@@ -1,195 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-61452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D28AB586AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 23:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9DBB586B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 23:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 557014E2253
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 21:24:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4307B4E2513
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 21:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0024A283CB8;
-	Mon, 15 Sep 2025 21:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02232C0F62;
+	Mon, 15 Sep 2025 21:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dToTMSfl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VqL9b1NW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75D71E9B1C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 21:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B41F2BFC9B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 21:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757971447; cv=none; b=ddjT2rDKwEp8FjUH8afPKqm4R33XpJ16CRebqAe7ivRjTm9jomdotOolp4nx/CTbs3E1W8ovlgMPS0zagJfkjAy6TCjDuYFz0oyXNuz+i7657AwbVvOYGduuKnQRE0WG7zlsYEtZStorpx0LdyfgDVFUIIHCOSeI/N3zzt3yYvY=
+	t=1757971577; cv=none; b=WGAYgkEdogztZ3GBu6JiSv1EvcxymQzepybGgfXIpjffJ/vvUu8s9/J29liIXO/FJemK9kRw3xBpX5fpD/uVSmE4XaekZ6UAh5gmgRnJNcH0+WVEnpxS4Wn8mwP04e4RGftj6lSh2hoSFy1ZXxNI8oESVxd740dpOSnQ6qkkei8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757971447; c=relaxed/simple;
-	bh=tJ07IjjkN6LfRKRaknf3GSKd5airO6VA/4CYAh6JTuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zv44BTpPC+SxeeZtCj4jwtN+OJDLzy/x3PLbCpm2SYTGaZBMeov4OIpcPPUj15TX2hBcGEAwBj4LD/y5W8GKOgM4aVoyTOgtFUSDE7QvacnGv3L6YmD4691p898Omc+wuuJK1VoyDhVFKC82rKpL0HWWwAhNvWreEF2zRNFdF2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dToTMSfl; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b7b3202dceso849741cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 14:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757971444; x=1758576244; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b8eIrrll5+Z7MtFeluZJcqZlVksz8aXT9U18MrDs6co=;
-        b=dToTMSflO/qB2WIJmpi3c067nj5Fg8XIgu4Q6f8E7YsFu3bCnY+8O0IMj1hyfpsXWI
-         trW9sISbsXwprL/8j/KeIKDCXSAUnw68e4/gFdZvThOGvZoa3H8hlo0ySohFBlFvV49G
-         H0BeaM2F5nc66dK//cfomHoJlVgqdkW0Ch+DOdEe7O/OU65B553m0cBai85XNKl/5Dz5
-         b8oF+fLV+N0c6fM3F00ijkhBuFtVhBCawcc/pCDQxmdHns1Bw87Ato0Q7qCPQC3vo9bI
-         kk3QmK/5KaHl1mW8r8GtfSdtI3nactdD8qil1KnLICFdMhN0eHOUaHSSBDpYthJB2sjh
-         uwiA==
+	s=arc-20240116; t=1757971577; c=relaxed/simple;
+	bh=1sOTIRHTFzvVsuFrLFr5SOKUlmErsLY3WO0d1tNp5Eg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAI0lN3LqgKzKsS9qBmbNefcdlrRHp4ibUs4LYpZy8GIbGDcN+efG7ayD70v3M6gVLXfhYpBp+7SHYjtbJF5TGIBdUL7jbykzuYHnTvceNbLYmLnA80bGS+zoqAluTqiVtd9YgeauXY45VjtjgTMPjrTj1cWOjdUwwSx1C0EMH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VqL9b1NW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757971573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KM4RQD/H6XgF3hQHay54Rz4wcT8Td67zLaIIGzgIOjc=;
+	b=VqL9b1NWQ0WussgNB3M6/5DEeTKPkt2riW+ZEDXT1eWDrs8Co9WiZO5mgZmuD+OobVNULa
+	zTdWRX7VTFzfTJT5uAcvGiVNxfUJ5Tb2ga7RbP13+oMIz8hEmjidkNjVhZlQGMowQPIOxg
+	yry0S9DoDx5MBN/ypLIuIE2yswCuKoE=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-140-tyI627ttM1ae_nR3wn4-Ww-1; Mon, 15 Sep 2025 17:26:11 -0400
+X-MC-Unique: tyI627ttM1ae_nR3wn4-Ww-1
+X-Mimecast-MFC-AGG-ID: tyI627ttM1ae_nR3wn4-Ww_1757971571
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-77ccfa8079cso36306916d6.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 14:26:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757971444; x=1758576244;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b8eIrrll5+Z7MtFeluZJcqZlVksz8aXT9U18MrDs6co=;
-        b=wgahJiOQOk4B9MlvoilRZsy6JpoMbSdZwvZxKSNk/5MMFqKAgW7qJe/yW/L51P/ht8
-         5kVC+VF7q03eCu/Ze2n1Z7U9bbSAt3kjMFutM2ozR3ZzddUeCLWWYmaQKfc+C7B1jk+e
-         7gYLGK4FIZlHhMUVmNKLuf39IAUfe8i/LQIY0lGr2qPKlj/1ztpRTSHcPLzc1uT6Jksc
-         WLXLtHlLO7sV30QMNEpp8n4Xqlj6o6nnGF89B2FfrG0HOiFvnBUWAHV/L6Rv4pdMeb20
-         0rQWf95mUXhobNnm4AEkMY7pvbBYkwSQM6mzZ/pX5odbR+TF51x2YBhvks5b+pygepXq
-         o7HA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOIIBV9TLf3qObarqU7wfiNmdGwUXheyNxh/7zaLVNoqoQzMT/H2XO4D/cBUtE+Jw7kmN95/w9rUZp1eqv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqO3yk1FN3b6QiHw9SW4tm/IMvEWKFgoSxIGb5uhbLQKAoAOph
-	XrHzcF2wJxIbZS8nms+/8m9J7EScYkvtXhTyQTpshv8HCP/4fTr9WA+tYzqebQTrRz/lCL5S/KX
-	AGwm/WMXL4dDA4WdNGeFZk8UpuY5Qe24+5IEnhwA=
-X-Gm-Gg: ASbGncsuNipjLd8aEIGl4L2jMS/5hVsQjIX6qgeGvQkVTa2BmZ4lL8XXBop15V5Q9/C
-	YskadGiAlHzD2rzZ7g14v+v7sDoPYd54RHm/ItvRTatFOqIG4wtZkrEUsPRc6S6panvLAtq46RX
-	Ped4TKN2me8UFJysSXYJz9th0xgDElASfjMcXrR76j8pTP39JD9x1Ghgzr8gaNzveiGcz0DRxuu
-	ypB0oMTgZ1R6q/P/Azm9SBVXfUvT5WK6X57+Y7q6bypjIU7UCE=
-X-Google-Smtp-Source: AGHT+IFIJ9IhF6jAqpzmUJSL4+hl3zu40fVnXzpJZy4e9IdU9ix0Q8B2yicBUKZoOLwFU8I4rb9++IF/GUV4oE5/nKI=
-X-Received: by 2002:ac8:5d51:0:b0:4b5:e38f:7497 with SMTP id
- d75a77b69052e-4b77cfcb815mr211857271cf.25.1757971444333; Mon, 15 Sep 2025
- 14:24:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757971571; x=1758576371;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KM4RQD/H6XgF3hQHay54Rz4wcT8Td67zLaIIGzgIOjc=;
+        b=SaN/4Om/BS3SvtQOGVWP2e3DMX3rej8vRMqBy64Tu/yx4gLxiEsDpck+ZXqfPumM9t
+         jfyFrfIp5ZwcYUUrkQwOM+nbbcwBLkShBOqOdQHC5vNZCNVSr1QaC+WlCq/ejitxgOtL
+         gW2FNiZ6VOClA1FeFgScB4oryw5L/KdKr+G6XqY78y6OyL43KwzMAlXqISxW5dUklEUJ
+         cByLxTSvA+/6KWzVYsSshPzM/mBlZ6mQU6LN6RfoTVp865as8+474Rhz788nLZ0N41VJ
+         kFY5hr1eD3MCbJp63l3AkF66H2NnXZhiJnp9mTxkkcc8kNcEJrcC5UvKgWDFmenkp8d4
+         OB+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfqgolOeP+6+uaG7Ug2DEThWX6IrjdNvqOqoHZPCgBt0+qhEJAjPkL92ptY5oIJ+VTU2f0DQ/XS2bdj/Bh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmN9oboiBqIXFDcnM0E1+w3SpyrV64PeS8x9xpNMxj8PBAkBdr
+	Tdnx92WIoJwpaUVaGMb0vV03CDRZmCKtc0J19+dhqzt5/9u6fwXQMKCk9RRhnI6sw0x3EmM7rXt
+	fCb1KESSfrGb7MdCnzyxNYpQbXFz34N1vONJAxioX3NDCrEBk/XylNz7TiXrU2irJNJM=
+X-Gm-Gg: ASbGncvSqBghrCVzBiTDUmUI0lyX+TjKIW1Hc7h8Lhrdlg0vIcjCP7Doa+3xFr8J+TH
+	TRM9VAqXjVdiZzWsmHeJJ42M8/40DrEW6ZfWk0VO3VisvBrCQrMQfybVmpawC2rrLAa7gu4Fzkj
+	euobc+hYUClOXk2VJ4bDD6cZz+O4kH37CUFz6A4usbhG6F59/nTj2Kr4Np96oNDTUz3nj+S9Js2
+	fWOvs0k/TUFcOrSiZw9StFV/BN05qnnV9oOJoj5YVRfh8tiuBPmmRICTELWz78r/tZHhYGs2MXO
+	U/+hAplrU19N1fQR0/LaJfeje269WImA
+X-Received: by 2002:a05:6214:3c85:b0:769:cd09:9d77 with SMTP id 6a1803df08f44-769cd099fafmr170285406d6.4.1757971571203;
+        Mon, 15 Sep 2025 14:26:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkORZIzaSeYsztcwaPnCJ3V7jNeNP5xXWbRprE054mUcehDj+b7ToSI1uNg2GLUniMgON4ow==
+X-Received: by 2002:a05:6214:3c85:b0:769:cd09:9d77 with SMTP id 6a1803df08f44-769cd099fafmr170284896d6.4.1757971570738;
+        Mon, 15 Sep 2025 14:26:10 -0700 (PDT)
+Received: from x1.local ([174.89.135.121])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-76e576ee0fcsm60107386d6.69.2025.09.15.14.26.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 14:26:10 -0700 (PDT)
+Date: Mon, 15 Sep 2025 17:25:57 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"david@redhat.com" <david@redhat.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"willy@infradead.org" <willy@infradead.org>,
+	"vbabka@suse.cz" <vbabka@suse.cz>,
+	"rppt@kernel.org" <rppt@kernel.org>,
+	"surenb@google.com" <surenb@google.com>,
+	"mhocko@suse.com" <mhocko@suse.com>, "jack@suse.cz" <jack@suse.cz>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"jthoughton@google.com" <jthoughton@google.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"vannapurve@google.com" <vannapurve@google.com>,
+	"Roy, Patrick" <roypat@amazon.co.uk>,
+	"Thomson, Jack" <jackabt@amazon.co.uk>,
+	"Manwaring, Derek" <derekmn@amazon.com>,
+	"Cali, Marco" <xmarcalx@amazon.co.uk>
+Subject: Re: [RFC PATCH v6 0/2] mm: Refactor KVM guest_memfd to introduce
+ guestmem library
+Message-ID: <aMiEZfkx5sRMU7it@x1.local>
+References: <20250915161815.40729-1-kalyazin@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <94377ddf-9d04-4181-a632-d8c393dcd240@ddn.com> <CAJnrk1ZHfd3r1+s0fV209LROO1kixM=_T7Derm+GrR_hYa_wpw@mail.gmail.com>
- <99313bf9-963f-430e-a929-faa915d77202@bsbernd.com>
-In-Reply-To: <99313bf9-963f-430e-a929-faa915d77202@bsbernd.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 15 Sep 2025 14:23:53 -0700
-X-Gm-Features: Ac12FXycsRvy3zln-ukMwkGq2UQ3GMzjiBIxKIz-WjR4rCZIZeKXbx0tjrMhuSw
-Message-ID: <CAJnrk1aYqZPNg_O25Yv6d5jGdzcPv0oyQ93KwarxovBJMyymdA@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/fuse: fix potential memory leak from fuse_uring_cancel
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Jian Huang Li <ali@ddn.com>, linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250915161815.40729-1-kalyazin@amazon.com>
 
-On Mon, Sep 15, 2025 at 1:15=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
-wrote:
->
-> Hi Joanne,
->
-> thanks for looking into this.
->
-> On 9/15/25 20:15, Joanne Koong wrote:
-> > On Thu, Sep 11, 2025 at 3:34=E2=80=AFAM Jian Huang Li <ali@ddn.com> wro=
-te:
-> >>
-> >> This issue could be observed sometimes during libfuse xfstests, from
-> >> dmseg prints some like "kernel: WARNING: CPU: 4 PID: 0 at
-> >> fs/fuse/dev_uring.c:204 fuse_uring_destruct+0x1f5/0x200 [fuse]".
-> >>
-> >> The cause is, if when fuse daemon just submitted
-> >> FUSE_IO_URING_CMD_REGISTER SQEs, then umount or fuse daemon quits at
-> >> this very early stage. After all uring queues stopped, might have one =
-or
-> >> more unprocessed FUSE_IO_URING_CMD_REGISTER SQEs get processed then so=
-me
-> >> new ring entities are created and added to ent_avail_queue, and
-> >> immediately fuse_uring_cancel moves them to ent_in_userspace after SQE=
-s
-> >> get canceled. These ring entities will not be moved to ent_released, a=
-nd
-> >> will stay in ent_in_userspace when fuse_uring_destruct is called, need=
-ed
-> >> be freed by the function.
-> >
-> > Hi Jian,
-> >
-> > Does it suffice to fix this race by tearing down the entries from the
-> > available queue first before tearing down the entries in the userspace
-> > queue? eg something like
-> >
-> >  static void fuse_uring_teardown_entries(struct fuse_ring_queue *queue)
-> >  {
-> > -       fuse_uring_stop_list_entries(&queue->ent_in_userspace, queue,
-> > -                                    FRRS_USERSPACE);
-> >         fuse_uring_stop_list_entries(&queue->ent_avail_queue, queue,
-> >                                      FRRS_AVAILABLE);
-> > +       fuse_uring_stop_list_entries(&queue->ent_in_userspace, queue,
-> > +                                    FRRS_USERSPACE);
-> >  }
-> >
-> > AFAICT, the race happens right now because when fuse_uring_cancel()
-> > moves the FRRS_AVAILABLE entries on the ent_avail_queue to the
-> > ent_in_userspace queue, fuse_uring_teardown_entries() may have already
-> > called fuse_uring_stop_list_entries() on the ent_in_userspace queue,
-> > thereby now missing the just-moved entries altogether, eg this logical
-> > flow
-> >
-> > -> fuse_uring_stop_list_entries(&queue->ent_in_userspace, ...);
-> >     -> fuse_uring_cancel() moves entry from avail q to userspace q
-> > -> fuse_uring_stop_list_entries(&queue->ent_avail_queue, ...);
-> >
-> > If instead fuse_uring_teardown_entries() stops the available queue firs=
-t, then
-> > -> fuse_uring_stop_list_entries(&queue->ent_avail_queue, ...);
-> >     -> fuse_uring_cancel()
-> > -> fuse_uring_stop_list_entries(&queue->ent_in_userspace, ...);
-> >
-> > seems fine now and fuse_uring_cancel() would basically be a no-op
-> > since ent->state is now FRRS_TEARDOWN.
-> >
->
-> I'm not sure. Let's say we have
->
-> task 1                                   task2
-> fuse_uring_cmd()
->     fuse_uring_register()
->          [slowness here]
->                                         fuse_abort_conn()
->                                           fuse_uring_teardown_entries()
->          [slowness continue]
->          fuse_uring_do_register()
->             fuse_uring_prepare_cancel()
->             fuse_uring_ent_avail()
->
->
-> I.e. fuse_uring_teardown_entries() might be called before
-> the command gets marked cancel-able and before it is
-> moved to the avail queue. I think we should extend the patch
-> and actually not set the ring to ready when fc->connected
-> is set to 0.
->
+Hello, Nikita,
 
-Hi Bernd,
+On Mon, Sep 15, 2025 at 04:18:16PM +0000, Kalyazin, Nikita wrote:
+> This is a revival of the guestmem library patch series originated from
+> Elliot [1].  The reason I am bringing it up now is it would help
+> implement UserfaultFD support minor mode in guest_memfd.
+> 
+> Background
+> 
+> We are building a Firecracker version that uses guest_memfd to back
+> guest memory [2].  The main objective is to use guest_memfd to remove
+> guest memory from host kernel's direct map to reduce the surface for
+> Spectre-style transient execution issues [3].  Currently, Firecracker
+> supports restoring VMs from snapshots using UserfaultFD [4], which is
+> similar to the postcopy phase of live migration.  During restoration,
+> while we rely on a separate mechanism to handle stage-2 faults in
+> guest_memfd [5], UserfaultFD support in guest_memfd is still required to
+> handle faults caused either by the VMM itself or by MMIO access handling
+> on x86.
+> 
+> The major problem in implementing UserfaultFD for guest_memfd is that
+> the MM code (UserfaultFD) needs to call KVM-specific interfaces.
+> Particularly for the minor mode, these are 1) determining the type of
+> the VMA (eg is_vma_guest_memfd()) and 2) obtaining a folio (ie
+> kvm_gmem_get_folio()).  Those may not be always available as KVM can be
+> compiled as a module.  Peter attempted to approach it via exposing an
+> ops structure where modules (such as KVM) could provide their own
+> callbacks, but it was not deemed to be sufficiently safe as it opens up
+> an unrestricted interface for all modules and may leave MM in an
+> inconsistent state [6].
 
-I think this is a separate race from the fuse_uring_cancel one.
-afaics, this race can happen even if the user doesn't call
-fuse_uring_cancel(). imo I think the cleanest solution to this
-registration vs teardown race is to check queue->stopped in
-fuse_uring_do_register() after we grab the queue spinlock, and if
-queue->stopped is true, then just clean up the entry ourselves with
-fuse_uring_entry_teardown()).
+I apologize when I was replying to your offlist email that I'll pick it up,
+but I didn't.. I moved on with other things after the long off which was
+more urgent, then I never got the chance to go back..  I will do it this
+week.
+
+I don't think it's a real safety issue.  Frankly, I still think that latest
+patchset, as-is, is the best we should come up with userfaultfd.  If people
+worry about uffdio_copy(), it's fine, we can drop it.  It's not a huge deal
+at least for now.
+
+Btw, thanks for help pinging that thread, and sorry I didn't yet get back
+to it.  I'll read the discussions (I didn't yet, after back to work for
+weeks), but I will.
+
+> 
+> An alternative way to make these interfaces available to the UserfaultFD
+> code is extracting generic-MM guest_memfd parts into a library
+> (guestmem) under MM where they can be safely consumed by the UserfaultFD
+> code.  As far as I know, the original guestmem library series was
+> motivated by adding guest_memfd support in Gunyah hypervisor [7].
+> 
+> This RFC
+> 
+> I took Elliot's v5 (the latest) and rebased it on top of the guest_memfd
+> preview branch [8] because I also wanted to see how it would work with
+> direct map removal [3] and write syscall [9], which are building blocks
+> for the guest_memfd-based Firecracker version.  On top of it I added a
+> patch that implements UserfaultFD support for guest_memfd using
+> interfaces provided by the guestmem library to illustrate the complete
+> idea.
+
+I hope patch 2 exactly illustrated on why the uffd modulization effort is
+still worthwhile (to not keep attaching "if"s all over the places).  Would
+you agree?
+
+If you agree, we'll need to review the library work as a separate effort
+from userfaultfd.
+
+> 
+> I made the following modifications along the way:
+>  - Followed by a comment from Sean, converted invalidate_begin()
+>    callback back to void as it cannot fail in KVM, and the related
+>    Gunyah requirement is unknown to me
+>  - Extended the guestmem_ops structure with the supports_mmap() callback
+>    to provide conditional mmap support in guestmem
+>  - Extended the guestmem library interface with guestmem_allocate(),
+>    guestmem_test_no_direct_map(), guestmem_mark_prepared(),
+>    guestmem_mmap(), and guestmem_vma_is_guestmem()
+>  - Made (kvm_gmem)/(guestmem)_test_no_direct_map() use
+>    mapping_no_direct_map() instead of KVM-specific flag
+>    GUEST_MEMFD_FLAG_NO_DIRECT_MAP to make it KVM-independent
+> 
+> Feedback that I would like to receive:
+>  - Is this the right solution to the "UserfaultFD in guest_memfd"
+>    problem?
+
+Yes it's always a fair question to ask.  I shared my two cents above.  We
+can definitely also hear about how others think.
+
+I hope I'll keep my words this time on reposting.
 
 Thanks,
-Joanne
 
->
-> Thanks,
-> Bernd
+>  - What requirements from other hypervisors than KVM do we need to
+>    consider at this point?
+>  - Does the line between generic-MM and KVM-specific guest_memfd parts
+>    look sensible?
+> 
+> Previous iterations of UserfaultFD support in guest_memfd patches:
+> v3:
+>  - https://lore.kernel.org/kvm/20250404154352.23078-1-kalyazin@amazon.com
+>  - minor changes to address review comments (James)
+> v2:
+>  - https://lore.kernel.org/kvm/20250402160721.97596-1-kalyazin@amazon.com
+>  - implement a full minor trap instead of hybrid missing/minor trap
+>    (James/Peter)
+>  - make UFFDIO_CONTINUE implementation generic calling vm_ops->fault()
+> v1:
+>  - https://lore.kernel.org/kvm/20250303133011.44095-1-kalyazin@amazon.com
+> 
+> Nikita
+> 
+> [1]: https://lore.kernel.org/kvm/20241122-guestmem-library-v5-2-450e92951a15@quicinc.com
+> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
+> [3]: https://lore.kernel.org/kvm/20250912091708.17502-1-roypat@amazon.co.uk
+> [4]: https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md
+> [5]: https://lore.kernel.org/kvm/20250618042424.330664-1-jthoughton@google.com
+> [6]: https://lore.kernel.org/linux-mm/20250627154655.2085903-1-peterx@redhat.com
+> [7]: https://lore.kernel.org/lkml/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com
+> [8]: https://git.kernel.org/pub/scm/linux/kernel/git/david/linux.git/log/?h=guestmemfd-preview
+> [9]: https://lore.kernel.org/kvm/20250902111951.58315-1-kalyazin@amazon.com
+> 
+> Nikita Kalyazin (2):
+>   mm: guestmem: introduce guestmem library
+>   userfaulfd: add minor mode for guestmem
+> 
+>  Documentation/admin-guide/mm/userfaultfd.rst |   4 +-
+>  MAINTAINERS                                  |   2 +
+>  fs/userfaultfd.c                             |   3 +-
+>  include/linux/guestmem.h                     |  46 +++
+>  include/linux/userfaultfd_k.h                |   8 +-
+>  include/uapi/linux/userfaultfd.h             |   8 +-
+>  mm/Kconfig                                   |   3 +
+>  mm/Makefile                                  |   1 +
+>  mm/guestmem.c                                | 380 +++++++++++++++++++
+>  mm/userfaultfd.c                             |  14 +-
+>  virt/kvm/Kconfig                             |   1 +
+>  virt/kvm/guest_memfd.c                       | 303 ++-------------
+>  12 files changed, 493 insertions(+), 280 deletions(-)
+>  create mode 100644 include/linux/guestmem.h
+>  create mode 100644 mm/guestmem.c
+> 
+> 
+> base-commit: 911634bac3107b237dcd8fdcb6ac91a22741cbe7
+> -- 
+> 2.50.1
+> 
+> 
+> 
+
+-- 
+Peter Xu
+
 
