@@ -1,235 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-61323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5DCB5796D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:55:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B01BB57A62
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 14:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A397548191C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2083B5582
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 12:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6340302760;
-	Mon, 15 Sep 2025 11:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PLvjQb+/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="joSEGeUW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PLvjQb+/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="joSEGeUW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E3E307489;
+	Mon, 15 Sep 2025 12:20:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FED3009FF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 11:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13DD27FD49;
+	Mon, 15 Sep 2025 12:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937189; cv=none; b=VJYmub0UsDleFiRW2UleABHz+zZGpooA68AsQiAhJ5mH2uRFeKnRPS9qWtaWZlVu9I2REWbJAr58Klwv29Ugxza6+yk26+87jxYzlHAFp3vPjtBo/Ad4oO9d/O/1h5BxY41QudIHE/+/qBdb69OOBXCgpbtlJ1UDshIuQQjrf4c=
+	t=1757938840; cv=none; b=KTkBWnsxxdJSSXJa5t7R9k/5iGbELLcN1SBBrjvQR37fJjidliedAGbNwNAN42pAHRtvovt/VVvWcCNluDVUoannPwcBaE2bKCqm9M2WJgsVQqffrZGsitcSViIhPoWxU+eWdBDM8L66Hn7LFrkUHXN+Evwo3I3xlvlh+7EAkh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937189; c=relaxed/simple;
-	bh=nlLI3L0Sq8c/MSaRVTC+PEhR8VCrTRWJMTkcjoJpjxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dyyzK1yTGbF5AqeWFYWvHoyB8+vmKLdykpHhs1XBr3NG0vufrdhI0Vob2bDzjigYH10i3EAzflZ/kl/7JTRv5lgZNBOjFsaw+yEEjmjMgbU396rnnUy0ENeJF6MlUre/8Cig7WAC4Cor0X34C3RxhLnQU6ZNm4/ic8eAX2Y0Z8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PLvjQb+/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=joSEGeUW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PLvjQb+/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=joSEGeUW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 955FD1F7B2;
-	Mon, 15 Sep 2025 11:53:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757937185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ic8ewN0DszMH+kil9P8NRCiSXAr9daRFgx2afEtpvfY=;
-	b=PLvjQb+/6Kib4OEvYcMjo995aZn2ZD+hk8dzkCI/Lekn5RPqHKgsQdcVP+XH45TJe2aWop
-	YtqQyc7kQQJsVkicyW4GAGOsb92YFr+42hF3FUXARrM4RCRNGAdWiRfqeue7M1SwcpXdKn
-	9N19uEJwSx9YhYKSqllMtwEu7fH/bRI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757937185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ic8ewN0DszMH+kil9P8NRCiSXAr9daRFgx2afEtpvfY=;
-	b=joSEGeUWresm7k29iPtanJSm62JLLX3zz5yrGwC23sf+qCZxSOKimqXVwlKMq39R33OYIl
-	+EWBFnDkxdlOloDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="PLvjQb+/";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=joSEGeUW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757937185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ic8ewN0DszMH+kil9P8NRCiSXAr9daRFgx2afEtpvfY=;
-	b=PLvjQb+/6Kib4OEvYcMjo995aZn2ZD+hk8dzkCI/Lekn5RPqHKgsQdcVP+XH45TJe2aWop
-	YtqQyc7kQQJsVkicyW4GAGOsb92YFr+42hF3FUXARrM4RCRNGAdWiRfqeue7M1SwcpXdKn
-	9N19uEJwSx9YhYKSqllMtwEu7fH/bRI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757937185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ic8ewN0DszMH+kil9P8NRCiSXAr9daRFgx2afEtpvfY=;
-	b=joSEGeUWresm7k29iPtanJSm62JLLX3zz5yrGwC23sf+qCZxSOKimqXVwlKMq39R33OYIl
-	+EWBFnDkxdlOloDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 891B71368D;
-	Mon, 15 Sep 2025 11:53:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ni9/ISH+x2jtLQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 11:53:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3CAC2A0A06; Mon, 15 Sep 2025 13:53:05 +0200 (CEST)
-Date: Mon, 15 Sep 2025 13:53:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 19/33] cgroup: support ns lookup
-Message-ID: <wx455y2gvdfkpg34r5apf3kzgj4yu6x2s45vgvrjitlgyayrum@lhrpijrvkmpm>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-19-1a247645cef5@kernel.org>
+	s=arc-20240116; t=1757938840; c=relaxed/simple;
+	bh=D/7KskjWGePd5lUSyB950r7KaGQ+t6CMELLiiCCjoR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aU4AUazivDeU3t+9gZkBhGYS8zye33+zt8Ha10Te78XdnKag4yWWLhtm8RKhy9xZ1dP/jfohKrqG7azNxX+0XU9Ah3cvp/S+md5JV6CBBGhy9OfhSnJ2e5j/fjFrnIb2vXkkekSR6E7LMWt74m3rOKWzhm4FVSO43VOfYgXxOGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cQNhn1N0hz9sxb;
+	Mon, 15 Sep 2025 13:53:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id anqguhIbwei8; Mon, 15 Sep 2025 13:53:29 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQNhm09sdz9sxY;
+	Mon, 15 Sep 2025 13:53:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CE0528B766;
+	Mon, 15 Sep 2025 13:53:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id xl8Y1gVm9bTH; Mon, 15 Sep 2025 13:53:27 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B538F8B763;
+	Mon, 15 Sep 2025 13:53:26 +0200 (CEST)
+Message-ID: <b7ecad05-9880-4443-b2d2-843cf6fcc937@csgroup.eu>
+Date: Mon, 15 Sep 2025 13:53:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-19-1a247645cef5@kernel.org>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 955FD1F7B2
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 06/62] arm: init: remove special logic for setting
+ brd.rd_size
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
+ Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+ Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
+ Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-7-safinaskar@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250913003842.41944-7-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri 12-09-25 13:52:42, Christian Brauner wrote:
-> Support the generic ns lookup infrastructure to support file handles for
-> namespaces.
+
+
+Le 13/09/2025 à 02:37, Askar Safin a écrit :
+> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> Acked-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> There is no any reason for having special mechanism
+> for setting ramdisk size.
 
-Looks good. Feel free to add:
+That's you opinion.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+You should explain why.
 
-								Honza
-
+> 
+> Also this allows us to change rd_size variable to static
+> 
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
 > ---
->  kernel/cgroup/cgroup.c    | 2 ++
->  kernel/cgroup/namespace.c | 7 +++++--
->  2 files changed, 7 insertions(+), 2 deletions(-)
+>   arch/arm/kernel/atags_parse.c | 12 ------------
+>   drivers/block/brd.c           |  8 ++++----
+>   include/linux/initrd.h        |  3 ---
+
+What about:
+
+arch/mips/kernel/setup.c:early_param("rd_size", rd_size_early);
+
+Is it unrelated ?
+
+>   3 files changed, 4 insertions(+), 19 deletions(-)
 > 
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index 312c6a8b55bb..092e6bf081ed 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -59,6 +59,7 @@
->  #include <linux/sched/cputime.h>
->  #include <linux/sched/deadline.h>
->  #include <linux/psi.h>
-> +#include <linux/nstree.h>
->  #include <net/sock.h>
->  
->  #define CREATE_TRACE_POINTS
-> @@ -6312,6 +6313,7 @@ int __init cgroup_init(void)
->  	WARN_ON(register_filesystem(&cpuset_fs_type));
->  #endif
->  
-> +	ns_tree_add(&init_cgroup_ns);
->  	return 0;
->  }
->  
-> diff --git a/kernel/cgroup/namespace.c b/kernel/cgroup/namespace.c
-> index 0391b6ab0bf1..fc12c416dfeb 100644
-> --- a/kernel/cgroup/namespace.c
-> +++ b/kernel/cgroup/namespace.c
-> @@ -5,7 +5,7 @@
->  #include <linux/slab.h>
->  #include <linux/nsproxy.h>
->  #include <linux/proc_ns.h>
+> diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+> index a3f0a4f84e04..615d9e83c9b5 100644
+> --- a/arch/arm/kernel/atags_parse.c
+> +++ b/arch/arm/kernel/atags_parse.c
+> @@ -87,18 +87,6 @@ static int __init parse_tag_videotext(const struct tag *tag)
+>   __tagtable(ATAG_VIDEOTEXT, parse_tag_videotext);
+>   #endif
+> 
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -static int __init parse_tag_ramdisk(const struct tag *tag)
+> -{
+> -       if (tag->u.ramdisk.size)
+> -               rd_size = tag->u.ramdisk.size;
 > -
-> +#include <linux/nstree.h>
->  
->  /* cgroup namespaces */
->  
-> @@ -30,16 +30,19 @@ static struct cgroup_namespace *alloc_cgroup_ns(void)
->  	ret = ns_common_init(&new_ns->ns, &cgroupns_operations, true);
->  	if (ret)
->  		return ERR_PTR(ret);
-> +	ns_tree_add(new_ns);
->  	return no_free_ptr(new_ns);
->  }
->  
->  void free_cgroup_ns(struct cgroup_namespace *ns)
->  {
-> +	ns_tree_remove(ns);
->  	put_css_set(ns->root_cset);
->  	dec_cgroup_namespaces(ns->ucounts);
->  	put_user_ns(ns->user_ns);
->  	ns_free_inum(&ns->ns);
-> -	kfree(ns);
-> +	/* Concurrent nstree traversal depends on a grace period. */
-> +	kfree_rcu(ns, ns.ns_rcu);
->  }
->  EXPORT_SYMBOL(free_cgroup_ns);
->  
+> -       return 0;
+> -}
+> -
+> -__tagtable(ATAG_RAMDISK, parse_tag_ramdisk);
+> -#endif
+> -
+>   static int __init parse_tag_serialnr(const struct tag *tag)
+>   {
+>          system_serial_low = tag->u.serialnr.low;
+> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+> index 0c2eabe14af3..72f02d2b8a99 100644
+> --- a/drivers/block/brd.c
+> +++ b/drivers/block/brd.c
+> @@ -27,6 +27,10 @@
 > 
-> -- 
-> 2.47.3
+>   #include <linux/uaccess.h>
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +static unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+> +module_param(rd_size, ulong, 0444);
+> +MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+> +
+>   /*
+>    * Each block ramdisk device has a xarray brd_pages of pages that stores
+>    * the pages containing the block device's contents.
+> @@ -209,10 +213,6 @@ static int rd_nr = CONFIG_BLK_DEV_RAM_COUNT;
+>   module_param(rd_nr, int, 0444);
+>   MODULE_PARM_DESC(rd_nr, "Maximum number of brd devices");
+> 
+> -unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+> -module_param(rd_size, ulong, 0444);
+> -MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+> -
+>   static int max_part = 1;
+>   module_param(max_part, int, 0444);
+>   MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
+> diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+> index 6320a9cb6686..b42235c21444 100644
+> --- a/include/linux/initrd.h
+> +++ b/include/linux/initrd.h
+> @@ -5,9 +5,6 @@
+> 
+>   #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
+> 
+> -/* size of a single RAM disk */
+> -extern unsigned long rd_size;
+> -
+>   /* 1 if it is not an error if initrd_start < memory_start */
+>   extern int initrd_below_start_ok;
+> 
+> --
+> 2.47.2
+> 
+> 
+
 
