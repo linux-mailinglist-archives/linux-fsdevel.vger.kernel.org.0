@@ -1,220 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-61414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80390B57E40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 16:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D819EB57E65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 16:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808B93A813C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE3E1894F95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 14:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF35231B81D;
-	Mon, 15 Sep 2025 13:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9D931280F;
+	Mon, 15 Sep 2025 14:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aLkCQhhk"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D8tfyCfQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9dxU6T2y";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ksaiJwzB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UpYpUxCm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B433331A05B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 13:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EF030E0D1
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 14:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944582; cv=none; b=lqKfws39ZpNP5ScWnPA57vffGrRRSKL8ZaeSAxN6+9TH46oiyc7DkUYZTapHdE1i2pfzO1olYrjbbj9BHmZPWsPFr3KY76rDEW5oagi/QcN5X39LC8Opzh8JC46IDybhAoKgYXEGMW1dKI5pRpi/orKXTo/glEfFqGyqtljCMv8=
+	t=1757945244; cv=none; b=Nau9gBDcS24x4TKIUUCjKAZHZL7WG5z3tKkWFFAKhVa8EpkUU1sjiMgx1FJQxH5RrLF6eY+2NOuYIbTrJOYkJhmwT+3CTR8RiQAndH2btEOZoLDcX6+EzN/4eHGZj0nkPqm76eLg8eo90CevywlgvQmNE3xvQ39ktzxQ+hWVMCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944582; c=relaxed/simple;
-	bh=m4vxR7Y03yH/06RsrUBBQhQGn4XLtdFMxMh/FvA39wQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NHnNb9iNuvpLMsJ5O5NfNI68UJwwmfPczQIBbmOW8QXM5ub1WSKKkw3ozJxW8WXj1rU3RTFL1K0xtxn0Gv3rBA/m8sxcg3hP891BY/jlJqmWqkZcS2uL0c0+l/xQ/9uFHSsgpc2vGeOpBuvBcAyB64SwZ8ZKXz28iP9LdOg9hTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aLkCQhhk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757944579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1757945244; c=relaxed/simple;
+	bh=gfRX9X/1aXyIhSeFPKrPTBcy4cWXlvncvUNvofMbX0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRxkXTfHlbIroDBUcjZkjqaS8XyfkYPo2Y9CF0TfPZPyBJ8DUQ5r7SyCwOL3nUIXPc/UjoTgbxINFGjnOvNrJstJyWkwzbG/Jn053q2AhCbqs9kIc+6GT/hBgSPqDPmOrMov1QcXKnlCr7MmVdU6X6pw7+WZoV9zBS4aK+fQChA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D8tfyCfQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9dxU6T2y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ksaiJwzB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UpYpUxCm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E1DD91FB3B;
+	Mon, 15 Sep 2025 14:07:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757945241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xhOG/fvp4vP62Eb6XPp5XNsran7BwQlb2XSK8gOzU1U=;
-	b=aLkCQhhkguhckibGzIugPnFpq6lZfpU4M0OCITj402qRmZSvUUI+mKvULGh6kf2Nk/r4i1
-	RU1ZZFPPbtyueE/+gfJokJIhC7LLwlgmq/kkDIzLjIkWH0GCQa93iJvXggvdKT0BiDGPIc
-	A4SRTiE5M4tCLJS0w1ZdlirOYLC6LcE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-2OS2UHEQOvqV-Wj3ASSozQ-1; Mon, 15 Sep 2025 09:56:17 -0400
-X-MC-Unique: 2OS2UHEQOvqV-Wj3ASSozQ-1
-X-Mimecast-MFC-AGG-ID: 2OS2UHEQOvqV-Wj3ASSozQ_1757944576
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45f28552927so1762605e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 06:56:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757944576; x=1758549376;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xhOG/fvp4vP62Eb6XPp5XNsran7BwQlb2XSK8gOzU1U=;
-        b=oxuA5KEsWShh3s0bviq/V6QhKDykru4q1WHI3cvlLTEN0OswViXs9nkU0Hvz8APDJD
-         EsNSkQmScKOxOqTQ3//QyLjARSEhXfXDyBRUTSXGjoU4F94I/e8hngwr0P3x5qF3CAEJ
-         F/gVjX/5MU5M8/owLehnzQ2nCk2LY7MVNor7y7DC/4GTlgnML8YXD9TnzNcDVpDLaUjA
-         AcJ54m8IuhYOMcSHATw8/zQUI77lqjfsH/7w8SX/AnJohk2sJchwM9xw0v/sRxP1wJLc
-         einoIDy04LdpWIIWldFPuJX0gVPKeT0W4GnQ/HBqEghGrdd2rY7vM4PZ9F4l0ANkFklN
-         +jfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNdDUXiBjK6VgUwL52k1IRsmuRBT94LhUMUBy4FT/VseaKv1dmBx5p3H0yixGcLofiNbf4R7BXf4YD7kbL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQrzVMbarJZdhMce0bvPLtnL7+Rav8B9/vxSm1+8fSaRiaE8Lc
-	cp7Z8Z6bL9I4JYItX8SQHTgbH25uLh3G295Uyw9j/N1e+RqV0DEPEEKmBLLFhnVXo3S0O7FFAp2
-	yUPqm/wXTfwRBrPYOKdItskZ93wZOFGP+7LW1rnMmSVoJjnc9ySafRqQ4GmfaEuWbzOz2VKgj8G
-	w=
-X-Gm-Gg: ASbGncvrTcnfudJAIl5baviNWWJ9MOY41/kNm1pzYy/vctKcPsU2V5Y+f9ZDCkMF8U1
-	EK6IiahBS8m9QshYy+51GoH4sN2PlZ5WQW8kyaAURzRexkSW9I9I96A4BOe0HE0UtE1m7V93CAt
-	VzUfgM9EKr+d8WYJZlFyxh/4Fg8bcbWAtSe0dKZlotM12dmp2aHOa5g1nyDfDT9/RToi9gTEwuO
-	Zi5Ayq9r7nYJeElaORSEAOJPEIKXc/T8fYd9xPF+18dPuvlHOHI9GCxp83OA/MK9aPsX4yQu/yo
-	sgl6rG2CTDuBX7rdRIYUQTcBQxFOu7DOIoJU56E9WQ4IpMWR57R/+2CjZn+qj39LF7K6KVD6L3K
-	uaXcD5bubQzWDgnrVZO2e6nYBo+d92UgyYhTLY3QxBLQ00EWcd8tK8yMWKGUJJlVpxi0=
-X-Received: by 2002:a05:600c:6288:b0:45b:8adf:cf2b with SMTP id 5b1f17b1804b1-45f211f881dmr115966265e9.21.1757944576050;
-        Mon, 15 Sep 2025 06:56:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtjLb9Ul6kS9hK8OGR9Dc+mdLSV5OClg6Pwy+q+DWumlQ5T+nt0OyxALBeSTSBr2gbzsMVcA==
-X-Received: by 2002:a05:600c:6288:b0:45b:8adf:cf2b with SMTP id 5b1f17b1804b1-45f211f881dmr115965935e9.21.1757944575556;
-        Mon, 15 Sep 2025 06:56:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd? (p200300d82f18f900e0ae65d58bf88cfd.dip0.t-ipconnect.de. [2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e032a0522sm178750375e9.0.2025.09.15.06.56.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 06:56:15 -0700 (PDT)
-Message-ID: <37c8dd09-e0b1-4f76-a03b-4548c1fe4796@redhat.com>
-Date: Mon, 15 Sep 2025 15:56:13 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=jeFwMh9UwQSuEr83cM3Kb6c9zmrNoDYzIWwjnIlsPAU=;
+	b=D8tfyCfQ1SwKRPN5mRs1h3vsgG8uRfhRU6DsoFb3XKs8b2/zHngcRCh853QDmMD85hHzou
+	CTU4np0H+v0PkWndKvlBOUCQDmqFQmTlDqURUP5K5Vwatz1d3MN0nIzAYygE3Z5ehfunzV
+	JUV2ItM3o/nmbFLutVpEQI6bEvIoXpw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757945241;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jeFwMh9UwQSuEr83cM3Kb6c9zmrNoDYzIWwjnIlsPAU=;
+	b=9dxU6T2yL5um/gdbL6topY9yETfgqyl80sqsnAjcHoiuuvtjcZiuMjBX2pApznWUOuGEEj
+	f2+MOpDm2S3VscBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ksaiJwzB;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UpYpUxCm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757945240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jeFwMh9UwQSuEr83cM3Kb6c9zmrNoDYzIWwjnIlsPAU=;
+	b=ksaiJwzBsh8NCVShPSkauS+xw0TEDnUIYtU2Ox7HRUDluqGc7/v5YCUCGfxMPt4GpD89pr
+	uxWBc4hJXMnS7sOjihXS8E4UiKSB3+JhN7+4IUVFLAre1DzAzgTYI+Muj94qQ9T8TA32r3
+	iAWA+e3RqH1FxvR1GttwYG7ST156GWM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757945240;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jeFwMh9UwQSuEr83cM3Kb6c9zmrNoDYzIWwjnIlsPAU=;
+	b=UpYpUxCmlp15C2/gd/W36MqXK3ilQGIQwai2bcfk2cfTFzReXu17sMjsCA448jANXJ2Dr+
+	f9pOLlYzSAENRBCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDFCC1368D;
+	Mon, 15 Sep 2025 14:07:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oMn6MZgdyGg1WgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 14:07:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 63FA1A0A06; Mon, 15 Sep 2025 16:07:15 +0200 (CEST)
+Date: Mon, 15 Sep 2025 16:07:15 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jakub Acs <acsjakub@amazon.de>, Jan Kara <jack@suse.cz>, 
+	linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V12 2/5] mm: userfaultfd: Add pgtable_supports_uffd_wp()
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>,
- Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250915101343.1449546-1-zhangchunyan@iscas.ac.cn>
- <20250915101343.1449546-3-zhangchunyan@iscas.ac.cn>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250915101343.1449546-3-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E1DD91FB3B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -4.01
 
-On 15.09.25 12:13, Chunyan Zhang wrote:
-> Some platforms can customize the PTE/PMD entry uffd-wp bit making
-> it unavailable even if the architecture provides the resource.
-> This patch adds a macro API that allows architectures to define their
-> specific implementations to check if the uffd-wp bit is available
-> on which device the kernel is running.
+On Mon 15-09-25 15:01:13, Amir Goldstein wrote:
+> On Mon, Sep 15, 2025 at 12:15 PM Jakub Acs <acsjakub@amazon.de> wrote:
+> >
+> > Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
+> > the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
+> >
+> > This issue was found by syzkaller.
+> >
+> > Race Condition Diagram:
+> >
+> > Thread 1                           Thread 2
+> > --------                           --------
+> >
+> > generic_shutdown_super()
+> >  shrink_dcache_for_umount
+> >   sb->s_root = NULL
+> >
+> >                     |
+> >                     |             vfs_read()
+> >                     |              inotify_fdinfo()
+> >                     |               * inode get from mark *
+> >                     |               show_mark_fhandle(m, inode)
+> >                     |                exportfs_encode_fid(inode, ..)
+> >                     |                 ovl_encode_fh(inode, ..)
+> >                     |                  ovl_check_encode_origin(inode)
+> >                     |                   * deref i_sb->s_root *
+> >                     |
+> >                     |
+> >                     v
+> >  fsnotify_sb_delete(sb)
+> >
+> > Which then leads to:
+> >
+> > [   32.133461] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> > [   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+> > [   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted 6.17.0-rc6 #22 PREEMPT(none)
+> >
+> > <snip registers, unreliable trace>
+> >
+> > [   32.143353] Call Trace:
+> > [   32.143732]  ovl_encode_fh+0xd5/0x170
+> > [   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
+> > [   32.144425]  show_mark_fhandle+0xbe/0x1f0
+> > [   32.145805]  inotify_fdinfo+0x226/0x2d0
+> > [   32.146442]  inotify_show_fdinfo+0x1c5/0x350
+> > [   32.147168]  seq_show+0x530/0x6f0
+> > [   32.147449]  seq_read_iter+0x503/0x12a0
+> > [   32.148419]  seq_read+0x31f/0x410
+> > [   32.150714]  vfs_read+0x1f0/0x9e0
+> > [   32.152297]  ksys_read+0x125/0x240
+> >
+> > IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
+> > to NULL in the unmount path.
+> >
+> > Minimize the window of opportunity by adding explicit check.
+> >
+> > Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias")
+> > Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Cc: linux-unionfs@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: stable@vger.kernel.org
+> > ---
+> >
+> > I'm happy to take suggestions for a better fix - I looked at taking
+> > s_umount for reading, but it wasn't clear to me for how long would the
+> > fdinfo path need to hold it. Hence the most primitive suggestion in this
+> > v1.
+> >
+> > I'm also not sure if ENOENT or EBUSY is better?.. or even something else?
+> >
+> >  fs/overlayfs/export.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> > index 83f80fdb1567..424c73188e06 100644
+> > --- a/fs/overlayfs/export.c
+> > +++ b/fs/overlayfs/export.c
+> > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct inode *inode)
+> >         if (!ovl_inode_lower(inode))
+> >                 return 0;
+> >
+> > +       if (!inode->i_sb->s_root)
+> > +               return -ENOENT;
 > 
+> For a filesystem method to have to check that its own root is still alive sounds
+> like the wrong way to me.
+> That's one of the things that should be taken for granted by fs code.
+> 
+> I don't think this is an overlayfs specific issue, because other fs would be
+> happy if encode_fh() would be called with NULL sb->s_root.
 
-Similar to my reply to #1, you should probably summarize what you do 
-regarding ifdef and "No functional change expected".
+Actually, I don't see where that would blow up? Generally references to
+sb->s_root in filesystems outside of mount / remount code are pretty rare.
+Also most of the code should be unreachable by the time we set sb->s_root
+to NULL because there are no open files at that moment, no exports etc. But
+as this report shows, there are occasional surprises (I remember similar
+issue with ext4 sysfs files handlers using s_root without checking couple
+years back).
 
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
+> Jan,
+> 
+> Can we change the order of generic_shutdown_super() so that
+> fsnotify_sb_delete(sb) is called before setting s_root to NULL?
+> 
+> Or is there a better solution for this race?
 
-[...]
+Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
+In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
+evict_inodes")) we've moved the call after evict_inodes() because otherwise
+we were just wasting cycles scanning many inodes without watches. So moving
+it earlier wouldn't be great...
 
-LGTM, one not below, thanks!
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
-> +/*
-> + * Some platforms can customize the uffd-wp bit, making it unavailable
-> + * even if the architecture provides the resource.
-> + * Adding this API allows architectures to add their own checks for the
-> + * devices on which the kernel is running.
-> + * Note: When overriding it, please make sure the
-> + * CONFIG_HAVE_ARCH_USERFAULTFD_WP is part of this macro.
-> + */
-> +#ifndef pgtable_supports_uffd_wp
-> +#define pgtable_supports_uffd_wp()	IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP)
-> +#endif
-> +
-> +static __always_inline bool uffd_supports_wp_marker(void)
-> +{
-> +	return pgtable_supports_uffd_wp() && IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP);
-> +}
-
-Likely a simple "inline" should do the trick?
-
-> +
->   #ifndef CONFIG_HAVE_ARCH_USERFAULTFD_WP
->   static __always_inline int pte_uffd_wp(pte_t pte)
->   {
-> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-> index 89b518ff097e..d6526a7f034b 100644
-> --- a/include/linux/mm_inline.h
-> +++ b/include/linux/mm_inline.h
-> @@ -570,9 +570,15 @@ static inline bool
->   pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
->   			      pte_t *pte, pte_t pteval)
->   {
-
-
+								Honza
 -- 
-Cheers
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
