@@ -1,1562 +1,254 @@
-Return-Path: <linux-fsdevel+bounces-61398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC36B57D08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28472B57D19
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADF21AA1943
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8CEA1AA2F53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCF530FC14;
-	Mon, 15 Sep 2025 13:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09962315D37;
+	Mon, 15 Sep 2025 13:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrBGA3F+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bNR4R6FA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kXVZgNRq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bNR4R6FA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kXVZgNRq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE21930F815
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 13:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF33315D29
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 13:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942855; cv=none; b=tOzgMn7BV4yL6DMlTII9WblFlcwTpu4PmKTVQkVED1Qhj2rQ8+LofZCFR82oSU3U3t8el+JGN09ODGd1pRdBLO+t8exK/71S822zz2JWpifvJ6thIXuH4D7YK6AP0nwXQF9CMqugvrhRKInj84sJdmaRQFLIPlYAltakvUCzeRg=
+	t=1757942920; cv=none; b=B0nEZ4L3KsMLOukNJeGfxkej7XTkM5657/KOKnIA8eJOyQDDz1jbalTLqRNrNWjRSVKd8YAcX6kXTGx3DRFuRqLNFov/Yn4/DpfSTQWbZO2QYLzA+KjRSMbI9got4AxdUVKdjLgZZys/vgCtj25xcmdmxhIXsOU3FA14jjYd6hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942855; c=relaxed/simple;
-	bh=hOrqMOr/Q0sA8iG1KI0ATW0GpZdOnKilXwwr3kfXdic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTnj3vZADOlFTwJG1IkmOsmjGK13qV/xGXXC+9tac8HwyU/b3N3dfhv5bQKslWc0aqIRQ8c/yHP9JZ/HHF1sPEt8F0lrtojoIavn/JSBer3d7iarvgXaGIx9Y0QjgTJcuDZGsVBSOX6ewRMIM/FeL6Y8bBo0mdGpTwklPxCVUW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrBGA3F+; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07e3a77b72so299146866b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 06:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757942850; x=1758547650; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dmdRfkUI0QfhGEBW6gwUGYd6xo0PeUiCqxXSuqRYj0s=;
-        b=OrBGA3F+uW0MnNlAo2UHsDiphR6jOXqj24E0TofW61ajmg+TGg8q70Beq1Gy3YOkOW
-         d9jdIQhV+EnKbMlXbNIlc7evOs6JVVNruTkrgpjkltzuq9+RocnTCbWoXOhq/gmxRYTr
-         +Y5vFWEz38PUXDLhdE72gDCmhDzXCgi8C+z1AWtRfLYOgWVZ6Dy0mWdbSIMFHTNcaa4i
-         J26g4YyD4cFsjbO6UdZZmq7i3cmlnrctngLqQhXgc0p0Tvwx4H8lIfLvbOiY2tHKQAwJ
-         QVJ4Rwp71wdZu/3f3UMy3bLgjAsmwMMDQHasI1P7KjTD+sYb/y6VXvamST2LM4b7W+Th
-         cAOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757942850; x=1758547650;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dmdRfkUI0QfhGEBW6gwUGYd6xo0PeUiCqxXSuqRYj0s=;
-        b=vCEHhAHGg3W11LNpgOEAOLHwy2YSxwWmLmk28LOWXr7miL4LagU77sSNsfOa6fk8RD
-         +A1kWcD9cTHHU16tCpTrbziD6H+8zRR/Wi5e7JiwGKrYJZIwnLJJApps7yxPqtfTryAp
-         LpBhAJkRHAaLg6WvLt9NGI0O0tbU8Y+KWqun+PIWpuVc6296EGqgVE9BjtHx5ykcMz1V
-         OFT0J5IApEkzDrcRJ4r6Fz5IXJ1lJpgAfaV2cTW2I+3SPXnc0QmA2f91264+V8W4nlcH
-         A3yd2TY4MgcEPNssgmNdxfnArGHAYBU/ExlZt+IStuVLPBWBlGJv72Dty6tp5oFQ2F8H
-         b1nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjJxGrDj59f1LeXvv2iVZXZmrwEJU0SakSyV16dYALctlaSy5U9ycy2kNUUhlknvdvWUdmSM6z8H5p+nO+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn4UBu3xY/ZfpHqOU3ov5LMa9g+0ObbvLhIKyeM308WoMM3fWp
-	BFWhWQXyovPBDO9QEk5GzXfYvbK/0BfPaYRueDaopx4Cdoep34lZTWKibABC9630sQY5NpZCbBv
-	M0DpLv+hR4jxKLROahouvV1Yi8H3eeRU=
-X-Gm-Gg: ASbGncvprM3ihL4Ot93ImF3h19XCMB/RjFSacYNOJ7qpnk1ORs7OEdUy73LpguLGdRl
-	lxo0QZje8KgcJt3AKLmLDhgtSSUaMs6/f/F+qtwG3XbgP7jIuNK5EfF3mc8m5Ro5z8epcggVDPV
-	A3nN2aRu4tUNgNuAWMkwvByMc+YROaPjZs6ZC2LWYNrgw6MbI15lHqSIt3Rzd0uEym5BY+rDobM
-	4ZBVFsRpynq9wSa0Uz7qyo4frcFPtHih1gJtlSktUKeYdkyoQ==
-X-Google-Smtp-Source: AGHT+IF5usKLzqYBzd8AfA9ZyczQcM+i+F8yXz/bGc/lOTM502ts3kw+VCSKegup8Kf2Vtf+X2VRZfm7GhqdFZmKKWU=
-X-Received: by 2002:a17:907:d8b:b0:afe:8de8:290d with SMTP id
- a640c23a62f3a-b07a629945emr1808827066b.6.1757942849729; Mon, 15 Sep 2025
- 06:27:29 -0700 (PDT)
+	s=arc-20240116; t=1757942920; c=relaxed/simple;
+	bh=1AW4t4m6IiHUftKocp6VIyAkHCIooVduXxKVptt40PQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZemURTt6iXR2aCGmrl/9sZysHR5B9tPhl2nlZwOPgYHnWVwga+DksSdzX8AOo7+jkG7CKJmo0b1VYokJZgJu1QTZxaO+oXvOa8LVc4DTl5b79VAeRvS3akDfh80dXYtlaGO4pp1S8Svtxf2zUCSgruObH38VRTDWkD9W45fr3w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bNR4R6FA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kXVZgNRq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bNR4R6FA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kXVZgNRq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 64A6B1FB3B;
+	Mon, 15 Sep 2025 13:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757942916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=bNR4R6FALKJQFagyxuMJVny9MRcdRheTibLPuOdI3N9VWPz1UVqy4t31q9NPZQiaDsgNxv
+	8domcKZEj0qkd6JIQsOHZSv1BnILvngKu7FNsZJrxmqz+rQ0fYm1fQ5z7tonW06c6t6Pvx
+	0QUFW5P6j5JaKurqRfXxa2TMsbsaxwE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757942916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=kXVZgNRq73fYquBOv5Gd6JCZO2bjeCgVyRCbya/8OaDivP9pCcU4v4vylnfj3Uzb03VhgZ
+	wBEx95vInt4e0cAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bNR4R6FA;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kXVZgNRq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757942916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=bNR4R6FALKJQFagyxuMJVny9MRcdRheTibLPuOdI3N9VWPz1UVqy4t31q9NPZQiaDsgNxv
+	8domcKZEj0qkd6JIQsOHZSv1BnILvngKu7FNsZJrxmqz+rQ0fYm1fQ5z7tonW06c6t6Pvx
+	0QUFW5P6j5JaKurqRfXxa2TMsbsaxwE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757942916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=kXVZgNRq73fYquBOv5Gd6JCZO2bjeCgVyRCbya/8OaDivP9pCcU4v4vylnfj3Uzb03VhgZ
+	wBEx95vInt4e0cAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4929B1372E;
+	Mon, 15 Sep 2025 13:28:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P7aLEYQUyGgUTgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:28:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E532FA0A06; Mon, 15 Sep 2025 15:28:31 +0200 (CEST)
+Date: Mon, 15 Sep 2025 15:28:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 30/33] nsfs: add missing id retrieval support
+Message-ID: <bmkl6ii7y7fbkzndiukfuxpgsysli6552zzg2fsax4xqhgms73@wk7sfbp6hqyl>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911045557.1552002-1-mjguzik@gmail.com> <20250911045557.1552002-3-mjguzik@gmail.com>
- <20250915-erstflug-kassieren-37e5b3f5b998@brauner>
-In-Reply-To: <20250915-erstflug-kassieren-37e5b3f5b998@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 15 Sep 2025 15:27:16 +0200
-X-Gm-Features: AS18NWAnwYvZ4wujQ9NzTCjrdOk0SY5avFWHUCCk_ru0Jdj6o2gOwr1mam1oqnM
-Message-ID: <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ocfs2-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 64A6B1FB3B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
+X-Spam-Score: -2.51
 
-On Mon, Sep 15, 2025 at 2:41=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
->
-> I would do:
->
-> inode_state()
-> inode_state_raw()
->
-> Similar to
->
-> rcu_derefence()
-> rcu_dereference_raw()
->
+On Fri 12-09-25 13:52:53, Christian Brauner wrote:
+> The mount namespace has supported id retrieval for a while already.
+> Add support for the other types as well.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-I don't follow how to fit this in here.
+Looks good. Feel free to add:
 
-Here is the complete list:
-inode_state_read
-inode_state_read_unstable
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-first is a plain read + lockdep assert, second is a READ_ONCE
+								Honza
 
-inode_state_add
-inode_state_add_unchecked
-inode_state_del
-inode_state_del_unchecked
-inode_state_set_unchecked
-
-Routine with _unchecked forego asserts, otherwise the op checks lockdep.
-
-I guess _unchecked could be _raw, but I don't see how to fit this into
-the read thing.
-
-Can you just spell out the names you want for all of these?
-
-> But you need some actual commit messages etc...
->
-
-Ye and I need to runtime test at least with xfs and btrfs.
-
-> >  block/bdev.c                     |   4 +-
-> >  drivers/dax/super.c              |   2 +-
-> >  fs/buffer.c                      |   4 +-
-> >  fs/crypto/keyring.c              |   2 +-
-> >  fs/crypto/keysetup.c             |   2 +-
-> >  fs/dcache.c                      |   8 +-
-> >  fs/drop_caches.c                 |   2 +-
-> >  fs/fs-writeback.c                | 123 ++++++++++++++++---------------
-> >  fs/inode.c                       | 103 +++++++++++++-------------
-> >  fs/libfs.c                       |   6 +-
-> >  fs/namei.c                       |   8 +-
-> >  fs/notify/fsnotify.c             |   2 +-
-> >  fs/pipe.c                        |   2 +-
-> >  fs/quota/dquot.c                 |   2 +-
-> >  fs/sync.c                        |   2 +-
-> >  include/linux/backing-dev.h      |   5 +-
-> >  include/linux/fs.h               |  55 +++++++++++++-
-> >  include/linux/writeback.h        |   4 +-
-> >  include/trace/events/writeback.h |   8 +-
-> >  mm/backing-dev.c                 |   2 +-
-> >  security/landlock/fs.c           |   2 +-
-> >  21 files changed, 198 insertions(+), 150 deletions(-)
-> >
-> > diff --git a/block/bdev.c b/block/bdev.c
-> > index b77ddd12dc06..77f04042ac67 100644
-> > --- a/block/bdev.c
-> > +++ b/block/bdev.c
-> > @@ -67,7 +67,7 @@ static void bdev_write_inode(struct block_device *bde=
-v)
-> >       int ret;
-> >
-> >       spin_lock(&inode->i_lock);
-> > -     while (inode->i_state & I_DIRTY) {
-> > +     while (inode_state_read(inode) & I_DIRTY) {
-> >               spin_unlock(&inode->i_lock);
-> >               ret =3D write_inode_now(inode, true);
-> >               if (ret)
-> > @@ -1265,7 +1265,7 @@ void sync_bdevs(bool wait)
-> >               struct block_device *bdev;
-> >
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW) ||
-> > +             if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NE=
-W) ||
-> >                   mapping->nrpages =3D=3D 0) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> > index 54c480e874cb..900e488105d3 100644
-> > --- a/drivers/dax/super.c
-> > +++ b/drivers/dax/super.c
-> > @@ -433,7 +433,7 @@ static struct dax_device *dax_dev_get(dev_t devt)
-> >               return NULL;
-> >
-> >       dax_dev =3D to_dax_dev(inode);
-> > -     if (inode->i_state & I_NEW) {
-> > +     if (inode_state_read_unstable(inode) & I_NEW) {
-> >               set_bit(DAXDEV_ALIVE, &dax_dev->flags);
-> >               inode->i_cdev =3D &dax_dev->cdev;
-> >               inode->i_mode =3D S_IFCHR;
-> > diff --git a/fs/buffer.c b/fs/buffer.c
-> > index ead4dc85debd..b732842fb060 100644
-> > --- a/fs/buffer.c
-> > +++ b/fs/buffer.c
-> > @@ -611,9 +611,9 @@ int generic_buffers_fsync_noflush(struct file *file=
-, loff_t start, loff_t end,
-> >               return err;
-> >
-> >       ret =3D sync_mapping_buffers(inode->i_mapping);
-> > -     if (!(inode->i_state & I_DIRTY_ALL))
-> > +     if (!(inode_state_read_unstable(inode) & I_DIRTY_ALL))
-> >               goto out;
-> > -     if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
-> > +     if (datasync && !(inode_state_read_unstable(inode) & I_DIRTY_DATA=
-SYNC))
-> >               goto out;
-> >
-> >       err =3D sync_inode_metadata(inode, 1);
-> > diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
-> > index 7557f6a88b8f..34beb60bc24e 100644
-> > --- a/fs/crypto/keyring.c
-> > +++ b/fs/crypto/keyring.c
-> > @@ -957,7 +957,7 @@ static void evict_dentries_for_decrypted_inodes(str=
-uct fscrypt_master_key *mk)
-> >       list_for_each_entry(ci, &mk->mk_decrypted_inodes, ci_master_key_l=
-ink) {
-> >               inode =3D ci->ci_inode;
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW)) {
-> > +             if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE | =
-I_NEW)) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> >               }
-> > diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-> > index c1f85715c276..b801c47f5699 100644
-> > --- a/fs/crypto/keysetup.c
-> > +++ b/fs/crypto/keysetup.c
-> > @@ -859,7 +859,7 @@ int fscrypt_drop_inode(struct inode *inode)
-> >        * userspace is still using the files, inodes can be dirtied betw=
-een
-> >        * then and now.  We mustn't lose any writes, so skip dirty inode=
-s here.
-> >        */
-> > -     if (inode->i_state & I_DIRTY_ALL)
-> > +     if (inode_state_read(inode) & I_DIRTY_ALL)
-> >               return 0;
-> >
-> >       /*
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index 60046ae23d51..e01c8b678a6f 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -794,7 +794,7 @@ void d_mark_dontcache(struct inode *inode)
-> >               de->d_flags |=3D DCACHE_DONTCACHE;
-> >               spin_unlock(&de->d_lock);
-> >       }
-> > -     inode->i_state |=3D I_DONTCACHE;
-> > +     inode_state_add(inode, I_DONTCACHE);
-> >       spin_unlock(&inode->i_lock);
-> >  }
-> >  EXPORT_SYMBOL(d_mark_dontcache);
-> > @@ -1073,7 +1073,7 @@ struct dentry *d_find_alias_rcu(struct inode *ino=
-de)
-> >       spin_lock(&inode->i_lock);
-> >       // ->i_dentry and ->i_rcu are colocated, but the latter won't be
-> >       // used without having I_FREEING set, which means no aliases left
-> > -     if (likely(!(inode->i_state & I_FREEING) && !hlist_empty(l))) {
-> > +     if (likely(!(inode_state_read(inode) & I_FREEING) && !hlist_empty=
-(l))) {
-> >               if (S_ISDIR(inode->i_mode)) {
-> >                       de =3D hlist_entry(l->first, struct dentry, d_u.d=
-_alias);
-> >               } else {
-> > @@ -1980,8 +1980,8 @@ void d_instantiate_new(struct dentry *entry, stru=
-ct inode *inode)
-> >       security_d_instantiate(entry, inode);
-> >       spin_lock(&inode->i_lock);
-> >       __d_instantiate(entry, inode);
-> > -     WARN_ON(!(inode->i_state & I_NEW));
-> > -     inode->i_state &=3D ~I_NEW & ~I_CREATING;
-> > +     WARN_ON(!(inode_state_read(inode) & I_NEW));
-> > +     inode_state_del(inode, I_NEW | I_CREATING);
-> >       /*
-> >        * Pairs with the barrier in prepare_to_wait_event() to make sure
-> >        * ___wait_var_event() either sees the bit cleared or
-> > diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> > index 019a8b4eaaf9..73175ac2fe92 100644
-> > --- a/fs/drop_caches.c
-> > +++ b/fs/drop_caches.c
-> > @@ -28,7 +28,7 @@ static void drop_pagecache_sb(struct super_block *sb,=
- void *unused)
-> >                * inodes without pages but we deliberately won't in case
-> >                * we need to reschedule to avoid softlockups.
-> >                */
-> > -             if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
-> > +             if ((inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_N=
-EW)) ||
-> >                   (mapping_empty(inode->i_mapping) && !need_resched()))=
- {
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index 6088a67b2aae..3ce3a636c061 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -121,7 +121,7 @@ static bool inode_io_list_move_locked(struct inode =
-*inode,
-> >  {
-> >       assert_spin_locked(&wb->list_lock);
-> >       assert_spin_locked(&inode->i_lock);
-> > -     WARN_ON_ONCE(inode->i_state & I_FREEING);
-> > +     WARN_ON_ONCE(inode_state_read(inode) & I_FREEING);
-> >
-> >       list_move(&inode->i_io_list, head);
-> >
-> > @@ -304,9 +304,9 @@ static void inode_cgwb_move_to_attached(struct inod=
-e *inode,
-> >  {
-> >       assert_spin_locked(&wb->list_lock);
-> >       assert_spin_locked(&inode->i_lock);
-> > -     WARN_ON_ONCE(inode->i_state & I_FREEING);
-> > +     WARN_ON_ONCE(inode_state_read(inode) & I_FREEING);
-> >
-> > -     inode->i_state &=3D ~I_SYNC_QUEUED;
-> > +     inode_state_del(inode, I_SYNC_QUEUED);
-> >       if (wb !=3D &wb->bdi->wb)
-> >               list_move(&inode->i_io_list, &wb->b_attached);
-> >       else
-> > @@ -408,7 +408,7 @@ static bool inode_do_switch_wbs(struct inode *inode=
-,
-> >        * Once I_FREEING or I_WILL_FREE are visible under i_lock, the ev=
-iction
-> >        * path owns the inode and we shouldn't modify ->i_io_list.
-> >        */
-> > -     if (unlikely(inode->i_state & (I_FREEING | I_WILL_FREE)))
-> > +     if (unlikely(inode_state_read(inode) & (I_FREEING | I_WILL_FREE))=
-)
-> >               goto skip_switch;
-> >
-> >       trace_inode_switch_wbs(inode, old_wb, new_wb);
-> > @@ -452,7 +452,7 @@ static bool inode_do_switch_wbs(struct inode *inode=
-,
-> >       if (!list_empty(&inode->i_io_list)) {
-> >               inode->i_wb =3D new_wb;
-> >
-> > -             if (inode->i_state & I_DIRTY_ALL) {
-> > +             if (inode_state_read(inode) & I_DIRTY_ALL) {
-> >                       struct inode *pos;
-> >
-> >                       list_for_each_entry(pos, &new_wb->b_dirty, i_io_l=
-ist)
-> > @@ -475,10 +475,11 @@ static bool inode_do_switch_wbs(struct inode *ino=
-de,
-> >       switched =3D true;
-> >  skip_switch:
-> >       /*
-> > -      * Paired with load_acquire in unlocked_inode_to_wb_begin() and
-> > +      * Paired with an acquire fence in unlocked_inode_to_wb_begin() a=
-nd
-> >        * ensures that the new wb is visible if they see !I_WB_SWITCH.
-> >        */
-> > -     smp_store_release(&inode->i_state, inode->i_state & ~I_WB_SWITCH)=
-;
-> > +     smp_wmb();
-> > +     inode_state_del(inode, I_WB_SWITCH);
-> >
-> >       xa_unlock_irq(&mapping->i_pages);
-> >       spin_unlock(&inode->i_lock);
-> > @@ -560,12 +561,12 @@ static bool inode_prepare_wbs_switch(struct inode=
- *inode,
-> >       /* while holding I_WB_SWITCH, no one else can update the associat=
-ion */
-> >       spin_lock(&inode->i_lock);
-> >       if (!(inode->i_sb->s_flags & SB_ACTIVE) ||
-> > -         inode->i_state & (I_WB_SWITCH | I_FREEING | I_WILL_FREE) ||
-> > +         inode_state_read(inode) & (I_WB_SWITCH | I_FREEING | I_WILL_F=
-REE) ||
-> >           inode_to_wb(inode) =3D=3D new_wb) {
-> >               spin_unlock(&inode->i_lock);
-> >               return false;
-> >       }
-> > -     inode->i_state |=3D I_WB_SWITCH;
-> > +     inode_state_add(inode, I_WB_SWITCH);
-> >       __iget(inode);
-> >       spin_unlock(&inode->i_lock);
-> >
-> > @@ -587,7 +588,7 @@ static void inode_switch_wbs(struct inode *inode, i=
-nt new_wb_id)
-> >       struct inode_switch_wbs_context *isw;
-> >
-> >       /* noop if seems to be already in progress */
-> > -     if (inode->i_state & I_WB_SWITCH)
-> > +     if (inode_state_read_unstable(inode) & I_WB_SWITCH)
-> >               return;
-> >
-> >       /* avoid queueing a new switch if too many are already in flight =
-*/
-> > @@ -1197,9 +1198,9 @@ static void inode_cgwb_move_to_attached(struct in=
-ode *inode,
-> >  {
-> >       assert_spin_locked(&wb->list_lock);
-> >       assert_spin_locked(&inode->i_lock);
-> > -     WARN_ON_ONCE(inode->i_state & I_FREEING);
-> > +     WARN_ON_ONCE(inode_state_read(inode) & I_FREEING);
-> >
-> > -     inode->i_state &=3D ~I_SYNC_QUEUED;
-> > +     inode_state_del(inode, I_SYNC_QUEUED);
-> >       list_del_init(&inode->i_io_list);
-> >       wb_io_lists_depopulated(wb);
-> >  }
-> > @@ -1312,7 +1313,7 @@ void inode_io_list_del(struct inode *inode)
-> >       wb =3D inode_to_wb_and_lock_list(inode);
-> >       spin_lock(&inode->i_lock);
-> >
-> > -     inode->i_state &=3D ~I_SYNC_QUEUED;
-> > +     inode_state_del(inode, I_SYNC_QUEUED);
-> >       list_del_init(&inode->i_io_list);
-> >       wb_io_lists_depopulated(wb);
-> >
-> > @@ -1370,13 +1371,13 @@ static void redirty_tail_locked(struct inode *i=
-node, struct bdi_writeback *wb)
-> >  {
-> >       assert_spin_locked(&inode->i_lock);
-> >
-> > -     inode->i_state &=3D ~I_SYNC_QUEUED;
-> > +     inode_state_del(inode, I_SYNC_QUEUED);
-> >       /*
-> >        * When the inode is being freed just don't bother with dirty lis=
-t
-> >        * tracking. Flush worker will ignore this inode anyway and it wi=
-ll
-> >        * trigger assertions in inode_io_list_move_locked().
-> >        */
-> > -     if (inode->i_state & I_FREEING) {
-> > +     if (inode_state_read(inode) & I_FREEING) {
-> >               list_del_init(&inode->i_io_list);
-> >               wb_io_lists_depopulated(wb);
-> >               return;
-> > @@ -1410,7 +1411,7 @@ static void inode_sync_complete(struct inode *ino=
-de)
-> >  {
-> >       assert_spin_locked(&inode->i_lock);
-> >
-> > -     inode->i_state &=3D ~I_SYNC;
-> > +     inode_state_del(inode, I_SYNC);
-> >       /* If inode is clean an unused, put it into LRU now... */
-> >       inode_add_lru(inode);
-> >       /* Called with inode->i_lock which ensures memory ordering. */
-> > @@ -1454,7 +1455,7 @@ static int move_expired_inodes(struct list_head *=
-delaying_queue,
-> >               spin_lock(&inode->i_lock);
-> >               list_move(&inode->i_io_list, &tmp);
-> >               moved++;
-> > -             inode->i_state |=3D I_SYNC_QUEUED;
-> > +             inode_state_add(inode, I_SYNC_QUEUED);
-> >               spin_unlock(&inode->i_lock);
-> >               if (sb_is_blkdev_sb(inode->i_sb))
-> >                       continue;
-> > @@ -1540,14 +1541,14 @@ void inode_wait_for_writeback(struct inode *ino=
-de)
-> >
-> >       assert_spin_locked(&inode->i_lock);
-> >
-> > -     if (!(inode->i_state & I_SYNC))
-> > +     if (!(inode_state_read(inode) & I_SYNC))
-> >               return;
-> >
-> >       wq_head =3D inode_bit_waitqueue(&wqe, inode, __I_SYNC);
-> >       for (;;) {
-> >               prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTE=
-RRUPTIBLE);
-> >               /* Checking I_SYNC with inode->i_lock guarantees memory o=
-rdering. */
-> > -             if (!(inode->i_state & I_SYNC))
-> > +             if (!(inode_state_read(inode) & I_SYNC))
-> >                       break;
-> >               spin_unlock(&inode->i_lock);
-> >               schedule();
-> > @@ -1573,7 +1574,7 @@ static void inode_sleep_on_writeback(struct inode=
- *inode)
-> >       wq_head =3D inode_bit_waitqueue(&wqe, inode, __I_SYNC);
-> >       prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBL=
-E);
-> >       /* Checking I_SYNC with inode->i_lock guarantees memory ordering.=
- */
-> > -     sleep =3D !!(inode->i_state & I_SYNC);
-> > +     sleep =3D !!(inode_state_read(inode) & I_SYNC);
-> >       spin_unlock(&inode->i_lock);
-> >       if (sleep)
-> >               schedule();
-> > @@ -1592,7 +1593,7 @@ static void requeue_inode(struct inode *inode, st=
-ruct bdi_writeback *wb,
-> >                         struct writeback_control *wbc,
-> >                         unsigned long dirtied_before)
-> >  {
-> > -     if (inode->i_state & I_FREEING)
-> > +     if (inode_state_read(inode) & I_FREEING)
-> >               return;
-> >
-> >       /*
-> > @@ -1600,7 +1601,7 @@ static void requeue_inode(struct inode *inode, st=
-ruct bdi_writeback *wb,
-> >        * shot. If still dirty, it will be redirty_tail()'ed below.  Upd=
-ate
-> >        * the dirty time to prevent enqueue and sync it again.
-> >        */
-> > -     if ((inode->i_state & I_DIRTY) &&
-> > +     if ((inode_state_read(inode) & I_DIRTY) &&
-> >           (wbc->sync_mode =3D=3D WB_SYNC_ALL || wbc->tagged_writepages)=
-)
-> >               inode->dirtied_when =3D jiffies;
-> >
-> > @@ -1611,7 +1612,7 @@ static void requeue_inode(struct inode *inode, st=
-ruct bdi_writeback *wb,
-> >                * is odd for clean inodes, it can happen for some
-> >                * filesystems so handle that gracefully.
-> >                */
-> > -             if (inode->i_state & I_DIRTY_ALL)
-> > +             if (inode_state_read(inode) & I_DIRTY_ALL)
-> >                       redirty_tail_locked(inode, wb);
-> >               else
-> >                       inode_cgwb_move_to_attached(inode, wb);
-> > @@ -1637,17 +1638,17 @@ static void requeue_inode(struct inode *inode, =
-struct bdi_writeback *wb,
-> >                        */
-> >                       redirty_tail_locked(inode, wb);
-> >               }
-> > -     } else if (inode->i_state & I_DIRTY) {
-> > +     } else if (inode_state_read(inode) & I_DIRTY) {
-> >               /*
-> >                * Filesystems can dirty the inode during writeback opera=
-tions,
-> >                * such as delayed allocation during submission or metada=
-ta
-> >                * updates after data IO completion.
-> >                */
-> >               redirty_tail_locked(inode, wb);
-> > -     } else if (inode->i_state & I_DIRTY_TIME) {
-> > +     } else if (inode_state_read(inode) & I_DIRTY_TIME) {
-> >               inode->dirtied_when =3D jiffies;
-> >               inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
-> > -             inode->i_state &=3D ~I_SYNC_QUEUED;
-> > +             inode_state_del(inode, I_SYNC_QUEUED);
-> >       } else {
-> >               /* The inode is clean. Remove from writeback lists. */
-> >               inode_cgwb_move_to_attached(inode, wb);
-> > @@ -1673,7 +1674,7 @@ __writeback_single_inode(struct inode *inode, str=
-uct writeback_control *wbc)
-> >       unsigned dirty;
-> >       int ret;
-> >
-> > -     WARN_ON(!(inode->i_state & I_SYNC));
-> > +     WARN_ON(!(inode_state_read_unstable(inode) & I_SYNC));
-> >
-> >       trace_writeback_single_inode_start(inode, wbc, nr_to_write);
-> >
-> > @@ -1697,7 +1698,7 @@ __writeback_single_inode(struct inode *inode, str=
-uct writeback_control *wbc)
-> >        * mark_inode_dirty_sync() to notify the filesystem about it and =
-to
-> >        * change I_DIRTY_TIME into I_DIRTY_SYNC.
-> >        */
-> > -     if ((inode->i_state & I_DIRTY_TIME) &&
-> > +     if ((inode_state_read_unstable(inode) & I_DIRTY_TIME) &&
-> >           (wbc->sync_mode =3D=3D WB_SYNC_ALL ||
-> >            time_after(jiffies, inode->dirtied_time_when +
-> >                       dirtytime_expire_interval * HZ))) {
-> > @@ -1712,8 +1713,8 @@ __writeback_single_inode(struct inode *inode, str=
-uct writeback_control *wbc)
-> >        * after handling timestamp expiration, as that may dirty the ino=
-de too.
-> >        */
-> >       spin_lock(&inode->i_lock);
-> > -     dirty =3D inode->i_state & I_DIRTY;
-> > -     inode->i_state &=3D ~dirty;
-> > +     dirty =3D inode_state_read(inode) & I_DIRTY;
-> > +     inode_state_del(inode, dirty);
-> >
-> >       /*
-> >        * Paired with smp_mb() in __mark_inode_dirty().  This allows
-> > @@ -1729,10 +1730,10 @@ __writeback_single_inode(struct inode *inode, s=
-truct writeback_control *wbc)
-> >       smp_mb();
-> >
-> >       if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-> > -             inode->i_state |=3D I_DIRTY_PAGES;
-> > -     else if (unlikely(inode->i_state & I_PINNING_NETFS_WB)) {
-> > -             if (!(inode->i_state & I_DIRTY_PAGES)) {
-> > -                     inode->i_state &=3D ~I_PINNING_NETFS_WB;
-> > +             inode_state_add(inode, I_DIRTY_PAGES);
-> > +     else if (unlikely(inode_state_read(inode) & I_PINNING_NETFS_WB)) =
-{
-> > +             if (!(inode_state_read(inode) & I_DIRTY_PAGES)) {
-> > +                     inode_state_del(inode, I_PINNING_NETFS_WB);
-> >                       wbc->unpinned_netfs_wb =3D true;
-> >                       dirty |=3D I_PINNING_NETFS_WB; /* Cause write_ino=
-de */
-> >               }
-> > @@ -1768,11 +1769,11 @@ static int writeback_single_inode(struct inode =
-*inode,
-> >
-> >       spin_lock(&inode->i_lock);
-> >       if (!icount_read(inode))
-> > -             WARN_ON(!(inode->i_state & (I_WILL_FREE|I_FREEING)));
-> > +             WARN_ON(!(inode_state_read(inode) & (I_WILL_FREE|I_FREEIN=
-G)));
-> >       else
-> > -             WARN_ON(inode->i_state & I_WILL_FREE);
-> > +             WARN_ON(inode_state_read(inode) & I_WILL_FREE);
-> >
-> > -     if (inode->i_state & I_SYNC) {
-> > +     if (inode_state_read(inode) & I_SYNC) {
-> >               /*
-> >                * Writeback is already running on the inode.  For WB_SYN=
-C_NONE,
-> >                * that's enough and we can just return.  For WB_SYNC_ALL=
-, we
-> > @@ -1783,7 +1784,7 @@ static int writeback_single_inode(struct inode *i=
-node,
-> >                       goto out;
-> >               inode_wait_for_writeback(inode);
-> >       }
-> > -     WARN_ON(inode->i_state & I_SYNC);
-> > +     WARN_ON(inode_state_read(inode) & I_SYNC);
-> >       /*
-> >        * If the inode is already fully clean, then there's nothing to d=
-o.
-> >        *
-> > @@ -1791,11 +1792,11 @@ static int writeback_single_inode(struct inode =
-*inode,
-> >        * still under writeback, e.g. due to prior WB_SYNC_NONE writebac=
-k.  If
-> >        * there are any such pages, we'll need to wait for them.
-> >        */
-> > -     if (!(inode->i_state & I_DIRTY_ALL) &&
-> > +     if (!(inode_state_read(inode) & I_DIRTY_ALL) &&
-> >           (wbc->sync_mode !=3D WB_SYNC_ALL ||
-> >            !mapping_tagged(inode->i_mapping, PAGECACHE_TAG_WRITEBACK)))
-> >               goto out;
-> > -     inode->i_state |=3D I_SYNC;
-> > +     inode_state_add(inode, I_SYNC);
-> >       wbc_attach_and_unlock_inode(wbc, inode);
-> >
-> >       ret =3D __writeback_single_inode(inode, wbc);
-> > @@ -1808,18 +1809,18 @@ static int writeback_single_inode(struct inode =
-*inode,
-> >        * If the inode is freeing, its i_io_list shoudn't be updated
-> >        * as it can be finally deleted at this moment.
-> >        */
-> > -     if (!(inode->i_state & I_FREEING)) {
-> > +     if (!(inode_state_read(inode) & I_FREEING)) {
-> >               /*
-> >                * If the inode is now fully clean, then it can be safely
-> >                * removed from its writeback list (if any). Otherwise th=
-e
-> >                * flusher threads are responsible for the writeback list=
-s.
-> >                */
-> > -             if (!(inode->i_state & I_DIRTY_ALL))
-> > +             if (!(inode_state_read(inode) & I_DIRTY_ALL))
-> >                       inode_cgwb_move_to_attached(inode, wb);
-> > -             else if (!(inode->i_state & I_SYNC_QUEUED)) {
-> > -                     if ((inode->i_state & I_DIRTY))
-> > +             else if (!(inode_state_read(inode) & I_SYNC_QUEUED)) {
-> > +                     if ((inode_state_read(inode) & I_DIRTY))
-> >                               redirty_tail_locked(inode, wb);
-> > -                     else if (inode->i_state & I_DIRTY_TIME) {
-> > +                     else if (inode_state_read(inode) & I_DIRTY_TIME) =
-{
-> >                               inode->dirtied_when =3D jiffies;
-> >                               inode_io_list_move_locked(inode,
-> >                                                         wb,
-> > @@ -1928,12 +1929,12 @@ static long writeback_sb_inodes(struct super_bl=
-ock *sb,
-> >                * kind writeout is handled by the freer.
-> >                */
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
-> > +             if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL=
-_FREE)) {
-> >                       redirty_tail_locked(inode, wb);
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> >               }
-> > -             if ((inode->i_state & I_SYNC) && wbc.sync_mode !=3D WB_SY=
-NC_ALL) {
-> > +             if ((inode_state_read(inode) & I_SYNC) && wbc.sync_mode !=
-=3D WB_SYNC_ALL) {
-> >                       /*
-> >                        * If this inode is locked for writeback and we a=
-re not
-> >                        * doing writeback-for-data-integrity, move it to
-> > @@ -1955,14 +1956,14 @@ static long writeback_sb_inodes(struct super_bl=
-ock *sb,
-> >                * are doing WB_SYNC_NONE writeback. So this catches only=
- the
-> >                * WB_SYNC_ALL case.
-> >                */
-> > -             if (inode->i_state & I_SYNC) {
-> > +             if (inode_state_read(inode) & I_SYNC) {
-> >                       /* Wait for I_SYNC. This function drops i_lock...=
- */
-> >                       inode_sleep_on_writeback(inode);
-> >                       /* Inode may be gone, start again */
-> >                       spin_lock(&wb->list_lock);
-> >                       continue;
-> >               }
-> > -             inode->i_state |=3D I_SYNC;
-> > +             inode_state_add(inode, I_SYNC);
-> >               wbc_attach_and_unlock_inode(&wbc, inode);
-> >
-> >               write_chunk =3D writeback_chunk_size(wb, work);
-> > @@ -2000,7 +2001,7 @@ static long writeback_sb_inodes(struct super_bloc=
-k *sb,
-> >                */
-> >               tmp_wb =3D inode_to_wb_and_lock_list(inode);
-> >               spin_lock(&inode->i_lock);
-> > -             if (!(inode->i_state & I_DIRTY_ALL))
-> > +             if (!(inode_state_read(inode) & I_DIRTY_ALL))
-> >                       total_wrote++;
-> >               requeue_inode(inode, tmp_wb, &wbc, dirtied_before);
-> >               inode_sync_complete(inode);
-> > @@ -2506,10 +2507,10 @@ void __mark_inode_dirty(struct inode *inode, in=
-t flags)
-> >                * We tell ->dirty_inode callback that timestamps need to
-> >                * be updated by setting I_DIRTY_TIME in flags.
-> >                */
-> > -             if (inode->i_state & I_DIRTY_TIME) {
-> > +             if (inode_state_read_unstable(inode) & I_DIRTY_TIME) {
-> >                       spin_lock(&inode->i_lock);
-> > -                     if (inode->i_state & I_DIRTY_TIME) {
-> > -                             inode->i_state &=3D ~I_DIRTY_TIME;
-> > +                     if (inode_state_read(inode) & I_DIRTY_TIME) {
-> > +                             inode_state_del(inode, I_DIRTY_TIME);
-> >                               flags |=3D I_DIRTY_TIME;
-> >                       }
-> >                       spin_unlock(&inode->i_lock);
-> > @@ -2546,16 +2547,16 @@ void __mark_inode_dirty(struct inode *inode, in=
-t flags)
-> >        */
-> >       smp_mb();
-> >
-> > -     if ((inode->i_state & flags) =3D=3D flags)
-> > +     if ((inode_state_read_unstable(inode) & flags) =3D=3D flags)
-> >               return;
-> >
-> >       spin_lock(&inode->i_lock);
-> > -     if ((inode->i_state & flags) !=3D flags) {
-> > -             const int was_dirty =3D inode->i_state & I_DIRTY;
-> > +     if ((inode_state_read(inode) & flags) !=3D flags) {
-> > +             const int was_dirty =3D inode_state_read(inode) & I_DIRTY=
-;
-> >
-> >               inode_attach_wb(inode, NULL);
-> >
-> > -             inode->i_state |=3D flags;
-> > +             inode_state_add(inode, flags);
-> >
-> >               /*
-> >                * Grab inode's wb early because it requires dropping i_l=
-ock and we
-> > @@ -2574,7 +2575,7 @@ void __mark_inode_dirty(struct inode *inode, int =
-flags)
-> >                * the inode it will place it on the appropriate superblo=
-ck
-> >                * list, based upon its state.
-> >                */
-> > -             if (inode->i_state & I_SYNC_QUEUED)
-> > +             if (inode_state_read(inode) & I_SYNC_QUEUED)
-> >                       goto out_unlock;
-> >
-> >               /*
-> > @@ -2585,7 +2586,7 @@ void __mark_inode_dirty(struct inode *inode, int =
-flags)
-> >                       if (inode_unhashed(inode))
-> >                               goto out_unlock;
-> >               }
-> > -             if (inode->i_state & I_FREEING)
-> > +             if (inode_state_read(inode) & I_FREEING)
-> >                       goto out_unlock;
-> >
-> >               /*
-> > @@ -2600,7 +2601,7 @@ void __mark_inode_dirty(struct inode *inode, int =
-flags)
-> >                       if (dirtytime)
-> >                               inode->dirtied_time_when =3D jiffies;
-> >
-> > -                     if (inode->i_state & I_DIRTY)
-> > +                     if (inode_state_read(inode) & I_DIRTY)
-> >                               dirty_list =3D &wb->b_dirty;
-> >                       else
-> >                               dirty_list =3D &wb->b_dirty_time;
-> > @@ -2696,7 +2697,7 @@ static void wait_sb_inodes(struct super_block *sb=
-)
-> >               spin_unlock_irq(&sb->s_inode_wblist_lock);
-> >
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) {
-> > +             if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NE=
-W)) {
-> >                       spin_unlock(&inode->i_lock);
-> >
-> >                       spin_lock_irq(&sb->s_inode_wblist_lock);
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index e8c712211822..af9b7cf784d2 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -233,7 +233,7 @@ int inode_init_always_gfp(struct super_block *sb, s=
-truct inode *inode, gfp_t gfp
-> >       inode->i_sb =3D sb;
-> >       inode->i_blkbits =3D sb->s_blocksize_bits;
-> >       inode->i_flags =3D 0;
-> > -     inode->i_state =3D 0;
-> > +     inode_state_set_unchecked(inode, 0);
-> >       atomic64_set(&inode->i_sequence, 0);
-> >       atomic_set(&inode->i_count, 1);
-> >       inode->i_op =3D &empty_iops;
-> > @@ -471,7 +471,7 @@ EXPORT_SYMBOL(set_nlink);
-> >  void inc_nlink(struct inode *inode)
-> >  {
-> >       if (unlikely(inode->i_nlink =3D=3D 0)) {
-> > -             WARN_ON(!(inode->i_state & I_LINKABLE));
-> > +             WARN_ON(!(inode_state_read_unstable(inode) & I_LINKABLE))=
-;
-> >               atomic_long_dec(&inode->i_sb->s_remove_count);
-> >       }
-> >
-> > @@ -532,7 +532,7 @@ EXPORT_SYMBOL(ihold);
-> >
-> >  static void __inode_add_lru(struct inode *inode, bool rotate)
-> >  {
-> > -     if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_F=
-REE))
-> > +     if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING |=
- I_WILL_FREE))
-> >               return;
-> >       if (icount_read(inode))
-> >               return;
-> > @@ -544,7 +544,7 @@ static void __inode_add_lru(struct inode *inode, bo=
-ol rotate)
-> >       if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
-> >               this_cpu_inc(nr_unused);
-> >       else if (rotate)
-> > -             inode->i_state |=3D I_REFERENCED;
-> > +             inode_state_add(inode, I_REFERENCED);
-> >  }
-> >
-> >  struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entr=
-y *wqe,
-> > @@ -577,15 +577,15 @@ static void inode_lru_list_del(struct inode *inod=
-e)
-> >  static void inode_pin_lru_isolating(struct inode *inode)
-> >  {
-> >       lockdep_assert_held(&inode->i_lock);
-> > -     WARN_ON(inode->i_state & (I_LRU_ISOLATING | I_FREEING | I_WILL_FR=
-EE));
-> > -     inode->i_state |=3D I_LRU_ISOLATING;
-> > +     WARN_ON(inode_state_read(inode) & (I_LRU_ISOLATING | I_FREEING | =
-I_WILL_FREE));
-> > +     inode_state_add(inode, I_LRU_ISOLATING);
-> >  }
-> >
-> >  static void inode_unpin_lru_isolating(struct inode *inode)
-> >  {
-> >       spin_lock(&inode->i_lock);
-> > -     WARN_ON(!(inode->i_state & I_LRU_ISOLATING));
-> > -     inode->i_state &=3D ~I_LRU_ISOLATING;
-> > +     WARN_ON(!(inode_state_read(inode) & I_LRU_ISOLATING));
-> > +     inode_state_del(inode, I_LRU_ISOLATING);
-> >       /* Called with inode->i_lock which ensures memory ordering. */
-> >       inode_wake_up_bit(inode, __I_LRU_ISOLATING);
-> >       spin_unlock(&inode->i_lock);
-> > @@ -597,7 +597,7 @@ static void inode_wait_for_lru_isolating(struct ino=
-de *inode)
-> >       struct wait_queue_head *wq_head;
-> >
-> >       lockdep_assert_held(&inode->i_lock);
-> > -     if (!(inode->i_state & I_LRU_ISOLATING))
-> > +     if (!(inode_state_read(inode) & I_LRU_ISOLATING))
-> >               return;
-> >
-> >       wq_head =3D inode_bit_waitqueue(&wqe, inode, __I_LRU_ISOLATING);
-> > @@ -607,14 +607,14 @@ static void inode_wait_for_lru_isolating(struct i=
-node *inode)
-> >                * Checking I_LRU_ISOLATING with inode->i_lock guarantees
-> >                * memory ordering.
-> >                */
-> > -             if (!(inode->i_state & I_LRU_ISOLATING))
-> > +             if (!(inode_state_read(inode) & I_LRU_ISOLATING))
-> >                       break;
-> >               spin_unlock(&inode->i_lock);
-> >               schedule();
-> >               spin_lock(&inode->i_lock);
-> >       }
-> >       finish_wait(wq_head, &wqe.wq_entry);
-> > -     WARN_ON(inode->i_state & I_LRU_ISOLATING);
-> > +     WARN_ON(inode_state_read(inode) & I_LRU_ISOLATING);
-> >  }
-> >
-> >  /**
-> > @@ -761,11 +761,11 @@ void clear_inode(struct inode *inode)
-> >        */
-> >       xa_unlock_irq(&inode->i_data.i_pages);
-> >       BUG_ON(!list_empty(&inode->i_data.i_private_list));
-> > -     BUG_ON(!(inode->i_state & I_FREEING));
-> > -     BUG_ON(inode->i_state & I_CLEAR);
-> > +     BUG_ON(!(inode_state_read_unstable(inode) & I_FREEING));
-> > +     BUG_ON(inode_state_read_unstable(inode) & I_CLEAR);
-> >       BUG_ON(!list_empty(&inode->i_wb_list));
-> >       /* don't need i_lock here, no concurrent mods to i_state */
-> > -     inode->i_state =3D I_FREEING | I_CLEAR;
-> > +     inode_state_set_unchecked(inode, I_FREEING | I_CLEAR);
-> >  }
-> >  EXPORT_SYMBOL(clear_inode);
-> >
-> > @@ -786,7 +786,7 @@ static void evict(struct inode *inode)
-> >  {
-> >       const struct super_operations *op =3D inode->i_sb->s_op;
-> >
-> > -     BUG_ON(!(inode->i_state & I_FREEING));
-> > +     BUG_ON(!(inode_state_read_unstable(inode) & I_FREEING));
-> >       BUG_ON(!list_empty(&inode->i_lru));
-> >
-> >       if (!list_empty(&inode->i_io_list))
-> > @@ -829,7 +829,7 @@ static void evict(struct inode *inode)
-> >        * This also means we don't need any fences for the call below.
-> >        */
-> >       inode_wake_up_bit(inode, __I_NEW);
-> > -     BUG_ON(inode->i_state !=3D (I_FREEING | I_CLEAR));
-> > +     BUG_ON(inode_state_read_unstable(inode) !=3D (I_FREEING | I_CLEAR=
-));
-> >
-> >       destroy_inode(inode);
-> >  }
-> > @@ -879,12 +879,12 @@ void evict_inodes(struct super_block *sb)
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> >               }
-> > -             if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
-> > +             if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL=
-_FREE)) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> >               }
-> >
-> > -             inode->i_state |=3D I_FREEING;
-> > +             inode_state_add(inode, I_FREEING);
-> >               inode_lru_list_del(inode);
-> >               spin_unlock(&inode->i_lock);
-> >               list_add(&inode->i_lru, &dispose);
-> > @@ -938,7 +938,7 @@ static enum lru_status inode_lru_isolate(struct lis=
-t_head *item,
-> >        * sync, or the last page cache deletion will requeue them.
-> >        */
-> >       if (icount_read(inode) ||
-> > -         (inode->i_state & ~I_REFERENCED) ||
-> > +         (inode_state_read(inode) & ~I_REFERENCED) ||
-> >           !mapping_shrinkable(&inode->i_data)) {
-> >               list_lru_isolate(lru, &inode->i_lru);
-> >               spin_unlock(&inode->i_lock);
-> > @@ -947,8 +947,8 @@ static enum lru_status inode_lru_isolate(struct lis=
-t_head *item,
-> >       }
-> >
-> >       /* Recently referenced inodes get one more pass */
-> > -     if (inode->i_state & I_REFERENCED) {
-> > -             inode->i_state &=3D ~I_REFERENCED;
-> > +     if (inode_state_read(inode) & I_REFERENCED) {
-> > +             inode_state_del(inode, I_REFERENCED);
-> >               spin_unlock(&inode->i_lock);
-> >               return LRU_ROTATE;
-> >       }
-> > @@ -975,8 +975,8 @@ static enum lru_status inode_lru_isolate(struct lis=
-t_head *item,
-> >               return LRU_RETRY;
-> >       }
-> >
-> > -     WARN_ON(inode->i_state & I_NEW);
-> > -     inode->i_state |=3D I_FREEING;
-> > +     WARN_ON(inode_state_read(inode) & I_NEW);
-> > +     inode_state_add(inode, I_FREEING);
-> >       list_lru_isolate_move(lru, &inode->i_lru, freeable);
-> >       spin_unlock(&inode->i_lock);
-> >
-> > @@ -1025,11 +1025,11 @@ static struct inode *find_inode(struct super_bl=
-ock *sb,
-> >               if (!test(inode, data))
-> >                       continue;
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-> > +             if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE)) {
-> >                       __wait_on_freeing_inode(inode, is_inode_hash_lock=
-ed);
-> >                       goto repeat;
-> >               }
-> > -             if (unlikely(inode->i_state & I_CREATING)) {
-> > +             if (unlikely(inode_state_read(inode) & I_CREATING)) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       rcu_read_unlock();
-> >                       return ERR_PTR(-ESTALE);
-> > @@ -1066,11 +1066,11 @@ static struct inode *find_inode_fast(struct sup=
-er_block *sb,
-> >               if (inode->i_sb !=3D sb)
-> >                       continue;
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
-> > +             if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE)) {
-> >                       __wait_on_freeing_inode(inode, is_inode_hash_lock=
-ed);
-> >                       goto repeat;
-> >               }
-> > -             if (unlikely(inode->i_state & I_CREATING)) {
-> > +             if (unlikely(inode_state_read(inode) & I_CREATING)) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       rcu_read_unlock();
-> >                       return ERR_PTR(-ESTALE);
-> > @@ -1180,8 +1180,8 @@ void unlock_new_inode(struct inode *inode)
-> >  {
-> >       lockdep_annotate_inode_mutex_key(inode);
-> >       spin_lock(&inode->i_lock);
-> > -     WARN_ON(!(inode->i_state & I_NEW));
-> > -     inode->i_state &=3D ~I_NEW & ~I_CREATING;
-> > +     WARN_ON(!(inode_state_read(inode) & I_NEW));
-> > +     inode_state_del(inode, I_NEW | I_CREATING);
-> >       /*
-> >        * Pairs with the barrier in prepare_to_wait_event() to make sure
-> >        * ___wait_var_event() either sees the bit cleared or
-> > @@ -1197,8 +1197,8 @@ void discard_new_inode(struct inode *inode)
-> >  {
-> >       lockdep_annotate_inode_mutex_key(inode);
-> >       spin_lock(&inode->i_lock);
-> > -     WARN_ON(!(inode->i_state & I_NEW));
-> > -     inode->i_state &=3D ~I_NEW;
-> > +     WARN_ON(!(inode_state_read(inode) & I_NEW));
-> > +     inode_state_del(inode, I_NEW);
-> >       /*
-> >        * Pairs with the barrier in prepare_to_wait_event() to make sure
-> >        * ___wait_var_event() either sees the bit cleared or
-> > @@ -1308,7 +1308,7 @@ struct inode *inode_insert5(struct inode *inode, =
-unsigned long hashval,
-> >        * caller is responsible for filling in the contents
-> >        */
-> >       spin_lock(&inode->i_lock);
-> > -     inode->i_state |=3D I_NEW;
-> > +     inode_state_add(inode, I_NEW);
-> >       hlist_add_head_rcu(&inode->i_hash, head);
-> >       spin_unlock(&inode->i_lock);
-> >
-> > @@ -1445,7 +1445,7 @@ struct inode *iget_locked(struct super_block *sb,=
- unsigned long ino)
-> >               if (!old) {
-> >                       inode->i_ino =3D ino;
-> >                       spin_lock(&inode->i_lock);
-> > -                     inode->i_state =3D I_NEW;
-> > +                     inode_state_add(inode, I_NEW);
-> >                       hlist_add_head_rcu(&inode->i_hash, head);
-> >                       spin_unlock(&inode->i_lock);
-> >                       spin_unlock(&inode_hash_lock);
-> > @@ -1538,7 +1538,7 @@ EXPORT_SYMBOL(iunique);
-> >  struct inode *igrab(struct inode *inode)
-> >  {
-> >       spin_lock(&inode->i_lock);
-> > -     if (!(inode->i_state & (I_FREEING|I_WILL_FREE))) {
-> > +     if (!(inode_state_read(inode) & (I_FREEING|I_WILL_FREE))) {
-> >               __iget(inode);
-> >               spin_unlock(&inode->i_lock);
-> >       } else {
-> > @@ -1728,7 +1728,7 @@ struct inode *find_inode_rcu(struct super_block *=
-sb, unsigned long hashval,
-> >
-> >       hlist_for_each_entry_rcu(inode, head, i_hash) {
-> >               if (inode->i_sb =3D=3D sb &&
-> > -                 !(READ_ONCE(inode->i_state) & (I_FREEING | I_WILL_FRE=
-E)) &&
-> > +                 !(inode_state_read_unstable(inode) & (I_FREEING | I_W=
-ILL_FREE)) &&
-> >                   test(inode, data))
-> >                       return inode;
-> >       }
-> > @@ -1767,7 +1767,7 @@ struct inode *find_inode_by_ino_rcu(struct super_=
-block *sb,
-> >       hlist_for_each_entry_rcu(inode, head, i_hash) {
-> >               if (inode->i_ino =3D=3D ino &&
-> >                   inode->i_sb =3D=3D sb &&
-> > -                 !(READ_ONCE(inode->i_state) & (I_FREEING | I_WILL_FRE=
-E)))
-> > +                 !(inode_state_read_unstable(inode) & (I_FREEING | I_W=
-ILL_FREE)))
-> >                   return inode;
-> >       }
-> >       return NULL;
-> > @@ -1789,7 +1789,7 @@ int insert_inode_locked(struct inode *inode)
-> >                       if (old->i_sb !=3D sb)
-> >                               continue;
-> >                       spin_lock(&old->i_lock);
-> > -                     if (old->i_state & (I_FREEING|I_WILL_FREE)) {
-> > +                     if (inode_state_read(old) & (I_FREEING|I_WILL_FRE=
-E)) {
-> >                               spin_unlock(&old->i_lock);
-> >                               continue;
-> >                       }
-> > @@ -1797,13 +1797,13 @@ int insert_inode_locked(struct inode *inode)
-> >               }
-> >               if (likely(!old)) {
-> >                       spin_lock(&inode->i_lock);
-> > -                     inode->i_state |=3D I_NEW | I_CREATING;
-> > +                     inode_state_add(inode, I_NEW | I_CREATING);
-> >                       hlist_add_head_rcu(&inode->i_hash, head);
-> >                       spin_unlock(&inode->i_lock);
-> >                       spin_unlock(&inode_hash_lock);
-> >                       return 0;
-> >               }
-> > -             if (unlikely(old->i_state & I_CREATING)) {
-> > +             if (unlikely(inode_state_read(old) & I_CREATING)) {
-> >                       spin_unlock(&old->i_lock);
-> >                       spin_unlock(&inode_hash_lock);
-> >                       return -EBUSY;
-> > @@ -1826,7 +1826,7 @@ int insert_inode_locked4(struct inode *inode, uns=
-igned long hashval,
-> >  {
-> >       struct inode *old;
-> >
-> > -     inode->i_state |=3D I_CREATING;
-> > +     inode_state_add_unchecked(inode, I_CREATING);
-> >       old =3D inode_insert5(inode, hashval, test, NULL, data);
-> >
-> >       if (old !=3D inode) {
-> > @@ -1858,10 +1858,9 @@ static void iput_final(struct inode *inode)
-> >  {
-> >       struct super_block *sb =3D inode->i_sb;
-> >       const struct super_operations *op =3D inode->i_sb->s_op;
-> > -     unsigned long state;
-> >       int drop;
-> >
-> > -     WARN_ON(inode->i_state & I_NEW);
-> > +     WARN_ON(inode_state_read(inode) & I_NEW);
-> >
-> >       if (op->drop_inode)
-> >               drop =3D op->drop_inode(inode);
-> > @@ -1869,27 +1868,25 @@ static void iput_final(struct inode *inode)
-> >               drop =3D generic_drop_inode(inode);
-> >
-> >       if (!drop &&
-> > -         !(inode->i_state & I_DONTCACHE) &&
-> > +         !(inode_state_read(inode) & I_DONTCACHE) &&
-> >           (sb->s_flags & SB_ACTIVE)) {
-> >               __inode_add_lru(inode, true);
-> >               spin_unlock(&inode->i_lock);
-> >               return;
-> >       }
-> >
-> > -     state =3D inode->i_state;
-> >       if (!drop) {
-> > -             WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> > +             inode_state_add(inode, I_WILL_FREE);
-> >               spin_unlock(&inode->i_lock);
-> >
-> >               write_inode_now(inode, 1);
-> >
-> >               spin_lock(&inode->i_lock);
-> > -             state =3D inode->i_state;
-> > -             WARN_ON(state & I_NEW);
-> > -             state &=3D ~I_WILL_FREE;
-> > +             inode_state_del(inode, I_WILL_FREE);
-> > +             WARN_ON(inode_state_read(inode) & I_NEW);
-> >       }
-> >
-> > -     WRITE_ONCE(inode->i_state, state | I_FREEING);
-> > +     inode_state_add(inode, I_FREEING);
-> >       if (!list_empty(&inode->i_lru))
-> >               inode_lru_list_del(inode);
-> >       spin_unlock(&inode->i_lock);
-> > @@ -1913,7 +1910,7 @@ void iput(struct inode *inode)
-> >
-> >  retry:
-> >       lockdep_assert_not_held(&inode->i_lock);
-> > -     VFS_BUG_ON_INODE(inode->i_state & I_CLEAR, inode);
-> > +     VFS_BUG_ON_INODE(inode_state_read_unstable(inode) & I_CLEAR, inod=
-e);
-> >       /*
-> >        * Note this assert is technically racy as if the count is bogusl=
-y
-> >        * equal to one, then two CPUs racing to further drop it can both
-> > @@ -1924,14 +1921,14 @@ void iput(struct inode *inode)
-> >       if (atomic_add_unless(&inode->i_count, -1, 1))
-> >               return;
-> >
-> > -     if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
-> > +     if ((inode_state_read_unstable(inode) & I_DIRTY_TIME) && inode->i=
-_nlink) {
-> >               trace_writeback_lazytime_iput(inode);
-> >               mark_inode_dirty_sync(inode);
-> >               goto retry;
-> >       }
-> >
-> >       spin_lock(&inode->i_lock);
-> > -     if (unlikely((inode->i_state & I_DIRTY_TIME) && inode->i_nlink)) =
-{
-> > +     if (unlikely((inode_state_read(inode) & I_DIRTY_TIME) && inode->i=
-_nlink)) {
-> >               spin_unlock(&inode->i_lock);
-> >               goto retry;
-> >       }
-> > @@ -2946,7 +2943,7 @@ void dump_inode(struct inode *inode, const char *=
-reason)
-> >       pr_warn("%s encountered for inode %px\n"
-> >               "fs %s mode %ho opflags %hx flags %u state %x\n",
-> >               reason, inode, sb->s_type->name, inode->i_mode, inode->i_=
-opflags,
-> > -             inode->i_flags, inode->i_state);
-> > +             inode->i_flags, inode_state_read_unstable(inode));
-> >  }
-> >
-> >  EXPORT_SYMBOL(dump_inode);
-> > diff --git a/fs/libfs.c b/fs/libfs.c
-> > index ce8c496a6940..469ca3314889 100644
-> > --- a/fs/libfs.c
-> > +++ b/fs/libfs.c
-> > @@ -1542,9 +1542,9 @@ int __generic_file_fsync(struct file *file, loff_=
-t start, loff_t end,
-> >
-> >       inode_lock(inode);
-> >       ret =3D sync_mapping_buffers(inode->i_mapping);
-> > -     if (!(inode->i_state & I_DIRTY_ALL))
-> > +     if (!(inode_state_read_unstable(inode) & I_DIRTY_ALL))
-> >               goto out;
-> > -     if (datasync && !(inode->i_state & I_DIRTY_DATASYNC))
-> > +     if (datasync && !(inode_state_read_unstable(inode) & I_DIRTY_DATA=
-SYNC))
-> >               goto out;
-> >
-> >       err =3D sync_inode_metadata(inode, 1);
-> > @@ -1664,7 +1664,7 @@ struct inode *alloc_anon_inode(struct super_block=
- *s)
-> >        * list because mark_inode_dirty() will think
-> >        * that it already _is_ on the dirty list.
-> >        */
-> > -     inode->i_state =3D I_DIRTY;
-> > +     inode_state_set_unchecked(inode, I_DIRTY);
-> >       /*
-> >        * Historically anonymous inodes don't have a type at all and
-> >        * userspace has come to rely on this.
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index cd43ff89fbaa..b0742d7376d5 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3948,7 +3948,7 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
-> >       inode =3D file_inode(file);
-> >       if (!(open_flag & O_EXCL)) {
-> >               spin_lock(&inode->i_lock);
-> > -             inode->i_state |=3D I_LINKABLE;
-> > +             inode_state_add(inode, I_LINKABLE);
-> >               spin_unlock(&inode->i_lock);
-> >       }
-> >       security_inode_post_create_tmpfile(idmap, inode);
-> > @@ -4844,7 +4844,7 @@ int vfs_link(struct dentry *old_dentry, struct mn=
-t_idmap *idmap,
-> >
-> >       inode_lock(inode);
-> >       /* Make sure we don't allow creating hardlink to an unlinked file=
- */
-> > -     if (inode->i_nlink =3D=3D 0 && !(inode->i_state & I_LINKABLE))
-> > +     if (inode->i_nlink =3D=3D 0 && !(inode_state_read_unstable(inode)=
- & I_LINKABLE))
-> >               error =3D  -ENOENT;
-> >       else if (max_links && inode->i_nlink >=3D max_links)
-> >               error =3D -EMLINK;
-> > @@ -4854,9 +4854,9 @@ int vfs_link(struct dentry *old_dentry, struct mn=
-t_idmap *idmap,
-> >                       error =3D dir->i_op->link(old_dentry, dir, new_de=
-ntry);
-> >       }
-> >
-> > -     if (!error && (inode->i_state & I_LINKABLE)) {
-> > +     if (!error && (inode_state_read_unstable(inode) & I_LINKABLE)) {
-> >               spin_lock(&inode->i_lock);
-> > -             inode->i_state &=3D ~I_LINKABLE;
-> > +             inode_state_del(inode, I_LINKABLE);
-> >               spin_unlock(&inode->i_lock);
-> >       }
-> >       inode_unlock(inode);
-> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> > index 46bfc543f946..8e504b40fb39 100644
-> > --- a/fs/notify/fsnotify.c
-> > +++ b/fs/notify/fsnotify.c
-> > @@ -52,7 +52,7 @@ static void fsnotify_unmount_inodes(struct super_bloc=
-k *sb)
-> >                * the inode cannot have any associated watches.
-> >                */
-> >               spin_lock(&inode->i_lock);
-> > -             if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) {
-> > +             if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NE=
-W)) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> >               }
-> > diff --git a/fs/pipe.c b/fs/pipe.c
-> > index 731622d0738d..81ad740af963 100644
-> > --- a/fs/pipe.c
-> > +++ b/fs/pipe.c
-> > @@ -906,7 +906,7 @@ static struct inode * get_pipe_inode(void)
-> >        * list because "mark_inode_dirty()" will think
-> >        * that it already _is_ on the dirty list.
-> >        */
-> > -     inode->i_state =3D I_DIRTY;
-> > +     inode_state_set_unchecked(inode, I_DIRTY);
-> >       inode->i_mode =3D S_IFIFO | S_IRUSR | S_IWUSR;
-> >       inode->i_uid =3D current_fsuid();
-> >       inode->i_gid =3D current_fsgid();
-> > diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> > index df4a9b348769..beb3d82a2915 100644
-> > --- a/fs/quota/dquot.c
-> > +++ b/fs/quota/dquot.c
-> > @@ -1030,7 +1030,7 @@ static int add_dquot_ref(struct super_block *sb, =
-int type)
-> >       spin_lock(&sb->s_inode_list_lock);
-> >       list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> >               spin_lock(&inode->i_lock);
-> > -             if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
-> > +             if ((inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_N=
-EW)) ||
-> >                   !atomic_read(&inode->i_writecount) ||
-> >                   !dqinit_needed(inode, type)) {
-> >                       spin_unlock(&inode->i_lock);
-> > diff --git a/fs/sync.c b/fs/sync.c
-> > index 2955cd4c77a3..def938b28c2a 100644
-> > --- a/fs/sync.c
-> > +++ b/fs/sync.c
-> > @@ -182,7 +182,7 @@ int vfs_fsync_range(struct file *file, loff_t start=
-, loff_t end, int datasync)
-> >
-> >       if (!file->f_op->fsync)
-> >               return -EINVAL;
-> > -     if (!datasync && (inode->i_state & I_DIRTY_TIME))
-> > +     if (!datasync && (inode_state_read_unstable(inode) & I_DIRTY_TIME=
-))
-> >               mark_inode_dirty_sync(inode);
-> >       return file->f_op->fsync(file, start, end, datasync);
-> >  }
-> > diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> > index e721148c95d0..4f461eb4232a 100644
-> > --- a/include/linux/backing-dev.h
-> > +++ b/include/linux/backing-dev.h
-> > @@ -289,10 +289,11 @@ unlocked_inode_to_wb_begin(struct inode *inode, s=
-truct wb_lock_cookie *cookie)
-> >       rcu_read_lock();
-> >
-> >       /*
-> > -      * Paired with store_release in inode_switch_wbs_work_fn() and
-> > +      * Paired with a release fence in inode_do_switch_wbs() and
-> >        * ensures that we see the new wb if we see cleared I_WB_SWITCH.
-> >        */
-> > -     cookie->locked =3D smp_load_acquire(&inode->i_state) & I_WB_SWITC=
-H;
-> > +     cookie->locked =3D inode_state_read_unstable(inode) & I_WB_SWITCH=
-;
-> > +     smp_rmb();
-> >
-> >       if (unlikely(cookie->locked))
-> >               xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags=
-);
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index c4fd010cf5bf..ed482e5d14a6 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -756,7 +756,7 @@ enum inode_state_bits {
-> >       /* reserved wait address bit 3 */
-> >  };
-> >
-> > -enum inode_state_flags_t {
-> > +enum inode_state_flags_enum {
-> >       I_NEW                   =3D (1U << __I_NEW),
-> >       I_SYNC                  =3D (1U << __I_SYNC),
-> >       I_LRU_ISOLATING         =3D (1U << __I_LRU_ISOLATING),
-> > @@ -840,7 +840,7 @@ struct inode {
-> >  #endif
-> >
-> >       /* Misc */
-> > -     enum inode_state_flags_t        i_state;
-> > +     enum inode_state_flags_enum i_state;
-> >       /* 32-bit hole */
-> >       struct rw_semaphore     i_rwsem;
-> >
-> > @@ -899,6 +899,55 @@ struct inode {
-> >       void                    *i_private; /* fs or device private point=
-er */
-> >  } __randomize_layout;
-> >
-> > +
-> > +/*
-> > + * i_state handling
-> > + *
-> > + * We hide all of it behind helpers so that we can validate consumers.
-> > + */
-> > +static inline enum inode_state_flags_enum inode_state_read(struct inod=
-e *inode)
-> > +{
-> > +     lockdep_assert_held(&inode->i_lock);
-> > +     return inode->i_state;
-> > +}
-> > +
-> > +static inline enum inode_state_flags_enum inode_state_read_unstable(st=
-ruct inode *inode)
-> > +{
-> > +     return READ_ONCE(inode->i_state);
-> > +}
-> > +
-> > +static inline void inode_state_add(struct inode *inode,
-> > +                                enum inode_state_flags_enum newflags)
-> > +{
-> > +     lockdep_assert_held(&inode->i_lock);
-> > +     WRITE_ONCE(inode->i_state, inode->i_state | newflags);
-> > +}
-> > +
-> > +static inline void inode_state_add_unchecked(struct inode *inode,
-> > +                                          enum inode_state_flags_enum =
-newflags)
-> > +{
-> > +     WRITE_ONCE(inode->i_state, inode->i_state | newflags);
-> > +}
-> > +
-> > +static inline void inode_state_del(struct inode *inode,
-> > +                                enum inode_state_flags_enum rmflags)
-> > +{
-> > +     lockdep_assert_held(&inode->i_lock);
-> > +     WRITE_ONCE(inode->i_state, inode->i_state & ~rmflags);
-> > +}
-> > +
-> > +static inline void inode_state_del_unchecked(struct inode *inode,
-> > +                                          enum inode_state_flags_enum =
-rmflags)
-> > +{
-> > +     WRITE_ONCE(inode->i_state, inode->i_state & ~rmflags);
-> > +}
-> > +
-> > +static inline void inode_state_set_unchecked(struct inode *inode,
-> > +                                          enum inode_state_flags_enum =
-newflags)
-> > +{
-> > +     WRITE_ONCE(inode->i_state, newflags);
-> > +}
-> > +
-> >  static inline void inode_set_cached_link(struct inode *inode, char *li=
-nk, int linklen)
-> >  {
-> >       VFS_WARN_ON_INODE(strlen(link) !=3D linklen, inode);
-> > @@ -2627,7 +2676,7 @@ static inline int icount_read(const struct inode =
-*inode)
-> >   */
-> >  static inline bool inode_is_dirtytime_only(struct inode *inode)
-> >  {
-> > -     return (inode->i_state & (I_DIRTY_TIME | I_NEW |
-> > +     return (inode_state_read_unstable(inode) & (I_DIRTY_TIME | I_NEW =
-|
-> >                                 I_FREEING | I_WILL_FREE)) =3D=3D I_DIRT=
-Y_TIME;
-> >  }
-> >
-> > diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> > index a2848d731a46..c24b581ed61f 100644
-> > --- a/include/linux/writeback.h
-> > +++ b/include/linux/writeback.h
-> > @@ -193,7 +193,7 @@ void inode_io_list_del(struct inode *inode);
-> >  static inline void wait_on_inode(struct inode *inode)
-> >  {
-> >       wait_var_event(inode_state_wait_address(inode, __I_NEW),
-> > -                    !(READ_ONCE(inode->i_state) & I_NEW));
-> > +                    !(inode_state_read_unstable(inode) & I_NEW));
-> >  }
-> >
-> >  #ifdef CONFIG_CGROUP_WRITEBACK
-> > @@ -234,7 +234,7 @@ static inline void inode_attach_wb(struct inode *in=
-ode, struct folio *folio)
-> >  static inline void inode_detach_wb(struct inode *inode)
-> >  {
-> >       if (inode->i_wb) {
-> > -             WARN_ON_ONCE(!(inode->i_state & I_CLEAR));
-> > +             WARN_ON_ONCE(!(inode_state_read_unstable(inode) & I_CLEAR=
-));
-> >               wb_put(inode->i_wb);
-> >               inode->i_wb =3D NULL;
-> >       }
-> > diff --git a/include/trace/events/writeback.h b/include/trace/events/wr=
-iteback.h
-> > index 1e23919c0da9..a6efa3ad37a9 100644
-> > --- a/include/trace/events/writeback.h
-> > +++ b/include/trace/events/writeback.h
-> > @@ -120,7 +120,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
-> >               /* may be called for files on pseudo FSes w/ unregistered=
- bdi */
-> >               strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
-> >               __entry->ino            =3D inode->i_ino;
-> > -             __entry->state          =3D inode->i_state;
-> > +             __entry->state          =3D inode_state_read_unstable(ino=
-de);
-> >               __entry->flags          =3D flags;
-> >       ),
-> >
-> > @@ -719,7 +719,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
-> >               strscpy_pad(__entry->name,
-> >                           bdi_dev_name(inode_to_bdi(inode)), 32);
-> >               __entry->ino            =3D inode->i_ino;
-> > -             __entry->state          =3D inode->i_state;
-> > +             __entry->state          =3D inode_state_read_unstable(ino=
-de);
-> >               __entry->dirtied_when   =3D inode->dirtied_when;
-> >               __entry->cgroup_ino     =3D __trace_wb_assign_cgroup(inod=
-e_to_wb(inode));
-> >       ),
-> > @@ -758,7 +758,7 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template=
-,
-> >               strscpy_pad(__entry->name,
-> >                           bdi_dev_name(inode_to_bdi(inode)), 32);
-> >               __entry->ino            =3D inode->i_ino;
-> > -             __entry->state          =3D inode->i_state;
-> > +             __entry->state          =3D inode_state_read_unstable(ino=
-de);
-> >               __entry->dirtied_when   =3D inode->dirtied_when;
-> >               __entry->writeback_index =3D inode->i_mapping->writeback_=
-index;
-> >               __entry->nr_to_write    =3D nr_to_write;
-> > @@ -810,7 +810,7 @@ DECLARE_EVENT_CLASS(writeback_inode_template,
-> >       TP_fast_assign(
-> >               __entry->dev    =3D inode->i_sb->s_dev;
-> >               __entry->ino    =3D inode->i_ino;
-> > -             __entry->state  =3D inode->i_state;
-> > +             __entry->state  =3D inode_state_read_unstable(inode);
-> >               __entry->mode   =3D inode->i_mode;
-> >               __entry->dirtied_when =3D inode->dirtied_when;
-> >       ),
-> > diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> > index 783904d8c5ef..0636abae1c5c 100644
-> > --- a/mm/backing-dev.c
-> > +++ b/mm/backing-dev.c
-> > @@ -72,7 +72,7 @@ static void collect_wb_stats(struct wb_stats *stats,
-> >       list_for_each_entry(inode, &wb->b_more_io, i_io_list)
-> >               stats->nr_more_io++;
-> >       list_for_each_entry(inode, &wb->b_dirty_time, i_io_list)
-> > -             if (inode->i_state & I_DIRTY_TIME)
-> > +             if (inode_state_read_unstable(inode) & I_DIRTY_TIME)
-> >                       stats->nr_dirty_time++;
-> >       spin_unlock(&wb->list_lock);
-> >
-> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index 0bade2c5aa1d..d4d72f406d58 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -1296,7 +1296,7 @@ static void hook_sb_delete(struct super_block *co=
-nst sb)
-> >                * second call to iput() for the same Landlock object.  A=
-lso
-> >                * checks I_NEW because such inode cannot be tied to an o=
-bject.
-> >                */
-> > -             if (inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW)) {
-> > +             if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE | =
-I_NEW)) {
-> >                       spin_unlock(&inode->i_lock);
-> >                       continue;
-> >               }
-> > --
-> > 2.43.0
-> >
+> ---
+>  fs/nsfs.c                 | 25 +++++++++++++------------
+>  include/uapi/linux/nsfs.h |  6 ++++--
+>  2 files changed, 17 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/nsfs.c b/fs/nsfs.c
+> index 22765fcab18e..8484bc4dd3de 100644
+> --- a/fs/nsfs.c
+> +++ b/fs/nsfs.c
+> @@ -177,6 +177,7 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
+>  	case NS_GET_TGID_FROM_PIDNS:
+>  	case NS_GET_PID_IN_PIDNS:
+>  	case NS_GET_TGID_IN_PIDNS:
+> +	case NS_GET_ID:
+>  		return true;
+>  	}
+>  
+> @@ -226,18 +227,6 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+>  		argp = (uid_t __user *) arg;
+>  		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
+>  		return put_user(uid, argp);
+> -	case NS_GET_MNTNS_ID: {
+> -		__u64 __user *idp;
+> -		__u64 id;
+> -
+> -		if (ns->ops->type != CLONE_NEWNS)
+> -			return -EINVAL;
+> -
+> -		mnt_ns = container_of(ns, struct mnt_namespace, ns);
+> -		idp = (__u64 __user *)arg;
+> -		id = mnt_ns->ns.ns_id;
+> -		return put_user(id, idp);
+> -	}
+>  	case NS_GET_PID_FROM_PIDNS:
+>  		fallthrough;
+>  	case NS_GET_TGID_FROM_PIDNS:
+> @@ -283,6 +272,18 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+>  			ret = -ESRCH;
+>  		return ret;
+>  	}
+> +	case NS_GET_MNTNS_ID:
+> +		if (ns->ops->type != CLONE_NEWNS)
+> +			return -EINVAL;
+> +		fallthrough;
+> +	case NS_GET_ID: {
+> +		__u64 __user *idp;
+> +		__u64 id;
+> +
+> +		idp = (__u64 __user *)arg;
+> +		id = ns->ns_id;
+> +		return put_user(id, idp);
+> +	}
+>  	}
+>  
+>  	/* extensible ioctls */
+> diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+> index fa86fe3c8bd3..5d5bf22464c9 100644
+> --- a/include/uapi/linux/nsfs.h
+> +++ b/include/uapi/linux/nsfs.h
+> @@ -16,8 +16,6 @@
+>  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+>  /* Get owner UID (in the caller's user namespace) for a user namespace */
+>  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+> -/* Get the id for a mount namespace */
+> -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
+>  /* Translate pid from target pid namespace into the caller's pid namespace. */
+>  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
+>  /* Return thread-group leader id of pid in the callers pid namespace. */
+> @@ -42,6 +40,10 @@ struct mnt_ns_info {
+>  /* Get previous namespace. */
+>  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+>  
+> +/* Retrieve namespace identifiers. */
+> +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
+> +#define NS_GET_ID		_IOR(NSIO, 13, __u64)
+> +
+>  enum init_ns_ino {
+>  	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
+>  	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
+> 
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
