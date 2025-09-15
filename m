@@ -1,182 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-61310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5193B577A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:07:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910F5B577BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4F01704B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:07:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A5E3AF170
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410442FE060;
-	Mon, 15 Sep 2025 11:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA40E2FDC51;
+	Mon, 15 Sep 2025 11:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KflZ5prr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2HNRZWLu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KflZ5prr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2HNRZWLu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JP7plFNw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A432FD7A0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 11:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014B32FAC1F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 11:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757934434; cv=none; b=Vnf+vBaGWU4lPSIycstK3epUGRaLAcoLer+6WCk6B3JnRn00LSsYej4gvLY6CZNTwoRv+rDemd3Jjd+yUTYqvsAlgBfD32EffEvmUQx37m8l7OW8hSh9QuzYFqKkqT4krnRUafwgQ2RfnPj7ukKMKsCmlru1JvDrDRHygRNXIXg=
+	t=1757934752; cv=none; b=Xe2z6Zm8+3pXrT475WyltJjicbjGl0+gvm1w2V8ZTyt1lnaenC+vg58ktJVkrXmfT570ejo8wrBhoNpGNjVh6Hkcc27I0fon+NcqYkLKRJT4OWqI/FT90M5vOVGirPr1isXWFAu2PElVcoopeLqFkoq0p9fAlRs6oisWnjwlA8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757934434; c=relaxed/simple;
-	bh=2rTj9y3vFl3DSsUtFge7HoysdKEspuu1+SWZm5XQOXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TK69HgJ0Unze/v1HBWiSyZwUt4Ylt0wofZfBHEya0JdJ6joe19SA6CeidIACmAT1E4kFP7fe2G34ivkOkiarx4MBkCDQMewvJwKu0M8wUAtSBAvCsDZhHdWXHibMkcTVft4AgygnZQ39OjWkJOuif9S7GYibeGw8AMJMqEmEyNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KflZ5prr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2HNRZWLu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KflZ5prr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2HNRZWLu; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2539C1F8B0;
-	Mon, 15 Sep 2025 11:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757934431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpKepJH4yP8uSf3BpFDlyGc+QODtbZz7D8+877HUnZQ=;
-	b=KflZ5prrtYNzVmL8k1x+IKinkh2EqpPUsKcKlQe2o8DkEj6UfckRnBAk7AQddMPpFg1KZz
-	Nd+4bkps7q0UZs9OuwrdlssIryLTv8Y3wgxHvXfbIu8Lj1zwXIFvFdBrl932x6iguGkm1D
-	s58C3CgZrMGFdfwdGBXfunliqX/vuh8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757934431;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpKepJH4yP8uSf3BpFDlyGc+QODtbZz7D8+877HUnZQ=;
-	b=2HNRZWLurYY2wsfcOlxWXzeiYIF0ycKfGboF0uoy5qGjuFJKKtuPZ9TwlvrzDkd7wEl8mJ
-	IXL9absr8FMy3lCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KflZ5prr;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2HNRZWLu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757934431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpKepJH4yP8uSf3BpFDlyGc+QODtbZz7D8+877HUnZQ=;
-	b=KflZ5prrtYNzVmL8k1x+IKinkh2EqpPUsKcKlQe2o8DkEj6UfckRnBAk7AQddMPpFg1KZz
-	Nd+4bkps7q0UZs9OuwrdlssIryLTv8Y3wgxHvXfbIu8Lj1zwXIFvFdBrl932x6iguGkm1D
-	s58C3CgZrMGFdfwdGBXfunliqX/vuh8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757934431;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpKepJH4yP8uSf3BpFDlyGc+QODtbZz7D8+877HUnZQ=;
-	b=2HNRZWLurYY2wsfcOlxWXzeiYIF0ycKfGboF0uoy5qGjuFJKKtuPZ9TwlvrzDkd7wEl8mJ
-	IXL9absr8FMy3lCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EDC961372E;
-	Mon, 15 Sep 2025 11:07:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rqYHOl7zx2jFHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 11:07:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9A844A09B1; Mon, 15 Sep 2025 13:07:06 +0200 (CEST)
-Date: Mon, 15 Sep 2025 13:07:06 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 11/33] net: use ns_common_init()
-Message-ID: <ucldl3baqsuuiwzmubrkloblxfjvcecfhjd2nyvl6boccc3qlh@bumwo2wjyvgr>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-11-1a247645cef5@kernel.org>
+	s=arc-20240116; t=1757934752; c=relaxed/simple;
+	bh=VY3zkdhTGgC126uMIeS5gV6qogT1HLoj1i2dxU+5eik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qvxt880JK8kPWliR0+6mhG3jErYNszW6qaFYAAAmmEFEYKT6OpapJiHOudYYlrrK7rzxk/sBVP0dyW0ELuCS3afmF8XVXNc2LJut5Z6IyQUG2PCqt0cV/G0eg7XwvEdDP+hFF20YSFJckYyBH3UIuQmNhvjaDrnJ6v04O6iWqHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JP7plFNw; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2445826fd9dso47609985ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 04:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757934750; x=1758539550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4p12IzWrRO+GuzSOQKOoYoCmZLULC1GsuqYzZhikEms=;
+        b=JP7plFNwh89sv86Cw8BHKTbfdRv709peLp0C+HGfWw1C2dzLaKCdUtqGhpBwHl071U
+         0Kj3hH81bMd77qHnpLyC9pjnHFeEqivHqmU/CkdNLHSobUk7wTzPe/DbP2r/lumuxo9F
+         3GzQcZz9xAnb8wL8E/RzUCoGGTb97dqWX8k61itKUMPIctsIFT53Xi6kkXruqA7tcXAN
+         SXhEeVbX72Yw700IdW+2feK0Net0oN6LBOgFabC747IRusGp5O542r0GzgGOp1d7O/7L
+         /wYy/HWGu81w9vCkaz/Z01PvBmixkjtWhaDTDqp4IDIJ1ded4CWth9GmKT1BpIVB8IoG
+         b2xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757934750; x=1758539550;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4p12IzWrRO+GuzSOQKOoYoCmZLULC1GsuqYzZhikEms=;
+        b=wS76yFr25HcXBhXEtY4IMElsvIKFBvK8D+ZDOO+0SDYPNW7uTZ6sl1cNXA/TNYisqd
+         xaiO6LGTjaYFP12OK5/lyZmffQ0xBGx2ROwbIWJzWxR+pfwTjFSicD59n+svw7LE7XS7
+         cnRscaeKpQeRxWxLql8KzOApd6urorGRqRSJyKyYBePXUBFAQGqih2gzrx+Ec346J6BM
+         aj/ho9KuJ41TTrkFCDjYRwDHBw9XqhbBFrBUitCCXT9MvqXLetfZxVAn5wI6awMLYS7d
+         nwv0gMklIW0mTiQ4cUPr+W4Yxdvr1ba8HDDfaeCcF8MT8MzMuVxAxsfEuMVaRk3j6fyK
+         35/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0RZVXKPsUDT1qZT4iIKmPET7FYFvHdp1xfNaaCukUy3/p4ivoGD1ahC+GHU4tKfpzJ/e3mc1hCZsdwQfR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSKySJYVOC8YdPH535eHN/fZFV04kHdpbOF9zqGzxBrmN8+Blm
+	dS4N3okUm3DJfYkXGJPuZ5nghL6LCz4vmvHM+pHTc3ntJHNq0vXog2tU
+X-Gm-Gg: ASbGncuPakWzqyiII3vEbJ9eWUJoJuM0+IAmbcR0wEEiYhs/NVO4YmORs9ptUogBxw9
+	oCD22fHijzXw3mMXlzOiYHAkul9sF1yG6M2tpt7EcT9EfNl7J1mcnAyrcKjqCYzyL7ddqSJrnnP
+	zlakTQbZKsK9d2ti2yRD3h6GRoAU+2k7U+MMkIqwC4SDnJdYvbhe6SbWoEYR4/wKpUFeLJs/uEf
+	pHOVu6zBpz1P0ZwSnikRyzRckfi9kDHHcTOcrHckWUjCMLBCAZ/hhptwRoPvzxJ2rGkRGQWSudz
+	Ef9nYYeukLY4essSWYrm+eXsfADmNaZ2BdPJviCnIKxBn5pDQI9KtiBYYOg6txWf8JWI8Tuqk2y
+	l6LtTWJzs3J2wlklQVqFeTwF38JNk6zGHfg==
+X-Google-Smtp-Source: AGHT+IExDJoPLFyVEh3wqMlZXAiX0+tZkyl11B1SwSybUi3y+vj4NaoaTvhTCkhJAG90Odm2ARIFaQ==
+X-Received: by 2002:a17:903:1746:b0:264:70da:7a3b with SMTP id d9443c01a7336-26470da7d17mr63606755ad.49.1757934749994;
+        Mon, 15 Sep 2025 04:12:29 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264ab88689fsm41411705ad.27.2025.09.15.04.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 04:12:29 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: kernel@pankajraghav.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH 4/4] iomap: don't abandon the whole copy when we have iomap_folio_state
+Date: Mon, 15 Sep 2025 19:12:28 +0800
+Message-ID: <20250915111228.4142222-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <dhjvmhfpmyf5ncbutlev6mmtgxatnuorfiv7i4q55wpzl7jrvn@asxbr2hv3xfv>
+References: <dhjvmhfpmyf5ncbutlev6mmtgxatnuorfiv7i4q55wpzl7jrvn@asxbr2hv3xfv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-11-1a247645cef5@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2539C1F8B0
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.com:email]
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: 8bit
 
-On Fri 12-09-25 13:52:34, Christian Brauner wrote:
-> Don't cargo-cult the same thing over and over.
+On Mon, 15 Sep 2025 12:50:54 +0200, kernel@pankajraghav.com wrote:
+> > +static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
+> > +		size_t copied, struct folio *folio)
+> > +{
+> > +	struct iomap_folio_state *ifs = folio->private;
+> > +	unsigned block_size, last_blk, last_blk_bytes;
+> > +
+> > +	if (!ifs || !copied)
+> > +		return 0;
+> > +
+> > +	block_size = 1 << inode->i_blkbits;
+> > +	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
+> > +	last_blk_bytes = (pos + copied) & (block_size - 1);
+> > +
+> > +	if (!ifs_block_is_uptodate(ifs, last_blk))
+> > +		copied -= min(copied, last_blk_bytes);
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> If pos is aligned to block_size, is there a scenario where 
+> copied < last_blk_bytes?
 
-...
+I believe there is no other scenario. The min() here is specifically to handle cases where
+pos is not aligned to block_size. But please note that the pos here is unrelated to the pos
+in iomap_adjust_read_range().
 
-> @@ -559,7 +572,9 @@ struct net *copy_net_ns(unsigned long flags,
->  		goto dec_ucounts;
->  	}
->  
-> -	preinit_net(net, user_ns);
-> +	rv = preinit_net(net, user_ns);
-> +	if (rv < 0)
-> +		goto dec_ucounts;
+thanks,
+Jinliang Zheng. :)
 
-Umm, this seems to be leaking 'net' on error exit.
-
->  	net->ucounts = ucounts;
->  	get_user_ns(user_ns);
->  
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> Trying to understand why you are using a min() here.
+> --
+> Pankaj
 
