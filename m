@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-61270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139A5B56E38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 04:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30833B56E39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 04:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373DF162AEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 02:16:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9137ABD7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 02:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376C421D3CC;
-	Mon, 15 Sep 2025 02:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8D91F874C;
+	Mon, 15 Sep 2025 02:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="edax7Xcq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jwHwJO79"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="KtmpY632";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gvi70dTm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637B82DC790
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 02:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DE12DC790
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 02:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757902582; cv=none; b=qngQjd8q+8T1YYy2Zu+d1UnRFqNdXefhrsqxho33Egr9dCGIaus85imeceTMWsYRXZq0kGMFIVvnL5Fe9Kwp9N2XA5TAFgroH+p8PPq/faHOUD3QkpX9c/sIaZv1B9931rcJFI2nVcNtz6fLSw8tggB/iD1cQ0NAPVwqjpjFRZw=
+	t=1757902587; cv=none; b=EBHYNjbonc0V0PdsUNjEwMAsy4k/x5HogVWHWSJRBeIEpNlGACJLfEUcXHJrtSkamYTQLB/iqVp/FPKq0vdNsS5CnZ0RX1dMdSr0qKPXliw2EpTpMxYrfseAl6nqS8ivaKMuaP1VICrMIwykS5lPJxxLwi8eKiJBg+QTLPjUCaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757902582; c=relaxed/simple;
-	bh=NfU2WNFVcmJFQqFO8cEqjsg2gtpuMMiH5PMGysDIHO0=;
+	s=arc-20240116; t=1757902587; c=relaxed/simple;
+	bh=cDKD6ZRZs+Kj0DYvKIiO1lPPEChdumAoEry9yN+yjhc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QxjMUqKdd6lfh54vu5TjBP262ik5TifQnylLuobdxEUv4n68+0IOQ5p+BAhKlvf95NwMkSBrMyhofPbB+WIrrGRSZl4hzyO7H4E0kDxR/5OFq3FgjdzJJb6ATYfPh9krvrfeut5SX0m/VRH4WzP5BzLiSKXKvREMbrLSUVEjqz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=edax7Xcq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jwHwJO79; arc=none smtp.client-ip=202.12.124.151
+	 MIME-Version; b=o7DtLp72v/6WreWcByVfVbGuQhcM81puyfZknvovQwizhuvgDVlqIV/H/1vfcJb7i8PF/SC7DzubZMwKBdkjt84scUqFCfNyo4+AEvUKGy0C4V6S8N730n42uVj3eTbDdTMBFiYGUsPr/yjV1meEzHEW1YkbOUC5stf3+2NYyi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=KtmpY632; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gvi70dTm; arc=none smtp.client-ip=202.12.124.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 44BEB1D0010E;
-	Sun, 14 Sep 2025 22:16:19 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sun, 14 Sep 2025 22:16:19 -0400
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 23A7D1D0008A;
+	Sun, 14 Sep 2025 22:16:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Sun, 14 Sep 2025 22:16:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1757902579;
-	 x=1757988979; bh=0jUV3JLQp2xY6O/3dB/61sNL0UhLEjUQ6SBHk4L82BQ=; b=
-	edax7XcqmetOqjVU+/cf3i4mZICsRumNTDgTIvLVx6QeJcbQnpblEL0uQfd3YWGm
-	8wqfOP805IltPSCojtVqAzKigvmBETApxqz+VEGuZlCMSDCfI7oQMAc3Kcn5XyaK
-	TpYf/mub6vk4bLGhnRpX9agrVRZYkNJdCKa6nZwcK+a5qHX64V4BZqPjs8P4Mvya
-	OoBHrvHqk8/STH21t3LwvrxTbgMNqMecUaMdrao1O6XpVhbGcmIWyQOirP4I1Rpu
-	xycA0MWc3fXBiOMbsToF4NNkL8BQDM4pebltcuBIjPRl1JaUBxkr1Xi6w2Mx39En
-	ShPoHFWYYKuA+OgQTYyMtA==
+	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1757902583;
+	 x=1757988983; bh=/ikzQUZ7jAaDaQS1tIRy16+viXipv617fvETci16Za0=; b=
+	KtmpY632jFXYZSCUj+1mkjsaTLXhhKRym+PWicBEfsX/mY8DXkkf+18zLjbsrZ2B
+	06ZvZtNd59eD9L4p5SK6LguZZlZV5B254Rv0c6WVgiKI+V99otGyoQAb6rCuYkWO
+	VZNPYuopmoy9mtFdskxvnsNh79quFNFsUG4IY3/BMOlCLI6pFCTrWRrwx9Ulq7W/
+	OG6iKQG0kRqbvP5MN7waLB+K2o6jGwfe5YPwUEEkiYVQfJfhwT9Qewjmb0HJLbMT
+	lRAZmqUrH2eSVLNYU0mHUyMTxvvTKB+rDRxE8dkL99GUqqOSdtNx3ifLcifAxdhO
+	XEzRqu3enn6o7/G87GSwsQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757902579; x=1757988979; bh=0
-	jUV3JLQp2xY6O/3dB/61sNL0UhLEjUQ6SBHk4L82BQ=; b=jwHwJO79JrC+oMSBB
-	5iF9Tgeb67xl7H9Sr9dN3I8BkyuYBhsGw0ae9FjZ6JLBZHP2mBNib73bfYVmN0Fg
-	xDxWpySun/AjSVudbfqbIoCFMrCJcuUJKejMfQdLa/SSpysXQZmxbPIt9oNajdPr
-	s5pjbA2MkgsNRlU035JjvdCo3vKzaTRVXNliXk9S+3HbxejS0uQWW8ALtQZPMVn3
-	/iBGv8gXr1hozfgoINMJB4C94cFW0LDBNVr4SFE25t2g0r2UewWLXDWKAo60T/Jb
-	lsPbndHdHzC05nmCeyqyiAxseOkhGT0kmNDpiMU+ACHBvytsfvMifc078vdnv6nA
-	K3itw==
-X-ME-Sender: <xms:8nbHaDzWid7KvAPu9agF8RCIEBBIH5CETPWWhqn2fsT1CkA09QvcNg>
-    <xme:8nbHaCqWgizZd4jQfyPsGgonGVIJUTH4bIAUQnbpjKBE_-pSphgMQ0VkcP4NydP4u
-    ZP5DeH3I31j4g>
-X-ME-Received: <xmr:8nbHaC6wCSDBN5Ii1Mu5QTvEyRrtlrKX9v8yezMPRvwc4MCQoI6Et1m-ncXWKj21rTEbqMwhxmphcQeNqXVvzfktTmpsQkub72_J3roPHxPz>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757902583; x=1757988983; bh=/
+	ikzQUZ7jAaDaQS1tIRy16+viXipv617fvETci16Za0=; b=Gvi70dTmrxezlGA1S
+	2VvW7gdfm7VjNWLAvHQnlQOUIv7v7uIM71r27GIgDBZvt+OzKQRzL1nYWJdorOdp
+	qS0iWyknRlyOh816Odyn3diTMahOSzwc8LusQkplY3Em35uAOluzLzVb9nSVnuME
+	8tUSeQrEQjgN6rdH05cmnvdIMAxx9rFiGyAMvJblfMxHVMJKwLRjW75xPJqlqME/
+	/QuNbc6GecQ6DOc0heuS2dZEQvMwzbgLP47LmDFiRP6DOb6KHWeOJ68HeRO2GjYK
+	igfoQbpXXmdGtQemASXA/9YX6g1s4ayHgoYZah1neIu4GPCX9B3b6Qo/LV3z26Oy
+	m6T1g==
+X-ME-Sender: <xms:93bHaCIjNt-Zg0qDrSCqOvYoEualg-fxyif4Iz2YcGzuXCwI5TiWtw>
+    <xme:93bHaBj4_ZpN8IXKANgD1VE19Ldhiw6dzGUKjTnnw0guJ9sK6iAMJ0CrSrAfpfMBD
+    TLe1jkuBHfaag>
+X-ME-Received: <xmr:93bHaIQ29q8Dn32EX-IhElgXAeBovYXW3su0mMIrr0MYafuxvcvvtZrQOlwGyS9---G3AHcAd01Pxt0cEHhq76UsIm4oQjmGb_1basJFF5pM>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefieegjecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
     hrpefhvfevufffkffojghfrhgggfestdekredtredttdenucfhrhhomheppfgvihhluehr
     ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
     evveekffduueevhfeigefhgfdukedtleekjeeitdejudfgueekvdekffdvfedvudenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    lhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
     hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
     thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
     hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
     rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
     hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
     ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:8nbHaJczFZJQGBQMYj-msgFX8AxPXMCxsnVO0nUXHuhysYHfbfg6QQ>
-    <xmx:83bHaH4PRE-wWW4ocL8EUw0cvxAQDne298pAxHAPO7RlweFcO_ABAg>
-    <xmx:83bHaAuhwrnRtarvs1_6soPiI37uT3Wpr5dFYuIRwxa0wPjHUnsVug>
-    <xmx:83bHaHjT_0ZeV3SQhB5g3jji9lbByQsomQ0RsAYmMpaADcykmOX1Cg>
-    <xmx:83bHaBLBqIgbZilEFYp8IXF5Diadd1EAFFlRPzXFsbgZoeVcp9QFbyEA>
+X-ME-Proxy: <xmx:93bHaDWqw8U8_I9CdK1FGqeBw8XyG9SB5EoLHEjh_6ivNIe65uXt8A>
+    <xmx:93bHaMSExmyWToNxNwdpaZeaUoYcSmpwdt4g72WjAnHmQZ4y6wjHBA>
+    <xmx:93bHaNlzM1CcudR1bmnS29Nn8kB9wkomGW8aXIBRxhSYknn7Xh8CIA>
+    <xmx:93bHaC6pVqwyXg9cydDqrPCbZ5cmgSJS-5kt0J6ItkM400PpgLuYRQ>
+    <xmx:93bHaIgwpEuJbQAyqP8USmSgb7lxdq072xwlCjrP_Q4FBXO0D3zF_VLo>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 22:16:16 -0400 (EDT)
+ 14 Sep 2025 22:16:21 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
@@ -93,9 +93,9 @@ To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	Jeff Layton <jlayton@kernel.org>
 Cc: "Jan Kara" <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 4/6] VFS/audit: introduce kern_path_parent() for audit
-Date: Mon, 15 Sep 2025 12:13:44 +1000
-Message-ID: <20250915021504.2632889-5-neilb@ownmail.net>
+Subject: [PATCH v3 5/6] VFS: rename kern_path_locked() and related functions.
+Date: Mon, 15 Sep 2025 12:13:45 +1000
+Message-ID: <20250915021504.2632889-6-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20250915021504.2632889-1-neilb@ownmail.net>
 References: <20250915021504.2632889-1-neilb@ownmail.net>
@@ -110,151 +110,587 @@ Content-Transfer-Encoding: 8bit
 
 From: NeilBrown <neil@brown.name>
 
-audit_alloc_mark() and audit_get_nd() both need to perform a path
-lookup getting the parent dentry (which must exist) and the final
-target (following a LAST_NORM name) which sometimes doesn't need to
-exist.
+kern_path_locked() is now only used to prepare for removing an object
+from the filesystem (and that is the only credible reason for wanting a
+positive locked dentry).  Thus it corresponds to kern_path_create() and
+so should have a corresponding name.
 
-They don't need the parent to be locked, but use kern_path_locked() or
-kern_path_locked_negative() anyway.  This is somewhat misleading to the
-casual reader.
+Unfortunately the name "kern_path_create" is somewhat misleading as it
+doesn't actually create anything.  The recently added
+simple_start_creating() provides a better pattern I believe.  The
+"start" can be matched with "end" to bracket the creating or removing.
 
-This patch introduces a more targeted function, kern_path_parent(),
-which returns not holding locks.  On success the "path" will
-be set to the parent, which must be found, and the return value is the
-dentry of the target, which might be negative.
+So this patch changes names:
 
-This will clear the way to rename kern_path_locked() which is
-otherwise only used to prepare for removing something.
+ kern_path_locked -> start_removing_path
+ kern_path_create -> start_creating_path
+ user_path_create -> start_creating_user_path
+ user_path_locked_at -> start_removing_user_path_at
+ done_path_create -> end_creating_path
 
-It also allows us to remove kern_path_locked_negative(), which is
-transformed into the new kern_path_parent().
+and also introduces end_removing_path() which is identical to
+end_creating_path().
 
+__start_removing_path (which was __kern_path_locked) is enhanced to
+call mnt_want_write() for consistency with the start_creating_path().
+
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/namei.c              | 23 +++++++++++++++++------
- include/linux/namei.h   |  2 +-
- kernel/audit_fsnotify.c | 11 ++++++-----
- kernel/audit_watch.c    |  3 +--
- 4 files changed, 25 insertions(+), 14 deletions(-)
+ Documentation/filesystems/porting.rst        | 12 ++++
+ arch/powerpc/platforms/cell/spufs/syscalls.c |  4 +-
+ drivers/base/devtmpfs.c                      | 22 +++-----
+ fs/bcachefs/fs-ioctl.c                       | 10 ++--
+ fs/init.c                                    | 17 +++---
+ fs/namei.c                                   | 59 ++++++++++++--------
+ fs/ocfs2/refcounttree.c                      |  4 +-
+ fs/smb/server/vfs.c                          |  8 +--
+ include/linux/namei.h                        | 14 +++--
+ kernel/bpf/inode.c                           |  4 +-
+ net/unix/af_unix.c                           |  6 +-
+ 11 files changed, 93 insertions(+), 67 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 180037b96956..4017bc8641d3 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2781,7 +2781,20 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
- 	return d;
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 85f590254f07..e0494860be6b 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -1285,3 +1285,15 @@ rather than a VMA, as the VMA at this stage is not yet valid.
+ The vm_area_desc provides the minimum required information for a filesystem
+ to initialise state upon memory mapping of a file-backed region, and output
+ parameters for the file system to set this state.
++
++---
++
++**mandatory**
++
++Several functions are renamed:
++
++-  kern_path_locked -> start_removing_path
++-  kern_path_create -> start_creating_path
++-  user_path_create -> start_creating_user_path
++-  user_path_locked_at -> start_removing_user_path_at
++-  done_path_create -> end_creating_path
+diff --git a/arch/powerpc/platforms/cell/spufs/syscalls.c b/arch/powerpc/platforms/cell/spufs/syscalls.c
+index 157e046e6e93..ea4ba1b6ce6a 100644
+--- a/arch/powerpc/platforms/cell/spufs/syscalls.c
++++ b/arch/powerpc/platforms/cell/spufs/syscalls.c
+@@ -67,11 +67,11 @@ static long do_spu_create(const char __user *pathname, unsigned int flags,
+ 	struct dentry *dentry;
+ 	int ret;
+ 
+-	dentry = user_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIRECTORY);
++	dentry = start_creating_user_path(AT_FDCWD, pathname, &path, LOOKUP_DIRECTORY);
+ 	ret = PTR_ERR(dentry);
+ 	if (!IS_ERR(dentry)) {
+ 		ret = spufs_create(&path, dentry, flags, mode, neighbor);
+-		done_path_create(&path, dentry);
++		end_creating_path(&path, dentry);
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 31bfb3194b4c..9d4e46ad8352 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -176,7 +176,7 @@ static int dev_mkdir(const char *name, umode_t mode)
+ 	struct dentry *dentry;
+ 	struct path path;
+ 
+-	dentry = kern_path_create(AT_FDCWD, name, &path, LOOKUP_DIRECTORY);
++	dentry = start_creating_path(AT_FDCWD, name, &path, LOOKUP_DIRECTORY);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+@@ -184,7 +184,7 @@ static int dev_mkdir(const char *name, umode_t mode)
+ 	if (!IS_ERR(dentry))
+ 		/* mark as kernel-created inode */
+ 		d_inode(dentry)->i_private = &thread;
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return PTR_ERR_OR_ZERO(dentry);
  }
  
--struct dentry *kern_path_locked_negative(const char *name, struct path *path)
-+/**
-+ * kern_path_parent: lookup path returning parent and target
-+ * @name: path name
-+ * @path: path to store parent in
-+ *
-+ * The path @name should end with a normal component, not "." or ".." or "/".
-+ * A lookup is performed and if successful the parent information
-+ * is store in @parent and the dentry is returned.
-+ *
-+ * The dentry maybe negative, the parent will be positive.
-+ *
-+ * Returns:  dentry or error.
-+ */
-+struct dentry *kern_path_parent(const char *name, struct path *path)
+@@ -222,10 +222,10 @@ static int handle_create(const char *nodename, umode_t mode, kuid_t uid,
+ 	struct path path;
+ 	int err;
+ 
+-	dentry = kern_path_create(AT_FDCWD, nodename, &path, 0);
++	dentry = start_creating_path(AT_FDCWD, nodename, &path, 0);
+ 	if (dentry == ERR_PTR(-ENOENT)) {
+ 		create_path(nodename);
+-		dentry = kern_path_create(AT_FDCWD, nodename, &path, 0);
++		dentry = start_creating_path(AT_FDCWD, nodename, &path, 0);
+ 	}
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+@@ -246,7 +246,7 @@ static int handle_create(const char *nodename, umode_t mode, kuid_t uid,
+ 		/* mark as kernel-created inode */
+ 		d_inode(dentry)->i_private = &thread;
+ 	}
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return err;
+ }
+ 
+@@ -256,7 +256,7 @@ static int dev_rmdir(const char *name)
+ 	struct dentry *dentry;
+ 	int err;
+ 
+-	dentry = kern_path_locked(name, &parent);
++	dentry = start_removing_path(name, &parent);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 	if (d_inode(dentry)->i_private == &thread)
+@@ -265,9 +265,7 @@ static int dev_rmdir(const char *name)
+ 	else
+ 		err = -EPERM;
+ 
+-	dput(dentry);
+-	inode_unlock(d_inode(parent.dentry));
+-	path_put(&parent);
++	end_removing_path(&parent, dentry);
+ 	return err;
+ }
+ 
+@@ -325,7 +323,7 @@ static int handle_remove(const char *nodename, struct device *dev)
+ 	int deleted = 0;
+ 	int err = 0;
+ 
+-	dentry = kern_path_locked(nodename, &parent);
++	dentry = start_removing_path(nodename, &parent);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+@@ -349,10 +347,8 @@ static int handle_remove(const char *nodename, struct device *dev)
+ 		if (!err || err == -ENOENT)
+ 			deleted = 1;
+ 	}
+-	dput(dentry);
+-	inode_unlock(d_inode(parent.dentry));
++	end_removing_path(&parent, dentry);
+ 
+-	path_put(&parent);
+ 	if (deleted && strchr(nodename, '/'))
+ 		delete_path(nodename);
+ 	return err;
+diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
+index 4e72e654da96..43510da5e734 100644
+--- a/fs/bcachefs/fs-ioctl.c
++++ b/fs/bcachefs/fs-ioctl.c
+@@ -255,7 +255,7 @@ static long bch2_ioctl_subvolume_create(struct bch_fs *c, struct file *filp,
+ 		snapshot_src = inode_inum(to_bch_ei(src_path.dentry->d_inode));
+ 	}
+ 
+-	dst_dentry = user_path_create(arg.dirfd,
++	dst_dentry = start_creating_user_path(arg.dirfd,
+ 			(const char __user *)(unsigned long)arg.dst_ptr,
+ 			&dst_path, lookup_flags);
+ 	error = PTR_ERR_OR_ZERO(dst_dentry);
+@@ -314,7 +314,7 @@ static long bch2_ioctl_subvolume_create(struct bch_fs *c, struct file *filp,
+ 	d_instantiate(dst_dentry, &inode->v);
+ 	fsnotify_mkdir(dir, dst_dentry);
+ err3:
+-	done_path_create(&dst_path, dst_dentry);
++	end_creating_path(&dst_path, dst_dentry);
+ err2:
+ 	if (arg.src_ptr)
+ 		path_put(&src_path);
+@@ -334,7 +334,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
+ 	if (arg.flags)
+ 		return -EINVAL;
+ 
+-	victim = user_path_locked_at(arg.dirfd, name, &path);
++	victim = start_removing_user_path_at(arg.dirfd, name, &path);
+ 	if (IS_ERR(victim))
+ 		return PTR_ERR(victim);
+ 
+@@ -351,9 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
+ 		d_invalidate(victim);
+ 	}
+ err:
+-	inode_unlock(dir);
+-	dput(victim);
+-	path_put(&path);
++	end_removing_path(&path, victim);
+ 	return ret;
+ }
+ 
+diff --git a/fs/init.c b/fs/init.c
+index eef5124885e3..07f592ccdba8 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -149,7 +149,7 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
+ 	else if (!(S_ISBLK(mode) || S_ISCHR(mode)))
+ 		return -EINVAL;
+ 
+-	dentry = kern_path_create(AT_FDCWD, filename, &path, 0);
++	dentry = start_creating_path(AT_FDCWD, filename, &path, 0);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+@@ -158,7 +158,7 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
+ 	if (!error)
+ 		error = vfs_mknod(mnt_idmap(path.mnt), path.dentry->d_inode,
+ 				  dentry, mode, new_decode_dev(dev));
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return error;
+ }
+ 
+@@ -173,7 +173,7 @@ int __init init_link(const char *oldname, const char *newname)
+ 	if (error)
+ 		return error;
+ 
+-	new_dentry = kern_path_create(AT_FDCWD, newname, &new_path, 0);
++	new_dentry = start_creating_path(AT_FDCWD, newname, &new_path, 0);
+ 	error = PTR_ERR(new_dentry);
+ 	if (IS_ERR(new_dentry))
+ 		goto out;
+@@ -191,7 +191,7 @@ int __init init_link(const char *oldname, const char *newname)
+ 	error = vfs_link(old_path.dentry, idmap, new_path.dentry->d_inode,
+ 			 new_dentry, NULL);
+ out_dput:
+-	done_path_create(&new_path, new_dentry);
++	end_creating_path(&new_path, new_dentry);
+ out:
+ 	path_put(&old_path);
+ 	return error;
+@@ -203,14 +203,14 @@ int __init init_symlink(const char *oldname, const char *newname)
+ 	struct path path;
+ 	int error;
+ 
+-	dentry = kern_path_create(AT_FDCWD, newname, &path, 0);
++	dentry = start_creating_path(AT_FDCWD, newname, &path, 0);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 	error = security_path_symlink(&path, dentry, oldname);
+ 	if (!error)
+ 		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+ 				    dentry, oldname);
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return error;
+ }
+ 
+@@ -225,7 +225,8 @@ int __init init_mkdir(const char *pathname, umode_t mode)
+ 	struct path path;
+ 	int error;
+ 
+-	dentry = kern_path_create(AT_FDCWD, pathname, &path, LOOKUP_DIRECTORY);
++	dentry = start_creating_path(AT_FDCWD, pathname, &path,
++				     LOOKUP_DIRECTORY);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 	mode = mode_strip_umask(d_inode(path.dentry), mode);
+@@ -236,7 +237,7 @@ int __init init_mkdir(const char *pathname, umode_t mode)
+ 		if (IS_ERR(dentry))
+ 			error = PTR_ERR(dentry);
+ 	}
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return error;
+ }
+ 
+diff --git a/fs/namei.c b/fs/namei.c
+index 4017bc8641d3..5ceb971632fe 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2758,7 +2758,8 @@ static int filename_parentat(int dfd, struct filename *name,
+ }
+ 
+ /* does lookup, returns the object with parent locked */
+-static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct path *path)
++static struct dentry *__start_removing_path(int dfd, struct filename *name,
++					   struct path *path)
  {
  	struct path parent_path __free(path_put) = {};
- 	struct filename *filename __free(putname) = getname_kernel(name);
-@@ -2794,12 +2807,10 @@ struct dentry *kern_path_locked_negative(const char *name, struct path *path)
+ 	struct dentry *d;
+@@ -2770,15 +2771,26 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
  		return ERR_PTR(error);
  	if (unlikely(type != LAST_NORM))
  		return ERR_PTR(-EINVAL);
--	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
--	d = lookup_one_qstr_excl(&last, parent_path.dentry, LOOKUP_CREATE);
++	/* don't fail immediately if it's r/o, at least try to report other errors */
++	error = mnt_want_write(path->mnt);
+ 	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
+ 	d = lookup_one_qstr_excl(&last, parent_path.dentry, 0);
 -	if (IS_ERR(d)) {
 -		inode_unlock(parent_path.dentry->d_inode);
-+
-+	d = lookup_noperm_unlocked(&last, parent_path.dentry);
-+	if (IS_ERR(d))
- 		return d;
+-		return d;
 -	}
++	if (IS_ERR(d))
++		goto unlock;
++	if (error)
++		goto fail;
  	path->dentry = no_free_ptr(parent_path.dentry);
  	path->mnt = no_free_ptr(parent_path.mnt);
  	return d;
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 551a1a01e5e7..1d5038c21c20 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -57,12 +57,12 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
- 				    struct dentry *base,
- 				    unsigned int flags);
- extern int kern_path(const char *, unsigned, struct path *);
-+struct dentry *kern_path_parent(const char *name, struct path *parent);
++
++fail:
++	dput(d);
++	d = ERR_PTR(error);
++unlock:
++	inode_unlock(parent_path.dentry->d_inode);
++	if (!error)
++		mnt_drop_write(path->mnt);
++	return d;
+ }
  
- extern struct dentry *kern_path_create(int, const char *, struct path *, unsigned int);
- extern struct dentry *user_path_create(int, const char __user *, struct path *, unsigned int);
- extern void done_path_create(struct path *, struct dentry *);
- extern struct dentry *kern_path_locked(const char *, struct path *);
--extern struct dentry *kern_path_locked_negative(const char *, struct path *);
- extern struct dentry *user_path_locked_at(int , const char __user *, struct path *);
- int vfs_path_parent_lookup(struct filename *filename, unsigned int flags,
- 			   struct path *parent, struct qstr *last, int *type,
-diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-index c565fbf66ac8..b92805b317a2 100644
---- a/kernel/audit_fsnotify.c
-+++ b/kernel/audit_fsnotify.c
-@@ -76,17 +76,18 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
- 	struct audit_fsnotify_mark *audit_mark;
- 	struct path path;
- 	struct dentry *dentry;
--	struct inode *inode;
- 	int ret;
+ /**
+@@ -2816,24 +2828,26 @@ struct dentry *kern_path_parent(const char *name, struct path *path)
+ 	return d;
+ }
  
- 	if (pathname[0] != '/' || pathname[len-1] == '/')
- 		return ERR_PTR(-EINVAL);
- 
--	dentry = kern_path_locked(pathname, &path);
-+	dentry = kern_path_parent(pathname, &path);
- 	if (IS_ERR(dentry))
- 		return ERR_CAST(dentry); /* returning an error */
--	inode = path.dentry->d_inode;
--	inode_unlock(inode);
-+	if (d_really_is_negative(dentry)) {
-+		audit_mark = ERR_PTR(-ENOENT);
-+		goto out;
-+	}
- 
- 	audit_mark = kzalloc(sizeof(*audit_mark), GFP_KERNEL);
- 	if (unlikely(!audit_mark)) {
-@@ -100,7 +101,7 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
- 	audit_update_mark(audit_mark, dentry->d_inode);
- 	audit_mark->rule = krule;
- 
--	ret = fsnotify_add_inode_mark(&audit_mark->mark, inode, 0);
-+	ret = fsnotify_add_inode_mark(&audit_mark->mark, path.dentry->d_inode, 0);
- 	if (ret < 0) {
- 		audit_mark->path = NULL;
- 		fsnotify_put_mark(&audit_mark->mark);
-diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-index 0ebbbe37a60f..a700e3c8925f 100644
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -349,7 +349,7 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+-struct dentry *kern_path_locked(const char *name, struct path *path)
++struct dentry *start_removing_path(const char *name, struct path *path)
  {
- 	struct dentry *d;
+ 	struct filename *filename = getname_kernel(name);
+-	struct dentry *res = __kern_path_locked(AT_FDCWD, filename, path);
++	struct dentry *res = __start_removing_path(AT_FDCWD, filename, path);
  
--	d = kern_path_locked_negative(watch->path, parent);
-+	d = kern_path_parent(watch->path, parent);
- 	if (IS_ERR(d))
- 		return PTR_ERR(d);
+ 	putname(filename);
+ 	return res;
+ }
  
-@@ -359,7 +359,6 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
- 		watch->ino = d_backing_inode(d)->i_ino;
+-struct dentry *user_path_locked_at(int dfd, const char __user *name, struct path *path)
++struct dentry *start_removing_user_path_at(int dfd,
++					   const char __user *name,
++					   struct path *path)
+ {
+ 	struct filename *filename = getname(name);
+-	struct dentry *res = __kern_path_locked(dfd, filename, path);
++	struct dentry *res = __start_removing_path(dfd, filename, path);
+ 
+ 	putname(filename);
+ 	return res;
+ }
+-EXPORT_SYMBOL(user_path_locked_at);
++EXPORT_SYMBOL(start_removing_user_path_at);
+ 
+ int kern_path(const char *name, unsigned int flags, struct path *path)
+ {
+@@ -4223,8 +4237,8 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 	return dentry;
+ }
+ 
+-struct dentry *kern_path_create(int dfd, const char *pathname,
+-				struct path *path, unsigned int lookup_flags)
++struct dentry *start_creating_path(int dfd, const char *pathname,
++				   struct path *path, unsigned int lookup_flags)
+ {
+ 	struct filename *filename = getname_kernel(pathname);
+ 	struct dentry *res = filename_create(dfd, filename, path, lookup_flags);
+@@ -4232,9 +4246,9 @@ struct dentry *kern_path_create(int dfd, const char *pathname,
+ 	putname(filename);
+ 	return res;
+ }
+-EXPORT_SYMBOL(kern_path_create);
++EXPORT_SYMBOL(start_creating_path);
+ 
+-void done_path_create(struct path *path, struct dentry *dentry)
++void end_creating_path(struct path *path, struct dentry *dentry)
+ {
+ 	if (!IS_ERR(dentry))
+ 		dput(dentry);
+@@ -4242,10 +4256,11 @@ void done_path_create(struct path *path, struct dentry *dentry)
+ 	mnt_drop_write(path->mnt);
+ 	path_put(path);
+ }
+-EXPORT_SYMBOL(done_path_create);
++EXPORT_SYMBOL(end_creating_path);
+ 
+-inline struct dentry *user_path_create(int dfd, const char __user *pathname,
+-				struct path *path, unsigned int lookup_flags)
++inline struct dentry *start_creating_user_path(
++	int dfd, const char __user *pathname,
++	struct path *path, unsigned int lookup_flags)
+ {
+ 	struct filename *filename = getname(pathname);
+ 	struct dentry *res = filename_create(dfd, filename, path, lookup_flags);
+@@ -4253,7 +4268,7 @@ inline struct dentry *user_path_create(int dfd, const char __user *pathname,
+ 	putname(filename);
+ 	return res;
+ }
+-EXPORT_SYMBOL(user_path_create);
++EXPORT_SYMBOL(start_creating_user_path);
+ 
+ /**
+  * vfs_mknod - create device node or file
+@@ -4361,7 +4376,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 			break;
+ 	}
+ out2:
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+@@ -4465,7 +4480,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 		if (IS_ERR(dentry))
+ 			error = PTR_ERR(dentry);
+ 	}
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+@@ -4819,7 +4834,7 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
+ 	if (!error)
+ 		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+ 				    dentry, from->name);
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+@@ -4988,7 +5003,7 @@ int do_linkat(int olddfd, struct filename *old, int newdfd,
+ 	error = vfs_link(old_path.dentry, idmap, new_path.dentry->d_inode,
+ 			 new_dentry, &delegated_inode);
+ out_dput:
+-	done_path_create(&new_path, new_dentry);
++	end_creating_path(&new_path, new_dentry);
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
+ 		if (!error) {
+diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+index 8f732742b26e..267b50e8e42e 100644
+--- a/fs/ocfs2/refcounttree.c
++++ b/fs/ocfs2/refcounttree.c
+@@ -4418,7 +4418,7 @@ int ocfs2_reflink_ioctl(struct inode *inode,
+ 		return error;
  	}
  
--	inode_unlock(d_backing_inode(parent->dentry));
- 	dput(d);
- 	return 0;
+-	new_dentry = user_path_create(AT_FDCWD, newname, &new_path, 0);
++	new_dentry = start_creating_user_path(AT_FDCWD, newname, &new_path, 0);
+ 	error = PTR_ERR(new_dentry);
+ 	if (IS_ERR(new_dentry)) {
+ 		mlog_errno(error);
+@@ -4435,7 +4435,7 @@ int ocfs2_reflink_ioctl(struct inode *inode,
+ 				  d_inode(new_path.dentry),
+ 				  new_dentry, preserve);
+ out_dput:
+-	done_path_create(&new_path, new_dentry);
++	end_creating_path(&new_path, new_dentry);
+ out:
+ 	path_put(&old_path);
+ 
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index 07739055ac9f..1cfa688904b2 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -196,7 +196,7 @@ int ksmbd_vfs_create(struct ksmbd_work *work, const char *name, umode_t mode)
+ 		pr_err("File(%s): creation failed (err:%d)\n", name, err);
+ 	}
+ 
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return err;
  }
+ 
+@@ -237,7 +237,7 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
+ 	if (!err && dentry != d)
+ 		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(dentry));
+ 
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	if (err)
+ 		pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
+ 	return err;
+@@ -669,7 +669,7 @@ int ksmbd_vfs_link(struct ksmbd_work *work, const char *oldname,
+ 		ksmbd_debug(VFS, "vfs_link failed err %d\n", err);
+ 
+ out3:
+-	done_path_create(&newpath, dentry);
++	end_creating_path(&newpath, dentry);
+ out2:
+ 	path_put(&oldpath);
+ out1:
+@@ -1325,7 +1325,7 @@ struct dentry *ksmbd_vfs_kern_path_create(struct ksmbd_work *work,
+ 	if (!abs_name)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	dent = kern_path_create(AT_FDCWD, abs_name, path, flags);
++	dent = start_creating_path(AT_FDCWD, abs_name, path, flags);
+ 	kfree(abs_name);
+ 	return dent;
+ }
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 1d5038c21c20..a7800ef04e76 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -59,11 +59,15 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+ extern int kern_path(const char *, unsigned, struct path *);
+ struct dentry *kern_path_parent(const char *name, struct path *parent);
+ 
+-extern struct dentry *kern_path_create(int, const char *, struct path *, unsigned int);
+-extern struct dentry *user_path_create(int, const char __user *, struct path *, unsigned int);
+-extern void done_path_create(struct path *, struct dentry *);
+-extern struct dentry *kern_path_locked(const char *, struct path *);
+-extern struct dentry *user_path_locked_at(int , const char __user *, struct path *);
++extern struct dentry *start_creating_path(int, const char *, struct path *, unsigned int);
++extern struct dentry *start_creating_user_path(int, const char __user *, struct path *, unsigned int);
++extern void end_creating_path(struct path *, struct dentry *);
++extern struct dentry *start_removing_path(const char *, struct path *);
++extern struct dentry *start_removing_user_path_at(int , const char __user *, struct path *);
++static inline void end_removing_path(struct path *path , struct dentry *dentry)
++{
++	end_creating_path(path, dentry);
++}
+ int vfs_path_parent_lookup(struct filename *filename, unsigned int flags,
+ 			   struct path *parent, struct qstr *last, int *type,
+ 			   const struct path *root);
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 5c2e96b19392..fadf3817a9c5 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -442,7 +442,7 @@ static int bpf_obj_do_pin(int path_fd, const char __user *pathname, void *raw,
+ 	umode_t mode;
+ 	int ret;
+ 
+-	dentry = user_path_create(path_fd, pathname, &path, 0);
++	dentry = start_creating_user_path(path_fd, pathname, &path, 0);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+@@ -471,7 +471,7 @@ static int bpf_obj_do_pin(int path_fd, const char __user *pathname, void *raw,
+ 		ret = -EPERM;
+ 	}
+ out:
+-	done_path_create(&path, dentry);
++	end_creating_path(&path, dentry);
+ 	return ret;
+ }
+ 
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 6d7c110814ff..768098dec231 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1387,7 +1387,7 @@ static int unix_bind_bsd(struct sock *sk, struct sockaddr_un *sunaddr,
+ 	 * Get the parent directory, calculate the hash for last
+ 	 * component.
+ 	 */
+-	dentry = kern_path_create(AT_FDCWD, addr->name->sun_path, &parent, 0);
++	dentry = start_creating_path(AT_FDCWD, addr->name->sun_path, &parent, 0);
+ 	if (IS_ERR(dentry)) {
+ 		err = PTR_ERR(dentry);
+ 		goto out;
+@@ -1417,7 +1417,7 @@ static int unix_bind_bsd(struct sock *sk, struct sockaddr_un *sunaddr,
+ 	unix_table_double_unlock(net, old_hash, new_hash);
+ 	unix_insert_bsd_socket(sk);
+ 	mutex_unlock(&u->bindlock);
+-	done_path_create(&parent, dentry);
++	end_creating_path(&parent, dentry);
+ 	return 0;
+ 
+ out_unlock:
+@@ -1427,7 +1427,7 @@ static int unix_bind_bsd(struct sock *sk, struct sockaddr_un *sunaddr,
+ 	/* failed after successful mknod?  unlink what we'd created... */
+ 	vfs_unlink(idmap, d_inode(parent.dentry), dentry, NULL);
+ out_path:
+-	done_path_create(&parent, dentry);
++	end_creating_path(&parent, dentry);
+ out:
+ 	unix_release_addr(addr);
+ 	return err == -EEXIST ? -EADDRINUSE : err;
 -- 
 2.50.0.107.gf914562f5916.dirty
 
