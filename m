@@ -1,133 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-61311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910F5B577BE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:12:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8C0B5794A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A5E3AF170
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:12:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A475169EDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA40E2FDC51;
-	Mon, 15 Sep 2025 11:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JP7plFNw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6892D30597E;
+	Mon, 15 Sep 2025 11:51:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014B32FAC1F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 11:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400A12FF678;
+	Mon, 15 Sep 2025 11:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757934752; cv=none; b=Xe2z6Zm8+3pXrT475WyltJjicbjGl0+gvm1w2V8ZTyt1lnaenC+vg58ktJVkrXmfT570ejo8wrBhoNpGNjVh6Hkcc27I0fon+NcqYkLKRJT4OWqI/FT90M5vOVGirPr1isXWFAu2PElVcoopeLqFkoq0p9fAlRs6oisWnjwlA8Y=
+	t=1757937070; cv=none; b=b618J1zmYB89GKhSyKYoY5TGQL3a3ZYdWSUz2+GGiaGMSClsjAKHhBT3PIpthavOLTwtGA5JCo2Mu/lDEXRlmTIwW7OP+Pd6S5bSYAChsUdT3QOn1YWKQb7IJPL3AhosxRJvKxoS1/9wH/lcZUUnE0SAOZs5ILdui2Dxwxz2rpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757934752; c=relaxed/simple;
-	bh=VY3zkdhTGgC126uMIeS5gV6qogT1HLoj1i2dxU+5eik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qvxt880JK8kPWliR0+6mhG3jErYNszW6qaFYAAAmmEFEYKT6OpapJiHOudYYlrrK7rzxk/sBVP0dyW0ELuCS3afmF8XVXNc2LJut5Z6IyQUG2PCqt0cV/G0eg7XwvEdDP+hFF20YSFJckYyBH3UIuQmNhvjaDrnJ6v04O6iWqHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JP7plFNw; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2445826fd9dso47609985ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 04:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757934750; x=1758539550; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4p12IzWrRO+GuzSOQKOoYoCmZLULC1GsuqYzZhikEms=;
-        b=JP7plFNwh89sv86Cw8BHKTbfdRv709peLp0C+HGfWw1C2dzLaKCdUtqGhpBwHl071U
-         0Kj3hH81bMd77qHnpLyC9pjnHFeEqivHqmU/CkdNLHSobUk7wTzPe/DbP2r/lumuxo9F
-         3GzQcZz9xAnb8wL8E/RzUCoGGTb97dqWX8k61itKUMPIctsIFT53Xi6kkXruqA7tcXAN
-         SXhEeVbX72Yw700IdW+2feK0Net0oN6LBOgFabC747IRusGp5O542r0GzgGOp1d7O/7L
-         /wYy/HWGu81w9vCkaz/Z01PvBmixkjtWhaDTDqp4IDIJ1ded4CWth9GmKT1BpIVB8IoG
-         b2xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757934750; x=1758539550;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4p12IzWrRO+GuzSOQKOoYoCmZLULC1GsuqYzZhikEms=;
-        b=wS76yFr25HcXBhXEtY4IMElsvIKFBvK8D+ZDOO+0SDYPNW7uTZ6sl1cNXA/TNYisqd
-         xaiO6LGTjaYFP12OK5/lyZmffQ0xBGx2ROwbIWJzWxR+pfwTjFSicD59n+svw7LE7XS7
-         cnRscaeKpQeRxWxLql8KzOApd6urorGRqRSJyKyYBePXUBFAQGqih2gzrx+Ec346J6BM
-         aj/ho9KuJ41TTrkFCDjYRwDHBw9XqhbBFrBUitCCXT9MvqXLetfZxVAn5wI6awMLYS7d
-         nwv0gMklIW0mTiQ4cUPr+W4Yxdvr1ba8HDDfaeCcF8MT8MzMuVxAxsfEuMVaRk3j6fyK
-         35/g==
-X-Forwarded-Encrypted: i=1; AJvYcCX0RZVXKPsUDT1qZT4iIKmPET7FYFvHdp1xfNaaCukUy3/p4ivoGD1ahC+GHU4tKfpzJ/e3mc1hCZsdwQfR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSKySJYVOC8YdPH535eHN/fZFV04kHdpbOF9zqGzxBrmN8+Blm
-	dS4N3okUm3DJfYkXGJPuZ5nghL6LCz4vmvHM+pHTc3ntJHNq0vXog2tU
-X-Gm-Gg: ASbGncuPakWzqyiII3vEbJ9eWUJoJuM0+IAmbcR0wEEiYhs/NVO4YmORs9ptUogBxw9
-	oCD22fHijzXw3mMXlzOiYHAkul9sF1yG6M2tpt7EcT9EfNl7J1mcnAyrcKjqCYzyL7ddqSJrnnP
-	zlakTQbZKsK9d2ti2yRD3h6GRoAU+2k7U+MMkIqwC4SDnJdYvbhe6SbWoEYR4/wKpUFeLJs/uEf
-	pHOVu6zBpz1P0ZwSnikRyzRckfi9kDHHcTOcrHckWUjCMLBCAZ/hhptwRoPvzxJ2rGkRGQWSudz
-	Ef9nYYeukLY4essSWYrm+eXsfADmNaZ2BdPJviCnIKxBn5pDQI9KtiBYYOg6txWf8JWI8Tuqk2y
-	l6LtTWJzs3J2wlklQVqFeTwF38JNk6zGHfg==
-X-Google-Smtp-Source: AGHT+IExDJoPLFyVEh3wqMlZXAiX0+tZkyl11B1SwSybUi3y+vj4NaoaTvhTCkhJAG90Odm2ARIFaQ==
-X-Received: by 2002:a17:903:1746:b0:264:70da:7a3b with SMTP id d9443c01a7336-26470da7d17mr63606755ad.49.1757934749994;
-        Mon, 15 Sep 2025 04:12:29 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264ab88689fsm41411705ad.27.2025.09.15.04.12.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 04:12:29 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: kernel@pankajraghav.com
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	yi.zhang@huawei.com
-Subject: Re: [PATCH 4/4] iomap: don't abandon the whole copy when we have iomap_folio_state
-Date: Mon, 15 Sep 2025 19:12:28 +0800
-Message-ID: <20250915111228.4142222-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <dhjvmhfpmyf5ncbutlev6mmtgxatnuorfiv7i4q55wpzl7jrvn@asxbr2hv3xfv>
-References: <dhjvmhfpmyf5ncbutlev6mmtgxatnuorfiv7i4q55wpzl7jrvn@asxbr2hv3xfv>
+	s=arc-20240116; t=1757937070; c=relaxed/simple;
+	bh=8Z5zmYLUV+4ZrO5EHC1XTvy0sirc64JgGyrM0lTrX/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CnP2qZqtGGlnXTgK/nCG2UtBNje10VNQXB7MDAwRmIKEDPn8nJkNqdFp+a9nMhku4WxiuEwexLbwIkhy7vSeONvwWm9FRfJMIZYsJHUjFzAUndu1FUhqRkDnhc/Ch3wGeNY912m4ada4u/Vvuq856GH8gdssDGpGiNz5307DVFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cQMtW5q8Yz9sxd;
+	Mon, 15 Sep 2025 13:16:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id OLcbQxt2yUNY; Mon, 15 Sep 2025 13:16:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQMtV4LnCz9sxb;
+	Mon, 15 Sep 2025 13:16:50 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 706ED8B766;
+	Mon, 15 Sep 2025 13:16:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id sggpKi6r1EPD; Mon, 15 Sep 2025 13:16:50 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B33B28B763;
+	Mon, 15 Sep 2025 13:16:49 +0200 (CEST)
+Message-ID: <053f39a9-06dc-4fbd-ad1b-325f9d3f3f66@csgroup.eu>
+Date: Mon, 15 Sep 2025 13:16:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 02/62] init: remove deprecated "prompt_ramdisk"
+ command line parameter, which does nothing
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
+ Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+ Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
+ Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-3-safinaskar@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250913003842.41944-3-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Mon, 15 Sep 2025 12:50:54 +0200, kernel@pankajraghav.com wrote:
-> > +static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
-> > +		size_t copied, struct folio *folio)
-> > +{
-> > +	struct iomap_folio_state *ifs = folio->private;
-> > +	unsigned block_size, last_blk, last_blk_bytes;
-> > +
-> > +	if (!ifs || !copied)
-> > +		return 0;
-> > +
-> > +	block_size = 1 << inode->i_blkbits;
-> > +	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
-> > +	last_blk_bytes = (pos + copied) & (block_size - 1);
-> > +
-> > +	if (!ifs_block_is_uptodate(ifs, last_blk))
-> > +		copied -= min(copied, last_blk_bytes);
+
+
+Le 13/09/2025 à 02:37, Askar Safin a écrit :
+> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> If pos is aligned to block_size, is there a scenario where 
-> copied < last_blk_bytes?
+> This is preparation for initrd removal
 
-I believe there is no other scenario. The min() here is specifically to handle cases where
-pos is not aligned to block_size. But please note that the pos here is unrelated to the pos
-in iomap_adjust_read_range().
+Squash patch 1 and patch 2 together and say this is cleanup of two 
+options deprecated by commit c8376994c86c ("initrd: remove support for 
+multiple floppies") with the documentation by commit 6b99e6e6aa62 
+("Documentation/admin-guide: blockdev/ramdisk: remove use of "rdev"")
 
-thanks,
-Jinliang Zheng. :)
+Christophe
 
 > 
-> Trying to understand why you are using a min() here.
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+> ---
+>   Documentation/admin-guide/kernel-parameters.txt | 2 --
+>   arch/arm/configs/neponset_defconfig             | 2 +-
+>   init/do_mounts_rd.c                             | 7 -------
+>   3 files changed, 1 insertion(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index d3b05ce249ff..f940c1184912 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -5229,8 +5229,6 @@
+>                          Param: <number> - step/bucket size as a power of 2 for
+>                                  statistical time based profiling.
+> 
+> -       prompt_ramdisk= [RAM] [Deprecated]
+> -
+>          prot_virt=      [S390] enable hosting protected virtual machines
+>                          isolated from the hypervisor (if hardware supports
+>                          that). If enabled, the default kernel base address
+> diff --git a/arch/arm/configs/neponset_defconfig b/arch/arm/configs/neponset_defconfig
+> index 16f7300239da..4d720001c12e 100644
+> --- a/arch/arm/configs/neponset_defconfig
+> +++ b/arch/arm/configs/neponset_defconfig
+> @@ -9,7 +9,7 @@ CONFIG_ASSABET_NEPONSET=y
+>   CONFIG_ZBOOT_ROM_TEXT=0x80000
+>   CONFIG_ZBOOT_ROM_BSS=0xc1000000
+>   CONFIG_ZBOOT_ROM=y
+> -CONFIG_CMDLINE="console=ttySA0,38400n8 cpufreq=221200 rw root=/dev/mtdblock2 mtdparts=sa1100:512K(boot),1M(kernel),2560K(initrd),4M(root) prompt_ramdisk=0 mem=32M noinitrd initrd=0xc0800000,3M"
+> +CONFIG_CMDLINE="console=ttySA0,38400n8 cpufreq=221200 rw root=/dev/mtdblock2 mtdparts=sa1100:512K(boot),1M(kernel),2560K(initrd),4M(root) mem=32M noinitrd initrd=0xc0800000,3M"
+>   CONFIG_FPE_NWFPE=y
+>   CONFIG_PM=y
+>   CONFIG_MODULES=y
+> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+> index ac021ae6e6fa..f7d53bc21e41 100644
+> --- a/init/do_mounts_rd.c
+> +++ b/init/do_mounts_rd.c
+> @@ -17,13 +17,6 @@
+>   static struct file *in_file, *out_file;
+>   static loff_t in_pos, out_pos;
+> 
+> -static int __init prompt_ramdisk(char *str)
+> -{
+> -       pr_warn("ignoring the deprecated prompt_ramdisk= option\n");
+> -       return 1;
+> -}
+> -__setup("prompt_ramdisk=", prompt_ramdisk);
+> -
+>   int __initdata rd_image_start;         /* starting block # of image */
+> 
+>   static int __init ramdisk_start_setup(char *str)
 > --
-> Pankaj
+> 2.47.2
+> 
+> 
+
 
