@@ -1,368 +1,476 @@
-Return-Path: <linux-fsdevel+bounces-61425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AE8B57FFB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 17:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9B8B58027
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 17:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF733AC46A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5089D3A3B71
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782CF33472D;
-	Mon, 15 Sep 2025 15:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4715233EB1B;
+	Mon, 15 Sep 2025 15:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Sn77ifHc";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZNJyof1r"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sjavrPa1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hhfAkb6x";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VlBpkTRV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gj1Tve6H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F044F32F77A;
-	Mon, 15 Sep 2025 15:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948822; cv=fail; b=C5y+Cm/PuIjQh3S3svMWQomqNchqWNjJRglRRlP7m0wE/2XfRA5dy8WiGoBRP1Ap/oRjkDk0g/BFSvN8XJgtaiXG8Ow+fmWJxumu13kt0zp8BvpqAWPmphRnlCRYAz+g2Wg36KhxaR/wUxBL4znTI+Hf0cb6wCwuPgVq11MLH18=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948822; c=relaxed/simple;
-	bh=2AzuQW3LOQtD528XTK9MazyGiq/eO4T6g5JiRMu7gsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NVRFa7dY/jR12CZYl5P8K/8Fk0mvC+wo83SwfcWaYJubQIXBn+05J26uclFewV03bOiT8DIbIxU1lrRt/9wSt4MATrnE++1cDtRPcoG/wDmIFiDVNCfeU2x++NTg88Wd5sVVJsuMZjrwaMXVhOyzujepysosgVW39Y5pcjxGLNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Sn77ifHc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZNJyof1r; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FEMnSq020268;
-	Mon, 15 Sep 2025 15:05:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=9zi855moYw2KbC3ZX0
-	OCjYwrIf9mR21txiFBMDTcDv0=; b=Sn77ifHcYf9YyRx51T8dqgmJn0uZ2v4oCK
-	VJ4MYk38kVkchoLr9YVgff0pkLC5BKAxeIKLXPjKqUKsXqcXoMqBvjDwRPYP4j3T
-	XD/r2eX+X11YwnFw2x3hPDj+89yik8Hv7pGN/F2IbovdgHlJlq+qJwf+4rfIfLZo
-	yF/biTJNSHapaL1ZKoKVxrRriBjFtj9aQeK0ESIiq3MqHtB0PE1BwnVQ1FN8lT70
-	7aTKwcJr5ESlJ9lhxWiT9hxjyuBdbt0F1NnVHWRlDdect5ApZKRmsLekh8/jYEbJ
-	0WLdFB7N7ZKFX+UEEow+ANFWPTVNlhXU8M076uSTQcKPENvkKkPQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 494y1fjkvd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 15:05:12 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58FE42iW015298;
-	Mon, 15 Sep 2025 15:05:11 GMT
-Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011056.outbound.protection.outlook.com [52.101.62.56])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2he78s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 15:05:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PfMzvZd8XodgwW3KBh5w8g0Us5Vq8WVLzT8VZjqtUpoAKuFHBz6Lx1xG1J56V1skLVB996qtAfxQoc2Q2HJaOrifaNasLI+qn254UeQFs9ZPKtYnt/mbz5rrJ2jfN3NMqfmTxjsV98HnLKNTrEkxqdN8O3pa747tA9C8R91R6zf1HVZ9LRC7+BxwVc0Yy/Ao2FhXOC3tOtCW0MKlbZYi2s328BQHXEoBk9cF5CBDy+8XW2BpmapmDE/heHEBBRW2qU3Y3znkV6xFfUg12/L0dlH5nRJ8FmIF5J4pm05GpwRT3CBmehnZZst/M7qhW1QK8alXIsocmY+pOXUuJ/Bc7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9zi855moYw2KbC3ZX0OCjYwrIf9mR21txiFBMDTcDv0=;
- b=W7nS/5Wbp3DwnfVdj7+I16rlXCPAYPbffAf5coxEjJsdjmYghNygURQkJxnf4GAAdYOoikht4/KarK3kfwqy2yVnfvFlmjhkKriJ7sej/7LWV/InKx99+cNBoKBt6Qhbrm8Xxk1FMweuP3wKK2QQGffZpNWz3wrXd8Ln6aYiXTr93DN2znWZ1W9+dSzLTwwozCwmMyRzN7k6g805b/6ZJbaEclYzruxQNyWIgcWLDAfEkb5sGOTYbUHMiNfPvifLSatt24YhzZjHDwkAPpxJvYGY/hQ+CRP7wCluZ1eALWZh++iOdVgtqt0xf9FCXc6FaFFGFGLNcACIi7KtUTi7WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9zi855moYw2KbC3ZX0OCjYwrIf9mR21txiFBMDTcDv0=;
- b=ZNJyof1rk3Sc2xjYVVCags/6/6XeT7Jxo5ccKLz2exYfy7ULtzi9iTTHdMbtTk0nNuQBXnt9cHBw59sHDk00BDdKLbTdS+bzORpytouSbnV7McgsDF2NBAaD2Up/vJVRIv6XpzLVQ/gZI+biFOujiDZuxNtZMZapobSLXa1fZvE=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB7430.namprd10.prod.outlook.com (2603:10b6:8:15b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 15:04:47 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 15:04:47 +0000
-Date: Mon, 15 Sep 2025 16:04:44 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
-        Guo Ren <guoren@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-        kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 08/16] mm: add ability to take further action in
- vm_area_desc
-Message-ID: <3c968a23-cf25-4b95-bb44-f7cdfd47c964@lucifer.local>
-References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
- <d85cc08dd7c5f0a4d5a3c5a5a1b75556461392a1.1757534913.git.lorenzo.stoakes@oracle.com>
- <20250915121112.GC1024672@nvidia.com>
- <77bbbfe8-871f-4bb3-ae8d-84dd328a1f7c@lucifer.local>
- <20250915124259.GF1024672@nvidia.com>
- <5be340e8-353a-4cde-8770-136a515f326a@lucifer.local>
- <20250915131142.GI1024672@nvidia.com>
- <c9c576db-a8d6-4a69-a7f6-2de4ab11390b@lucifer.local>
- <20250915143414.GJ1024672@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915143414.GJ1024672@nvidia.com>
-X-ClientProxiedBy: LO4P123CA0526.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:2c5::12) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABECD32BF44
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 15:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757949201; cv=none; b=bAfNjA8KH91P3WIRYMLTBpRZbG1AJvqh3bn0R8ROeLGK1C6bUZqyVkyks//ZiB6sOHgQLIqFOQxVAI7ltKNl/3hGhk4pdNFfCNfBzQHYHIMqABxthvWhnR0Vw2vEwO1qC0dOooO4BwVpzF1FJTD9H3chIviaoNcYt81p2vfYQcw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757949201; c=relaxed/simple;
+	bh=3IQtJm7mMS1Uo12dh23cyk5e3NgioMFfSDoTlzxwp3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ax9T5I8bpKS1I21U8VqEnSobTWKux/IQqmRdZ62xIBN87rDAaAHb5PhZmWDjgLcDxx+LiOIiIIFhS00IH5Ds02+tPZ9511MJkOGVSOQEQ0jzVtrQp22C+L6Xwbc3JWMOEi/JWL7A/NDxpAEROlcgbfxHUHzuB02yisnQDVR0aD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sjavrPa1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hhfAkb6x; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VlBpkTRV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gj1Tve6H; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E36651F45B;
+	Mon, 15 Sep 2025 15:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757949198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SM04c3QTg7sbF+DmVDu8U26IY5Hco7mj11iLk2ezn+0=;
+	b=sjavrPa16XdZpEhsUFnBumByv38eoJkDlURL7A+NJb79EUeBCwThelr7TYUgUQk2/vK+38
+	awTWx3zrdqcaDVbxL3/0KBJLW15+8CndcpIrTagIEXDw8oIhkXj8mWGSj8vjClt4qNVtXG
+	oB332MoHgP1EZhrI1sMNjb5eJsVZxws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757949198;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SM04c3QTg7sbF+DmVDu8U26IY5Hco7mj11iLk2ezn+0=;
+	b=hhfAkb6xQtw6SKoNZioWbmOSQbjjB2prB0unKkGnUe6VIjSx/Gv2DpLofFN1L5VaUp0/4C
+	YUhsvBXoFp8BOqDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757949197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SM04c3QTg7sbF+DmVDu8U26IY5Hco7mj11iLk2ezn+0=;
+	b=VlBpkTRVh7cINAz5wGckiQvlQPvYYsx62xquF6DaLAW1Qeo0Wl0+y54LRAvwl6GwK3n5z8
+	Pzab9e3ggjs5ja6uDCbAc00vAItvV/i7dLOl9X/J1dq+4b66LuxeFrwjoGJWVyPKybh2Kc
+	/20D96zns+19XvKN19DrADgENebeW6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757949197;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SM04c3QTg7sbF+DmVDu8U26IY5Hco7mj11iLk2ezn+0=;
+	b=Gj1Tve6HksnE02rwkQ0zHkV+/MlY7zsqXH8dr1mmM95Eh0gambjxwkjDgUAoFj8RzG6r1T
+	sT6Sbf2cA/TOQ1Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4A961368D;
+	Mon, 15 Sep 2025 15:13:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RijjMw0tyGjrcAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 15:13:17 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9037DA0A06; Mon, 15 Sep 2025 17:13:17 +0200 (CEST)
+Date: Mon, 15 Sep 2025 17:13:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 0/4] writeback: Avoid lockups when switching inodes
+Message-ID: <3jfmu376jyk75l3jl5aopygfslbjj4omieavbtyugivxoe5kex@cv34s24fuzae>
+References: <20250912103522.2935-1-jack@suse.cz>
+ <20250915-anlegen-biegung-546ecc3b96a5@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7430:EE_
-X-MS-Office365-Filtering-Correlation-Id: df62b800-e704-4760-dfb9-08ddf46935e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YpZ4FA9Tu9aRn9wxD1uu+x/6JA8Unni8i/1eX+zZ0KzCaO2U85NVrHOdAQze?=
- =?us-ascii?Q?ua/mR2LvwgC0VRIh6SaFk/YrigVU9krt/jExgR7ARSTqSnoBF1tfL/IdGUMT?=
- =?us-ascii?Q?PKH3K2FF62erzrEQNWwb5KHBOAlb+Aw+NOFfBO4DeF0R5MJAHkC5M3dQBx4R?=
- =?us-ascii?Q?XixKogvhnWLweY8mkNwN11aM8DlVTOTevUiHluRCn7ACrQhii6x5+24EbRsc?=
- =?us-ascii?Q?bryD7fmv5SuWC6xMjPZ1toUTB4JBUEQTpPuVqyanJVBu7O3sSImyJwvk3CKv?=
- =?us-ascii?Q?leFMq2IjA6P8YODcNtMEMHqoAh9NQsb5KTZ8eQJFYNrbVopSPMOTJs/bzTou?=
- =?us-ascii?Q?nL7dkiZoCcx2SMhW0vaEclFuWzm0bv4j3LdnEAwyn1s5Ps0STlIc3lfDW9Q7?=
- =?us-ascii?Q?mqH7gewh5/BFIc8gsis+TsAv5uaMszA99A+WfrBa2g4d99zXbNLsr31k4jFF?=
- =?us-ascii?Q?hT6RRkXKNhik8NOrNpVBKpjfhzr49dypVwg2TWZX8nYMcZLuZrJrjPWwkTQ6?=
- =?us-ascii?Q?m//rijDO2/38abTpxpzDQn6CC91fa4IeujZQDGAMxq+EphCl7xsmMRLiZ5ee?=
- =?us-ascii?Q?tkiUW54jFKnDqGWs4/ympd+APAkoyqk14okQtzB08r21ggQkVVEpgu0Aa2Ou?=
- =?us-ascii?Q?59Js01AAoWTWzch8ICOwRxLWcNrWAOY8YnzGRrjyxQC2EE0NdH8Zyld50R6P?=
- =?us-ascii?Q?SO1dPThbYtmFhsJsKvCZIoTWzXbXPstI8kCfHe25oAIVXbcZwWiUIJDDboST?=
- =?us-ascii?Q?8h7pAVttv9JMJ7e2LOlPmHSxXOMwPPyxr0o1rZUoEn2N9j9zAkEJkJ02hOCM?=
- =?us-ascii?Q?etDjUoDA1cPEI9EJODdjAdeenR6NugZUd4NG99z4ddQKzK7r0fJ2aA+CE3UQ?=
- =?us-ascii?Q?6CbT65aJvy8QzVu7Oo+8P2gscGcBJ8CKAzQW/M4LEoKfZ6qYGbkM0ly13apB?=
- =?us-ascii?Q?OjUEAHG8k7+O4XwEJvDBaJ0q4YfcNIA3P455/NHLrAC20F9JiS2bM7V3h0fe?=
- =?us-ascii?Q?/Y9f8II0+TYR9DVsxyYh7k3fv3JglnbwCy28KD5VQPf/BFi83E37RBdE47+o?=
- =?us-ascii?Q?jClK51YAlOtRtJiNwYRhaqgzB2Wg7ajNyFxJQEFSpnI6ocrP38ZJnpJvJ88U?=
- =?us-ascii?Q?FAxnxsEYYqUabEAiNrCY8ViWUsnZfTkns4CZM5xHNtJLYU4+tPiZvRc+6VUW?=
- =?us-ascii?Q?HfopLmIEnEsjfOlY5fTNkWpTPkK9r5ECT7taCuhkG/neSoZzbpcZUi+tFv3D?=
- =?us-ascii?Q?F4nNuDTs0oSLZNz8pnjNQPtg/+t/HVebDtK9jQ3EezhsS0fSiwfJUwFtHhpN?=
- =?us-ascii?Q?MIAvcYXR5jB7JyZppbLc2mAXPsAqZ9KnUR7/Xsqw2bt9R6gmEXTjzyJIQlaN?=
- =?us-ascii?Q?489wzxO7vZciUbu6QaIXxbDiLsCflg9Xd8bxVhgyxFCLPYOTDS3NOLpP2BkT?=
- =?us-ascii?Q?oYtesUFR0s4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qyIZAj5xz/8d3bystBZevVhTWIq3lS8NkSAahae9kc4xpk669KOQtTNVNDUo?=
- =?us-ascii?Q?CAGCUHm5k/hKwt//sXhXh1bNLrUc8rA+fKyXLTlnYptBdRMmxunF7Bjm6ZpP?=
- =?us-ascii?Q?OlwXLhdnPlZm4l9QRs6h2YRWbKVWLUJnK31R9V416Oi1yk1ezXenyqGSYAe6?=
- =?us-ascii?Q?5jtWFCUpJGdp0EALs9Tkl27ZBzvMaTXGAfaUEZhAcR3/LTpopXJDzTwEgmD0?=
- =?us-ascii?Q?6l8ylT5NxqyQaXz6+z/2DvEmnP3St8Eee+VJXJNrRmfzAiwcumcUkp3rb6yg?=
- =?us-ascii?Q?dxLLv9Pk9VSmdmSsNzg48R/6NhOjveK7+S+2TqPeEqIQLtjgk4wrznymCsza?=
- =?us-ascii?Q?WVmCwJ5UrU8OilvVH1jUUGCV0pZSSYpTvoJ/1nKS03EQG6UXuruxbnz0Q+wi?=
- =?us-ascii?Q?9DzhXYo1uEdCsd+aKYHUmFiI+dbeHKroLgsLEro7Rk/rjy93Orgvxrhm8x5t?=
- =?us-ascii?Q?Rk/vZcvI9gKCDobZpmifoxH3tNNKP7DfFei+llxPg7rPMe8unvKlIpILAtUx?=
- =?us-ascii?Q?1W7uu7bQPEWiM0X1wNd0T/4alupTUdMe2G+B2z3XuFI81aOlfWKDSq3c26ER?=
- =?us-ascii?Q?XM4P4YXjZu6AOYYw01QXUp51vtjUtydS5DzOmSTdIb4BjczD4kg6G9KHjJhh?=
- =?us-ascii?Q?+P6kmfAC7A2nK6NJpxPZCAdRscpt4cPrfcvg5WJYrQQifKjAehsIm+gNz1RB?=
- =?us-ascii?Q?idKDnDGhwxyJ6PU6rDWYtwjwDlRnXMCWKtOf4PboNR6dNDqnFPJUybtwA9BR?=
- =?us-ascii?Q?InPe8Utbpv07gYIKaD2jnhKWqaaF7GpePROjGb7SakH/nqhNA+06jv5pKl4u?=
- =?us-ascii?Q?Yplfu6yUIZ6D+qa/ViDKfqYg1Di4gvKz2SBp6LUKgYROnX35vvo8MgUN83Fv?=
- =?us-ascii?Q?HdXkIRtPlVdJmGCI5Nd4XPA5AWRy44Ki1V2i+5RYZJrMTznh5MPRFXH8ypsG?=
- =?us-ascii?Q?wZ6I6cX5tGVNXNAQCpyFfPJ3DFDB5EbB/amuUz77y7f0oi6L+FnF4M6ZkOQ+?=
- =?us-ascii?Q?3SF41gQ4FhcULsy+rmAF8tlbD6/x7slJwdK30+Y3PKMRht9aSbhzAOzjQ2Zm?=
- =?us-ascii?Q?3RKbm4GQSA118pVuqzGov2FMCa9TWwWSjbRaTRKH2aAo4hkj+2pRNGVFmhm/?=
- =?us-ascii?Q?qfp+9ba07f2aFFTJjkFZthD6ODppudZIDbyJzLjWMJMEsvlL2A70R9EWKZO0?=
- =?us-ascii?Q?VyOUd+7zZVDFQj2IParSz5ZsO1HBISW3Jkm3z2ytH9pQF7sswVm+KdfDowz9?=
- =?us-ascii?Q?JjUGL7Cq60KO5h5ZmuDOH33WHGFZmRCfZ+DReq+ytbQAz2FJcFgofcM61pNw?=
- =?us-ascii?Q?acmJhfW9dxM/ltCWk0+dJ2BvBZFqXuX9jIHXQAewkt7Ip7LPeAUDNxDhrvHC?=
- =?us-ascii?Q?j0+oVPzaEY99rYFW5jR9zhG6rRm98HFJ6GQtL4UjwCFVCz0tEjaaww/VjfpN?=
- =?us-ascii?Q?h/zeLxWfD/qEKOFq4F3gWAA9bJBohu6cfAz74LZVShfy5+5/cch3EXKhCw+A?=
- =?us-ascii?Q?8JqPEfb17OwvEVtwQ7R6HO331WazHTT1pjMoFf8DzlI1juKOo0BS230mO8YK?=
- =?us-ascii?Q?y+tAE0iCI6if4MGVIjrgnnkw8/peWiDW2jmQrjMCYJrcptQJe77meSaeXfA+?=
- =?us-ascii?Q?rw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	RdSHP8JynCFQSzEXbIa8F6Pxqi/bRRo1nrHQSoa+Y8KBeV8L7w6PUS3Z6zez9tAwvjeUvWl+ojVBvp05IffMJvyHAHely+ERClaUXGmMrwQ8amvQP2esdf8HqwRXmAT0BFJlKxF8+IN+aOGrZGzw3WWB5kqzkJpMBXKBLFtkLK2hJJERyJe6N7HoS4wzWVV5kvOi7g7djA/17ccieB+orv49pBaPXKRxAF/OEP/chdc5S0tqFby4dGYFvjB+DM6x9Q5//u4dzZ++2labwG6jYWH16hOpEmTvqe8CCKZleX5uOuroc3PBx35mPxPDo2hr3vhAh/kQ6Kbyt2Bw3yBPDrAMoEmSEFjZIZtADEGgeWjvlaR+F45FNHiqyNIH6DKWsYByzKdCEZ1so3Kf69fxdyDq6aTEbBjPnc1BivNOKvmeHfoMmPtdPhrehxE4dUBz7eTSC4qgRyIz8LJbMgFMooBnDelmxGJgDPA0eYO+atl8TOHxnEGjK+T2s/v9Kps5h/RQoPpF5d8XSFm50Lqbh73LrXzK0Gh9LNc7qq9lbPOo6QGtIRzv5oY5GCugsyvljv99d8JaCdS8Bwl2RsLgHv2ZTa4IFbwizBl0q/r2KV4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df62b800-e704-4760-dfb9-08ddf46935e1
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 15:04:47.1148
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lzQr/RfVA8jKjcnFLpbkEa+T35n8j3u5Fc9VyF9xRK3nrVm+JQARrJJcH8/GhnXnLXJPtoaEqKvEy1i9n6hh5ktDES0ojZ44SATAKRJU1VA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7430
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_06,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- adultscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509150143
-X-Proofpoint-ORIG-GUID: _Clld2-6NJqe8w8m6ACRtj6Oy6FwjEkr
-X-Authority-Analysis: v=2.4 cv=KNpaDEFo c=1 sm=1 tr=0 ts=68c82b28 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=xsfo4qHKq2V8f6MN6hQA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:13614
-X-Proofpoint-GUID: _Clld2-6NJqe8w8m6ACRtj6Oy6FwjEkr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxMiBTYWx0ZWRfXyrIBTSUbnnTT
- FuqhtNFRAaCEfjqsnNTP3iEI5jrOpL7wNvvSnXnkab/NeOY//2LEFF270ePnFvOLeXgjO5DRJiX
- j7EeP4pXkBCFuHegtr2iB2Psi069f4d7wvw/6vVpQX9LiVLBLhDRflVO0aBeZdvsJVN9hx5+lB1
- qxqZWnK7Sq+E6a2MsCCFuNXYk8ia4HTl9DCyiqxOLr1i6v0IEzlG7jvJty8erXsukOKCiDTKZK2
- lrdnoeBtRoKGPhUInxwn53nuTWKLanHcYGlRNtwvEKxKkd+JshQxjjRHpY9rbx3SI0WKC4EHrwf
- DOWzq9yve2MHp5Vh5o8qXkcK2JCUhKnLClTGrPitTMicwWegwE8XMaaWPRRsTkkAGQ4ziEcJld4
- lKq+n3/E9yuBU473nphj0Q4f+hzBLA==
+Content-Type: multipart/mixed; boundary="tzlytyesm7ilxap6"
+Content-Disposition: inline
+In-Reply-To: <20250915-anlegen-biegung-546ecc3b96a5@brauner>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+,1:+,2:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Mon, Sep 15, 2025 at 11:34:14AM -0300, Jason Gunthorpe wrote:
-> On Mon, Sep 15, 2025 at 02:51:52PM +0100, Lorenzo Stoakes wrote:
-> > > vmcore is a true MIXEDMAP, it isn't doing two actions. These mixedmap
-> > > helpers just aren't good for what mixedmap needs.. Mixed map need a
-> > > list of physical pfns with a bit indicating if they are "special" or
-> > > not. If you do it with a callback or a kmalloc allocation it doesn't
-> > > matter.
-> >
-> > Well it's a mix of actions to accomodate PFNs and normal pages as
-> > implemented via a custom hook that can invoke each.
->
-> No it's not a mix of actions. The mixedmap helpers are just
-> wrong for actual mixedmap usage:
->
-> +static inline void mmap_action_remap(struct mmap_action *action,
-> +		unsigned long addr, unsigned long pfn, unsigned long size,
-> +		pgprot_t pgprot)
-> +
-> +static inline void mmap_action_mixedmap(struct mmap_action *action,
-> +		unsigned long addr, unsigned long pfn, unsigned long num_pages)
->
-> Mixed map is a list of PFNs and a flag if the PFN is special or
-> not. That's what makes mixed map different from the other mapping
-> cases.
->
-> One action per VMA, and mixed map is handled by supporting the above
-> lis tin some way.
 
-I don't think any of the above is really useful for me to respond to, I
-think you've misunderstood what I'm saying, but it doesn't really matter
-because I agree that the interface you propose is better for mixed map.
+--tzlytyesm7ilxap6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> > > I think this series should drop the mixedmem stuff, it is the most
-> > > complicated action type. A vmalloc_user action is better for kcov.
-> >
-> > Fine, I mean if we could find a way to explicitly just give a list of stuff
-> > to map that'd be _great_ vs. having a custom hook.
->
-> You already proposed to allocate memory to hold an array, I suggested
-> to have a per-range callback. Either could work as an API for
-> mixedmap.
+On Mon 15-09-25 14:50:46, Christian Brauner wrote:
+> On Fri, 12 Sep 2025 12:38:34 +0200, Jan Kara wrote:
+> > This patch series addresses lockups reported by users when systemd unit reading
+> > lots of files from a filesystem mounted with lazytime mount option exits. See
+> > patch 3 for more details about the reproducer.
+> > 
+> > There are two main issues why switching many inodes between wbs:
+> > 
+> > 1) Multiple workers will be spawned to do the switching but they all contend
+> > on the same wb->list_lock making all the parallelism pointless and just
+> > wasting time.
+> > 
+> > [...]
+> 
+> Applied to the vfs-6.18.writeback branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.18.writeback branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
 
-Again, I think you've misunderstood me, but it's moot, because I agree,
-this kind of interface is better.
+Thanks Christian! I'm attaching a new version of the patch 1/4 which
+addresses Tejun's minor comments. It would be nice if you can replace it in
+your tree. Thanks.
 
->
-> > So maybe I should drop the vmalloc_user() bits too and make this a
-> > remap-only change...
->
-> Sure
->
-> > But I don't want to tackle _all_ remap cases here.
->
-> Due 4-5 or something to show the API is working. Things like my remark
-> to have a better helper that does whole-vma only should show up more
-> clearly with a few more conversions.
+								Honza
 
-I was trying to limit to mm or mm-adjacent as per the cover letter.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
-But sure I will do that.
+--tzlytyesm7ilxap6
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-writeback-Avoid-contention-on-wb-list_lock-when-swit.patch"
 
->
-> It is generally a good idea when doing these reworks to look across
+From c88933809024ebc8ad164aebe02237186614a25f Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 9 Apr 2025 17:12:59 +0200
+Subject: [PATCH] writeback: Avoid contention on wb->list_lock when switching
+ inodes
 
-It's not a rework :) cover letter describes why I'm doing this.
+There can be multiple inode switch works that are trying to switch
+inodes to / from the same wb. This can happen in particular if some
+cgroup exits which owns many (thousands) inodes and we need to switch
+them all. In this case several inode_switch_wbs_work_fn() instances will
+be just spinning on the same wb->list_lock while only one of them makes
+forward progress. This wastes CPU cycles and quickly leads to softlockup
+reports and unusable system.
 
-> all the use cases patterns and try to simplify them. This is why a
-> series per pattern is a good idea because you are saying you found a
-> pattern, and here are N examples of the pattern to prove it.
->
-> Eg if a huge number of drivers are just mmaping a linear range of
-> memory with a fixed pgoff then a helper to support exactly that
-> pattern with minimal driver code should be developed.
+Instead of running several inode_switch_wbs_work_fn() instances in
+parallel switching to the same wb and contending on wb->list_lock, run
+just one work item per wb and manage a queue of isw items switching to
+this wb.
 
-Fine in spirit, let's be pragmatic also though.
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/fs-writeback.c                | 99 ++++++++++++++++++++------------
+ include/linux/backing-dev-defs.h |  4 ++
+ include/linux/writeback.h        |  2 +
+ mm/backing-dev.c                 |  5 ++
+ 4 files changed, 74 insertions(+), 36 deletions(-)
 
-Again this isn't a refactoring exercise. But I agree we should try to get
-the API right as best we can.
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..e87612a40cb0 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -368,7 +368,8 @@ static struct bdi_writeback *inode_to_wb_and_lock_list(struct inode *inode)
+ }
+ 
+ struct inode_switch_wbs_context {
+-	struct rcu_work		work;
++	/* List of queued switching contexts for the wb */
++	struct llist_node	list;
+ 
+ 	/*
+ 	 * Multiple inodes can be switched at once.  The switching procedure
+@@ -378,7 +379,6 @@ struct inode_switch_wbs_context {
+ 	 * array embedded into struct inode_switch_wbs_context.  Otherwise
+ 	 * an inode could be left in a non-consistent state.
+ 	 */
+-	struct bdi_writeback	*new_wb;
+ 	struct inode		*inodes[];
+ };
+ 
+@@ -486,13 +486,11 @@ static bool inode_do_switch_wbs(struct inode *inode,
+ 	return switched;
+ }
+ 
+-static void inode_switch_wbs_work_fn(struct work_struct *work)
++static void process_inode_switch_wbs(struct bdi_writeback *new_wb,
++				     struct inode_switch_wbs_context *isw)
+ {
+-	struct inode_switch_wbs_context *isw =
+-		container_of(to_rcu_work(work), struct inode_switch_wbs_context, work);
+ 	struct backing_dev_info *bdi = inode_to_bdi(isw->inodes[0]);
+ 	struct bdi_writeback *old_wb = isw->inodes[0]->i_wb;
+-	struct bdi_writeback *new_wb = isw->new_wb;
+ 	unsigned long nr_switched = 0;
+ 	struct inode **inodep;
+ 
+@@ -543,6 +541,38 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+ 	atomic_dec(&isw_nr_in_flight);
+ }
+ 
++void inode_switch_wbs_work_fn(struct work_struct *work)
++{
++	struct bdi_writeback *new_wb = container_of(work, struct bdi_writeback,
++						    switch_work);
++	struct inode_switch_wbs_context *isw, *next_isw;
++	struct llist_node *list;
++
++	/*
++	 * Grab out reference to wb so that it cannot get freed under us
++	 * after we process all the isw items.
++	 */
++	wb_get(new_wb);
++	while (1) {
++		list = llist_del_all(&new_wb->switch_wbs_ctxs);
++		/* Nothing to do? */
++		if (!list)
++			break;
++		/*
++		 * In addition to synchronizing among switchers, I_WB_SWITCH
++		 * tells the RCU protected stat update paths to grab the i_page
++		 * lock so that stat transfer can synchronize against them.
++		 * Let's continue after I_WB_SWITCH is guaranteed to be
++		 * visible.
++		 */
++		synchronize_rcu();
++
++		llist_for_each_entry_safe(isw, next_isw, list, list)
++			process_inode_switch_wbs(new_wb, isw);
++	}
++	wb_put(new_wb);
++}
++
+ static bool inode_prepare_wbs_switch(struct inode *inode,
+ 				     struct bdi_writeback *new_wb)
+ {
+@@ -572,6 +602,13 @@ static bool inode_prepare_wbs_switch(struct inode *inode,
+ 	return true;
+ }
+ 
++static void wb_queue_isw(struct bdi_writeback *wb,
++			 struct inode_switch_wbs_context *isw)
++{
++	if (llist_add(&isw->list, &wb->switch_wbs_ctxs))
++		queue_work(isw_wq, &wb->switch_work);
++}
++
+ /**
+  * inode_switch_wbs - change the wb association of an inode
+  * @inode: target inode
+@@ -585,6 +622,7 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+ 	struct backing_dev_info *bdi = inode_to_bdi(inode);
+ 	struct cgroup_subsys_state *memcg_css;
+ 	struct inode_switch_wbs_context *isw;
++	struct bdi_writeback *new_wb = NULL;
+ 
+ 	/* noop if seems to be already in progress */
+ 	if (inode->i_state & I_WB_SWITCH)
+@@ -609,40 +647,34 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+ 	if (!memcg_css)
+ 		goto out_free;
+ 
+-	isw->new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
++	new_wb = wb_get_create(bdi, memcg_css, GFP_ATOMIC);
+ 	css_put(memcg_css);
+-	if (!isw->new_wb)
++	if (!new_wb)
+ 		goto out_free;
+ 
+-	if (!inode_prepare_wbs_switch(inode, isw->new_wb))
++	if (!inode_prepare_wbs_switch(inode, new_wb))
+ 		goto out_free;
+ 
+ 	isw->inodes[0] = inode;
+ 
+-	/*
+-	 * In addition to synchronizing among switchers, I_WB_SWITCH tells
+-	 * the RCU protected stat update paths to grab the i_page
+-	 * lock so that stat transfer can synchronize against them.
+-	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
+-	 */
+-	INIT_RCU_WORK(&isw->work, inode_switch_wbs_work_fn);
+-	queue_rcu_work(isw_wq, &isw->work);
++	wb_queue_isw(new_wb, isw);
+ 	return;
+ 
+ out_free:
+ 	atomic_dec(&isw_nr_in_flight);
+-	if (isw->new_wb)
+-		wb_put(isw->new_wb);
++	if (new_wb)
++		wb_put(new_wb);
+ 	kfree(isw);
+ }
+ 
+-static bool isw_prepare_wbs_switch(struct inode_switch_wbs_context *isw,
++static bool isw_prepare_wbs_switch(struct bdi_writeback *new_wb,
++				   struct inode_switch_wbs_context *isw,
+ 				   struct list_head *list, int *nr)
+ {
+ 	struct inode *inode;
+ 
+ 	list_for_each_entry(inode, list, i_io_list) {
+-		if (!inode_prepare_wbs_switch(inode, isw->new_wb))
++		if (!inode_prepare_wbs_switch(inode, new_wb))
+ 			continue;
+ 
+ 		isw->inodes[*nr] = inode;
+@@ -666,6 +698,7 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+ {
+ 	struct cgroup_subsys_state *memcg_css;
+ 	struct inode_switch_wbs_context *isw;
++	struct bdi_writeback *new_wb;
+ 	int nr;
+ 	bool restart = false;
+ 
+@@ -678,12 +711,12 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+ 
+ 	for (memcg_css = wb->memcg_css->parent; memcg_css;
+ 	     memcg_css = memcg_css->parent) {
+-		isw->new_wb = wb_get_create(wb->bdi, memcg_css, GFP_KERNEL);
+-		if (isw->new_wb)
++		new_wb = wb_get_create(wb->bdi, memcg_css, GFP_KERNEL);
++		if (new_wb)
+ 			break;
+ 	}
+-	if (unlikely(!isw->new_wb))
+-		isw->new_wb = &wb->bdi->wb; /* wb_get() is noop for bdi's wb */
++	if (unlikely(!new_wb))
++		new_wb = &wb->bdi->wb; /* wb_get() is noop for bdi's wb */
+ 
+ 	nr = 0;
+ 	spin_lock(&wb->list_lock);
+@@ -695,27 +728,21 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
+ 	 * bandwidth restrictions, as writeback of inode metadata is not
+ 	 * accounted for.
+ 	 */
+-	restart = isw_prepare_wbs_switch(isw, &wb->b_attached, &nr);
++	restart = isw_prepare_wbs_switch(new_wb, isw, &wb->b_attached, &nr);
+ 	if (!restart)
+-		restart = isw_prepare_wbs_switch(isw, &wb->b_dirty_time, &nr);
++		restart = isw_prepare_wbs_switch(new_wb, isw, &wb->b_dirty_time,
++						 &nr);
+ 	spin_unlock(&wb->list_lock);
+ 
+ 	/* no attached inodes? bail out */
+ 	if (nr == 0) {
+ 		atomic_dec(&isw_nr_in_flight);
+-		wb_put(isw->new_wb);
++		wb_put(new_wb);
+ 		kfree(isw);
+ 		return restart;
+ 	}
+ 
+-	/*
+-	 * In addition to synchronizing among switchers, I_WB_SWITCH tells
+-	 * the RCU protected stat update paths to grab the i_page
+-	 * lock so that stat transfer can synchronize against them.
+-	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
+-	 */
+-	INIT_RCU_WORK(&isw->work, inode_switch_wbs_work_fn);
+-	queue_rcu_work(isw_wq, &isw->work);
++	wb_queue_isw(new_wb, isw);
+ 
+ 	return restart;
+ }
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 2ad261082bba..c5c9d89c73ed 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -152,6 +152,10 @@ struct bdi_writeback {
+ 	struct list_head blkcg_node;	/* anchored at blkcg->cgwb_list */
+ 	struct list_head b_attached;	/* attached inodes, protected by list_lock */
+ 	struct list_head offline_node;	/* anchored at offline_cgwbs */
++	struct work_struct switch_work;	/* work used to perform inode switching
++					 * to this wb */
++	struct llist_head switch_wbs_ctxs;	/* queued contexts for
++						 * writeback switching */
+ 
+ 	union {
+ 		struct work_struct release_work;
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index a2848d731a46..15a4bc4ab819 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -265,6 +265,8 @@ static inline void wbc_init_bio(struct writeback_control *wbc, struct bio *bio)
+ 		bio_associate_blkg_from_css(bio, wbc->wb->blkcg_css);
+ }
+ 
++void inode_switch_wbs_work_fn(struct work_struct *work);
++
+ #else	/* CONFIG_CGROUP_WRITEBACK */
+ 
+ static inline void inode_attach_wb(struct inode *inode, struct folio *folio)
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 783904d8c5ef..0beaca6bacf7 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -633,6 +633,7 @@ static void cgwb_release_workfn(struct work_struct *work)
+ 	wb_exit(wb);
+ 	bdi_put(bdi);
+ 	WARN_ON_ONCE(!list_empty(&wb->b_attached));
++	WARN_ON_ONCE(work_pending(&wb->switch_work));
+ 	call_rcu(&wb->rcu, cgwb_free_rcu);
+ }
+ 
+@@ -709,6 +710,8 @@ static int cgwb_create(struct backing_dev_info *bdi,
+ 	wb->memcg_css = memcg_css;
+ 	wb->blkcg_css = blkcg_css;
+ 	INIT_LIST_HEAD(&wb->b_attached);
++	INIT_WORK(&wb->switch_work, inode_switch_wbs_work_fn);
++	init_llist_head(&wb->switch_wbs_ctxs);
+ 	INIT_WORK(&wb->release_work, cgwb_release_workfn);
+ 	set_bit(WB_registered, &wb->state);
+ 	bdi_get(bdi);
+@@ -839,6 +842,8 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
+ 	if (!ret) {
+ 		bdi->wb.memcg_css = &root_mem_cgroup->css;
+ 		bdi->wb.blkcg_css = blkcg_root_css;
++		INIT_WORK(&bdi->wb.switch_work, inode_switch_wbs_work_fn);
++		init_llist_head(&bdi->wb.switch_wbs_ctxs);
+ 	}
+ 	return ret;
+ }
+-- 
+2.51.0
 
->
-> Like below, apparently vmalloc_user() is already a pattern and already
-> has a simplifying safe helper.
->
-> > Anyway maybe if I simplify there's still a shot at this landing in time...
->
-> Simplify is always good to help things get merged :)
 
-Yup :)
-
->
-> > > Eg there are not that many places calling vmalloc_user(), a single
-> > > series could convert alot of them.
-> > >
-> > > If you did it this way we'd discover that there are already
-> > > helpers for vmalloc_user():
-> > >
-> > > 	return remap_vmalloc_range(vma, mdev_state->memblk, 0);
-> > >
-> > > And kcov looks buggy to not be using it already. The above gets the
-> > > VMA type right and doesn't force mixedmap :)
-> >
-> > Right, I mean maybe.
->
-> Maybe send out a single patch to change kcov to remap_vmalloc_range()
-> for this cycle? Answer the maybe?
-
-Sure I can probably do that.
-
-The question is time and, because most of my days are full of review as per
-my self-inflicted^W -selected role as a maintainer.
-
-This series will be the priority obviously :)
-
->
-> Jason
-
-Cheers, Lorenzo
+--tzlytyesm7ilxap6--
 
