@@ -1,170 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-61292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADB3B5742F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63409B574A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A73E4E18F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 09:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EFE1443F5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 09:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDE12ED174;
-	Mon, 15 Sep 2025 09:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0ED92F3C2B;
+	Mon, 15 Sep 2025 09:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HyC8Qm9t"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6rhBH2y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SJvrSjvI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dMec5VwZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NOo6WaFM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C20B2ED159
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 09:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9352F3C1D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 09:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757927531; cv=none; b=ssgcgskNuQJXUzLOei5g6SsN4JiT9zR85thdBXoDkI2NkQiUj8Fpc2IaRuRqzhwyVOu5iaTEeiWC8JpQ+rB2ou1SPqsuGWnJXqrHK1ZxiodXQZPhYJLTQu1+pta8bstaGdYfiNpX76iYo2r68asgf3GG6oIu/KXVm5XQIwBFEE4=
+	t=1757927984; cv=none; b=qYUNiR1BcHvA88WEpput3iTyGHlp7TiMhWpA4mtl+/KjG1zZFXJydUcCnB/WgaAjBy6AIW0tPUsoGtq0VGtx9YI5pQlAsQUM+NzA0D9cq759YI4hFXifIzxZVcTsLVDiXoZh9EEXKKL879OMFi/R/6xDMRUG8IkjnbF1CzZNREA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757927531; c=relaxed/simple;
-	bh=YMyUO4ZSxSVOsCD3A/Ao02x8ck9F7ZcDeav94TcyBQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E7JkydBgPzbRCQLxAf+BPsIJFTzIRbc5wetcSyCP4hjXWGMFNO8SKNdjeBH0e2w4LHm5JDCjpYcTAwC2JJCwmFcAF0WLxJpfATLZDJFAOLNzE24SqiDevHWDeWZJD2q24XlcUg0R46d3V/i4O1dYmXxj+tqiax2ORXw73AwruCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HyC8Qm9t; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32df5cae0b1so2549031a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 02:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757927530; x=1758532330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z912WmA+67ALWSaIKEWQEm3fb/lfEWHjZZbHUaxsCYg=;
-        b=HyC8Qm9tNP270pXki8zd3sjk8GmeiJx5fivPGSky/i4Vj5T8ZcS3qIa6w364xsGVvb
-         9KHCrRMplCGsoL+J9PtwD8FmyfICubAqNeQ2azLbWSsen/Mx7sHPZO4FebC4hk18QkCG
-         vq6Kn7nnEhdrXwU9eXHrdJhiwhuLofb/tF9HZM+8Pq1OiBvXN8MsvMHRbOBNI8e0dU/7
-         oBS6ZDyNTJ14gqlGTl/W2FBLQgbBDzi9UzLjoFIjb1AXxwwws6klcfeAXYBK4nsnyufs
-         JNNl7wrbe3WqmoR2r706u+k6tisI5qMNNwnnovD50vvjeObplqVB0zClP7YJ5euqyVMs
-         3mFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757927530; x=1758532330;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z912WmA+67ALWSaIKEWQEm3fb/lfEWHjZZbHUaxsCYg=;
-        b=U6pRq/wFOL27mWlbVbW0U72Lbns2MZSXOPKJ1M93CjvKzQp9zYfsWdhPR85wKOYUF3
-         gWXWyp2+NdiEmH3Y0fHqefewZbftpGw5AIX4S0yJI4BbAqusLC8HGBWO/1DEtuyhqtFd
-         1Yui3HaYDXvfzF/vdZ6ywteYzhqC4E88I3VwR2JgJ0zIZ9y/v9sPyUW6agFiZFslA+rP
-         w/I2MvMUhQ4KQtHHsQDNN5Mj+bZ/Q19zH0YSCGdK2bbMJS3ygnpOgdlEPdN4IVWuUrfR
-         Y7yOny8vtVprhIT/5tl627KyW4TQmhHtSrbuHzgaIVNTHTSRHA+Do9v1mPsL4omCK4TH
-         EWfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKK+hvuHjicf5XcfkTASDPG5im9fWOfm43m7/LDeHKRJZcXTynnPOOW7LVgNwSDJfA2Yx1OmRzVZH3Sbdk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzelrEMXH6tss6oyn1l2fDZSqSJn1KAPs2LcIKLO22+bl43nUmj
-	K3vYzVSnngRqBXBsPXV09WtTo/CDgu/uVozfEULIglfcyWS97Q15KWyE
-X-Gm-Gg: ASbGncsy5hZCKfxkq/3vXFQ0faibc8f3A727lRXxIKRgEN7mrV/CUEQb/4GiPSD0Vc9
-	Ol4HmUi8D01Z75trmTIwk4P3WAcrg+ONPAXpFUwGQ1ghiArChz5gHM8hTCFo/MXvN+92jOPaMTR
-	GyntWLtuMzbMibZwyHaNPoFGRmR7jC3mXnh/WLczg6UWfuTzvC5JdU4GXabnlurmWqWVPNoBvEQ
-	Iw6aACjy4gbtT5m2sOy8htmReRVfwrHiL5/9lBDZmIoaXhKTCCkeg52wcDS86R8Z4uQkSt470/y
-	DtzIzI6ab5oWzuU+Ch6TuOPaaMBd/6TiTxqsZsYR1My79ZOyDVST3c5LZ6iydDXY7I5Mwwx4GLb
-	ZZdz17Yt2ZWOJ/OduxRN8RD32DUgMAEV+mQ==
-X-Google-Smtp-Source: AGHT+IHUHoRnBUAizNQ0Y7bS8vqoAmmxVHF9oFrvfp8wcyILr5tPIdrCluwCWQp30ooP5fOFV+uolA==
-X-Received: by 2002:a17:90b:5110:b0:32e:4194:52a with SMTP id 98e67ed59e1d1-32e41940830mr4235639a91.9.1757927529654;
-        Mon, 15 Sep 2025 02:12:09 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32e0f101943sm6901264a91.1.2025.09.15.02.12.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 02:12:09 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: kernel@pankajraghav.com
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	yi.zhang@huawei.com
-Subject: Re: [PATCH 1/4] iomap: make sure iomap_adjust_read_range() are aligned with block_size
-Date: Mon, 15 Sep 2025 17:12:07 +0800
-Message-ID: <20250915091207.4094376-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <eyyshgzsxupyen6ms3izkh45ydh3ekxycpk5p4dbets6mpyhch@q4db2ayr4g3r>
-References: <eyyshgzsxupyen6ms3izkh45ydh3ekxycpk5p4dbets6mpyhch@q4db2ayr4g3r>
+	s=arc-20240116; t=1757927984; c=relaxed/simple;
+	bh=XA6mXkBIPFgan+x1bf5BLCjXCwYPhLpEO9xTsEBGW0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMgUF7e9i+uSLxRuPUWdFbPk3+1LgloQy4/RZPaK/Sfq3xSmZl8Impbd5raSwfOMFbYK28EeXTWcdMlLf67hCmCWSnvLVJx3eus6xuJyyDWuN5GOXnO8+471NrwqOibDXcM0CowYbwHQjqCLDe/hD9R5Z+l3NUUIN9cpsjbEhX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6rhBH2y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SJvrSjvI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dMec5VwZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NOo6WaFM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EA1BB33712;
+	Mon, 15 Sep 2025 09:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757927979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
+	b=y6rhBH2yIHqcEhWvW3OK/M1MGL07yB+6JMwC6X/CknVE5ua038lWDkVtBxXcMW2YiW0/gB
+	rSMv7hNa/JVKJWM7hARJEEPpYWbHOSmUMRbz8f4sVhqeny14kYvL5lcca9exMU9JyNeq6n
+	Pyq6WFF1sN1B85usXfvLUNO8krTzzDE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757927979;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
+	b=SJvrSjvI7wBdkhoQj3MZ4ZBU7tX1b1mGqMmsm9Le3rr8bw1HFENqVr83A7BDG7tAfD/H3I
+	rh7jnWIRJSAAW1Cg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757927978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
+	b=dMec5VwZSk27WNcuKLsJWYANLg5lWjboI6lQZXChre5tGBQy9LfQiob4gACGMYnIEyj7wt
+	of5w1OHw8GaX5rzloEDHnRzUEa9We+whyL+vVkIgzkYI4qkYUE0EW8OsHCuSl7kqKZApPI
+	R62vbkO0euBFSVizbuH5OjHtbfjlT3s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757927978;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
+	b=NOo6WaFMZo/gSs0Cn6FVxnoIe/rbPumE4+eUSjak33WwfmR1YoYCMva3UzVfmUFBWfq4S4
+	cDjh2ACDImG9O8DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D5CE31398D;
+	Mon, 15 Sep 2025 09:19:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FQ3QMyrax2hoeQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 09:19:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 74FF7A0A2B; Mon, 15 Sep 2025 11:19:38 +0200 (CEST)
+Date: Mon, 15 Sep 2025 11:19:38 +0200
+From: Jan Kara <jack@suse.cz>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>, 
+	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
+	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-um@lists.infradead.org, 
+	x86@kernel.org, Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org, 
+	initramfs@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, 
+	linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+Subject: Re: [PATCH RESEND 13/62] ext2: remove ext2_image_size and associated
+ code
+Message-ID: <5xr5efvf4dhy43fchbvfsxspzgde5bxezhszdgqcya4eqrocgy@lqqkaq5wok6a>
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-14-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250913003842.41944-14-safinaskar@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,linux-foundation.org,linuxfoundation.org,kernel.org,zeniv.linux.org.uk,suse.cz,lst.de,kernel.dk,gmail.com,cyphar.com,linutronix.de,cyberus-technology.de,linux.alibaba.com,redhat.com,amazon.com,landley.net,0pointer.de,lists.infradead.org,lists.linux.dev,lists.linux-m68k.org,lists.ozlabs.org,mit.edu,monstr.eu,linux.dev,linux.ibm.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[55];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-On Mon, 15 Sep 2025 10:54:00 +0200, kernel@pankajraghav.com wrote:
-> On Sun, Sep 14, 2025 at 08:40:06PM +0800, Jinliang Zheng wrote:
-> > On Sun, 14 Sep 2025 13:45:16 +0200, kernel@pankajraghav.com wrote:
-> > > On Sat, Sep 14, 2025 at 11:37:15AM +0800, alexjlzheng@gmail.com wrote:
-> > > > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > > 
-> > > > iomap_folio_state marks the uptodate state in units of block_size, so
-> > > > it is better to check that pos and length are aligned with block_size.
-> > > > 
-> > > > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > > ---
-> > > >  fs/iomap/buffered-io.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > > index fd827398afd2..0c38333933c6 100644
-> > > > --- a/fs/iomap/buffered-io.c
-> > > > +++ b/fs/iomap/buffered-io.c
-> > > > @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
-> > > >  	unsigned first = poff >> block_bits;
-> > > >  	unsigned last = (poff + plen - 1) >> block_bits;
-> > > >  
-> > > > +	WARN_ON(*pos & (block_size - 1));
-> > > > +	WARN_ON(length & (block_size - 1));
-> > > Any reason you chose WARN_ON instead of WARN_ON_ONCE?
-> > 
-> > I just think it's a fatal error that deserves attention every time
-> > it's triggered.
-> > 
+On Sat 13-09-25 00:37:52, Askar Safin wrote:
+> It is not used anymore
 > 
-> Is this a general change or does your later changes depend on these on
-> warning to work correctly?
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
 
-No, there is no functional change.
+Looks good.
 
-I added it only because the correctness of iomap_adjust_read_range() depends on
-it, so it's better to hightlight it now.
+Acked-by: Jan Kara <jack@suse.cz>
 
-```
-	/* move forward for each leading block marked uptodate */
-	for (i = first; i <= last; i++) {
-		if (!ifs_block_is_uptodate(ifs, i))
-			break;
-		*pos += block_size; <-------------------- if not aligned, ...
-		poff += block_size;
-		plen -= block_size;
-		first++;
-	}
-```
+								Honza
 
+> ---
+>  fs/ext2/ext2.h          |  9 ---------
+>  include/linux/ext2_fs.h | 13 -------------
+>  2 files changed, 22 deletions(-)
 > 
-> > > 
-> > > I don't see WARN_ON being used in iomap/buffered-io.c.
-> > 
-> > I'm not sure if there are any community guidelines for using these
-> > two macros. If there are, please let me know and I'll be happy to
-> > follow them as a guide.
+> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
+> index cf97b76e9fd3..d623a14040d9 100644
+> --- a/fs/ext2/ext2.h
+> +++ b/fs/ext2/ext2.h
+> @@ -608,15 +608,6 @@ struct ext2_dir_entry_2 {
+>  					 ~EXT2_DIR_ROUND)
+>  #define EXT2_MAX_REC_LEN		((1<<16)-1)
+>  
+> -static inline void verify_offsets(void)
+> -{
+> -#define A(x,y) BUILD_BUG_ON(x != offsetof(struct ext2_super_block, y));
+> -	A(EXT2_SB_MAGIC_OFFSET, s_magic);
+> -	A(EXT2_SB_BLOCKS_OFFSET, s_blocks_count);
+> -	A(EXT2_SB_BSIZE_OFFSET, s_log_block_size);
+> -#undef A
+> -}
+> -
+>  /*
+>   * ext2 mount options
+>   */
+> diff --git a/include/linux/ext2_fs.h b/include/linux/ext2_fs.h
+> index 1fef88569037..e5ebe6cdf06c 100644
+> --- a/include/linux/ext2_fs.h
+> +++ b/include/linux/ext2_fs.h
+> @@ -27,17 +27,4 @@
+>   */
+>  #define EXT2_LINK_MAX		32000
+>  
+> -#define EXT2_SB_MAGIC_OFFSET	0x38
+> -#define EXT2_SB_BLOCKS_OFFSET	0x04
+> -#define EXT2_SB_BSIZE_OFFSET	0x18
+> -
+> -static inline u64 ext2_image_size(void *ext2_sb)
+> -{
+> -	__u8 *p = ext2_sb;
+> -	if (*(__le16 *)(p + EXT2_SB_MAGIC_OFFSET) != cpu_to_le16(EXT2_SUPER_MAGIC))
+> -		return 0;
+> -	return (u64)le32_to_cpup((__le32 *)(p + EXT2_SB_BLOCKS_OFFSET)) <<
+> -		le32_to_cpup((__le32 *)(p + EXT2_SB_BSIZE_OFFSET));
+> -}
+> -
+>  #endif	/* _LINUX_EXT2_FS_H */
+> -- 
+> 2.47.2
 > 
-> We typically use WARN_ON_ONCE to prevent spamming.
-
-If you think it's better, I will send a new version.
-
-thanks,
-Jinliang Zheng. :)
-
-> 
-> --
-> Pankaj
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
