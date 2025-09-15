@@ -1,130 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-61407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A275B57DE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:51:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2955B57DFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D37170B82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CB54188C0C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1072327A19;
-	Mon, 15 Sep 2025 13:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BA331D746;
+	Mon, 15 Sep 2025 13:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pO765AHk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRLhTpsL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9AD1F91D6;
-	Mon, 15 Sep 2025 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87C830BF5A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 13:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944066; cv=none; b=o9T2RnGZpBAoEIwtLpGQWNzY9UOOf0XxVBzMT5Iw9wsA33o9uBqqHl272tQc7WnBl1cF/GP0jr8aNJigqAGssYp4WK5gAZHLe2f/wkhX7jDaHbe+6f0gcHpGdnvNnGBi6V0NFfDOZYkGvCriipykczGAdP09EciNO8+1ohHbiCg=
+	t=1757944127; cv=none; b=QTnTOLbbNNkj6kZDvL/OqJlRrD3PAh7MTC8KjAYFYvAjjehTKO2rXKWIORRE1YUCHtB7OKpqpIxM3Ry4UICzVFS/46r7OO1VXUqSNfkQZER69LWKUdNSqimakRUq4yJ8QsZCx3m4ktf3t01pnv9Rh9pYCJjTr7SNqwNtNC9O+do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944066; c=relaxed/simple;
-	bh=EKRXyuPv+Jg17gknHWC1AaM5Wujt+D7ZjacaXEH27Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuCE3Kc++mbIzr5yZLUKzbyByh03gAZlEWZ6CKSSik6+wKtTN9oA3INJJsi6RzqbxUFKW6ULRTk7sWmj+sSggIejO+9cVT50PIHv/YxoShtBq7BPQgvEPeQBh1V/1obGDi27fRs5u4NXLUNDJcKWRB94epipLrxEPVAhlS+egNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pO765AHk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C57FC4CEF1;
-	Mon, 15 Sep 2025 13:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757944065;
-	bh=EKRXyuPv+Jg17gknHWC1AaM5Wujt+D7ZjacaXEH27Co=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pO765AHkxwjpF2BGA2EOjB/HkqFxpy/yNq40f1smNEPE3GYRoMafZJ9/UmWTCyf6i
-	 jF1Ee3IyvtYp+a6r+axUA2YwqL0cfE61wsa2Fx0I82/EGm6AiMF7Vt5GPnXtKDMQW5
-	 o9zShRV5EW6lSsF+Q1o+6q2llTEeDOkUBcdWXKLYgW+vDiO2pqPFfgRgx68ZSAWnDd
-	 YYXs1VCTdjwRuHOq1J82uJdwnztZLyTdbaniACV6Pmg6MEcfd9cWhdPN3VwtQRIrLw
-	 Qf7qSZnMs7YYRRVGMNqVQJslqZ9uS7vpKrHGplZfCMm+cTe1b2G48fSF3jRipXuUMQ
-	 G9LbRAHLfgb/g==
-Date: Mon, 15 Sep 2025 15:47:37 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 21/33] net: support ns lookup
-Message-ID: <20250915-bildverarbeitung-unbeobachtet-80e2f149c434@brauner>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-21-1a247645cef5@kernel.org>
- <qdxj5g326tpu3sczuhveknkvcsn6a3rngfm6plmwmbq22oof6e@qcapgrdp4n3x>
+	s=arc-20240116; t=1757944127; c=relaxed/simple;
+	bh=ZQub+XOP6AHhSCrQS8OLhNc41tiEetqbLr9I34JJKfI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EN7l4UT8DA9x8t3p06J5487QTjH+5FH2dgtIx8UeB979AvthYmEXsBAb81yEdVk1uxIatnDKOhrQJS6jtA/zSfEDYidqCuPL9zxIgJWt6P8is7sycSHZco9pgomrgXmNufrCQmBWe52knU/KHWCtG6lmjl5sSfLBrV3SBXvjFp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRLhTpsL; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62f28b8e12cso2791094a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 06:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757944123; x=1758548923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQub+XOP6AHhSCrQS8OLhNc41tiEetqbLr9I34JJKfI=;
+        b=RRLhTpsLrx9Sr8YLwKoknx0bVMfaEylTK9/uhnWhAZR+SnL8QQM+oLvYNDbdTQO5Il
+         hQY8dAvJPoriAxgvLuv9PFAd2cwiG8wJxTuSRZDTWYIjZ26LGRnr3JIrwUhKt8xkZ+gY
+         JVkUfUKtTYS/nYS6FJOFoEUj5MnfJpMjIpDHlTYNm2w6/1gNslccuYLUsX+ACHVQUMqT
+         Jm6bp4OxaI5b9zjx2xIDpW9LFKVSBi4ba5L1B8R8oxF7s6ZLZ6SnsI0kiwVq3TijNUo+
+         eU6tC5nCkXIM1Qn5or2Cg2GlMtyAoydwJSetKbZwkCXzzVlqAYs2u4DG+29TT6ZMin2X
+         8vug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757944123; x=1758548923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZQub+XOP6AHhSCrQS8OLhNc41tiEetqbLr9I34JJKfI=;
+        b=n0nBADmKRb/1WU5+K5nLxW4Ot8pf63iSuRaazVuoF8lkgD4RLoI5yysWf90UPuvMK1
+         Ti6JcZVA/T4pmljnGrNojL0pvrNcOEM0Cw2lGbK+9d8AY4iOZu19fSdRxGb8db0n9/qo
+         arLO5Tpa5kpzk9qicrqUNuVmyuiSWQmD867ICJR8cNeMFCwPqTKOCefTtSExah0fDTrU
+         aTXO4/Tk1m92h6GPFeEs9oGva1pUwudMjP/Itgp67p3GR2uG0oCbJZzxuCGDGcGCfVEI
+         kgaQZqBnLFqUfLF47BjxheVzXJlixGn+DPdrXR3E5vs1KEttwk2vxlkdH9sdxxyq8/uc
+         dJrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVfyPHOpQLRywiviDtY6yey5u8d9EiitTUosMWY6DDahEl5D5oid3Z/tqcV12sUc9cATys8cVv2+syTyns@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBFjJj0gpjwjClpAOd1QXQBZ0i9X5SPdH9yQAj3HN1me0u9diH
+	t5MZPJXLGVRadLWUxVXMNPwvdiS+tRPmLasTQNmnYkl0Q+CxmWR7J/fLwKOkAca7C7LwyAdgRA6
+	TaVAp4csQvGh9EK2R7pvOJZizbdzZ8js=
+X-Gm-Gg: ASbGncu+P6YBcBHEUAKA/govaT9w+m6DFUXlT6Nkd3Qs0/WzlobvuNlku9xkOslgY+D
+	q5MidkISAcspy1aMe3PJhQAW9od+DHDcBijPQwPgrKfRDUUS0IXe0/1w+n/MzXkfFZJqObfKRzB
+	fXA+B0QOHLa7dcUBJ4n0L/eZvu9M29rXTpdpgNL8EW7yoP7Rz2hQK8M2uNVqCS3ZTeiFC2UEfok
+	mDP+/nwVY4l6FT2Brzl8P41VPwJpIh7+qMTAkzW8pI/fTk1sg==
+X-Google-Smtp-Source: AGHT+IHKOjA1HGcuEvHra72Dd+b7paytkVEuO8cRpT6BW/OBg2GvOxuDt2DlAqGkxcef1Fdd4odGq3BTUr41/Ykmo58=
+X-Received: by 2002:a05:6402:4556:b0:62a:53ad:c5f6 with SMTP id
+ 4fb4d7f45d1cf-62ed80d0d53mr10005029a12.7.1757944122921; Mon, 15 Sep 2025
+ 06:48:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <qdxj5g326tpu3sczuhveknkvcsn6a3rngfm6plmwmbq22oof6e@qcapgrdp4n3x>
+References: <20250911045557.1552002-1-mjguzik@gmail.com> <20250911045557.1552002-3-mjguzik@gmail.com>
+ <20250915-erstflug-kassieren-37e5b3f5b998@brauner> <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
+ <20250915-tricksen-militant-406d4cb8ebda@brauner>
+In-Reply-To: <20250915-tricksen-militant-406d4cb8ebda@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 15 Sep 2025 15:48:29 +0200
+X-Gm-Features: AS18NWBzKunwGtJz0IldCwMc_KnnKbN39RwVHQ4hFOW8fT-nO1xKAbfCWtkbTJc
+Message-ID: <CAGudoHETnk1NJe_7TAsweokKia2xtKH0bLn-V7+hcE1voiqrhw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
+	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, ocfs2-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 02:02:45PM +0200, Jan Kara wrote:
-> On Fri 12-09-25 13:52:44, Christian Brauner wrote:
-> > Support the generic ns lookup infrastructure to support file handles for
-> > namespaces.
-> > 
-> > The network namespace has a separate list with different lifetime rules
-> > which we can just leave in tact. We have a similar concept for mount
-> > namespaces as well where it is on two differenet lists for different
-> > purposes.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> Just some nits below. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> > diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-> > index 025a7574b275..42075748dff1 100644
-> > --- a/include/net/net_namespace.h
-> > +++ b/include/net/net_namespace.h
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/list.h>
-> >  #include <linux/sysctl.h>
-> >  #include <linux/uidgid.h>
-> > +#include <linux/nstree.h>
-> >  
-> >  #include <net/flow.h>
-> >  #include <net/netns/core.h>
-> 
-> Why this include?
+On Mon, Sep 15, 2025 at 3:41=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Mon, Sep 15, 2025 at 03:27:16PM +0200, Mateusz Guzik wrote:
+> > On Mon, Sep 15, 2025 at 2:41=E2=80=AFPM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
+> > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > > > ---
+> > >
+> > > I would do:
+> > >
+> > > inode_state()
+> > > inode_state_raw()
+> > >
+> > > Similar to
+> > >
+> > > rcu_derefence()
+> > > rcu_dereference_raw()
+> > >
+> >
+> > I don't follow how to fit this in here.
+> >
+> > Here is the complete list:
+> > inode_state_read
+> > inode_state_read_unstable
+> >
+> > first is a plain read + lockdep assert, second is a READ_ONCE
+> >
+> > inode_state_add
+> > inode_state_add_unchecked
+> > inode_state_del
+> > inode_state_del_unchecked
+> > inode_state_set_unchecked
+> >
+> > Routine with _unchecked forego asserts, otherwise the op checks lockdep=
+.
+> >
+> > I guess _unchecked could be _raw, but I don't see how to fit this into
+> > the read thing.
+>
+> _raw() is adapted from rcu which is why I'm very familiar with what it
+> means: rcu_dereference() performs checks and rcu_dereference_raw()
+> doesn't. It's just a naming convention that we already have and are
+> accustomed to.
+>
+> >
+> > Can you just spell out the names you want for all of these?
+>
+> just use _raw() imho
+>
 
-Dropped.
+For these no problem:
+inode_state_add
+inode_state_add_raw
+inode_state_del
+inode_state_del_raw
+inode_state_set_raw
 
-> 
-> > diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> > index 5fb7bd8ac45a..169ec22c4758 100644
-> > --- a/net/core/net_namespace.c
-> > +++ b/net/core/net_namespace.c
-> > @@ -20,6 +20,7 @@
-> >  #include <linux/sched/task.h>
-> >  #include <linux/uidgid.h>
-> >  #include <linux/proc_fs.h>
-> > +#include <linux/nstree.h>
-> >  
-> >  #include <net/aligned_data.h>
-> >  #include <net/sock.h>
-> > @@ -445,7 +446,7 @@ static __net_init int setup_net(struct net *net)
-> >  	LIST_HEAD(net_exit_list);
-> >  	int error = 0;
-> >  
-> > -	net->net_cookie = atomic64_inc_return(&net_aligned_data.net_cookie);
-> > +	net->net_cookie = ns_tree_gen_id(&net->ns);
-> 
-> net_cookie seems to be unused now and can be deleted?
+But for the read side:
+inode_state_read
+inode_state_read_unstable
 
-Yes. I planned to do this in a follow-up patch because it'll create some
-churn in net/. I'd rather get that in early after the next mw.
+The _unstable thing makes sure to prevent surprise re-reads
+specifically because the lock is not expected to be held.
+Giving it the _raw suffix would suggest it is plain inode_state_read
+without lockdep, which is imo misleading.
+
+But I'm not going to die on this hill.
 
