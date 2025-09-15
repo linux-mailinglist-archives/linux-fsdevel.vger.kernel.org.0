@@ -1,160 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-61290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07445B573B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 10:56:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E019B57418
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673C43A8E3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 08:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148CC3AC1AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 09:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6222F3605;
-	Mon, 15 Sep 2025 08:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="FUw+fADi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ggeEpfsi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BECF283FF8;
+	Mon, 15 Sep 2025 09:07:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FC82EFD98
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 08:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B8B27604E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 09:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757926473; cv=none; b=HAMT0MaqacP/y0heIypkTJvLVVj9W4Q6K0Pbbqp1H1jCkuq9ml4ziPk7m+Y54vtjfDa0P6mK7nWcvWnmHeSdyj3QXLMxbuHyj4V9XG6hGt7PfHepBOPmgUVi2XZ2osG/4yyRtk04kZ1pdEzmsQrt5KZMxLKYap1UNPOJHcp910Y=
+	t=1757927273; cv=none; b=bsref3mlYUvlw3DBzOkgOO4c37yp2qymDr5VHJFfjDSXIcPxfjsbSehIPenX/yUzjvY+/G1p83LcV30mngaQOpq6We+gqUHt7196V7TmOo+ExDDKWvo4YuN3+fjN1vm2TUa2BdQD+7vYaHGAsLrjLFZPXd1CHo9L9OZ6Cw/wxnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757926473; c=relaxed/simple;
-	bh=vuwffLT4aDb91xpGVyBK4tzX66MW2A3TWPkdaeQGSd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+ZflaIsBlLLjiU2PEitxqVmvN/z8WNhQSKLRxQoGrNtD0ixle3kCBGVm4raurueCo/4AUo8lwKH56GYg/9rxRy6XYbddVVjYAQGSUhsmPcX3ByPmQe0dyxqP4PA/eNeT13LI2yWVVsIzYol1qHVSaRy6n23GqEyYdqecosBU3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=FUw+fADi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ggeEpfsi; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3A5FA7A007A;
-	Mon, 15 Sep 2025 04:54:30 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 15 Sep 2025 04:54:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757926470;
-	 x=1758012870; bh=PVDcvdErTTvTPg8kb4DgHh9EI2hNbZrGZzQ50VoxzUc=; b=
-	FUw+fADiJEzdN3yxYcTTsYOvTUxbMdCHU5SThvUXjl22a878C0zrBMYOG2Epve/N
-	APslzw1spibvjimg6RFnVpJdOapmEjzdE1Zyy4pXPul/wW4sKyqK/Fv9vZQ/mvkp
-	aiFJwZuCtsx6UVscN7CEhccDixTlMW5ueQtepFsZ29cEIBTxu74yzCEqYfxxQQAf
-	z9fA0+LRkHdhh0Xcn5hoDCQ6wbUrmZTRCTr4U5zQz0rSbbY+PTsWeEYNWemBpCsA
-	zuFX81pTXb+AC1kmhm8ZR03bSl/mSkHUJpTF9Ysnx0AOHZ0MNbJy13PBkFWqJAJG
-	UMEoo/vRQzopRbPDkX3mBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757926470; x=
-	1758012870; bh=PVDcvdErTTvTPg8kb4DgHh9EI2hNbZrGZzQ50VoxzUc=; b=g
-	geEpfsiP4hwkScei9DYpbmpfadRRNwxXt0SFCvDFIWJnFUtiDOlxuftM6XTXUbUZ
-	GsBikp+Ky6CFH/BlXUziRF8uEitHL9wvYP/+jAxcahXcRskqqdppeHvUMhTgLaTf
-	5dqxD8R6fOdy1+nOasxhXVV5c90WrXkZgPkTRCexu7nQdL4o9KS9fVRSjeBh1aCa
-	padPFRPU2lEVmylCuseqJ7Bb4F+1yCJbsOHpqMUP2ceza+gF6FLWFCOee+/kdA2/
-	q3h1IxnXgsIeDramrfzTFQ8z4E8/o+Qrr612btpfKWTlALtqdee650dBp6x74Hv7
-	VDAVCBWzyUbIJc9S2xllw==
-X-ME-Sender: <xms:RdTHaG5PFoCwlccJZ8DiLlvcuAQirFDvHsC13x6dY86uCUaR20727w>
-    <xme:RdTHaGr2B7UACXIQIX3N65HJNrY8wfsZ5MZkIWzYXZVuVgOK1Jjtyqoj69pXKfrdZ
-    SwvMuauhoOBN1Ox>
-X-ME-Received: <xmr:RdTHaHMHM4SSwqY69bS-13HQg4q25wF6rG1EnG_EoPfESZXOJCM3OCygFWL4PrKPNIevJsyWTLOw4nnHHXYj5cBmmnJ9niDKYKRSgij5dMZLRV5RCSji>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjedviecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnhephefhjeeujeelhedtheetfedvgfdtleffuedujefhheegudefvdfhheeuvedu
-    ueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtph
-    htthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohep
-    nhgvihhlsegsrhhofihnrdhnrghmvgdprhgtphhtthhopehtohhrvhgrlhgusheslhhinh
-    hugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphht
-    thhopehhsghirhhthhgvlhhmvghrseguughnrdgtohhm
-X-ME-Proxy: <xmx:RdTHaO1SjUEbLRCI2UhZFFDsKtTORp-3O8QzBIuO20YOw3ZY7Nj42g>
-    <xmx:RdTHaGDytee7mItlUVkY5YSaeWyTK84KWD0GxNt7GVot8A4EcKP_5w>
-    <xmx:RdTHaLKiOlIjhOX7rsYHHtxN3Vin571A0Vd5U0Rd2UYhH1CG579amQ>
-    <xmx:RdTHaPnn3BrE7mTf15nzxdk2kx7ORy7CbATDZAZIToXZF9UoxF_JnA>
-    <xmx:RtTHaPELJI8dbyzq6uFoD345KEs0V53f9ZCwRpMznYXQ32WIcyVk-OjV>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 04:54:28 -0400 (EDT)
-Message-ID: <01e93ff6-ddce-48a4-a44e-c6af1c546754@bsbernd.com>
-Date: Mon, 15 Sep 2025 10:54:27 +0200
+	s=arc-20240116; t=1757927273; c=relaxed/simple;
+	bh=8wNUBEhQRfJk6tQNCMGgO/dGHU6tf4jeNUQcQAV5+ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MeMBJUZIMQSeyVlovSeXmiAvr7myOOKpdH8j2D6U5GJFisuNZMlEfQDq1XOjUCRBG/oSYcpTyFUmH0YrkdRaYr+azm3/0jKDJXAuQgvbH6pyfuSamaEIRvLX5znnoe5ZWnjc4bS0fjlF4PfDXIMGpHluL+DEebOg3oOpgikDh4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cQJwr61yXz13Mlb;
+	Mon, 15 Sep 2025 17:03:40 +0800 (CST)
+Received: from kwepemf100006.china.huawei.com (unknown [7.202.181.220])
+	by mail.maildlp.com (Postfix) with ESMTPS id B3E1318048B;
+	Mon, 15 Sep 2025 17:07:47 +0800 (CST)
+Received: from [10.174.177.210] (10.174.177.210) by
+ kwepemf100006.china.huawei.com (7.202.181.220) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 15 Sep 2025 17:07:47 +0800
+Message-ID: <683bccd5-d6c7-7609-1e40-1633d026e722@huawei.com>
+Date: Mon, 15 Sep 2025 17:07:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ->atomic_open() fun (was Re: [RFC] a possible way of reducing the
- PITA of ->d_name audits)
-To: Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: NeilBrown <neil@brown.name>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Jan Kara <jack@suse.cz>, Horst Birthelmer <hbirthelmer@ddn.com>
-References: <20250908090557.GJ31600@ZenIV>
- <175747234137.2850467.15661817300242450115@noble.neil.brown.name>
- <20250910072423.GR31600@ZenIV> <20250912054907.GA2537338@ZenIV>
- <CAJfpeguqygkT0UsoSLrsSMod61goDoU6b3Bj2AGT6eYBcW8-ZQ@mail.gmail.com>
- <20250912182936.GY39973@ZenIV>
- <175773460967.1696783.15803928091939003441@noble.neil.brown.name>
- <20250913050719.GD39973@ZenIV>
- <CAJfpegvXtXY=Pbxv+dMGFR8mvWN0DUwhSo6NwaVexk6Y6sao+w@mail.gmail.com>
- <20250914195034.GI39973@ZenIV>
- <CAJfpegvD7Ch59LJi8ymB6yX2TNMpQxVRLZ3xvsGLbsrktQ88_A@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegvD7Ch59LJi8ymB6yX2TNMpQxVRLZ3xvsGLbsrktQ88_A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 5/5] fuse: {io-uring} Allow reduced number of ring queues
+To: Bernd Schubert <bernd@bsbernd.com>, Bernd Schubert <bschubert@ddn.com>,
+	Miklos Szeredi <miklos@szeredi.hu>
+CC: Joanne Koong <joannelkoong@gmail.com>, <linux-fsdevel@vger.kernel.org>
+References: <20250722-reduced-nr-ring-queues_3-v1-0-aa8e37ae97e6@ddn.com>
+ <20250722-reduced-nr-ring-queues_3-v1-5-aa8e37ae97e6@ddn.com>
+ <7c8557f9-1a8a-71ec-94aa-386e5abd3182@huawei.com>
+ <15ba1a8d-d216-4609-aa7d-5e32e54349e5@bsbernd.com>
+From: yangerkun <yangerkun@huawei.com>
+In-Reply-To: <15ba1a8d-d216-4609-aa7d-5e32e54349e5@bsbernd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf100006.china.huawei.com (7.202.181.220)
 
 
 
-On 9/14/25 22:05, Miklos Szeredi wrote:
-> On Sun, 14 Sept 2025 at 21:50, Al Viro <viro@zeniv.linux.org.uk> wrote:
+在 2025/9/15 16:39, Bernd Schubert 写道:
+> 
+> 
+> On 9/15/25 06:37, yangerkun wrote:
 >>
->> On Sun, Sep 14, 2025 at 09:01:40PM +0200, Miklos Szeredi wrote:
-> 
->>> - cached positive (plain or O_CREAT): FUSE_OPEN_REVAL getting nodeid
->>> of parent + name + nodeid of child and return opened file or -ESTALE,
->>> no locking required
 >>
->> What happens if the latter overlaps with rename?  Or, for a cached
->> directory inode, with lookup elsewhere picking the same inode as our
->> cached (and possibly invalid, but we don't know that) dentry?
+>> 在 2025/7/23 5:58, Bernd Schubert 写道:
+>>> Currently, FUSE io-uring requires all queues to be registered before
+>>> becoming ready, which can result in too much memory usage.
+>>
+>> Thank you very much for this patchset! We have also encountered this
+>> issue and have been using per-CPU fiq->ops locally, which combines uring
+>> ops and dev ops for a single fuse instance. After discussing it, we
+>> prefer your solution as it seems excellent!
+>>
+>>>
+>>> This patch introduces a static queue mapping system that allows FUSE
+>>> io-uring to operate with a reduced number of registered queues by:
+>>>
+>>> 1. Adding a queue_mapping array to track which registered queue each
+>>>      CPU should use
+>>> 2. Replacing the is_ring_ready() check with immediate queue mapping
+>>>      once any queues are registered
+>>> 3. Implementing fuse_uring_map_queues() to create CPU-to-queue mappings
+>>>      that prefer NUMA-local queues when available
+>>> 4. Updating fuse_uring_get_queue() to use the static mapping instead
+>>>      of direct CPU-to-queue correspondence
+>>
+>> It appears that fuse_uring_do_register can assist in determining which
+>> CPU has been registered. Perhaps you could also modify libfuse to make
+>> use of this feature. Could you provide that?
 > 
-> In the overlapping rename case either result is okay: if the open
-> succeeded, that means open won the race against rename.  If on the
-> other hand open_reval lost and didn't find the expected child, then
-> dentry is going to get invalidated and the whole thing retried ending
-> up with open_atomic or open_creat with no further races possible.
+> Just had forgotten to post it:
+> https://github.com/bsbernd/libfuse/tree/uring-reduce-nr-queues.
+
+Thanks.
+
 > 
-> With the stale dentry getting moved by d_splice_alias() it's a
-> slightly different story.  The dentry starts out stale, but by being
-> moved to its proper place it becomes uptodate again.  So before
-> invalidating it, it would make sense to check whether the parent and
-> the name still matches the one we are looking up.   But that race
-> happens with plain ->d_revalidate() as well AFAICS, so that wouldn't
-> be a new thing.
+> In that branch you can specify the number of queues to use,
+> cores are then auto-selected. Or you can specify a core mask on
+> which cores queues are supposed to run on.
+> 
+> Kernel patch series v2 should follow in the evening, I was busy
+> till last week with other things.
 
-Thanks Miklos for bringing this up again! I'm going to try to update
-the patches this week. One issue with open-atomic and open-revalidate
-was testing - Horst (in CC) had started to create fuse specific
-xfstests for that.
+OK, look forward for this new version!
 
-
-Thanks,
-Bernd
+> 
+> 
+> Thanks,
+> Bernd
 
