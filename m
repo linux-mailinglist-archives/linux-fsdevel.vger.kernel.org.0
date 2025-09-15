@@ -1,680 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-61401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468B5B57D96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:40:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48184B57DA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 15:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37F047A18C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:39:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224C63ADAB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6EF31A06A;
-	Mon, 15 Sep 2025 13:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B2B31D75F;
+	Mon, 15 Sep 2025 13:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CU3/uSys";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3z/24UgG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DAkYmBb3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9dKfIiql"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTVCKsBS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A183191D0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 13:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39C731986F;
+	Mon, 15 Sep 2025 13:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757943639; cv=none; b=e2FEMzhWXsMPTmu3Cq40Zw/AjiotciEIabqdXiTvLeUCG3RYjBNhxG3mLY0KthKe5gntfGKZwpvI6EfspMIDJSc+niIqlJozki1tQfWVCCo0Jeplyy6aOgQ7HhNc3Xy/Frbz7dage7pUKxIlthO7SxQdrXAlaj837pnXqh2g9F0=
+	t=1757943667; cv=none; b=e7OK11f+Hdlfv1bT9i8QLJNMfrKrcxemYBwTNNMvSj2cMYm+CaCBF0V6nxK+OCaumzenuClUXspYFcMvrL7dSLEHglWZrZM9DDzYjCLGOhWAD9MWskhcLNC1ZPaW4m0pKLvlzbbzlfWT2YeibeL9gUNrKdr4Ek9sZcpxvjNu80o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757943639; c=relaxed/simple;
-	bh=e98qNp9Avn1b5EpJmktdZ+gE7fCOGIfkjQq9A2J0peo=;
+	s=arc-20240116; t=1757943667; c=relaxed/simple;
+	bh=VDLORfLKka5X/8PhdR6E7ilqkJcXYuBbGf75wpi+r+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVq0KIkSmF1q6voN+ygfZV1oOhkKNLeSZX2wBZCEMtQeXTxiMX/NLWBlVzA/BWXdWynP4raFn0pkjXINccmSIlRjj6IMTNjTI4ySQSZPUirmOVqdwV6cOFA5uBeSRz0gqKeVkEPoeVmRpPhW2gZMC3gN0wYpkabxJ2Q4LVnpu6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CU3/uSys; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3z/24UgG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DAkYmBb3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9dKfIiql; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C0B711FB3B;
-	Mon, 15 Sep 2025 13:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757943635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FeXUZUVuaBjmsZhtxA8iCKS10I1FtJQOJkYLWXu3sto=;
-	b=CU3/uSysAtKHcSbru8KBj6dUrRub4YckOBji24+xM22EhbqDm8NmP5u5g884FHc+tabd7O
-	mkJsbts2scwDXKXaSZZlZpxJ5mT/1+MFCxtlqoGU35U9GSiBO7PaCnKXzLhFTgit2Vi8ap
-	8Tuw/yoXwBkhIbpNwFIQooU2qh27OtA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757943635;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FeXUZUVuaBjmsZhtxA8iCKS10I1FtJQOJkYLWXu3sto=;
-	b=3z/24UgGuaiMrGKSCHZ/xtbI3L2TpOJnDtxcbC+499DzgcfmGeW7zjLZgT8XpUARCuOOSi
-	dRJatlM1C3LggIDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DAkYmBb3;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=9dKfIiql
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757943633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FeXUZUVuaBjmsZhtxA8iCKS10I1FtJQOJkYLWXu3sto=;
-	b=DAkYmBb3NN2+4x/T+eQBpZvmtGYYAqE3Noxcb/gGhjBlFWM+/Yy537wkfweLR27RgH94Z3
-	6qG7YwNREV97ck+b9pan3aSlQt/EhAuWzKC/DwO1oXJdqYrR+3IAEDdiP5h92E3GI12DrL
-	SYuZTNhyGOZM0kBTC1x+16ZNuL3rt/o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757943633;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FeXUZUVuaBjmsZhtxA8iCKS10I1FtJQOJkYLWXu3sto=;
-	b=9dKfIiqlnRyA/bL54Hp1fUzgUC5oHhm88gCANwwMwPb4cUXQZp2NOATJehmvD/KvCmL2BU
-	bwDV+/7ifBkatpDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9F92F1372E;
-	Mon, 15 Sep 2025 13:40:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PzydJlEXyGjLUQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:40:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 302F2A0A06; Mon, 15 Sep 2025 15:40:25 +0200 (CEST)
-Date: Mon, 15 Sep 2025 15:40:25 +0200
-From: Jan Kara <jack@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eI2eWZK/qzMHa4qqGZ0fQs0Bb3wWnEPA78yQFJ3LRuWAS8Z4Y4AaZF31zvPbEC7pBfMErTXHgHcnHnqP1WKQ4mmBsqgJEXCg4i7VwZJvD3U/7KVUNOBQpcZgblKj946GxaZ572ApXu1iv6ZZk3iJ8/WC3+14U7SMJCM/X9ged1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTVCKsBS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA215C4CEF5;
+	Mon, 15 Sep 2025 13:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757943667;
+	bh=VDLORfLKka5X/8PhdR6E7ilqkJcXYuBbGf75wpi+r+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nTVCKsBSCbnc2DScS5sG9dC7zfwep0s3pxzrPi3qgLq/idFr0YOlHS+XFqsVdjK9r
+	 lpc1mHs571V8SRqJTAnfaN1D1X+CbboBKQXBXHamDkBTIjj5tz8bJQELVflMbgehzf
+	 a9raZrsOaOi7Wc5cA9TD/PROoxV1WBDXhYPgayF85sMbGt1vwMOACrahqRCoVl6Lk7
+	 ypgPSNqZRx5BYBe2bYMKplLtCXzGAYX6L0mfS1s0P0IeG9FtgH0QjkNVkLpFB2+o43
+	 zlulvGNMM2+LVDMEDpatNlUtx06Ryq4VoVnO8OU4HQScVHJgJ5Z0BlTMU6LvUiIqHe
+	 nSTJ13a40aN3g==
+Date: Mon, 15 Sep 2025 15:41:02 +0200
+From: Christian Brauner <brauner@kernel.org>
 To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: rename generic_delete_inode() and
- generic_drop_inode()
-Message-ID: <vhchnp5fgvenoku356upyze5enpevp7ll56nxfm4b2gbrywcbn@tntas2jdgkg7>
-References: <20250915125729.2027639-1-mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
+Message-ID: <20250915-tricksen-militant-406d4cb8ebda@brauner>
+References: <20250911045557.1552002-1-mjguzik@gmail.com>
+ <20250911045557.1552002-3-mjguzik@gmail.com>
+ <20250915-erstflug-kassieren-37e5b3f5b998@brauner>
+ <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915125729.2027639-1-mjguzik@gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C0B711FB3B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
 
-On Mon 15-09-25 14:57:29, Mateusz Guzik wrote:
-> generic_delete_inode() is rather misleading for what the routine is
-> doing. inode_just_drop() should be much clearer.
+On Mon, Sep 15, 2025 at 03:27:16PM +0200, Mateusz Guzik wrote:
+> On Mon, Sep 15, 2025 at 2:41 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > > ---
+> >
+> > I would do:
+> >
+> > inode_state()
+> > inode_state_raw()
+> >
+> > Similar to
+> >
+> > rcu_derefence()
+> > rcu_dereference_raw()
+> >
 > 
-> The new naming is inconsistent with generic_drop_inode(), so rename that
-> one as well with inode_ as the suffix.
+> I don't follow how to fit this in here.
 > 
-> No functional changes.
+> Here is the complete list:
+> inode_state_read
+> inode_state_read_unstable
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> first is a plain read + lockdep assert, second is a READ_ONCE
+> 
+> inode_state_add
+> inode_state_add_unchecked
+> inode_state_del
+> inode_state_del_unchecked
+> inode_state_set_unchecked
+> 
+> Routine with _unchecked forego asserts, otherwise the op checks lockdep.
+> 
+> I guess _unchecked could be _raw, but I don't see how to fit this into
+> the read thing.
 
-Better name than in was :) feel free to add:
+_raw() is adapted from rcu which is why I'm very familiar with what it
+means: rcu_dereference() performs checks and rcu_dereference_raw()
+doesn't. It's just a naming convention that we already have and are
+accustomed to.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> Can you just spell out the names you want for all of these?
 
-								Honza
+just use _raw() imho
 
-> ---
 > 
-> Generated on top of master with:
-> git grep --files-with-matches -E '(generic_delete_inode|generic_drop_inode)' | xargs sed -i 's/generic_delete_inode/inode_just_drop/; s/generic_drop_inode/inode_generic_drop/'
+> > But you need some actual commit messages etc...
+> >
 > 
-> [is there a handier way?]
-> 
-> I'm not going to argue for the names and I'm not going to protest if
-> someone else submits their own sedpatch.
-> 
->  Documentation/filesystems/porting.rst | 4 ++--
->  Documentation/filesystems/vfs.rst     | 4 ++--
->  block/bdev.c                          | 2 +-
->  drivers/dax/super.c                   | 2 +-
->  drivers/misc/ibmasm/ibmasmfs.c        | 2 +-
->  drivers/usb/gadget/function/f_fs.c    | 2 +-
->  drivers/usb/gadget/legacy/inode.c     | 2 +-
->  fs/9p/vfs_super.c                     | 2 +-
->  fs/afs/inode.c                        | 4 ++--
->  fs/btrfs/inode.c                      | 2 +-
->  fs/ceph/super.c                       | 2 +-
->  fs/configfs/mount.c                   | 2 +-
->  fs/efivarfs/super.c                   | 2 +-
->  fs/ext4/super.c                       | 2 +-
->  fs/f2fs/super.c                       | 2 +-
->  fs/fuse/inode.c                       | 2 +-
->  fs/gfs2/super.c                       | 2 +-
->  fs/hostfs/hostfs_kern.c               | 2 +-
->  fs/inode.c                            | 6 +++---
->  fs/kernfs/mount.c                     | 2 +-
->  fs/nfs/inode.c                        | 2 +-
->  fs/ocfs2/dlmfs/dlmfs.c                | 2 +-
->  fs/orangefs/super.c                   | 2 +-
->  fs/overlayfs/super.c                  | 2 +-
->  fs/pidfs.c                            | 2 +-
->  fs/proc/inode.c                       | 2 +-
->  fs/pstore/inode.c                     | 2 +-
->  fs/ramfs/inode.c                      | 2 +-
->  fs/smb/client/cifsfs.c                | 2 +-
->  fs/ubifs/super.c                      | 2 +-
->  fs/xfs/xfs_super.c                    | 2 +-
->  include/linux/fs.h                    | 4 ++--
->  kernel/bpf/inode.c                    | 2 +-
->  mm/shmem.c                            | 2 +-
->  34 files changed, 40 insertions(+), 40 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-> index 85f590254f07..b5db45c0094c 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -340,8 +340,8 @@ of those. Caller makes sure async writeback cannot be running for the inode whil
->  
->  ->drop_inode() returns int now; it's called on final iput() with
->  inode->i_lock held and it returns true if filesystems wants the inode to be
-> -dropped.  As before, generic_drop_inode() is still the default and it's been
-> -updated appropriately.  generic_delete_inode() is also alive and it consists
-> +dropped.  As before, inode_generic_drop() is still the default and it's been
-> +updated appropriately.  inode_just_drop() is also alive and it consists
->  simply of return 1.  Note that all actual eviction work is done by caller after
->  ->drop_inode() returns.
->  
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 486a91633474..7a314eee6305 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -327,11 +327,11 @@ or bottom half).
->  	inode->i_lock spinlock held.
->  
->  	This method should be either NULL (normal UNIX filesystem
-> -	semantics) or "generic_delete_inode" (for filesystems that do
-> +	semantics) or "inode_just_drop" (for filesystems that do
->  	not want to cache inodes - causing "delete_inode" to always be
->  	called regardless of the value of i_nlink)
->  
-> -	The "generic_delete_inode()" behavior is equivalent to the old
-> +	The "inode_just_drop()" behavior is equivalent to the old
->  	practice of using "force_delete" in the put_inode() case, but
->  	does not have the races that the "force_delete()" approach had.
->  
-> diff --git a/block/bdev.c b/block/bdev.c
-> index b77ddd12dc06..810707cca970 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -412,7 +412,7 @@ static const struct super_operations bdev_sops = {
->  	.statfs = simple_statfs,
->  	.alloc_inode = bdev_alloc_inode,
->  	.free_inode = bdev_free_inode,
-> -	.drop_inode = generic_delete_inode,
-> +	.drop_inode = inode_just_drop,
->  	.evict_inode = bdev_evict_inode,
->  };
->  
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 54c480e874cb..d7714d8afb0f 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -388,7 +388,7 @@ static const struct super_operations dax_sops = {
->  	.alloc_inode = dax_alloc_inode,
->  	.destroy_inode = dax_destroy_inode,
->  	.free_inode = dax_free_inode,
-> -	.drop_inode = generic_delete_inode,
-> +	.drop_inode = inode_just_drop,
->  };
->  
->  static int dax_init_fs_context(struct fs_context *fc)
-> diff --git a/drivers/misc/ibmasm/ibmasmfs.c b/drivers/misc/ibmasm/ibmasmfs.c
-> index c44de892a61e..5372ed2a363e 100644
-> --- a/drivers/misc/ibmasm/ibmasmfs.c
-> +++ b/drivers/misc/ibmasm/ibmasmfs.c
-> @@ -94,7 +94,7 @@ static int ibmasmfs_init_fs_context(struct fs_context *fc)
->  
->  static const struct super_operations ibmasmfs_s_ops = {
->  	.statfs		= simple_statfs,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  };
->  
->  static const struct file_operations *ibmasmfs_dir_ops = &simple_dir_operations;
-> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> index 08a251df20c4..5246fa6af3d6 100644
-> --- a/drivers/usb/gadget/function/f_fs.c
-> +++ b/drivers/usb/gadget/function/f_fs.c
-> @@ -1891,7 +1891,7 @@ static struct dentry *ffs_sb_create_file(struct super_block *sb,
->  /* Super block */
->  static const struct super_operations ffs_sb_operations = {
->  	.statfs =	simple_statfs,
-> -	.drop_inode =	generic_delete_inode,
-> +	.drop_inode =	inode_just_drop,
->  };
->  
->  struct ffs_sb_fill_data {
-> diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
-> index b51e132b0cd2..13c3da49348c 100644
-> --- a/drivers/usb/gadget/legacy/inode.c
-> +++ b/drivers/usb/gadget/legacy/inode.c
-> @@ -2011,7 +2011,7 @@ gadgetfs_create_file (struct super_block *sb, char const *name,
->  
->  static const struct super_operations gadget_fs_operations = {
->  	.statfs =	simple_statfs,
-> -	.drop_inode =	generic_delete_inode,
-> +	.drop_inode =	inode_just_drop,
->  };
->  
->  static int
-> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-> index 795c6388744c..1581ebac5bb4 100644
-> --- a/fs/9p/vfs_super.c
-> +++ b/fs/9p/vfs_super.c
-> @@ -252,7 +252,7 @@ static int v9fs_drop_inode(struct inode *inode)
->  
->  	v9ses = v9fs_inode2v9ses(inode);
->  	if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
-> -		return generic_drop_inode(inode);
-> +		return inode_generic_drop(inode);
->  	/*
->  	 * in case of non cached mode always drop the
->  	 * inode because we want the inode attribute
-> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-> index e9538e91f848..e1cb17b85791 100644
-> --- a/fs/afs/inode.c
-> +++ b/fs/afs/inode.c
-> @@ -723,9 +723,9 @@ int afs_drop_inode(struct inode *inode)
->  	_enter("");
->  
->  	if (test_bit(AFS_VNODE_PSEUDODIR, &AFS_FS_I(inode)->flags))
-> -		return generic_delete_inode(inode);
-> +		return inode_just_drop(inode);
->  	else
-> -		return generic_drop_inode(inode);
-> +		return inode_generic_drop(inode);
->  }
->  
->  /*
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index e7218e78bff4..188e9eb9714b 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -7974,7 +7974,7 @@ int btrfs_drop_inode(struct inode *inode)
->  	if (btrfs_root_refs(&root->root_item) == 0)
->  		return 1;
->  	else
-> -		return generic_drop_inode(inode);
-> +		return inode_generic_drop(inode);
->  }
->  
->  static void init_once(void *foo)
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index c3eb651862c5..70dc9467f6a0 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -1042,7 +1042,7 @@ static const struct super_operations ceph_super_ops = {
->  	.alloc_inode	= ceph_alloc_inode,
->  	.free_inode	= ceph_free_inode,
->  	.write_inode    = ceph_write_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.evict_inode	= ceph_evict_inode,
->  	.sync_fs        = ceph_sync_fs,
->  	.put_super	= ceph_put_super,
-> diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
-> index 740f18b60c9d..456c4a2efb53 100644
-> --- a/fs/configfs/mount.c
-> +++ b/fs/configfs/mount.c
-> @@ -36,7 +36,7 @@ static void configfs_free_inode(struct inode *inode)
->  
->  static const struct super_operations configfs_ops = {
->  	.statfs		= simple_statfs,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.free_inode	= configfs_free_inode,
->  };
->  
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index 4bb4002e3cdf..1f4d8ce56667 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -127,7 +127,7 @@ static int efivarfs_unfreeze_fs(struct super_block *sb);
->  
->  static const struct super_operations efivarfs_ops = {
->  	.statfs = efivarfs_statfs,
-> -	.drop_inode = generic_delete_inode,
-> +	.drop_inode = inode_just_drop,
->  	.alloc_inode = efivarfs_alloc_inode,
->  	.free_inode = efivarfs_free_inode,
->  	.show_options = efivarfs_show_options,
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 699c15db28a8..caac4067f777 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1417,7 +1417,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
->  
->  static int ext4_drop_inode(struct inode *inode)
->  {
-> -	int drop = generic_drop_inode(inode);
-> +	int drop = inode_generic_drop(inode);
->  
->  	if (!drop)
->  		drop = fscrypt_drop_inode(inode);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index e16c4e2830c2..63cf73409da6 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1768,7 +1768,7 @@ static int f2fs_drop_inode(struct inode *inode)
->  		trace_f2fs_drop_inode(inode, 0);
->  		return 0;
->  	}
-> -	ret = generic_drop_inode(inode);
-> +	ret = inode_generic_drop(inode);
->  	if (!ret)
->  		ret = fscrypt_drop_inode(inode);
->  	trace_f2fs_drop_inode(inode, ret);
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 7ddfd2b3cc9c..fdecd5a90dee 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1209,7 +1209,7 @@ static const struct super_operations fuse_super_operations = {
->  	.free_inode     = fuse_free_inode,
->  	.evict_inode	= fuse_evict_inode,
->  	.write_inode	= fuse_write_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.umount_begin	= fuse_umount_begin,
->  	.statfs		= fuse_statfs,
->  	.sync_fs	= fuse_sync_fs,
-> diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-> index b42e2110084b..644b2d1e7276 100644
-> --- a/fs/gfs2/super.c
-> +++ b/fs/gfs2/super.c
-> @@ -1050,7 +1050,7 @@ static int gfs2_drop_inode(struct inode *inode)
->  	if (test_bit(SDF_EVICTING, &sdp->sd_flags))
->  		return 1;
->  
-> -	return generic_drop_inode(inode);
-> +	return inode_generic_drop(inode);
->  }
->  
->  /**
-> diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-> index 01e516175bcd..1e1acf5775ab 100644
-> --- a/fs/hostfs/hostfs_kern.c
-> +++ b/fs/hostfs/hostfs_kern.c
-> @@ -261,7 +261,7 @@ static int hostfs_show_options(struct seq_file *seq, struct dentry *root)
->  static const struct super_operations hostfs_sbops = {
->  	.alloc_inode	= hostfs_alloc_inode,
->  	.free_inode	= hostfs_free_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.evict_inode	= hostfs_evict_inode,
->  	.statfs		= hostfs_statfs,
->  	.show_options	= hostfs_show_options,
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 01ebdc40021e..e580a0eb4992 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1838,11 +1838,11 @@ int insert_inode_locked4(struct inode *inode, unsigned long hashval,
->  EXPORT_SYMBOL(insert_inode_locked4);
->  
->  
-> -int generic_delete_inode(struct inode *inode)
-> +int inode_just_drop(struct inode *inode)
->  {
->  	return 1;
->  }
-> -EXPORT_SYMBOL(generic_delete_inode);
-> +EXPORT_SYMBOL(inode_just_drop);
->  
->  /*
->   * Called when we're dropping the last reference
-> @@ -1866,7 +1866,7 @@ static void iput_final(struct inode *inode)
->  	if (op->drop_inode)
->  		drop = op->drop_inode(inode);
->  	else
-> -		drop = generic_drop_inode(inode);
-> +		drop = inode_generic_drop(inode);
->  
->  	if (!drop &&
->  	    !(inode->i_state & I_DONTCACHE) &&
-> diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-> index e384a69fbece..76eaf64b9d9e 100644
-> --- a/fs/kernfs/mount.c
-> +++ b/fs/kernfs/mount.c
-> @@ -57,7 +57,7 @@ static int kernfs_statfs(struct dentry *dentry, struct kstatfs *buf)
->  
->  const struct super_operations kernfs_sops = {
->  	.statfs		= kernfs_statfs,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.evict_inode	= kernfs_evict_inode,
->  
->  	.show_options	= kernfs_sop_show_options,
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index 49df9debb1a6..43f09d8eb5e3 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -108,7 +108,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
->  
->  int nfs_drop_inode(struct inode *inode)
->  {
-> -	return NFS_STALE(inode) || generic_drop_inode(inode);
-> +	return NFS_STALE(inode) || inode_generic_drop(inode);
->  }
->  EXPORT_SYMBOL_GPL(nfs_drop_inode);
->  
-> diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-> index 5130ec44e5e1..807e2b758a5c 100644
-> --- a/fs/ocfs2/dlmfs/dlmfs.c
-> +++ b/fs/ocfs2/dlmfs/dlmfs.c
-> @@ -547,7 +547,7 @@ static const struct super_operations dlmfs_ops = {
->  	.alloc_inode	= dlmfs_alloc_inode,
->  	.free_inode	= dlmfs_free_inode,
->  	.evict_inode	= dlmfs_evict_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  };
->  
->  static const struct inode_operations dlmfs_file_inode_operations = {
-> diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
-> index f3da840758e7..b46100a4f529 100644
-> --- a/fs/orangefs/super.c
-> +++ b/fs/orangefs/super.c
-> @@ -306,7 +306,7 @@ static const struct super_operations orangefs_s_ops = {
->  	.free_inode = orangefs_free_inode,
->  	.destroy_inode = orangefs_destroy_inode,
->  	.write_inode = orangefs_write_inode,
-> -	.drop_inode = generic_delete_inode,
-> +	.drop_inode = inode_just_drop,
->  	.statfs = orangefs_statfs,
->  	.show_options = orangefs_show_options,
->  };
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index df85a76597e9..bd3d7ba8fb95 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -280,7 +280,7 @@ static const struct super_operations ovl_super_operations = {
->  	.alloc_inode	= ovl_alloc_inode,
->  	.free_inode	= ovl_free_inode,
->  	.destroy_inode	= ovl_destroy_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.put_super	= ovl_put_super,
->  	.sync_fs	= ovl_sync_fs,
->  	.statfs		= ovl_statfs,
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 108e7527f837..d01729c5263a 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -718,7 +718,7 @@ static void pidfs_evict_inode(struct inode *inode)
->  }
->  
->  static const struct super_operations pidfs_sops = {
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.evict_inode	= pidfs_evict_inode,
->  	.statfs		= simple_statfs,
->  };
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index 129490151be1..d9b7ef122343 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -187,7 +187,7 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
->  const struct super_operations proc_sops = {
->  	.alloc_inode	= proc_alloc_inode,
->  	.free_inode	= proc_free_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.evict_inode	= proc_evict_inode,
->  	.statfs		= simple_statfs,
->  	.show_options	= proc_show_options,
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 1a2e1185426c..b4e55c90f8dc 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -282,7 +282,7 @@ static int pstore_reconfigure(struct fs_context *fc)
->  
->  static const struct super_operations pstore_ops = {
->  	.statfs		= simple_statfs,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.evict_inode	= pstore_evict_inode,
->  	.show_options	= pstore_show_options,
->  };
-> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-> index f8874c3b8c1e..41f9995da7ca 100644
-> --- a/fs/ramfs/inode.c
-> +++ b/fs/ramfs/inode.c
-> @@ -215,7 +215,7 @@ static int ramfs_show_options(struct seq_file *m, struct dentry *root)
->  
->  static const struct super_operations ramfs_ops = {
->  	.statfs		= simple_statfs,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.show_options	= ramfs_show_options,
->  };
->  
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index e1848276bab4..b0e84ca5d268 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -857,7 +857,7 @@ static int cifs_drop_inode(struct inode *inode)
->  
->  	/* no serverino => unconditional eviction */
->  	return !(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM) ||
-> -		generic_drop_inode(inode);
-> +		inode_generic_drop(inode);
->  }
->  
->  static const struct super_operations cifs_super_ops = {
-> diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-> index f3e3b2068608..733fd1e5a9a2 100644
-> --- a/fs/ubifs/super.c
-> +++ b/fs/ubifs/super.c
-> @@ -335,7 +335,7 @@ static int ubifs_write_inode(struct inode *inode, struct writeback_control *wbc)
->  
->  static int ubifs_drop_inode(struct inode *inode)
->  {
-> -	int drop = generic_drop_inode(inode);
-> +	int drop = inode_generic_drop(inode);
->  
->  	if (!drop)
->  		drop = fscrypt_drop_inode(inode);
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index bb0a82635a77..a05ff68748dc 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -778,7 +778,7 @@ xfs_fs_drop_inode(
->  		return 0;
->  	}
->  
-> -	return generic_drop_inode(inode);
-> +	return inode_generic_drop(inode);
->  }
->  
->  STATIC void
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 601d036a6c78..72fe62a65a38 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3314,8 +3314,8 @@ extern void address_space_init_once(struct address_space *mapping);
->  extern struct inode * igrab(struct inode *);
->  extern ino_t iunique(struct super_block *, ino_t);
->  extern int inode_needs_sync(struct inode *inode);
-> -extern int generic_delete_inode(struct inode *inode);
-> -static inline int generic_drop_inode(struct inode *inode)
-> +extern int inode_just_drop(struct inode *inode);
-> +static inline int inode_generic_drop(struct inode *inode)
->  {
->  	return !inode->i_nlink || inode_unhashed(inode);
->  }
-> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-> index 5c2e96b19392..6d021d18afa6 100644
-> --- a/kernel/bpf/inode.c
-> +++ b/kernel/bpf/inode.c
-> @@ -788,7 +788,7 @@ static void bpf_free_inode(struct inode *inode)
->  
->  const struct super_operations bpf_super_ops = {
->  	.statfs		= simple_statfs,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.show_options	= bpf_show_options,
->  	.free_inode	= bpf_free_inode,
->  };
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index e2c76a30802b..932727247c64 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -5341,7 +5341,7 @@ static const struct super_operations shmem_ops = {
->  	.get_dquots	= shmem_get_dquots,
->  #endif
->  	.evict_inode	= shmem_evict_inode,
-> -	.drop_inode	= generic_delete_inode,
-> +	.drop_inode	= inode_just_drop,
->  	.put_super	= shmem_put_super,
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  	.nr_cached_objects	= shmem_unused_huge_count,
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Ye and I need to runtime test at least with xfs and btrfs.
+
+Something I plan to do soon is more automated testing as soon as patch
+series are pulled into one of the VFS trees. And by that I mean visible
+to the author of the series. It'll be a while though unless we get
+manpower for that.
 
