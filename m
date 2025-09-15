@@ -1,150 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-61313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7636B578A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:41:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257F9B578B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 13:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814E4173845
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D844A1A2222E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 11:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11102FA0F4;
-	Mon, 15 Sep 2025 11:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CC93002DB;
+	Mon, 15 Sep 2025 11:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="L4Q/Y2OF";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Lqzjjb0M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Reb/9G62"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D8F2EC54B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 11:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A957A2FFDE2;
+	Mon, 15 Sep 2025 11:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936384; cv=none; b=OUW08+TMmbfmHIvCoMIU16oW5TwNN7q/42j9S/M5+Zs+VadCKTcn2WdRNMpsrCmVT2qjRF3rTD1nzxQZ7vEsGX9yO7vdFZmA4NpV449vutrMZLLhkpTicIfJ8gwKtPVvexgP08mRLBxQeqI3yJFDxxPb0wpaIyFgvqzZODl18wE=
+	t=1757936532; cv=none; b=a8T65ZeIflYHZhAslTScTazCEPU1wVDcE9jL1ad8olChKhBa21UJIFoMfNY0a0Brt8rNKgRA9wdNzdwsn2j+G7y2YZ7EwtYSy4IWW1adAtYmufHbsqTF9dknSi7shtKt6nNOj1nphPXa7Q4j5mv9iVXMkOThccqMP/HbYNXQ8aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936384; c=relaxed/simple;
-	bh=pxRfG48JHXGzCjqxBTxY6WKUTTCQO9YnXY/gPGtCk58=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fi1iqOZcyRl6q3mqxYv8r4oy+0YK8D+720/yY/TX9s8vBVOt1oW7xHiM+GNy0/JfMJwk0PfWPS8Qigrd+6MiDASkkTxgugWlbLoOAVN33jWdH/5CpSvAyIG6QGD4QFVmjgZ13iYuKFX7fdiO8az1gj/y1f5c+Ec5KyBPTYwlrBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=L4Q/Y2OF; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Lqzjjb0M; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4C80F1F8B0;
-	Mon, 15 Sep 2025 11:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1757936380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EWS23Ksjhwng7aG6+P+qQcbIi/2CQPisnn0O+hxkMsA=;
-	b=L4Q/Y2OFxwSYzdRcb8rWDUuYmbyAyMQdz/fc2+sBsJy7ufhEhdGopXHtlV7HsKJgOBTovM
-	O9d1vT3GGcuQ6dXtelsFDMpt6AoaRQ4BrZj7EvOESuxbqHoP49nGBCFsd30LL8jb+NCGsU
-	gG8XKxYL5XF+AfPVs1G4vOqGy0eU6Zc=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1757936379; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EWS23Ksjhwng7aG6+P+qQcbIi/2CQPisnn0O+hxkMsA=;
-	b=Lqzjjb0MbCaXtzRZJx+p3SKHQogb0vADJ0WeO62Vgo7CyOHf+O6GQDk15BJfZevMwd60ZU
-	qErT6ECVt/kVYr97Bxu+EwbLF3hGilNKyPbb6DKPBLkRpaV+CO8/SqPGeCTb7RKewiXLRE
-	VjLQFa+s1JsDLEYXYsiWsMAtvvYigWI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16ECE1372E;
-	Mon, 15 Sep 2025 11:39:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uDKLBPv6x2gqKQAAD6G6ig
-	(envelope-from <mwilck@suse.com>); Mon, 15 Sep 2025 11:39:39 +0000
-Message-ID: <aa5d1e137ddab12d1fa6beca4279fd9c90ff58dd.camel@suse.com>
-Subject: Re: [PATCH] init: INITRAMFS_PRESERVE_MTIME should depend on
- BLK_DEV_INITRD
-From: Martin Wilck <mwilck@suse.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Andrew Morton	
- <akpm@linux-foundation.org>, David Disseldorp <ddiss@suse.de>, Alexander
- Viro	 <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara	 <jack@suse.cz>
-Cc: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 15 Sep 2025 13:39:38 +0200
-In-Reply-To: <9a65128514408dc7de64cf4fea75c1a8342263ea.1757920006.git.geert+renesas@glider.be>
-References: 
-	<9a65128514408dc7de64cf4fea75c1a8342263ea.1757920006.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1757936532; c=relaxed/simple;
+	bh=f9AZ6ETGhgOlD9k/ZxuW8BeYMmQM+TaA/I74h6msMzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWVYR4tWISQTz77GPLWM1U/kArOET4F2YA6NPoDHdvzF4Hna3gZSCvve9YjM8Npri7vQ5dYziqJ86Cpivy4/eHW7JtvDyq8/gSoMqY2GyrHygA84y0zQ8VHSEZTMXmGq4lFQxiPzWY1yfedQuthwhkmoVaZZFTxlhzFiN/cYUg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Reb/9G62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78DFC4CEF7;
+	Mon, 15 Sep 2025 11:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757936532;
+	bh=f9AZ6ETGhgOlD9k/ZxuW8BeYMmQM+TaA/I74h6msMzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Reb/9G62tOG8PU9Hb/xKDN5bmyg9zz54YcvMN7a02rfgSnhhxEV3y/LtUpEuSdUSj
+	 U2NTxTTz060S1kFl1Y9Xs/8TdgF3YwjgbXiZHUXTCNilcmk0ut8c7Zgm3wfRtfFqcN
+	 JZb7W+l6ij0bIU623xhg3SQxrj6E2Tv0oHsQ8oIZgE6etlpdrqE6Bi+cIIx/6+Xi4k
+	 X2PdlRNFTE2pDgcQI242ZHch/vrP/LP/o5Y4510Up9rIfEmUpl/GQd3tS7hBcoDwxn
+	 iX+3+p9RiKdr+gcztuYgoZiK1taRoLvmk5yj1r8l2vkxLbvcRv7BSElyeQEflG7csp
+	 YQ7jPBRUIaJIw==
+Date: Mon, 15 Sep 2025 13:42:04 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 11/33] net: use ns_common_init()
+Message-ID: <20250915-ungeduldig-erlegen-f3d3770f15d3@brauner>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-11-1a247645cef5@kernel.org>
+ <ucldl3baqsuuiwzmubrkloblxfjvcecfhjd2nyvl6boccc3qlh@bumwo2wjyvgr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ucldl3baqsuuiwzmubrkloblxfjvcecfhjd2nyvl6boccc3qlh@bumwo2wjyvgr>
 
-On Mon, 2025-09-15 at 09:11 +0200, Geert Uytterhoeven wrote:
-> INITRAMFS_PRESERVE_MTIME is only used in init/initramfs.c and
-> init/initramfs_test.c.=C2=A0 Hence add a dependency on BLK_DEV_INITRD, to
-> prevent asking the user about this feature when configuring a kernel
-> without initramfs support.
->=20
-> Fixes: 1274aea127b2e8c9 ("initramfs: add INITRAMFS_PRESERVE_MTIME
-> Kconfig option")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Sep 15, 2025 at 01:07:06PM +0200, Jan Kara wrote:
+> On Fri 12-09-25 13:52:34, Christian Brauner wrote:
+> > Don't cargo-cult the same thing over and over.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> 
+> ...
+> 
+> > @@ -559,7 +572,9 @@ struct net *copy_net_ns(unsigned long flags,
+> >  		goto dec_ucounts;
+> >  	}
+> >  
+> > -	preinit_net(net, user_ns);
+> > +	rv = preinit_net(net, user_ns);
+> > +	if (rv < 0)
+> > +		goto dec_ucounts;
+> 
+> Umm, this seems to be leaking 'net' on error exit.
 
-Reviewed-by: Martin  Wilck <mwilck@suse.com>
+Sorry about this:
 
-> ---
-> =C2=A0init/Kconfig | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/init/Kconfig b/init/Kconfig
-> index e3eb63eadc8757a1..c0c61206499e6bd5 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1501,6 +1501,7 @@ config BOOT_CONFIG_EMBED_FILE
-> =C2=A0
-> =C2=A0config INITRAMFS_PRESERVE_MTIME
-> =C2=A0	bool "Preserve cpio archive mtimes in initramfs"
-> +	depends on BLK_DEV_INITRD
-> =C2=A0	default y
-> =C2=A0	help
-> =C2=A0	=C2=A0 Each entry in an initramfs cpio archive carries an mtime
-> value. When
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index 5fb7bd8ac45a..466de530c495 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -572,12 +572,13 @@ struct net *copy_net_ns(unsigned long flags,
+                goto dec_ucounts;
+        }
+
+-       rv = preinit_net(net, user_ns);
+-       if (rv < 0)
+-               goto dec_ucounts;
+        net->ucounts = ucounts;
+        get_user_ns(user_ns);
+
++       rv = preinit_net(net, user_ns);
++       if (rv < 0)
++               goto put_userns;
++
+        rv = down_read_killable(&pernet_ops_rwsem);
+        if (rv < 0)
+                goto put_userns;
+
+Thanks for noticing! Fixed in-tree.
 
