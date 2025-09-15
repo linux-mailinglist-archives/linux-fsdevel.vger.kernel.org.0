@@ -1,181 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-61264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0F7B56CE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 01:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBAAB56DA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 02:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F97D189A4A6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Sep 2025 23:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57F9189A82B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 00:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75E623D7E6;
-	Sun, 14 Sep 2025 23:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC2A1D54FA;
+	Mon, 15 Sep 2025 00:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="VH2NAcoq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FY4vMGu7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LvKNtk/3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2CE7A13A
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 23:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96311C860E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 00:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757891231; cv=none; b=J8O4/NT/oWrks/hApBV5cFaWN1+A1w3s8YCgdLLTVN/724KUfHEzeozxKjESd4j4qIpaY0DX2Jq3pMuDg4iGElZ7I8I2CqVqF6YI98l/jJc6Hab94T7UombhqIYqJNazaUuIiQ5CuvWhc47qkubKGvomeWLDO8RW6m0w09/UWSY=
+	t=1757897048; cv=none; b=S2z5f/6oLjuxhBY6m/Xv0to+FwCUCiEU514Th7B/1MTXrKbvZbDWwiwT8JbedtopwhQ4wltLbhd+MMgutYtxjBOu2cysRKtG9sO7nkCzWpl3s4diZ/bMJbBQ+rq2PsV6a2xdXYX0NSebO0X146bY8l9uII5YV03bW+c7Fc0WisI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757891231; c=relaxed/simple;
-	bh=qDqiUGGSgsYoG/ndpQvRa5FQSH3Ixa3oY3KqMt6u1tE=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=KPUrUlXU/oxPIqRNuDdY7h4TmOVuNeyAX3eGotR5ceVW5a+VIlbByWcVMoqJDCoIDa+/XABQdRdFGEGQzOjYrYCZZQeYtWxTnKoi/HcdjmwutjBBwJ/y21PV/AQfHfsnoaL49S7lb8Za9M8bfvmOWm0ZCcdbyGBilLzUjpe3QuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=VH2NAcoq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FY4vMGu7; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 0E569140019F;
-	Sun, 14 Sep 2025 19:07:09 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Sun, 14 Sep 2025 19:07:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1757891229; x=1757977629; bh=KP20626VEmIb4eum88VEc96VVLx4tyFoz6D
-	G5wF8wHI=; b=VH2NAcoqXM5iOfjdnqsadDPNKb9Xbf/BmOjn38nh3aPqwHkrCfh
-	H0xCp76yobUb2Fw/Uzp6ZNO/zeZW1e4FIofS86eGClwzUbB66W0jRCoK5QG8KxDk
-	jxId8LOygbVrKLdhdbil7wxGb3GE/gN46MhpRT3MRCE5cvZcwQ1TRVi/zDALiw38
-	aBNapNhjX7W8r+JlQ6QlB9Mrtlgw5pUMxMXTmDgkiPIo8yQn9Ba+J0NXXRBx3qDf
-	V/v9iOPOof5US+03NPlpmZd33vAiJQUvCSUyE58Y5fXH4Hg961thj7PNtqW5wpYM
-	lSHOKSneuf7MU/rvj8RK6jmVlCdCl/Pcavw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757891229; x=
-	1757977629; bh=KP20626VEmIb4eum88VEc96VVLx4tyFoz6DG5wF8wHI=; b=F
-	Y4vMGu7o7jYyPAekNFQRRYxh3aGfREOZh4i79EmlUE57T4WZ6mt4Lr6BFT0o0uox
-	asjGxp0JeDoGerwGlJGor1QvNEy1bk1Q8dHW/UrS6D5+J7fCi1mfYJIGMxEg9Sjq
-	b/DCOYKJ37ExDFmjt8ObCRmDiL8vowfHCyq+crW5tbywzSId4+twFaSVAerRi1LF
-	d3uGFlZTh5ydUoGEQSBq2QjFzs3Iz8Es4J/HStirV/9JY4fOAGiCw5M1U4QhbLhk
-	O4GIr1RXq5mjof8ZOUz0Gs6lKIgdpy1c7VoiM8MvwMKXY/TUFaZIdZBWwLdLA0/S
-	umI1r7lRmrpHx4bHZxsYg==
-X-ME-Sender: <xms:nErHaFABB1OH-G9hyv70f2KledFbitnFpXmqeaUJeABFUvHFg5eTMg>
-    <xme:nErHaK7l8UgAkZz5uH_LQaLuns4nTUWdF1tfZhhpHRfkBSPjE1m39ez11p0LWbAa8
-    LaxpC-6tuKpew>
-X-ME-Received: <xmr:nErHaGIjjwJG0utYgRbTHfrur4xDhvqAs_4EEYpiRZPWATQtC8UknmubYf7XzrwgnldAFewQRODyXHcHMfSBHAMJN8OD7VgaGUC4oO6ZxDbl>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefiedtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehtohhrvhgrlhgush
-    eslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepthhrohhnughm
-    hieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrd
-    horhhg
-X-ME-Proxy: <xmx:nErHaLv4VzaEG8s_A2PE0DtvqedxrzWHsgwQNVdeBpwYNueVV_9wQg>
-    <xmx:nErHaNJXADLoh_zU8cK4JeAvQmU3wemhS0z9vSYw7MstbMteqSbPOQ>
-    <xmx:nErHaM_kWPJCprjI6N17m4iFWciUY7VdrFhksxTPoA33cK022tLBqw>
-    <xmx:nErHaOzFjNAUYzRAx1Z-lXKE_dwzohLyI1r_zpy_F-sOfI5l_YYyCQ>
-    <xmx:nUrHaAas_U0xPXbbVuQ71Z7RFSvKKFg2vSRKQb1LJ2a37JAGoMZ1w3nX>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 19:07:06 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1757897048; c=relaxed/simple;
+	bh=aA8qj6lRb3xePM94d10e4Y4cI1pxwAPWJSkyEKnf/Zo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vw5wO21lMmZ6KV3yDDTNZXkh6OpGIbFda8dUQHyP66z6ICOuumPiTUw5bLySs25+YaNtQhh2wLF36qhFfFbNoyZCh9L3Q4M8VTeycVwDiFVo9w9l6yYbzZzDCcBTBqn/A2Xpzsf/+q0XCHjlXg2WRwXGlxB5ofMXW502q20sf6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LvKNtk/3; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b78657a35aso358821cf.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Sep 2025 17:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757897046; x=1758501846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V9JaDewgxuozpkxda6xKseXUycmdfaWorgRDXhlzyRo=;
+        b=LvKNtk/385HLT9CfJCeRTZIN8xMhLYHBJsE1HZhSnEU4MIfMuXdBFyQVaK0wlxNeph
+         tqtQtgeNYMaYCtpx8W9n5QSBosliKLaV5Q8uUonSwtFQB+/47f92H0/iXOtUmiQosBk6
+         Fd/Q/K9y50VE7fyMdic0sKL7HRjvWOlnkjmMoOsqQcn3NjGyYIYeI1eQzQRcOtrOPixG
+         VhEqeoE35hLkFZPUOn1CAH9pIgmzMNvrtwkiGyqvxeppkscYF4Mz8BlvAJnnHW7I2No/
+         vDfivupQbBMbgj/jc6QmhjsP3HeF97XTCnxB8J86viMc/TL1CgYjEr0fjhqgA39fi0xe
+         7q9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757897046; x=1758501846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V9JaDewgxuozpkxda6xKseXUycmdfaWorgRDXhlzyRo=;
+        b=EuJ0K27KxIrD1JDXjniW4WWu6qr43kaPTDw1TtWBao5ZwUwD1WEZ5LkumiXDE8hfsN
+         DVuzylqO8E74K1KY44VUinzM5KXPuQQoTeWSzsq49dwkKOT046XL9cO/17FokyRPg9Tj
+         J9mZW0w1RvgPwmiCNkAhE8+Nsi7KjF6/BfeGiqTXhrCFbWbqw44cXHF+KiRgzSqJ7iJp
+         Mcq5gcxStRsTqwtoJnpv+HwQfhSLJAZykVzVtTrs9R+h+724/iI/Xoi6L9fCQPE57C2E
+         YbpHrZGFR9WKDfW4PmgEMdhMAi28W32CKeaQ+26WSoMjA5pj1A5RwiBHQxbPSxH+1quc
+         sj/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEZJrxVYlP/uzgRJxY1ZRiOGd5rH0nvasMAeNA4zrtqnedwluZ8Cbij3sp0xNlroBC7PildoqLezS8DogE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiMAkoCiDridZW0fP1xdKdAFLwUUDbxJAULalFETXx56OBB9ry
+	bSSXBx2cYU+108ZWYKDcs2XE/AgZ7utp2clTMmKJMmdnUWIyEy9M8HV3b44VkXZ47I9A8WcBJkC
+	U4c7ZuKD4OVOHxonUhPBkLzw3dEGAGLSrLuQpYS8M
+X-Gm-Gg: ASbGncuR/eaRGWBu6c2OpiNCjMtFfKmkRotjY08fhTsO0KNa67rgQ++HPLLNTvkhKSe
+	VhieWWXwW6+1wm1DWPhtV2MHxsS3m7CAPf+ayIzsvLyKGtxI1vTJoezKk/TewZIcDm5fXBenwls
+	Mj++c78Wr4rwIl+ZmiVwTJ/8sI9bQh+i/jAbT+vnALhMPRUeopAv9DcEw+ycAypPQk3aaI/RVRs
+	XzRqMQ1tMvNiE7eRi9t/qQ=
+X-Google-Smtp-Source: AGHT+IEezB3iSLbeJTHsIwywK29EKKbUJtnk62B10GeCdyT9bGxf+jf23KN9V20U3FFXbSgM6H7iFnxQMLHkzklqJuw=
+X-Received: by 2002:a05:622a:900f:b0:4b3:7533:c1dd with SMTP id
+ d75a77b69052e-4b78b98e1ecmr8313771cf.1.1757897045275; Sun, 14 Sep 2025
+ 17:44:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Trond Myklebust" <trondmy@kernel.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Jan Kara" <jack@suse.cz>
-Subject: Re: [RFC] a possible way of reducing the PITA of ->d_name audits
-In-reply-to: <20250914055626.GG39973@ZenIV>
-References: <>, <20250908051951.GI31600@ZenIV>,
- <175731272688.2850467.5386978241813293277@noble.neil.brown.name>,
- <20250908090557.GJ31600@ZenIV>, <20250913212815.GE39973@ZenIV>,
- <175781190836.1696783.10753790171717564249@noble.neil.brown.name>,
- <20250914013730.GF39973@ZenIV>, <20250914055626.GG39973@ZenIV>
-Date: Mon, 15 Sep 2025 09:07:00 +1000
-Message-id: <175789122000.1696783.12073600603531640624@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+References: <20250808152850.2580887-4-surenb@google.com> <20250914114308.3024033-1-clm@meta.com>
+In-Reply-To: <20250914114308.3024033-1-clm@meta.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Sun, 14 Sep 2025 17:43:54 -0700
+X-Gm-Features: AS18NWCmk4aMAnU5waOHNrHwd6qTif_tgIS8NTe99BvH87FvfzNuXoMxBTE1cSY
+Message-ID: <CAJuCfpGuvyRj6zxPuJDzCcGz_-x7feycsCkNQT0+Nzn4oUYcSA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
+ under per-vma locks
+To: Chris Mason <clm@meta.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
+	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
+	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, SeongJae Park <sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 14 Sep 2025, Al Viro wrote:
-> On Sun, Sep 14, 2025 at 02:37:30AM +0100, Al Viro wrote:
->=20
-> > AFAICS, it can happen if you are there from nfs4_file_open(), hit
-> > _nfs4_opendata_to_nfs4_state(opendata), find ->rpc_done to be true
-> > in there, hit nfs4_opendata_find_nfs4_state(), have it call
-> > nfs4_opendata_get_inode() and run into a server without
-> > NFS_CAP_ATOMIC_OPEN_V1.  Then you get ->o_arg.claim set to
-> > NFS4_OPEN_CLAIM_NULL and hit this:
-> >                 inode =3D nfs_fhget(data->dir->d_sb, &data->o_res.fh,
-> >                                 &data->f_attr);
-> > finding not the same inode as your dentry has attached to it.
-> >=20
-> > So the test might end up not being true, at least from my reading of
-> > that code.
-> >=20
-> > What I don't understand is the reasons for not failing immediately
-> > with EOPENSTALE in that case.
-> >=20
-> > TBH, I would be a lot more comfortable if the "attach inode to dentry"
-> > logics in there had been taken several levels up the call chains - analys=
-is
-> > would be much easier that way...
-> =20
-> BTW, that's one place where your scheme with locking dentry might cause
-> latency problems - two opens on the same cached dentry could be sent
-> in parallel, but if you hold it against renames, etc., you might end up
-> with those two roundtrips serialized against each other...
->=20
+On Sun, Sep 14, 2025 at 6:24=E2=80=AFAM Chris Mason <clm@meta.com> wrote:
+>
+> On Fri,  8 Aug 2025 08:28:49 -0700 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+>
+> > Utilize per-vma locks to stabilize vma after lookup without taking
+> > mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
+> > contended, we fall back to mmap_lock but take it only momentarily
+> > to lock the vma and release the mmap_lock. In a very unlikely case
+> > of vm_refcnt overflow, this fall back path will fail and ioctl is
+> > done under mmap_lock protection.
+> >
+> > This change is designed to reduce mmap_lock contention and prevent
+> > PROCMAP_QUERY ioctl calls from blocking address space updates.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Acked-by: SeongJae Park <sj@kernel.org>
+> > ---
+> >  fs/proc/task_mmu.c | 103 +++++++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 85 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index c0968d293b61..e64cf40ce9c4 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -132,6 +132,12 @@ static void release_task_mempolicy(struct proc_map=
+s_private *priv)
+>
+> [ ... ]
+>
+> > +static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_=
+locking_ctx *lock_ctx,
+> > +                                                  unsigned long addr)
+> > +{
+> > +     struct mm_struct *mm =3D lock_ctx->mm;
+> > +     struct vm_area_struct *vma;
+> > +     struct vma_iterator vmi;
+> > +
+> > +     if (lock_ctx->mmap_locked)
+> > +             return find_vma(mm, addr);
+> > +
+> > +     /* Unlock previously locked VMA and find the next one under RCU *=
+/
+> > +     unlock_ctx_vma(lock_ctx);
+> > +     rcu_read_lock();
+> > +     vma_iter_init(&vmi, mm, addr);
+> > +     vma =3D lock_next_vma(mm, &vmi, addr);
+> > +     rcu_read_unlock();
+> > +
+> > +     if (!vma)
+> > +             return NULL;
+> > +
+> > +     if (!IS_ERR(vma)) {
+> > +             lock_ctx->locked_vma =3D vma;
+> > +             return vma;
+> > +     }
+> > +
+> > +     if (PTR_ERR(vma) =3D=3D -EAGAIN) {
+> > +             /* Fallback to mmap_lock on vma->vm_refcnt overflow */
+> > +             mmap_read_lock(mm);
+>
+> I know it's just a (very rare) fallback, but should we be using
+> mmap_read_lock_killable() for consistency?  I can see this impacting oom
+> kills or other times we really want to be able to get rid of procs.
 
-That is certainly something we need to explore when the time comes,
-though at the moment I'm mostly focuses on trying to land APIs to
-centralise the locking so that we can easily see what locking is
-actually being done and can change it all in one place.
+That's a good idea. From a quick look it seems safe to fail with
+-EINTR here, which will propagate all the way to do_procmap_query().
+Do you want to post a fixup patch?
+Thanks,
+Suren.
 
-Currently all calls to ->atomic_open are exclusive on the dentry, either
-because O_CREATE means the directory is locked exclusively or because
-d_alloc_parallel() locked the dentry with DCACHE_PAR_LOOKUP.  ...except
-a cached-negative (which was accepted by d_revalidate) without O_CREATE.
-I would rather we didn't call ->atomic_open in that case.  If the
-filesystem wants us to (which NFS does) they can fail ->d_revalidate
-for LOOKUP_OPEN.  I have a patch to do that for NFS so we can drop the
-d_alloc_parallel() from nfs_atomic_open().  I think we need that case to
-be exclusive anyway.  You achieved that for NFS by using
-d_alloc_parallel().
-
-All other atomic_open functions simply call finish_no_open() or return
--ENOENT when given a non-d_in_lookup() dentry and are not asked to
-CREATE.  They could all be simplified if we avoided the atomic_open call
-in that case.
-
-The proposal is to add a case when O_CREATE isn't requested and the
-dentry is no longer d_in_lookup().  Probably that needs exclusive access
-to the dentry anyway?  Either way it wouldn't be a regression.
-
-I wonder if maybe we should transition from offering ->atomic_open() to
-offering ->lookup_open() which is called instead of the current
-lookup_open() (though with locking moved inside the function).
-
-So for a LAST_NORM open the filesystem can take complete control after
-the parent has been found.  The VFS can export a bunch of appropriate
-helpers which the filesystem can mix and match.  This seems cleaner than
-having a ->lookup() which bypasses LOOKUP_OPEN requests and a
-->d_revalidate which does the same.
-
-NeilBrown
+>
+> -chris
 
