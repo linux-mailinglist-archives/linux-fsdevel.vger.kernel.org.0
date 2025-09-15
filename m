@@ -1,94 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-61284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD04B571DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 09:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0683FB5729E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 10:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39FF3BD60E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 07:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9AC03A8A4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 08:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414762DF3F9;
-	Mon, 15 Sep 2025 07:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6502EAB93;
+	Mon, 15 Sep 2025 08:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fLEzUF3S";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WhForuUw";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fLEzUF3S";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WhForuUw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1072D592B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 07:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F194E2D1F64
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 08:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757922484; cv=none; b=j6o5t4plSIxvAlBMrD305yc1ErzgnadBtqXpBiIJiTrsuS4eLCAb5WJoN/2CWN8KiO7RPrJQ/ZRfsvTcTRHkl0Etk+U/88/EqW8DKHvNsjtzi2pEODtbgnEVeSm0jTkueBqfktfIbECeE3f462jYKn3kz6diuEx/E25urba5FCo=
+	t=1757924096; cv=none; b=N0nxD0d8Zo57isdICnTWQFdQBacwAXuYhCVGl7rwi7A6lsk1cg85itNX3pMpI72H+RkITQz8fdoqIqIIzNl8RUrNFktZ7AZ4NYcumKrPVB3Rv9yBPrkyvH+vaLEueCIhr31Iv2ScU0EGf2WepZmGRC7Xf0EY0bFmDSQdjlGy+lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757922484; c=relaxed/simple;
-	bh=sDqJwn9c7svvbHL1gVSSlKD6t7Spn2ExhaOMtxottpk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MOsKBOEG6qxemKcJV747vvP/6zlLZQiZ8iTnQYszQB9yoUCd0qx8A3Mv7xkHtpT8PQx9pssdHrxNR+TezMJf8edmMxfDZN7489NzF5L4p52YM3CVKd3Myd+iO1LtiG7Xi3Gs0jQlF4s3mqvcvFdNUBW3VZmzau4ClTe6a7ZzyWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-411db730dcaso142660195ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 00:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757922482; x=1758527282;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6mUB+sqn22sEooHqNX4QjIWNl0SVDHgDFAZHnR3by08=;
-        b=FURvS5zSM8Z8lgo1cvE1ra5BxZx5fwoCnmh6l4PBPCIgeegZSeeSPGqbmvuqtuSh0s
-         WAx6t5EIk99qeiYFQp85cDrvPDndw+FE7eHOqgBqHXu82pH+OPDHg3QPe9ffSL5u2xhs
-         /UQZ5ZXCAhvs9iEdITmiiBxrwjQkxlWHgP2DL+1YpfSdsDQ3oICMiulIsh5zHaxceRfw
-         9jJwQCrMYzN299u3pP9O9ifpYZrx708ZH0mAAx58dqd7/t8SWZTJgPbwzVJ1xcFLOFwV
-         63QrCDK2TNvKPBz63///2wKW3zZ/0fiN5x0fURDAURJ9IJlZJEGWJ5xA/mROvMKKhnep
-         7ZnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/u32RNgeMtPH30DRF3rTTQdbT4wUkgRxw5oORsyp7gBbfUHfDUe7xDpa3y1qBgB11O1Sco96Xv9MTff6q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoJ88cI3EYu36uv7QPeN016uZp4Q1f2r7yzMHpRcG/I8bvnjte
-	OAWQcrYwyrA3R/uPZkNpjLD6s29kCNm+85PzcB6MTsrNOBoTDq1/7QVpHphba8ZyXq+0KP+YE/o
-	joj68sMpMec97Fx8uVeVYHqtxV+7iBVn0VtMcVfuR1eL156drYB54iLG83Ys=
-X-Google-Smtp-Source: AGHT+IE4CuAPdzy8E4AvKc8mu1VORU1gsGkMG2LeH46HuG2nXACKeM9R4m04zBUAqJVQdjLVNxByaK5Y3triGrs0MdUjLeTFvwJq
+	s=arc-20240116; t=1757924096; c=relaxed/simple;
+	bh=deJY1b9TWxN7bxAyrceEcgEUmvcwqV8/tbUprds4akI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TjkmkDI4uIG5Lu0JlK48+f/jfsJtzEaYyo13KC9MrWp6I7od+U/8+kMNt5xpBuZsT8mJl4QFrA97e0cwz79lHwG45pp995h5gUYAcFKvdQtU3MJRZp7XW4i8/+Y5skSkbz8hpXx3XHtt6lbbg+yWvFaqL6LqQjM4HkfJZfu69F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fLEzUF3S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WhForuUw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fLEzUF3S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WhForuUw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 332221F821;
+	Mon, 15 Sep 2025 08:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757924093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YGy0rfdSRjLJPpgGFILAlv/48JaKsrMZ18rxppBWgPo=;
+	b=fLEzUF3SFRbMwOfmLkqeV9pe8sbX3A3lB39Yo3RrSdU8Blv/NV+2QNUXJDhaKXZzKXJ5e5
+	I5DEzPgwNLBChq1/q/fD86GnecXfmroRe8a6Hmhz6KXbEOafs4WMfXVKB8V328N0Pqh866
+	VwW/E6rPVWqYo0K/PYcvEquZuLFE0i0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757924093;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YGy0rfdSRjLJPpgGFILAlv/48JaKsrMZ18rxppBWgPo=;
+	b=WhForuUwl8lPZHxbv1oL3ag44IUcWYWhDOlIy08GdKLHBEswynXn3YI+vkQAis+hwyODat
+	yBEoRnN7bkE3rYCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757924093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YGy0rfdSRjLJPpgGFILAlv/48JaKsrMZ18rxppBWgPo=;
+	b=fLEzUF3SFRbMwOfmLkqeV9pe8sbX3A3lB39Yo3RrSdU8Blv/NV+2QNUXJDhaKXZzKXJ5e5
+	I5DEzPgwNLBChq1/q/fD86GnecXfmroRe8a6Hmhz6KXbEOafs4WMfXVKB8V328N0Pqh866
+	VwW/E6rPVWqYo0K/PYcvEquZuLFE0i0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757924093;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YGy0rfdSRjLJPpgGFILAlv/48JaKsrMZ18rxppBWgPo=;
+	b=WhForuUwl8lPZHxbv1oL3ag44IUcWYWhDOlIy08GdKLHBEswynXn3YI+vkQAis+hwyODat
+	yBEoRnN7bkE3rYCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 06AFA1368D;
+	Mon, 15 Sep 2025 08:14:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BQ+ELPnKx2hKYwAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Mon, 15 Sep 2025 08:14:49 +0000
+Date: Mon, 15 Sep 2025 18:14:40 +1000
+From: David Disseldorp <ddiss@suse.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Martin Wilck
+ <mwilck@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Askar Safin
+ <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] init: INITRAMFS_PRESERVE_MTIME should depend on
+ BLK_DEV_INITRD
+Message-ID: <20250915181440.1e52a824.ddiss@suse.de>
+In-Reply-To: <9a65128514408dc7de64cf4fea75c1a8342263ea.1757920006.git.geert+renesas@glider.be>
+References: <9a65128514408dc7de64cf4fea75c1a8342263ea.1757920006.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fe9:b0:423:f9c6:f21b with SMTP id
- e9e14a558f8ab-423f9c6f2d1mr51696275ab.8.1757922482721; Mon, 15 Sep 2025
- 00:48:02 -0700 (PDT)
-Date: Mon, 15 Sep 2025 00:48:02 -0700
-In-Reply-To: <0000000000008b529305ec20dacc@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c7c4b2.050a0220.2ff435.0391.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] kernel BUG in dnotify_free_mark
-From: syzbot <syzbot+06cc05ddc896f12b7ec5@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, amir73il@gmail.com, 
-	christian@brauner.io, hdanton@sina.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	viro@ZenIV.linux.org.uk, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[renesas];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,suse.com,zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -1.80
 
-syzbot suspects this issue was fixed by commit:
+On Mon, 15 Sep 2025 09:11:05 +0200, Geert Uytterhoeven wrote:
 
-commit 55ad333de0f80bc0caee10c6c27196cdcf8891bb
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Mon Dec 30 07:34:08 2024 +0000
+> INITRAMFS_PRESERVE_MTIME is only used in init/initramfs.c and
+> init/initramfs_test.c.  Hence add a dependency on BLK_DEV_INITRD, to
+> prevent asking the user about this feature when configuring a kernel
+> without initramfs support.
+> 
+> Fixes: 1274aea127b2e8c9 ("initramfs: add INITRAMFS_PRESERVE_MTIME Kconfig option")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    fs/ntfs3: Unify inode corruption marking with _ntfs_bad_inode()
+Makes sense, thanks.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15420e42580000
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586
-dashboard link: https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e3dffd180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f9e08d180000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Unify inode corruption marking with _ntfs_bad_inode()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Reviewed-by: David Disseldorp <ddiss@suse.de>
 
