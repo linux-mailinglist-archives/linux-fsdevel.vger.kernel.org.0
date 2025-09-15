@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-61276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C360DB56EBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 05:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C48FB56EC0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 05:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4682F177791
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 03:12:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D3F176D40
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 03:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D7239591;
-	Mon, 15 Sep 2025 03:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5DE261B76;
+	Mon, 15 Sep 2025 03:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="TyuuT6dC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iMLIbkIf"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="er589QUE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hs2g5Evz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B50A22173A;
-	Mon, 15 Sep 2025 03:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE6125D917;
+	Mon, 15 Sep 2025 03:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757905969; cv=none; b=EFBwlP66QOxui2h2J75k5KvaE+ciJZmqEENhObXLw3e12O1q/banfe5tzgVfGrW46jyt3WXWe59PS/jAcKUJz2P5kXrl9yBDme+GBZQVWLzzpjU6n3rHP/Fo3n0EKEG+TwHAfL1McT2bqSnZKxUhKlM7JW+VeE0HHMR2agKLlQk=
+	t=1757905974; cv=none; b=NpQIEbJrYbvQLpWy897jpWXQnLSkR6FR9Na931sF5O3MB3MWtXHmNRhtjKquS1RWQxMo5jBczjNjw037QnOv/LVJF7UvHr8rU9OkzE+pX2PHoG8UVHSYIt3bMzdfcKz7nQBc3v2KqHep9GaBMjthPlZ8BEe1aMJxCC4kXpgUoqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757905969; c=relaxed/simple;
-	bh=g3iP9mSHzeimQ1owqwMEemrcx0YEVWAHUT4W/NqodS8=;
+	s=arc-20240116; t=1757905974; c=relaxed/simple;
+	bh=gpP1dOjqRCJ3gNH8Nc/Z2rZu+rLGsW4zNgFN9hiHySQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PcJrHc+esB00oor4kUD7xAcUQuap8T2W8CSvU7wirk79phiCBpURyaKXGMjt3TX/WTYhZlv3WtOQ4jwKrWLhvvNS1G6+8NaKJzeeMTl0Z3Wn4kxKJ+v4vidnu98d7J3cD3XInE1TWOrTHp3CRlChzZrs81SpWXzI2jfiUF+/za8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=TyuuT6dC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iMLIbkIf; arc=none smtp.client-ip=202.12.124.151
+	 MIME-Version; b=TRr/+lVde8mqSjQhIrf0/MDWAE3qOv6fkjbFhEEDTy7OGSnqBMKqbfwuxeJ/xy4k/r31wVTXWPEcK/ywKqo7GPQYIbUID+OMp7EHhd3SP/IPp0jRbzqskVGpRdIV6knSeGFnQf9TH1YCFqobCsH5XJhZFufDaZEXzs31iQIXEzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=er589QUE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hs2g5Evz; arc=none smtp.client-ip=202.12.124.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 3D89F1D000B8;
-	Sun, 14 Sep 2025 23:12:46 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sun, 14 Sep 2025 23:12:46 -0400
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 97DB77A007A;
+	Sun, 14 Sep 2025 23:12:51 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Sun, 14 Sep 2025 23:12:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1757905966;
-	 x=1757992366; bh=5H+IOTextlM7T2psowwtP600Ua9Jo8aLAeD6ncvUXzo=; b=
-	TyuuT6dC/fuROJTPb36kbkPJWlpPGsoqONvMVk9KFhwo/lTK72F1S/4tuZo3tNoU
-	1Vleafrhiqp36rQ2RWdKE8BXZyFk1UhZ15nR/XKQBOFdnrDFs8lIGWEGa8z45rpN
-	+mvE7KiXurR5MrraDTrYGIZU+qrHzJvGBog4Wq5+/VJS7vKQNWlFfScLu7FuPdXn
-	Ez6JUW0a2rAXUD8kXBGxeKi54mC1jf0vOHKLQQ1wmt/ZH1TcrKeFyrdNc6Dfje8i
-	6aGjwlPpPMkHUXLYeZbxOrgkq8zIE4Dbx6ui6HvtXPiQ8UgvrZYXJgZ6xL98KVWL
-	PAPhJYqhzaEyU1qrlm3Aiw==
+	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1757905971;
+	 x=1757992371; bh=kcU83f9/sJFSLx41D45jjxkDKrjkZppB/H54vBPyma0=; b=
+	er589QUEYbZ2Kbwp+GDvwAL0RApDLQk5nM1UF19lFH/qoFiJZJYuTYQ8kK7HOVbH
+	hwCnpG5DJ1E58OfP8PfuyQS8FoVTv+leUoZMlFw8ZuJ6/LQHk0NBhkaoPMai1E+y
+	96DoBiEQB42aTctVhVv/PG0NYqN5ij+Z0l5sYq4dZZ4QZJE9Yc8rtV9fcuoF71/8
+	HKeSEQb+i0VgNiJtfeXCeWdhHTjj+cykgGKkYYtpkCL5lqkOlgtBG0E36jGvStoM
+	D6BjdjKO60xtJ5c42smIA1MjOf28AJUIVwosoJE0AsRhaOHlzbXqYtJHZWLL0n6E
+	UYlKTlQnlLW7zc2ywdxf/w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757905966; x=1757992366; bh=5
-	H+IOTextlM7T2psowwtP600Ua9Jo8aLAeD6ncvUXzo=; b=iMLIbkIfXg9WgQ0If
-	Ma0EZhkBvteQFNt062kDu8gdJxRiqlA33aIqTYTKaTtNeU9mjKz+dABEKiHvouh/
-	3uyq8zZcZu2ct97874ZXMp64d3mHj6NKHRPZrY6a62E1EC0ymE/5InkG7AxDR3Zi
-	K4C5eXltRHd8E6rFCexaY+kNR85eIKRq66Lw8M/ixN4KWNFQSPo2Ftp1qOjPXKJT
-	o4B+mCLdsgmNLpeNESaZIKe1AePNYzmGBsaR1pLN3frq9nX16ERs7xAeBkOp988u
-	zJX5bdeY1P66bUvDw5Zfogx1mC6dSO1Mqc89KLk2UvtBgT1F3f9ZZ7HZn2Fadzgk
-	tnqxg==
-X-ME-Sender: <xms:LYTHaG7gu6JFv7KtEG6NOOWpi5jBGMnZTpAs1KOwbDt6Bud5QMU3UA>
-    <xme:LYTHaLmbr9IYTe7fjoESiSdmgFvlTbFi-NoM3CvhIFrF2ETqQ3rtJFip1T2IXWewJ
-    X8I5oo1-iQX1Q>
-X-ME-Received: <xmr:LYTHaB6Frqcw0R_o7T536-TbZws93K2rvzrdIuaZIrNT-eU9bkVNA6iTUCMVLNqtiHAH3TvXtXYxhBXyOLqS6s_VHWx6bPmjoE14eYw5BuRA>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757905971; x=1757992371; bh=k
+	cU83f9/sJFSLx41D45jjxkDKrjkZppB/H54vBPyma0=; b=Hs2g5EvzkOUHHRpFS
+	ZVIM486xmBOPb+FW0nLiKhuXJBp1UMDWSFsdBJWmK8bhwBEgW26lVxfajd5+S3wj
+	bst+B7HaH/0wZgntVVI9uSV8UpYHi7Ms3x7jxdnf6PKrl48YRX7mVMDPpDzDHqHD
+	lo7nkTLO7gNhovdk8URMvoxYycii4/kqpYcy+R+2vdpQEH1LP+DehtPneh61KdSp
+	+s3p6bGZ+cVVSGVgJSOxx4w4bYTegUWeaPkQcVBFNnpPBedOA240TRdIiLk01KxG
+	3QtJwmHNp+aJGhq6TWnLR3PuHcfc3GHC0UVGzBWwTyhSky8Zwqnu/fEY6WY54sv2
+	0tAsA==
+X-ME-Sender: <xms:M4THaJBdb7aEtW_TWkKWIZGQyppbv__hVcUGIcOn8nKAVOzWbE_2hw>
+    <xme:M4THaDNv4E9CgZRdYytUuMqW5mm4-EDUUfvY76avfeNe9fwuWr-Emg-1JqhuZnRhd
+    it2w-DR67v9JQ>
+X-ME-Received: <xmr:M4THaBAs8JO5p1ItAFXKSY-8w-cY1rq5Ms1WVwvFfw9q7Nxx6zhZgaWkd8XhykzFyckYBsYFtNg4DnX6mFJWrb05FGodfQYg5vInD3yejhP1>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefieehkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -81,14 +81,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefieehkecutefuodetgg
     hrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghn
     nhgrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilh
     drtghomh
-X-ME-Proxy: <xmx:LYTHaMR5rUi7_cNAMQ1v45LaPbqyK4HAHK8QvfAgrG3Smq3OdcQ-CA>
-    <xmx:LYTHaPxn9d5IGr-ChPCWSGajzgW_f9QOahaH_5X4GQk2Gpr3_nXmYQ>
-    <xmx:LYTHaEoX-mF2Q6vp45BbY2kGmc7oRX6gk5xsBNviwTqvcPQ9v93LCQ>
-    <xmx:LYTHaC13Es-UzMkTOUa845YAgYBDy61WZUlUyNtdfMDpdhUDdPnNfA>
-    <xmx:LoTHaAYOc9wH79JXMy9LpZMGV6aMR5j3lsWsh5J_hLlgF2QsRfBsjbfL>
+X-ME-Proxy: <xmx:M4THaM76tp_IJO02Tp2R5YMmjFTMCOtm1LiGJ9Bht4YMzRgLVQKgIQ>
+    <xmx:M4THaD5VKBnPZl-jyvMXobQhdlrQuA6FsQNNiRlCIPYIteFvSQrHog>
+    <xmx:M4THaGRoqt_Eo31g5WTi8VvtS8qGFRTUZNwHjsfyR6HKm3XU4s3VNg>
+    <xmx:M4THaD9b-gv60BKfz0Dhmv2t-yvOhx3LWsfkc_XETAkcSHcIYjxUKw>
+    <xmx:M4THaJogzLE0n9MPp2ovZJiEvRNwc7rUHaXhe7k9ZLDzbiC8xxXcwAoa>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 23:12:42 -0400 (EDT)
+ 14 Sep 2025 23:12:48 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -99,9 +99,9 @@ Cc: linux-nfs@vger.kernel.org,
 	Jeff Layton <jlayton@kernel.org>,
 	"Amir Goldstein" <amir73il@gmail.com>,
 	"Jan Kara" <jack@suse.cz>
-Subject: [PATCH 1/2] NFS: remove d_drop()/d_alloc_paralle() from nfs_atomic_open()
-Date: Mon, 15 Sep 2025 13:01:07 +1000
-Message-ID: <20250915031134.2671907-2-neilb@ownmail.net>
+Subject: [PATCH 2/2] VFS: don't call ->atomic_open on cached negative without O_CREAT
+Date: Mon, 15 Sep 2025 13:01:08 +1000
+Message-ID: <20250915031134.2671907-3-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20250915031134.2671907-1-neilb@ownmail.net>
 References: <20250915031134.2671907-1-neilb@ownmail.net>
@@ -116,119 +116,77 @@ Content-Transfer-Encoding: 8bit
 
 From: NeilBrown <neil@brown.name>
 
-It is important that two non-create NFS "open"s of a negative dentry don't race.
-They both have a shared lock on i_rwsem and so could run concurrently, but
-they might both try to call d_exact_alias() or d_splice_alias() at the
-same time which is confusing at best.
+If the dentry is found to be negative (not d_in_lookup() and not
+positive) and if O_CREATE wasn't requested then we do not have exclusive
+access the dentry.
 
-nfs_atomic_open() currently avoids this by discarding the negative dentry
-and creating a new one with d_alloc_parallel().  Only one thread can
-successfully get the d_in_lookup() dentry, the other will wait for the
-first to finish, and can use the result of that first lookup.
+If we pass it to ->atomic_open() the filesystem will need to ensure any
+lookup+open operations are serialised so that two threads don't both try
+to instantiate the dentry.  This is an unnecessary burden to put on the
+filesystem.
 
-Dropping the dentry like this will defeat a proposed new locking scheme
-which locks the dentry and requires it to remain hashed.
+If the filesystem wants to perform such a lookup+open operation when a
+negative dentry is found, it should return 0 from ->d_revalidate in that
+case (when LOOKUP_OPEN) so that the calls serialise in
+d_alloc_parallel().
 
-We can achieve the same effect by causing ->d_revalidate to invalidate a
-negative dentry when LOOKUP_OPEN is set.  Doing this is consistent with
-the "close to open" caching semantics of NFS which require the server to
-be queried whenever opening a file - cached information must not be
-trusted.
+All filesystems with ->atomic_open() currently handle the case of a
+negative dentry without O_CREAT either by returning -ENOENT or by
+calling finish_no_open(), either with NULL or with the negative dentry.
+All of these have the same effect.
 
-With this change to d_revaliate (implemented in nfs_neg_need_reval)
-we can be sure that if the dentry that reaches nfs_atomic_open() is
-not d_in_lookup and is negative, then some other lookup or atomic_open
-must have happened since d_revalidate was called, so we have recent
-confirmation from the server that the name doesn't exist, and we can
-safely fail the open request (which finish_no_open() will effectively do
-when passed a negative dentry).
+For filesystems without ->atomic_open(), lookup_open() will, in this
+case, also call finish_no_open().
 
-Note that none of the above applies to O_CREAT opens.  These are fully
-serialised with an exclusive lock on i_rwsem and there is no attempt to
-d_drop() the dentry in that case.  d_revalidate() does not need to
-request invalidation of a negative dentry as a create will proceed in
-that case anyway.
+So this patch removes the burden from filesystems by calling
+finish_no_open() early on a negative cached dentry when O_CREAT isn't
+requested.
+
+With this change any ->atomic_open() function can be certain that it has
+exclusive access to the dentry, either because an exclusive lock is held
+on the parent directory or because DCACHE_PAR_LOOKUP is set implying an
+exclusive lock on the dentry itself.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/nfs/dir.c | 30 +++++++-----------------------
- 1 file changed, 7 insertions(+), 23 deletions(-)
+ Documentation/filesystems/vfs.rst | 4 ++++
+ fs/namei.c                        | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index d81217923936..bc417566508e 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -1615,6 +1615,11 @@ int nfs_neg_need_reval(struct inode *dir, struct dentry *dentry,
- {
- 	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET))
- 		return 0;
-+	if (flags & LOOKUP_OPEN)
-+		/* close-to-open semantics require we go to server
-+		 * on each open.
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 486a91633474..be7dd654f5fd 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -678,6 +678,10 @@ otherwise noted.
+ 	flag should be set in file->f_mode.  In case of O_EXCL the
+ 	method must only succeed if the file didn't exist and hence
+ 	FMODE_CREATED shall always be set on success.
++	atomic_open() will always have exclusive access to the dentry
++	as if O_CREAT hasn't caused the directory to be locked exclusively,
++	then the dentry will have DCACHE_PAR_LOOKUP will also
++	provides exclusivity.
+ 
+ ``tmpfile``
+ 	called in the end of O_TMPFILE open().  Optional, equivalent to
+diff --git a/fs/namei.c b/fs/namei.c
+index ba8bf73d2f9c..5f732b9cd2db 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3647,6 +3647,14 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		/* Cached positive dentry: will open in f_op->open */
+ 		return dentry;
+ 	}
++	if ((open_flag & O_CREAT) == 0 && !d_in_lookup(dentry)) {
++		/* Cached negative dentry and no create requested.
++		 * If a filesystem wants to be called in this case
++		 * it should trigger dentry invalidation in
++		 * ->d_revalidate.
 +		 */
-+		return 1;
- 	if (NFS_SERVER(dir)->flags & NFS_MOUNT_LOOKUP_CACHE_NONEG)
- 		return 1;
- 	/* Case insensitive server? Revalidate negative dentries */
-@@ -2060,14 +2065,12 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 		    struct file *file, unsigned open_flags,
- 		    umode_t mode)
- {
--	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
- 	struct nfs_open_context *ctx;
- 	struct dentry *res;
- 	struct iattr attr = { .ia_valid = ATTR_OPEN };
- 	struct inode *inode;
- 	unsigned int lookup_flags = 0;
- 	unsigned long dir_verifier;
--	bool switched = false;
- 	int created = 0;
- 	int err;
++		return dentry;
++	}
  
-@@ -2112,16 +2115,8 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 		attr.ia_size = 0;
- 	}
- 
--	if (!(open_flags & O_CREAT) && !d_in_lookup(dentry)) {
--		d_drop(dentry);
--		switched = true;
--		dentry = d_alloc_parallel(dentry->d_parent,
--					  &dentry->d_name, &wq);
--		if (IS_ERR(dentry))
--			return PTR_ERR(dentry);
--		if (unlikely(!d_in_lookup(dentry)))
--			return finish_no_open(file, dentry);
--	}
-+	if (!(open_flags & O_CREAT) && !d_in_lookup(dentry))
-+		return finish_no_open(file, dentry);
- 
- 	ctx = create_nfs_open_context(dentry, open_flags, file);
- 	err = PTR_ERR(ctx);
-@@ -2165,10 +2160,6 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 	trace_nfs_atomic_open_exit(dir, ctx, open_flags, err);
- 	put_nfs_open_context(ctx);
- out:
--	if (unlikely(switched)) {
--		d_lookup_done(dentry);
--		dput(dentry);
--	}
- 	return err;
- 
- no_open:
-@@ -2191,13 +2182,6 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 			res = ERR_PTR(-EOPENSTALE);
- 		}
- 	}
--	if (switched) {
--		d_lookup_done(dentry);
--		if (!res)
--			res = dentry;
--		else
--			dput(dentry);
--	}
- 	if (IS_ERR(res))
- 		return PTR_ERR(res);
- 	return finish_no_open(file, res);
+ 	if (open_flag & O_CREAT)
+ 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
 -- 
 2.50.0.107.gf914562f5916.dirty
 
