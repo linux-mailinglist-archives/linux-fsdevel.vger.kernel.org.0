@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-61331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC731B579A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 14:01:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A79DB579AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 14:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A83188554A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 12:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099A91887481
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Sep 2025 12:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989EE2FFDD5;
-	Mon, 15 Sep 2025 12:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A16F2FD1A5;
+	Mon, 15 Sep 2025 12:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8C6uLjf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3bJmRX6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E472D662D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 12:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E3F2F0C58
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Sep 2025 12:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937703; cv=none; b=ezhhftmAtXjk9Wi+QIvALgCa49Y0Refnt0nrsL+XaBuLf3PX6e6gAeGeS+Rpv8N79N/s7/IEY0kyuwI+9eJJ9Pgu/dSjNAOe/1rlSVQbuB2fNsopL9ufO66aGVtS+U/RvBY5FB3Ik6cl1+OkMPHu7biuHlI0avGiR5NlrSEJaMI=
+	t=1757937723; cv=none; b=T0o2pOd1pQVIyF9QcWnzZvQ5IA107CRgH9wyDXkyuGpBS1qdHSxlbx9cfzCQ33cI6/iL4eIo/qliprFWb/ZoXj7TkY09d74LgBO4rpi949XiY9hrjW2VUqLrv+vEN1Ij+xSu5sI48SJjnbC3mg4RsHN0ZXyLox5IPZGQy94Aha8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937703; c=relaxed/simple;
-	bh=jYEedmzc6LrnWT6kL3zUwNs9GrOB6CB9dVEvOasj0HE=;
+	s=arc-20240116; t=1757937723; c=relaxed/simple;
+	bh=Z14AJKR0ozYpwB73oY3GYNN/qDa63jJs12fbWD+pHE8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTopEdwImdtzd9T2ZYc6lmWuvgNnUe0vBj39/dLXdOK8wK98+RcY2nVAbbdwkOEtNu+7FIwgfslZ2BnrwhPknPWjHLj6Q68CEVbwdgifZ0ZCOlUj4LTlvdu3x78wtzKDjZ4p2n4UgrwkVjeRykuuykcGpQRifOJ1Iwsw7Bjgbd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8C6uLjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 605FDC4CEF1;
-	Mon, 15 Sep 2025 12:01:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGn6MSuyAKZR1jel1o5lrJIyqUWvzsarWY6GDTcUItEklw8n97QvTIK8vhZm8QIKXLkGoEMiJHX9NFe33ig8Fpqz9YUyJts0cR3FJEBS5q7wKaUhVwywrizRoYIt/DeFQvbs6Sq+Tky8vPlxaSo0uha83ERemvvZCy7kGYbl+jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3bJmRX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62BAC4CEF7;
+	Mon, 15 Sep 2025 12:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757937702;
-	bh=jYEedmzc6LrnWT6kL3zUwNs9GrOB6CB9dVEvOasj0HE=;
+	s=k20201202; t=1757937723;
+	bh=Z14AJKR0ozYpwB73oY3GYNN/qDa63jJs12fbWD+pHE8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h8C6uLjfDJGcBVUpiIzYU7xDGY1qO/DbKsG6Pj4yb1AaGTS+R9Q/+BReSisbDHWas
-	 fX8HLusWmvzTiJfZd9WHPGefqmxaSpHt1+UABbKhBG2MtTKsv6Tp+LBIMC4qBXwR7B
-	 ijno8uT2CToyQAXcCpxm7mpne7raD+fKP1qlb1pRs1YCcNdVXVtiQrFk+4FDrlljpw
-	 oMFsOox1kaqyNNkr04yfptf7XF04LWr84LJjuX62Ra/qOp8iIuy4XNNLa1eDwQ/KD1
-	 wkUQjQNvypI61DnmcpLAhWHgkpGUMWGRARBlPgpEnxmIKTZ88LUYDmxfe1wMxj3Oad
-	 gW2iJ3Ls8yf0w==
-Date: Mon, 15 Sep 2025 14:01:38 +0200
+	b=I3bJmRX699HwnqpEBWjXAHn0YnpeBZtahliW22LiuYUbB/LUTja/mot7eeltTLEpg
+	 o0wQOeOj2QkJu9hc7wwKi+L0xCKc28z+PJ+K36gCsY4gu8hwNYxSuLyDgkFWHwr7Ty
+	 ePJ+jqTXlikt7Ca7/8V7NqN2CLDFN63v+0xfv0+G3Xjib9AUmC8zNBPNuwJEiwgFrX
+	 TJ/8Zp/dvlPNjnVPEnosixIUx73KGNvH4WMcwXbRumsXPgN4vdqA1TMR4NG0T2lE98
+	 VsX+rYuYSYFHNP3dxXLAgw1OxP7+CtGSUFeK+me29gmsyHG8XAO8xG8vqjGTOwGVpK
+	 6XgI259T0R2nA==
+Date: Mon, 15 Sep 2025 14:01:58 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
 	torvalds@linux-foundation.org, amir73il@gmail.com, chuck.lever@oracle.com, 
 	linkinjeon@kernel.org, john@apparmor.net
-Subject: Re: [PATCH 04/21] done_path_create(): constify path argument
-Message-ID: <20250915-losfahren-farbaufnahme-e4429a8aba23@brauner>
+Subject: Re: [PATCH 05/21] bpf...d_path(): constify path argument
+Message-ID: <20250915-trapez-deshalb-54e92a2232af@brauner>
 References: <20250906090738.GA31600@ZenIV>
  <20250906091137.95554-1-viro@zeniv.linux.org.uk>
- <20250906091137.95554-4-viro@zeniv.linux.org.uk>
+ <20250906091137.95554-5-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,9 +60,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250906091137.95554-4-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250906091137.95554-5-viro@zeniv.linux.org.uk>
 
-On Sat, Sep 06, 2025 at 10:11:20AM +0100, Al Viro wrote:
+On Sat, Sep 06, 2025 at 10:11:21AM +0100, Al Viro wrote:
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
 
