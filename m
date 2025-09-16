@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DB1B5893E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ED4B58941
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764D8189D716
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEF4A189DBE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4318B1E832E;
-	Tue, 16 Sep 2025 00:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FE81A2545;
+	Tue, 16 Sep 2025 00:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdwfRVsz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ka3X8xdo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF931A5B8F;
-	Tue, 16 Sep 2025 00:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F441A3172;
+	Tue, 16 Sep 2025 00:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982385; cv=none; b=KLC3fGARNJ3YivkV1O1MgdpLTGH6HwI13CoWC4CM5sJ9+0GqMgqI2lzHLO1bX/SeB8H/iGRiBBoafZNcd+NGdh4nGzzzlMgzy9bW/HUnpd7zXgS0V2W4gmmMCxnvQ9jFXo+9Rkxc5r3iPpz/lwB22vr0y5PeRac+owziC5pBY64=
+	t=1757982401; cv=none; b=Bxv5PLAEGvn5EPscFwP37gz0cDZ42QM/VpBEEzSOhTdGQ4bTI+VuECHNIXvQucamFWq0Jic7E+1p8+luoPBLm5CJk8n32q04TyGlZ/cj8xf5kWmUW50D+3tzxYzU5lA9rqXysdrdb41XQrEP3v1vwoqkq1PF/fXSF2z8E47GwkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982385; c=relaxed/simple;
-	bh=RLzedDQ5IK8mLU4WXaO6D3vKVUlc3JP2v1ef3Y1aT04=;
+	s=arc-20240116; t=1757982401; c=relaxed/simple;
+	bh=Y8fhQtPSHD6eLfhNHO10Ngyi9+k9dHUH0jLtn63n5NQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SEKNaUBlcJYsYHUSB4G8rbk/+T9PEV9WiPhRPWkqqxpjklM1uVOcj3Xdxon0a/98pksMAnleIQ9GN8qYlfRfDzutifTRJm51jXPmX/9wCR3o3z+ASMJIQDwdrqnTDumJG8pR7zNhCyiYRVjsR3tjnYBgyDoCnPlglg/PYvbLfQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdwfRVsz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C97C4CEF1;
-	Tue, 16 Sep 2025 00:26:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=erOgQg+Y8MxFJDxlqviqIWP5nJn9tXX7W6iEp0HbZetHyeDmM3kxMK0LEKVZsPkxSTQVsNnivMmMcBPP6+QAm7apOXjsUI7lMZJxY2qQyUf3BCJCLzDZbl9upH3Wj5MVazIe/mxt+DHpZpQ6JPPLXj/5NobMrJ3jD1LoXPRgYv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ka3X8xdo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF414C4CEF1;
+	Tue, 16 Sep 2025 00:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757982385;
-	bh=RLzedDQ5IK8mLU4WXaO6D3vKVUlc3JP2v1ef3Y1aT04=;
+	s=k20201202; t=1757982400;
+	bh=Y8fhQtPSHD6eLfhNHO10Ngyi9+k9dHUH0jLtn63n5NQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=bdwfRVszu4C3130Yr1tA3/TdQ/DBVdIeLTQthTXi9SZR94lpB6AM0mtQZlvq4I4+B
-	 TpTJxZNm40uu0NJcDgIl1GiGz5/obgEJt6SGAUzS4qnqumLOLm3upHKNgHyE7L1Nu8
-	 4vbwHKrsWdaAVAnJDi3G60jl3jt5OYlcv4A+zCe5xhFVICnj1IAd2VNXVOaf0QNb/r
-	 Pwkh8vUpEpoZhnXoJHj1T4ITuKBGowClGJzZ8+b5uhGhJndAHS3Q2slvTsoPIC1nHp
-	 fu0rfO7yKCoLX9Z7Ef6mZOU9RK28TP4zkZfUK45Wo2v2xwlUCM+SJ3tMVDalBs7W64
-	 rvfJ+WVnTWh+g==
-Date: Mon, 15 Sep 2025 17:26:24 -0700
-Subject: [PATCH 1/2] iomap: trace iomap_zero_iter zeroing activities
+	b=Ka3X8xdoQhzzr0fRNUY6RyAlguVpeElHbAsRXmK23pSHo+Gy1S6O0otvvisoDow9p
+	 1R6zMasJy6Vq4jqC/UTZ+wiSA55pOsggUbdhq8094SknqO20VrEHIRylEu5u+nV3JC
+	 DlRx2zLesEGw9GGXrdkBPmqbOGmb0bY9FwQillPd9rwMngXi9iG5CuZeRe3ZIdiqT+
+	 VtNwd4h0aGeP+o35IYITTzzdAX0HIBJNAgDQA5SWInBudOyQ//iE5eyyMy1yJwZ0/4
+	 02arYjJQg0fByva+RF7WsVOeQx9dHaEqq/bVsUDmi+VrMUEjGUMX1DYprGhlLWtgal
+	 +LZO11fl5BbOQ==
+Date: Mon, 15 Sep 2025 17:26:40 -0700
+Subject: [PATCH 2/2] iomap: error out on file IO when there is no inline_data
+ buffer
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
  linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Message-ID: <175798150439.382342.16301331727277357575.stgit@frogsfrogsfrogs>
+Message-ID: <175798150460.382342.6574514049895510791.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798150409.382342.12419127054800541532.stgit@frogsfrogsfrogs>
 References: <175798150409.382342.12419127054800541532.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,40 +62,85 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Trace which bytes actually get zeroed.
+Return IO errors if an ->iomap_begin implementation returns an
+IOMAP_INLINE buffer but forgets to set the inline_data pointer.
+Filesystems should never do this, but we could help fs developers (me)
+fix their bugs by handling this more gracefully than crashing the
+kernel.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/iomap/trace.h       |    1 +
- fs/iomap/buffered-io.c |    3 +++
- 2 files changed, 4 insertions(+)
+ fs/iomap/buffered-io.c |   15 ++++++++++-----
+ fs/iomap/direct-io.c   |    3 +++
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
 
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index 6ad66e6ba653e8..a61c1dae474270 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -84,6 +84,7 @@ DEFINE_RANGE_EVENT(iomap_release_folio);
- DEFINE_RANGE_EVENT(iomap_invalidate_folio);
- DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
- DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
-+DEFINE_RANGE_EVENT(iomap_zero_iter);
- 
- #define IOMAP_TYPE_STRINGS \
- 	{ IOMAP_HOLE,		"HOLE" }, \
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1e95a331a682e2..741f1f6001e1ff 100644
+index 741f1f6001e1ff..869f178aea28d3 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1415,6 +1415,9 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
- 		/* warn about zeroing folios beyond eof that won't write back */
- 		WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
+@@ -312,6 +312,9 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+ 	size_t size = i_size_read(iter->inode) - iomap->offset;
+ 	size_t offset = offset_in_folio(folio, iomap->offset);
  
-+		trace_iomap_zero_iter(iter->inode, folio_pos(folio) + offset,
-+				bytes);
++	if (WARN_ON_ONCE(iomap->inline_data == NULL))
++		return -EIO;
 +
- 		folio_zero_range(folio, offset, bytes);
- 		folio_mark_accessed(folio);
+ 	if (folio_test_uptodate(folio))
+ 		return 0;
+ 
+@@ -913,7 +916,7 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 	return true;
+ }
+ 
+-static void iomap_write_end_inline(const struct iomap_iter *iter,
++static bool iomap_write_end_inline(const struct iomap_iter *iter,
+ 		struct folio *folio, loff_t pos, size_t copied)
+ {
+ 	const struct iomap *iomap = &iter->iomap;
+@@ -922,12 +925,16 @@ static void iomap_write_end_inline(const struct iomap_iter *iter,
+ 	WARN_ON_ONCE(!folio_test_uptodate(folio));
+ 	BUG_ON(!iomap_inline_data_valid(iomap));
+ 
++	if (WARN_ON_ONCE(iomap->inline_data == NULL))
++		return false;
++
+ 	flush_dcache_folio(folio);
+ 	addr = kmap_local_folio(folio, pos);
+ 	memcpy(iomap_inline_data(iomap, pos), addr, copied);
+ 	kunmap_local(addr);
+ 
+ 	mark_inode_dirty(iter->inode);
++	return true;
+ }
+ 
+ /*
+@@ -940,10 +947,8 @@ static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	loff_t pos = iter->pos;
+ 
+-	if (srcmap->type == IOMAP_INLINE) {
+-		iomap_write_end_inline(iter, folio, pos, copied);
+-		return true;
+-	}
++	if (srcmap->type == IOMAP_INLINE)
++		return iomap_write_end_inline(iter, folio, pos, copied);
+ 
+ 	if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
+ 		size_t bh_written;
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 6dc4e18f93a40a..a992130a1cb6dd 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -523,6 +523,9 @@ static int iomap_dio_inline_iter(struct iomap_iter *iomi, struct iomap_dio *dio)
+ 	loff_t pos = iomi->pos;
+ 	u64 copied;
+ 
++	if (WARN_ON_ONCE(inline_data == NULL))
++		return -EIO;
++
+ 	if (WARN_ON_ONCE(!iomap_inline_data_valid(iomap)))
+ 		return -EIO;
  
 
 
