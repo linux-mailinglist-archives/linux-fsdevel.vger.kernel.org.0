@@ -1,79 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-61704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4F9B590A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 10:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F515B590A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 10:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00F09322FE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 08:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8361A189D778
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 08:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD912EB5A5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22D22ECD1A;
 	Tue, 16 Sep 2025 08:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fU9hvUzQ"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NQtZ/ul9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AC12EAD0A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 08:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457562EB5C4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 08:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758011381; cv=none; b=iW8hNkR1/MyrdmxlPjPz+DT+jXixXoRzeV/rYx8Q01AsJiC0FqHVZXU2NzwB8ZAIAMp7P1rXudfgzBK9owdUfdEYRATHiscHqx48IXHMmdNJ6Ll0+0FRtYxCEX6LnMb7pckz3hOqwo8zRnN4VjuXlSYjbr4NHpd6ftt86M/7ZL4=
+	t=1758011382; cv=none; b=hmt5/npc9JMBUVyvzp29p8VyXMkkAEM6n3HgCecpz/e27zAZ+8o7XQdnpUoyKcLGCHiYhPPbyPrPJsh/lugpvbRmPIL3Yl4eYhcq97BXLg9sJtGNbQELO4KER526QLvM6sjrfuB2loUEU7oHJS1gDuk+pexZFBmILk1825MP0r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758011381; c=relaxed/simple;
-	bh=K7YPDPZFAE6sVJVf7EgfXTh14JJBhD2cYTW4qBIoWFM=;
+	s=arc-20240116; t=1758011382; c=relaxed/simple;
+	bh=/i+TGxphlbcwtQ06iusDU6Wu8PnYL1IFwfBvQeHM9/8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pDVMevYRmFFMjhWGOD6xHH6QPEareDpPCLB4BkY6ttZkjrNnNdS0ALuxMPx5h8sAv2VZ8MFCj7/SQAYbll5nFn/BO2m3jdy2atwKLm9e6dv99sZ9IRO+3dnN4UO0qXezPMVz3DccMBsPERW226Dxf1eyLjOBddwCMFINj8hjBto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fU9hvUzQ; arc=none smtp.client-ip=209.85.221.68
+	 MIME-Version; b=qkXXgpCWVP9QEhftN7yRw54P4mVbmTLVROlO3zfFxdyVMkicLlJSpVv0bv6BNfXanr19kDbCRT4L34Oq54Mb+nXLOPm/en6iT4CgCOsn01iZS83MZdpX4Na5wPi4CQSlB4C7+O1frLrY88Fkt8HHTX9SQHcYmGQ+yRsVyw+OZ9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NQtZ/ul9; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3ea7af25f42so1416676f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 01:29:39 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e9042021faso1808908f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 01:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=suse.com; s=google; t=1758011378; x=1758616178; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=baH/Z1f5f8iZGA6Au4zz6QKHJHadwW2kGkKITcSHlfU=;
-        b=fU9hvUzQmkQOIPHXnxDmn4CrPdHB/KTba+kFpwKS+4X2pDM312AXxWy6ah1640z08R
-         3t9fujRwOv85Sh4WfkymDQE5BjcXU4BhfZGsWIuLcRWa8AWZPHPl7gRmXYKByGlQGzQ2
-         b2olTfW4/nx8+MsfIUh9qvZlAdr8gLLxA3/XGrHObWSYmhGgqXcb5hpgEoEP9b6C2Jry
-         aMJypyb+rBiDw9EcQ0YRkeGfRMj/Kz1Q2lQSWLFMB+31BasUhco0Q/Rlc9dTPYlpiwvx
-         +pnRSYp/39maddIgiJbS7fqya4wivtEYPdqIi/mhix8PpWRd/ZRu0w9ev6561FxySoOE
-         5qEA==
+        bh=nBilMR31EpsMq6XriB2xtLqKoFrteD6oJai1ocFwypA=;
+        b=NQtZ/ul9tHEnvrATlBpnNo5IVupgZK2MTroPP11X6e64n9UX/psg4qwR2aG+5BLKUS
+         rXf1M4qw443YtjRDt8pKAYFPVa+MXnfp2g/LzuR7l4P8qJn+m8zUEP91e+l8BrEQkttv
+         dqjiW2LBuKwbLf+KmR8UfYGYhjaVH6u/qm51cmK7QG567bRghc0hZyhbXQqxhRgr7k4b
+         dvgEuuwsBHnZNCLgDyY6ZdddC1wTzATqlUG/3JA/uB4ZHVVki3H3aLAm4AgGShBadI/Y
+         o8hmx26XE8SDdYW9CcU0Gdv8FFxbwPWz8sMV1le1P1x2MyePJhd5tGTw8FcpEyMOyqsp
+         GE4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758011378; x=1758616178;
+        d=1e100.net; s=20230601; t=1758011379; x=1758616179;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=baH/Z1f5f8iZGA6Au4zz6QKHJHadwW2kGkKITcSHlfU=;
-        b=aGVQx9S+yIOLMYUGKaxhFkmn92wgMBlSQ9dqq+IOMGfDeQP6OrIBtJ6hMICoZcT9oK
-         6kICDUCIjJKIJUkTya83Hm51pJgV0KvKDvrfVdFoLGntwTJIM3HIKoNCN5/pletjBqRJ
-         Z4kHrj4tMnFEnwi5oL4J5MwI3v+dt7BWWVqLyzwgGlZyxfdu2JNBGDV0uQ62wUNhH3KR
-         jZ1kirkmjjUejfnsKfxnPi+Qd1RhU+rffQnTwY6ihQfpl3aF3oco4NOYteIOYiEogAYI
-         /sM6nKHlWhP5+rIpTZjucYsb2vTwJcg2S0WDlKgvKekiqpjnWEb2ffw5IeJD7MOQSHU9
-         rKig==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cinXSRywN4uJsgpdktlutR32eUTMrNwL5iulEAa9IBOaCKrhdnxncjIAKy3PfXiIZer//BkNXFSKa9pR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI9QdzPco+1r1rHEbtSt7lYP7XdXOalTj6dEsQQBeTOGG4vxNy
-	vIJqRr/Ut7CJ8UHdiDKPSiAZX7mo36l3f9C7lheJEMswsPU95zpVyd1HcC+NoV3g5blpx1tAi8d
-	aGJCnpPfq1w==
-X-Gm-Gg: ASbGncuIZStjEIsQq3dnLDfqNY/jQWYPteGscGXNFhwflP0DOtcBVW/R7SV/jaIpdpC
-	6jCEPe9us7EtntFym1NCSFKAv3e9GBeQkBmljAhHQvPQCUNQQsjgYWg8JoaXH/mDyVbj7M5Msm/
-	b6XdF85wUte9w9LLXYIObszcrGjWt90xOCu/NmMt+ff8IWl6gWZGg3+RDhix2I7hY7nxozONXYj
-	fRKHN5ycXYgWHTH7i6IxA0aLDH2p0BicxcbhZy3xMNIxaGwnyhaqIbn0ZmHqfKTH36Ixst+bsEc
-	RX9wkuP2vC+mrgjxdA5jqJR2M2ixlHYbhhsxvws0UNG2a8WK1SXHgLXOEGbIaqSTX8MMKnsuogD
-	54p4PZPq/wHrtQ+4nxkkRG1KMvpX07E7r8CT8gkknJpXP8es=
-X-Google-Smtp-Source: AGHT+IEU6fy5i34ArkZZeaj8r2NZELls8P+t5l6yq/cZbsAVauLjGqw7Ul5ufd1VdTfW9XVrA2N2zg==
-X-Received: by 2002:a05:6000:40db:b0:3e5:190b:b04e with SMTP id ffacd0b85a97d-3e765a140f0mr9981489f8f.37.1758011377616;
-        Tue, 16 Sep 2025 01:29:37 -0700 (PDT)
+        bh=nBilMR31EpsMq6XriB2xtLqKoFrteD6oJai1ocFwypA=;
+        b=taB9V3mgS3Ms1miQYWY/Tu+uy0rsO/lwQ7yKieh8yvB+P7ADph6fBWS3uOmIAvbN1+
+         fd4s+3ETDnkQjGxMES8zEIeNuPZ84Mu8AXK+P+22Zo25W1+eFE9/jB46Pt0LpjmjVCzx
+         TywarFtRK3BSFSLWwn/8jPZKlMm0pwnvymjc8J68HjGMN54KQ31afGrfYA4rTA8GtVca
+         PPu9rCfszPCrvcYS+ScVMZVpNcqrUvUncLrPij2nF9/gQTLv8DYHZbUNVhBzKhbfA6gL
+         7+iPBgIMizlsruBAnE2d2UHh/t7AO8xT80jx2ES9HTXYtQnCHdUPFpGXSe/US4q2u5b7
+         rjWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlqnlVUeA+onmEJuWG2PtPmYkOdE1QC7hZfLUjcHUn1lK8e1EzbfHTWxsWksMdQtYX+Fhdt0y7skDNywKC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUA4qKIvmrY8QVhGQR/yNw2EVsF6c6u0ZBqDjWmFPwRwtVVbwK
+	jMDirjDfEF13bIrLTqxUU5GBsOcn6rU6LaYiAL5EYIjInZPqpnQXSrOxgNa4F5HB4jg=
+X-Gm-Gg: ASbGncsGkmASHSCbs4HXRCnztQcKbPfO7LnxQTL1g2JWZHO2e8a806DMbBTzQ7RUEq2
+	z6AVHbZc2xQ0u8Jde3bVPbLOu7jDs55C3irECRJqHgYo7LBpw9MRe1bViLeOAevlz2nDSBsJGn3
+	IYjRjHS+OQ6yJE0gbu/NS99lKlOZKNCu84ddM5QvFnEEW/1ZC/mPdhY2M2A59mdZsFxyW0bNShE
+	AVLd/ntAac8+k2G3BsXY+e+1tbWlw9giieYzYydTcJqCjmWsB/c1lUYQ0JrETPk1R2qKPzPD7gP
+	FrEYJHSquEaHvnNKrvftN3uyeGdO5EGxLDk9WKjQR0nbih7G8lq31jws9N/XiJGoEo2vROw9q4v
+	kcs7qEnptcuwc0laoVMOtcQssSL7nCSoRsaqsk+5OTlqqdwQ=
+X-Google-Smtp-Source: AGHT+IECcPkK/uCDcwuj6Jp8VaNKrf3F0LNpSEAIH7H9DBNggSNoOwxQSChtkKRsK7+vN0Ie0bYeOA==
+X-Received: by 2002:a05:6000:25c8:b0:3ea:dd2b:5dc with SMTP id ffacd0b85a97d-3eadd2b09f0mr5198924f8f.14.1758011378538;
+        Tue, 16 Sep 2025 01:29:38 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e95b111b68sm11006125f8f.32.2025.09.16.01.29.36
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e95b111b68sm11006125f8f.32.2025.09.16.01.29.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 01:29:37 -0700 (PDT)
+        Tue, 16 Sep 2025 01:29:38 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -85,9 +84,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Michal Hocko <mhocko@suse.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v2 1/3] fs: replace use of system_unbound_wq with system_dfl_wq
-Date: Tue, 16 Sep 2025 10:29:04 +0200
-Message-ID: <20250916082906.77439-2-marco.crivellari@suse.com>
+Subject: [PATCH v2 2/3] fs: replace use of system_wq with system_percpu_wq
+Date: Tue, 16 Sep 2025 10:29:05 +0200
+Message-ID: <20250916082906.77439-3-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250916082906.77439-1-marco.crivellari@suse.com>
 References: <20250916082906.77439-1-marco.crivellari@suse.com>
@@ -107,291 +106,101 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-system_unbound_wq should be the default workqueue so as not to enforce
-locality constraints for random work whenever it's not required.
+system_wq is a per-CPU worqueue, yet nothing in its name tells about that
+CPU affinity constraint, which is very often not required by users.
+Make it clear by adding a system_percpu_wq to all the fs subsystem.
 
-Adding system_dfl_wq to encourage its use when unbound work should be used.
-
-The old system_unbound_wq will be kept for a few release cycles.
+The old wq will be kept for a few release cylces.
 
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- fs/afs/callback.c                | 4 ++--
- fs/afs/write.c                   | 2 +-
- fs/bcachefs/btree_write_buffer.c | 2 +-
- fs/bcachefs/io_read.c            | 8 ++++----
- fs/bcachefs/journal_io.c         | 2 +-
- fs/btrfs/block-group.c           | 2 +-
- fs/btrfs/extent_map.c            | 2 +-
- fs/btrfs/space-info.c            | 4 ++--
- fs/btrfs/zoned.c                 | 2 +-
- fs/coredump.c                    | 2 +-
- fs/ext4/mballoc.c                | 2 +-
- fs/netfs/misc.c                  | 2 +-
- fs/netfs/objects.c               | 2 +-
- fs/nfsd/filecache.c              | 2 +-
- fs/notify/mark.c                 | 4 ++--
- fs/quota/dquot.c                 | 2 +-
- 16 files changed, 22 insertions(+), 22 deletions(-)
+ fs/aio.c            | 2 +-
+ fs/fs-writeback.c   | 2 +-
+ fs/fuse/dev.c       | 2 +-
+ fs/fuse/inode.c     | 2 +-
+ fs/nfs/namespace.c  | 2 +-
+ fs/nfs/nfs4renewd.c | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/afs/callback.c b/fs/afs/callback.c
-index 69e1dd55b160..894d2bad6b6c 100644
---- a/fs/afs/callback.c
-+++ b/fs/afs/callback.c
-@@ -42,7 +42,7 @@ static void afs_volume_init_callback(struct afs_volume *volume)
- 	list_for_each_entry(vnode, &volume->open_mmaps, cb_mmap_link) {
- 		if (vnode->cb_v_check != atomic_read(&volume->cb_v_break)) {
- 			afs_clear_cb_promise(vnode, afs_cb_promise_clear_vol_init_cb);
--			queue_work(system_unbound_wq, &vnode->cb_work);
-+			queue_work(system_dfl_wq, &vnode->cb_work);
- 		}
- 	}
+diff --git a/fs/aio.c b/fs/aio.c
+index 7fc7b6221312..6002617f078c 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -636,7 +636,7 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
  
-@@ -90,7 +90,7 @@ void __afs_break_callback(struct afs_vnode *vnode, enum afs_cb_break_reason reas
- 		if (reason != afs_cb_break_for_deleted &&
- 		    vnode->status.type == AFS_FTYPE_FILE &&
- 		    atomic_read(&vnode->cb_nr_mmap))
--			queue_work(system_unbound_wq, &vnode->cb_work);
-+			queue_work(system_dfl_wq, &vnode->cb_work);
+ 	/* Synchronize against RCU protected table->table[] dereferences */
+ 	INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
+-	queue_rcu_work(system_wq, &ctx->free_rwork);
++	queue_rcu_work(system_percpu_wq, &ctx->free_rwork);
+ }
  
- 		trace_afs_cb_break(&vnode->fid, vnode->cb_break, reason, true);
- 	} else {
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 2e7526ea883a..93ad86ff3345 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -172,7 +172,7 @@ static void afs_issue_write_worker(struct work_struct *work)
- void afs_issue_write(struct netfs_io_subrequest *subreq)
+ /*
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..21aaed728929 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2442,7 +2442,7 @@ static int dirtytime_interval_handler(const struct ctl_table *table, int write,
+ 
+ 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ 	if (ret == 0 && write)
+-		mod_delayed_work(system_wq, &dirtytime_work, 0);
++		mod_delayed_work(system_percpu_wq, &dirtytime_work, 0);
+ 	return ret;
+ }
+ 
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e80cd8f2c049..8520eb94c527 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -119,7 +119,7 @@ void fuse_check_timeout(struct work_struct *work)
+ 	    goto abort_conn;
+ 
+ out:
+-	queue_delayed_work(system_wq, &fc->timeout.work,
++	queue_delayed_work(system_percpu_wq, &fc->timeout.work,
+ 			   fuse_timeout_timer_freq);
+ 	return;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 67c2318bfc42..1e044c4f4a00 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1268,7 +1268,7 @@ static void set_request_timeout(struct fuse_conn *fc, unsigned int timeout)
  {
- 	subreq->work.func = afs_issue_write_worker;
--	if (!queue_work(system_unbound_wq, &subreq->work))
-+	if (!queue_work(system_dfl_wq, &subreq->work))
- 		WARN_ON_ONCE(1);
+ 	fc->timeout.req_timeout = secs_to_jiffies(timeout);
+ 	INIT_DELAYED_WORK(&fc->timeout.work, fuse_check_timeout);
+-	queue_delayed_work(system_wq, &fc->timeout.work,
++	queue_delayed_work(system_percpu_wq, &fc->timeout.work,
+ 			   fuse_timeout_timer_freq);
  }
  
-diff --git a/fs/bcachefs/btree_write_buffer.c b/fs/bcachefs/btree_write_buffer.c
-index 4b095235a0d2..0afb44ce1a85 100644
---- a/fs/bcachefs/btree_write_buffer.c
-+++ b/fs/bcachefs/btree_write_buffer.c
-@@ -827,7 +827,7 @@ int bch2_journal_keys_to_write_buffer_end(struct bch_fs *c, struct journal_keys_
- 
- 	if (bch2_btree_write_buffer_should_flush(c) &&
- 	    __enumerated_ref_tryget(&c->writes, BCH_WRITE_REF_btree_write_buffer) &&
--	    !queue_work(system_unbound_wq, &c->btree_write_buffer.flush_work))
-+	    !queue_work(system_dfl_wq, &c->btree_write_buffer.flush_work))
- 		enumerated_ref_put(&c->writes, BCH_WRITE_REF_btree_write_buffer);
- 
- 	if (dst->wb == &wb->flushing)
-diff --git a/fs/bcachefs/io_read.c b/fs/bcachefs/io_read.c
-index e0874ad9a6cf..460e2e6341f1 100644
---- a/fs/bcachefs/io_read.c
-+++ b/fs/bcachefs/io_read.c
-@@ -684,7 +684,7 @@ static void bch2_rbio_error(struct bch_read_bio *rbio,
- 
- 	if (bch2_err_matches(ret, BCH_ERR_data_read_retry)) {
- 		bch2_rbio_punt(rbio, bch2_rbio_retry,
--			       RBIO_CONTEXT_UNBOUND, system_unbound_wq);
-+			       RBIO_CONTEXT_UNBOUND, system_dfl_wq);
+diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+index 7f1ec9c67ff2..f9a3a1fbf44c 100644
+--- a/fs/nfs/namespace.c
++++ b/fs/nfs/namespace.c
+@@ -335,7 +335,7 @@ static int param_set_nfs_timeout(const char *val, const struct kernel_param *kp)
+ 			num *= HZ;
+ 		*((int *)kp->arg) = num;
+ 		if (!list_empty(&nfs_automount_list))
+-			mod_delayed_work(system_wq, &nfs_automount_task, num);
++			mod_delayed_work(system_percpu_wq, &nfs_automount_task, num);
  	} else {
- 		rbio = bch2_rbio_free(rbio);
- 
-@@ -921,10 +921,10 @@ static void __bch2_read_endio(struct work_struct *work)
- 	bch2_rbio_error(rbio, -BCH_ERR_data_read_retry_csum_err, BLK_STS_IOERR);
- 	goto out;
- decompression_err:
--	bch2_rbio_punt(rbio, bch2_read_decompress_err, RBIO_CONTEXT_UNBOUND, system_unbound_wq);
-+	bch2_rbio_punt(rbio, bch2_read_decompress_err, RBIO_CONTEXT_UNBOUND, system_dfl_wq);
- 	goto out;
- decrypt_err:
--	bch2_rbio_punt(rbio, bch2_read_decrypt_err, RBIO_CONTEXT_UNBOUND, system_unbound_wq);
-+	bch2_rbio_punt(rbio, bch2_read_decrypt_err, RBIO_CONTEXT_UNBOUND, system_dfl_wq);
- 	goto out;
+ 		*((int *)kp->arg) = -1*HZ;
+ 		cancel_delayed_work(&nfs_automount_task);
+diff --git a/fs/nfs/nfs4renewd.c b/fs/nfs/nfs4renewd.c
+index db3811af0796..18ae614e5a6c 100644
+--- a/fs/nfs/nfs4renewd.c
++++ b/fs/nfs/nfs4renewd.c
+@@ -122,7 +122,7 @@ nfs4_schedule_state_renewal(struct nfs_client *clp)
+ 		timeout = 5 * HZ;
+ 	dprintk("%s: requeueing work. Lease period = %ld\n",
+ 			__func__, (timeout + HZ - 1) / HZ);
+-	mod_delayed_work(system_wq, &clp->cl_renewd, timeout);
++	mod_delayed_work(system_percpu_wq, &clp->cl_renewd, timeout);
+ 	set_bit(NFS_CS_RENEWD, &clp->cl_res_state);
+ 	spin_unlock(&clp->cl_lock);
  }
- 
-@@ -963,7 +963,7 @@ static void bch2_read_endio(struct bio *bio)
- 	    rbio->promote ||
- 	    crc_is_compressed(rbio->pick.crc) ||
- 	    bch2_csum_type_is_encryption(rbio->pick.crc.csum_type))
--		context = RBIO_CONTEXT_UNBOUND,	wq = system_unbound_wq;
-+		context = RBIO_CONTEXT_UNBOUND,	wq = system_dfl_wq;
- 	else if (rbio->pick.crc.csum_type)
- 		context = RBIO_CONTEXT_HIGHPRI,	wq = system_highpri_wq;
- 
-diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-index 9e028dbcc3d0..29bea8e0e495 100644
---- a/fs/bcachefs/journal_io.c
-+++ b/fs/bcachefs/journal_io.c
-@@ -1362,7 +1362,7 @@ int bch2_journal_read(struct bch_fs *c,
- 					  BCH_DEV_READ_REF_journal_read))
- 			closure_call(&ca->journal.read,
- 				     bch2_journal_read_device,
--				     system_unbound_wq,
-+				     system_dfl_wq,
- 				     &jlist.cl);
- 		else
- 			degraded = true;
-diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-index 9bf282d2453c..9a0af7e4a935 100644
---- a/fs/btrfs/block-group.c
-+++ b/fs/btrfs/block-group.c
-@@ -2031,7 +2031,7 @@ void btrfs_reclaim_bgs(struct btrfs_fs_info *fs_info)
- 	btrfs_reclaim_sweep(fs_info);
- 	spin_lock(&fs_info->unused_bgs_lock);
- 	if (!list_empty(&fs_info->reclaim_bgs))
--		queue_work(system_unbound_wq, &fs_info->reclaim_bgs_work);
-+		queue_work(system_dfl_wq, &fs_info->reclaim_bgs_work);
- 	spin_unlock(&fs_info->unused_bgs_lock);
- }
- 
-diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-index 57f52585a6dd..9a5a497edc97 100644
---- a/fs/btrfs/extent_map.c
-+++ b/fs/btrfs/extent_map.c
-@@ -1372,7 +1372,7 @@ void btrfs_free_extent_maps(struct btrfs_fs_info *fs_info, long nr_to_scan)
- 	if (atomic64_cmpxchg(&fs_info->em_shrinker_nr_to_scan, 0, nr_to_scan) != 0)
- 		return;
- 
--	queue_work(system_unbound_wq, &fs_info->em_shrinker_work);
-+	queue_work(system_dfl_wq, &fs_info->em_shrinker_work);
- }
- 
- void btrfs_init_extent_map_shrinker_work(struct btrfs_fs_info *fs_info)
-diff --git a/fs/btrfs/space-info.c b/fs/btrfs/space-info.c
-index 0481c693ac2e..c573d80550ad 100644
---- a/fs/btrfs/space-info.c
-+++ b/fs/btrfs/space-info.c
-@@ -1830,7 +1830,7 @@ static int __reserve_bytes(struct btrfs_fs_info *fs_info,
- 							  space_info->flags,
- 							  orig_bytes, flush,
- 							  "enospc");
--				queue_work(system_unbound_wq, async_work);
-+				queue_work(system_dfl_wq, async_work);
- 			}
- 		} else {
- 			list_add_tail(&ticket.list,
-@@ -1847,7 +1847,7 @@ static int __reserve_bytes(struct btrfs_fs_info *fs_info,
- 		    need_preemptive_reclaim(fs_info, space_info)) {
- 			trace_btrfs_trigger_flush(fs_info, space_info->flags,
- 						  orig_bytes, flush, "preempt");
--			queue_work(system_unbound_wq,
-+			queue_work(system_dfl_wq,
- 				   &fs_info->preempt_reclaim_work);
- 		}
- 	}
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index ea662036f441..3d554ebca08c 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -2515,7 +2515,7 @@ void btrfs_schedule_zone_finish_bg(struct btrfs_block_group *bg,
- 	refcount_inc(&eb->refs);
- 	bg->last_eb = eb;
- 	INIT_WORK(&bg->zone_finish_work, btrfs_zone_finish_endio_workfn);
--	queue_work(system_unbound_wq, &bg->zone_finish_work);
-+	queue_work(system_dfl_wq, &bg->zone_finish_work);
- }
- 
- void btrfs_clear_data_reloc_bg(struct btrfs_block_group *bg)
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 5dce257c67fc..f36354785e11 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -635,7 +635,7 @@ static int umh_coredump_setup(struct subprocess_info *info, struct cred *new)
- 
- 		/*
- 		 * Usermode helpers are childen of either
--		 * system_unbound_wq or of kthreadd. So we know that
-+		 * system_dfl_wq or of kthreadd. So we know that
- 		 * we're starting off with a clean file descriptor
- 		 * table. So we should always be able to use
- 		 * COREDUMP_PIDFD_NUMBER as our file descriptor value.
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 5898d92ba19f..8b18802e83eb 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -3995,7 +3995,7 @@ void ext4_process_freed_data(struct super_block *sb, tid_t commit_tid)
- 		list_splice_tail(&freed_data_list, &sbi->s_discard_list);
- 		spin_unlock(&sbi->s_md_lock);
- 		if (wake)
--			queue_work(system_unbound_wq, &sbi->s_discard_work);
-+			queue_work(system_dfl_wq, &sbi->s_discard_work);
- 	} else {
- 		list_for_each_entry_safe(entry, tmp, &freed_data_list, efd_list)
- 			kmem_cache_free(ext4_free_data_cachep, entry);
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 20748bcfbf59..486166460e17 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -321,7 +321,7 @@ void netfs_wake_collector(struct netfs_io_request *rreq)
- {
- 	if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags) &&
- 	    !test_bit(NETFS_RREQ_RETRYING, &rreq->flags)) {
--		queue_work(system_unbound_wq, &rreq->work);
-+		queue_work(system_dfl_wq, &rreq->work);
- 	} else {
- 		trace_netfs_rreq(rreq, netfs_rreq_trace_wake_queue);
- 		wake_up(&rreq->waitq);
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index e8c99738b5bb..2ebe56b24ddd 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -163,7 +163,7 @@ void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace
- 		dead = __refcount_dec_and_test(&rreq->ref, &r);
- 		trace_netfs_rreq_ref(debug_id, r - 1, what);
- 		if (dead)
--			WARN_ON(!queue_work(system_unbound_wq, &rreq->cleanup_work));
-+			WARN_ON(!queue_work(system_dfl_wq, &rreq->cleanup_work));
- 	}
- }
- 
-diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-index 732abf6b92a5..85ca663c052c 100644
---- a/fs/nfsd/filecache.c
-+++ b/fs/nfsd/filecache.c
-@@ -113,7 +113,7 @@ static void
- nfsd_file_schedule_laundrette(void)
- {
- 	if (test_bit(NFSD_FILE_CACHE_UP, &nfsd_file_flags))
--		queue_delayed_work(system_unbound_wq, &nfsd_filecache_laundrette,
-+		queue_delayed_work(system_dfl_wq, &nfsd_filecache_laundrette,
- 				   NFSD_LAUNDRETTE_DELAY);
- }
- 
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 798340db69d7..55a03bb05aa1 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -428,7 +428,7 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
- 		conn->destroy_next = connector_destroy_list;
- 		connector_destroy_list = conn;
- 		spin_unlock(&destroy_lock);
--		queue_work(system_unbound_wq, &connector_reaper_work);
-+		queue_work(system_dfl_wq, &connector_reaper_work);
- 	}
- 	/*
- 	 * Note that we didn't update flags telling whether inode cares about
-@@ -439,7 +439,7 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
- 	spin_lock(&destroy_lock);
- 	list_add(&mark->g_list, &destroy_list);
- 	spin_unlock(&destroy_lock);
--	queue_delayed_work(system_unbound_wq, &reaper_work,
-+	queue_delayed_work(system_dfl_wq, &reaper_work,
- 			   FSNOTIFY_REAPER_DELAY);
- }
- EXPORT_SYMBOL_GPL(fsnotify_put_mark);
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index df4a9b348769..afa15a214538 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -881,7 +881,7 @@ void dqput(struct dquot *dquot)
- 	put_releasing_dquots(dquot);
- 	atomic_dec(&dquot->dq_count);
- 	spin_unlock(&dq_list_lock);
--	queue_delayed_work(system_unbound_wq, &quota_release_work, 1);
-+	queue_delayed_work(system_dfl_wq, &quota_release_work, 1);
- }
- EXPORT_SYMBOL(dqput);
- 
 -- 
 2.51.0
 
