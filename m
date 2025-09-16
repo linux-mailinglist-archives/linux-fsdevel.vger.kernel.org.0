@@ -1,207 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-61728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F0AB597AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07152B597CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BBE188A392
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:30:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FDF6163A74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ED43128C7;
-	Tue, 16 Sep 2025 13:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6156C313E16;
+	Tue, 16 Sep 2025 13:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpzVsbJn"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0TBepx7n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF043081A2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1C93191A3;
+	Tue, 16 Sep 2025 13:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029390; cv=none; b=syGBFVtVfan8y3xKBWD48Z+DwGSXvp4evYFspHgFaSKWTiOIIq/JQRCj8uq5EnBke4DgZJLMxAR0dxN8FNAUS1LoP7L5fcceGyzwCofZVDJUmcNfclDTBTZyNVX5KDDB9/ye02zHi15ny5baw3GiRs+NdRpGXWNqQOF2aGY066M=
+	t=1758029765; cv=none; b=UtkqKrTVB5cdOZL9lmgBncCqn1hcUqtKDC+34qCtACkux/rq9Eip8DTSTJ5tXzEzKFY08Qkmt9uSiIfurfBXMC8sqAc/y8qXeZWtUpmkbyzbbBu+WkMLqDkwwSHFfXaBv6S/1S14XdBKGAzrxuCDQ6f8FaeTx+9qqUKHBN7jX6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029390; c=relaxed/simple;
-	bh=/dlRa3fJmDKHfHaLN7gvlMCOjbtBNW/Z1+IbKo1HKVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Op00WmZYdUWgl5pxXhemTragN4eWFfZ/k0G4+7e/bEzLIrEx92Kjz0yb6a4ESYUVeZ+gUl9qgZsDgUdyPB1JtM2PLS1xZpDIBC/BGyL7ffv5pKkSVBGRhr+I2XAoQTxFvRx4jzh228XO3QXcydfKVFBSyFIpW+736dbMBO7FbTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpzVsbJn; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-620724883e6so10277169a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 06:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758029387; x=1758634187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nUBl38KozCd2EM6dPQpNsN7WfMcH/uyK4YoPI5ee8s=;
-        b=YpzVsbJnoFX/l+brAgnsXam5Tq79FkQm5NERsg2M3IMIz1h5/8wmAlaHgwd7M88rN8
-         I3al5vkyhDoy4R8wnOfNTyUDjt54ABRBWy3znkYemO0ClP8TSo2B3UMbcFC28Z5W26a7
-         xNsha9PDLH19lqhbbMV7R7cRVWTSJ5pjR9TN6KlRymBQh/GCUEqgrbD3DXpJTbJdmVOU
-         ZRIeoixcXZ+NkL656p8AB4BJPJjxGLvDifEKq5ZEHLM4fCBSBlDWIKUEu0iIiuPtcUGl
-         O2XAdmERgavlDO92bx9XqAnPn6pHZItVz1rnvRoHhNe4bqZ1tBZIUbgsTxbiIqz8kO5l
-         d3nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758029387; x=1758634187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8nUBl38KozCd2EM6dPQpNsN7WfMcH/uyK4YoPI5ee8s=;
-        b=aItWL5NYTX5gu9Et+i2uHLQ20hMNNApZwMhJAk3EY9rVD7jnAmTVnNcSn/IYWFxHB3
-         H4tEdTjxl5B+QZNXRmdPe5R/dzL6kTeuX0crVUCebMTeXI8yUkqdAan6h9Eiqp9YcShY
-         nPYtqzg4CgU3E7v0QMbbS3YiJ5kELJRnNYFYhSRqjF828yydbRQC0C/WQWFe7wvkCIsH
-         GPECVpTgtB+0vrtAFtQFO6qmpQ4otfsoaYYnm6iH7O46BWHNJrl3TakNjtqNNJvGGVNN
-         cZTUQlsyRu7QxkDyOlWdIiKdwd4xCBmtNDD7D8nwUUFrhCRs4SDEE7G3O7qB+K4VOqyS
-         0yBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgl89hdnorLwlG1KGp9QY2lz6SNQcjytJlDsF8K17HOcGKQ5DnYUaVwLVgymBgBVr8sRkA3ucP05VK7Vjn@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHkJE1ClMzzhYyTu81b/1Qua3c8TnGugNTqKUUbO+5j2SDPgqU
-	rlAQ7nAKhbvoU85mGdM3hrCU1fDY74VKXmQM84/slLk10z3PUE8ijHM+2gASsyv5r4oAj9SwbEe
-	qBf4aQ/RrX6MCoZuCkC/hbj/i3WuIMFs=
-X-Gm-Gg: ASbGncuaibKvE25Sp6EP6oG4SqfgWwO/Z/CNZcWYSwBYw91irsVJ8TBk/pjcg+0pJ9f
-	SbKhCj6lkdDsHkODQj8d5Z4CXNGbiIfFk2YBAKaSCYFG1/Xt80Ja5ZMFyKSAmqH9XpJ/SUNt0IJ
-	Eb1DmLJb+IkKk2OQZgQxw1j6rgD3UboODctimKNq0wurroQ6piutmeAKzPik+hJymxX1981orEN
-	sBVS8bx63Samnoq8/4ZpfQcbQ6gWgc57ihSPigYJFovE1Q/rl8=
-X-Google-Smtp-Source: AGHT+IFx9yd4PB/vn4IjXsoACWwoeCb/LEf5nz0y3KpLeNZ2RitKABUZYjPvumidUpl8exgSkmnuKsZ7bjrh8cCbDhE=
-X-Received: by 2002:a05:6402:a0cd:b0:629:54af:4f53 with SMTP id
- 4fb4d7f45d1cf-62ed82c6656mr16233534a12.18.1758029386970; Tue, 16 Sep 2025
- 06:29:46 -0700 (PDT)
+	s=arc-20240116; t=1758029765; c=relaxed/simple;
+	bh=nxPr6BROuKeid2asUHqylc5kE6izLAV55LFjfxk7V7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hLobXFdHh/hTtSbaEU5dJBaIFVYoKekuHqSjAV7u3ozFW9hAeq9KfvYPAKJsQJSi7oSQOLwMIJmNcY7YTW08dbgU7t54BIX5/9qDzxO9bd5Fpud7a9bIaCRgG7XJuTGp/+22oLd9baOX20amJ40VWJ34+uXr+eAiQrbt816kvMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0TBepx7n; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 7261F14C2D3;
+	Tue, 16 Sep 2025 15:35:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1758029756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lJQV/xL2hmIUKXDSuzeF/Nwm/bBht4Qf4SUZQZ6+msY=;
+	b=0TBepx7n/S/c5Sq8+oJsksGNWfhB4aNwu00NfyFWcGS9i1/LhKGUjmpKAQU8wGSvaJA6HS
+	enIe247FPthCU76U4kscIarSZ3ro0VTGDprPkp1RfS7o5FhpHQypDM+/T/MD9doS/0neub
+	WGz1WOuMDF1LQaU6FQiOf6TVRSTlbhjKw9K9YKvoM4qHr0+GmTyGweaKDDPIGKkzmLSd0e
+	44xV372CW2+9Tjdy0kZyjes+MtT/aCOSKtEW/VWdj+2dxEkearky9U2F2W7LGOx4F94J5Z
+	PGiWQ8IzbM0ZWluN+RKH7dGoYBphNIEVUGgsL6M/TFyWL1PU+xAXGUC33MebPg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b149dc1f;
+	Tue, 16 Sep 2025 13:35:50 +0000 (UTC)
+Date: Tue, 16 Sep 2025 22:35:35 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+Message-ID: <aMlnpz7TrbXuL0mc@codewreck.org>
+References: <aMih5XYYrpP559de@codewreck.org>
+ <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915101510.7994-1-acsjakub@amazon.de> <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
- <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
- <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com> <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
-In-Reply-To: <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 16 Sep 2025 15:29:35 +0200
-X-Gm-Features: AS18NWAPAV01WXyNb64OPEzkKEyOkzIVEVp3wm-eCN6oWp1E8_sj0VUWGpMMb0M
-Message-ID: <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
-Subject: Re: [PATCH] ovl: check before dereferencing s_root field
-To: Jan Kara <jack@suse.cz>
-Cc: Jakub Acs <acsjakub@amazon.de>, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
 
-On Tue, Sep 16, 2025 at 1:30=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 15-09-25 17:29:40, Amir Goldstein wrote:
-> > On Mon, Sep 15, 2025 at 4:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> > > > > index 83f80fdb1567..424c73188e06 100644
-> > > > > --- a/fs/overlayfs/export.c
-> > > > > +++ b/fs/overlayfs/export.c
-> > > > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct ino=
-de *inode)
-> > > > >         if (!ovl_inode_lower(inode))
-> > > > >                 return 0;
-> > > > >
-> > > > > +       if (!inode->i_sb->s_root)
-> > > > > +               return -ENOENT;
-> > > >
-> > > > For a filesystem method to have to check that its own root is still=
- alive sounds
-> > > > like the wrong way to me.
-> > > > That's one of the things that should be taken for granted by fs cod=
-e.
-> > > >
-> > > > I don't think this is an overlayfs specific issue, because other fs=
- would be
-> > > > happy if encode_fh() would be called with NULL sb->s_root.
-> > >
-> > > Actually, I don't see where that would blow up? Generally references =
-to
-> > > sb->s_root in filesystems outside of mount / remount code are pretty =
-rare.
-> > > Also most of the code should be unreachable by the time we set sb->s_=
-root
-> > > to NULL because there are no open files at that moment, no exports et=
-c. But
-> > > as this report shows, there are occasional surprises (I remember simi=
-lar
-> > > issue with ext4 sysfs files handlers using s_root without checking co=
-uple
-> > > years back).
-> > >
-> >
-> > I am not sure that I understand what you are arguing for.
-> > I did a very naive grep s_root fs/*/export.c and quickly found:
->
-> You're better with grep than me ;). I was grepping for '->s_root' as well
-> but all the hits I had looked into were related to mounting and similar a=
-nd
-> eventually I got bored. Restricting the grep to export ops indeed shows
-> ceph, gfs2 and overlayfs are vulnerable to this kind of problem.
->
-> > static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
-> >                           struct inode *parent)
-> > {
-> > ...
-> >         if (!parent || inode =3D=3D d_inode(sb->s_root))
-> >                 return *len;
-> >
-> > So it's not an overlayfs specific issue, just so happens that zysbot
-> > likes to test overlayfs.
-> >
-> > Are you suggesting that we fix all of those one by one?
->
-> No. I agree we need to figure out a way to make sure export ops are not
-> called on a filesystem being unmounted. Standard open_by_handle() or NFS
-> export cannot race with generic_shutdown_super() (they hold the fs mounte=
-d)
-> so fsnotify is a special case here.
->
-> I actually wonder if fanotify event (e.g. from inode deletion postponed t=
-o
-> some workqueue or whatever) cannot race with umount as well and cause the
-> same problem...
->
+Tingmao Wang wrote on Tue, Sep 16, 2025 at 01:44:27PM +0100:
+> > iirc even in cacheless mode 9p should keep inode arounds if there's an
+> > open fd somewhere
+> 
+> Yes, because there is a dentry that has a reference to it.  Similarly if
+> there is a Landlock rule referencing it, the inode will also be kept
+> around (but not the dentry, Landlock only references the inode).  The
+> problem is that when another application (that is being Landlocked)
+> accesses the file, 9pfs will create a new inode in uncached mode,
+> regardless of whether an existing inode exists.
+> [...]
+> Based on my understanding, I think this isn't really to do with whether
+> the dentry is around or not.  In cached mode, 9pfs will use iget5_locked
+> to look up an existing inode based on the qid, if one exists, and use
+> that, even if no cached dentry points to it.  However, in uncached mode,
+> currently if vfs asks 9pfs to find an inode (e.g. because the dentry is no
+> longer in cache), it always get a new one:
+> [...]
+> v9fs_qid_iget_dotl:
+> 	...
+> 	if (new)
+> 		test = v9fs_test_new_inode_dotl;
+> 	else
+> 		test = v9fs_test_inode_dotl;
 
-Oy. I was thinking that all event happen when holding some mnt ref
-but yeh fsnotify_inoderemove() does look like it could be a problem
-from sb shutdown context.
+Right, if we get all the way to iget uncached mode will get a new inode,
+but if the file is opened (I tried `cat > foo` and `tail -f foo`) then
+re-opening cat will not issue a lookup at all -- v9fs_vfs_lookup() is
+not called in the first place.
+Likewise, in cached mode, just having the file in cache makes new open
+not call v9fs_vfs_lookup for that file (even if it's not currently
+open), so that `if (new)` is not actually what matters here afaiu.
 
-How about skipping fsnotify_inoderemove() in case sb is in shutdown?
+What's the condition to make it happen? Can we make that happen with
+landlock?
 
-> > > > Can we change the order of generic_shutdown_super() so that
-> > > > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
-> > > >
-> > > > Or is there a better solution for this race?
-> > >
-> > > Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
-> > > In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
-> > > evict_inodes")) we've moved the call after evict_inodes() because oth=
-erwise
-> > > we were just wasting cycles scanning many inodes without watches. So =
-moving
-> > > it earlier wouldn't be great...
-> >
-> > Yes, I noticed that and I figured there were subtleties.
->
-> Right. After thinking more about it I think calling fsnotify_sb_delete()
-> earlier is the only practical choice we have (not clearing sb->s_root isn=
-'t
-> much of an option - we need to prune all dentries to quiesce the filesyst=
-em
-> and leaving s_root alive would create odd corner cases). But you don't wa=
-nt
-> to be iterating millions of inodes just to clear couple of marks so we'll
-> have to figure out something more clever there.
+In practice that'd make landlock partially negate cacheless mode, as
+we'd "pin" landlocked paths, but as long as readdirs aren't cached and
+other metadata is refreshed on e.g. stat() calls I think that's fine
+if we can make it happen.
 
-I think we only need to suppress the fsnotify_inoderemove() call.
-It sounds doable and very local to fs/super.c.
+(That's a big if)
 
-Regarding show_mark_fhandle() WDYT about my suggestion to
-guard it with super_trylock_shared()?
+> > So in cacheless mode, if you have a tree like this:
+> > a
+> > └── b
+> >     ├── c
+> >     └── d
+> > with c 'open' (or a reference held by landlock), then dentries for a/b/c
+> > would be kept, but d could be droppable?
+> 
+> I think, based on my understanding, a child dentry does always have a
+> reference to its parent, and so parent won't be dropped before child, if
+> child dentry is alive.
 
-Thanks,
-Amir.
+I'd be tempted to agree here
+
+> However holding a proper dentry reference in an
+> inode might be tricky as dentry holds the reference to its inode.
+
+Hmm, yeah, that's problematic.
+Could it be held in landlock and not by the inode?
+Just thinking out loud.
+
+> > My understanding is that in cacheless mode we're dropping dentries
+> > aggressively so that things like readdir() are refreshed, but I'm
+> > thinking this should work even if we keep some dentries alive when their
+> > inode is held up.
+> 
+> If we have some way of keeping the dentry alive (without introducing
+> circular reference problems) then I guess that would work and we don't
+> have to track paths ourselves.
+
+Yes, that's the idea - the dentry basically already contain the path, so
+we wouldn't be reinventing the wheel...
+
+> >  - if that doesn't work (or is too complicated), I'm thinking tracking
+> > path is probably better than qid-based filtering based on what we
+> > discussed as it only affects uncached mode.. I'll need to spend some
+> > time testing but I think we can move forward with the current patchset
+> > rather than try something new.
+> 
+> Note that in discussion with Mickaël (maintainer of Landlock) he indicated
+> that he would be comfortable for Landlock to track a qid, instead of
+> holding a inode, specifically for 9pfs.
+
+Yes, I saw that, but what you pointed out about qid reuse make me
+somewhat uncomfortable with that direction -- you could allow a
+directory, delete it, create a new one somewhere else and if the
+underlying fs reuse the same inode number the rule would allow an
+intended directory instead so I'd rather not rely on qid for this
+either.
+But if you think that's not a problem in practice (because e.g. landlock
+would somehow detect the dir got deleted or another good reason it's not
+a problem) then I agree it's probably the simplest way forward
+implementation-wise.
+
+-- 
+Dominique Martinet | Asmadeus
 
