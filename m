@@ -1,51 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-61735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F298BB59841
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:53:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF68B59844
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865064E4C6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:53:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3DA7AC1A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7C732779D;
-	Tue, 16 Sep 2025 13:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AF632F75A;
+	Tue, 16 Sep 2025 13:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MQQx/Q1b"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="r9JqvVPe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFA331DDBC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194E831DDB6;
 	Tue, 16 Sep 2025 13:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030813; cv=none; b=txv0W5ocvBQRWZgXtvBT61ZBTR3Aew1NKN2KKXcL5JoVKBBzNywE2Cbo3nKf53J0GFCDLd38Ab2gOrDuRQ2F8I0GYnjL9E5k3CmJP7bBEmJemZgXLGm9hNenAr4c5OMCN/57bCgPV5h/fyjB7BtBu50RO2+W0arqjnJ3n/Jj818=
+	t=1758030814; cv=none; b=HUdpbgtx5LUu+BKPUEfVcq+wuVpRf+PNML1w6u7Ymbu4s9nKIM6gmqh0nKOSaAYBxPGLUI4ifVTe2L49E1umPlhLBSPgqu3zCoSKQfljlYW4jxludy6rZfXI14/d2Tf46hblsT5bhMZ7jcgB0xWsW7+9ZF+DLvVKMZFORkkJZz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030813; c=relaxed/simple;
-	bh=trezP0UU3b59VsavJ8DxZlX4bgvjLNK6GY622X7Ce3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F8r9FuhuQ9HxJ8U7fTXwVXZnpJyuaigcdbrnxUy2dDnSsOYOcIzu8pIEQ8Ue9w7IKbxnxqi++FtQqU4TZwTACFndb6dZxc0KZ7sfdEtaYx1dBoe81twB1GsI82C8I5ldJWDUern2CIf4Y3fI9wKACzN0Xqjh1odsiH7D+e7XIcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MQQx/Q1b; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1758030814; c=relaxed/simple;
+	bh=SMGSmx2pqz5voqtJR3czA7f6GuqUU80n5EtyBj5q9GM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ueQH+TLPshvKeXNPjog6AJFuvmlHrqVl2WT95nsTKE7a0SxDTMSc/vpKp1viNktnX24aFWsS4daXwJatwNYFrw8OacDLL6sNy7xlCfuW1CXAr014JkOdDet7Gm17ExrgEzWST1luMTYR/DKR0hPUTBNI1F6RtI85oIYu3axKLi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=r9JqvVPe; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=dRivKGbqX8Ck0pSd7S8JXZq2IVPS9OaLEtzmhjUJT88=; b=MQQx/Q1bmmN9lDTg72QqGmUgf5
-	jdmcXRocuBnGJsB6+VedkkrIxduRSzKDKiSmUjbfgnxsEMK5nIV+YcZjLy+IYk4GA776PWk9JF6yO
-	V2NfQRsEuVX+ea3eRnUgvdyuDlp49EUp6t/aGeo0U+CPbYCwTpc3TCFnfvveLUumgzescXMu7BxN4
-	FSB24Yd0LRU3WbaJLhRcI7hyu3n2ldlu2wAvg114qV4e9yQ1veoLHceLn6uDauCgOMe+hnz9Rj4ns
-	pasRayXPUYrRhyshFfhKOBBWtoww/Dw44QQRXknlhVpSNbwivtDUUc0jdcQTzX6IbZ8w6ZMFQ5E6Q
-	L8OKQBhA==;
+	bh=UQ81DTt4EOw7u3fHJtPSWfenc7ZBjC0pxzgeRhwqK8s=; b=r9JqvVPelk/d/5P9WhRXm+04BY
+	gJZRiyTQ7xxLDnaqW5VerHOoJmegcYCuv0dZcsBJPy1oIPozt8nUPFMbN/SI3VuZrO4+LYTgmsyU4
+	8d/Rmb3JcyvK4b5ex5KJBxEaHYwSbAboR6+ai/aPvoncC2sCGCyb+hgSEN57+s7xLM38bOuUpL+OG
+	39gbMmarhc7dv38RZkOxWmf+u8xDu0LzEv99laqLFtL9runillJqNg6+h075NXUz82EY/y9Pdjv86
+	ZkjEU6qrtOMdMDOPe3F5oKP2E2BJ0BPs9nN+D27LzzUxkvUZ3uZvhaoXv9SXkLGiB+SaWNfVbE4HL
+	l5fl0PTA==;
 Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
 	by fanzine2.igalia.com with utf8esmtpsa 
 	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uyW7R-00CH0m-Mj; Tue, 16 Sep 2025 15:53:17 +0200
+	id 1uyW7S-00CH0p-59; Tue, 16 Sep 2025 15:53:18 +0200
 From: Luis Henriques <luis@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Bernd Schubert <bernd@bsbernd.com>,
@@ -56,9 +57,11 @@ Cc: Bernd Schubert <bernd@bsbernd.com>,
 	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org,
 	Luis Henriques <luis@igalia.com>
-Subject: [RFC PATCH v6 0/4] fuse: work queues to invalided dentries
-Date: Tue, 16 Sep 2025 14:53:06 +0100
-Message-ID: <20250916135310.51177-1-luis@igalia.com>
+Subject: [RFC PATCH v6 1/4] dcache: export shrink_dentry_list() and add new helper d_dispose_if_unused()
+Date: Tue, 16 Sep 2025 14:53:07 +0100
+Message-ID: <20250916135310.51177-2-luis@igalia.com>
+In-Reply-To: <20250916135310.51177-1-luis@igalia.com>
+References: <20250916135310.51177-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,68 +70,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Miklos,
+Add and export a new helper d_dispose_if_unused() which is simply a wrapper
+around to_shrink_list(), to add an entry to a dispose list if it's not used
+anymore.
 
-Here's a new version of the patchset to invalidate expired dentries.  Most
-of the changes (and there are a lot of them!) result from the v5 review.
-See below for details.
+Also export shrink_dentry_list() to kill all dentries in a dispose list.
 
-Changes since v5:
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Luis Henriques <luis@igalia.com>
+---
+ fs/dcache.c            | 18 ++++++++++++------
+ include/linux/dcache.h |  2 ++
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-- Changes to dcache: export shrink_dentry_list() and add new helper
-  d_dispose_if_unused()
-- Reduced hash lock array size
-- Set 'inval_wq' max value to USHRT_MAX to prevent a potential overflow in
-  secs_to_jiffies()
-- Updated 'inval_wq' parameter description and comment
-- Removed useless check in fuse_dentry_tree_del_node()
-- Make fuse_dentry_tree_work() use dcache helpers d_dispose_if_unused() and
-  shrink_dentry_list()
-- Fix usage of need_resched() (replaced with cond_resched())
-- fuse_dentry_tree_cleanup() now simply does a WARN_ON() if there are
-  non-empty trees
-- Removed TODO comment in fuse_conn_destroy() -- no need to prune trees
-- Have fuse_epoch_work() use of shrink_dcache_sb() instead of going through
-  all the trees
-- Refactor fuse_conn_put() in a separate patch
-- Fix bug in fuse_dentry_tree_add_node() for cases where dentries have the
-  same timeout
-- Reword some of the commits text
-
-Changes since v4:
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 60046ae23d51..3adefe05583c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1086,6 +1086,15 @@ struct dentry *d_find_alias_rcu(struct inode *inode)
+ 	return de;
+ }
  
-- Dropped extra check in fuse_dentry_tree_add_node() (Chunsheng)
-- Make the dentries trees global instead of per fuse_conn (Miklos)
-- Protect trees with hashed locking instead of a single lock (Miklos)
-- Added new work queue (2nd patch) specifically to handle epoch (Miklos)
++void d_dispose_if_unused(struct dentry *dentry, struct list_head *dispose)
++{
++	spin_lock(&dentry->d_lock);
++	if (!dentry->d_lockref.count)
++		to_shrink_list(dentry, dispose);
++	spin_unlock(&dentry->d_lock);
++}
++EXPORT_SYMBOL(d_dispose_if_unused);
++
+ /*
+  *	Try to kill dentries associated with this inode.
+  * WARNING: you must own a reference to inode.
+@@ -1096,12 +1105,8 @@ void d_prune_aliases(struct inode *inode)
+ 	struct dentry *dentry;
  
-Changes since v3:
+ 	spin_lock(&inode->i_lock);
+-	hlist_for_each_entry(dentry, &inode->i_dentry, d_u.d_alias) {
+-		spin_lock(&dentry->d_lock);
+-		if (!dentry->d_lockref.count)
+-			to_shrink_list(dentry, &dispose);
+-		spin_unlock(&dentry->d_lock);
+-	}
++	hlist_for_each_entry(dentry, &inode->i_dentry, d_u.d_alias)
++		d_dispose_if_unused(dentry, &dispose);
+ 	spin_unlock(&inode->i_lock);
+ 	shrink_dentry_list(&dispose);
+ }
+@@ -1141,6 +1146,7 @@ void shrink_dentry_list(struct list_head *list)
+ 		shrink_kill(dentry);
+ 	}
+ }
++EXPORT_SYMBOL(shrink_dentry_list);
  
-- Use of need_resched() instead of limiting the work queue to run for 5
-  seconds
-- Restore usage of union with rcu_head, in struct fuse_dentry
-- Minor changes in comments (e.g. s/workqueue/work queue/)
+ static enum lru_status dentry_lru_isolate(struct list_head *item,
+ 		struct list_lru_one *lru, void *arg)
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index cc3e1c1a3454..4ef41a5debdc 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -265,6 +265,8 @@ extern void d_tmpfile(struct file *, struct inode *);
  
-Changes since v2:
+ extern struct dentry *d_find_alias(struct inode *);
+ extern void d_prune_aliases(struct inode *);
++extern void d_dispose_if_unused(struct dentry *, struct list_head *);
++extern void shrink_dentry_list(struct list_head *);
  
-- Major rework, the dentries tree nodes are now in fuse_dentry and they are
-  tied to the actual dentry lifetime
-- Mount option is now a module parameter
-- workqueue now runs for at most 5 seconds before rescheduling
-
-Luis Henriques (4):
-  dcache: export shrink_dentry_list() and new helper
-    d_dispose_if_unused()
-  fuse: new work queue to periodically invalidate expired dentries
-  fuse: new work queue to invalidate dentries from old epochs
-  fuse: refactor fuse_conn_put() to remove negative logic.
-
- fs/dcache.c            |  18 ++--
- fs/fuse/dev.c          |   7 +-
- fs/fuse/dir.c          | 237 +++++++++++++++++++++++++++++++++++++----
- fs/fuse/fuse_i.h       |  14 +++
- fs/fuse/inode.c        |  44 ++++----
- include/linux/dcache.h |   2 +
- 6 files changed, 273 insertions(+), 49 deletions(-)
-
+ extern struct dentry *d_find_alias_rcu(struct inode *);
+ 
 
