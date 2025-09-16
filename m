@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E065AB58A28
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:52:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9C1B58A2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D641B2516A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77193B1555
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5381B1AC43A;
-	Tue, 16 Sep 2025 00:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047861C5F23;
+	Tue, 16 Sep 2025 00:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSy7jGUS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwLlWigy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050CFC1D;
-	Tue, 16 Sep 2025 00:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEECFC1D;
+	Tue, 16 Sep 2025 00:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983933; cv=none; b=p7DaFHVTdxka/aSvGWcdPJPwNd5pyH6YReD4hi98DrlL8Ik8LPQAaFeCeWfAID/AE5QPxvsRb6kLt5AdTaT2le5bxIOyOJl7KaaFCrkE7Z9TERzfjpcP8uB034Pe11/vCHAI2BuX/49Kzo5SBhma9s7xAdwgPULlTkpX5AdK4x8=
+	t=1757983949; cv=none; b=P7hclZ69Bz3TblLECHMDpQJPPRao34ZBqTRJigOvSaS9d8wRQD6c24/Lh4K/GvZN+moOaP/h18W8jqwXCjDkWc/MKX/7HibxeWc7YBfcq7avt+NNBg5w/DuSFxyOFX8+DrNJxF36lDg1zOX8GpRTbDvfYAKSEG3Z/jgacBkTI2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983933; c=relaxed/simple;
-	bh=lf+08GdWdFR1dWusoXZWFCjg958B1RrpyY7aH6EeIwI=;
+	s=arc-20240116; t=1757983949; c=relaxed/simple;
+	bh=AZUe6n5h+Y6vesMbm3T6tuMHWZXTUwGwk6Yo93nlVh0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NfBFiylikIiuz4oRoITpwcnXBhOiKsb4QfJ2T07Hb5miUaDk54CxLc6eCQSiN++NN1G9Zt6nZ0z/blhWlmi3z3+1xVuI+gHebtugOmR2J1+RcUgVKBb4rqNt6zqDBT5KUlZCh42qkz/itxS0VWCfM+bryw8p6Z+v/UrlBKWO+0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSy7jGUS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629B4C4CEF1;
-	Tue, 16 Sep 2025 00:52:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sy3w+VY6bUyNItkeXyZusvDz2r2z5PGyA8rBxntFHMMEgiONhM7YXX8XdLE8Y/K4TcH7hmFmzhuchguqC4UrArFByLoBfNR70chFJL7F8MU514gOf5ntPY/cbgNFQEJfqvdw6m99BHP1W2U6S0g/pn0zHfddnsk+gc7GJLIRQcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwLlWigy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E76C4CEF1;
+	Tue, 16 Sep 2025 00:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757983933;
-	bh=lf+08GdWdFR1dWusoXZWFCjg958B1RrpyY7aH6EeIwI=;
+	s=k20201202; t=1757983949;
+	bh=AZUe6n5h+Y6vesMbm3T6tuMHWZXTUwGwk6Yo93nlVh0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=HSy7jGUSMxzah38JZxlpOhkWcdQsSwHqetAKyNoPXP0ck9NG7a+BJBh3SXaAIcNo7
-	 jGCuQjdIZoeCUGSi0xdFRvbQqWN53tHJrqxZbLcjHpB480Vg7pMgrnwbLsHibYvw3L
-	 u6lpClX1KTdCihZ7/qfBxF6e7E7LEfD3ejElAWf2XVSq+SQkLpKkMkGq4b31fWpqBA
-	 3CihkzjL9mZx0c35uD2afDIyAnMhgtN8M9NqwvVd/8xBuLGoOa33fkjYCv0yEqjhmR
-	 puOT0oUiUQDOayd5pcFemi8HRqyg98HHIXHQY0y3o4HIsjNXPFqhzYOKK3OPZr3C2c
-	 oY3Nqpg8BfSHw==
-Date: Mon, 15 Sep 2025 17:52:12 -0700
-Subject: [PATCH 06/21] libsupport: port the kernel list.h to libsupport
+	b=JwLlWigyOoKZkf99o7mmxre8nxyJ5VpKqUCQADLevgPVQrf+ua6FN8FeKUyCQ9mfn
+	 abgI10/Rd7rC3rDUnI662Qxcj/WcC2DxPQNA/4oqDN+up4nqgSMZ68q3UuGICF3SIG
+	 hEQ4GC5P2Gs8sTf+q77F/XcqHiilCx4dqgunNYyvCwSan3vpCi9DowXvVTX7PZM351
+	 lw2XvnUs7qQghR+Bc9Z90L0Y2gNeRJmOBd/GxQW2PU0KFosEp62EGBxmX+JG2oVlOa
+	 fTi55MMNL7Saattb9H/eO+rxhbW8WH1dokcDhYtN9iB4XAl+bsnFWExqNpMDXcUcuU
+	 rm46Htq1UC8jw==
+Date: Mon, 15 Sep 2025 17:52:28 -0700
+Subject: [PATCH 07/21] libsupport: add a cache
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: miklos@szeredi.hu, neal@gompa.dev, amir73il@gmail.com,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, John@groves.net,
  bernd@bsbernd.com, joannelkoong@gmail.com
-Message-ID: <175798160884.389252.10587862948187647786.stgit@frogsfrogsfrogs>
+Message-ID: <175798160902.389252.5074023840534966467.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 References: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,1558 +62,1092 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-In the next patch, we're going to add the xfsprogs cache manager code to
-e2fsprogs.  That code is going into libsupport so that it doesn't become
-part of the libext2fs ABI, and it depends on a richer set of list_head
-helpers than what is in kernel-list.h, so port the Linux 6.17 list.h to
-libsupport and drop the one in libext2fs.
+Reuse the cache code from xfsprogs.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- lib/ext2fs/jfs_compat.h  |    2 
- lib/ext2fs/kernel-list.h |  111 ------
- lib/support/list.h       |  894 ++++++++++++++++++++++++++++++++++++++++++++++
- debugfs/Makefile.in      |   12 -
- e2fsck/Makefile.in       |   56 +--
- fuse4fs/Makefile.in      |    6 
- lib/e2p/Makefile.in      |    4 
- lib/ext2fs/Makefile.in   |   14 -
- misc/Makefile.in         |   12 -
- misc/tune2fs.c           |    4 
- 10 files changed, 947 insertions(+), 168 deletions(-)
- delete mode 100644 lib/ext2fs/kernel-list.h
- create mode 100644 lib/support/list.h
+ lib/support/cache.h     |  139 +++++++++
+ lib/support/list.h      |    7 
+ lib/support/xbitops.h   |  128 ++++++++
+ lib/support/Makefile.in |    8 -
+ lib/support/cache.c     |  739 +++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 1019 insertions(+), 2 deletions(-)
+ create mode 100644 lib/support/cache.h
+ create mode 100644 lib/support/xbitops.h
+ create mode 100644 lib/support/cache.c
 
 
-diff --git a/lib/ext2fs/jfs_compat.h b/lib/ext2fs/jfs_compat.h
-index 30b05822b6fd4d..8e598bcfa73ef7 100644
---- a/lib/ext2fs/jfs_compat.h
-+++ b/lib/ext2fs/jfs_compat.h
-@@ -2,7 +2,7 @@
- #ifndef _JFS_COMPAT_H
- #define _JFS_COMPAT_H
- 
--#include "kernel-list.h"
-+#include "support/list.h"
- #include <errno.h>
- #ifdef HAVE_NETINET_IN_H
- #include <netinet/in.h>
-diff --git a/lib/ext2fs/kernel-list.h b/lib/ext2fs/kernel-list.h
-deleted file mode 100644
-index dd7b8e07dd56c4..00000000000000
---- a/lib/ext2fs/kernel-list.h
-+++ /dev/null
-@@ -1,111 +0,0 @@
--#ifndef _LINUX_LIST_H
--#define _LINUX_LIST_H
--
--#include "compiler.h"
--
--/*
-- * Simple doubly linked list implementation.
-- *
-- * Some of the internal functions ("__xxx") are useful when
-- * manipulating whole lists rather than single entries, as
-- * sometimes we already know the next/prev entries and we can
-- * generate better code by using them directly rather than
-- * using the generic single-entry routines.
-- */
--
--struct list_head {
--	struct list_head *next, *prev;
--};
--
--#define LIST_HEAD_INIT(name) { &(name), &(name) }
--
--#define INIT_LIST_HEAD(ptr) do { \
--	(ptr)->next = (ptr); (ptr)->prev = (ptr); \
--} while (0)
--
--#if (!defined(__GNUC__) && !defined(__WATCOMC__))
--#define __inline__
--#endif
--
--/*
-- * Insert a new entry between two known consecutive entries.
-- *
-- * This is only for internal list manipulation where we know
-- * the prev/next entries already!
-- */
--static __inline__ void __list_add(struct list_head * new,
--	struct list_head * prev,
--	struct list_head * next)
--{
--	next->prev = new;
--	new->next = next;
--	new->prev = prev;
--	prev->next = new;
--}
--
--/*
-- * Insert a new entry after the specified head..
-- */
--static __inline__ void list_add(struct list_head *new, struct list_head *head)
--{
--	__list_add(new, head, head->next);
--}
--
--/*
-- * Insert a new entry at the tail
-- */
--static __inline__ void list_add_tail(struct list_head *new, struct list_head *head)
--{
--	__list_add(new, head->prev, head);
--}
--
--/*
-- * Delete a list entry by making the prev/next entries
-- * point to each other.
-- *
-- * This is only for internal list manipulation where we know
-- * the prev/next entries already!
-- */
--static __inline__ void __list_del(struct list_head * prev,
--				  struct list_head * next)
--{
--	next->prev = prev;
--	prev->next = next;
--}
--
--static __inline__ void list_del(struct list_head *entry)
--{
--	__list_del(entry->prev, entry->next);
--}
--
--static __inline__ int list_empty(struct list_head *head)
--{
--	return head->next == head;
--}
--
--/*
-- * Splice in "list" into "head"
-- */
--static __inline__ void list_splice(struct list_head *list, struct list_head *head)
--{
--	struct list_head *first = list->next;
--
--	if (first != list) {
--		struct list_head *last = list->prev;
--		struct list_head *at = head->next;
--
--		first->prev = head;
--		head->next = first;
--
--		last->next = at;
--		at->prev = last;
--	}
--}
--
--#define list_entry(ptr, type, member) \
--	container_of(ptr, type, member)
--
--#define list_for_each(pos, head) \
--        for (pos = (head)->next; pos != (head); pos = pos->next)
--
--#endif
-diff --git a/lib/support/list.h b/lib/support/list.h
+diff --git a/lib/support/cache.h b/lib/support/cache.h
 new file mode 100644
-index 00000000000000..df6c99708e4a8e
+index 00000000000000..16b17a9b7a1a51
 --- /dev/null
-+++ b/lib/support/list.h
-@@ -0,0 +1,894 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_LIST_H
-+#define _LINUX_LIST_H
++++ b/lib/support/cache.h
+@@ -0,0 +1,139 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2006 Silicon Graphics, Inc.
++ * All Rights Reserved.
++ */
++#ifndef __CACHE_H__
++#define __CACHE_H__
 +
-+#include <stdbool.h>
++/*
++ * initialisation flags
++ */
++/*
++ * xfs_db always writes changes immediately, and so we need to purge buffers
++ * when we get a buffer lookup mismatch due to reading the same block with a
++ * different buffer configuration.
++ */
++#define CACHE_MISCOMPARE_PURGE	(1 << 0)
 +
-+struct list_head {
-+	struct list_head *next, *prev;
++/*
++ * cache object campare return values
++ */
++enum {
++	CACHE_HIT,
++	CACHE_MISS,
++	CACHE_PURGE,
 +};
 +
-+#ifdef __GNUC__
-+#define container_of(ptr, type, member) ({				\
-+	__typeof__( ((type *)0)->member ) *__mptr = (ptr);	\
-+	(type *)( (char *)__mptr - offsetof(type,member) );})
-+#else
-+#define container_of(ptr, type, member)				\
-+	((type *)((char *)(ptr) - offsetof(type, member)))
++#define	HASH_CACHE_RATIO	8
++
++/*
++ * Cache priorities range from BASE to MAX.
++ *
++ * For prefetch support, the top half of the range starts at
++ * CACHE_PREFETCH_PRIORITY and everytime the buffer is fetched and is at or
++ * above this priority level, it is reduced to below this level (refer to
++ * libxfs_buf_get).
++ *
++ * If we have dirty nodes, we can't recycle them until they've been cleaned. To
++ * keep these out of the reclaimable lists (as there can be lots of them) give
++ * them their own priority that the shaker doesn't attempt to walk.
++ */
++
++#define CACHE_BASE_PRIORITY	0
++#define CACHE_PREFETCH_PRIORITY	8
++#define CACHE_MAX_PRIORITY	15
++#define CACHE_DIRTY_PRIORITY	(CACHE_MAX_PRIORITY + 1)
++#define CACHE_NR_PRIORITIES	CACHE_DIRTY_PRIORITY
++
++/*
++ * Simple, generic implementation of a cache (arbitrary data).
++ * Provides a hash table with a capped number of cache entries.
++ */
++
++struct cache;
++struct cache_node;
++
++typedef void *cache_key_t;
++
++typedef void (*cache_walk_t)(struct cache_node *);
++typedef struct cache_node * (*cache_node_alloc_t)(cache_key_t);
++typedef int (*cache_node_flush_t)(struct cache_node *);
++typedef void (*cache_node_relse_t)(struct cache_node *);
++typedef unsigned int (*cache_node_hash_t)(cache_key_t, unsigned int,
++					  unsigned int);
++typedef int (*cache_node_compare_t)(struct cache_node *, cache_key_t);
++typedef unsigned int (*cache_bulk_relse_t)(struct cache *, struct list_head *);
++typedef int (*cache_node_get_t)(struct cache_node *);
++typedef void (*cache_node_put_t)(struct cache_node *);
++
++struct cache_operations {
++	cache_node_hash_t	hash;
++	cache_node_alloc_t	alloc;
++	cache_node_flush_t	flush;
++	cache_node_relse_t	relse;
++	cache_node_compare_t	compare;
++	cache_bulk_relse_t	bulkrelse;	/* optional */
++	cache_node_get_t	get;		/* optional */
++	cache_node_put_t	put;		/* optional */
++};
++
++struct cache_hash {
++	struct list_head	ch_list;	/* hash chain head */
++	unsigned int		ch_count;	/* hash chain length */
++	pthread_mutex_t		ch_mutex;	/* hash chain mutex */
++};
++
++struct cache_mru {
++	struct list_head	cm_list;	/* MRU head */
++	unsigned int		cm_count;	/* MRU length */
++	pthread_mutex_t		cm_mutex;	/* MRU lock */
++};
++
++struct cache_node {
++	struct list_head	cn_hash;	/* hash chain */
++	struct list_head	cn_mru;		/* MRU chain */
++	unsigned int		cn_count;	/* reference count */
++	unsigned int		cn_hashidx;	/* hash chain index */
++	int			cn_priority;	/* priority, -1 = free list */
++	int			cn_old_priority;/* saved pre-dirty prio */
++	pthread_mutex_t		cn_mutex;	/* node mutex */
++};
++
++struct cache {
++	int			c_flags;	/* behavioural flags */
++	unsigned int		c_maxcount;	/* max cache nodes */
++	unsigned int		c_count;	/* count of nodes */
++	pthread_mutex_t		c_mutex;	/* node count mutex */
++	cache_node_hash_t	hash;		/* node hash function */
++	cache_node_alloc_t	alloc;		/* allocation function */
++	cache_node_flush_t	flush;		/* flush dirty data function */
++	cache_node_relse_t	relse;		/* memory free function */
++	cache_node_compare_t	compare;	/* comparison routine */
++	cache_bulk_relse_t	bulkrelse;	/* bulk release routine */
++	cache_node_get_t	get;		/* prepare cache node after get */
++	cache_node_put_t	put;		/* prepare to put cache node */
++	unsigned int		c_hashsize;	/* hash bucket count */
++	unsigned int		c_hashshift;	/* hash key shift */
++	struct cache_hash	*c_hash;	/* hash table buckets */
++	struct cache_mru	c_mrus[CACHE_DIRTY_PRIORITY + 1];
++	unsigned long long	c_misses;	/* cache misses */
++	unsigned long long	c_hits;		/* cache hits */
++	unsigned int 		c_max;		/* max nodes ever used */
++};
++
++struct cache *cache_init(int, unsigned int, const struct cache_operations *);
++void cache_destroy(struct cache *);
++void cache_walk(struct cache *, cache_walk_t);
++void cache_purge(struct cache *);
++void cache_flush(struct cache *);
++
++int cache_node_get(struct cache *, cache_key_t, struct cache_node **);
++void cache_node_put(struct cache *, struct cache_node *);
++void cache_node_set_priority(struct cache *, struct cache_node *, int);
++int cache_node_get_priority(struct cache_node *);
++int cache_node_purge(struct cache *, cache_key_t, struct cache_node *);
++void cache_report(FILE *fp, const char *, struct cache *);
++int cache_overflowed(struct cache *);
++
++#endif	/* __CACHE_H__ */
+diff --git a/lib/support/list.h b/lib/support/list.h
+index df6c99708e4a8e..0e00e446dd7214 100644
+--- a/lib/support/list.h
++++ b/lib/support/list.h
+@@ -17,6 +17,13 @@ struct list_head {
+ 	((type *)((char *)(ptr) - offsetof(type, member)))
+ #endif
+ 
++static inline void list_head_destroy(struct list_head *list)
++{
++	list->next = list->prev = NULL;
++}
++
++#define list_head_init(list) INIT_LIST_HEAD(list)
++
+ /*
+  * Circular doubly linked list implementation.
+  *
+diff --git a/lib/support/xbitops.h b/lib/support/xbitops.h
+new file mode 100644
+index 00000000000000..78a8f2a8545f4c
+--- /dev/null
++++ b/lib/support/xbitops.h
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef __BITOPS_H__
++#define __BITOPS_H__
++
++/*
++ * fls: find last bit set.
++ */
++
++static inline int fls(int x)
++{
++	int r = 32;
++
++	if (!x)
++		return 0;
++	if (!(x & 0xffff0000u)) {
++		x = (x & 0xffffu) << 16;
++		r -= 16;
++	}
++	if (!(x & 0xff000000u)) {
++		x = (x & 0xffffffu) << 8;
++		r -= 8;
++	}
++	if (!(x & 0xf0000000u)) {
++		x = (x & 0xfffffffu) << 4;
++		r -= 4;
++	}
++	if (!(x & 0xc0000000u)) {
++		x = (x & 0x3fffffffu) << 2;
++		r -= 2;
++	}
++	if (!(x & 0x80000000u)) {
++		r -= 1;
++	}
++	return r;
++}
++
++static inline int fls64(uint64_t x)
++{
++	uint32_t h = x >> 32;
++	if (h)
++		return fls(h) + 32;
++	return fls(x);
++}
++
++static inline unsigned fls_long(unsigned long l)
++{
++        if (sizeof(l) == 4)
++                return fls(l);
++        return fls64(l);
++}
++
++/*
++ * ffz: find first zero bit.
++ * Result is undefined if no zero bit exists.
++ */
++#define ffz(x)	ffs(~(x))
++
++/*
++ * XFS bit manipulation routines.  Repeated here so that some programs
++ * don't have to link in all of libxfs just to have bit manipulation.
++ */
++
++/*
++ * masks with n high/low bits set, 64-bit values
++ */
++static inline uint64_t mask64hi(int n)
++{
++	return (uint64_t)-1 << (64 - (n));
++}
++static inline uint32_t mask32lo(int n)
++{
++	return ((uint32_t)1 << (n)) - 1;
++}
++static inline uint64_t mask64lo(int n)
++{
++	return ((uint64_t)1 << (n)) - 1;
++}
++
++/* Get high bit set out of 32-bit argument, -1 if none set */
++static inline int highbit32(uint32_t v)
++{
++	return fls(v) - 1;
++}
++
++/* Get high bit set out of 64-bit argument, -1 if none set */
++static inline int highbit64(uint64_t v)
++{
++	return fls64(v) - 1;
++}
++
++/* Get low bit set out of 32-bit argument, -1 if none set */
++static inline int lowbit32(uint32_t v)
++{
++	return ffs(v) - 1;
++}
++
++/* Get low bit set out of 64-bit argument, -1 if none set */
++static inline int lowbit64(uint64_t v)
++{
++	uint32_t	w = (uint32_t)v;
++	int		n = 0;
++
++	if (w) {	/* lower bits */
++		n = ffs(w);
++	} else {	/* upper bits */
++		w = (uint32_t)(v >> 32);
++		if (w) {
++			n = ffs(w);
++			if (n)
++				n += 32;
++		}
++	}
++	return n - 1;
++}
++
++/**
++ * __rounddown_pow_of_two() - round down to nearest power of two
++ * @n: value to round down
++ */
++static inline __attribute__((const))
++unsigned long __rounddown_pow_of_two(unsigned long n)
++{
++	return 1UL << (fls_long(n) - 1);
++}
++
++#define rounddown_pow_of_two(n) __rounddown_pow_of_two(n)
++
++#endif
+diff --git a/lib/support/Makefile.in b/lib/support/Makefile.in
+index 3f26cd30172f51..13d6f06f150afd 100644
+--- a/lib/support/Makefile.in
++++ b/lib/support/Makefile.in
+@@ -25,7 +25,8 @@ OBJS=		cstring.o \
+ 		quotaio_v2.o \
+ 		quotaio_tree.o \
+ 		dict.o \
+-		devname.o
++		devname.o \
++		cache.o
+ 
+ SRCS=		$(srcdir)/argv_parse.c \
+ 		$(srcdir)/cstring.c \
+@@ -40,7 +41,8 @@ SRCS=		$(srcdir)/argv_parse.c \
+ 		$(srcdir)/quotaio_tree.c \
+ 		$(srcdir)/quotaio_v2.c \
+ 		$(srcdir)/dict.c \
+-		$(srcdir)/devname.c
++		$(srcdir)/devname.c \
++		$(srcdir)/cache.c
+ 
+ LIBRARY= libsupport
+ LIBDIR= support
+@@ -183,3 +185,5 @@ dict.o: $(srcdir)/dict.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/dict.h
+ devname.o: $(srcdir)/devname.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/devname.h $(srcdir)/nls-enable.h
++cache.o: $(srcdir)/cache.c $(top_builddir)/lib/config.h \
++ $(srcdir)/cache.h $(srcdir)/list.h $(srcdir)/xbitops.h
+diff --git a/lib/support/cache.c b/lib/support/cache.c
+new file mode 100644
+index 00000000000000..fe04f62f262aaa
+--- /dev/null
++++ b/lib/support/cache.c
+@@ -0,0 +1,739 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2006 Silicon Graphics, Inc.
++ * All Rights Reserved.
++ */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <pthread.h>
++#include <stdbool.h>
++#include <stddef.h>
++#include <stdint.h>
++
++#include "list.h"
++#include "cache.h"
++#include "xbitops.h"
++
++#define CACHE_DEBUG 1
++#undef CACHE_DEBUG
++#define CACHE_DEBUG 1
++#undef CACHE_ABORT
++/* #define CACHE_ABORT 1 */
++
++#define CACHE_SHAKE_COUNT	64
++
++#ifdef CACHE_DEBUG
++# include <assert.h>
++# define ASSERT(x)		assert(x)
 +#endif
 +
-+/*
-+ * Circular doubly linked list implementation.
-+ *
-+ * Some of the internal functions ("__xxx") are useful when
-+ * manipulating whole lists rather than single entries, as
-+ * sometimes we already know the next/prev entries and we can
-+ * generate better code by using them directly rather than
-+ * using the generic single-entry routines.
-+ */
++static unsigned int cache_generic_bulkrelse(struct cache *, struct list_head *);
 +
-+#define LIST_HEAD_INIT(name) { &(name), &(name) }
-+
-+#define LIST_HEAD(name) \
-+	struct list_head name = LIST_HEAD_INIT(name)
-+
-+/**
-+ * INIT_LIST_HEAD - Initialize a list_head structure
-+ * @list: list_head structure to be initialized.
-+ *
-+ * Initializes the list_head to point to itself.  If it is a list header,
-+ * the result is an empty list.
-+ */
-+static inline void INIT_LIST_HEAD(struct list_head *list)
++struct cache *
++cache_init(
++	int			flags,
++	unsigned int		hashsize,
++	const struct cache_operations	*cache_operations)
 +{
-+	list->next = list;
-+	list->prev = list;
++	struct cache *		cache;
++	unsigned int		i, maxcount;
++
++	maxcount = hashsize * HASH_CACHE_RATIO;
++
++	if (!(cache = malloc(sizeof(struct cache))))
++		return NULL;
++	if (!(cache->c_hash = calloc(hashsize, sizeof(struct cache_hash)))) {
++		free(cache);
++		return NULL;
++	}
++
++	cache->c_flags = flags;
++	cache->c_count = 0;
++	cache->c_max = 0;
++	cache->c_hits = 0;
++	cache->c_misses = 0;
++	cache->c_maxcount = maxcount;
++	cache->c_hashsize = hashsize;
++	cache->c_hashshift = fls(hashsize) - 1;
++	cache->hash = cache_operations->hash;
++	cache->alloc = cache_operations->alloc;
++	cache->flush = cache_operations->flush;
++	cache->relse = cache_operations->relse;
++	cache->compare = cache_operations->compare;
++	cache->bulkrelse = cache_operations->bulkrelse ?
++		cache_operations->bulkrelse : cache_generic_bulkrelse;
++	cache->get = cache_operations->get;
++	cache->put = cache_operations->put;
++	pthread_mutex_init(&cache->c_mutex, NULL);
++
++	for (i = 0; i < hashsize; i++) {
++		list_head_init(&cache->c_hash[i].ch_list);
++		cache->c_hash[i].ch_count = 0;
++		pthread_mutex_init(&cache->c_hash[i].ch_mutex, NULL);
++	}
++
++	for (i = 0; i <= CACHE_DIRTY_PRIORITY; i++) {
++		list_head_init(&cache->c_mrus[i].cm_list);
++		cache->c_mrus[i].cm_count = 0;
++		pthread_mutex_init(&cache->c_mrus[i].cm_mutex, NULL);
++	}
++	return cache;
 +}
 +
-+#ifdef CONFIG_LIST_HARDENED
++static void
++cache_expand(
++	struct cache *		cache)
++{
++	pthread_mutex_lock(&cache->c_mutex);
++#ifdef CACHE_DEBUG
++	fprintf(stderr, "doubling cache size to %d\n", 2 * cache->c_maxcount);
++#endif
++	cache->c_maxcount *= 2;
++	pthread_mutex_unlock(&cache->c_mutex);
++}
 +
-+#ifdef CONFIG_DEBUG_LIST
-+# define __list_valid_slowpath
++void
++cache_walk(
++	struct cache *		cache,
++	cache_walk_t		visit)
++{
++	struct cache_hash *	hash;
++	struct list_head *	head;
++	struct list_head *	pos;
++	unsigned int		i;
++
++	for (i = 0; i < cache->c_hashsize; i++) {
++		hash = &cache->c_hash[i];
++		head = &hash->ch_list;
++		pthread_mutex_lock(&hash->ch_mutex);
++		for (pos = head->next; pos != head; pos = pos->next)
++			visit((struct cache_node *)pos);
++		pthread_mutex_unlock(&hash->ch_mutex);
++	}
++}
++
++#ifdef CACHE_ABORT
++#define cache_abort()	abort()
 +#else
-+# define __list_valid_slowpath __cold __preserve_most
++#define cache_abort()	do { } while (0)
 +#endif
 +
-+/*
-+ * Performs the full set of list corruption checks before __list_add().
-+ * On list corruption reports a warning, and returns false.
-+ */
-+bool __list_valid_slowpath __list_add_valid_or_report(struct list_head *new,
-+						      struct list_head *prev,
-+						      struct list_head *next);
-+
-+/*
-+ * Performs list corruption checks before __list_add(). Returns false if a
-+ * corruption is detected, true otherwise.
-+ *
-+ * With CONFIG_LIST_HARDENED only, performs minimal list integrity checking
-+ * inline to catch non-faulting corruptions, and only if a corruption is
-+ * detected calls the reporting function __list_add_valid_or_report().
-+ */
-+static __always_inline bool __list_add_valid(struct list_head *new,
-+					     struct list_head *prev,
-+					     struct list_head *next)
++#ifdef CACHE_DEBUG
++static void
++cache_zero_check(
++	struct cache_node *	node)
 +{
-+	bool ret = true;
-+
-+	if (!IS_ENABLED(CONFIG_DEBUG_LIST)) {
-+		/*
-+		 * With the hardening version, elide checking if next and prev
-+		 * are NULL, since the immediate dereference of them below would
-+		 * result in a fault if NULL.
-+		 *
-+		 * With the reduced set of checks, we can afford to inline the
-+		 * checks, which also gives the compiler a chance to elide some
-+		 * of them completely if they can be proven at compile-time. If
-+		 * one of the pre-conditions does not hold, the slow-path will
-+		 * show a report which pre-condition failed.
-+		 */
-+		if (likely(next->prev == prev && prev->next == next && new != prev && new != next))
-+			return true;
-+		ret = false;
++	if (node->cn_count > 0) {
++		fprintf(stderr, "%s: refcount is %u, not zero (node=%p)\n",
++			__FUNCTION__, node->cn_count, node);
++		cache_abort();
 +	}
-+
-+	ret &= __list_add_valid_or_report(new, prev, next);
-+	return ret;
 +}
-+
-+/*
-+ * Performs the full set of list corruption checks before __list_del_entry().
-+ * On list corruption reports a warning, and returns false.
-+ */
-+bool __list_valid_slowpath __list_del_entry_valid_or_report(struct list_head *entry);
-+
-+/*
-+ * Performs list corruption checks before __list_del_entry(). Returns false if a
-+ * corruption is detected, true otherwise.
-+ *
-+ * With CONFIG_LIST_HARDENED only, performs minimal list integrity checking
-+ * inline to catch non-faulting corruptions, and only if a corruption is
-+ * detected calls the reporting function __list_del_entry_valid_or_report().
-+ */
-+static __always_inline bool __list_del_entry_valid(struct list_head *entry)
-+{
-+	bool ret = true;
-+
-+	if (!IS_ENABLED(CONFIG_DEBUG_LIST)) {
-+		struct list_head *prev = entry->prev;
-+		struct list_head *next = entry->next;
-+
-+		/*
-+		 * With the hardening version, elide checking if next and prev
-+		 * are NULL, LIST_POISON1 or LIST_POISON2, since the immediate
-+		 * dereference of them below would result in a fault.
-+		 */
-+		if (likely(prev->next == entry && next->prev == entry))
-+			return true;
-+		ret = false;
-+	}
-+
-+	ret &= __list_del_entry_valid_or_report(entry);
-+	return ret;
-+}
++#define cache_destroy_check(c)	cache_walk((c), cache_zero_check)
 +#else
-+static inline bool __list_add_valid(struct list_head *new,
-+				struct list_head *prev,
-+				struct list_head *next)
-+{
-+	return true;
-+}
-+static inline bool __list_del_entry_valid(struct list_head *entry)
-+{
-+	return true;
-+}
++#define cache_destroy_check(c)	do { } while (0)
 +#endif
 +
-+/*
-+ * Insert a new entry between two known consecutive entries.
-+ *
-+ * This is only for internal list manipulation where we know
-+ * the prev/next entries already!
-+ */
-+static inline void __list_add(struct list_head *new,
-+			      struct list_head *prev,
-+			      struct list_head *next)
++void
++cache_destroy(
++	struct cache *		cache)
 +{
-+	if (!__list_add_valid(new, prev, next))
-+		return;
++	unsigned int		i;
 +
-+	next->prev = new;
-+	new->next = next;
-+	new->prev = prev;
-+	prev->next = new;
-+}
-+
-+/**
-+ * list_add - add a new entry
-+ * @new: new entry to be added
-+ * @head: list head to add it after
-+ *
-+ * Insert a new entry after the specified head.
-+ * This is good for implementing stacks.
-+ */
-+static inline void list_add(struct list_head *new, struct list_head *head)
-+{
-+	__list_add(new, head, head->next);
-+}
-+
-+
-+/**
-+ * list_add_tail - add a new entry
-+ * @new: new entry to be added
-+ * @head: list head to add it before
-+ *
-+ * Insert a new entry before the specified head.
-+ * This is useful for implementing queues.
-+ */
-+static inline void list_add_tail(struct list_head *new, struct list_head *head)
-+{
-+	__list_add(new, head->prev, head);
-+}
-+
-+/*
-+ * Delete a list entry by making the prev/next entries
-+ * point to each other.
-+ *
-+ * This is only for internal list manipulation where we know
-+ * the prev/next entries already!
-+ */
-+static inline void __list_del(struct list_head * prev, struct list_head * next)
-+{
-+	next->prev = prev;
-+	prev->next = next;
-+}
-+
-+/*
-+ * Delete a list entry and clear the 'prev' pointer.
-+ *
-+ * This is a special-purpose list clearing method used in the networking code
-+ * for lists allocated as per-cpu, where we don't want to incur the extra
-+ * WRITE_ONCE() overhead of a regular list_del_init(). The code that uses this
-+ * needs to check the node 'prev' pointer instead of calling list_empty().
-+ */
-+static inline void __list_del_clearprev(struct list_head *entry)
-+{
-+	__list_del(entry->prev, entry->next);
-+	entry->prev = NULL;
-+}
-+
-+static inline void __list_del_entry(struct list_head *entry)
-+{
-+	if (!__list_del_entry_valid(entry))
-+		return;
-+
-+	__list_del(entry->prev, entry->next);
-+}
-+
-+/**
-+ * list_del - deletes entry from list.
-+ * @entry: the element to delete from the list.
-+ * Note: list_empty() on entry does not return true after this, the entry is
-+ * in an undefined state.
-+ */
-+static inline void list_del(struct list_head *entry)
-+{
-+	__list_del_entry(entry);
-+	entry->next = NULL;
-+	entry->prev = NULL;
-+}
-+
-+/**
-+ * list_replace - replace old entry by new one
-+ * @old : the element to be replaced
-+ * @new : the new element to insert
-+ *
-+ * If @old was empty, it will be overwritten.
-+ */
-+static inline void list_replace(struct list_head *old,
-+				struct list_head *new)
-+{
-+	new->next = old->next;
-+	new->next->prev = new;
-+	new->prev = old->prev;
-+	new->prev->next = new;
-+}
-+
-+/**
-+ * list_replace_init - replace old entry by new one and initialize the old one
-+ * @old : the element to be replaced
-+ * @new : the new element to insert
-+ *
-+ * If @old was empty, it will be overwritten.
-+ */
-+static inline void list_replace_init(struct list_head *old,
-+				     struct list_head *new)
-+{
-+	list_replace(old, new);
-+	INIT_LIST_HEAD(old);
-+}
-+
-+/**
-+ * list_swap - replace entry1 with entry2 and re-add entry1 at entry2's position
-+ * @entry1: the location to place entry2
-+ * @entry2: the location to place entry1
-+ */
-+static inline void list_swap(struct list_head *entry1,
-+			     struct list_head *entry2)
-+{
-+	struct list_head *pos = entry2->prev;
-+
-+	list_del(entry2);
-+	list_replace(entry1, entry2);
-+	if (pos == entry1)
-+		pos = entry2;
-+	list_add(entry1, pos);
-+}
-+
-+/**
-+ * list_del_init - deletes entry from list and reinitialize it.
-+ * @entry: the element to delete from the list.
-+ */
-+static inline void list_del_init(struct list_head *entry)
-+{
-+	__list_del_entry(entry);
-+	INIT_LIST_HEAD(entry);
-+}
-+
-+/**
-+ * list_move - delete from one list and add as another's head
-+ * @list: the entry to move
-+ * @head: the head that will precede our entry
-+ */
-+static inline void list_move(struct list_head *list, struct list_head *head)
-+{
-+	__list_del_entry(list);
-+	list_add(list, head);
-+}
-+
-+/**
-+ * list_move_tail - delete from one list and add as another's tail
-+ * @list: the entry to move
-+ * @head: the head that will follow our entry
-+ */
-+static inline void list_move_tail(struct list_head *list,
-+				  struct list_head *head)
-+{
-+	__list_del_entry(list);
-+	list_add_tail(list, head);
-+}
-+
-+/**
-+ * list_bulk_move_tail - move a subsection of a list to its tail
-+ * @head: the head that will follow our entry
-+ * @first: first entry to move
-+ * @last: last entry to move, can be the same as first
-+ *
-+ * Move all entries between @first and including @last before @head.
-+ * All three entries must belong to the same linked list.
-+ */
-+static inline void list_bulk_move_tail(struct list_head *head,
-+				       struct list_head *first,
-+				       struct list_head *last)
-+{
-+	first->prev->next = last->next;
-+	last->next->prev = first->prev;
-+
-+	head->prev->next = first;
-+	first->prev = head->prev;
-+
-+	last->next = head;
-+	head->prev = last;
-+}
-+
-+/**
-+ * list_is_first -- tests whether @list is the first entry in list @head
-+ * @list: the entry to test
-+ * @head: the head of the list
-+ */
-+static inline int list_is_first(const struct list_head *list, const struct list_head *head)
-+{
-+	return list->prev == head;
-+}
-+
-+/**
-+ * list_is_last - tests whether @list is the last entry in list @head
-+ * @list: the entry to test
-+ * @head: the head of the list
-+ */
-+static inline int list_is_last(const struct list_head *list, const struct list_head *head)
-+{
-+	return list->next == head;
-+}
-+
-+/**
-+ * list_is_head - tests whether @list is the list @head
-+ * @list: the entry to test
-+ * @head: the head of the list
-+ */
-+static inline int list_is_head(const struct list_head *list, const struct list_head *head)
-+{
-+	return list == head;
-+}
-+
-+/**
-+ * list_empty - tests whether a list is empty
-+ * @head: the list to test.
-+ */
-+static inline int list_empty(const struct list_head *head)
-+{
-+	return head->next == head;
-+}
-+
-+/**
-+ * list_rotate_left - rotate the list to the left
-+ * @head: the head of the list
-+ */
-+static inline void list_rotate_left(struct list_head *head)
-+{
-+	struct list_head *first;
-+
-+	if (!list_empty(head)) {
-+		first = head->next;
-+		list_move_tail(first, head);
++	cache_destroy_check(cache);
++	for (i = 0; i < cache->c_hashsize; i++) {
++		list_head_destroy(&cache->c_hash[i].ch_list);
++		pthread_mutex_destroy(&cache->c_hash[i].ch_mutex);
 +	}
-+}
-+
-+/**
-+ * list_rotate_to_front() - Rotate list to specific item.
-+ * @list: The desired new front of the list.
-+ * @head: The head of the list.
-+ *
-+ * Rotates list so that @list becomes the new front of the list.
-+ */
-+static inline void list_rotate_to_front(struct list_head *list,
-+					struct list_head *head)
-+{
-+	/*
-+	 * Deletes the list head from the list denoted by @head and
-+	 * places it as the tail of @list, this effectively rotates the
-+	 * list so that @list is at the front.
-+	 */
-+	list_move_tail(head, list);
-+}
-+
-+/**
-+ * list_is_singular - tests whether a list has just one entry.
-+ * @head: the list to test.
-+ */
-+static inline int list_is_singular(const struct list_head *head)
-+{
-+	return !list_empty(head) && (head->next == head->prev);
-+}
-+
-+static inline void __list_cut_position(struct list_head *list,
-+		struct list_head *head, struct list_head *entry)
-+{
-+	struct list_head *new_first = entry->next;
-+	list->next = head->next;
-+	list->next->prev = list;
-+	list->prev = entry;
-+	entry->next = list;
-+	head->next = new_first;
-+	new_first->prev = head;
-+}
-+
-+/**
-+ * list_cut_position - cut a list into two
-+ * @list: a new list to add all removed entries
-+ * @head: a list with entries
-+ * @entry: an entry within head, could be the head itself
-+ *	and if so we won't cut the list
-+ *
-+ * This helper moves the initial part of @head, up to and
-+ * including @entry, from @head to @list. You should
-+ * pass on @entry an element you know is on @head. @list
-+ * should be an empty list or a list you do not care about
-+ * losing its data.
-+ *
-+ */
-+static inline void list_cut_position(struct list_head *list,
-+		struct list_head *head, struct list_head *entry)
-+{
-+	if (list_empty(head))
-+		return;
-+	if (list_is_singular(head) && !list_is_head(entry, head) && (entry != head->next))
-+		return;
-+	if (list_is_head(entry, head))
-+		INIT_LIST_HEAD(list);
-+	else
-+		__list_cut_position(list, head, entry);
-+}
-+
-+/**
-+ * list_cut_before - cut a list into two, before given entry
-+ * @list: a new list to add all removed entries
-+ * @head: a list with entries
-+ * @entry: an entry within head, could be the head itself
-+ *
-+ * This helper moves the initial part of @head, up to but
-+ * excluding @entry, from @head to @list.  You should pass
-+ * in @entry an element you know is on @head.  @list should
-+ * be an empty list or a list you do not care about losing
-+ * its data.
-+ * If @entry == @head, all entries on @head are moved to
-+ * @list.
-+ */
-+static inline void list_cut_before(struct list_head *list,
-+				   struct list_head *head,
-+				   struct list_head *entry)
-+{
-+	if (head->next == entry) {
-+		INIT_LIST_HEAD(list);
-+		return;
++	for (i = 0; i <= CACHE_DIRTY_PRIORITY; i++) {
++		list_head_destroy(&cache->c_mrus[i].cm_list);
++		pthread_mutex_destroy(&cache->c_mrus[i].cm_mutex);
 +	}
-+	list->next = head->next;
-+	list->next->prev = list;
-+	list->prev = entry->prev;
-+	list->prev->next = list;
-+	head->next = entry;
-+	entry->prev = head;
++	pthread_mutex_destroy(&cache->c_mutex);
++	free(cache->c_hash);
++	free(cache);
 +}
 +
-+static inline void __list_splice(const struct list_head *list,
-+				 struct list_head *prev,
-+				 struct list_head *next)
++static unsigned int
++cache_generic_bulkrelse(
++	struct cache *		cache,
++	struct list_head *	list)
 +{
-+	struct list_head *first = list->next;
-+	struct list_head *last = list->prev;
++	struct cache_node *	node;
++	unsigned int		count = 0;
 +
-+	first->prev = prev;
-+	prev->next = first;
-+
-+	last->next = next;
-+	next->prev = last;
-+}
-+
-+/**
-+ * list_splice - join two lists, this is designed for stacks
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ */
-+static inline void list_splice(const struct list_head *list,
-+				struct list_head *head)
-+{
-+	if (!list_empty(list))
-+		__list_splice(list, head, head->next);
-+}
-+
-+/**
-+ * list_splice_tail - join two lists, each list being a queue
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ */
-+static inline void list_splice_tail(struct list_head *list,
-+				struct list_head *head)
-+{
-+	if (!list_empty(list))
-+		__list_splice(list, head->prev, head);
-+}
-+
-+/**
-+ * list_splice_init - join two lists and reinitialise the emptied list.
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ *
-+ * The list at @list is reinitialised
-+ */
-+static inline void list_splice_init(struct list_head *list,
-+				    struct list_head *head)
-+{
-+	if (!list_empty(list)) {
-+		__list_splice(list, head, head->next);
-+		INIT_LIST_HEAD(list);
-+	}
-+}
-+
-+/**
-+ * list_splice_tail_init - join two lists and reinitialise the emptied list
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ *
-+ * Each of the lists is a queue.
-+ * The list at @list is reinitialised
-+ */
-+static inline void list_splice_tail_init(struct list_head *list,
-+					 struct list_head *head)
-+{
-+	if (!list_empty(list)) {
-+		__list_splice(list, head->prev, head);
-+		INIT_LIST_HEAD(list);
-+	}
-+}
-+
-+/**
-+ * list_entry - get the struct for this entry
-+ * @ptr:	the &struct list_head pointer.
-+ * @type:	the type of the struct this is embedded in.
-+ * @member:	the name of the list_head within the struct.
-+ */
-+#define list_entry(ptr, type, member) \
-+	container_of(ptr, type, member)
-+
-+/**
-+ * list_first_entry - get the first element from a list
-+ * @ptr:	the list head to take the element from.
-+ * @type:	the type of the struct this is embedded in.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Note, that list is expected to be not empty.
-+ */
-+#define list_first_entry(ptr, type, member) \
-+	list_entry((ptr)->next, type, member)
-+
-+/**
-+ * list_last_entry - get the last element from a list
-+ * @ptr:	the list head to take the element from.
-+ * @type:	the type of the struct this is embedded in.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Note, that list is expected to be not empty.
-+ */
-+#define list_last_entry(ptr, type, member) \
-+	list_entry((ptr)->prev, type, member)
-+
-+/**
-+ * list_first_entry_or_null - get the first element from a list
-+ * @ptr:	the list head to take the element from.
-+ * @type:	the type of the struct this is embedded in.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Note that if the list is empty, it returns NULL.
-+ */
-+#define list_first_entry_or_null(ptr, type, member) ({ \
-+	struct list_head *head__ = (ptr); \
-+	struct list_head *pos__ = head__->next; \
-+	pos__ != head__ ? list_entry(pos__, type, member) : NULL; \
-+})
-+
-+/**
-+ * list_next_entry - get the next element in list
-+ * @pos:	the type * to cursor
-+ * @member:	the name of the list_head within the struct.
-+ */
-+#define list_next_entry(pos, member) \
-+	list_entry((pos)->member.next, typeof(*(pos)), member)
-+
-+/**
-+ * list_next_entry_circular - get the next element in list
-+ * @pos:	the type * to cursor.
-+ * @head:	the list head to take the element from.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Wraparound if pos is the last element (return the first element).
-+ * Note, that list is expected to be not empty.
-+ */
-+#define list_next_entry_circular(pos, head, member) \
-+	(list_is_last(&(pos)->member, head) ? \
-+	list_first_entry(head, typeof(*(pos)), member) : list_next_entry(pos, member))
-+
-+/**
-+ * list_prev_entry - get the prev element in list
-+ * @pos:	the type * to cursor
-+ * @member:	the name of the list_head within the struct.
-+ */
-+#define list_prev_entry(pos, member) \
-+	list_entry((pos)->member.prev, typeof(*(pos)), member)
-+
-+/**
-+ * list_prev_entry_circular - get the prev element in list
-+ * @pos:	the type * to cursor.
-+ * @head:	the list head to take the element from.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Wraparound if pos is the first element (return the last element).
-+ * Note, that list is expected to be not empty.
-+ */
-+#define list_prev_entry_circular(pos, head, member) \
-+	(list_is_first(&(pos)->member, head) ? \
-+	list_last_entry(head, typeof(*(pos)), member) : list_prev_entry(pos, member))
-+
-+/**
-+ * list_for_each	-	iterate over a list
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each(pos, head) \
-+	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
-+
-+/**
-+ * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each_rcu(pos, head)		  \
-+	for (pos = rcu_dereference((head)->next); \
-+	     !list_is_head(pos, (head)); \
-+	     pos = rcu_dereference(pos->next))
-+
-+/**
-+ * list_for_each_continue - continue iteration over a list
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @head:	the head for your list.
-+ *
-+ * Continue to iterate over a list, continuing after the current position.
-+ */
-+#define list_for_each_continue(pos, head) \
-+	for (pos = pos->next; !list_is_head(pos, (head)); pos = pos->next)
-+
-+/**
-+ * list_for_each_prev	-	iterate over a list backwards
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each_prev(pos, head) \
-+	for (pos = (head)->prev; !list_is_head(pos, (head)); pos = pos->prev)
-+
-+/**
-+ * list_for_each_safe - iterate over a list safe against removal of list entry
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @n:		another &struct list_head to use as temporary storage
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each_safe(pos, n, head) \
-+	for (pos = (head)->next, n = pos->next; \
-+	     !list_is_head(pos, (head)); \
-+	     pos = n, n = pos->next)
-+
-+/**
-+ * list_for_each_prev_safe - iterate over a list backwards safe against removal of list entry
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @n:		another &struct list_head to use as temporary storage
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each_prev_safe(pos, n, head) \
-+	for (pos = (head)->prev, n = pos->prev; \
-+	     !list_is_head(pos, (head)); \
-+	     pos = n, n = pos->prev)
-+
-+/**
-+ * list_count_nodes - count nodes in the list
-+ * @head:	the head for your list.
-+ */
-+static inline size_t list_count_nodes(struct list_head *head)
-+{
-+	struct list_head *pos;
-+	size_t count = 0;
-+
-+	list_for_each(pos, head)
++	while (!list_empty(list)) {
++		node = list_entry(list->next, struct cache_node, cn_mru);
++		pthread_mutex_destroy(&node->cn_mutex);
++		list_del_init(&node->cn_mru);
++		cache->relse(node);
 +		count++;
++	}
 +
 +	return count;
 +}
 +
-+/**
-+ * list_entry_is_head - test if the entry points to the head of the list
-+ * @pos:	the type * to cursor
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
++/*
++ * Park unflushable nodes on their own special MRU so that cache_shake() doesn't
++ * end up repeatedly scanning them in the futile attempt to clean them before
++ * reclaim.
 + */
-+#define list_entry_is_head(pos, head, member)				\
-+	list_is_head(&pos->member, (head))
++static void
++cache_add_to_dirty_mru(
++	struct cache		*cache,
++	struct cache_node	*node)
++{
++	struct cache_mru	*mru = &cache->c_mrus[CACHE_DIRTY_PRIORITY];
 +
-+/**
-+ * list_for_each_entry	-	iterate over list of given type
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ */
-+#define list_for_each_entry(pos, head, member)				\
-+	for (pos = list_first_entry(head, typeof(*pos), member);	\
-+	     !list_entry_is_head(pos, head, member);			\
-+	     pos = list_next_entry(pos, member))
++	pthread_mutex_lock(&mru->cm_mutex);
++	node->cn_old_priority = node->cn_priority;
++	node->cn_priority = CACHE_DIRTY_PRIORITY;
++	list_add(&node->cn_mru, &mru->cm_list);
++	mru->cm_count++;
++	pthread_mutex_unlock(&mru->cm_mutex);
++}
 +
-+/**
-+ * list_for_each_entry_reverse - iterate backwards over list of given type.
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ */
-+#define list_for_each_entry_reverse(pos, head, member)			\
-+	for (pos = list_last_entry(head, typeof(*pos), member);		\
-+	     !list_entry_is_head(pos, head, member); 			\
-+	     pos = list_prev_entry(pos, member))
-+
-+/**
-+ * list_prepare_entry - prepare a pos entry for use in list_for_each_entry_continue()
-+ * @pos:	the type * to use as a start point
-+ * @head:	the head of the list
-+ * @member:	the name of the list_head within the struct.
++/*
++ * We've hit the limit on cache size, so we need to start reclaiming nodes we've
++ * used. The MRU specified by the priority is shaken.  Returns new priority at
++ * end of the call (in case we call again). We are not allowed to reclaim dirty
++ * objects, so we have to flush them first. If flushing fails, we move them to
++ * the "dirty, unreclaimable" list.
 + *
-+ * Prepares a pos entry for use as a start point in list_for_each_entry_continue().
++ * Hence we skip priorities > CACHE_MAX_PRIORITY unless "purge" is set as we
++ * park unflushable (and hence unreclaimable) buffers at these priorities.
++ * Trying to shake unreclaimable buffer lists when there is memory pressure is a
++ * waste of time and CPU and greatly slows down cache node recycling operations.
++ * Hence we only try to free them if we are being asked to purge the cache of
++ * all entries.
 + */
-+#define list_prepare_entry(pos, head, member) \
-+	((pos) ? : list_entry(head, typeof(*pos), member))
++static unsigned int
++cache_shake(
++	struct cache *		cache,
++	unsigned int		priority,
++	bool			purge)
++{
++	struct cache_mru	*mru;
++	struct cache_hash *	hash;
++	struct list_head	temp;
++	struct list_head *	head;
++	struct list_head *	pos;
++	struct list_head *	n;
++	struct cache_node *	node;
++	unsigned int		count;
 +
-+/**
-+ * list_for_each_entry_continue - continue iteration over list of given type
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Continue to iterate over list of given type, continuing after
-+ * the current position.
++	ASSERT(priority <= CACHE_DIRTY_PRIORITY);
++	if (priority > CACHE_MAX_PRIORITY && !purge)
++		priority = 0;
++
++	mru = &cache->c_mrus[priority];
++	count = 0;
++	list_head_init(&temp);
++	head = &mru->cm_list;
++
++	pthread_mutex_lock(&mru->cm_mutex);
++	for (pos = head->prev, n = pos->prev; pos != head;
++						pos = n, n = pos->prev) {
++		node = list_entry(pos, struct cache_node, cn_mru);
++
++		if (pthread_mutex_trylock(&node->cn_mutex) != 0)
++			continue;
++
++		/* memory pressure is not allowed to release dirty objects */
++		if (cache->flush(node) && !purge) {
++			list_del(&node->cn_mru);
++			mru->cm_count--;
++			node->cn_priority = -1;
++			pthread_mutex_unlock(&node->cn_mutex);
++			cache_add_to_dirty_mru(cache, node);
++			continue;
++		}
++
++		hash = cache->c_hash + node->cn_hashidx;
++		if (pthread_mutex_trylock(&hash->ch_mutex) != 0) {
++			pthread_mutex_unlock(&node->cn_mutex);
++			continue;
++		}
++		ASSERT(node->cn_count == 0);
++		ASSERT(node->cn_priority == priority);
++		node->cn_priority = -1;
++
++		list_move(&node->cn_mru, &temp);
++		list_del_init(&node->cn_hash);
++		hash->ch_count--;
++		mru->cm_count--;
++		pthread_mutex_unlock(&hash->ch_mutex);
++		pthread_mutex_unlock(&node->cn_mutex);
++
++		count++;
++		if (!purge && count == CACHE_SHAKE_COUNT)
++			break;
++	}
++	pthread_mutex_unlock(&mru->cm_mutex);
++
++	if (count > 0) {
++		cache->bulkrelse(cache, &temp);
++
++		pthread_mutex_lock(&cache->c_mutex);
++		cache->c_count -= count;
++		pthread_mutex_unlock(&cache->c_mutex);
++	}
++
++	return (count == CACHE_SHAKE_COUNT) ? priority : ++priority;
++}
++
++/*
++ * Allocate a new hash node (updating atomic counter in the process),
++ * unless doing so will push us over the maximum cache size.
 + */
-+#define list_for_each_entry_continue(pos, head, member) 		\
-+	for (pos = list_next_entry(pos, member);			\
-+	     !list_entry_is_head(pos, head, member);			\
-+	     pos = list_next_entry(pos, member))
++static struct cache_node *
++cache_node_allocate(
++	struct cache *		cache,
++	cache_key_t		key)
++{
++	unsigned int		nodesfree;
++	struct cache_node *	node;
 +
-+/**
-+ * list_for_each_entry_continue_reverse - iterate backwards from the given point
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Start to iterate over list of given type backwards, continuing after
-+ * the current position.
++	pthread_mutex_lock(&cache->c_mutex);
++	nodesfree = (cache->c_count < cache->c_maxcount);
++	if (nodesfree) {
++		cache->c_count++;
++		if (cache->c_count > cache->c_max)
++			cache->c_max = cache->c_count;
++	}
++	cache->c_misses++;
++	pthread_mutex_unlock(&cache->c_mutex);
++	if (!nodesfree)
++		return NULL;
++	node = cache->alloc(key);
++	if (node == NULL) {	/* uh-oh */
++		pthread_mutex_lock(&cache->c_mutex);
++		cache->c_count--;
++		pthread_mutex_unlock(&cache->c_mutex);
++		return NULL;
++	}
++	pthread_mutex_init(&node->cn_mutex, NULL);
++	list_head_init(&node->cn_mru);
++	node->cn_count = 1;
++	node->cn_priority = 0;
++	node->cn_old_priority = -1;
++	return node;
++}
++
++int
++cache_overflowed(
++	struct cache *		cache)
++{
++	return cache->c_maxcount == cache->c_max;
++}
++
++
++static int
++__cache_node_purge(
++	struct cache *		cache,
++	struct cache_node *	node)
++{
++	int			count;
++	struct cache_mru *	mru;
++
++	pthread_mutex_lock(&node->cn_mutex);
++	count = node->cn_count;
++	if (count != 0) {
++		pthread_mutex_unlock(&node->cn_mutex);
++		return count;
++	}
++
++	/* can't purge dirty objects */
++	if (cache->flush(node)) {
++		pthread_mutex_unlock(&node->cn_mutex);
++		return 1;
++	}
++
++	mru = &cache->c_mrus[node->cn_priority];
++	pthread_mutex_lock(&mru->cm_mutex);
++	list_del_init(&node->cn_mru);
++	mru->cm_count--;
++	pthread_mutex_unlock(&mru->cm_mutex);
++
++	pthread_mutex_unlock(&node->cn_mutex);
++	pthread_mutex_destroy(&node->cn_mutex);
++	list_del_init(&node->cn_hash);
++	cache->relse(node);
++	return 0;
++}
++
++/*
++ * Lookup in the cache hash table.  With any luck we'll get a cache
++ * hit, in which case this will all be over quickly and painlessly.
++ * Otherwise, we allocate a new node, taking care not to expand the
++ * cache beyond the requested maximum size (shrink it if it would).
++ * Returns one if hit in cache, otherwise zero.  A node is _always_
++ * returned, however.
 + */
-+#define list_for_each_entry_continue_reverse(pos, head, member)		\
-+	for (pos = list_prev_entry(pos, member);			\
-+	     !list_entry_is_head(pos, head, member);			\
-+	     pos = list_prev_entry(pos, member))
++int
++cache_node_get(
++	struct cache *		cache,
++	cache_key_t		key,
++	struct cache_node **	nodep)
++{
++	struct cache_node *	node = NULL;
++	struct cache_hash *	hash;
++	struct cache_mru *	mru;
++	struct list_head *	head;
++	struct list_head *	pos;
++	struct list_head *	n;
++	unsigned int		hashidx;
++	int			priority = 0;
++	int			purged = 0;
 +
-+/**
-+ * list_for_each_entry_from - iterate over list of given type from the current point
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Iterate over list of given type, continuing from current position.
-+ */
-+#define list_for_each_entry_from(pos, head, member) 			\
-+	for (; !list_entry_is_head(pos, head, member);			\
-+	     pos = list_next_entry(pos, member))
++	hashidx = cache->hash(key, cache->c_hashsize, cache->c_hashshift);
++	hash = cache->c_hash + hashidx;
++	head = &hash->ch_list;
 +
-+/**
-+ * list_for_each_entry_from_reverse - iterate backwards over list of given type
-+ *                                    from the current point
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Iterate backwards over list of given type, continuing from current position.
-+ */
-+#define list_for_each_entry_from_reverse(pos, head, member)		\
-+	for (; !list_entry_is_head(pos, head, member);			\
-+	     pos = list_prev_entry(pos, member))
++	for (;;) {
++		pthread_mutex_lock(&hash->ch_mutex);
++		for (pos = head->next, n = pos->next; pos != head;
++						pos = n, n = pos->next) {
++			int result;
 +
-+/**
-+ * list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
-+ * @pos:	the type * to use as a loop cursor.
-+ * @n:		another type * to use as temporary storage
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ */
-+#define list_for_each_entry_safe(pos, n, head, member)			\
-+	for (pos = list_first_entry(head, typeof(*pos), member),	\
-+		n = list_next_entry(pos, member);			\
-+	     !list_entry_is_head(pos, head, member); 			\
-+	     pos = n, n = list_next_entry(n, member))
++			node = list_entry(pos, struct cache_node, cn_hash);
++			result = cache->compare(node, key);
++			switch (result) {
++			case CACHE_HIT:
++				break;
++			case CACHE_PURGE:
++				if ((cache->c_flags & CACHE_MISCOMPARE_PURGE) &&
++				    !__cache_node_purge(cache, node)) {
++					purged++;
++					hash->ch_count--;
++				}
++				/* FALL THROUGH */
++			case CACHE_MISS:
++				goto next_object;
++			}
 +
-+/**
-+ * list_for_each_entry_safe_continue - continue list iteration safe against removal
-+ * @pos:	the type * to use as a loop cursor.
-+ * @n:		another type * to use as temporary storage
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Iterate over list of given type, continuing after current point,
-+ * safe against removal of list entry.
-+ */
-+#define list_for_each_entry_safe_continue(pos, n, head, member) 		\
-+	for (pos = list_next_entry(pos, member), 				\
-+		n = list_next_entry(pos, member);				\
-+	     !list_entry_is_head(pos, head, member);				\
-+	     pos = n, n = list_next_entry(n, member))
++			/*
++			 * node found, bump node's reference count, remove it
++			 * from its MRU list, and update stats.
++			 */
++			pthread_mutex_lock(&node->cn_mutex);
 +
-+/**
-+ * list_for_each_entry_safe_from - iterate over list from current point safe against removal
-+ * @pos:	the type * to use as a loop cursor.
-+ * @n:		another type * to use as temporary storage
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Iterate over list of given type from current point, safe against
-+ * removal of list entry.
-+ */
-+#define list_for_each_entry_safe_from(pos, n, head, member) 			\
-+	for (n = list_next_entry(pos, member);					\
-+	     !list_entry_is_head(pos, head, member);				\
-+	     pos = n, n = list_next_entry(n, member))
++			if (node->cn_count == 0 && cache->get) {
++				int err = cache->get(node);
++				if (err) {
++					pthread_mutex_unlock(&node->cn_mutex);
++					goto next_object;
++				}
++			}
++			if (node->cn_count == 0) {
++				ASSERT(node->cn_priority >= 0);
++				ASSERT(!list_empty(&node->cn_mru));
++				mru = &cache->c_mrus[node->cn_priority];
++				pthread_mutex_lock(&mru->cm_mutex);
++				mru->cm_count--;
++				list_del_init(&node->cn_mru);
++				pthread_mutex_unlock(&mru->cm_mutex);
++				if (node->cn_old_priority != -1) {
++					ASSERT(node->cn_priority ==
++							CACHE_DIRTY_PRIORITY);
++					node->cn_priority = node->cn_old_priority;
++					node->cn_old_priority = -1;
++				}
++			}
++			node->cn_count++;
 +
-+/**
-+ * list_for_each_entry_safe_reverse - iterate backwards over list safe against removal
-+ * @pos:	the type * to use as a loop cursor.
-+ * @n:		another type * to use as temporary storage
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * Iterate backwards over list of given type, safe against removal
-+ * of list entry.
-+ */
-+#define list_for_each_entry_safe_reverse(pos, n, head, member)		\
-+	for (pos = list_last_entry(head, typeof(*pos), member),		\
-+		n = list_prev_entry(pos, member);			\
-+	     !list_entry_is_head(pos, head, member); 			\
-+	     pos = n, n = list_prev_entry(n, member))
++			pthread_mutex_unlock(&node->cn_mutex);
++			pthread_mutex_unlock(&hash->ch_mutex);
 +
-+/**
-+ * list_safe_reset_next - reset a stale list_for_each_entry_safe loop
-+ * @pos:	the loop cursor used in the list_for_each_entry_safe loop
-+ * @n:		temporary storage used in list_for_each_entry_safe
-+ * @member:	the name of the list_head within the struct.
-+ *
-+ * list_safe_reset_next is not safe to use in general if the list may be
-+ * modified concurrently (eg. the lock is dropped in the loop body). An
-+ * exception to this is if the cursor element (pos) is pinned in the list,
-+ * and list_safe_reset_next is called after re-taking the lock and before
-+ * completing the current iteration of the loop body.
-+ */
-+#define list_safe_reset_next(pos, n, member)				\
-+	n = list_next_entry(pos, member)
++			pthread_mutex_lock(&cache->c_mutex);
++			cache->c_hits++;
++			pthread_mutex_unlock(&cache->c_mutex);
 +
++			*nodep = node;
++			return 0;
++next_object:
++			continue;	/* what the hell, gcc? */
++		}
++		pthread_mutex_unlock(&hash->ch_mutex);
++		/*
++		 * not found, allocate a new entry
++		 */
++		node = cache_node_allocate(cache, key);
++		if (node)
++			break;
++		priority = cache_shake(cache, priority, false);
++		/*
++		 * We start at 0; if we free CACHE_SHAKE_COUNT we get
++		 * back the same priority, if not we get back priority+1.
++		 * If we exceed CACHE_MAX_PRIORITY all slots are full; grow it.
++		 */
++		if (priority > CACHE_MAX_PRIORITY) {
++			priority = 0;
++			cache_expand(cache);
++		}
++	}
++
++	node->cn_hashidx = hashidx;
++
++	/* add new node to appropriate hash */
++	pthread_mutex_lock(&hash->ch_mutex);
++	hash->ch_count++;
++	list_add(&node->cn_hash, &hash->ch_list);
++	pthread_mutex_unlock(&hash->ch_mutex);
++
++	if (purged) {
++		pthread_mutex_lock(&cache->c_mutex);
++		cache->c_count -= purged;
++		pthread_mutex_unlock(&cache->c_mutex);
++	}
++
++	*nodep = node;
++	return 1;
++}
++
++void
++cache_node_put(
++	struct cache *		cache,
++	struct cache_node *	node)
++{
++	struct cache_mru *	mru;
++
++	pthread_mutex_lock(&node->cn_mutex);
++#ifdef CACHE_DEBUG
++	if (node->cn_count < 1) {
++		fprintf(stderr, "%s: node put on refcount %u (node=%p)\n",
++				__FUNCTION__, node->cn_count, node);
++		cache_abort();
++	}
++	if (!list_empty(&node->cn_mru)) {
++		fprintf(stderr, "%s: node put on node (%p) in MRU list\n",
++				__FUNCTION__, node);
++		cache_abort();
++	}
 +#endif
-diff --git a/debugfs/Makefile.in b/debugfs/Makefile.in
-index 689bf0c4a3c13d..700ae87418c268 100644
---- a/debugfs/Makefile.in
-+++ b/debugfs/Makefile.in
-@@ -195,7 +195,7 @@ debugfs.o: $(srcdir)/debugfs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(top_srcdir)/version.h \
-  $(srcdir)/../e2fsck/jfs_user.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h $(top_srcdir)/lib/support/plausible.h
- util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ss/ss.h \
-@@ -287,7 +287,7 @@ logdump.o: $(srcdir)/logdump.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h
- htree.o: $(srcdir)/htree.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/debugfs.h $(top_srcdir)/lib/ss/ss.h \
-@@ -408,7 +408,7 @@ journal.o: $(srcdir)/journal.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h
- revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -418,7 +418,7 @@ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h
- recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -428,7 +428,7 @@ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h
- do_journal.o: $(srcdir)/do_journal.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/debugfs.h $(top_srcdir)/lib/ss/ss.h \
-@@ -442,7 +442,7 @@ do_journal.o: $(srcdir)/do_journal.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/journal.h $(srcdir)/../e2fsck/jfs_user.h
- do_orphan.o: $(srcdir)/do_orphan.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/debugfs.h $(top_srcdir)/lib/ss/ss.h \
-diff --git a/e2fsck/Makefile.in b/e2fsck/Makefile.in
-index fbb7b156d5c759..52fad9cbfd2b23 100644
---- a/e2fsck/Makefile.in
-+++ b/e2fsck/Makefile.in
-@@ -282,7 +282,7 @@ e2fsck.o: $(srcdir)/e2fsck.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- super.o: $(srcdir)/super.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -296,7 +296,7 @@ super.o: $(srcdir)/super.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- pass1.o: $(srcdir)/pass1.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -310,7 +310,7 @@ pass1.o: $(srcdir)/pass1.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/e2p/e2p.h $(srcdir)/problem.h
- pass1b.o: $(srcdir)/pass1b.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/et/com_err.h \
-@@ -324,7 +324,7 @@ pass1b.o: $(srcdir)/pass1b.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h $(top_srcdir)/lib/support/dict.h
- pass2.o: $(srcdir)/pass2.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -338,7 +338,7 @@ pass2.o: $(srcdir)/pass2.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h $(top_srcdir)/lib/support/dict.h
- pass3.o: $(srcdir)/pass3.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -352,7 +352,7 @@ pass3.o: $(srcdir)/pass3.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- pass4.o: $(srcdir)/pass4.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -366,7 +366,7 @@ pass4.o: $(srcdir)/pass4.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- pass5.o: $(srcdir)/pass5.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -380,7 +380,7 @@ pass5.o: $(srcdir)/pass5.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- journal.o: $(srcdir)/journal.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/jfs_user.h $(srcdir)/e2fsck.h \
-@@ -394,7 +394,7 @@ journal.o: $(srcdir)/journal.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(srcdir)/problem.h
- recovery.o: $(srcdir)/recovery.c $(srcdir)/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -408,7 +408,7 @@ recovery.o: $(srcdir)/recovery.c $(srcdir)/jfs_user.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
- revoke.o: $(srcdir)/revoke.c $(srcdir)/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -422,7 +422,7 @@ revoke.o: $(srcdir)/revoke.c $(srcdir)/jfs_user.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
- badblocks.o: $(srcdir)/badblocks.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/et/com_err.h \
-@@ -436,7 +436,7 @@ badblocks.o: $(srcdir)/badblocks.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -449,7 +449,7 @@ util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- unix.o: $(srcdir)/unix.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/e2p/e2p.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -463,7 +463,7 @@ unix.o: $(srcdir)/unix.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h $(srcdir)/jfs_user.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/version.h
- dirinfo.o: $(srcdir)/dirinfo.c $(top_builddir)/lib/config.h \
-@@ -478,7 +478,7 @@ dirinfo.o: $(srcdir)/dirinfo.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/tdb.h
- dx_dirinfo.o: $(srcdir)/dx_dirinfo.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -492,7 +492,7 @@ dx_dirinfo.o: $(srcdir)/dx_dirinfo.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- ehandler.o: $(srcdir)/ehandler.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -505,7 +505,7 @@ ehandler.o: $(srcdir)/ehandler.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- problem.o: $(srcdir)/problem.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -518,7 +518,7 @@ problem.o: $(srcdir)/problem.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h $(srcdir)/problemP.h
- message.o: $(srcdir)/message.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/support/quotaio.h \
-@@ -531,7 +531,7 @@ message.o: $(srcdir)/message.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/support/profile.h $(top_builddir)/lib/support/prof_err.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- ea_refcount.o: $(srcdir)/ea_refcount.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -545,7 +545,7 @@ ea_refcount.o: $(srcdir)/ea_refcount.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- rehash.o: $(srcdir)/rehash.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -558,7 +558,7 @@ rehash.o: $(srcdir)/rehash.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h $(top_srcdir)/lib/support/sort_r.h
- readahead.o: $(srcdir)/readahead.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -572,7 +572,7 @@ readahead.o: $(srcdir)/readahead.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- region.o: $(srcdir)/region.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -585,7 +585,7 @@ region.o: $(srcdir)/region.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- sigcatcher.o: $(srcdir)/sigcatcher.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -598,7 +598,7 @@ sigcatcher.o: $(srcdir)/sigcatcher.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- logfile.o: $(srcdir)/logfile.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -611,7 +611,7 @@ logfile.o: $(srcdir)/logfile.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- quota.o: $(srcdir)/quota.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-@@ -624,7 +624,7 @@ quota.o: $(srcdir)/quota.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- extents.o: $(srcdir)/extents.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -638,7 +638,7 @@ extents.o: $(srcdir)/extents.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h
- encrypted_files.o: $(srcdir)/encrypted_files.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
-@@ -652,5 +652,5 @@ encrypted_files.o: $(srcdir)/encrypted_files.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(srcdir)/problem.h $(top_srcdir)/lib/ext2fs/rbtree.h
-diff --git a/fuse4fs/Makefile.in b/fuse4fs/Makefile.in
-index bc137a765ee2b7..6b41d1dd5ffe8d 100644
---- a/fuse4fs/Makefile.in
-+++ b/fuse4fs/Makefile.in
-@@ -160,7 +160,7 @@ journal.o: $(srcdir)/../debugfs/journal.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
- revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -174,7 +174,7 @@ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
- recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -188,5 +188,5 @@ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
-diff --git a/lib/e2p/Makefile.in b/lib/e2p/Makefile.in
-index 92d9c018fe46c8..f642f5ec367c93 100644
---- a/lib/e2p/Makefile.in
-+++ b/lib/e2p/Makefile.in
-@@ -130,7 +130,7 @@ feature.o: $(srcdir)/feature.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h
- fgetflags.o: $(srcdir)/fgetflags.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2p.h \
-@@ -173,7 +173,7 @@ ljs.o: $(srcdir)/ljs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(srcdir)/e2p.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
- mntopts.o: $(srcdir)/mntopts.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2p.h \
-  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h
-diff --git a/lib/ext2fs/Makefile.in b/lib/ext2fs/Makefile.in
-index e9a6ced244ea26..1d0991defff804 100644
---- a/lib/ext2fs/Makefile.in
-+++ b/lib/ext2fs/Makefile.in
-@@ -1032,7 +1032,7 @@ mkjournal.o: $(srcdir)/mkjournal.c $(top_builddir)/lib/config.h \
-  $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h $(srcdir)/ext2_io.h \
-  $(top_builddir)/lib/ext2fs/ext2_err.h $(srcdir)/ext2_ext_attr.h \
-  $(srcdir)/hashmap.h $(srcdir)/bitops.h $(srcdir)/kernel-jbd.h \
-- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h
-+ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h
- mmp.o: $(srcdir)/mmp.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/ext2_fs.h \
-  $(top_builddir)/lib/ext2fs/ext2_types.h $(srcdir)/ext2fs.h \
-@@ -1263,7 +1263,7 @@ debugfs.o: $(top_srcdir)/debugfs/debugfs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(top_srcdir)/debugfs/../version.h \
-  $(srcdir)/../../e2fsck/jfs_user.h $(srcdir)/kernel-jbd.h \
-- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h \
-+ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h \
-  $(top_srcdir)/lib/support/plausible.h
- util.o: $(top_srcdir)/debugfs/util.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ss/ss.h \
-@@ -1353,7 +1353,7 @@ logdump.o: $(top_srcdir)/debugfs/logdump.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/debugfs/../misc/create_inode.h $(top_srcdir)/lib/e2p/e2p.h \
-  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/../../e2fsck/jfs_user.h \
-- $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h \
-+ $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h \
-  $(srcdir)/compiler.h $(srcdir)/fast_commit.h
- htree.o: $(top_srcdir)/debugfs/htree.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/debugfs/debugfs.h \
-@@ -1469,14 +1469,14 @@ journal.o: $(top_srcdir)/debugfs/journal.c $(top_builddir)/lib/config.h \
-  $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h $(srcdir)/ext2_io.h \
-  $(top_builddir)/lib/ext2fs/ext2_err.h $(srcdir)/ext2_ext_attr.h \
-  $(srcdir)/hashmap.h $(srcdir)/bitops.h $(srcdir)/kernel-jbd.h \
-- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h
-+ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h
- revoke.o: $(top_srcdir)/e2fsck/revoke.c $(top_srcdir)/e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-  $(srcdir)/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
-  $(srcdir)/ext2fs.h $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h \
-  $(srcdir)/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(srcdir)/ext2_ext_attr.h $(srcdir)/hashmap.h $(srcdir)/bitops.h \
-- $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h \
-+ $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h \
-  $(srcdir)/compiler.h
- recovery.o: $(top_srcdir)/e2fsck/recovery.c $(top_srcdir)/e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -1484,7 +1484,7 @@ recovery.o: $(top_srcdir)/e2fsck/recovery.c $(top_srcdir)/e2fsck/jfs_user.h \
-  $(srcdir)/ext2fs.h $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h \
-  $(srcdir)/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(srcdir)/ext2_ext_attr.h $(srcdir)/hashmap.h $(srcdir)/bitops.h \
-- $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h \
-+ $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h \
-  $(srcdir)/compiler.h
- do_journal.o: $(top_srcdir)/debugfs/do_journal.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/debugfs/debugfs.h \
-@@ -1497,7 +1497,7 @@ do_journal.o: $(top_srcdir)/debugfs/do_journal.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/debugfs/../misc/create_inode.h $(top_srcdir)/lib/e2p/e2p.h \
-  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/kernel-jbd.h \
-- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h \
-+ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h \
-  $(top_srcdir)/debugfs/journal.h $(srcdir)/../../e2fsck/jfs_user.h
- do_orphan.o: $(top_srcdir)/debugfs/do_orphan.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/debugfs/debugfs.h \
-diff --git a/misc/Makefile.in b/misc/Makefile.in
-index b63a0424b19fec..ec964688acd623 100644
---- a/misc/Makefile.in
-+++ b/misc/Makefile.in
-@@ -736,7 +736,7 @@ tune2fs.o: $(srcdir)/tune2fs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h $(top_srcdir)/lib/support/plausible.h \
-  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h $(top_srcdir)/lib/support/devname.h \
-@@ -789,7 +789,7 @@ dumpe2fs.o: $(srcdir)/dumpe2fs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/e2p/e2p.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/support/devname.h $(top_srcdir)/lib/support/nls-enable.h \
-  $(top_srcdir)/lib/support/plausible.h $(top_srcdir)/version.h
- badblocks.o: $(srcdir)/badblocks.c $(top_builddir)/lib/config.h \
-@@ -812,7 +812,7 @@ util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/ext2fs/ext2_err.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
-- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
-+ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
-  $(top_srcdir)/lib/ext2fs/compiler.h $(top_srcdir)/lib/support/nls-enable.h \
-  $(top_srcdir)/lib/support/devname.h $(srcdir)/util.h
- uuidgen.o: $(srcdir)/uuidgen.c $(top_builddir)/lib/config.h \
-@@ -907,7 +907,7 @@ journal.o: $(srcdir)/../debugfs/journal.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
- revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -921,7 +921,7 @@ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
- recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
-@@ -935,5 +935,5 @@ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
-  $(top_srcdir)/lib/support/dqblk_v2.h \
-  $(top_srcdir)/lib/support/quotaio_tree.h \
-  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
-- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
-  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
-diff --git a/misc/tune2fs.c b/misc/tune2fs.c
-index 3db57632c88d42..ac440176351e83 100644
---- a/misc/tune2fs.c
-+++ b/misc/tune2fs.c
-@@ -2857,10 +2857,6 @@ static int expand_inode_table(ext2_filsys fs, unsigned long new_ino_size)
- }
- 
- 
--#define list_for_each_safe(pos, pnext, head) \
--	for (pos = (head)->next, pnext = pos->next; pos != (head); \
--	     pos = pnext, pnext = pos->next)
--
- static void free_blk_move_list(void)
- {
- 	struct list_head *entry, *tmp;
++	node->cn_count--;
++
++	if (node->cn_count == 0 && cache->put)
++		cache->put(node);
++	if (node->cn_count == 0) {
++		/* add unreferenced node to appropriate MRU for shaker */
++		mru = &cache->c_mrus[node->cn_priority];
++		pthread_mutex_lock(&mru->cm_mutex);
++		mru->cm_count++;
++		list_add(&node->cn_mru, &mru->cm_list);
++		pthread_mutex_unlock(&mru->cm_mutex);
++	}
++
++	pthread_mutex_unlock(&node->cn_mutex);
++}
++
++void
++cache_node_set_priority(
++	struct cache *		cache,
++	struct cache_node *	node,
++	int			priority)
++{
++	if (priority < 0)
++		priority = 0;
++	else if (priority > CACHE_MAX_PRIORITY)
++		priority = CACHE_MAX_PRIORITY;
++
++	pthread_mutex_lock(&node->cn_mutex);
++	ASSERT(node->cn_count > 0);
++	node->cn_priority = priority;
++	node->cn_old_priority = -1;
++	pthread_mutex_unlock(&node->cn_mutex);
++}
++
++int
++cache_node_get_priority(
++	struct cache_node *	node)
++{
++	int			priority;
++
++	pthread_mutex_lock(&node->cn_mutex);
++	priority = node->cn_priority;
++	pthread_mutex_unlock(&node->cn_mutex);
++
++	return priority;
++}
++
++
++/*
++ * Purge a specific node from the cache.  Reference count must be zero.
++ */
++int
++cache_node_purge(
++	struct cache *		cache,
++	cache_key_t		key,
++	struct cache_node *	node)
++{
++	struct list_head *	head;
++	struct list_head *	pos;
++	struct list_head *	n;
++	struct cache_hash *	hash;
++	int			count = -1;
++
++	hash = cache->c_hash + cache->hash(key, cache->c_hashsize,
++					   cache->c_hashshift);
++	head = &hash->ch_list;
++	pthread_mutex_lock(&hash->ch_mutex);
++	for (pos = head->next, n = pos->next; pos != head;
++						pos = n, n = pos->next) {
++		if ((struct cache_node *)pos != node)
++			continue;
++
++		count = __cache_node_purge(cache, node);
++		if (!count)
++			hash->ch_count--;
++		break;
++	}
++	pthread_mutex_unlock(&hash->ch_mutex);
++
++	if (count == 0) {
++		pthread_mutex_lock(&cache->c_mutex);
++		cache->c_count--;
++		pthread_mutex_unlock(&cache->c_mutex);
++	}
++#ifdef CACHE_DEBUG
++	if (count >= 1) {
++		fprintf(stderr, "%s: refcount was %u, not zero (node=%p)\n",
++				__FUNCTION__, count, node);
++		cache_abort();
++	}
++	if (count == -1) {
++		fprintf(stderr, "%s: purge node not found! (node=%p)\n",
++			__FUNCTION__, node);
++		cache_abort();
++	}
++#endif
++	return count == 0;
++}
++
++/*
++ * Purge all nodes from the cache.  All reference counts must be zero.
++ */
++void
++cache_purge(
++	struct cache *		cache)
++{
++	int			i;
++
++	for (i = 0; i <= CACHE_DIRTY_PRIORITY; i++)
++		cache_shake(cache, i, true);
++
++#ifdef CACHE_DEBUG
++	if (cache->c_count != 0) {
++		/* flush referenced nodes to disk */
++		cache_flush(cache);
++		fprintf(stderr, "%s: shake on cache %p left %u nodes!?\n",
++				__FUNCTION__, cache, cache->c_count);
++		cache_abort();
++	}
++#endif
++}
++
++/*
++ * Flush all nodes in the cache to disk.
++ */
++void
++cache_flush(
++	struct cache *		cache)
++{
++	struct cache_hash *	hash;
++	struct list_head *	head;
++	struct list_head *	pos;
++	struct cache_node *	node;
++	int			i;
++
++	if (!cache->flush)
++		return;
++
++	for (i = 0; i < cache->c_hashsize; i++) {
++		hash = &cache->c_hash[i];
++
++		pthread_mutex_lock(&hash->ch_mutex);
++		head = &hash->ch_list;
++		for (pos = head->next; pos != head; pos = pos->next) {
++			node = (struct cache_node *)pos;
++			pthread_mutex_lock(&node->cn_mutex);
++			cache->flush(node);
++			pthread_mutex_unlock(&node->cn_mutex);
++		}
++		pthread_mutex_unlock(&hash->ch_mutex);
++	}
++}
++
++#define	HASH_REPORT	(3 * HASH_CACHE_RATIO)
++void
++cache_report(
++	FILE		*fp,
++	const char	*name,
++	struct cache	*cache)
++{
++	int		i;
++	unsigned long	count, index, total;
++	unsigned long	hash_bucket_lengths[HASH_REPORT + 2];
++
++	if ((cache->c_hits + cache->c_misses) == 0)
++		return;
++
++	/* report cache summary */
++	fprintf(fp, "%s: %p\n"
++			"Max supported entries = %u\n"
++			"Max utilized entries = %u\n"
++			"Active entries = %u\n"
++			"Hash table size = %u\n"
++			"Hits = %llu\n"
++			"Misses = %llu\n"
++			"Hit ratio = %5.2f\n",
++			name, cache,
++			cache->c_maxcount,
++			cache->c_max,
++			cache->c_count,
++			cache->c_hashsize,
++			cache->c_hits,
++			cache->c_misses,
++			(double)cache->c_hits * 100 /
++				(cache->c_hits + cache->c_misses)
++	);
++
++	for (i = 0; i <= CACHE_MAX_PRIORITY; i++)
++		fprintf(fp, "MRU %d entries = %6u (%3u%%)\n",
++			i, cache->c_mrus[i].cm_count,
++			cache->c_mrus[i].cm_count * 100 / cache->c_count);
++
++	i = CACHE_DIRTY_PRIORITY;
++	fprintf(fp, "Dirty MRU %d entries = %6u (%3u%%)\n",
++		i, cache->c_mrus[i].cm_count,
++		cache->c_mrus[i].cm_count * 100 / cache->c_count);
++
++	/* report hash bucket lengths */
++	bzero(hash_bucket_lengths, sizeof(hash_bucket_lengths));
++
++	for (i = 0; i < cache->c_hashsize; i++) {
++		count = cache->c_hash[i].ch_count;
++		if (count > HASH_REPORT)
++			index = HASH_REPORT + 1;
++		else
++			index = count;
++		hash_bucket_lengths[index]++;
++	}
++
++	total = 0;
++	for (i = 0; i < HASH_REPORT + 1; i++) {
++		total += i * hash_bucket_lengths[i];
++		if (hash_bucket_lengths[i] == 0)
++			continue;
++		fprintf(fp, "Hash buckets with  %2d entries %6ld (%3ld%%)\n",
++			i, hash_bucket_lengths[i],
++			(i * hash_bucket_lengths[i] * 100) / cache->c_count);
++	}
++	if (hash_bucket_lengths[i])	/* last report bucket is the overflow bucket */
++		fprintf(fp, "Hash buckets with >%2d entries %6ld (%3ld%%)\n",
++			i - 1, hash_bucket_lengths[i],
++			((cache->c_count - total) * 100) / cache->c_count);
++}
 
 
