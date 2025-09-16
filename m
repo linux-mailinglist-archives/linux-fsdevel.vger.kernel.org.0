@@ -1,362 +1,338 @@
-Return-Path: <linux-fsdevel+bounces-61804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4596BB59F83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 19:38:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726A4B59F88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 19:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D8E17A5CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 17:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F24A16BF70
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 17:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7B830171D;
-	Tue, 16 Sep 2025 17:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3953031E894;
+	Tue, 16 Sep 2025 17:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rp3nw1i5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DctidhIK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfH0Cx3B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAA932D5AA;
-	Tue, 16 Sep 2025 17:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758044325; cv=fail; b=HOVLpiF1szuqPf8bbROhPVmXgijBqSRweGjJAl6PPMXw+jNF+ONdet2vp0Tirc0JzXdka4nf86CrQkB2kq4SR/x/6b2CBDMraNoYRR5IrHanSWJwCp3oA6i0b5z29b98D8wIZGeU4922EJgn6IF8GiVDVu9nMm2RhAZMD8iisYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758044325; c=relaxed/simple;
-	bh=QaQ6gtUjXoOG5sC0S5lr7ga2NIBeuJdCx+D/dSQmc3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=K/X+R3aXrs5vhl6byQss7T5azUd2Yx07jp9SNiQkrj3VyEhleRuw0caje5aLMZwXrth038W9AXKq9KNbo+UyAzt4q0xe+HuT1pTDoG00q4oC5CCrq0HqU8hjqeTIoD40ldmwrmedCnGl/RWCPchuYHjRzHHCeubbiqJEtXoXGaQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=rp3nw1i5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DctidhIK; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GGNEdU014342;
-	Tue, 16 Sep 2025 17:38:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=uxapfRc7HQovadVMar
-	Qt0MupoTPzMNCVucnOfihB7/Y=; b=rp3nw1i5frLSS7Lk4+BJeKfkdKf7h6n5Ld
-	l4zrD3IWQOL6BHDbfTVhOQEC428ME2Awq9SXG3F6zJhV5s9NjRyUGwCLQv/kvVUR
-	UnInFiEc+ijlo3nBISEL6IllUohlGXGSQYEEDhwi43pvJsD6Fmx1gLxeD/8jOXR7
-	lYRibY1Gocq///lMG5Nbr41rDzYEVEomzPNtv6BV4UbNg/B79uf5pC5r6F/Z35/l
-	QpuNqUMUyDEH6euNkhDATgU11Rlo5+3vJgUqHJlWn0m5VpnVicCiVYJI1Mm4u1Jt
-	Sq47Q2RzMPxbmZhiU/bSMbba/0W+tzukIlA/NHLm8841HydeP9bQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4950nf59ty-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 17:38:04 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58GGkHCx036751;
-	Tue, 16 Sep 2025 17:38:03 GMT
-Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012039.outbound.protection.outlook.com [40.93.195.39])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2cqyeu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 17:38:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ei+8PCWKqogccjLH/9v/KDI1LALdaQwmlGsTkGaE2earS/foCkCxUrp0dEG/wntRXpsjwo09UB9b7Y3JMhQMOPiztIOIyHYQds+morPxv6WAHV+EJv8F+ubbBhSamrFYXezozNu4W8/iI+HaJwqtF81AuTwkZOp8Yb0cWyBJv0rRy/6rhEW5r62CKZb3JyW1VYHKwc34FCt25SsIFcXBW2NmongpSFM343bAlVKlJERU2r9Se1GGVSHN91CtFllPSzAv7+SD1nNwirBJZGDDiBMfiQavX9WiOblFwb3LiPjmUK33EpqX5Y/dC61nemiO6uL875uRO2TiYudSn7fuyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uxapfRc7HQovadVMarQt0MupoTPzMNCVucnOfihB7/Y=;
- b=GCuPlE3BgQ3cd3fPdDpVVmJ5N/A5gw2xAeIIHw2AwEPvYyT5P5yPAap4+uvImP1xsziOj0ckFMeF/zcRBePd5pv04j6ylcOV7Y79fSwRfmueSJpsGPIZ1b1FcHGCVgzD+BWXC/hz2RauoGdqsPfJH7Q+kx7dUMzSCBR2STVWqoofolPcn85UIK62fL4YGnmEsD/v+Mp44pnKdva+XjkVn6lo3WaGqoPR0Z+M9oc+1t71oQhq8fh7B6/rVUyqfilwnsCqFfL1mMNpnCj8gPWT1d+UrTuMImpCeKM4lkPGseeHZIRsWDUgpA5TA79PGenSF9XNuV7SpUGBD5l+hYXOOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCC42F5A2F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 17:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758044328; cv=none; b=cRobExAUe8e49sjMF+J6y7ZM1bCJC0WlpE9/lHgbekNcKi0ZbRDWSNUGP1gncpS5NHmjj6eDrkp5Pt/td424YVH2+i+CyIJjQIV9ckzaAu07zLNajTVYZwBFT3tcKuwSJtJpfQlUrFwIM9B7Mr21AHOBBYTgdxzzLMOvh+9rbfo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758044328; c=relaxed/simple;
+	bh=zKUgt0gUNcL0CAw+ftmR3WEbBxbg+hYQUd2BC5lpGxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rzzaURiFGCgYPpE8Kbrwhc8bHr22/v152ltFikyiH88Nk7LV5rHHK+sIjVPhDKH1mJnF2CHgxfNbmgIppW5jcXifj7nUOlfcUqYAGH66WhAdtP89dr//iSBSB82e3OYwM8xSg7TmLBP7yYAnLWFcti55Yy2cjYezqFMrAChW3DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfH0Cx3B; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62f1987d49fso2592448a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 10:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uxapfRc7HQovadVMarQt0MupoTPzMNCVucnOfihB7/Y=;
- b=DctidhIKIoSSqB1PkLn4EpIrd0aM100wabzGPDK/wYdYFI2LQxNIEQ6EjygLjJhD/mDzeNaLCkS1VLrRd/F97RShPLeDKP0QC0xIKYhwqBbcORhBF+MrRjcrbbe9judgYxR7JkgNotVrkL1sc382Z15mRR8pQP3wSm2NIZ5EzJc=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CY8PR10MB7377.namprd10.prod.outlook.com (2603:10b6:930:94::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Tue, 16 Sep
- 2025 17:37:59 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9115.022; Tue, 16 Sep 2025
- 17:37:59 +0000
-Date: Tue, 16 Sep 2025 18:37:57 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
-        Guo Ren <guoren@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-        kasan-dev@googlegroups.com, iommu@lists.linux.dev,
-        Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 06/13] mm: add remap_pfn_range_prepare(),
- remap_pfn_range_complete()
-Message-ID: <19ec3d37-46c4-4921-933d-4d554a351ef2@lucifer.local>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <7c050219963aade148332365f8d2223f267dd89a.1758031792.git.lorenzo.stoakes@oracle.com>
- <20250916170723.GO1086830@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916170723.GO1086830@nvidia.com>
-X-ClientProxiedBy: LO6P265CA0020.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ff::11) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1758044324; x=1758649124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p3TcgADr/097b4uZyQGdMCl4rLNQ0NPXzmfPchyLdPQ=;
+        b=GfH0Cx3ByMZLLxuxss1hw9y6ViWjc6GFXUTwh8wxiFuQyv1UNTF3+pkG1NAcvjRS54
+         cAqDndDj82iHj5Dj9+66Ku5azYCOnuzXOZa8RPNrUPX6BXwBggfcPSOzDDN0usx73RnO
+         kQlsYc+f10/0RLCOTYmKSAvOtFPwrlhNpM8vpEh0u3Pf3+kRtbfM5Udwf2CtpX5axh6I
+         Ur0Osf4gvnN39m61oQpRMIa5G7es8Y84Gaq2QZvbkoj3aLr55nKqwHnLF59H1+wHRD4E
+         fIBjOc/qiILJj1W02mnrxmslq4kG2lFtO1RGBGaXj9Uof0wRO3cabDN7waUHM0Vrkco5
+         SdaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758044324; x=1758649124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p3TcgADr/097b4uZyQGdMCl4rLNQ0NPXzmfPchyLdPQ=;
+        b=cC+AouL7N8q/j7y8aeX5USTCXedm9q4cJbtOT4fAdqN6UflBfO9pUgViqy9Yia0QY4
+         VyHYRUR/JgIdBDfpnqeDNnyBzrxxo3vsDkeW7/6ocTn14YkX4lebr67Y0gvOha6Eq8LA
+         Ipnl4Gqlkf82G/xO/kjdUwUb2sXx+GkOdAOthyi69tmXR49FgTMTZkdi6SYZerPG7RPD
+         NM8lwQtRimbNyTuIF1CZlUgz560UQ0vFimm+7neUxClMHjMzHR6aDfMZQjC7e4kgeVll
+         VmwVjMHTEAIx1Xh256epvdZB+lEd44UVidiTga10nkRa0aDpHkry/5T+sfGM38spSEfU
+         qNsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWurfXwTFKCWPaFbqNQpC4/QtaiODMNiI5wYy+udYCGxuJ4jqpuYBVOrRsTixnDcbDJ8dPOsqCQilDXjsno@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa8HFffSO+GzWkdvwuwUGN4ke3o4QaqzxKWQLzu1Pj6hJn03ZL
+	f0YkDQnS+TlOseVV8EhHmb9OgHa6NHPo6K0HdQPm3mbUz3YcTRYtHeAQeCPMQbvDg8+lxwuo0LB
+	4PQyvFW+lH50BW1xOOiIUy8yk5QUOc+Q=
+X-Gm-Gg: ASbGncv+Xm/VkooAuOSMlXh2dUKltSxj68s5fs8A8HCPcC1tQ4jOrBF7H1ftX00iFMw
+	7+12miu8/lWUPxvY6eTxPqzegU7NPC+rtQmE4kRR8lJ55gZzLrVw5RoZT3xKu68QNpfeJgiecXQ
+	olmq/WOQ7iA2wm2PhIH28vEspyKFMEG9y2UK8umG08mV9jHP7JLQZfjNZGBimLGeo0z1vDEBGCj
+	9puEy+tcghXgQ1SDetbgse5KwnB8tK3Wn6i5gM=
+X-Google-Smtp-Source: AGHT+IEQAizvJyfl6mOXg4hBBS+TalumNbe7qc/OZyNcho/cVYkSxvxPEoWzONM4gKvQT/mtpDeTEZzuaP3ja1SqEuc=
+X-Received: by 2002:a05:6402:21ce:b0:61c:7b6e:b242 with SMTP id
+ 4fb4d7f45d1cf-62ed69e016amr15383132a12.0.1758044323803; Tue, 16 Sep 2025
+ 10:38:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CY8PR10MB7377:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64505f58-b98a-4574-9d48-08ddf547c730
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cYTlBbdDE0xLygR8T38KMp8aIwqEz93e8pQKc1WMNKBG4hOG/p0G+E6hXLdy?=
- =?us-ascii?Q?NTWiXUwA4L3OFj+hKQpiFJMdUTLPXF3ViQl0Eob/aeYPWsoggtstW2SNNr5e?=
- =?us-ascii?Q?/C7AewL1X0/mGVCuhYzBCXJ3ESTu5e/jr68g/5zu87a4DlTJ+jMwhw//uXF8?=
- =?us-ascii?Q?YcjhwZXA6Bg+4z85AG1/mFgyNvuHSgiVvy/6omufGnruDHM+KKc0cT3IoUXt?=
- =?us-ascii?Q?kfBccnaZWPp2nZWD46ykyM+BHnWh1VQ2L1NNW4KuXcrYvjuW9g6UsBlSiccs?=
- =?us-ascii?Q?boKlbDKxAQnOfvq80cv80aTKAtbrHWC8ZsjzSFHz3bQpMf1kaeJMT+OeAmwK?=
- =?us-ascii?Q?p+GBlKTqC0psy8ghZBL9395kPGD89KRUcynnk0e8nkWNH3/loOq+f5z5865L?=
- =?us-ascii?Q?aykp+kxpis1tSKnIJ3G9uL6bqg7029kW8HnNnmXovpa1qW09TSr5YJ3dhUR2?=
- =?us-ascii?Q?D6ldV40rApzTh5DMFsqlPs+ZqgXD7xJl+E269OawUB7x7awnVO280CLqQI+C?=
- =?us-ascii?Q?dDYg3l2HqPCXvJ5YHoO9iyMYQ1fJjBKxCElFVnifxfStjm7gr5GYdiNFak92?=
- =?us-ascii?Q?0mVGWtmSw8EL5+vuigDrb8XpTcHYUYf/HrzliunKT9Zq9H/t2fVlIC9VQj8Z?=
- =?us-ascii?Q?PUJsLcC/hWoVP+YQQz+IgFHST7GvElDkXCQpqaCdfsXEATzPjDBw50WOx9Pi?=
- =?us-ascii?Q?gRZC3TkxfUB89gbg+74P/ctUixbCXjuuABchBojqX0XQuxjo05JgGKOzUxwL?=
- =?us-ascii?Q?TkClffID8rNELx0a5X7L7gpjTrxxt+yk1LDSkhnOixxXp96Tn8j5hjluWw3F?=
- =?us-ascii?Q?LyhCkLMgXNuCtiKQX3cr2MFeTLoD5SYFWE9dipnvSIxV6oVsanCjXzmin05n?=
- =?us-ascii?Q?xduoavOu4220XUwu4nndNQwLTj8DM+9ZMRAPugn4hcw46wi7++eeTd6hYT71?=
- =?us-ascii?Q?MF7WrO7nv1fTjjXVGrO0AS8yCig/bm7At+Mo4XCJdI0FE+ulMneAbTghjcRk?=
- =?us-ascii?Q?DbWc/A8sY4GkUWJpPQ3Mq0TM/y7eCPI236kidn7QGrxLYLP4/yenCPxoo0aF?=
- =?us-ascii?Q?A1imp7jQcQOxbe1H3bp7aE3+yaN1L6RC/ETcdZxV7z2r6pPSm6e/G5gD+Cvk?=
- =?us-ascii?Q?OelOpX9NcAEBb7wBshpcCBQBTP41nE3h8U91nmCp6Un8RucvEuPE/KecE9lF?=
- =?us-ascii?Q?Lxj9llIBqfRIwpIZzXlzS8nEt5tdPFUiV/RKILGrkiH5HpYhQgYhIsUyKwcm?=
- =?us-ascii?Q?U8LyY5hlaZF0MuSh8Fm+oC41yOUU6SsqnB5W3ah9EirwjLJlwMy645vrkf7I?=
- =?us-ascii?Q?OhlKRTy52cvjQm1nQVGSm8SrfqHb+Y/yobyK6BsmpaPDQ8OgUzXKww+9Cj3l?=
- =?us-ascii?Q?xSccyQzfnQ+bfHMey0sAsCEI3KUAX3V1ceWDOPo20HhmNboq/Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fw8Fi2/t9QD57poRstxiDnpnisOEg1id0oQ2rbQ0AEjjQxnYJUkyBXIurohn?=
- =?us-ascii?Q?i7+zywd/3fs6DJPXVY0ZLmaV2c4fhGgUPUq6t3WG4Rgo8r7Gx8Z1hnQElEQH?=
- =?us-ascii?Q?N8MokEFfsggMLQncRPnJEoIRApDLcXZ585z5pHMAeQmlEf2J+Eo8jxMGO18+?=
- =?us-ascii?Q?XomFhAOb5rNDW5sX4VEVZW9LQIZx0nFZbV4cabPeUAgAaLyPeGyE+EixwLhg?=
- =?us-ascii?Q?MBpjghHnfSs7p1Q5btSP2wctBbF0vd1XTDYs952sYBNLpuYM/E0hPtslt4wX?=
- =?us-ascii?Q?5ZUHR4Na3JxQa/i46vqt9dHs986NyCywOgTFCdr28mVQcH17ymKtRvLWYwxQ?=
- =?us-ascii?Q?nMNP7FdfSWB5Oz3LZYruVb6p8QQUEV2TvA3Nzbj8nE33B9VrLmoSutOPM2Pu?=
- =?us-ascii?Q?UCjJBvUqvUcqIYpeieRbSiyjowIC+L2276VJGex3+HjvnGGMuDoe26pO4gRG?=
- =?us-ascii?Q?LsCHUWNgRtTAtAyi6fKySJgsheVmv9Q/2/hZQncz6kbTRFMO/+pceOCAVhQE?=
- =?us-ascii?Q?K16joH9W+VE3Ua2kzozblDYzuHTRwyLE0KwJ9jkcQXivfiy7SPAkSwYCjtSU?=
- =?us-ascii?Q?S5Lqa5i/niDEPZD1ebNWQuqI4Fk9wG/n/DUG5udNPrTM/TqVfCW0SGqrftjp?=
- =?us-ascii?Q?vdjZLwqWyv8fZqQiQPkU8QKvZlA6tsenDY0NDzjSaXVG3MNFbKsu/brkDnpO?=
- =?us-ascii?Q?wNSdGQ6g815QT3t0zW3Ce1tfwJNXAunronmGMoFEQNVwxDpF9KSARE2gLna2?=
- =?us-ascii?Q?oEIdJP8FcE8MaXo5yF/2jnc1WFg5f2e1LjzMwsZHqo2mzkLYCu28bDCQXxyj?=
- =?us-ascii?Q?eC9404kxTgX5VAre/6QZ0fAGrMt+YN4VD3fr7MRGtuTYkghtbuYohn2g42Yc?=
- =?us-ascii?Q?Rrst+BPxRcI6CRcQa82RFOk1AMTYcQSaVWMmMiex4FMSgtb5SL50A9g0Anx0?=
- =?us-ascii?Q?XUtEOsvPwAFVQVoDABV5l1zeM3IPr8MPhjRVX83G69tAVMjRMfcleR93PPPX?=
- =?us-ascii?Q?CUZrYe77NxTVNIga4iEyspjYpJ+uBaUZRyk+UpxPSIOcjDT2ySawcHybpTGy?=
- =?us-ascii?Q?1AfG6xTyhs3RdMRdSo88MnBMu6Mgz8plYKZwZVI+fm4TdCCk3dSteo75AJ8f?=
- =?us-ascii?Q?9h0fcaULahiGBiviE3fFF3b6wu+NpqBgNrIEPnXw8km7AtvhBf+Rwq8petZJ?=
- =?us-ascii?Q?ZtOgXvCeDWoK5v2h/kGAo7jjAZkKipfiRH150Znq8Mi289gCLvOWUzm9bYWW?=
- =?us-ascii?Q?bVRMTdgXnIPFGUWfOW4XdOWH3frMiB1g762CbruoPqopvwX25eSL9yyAiF59?=
- =?us-ascii?Q?vcJjGeV06/Kvv4Cp3IV/KUWQM54hjQ8zI8OgsmY58AFMb3eU5mtNUiIJfFbz?=
- =?us-ascii?Q?fQQ0IEaYI4agMBQ/TjgZq3CMKVH9YA024XgbOGT1rJVqF1WTJfpjUGBQfy4s?=
- =?us-ascii?Q?JweMK5Updmv9orP4uDNU5wl+Y2X2/UXhZudVxoFK7jwsOuNI2DWnHxMb5rux?=
- =?us-ascii?Q?rMBaH6k2EBLHPa28xjZwhQNk+hAK0LosjfOF/w3XdSlkdWPbhnk9T0zokn61?=
- =?us-ascii?Q?W5wcwlcAjBs1gjwhJrRhl3eDsRcKrSshwA3079o8DSc9KhTWdalUVA8sC0Jq?=
- =?us-ascii?Q?SA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Os6hWf9h3734TiK4kaQuQSEbtWms0hkfTU6hcBpth4XCpsxTJ9ws3i7efrZcdCXfUiUS13s4W7U3iwLIymF2TXynLurYecQY36/mV6R9rRHZODy5QFBZvmB650j+I3PZC1/WFMC12D/3OmmQk6dB4YbOllVDtBtTlH1rjhQvOlX85b9nhdp93WOGoO5r2IAhV7CO4FVuBlbS+fE55Afxg9Fg4DDwO0LbU4sWwZISGf9ENRmEVUhRF8QjP6LEkuP9WdgCaxsBP3eFyS4IzGjh7m9i/fRtpAJ8eott+9oWOVrxoVh7UM3Vd+zSEMswD8RbokPO2m1esnTL3gPOeugdGo7QCriDbimigf66CrR+RSNjJZS5t/Is/5hz9bZHZFenshgU4mSko1P5kBi+B6EUNPtD2xGuTdAypPM8O/HWO3stYSJmI2BKIsSKke7F6giVrfIEhf1uMl2nbxdsj8tk1m/2v5Er578P/fynm7UnWyFTKaRqtz10ErstR1fwDyWm4QyKbPhHgy6GyqHd7jhe6wa78faWxjv+3LL6zYjepdhOkHk0GnF0d+sboOXrcxgJQObrvOTHxaQMEiX0palICD8QVkbLASNkzQ6l2+h27n4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64505f58-b98a-4574-9d48-08ddf547c730
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 17:37:59.0511
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SKjt8Ea3+9X3Wxse2HJatFY3rgPmvHIU1FAttbmWo27h8+DL35IsDoemvwMm10sq3SGvIU6rQVcFdOyg8V9ye1FoihDRSRI0o7px87cxVeQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB7377
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509160163
-X-Authority-Analysis: v=2.4 cv=S7vZwJsP c=1 sm=1 tr=0 ts=68c9a07c b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=RV78GzlOPR0tUAWTfhgA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12084
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyOSBTYWx0ZWRfXzsstSIRoWpbK
- WN1s2OCzqh6gA23+diKBjpwh7e4P6VUGh7TUjSKddFO6w5r7S2rjjKl4gdptAbmwjByaIptDnJV
- FE/s1Z1ZVtBThNomgABtku3L2mtILexSCWvLTBObjZGjOl2MubHiftZz/NUVVDhYKpPJb63ASi7
- l8n3acz2V/E7kgyxdZWeQ3lwAxqQji2yQh4+qIR8Wgkq0sKrW4Ehh4fLteEoni+r9yhAiP3C24A
- 3C3UhTEYhELTE3eVbtmwcWF6BlirbSToS+h41I36WWKQzYBEIRfQyiO/bQFTR7g77IWqJpflSU5
- mjKUxtpcQjB3EyvXWGVeyiZNO0ECyKO7QvGyjK8KgCfLTsoUs5yyOICNms4Mx2dtyBD0nstvlTO
- PQilGy09PK1xTHRAQM0tD8vlssokyA==
-X-Proofpoint-ORIG-GUID: H1b_nVzTbGyMunA6BzqGx0lh-p-J-3hp
-X-Proofpoint-GUID: H1b_nVzTbGyMunA6BzqGx0lh-p-J-3hp
+References: <20250916135900.2170346-1-mjguzik@gmail.com> <20250916135900.2170346-11-mjguzik@gmail.com>
+ <81eada571cb7892a5df26e50884ed0cbeed6220e.camel@ibm.com>
+In-Reply-To: <81eada571cb7892a5df26e50884ed0cbeed6220e.camel@ibm.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 16 Sep 2025 19:38:30 +0200
+X-Gm-Features: AS18NWAmVDlsNyi6dtnYK_j30gOV-5wVdqXuIOB6nJEDQ-VrcixkXRBh_VFTN3g
+Message-ID: <CAGudoHGxxf_vXB-J8SWwaq6MFdK-+H=-q1+tx4pDNT8mTgHYug@mail.gmail.com>
+Subject: Re: [PATCH v4 10/12] ceph: use the new ->i_state accessors
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>, 
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
+	"linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "kernel-team@fb.com" <kernel-team@fb.com>, 
+	"josef@toxicpanda.com" <josef@toxicpanda.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 02:07:23PM -0300, Jason Gunthorpe wrote:
-> On Tue, Sep 16, 2025 at 03:11:52PM +0100, Lorenzo Stoakes wrote:
-> > We need the ability to split PFN remap between updating the VMA and
-> > performing the actual remap, in order to do away with the legacy
-> > f_op->mmap hook.
-> >
-> > To do so, update the PFN remap code to provide shared logic, and also make
-> > remap_pfn_range_notrack() static, as its one user, io_mapping_map_user()
-> > was removed in commit 9a4f90e24661 ("mm: remove mm/io-mapping.c").
-> >
-> > Then, introduce remap_pfn_range_prepare(), which accepts VMA descriptor
-> > and PFN parameters, and remap_pfn_range_complete() which accepts the same
-> > parameters as remap_pfn_rangte().
-> >
-> > remap_pfn_range_prepare() will set the cow vma->vm_pgoff if necessary, so
-> > it must be supplied with a correct PFN to do so.  If the caller must hold
-> > locks to be able to do this, those locks should be held across the
-> > operation, and mmap_abort() should be provided to revoke the lock should
-> > an error arise.
+On Tue, Sep 16, 2025 at 7:36=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
 >
-> It looks like the patches have changed to remove mmap_abort so this
-> paragraph can probably be dropped.
-
-Ugh, thought I'd caught all of these, oops. Will fixup...
-
->
-> >  static int remap_pfn_range_internal(struct vm_area_struct *vma, unsigned long addr,
-> > -		unsigned long pfn, unsigned long size, pgprot_t prot)
-> > +		unsigned long pfn, unsigned long size, pgprot_t prot, bool set_vma)
-> >  {
-> >  	pgd_t *pgd;
-> >  	unsigned long next;
-> > @@ -2912,32 +2931,17 @@ static int remap_pfn_range_internal(struct vm_area_struct *vma, unsigned long ad
-> >  	if (WARN_ON_ONCE(!PAGE_ALIGNED(addr)))
-> >  		return -EINVAL;
+> On Tue, 2025-09-16 at 15:58 +0200, Mateusz Guzik wrote:
+> > Change generated with coccinelle and fixed up by hand as appropriate.
 > >
-> > -	/*
-> > -	 * Physically remapped pages are special. Tell the
-> > -	 * rest of the world about it:
-> > -	 *   VM_IO tells people not to look at these pages
-> > -	 *	(accesses can have side effects).
-> > -	 *   VM_PFNMAP tells the core MM that the base pages are just
-> > -	 *	raw PFN mappings, and do not have a "struct page" associated
-> > -	 *	with them.
-> > -	 *   VM_DONTEXPAND
-> > -	 *      Disable vma merging and expanding with mremap().
-> > -	 *   VM_DONTDUMP
-> > -	 *      Omit vma from core dump, even when VM_IO turned off.
-> > -	 *
-> > -	 * There's a horrible special case to handle copy-on-write
-> > -	 * behaviour that some programs depend on. We mark the "original"
-> > -	 * un-COW'ed pages by matching them up with "vma->vm_pgoff".
-> > -	 * See vm_normal_page() for details.
-> > -	 */
-> > -	if (is_cow_mapping(vma->vm_flags)) {
-> > -		if (addr != vma->vm_start || end != vma->vm_end)
-> > -			return -EINVAL;
-> > -		vma->vm_pgoff = pfn;
-> > +	if (set_vma) {
-> > +		err = get_remap_pgoff(vma->vm_flags, addr, end,
-> > +				      vma->vm_start, vma->vm_end,
-> > +				      pfn, &vma->vm_pgoff);
-> > +		if (err)
-> > +			return err;
-> > +		vm_flags_set(vma, VM_REMAP_FLAGS);
-> > +	} else {
-> > +		VM_WARN_ON_ONCE((vma->vm_flags & VM_REMAP_FLAGS) != VM_REMAP_FLAGS);
-> >  	}
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >  fs/ceph/cache.c  |  2 +-
+> >  fs/ceph/crypto.c |  4 ++--
+> >  fs/ceph/file.c   |  4 ++--
+> >  fs/ceph/inode.c  | 28 ++++++++++++++--------------
+> >  4 files changed, 19 insertions(+), 19 deletions(-)
+> >
 >
-> It looks like you can avoid the changes to add set_vma by making
-> remap_pfn_range_internal() only do the complete portion and giving
-> the legacy calls a helper to do prepare in line:
-
-OK nice, yeah I would always prefer to avoid a boolean parameter if possible.
-
-Will do something similar to below.
-
+> Looks good. I simply started to guess. Do we need a method something like=
+ this?
 >
-> int remap_pfn_range_prepare_vma(..)
+> bool inode_is_new(struct inode *inode)
 > {
-> 	int err;
->
-> 	err = get_remap_pgoff(vma->vm_flags, addr, end,
-> 			      vma->vm_start, vma->vm_end,
-> 			      pfn, &vma->vm_pgoff);
-> 	if (err)
-> 		return err;
-> 	vm_flags_set(vma, VM_REMAP_FLAGS);
-> 	return 0;
+>     return inode_state_read_once(inode) & I_NEW;
 > }
 >
-> int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
-> 	    	    unsigned long pfn, unsigned long size, pgprot_t prot)
-> {
-> 	int err;
->
-> 	err = remap_pfn_range_prepare_vma(vma, addr, pfn, size)
-> 	if (err)
-> 	     return err;
->
-> 	if (IS_ENABLED(__HAVE_PFNMAP_TRACKING))
-> 		return remap_pfn_range_track(vma, addr, pfn, size, prot);
-> 	return remap_pfn_range_notrack(vma, addr, pfn, size, prot);
-> }
->
-> (fix pgtable_Types.h to #define to 1 so IS_ENABLED works)
->
-> But the logic here is all fine
->
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Thanks!
+Helpers of the sort might show up later after the flag situation gets
+sorted out, for now it's baby steps.
 
+> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> Jason
-
-Cheers, Lorenzo
+> Thanks,
+> Slava.
+>
+> > diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+> > index 930fbd54d2c8..f678bab189d8 100644
+> > --- a/fs/ceph/cache.c
+> > +++ b/fs/ceph/cache.c
+> > @@ -26,7 +26,7 @@ void ceph_fscache_register_inode_cookie(struct inode =
+*inode)
+> >               return;
+> >
+> >       /* Only new inodes! */
+> > -     if (!(inode->i_state & I_NEW))
+> > +     if (!(inode_state_read_once(inode) & I_NEW))
+> >               return;
+> >
+> >       WARN_ON_ONCE(ci->netfs.cache);
+> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> > index 7026e794813c..928746b92512 100644
+> > --- a/fs/ceph/crypto.c
+> > +++ b/fs/ceph/crypto.c
+> > @@ -329,7 +329,7 @@ int ceph_encode_encrypted_dname(struct inode *paren=
+t, char *buf, int elen)
+> >  out:
+> >       kfree(cryptbuf);
+> >       if (dir !=3D parent) {
+> > -             if ((dir->i_state & I_NEW))
+> > +             if ((inode_state_read_once(dir) & I_NEW))
+> >                       discard_new_inode(dir);
+> >               else
+> >                       iput(dir);
+> > @@ -438,7 +438,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fnam=
+e, struct fscrypt_str *tname,
+> >       fscrypt_fname_free_buffer(&_tname);
+> >  out_inode:
+> >       if (dir !=3D fname->dir) {
+> > -             if ((dir->i_state & I_NEW))
+> > +             if ((inode_state_read_once(dir) & I_NEW))
+> >                       discard_new_inode(dir);
+> >               else
+> >                       iput(dir);
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index c02f100f8552..59f2be41c9aa 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -744,7 +744,7 @@ static int ceph_finish_async_create(struct inode *d=
+ir, struct inode *inode,
+> >                     vino.ino, ceph_ino(dir), dentry->d_name.name);
+> >               ceph_dir_clear_ordered(dir);
+> >               ceph_init_inode_acls(inode, as_ctx);
+> > -             if (inode->i_state & I_NEW) {
+> > +             if (inode_state_read_once(inode) & I_NEW) {
+> >                       /*
+> >                        * If it's not I_NEW, then someone created this b=
+efore
+> >                        * we got here. Assume the server is aware of it =
+at
+> > @@ -907,7 +907,7 @@ int ceph_atomic_open(struct inode *dir, struct dent=
+ry *dentry,
+> >                               new_inode =3D NULL;
+> >                               goto out_req;
+> >                       }
+> > -                     WARN_ON_ONCE(!(new_inode->i_state & I_NEW));
+> > +                     WARN_ON_ONCE(!(inode_state_read_once(new_inode) &=
+ I_NEW));
+> >
+> >                       spin_lock(&dentry->d_lock);
+> >                       di->flags |=3D CEPH_DENTRY_ASYNC_CREATE;
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 480cb3a1d639..6786ec955a87 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -86,7 +86,7 @@ struct inode *ceph_new_inode(struct inode *dir, struc=
+t dentry *dentry,
+> >                       goto out_err;
+> >       }
+> >
+> > -     inode->i_state =3D 0;
+> > +     inode_state_set_raw(inode, 0);
+> >       inode->i_mode =3D *mode;
+> >
+> >       err =3D ceph_security_init_secctx(dentry, *mode, as_ctx);
+> > @@ -155,7 +155,7 @@ struct inode *ceph_get_inode(struct super_block *sb=
+, struct ceph_vino vino,
+> >
+> >       doutc(cl, "on %llx=3D%llx.%llx got %p new %d\n",
+> >             ceph_present_inode(inode), ceph_vinop(inode), inode,
+> > -           !!(inode->i_state & I_NEW));
+> > +           !!(inode_state_read_once(inode) & I_NEW));
+> >       return inode;
+> >  }
+> >
+> > @@ -182,7 +182,7 @@ struct inode *ceph_get_snapdir(struct inode *parent=
+)
+> >               goto err;
+> >       }
+> >
+> > -     if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
+> > +     if (!(inode_state_read_once(inode) & I_NEW) && !S_ISDIR(inode->i_=
+mode)) {
+> >               pr_warn_once_client(cl, "bad snapdir inode type (mode=3D0=
+%o)\n",
+> >                                   inode->i_mode);
+> >               goto err;
+> > @@ -215,7 +215,7 @@ struct inode *ceph_get_snapdir(struct inode *parent=
+)
+> >               }
+> >       }
+> >  #endif
+> > -     if (inode->i_state & I_NEW) {
+> > +     if (inode_state_read_once(inode) & I_NEW) {
+> >               inode->i_op =3D &ceph_snapdir_iops;
+> >               inode->i_fop =3D &ceph_snapdir_fops;
+> >               ci->i_snap_caps =3D CEPH_CAP_PIN; /* so we can open */
+> > @@ -224,7 +224,7 @@ struct inode *ceph_get_snapdir(struct inode *parent=
+)
+> >
+> >       return inode;
+> >  err:
+> > -     if ((inode->i_state & I_NEW))
+> > +     if ((inode_state_read_once(inode) & I_NEW))
+> >               discard_new_inode(inode);
+> >       else
+> >               iput(inode);
+> > @@ -698,7 +698,7 @@ void ceph_evict_inode(struct inode *inode)
+> >
+> >       netfs_wait_for_outstanding_io(inode);
+> >       truncate_inode_pages_final(&inode->i_data);
+> > -     if (inode->i_state & I_PINNING_NETFS_WB)
+> > +     if (inode_state_read_once(inode) & I_PINNING_NETFS_WB)
+> >               ceph_fscache_unuse_cookie(inode, true);
+> >       clear_inode(inode);
+> >
+> > @@ -967,7 +967,7 @@ int ceph_fill_inode(struct inode *inode, struct pag=
+e *locked_page,
+> >             le64_to_cpu(info->version), ci->i_version);
+> >
+> >       /* Once I_NEW is cleared, we can't change type or dev numbers */
+> > -     if (inode->i_state & I_NEW) {
+> > +     if (inode_state_read_once(inode) & I_NEW) {
+> >               inode->i_mode =3D mode;
+> >       } else {
+> >               if (inode_wrong_type(inode, mode)) {
+> > @@ -1044,7 +1044,7 @@ int ceph_fill_inode(struct inode *inode, struct p=
+age *locked_page,
+> >
+> >  #ifdef CONFIG_FS_ENCRYPTION
+> >       if (iinfo->fscrypt_auth_len &&
+> > -         ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len =3D=3D 0))=
+) {
+> > +         ((inode_state_read_once(inode) & I_NEW) || (ci->fscrypt_auth_=
+len =3D=3D 0))) {
+> >               kfree(ci->fscrypt_auth);
+> >               ci->fscrypt_auth_len =3D iinfo->fscrypt_auth_len;
+> >               ci->fscrypt_auth =3D iinfo->fscrypt_auth;
+> > @@ -1638,13 +1638,13 @@ int ceph_fill_trace(struct super_block *sb, str=
+uct ceph_mds_request *req)
+> >                       pr_err_client(cl, "badness %p %llx.%llx\n", in,
+> >                                     ceph_vinop(in));
+> >                       req->r_target_inode =3D NULL;
+> > -                     if (in->i_state & I_NEW)
+> > +                     if (inode_state_read_once(in) & I_NEW)
+> >                               discard_new_inode(in);
+> >                       else
+> >                               iput(in);
+> >                       goto done;
+> >               }
+> > -             if (in->i_state & I_NEW)
+> > +             if (inode_state_read_once(in) & I_NEW)
+> >                       unlock_new_inode(in);
+> >       }
+> >
+> > @@ -1830,11 +1830,11 @@ static int readdir_prepopulate_inodes_only(stru=
+ct ceph_mds_request *req,
+> >                       pr_err_client(cl, "inode badness on %p got %d\n",=
+ in,
+> >                                     rc);
+> >                       err =3D rc;
+> > -                     if (in->i_state & I_NEW) {
+> > +                     if (inode_state_read_once(in) & I_NEW) {
+> >                               ihold(in);
+> >                               discard_new_inode(in);
+> >                       }
+> > -             } else if (in->i_state & I_NEW) {
+> > +             } else if (inode_state_read_once(in) & I_NEW) {
+> >                       unlock_new_inode(in);
+> >               }
+> >
+> > @@ -2046,7 +2046,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_requ=
+est *req,
+> >                       pr_err_client(cl, "badness on %p %llx.%llx\n", in=
+,
+> >                                     ceph_vinop(in));
+> >                       if (d_really_is_negative(dn)) {
+> > -                             if (in->i_state & I_NEW) {
+> > +                             if (inode_state_read_once(in) & I_NEW) {
+> >                                       ihold(in);
+> >                                       discard_new_inode(in);
+> >                               }
+> > @@ -2056,7 +2056,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_requ=
+est *req,
+> >                       err =3D ret;
+> >                       goto next_item;
+> >               }
+> > -             if (in->i_state & I_NEW)
+> > +             if (inode_state_read_once(in) & I_NEW)
+> >                       unlock_new_inode(in);
+> >
+> >               if (d_really_is_negative(dn)) {
 
