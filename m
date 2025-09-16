@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-61834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD1DB7DCB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C442B7EEC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8401C0698F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 22:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6D81BC8071
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 22:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8311C32E2C5;
-	Tue, 16 Sep 2025 22:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61112E3B11;
+	Tue, 16 Sep 2025 22:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dO05iMKn"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K01nSe04"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012006.outbound.protection.outlook.com [40.107.209.6])
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013055.outbound.protection.outlook.com [40.93.196.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FEE32B482;
-	Tue, 16 Sep 2025 22:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908CB2C3244;
+	Tue, 16 Sep 2025 22:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758061741; cv=fail; b=A6mEolzVkIZkCrcBruD1zMdaGF6RfgXa6xCAG/V06TI7tj1LhvjMI1WACU6xjGVnVTwe/T03/Ese3pHrMHeK5Q0EbNmr7/cjKOYvFJtvul50DWewDzzodumAlyC46MPcmZ7KM4MHgZheP+1YT4oiNVPBBADKcQturITiktnTZec=
+	t=1758063146; cv=fail; b=XVTfG/RiivfE6s3U3y+omdsV0Me3te6BlUSyNUrw8IKjU92rclXfzl+SbVF53dMr71ffvmdoqc0GcUi+xHUQdiMYtdnrOKhlO9L/QGQA1uZMEgRp8gu6YHvZN3BSUKofxg1betD9DkpKzlfyVODnOvp5PcHkS6B+HnIh9rqw950=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758061741; c=relaxed/simple;
-	bh=qTCh42ngBeCZzyvlTNlHxY0dKX0rnYI3vO2J2JardWU=;
+	s=arc-20240116; t=1758063146; c=relaxed/simple;
+	bh=kvC/JWjuNwx42U2kWzwyu7k1O6Wdtc6HTeqAaz0Wa4M=;
 	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/1sRG4Bw/w9tCfllpHhbJvkl4VEjZFyECviAjgxgBzmA5pF/KWcinkUtT+xB5qZHs+nEKy/WfDCplDhfgRH93HYmnGRbPLeDchR+hp15Anm7c7u24C4EKr0PXFfVRRen2fb6kvIq1np+T4PxHBd92RyS9JPXhww7wfwUYYPXh0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dO05iMKn; arc=fail smtp.client-ip=40.107.209.6
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hi2fdDQ0KayAr9R9dr0URKKXGTDHdL5o9JSM8wM89/zPAcaReWm6LlD0usXeYJZlydEscPnrzFPy9LouSKSInBqgV8k70wDWe3iIA4zGOYeyOeP2bnaXCwvHVN6rGJWceORX8D/erdX9eGBW5x58wWdoF/2LpVjOUR/3TAWGddg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K01nSe04; arc=fail smtp.client-ip=40.93.196.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DhJZWOAkvsKT5wpsuoFI7lEsbm4K7WKZzCX/8v2foQWY0kjMa++np8y3PVIWFdygrY+l8dISDKFJHs8PyF0Tb0FDL3AZKYniXnKy5WRewM+rfPdb7ASYeFpnp6rG35qlQF/c3LggQaI6iqp9p79a+sNLc56J1hChLaaIydzEok3RsdKRlHf2yXQj2aIwMTRwiVSmD6oziZlBrAkPbtt6gp6f3FKs9QdQJ7Lmx1lPiGXakqor7d98e90X3m4ab6ho+vGGAk1pHHz3x0qJ1QtN/N+tggjo9iE3xxszlnAPjkIL2AIQts36MeE1NiutegcVgLnpqPbwtGgEORVb6i5DKA==
+ b=T5nHjUSwPwCKiEi9LWnkwWxF1Ee6xqK2twxCOYiu/lbL9EyENGApS9Q/cJXKCbYrgC3qaP0E9uuDkY8Y2fWDlafb1Y6giICSKZU66BbwqHUBc01/s3n5vL1labNchBRGX3FYySW0Lb6jcD/RnrKs+NTaDt6nQFNzVp2SSQX4plXAbdUavsjK56GDfsopPR7AlQ+U3FkheVyhvvDq2jAikB6olwWR+aRT/O/MA0Cs9/NkEc0WBmcEGlR4DxUtZJ1dZCS6uOlVbMz2SdICGFUFcYVwmi7ThKQ2+yDjmCTFagJO0h4aWW2WqsLrGww6+aiJDeNqImUu1mE2oHNGPH90UQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vRvJqB1cYjNMQq+zrXuIgQhoZgiwGntkhPflEykCBbE=;
- b=tYB8r9hmyNejQMCv0vy/gqzP3uXAN8EvqDvrOS2RVDAbUy0TJfP4k70YTMCBmjyVFZs1DMtZ6txA2q22lwE2y0pMnGTxsDoS7nmo53ZRX8E8x8izOJ975ilXqIt5Uet6SeE55a03AutQIGB1EEuYkpZqMYML6FmWrFjAz7keRSeoNYjYEZnyHjILsTWfJyEEUBpUPqyzZZE/to1pIp2ek8NcgVd+MUxanftdaOPNCw2xCVu5VG72xGh2fsDbyDix26uEbgE67/tnj///0CokM9PFo4YuFje71/cz7werkppNnLS3eAuSAnKxhlQJxlj6sA7WNh3TkYYan9/d6K939g==
+ bh=rMtO28GYSz5vMZAhs62tYpH0NATG+6M/yKPKZk3d3+0=;
+ b=DvrG8nXVwvQ3uHsYtIt4nz1ySec4a7sdTZywaEyftvCEDVU+bImL1TVfZ/FOtj+dcBuJA4eVQK1ph6TocdA45abalbU6ccgmMAgbPEbZNkvAohIQwqmtGDlbC1YgS8cTywx6U4bvanzk7D8Bg53WudyF1qqIgjgRu4CDpSK5GykWvhZ4iPP+kPPZ/vAZ2nW2pwQezxNM5joIS30Ibjpv+ZmySktEjAyn0f8COX3SIwYbZIQPODkrBnoHmiwSvw5ujgdejpNiHeXJs2bUO1TLKfJrYT5WrrK1VZQGkcygwKXf/q0rBLM7Lzz1qyBlveAwUr+qfk1oijS6WWGcjXJm2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vRvJqB1cYjNMQq+zrXuIgQhoZgiwGntkhPflEykCBbE=;
- b=dO05iMKn0mE+BBJrxmKKSKvF9qrlIdnbfuaF9tJkIpjI1p7SOxiGMbbFTRGLkwLzt4q7ZcdcoT8PVaqdQ5zy5MVX57IHLGubzA2ATN8DEj+8vsn6uTjhSZGOzRm7vHFJm8WKwEmP87IWiz6fvBvDVGrarNy7AB11WF/2BxW9LMk=
-Received: from DS7PR05CA0014.namprd05.prod.outlook.com (2603:10b6:5:3b9::19)
- by PH7PR12MB6417.namprd12.prod.outlook.com (2603:10b6:510:1ff::14) with
+ bh=rMtO28GYSz5vMZAhs62tYpH0NATG+6M/yKPKZk3d3+0=;
+ b=K01nSe040vcCAvVd4dASJQMGbps175U2UPmxBGfd1Ugqrd14TOh01BFaueCNEDmygq0MPnV3FCnHzUOytoFzrS0GLl0ILJa2q0TFSffgWkA8UcPcn8uV6vvEVqVuWrI3Z/5tu5yxeKIKhLoxHrJaEiy5xbDDPWbDjA5cKSFg5GE=
+Received: from SJ0PR03CA0169.namprd03.prod.outlook.com (2603:10b6:a03:338::24)
+ by CH3PR12MB9099.namprd12.prod.outlook.com (2603:10b6:610:1a5::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Tue, 16 Sep
- 2025 22:28:51 +0000
-Received: from DS2PEPF00003443.namprd04.prod.outlook.com
- (2603:10b6:5:3b9:cafe::9a) by DS7PR05CA0014.outlook.office365.com
- (2603:10b6:5:3b9::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12 via Frontend Transport; Tue,
- 16 Sep 2025 22:28:50 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
+ 2025 22:52:18 +0000
+Received: from SJ5PEPF000001E9.namprd05.prod.outlook.com
+ (2603:10b6:a03:338:cafe::e6) by SJ0PR03CA0169.outlook.office365.com
+ (2603:10b6:a03:338::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Tue,
+ 16 Sep 2025 22:52:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -63,14 +63,14 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- DS2PEPF00003443.mail.protection.outlook.com (10.167.17.70) with Microsoft
+ SJ5PEPF000001E9.mail.protection.outlook.com (10.167.242.197) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 22:28:50 +0000
+ 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 22:52:18 +0000
 Received: from localhost (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 16 Sep
- 2025 15:28:50 -0700
-Date: Tue, 16 Sep 2025 17:28:01 -0500
+ 2025 15:52:09 -0700
+Date: Tue, 16 Sep 2025 17:41:33 -0500
 From: Michael Roth <michael.roth@amd.com>
 To: Ackerley Tng <ackerleytng@google.com>
 CC: <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
@@ -108,11 +108,11 @@ CC: <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
 	<vkuznets@redhat.com>, <wei.w.wang@intel.com>, <will@kernel.org>,
 	<willy@infradead.org>, <xiaoyao.li@intel.com>, <yan.y.zhao@intel.com>,
 	<yilun.xu@intel.com>, <yuzenghui@huawei.com>, <zhiquan1.li@intel.com>
-Subject: Re: [RFC PATCH v2 35/51] mm: guestmem_hugetlb: Add support for
- splitting and merging pages
-Message-ID: <20250916222801.dlew6mq7kog2q5ni@amd.com>
-References: <cover.1747264138.git.ackerleytng@google.com>
- <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
+Subject: Re: [RFC PATCH v2 29/51] mm: guestmem_hugetlb: Wrap HugeTLB as an
+ allocator for guest_memfd
+Message-ID: <20250916224133.ysuqlboywxyybsbl@amd.com>
+References: <diqzzffcfy3k.fsf@ackerleytng-ctop.c.googlers.com>
+ <diqzecwofg7w.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -121,298 +121,188 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+In-Reply-To: <diqzecwofg7w.fsf@ackerleytng-ctop.c.googlers.com>
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003443:EE_|PH7PR12MB6417:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5420751-3700-49e2-3634-08ddf570694b
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E9:EE_|CH3PR12MB9099:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f69efc8-502b-4ad5-f7eb-08ddf573b076
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026|7053199007|13003099007;
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qlOpVWPqD3Xy81rnCePzadVbU5FaOEsYEEYnDWxQAM8U1TBT/8cqVHiftwo3?=
- =?us-ascii?Q?AikbNWAmzRZVcgIeBJ+KJ4xgf3ITSHdFd4NCbD206aJPoDQAq6UfpG/ouo6z?=
- =?us-ascii?Q?5sl925dCBBJ/GpZvaDUbdjeACOXhdZORa5+gDktl+6NeNODyrjbDQ+NxW1mc?=
- =?us-ascii?Q?LUhw+3bIz0nOypIIb/RmCJ51hEN7QQmpgXcG+2SQa5+NVpR4fgFAVLhqfxwd?=
- =?us-ascii?Q?PVZZP7Ny+P4IBBO2GbctTZXJVp8/gtae7zOKs0+6rBFkEpO0hAkVC6QjBOTN?=
- =?us-ascii?Q?ZDft8Hd/mwRFxQrFccy03T5KhCzcxNER+eVf0QUbYzmySINK4S+P3qvkqxaA?=
- =?us-ascii?Q?tR5hpW/BBRBq4iExnSTGE1rrB6/5jpzyV8PCLaeDjh0yAaDpke8w9dYNY3lx?=
- =?us-ascii?Q?RU+nrvi8JPyUM8MO1w3T5iUDbqPMmQvHvlLYAHZCJduZdQ9IDbAEsZzxRuAH?=
- =?us-ascii?Q?wG5BZJl4caaaHuS1EHmNvHMxfujeDGF1mfBNlEodcO9j3emlX/afXkw7/tli?=
- =?us-ascii?Q?amgw6vyX2VScPC2II5fMh91gDb8O9N7O0M5ZwndOs9EMju8OXC9e7GpoIfrX?=
- =?us-ascii?Q?4xOyjyZ5SUe69R+f4xX3hV+tV7T1x8GlrvmsxP2Uj3YalMofANEwuAuyFY3A?=
- =?us-ascii?Q?LX9/o18J9icOFwgH/sCEtuN7fKvDRs/fTy7ciPG8BPn306hi/WcAuyD2gnAB?=
- =?us-ascii?Q?H/HihwX+17Ezp5l3lJPr/b4cp1E42Aj5w4aJdT/tdftWTnnzdOZ2ywNA0bS0?=
- =?us-ascii?Q?z2Zmk9IxjWXLLx5172Xgph4GOybj7mHCCpd+phA8uo+EgkDyjhLaqmDVjeSb?=
- =?us-ascii?Q?MqbSgnGLWEme6zkPnOt6KToNHf+OGhyhaafB1uX/kN3W7tvc7JKHp3iSX6ml?=
- =?us-ascii?Q?gqGRrhDrMSfQfanAltT/LLsVAe35/FsKYVt6kZtD+2xaw5EAe0Y94VmWZvzX?=
- =?us-ascii?Q?4oWoVhR/gr1eUX9FqY5HwmgCVXvMxJ+oDDArUqFGJ227j96pgutJbDM5q+t4?=
- =?us-ascii?Q?kphCfbAX40O8DwOtWnPd85yo7gErf7hT/RjDdOpPpHHBk9xT1KVJHx0DDGI9?=
- =?us-ascii?Q?+XrCirBEtYI9oVfrG08qQjnLYtPtxzPhkSQLMJJawgAmdNOa7e2hr9khk71i?=
- =?us-ascii?Q?DJJKMyFH8Arcjehw8e1YHFuJeWugxpCwCitUStt8qpb+5MxF6gjwvbfgbknV?=
- =?us-ascii?Q?ek0q4jiOmWaNrkXJzxj96UindF+WoO+GRhltOTL7ZMMi+e27wglOut3bBRQa?=
- =?us-ascii?Q?jtU091ZqtBbRSk3YJdENHwqXzFhUeFDofBU798QxIlIPP9EFGiqC2QBuvsXP?=
- =?us-ascii?Q?V8yyJp0TzYRaisXlA+NthqsUxJIgrjRzJmQzSzZYDoZbtAgGni5UXP7ggtFB?=
- =?us-ascii?Q?YNsxP8zVvs/PcGo4WUaUhn5E2z0mol9QC57AKoEBAJKQB9Pk2EEMPfArTYrJ?=
- =?us-ascii?Q?vdntjkG08aLW7NF6uXm/+1TBTKX7iBG6VjD7POhwZyJo9nuDQhXffSweFV8j?=
- =?us-ascii?Q?Q60RFK10k6V3FKjaa5Dwa4UkJEnAU/C5asqW92SCdX0Ez47Z2bhAYy8snw?=
- =?us-ascii?Q?=3D=3D?=
+	=?us-ascii?Q?ec2oaiBz5Ek+1wiO411ZHT0yLQ7l39bRz1RJulXqMWk/M++okY5tHtgaQwKM?=
+ =?us-ascii?Q?0WWf/6ybfgd+gNy6PRQ1yfgBs2isXY5oyHCZxAi08wREVd+D5R+TdlkeACTn?=
+ =?us-ascii?Q?q3l7bNAO+GmEGov6QDdnEkUYMFZHvS5X2lacdSb8Bg7VRj2Ia9xpNgzWx4lX?=
+ =?us-ascii?Q?X/TAYP92I6eh/6FfgHn56CFawFxSf9IjEiVZkGv5Fw69gY9JwByJ4uLrzobF?=
+ =?us-ascii?Q?Kw3dR6oqm5/1VqEosnk/hi3axKKXgqbc8JIqevVvZkJamEZzEywUIRm6/bvs?=
+ =?us-ascii?Q?nT41If+qSaI6I3ty8E/d1eSGbzfYOTYAXPxFWzv97Qt2t+wBVBC2gz3Irazx?=
+ =?us-ascii?Q?+V3SSL03kGk8/QZW9yEsSAmg8E7zMnT95Gp9lwsNpWwHL/h7mZ2jW/LkP0y/?=
+ =?us-ascii?Q?pQ3w+YpdTuwcEbcFBe4UxAeQdWzmUhSIww1ixaYZfWAmcKwQN0bQ/R84PIC8?=
+ =?us-ascii?Q?Hvd7qgOQuxRq6XK1nQhgpfIDwp+1c7xqtobZUjXRQAxMJv9otKqs0akgKtCT?=
+ =?us-ascii?Q?30M9/slahoIxqvFviU2BUJ0QXo/teD2dJAJ6ZDiT7AXSSgc90klSoTpHHQ/i?=
+ =?us-ascii?Q?NqXloS9xtC6I2mXYNN6AMCK3ycucGmB7UdvxXNzZpZ+C611d5Db5kr1AnS1P?=
+ =?us-ascii?Q?FBQtaJbmxD8anD9VIvZ/vBizvjTWDBT+wwkXqVVWDjCO3ZA3VeAKPgmIhRD8?=
+ =?us-ascii?Q?W2oBpDHpO7EMD5OsdKFjXb99HVuNnYQKoArg+Nirk/RYAXnzqMtIBjvvD3FO?=
+ =?us-ascii?Q?d7a852xZt897WhhFnfcUq7mk/VnR+1xy/B0sihjm/sn14IOsq5ESPnagjg9K?=
+ =?us-ascii?Q?PWhqp9KoT16RlyA84OO6iU02N2TpXFG9wDmSwdRIMvL1ztuCWibDZaN1NI6f?=
+ =?us-ascii?Q?y2LSbhvhTLnBJB5OSOATk+vFc4xa6QFTq4QVjEydRY6v37Ay4Rbl/wJ8/wOY?=
+ =?us-ascii?Q?O1mF8irywQhCoy9b2FfumEWdRZFvPL5/Q+fQU+kl9GksOlmcr6B28Rh8g811?=
+ =?us-ascii?Q?ODqy9xEOP4BJFSFTPVoVXme//vIr58dRSDms0DLhgttpq/37Q0kak4Fr9NY5?=
+ =?us-ascii?Q?Kv89/BRP5eW0zXG9eKeSgc0AeAT/h6CTQmZwKGVjfE0EH3C385xe+B3tKTxP?=
+ =?us-ascii?Q?DXoyIHs0SDEagkarFiMUuxeXEHfGcjK3ExYokgKgyKpe/98Bw/PR2uVxfZuZ?=
+ =?us-ascii?Q?VMO7cfyvahKnwpTB6l0xJmfsAyoFUCwa1APkhT9xhvXNRmFsLrJKFABNbeOq?=
+ =?us-ascii?Q?kviYYkhBiGoUXFfKhCqAIsRQFcYghMSCwua0IKLe9MbZRwpNA82HOjn0fToL?=
+ =?us-ascii?Q?JoEfjBC0VPRdl1Q/xdPxnoTIn41QrMHsCF/m8HlR062UN43hLPNYNUQ3sxp2?=
+ =?us-ascii?Q?PaYVSBV2IxgylQqb2hL5PrZeA5rAQ1QLbvjnOtXqDmDWMC7mlcX/PRz2iY65?=
+ =?us-ascii?Q?B8TqhvksP9khkZV6Y4xAq+BQp/jHUJfB0bSUt4oJGk98WDMtcHoV+9+Hjp/1?=
+ =?us-ascii?Q?qOF4noNHME+0E8KCJsRGpE0VSyDultnNjC94?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026)(7053199007)(13003099007);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 22:28:50.7362
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 22:52:18.5774
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5420751-3700-49e2-3634-08ddf570694b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f69efc8-502b-4ad5-f7eb-08ddf573b076
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003443.namprd04.prod.outlook.com
+	SJ5PEPF000001E9.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6417
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9099
 
-On Wed, May 14, 2025 at 04:42:14PM -0700, Ackerley Tng wrote:
-> These functions allow guest_memfd to split and merge HugeTLB pages,
-> and clean them up on freeing the page.
+On Fri, May 16, 2025 at 01:33:39PM -0700, Ackerley Tng wrote:
+> Ackerley Tng <ackerleytng@google.com> writes:
 > 
-> For merging and splitting pages on conversion, guestmem_hugetlb
-> expects the refcount on the pages to already be 0. The caller must
-> ensure that.
+> > Ackerley Tng <ackerleytng@google.com> writes:
+> >
+> >> guestmem_hugetlb is an allocator for guest_memfd. It wraps HugeTLB to
+> >> provide huge folios for guest_memfd.
+> >>
+> >> This patch also introduces guestmem_allocator_operations as a set of
+> >> operations that allocators for guest_memfd can provide. In a later
+> >> patch, guest_memfd will use these operations to manage pages from an
+> >> allocator.
+> >>
+> >> The allocator operations are memory-management specific and are placed
+> >> in mm/ so key mm-specific functions do not have to be exposed
+> >> unnecessarily.
+> >>
+> >> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> >>
+> >> Change-Id: I3cafe111ea7b3c84755d7112ff8f8c541c11136d
+> >> ---
+> >>  include/linux/guestmem.h      |  20 +++++
+> >>  include/uapi/linux/guestmem.h |  29 +++++++
+> >>  mm/Kconfig                    |   5 +-
+> >>  mm/guestmem_hugetlb.c         | 159 ++++++++++++++++++++++++++++++++++
+> >>  4 files changed, 212 insertions(+), 1 deletion(-)
+> >>  create mode 100644 include/linux/guestmem.h
+> >>  create mode 100644 include/uapi/linux/guestmem.h
+> >>
+> >> <snip>
+> >>
+> >> diff --git a/mm/Kconfig b/mm/Kconfig
+> >> index 131adc49f58d..bb6e39e37245 100644
+> >> --- a/mm/Kconfig
+> >> +++ b/mm/Kconfig
+> >> @@ -1218,7 +1218,10 @@ config SECRETMEM
+> >>  
+> >>  config GUESTMEM_HUGETLB
+> >>  	bool "Enable guestmem_hugetlb allocator for guest_memfd"
+> >> -	depends on HUGETLBFS
+> >> +	select GUESTMEM
+> >> +	select HUGETLBFS
+> >> +	select HUGETLB_PAGE
+> >> +	select HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+> >
+> > My bad. I left out CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON=y in
+> > my testing and just found that when it is set, I hit
+> >
+> >   BUG_ON(pte_page(ptep_get(pte)) != walk->reuse_page);
+> >
+> > with the basic guest_memfd_test on splitting pages on allocation.
+> >
+> > I'll follow up with the fix soon.
+> >
+> > Another note about testing: I've been testing in a nested VM for the
+> > development process:
+> >
+> > 1. Host
+> > 2. VM for development
+> > 3. Nested VM running kernel being developed
+> > 4. Nested nested VMs created during selftests
+> >
+> > This series has not yet been tested on a physical host.
+> >
+> >>  	help
+> >>  	  Enable this to make HugeTLB folios available to guest_memfd
+> >>  	  (KVM virtualization) as backing memory.
+> >>
+> >> <snip>
+> >>
 > 
-> For conversions, guest_memfd ensures that the refcounts are already 0
-> by checking that there are no unexpected refcounts, and then freezing
-> the expected refcounts away. On unexpected refcounts, guest_memfd will
-> return an error to userspace.
+> Here's the fix for this issue
 > 
-> For truncation, on unexpected refcounts, guest_memfd will return an
-> error to userspace.
+> From 998af6404d4e39920ba42764e7f3815cb9bb9e3d Mon Sep 17 00:00:00 2001
+> Message-ID: <998af6404d4e39920ba42764e7f3815cb9bb9e3d.1747427489.git.ackerleytng@google.com>
+> From: Ackerley Tng <ackerleytng@google.com>
+> Date: Fri, 16 May 2025 13:14:55 -0700
+> Subject: [RFC PATCH v2 1/1] KVM: guest_memfd: Reorder undoing vmemmap
+>  optimization and stashing hugetlb folio metadata
 > 
-> For truncation on closing, guest_memfd will just remove its own
-> refcounts (the filemap refcounts) and mark split pages with
-> PGTY_guestmem_hugetlb.
+> Without this patch, when HugeTLB folio metadata is stashed, the
+> vmemmap_optimized flag, stored in a HugeTLB folio's folio->private was
+> stashed as set.
 > 
-> The presence of PGTY_guestmem_hugetlb will trigger the folio_put()
-> callback to handle further cleanup. This cleanup process will merge
-> pages (with refcount 0, since cleanup is triggered from folio_put())
-> before returning the pages to HugeTLB.
+> The first splitting works, but on merging, when the folio metadata was
+> unstashed, vmemmap_optimized is unstashed as set, making the call to
+> hugetlb_vmemmap_optimize_folio() skip actually applying optimizations.
 > 
-> Since the merging process is long, it is deferred to a worker thread
-> since folio_put() could be called from atomic context.
+> On a second split, hugetlb_vmemmap_restore_folio() attempts to reapply
+> optimizations when it was already applied, hence hitting the BUG().
 > 
-> Change-Id: Ib04a3236f1e7250fd9af827630c334d40fb09d40
 > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Co-developed-by: Vishal Annapurve <vannapurve@google.com>
-> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
 > ---
->  include/linux/guestmem.h |   3 +
->  mm/guestmem_hugetlb.c    | 349 ++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 347 insertions(+), 5 deletions(-)
+>  mm/guestmem_hugetlb.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
 > 
-> diff --git a/include/linux/guestmem.h b/include/linux/guestmem.h
-> index 4b2d820274d9..3ee816d1dd34 100644
-> --- a/include/linux/guestmem.h
-> +++ b/include/linux/guestmem.h
-> @@ -8,6 +8,9 @@ struct guestmem_allocator_operations {
->  	void *(*inode_setup)(size_t size, u64 flags);
->  	void (*inode_teardown)(void *private, size_t inode_size);
->  	struct folio *(*alloc_folio)(void *private);
-> +	int (*split_folio)(struct folio *folio);
-> +	void (*merge_folio)(struct folio *folio);
-> +	void (*free_folio)(struct folio *folio);
->  	/*
->  	 * Returns the number of PAGE_SIZE pages in a page that this guestmem
->  	 * allocator provides.
 > diff --git a/mm/guestmem_hugetlb.c b/mm/guestmem_hugetlb.c
-> index ec5a188ca2a7..8727598cf18e 100644
+> index 8727598cf18e..2c0192543676 100644
 > --- a/mm/guestmem_hugetlb.c
 > +++ b/mm/guestmem_hugetlb.c
-> @@ -11,15 +11,12 @@
->  #include <linux/mm.h>
->  #include <linux/mm_types.h>
->  #include <linux/pagemap.h>
-> +#include <linux/xarray.h>
+> @@ -200,16 +200,21 @@ static int guestmem_hugetlb_split_folio(struct folio *folio)
+>  		return 0;
 >  
->  #include <uapi/linux/guestmem.h>
+>  	orig_nr_pages = folio_nr_pages(folio);
+> -	ret = guestmem_hugetlb_stash_metadata(folio);
+> +
+> +	/*
+> +	 * hugetlb_vmemmap_restore_folio() has to be called ahead of the rest
+> +	 * because it checks page type. This doesn't actually split the folio,
+> +	 * so the first few struct pages are still intact.
+> +	 */
+> +	ret = hugetlb_vmemmap_restore_folio(folio_hstate(folio), folio);
+>  	if (ret)
+>  		return ret;
 >  
->  #include "guestmem_hugetlb.h"
-> -
-> -void guestmem_hugetlb_handle_folio_put(struct folio *folio)
-> -{
-> -	WARN_ONCE(1, "A placeholder that shouldn't trigger. Work in progress.");
-> -}
-> +#include "hugetlb_vmemmap.h"
->  
->  struct guestmem_hugetlb_private {
->  	struct hstate *h;
-> @@ -34,6 +31,339 @@ static size_t guestmem_hugetlb_nr_pages_in_folio(void *priv)
->  	return pages_per_huge_page(private->h);
->  }
->  
-> +static DEFINE_XARRAY(guestmem_hugetlb_stash);
-> +
-> +struct guestmem_hugetlb_metadata {
-> +	void *_hugetlb_subpool;
-> +	void *_hugetlb_cgroup;
-> +	void *_hugetlb_hwpoison;
-> +	void *private;
-> +};
-> +
-> +struct guestmem_hugetlb_stash_item {
-> +	struct guestmem_hugetlb_metadata hugetlb_metadata;
-> +	/* hstate tracks the original size of this folio. */
-> +	struct hstate *h;
-> +	/* Count of split pages, individually freed, waiting to be merged. */
-> +	atomic_t nr_pages_waiting_to_be_merged;
-> +};
-> +
-> +struct workqueue_struct *guestmem_hugetlb_wq __ro_after_init;
-> +static struct work_struct guestmem_hugetlb_cleanup_work;
-> +static LLIST_HEAD(guestmem_hugetlb_cleanup_list);
-> +
-> +static inline void guestmem_hugetlb_register_folio_put_callback(struct folio *folio)
-> +{
-> +	__folio_set_guestmem_hugetlb(folio);
-> +}
-> +
-> +static inline void guestmem_hugetlb_unregister_folio_put_callback(struct folio *folio)
-> +{
-> +	__folio_clear_guestmem_hugetlb(folio);
-> +}
-> +
-> +static inline void guestmem_hugetlb_defer_cleanup(struct folio *folio)
-> +{
-> +	struct llist_node *node;
-> +
-> +	/*
-> +	 * Reuse the folio->mapping pointer as a struct llist_node, since
-> +	 * folio->mapping is NULL at this point.
-> +	 */
-> +	BUILD_BUG_ON(sizeof(folio->mapping) != sizeof(struct llist_node));
-> +	node = (struct llist_node *)&folio->mapping;
-> +
-> +	/*
-> +	 * Only schedule work if list is previously empty. Otherwise,
-> +	 * schedule_work() had been called but the workfn hasn't retrieved the
-> +	 * list yet.
-> +	 */
-> +	if (llist_add(node, &guestmem_hugetlb_cleanup_list))
-> +		queue_work(guestmem_hugetlb_wq, &guestmem_hugetlb_cleanup_work);
-> +}
-> +
-> +void guestmem_hugetlb_handle_folio_put(struct folio *folio)
-> +{
-> +	guestmem_hugetlb_unregister_folio_put_callback(folio);
-> +
-> +	/*
-> +	 * folio_put() can be called in interrupt context, hence do the work
-> +	 * outside of interrupt context
-> +	 */
-> +	guestmem_hugetlb_defer_cleanup(folio);
-> +}
-> +
-> +/*
-> + * Stash existing hugetlb metadata. Use this function just before splitting a
-> + * hugetlb page.
-> + */
-> +static inline void
-> +__guestmem_hugetlb_stash_metadata(struct guestmem_hugetlb_metadata *metadata,
-> +				  struct folio *folio)
-> +{
-> +	/*
-> +	 * (folio->page + 1) doesn't have to be stashed since those fields are
-> +	 * known on split/reconstruct and will be reinitialized anyway.
-> +	 */
-> +
-> +	/*
-> +	 * subpool is created for every guest_memfd inode, but the folios will
-> +	 * outlive the inode, hence we store the subpool here.
-> +	 */
-> +	metadata->_hugetlb_subpool = folio->_hugetlb_subpool;
-> +	/*
-> +	 * _hugetlb_cgroup has to be stored for freeing
-> +	 * later. _hugetlb_cgroup_rsvd does not, since it is NULL for
-> +	 * guest_memfd folios anyway. guest_memfd reservations are handled in
-> +	 * the inode.
-> +	 */
-> +	metadata->_hugetlb_cgroup = folio->_hugetlb_cgroup;
-> +	metadata->_hugetlb_hwpoison = folio->_hugetlb_hwpoison;
-> +
-> +	/*
-> +	 * HugeTLB flags are stored in folio->private. stash so that ->private
-> +	 * can be used by core-mm.
-> +	 */
-> +	metadata->private = folio->private;
-> +}
-> +
-> +static int guestmem_hugetlb_stash_metadata(struct folio *folio)
-> +{
-> +	XA_STATE(xas, &guestmem_hugetlb_stash, 0);
-> +	struct guestmem_hugetlb_stash_item *stash;
-> +	void *entry;
-> +
-> +	stash = kzalloc(sizeof(*stash), 1);
-> +	if (!stash)
-> +		return -ENOMEM;
-> +
-> +	stash->h = folio_hstate(folio);
-> +	__guestmem_hugetlb_stash_metadata(&stash->hugetlb_metadata, folio);
-> +
-> +	xas_set_order(&xas, folio_pfn(folio), folio_order(folio));
-> +
-> +	xas_lock(&xas);
-> +	entry = xas_store(&xas, stash);
-> +	xas_unlock(&xas);
-> +
-> +	if (xa_is_err(entry)) {
-> +		kfree(stash);
-> +		return xa_err(entry);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void
-> +__guestmem_hugetlb_unstash_metadata(struct guestmem_hugetlb_metadata *metadata,
-> +				    struct folio *folio)
-> +{
-> +	folio->_hugetlb_subpool = metadata->_hugetlb_subpool;
-> +	folio->_hugetlb_cgroup = metadata->_hugetlb_cgroup;
-> +	folio->_hugetlb_cgroup_rsvd = NULL;
-> +	folio->_hugetlb_hwpoison = metadata->_hugetlb_hwpoison;
-> +
-> +	folio_change_private(folio, metadata->private);
+>  	/*
+> -	 * hugetlb_vmemmap_restore_folio() has to be called ahead of the rest
+> -	 * because it checks and page type. This doesn't actually split the
+> -	 * folio, so the first few struct pages are still intact.
+> +	 * Stash metadata after vmemmap stuff so the outcome of the vmemmap
+> +	 * restoration is stashed.
+>  	 */
+> -	ret = hugetlb_vmemmap_restore_folio(folio_hstate(folio), folio);
+> +	ret = guestmem_hugetlb_stash_metadata(folio);
+>  	if (ret)
+>  		goto err;
 
-Hi Ackerley,
+Doh, I missed this before replying earlier. This definitely seems like
+the cleaner fix as it pertains to other flags/state that potentially
+becomes stale after calling hugetlb_vmemmap_restore_folio().
 
-We've been doing some testing with this series on top of David's
-guestmemfd-preview branch with some SNP enablement[1][2] to exercise
-this code along with the NUMA support from Shivank (BTW, I know you
-have v3 in the works so let me know if we can help with testing that
-as well).
-
-One issue we hit is if you do a split->merge sequence the unstash of the
-private data will result in folio_test_hugetlb_vmemmap_optimized() reporting
-true even though the hugetlb_vmemmap_optimize_folio() call hasn't been
-performed yet, and when that does get called it will be skipped, so some HVO
-optimization can be lost in this way.
-
-More troublesome however is if you later split the folio again,
-hugetlb_vmemmap_restore_folio() may cause a BUG_ON() since the flags are in a
-state that's not consistent with the state of the folio/vmemmap.
-
-The following patch seems to resolve the issue but I'm not sure what the
-best approach would be:
-
-  https://github.com/AMDESE/linux/commit/b1f25956f18d32730b8d4ded6d77e980091eb4d3
-
-Thanks,
-
-Mike
-
-[1] https://github.com/AMDESE/linux/commits/snp-hugetlb-v2-wip0/
-[2] https://github.com/AMDESE/qemu/tree/snp-hugetlb-dev-wip0
-
+-Mike
 
