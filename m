@@ -1,170 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-61821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EB3B5A101
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 21:11:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E96B5A124
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 21:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626A14600A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 19:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68161523FFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 19:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32952DF13C;
-	Tue, 16 Sep 2025 19:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC572FFF92;
+	Tue, 16 Sep 2025 19:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="CNLos0Tq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvd7h8X2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA8432D5D4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 19:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FBE2F5A2F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 19:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758049876; cv=none; b=bzfPygOSU2LLeB4oCz+zrjselO0FQTgtV3g8hJLDnZyjuoTTT7wsShGX3mlttuB5S6lGrbScxZxYPbAgn37UV2oYttZxazcrck0gp9VgrFFOAO9BXRzwmESCO2MCAHdPC1an1I+ql1bqllBwBounPwdLaBE0PceyDOwM0H8prTM=
+	t=1758050060; cv=none; b=C/+qlNL+DP5+sS8qHjJrA+LccufQVLntSeJ48eFeOtZ+pFHo7IShTzeX/zjmAWmNrK6DQvpWjtpMzaRCk8yXFWve1FLPGn6V3gpbrAWZeH8orvC6ycKeINnIH6YmYZOcbg6gIf0+FXkITfMaHBLiLnOgQPM/SvodLzwbcJQSEyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758049876; c=relaxed/simple;
-	bh=JQYkjz/tXf7d/SYvDSq1GiiZGTTEL+cmVmMScaES8bA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vFVcEqNzzgVuTYnx9vizykkTDVLsmFHyTGiy6CRr/1nKHQv5zkKo0/9cWs+cxFs1HB8YmwaI11KxkTzczszo8wo8LsHHKAsXWAX4Z+oIj2Q8ipcPr1BLAwI+w6A9S9pCcYgo31Bxcj2vDqfv+Kj5fjvAuN15wfD5QEINGSp4EZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=CNLos0Tq; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603a269cso39245397b3.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 12:11:13 -0700 (PDT)
+	s=arc-20240116; t=1758050060; c=relaxed/simple;
+	bh=Xy7VXhh3YEK7cUVocua6pJ6f1HAClx0ThLQjwcRSeMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nVOhR283cp1zMVBOOsjqdjcIgt5w0fenX9bUr3bOEuyj9UTLJT6lMJm2FqwYvqYXr/OWY4e3MobO+fYiYH1hEki6bZY8PprTlnH2dyfo7cfotF8oRV9MaFg+MuBeM0IxnHId2Fvs7PiWUtjynZ8ImvNfRdsIYLnflFBFDCOBS8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvd7h8X2; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b5f7fe502dso30972041cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 12:14:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1758049873; x=1758654673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3TvpNjNfXgTalwqDVj/2NqZE6nMjrCbJzcEExPw5piU=;
-        b=CNLos0Tqd8a0A2r/zxol15dVnKxYCxNaH6cW/Pf/YX/c652/0/v9cMlTUxcZ2eUoKD
-         0qNnfIUK4EFFedyPmhlZGO9W6Vo71iSHPBIe/Gn6RCMhXkI0pLtRbmPDgm+Pamk+u3gY
-         TXofVT5u3FPPhV/Y32i9D48w/HCN3UC9FnUPyRiTbxR/EWjizamvPE0FmIH4aO4xAULR
-         bvZylqJ1W7OmGGp0FHc/4kvfUZzdHcLZNE+ykxT6VATCRnKncyIF+//fxWzmQbybv6Y6
-         GyETvSwcovQGE4h9Nm+19m6c4t/cfE8BAqlg4gyxQZGUb6iU8dEBgoeKgNzFmQqhY117
-         hGXQ==
+        d=gmail.com; s=20230601; t=1758050057; x=1758654857; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0sDsCrroOBNAqKcWltn4wv/b9zaB4bt8yGtraqcOqWI=;
+        b=fvd7h8X2/ZRMW6g5Gg5GoHL2eRQFiGRYq1Bcb1RUsvrApPo2atFFTmLy+4deN2L1k8
+         kiERxSkcZochKLHEKUKl/TxYAjupJdq/l5j3MIONvLO9suPm8Mx1UAbsEp4ZpAaxNjFo
+         2T4WhZJP3g7Q7DOqF3KG4rSMEu/lTrwQ7jk3q+7YagiI0nMICAS81L8bo+sNGePvu7aE
+         5ckvalqNSmpkPsI+l6SyLFvWird3/bDeT6B87BfBj/r/YkwldDAuZfNA6bkz0bF7c8F+
+         el15tWVIdikMA8u7d3zMxmDXkW/swLlvXMJcpoMSYrtlnkmWeeQcDNEF9kkQjLNrwAVX
+         LmbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758049873; x=1758654673;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3TvpNjNfXgTalwqDVj/2NqZE6nMjrCbJzcEExPw5piU=;
-        b=doi7aiqosMhjIYnRriFYCNlk6sotVH3Fqfrge5toQAsYDNuRaLIvT1XeChj9kDX9zF
-         o5LsM/hcTjfHdtFcYdbR4uyl2sYY6BHImLFyrNswKqGkuI6P3WaE0SitZL24FEwIq809
-         XmWbKHm9uJMk4bPMBBrgjzYlVFDInNmiF+bOah9cMstkNeeW+MzrF0Rygid2jGPV45kM
-         X/OB3RBTsSrhy1Bj1skgOVJCbVmE+0h3cMCuUJqqUxkguwGb2tH8vuNPmCgi8/tQUGDS
-         6dBpP7svZRtKGMim5FHFvWSFeb8RjgG69yuARHPaR0pLXLWztblfG74AQ+NVcIYoKo5d
-         ngsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpguxWAAEtfhAmVi02Ydpr2rXB9yXH1xLUpYRR7TDjicVJRQVJWc6c5uNk/9HHJBdDNCPaUKt43fonog/b@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPsmduEII2UPefIji+mRCKkRwv7ffDJD7jt1o1GowOY89K0eEc
-	w0SiPrGU1o9WXwRTRHFM1OD30xJfnc++xQrNHw7enwdw7YcKVL3brA6YhX3XsXLomNU=
-X-Gm-Gg: ASbGncugsDNv/fMPcLRqJOiwY4aPX3KsYQkS07J0r6w3w8p+ppFPQNz7HIKHziizpqW
-	e4wsqoL3OejupOVO6t9zbpCdjX38y152PkYkQoNLRFHbUtTYQ+5/6+2m7h73/F4qSm8JTOsIcTl
-	KCScBPgxyeB+w9hhneJbYAx0Qc6AIFCmB9L0VvPbdiJPFIz+Q3FoAR6+EFeEVKGwecggNTLQYWE
-	0QdUzV1A279DvAFypOsxBdlwrv8elGen//wMw+woou61ZkDSgde44nsdUoLlSBELJ2SneZXYqbi
-	YnefrKeehEdmHoj9QRP3Ps1jRHR94F39EnQDGPfeNjeFqjpFnvW+EIXtyadGsyRckmocfN+yw4m
-	c1x3Tu9SHB/oCvbjR3enOZ8L9OFyBMIA5JlG34OLV
-X-Google-Smtp-Source: AGHT+IHil1gr51LI7xjg/42gWZmcXvSxhtj9s8Bt65HqQdbE2moQKNAOxJBU538skxGILgfFZprkOg==
-X-Received: by 2002:a05:690c:600a:b0:734:81fb:8ba0 with SMTP id 00721157ae682-73481fba2afmr75450197b3.19.1758049872579;
-        Tue, 16 Sep 2025 12:11:12 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:a504:df7d:48b8:47b7])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-736ad7b2aafsm9436757b3.5.2025.09.16.12.11.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 12:11:11 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com
-Subject: [PATCH] ceph: fix potential overflow in parse_reply_info_dir()
-Date: Tue, 16 Sep 2025 12:10:47 -0700
-Message-ID: <20250916191046.400201-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758050057; x=1758654857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0sDsCrroOBNAqKcWltn4wv/b9zaB4bt8yGtraqcOqWI=;
+        b=dluq2wJ5VktohWgw6VTl7PkxBx92uhXbwNnmCO7XWz8y1NiAzUGyLqGHDde2R2OtiJ
+         fvyCtIokLfF+nGQ1eensOWAlni/0sGCt4N8g9mYAeQ5Kt/Xf8TYUuscCKzHTT7NWtVQU
+         SF+d8VGmSEUhELvafmbilUUIk2cSfZsCA9Nyj7F8FBNWQ7zOg7c5+SMR+OQNSK1nSaj1
+         TR6WHAQGsGWdCu1sDCnmVEDjIE2qA/3myue4QmgdpEfs62q2MYBylVZsTTBwCiIBQsUQ
+         2G3mAPXI6AFedJvuH3RuiSiA7mzg7jIzsjUEZa6EnuIPBvteBUtxEeEO/R3cO4mEgyqL
+         d89g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFi1VcrltnV63kklJ9rYGvRyzDFHFfbdU26+UqNQpddbBRuB3+yuGUt0re9fKRAt6Ah/MiEnejVN4NCJjN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwt+03/BgfTj1VcoheBHReQRKc+/2bKecYK4WR4INtPCzzWnM8
+	C+UMXMOOSCeZ4dilOGnWE4GGKg7lLAoVu/35xx0+zfKAgj9w/4og+NwKxOrEY0ho2n+X5GHbI0V
+	q2+iaOlUbHlaQR5x1J+cF4LTP2o+shak=
+X-Gm-Gg: ASbGncsY3KGsS04iGh+/EcfQfXLHqhFqIO/VHNjhyQPXpoJ5QCAG5P3W/5luuM6+DV/
+	RaO3ESKbEQ5bWeXHtojdXBR2PL/8akbynbtbbsh4D+0E1uD2/8wQJCgS/L+996GhJLT6iH+o28T
+	qYJXbei0UAfooFYd89gNfCU2kdHY/j11KVBZtcE3FUqMqHygONfShJTdVD7fiKDnc0p+H3t89HW
+	xVOWP9sNtXeejAeEiLdu+2Hb5pCxcNDXqIsXmCWLBCOU3ArL14=
+X-Google-Smtp-Source: AGHT+IEnrb16bzEhxxaatwm/RHyGJRLO1QGX6fXH1y0q6MaUT6DETIc88lYKeVZ10sb2epPRZw0BAX+3ZiCq+mA4Bjw=
+X-Received: by 2002:ac8:5d0a:0:b0:4b6:cbd:8cb7 with SMTP id
+ d75a77b69052e-4b77d0894f7mr223403051cf.54.1758050056106; Tue, 16 Sep 2025
+ 12:14:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250908185122.3199171-1-joannelkoong@gmail.com>
+ <20250908185122.3199171-13-joannelkoong@gmail.com> <aMKzG3NUGsQijvEg@infradead.org>
+ <CAJnrk1Z2JwUKKoaqExh2gPDxtjRbzSPxzHi3YdBWXKvygGuGFA@mail.gmail.com>
+In-Reply-To: <CAJnrk1Z2JwUKKoaqExh2gPDxtjRbzSPxzHi3YdBWXKvygGuGFA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 16 Sep 2025 12:14:05 -0700
+X-Gm-Features: AS18NWDZ6XCFv5ugS-Pg-arJpmWxy4cqI-2OS1xanpbZfZTkTFB40b8v2IMXcnk
+Message-ID: <CAJnrk1YmxMbT-z9SLxrnrEwagLeyT=bDMzaONYAO6VgQyFHJOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 12/16] iomap: add bias for async read requests
+To: Christoph Hellwig <hch@infradead.org>
+Cc: brauner@kernel.org, miklos@szeredi.hu, djwong@kernel.org, 
+	hsiangkao@linux.alibaba.com, linux-block@vger.kernel.org, 
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Fri, Sep 12, 2025 at 10:30=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+>
+> On Thu, Sep 11, 2025 at 7:31=E2=80=AFAM Christoph Hellwig <hch@infradead.=
+org> wrote:
+> >
+> > > +static void __iomap_finish_folio_read(struct folio *folio, size_t of=
+f,
+> > > +             size_t len, int error, bool update_bitmap)
+> > >  {
+> > >       struct iomap_folio_state *ifs =3D folio->private;
+> > >       bool uptodate =3D !error;
+> > > @@ -340,7 +340,7 @@ void iomap_finish_folio_read(struct folio *folio,=
+ size_t off, size_t len,
+> > >               unsigned long flags;
+> > >
+> > >               spin_lock_irqsave(&ifs->state_lock, flags);
+> > > -             if (!error)
+> > > +             if (!error && update_bitmap)
+> > >                       uptodate =3D ifs_set_range_uptodate(folio, ifs,=
+ off, len);
+> >
+> > This code sharing keeps confusing me a bit.  I think it's technically
+> > perfectly fine, but not helpful for readability.  We'd solve that by
+> > open coding the !update_bitmap case in iomap_read_folio_iter.  Which
+> > would also allow to use spin_lock_irq instead of spin_lock_irqsave ther=
+e
+> > as a nice little micro-optimization.  If we'd then also get rid of the
+> > error return from ->read_folio_range and always do asynchronous error
+> > returns it would be even simpler.
+> >
+> > Or maybe I just need to live with the magic bitmap update, but the
+> > fact that "len" sometimes is an actual length, and sometimes just a
+> > counter for read_bytes_pending keeps confusing me
+> >
+>
+> I think you're right, this is probably clearer without trying to share
+> the function.
+>
+> I think maybe we can make this even simpler. Right now we mark the
+> bitmap uptodate every time a range is read in but I think instead we
+> can just do one bitmap uptodate operation for the entire folio when
+> the read has completely finished.  If we do this, then we can make
+> "ifs->read_bytes_pending" back to an atomic_t since we don't save one
+> atomic operation from doing it through a spinlock anymore (eg what
+> commit f45b494e2a "iomap: protect read_bytes_pending with the
+> state_lock" optimized). And then this bias thing can just become:
+>
+> if (ifs) {
+>     if (atomic_dec_and_test(&ifs->read_bytes_pending))
+>         folio_end_read(folio, !ret);
+>     *cur_folio_owned =3D true;
+> }
+>
 
-The parse_reply_info_dir() logic tries to parse
-a dir fragment:
+This idea doesn't work unfortunately because reading in a range might fail.
 
-struct ceph_mds_reply_dirfrag {
-	__le32 frag;            /* fragment */
-	__le32 auth;            /* auth mds, if this is a delegation point */
-	__le32 ndist;           /* number of mds' this is replicated on */
-	__le32 dist[];
-} __attribute__ ((packed));
+I'll change this to open coding the !update_bitmap case with
+spin_lock_irq, like Christoph suggested.
 
-Potentially, ndist field could be corrupted or to have
-invalid or malicious value. As a result, this logic
-could result in overflow:
-
-*p += sizeof(**dirfrag) + sizeof(u32) * le32_to_cpu((*dirfrag)->ndist);
-
-Al Viro suggested the initial vision of the fix.
-The suggested fix was partially reworked.
-
-This patch adds the checking that ndist is not bigger
-than (U32_MAX / sizeof(u32)) and to check that we have
-enough space in memory buffer by means of ceph_decode_need().
-
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
----
- fs/ceph/mds_client.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 3bc72b47fe4d..245f5fb97f2e 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -283,6 +283,11 @@ static int parse_reply_info_dir(void **p, void *end,
- 				struct ceph_mds_reply_dirfrag **dirfrag,
- 				u64 features)
- {
-+	size_t item_size = sizeof(u32);
-+	size_t dirfrag_size;
-+	u32 ndist;
-+	u32 array_size;
-+
- 	if (features == (u64)-1) {
- 		u8 struct_v, struct_compat;
- 		u32 struct_len;
-@@ -297,11 +302,16 @@ static int parse_reply_info_dir(void **p, void *end,
- 		end = *p + struct_len;
- 	}
- 
--	ceph_decode_need(p, end, sizeof(**dirfrag), bad);
-+	dirfrag_size = sizeof(**dirfrag);
-+	ceph_decode_need(p, end, dirfrag_size, bad);
- 	*dirfrag = *p;
--	*p += sizeof(**dirfrag) + sizeof(u32) * le32_to_cpu((*dirfrag)->ndist);
--	if (unlikely(*p > end))
-+	*p += dirfrag_size;
-+	ndist = le32_to_cpu((*dirfrag)->ndist);
-+	if (unlikely(ndist > (U32_MAX / item_size)))
- 		goto bad;
-+	array_size = ndist * item_size;
-+	ceph_decode_need(p, end, array_size, bad);
-+	*p += array_size;
- 	if (features == (u64)-1)
- 		*p = end;
- 	return 0;
--- 
-2.51.0
-
+>
+> Thanks,
+> Joanne
 
