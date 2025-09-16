@@ -1,152 +1,368 @@
-Return-Path: <linux-fsdevel+bounces-61590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42A5B58A0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4676DB58A08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26C12A592B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22961B228B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BF91DE8AF;
-	Tue, 16 Sep 2025 00:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D880218C03F;
+	Tue, 16 Sep 2025 00:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wfnwx2si"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B045C96;
-	Tue, 16 Sep 2025 00:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF71CD2C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 00:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983765; cv=none; b=gQBZ2ZrJHc/mVo4UyXnnOl3puSXwrhOxXpWgW1n3hIBZK5s6dGXXY6vezvtuIfgOuqgL13L6muQFfT85em36tWNGB7HwvYPPPPdmgaDIqbkKzZYo7EI4mC1+x/jnT7GsTyv4ljFoiZneR8z/P/Elok8oAl3OgDGsXBVFm+VJhOc=
+	t=1757983761; cv=none; b=M55IvIoeF55PiVZThM+8xodTuCUy25/5Cepp2nhbouevXl08SfKpvdN4Itets90x7vAQXT+Pjsbvlg5ws3CT0OTuE9wEBsihr9U8SBBMznpt8b21i9sPoACZG2a6bT1OEPbZ6bC/w79ro43bbVwR3AjAs2qHuQktPD7dFbbjW5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983765; c=relaxed/simple;
-	bh=X/pFC3va19rRg+gk9IqHnYcd8NlNCqdJD2INmemQlIQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QfKqVOg8AIKAtt7xptEf3Pe3cZiaoptQESXo1SFs8wTzeE2jY9SVEfzOKMH/+NkEFvQvZo7d2W7tGwcLMe3DC+1aZJbxn4EKMcwGZrIGBGsvD58nO9oyn2/dJS9IELt6H98qAQ7pD9ZAm8/1/qgOjfkcj0nixKx7SbgJMYolWgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQjvx38XNzKHMVH;
-	Tue, 16 Sep 2025 08:49:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0DF5E1A0FC4;
-	Tue, 16 Sep 2025 08:49:18 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXIY4JtMhoI46ZCg--.11965S3;
-	Tue, 16 Sep 2025 08:49:15 +0800 (CST)
-Subject: Re: [PATCH v2 0/2] Fix the initialization of
- max_hw_wzeroes_unmap_sectors for stacking drivers
-To: John Garry <john.g.garry@oracle.com>, Zhang Yi
- <yi.zhang@huaweicloud.com>, axboe@kernel.dk, linux-raid@vger.kernel.org
-Cc: linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- pmenzel@molgen.mpg.de, hch@lst.de, martin.petersen@oracle.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250910111107.3247530-1-yi.zhang@huaweicloud.com>
- <c7dd117e-6e3e-4b2d-a890-20f5c4bade2f@huaweicloud.com>
- <370ca2e5-a4b2-4b5d-9fd1-a931dc2d1a6b@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <44590d08-2127-e44d-d4f8-6ae9237dd53c@huaweicloud.com>
-Date: Tue, 16 Sep 2025 08:49:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757983761; c=relaxed/simple;
+	bh=KDmWmYrzVLoASEL82haETDZcsW2hyzZDyHtE2R0lilU=;
+	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XEsOu198uCZEBjnDNJa1wJVZ15DKHkn8FZHLKzHvkBMoaeiDB89LZ/Gymk+xdTctM6JBjaue9M7W5QCMikV4F//UphiZKpEtOovtEi7HpBqx92wcihT9+rAzirJVjCO/66hTDe3NWK9oPSv+Y3PAW6pEmLwlhyAOgqKCcuEPdqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wfnwx2si; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7EA0C4CEF1;
+	Tue, 16 Sep 2025 00:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757983760;
+	bh=KDmWmYrzVLoASEL82haETDZcsW2hyzZDyHtE2R0lilU=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=Wfnwx2sixv9YjTpw+/H9hSCPn/gu0brh40IF6IdTuRtkX7R3pH/8VstJyWcq79DnC
+	 AP5Kcpvcehmc2uEsvCEeWY+f7G6fNbsa/WCXim7Hh6kmGU9KDnd0+rR6LPZLxf35cF
+	 +pwEg/ebH1sHbgABFXpQ5kRuuzrei5IQg2liBK6guyfkCJgMbS/6jG+00P6D36J+xe
+	 WCIEnTF/ZAKznxK9ZA+HkahAEv0DOopMosV/K5fsemiDZFU6YqKcsRnq6PdAAiZfW2
+	 IFDb6JcvX+eh21yAb8KmEgARtetPwox+A46VZIn1tkBwvwpCd7kVa65RByBIiz2z3I
+	 iLjf3x3/XV5QA==
+Date: Mon, 15 Sep 2025 17:49:20 -0700
+Subject: [PATCH 3/4] libfuse: delegate iomap privilege from mount.service to
+ fuse services
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: bschubert@ddn.com, djwong@kernel.org
+Cc: John@groves.net, neal@gompa.dev, bernd@bsbernd.com,
+ linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com
+Message-ID: <175798155823.388120.1495058623263971375.stgit@frogsfrogsfrogs>
+In-Reply-To: <175798155756.388120.4267843355083714610.stgit@frogsfrogsfrogs>
+References: <175798155756.388120.4267843355083714610.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <370ca2e5-a4b2-4b5d-9fd1-a931dc2d1a6b@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXIY4JtMhoI46ZCg--.11965S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFy3Gw4fXw1DGry7Gw1xZrb_yoW8Cw4xpF
-	Z7Wa4jyryUKr48Ar1jqF12vFy5tw1fJ347XrW5Xan3XrWqvFyIgF409FZ0grnrXw4rGa4j
-	qF1UG3s3uw13trDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+From: Darrick J. Wong <djwong@kernel.org>
 
-在 2025/09/15 18:43, John Garry 写道:
-> On 12/09/2025 07:16, Zhang Yi wrote:
->> Hi, Jens!
->>
->> Can you take this patch set through the linux-block tree?
-> 
-> 
-> md raid maintainers,
-> 
-> please try to get this picked up ASAP. As things stand, all these RAID 
-> personalities will be broken for 6.17 on drives supporting/reporting 
-> write zeroes.
-> 
+Enable the mount.service helper to attach whatever privileges it might
+have to enable iomap to a /dev/fuse fd before passing that fd to the
+fuse server.  Assuming that the fuse service itself does not have
+sufficient privilege to enable iomap on its own, it can now inherit that
+privilege via the fd.
 
-Not sure if Jens missed this, I'll pick patch 1 later today if Jens
-doesn't apply.
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ include/fuse_kernel.h       |    1 +
+ include/fuse_lowlevel.h     |   11 +++++++
+ include/fuse_service.h      |   11 +++++++
+ include/fuse_service_priv.h |   10 +++++++
+ lib/fuse_lowlevel.c         |    5 +++
+ lib/fuse_service.c          |   49 +++++++++++++++++++++++++++++++++
+ lib/fuse_versionscript      |    2 +
+ util/mount_service.c        |   64 +++++++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 152 insertions(+), 1 deletion(-)
 
-Thanks,
-Kuai
 
-> Thanks
-> 
->>
->> Thanks,
->> Yi.
->>
->> On 9/10/2025 7:11 PM, Zhang Yi wrote:
->>> From: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> Changes since v1:
->>>   - Improve commit messages in patch 1 by adding a simple reproduction
->>>     case as Paul suggested and explaining the implementation differences
->>>     between RAID 0 and RAID 1/10/5, no code changes.
->>>
->>> v1: 
->>> https://urldefense.com/v3/__https://lore.kernel.org/linux-block/20250825083320.797165-1-yi.zhang@huaweicloud.com/__;!!ACWV5N9M2RV99hQ!JAN4eq3ePrspeto0Hn7563lg3392Lh44jM1oTbgxbDoClxVOh5B73QhGD53f9tiLxuxfJCr51PyAP55COV2TTZAt$ 
->>>
->>>
->>> This series fixes the initialization of max_hw_wzeroes_unmap_sectors in
->>> queue_limits for all md raid and drbd drivers, preventing
->>> blk_validate_limits() failures on underlying devices that support the
->>> unmap write zeroes command.
->>>
->>> Best regards,
->>> Yi.
->>>
->>> Zhang Yi (2):
->>>    md: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
->>>    drbd: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
->>>
->>>   drivers/block/drbd/drbd_nl.c | 1 +
->>>   drivers/md/md-linear.c       | 1 +
->>>   drivers/md/raid0.c           | 1 +
->>>   drivers/md/raid1.c           | 1 +
->>>   drivers/md/raid10.c          | 1 +
->>>   drivers/md/raid5.c           | 1 +
->>>   6 files changed, 6 insertions(+)
->>>
->>
->>
-> 
-> 
-> .
-> 
+diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+index 3bb26fce2f6a0e..3b88b36c04ae02 100644
+--- a/include/fuse_kernel.h
++++ b/include/fuse_kernel.h
+@@ -1169,6 +1169,7 @@ struct fuse_iomap_support {
+ #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
+ 					     struct fuse_backing_map)
+ #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
++#define FUSE_DEV_IOC_ADD_IOMAP		_IO(FUSE_DEV_IOC_MAGIC, 99)
+ #define FUSE_DEV_IOC_IOMAP_SUPPORT	_IOR(FUSE_DEV_IOC_MAGIC, 99, \
+ 					     struct fuse_iomap_support)
+ 
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index 1d73f2befc5f3c..7a99f05e2de841 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -2673,7 +2673,6 @@ bool fuse_req_is_uring(fuse_req_t req);
+ int fuse_req_get_payload(fuse_req_t req, char **payload, size_t *payload_sz,
+ 			 void **mr);
+ 
+-
+ /**
+  * Discover the kernel's iomap capabilities.  Returns FUSE_CAP_IOMAP_* flags.
+  *
+@@ -2683,6 +2682,16 @@ int fuse_req_get_payload(fuse_req_t req, char **payload, size_t *payload_sz,
+  */
+ uint64_t fuse_lowlevel_discover_iomap(int fd);
+ 
++/**
++ * Request that iomap capabilities be added to this fuse device.  This enables
++ * a privileged mount helper to convey the privileges that allow iomap usage to
++ * a completely unprivileged fuse server.
++ *
++ * @param fd open file descriptor to a fuse device
++ * @return 0 on success, -1 on failure with errno set
++ */
++int fuse_lowlevel_add_iomap(int fd);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/fuse_service.h b/include/fuse_service.h
+index 7c44c701bd695b..4e0923bafb0703 100644
+--- a/include/fuse_service.h
++++ b/include/fuse_service.h
+@@ -126,6 +126,17 @@ int fuse_service_receive_file(struct fuse_service *sf,
+  */
+ int fuse_service_finish_file_requests(struct fuse_service *sf);
+ 
++/**
++ * Attach iomap to the fuse connection.
++ *
++ * @param sf service context
++ * @param mandatory true if the server requires iomap
++ * @param error result of trying to enable iomap
++ * @return 0 on success, -1 on error
++ */
++int fuse_service_configure_iomap(struct fuse_service *sf, bool mandatory,
++				 int *error);
++
+ /**
+  * Ask the mount.service helper to mount the filesystem for us.  The fuse client
+  * will begin sending requests to the fuse server immediately after this.
+diff --git a/include/fuse_service_priv.h b/include/fuse_service_priv.h
+index 1c01a7ba9614f2..c57fd4c563bac3 100644
+--- a/include/fuse_service_priv.h
++++ b/include/fuse_service_priv.h
+@@ -32,6 +32,7 @@ struct fuse_service_memfd_argv {
+ #define FUSE_SERVICE_MNTPT_CMD		0x4d4e5450	/* MNTP */
+ #define FUSE_SERVICE_MOUNT_CMD		0x444f4954	/* DOIT */
+ #define FUSE_SERVICE_BYE_CMD		0x42594545	/* BYEE */
++#define FUSE_SERVICE_IOMAP_CMD		0x494f4d41	/* IOMA */
+ 
+ /* mount.service sends replies to the fuse server */
+ #define FUSE_SERVICE_OPEN_REPLY		0x46494c45	/* FILE */
+@@ -69,6 +70,15 @@ static inline size_t sizeof_fuse_service_open_command(size_t pathlen)
+ 	return sizeof(struct fuse_service_open_command) + pathlen + 1;
+ }
+ 
++#define FUSE_IOMAP_MODE_OPTIONAL	0x503F /* P? */
++#define FUSE_IOMAP_MODE_MANDATORY	0x5021 /* P! */
++
++struct fuse_service_iomap_command {
++	struct fuse_service_packet p;
++	__be16 mode;
++	__be16 padding;
++};
++
+ struct fuse_service_string_command {
+ 	struct fuse_service_packet p;
+ 	char value[];
+diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
+index 460ade5a9704a4..784c90d8cd1e3f 100644
+--- a/lib/fuse_lowlevel.c
++++ b/lib/fuse_lowlevel.c
+@@ -4839,3 +4839,8 @@ uint64_t fuse_lowlevel_discover_iomap(int fd)
+ 
+ 	return ios.flags;
+ }
++
++int fuse_lowlevel_add_iomap(int fd)
++{
++	return ioctl(fd, FUSE_DEV_IOC_ADD_IOMAP);
++}
+diff --git a/lib/fuse_service.c b/lib/fuse_service.c
+index ab50f0017b255c..d378cb01f72665 100644
+--- a/lib/fuse_service.c
++++ b/lib/fuse_service.c
+@@ -617,6 +617,55 @@ static int send_mount(struct fuse_service *sf, unsigned int flags, int *error)
+ 	return 0;
+ }
+ 
++int fuse_service_configure_iomap(struct fuse_service *sf, bool mandatory,
++				 int *error)
++{
++	struct fuse_service_iomap_command cmd = {
++		.p.magic = ntohl(FUSE_SERVICE_IOMAP_CMD),
++		.mode = mandatory ? ntohs(FUSE_IOMAP_MODE_MANDATORY) :
++				    ntohs(FUSE_IOMAP_MODE_OPTIONAL),
++	};
++	struct fuse_service_simple_reply reply = { };
++	struct iovec iov = {
++		.iov_base = &cmd,
++		.iov_len = sizeof(cmd),
++	};
++	struct msghdr msg = {
++		.msg_iov = &iov,
++		.msg_iovlen = 1,
++	};
++	ssize_t size;
++
++	size = sendmsg(sf->sockfd, &msg, MSG_EOR | MSG_NOSIGNAL);
++	if (size < 0) {
++		perror("fuse: send iomap command");
++		return -1;
++	}
++
++	iov.iov_base = &reply;
++	iov.iov_len = sizeof(reply);
++	size = recvmsg(sf->sockfd, &msg, MSG_TRUNC);
++	if (size < 0) {
++		perror("fuse: iomap command reply");
++		return -1;
++	}
++	if (size != sizeof(reply)) {
++		fprintf(stderr,
++ "fuse: wrong iomap command reply size %zd, expected %zd\n",
++			size, sizeof(reply));
++		return -1;
++	}
++
++	if (ntohl(reply.p.magic) != FUSE_SERVICE_SIMPLE_REPLY) {
++		fprintf(stderr,
++ "fuse: iomap command reply contains wrong magic!\n");
++		return -1;
++	}
++
++	*error = ntohl(reply.error);
++	return 0;
++}
++
+ int fuse_service_mount(struct fuse_service *sf, struct fuse_session *se,
+ 		       const char *mountpoint)
+ {
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index 335e18063bab00..39bc1e1036007a 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -240,9 +240,11 @@ FUSE_3.99 {
+ 		fuse_lowlevel_notify_iomap_inval;
+ 		fuse_fs_iomap_upsert;
+ 		fuse_fs_iomap_inval;
++		fuse_lowlevel_add_iomap;
+ 
+ 		fuse_service_accept;
+ 		fuse_service_append_args;
++		fuse_service_configure_iomap;
+ 		fuse_service_destroy;
+ 		fuse_service_finish_file_requests;
+ 		fuse_service_mount;
+diff --git a/util/mount_service.c b/util/mount_service.c
+index 612fec327cedde..ceaa74f8a6127e 100644
+--- a/util/mount_service.c
++++ b/util/mount_service.c
+@@ -62,6 +62,9 @@ struct mount_service {
+ 
+ 	/* fd for fsopen */
+ 	int fsopenfd;
++
++	/* did someone configure iomap already? */
++	int iomap_configured:1;
+ };
+ 
+ /* Filter out the subtype of the filesystem (e.g. fuse.Y -> Y) */
+@@ -399,6 +402,22 @@ static int mount_service_send_file_error(struct mount_service *mo, int error,
+ 	return ret;
+ }
+ 
++static int mount_service_config_iomap(struct mount_service *mo,
++				      bool mandatory)
++{
++	int ret;
++
++	mo->iomap_configured = 1;
++
++	ret = fuse_lowlevel_add_iomap(mo->fusedevfd);
++	if (ret && mandatory) {
++		perror("mount.service: adding iomap capability");
++		return -errno;
++	}
++
++	return 0;
++}
++
+ static int mount_service_send_required_files(struct mount_service *mo,
+ 					     const char *fusedev)
+ {
+@@ -721,6 +740,13 @@ static int mount_service_regular_mount(struct mount_service *mo,
+ 		return -1;
+ 	}
+ 
++	/*
++	 * If nobody tried to configure iomap, try to enable it but don't
++	 * fail if we can't.
++	 */
++	if (!mo->iomap_configured)
++		mount_service_config_iomap(mo, false);
++
+ 	ret = mount(mo->source, mo->mountpoint, mo->fstype, ntohl(oc->flags),
+ 		    realmopts);
+ 	free(realmopts);
+@@ -792,6 +818,41 @@ static int mount_service_fsopen_mount(struct mount_service *mo,
+ 	return mount_service_send_reply(mo, 0);
+ }
+ 
++static int mount_service_handle_iomap_cmd(struct mount_service *mo,
++					  struct fuse_service_packet *p)
++{
++	struct fuse_service_iomap_command *oc =
++			container_of(p, struct fuse_service_iomap_command, p);
++	bool mandatory = false;
++	int ret;
++
++	if (oc->padding) {
++		fprintf(stderr, "mount.service: invalid iomap command\n");
++		mount_service_send_reply(mo, EINVAL);
++		return -1;
++	}
++
++	switch (ntohs(oc->mode)) {
++	case FUSE_IOMAP_MODE_MANDATORY:
++		mandatory = true;
++		/* fallthrough */
++	case FUSE_IOMAP_MODE_OPTIONAL:
++		ret = mount_service_config_iomap(mo, mandatory);
++		break;
++	default:
++		fprintf(stderr, "mount.service: invalid iomap command mode\n");
++		ret = -1;
++	}
++
++	if (ret < 0) {
++		mount_service_send_reply(mo, -ret);
++		return -1;
++	}
++
++	mount_service_send_reply(mo, 0);
++	return 0;
++}
++
+ static int mount_service_handle_mount_cmd(struct mount_service *mo,
+ 					  struct fuse_service_packet *p)
+ {
+@@ -934,6 +995,9 @@ int mount_service_main(int argc, char *argv[])
+ 		case FUSE_SERVICE_MNTPT_CMD:
+ 			ret = mount_service_handle_mountpoint_cmd(&mo, p);
+ 			break;
++		case FUSE_SERVICE_IOMAP_CMD:
++			ret = mount_service_handle_iomap_cmd(&mo, p);
++			break;
+ 		case FUSE_SERVICE_MOUNT_CMD:
+ 			ret = mount_service_handle_mount_cmd(&mo, p);
+ 			break;
 
 
