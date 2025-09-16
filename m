@@ -1,130 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-61708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5F3B59220
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 11:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C60B5924E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 11:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E48C77A249E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 09:24:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E65E67ACFE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 09:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3599229BDBA;
-	Tue, 16 Sep 2025 09:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dT0RQQsl"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5759029B775;
+	Tue, 16 Sep 2025 09:35:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACEC29ACEE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82C6296BB6;
+	Tue, 16 Sep 2025 09:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014751; cv=none; b=kYRSf7eEzOZTScTX/6aQzv/yefgFzvpstScc4b9HL+qrgv3F4UXMx17tkgFnJsJE8KWVj91P+WDm7FjAhIwlpEj7nOoAx9EX2rhD8vBIRdFeaAdTzJ7oWxoy9AXaV0kNbYw/m91FPG/51OERjLirZR7C/8RDGGsmCpQnxr+/JHc=
+	t=1758015316; cv=none; b=j6XEFZaaBwdKwcS/Xz/ycM5ckQldMxi3q51gc4ltG3bi33oynxXp7O2xiVZIwgYYQXR0obCS9mkVQKZ1TqoQQ+XfJffSMRbaGIKFT8lDcas3RAwCjYHkVg83+eU1/OGmofTNXXBNiBDWM+/IDD3cEMar46bTcJ/ueXQm/Y6stm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014751; c=relaxed/simple;
-	bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6jpUPzBN8tgrDWLzkV7CbxtmOTu/KAxgHvB8ix4SfzfQ18COoGbwu0jCmmIDY36oKmYVVUXMMdNCa1Jtz96odEuQ5SBphr2PF4Ey6UTCteThfASwXpP7SKZkR9Tb4YTTStkO6qngRLrUK5dY3Zei6lCK+HaiNFJMyCGyVmD4SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dT0RQQsl; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-265f97930baso3460115ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 02:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758014749; x=1758619549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
-        b=dT0RQQsl5eje7hoAfPCSV5cH16kUHaJsx/OLYQ/4UzEfSN5Y7zVtlbkRz38i+Xbdee
-         ftV8068+/eTu47ZV4UFRTANTk2T1XfHXjxJTIa0t05FXfRgE+tBsuDLPTu5TsoE4qzUS
-         3tvyTT7vdyW07G73hn/lXzEg9dVEZVWHxjNicVgfiFH3pOXlNuCSGg6G3OGhK84h4a8/
-         B7ZPZCgRC/ibUw7LFO+MNHq7Kbm0a2IxPUI1boPQHV1gv9CChl+FYUbENeWRVOPOasTm
-         mgstynIf5MNv6meFrxVsuCenfl9kWH8u7oPbimZaG8ARLrYrfuTvPN43mKhAdnfvq+8f
-         HbvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758014749; x=1758619549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
-        b=WLcZ2imB4Y5l+krTNEHK9u0jtjB1ipjFYlPCDTN30FHG73WepBVqFvD3tmi521J8em
-         a4VSWKCBYw2oYdDOTXcR9oYq4ZmMAInJewweZugh3yKrZpcSLmNWVvK7mZkBWf4oYmfY
-         1VsBrkhczpboufDcJpR7k5XDLOJjiaT3/g7bZUVnYw9O/nUP2obbZPhIuTxY2ZTfKjOT
-         irR52GSVI23BmuV8rDcQE/2mdxeIa27PLAmHuvNa3rbrYgVsVsgkzOze0OyvHZ/Xui0A
-         9ANxfAu3Y9V4ls2C2nlHUpBDbGbffp+9yLP6+4Ez7vNa3xA8bg6Xaa0jn4Z5LoGwadrp
-         57Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUPAeoFEChM277J/M2JKakjjsQXnPLIF4w/OGJH2SUtagoznS7I8QyBnQnq+U4cfH0p2QHXRP80RdBXJw+H@vger.kernel.org
-X-Gm-Message-State: AOJu0YybUaKiqLlE8TMPhCFauOyCLBg2SoiVC5BT9m2oOQ6ONrY8Wh1L
-	EyfvtCwOEY2MrF9rUScz9n3+TrIddrJzu1Ljgm88U2UXp6ByWpsv7dH5tBkQQySoc36wwYfX9r2
-	kYycUXarrSfdswXhpEU2Mbaz48gBKhFM=
-X-Gm-Gg: ASbGnctc8oo9ZX4CQ/J86gJOSdbL9uPZRbKVbQFBtelfiBZBwYcd5tSzRVoBI58Vapl
-	J3FTGyzLyWcTtiVg63IR3b6bRmb79OA1gJwMb/l852hMTtlROicl/LBFZL3VT8OT+a5P0B4FY7f
-	8A93OmYdru4w3XIJfq/4Mghrb0g7xticTPFgnBqm4Pzp85O/3M7sfq0ovLLJQBK2/Ju+4AS/ZOY
-	+GzSioFqg05szjUykEteLP/7/9pXBlMNdH/nDxN0aI5TZmOJGhCZW9kOBrATtmSC4fHvARGt30+
-	egCpIQf1etZGrHibNsQIr334QA==
-X-Google-Smtp-Source: AGHT+IFbZW+x9x9wRPjcu0fUDKKV+FI4Ux2olLrfd71XqGlZeb06RKz20GRATJ3RhC04PqeZ4amtqqROnzbUAvJFtis=
-X-Received: by 2002:a17:903:234e:b0:267:b357:b63f with SMTP id
- d9443c01a7336-267b357ba4cmr28322155ad.11.1758014749004; Tue, 16 Sep 2025
- 02:25:49 -0700 (PDT)
+	s=arc-20240116; t=1758015316; c=relaxed/simple;
+	bh=jCU4xSa9+1LGaPsyL6OfJbFmHOlnj4FeIJVIUBrpyeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nSiuIGgT16X6c4xhXfHtbxVn6rrlgrbvEQGiH/H0LyJh/F+jYcML7/aSoJ2tVGFY3gu1zh6YNZGJN6Js176F2h3SADBORHdJPYYHb110c1o96jv3dDvlPwHwAxJhdlrVdjBtKg3evvu1AkLUkmTgW78PB9uslFVfaCSg7py3N5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQxZl4ZmPzKHN74;
+	Tue, 16 Sep 2025 17:35:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4758C1A0E1E;
+	Tue, 16 Sep 2025 17:35:12 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIxIL8loVknDCg--.4503S4;
+	Tue, 16 Sep 2025 17:35:10 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	hsiangkao@linux.alibaba.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/2] ext4: fix an data corruption issue in nojournal mode
+Date: Tue, 16 Sep 2025 17:33:35 +0800
+Message-ID: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
-In-Reply-To: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 16 Sep 2025 11:25:35 +0200
-X-Gm-Features: AS18NWBte47JR71hFkT2j6pdf07EXnpt9Cw80lEcllpwl7SjI3e6diSfmzb9hqQ
-Message-ID: <CANiq72mrY92-msShBgiqqRpewiTqLANb-uH8+nPfAqKivCWjUw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] rust: use `kernel::{fmt,prelude::fmt!}`
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncIxIL8loVknDCg--.4503S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrWrCry5Zw17KFWrCFWrGrg_yoWDKwb_uF
+	WvyF98JrsYqaySkFW3Krs8WrySkrWIgr18Xan5K3ZxKryUJFnruan3KrZ3ZrnF9F4F93s8
+	JFyqvw4xZwnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, Aug 13, 2025 at 5:39=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> This is series 2a/5 of the migration to `core::ffi::CStr`[0].
-> 20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com.
->
-> This series depends on the prior series[0] and is intended to go through
-> the rust tree to reduce the number of release cycles required to
-> complete the work.
->
-> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> can be taken through Miguel's tree (where the other series must go).
->
-> [0] https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a91524037=
-783@gmail.com/
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Applied to `rust-next` -- thanks everyone!
+Hello!
 
-If any maintainer has a problem with this, please shout.
+This series fixes an data corruption issue reported by Gao Xiang in
+nojournal mode. The problem is happened after a metadata block is freed,
+it can be immediately reallocated as a data block. However, the metadata
+on this block may still be in the process of being written back, which
+means the new data in this block could potentially be overwritten by the
+stale metadata and trigger a data corruption issue. Please see below
+discussion with Jan for more details:
 
-Cheers,
-Miguel
+  https://lore.kernel.org/linux-ext4/a9417096-9549-4441-9878-b1955b899b4e@huaweicloud.com/
+
+Patch 1 strengthens the same case in ordered journal mode, theoretically
+preventing the occurrence of stale data issues. 
+Patch 2 fix this issue in nojournal mode.
+
+Regards,
+Yi.
+
+Zhang Yi (2):
+  jbd2: ensure that all ongoing I/O complete before freeing blocks
+  ext4: wait for ongoing I/O to complete before freeing blocks
+
+ fs/ext4/ext4_jbd2.c   | 11 +++++++++--
+ fs/jbd2/transaction.c | 13 +++++++++----
+ 2 files changed, 18 insertions(+), 6 deletions(-)
+
+-- 
+2.46.1
+
 
