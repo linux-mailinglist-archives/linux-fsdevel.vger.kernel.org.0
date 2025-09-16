@@ -1,264 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-61707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59F3B591E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 11:18:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5F3B59220
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 11:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C35161CCD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 09:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E48C77A249E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 09:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A544D2580F9;
-	Tue, 16 Sep 2025 09:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3599229BDBA;
+	Tue, 16 Sep 2025 09:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="BRdJ3Bw3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DBquHLeR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dT0RQQsl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB51B17597
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 09:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACEC29ACEE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014279; cv=none; b=S0ug/hAo/H4uf/A8X6PVeb1G9qMsstMb10/lJi250P/2jH+T3pigoj2LUQsi3T4gZU+JrHjo4IiAKhY/cGOOQKBAOzggjwOT4mDyxwJuDP3dDdRjsNsuP8kGnqoC30v1IlP5LrH1KC7AaUdd8PyEnoyurBNRGjJqfpfGS1nOSI0=
+	t=1758014751; cv=none; b=kYRSf7eEzOZTScTX/6aQzv/yefgFzvpstScc4b9HL+qrgv3F4UXMx17tkgFnJsJE8KWVj91P+WDm7FjAhIwlpEj7nOoAx9EX2rhD8vBIRdFeaAdTzJ7oWxoy9AXaV0kNbYw/m91FPG/51OERjLirZR7C/8RDGGsmCpQnxr+/JHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014279; c=relaxed/simple;
-	bh=QewYBolD3qDrFHYdzN1pEDVbU6uD6tkiUnPG8yHRc5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j60hcNNIiZDYDAcGh9gBAsqk0QAEtH+edI1WKv+CI3AJUAJ39u66uNjZ5+d0H6tSqZRYHhECzr0CyT9Tx0KDaM/rmLFHm+NEBEM4gdCkhhGmxBoJn3fUyfb8xqmXJR+jPon8j/+JiYcMpN5Zb3pYrZrcBEBVqwQ+IF8kOU9SPx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=BRdJ3Bw3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DBquHLeR; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id E92DCEC023E;
-	Tue, 16 Sep 2025 05:17:55 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 16 Sep 2025 05:17:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1758014275;
-	 x=1758100675; bh=CXbyD4jzmWQ1VtHqrCjK+sGbU6slLV0OI/tZ7st5Bp0=; b=
-	BRdJ3Bw3ivWQjP6UNr7jBqQIhs8SIDRIncR1Ua0+IAZ9jhVAWD/0HeQHpzR3UrnO
-	808xGS+EPb+S1vNad6EA1G1vJ95g+K5PaXllT/0TA3+/kCqIFxwzHcjIjrycxP1i
-	N8PVKY17/MKD0Diz7zp6lzPdbR32tbeoLySc+zp+T3Us2wNVZ6HTArOGTWtCPI7s
-	rJmfL9y9Z7Ea6DHSFP24K/ZK49qDVvZ7TpEJSu46pszQ8k6RPsRqGCaiegaE7HUz
-	42TWtLj0p78Lci0kmms+vlMgL5kggVHuhE4gkr5wSHk7P2410ta6BH9fDG/70Ap6
-	PQAVOzPNZ8W9QGFHnVk+5g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758014275; x=
-	1758100675; bh=CXbyD4jzmWQ1VtHqrCjK+sGbU6slLV0OI/tZ7st5Bp0=; b=D
-	BquHLeRNYG9PSjU7cu8k4WPqwsOWalFCuKRhxBnAZQh4KST4/YUCkFpIyvqJVsaw
-	htHqn7/RlApVm097Pqey1QZYWddJUxdEjTksTkkUJufKRFZjKierLs1JfW2X+qbM
-	hat6yGXJKjk50ldodIcuEba9Y6WjBusLpg7CweNi+O+Z/tASI5U8McY5pSBTCakU
-	X6xab8nqe+BgmVKgCmuU6LtWPuL99/HM1kf5Jv6mEEq1Mvfn7o8v9yQ2Nc5dQ7Gf
-	/XUWZstg2IvYemiyIdGDgePN7EkV7RIifC7Imkq/gDprntBMAX2KeOpgrzhs7Tcg
-	OOyVdWYpeW5a9Flz9/j1w==
-X-ME-Sender: <xms:QyvJaDU5pCUXidgFhCBCLF3ujAmhCZ9l6Z3rvxqTsb0ReCvYjWTrAg>
-    <xme:QyvJaGIHGLOizHtMJ71hC86pBP2Zxjjxez0KY4XPsbn5xU52YgdLSXaIyLWSyDN1a
-    9USlUOxmJT3Qu-1>
-X-ME-Received: <xmr:QyvJaL8-VXuBUYgDwzyhcf-uZY8gqgn1E_U8lDaX-59EslKaii0r1XuiMLStPtEhxwMfjJS7qYiaKpSqyGdYkwEgUF1QaUcqxUYBjRneps8uT2OL_Uvy>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnhepfeeggeefffekudduleefheelleehgfffhedujedvgfetvedvtdefieehfeel
-    gfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepgedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtoheprghlihesuggunhdrtghomhdprhgtphhtthhopehlihhnuhigqdhf
-    shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhikhhloh
-    hssehsiigvrhgvughirdhhuh
-X-ME-Proxy: <xmx:QyvJaBKHAEFRnmgzN7cWS3qIfoSaI6fi4XefpWXzTxvG_F094WeTnA>
-    <xmx:QyvJaIn8wZUY7QeKBr3RiCzUPjEZUskediVV-TdfkOlLGJB55zhkOw>
-    <xmx:QyvJaNOvsjCOV7goLPJaE6A4KWjxNz_mzudFCEfXN6hneKNrgRYZ4w>
-    <xmx:QyvJaG1VvXFhWVjDaNYmFE9GBbDdO3qBJ0n-ASv6pbB_oI4kEDtdGw>
-    <xmx:QyvJaCwtFurDHe1cREIp5gzndcaVLNc_8k8v-9ewzGkItU3GnOQziG3m>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Sep 2025 05:17:54 -0400 (EDT)
-Message-ID: <e5793dc4-94f8-4216-aa0c-463331d3092b@bsbernd.com>
-Date: Tue, 16 Sep 2025 11:17:53 +0200
+	s=arc-20240116; t=1758014751; c=relaxed/simple;
+	bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6jpUPzBN8tgrDWLzkV7CbxtmOTu/KAxgHvB8ix4SfzfQ18COoGbwu0jCmmIDY36oKmYVVUXMMdNCa1Jtz96odEuQ5SBphr2PF4Ey6UTCteThfASwXpP7SKZkR9Tb4YTTStkO6qngRLrUK5dY3Zei6lCK+HaiNFJMyCGyVmD4SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dT0RQQsl; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-265f97930baso3460115ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 02:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758014749; x=1758619549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
+        b=dT0RQQsl5eje7hoAfPCSV5cH16kUHaJsx/OLYQ/4UzEfSN5Y7zVtlbkRz38i+Xbdee
+         ftV8068+/eTu47ZV4UFRTANTk2T1XfHXjxJTIa0t05FXfRgE+tBsuDLPTu5TsoE4qzUS
+         3tvyTT7vdyW07G73hn/lXzEg9dVEZVWHxjNicVgfiFH3pOXlNuCSGg6G3OGhK84h4a8/
+         B7ZPZCgRC/ibUw7LFO+MNHq7Kbm0a2IxPUI1boPQHV1gv9CChl+FYUbENeWRVOPOasTm
+         mgstynIf5MNv6meFrxVsuCenfl9kWH8u7oPbimZaG8ARLrYrfuTvPN43mKhAdnfvq+8f
+         HbvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758014749; x=1758619549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
+        b=WLcZ2imB4Y5l+krTNEHK9u0jtjB1ipjFYlPCDTN30FHG73WepBVqFvD3tmi521J8em
+         a4VSWKCBYw2oYdDOTXcR9oYq4ZmMAInJewweZugh3yKrZpcSLmNWVvK7mZkBWf4oYmfY
+         1VsBrkhczpboufDcJpR7k5XDLOJjiaT3/g7bZUVnYw9O/nUP2obbZPhIuTxY2ZTfKjOT
+         irR52GSVI23BmuV8rDcQE/2mdxeIa27PLAmHuvNa3rbrYgVsVsgkzOze0OyvHZ/Xui0A
+         9ANxfAu3Y9V4ls2C2nlHUpBDbGbffp+9yLP6+4Ez7vNa3xA8bg6Xaa0jn4Z5LoGwadrp
+         57Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUPAeoFEChM277J/M2JKakjjsQXnPLIF4w/OGJH2SUtagoznS7I8QyBnQnq+U4cfH0p2QHXRP80RdBXJw+H@vger.kernel.org
+X-Gm-Message-State: AOJu0YybUaKiqLlE8TMPhCFauOyCLBg2SoiVC5BT9m2oOQ6ONrY8Wh1L
+	EyfvtCwOEY2MrF9rUScz9n3+TrIddrJzu1Ljgm88U2UXp6ByWpsv7dH5tBkQQySoc36wwYfX9r2
+	kYycUXarrSfdswXhpEU2Mbaz48gBKhFM=
+X-Gm-Gg: ASbGnctc8oo9ZX4CQ/J86gJOSdbL9uPZRbKVbQFBtelfiBZBwYcd5tSzRVoBI58Vapl
+	J3FTGyzLyWcTtiVg63IR3b6bRmb79OA1gJwMb/l852hMTtlROicl/LBFZL3VT8OT+a5P0B4FY7f
+	8A93OmYdru4w3XIJfq/4Mghrb0g7xticTPFgnBqm4Pzp85O/3M7sfq0ovLLJQBK2/Ju+4AS/ZOY
+	+GzSioFqg05szjUykEteLP/7/9pXBlMNdH/nDxN0aI5TZmOJGhCZW9kOBrATtmSC4fHvARGt30+
+	egCpIQf1etZGrHibNsQIr334QA==
+X-Google-Smtp-Source: AGHT+IFbZW+x9x9wRPjcu0fUDKKV+FI4Ux2olLrfd71XqGlZeb06RKz20GRATJ3RhC04PqeZ4amtqqROnzbUAvJFtis=
+X-Received: by 2002:a17:903:234e:b0:267:b357:b63f with SMTP id
+ d9443c01a7336-267b357ba4cmr28322155ad.11.1758014749004; Tue, 16 Sep 2025
+ 02:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/fuse: fix potential memory leak from
- fuse_uring_cancel
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Jian Huang Li <ali@ddn.com>, linux-fsdevel@vger.kernel.org,
- miklos@szeredi.hu
-References: <94377ddf-9d04-4181-a632-d8c393dcd240@ddn.com>
- <CAJnrk1ZHfd3r1+s0fV209LROO1kixM=_T7Derm+GrR_hYa_wpw@mail.gmail.com>
- <99313bf9-963f-430e-a929-faa915d77202@bsbernd.com>
- <CAJnrk1aYqZPNg_O25Yv6d5jGdzcPv0oyQ93KwarxovBJMyymdA@mail.gmail.com>
- <4acdbba9-c4ad-4b33-b74b-2acc424cb24a@bsbernd.com>
- <478c4d28-e7d9-4dbd-9521-a3cea73fddde@bsbernd.com>
- <CAJnrk1ahQf5-Rb+axFJ=yNn=AWneTtYjKMFzVeorKjQfTjc9Aw@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1ahQf5-Rb+axFJ=yNn=AWneTtYjKMFzVeorKjQfTjc9Aw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
+In-Reply-To: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 16 Sep 2025 11:25:35 +0200
+X-Gm-Features: AS18NWBte47JR71hFkT2j6pdf07EXnpt9Cw80lEcllpwl7SjI3e6diSfmzb9hqQ
+Message-ID: <CANiq72mrY92-msShBgiqqRpewiTqLANb-uH8+nPfAqKivCWjUw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] rust: use `kernel::{fmt,prelude::fmt!}`
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 13, 2025 at 5:39=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> This is series 2a/5 of the migration to `core::ffi::CStr`[0].
+> 20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com.
+>
+> This series depends on the prior series[0] and is intended to go through
+> the rust tree to reduce the number of release cycles required to
+> complete the work.
+>
+> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+> can be taken through Miguel's tree (where the other series must go).
+>
+> [0] https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a91524037=
+783@gmail.com/
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
+Applied to `rust-next` -- thanks everyone!
 
-On 9/16/25 01:04, Joanne Koong wrote:
-> On Mon, Sep 15, 2025 at 2:57 PM Bernd Schubert <bernd@bsbernd.com> wrote:
->> On 9/15/25 23:46, Bernd Schubert wrote:
->>> On 9/15/25 23:23, Joanne Koong wrote:
->>>> On Mon, Sep 15, 2025 at 1:15 PM Bernd Schubert <bernd@bsbernd.com> wrote:
->>>>>
->>>>> Hi Joanne,
->>>>>
->>>>> thanks for looking into this.
->>>>>
->>>>> On 9/15/25 20:15, Joanne Koong wrote:
->>>>>> On Thu, Sep 11, 2025 at 3:34 AM Jian Huang Li <ali@ddn.com> wrote:
->>>>>>>
->>>>>>> This issue could be observed sometimes during libfuse xfstests, from
->>>>>>> dmseg prints some like "kernel: WARNING: CPU: 4 PID: 0 at
->>>>>>> fs/fuse/dev_uring.c:204 fuse_uring_destruct+0x1f5/0x200 [fuse]".
->>>>>>>
->>>>>>> The cause is, if when fuse daemon just submitted
->>>>>>> FUSE_IO_URING_CMD_REGISTER SQEs, then umount or fuse daemon quits at
->>>>>>> this very early stage. After all uring queues stopped, might have one or
->>>>>>> more unprocessed FUSE_IO_URING_CMD_REGISTER SQEs get processed then some
->>>>>>> new ring entities are created and added to ent_avail_queue, and
->>>>>>> immediately fuse_uring_cancel moves them to ent_in_userspace after SQEs
->>>>>>> get canceled. These ring entities will not be moved to ent_released, and
->>>>>>> will stay in ent_in_userspace when fuse_uring_destruct is called, needed
->>>>>>> be freed by the function.
->>>>>>
->>>>>> Hi Jian,
->>>>>>
->>>>>> Does it suffice to fix this race by tearing down the entries from the
->>>>>> available queue first before tearing down the entries in the userspace
->>>>>> queue? eg something like
->>>>>>
->>>>>>  static void fuse_uring_teardown_entries(struct fuse_ring_queue *queue)
->>>>>>  {
->>>>>> -       fuse_uring_stop_list_entries(&queue->ent_in_userspace, queue,
->>>>>> -                                    FRRS_USERSPACE);
->>>>>>         fuse_uring_stop_list_entries(&queue->ent_avail_queue, queue,
->>>>>>                                      FRRS_AVAILABLE);
->>>>>> +       fuse_uring_stop_list_entries(&queue->ent_in_userspace, queue,
->>>>>> +                                    FRRS_USERSPACE);
->>>>>>  }
->>>>>>
->>>>>> AFAICT, the race happens right now because when fuse_uring_cancel()
->>>>>> moves the FRRS_AVAILABLE entries on the ent_avail_queue to the
->>>>>> ent_in_userspace queue, fuse_uring_teardown_entries() may have already
->>>>>> called fuse_uring_stop_list_entries() on the ent_in_userspace queue,
->>>>>> thereby now missing the just-moved entries altogether, eg this logical
->>>>>> flow
->>>>>>
->>>>>> -> fuse_uring_stop_list_entries(&queue->ent_in_userspace, ...);
->>>>>>     -> fuse_uring_cancel() moves entry from avail q to userspace q
->>>>>> -> fuse_uring_stop_list_entries(&queue->ent_avail_queue, ...);
->>>>>>
->>>>>> If instead fuse_uring_teardown_entries() stops the available queue first, then
->>>>>> -> fuse_uring_stop_list_entries(&queue->ent_avail_queue, ...);
->>>>>>     -> fuse_uring_cancel()
->>>>>> -> fuse_uring_stop_list_entries(&queue->ent_in_userspace, ...);
->>>>>>
->>>>>> seems fine now and fuse_uring_cancel() would basically be a no-op
->>>>>> since ent->state is now FRRS_TEARDOWN.
->>>>>>
->>>>>
->>>>> I'm not sure. Let's say we have
->>>>>
->>>>> task 1                                   task2
->>>>> fuse_uring_cmd()
->>>>>     fuse_uring_register()
->>>>>          [slowness here]
->>>>>                                         fuse_abort_conn()
->>>>>                                           fuse_uring_teardown_entries()
->>>>>          [slowness continue]
->>>>>          fuse_uring_do_register()
->>>>>             fuse_uring_prepare_cancel()
->>>>>             fuse_uring_ent_avail()
->>>>>
->>>>>
->>>>> I.e. fuse_uring_teardown_entries() might be called before
->>>>> the command gets marked cancel-able and before it is
->>>>> moved to the avail queue. I think we should extend the patch
->>>>> and actually not set the ring to ready when fc->connected
->>>>> is set to 0.
->>>>>
->>>>
->>>> Hi Bernd,
->>>>
->>>> I think this is a separate race from the fuse_uring_cancel one.
->>>> afaics, this race can happen even if the user doesn't call
->>>> fuse_uring_cancel(). imo I think the cleanest solution to this
->>>> registration vs teardown race is to check queue->stopped in
->>>> fuse_uring_do_register() after we grab the queue spinlock, and if
->>>> queue->stopped is true, then just clean up the entry ourselves with
->>>> fuse_uring_entry_teardown()).
->>>
->>> What speaks against just doing as in the existing patch and freeing
->>> the ent_in_userspace entries fuse_uring_destruct()?
->>> IMO it covers both races, missing is just to avoid setting the ring
->>> as ready.
-> 
-> Couldn't the entry in fuse_uring_do_register() be in the available
-> queue when we get to fuse_uring_destruct() which means the existing
+If any maintainer has a problem with this, please shout.
 
-We would never go into fuse_uring_destruct(), because io-uring would
-still hold references on the fuse device / fuse_conn.
-
-> patch would also have to iterate through the available queue too? eg
-> i'm imagining something like
-> 
-> fuse_uring_do_register()
->    -> fuse_uring_prepare_cancel()
->          *** fuse_uring_cancel() + teardown run on other threads
->    -> fuse_uring_ent_avail()
-
-Up to hear it is right, but then see io_ring_exit_work() in io_uring.c.
-I.e. it will run io_uring_try_cancel_requests() in a loop.
-fuse_uring_cancel() is a noop as long as ent->state != FRRS_AVAILABLE
-
-If commands are not cancelled at all, io_ring_exit_work() will print
-warnings in intervals - initially I hadn't figured out about
-IO_URING_F_CANCEL (and maybe it also didn't exist in earlier kernel
-versions) and then had added workarounds into fuse_dev_release(),
-because of the io-uring references.
-
-> 
-> imo, I think this scenario is its own separate race (between
-> registration and cancellation, that can happen irregardless of
-> teardown) that should be fixed by calling fuse_uring_prepare_cancel()
-> only after the fuse_uring_ent_avail() call, but I think this
-> underscores a bit that explicitly checking against torn down entries
-> is more robust when dealing with these races.
-> 
->>
->> Well, maybe cleaner, I don't have a strong opinion. We could skip the
->> comment and explanation with your approach.
-> 
-> I don't really have a strong opinion on this either, just wanted to
-> share my thoughts. If you'd rather go with the existing patch, then we
-> should do that.
-
-
-I still think Jians patch works as it is, although there is a bit magic
-behind it. The mere fact that we have the discussion above it probably
-reason enough to at least try to find a way to make easier to read.
-
-
-Thanks,
-Bernd
+Cheers,
+Miguel
 
