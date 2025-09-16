@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-61506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5ABB5894E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:28:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF1CB58952
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A652A4AAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:27:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6E21B25CC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AF51AA7BF;
-	Tue, 16 Sep 2025 00:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1551DE8AF;
+	Tue, 16 Sep 2025 00:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNksD2Qa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSNAiiKT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE02C19EEC2;
-	Tue, 16 Sep 2025 00:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C081DB377;
+	Tue, 16 Sep 2025 00:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982464; cv=none; b=ZkOeH+N3bC/i6V7JjjxEOloTwRVHErYTsSWE6ibgkwYo4I3ku1Kli/cHqnKANrTYEUDqC6ZBfScu79jAIEB+bATb0s16/WqVXe0J9iPpHs89KmrQskacjmuAKeo3us2zopUp5SsUtdtZaERO2ryeHMBVpozU4kL/UUqmWYuGKoQ=
+	t=1757982479; cv=none; b=hsEUuLrmsnRhI+DDBuvvSVPTgKiXpknmxntBUK3EOZ9UYhf2l5iiCKORZgOux+KSD/NXJZK0/TpTrsHiFpClAeESrG3QZqlRbO3thnaj2THi3B5rMjRssxhJciSQz91YMUVXPHN8PC5KSXMtdw9df1Dtrhq9dBqngDypoALGwZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982464; c=relaxed/simple;
-	bh=6jUD3sytMsMYDBoNXJXmk7N91wL3yH093Th4YYOYO1Y=;
+	s=arc-20240116; t=1757982479; c=relaxed/simple;
+	bh=HT1DHlHLaa5BWVmlm6m4nWsHeoIvJuY0G6cJhLGNsnY=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pxlgQKIzV/Eh/7y/fR6ZetUhPF2gkYMsUyxlay89NDVbbRiIoS00xUaAdadEn8KExC+BLD8hUBClgGpzxFEAbbz7OO861IzyLcQpfZorqCgoy/uKhDi8WOe01RvSed0tpccRb6XN5QLOWe9NvqU5tW6HGYof4QFc2g2GV7uVxvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNksD2Qa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B66DC4CEF1;
-	Tue, 16 Sep 2025 00:27:43 +0000 (UTC)
+	 MIME-Version:Content-Type; b=MVHZaf6Fbn2rdMkgX9zvSLOsuNru0hTBrWSA0wgwJMd+wzw5hIwPoYwVht8UoykJz49y7l+bl4yMdS0rOwgvYd9RdnzLHcLCwiEYkq4ZDcDttf1m4s7qc8Q1JPFX058teFqSWgEbCMMPhTI9GLK6Y7w/bSLDr29yVNQJWGlyo30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSNAiiKT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC14C4CEF5;
+	Tue, 16 Sep 2025 00:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757982463;
-	bh=6jUD3sytMsMYDBoNXJXmk7N91wL3yH093Th4YYOYO1Y=;
+	s=k20201202; t=1757982479;
+	bh=HT1DHlHLaa5BWVmlm6m4nWsHeoIvJuY0G6cJhLGNsnY=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=kNksD2Qa8Pu0e8kh5ZNNxdKNGzQn+fHRHTixgOTiba3P+3UhlM/PY/TzJZqVtwGo1
-	 pkQsrfQs0fRp8sotq1DJp2eRyttS2Bi8rNqZJFUZKRcBlbrufwB1ErG1gAXOjDw3f4
-	 FBSjvRag8F8T1mqj2Dno4lbFgPVULeTw+zb4FrPVQpwuoFeZbukxEdqRGskSR3fQTb
-	 s0cmrEpqnEo+OOxR7qYTBO+n6cbwqcUArTdWpYyEIEW1j83WzW20PZso9HPMwkcGqj
-	 cCtQfqlkB2msHtAUB5OoecnVnNo/IFEAaKLP/AKIc3CCCwIzugeVao0mP6BP/YevHo
-	 PIGSDYH1F8b/g==
-Date: Mon, 15 Sep 2025 17:27:43 -0700
-Subject: [PATCH 4/5] fuse_trace: move the passthrough-specific code back to
- passthrough.c
+	b=SSNAiiKTXNnXR19X/+9R7tcM8Y+Swyh8nf5ZNC9cIVu7FMp9p5Nt2MXSU1IqlVI1e
+	 H2RTBLWHyuURl58wjd25fIAEjMIsAKOMV0LEfIQfr+6FBeSnf/yILggyu+JlHpV47j
+	 JLVCzpTuD0MYTblc9+FmqBSr7gJSE6D7XnQ9/KzmEvWDfmIZwjLNnu+MQi0uI1oFVu
+	 +qGvcxb6yRiIprJJfcKOBd/MJFORpSNmC7vLwHTH2evuyHoF4PjnPPqLtCq+Ui8dC0
+	 C/ddSujREU0qiNaylPRyNA+e8eU88Eb0hW4zl1iUDvisCNa7HseFbxQcxuFEtbm+GV
+	 O1NcTu+8/uDOg==
+Date: Mon, 15 Sep 2025 17:27:58 -0700
+Subject: [PATCH 5/5] fuse: move CREATE_TRACE_POINTS to a separate file
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
  linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Message-ID: <175798150795.382479.17399486562438456769.stgit@frogsfrogsfrogs>
+Message-ID: <175798150817.382479.14480676596668508285.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798150680.382479.9087542564560468560.stgit@frogsfrogsfrogs>
 References: <175798150680.382479.9087542564560468560.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,90 +61,64 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add tracepoints for the previous patch.
+Before we start adding new tracepoints for fuse+iomap, move the
+tracepoint creation itself to a separate source file so that we don't
+have to start pulling iomap dependencies into dev.c just for the iomap
+structures.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_trace.h |   35 +++++++++++++++++++++++++++++++++++
- fs/fuse/backing.c    |    5 +++++
- 2 files changed, 40 insertions(+)
+ fs/fuse/Makefile |    3 ++-
+ fs/fuse/dev.c    |    1 -
+ fs/fuse/trace.c  |   13 +++++++++++++
+ 3 files changed, 15 insertions(+), 2 deletions(-)
+ create mode 100644 fs/fuse/trace.c
 
 
-diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
-index bbe9ddd8c71696..286a0845dc0898 100644
---- a/fs/fuse/fuse_trace.h
-+++ b/fs/fuse/fuse_trace.h
-@@ -124,6 +124,41 @@ TRACE_EVENT(fuse_request_end,
- 		  __entry->unique, __entry->len, __entry->error)
- );
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 36be6d715b111a..46041228e5be2c 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -10,7 +10,8 @@ obj-$(CONFIG_FUSE_FS) += fuse.o
+ obj-$(CONFIG_CUSE) += cuse.o
+ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
  
-+#ifdef CONFIG_FUSE_BACKING
-+TRACE_EVENT(fuse_backing_class,
-+	TP_PROTO(const struct fuse_conn *fc, unsigned int idx,
-+		 const struct fuse_backing *fb),
-+
-+	TP_ARGS(fc, idx, fb),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,			connection)
-+		__field(unsigned int,		idx)
-+		__field(unsigned long,		ino)
-+	),
-+
-+	TP_fast_assign(
-+		struct inode *inode = file_inode(fb->file);
-+
-+		__entry->connection	=	fc->dev;
-+		__entry->idx		=	idx;
-+		__entry->ino		=	inode->i_ino;
-+	),
-+
-+	TP_printk("connection %u idx %u ino 0x%lx",
-+		  __entry->connection,
-+		  __entry->idx,
-+		  __entry->ino)
-+);
-+#define DEFINE_FUSE_BACKING_EVENT(name)		\
-+DEFINE_EVENT(fuse_backing_class, name,		\
-+	TP_PROTO(const struct fuse_conn *fc, unsigned int idx, \
-+		 const struct fuse_backing *fb), \
-+	TP_ARGS(fc, idx, fb))
-+DEFINE_FUSE_BACKING_EVENT(fuse_backing_open);
-+DEFINE_FUSE_BACKING_EVENT(fuse_backing_close);
-+#endif /* CONFIG_FUSE_BACKING */
-+
- #endif /* _TRACE_FUSE_H */
+-fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
++fuse-y := trace.o	# put trace.o first so we see ftrace errors sooner
++fuse-y += dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
+ fuse-y += iomode.o
+ fuse-$(CONFIG_FUSE_DAX) += dax.o
+ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 281bc81f3b448b..871877cac2acf3 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -26,7 +26,6 @@
+ #include <linux/seq_file.h>
+ #include <linux/nmi.h>
  
- #undef TRACE_INCLUDE_PATH
-diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-index da0dff288396ed..229c101ab46b0e 100644
---- a/fs/fuse/backing.c
-+++ b/fs/fuse/backing.c
-@@ -71,6 +71,7 @@ static int fuse_backing_id_free(int id, void *p, void *data)
+-#define CREATE_TRACE_POINTS
+ #include "fuse_trace.h"
  
- 	WARN_ON_ONCE(refcount_read(&fb->count) != 1);
- 
-+	trace_fuse_backing_close((struct fuse_conn *)data, id, fb);
- 	fuse_backing_free(fb);
- 	return 0;
- }
-@@ -144,6 +145,8 @@ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
- 		fb = NULL;
- 		goto out;
- 	}
+ MODULE_ALIAS_MISCDEV(FUSE_MINOR);
+diff --git a/fs/fuse/trace.c b/fs/fuse/trace.c
+new file mode 100644
+index 00000000000000..93bd72efc98cd0
+--- /dev/null
++++ b/fs/fuse/trace.c
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#include "dev_uring_i.h"
++#include "fuse_i.h"
++#include "fuse_dev_i.h"
 +
-+	trace_fuse_backing_open(fc, res, fb);
- out:
- 	pr_debug("%s: fb=0x%p, ret=%i\n", __func__, fb, res);
- 
-@@ -193,6 +196,8 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
- 	if (err)
- 		goto out_fb;
- 
-+	trace_fuse_backing_close(fc, backing_id, fb);
++#include <linux/pagemap.h>
 +
- 	err = -ENOENT;
- 	test_fb = fuse_backing_id_remove(fc, backing_id);
- 	if (!test_fb)
++#define CREATE_TRACE_POINTS
++#include "fuse_trace.h"
 
 
