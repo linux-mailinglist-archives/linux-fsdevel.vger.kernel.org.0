@@ -1,534 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-61706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE3DB590AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 10:31:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59F3B591E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 11:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE06418991F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 08:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C35161CCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 09:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0592B2ED87F;
-	Tue, 16 Sep 2025 08:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A544D2580F9;
+	Tue, 16 Sep 2025 09:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="B1Lgn0ri"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="BRdJ3Bw3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DBquHLeR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882732EB853
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 08:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB51B17597
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 09:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758011384; cv=none; b=pZev/2jBLD9h7wr6HGv5hZ3Hbr1XCcto+7oRufMW/CkY45glE+TUnQtWf/yvUyrwRoxiNnt67f5uW0+tzopbKRPSra0zD8j8ejIUm5SX6lsZLRpD4IusjO+lF/i/oZQZ3bZi4A8orRlDE558bjAsmjjX5s0ny3JrJDhqi1HVggg=
+	t=1758014279; cv=none; b=S0ug/hAo/H4uf/A8X6PVeb1G9qMsstMb10/lJi250P/2jH+T3pigoj2LUQsi3T4gZU+JrHjo4IiAKhY/cGOOQKBAOzggjwOT4mDyxwJuDP3dDdRjsNsuP8kGnqoC30v1IlP5LrH1KC7AaUdd8PyEnoyurBNRGjJqfpfGS1nOSI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758011384; c=relaxed/simple;
-	bh=RhnMnSiyE5w7nQ2hNx+e79D7ApOroWPIWatouF+Y99Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AIn/YV8+qnOZ4Lt0Y9djMJeFeCst0K78wiMxzsEWpfV+gzdJPt8v9CQtyVjHnOTNvswOhHEk4Pdd+rsZonqzcwrgBkp+BXP8S2jcYRirjVLvIyoHVDaS77Qgr4QAX+TVepxQX16EDrJEy/MaEJKm3YktdX3Qj//ZtBRvQPcYYTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=B1Lgn0ri; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so46947095e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 01:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758011380; x=1758616180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sbJSoOKen5SxomC3r8FovjHSg2UWh6anxEf3JfwaO64=;
-        b=B1Lgn0riAHMcofE5qbhUugKk1DFqEycte6y1xg4FuFAyoMwkrWaN8Wsc8Ev5FEMxwn
-         KJ5BvVrEadU6vqSCvQaOsn9AN4dAJBXgHQ2T/vcWRzknb6oOr5xz+RjEqbE7VQP0bKQt
-         +kNJw/9SmHHCF1wCmW6uATFfF+iO55SHSXHo7y15BZbyirbfTnft1WND6uW3qLb5PyJA
-         nhAoOQNwVDIk0HS8YYP6otIMlxM3eOz+/CJURxBYnzXFb61cknnGE/i1z8MXNCv8Hfqn
-         UgLJ85eWfdSRV/d387oXbV9Q18IvfGXmjw2N++282bz6MbBlt8jFr7DRIcOkyC/vbvMr
-         0fPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758011380; x=1758616180;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sbJSoOKen5SxomC3r8FovjHSg2UWh6anxEf3JfwaO64=;
-        b=eZryNROfmXzmQufhA/m/mtj+zsFBv+cmZH5ZuM8CpdJhx3jIAJ+QyZq3N4RZgXqXl8
-         1/uyqO/gyhYd7T4NDU5BjYYcQPrl/OGyrCNiP28JfpkO+hasCJK1YJexUIaQmpL6Q+2A
-         vqU5XvMmcNOZOdggIJznibiJwkSEnlzarYBg+CKLjV2uRw/Rf3h2fk7nKmQ7aCBufdUL
-         Se/FldoB99q+4zpF42LgtPkieq1sC8JxUhRWA6LwGXwOR0pc0QDVoFB0+wHPQacCi8zR
-         HYC+94lFP8bM4yYQq/hwic6paXpnfxxxyoWMClsA9cMtjIuc/IkKavGnFA1DneYtJ01i
-         Z+7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWUPVOWfePP54IQLTCkuffaVgFNyWZDBIPX2oaZKw4uoBfTxwOTNsWeMUrUqzaGPeTMuORUdkIs3CnCRMSY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpDcBB83SwjLSkS1I8f3jZ1kFHvC/DACD2jKafgd9MytY6jI/2
-	f+OhKzPYVz7KdovSSTrQcdAyEfADfCRFLgaKSi+QVYqE7KcrddCuZDqKnWgQEme43FE=
-X-Gm-Gg: ASbGnctt8BnPj0xOE/o62cDs0+LwqnqRATIW34TnDwQTwO1t8C160HtxYW6uoyJhka+
-	utZaCDGSaYtj5c4Hh3jsd6DjeybXvy//1ohkvBNnqHRz4KqbnCeBED09chEHJNJ5MliOAtciL2F
-	8o+CmMxMgOpbioN8uvrPBbkkdmPtS/dgcIUAdWt/+QRx0YD/AqkMhQBuIPnj8ZAQNveXeo4jeIU
-	Gg6fSzeBU9YhogQCEeXhHzAPThutwizYNItYW543z04SPSPm1bDrErg+Xz0pjrMyxnsng3co2qz
-	BLRh/1OECcdav9wG0qbkccivAOXmj79h90row6GA5MdeiStTwjQ59O1K9FnpNy+EzwEq+0cq1I3
-	XUiyn9srurw2LjbViJ2QrBC50mc2VsC+k8l5vZ8g69y6Alss=
-X-Google-Smtp-Source: AGHT+IHWxjvmEys/piSSod/WbbNumEjg8pRUdu6ibUWhdUADnxmqtO01su2HmjDVUPND5X+nSqa2ug==
-X-Received: by 2002:a05:6000:2c07:b0:3d3:494b:4e5d with SMTP id ffacd0b85a97d-3e765532afdmr12067163f8f.0.1758011379635;
-        Tue, 16 Sep 2025 01:29:39 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e95b111b68sm11006125f8f.32.2025.09.16.01.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 01:29:39 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v2 3/3] fs: WQ_PERCPU added to alloc_workqueue users
-Date: Tue, 16 Sep 2025 10:29:06 +0200
-Message-ID: <20250916082906.77439-4-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250916082906.77439-1-marco.crivellari@suse.com>
-References: <20250916082906.77439-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1758014279; c=relaxed/simple;
+	bh=QewYBolD3qDrFHYdzN1pEDVbU6uD6tkiUnPG8yHRc5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j60hcNNIiZDYDAcGh9gBAsqk0QAEtH+edI1WKv+CI3AJUAJ39u66uNjZ5+d0H6tSqZRYHhECzr0CyT9Tx0KDaM/rmLFHm+NEBEM4gdCkhhGmxBoJn3fUyfb8xqmXJR+jPon8j/+JiYcMpN5Zb3pYrZrcBEBVqwQ+IF8kOU9SPx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=BRdJ3Bw3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DBquHLeR; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id E92DCEC023E;
+	Tue, 16 Sep 2025 05:17:55 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 16 Sep 2025 05:17:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1758014275;
+	 x=1758100675; bh=CXbyD4jzmWQ1VtHqrCjK+sGbU6slLV0OI/tZ7st5Bp0=; b=
+	BRdJ3Bw3ivWQjP6UNr7jBqQIhs8SIDRIncR1Ua0+IAZ9jhVAWD/0HeQHpzR3UrnO
+	808xGS+EPb+S1vNad6EA1G1vJ95g+K5PaXllT/0TA3+/kCqIFxwzHcjIjrycxP1i
+	N8PVKY17/MKD0Diz7zp6lzPdbR32tbeoLySc+zp+T3Us2wNVZ6HTArOGTWtCPI7s
+	rJmfL9y9Z7Ea6DHSFP24K/ZK49qDVvZ7TpEJSu46pszQ8k6RPsRqGCaiegaE7HUz
+	42TWtLj0p78Lci0kmms+vlMgL5kggVHuhE4gkr5wSHk7P2410ta6BH9fDG/70Ap6
+	PQAVOzPNZ8W9QGFHnVk+5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758014275; x=
+	1758100675; bh=CXbyD4jzmWQ1VtHqrCjK+sGbU6slLV0OI/tZ7st5Bp0=; b=D
+	BquHLeRNYG9PSjU7cu8k4WPqwsOWalFCuKRhxBnAZQh4KST4/YUCkFpIyvqJVsaw
+	htHqn7/RlApVm097Pqey1QZYWddJUxdEjTksTkkUJufKRFZjKierLs1JfW2X+qbM
+	hat6yGXJKjk50ldodIcuEba9Y6WjBusLpg7CweNi+O+Z/tASI5U8McY5pSBTCakU
+	X6xab8nqe+BgmVKgCmuU6LtWPuL99/HM1kf5Jv6mEEq1Mvfn7o8v9yQ2Nc5dQ7Gf
+	/XUWZstg2IvYemiyIdGDgePN7EkV7RIifC7Imkq/gDprntBMAX2KeOpgrzhs7Tcg
+	OOyVdWYpeW5a9Flz9/j1w==
+X-ME-Sender: <xms:QyvJaDU5pCUXidgFhCBCLF3ujAmhCZ9l6Z3rvxqTsb0ReCvYjWTrAg>
+    <xme:QyvJaGIHGLOizHtMJ71hC86pBP2Zxjjxez0KY4XPsbn5xU52YgdLSXaIyLWSyDN1a
+    9USlUOxmJT3Qu-1>
+X-ME-Received: <xmr:QyvJaL8-VXuBUYgDwzyhcf-uZY8gqgn1E_U8lDaX-59EslKaii0r1XuiMLStPtEhxwMfjJS7qYiaKpSqyGdYkwEgUF1QaUcqxUYBjRneps8uT2OL_Uvy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnhepfeeggeefffekudduleefheelleehgfffhedujedvgfetvedvtdefieehfeel
+    gfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepgedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtoheprghlihesuggunhdrtghomhdprhgtphhtthhopehlihhnuhigqdhf
+    shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhikhhloh
+    hssehsiigvrhgvughirdhhuh
+X-ME-Proxy: <xmx:QyvJaBKHAEFRnmgzN7cWS3qIfoSaI6fi4XefpWXzTxvG_F094WeTnA>
+    <xmx:QyvJaIn8wZUY7QeKBr3RiCzUPjEZUskediVV-TdfkOlLGJB55zhkOw>
+    <xmx:QyvJaNOvsjCOV7goLPJaE6A4KWjxNz_mzudFCEfXN6hneKNrgRYZ4w>
+    <xmx:QyvJaG1VvXFhWVjDaNYmFE9GBbDdO3qBJ0n-ASv6pbB_oI4kEDtdGw>
+    <xmx:QyvJaCwtFurDHe1cREIp5gzndcaVLNc_8k8v-9ewzGkItU3GnOQziG3m>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Sep 2025 05:17:54 -0400 (EDT)
+Message-ID: <e5793dc4-94f8-4216-aa0c-463331d3092b@bsbernd.com>
+Date: Tue, 16 Sep 2025 11:17:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/fuse: fix potential memory leak from
+ fuse_uring_cancel
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Jian Huang Li <ali@ddn.com>, linux-fsdevel@vger.kernel.org,
+ miklos@szeredi.hu
+References: <94377ddf-9d04-4181-a632-d8c393dcd240@ddn.com>
+ <CAJnrk1ZHfd3r1+s0fV209LROO1kixM=_T7Derm+GrR_hYa_wpw@mail.gmail.com>
+ <99313bf9-963f-430e-a929-faa915d77202@bsbernd.com>
+ <CAJnrk1aYqZPNg_O25Yv6d5jGdzcPv0oyQ93KwarxovBJMyymdA@mail.gmail.com>
+ <4acdbba9-c4ad-4b33-b74b-2acc424cb24a@bsbernd.com>
+ <478c4d28-e7d9-4dbd-9521-a3cea73fddde@bsbernd.com>
+ <CAJnrk1ahQf5-Rb+axFJ=yNn=AWneTtYjKMFzVeorKjQfTjc9Aw@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1ahQf5-Rb+axFJ=yNn=AWneTtYjKMFzVeorKjQfTjc9Aw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+On 9/16/25 01:04, Joanne Koong wrote:
+> On Mon, Sep 15, 2025 at 2:57 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+>> On 9/15/25 23:46, Bernd Schubert wrote:
+>>> On 9/15/25 23:23, Joanne Koong wrote:
+>>>> On Mon, Sep 15, 2025 at 1:15 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+>>>>>
+>>>>> Hi Joanne,
+>>>>>
+>>>>> thanks for looking into this.
+>>>>>
+>>>>> On 9/15/25 20:15, Joanne Koong wrote:
+>>>>>> On Thu, Sep 11, 2025 at 3:34 AM Jian Huang Li <ali@ddn.com> wrote:
+>>>>>>>
+>>>>>>> This issue could be observed sometimes during libfuse xfstests, from
+>>>>>>> dmseg prints some like "kernel: WARNING: CPU: 4 PID: 0 at
+>>>>>>> fs/fuse/dev_uring.c:204 fuse_uring_destruct+0x1f5/0x200 [fuse]".
+>>>>>>>
+>>>>>>> The cause is, if when fuse daemon just submitted
+>>>>>>> FUSE_IO_URING_CMD_REGISTER SQEs, then umount or fuse daemon quits at
+>>>>>>> this very early stage. After all uring queues stopped, might have one or
+>>>>>>> more unprocessed FUSE_IO_URING_CMD_REGISTER SQEs get processed then some
+>>>>>>> new ring entities are created and added to ent_avail_queue, and
+>>>>>>> immediately fuse_uring_cancel moves them to ent_in_userspace after SQEs
+>>>>>>> get canceled. These ring entities will not be moved to ent_released, and
+>>>>>>> will stay in ent_in_userspace when fuse_uring_destruct is called, needed
+>>>>>>> be freed by the function.
+>>>>>>
+>>>>>> Hi Jian,
+>>>>>>
+>>>>>> Does it suffice to fix this race by tearing down the entries from the
+>>>>>> available queue first before tearing down the entries in the userspace
+>>>>>> queue? eg something like
+>>>>>>
+>>>>>>  static void fuse_uring_teardown_entries(struct fuse_ring_queue *queue)
+>>>>>>  {
+>>>>>> -       fuse_uring_stop_list_entries(&queue->ent_in_userspace, queue,
+>>>>>> -                                    FRRS_USERSPACE);
+>>>>>>         fuse_uring_stop_list_entries(&queue->ent_avail_queue, queue,
+>>>>>>                                      FRRS_AVAILABLE);
+>>>>>> +       fuse_uring_stop_list_entries(&queue->ent_in_userspace, queue,
+>>>>>> +                                    FRRS_USERSPACE);
+>>>>>>  }
+>>>>>>
+>>>>>> AFAICT, the race happens right now because when fuse_uring_cancel()
+>>>>>> moves the FRRS_AVAILABLE entries on the ent_avail_queue to the
+>>>>>> ent_in_userspace queue, fuse_uring_teardown_entries() may have already
+>>>>>> called fuse_uring_stop_list_entries() on the ent_in_userspace queue,
+>>>>>> thereby now missing the just-moved entries altogether, eg this logical
+>>>>>> flow
+>>>>>>
+>>>>>> -> fuse_uring_stop_list_entries(&queue->ent_in_userspace, ...);
+>>>>>>     -> fuse_uring_cancel() moves entry from avail q to userspace q
+>>>>>> -> fuse_uring_stop_list_entries(&queue->ent_avail_queue, ...);
+>>>>>>
+>>>>>> If instead fuse_uring_teardown_entries() stops the available queue first, then
+>>>>>> -> fuse_uring_stop_list_entries(&queue->ent_avail_queue, ...);
+>>>>>>     -> fuse_uring_cancel()
+>>>>>> -> fuse_uring_stop_list_entries(&queue->ent_in_userspace, ...);
+>>>>>>
+>>>>>> seems fine now and fuse_uring_cancel() would basically be a no-op
+>>>>>> since ent->state is now FRRS_TEARDOWN.
+>>>>>>
+>>>>>
+>>>>> I'm not sure. Let's say we have
+>>>>>
+>>>>> task 1                                   task2
+>>>>> fuse_uring_cmd()
+>>>>>     fuse_uring_register()
+>>>>>          [slowness here]
+>>>>>                                         fuse_abort_conn()
+>>>>>                                           fuse_uring_teardown_entries()
+>>>>>          [slowness continue]
+>>>>>          fuse_uring_do_register()
+>>>>>             fuse_uring_prepare_cancel()
+>>>>>             fuse_uring_ent_avail()
+>>>>>
+>>>>>
+>>>>> I.e. fuse_uring_teardown_entries() might be called before
+>>>>> the command gets marked cancel-able and before it is
+>>>>> moved to the avail queue. I think we should extend the patch
+>>>>> and actually not set the ring to ready when fc->connected
+>>>>> is set to 0.
+>>>>>
+>>>>
+>>>> Hi Bernd,
+>>>>
+>>>> I think this is a separate race from the fuse_uring_cancel one.
+>>>> afaics, this race can happen even if the user doesn't call
+>>>> fuse_uring_cancel(). imo I think the cleanest solution to this
+>>>> registration vs teardown race is to check queue->stopped in
+>>>> fuse_uring_do_register() after we grab the queue spinlock, and if
+>>>> queue->stopped is true, then just clean up the entry ourselves with
+>>>> fuse_uring_entry_teardown()).
+>>>
+>>> What speaks against just doing as in the existing patch and freeing
+>>> the ent_in_userspace entries fuse_uring_destruct()?
+>>> IMO it covers both races, missing is just to avoid setting the ring
+>>> as ready.
+> 
+> Couldn't the entry in fuse_uring_do_register() be in the available
+> queue when we get to fuse_uring_destruct() which means the existing
 
-This patch adds a new WQ_PERCPU flag to all the fs subsystem users to
-explicitly request the use of the per-CPU behavior. Both flags coexist
-for one release cycle to allow callers to transition their calls.
+We would never go into fuse_uring_destruct(), because io-uring would
+still hold references on the fuse device / fuse_conn.
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+> patch would also have to iterate through the available queue too? eg
+> i'm imagining something like
+> 
+> fuse_uring_do_register()
+>    -> fuse_uring_prepare_cancel()
+>          *** fuse_uring_cancel() + teardown run on other threads
+>    -> fuse_uring_ent_avail()
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+Up to hear it is right, but then see io_ring_exit_work() in io_uring.c.
+I.e. it will run io_uring_try_cancel_requests() in a loop.
+fuse_uring_cancel() is a noop as long as ent->state != FRRS_AVAILABLE
 
-All existing users have been updated accordingly.
+If commands are not cancelled at all, io_ring_exit_work() will print
+warnings in intervals - initially I hadn't figured out about
+IO_URING_F_CANCEL (and maybe it also didn't exist in earlier kernel
+versions) and then had added workarounds into fuse_dev_release(),
+because of the io-uring references.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- fs/afs/main.c                  |  4 ++--
- fs/bcachefs/super.c            | 10 +++++-----
- fs/btrfs/disk-io.c             |  2 +-
- fs/ceph/super.c                |  2 +-
- fs/dlm/lowcomms.c              |  2 +-
- fs/dlm/main.c                  |  2 +-
- fs/fs-writeback.c              |  2 +-
- fs/gfs2/main.c                 |  5 +++--
- fs/gfs2/ops_fstype.c           |  6 ++++--
- fs/ocfs2/dlm/dlmdomain.c       |  3 ++-
- fs/ocfs2/dlmfs/dlmfs.c         |  3 ++-
- fs/smb/client/cifsfs.c         | 16 +++++++++++-----
- fs/smb/server/ksmbd_work.c     |  2 +-
- fs/smb/server/transport_rdma.c |  3 ++-
- fs/super.c                     |  3 ++-
- fs/verity/verify.c             |  2 +-
- fs/xfs/xfs_log.c               |  3 +--
- fs/xfs/xfs_mru_cache.c         |  3 ++-
- fs/xfs/xfs_super.c             | 15 ++++++++-------
- 19 files changed, 51 insertions(+), 37 deletions(-)
+> 
+> imo, I think this scenario is its own separate race (between
+> registration and cancellation, that can happen irregardless of
+> teardown) that should be fixed by calling fuse_uring_prepare_cancel()
+> only after the fuse_uring_ent_avail() call, but I think this
+> underscores a bit that explicitly checking against torn down entries
+> is more robust when dealing with these races.
+> 
+>>
+>> Well, maybe cleaner, I don't have a strong opinion. We could skip the
+>> comment and explanation with your approach.
+> 
+> I don't really have a strong opinion on this either, just wanted to
+> share my thoughts. If you'd rather go with the existing patch, then we
+> should do that.
 
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index 02475d415d88..e6bb8237db98 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -169,13 +169,13 @@ static int __init afs_init(void)
- 
- 	printk(KERN_INFO "kAFS: Red Hat AFS client v0.1 registering.\n");
- 
--	afs_wq = alloc_workqueue("afs", 0, 0);
-+	afs_wq = alloc_workqueue("afs", WQ_PERCPU, 0);
- 	if (!afs_wq)
- 		goto error_afs_wq;
- 	afs_async_calls = alloc_workqueue("kafsd", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
- 	if (!afs_async_calls)
- 		goto error_async;
--	afs_lock_manager = alloc_workqueue("kafs_lockd", WQ_MEM_RECLAIM, 0);
-+	afs_lock_manager = alloc_workqueue("kafs_lockd", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!afs_lock_manager)
- 		goto error_lockmgr;
- 
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index c46b1053a02c..f2417d298b84 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -801,13 +801,13 @@ int bch2_fs_init_rw(struct bch_fs *c)
- 	if (!(c->btree_update_wq = alloc_workqueue("bcachefs",
- 				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_UNBOUND, 512)) ||
- 	    !(c->btree_write_complete_wq = alloc_workqueue("bcachefs_btree_write_complete",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 1)) ||
-+				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_PERCPU, 1)) ||
- 	    !(c->copygc_wq = alloc_workqueue("bcachefs_copygc",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_CPU_INTENSIVE, 1)) ||
-+				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_CPU_INTENSIVE|WQ_PERCPU, 1)) ||
- 	    !(c->btree_write_submit_wq = alloc_workqueue("bcachefs_btree_write_sumit",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 1)) ||
-+				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_PERCPU, 1)) ||
- 	    !(c->write_ref_wq = alloc_workqueue("bcachefs_write_ref",
--				WQ_FREEZABLE, 0)))
-+				WQ_FREEZABLE|WQ_PERCPU, 0)))
- 		return bch_err_throw(c, ENOMEM_fs_other_alloc);
- 
- 	int ret = bch2_fs_btree_interior_update_init(c) ?:
-@@ -975,7 +975,7 @@ static struct bch_fs *bch2_fs_alloc(struct bch_sb *sb, struct bch_opts *opts,
- 		sizeof(struct sort_iter_set);
- 
- 	if (!(c->btree_read_complete_wq = alloc_workqueue("bcachefs_btree_read_complete",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 512)) ||
-+				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_PERCPU, 512)) ||
- 	    enumerated_ref_init(&c->writes, BCH_WRITE_REF_NR,
- 				bch2_writes_disabled) ||
- 	    mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 70fc4e7cc5a0..aa4393eba997 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1958,7 +1958,7 @@ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
- {
- 	u32 max_active = fs_info->thread_pool_size;
- 	unsigned int flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_UNBOUND;
--	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE;
-+	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU;
- 
- 	fs_info->workers =
- 		btrfs_alloc_workqueue(fs_info, "worker", flags, max_active, 16);
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index c3eb651862c5..2dc64515f259 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -862,7 +862,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 	fsc->inode_wq = alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
- 	if (!fsc->inode_wq)
- 		goto fail_client;
--	fsc->cap_wq = alloc_workqueue("ceph-cap", 0, 1);
-+	fsc->cap_wq = alloc_workqueue("ceph-cap", WQ_PERCPU, 1);
- 	if (!fsc->cap_wq)
- 		goto fail_inode_wq;
- 
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index e4373bce1bc2..9a0b6c2b6b01 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -1703,7 +1703,7 @@ static int work_start(void)
- 		return -ENOMEM;
- 	}
- 
--	process_workqueue = alloc_workqueue("dlm_process", WQ_HIGHPRI | WQ_BH, 0);
-+	process_workqueue = alloc_workqueue("dlm_process", WQ_HIGHPRI | WQ_BH | WQ_PERCPU, 0);
- 	if (!process_workqueue) {
- 		log_print("can't start dlm_process");
- 		destroy_workqueue(io_workqueue);
-diff --git a/fs/dlm/main.c b/fs/dlm/main.c
-index 4887c8a05318..a44d16da7187 100644
---- a/fs/dlm/main.c
-+++ b/fs/dlm/main.c
-@@ -52,7 +52,7 @@ static int __init init_dlm(void)
- 	if (error)
- 		goto out_user;
- 
--	dlm_wq = alloc_workqueue("dlm_wq", 0, 0);
-+	dlm_wq = alloc_workqueue("dlm_wq", WQ_PERCPU, 0);
- 	if (!dlm_wq) {
- 		error = -ENOMEM;
- 		goto out_plock;
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 21aaed728929..4f64971f8c70 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1180,7 +1180,7 @@ void cgroup_writeback_umount(struct super_block *sb)
- 
- static int __init cgroup_writeback_init(void)
- {
--	isw_wq = alloc_workqueue("inode_switch_wbs", 0, 0);
-+	isw_wq = alloc_workqueue("inode_switch_wbs", WQ_PERCPU, 0);
- 	if (!isw_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
-index 0727f60ad028..9d65719353fa 100644
---- a/fs/gfs2/main.c
-+++ b/fs/gfs2/main.c
-@@ -151,7 +151,8 @@ static int __init init_gfs2_fs(void)
- 
- 	error = -ENOMEM;
- 	gfs2_recovery_wq = alloc_workqueue("gfs2_recovery",
--					  WQ_MEM_RECLAIM | WQ_FREEZABLE, 0);
-+					  WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU,
-+					  0);
- 	if (!gfs2_recovery_wq)
- 		goto fail_wq1;
- 
-@@ -160,7 +161,7 @@ static int __init init_gfs2_fs(void)
- 	if (!gfs2_control_wq)
- 		goto fail_wq2;
- 
--	gfs2_freeze_wq = alloc_workqueue("gfs2_freeze", 0, 0);
-+	gfs2_freeze_wq = alloc_workqueue("gfs2_freeze", WQ_PERCPU, 0);
- 
- 	if (!gfs2_freeze_wq)
- 		goto fail_wq3;
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index efe99b732551..05f936cc5db7 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1193,13 +1193,15 @@ static int gfs2_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	error = -ENOMEM;
- 	sdp->sd_glock_wq = alloc_workqueue("gfs2-glock/%s",
--			WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE, 0,
-+			WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE | WQ_PERCPU,
-+			0,
- 			sdp->sd_fsname);
- 	if (!sdp->sd_glock_wq)
- 		goto fail_iput;
- 
- 	sdp->sd_delete_wq = alloc_workqueue("gfs2-delete/%s",
--			WQ_MEM_RECLAIM | WQ_FREEZABLE, 0, sdp->sd_fsname);
-+			WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU, 0,
-+			sdp->sd_fsname);
- 	if (!sdp->sd_delete_wq)
- 		goto fail_glock_wq;
- 
-diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
-index 2018501b2249..2347a50f079b 100644
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -1876,7 +1876,8 @@ static int dlm_join_domain(struct dlm_ctxt *dlm)
- 	dlm_debug_init(dlm);
- 
- 	snprintf(wq_name, O2NM_MAX_NAME_LEN, "dlm_wq-%s", dlm->name);
--	dlm->dlm_worker = alloc_workqueue(wq_name, WQ_MEM_RECLAIM, 0);
-+	dlm->dlm_worker = alloc_workqueue(wq_name, WQ_MEM_RECLAIM | WQ_PERCPU,
-+					  0);
- 	if (!dlm->dlm_worker) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
-diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-index 5130ec44e5e1..0b730535b2c8 100644
---- a/fs/ocfs2/dlmfs/dlmfs.c
-+++ b/fs/ocfs2/dlmfs/dlmfs.c
-@@ -595,7 +595,8 @@ static int __init init_dlmfs_fs(void)
- 	}
- 	cleanup_inode = 1;
- 
--	user_dlm_worker = alloc_workqueue("user_dlm", WQ_MEM_RECLAIM, 0);
-+	user_dlm_worker = alloc_workqueue("user_dlm",
-+					  WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!user_dlm_worker) {
- 		status = -ENOMEM;
- 		goto bail;
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index e1848276bab4..c99f3916cab2 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1895,7 +1895,9 @@ init_cifs(void)
- 		cifs_dbg(VFS, "dir_cache_timeout set to max of 65000 seconds\n");
- 	}
- 
--	cifsiod_wq = alloc_workqueue("cifsiod", WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+	cifsiod_wq = alloc_workqueue("cifsiod",
-+				     WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+				     0);
- 	if (!cifsiod_wq) {
- 		rc = -ENOMEM;
- 		goto out_clean_proc;
-@@ -1923,28 +1925,32 @@ init_cifs(void)
- 	}
- 
- 	cifsoplockd_wq = alloc_workqueue("cifsoplockd",
--					 WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					 WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					 0);
- 	if (!cifsoplockd_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_fileinfo_put_wq;
- 	}
- 
- 	deferredclose_wq = alloc_workqueue("deferredclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					   0);
- 	if (!deferredclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_cifsoplockd_wq;
- 	}
- 
- 	serverclose_wq = alloc_workqueue("serverclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					   0);
- 	if (!serverclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_deferredclose_wq;
- 	}
- 
- 	cfid_put_wq = alloc_workqueue("cfid_put_wq",
--				      WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+				      WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+				      0);
- 	if (!cfid_put_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_serverclose_wq;
-diff --git a/fs/smb/server/ksmbd_work.c b/fs/smb/server/ksmbd_work.c
-index 72b00ca6e455..4a71f46d7020 100644
---- a/fs/smb/server/ksmbd_work.c
-+++ b/fs/smb/server/ksmbd_work.c
-@@ -78,7 +78,7 @@ int ksmbd_work_pool_init(void)
- 
- int ksmbd_workqueue_init(void)
- {
--	ksmbd_wq = alloc_workqueue("ksmbd-io", 0, 0);
-+	ksmbd_wq = alloc_workqueue("ksmbd-io", WQ_PERCPU, 0);
- 	if (!ksmbd_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/smb/server/transport_rdma.c b/fs/smb/server/transport_rdma.c
-index 5466aa8c39b1..4f89a7a33a26 100644
---- a/fs/smb/server/transport_rdma.c
-+++ b/fs/smb/server/transport_rdma.c
-@@ -2177,7 +2177,8 @@ int ksmbd_rdma_init(void)
- 	 * for lack of credits
- 	 */
- 	smb_direct_wq = alloc_workqueue("ksmbd-smb_direct-wq",
--					WQ_HIGHPRI | WQ_MEM_RECLAIM, 0);
-+					WQ_HIGHPRI | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					0);
- 	if (!smb_direct_wq)
- 		return -ENOMEM;
- 
-diff --git a/fs/super.c b/fs/super.c
-index 7f876f32343a..5cb3f41e42ca 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -2314,7 +2314,8 @@ int sb_init_dio_done_wq(struct super_block *sb)
- {
- 	struct workqueue_struct *old;
- 	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
--						      WQ_MEM_RECLAIM, 0,
-+						      WQ_MEM_RECLAIM | WQ_PERCPU,
-+						      0,
- 						      sb->s_id);
- 	if (!wq)
- 		return -ENOMEM;
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index a1f00c3fd3b2..628c23710f9f 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -355,7 +355,7 @@ void __init fsverity_init_workqueue(void)
- 	 * latency on ARM64.
- 	 */
- 	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
--						  WQ_HIGHPRI,
-+						  WQ_HIGHPRI | WQ_PERCPU,
- 						  num_online_cpus());
- 	if (!fsverity_read_workqueue)
- 		panic("failed to allocate fsverity_read_queue");
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index c8a57e21a1d3..0da19472d603 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1489,8 +1489,7 @@ xlog_alloc_log(
- 	log->l_iclog->ic_prev = prev_iclog;	/* re-write 1st prev ptr */
- 
- 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM |
--				    WQ_HIGHPRI),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!log->l_ioend_workqueue)
- 		goto out_free_iclog;
-diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
-index 866c71d9fbae..73b7e72944e4 100644
---- a/fs/xfs/xfs_mru_cache.c
-+++ b/fs/xfs/xfs_mru_cache.c
-@@ -293,7 +293,8 @@ int
- xfs_mru_cache_init(void)
- {
- 	xfs_mru_reap_wq = alloc_workqueue("xfs_mru_cache",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 1);
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU),
-+			1);
- 	if (!xfs_mru_reap_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index bb0a82635a77..43e9aab71610 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -578,19 +578,19 @@ xfs_init_mount_workqueues(
- 	struct xfs_mount	*mp)
- {
- 	mp->m_buf_workqueue = alloc_workqueue("xfs-buf/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_buf_workqueue)
- 		goto out;
- 
- 	mp->m_unwritten_workqueue = alloc_workqueue("xfs-conv/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_unwritten_workqueue)
- 		goto out_destroy_buf;
- 
- 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_reclaim_workqueue)
- 		goto out_destroy_unwritten;
-@@ -602,13 +602,14 @@ xfs_init_mount_workqueues(
- 		goto out_destroy_reclaim;
- 
- 	mp->m_inodegc_wq = alloc_workqueue("xfs-inodegc/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_inodegc_wq)
- 		goto out_destroy_blockgc;
- 
- 	mp->m_sync_workqueue = alloc_workqueue("xfs-sync/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE), 0, mp->m_super->s_id);
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_PERCPU), 0,
-+			mp->m_super->s_id);
- 	if (!mp->m_sync_workqueue)
- 		goto out_destroy_inodegc;
- 
-@@ -2596,8 +2597,8 @@ xfs_init_workqueues(void)
- 	 * AGs in all the filesystems mounted. Hence use the default large
- 	 * max_active value for this workqueue.
- 	 */
--	xfs_alloc_wq = alloc_workqueue("xfsalloc",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 0);
-+	xfs_alloc_wq = alloc_workqueue("xfsalloc", XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU),
-+			0);
- 	if (!xfs_alloc_wq)
- 		return -ENOMEM;
- 
--- 
-2.51.0
 
+I still think Jians patch works as it is, although there is a bit magic
+behind it. The mere fact that we have the discussion above it probably
+reason enough to at least try to find a way to make easier to read.
+
+
+Thanks,
+Bernd
 
