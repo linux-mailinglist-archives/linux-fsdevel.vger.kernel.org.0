@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-61581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054ABB589FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:47:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B4CB589FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B136A3AD71B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:47:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 161EA7AC2B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87AD3D561;
-	Tue, 16 Sep 2025 00:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861463D561;
+	Tue, 16 Sep 2025 00:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvldTYMP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrpwbT5V"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5357A4400
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 00:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DBF5C96
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 00:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983637; cv=none; b=m1UvvE4rGgfBt+deKGZOXrRgoCMxvDN1CsaPRIfYQ+hCt46Fy81zRracTa4tNrO8yyxX6WbivCKeUntKVa1boU8zqERRM1wMJWZMTLF3yc8SRu5UGPewSv6Ph1Bkj6h9aNB48C2eM/mPH5WLw5fxnHsZ6rRmsGPLeyyf3bNAArc=
+	t=1757983652; cv=none; b=iHUHMWFE7stAWIwwfxmpiP04hhuFndWO7iwV620l4sjPg8qEnjKTtLh4bGuPmXCQosBZSI/TPzppEuPIiwycx2waXh5OhO73rO/4ou2ppwwPyRjI4awzaHty4AB2KnMIIvOuLbsaMObzSm0jUNDlaGw49AkAyTzwBZU23kvuk6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983637; c=relaxed/simple;
-	bh=iQZ2HVcbzkTETf81ZHgMaicVlUr+KJZMLkXVflneqiY=;
+	s=arc-20240116; t=1757983652; c=relaxed/simple;
+	bh=P/1yRqqXGcaldhj8gkz7s2Mc46pW+li+6tiyLOB8PGo=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A4pAnvljSz9HhVHdQL6DVNj8tPrF0LsX45yVNY/UE7AFqXQL12KkUx5OOjrzgW4R3yIO4CVo2JjrXQfYJ6L5+kfLvS28XPjzEqBNKf1pseXy+QEMQqISvSehPgFDRQyy9gDmZxawdfCA4G9bJ8gCjXZvp7V/0R5cyo08/LzLabk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvldTYMP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B4FC4CEF1;
-	Tue, 16 Sep 2025 00:47:15 +0000 (UTC)
+	 MIME-Version:Content-Type; b=R+XDZ+c0AUHk1aEm3WMUJ/e96nvUarBzjYAdnB4twznqv0UZPVEIMR6VYVp/6kvR1WjaC7EbbpGNiQrQuHm0L/xLZ0aeVSKz+3EDDyddHClFscG1y1zQWW+nHnw7GMltIg3CuvmFiMkCtss+hgRwEaTG35W1xGDR6ayLnMbyHl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrpwbT5V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590E8C4CEF1;
+	Tue, 16 Sep 2025 00:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757983635;
-	bh=iQZ2HVcbzkTETf81ZHgMaicVlUr+KJZMLkXVflneqiY=;
+	s=k20201202; t=1757983651;
+	bh=P/1yRqqXGcaldhj8gkz7s2Mc46pW+li+6tiyLOB8PGo=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=EvldTYMPOUXO6pNmIPXeBXvLgBGxwb4a52I7637KThno2AjHLbu7dtdrCL/+eZe2G
-	 GJeL6wcLeEOjFQkz6u08Zumo8gC5pFfh1uK/gRavNNk7mMEpxGGhBmLcJBkr57CGY0
-	 +BdNEP0JQOino655J6tHlc6jXCPatOx0PVcHQT5PiQRF70PFidQWrIXFwNnv2wAUUe
-	 LWOWeVVuSLwoWTaxZDJH4+Vv17LXA+O+31xD9JxLUDriP3hsLJkhhWPLhIuUstvZqR
-	 0zzKWmbLqOBmxPseewRyOSQARMm9OdkpQZVJn4zLyR5TP7vdgt16U2XZiPJuLWTwIW
-	 m0OwGaQYzpQlg==
-Date: Mon, 15 Sep 2025 17:47:15 -0700
-Subject: [PATCH 2/4] libfuse: set sync, immutable,
- and append when loading files
+	b=YrpwbT5VHKWVaABXO1dW6on6JHN/KfeBSv7xbIKTPjV2hywAfSHRdmJA8WHlJgmyQ
+	 9DLfVLhDVkZEpf1QpmCrb9DxlXPQt2wyA0JwgMwSVgOVAtZ5tXQM79l/TqJciSC87m
+	 Y458Ix8i4A6iR5EaoZhGQHEz15ILookw7GSJ+DfEU6DncrM7m2bhttLCvwstqpAUKW
+	 fp4qeFmrGzQOV8zNlM0YScB/scAhtCmUxiD9PJO0Wp1OE9TRbEK0iFqVmYRirH2eNJ
+	 inAvuhwswxAwamHr2tRnyxJCOjQfJVXvuymMXE6+NgUNj2//w9VCRfbs9vfT8QtqWD
+	 F7tJjjd7SYcEQ==
+Date: Mon, 15 Sep 2025 17:47:30 -0700
+Subject: [PATCH 3/4] libfuse: wire up FUSE_SYNCFS to the low level library
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: bschubert@ddn.com, djwong@kernel.org
 Cc: John@groves.net, neal@gompa.dev, bernd@bsbernd.com,
  linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com
-Message-ID: <175798155278.387738.2496408963127208492.stgit@frogsfrogsfrogs>
+Message-ID: <175798155295.387738.4752456657837395030.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798155228.387738.1956568770138953630.stgit@frogsfrogsfrogs>
 References: <175798155228.387738.1956568770138953630.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,81 +61,85 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add these three fuse_attr::flags bits so that servers can mark a file as
-immutable or append-only and have the kernel advertise and enforce that.
+Create hooks in the lowlevel library for syncfs.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_common.h |    6 ++++++
- include/fuse_kernel.h |    8 ++++++++
- lib/fuse_lowlevel.c   |    6 ++++++
- 3 files changed, 20 insertions(+)
+ include/fuse_lowlevel.h |   16 ++++++++++++++++
+ lib/fuse_lowlevel.c     |   19 +++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
 
-diff --git a/include/fuse_common.h b/include/fuse_common.h
-index eb08320bc8863f..9016721320eb5a 100644
---- a/include/fuse_common.h
-+++ b/include/fuse_common.h
-@@ -1236,6 +1236,12 @@ static inline bool fuse_iomap_need_write_allocate(unsigned int opflags,
- #define FUSE_IFLAG_IOMAP		(1U << 1)
- /* enable untorn writes */
- #define FUSE_IFLAG_ATOMIC		(1U << 2)
-+/* file writes are synchronous */
-+#define FUSE_IFLAG_SYNC			(1U << 3)
-+/* file is immutable */
-+#define FUSE_IFLAG_IMMUTABLE		(1U << 4)
-+/* file is append only */
-+#define FUSE_IFLAG_APPEND		(1U << 5)
- 
- /* Which fields are set in fuse_iomap_config_out? */
- #define FUSE_IOMAP_CONFIG_SID		(1 << 0ULL)
-diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index ed41792f94cf4f..4721c4e36159e1 100644
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -242,6 +242,8 @@
-  *  - add FUSE_IOMAP_CONFIG so the fuse server can configure more fs geometry
-  *  - add FUSE_NOTIFY_IOMAP_DEV_INVAL to invalidate iomap bdev ranges
-  *  - add FUSE_ATTR_ATOMIC for single-fsblock atomic write support
-+ *  - add FUSE_ATTR_{SYNC,IMMUTABLE,APPEND} for VFS enforcement of file
-+ *    attributes
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -584,11 +586,17 @@ struct fuse_file_lock {
-  * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
-  * FUSE_ATTR_IOMAP: Use iomap for this inode
-  * FUSE_ATTR_ATOMIC: Enable untorn writes
-+ * FUSE_ATTR_SYNC: File writes are always synchronous
-+ * FUSE_ATTR_IMMUTABLE: File is immutable
-+ * FUSE_ATTR_APPEND: File is append-only
-  */
- #define FUSE_ATTR_SUBMOUNT      (1 << 0)
- #define FUSE_ATTR_DAX		(1 << 1)
- #define FUSE_ATTR_IOMAP		(1 << 2)
- #define FUSE_ATTR_ATOMIC	(1 << 3)
-+#define FUSE_ATTR_SYNC		(1 << 4)
-+#define FUSE_ATTR_IMMUTABLE	(1 << 5)
-+#define FUSE_ATTR_APPEND	(1 << 6)
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index 687e14b8fea64f..9de93392d6df67 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1422,6 +1422,22 @@ struct fuse_lowlevel_ops {
+ 	 */
+ 	void (*iomap_config) (fuse_req_t req, uint64_t flags,
+ 			      uint64_t maxbytes);
++
++	/**
++	 * Flush the entire filesystem to disk.
++	 *
++	 * If this request is answered with an error code of ENOSYS, this is
++	 * treated as a permanent failure, i.e. all future syncfs() requests
++	 * will fail with the same error code without being sent to the
++	 * filesystem process.
++	 *
++	 * Valid replies:
++	 *   fuse_reply_err
++	 *
++	 * @param req request handle
++	 * @param ino the inode number
++	 */
++	void (*syncfs) (fuse_req_t req, fuse_ino_t ino);
+ };
  
  /**
-  * Open flags
 diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 6108b1862a7eb8..a6294c5c065cd2 100644
+index a6294c5c065cd2..668645dd1c2e08 100644
 --- a/lib/fuse_lowlevel.c
 +++ b/lib/fuse_lowlevel.c
-@@ -128,6 +128,12 @@ static void convert_stat(const struct stat *stbuf, struct fuse_attr *attr,
- 		attr->flags |= FUSE_ATTR_IOMAP;
- 	if (iflags & FUSE_IFLAG_ATOMIC)
- 		attr->flags |= FUSE_ATTR_ATOMIC;
-+	if (iflags & FUSE_IFLAG_SYNC)
-+		attr->flags |= FUSE_ATTR_SYNC;
-+	if (iflags & FUSE_IFLAG_IMMUTABLE)
-+		attr->flags |= FUSE_ATTR_IMMUTABLE;
-+	if (iflags & FUSE_IFLAG_APPEND)
-+		attr->flags |= FUSE_ATTR_APPEND;
+@@ -2783,6 +2783,23 @@ static void do_iomap_config(fuse_req_t req, const fuse_ino_t nodeid,
+ 	_do_iomap_config(req, nodeid, inarg, NULL);
  }
  
- static void convert_attr(const struct fuse_setattr_in *attr, struct stat *stbuf)
++static void _do_syncfs(fuse_req_t req, const fuse_ino_t nodeid,
++		      const void *op_in, const void *in_payload)
++{
++	(void)op_in;
++	(void)in_payload;
++
++	if (req->se->op.syncfs)
++		req->se->op.syncfs(req, nodeid);
++	else
++		fuse_reply_err(req, ENOSYS);
++}
++
++static void do_syncfs(fuse_req_t req, const fuse_ino_t nodeid, const void *inarg)
++{
++	_do_syncfs(req, nodeid, inarg, NULL);
++}
++
+ static bool want_flags_valid(uint64_t capable, uint64_t want)
+ {
+ 	uint64_t unknown_flags = want & (~capable);
+@@ -3704,6 +3721,7 @@ static struct {
+ 	[FUSE_COPY_FILE_RANGE] = { do_copy_file_range, "COPY_FILE_RANGE" },
+ 	[FUSE_LSEEK]	   = { do_lseek,       "LSEEK"	     },
+ 	[FUSE_STATX]	   = { do_statx,       "STATX"	     },
++	[FUSE_SYNCFS]	   = { do_syncfs,	"SYNCFS"     },
+ 	[FUSE_IOMAP_CONFIG]= { do_iomap_config, "IOMAP_CONFIG" },
+ 	[FUSE_IOMAP_BEGIN] = { do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]   = { do_iomap_end,	"IOMAP_END" },
+@@ -3763,6 +3781,7 @@ static struct {
+ 	[FUSE_COPY_FILE_RANGE]	= { _do_copy_file_range, "COPY_FILE_RANGE" },
+ 	[FUSE_LSEEK]		= { _do_lseek,		"LSEEK" },
+ 	[FUSE_STATX]		= { _do_statx,		"STATX" },
++	[FUSE_SYNCFS]		= { _do_syncfs,		"SYNCFS" },
+ 	[FUSE_IOMAP_CONFIG]	= { _do_iomap_config,	"IOMAP_CONFIG" },
+ 	[FUSE_IOMAP_BEGIN]	= { _do_iomap_begin,	"IOMAP_BEGIN" },
+ 	[FUSE_IOMAP_END]	= { _do_iomap_end,	"IOMAP_END" },
 
 
