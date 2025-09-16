@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-61748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AB6B598B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:06:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352E7B598CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88FF37A2694
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 14:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96B71888A41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 14:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BC8326D50;
-	Tue, 16 Sep 2025 14:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812A035AAD3;
+	Tue, 16 Sep 2025 14:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C21u3d19"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtUt9nFp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0BF353354
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 13:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC88C353346
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 14:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031200; cv=none; b=uNf4w5xTcNbSK/doPwmzWM21/orC2/jxTobdcc9zv1sDTfNlCUVk71k5EloULNqalxq6+S2NfhVulY7vY/MVRnLDUsfumoOkwgTfaHSypIETy41esmMI7RiHr6i0ns5lX6ypoj39jCLZd0xSqzoHwPY8DS355p0/2fTuc97tz6w=
+	t=1758031204; cv=none; b=sTqnHJHf3kj2X/O6FB2miZKSu8kLSkFT2V1UfQLoJ//XWlAZplZc1jG2ggnGhrD+GUmzUS5MAXTfokm5l7a7sdpQwXsa9qE6IncCxN2KX+nA8Ak80SVpGsrxbPVaGuAclahlmuO9D0SS0HKjKuGzmqx4pI08XWeoXdOE4rKC67g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758031200; c=relaxed/simple;
-	bh=c+jscvVcjHEiu8psO35s6FUxxWLk6N1H5PVjaYHBuTk=;
+	s=arc-20240116; t=1758031204; c=relaxed/simple;
+	bh=onJPCe9YqJgqvuYwKD4fnxdCGXT93MaxVU0lwENDDkI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hJlBqnzHg7Dvjab8+o9kvraA+9OKzW4dn/Z5Pb7h7MpTh5pOh/NkVfvhGPw6/IdD5yXCp/04sXOj16dk3LQ8WASKxLlinY4VWR1GsdYbbXp620M8preBT8JuvDWGbewjVXIf6SmOsrHorpiyK/L6JV/xx2iuodmc7wAMRMNKcTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C21u3d19; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=f8Bs3oLKlteX2GHhzg32kZIs3nP5iVGHrcaj+uk05PH7MBxwuTqzlv0UdDMqahv+o/MXBWJo20r2nSc7vpCap+6W/oMI+8jGxSv3a9mM4Kl79F7gXdJaq4XrWepNaSx1yBinLsuq35trGBNvNR5B3SsN/BiJNxnzpOk4t1Hd4Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RtUt9nFp; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45dcff2f313so34513095e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 06:59:58 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45f29e5e89bso33322505e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 07:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758031197; x=1758635997; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758031201; x=1758636001; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vENfTvsqrFJ9tJyBfgLNz2mb8wc8do/WZvddYLx/2MM=;
-        b=C21u3d19x1DjsYLGY77AgVuGFJpc7Ig4fo4Ohm8jKWcl7iOvflvcwoJ48taJ4+fHLm
-         tIdGWj1Za+IZGy/XPSuZty/tFmcdO9gKYqRvPzDG4iT2AAFWgiYbCa6zQVL1QjjdchTX
-         /dAhqFk775dJjUo5Dobt1zHOXXoUVZkJ6hLgIjZTBWg4ztB+8AewMjOpnzltJlilhwHl
-         0gfsMylQ001Vy1z2qGg6/HapEPCjePhuPj9OUpeXne4xp/jB1hdJ5OPPtc1GkVR/1UT0
-         tvLara7/TZ0N5t5aa12RyY3LEr0f/nlndfwk7+cSe1jJmoGd4KvUQAVdffshf5o07KGd
-         CYpA==
+        bh=9LJ4r8TF2Lv0as7EYdqZVHam471k9lVFSDN/DCiOydU=;
+        b=RtUt9nFpd50H7wmzr0gHC58QRsJODnR+/tCPl1yNDa0OdGz8TZwvuZRtbSOYz+iZW+
+         DRZCQlpIZQqsRh1TqDFUvf8A899jysaa1AIkBL39A9YUUipAZgQ/yQDhj+h9Hd32NOKz
+         VQkmEnQiDn4DOlZveL4LIkl7SHK/bFDiB5cySMs57DOXhJP5sT51HrhMkavke8tZjR/n
+         r7GADARKaNnMQAu3ZiUCnjRubbNc3hV1pgLEosREt8hzec0AYg5f/Acjw8fivI6+3Dr+
+         AEFdfCHbTnv0+NKXHtM/soOzMeeqvYtV+QAalJqAgBKLJ9DnImHL1odT6uVFWuMJ5+gS
+         gfbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758031197; x=1758635997;
+        d=1e100.net; s=20230601; t=1758031201; x=1758636001;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vENfTvsqrFJ9tJyBfgLNz2mb8wc8do/WZvddYLx/2MM=;
-        b=NRIR387ZWNt3AyQLrRHtnBeb50FUNhDWFs42LsuSFMRnYA7WN48HckPhPiDC1HceVB
-         SkktMhbyhwBEVrr2wrX06D5OAtdlzBJ28uOisZ9evAQ/rFuqY5jn6YCEFWaHke0nPT26
-         +9qRAz4OzB6YNPCqedxs7WGgNl/NnBfub/+aMjVYxmG2tHPZHD0eIutyTwFjZzX6t9YW
-         hkQV81pd0ppUikXDPZgyBYn1RwfshoHn17epUDYeup0yosAEFvD6tDlyQydosSxwzSXC
-         s4pfp27UnwRsRJosh09iaSt2aPm0a8ZNip5ZvGlA45LR+wY8k1TOK6Xb01tWcmYlzKL1
-         TBhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPBDLnbAmcBigxzCbbgSZfAToSf1aDVrDJ4XpQw5IQC0gDaAUkl/Qtoy7KkUezUa7/X8KLI/7M6aXj2mEq@vger.kernel.org
-X-Gm-Message-State: AOJu0YykyBIPYn4Xu4a2SS9hqYFE1jyd6awCzQuYlwr0wdpXY6ezhkTz
-	RS83vTYufJzjMWlyKntPkxV3FErCizNtZvGJeSpwAmGmjtYeAjCcUunm
-X-Gm-Gg: ASbGnctbJDPWzMu/MfbYM1hrjxBOkv3kBMTKDT4brNcPGxt6okYRxHFJa7jKu3uqy6j
-	05SBbpTx/vt6pblPTsm/imvrAF9hexOpmvF64IYowP28q8TvbFp1hdBYPOm+7T7vbzr074O8Cv9
-	5ehUkHBfUivy2l5lrJsxBLEdGPm2BdfNLJIGL3uc1JYpKJ+59vbcwjUuF8DMf/eWiSR8N/Aj7+S
-	yynzlsTNBwqRoSxSbfgTv+7yL7Q8c9uftDTsD9Kbh5crjXFOybUJOXdSz4OgqCOfBy39fTIndcG
-	YUz5djA4skb2b/xoBsFatt6i86nj2E/S1y0NYVaoJr8Hy6CNJgGUezZs05itGnZmcUslG3eqF3Y
-	njx+j/c8TrjL8/Dtlzo/SndVHGWfU6zClD/swNtiVPMi3ClP/E31gIdpFmd+uWQ+SvwoIG4HE
-X-Google-Smtp-Source: AGHT+IGywKOeZnJ30E7Ud2DvguwBt7x+jM+ZimZarnO2UYCjYh4k81VYRu4VVnkSvPh9Eqb3iEJtqg==
-X-Received: by 2002:a05:600c:5254:b0:45f:284b:1d89 with SMTP id 5b1f17b1804b1-45f2a4f8bafmr97604315e9.25.1758031196860;
-        Tue, 16 Sep 2025 06:59:56 -0700 (PDT)
+        bh=9LJ4r8TF2Lv0as7EYdqZVHam471k9lVFSDN/DCiOydU=;
+        b=d5RNUdcyi1W6B5qLCf38qUciXRwYMVgfzrxG6E2pKhf4SSc6ndw7uBMB86o0Gok4GH
+         pMTtaSmur5dPB1/Ketb1lSMxXw+oz60Pj/l/LAi7rkOU/LbhxDNOHzatc9CIhW6iyeRt
+         EWpJqJvThk7SUHs4X3ybZEaMTILWlnCIX0XTQV7JZfEW6Mg7kyDTMrsfB/xTnuiZAZOQ
+         +Pwbu7dUwKU0Rc8fNJnGrw1fOgHpvAfPZq6tSwPfOgPglXR03YobxNnCueWDFIk590jW
+         W48mKpfFUgeVKLnWqfVoacGjsMqbcOFCVnpwkOB02MGMFzhCfcPhjWI3C2WZv3bCkvnP
+         Qv7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVx1Zakuzb/ySkngCFyWVm45/b1E1EQH0dijFlX2zXbDFdzaozg425p+IjbOoj8/eo/4SCpo7V2XlilZ/g4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGqCPKZw2dM+0fyxeyH8kdg01liS22NdFDhGzlWaD4MjoOCq6H
+	8RrhTBaXoz4jInDF5zmk6F+buDw57KNclYs07YSiQbplW9n4Sjv2qv4l
+X-Gm-Gg: ASbGncsNvSDzHokRm8MsxPstl3bPjLoUmEBVqDKbgy556WkOQMZi7rLlGVxfcCLC1IY
+	S61l9CX2PLqOzHrIPiv7KCGupdVam9nBNsxSzzDbBycNpmB9sIMm7lDEK1Dt5y1n00ZawmEJ29J
+	P2oGf9uC2l5oBPRmvCjzEyuEXkL7couQY9sS9P1oATEbgP2VMtiVZaWGUYg293CjORvz3cRjb43
+	QJH0YdD7Ek9DBw/EHp7SQVjMmjG+Iipr9cucUj0e2B5arSp2f7g5BcHgtcGJpZ1nl9fGFw8oiWc
+	EjnWwQ+2mYuVZnLUMWQIH0ETsOMSZFoVAihPdyB15xh3ADD9DE8z3ynNZYFgnxoipR3UP2TM92b
+	m24vM6tYbnfUtJ+hDYbCQSwDzA/QFQR83dPefX5vWE5e1jWlxhGl17dzqkYmPu7l7QSVdvJeH
+X-Google-Smtp-Source: AGHT+IHYJqSjXtRyu8AlavSqqYLYRl8QcSweA/3ngpN0GUZA3qROSZnetWUBJ5Se7JCe/tV8GyTMYw==
+X-Received: by 2002:a05:600c:1387:b0:45b:88d6:8ddb with SMTP id 5b1f17b1804b1-45f211fc2dbmr154100195e9.37.1758031200730;
+        Tue, 16 Sep 2025 07:00:00 -0700 (PDT)
 Received: from f.. (cst-prg-88-146.cust.vodafone.cz. [46.135.88.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7cde81491sm16557991f8f.42.2025.09.16.06.59.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7cde81491sm16557991f8f.42.2025.09.16.06.59.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 06:59:56 -0700 (PDT)
+        Tue, 16 Sep 2025 07:00:00 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -88,9 +88,9 @@ Cc: viro@zeniv.linux.org.uk,
 	ceph-devel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v4 09/12] f2fs: use the new ->i_state accessors
-Date: Tue, 16 Sep 2025 15:58:57 +0200
-Message-ID: <20250916135900.2170346-10-mjguzik@gmail.com>
+Subject: [PATCH v4 10/12] ceph: use the new ->i_state accessors
+Date: Tue, 16 Sep 2025 15:58:58 +0200
+Message-ID: <20250916135900.2170346-11-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250916135900.2170346-1-mjguzik@gmail.com>
 References: <20250916135900.2170346-1-mjguzik@gmail.com>
@@ -106,73 +106,193 @@ Change generated with coccinelle and fixed up by hand as appropriate.
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- fs/f2fs/data.c  | 2 +-
- fs/f2fs/inode.c | 2 +-
- fs/f2fs/namei.c | 4 ++--
- fs/f2fs/super.c | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ fs/ceph/cache.c  |  2 +-
+ fs/ceph/crypto.c |  4 ++--
+ fs/ceph/file.c   |  4 ++--
+ fs/ceph/inode.c  | 28 ++++++++++++++--------------
+ 4 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7961e0ddfca3..9cc22322ce7f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -4241,7 +4241,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 930fbd54d2c8..f678bab189d8 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -26,7 +26,7 @@ void ceph_fscache_register_inode_cookie(struct inode *inode)
+ 		return;
  
- 	if (map.m_flags & F2FS_MAP_NEW)
- 		iomap->flags |= IOMAP_F_NEW;
--	if ((inode->i_state & I_DIRTY_DATASYNC) ||
-+	if ((inode_state_read_once(inode) & I_DIRTY_DATASYNC) ||
- 	    offset + length > i_size_read(inode))
- 		iomap->flags |= IOMAP_F_DIRTY;
+ 	/* Only new inodes! */
+-	if (!(inode->i_state & I_NEW))
++	if (!(inode_state_read_once(inode) & I_NEW))
+ 		return;
  
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 8c4eafe9ffac..f1cda1900658 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -569,7 +569,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 	if (!inode)
- 		return ERR_PTR(-ENOMEM);
+ 	WARN_ON_ONCE(ci->netfs.cache);
+diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+index 7026e794813c..928746b92512 100644
+--- a/fs/ceph/crypto.c
++++ b/fs/ceph/crypto.c
+@@ -329,7 +329,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
+ out:
+ 	kfree(cryptbuf);
+ 	if (dir != parent) {
+-		if ((dir->i_state & I_NEW))
++		if ((inode_state_read_once(dir) & I_NEW))
+ 			discard_new_inode(dir);
+ 		else
+ 			iput(dir);
+@@ -438,7 +438,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+ 	fscrypt_fname_free_buffer(&_tname);
+ out_inode:
+ 	if (dir != fname->dir) {
+-		if ((dir->i_state & I_NEW))
++		if ((inode_state_read_once(dir) & I_NEW))
+ 			discard_new_inode(dir);
+ 		else
+ 			iput(dir);
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index c02f100f8552..59f2be41c9aa 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -744,7 +744,7 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
+ 		      vino.ino, ceph_ino(dir), dentry->d_name.name);
+ 		ceph_dir_clear_ordered(dir);
+ 		ceph_init_inode_acls(inode, as_ctx);
+-		if (inode->i_state & I_NEW) {
++		if (inode_state_read_once(inode) & I_NEW) {
+ 			/*
+ 			 * If it's not I_NEW, then someone created this before
+ 			 * we got here. Assume the server is aware of it at
+@@ -907,7 +907,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+ 				new_inode = NULL;
+ 				goto out_req;
+ 			}
+-			WARN_ON_ONCE(!(new_inode->i_state & I_NEW));
++			WARN_ON_ONCE(!(inode_state_read_once(new_inode) & I_NEW));
  
--	if (!(inode->i_state & I_NEW)) {
-+	if (!(inode_state_read_once(inode) & I_NEW)) {
- 		if (is_meta_ino(sbi, ino)) {
- 			f2fs_err(sbi, "inaccessible inode: %lu, run fsck to repair", ino);
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index b882771e4699..7d977b80bae5 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -844,7 +844,7 @@ static int __f2fs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 		f2fs_i_links_write(inode, false);
+ 			spin_lock(&dentry->d_lock);
+ 			di->flags |= CEPH_DENTRY_ASYNC_CREATE;
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 480cb3a1d639..6786ec955a87 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -86,7 +86,7 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+ 			goto out_err;
+ 	}
  
- 		spin_lock(&inode->i_lock);
--		inode->i_state |= I_LINKABLE;
-+		inode_state_add(inode, I_LINKABLE);
- 		spin_unlock(&inode->i_lock);
+-	inode->i_state = 0;
++	inode_state_set_raw(inode, 0);
+ 	inode->i_mode = *mode;
+ 
+ 	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+@@ -155,7 +155,7 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino,
+ 
+ 	doutc(cl, "on %llx=%llx.%llx got %p new %d\n",
+ 	      ceph_present_inode(inode), ceph_vinop(inode), inode,
+-	      !!(inode->i_state & I_NEW));
++	      !!(inode_state_read_once(inode) & I_NEW));
+ 	return inode;
+ }
+ 
+@@ -182,7 +182,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 		goto err;
+ 	}
+ 
+-	if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
++	if (!(inode_state_read_once(inode) & I_NEW) && !S_ISDIR(inode->i_mode)) {
+ 		pr_warn_once_client(cl, "bad snapdir inode type (mode=0%o)\n",
+ 				    inode->i_mode);
+ 		goto err;
+@@ -215,7 +215,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 		}
+ 	}
+ #endif
+-	if (inode->i_state & I_NEW) {
++	if (inode_state_read_once(inode) & I_NEW) {
+ 		inode->i_op = &ceph_snapdir_iops;
+ 		inode->i_fop = &ceph_snapdir_fops;
+ 		ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
+@@ -224,7 +224,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 
+ 	return inode;
+ err:
+-	if ((inode->i_state & I_NEW))
++	if ((inode_state_read_once(inode) & I_NEW))
+ 		discard_new_inode(inode);
+ 	else
+ 		iput(inode);
+@@ -698,7 +698,7 @@ void ceph_evict_inode(struct inode *inode)
+ 
+ 	netfs_wait_for_outstanding_io(inode);
+ 	truncate_inode_pages_final(&inode->i_data);
+-	if (inode->i_state & I_PINNING_NETFS_WB)
++	if (inode_state_read_once(inode) & I_PINNING_NETFS_WB)
+ 		ceph_fscache_unuse_cookie(inode, true);
+ 	clear_inode(inode);
+ 
+@@ -967,7 +967,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 	      le64_to_cpu(info->version), ci->i_version);
+ 
+ 	/* Once I_NEW is cleared, we can't change type or dev numbers */
+-	if (inode->i_state & I_NEW) {
++	if (inode_state_read_once(inode) & I_NEW) {
+ 		inode->i_mode = mode;
  	} else {
- 		if (file)
-@@ -1057,7 +1057,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			goto put_out_dir;
+ 		if (inode_wrong_type(inode, mode)) {
+@@ -1044,7 +1044,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
  
- 		spin_lock(&whiteout->i_lock);
--		whiteout->i_state &= ~I_LINKABLE;
-+		inode_state_del(whiteout, I_LINKABLE);
- 		spin_unlock(&whiteout->i_lock);
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	if (iinfo->fscrypt_auth_len &&
+-	    ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len == 0))) {
++	    ((inode_state_read_once(inode) & I_NEW) || (ci->fscrypt_auth_len == 0))) {
+ 		kfree(ci->fscrypt_auth);
+ 		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
+ 		ci->fscrypt_auth = iinfo->fscrypt_auth;
+@@ -1638,13 +1638,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			pr_err_client(cl, "badness %p %llx.%llx\n", in,
+ 				      ceph_vinop(in));
+ 			req->r_target_inode = NULL;
+-			if (in->i_state & I_NEW)
++			if (inode_state_read_once(in) & I_NEW)
+ 				discard_new_inode(in);
+ 			else
+ 				iput(in);
+ 			goto done;
+ 		}
+-		if (in->i_state & I_NEW)
++		if (inode_state_read_once(in) & I_NEW)
+ 			unlock_new_inode(in);
+ 	}
  
- 		iput(whiteout);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 2045642cfe3b..d8db9a4084fa 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1747,7 +1747,7 @@ static int f2fs_drop_inode(struct inode *inode)
- 	 *    - f2fs_gc -> iput -> evict
- 	 *       - inode_wait_for_writeback(inode)
- 	 */
--	if ((!inode_unhashed(inode) && inode->i_state & I_SYNC)) {
-+	if ((!inode_unhashed(inode) && inode_state_read(inode) & I_SYNC)) {
- 		if (!inode->i_nlink && !is_bad_inode(inode)) {
- 			/* to avoid evict_inode call simultaneously */
- 			__iget(inode);
+@@ -1830,11 +1830,11 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
+ 			pr_err_client(cl, "inode badness on %p got %d\n", in,
+ 				      rc);
+ 			err = rc;
+-			if (in->i_state & I_NEW) {
++			if (inode_state_read_once(in) & I_NEW) {
+ 				ihold(in);
+ 				discard_new_inode(in);
+ 			}
+-		} else if (in->i_state & I_NEW) {
++		} else if (inode_state_read_once(in) & I_NEW) {
+ 			unlock_new_inode(in);
+ 		}
+ 
+@@ -2046,7 +2046,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 			pr_err_client(cl, "badness on %p %llx.%llx\n", in,
+ 				      ceph_vinop(in));
+ 			if (d_really_is_negative(dn)) {
+-				if (in->i_state & I_NEW) {
++				if (inode_state_read_once(in) & I_NEW) {
+ 					ihold(in);
+ 					discard_new_inode(in);
+ 				}
+@@ -2056,7 +2056,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 			err = ret;
+ 			goto next_item;
+ 		}
+-		if (in->i_state & I_NEW)
++		if (inode_state_read_once(in) & I_NEW)
+ 			unlock_new_inode(in);
+ 
+ 		if (d_really_is_negative(dn)) {
 -- 
 2.43.0
 
