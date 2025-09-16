@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC0AB58A25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E065AB58A28
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01331B2506A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D641B2516A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10B81DD0EF;
-	Tue, 16 Sep 2025 00:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5381B1AC43A;
+	Tue, 16 Sep 2025 00:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFEyfTWB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSy7jGUS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC3719E99F;
-	Tue, 16 Sep 2025 00:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050CFC1D;
+	Tue, 16 Sep 2025 00:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983918; cv=none; b=e7Tx+UfcE8vmYyl0z4F9u8c1SuJd45X09TxqYBETKgtgn79zuK2KYcpy0YBteQhJPynnbWD+j7ROAmFHSROCz19Kx3aFlsZ/T/KJDstLRJ1i/S5PQ0x7iyMeuXFxO9LKjyfaHuL6vZghV9pBDCBznp3B8iCvyJUnlkki0d93ezk=
+	t=1757983933; cv=none; b=p7DaFHVTdxka/aSvGWcdPJPwNd5pyH6YReD4hi98DrlL8Ik8LPQAaFeCeWfAID/AE5QPxvsRb6kLt5AdTaT2le5bxIOyOJl7KaaFCrkE7Z9TERzfjpcP8uB034Pe11/vCHAI2BuX/49Kzo5SBhma9s7xAdwgPULlTkpX5AdK4x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983918; c=relaxed/simple;
-	bh=AVBaxyLbqxYPiRtWKpXmbTCznFXh59S1UkV91WiMPwk=;
+	s=arc-20240116; t=1757983933; c=relaxed/simple;
+	bh=lf+08GdWdFR1dWusoXZWFCjg958B1RrpyY7aH6EeIwI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nXj3Sb///6iEAy+Ny3V351y+3RHlnv+iK7Zcw2g6tDsRwe0CaSecJH5A8rtbeQmS7GNh5HVcqbNH/NYXcG3+Y0G1KdMRnWQ1/ZspCAPm3Mv/67QEUE2C6EXKcugWR5ODaF1Ad7DX1NyWeN0MA5J5XQ5HgK3SB/kl5TcnreHa9LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFEyfTWB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18EBC4CEF1;
-	Tue, 16 Sep 2025 00:51:57 +0000 (UTC)
+	 MIME-Version:Content-Type; b=NfBFiylikIiuz4oRoITpwcnXBhOiKsb4QfJ2T07Hb5miUaDk54CxLc6eCQSiN++NN1G9Zt6nZ0z/blhWlmi3z3+1xVuI+gHebtugOmR2J1+RcUgVKBb4rqNt6zqDBT5KUlZCh42qkz/itxS0VWCfM+bryw8p6Z+v/UrlBKWO+0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSy7jGUS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629B4C4CEF1;
+	Tue, 16 Sep 2025 00:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757983917;
-	bh=AVBaxyLbqxYPiRtWKpXmbTCznFXh59S1UkV91WiMPwk=;
+	s=k20201202; t=1757983933;
+	bh=lf+08GdWdFR1dWusoXZWFCjg958B1RrpyY7aH6EeIwI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=eFEyfTWBkyv4KKTU8mmPKi5WN8zn4rLgcuKlVxVZpoMY94gfjVknYWEqa+wR0BoSn
-	 qxt/A/aD5893SCsqqz+DpE7sqoT6J79eHKm1nSzMHmpBZ88zSPdJm+d+fDPLjuEqUn
-	 vWbfUN3RcJhpCN7vRpUZX+D3GIsdYw1X/7dQ1sx02cf7Kqr84QGES2W91Tm1czNG7E
-	 w29e8vNCsTZ/oF5NApXNEu3tct0eTD3mIaCHpkWDEvIW833Uy9xC8fSYJ73dwbHBGL
-	 R1X/OOUqY6ZxUHqqLGylt58E7ZnZFlFYwp/lf9wuwDnayFRxfCjqHCfR4pCr63oCEb
-	 a8/9ScGk/XAIg==
-Date: Mon, 15 Sep 2025 17:51:57 -0700
-Subject: [PATCH 05/21] fuse4fs: convert to low level API
+	b=HSy7jGUSMxzah38JZxlpOhkWcdQsSwHqetAKyNoPXP0ck9NG7a+BJBh3SXaAIcNo7
+	 jGCuQjdIZoeCUGSi0xdFRvbQqWN53tHJrqxZbLcjHpB480Vg7pMgrnwbLsHibYvw3L
+	 u6lpClX1KTdCihZ7/qfBxF6e7E7LEfD3ejElAWf2XVSq+SQkLpKkMkGq4b31fWpqBA
+	 3CihkzjL9mZx0c35uD2afDIyAnMhgtN8M9NqwvVd/8xBuLGoOa33fkjYCv0yEqjhmR
+	 puOT0oUiUQDOayd5pcFemi8HRqyg98HHIXHQY0y3o4HIsjNXPFqhzYOKK3OPZr3C2c
+	 oY3Nqpg8BfSHw==
+Date: Mon, 15 Sep 2025 17:52:12 -0700
+Subject: [PATCH 06/21] libsupport: port the kernel list.h to libsupport
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
-Cc: amir73il@gmail.com, miklos@szeredi.hu, neal@gompa.dev, amir73il@gmail.com,
+Cc: miklos@szeredi.hu, neal@gompa.dev, amir73il@gmail.com,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, John@groves.net,
  bernd@bsbernd.com, joannelkoong@gmail.com
-Message-ID: <175798160865.389252.17956142778624394742.stgit@frogsfrogsfrogs>
+Message-ID: <175798160884.389252.10587862948187647786.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 References: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,3376 +62,1558 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Convert fuse4fs to the lowlevel fuse API.  Amir supplied the auto
-translation; I ported and cleaned it up by hand, and did the QA work to
-make sure it still runs correctly.
+In the next patch, we're going to add the xfsprogs cache manager code to
+e2fsprogs.  That code is going into libsupport so that it doesn't become
+part of the libext2fs ABI, and it depends on a richer set of list_head
+helpers than what is in kernel-list.h, so port the Linux 6.17 list.h to
+libsupport and drop the one in libext2fs.
 
-Co-developed-by: Claude claude-4-sonnet
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fuse4fs/fuse4fs.c | 2012 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 1072 insertions(+), 940 deletions(-)
+ lib/ext2fs/jfs_compat.h  |    2 
+ lib/ext2fs/kernel-list.h |  111 ------
+ lib/support/list.h       |  894 ++++++++++++++++++++++++++++++++++++++++++++++
+ debugfs/Makefile.in      |   12 -
+ e2fsck/Makefile.in       |   56 +--
+ fuse4fs/Makefile.in      |    6 
+ lib/e2p/Makefile.in      |    4 
+ lib/ext2fs/Makefile.in   |   14 -
+ misc/Makefile.in         |   12 -
+ misc/tune2fs.c           |    4 
+ 10 files changed, 947 insertions(+), 168 deletions(-)
+ delete mode 100644 lib/ext2fs/kernel-list.h
+ create mode 100644 lib/support/list.h
 
 
-diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index a4eeb86201db0c..8b65dd1b419eaa 100644
---- a/fuse4fs/fuse4fs.c
-+++ b/fuse4fs/fuse4fs.c
-@@ -41,7 +41,7 @@
- # define __SET_FOB_FOR_FUSE
- # define _FILE_OFFSET_BITS 64
- #endif /* _FILE_OFFSET_BITS */
--#include <fuse.h>
-+#include <fuse_lowlevel.h>
- #ifdef __SET_FOB_FOR_FUSE
- # undef _FILE_OFFSET_BITS
- #endif /* __SET_FOB_FOR_FUSE */
-@@ -116,6 +116,8 @@
- #endif
- #endif /* !defined(ENODATA) */
+diff --git a/lib/ext2fs/jfs_compat.h b/lib/ext2fs/jfs_compat.h
+index 30b05822b6fd4d..8e598bcfa73ef7 100644
+--- a/lib/ext2fs/jfs_compat.h
++++ b/lib/ext2fs/jfs_compat.h
+@@ -2,7 +2,7 @@
+ #ifndef _JFS_COMPAT_H
+ #define _JFS_COMPAT_H
  
-+#define FUSE4FS_ATTR_TIMEOUT	(0.0)
-+
- static inline uint64_t round_up(uint64_t b, unsigned int align)
- {
- 	unsigned int m;
-@@ -254,16 +256,18 @@ struct fuse4fs {
- 	/* options set by fuse_opt_parse must be of type int */
- 	int timing;
- #endif
-+	struct fuse_session *fuse;
- };
- 
--#define FUSE4FS_CHECK_HANDLE(ff, fh) \
-+#define FUSE4FS_CHECK_HANDLE(req, fh) \
- 	do { \
- 		if ((fh) == NULL || (fh)->magic != FUSE4FS_FILE_MAGIC) { \
- 			fprintf(stderr, \
- 				"FUSE4FS: Corrupt in-memory file handle at %s:%d!\n", \
- 				__func__, __LINE__); \
- 			fflush(stderr); \
--			return -EUCLEAN; \
-+			fuse_reply_err(req, EUCLEAN); \
-+			return; \
- 		} \
- 	} while (0)
- 
-@@ -275,19 +279,52 @@ struct fuse4fs {
- 				__func__, __LINE__); \
- 			fflush(stderr); \
- 			retcode; \
-+			return; \
- 		} \
- 		if ((ff)->opstate == F4OP_SHUTDOWN) { \
- 			shutcode; \
-+			return; \
- 		} \
- 	} while (0)
- 
--#define FUSE4FS_CHECK_CONTEXT(ff) \
--	__FUSE4FS_CHECK_CONTEXT((ff), return -EUCLEAN, return -EIO)
-+#define FUSE4FS_CHECK_CONTEXT(req) \
-+	__FUSE4FS_CHECK_CONTEXT(fuse4fs_get(req), \
-+				fuse_reply_err((req), EUCLEAN), \
-+				fuse_reply_err((req), EIO))
- #define FUSE4FS_CHECK_CONTEXT_RETURN(ff) \
- 	__FUSE4FS_CHECK_CONTEXT((ff), return, return)
- #define FUSE4FS_CHECK_CONTEXT_ABORT(ff) \
- 	__FUSE4FS_CHECK_CONTEXT((ff), abort(), abort())
- 
-+static inline void fuse4fs_ino_from_fuse(ext2_ino_t *inop, fuse_ino_t fino)
-+{
-+	if (fino == FUSE_ROOT_ID)
-+		*inop = EXT2_ROOT_INO;
-+	else
-+		*inop = fino;
-+}
-+
-+static inline void fuse4fs_ino_to_fuse(fuse_ino_t *finop, ext2_ino_t ino)
-+{
-+	if (ino == EXT2_ROOT_INO)
-+		*finop = FUSE_ROOT_ID;
-+	else
-+		*finop = ino;
-+}
-+
-+#define FUSE4FS_CONVERT_FINO(req, ext2_inop, fuse_ino) \
-+	do { \
-+		if ((fuse_ino) > UINT32_MAX) { \
-+			fprintf(stderr, \
-+				"FUSE4FS: Bogus inode number 0x%llx at %s:%d!\n", \
-+				(unsigned long long)(fuse_ino), __func__, __LINE__); \
-+			fflush(stderr); \
-+			fuse_reply_err((req), EIO); \
-+			return; \
-+		} \
-+		fuse4fs_ino_from_fuse(ext2_inop, fuse_ino); \
-+	} while (0)
-+
- static int __translate_error(ext2_filsys fs, ext2_ino_t ino, errcode_t err,
- 			     const char *func, int line);
- #define translate_error(fs, ino, err) __translate_error((fs), (ino), (err), \
-@@ -454,11 +491,9 @@ static inline errcode_t fuse4fs_write_inode(ext2_filsys fs, ext2_ino_t ino,
- 				       sizeof(*inode));
- }
- 
--static inline struct fuse4fs *fuse4fs_get(void)
-+static inline struct fuse4fs *fuse4fs_get(fuse_req_t req)
- {
--	struct fuse_context *ctxt = fuse_get_context();
+-#include "kernel-list.h"
++#include "support/list.h"
+ #include <errno.h>
+ #ifdef HAVE_NETINET_IN_H
+ #include <netinet/in.h>
+diff --git a/lib/ext2fs/kernel-list.h b/lib/ext2fs/kernel-list.h
+deleted file mode 100644
+index dd7b8e07dd56c4..00000000000000
+--- a/lib/ext2fs/kernel-list.h
++++ /dev/null
+@@ -1,111 +0,0 @@
+-#ifndef _LINUX_LIST_H
+-#define _LINUX_LIST_H
 -
--	return ctxt->private_data;
-+	return (struct fuse4fs *)fuse_req_userdata(req);
- }
- 
- static inline struct fuse4fs_file_handle *
-@@ -471,6 +506,7 @@ static inline void
- fuse4fs_set_handle(struct fuse_file_info *fp, struct fuse4fs_file_handle *fh)
- {
- 	fp->fh = (uintptr_t)fh;
-+	fp->keep_cache = 1;
- }
- 
- #ifdef HAVE_CLOCK_MONOTONIC
-@@ -731,7 +767,7 @@ static int fuse4fs_is_writeable(const struct fuse4fs *ff)
- }
- 
- static inline int fuse4fs_is_superuser(struct fuse4fs *ff,
--				       const struct fuse_context *ctxt)
-+				       const struct fuse_ctx *ctxt)
- {
- 	if (ff->fakeroot)
- 		return 1;
-@@ -739,7 +775,7 @@ static inline int fuse4fs_is_superuser(struct fuse4fs *ff,
- }
- 
- static inline int fuse4fs_want_check_owner(struct fuse4fs *ff,
--					   const struct fuse_context *ctxt)
-+					   const struct fuse_ctx *ctxt)
- {
- 	/*
- 	 * The kernel is responsible for access control, so we allow anything
-@@ -782,9 +818,9 @@ static int fuse4fs_iflags_access(struct fuse4fs *ff, ext2_ino_t ino,
- 	return 0;
- }
- 
--static int fuse4fs_inum_access(struct fuse4fs *ff, ext2_ino_t ino, int mask)
-+static int fuse4fs_inum_access(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			       ext2_ino_t ino, int mask)
- {
--	struct fuse_context *ctxt = fuse_get_context();
- 	ext2_filsys fs = ff->fs;
- 	struct ext2_inode inode;
- 	mode_t perms;
-@@ -1118,9 +1154,9 @@ static int fuse4fs_mount(struct fuse4fs *ff)
- 	return 0;
- }
- 
--static void op_destroy(void *p EXT2FS_ATTR((unused)))
-+static void op_destroy(void *userdata)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = userdata;
- 	ext2_filsys fs;
- 	errcode_t err;
- 
-@@ -1302,24 +1338,13 @@ static inline int fuse_set_feature_flag(struct fuse_conn_info *conn,
- }
- #endif
- 
--static void *op_init(struct fuse_conn_info *conn,
--		     struct fuse_config *cfg EXT2FS_ATTR((unused)))
-+static void op_init(void *userdata, struct fuse_conn_info *conn)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = userdata;
- 	ext2_filsys fs;
- 
- 	FUSE4FS_CHECK_CONTEXT_ABORT(ff);
- 
--	/*
--	 * Configure logging a second time, because libfuse might have
--	 * redirected std{out,err} as part of daemonization.  If this fails,
--	 * give up and move on.
--	 */
--	fuse4fs_setup_logging(ff);
--	if (ff->logfd >= 0)
--		close(ff->logfd);
--	ff->logfd = -1;
+-#include "compiler.h"
 -
- 	fs = ff->fs;
- 	dbg_printf(ff, "%s: dev=%s\n", __func__, fs->device_name);
- #ifdef FUSE_CAP_IOCTL_DIR
-@@ -1336,10 +1361,6 @@ static void *op_init(struct fuse_conn_info *conn,
- 	fuse_set_feature_flag(conn, FUSE_CAP_NO_EXPORT_SUPPORT);
- #endif
- 	conn->time_gran = 1;
--	cfg->use_ino = 1;
--	if (ff->debug)
--		cfg->debug = 1;
--	cfg->nullpath_ok = 1;
- 
- 	if (ff->kernel) {
- 		char uuid[UUID_STR_SIZE];
-@@ -1364,132 +1385,151 @@ static void *op_init(struct fuse_conn_info *conn,
- 	 */
- 	conn->want = conn->want_ext & 0xFFFFFFFF;
- #endif
--	return ff;
- }
- 
--static int stat_inode(ext2_filsys fs, ext2_ino_t ino, struct stat *statbuf)
-+struct fuse4fs_stat {
-+	struct fuse_entry_param	entry;
+-/*
+- * Simple doubly linked list implementation.
+- *
+- * Some of the internal functions ("__xxx") are useful when
+- * manipulating whole lists rather than single entries, as
+- * sometimes we already know the next/prev entries and we can
+- * generate better code by using them directly rather than
+- * using the generic single-entry routines.
+- */
+-
+-struct list_head {
+-	struct list_head *next, *prev;
+-};
+-
+-#define LIST_HEAD_INIT(name) { &(name), &(name) }
+-
+-#define INIT_LIST_HEAD(ptr) do { \
+-	(ptr)->next = (ptr); (ptr)->prev = (ptr); \
+-} while (0)
+-
+-#if (!defined(__GNUC__) && !defined(__WATCOMC__))
+-#define __inline__
+-#endif
+-
+-/*
+- * Insert a new entry between two known consecutive entries.
+- *
+- * This is only for internal list manipulation where we know
+- * the prev/next entries already!
+- */
+-static __inline__ void __list_add(struct list_head * new,
+-	struct list_head * prev,
+-	struct list_head * next)
+-{
+-	next->prev = new;
+-	new->next = next;
+-	new->prev = prev;
+-	prev->next = new;
+-}
+-
+-/*
+- * Insert a new entry after the specified head..
+- */
+-static __inline__ void list_add(struct list_head *new, struct list_head *head)
+-{
+-	__list_add(new, head, head->next);
+-}
+-
+-/*
+- * Insert a new entry at the tail
+- */
+-static __inline__ void list_add_tail(struct list_head *new, struct list_head *head)
+-{
+-	__list_add(new, head->prev, head);
+-}
+-
+-/*
+- * Delete a list entry by making the prev/next entries
+- * point to each other.
+- *
+- * This is only for internal list manipulation where we know
+- * the prev/next entries already!
+- */
+-static __inline__ void __list_del(struct list_head * prev,
+-				  struct list_head * next)
+-{
+-	next->prev = prev;
+-	prev->next = next;
+-}
+-
+-static __inline__ void list_del(struct list_head *entry)
+-{
+-	__list_del(entry->prev, entry->next);
+-}
+-
+-static __inline__ int list_empty(struct list_head *head)
+-{
+-	return head->next == head;
+-}
+-
+-/*
+- * Splice in "list" into "head"
+- */
+-static __inline__ void list_splice(struct list_head *list, struct list_head *head)
+-{
+-	struct list_head *first = list->next;
+-
+-	if (first != list) {
+-		struct list_head *last = list->prev;
+-		struct list_head *at = head->next;
+-
+-		first->prev = head;
+-		head->next = first;
+-
+-		last->next = at;
+-		at->prev = last;
+-	}
+-}
+-
+-#define list_entry(ptr, type, member) \
+-	container_of(ptr, type, member)
+-
+-#define list_for_each(pos, head) \
+-        for (pos = (head)->next; pos != (head); pos = pos->next)
+-
+-#endif
+diff --git a/lib/support/list.h b/lib/support/list.h
+new file mode 100644
+index 00000000000000..df6c99708e4a8e
+--- /dev/null
++++ b/lib/support/list.h
+@@ -0,0 +1,894 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_LIST_H
++#define _LINUX_LIST_H
++
++#include <stdbool.h>
++
++struct list_head {
++	struct list_head *next, *prev;
 +};
 +
-+static int fuse4fs_stat_inode(struct fuse4fs *ff, ext2_ino_t ino,
-+			      struct ext2_inode_large *inodep,
-+			      struct fuse4fs_stat *fstat)
- {
- 	struct ext2_inode_large inode;
-+	ext2_filsys fs = ff->fs;
-+	struct fuse_entry_param *entry = &fstat->entry;
-+	struct stat *statbuf = &entry->attr;
- 	dev_t fakedev = 0;
- 	errcode_t err;
--	int ret = 0;
- 	struct timespec tv;
- 
--	err = fuse4fs_read_inode(fs, ino, &inode);
--	if (err)
--		return translate_error(fs, ino, err);
-+	memset(fstat, 0, sizeof(*fstat));
++#ifdef __GNUC__
++#define container_of(ptr, type, member) ({				\
++	__typeof__( ((type *)0)->member ) *__mptr = (ptr);	\
++	(type *)( (char *)__mptr - offsetof(type,member) );})
++#else
++#define container_of(ptr, type, member)				\
++	((type *)((char *)(ptr) - offsetof(type, member)))
++#endif
 +
-+	if (!inodep) {
-+		err = fuse4fs_read_inode(fs, ino, &inode);
-+		if (err)
-+			return translate_error(fs, ino, err);
-+		inodep = &inode;
-+	}
- 
- 	memcpy(&fakedev, fs->super->s_uuid, sizeof(fakedev));
- 	statbuf->st_dev = fakedev;
- 	statbuf->st_ino = ino;
--	statbuf->st_mode = inode.i_mode;
--	statbuf->st_nlink = inode.i_links_count;
--	statbuf->st_uid = inode_uid(inode);
--	statbuf->st_gid = inode_gid(inode);
--	statbuf->st_size = EXT2_I_SIZE(&inode);
-+	statbuf->st_mode = inodep->i_mode;
-+	statbuf->st_nlink = inodep->i_links_count;
-+	statbuf->st_uid = inode_uid(*inodep);
-+	statbuf->st_gid = inode_gid(*inodep);
-+	statbuf->st_size = EXT2_I_SIZE(inodep);
- 	statbuf->st_blksize = fs->blocksize;
- 	statbuf->st_blocks = ext2fs_get_stat_i_blocks(fs,
--						EXT2_INODE(&inode));
--	EXT4_INODE_GET_XTIME(i_atime, &tv, &inode);
-+						EXT2_INODE(inodep));
-+	EXT4_INODE_GET_XTIME(i_atime, &tv, inodep);
- #if HAVE_STRUCT_STAT_ST_ATIM
- 	statbuf->st_atim = tv;
- #else
- 	statbuf->st_atime = tv.tv_sec;
- #endif
--	EXT4_INODE_GET_XTIME(i_mtime, &tv, &inode);
-+	EXT4_INODE_GET_XTIME(i_mtime, &tv, inodep);
- #if HAVE_STRUCT_STAT_ST_ATIM
- 	statbuf->st_mtim = tv;
- #else
- 	statbuf->st_mtime = tv.tv_sec;
- #endif
--	EXT4_INODE_GET_XTIME(i_ctime, &tv, &inode);
-+	EXT4_INODE_GET_XTIME(i_ctime, &tv, inodep);
- #if HAVE_STRUCT_STAT_ST_ATIM
- 	statbuf->st_ctim = tv;
- #else
- 	statbuf->st_ctime = tv.tv_sec;
- #endif
--	if (LINUX_S_ISCHR(inode.i_mode) ||
--	    LINUX_S_ISBLK(inode.i_mode)) {
--		if (inode.i_block[0])
--			statbuf->st_rdev = inode.i_block[0];
-+	if (LINUX_S_ISCHR(inodep->i_mode) ||
-+	    LINUX_S_ISBLK(inodep->i_mode)) {
-+		if (inodep->i_block[0])
-+			statbuf->st_rdev = inodep->i_block[0];
- 		else
--			statbuf->st_rdev = inode.i_block[1];
-+			statbuf->st_rdev = inodep->i_block[1];
- 	}
- 
--	return ret;
--}
--
--static int __fuse4fs_file_ino(struct fuse4fs *ff, const char *path,
--			      struct fuse_file_info *fp EXT2FS_ATTR((unused)),
--			      ext2_ino_t *inop,
--			      const char *func,
--			      int line)
--{
--	ext2_filsys fs = ff->fs;
--	errcode_t err;
--
--	if (fp) {
--		struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
--
--		if (fh->ino == 0)
--			return -ESTALE;
--
--		*inop = fh->ino;
--		dbg_printf(ff, "%s: get ino=%d\n", func, fh->ino);
--		return 0;
--	}
--
--	dbg_printf(ff, "%s: get path=%s\n", func, path);
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, inop);
--	if (err)
--		return __translate_error(fs, 0, err, func, line);
-+	fuse4fs_ino_to_fuse(&entry->ino, ino);
-+	entry->generation = inodep->i_generation;
-+	entry->attr_timeout = FUSE4FS_ATTR_TIMEOUT;
-+	entry->entry_timeout = FUSE4FS_ATTR_TIMEOUT;
- 
- 	return 0;
- }
- 
--# define fuse4fs_file_ino(ff, path, fp, inop) \
--	__fuse4fs_file_ino((ff), (path), (fp), (inop), __func__, __LINE__)
--
--static int op_getattr(const char *path, struct stat *statbuf,
--		      struct fuse_file_info *fi)
-+static void op_lookup(fuse_req_t req, fuse_ino_t fino, const char *name)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs_stat fstat;
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
--	ext2_ino_t ino;
-+	ext2_ino_t parent, child;
-+	errcode_t err;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	dbg_printf(ff, "%s: parent=%d name='%s'\n", __func__, parent, name);
- 	fs = fuse4fs_start(ff);
--	ret = fuse4fs_file_ino(ff, path, fi, &ino);
++/*
++ * Circular doubly linked list implementation.
++ *
++ * Some of the internal functions ("__xxx") are useful when
++ * manipulating whole lists rather than single entries, as
++ * sometimes we already know the next/prev entries and we can
++ * generate better code by using them directly rather than
++ * using the generic single-entry routines.
++ */
 +
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, parent, name, &child);
-+	if (err || child == 0) {
-+		ret = translate_error(fs, 0, err);
-+		goto out;
-+	}
++#define LIST_HEAD_INIT(name) { &(name), &(name) }
 +
-+	ret = fuse4fs_stat_inode(ff, child, NULL, &fstat);
- 	if (ret)
- 		goto out;
--	ret = stat_inode(fs, ino, statbuf);
++#define LIST_HEAD(name) \
++	struct list_head name = LIST_HEAD_INIT(name)
 +
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_entry(req, &fstat.entry);
- }
- 
--static int op_readlink(const char *path, char *buf, size_t len)
-+static void op_getattr(fuse_req_t req, fuse_ino_t fino,
-+		       struct fuse_file_info *fi EXT2FS_ATTR((unused)))
- {
--	struct fuse4fs *ff = fuse4fs_get();
--	ext2_filsys fs;
--	errcode_t err;
-+	struct fuse4fs_stat fstat;
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_ino_t ino;
-+	int ret = 0;
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-+	fuse4fs_start(ff);
-+	ret = fuse4fs_stat_inode(ff, ino, NULL, &fstat);
-+	fuse4fs_finish(ff, ret);
-+
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_attr(req, &fstat.entry.attr,
-+				fstat.entry.attr_timeout);
++/**
++ * INIT_LIST_HEAD - Initialize a list_head structure
++ * @list: list_head structure to be initialized.
++ *
++ * Initializes the list_head to point to itself.  If it is a list header,
++ * the result is an empty list.
++ */
++static inline void INIT_LIST_HEAD(struct list_head *list)
++{
++	list->next = list;
++	list->prev = list;
 +}
 +
-+static void op_readlink(fuse_req_t req, fuse_ino_t fino)
++#ifdef CONFIG_LIST_HARDENED
++
++#ifdef CONFIG_DEBUG_LIST
++# define __list_valid_slowpath
++#else
++# define __list_valid_slowpath __cold __preserve_most
++#endif
++
++/*
++ * Performs the full set of list corruption checks before __list_add().
++ * On list corruption reports a warning, and returns false.
++ */
++bool __list_valid_slowpath __list_add_valid_or_report(struct list_head *new,
++						      struct list_head *prev,
++						      struct list_head *next);
++
++/*
++ * Performs list corruption checks before __list_add(). Returns false if a
++ * corruption is detected, true otherwise.
++ *
++ * With CONFIG_LIST_HARDENED only, performs minimal list integrity checking
++ * inline to catch non-faulting corruptions, and only if a corruption is
++ * detected calls the reporting function __list_add_valid_or_report().
++ */
++static __always_inline bool __list_add_valid(struct list_head *new,
++					     struct list_head *prev,
++					     struct list_head *next)
 +{
- 	struct ext2_inode inode;
-+	char buf[PATH_MAX + 1];
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	ext2_file_t file;
-+	errcode_t err;
-+	ext2_ino_t ino;
-+	size_t len = PATH_MAX;
- 	unsigned int got;
--	ext2_file_t file;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: path=%s\n", __func__, path);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-+	dbg_printf(ff, "%s: ino=%d\n", __func__, ino);
- 	fs = fuse4fs_start(ff);
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
- 
--	err = ext2fs_read_inode(fs, ino, &inode);
-+	err = ext2fs_read_inode(fs, fino, &inode);
- 	if (err) {
- 		ret = translate_error(fs, ino, err);
- 		goto out;
-@@ -1500,7 +1540,6 @@ static int op_readlink(const char *path, char *buf, size_t len)
- 		goto out;
- 	}
- 
--	len--;
- 	if (inode.i_size < len)
- 		len = inode.i_size;
- 	if (ext2fs_is_fast_symlink(&inode))
-@@ -1538,7 +1577,11 @@ static int op_readlink(const char *path, char *buf, size_t len)
- 
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
++	bool ret = true;
 +
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_readlink(req, buf);
- }
- 
- static int fuse4fs_getxattr(struct fuse4fs *ff, ext2_ino_t ino,
-@@ -1644,11 +1687,12 @@ static inline void fuse4fs_set_gid(struct ext2_inode_large *inode, gid_t gid)
- 	ext2fs_set_i_gid_high(*inode, gid >> 16);
- }
- 
--static int fuse4fs_new_child_gid(struct fuse4fs *ff, ext2_ino_t parent,
--				 gid_t *gid, int *parent_sgid)
-+static int fuse4fs_new_child_gid(struct fuse4fs *ff,
-+				 const struct fuse_ctx *ctxt,
-+				 ext2_ino_t parent, gid_t *gid,
-+				 int *parent_sgid)
- {
- 	struct ext2_inode_large inode;
--	struct fuse_context *ctxt = fuse_get_context();
- 	errcode_t err;
- 
- 	err = fuse4fs_read_inode(ff->fs, parent, &inode);
-@@ -1724,36 +1768,44 @@ static void fuse4fs_set_extra_isize(struct fuse4fs *ff, ext2_ino_t ino,
- 	inode->i_extra_isize = extra;
- }
- 
--static int op_mknod(const char *path, mode_t mode, dev_t dev)
-+static void fuse4fs_reply_entry(fuse_req_t req, ext2_ino_t ino,
-+				struct ext2_inode_large *inode, int ret)
- {
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs_stat fstat;
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+
-+	if (ret) {
-+		fuse_reply_err(req, -ret);
-+		return;
++	if (!IS_ENABLED(CONFIG_DEBUG_LIST)) {
++		/*
++		 * With the hardening version, elide checking if next and prev
++		 * are NULL, since the immediate dereference of them below would
++		 * result in a fault if NULL.
++		 *
++		 * With the reduced set of checks, we can afford to inline the
++		 * checks, which also gives the compiler a chance to elide some
++		 * of them completely if they can be proven at compile-time. If
++		 * one of the pre-conditions does not hold, the slow-path will
++		 * show a report which pre-condition failed.
++		 */
++		if (likely(next->prev == prev && prev->next == next && new != prev && new != next))
++			return true;
++		ret = false;
 +	}
 +
-+	/* Get stat info for the new entry */
-+	ret = fuse4fs_stat_inode(ff, ino, inode, &fstat);
-+	if (ret) {
-+		fuse_reply_err(req, -ret);
-+		return;
-+	}
-+
-+	fuse_reply_entry(req, &fstat.entry);
-+}
-+
-+static void op_mknod(fuse_req_t req, fuse_ino_t fino, const char *name,
-+		     mode_t mode, dev_t dev)
-+{
-+	struct ext2_inode_large inode;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	ext2_ino_t parent, child;
--	char *temp_path;
- 	errcode_t err;
--	char *node_name, a;
- 	int filetype;
--	struct ext2_inode_large inode;
- 	gid_t gid;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: path=%s mode=0%o dev=0x%x\n", __func__, path, mode,
--		   (unsigned int)dev);
--	temp_path = strdup(path);
--	if (!temp_path) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name = strrchr(temp_path, '/');
--	if (!node_name) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name++;
--	a = *node_name;
--	*node_name = 0;
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	dbg_printf(ff, "%s: parent=%d name='%s' mode=0%o dev=0x%x\n",
-+		   __func__, parent, name, mode, (unsigned int)dev);
- 
- 	fs = fuse4fs_start(ff);
- 	if (!fuse4fs_can_allocate(ff, 2)) {
-@@ -1761,33 +1813,14 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
- 		goto out2;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &parent);
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
--
--	ret = fuse4fs_inum_access(ff, parent, A_OK | W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, A_OK | W_OK);
- 	if (ret)
- 		goto out2;
- 
--	*node_name = a;
-+	/* On a low level server, mknod handles all non-directory types */
-+	filetype = ext2_file_type(mode);
- 
--	if (LINUX_S_ISCHR(mode))
--		filetype = EXT2_FT_CHRDEV;
--	else if (LINUX_S_ISBLK(mode))
--		filetype = EXT2_FT_BLKDEV;
--	else if (LINUX_S_ISFIFO(mode))
--		filetype = EXT2_FT_FIFO;
--	else if (LINUX_S_ISSOCK(mode))
--		filetype = EXT2_FT_SOCK;
--	else {
--		ret = -EINVAL;
--		goto out2;
--	}
--
--	err = fuse4fs_new_child_gid(ff, parent, &gid, NULL);
-+	err = fuse4fs_new_child_gid(ff, ctxt, parent, &gid, NULL);
- 	if (err)
- 		goto out2;
- 
-@@ -1797,9 +1830,9 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
- 		goto out2;
- 	}
- 
--	dbg_printf(ff, "%s: create ino=%d/name=%s in dir=%d\n", __func__, child,
--		   node_name, parent);
--	err = ext2fs_link(fs, parent, node_name, child,
-+	dbg_printf(ff, "%s: create ino=%d name='%s' in dir=%d\n", __func__,
-+		   child, name, parent);
-+	err = ext2fs_link(fs, parent, name, child,
- 			  filetype | EXT2FS_LINK_EXPAND);
- 	if (err) {
- 		ret = translate_error(fs, parent, err);
-@@ -1848,42 +1881,28 @@ static int op_mknod(const char *path, mode_t mode, dev_t dev)
- 
- out2:
- 	fuse4fs_finish(ff, ret);
--out:
--	free(temp_path);
--	return ret;
-+	fuse4fs_reply_entry(req, child, &inode, ret);
- }
- 
--static int op_mkdir(const char *path, mode_t mode)
-+static void op_mkdir(fuse_req_t req, fuse_ino_t fino, const char *name,
-+		     mode_t mode)
- {
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct ext2_inode_large inode;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	ext2_ino_t parent, child;
--	char *temp_path;
- 	errcode_t err;
--	char *node_name, a;
--	struct ext2_inode_large inode;
- 	char *block;
- 	blk64_t blk;
- 	int ret = 0;
- 	gid_t gid;
- 	int parent_sgid;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: path=%s mode=0%o\n", __func__, path, mode);
--	temp_path = strdup(path);
--	if (!temp_path) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name = strrchr(temp_path, '/');
--	if (!node_name) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name++;
--	a = *node_name;
--	*node_name = 0;
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	dbg_printf(ff, "%s: parent=%d name='%s' mode=0%o\n",
-+		   __func__, parent, name, mode);
- 
- 	fs = fuse4fs_start(ff);
- 	if (!fuse4fs_can_allocate(ff, 1)) {
-@@ -1891,25 +1910,15 @@ static int op_mkdir(const char *path, mode_t mode)
- 		goto out2;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &parent);
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
--
--	ret = fuse4fs_inum_access(ff, parent, A_OK | W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, A_OK | W_OK);
- 	if (ret)
- 		goto out2;
- 
--	err = fuse4fs_new_child_gid(ff, parent, &gid, &parent_sgid);
-+	err = fuse4fs_new_child_gid(ff, ctxt, parent, &gid, &parent_sgid);
- 	if (err)
- 		goto out2;
- 
--	*node_name = a;
--
--	err = ext2fs_mkdir2(fs, parent, 0, 0, EXT2FS_LINK_EXPAND,
--			    node_name, NULL);
-+	err = ext2fs_mkdir2(fs, parent, 0, 0, EXT2FS_LINK_EXPAND, name, NULL);
- 	if (err) {
- 		ret = translate_error(fs, parent, err);
- 		goto out2;
-@@ -1920,14 +1929,13 @@ static int op_mkdir(const char *path, mode_t mode)
- 		goto out2;
- 
- 	/* Still have to update the uid/gid of the dir */
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &child);
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, parent, name, &child);
- 	if (err) {
- 		ret = translate_error(fs, 0, err);
- 		goto out2;
- 	}
--	dbg_printf(ff, "%s: created ino=%d/path=%s in dir=%d\n", __func__, child,
--		   node_name, parent);
-+	dbg_printf(ff, "%s: created ino=%d name='%s' in dir=%d\n",
-+		   __func__, child, name, parent);
- 
- 	err = fuse4fs_read_inode(fs, child, &inode);
- 	if (err) {
-@@ -1983,55 +1991,7 @@ static int op_mkdir(const char *path, mode_t mode)
- 	ext2fs_free_mem(&block);
- out2:
- 	fuse4fs_finish(ff, ret);
--out:
--	free(temp_path);
--	return ret;
--}
--
--static int fuse4fs_unlink(struct fuse4fs *ff, const char *path,
--			  ext2_ino_t *parent)
--{
--	ext2_filsys fs = ff->fs;
--	errcode_t err;
--	ext2_ino_t dir;
--	char *filename = strdup(path);
--	char *base_name;
--	int ret;
--
--	base_name = strrchr(filename, '/');
--	if (base_name) {
--		*base_name++ = '\0';
--		err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, filename,
--				   &dir);
--		if (err) {
--			free(filename);
--			return translate_error(fs, 0, err);
--		}
--	} else {
--		dir = EXT2_ROOT_INO;
--		base_name = filename;
--	}
--
--	ret = fuse4fs_inum_access(ff, dir, W_OK);
--	if (ret) {
--		free(filename);
--		return ret;
--	}
--
--	dbg_printf(ff, "%s: unlinking name=%s from dir=%d\n", __func__,
--		   base_name, dir);
--	err = ext2fs_unlink(fs, dir, base_name, 0, 0);
--	free(filename);
--	if (err)
--		return translate_error(fs, dir, err);
--
--	ret = update_mtime(fs, dir, NULL);
--	if (ret)
--		return ret;
--
--	if (parent)
--		*parent = dir;
--	return 0;
-+	fuse4fs_reply_entry(req, child, &inode, ret);
- }
- 
- static int fuse4fs_remove_ea_inodes(struct fuse4fs *ff, ext2_ino_t ino,
-@@ -2140,49 +2100,78 @@ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
- 	return 0;
- }
- 
--static int __op_unlink(struct fuse4fs *ff, const char *path)
-+static int fuse4fs_unlink(struct fuse4fs *ff, ext2_ino_t parent,
-+			  const char *name, ext2_ino_t child)
- {
- 	ext2_filsys fs = ff->fs;
--	ext2_ino_t parent, ino;
- 	errcode_t err;
- 	int ret = 0;
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
-+	err = ext2fs_unlink(fs, parent, name, child, 0);
-+	if (err) {
-+		ret = translate_error(fs, parent, err);
-+		goto out;
-+	}
-+
-+	ret = update_mtime(fs, parent, NULL);
-+	if (ret)
-+		goto out;
-+out:
++	ret &= __list_add_valid_or_report(new, prev, next);
 +	return ret;
 +}
 +
-+static int fuse4fs_rmfile(struct fuse4fs *ff, ext2_ino_t parent,
-+			  const char *name, ext2_ino_t child)
++/*
++ * Performs the full set of list corruption checks before __list_del_entry().
++ * On list corruption reports a warning, and returns false.
++ */
++bool __list_valid_slowpath __list_del_entry_valid_or_report(struct list_head *entry);
++
++/*
++ * Performs list corruption checks before __list_del_entry(). Returns false if a
++ * corruption is detected, true otherwise.
++ *
++ * With CONFIG_LIST_HARDENED only, performs minimal list integrity checking
++ * inline to catch non-faulting corruptions, and only if a corruption is
++ * detected calls the reporting function __list_del_entry_valid_or_report().
++ */
++static __always_inline bool __list_del_entry_valid(struct list_head *entry)
 +{
-+	int ret;
++	bool ret = true;
 +
-+	ret = fuse4fs_unlink(ff, parent, name, child);
-+	if (ret)
-+		return ret;
++	if (!IS_ENABLED(CONFIG_DEBUG_LIST)) {
++		struct list_head *prev = entry->prev;
++		struct list_head *next = entry->next;
 +
-+	return fuse4fs_remove_inode(ff, child);
-+}
-+
-+static void op_unlink(fuse_req_t req, fuse_ino_t fino, const char *name)
-+{
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	ext2_ino_t parent, child;
-+	errcode_t err;
-+	int ret;
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	fs = fuse4fs_start(ff);
-+
-+	/* Get the inode number for the file */
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, parent, name, &child);
- 	if (err) {
- 		ret = translate_error(fs, 0, err);
- 		goto out;
- 	}
- 
--	ret = fuse4fs_inum_access(ff, ino, W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, child, W_OK);
- 	if (ret)
- 		goto out;
- 
--	ret = fuse4fs_unlink(ff, path, &parent);
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, W_OK);
- 	if (ret)
- 		goto out;
- 
--	ret = fuse4fs_remove_inode(ff, ino);
-+	dbg_printf(ff, "%s: unlink parent=%d name='%s' child=%d\n",
-+		   __func__, parent, name, child);
-+	ret = fuse4fs_rmfile(ff, parent, name, child);
- 	if (ret)
- 		goto out;
- 
- 	ret = fuse4fs_dirsync_flush(ff, parent, NULL);
- 	if (ret)
- 		goto out;
--
- out:
--	return ret;
--}
--
--static int op_unlink(const char *path)
--{
--	struct fuse4fs *ff = fuse4fs_get();
--	int ret;
--
--	FUSE4FS_CHECK_CONTEXT(ff);
--	fuse4fs_start(ff);
--	ret = __op_unlink(ff, path);
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
- struct rd_struct {
-@@ -2213,51 +2202,36 @@ static int rmdir_proc(ext2_ino_t dir EXT2FS_ATTR((unused)),
- 	return 0;
- }
- 
--static int __op_rmdir(struct fuse4fs *ff, const char *path)
-+static int fuse4fs_rmdir(struct fuse4fs *ff, ext2_ino_t parent,
-+			 const char *name, ext2_ino_t child)
- {
- 	ext2_filsys fs = ff->fs;
--	ext2_ino_t parent, child;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
--	struct rd_struct rds;
-+	struct rd_struct rds = {
-+		.parent = 0,
-+		.empty = 1,
-+	};
- 	int ret = 0;
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &child);
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
--	dbg_printf(ff, "%s: rmdir path=%s ino=%d\n", __func__, path, child);
--
--	ret = fuse4fs_inum_access(ff, child, W_OK);
--	if (ret)
--		goto out;
--
--	rds.parent = 0;
--	rds.empty = 1;
--
- 	err = ext2fs_dir_iterate2(fs, child, 0, 0, rmdir_proc, &rds);
- 	if (err) {
- 		ret = translate_error(fs, child, err);
- 		goto out;
- 	}
- 
--	/* the kernel checks parent permissions before emptiness */
-+	/* Make sure we found a dotdot entry */
- 	if (rds.parent == 0) {
- 		ret = translate_error(fs, child, EXT2_ET_FILESYSTEM_CORRUPTED);
- 		goto out;
- 	}
- 
--	ret = fuse4fs_inum_access(ff, rds.parent, W_OK);
--	if (ret)
--		goto out;
--
- 	if (rds.empty == 0) {
- 		ret = -ENOTEMPTY;
- 		goto out;
- 	}
- 
--	ret = fuse4fs_unlink(ff, path, &parent);
-+	ret = fuse4fs_unlink(ff, parent, name, child);
- 	if (ret)
- 		goto out;
- 	/* Directories have to be "removed" twice. */
-@@ -2288,78 +2262,85 @@ static int __op_rmdir(struct fuse4fs *ff, const char *path)
- 		}
- 	}
- 
--	ret = fuse4fs_dirsync_flush(ff, parent, NULL);
--	if (ret)
--		goto out;
--
- out:
- 	return ret;
- }
- 
--static int op_rmdir(const char *path)
-+static void op_rmdir(fuse_req_t req, fuse_ino_t fino, const char *name)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	ext2_ino_t parent, child;
-+	errcode_t err;
- 	int ret;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	fuse4fs_start(ff);
--	ret = __op_rmdir(ff, path);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	fs = fuse4fs_start(ff);
-+
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, parent, name, &child);
-+	if (err) {
-+		ret = translate_error(fs, 0, err);
-+		goto out;
++		/*
++		 * With the hardening version, elide checking if next and prev
++		 * are NULL, LIST_POISON1 or LIST_POISON2, since the immediate
++		 * dereference of them below would result in a fault.
++		 */
++		if (likely(prev->next == entry && next->prev == entry))
++			return true;
++		ret = false;
 +	}
 +
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, W_OK);
-+	if (ret)
-+		goto out;
-+
-+	ret = fuse4fs_inum_access(ff, ctxt, child, W_OK);
-+	if (ret)
-+		goto out;
-+
-+	dbg_printf(ff, "%s: unlink parent=%d name='%s' child=%d\n",
-+		   __func__, parent, name, child);
-+	ret = fuse4fs_rmdir(ff, parent, name, child);
-+	if (ret)
-+		goto out;
-+
-+	ret = fuse4fs_dirsync_flush(ff, parent, NULL);
-+	if (ret)
-+		goto out;
-+
-+out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
--static int op_symlink(const char *src, const char *dest)
-+static void op_symlink(fuse_req_t req, const char *target, fuse_ino_t fino,
-+		       const char *name)
- {
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fuse4fs *ff = fuse4fs_get();
--	ext2_filsys fs;
--	ext2_ino_t parent, child;
--	char *temp_path;
--	errcode_t err;
--	char *node_name, a;
- 	struct ext2_inode_large inode;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	ext2_ino_t parent, child;
-+	errcode_t err;
- 	gid_t gid;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: symlink %s to %s\n", __func__, src, dest);
--	temp_path = strdup(dest);
--	if (!temp_path) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name = strrchr(temp_path, '/');
--	if (!node_name) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name++;
--	a = *node_name;
--	*node_name = 0;
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	dbg_printf(ff, "%s: symlink dir=%d name='%s' target='%s'\n",
-+		   __func__, parent, name, target);
- 
- 	fs = fuse4fs_start(ff);
--	if (!fs_can_allocate(ff, 1)) {
-+	if (!fuse4fs_can_allocate(ff, 1)) {
- 		ret = -ENOSPC;
- 		goto out2;
- 	}
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &parent);
--	*node_name = a;
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
- 
--	ret = fuse4fs_inum_access(ff, parent, A_OK | W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, A_OK | W_OK);
- 	if (ret)
- 		goto out2;
- 
--	err = fuse4fs_new_child_gid(ff, parent, &gid, NULL);
-+	err = fuse4fs_new_child_gid(ff, ctxt, parent, &gid, NULL);
- 	if (err)
- 		goto out2;
- 
- 	/* Create symlink */
--	err = ext2fs_symlink(fs, parent, 0, node_name, src);
-+	err = ext2fs_symlink(fs, parent, 0, name, target);
- 	if (err == EXT2_ET_DIR_NO_SPACE) {
- 		err = ext2fs_expand_dir(fs, parent);
- 		if (err) {
-@@ -2367,7 +2348,7 @@ static int op_symlink(const char *src, const char *dest)
- 			goto out2;
- 		}
- 
--		err = ext2fs_symlink(fs, parent, 0, node_name, src);
-+		err = ext2fs_symlink(fs, parent, 0, name, target);
- 	}
- 	if (err) {
- 		ret = translate_error(fs, parent, err);
-@@ -2380,14 +2361,13 @@ static int op_symlink(const char *src, const char *dest)
- 		goto out2;
- 
- 	/* Still have to update the uid/gid of the symlink */
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &child);
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, parent, name, &child);
- 	if (err) {
- 		ret = translate_error(fs, 0, err);
- 		goto out2;
- 	}
--	dbg_printf(ff, "%s: symlinking ino=%d/name=%s to dir=%d\n", __func__,
--		   child, node_name, parent);
-+	dbg_printf(ff, "%s: symlinking dir=%d name='%s' child=%d\n",
-+		   __func__, parent, name, child);
- 
- 	err = fuse4fs_read_inode(fs, child, &inode);
- 	if (err) {
-@@ -2413,9 +2393,7 @@ static int op_symlink(const char *src, const char *dest)
- 
- out2:
- 	fuse4fs_finish(ff, ret);
--out:
--	free(temp_path);
--	return ret;
-+	fuse4fs_reply_entry(req, child, &inode, ret);
- }
- 
- struct update_dotdot {
-@@ -2441,39 +2419,43 @@ static int update_dotdot_helper(ext2_ino_t dir EXT2FS_ATTR((unused)),
- 	return 0;
- }
- 
--static int op_rename(const char *from, const char *to,
--		     unsigned int flags EXT2FS_ATTR((unused)))
-+static void op_rename(fuse_req_t req, fuse_ino_t from_parent, const char *from,
-+		      fuse_ino_t to_parent, const char *to, unsigned int flags)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	errcode_t err;
- 	ext2_ino_t from_ino, to_ino, to_dir_ino, from_dir_ino;
--	char *temp_to = NULL, *temp_from = NULL;
--	char *cp, a;
- 	struct ext2_inode inode;
- 	struct update_dotdot ud;
- 	int flushed = 0;
- 	int ret = 0;
- 
- 	/* renameat2 is not supported */
--	if (flags)
--		return -ENOSYS;
-+	if (flags) {
-+		fuse_reply_err(req, ENOSYS);
-+		return;
-+	}
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: renaming %s to %s\n", __func__, from, to);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &from_dir_ino, from_parent);
-+	FUSE4FS_CONVERT_FINO(req, &to_dir_ino, to_parent);
-+	dbg_printf(ff, "%s: renaming dir=%d name='%s' to dir=%d name='%s'\n",
-+		   __func__, from_dir_ino, from, to_dir_ino, to);
- 	fs = fuse4fs_start(ff);
- 	if (!fuse4fs_can_allocate(ff, 5)) {
- 		ret = -ENOSPC;
- 		goto out;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, from, &from_ino);
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, from_dir_ino, from, &from_ino);
- 	if (err || from_ino == 0) {
- 		ret = translate_error(fs, 0, err);
- 		goto out;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, to, &to_ino);
-+	err = ext2fs_namei(fs, EXT2_ROOT_INO, to_dir_ino, to, &to_ino);
- 	if (err && err != EXT2_ET_FILE_NOT_FOUND) {
- 		ret = translate_error(fs, 0, err);
- 		goto out;
-@@ -2482,136 +2464,80 @@ static int op_rename(const char *from, const char *to,
- 	if (err == EXT2_ET_FILE_NOT_FOUND)
- 		to_ino = 0;
- 
-+	dbg_printf(ff,
-+ "%s: renaming dir=%d name='%s' child=%d to dir=%d name='%s' child=%d\n",
-+		   __func__, from_dir_ino, from, from_ino, to_dir_ino, to,
-+		   to_ino);
-+
- 	/* Already the same file? */
- 	if (to_ino != 0 && to_ino == from_ino) {
- 		ret = 0;
- 		goto out;
- 	}
- 
--	ret = fuse4fs_inum_access(ff, from_ino, W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, from_ino, W_OK);
- 	if (ret)
- 		goto out;
- 
- 	if (to_ino) {
--		ret = fuse4fs_inum_access(ff, to_ino, W_OK);
-+		ret = fuse4fs_inum_access(ff, ctxt, to_ino, W_OK);
- 		if (ret)
- 			goto out;
- 	}
- 
--	temp_to = strdup(to);
--	if (!temp_to) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	temp_from = strdup(from);
--	if (!temp_from) {
--		ret = -ENOMEM;
--		goto out2;
--	}
--
--	/* Find parent dir of the source and check write access */
--	cp = strrchr(temp_from, '/');
--	if (!cp) {
--		ret = -EINVAL;
--		goto out2;
--	}
--
--	a = *(cp + 1);
--	*(cp + 1) = 0;
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_from,
--			   &from_dir_ino);
--	*(cp + 1) = a;
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
--	if (from_dir_ino == 0) {
--		ret = -ENOENT;
--		goto out2;
--	}
--
--	ret = fuse4fs_inum_access(ff, from_dir_ino, W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, from_dir_ino, W_OK);
- 	if (ret)
--		goto out2;
--
--	/* Find parent dir of the destination and check write access */
--	cp = strrchr(temp_to, '/');
--	if (!cp) {
--		ret = -EINVAL;
--		goto out2;
--	}
--
--	a = *(cp + 1);
--	*(cp + 1) = 0;
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_to,
--			   &to_dir_ino);
--	*(cp + 1) = a;
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
--	if (to_dir_ino == 0) {
--		ret = -ENOENT;
--		goto out2;
--	}
-+		goto out;
- 
--	ret = fuse4fs_inum_access(ff, to_dir_ino, W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, to_dir_ino, W_OK);
- 	if (ret)
--		goto out2;
-+		goto out;
- 
- 	/* If the target exists, unlink it first */
- 	if (to_ino != 0) {
- 		err = ext2fs_read_inode(fs, to_ino, &inode);
- 		if (err) {
- 			ret = translate_error(fs, to_ino, err);
--			goto out2;
-+			goto out;
- 		}
- 
--		dbg_printf(ff, "%s: unlinking %s ino=%d\n", __func__,
--			   LINUX_S_ISDIR(inode.i_mode) ? "dir" : "file",
--			   to_ino);
-+		dbg_printf(ff, "%s: unlink dir=%d name='%s' child=%d\n",
-+			   __func__, to_dir_ino, to, to_ino);
- 		if (LINUX_S_ISDIR(inode.i_mode))
--			ret = __op_rmdir(ff, to);
-+			ret = fuse4fs_rmdir(ff, to_dir_ino, to, to_ino);
- 		else
--			ret = __op_unlink(ff, to);
-+			ret = fuse4fs_rmfile(ff, to_dir_ino, to, to_ino);
- 		if (ret)
--			goto out2;
-+			goto out;
- 	}
- 
- 	/* Get ready to do the move */
- 	err = ext2fs_read_inode(fs, from_ino, &inode);
- 	if (err) {
- 		ret = translate_error(fs, from_ino, err);
--		goto out2;
-+		goto out;
- 	}
- 
- 	/* Link in the new file */
--	dbg_printf(ff, "%s: linking ino=%d/path=%s to dir=%d\n", __func__,
--		   from_ino, cp + 1, to_dir_ino);
--	err = ext2fs_link(fs, to_dir_ino, cp + 1, from_ino,
-+	dbg_printf(ff, "%s: link dir=%d name='%s' child=%d\n",
-+		   __func__, to_dir_ino, to, from_ino);
-+	err = ext2fs_link(fs, to_dir_ino, to, from_ino,
- 			  ext2_file_type(inode.i_mode) | EXT2FS_LINK_EXPAND);
- 	if (err) {
- 		ret = translate_error(fs, to_dir_ino, err);
--		goto out2;
-+		goto out;
- 	}
- 
- 	/* Update '..' pointer if dir */
--	err = ext2fs_read_inode(fs, from_ino, &inode);
--	if (err) {
--		ret = translate_error(fs, from_ino, err);
--		goto out2;
--	}
--
- 	if (LINUX_S_ISDIR(inode.i_mode)) {
- 		ud.new_dotdot = to_dir_ino;
--		dbg_printf(ff, "%s: updating .. entry for dir=%d\n", __func__,
--			   to_dir_ino);
-+		dbg_printf(ff, "%s: updating .. entry for child=%d parent=%d\n",
-+			   __func__, from_ino, to_dir_ino);
- 		err = ext2fs_dir_iterate2(fs, from_ino, 0, NULL,
- 					  update_dotdot_helper, &ud);
- 		if (err) {
- 			ret = translate_error(fs, from_ino, err);
--			goto out2;
-+			goto out;
- 		}
- 
- 		/* Decrease from_dir_ino's links_count */
-@@ -2620,87 +2546,76 @@ static int op_rename(const char *from, const char *to,
- 		err = ext2fs_read_inode(fs, from_dir_ino, &inode);
- 		if (err) {
- 			ret = translate_error(fs, from_dir_ino, err);
--			goto out2;
-+			goto out;
- 		}
- 		inode.i_links_count--;
- 		err = ext2fs_write_inode(fs, from_dir_ino, &inode);
- 		if (err) {
- 			ret = translate_error(fs, from_dir_ino, err);
--			goto out2;
-+			goto out;
- 		}
- 
- 		/* Increase to_dir_ino's links_count */
- 		err = ext2fs_read_inode(fs, to_dir_ino, &inode);
- 		if (err) {
- 			ret = translate_error(fs, to_dir_ino, err);
--			goto out2;
-+			goto out;
- 		}
- 		inode.i_links_count++;
- 		err = ext2fs_write_inode(fs, to_dir_ino, &inode);
- 		if (err) {
- 			ret = translate_error(fs, to_dir_ino, err);
--			goto out2;
-+			goto out;
- 		}
- 	}
- 
- 	/* Update timestamps */
- 	ret = update_ctime(fs, from_ino, NULL);
- 	if (ret)
--		goto out2;
-+		goto out;
- 
- 	ret = update_mtime(fs, to_dir_ino, NULL);
- 	if (ret)
--		goto out2;
-+		goto out;
- 
- 	/* Remove the old file */
--	ret = fuse4fs_unlink(ff, from, NULL);
-+	dbg_printf(ff, "%s: unlink dir=%d name='%s' child=%d\n",
-+		   __func__, from_dir_ino, from, from_ino);
-+	ret = fuse4fs_unlink(ff, from_dir_ino, from, from_ino);
- 	if (ret)
--		goto out2;
-+		goto out;
- 
- 	ret = fuse4fs_dirsync_flush(ff, from_dir_ino, &flushed);
- 	if (ret)
--		goto out2;
-+		goto out;
- 
- 	if (from_dir_ino != to_dir_ino && !flushed) {
- 		ret = fuse4fs_dirsync_flush(ff, to_dir_ino, NULL);
- 		if (ret)
--			goto out2;
-+			goto out;
- 	}
- 
--out2:
--	free(temp_from);
--	free(temp_to);
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
--static int op_link(const char *src, const char *dest)
-+static void op_link(fuse_req_t req, fuse_ino_t child_fino,
-+		    fuse_ino_t parent_fino, const char *name)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct ext2_inode_large inode;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
--	char *temp_path;
- 	errcode_t err;
--	char *node_name, a;
--	ext2_ino_t parent, ino;
--	struct ext2_inode_large inode;
-+	ext2_ino_t parent, child;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: src=%s dest=%s\n", __func__, src, dest);
--	temp_path = strdup(dest);
--	if (!temp_path) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name = strrchr(temp_path, '/');
--	if (!node_name) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name++;
--	a = *node_name;
--	*node_name = 0;
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, parent_fino);
-+	FUSE4FS_CONVERT_FINO(req, &child, child_fino);
-+	dbg_printf(ff, "%s: link dir=%d name='%s' child=%d\n",
-+		   __func__, parent, name, child);
- 
- 	fs = fuse4fs_start(ff);
- 	if (!fuse4fs_can_allocate(ff, 2)) {
-@@ -2708,48 +2623,32 @@ static int op_link(const char *src, const char *dest)
- 		goto out2;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &parent);
--	*node_name = a;
--	if (err) {
--		err = -ENOENT;
--		goto out2;
--	}
--
--	ret = fuse4fs_inum_access(ff, parent, A_OK | W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, A_OK | W_OK);
- 	if (ret)
- 		goto out2;
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, src, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
--
--	err = fuse4fs_read_inode(fs, ino, &inode);
-+	err = fuse4fs_read_inode(fs, child, &inode);
- 	if (err) {
--		ret = translate_error(fs, ino, err);
-+		ret = translate_error(fs, child, err);
- 		goto out2;
- 	}
- 
--	ret = fuse4fs_iflags_access(ff, ino, EXT2_INODE(&inode), W_OK);
-+	ret = fuse4fs_iflags_access(ff, child, EXT2_INODE(&inode), W_OK);
- 	if (ret)
- 		goto out2;
- 
- 	inode.i_links_count++;
--	ret = update_ctime(fs, ino, &inode);
-+	ret = update_ctime(fs, child, &inode);
- 	if (ret)
- 		goto out2;
- 
--	err = fuse4fs_write_inode(fs, ino, &inode);
-+	err = fuse4fs_write_inode(fs, child, &inode);
- 	if (err) {
--		ret = translate_error(fs, ino, err);
-+		ret = translate_error(fs, child, err);
- 		goto out2;
- 	}
- 
--	dbg_printf(ff, "%s: linking ino=%d/name=%s to dir=%d\n", __func__, ino,
--		   node_name, parent);
--	err = ext2fs_link(fs, parent, node_name, ino,
-+	err = ext2fs_link(fs, parent, name, child,
- 			  ext2_file_type(inode.i_mode) | EXT2FS_LINK_EXPAND);
- 	if (err) {
- 		ret = translate_error(fs, parent, err);
-@@ -2766,13 +2665,12 @@ static int op_link(const char *src, const char *dest)
- 
- out2:
- 	fuse4fs_finish(ff, ret);
--out:
--	free(temp_path);
--	return ret;
-+	fuse4fs_reply_entry(req, child, &inode, ret);
- }
- 
- /* Obtain group ids of the process that sent us a command(?) */
--static int fuse4fs_get_groups(struct fuse4fs *ff, gid_t **gids, size_t *nr_gids)
-+static int fuse4fs_get_groups(struct fuse4fs *ff, fuse_req_t req, gid_t **gids,
-+			      size_t *nr_gids)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
-@@ -2785,7 +2683,7 @@ static int fuse4fs_get_groups(struct fuse4fs *ff, gid_t **gids, size_t *nr_gids)
- 		if (err)
- 			return translate_error(fs, 0, err);
- 
--		ret = fuse_getgroups(nr, array);
-+		ret = fuse_req_getgroups(req, nr, array);
- 		if (ret < 0) {
- 			/*
- 			 * If there's an error, we failed to find the group
-@@ -2817,10 +2715,10 @@ static int fuse4fs_get_groups(struct fuse4fs *ff, gid_t **gids, size_t *nr_gids)
-  * that initiated the fuse request?  Returns 1 for yes, 0 for no, or a negative
-  * errno.
-  */
--static int fuse4fs_in_file_group(struct fuse_context *ctxt,
-+static int fuse4fs_in_file_group(struct fuse4fs *ff, fuse_req_t req,
- 				 const struct ext2_inode_large *inode)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
- 	gid_t *gids = NULL;
- 	size_t i, nr_gids = 0;
- 	gid_t gid = inode_gid(*inode);
-@@ -2830,7 +2728,7 @@ static int fuse4fs_in_file_group(struct fuse_context *ctxt,
- 	if (ctxt->gid == gid)
- 		return 1;
- 
--	ret = fuse4fs_get_groups(ff, &gids, &nr_gids);
-+	ret = fuse4fs_get_groups(ff, req, &gids, &nr_gids);
- 	if (ret == -ENOENT) {
- 		/* magic return code for "could not get caller group info" */
- 		return 0;
-@@ -2850,37 +2748,21 @@ static int fuse4fs_in_file_group(struct fuse_context *ctxt,
- 	return ret;
- }
- 
--static int op_chmod(const char *path, mode_t mode, struct fuse_file_info *fi)
-+static int fuse4fs_chmod(struct fuse4fs *ff, fuse_req_t req, ext2_ino_t ino,
-+			 mode_t mode, struct ext2_inode_large *inode)
- {
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fuse4fs *ff = fuse4fs_get();
--	ext2_filsys fs;
--	errcode_t err;
--	ext2_ino_t ino;
--	struct ext2_inode_large inode;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	fs = fuse4fs_start(ff);
--	ret = fuse4fs_file_ino(ff, path, fi, &ino);
--	if (ret)
--		goto out;
--	dbg_printf(ff, "%s: path=%s mode=0%o ino=%d\n", __func__, path, mode, ino);
--
--	err = fuse4fs_read_inode(fs, ino, &inode);
--	if (err) {
--		ret = translate_error(fs, ino, err);
--		goto out;
--	}
-+	dbg_printf(ff, "%s: ino=%d mode=0%o\n", __func__, ino, mode);
- 
--	ret = fuse4fs_iflags_access(ff, ino, EXT2_INODE(&inode), W_OK);
-+	ret = fuse4fs_iflags_access(ff, ino, EXT2_INODE(inode), W_OK);
- 	if (ret)
--		goto out;
-+		return ret;
- 
--	if (fuse4fs_want_check_owner(ff, ctxt) && ctxt->uid != inode_uid(inode)) {
--		ret = -EPERM;
--		goto out;
--	}
-+	if (fuse4fs_want_check_owner(ff, ctxt) &&
-+	    ctxt->uid != inode_uid(*inode))
-+		return -EPERM;
- 
- 	/*
- 	 * XXX: We should really check that the inode gid is not in /any/
-@@ -2888,100 +2770,60 @@ static int op_chmod(const char *path, mode_t mode, struct fuse_file_info *fi)
- 	 * group.
- 	 */
- 	if (!fuse4fs_is_superuser(ff, ctxt)) {
--		ret = fuse4fs_in_file_group(ctxt, &inode);
-+		ret = fuse4fs_in_file_group(ff, req, inode);
- 		if (ret < 0)
--			goto out;
-+			return ret;
- 
- 		if (!ret)
- 			mode &= ~S_ISGID;
- 	}
- 
--	inode.i_mode &= ~0xFFF;
--	inode.i_mode |= mode & 0xFFF;
-+	inode->i_mode &= ~0xFFF;
-+	inode->i_mode |= mode & 0xFFF;
- 
--	dbg_printf(ff, "%s: path=%s new_mode=0%o ino=%d\n", __func__,
--		   path, inode.i_mode, ino);
-+	dbg_printf(ff, "%s: ino=%d new_mode=0%o\n",
-+		   __func__, ino, inode->i_mode);
- 
--	ret = update_ctime(fs, ino, &inode);
--	if (ret)
--		goto out;
--
--	err = fuse4fs_write_inode(fs, ino, &inode);
--	if (err) {
--		ret = translate_error(fs, ino, err);
--		goto out;
--	}
--
--out:
--	fuse4fs_finish(ff, ret);
--	return ret;
-+	return 0;
- }
- 
--static int op_chown(const char *path, uid_t owner, gid_t group,
--		    struct fuse_file_info *fi)
-+static int fuse4fs_chown(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			 ext2_ino_t ino, const int to_set,
-+			 const struct stat *attr,
-+			 struct ext2_inode_large *inode)
- {
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fuse4fs *ff = fuse4fs_get();
--	ext2_filsys fs;
--	errcode_t err;
--	ext2_ino_t ino;
--	struct ext2_inode_large inode;
-+	uid_t owner = (to_set & FUSE_SET_ATTR_UID) ? attr->st_uid : (uid_t)~0;
-+	gid_t group = (to_set & FUSE_SET_ATTR_GID) ? attr->st_gid : (gid_t)~0;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	fs = fuse4fs_start(ff);
--	ret = fuse4fs_file_ino(ff, path, fi, &ino);
--	if (ret)
--		goto out;
--	dbg_printf(ff, "%s: path=%s owner=%d group=%d ino=%d\n", __func__,
--		   path, owner, group, ino);
--
--	err = fuse4fs_read_inode(fs, ino, &inode);
--	if (err) {
--		ret = translate_error(fs, ino, err);
--		goto out;
--	}
-+	dbg_printf(ff, "%s: ino=%d owner=%d group=%d\n",
-+		   __func__, ino, owner, group);
- 
--	ret = fuse4fs_iflags_access(ff, ino, EXT2_INODE(&inode), W_OK);
-+	ret = fuse4fs_iflags_access(ff, ino, EXT2_INODE(inode), W_OK);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	/* FUSE seems to feed us ~0 to mean "don't change" */
- 	if (owner != (uid_t) ~0) {
- 		/* Only root gets to change UID. */
- 		if (fuse4fs_want_check_owner(ff, ctxt) &&
--		    !(inode_uid(inode) == ctxt->uid && owner == ctxt->uid)) {
--			ret = -EPERM;
--			goto out;
--		}
--		fuse4fs_set_uid(&inode, owner);
-+		    !(inode_uid(*inode) == ctxt->uid && owner == ctxt->uid))
-+			return -EPERM;
-+
-+		fuse4fs_set_uid(inode, owner);
- 	}
- 
- 	if (group != (gid_t) ~0) {
- 		/* Only root or the owner get to change GID. */
- 		if (fuse4fs_want_check_owner(ff, ctxt) &&
--		    inode_uid(inode) != ctxt->uid) {
--			ret = -EPERM;
--			goto out;
--		}
-+		    inode_uid(*inode) != ctxt->uid)
-+			return -EPERM;
- 
- 		/* XXX: We /should/ check group membership but FUSE */
--		fuse4fs_set_gid(&inode, group);
-+		fuse4fs_set_gid(inode, group);
- 	}
- 
--	ret = update_ctime(fs, ino, &inode);
--	if (ret)
--		goto out;
--
--	err = fuse4fs_write_inode(fs, ino, &inode);
--	if (err) {
--		ret = translate_error(fs, ino, err);
--		goto out;
--	}
--
--out:
--	fuse4fs_finish(ff, ret);
--	return ret;
-+	return 0;
- }
- 
- static int fuse4fs_punch_posteof(struct fuse4fs *ff, ext2_ino_t ino,
-@@ -3056,32 +2898,6 @@ static int fuse4fs_truncate(struct fuse4fs *ff, ext2_ino_t ino, off_t new_size)
- 	return 0;
- }
- 
--static int op_truncate(const char *path, off_t len, struct fuse_file_info *fi)
--{
--	struct fuse4fs *ff = fuse4fs_get();
--	ext2_ino_t ino;
--	int ret = 0;
--
--	FUSE4FS_CHECK_CONTEXT(ff);
--	fuse4fs_start(ff);
--	ret = fuse4fs_file_ino(ff, path, fi, &ino);
--	if (ret)
--		goto out;
--	dbg_printf(ff, "%s: ino=%d len=%jd\n", __func__, ino, (intmax_t) len);
--
--	ret = fuse4fs_inum_access(ff, ino, W_OK);
--	if (ret)
--		goto out;
--
--	ret = fuse4fs_truncate(ff, ino, len);
--	if (ret)
--		goto out;
--
--out:
--	fuse4fs_finish(ff, ret);
--	return ret;
--}
--
- #ifdef __linux__
- static void detect_linux_executable_open(int kernel_flags, int *access_check,
- 				  int *e2fs_open_flags)
-@@ -3103,19 +2919,20 @@ static void detect_linux_executable_open(int kernel_flags, int *access_check,
- }
- #endif /* __linux__ */
- 
--static int __op_open(struct fuse4fs *ff, const char *path,
--		     struct fuse_file_info *fp)
-+static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			     ext2_ino_t ino, struct fuse_file_info *fp)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct fuse4fs_file_handle *file;
- 	int check = 0, ret = 0;
- 
--	dbg_printf(ff, "%s: path=%s oflags=0o%o\n", __func__, path, fp->flags);
-+	dbg_printf(ff, "%s: ino=%d oflags=0o%o\n", __func__, ino, fp->flags);
- 	err = ext2fs_get_mem(sizeof(*file), &file);
- 	if (err)
- 		return translate_error(fs, 0, err);
- 	file->magic = FUSE4FS_FILE_MAGIC;
-+	file->ino = ino;
- 
- 	file->open_flags = 0;
- 	switch (fp->flags & O_ACCMODE) {
-@@ -3144,14 +2961,7 @@ static int __op_open(struct fuse4fs *ff, const char *path,
- 	if (fp->flags & O_CREAT)
- 		file->open_flags |= EXT2_FILE_CREATE;
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &file->ino);
--	if (err || file->ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
--	dbg_printf(ff, "%s: ino=%d\n", __func__, file->ino);
--
--	ret = fuse4fs_inum_access(ff, file->ino, check);
-+	ret = fuse4fs_inum_access(ff, ctxt, file->ino, check);
- 	if (ret) {
- 		/*
- 		 * In a regular (Linux) fs driver, the kernel will open
-@@ -3163,7 +2973,7 @@ static int __op_open(struct fuse4fs *ff, const char *path,
- 		 * also employ undocumented hacks (see above).
- 		 */
- 		if (check == R_OK) {
--			ret = fuse4fs_inum_access(ff, file->ino, X_OK);
-+			ret = fuse4fs_inum_access(ff, ctxt, file->ino, X_OK);
- 			if (ret)
- 				goto out;
- 			check = X_OK;
-@@ -3186,34 +2996,48 @@ static int __op_open(struct fuse4fs *ff, const char *path,
- 	return ret;
- }
- 
--static int op_open(const char *path, struct fuse_file_info *fp)
-+static void op_open(fuse_req_t req, fuse_ino_t fino, struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_ino_t ino;
- 	int ret;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
- 	fuse4fs_start(ff);
--	ret = __op_open(ff, path, fp);
-+	ret = fuse4fs_open_file(ff, ctxt, ino, fp);
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_open(req, fp);
- }
- 
--static int op_read(const char *path EXT2FS_ATTR((unused)), char *buf,
--		   size_t len, off_t offset,
--		   struct fuse_file_info *fp)
-+static void op_read(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
-+		    size_t len, off_t offset, struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
-+	char *buf;
- 	ext2_filsys fs;
- 	ext2_file_t efp;
- 	errcode_t err;
- 	unsigned int got = 0;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	buf = calloc(len, sizeof(char));
-+	if (!buf) {
-+		fuse_reply_err(req, errno);
-+		return;
-+	}
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	dbg_printf(ff, "%s: ino=%d off=0x%llx len=0x%zx\n", __func__, fh->ino,
- 		   (unsigned long long)offset, len);
-+
- 	fs = fuse4fs_start(ff);
- 	err = ext2fs_file_open(fs, fh->ino, fh->open_flags, &efp);
- 	if (err) {
-@@ -3249,14 +3073,18 @@ static int op_read(const char *path EXT2FS_ATTR((unused)), char *buf,
- 	}
- out:
- 	fuse4fs_finish(ff, ret);
--	return got ? (int) got : ret;
-+	if (got)
-+		fuse_reply_buf(req, buf, got);
-+	else
-+		fuse_reply_err(req, -ret);
-+	ext2fs_free_mem(&buf);
- }
- 
--static int op_write(const char *path EXT2FS_ATTR((unused)),
--		    const char *buf, size_t len, off_t offset,
--		    struct fuse_file_info *fp)
-+static void op_write(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
-+		     const char *buf, size_t len, off_t offset,
-+		     struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
- 	ext2_filsys fs;
- 	ext2_file_t efp;
-@@ -3264,8 +3092,8 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
- 	unsigned int got = 0;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	dbg_printf(ff, "%s: ino=%d off=0x%llx len=0x%zx\n", __func__, fh->ino,
- 		   (unsigned long long) offset, len);
- 	fs = fuse4fs_start(ff);
-@@ -3319,20 +3147,23 @@ static int op_write(const char *path EXT2FS_ATTR((unused)),
- 
- out:
- 	fuse4fs_finish(ff, ret);
--	return got ? (int) got : ret;
-+	if (got)
-+		fuse_reply_write(req, got);
-+	else
-+		fuse_reply_err(req, -ret);
- }
- 
--static int op_release(const char *path EXT2FS_ATTR((unused)),
--		      struct fuse_file_info *fp)
-+static void op_release(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
-+		       struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
- 	ext2_filsys fs;
- 	errcode_t err;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
- 	fs = fuse4fs_start(ff);
- 
-@@ -3349,21 +3180,21 @@ static int op_release(const char *path EXT2FS_ATTR((unused)),
- 
- 	ext2fs_free_mem(&fh);
- 
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
--static int op_fsync(const char *path EXT2FS_ATTR((unused)),
--		    int datasync EXT2FS_ATTR((unused)),
--		    struct fuse_file_info *fp)
-+static void op_fsync(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
-+		     int datasync EXT2FS_ATTR((unused)),
-+		     struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
- 	ext2_filsys fs;
- 	errcode_t err;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
- 	fs = fuse4fs_start(ff);
- 	/* For now, flush everything, even if it's slow */
-@@ -3374,22 +3205,24 @@ static int op_fsync(const char *path EXT2FS_ATTR((unused)),
- 	}
- 	fuse4fs_finish(ff, ret);
- 
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
--static int op_statfs(const char *path EXT2FS_ATTR((unused)),
--		     struct statvfs *buf)
-+static void op_statfs(fuse_req_t req, fuse_ino_t fino)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct statvfs buf;
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	uint64_t fsid, *f;
-+	ext2_ino_t ino;
- 	blk64_t overhead, reserved, free;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: path=%s\n", __func__, path);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-+	dbg_printf(ff, "%s: ino=%d\n", __func__, ino);
- 	fs = fuse4fs_start(ff);
--	buf->f_bsize = fs->blocksize;
--	buf->f_frsize = 0;
-+	buf.f_bsize = fs->blocksize;
-+	buf.f_frsize = 0;
- 
- 	if (ff->minixdf)
- 		overhead = 0;
-@@ -3402,27 +3235,27 @@ static int op_statfs(const char *path EXT2FS_ATTR((unused)),
- 		reserved = ext2fs_blocks_count(fs->super) / 10;
- 	free = ext2fs_free_blocks_count(fs->super);
- 
--	buf->f_blocks = ext2fs_blocks_count(fs->super) - overhead;
--	buf->f_bfree = free;
-+	buf.f_blocks = ext2fs_blocks_count(fs->super) - overhead;
-+	buf.f_bfree = free;
- 	if (free < reserved)
--		buf->f_bavail = 0;
-+		buf.f_bavail = 0;
- 	else
--		buf->f_bavail = free - reserved;
--	buf->f_files = fs->super->s_inodes_count;
--	buf->f_ffree = fs->super->s_free_inodes_count;
--	buf->f_favail = fs->super->s_free_inodes_count;
-+		buf.f_bavail = free - reserved;
-+	buf.f_files = fs->super->s_inodes_count;
-+	buf.f_ffree = fs->super->s_free_inodes_count;
-+	buf.f_favail = fs->super->s_free_inodes_count;
- 	f = (uint64_t *)fs->super->s_uuid;
- 	fsid = *f;
- 	f++;
- 	fsid ^= *f;
--	buf->f_fsid = fsid;
--	buf->f_flag = 0;
-+	buf.f_fsid = fsid;
-+	buf.f_flag = 0;
- 	if (ff->opstate != F4OP_WRITABLE)
--		buf->f_flag |= ST_RDONLY;
--	buf->f_namemax = EXT2_NAME_LEN;
-+		buf.f_flag |= ST_RDONLY;
-+	buf.f_namemax = EXT2_NAME_LEN;
- 	fuse4fs_finish(ff, 0);
- 
--	return 0;
-+	fuse_reply_statfs(req, &buf);
- }
- 
- static const char *valid_xattr_prefixes[] = {
-@@ -3446,35 +3279,33 @@ static int validate_xattr_name(const char *name)
- 	return 0;
- }
- 
--static int op_getxattr(const char *path, const char *key, char *value,
--		       size_t len)
-+static void op_getxattr(fuse_req_t req, fuse_ino_t fino, const char *key,
-+			size_t len)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
--	void *ptr;
-+	void *ptr = NULL;
- 	size_t plen;
- 	ext2_ino_t ino;
--	errcode_t err;
- 	int ret = 0;
- 
--	if (!validate_xattr_name(key))
--		return -ENODATA;
-+	if (!validate_xattr_name(key)) {
-+		fuse_reply_err(req, ENODATA);
-+		return;
-+	}
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
- 	fs = fuse4fs_start(ff);
- 	if (!ext2fs_has_feature_xattr(fs->super)) {
- 		ret = -ENOTSUP;
- 		goto out;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
--	dbg_printf(ff, "%s: ino=%d name=%s\n", __func__, ino, key);
-+	dbg_printf(ff, "%s: ino=%d name='%s'\n", __func__, ino, key);
- 
--	ret = fuse4fs_inum_access(ff, ino, R_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, R_OK);
- 	if (ret)
- 		goto out;
- 
-@@ -3483,19 +3314,26 @@ static int op_getxattr(const char *path, const char *key, char *value,
- 		goto out;
- 
- 	if (!len) {
-+		/* Just tell us the length */
- 		ret = plen;
- 	} else if (len < plen) {
-+		/* Caller's buffer wasn't big enough */
- 		ret = -ERANGE;
- 	} else {
--		memcpy(value, ptr, plen);
-+		/* We have data */
- 		ret = plen;
- 	}
- 
-+out:
-+	fuse4fs_finish(ff, ret);
-+
-+	if (ret < 0)
-+		fuse_reply_err(req, -ret);
-+	else if (!len)
-+		fuse_reply_xattr(req, ret);
-+	else
-+		fuse_reply_buf(req, ptr, ret);
- 	ext2fs_free_mem(&ptr);
--out:
--	fuse4fs_finish(ff, ret);
--
--	return ret;
- }
- 
- static int count_buffer_space(char *name, char *value EXT2FS_ATTR((unused)),
-@@ -3520,31 +3358,30 @@ static int copy_names(char *name, char *value EXT2FS_ATTR((unused)),
- 	return 0;
- }
- 
--static int op_listxattr(const char *path, char *names, size_t len)
-+static void op_listxattr(fuse_req_t req, fuse_ino_t fino, size_t len)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	struct ext2_xattr_handle *h;
-+	char *names = NULL;
-+	char *next_name;
- 	unsigned int bufsz;
- 	ext2_ino_t ino;
- 	errcode_t err;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
- 	fs = fuse4fs_start(ff);
- 	if (!ext2fs_has_feature_xattr(fs->super)) {
- 		ret = -ENOTSUP;
- 		goto out;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, ino, err);
--		goto out;
--	}
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, ino);
- 
--	ret = fuse4fs_inum_access(ff, ino, R_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, R_OK);
- 	if (ret)
- 		goto out;
- 
-@@ -3569,21 +3406,28 @@ static int op_listxattr(const char *path, char *names, size_t len)
- 	}
- 
- 	if (len == 0) {
--		ret = bufsz;
-+		/* Just tell us the length */
- 		goto out2;
- 	} else if (len < bufsz) {
-+		/* Caller's buffer wasn't big enough */
- 		ret = -ERANGE;
- 		goto out2;
- 	}
- 
- 	/* Copy names out */
--	memset(names, 0, len);
--	err = ext2fs_xattrs_iterate(h, copy_names, &names);
-+	names = calloc(len, sizeof(char));
-+	if (!names) {
-+		ret = translate_error(fs, ino, errno);
-+		goto out2;
-+	}
-+	next_name = names;
-+
-+	err = ext2fs_xattrs_iterate(h, copy_names, &next_name);
- 	if (err) {
- 		ret = translate_error(fs, ino, err);
- 		goto out2;
- 	}
--	ret = bufsz;
-+
- out2:
- 	err = ext2fs_xattrs_close(&h);
- 	if (err && !ret)
-@@ -3591,41 +3435,47 @@ static int op_listxattr(const char *path, char *names, size_t len)
- out:
- 	fuse4fs_finish(ff, ret);
- 
--	return ret;
-+	if (ret < 0)
-+		fuse_reply_err(req, -ret);
-+	else if (names)
-+		fuse_reply_buf(req, names, bufsz);
-+	else
-+		fuse_reply_xattr(req, bufsz);
-+	free(names);
- }
- 
--static int op_setxattr(const char *path EXT2FS_ATTR((unused)),
--		       const char *key, const char *value,
--		       size_t len, int flags)
-+static void op_setxattr(fuse_req_t req, fuse_ino_t fino, const char *key,
-+			const char *value, size_t len, int flags)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	struct ext2_xattr_handle *h;
- 	ext2_ino_t ino;
- 	errcode_t err;
- 	int ret = 0;
- 
--	if (flags & ~(XATTR_CREATE | XATTR_REPLACE))
--		return -EOPNOTSUPP;
-+	if (flags & ~(XATTR_CREATE | XATTR_REPLACE)) {
-+		fuse_reply_err(req, EOPNOTSUPP);
-+		return;
-+	}
- 
--	if (!validate_xattr_name(key))
--		return -EINVAL;
-+	if (!validate_xattr_name(key)) {
-+		fuse_reply_err(req, EINVAL);
-+		return;
-+	}
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
- 	fs = fuse4fs_start(ff);
- 	if (!ext2fs_has_feature_xattr(fs->super)) {
- 		ret = -ENOTSUP;
- 		goto out;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
--	dbg_printf(ff, "%s: ino=%d name=%s\n", __func__, ino, key);
-+	dbg_printf(ff, "%s: ino=%d name='%s'\n", __func__, ino, key);
- 
--	ret = fuse4fs_inum_access(ff, ino, W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, W_OK);
- 	if (ret == -EACCES) {
- 		ret = -EPERM;
- 		goto out;
-@@ -3682,13 +3532,13 @@ static int op_setxattr(const char *path EXT2FS_ATTR((unused)),
- 		ret = translate_error(fs, ino, err);
- out:
- 	fuse4fs_finish(ff, ret);
--
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
--static int op_removexattr(const char *path, const char *key)
-+static void op_removexattr(fuse_req_t req, fuse_ino_t fino, const char *key)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	struct ext2_xattr_handle *h;
- 	void *buf;
-@@ -3701,13 +3551,18 @@ static int op_removexattr(const char *path, const char *key)
- 	 * Once in a while libfuse gives us a no-name xattr to delete as part
- 	 * of clearing ACLs.  Just pretend we cleared them.
- 	 */
--	if (key[0] == 0)
--		return 0;
-+	if (key[0] == 0) {
-+		fuse_reply_err(req, 0);
-+		return;
-+	}
- 
--	if (!validate_xattr_name(key))
--		return -ENODATA;
-+	if (!validate_xattr_name(key)) {
-+		fuse_reply_err(req, ENODATA);
-+		return;
-+	}
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
- 	fs = fuse4fs_start(ff);
- 	if (!ext2fs_has_feature_xattr(fs->super)) {
- 		ret = -ENOTSUP;
-@@ -3719,14 +3574,9 @@ static int op_removexattr(const char *path, const char *key)
- 		goto out;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
- 	dbg_printf(ff, "%s: ino=%d name=%s\n", __func__, ino, key);
- 
--	ret = fuse4fs_inum_access(ff, ino, W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, W_OK);
- 	if (ret)
- 		goto out;
- 
-@@ -3776,24 +3626,26 @@ static int op_removexattr(const char *path, const char *key)
- 		ret = translate_error(fs, ino, err);
- out:
- 	fuse4fs_finish(ff, ret);
--
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
- struct readdir_iter {
- 	void *buf;
--	ext2_filsys fs;
--	fuse_fill_dir_t func;
-+	size_t bufsz;
-+	size_t bufused;
- 
-+	ext2_filsys fs;
- 	struct fuse4fs *ff;
--	enum fuse_readdir_flags flags;
-+	fuse_req_t req;
-+
-+	bool readdirplus;
- 	unsigned int nr;
- 	off_t startpos;
- 	off_t dirpos;
- };
- 
- static inline mode_t dirent_fmode(ext2_filsys fs,
--				   const struct ext2_dir_entry *dirent)
-+				  const struct ext2_dir_entry *dirent)
- {
- 	if (!ext2fs_has_feature_filetype(fs->super))
- 		return 0;
-@@ -3827,10 +3679,15 @@ static int op_readdir_iter(ext2_ino_t dir EXT2FS_ATTR((unused)),
- {
- 	struct readdir_iter *i = data;
- 	char namebuf[EXT2_NAME_LEN + 1];
--	struct stat stat = {
--		.st_ino = dirent->inode,
--		.st_mode = dirent_fmode(i->fs, dirent),
-+	struct fuse4fs_stat fstat = {
-+		.entry = {
-+			.attr = {
-+				.st_ino = dirent->inode,
-+				.st_mode = dirent_fmode(i->fs, dirent),
-+			},
-+		},
- 	};
-+	size_t entrysize;
- 	int ret;
- 
- 	i->dirpos++;
-@@ -3838,48 +3695,67 @@ static int op_readdir_iter(ext2_ino_t dir EXT2FS_ATTR((unused)),
- 		return 0;
- 
- 	dbg_printf(i->ff, "READDIR%s ino=%d %u offset=0x%llx\n",
--			i->flags == FUSE_READDIR_PLUS ? "PLUS" : "",
-+			i->readdirplus ? "PLUS" : "",
- 			dir,
- 			i->nr++,
- 			(unsigned long long)i->dirpos);
- 
--	if (i->flags == FUSE_READDIR_PLUS) {
--		ret = stat_inode(i->fs, dirent->inode, &stat);
-+	if (i->readdirplus) {
-+		ret = fuse4fs_stat_inode(i->ff, dirent->inode, NULL, &fstat);
- 		if (ret)
- 			return DIRENT_ABORT;
- 	}
- 
- 	memcpy(namebuf, dirent->name, dirent->name_len & 0xFF);
- 	namebuf[dirent->name_len & 0xFF] = 0;
--	ret = i->func(i->buf, namebuf, &stat, i->dirpos , 0);
--	if (ret)
-+
-+	if (i->readdirplus) {
-+		entrysize = fuse_add_direntry_plus(i->req, i->buf + i->bufused,
-+						   i->bufsz - i->bufused,
-+						   namebuf, &fstat.entry,
-+						   i->dirpos);
-+	} else {
-+		entrysize = fuse_add_direntry(i->req, i->buf + i->bufused,
-+					      i->bufsz - i->bufused, namebuf,
-+					      &fstat.entry.attr, i->dirpos);
-+	}
-+	if (entrysize > i->bufsz - i->bufused) {
-+		/* Buffer is full */
- 		return DIRENT_ABORT;
-+	}
- 
-+	i->bufused += entrysize;
- 	return 0;
- }
- 
--static int op_readdir(const char *path EXT2FS_ATTR((unused)), void *buf,
--		      fuse_fill_dir_t fill_func, off_t offset,
--		      struct fuse_file_info *fp, enum fuse_readdir_flags flags)
-+static void __op_readdir(fuse_req_t req, fuse_ino_t fino, size_t size,
-+			 off_t offset, bool plus, struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
- 	errcode_t err;
- 	struct readdir_iter i = {
- 		.ff = ff,
-+		.req = req,
- 		.dirpos = 0,
- 		.startpos = offset,
--		.flags = flags,
-+		.readdirplus = plus,
-+		.bufsz = size,
- 	};
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	dbg_printf(ff, "%s: ino=%d offset=0x%llx\n", __func__, fh->ino,
- 			(unsigned long long)offset);
-+
-+	err = ext2fs_get_mem(size, &i.buf);
-+	if (err) {
-+		ret = translate_error(i.fs, fh->ino, err);
-+		goto out;
-+	}
-+
- 	i.fs = fuse4fs_start(ff);
--	i.buf = buf;
--	i.func = fill_func;
- 	err = ext2fs_dir_iterate2(i.fs, fh->ino, 0, NULL, op_readdir_iter, &i);
- 	if (err) {
- 		ret = translate_error(i.fs, fh->ino, err);
-@@ -3893,64 +3769,66 @@ static int op_readdir(const char *path EXT2FS_ATTR((unused)), void *buf,
- 	}
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_buf(req, i.buf, i.bufused);
-+
-+	ext2fs_free_mem(&i.buf);
-+}
-+
-+static void op_readdir(fuse_req_t req, fuse_ino_t fino, size_t size,
-+		       off_t offset, struct fuse_file_info *fp)
-+{
-+	__op_readdir(req, fino, size, offset, false, fp);
-+}
-+
-+static void op_readdirplus(fuse_req_t req, fuse_ino_t fino, size_t size,
-+			   off_t offset, struct fuse_file_info *fp)
-+{
-+	__op_readdir(req, fino, size, offset, true, fp);
- }
- 
--static int op_access(const char *path, int mask)
-+static void op_access(fuse_req_t req, fuse_ino_t fino, int mask)
- {
--	struct fuse4fs *ff = fuse4fs_get();
--	ext2_filsys fs;
--	errcode_t err;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_ino_t ino;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: path=%s mask=0x%x\n", __func__, path, mask);
--	fs = fuse4fs_start(ff);
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err || ino == 0) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-+	dbg_printf(ff, "%s: ino=%d mask=0x%x\n",
-+		   __func__, ino, mask);
-+	fuse4fs_start(ff);
- 
--	ret = fuse4fs_inum_access(ff, ino, mask);
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, mask);
- 	if (ret)
- 		goto out;
- 
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- 
--static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
-+static void op_create(fuse_req_t req, fuse_ino_t fino, const char *name,
-+		      mode_t mode, struct fuse_file_info *fp)
- {
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct ext2_inode_large inode;
-+	struct fuse4fs_stat fstat;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	ext2_ino_t parent, child;
--	char *temp_path;
- 	errcode_t err;
--	char *node_name, a;
- 	int filetype;
--	struct ext2_inode_large inode;
- 	gid_t gid;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	dbg_printf(ff, "%s: path=%s mode=0%o\n", __func__, path, mode);
--	temp_path = strdup(path);
--	if (!temp_path) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name = strrchr(temp_path, '/');
--	if (!node_name) {
--		ret = -ENOMEM;
--		goto out;
--	}
--	node_name++;
--	a = *node_name;
--	*node_name = 0;
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &parent, fino);
-+	dbg_printf(ff, "%s: parent=%d name='%s' mode=0%o\n",
-+		   __func__, parent, name, mode);
- 
- 	fs = fuse4fs_start(ff);
- 	if (!fuse4fs_can_allocate(ff, 1)) {
-@@ -3958,23 +3836,14 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
- 		goto out2;
- 	}
- 
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, temp_path,
--			   &parent);
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out2;
--	}
--
--	ret = fuse4fs_inum_access(ff, parent, A_OK | W_OK);
-+	ret = fuse4fs_inum_access(ff, ctxt, parent, A_OK | W_OK);
- 	if (ret)
- 		goto out2;
- 
--	err = fuse4fs_new_child_gid(ff, parent, &gid, NULL);
-+	err = fuse4fs_new_child_gid(ff, ctxt, parent, &gid, NULL);
- 	if (err)
- 		goto out2;
- 
--	*node_name = a;
--
- 	filetype = ext2_file_type(mode);
- 
- 	err = ext2fs_new_inode(fs, parent, mode, 0, &child);
-@@ -3983,9 +3852,9 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
- 		goto out2;
- 	}
- 
--	dbg_printf(ff, "%s: creating ino=%d/name=%s in dir=%d\n", __func__, child,
--		   node_name, parent);
--	err = ext2fs_link(fs, parent, node_name, child,
-+	dbg_printf(ff, "%s: creating dir=%d name='%s' child=%d\n",
-+		   __func__, parent, name, child);
-+	err = ext2fs_link(fs, parent, name, child,
- 			  filetype | EXT2FS_LINK_EXPAND);
- 	if (err) {
- 		ret = translate_error(fs, parent, err);
-@@ -4037,7 +3906,7 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
- 		goto out2;
- 
- 	fp->flags &= ~O_TRUNC;
--	ret = __op_open(ff, path, fp);
-+	ret = fuse4fs_open_file(ff, ctxt, child, fp);
- 	if (ret)
- 		goto out2;
- 
-@@ -4045,44 +3914,152 @@ static int op_create(const char *path, mode_t mode, struct fuse_file_info *fp)
- 	if (ret)
- 		goto out2;
- 
-+	ret = fuse4fs_stat_inode(ff, child, NULL, &fstat);
-+	if (ret)
-+		goto out2;
-+
- out2:
- 	fuse4fs_finish(ff, ret);
--out:
--	free(temp_path);
--	return ret;
-+
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_create(req, &fstat.entry, fp);
-+}
-+
-+enum fuse4fs_time_action {
-+	TA_NOW,		/* set to current time */
-+	TA_OMIT,	/* do not set timestamp */
-+	TA_THIS,	/* set to specific timestamp */
-+};
-+
-+static inline const char *
-+fuse4fs_time_action_string(enum fuse4fs_time_action act)
-+{
-+	switch (act) {
-+	case TA_NOW:
-+		return "now";
-+	case TA_OMIT:
-+		return "omit";
-+	case TA_THIS:
-+		return "specific";
-+	}
-+	return NULL; /* shut up gcc */
- }
- 
--static int op_utimens(const char *path, const struct timespec ctv[2],
--		      struct fuse_file_info *fi)
-+static int fuse4fs_utimens(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			   ext2_ino_t ino, const int to_set,
-+			   const struct stat *attr,
-+			   struct ext2_inode_large *inode)
- {
--	struct fuse4fs *ff = fuse4fs_get();
--	struct timespec tv[2];
--	ext2_filsys fs;
--	errcode_t err;
--	ext2_ino_t ino;
--	struct ext2_inode_large inode;
-+	enum fuse4fs_time_action aact = TA_OMIT;
-+	enum fuse4fs_time_action mact = TA_OMIT;
-+	struct timespec atime = { };
-+	struct timespec mtime = { };
-+	struct timespec now = { };
- 	int access = W_OK;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	fs = fuse4fs_start(ff);
--	ret = fuse4fs_file_ino(ff, path, fi, &ino);
--	if (ret)
--		goto out;
--	dbg_printf(ff, "%s: ino=%d atime=%lld.%ld mtime=%lld.%ld\n", __func__,
--			ino,
--			(long long int)ctv[0].tv_sec, ctv[0].tv_nsec,
--			(long long int)ctv[1].tv_sec, ctv[1].tv_nsec);
-+	if (to_set & (FUSE_SET_ATTR_ATIME_NOW | FUSE_SET_ATTR_MTIME_NOW))
-+		get_now(&now);
-+
-+	if (to_set & FUSE_SET_ATTR_ATIME_NOW) {
-+		atime = now;
-+		aact = TA_NOW;
-+	} else if (to_set & FUSE_SET_ATTR_ATIME) {
-+#if HAVE_STRUCT_STAT_ST_ATIM
-+		atime = attr->st_atim;
-+#else
-+		atime.tv_sec = attr->st_atime;
-+#endif
-+		aact = TA_THIS;
-+	}
-+
-+	if (to_set & FUSE_SET_ATTR_MTIME_NOW) {
-+		mtime = now;
-+		mact = TA_NOW;
-+	} else if (to_set & FUSE_SET_ATTR_MTIME) {
-+#if HAVE_STRUCT_STAT_ST_ATIM
-+		mtime = attr->st_mtim;
-+#else
-+		mtime.tv_sec = attr->st_mtime;
-+#endif
-+		mact = TA_THIS;
-+	}
-+
-+	dbg_printf(ff, "%s: ino=%d atime=%s:%lld.%ld mtime=%s:%lld.%ld\n",
-+		   __func__, ino, fuse4fs_time_action_string(aact),
-+		   (long long int)atime.tv_sec, atime.tv_nsec,
-+		   fuse4fs_time_action_string(mact),
-+		   (long long int)mtime.tv_sec, mtime.tv_nsec);
- 
- 	/*
- 	 * ext4 allows timestamp updates of append-only files but only if we're
- 	 * setting to current time
- 	 */
--	if (ctv[0].tv_nsec == UTIME_NOW && ctv[1].tv_nsec == UTIME_NOW)
-+	if (aact == TA_NOW && mact == TA_NOW)
- 		access |= A_OK;
--	ret = fuse4fs_inum_access(ff, ino, access);
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, access);
- 	if (ret)
-+		return ret;
-+
-+	if (aact != TA_OMIT)
-+		EXT4_INODE_SET_XTIME(i_atime, &atime, inode);
-+	if (mact != TA_OMIT)
-+		EXT4_INODE_SET_XTIME(i_mtime, &mtime, inode);
-+
-+	return 0;
-+}
-+
-+static int fuse4fs_setsize(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			   ext2_ino_t ino, off_t new_size,
-+			   struct ext2_inode_large *inode)
-+{
-+	errcode_t err;
-+	int ret;
-+
-+	/* Write inode because truncate makes its own copy */
-+	err = fuse4fs_write_inode(ff->fs, ino, inode);
-+	if (err)
-+		return translate_error(ff->fs, ino, err);
-+
-+	ret = fuse4fs_inum_access(ff, ctxt, ino, W_OK);
-+	if (ret)
-+		return ret;
-+
-+	ret = fuse4fs_truncate(ff, ino, new_size);
-+	if (ret)
-+		return ret;
-+
-+	/* Re-read inode after truncate */
-+	err = fuse4fs_read_inode(ff->fs, ino, inode);
-+	if (err)
-+		return translate_error(ff->fs, ino, err);
-+
-+	return 0;
-+}
-+
-+static void op_setattr(fuse_req_t req, fuse_ino_t fino, struct stat *attr,
-+		       int to_set, struct fuse_file_info *fi EXT2FS_ATTR((unused)))
-+{
-+	struct ext2_inode_large inode;
-+	struct fuse4fs_stat fstat;
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
-+	ext2_filsys fs;
-+	ext2_ino_t ino;
-+	errcode_t err;
-+	int ret = 0;
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
-+	dbg_printf(ff, "%s: ino=%d to_set=0x%x\n", __func__, ino, to_set);
-+	fs = fuse4fs_start(ff);
-+
-+	if (!fuse4fs_is_writeable(ff)) {
-+		ret = -EROFS;
- 		goto out;
-+	}
- 
- 	err = fuse4fs_read_inode(fs, ino, &inode);
- 	if (err) {
-@@ -4090,20 +4067,35 @@ static int op_utimens(const char *path, const struct timespec ctv[2],
- 		goto out;
- 	}
- 
--	tv[0] = ctv[0];
--	tv[1] = ctv[1];
--#ifdef UTIME_NOW
--	if (tv[0].tv_nsec == UTIME_NOW)
--		get_now(tv);
--	if (tv[1].tv_nsec == UTIME_NOW)
--		get_now(tv + 1);
--#endif /* UTIME_NOW */
--#ifdef UTIME_OMIT
--	if (tv[0].tv_nsec != UTIME_OMIT)
--		EXT4_INODE_SET_XTIME(i_atime, &tv[0], &inode);
--	if (tv[1].tv_nsec != UTIME_OMIT)
--		EXT4_INODE_SET_XTIME(i_mtime, &tv[1], &inode);
--#endif /* UTIME_OMIT */
-+	/* Handle mode change using helper */
-+	if (to_set & FUSE_SET_ATTR_MODE) {
-+		ret = fuse4fs_chmod(ff, req, ino, attr->st_mode, &inode);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	/* Handle owner/group change using helper */
-+	if (to_set & (FUSE_SET_ATTR_UID | FUSE_SET_ATTR_GID)) {
-+		ret = fuse4fs_chown(ff, ctxt, ino, to_set, attr, &inode);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	/* Handle size change using helper */
-+	if (to_set & FUSE_SET_ATTR_SIZE) {
-+		ret = fuse4fs_setsize(ff, ctxt, ino, attr->st_size, &inode);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	/* Handle time changes using helper */
-+	if (to_set & (FUSE_SET_ATTR_ATIME | FUSE_SET_ATTR_MTIME)) {
-+		ret = fuse4fs_utimens(ff, ctxt, ino, to_set, attr, &inode);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	/* Update ctime for any attribute change */
- 	ret = update_ctime(fs, ino, &inode);
- 	if (ret)
- 		goto out;
-@@ -4114,9 +4106,17 @@ static int op_utimens(const char *path, const struct timespec ctv[2],
- 		goto out;
- 	}
- 
-+	/* Get updated stat info to return */
-+	ret = fuse4fs_stat_inode(ff, ino, &inode, &fstat);
-+
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_attr(req, &fstat.entry.attr,
-+				fstat.entry.attr_timeout);
- }
- 
- #define FUSE4FS_MODIFIABLE_IFLAGS \
-@@ -4135,32 +4135,38 @@ static inline int set_iflags(struct ext2_inode_large *inode, __u32 iflags)
- 
- #ifdef SUPPORT_I_FLAGS
- static int ioctl_getflags(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			  void *data)
-+			  __u32 *outdata, size_t *outsize)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
- 
-+	if (*outsize < sizeof(__u32))
-+		return -EFAULT;
-+
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
- 	err = fuse4fs_read_inode(fs, fh->ino, &inode);
- 	if (err)
- 		return translate_error(fs, fh->ino, err);
- 
--	*(__u32 *)data = inode.i_flags & EXT2_FL_USER_VISIBLE;
-+	*outdata = inode.i_flags & EXT2_FL_USER_VISIBLE;
-+	*outsize = sizeof(__u32);
- 	return 0;
- }
- 
--static int ioctl_setflags(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			  void *data)
-+static int ioctl_setflags(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			  struct fuse4fs_file_handle *fh, const __u32 *indata,
-+			  size_t insize)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
- 	int ret;
--	__u32 flags = *(__u32 *)data;
--	struct fuse_context *ctxt = fuse_get_context();
- 
--	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
-+	if (insize < sizeof(__u32))
-+		return -EFAULT;
-+
-+	dbg_printf(ff, "%s: ino=%d iflags=0x%x\n", __func__, fh->ino, *indata);
- 	err = fuse4fs_read_inode(fs, fh->ino, &inode);
- 	if (err)
- 		return translate_error(fs, fh->ino, err);
-@@ -4168,7 +4174,7 @@ static int ioctl_setflags(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- 	if (fuse4fs_want_check_owner(ff, ctxt) && inode_uid(inode) != ctxt->uid)
- 		return -EPERM;
- 
--	ret = set_iflags(&inode, flags);
-+	ret = set_iflags(&inode, *indata);
- 	if (ret)
- 		return ret;
- 
-@@ -4184,32 +4190,38 @@ static int ioctl_setflags(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- }
- 
- static int ioctl_getversion(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			    void *data)
-+			    __u32 *outdata, size_t *outsize)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
- 
-+	if (*outsize < sizeof(__u32))
-+		return -EFAULT;
-+
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
- 	err = fuse4fs_read_inode(fs, fh->ino, &inode);
- 	if (err)
- 		return translate_error(fs, fh->ino, err);
- 
--	*(__u32 *)data = inode.i_generation;
-+	*outdata = inode.i_generation;
-+	*outsize = sizeof(__u32);
- 	return 0;
- }
- 
--static int ioctl_setversion(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			    void *data)
-+static int ioctl_setversion(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			    struct fuse4fs_file_handle *fh, const __u32 *indata,
-+			    size_t insize)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
- 	int ret;
--	__u32 generation = *(__u32 *)data;
--	struct fuse_context *ctxt = fuse_get_context();
- 
--	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
-+	if (insize < sizeof(__u32))
-+		return -EFAULT;
-+
-+	dbg_printf(ff, "%s: ino=%d generation=%d\n", __func__, fh->ino, *indata);
- 	err = fuse4fs_read_inode(fs, fh->ino, &inode);
- 	if (err)
- 		return translate_error(fs, fh->ino, err);
-@@ -4217,7 +4229,7 @@ static int ioctl_setversion(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- 	if (fuse4fs_want_check_owner(ff, ctxt) && inode_uid(inode) != ctxt->uid)
- 		return -EPERM;
- 
--	inode.i_generation = generation;
-+	inode.i_generation = *indata;
- 
- 	ret = update_ctime(fs, fh->ino, &inode);
- 	if (ret)
-@@ -4254,14 +4266,16 @@ static __u32 iflags_to_fsxflags(__u32 iflags)
- }
- 
- static int ioctl_fsgetxattr(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			    void *data)
-+			    struct fsxattr *fsx, size_t *outsize)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
--	struct fsxattr *fsx = data;
- 	unsigned int inode_size;
- 
-+	if (*outsize < sizeof(struct fsxattr))
-+		return -EFAULT;
-+
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
- 	err = fuse4fs_read_inode(fs, fh->ino, &inode);
- 	if (err)
-@@ -4272,6 +4286,7 @@ static int ioctl_fsgetxattr(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- 	if (ext2fs_inode_includes(inode_size, i_projid))
- 		fsx->fsx_projid = inode_projid(inode);
- 	fsx->fsx_xflags = iflags_to_fsxflags(inode.i_flags);
-+	*outsize = sizeof(struct fsxattr);
- 	return 0;
- }
- 
-@@ -4323,17 +4338,19 @@ static inline int set_xflags(struct ext2_inode_large *inode, __u32 xflags)
- 	return 0;
- }
- 
--static int ioctl_fssetxattr(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			    void *data)
-+static int ioctl_fssetxattr(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			    struct fuse4fs_file_handle *fh,
-+			    const struct fsxattr *fsx, size_t insize)
- {
- 	ext2_filsys fs = ff->fs;
- 	errcode_t err;
- 	struct ext2_inode_large inode;
- 	int ret;
--	struct fuse_context *ctxt = fuse_get_context();
--	struct fsxattr *fsx = data;
- 	unsigned int inode_size;
- 
-+	if (insize < sizeof(struct fsxattr))
-+		return -EFAULT;
-+
- 	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
- 	err = fuse4fs_read_inode(fs, fh->ino, &inode);
- 	if (err)
-@@ -4364,17 +4381,24 @@ static int ioctl_fssetxattr(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- 
- #ifdef FITRIM
- static int ioctl_fitrim(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			void *data)
-+			const struct fstrim_range *fr_in, size_t insize,
-+			struct fstrim_range *fr, size_t *outsize)
- {
- 	ext2_filsys fs = ff->fs;
--	struct fstrim_range *fr = data;
- 	blk64_t start, end, max_blocks, b, cleared, minlen;
- 	blk64_t max_blks = ext2fs_blocks_count(fs->super);
- 	errcode_t err = 0;
- 
-+	if (insize < sizeof(struct fstrim_range))
-+		return -EFAULT;
-+
-+	if (*outsize < sizeof(struct fstrim_range))
-+		return -EFAULT;
-+
- 	if (!fuse4fs_is_writeable(ff))
- 		return -EROFS;
- 
-+	memcpy(fr, fr_in, sizeof(*fr));
- 	start = FUSE4FS_B_TO_FSBT(ff, fr->start);
- 	if (fr->len == -1ULL)
- 		end = -1ULL;
-@@ -4453,6 +4477,7 @@ static int ioctl_fitrim(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- 
- out:
- 	fr->len = FUSE4FS_FSB_TO_B(ff, cleared);
-+	*outsize = sizeof(struct fstrim_range);
- 	dbg_printf(ff, "%s: len=%llu err=%ld\n", __func__, fr->len, err);
- 	return err;
- }
-@@ -4462,10 +4487,10 @@ static int ioctl_fitrim(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- # define EXT4_IOC_SHUTDOWN	_IOR('X', 125, __u32)
- #endif
- 
--static int ioctl_shutdown(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
--			  void *data)
-+static int ioctl_shutdown(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
-+			  struct fuse4fs_file_handle *fh, const void *indata,
-+			  size_t insize)
- {
--	struct fuse_context *ctxt = fuse_get_context();
- 	ext2_filsys fs = ff->fs;
- 
- 	if (!fuse4fs_is_superuser(ff, ctxt))
-@@ -4485,49 +4510,61 @@ static int ioctl_shutdown(struct fuse4fs *ff, struct fuse4fs_file_handle *fh,
- 	return 0;
- }
- 
--static int op_ioctl(const char *path EXT2FS_ATTR((unused)),
--		    unsigned int cmd,
--		    void *arg EXT2FS_ATTR((unused)),
--		    struct fuse_file_info *fp,
--		    unsigned int flags EXT2FS_ATTR((unused)), void *data)
-+static void op_ioctl(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
-+		     unsigned int cmd,
-+		     void *arg EXT2FS_ATTR((unused)),
-+		     struct fuse_file_info *fp,
-+		     unsigned int flags EXT2FS_ATTR((unused)),
-+		     const void *indata, size_t insize,
-+		     size_t outsize)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	const struct fuse_ctx *ctxt = fuse_req_ctx(req);
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
-+	void *outdata = NULL;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	if (outsize > 0) {
-+		outdata = calloc(outsize, sizeof(char));
-+		if (!outdata) {
-+			fuse_reply_err(req, errno);
-+			return;
-+		}
-+	}
-+
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	fuse4fs_start(ff);
- 	switch ((unsigned long) cmd) {
- #ifdef SUPPORT_I_FLAGS
- 	case EXT2_IOC_GETFLAGS:
--		ret = ioctl_getflags(ff, fh, data);
-+		ret = ioctl_getflags(ff, fh, outdata, &outsize);
- 		break;
- 	case EXT2_IOC_SETFLAGS:
--		ret = ioctl_setflags(ff, fh, data);
-+		ret = ioctl_setflags(ff, ctxt, fh, indata, insize);
- 		break;
- 	case EXT2_IOC_GETVERSION:
--		ret = ioctl_getversion(ff, fh, data);
-+		ret = ioctl_getversion(ff, fh, outdata, &outsize);
- 		break;
- 	case EXT2_IOC_SETVERSION:
--		ret = ioctl_setversion(ff, fh, data);
-+		ret = ioctl_setversion(ff, ctxt, fh, indata, insize);
- 		break;
- #endif
- #ifdef FS_IOC_FSGETXATTR
- 	case FS_IOC_FSGETXATTR:
--		ret = ioctl_fsgetxattr(ff, fh, data);
-+		ret = ioctl_fsgetxattr(ff, fh, outdata, &outsize);
- 		break;
- 	case FS_IOC_FSSETXATTR:
--		ret = ioctl_fssetxattr(ff, fh, data);
-+		ret = ioctl_fssetxattr(ff, ctxt, fh, indata, insize);
- 		break;
- #endif
- #ifdef FITRIM
- 	case FITRIM:
--		ret = ioctl_fitrim(ff, fh, data);
-+		ret = ioctl_fitrim(ff, fh, indata, insize, outdata, &outsize);
- 		break;
- #endif
- 	case EXT4_IOC_SHUTDOWN:
--		ret = ioctl_shutdown(ff, fh, data);
-+		ret = ioctl_shutdown(ff, ctxt, fh, indata, insize);
- 		break;
- 	default:
- 		dbg_printf(ff, "%s: Unknown ioctl %d\n", __func__, cmd);
-@@ -4535,28 +4572,29 @@ static int op_ioctl(const char *path EXT2FS_ATTR((unused)),
- 	}
- 	fuse4fs_finish(ff, ret);
- 
--	return ret;
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_ioctl(req, 0, outdata, outsize);
-+	free(outdata);
- }
- 
--static int op_bmap(const char *path, size_t blocksize EXT2FS_ATTR((unused)),
--		   uint64_t *idx)
-+static void op_bmap(fuse_req_t req, fuse_ino_t fino,
-+		    size_t blocksize EXT2FS_ATTR((unused)), uint64_t idx)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	ext2_filsys fs;
- 	ext2_ino_t ino;
-+	blk64_t blkno;
- 	errcode_t err;
- 	int ret = 0;
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CONVERT_FINO(req, &ino, fino);
- 	fs = fuse4fs_start(ff);
--	err = ext2fs_namei(fs, EXT2_ROOT_INO, EXT2_ROOT_INO, path, &ino);
--	if (err) {
--		ret = translate_error(fs, 0, err);
--		goto out;
--	}
--	dbg_printf(ff, "%s: ino=%d blk=%"PRIu64"\n", __func__, ino, *idx);
-+	dbg_printf(ff, "%s: ino=%d blk=%"PRIu64"\n", __func__, ino, idx);
- 
--	err = ext2fs_bmap2(fs, ino, NULL, NULL, 0, *idx, 0, (blk64_t *)idx);
-+	err = ext2fs_bmap2(fs, ino, NULL, NULL, 0, idx, 0, &blkno);
- 	if (err) {
- 		ret = translate_error(fs, ino, err);
- 		goto out;
-@@ -4564,7 +4602,10 @@ static int op_bmap(const char *path, size_t blocksize EXT2FS_ATTR((unused)),
- 
- out:
- 	fuse4fs_finish(ff, ret);
--	return ret;
-+	if (ret)
-+		fuse_reply_err(req, -ret);
-+	else
-+		fuse_reply_bmap(req, blkno);
- }
- 
- #ifdef SUPPORT_FALLOCATE
-@@ -4807,20 +4848,22 @@ static int fuse4fs_zero_range(struct fuse4fs *ff,
- 	return ret;
- }
- 
--static int op_fallocate(const char *path EXT2FS_ATTR((unused)), int mode,
--			off_t offset, off_t len,
--			struct fuse_file_info *fp)
-+static void op_fallocate(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
-+			 int mode, off_t offset, off_t len,
-+			 struct fuse_file_info *fp)
- {
--	struct fuse4fs *ff = fuse4fs_get();
-+	struct fuse4fs *ff = fuse4fs_get(req);
- 	struct fuse4fs_file_handle *fh = fuse4fs_get_handle(fp);
- 	int ret;
- 
- 	/* Catch unknown flags */
--	if (mode & ~(FL_ZERO_RANGE_FLAG | FL_PUNCH_HOLE_FLAG | FL_KEEP_SIZE_FLAG))
--		return -EOPNOTSUPP;
-+	if (mode & ~(FL_ZERO_RANGE_FLAG | FL_PUNCH_HOLE_FLAG | FL_KEEP_SIZE_FLAG)) {
-+		fuse_reply_err(req, EOPNOTSUPP);
-+		return;
-+	}
- 
--	FUSE4FS_CHECK_CONTEXT(ff);
--	FUSE4FS_CHECK_HANDLE(ff, fh);
-+	FUSE4FS_CHECK_CONTEXT(req);
-+	FUSE4FS_CHECK_HANDLE(req, fh);
- 	fuse4fs_start(ff);
- 	if (!fuse4fs_is_writeable(ff)) {
- 		ret = -EROFS;
-@@ -4840,12 +4883,13 @@ static int op_fallocate(const char *path EXT2FS_ATTR((unused)), int mode,
- 		ret = fuse4fs_allocate_range(ff, fh, mode, offset, len);
- out:
- 	fuse4fs_finish(ff, ret);
--
--	return ret;
-+	fuse_reply_err(req, -ret);
- }
- #endif /* SUPPORT_FALLOCATE */
- 
--static struct fuse_operations fs_ops = {
-+static struct fuse_lowlevel_ops fs_ops = {
-+	.lookup = op_lookup,
-+	.setattr = op_setattr,
- 	.init = op_init,
- 	.destroy = op_destroy,
- 	.getattr = op_getattr,
-@@ -4857,9 +4901,6 @@ static struct fuse_operations fs_ops = {
- 	.symlink = op_symlink,
- 	.rename = op_rename,
- 	.link = op_link,
--	.chmod = op_chmod,
--	.chown = op_chown,
--	.truncate = op_truncate,
- 	.open = op_open,
- 	.read = op_read,
- 	.write = op_write,
-@@ -4872,11 +4913,11 @@ static struct fuse_operations fs_ops = {
- 	.removexattr = op_removexattr,
- 	.opendir = op_open,
- 	.readdir = op_readdir,
-+	.readdirplus = op_readdirplus,
- 	.releasedir = op_release,
- 	.fsyncdir = op_fsync,
- 	.access = op_access,
- 	.create = op_create,
--	.utimens = op_utimens,
- 	.bmap = op_bmap,
- #ifdef SUPERFLUOUS
- 	.lock = op_lock,
-@@ -5025,8 +5066,8 @@ static int fuse4fs_opt_proc(void *data, const char *arg,
- 	"\n",
- 			outargs->argv[0]);
- 		if (key == FUSE4FS_HELPFULL) {
--			fuse_opt_add_arg(outargs, "-h");
--			fuse_main(outargs->argc, outargs->argv, &fs_ops, NULL);
-+			printf("FUSE options:\n");
-+			fuse_cmdline_help();
- 		} else {
- 			fprintf(stderr, "Try --helpfull to get a list of "
- 				"all flags, including the FUSE options.\n");
-@@ -5036,8 +5077,7 @@ static int fuse4fs_opt_proc(void *data, const char *arg,
- 	case FUSE4FS_VERSION:
- 		fprintf(stderr, "fuse4fs %s (%s)\n", E2FSPROGS_VERSION,
- 			E2FSPROGS_DATE);
--		fuse_opt_add_arg(outargs, "--version");
--		fuse_main(outargs->argc, outargs->argv, &fs_ops, NULL);
-+		fprintf(stderr, "FUSE library version %s\n", fuse_pkgversion());
- 		exit(0);
- 	}
- 	return 1;
-@@ -5106,6 +5146,107 @@ static void fuse4fs_com_err_proc(const char *whoami, errcode_t code,
- 	fflush(stderr);
- }
- 
-+static int fuse4fs_main(struct fuse_args *args, struct fuse4fs *ff)
-+{
-+	struct fuse_cmdline_opts opts;
-+	struct fuse_session *se;
-+	struct fuse_loop_config *loop_config = NULL;
-+	int ret;
-+
-+	if (fuse_parse_cmdline(args, &opts) != 0) {
-+		ret = 1;
-+		goto out;
-+	}
-+
-+	if (ff->debug)
-+		opts.debug = true;
-+
-+	if (opts.show_help) {
-+		fuse_cmdline_help();
-+		ret = 0;
-+		goto out_free_opts;
-+	}
-+
-+	if (opts.show_version) {
-+		printf("FUSE library version %s\n", fuse_pkgversion());
-+		ret = 0;
-+		goto out_free_opts;
-+	}
-+
-+	if (!opts.mountpoint) {
-+		fprintf(stderr, "error: no mountpoint specified\n");
-+		ret = 2;
-+		goto out_free_opts;
-+	}
-+
-+	se = fuse_session_new(args, &fs_ops, sizeof(fs_ops), ff);
-+	if (se == NULL) {
-+		ret = 3;
-+		goto out_free_opts;
-+	}
-+	ff->fuse = se;
-+
-+	if (fuse_session_mount(se, opts.mountpoint) != 0) {
-+		ret = 4;
-+		goto out_destroy_session;
-+	}
-+
-+	if (fuse_daemonize(opts.foreground) != 0) {
-+		ret = 5;
-+		goto out_unmount;
-+	}
-+
-+	/*
-+	 * Configure logging a second time, because libfuse might have
-+	 * redirected std{out,err} as part of daemonization.  If this fails,
-+	 * give up and move on.
-+	 */
-+	fuse4fs_setup_logging(ff);
-+	if (ff->logfd >= 0)
-+		close(ff->logfd);
-+	ff->logfd = -1;
-+
-+	if (fuse_set_signal_handlers(se) != 0) {
-+		ret = 6;
-+		goto out_unmount;
-+	}
-+
-+	loop_config = fuse_loop_cfg_create();
-+	if (loop_config == NULL) {
-+		ret = 7;
-+		goto out_remove_signal_handlers;
-+	}
-+
-+	/*
-+	 * Since there's a Big Kernel Lock around all the libext2fs code, we
-+	 * only need to start four threads -- one to decode a request, another
-+	 * to do the filesystem work, a third to transmit the reply, and a
-+	 * fourth to handle fuse notifications.
-+	 */
-+	fuse_loop_cfg_set_clone_fd(loop_config, opts.clone_fd);
-+	fuse_loop_cfg_set_idle_threads(loop_config, opts.max_idle_threads);
-+	fuse_loop_cfg_set_max_threads(loop_config, 4);
-+
-+	if (fuse_session_loop_mt(se, loop_config) != 0) {
-+		ret = 8;
-+		goto out_loopcfg;
-+	}
-+
-+out_loopcfg:
-+	fuse_loop_cfg_destroy(loop_config);
-+out_remove_signal_handlers:
-+	fuse_remove_signal_handlers(se);
-+out_unmount:
-+	fuse_session_unmount(se);
-+out_destroy_session:
-+	ff->fuse = NULL;
-+	fuse_session_destroy(se);
-+out_free_opts:
-+	free(opts.mountpoint);
-+out:
++	ret &= __list_del_entry_valid_or_report(entry);
 +	return ret;
 +}
++#else
++static inline bool __list_add_valid(struct list_head *new,
++				struct list_head *prev,
++				struct list_head *next)
++{
++	return true;
++}
++static inline bool __list_del_entry_valid(struct list_head *entry)
++{
++	return true;
++}
++#endif
 +
- int main(int argc, char *argv[])
- {
- 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
-@@ -5247,8 +5388,7 @@ int main(int argc, char *argv[])
- 	get_random_bytes(&fctx.next_generation, sizeof(unsigned int));
++/*
++ * Insert a new entry between two known consecutive entries.
++ *
++ * This is only for internal list manipulation where we know
++ * the prev/next entries already!
++ */
++static inline void __list_add(struct list_head *new,
++			      struct list_head *prev,
++			      struct list_head *next)
++{
++	if (!__list_add_valid(new, prev, next))
++		return;
++
++	next->prev = new;
++	new->next = next;
++	new->prev = prev;
++	prev->next = new;
++}
++
++/**
++ * list_add - add a new entry
++ * @new: new entry to be added
++ * @head: list head to add it after
++ *
++ * Insert a new entry after the specified head.
++ * This is good for implementing stacks.
++ */
++static inline void list_add(struct list_head *new, struct list_head *head)
++{
++	__list_add(new, head, head->next);
++}
++
++
++/**
++ * list_add_tail - add a new entry
++ * @new: new entry to be added
++ * @head: list head to add it before
++ *
++ * Insert a new entry before the specified head.
++ * This is useful for implementing queues.
++ */
++static inline void list_add_tail(struct list_head *new, struct list_head *head)
++{
++	__list_add(new, head->prev, head);
++}
++
++/*
++ * Delete a list entry by making the prev/next entries
++ * point to each other.
++ *
++ * This is only for internal list manipulation where we know
++ * the prev/next entries already!
++ */
++static inline void __list_del(struct list_head * prev, struct list_head * next)
++{
++	next->prev = prev;
++	prev->next = next;
++}
++
++/*
++ * Delete a list entry and clear the 'prev' pointer.
++ *
++ * This is a special-purpose list clearing method used in the networking code
++ * for lists allocated as per-cpu, where we don't want to incur the extra
++ * WRITE_ONCE() overhead of a regular list_del_init(). The code that uses this
++ * needs to check the node 'prev' pointer instead of calling list_empty().
++ */
++static inline void __list_del_clearprev(struct list_head *entry)
++{
++	__list_del(entry->prev, entry->next);
++	entry->prev = NULL;
++}
++
++static inline void __list_del_entry(struct list_head *entry)
++{
++	if (!__list_del_entry_valid(entry))
++		return;
++
++	__list_del(entry->prev, entry->next);
++}
++
++/**
++ * list_del - deletes entry from list.
++ * @entry: the element to delete from the list.
++ * Note: list_empty() on entry does not return true after this, the entry is
++ * in an undefined state.
++ */
++static inline void list_del(struct list_head *entry)
++{
++	__list_del_entry(entry);
++	entry->next = NULL;
++	entry->prev = NULL;
++}
++
++/**
++ * list_replace - replace old entry by new one
++ * @old : the element to be replaced
++ * @new : the new element to insert
++ *
++ * If @old was empty, it will be overwritten.
++ */
++static inline void list_replace(struct list_head *old,
++				struct list_head *new)
++{
++	new->next = old->next;
++	new->next->prev = new;
++	new->prev = old->prev;
++	new->prev->next = new;
++}
++
++/**
++ * list_replace_init - replace old entry by new one and initialize the old one
++ * @old : the element to be replaced
++ * @new : the new element to insert
++ *
++ * If @old was empty, it will be overwritten.
++ */
++static inline void list_replace_init(struct list_head *old,
++				     struct list_head *new)
++{
++	list_replace(old, new);
++	INIT_LIST_HEAD(old);
++}
++
++/**
++ * list_swap - replace entry1 with entry2 and re-add entry1 at entry2's position
++ * @entry1: the location to place entry2
++ * @entry2: the location to place entry1
++ */
++static inline void list_swap(struct list_head *entry1,
++			     struct list_head *entry2)
++{
++	struct list_head *pos = entry2->prev;
++
++	list_del(entry2);
++	list_replace(entry1, entry2);
++	if (pos == entry1)
++		pos = entry2;
++	list_add(entry1, pos);
++}
++
++/**
++ * list_del_init - deletes entry from list and reinitialize it.
++ * @entry: the element to delete from the list.
++ */
++static inline void list_del_init(struct list_head *entry)
++{
++	__list_del_entry(entry);
++	INIT_LIST_HEAD(entry);
++}
++
++/**
++ * list_move - delete from one list and add as another's head
++ * @list: the entry to move
++ * @head: the head that will precede our entry
++ */
++static inline void list_move(struct list_head *list, struct list_head *head)
++{
++	__list_del_entry(list);
++	list_add(list, head);
++}
++
++/**
++ * list_move_tail - delete from one list and add as another's tail
++ * @list: the entry to move
++ * @head: the head that will follow our entry
++ */
++static inline void list_move_tail(struct list_head *list,
++				  struct list_head *head)
++{
++	__list_del_entry(list);
++	list_add_tail(list, head);
++}
++
++/**
++ * list_bulk_move_tail - move a subsection of a list to its tail
++ * @head: the head that will follow our entry
++ * @first: first entry to move
++ * @last: last entry to move, can be the same as first
++ *
++ * Move all entries between @first and including @last before @head.
++ * All three entries must belong to the same linked list.
++ */
++static inline void list_bulk_move_tail(struct list_head *head,
++				       struct list_head *first,
++				       struct list_head *last)
++{
++	first->prev->next = last->next;
++	last->next->prev = first->prev;
++
++	head->prev->next = first;
++	first->prev = head->prev;
++
++	last->next = head;
++	head->prev = last;
++}
++
++/**
++ * list_is_first -- tests whether @list is the first entry in list @head
++ * @list: the entry to test
++ * @head: the head of the list
++ */
++static inline int list_is_first(const struct list_head *list, const struct list_head *head)
++{
++	return list->prev == head;
++}
++
++/**
++ * list_is_last - tests whether @list is the last entry in list @head
++ * @list: the entry to test
++ * @head: the head of the list
++ */
++static inline int list_is_last(const struct list_head *list, const struct list_head *head)
++{
++	return list->next == head;
++}
++
++/**
++ * list_is_head - tests whether @list is the list @head
++ * @list: the entry to test
++ * @head: the head of the list
++ */
++static inline int list_is_head(const struct list_head *list, const struct list_head *head)
++{
++	return list == head;
++}
++
++/**
++ * list_empty - tests whether a list is empty
++ * @head: the list to test.
++ */
++static inline int list_empty(const struct list_head *head)
++{
++	return head->next == head;
++}
++
++/**
++ * list_rotate_left - rotate the list to the left
++ * @head: the head of the list
++ */
++static inline void list_rotate_left(struct list_head *head)
++{
++	struct list_head *first;
++
++	if (!list_empty(head)) {
++		first = head->next;
++		list_move_tail(first, head);
++	}
++}
++
++/**
++ * list_rotate_to_front() - Rotate list to specific item.
++ * @list: The desired new front of the list.
++ * @head: The head of the list.
++ *
++ * Rotates list so that @list becomes the new front of the list.
++ */
++static inline void list_rotate_to_front(struct list_head *list,
++					struct list_head *head)
++{
++	/*
++	 * Deletes the list head from the list denoted by @head and
++	 * places it as the tail of @list, this effectively rotates the
++	 * list so that @list is at the front.
++	 */
++	list_move_tail(head, list);
++}
++
++/**
++ * list_is_singular - tests whether a list has just one entry.
++ * @head: the list to test.
++ */
++static inline int list_is_singular(const struct list_head *head)
++{
++	return !list_empty(head) && (head->next == head->prev);
++}
++
++static inline void __list_cut_position(struct list_head *list,
++		struct list_head *head, struct list_head *entry)
++{
++	struct list_head *new_first = entry->next;
++	list->next = head->next;
++	list->next->prev = list;
++	list->prev = entry;
++	entry->next = list;
++	head->next = new_first;
++	new_first->prev = head;
++}
++
++/**
++ * list_cut_position - cut a list into two
++ * @list: a new list to add all removed entries
++ * @head: a list with entries
++ * @entry: an entry within head, could be the head itself
++ *	and if so we won't cut the list
++ *
++ * This helper moves the initial part of @head, up to and
++ * including @entry, from @head to @list. You should
++ * pass on @entry an element you know is on @head. @list
++ * should be an empty list or a list you do not care about
++ * losing its data.
++ *
++ */
++static inline void list_cut_position(struct list_head *list,
++		struct list_head *head, struct list_head *entry)
++{
++	if (list_empty(head))
++		return;
++	if (list_is_singular(head) && !list_is_head(entry, head) && (entry != head->next))
++		return;
++	if (list_is_head(entry, head))
++		INIT_LIST_HEAD(list);
++	else
++		__list_cut_position(list, head, entry);
++}
++
++/**
++ * list_cut_before - cut a list into two, before given entry
++ * @list: a new list to add all removed entries
++ * @head: a list with entries
++ * @entry: an entry within head, could be the head itself
++ *
++ * This helper moves the initial part of @head, up to but
++ * excluding @entry, from @head to @list.  You should pass
++ * in @entry an element you know is on @head.  @list should
++ * be an empty list or a list you do not care about losing
++ * its data.
++ * If @entry == @head, all entries on @head are moved to
++ * @list.
++ */
++static inline void list_cut_before(struct list_head *list,
++				   struct list_head *head,
++				   struct list_head *entry)
++{
++	if (head->next == entry) {
++		INIT_LIST_HEAD(list);
++		return;
++	}
++	list->next = head->next;
++	list->next->prev = list;
++	list->prev = entry->prev;
++	list->prev->next = list;
++	head->next = entry;
++	entry->prev = head;
++}
++
++static inline void __list_splice(const struct list_head *list,
++				 struct list_head *prev,
++				 struct list_head *next)
++{
++	struct list_head *first = list->next;
++	struct list_head *last = list->prev;
++
++	first->prev = prev;
++	prev->next = first;
++
++	last->next = next;
++	next->prev = last;
++}
++
++/**
++ * list_splice - join two lists, this is designed for stacks
++ * @list: the new list to add.
++ * @head: the place to add it in the first list.
++ */
++static inline void list_splice(const struct list_head *list,
++				struct list_head *head)
++{
++	if (!list_empty(list))
++		__list_splice(list, head, head->next);
++}
++
++/**
++ * list_splice_tail - join two lists, each list being a queue
++ * @list: the new list to add.
++ * @head: the place to add it in the first list.
++ */
++static inline void list_splice_tail(struct list_head *list,
++				struct list_head *head)
++{
++	if (!list_empty(list))
++		__list_splice(list, head->prev, head);
++}
++
++/**
++ * list_splice_init - join two lists and reinitialise the emptied list.
++ * @list: the new list to add.
++ * @head: the place to add it in the first list.
++ *
++ * The list at @list is reinitialised
++ */
++static inline void list_splice_init(struct list_head *list,
++				    struct list_head *head)
++{
++	if (!list_empty(list)) {
++		__list_splice(list, head, head->next);
++		INIT_LIST_HEAD(list);
++	}
++}
++
++/**
++ * list_splice_tail_init - join two lists and reinitialise the emptied list
++ * @list: the new list to add.
++ * @head: the place to add it in the first list.
++ *
++ * Each of the lists is a queue.
++ * The list at @list is reinitialised
++ */
++static inline void list_splice_tail_init(struct list_head *list,
++					 struct list_head *head)
++{
++	if (!list_empty(list)) {
++		__list_splice(list, head->prev, head);
++		INIT_LIST_HEAD(list);
++	}
++}
++
++/**
++ * list_entry - get the struct for this entry
++ * @ptr:	the &struct list_head pointer.
++ * @type:	the type of the struct this is embedded in.
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_entry(ptr, type, member) \
++	container_of(ptr, type, member)
++
++/**
++ * list_first_entry - get the first element from a list
++ * @ptr:	the list head to take the element from.
++ * @type:	the type of the struct this is embedded in.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Note, that list is expected to be not empty.
++ */
++#define list_first_entry(ptr, type, member) \
++	list_entry((ptr)->next, type, member)
++
++/**
++ * list_last_entry - get the last element from a list
++ * @ptr:	the list head to take the element from.
++ * @type:	the type of the struct this is embedded in.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Note, that list is expected to be not empty.
++ */
++#define list_last_entry(ptr, type, member) \
++	list_entry((ptr)->prev, type, member)
++
++/**
++ * list_first_entry_or_null - get the first element from a list
++ * @ptr:	the list head to take the element from.
++ * @type:	the type of the struct this is embedded in.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Note that if the list is empty, it returns NULL.
++ */
++#define list_first_entry_or_null(ptr, type, member) ({ \
++	struct list_head *head__ = (ptr); \
++	struct list_head *pos__ = head__->next; \
++	pos__ != head__ ? list_entry(pos__, type, member) : NULL; \
++})
++
++/**
++ * list_next_entry - get the next element in list
++ * @pos:	the type * to cursor
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_next_entry(pos, member) \
++	list_entry((pos)->member.next, typeof(*(pos)), member)
++
++/**
++ * list_next_entry_circular - get the next element in list
++ * @pos:	the type * to cursor.
++ * @head:	the list head to take the element from.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Wraparound if pos is the last element (return the first element).
++ * Note, that list is expected to be not empty.
++ */
++#define list_next_entry_circular(pos, head, member) \
++	(list_is_last(&(pos)->member, head) ? \
++	list_first_entry(head, typeof(*(pos)), member) : list_next_entry(pos, member))
++
++/**
++ * list_prev_entry - get the prev element in list
++ * @pos:	the type * to cursor
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_prev_entry(pos, member) \
++	list_entry((pos)->member.prev, typeof(*(pos)), member)
++
++/**
++ * list_prev_entry_circular - get the prev element in list
++ * @pos:	the type * to cursor.
++ * @head:	the list head to take the element from.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Wraparound if pos is the first element (return the last element).
++ * Note, that list is expected to be not empty.
++ */
++#define list_prev_entry_circular(pos, head, member) \
++	(list_is_first(&(pos)->member, head) ? \
++	list_last_entry(head, typeof(*(pos)), member) : list_prev_entry(pos, member))
++
++/**
++ * list_for_each	-	iterate over a list
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @head:	the head for your list.
++ */
++#define list_for_each(pos, head) \
++	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
++
++/**
++ * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @head:	the head for your list.
++ */
++#define list_for_each_rcu(pos, head)		  \
++	for (pos = rcu_dereference((head)->next); \
++	     !list_is_head(pos, (head)); \
++	     pos = rcu_dereference(pos->next))
++
++/**
++ * list_for_each_continue - continue iteration over a list
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @head:	the head for your list.
++ *
++ * Continue to iterate over a list, continuing after the current position.
++ */
++#define list_for_each_continue(pos, head) \
++	for (pos = pos->next; !list_is_head(pos, (head)); pos = pos->next)
++
++/**
++ * list_for_each_prev	-	iterate over a list backwards
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @head:	the head for your list.
++ */
++#define list_for_each_prev(pos, head) \
++	for (pos = (head)->prev; !list_is_head(pos, (head)); pos = pos->prev)
++
++/**
++ * list_for_each_safe - iterate over a list safe against removal of list entry
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @n:		another &struct list_head to use as temporary storage
++ * @head:	the head for your list.
++ */
++#define list_for_each_safe(pos, n, head) \
++	for (pos = (head)->next, n = pos->next; \
++	     !list_is_head(pos, (head)); \
++	     pos = n, n = pos->next)
++
++/**
++ * list_for_each_prev_safe - iterate over a list backwards safe against removal of list entry
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @n:		another &struct list_head to use as temporary storage
++ * @head:	the head for your list.
++ */
++#define list_for_each_prev_safe(pos, n, head) \
++	for (pos = (head)->prev, n = pos->prev; \
++	     !list_is_head(pos, (head)); \
++	     pos = n, n = pos->prev)
++
++/**
++ * list_count_nodes - count nodes in the list
++ * @head:	the head for your list.
++ */
++static inline size_t list_count_nodes(struct list_head *head)
++{
++	struct list_head *pos;
++	size_t count = 0;
++
++	list_for_each(pos, head)
++		count++;
++
++	return count;
++}
++
++/**
++ * list_entry_is_head - test if the entry points to the head of the list
++ * @pos:	the type * to cursor
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_entry_is_head(pos, head, member)				\
++	list_is_head(&pos->member, (head))
++
++/**
++ * list_for_each_entry	-	iterate over list of given type
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_for_each_entry(pos, head, member)				\
++	for (pos = list_first_entry(head, typeof(*pos), member);	\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = list_next_entry(pos, member))
++
++/**
++ * list_for_each_entry_reverse - iterate backwards over list of given type.
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_for_each_entry_reverse(pos, head, member)			\
++	for (pos = list_last_entry(head, typeof(*pos), member);		\
++	     !list_entry_is_head(pos, head, member); 			\
++	     pos = list_prev_entry(pos, member))
++
++/**
++ * list_prepare_entry - prepare a pos entry for use in list_for_each_entry_continue()
++ * @pos:	the type * to use as a start point
++ * @head:	the head of the list
++ * @member:	the name of the list_head within the struct.
++ *
++ * Prepares a pos entry for use as a start point in list_for_each_entry_continue().
++ */
++#define list_prepare_entry(pos, head, member) \
++	((pos) ? : list_entry(head, typeof(*pos), member))
++
++/**
++ * list_for_each_entry_continue - continue iteration over list of given type
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Continue to iterate over list of given type, continuing after
++ * the current position.
++ */
++#define list_for_each_entry_continue(pos, head, member) 		\
++	for (pos = list_next_entry(pos, member);			\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = list_next_entry(pos, member))
++
++/**
++ * list_for_each_entry_continue_reverse - iterate backwards from the given point
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Start to iterate over list of given type backwards, continuing after
++ * the current position.
++ */
++#define list_for_each_entry_continue_reverse(pos, head, member)		\
++	for (pos = list_prev_entry(pos, member);			\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = list_prev_entry(pos, member))
++
++/**
++ * list_for_each_entry_from - iterate over list of given type from the current point
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Iterate over list of given type, continuing from current position.
++ */
++#define list_for_each_entry_from(pos, head, member) 			\
++	for (; !list_entry_is_head(pos, head, member);			\
++	     pos = list_next_entry(pos, member))
++
++/**
++ * list_for_each_entry_from_reverse - iterate backwards over list of given type
++ *                                    from the current point
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Iterate backwards over list of given type, continuing from current position.
++ */
++#define list_for_each_entry_from_reverse(pos, head, member)		\
++	for (; !list_entry_is_head(pos, head, member);			\
++	     pos = list_prev_entry(pos, member))
++
++/**
++ * list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
++ * @pos:	the type * to use as a loop cursor.
++ * @n:		another type * to use as temporary storage
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ */
++#define list_for_each_entry_safe(pos, n, head, member)			\
++	for (pos = list_first_entry(head, typeof(*pos), member),	\
++		n = list_next_entry(pos, member);			\
++	     !list_entry_is_head(pos, head, member); 			\
++	     pos = n, n = list_next_entry(n, member))
++
++/**
++ * list_for_each_entry_safe_continue - continue list iteration safe against removal
++ * @pos:	the type * to use as a loop cursor.
++ * @n:		another type * to use as temporary storage
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Iterate over list of given type, continuing after current point,
++ * safe against removal of list entry.
++ */
++#define list_for_each_entry_safe_continue(pos, n, head, member) 		\
++	for (pos = list_next_entry(pos, member), 				\
++		n = list_next_entry(pos, member);				\
++	     !list_entry_is_head(pos, head, member);				\
++	     pos = n, n = list_next_entry(n, member))
++
++/**
++ * list_for_each_entry_safe_from - iterate over list from current point safe against removal
++ * @pos:	the type * to use as a loop cursor.
++ * @n:		another type * to use as temporary storage
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Iterate over list of given type from current point, safe against
++ * removal of list entry.
++ */
++#define list_for_each_entry_safe_from(pos, n, head, member) 			\
++	for (n = list_next_entry(pos, member);					\
++	     !list_entry_is_head(pos, head, member);				\
++	     pos = n, n = list_next_entry(n, member))
++
++/**
++ * list_for_each_entry_safe_reverse - iterate backwards over list safe against removal
++ * @pos:	the type * to use as a loop cursor.
++ * @n:		another type * to use as temporary storage
++ * @head:	the head for your list.
++ * @member:	the name of the list_head within the struct.
++ *
++ * Iterate backwards over list of given type, safe against removal
++ * of list entry.
++ */
++#define list_for_each_entry_safe_reverse(pos, n, head, member)		\
++	for (pos = list_last_entry(head, typeof(*pos), member),		\
++		n = list_prev_entry(pos, member);			\
++	     !list_entry_is_head(pos, head, member); 			\
++	     pos = n, n = list_prev_entry(n, member))
++
++/**
++ * list_safe_reset_next - reset a stale list_for_each_entry_safe loop
++ * @pos:	the loop cursor used in the list_for_each_entry_safe loop
++ * @n:		temporary storage used in list_for_each_entry_safe
++ * @member:	the name of the list_head within the struct.
++ *
++ * list_safe_reset_next is not safe to use in general if the list may be
++ * modified concurrently (eg. the lock is dropped in the loop body). An
++ * exception to this is if the cursor element (pos) is pinned in the list,
++ * and list_safe_reset_next is called after re-taking the lock and before
++ * completing the current iteration of the loop body.
++ */
++#define list_safe_reset_next(pos, n, member)				\
++	n = list_next_entry(pos, member)
++
++#endif
+diff --git a/debugfs/Makefile.in b/debugfs/Makefile.in
+index 689bf0c4a3c13d..700ae87418c268 100644
+--- a/debugfs/Makefile.in
++++ b/debugfs/Makefile.in
+@@ -195,7 +195,7 @@ debugfs.o: $(srcdir)/debugfs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(top_srcdir)/version.h \
+  $(srcdir)/../e2fsck/jfs_user.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h $(top_srcdir)/lib/support/plausible.h
+ util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ss/ss.h \
+@@ -287,7 +287,7 @@ logdump.o: $(srcdir)/logdump.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h
+ htree.o: $(srcdir)/htree.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/debugfs.h $(top_srcdir)/lib/ss/ss.h \
+@@ -408,7 +408,7 @@ journal.o: $(srcdir)/journal.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/ext2fs/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h
+ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -418,7 +418,7 @@ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h
+ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -428,7 +428,7 @@ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h
+ do_journal.o: $(srcdir)/do_journal.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/debugfs.h $(top_srcdir)/lib/ss/ss.h \
+@@ -442,7 +442,7 @@ do_journal.o: $(srcdir)/do_journal.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/journal.h $(srcdir)/../e2fsck/jfs_user.h
+ do_orphan.o: $(srcdir)/do_orphan.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/debugfs.h $(top_srcdir)/lib/ss/ss.h \
+diff --git a/e2fsck/Makefile.in b/e2fsck/Makefile.in
+index fbb7b156d5c759..52fad9cbfd2b23 100644
+--- a/e2fsck/Makefile.in
++++ b/e2fsck/Makefile.in
+@@ -282,7 +282,7 @@ e2fsck.o: $(srcdir)/e2fsck.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ super.o: $(srcdir)/super.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -296,7 +296,7 @@ super.o: $(srcdir)/super.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ pass1.o: $(srcdir)/pass1.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -310,7 +310,7 @@ pass1.o: $(srcdir)/pass1.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/e2p/e2p.h $(srcdir)/problem.h
+ pass1b.o: $(srcdir)/pass1b.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/et/com_err.h \
+@@ -324,7 +324,7 @@ pass1b.o: $(srcdir)/pass1b.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h $(top_srcdir)/lib/support/dict.h
+ pass2.o: $(srcdir)/pass2.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -338,7 +338,7 @@ pass2.o: $(srcdir)/pass2.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h $(top_srcdir)/lib/support/dict.h
+ pass3.o: $(srcdir)/pass3.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -352,7 +352,7 @@ pass3.o: $(srcdir)/pass3.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ pass4.o: $(srcdir)/pass4.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -366,7 +366,7 @@ pass4.o: $(srcdir)/pass4.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ pass5.o: $(srcdir)/pass5.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -380,7 +380,7 @@ pass5.o: $(srcdir)/pass5.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ journal.o: $(srcdir)/journal.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/jfs_user.h $(srcdir)/e2fsck.h \
+@@ -394,7 +394,7 @@ journal.o: $(srcdir)/journal.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(srcdir)/problem.h
+ recovery.o: $(srcdir)/recovery.c $(srcdir)/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -408,7 +408,7 @@ recovery.o: $(srcdir)/recovery.c $(srcdir)/jfs_user.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+ revoke.o: $(srcdir)/revoke.c $(srcdir)/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -422,7 +422,7 @@ revoke.o: $(srcdir)/revoke.c $(srcdir)/jfs_user.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+ badblocks.o: $(srcdir)/badblocks.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/et/com_err.h \
+@@ -436,7 +436,7 @@ badblocks.o: $(srcdir)/badblocks.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -449,7 +449,7 @@ util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ unix.o: $(srcdir)/unix.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/e2p/e2p.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -463,7 +463,7 @@ unix.o: $(srcdir)/unix.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h $(srcdir)/jfs_user.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/version.h
+ dirinfo.o: $(srcdir)/dirinfo.c $(top_builddir)/lib/config.h \
+@@ -478,7 +478,7 @@ dirinfo.o: $(srcdir)/dirinfo.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/tdb.h
+ dx_dirinfo.o: $(srcdir)/dx_dirinfo.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -492,7 +492,7 @@ dx_dirinfo.o: $(srcdir)/dx_dirinfo.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ ehandler.o: $(srcdir)/ehandler.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -505,7 +505,7 @@ ehandler.o: $(srcdir)/ehandler.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ problem.o: $(srcdir)/problem.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -518,7 +518,7 @@ problem.o: $(srcdir)/problem.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h $(srcdir)/problemP.h
+ message.o: $(srcdir)/message.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/support/quotaio.h \
+@@ -531,7 +531,7 @@ message.o: $(srcdir)/message.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/support/profile.h $(top_builddir)/lib/support/prof_err.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ ea_refcount.o: $(srcdir)/ea_refcount.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -545,7 +545,7 @@ ea_refcount.o: $(srcdir)/ea_refcount.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ rehash.o: $(srcdir)/rehash.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -558,7 +558,7 @@ rehash.o: $(srcdir)/rehash.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h $(top_srcdir)/lib/support/sort_r.h
+ readahead.o: $(srcdir)/readahead.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -572,7 +572,7 @@ readahead.o: $(srcdir)/readahead.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ region.o: $(srcdir)/region.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -585,7 +585,7 @@ region.o: $(srcdir)/region.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ sigcatcher.o: $(srcdir)/sigcatcher.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -598,7 +598,7 @@ sigcatcher.o: $(srcdir)/sigcatcher.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ logfile.o: $(srcdir)/logfile.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -611,7 +611,7 @@ logfile.o: $(srcdir)/logfile.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ quota.o: $(srcdir)/quota.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+@@ -624,7 +624,7 @@ quota.o: $(srcdir)/quota.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ extents.o: $(srcdir)/extents.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -638,7 +638,7 @@ extents.o: $(srcdir)/extents.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h
+ encrypted_files.o: $(srcdir)/encrypted_files.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2fsck.h \
+@@ -652,5 +652,5 @@ encrypted_files.o: $(srcdir)/encrypted_files.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(srcdir)/problem.h $(top_srcdir)/lib/ext2fs/rbtree.h
+diff --git a/fuse4fs/Makefile.in b/fuse4fs/Makefile.in
+index bc137a765ee2b7..6b41d1dd5ffe8d 100644
+--- a/fuse4fs/Makefile.in
++++ b/fuse4fs/Makefile.in
+@@ -160,7 +160,7 @@ journal.o: $(srcdir)/../debugfs/journal.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -174,7 +174,7 @@ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -188,5 +188,5 @@ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+diff --git a/lib/e2p/Makefile.in b/lib/e2p/Makefile.in
+index 92d9c018fe46c8..f642f5ec367c93 100644
+--- a/lib/e2p/Makefile.in
++++ b/lib/e2p/Makefile.in
+@@ -130,7 +130,7 @@ feature.o: $(srcdir)/feature.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h
+ fgetflags.o: $(srcdir)/fgetflags.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2p.h \
+@@ -173,7 +173,7 @@ ljs.o: $(srcdir)/ljs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(srcdir)/e2p.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h
+ mntopts.o: $(srcdir)/mntopts.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/e2p.h \
+  $(top_srcdir)/lib/ext2fs/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h
+diff --git a/lib/ext2fs/Makefile.in b/lib/ext2fs/Makefile.in
+index e9a6ced244ea26..1d0991defff804 100644
+--- a/lib/ext2fs/Makefile.in
++++ b/lib/ext2fs/Makefile.in
+@@ -1032,7 +1032,7 @@ mkjournal.o: $(srcdir)/mkjournal.c $(top_builddir)/lib/config.h \
+  $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h $(srcdir)/ext2_io.h \
+  $(top_builddir)/lib/ext2fs/ext2_err.h $(srcdir)/ext2_ext_attr.h \
+  $(srcdir)/hashmap.h $(srcdir)/bitops.h $(srcdir)/kernel-jbd.h \
+- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h
++ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h
+ mmp.o: $(srcdir)/mmp.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(srcdir)/ext2_fs.h \
+  $(top_builddir)/lib/ext2fs/ext2_types.h $(srcdir)/ext2fs.h \
+@@ -1263,7 +1263,7 @@ debugfs.o: $(top_srcdir)/debugfs/debugfs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(top_srcdir)/debugfs/../version.h \
+  $(srcdir)/../../e2fsck/jfs_user.h $(srcdir)/kernel-jbd.h \
+- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h \
++ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h \
+  $(top_srcdir)/lib/support/plausible.h
+ util.o: $(top_srcdir)/debugfs/util.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/lib/ss/ss.h \
+@@ -1353,7 +1353,7 @@ logdump.o: $(top_srcdir)/debugfs/logdump.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/debugfs/../misc/create_inode.h $(top_srcdir)/lib/e2p/e2p.h \
+  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/../../e2fsck/jfs_user.h \
+- $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h \
++ $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h \
+  $(srcdir)/compiler.h $(srcdir)/fast_commit.h
+ htree.o: $(top_srcdir)/debugfs/htree.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/debugfs/debugfs.h \
+@@ -1469,14 +1469,14 @@ journal.o: $(top_srcdir)/debugfs/journal.c $(top_builddir)/lib/config.h \
+  $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h $(srcdir)/ext2_io.h \
+  $(top_builddir)/lib/ext2fs/ext2_err.h $(srcdir)/ext2_ext_attr.h \
+  $(srcdir)/hashmap.h $(srcdir)/bitops.h $(srcdir)/kernel-jbd.h \
+- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h
++ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h
+ revoke.o: $(top_srcdir)/e2fsck/revoke.c $(top_srcdir)/e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+  $(srcdir)/ext2_fs.h $(top_builddir)/lib/ext2fs/ext2_types.h \
+  $(srcdir)/ext2fs.h $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h \
+  $(srcdir)/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(srcdir)/ext2_ext_attr.h $(srcdir)/hashmap.h $(srcdir)/bitops.h \
+- $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h \
++ $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h \
+  $(srcdir)/compiler.h
+ recovery.o: $(top_srcdir)/e2fsck/recovery.c $(top_srcdir)/e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -1484,7 +1484,7 @@ recovery.o: $(top_srcdir)/e2fsck/recovery.c $(top_srcdir)/e2fsck/jfs_user.h \
+  $(srcdir)/ext2fs.h $(srcdir)/ext3_extents.h $(top_srcdir)/lib/et/com_err.h \
+  $(srcdir)/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(srcdir)/ext2_ext_attr.h $(srcdir)/hashmap.h $(srcdir)/bitops.h \
+- $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h \
++ $(srcdir)/kernel-jbd.h $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h \
+  $(srcdir)/compiler.h
+ do_journal.o: $(top_srcdir)/debugfs/do_journal.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/debugfs/debugfs.h \
+@@ -1497,7 +1497,7 @@ do_journal.o: $(top_srcdir)/debugfs/do_journal.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/debugfs/../misc/create_inode.h $(top_srcdir)/lib/e2p/e2p.h \
+  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(srcdir)/kernel-jbd.h \
+- $(srcdir)/jfs_compat.h $(srcdir)/kernel-list.h $(srcdir)/compiler.h \
++ $(srcdir)/jfs_compat.h $(srcdir)/../support/list.h $(srcdir)/compiler.h \
+  $(top_srcdir)/debugfs/journal.h $(srcdir)/../../e2fsck/jfs_user.h
+ do_orphan.o: $(top_srcdir)/debugfs/do_orphan.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/dirpaths.h $(top_srcdir)/debugfs/debugfs.h \
+diff --git a/misc/Makefile.in b/misc/Makefile.in
+index b63a0424b19fec..ec964688acd623 100644
+--- a/misc/Makefile.in
++++ b/misc/Makefile.in
+@@ -736,7 +736,7 @@ tune2fs.o: $(srcdir)/tune2fs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/ext2fs/ext2_io.h $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h $(top_srcdir)/lib/support/plausible.h \
+  $(top_srcdir)/lib/support/quotaio.h $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h $(top_srcdir)/lib/support/devname.h \
+@@ -789,7 +789,7 @@ dumpe2fs.o: $(srcdir)/dumpe2fs.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/e2p/e2p.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/support/devname.h $(top_srcdir)/lib/support/nls-enable.h \
+  $(top_srcdir)/lib/support/plausible.h $(top_srcdir)/version.h
+ badblocks.o: $(srcdir)/badblocks.c $(top_builddir)/lib/config.h \
+@@ -812,7 +812,7 @@ util.o: $(srcdir)/util.c $(top_builddir)/lib/config.h \
+  $(top_builddir)/lib/ext2fs/ext2_err.h \
+  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
+  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/kernel-jbd.h \
+- $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/ext2fs/kernel-list.h \
++ $(top_srcdir)/lib/ext2fs/jfs_compat.h $(top_srcdir)/lib/support/list.h \
+  $(top_srcdir)/lib/ext2fs/compiler.h $(top_srcdir)/lib/support/nls-enable.h \
+  $(top_srcdir)/lib/support/devname.h $(srcdir)/util.h
+ uuidgen.o: $(srcdir)/uuidgen.c $(top_builddir)/lib/config.h \
+@@ -907,7 +907,7 @@ journal.o: $(srcdir)/../debugfs/journal.c $(top_builddir)/lib/config.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -921,7 +921,7 @@ revoke.o: $(srcdir)/../e2fsck/revoke.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_builddir)/lib/config.h $(top_builddir)/lib/dirpaths.h \
+@@ -935,5 +935,5 @@ recovery.o: $(srcdir)/../e2fsck/recovery.c $(srcdir)/../e2fsck/jfs_user.h \
+  $(top_srcdir)/lib/support/dqblk_v2.h \
+  $(top_srcdir)/lib/support/quotaio_tree.h \
+  $(top_srcdir)/lib/ext2fs/fast_commit.h $(top_srcdir)/lib/ext2fs/jfs_compat.h \
+- $(top_srcdir)/lib/ext2fs/kernel-list.h $(top_srcdir)/lib/ext2fs/compiler.h \
++ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/ext2fs/compiler.h \
+  $(top_srcdir)/lib/ext2fs/kernel-jbd.h
+diff --git a/misc/tune2fs.c b/misc/tune2fs.c
+index 3db57632c88d42..ac440176351e83 100644
+--- a/misc/tune2fs.c
++++ b/misc/tune2fs.c
+@@ -2857,10 +2857,6 @@ static int expand_inode_table(ext2_filsys fs, unsigned long new_ino_size)
+ }
  
- 	/* Set up default fuse parameters */
--	snprintf(extra_args, BUFSIZ, "-okernel_cache,subtype=%s,"
--		 "fsname=%s,attr_timeout=0",
-+	snprintf(extra_args, BUFSIZ, "-osubtype=%s,fsname=%s",
- 		 get_subtype(argv[0]),
- 		 fctx.device);
- 	if (fctx.no_default_opts == 0)
-@@ -5276,14 +5416,6 @@ int main(int argc, char *argv[])
-  "-oallow_other,default_permissions,suid,dev");
- 	}
  
--	/*
--	 * Since there's a Big Kernel Lock around all the libext2fs code, we
--	 * only need to start four threads -- one to decode a request, another
--	 * to do the filesystem work, a third to transmit the reply, and a
--	 * fourth to handle fuse notifications.
--	 */
--	fuse_opt_insert_arg(&args, 1, "-omax_threads=4");
+-#define list_for_each_safe(pos, pnext, head) \
+-	for (pos = (head)->next, pnext = pos->next; pos != (head); \
+-	     pos = pnext, pnext = pos->next)
 -
- 	if (fctx.debug) {
- 		int	i;
- 
-@@ -5295,7 +5427,7 @@ int main(int argc, char *argv[])
- 	}
- 
- 	pthread_mutex_init(&fctx.bfl, NULL);
--	ret = fuse_main(args.argc, args.argv, &fs_ops, &fctx);
-+	ret = fuse4fs_main(&args, &fctx);
- 	pthread_mutex_destroy(&fctx.bfl);
- 
- 	switch(ret) {
+ static void free_blk_move_list(void)
+ {
+ 	struct list_head *entry, *tmp;
 
 
