@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DD1B58908
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:19:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03365B58909
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD3F1B219E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86BEF1B21A7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662F119F43A;
-	Tue, 16 Sep 2025 00:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20D019F43A;
+	Tue, 16 Sep 2025 00:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R50yAed2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjNx0Nct"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C330C19CC28;
-	Tue, 16 Sep 2025 00:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FF219CC28;
+	Tue, 16 Sep 2025 00:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757981961; cv=none; b=tf4Wm8AaXQFWBI4YQXvRWd+FWgBNnB4CQ4MxmrtGkOLBDabflJsQxQKESb9+LGQSC7OFrmk8pwIY7ZVui0/tkezsR/yZoDFOvuleoPSoNqCQthmvms5c/eZftCiwpQ5/hcP6sp8nTe8KFl6BWf63+VniBQukWw9E0+CT5Ernz1M=
+	t=1757981977; cv=none; b=dizLcw6AHyjFxuQ/myZkQDxQ2BYeRFhnakwGhBZdfU5CENyU+mGDnyNmq2KgBu/+6ZVU885b9mdB+cl7BJG6FAC4S4iMheAtgjgrTN+qriLqSrTLi1QvTx174rCSFtIpDZbfeo/KL6F+D23nzicse6Bos2v7WZvDCuTxyBIjhxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757981961; c=relaxed/simple;
-	bh=4I5hXOs36K19a9LmOPEQFqBNGALqwnBMZ4YoX5qFXuE=;
+	s=arc-20240116; t=1757981977; c=relaxed/simple;
+	bh=pqsLfXTWHwxvZA8BkWYgWOmeHOsE+HB7OBJnECj+MRc=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bQP1rsYn81+R9AB2milT+K7Lu0V5S7UsFwp04DoeWCxG+sHRf3z+Q5YbrrhOdbxhF6i9eic3kJz0eu9xAxOu2k6RXX0uewA1k0KwKnRTfDBEpC7FhEkJVize3cjHS2OgqH15XyOoO+apjylC1Q13OWs00T8pybghRwx2hUviC4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R50yAed2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6B3C4CEF1;
-	Tue, 16 Sep 2025 00:19:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=IYcey4nc8PbL2tdhG82bDoTzYdHe3OIw0EmcyxtQJ0zYutzF7vePb99K9+U72NiRvHk2FSKGkQ3gF2PjlbT9swT5HM0M7FJ0RX58KL1xs4FeHpRmBYydSSLp9DSkU8X+2+6TbyFP5CBgyYGcpAUpeBgH04fSapCforBrK5rJMQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjNx0Nct; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D87A2C4CEF1;
+	Tue, 16 Sep 2025 00:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757981961;
-	bh=4I5hXOs36K19a9LmOPEQFqBNGALqwnBMZ4YoX5qFXuE=;
+	s=k20201202; t=1757981976;
+	bh=pqsLfXTWHwxvZA8BkWYgWOmeHOsE+HB7OBJnECj+MRc=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=R50yAed2ka6kkDMH+NoVPsXsyksIRHjg4w00Ewdx3JsYVREgpb3m286ZI/zrLKEq4
-	 tLyu0Rdr2vBDzaG46qMaoUxAVuMTGbLVIWBMBP78YDGIKVysvFd39Zlmh+dPJ0ifmL
-	 HHP1BUCzSQ6hflCmxQUHYii5R2GvFxDKuq9lCSGbCH5niBqJbJgnx1sXZDrAImP2Ky
-	 pQApqEQOHy2xtrLur8IarepbaO3fzzq2rHZFFrvkyAd2wYZijCmVXT1j6ClfJO2Eg0
-	 3SA8OxRBWUL07F3CKACbh42lbUt6R88eMerUPXJusZQEwfUBRx/k8zF4vtNEFMWN98
-	 B0XdtaU/9Ja+g==
-Date: Mon, 15 Sep 2025 17:19:20 -0700
-Subject: [PATCHSET RFC v5 5/8] fuse: allow servers to specify root node id
+	b=IjNx0NctS2bNdO46cV8FCXjkQzkvOcQbYBTIhiTUaWnex/7plv3EduNV6xdjrbwly
+	 Fw0LEc1ILyJut9xI1MNyldbuwH6UAE5404EIkbRr6KK6By108pr0cTOO8S/bM+H3ZK
+	 usHgBRiKu4hLlg2XL4KFI01LxO0ZLXx282p69j+nFkCuF8Okfi0ox7318Vn6HFV8RA
+	 TuSZOx18F4VIF46OhOB5cD3Gw1AhTYqyz+C7Rhdt3CK6MEspuCT61SqnG0CYxSFXUB
+	 I+rTI+ShbQuHZbunZysnFatXnLDdFZ6vFe0z+PNRq2f67fKkbfvC5Hw3g8nOM9FsPn
+	 CQnRadwPZ6gEg==
+Date: Mon, 15 Sep 2025 17:19:36 -0700
+Subject: [PATCHSET RFC v5 6/8] fuse: handle timestamps and ACLs correctly when
+ iomap is enabled
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
  linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Message-ID: <175798152081.383798.16940546036390782667.stgit@frogsfrogsfrogs>
+Message-ID: <175798152384.383971.2031565738833129575.stgit@frogsfrogsfrogs>
 In-Reply-To: <20250916000759.GA8080@frogsfrogsfrogs>
 References: <20250916000759.GA8080@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,10 +62,25 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-This series grants fuse servers full control over the entire node id
-address space by allowing them to specify the nodeid of the root
-directory.  With this new feature, fuse4fs will not have to translate
-node ids.
+When iomap is enabled for a fuse file, we try to keep as much of the
+file IO path in the kernel as we possibly can.  That means no calling
+out to the fuse server in the IO path when we can avoid it.  However,
+the existing FUSE architecture defers all file attributes to the fuse
+server -- [cm]time updates, ACL metadata management, set[ug]id removal,
+and permissions checking thereof, etc.
+
+We'd really rather do all these attribute updates in the kernel, and
+only push them to the fuse server when it's actually necessary (e.g.
+fsync).  Furthermore, the POSIX ACL code has the weird behavior that if
+the access ACL can be represented entirely by i_mode bits, it will
+change the mode and delete the ACL, which fuse servers generally don't
+seem to implement.
+
+IOWs, we want consistent and correct (as defined by fstests) behavior
+of file attributes in iomap mode.  Let's make the kernel manage all that
+and push the results to userspace as needed.  This improves performance
+even further, since it's sort of like writeback_cache mode but more
+aggressive.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -75,18 +91,29 @@ Comments and questions are, as always, welcome.
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-root-nodeid
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-attrs
 ---
 Commits in this patchset:
- * fuse: make the root nodeid dynamic
- * fuse_trace: make the root nodeid dynamic
- * fuse: allow setting of root nodeid
+ * fuse: enable caching of timestamps
+ * fuse: force a ctime update after a fileattr_set call when in iomap mode
+ * fuse: allow local filesystems to set some VFS iflags
+ * fuse_trace: allow local filesystems to set some VFS iflags
+ * fuse: cache atime when in iomap mode
+ * fuse: let the kernel handle KILL_SUID/KILL_SGID for iomap filesystems
+ * fuse_trace: let the kernel handle KILL_SUID/KILL_SGID for iomap filesystems
+ * fuse: update ctime when updating acls on an iomap inode
+ * fuse: always cache ACLs when using iomap
 ---
- fs/fuse/fuse_i.h     |    9 +++++++--
- fs/fuse/fuse_trace.h |    6 ++++--
- fs/fuse/dir.c        |   10 ++++++----
- fs/fuse/inode.c      |   22 ++++++++++++++++++----
- fs/fuse/readdir.c    |   10 +++++-----
- 5 files changed, 40 insertions(+), 17 deletions(-)
+ fs/fuse/fuse_i.h          |    1 +
+ fs/fuse/fuse_trace.h      |   87 +++++++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h |    8 ++++
+ fs/fuse/acl.c             |   29 +++++++++++++--
+ fs/fuse/dir.c             |   38 ++++++++++++++++----
+ fs/fuse/file.c            |   18 ++++++---
+ fs/fuse/file_iomap.c      |    6 +++
+ fs/fuse/inode.c           |   27 +++++++++++---
+ fs/fuse/ioctl.c           |   70 ++++++++++++++++++++++++++++++++++++
+ fs/fuse/readdir.c         |    3 +-
+ 10 files changed, 263 insertions(+), 24 deletions(-)
 
 
