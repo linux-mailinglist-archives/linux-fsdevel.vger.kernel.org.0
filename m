@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75EEFB58A41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:55:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2D8B58A44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FF7D2A59F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F45188AC7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1371C5F23;
-	Tue, 16 Sep 2025 00:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEF91C5F23;
+	Tue, 16 Sep 2025 00:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWhXC2hU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVBCA2Yr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101E0FC1D;
-	Tue, 16 Sep 2025 00:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225283A1D2;
+	Tue, 16 Sep 2025 00:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757984121; cv=none; b=QxVJVddQmRTuQtSbH/BLQnHMrikquGLryL9y2FjzqDpZtu9iYLdjbO/HQ4nw0Tfk6lYKEOynZpEZGTnJL3JtNVR2/6cIe4QprDgom2k80k77OTeVUlNKUkJSDzhzjd8iGoQ6gGqHR/TTt7To29Vh3xs7nOQnLbentnL1nDN6FiQ=
+	t=1757984138; cv=none; b=SAh3wyQZarfM6aKxyaBTG0FLSypyZATt/St2GpHmkQse1iUr6LnJQ17aRoOPAGrFDasvUHBuvk/ysv11BjYi4vTDnNu8WlpkatH0jEUIUsy4JW26N4l5/CAYiEGUqU67lY+io0kt+lu7MbGxW4w3kX0THf8VZffgsKkvi5aCGlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757984121; c=relaxed/simple;
-	bh=02Up2PVyGLG44tXXm4hwcj6Zn0wX82pSHiJsZhlkF8E=;
+	s=arc-20240116; t=1757984138; c=relaxed/simple;
+	bh=2jAlUggacIeUpapaufumP3mAoK3sSl7nXHn1cBmGDdg=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=inELOoMllFYfBluQF4pMpNgPJs6MIJo+WrqQLH85hKbH2xDGxxMgO0LbdFa6ieGYyyL0R5rSorSo0aHbwh/IGLFSD2HteZJdQ5lBgEUSrHx6YTLq+/Ajd8n924IGU+vwFs/s1o3rrryvde92pIvJTTYo5zraQpi9PSmXPutWjXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWhXC2hU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC737C4CEF1;
-	Tue, 16 Sep 2025 00:55:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HSZMXSjdwqor5SEtokPY6Ql+JV3QtGlgd46J/noNhPnX+gahu8A8TLGnCykbXhCKZ5rvgdj4khX1XbGGRRMWBg6yxvmXbIZ9WsugFYSqwKateapE7xnOQ1ZeZ9LSicNYBFQTXXNsKe16V1vlVUtoCxthJtOnIHeAQxnozzMxlvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVBCA2Yr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814F8C4CEF1;
+	Tue, 16 Sep 2025 00:55:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757984120;
-	bh=02Up2PVyGLG44tXXm4hwcj6Zn0wX82pSHiJsZhlkF8E=;
+	s=k20201202; t=1757984136;
+	bh=2jAlUggacIeUpapaufumP3mAoK3sSl7nXHn1cBmGDdg=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=AWhXC2hUxw/nV/J16Kkl+PeuxdZP0t/kLmIG7nl7Jo0nINXVDfXafqMkQ1vod2QDs
-	 zB9mpG1lCa10c8RRNCOXtl8OrbVx9/ux6DVhsEO8KZxK42+L+CBhWgDhFph2jIQ2qQ
-	 cb9YukksNsLwleovxXgnHrE1+aEw75bYQudHir55Ow6qXdnO8UnVx+o7ZpZat0diCI
-	 oI2pafOW7AGaylimyZsrPiyTpISdpy24hHIAcsdkWWh8+eEqarHL672K6zVHJ6FYlq
-	 mWtOUPv0zwCLk0tCxurKTrLLSRXRPZB7h+BCkW9MKIk3maWf6K3ncDlYV7CJYAvLnr
-	 yk1dUCUIXrxvg==
-Date: Mon, 15 Sep 2025 17:55:20 -0700
-Subject: [PATCH 18/21] fuse4fs: add cache to track open files
+	b=BVBCA2Yrl++9biqJfe4tD8y9IXYlbk6bWvqey9dyK3vRrXlT6vOLOB35pqirnkoaO
+	 iuHukiOp+Dnp+Jl8oWtoXKTuT0XsoP6W8w78yPkMqj/uVJRYCoAeLfIk8wUUpERtZh
+	 1mIdxWvhwXKdCTLQdcHfDtPFvJWxcXNBKz2qiFGedGm8LwXdcmHRY3poO6O50zoVVn
+	 UB1XBHWGDbEUIr/IL/bm2i8dKU+evoZvCGA/aqcRbtu3BiNbPIXuVVJM6a4EhWy+4a
+	 pijDBSt9q2Bks3WkjVYs8x8mHJh99ULusSYo1fKGAxmNLIOKXDLmxRkZmJGBnfNNxW
+	 b2y47nLnwXlqA==
+Date: Mon, 15 Sep 2025 17:55:36 -0700
+Subject: [PATCH 19/21] fuse4fs: use the orphaned inode list
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: miklos@szeredi.hu, neal@gompa.dev, amir73il@gmail.com,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, John@groves.net,
  bernd@bsbernd.com, joannelkoong@gmail.com
-Message-ID: <175798161099.389252.789807659344261604.stgit@frogsfrogsfrogs>
+Message-ID: <175798161117.389252.3955203958973693102.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 References: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,253 +62,288 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add our own inode cache so that we can track open files.
+Put open but unlinked files on the orphan list, and remove them when the
+last open fd releases the inode.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- lib/support/cache.h |    7 +++
- fuse4fs/Makefile.in |    3 +
- fuse4fs/fuse4fs.c   |  132 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 141 insertions(+), 1 deletion(-)
+ fuse4fs/fuse4fs.c |  181 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 178 insertions(+), 3 deletions(-)
 
 
-diff --git a/lib/support/cache.h b/lib/support/cache.h
-index cd738b6cd3a460..f482948a3b6331 100644
---- a/lib/support/cache.h
-+++ b/lib/support/cache.h
-@@ -6,6 +6,13 @@
- #ifndef __CACHE_H__
- #define __CACHE_H__
- 
-+/*  2^63 + 2^61 - 2^57 + 2^54 - 2^51 - 2^18 + 1 */
-+#define GOLDEN_RATIO_PRIME	0x9e37fffffffc0001UL
-+#ifndef CACHE_LINE_SIZE
-+/* if the system didn't tell us, guess something reasonable */
-+#define CACHE_LINE_SIZE		64
-+#endif
-+
- /*
-  * initialisation flags
-  */
-diff --git a/fuse4fs/Makefile.in b/fuse4fs/Makefile.in
-index 6b41d1dd5ffe8d..9f3547c271638f 100644
---- a/fuse4fs/Makefile.in
-+++ b/fuse4fs/Makefile.in
-@@ -146,7 +146,8 @@ fuse4fs.o: $(srcdir)/fuse4fs.c $(top_builddir)/lib/config.h \
-  $(top_srcdir)/lib/ext2fs/ext2_ext_attr.h $(top_srcdir)/lib/ext2fs/hashmap.h \
-  $(top_srcdir)/lib/ext2fs/bitops.h $(top_srcdir)/lib/ext2fs/ext2fsP.h \
-  $(top_srcdir)/lib/ext2fs/ext2fs.h $(top_srcdir)/version.h \
-- $(top_srcdir)/lib/e2p/e2p.h
-+ $(top_srcdir)/lib/e2p/e2p.h $(top_srcdir)/lib/support/cache.h \
-+ $(top_srcdir)/lib/support/list.h $(top_srcdir)/lib/support/xbitops.h
- journal.o: $(srcdir)/../debugfs/journal.c $(top_builddir)/lib/config.h \
-  $(top_builddir)/lib/dirpaths.h $(srcdir)/../debugfs/journal.h \
-  $(top_srcdir)/e2fsck/jfs_user.h $(top_srcdir)/e2fsck/e2fsck.h \
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index 8b65dd1b419eaa..5b06e5a5b9668e 100644
+index 5b06e5a5b9668e..e046c782957e60 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -27,6 +27,7 @@
- #include <unistd.h>
- #include <ctype.h>
- #include <stdbool.h>
-+#include <assert.h>
- #define FUSE_DARWIN_ENABLE_EXTENSIONS 0
- #ifdef __SET_FOB_FOR_FUSE
- # error Do not set magic value __SET_FOB_FOR_FUSE!!!!
-@@ -49,6 +50,8 @@
- #include "ext2fs/ext2fs.h"
- #include "ext2fs/ext2_fs.h"
- #include "ext2fs/ext2fsP.h"
-+#include "support/list.h"
-+#include "support/cache.h"
+@@ -960,6 +960,13 @@ static int fuse4fs_inum_access(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
+ 		   inode_uid(inode), inode_gid(inode),
+ 		   ctxt->uid, ctxt->gid);
  
- #include "../version.h"
- #include "uuid/uuid.h"
-@@ -205,6 +208,7 @@ int journal_enable_debug = -1;
- #define FUSE4FS_FILE_MAGIC	(0xEF53DEAFUL)
- struct fuse4fs_file_handle {
- 	unsigned long magic;
-+	struct fuse4fs_inode *fi;
- 	ext2_ino_t ino;
- 	int open_flags;
- 	int check_flags;
-@@ -257,6 +261,7 @@ struct fuse4fs {
- 	int timing;
- #endif
- 	struct fuse_session *fuse;
-+	struct cache inodes;
- };
- 
- #define FUSE4FS_CHECK_HANDLE(req, fh) \
-@@ -351,6 +356,115 @@ static inline int u_log2(unsigned int arg)
- 	return l;
- }
- 
-+struct fuse4fs_inode {
-+	struct cache_node	i_cnode;
-+	ext2_ino_t		i_ino;
-+	unsigned int		i_open_count;
-+};
-+
-+struct fuse4fs_ikey {
-+	ext2_ino_t		i_ino;
-+};
-+
-+#define ICKEY(key)	((struct fuse4fs_ikey *)(key))
-+#define ICNODE(node)	(container_of((node), struct fuse4fs_inode, i_cnode))
-+
-+static unsigned int
-+icache_hash(cache_key_t key, unsigned int hashsize, unsigned int hashshift)
-+{
-+	uint64_t	hashval = ICKEY(key)->i_ino;
-+	uint64_t	tmp;
-+
-+	tmp = hashval ^ (GOLDEN_RATIO_PRIME + hashval) / CACHE_LINE_SIZE;
-+	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_PRIME) >> hashshift);
-+	return tmp % hashsize;
-+}
-+
-+static int icache_compare(struct cache_node *node, cache_key_t key)
-+{
-+	struct fuse4fs_inode *fi = ICNODE(node);
-+	struct fuse4fs_ikey *ikey = ICKEY(key);
-+
-+	if (fi->i_ino == ikey->i_ino)
-+		return CACHE_HIT;
-+
-+	return CACHE_MISS;
-+}
-+
-+static struct cache_node *icache_alloc(struct cache *c, cache_key_t key)
-+{
-+	struct fuse4fs_ikey *ikey = ICKEY(key);
-+	struct fuse4fs_inode *fi;
-+
-+	fi = calloc(1, sizeof(struct fuse4fs_inode));
-+	if (!fi)
-+		return NULL;
-+
-+	fi->i_ino = ikey->i_ino;
-+	return &fi->i_cnode;
-+}
-+
-+static bool icache_flush(struct cache *c, struct cache_node *node)
-+{
-+	return false;
-+}
-+
-+static void icache_relse(struct cache *c, struct cache_node *node)
-+{
-+	struct fuse4fs_inode *fi = ICNODE(node);
-+
-+	assert(fi->i_open_count == 0);
-+	free(fi);
-+}
-+
-+static unsigned int icache_bulkrelse(struct cache *cache,
-+				     struct list_head *list)
-+{
-+	struct cache_node *cn, *n;
-+	int count = 0;
-+
-+	if (list_empty(list))
-+		return 0;
-+
-+	list_for_each_entry_safe(cn, n, list, cn_mru) {
-+		icache_relse(cache, cn);
-+		count++;
++	/* linked files cannot be on the unlinked list or deleted */
++	if (inode.i_dtime != 0) {
++		dbg_printf(ff, "%s: unlinked ino=%d dtime=0x%x\n",
++			   __func__, ino, inode.i_dtime);
++		return -ENOENT;
 +	}
 +
-+	return count;
-+}
-+
-+static const struct cache_operations icache_ops = {
-+	.hash		= icache_hash,
-+	.alloc		= icache_alloc,
-+	.flush		= icache_flush,
-+	.relse		= icache_relse,
-+	.compare	= icache_compare,
-+	.bulkrelse	= icache_bulkrelse,
-+	.resize		= cache_gradual_resize,
-+};
-+
-+static errcode_t fuse4fs_iget(struct fuse4fs *ff, ext2_ino_t ino,
-+			      struct fuse4fs_inode **fip)
+ 	/* existence check */
+ 	if (mask == 0)
+ 		return 0;
+@@ -2162,9 +2169,80 @@ static int fuse4fs_remove_ea_inodes(struct fuse4fs *ff, ext2_ino_t ino,
+ 	return 0;
+ }
+ 
++static int fuse4fs_add_to_orphans(struct fuse4fs *ff, ext2_ino_t ino,
++				  struct ext2_inode_large *inode)
 +{
-+	struct fuse4fs_ikey ikey = {
-+		.i_ino = ino,
-+	};
-+	struct cache_node *node = NULL;
++	ext2_filsys fs = ff->fs;
 +
-+	cache_node_get(&ff->inodes, &ikey, 0, &node);
-+	if (!node)
-+		return ENOMEM;
++	dbg_printf(ff, "%s: orphan ino=%d dtime=%d next=%d\n",
++		   __func__, ino, inode->i_dtime, fs->super->s_last_orphan);
 +
-+	*fip = ICNODE(node);
++	inode->i_dtime = fs->super->s_last_orphan;
++	fs->super->s_last_orphan = ino;
++	ext2fs_mark_super_dirty(fs);
++
 +	return 0;
 +}
 +
-+static void fuse4fs_iput(struct fuse4fs *ff, struct fuse4fs_inode *fi)
++static int fuse4fs_remove_from_orphans(struct fuse4fs *ff, ext2_ino_t ino,
++				       struct ext2_inode_large *inode)
 +{
-+	cache_node_put(&ff->inodes, &fi->i_cnode);
-+}
++	ext2_filsys fs = ff->fs;
++	ext2_ino_t prev_orphan;
++	errcode_t err;
 +
- static inline blk64_t FUSE4FS_B_TO_FSBT(const struct fuse4fs *ff, off_t pos)
- {
- 	return pos >> ff->blocklog;
-@@ -954,6 +1068,11 @@ static void fuse4fs_unmount(struct fuse4fs *ff)
- 	if (!ff->fs)
- 		return;
- 
-+	if (cache_initialized(&ff->inodes)) {
-+		cache_purge(&ff->inodes);
-+		cache_destroy(&ff->inodes);
++	dbg_printf(ff, "%s: super=%d ino=%d next=%d\n",
++		   __func__, fs->super->s_last_orphan, ino, inode->i_dtime);
++
++	/* If we're lucky, the ondisk superblock points to us */
++	if (fs->super->s_last_orphan == ino) {
++		dbg_printf(ff, "%s: superblock\n", __func__);
++
++		fs->super->s_last_orphan = inode->i_dtime;
++		inode->i_dtime = 0;
++		ext2fs_mark_super_dirty(fs);
++		return 0;
 +	}
 +
- 	err = ext2fs_close(ff->fs);
- 	if (err) {
- 		err_printf(ff, "%s: %s\n", _("while closing fs"),
-@@ -1002,6 +1121,10 @@ static errcode_t fuse4fs_open(struct fuse4fs *ff, int libext2_flags)
- 		return err;
- 	}
- 
-+	err = cache_init(CACHE_CAN_SHRINK, 1U << 10, &icache_ops, &ff->inodes);
-+	if (err)
-+		return translate_error(ff->fs, 0, err);
++	/* Otherwise walk the ondisk orphan list. */
++	prev_orphan = fs->super->s_last_orphan;
++	while (prev_orphan != 0) {
++		struct ext2_inode_large orphan;
 +
- 	ff->fs->priv_data = ff;
- 	ff->blocklog = u_log2(ff->fs->blocksize);
- 	ff->blockmask = ff->fs->blocksize - 1;
-@@ -2071,6 +2194,7 @@ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
++		err = fuse4fs_read_inode(fs, prev_orphan, &orphan);
++		if (err)
++			return translate_error(fs, prev_orphan, err);
++
++		if (orphan.i_dtime == prev_orphan)
++			return translate_error(fs, prev_orphan,
++					       EXT2_ET_FILESYSTEM_CORRUPTED);
++
++		if (orphan.i_dtime == ino) {
++			dbg_printf(ff, "%s: prev=%d\n",
++				   __func__, prev_orphan);
++
++			orphan.i_dtime = inode->i_dtime;
++			inode->i_dtime = 0;
++
++			err = fuse4fs_write_inode(fs, prev_orphan, &orphan);
++			if (err)
++				return translate_error(fs, prev_orphan, err);
++
++			return 0;
++		}
++
++		dbg_printf(ff, "%s: orphan=%d next=%d\n",
++			   __func__, prev_orphan, orphan.i_dtime);
++		prev_orphan = orphan.i_dtime;
++	}
++
++	return translate_error(fs, ino, EXT2_ET_FILESYSTEM_CORRUPTED);
++}
++
+ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
+ {
+ 	ext2_filsys fs = ff->fs;
++	struct fuse4fs_inode *fi;
+ 	errcode_t err;
+ 	struct ext2_inode_large inode;
+ 	int ret = 0;
+@@ -2181,7 +2259,6 @@ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
+ 		return 0; /* XXX: already done? */
+ 	case 1:
+ 		inode.i_links_count--;
+-		ext2fs_set_dtime(fs, EXT2_INODE(&inode));
+ 		break;
+ 	default:
+ 		inode.i_links_count--;
+@@ -2194,6 +2271,26 @@ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
  	if (inode.i_links_count)
  		goto write_out;
  
++	err = fuse4fs_iget(ff, ino, &fi);
++	if (err)
++		return translate_error(fs, ino, err);
 +
++	dbg_printf(ff, "%s: put ino=%d opencount=%d\n", __func__, ino,
++		   fi->i_open_count);
++
++	/*
++	 * The file is unlinked but still open; add it to the orphan list and
++	 * free it later.
++	 */
++	if (fi->i_open_count > 0) {
++		fuse4fs_iput(ff, fi);
++		ret = fuse4fs_add_to_orphans(ff, ino, &inode);
++		if (ret)
++			return ret;
++
++		goto write_out;
++	}
++	fuse4fs_iput(ff, fi);
+ 
  	if (ext2fs_has_feature_ea_inode(fs->super)) {
  		ret = fuse4fs_remove_ea_inodes(ff, ino, &inode);
- 		if (ret)
-@@ -2987,6 +3111,13 @@ static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
- 			goto out;
+@@ -2213,6 +2310,7 @@ static int fuse4fs_remove_inode(struct fuse4fs *ff, ext2_ino_t ino)
+ 			return translate_error(fs, ino, err);
  	}
  
-+	err = fuse4fs_iget(ff, file->ino, &file->fi);
-+	if (err) {
-+		ret = translate_error(fs, 0, err);
-+		goto out;
++	ext2fs_set_dtime(fs, EXT2_INODE(&inode));
+ 	ext2fs_inode_alloc_stats2(fs, ino, -1,
+ 				  LINUX_S_ISDIR(inode.i_mode));
+ 
+@@ -2761,6 +2859,16 @@ static void op_link(fuse_req_t req, fuse_ino_t child_fino,
+ 	if (ret)
+ 		goto out2;
+ 
++	/*
++	 * Linking a file back into the filesystem requires removing it from
++	 * the orphan list.
++	 */
++	if (inode.i_links_count == 0) {
++		ret = fuse4fs_remove_from_orphans(ff, child, &inode);
++		if (ret)
++			goto out2;
 +	}
-+	file->fi->i_open_count++;
 +
+ 	inode.i_links_count++;
+ 	ret = update_ctime(fs, child, &inode);
+ 	if (ret)
+@@ -3044,7 +3152,8 @@ static void detect_linux_executable_open(int kernel_flags, int *access_check,
+ #endif /* __linux__ */
+ 
+ static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
+-			     ext2_ino_t ino, struct fuse_file_info *fp)
++			     ext2_ino_t ino,
++			     struct fuse_file_info *fp)
+ {
+ 	ext2_filsys fs = ff->fs;
+ 	errcode_t err;
+@@ -3120,6 +3229,8 @@ static int fuse4fs_open_file(struct fuse4fs *ff, const struct fuse_ctx *ctxt,
+ 
  	file->check_flags = check;
  	fuse4fs_set_handle(fp, file);
++	dbg_printf(ff, "%s: ino=%d fh=%p opencount=%d\n", __func__, ino, file,
++		   file->fi->i_open_count);
  
-@@ -3175,6 +3306,7 @@ static void op_release(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
+ out:
+ 	if (ret)
+@@ -3136,6 +3247,8 @@ static void op_open(fuse_req_t req, fuse_ino_t fino, struct fuse_file_info *fp)
+ 
+ 	FUSE4FS_CHECK_CONTEXT(req);
+ 	FUSE4FS_CONVERT_FINO(req, &ino, fino);
++	dbg_printf(ff, "%s: ino=%d\n", __func__, ino);
++
+ 	fuse4fs_start(ff);
+ 	ret = fuse4fs_open_file(ff, ctxt, ino, fp);
+ 	fuse4fs_finish(ff, ret);
+@@ -3284,6 +3397,55 @@ static void op_write(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
+ 		fuse_reply_err(req, -ret);
+ }
+ 
++static int fuse4fs_free_unlinked(struct fuse4fs *ff, ext2_ino_t ino)
++{
++	struct ext2_inode_large inode;
++	ext2_filsys fs = ff->fs;
++	errcode_t err;
++	int ret = 0;
++
++	err = fuse4fs_read_inode(fs, ino, &inode);
++	if (err)
++		return translate_error(fs, ino, err);
++
++	if (inode.i_links_count > 0)
++		return 0;
++
++	dbg_printf(ff, "%s: ino=%d links=%d\n", __func__, ino,
++		   inode.i_links_count);
++
++	if (ext2fs_has_feature_ea_inode(fs->super)) {
++		ret = fuse4fs_remove_ea_inodes(ff, ino, &inode);
++		if (ret)
++			return ret;
++	}
++
++	/* Nobody holds this file; free its blocks! */
++	err = ext2fs_free_ext_attr(fs, ino, &inode);
++	if (err)
++		return translate_error(fs, ino, err);
++
++	if (ext2fs_inode_has_valid_blocks2(fs, EXT2_INODE(&inode))) {
++		err = ext2fs_punch(fs, ino, EXT2_INODE(&inode), NULL,
++				   0, ~0ULL);
++		if (err)
++			return translate_error(fs, ino, err);
++	}
++
++	ret = fuse4fs_remove_from_orphans(ff, ino, &inode);
++	if (ret)
++		return ret;
++
++	ext2fs_set_dtime(fs, EXT2_INODE(&inode));
++	ext2fs_inode_alloc_stats2(fs, ino, -1, LINUX_S_ISDIR(inode.i_mode));
++
++	err = fuse4fs_write_inode(fs, ino, &inode);
++	if (err)
++		return translate_error(fs, ino, err);
++
++	return 0;
++}
++
+ static void op_release(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
+ 		       struct fuse_file_info *fp)
+ {
+@@ -3295,9 +3457,21 @@ static void op_release(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
+ 
+ 	FUSE4FS_CHECK_CONTEXT(req);
+ 	FUSE4FS_CHECK_HANDLE(req, fh);
+-	dbg_printf(ff, "%s: ino=%d\n", __func__, fh->ino);
++	dbg_printf(ff, "%s: ino=%d fh=%p opencount=%u\n",
++		   __func__, fh->ino, fh, fh->fi->i_open_count);
++
+ 	fs = fuse4fs_start(ff);
+ 
++	/*
++	 * If the file is no longer open and is unlinked, free it, which
++	 * removes it from the ondisk list.
++	 */
++	if (--fh->fi->i_open_count == 0) {
++		ret = fuse4fs_free_unlinked(ff, fh->ino);
++		if (ret)
++			goto out_iput;
++	}
++
+ 	if ((fp->flags & O_SYNC) &&
+ 	    fuse4fs_is_writeable(ff) &&
+ 	    (fh->open_flags & EXT2_FILE_WRITE)) {
+@@ -3306,6 +3480,7 @@ static void op_release(fuse_req_t req, fuse_ino_t fino EXT2FS_ATTR((unused)),
  			ret = translate_error(fs, fh->ino, err);
  	}
  
-+	fuse4fs_iput(ff, fh->fi);
++out_iput:
+ 	fuse4fs_iput(ff, fh->fi);
  	fp->fh = 0;
  	fuse4fs_finish(ff, ret);
- 
 
 
