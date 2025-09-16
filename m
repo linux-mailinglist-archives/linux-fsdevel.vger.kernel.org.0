@@ -1,183 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-61832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1345B5A441
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 23:50:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD168B5A45E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 23:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868E317B866
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 21:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 925204859CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 21:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1C430506C;
-	Tue, 16 Sep 2025 21:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAA5323F65;
+	Tue, 16 Sep 2025 21:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+TrpXzU"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="Qyx3ysYD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BAC292B44;
-	Tue, 16 Sep 2025 21:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829DA31BCA5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 21:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758059417; cv=none; b=Lyq0Agmm48GES1XC+UFidB4G31XkjTC1+TWF4dVAVLl5RUWW0s19YUMxZfdLA6VdgUpQtMRWJnibf7HzwQFH61cjU2/4SpQSh6s6nK8v5vOqSxRjGYBF2Yues/PVtS4pfitb6fF0PQy24OrPyMn7isAVXB/hnAlXZQUhqZX+KYA=
+	t=1758059856; cv=none; b=HGcYlC4DY2Kk6kSS0LwKsiBhfdgdHYhFJdnKiXYLCg+SZmTpShnIpdE+PBEbrV1pANOjtpUJ3TjySLOgc5Gl5y2//FLrr7ieXyxaDGr8tBDSsFmvIk+1VVYnqZ5pvpwiHlKe6vcDmh+/3q0ZF03SCy2edR9N6Axs12A2jZp8FQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758059417; c=relaxed/simple;
-	bh=ZQ5vXZCra2+RwJM46CnghsruiNCvFvmuzVBMwnQAxV8=;
+	s=arc-20240116; t=1758059856; c=relaxed/simple;
+	bh=IGi6wW9ZwhNONQRqpRWlNHQaETJE/DXoYHyCSnrl0PU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJ8/3SoLTggNUB5tcboIfyE1Vo/WYrLqGPvvF9aoxlcRIA2tOEJdz/mM215LR2TsmoZ3X/dDF45qKOeOHqbSJYDSv19zWV0zmQSZwmHauESZiqx+eNfJItMa7jhIsS16bmAArCzJ/qRbNdS9Qlq4jx0b7ThsiTfd3LEdVaiKaK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+TrpXzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7972C4CEEB;
-	Tue, 16 Sep 2025 21:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758059416;
-	bh=ZQ5vXZCra2+RwJM46CnghsruiNCvFvmuzVBMwnQAxV8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V+TrpXzUl2eTgi4QAIadZ/pNqv4SSebpKU3um6A7/anUcuUGYZyj9EL6D0IGTRP7l
-	 LGw9Vctspzd2wyYumY6+hlmE5QoNEyrVnAial2rZOdpr6lJ2kAfh0l4YBsjHEZPx75
-	 uqyKE07qlPxAeISvNqNsGLvGISga6JTeIVmT4nBWYhNyE5eUDLXu9mmj2DrMmAyFg8
-	 dkXAjw1NJS5PNR1FKKPpQBvzDmq2fVa4WxBysqzBwlYh8XiWX/MzgZVcNluuzMEW99
-	 xRLj940q2hWbWyuSkN/iWBNliBKT3Sw5fBuGq+8+9IZt49pC1glVE13Dd7fnXFtJ+z
-	 wx+sp4PwAsr6w==
-Date: Tue, 16 Sep 2025 14:50:11 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0dDDybezCTWn5R8zFdco6n3AOGcxmhyoHNkJ8mN42jIr0SG71idb6pZ9y+A/XZHHscyG0y76p5xXbc2QTHIJVsZlDT7nx4cRFuCW51U7iv6dY+/2sMJs8WpeiGp2nKNZzeXiyg04FlsWm22DkT4IRQIFiZeuZG1GCpHown64FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=Qyx3ysYD; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso5023311a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 14:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1758059854; x=1758664654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fSsNsg94xTPxgo7mtr0vhLneaLnV1NurRaDsg6aVKxA=;
+        b=Qyx3ysYDBJIag093ZXSEr4hRI70hbJHvHwW6sKjnIdvE8tOxy2eUr5GvcWfanJGsA2
+         b+9H7Fcsyct5E0+rHmMMZd7ZMXoGPDYV9H0aTOqLDCOnMOsL8I89zPipwxVJX9qi105I
+         rpvNWP0YrAu9cn4RDVphU509dHbwN9UKc5vBPTyFXgg+33H+opp3T5XxBr6H/WbHwJjm
+         3/4lq3mIl26vrY4CoTpxzLCdpbUrQy/6WF92nXz5J4QZHAMNEeIU0so/Co/HxMQ+C9Mc
+         cz9io9/M0xM+o3aIPd0+NF1HwnJ+0m6Qekp6j7lxAkLgJ+GfwU2A3BzJNCJa8nKd2lJ/
+         3DFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758059854; x=1758664654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fSsNsg94xTPxgo7mtr0vhLneaLnV1NurRaDsg6aVKxA=;
+        b=Xcp6bivHccJSu1EYhQ20kSiXYPiaNK3Mrn5/g1s1egdTkf4G8p9i4l1WgDRgYO+Eki
+         YQTG+7BqLNhkCxTz6oEEBv80ZuC44+ymJuu/xNKS2pE8zpXNLaunpfT5bBSvSEl3yrxZ
+         Di712QuapGo/pgOFY1yBtaqfkZb/UKUqafspWW5mcB0yKh0LE+3SzD1nCGQwTqVDbics
+         I69WuQL4c1VK1gzPS6MJj1huGZ4WTxkkloisZEjWgPdL1L2g1R6BP6OwvrXUPQ8bvXn4
+         TJVoHxZ5V6QBuVMGY9j6Fg8nI4KqNUNpId4nrgP7UuNiU8T1/wawK44f6vIIfEHgpS1K
+         EQog==
+X-Forwarded-Encrypted: i=1; AJvYcCX3m5vd7ycOIoJUlNn/ujp82HcP8l406N2ZZ08IiBfH4GOlEWqdXSlbk0QSCB9jSwwg7Gg7xyFCj8WQ67NP@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzb95gCvq5tjOcjtRUoPnLNy9NTkQezswopZntyqQqJfPfkTAG
+	Ze29jFlIr6M9SkJ+DK2Upog0hw28NAQnMnJCYY6N1oAR6splKz4R6a9u0DSfztuRosE=
+X-Gm-Gg: ASbGncsOTwpryYepJMArsWXdIxSYvHK4qnOIPjrv86SLo9IpZXbDx+1nUNY2im+at5E
+	2mSb7GMBNXuv3lx6yoKfF5oR7RCrCLn7uFmwM0q95V2ailPpEOPXJd0jHUWKOYztV95j7eg5QcY
+	Uxw+gyAelKemloI8zke5Kep2eQLqQhyH+IhAB/aV64nodn0btC2IqJtPmyIj6onqq7/Z5QNsPRo
+	YnUxR52Affn+bG2ohmFcQiKFih/djYRCBrPSphnWRox35MuBooMx9vTk3KXBTxyT9EpxnNYzsQH
+	9BHN8Vlf/dvkoDSjKzie0Vb5kB/Yo60fo4UJn0Dr/eZH+FDIyGfHP9/KVVi1durL1wP5BTFBr24
+	H0Zsei9hx84qThRoKrq0hXoXewiEJ4nZe
+X-Google-Smtp-Source: AGHT+IHdEe5K+YDWPhJLhlZn7IU67ePHwIpfI8vI3XiMDhr12ZwDMD7hxV3qH6hUc2/5B/bKZQSVwg==
+X-Received: by 2002:a17:902:ebc9:b0:24b:4a9a:703a with SMTP id d9443c01a7336-25d24da7536mr278813885ad.17.1758059853851;
+        Tue, 16 Sep 2025 14:57:33 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ea3c72dacsm1636848a91.4.2025.09.16.14.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 14:57:33 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:57:31 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+Cc: linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Ved Shanbhogue <ved@rivosinc.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang
- < version 17
-Message-ID: <20250916215011.GA596283@ax162>
-References: <20250916163004.674341701@linutronix.de>
- <20250916163252.100835216@linutronix.de>
- <20250916184440.GA1245207@ax162>
- <87ikhi9lhg.ffs@tglx>
- <87frcm9kvv.ffs@tglx>
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V12 3/5] riscv: Add RISC-V Svrsw60t59b extension support
+Message-ID: <aMndS8F6tr1ZvILt@debug.ba.rivosinc.com>
+References: <20250915101343.1449546-1-zhangchunyan@iscas.ac.cn>
+ <20250915101343.1449546-4-zhangchunyan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <87frcm9kvv.ffs@tglx>
+In-Reply-To: <20250915101343.1449546-4-zhangchunyan@iscas.ac.cn>
 
-On Tue, Sep 16, 2025 at 10:56:36PM +0200, Thomas Gleixner wrote:
-> clang < 17 fails to use scope local labels with CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y:
-> 
->      {
->      	__label__ local_lbl;
-> 	...
-> 	unsafe_get_user(uval, uaddr, local_lbl);
-> 	...
-> 	return 0;
-> 	local_lbl:
-> 		return -EFAULT;
->      }
-> 
-> when two such scopes exist in the same function:
-> 
->   error: cannot jump from this asm goto statement to one of its possible targets
-> 
-> There are other failure scenarios. Shuffling code around slightly makes it
-> worse and fail even with one instance.
-> 
-> That issue prevents using local labels for a cleanup based user access
-> mechanism.
-> 
-> After failed attempts to provide a simple enough test case for the 'depends
-> on' test in Kconfig, the initial cure was to mark ASM goto broken on clang
-> versions < 17 to get this road block out of the way.
-> 
-> But Nathan pointed out that this is a known clang issue and indeed affects
-> clang < version 17 in combination with cleanup(). It's not even required to
-> use local labels for that.
-> 
-> The clang issue tracker has a small enough test case, which can be used as
-> a test in the 'depends on' section of CC_HAS_ASM_GOTO_OUTPUT:
-> 
-> void bar(void **);
-> void* baz();
+On Mon, Sep 15, 2025 at 06:13:41PM +0800, Chunyan Zhang wrote:
+>The Svrsw60t59b extension allows to free the PTE reserved bits 60
+>and 59 for software to use.
+>
+>Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+>Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 
-I would recommend
+Same comment as Conor for dt-bindings.
+Other than that
 
-  void* baz(void);
-
-here and in the actual test to preemptively harden against the
-possibility of a future where -Wstrict-prototypes is turned on as an
-error by default (as unlikely as this may be, it has been brought up
-before [1]), as I would not want this to get silently disabled.
-
-> int  foo (void) {
->     {
-> 	    asm goto("jmp %l0"::::l0);
-> 	    return 0;
-> l0:
-> 	    return 1;
->     }
->     void *x __attribute__((cleanup(bar))) = baz();
->     {
-> 	    asm goto("jmp %l0"::::l1);
-> 	    return 42;
-> l1:
-> 	    return 0xff;
->     }
-> }
-> 
-> Add another dependency to config CC_HAS_ASM_GOTO_OUTPUT for it and use the
-> clang issue tracker test case for detection by condensing it to obfuscated
-> C-code contest format. This reliably catches the problem on clang < 17 and
-> did not show any issues on the non known to be broken GCC versions.
-> 
-> That test might be sufficient to catch all issues and therefore could
-> replace the existing test, but keeping that around does no harm either.
-> 
-> Thanks to Nathan for pointing to the relevant clang issue!
-> 
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1886
-> Link: https://github.com/llvm/llvm-project/commit/f023f5cdb2e6c19026f04a15b5a935c041835d14
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-> ---
-> V2a: Use the reproducer from llvm
-> V2: New patch
-> ---
->  init/Kconfig |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -99,7 +99,10 @@ config GCC_ASM_GOTO_OUTPUT_BROKEN
->  config CC_HAS_ASM_GOTO_OUTPUT
->  	def_bool y
->  	depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
-> +	# Find basic issues
-
-Maybe "Detect basic support" or something like that? This is not really
-an "issues" test, more of a "does the compiler support it at all?" test
-if I understand correctly.
-
->  	depends on $(success,echo 'int foo(int x) { asm goto ("": "=r"(x) ::: bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
-> +	# Detect buggy clang, fixed in clang-17
-> +	depends on $(success,echo 'void b(void **);void* c();int f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribute__((cleanup(b))) = c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}}' | $(CC) -x c - -c -o /dev/null)
->  
->  config CC_HAS_ASM_GOTO_TIED_OUTPUT
->  	depends on CC_HAS_ASM_GOTO_OUTPUT
+Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+>---
+> arch/riscv/Kconfig             | 14 ++++++++++++++
+> arch/riscv/include/asm/hwcap.h |  1 +
+> arch/riscv/kernel/cpufeature.c |  1 +
+> 3 files changed, 16 insertions(+)
+>
+>diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>index 51dcd8eaa243..e1b6a95952c4 100644
+>--- a/arch/riscv/Kconfig
+>+++ b/arch/riscv/Kconfig
+>@@ -862,6 +862,20 @@ config RISCV_ISA_ZICBOP
+>
+> 	  If you don't know what to do here, say Y.
+>
+>+config RISCV_ISA_SVRSW60T59B
+>+	bool "Svrsw60t59b extension support for using PTE bits 60 and 59"
+>+	depends on MMU && 64BIT
+>+	depends on RISCV_ALTERNATIVE
+>+	default y
+>+	help
+>+	  Adds support to dynamically detect the presence of the Svrsw60t59b
+>+	  extension and enable its usage.
+>+
+>+	  The Svrsw60t59b extension allows to free the PTE reserved bits 60
+>+	  and 59 for software to use.
+>+
+>+	  If you don't know what to do here, say Y.
+>+
+> config TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI
+> 	def_bool y
+> 	# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=aed44286efa8ae8717a77d94b51ac3614e2ca6dc
+>diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+>index affd63e11b0a..f98fcb5c17d5 100644
+>--- a/arch/riscv/include/asm/hwcap.h
+>+++ b/arch/riscv/include/asm/hwcap.h
+>@@ -106,6 +106,7 @@
+> #define RISCV_ISA_EXT_ZAAMO		97
+> #define RISCV_ISA_EXT_ZALRSC		98
+> #define RISCV_ISA_EXT_ZICBOP		99
+>+#define RISCV_ISA_EXT_SVRSW60T59B	100
+>
+> #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>
+>diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+>index 743d53415572..2ba71d2d3fa3 100644
+>--- a/arch/riscv/kernel/cpufeature.c
+>+++ b/arch/riscv/kernel/cpufeature.c
+>@@ -539,6 +539,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+> 	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+> 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+> 	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+>+	__RISCV_ISA_EXT_DATA(svrsw60t59b, RISCV_ISA_EXT_SVRSW60T59B),
+> 	__RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
+> };
+>
+>-- 
+>2.34.1
+>
 
