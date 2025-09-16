@@ -1,123 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-61730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EADBB597E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:40:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A920B59803
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13FA6161EFC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1BD4618D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7C931326B;
-	Tue, 16 Sep 2025 13:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A173A31B10A;
+	Tue, 16 Sep 2025 13:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w11yYXx+"
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="aAgNAUG/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74599315D30
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 13:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E167331A05B;
+	Tue, 16 Sep 2025 13:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030018; cv=none; b=bgXPIGG22Q/QvBhC/kAB+oWwdEtyPa+2PKmYhJWbQuNa9pjhmg7/ObHmMla6dmdjcMJblAtA+Ogq9B6+BVQSi2CfCmvI8Pj4TBHmuNFqMy3ud/bMMemKLmdocayaZV0PGcIZtXOjwWljakVcCDSuCUoMem16FpHb0CGZO9E/S2Y=
+	t=1758030227; cv=none; b=gUMBmUw/KnD0efoJ5QchAANx0aklDD074eLQUis0hzUmVzSBlMxKdyTFn1J6aqeMQ7x8awMn5IdltApaurk/CVvAQUyTWcpwGdb54Ba31gjMfwQchVGADSoGNQDxzTeOr2roDX3OZZBiXx+NAh9OaWajmrZf0MOrBhpUStJhQqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030018; c=relaxed/simple;
-	bh=+gio5aL+IW3u8W8SSU4aBeYKAREDBl4pvtVMTW2Fww4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nHvgI2JA3bGgczJ0XgrSx7MYfB96isfY/I1E7MfsMsXjoLXZSeW0++q2glKRpJ+SPKkWD7SG8SJ4ObL5+F5uQ5mSeXQQnw7d8OmBu4Mb04etKS8fs29tXKORx88+cM7ELnIKLDJr2wQBwLW+mm/+H8mUDUs4kk0IqXlsHYTRdY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w11yYXx+; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso55075505e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 06:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758030015; x=1758634815; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mcfExlni0fgEhBakaF+iv8wUB2vTkCFI57QVuCuRuQI=;
-        b=w11yYXx+PJ2S70aQQE6th1BIImCh6AeKdDLfGNuw5UKqoUlQg24eqiqWzz2LuG36Rr
-         St7GLc6KvVp/2vysYpx1BN3l0cAXG/8+P9e80zbhvu/Kg7OAgIdQCFEeLjhmwiKxH+uf
-         p7ihY0EUmz0EaHqBp8WcDF9zuLuLyQk+vBrXeBBCcAVU8+lRgrLuFbvDVAgOIpnGq/Qi
-         TVC8MIaj7CrgWSh+klvGhsiNYl/1fjByc8yKuEVjD/sDV2EDFt/ZzKKNRqEpI7ky3nTm
-         IhtAJC8awvvIPShrMU6xonUvljn1ALrGtZTid0edYRLBXDT+vBY0Tfbmur/QuBe+zHRM
-         wSpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758030015; x=1758634815;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mcfExlni0fgEhBakaF+iv8wUB2vTkCFI57QVuCuRuQI=;
-        b=as/h8onlEw+ZkVrgchtnksuJWRE/tsIKGV5jNcGHXyFtpBn3JhO7wZ80WNgFa0qLxL
-         5tPVGYgcYbHeNDCcYYkykMmpJRqmKQAWzDP9fXFkZpq+J45BIcLFM2ECuPK7Sd2zfhc0
-         2Ts5LycQxKzHQVVf4Kcw+Q0l/7C6ygtd2o2anVHlQy5sTxRMd+lfX0U879zmHbHjBtjV
-         IuTGEPdYDWh1v2TjyM4rsyvTok0fMxMb1JJEWbtcgQdkXqeqpUMKZrxIC1z5PQNaKjJm
-         G2woWWHxXJHHdV3R6iZo0wEey6nJ2cOgaItvVmjlF459X/CD5pHDWG/SDTOlBTxzqnHl
-         zEhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU64F6uz26zsd6V3j7u0tzYKXxjIqs6aBhaGhIpCJLNKYjZkP4XoilFa8I8aPPVxz0WcHBj5o9mEXGbLOi4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxJzFgXc6v9rv1yZiuoIB3M8wjHCiFGYPW/95a7/HGw5cuLNmn
-	UNPc/C4N3p8iI4dODgYJ9UZvNCmio7Efrncmh4qx7BrTexd6jlfflR4GfsvUg7AcnmE=
-X-Gm-Gg: ASbGncv7/A28M0Jwg/BrlOIlqJQSOjm63XDb4aq1vUBMXoDhlVky2ilmdz+xcxEBrMN
-	gI3Qvdlo0M72JhFFdGmxnb1m1Bvt+v1x4qzww/J6Ai8CaRk2cZJ++ceUsBxPvA5r4Pyk/HGXpaN
-	M+5wvyoVDfij8OeXO31mU7ndvcD4daBF+TDAmcJ7Nwsl0Iec+W2CP+EkYxvX0+mfQUkOY/lsx85
-	iuoEOGKLcqLddngdUe5yXezT7t7xOl2H7moRu6bPhg4aprWvXc6n+9bS8vllK9qzDbb9z0a0wbY
-	qU2dVgPA4B3W8/NecoIkh9l0OWhheHqyOdafbU8AJZmMoQbS6GP89FvKpUSenFNrfG/kHYrCwNW
-	pygQJVk+tr1uX2mm5478v5S0LKJc=
-X-Google-Smtp-Source: AGHT+IG8kaWPMWFHbVd4viKfQeFJBGjRKwC9gr1w5fiYvRQ3T/k+ZTU4DWIxru8SYExw4YHgKkL4Vg==
-X-Received: by 2002:a05:6000:2887:b0:3ec:dbcc:8104 with SMTP id ffacd0b85a97d-3ecdbcc8195mr912496f8f.36.1758030014747;
-        Tue, 16 Sep 2025 06:40:14 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45f31c51e8dsm41553405e9.1.2025.09.16.06.40.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 06:40:14 -0700 (PDT)
-Date: Tue, 16 Sep 2025 16:40:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>,
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 04/33] block: use extensible_ioctl_valid()
-Message-ID: <aMlouk_55OXZv8w5@stanley.mountain>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-4-1a247645cef5@kernel.org>
- <02da33e3-6583-4344-892f-a9784b9c5b1b@sirena.org.uk>
+	s=arc-20240116; t=1758030227; c=relaxed/simple;
+	bh=4RPsniceCxTbDvIQYtXo7KbQrexVuJ3owhcslNfqKlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X+p5EqNvAXV5g5/5RnN3/5/JLn/0FtQQOm3mQWhA3FV9wd++XNm8vunKAklSEAUmriuCoJHIjQb/zWklcgUwrMJT+5No+3+N0F62Or09/sJdjcE/GQcxUgiPmtpjDX4qtr7Zp2jLtMcd4/xp54FT9G+CGw6hqLOL9qr4qK6yoo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=aAgNAUG/; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=7ImHOzG3mjGym1iYUJc4foIPK8/k8Yedk8oGlL7UsVY=; b=aAgNAUG/wunDgGVcWNxOFDQJaT
+	hx3bS58WhDpIWZeFUX9lLiCpL/r9ic212DUwcF2xi56C9CROL43qnc3M/fzM7G2Z05b1tpyGEhT28
+	SnRzs36jaMEa73sH1SEWyG6hkMd82Ofm+IkOHh5dCuo5phpBtkUJHEvrNc3NlmK1DV/J0gb0iLAQi
+	uSZ/PjEymNRBxrrl4NOCXCfjjSFdiHqOgWMMRXzNXWu8KGFE6w2xavO7Y4C7vQVaFCWpIY4mjAjFY
+	wps1U+SzvyEERlN7MJ8jjbl9HSpMekw/M8h3kyzpXaR9mDxnwtgUREZrNgnf3jfQlwd+TENJO5QQt
+	kh7V7o4CuEQDWSOoMgKN9ytrDZPLpOTPXgu6A1D4SIZBDexdJ/zw2CGXtX+u0tCNf4EiHHHdQytiy
+	hy77IDNIizcO8VDnkscPlFnkNMItyKyve7bk51G9Olfdi4P3Rt4xFO5dUQRW3adcfg2fHnkD+rDVb
+	m1LHPsSdUvnsOuphSd66/YLB4YD1o3h/j/8wblaaJWrAlgzuvz28lR1sVace45NV2q9ImcMmW3io+
+	kOeT/WF/x8o9nVnCEVW4h7uSipowuSoRZtSdizFnzQlMnTEblxABRPY0obZ1S1m6tS0Jc0I7WFjC0
+	de3JYIIiphuqBUy6aCrIO+jgMo5cdRbDUYlu4Bf3U=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>, Tingmao Wang <m@maowtm.org>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+ v9fs@lists.linux.dev, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Tue, 16 Sep 2025 15:43:33 +0200
+Message-ID: <16279923.yzM2DkEX5f@silver>
+In-Reply-To: <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
+References:
+ <aMih5XYYrpP559de@codewreck.org>
+ <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02da33e3-6583-4344-892f-a9784b9c5b1b@sirena.org.uk>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Yeah, the:
+On Tuesday, September 16, 2025 2:44:27 PM CEST Tingmao Wang wrote:
+> On 9/16/25 00:31, Dominique Martinet wrote:
+[...]
+> >> I tried mounting a qemu-exported 9pfs backed on ext4, with
+> >> multidevs=remap, and created a file, used stat to note its inode number,
+> >> deleted the file, created another file (of the same OR different name),
+> >> and that new file will have the same inode number.
+> >> 
+> >> (If I don't delete the file, then a newly created file would of course
+> >> have a different ext4 inode number, and in that case QEMU exposes a
+> >> different qid)
+> > 
+> > Ok so from Christian's reply this is just ext4 reusing the same inode..
+> > I briefly hinted at this above, but in this case ext4 will give the
+> > inode a different generation number (so the ext4 file handle will be
+> > different, and accessing the old one will get ESTALE); but that's not
+> > something qemu currently tracks and it'd be a bit of an overhaul...
+> > In theory qemu could hash mount_id + file handle to get a properly
+> > unique qid, if we need to improve that, but that'd be limited to root
+> > users (and to filesystems that support name_to_handle_at) so I don't
+> > think it's really appropriate either... hmm..
+> 
+> Actually I think I forgot that there is also qid.version, which in the
+> case of a QEMU-exported 9pfs might just be the file modification time?  In
+> 9pfs currently we do reject a inode match if that version changed server
+> side in cached mode:
+> 
+> v9fs_test_inode_dotl:
+> 	/* compare qid details */
+> 	if (memcmp(&v9inode->qid.version,
+> 		   &st->qid.version, sizeof(v9inode->qid.version)))
+> 		return 0;
+> 
+> (not tested whether QEMU correctly sets this version yet)
 
-	if (extensible_ioctl_valid(cmd, FS_IOC_GETLBMD_CAP, LBMD_SIZE_VER0))
-		return -ENOIOCTLCMD;
+Define "correctly". ;-) QEMU sets it like this since 2010:
 
-test is inverted...  It should be if (!valid) return instead of if (valid)
-return;
+  qidp->version = stbuf->st_mtime ^ (stbuf->st_size << 8);
 
-regards,
-dan carpenter
+https://github.com/qemu/qemu/blob/190d5d7fd725ff754f94e8e0cbfb69f279c82b5d/hw/9pfs/9p.c#L1020
+
+/Christian
+
 
 
