@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6E6B58AD8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 03:09:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF6BB58ADA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 03:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC791B26C08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 01:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D301B26B9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 01:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AB81DE89A;
-	Tue, 16 Sep 2025 01:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67301E1A3D;
+	Tue, 16 Sep 2025 01:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8bx7678"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjU55giO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90F07E0E4;
-	Tue, 16 Sep 2025 01:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139821C84B8;
+	Tue, 16 Sep 2025 01:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757984951; cv=none; b=i3g01NvbBTf1T2s618kCwxue2DLHar48JkvSSV2Etgs6DkZ6lYG8eDx+J+8IwwVT2pjUawi2GuxohsyI2T0jgSAYk5Kb9I0Os/5ezB70rYDgc9OwCm4flHXB3COCUerZ8ZPCHIja0bHGbem4nEK1EBBSspMdMURL/1AzEvvf0Kk=
+	t=1757984967; cv=none; b=Bfvk1E5u0P3mS+G65MnaSB9rnCBJp9k4PmSVAbHZlbPfFO7YUFOcxjOo0V0mQ+BUUPThZtZw9EZLO8yLJEmkMIkEYfhWbQ1NbP5vQfU5aNyTzPBo2ta16h0JPbvMIBL/Yg/s+lvLwhZU10PLsvMTmsywJsSDG2ZaXGHQTDrB14I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757984951; c=relaxed/simple;
-	bh=YrNdJIb5GvVUXeN38Lep1KSvkbZbYgNQTwDklswNS7U=;
+	s=arc-20240116; t=1757984967; c=relaxed/simple;
+	bh=FwybMnKCoTO6dYzytLK04GE496dfqF9GYP67GUYAz/0=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cylabs//iyGH9YVZiQf9WCrdm47sxPOGrzuY7UtKQUNG3r5oQynyiMS9k5XeX08LWBRp8hSYWgfg2X3dRzIV/HC/AVT2pnp82tFemYuSzPPymcSfN3yoyMjoftjo2V/b5A2tiVJmsV0e/GOaDD0lvnldORazOPZRr8l5dHGgQrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8bx7678; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFDEC4CEF1;
-	Tue, 16 Sep 2025 01:09:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=lZY4SMgVo1CX/eUFsCzL2M4bylAbYT/HARqHugrIlFk6ufCE37srEtTFkID3W9iRGscJcs3FHo0SvZhuaXwzRpNBUnPd/WqySVntNmgi2yiYKoO41tu5YNxwk0RPmPtw2k/Nm+8LCQqMfSjFktMFpYhLXIGQ2tuO0QMFjes6pug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjU55giO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEEEFC4CEF1;
+	Tue, 16 Sep 2025 01:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757984951;
-	bh=YrNdJIb5GvVUXeN38Lep1KSvkbZbYgNQTwDklswNS7U=;
+	s=k20201202; t=1757984966;
+	bh=FwybMnKCoTO6dYzytLK04GE496dfqF9GYP67GUYAz/0=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=n8bx7678Mg/r0tNaG4yPmWEZo7Yr4mJqxMfl49gXt/ITLcV0iriKHbSuLJW4YS1io
-	 WUInnj2YuNIvKaAgF6IvD3qW+cYeY8j1wdq8ialuCf5PHe0X8PSmomDzGIceIe7U9q
-	 P3crrdSdqNSdI1Q0qEH4dUTETK7L5mXFbjxYv6dZlxEUfhbA7btJ2Nlv+x2G9tKEuh
-	 ysQLPdPSBXMX2t9TABX0LyqLSIV9jwQHmkBgEydhd2My+mB1+yr7hwUEVBp7DU3eWE
-	 cbHuJVMohHWo1HKMlPcdAQ1bIZB6hlDU6F7+RPKH+7oGxpwM+XODJvA6SIIGErgVGj
-	 tnpPmdc/uWTAA==
-Date: Mon, 15 Sep 2025 18:09:10 -0700
-Subject: [PATCH 3/4] fuse4fs: set proc title when in fuse service mode
+	b=kjU55giOnVJk/SSkHUTCd4VrF1evTC0G4OG6Q5LchkJqrf106PZeN1SHZONTHNpuW
+	 dE7DYZvk8OMkEQAYgpCsYASnhcQ8Avrqo7ACCxieeWZC38/g29cc1AipsUTq1XhP6d
+	 XT61uSMWdArAeo1/NIEO9tfm2LaWGfq+8EEsU+e633vbWoHmi00Vt1PP0JKdrjoWfo
+	 OWqW19fg9DGD8A6HRgBf6MhXRnpcTlZUETgcybiEkbT6jGwEV+XaoPiQBkBcc2HnAC
+	 9rqQooYv94oDxsguajuD1yuuewTl2PzF/ODXh7YKkWFn4lalM1VCQHksw0p1GyWt4m
+	 VrsFgmRqrZceA==
+Date: Mon, 15 Sep 2025 18:09:26 -0700
+Subject: [PATCH 4/4] fuse4fs: set iomap backing device blocksize
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: miklos@szeredi.hu, neal@gompa.dev, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, John@groves.net, bernd@bsbernd.com,
  joannelkoong@gmail.com
-Message-ID: <175798163153.392148.11363900743040313759.stgit@frogsfrogsfrogs>
+Message-ID: <175798163172.392148.13591414637945028939.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798163083.392148.13563951490661745612.stgit@frogsfrogsfrogs>
 References: <175798163083.392148.13563951490661745612.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,204 +62,93 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-When in fuse service mode, set the proc title so that we can identify
-fuse servers by mount arguments.
+If we're running as an unprivileged iomap fuse server, we must ask the
+kernel to set the blocksize of the block device.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- configure           |   48 ++++++++++++++++++++++++++++++++++++++++++++++++
- configure.ac        |   24 ++++++++++++++++++++++++
- fuse4fs/Makefile.in |    2 +-
- fuse4fs/fuse4fs.c   |   23 ++++++++++++++++++++++-
- lib/config.h.in     |    3 +++
- 5 files changed, 98 insertions(+), 2 deletions(-)
+ fuse4fs/fuse4fs.c |   41 +++++++++++++++++++++++++++++++----------
+ 1 file changed, 31 insertions(+), 10 deletions(-)
 
 
-diff --git a/configure b/configure
-index b2b8bbf2f92ea3..d089e5e35a66c3 100755
---- a/configure
-+++ b/configure
-@@ -701,6 +701,7 @@ gcc_ranlib
- gcc_ar
- UNI_DIFF_OPTS
- SEM_INIT_LIB
-+LIBBSD_LIB
- FUSE4FS_CMT
- FUSE2FS_CMT
- fuse_service_socket_dir
-@@ -14599,6 +14600,53 @@ fi
- 
- 
- 
-+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for setproctitle in -lbsd" >&5
-+printf %s "checking for setproctitle in -lbsd... " >&6; }
-+if test ${ac_cv_lib_bsd_setproctitle+y}
-+then :
-+  printf %s "(cached) " >&6
-+else $as_nop
-+  ac_check_lib_save_LIBS=$LIBS
-+LIBS="-lbsd  $LIBS"
-+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-+/* end confdefs.h.  */
-+
-+/* Override any GCC internal prototype to avoid an error.
-+   Use char because int might match the return type of a GCC
-+   builtin and then its argument prototype would still apply.  */
-+char setproctitle ();
-+int
-+main (void)
-+{
-+return setproctitle ();
-+  ;
-+  return 0;
-+}
-+_ACEOF
-+if ac_fn_c_try_link "$LINENO"
-+then :
-+  ac_cv_lib_bsd_setproctitle=yes
-+else $as_nop
-+  ac_cv_lib_bsd_setproctitle=no
-+fi
-+rm -f core conftest.err conftest.$ac_objext conftest.beam \
-+    conftest$ac_exeext conftest.$ac_ext
-+LIBS=$ac_check_lib_save_LIBS
-+fi
-+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bsd_setproctitle" >&5
-+printf "%s\n" "$ac_cv_lib_bsd_setproctitle" >&6; }
-+if test "x$ac_cv_lib_bsd_setproctitle" = xyes
-+then :
-+  LIBBSD_LIB=-lbsd
-+fi
-+
-+
-+if test "$ac_cv_lib_bsd_setproctitle" = yes ; then
-+	printf "%s\n" "#define HAVE_SETPROCTITLE 1" >>confdefs.h
-+
-+fi
-+
-+
- { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for PR_SET_IO_FLUSHER" >&5
- printf %s "checking for PR_SET_IO_FLUSHER... " >&6; }
- cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-diff --git a/configure.ac b/configure.ac
-index 7d3e3d86fff94e..603d6ec1a1712c 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -1574,6 +1574,30 @@ AS_HELP_STRING([--disable-fuse4fs],[do not build fuse4fs]),
- )
- AC_SUBST(FUSE4FS_CMT)
- 
-+dnl
-+dnl see if setproctitle exists
-+dnl
-+AC_CHECK_LIB(bsd, setproctitle, [LIBBSD_LIB=-lbsd])
-+AC_SUBST(LIBBSD_LIB)
-+if test "$ac_cv_lib_bsd_setproctitle" = yes ; then
-+	AC_DEFINE(HAVE_SETPROCTITLE, 1, Define to 1 if setproctitle])
-+fi
-+
-+dnl AC_LINK_IFELSE(
-+dnl [	AC_LANG_PROGRAM([[
-+dnl #define _GNU_SOURCE
-+dnl #include <bsd/unistd.h>
-+dnl 	]], [[
-+dnl setproctitle_init(argc, argv, environ);
-+dnl setproctitle("-What sourcery is this???");
-+dnl 	]])
-+dnl ], have_setproctitle=yes
-+dnl    AC_MSG_RESULT(yes),
-+dnl    AC_MSG_RESULT(no))
-+dnl if test "$setproctitle" = yes; then
-+dnl   AC_DEFINE(HAVE_SETPROCTITLE, 1, [Define to 1 if setproctitle exists])
-+dnl fi
-+
- dnl
- dnl see if PR_SET_IO_FLUSHER exists
- dnl
-diff --git a/fuse4fs/Makefile.in b/fuse4fs/Makefile.in
-index ef15316eff59ca..447212f836cbc0 100644
---- a/fuse4fs/Makefile.in
-+++ b/fuse4fs/Makefile.in
-@@ -76,7 +76,7 @@ fuse4fs: $(FUSE4FS_OBJS) $(DEPLIBS) $(DEPLIBBLKID) $(DEPLIBUUID) \
- 	$(E) "	LD $@"
- 	$(Q) $(CC) $(ALL_LDFLAGS) -o fuse4fs $(FUSE4FS_OBJS) $(LIBS) \
- 		$(LIBFUSE) $(LIBBLKID) $(LIBUUID) $(LIBEXT2FS) $(LIBINTL) \
--		$(CLOCK_GETTIME_LIB) $(SYSLIBS) $(LIBS_E2P)
-+		$(CLOCK_GETTIME_LIB) $(SYSLIBS) $(LIBS_E2P) @LIBBSD_LIB@
- 
- %.socket: %.socket.in $(DEP_SUBSTITUTE)
- 	$(E) "	SUBST $@"
 diff --git a/fuse4fs/fuse4fs.c b/fuse4fs/fuse4fs.c
-index db86a749b74af0..0e43e99c3c080d 100644
+index 0e43e99c3c080d..40171a8cab5279 100644
 --- a/fuse4fs/fuse4fs.c
 +++ b/fuse4fs/fuse4fs.c
-@@ -47,6 +47,9 @@
- #ifdef HAVE_FUSE_SERVICE
- # include <sys/mount.h>
- # include <fuse_service.h>
-+# ifdef HAVE_SETPROCTITLE
-+#  include <bsd/unistd.h>
-+# endif
- #endif
- #ifdef __SET_FOB_FOR_FUSE
- # undef _FILE_OFFSET_BITS
-@@ -1221,10 +1224,24 @@ static int fuse4fs_service_connect(struct fuse4fs *ff, struct fuse_args *args)
+@@ -1371,6 +1371,21 @@ static int fuse4fs_service(struct fuse4fs *ff, struct fuse_session *se,
  
- 	if (fuse4fs_is_service(ff))
- 		fuse_service_append_args(ff->service, args);
--
  	return 0;
  }
- 
-+static void fuse4fs_service_set_proc_cmdline(struct fuse4fs *ff, int argc,
-+					     char *argv[],
-+					     struct fuse_args *args)
++
++int fuse4fs_service_set_bdev_blocksize(struct fuse4fs *ff, int dev_index)
 +{
-+	char *cmdline;
++	int ret;
 +
-+	setproctitle_init(argc, argv, environ);
-+	cmdline = fuse_service_cmdline(argc, argv, args);
-+	if (!cmdline)
-+		return;
++	ret = fuse_lowlevel_iomap_set_blocksize(ff->fusedev_fd, dev_index,
++						ff->fs->blocksize);
++	if (ret) {
++		err_printf(ff, "%s: cannot set blocksize %u: %s\n", __func__,
++			   ff->fs->blocksize, strerror(errno));
++		return -EIO;
++	}
 +
-+	setproctitle("-%s", cmdline);
-+	free(cmdline);
++	return 0;
 +}
-+
- static inline int
- fuse4fs_service_parse_cmdline(struct fuse_args *args,
- 			      struct fuse_cmdline_opts *opts)
-@@ -1357,6 +1374,7 @@ static int fuse4fs_service(struct fuse4fs *ff, struct fuse_session *se,
  #else
  # define fuse4fs_is_service(...)		(false)
  # define fuse4fs_service_connect(...)		(0)
-+# define fuse4fs_service_set_proc_cmdline(...)	(0)
- # define fuse4fs_service_parse_cmdline(...)	(EOPNOTSUPP)
- # define fuse4fs_service_release(...)		((void)0)
- # define fuse4fs_service_finish(ret)		(ret)
-@@ -7746,6 +7764,9 @@ int main(int argc, char *argv[])
- 		exit(1);
+@@ -1382,6 +1397,7 @@ static int fuse4fs_service(struct fuse4fs *ff, struct fuse_session *se,
+ # define fuse4fs_service_openfs(...)		(EOPNOTSUPP)
+ # define fuse4fs_service_configure_iomap(...)	(EOPNOTSUPP)
+ # define fuse4fs_service(...)			(EOPNOTSUPP)
++# define fuse4fs_service_set_bdev_blocksize(...) (EOPNOTSUPP)
+ #endif
+ 
+ static errcode_t fuse4fs_acquire_lockfile(struct fuse4fs *ff)
+@@ -6798,21 +6814,19 @@ static int fuse4fs_iomap_config_devices(struct fuse4fs *ff)
+ {
+ 	errcode_t err;
+ 	int fd;
++	int dev_index;
+ 	int ret;
+ 
+ 	err = io_channel_get_fd(ff->fs->io, &fd);
+ 	if (err)
+ 		return translate_error(ff->fs, 0, err);
+ 
+-	ret = fuse4fs_set_bdev_blocksize(ff, fd);
+-	if (ret)
+-		return ret;
+-
+-	ret = fuse_lowlevel_iomap_device_add(ff->fuse, fd, 0);
+-	if (ret < 0) {
+-		dbg_printf(ff, "%s: cannot register iomap dev fd=%d, err=%d\n",
+-			   __func__, fd, -ret);
+-		return translate_error(ff->fs, 0, -ret);
++	dev_index = fuse_lowlevel_iomap_device_add(ff->fuse, fd, 0);
++	if (dev_index < 0) {
++		ret = -dev_index;
++		dbg_printf(ff, "%s: cannot register iomap dev fd=%d: %s\n",
++			   __func__, fd, strerror(ret));
++		return translate_error(ff->fs, 0, ret);
  	}
  
-+	if (fuse4fs_is_service(&fctx))
-+		fuse4fs_service_set_proc_cmdline(&fctx, argc, argv, &args);
-+
- 	ret = fuse_opt_parse(&args, &fctx, fuse4fs_opts, fuse4fs_opt_proc);
- 	if (ret)
- 		exit(1);
-diff --git a/lib/config.h.in b/lib/config.h.in
-index dcbbb3a7bf1ac4..7ef6a815213856 100644
---- a/lib/config.h.in
-+++ b/lib/config.h.in
-@@ -358,6 +358,9 @@
- /* Define to 1 if you have the `setmntent' function. */
- #undef HAVE_SETMNTENT
+ 	dbg_printf(ff, "%s: registered iomap dev fd=%d iomap_dev=%u\n",
+@@ -6820,7 +6834,14 @@ static int fuse4fs_iomap_config_devices(struct fuse4fs *ff)
  
-+/* Define to 1 if setproctitle */
-+#undef HAVE_SETPROCTITLE
+ 	fuse4fs_configure_atomic_write(ff, fd);
+ 
+-	ff->iomap_dev = ret;
++	if (fuse4fs_is_service(ff))
++		ret = fuse4fs_service_set_bdev_blocksize(ff, dev_index);
++	else
++		ret = fuse4fs_set_bdev_blocksize(ff, fd);
++	if (ret)
++		return ret;
 +
- /* Define to 1 if you have the `setresgid' function. */
- #undef HAVE_SETRESGID
++	ff->iomap_dev = dev_index;
+ 	return 0;
+ }
  
 
 
