@@ -1,79 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-61771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB7FB59ADF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C687B59B54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 17:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9D33B216D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 14:53:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618BE1BC5A3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044083469F8;
-	Tue, 16 Sep 2025 14:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65EA35FC35;
+	Tue, 16 Sep 2025 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsKJuFwn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgvPa2FC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D912C2357;
-	Tue, 16 Sep 2025 14:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5B235E4F9
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 15:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758034256; cv=none; b=HTlehpOLEEf24GtIm7SK0cQlIRX2FNNXnmuPVabRvQ7s15ilPLb+8xBv/YsbNRGjJQAl9CGGXaeSiyFv1ZQC7SzQZOqn5/PCaWFc1PEIoUXafajWgxT4Vb+GgwWv+DKtdWG20fKj2WhZaq+BbO/ZJynsH4V3IwH1nE7Qvo0yvdc=
+	t=1758034825; cv=none; b=nhCGKeyh8qtCq1Cr/SFiILFkt0Nc+khxjDRrywEHgQ2slxwTogzuyCuhxyQ1jq6X5UJGmdHI0w94yPHoSvT/I4YBmWfLfXzq7pMNCvriNuzLzjLcM03PwIsQELCj6jIlHkr3l9E+OWsyR5bFb0tiJyc+xWMy//j2LeFiU7BsO+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758034256; c=relaxed/simple;
-	bh=PIYBiE5w8xKX+GnRe1IKo1pQgkYNq+pJKfN5WE2vBqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gu2e7bF3aMz+xNGLfS6Y/a1H81JnPm2OaPAHQ+ARA8/w3XGn6s7LQLsnKHh0KlghnsjWzQJ3z1YM0mFzMNtde4gQQXJwpSEGM/PG3Yr5IBk7cNS+EZu4Q7HXBixhjkUtr+g/pnJIF+DyiE1FVDp6B6YG6Wb+0PLWz+LIroW+QHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsKJuFwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B35AC4CEEB;
-	Tue, 16 Sep 2025 14:50:56 +0000 (UTC)
+	s=arc-20240116; t=1758034825; c=relaxed/simple;
+	bh=fwSbSm5aR+pFnNb0ILt9hrAunOhekR3Sg17cxJqVfDY=;
+	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:Content-Type; b=uWpYjGxOMuhh7O8NXJCJucMVmSsNunpxeCd5iOvjh4XoikJPL0blzgLx28F8XjENh7PERlKguuOGA1bgM/wSE+4W/bYHLPfWcUaUYJnMBeurObK+SH9Ee7qe3MwMgFHB77BLLhv+i/D0wzux63T2IYFqZSU4PcnR4Guom8fJ8B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgvPa2FC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82D89C4CEFE;
+	Tue, 16 Sep 2025 15:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758034256;
-	bh=PIYBiE5w8xKX+GnRe1IKo1pQgkYNq+pJKfN5WE2vBqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LsKJuFwneGLsKYAs+0bT5CefPEabxGNOMRBRnOBdSXYAZueIXU1MunUXJuCUzaOj6
-	 ve3voXG1A2nV8BXS541Gk1a9tDveO+hOsLgts+vz96/UUw9LDgKAAKMe2Vr48UB5Sf
-	 YbYw5nVoPdEGWiAUG9f5FTzKYeh/M5szgdvsK4Eoh9KroSxj3ATM+9y4p/3JM801Gb
-	 mZpdOWFKln8UTOJ7/9YjdOCQzY/5YjtcogKu8v0d8aWepCn3x5kGjl0PbA2ZhoSp9J
-	 6OuVDHZbaA0IQCtJ+X2BMCsNzozhnXwLgSQX/cZBWDk9JbksH3mjv1BbBEYMHba9oX
-	 znMIZO2V2dtyQ==
-Date: Tue, 16 Sep 2025 07:50:55 -0700
+	s=k20201202; t=1758034824;
+	bh=fwSbSm5aR+pFnNb0ILt9hrAunOhekR3Sg17cxJqVfDY=;
+	h=Date:Subject:From:To:Cc:From;
+	b=bgvPa2FC19Dk14dY8LXcyYKNz+VVHYiYNHCsNkewJGIDiVH90eZgZZk83UZ5ePYVb
+	 eySN01uvipCBPKoJS5Nmn7rt50Mp0uoH5pCroEpJdhe3z8aZ+F3lDnz1rsJjYNcDoN
+	 0y4nXHy1ue5ZqcDTXYQJtRhTT8onYdp+3Zq6l4VJ4smTwiPykx4VbsPIjBm69n2rH+
+	 36uqkUUbQp3G9r2En1bF3wTCYEZpyrlTcr0QdPQA2JTHj4wVAqbnzl0ZZO9IL4ikoG
+	 981Jp2GOrmaMKC4883Ntms085lAeeOoWrvV5a9lVa72Nn76xO2xZzUKDUGt7Eg/OIi
+	 S8KChArjkGyaw==
+Date: Tue, 16 Sep 2025 08:00:24 -0700
+Subject: [PATCHSET v5.1] iomap: cleanups ahead of adding fuse support
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, linux-xfs@vger.kernel.org,
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev,
-	joannelkoong@gmail.com
-Subject: Re: [PATCH 2/2] iomap: error out on file IO when there is no
- inline_data buffer
-Message-ID: <20250916145055.GF8096@frogsfrogsfrogs>
-References: <175798150409.382342.12419127054800541532.stgit@frogsfrogsfrogs>
- <175798150460.382342.6574514049895510791.stgit@frogsfrogsfrogs>
- <aMlrI3IfhtyI0eYR@infradead.org>
+To: djwong@kernel.org, brauner@kernel.org
+Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, hch@lst.de
+Message-ID: <175803480273.966383.16598493355913871794.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMlrI3IfhtyI0eYR@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 06:50:27AM -0700, Christoph Hellwig wrote:
-> > +	if (WARN_ON_ONCE(iomap->inline_data == NULL))
-> 
-> Shorten this to just !iomap->inline_data instead of checking for NULL?
-> 
-> Same for the other two.
-> 
-> Otherwise this looks good, and I'd prefer to see it go upstream ASAP
-> instead of hiding it in your big patch pile if possible.
+Hi all,
 
-Ok.  Will fix and resend as an independent series.
+In preparation for making fuse use the fs/iomap code for regular file
+data IO, fix a few bugs in fuse and apply a couple of tweaks to iomap.
+These patches can go in immediately.
+
+If you're going to start using this code, I strongly recommend pulling
+from my git trees, which are linked below.
+
+This has been running on the djcloud for months with no problems.  Enjoy!
+Comments and questions are, as always, welcome.
 
 --D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=iomap-fuse-prep
+---
+Commits in this patchset:
+ * iomap: trace iomap_zero_iter zeroing activities
+ * iomap: error out on file IO when there is no inline_data buffer
+---
+ fs/iomap/trace.h       |    1 +
+ fs/iomap/buffered-io.c |   18 +++++++++++++-----
+ fs/iomap/direct-io.c   |    3 +++
+ 3 files changed, 17 insertions(+), 5 deletions(-)
+
 
