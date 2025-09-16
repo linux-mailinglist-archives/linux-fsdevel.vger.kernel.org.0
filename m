@@ -1,154 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-61781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0B7B59DB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 18:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98ECEB59DBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 18:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246177B6C5D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:29:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 020CC7B78B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70F62F260D;
-	Tue, 16 Sep 2025 16:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD3521D58B;
+	Tue, 16 Sep 2025 16:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQwXsDXk"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GEhOLZYO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sV7YXVNF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8410D2F25F7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 16:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30C42F25F8;
+	Tue, 16 Sep 2025 16:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758040286; cv=none; b=LyXZ4ABHSu6r0+cw6QJWIHAW3Sfa6i49zvea8keDM3GpYQPyYZ5wV1Afh2EBbnlscFk0ruXj27YNgIvksiP/Cs04TKy+j5HyEnPt2UggyCpx7XXcPTKh0vPJ4hMtQU2NFzhyJpcAEr+f2NXjl/Nie4Xoev44JGzUmHxN+74GTns=
+	t=1758040392; cv=none; b=MpiUgx8LVkznJ3u0v5+YoY4hm3CAm0auEhkV/AZiHtHqCuFchVJN4TTdQxmaWqOsd0UcpI8R96kcAl9xDs6PFj2em9IA/XD9Dq/ukxUjxwcGRn/BzXe5MQI+qakurYmMyslD3qTmsqDAny5nouM/JuPFO6YMlyIhwCnUawkAR9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758040286; c=relaxed/simple;
-	bh=dAyZBLZ3deSFmd3TqM+cMI9+qPNkumh+pm2PAUP11RE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fQAmMEDy9xosow9AeAM+vs+CsCCsuxzGB7lHp24ZYH6IEC+ryQ/Xnur5mYZg7BaxVcx0oaGVzz/eMojq6kuz+gMUJ0fnBJ+emZPuaQI+/VcbPDvHOZCxQu4l4H/PdS/cSXrELKp77ILX2d5gAL2BYI1zEQBZxSB+4Nv2LwPxGAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CQwXsDXk; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-251fc032d1fso63906745ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 09:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758040284; x=1758645084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sh23vzAY4zhgyBViC+bSV8XfkSwZGUCWtaMJhyioQaQ=;
-        b=CQwXsDXkXTcjWAHOESGdi8repuaQFY8GhlmqgERYtW/tNIXgyzWjkM+kYU4qJ4o89D
-         e5ce062Yf+ISphAap/rWN4viVKXcgI6ZJoE5d7n5m0tiNcMBVSy/p/M6eiBBmIqtQw9u
-         GYawp+HOqj/tCjRTXdUGg0q464hI8DrwdqiQNuVy4JT7DuIchFHGjpWm64ZaxVh/gr3i
-         19MZ7j+d9okgaoj7jWrUuaC1BTKzz8D8Zi4Da1Q2iqgHDw6NirYq0UeFOizuwtyGRxIx
-         4KG2VopkGQ6fBrNwRKT+PcyXsYmJqZBDHkTBOgd4eEyS61TOaDNJuZ4yRhsGN4ed6r/G
-         twzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758040284; x=1758645084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sh23vzAY4zhgyBViC+bSV8XfkSwZGUCWtaMJhyioQaQ=;
-        b=RLdP56QWt16gtsuiebCGnq6emuOGG2sniZu3xShnjmM2SeUymou0M2cmt6m8rb8y0W
-         lIlqxLHEt5nc3oN7ETXAxjVneDqHoAJiVadzSVcFs32InXaSD1si3AW6xvSNoyTHOwcX
-         tZiuC4NzzFEEs8VBo2T1CyJEomUmn0yby+y21GjDbzybuDmmWE2/q+5JU4p0xMBLAe60
-         SlxcmbIMHG3eExwH2PUMHHtFyuiDSTLkyrOtOPEXkjlw9vUCaaQcPcFdC0BvssLvz3H/
-         tCq5VzvZs+LeYd6CwcNL5ci5mxPALofrpv3yKuYvMvFKfPCOH7d+Vf7smvG7X0S+y8Pt
-         BQ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWPcrnMVfz9l2+53AFMAwtv59suVYSqvK9BmuQ0EwyvsGuNEwS/C+hMCyt/ZsoMjSX0AMRb/dzeOV2PfqZZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkzFCxXwCoQ/M+cNRodVMbIP6D3GntQNBPadAgWKyst7iKq8kJ
-	KHKY4u3zLvG3da44hdxoqC+YjGM3JqRJFxbticP/SkH4K0s+QwOrP15Fvum/kBIGc25kNkwewdC
-	RkDPNC5am0sWvIcrBjlTA9BK9kxtS919Qg7uNswClWA==
-X-Gm-Gg: ASbGncvJAQ4vaHo2HxDfSXhlP0+TQKYmIwJIm5J1SxhtepULeRH+1YYY+jntZE2wpwq
-	br+TEJal5yp724YqqopeORWYY2tclJ/ifa2AdJ/hFguyTjoGFv26yN1yHQus3b7jlAier0XVgV+
-	N2XCtuvU7fIe/N4HDGtPdi9DpK4sThaHqy44eTazEVgCUZrKYx6it++UMukbdkYv0r6/9qdpZUf
-	+FTZQVJOtmcimX0MjeWqjauXfnWHY5Rt3SQO1bM5Fzpy6wm4HOotaYX5KqsFlEFY2BS/SI=
-X-Google-Smtp-Source: AGHT+IECix1AVjlUybWwIVsJ9ka34tk4B2CLcGJk1N772RB5xGMQFqHG7lxLaX0geY/djsujO8rX54rNeXzB0pVIUu4=
-X-Received: by 2002:a17:903:22c9:b0:246:4077:4563 with SMTP id
- d9443c01a7336-25d26077119mr182620025ad.34.1758040283778; Tue, 16 Sep 2025
- 09:31:23 -0700 (PDT)
+	s=arc-20240116; t=1758040392; c=relaxed/simple;
+	bh=q+j0EmfTuB1UzOhI8pAGiouFGTQKA3kEDTpkj0zjHG0=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=gOF4LmiVvHDQWroAA9Rt0y35Wh80R0+FY5be9LqwAYEcluZLegGRWLt06SQ/9SEgNp5UpU71rk68Ty3yPezNstSnbL8Lz+9nelynSD/BYiNPcAoYn7+iMZeeyV4ZGUVyphZY+JyZ4zWHPDbSXSRFELLzh9ORiUfqhZvUBqWvedg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GEhOLZYO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sV7YXVNF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250916163004.674341701@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758040388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=QAHJKycBV24FB7D+5sgN+DCQ8BtvYWGyoFjnG0jF1+Y=;
+	b=GEhOLZYOHp5C638N6Rsuee1kTC0rYKv5bwoA67L0S28vT6AEFAilXoAXHK1RTjW5v8sMnN
+	Z4IjqkUEo6lHX0J4FSjUh24xozx+6NeydkTVGnuyE4WIuElD1ETs0oy2Wphr0XCukR6qSC
+	OWIDKIAMCaPcbgs0jNBkR1K2lvRx5UAkzcpyp3Fjsbj0jWd6Aet/dpcox2cEkyObElCw2v
+	Xv64gOHlSJyJKgKAmp2tqyqSORCna7OMkQEKQgsOKma1oFB4ZmyKr470EHX3f+aHwJHnZL
+	4uKaga73pYP/zymmuSbR0U0577bWYWRDcvE0jBJpJi5ioURaonJoD7Dc7/FV8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758040388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=QAHJKycBV24FB7D+5sgN+DCQ8BtvYWGyoFjnG0jF1+Y=;
+	b=sV7YXVNFf4kk3eGZA9fyUCDgJyEji7uiLDNlbiVtw2tZX9TqOBAQqt4Whov7Oat8X2WHOq
+	0ymKt0WYDEZYY9Dg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ kernel test robot <lkp@intel.com>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Nathan Chancellor <nathan@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+ x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: [patch V2 0/6] uaccess: Provide and use scopes for user masked access
+Date: Tue, 16 Sep 2025 18:33:07 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CA+G9fYuFdesVkgGOow7+uQpw-QA6hdqBBUye8CKMxGAiwHagOA@mail.gmail.com>
- <arfepejkmgi63wepbkfhl2jjbhleh5degel7i3o7htgwjsayqg@z3pjoszloxni> <h3ov4pformuvguwsxtziqui2alarqno37kdru4bjsppeok4sth@yb4iposv7okd>
-In-Reply-To: <h3ov4pformuvguwsxtziqui2alarqno37kdru4bjsppeok4sth@yb4iposv7okd>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 16 Sep 2025 22:01:11 +0530
-X-Gm-Features: AS18NWAmN3EQ1CXxJUBXHQK10t01W_4u2E9Mk2iKi6ZR0XCV66DIDrPHefQHuH8
-Message-ID: <CA+G9fYu7RAGNnHEJjLdH=YhEyUJ8gvcR-+JV79Z4OxO3ODTu-g@mail.gmail.com>
-Subject: Re: next-20250915: LTP chdir01 df01_sh stat04 tst_device.c:97: TBROK:
- Could not stat loop device 0
-To: Jan Kara <jack@suse.cz>
-Cc: linux-block <linux-block@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	LTP List <ltp@lists.linux.it>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	Christian Brauner <brauner@kernel.org>, chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Anuj Gupta <anuj20.g@samsung.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 16 Sept 2025 at 17:04, Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 16-09-25 13:04:42, Jan Kara wrote:
-> > On Tue 16-09-25 12:57:26, Naresh Kamboju wrote:
-> > > The following LTP chdir01 df01_sh and stat04 tests failed on the rock=
--pi-4b
-> > > qemu-arm64 on the Linux next-20250915 tag build.
-> > >
-> > > First seen on next-20250915
-> > > Good: next-20250912
-> > > Bad: next-20250915
-> > >
-> > > Regression Analysis:
-> > > - New regression? yes
-> > > - Reproducibility? yes
-> > >
-> > > * rk3399-rock-pi-4b, ltp-smoke
-> > > * qemu-arm64, ltp-smoke
-> > > * qemu-arm64-compat, ltp-smoke
-> > >  - chdir01
-> > >   - df01_sh
-> > >   - stat04
-> > >
-> > > Test regression: next-20250915: LTP chdir01 df01_sh stat04
-> > > tst_device.c:97: TBROK: Could not stat loop device 0
-> >
-> > This is really strange. Those failing tests all start to complain that
-> > /dev/loop0 doesn't exist (open gets ENOENT)... The fact that this is
-> > limited to only a few archs suggests it's some race somewhere but I don=
-'t
-> > see any relevant changes in linux-block in last three days...
->
-> Ha, Mark Brown tracked this [1] to changes in VFS tree in
-> extensible_ioctl_valid(). More discussion there I guess.
+This is a follow up on the initial V1 to make the masked user access more
+accessible:
 
-That right,
-Ander=E2=80=99s bisection confirmed the same commit that Mark Brown reporte=
-d.
+   https://lore.kernel.org/r/20250813150610.521355442@linutronix.de
 
-# first bad commit:
- [60949057a2e71c9244e82608adf269e62e6ac443]
-block: use extensible_ioctl_valid()
+After reading through the discussions in the V1 thread, I sat down
+and thought about this some more.
 
->
-> [1] https://lore.kernel.org/all/02da33e3-6583-4344-892f-a9784b9c5b1b@sire=
-na.org.uk
->
->                                                                 Honza
->
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+My initial reason to tackle this was that the usage pattern is tedious:
 
-- Naresh
+	if (can_do_masked_user_access())
+		from = masked_user_read_access_begin((from));
+	else if (!user_read_access_begin(from, sizeof(*from)))
+		return -EFAULT;
+	unsafe_get_user(val, from, Efault);
+	user_read_access_end();
+	return 0;
+Efault:
+	user_read_access_end();
+	return -EFAULT;
+
+This obviously has some interesting ways to get it wrong and after a while
+I came to the conclusion that this really begs for a scope based
+implementation with automatic cleanup.
+
+After quite some frustrating fights with macro limitations, I finally came
+up with a scheme, which provides scoped guards for this.
+
+This allows to implement the above as:
+
+	scoped_masked_user_read_access(ptr, return -EFAULT,
+		scoped_get_user(val, ptr); );
+	return 0;
+
+The scope hides the masked user magic and ensures that the proper
+access_end() variant is invoked when leaving the scope.
+
+It provides a scope local fault label ('scope_fault:'), which has to
+be used by the user accesses within the scope. The label is placed
+before the exit code ('return -EFAULT' in the above example)
+
+The provided scoped_get/put_user() macros use 'scope_fault'
+internally, i.e. they expand to
+
+    unsafe_get/put_user(val, ptr, scope_fault)
+
+Obvioulsly nothing prevents using unsafe_get/put_user() within the scope
+and supplying a wrong label:
+
+	scoped_masked_user_read_access(ptr, return -EFAULT,
+		unsafe_get_user(val, ptr, fail); );
+	return 0;
+fail:
+	return -EFAULT;
+
+This bug is caught at least by clang, but GCC happily jumps outside the
+cleanup scope.
+
+Using a dedicated label is possible as long as it is within the scope:
+
+	scoped_masked_user_read_access(ptr, return -EFAULT, {
+		unsafe_get_user(*val, ptr, fail);
+		return 0;
+	fail:
+		*val = 99;
+	});
+	return -EFAULT;
+
+That example does not make a lot of sense, but at least it's correct :)
+
+In that case the error code 'return -EFAULT' is only used when the
+architecture does not support masked access and user_access_begin()
+fails. That error exit code must obviously be run _before_ the cleanup
+scope starts because user_access_begin() does not enable user access
+on failure.
+
+Unfortunately clang < version 17 has issues with scope local labels, which
+means that ASM goto needs to be disabled for clang < 17 to make this
+work. GCC seems to be doing fine (except for not detecting the above label
+scope bug).
+
+The user pointer 'ptr' is aliased with the eventually modified pointer
+within the scope, which means that the following would work correctly:
+
+	bool result = true;
+
+	scoped_masked_user_read_access(ptr, result = false,
+		scoped_get_user(val, ptr); );
+
+        if (!result) {
+	   	// ptr is unmodified even when masking modified it
+		// within the scope, so do_magic() gets the original
+		// value.
+		do_magic(ptr);
+	}
+
+Not sure whether it matters. The aliasing is not really required for the
+code to function and could be removed if there is a real argument against
+it.
+
+Looking at the compiler output for this scope magic.
+
+bool set_usr_val(u32 val, u32 *ptr)
+{
+	scoped_masked_user_read_access(ptr, return false,
+		scoped_get_user(val, ptr); );
+	return true;
+}
+
+On x86 with masked access and ASM goto supported clang-19 compiles
+it to:
+
+0000000000000b60 <set_usr_val>:
+ b60:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+ b65:	48 b8 ef cd ab 89 67 	movabs $0x123456789abcdef,%rax
+ b6c:	45 23 01 
+ b6f:	48 39 c7             	cmp    %rax,%rsi
+ b72:	48 0f 47 f8          	cmova  %rax,%rsi
+ b76:	90                   	nop    // STAC	
+ b77:	90                   	nop
+ b78:	90                   	nop
+ b79:	31 c0                	xor    %eax,%eax
+ b7b:	89 37                	mov    %edi,(%rsi)
+ b7d:	b0 01                	mov    $0x1,%al
+ b7f:	90                   	nop    // scope_fault: CLAC
+ b80:	90                   	nop
+ b81:	90                   	nop
+ b82:	2e e9 00 00 00 00    	cs jmp b88 <set_usr_val+0x28>
+
+GCC 14 and 15 are not so smart and create an extra error exit for it:
+
+0000000000000bd0 <set_usr_val>:
+ bd0:	e8 00 00 00 00       	call   bd5 <set_usr_val+0x5>
+ bd5:	48 b8 ef cd ab 89 67 	movabs $0x123456789abcdef,%rax
+ bdc:	45 23 01 
+ bdf:	48 39 c6             	cmp    %rax,%rsi
+ be2:	48 0f 47 f0          	cmova  %rax,%rsi
+ be6:	90                   	nop    // STAC
+ be7:	90                   	nop
+ be8:	90                   	nop
+ be9:	89 3e                	mov    %edi,(%rsi)
+ beb:	90                   	nop    // CLAC
+ bec:	90                   	nop
+ bed:	90                   	nop
+ bee:	b8 01 00 00 00       	mov    $0x1,%eax
+ bf3:	e9 00 00 00 00       	jmp    bf8 <set_usr_val+0x28>
+ bf8:	90                   	nop    // scope_fault: CLAC
+ bf9:	90                   	nop
+ bfa:	90                   	nop
+ bfb:	31 c0                	xor    %eax,%eax
+ bfd:	e9 00 00 00 00       	jmp    c02 <set_usr_val+0x32>
+
+
+That said, the series implements the scope infrastructure and converts the
+existing users in futex, x86/futex and select over to the new scheme. So
+far it nicely held up in testing.
+
+The series applies on top of Linus tree and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/masked
+
+Changes vs. V1:
+	- use scopes with automatic cleanup
+	- provide read/write/rw variants to accommodate PowerPC
+	- use the proper rw variant in the futex code
+	- avoid the read/write begin/end mismatch by implementation :)
+	- implement u64 user access for some shady ARM variant which lacks it
+
+Thanks,
+
+	tglx
+---
+Thomas Gleixner (6):
+      ARM: uaccess: Implement missing __get_user_asm_dword()
+      kbuild: Disable asm goto on clang < 17
+      uaccess: Provide scoped masked user access regions
+      futex: Convert to scoped masked user access
+      x86/futex: Convert to scoped masked user access
+      select: Convert to scoped masked user access
+
+---
+ arch/arm/include/asm/uaccess.h |   17 ++++
+ arch/x86/include/asm/futex.h   |   76 ++++++++------------
+ fs/select.c                    |   14 +--
+ include/linux/uaccess.h        |  151 +++++++++++++++++++++++++++++++++++++++++
+ init/Kconfig                   |    7 +
+ kernel/futex/futex.h           |   37 +---------
+ 6 files changed, 214 insertions(+), 88 deletions(-)
+
+
 
