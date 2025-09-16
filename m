@@ -1,179 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-61729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07152B597CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EADBB597E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FDF6163A74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:36:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13FA6161EFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6156C313E16;
-	Tue, 16 Sep 2025 13:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7C931326B;
+	Tue, 16 Sep 2025 13:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0TBepx7n"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w11yYXx+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1C93191A3;
-	Tue, 16 Sep 2025 13:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74599315D30
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 13:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029765; cv=none; b=UtkqKrTVB5cdOZL9lmgBncCqn1hcUqtKDC+34qCtACkux/rq9Eip8DTSTJ5tXzEzKFY08Qkmt9uSiIfurfBXMC8sqAc/y8qXeZWtUpmkbyzbbBu+WkMLqDkwwSHFfXaBv6S/1S14XdBKGAzrxuCDQ6f8FaeTx+9qqUKHBN7jX6I=
+	t=1758030018; cv=none; b=bgXPIGG22Q/QvBhC/kAB+oWwdEtyPa+2PKmYhJWbQuNa9pjhmg7/ObHmMla6dmdjcMJblAtA+Ogq9B6+BVQSi2CfCmvI8Pj4TBHmuNFqMy3ud/bMMemKLmdocayaZV0PGcIZtXOjwWljakVcCDSuCUoMem16FpHb0CGZO9E/S2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029765; c=relaxed/simple;
-	bh=nxPr6BROuKeid2asUHqylc5kE6izLAV55LFjfxk7V7I=;
+	s=arc-20240116; t=1758030018; c=relaxed/simple;
+	bh=+gio5aL+IW3u8W8SSU4aBeYKAREDBl4pvtVMTW2Fww4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLobXFdHh/hTtSbaEU5dJBaIFVYoKekuHqSjAV7u3ozFW9hAeq9KfvYPAKJsQJSi7oSQOLwMIJmNcY7YTW08dbgU7t54BIX5/9qDzxO9bd5Fpud7a9bIaCRgG7XJuTGp/+22oLd9baOX20amJ40VWJ34+uXr+eAiQrbt816kvMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0TBepx7n; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 7261F14C2D3;
-	Tue, 16 Sep 2025 15:35:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1758029756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lJQV/xL2hmIUKXDSuzeF/Nwm/bBht4Qf4SUZQZ6+msY=;
-	b=0TBepx7n/S/c5Sq8+oJsksGNWfhB4aNwu00NfyFWcGS9i1/LhKGUjmpKAQU8wGSvaJA6HS
-	enIe247FPthCU76U4kscIarSZ3ro0VTGDprPkp1RfS7o5FhpHQypDM+/T/MD9doS/0neub
-	WGz1WOuMDF1LQaU6FQiOf6TVRSTlbhjKw9K9YKvoM4qHr0+GmTyGweaKDDPIGKkzmLSd0e
-	44xV372CW2+9Tjdy0kZyjes+MtT/aCOSKtEW/VWdj+2dxEkearky9U2F2W7LGOx4F94J5Z
-	PGiWQ8IzbM0ZWluN+RKH7dGoYBphNIEVUGgsL6M/TFyWL1PU+xAXGUC33MebPg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b149dc1f;
-	Tue, 16 Sep 2025 13:35:50 +0000 (UTC)
-Date: Tue, 16 Sep 2025 22:35:35 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Tingmao Wang <m@maowtm.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <aMlnpz7TrbXuL0mc@codewreck.org>
-References: <aMih5XYYrpP559de@codewreck.org>
- <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHvgI2JA3bGgczJ0XgrSx7MYfB96isfY/I1E7MfsMsXjoLXZSeW0++q2glKRpJ+SPKkWD7SG8SJ4ObL5+F5uQ5mSeXQQnw7d8OmBu4Mb04etKS8fs29tXKORx88+cM7ELnIKLDJr2wQBwLW+mm/+H8mUDUs4kk0IqXlsHYTRdY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w11yYXx+; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso55075505e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 06:40:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758030015; x=1758634815; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mcfExlni0fgEhBakaF+iv8wUB2vTkCFI57QVuCuRuQI=;
+        b=w11yYXx+PJ2S70aQQE6th1BIImCh6AeKdDLfGNuw5UKqoUlQg24eqiqWzz2LuG36Rr
+         St7GLc6KvVp/2vysYpx1BN3l0cAXG/8+P9e80zbhvu/Kg7OAgIdQCFEeLjhmwiKxH+uf
+         p7ihY0EUmz0EaHqBp8WcDF9zuLuLyQk+vBrXeBBCcAVU8+lRgrLuFbvDVAgOIpnGq/Qi
+         TVC8MIaj7CrgWSh+klvGhsiNYl/1fjByc8yKuEVjD/sDV2EDFt/ZzKKNRqEpI7ky3nTm
+         IhtAJC8awvvIPShrMU6xonUvljn1ALrGtZTid0edYRLBXDT+vBY0Tfbmur/QuBe+zHRM
+         wSpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758030015; x=1758634815;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mcfExlni0fgEhBakaF+iv8wUB2vTkCFI57QVuCuRuQI=;
+        b=as/h8onlEw+ZkVrgchtnksuJWRE/tsIKGV5jNcGHXyFtpBn3JhO7wZ80WNgFa0qLxL
+         5tPVGYgcYbHeNDCcYYkykMmpJRqmKQAWzDP9fXFkZpq+J45BIcLFM2ECuPK7Sd2zfhc0
+         2Ts5LycQxKzHQVVf4Kcw+Q0l/7C6ygtd2o2anVHlQy5sTxRMd+lfX0U879zmHbHjBtjV
+         IuTGEPdYDWh1v2TjyM4rsyvTok0fMxMb1JJEWbtcgQdkXqeqpUMKZrxIC1z5PQNaKjJm
+         G2woWWHxXJHHdV3R6iZo0wEey6nJ2cOgaItvVmjlF459X/CD5pHDWG/SDTOlBTxzqnHl
+         zEhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU64F6uz26zsd6V3j7u0tzYKXxjIqs6aBhaGhIpCJLNKYjZkP4XoilFa8I8aPPVxz0WcHBj5o9mEXGbLOi4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxJzFgXc6v9rv1yZiuoIB3M8wjHCiFGYPW/95a7/HGw5cuLNmn
+	UNPc/C4N3p8iI4dODgYJ9UZvNCmio7Efrncmh4qx7BrTexd6jlfflR4GfsvUg7AcnmE=
+X-Gm-Gg: ASbGncv7/A28M0Jwg/BrlOIlqJQSOjm63XDb4aq1vUBMXoDhlVky2ilmdz+xcxEBrMN
+	gI3Qvdlo0M72JhFFdGmxnb1m1Bvt+v1x4qzww/J6Ai8CaRk2cZJ++ceUsBxPvA5r4Pyk/HGXpaN
+	M+5wvyoVDfij8OeXO31mU7ndvcD4daBF+TDAmcJ7Nwsl0Iec+W2CP+EkYxvX0+mfQUkOY/lsx85
+	iuoEOGKLcqLddngdUe5yXezT7t7xOl2H7moRu6bPhg4aprWvXc6n+9bS8vllK9qzDbb9z0a0wbY
+	qU2dVgPA4B3W8/NecoIkh9l0OWhheHqyOdafbU8AJZmMoQbS6GP89FvKpUSenFNrfG/kHYrCwNW
+	pygQJVk+tr1uX2mm5478v5S0LKJc=
+X-Google-Smtp-Source: AGHT+IG8kaWPMWFHbVd4viKfQeFJBGjRKwC9gr1w5fiYvRQ3T/k+ZTU4DWIxru8SYExw4YHgKkL4Vg==
+X-Received: by 2002:a05:6000:2887:b0:3ec:dbcc:8104 with SMTP id ffacd0b85a97d-3ecdbcc8195mr912496f8f.36.1758030014747;
+        Tue, 16 Sep 2025 06:40:14 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45f31c51e8dsm41553405e9.1.2025.09.16.06.40.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 06:40:14 -0700 (PDT)
+Date: Tue, 16 Sep 2025 16:40:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 04/33] block: use extensible_ioctl_valid()
+Message-ID: <aMlouk_55OXZv8w5@stanley.mountain>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-4-1a247645cef5@kernel.org>
+ <02da33e3-6583-4344-892f-a9784b9c5b1b@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
+In-Reply-To: <02da33e3-6583-4344-892f-a9784b9c5b1b@sirena.org.uk>
 
-Tingmao Wang wrote on Tue, Sep 16, 2025 at 01:44:27PM +0100:
-> > iirc even in cacheless mode 9p should keep inode arounds if there's an
-> > open fd somewhere
-> 
-> Yes, because there is a dentry that has a reference to it.  Similarly if
-> there is a Landlock rule referencing it, the inode will also be kept
-> around (but not the dentry, Landlock only references the inode).  The
-> problem is that when another application (that is being Landlocked)
-> accesses the file, 9pfs will create a new inode in uncached mode,
-> regardless of whether an existing inode exists.
-> [...]
-> Based on my understanding, I think this isn't really to do with whether
-> the dentry is around or not.  In cached mode, 9pfs will use iget5_locked
-> to look up an existing inode based on the qid, if one exists, and use
-> that, even if no cached dentry points to it.  However, in uncached mode,
-> currently if vfs asks 9pfs to find an inode (e.g. because the dentry is no
-> longer in cache), it always get a new one:
-> [...]
-> v9fs_qid_iget_dotl:
-> 	...
-> 	if (new)
-> 		test = v9fs_test_new_inode_dotl;
-> 	else
-> 		test = v9fs_test_inode_dotl;
+Yeah, the:
 
-Right, if we get all the way to iget uncached mode will get a new inode,
-but if the file is opened (I tried `cat > foo` and `tail -f foo`) then
-re-opening cat will not issue a lookup at all -- v9fs_vfs_lookup() is
-not called in the first place.
-Likewise, in cached mode, just having the file in cache makes new open
-not call v9fs_vfs_lookup for that file (even if it's not currently
-open), so that `if (new)` is not actually what matters here afaiu.
+	if (extensible_ioctl_valid(cmd, FS_IOC_GETLBMD_CAP, LBMD_SIZE_VER0))
+		return -ENOIOCTLCMD;
 
-What's the condition to make it happen? Can we make that happen with
-landlock?
+test is inverted...  It should be if (!valid) return instead of if (valid)
+return;
 
-In practice that'd make landlock partially negate cacheless mode, as
-we'd "pin" landlocked paths, but as long as readdirs aren't cached and
-other metadata is refreshed on e.g. stat() calls I think that's fine
-if we can make it happen.
+regards,
+dan carpenter
 
-(That's a big if)
-
-> > So in cacheless mode, if you have a tree like this:
-> > a
-> > └── b
-> >     ├── c
-> >     └── d
-> > with c 'open' (or a reference held by landlock), then dentries for a/b/c
-> > would be kept, but d could be droppable?
-> 
-> I think, based on my understanding, a child dentry does always have a
-> reference to its parent, and so parent won't be dropped before child, if
-> child dentry is alive.
-
-I'd be tempted to agree here
-
-> However holding a proper dentry reference in an
-> inode might be tricky as dentry holds the reference to its inode.
-
-Hmm, yeah, that's problematic.
-Could it be held in landlock and not by the inode?
-Just thinking out loud.
-
-> > My understanding is that in cacheless mode we're dropping dentries
-> > aggressively so that things like readdir() are refreshed, but I'm
-> > thinking this should work even if we keep some dentries alive when their
-> > inode is held up.
-> 
-> If we have some way of keeping the dentry alive (without introducing
-> circular reference problems) then I guess that would work and we don't
-> have to track paths ourselves.
-
-Yes, that's the idea - the dentry basically already contain the path, so
-we wouldn't be reinventing the wheel...
-
-> >  - if that doesn't work (or is too complicated), I'm thinking tracking
-> > path is probably better than qid-based filtering based on what we
-> > discussed as it only affects uncached mode.. I'll need to spend some
-> > time testing but I think we can move forward with the current patchset
-> > rather than try something new.
-> 
-> Note that in discussion with Mickaël (maintainer of Landlock) he indicated
-> that he would be comfortable for Landlock to track a qid, instead of
-> holding a inode, specifically for 9pfs.
-
-Yes, I saw that, but what you pointed out about qid reuse make me
-somewhat uncomfortable with that direction -- you could allow a
-directory, delete it, create a new one somewhere else and if the
-underlying fs reuse the same inode number the rule would allow an
-intended directory instead so I'd rather not rely on qid for this
-either.
-But if you think that's not a problem in practice (because e.g. landlock
-would somehow detect the dir got deleted or another good reason it's not
-a problem) then I agree it's probably the simplest way forward
-implementation-wise.
-
--- 
-Dominique Martinet | Asmadeus
 
