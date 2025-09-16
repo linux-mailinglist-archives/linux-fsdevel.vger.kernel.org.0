@@ -1,197 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-61751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E750B598C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:07:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600ABB598D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65F5E7A1B23
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 14:05:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07E23ABEB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 14:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BE936935F;
-	Tue, 16 Sep 2025 14:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE1E315D3B;
+	Tue, 16 Sep 2025 14:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iW6+BSMB"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="h9UZICVd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ex8jxbWG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8E1315D58
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 14:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D35228315A;
+	Tue, 16 Sep 2025 14:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031213; cv=none; b=qWiXnRNwrErc1lIisZVLx1FL36La4gmxdXgJq+e5nB5Q+q6TWNw8FFZcMmdRgnYE7vSNWpjnj4rhbHQU0ziurJGRzcDX2jR/l4lq6B6usjxbnFiBxu0gFodmFmgLIM85YvfxZ4f8nClcZaw9VTNSONEESPLUzYu/6OS4w8WtMlI=
+	t=1758031307; cv=none; b=eDeVU2e7izWITcu53KaxHqgNGFklBH4h3VbRCgg+ZaEC8yC4r1E/JSBZZJ5j45PQB3Mr8+6qTEb5diBLh2koAsdC8teA4fuTw0mdYZAh+1fWa8EuGd0zTPztwpAiWt98fZZPelv6d083E+7sc6kuEzAzqHMbSwp5Jxjg5dAP/j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758031213; c=relaxed/simple;
-	bh=QCGFM/cnMeWMX3htX5p6eryZx4ChTW6raUZie6Xkq4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o3MS93FO9OJ46Cu6oPe2f4yVctgjAT/h8C0PZk3IMqebuze3zInXpf+8pRlS5LH1AgEnRW3ONHgoKZzdWollUPDcU4BHVS4sOUxjuV5HcVyboTqp604h6IhZkzc4jtBNt8lKBxSaG0O/cK8lboRKubzIcYAHnKzmpfInVKyvHHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iW6+BSMB; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so34724685e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 07:00:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758031210; x=1758636010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F3p/HZf12MlzeyzMfr2O5f/PDaT3y6+eiNIS1WtKNH8=;
-        b=iW6+BSMBZRvQB1yYWR4AswPcskWhLKeXP2AgMF33mGwxfNGuGLGG/iihOf97Pk3Egf
-         yascFKoHCofXHSCGwGWX85WoMawk1WChMZ2vVnBG5iceOVpKN1kcV8Sq5dP7TXvzTpIL
-         TpTrFz3zsxDGASFjV56JglRetgt4y5Spwz0nRpIUcispuuErnBKOR8ORLItpMcNX/DWx
-         JqKQ8dlFndK3il1wKHydLbizCGikW+CjagTFk6DCX6io+CAyV7kIPQcS70mCyMP2Aq/a
-         iEywUIfKGqKLHljPOQVCcviJjYxpEO4D/xI2iJ4m+NbU8iNfvItPWbS4KyfakuHJ7dH5
-         odog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758031210; x=1758636010;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F3p/HZf12MlzeyzMfr2O5f/PDaT3y6+eiNIS1WtKNH8=;
-        b=ODqJFCEUykP4ITGaLKFKBNK/nwZihYPrbx6XJbeFyt2JKhJjOV/tXox/Hxj3nobHdX
-         SWpyxhKcoqt4qDdDjPqzylieQ70INXIXFyvHJu0pQtsHtzZ+ZbnziyqmLp7OxtC24cT2
-         UCve8ftIEx0gNwsnxbvFIV+aez/YKvW1V08XuF3bQWfUEIqBall2aCJNuSavMvbeDZ4J
-         Td+rDr3Lu4yDUA9UcLF0FjtLsB5xM+LVR57lw/m3fw4IJIOW4ojVjoZ9HeyL3Q1TPjlq
-         GEeAI4TUlrKRpJ0ItJwKrRUb5/7z4BM3a2vZzDOQ++YB+B1CSXxzhEFPpFWqx6zU0I2H
-         a6QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWejv6c6DTw39el7MMMi1iILGiRgKCB8IR19uz5Pr71PbSEh/xMm9Zo0ZXlSI+7/2oE2i7zfiqBcdcfmW16@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBcjmIeHKb+Lacct7Go97zabNXPNnUknbRd/nnMBqlZz+tY9rl
-	zftH/UcZQMSjtWQfe1Aav+zyUZYs+zQ+OnKgzHJ2GlFD4ZzGT3zDitl+
-X-Gm-Gg: ASbGncuJwaydZ2b3SK3IcwKLj64uyjxBqIyiLwfw8Q5J8QD346zz9wpdoatzAefHbjv
-	ABM8GU938OvVcs2lFYh6j4E2rPhQGhBM2Q6nMMOzJZyGhUgS43exB+Ph1ch1ousxHhzB4M7XF6S
-	jCx8N2jftJM1TeZewPXIkAGc/9QCM809wj0zBcP8Xa7h5CXdrwGL0a6zgvpcp6bkbiuRCNxyprb
-	QLDkWOLz8LauqfbMCDTRUMRdAbh2j8AbRs3SgYPMwFyYkoxGxCn72rjn5CMl7vDCnYSLhWsMNKm
-	8bV8xjEjHUmj4JaNNZ5WzSvmDPWeFTGY9bTyog6W2p5jiwuK+sOJRWkBQ9DqvUxu6Kn1FzoOKBr
-	ucKngEYaDY2jYc7uxZBCbtm9/oalS2n+FTZnQBhLMUAi/qL6Qv/IWVVvfrTXWcifT5bj92WOW
-X-Google-Smtp-Source: AGHT+IG3ojTnTVy1hdNr03FmdV6E3sTeXWaDybJz1f1E1nvEGmI8CA+2Pel84ZsC9/O7zHxZywZmtw==
-X-Received: by 2002:a05:600c:5246:b0:459:e025:8c40 with SMTP id 5b1f17b1804b1-45f211c8aa9mr181401305e9.10.1758031208380;
-        Tue, 16 Sep 2025 07:00:08 -0700 (PDT)
-Received: from f.. (cst-prg-88-146.cust.vodafone.cz. [46.135.88.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7cde81491sm16557991f8f.42.2025.09.16.07.00.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 07:00:07 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com,
-	kernel-team@fb.com,
-	amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v4 12/12] fs: make plain ->i_state access fail to compile
-Date: Tue, 16 Sep 2025 15:59:00 +0200
-Message-ID: <20250916135900.2170346-13-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250916135900.2170346-1-mjguzik@gmail.com>
-References: <20250916135900.2170346-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1758031307; c=relaxed/simple;
+	bh=PI1MIx112AMKlNMjgAe/Z6fyJoAYHuhQPgHy2K0We8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BCFOvViJ6tu+E6FWD8fq58hCf4nyXoNn8wAr2JuXqTtJmV3UGhZbg/3PrCygignlLcbhF1wFzWo1bCcAWN9Pj2Fejqy+/h5cjF+O9RGu92MAruy3M/v1fZPTiWrMRB765NALCUvsLz2vcTeb5nx23x+2tZq131LlOilrFoyekL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=h9UZICVd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ex8jxbWG; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4C1847A026A;
+	Tue, 16 Sep 2025 10:01:44 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Tue, 16 Sep 2025 10:01:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758031304;
+	 x=1758117704; bh=dUGmtAZGjQCM3ouX0gm59Gepoq8iuPnrmyp5Xovbgdk=; b=
+	h9UZICVd+cYisRdI2KY5Oj5PHdGrT9lN5EkaC7kwu/Ij/oXTlZk4vJ6pRX2yYQm5
+	sVnqMBkn54RtGbCaWfoTHSE9rTf6XURIFQjC9EIXU28tu9x/P42Es4Lb1zRp8GIi
+	AsmXHhKD8X5suGQLHR+opc4tNDx5XlKFb5x2v1Lb4Kww8t/ej0NcSd+x73soBr1C
+	7baQI4k7lld8ztg7zD9Oe0Sr0TZhOsz2I7tsJatSUzUH/ffMPA1I4XpFVpF4pWwR
+	5q9tWc6IFmGaiYk7icFeM+ogFV5y2oBvgbTAC7q7b+SxDvuNbvdjVPE2LJmxNwb8
+	MP0M7kmYztNFaFKvJAh3qg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758031304; x=
+	1758117704; bh=dUGmtAZGjQCM3ouX0gm59Gepoq8iuPnrmyp5Xovbgdk=; b=E
+	x8jxbWGEYY/ZWIcV10f4Fflz4CGM8f4RUeqVOdeFsJYrnU2iP1dekhCEH2wChobR
+	Mkyaph8M5rzFcI3SYitoAb1CazKihfh3U7e1plxR58uD7FWbtu44Lz/foEgCSfNd
+	lJW0B7Tzll2Spk4IGDLJjXkjL6ovN6yg/KhhHDIL8IKqz4w+0RrG2Gjd4bpTnAfF
+	cCfKWkmEivxti/QFkWTTYlEmGTubf2k7Pl0+bPbbtwPEVQF8xaPBFhEUQMZ/pH+Z
+	EIeR35iTmlRVF9HleLSEAx4SGz0SNKZd86nH5uaENNtFBPNRod81eAQMsFZdZl96
+	K+k6avxVvWCzLuYJggR4A==
+X-ME-Sender: <xms:x23JaNa3R8Zr8Tgg4B7zzJYD9Ti8VV60J_wFrzqtr9Rbji9ID70K1Q>
+    <xme:x23JaAMqwpUEBaAGmVKAm2R5pETjlo8RJtArgI72mnHCYtML4w5Jk6jySAgYlXEtN
+    XctlH2Ot_iiYRC1n-Y>
+X-ME-Received: <xmr:x23JaGa5laVJ89-BHAn5ZHonQeOkW9laaUo71btf6I1iuqOy9aNyjmUmtI2ahoZuv2Yaaw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtdejiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
+    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
+    drohhrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtphhtthhopehlih
+    hnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepmhhitgesughi
+    ghhikhhougdrnhgvthdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtohepvhelfhhs
+    sehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepghhnohgrtghksehgohhogh
+    hlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgv
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtg
+    ii
+X-ME-Proxy: <xmx:x23JaIWZhPdklPBCYuGeYT-hAZ18TeVqb6Dt3k08Mf-c7z3LO3ZxEg>
+    <xmx:x23JaNBOqZUv26gUpxA5gv6gYOJpT0AbYY4SOaqzElzm6DNNjy47Ug>
+    <xmx:x23JaMLeiD4TkaYgkvKM6La-BH9D1qz53DWidsqvs2CyyXf7eHwF_A>
+    <xmx:x23JaDv00oVs2gNCOIHrxAJZprZp8_PDQ6_4nmv40ExZbmD05DpTaw>
+    <xmx:yG3JaKwML17l4D9Vrk4fZwLr0H7fJKihD9fhtMbGj-j55Fyhcf74N9ku>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Sep 2025 10:01:41 -0400 (EDT)
+Message-ID: <a98c14f5-4b28-4f7b-86a2-94e3d66bbf26@maowtm.org>
+Date: Tue, 16 Sep 2025 15:01:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+To: Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, v9fs@lists.linux.dev, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>, linux-security-module@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+ Matthew Bobrowski <repnop@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+References: <aMih5XYYrpP559de@codewreck.org>
+ <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
+ <aMlnpz7TrbXuL0mc@codewreck.org>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <aMlnpz7TrbXuL0mc@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-... to make sure all accesses are properly validated.
+On 9/16/25 14:35, Dominique Martinet wrote:
+> Tingmao Wang wrote on Tue, Sep 16, 2025 at 01:44:27PM +0100:
+>> [...]
+>>
+>> Note that in discussion with Mickaël (maintainer of Landlock) he indicated
+>> that he would be comfortable for Landlock to track a qid, instead of
+>> holding a inode, specifically for 9pfs.
+> 
+> Yes, I saw that, but what you pointed out about qid reuse make me
+> somewhat uncomfortable with that direction -- you could allow a
+> directory, delete it, create a new one somewhere else and if the
+> underlying fs reuse the same inode number the rule would allow an
+> intended directory instead so I'd rather not rely on qid for this
+> either.
+> But if you think that's not a problem in practice (because e.g. landlock
+> would somehow detect the dir got deleted or another good reason it's not
+> a problem) then I agree it's probably the simplest way forward
+> implementation-wise.
+> 
 
-Merely renaming the var to __i_state still lets the compiler make the
-following suggestion:
-error: 'struct inode' has no member named 'i_state'; did you mean '__i_state'?
+Sorry, I forgot to add that this idea would also involve Landlock holding
+a reference to the fid (or dentry, but that's problematic due to breaking
+unmount unless we can have a new hook) to keep the file open on the host
+side so that the qid won't be reused (ignoring collisions caused by
+different filesystems mounted under one 9pfs export when multidev mapping
+is not enabled)
 
-Unfortunately some people will add the __'s and call it a day.
+(There's the separate issue of QEMU not seemingly keeping a directory open
+on the host when the guest has a fid to it tho.  I checked that if the dir
+is renamed on the host side, any process in the guest that has a fd to it
+(checked via cd in a shell) will not be able to use that fd to read it
+anymore.  This also means that another directory might be created with the
+same qid.path)
 
-In order to make it harder to mess up in this way, hide it behind a
-struct. The resulting error message should be convincing in terms of
-checking what to do:
-error: invalid operands to binary & (have 'struct inode_state_flags' and 'int')
-
-Of course people determined to do a plain access can still do it, but
-nothing can be done for that case.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/fs.h | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 11eef4ef5ace..80c53af7bc5a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -782,6 +782,13 @@ enum inode_state_flags_enum {
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
- #define I_DIRTY_ALL (I_DIRTY | I_DIRTY_TIME)
- 
-+/*
-+ * Use inode_state_read() & friends to access.
-+ */
-+struct inode_state_flags {
-+	enum inode_state_flags_enum __state;
-+};
-+
- /*
-  * Keep mostly read-only and often accessed (especially for
-  * the RCU path lookup and 'stat' data) fields at the beginning
-@@ -840,7 +847,7 @@ struct inode {
- #endif
- 
- 	/* Misc */
--	enum inode_state_flags_enum i_state;
-+	struct inode_state_flags i_state;
- 	/* 32-bit hole */
- 	struct rw_semaphore	i_rwsem;
- 
-@@ -906,19 +913,19 @@ struct inode {
-  */
- static inline enum inode_state_flags_enum inode_state_read_once(struct inode *inode)
- {
--	return READ_ONCE(inode->i_state);
-+	return READ_ONCE(inode->i_state.__state);
- }
- 
- static inline enum inode_state_flags_enum inode_state_read(struct inode *inode)
- {
- 	lockdep_assert_held(&inode->i_lock);
--	return inode->i_state;
-+	return inode->i_state.__state;
- }
- 
- static inline void inode_state_add_raw(struct inode *inode,
- 				       enum inode_state_flags_enum addflags)
- {
--	WRITE_ONCE(inode->i_state, inode->i_state | addflags);
-+	WRITE_ONCE(inode->i_state.__state, inode->i_state.__state | addflags);
- }
- 
- static inline void inode_state_add(struct inode *inode,
-@@ -931,7 +938,7 @@ static inline void inode_state_add(struct inode *inode,
- static inline void inode_state_del_raw(struct inode *inode,
- 				       enum inode_state_flags_enum delflags)
- {
--	WRITE_ONCE(inode->i_state, inode->i_state & ~delflags);
-+	WRITE_ONCE(inode->i_state.__state, inode->i_state.__state & ~delflags);
- }
- 
- static inline void inode_state_del(struct inode *inode,
-@@ -944,7 +951,7 @@ static inline void inode_state_del(struct inode *inode,
- static inline void inode_state_set_raw(struct inode *inode,
- 				       enum inode_state_flags_enum setflags)
- {
--	WRITE_ONCE(inode->i_state, setflags);
-+	WRITE_ONCE(inode->i_state.__state, setflags);
- }
- 
- static inline void inode_state_set(struct inode *inode,
--- 
-2.43.0
-
+(I've not looked at the code yet but Christian, feel free to point out if
+I missed anything or if you disagree :) didn't realize earlier you're also
+the recent author of the 9pfs server in QEMU)
 
