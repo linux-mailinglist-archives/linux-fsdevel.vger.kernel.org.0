@@ -1,190 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-61717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF68AB59463
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 12:53:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95996B59473
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 12:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F251BC8236
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 10:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAFF52A32BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 10:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745082D063D;
-	Tue, 16 Sep 2025 10:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3092C1596;
+	Tue, 16 Sep 2025 10:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AbLSsMHN"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rINvNTXD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RGAeGeE8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EDEPYK4f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jm5TOFkh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3F82877D3;
-	Tue, 16 Sep 2025 10:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF2629DB8F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 10:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758019894; cv=none; b=dZtWuA/SOPSca4/AsYzSGEEtPXUZIMqBCCBmGU+CrWwJjgAV2GLgHI2AkmTNOd0VTNGICfMnMw19PGePrv2xKGlJpli1H95mtpuIYAlvLfTCSMpwXJSPHTyYAB7347jCFe6PA21pA2gYlA1uIE2pMtqQ5GmB4s9cvppfEyqPjCU=
+	t=1758020210; cv=none; b=KsWCgqhaIWASX/K+oj1CkoeANDT9wWEbzno4toVbz97sxFW0yqvzP3e7LJ5n+9kjmwFDQB1ry34Nj7oMvEOO9eWarrlUOeHU0E2OiDOnLyvA/pKdrO+QOnaOtQsl/v7OH2DG4UQDqt5hPFzT5eLg7JZbJFHuWs+YYenH+tL9/IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758019894; c=relaxed/simple;
-	bh=nGtXyRb3El3m6A0XnwTidWGk9rdKsvA5L58wZQPcKTY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=lHjrjMNfnvVB4sYUJHzttMSvzlMZUHJzG7GVwSKI8+O+0tOYp1pKbFKmitqyYANhxB5q6/Y8D/x2/MjxtSnGaaqn6RfTJJAyu9zpVDuJlJkWjHYgUbhY1PXxC7jY2UfeOfGnY7HHEmbudniH1h6imN1b0MvOGqSw66ANumxJ32I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AbLSsMHN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G7VubJ017774;
-	Tue, 16 Sep 2025 10:51:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=6tiMzpFySb6QheQKIvDTH6bfs6J9A1FW2+JoAuxFTeI=; b=AbLSsMHN4/7x
-	K1xNMtFDrE+TOYW1iIsk4Mpi83HqtjESBjZwkWHJ8kKIL6P1kWFgRbg5RHL/Vc3/
-	3gNiaqucIq+Hh51NRfzWX0tQi6l43nWNKIrpYWsuJRM6WFMkpMIumQPjbiBNolvo
-	Y5C7x/SgZ+Lg+AIaq8uXUg7N+k5h9pT/2jo/OiBPLGzNJmqVQ/uNJdo/uDuDiSBq
-	WEnHzpMxwUc0R/63Kg2X/G4mqzS8whBtZo73nJ9nqat9v/gFpoDFgpa6HdDBi/35
-	ZZtv0zCsk+pBvAE/vE0jbXVqaj9ApqBocZnQJNjhIpUknqNLYl+7NU0hbSMUKozo
-	aSRGgR2Zog==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g536k9u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 10:51:09 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58GAp8j4018605;
-	Tue, 16 Sep 2025 10:51:08 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g536k9s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 10:51:08 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G85k50009486;
-	Tue, 16 Sep 2025 10:51:07 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 495nn3b4fg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 10:51:07 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58GAp6EK11011482
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 10:51:06 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6406D5803F;
-	Tue, 16 Sep 2025 10:51:06 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4345B58055;
-	Tue, 16 Sep 2025 10:51:04 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Sep 2025 10:51:04 +0000 (GMT)
+	s=arc-20240116; t=1758020210; c=relaxed/simple;
+	bh=pxmiK2G5fQJIkvvkHLZyEBKCBkCYa+9mjl3zcUyNVNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7EAnveBE4SafiV2zTtvqjBGp4Bxv+ELMnYIaBmV0e+BTsAPAawVQlncsl0+rkeAXOd9O+g+lojeGYnnN7ly0cZYwt/JpqkKyJ/U1dc1YNlzTwesPmbGyvNLc5iZXNDqiTZOQbOJseXg4FtoxusaqA5w1CmKFfRM46sq2US9bro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rINvNTXD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RGAeGeE8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EDEPYK4f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jm5TOFkh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 188911FB68;
+	Tue, 16 Sep 2025 10:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758020207; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGwWhNIO4PiBFylmCZMgRfTg1I0nw47qWzgCcsKqCBw=;
+	b=rINvNTXDBiBlFnESIRVo4YWuA7hfvqCM5mEqzukAdXmWwpKxGa5AZ1ue0a76Umk/+Dg/Ao
+	R19fVJjxMr4HOi0Ys3AHRK4aYO2hcnYwwlEPjmwVRqgxiM9apAEdzPyl3P8KqqXzxLmZFx
+	OeKOys3rMKuxFdsGpVtjOsoSftZ7jC8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758020207;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGwWhNIO4PiBFylmCZMgRfTg1I0nw47qWzgCcsKqCBw=;
+	b=RGAeGeE8YfqXr/33Y8kqHLkebD+y2xiPmhJUCZFvzYlHM/l0VidFmQY07ZU6m3ig7EcSP6
+	2lVXvtBpXhCtD0AA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=EDEPYK4f;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Jm5TOFkh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758020206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGwWhNIO4PiBFylmCZMgRfTg1I0nw47qWzgCcsKqCBw=;
+	b=EDEPYK4fpCjFs0PuL3EJ9ZRiiFNhwMIUItJ3UwRgysHcThrzs6EUyZpYznqjnpDtgT8cnU
+	GQq+rzld3PifYBAdxAk+HerPswajbFUWn3kDMeekqLh83i2Hs0Wf3caI47+vGryZINpKT7
+	1y8E/ibbuLBsiLp6So/fHwXXH2x4nwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758020206;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGwWhNIO4PiBFylmCZMgRfTg1I0nw47qWzgCcsKqCBw=;
+	b=Jm5TOFkhTL+48+l0TQ6Et1s6HejhTPyNglktnEiJUmZt0e5juvWdAX6/lXqH6FxTYJK46N
+	qeWmSwCvUfkwzDBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0232113A63;
+	Tue, 16 Sep 2025 10:56:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +ceGAG5CyWieWAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 16 Sep 2025 10:56:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8FFA3A0A56; Tue, 16 Sep 2025 12:56:41 +0200 (CEST)
+Date: Tue, 16 Sep 2025 12:56:41 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	hsiangkao@linux.alibaba.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com
+Subject: Re: [PATCH 1/2] jbd2: ensure that all ongoing I/O complete before
+ freeing blocks
+Message-ID: <p7aznpdg4ue7g3hv7y4wv6lfqp3aoavkdzthz5jgbwtrkc2cnu@gndrpsqaoma2>
+References: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+ <20250916093337.3161016-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 16 Sep 2025 12:51:03 +0200
-From: Harald Freudenberger <freude@linux.ibm.com>
-To: pengdonglin <dolinux.peng@gmail.com>
-Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com,
-        ap420073@gmail.com, jv@jvosburgh.net, bcrl@kvack.org,
-        trondmy@kernel.org, longman@redhat.com, kees@kernel.org,
-        bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-        linux-nfs@vger.kernel.org, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-wireless@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-s390@vger.kernel.org, cgroups@vger.kernel.org,
-        Holger Dengler <dengler@linux.ibm.com>,
-        Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        pengdonglin <pengdonglin@xiaomi.com>
-Subject: Re: [PATCH v3 05/14] s390/pkey: Remove redundant
- rcu_read_lock/unlock() in spin_lock
-Reply-To: freude@linux.ibm.com
-Mail-Reply-To: freude@linux.ibm.com
-In-Reply-To: <20250916044735.2316171-6-dolinux.peng@gmail.com>
-References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
- <20250916044735.2316171-6-dolinux.peng@gmail.com>
-Message-ID: <31be6bb6541bb3e338e3025ac9e8fce5@linux.ibm.com>
-X-Sender: freude@linux.ibm.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dUB5GxZDVKC_6J2Ylb023C_3mzK49UHc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX5K5HvLPe748s
- 1a0iccxe5DzHqpq2HHVExtQN3K3dDZAHmx+plczsOrZBuez8PS/bGeKlwxmdko1vp27MiJETJTG
- rWBkahKjm6E+Lehe9W5AsUAlfhXLzBCKZl91u4s5pKGLTilBgre1vFNiCO4KLvO9XrWU1Caav6A
- LP5y7FEjU/NnADi5ucPQYwViKT2GmRSmRBhcRXXpZEfspZ5l5uxEmXVcbW4As4eHjzGuflsj31H
- fsacgfENVa2S7hh4yS1XXPBx2rL5+dQv2gYhPIFTz7huQ8NQh9IyA9t8ZyRl7UxTDbk1vmK6jmT
- k/dl/Zv55pKlRrfw9Ym17kI1XWuEyzglymXJjQwZlfbaExngRAMTnR8i/K+0vtUxACA7W2YSZzh
- NNpGuSjP
-X-Proofpoint-ORIG-GUID: okqK8s0OaduvH8SS01anEhfn0Ac3dkSd
-X-Authority-Analysis: v=2.4 cv=UJ7dHDfy c=1 sm=1 tr=0 ts=68c9411d cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=IeNN-m2dAAAA:8 a=VnNF1IyMAAAA:8
- a=pGLkceISAAAA:8 a=6zuzY4jPHNdFWWqqfRgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- clxscore=1011 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916093337.3161016-2-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 188911FB68
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email,suse.com:email]
+X-Spam-Score: -4.01
 
-On 2025-09-16 06:47, pengdonglin wrote:
-> From: pengdonglin <pengdonglin@xiaomi.com>
+On Tue 16-09-25 17:33:36, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side
-> function definitions")
-> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
-> rcu_read_lock_sched() in terms of RCU read section and the relevant 
-> grace
-> period. That means that spin_lock(), which implies 
-> rcu_read_lock_sched(),
-> also implies rcu_read_lock().
+> When releasing file system metadata blocks in jbd2_journal_forget(), if
+> this buffer has not yet been checkpointed, it may have already been
+> written back, currently be in the process of being written back, or has
+> not yet written back. jbd2_journal_forget() calls
+> jbd2_journal_try_remove_checkpoint() to check the buffer's status and
+> add it to the current transaction if it has not been written back. This
+> buffer can only be reallocated after the transaction is committed.
 > 
-> There is no need no explicitly start a RCU read section if one has 
-> already
-> been started implicitly by spin_lock().
+> jbd2_journal_try_remove_checkpoint() attempts to lock the buffer and
+> check its dirty status while holding the buffer lock. If the buffer has
+> already been written back, everything proceeds normally. However, there
+> are two issues. First, the function returns immediately if the buffer is
+> locked by the write-back process. It does not wait for the write-back to
+> complete. Consequently, until the current transaction is committed and
+> the block is reallocated, there is no guarantee that the I/O will
+> complete. This means that ongoing I/O could write stale metadata to the
+> newly allocated block, potentially corrupting data. Second, the function
+> unlocks the buffer as soon as it detects that the buffer is still dirty.
+> If a concurrent write-back occurs immediately after this unlocking and
+> before clear_buffer_dirty() is called in jbd2_journal_forget(), data
+> corruption can theoretically still occur.
 > 
-> Simplify the code and remove the inner rcu_read_lock() invocation.
+> Although these two issues are unlikely to occur in practice since the
+> undergoing metadata writeback I/O does not take this long to complete,
+> it's better to explicitly ensure that all ongoing I/O operations are
+> completed.
 > 
-> Cc: Harald Freudenberger <freude@linux.ibm.com>
-> Cc: Holger Dengler <dengler@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+> Fixes: 597599268e3b ("jbd2: discard dirty data when forgetting an un-journalled buffer")
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  drivers/s390/crypto/pkey_base.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  fs/jbd2/transaction.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/s390/crypto/pkey_base.c 
-> b/drivers/s390/crypto/pkey_base.c
-> index b15741461a63..4c4a9feecccc 100644
-> --- a/drivers/s390/crypto/pkey_base.c
-> +++ b/drivers/s390/crypto/pkey_base.c
-> @@ -48,16 +48,13 @@ int pkey_handler_register(struct pkey_handler 
-> *handler)
-> 
->  	spin_lock(&handler_list_write_lock);
-> 
-> -	rcu_read_lock();
->  	list_for_each_entry_rcu(h, &handler_list, list) {
->  		if (h == handler) {
-> -			rcu_read_unlock();
->  			spin_unlock(&handler_list_write_lock);
->  			module_put(handler->module);
->  			return -EEXIST;
+> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+> index c7867139af69..3e510564de6e 100644
+> --- a/fs/jbd2/transaction.c
+> +++ b/fs/jbd2/transaction.c
+> @@ -1659,6 +1659,7 @@ int jbd2_journal_forget(handle_t *handle, struct buffer_head *bh)
+>  	int drop_reserve = 0;
+>  	int err = 0;
+>  	int was_modified = 0;
+> +	int wait_for_writeback = 0;
+>  
+>  	if (is_handle_aborted(handle))
+>  		return -EROFS;
+> @@ -1782,18 +1783,22 @@ int jbd2_journal_forget(handle_t *handle, struct buffer_head *bh)
 >  		}
+>  
+>  		/*
+> -		 * The buffer is still not written to disk, we should
+> -		 * attach this buffer to current transaction so that the
+> -		 * buffer can be checkpointed only after the current
+> -		 * transaction commits.
+> +		 * The buffer has not yet been written to disk. We should
+> +		 * either clear the buffer or ensure that the ongoing I/O
+> +		 * is completed, and attach this buffer to current
+> +		 * transaction so that the buffer can be checkpointed only
+> +		 * after the current transaction commits.
+>  		 */
+>  		clear_buffer_dirty(bh);
+> +		wait_for_writeback = 1;
+>  		__jbd2_journal_file_buffer(jh, transaction, BJ_Forget);
+>  		spin_unlock(&journal->j_list_lock);
 >  	}
-> -	rcu_read_unlock();
+>  drop:
+>  	__brelse(bh);
+>  	spin_unlock(&jh->b_state_lock);
+> +	if (wait_for_writeback)
+> +		wait_on_buffer(bh);
+>  	jbd2_journal_put_journal_head(jh);
+>  	if (drop_reserve) {
+>  		/* no need to reserve log space for this block -bzzz */
+> -- 
+> 2.46.1
 > 
->  	list_add_rcu(&handler->list, &handler_list);
->  	spin_unlock(&handler_list_write_lock);
-
-Acked-by: Harald Freudenberger <freude@linux.ibm.com>
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
