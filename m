@@ -1,267 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-61727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0DEB59674
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 14:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F0AB597AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 15:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DCFA3247F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 12:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BBE188A392
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 13:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A96830E838;
-	Tue, 16 Sep 2025 12:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ED43128C7;
+	Tue, 16 Sep 2025 13:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="VpniS6ED";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KaqRk9P6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpzVsbJn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F862877FC;
-	Tue, 16 Sep 2025 12:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF043081A2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 13:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026675; cv=none; b=J/jmNMD7hUS1vLFGWOY7UPT0lRoDavAc9G95PdXRYk/d6RMq1/PpdUhC2UFRjkkxBUiZu6zzsTmEEBN7Q8cPgVo1TMcckTI8svsCp26bjWDbCQaF7fBJGKzD8KlziQqBsA3FB52T0c4d/iNgiD034kSTD7hqXWdyL3ayBrni+qU=
+	t=1758029390; cv=none; b=syGBFVtVfan8y3xKBWD48Z+DwGSXvp4evYFspHgFaSKWTiOIIq/JQRCj8uq5EnBke4DgZJLMxAR0dxN8FNAUS1LoP7L5fcceGyzwCofZVDJUmcNfclDTBTZyNVX5KDDB9/ye02zHi15ny5baw3GiRs+NdRpGXWNqQOF2aGY066M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026675; c=relaxed/simple;
-	bh=pp6VS8wfKD4WbYFwKVJ9DgnVGuEkZwsqQIckY+Lzxw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zoh8PMzRGXqYhH8gRT4RUodFSDfLf/7NwIW8vGxEWfTpm/khaAFV5+n4AmMakRhgWvvu+j0y0TcSWGI2c+mY39NM39AKlSgOW+ScgTCr/9TiE5biepeQDaShH+VH78hwq2VBlXm/VDGnQoNkdzqJkWfyE2jQ7FkUAHYO0OwclCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=VpniS6ED; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KaqRk9P6; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id B8E781D00274;
-	Tue, 16 Sep 2025 08:44:31 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 16 Sep 2025 08:44:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758026671;
-	 x=1758113071; bh=QMiHHL7HOro34ACIJzbC1zuje8l5Xh5uCKqtWdvq8yo=; b=
-	VpniS6EDrSBqjBwrS6tDHvtZ2IglEDYuNuLP861f4foUE7HxBrQ80LaqoQp9ZuzD
-	mboBWUffMxGu1NHvnao5TRBcADd2PEmkHjIDcO6Py8/ZGMXtlzgXWggEV6iaC1Kr
-	cWm1vWicatX0mnNY/4QdTiucjBWel1m6HZ22tV92k5KsDedsFpFvOprYoHFJ9w9y
-	u9leCmAsd3g6GahBhCxUiQcg7HYrOyGAQZcplVOtfACWHji3tYsZTlnvHoqKEKAA
-	SIK7aZEeHw8RJCLE+PraMA0abISHjOKB6Ctljj8n/YZZ+ZriDGMsILQqbQcCMKMX
-	oo7UUuKBLAxTk3ixA0wpVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758026671; x=
-	1758113071; bh=QMiHHL7HOro34ACIJzbC1zuje8l5Xh5uCKqtWdvq8yo=; b=K
-	aqRk9P6zTIAmAlQQuI6ctREiI4skKL9aXrzB3TmO/I4mOsZ4Nq1k7cqPU96uO9Ss
-	fpdpYOn4rdWYtrIp/woxY7LZj9Ldfhx9aV3NhAPRjK+SZ18KiqKIfNVkmHadmd78
-	GA5o24ZhFi62GSVyETfNEgKGAJrlIiUc/wYlFmb0JTceaLzhdg+xYHmecjKcG5P+
-	JtzUBOqNsrglXiRVsFzhIxPKhGSTDIliiecYDPGJHSnJkZ9u7/64/sNhj0yMuJPG
-	Hf9+sr9OkKuWk0meDXgwn/QH+/o1PT6V1huepTLJ5qq2XkvXWYV95/AdUioPzdwZ
-	ocFvl7d9CbaBua85VHuuQ==
-X-ME-Sender: <xms:rlvJaBCgyvZQLMj0FUNmGLsv7ycKdYe2NQR858lGFIGBP8TjiYo9wg>
-    <xme:rlvJaLUmmzuSBnh_yaEg_y5zvVunY57qbdamTlGj1B4N8QNMjEHw0Jzqhkzr972HL
-    rfuut45h2_rOEkt2BA>
-X-ME-Received: <xmr:rlvJaDA9GYb6AzUFp1qtK29hauT-Lw_xZjwLOYlSXbOopis5kq0Ft2N5ylinBBqfC77W>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtdeitdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
-    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
-    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtphhtthhopehlih
-    hnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepmhhitgesughi
-    ghhikhhougdrnhgvthdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtohepvhelfhhs
-    sehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepghhnohgrtghksehgohhogh
-    hlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgv
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtg
-    ii
-X-ME-Proxy: <xmx:rlvJaIcyI2LlXBZRvujZfs4hSaQO4LbkfGhI1S5e5uzOWZlvF4P-WA>
-    <xmx:rlvJaKpAgEIbReSEsCojnAFbPtYP9kXsFdNjVdrzQ7jb8FwCp7zzPw>
-    <xmx:rlvJaJS0T_RxmYh5PGjrNj85YyiViwJYExgrxqd7SB2U7_bh3cB1kA>
-    <xmx:rlvJaKWqLslmJMwnzQ_GuxaqmnA7pJZjZyobj6CPDZePHvtNbXTKXQ>
-    <xmx:r1vJaARjZ1PADkXbfH4FLzxllL3oJkly5AJzXULYm2PkSoEGE7yYMTil>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Sep 2025 08:44:28 -0400 (EDT)
-Message-ID: <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
-Date: Tue, 16 Sep 2025 13:44:27 +0100
+	s=arc-20240116; t=1758029390; c=relaxed/simple;
+	bh=/dlRa3fJmDKHfHaLN7gvlMCOjbtBNW/Z1+IbKo1HKVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Op00WmZYdUWgl5pxXhemTragN4eWFfZ/k0G4+7e/bEzLIrEx92Kjz0yb6a4ESYUVeZ+gUl9qgZsDgUdyPB1JtM2PLS1xZpDIBC/BGyL7ffv5pKkSVBGRhr+I2XAoQTxFvRx4jzh228XO3QXcydfKVFBSyFIpW+736dbMBO7FbTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpzVsbJn; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-620724883e6so10277169a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 06:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758029387; x=1758634187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8nUBl38KozCd2EM6dPQpNsN7WfMcH/uyK4YoPI5ee8s=;
+        b=YpzVsbJnoFX/l+brAgnsXam5Tq79FkQm5NERsg2M3IMIz1h5/8wmAlaHgwd7M88rN8
+         I3al5vkyhDoy4R8wnOfNTyUDjt54ABRBWy3znkYemO0ClP8TSo2B3UMbcFC28Z5W26a7
+         xNsha9PDLH19lqhbbMV7R7cRVWTSJ5pjR9TN6KlRymBQh/GCUEqgrbD3DXpJTbJdmVOU
+         ZRIeoixcXZ+NkL656p8AB4BJPJjxGLvDifEKq5ZEHLM4fCBSBlDWIKUEu0iIiuPtcUGl
+         O2XAdmERgavlDO92bx9XqAnPn6pHZItVz1rnvRoHhNe4bqZ1tBZIUbgsTxbiIqz8kO5l
+         d3nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758029387; x=1758634187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8nUBl38KozCd2EM6dPQpNsN7WfMcH/uyK4YoPI5ee8s=;
+        b=aItWL5NYTX5gu9Et+i2uHLQ20hMNNApZwMhJAk3EY9rVD7jnAmTVnNcSn/IYWFxHB3
+         H4tEdTjxl5B+QZNXRmdPe5R/dzL6kTeuX0crVUCebMTeXI8yUkqdAan6h9Eiqp9YcShY
+         nPYtqzg4CgU3E7v0QMbbS3YiJ5kELJRnNYFYhSRqjF828yydbRQC0C/WQWFe7wvkCIsH
+         GPECVpTgtB+0vrtAFtQFO6qmpQ4otfsoaYYnm6iH7O46BWHNJrl3TakNjtqNNJvGGVNN
+         cZTUQlsyRu7QxkDyOlWdIiKdwd4xCBmtNDD7D8nwUUFrhCRs4SDEE7G3O7qB+K4VOqyS
+         0yBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgl89hdnorLwlG1KGp9QY2lz6SNQcjytJlDsF8K17HOcGKQ5DnYUaVwLVgymBgBVr8sRkA3ucP05VK7Vjn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHkJE1ClMzzhYyTu81b/1Qua3c8TnGugNTqKUUbO+5j2SDPgqU
+	rlAQ7nAKhbvoU85mGdM3hrCU1fDY74VKXmQM84/slLk10z3PUE8ijHM+2gASsyv5r4oAj9SwbEe
+	qBf4aQ/RrX6MCoZuCkC/hbj/i3WuIMFs=
+X-Gm-Gg: ASbGncuaibKvE25Sp6EP6oG4SqfgWwO/Z/CNZcWYSwBYw91irsVJ8TBk/pjcg+0pJ9f
+	SbKhCj6lkdDsHkODQj8d5Z4CXNGbiIfFk2YBAKaSCYFG1/Xt80Ja5ZMFyKSAmqH9XpJ/SUNt0IJ
+	Eb1DmLJb+IkKk2OQZgQxw1j6rgD3UboODctimKNq0wurroQ6piutmeAKzPik+hJymxX1981orEN
+	sBVS8bx63Samnoq8/4ZpfQcbQ6gWgc57ihSPigYJFovE1Q/rl8=
+X-Google-Smtp-Source: AGHT+IFx9yd4PB/vn4IjXsoACWwoeCb/LEf5nz0y3KpLeNZ2RitKABUZYjPvumidUpl8exgSkmnuKsZ7bjrh8cCbDhE=
+X-Received: by 2002:a05:6402:a0cd:b0:629:54af:4f53 with SMTP id
+ 4fb4d7f45d1cf-62ed82c6656mr16233534a12.18.1758029386970; Tue, 16 Sep 2025
+ 06:29:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, v9fs@lists.linux.dev, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>, linux-security-module@vger.kernel.org,
- Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
- Matthew Bobrowski <repnop@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-References: <aMih5XYYrpP559de@codewreck.org>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <aMih5XYYrpP559de@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250915101510.7994-1-acsjakub@amazon.de> <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com> <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+In-Reply-To: <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 16 Sep 2025 15:29:35 +0200
+X-Gm-Features: AS18NWAPAV01WXyNb64OPEzkKEyOkzIVEVp3wm-eCN6oWp1E8_sj0VUWGpMMb0M
+Message-ID: <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+To: Jan Kara <jack@suse.cz>
+Cc: Jakub Acs <acsjakub@amazon.de>, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/16/25 00:31, Dominique Martinet wrote:
-> (Thanks Christian, replying just once but your reply was helpful)
-> 
-> Tingmao Wang wrote on Mon, Sep 15, 2025 at 02:44:44PM +0100:
->>> I'm fuzzy on the details but I don't see how inode pointers would be
->>> stable for other filesystems as well, what prevents
->>> e.g. vm.drop_caches=3 to drop these inodes on ext4?
->>
->> Landlock holds a reference to the inode in the ruleset, so they shouldn't
->> be dropped.  On security_sb_delete Landlock will iput those inodes so they
->> won't cause issue with unmounting.  There is some special mechanism
->> ("landlock objects") to decouple the ruleset themselves from the actual
->> inodes, so that previously Landlocked things can keep running even after
->> the inode has disappeared as a result of unmounting.
-> 
-> Thank you for the explanation, that makes more sense.
-> iirc even in cacheless mode 9p should keep inode arounds if there's an
-> open fd somewhere
+On Tue, Sep 16, 2025 at 1:30=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 15-09-25 17:29:40, Amir Goldstein wrote:
+> > On Mon, Sep 15, 2025 at 4:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > > > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> > > > > index 83f80fdb1567..424c73188e06 100644
+> > > > > --- a/fs/overlayfs/export.c
+> > > > > +++ b/fs/overlayfs/export.c
+> > > > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct ino=
+de *inode)
+> > > > >         if (!ovl_inode_lower(inode))
+> > > > >                 return 0;
+> > > > >
+> > > > > +       if (!inode->i_sb->s_root)
+> > > > > +               return -ENOENT;
+> > > >
+> > > > For a filesystem method to have to check that its own root is still=
+ alive sounds
+> > > > like the wrong way to me.
+> > > > That's one of the things that should be taken for granted by fs cod=
+e.
+> > > >
+> > > > I don't think this is an overlayfs specific issue, because other fs=
+ would be
+> > > > happy if encode_fh() would be called with NULL sb->s_root.
+> > >
+> > > Actually, I don't see where that would blow up? Generally references =
+to
+> > > sb->s_root in filesystems outside of mount / remount code are pretty =
+rare.
+> > > Also most of the code should be unreachable by the time we set sb->s_=
+root
+> > > to NULL because there are no open files at that moment, no exports et=
+c. But
+> > > as this report shows, there are occasional surprises (I remember simi=
+lar
+> > > issue with ext4 sysfs files handlers using s_root without checking co=
+uple
+> > > years back).
+> > >
+> >
+> > I am not sure that I understand what you are arguing for.
+> > I did a very naive grep s_root fs/*/export.c and quickly found:
+>
+> You're better with grep than me ;). I was grepping for '->s_root' as well
+> but all the hits I had looked into were related to mounting and similar a=
+nd
+> eventually I got bored. Restricting the grep to export ops indeed shows
+> ceph, gfs2 and overlayfs are vulnerable to this kind of problem.
+>
+> > static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
+> >                           struct inode *parent)
+> > {
+> > ...
+> >         if (!parent || inode =3D=3D d_inode(sb->s_root))
+> >                 return *len;
+> >
+> > So it's not an overlayfs specific issue, just so happens that zysbot
+> > likes to test overlayfs.
+> >
+> > Are you suggesting that we fix all of those one by one?
+>
+> No. I agree we need to figure out a way to make sure export ops are not
+> called on a filesystem being unmounted. Standard open_by_handle() or NFS
+> export cannot race with generic_shutdown_super() (they hold the fs mounte=
+d)
+> so fsnotify is a special case here.
+>
+> I actually wonder if fanotify event (e.g. from inode deletion postponed t=
+o
+> some workqueue or whatever) cannot race with umount as well and cause the
+> same problem...
+>
 
-Yes, because there is a dentry that has a reference to it.  Similarly if
-there is a Landlock rule referencing it, the inode will also be kept
-around (but not the dentry, Landlock only references the inode).  The
-problem is that when another application (that is being Landlocked)
-accesses the file, 9pfs will create a new inode in uncached mode,
-regardless of whether an existing inode exists.
+Oy. I was thinking that all event happen when holding some mnt ref
+but yeh fsnotify_inoderemove() does look like it could be a problem
+from sb shutdown context.
 
-> 
->> [...]
->>
->> I tried mounting a qemu-exported 9pfs backed on ext4, with
->> multidevs=remap, and created a file, used stat to note its inode number,
->> deleted the file, created another file (of the same OR different name),
->> and that new file will have the same inode number.
->>
->> (If I don't delete the file, then a newly created file would of course
->> have a different ext4 inode number, and in that case QEMU exposes a
->> different qid)
-> 
-> Ok so from Christian's reply this is just ext4 reusing the same inode..
-> I briefly hinted at this above, but in this case ext4 will give the
-> inode a different generation number (so the ext4 file handle will be
-> different, and accessing the old one will get ESTALE); but that's not
-> something qemu currently tracks and it'd be a bit of an overhaul...
-> In theory qemu could hash mount_id + file handle to get a properly
-> unique qid, if we need to improve that, but that'd be limited to root
-> users (and to filesystems that support name_to_handle_at) so I don't
-> think it's really appropriate either... hmm..
+How about skipping fsnotify_inoderemove() in case sb is in shutdown?
 
-Actually I think I forgot that there is also qid.version, which in the
-case of a QEMU-exported 9pfs might just be the file modification time?  In
-9pfs currently we do reject a inode match if that version changed server
-side in cached mode:
+> > > > Can we change the order of generic_shutdown_super() so that
+> > > > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
+> > > >
+> > > > Or is there a better solution for this race?
+> > >
+> > > Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
+> > > In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
+> > > evict_inodes")) we've moved the call after evict_inodes() because oth=
+erwise
+> > > we were just wasting cycles scanning many inodes without watches. So =
+moving
+> > > it earlier wouldn't be great...
+> >
+> > Yes, I noticed that and I figured there were subtleties.
+>
+> Right. After thinking more about it I think calling fsnotify_sb_delete()
+> earlier is the only practical choice we have (not clearing sb->s_root isn=
+'t
+> much of an option - we need to prune all dentries to quiesce the filesyst=
+em
+> and leaving s_root alive would create odd corner cases). But you don't wa=
+nt
+> to be iterating millions of inodes just to clear couple of marks so we'll
+> have to figure out something more clever there.
 
-v9fs_test_inode_dotl:
-	/* compare qid details */
-	if (memcmp(&v9inode->qid.version,
-		   &st->qid.version, sizeof(v9inode->qid.version)))
-		return 0;
+I think we only need to suppress the fsnotify_inoderemove() call.
+It sounds doable and very local to fs/super.c.
 
-(not tested whether QEMU correctly sets this version yet)
+Regarding show_mark_fhandle() WDYT about my suggestion to
+guard it with super_trylock_shared()?
 
-> 
-> (I also thought of checking if nlink is 0 when getting a new inode, but
-> that's technically legimitate from /proc/x/fd opens so I don't think we
-> can do that either)
-> 
-> And then there's also all the servers that don't give unique qids at
-> all, so we'll just get weird landlock/fsnotify behaviours for them if we
-> go that way...
-> 
-> -----------------
-> 
-> Okay, you've convinced me something like path tracking seems more
-> appropriate; I'll just struggle one last time first with a few more open
-> questions:
->  - afaiu this (reusing inodes) work in cached mode because the dentry is
-> kept around;
-
-Based on my understanding, I think this isn't really to do with whether
-the dentry is around or not.  In cached mode, 9pfs will use iget5_locked
-to look up an existing inode based on the qid, if one exists, and use
-that, even if no cached dentry points to it.  However, in uncached mode,
-currently if vfs asks 9pfs to find an inode (e.g. because the dentry is no
-longer in cache), it always get a new one:
-
-v9fs_vfs_lookup:
-	...
-	else if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
-		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb);
-	else
-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
-	...
-v9fs_qid_iget_dotl:
-	...
-	if (new)
-		test = v9fs_test_new_inode_dotl;
-	else
-		test = v9fs_test_inode_dotl;
-	...
-v9fs_test_new_inode_dotl:
-	static int v9fs_test_new_inode_dotl(struct inode *inode, void *data)
-	{
-		return 0;
-	}
-
-
-> I don't understand the vfs well enough but could the inodes
-> hold its dentry and dentries hold their parent dentry alive somehow?
-> So in cacheless mode, if you have a tree like this:
-> a
-> └── b
->     ├── c
->     └── d
-> with c 'open' (or a reference held by landlock), then dentries for a/b/c
-> would be kept, but d could be droppable?
-
-I think, based on my understanding, a child dentry does always have a
-reference to its parent, and so parent won't be dropped before child, if
-child dentry is alive.  However holding a proper dentry reference in an
-inode might be tricky as dentry holds the reference to its inode.
-
-> 
-> My understanding is that in cacheless mode we're dropping dentries
-> aggressively so that things like readdir() are refreshed, but I'm
-> thinking this should work even if we keep some dentries alive when their
-> inode is held up.
-
-If we have some way of keeping the dentry alive (without introducing
-circular reference problems) then I guess that would work and we don't
-have to track paths ourselves.
-
-> 
->  - if that doesn't work (or is too complicated), I'm thinking tracking
-> path is probably better than qid-based filtering based on what we
-> discussed as it only affects uncached mode.. I'll need to spend some
-> time testing but I think we can move forward with the current patchset
-> rather than try something new.
-> 
-> Thanks!
-
-Note that in discussion with Mickaël (maintainer of Landlock) he indicated
-that he would be comfortable for Landlock to track a qid, instead of
-holding a inode, specifically for 9pfs.
-
-(This doesn't solve the problem for fsnotify though)
-
-Kind regards,
-Tingmao
+Thanks,
+Amir.
 
