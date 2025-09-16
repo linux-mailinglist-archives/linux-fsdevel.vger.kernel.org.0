@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-61783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD7DB59DBC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 18:33:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21ED4B59DC0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 18:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C359D48574A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:33:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80C52A7181
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 16:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0C127FB2E;
-	Tue, 16 Sep 2025 16:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2878372885;
+	Tue, 16 Sep 2025 16:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aAZOwPKM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/H9ENHoj"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tMTiXy8m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2X5FfAfx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B5227713;
-	Tue, 16 Sep 2025 16:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B932730FC31;
+	Tue, 16 Sep 2025 16:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758040393; cv=none; b=Gd5pQWTo6MJQ178dPxgJTs5HogTxSiFX2I4gMTef9oSMWY2rIGB3b5zyKZMydUCPgbaFocmteJ/YuZexwLrqr+fEQgwyuhW0jZe9Oi/+E0HwRpkPQHXjd5tWEjx7aLCzfujV/BLz69tcStA7s4w//Eh2LIxPhJDclEWCFsc2nd4=
+	t=1758040396; cv=none; b=RP5Sz9dTWcNlSPwFOU4eHeWJVlhtKCZQcY+9nmVZ0gGy9wzTU77oLwF6gtmqKFnKN+SWYO9bzgRwjn2rPuEpQ3b4TUbAfHDUFNftI6DDkCHNMVUYDV5Y2nVvdolq2dp8qpjekj5mMpPodmxCMDoSvLajw2jbC/cLzL0lu8Bpz2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758040393; c=relaxed/simple;
-	bh=aNA0BOq5pZa4UZHJvNSqUe7oskOnYx6OhDY2Zyl56cA=;
+	s=arc-20240116; t=1758040396; c=relaxed/simple;
+	bh=LmP1t1NEliIYRE1NqprRXU4f2LEUc9PuYT11S4SHt7g=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=j2gpA86x5WjqJCcW+uPOaCnbtpLYz7IH+awEWJxKYD82suMlaWsr1jxZeWiIUOEIgpNKxIEhf9N+b+gIsi8a2ZM/ZinV98Sa1bkkcUzuFTtlYA4TFn+j5NgkyFTI22V0nkUncGQswh9k+11FaYxsIzHccAOF9GDjA3tgzngArss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aAZOwPKM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/H9ENHoj; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=oU5QQQ+6eYrv/t8rihe4Igujf0zFaaz/z035m+OaTqdDtiNt29cT/BoIfAZi3bi1MbUfaEGjCoTptpEnWuQMWnzTwr9IevSjI3oa4hW+kqF6A4ZN8DfrLYdhAwcTiYZtlISVAvgTxovKyeipDG2j4/2mM3hdakMdDOxuATdtSMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tMTiXy8m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2X5FfAfx; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250916163252.037251747@linutronix.de>
+Message-ID: <20250916163252.100835216@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758040389;
+	s=2020; t=1758040391;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=B/RhS9MNlGp3gsd3Y5Hcz+zwOUSn+KCGsE63faUFAJ8=;
-	b=aAZOwPKMm4jwayUq+qDJ8DY/iZjvms9gmpOm+ct7FIi2qfXqO2u1fVe2YStaVUIzzWxt9d
-	tA8sboL0MDk+yZHp4z5FYKjRwQm14cSPwYvVNV4cZphj4sO5MO0rxwwhUtwG1Phz3gxBVv
-	ZFYIud/j3ahpmykVe1dpyXZxMl2FJfFxy+vZxH2rjLe5TRh7eOIG+/2awPBlH+L7wFaChL
-	7hkPOhd7tSFEHwu622HJyBogkgSDWOXM+pL+8jvnvMcKRpMhn+0FBL6Y3MD3dkRfqsYCHT
-	hf5xIyg4gcU0iS+UN7J6WeLF49JHHSFv2JnDsP9mfoQGUXRdms1Z8nZzc2UXZw==
+	 references:references; bh=buXtarGTm5jtJPETYvya0klPdCPo5lg6x42RHvHcKok=;
+	b=tMTiXy8mUOfJCFDjOKCgDFF1NRDxySWAX2O8TLSvs30T9S1E2AiTsQVgh458xzHMSqXC+2
+	1kcDX0vVYCkmHTAnaz0FZEsRLQAAvYHzKDLzisOvelP0eqKwFI6cc4j+0qctuul9fH7MjB
+	7wIpQIG4gAC6OzloTYfH8zv2oLDUVnHsmZuwknO78ukUXHESIfyJ7Ol0y+74ie0REODCVS
+	J7WwfoNfO3O6ow0DP1vSfLqvfBAxhU8IVWtU3vBeuW07mt/gQmZw61yF3qXI8YHcyvsOIp
+	13UYm6KCKQuy+rUfIT3REKlA5bOgbNNXmZZLG4ix/OlbvfXQOuxavMGPHieSdQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758040389;
+	s=2020e; t=1758040391;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=B/RhS9MNlGp3gsd3Y5Hcz+zwOUSn+KCGsE63faUFAJ8=;
-	b=/H9ENHojbyZCig4RCbcZB0AcR5KYCv6FUU8ji5Q7CeEhYJ1EZB4nUb9K7XrWSI/58jOkZC
-	GD2DBAPopu7XXHDA==
+	 references:references; bh=buXtarGTm5jtJPETYvya0klPdCPo5lg6x42RHvHcKok=;
+	b=2X5FfAfxhvDIRItdbY0APY7iqOVIg/EJmgLkNdRtkF+wSl4K88PZjRMj9VVKNrzby18DHX
+	Rzngsjl5TGRcEHBQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  Peter Zijlstra <peterz@infradead.org>,
+ Nathan Chancellor <nathan@kernel.org>,
  kernel test robot <lkp@intel.com>,
  Russell King <linux@armlinux.org.uk>,
  linux-arm-kernel@lists.infradead.org,
- Nathan Chancellor <nathan@kernel.org>,
  Christophe Leroy <christophe.leroy@csgroup.eu>,
  Darren Hart <dvhart@infradead.org>,
  Davidlohr Bueso <dave@stgolabs.net>,
@@ -67,7 +67,7 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  Christian Brauner <brauner@kernel.org>,
  Jan Kara <jack@suse.cz>,
  linux-fsdevel@vger.kernel.org
-Subject: [patch V2 1/6] ARM: uaccess: Implement missing __get_user_asm_dword()
+Subject: [patch V2 2/6] kbuild: Disable asm goto on clang < 17
 References: <20250916163004.674341701@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,56 +76,55 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 16 Sep 2025 18:33:09 +0200 (CEST)
+Date: Tue, 16 Sep 2025 18:33:11 +0200 (CEST)
 
-When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM variant
-for no real good reason. This prevents using get_user(u64) in generic code.
+clang < 17 fails to use scope local labels with asm goto:
 
-Implement it as a sequence of two 4-byte reads with LE/BE awareness.
+     {
+     	__label__ local_lbl;
+	...
+	unsafe_get_user(uval, uaddr, local_lbl);
+	...
+	return 0;
+	local_lbl:
+		return -EFAULT;
+     }
 
-Reported-by: kernel test robot <lkp@intel.com>
+when two such scopes exist in the same function:
+
+  error: cannot jump from this asm goto statement to one of its possible targets
+
+That prevents using local labels for a cleanup based user access mechanism.
+
+As there is no way to provide a simple test case for the 'depends on' test
+in Kconfig, mark ASM goto broken on clang versions < 17 to get this road
+block out of the way.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel.com/
+Cc: Nathan Chancellor <nathan@kernel.org>
 ---
-V2: New patch to fix the 0-day fallout
+V2: New patch
 ---
- arch/arm/include/asm/uaccess.h |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ init/Kconfig |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -295,6 +295,7 @@ do {									\
- 	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
- 	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
- 	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
-+	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
- 	default: (__gu_val) = __get_user_bad();				\
- 	}								\
- 	uaccess_restore(__ua_flags);					\
-@@ -353,6 +354,22 @@ do {									\
- #define __get_user_asm_word(x, addr, err, __t)			\
- 	__get_user_asm(x, addr, err, "ldr" __t)
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -96,9 +96,14 @@ config GCC_ASM_GOTO_OUTPUT_BROKEN
+ 	default y if GCC_VERSION >= 120000 && GCC_VERSION < 120400
+ 	default y if GCC_VERSION >= 130000 && GCC_VERSION < 130300
  
-+#ifdef __ARMEB__
-+#define __WORD0_OFFS	4
-+#define __WORD1_OFFS	0
-+#else
-+#define __WORD0_OFFS	0
-+#define __WORD1_OFFS	4
-+#endif
++config CLANG_ASM_GOTO_OUTPUT_BROKEN
++	bool
++	depends on CC_IS_CLANG
++	default y if CLANG_VERSION < 170000
 +
-+#define __get_user_asm_dword(x, addr, err, __t)				\
-+	({								\
-+	unsigned long __w0, __w1;					\
-+	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
-+	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
-+	(x) = ((u64)__w1 << 32) | (u64) __w0;				\
-+})
-+
- #define __put_user_switch(x, ptr, __err, __fn)				\
- 	do {								\
- 		const __typeof__(*(ptr)) __user *__pu_ptr = (ptr);	\
+ config CC_HAS_ASM_GOTO_OUTPUT
+ 	def_bool y
+-	depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
++	depends on !GCC_ASM_GOTO_OUTPUT_BROKEN && !CLANG_ASM_GOTO_OUTPUT_BROKEN
+ 	depends on $(success,echo 'int foo(int x) { asm goto ("": "=r"(x) ::: bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
+ 
+ config CC_HAS_ASM_GOTO_TIED_OUTPUT
 
 
