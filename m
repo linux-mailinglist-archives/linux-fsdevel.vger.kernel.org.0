@@ -1,148 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-61816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37518B5A070
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 20:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C85AB5A0A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 20:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70B44869AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 18:23:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893AD585D5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 18:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29F529B8E0;
-	Tue, 16 Sep 2025 18:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701DD2DE70C;
+	Tue, 16 Sep 2025 18:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BHZOcV+c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2ep6gSM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05816285CBD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 18:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95710246783;
+	Tue, 16 Sep 2025 18:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758046999; cv=none; b=mlHNCCZbqIKXgpA88nNwjEEIu0iVcavn6YOWFcV3uRyHvXx3Zww61zN0T9zUFzgosBHWC1ku9pVsPEfjOfmxulAT8h0+P7RXYPdkBJJ8+rcbXwWEH7/ALOm6FJKk6kQ7KvPYfBjA/m0aWNPw1/SBq68Irc/4Xkyd9nH42PGuGDU=
+	t=1758047824; cv=none; b=QIBcOqFdSiSE4lL4gg/grwqz0VsGkse9YGTVuc83QdMZGcRFkTTTrAeSAQ9qGuOfEsHiAM82/SS45L5ob2GAnwFilqltcBK90hbBUtPxyDJ1Pmm4Y+Yt/uKBBTCXpSLJz76GzYl3hAkB89APTcVMf2hitTkL/1WMPSPDWNIg5Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758046999; c=relaxed/simple;
-	bh=MWP0yXO5hqblKAsf86sVb92EBQ6Tee6NsUCw9nEvo9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TqcuYEvS002xSQ3cPan8V9WM/JY6Y7otS7cXKibH6f1+K2QHq1kqxNpS25pG6URU7sQeOhi3SXwcadxHGy6djqv0J0Nq3N+bpIpEbFXW5ag54WbPMRLykBI2Ls4ZFlVLbJ/O0/Ei6AQ8iJzpqHipw42c9R8GdrOwR7XlcezCJq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BHZOcV+c; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-265abad93bfso23055ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 11:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758046997; x=1758651797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VxUZE7TC0xZyMAyFa+6mdSBsb32RFob5X99goi87Xdw=;
-        b=BHZOcV+c6MvOfCF65mjwe2IECKvFxVl2aV2YgpzUCnkCAPcYhJJVMweggAcfmmLOIe
-         2RV9aX5ubl/xGN/A9Lkl5iHYRnNCxLahMeFB20QpHZ9A2tT5gcx7soK4U/UpdeuVma3J
-         i7n2UtmYDVwc1SaptmDPUfClDnslr+ozNmj5dYzjpjQezKEsa78W3yEy7ZoHBtB5t6LC
-         mGTdm6imIgfYUrVjpyDpmmZPjgaLHYwlkTGoOq3oyYSpDSrPFi7DGlmKfh1sENmglEgC
-         VTzOtoHzZYMDNNZSWa5FLUzvl8D2OI+o2UaZmkoxNav7lwfybTzYQRQCeac5o7ljViKc
-         5rXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758046997; x=1758651797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VxUZE7TC0xZyMAyFa+6mdSBsb32RFob5X99goi87Xdw=;
-        b=uysTbCAxM2Bmj5oxisv2kj6fAfRVvThyFqz6zaG9LAOFOJBXB4ha2Y9arMfYSpPiOA
-         QD7GAFsdwd0EBV1tdk1kJxOPx37TTsBp7lf9xK3gEjMl/MKEKGqXeon4fL5kAsgFRFlh
-         zZ2uLwWEtNnrbBD48OUqcNjvpTuiHS+tRUWONsdLAQqLgGsG3pf4piCq/BuA9I7XunZo
-         fRdcdBT5XMjMrrpGk5H1MjHwcnVABJXlw63uW5D/LDLD5qvXO9fKvBP6Gw9A7qZUVUyZ
-         OYFBZgUHUKPbgL1nSB1itN7ssZua7bYYY8v40k2yLHtwwvGoSJvfv/5mydoGXCwYXVdz
-         uIWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmjkEHpYFQsPZQAq7QMIyT8MbJ2brmxyf6S7jI7I+r6vjQCakkc68Bo6Y6CMS3UY5smbU7g0KXrVLi1HEL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfABk4FxCfgqQef8QecU81EycPa2OFZz12ihsHTiHGNSyNU8Ln
-	rU2PsvpPxwF71WWChFwdv2JE22dBLyIg+HbcBoHhWsravNZdTzrXQ+08sRwq2v7n3qHAUF3h6FT
-	waRymCx8a6V8s6AAoe+xuCDe4EbGE+iVOG7BzIGsk
-X-Gm-Gg: ASbGncsGWL9WDXcDwt6BzFb6hjCSwgP80Wt1A6+LzIQwPBaRMoh7afkmzubT/TQ/iMH
-	NEig4617dbI0xFVf3bWh16Q8Dymjan0+1xl4t9F7LB29A2ntoibpFhUYWbCgzFl8nbFO/PaxLed
-	lV7ksQfJC6c3iVGraO/qAbCBNKzRNuOe6qfdUElUdoBmzjlTdueKVks+42388Lub7sDXIG2Sep9
-	viP5Q1Ml7ynj6n5RHlbbRgQrh+BBbFggpdCgny0SwIT/ocId7dhTwM=
-X-Google-Smtp-Source: AGHT+IFeMeqAy+cuIfy8BDPUr07CVnLWSx0isY1COTxmQUhbfeHhUc/gJKs+z9vTXpQo6NDvDMpWAnnnlJDkjgySN7E=
-X-Received: by 2002:a17:902:d2c9:b0:266:b8a2:f605 with SMTP id
- d9443c01a7336-2680120ed16mr333025ad.3.1758046996934; Tue, 16 Sep 2025
- 11:23:16 -0700 (PDT)
+	s=arc-20240116; t=1758047824; c=relaxed/simple;
+	bh=jnE3T/TrSxsfQhYKHHZkySdj6XnCpKLKkcg0Jk32Y6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhqA7IKeND8GINKHhpZh2sZeohxYNzsEW8xSQd+OUwhTMoXALhNpb5OLAUrCukl94C7+UiE47Mi8pTomM+BC8VU2uZ9ef9xAPObn+yzTcsqOGq17FDs9h+PBhcv5cJzVFvO0/0aVdg9Xz2oODyG1OsFOjHJzjRGMB1GKTagpVNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2ep6gSM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F45C4CEEB;
+	Tue, 16 Sep 2025 18:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758047822;
+	bh=jnE3T/TrSxsfQhYKHHZkySdj6XnCpKLKkcg0Jk32Y6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d2ep6gSMpdFnttghY+ZQDHb/uKNh+aQyvx1yPRjPflTZYBy+I0m9GICWEC3pl6D5l
+	 A7KYUBEoyGG0LaIlpwgEtS1y438lnBM2Keo7Dh4eMrcmYp3BsuQ55zp1qTmqtOXJRs
+	 wjEnNkw1308B6wqeofWDMH2XkhB2krw0z5woQZWEZzIBQY0jFyHHIaKUdX8iHgnNWk
+	 VXmXEZmnvyR4DtzMz9hDRUUKrg7q8pVqM7UcnRJSeI62VFtb4NdnL8KB3JqN+YTLaT
+	 VfcNwEURuquG6ungOU6gMBnq84GmJgN8vp1SUb2pcs/GDlCL1EOMR4XvIkPhFmbjC7
+	 mQsnS8YiqJHNg==
+Date: Tue, 16 Sep 2025 08:37:01 -1000
+From: Tejun Heo <tj@kernel.org>
+To: pengdonglin <dolinux.peng@gmail.com>
+Cc: tony.luck@intel.com, jani.nikula@linux.intel.com, ap420073@gmail.com,
+	jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org,
+	trondmy@kernel.org, longman@redhat.com, kees@kernel.org,
+	bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-nfs@vger.kernel.org, linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-s390@vger.kernel.org,
+	cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+	pengdonglin <pengdonglin@xiaomi.com>
+Subject: Re: [PATCH v3 08/14] cgroup: Remove redundant rcu_read_lock/unlock()
+ in spin_lock
+Message-ID: <aMmuTXNPY_9Fp_WQ@slm.duckdns.org>
+References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+ <20250916044735.2316171-9-dolinux.peng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-8-kaleshsingh@google.com> <20250915194158.472edea5@gandalf.local.home>
- <CAC_TJvconNNKPboAbsfXFBboiRCYgE2AN23ask1gdaj9=wuHAQ@mail.gmail.com>
- <20250916115220.4a90c745@batman.local.home> <CAC_TJvdkVPcw+aKEjUOmTjwYfe8BevR51X_JPOo69hWSQ1MGcw@mail.gmail.com>
- <20250916134833.281e7f8b@gandalf.local.home> <CAC_TJvc6aqjBRZ05wyGb49AU+-aKpSph=ZSk3fdV2xraXi-_nQ@mail.gmail.com>
- <20250916140245.5894a2aa@gandalf.local.home>
-In-Reply-To: <20250916140245.5894a2aa@gandalf.local.home>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Tue, 16 Sep 2025 11:23:03 -0700
-X-Gm-Features: AS18NWDeydKXZzxWqGElteJppqO6QozHlpb4s_Ylp5BcEhKGMmDvVoyYUojBOGg
-Message-ID: <CAC_TJvfAQDiL9PydWnKE6TDMcCzw0xrsLMZVZLe6eO0R1LODhA@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded trace event
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
-	kernel-team@android.com, android-mm@google.com, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916044735.2316171-9-dolinux.peng@gmail.com>
 
-On Tue, Sep 16, 2025 at 11:01=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Tue, 16 Sep 2025 10:57:43 -0700
-> Kalesh Singh <kaleshsingh@google.com> wrote:
->
-> > > BTW, why the hash of the mm pointer and not the pointer itself? We sa=
-ve
-> > > pointers in lots of places, and if it is the pointer, you could use a=
-n
-> > > eprobe to attache to the trace event to dereference its fields.
-> >
-> > In Android we try to avoid exposing raw kernel pointers to userspace
-> > for security reasons: raising /proc/sys/kernel/kptr_restrict to 2
-> > immediately after symbols are resolved for necessary telemetry tooling
-> > during early boot. I believe this is also why rss_stat uses the hash
-> > and not the raw pointer.
->
-> When it comes to tracing, you already lost. If it goes into the ring buff=
-er
-> it's a raw pointer. BPF doesn't use the output of the trace event, so you
-> are exposing nothing from that. It uses the proto directly.
+On Tue, Sep 16, 2025 at 12:47:29PM +0800, pengdonglin wrote:
+> From: pengdonglin <pengdonglin@xiaomi.com>
+> 
+> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side function definitions")
+> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
+> rcu_read_lock_sched() in terms of RCU read section and the relevant grace
+> period. That means that spin_lock(), which implies rcu_read_lock_sched(),
+> also implies rcu_read_lock().
+> 
+> There is no need no explicitly start a RCU read section if one has already
+> been started implicitly by spin_lock().
+> 
+> Simplify the code and remove the inner rcu_read_lock() invocation.
+> 
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
 
-My understanding is that the BPF tracepoint type uses the trace event
-fields from TP_STRUCT__entry(); whereas the raw tracepoint type has
-access to the proto arguments. Please CMIW: Isn't what we'd be adding
-to the trace buffer is the hashed mm_id value?
+Applied to cgroup/for-6.18.
 
->
-> Heck, if you enable function tracing, you are exposing every function
-> address it traces via the raw data output.
+Thanks.
 
-Right, security doesn't allow compiling CONFIG_FUNCTION_TRACER  in
-Android production kernels.
-
-Thanks,
-Kalesh
-
->
-> -- Steve
+-- 
+tejun
 
