@@ -1,55 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-61606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A17B58A3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F162B58A3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43EB3BA56D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F83C3BAE78
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFDB1C8621;
-	Tue, 16 Sep 2025 00:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824C21C5F23;
+	Tue, 16 Sep 2025 00:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVzTpuPB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/LnmOij"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B464FC1D;
-	Tue, 16 Sep 2025 00:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82A3FC1D;
+	Tue, 16 Sep 2025 00:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757984074; cv=none; b=IHKYoz4xxH3OqnML1KrGw54hcbat2PsZdNgQYK592F7C5rej7TBKVKmxwdX/YDERY5k8SEnoFF0+lFGmg1kV9hkYMI3pApxhnYm90MLLaVeCwewTfE/1SA4gS+MQ1wEWYBBhgpLbFrdaJKPUwVoOiIAWItCYwB3CZx70fWBlYGM=
+	t=1757984089; cv=none; b=oq8WRB00Pr4JG1469XYVXGqhweTY8GYwmrZBVDIl4CNAd2blMfmP8XGtNoHYFU3GivEpkT0y4ryFDxjs/01naZGozaVLWAzwj3nfXi6bS8PeL21Ss6oKY9FkcquOql81ZB8gsAH+zr771/EkEgRBvrdQSjYx6UYLWbawb9TBXJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757984074; c=relaxed/simple;
-	bh=gAZrmKolXFCxZ45HJQmM9Ami+wuutg5zgqcKfzdRftc=;
+	s=arc-20240116; t=1757984089; c=relaxed/simple;
+	bh=D37ShS265+TRIyJOHXbxdya2eyUUS95H8eaOyLDCoAU=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f6mpmITC59opS9ADtjdVkBB0q6tT2ZLz7QAlcrtofwkG9V48AD7aBPa8uBKcTPn77INssHUypdfL0dViHGUFeMNdT+9wvZAY9UlneLN3XQr7cHDKIq95zsc+x92xF3FBKgj2d9CKK0Mo0HlGpb5XwJCpq8EZZ7uSP120w4nM3ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVzTpuPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B56EC4CEF1;
-	Tue, 16 Sep 2025 00:54:34 +0000 (UTC)
+	 MIME-Version:Content-Type; b=td5/PBMn8LO6GFltzvnBDdYFo7kTkk+wAPbLmLyXv1vi3WM7HRLP/tEMca8J5lQB6JRJ/LPdqYMvnHQjQ+R8v75dq5o+tYyYAJI9cEnBsNNkKNETVNz3EX03rVCNapBEameSFtd12ybcEGBR5FeVO6cHei2jqZPVaHRZ9UII8IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/LnmOij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B15C4CEF1;
+	Tue, 16 Sep 2025 00:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757984074;
-	bh=gAZrmKolXFCxZ45HJQmM9Ami+wuutg5zgqcKfzdRftc=;
+	s=k20201202; t=1757984089;
+	bh=D37ShS265+TRIyJOHXbxdya2eyUUS95H8eaOyLDCoAU=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=EVzTpuPBUZD4YO0dQRAj7s6M14HBAh1EAwCVut2CWRKVymLr6WRCq5o0UBI6Qwk7i
-	 xBJSOm9hwNwfHJb/GF7slRJ9jRDenEzORv8GzNmfKV8hycOks1uvOIxLO/bJHWfifl
-	 TBsJNrdScP74lFNNY00swon77zJhftwSRQOtzh2pfPoW9FcPivfUcSVYfyuncupZ6j
-	 KFwQvOGleAhlB0uvBcs/jFJVSN8PYOgnjmCPMz78RAZak40hikfbikakA5+9gNEhnO
-	 mONZdY2PtZFsMywJXolQUDjXU00ZB2Qtl4CCJTRkQQYlugn53a4mrJRaq6xtvrrzcZ
-	 87/P7GpZ/Zphw==
-Date: Mon, 15 Sep 2025 17:54:33 -0700
-Subject: [PATCH 15/21] cache: add a "get only if incore" flag to
- cache_node_get
+	b=W/LnmOijwsbV5r18xMewIv3ReCOVz1iynlMWxsM74m/7+h1ZfB1REj01dB851Jitz
+	 ZGHy5FB0LiiCLm2Wm6skihOKNL/hD1suAmuLzpybwo8uWp+/RgH75WX8NuVVtSsi+4
+	 qhlvSMAv2KWRnwKpNAL/s1VGBzEV+9/v/nWFxIwh+SRcznC4G4yCy16lYTBFIGMWSB
+	 +hioGN2uWUodHBs538b9uFhIuSSrQYyul9Jc8rrnEvjw3Tc7+LnayuNZau0VNeKQNF
+	 XmFQV5DdvSSExdJ8QvRmF98ZDaIeaRc5hdE/nvVzYhOG2n7dQcsRMM5X9EOBILMnI2
+	 TJqLYlQ55ZIHA==
+Date: Mon, 15 Sep 2025 17:54:49 -0700
+Subject: [PATCH 16/21] cache: support gradual expansion
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: miklos@szeredi.hu, neal@gompa.dev, amir73il@gmail.com,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, John@groves.net,
  bernd@bsbernd.com, joannelkoong@gmail.com
-Message-ID: <175798161046.389252.16365666297772843985.stgit@frogsfrogsfrogs>
+Message-ID: <175798161064.389252.14627358765195200164.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 References: <175798160681.389252.3813376553626224026.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -63,57 +62,84 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add a new flag to cache_node_get so that callers can specify that they
-only want the cache to return an existing cache node, and not create a
-new one.
+It's probably not a good idea to expand the cache size by powers of two
+beyond some random limit, so let the users figure that out if they want
+to.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- lib/support/cache.h |    5 ++++-
- lib/support/cache.c |    7 +++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ lib/support/cache.h |   10 ++++++++++
+ lib/support/cache.c |   12 ++++++++++--
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
 
 diff --git a/lib/support/cache.h b/lib/support/cache.h
-index 8d39ca5c02a285..98b2182d49a6e0 100644
+index 98b2182d49a6e0..ae37945c545f46 100644
 --- a/lib/support/cache.h
 +++ b/lib/support/cache.h
-@@ -134,7 +134,10 @@ void cache_walk(struct cache *cache, cache_walk_t fn, void *data);
- void cache_purge(struct cache *);
- bool cache_flush(struct cache *cache);
+@@ -66,6 +66,14 @@ typedef int (*cache_node_compare_t)(struct cache_node *, cache_key_t);
+ typedef unsigned int (*cache_bulk_relse_t)(struct cache *, struct list_head *);
+ typedef int (*cache_node_get_t)(struct cache *c, struct cache_node *cn);
+ typedef void (*cache_node_put_t)(struct cache *c, struct cache_node *cn);
++typedef unsigned int (*cache_node_resize_t)(const struct cache *c,
++					    unsigned int curr_size);
++
++static inline unsigned int cache_gradual_resize(const struct cache *cache,
++						unsigned int curr_size)
++{
++	return curr_size * 5 / 4;
++}
  
--int cache_node_get(struct cache *, cache_key_t, struct cache_node **);
-+/* don't allocate a new node */
-+#define CACHE_GET_INCORE	(1U << 0)
-+int cache_node_get(struct cache *c, cache_key_t key, unsigned int cgflags,
-+		   struct cache_node **nodep);
- void cache_node_put(struct cache *, struct cache_node *);
- void cache_node_set_priority(struct cache *, struct cache_node *, int);
- int cache_node_get_priority(struct cache_node *);
+ struct cache_operations {
+ 	cache_node_hash_t	hash;
+@@ -76,6 +84,7 @@ struct cache_operations {
+ 	cache_bulk_relse_t	bulkrelse;	/* optional */
+ 	cache_node_get_t	get;		/* optional */
+ 	cache_node_put_t	put;		/* optional */
++	cache_node_resize_t	resize;		/* optional */
+ };
+ 
+ struct cache_hash {
+@@ -113,6 +122,7 @@ struct cache {
+ 	cache_bulk_relse_t	bulkrelse;	/* bulk release routine */
+ 	cache_node_get_t	get;		/* prepare cache node after get */
+ 	cache_node_put_t	put;		/* prepare to put cache node */
++	cache_node_resize_t	resize;		/* compute new maxcount */
+ 	unsigned int		c_hashsize;	/* hash bucket count */
+ 	unsigned int		c_hashshift;	/* hash key shift */
+ 	struct cache_hash	*c_hash;	/* hash table buckets */
 diff --git a/lib/support/cache.c b/lib/support/cache.c
-index fa07b4ad8222d2..9da6c59b3b6391 100644
+index 9da6c59b3b6391..dbaddc1bd36d3d 100644
 --- a/lib/support/cache.c
 +++ b/lib/support/cache.c
-@@ -403,6 +403,7 @@ int
- cache_node_get(
- 	struct cache		*cache,
- 	cache_key_t		key,
-+	unsigned int		cgflags,
- 	struct cache_node	**nodep)
+@@ -62,6 +62,7 @@ cache_init(
+ 		cache_operations->bulkrelse : cache_generic_bulkrelse;
+ 	cache->get = cache_operations->get;
+ 	cache->put = cache_operations->put;
++	cache->resize = cache_operations->resize;
+ 	pthread_mutex_init(&cache->c_mutex, NULL);
+ 
+ 	for (i = 0; i <= CACHE_DIRTY_PRIORITY; i++) {
+@@ -90,11 +91,18 @@ static void
+ cache_expand(
+ 	struct cache *		cache)
  {
- 	struct cache_hash	*hash;
-@@ -456,6 +457,12 @@ cache_node_get(
- 			continue;	/* what the hell, gcc? */
- 		}
- 		pthread_mutex_unlock(&hash->ch_mutex);
++	unsigned int		new_size = 0;
 +
-+		if (cgflags & CACHE_GET_INCORE) {
-+			*nodep = NULL;
-+			return 0;
-+		}
-+
- 		/*
- 		 * not found, allocate a new entry
- 		 */
+ 	pthread_mutex_lock(&cache->c_mutex);
++	if (cache->resize)
++		new_size = cache->resize(cache, cache->c_maxcount);
++	if (new_size <= cache->c_maxcount)
++		new_size = cache->c_maxcount * 2;
+ #ifdef CACHE_DEBUG
+-	fprintf(stderr, "doubling cache size to %d\n", 2 * cache->c_maxcount);
++	fprintf(stderr, "increasing cache max size from %u to %u\n",
++			cache->c_maxcount, new_size);
+ #endif
+-	cache->c_maxcount *= 2;
++	cache->c_maxcount = new_size;
+ 	pthread_mutex_unlock(&cache->c_mutex);
+ }
+ 
 
 
