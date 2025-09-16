@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-61498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8413B58931
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6816AB58934
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9170A2A14EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:25:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191222A24AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F921A0712;
-	Tue, 16 Sep 2025 00:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3329F1A073F;
+	Tue, 16 Sep 2025 00:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yd86+AHf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkMpWDK5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D703E19E99F;
-	Tue, 16 Sep 2025 00:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C26619E99F;
+	Tue, 16 Sep 2025 00:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982338; cv=none; b=YuymI0tubblOv+wgHj0c6nbwGvY4IbXRPqtg+487erdnXDbUeAHdlrA2N6AmOo19j5HywZIo1ClQiYpGPu6I0yLTRDxENwl0thFpH8SPoai/zMrbkm6a/6X++IYkG+jYrdEmNAAgw4tpQk2C8TH2LHNzk5CLLFMIRsggTsoLp6s=
+	t=1757982355; cv=none; b=dXeCU7fjHXnXp0UreOKBGVRUIanKeFh/J3vYow/pnqJJVILELHEzyZUrThrhv6FpMiAf9mRPYz7/hDhhGqnnnPz5F4YEe1uEdxPuPE04PY9j6HTsMhxIaqaDkOf9scfp1InbQY68M0YxIWkr92POvbDBAXANsAgsaZeVlTicVuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982338; c=relaxed/simple;
-	bh=zLQeuT3EfxmV9o26f5Bu45BGkAYyR5LsdV79Koh7vJ4=;
+	s=arc-20240116; t=1757982355; c=relaxed/simple;
+	bh=hF8znULNzse0h4rzpNpmkYj3BvEgGZP98NOkSLgF1xU=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F2etIlY710MsbDdJvh5JFj9HmLKklT9h9UMyGcyMWOIzHeQiZLzurGvjApc6srsWfdaV9qpanxQDRotLNlwgqjn4633m9wyMKvlagx05eCjpN/2JH/zj8DXi4Z43PKHvkHSUnB691PVgW7FzzgL766iVMeU5Wj0oP3mx4PsJfnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yd86+AHf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E78FC4CEF1;
-	Tue, 16 Sep 2025 00:25:37 +0000 (UTC)
+	 MIME-Version:Content-Type; b=i96ZkmpJT2ee2Mj36JUUju33LZuT10DczRDnt3G+CzjCrDAFLK6mcpOVwhMxyLdhmrjGflkDzaXwt4E+1EC4F5+igI+BS/n1H4AAPg6y+/E9lj5f5lkhxIOoUfg1xNIF3di7XYnffUI2cCcsjMXASE+DYDFw+P8p1fuvtpwywvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkMpWDK5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A5EDC4CEFB;
+	Tue, 16 Sep 2025 00:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757982338;
-	bh=zLQeuT3EfxmV9o26f5Bu45BGkAYyR5LsdV79Koh7vJ4=;
+	s=k20201202; t=1757982354;
+	bh=hF8znULNzse0h4rzpNpmkYj3BvEgGZP98NOkSLgF1xU=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Yd86+AHfLwIOthN6utBf6vnxQNZYMW+XioT8dNRP9GVWJNicpuWUhqzV/TsPhQ2ss
-	 Fkl/0Hr7Fa8cyFUu+ppy4MGC/vL7bwWjV1Zn8NPu8jQils2jd0pvf3RZs7nmYDs9Kq
-	 4MuoUnbBFJOVvyNB/wscx0xRkoaEy1sJr5Ybm/9nDpiZP/pdu0OBq3jxDzG5J1XTq7
-	 Y6PxuLL4P4LKjBOzQu6B6hnrRCviEsgT8g5K9ohSzdkEC50r/WeVBcy3ZQoQM/t1F3
-	 d1bOr5M82fbq81WhpRWDPF08R9z+Z1LxqZhvjQyMrtNkSvuyUuhAXtP+Dz6TSE51CP
-	 KSZVqFj/X4Llw==
-Date: Mon, 15 Sep 2025 17:25:37 -0700
-Subject: [PATCH 6/8] fuse: update file mode when updating acls
+	b=XkMpWDK5/HfrPIWaVaT6wCcfGaSqJcd7S9xMWY3FTGAxJcbEtR6bhodNQ/4CNOG3L
+	 /POX7GX4AkJLGc6MQV8+3P8wXYzqvPXlCM/YF1XqH/QDV4XJwfzss8EZMdpy3J7kR9
+	 5PpLQBCWZJf6b9gMReTl4bQJ/+YUESiiGKOzrZPiTjZ43kjSphKmyj3eUo6V8hOSLu
+	 g7W531Ntyc7cClBGC3lcD7QtlCrmveUBFd3bNPFPFfNqJg0LnzGZUtuGRvfCGTyTs5
+	 xhCPM7EpFwgukw/9BV+yClISiYhusPSCExqhnS/+VoWJwVHSbP0xarpvQYrXXs+Ikb
+	 by5ccIrqwLv2w==
+Date: Mon, 15 Sep 2025 17:25:53 -0700
+Subject: [PATCH 7/8] fuse: propagate default and file acls on creation
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
  linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Message-ID: <175798150156.381990.10321060777321307486.stgit@frogsfrogsfrogs>
+Message-ID: <175798150177.381990.5457916685867195048.stgit@frogsfrogsfrogs>
 In-Reply-To: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
 References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,101 +61,350 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-If someone sets ACLs on a file that can be expressed fully as Unix DAC
-mode bits, most local filesystems will then update the mode bits and
-drop the ACL xattr to reduce inefficiency in the file access paths.
-Let's do that too.  Note that means that we can setacl and end up with
-no ACL xattrs, so we also need to tolerate ENODATA returns from
-fuse_removexattr.
-
-Note that here we define a "local" fuse filesystem as one that uses
-fuseblk mode; we'll shortly add fuse servers that use iomap for the file
-IO path to that list.
+For local filesystems, propagate the default and file access ACLs to new
+children when creating them, just like the other in-kernel local
+filesystems.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/acl.c |   40 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
+ fs/fuse/fuse_i.h |    4 ++
+ fs/fuse/acl.c    |   65 ++++++++++++++++++++++++++++++++++++++
+ fs/fuse/dir.c    |   92 +++++++++++++++++++++++++++++++++++++++++-------------
+ 3 files changed, 138 insertions(+), 23 deletions(-)
 
 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 52776b77efc0e4..b9306678dcda0d 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1507,6 +1507,10 @@ struct posix_acl *fuse_get_acl(struct mnt_idmap *idmap,
+ 			       struct dentry *dentry, int type);
+ int fuse_set_acl(struct mnt_idmap *, struct dentry *dentry,
+ 		 struct posix_acl *acl, int type);
++int fuse_acl_create(struct inode *dir, umode_t *mode,
++		    struct posix_acl **default_acl, struct posix_acl **acl);
++int fuse_init_acls(struct inode *inode, const struct posix_acl *default_acl,
++		   const struct posix_acl *acl);
+ 
+ /* readdir.c */
+ int fuse_readdir(struct file *file, struct dir_context *ctx);
 diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index 8f484b105f13ab..4997827ee83c6d 100644
+index 4997827ee83c6d..4faee72f1365a5 100644
 --- a/fs/fuse/acl.c
 +++ b/fs/fuse/acl.c
-@@ -11,6 +11,16 @@
- #include <linux/posix_acl.h>
- #include <linux/posix_acl_xattr.h>
+@@ -203,3 +203,68 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
  
-+/*
-+ * If this fuse server behaves like a local filesystem, we can implement the
-+ * kernel's optimizations for ACLs for local filesystems instead of passing
-+ * the ACL requests straight through to another server.
-+ */
-+static inline bool fuse_has_local_acls(const struct fuse_conn *fc)
+ 	return ret;
+ }
++
++int fuse_acl_create(struct inode *dir, umode_t *mode,
++		    struct posix_acl **default_acl, struct posix_acl **acl)
 +{
-+	return fc->posix_acl && fc->local_fs;
++	struct fuse_conn *fc = get_fuse_conn(dir);
++
++	if (fuse_is_bad(dir))
++		return -EIO;
++
++	if (IS_POSIXACL(dir) && fuse_has_local_acls(fc))
++		return posix_acl_create(dir, mode, default_acl, acl);
++
++	if (!fc->dont_mask)
++		*mode &= ~current_umask();
++
++	*default_acl = NULL;
++	*acl = NULL;
++	return 0;
 +}
 +
- static struct posix_acl *__fuse_get_acl(struct fuse_conn *fc,
- 					struct inode *inode, int type, bool rcu)
- {
-@@ -98,6 +108,7 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct inode *inode = d_inode(dentry);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	const char *name;
-+	umode_t mode = inode->i_mode;
- 	int ret;
- 
- 	if (fuse_is_bad(inode))
-@@ -113,6 +124,17 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	else
- 		return -EINVAL;
- 
-+	/*
-+	 * If the ACL can be represented entirely with changes to the mode
-+	 * bits, then most filesystems will update the mode bits and delete
-+	 * the ACL xattr.
-+	 */
-+	if (acl && type == ACL_TYPE_ACCESS && fuse_has_local_acls(fc)) {
-+		ret = posix_acl_update_mode(idmap, inode, &mode, &acl);
++static int __fuse_set_acl(struct inode *inode, const char *name,
++			  const struct posix_acl *acl)
++{
++	struct fuse_conn *fc = get_fuse_conn(inode);
++	size_t size = posix_acl_xattr_size(acl->a_count);
++	void *value;
++	int ret;
++
++	if (size > PAGE_SIZE)
++		return -E2BIG;
++
++	value = kmalloc(size, GFP_KERNEL);
++	if (!value)
++		return -ENOMEM;
++
++	ret = posix_acl_to_xattr(fc->user_ns, acl, value, size);
++	if (ret < 0)
++		goto out_value;
++
++	ret = fuse_setxattr(inode, name, value, size, 0, 0);
++out_value:
++	kfree(value);
++	return ret;
++}
++
++int fuse_init_acls(struct inode *inode, const struct posix_acl *default_acl,
++		   const struct posix_acl *acl)
++{
++	int ret;
++
++	if (default_acl) {
++		ret = __fuse_set_acl(inode, XATTR_NAME_POSIX_ACL_DEFAULT,
++				     default_acl);
 +		if (ret)
 +			return ret;
 +	}
 +
- 	if (acl) {
- 		unsigned int extra_flags = 0;
- 		/*
-@@ -143,7 +165,7 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * through POSIX ACLs. Such daemons don't expect setgid bits to
- 		 * be stripped.
- 		 */
--		if (fc->posix_acl &&
-+		if (fc->posix_acl && mode == inode->i_mode &&
- 		    !in_group_or_capable(idmap, inode,
- 					 i_gid_into_vfsgid(idmap, inode)))
- 			extra_flags |= FUSE_SETXATTR_ACL_KILL_SGID;
-@@ -152,6 +174,22 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		kfree(value);
- 	} else {
- 		ret = fuse_removexattr(inode, name);
-+		/* If the acl didn't exist to start with that's fine. */
-+		if (ret == -ENODATA)
-+			ret = 0;
++	if (acl) {
++		ret = __fuse_set_acl(inode, XATTR_NAME_POSIX_ACL_ACCESS, acl);
++		if (ret)
++			return ret;
 +	}
 +
-+	/* If we scheduled a mode update above, push that to userspace now. */
-+	if (!ret) {
-+		struct iattr attr = { };
-+
-+		if (mode != inode->i_mode) {
-+			attr.ia_valid |= ATTR_MODE;
-+			attr.ia_mode = mode;
-+		}
-+
-+		if (attr.ia_valid)
-+			ret = fuse_do_setattr(idmap, dentry, &attr, NULL);
- 	}
++	return 0;
++}
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index a7f47e43692f1c..b116e42431ee12 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -628,26 +628,28 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct fuse_entry_out outentry;
+ 	struct fuse_inode *fi;
+ 	struct fuse_file *ff;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	int epoch, err;
+ 	bool trunc = flags & O_TRUNC;
  
- 	if (fc->posix_acl) {
+ 	/* Userspace expects S_IFREG in create mode */
+ 	BUG_ON((mode & S_IFMT) != S_IFREG);
+ 
++	err = fuse_acl_create(dir, &mode, &default_acl, &acl);
++	if (err)
++		return err;
++
+ 	epoch = atomic_read(&fm->fc->epoch);
+ 	forget = fuse_alloc_forget();
+ 	err = -ENOMEM;
+ 	if (!forget)
+-		goto out_err;
++		goto out_acl_release;
+ 
+ 	err = -ENOMEM;
+ 	ff = fuse_file_alloc(fm, true);
+ 	if (!ff)
+ 		goto out_put_forget_req;
+ 
+-	if (!fm->fc->dont_mask)
+-		mode &= ~current_umask();
+-
+ 	flags &= ~O_NOCTTY;
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	memset(&outentry, 0, sizeof(outentry));
+@@ -699,12 +701,16 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 		fuse_sync_release(NULL, ff, flags);
+ 		fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
+ 		err = -ENOMEM;
+-		goto out_err;
++		goto out_acl_release;
+ 	}
+ 	kfree(forget);
+ 	d_instantiate(entry, inode);
+ 	entry->d_time = epoch;
+ 	fuse_change_entry_timeout(entry, &outentry);
++
++	err = fuse_init_acls(inode, default_acl, acl);
++	if (err)
++		goto out_acl_release;
+ 	fuse_dir_changed(dir);
+ 	err = generic_file_open(inode, file);
+ 	if (!err) {
+@@ -726,7 +732,9 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	fuse_file_free(ff);
+ out_put_forget_req:
+ 	kfree(forget);
+-out_err:
++out_acl_release:
++	posix_acl_release(default_acl);
++	posix_acl_release(acl);
+ 	return err;
+ }
+ 
+@@ -785,7 +793,9 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+  */
+ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
+ 				       struct fuse_args *args, struct inode *dir,
+-				       struct dentry *entry, umode_t mode)
++				       struct dentry *entry, umode_t mode,
++				       struct posix_acl *default_acl,
++				       struct posix_acl *acl)
+ {
+ 	struct fuse_entry_out outarg;
+ 	struct inode *inode;
+@@ -793,14 +803,18 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
+ 	struct fuse_forget_link *forget;
+ 	int epoch, err;
+ 
+-	if (fuse_is_bad(dir))
+-		return ERR_PTR(-EIO);
++	if (fuse_is_bad(dir)) {
++		err = -EIO;
++		goto out_acl_release;
++	}
+ 
+ 	epoch = atomic_read(&fm->fc->epoch);
+ 
+ 	forget = fuse_alloc_forget();
+-	if (!forget)
+-		return ERR_PTR(-ENOMEM);
++	if (!forget) {
++		err = -ENOMEM;
++		goto out_acl_release;
++	}
+ 
+ 	memset(&outarg, 0, sizeof(outarg));
+ 	args->nodeid = get_node_id(dir);
+@@ -830,7 +844,8 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
+ 			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0, 0);
+ 	if (!inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+-		return ERR_PTR(-ENOMEM);
++		err = -ENOMEM;
++		goto out_acl_release;
+ 	}
+ 	kfree(forget);
+ 
+@@ -846,19 +861,31 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
+ 		entry->d_time = epoch;
+ 		fuse_change_entry_timeout(entry, &outarg);
+ 	}
++
++	err = fuse_init_acls(inode, default_acl, acl);
++	if (err)
++		goto out_acl_release;
+ 	fuse_dir_changed(dir);
++
++	posix_acl_release(default_acl);
++	posix_acl_release(acl);
+ 	return d;
+ 
+  out_put_forget_req:
+ 	if (err == -EEXIST)
+ 		fuse_invalidate_entry(entry);
+ 	kfree(forget);
++ out_acl_release:
++	posix_acl_release(default_acl);
++	posix_acl_release(acl);
+ 	return ERR_PTR(err);
+ }
+ 
+ static int create_new_nondir(struct mnt_idmap *idmap, struct fuse_mount *fm,
+ 			     struct fuse_args *args, struct inode *dir,
+-			     struct dentry *entry, umode_t mode)
++			     struct dentry *entry, umode_t mode,
++			     struct posix_acl *default_acl,
++			     struct posix_acl *acl)
+ {
+ 	/*
+ 	 * Note that when creating anything other than a directory we
+@@ -869,7 +896,8 @@ static int create_new_nondir(struct mnt_idmap *idmap, struct fuse_mount *fm,
+ 	 */
+ 	WARN_ON_ONCE(S_ISDIR(mode));
+ 
+-	return PTR_ERR(create_new_entry(idmap, fm, args, dir, entry, mode));
++	return PTR_ERR(create_new_entry(idmap, fm, args, dir, entry, mode,
++					default_acl, acl));
+ }
+ 
+ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+@@ -877,10 +905,13 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ {
+ 	struct fuse_mknod_in inarg;
+ 	struct fuse_mount *fm = get_fuse_mount(dir);
++	struct posix_acl *default_acl, *acl;
+ 	FUSE_ARGS(args);
++	int err;
+ 
+-	if (!fm->fc->dont_mask)
+-		mode &= ~current_umask();
++	err = fuse_acl_create(dir, &mode, &default_acl, &acl);
++	if (err)
++		return err;
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.mode = mode;
+@@ -892,7 +923,8 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[0].value = &inarg;
+ 	args.in_args[1].size = entry->d_name.len + 1;
+ 	args.in_args[1].value = entry->d_name.name;
+-	return create_new_nondir(idmap, fm, &args, dir, entry, mode);
++	return create_new_nondir(idmap, fm, &args, dir, entry, mode,
++				 default_acl, acl);
+ }
+ 
+ static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+@@ -924,13 +956,17 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ {
+ 	struct fuse_mkdir_in inarg;
+ 	struct fuse_mount *fm = get_fuse_mount(dir);
++	struct posix_acl *default_acl, *acl;
+ 	FUSE_ARGS(args);
++	int err;
+ 
+-	if (!fm->fc->dont_mask)
+-		mode &= ~current_umask();
++	mode |= S_IFDIR;	/* vfs doesn't set S_IFDIR for us */
++	err = fuse_acl_create(dir, &mode, &default_acl, &acl);
++	if (err)
++		return ERR_PTR(err);
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+-	inarg.mode = mode;
++	inarg.mode = mode & ~S_IFDIR;
+ 	inarg.umask = current_umask();
+ 	args.opcode = FUSE_MKDIR;
+ 	args.in_numargs = 2;
+@@ -938,7 +974,8 @@ static struct dentry *fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[0].value = &inarg;
+ 	args.in_args[1].size = entry->d_name.len + 1;
+ 	args.in_args[1].value = entry->d_name.name;
+-	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR);
++	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR,
++				default_acl, acl);
+ }
+ 
+ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -946,7 +983,14 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ {
+ 	struct fuse_mount *fm = get_fuse_mount(dir);
+ 	unsigned len = strlen(link) + 1;
++	struct posix_acl *default_acl, *acl;
++	umode_t mode = S_IFLNK | 0777;
+ 	FUSE_ARGS(args);
++	int err;
++
++	err = fuse_acl_create(dir, &mode, &default_acl, &acl);
++	if (err)
++		return err;
+ 
+ 	args.opcode = FUSE_SYMLINK;
+ 	args.in_numargs = 3;
+@@ -955,7 +999,8 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[1].value = entry->d_name.name;
+ 	args.in_args[2].size = len;
+ 	args.in_args[2].value = link;
+-	return create_new_nondir(idmap, fm, &args, dir, entry, S_IFLNK);
++	return create_new_nondir(idmap, fm, &args, dir, entry, S_IFLNK,
++				 default_acl, acl);
+ }
+ 
+ void fuse_flush_time_update(struct inode *inode)
+@@ -1155,7 +1200,8 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+ 	args.in_args[0].value = &inarg;
+ 	args.in_args[1].size = newent->d_name.len + 1;
+ 	args.in_args[1].value = newent->d_name.name;
+-	err = create_new_nondir(&invalid_mnt_idmap, fm, &args, newdir, newent, inode->i_mode);
++	err = create_new_nondir(&invalid_mnt_idmap, fm, &args, newdir, newent,
++				inode->i_mode, NULL, NULL);
+ 	if (!err)
+ 		fuse_update_ctime_in_cache(inode);
+ 	else if (err == -EINTR)
 
 
