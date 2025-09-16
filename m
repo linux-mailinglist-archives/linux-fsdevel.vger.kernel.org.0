@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-61559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F2AB589E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA86B589E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07DB716A2D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B5F16FADC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA741B394F;
-	Tue, 16 Sep 2025 00:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E3F14F112;
+	Tue, 16 Sep 2025 00:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOd4hPFK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkb7PLYS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAC2D528;
-	Tue, 16 Sep 2025 00:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F991F95C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 00:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983292; cv=none; b=Q+5xImJsu64A73OhIphorPcgV7aJZsidJtBE4RsuQe3+hT8uyR/gjrr5OJgKwGthlZQ/Cy2gK7+yWjnQanrdkBLwSvRJjmNjBoTUYkdFicWZyS6dxS56E6abKFsonLLlgR3zSU34c0z5EiECIoEZ9ZrDyCDTeARDP7I4Ju3+b+Y=
+	t=1757983308; cv=none; b=elGZV3iYedIibqyoLDtqDeIapCd0KzfsnGHgbZdTkv6yGF/4v4sCeIvGdrxbrubu6V7PcbhrLNbBuwiFYd+hGqOQUIZ9uenRyhuwopWfzmYSk77HFFFrVzuMIvddjiRckeis2vfpa3z4Rgb2USvMlR2M6Yqxdae1x5AzFOApLUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983292; c=relaxed/simple;
-	bh=beyfQa9zBFHSfgHdtfPszXYen9pUopqvTwRuR6dahvg=;
+	s=arc-20240116; t=1757983308; c=relaxed/simple;
+	bh=Jj3Jo5hYuGzysiSOZIpqnew5Sj9LKWBZ1l8WghwCTA8=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iMemgGwifH0Zek6EE8j9toThu/I8vNBDGgjf7XKW3XofPHszCEwfINEg6cxX2lrP1eX66Cuc+kGYQFe3hCug0sPaJq4w9B7YnEE4KffuWbee6eGeWCNkn+/OfWIeCfBJo1MrT51v6yvZakNE1/ol9hQrr2AJNRzGVFlMI5MsXPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOd4hPFK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48242C4CEF5;
-	Tue, 16 Sep 2025 00:41:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=t6XuggjrBxeeGvRaOvT/tket5iPDQ1AU/ZFfX+2AqLN6rI1p3a91KQ0J2TQwwOWg9xI1I4Sin9wyrGBuyY6tZE/rQjAvb2x55HYxKz/IkJqg72jA4+zRfilRQQ0ugiGvkNyaOoiR+HxzqN1HrsEvsH37OcILUNwleMUsnwFLRLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkb7PLYS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE499C4CEF1;
+	Tue, 16 Sep 2025 00:41:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757983292;
-	bh=beyfQa9zBFHSfgHdtfPszXYen9pUopqvTwRuR6dahvg=;
+	s=k20201202; t=1757983307;
+	bh=Jj3Jo5hYuGzysiSOZIpqnew5Sj9LKWBZ1l8WghwCTA8=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=OOd4hPFK4V5j7AYSFE56zROPT5+0/uTX/cOBnEGXTKMNk4ksWXmKfAJe9e1xdFoo5
-	 lPvwstduGQGMJXIrLNZop89NSJPeoCzw2dMkuiC59uMrOyQZZNWhWh9OnE3+RceCOQ
-	 8hOGAg1/g09Wr5GApb6tlNIYVBj95qR4hrGRykilkd2YCyqT9JYJhMVwBRzqNueH++
-	 JSx51N6BAv7ONHDsCcBOYp0pJ06SKrqSpRcPQONaoVN/TIehsQIk0er7MkkV6BoCAa
-	 Hl67tmmtFWqcKV30Hqy4d2XD4xWm2AiBkloKUNKJ/ShthTnsj/MMcgS/Lgr2lqcjxt
-	 Z4JJx1nSC3DOg==
-Date: Mon, 15 Sep 2025 17:41:31 -0700
-Subject: [PATCH 2/2] fuse: set iomap backing device block size
+	b=hkb7PLYSmzlt/AlRCyB7LdZ8NP4iYpEyPvh1X27377lHc845CWYg7AqCsiSn11MGo
+	 0o0+wEikPnR3vR27VL2n4X//uzi2Fd4WKGMvzJl4hhiH9tf6BzcDpGZutAms5i2EaS
+	 /l6X40AbSIbqBCGJpQj/lpgnFo1544DjZp6zXgpe7kJ3a2gLQy/xHyifzVRoB2gK2P
+	 orHmKJaDAv3FNEFyXw5TTLmbFnmy0f1OTJ2IecFcoCOeNr54w1vX9vE4rMczIsmi0D
+	 DdCi3tD/vhj+wOjgP3eZp/BrS+v3Ydro/ZtRi1izt6Zvj6R2FXvtrE7TT8qdNurV6m
+	 cmzZEO0zATkmw==
+Date: Mon, 15 Sep 2025 17:41:47 -0700
+Subject: [PATCH 1/1] libfuse: don't put HAVE_STATX in a public header
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org, miklos@szeredi.hu
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
- linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Message-ID: <175798153407.384981.8321400280930442750.stgit@frogsfrogsfrogs>
-In-Reply-To: <175798153353.384981.9881071302133055510.stgit@frogsfrogsfrogs>
-References: <175798153353.384981.9881071302133055510.stgit@frogsfrogsfrogs>
+To: bschubert@ddn.com, djwong@kernel.org
+Cc: John@groves.net, neal@gompa.dev, bernd@bsbernd.com,
+ linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com
+Message-ID: <175798154240.386823.11914403737098230888.stgit@frogsfrogsfrogs>
+In-Reply-To: <175798154222.386823.13485387355674002636.stgit@frogsfrogsfrogs>
+References: <175798154222.386823.13485387355674002636.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,108 +61,115 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add a new ioctl so that an unprivileged fuse server can set the block
-size of a bdev that's opened for iomap usage.
+fuse.h and fuse_lowlevel.h are public headers, don't expose internal
+build system config variables to downstream clients.  This can also lead
+to function pointer ordering issues if (say) libfuse gets built with
+HAVE_STATX but the client program doesn't define a HAVE_STATX.
+
+Get rid of the conditionals in the public header files to fix this.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_i.h          |    3 +++
- include/uapi/linux/fuse.h |    7 +++++++
- fs/fuse/dev.c             |    2 ++
- fs/fuse/file_iomap.c      |   24 ++++++++++++++++++++++++
- 4 files changed, 36 insertions(+)
+ include/fuse.h           |    2 --
+ include/fuse_lowlevel.h  |    2 --
+ example/memfs_ll.cc      |    2 +-
+ example/passthrough.c    |    2 +-
+ example/passthrough_fh.c |    2 +-
+ example/passthrough_ll.c |    2 +-
+ 6 files changed, 4 insertions(+), 8 deletions(-)
 
 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 1a965d3dee6479..faef0efe6a9506 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1853,6 +1853,8 @@ void fuse_iomap_copied_file_range(struct inode *inode, loff_t offset,
- int fuse_dev_ioctl_add_iomap(struct file *file);
- int fuse_dev_ioctl_iomap_support(struct file *file,
- 				 struct fuse_iomap_support __user *argp);
-+int fuse_dev_ioctl_iomap_set_blocksize(struct file *file,
-+				struct fuse_iomap_backing_info __user *argp);
- int fuse_iomap_dev_inval(struct fuse_conn *fc,
- 			 const struct fuse_iomap_dev_inval_out *arg);
+diff --git a/include/fuse.h b/include/fuse.h
+index 06feacb070fbfb..209102651e9454 100644
+--- a/include/fuse.h
++++ b/include/fuse.h
+@@ -854,7 +854,6 @@ struct fuse_operations {
+ 	 */
+ 	off_t (*lseek) (const char *, off_t off, int whence, struct fuse_file_info *);
  
-@@ -1902,6 +1904,7 @@ int fuse_iomap_inval(struct fuse_conn *fc,
- # define fuse_iomap_copied_file_range(...)	((void)0)
- # define fuse_dev_ioctl_add_iomap(...)		(-EOPNOTSUPP)
- # define fuse_dev_ioctl_iomap_support(...)	(-EOPNOTSUPP)
-+# define fuse_dev_ioctl_iomap_set_blocksize(...) (-EOPNOTSUPP)
- # define fuse_iomap_dev_inval(...)		(-ENOSYS)
- # define fuse_iomap_fadvise			NULL
- # define fuse_inode_caches_iomaps(...)		(false)
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index b59ce131513efd..d360c39be43104 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -1180,6 +1180,11 @@ struct fuse_iomap_support {
- 	uint64_t	padding;
+-#ifdef HAVE_STATX
+ 	/**
+ 	 * Get extended file attributes.
+ 	 *
+@@ -865,7 +864,6 @@ struct fuse_operations {
+ 	 */
+ 	int (*statx)(const char *path, int flags, int mask, struct statx *stxbuf,
+ 		     struct fuse_file_info *fi);
+-#endif
  };
  
-+struct fuse_iomap_backing_info {
-+	uint32_t	backing_id;
-+	uint32_t	blocksize;
-+};
-+
- /* Device ioctls: */
- #define FUSE_DEV_IOC_MAGIC		229
- #define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
-@@ -1190,6 +1195,8 @@ struct fuse_iomap_support {
- #define FUSE_DEV_IOC_ADD_IOMAP		_IO(FUSE_DEV_IOC_MAGIC, 99)
- #define FUSE_DEV_IOC_IOMAP_SUPPORT	_IOR(FUSE_DEV_IOC_MAGIC, 99, \
- 					     struct fuse_iomap_support)
-+#define FUSE_DEV_IOC_IOMAP_SET_BLOCKSIZE _IOW(FUSE_DEV_IOC_MAGIC, 99, \
-+					      struct fuse_iomap_backing_info)
+ /** Extra context that may be needed by some filesystems
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index dc4ec07e6dbb00..a6cce014391aec 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1327,7 +1327,6 @@ struct fuse_lowlevel_ops {
+ 	void (*tmpfile) (fuse_req_t req, fuse_ino_t parent,
+ 			mode_t mode, struct fuse_file_info *fi);
  
- struct fuse_lseek_in {
- 	uint64_t	fh;
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 7a24fbcdb2f919..5003a862daf37a 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2782,6 +2782,8 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
- 		return fuse_dev_ioctl_iomap_support(file, argp);
- 	case FUSE_DEV_IOC_ADD_IOMAP:
- 		return fuse_dev_ioctl_add_iomap(file);
-+	case FUSE_DEV_IOC_IOMAP_SET_BLOCKSIZE:
-+		return fuse_dev_ioctl_iomap_set_blocksize(file, argp);
+-#ifdef HAVE_STATX
+ 	/**
+ 	 * Get extended file attributes.
+ 	 *
+@@ -1343,7 +1342,6 @@ struct fuse_lowlevel_ops {
+ 	 */
+ 	void (*statx)(fuse_req_t req, fuse_ino_t ino, int flags, int mask,
+ 		      struct fuse_file_info *fi);
+-#endif
+ };
  
- 	default:
- 		return -ENOTTY;
-diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-index 70b01638006a2e..a915cc9520b532 100644
---- a/fs/fuse/file_iomap.c
-+++ b/fs/fuse/file_iomap.c
-@@ -2721,3 +2721,27 @@ int fuse_iomap_inval(struct fuse_conn *fc,
- 	up_read(&fc->killsb);
- 	return ret ? ret : ret2;
- }
-+
-+int fuse_dev_ioctl_iomap_set_blocksize(struct file *file,
-+				struct fuse_iomap_backing_info __user *argp)
-+{
-+	struct fuse_iomap_backing_info fbi;
-+	struct fuse_dev *fud = fuse_get_dev(file);
-+	struct fuse_backing *fb;
-+	int ret;
-+
-+	if (IS_ERR(fud))
-+		return PTR_ERR(fud);
-+
-+	if (copy_from_user(&fbi, argp, sizeof(fbi)))
-+		return -EFAULT;
-+
-+	fb = fuse_backing_lookup(fud->fc, &fuse_iomap_backing_ops,
-+				 fbi.backing_id);
-+	if (!fb)
-+		return -ENOENT;
-+
-+	ret = set_blocksize(fb->file, fbi.blocksize);
-+	fuse_backing_put(fb);
-+	return ret;
-+}
+ /**
+diff --git a/example/memfs_ll.cc b/example/memfs_ll.cc
+index edda34b4e43d39..7055a434a439cd 100644
+--- a/example/memfs_ll.cc
++++ b/example/memfs_ll.cc
+@@ -6,7 +6,7 @@
+   See the file GPL2.txt.
+ */
+ 
+-#define FUSE_USE_VERSION 317
++#define FUSE_USE_VERSION FUSE_MAKE_VERSION(3, 18)
+ 
+ #include <algorithm>
+ #include <stdio.h>
+diff --git a/example/passthrough.c b/example/passthrough.c
+index fdaa19e331a17d..1f09c2dc05df1e 100644
+--- a/example/passthrough.c
++++ b/example/passthrough.c
+@@ -23,7 +23,7 @@
+  */
+ 
+ 
+-#define FUSE_USE_VERSION 31
++#define FUSE_USE_VERSION FUSE_MAKE_VERSION(3, 18)
+ 
+ #define _GNU_SOURCE
+ 
+diff --git a/example/passthrough_fh.c b/example/passthrough_fh.c
+index 0d4fb5bd4df0d6..6403fbb74c7759 100644
+--- a/example/passthrough_fh.c
++++ b/example/passthrough_fh.c
+@@ -23,7 +23,7 @@
+  * \include passthrough_fh.c
+  */
+ 
+-#define FUSE_USE_VERSION 31
++#define FUSE_USE_VERSION FUSE_MAKE_VERSION(3, 18)
+ 
+ #define _GNU_SOURCE
+ 
+diff --git a/example/passthrough_ll.c b/example/passthrough_ll.c
+index 5ca6efa2300abe..8a5ac2e9226b59 100644
+--- a/example/passthrough_ll.c
++++ b/example/passthrough_ll.c
+@@ -35,7 +35,7 @@
+  */
+ 
+ #define _GNU_SOURCE
+-#define FUSE_USE_VERSION FUSE_MAKE_VERSION(3, 12)
++#define FUSE_USE_VERSION FUSE_MAKE_VERSION(3, 18)
+ 
+ #include <fuse_lowlevel.h>
+ #include <unistd.h>
 
 
