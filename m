@@ -1,54 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-61474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844C8B58905
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DD1B58908
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 02:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466C3520A09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD3F1B219E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 00:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1519F43A;
-	Tue, 16 Sep 2025 00:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662F119F43A;
+	Tue, 16 Sep 2025 00:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M80JViEl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R50yAed2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F18D19CC28;
-	Tue, 16 Sep 2025 00:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C330C19CC28;
+	Tue, 16 Sep 2025 00:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757981946; cv=none; b=scxOTs3LjX9DYqZqvDiPF8WGokmC0H/sWuz4QwQfTS+u3Y/jN9Tg9/l+dPRUfqTSJRmCN0PLAVjv9ZInhLtw+dSZxoVMJNXWWCGxb4d93PF8s2I7xWGHg0fJcmgADqwgp/RBBpIpldwVEY8CZXruv0aK8tROIPwB1TEFjNNtKrA=
+	t=1757981961; cv=none; b=tf4Wm8AaXQFWBI4YQXvRWd+FWgBNnB4CQ4MxmrtGkOLBDabflJsQxQKESb9+LGQSC7OFrmk8pwIY7ZVui0/tkezsR/yZoDFOvuleoPSoNqCQthmvms5c/eZftCiwpQ5/hcP6sp8nTe8KFl6BWf63+VniBQukWw9E0+CT5Ernz1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757981946; c=relaxed/simple;
-	bh=kJ7es16wIZjWlflLniEdtgot4aDo6nguFd5atULtJXw=;
+	s=arc-20240116; t=1757981961; c=relaxed/simple;
+	bh=4I5hXOs36K19a9LmOPEQFqBNGALqwnBMZ4YoX5qFXuE=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kXKvn06q+LdX4qj44aDT2SkIZ7ePkqGsgwjj1RMvFZkAjxdO/mJt9TO0OxR+VmwIgM5HGQMVyLH2kGXg387FO4rtxaZdIU2aIpzQ02Ct9q21jyJmg4HbmHyva4c5QvzinE6XegZFu10vNG59acoB8gIzWuzxOMQn4KQbcNoHtEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M80JViEl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9960FC4CEF1;
-	Tue, 16 Sep 2025 00:19:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=bQP1rsYn81+R9AB2milT+K7Lu0V5S7UsFwp04DoeWCxG+sHRf3z+Q5YbrrhOdbxhF6i9eic3kJz0eu9xAxOu2k6RXX0uewA1k0KwKnRTfDBEpC7FhEkJVize3cjHS2OgqH15XyOoO+apjylC1Q13OWs00T8pybghRwx2hUviC4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R50yAed2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6B3C4CEF1;
+	Tue, 16 Sep 2025 00:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757981945;
-	bh=kJ7es16wIZjWlflLniEdtgot4aDo6nguFd5atULtJXw=;
+	s=k20201202; t=1757981961;
+	bh=4I5hXOs36K19a9LmOPEQFqBNGALqwnBMZ4YoX5qFXuE=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=M80JViElh0rJ30St0epmaAyH0ougJlXVhsLc1UwQ4pYgBuB50wJfLpoxtWU2gGMZB
-	 EeZarUu9XeC51OWVqJdrRwOYbwOPVIYrUxF47nTYrSKmpU3oBwMONS7K705of1QBM+
-	 wIYdr+441+WFShv4Quwb85YvRxe/PorViZg6zQkYgUfkuZTRQ6l3lQHXTdf+zrXIby
-	 26vgxtZ4gkrX5lu00cjDQMSvTj0BjdI+1FDvTTJYrRTD76/rBRFkLxGCmRfb1hkVzW
-	 iEBhXgji96vhkdLRuyQNsj++UXll3YwcjO55IzE/Xkw7aFWUNz223SD9cmch48ziCV
-	 nq5MXiUIC5HXw==
-Date: Mon, 15 Sep 2025 17:19:05 -0700
-Subject: [PATCHSET RFC v5 4/8] fuse: allow servers to use iomap for better
- file IO performance
+	b=R50yAed2ka6kkDMH+NoVPsXsyksIRHjg4w00Ewdx3JsYVREgpb3m286ZI/zrLKEq4
+	 tLyu0Rdr2vBDzaG46qMaoUxAVuMTGbLVIWBMBP78YDGIKVysvFd39Zlmh+dPJ0ifmL
+	 HHP1BUCzSQ6hflCmxQUHYii5R2GvFxDKuq9lCSGbCH5niBqJbJgnx1sXZDrAImP2Ky
+	 pQApqEQOHy2xtrLur8IarepbaO3fzzq2rHZFFrvkyAd2wYZijCmVXT1j6ClfJO2Eg0
+	 3SA8OxRBWUL07F3CKACbh42lbUt6R88eMerUPXJusZQEwfUBRx/k8zF4vtNEFMWN98
+	 B0XdtaU/9Ja+g==
+Date: Mon, 15 Sep 2025 17:19:20 -0700
+Subject: [PATCHSET RFC v5 5/8] fuse: allow servers to specify root node id
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, miklos@szeredi.hu
 Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
  linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Message-ID: <175798151087.382724.2707973706304359333.stgit@frogsfrogsfrogs>
+Message-ID: <175798152081.383798.16940546036390782667.stgit@frogsfrogsfrogs>
 In-Reply-To: <20250916000759.GA8080@frogsfrogsfrogs>
 References: <20250916000759.GA8080@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,13 +61,10 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-This series connects fuse (the userspace filesystem layer) to fs-iomap
-to get fuse servers out of the business of handling file I/O themselves.
-By keeping the IO path mostly within the kernel, we can dramatically
-improve the speed of disk-based filesystems.  This enables us to move
-all the filesystem metadata parsing code out of the kernel and into
-userspace, which means that we can containerize them for security
-without losing a lot of performance.
+This series grants fuse servers full control over the entire node id
+address space by allowing them to specify the nodeid of the root
+directory.  With this new feature, fuse4fs will not have to translate
+node ids.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -79,54 +75,18 @@ Comments and questions are, as always, welcome.
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap-fileio
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-root-nodeid
 ---
 Commits in this patchset:
- * fuse: implement the basic iomap mechanisms
- * fuse_trace: implement the basic iomap mechanisms
- * fuse: make debugging configurable at runtime
- * fuse: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to add new iomap devices
- * fuse_trace: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to add new iomap devices
- * fuse: flush events and send FUSE_SYNCFS and FUSE_DESTROY on unmount
- * fuse: create a per-inode flag for toggling iomap
- * fuse_trace: create a per-inode flag for toggling iomap
- * fuse: isolate the other regular file IO paths from iomap
- * fuse: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
- * fuse_trace: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
- * fuse: implement direct IO with iomap
- * fuse_trace: implement direct IO with iomap
- * fuse: implement buffered IO with iomap
- * fuse_trace: implement buffered IO with iomap
- * fuse: implement large folios for iomap pagecache files
- * fuse: use an unrestricted backing device with iomap pagecache io
- * fuse: advertise support for iomap
- * fuse: query filesystem geometry when using iomap
- * fuse_trace: query filesystem geometry when using iomap
- * fuse: implement fadvise for iomap files
- * fuse: invalidate ranges of block devices being used for iomap
- * fuse_trace: invalidate ranges of block devices being used for iomap
- * fuse: implement inline data file IO via iomap
- * fuse_trace: implement inline data file IO via iomap
- * fuse: allow more statx fields
- * fuse: support atomic writes with iomap
- * fuse: disable direct reclaim for any fuse server that uses iomap
+ * fuse: make the root nodeid dynamic
+ * fuse_trace: make the root nodeid dynamic
+ * fuse: allow setting of root nodeid
 ---
- fs/fuse/fuse_i.h          |  172 ++++
- fs/fuse/fuse_trace.h      |  936 +++++++++++++++++++
- fs/fuse/iomap_priv.h      |   52 +
- include/uapi/linux/fuse.h |  201 ++++
- fs/fuse/Kconfig           |   48 +
- fs/fuse/Makefile          |    1 
- fs/fuse/backing.c         |   12 
- fs/fuse/dev.c             |   30 +
- fs/fuse/dir.c             |  120 ++
- fs/fuse/file.c            |  133 ++-
- fs/fuse/file_iomap.c      | 2165 +++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/inode.c           |   66 +
- fs/fuse/iomode.c          |    2 
- fs/fuse/trace.c           |    2 
- 14 files changed, 3892 insertions(+), 48 deletions(-)
- create mode 100644 fs/fuse/iomap_priv.h
- create mode 100644 fs/fuse/file_iomap.c
+ fs/fuse/fuse_i.h     |    9 +++++++--
+ fs/fuse/fuse_trace.h |    6 ++++--
+ fs/fuse/dir.c        |   10 ++++++----
+ fs/fuse/inode.c      |   22 ++++++++++++++++++----
+ fs/fuse/readdir.c    |   10 +++++-----
+ 5 files changed, 40 insertions(+), 17 deletions(-)
 
 
