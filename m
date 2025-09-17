@@ -1,175 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-61951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93A5B807BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:20:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A2DB8093E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1DA1BC2832
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12A34A00E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D64333A90;
-	Wed, 17 Sep 2025 15:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE8D2EAD16;
+	Wed, 17 Sep 2025 15:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y90Y8EaR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3plVSZ8s";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y90Y8EaR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3plVSZ8s"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L8WxUzFD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E4B220F5C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C8D333AB0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122438; cv=none; b=udpmKNyoJGMcBSS0v71+VMoeWqi/5DYSBsd4urk/s27uP6fKTGTlpDqKymgNqPMoZiaE6Am0DLUQ0fRLTm4mSpVW3bnmPLOHYaBSol+RE2Rm9ga7/FSibPWY0uJw+Qy/pltM/HnANkxKWoUnFPTto+iMRIEZy/rLS+RK3xQkZRw=
+	t=1758123041; cv=none; b=t1f9p6sohqxhPGNarPGRowpv3jX6xvHqIV06NPIl9/GRJstHQiApdWkKbgocdjj5TLqPurXzRnCYCCi3YHsD2zK4ofQu36NK+bx2d8OS2YorTJhnvSpPvt5ua650cgIkXBQy7S/QSFM7OEyjgJeU/GHumPlu3xZYvPHy5qbtiYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122438; c=relaxed/simple;
-	bh=/LO4PR4MHCg4VJdLZXiWotYb16n75l2OrLKP76EGfx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qg5AkRhvUPrZrjr/Gkia9Ogdzrj8UP1epgZnjC0NB58xGpO79gQQse7oxuvXqTOgpv8Gfkwgm2uMNXNruAukllLvdX35Z2TQM3pUnS5A3CMAwhnC+LFJtD+GGaSxF1OoP1t2XLw6M4dcY4G7OJaT5nWLLIzFByCg/FtyQBCzgFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y90Y8EaR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3plVSZ8s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y90Y8EaR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3plVSZ8s; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 72046206BE;
-	Wed, 17 Sep 2025 15:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758122434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
-	b=y90Y8EaRXeKbmQM8CZaMvsN0nOr1ZJi0pOTV6rxulwfLrxW2ebeQPIrpTpHChGA9HPsyl6
-	4j8CkR/QqaXXR14Y7ovf+Npsik/u/nS3pMMjRFl+3K+z+69duwT29VWceUstsR5/aT2Rj3
-	UlccGbg79S7FYmt/YNMGxMdcKRCqvqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758122434;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
-	b=3plVSZ8sUJRShcLCni69PgPQMfIgPE2fk0dU+D6nLxYgB9b3ZOJ1jL/3cpKKq3x+HjMgQQ
-	Qwr2+/UXX40imqDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758122434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
-	b=y90Y8EaRXeKbmQM8CZaMvsN0nOr1ZJi0pOTV6rxulwfLrxW2ebeQPIrpTpHChGA9HPsyl6
-	4j8CkR/QqaXXR14Y7ovf+Npsik/u/nS3pMMjRFl+3K+z+69duwT29VWceUstsR5/aT2Rj3
-	UlccGbg79S7FYmt/YNMGxMdcKRCqvqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758122434;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
-	b=3plVSZ8sUJRShcLCni69PgPQMfIgPE2fk0dU+D6nLxYgB9b3ZOJ1jL/3cpKKq3x+HjMgQQ
-	Qwr2+/UXX40imqDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60EA4137C3;
-	Wed, 17 Sep 2025 15:20:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9HdfF8LRymgeHAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 15:20:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E5BF9A077E; Wed, 17 Sep 2025 17:20:29 +0200 (CEST)
-Date: Wed, 17 Sep 2025 17:20:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Pavel Emelyanov <xemul@scylladb.com>
-Cc: linux-fsdevel@vger.kernel.org, 
-	"Raphael S . Carvalho" <raphaelsc@scylladb.com>
-Subject: Re: [PATCH] inode: Relax RWF_NOWAIT restriction for EINTR in
- file_modified_flags()
-Message-ID: <5pzb4pxshhgytfki6s52jhnuyxa3hgsyzhcwkdz4qlvpkwimwp@ngsfvqn7i4yc>
-References: <20250912142626.4018-1-xemul@scylladb.com>
+	s=arc-20240116; t=1758123041; c=relaxed/simple;
+	bh=qGRIys5JF7wKv1JZniMpEOjjbs/U5vyKXyFpJyPZHzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C9601LlpABykbrRDo7XYkZVaZ7xnLixZSKkTEsnzZOpVdl8m6e9gjzpDOcw9vfCpRdlawqrIxYq9ofyLqYen2ghDBXCbawdM9trcMyR+U9t7GCMiZNQRj6/ecnRSxmYsIIMecI6P9Q9NbF5fHCcUB78NXzSoa6MBcruriylhKGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L8WxUzFD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758123038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+wZBRbhCfIcILOq32sHnsWiJJky+CAvNGRjo6J6IWn0=;
+	b=L8WxUzFDb5LLpkYHJ8CAHZZyJY0B/IlPyq5y1XRWDbyfVH0ajHlvVYWSMDvA4okySDL8i8
+	y9MPeS5oM9m0VAxH9YQWckNZfocrFoLLSyRuwjZdlFhJ7GFk4bBszbfZ1bkzJsYQPOtUOT
+	XF0WSBUQtKUQFrFPZG3b7qrhcNVtRJg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-646-Xn0zX0k9O0qPAZOH6O2IMg-1; Wed, 17 Sep 2025 11:30:35 -0400
+X-MC-Unique: Xn0zX0k9O0qPAZOH6O2IMg-1
+X-Mimecast-MFC-AGG-ID: Xn0zX0k9O0qPAZOH6O2IMg_1758123034
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45ddbdb92dfso34974025e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 08:30:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758123033; x=1758727833;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+wZBRbhCfIcILOq32sHnsWiJJky+CAvNGRjo6J6IWn0=;
+        b=gMw9zKxcsVIUsxarciGPPaaSa6EMR1hCjUcQFImvTwBW2O4+cT8erTtzubw3Bp3P81
+         NdMz5Ugizr4mGIdpQCy02QFrSpmOLVPpwizF6mQaNNRkgWh0drpVIGdaF2gTEfkU294T
+         MlNQCCgf9Bhp0Y+v6dvCOdSZyBNpQ5y/5jTJVrZH4hDiG+zHr5iagbELOSrGN/B7uX/a
+         9+SH1XM+oEGeEOJGVQgAZT0eM5k8oH1kphZTPb1eXVwIhK5XvZUDfkFN37Waa6jmrNno
+         /pRsrivqQAQSzCVXhUy8f4VnJUOiSSjIM5mbq93XDrLqmYIgZodplpNGqz4cVVzRv8p4
+         XcJg==
+X-Gm-Message-State: AOJu0YwdBWpeHUNqRu9AWXjMqZjtZPRKARCf2HtHDG7mQSgfdQF98wkA
+	X6jYfBqoWTzak4v2OyVzSqjNafWsaPrBCF+zigTVKWp8i+sMDCYA0z8Ot3lk4TVIHywhlrUs+m1
+	kL/KqDlukH8YT+eorZI/O78nXIzJ3S1mm7pJy5UyZJpzcQBbiX0DxNlWhFoGOYE54NwI9xyA+vc
+	DxC5nUPUpYW0l0jhnc4wrL/A3WR7lYsuIXuRUTm1zN2JsdVtdD73o=
+X-Gm-Gg: ASbGncsQtpBdOKJsuG2NjWmpQhxaQ3LmFNwF8tiRJTsgnBtHOJ7QlRRSw6GRp2Hlvct
+	Cdx2m0YswHVAL8U92diu5D99l8+AeZ7lZCKZ1EwkMgIzHK/SeZjDLjduyeYiAPS/HKZGb+ng/Zc
+	zjYmIZqotOdvYlcDb4/Z5pG/jo8XjUnMV172gy92j6gNgJSxgUchDBJHT/l75qrsW8w6ErGJBTu
+	QqyXaBZtSRNXvXBmFR9NwawG5HTjmT3/AuIWEKO394MeCMBT4A6svCWfqE51oNv1htS7veE9Xnq
+	MNSQXF36hY+DASm/xBJI9XmChxJbFkw/92yf+UCf9J8vocAtwIC8ClC6Vrw9vIvw8aUx48IXP1C
+	0k85txyFEpRPF1oIw7BX3Rw==
+X-Received: by 2002:a05:6000:290b:b0:3e9:9282:cfdc with SMTP id ffacd0b85a97d-3ecdf9f44famr2370856f8f.12.1758123033538;
+        Wed, 17 Sep 2025 08:30:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE10SIsuAAxKwrMnQs3f0QGXdbrEYT9DkVrxChgBsNftQ5KW+fmqs6BKcxBXD6V3sfp4EyfxA==
+X-Received: by 2002:a05:6000:290b:b0:3e9:9282:cfdc with SMTP id ffacd0b85a97d-3ecdf9f44famr2370826f8f.12.1758123032993;
+        Wed, 17 Sep 2025 08:30:32 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (176-241-40-109.pool.digikabel.hu. [176.241.40.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e84de17f9bsm19665691f8f.49.2025.09.17.08.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 08:30:32 -0700 (PDT)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	NeilBrown <neil@brown.name>
+Subject: [PATCH] fuse: prevent exchange/revalidate races
+Date: Wed, 17 Sep 2025 17:30:24 +0200
+Message-ID: <20250917153031.371581-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912142626.4018-1-xemul@scylladb.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
 
-Hello!
+If a path component is revalidated while taking part in a
+rename(RENAME_EXCHANGE) request, userspace might find the already exchanged
+files, while the kernel still has the old ones in dcache.  This mismatch
+will cause the dentry to be invalidated (unhashed), resulting in
+"(deleted)" being appended to proc paths.
 
-On Fri 12-09-25 17:26:26, Pavel Emelyanov wrote:
-> When performing AIO write, the file_modified_flags() function checks
-> whether or not to update inode times. In case update is needed and iocb
-> carries the RWF_NOWAIT flag, the check return EINTR error that quickly
-> propagates into iocb completion without doing any IO.
-> 
-> This restriction effectively prevents doing AIO writes with nowait flag,
-> as file modifications really imply time update.
-> 
-> However, in the filesystem is mounted with SB_LAZYTIME flag, this
-> restriction can be raised, as updating inode times should happen in a
-> lazy manner, by marking the inode dirty and postponing on-disk updates
-> that may require locking.
-> 
-> Signed-off-by: Pavel Emelyanov <xemul@scylladb.com>
-...
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 01ebdc40021e..d65584d25a00 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2369,7 +2369,7 @@ static int file_modified_flags(struct file *file, int flags)
->  	ret = inode_needs_update_time(inode);
->  	if (ret <= 0)
->  		return ret;
-> -	if (flags & IOCB_NOWAIT)
-> +	if ((flags & IOCB_NOWAIT) && !(inode->i_sb->s_flags & SB_LAZYTIME))
->  		return -EAGAIN;
+Prevent this by taking the inode lock shared for the dentry being
+revalidated.
 
-The idea isn't bad but this implementation is wrong for several reasons.
-Firstly, if S_VERSION is set in 'ret', then generic_update_time() will call
-__mark_inode_dirty(I_DIRTY_SYNC) which generally means blocking inside the
-filesystem. This is easy to fix. Secondly, there are filesystems
-implementing their ->update_time method which may (and does for some
-filesystems) block. Hence for this to work we need to propagate the
-information about RWF_NOWAIT into inode_update_time() and ->update_time
-callbacks or at the very least keep the old behavior if ->update_time is
-set - depending on which filesystems you're more interested in ;).
+Another race introduced by commit 5be1fa8abd7b ("Pass parent directory
+inode and expected name to ->d_revalidate()") is that the name passed to
+revalidate can be stale (rename succeeded after the dentry was looked up in
+the dcache).
 
-								Honza
+By checking the name and the parent while the inode is locked, this issue
+can also be solved.
+
+This doesn't deal with revalidate/d_splice_alias() races, which happens if
+a directory (which is cached) is moved on the server and the new location
+discovered by a lookup.  In this case the inode is not locked during the
+new lookup.
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/fuse/dir.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 5c569c3cb53f..7148b2a7611a 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -235,9 +235,18 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 
+ 		attr_version = fuse_get_attr_version(fm->fc);
+ 
++		inode_lock_shared(inode);
++		if (entry->d_parent->d_inode != dir ||
++		    !d_same_name(entry, entry, name)) {
++			/* raced with rename, assume revalidated */
++			inode_unlock_shared(inode);
++			return 1;
++		}
++
+ 		fuse_lookup_init(fm->fc, &args, get_node_id(dir),
+ 				 name, &outarg);
+ 		ret = fuse_simple_request(fm, &args);
++		inode_unlock_shared(inode);
+ 		/* Zero nodeid is same as -ENOENT */
+ 		if (!ret && !outarg.nodeid)
+ 			ret = -ENOENT;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.0
+
 
