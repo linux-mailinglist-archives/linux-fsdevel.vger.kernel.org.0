@@ -1,174 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-61884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C5DB7D83F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:30:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BA0B7D8EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1E51718EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 07:37:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4AA3BFDC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 07:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C145C2FFF8D;
-	Wed, 17 Sep 2025 07:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2F3303CB7;
+	Wed, 17 Sep 2025 07:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="WHn1EZQB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lSg9XMDV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbSauEvn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4009D2F291B;
-	Wed, 17 Sep 2025 07:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F50248F68;
+	Wed, 17 Sep 2025 07:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758094622; cv=none; b=TQ7L/kjiUhaT7Siqvm+xt+olmJdATBZ9MLx8xCdc14EA+kS3aVVFtRdV2wSTfK/j/la04GX1qFkYSB2vk65p3WeddpPxB8xAFf5ow5JjAWglLLyecknNp2gCZBV1ELmfSvA/wme2U01V8U/UygejbY1xeDyuAbadx941Iyj5Az0=
+	t=1758095056; cv=none; b=jRGTW24+OEvvbIJxW9Zu9kQ0Wnz8jyb1rUKRi42lm9DzCBuBh/tE0yxoE3kleQ6tn2n+30MjP/AGFO68STJYqDb+z7iDekgB05+B7XlphGTDGIEnAQBqg2WnlJeJA4YQvb2emXbpaxs5IA5sHMJATUIv/oqtoDjPoxRfynwHGfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758094622; c=relaxed/simple;
-	bh=/a4SbsVzqO1jNQ82naGvBj0LOt0lvz/CD/bjLWnkpF8=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=ACvou4k/kgU3Lk9Z7mld0S+vxsQZI3SoEln2dgd1PIHYNqKhcMlvxG0D9wldT1QAEKfhXH4gjGXIASdznDu3eggsphHjf0LuEcj7h4VlBdTiGi+DZZlg2FmemrG3GZT8AVM+flkvfTp2Wz10fP4nnytzebxDwXqXvCQewo4P5LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=WHn1EZQB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lSg9XMDV; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4B14A14000EC;
-	Wed, 17 Sep 2025 03:36:59 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 17 Sep 2025 03:36:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1758094619; x=1758181019; bh=9WYxe3ScZzspcMiOBOj1l0vTDzVUROKuguU
-	p/Md8T9M=; b=WHn1EZQBN4Gv8PcS2306IUOkEI1G1yYPUg7vzrYtwkZrbet25Ey
-	sEB8x11fTj5+ntxmrD4fyTkLgZr6uot9GEAxtqB2sJBmxOZJmPQrQcOza0SoXej+
-	tAJ/QvNnRzyjtOlfMAeAhpRpH/qsAAk/kZfPqfD6PTkHQRlIm2ipWhzMZ125jWds
-	rLfOMOWLwJMVm6ixM7AepUK5s9ukvTfLA9+9LJgl4qwq8/JExclZQ58ESoQ0LImo
-	x37b6a71zQmlA9cdUdO5Gv+hjnaKfMcq415YHAWg4f7BLKHdG5fARwuShXLJ5WxT
-	ncJFJUmTyuHMPJrslt8g9BXguQTaPP76O6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758094619; x=
-	1758181019; bh=9WYxe3ScZzspcMiOBOj1l0vTDzVUROKuguUp/Md8T9M=; b=l
-	Sg9XMDVHk2tLClpo2YJlnhtwKGs7OGu9n5WowubzjEA9Sjbdgor0chcqUTFOtz3k
-	aSp53BWVB/mxbj1l+FjRXXkOKr4CaWh0zj50mVb7lc0duiixHp7B5eyqykkOvBtN
-	pTNR+Ir7dufPOUxkd1EgA+FlQNAVTyQOmqbqQdjpNn55qbZ5XrYirOh34czpAR/7
-	uE1XsgVOgwhLAcQYVXwKnCDZpG/IKYjPTjsWVWcDgQgs/mNzuJplB2oM6Tm5DLo+
-	jxJdtd6mf1wNpfTXzCZ9HGPWW331IkgmW4z+6zGQUonczDkYyBwsF/gx/EaqiDpr
-	9ZfuhruPAXXM+1JuDt+OQ==
-X-ME-Sender: <xms:GmXKaGrn6A9GEYKPybXPjIttYfPGAmSPtCJeBWoHTN5TM6Ztz26ZwA>
-    <xme:GmXKaAX9cbtMiAMmpBduVxzepulWpd0jkIwFTCR0qPdkn_qj4OLkFNQFaK7HXCKk4
-    9st8K3xNLolwg>
-X-ME-Received: <xmr:GmXKaHo67P-p9du6Ge_80bZcWEsum5qDMYb7pFR4tPIdfORm13RdbPk4jlaE-o5v0T-e_cEXSGZozlwHVfwvH1Tc99i6xlKdpeLXMgfqRQZf>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegvdekjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepthhrohhnughmhieskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghn
-    nhgrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilh
-    drtghomh
-X-ME-Proxy: <xmx:GmXKaPBZtEQRrrWbhPB8LFq12WQKF_QkHpHa8C2-MHw-SOgnOpaK2Q>
-    <xmx:GmXKaLhi2isTeWPH9w0G2HbJaQH0x97QHLeV6gfN6RsDo8npKKRdOA>
-    <xmx:GmXKaFbBDQbPXnZy_qtPCPi45Ha_DtWQcPX4mhGK9QMEM66Uiltj5g>
-    <xmx:GmXKaEmmSIHUpwNa9339RrmDgHRMOh0BQ3NsJxBI9pku7PTP7WFo8Q>
-    <xmx:G2XKaFKcsaIm6yCJzQ3hRyHQv2NU0I16xclk5R5aAWhTxwtdwPI6xewm>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 17 Sep 2025 03:36:56 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758095056; c=relaxed/simple;
+	bh=O32d9nMpfCjkvZmQj+LHF+wrVeinQYtykhIahUtbw28=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iSJtplyrVDTCqp4EoHbm5Xf1zECwq4gsCit9yZfw6SiScHAIFj9dvMVNXu5Gf2ezcqTyQ9B/scqsA5QgeFSX0zGxb5Pait72TtjDcLCg7BqzssbfgzNv8QmbHu3xugoQTHpQ9GfVo7KoU3O06TGYcRabTnHD62X4GbZgL/geado=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbSauEvn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E97C4CEF0;
+	Wed, 17 Sep 2025 07:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758095055;
+	bh=O32d9nMpfCjkvZmQj+LHF+wrVeinQYtykhIahUtbw28=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hbSauEvn8Wn3EmtIF1IR8j8PX6fACuh6JMywy6s8FmmriFeqeH4xYjv3rsgkiiCHw
+	 UyXW6ZCZNvyZE6RGZMkRkFVYho1qOiCrBlbKLbvA3DYc3eG5k5Z3b3t4Ah6Vut8N9F
+	 mz9Od2K/Zjhb48M5Pz2QeuVL8vkMb1oj5uZE9k+U3z9YRyXC2W/V4Q1Rs0QQvxv6oI
+	 TuhwBy01nl82bA0BWe24Tay45kPxpRH5HoKH4BQiwqA0cpTdkVZWobrGlHTzenVrMv
+	 tcbISR9d3OsZQnCUcEViB7xZ1G39ye6jJ1F7RiGRvM7WXqTvJfZlKNBNHAG6K+b2bD
+	 GaMy0M7pskqyA==
+From: SeongJae Park <sj@kernel.org>
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	minchan@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	david@redhat.com,
+	Liam.Howlett@oracle.com,
+	rppt@kernel.org,
+	pfalcato@suse.de,
+	kernel-team@android.com,
+	android-mm@google.com,
+	stable@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] mm: fix off-by-one error in VMA count limit checks
+Date: Wed, 17 Sep 2025 00:44:13 -0700
+Message-Id: <20250917074413.58886-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250915163838.631445-2-kaleshsingh@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Jeff Layton" <jlayton@kernel.org>, "Amir Goldstein" <amir73il@gmail.com>,
- "Jan Kara" <jack@suse.cz>
-Subject: Re: [PATCH 2/2] VFS: don't call ->atomic_open on cached negative
- without O_CREAT
-In-reply-to: <20250917042348.GS39973@ZenIV>
-References: <20250915031134.2671907-1-neilb@ownmail.net>,
- <20250915031134.2671907-3-neilb@ownmail.net>, <20250917042348.GS39973@ZenIV>
-Date: Wed, 17 Sep 2025 17:36:54 +1000
-Message-id: <175809461430.1696783.8945122470534240428@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Transfer-Encoding: 8bit
 
-On Wed, 17 Sep 2025, Al Viro wrote:
-> On Mon, Sep 15, 2025 at 01:01:08PM +1000, NeilBrown wrote:
->=20
-> > All filesystems with ->atomic_open() currently handle the case of a
-> > negative dentry without O_CREAT either by returning -ENOENT or by
-> > calling finish_no_open(), either with NULL or with the negative dentry.
->=20
-> Wait a sec...  Just who is passing finish_no_open() a negative dentry?
-> Any such is very likely to be a bug...
+On Mon, 15 Sep 2025 09:36:32 -0700 Kalesh Singh <kaleshsingh@google.com> wrote:
 
-You're right, that never happens.  It always NULL being passed or
--ENOENT being returned in the cases I was considering.
+> The VMA count limit check in do_mmap() and do_brk_flags() uses a
+> strict inequality (>), which allows a process's VMA count to exceed
+> the configured sysctl_max_map_count limit by one.
+> 
+> A process with mm->map_count == sysctl_max_map_count will incorrectly
+> pass this check and then exceed the limit upon allocation of a new VMA
+> when its map_count is incremented.
+> 
+> Other VMA allocation paths, such as split_vma(), already use the
+> correct, inclusive (>=) comparison.
+> 
+> Fix this bug by changing the comparison to be inclusive in do_mmap()
+> and do_brk_flags(), bringing them in line with the correct behavior
+> of other allocation paths.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: <stable@vger.kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Pedro Falcato <pfalcato@suse.de>
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 
->=20
-> > All of these have the same effect.
-> >=20
-> > For filesystems without ->atomic_open(), lookup_open() will, in this
-> > case, also call finish_no_open().
-> >=20
-> > So this patch removes the burden from filesystems by calling
-> > finish_no_open() early on a negative cached dentry when O_CREAT isn't
-> > requested.
->=20
-> Re "removing the burden" - it still can be called with negative cached with=
-out
-> O_CREAT.
+Acked-by: SeongJae Park <sj@kernel.org>
 
-You, but it will also have exclusive access to the dentry - either an
-exclusive lock on the parent, or DCACHE_PAR_LOOKUP.  That is the
-important outcome that I wanted to achieve.
-
->=20
-> O_CREAT in open(2) arguments might not survive to the call of atomic_open()=
- -
-> in case when you don't have write permissions on parent.  In that case
-> we strip O_CREAT and call into atomic_open() (if the method is there).
-> In that case -ENOENT from atomic_open() is translated into -EACCES or -EROF=
-S:
->                 dentry =3D atomic_open(nd, dentry, file, open_flag, mode);
-> 		if (unlikely(create_error) && dentry =3D=3D ERR_PTR(-ENOENT))
-> 			dentry =3D ERR_PTR(create_error);
-> 		return dentry;
-> In case when no ->atomic_open() is there the same logics is
->         if (unlikely(create_error) && !dentry->d_inode) {
-> 		error =3D create_error;
-> 		goto out_dput;
-> 	}
-> in the very end of lookup_open().  The point is, you might have had a call
-> of ->d_revalidate() with LOOKUP_CREATE|LOOKUP_OPEN and then have the damn
-> thing passed to ->atomic_open() with no O_CREAT in flags.
->=20
-
-That inconsistency could be confusing for the filesystem.  It would be
-hard to make it consistent through.
 
 Thanks,
-NeilBrown
+SJ
 
+[...]
 
