@@ -1,104 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-61975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0354B812C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 19:27:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E7FB812F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 19:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CCB71C27217
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023B7626331
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BC82FD1BE;
-	Wed, 17 Sep 2025 17:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAB82FDC4C;
+	Wed, 17 Sep 2025 17:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NfT7yy9y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wr9Pzivg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8D82FC881
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 17:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B261C84C0;
+	Wed, 17 Sep 2025 17:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758130060; cv=none; b=TTMGgBrVBTQsmZChYZLu5GKmjv3uUBHHomAy/dUZExIf3tsvWsWhZdywwzBTsEh4gf+1UiNQSBi1SC4arwBZo40VuxrFl7yJQgkLiwQwBo5OPjXLmgoVp2yc8ORNXQGuk57bzHlPDdzyzrON6SEmxO4tJBiGau70rx5PQDfPhO4=
+	t=1758130467; cv=none; b=Wt+U8OrsC4bTxdNMHUjuuiRMAUMWPkTrwBJFMqJ6VlSOkyy/dOJdXnFAbWoxZU9fRLDwShgsQTL/2OxWAaY2aHhEtD//ijySSGf0aCWShzYTGlIDpNxsIRJKrVgdnQ2kio1lgpQkcNCfp76RksXJJA64gi+fEYRlYLY8Wcn9l5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758130060; c=relaxed/simple;
-	bh=yBgNglhUj28Ssiy8gVhtR3DVtZUq7MxzTlcQ+kt7TDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SeVf3HeIf5sJm7TlARQiM44h96jUJUljwSuO3/lXbxJ64jGLFY1O9NlI6C+SGtpP2/2qdhxsGeSyBuS493zgjf/zLuu5NP1chqAK+PF0ndSOB1ZBr6Hyz5DxFTD/qJnbRC5/mgdFlf2KWYla8fekonwyCAuHHkoB5BsjGm2XbhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=NfT7yy9y; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b795fa11adso536511cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 10:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758130056; x=1758734856; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yBgNglhUj28Ssiy8gVhtR3DVtZUq7MxzTlcQ+kt7TDE=;
-        b=NfT7yy9yDHLhTvGPmk9mIbqvfyGRr5F9ucxVssdTiEUucHoSvWqy5CXj2y/yA4KL8h
-         R6dIQFefRPZVO4sL6e4b6jEOetme7oz3b1nyhM/YGwVYezPVUGz1M1m7zoA0bWMpyCgL
-         Rtb00Tz4w+jsFkrPh3T0H866jaTVfrA95U2Y0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758130056; x=1758734856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yBgNglhUj28Ssiy8gVhtR3DVtZUq7MxzTlcQ+kt7TDE=;
-        b=wDbGcXOYvfjj6VhLRfdXrdOTOTdZ8qdTjwxe/yW+z24UumAc3TMFX03A3hM81PJ1YY
-         vBmaKOHlxxmSw8a+9GyB569igtI4Tf/XhH+J3r8T5dB/tJplYptqzRVZudJw+9pwumiU
-         f4rx/gaHFasxuMHCburITtr1LYGJmWelbHegykPlhCfB2r+N4mCwhmijC388+Cgd+M0p
-         Q1PdCK0lKr0eWI2VVnh911im6rM5hNtXNEpCnWqmpkLxYRs2xFr1YlX0Bg3BfFXRF6/G
-         RJDXKIc/+jiPmoZ1B71MBqRb4cf3FRLyT+MkUAvAHqp77Eh8GXF4H9/UXBiYJoLRGTDp
-         DxiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVk3LQaBXOQSlI2jsvhnKuhpV9eJbUh2huFLEjm5zA0oSarnuFgy1a4Jz/tvZC85IRN68OfiQTvt4x/CdiW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdDz2B28KOYvin6ZDZ49o/3NHRY6sfC+4XIK8+zERTTZH6i+Dn
-	QIoOttIL6Kr/kc9W7mrN57ha5N9sfOoI+6qDpyzs4SCRRK3DZB/CqYy9uVvdvsMc011145JEsFg
-	qYi5vkQ9To7uOkz/UTU7EObdqFutL8OfjzCEE+6w0hg==
-X-Gm-Gg: ASbGncuY4U3Z4LjYgUHtCTV0O1FUy1564sOxcvxlJcooysNEYhGtykh5kmDF7wW5TwN
-	zB1yLHifEfDFnOyMlNkgkNqQAd3Zwfug8+GsUUPVHcf6iatjB37gVhVWqNKrOGd4TS4xyAZozkj
-	tbY8H7DxfENSA+FmdxHekXSAvxAp+srbc/ujag3nl84cfZf2WvITIfm8YsFVIKiVAX3DctuJZ8g
-	bLZiwierqUipejMfxuVelY0et/BUZ+Bv64LKWxu
-X-Google-Smtp-Source: AGHT+IFBkFOk0XNIkJfTtP12NzSLh1/XbpFxeGvj1/V9q4Ba7zUNhwZjk6B+bsdIG3yL0hBBs0xc19mJKt5GE6VamIM=
-X-Received: by 2002:a05:622a:18a4:b0:4b7:8028:ff1d with SMTP id
- d75a77b69052e-4ba6cd70b48mr32432871cf.74.1758130055944; Wed, 17 Sep 2025
- 10:27:35 -0700 (PDT)
+	s=arc-20240116; t=1758130467; c=relaxed/simple;
+	bh=bgcVqmixOn47G6EpqaXlR06xxVFF4RoZW9BetbI6TZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjuZOCUZMSbKA6+0Kbw1LdoKEClTRLuRt1Q3ykhrcGCTnygzv+ioO63uR8PzIaRVP5wpTLtW3CYlcf1FWRexEXCxMqhwR3ck3cYfDdJSeMLlIhJC/iJ+IdeLQBm0s+XDev6mzaI2yuHJE92mcdoBZpgia29eNW7dwZLeFyewcuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wr9Pzivg; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=re9XiQwZHyoGrJmwBRzeNqQiLmgFq6r4H1Yj73RZIV8=; b=wr9Pzivg4eMg+afHKT1BIf6dDL
+	Q4WjVxrBc0RMofwJb53n409SGCq035N3e91aPMXt47MwNYA9yEhewMvTDAR69hT5H45W1sktyPL4D
+	nJqQM5Ze4peqVjOJYjvdLJhMaWb3Hk1GCpwyB9MeUYULC+lsqJag91Fo2goJ8S/nDlWnRFIRs2VwB
+	OESogtTWXLz49g6qJ/ax/byne2afQNrq/7hNHyIxgElulMsYptKIy5JYhpyG62HfRP/fPgeKFMoGF
+	B5lry83DH8O6pkJ0/3cNDFq0lNh25J6Zb7iZkW/R5ofgIx9J0tmY0STZe4bZNS5Rlna7AUq2QWlkf
+	imnUJ98Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44040)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uyw2u-000000005Pd-0r9U;
+	Wed, 17 Sep 2025 18:34:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uyw2p-000000000Nu-3wy6;
+	Wed, 17 Sep 2025 18:34:15 +0100
+Date: Wed, 17 Sep 2025 18:34:15 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	kernel test robot <lkp@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
+ __get_user_asm_dword()
+Message-ID: <aMrxF3AnFox0LH8V@shell.armlinux.org.uk>
+References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk>
+ <875xdhaaun.ffs@tglx>
+ <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
+ <87y0qd89q9.ffs@tglx>
+ <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
+ <20250917171424.GB1457869@ax162>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917153031.371581-1-mszeredi@redhat.com> <20250917153655.GU39973@ZenIV>
- <CAJfpegsZT4X5sZUyNd9An-LxQQAV=T1AEPUYQJUUX4bZzUwJUg@mail.gmail.com> <20250917164148.GV39973@ZenIV>
-In-Reply-To: <20250917164148.GV39973@ZenIV>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 17 Sep 2025 19:27:25 +0200
-X-Gm-Features: AS18NWCqpvfS17bi0aCbYLaXRQxbYd_3bKWSccrJkXY_9QIc6sOxFHCKnJZBA_M
-Message-ID: <CAJfpegvYJD8UUuukNY7oj7-PSu48y6hXn+iV9iHzrO4fdgWXQw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: prevent exchange/revalidate races
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917171424.GB1457869@ax162>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, 17 Sept 2025 at 18:41, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Sep 17, 2025 at 05:42:18PM +0200, Miklos Szeredi wrote:
-> > > ... and if the call of ->d_revalidate() had been with parent locked, you've
-> > > just got a deadlock in that case.
-> >
-> > Why?
->
-> Because the locking order on directories is "ancestors first"; you are trying
-> to grab an inode that is also a directory and might be anywhere in the tree
-> by that point - that's precisely what you are trying to check, isn't it?
+On Wed, Sep 17, 2025 at 10:14:24AM -0700, Nathan Chancellor wrote:
+> On Wed, Sep 17, 2025 at 04:17:38PM +0100, Russell King (Oracle) wrote:
+> > For me, this produces:
+> > 
+> > get-user-test.c:41:16: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+> >    41 |         (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;                \
+> >       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > with arm-linux-gnueabihf-gcc (Debian 14.2.0-19) 14.2.0
+> > 
+> > Maybe you're using a different compiler that doesn't issue that warning?
+> 
+> Maybe because the kernel uses -fno-strict-aliasing, which presumably
+> turns off -Wstrict-aliasing?
 
-But if parent is locked, it must not have been renamed, hence
-parent-child relationship holds.
+Thanks, I'd forgotten to pick the -f flags for building the out of tree
+test. Yes, that does work, but I wonder whether the powerpc 32-bit
+approach with __long_type() that Christophe mentioned would be better.
+That also appears to avoid all issues, and doesn't need the use of
+the nasty __force, address-of and deref trick.
 
-Thanks,
-Miklos
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
