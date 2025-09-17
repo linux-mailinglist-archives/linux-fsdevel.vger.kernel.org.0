@@ -1,163 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-61972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F13B81253
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 19:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB65B8126E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 19:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E6FC462AEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0F5174CBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241AF2FA0CC;
-	Wed, 17 Sep 2025 17:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087282F7AA8;
+	Wed, 17 Sep 2025 17:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVjx+uEK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAfPS9Vm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF92BE655
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 17:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AB034BA25
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 17:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758129534; cv=none; b=E+gmeXrjd9qVOI6BnUKx54Nn05F7LW+IxbEj3YZMFBlCnhn4U0WkssyWbsAiq/clnJ1ATp4zZw5egvfbiNT531iNxD4fY9ZpsV+t1aB78TSU+JNqPfESK800jbMPjQO/DkWPg+xvwlr9CTuz66v2JCpaf05QZRluJICiQHFU4EY=
+	t=1758129755; cv=none; b=XgQjqhUFcm/aObQ77lLnwVZF5k9kD5s7/sOq7guQTo2yKJR268kvgnh13/pXnZEPXKBBZqfX+NiurRyGry5KiUwidGueT715+b5txcA01y1tXZdxIgAjz9fRlqbyVMUdKnMLEEIncaTRkuGjNQt6Uk5GWmAO6EzCscPpJxu0d90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758129534; c=relaxed/simple;
-	bh=vp4xXfEstXfG1EmVhXAhHkfIJCfjz0gaa7uWSYhK+O0=;
+	s=arc-20240116; t=1758129755; c=relaxed/simple;
+	bh=RSDxu9t+D5UuL/HojUmVJ3BjyA67oJoFD+owjBDORPM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J0pLFhgtl+mngTfKTPBhOTP6jFIDQlHI8oOrvG0OZTrQz+M0/U7wmW9yAKzqcTqCxp/s3vYeM2ia2uUSxsB1xvFW4vJJK1Jyw8D1y2dmZaZouljZjnCZjve/IU1/7yFI+n8oTZmckMT1IvXNxzKBEK47ocP8H2IATs6WYwO3RQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVjx+uEK; arc=none smtp.client-ip=209.85.160.171
+	 To:Cc:Content-Type; b=HRTcIlg32aqyIFkAsbQBLeNBFtnNmDKYUcNph4smlmMj/4dNpY0hPiqBmWN8/T89IqQBSdxxsqWHUWeWn8mz54kTaoWo9HqxMbgh8v8yqjSaw0uZAVxo7iCvoD8CxWHIRxllYo221AOJxmqA6Qo9SarR2SkzL5iI0etX9J06tHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAfPS9Vm; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b794e9a850so467971cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 10:18:52 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b5f7fe502dso475041cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 10:22:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758129532; x=1758734332; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758129753; x=1758734553; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D8pW7pxi6JTe55Epd+um3+DbceuB+Xvn3fqBDDJif2g=;
-        b=IVjx+uEK/gqmilCKdtTghrftfgk4OK6ghUX+AibF9mE0GrjKyFajd9I1Ype5tNXEnh
-         fa2dYJj0b+wGPUVxi6R9nvKgeHeU8qUVHDNrxLVV8lvCrX80FAukS1032Xxj1ky6g/3g
-         C80aklEy+6Umg2FWB0tefMdOOO78zqw5CWj0MqhNAXg80Jp/EH9obmMDfuA7MnAdGwzt
-         NWdQ5IK1ooyJiry/HjFAm+YvdPXPlL3ztq+hxAiQr7sK7O589DA6d0lrXic3PTbmMUzy
-         7kkKIlaXJIxGtWUrXlLsxJ9iEHvbcHiAajRKiFhw/F2d/tAvCoe46ZLswLlnlOGrZtHB
-         d71w==
+        bh=9gdUx6S6T0XeY4RpC698Oo7BCydPLt/+wzQmQWUkBN0=;
+        b=AAfPS9VmpTuHwUhnVtagpZK8y6KCd+JaUtMpOQcJVcLoE3f3YKLPrfxUqmtGd9dhKM
+         Qa65n2d+Y+arXSHgbDkYXwWLcRKvsa4AYzLDFZJI9jvMAeakLRnx0NXGaMd6lbqrNEf5
+         NQy4TVQBTshfQrHhXAYet33hFLmIIQgNghY4m2QJ0JdRV1kXXA6OhD9vj7H0LPjPr62y
+         GQREd2MdAdP9PVle0kcERZqlCu9VcJNuTCtoEVBsK0UiGcyF+FNq/u7XqnFJEs7S5Yjj
+         LbsdK11dYB4Vzho6EHsqk3Dh/D6pnUzV7G1DgOx5dcQjYxoVjToDD5lCyDoU5qkemvpj
+         m2wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758129532; x=1758734332;
+        d=1e100.net; s=20230601; t=1758129753; x=1758734553;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D8pW7pxi6JTe55Epd+um3+DbceuB+Xvn3fqBDDJif2g=;
-        b=q6xyBqlBwXQoVEl3yy7r8qXvZwHZ9DeSr7fDIihfc0G0BbctDazRsb51TxB0DJ+GOC
-         AHlhrQZjW52ez2PgB24kf0zTuIasCBxy43y8xKPLjGX6P3Dmno2DiY/PQfWLcq6fLl+e
-         05RKk03QkxFpK3uGThmZk5OPuPi7x6TVHPp4d5dSkfWxyUGhF/UF/sGbzPXLWuE2W/Ro
-         XiI3ERwBst5/D7CmolII0pIDXrBZhEg8C8mrYtwRpJE7CU9SSu46R3UwB2ozfH6H20qn
-         3NKDsqgA5N/I4JxGNNLRrtbcsOFm3wg/TV9nK1O20DNHkC6ZSATBgYLXiDiSJbQFueeP
-         8HMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEScTxnW2JjlLJMSboB4pZ3Cj8BNpIoszfJTmYU5dQqxmn1r2Di8bP6obT13+OO+jpTTNntXNOyOHP+Lq3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcPwjnaznpMFaQUSV65SI0FLKivj5NZnzmUhzksLX+OgEJw+H6
-	S7YNcLRY9yU55UrDe3DWIg6mm8m58kcsLE875V7C+0yvtBmotz4d2JX3BRi+MxZ1rx3xx88nAi/
-	NyLJp0Rfr2npK1EI9K6VHXzHmGbSPctA=
-X-Gm-Gg: ASbGncu/T6jGqwYe5Zz+Vt4QK3cJXwRCW1pAud0ArB2GZEEGxKQiLdnRbn8Mr1CNzXw
-	NtaexzBLl1ytM0z1SLt1VoxvA0r7Yg53Tqzk5e6On1A4fRiFRjUtbAXWmDqHGCJ4PIt6s0mP55Q
-	1Sh8tWhQ1XUPO97VUWIKJ3mKUPkzoTjO9nRzi1DrpVkhs0IUntfiAGecIr30Gb8h6pdZbpPgbSj
-	b2PAhP0gt/cnO7F5eBvueA6dSlZWKZiRG3glo3v
-X-Google-Smtp-Source: AGHT+IHiMTSmkmvH/pD4nOT6bsOIUhs4gEp68ZMAu2302zulspJRouc36WusR+YC7ttsBUGHtvGI0zOG4nIXrlbyvJI=
-X-Received: by 2002:a05:622a:346:b0:4b7:9b6c:57a6 with SMTP id
- d75a77b69052e-4ba676ba708mr36173691cf.36.1758129531421; Wed, 17 Sep 2025
- 10:18:51 -0700 (PDT)
+        bh=9gdUx6S6T0XeY4RpC698Oo7BCydPLt/+wzQmQWUkBN0=;
+        b=Y8LXopy27b9P7o0lG5J17aH62joa96zUwkyUm74+EW33V//UXEti5+pGyCDXdRuxj3
+         yuuJSIXgtevyOTJrus0kRGC2JibQLuR081da9pvLoAyiZAr3ey0q2fx935PbsimUmUgc
+         pwe6S/l0khBDh1Z0n+j+LF+wwhcUex13waWzlex2IBCWyyMHc8d18UkpS2E/l5LpiU7I
+         pAc/0hzOscjtKHNcoeY4MHfOEXr6D6lIrDDZbI0ljy4Ih46lNezETRVxwWEhvkjPWe/Q
+         g9gSPrlYi4OCzt3inXBPFWU9jRTPiC2SVJWcy+C6AO8Uh8xK0v4UyEUUSMjEUGEiMHOz
+         Su4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVgy+tvYBSG94yMi/4t/mLfAaXnA9eMHckb4hpKox2wsYev9O1soWm0zu/fTILuyGKLIU6SlHYi3Brsxp/A@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqngFNkUzzbr7VgCm5auP6imMq2ym7XWNuIpWRmVuVtC1uyyF2
+	kOG7ptXY97/ToDJYU2gqkkq5s9hfH9jrqvOcjjDJ8JfAGSsWou9dvq7wGeG58wkBZY2rfKZkMoW
+	dqsTZ7ZXtZs3nLbnoSc2I7wY7X4Jm2H5QQsxqA3o=
+X-Gm-Gg: ASbGncs4Xq+Cn6cU3SQzfjabXuug7bhoR7mWtLlbgcfVifkPdfSDXVZsYLOuEhk7U1p
+	BzAv9wfXo0+j9UrYbvhDQt1oFvLnlxUhTTTAFZruU6grJE0Ue9xoEDht9FW6snoV54b8ITUArk3
+	ZXqC5HVZB0Ld0gO3rQOEpPeIg3j/7pIsKHZcwj75YLgjoF1xpr1bOyFe/KaSrZB1uIe2txY0YeN
+	0qB9ne5hv8RxTs5gqC2nfnZ23rm9KvGXc8ApbOaKvqE2xcRsY1z+Rkv1gBJ6w==
+X-Google-Smtp-Source: AGHT+IGhw/RAdL+Qq2ErhT+RqzctdlfmfkoP0agP9mEGuC3CqxOJ5ZYts1MnMGTbJhwI9M6YjxB3u2up4luyGrjSUu4=
+X-Received: by 2002:a05:622a:3d4:b0:4b7:9b8f:77f2 with SMTP id
+ d75a77b69052e-4ba69d34e9cmr44802521cf.39.1758129752501; Wed, 17 Sep 2025
+ 10:22:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs> <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
-In-Reply-To: <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
+References: <175798150680.382479.9087542564560468560.stgit@frogsfrogsfrogs> <175798150731.382479.12549018102254808407.stgit@frogsfrogsfrogs>
+In-Reply-To: <175798150731.382479.12549018102254808407.stgit@frogsfrogsfrogs>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 17 Sep 2025 10:18:40 -0700
-X-Gm-Features: AS18NWCrbo_HW6aoJVfhCMuUdYyAl8VotiYmI_03uQUmXbXXWG4XO46mip0fHBY
-Message-ID: <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
-Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
- local fs behaviors
+Date: Wed, 17 Sep 2025 10:22:21 -0700
+X-Gm-Features: AS18NWBMZSYluzPeM3z2iS9vBZBge3HQ1yV3N-msM09MJyDe4NdK72RgXGvQGco
+Message-ID: <CAJnrk1ZhMnkEWqp4yhuAk6vC4xw1VcAXfYBsvLXNu7G1isWZpg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] fuse: allow synchronous FUSE_INIT
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev
+Cc: miklos@szeredi.hu, mszeredi@redhat.com, bernd@bsbernd.com, 
+	linux-xfs@vger.kernel.org, John@groves.net, linux-fsdevel@vger.kernel.org, 
+	neal@gompa.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 5:25=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+On Mon, Sep 15, 2025 at 5:26=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
  wrote:
 >
-> From: Darrick J. Wong <djwong@kernel.org>
+> From: Miklos Szeredi <mszeredi@redhat.com>
 >
-> Create a new fuse context flag that indicates that the kernel should
-> implement various local filesystem behaviors instead of passing vfs
-> commands straight through to the fuse server and expecting the server to
-> do all the work.  For example, this means that we'll use the kernel to
-> transform some ACL updates into mode changes, and later to do
-> enforcement of the immutable and append iflags.
+> FUSE_INIT has always been asynchronous with mount.  That means that the
+> server processed this request after the mount syscall returned.
 >
+> This means that FUSE_INIT can't supply the root inode's ID, hence it
+> currently has a hardcoded value.  There are other limitations such as not
+> being able to perform getxattr during mount, which is needed by selinux.
+>
+> To remove these limitations allow server to process FUSE_INIT while
+> initializing the in-core super block for the fuse filesystem.  This can
+> only be done if the server is prepared to handle this, so add
+> FUSE_DEV_IOC_SYNC_INIT ioctl, which
+>
+>  a) lets the server know whether this feature is supported, returning
+>  ENOTTY othewrwise.
+>
+>  b) lets the kernel know to perform a synchronous initialization
+>
+> The implementation is slightly tricky, since fuse_dev/fuse_conn are set u=
+p
+> only during super block creation.  This is solved by setting the private
+> data of the fuse device file to a special value ((struct fuse_dev *) 1) a=
+nd
+> waiting for this to be turned into a proper fuse_dev before commecing wit=
+h
+> operations on the device file.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 > ---
->  fs/fuse/fuse_i.h |    4 ++++
->  fs/fuse/inode.c  |    2 ++
->  2 files changed, 6 insertions(+)
->
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index e93a3c3f11d901..e13e8270f4f58d 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -603,6 +603,7 @@ struct fuse_fs_context {
->         bool no_control:1;
->         bool no_force_umount:1;
->         bool legacy_opts_show:1;
-> +       bool local_fs:1;
->         enum fuse_dax_mode dax_mode;
->         unsigned int max_read;
->         unsigned int blksize;
-> @@ -901,6 +902,9 @@ struct fuse_conn {
->         /* Is link not implemented by fs? */
->         unsigned int no_link:1;
->
-> +       /* Should this filesystem behave like a local filesystem? */
-> +       unsigned int local_fs:1;
-> +
->         /* Use io_uring for communication */
->         unsigned int io_uring;
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index c94aba627a6f11..c8dd0bcb7e6f9f 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1862,6 +1862,7 @@ int fuse_fill_super_common(struct super_block *sb, =
-struct fuse_fs_context *ctx)
->         fc->destroy =3D ctx->destroy;
->         fc->no_control =3D ctx->no_control;
->         fc->no_force_umount =3D ctx->no_force_umount;
-> +       fc->local_fs =3D ctx->local_fs;
->
+>  fs/fuse/fuse_dev_i.h      |   13 +++++++-
+>  fs/fuse/fuse_i.h          |    5 ++-
+>  include/uapi/linux/fuse.h |    1 +
+>  fs/fuse/cuse.c            |    3 +-
+>  fs/fuse/dev.c             |   74 +++++++++++++++++++++++++++++++++------=
+------
+>  fs/fuse/dev_uring.c       |    4 +-
+>  fs/fuse/inode.c           |   50 ++++++++++++++++++++++++------
+>  7 files changed, 115 insertions(+), 35 deletions(-)
 
-If I'm understanding it correctly, fc->local_fs is set to true if it's
-a fuseblk device? Why do we need a new "ctx->local_fs" instead of
-reusing ctx->is_bdev?
+btw, I think an updated version of this has already been merged into
+the fuse for-next tree (commit dfb84c330794)
 
 Thanks,
 Joanne
-
->         err =3D -ENOMEM;
->         root =3D fuse_get_root_inode(sb, ctx->rootmode);
-> @@ -2029,6 +2030,7 @@ static int fuse_init_fs_context(struct fs_context *=
-fsc)
->         if (fsc->fs_type =3D=3D &fuseblk_fs_type) {
->                 ctx->is_bdev =3D true;
->                 ctx->destroy =3D true;
-> +               ctx->local_fs =3D true;
->         }
->  #endif
->
->
 
