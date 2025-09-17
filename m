@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-61904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06859B7ED1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C83F1B7F8B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E51327A5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C206A327988
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37FB36208E;
-	Wed, 17 Sep 2025 10:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7DC368087;
+	Wed, 17 Sep 2025 10:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBFwtgpe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyzXfDbi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E41B32D5D3;
-	Wed, 17 Sep 2025 10:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1AD32D5D3;
+	Wed, 17 Sep 2025 10:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104935; cv=none; b=pgigppbeVQxjfFPSjUzPwDs/jtx15JXxQiZo+e/zZNx7BDwjq1lmcl/vUmjX5/YokH25MKUAn0jow02gawCho+KZlXbp3qZf/25Ja19G7LJdOobVRfzt92jfl5LZNmubpC2BS11JRar8Zn8+I+edS6nTPicHJlSBowUx/R11jcs=
+	t=1758104940; cv=none; b=QX/hn10n7Wpu3wl9lhtbAM8rnHSI7P1+l2+MkPw+j7FocHSucW6KuB1uPiW7sCvi5hATKxmROXPPhLcwZd+0yi6wzO+rAt275XGKWjmBbVBPR3EIloboKo/goIUDVW4TV3KbEVEdv23h/WKc+1WDtSuMfrQrRwz4VlJItkvHLIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104935; c=relaxed/simple;
-	bh=SsZE3XmD+yCPUHrqRLeweA2GPr1r2EaHz2fY+2nM1AE=;
+	s=arc-20240116; t=1758104940; c=relaxed/simple;
+	bh=6GX+edfqAtvCu/yle/NskZ5IXtOjExmscE2dvb5jQ6M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IGqRHR13NHTBkcohAQrnMQNowj0pCrJVBsdkp73TGuHt055Ev38F/JyiGEIY28D7qc9jcn5PQGmHDtPZvelMVE6intIbLS173LsWc17UhNgey/9QrFKdhDch0zcfKr6ZYvRrYIlnG0JMzJPwRbPKopTN0v+yvEVDL8d1gutMfD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBFwtgpe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83932C4CEF0;
-	Wed, 17 Sep 2025 10:28:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=A/peenwdxtkyTA8wPKrU00r2gNrrobKoa7ov3eS6F9rZwogwXDOE6qsBK+EgXu3LnYZA4drJHkFYoVXdhDqs4JS76u5GQmAJ6KOERWnHnbglbbilwt45L5Rd4SdeKkuwSxB4tU6JmET/FTrG06m2r6ZsWW8jgSxMTalHb9Bbts0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyzXfDbi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E6EC4CEF5;
+	Wed, 17 Sep 2025 10:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758104934;
-	bh=SsZE3XmD+yCPUHrqRLeweA2GPr1r2EaHz2fY+2nM1AE=;
+	s=k20201202; t=1758104939;
+	bh=6GX+edfqAtvCu/yle/NskZ5IXtOjExmscE2dvb5jQ6M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kBFwtgpepfshYuZnD4klIHAOM96iSsxdZORRZKQTKsXx4Nzb89fQYAS4ZBqwkEK5O
-	 HCyxCs0A0wjM3txjEs31x3Qtter6wsVwL9YEMFGV5+vL/ZArcC5ZThqGwt2WTxQ43k
-	 Ej4nzRnoOPKKJuBHCIyix4Ll+O9X5amXFmfALWC8Jx4bF0PpMnTXmPe2Dj5OXhPoHR
-	 7F+BpSCzc3NncLBMmNkf1Y98wAlUiN0IuR58tRB/5rF3TiI++Asalw0GD5FJ+rcOnG
-	 REAAhGWQeDBvCZhu8oMYBbsFxuW5nlgsUILo60sVd7SRLiO1gtaNn3Xv90qrZmRfT9
-	 ucoPn17rBN8og==
+	b=OyzXfDbimMLy0Fx6M58fD+mofgMhOwDSKHAjSn2Q8XEqZHN5uehbaG7Oxt7hco8dX
+	 S/Yc6LyoBOqiKFLjtWmPdkRf0jEBbV31vpcxLHIChjd4ZIyFe6KSJqw8xrm7tp61EP
+	 9ESUpyC6cjj7RjwIME8gUaS3mFolg1WPBcYNGxk6TWueEv4UycIDrzYXbP1t5UruA+
+	 bUNfD+9OasjHXjGm044YKg8+t8CubPsrsP6H8uFMDH9C+nGhKdJA3Xh0y9fyYdjCl3
+	 iqi9Xub1hGIhpnWhZjvCwRCBcTIMCBNup6lIW4KKLVZg1ZZV2wcPluUsq+sw2aa42R
+	 QXKUH22emII/w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 17 Sep 2025 12:28:03 +0200
-Subject: [PATCH 4/9] cgroup: split namespace into separate header
+Date: Wed, 17 Sep 2025 12:28:04 +0200
+Subject: [PATCH 5/9] nsfs: add inode number for anon namespace
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-work-namespace-ns_common-v1-4-1b3bda8ef8f2@kernel.org>
+Message-Id: <20250917-work-namespace-ns_common-v1-5-1b3bda8ef8f2@kernel.org>
 References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
 In-Reply-To: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -71,156 +71,36 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
  linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-56183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4120; i=brauner@kernel.org;
- h=from:subject:message-id; bh=SsZE3XmD+yCPUHrqRLeweA2GPr1r2EaHz2fY+2nM1AE=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vUzPxpiPOlleeT9LW8TFr6fXbtGYsXk46/5th96z
- 3F6h//eWx2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATWbqD4X/Ukr0NYb7/ZJRn
- tAsXfbHwunEt09D0Y9/x90uOyEb8vHWTkWHhQx3nF4d5LnYni11q69vgUGx709nZa9Yc6Z3XF6d
- J23AAAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=610; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6GX+edfqAtvCu/yle/NskZ5IXtOjExmscE2dvb5jQ6M=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vXbcW4j+6HSZy4aqupNiQ7HlKKdM7huMdxWmvLxi
+ OCqJw35HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5c4jhf7ho4xn59Gfsq/Vk
+ juzJilotpCe+a+7jhl1H+aMn5E96Zsbwz8gwuE21Pzfx/GSba0bO+TZ/Wplm+p/mv8RqYfHmqbk
+ mGwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-We have dedicated headers for all namespace types. Add one for the
-cgroup namespace as well. Now it's consistent for all namespace types
-and easy to figure out what to include.
+Add an inode number anonymous namespaces.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/cgroup.h           | 51 +-----------------------------------
- include/linux/cgroup_namespace.h | 56 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+), 50 deletions(-)
+ include/uapi/linux/nsfs.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-index 9ca25346f7cb..5156fed8cbc3 100644
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -27,6 +27,7 @@
- #include <linux/kernel_stat.h>
+diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+index 5d5bf22464c9..e098759ec917 100644
+--- a/include/uapi/linux/nsfs.h
++++ b/include/uapi/linux/nsfs.h
+@@ -53,6 +53,9 @@ enum init_ns_ino {
+ 	TIME_NS_INIT_INO	= 0xEFFFFFFAU,
+ 	NET_NS_INIT_INO		= 0xEFFFFFF9U,
+ 	MNT_NS_INIT_INO		= 0xEFFFFFF8U,
++#ifdef __KERNEL__
++	MNT_NS_ANON_INO		= 0xEFFFFFF7U,
++#endif
+ };
  
- #include <linux/cgroup-defs.h>
-+#include <linux/cgroup_namespace.h>
- 
- struct kernel_clone_args;
- 
-@@ -783,56 +784,6 @@ static inline void cgroup_sk_free(struct sock_cgroup_data *skcd) {}
- 
- #endif	/* CONFIG_CGROUP_DATA */
- 
--struct cgroup_namespace {
--	struct ns_common	ns;
--	struct user_namespace	*user_ns;
--	struct ucounts		*ucounts;
--	struct css_set          *root_cset;
--};
--
--extern struct cgroup_namespace init_cgroup_ns;
--
--#ifdef CONFIG_CGROUPS
--
--static inline struct cgroup_namespace *to_cg_ns(struct ns_common *ns)
--{
--	return container_of(ns, struct cgroup_namespace, ns);
--}
--
--void free_cgroup_ns(struct cgroup_namespace *ns);
--
--struct cgroup_namespace *copy_cgroup_ns(unsigned long flags,
--					struct user_namespace *user_ns,
--					struct cgroup_namespace *old_ns);
--
--int cgroup_path_ns(struct cgroup *cgrp, char *buf, size_t buflen,
--		   struct cgroup_namespace *ns);
--
--static inline void get_cgroup_ns(struct cgroup_namespace *ns)
--{
--	refcount_inc(&ns->ns.count);
--}
--
--static inline void put_cgroup_ns(struct cgroup_namespace *ns)
--{
--	if (refcount_dec_and_test(&ns->ns.count))
--		free_cgroup_ns(ns);
--}
--
--#else /* !CONFIG_CGROUPS */
--
--static inline void free_cgroup_ns(struct cgroup_namespace *ns) { }
--static inline struct cgroup_namespace *
--copy_cgroup_ns(unsigned long flags, struct user_namespace *user_ns,
--	       struct cgroup_namespace *old_ns)
--{
--	return old_ns;
--}
--
--static inline void get_cgroup_ns(struct cgroup_namespace *ns) { }
--static inline void put_cgroup_ns(struct cgroup_namespace *ns) { }
--
--#endif /* !CONFIG_CGROUPS */
- 
- #ifdef CONFIG_CGROUPS
- 
-diff --git a/include/linux/cgroup_namespace.h b/include/linux/cgroup_namespace.h
-new file mode 100644
-index 000000000000..c02bb76c5e32
---- /dev/null
-+++ b/include/linux/cgroup_namespace.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_CGROUP_NAMESPACE_H
-+#define _LINUX_CGROUP_NAMESPACE_H
-+
-+struct cgroup_namespace {
-+	struct ns_common	ns;
-+	struct user_namespace	*user_ns;
-+	struct ucounts		*ucounts;
-+	struct css_set          *root_cset;
-+};
-+
-+extern struct cgroup_namespace init_cgroup_ns;
-+
-+#ifdef CONFIG_CGROUPS
-+
-+static inline struct cgroup_namespace *to_cg_ns(struct ns_common *ns)
-+{
-+	return container_of(ns, struct cgroup_namespace, ns);
-+}
-+
-+void free_cgroup_ns(struct cgroup_namespace *ns);
-+
-+struct cgroup_namespace *copy_cgroup_ns(unsigned long flags,
-+					struct user_namespace *user_ns,
-+					struct cgroup_namespace *old_ns);
-+
-+int cgroup_path_ns(struct cgroup *cgrp, char *buf, size_t buflen,
-+		   struct cgroup_namespace *ns);
-+
-+static inline void get_cgroup_ns(struct cgroup_namespace *ns)
-+{
-+	refcount_inc(&ns->ns.count);
-+}
-+
-+static inline void put_cgroup_ns(struct cgroup_namespace *ns)
-+{
-+	if (refcount_dec_and_test(&ns->ns.count))
-+		free_cgroup_ns(ns);
-+}
-+
-+#else /* !CONFIG_CGROUPS */
-+
-+static inline void free_cgroup_ns(struct cgroup_namespace *ns) { }
-+static inline struct cgroup_namespace *
-+copy_cgroup_ns(unsigned long flags, struct user_namespace *user_ns,
-+	       struct cgroup_namespace *old_ns)
-+{
-+	return old_ns;
-+}
-+
-+static inline void get_cgroup_ns(struct cgroup_namespace *ns) { }
-+static inline void put_cgroup_ns(struct cgroup_namespace *ns) { }
-+
-+#endif /* !CONFIG_CGROUPS */
-+
-+#endif /* _LINUX_CGROUP_NAMESPACE_H */
+ struct nsfs_file_handle {
 
 -- 
 2.47.3
