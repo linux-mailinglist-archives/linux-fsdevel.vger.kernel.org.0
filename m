@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-61963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C2BB8107B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 18:34:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7453B80571
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0397A2A5E81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:30:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADC964E2AE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2B32FAC00;
-	Wed, 17 Sep 2025 16:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F562BF3CA;
+	Wed, 17 Sep 2025 15:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="y7dfMZII"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UDRF/3Sf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464212F3C3F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 16:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F2A350D4A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126616; cv=none; b=VCMZARQptQZiWzKonO4RpG8Ucz3T2RsGjLPHZ9wGFCX04Gym+X6azv8oEURsSeXsVOwcjPGzpIf7VEBHD58NQrFHFvxONiEvR8k3D+/h9SvbalaTKLOlC1/v9qwSp9rVIaiy5eFITAa1qvaz06h7o6MqtQR9XyauHrA5qB4FJbs=
+	t=1758121229; cv=none; b=ZKQXYkEcNHFMGhhPwmlVbUWjPvNZyPoUvt/jF63GJyqZqQ1k2RXcpiT3B1kvlyyx1gPQYeZBc4qKgqX8lbXTjRqV08DVNSCa425nDJtazjnL0+9TYmFx59xFbxzQukYDku2mBaI68J/NYpyRiqKo2PAk0Hg1l150geIvEucrvPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126616; c=relaxed/simple;
-	bh=hEeziQot0vBjqaii0OlztAOOx169xCFGd3aiQcDgMVU=;
+	s=arc-20240116; t=1758121229; c=relaxed/simple;
+	bh=kUknV5WKpxqxen6YllO7EndW/9+UBC/114j9r0F6OAs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ut7v1YIYXHHZ6EPJtxHaC8CIQVNedwmwHDINnFW7M/pEdOK7OPWqjDhLi9/kuqu1RXoQIjO3fNZeku2MATUffAiSrCfK7VOwg+mTaUFiq1V2Jnm+xINSfFvW/+w9E/4WogIR+HuvyGO09BVMDiZwz9WS2UNHC2kji/voYz+jadI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=y7dfMZII; arc=none smtp.client-ip=84.16.66.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXe8ZkxO2W29xixtWAKpsX/CsyHL7IAjqHbh55/aIyC0I7FaV/pTHyz/zlozxzrVOK1PZnFcP0i12TaYFagKbtOj5pvuj3gxYst7VQWfqkGoPV8DXPqJK2wqIpJ7Y+XQyP7Q0gqQ0aAMO9Y3D//BTFrKEsLoPnl1unyhzwSoqAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UDRF/3Sf; arc=none smtp.client-ip=84.16.66.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cRhl72X5bzC9h;
-	Wed, 17 Sep 2025 17:00:03 +0200 (CEST)
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cRhlW6rTTzC01;
+	Wed, 17 Sep 2025 17:00:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1758121203;
-	bh=rL7Wz/OzT+h4BNs1HqM2gnwP58YKoyxzpcyYZtg3OCc=;
+	s=20191114; t=1758121223;
+	bh=+45b6a8YTAEI9zyXy5cY7AS59XYHHDZqWbTvbxo1FxU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y7dfMZIIs/M7kUdhPB/zCQ3CtUyfYRCZ3SdMHWhiFUFPMETzMoLSqMCw3BwYtKu83
-	 db529S2qHb+Zbtzkl62qOoVb1xJmsBF1iO5Q2tyf7mtCg4RXqdl+mD6nUailw7BEg0
-	 f3XnWjetxQIRJjAhlr4jCd6YkklsdleOOC5KqXDE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cRhl60h5fzW6c;
-	Wed, 17 Sep 2025 17:00:02 +0200 (CEST)
-Date: Wed, 17 Sep 2025 17:00:00 +0200
+	b=UDRF/3SffXxjKytOWxXm3JgK/CZgebWXr5PGhgWjJr9lLyIoQuHbCGfbv7PAXlHXP
+	 FB6QX8qmHVjKGzCz4GgyR/PbQm4ioGTyyA1wkBxYqgoC0gjqSi8lL6nsbRR3JC3xoZ
+	 e7bJGu2tWSKQERvIFGRqgoGtJdryMVZCZ9IWgTSc=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cRhlW1wt0zBcl;
+	Wed, 17 Sep 2025 17:00:23 +0200 (CEST)
+Date: Wed, 17 Sep 2025 17:00:22 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Tingmao Wang <m@maowtm.org>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
+Cc: Dominique Martinet <asmadeus@codewreck.org>, 
+	Tingmao Wang <m@maowtm.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
 	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev, 
 	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, 
 	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
@@ -55,11 +55,11 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
  qid)
-Message-ID: <20250917.Ung8aukeiz9i@digikod.net>
-References: <cover.1756935780.git.m@maowtm.org>
- <2acd6ae7-caf5-4fe7-8306-b92f5903d9c0@maowtm.org>
- <aMgMOnrAOrwQyVbp@codewreck.org>
- <14530343.U1M6xoFM3Z@silver>
+Message-ID: <20250917.Eip1ahj6neij@digikod.net>
+References: <aMih5XYYrpP559de@codewreck.org>
+ <3070012.VW4agfvzBM@silver>
+ <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org>
+ <3774641.iishnSSGpB@silver>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,62 +68,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <14530343.U1M6xoFM3Z@silver>
+In-Reply-To: <3774641.iishnSSGpB@silver>
 X-Infomaniak-Routing: alpha
 
-On Mon, Sep 15, 2025 at 04:10:07PM +0200, Christian Schoenebeck wrote:
-> On Monday, September 15, 2025 2:53:14 PM CEST Dominique Martinet wrote:
+On Wed, Sep 17, 2025 at 11:52:35AM +0200, Christian Schoenebeck wrote:
+> On Wednesday, September 17, 2025 1:59:21 AM CEST Tingmao Wang wrote:
+> > On 9/16/25 20:22, Christian Schoenebeck wrote:
+> > > On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
 > [...]
-> > > 1. The qid is 9pfs internal data, and we may need extra API for 9pfs to
-> > > 
-> > >    expose this to Landlock.  On 64bit, this is easy as it's just the inode
-> > >    number (offset by 2), which we can already get from the struct inode.
-> > >    But perhaps on 32bit we need a way to expose the full 64bit server-sent
-> > >    qid to Landlock (or other kernel subsystems), if we're going to do
-> > >    this.
+> > > I see that you are proposing an option for your proposed qid based
+> > > re-using of dentries. I don't think it should be on by default though,
+> > > considering what we already discussed (e.g. inodes recycled by ext4, but
+> > > also not all 9p servers handling inode collisions).
 > > 
-> > I'm not sure how much effort we want to spend on 32bit: as far as I
-> > know, if we have inode number collision on 32 bit we're already in
-> > trouble (tools like tar will consider such files to be hardlink of each
-> > other and happily skip reading data, producing corrupted archives);
-> > this is not a happy state but I don't know how to do better in any
-> > reasonable way, so we can probably keep a similar limitation for 32bit
-> > and use inode number directly...
-> 
-> I agree, on 32-bit the game is lost.
-> 
-> One way that would come to my mind though: exposing the full qid path as xattr 
-> on 32-bit, e.g. via "system.9pfs_qid" or something like that.
-
-Another way to always deal with 64-bit values, even on 32-bit
-architectures, would be to implement inode->i_op->getattr(), but that
-could have side effects for 9p users expecting the current behavior.
-
-> 
-> > > 2. Even though qids are supposed to be unique across the lifetime of a
-> > > 
-> > >    filesystem (including deleted files), this is not the case even for
-> > >    QEMU in multidevs=remap mode, when running on ext4, as tested on QEMU
-> > >    10.1.0.
+> > Just to be clear, this approach (Landlock holding a fid reference, then
+> > using the qid as a key to search for rules when a Landlocked process
+> > accesses the previously remembered file, possibly after the file has been
+> > moved on the server) would only be in Landlock, and would only affect
+> > Landlock, not 9pfs (so not sure what you meant by "re-using of dentries").
 > > 
-> > I'm not familiar with the qid remap implementation in qemu, but I'm
-> > curious in what case you hit that.
-> > Deleting and recreating files? Or as you seem to say below the 'qid' is
-> > "freed" when fd is closed qemu-side and re-used by later open of other
-> > files?
+> > The idea behind holding a fid reference within Landlock is that, because
+> > we have the file open, the inode would not get recycled in ext4, and thus
+> > no other file will reuse the qid, until we close that reference (when the
+> > Landlock domain terminates, or when the 9p filesystem is unmounted)
 > 
-> The inode remap algorithm in QEMU's 9p server was designed to prevent inode 
-> number collisions of equally numbered inodes of *different* *devices* on host, 
-> exposed to guest via the same 9p mount (which appears as only one 9pfs device 
-> on guest). Basis for this however is still the underlying filesystem's inode 
-> number on host.
+> So far I only had a glimpse on your kernel patches and had the impression that 
+> they are changing behaviour for all users, since you are touching dentry 
+> lookup.
+
+I think we should not hold dentries because:
+- they reference other dentries (i.e. a file hierarchy),
+- they block umount and I'm convinced the VFS (and users) are not going
+  to like long-lived dentries,
+- Landlock and inotify don't need dentries, just inodes.
+
+I'm wondering why fid are referenced by dentries instead of inodes.
+
+The need for Landlock is to be able to match an inode with a previously
+seen one.  Not all LSM hooks (nor VFS internals) always have access to
+dentries, but they do have access to inodes.
+
 > 
-> So yes, ext4 re-uses inode numbers of deleted files, and when that happens, a 
-> new file appears with the same qid path as the previously deleted file with 
-> QEMU.
+> > > For all open FIDs QEMU retains a descriptor to the file/directory.
+> > > 
+> > > Which 9p message do you see sent to server, Trename or Trenameat?
+> > > 
+> > > Does this always happen to you or just sometimes, i.e. under heavy load?
+> > 
+> > Always happen, see log: (no Trename since the rename is done on the host)
+> [...]
+> > Somehow if I rename in the guest, it all works, even though it's using the
+> > same fid 2 (and it didn't ask QEMU to walk the new path)
 > 
-> /Christian
-> 
-> 
-> 
+> Got it. Even though QEMU *should* hold a file descriptor (or a DIR* stream, 
+
+It's reasonable to assume that QEMU and other should hold opened fid In
+practice, this might not always be the case, but let's move on and
+consider that a 9p server bug.
+
+Landlock and fanotify need some guarantees on opened files, and we
+cannot consider every server bug.  For Landlock, inode may get an
+"ephemeral tag" (with the Landlock object mechanism) to match previously
+seen inodes.  In a perfect world, Landlock could keep a reference on 9p
+inodes (as for other filesystems) and these inodes would always match
+the same file.  In practice this is not the case, but the 9p client
+requirements and the Landlock requirements are not exactly the same.
+
+A 9p client (the kernel) wants to safely deal with duplicated qid, which
+should not happen but still happen in practice as explained before.
+On the other side, Landlock wants to not deny access to allowed files
+(currently identified by their inodes), but I think it would be
+reasonable to allow access theoretically denied (i.e. not allowed to be
+precise, because of the denied by default mechanism) files because of a
+9p server bug mishandling qid (e.g. mapping them to recycled ext4
+inodes).
+
+All that to say that it looks reasonable for Landlock to trust the
+filesystem, and by that I mean all its dependencies, including the 9p
+server, to not have bugs.
+
+Another advantage to rely on qid and server-side opened files is that we
+get (in theory) the same semantic as when Landlock is used with local
+filesystems (e.g. files moved on the server should still be correctly
+identified by Landlock on the client).
+
+> which should imply a file descriptor), there is still a path string stored at 
+> V9fsFidState and that path being processed at some places, probably because 
+> there are path based and FID based variants (e.g Trename vs. Trenameat). Maybe 
+> that clashes somewhere, not sure. So I fear you would need to debug this.
+
+Good to know that it is not a legitimate behavior for a 9p client.
 
