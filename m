@@ -1,65 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-61949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7453B80571
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:02:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A8FB80788
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADC964E2AE6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90949587F17
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F562BF3CA;
-	Wed, 17 Sep 2025 15:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB35A33592B;
+	Wed, 17 Sep 2025 15:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UDRF/3Sf"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AXqMWWLO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F2A350D4A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B228C22576E;
+	Wed, 17 Sep 2025 15:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758121229; cv=none; b=ZKQXYkEcNHFMGhhPwmlVbUWjPvNZyPoUvt/jF63GJyqZqQ1k2RXcpiT3B1kvlyyx1gPQYeZBc4qKgqX8lbXTjRqV08DVNSCa425nDJtazjnL0+9TYmFx59xFbxzQukYDku2mBaI68J/NYpyRiqKo2PAk0Hg1l150geIvEucrvPw=
+	t=1758122269; cv=none; b=QNCAp32MKxElWCX4JYxkyuRIYZ/EwP7tl/7BgjG57dqc+LcNH7CbuRsuwts2F5GVaCEpfgVRnUL+AnEX2F/u3Jv9kjt5mUnUPOU+J/0M+P5rUy0YnrJQtBDq3GbBcGGMaRRVUD3BLkbMpH1rupy/FmoWcJY8ZtvrBe94w+ogfs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758121229; c=relaxed/simple;
-	bh=kUknV5WKpxqxen6YllO7EndW/9+UBC/114j9r0F6OAs=;
+	s=arc-20240116; t=1758122269; c=relaxed/simple;
+	bh=dr4qqB+gUQjpx9BPl5XmLoEZyK9T8SJYsWEaVlVRIQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXe8ZkxO2W29xixtWAKpsX/CsyHL7IAjqHbh55/aIyC0I7FaV/pTHyz/zlozxzrVOK1PZnFcP0i12TaYFagKbtOj5pvuj3gxYst7VQWfqkGoPV8DXPqJK2wqIpJ7Y+XQyP7Q0gqQ0aAMO9Y3D//BTFrKEsLoPnl1unyhzwSoqAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UDRF/3Sf; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cRhlW6rTTzC01;
-	Wed, 17 Sep 2025 17:00:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1758121223;
-	bh=+45b6a8YTAEI9zyXy5cY7AS59XYHHDZqWbTvbxo1FxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UDRF/3SffXxjKytOWxXm3JgK/CZgebWXr5PGhgWjJr9lLyIoQuHbCGfbv7PAXlHXP
-	 FB6QX8qmHVjKGzCz4GgyR/PbQm4ioGTyyA1wkBxYqgoC0gjqSi8lL6nsbRR3JC3xoZ
-	 e7bJGu2tWSKQERvIFGRqgoGtJdryMVZCZ9IWgTSc=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cRhlW1wt0zBcl;
-	Wed, 17 Sep 2025 17:00:23 +0200 (CEST)
-Date: Wed, 17 Sep 2025 17:00:22 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Dominique Martinet <asmadeus@codewreck.org>, 
-	Tingmao Wang <m@maowtm.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=rG/bScRPit3e/nWanfgM7MjaEgHYmCarHJlhNAQ49QzgYGjBRWl2I/N3See1FTPu68zoWrjyN1lo66sh7INVBgJenhUXsbADu/tQ7QmmN0AxCwk35+aryEOU3dM5hh6jRWVcLNfXx2Lme2eO6R0nzPvjz0F9gDw2MgMAJ6DGK6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AXqMWWLO; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=d2rOtavN8Yu5wp1NcVsRpxDZLel/3IAuBK2KE2s78bs=; b=AXqMWWLOmPyRphOsbmVfXMxScx
+	BvFgiufLKJWsHtvi3uUbeWEc2oY0SA/fHNKXxM650FCV4woIljD4ramthXo4iNMBYhqK3UpJ8urAI
+	oNYWczNXp8U4ZI2MPeCdij3j7WPW5tN8oYv5wUaPNzUZYuG3/fYejTM4KsEMC/uuEhOzAum5lSUev
+	y6iVlG6nM9qom0+6IU8Skhg3J5m/d0bWYCArtFXZMmkqhVWA/O+xCZzKQQZ+KT81ZxGJ9KpLwqQ+l
+	ry/4hO5Nnr8PyWYjPO8CTax/TsxCv6qEdYqI4F2UHngp6KcQASfyK7LOAiiaLMzdejC+XOAwgT1jY
+	Mylix9gQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46120)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uytug-000000004qV-2pGK;
+	Wed, 17 Sep 2025 16:17:42 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uytud-000000000ID-028Q;
+	Wed, 17 Sep 2025 16:17:39 +0100
+Date: Wed, 17 Sep 2025 16:17:38 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	kernel test robot <lkp@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <20250917.Eip1ahj6neij@digikod.net>
-References: <aMih5XYYrpP559de@codewreck.org>
- <3070012.VW4agfvzBM@silver>
- <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org>
- <3774641.iishnSSGpB@silver>
+Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
+ __get_user_asm_dword()
+Message-ID: <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
+References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk>
+ <875xdhaaun.ffs@tglx>
+ <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
+ <87y0qd89q9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,94 +84,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3774641.iishnSSGpB@silver>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87y0qd89q9.ffs@tglx>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Sep 17, 2025 at 11:52:35AM +0200, Christian Schoenebeck wrote:
-> On Wednesday, September 17, 2025 1:59:21 AM CEST Tingmao Wang wrote:
-> > On 9/16/25 20:22, Christian Schoenebeck wrote:
-> > > On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
-> [...]
-> > > I see that you are proposing an option for your proposed qid based
-> > > re-using of dentries. I don't think it should be on by default though,
-> > > considering what we already discussed (e.g. inodes recycled by ext4, but
-> > > also not all 9p servers handling inode collisions).
-> > 
-> > Just to be clear, this approach (Landlock holding a fid reference, then
-> > using the qid as a key to search for rules when a Landlocked process
-> > accesses the previously remembered file, possibly after the file has been
-> > moved on the server) would only be in Landlock, and would only affect
-> > Landlock, not 9pfs (so not sure what you meant by "re-using of dentries").
-> > 
-> > The idea behind holding a fid reference within Landlock is that, because
-> > we have the file open, the inode would not get recycled in ext4, and thus
-> > no other file will reuse the qid, until we close that reference (when the
-> > Landlock domain terminates, or when the 9p filesystem is unmounted)
+On Wed, Sep 17, 2025 at 03:55:10PM +0200, Thomas Gleixner wrote:
+> On Wed, Sep 17 2025 at 10:41, Russell King wrote:
+> > On Wed, Sep 17, 2025 at 07:48:00AM +0200, Thomas Gleixner wrote:
+> >
+> > Putting together a simple test case, where the only change is making
+> > __gu_val an unsigned long long:
+> >
+> > t.c: In function ‘get_ptr’:
+> > t.c:40:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+> >    40 |         (x) = (__typeof__(*(ptr)))__gu_val;                             \
+> >       |               ^
+> > t.c:21:9: note: in expansion of macro ‘__get_user_err’
+> >    21 |         __get_user_err((x), (ptr), __gu_err, TUSER());                  \
+> >       |         ^~~~~~~~~~~~~~
+> > t.c:102:16: note: in expansion of macro ‘__get_user’
+> >   102 |         return __get_user(p, ptr);
+> >       |                ^~~~~~~~~~
+> >
+> > In order for the code you are modifying to be reachable, you need to
+> > build with CONFIG_CPU_SPECTRE disabled. This is produced by:
+> >
+> > int get_ptr(void **ptr)
+> > {
+> >         void *p;
+> >
+> >         return __get_user(p, ptr);
+> > }
 > 
-> So far I only had a glimpse on your kernel patches and had the impression that 
-> they are changing behaviour for all users, since you are touching dentry 
-> lookup.
-
-I think we should not hold dentries because:
-- they reference other dentries (i.e. a file hierarchy),
-- they block umount and I'm convinced the VFS (and users) are not going
-  to like long-lived dentries,
-- Landlock and inotify don't need dentries, just inodes.
-
-I'm wondering why fid are referenced by dentries instead of inodes.
-
-The need for Landlock is to be able to match an inode with a previously
-seen one.  Not all LSM hooks (nor VFS internals) always have access to
-dentries, but they do have access to inodes.
-
+> Duh, yes. I hate get_user() and I did not notice, because the
+> allmodconfig build breaks early due to frame size checks, so I was too
+> lazy to find that config knob and built only a couple of things and an
+> artificial test case for u64.
 > 
-> > > For all open FIDs QEMU retains a descriptor to the file/directory.
-> > > 
-> > > Which 9p message do you see sent to server, Trename or Trenameat?
-> > > 
-> > > Does this always happen to you or just sometimes, i.e. under heavy load?
-> > 
-> > Always happen, see log: (no Trename since the rename is done on the host)
-> [...]
-> > Somehow if I rename in the guest, it all works, even though it's using the
-> > same fid 2 (and it didn't ask QEMU to walk the new path)
+> But it actually can be solved solvable by switching the casting to:
 > 
-> Got it. Even though QEMU *should* hold a file descriptor (or a DIR* stream, 
+>     (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;
+> 
+> Not pretty, but after upping the frame size limit it builds an
+> allmodconfig kernel.
 
-It's reasonable to assume that QEMU and other should hold opened fid In
-practice, this might not always be the case, but let's move on and
-consider that a 9p server bug.
+For me, this produces:
 
-Landlock and fanotify need some guarantees on opened files, and we
-cannot consider every server bug.  For Landlock, inode may get an
-"ephemeral tag" (with the Landlock object mechanism) to match previously
-seen inodes.  In a perfect world, Landlock could keep a reference on 9p
-inodes (as for other filesystems) and these inodes would always match
-the same file.  In practice this is not the case, but the 9p client
-requirements and the Landlock requirements are not exactly the same.
+get-user-test.c:41:16: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+   41 |         (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;                \
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A 9p client (the kernel) wants to safely deal with duplicated qid, which
-should not happen but still happen in practice as explained before.
-On the other side, Landlock wants to not deny access to allowed files
-(currently identified by their inodes), but I think it would be
-reasonable to allow access theoretically denied (i.e. not allowed to be
-precise, because of the denied by default mechanism) files because of a
-9p server bug mishandling qid (e.g. mapping them to recycled ext4
-inodes).
+with arm-linux-gnueabihf-gcc (Debian 14.2.0-19) 14.2.0
 
-All that to say that it looks reasonable for Landlock to trust the
-filesystem, and by that I mean all its dependencies, including the 9p
-server, to not have bugs.
+Maybe you're using a different compiler that doesn't issue that warning?
 
-Another advantage to rely on qid and server-side opened files is that we
-get (in theory) the same semantic as when Landlock is used with local
-filesystems (e.g. files moved on the server should still be correctly
-identified by Landlock on the client).
-
-> which should imply a file descriptor), there is still a path string stored at 
-> V9fsFidState and that path being processed at some places, probably because 
-> there are path based and FID based variants (e.g Trename vs. Trenameat). Maybe 
-> that clashes somewhere, not sure. So I fear you would need to debug this.
-
-Good to know that it is not a legitimate behavior for a 9p client.
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
