@@ -1,196 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-61890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BADDB7DE54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBC4B80008
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59051738CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 08:59:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4E63284F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 09:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69196314A8D;
-	Wed, 17 Sep 2025 08:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8612309EFE;
+	Wed, 17 Sep 2025 09:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bz5kPIdj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOSe7VCM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B3D313E31
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 08:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3C1306D4B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 09:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758099580; cv=none; b=fgSWAEDv9Q27BoNeO/Tk8W2yMe7MRHVs4eGm1c08Y5uh/bd8CMZBav1tEJQd6kSbD5hwqKz+huwl0Te72ylu37UkTfTPFx+ZxMl38iwg1NLD3bfs4W56dGLnaEhRkvFZtpPnIoMeahwm7rpq+PVs7er7n6DsAedx7++wjKBu0rI=
+	t=1758100853; cv=none; b=eu35z/BgEdaybQP1PRjYUhSnAJTJUhMUt+GSxtMLP7JtV8BLEoqHUA4VzL8RolA2wtDEHl0Q7UkVqTQjeSRSRk48BZPr0/yBhzlt2ZU1dKVfsdnpiZR6LFSFKVuYVN+rl0naZtquHDS7yNIdg8Ug/gh1ZyRGW1XamVVYddxRJ1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758099580; c=relaxed/simple;
-	bh=Ld1LnQhXB0QKpjLGe6k9t5ouZ791PHsD8Yn+V6ZL4wo=;
+	s=arc-20240116; t=1758100853; c=relaxed/simple;
+	bh=GPrMgKLIF76NvpNeh03mLIHEOaiBvol3hzVk3son8tE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RmKB1yH++YFH78qmA4KHjns+XcIo/mN2x8wr+DFdsf/rxnrjpXDfEUkBWlccyaV7S4WLCpotUrEN1WIAnDf2aUWOlVOYg5c7csS/StZ2d++dvGiC+Z9PnVJ7VJ49jpf4kXtjpAJJ3oyVYVJFYD5xWGjiQpsW3oGNry5AtrcsMwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bz5kPIdj; arc=none smtp.client-ip=209.85.218.43
+	 To:Cc:Content-Type; b=mNhVgXhcSmpzX29aPt1Rak6xwmOhOA1vJ1iNsI8x8Aws/7GXKPIB/QMpPOIOLn+XCI/aMgE0KJUXBkOMFByTj5774wdbx9+6VFDTWTifSsTyy/q0edzDpbvXE5084G6PP3CsCvDA9nRDkqPBivCVLk+QP5XrhZaDwow5QROtm2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOSe7VCM; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b00a9989633so153222066b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 01:59:38 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30ccec59b4bso4895882fac.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 02:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758099577; x=1758704377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vOKz7P4HEtYH+i5ElgrU7Bp4EAn43MTUmnEdpQptHBs=;
-        b=bz5kPIdjxLizdK0+wwEZXW/t8GqL5hVh5yjejJxY2Gswt3XeRyVQtBgG9YtVOGkwsB
-         pHxDFi2iu6Ero4hSqmnWlSN6LhW0BMSmGWLB3kI0Nbmksv8H332wjAoSjZogbZW3kfLj
-         tAgBxYIV6+Tmotkw4KTlf9n3UTiQoq40stulWGtqX2lClvI2+7ZYy0FpMI76mP2EL2vD
-         yjI/BTsP1Q96zHNzDWS1oKjzJ6ao6VwjKkdi79C0kdsr5ICxfYzkU6JtqHRkmj9iSuQm
-         rgK1TwK5Wk1zwDy3HRrTzSiO+bNSU6eHwKgje/Mi6b2ldbe82FxSS2blso7euJgIET4s
-         vWCg==
+        d=gmail.com; s=20230601; t=1758100850; x=1758705650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ox09wceLheN9CV/GNKAbltAUFRxxk0VbuNEPceF8/DQ=;
+        b=SOSe7VCMhoCLfGmUaYB6GzCdWwStBaaY2tOuKd2oo+GJyneR5SYpsEdYYIgPoTu58s
+         /P8BrPZ+AY9skH1sKfJBZNpx2fMK5qPx90ZcCmLu8B0mBFrVw35eoAn7XGDWRCbUx2fT
+         AYOyLvXzoXkq4eolmfS2JeG81abYUpAvgF5ZhjdilnMCZrJMKfVKuFHVtMwxl6DAbur7
+         Frci7n+jXhNdLXtJ2wui2OP8h81JQBnoNXXyedY7Av63BxERfqOfjgstBFx1+3bwJ0sh
+         2njAnl4Rdv896JknCeJMxUzvtOwTipYdnVVCI3uqqVdj3GLmmYbRJG/DWxFGYm2P4AxB
+         +SLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758099577; x=1758704377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vOKz7P4HEtYH+i5ElgrU7Bp4EAn43MTUmnEdpQptHBs=;
-        b=xFB7rkjrh2jbuRUyXI9e8PS+rh4/uUPK68LQQ+75Tubu3AFq49xmHmaMNAIMuDK4zI
-         A4jigwo+zuxbJfNNfTn8u8Klnm6TU1JpaCLLop4hR70KVMOATRQRTThNZ4+1tik6zpQZ
-         MoT3nYiX09vjXySntt8vMneSMtvM6Dp9RAd8d2rRGM9RqK3tpbx1LGhR+ueu8DWO08aD
-         u20mAPcMjLUzf4TvBbrB0EHKNOCMPyiI+IE6khrETQYJYlb/048QJheu8UrCJmup3YSp
-         qpaXpXBdSXncHlnV3IXyEqNVSoOLEP+OVAcH3GgatNoMMovS+rVjApb+On/2CV8fKO6j
-         iXUw==
-X-Gm-Message-State: AOJu0Yw5rH7uA63xCUYb/FBleQORMlQYGCjP9wf2sOXkpzwHlZFBYbuj
-	WeudBaUddfLA4DtmehTfIb4bLTPhJWYigqwNlXgMAoTIz7YE0Z5wZxKuHYmBzj0Y8SfXbKLIdx7
-	+RC29RMUzjWzBEbtL5kGjwNIYQFwbtaQ=
-X-Gm-Gg: ASbGnctzR/x3n16jj2uDkhzEYrG7JniZzPMxqv0zaEHoSJ1dAq9H5CUgGHHzluaU2G/
-	qCbOi465gb+9LXL+YbotAIz9d4YwuedwhjvWyoki/j/Fb6x7kZmoRoBJaQmgYcfcvP39ldvh0sj
-	mxexaWwkdFJIZ6v/K5KWwkI4VUFM34AS5mCKsDikpexo9t9QHzqRdvEjSKgI5fsbOMfh0ZbNkTB
-	AM21JbINn8sTvixQNm6d7SoLOLEHXBpGc1UCYUZRKisciWbNg==
-X-Google-Smtp-Source: AGHT+IF8FMgkRoO/NnsZ7DpY2fIfWx24GDJaOJTYMMvbCsE2nBH2lhvZ+nLWR7ImqMEp0F3hlSbxGlKaMDHdtZweEec=
-X-Received: by 2002:a17:907:a08a:b0:b07:e348:8278 with SMTP id
- a640c23a62f3a-b168286b0a3mr607388666b.25.1758099577296; Wed, 17 Sep 2025
- 01:59:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758100850; x=1758705650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ox09wceLheN9CV/GNKAbltAUFRxxk0VbuNEPceF8/DQ=;
+        b=IXz2vaGqWmaBCS6bwOS3PyqgV9zNtDqrHw4p1uuhQiituwV+0BrdWviyldrHs0ZNiG
+         wh92YZTNDLY7by6f7OI6kJX0Tcbjtenys9dQWmrIAVf9CnSXbcp4aIo4twFophegO2ui
+         tz1QylpzTP0eyS10J8tdbpmrZ8rCN3da77peE8NRZgfjCK99T0ApygyPnFO07ItwZK5+
+         iipk9qDVLG31xmd8Ro71QjNve0PAaoqcpgm3EoH32nHwgAbgJHaVUaFC65vyF/EYp+Rg
+         us+MZ7ofxVK8otn0zc7NFLbkJ3ath4rYt5XeRvnmGrNaCiaJlfrcemgi68eDX4lDCdnV
+         01QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXm7ls5OJKVNES4nJeP0akrJ3UWVW7McHNTJNsI422lV0lmhAZav7n/et/3B/Knc4Tw5HCkuy/lZWpK6IgB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo7ZIrbfqu8ZMAgVk+EWS6hWhHv8OeKsi3wmkbJUv9DSTJw4Tp
+	iiOMIFgbYny97StJjtVsrRBrmTWOTFnNSV3iYzANVq3JYxF6nzqe3lnY4a8gAqyFOFcKxVEQjv9
+	EmtJnP2Wae0G9b4/XvO2Pq6HaOHo7mxw=
+X-Gm-Gg: ASbGnctqKJJuOGv+uqGBwiAEGFz+z7AF2U3gzlFFtS9RsrFrVAALABKGy5u+xp35det
+	7Rc1alvz/di3yK6IijstCvi9Dy18B+jAKlYEoJ6721h28lRSkkw86W9KEW2UiyKVhdSSWeDS4/P
+	9RKZKCNLQ9jz6MG4ywtR3RCF7tmIj5pMDfTjmMfy+3Ym7QBkQquSmyzXEjV0r8qc87fqtip40Lt
+	COuSg==
+X-Google-Smtp-Source: AGHT+IEvi/vcvuNXEKryAobinAuQaOybDNziHzvdIl5fQxCUxTSrL6UDLu1P/TgPbjPopqUhtAHphiQym0mzQtaf3UA=
+X-Received: by 2002:a05:6871:d618:b0:31d:6467:3ddd with SMTP id
+ 586e51a60fabf-335be8c863emr772149fac.3.1758100850540; Wed, 17 Sep 2025
+ 02:20:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
- <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3> <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
-In-Reply-To: <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 10:59:23 +0200
-X-Gm-Features: AS18NWCmzvVAdt9cnGznBaPer5VswI6NuC9qGL-CKG8mFwH0Gs_2YwiI-pnnOec
-Message-ID: <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
-Subject: Re: Need advice with iput() deadlock during writeback
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
+References: <20250917033703.1695933-1-zhangchunyan@iscas.ac.cn>
+ <20250917033703.1695933-3-zhangchunyan@iscas.ac.cn> <bc87f2a8-7a9c-4416-9106-bdf4b98e40a8@redhat.com>
+In-Reply-To: <bc87f2a8-7a9c-4416-9106-bdf4b98e40a8@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 17 Sep 2025 17:20:14 +0800
+X-Gm-Features: AS18NWA4SAC8zxdE-h5_sRhBzgX8xMPmN4jL9phgOErltDfEWb2iq0mEGYtEXpk
+Message-ID: <CAAfSe-vjgcgFyvVoci8F9ra4JwbDcdbhsxjSL0j8=0CCKAzFHQ@mail.gmail.com>
+Subject: Re: [PATCH V13 2/6] mm: userfaultfd: Add pgtable_supports_uffd_wp()
+To: David Hildenbrand <david@redhat.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, Deepak Gupta <debug@rivosinc.com>, 
+	Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 10:38=E2=80=AFAM Max Kellermann
-<max.kellermann@ionos.com> wrote:
+On Wed, 17 Sept 2025 at 15:25, David Hildenbrand <david@redhat.com> wrote:
 >
-> On Wed, Sep 17, 2025 at 10:23=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com=
-> wrote:
-> > One of the ways to stall inode teardown is to have writeback running. I=
-t
-> > does not need a reference because inode_wait_for_writeback() explicitly
-> > waits for it like in the very deadlock you encountered.
->
-> Ah, right. No UAF. But I wonder if that's the best way to do it - why
-> not let writeback hold its own reference, and eliminate
-> inode_wait_for_writeback()? (and its latency)
->
-
-There happens to be a temporarily inactive discussion related to it, see:
-https://lore.kernel.org/linux-fsdevel/cover.1756222464.git.josef@toxicpanda=
-.com/
-
-but also the followup:
-https://lore.kernel.org/linux-fsdevel/eeu47pjcaxkfol2o2bltigfjvrz6eecdjwtil=
-nmnprqh7dhdn7@rqi35ya5ilmv/
-
-The patchset posted there retains inode_wait_for_writeback().
-
-Suppose you are to get rid of it. In that case you have a corner case
-where the writeback thread has to issue ->evict_inode() for arbitrary
-filesystems, and that's quite a change and I'm not at all convinced
-that's safe.
-
-> > However, assuming that's not avoidable, iput_async() or whatever could
-> > be added to sort this out in a similar way fput() is.
+> On 17.09.25 05:36, Chunyan Zhang wrote:
+> > Some platforms can customize the PTE/PMD entry uffd-wp bit making
+> > it unavailable even if the architecture provides the resource.
+> > This patch adds a macro API that allows architectures to define their
+> > specific implementations to check if the uffd-wp bit is available
+> > on which device the kernel is running.
 > >
-> > As a temporary bandaid iput() itself could check if I_SYNC is set and i=
-f
-> > so roll with the iput_async() option.
+> > Also this patch is removing "ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP" and
+> > "ifdef CONFIG_PTE_MARKER_UFFD_WP" in favor of pgtable_supports_uffd_wp()
+> > and uffd_supports_wp_marker() checks respectively that default to
+> > IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) and
+> > "IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) && IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP)"
+> > if not overridden by the architecture, no change in behavior is expected.
 > >
-> > I can cook something up later.
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
 >
-> My idea was something like iput_safe() and that function would defer
-> the actual iput() call if the reference counter is 1 (i.e. the caller
-> is holding the last reference).
+> [...]
 >
-
-That's the same as my proposal.
-
-> Almost all iput() calls are fine because they just do an atomic
-> decrement, but all kinds of scary stuff can happen if the last
-> reference is released. Callers that are not confident that this is
-> safe shall then use my new iput_safe() instead of iput().
+> Taking another look.
 >
-
-Note  that vast majority of real-world calls to iput already come with
-a count of 1, but it may be this is not true for ceph.
-
-> I can write such a patch, but I wanted you experts to first confirm
-> that this is a good idea that would be acceptable for merging (or
-> maybe Ceph is just weird and there's a simpler way to avoid this).
+> >   /* mm helpers */
+> > @@ -415,68 +475,24 @@ static inline bool vma_has_uffd_without_event_remap(struct vm_area_struct *vma)
+> >       return false;
+> >   }
+> >
+> > -#endif /* CONFIG_USERFAULTFD */
+> > -
+> >   static inline bool userfaultfd_wp_use_markers(struct vm_area_struct *vma)
+> >   {
+> > -     /* Only wr-protect mode uses pte markers */
+> > -     if (!userfaultfd_wp(vma))
+> >               return false;
 >
+> Isn't this indented one level too deep?
 
-So the problem here is where to put linkage for the delegated work.
+Oh right, I will fix these.
 
-Another issue is that as is nobody knows who set I_SYNC and that
-probably should change on kernel with CONFIG_DEBUG_VFS. As luck would
-have it I posted a related patchset here:
-https://lore.kernel.org/linux-fsdevel/20250916135900.2170346-1-mjguzik@gmai=
-l.com/T/#t
+Thanks to you spotting them out!
 
-with that in place and debug enabled we can panic early on the first
-iput so you don't have to wait to trigger the problem
+Chunyan
 
-I suspect the best short-term fix is to implement ceph-private async
-iput with linkage coming from struct ceph_inode_info or whatever other
-struct applicable.
-
-You can use __fput_deferred() as a reference (put intended). Note this
-one assumes the obj is already unrefed, but for iput_async it would be
-best to also postpone it to that routine.
-
-A sketch, incomplete:
-static DECLARE_DELAYED_WORK(delayed_ceph_iput_work, delayed_ceph_iput);
-
-static void __ceph_iput_async(struct callback_head *work)
-{
-        struct ceph_inode_info *ci =3D container_of(work, struct
-ceph_inode_info, async_task_work);
-        iput(&ci->netfs.inode);
-}
-
-void ceph_iput_async(struct ceph_inode_info *ci)
-{
-        struct inode *inode =3D &ci->netfs.inode;
-
-        if (atomic_add_unless(&inode->i_count, -1, 1))
-                return;
-
-        if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
-                init_task_work(&ci->async_task_work, __ceph_iput_async);
-                if (!task_work_add(task, &ci->async_task_work, TWA_RESUME))
-                        return;
-        }
-
-        if (llist_add(&ci->async_llist, &delayed_ceph_iput_list))
-                schedule_delayed_work(&delayed_ceph_iput_work, 1);
-}
+>
+> > -
+> > -     /* File-based uffd-wp always need markers */
+> > -     if (!vma_is_anonymous(vma))
+> > -             return true;
+> > -
+> > -     /*
+> > -      * Anonymous uffd-wp only needs the markers if WP_UNPOPULATED
+> > -      * enabled (to apply markers on zero pages).
+> > -      */
+> > -     return userfaultfd_wp_unpopulated(vma);
+> >   }
+> >
+> >   static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
+> >   {
+> > -#ifdef CONFIG_PTE_MARKER_UFFD_WP
+> > -     return is_pte_marker_entry(entry) &&
+> > -         (pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
+> > -#else
+> > -     return false;
+> > -#endif
+> > +             return false;
+>
+> Same here.
+>
+> >   }
+> >
+> >   static inline bool pte_marker_uffd_wp(pte_t pte)
+> >   {
+> > -#ifdef CONFIG_PTE_MARKER_UFFD_WP
+> > -     swp_entry_t entry;
+> > -
+> > -     if (!is_swap_pte(pte))
+> >               return false;
+>
+> Same here.
+>
+> > -
+> > -     entry = pte_to_swp_entry(pte);
+> > -
+> > -     return pte_marker_entry_uffd_wp(entry);
+> > -#else
+> > -     return false;
+> > -#endif
+> >   }
+>
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
