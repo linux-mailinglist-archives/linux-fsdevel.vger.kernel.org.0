@@ -1,200 +1,351 @@
-Return-Path: <linux-fsdevel+bounces-61916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53658B7D476
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF6BB7D8DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8FAE463EF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA0483B5651
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 11:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FBB2E2845;
-	Wed, 17 Sep 2025 10:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFD62E041A;
+	Wed, 17 Sep 2025 11:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gohQAgu+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPBiLHzt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A3429B76F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 10:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C0D28489B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 11:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758106723; cv=none; b=bi1DPCPYX4oiUXFlfSzZoC1uk8eb3es/Ikcb32sq3KaKjKiXeoOHf+pcKiZ5j6qxVNayHOsSIPJc22if6PCMeMJyOn/PAgzbi4ZmxdTjAMiN19cOllr1MYHV9X6jiBAEWf70lI/dy7YQ1e1Ujfir+cpexdvApVN2jP4K3Ddedt0=
+	t=1758107281; cv=none; b=b+huKrfHmqkDftq8N8w/Yzwo9iQsKWR4mHxB2Bv07DsKbyYMvKCiXY40Q/uIIgrWX21jtGcOwo0HH5SgofED3fHbjyhyTrKWBfXnt4XawsZP96TaBCzxNf75vEA0LNCMXY4C5bPJHPVDUTckr/wiwpia2NQxX2tDQF3vDQrqQMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758106723; c=relaxed/simple;
-	bh=Izdcts6h65LPN1G5a3zTjxcIrlr+ukYYyT16tAVPvkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N9Sp8tmmpTtqS6pNpOQmtiMwcedRa1VLbrmf1jcHKz/AwGnqGziKVT5rWmy1JJ+E0+Qa9NDjPuYdCg/HAvdIQTU5atxfQeyBvUrmVI9G+EGdYQ+pu9eJK50H1sBI/vDvNIztPJWu+TQvYSblKQb9RIWXO85M4B8p6Vc6k9Qve24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gohQAgu+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758106721;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7JkjtbRP7dMtBFUCBqCV1SQcXuhyJiXUoZv2gn/Tp1M=;
-	b=gohQAgu+Xl71BuVyh7mtMqDaDLwB4NwEMQsHmXViV+HWZwDsK8DaFm5DvRkcqo0Q++r0Sa
-	mEuT4vA7Z1yzKCEOAdyljutkCaNOpRJs2N0iHDl+aKkq3a9wv/P0y1TOoCS+VLMirLG7rv
-	Krc6SSQQD4fztR8QgdDWuierUkuut2I=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-AcDeq2b6O9WK3fx6IKLbiA-1; Wed, 17 Sep 2025 06:58:40 -0400
-X-MC-Unique: AcDeq2b6O9WK3fx6IKLbiA-1
-X-Mimecast-MFC-AGG-ID: AcDeq2b6O9WK3fx6IKLbiA_1758106719
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b990eb77cso6392335e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 03:58:39 -0700 (PDT)
+	s=arc-20240116; t=1758107281; c=relaxed/simple;
+	bh=pYjQ1XQT/HNuTqn+7b4q9hbNaRNnguSPkHWg1Y4CjWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fNzV8fZ7pCWsnXhemq5FvM+dIns045X8KceDrg1Uk7ytWNxwf26LYxPpY+sAdMUbgm9I0LnFY125bgt6pHAA1cZq+dMgHasdaLFsK+M0V5wJEdjQgK9xLH6yOhc0T+xMn5VgBSn6FpcSIRLFVJpzcKJStL2+So02pJU679FwP78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPBiLHzt; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so12597734a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 04:07:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758107277; x=1758712077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fWIRj9EPAFJ6SDGK2W9Q/BH2SriYdsdu0mVtJzTtwOc=;
+        b=HPBiLHztXQEcHy+xD9LHYhE/akuafDFpYHEyzVr2772BF2pV5F5jgsHQHvBnwz8KxS
+         2IFMbik9uVIbtcqnWZR3fwtreVy0M5SREGazz0cw7ODtRz34xZbl5/1gJv/V0MQzwTn+
+         XZlfR1o6HK00Pr+MdljilwjdivFP+n1ShiFqNoGlWW5syuRVf+wh/G14/fCDQ+IJAWbM
+         dYmjEoY9sNCDv8gni3QtrU5O/nYFXlFymIOiPNOLY5P+ulTQe5dmBNJE3BJcW8EMcQmv
+         ZAakW++4i72/pUgDbzx8NtN77B3xpq9ZnAw178AT0Sghq7IDcn8+MQE0LmvrnkA5NLya
+         cPJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758106719; x=1758711519;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7JkjtbRP7dMtBFUCBqCV1SQcXuhyJiXUoZv2gn/Tp1M=;
-        b=kHe5742I1i2Rz8cTKrOCf515nPa5C2Ox7gBNPs3Xvx0rMvKinjRXpS18rOs85kZUft
-         oLimUELKN6mEUZXwQEhhf7+M4SSbZuaeJT3f2Lw9j3ZXbEIa8o/4axS5vsLuR7+ACng3
-         woGSObAdMQZZBc6xCmWljK6le8FSNfFQVruVAP0ZVTsoQz1ysH+/D3YByxz3yVQeW9Ia
-         LWzOHQU15jLfpzdQ4hHkRBRgL9LdchPkvon8qY9RjM7WAQhTr1ME87HY9ZnMWlj5dGAs
-         IaiWQO2CoLoCNtEYUTzuCnPW/QlsQy5Jz1AmcvQdcG7Pabp8ZD8x0IGBPbIVeUZnyNtd
-         kG0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXa462ayX9mxThvo/LDRWVUpOfL/Dr53Ebtc8g9X//WauK4TRFuf78IxHBQZChyZx8sH7QAuk+FHMq+dFpM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAINEWlKobFAtXkq0N0GEKX/DoqRJ/KCw4Vq5+Ij4c/t2MMSJ3
-	qk1ZPvlJTibHmJ/fGxxY+e+rD9K3gOhIqUg5jidsSOQ+BkwlaZP1KUnGA1fy8WFCgDEj72zqdbE
-	uR1aaSbne50G4xJ/dXcZnni5M5YTr6px/xoUXaVeqhQY3f+gHER7kG/V1p9darwrIF9o=
-X-Gm-Gg: ASbGncvOstD1LVnBK7hmUPttLCprWNFIhEOa2vEwDaLcwW0HxCWLRSWqUWW2GaRszRh
-	Wz85cNeMdeS+i8pvw8EzR4hn8x20J4d54ryEieN24mavkzzjoN8uY2s4LsNYnjAZ7KhMIfYrgMG
-	EF1QGfT+Duw5Q+rL0D2OwTbLC1ykmmEmQRAVh4/hL2e6Jb3oIB/WjQdqI1L96HbPvNTYlflFOF/
-	CR2LAinrKgl66h6yiRjqzztfoK6psUSe9mWUVZbeEGeMXj4RTO8VyOeheA3NzkYTCcm5VvpruGu
-	QOlVayFGPe+wL0JjqN+oFr7YYe9t0A6XM4LphO5ceZRFKb77Yatd9rbTf+r+9W2dcTbp8upLcTc
-	30QTUtrd7iS3YYgmUljom0uJ41Ta17+wBowvjja4c8f4w2DWYeCAQFkoXFXg4KkLw
-X-Received: by 2002:a05:600c:608b:b0:45d:e775:d8b8 with SMTP id 5b1f17b1804b1-45f32d002bamr64516815e9.1.1758106718673;
-        Wed, 17 Sep 2025 03:58:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYHfjJCnarL426rUzCpUmPlFf0QrjHqktYk5gtQG/LD4ICoTbUxGn3yS+4cVVuXKN0QVM+1w==
-X-Received: by 2002:a05:600c:608b:b0:45d:e775:d8b8 with SMTP id 5b1f17b1804b1-45f32d002bamr64516205e9.1.1758106718247;
-        Wed, 17 Sep 2025 03:58:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ece199ad24sm745170f8f.50.2025.09.17.03.58.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 03:58:37 -0700 (PDT)
-Message-ID: <1308de0e-bb5a-481f-a447-ee4440ffb419@redhat.com>
-Date: Wed, 17 Sep 2025 12:58:35 +0200
+        d=1e100.net; s=20230601; t=1758107277; x=1758712077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fWIRj9EPAFJ6SDGK2W9Q/BH2SriYdsdu0mVtJzTtwOc=;
+        b=JMRTBmWzN2d1bOXe8ri+h9IdQ6L/HCQJw6ruik/iVyps6toXdcfIl1mEv2OgxcmZ7C
+         ZBm0Dz4VXmxAImHD6jmVMDB93gX45yJL9oQh3VZasfreWOxQjcQ0y8bBrQ9fO8n5GPMR
+         LNAidKHKVVtP3N647b32F4t0AUSwTLqaeR7iaARBuZqgwKvENPqZWTesr4D24KHHZei5
+         lV6gULgVJihaZgbA3s1iQJ3fl6y2inxF9OQ1NrJLnVpmgz+Lt1BbJKPudJuMaoF0bblA
+         IJdPrk10hHbwjzZ5H3qVqBxRJuaiUJoYtCY6Od+iQDI8RXFqKXOv/hL2I7jL9BqlKxH1
+         XN6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWrR+q+uZm9gmvCbKoD79Cn+72wqUL0/c32Wwpsj8jSJTh47XPbRNfn2yOIdAu++qyuHKIYNgGi6Qv2aKRt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIvNrX/RfRl3cYUIZMcLygzPkzmgfGU8V20pcs3Jv9nb4SgE99
+	F5v0Hxjga3VJgDm5CZaBdSCnTpbXryEm5BhfGOQc1c0n+HTLd3dEUbDkMRucItF1IuxFHJo9+gR
+	zvM0r/UgntN5lI1XW9uyO/joKcQ6S1qk=
+X-Gm-Gg: ASbGncsBk36FTJHC/er+eaOxYWUHtgEIQ00FqGrVVjP3f1HQm9mOZ41o20hzDWh0eGu
+	Z6durqem0rBDfToXP98jOunvNKuhUIxIGuzKIIsMbJ9hGxH+d5oaRXx/V15dL1dRSKevoE4SLL5
+	h2XGkEquIzUT9PK5RP8hdrHRdqDDhBqkzeoyqWX6wJgtZp9NaUOaZ15UjIRmcPGgbuuFIbgZd62
+	XzFc9lkBtTVEKVDLFEV4kk3J81AGfu4qlVXK8SiuQ==
+X-Google-Smtp-Source: AGHT+IFCZrDxRyDuF19zB+0I4pu2/v9rmtKq82MHbh7mP5cn+VDFD1mqV8V5UWGcn/V+qarK8JVVe8IWCUPBfnenwls=
+X-Received: by 2002:a05:6402:34c2:b0:62d:e044:4a5a with SMTP id
+ 4fb4d7f45d1cf-62f834b2c31mr2034219a12.0.1758107276976; Wed, 17 Sep 2025
+ 04:07:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm/selftests: add max_vma_count tests
-To: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
- minchan@kernel.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- rppt@kernel.org, pfalcato@suse.de
-Cc: kernel-team@android.com, android-mm@google.com,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-3-kaleshsingh@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250915163838.631445-3-kaleshsingh@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250915101510.7994-1-acsjakub@amazon.de> <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com> <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+In-Reply-To: <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 17 Sep 2025 13:07:45 +0200
+X-Gm-Features: AS18NWAyG-Lbgs8NF1KctS3y1dROL3-UVQmiQF_4Pa3SBteksXQOKH4-h04JDS0
+Message-ID: <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+To: Jan Kara <jack@suse.cz>
+Cc: Jakub Acs <acsjakub@amazon.de>, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> + * test_suite_setup - Set up the VMA layout for VMA count testing.
-> + *
-> + * Sets up the following VMA layout:
-> + *
-> + * +----- base_addr
-> + * |
-> + * V
-> + * +--------------+----------------------+--------------+----------------+--------------+----------------+--------------+-----+----------------+--------------+
-> + * |  Guard Page  |                      |  Guard Page  |  Extra Map 1   | Unmapped Gap |  Extra Map 2   | Unmapped Gap | ... |  Extra Map N   | Unmapped Gap |
-> + * |  (unmapped)  |      TEST_AREA       |  (unmapped)  | (mapped page)  |  (1 page)    | (mapped page)  |  (1 page)    | ... | (mapped page)  |  (1 page)    |
-> + * |   (1 page)   | (unmapped, 3 pages)  |   (1 page)   |    (1 page)    |              |    (1 page)    |              |     |    (1 page)    |              |
-> + * +--------------+----------------------+--------------+----------------+--------------+----------------+--------------+-----+----------------+--------------+
-> + * ^              ^                      ^              ^                                                                  ^
-> + * |              |                      |              |                                                                  |
-> + * +--GUARD_SIZE--+                      |              +-- EXTRA_MAPS points here             Sufficient EXTRA_MAPS to ---+
-> + *    (PAGE_SIZE) |                      |                                                         reach MAX_VMA_COUNT
-> + *                |                      |
-> + *                +--- TEST_AREA_SIZE ---+
-> + *                |   (3 * PAGE_SIZE)    |
-> + *                ^
-> + *                |
-> + *                +-- TEST_AREA starts here
-> + *
+On Wed, Sep 17, 2025 at 11:25=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 16-09-25 15:29:35, Amir Goldstein wrote:
+> > On Tue, Sep 16, 2025 at 1:30=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Mon 15-09-25 17:29:40, Amir Goldstein wrote:
+> > > > On Mon, Sep 15, 2025 at 4:07=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
+te:
+> > > > > > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> > > > > > > index 83f80fdb1567..424c73188e06 100644
+> > > > > > > --- a/fs/overlayfs/export.c
+> > > > > > > +++ b/fs/overlayfs/export.c
+> > > > > > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct=
+ inode *inode)
+> > > > > > >         if (!ovl_inode_lower(inode))
+> > > > > > >                 return 0;
+> > > > > > >
+> > > > > > > +       if (!inode->i_sb->s_root)
+> > > > > > > +               return -ENOENT;
+> > > > > >
+> > > > > > For a filesystem method to have to check that its own root is s=
+till alive sounds
+> > > > > > like the wrong way to me.
+> > > > > > That's one of the things that should be taken for granted by fs=
+ code.
+> > > > > >
+> > > > > > I don't think this is an overlayfs specific issue, because othe=
+r fs would be
+> > > > > > happy if encode_fh() would be called with NULL sb->s_root.
+> > > > >
+> > > > > Actually, I don't see where that would blow up? Generally referen=
+ces to
+> > > > > sb->s_root in filesystems outside of mount / remount code are pre=
+tty rare.
+> > > > > Also most of the code should be unreachable by the time we set sb=
+->s_root
+> > > > > to NULL because there are no open files at that moment, no export=
+s etc. But
+> > > > > as this report shows, there are occasional surprises (I remember =
+similar
+> > > > > issue with ext4 sysfs files handlers using s_root without checkin=
+g couple
+> > > > > years back).
+> > > > >
+> > > >
+> > > > I am not sure that I understand what you are arguing for.
+> > > > I did a very naive grep s_root fs/*/export.c and quickly found:
+> > >
+> > > You're better with grep than me ;). I was grepping for '->s_root' as =
+well
+> > > but all the hits I had looked into were related to mounting and simil=
+ar and
+> > > eventually I got bored. Restricting the grep to export ops indeed sho=
+ws
+> > > ceph, gfs2 and overlayfs are vulnerable to this kind of problem.
+
+As far as I can tell, ceph uses s_root only in decode_fh methods.
+
+ovl and gfs2 only want to know for an inode if it is the root inode,
+they do not strictly need to dereference s_root for that purpose.
+(see patch below)
+
+> > >
+> > > > static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
+> > > >                           struct inode *parent)
+> > > > {
+> > > > ...
+> > > >         if (!parent || inode =3D=3D d_inode(sb->s_root))
+> > > >                 return *len;
+> > > >
+> > > > So it's not an overlayfs specific issue, just so happens that zysbo=
+t
+> > > > likes to test overlayfs.
+> > > >
+> > > > Are you suggesting that we fix all of those one by one?
+> > >
+> > > No. I agree we need to figure out a way to make sure export ops are n=
+ot
+> > > called on a filesystem being unmounted. Standard open_by_handle() or =
+NFS
+> > > export cannot race with generic_shutdown_super() (they hold the fs mo=
+unted)
+> > > so fsnotify is a special case here.
+> > >
+> > > I actually wonder if fanotify event (e.g. from inode deletion postpon=
+ed to
+> > > some workqueue or whatever) cannot race with umount as well and cause=
+ the
+> > > same problem...
+> > >
+> >
+> > Oy. I was thinking that all event happen when holding some mnt ref
+> > but yeh fsnotify_inoderemove() does look like it could be a problem
+> > from sb shutdown context.
+>
+> Well, but there's also fun like fs/kernfs/file.c: kernfs_notify() which
+> queues work which calls fsnotify for some inodes and, frankly, proper
+> exclusion with umount seems non-existent there (but I can be missing
+> something).
+
+Ouch!
+
+>
+> Also we have fsnotify_sb_error() which can happen practically anytime
+> before the fs gets fully shutdown in ->kill_sb() and may try to encode fh
+> of an inode.
 >
 
-Just wondering if we could find a different name than "guard page" here, 
-to not confuse stuff with guard ptes
+Bigger ouch because silencing this event is not an option.
 
-Will the current "guard page" we a valid vma or just a hole?
+> So there are not many cases where this can happen but enough that I'd say
+> that handling some events specially to avoid encoding fh on fs while it i=
+s
+> unmounted is fragile and prone to breaking again sooner or later.
+>
+> > How about skipping fsnotify_inoderemove() in case sb is in shutdown?
+>
+> Also how would you like to handle that in a race-free manner? We'd need t=
+o
+> hold s_umount for that which we cannot really afford in that context. But
+> maybe you have some better idea...
+>
 
--- 
-Cheers
+I was only thinking about this code path:
 
-David / dhildenb
+generic_shutdown_super()
+  shrink_dcache_for_umount()
+    ...
+      __dentry_kill()
+        dentry_unlink_inode()
 
+This is supposed to be the last dput of all remaining dentries
+and I don't think a deferred unlink should be expected in that case.
+
+But I realize now that you mean delayed unlink from another context
+which races with shutdown.
+
+> > > > > > Can we change the order of generic_shutdown_super() so that
+> > > > > > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
+> > > > > >
+> > > > > > Or is there a better solution for this race?
+> > > > >
+> > > > > Regarding calling fsnotify_sb_delete() before setting s_root to N=
+ULL:
+> > > > > In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
+> > > > > evict_inodes")) we've moved the call after evict_inodes() because=
+ otherwise
+> > > > > we were just wasting cycles scanning many inodes without watches.=
+ So moving
+> > > > > it earlier wouldn't be great...
+> > > >
+> > > > Yes, I noticed that and I figured there were subtleties.
+> > >
+> > > Right. After thinking more about it I think calling fsnotify_sb_delet=
+e()
+> > > earlier is the only practical choice we have (not clearing sb->s_root=
+ isn't
+> > > much of an option - we need to prune all dentries to quiesce the file=
+system
+> > > and leaving s_root alive would create odd corner cases). But you don'=
+t want
+> > > to be iterating millions of inodes just to clear couple of marks so w=
+e'll
+> > > have to figure out something more clever there.
+> >
+> > I think we only need to suppress the fsnotify_inoderemove() call.
+> > It sounds doable and very local to fs/super.c.
+> >
+> > Regarding show_mark_fhandle() WDYT about my suggestion to
+> > guard it with super_trylock_shared()?
+>
+> Yes, super_trylock_shared() for that callsite looks like a fine solution
+> for that call site. Occasional random failures in encoding fh because the
+> trylock fails are unlikely to have any bad consequences there. But I thin=
+k
+> we need to figure out other possibly racing call-sites as well first.
+>
+
+Might something naive as this be enough?
+
+Thanks,
+Amir.
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 60046ae23d514..8c9d0d6bb0045 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode=
+)
+
+        if (root_inode) {
+                res =3D d_alloc_anon(root_inode->i_sb);
+-               if (res)
++               if (res) {
++                       root_inode->i_opflags |=3D IOP_ROOT;
+                        d_instantiate(res, root_inode);
+-               else
++               } else {
+                        iput(root_inode);
++               }
+        }
+        return res;
+ }
+diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
+index 3334c394ce9cb..809a09c6a89e0 100644
+--- a/fs/gfs2/export.c
++++ b/fs/gfs2/export.c
+@@ -46,7 +46,7 @@ static int gfs2_encode_fh(struct inode *inode, __u32
+*p, int *len,
+        fh[3] =3D cpu_to_be32(ip->i_no_addr & 0xFFFFFFFF);
+        *len =3D GFS2_SMALL_FH_SIZE;
+
+-       if (!parent || inode =3D=3D d_inode(sb->s_root))
++       if (!parent || is_root_inode(inode))
+                return *len;
+
+        ip =3D GFS2_I(parent);
+diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+index 83f80fdb15674..7827c63354ad5 100644
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -199,7 +199,7 @@ static int ovl_check_encode_origin(struct inode *inode)
+         * Root is never indexed, so if there's an upper layer, encode uppe=
+r for
+         * root.
+         */
+-       if (inode =3D=3D d_inode(inode->i_sb->s_root))
++       if (is_root_inode(inode))
+                return 0;
+
+        /*
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ec867f112fd5f..ed84379aa06ca 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -665,6 +665,7 @@ is_uncached_acl(struct posix_acl *acl)
+ #define IOP_DEFAULT_READLINK   0x0010
+ #define IOP_MGTIME     0x0020
+ #define IOP_CACHED_LINK        0x0040
++#define IOP_ROOT       0x0080
+  /*
+  * Keep mostly read-only and often accessed (especially for
+@@ -2713,6 +2714,11 @@ static inline bool is_mgtime(const struct inode *ino=
+de)
+        return inode->i_opflags & IOP_MGTIME;
+ }
+
++static inline bool is_root_inode(const struct inode *inode)
++{
++       return inode->i_opflags & IOP_ROOT;
++}
++
+ extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+        int flags, const char *dev_name, void *data,
+        int (*fill_super)(struct super_block *, void *, int));
 
