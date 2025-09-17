@@ -1,399 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-61928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4A4B7F418
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:28:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05636B7F1CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE1B4A3BBB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 13:14:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FE524E30D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 13:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7BA2EAB89;
-	Wed, 17 Sep 2025 13:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC734323402;
+	Wed, 17 Sep 2025 13:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="duQiKlgi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxMcTppA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533F3215F4A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 13:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F1431BC88
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 13:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758114487; cv=none; b=jGLpKB8yTc3VrqIC3hDsZtYs9PnMZIu6PN17pmqnsvBVU0EkMlRVLuLT7/5Ba4f9RQwz2Y2kfe4rfYEgF7slE0lBzNzsPQpqL2vHYC0eqjCvKNAILvoew+GM8oPx8EU4/GOcgwuynEBVxGqBmHSlEWXrZebxhGxkp4nlzITSClQ=
+	t=1758114843; cv=none; b=aqRz4gCD04+2vz6FwplZA9rDpETH2BsL9sX3U7mgkmYFpVrtUMdk/1GaMjsy36Ypmo/swdYZHgAwlh98MiBAokFMJcF9LoopqC+tjvQHw59+L3/NKvRnmpB5G79MJNFxciuSZHf1AwVdZ6htLTUonIIibPN4GCb9hAowhSEfFNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758114487; c=relaxed/simple;
-	bh=VC8i9EuI8elmGanm5n7un4HuN+k9TiFlpwIHh4VRuMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+TPNCzp8NksS109SjhhsCHAO2Ajj/ZZ8gJr4veuAqgYRKqEWkIWgINl0PfoHPFnuEvZTlU1WglfvlytgNAztmBdiPql/JnG+eI9KUqDwWUt6eVOvu06cxeYKA5VKOjMFbXsmjEh9oxDtqRn6xaPwYGvKsYePIYiZGUhWQ5OvYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=duQiKlgi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758114484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9C2dGW9H76hURaUowowv+DpUt4X7AUUikHVR9izs+Tw=;
-	b=duQiKlgicM8CbNZTL64aVfpVaYABzfkkaTh/BQiQW5g/HS2TONvS/FT4vFWXFkcyrfQQH3
-	ERXUHeJVRNiASvRq+ytAxkzOskAtXm4ytqSwlzx/ZSZSy+KHUPsqVg5h5xsJ6BJflo034v
-	Xmth+Cb01Kh5pzWIHDepgqOSAERR8ro=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-RuRJd-1MPwad3PJ5fmq2yA-1; Wed,
- 17 Sep 2025 09:07:58 -0400
-X-MC-Unique: RuRJd-1MPwad3PJ5fmq2yA-1
-X-Mimecast-MFC-AGG-ID: RuRJd-1MPwad3PJ5fmq2yA_1758114477
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77C7D180035C;
-	Wed, 17 Sep 2025 13:07:57 +0000 (UTC)
-Received: from bfoster (unknown [10.22.64.134])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9FE918003FC;
-	Wed, 17 Sep 2025 13:07:55 +0000 (UTC)
-Date: Wed, 17 Sep 2025 09:12:00 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, hch@infradead.org, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] iomap: simplify iomap_iter_advance()
-Message-ID: <aMqzoK1BAq0ed-pB@bfoster>
-References: <20250917004001.2602922-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1758114843; c=relaxed/simple;
+	bh=HfiXVahdmKU9llTpUf4nFKXL5fsS+NIMrnVM7WxbQ4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QCY3/xjNgJeMKrzhJlaZ4adjsnQdtbba3TaeegZ1hYG8nM9g9n/F4L07MXklKRX5tGlNKtQbm7YsApKNmN3JymD11QA7qRSD/tntMwteHkRRk+1cUpU69Pvw/usYHGTF7LlxvmEjZZfihwG9DtOvyrpR+TCWwvd6aJViwEGSVfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxMcTppA; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso4174611a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 06:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758114840; x=1758719640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e5H63/AUiRra8BoZW6vXEUzxV1wo5MwGIxUp9c3IcVo=;
+        b=FxMcTppA2m9EJYMUyH6eXSiv7TJuwxLwsolHBG+iDiRfIF+wx96PM3Q40XArdlyrHn
+         ccxdcbkyPdj8GlcZcWJswrF+vHFOfAVm4IQAIt6BZo+Q/MRxaee6n59phIZ8Mg7e/E7f
+         tUS3gWqcDuqsMng84h52zYvpp2OOEMAOw3dAIBTA550pemVr7aXgMtJx8Cl5SxYO3qTY
+         Xc0z0633NjtcFs+crC/egv9JbPYHqmftSxyoEL5hTSzQQnGX2uc2mrArHQnKHmM1ndiK
+         wDTyvEJSGKNYSlY8zVZJK/gQs0QO4jf6FTvHROBDqSVKeI4tQA0VhZcfwtZwsvOwMebe
+         CFqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758114840; x=1758719640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e5H63/AUiRra8BoZW6vXEUzxV1wo5MwGIxUp9c3IcVo=;
+        b=eoi3Cf28utA57NDZgrWVirZkFNp1OEGFk6AgVnh3f7X8ng8aqHG92fHtJzOa0DLQC+
+         WfVcSCd+7q4++UHKmx/4whI24IYLJEs+WwMx+9zPhE4m/aQwB+KmFdv9UoUeiaPt+zmB
+         K+bZOi2PjOojAxoRPjlGNaOSNKOnE5WnL7GzjRTvWMsAx5fUNo9eV4qNwyoaebdPIrjG
+         Y5VGaIHkDqh9j/cKUKvrDkGgsyzQpqHmyRy8g18p/vu5ZiIYu1mSPQyp+8MQ22bHsNhh
+         MQcp/jY1CcQ02ZFZs/WhtEJBZ7bLROMF4LEysgQR07iFeL06tH4Y1v44mZuxtfWwLjvi
+         v4SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIZduHstTFZqolvLdKQQoo0bwPo/kiDx7Bm72a/6L6BZ2fi/iZIS6tYvU7zJk9XVuXeXaOT3+uQ8DwMAMr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR7L2GhxSqjSF2dULlsLaed1U0cVtbtk896u8tYNYfgt8dIiTd
+	f2Sux2uNqchPSNF0DUnqi7Nb6CxR4aGEwLYovdnTDx7ONCtO3wg6k+7uE7TmCQXMxwyZ36hnxMA
+	3c25XmHn0+Hw1UscsyCU+eJ/azhA1GFc=
+X-Gm-Gg: ASbGncvhmwcBxDdS0Jw4NDkMu+ujRXGwCQMrUGPK4T4vpnagde7A/13FhNPZzQ1Q0d1
+	b1q50jYGw4fyPe8YC3boRQ2cWkAHKXcDDKYvHOQw5fmWWHVlcPnp/3nn5T2/Q9xr4GXbzToPImw
+	eGMUJQVtHMazQrA4mX5rYo3PJt2Vfdb7cg16457srfleaSO1BATz7x9MqeYhiKUB1RX01rgNf4y
+	oqxZAyBT1ouN0peyvCz9PR14MsZ6E10Ipe//U8=
+X-Google-Smtp-Source: AGHT+IHZqG7bIkkgFnNnamLc+d2ib1zkjvzaCKTtDXUUOD25WDP7oC1jkuiVQ7lPHR9J6yOsbhbl9bqd49wGef5FN+U=
+X-Received: by 2002:a05:6402:5c8:b0:62b:63f8:cdbb with SMTP id
+ 4fb4d7f45d1cf-62f8444b4ecmr2100800a12.25.1758114839438; Wed, 17 Sep 2025
+ 06:13:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917004001.2602922-1-joannelkoong@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250917124404.2207918-1-max.kellermann@ionos.com>
+In-Reply-To: <20250917124404.2207918-1-max.kellermann@ionos.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Sep 2025 15:13:47 +0200
+X-Gm-Features: AS18NWAAFc83ppVkA4fnw2IGGyxvDdDuE0G3TJ0kjzGRSMkmIKZ5yfl7jNQoS8Q
+Message-ID: <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 05:40:01PM -0700, Joanne Koong wrote:
-> Most callers of iomap_iter_advance() do not need the remaining length
-> returned. Get rid of the extra iomap_length() call that
-> iomap_iter_advance() does. If the caller wants the remaining length,
-> they can make the call to iomap_length().
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
+On Wed, Sep 17, 2025 at 2:44=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
 
-Indeed this does clean up some of the calls that create a local var
-purely to work around the interface. OTOH, the reason I made the advance
-update the length was so it was clear the remaining length would be used
-correctly in those looping callers. Otherwise I'm not sure it's clear
-the bytes/length value needs to be updated and that felt like an easy
-mistake to make to me.
+I don't know about ceph internals, so no comment on that front.
 
-I don't really have a strong preference so I'll defer to whatever the
-majority opinion is. I wonder though if something else worth considering
-is to rename the current helper to __iomap_iter_advance() (or whatever)
-and make your updated variant of iomap_iter_advance() into a wrapper of
-it.
+> +/**
+> + * Queue an asynchronous iput() call in a worker thread.  Use this
+> + * instead of iput() in contexts where evicting the inode is unsafe.
+> + * For example, inode eviction may cause deadlocks in
+> + * inode_wait_for_writeback() (when called from within writeback) or
+> + * in netfs_wait_for_outstanding_io() (when called from within the
+> + * Ceph messenger).
+> + *
+> + * @n: how many references to put
+> + */
+> +void ceph_iput_n_async(struct inode *inode, int n)
+> +{
+> +       if (unlikely(!inode))
+> +               return;
+> +
+> +       if (likely(atomic_sub_return(n, &inode->i_count) > 0))
+> +               /* somebody else is holding another reference -
+> +                * nothing left to do for us
+> +                */
+> +               return;
+> +
+> +       doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", i=
+node, ceph_vinop(inode));
+> +
+> +       /* the reference counter is now 0, i.e. nobody else is holding
+> +        * a reference to this inode; restore it to 1 and donate it to
+> +        * ceph_inode_work() which will call iput() at the end
+> +        */
+> +       atomic_set(&inode->i_count, 1);
+> +
 
-Brian
+That loop over iput() indeed asks for a variant which grabs an
+explicit count to subtract.
 
->  fs/dax.c               | 28 ++++++++++++----------------
->  fs/iomap/buffered-io.c | 16 +++++++++-------
->  fs/iomap/direct-io.c   |  6 +++---
->  fs/iomap/iter.c        | 14 +++++---------
->  fs/iomap/seek.c        |  8 ++++----
->  include/linux/iomap.h  |  6 ++----
->  6 files changed, 35 insertions(+), 43 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 20ecf652c129..29e7a150b6f9 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1534,7 +1534,7 @@ static int dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  
->  	/* already zeroed?  we're done. */
->  	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-> -		return iomap_iter_advance(iter, &length);
-> +		return iomap_iter_advance(iter, length);
->  
->  	/*
->  	 * invalidate the pages whose sharing state is to be changed
-> @@ -1563,9 +1563,10 @@ static int dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		if (ret < 0)
->  			return ret;
->  
-> -		ret = iomap_iter_advance(iter, &length);
-> +		ret = iomap_iter_advance(iter, length);
->  		if (ret)
->  			return ret;
-> +		length = iomap_length(iter);
->  	} while (length > 0);
->  
->  	if (did_zero)
-> @@ -1624,7 +1625,7 @@ static int dax_iomap_iter(struct iomap_iter *iomi, struct iov_iter *iter)
->  
->  		if (iomap->type == IOMAP_HOLE || iomap->type == IOMAP_UNWRITTEN) {
->  			done = iov_iter_zero(min(length, end - pos), iter);
-> -			return iomap_iter_advance(iomi, &done);
-> +			return iomap_iter_advance(iomi, done);
->  		}
->  	}
->  
-> @@ -1709,11 +1710,12 @@ static int dax_iomap_iter(struct iomap_iter *iomi, struct iov_iter *iter)
->  					map_len, iter);
->  
->  		length = xfer;
-> -		ret = iomap_iter_advance(iomi, &length);
-> +		ret = iomap_iter_advance(iomi, length);
->  		if (!ret && xfer == 0)
->  			ret = -EFAULT;
->  		if (xfer < map_len)
->  			break;
-> +		length = iomap_length(iomi);
->  	}
->  	dax_read_unlock(id);
->  
-> @@ -1946,10 +1948,8 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, unsigned long *pfnp,
->  			ret |= VM_FAULT_MAJOR;
->  		}
->  
-> -		if (!(ret & VM_FAULT_ERROR)) {
-> -			u64 length = PAGE_SIZE;
-> -			iter.status = iomap_iter_advance(&iter, &length);
-> -		}
-> +		if (!(ret & VM_FAULT_ERROR))
-> +			iter.status = iomap_iter_advance(&iter, PAGE_SIZE);
->  	}
->  
->  	if (iomap_errp)
-> @@ -2061,10 +2061,8 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, unsigned long *pfnp,
->  			continue; /* actually breaks out of the loop */
->  
->  		ret = dax_fault_iter(vmf, &iter, pfnp, &xas, &entry, true);
-> -		if (ret != VM_FAULT_FALLBACK) {
-> -			u64 length = PMD_SIZE;
-> -			iter.status = iomap_iter_advance(&iter, &length);
-> -		}
-> +		if (ret != VM_FAULT_FALLBACK)
-> +			iter.status = iomap_iter_advance(&iter, PMD_SIZE);
->  	}
->  
->  unlock_entry:
-> @@ -2190,7 +2188,6 @@ static int dax_range_compare_iter(struct iomap_iter *it_src,
->  	const struct iomap *smap = &it_src->iomap;
->  	const struct iomap *dmap = &it_dest->iomap;
->  	loff_t pos1 = it_src->pos, pos2 = it_dest->pos;
-> -	u64 dest_len;
->  	void *saddr, *daddr;
->  	int id, ret;
->  
-> @@ -2223,10 +2220,9 @@ static int dax_range_compare_iter(struct iomap_iter *it_src,
->  	dax_read_unlock(id);
->  
->  advance:
-> -	dest_len = len;
-> -	ret = iomap_iter_advance(it_src, &len);
-> +	ret = iomap_iter_advance(it_src, len);
->  	if (!ret)
-> -		ret = iomap_iter_advance(it_dest, &dest_len);
-> +		ret = iomap_iter_advance(it_dest, len);
->  	return ret;
->  
->  out_unlock:
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index fd827398afd2..fe6588ab0922 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -373,7 +373,7 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
->  		ret = iomap_read_inline_data(iter, folio);
->  		if (ret)
->  			return ret;
-> -		return iomap_iter_advance(iter, &length);
-> +		return iomap_iter_advance(iter, length);
->  	}
->  
->  	/* zero post-eof blocks as the page may be mapped */
-> @@ -434,7 +434,7 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
->  	 * iteration.
->  	 */
->  	length = pos - iter->pos + plen;
-> -	return iomap_iter_advance(iter, &length);
-> +	return iomap_iter_advance(iter, length);
->  }
->  
->  static int iomap_read_folio_iter(struct iomap_iter *iter,
-> @@ -1036,7 +1036,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
->  			}
->  		} else {
->  			total_written += written;
-> -			iomap_iter_advance(iter, &written);
-> +			iomap_iter_advance(iter, written);
->  		}
->  	} while (iov_iter_count(i) && iomap_length(iter));
->  
-> @@ -1305,7 +1305,7 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
->  	int status;
->  
->  	if (!iomap_want_unshare_iter(iter))
-> -		return iomap_iter_advance(iter, &bytes);
-> +		return iomap_iter_advance(iter, bytes);
->  
->  	do {
->  		struct folio *folio;
-> @@ -1329,9 +1329,10 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
->  
->  		balance_dirty_pages_ratelimited(iter->inode->i_mapping);
->  
-> -		status = iomap_iter_advance(iter, &bytes);
-> +		status = iomap_iter_advance(iter, bytes);
->  		if (status)
->  			break;
-> +		bytes = iomap_length(iter);
->  	} while (bytes > 0);
->  
->  	return status;
-> @@ -1404,9 +1405,10 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
->  		if (WARN_ON_ONCE(!ret))
->  			return -EIO;
->  
-> -		status = iomap_iter_advance(iter, &bytes);
-> +		status = iomap_iter_advance(iter, bytes);
->  		if (status)
->  			break;
-> +		bytes = iomap_length(iter);
->  	} while (bytes > 0);
->  
->  	if (did_zero)
-> @@ -1518,7 +1520,7 @@ static int iomap_folio_mkwrite_iter(struct iomap_iter *iter,
->  		folio_mark_dirty(folio);
->  	}
->  
-> -	return iomap_iter_advance(iter, &length);
-> +	return iomap_iter_advance(iter, length);
->  }
->  
->  vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops,
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index b84f6af2eb4c..e3544a6719a7 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -496,7 +496,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  	/* Undo iter limitation to current extent */
->  	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
->  	if (copied)
-> -		return iomap_iter_advance(iter, &copied);
-> +		return iomap_iter_advance(iter, copied);
->  	return ret;
->  }
->  
-> @@ -507,7 +507,7 @@ static int iomap_dio_hole_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  	dio->size += length;
->  	if (!length)
->  		return -EFAULT;
-> -	return iomap_iter_advance(iter, &length);
-> +	return iomap_iter_advance(iter, length);
->  }
->  
->  static int iomap_dio_inline_iter(struct iomap_iter *iomi, struct iomap_dio *dio)
-> @@ -539,7 +539,7 @@ static int iomap_dio_inline_iter(struct iomap_iter *iomi, struct iomap_dio *dio)
->  	dio->size += copied;
->  	if (!copied)
->  		return -EFAULT;
-> -	return iomap_iter_advance(iomi, &copied);
-> +	return iomap_iter_advance(iomi, copied);
->  }
->  
->  static int iomap_dio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-> index cef77ca0c20b..91d2024e00da 100644
-> --- a/fs/iomap/iter.c
-> +++ b/fs/iomap/iter.c
-> @@ -13,17 +13,13 @@ static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
->  	memset(&iter->srcmap, 0, sizeof(iter->srcmap));
->  }
->  
-> -/*
-> - * Advance the current iterator position and output the length remaining for the
-> - * current mapping.
-> - */
-> -int iomap_iter_advance(struct iomap_iter *iter, u64 *count)
-> +/* Advance the current iterator position and decrement the remaining length */
-> +int iomap_iter_advance(struct iomap_iter *iter, u64 count)
->  {
-> -	if (WARN_ON_ONCE(*count > iomap_length(iter)))
-> +	if (WARN_ON_ONCE(count > iomap_length(iter)))
->  		return -EIO;
-> -	iter->pos += *count;
-> -	iter->len -= *count;
-> -	*count = iomap_length(iter);
-> +	iter->pos += count;
-> +	iter->len -= count;
->  	return 0;
->  }
->  
-> diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-> index 56db2dd4b10d..6cbc587c93da 100644
-> --- a/fs/iomap/seek.c
-> +++ b/fs/iomap/seek.c
-> @@ -16,13 +16,13 @@ static int iomap_seek_hole_iter(struct iomap_iter *iter,
->  		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
->  				iter->pos, iter->pos + length, SEEK_HOLE);
->  		if (*hole_pos == iter->pos + length)
-> -			return iomap_iter_advance(iter, &length);
-> +			return iomap_iter_advance(iter, length);
->  		return 0;
->  	case IOMAP_HOLE:
->  		*hole_pos = iter->pos;
->  		return 0;
->  	default:
-> -		return iomap_iter_advance(iter, &length);
-> +		return iomap_iter_advance(iter, length);
->  	}
->  }
->  
-> @@ -59,12 +59,12 @@ static int iomap_seek_data_iter(struct iomap_iter *iter,
->  
->  	switch (iter->iomap.type) {
->  	case IOMAP_HOLE:
-> -		return iomap_iter_advance(iter, &length);
-> +		return iomap_iter_advance(iter, length);
->  	case IOMAP_UNWRITTEN:
->  		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
->  				iter->pos, iter->pos + length, SEEK_DATA);
->  		if (*hole_pos < 0)
-> -			return iomap_iter_advance(iter, &length);
-> +			return iomap_iter_advance(iter, length);
->  		return 0;
->  	default:
->  		*hole_pos = iter->pos;
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 73dceabc21c8..4469b2318b08 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -245,7 +245,7 @@ struct iomap_iter {
->  };
->  
->  int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
-> -int iomap_iter_advance(struct iomap_iter *iter, u64 *count);
-> +int iomap_iter_advance(struct iomap_iter *iter, u64 count);
->  
->  /**
->   * iomap_length_trim - trimmed length of the current iomap iteration
-> @@ -282,9 +282,7 @@ static inline u64 iomap_length(const struct iomap_iter *iter)
->   */
->  static inline int iomap_iter_advance_full(struct iomap_iter *iter)
->  {
-> -	u64 length = iomap_length(iter);
-> -
-> -	return iomap_iter_advance(iter, &length);
-> +	return iomap_iter_advance(iter, iomap_length(iter));
->  }
->  
->  /**
-> -- 
-> 2.47.3
-> 
+However, you cannot legally transition to 0 without ->i_lock held. By
+API contract the ->drop_inode routine needs to be called when you get
+here and other CPUs are prevented from refing the inode.
 
+While it is true nobody *refs* the inode, it is still hanging out on
+the superblock list where it can get picked up by forced unmount and
+on the inode hash where it can get picked up by lookup. With a
+refcount of 0, ->i_lock not held and no flags added, from their POV
+this is a legally cached inode they can do whatever they want with.
+
+So that force setting of refcount to 1 might be a use-after-free if
+this raced against another iput or it might be losing a reference
+picked up by someone else.
+
+If you got the idea to bring back one frem from iput() in the stock kernel:
+
+        if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+                if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
+                        atomic_inc(&inode->i_count);
+
+Note this guy still makes sure to take the lock first. As a side note
+this weird deref to 0 + ref back to 1 business is going away [1].
+
+I don't know what's the handy Linux way to sub an arbitrary amount as
+long as the target is not x, I guess worst case one can just write a
+cmpxchg loop by hand.
+
+Given that this is a reliability fix I would forego optimizations of the so=
+rt.
+
+Does the patch convert literally all iput calls within ceph into the
+async variant? I would be worried that mandatory deferral of literally
+all final iputs may be a regression from perf standpoint.
+
+I see you are mentioning another deadlock, perhaps being in danger of
+deadlocking is something you could track with a flag within ceph (just
+like it happens for writeback)? Then the local iput variant could
+check on both. I have no idea if this is feasible at all for the netfs
+thing.
+
+No matter what though, it looks like the way forward concerning
+->i_count is to make sure it does not drop to 0 within the new
+primitive.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=
+=3Dvfs-6.18.inode.refcount.preliminaries&id=3D9e70e985bdc2[1[1c6fe7a160e4d5=
+9ddd7c0a39bc077
+
+> +       /* simply queue a ceph_inode_work() without setting
+> +        * i_work_mask bit; other than putting the reference, there is
+> +        * nothing to do
+> +        */
+> +       WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq=
+,
+> +                                &ceph_inode(inode)->i_work));
+> +
+> +       /* note: queue_work() cannot fail; it i_work were already
+> +        * queued, then it would be holding another reference, but no
+> +        * such reference exists
+> +        */
+> +}
+> +
 
