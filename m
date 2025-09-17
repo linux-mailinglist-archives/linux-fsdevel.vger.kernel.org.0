@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-61901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58236B7FB39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287D7B7EB38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6E5326EC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D78031C03A12
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096B1350D4A;
-	Wed, 17 Sep 2025 10:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAC235A28B;
+	Wed, 17 Sep 2025 10:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCvOjRku"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFcXr37r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53921303A1E;
-	Wed, 17 Sep 2025 10:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44E52F7AA3;
+	Wed, 17 Sep 2025 10:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104920; cv=none; b=XzwvDim4SsCv5aLokyAJSVKi8JOiMAHNT7jdK12NEzbmdWJ2GzC2xno7PxNGsZIVnKB4QrsosURVQuwuCV7V/YLBTdpOpvq8i9AmR1NXnnLEWkzIT9q1NAVl+qWB+u66D35Ng4E9OZR3JIcUOrZXpMWIWoj6mkTZh/hSBrtV/+8=
+	t=1758104925; cv=none; b=X0Kvj5dyi12d69muDHRDN0YaiIt21NzlcaR1cxGr9PmZeHIoWUxgTr3IPFamzFtPzqmakabS+OV7tE5gF69ZnE7PbchTPw/N8sT9ecl04gtrsg5cIQOritWfbOjp8IS7HDDVNGIezsH6MuSoNv44D0FaSPHRGY0YoDewadowmIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104920; c=relaxed/simple;
-	bh=AvdOHxfXHrvdoBdIQ10mM48HLMw4+4GPk3SqftCCZM8=;
+	s=arc-20240116; t=1758104925; c=relaxed/simple;
+	bh=7IxtHM+V3qkSMuMxxb4C83WRBdh/pZ/dABcbRzXFT34=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=urWqCGLg2z33z2FZympYVzYILNuil+r+M1hLNQdnFovhSLacpjoQQx+EgrE+3Sh0ZJogQ2i/iLpPc5aA5Z/3KWPFViNM/h1T9ThyzXxrKmB6ZG0LLRopXF2pL0vNWPSzoq2/UfHVJCRGmkpb2bl85oWU8daw5KR97YFXEunBW8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCvOjRku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C83C4CEF0;
-	Wed, 17 Sep 2025 10:28:35 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XdOKHQF1Xo5MPhCwRtKbZz3pmn8BV+AE3Ur/TMwU1mJlAW7sfDmnEKGO1Fe9bfEyoAcg5gedYVHzMhs8aemVa/gtrvhlp8JhB6dr1ima8J7GVKZldk9hp+y57lp6mJyOlWr6caXulPiOtgdEfaHXBjWFqVBh8n1EslRe+wIOlZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFcXr37r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D57C4CEF0;
+	Wed, 17 Sep 2025 10:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758104920;
-	bh=AvdOHxfXHrvdoBdIQ10mM48HLMw4+4GPk3SqftCCZM8=;
+	s=k20201202; t=1758104925;
+	bh=7IxtHM+V3qkSMuMxxb4C83WRBdh/pZ/dABcbRzXFT34=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CCvOjRku2B74YaC9Bka/d9l72iV8shu4Hyh985EQuiHZLwIg6mlg2nIY41KwQQ6Bc
-	 jkwytlzDNUjAxBLflKZwffEGwrW6uJ3vD6IA96Hf9jKnpoNtim213UAjt1Ejhbr1Pm
-	 AygPg8zbDkOzKyvXQ2zE6Qaak/o/W9aUJXGWi8AkYpbzOro8D4orMx3SBFm+rbO4X7
-	 OaEpwtIRcqtAhes+JjA8T7rSJTDrA4j47RvtePyA+/LdeqjmVNMCvsdG859T5dNZ8i
-	 ECTnIqAXOjEcazVfzujiKC2sZwGsCnRbGaxv4ux8/kPFAFtQUcgSkKUh5K3FJLX+lf
-	 uWsSZc113ZA8A==
+	b=eFcXr37r1T0tT6dV8/G6uX5BzrUt2GqahU0oGcnr4ruxc/2fx2aAXCMEFio8J5RQw
+	 NmYhg1HCaePjwCxkQgEuFQYYIxn3C/coDPVXPbFrUv6+KV3ru+5hMik1L+vreVM6Wi
+	 XHBFvXdQsw1ObtTIWNexbtiVXmmxvGxG6MeZ4UTz6/VMPfY0Us0MxBnLFLroU080sA
+	 ggtWoXKbt4AOMqQIfXTV+THaDwIYfawzu2Kd7L5UuLap1UJf+WUlJRuoSla0EGLT6i
+	 /MJnNjXRrDMz32DLR0AcFJoGbwrnwAMhVBMLqOTyEFvGShbU/L5/Et69TQZw4UMzgE
+	 Ae8qlhPT9Ad8A==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 17 Sep 2025 12:28:00 +0200
-Subject: [PATCH 1/9] uts: split namespace into separate header
+Date: Wed, 17 Sep 2025 12:28:01 +0200
+Subject: [PATCH 2/9] mnt: expose pointer to init_mnt_ns
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-work-namespace-ns_common-v1-1-1b3bda8ef8f2@kernel.org>
+Message-Id: <20250917-work-namespace-ns_common-v1-2-1b3bda8ef8f2@kernel.org>
 References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
 In-Reply-To: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -71,171 +71,58 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
  linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-56183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4023; i=brauner@kernel.org;
- h=from:subject:message-id; bh=AvdOHxfXHrvdoBdIQ10mM48HLMw4+4GPk3SqftCCZM8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vVtMrnXf4f9QPm3ewud93cf5324KylFcJVGaUvwy
- l18DvslOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS9Z6R4QWL18ufq5W+NauJ
- SJxYd2B7+G0Rw8oL2nmPhTq2shcmszL8T83NvbeBwemVTGj2psWibJNeh1j/ypzmaiJ0dZHF7X9
- /uQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1604; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=7IxtHM+V3qkSMuMxxb4C83WRBdh/pZ/dABcbRzXFT34=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vXlmKRy+EeWkvjnmoDPT7qZ2HjebcmWLLtx7+05m
+ eNvEmt9O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyT5Phr/S1bQxyHLXsVTW7
+ bO7s9b1ewVptt5d5GSfXnzq18mdrLjD84UzzUgiXbgzT7N6pYerfuSoh84TJBJ21flkPt5vec3b
+ mAAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-We have dedicated headers for all namespace types. Add one for the uts
-namespace as well. Now it's consistent for all namespace types.
+There's various scenarios where we need to know whether we are in the
+initial set of namespaces or not to e.g., shortcut permission checking.
+All namespaces expose that information. Let's do that too.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/uts_namespace.h | 65 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/utsname.h       | 58 +-------------------------------------
- 2 files changed, 66 insertions(+), 57 deletions(-)
+ fs/namespace.c                | 2 ++
+ include/linux/mnt_namespace.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/include/linux/uts_namespace.h b/include/linux/uts_namespace.h
-new file mode 100644
-index 000000000000..c2b619bb4e57
---- /dev/null
-+++ b/include/linux/uts_namespace.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_UTS_NAMESPACE_H
-+#define _LINUX_UTS_NAMESPACE_H
-+
-+#include <linux/ns_common.h>
-+#include <uapi/linux/utsname.h>
-+
-+struct user_namespace;
-+extern struct user_namespace init_user_ns;
-+
-+struct uts_namespace {
-+	struct new_utsname name;
-+	struct user_namespace *user_ns;
-+	struct ucounts *ucounts;
-+	struct ns_common ns;
-+} __randomize_layout;
-+
-+extern struct uts_namespace init_uts_ns;
-+
-+#ifdef CONFIG_UTS_NS
-+static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
-+{
-+	return container_of(ns, struct uts_namespace, ns);
-+}
-+
-+static inline void get_uts_ns(struct uts_namespace *ns)
-+{
-+	refcount_inc(&ns->ns.count);
-+}
-+
-+extern struct uts_namespace *copy_utsname(unsigned long flags,
-+	struct user_namespace *user_ns, struct uts_namespace *old_ns);
-+extern void free_uts_ns(struct uts_namespace *ns);
-+
-+static inline void put_uts_ns(struct uts_namespace *ns)
-+{
-+	if (refcount_dec_and_test(&ns->ns.count))
-+		free_uts_ns(ns);
-+}
-+
-+void uts_ns_init(void);
-+#else
-+static inline void get_uts_ns(struct uts_namespace *ns)
-+{
-+}
-+
-+static inline void put_uts_ns(struct uts_namespace *ns)
-+{
-+}
-+
-+static inline struct uts_namespace *copy_utsname(unsigned long flags,
-+	struct user_namespace *user_ns, struct uts_namespace *old_ns)
-+{
-+	if (flags & CLONE_NEWUTS)
-+		return ERR_PTR(-EINVAL);
-+
-+	return old_ns;
-+}
-+
-+static inline void uts_ns_init(void)
-+{
-+}
-+#endif
-+
-+#endif /* _LINUX_UTS_NAMESPACE_H */
-diff --git a/include/linux/utsname.h b/include/linux/utsname.h
-index 5d34c4f0f945..547bd4439706 100644
---- a/include/linux/utsname.h
-+++ b/include/linux/utsname.h
-@@ -7,7 +7,7 @@
- #include <linux/nsproxy.h>
- #include <linux/ns_common.h>
- #include <linux/err.h>
--#include <uapi/linux/utsname.h>
-+#include <linux/uts_namespace.h>
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a68998449698..c8251545d57e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -81,6 +81,7 @@ static DECLARE_RWSEM(namespace_sem);
+ static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+ static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+ static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
++struct mnt_namespace *init_mnt_ns;
  
- enum uts_proc {
- 	UTS_PROC_ARCH,
-@@ -18,62 +18,6 @@ enum uts_proc {
- 	UTS_PROC_DOMAINNAME,
- };
+ #ifdef CONFIG_FSNOTIFY
+ LIST_HEAD(notify_list); /* protected by namespace_sem */
+@@ -6037,6 +6038,7 @@ static void __init init_mount_tree(void)
+ 	set_fs_root(current->fs, &root);
  
--struct user_namespace;
--extern struct user_namespace init_user_ns;
--
--struct uts_namespace {
--	struct new_utsname name;
--	struct user_namespace *user_ns;
--	struct ucounts *ucounts;
--	struct ns_common ns;
--} __randomize_layout;
--extern struct uts_namespace init_uts_ns;
--
--#ifdef CONFIG_UTS_NS
--static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
--{
--	return container_of(ns, struct uts_namespace, ns);
--}
--
--static inline void get_uts_ns(struct uts_namespace *ns)
--{
--	refcount_inc(&ns->ns.count);
--}
--
--extern struct uts_namespace *copy_utsname(unsigned long flags,
--	struct user_namespace *user_ns, struct uts_namespace *old_ns);
--extern void free_uts_ns(struct uts_namespace *ns);
--
--static inline void put_uts_ns(struct uts_namespace *ns)
--{
--	if (refcount_dec_and_test(&ns->ns.count))
--		free_uts_ns(ns);
--}
--
--void uts_ns_init(void);
--#else
--static inline void get_uts_ns(struct uts_namespace *ns)
--{
--}
--
--static inline void put_uts_ns(struct uts_namespace *ns)
--{
--}
--
--static inline struct uts_namespace *copy_utsname(unsigned long flags,
--	struct user_namespace *user_ns, struct uts_namespace *old_ns)
--{
--	if (flags & CLONE_NEWUTS)
--		return ERR_PTR(-EINVAL);
--
--	return old_ns;
--}
--
--static inline void uts_ns_init(void)
--{
--}
--#endif
--
- #ifdef CONFIG_PROC_SYSCTL
- extern void uts_proc_notify(enum uts_proc proc);
- #else
+ 	ns_tree_add(ns);
++	init_mnt_ns = ns;
+ }
+ 
+ void __init mnt_init(void)
+diff --git a/include/linux/mnt_namespace.h b/include/linux/mnt_namespace.h
+index 70b366b64816..7e23c8364a9c 100644
+--- a/include/linux/mnt_namespace.h
++++ b/include/linux/mnt_namespace.h
+@@ -11,6 +11,8 @@ struct fs_struct;
+ struct user_namespace;
+ struct ns_common;
+ 
++extern struct mnt_namespace *init_mnt_ns;
++
+ extern struct mnt_namespace *copy_mnt_ns(unsigned long, struct mnt_namespace *,
+ 		struct user_namespace *, struct fs_struct *);
+ extern void put_mnt_ns(struct mnt_namespace *ns);
 
 -- 
 2.47.3
