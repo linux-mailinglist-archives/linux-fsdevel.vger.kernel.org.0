@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-61900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882B1B7EB2C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58236B7FB39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5501C0314A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:29:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6E5326EC3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 10:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E432DF71E;
-	Wed, 17 Sep 2025 10:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096B1350D4A;
+	Wed, 17 Sep 2025 10:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txxfI2C8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCvOjRku"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611D6306498;
-	Wed, 17 Sep 2025 10:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53921303A1E;
+	Wed, 17 Sep 2025 10:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104915; cv=none; b=CIpWOh+XUzgPIm5w2nlJwdLLGa8+CYQ5X6xXbV7BHD3pUGb4Lj60GiYqcRE14XLddAasXoqZCbso7MRydrbJNog7snWIAy3X2BdOwlRGV4LU0b01SAYcRe90HbJ+A5iteW2ShwVmYqlM7FmKdJYIKTBI6C/77Jrl+CfeE9o0cFY=
+	t=1758104920; cv=none; b=XzwvDim4SsCv5aLokyAJSVKi8JOiMAHNT7jdK12NEzbmdWJ2GzC2xno7PxNGsZIVnKB4QrsosURVQuwuCV7V/YLBTdpOpvq8i9AmR1NXnnLEWkzIT9q1NAVl+qWB+u66D35Ng4E9OZR3JIcUOrZXpMWIWoj6mkTZh/hSBrtV/+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104915; c=relaxed/simple;
-	bh=6Fbk1AWCJkKzgSUrfIvCQZYtZjMyGsGaw3a7FOb//jc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Xbx3hoqQYwnI80p1kRIoyTIeltL6Nnj5gPsgCZKGXkR7WL7ou3Zqbc9mKYlZkMe2QsDmEfg0HvlQO2APSpfQly4P9/B4hW5x2qF/lPzgLaqt6M4lSOzVdcgPDTgG9QX7Z3i6SY5c2n8fYdazPqxc8jvzoZehZ7KD0F7DADBvQl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txxfI2C8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1FDC4CEF0;
-	Wed, 17 Sep 2025 10:28:30 +0000 (UTC)
+	s=arc-20240116; t=1758104920; c=relaxed/simple;
+	bh=AvdOHxfXHrvdoBdIQ10mM48HLMw4+4GPk3SqftCCZM8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=urWqCGLg2z33z2FZympYVzYILNuil+r+M1hLNQdnFovhSLacpjoQQx+EgrE+3Sh0ZJogQ2i/iLpPc5aA5Z/3KWPFViNM/h1T9ThyzXxrKmB6ZG0LLRopXF2pL0vNWPSzoq2/UfHVJCRGmkpb2bl85oWU8daw5KR97YFXEunBW8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCvOjRku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C83C4CEF0;
+	Wed, 17 Sep 2025 10:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758104915;
-	bh=6Fbk1AWCJkKzgSUrfIvCQZYtZjMyGsGaw3a7FOb//jc=;
-	h=From:Subject:Date:To:Cc:From;
-	b=txxfI2C8t9zqn/W6qoRHRsg9YVf+acGtNqdRHEb735n9avqnFj/OnWflHYRI5zujJ
-	 LP7lzkakqsah4XdI3DOIwvjWZmD3z0MBfkLsOJylm5JwwmqsrZtomxw/+i8X176jLN
-	 HcdeCrixaN2qziTTw1+p/it42cuexxbmmc7k8ayaqU5neYpasjr3bWBkaCv5u+We8Y
-	 w+ZEWm5ZjPnTkRoZLA23JMyzVVZ9Q4vcsaGVWRXPb12Qf+8ggIjGf5JXZNX7MuuDIL
-	 hcYVOxrHwI6LGeEi0snKBvdviv0i6MLMi5XmhrcZkLUaQzLmOa0TsKbMoeVe5ZHZYM
-	 RUbGybX1p0uDw==
+	s=k20201202; t=1758104920;
+	bh=AvdOHxfXHrvdoBdIQ10mM48HLMw4+4GPk3SqftCCZM8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=CCvOjRku2B74YaC9Bka/d9l72iV8shu4Hyh985EQuiHZLwIg6mlg2nIY41KwQQ6Bc
+	 jkwytlzDNUjAxBLflKZwffEGwrW6uJ3vD6IA96Hf9jKnpoNtim213UAjt1Ejhbr1Pm
+	 AygPg8zbDkOzKyvXQ2zE6Qaak/o/W9aUJXGWi8AkYpbzOro8D4orMx3SBFm+rbO4X7
+	 OaEpwtIRcqtAhes+JjA8T7rSJTDrA4j47RvtePyA+/LdeqjmVNMCvsdG859T5dNZ8i
+	 ECTnIqAXOjEcazVfzujiKC2sZwGsCnRbGaxv4ux8/kPFAFtQUcgSkKUh5K3FJLX+lf
+	 uWsSZc113ZA8A==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 0/9] ns: rework common initialization
-Date: Wed, 17 Sep 2025 12:27:59 +0200
-Message-Id: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
+Date: Wed, 17 Sep 2025 12:28:00 +0200
+Subject: [PATCH 1/9] uts: split namespace into separate header
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +52,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADCNymgC/0WNQQ6CMBAAv0J6dpESisWvGEOWssDGsiVtoiaEv
- 1u9eJzDzOwqUWRK6lrsKtKTEwfJoE+FcgvKTMBjZlVXtak6fYFXiA8QXClt6Agk9S6saxAw1nR
- Na6lxxqisb5Emfv/St3vmARPBEFHc8g2GyDMLoPfnf60ttS0n9tTn9+izfBwfSuxwbKMAAAA=
-X-Change-ID: 20250917-work-namespace-ns_common-5859468e4c55
+Message-Id: <20250917-work-namespace-ns_common-v1-1-1b3bda8ef8f2@kernel.org>
+References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
+In-Reply-To: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
  Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
@@ -72,53 +71,173 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
  linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-56183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1854; i=brauner@kernel.org;
- h=from:subject:message-id; bh=6Fbk1AWCJkKzgSUrfIvCQZYtZjMyGsGaw3a7FOb//jc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vWNbnF/+9Yg77h7kTXXB3Ym/ea313JzGpeLJOc0n
- jsT8+JsRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETelzD8Uym6IFzs6r0gkofh
- xBlFXe7Db38+OCTS/Vjr5YZ3rAXMiQz/q4sXba/ZVbDqaK25rIJSS4m8CePqL5tsrruWiu0WD87
- lAQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4023; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=AvdOHxfXHrvdoBdIQ10mM48HLMw4+4GPk3SqftCCZM8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vVtMrnXf4f9QPm3ewud93cf5324KylFcJVGaUvwy
+ l18DvslOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS9Z6R4QWL18ufq5W+NauJ
+ SJxYd2B7+G0Rw8oL2nmPhTq2shcmszL8T83NvbeBwemVTGj2psWibJNeh1j/ypzmaiJ0dZHF7X9
+ /uQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-The current scheme still involves a lot of open-coding and copy-pasing
-and bleeds a lot of unnecessary details into actual namespace
-implementers. Encapsulate it in the common helpers and simplify it all.
+We have dedicated headers for all namespace types. Add one for the uts
+namespace as well. Now it's consistent for all namespace types.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (9):
-      uts: split namespace into separate header
-      mnt: expose pointer to init_mnt_ns
-      nscommon: move to separate file
-      cgroup: split namespace into separate header
-      nsfs: add inode number for anon namespace
-      mnt: simplify ns_common_init() handling
-      net: centralize ns_common initialization
-      nscommon: simplify initialization
-      ns: add ns_common_free()
+ include/linux/uts_namespace.h | 65 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/utsname.h       | 58 +-------------------------------------
+ 2 files changed, 66 insertions(+), 57 deletions(-)
 
- fs/namespace.c                   | 16 ++++++----
- include/linux/cgroup.h           | 51 +------------------------------
- include/linux/cgroup_namespace.h | 56 ++++++++++++++++++++++++++++++++++
- include/linux/mnt_namespace.h    |  2 ++
- include/linux/ns_common.h        | 43 ++++++++++++++++++++++++++
- include/linux/proc_ns.h          | 21 -------------
- include/linux/uts_namespace.h    | 65 ++++++++++++++++++++++++++++++++++++++++
- include/linux/utsname.h          | 58 +----------------------------------
- include/uapi/linux/nsfs.h        |  3 ++
- ipc/namespace.c                  |  6 ++--
- kernel/Makefile                  |  2 +-
- kernel/cgroup/namespace.c        |  4 +--
- kernel/nscommon.c                | 25 ++++++++++++++++
- kernel/pid_namespace.c           |  6 ++--
- kernel/time/namespace.c          |  4 +--
- kernel/user_namespace.c          |  6 ++--
- kernel/utsname.c                 |  4 +--
- net/core/net_namespace.c         | 23 ++------------
- 18 files changed, 225 insertions(+), 170 deletions(-)
----
-base-commit: bf56a464f4ad7143c6e4b581b411f682f345a344
-change-id: 20250917-work-namespace-ns_common-5859468e4c55
+diff --git a/include/linux/uts_namespace.h b/include/linux/uts_namespace.h
+new file mode 100644
+index 000000000000..c2b619bb4e57
+--- /dev/null
++++ b/include/linux/uts_namespace.h
+@@ -0,0 +1,65 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_UTS_NAMESPACE_H
++#define _LINUX_UTS_NAMESPACE_H
++
++#include <linux/ns_common.h>
++#include <uapi/linux/utsname.h>
++
++struct user_namespace;
++extern struct user_namespace init_user_ns;
++
++struct uts_namespace {
++	struct new_utsname name;
++	struct user_namespace *user_ns;
++	struct ucounts *ucounts;
++	struct ns_common ns;
++} __randomize_layout;
++
++extern struct uts_namespace init_uts_ns;
++
++#ifdef CONFIG_UTS_NS
++static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
++{
++	return container_of(ns, struct uts_namespace, ns);
++}
++
++static inline void get_uts_ns(struct uts_namespace *ns)
++{
++	refcount_inc(&ns->ns.count);
++}
++
++extern struct uts_namespace *copy_utsname(unsigned long flags,
++	struct user_namespace *user_ns, struct uts_namespace *old_ns);
++extern void free_uts_ns(struct uts_namespace *ns);
++
++static inline void put_uts_ns(struct uts_namespace *ns)
++{
++	if (refcount_dec_and_test(&ns->ns.count))
++		free_uts_ns(ns);
++}
++
++void uts_ns_init(void);
++#else
++static inline void get_uts_ns(struct uts_namespace *ns)
++{
++}
++
++static inline void put_uts_ns(struct uts_namespace *ns)
++{
++}
++
++static inline struct uts_namespace *copy_utsname(unsigned long flags,
++	struct user_namespace *user_ns, struct uts_namespace *old_ns)
++{
++	if (flags & CLONE_NEWUTS)
++		return ERR_PTR(-EINVAL);
++
++	return old_ns;
++}
++
++static inline void uts_ns_init(void)
++{
++}
++#endif
++
++#endif /* _LINUX_UTS_NAMESPACE_H */
+diff --git a/include/linux/utsname.h b/include/linux/utsname.h
+index 5d34c4f0f945..547bd4439706 100644
+--- a/include/linux/utsname.h
++++ b/include/linux/utsname.h
+@@ -7,7 +7,7 @@
+ #include <linux/nsproxy.h>
+ #include <linux/ns_common.h>
+ #include <linux/err.h>
+-#include <uapi/linux/utsname.h>
++#include <linux/uts_namespace.h>
+ 
+ enum uts_proc {
+ 	UTS_PROC_ARCH,
+@@ -18,62 +18,6 @@ enum uts_proc {
+ 	UTS_PROC_DOMAINNAME,
+ };
+ 
+-struct user_namespace;
+-extern struct user_namespace init_user_ns;
+-
+-struct uts_namespace {
+-	struct new_utsname name;
+-	struct user_namespace *user_ns;
+-	struct ucounts *ucounts;
+-	struct ns_common ns;
+-} __randomize_layout;
+-extern struct uts_namespace init_uts_ns;
+-
+-#ifdef CONFIG_UTS_NS
+-static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
+-{
+-	return container_of(ns, struct uts_namespace, ns);
+-}
+-
+-static inline void get_uts_ns(struct uts_namespace *ns)
+-{
+-	refcount_inc(&ns->ns.count);
+-}
+-
+-extern struct uts_namespace *copy_utsname(unsigned long flags,
+-	struct user_namespace *user_ns, struct uts_namespace *old_ns);
+-extern void free_uts_ns(struct uts_namespace *ns);
+-
+-static inline void put_uts_ns(struct uts_namespace *ns)
+-{
+-	if (refcount_dec_and_test(&ns->ns.count))
+-		free_uts_ns(ns);
+-}
+-
+-void uts_ns_init(void);
+-#else
+-static inline void get_uts_ns(struct uts_namespace *ns)
+-{
+-}
+-
+-static inline void put_uts_ns(struct uts_namespace *ns)
+-{
+-}
+-
+-static inline struct uts_namespace *copy_utsname(unsigned long flags,
+-	struct user_namespace *user_ns, struct uts_namespace *old_ns)
+-{
+-	if (flags & CLONE_NEWUTS)
+-		return ERR_PTR(-EINVAL);
+-
+-	return old_ns;
+-}
+-
+-static inline void uts_ns_init(void)
+-{
+-}
+-#endif
+-
+ #ifdef CONFIG_PROC_SYSCTL
+ extern void uts_proc_notify(enum uts_proc proc);
+ #else
+
+-- 
+2.47.3
 
 
