@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-61960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95205B81018
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 18:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF05B81039
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 18:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D4917DA4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:28:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECF62A0369
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5A42F90D3;
-	Wed, 17 Sep 2025 16:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF720229B1F;
+	Wed, 17 Sep 2025 16:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hmD27b4B";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DlBgZGiU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1j/1c0St";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TCFC+7h0"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gFbpLFj+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gtlmibLO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjD1+4Ol";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q/TIevOh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56E81F7586
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 16:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76A0224B04
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 16:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126490; cv=none; b=Ifm7Kp2JkciNxuVNiy8K7HBn8FyXMZ2Go1c3bZFdY+5M+GGp2psbARg9nCQim5q6EewkZ9ZU13klXjmJiZjJIVcPUQGKLhdDYBC33HmsNc9BEib6qf1CxYabVJ606dXItwVwa6AZH/U6+c8tm/TCY1X+SQa9tQ/MXkDt4Npv77Q=
+	t=1758126525; cv=none; b=VUmi8Z6bP+93TPjgEh71rkl8O1Rnx6Wkc9hSQdpfmNEhSPkfLOyQZgTPvIIgDJUgas3bzcsz1I7AhI5NVHpJ3DK3JZTOWG1JeJ2BwUQpvTku0dkm9crtXlSUSpaLZ/AX/6zPsQTiu4td5plNGxbEjCuYbiq3/ywatT3vcW+YU+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126490; c=relaxed/simple;
-	bh=AYoQ9gSJVsp1ktMxwpgGVIDF2JBU+4HfsaFdN1qVlfM=;
+	s=arc-20240116; t=1758126525; c=relaxed/simple;
+	bh=3bzbuf2TdiGrC0TNG9ZgtRS/e5A769JAIK6NlrY7Lr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbR0YVaqBusPq30y9OU1fhjWh2CfZRGKPw7FSJH8if47JEXYqfGQ2UerCRBSghXYa9+mBHUjDjrZu9Nj2bFBYiYFxu6GuB/Ga6zmFRDpiY6Elh3lW9dJAwNxDpLwxWKOvDrb4fCYKrplv2gkWiCEOFp3Kb6v4VMUElZGh5aMwK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hmD27b4B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DlBgZGiU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1j/1c0St; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TCFC+7h0; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQ0gCLhEaf0CypGlIYeXo9RTl+7z18YezqmTaxHvA4omgNYtItJd9nFyHPdkzMsXTDxokHFbTUdtIClYZWSrW2Mj+8D+zSm8VmtH2zvdL41em2yAKN3DPRjWpuh3vnme3QRT6IUUnu0nVx1T6SEHMzySx6T79x/0sDKq28pIcn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gFbpLFj+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gtlmibLO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjD1+4Ol; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q/TIevOh; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C73BD20D71;
-	Wed, 17 Sep 2025 16:28:05 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E793320D7C;
+	Wed, 17 Sep 2025 16:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758126486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1758126522; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DJvaxjsReAH5d3kbnAfNByUGaY9p2NVaEyyxIn+izk4=;
-	b=hmD27b4BWSo5vVqG/At0KtqDKdvW5gF0Bca2yHnr9BsWrdzJyGQjkFY83PHE7B4nfbBE7d
-	crP010m7gfrNlTkJeuAQdEYwfIIq9p22maCj5B0mHP2VEkgCmpC8Ga1Eyhud38CPqXtVAt
-	jppKc2GJgM5CH1VdsGC21RrFoAsDJNU=
+	bh=kbLwGr2Tk1p277N0IGSkxxjAe8nYGHmpY42SElvUgD8=;
+	b=gFbpLFj+ERyvaWQ5cn1hWsISRsBd3JdcksWILtWpv0ql3Mlp1dtYSaNxrVklrcDEMPYnj1
+	wWe18WY/4Hb88kRI4nBCn0WLSC9DgK/O4RF0PFX+r1uBfuAGg4kKxdtP7S0iFP2GtcrGin
+	Wd1K4RKctLvHfM/AwcpoI7nlwCkdmWY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758126486;
+	s=susede2_ed25519; t=1758126522;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DJvaxjsReAH5d3kbnAfNByUGaY9p2NVaEyyxIn+izk4=;
-	b=DlBgZGiUPbr8PCEXBQELl1DvgjCULZU5qiwWj2EFKFm0MMK/WGxq9NJOxubm3tt2X6DT/6
-	RNE2jaexmP16FcCA==
+	bh=kbLwGr2Tk1p277N0IGSkxxjAe8nYGHmpY42SElvUgD8=;
+	b=gtlmibLOqcmBd5EKfu7zDCLSx2uVybh6FNjx0gU/hq7TY7t0R+ENze0BCFvzhDeGA/j0Pj
+	ukkPue+UrnG1HgAQ==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="1j/1c0St";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TCFC+7h0
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PjD1+4Ol;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="Q/TIevOh"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758126485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1758126521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DJvaxjsReAH5d3kbnAfNByUGaY9p2NVaEyyxIn+izk4=;
-	b=1j/1c0StxgIbqBxuolcijubS0/x79jaT/IR86x/GetHTjsPA4SCknHTb2L9Tq13CvNdCHo
-	2wgqGFOgxgvXkuH81cAMRzLcCb+eIUd76Xr1knC9u1KTZVakOzI/nPRVYKzodw/w/L9Wrx
-	ratHvh5dCdBdUjJIyFTZQOclq/8jqGg=
+	bh=kbLwGr2Tk1p277N0IGSkxxjAe8nYGHmpY42SElvUgD8=;
+	b=PjD1+4Olh+R77W1oaCIhSx2Z/3gMnB6yD/rq9UeT4NCMQOPVb6dWt4XVbCA42yU/yZGYYg
+	E3pz87Yv8aCIeqmo93B5WVh0pRBrwgqd/gX1CBlVCzkZcAQw/f+0hMMUBXDSvQAXGOeav2
+	+0T7Jdbi7ONPwB3aKnmegSGK+8+6zM4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758126485;
+	s=susede2_ed25519; t=1758126521;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DJvaxjsReAH5d3kbnAfNByUGaY9p2NVaEyyxIn+izk4=;
-	b=TCFC+7h0Uwu1Sw7H5mugScMY0PszqBSt+wDtv3LHUW6K2smYBjbXCvdhgBfKlNnQwNl319
-	nYrj6h9sDJftkYBA==
+	bh=kbLwGr2Tk1p277N0IGSkxxjAe8nYGHmpY42SElvUgD8=;
+	b=Q/TIevOhZPPqxS+YiOw0kGYk+G8F9+aqBxx7lMGkANqj1j7Mcn1ipPf03dL5dmuLsQlEgs
+	S4/IdZckIEuwvBAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4BA61368D;
-	Wed, 17 Sep 2025 16:28:05 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D98C91368D;
+	Wed, 17 Sep 2025 16:28:41 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8VwWLJXhymjuMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 16:28:05 +0000
+	id vlAbNbnhymglMgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 16:28:41 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6940BA083B; Wed, 17 Sep 2025 18:28:05 +0200 (CEST)
-Date: Wed, 17 Sep 2025 18:28:05 +0200
+	id 69A2CA083B; Wed, 17 Sep 2025 18:28:37 +0200 (CEST)
+Date: Wed, 17 Sep 2025 18:28:37 +0200
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
@@ -99,10 +99,10 @@ Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
 	Jakub Kicinski <kuba@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
 	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 1/9] uts: split namespace into separate header
-Message-ID: <aoqhkflvxtqwo6xg72pqhuqz6khzqiqpjh2xoboubhv3kctjpo@bheczoufd5yh>
+Subject: Re: [PATCH 2/9] mnt: expose pointer to init_mnt_ns
+Message-ID: <oqtggwqink4kthsxiv6tv6q6l7tgykosz3tenek2vejqfiuqzl@drczxzwwucfi>
 References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
- <20250917-work-namespace-ns_common-v1-1-1b3bda8ef8f2@kernel.org>
+ <20250917-work-namespace-ns_common-v1-2-1b3bda8ef8f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -111,10 +111,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917-work-namespace-ns_common-v1-1-1b3bda8ef8f2@kernel.org>
+In-Reply-To: <20250917-work-namespace-ns_common-v1-2-1b3bda8ef8f2@kernel.org>
 X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: C73BD20D71
+X-Rspamd-Queue-Id: E793320D7C
 X-Rspamd-Action: no action
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-2.51 / 50.00];
@@ -140,176 +140,64 @@ X-Spamd-Result: default: False [-2.51 / 50.00];
 	FROM_HAS_DN(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
 	MISSING_XM_UA(0.00)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,suse.cz,cmpxchg.org,suse.com,linutronix.de];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
 X-Spam-Score: -2.51
 
-On Wed 17-09-25 12:28:00, Christian Brauner wrote:
-> We have dedicated headers for all namespace types. Add one for the uts
-> namespace as well. Now it's consistent for all namespace types.
+On Wed 17-09-25 12:28:01, Christian Brauner wrote:
+> There's various scenarios where we need to know whether we are in the
+> initial set of namespaces or not to e.g., shortcut permission checking.
+> All namespaces expose that information. Let's do that too.
 > 
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Fine by me. Feel free to add:
+Right. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  include/linux/uts_namespace.h | 65 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/utsname.h       | 58 +-------------------------------------
->  2 files changed, 66 insertions(+), 57 deletions(-)
+>  fs/namespace.c                | 2 ++
+>  include/linux/mnt_namespace.h | 2 ++
+>  2 files changed, 4 insertions(+)
 > 
-> diff --git a/include/linux/uts_namespace.h b/include/linux/uts_namespace.h
-> new file mode 100644
-> index 000000000000..c2b619bb4e57
-> --- /dev/null
-> +++ b/include/linux/uts_namespace.h
-> @@ -0,0 +1,65 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_UTS_NAMESPACE_H
-> +#define _LINUX_UTS_NAMESPACE_H
-> +
-> +#include <linux/ns_common.h>
-> +#include <uapi/linux/utsname.h>
-> +
-> +struct user_namespace;
-> +extern struct user_namespace init_user_ns;
-> +
-> +struct uts_namespace {
-> +	struct new_utsname name;
-> +	struct user_namespace *user_ns;
-> +	struct ucounts *ucounts;
-> +	struct ns_common ns;
-> +} __randomize_layout;
-> +
-> +extern struct uts_namespace init_uts_ns;
-> +
-> +#ifdef CONFIG_UTS_NS
-> +static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
-> +{
-> +	return container_of(ns, struct uts_namespace, ns);
-> +}
-> +
-> +static inline void get_uts_ns(struct uts_namespace *ns)
-> +{
-> +	refcount_inc(&ns->ns.count);
-> +}
-> +
-> +extern struct uts_namespace *copy_utsname(unsigned long flags,
-> +	struct user_namespace *user_ns, struct uts_namespace *old_ns);
-> +extern void free_uts_ns(struct uts_namespace *ns);
-> +
-> +static inline void put_uts_ns(struct uts_namespace *ns)
-> +{
-> +	if (refcount_dec_and_test(&ns->ns.count))
-> +		free_uts_ns(ns);
-> +}
-> +
-> +void uts_ns_init(void);
-> +#else
-> +static inline void get_uts_ns(struct uts_namespace *ns)
-> +{
-> +}
-> +
-> +static inline void put_uts_ns(struct uts_namespace *ns)
-> +{
-> +}
-> +
-> +static inline struct uts_namespace *copy_utsname(unsigned long flags,
-> +	struct user_namespace *user_ns, struct uts_namespace *old_ns)
-> +{
-> +	if (flags & CLONE_NEWUTS)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	return old_ns;
-> +}
-> +
-> +static inline void uts_ns_init(void)
-> +{
-> +}
-> +#endif
-> +
-> +#endif /* _LINUX_UTS_NAMESPACE_H */
-> diff --git a/include/linux/utsname.h b/include/linux/utsname.h
-> index 5d34c4f0f945..547bd4439706 100644
-> --- a/include/linux/utsname.h
-> +++ b/include/linux/utsname.h
-> @@ -7,7 +7,7 @@
->  #include <linux/nsproxy.h>
->  #include <linux/ns_common.h>
->  #include <linux/err.h>
-> -#include <uapi/linux/utsname.h>
-> +#include <linux/uts_namespace.h>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index a68998449698..c8251545d57e 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -81,6 +81,7 @@ static DECLARE_RWSEM(namespace_sem);
+>  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+>  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+>  static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
+> +struct mnt_namespace *init_mnt_ns;
 >  
->  enum uts_proc {
->  	UTS_PROC_ARCH,
-> @@ -18,62 +18,6 @@ enum uts_proc {
->  	UTS_PROC_DOMAINNAME,
->  };
+>  #ifdef CONFIG_FSNOTIFY
+>  LIST_HEAD(notify_list); /* protected by namespace_sem */
+> @@ -6037,6 +6038,7 @@ static void __init init_mount_tree(void)
+>  	set_fs_root(current->fs, &root);
 >  
-> -struct user_namespace;
-> -extern struct user_namespace init_user_ns;
-> -
-> -struct uts_namespace {
-> -	struct new_utsname name;
-> -	struct user_namespace *user_ns;
-> -	struct ucounts *ucounts;
-> -	struct ns_common ns;
-> -} __randomize_layout;
-> -extern struct uts_namespace init_uts_ns;
-> -
-> -#ifdef CONFIG_UTS_NS
-> -static inline struct uts_namespace *to_uts_ns(struct ns_common *ns)
-> -{
-> -	return container_of(ns, struct uts_namespace, ns);
-> -}
-> -
-> -static inline void get_uts_ns(struct uts_namespace *ns)
-> -{
-> -	refcount_inc(&ns->ns.count);
-> -}
-> -
-> -extern struct uts_namespace *copy_utsname(unsigned long flags,
-> -	struct user_namespace *user_ns, struct uts_namespace *old_ns);
-> -extern void free_uts_ns(struct uts_namespace *ns);
-> -
-> -static inline void put_uts_ns(struct uts_namespace *ns)
-> -{
-> -	if (refcount_dec_and_test(&ns->ns.count))
-> -		free_uts_ns(ns);
-> -}
-> -
-> -void uts_ns_init(void);
-> -#else
-> -static inline void get_uts_ns(struct uts_namespace *ns)
-> -{
-> -}
-> -
-> -static inline void put_uts_ns(struct uts_namespace *ns)
-> -{
-> -}
-> -
-> -static inline struct uts_namespace *copy_utsname(unsigned long flags,
-> -	struct user_namespace *user_ns, struct uts_namespace *old_ns)
-> -{
-> -	if (flags & CLONE_NEWUTS)
-> -		return ERR_PTR(-EINVAL);
-> -
-> -	return old_ns;
-> -}
-> -
-> -static inline void uts_ns_init(void)
-> -{
-> -}
-> -#endif
-> -
->  #ifdef CONFIG_PROC_SYSCTL
->  extern void uts_proc_notify(enum uts_proc proc);
->  #else
+>  	ns_tree_add(ns);
+> +	init_mnt_ns = ns;
+>  }
+>  
+>  void __init mnt_init(void)
+> diff --git a/include/linux/mnt_namespace.h b/include/linux/mnt_namespace.h
+> index 70b366b64816..7e23c8364a9c 100644
+> --- a/include/linux/mnt_namespace.h
+> +++ b/include/linux/mnt_namespace.h
+> @@ -11,6 +11,8 @@ struct fs_struct;
+>  struct user_namespace;
+>  struct ns_common;
+>  
+> +extern struct mnt_namespace *init_mnt_ns;
+> +
+>  extern struct mnt_namespace *copy_mnt_ns(unsigned long, struct mnt_namespace *,
+>  		struct user_namespace *, struct fs_struct *);
+>  extern void put_mnt_ns(struct mnt_namespace *ns);
 > 
 > -- 
 > 2.47.3
