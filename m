@@ -1,102 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-61925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753C7B7E8BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:52:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A2EB7E900
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E81164E1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 12:49:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED297BB0E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 12:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4587D306B1E;
-	Wed, 17 Sep 2025 12:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633BB183CA6;
+	Wed, 17 Sep 2025 12:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="cMDTF90E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0iAu4bf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88030183CA6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 12:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D1A30CB21
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 12:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113302; cv=none; b=SAKS014SJyTNoRJ/oaVPeR3+3kG2NJLvLxGjvdRJzw6XXZQz0SB7T+Qruzsexpm0/iv57kBPLaIGhjasCHjPqHafZ2h7hSbJJudXRO90kH4sDTZM6X8AgWD40GTmmNztfvq0JcK7XXZ6ad82eJXilE9T91ke9gYEMJke2i9AFRg=
+	t=1758113460; cv=none; b=Pr9L/qggL5dBkdLSw1GBr7sWHurnFgsnWfZBhw5pGy76oSmmKAKxsBKuJuciQPcCoryCP5d6Em3xJp63ZbsFPI1t0R/c/cXeY5dn/FzLj86rEmnOKI+T+W3bpBn45YYuwKE2aoY74nP58mEAp8M9X6gVrDRb2pfr+sG0+yTcTog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113302; c=relaxed/simple;
-	bh=mzoJJTaUHkHZHToYowEQCZnMPpDM4R66Ou5zGDbIBXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QqMh9GUfsgO27ktjGuMi3sHjr8imDV+2PUTyWi4aP0HdztRARL5jdKj6Cao50zWpH954Fl4Yua7kxOjD4wYROVYKOIht+tBna/MlGJXb5k1Wfc0YZjq2BzPHKwODQEVu3p/Zt1CPd5vyHhHlqTB0zVeYa5IBdO90rK9r1T8UO4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=cMDTF90E; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b042cc39551so1103933466b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 05:48:20 -0700 (PDT)
+	s=arc-20240116; t=1758113460; c=relaxed/simple;
+	bh=6W7LdjEg9c75ZY24gbntewQyMFhu8A3a6cFM/hRcPNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OipPSHGofmsFhGrWiuvEYht4NFxDTpGe1r7LtpupI4R3MAQ88Uvhb7NKt3g/8Q5a2OEo9yFZJ7Oxl9a73EVUxleAQ/+mAC+fr2F9jObkfv+Y3hlb/8PKRr3hZQCsQbdheu/m6bPR8cBWY5bwMB7o4dCYLxhRu7dNHYmw30qwjX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U0iAu4bf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso65777685e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 05:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758113299; x=1758718099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mzoJJTaUHkHZHToYowEQCZnMPpDM4R66Ou5zGDbIBXA=;
-        b=cMDTF90EGBeuHInGda+w93d1GOwo2rHKkwntG0bwK+MWxwhfBaJFYt5If1zJdMil24
-         5xX3bI2z91Y8/9jTDIzQUP2OqhEPBttZlBiN0MZ1RwtFljVXPaOlAxidBHG1bHKGyzoP
-         QTkuajgM283DoE5D3a/0vq56noXNHVURz2XTLjBoYcF7KTd9nf8YPUUNlhoYxtIKi9C4
-         p9tCADKAmVwYGS1AOMtO8qemwur1QETYSt37hZZKVFKHI9pzl1Y5Q2ORFAEEvyDtovFU
-         tgQ5sV1z7fR10O3pL+ixZnw57A7rQBpgvY0OpvdyxvqgbmfPG3A2uj4GOEwCOk9YeN2n
-         neNw==
+        d=gmail.com; s=20230601; t=1758113457; x=1758718257; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/eSyRA5oueLfSAHQhBZdQPij9wtIRHuJIzp8LeX2224=;
+        b=U0iAu4bfH0MZI/s1RpfV40eEkDSdChd9h8Ei4xeZE4nArzInXYvQv4v6Y5VJFxjfrT
+         mkgo3rEf69xPXqy6NRwwmogCC+zgSJLuj0JhpDisPqYzQiFEgR1BbYNTFqEpydKxovCn
+         5w+6XcZOHdx/WXxswS5AdcoKtiBOSIz0YkSrwJeYr3Bhz9LALjd8TU5t1l7vBcTqbD0A
+         EZj9zC3ycgrkN08CIkmcuBhdYi2NbUFQrA3oZ0yLfr6hTC0EbqFvSSM/JzorPBlE+ACT
+         tXCGWfalAvNZm4+flZGsAolY+IPS2X/xToY/Ek6fguVWqTH9gISvNgoxHgOrs6QNpaSr
+         MFag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758113299; x=1758718099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mzoJJTaUHkHZHToYowEQCZnMPpDM4R66Ou5zGDbIBXA=;
-        b=lRsmScG7zQ5luMt+VVT3YHeB38Uzca68F/aNVi9cAkAhfYPGu8jq35+L1IZpRAV3Gp
-         woFU1Fc3jKqQ7XwVuNcfJpTB9hDFUeo9FshXwSVLpXFBSQ+y4lBXv7r0c6Oz7avtDEJn
-         zAQZR4++Zo1NQxDFPlbqcJZuekdVVEz/O+qUp18+kzBdQYR1XGwg69y8Eh1cpixh0j0b
-         tWngOePDn7KFi+aYzwZHdwRL1nQ2LXYGzlCevNYxzPrPeInsINzezyHBWpz1uZt3jkFQ
-         bVsTMM4myFtGdTwDnvmv4HaakZNfGiGPv39oFaXdBqI5rlu9yG5ZKixHQ6QMNj1wzEN4
-         Y90A==
-X-Gm-Message-State: AOJu0YxaJzec3nmf3chnS4v1y9pps8iXVdDiHL1/Bo5brzxI/qjz/Di7
-	fStGdY9lNHYWqW5dk8kJIs8qP2tmqe7WY1NH/YMR6ubsosMNubG2aBrj0OqfKt/zTbq3BHtlPDG
-	VAPfxHHeyPUEZllUWCRBeGjILNdbhGsnNaB4SsyhHMg==
-X-Gm-Gg: ASbGnctKFJSg4NpyF6HkibBS9bXWnMCUsXaosbzTHsjiXrVm6j7FWkr0Yu8VYNVoWRC
-	niCuDZPuieStD9/AT/4Sw2GDQO3ZOYrUxRQyvYSZE57ci6ZYMI3AlubSiDeZt3xowEkAJND4xVB
-	ZRXUK/a2SR11FmuLOvnS/GJthMLLYSxdhwmwBVeBPY1ude7H6sFlxeWbChsqnsDMSTrAn3YFDcO
-	BJtZqiIl6QwtnwXqDqRa491AaWYfYO8NdrF
-X-Google-Smtp-Source: AGHT+IGxLydLDJb0VdYSaq6Lk+OQ4q1aEqSqriHtwbCsy+e8WDZN7b+TQjeMCOhaF7PVT8Bkog08GU6BKCkdGttIS0I=
-X-Received: by 2002:a17:907:3e27:b0:b09:6ff1:e65d with SMTP id
- a640c23a62f3a-b1bc2778d71mr257244066b.61.1758113298807; Wed, 17 Sep 2025
- 05:48:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758113457; x=1758718257;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/eSyRA5oueLfSAHQhBZdQPij9wtIRHuJIzp8LeX2224=;
+        b=dgahO9hUG5COdT9bW2lHbVhP/tXuT+UNcEj65gEZWJSiDdPKT4KHjcenR4YCiFvvz2
+         c3AwltO9OP81XpBRfZJukL5HzeTxoG0sgSbj0A4mBLL1Un4GEd9hWCR2Dz4jfa2wE1Ry
+         KM8ZZEVROCfMtS3iTArFriwRTB19M5+ahM6LpA7tba541U9jbUrlEdn9X2B7kV4RJGCP
+         +eg8cITcVYUtAovofl0Q7ki6AKgdEq/dHSJWfB6decKeoyDO7tsiDhmrdKJKMSYQBdnS
+         8R7D8Tf97elHrJA2wx9Er1dp2oUTyK7OTnghd/653I8aRc76yU5t9Mnx0HSwccs9zHdF
+         vn/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2YNLDM/3aTKswXGd+6/7Ifh/9+pfZj4yK8VlE9U/h2HSQIPMWq6j8g0i4uK/fW33dyfzW4KaCQmhhqhVa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIN/LyMePhw7BiIeUaXCmnsmeWGb1SzzMDcEEfKglqcZJ4hvXt
+	eJQ4fq5Z5GxfFEfaWRSlsVm4JNpTxgptswPA6QZVUsonaA2lpl/v47eo
+X-Gm-Gg: ASbGncv2WSrtI7XIVdeHIF5ZDy4ucXRcueK99XX+gR7Vj+oyWi//BPZTm3n0BPl7Uk9
+	9baHn0agjB00e53zVEmyIndgJIJ9VDZx0GyhEnO2+7yq0qhE4K41sH6f/0RtKbUpDYXiLBfxrRl
+	4lDjlM8q06cB3XqJ1cLzZNUHJRxtjkNswxi0mUvm0yQxiCJE/x72yQIPQnlfHyh9JFPFWM/iDmA
+	U8yFQel3vgRHCkyBwC3W6+VqI4yj5wF0UH4q88fV+oooyrKe2KAGF4oFXDW3apSCjCpYp+qAkXs
+	0WrKHJt+ZQqzAnXGbxl4ZwlSI5CPiyVUQ7Clcp0ZbCfjQBfWdsaxlPiepO45aef54Wkm1SNXpoX
+	CYbfNJIDKNg5E/tZw3KMCJTCciiRkerPlxR/XfnhLg3j27qvyubJ9BSn3zIaf7IZeBlBjxg==
+X-Google-Smtp-Source: AGHT+IHFSppk996QzBjjlSKFZhWiUI+JlDHTsb1+baHRJATrYU3tIfMGlg87oF6xS1Lygp8exZOqtQ==
+X-Received: by 2002:a05:600c:1549:b0:45d:cfc6:5166 with SMTP id 5b1f17b1804b1-46205eb142emr21520885e9.23.1758113456708;
+        Wed, 17 Sep 2025 05:50:56 -0700 (PDT)
+Received: from f (cst-prg-88-146.cust.vodafone.cz. [46.135.88.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46138695223sm35987005e9.5.2025.09.17.05.50.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 05:50:55 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:49:43 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan <shuah@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Soheil Hassas Yeganeh <soheil@google.com>, 
+	Khazhismel Kumykov <khazhy@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+Message-ID: <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+References: <cover.1752824628.git.namcao@linutronix.de>
+ <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
- <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
- <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
- <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com> <CAKPOu+_B=0G-csXEw2OshD6ZJm0+Ex9dRNf6bHpVuQFgBB7-Zw@mail.gmail.com>
-In-Reply-To: <CAKPOu+_B=0G-csXEw2OshD6ZJm0+Ex9dRNf6bHpVuQFgBB7-Zw@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 14:48:07 +0200
-X-Gm-Features: AS18NWBvdouXUe1Mvci0ghTgQgjd6tzI9CRI7bVed8MohvrSsbtpRmVZImWkHk8
-Message-ID: <CAKPOu+-xr+nQuzfjtQCgZCqPtec=8uQiz29H5+5AeFzTbp=1rw@mail.gmail.com>
-Subject: Re: Need advice with iput() deadlock during writeback
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
 
-On Wed, Sep 17, 2025 at 11:20=E2=80=AFAM Max Kellermann
-<max.kellermann@ionos.com> wrote:
-> I had already started writing exactly this, very similar to your
-> sketch.
+On Fri, Jul 18, 2025 at 09:52:29AM +0200, Nam Cao wrote:
+> ep_events_available() checks for available events by looking at ep->rdllist
+> and ep->ovflist. However, this is done without a lock, therefore the
+> returned value is not reliable. Because it is possible that both checks on
+> ep->rdllist and ep->ovflist are false while ep_start_scan() or
+> ep_done_scan() is being executed on other CPUs, despite events are
+> available.
+> 
+> This bug can be observed by:
+> 
+>   1. Create an eventpoll with at least one ready level-triggered event
+> 
+>   2. Create multiple threads who do epoll_wait() with zero timeout. The
+>      threads do not consume the events, therefore all epoll_wait() should
+>      return at least one event.
+> 
+> If one thread is executing ep_events_available() while another thread is
+> executing ep_start_scan() or ep_done_scan(), epoll_wait() may wrongly
+> return no event for the former thread.
+> 
+> This reproducer is implemented as TEST(epoll65) in
+> tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
+> 
+> Fix it by skipping ep_events_available(), just call ep_try_send_events()
+> directly.
+> 
+> epoll_sendevents() (io_uring) suffers the same problem, fix that as well.
+> 
+> There is still ep_busy_loop() who uses ep_events_available() without lock,
+> but it is probably okay (?) for busy-polling.
+> 
 
-I just submitted the patch, and it was even simpler than my first
-draft, because I could use the existing work_struct in ceph_inode_info
-and donate the inode reference to it.
-I'd welcome your opinion on this approach.
+I'll say upfront I'm not an epoll person, just looked here out of
+curiosity.
+
+I can agree there is a bug. The event is generated before any of the
+threads even exist and they only poll for it, none of them consume it.
+
+However, the commit message fails to explain why the change fixes
+anything and I think your patch de facto reverts e59d3c64cba6 ("epoll:
+eliminate unnecessary lock for zero timeout"). Looking at that diff
+the point was to avoid the expensive lock trip if timeout == 0 and there
+are no events.
+
+As for the bug is, from my reading the ep_start_scan()/ep_done_scan()
+pair transiently disturbs the state checked by ep_events_available(),
+resulting in false-negatives. Then the locked check works because by the
+time you acquire it, the damage is undone.
+
+Given the commits referenced in Fixes:, I suspect the real fix would be
+to stop destroying that state of course.
+
+But if that's not feasible, I would check if a sequence counter around
+this would do the trick -- then the racy ep_events_available(ep) upfront
+would become safe with smaller overhead than with your proposal for the
+no-event case, but with higher overhead when there is something.
+
+My proposal is trivial to implement, I have no idea if it will get a
+buy-in though.
+
+> Fixes: c5a282e9635e ("fs/epoll: reduce the scope of wq lock in
+> epoll_wait()") Fixes: e59d3c64cba6 ("epoll: eliminate unnecessary lock
+> for zero timeout") Fixes: ae3a4f1fdc2c ("eventpoll: add
+> epoll_sendevents() helper") Signed-off-by: Nam Cao
+> <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
+> ---
+>  fs/eventpoll.c | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 0fbf5dfedb24..541481eafc20 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2022,7 +2022,7 @@ static int ep_schedule_timeout(ktime_t *to)
+>  static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  		   int maxevents, struct timespec64 *timeout)
+>  {
+> -	int res, eavail, timed_out = 0;
+> +	int res, eavail = 1, timed_out = 0;
+>  	u64 slack = 0;
+>  	wait_queue_entry_t wait;
+>  	ktime_t expires, *to = NULL;
+> @@ -2041,16 +2041,6 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  		timed_out = 1;
+>  	}
+>  
+> -	/*
+> -	 * This call is racy: We may or may not see events that are being added
+> -	 * to the ready list under the lock (e.g., in IRQ callbacks). For cases
+> -	 * with a non-zero timeout, this thread will check the ready list under
+> -	 * lock and will add to the wait queue.  For cases with a zero
+> -	 * timeout, the user by definition should not care and will have to
+> -	 * recheck again.
+> -	 */
+> -	eavail = ep_events_available(ep);
+> -
+>  	while (1) {
+>  		if (eavail) {
+>  			res = ep_try_send_events(ep, events, maxevents);
+> @@ -2496,9 +2486,7 @@ int epoll_sendevents(struct file *file, struct epoll_event __user *events,
+>  	 * Racy call, but that's ok - it should get retried based on
+>  	 * poll readiness anyway.
+>  	 */
+> -	if (ep_events_available(ep))
+> -		return ep_try_send_events(ep, events, maxevents);
+> -	return 0;
+> +	return ep_try_send_events(ep, events, maxevents);
+>  }
+>  
+>  /*
+> -- 
+> 2.39.5
+> 
 
