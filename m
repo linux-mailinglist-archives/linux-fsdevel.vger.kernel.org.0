@@ -1,484 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-61855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB46B7EB4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:58:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD7DB7C7B6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9211B24A42
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Sep 2025 23:59:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6CFA7ACB79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 00:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E8E2D373F;
-	Tue, 16 Sep 2025 23:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5991A2392;
+	Wed, 17 Sep 2025 00:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="O3CQsZx4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PYutQu8g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3lswAoh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568D36D;
-	Tue, 16 Sep 2025 23:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AD97082D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 00:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758067169; cv=none; b=SEQZZxFT80BYBrrruSRkpvBW06oCyiVXocECZxM1/QAXC3p13MubcANdIKgND6soFfLypaNR7KV4UZbS8R92lMhoisOiBLEE3AUhDkFKNAwUyVKVI/XmaqlxETOvww9xtH/xoOrtTqrbV8Ub+cM04pEHWguf7Ma18J4qVhsQkKc=
+	t=1758068232; cv=none; b=NCKHSsypx3WHkLHHz5js8wR3iGn1X+9zHy93KZ8d7SuP9SN7l9/wQJmdj4LzbPWjO1ipZl8/smdZmQAP0YB707ZQvKVvareb8K/cq4KUkivFcVHgO4qTc3ozwsL1t3vrHTwzf5H9LswL3MPJxlKRQmmTWFwrwcDFs1Rg+V/d8WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758067169; c=relaxed/simple;
-	bh=+8zaMMV3T6EoZfOA8D69GwX/UBqPE2EJSXGicAyH978=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHDDtPdRHPdCAyHG36Pk0i6Um/b7x8BSz2+W+abTIuojL9jmL3yrPenXwP1TrqINO4EhMBeJDVUvxQCXYxSQq/PN/BGOKihZy6q1tD/VUS4BXKqaIcF24nGEsKio5vVUvjNPrKJpF/7GFM1g3IHgEj9+iJoHZCYXA80SL+quiBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=O3CQsZx4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PYutQu8g; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id D44141D002F8;
-	Tue, 16 Sep 2025 19:59:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 16 Sep 2025 19:59:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758067165;
-	 x=1758153565; bh=DeqvTAVJZs8kmAzF9JBr74N4gch5my6l5YGk030/rVI=; b=
-	O3CQsZx4iLdcse1WZipL4T0mlZSYKoUfusrGGFLRr3jm60tr7KalZDsE6SLcs+b1
-	zj3oYLGDbHT5p3kycuyK+sTGImLGZC9nXvN9c//ouaTgkqks6oxLQV9yRmZn8+U3
-	T32eVM7ZBkSjfwA7/wmSqQMYYKTqpEt0bSUq7GVthY7PBwtvZEqOCtWski///lZJ
-	wSmVus7r82sKINMmaGt5y1p2CxtnkwwptbR74xeEtwErjdRTlyyy7bxgbFRyi9h9
-	JyFIEHNpHA94h/olJ7veD6eq/ZkOmD81DRDE/cKjdpEFo0iry0MFfhKUHUWWwH1Q
-	fMQJ0kAol+LVzGDXnDqemw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758067165; x=
-	1758153565; bh=DeqvTAVJZs8kmAzF9JBr74N4gch5my6l5YGk030/rVI=; b=P
-	YutQu8gSnWPNhvoTqEd33YM3h+VsDX61rcor1lAE9A78jlRkKFSQcbWF20djkV2d
-	1zFsQRfne551LOs0hpca9tEDH/JeYDsw8NUeWJu4VU0wp3jVhzT/nRZL3RQfGBCQ
-	ajLx6jEzJzzSgZW9+qOQKdxxhzT4T82Pj1FhH8BC3LO2ndBrFBOxQDx4viYSUVHp
-	iomn82PPel9DUvB6zr1g4Boo6q6r1p02a9mwDinU4Us4AsCmP6CrKHvVwPvl0ArI
-	D6Ng+wYRb+1C4aACgTGrnJn5SGTXrSm3QdwYbmJ4mkiP0HoC0bFoQaIUVYcc0dio
-	xFFy8UkvOcTK2cDUCMQkA==
-X-ME-Sender: <xms:3PnJaHlntwyOjtKGLfbZCOMqJL3-hzW5AShkKUbVWvGOFqwlErxuvg>
-    <xme:3PnJaGpkYC9S5VIhma125yIzgQRx5azK6Nu1EfEnoTm3PwxrQSbFZShZm3VgbeqUK
-    puYVvy9GCw8yJSaIaU>
-X-ME-Received: <xmr:3PnJaEEhYV9ZBRlTgueJ1uVfE_uO63exoe3pEnfGGVsj19aaIPgatcxIe4sH8Rn17HXBu0z4s3Q_NDre2d86oo8y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegudelhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
-    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
-    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehlihhnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtoheprg
-    hsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtohepmhhitgesughi
-    ghhikhhougdrnhgvthdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtohepvhelfhhs
-    sehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepghhnohgrtghksehgohhogh
-    hlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgv
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtg
-    ii
-X-ME-Proxy: <xmx:3PnJaMSTUnrICQq9MwrkSqycj8p39QHYUL7ZJvGw5IEa6cJ9Efdxow>
-    <xmx:3PnJaKN1RapJMK3ggba5I5J9ZywOIHNrPnJsde592chGinxRST15GA>
-    <xmx:3PnJaJn4ahR9g5SFlOZj13KtF981dBfFVLsB0INTcFpWx0t5gNa9yg>
-    <xmx:3PnJaMYeg_6bX9IXbRWOw_Ezcl5fAx3tk_4C3WQ_bqdXVtkmIy6h5w>
-    <xmx:3fnJaKffWnkb60wQqVwLjeeGBLVm8ojc-e0hWfae1Iwhj8EAeGo2QMFQ>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Sep 2025 19:59:23 -0400 (EDT)
-Message-ID: <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org>
-Date: Wed, 17 Sep 2025 00:59:21 +0100
+	s=arc-20240116; t=1758068232; c=relaxed/simple;
+	bh=8bMaW+s8iABakKwgqc6w26p8Hw7d/FhUe28p51azdRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WrxEr/ihKH/erAhk9sfxEhmqEgMstC8RqBEuM54nCdWOMIB0Hvk7/bwQaz4wfbjVKHTaI9yDos8Ldu+8M8RzQnfmwsIN1uc6ejSz9zGwB/m9y7lpnGwKNKdJ4TVVAev6vWHeGBlDm+UmMdnwhBwmPnjGJUyuUQaPvPA8Ky+NF1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3lswAoh; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-624fdf51b44so7279907a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 17:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758068227; x=1758673027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xXSGAh8chrKBAWdQa4v/8pOW/Kzc0QCjuDzlGtOmWtE=;
+        b=R3lswAohNyOMwWKwXZqGgP77g3sVJvV3/mg9TzComvE2dQRdy7tW7chcmxkZgXm5Pt
+         y8ShAYeveHS9l1YTNw5O33im160bqMNxYklewVHTmq3rbd0RGrrrEKQnTEBMbeGaXYw5
+         /9t/BxIp5x6YFECxH3FclY7u5KY4PbtZH6zaLOai03vO0gev+pPSHEaElrdTFmXcaWyc
+         QTS8iwW92mgHxfbuc18vaFp/5XWSypNuiQ0ebTp7bC+sVmNC7ZUfCgnRAIoiqtmsAEnR
+         1eJNoGEYG0GVdU7ROWlTd39kVc0mCpHRMJo29uGRqv8NNLmdOuXjSY3rWz0QCMxuy7U4
+         9MKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758068227; x=1758673027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xXSGAh8chrKBAWdQa4v/8pOW/Kzc0QCjuDzlGtOmWtE=;
+        b=emSleza3JeRTEH4u1tc5DJMQonfa1tVsx9v2wsEmS2UQCSW8YDcjKZ+YjNlIDEGxhy
+         FiU8WZi7e+3Ja2eQCkyWC6A1YWqpWcPuoU7rBqSqBXzmPZy8CbqoRK66688Km9XnWejN
+         JNr3u1MdIbp4jdGkUBu65w/jOD5Ozw8S3PCK1cs9xBX+C2BXHJ3YqTeKpec+hr86CTDY
+         I3FX0xwLjKxyFfDmiItv1xrCdNSaGTBESTBsIwTEiJXh9tNeGFZ0nvjR/22OQFkvtQ+c
+         BUThMKrQ41r2uDURNFeye2fmTDXdsmfkEFnuhnIfEwOGdV81URp4d2PEA+rnwX7coXwL
+         z46g==
+X-Forwarded-Encrypted: i=1; AJvYcCWQmSLzdXj/EZ3PuXm9uZdbPTgwxVK+3BYFzHgabFw4C6/YhMFZzcRaZOOePa0jQyKoZkrmknBHtGOFC4s3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLg48J5yMw83ZLTUGgnc62xDkowHw9qKrbk9uCdU/AHqR3+EBd
+	DdR3xrcOCtmvM3OLlGygeYxXZhgxmSsIZ4etRIb4MOaIQwnf4rMBbpdcpIpXbTNzszjsmTx+0yT
+	u8JekDFQyenWDzuEMiChgGBaLjatH2z0=
+X-Gm-Gg: ASbGncvUeZ/XpPjPZD9BKmG14xnZFd1wtGkah4UwVOZID7wpoMxcPF8S75XnhQ5gbk4
+	jrSjKa6TmSfY3km4Y3hsVGO/Nf9/sKBeY20KMrxz/hVDeAd7I+Leel/859zooVHglctPJOei+YW
+	GT09yEr00x9P2SO0rF4PHrooduO0rV+/PuwFJaavvsyuKXNfz/8peiT6WiRHhnJWnXYnoci76xH
+	fdlBNt7cELTlGUj10KcKh2M6OeBdGO0E3fnJBg=
+X-Google-Smtp-Source: AGHT+IHkWc8z+1xTqfr6RJDMY4BcUWdUqKw6o2ECW5HvusjoalWjKeML6JPCAbs/M1LUcK6l6vjMuNB824YFNjkP4LM=
+X-Received: by 2002:a05:6402:26c3:b0:62f:2afa:60e6 with SMTP id
+ 4fb4d7f45d1cf-62f83c3f396mr486555a12.7.1758068227086; Tue, 16 Sep 2025
+ 17:17:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-To: Christian Schoenebeck <linux_oss@crudebyte.com>,
- Dominique Martinet <asmadeus@codewreck.org>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, v9fs@lists.linux.dev, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>, linux-security-module@vger.kernel.org,
- Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
- Matthew Bobrowski <repnop@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-References: <aMih5XYYrpP559de@codewreck.org> <aMlnpz7TrbXuL0mc@codewreck.org>
- <a98c14f5-4b28-4f7b-86a2-94e3d66bbf26@maowtm.org> <3070012.VW4agfvzBM@silver>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <3070012.VW4agfvzBM@silver>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
+ <20250916194915.1395712-1-clm@meta.com>
+In-Reply-To: <20250916194915.1395712-1-clm@meta.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Sep 2025 02:16:54 +0200
+X-Gm-Features: AS18NWCoF9toVvfO2cO2nt5EYzoV_mx2NXf7z13bcCNBsYM4N3TAXw98oK0bZL0
+Message-ID: <CAGudoHE1GfgM-fX9pE-McqXH3dowPRoSPU9yHiGi+a3mk1hwnw@mail.gmail.com>
+Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
+To: Chris Mason <clm@meta.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, David Rientjes <rientjes@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Matthew Wilcox <willy@infradead.org>, linux-s390@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/16/25 20:22, Christian Schoenebeck wrote:
-> On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
->> On 9/16/25 14:35, Dominique Martinet wrote:
->>> Tingmao Wang wrote on Tue, Sep 16, 2025 at 01:44:27PM +0100:
->>>> [...]
->>>>
->>>> Note that in discussion with Mickaël (maintainer of Landlock) he
->>>> indicated
->>>> that he would be comfortable for Landlock to track a qid, instead of
->>>> holding a inode, specifically for 9pfs.
->>>
->>> Yes, I saw that, but what you pointed out about qid reuse make me
->>> somewhat uncomfortable with that direction -- you could allow a
->>> directory, delete it, create a new one somewhere else and if the
->>> underlying fs reuse the same inode number the rule would allow an
->>> intended directory instead so I'd rather not rely on qid for this
->>> either.
->>> But if you think that's not a problem in practice (because e.g. landlock
->>> would somehow detect the dir got deleted or another good reason it's not
->>> a problem) then I agree it's probably the simplest way forward
->>> implementation-wise.
->>
->> Sorry, I forgot to add that this idea would also involve Landlock holding
->> a reference to the fid (or dentry, but that's problematic due to breaking
->> unmount unless we can have a new hook) to keep the file open on the host
->> side so that the qid won't be reused (ignoring collisions caused by
->> different filesystems mounted under one 9pfs export when multidev mapping
->> is not enabled)
-> 
-> I see that you are proposing an option for your proposed qid based re-using of 
-> dentries. I don't think it should be on by default though, considering what we 
-> already discussed (e.g. inodes recycled by ext4, but also not all 9p servers 
-> handling inode collisions).
+On Wed, Sep 17, 2025 at 1:57=E2=80=AFAM Chris Mason <clm@meta.com> wrote:
+>
+> On Tue, 12 Aug 2025 16:44:11 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracl=
+e.com> wrote:
+>
+> > As part of the effort to move to mm->flags becoming a bitmap field, con=
+vert
+> > existing users to making use of the mm_flags_*() accessors which will, =
+when
+> > the conversion is complete, be the only means of accessing mm_struct fl=
+ags.
+> >
+> > This will result in the debug output being that of a bitmap output, whi=
+ch
+> > will result in a minor change here, but since this is for debug only, t=
+his
+> > should have no bearing.
+> >
+> > Otherwise, no functional changes intended.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>
+> [ ... ]
+>
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index 25923cfec9c6..17650f0b516e 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+>
+> [ ... ]
+>
+> > @@ -1251,7 +1251,7 @@ SYSCALL_DEFINE2(process_mrelease, int, pidfd, uns=
+igned int, flags)
+> >        * Check MMF_OOM_SKIP again under mmap_read_lock protection to en=
+sure
+> >        * possible change in exit_mmap is seen
+> >        */
+> > -     if (!test_bit(MMF_OOM_SKIP, &mm->flags) && !__oom_reap_task_mm(mm=
+))
+> > +     if (mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm))
+> >               ret =3D -EAGAIN;
+> >       mmap_read_unlock(mm);
+> >
+>
+> Hi Lorzeno, I think we lost a ! here.
+>
+> claude found enough inverted logic in moved code that I did a new run wit=
+h
+> a more explicit prompt for it, but this was the only new hit.
+>
 
-Just to be clear, this approach (Landlock holding a fid reference, then
-using the qid as a key to search for rules when a Landlocked process
-accesses the previously remembered file, possibly after the file has been
-moved on the server) would only be in Landlock, and would only affect
-Landlock, not 9pfs (so not sure what you meant by "re-using of dentries").
+I presume conversion was done mostly manually?
 
-The idea behind holding a fid reference within Landlock is that, because
-we have the file open, the inode would not get recycled in ext4, and thus
-no other file will reuse the qid, until we close that reference (when the
-Landlock domain terminates, or when the 9p filesystem is unmounted)
+The way(tm) is to use coccinelle.
 
-> 
->> (There's the separate issue of QEMU not seemingly keeping a directory open
->> on the host when the guest has a fid to it tho.  I checked that if the dir
->> is renamed on the host side, any process in the guest that has a fd to it
->> (checked via cd in a shell) will not be able to use that fd to read it
->> anymore.  This also means that another directory might be created with the
->> same qid.path)
-> 
-> For all open FIDs QEMU retains a descriptor to the file/directory.
-> 
-> Which 9p message do you see sent to server, Trename or Trenameat?
-> 
-> Does this always happen to you or just sometimes, i.e. under heavy load? 
+I whipped out the following real quick and results look good:
 
-Always happen, see log: (no Trename since the rename is done on the host)
+@@
+expression mm, bit;
+@@
 
-    qemu flags: -virtfs "local,path=/tmp/test,mount_tag=test,security_model=passthrough,readonly=off,multidevs=remap"
-    qemu version: QEMU emulator version 10.1.0 (Debian 1:10.1.0+ds-5)
-    guest kernel version: 6.17.0-rc5 (for the avoidance of doubt, this is clean 6.17-rc5 with no patches)
-    qemu pid: 511476
+- test_bit(bit, &mm->flags)
++ mm_flags_test(bit, mm)
 
-    root@host # ls -la /proc/511476/fd | grep test
-    lr-x------ 1 root root 64 Sep 17 00:35 41 -> /tmp/test
+$ spatch --sp-file mmbit.cocci mm/oom_kill.c
+[snip]
+@@ -892,7 +892,7 @@ static bool task_will_free_mem(struct ta
+         * This task has already been drained by the oom reaper so there ar=
+e
+         * only small chances it will free some more
+         */
+-       if (test_bit(MMF_OOM_SKIP, &mm->flags))
++       if (mm_flags_test(MMF_OOM_SKIP, mm))
+                return false;
 
-    root@guest # mount --mkdir -t 9p -o trans=virtio,cache=none,inodeident=qid,debug=13 test /tmp/test
-    root@guest # mkdir /tmp/test/dir1
-    root@guest # cd /tmp/test/dir1
-     9pnet: -- v9fs_vfs_getattr_dotl (183): dentry: ffff888102ed4d38
-     9pnet: -- v9fs_fid_find (183):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000183) >>> TGETATTR fid 1, request_mask 16383
-     9pnet: (00000183) >>> size=19 type: 24 tag: 0
-     9pnet: (00000183) <<< size=160 type: 25 tag: 0
-     9pnet: (00000183) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.3.68c9c8a3
-     <<< st_mode=000043ff st_nlink=3
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=3c st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758065706 st_atime_nsec=857221735
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758065827 st_ctime_nsec=745359877
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-     9pnet: -- v9fs_vfs_lookup (183): dir: ffff8881090e0000 dentry: (dir1) ffff888102e458f8 flags: 1
-     9pnet: -- v9fs_fid_find (183):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000183) >>> TWALK fids 1,2 nwname 1d wname[0] dir1
-     9pnet: (00000183) >>> size=23 type: 110 tag: 0
-     9pnet: (00000183) <<< size=22 type: 111 tag: 0
-     9pnet: (00000183) <<< RWALK nwqid 1:
-     9pnet: (00000183) <<<     [0] 80.5.68c9dca3
-     9pnet: (00000183) >>> TGETATTR fid 2, request_mask 6143
-     9pnet: (00000183) >>> size=19 type: 24 tag: 0
-     9pnet: (00000183) <<< size=160 type: 25 tag: 0
-     9pnet: (00000183) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.5.68c9dca3
-     <<< st_mode=000041ed st_nlink=2
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=28 st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758065827 st_atime_nsec=745359877
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758065827 st_ctime_nsec=749830521
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-     9pnet: -- v9fs_vfs_getattr_dotl (183): dentry: ffff888102e458f8
-     9pnet: -- v9fs_fid_find (183):  dentry: dir1 (ffff888102e458f8) uid 0 any 0
-     9pnet: (00000183) >>> TGETATTR fid 2, request_mask 16383
-     9pnet: (00000183) >>> size=19 type: 24 tag: 0
-     9pnet: (00000183) <<< size=160 type: 25 tag: 0
-     9pnet: (00000183) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.5.68c9dca3
-     <<< st_mode=000041ed st_nlink=2
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=28 st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758065827 st_atime_nsec=745359877
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758065827 st_ctime_nsec=749830521
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-     9pnet: -- v9fs_dentry_release (183):  dentry: dir1 (ffff888102e458f8)
-     9pnet: (00000183) >>> TCLUNK fid 2 (try 0)
-     9pnet: (00000183) >>> size=11 type: 120 tag: 0
-     9pnet: (00000183) <<< size=7 type: 121 tag: 0
-     9pnet: (00000183) <<< RCLUNK fid 2
-     9pnet: -- v9fs_vfs_lookup (183): dir: ffff8881090e0000 dentry: (dir1) ffff888102e45a70 flags: 3
-     9pnet: -- v9fs_fid_find (183):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000183) >>> TWALK fids 1,2 nwname 1d wname[0] dir1
-     9pnet: (00000183) >>> size=23 type: 110 tag: 0
-     9pnet: (00000183) <<< size=22 type: 111 tag: 0
-     9pnet: (00000183) <<< RWALK nwqid 1:
-     9pnet: (00000183) <<<     [0] 80.5.68c9dca3
-     9pnet: (00000183) >>> TGETATTR fid 2, request_mask 6143
-     9pnet: (00000183) >>> size=19 type: 24 tag: 0
-     9pnet: (00000183) <<< size=160 type: 25 tag: 0
-     9pnet: (00000183) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.5.68c9dca3
-     <<< st_mode=000041ed st_nlink=2
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=28 st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758065827 st_atime_nsec=745359877
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758065827 st_ctime_nsec=749830521
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-
-     (fid 2 is now a persistent handle pointing to /dir1, not sure why the
-     walk was done twice)
-
-    root@host # ls -la /proc/511476/fd | grep test
-    lr-x------ 1 root root 64 Sep 17 00:35 41 -> /tmp/test
-    (no fd points to dir1)
-
-    root@host # mv -v /tmp/test/dir1 /tmp/test/dir2
-    renamed '/tmp/test/dir1' -> '/tmp/test/dir2'
-
-    root@guest:/tmp/test/dir1# ls
-     9pnet: -- v9fs_vfs_getattr_dotl (183): dentry: ffff888102e45a70
-     9pnet: -- v9fs_fid_find (183):  dentry: dir1 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000183) >>> TGETATTR fid 2, request_mask 16383
-     9pnet: (00000183) >>> size=19 type: 24 tag: 0
-     9pnet: (00000183) <<< size=11 type: 7 tag: 0
-     9pnet: (00000183) <<< RLERROR (-2)
-     9pnet: -- v9fs_file_open (188): inode: ffff888102e80640 file: ffff88810af45340
-     9pnet: -- v9fs_fid_find (188):  dentry: dir1 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000188) >>> TWALK fids 2,3 nwname 0d wname[0] (null)
-     9pnet: (00000188) >>> size=17 type: 110 tag: 0
-     9pnet: (00000188) <<< size=11 type: 7 tag: 0
-     9pnet: (00000188) <<< RLERROR (-2)
-    ls: cannot open directory '.': No such file or directory
-
-It looks like as soon as the directory was moved on the host, TGETATTR on
-the guest-opened fid 2 fails, even though I would expect that if QEMU
-opens a fd to the dir and use that fd whenever fid 2 is used, that
-TGETATTR should succeed.  The fact that I can't see anything pointing to
-dir1 in /proc/511476/fd was also suspicious.
-
-Also, if I remove the dir on the host, then repoen it in the guest, ls
-starts working again:
-
-    root@host # mv -v /tmp/test/dir2 /tmp/test/dir1
-    renamed '/tmp/test/dir2' -> '/tmp/test/dir1'
-
-    root@guest:/tmp/test/dir1# ls
-     9pnet: -- v9fs_file_open (189): inode: ffff888102e80640 file: ffff88810af47100
-     9pnet: -- v9fs_fid_find (189):  dentry: dir1 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000189) >>> TWALK fids 2,3 nwname 0d wname[0] (null)
-     9pnet: (00000189) >>> size=17 type: 110 tag: 0
-     9pnet: (00000189) <<< size=9 type: 111 tag: 0
-     9pnet: (00000189) <<< RWALK nwqid 0:
-     9pnet: (00000189) >>> TLOPEN fid 3 mode 100352
-     9pnet: (00000189) >>> size=15 type: 12 tag: 0
-     9pnet: (00000189) <<< size=24 type: 13 tag: 0
-     9pnet: (00000189) <<< RLOPEN qid 80.5.68c9dca3 iounit 0
-     9pnet: -- v9fs_vfs_getattr_dotl (189): dentry: ffff888102e45a70
-     9pnet: -- v9fs_fid_find (189):  dentry: dir1 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000189) >>> TGETATTR fid 2, request_mask 16383
-     9pnet: (00000189) >>> size=19 type: 24 tag: 0
-     9pnet: (00000189) <<< size=160 type: 25 tag: 0
-     9pnet: (00000189) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.5.68c9dca3
-     <<< st_mode=000041ed st_nlink=2
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=28 st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758065827 st_atime_nsec=745359877
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758066075 st_ctime_nsec=497687251
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-     9pnet: -- v9fs_dir_readdir_dotl (189): name dir1
-     9pnet: (00000189) >>> TREADDIR fid 3 offset 0 count 131072
-     9pnet: (00000189) >>> size=23 type: 40 tag: 0
-     9pnet: (00000189) <<< size=62 type: 41 tag: 0
-     9pnet: (00000189) <<< RREADDIR count 51
-     9pnet: (00000189) >>> TREADDIR fid 3 offset 2147483647 count 131072
-     9pnet: (00000189) >>> size=23 type: 40 tag: 0
-     9pnet: (00000189) <<< size=11 type: 41 tag: 0
-     9pnet: (00000189) <<< RREADDIR count 0
-     9pnet: -- v9fs_dir_readdir_dotl (189): name dir1
-     9pnet: (00000189) >>> TREADDIR fid 3 offset 2147483647 count 131072
-     9pnet: (00000189) >>> size=23 type: 40 tag: 0
-     9pnet: (00000189) <<< size=11 type: 41 tag: 0
-     9pnet: (00000189) <<< RREADDIR count 0
-     9pnet: -- v9fs_dir_release (189): inode: ffff888102e80640 filp: ffff88810af47100 fid: 3
-     9pnet: (00000189) >>> TCLUNK fid 3 (try 0)
-     9pnet: (00000189) >>> size=11 type: 120 tag: 0
-     9pnet: (00000189) <<< size=7 type: 121 tag
-    root@guest:/tmp/test/dir1# echo $?
-    0
-
-Somehow if I rename in the guest, it all works, even though it's using the
-same fid 2 (and it didn't ask QEMU to walk the new path)
-
-    root@guest:/tmp/test/dir1# mv /tmp/test/dir1 /tmp/test/dir2
-     9pnet: -- v9fs_vfs_getattr_dotl (183): dentry: ffff888102e45a70
-     9pnet: -- v9fs_fid_find (183):  dentry: dir1 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000183) >>> TGETATTR fid 2, request_mask 16383
-     9pnet: (00000183) >>> size=19 type: 24 tag: 0
-     9pnet: (00000183) <<< size=160 type: 25 tag: 0
-     9pnet: (00000183) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.5.68c9dca3
-     <<< st_mode=000041ed st_nlink=2
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=28 st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758066561 st_atime_nsec=442431580
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758066559 st_ctime_nsec=570428555
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-     9pnet: -- v9fs_vfs_lookup (194): dir: ffff8881090e0000 dentry: (dir2) ffff888102edca48 flags: e0000
-     9pnet: -- v9fs_fid_find (194):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000194) >>> TWALK fids 1,3 nwname 1d wname[0] dir2
-     9pnet: (00000194) >>> size=23 type: 110 tag: 0
-     9pnet: (00000194) <<< size=11 type: 7 tag: 0
-     9pnet: (00000194) <<< RLERROR (-2)
-     9pnet: -- v9fs_dentry_release (194):  dentry: dir2 (ffff888102edca48)
-     9pnet: -- v9fs_vfs_lookup (194): dir: ffff8881090e0000 dentry: (dir2) ffff888102edcbc0 flags: 0
-     9pnet: -- v9fs_fid_find (194):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000194) >>> TWALK fids 1,3 nwname 1d wname[0] dir2
-     9pnet: (00000194) >>> size=23 type: 110 tag: 0
-     9pnet: (00000194) <<< size=11 type: 7 tag: 0
-     9pnet: (00000194) <<< RLERROR (-2)
-     9pnet: -- v9fs_dentry_release (194):  dentry: dir2 (ffff888102edcbc0)
-     9pnet: -- v9fs_vfs_lookup (194): dir: ffff8881090e0000 dentry: (dir2) ffff888102edcd38 flags: a0000
-     9pnet: -- v9fs_fid_find (194):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000194) >>> TWALK fids 1,3 nwname 1d wname[0] dir2
-     9pnet: (00000194) >>> size=23 type: 110 tag: 0
-     9pnet: (00000194) <<< size=11 type: 7 tag: 0
-     9pnet: (00000194) <<< RLERROR (-2)
-     9pnet: -- v9fs_vfs_rename (194): 
-     9pnet: -- v9fs_fid_find (194):  dentry: dir1 (ffff888102e45a70) uid 0 any 0
-     9pnet: -- v9fs_fid_find (194):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000194) >>> TWALK fids 1,3 nwname 0d wname[0] (null)
-     9pnet: (00000194) >>> size=17 type: 110 tag: 0
-     9pnet: (00000194) <<< size=9 type: 111 tag: 0
-     9pnet: (00000194) <<< RWALK nwqid 0:
-     9pnet: -- v9fs_fid_find (194):  dentry: / (ffff888102ed4d38) uid 0 any 0
-     9pnet: (00000194) >>> TWALK fids 1,4 nwname 0d wname[0] (null)
-     9pnet: (00000194) >>> size=17 type: 110 tag: 0
-     9pnet: (00000194) <<< size=9 type: 111 tag: 0
-     9pnet: (00000194) <<< RWALK nwqid 0:
-     9pnet: (00000194) >>> TRENAMEAT olddirfid 3 old name dir1 newdirfid 4 new name dir2
-     9pnet: (00000194) >>> size=27 type: 74 tag: 0
-     9pnet: (00000194) <<< size=7 type: 75 tag: 0
-     9pnet: (00000194) <<< RRENAMEAT newdirfid 4 new name dir2
-     9pnet: (00000194) >>> TCLUNK fid 4 (try 0)
-     9pnet: (00000194) >>> size=11 type: 120 tag: 0
-     9pnet: (00000194) <<< size=7 type: 121 tag: 0
-     9pnet: (00000194) <<< RCLUNK fid 4
-     9pnet: (00000194) >>> TCLUNK fid 3 (try 0)
-     9pnet: (00000194) >>> size=11 type: 120 tag: 0
-     9pnet: (00000194) <<< size=7 type: 121 tag: 0
-     9pnet: (00000194) <<< RCLUNK fid 3
-     9pnet: -- v9fs_dentry_release (194):  dentry: dir2 (ffff888102edcd38)
-    root@guest:/tmp/test/dir1# ls
-     9pnet: -- v9fs_file_open (195): inode: ffff888102e80640 file: ffff88810b2b1500
-     9pnet: -- v9fs_fid_find (195):  dentry: dir2 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000195) >>> TWALK fids 2,3 nwname 0d wname[0] (null)
-     9pnet: (00000195) >>> size=17 type: 110 tag: 0
-     9pnet: (00000195) <<< size=9 type: 111 tag: 0
-     9pnet: (00000195) <<< RWALK nwqid 0:
-     9pnet: (00000195) >>> TLOPEN fid 3 mode 100352
-     9pnet: (00000195) >>> size=15 type: 12 tag: 0
-     9pnet: (00000195) <<< size=24 type: 13 tag: 0
-     9pnet: (00000195) <<< RLOPEN qid 80.5.68c9dca3 iounit 0
-     9pnet: -- v9fs_vfs_getattr_dotl (195): dentry: ffff888102e45a70
-     9pnet: -- v9fs_fid_find (195):  dentry: dir2 (ffff888102e45a70) uid 0 any 0
-     9pnet: (00000195) >>> TGETATTR fid 2, request_mask 16383
-     9pnet: (00000195) >>> size=19 type: 24 tag: 0
-     9pnet: (00000195) <<< size=160 type: 25 tag: 0
-     9pnet: (00000195) <<< RGETATTR st_result_mask=6143
-     <<< qid=80.5.68c9dca3
-     <<< st_mode=000041ed st_nlink=2
-     <<< st_uid=0 st_gid=0
-     <<< st_rdev=0 st_size=28 st_blksize=131072 st_blocks=0
-     <<< st_atime_sec=1758066561 st_atime_nsec=442431580
-     <<< st_mtime_sec=1758065827 st_mtime_nsec=745359877
-     <<< st_ctime_sec=1758066568 st_ctime_nsec=562443096
-     <<< st_btime_sec=0 st_btime_nsec=0
-     <<< st_gen=0 st_data_version=0
-     9pnet: -- v9fs_dir_readdir_dotl (195): name dir2
-     9pnet: (00000195) >>> TREADDIR fid 3 offset 0 count 131072
-     9pnet: (00000195) >>> size=23 type: 40 tag: 0
-     9pnet: (00000195) <<< size=62 type: 41 tag: 0
-     9pnet: (00000195) <<< RREADDIR count 51
-     9pnet: (00000195) >>> TREADDIR fid 3 offset 2147483647 count 131072
-     9pnet: (00000195) >>> size=23 type: 40 tag: 0
-     9pnet: (00000195) <<< size=11 type: 41 tag: 0
-     9pnet: (00000195) <<< RREADDIR count 0
-     9pnet: -- v9fs_dir_readdir_dotl (195): name dir2
-     9pnet: (00000195) >>> TREADDIR fid 3 offset 2147483647 count 131072
-     9pnet: (00000195) >>> size=23 type: 40 tag: 0
-     9pnet: (00000195) <<< size=11 type: 41 tag: 0
-     9pnet: (00000195) <<< RREADDIR count 0
-     9pnet: -- v9fs_dir_release (195): inode: ffff888102e80640 filp: ffff88810b2b1500 fid: 3
-     9pnet: (00000195) >>> TCLUNK fid 3 (try 0)
-     9pnet: (00000195) >>> size=11 type: 120 tag: 0
-     9pnet: (00000195) <<< size=7 type: 121 tag: 0
-     9pnet: (00000195) <<< RCLUNK fid 3
-
-If this is surprising, I'm happy to take a deeper look over the weekend
-(but I've never tried to debug QEMU itself :D)
-
-> Because even though QEMU retains descriptors of open FIDs; when the QEMU 
-> process approaches host system's max. allowed number of open file descriptors 
-> then v9fs_reclaim_fd() [hw/9pfs/9p.c] is called, which closes some descriptors 
-> of older FIDs to (at least) keep the QEMU process alive.
-> 
-> BTW: to prevent these descriptor reclaims to happen too often, I plan to do 
-> what many other files servers do: asking the host system on process start to 
-> increase the max. number of file descriptors.
-
-Note that the above is reproduced with only 1 file open (the dir being
-renamed around)
-
-Kind regards,
-Tingmao
-
-> 
-> /Christian
-> 
-> 
+        if (atomic_read(&mm->mm_users) <=3D 1)
+@@ -1235,7 +1235,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
+                reap =3D true;
+        else {
+                /* Error only if the work has not been done already */
+-               if (!test_bit(MMF_OOM_SKIP, &mm->flags))
++               if (!mm_flags_test(MMF_OOM_SKIP, mm))
+                        ret =3D -EINVAL;
+        }
+        task_unlock(p);
+@@ -1251,7 +1251,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
+         * Check MMF_OOM_SKIP again under mmap_read_lock protection to ensu=
+re
+         * possible change in exit_mmap is seen
+         */
+-       if (!test_bit(MMF_OOM_SKIP, &mm->flags) && !__oom_reap_task_mm(mm))
++       if (!mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm))
+                ret =3D -EAGAIN;
+        mmap_read_unlock(mm);
 
