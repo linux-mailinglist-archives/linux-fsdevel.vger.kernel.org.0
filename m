@@ -1,121 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-61897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1426B7D26D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:20:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D96B7D314
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4434821BA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 09:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8D41C07607
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 09:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF71634AAF2;
-	Wed, 17 Sep 2025 09:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0EB346A06;
+	Wed, 17 Sep 2025 09:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSuYhjIB"
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="BAH2dwGU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1598884A3E;
-	Wed, 17 Sep 2025 09:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345A726B2DB;
+	Wed, 17 Sep 2025 09:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102638; cv=none; b=IhFJoLDj3Abj7EB6k8YepCEXmLpc7sP2caWygZWllac7LIBvT64ff8qLdXPIB+RJnfWNtMdwMgSfwc4QTc7yaz9Yk8ht6gfgMDbtNBR74V/3IJF6fNRHUJURpI0iOibNHjtzjjp9fdC7bL4QHSPbjeQwN2zES9S7CmFdI4wdhUs=
+	t=1758102775; cv=none; b=hmmcJVoeZGh6FVNHZcG+8wSG36H25M10EFbjXNdgVKntG1DcLi4k7iiIyHyD/L+FPxzcG2drDATeWW1T44+hfrKaKOIztT6t3QluOAkihPdYiucXn0jLy/tguYgQwvSS/NL9dqoDsrzrx1ckXesLUcQ7Ku+KZNQyGk7m+0Qn3lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102638; c=relaxed/simple;
-	bh=R8bBc8E+Z3IqtxfpLmr+7QmObySQ+mWruEPNJ7MrlFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRMeF4W6ekx/PijDAcV0ISs+X7z2Fnxendp9khd5uOsLWypBXhciz274l4BSp27TOccjsthLtGBKGdXbtUbQpBt4ZhXoZWDFW7PZMzNRCyQgyMu5o0nZVERtxsGUdLsE+Nb0tDKvBgLzt4dp7fsb1xF3BMA8dCjUzHOmtm07ie4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSuYhjIB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A16DC4CEF0;
-	Wed, 17 Sep 2025 09:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758102637;
-	bh=R8bBc8E+Z3IqtxfpLmr+7QmObySQ+mWruEPNJ7MrlFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fSuYhjIBPQXozMo1k0MYS23BlFjFflyKzb9M1olal1DqbotYr5zJO8l0sSMemANvr
-	 JIZm0E5KcqWHVcq+UJR7QNrEUu2z+Rqrfyhj932a9O2x1WDTMZMU4LHeGU+0J4eyuJ
-	 K4kixSlqEBJGjJYTr3gob3XKckJSRylgsFH58XOdeqYKnyayTN6YBRMdf+fctC4SK3
-	 AWzPoJBDk4fWUyo6RG6EQbGarou/c5TaQLpI7f38fr8zD+Df32I8yfBtDATeVEFvmA
-	 MZx+1PLSxEuhCwUODD21YBZbHLhi2AHw+SNDcQEVNHcWpClXy2uRenMP8fORyCC7zI
-	 kZFU+jQ0ZIGfA==
-Date: Wed, 17 Sep 2025 11:50:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 18/33] mnt: support ns lookup
-Message-ID: <20250917-garten-nirgendwo-f65f951a9268@brauner>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-18-1a247645cef5@kernel.org>
- <20250916035633.GM39973@ZenIV>
- <20250916035949.GO39973@ZenIV>
- <20250916044648.GP39973@ZenIV>
+	s=arc-20240116; t=1758102775; c=relaxed/simple;
+	bh=jek3eQCrIIKVzpBPRXKe0t3upClBCOumFZr1JgMJHUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Knto+d545hM78xyvvYPKF7p0NLua5CSTk/06jfUQevOjRaYWbVTy0mbpfKnvKWmL7SUZv1aTtZG8G+Kw9+72sNvqtCf8l1Bldm5kyKfZqRC9RNji+/mrfSCOgiMv3eA+QJqFvziIOxEXlgVtf3e9hCY4CElYnXuzYFWPw+SiHN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=BAH2dwGU; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=+cQHhW6VGH2OlTG9Et3G2MQsI3hAr+1+N7KUvAYnrXs=; b=BAH2dwGUm/DjXtwQPcfCNawXwX
+	Cj8dXfc52wp5b4PAS6MYGk9f0lJ0k5/8G+MyWmJs/DBeZel165Y/Sq4bndiZJRb8X6P2D/6GUZw34
+	oezHJ55H369eonRjjrRbLFGfOEsrHAIstTLnpxA+ALyJIzZyYOkWhqhrT51bmxKAT9BHWhQN5Qgo+
+	5PIaCqFTrDl9FA3yAbhd/uqyV7chjkgvSCaUktnAEb/TXDg6FG6SodxrrF5Bs3tWy9E/JJF0WnqA5
+	Wrd1VJRrOMomr8pSg+TTJXwU0Vd0aIbnyVioMpFtoylEh6aKXdJaUVnD2T4JXJjcBOTBQVn4w+ay2
+	1kj6gYD+aPs091TphSqzOBfkkkjQcNrjmEIi87SVxbJD4W1FhvQMpkgUwePpmOM3OoBsmLenk7VUX
+	sCWGH+DNPq0J5UIbvlW6l9ImOtti/ZpouFbvsgvVQTCznHyencl14tQIMVcaBo74kC5uz1jxWkr/I
+	lY6+DDGLzoY8gKgJ7JfRbA/osSMN2y+mxTCPNOez/FW2IYqdYau/hlhSH4jfb+v/u0gdiwk7IsbNi
+	VXoyB0qqY4JxOkJR6JNCyUOFNFNtIDx00YweILrczqZulo7Hzy6Ushopwh4Bh+8fzUVRZPB2PUgj0
+	2BB/FSqNi9o+Ycd2m+vx5K9Wz/GKxU9qX59TeYYa0=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>, Tingmao Wang <m@maowtm.org>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+ v9fs@lists.linux.dev, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Wed, 17 Sep 2025 11:52:35 +0200
+Message-ID: <3774641.iishnSSGpB@silver>
+In-Reply-To: <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org>
+References:
+ <aMih5XYYrpP559de@codewreck.org> <3070012.VW4agfvzBM@silver>
+ <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250916044648.GP39973@ZenIV>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 16, 2025 at 05:46:48AM +0100, Al Viro wrote:
-> On Tue, Sep 16, 2025 at 04:59:49AM +0100, Al Viro wrote:
-> > On Tue, Sep 16, 2025 at 04:56:33AM +0100, Al Viro wrote:
-> > > 	if (!RB_EMPTY_NODE(to_ns_common(ns)->ns_tree_node))
+On Wednesday, September 17, 2025 1:59:21 AM CEST Tingmao Wang wrote:
+> On 9/16/25 20:22, Christian Schoenebeck wrote:
+> > On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
+[...]
+> > I see that you are proposing an option for your proposed qid based
+> > re-using of dentries. I don't think it should be on by default though,
+> > considering what we already discussed (e.g. inodes recycled by ext4, but
+> > also not all 9p servers handling inode collisions).
+> 
+> Just to be clear, this approach (Landlock holding a fid reference, then
+> using the qid as a key to search for rules when a Landlocked process
+> accesses the previously remembered file, possibly after the file has been
+> moved on the server) would only be in Landlock, and would only affect
+> Landlock, not 9pfs (so not sure what you meant by "re-using of dentries").
+> 
+> The idea behind holding a fid reference within Landlock is that, because
+> we have the file open, the inode would not get recycled in ext4, and thus
+> no other file will reuse the qid, until we close that reference (when the
+> Landlock domain terminates, or when the 9p filesystem is unmounted)
+
+So far I only had a glimpse on your kernel patches and had the impression that 
+they are changing behaviour for all users, since you are touching dentry 
+lookup.
+
+> > For all open FIDs QEMU retains a descriptor to the file/directory.
 > > 
-> >  	if (!RB_EMPTY_NODE(&to_ns_common(ns)->ns_tree_node))
+> > Which 9p message do you see sent to server, Trename or Trenameat?
 > > 
-> > obviously...
+> > Does this always happen to you or just sometimes, i.e. under heavy load?
 > 
-> FWIW, how about the following - I put the commit below into never-rebased
-> branch, pull it into #work.mount and you do the same to your branch
-> just prior to 18/33?  The difference from one in #work.mount is that
-> this variant checks RB_EMPTY_NODE(&ns->mnt_ns_tree_node) instead of
-> list_empty(&ns->mnt_ns_list).  The reasons why it's safe lockless are
-> pretty much the same...
-> 
-> Objections?  Does vfs/vfs.git #no-rebases-mnt_ns_tree_remove look sane
-> for you?
+> Always happen, see log: (no Trename since the rename is done on the host)
+[...]
+> Somehow if I rename in the guest, it all works, even though it's using the
+> same fid 2 (and it didn't ask QEMU to walk the new path)
 
-Perfect, thank you!
+Got it. Even though QEMU *should* hold a file descriptor (or a DIR* stream, 
+which should imply a file descriptor), there is still a path string stored at 
+V9fsFidState and that path being processed at some places, probably because 
+there are path based and FID based variants (e.g Trename vs. Trenameat). Maybe 
+that clashes somewhere, not sure. So I fear you would need to debug this.
 
-> 
-> mnt_ns_tree_remove(): DTRT if mnt_ns had never been added to mnt_ns_list
->     
-> Actual removal is done under the lock, but for checking if need to bother
-> the lockless RB_EMPTY_NODE() is safe - either that namespace had never
-> been added to mnt_ns_tree, in which case the the node will stay empty, or
-> whoever had allocated it has called mnt_ns_tree_add() and it has already
-> run to completion.  After that point RB_EMPTY_NODE() will become false and
-> will remain false, no matter what we do with other nodes in the tree.
->     
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ae6d1312b184..39afeb521a80 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -187,7 +187,7 @@ static void mnt_ns_release_rcu(struct rcu_head *rcu)
->  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
->  {
->  	/* remove from global mount namespace list */
-> -	if (!is_anon_ns(ns)) {
-> +	if (!RB_EMPTY_NODE(&ns->mnt_ns_tree_node)) {
->  		mnt_ns_tree_write_lock();
->  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
->  		list_bidir_del_rcu(&ns->mnt_ns_list);
+/Christian
+
+
 
