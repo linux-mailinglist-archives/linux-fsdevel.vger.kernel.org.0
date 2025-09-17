@@ -1,128 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-62034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11246B8209F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 23:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62859B8227D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 00:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E164A3380
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 21:54:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AEAD465841
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 22:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED6D30C63A;
-	Wed, 17 Sep 2025 21:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503C730EF97;
+	Wed, 17 Sep 2025 22:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V61z6OaS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G0xhXweG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA6B30E83A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 21:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A2D30E0F5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 22:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758146064; cv=none; b=A5JvGNL0mG396zM1RZ10wfC9mCbJQFZ+M884Wu+Ic/jGDjgr1F8w1pJygbwHPeyeqxKvcC/vTPEqlVo5gFwtkaDWa827inLsBd8VLa1c8mwd+2L/P2KcTCeGiiOS8IUz9A2QdqaryqL6mHPxbgeoPYAu4YIwngCPSjGS0VXbNWk=
+	t=1758148123; cv=none; b=cJTM0o/w+vjXSvClyuaf0ras7dAyKCgbROy9qsAlWpTI0Eyd0KIbffuaCS2BVlQoGVrOTO7+mo9NnG6rWzyomcFwfyI1skxG9bPZEGG+lcwVlcU0Oh+F6wceEWrQzc/a5FmtGoufgr/HZPcv24LuGJjJDp/+sSH6tcp9QKe+R4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758146064; c=relaxed/simple;
-	bh=dnV2B2wqRFCgH/cdihnqismdKFVf2tJOPij7DasM7fE=;
+	s=arc-20240116; t=1758148123; c=relaxed/simple;
+	bh=FibkJLFpdmPs16TWPQcjI1FEmw5E/LmUaqG65SaId+U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p9rlAqXIZvZ3yB0wwDRkF7STRCnr83Pv+jPDIgTJ5Y6ShKemoNoTfgfXMDhOhw2OTIwUgyfCT4jlbIRXGVQHxZXFV+1y9Bo9qVsyo7pNIoXFkUNFxOxriCFSCGlt5ePy40a/2oa+c7/HvCMwe7AOE9SJw9DI6vXXLAW4XXiPQAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V61z6OaS; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b79c8d1e39so3599391cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 14:54:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=qxpKhc+/N3sNMRuWgCb8hBwpLOiIRrDWv0Z3DPygKJmqubpOxEwJzjXaIl4VKUto56dgCmrdWYg3LhJkA0jXac8a8/d77GCOISiyLBZjJvDBXtxc12hR98uyRypwMJZF7bvU9eFJxJ60bzLwhAoycdi5FZ8OJ8VWGt89qZwzeSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G0xhXweG; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-826311c1774so34857585a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:28:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758146062; x=1758750862; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1758148120; x=1758752920; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dnV2B2wqRFCgH/cdihnqismdKFVf2tJOPij7DasM7fE=;
-        b=V61z6OaS/2R/tgaS6yfJtz48Y+M3TsCTWj23/iSwNTeYMtw7qSyO0G0pMMpLpAOPm6
-         rV/yIr+TQ9Nn/zYD4GINOU9HTJy0ywMcjjqmD2mB8LDNDSScioHfvRoSUdlFAIqsghjj
-         zIFn7NNAqwpzHdqVFXe9iqB6QfySea7QPqT/fvU6U9xZj9Nz0QpzMCDwPxTTUTM6l+e4
-         Gq7WEGoD7Pmhgo6CcICwSUcpkg2+BUSFOLiEeaS4EBK00SLnLvYKPjrOnXx/J4BjcQqV
-         oXr+3UmtGpMiFfuPXnYcZMv3hvZhuwuF2LyVIcCRplAvZaYRCpbf3Gz2hZ0Nu/11q8Nq
-         qECQ==
+        bh=FibkJLFpdmPs16TWPQcjI1FEmw5E/LmUaqG65SaId+U=;
+        b=G0xhXweGeD4m22BpUYK2rJAB1NzwdepdngJJZpyLeE9M2TXbsH9EtKpq+2JER/nUAa
+         MqgkbSIDErbjdl4PWvA92cImUwZw93ajTaErws2Cjn17NLcx0QV8JblGkxbIMQrwD9x0
+         jGY3oh773JJCAu8IIEC/+YTNwLJhA9qOmFBUU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758146062; x=1758750862;
+        d=1e100.net; s=20230601; t=1758148120; x=1758752920;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dnV2B2wqRFCgH/cdihnqismdKFVf2tJOPij7DasM7fE=;
-        b=KdEum4Ty8br5nz47+MxG8UWgwSpO9UqDTvhNbaCH+pXylGBS9qQfNJYhkDYeybB98D
-         6SJh4qA0dtHFxfHvQWvmqYiMNsLj6A21w9/22onVIJXpeaw1yc2Pk96U1b01ugRhROAp
-         KxBPoaPsXnjniu1hvu6ITggBjNOwr7PV0Cd745lznQfgNP0zKAUoj+4WB43IAE8kjYQ7
-         0dE2zE5CF2LfKAr2qmOsGOqXQO3fHd/nLMwDF7i8KYyEm2EuNqfIFpZxyMElhmhXvLdG
-         Y+Ec03XAGuHmdqOGzX+Bv/TkDX+UvkPTbbkgtkKjVBeLONxicStrBFSeVgVt0AGxjy8J
-         BBlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUChInPZY+3yUiXQ/a4emic9736LtdQfd+hxgQoW69R2d5nTmwNm0ywK+WV6D+GfInLlspso5FyNjUR85Wr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhYM6NqgYMCaNRhCDA8RwtJCtgvtkh4vcBZu3Jt3VGK5SiJljZ
-	SBGABoywezc2lpSep29A/qTOAt4I2JoNiY9c4h6ZszKlLUHRcFHplp+ltOtFI9OmIESd9MeSrl2
-	UVLYKxO7yssvksW3KHp0CW/GebuItC1M=
-X-Gm-Gg: ASbGncs48UhEtPZHoiZdt/29wSQYvnPIEk/XAWj+7okhXGPTkJF9TYYA1rdzQTB/lMD
-	rNellCEpOEYLWG9GUep8pFq8A7Os2a4zHj5m4vPb8xqQzvP1uTwy0JimXnp0KaL3N893pxrSVEu
-	Mz5MkbVVJEfnkLpT5LJl9P82b9tmP2TmYSUMN7fEqh0DFQtjAnc/26eGHwuvUWkwpF9QYJN58jB
-	beRdGOW8aHRNGr4jesp4iFKsjrJaAngeB1tsXADszBFY4zwu3qcHxvfsoc=
-X-Google-Smtp-Source: AGHT+IESe+5RLwo18Azrwu0hE9yXBll8YB55nGRdLYKUg+cEVS3wNYJu042VXJ4a2p+dJQeCAwvBG97Uhl3N8ggwvXg=
-X-Received: by 2002:a05:622a:4e8e:b0:4b7:a74b:fd42 with SMTP id
- d75a77b69052e-4ba66187296mr50706291cf.13.1758146061722; Wed, 17 Sep 2025
- 14:54:21 -0700 (PDT)
+        bh=FibkJLFpdmPs16TWPQcjI1FEmw5E/LmUaqG65SaId+U=;
+        b=s1DNK4eLrjdynYHnbokbYVfXY73IbyayZfZ3CGKRTaclFPylsaZRH3HXderLFdq/o3
+         YUi0a5WKH89Gw7EyYxeeLaLkw0wYIZ4IwwOgyoIiYnILNyLt2TRQ/Aihu/ni7jOp6Uvx
+         EpB9rXeieihqL7BQ5BMsWYMiA56p2PZTFTJRMm0NoTwgjorwUHasiN4UCQjKX8E1OOah
+         lkedWhYSg29IK1NzaH3rtsUbdmmd/uKGFQDDYozlsvOxqjCXZu64raIlS5T/WB1OIY//
+         k1e2H8y6FFLDP0ZUSKvKSPcvqX6iteRaw0lox/Cfzp1en/bunlZzgKcblws2kwY2txAQ
+         qhaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQHyYoyvJkAv/Df8cmpUvI5yiIjPZl9Q+PDJbF+Eqi9KuyS1vuIWPxgU9WKMStS81BbWbrh2jX0LoYOKjL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYgKAhFQ4vzEC1UH9615ISdCKoYjvcnLd/4OgXnYxfXFWg5ZTE
+	ZT+rHfDoDf1PGUDsyF4bpQDtDkryi7amKjI3QEgvANhth1saVOqyzJUUaXoUE6j5eLF/Gy7Ii5H
+	sn7M=
+X-Gm-Gg: ASbGnctKBsJ61xH22TeUI6xLpBsii/HZdKQGEJAj6eCzmeq8ISu37dUJlN4/uCY8H9m
+	E314YaU13N6L9mesDZntMnHTjB2FrUukMOgLuXpawbXMfdg5PVgyArUkBGLd1Faof6MfwPDhW/F
+	hcnpsr+Hq38oWXHyRSzFKdIoLBUJzlWnEFWTEL7ZdYDBT4rveDNbylPrhqPODg2cN3JmnPntmDW
+	xkM1y1SHfHdYuXvOrL6tczUwwlNNXHHslkOqX99Yt8ZTSkyP9WkrYyZ0EAbesf6+0iNZ5MfFdju
+	in8KZJkNpZGHVluCmSw7AAwATzpl6+Q6XzD13CDiMSKTUN1tTXgW9ufHcK6LpHnFomwhLpSQGiB
+	J58/qDtmhwfkuCKP7HTOUN7fDA0QjIpFOr5OtHtVm5+JnwfOoZwH51eyqn/gmeG6rtnIS3pFas0
+	4X0C5EpA==
+X-Google-Smtp-Source: AGHT+IH3Ec6tmhKPi//e3rqGnC9qn1fv+SISw9lX2T/TSvZKbfCeJ5xucg2Zbub96//9oQ2dBRpRDg==
+X-Received: by 2002:a05:6214:1309:b0:783:c657:6db0 with SMTP id 6a1803df08f44-78ecc631483mr43954786d6.14.1758148120439;
+        Wed, 17 Sep 2025 15:28:40 -0700 (PDT)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-836278b80bbsm56279585a.25.2025.09.17.15.28.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 15:28:39 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b4bcb9638aso140521cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:28:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8kwl9cPfhqVqstcs6DzdVBn/9PPhw7hmhSzBjJ+0TA/UquzA2RPPP1Lf952vChiAfYGTRtemIf2NiDsDK@vger.kernel.org
+X-Received: by 2002:a05:622a:290:b0:4b0:f1f3:db94 with SMTP id
+ d75a77b69052e-4ba2dbd91e3mr7888171cf.5.1758148118686; Wed, 17 Sep 2025
+ 15:28:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917004001.2602922-1-joannelkoong@gmail.com> <aMqzoK1BAq0ed-pB@bfoster>
-In-Reply-To: <aMqzoK1BAq0ed-pB@bfoster>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 17 Sep 2025 14:54:09 -0700
-X-Gm-Features: AS18NWDD15N9gC12pISzbipW6vqaSb0NUMNu6g2F-8oXpI7B6SHPZU6jDCawaNg
-Message-ID: <CAJnrk1ZeYWseb0rpTT7w5S-c1YuVXe-w-qMVCAiwTJRpgm+fbQ@mail.gmail.com>
-Subject: Re: [PATCH v1] iomap: simplify iomap_iter_advance()
-To: Brian Foster <bfoster@redhat.com>
-Cc: brauner@kernel.org, hch@infradead.org, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org
+References: <cover.1752824628.git.namcao@linutronix.de> <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+ <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+ <87zfat19i7.fsf@yellow.woof> <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
+ <CAGudoHE=iaZp66pTBYTpgcqis25rU--wFJecJP-fq78hmPViCg@mail.gmail.com> <CACGdZYKcQmJtEVt8xoO9Gk53Rq1nmdginH4o5CmS4Kp3yVyM-Q@mail.gmail.com>
+In-Reply-To: <CACGdZYKcQmJtEVt8xoO9Gk53Rq1nmdginH4o5CmS4Kp3yVyM-Q@mail.gmail.com>
+From: Khazhy Kumykov <khazhy@chromium.org>
+Date: Wed, 17 Sep 2025 15:28:27 -0700
+X-Gmail-Original-Message-ID: <CACGdZYLByXsRruwv+BNWG-EqK+-f6V0inki+6gg31PGw5oa90A@mail.gmail.com>
+X-Gm-Features: AS18NWCUMtpdk9H0fWidPAaF1Bc8oxlz8rdMZKPuVQEPlj7Pq_GvycrjQRByVOg
+Message-ID: <CACGdZYLByXsRruwv+BNWG-EqK+-f6V0inki+6gg31PGw5oa90A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Nam Cao <namcao@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan <shuah@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Soheil Hassas Yeganeh <soheil@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 6:08=E2=80=AFAM Brian Foster <bfoster@redhat.com> w=
-rote:
+On Wed, Sep 17, 2025 at 11:03=E2=80=AFAM Khazhy Kumykov <khazhy@chromium.or=
+g> wrote:
 >
-> On Tue, Sep 16, 2025 at 05:40:01PM -0700, Joanne Koong wrote:
-> > Most callers of iomap_iter_advance() do not need the remaining length
-> > returned. Get rid of the extra iomap_length() call that
-> > iomap_iter_advance() does. If the caller wants the remaining length,
-> > they can make the call to iomap_length().
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
->
-> Indeed this does clean up some of the calls that create a local var
-> purely to work around the interface. OTOH, the reason I made the advance
-> update the length was so it was clear the remaining length would be used
-> correctly in those looping callers. Otherwise I'm not sure it's clear
-> the bytes/length value needs to be updated and that felt like an easy
-> mistake to make to me.
->
-> I don't really have a strong preference so I'll defer to whatever the
-> majority opinion is. I wonder though if something else worth considering
-> is to rename the current helper to __iomap_iter_advance() (or whatever)
-> and make your updated variant of iomap_iter_advance() into a wrapper of
-> it.
-
-That idea sounds good to me too, though I wonder for the naming of it
-if iomap_iter_advance() should remain the current helper and
-__iomap_iter_advance() should be for this more-minimal version of it.
-From what I've seen elsewhere, it seems like the __ prefix is used for
-minimum behavior and then the non-__ version of it is for that
-behavior + extra stuff.
-
-
-Thanks,
-Joanne
->
-> Brian
+> One ordering thing that sticks out to me is
+(ordering can't help here since we'll rapidly be flapping between
+ovflist in use and inactive... right)
 
