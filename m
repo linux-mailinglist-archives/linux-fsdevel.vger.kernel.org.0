@@ -1,195 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-61923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678A1B7D5BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F352B7EA80
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E245D4880E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 11:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A8F42A10CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 12:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED58536C081;
-	Wed, 17 Sep 2025 11:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="J7W0TKO9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E193233FF;
+	Wed, 17 Sep 2025 12:50:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F862EB5D5;
-	Wed, 17 Sep 2025 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.34.181.151
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FA42F7ABF;
+	Wed, 17 Sep 2025 12:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758108996; cv=none; b=iqT5kqZylJcWoHiS2bCZFNIHVpo9ucUIx6HT2Zer0Wm74SlAFEEphFn+2kMyQE7Oe88HZE0Nz6x5wtPJj7KEAselwLwjUq5A62z7PUbHSLy6Tu8B1xiV/NJ8pZtD5s8IiVEGwQ02CO2y4nxUf8519ElzmKupCTZx4oMFNvFuB2w=
+	t=1758113438; cv=none; b=ZkRRI8MiowFcEpO5ijKOWYYuEyDmlotjtUrrcVMrwfk7LtqNar/06WaJMBgfA36TIEw7m/jV9TsXBnTZTZ6w4TLdIEVF5pwRmO4YTjKYyQ5dCPdVJHI0bL/kyd6IHCTIiY6WZsSgigxjo6dpDYQdESJXqap8StLHm1rEafPkTfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758108996; c=relaxed/simple;
-	bh=wRXgDn7HywfAgrTjrDN0yqYd57MJsiJj40hGha2SdgA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEAUdPxDYuK7SJxoaxPVR9+musAETjQpNd9JyzeCdXBBAh89pNl3C4YDyr1eRnNtmkmmiAUWBddrLiTilLOgOp8sfVAc+sCrhVajzinpsItiZbuJ1UZo6CAkocuUrDy/L5SUT0L/jg2MqfOf0GGl84zQUcYEUbCGR3YuFMpw+X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=J7W0TKO9; arc=none smtp.client-ip=52.34.181.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1758108994; x=1789644994;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dWbPeUw7wRMdj3193lZI9i/Wb7Z9FK8CyLLo3CIDTyU=;
-  b=J7W0TKO9JJbtwzA/KDWqDK0oSH7h8b6rDkysJ29/nwBk/k/r5pNoat1e
-   7MIiLQxSt4djiCdB9ZXVTEfCVT6GV1QaHwF69P/zrLnAKU937F2TGSIPy
-   FKtHtrBvzqiwJnE05uBWJHorC+8PrZmvjeUKgWsmpQDuHaCYYS/MP9lTI
-   z1ooHGTk8EXOVg4wn9qcnDVcmnRq8yFaOX/9KoODiwI9yeJIt7s4ujdOe
-   QPBzne+lkpuM+OJc9n/KoDi/xPO3EvkZU5ITE2d0I8mnAqqMl9OFPEGz6
-   e9FqmhhCKM8KbbV1sucbMrU1Jd5gEVWCdW1r9uLN5LkFCHb0cgUwmkgqv
-   g==;
-X-CSE-ConnectionGUID: 3Vojkt4tS96bxJte7xtpaw==
-X-CSE-MsgGUID: OVp1OPtcR5+yogFIzkg6NQ==
-X-IronPort-AV: E=Sophos;i="6.18,263,1751241600"; 
-   d="scan'208";a="3150228"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 11:36:32 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:33744]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.60:2525] with esmtp (Farcaster)
- id 7ed5f850-98bb-4f32-9e4d-0ddd3fe41eee; Wed, 17 Sep 2025 11:36:31 +0000 (UTC)
-X-Farcaster-Flow-ID: 7ed5f850-98bb-4f32-9e4d-0ddd3fe41eee
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 17 Sep 2025 11:36:31 +0000
-Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
- (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 17 Sep 2025
- 11:36:30 +0000
-Date: Wed, 17 Sep 2025 11:36:27 +0000
-From: Jakub Acs <acsjakub@amazon.de>
-To: Amir Goldstein <amir73il@gmail.com>
-CC: Jan Kara <jack@suse.cz>, <linux-unionfs@vger.kernel.org>, Miklos Szeredi
-	<miklos@szeredi.hu>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] ovl: check before dereferencing s_root field
-Message-ID: <20250917113627.GA51799@dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com>
-References: <20250915101510.7994-1-acsjakub@amazon.de>
- <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
- <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
- <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
- <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
- <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
- <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
- <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+	s=arc-20240116; t=1758113438; c=relaxed/simple;
+	bh=b49q9IBEZTvi0/7BhRUf9xYDSnZFZjimws3ifu5xzpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KdVFW4RBEZRqv90XoCYjB3R1as8TGclsZnMxvJthKQomwJPf4HGbs0H3RE4Ue1n9uYvhtsl8mtl69Tg6YqvgCojn+IJPCfY7RBLjCT300hRVoHVKyvuT3DfQwPLe3H+7r141b2KXrAv/ASr+eXAAioPRv5rj/arIU1pto4yNLtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cRdXQ3MrBz9sSX;
+	Wed, 17 Sep 2025 14:35:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 2hByasP5zA5U; Wed, 17 Sep 2025 14:35:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRdXN460gz9sSW;
+	Wed, 17 Sep 2025 14:35:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A9278B768;
+	Wed, 17 Sep 2025 14:35:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id sCBsXy1_jEJK; Wed, 17 Sep 2025 14:35:32 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 977AD8B763;
+	Wed, 17 Sep 2025 14:35:31 +0200 (CEST)
+Message-ID: <179737a1-8847-46e0-b8d2-aba89968d481@csgroup.eu>
+Date: Wed, 17 Sep 2025 14:35:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-ClientProxiedBy: EX19D033UWA001.ant.amazon.com (10.13.139.103) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-
-On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
-> Might something naive as this be enough?
-> 
-> Thanks,
-> Amir.
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 60046ae23d514..8c9d0d6bb0045 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
-> 
->         if (root_inode) {
->                 res = d_alloc_anon(root_inode->i_sb);
-> -               if (res)
-> +               if (res) {
-> +                       root_inode->i_opflags |= IOP_ROOT;
->                         d_instantiate(res, root_inode);
-> -               else
-> +               } else {
->                         iput(root_inode);
-> +               }
->         }
->         return res;
->  }
-> diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
-> index 3334c394ce9cb..809a09c6a89e0 100644
-> --- a/fs/gfs2/export.c
-> +++ b/fs/gfs2/export.c
-> @@ -46,7 +46,7 @@ static int gfs2_encode_fh(struct inode *inode, __u32
-> *p, int *len,
->         fh[3] = cpu_to_be32(ip->i_no_addr & 0xFFFFFFFF);
->         *len = GFS2_SMALL_FH_SIZE;
-> 
-> -       if (!parent || inode == d_inode(sb->s_root))
-> +       if (!parent || is_root_inode(inode))
->                 return *len;
-> 
->         ip = GFS2_I(parent);
-> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> index 83f80fdb15674..7827c63354ad5 100644
-> --- a/fs/overlayfs/export.c
-> +++ b/fs/overlayfs/export.c
-> @@ -199,7 +199,7 @@ static int ovl_check_encode_origin(struct inode *inode)
->          * Root is never indexed, so if there's an upper layer, encode upper for
->          * root.
->          */
-> -       if (inode == d_inode(inode->i_sb->s_root))
-> +       if (is_root_inode(inode))
->                 return 0;
-> 
->         /*
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index ec867f112fd5f..ed84379aa06ca 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -665,6 +665,7 @@ is_uncached_acl(struct posix_acl *acl)
->  #define IOP_DEFAULT_READLINK   0x0010
->  #define IOP_MGTIME     0x0020
->  #define IOP_CACHED_LINK        0x0040
-> +#define IOP_ROOT       0x0080
->   /*
->   * Keep mostly read-only and often accessed (especially for
-> @@ -2713,6 +2714,11 @@ static inline bool is_mgtime(const struct inode *inode)
->         return inode->i_opflags & IOP_MGTIME;
->  }
-> 
-> +static inline bool is_root_inode(const struct inode *inode)
-> +{
-> +       return inode->i_opflags & IOP_ROOT;
-> +}
-> +
->  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
->         int flags, const char *dev_name, void *data,
->         int (*fill_super)(struct super_block *, void *, int));
-> 
-
-This would prevent the null-ptr-deref, but the encoding procedure would
-continue (for non-root inode), potentially reaching other code paths
-that assume fs is still mounted - could that maybe be a problem?
-
-I had considered similar direction initially, too, but then decided I'm
-unable to verify the paths and that it's safer to just fail if we detect
-no root (or cannot take the lock).
-
-Am I thinking wrong?
-
-Jakub
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
+ __get_user_asm_dword()
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, kernel test robot <lkp@intel.com>,
+ linux-arm-kernel@lists.infradead.org, Nathan Chancellor <nathan@kernel.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk> <875xdhaaun.ffs@tglx>
+ <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+Le 17/09/2025 à 11:41, Russell King (Oracle) a écrit :
+> You may think this is easy to solve, just change the last cast to:
+> 
+>          (x) = (__typeof__(*(ptr)))(__typeof__(x))__gu_val;
+> 
+> but that doesn't work either (because in the test case __typeof__(x) is
+> still a pointer type. You can't cast this down to a 32-bit quantity
+> because that will knock off the upper 32 bits for the case you're trying
+> to add.
+> 
+> You may think, why not  move this cast into each switch statement...
+> there will still be warnings because the cast is still reachable at the
+> point the compiler evaluates the code for warnings, even though the
+> optimiser gets rid of it later.
+> 
+> Feel free to try to solve this, but I can assure you that you certainly
+> are not the first. Several people have already tried.
+> 
+
+No such problem on powerpc/32, maybe because we have defined and use 
+macro __long_type(x), see below:
+
+#define __get_user_size_allowed(x, ptr, size, retval)		\
+do {								\
+	retval = 0;						\
+	BUILD_BUG_ON(size > sizeof(x));				\
+	switch (size) {						\
+	case 1: __get_user_asm(x, (u8 __user *)ptr, retval, "lbz"); break;	\
+	case 2: __get_user_asm(x, (u16 __user *)ptr, retval, "lhz"); break;	\
+	case 4: __get_user_asm(x, (u32 __user *)ptr, retval, "lwz"); break;	\
+	case 8: __get_user_asm2(x, (u64 __user *)ptr, retval);  break;	\
+	default: x = 0; BUILD_BUG();				\
+	}							\
+} while (0)
+
+/*
+  * This is a type: either unsigned long, if the argument fits into
+  * that type, or otherwise unsigned long long.
+  */
+#define __long_type(x) \
+	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
+
+#define __get_user(x, ptr)					\
+({								\
+	long __gu_err;						\
+	__long_type(*(ptr)) __gu_val;				\
+	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
+	__typeof__(sizeof(*(ptr))) __gu_size = sizeof(*(ptr));	\
+								\
+	might_fault();					\
+	allow_read_from_user(__gu_addr, __gu_size);		\
+	__get_user_size_allowed(__gu_val, __gu_addr, __gu_size, __gu_err);	\
+	prevent_read_from_user(__gu_addr, __gu_size);		\
+	(x) = (__typeof__(*(ptr)))__gu_val;			\
+								\
+	__gu_err;						\
+})
+
 
 
