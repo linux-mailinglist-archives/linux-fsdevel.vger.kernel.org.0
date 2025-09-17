@@ -1,386 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-61863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BC4B7DD87
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE11B7F895
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193D6528523
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 03:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6682527100
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 03:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5A12F28FB;
-	Wed, 17 Sep 2025 03:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irGNlYDl"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B9D2F548A;
+	Wed, 17 Sep 2025 03:38:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6B223D297
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 03:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1232BE656;
+	Wed, 17 Sep 2025 03:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758078571; cv=none; b=nbJZTwA2QbKvn02Y0ozgorJjnJc1LRv6q2Sdy2BR3KI0NR99suE0pdySvAJL513iFYVlt6Nru4Yh5RzNB9CdglrubyIig6lBA1dSzjMdNL+JjUyY1nRl8wfpG1fzhjpCrN/U0zXQpauWfDbVQyIMDfVyedmk4JuA44vC16dc0Kg=
+	t=1758080285; cv=none; b=CZGkYSaxC54+grsFOoAm0xMXGr010gKbBZLykgXKHik9Qqp9KvZevb1PnfzjCd4WUdNfmxryi9ZTlST8bImsqj6AH4xWYCP8D1r2JYgCrXHgTyHWDwEiYksFmLihB4v7fbcOqEcF1BZm7IFaHOkokuOI6ERylYP5rmLR1fju4uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758078571; c=relaxed/simple;
-	bh=Kqd/Saes4OE55SY123mfIUrQ1HiOtPBDCpmm03ARoT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fb8Nb+Q5BuSo7ArwRIGCQQQsFC3hKDE3BgVTmVXcb7jyMAgRhEeOl+2u9Ir9Mdc4kRVeb4dYykT9Yw2hezdWwNQYbZCmcTQkKmBadSXqSrkBMQLmIVxy7cPlJ99XXgK3K3WP+uvbn46sk5EOh77a+SkU800tz0hG96OulEQ3piU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irGNlYDl; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso3407192a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Sep 2025 20:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758078566; x=1758683366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQISpO/KOSQlc60qkfaLofZlpHkKqo3WtxB9jZ3MGMw=;
-        b=irGNlYDlDuNopxeeDcdzVq+9oTk6ZDPQ5QHTJwfSbx06yBuP20MVgtEQ962M/M0HqO
-         P2h7KE0x+a4mxSYiOguXtieHBQonoBUiuII+YlFqq4i1ErOkpeGvv13Rzt+Asrpwjojk
-         XqtXR4cL0NnebpvwIAt72oCgdwDNnrnwl8LFE9LuROzLxb9TFQn09Q9Jr5F+x3yxr9sZ
-         s5bGkfQ1CPeuhK38Aap/fa2TVubjEkMHO58ehAgbDjbIEVJ6tp9t145Vj/gSfw3lXpQc
-         54FBS+SGlh+08sDRICSxQf27+7KKA1LR+qRoYDogpsMqh2oplvloaZFu7IlbC5kYj8sC
-         546g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758078566; x=1758683366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DQISpO/KOSQlc60qkfaLofZlpHkKqo3WtxB9jZ3MGMw=;
-        b=EUPIe7v4jhfv6UIMKoGHU4fTsTx29LBAKb22CnzvOIrG+d5BcgUc/e8sp006WTfUxw
-         8r2UIs2b+y0DqXMEA5EDhtUnBFyf0sbn6GBZJl7dGwloiGqR0wV27aGn42sHG4GVR3w6
-         IiDmkaXxgYZsVNSJfp/JXO+a2zn+pthpx0nhkN/EVoxjOrY/syKyiX81NxmxxJo1p/LI
-         5LpHWyH42tsnfuzsJkLJOG3tiy7y+qyfeIA+1Q8W+Y8Bqni23zS3zp/I4SMEt6O7y4rx
-         0Y7wqK/yD2xSgqwXeC98DoKjBfMiTI9tn6baPJh9UtmT7LOvtyxemDpmoltnBLzBS0Ol
-         9HAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUydATWeaQHuSt3bv1DDwJXVQxh+vD7bqQZMtmFrBxOze+RU9/xgh41N/KdaEGRI2SX1Fty9lGCJ0fbARqN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYl8UZeoeo6JQ1A+K/aNtlXIlPzkteQ6xRqKHTbz+wOIbEY3W+
-	s9Gu79GtBcgAzwQZCye8Ca8uklZke+yjcI+Xyf4x6bohPuIE5WMx4jeBD4qaybUnWvYizZZAegh
-	iK0HW/d+RP9n03qAZ2q90XViilHrOvcM=
-X-Gm-Gg: ASbGncupry7VvJ1q0yQd8nRvObOhe22a3oMBddZPfv6Z5KVbkDq5C2p5/DmZ76TWuLA
-	Xax9jQUfNLkn3PRMDVcEjwFuxdN+tnh4rXGfIh9OOFcomz38gOVRN5qbp/bezowT9zLAllBKsUo
-	qcRJkka5aQxssHFko8Vg3a7c1VTyLNnmILRFBuf9P2JLzbMmYeiPwHkYF/N2wSYodu4YH9wf0uw
-	+/D238W9oiOE9vJsz1IQ8AQFWOMHGKGhIBzW5GmrR09Bcgo2oEc
-X-Google-Smtp-Source: AGHT+IGpQiAHDeu3gp7Iyvw58eu1QQfsnEVxzHrMVXmEJCWT+SwX+13n0y3vErJB5AR7sMh1pXOTx7CvEi1NXwbveEI=
-X-Received: by 2002:a05:6402:1d4b:b0:62f:4dbc:6785 with SMTP id
- 4fb4d7f45d1cf-62f8443531amr830093a12.19.1758078565700; Tue, 16 Sep 2025
- 20:09:25 -0700 (PDT)
+	s=arc-20240116; t=1758080285; c=relaxed/simple;
+	bh=MrzlUtN2zfhfoSrvl3R7KvmvpP/OQ/YktUCjI57UoUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mMO4rEqTBQH5YgJ2zUK+ZB8HSDdHKtnU3sp+WP/DycYV/gzNGDNGeH7ZIqU7ucMvX+6i5PG1AU4Ba683U07RQdUahfMYJg9BQc+gPKO8QPTJ5v4ycXVg4oIPJPb+2CITYrCtNancbW2vejoDwqNgqpnJ5dxsrpS6GE81HV34NxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.43.101])
+	by APP-03 (Coremail) with SMTP id rQCowABnsXvsLMpojtxAAw--.607S2;
+	Wed, 17 Sep 2025 11:37:17 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: linux-riscv@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Conor Dooley <conor@kernel.org>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ved Shanbhogue <ved@rivosinc.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V13 0/6] riscv: mm: Add soft-dirty and uffd-wp support
+Date: Wed, 17 Sep 2025 11:36:57 +0800
+Message-Id: <20250917033703.1695933-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798151087.382724.2707973706304359333.stgit@frogsfrogsfrogs> <175798151352.382724.799745519035147130.stgit@frogsfrogsfrogs>
-In-Reply-To: <175798151352.382724.799745519035147130.stgit@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 17 Sep 2025 05:09:14 +0200
-X-Gm-Features: AS18NWAvuzfcNKLzObLwIDzq_urQ8n-PHloRWEiou4jflORQao8K4PvaoSPXMeU
-Message-ID: <CAOQ4uxibHLq7YVpjtXdrHk74rXrOLSc7sAW7s=RADc7OYN2ndA@mail.gmail.com>
-Subject: Re: [PATCH 04/28] fuse: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to
- add new iomap devices
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
-	joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABnsXvsLMpojtxAAw--.607S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr18CrW3AF1rtw1rZFWDurg_yoW7AFy5pF
+	4UGry3tr4rtF1Ig393Jw109a1Yqan5t343Gw1rX34rA3y2k3Wjvrna9a1rGF1DJr48WryS
+	qryYkr9I934qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9vb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r48MxAIw28IcxkI7VAKI48JMxC20s
+	026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_
+	JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14
+	v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xva
+	j40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JV
+	W8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUYS2MUUUUUU==
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwkIB2jJ8O30wgAAsL
 
-On Tue, Sep 16, 2025 at 2:30=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Enable the use of the backing file open/close ioctls so that fuse
-> servers can register block devices for use with iomap.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  fs/fuse/fuse_i.h          |    5 ++
->  include/uapi/linux/fuse.h |    3 +
->  fs/fuse/Kconfig           |    1
->  fs/fuse/backing.c         |   12 +++++
->  fs/fuse/file_iomap.c      |   99 +++++++++++++++++++++++++++++++++++++++=
-++----
->  fs/fuse/trace.c           |    1
->  6 files changed, 111 insertions(+), 10 deletions(-)
->
->
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 389b123f0bf144..791f210c13a876 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -97,12 +97,14 @@ struct fuse_submount_lookup {
->  };
->
->  struct fuse_conn;
-> +struct fuse_backing;
->
->  /** Operations for subsystems that want to use a backing file */
->  struct fuse_backing_ops {
->         int (*may_admin)(struct fuse_conn *fc, uint32_t flags);
->         int (*may_open)(struct fuse_conn *fc, struct file *file);
->         int (*may_close)(struct fuse_conn *fc, struct file *file);
-> +       int (*post_open)(struct fuse_conn *fc, struct fuse_backing *fb);
->         unsigned int type;
->  };
->
-> @@ -110,6 +112,7 @@ struct fuse_backing_ops {
->  struct fuse_backing {
->         struct file *file;
->         struct cred *cred;
-> +       struct block_device *bdev;
->         const struct fuse_backing_ops *ops;
->
->         /** refcount */
-> @@ -1704,6 +1707,8 @@ static inline bool fuse_has_iomap(const struct inod=
-e *inode)
->  {
->         return get_fuse_conn_c(inode)->iomap;
->  }
-> +
-> +extern const struct fuse_backing_ops fuse_iomap_backing_ops;
->  #else
->  # define fuse_iomap_enabled(...)               (false)
->  # define fuse_has_iomap(...)                   (false)
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 3634cbe602cd9c..3a367f387795ff 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -1124,7 +1124,8 @@ struct fuse_notify_retrieve_in {
->
->  #define FUSE_BACKING_TYPE_MASK         (0xFF)
->  #define FUSE_BACKING_TYPE_PASSTHROUGH  (0)
-> -#define FUSE_BACKING_MAX_TYPE          (FUSE_BACKING_TYPE_PASSTHROUGH)
-> +#define FUSE_BACKING_TYPE_IOMAP                (1)
-> +#define FUSE_BACKING_MAX_TYPE          (FUSE_BACKING_TYPE_IOMAP)
->
->  #define FUSE_BACKING_FLAGS_ALL         (FUSE_BACKING_TYPE_MASK)
->
-> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-> index 52e1a04183e760..baa38cf0f295ff 100644
-> --- a/fs/fuse/Kconfig
-> +++ b/fs/fuse/Kconfig
-> @@ -75,6 +75,7 @@ config FUSE_IOMAP
->         depends on FUSE_FS
->         depends on BLOCK
->         select FS_IOMAP
-> +       select FUSE_BACKING
->         help
->           Enable fuse servers to operate the regular file I/O path throug=
-h
->           the fs-iomap library in the kernel.  This enables higher perfor=
-mance
-> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-> index 229c101ab46b0e..fc58636ac78eaa 100644
-> --- a/fs/fuse/backing.c
-> +++ b/fs/fuse/backing.c
-> @@ -89,6 +89,10 @@ fuse_backing_ops_from_map(const struct fuse_backing_ma=
-p *map)
->  #ifdef CONFIG_FUSE_PASSTHROUGH
->         case FUSE_BACKING_TYPE_PASSTHROUGH:
->                 return &fuse_passthrough_backing_ops;
-> +#endif
-> +#ifdef CONFIG_FUSE_IOMAP
-> +       case FUSE_BACKING_TYPE_IOMAP:
-> +               return &fuse_iomap_backing_ops;
->  #endif
->         default:
->                 break;
-> @@ -137,8 +141,16 @@ int fuse_backing_open(struct fuse_conn *fc, struct f=
-use_backing_map *map)
->         fb->file =3D file;
->         fb->cred =3D prepare_creds();
->         fb->ops =3D ops;
-> +       fb->bdev =3D NULL;
->         refcount_set(&fb->count, 1);
->
-> +       res =3D ops->post_open ? ops->post_open(fc, fb) : 0;
-> +       if (res) {
-> +               fuse_backing_free(fb);
-> +               fb =3D NULL;
-> +               goto out;
-> +       }
-> +
->         res =3D fuse_backing_id_alloc(fc, fb);
->         if (res < 0) {
->                 fuse_backing_free(fb);
-> diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-> index e7d19e2aee4541..3a4161633add0e 100644
-> --- a/fs/fuse/file_iomap.c
-> +++ b/fs/fuse/file_iomap.c
-> @@ -319,10 +319,6 @@ static inline bool fuse_iomap_check_mapping(const st=
-ruct inode *inode,
->                 return false;
->         }
->
-> -       /* XXX: we don't support devices yet */
-> -       if (BAD_DATA(map->dev !=3D FUSE_IOMAP_DEV_NULL))
-> -               return false;
-> -
->         /* No overflows in the device range, if supplied */
->         if (map->addr !=3D FUSE_IOMAP_NULL_ADDR &&
->             BAD_DATA(check_add_overflow(map->addr, map->length, &end)))
-> @@ -334,6 +330,7 @@ static inline bool fuse_iomap_check_mapping(const str=
-uct inode *inode,
->  /* Convert a mapping from the server into something the kernel can use *=
-/
->  static inline void fuse_iomap_from_server(struct inode *inode,
->                                           struct iomap *iomap,
-> +                                         const struct fuse_backing *fb,
->                                           const struct fuse_iomap_io *fma=
-p)
->  {
->         iomap->addr =3D fmap->addr;
-> @@ -341,7 +338,9 @@ static inline void fuse_iomap_from_server(struct inod=
-e *inode,
->         iomap->length =3D fmap->length;
->         iomap->type =3D fuse_iomap_type_from_server(fmap->type);
->         iomap->flags =3D fuse_iomap_flags_from_server(fmap->flags);
-> -       iomap->bdev =3D inode->i_sb->s_bdev; /* XXX */
-> +
-> +       iomap->bdev =3D fb ? fb->bdev : NULL;
-> +       iomap->dax_dev =3D NULL;
->  }
->
->  /* Convert a mapping from the kernel into something the server can use *=
-/
-> @@ -392,6 +391,27 @@ static inline bool fuse_is_iomap_file_write(unsigned=
- int opflags)
->         return opflags & (IOMAP_WRITE | IOMAP_ZERO | IOMAP_UNSHARE);
->  }
->
-> +static inline struct fuse_backing *
-> +fuse_iomap_find_dev(struct fuse_conn *fc, const struct fuse_iomap_io *ma=
-p)
-> +{
-> +       struct fuse_backing *ret =3D NULL;
-> +
-> +       if (map->dev !=3D FUSE_IOMAP_DEV_NULL && map->dev < INT_MAX)
-> +               ret =3D fuse_backing_lookup(fc, &fuse_iomap_backing_ops,
-> +                                         map->dev);
-> +
-> +       switch (map->type) {
-> +       case FUSE_IOMAP_TYPE_MAPPED:
-> +       case FUSE_IOMAP_TYPE_UNWRITTEN:
-> +               /* Mappings backed by space must have a device/addr */
-> +               if (BAD_DATA(ret =3D=3D NULL))
-> +                       return ERR_PTR(-EFSCORRUPTED);
-> +               break;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
->  static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t coun=
-t,
->                             unsigned opflags, struct iomap *iomap,
->                             struct iomap *srcmap)
-> @@ -405,6 +425,8 @@ static int fuse_iomap_begin(struct inode *inode, loff=
-_t pos, loff_t count,
->         };
->         struct fuse_iomap_begin_out outarg =3D { };
->         struct fuse_mount *fm =3D get_fuse_mount(inode);
-> +       struct fuse_backing *read_dev =3D NULL;
-> +       struct fuse_backing *write_dev =3D NULL;
->         FUSE_ARGS(args);
->         int err;
->
-> @@ -431,24 +453,44 @@ static int fuse_iomap_begin(struct inode *inode, lo=
-ff_t pos, loff_t count,
->         if (err)
->                 return err;
->
-> +       read_dev =3D fuse_iomap_find_dev(fm->fc, &outarg.read);
-> +       if (IS_ERR(read_dev))
-> +               return PTR_ERR(read_dev);
-> +
->         if (fuse_is_iomap_file_write(opflags) &&
->             outarg.write.type !=3D FUSE_IOMAP_TYPE_PURE_OVERWRITE) {
-> +               /* open the write device */
-> +               write_dev =3D fuse_iomap_find_dev(fm->fc, &outarg.write);
-> +               if (IS_ERR(write_dev)) {
-> +                       err =3D PTR_ERR(write_dev);
-> +                       goto out_read_dev;
-> +               }
-> +
->                 /*
->                  * For an out of place write, we must supply the write ma=
-pping
->                  * via @iomap, and the read mapping via @srcmap.
->                  */
-> -               fuse_iomap_from_server(inode, iomap, &outarg.write);
-> -               fuse_iomap_from_server(inode, srcmap, &outarg.read);
-> +               fuse_iomap_from_server(inode, iomap, write_dev, &outarg.w=
-rite);
-> +               fuse_iomap_from_server(inode, srcmap, read_dev, &outarg.r=
-ead);
->         } else {
->                 /*
->                  * For everything else (reads, reporting, and pure overwr=
-ites),
->                  * we can return the sole mapping through @iomap and leav=
-e
->                  * @srcmap unchanged from its default (HOLE).
->                  */
-> -               fuse_iomap_from_server(inode, iomap, &outarg.read);
-> +               fuse_iomap_from_server(inode, iomap, read_dev, &outarg.re=
-ad);
->         }
->
-> -       return 0;
-> +       /*
-> +        * XXX: if we ever want to support closing devices, we need a way=
- to
-> +        * track the fuse_backing refcount all the way through bio endios=
-.
-> +        * For now we put the refcount here because you can't remove an i=
-omap
-> +        * device until unmount time.
-> +        */
-> +       fuse_backing_put(write_dev);
-> +out_read_dev:
-> +       fuse_backing_put(read_dev);
-> +       return err;
->  }
->
->  /* Decide if we send FUSE_IOMAP_END to the fuse server */
-> @@ -523,3 +565,42 @@ const struct iomap_ops fuse_iomap_ops =3D {
->         .iomap_begin            =3D fuse_iomap_begin,
->         .iomap_end              =3D fuse_iomap_end,
->  };
-> +
-> +static int fuse_iomap_may_admin(struct fuse_conn *fc, unsigned int flags=
-)
-> +{
-> +       if (!fc->iomap)
-> +               return -EPERM;
-> +
+This patchset adds support for Svrsw60t59b [1] extension which is ratified now,
+also add soft dirty and userfaultfd write protect tracking for RISC-V.
 
-IIRC, on RFC I asked why is iomap exempt from CAP_SYS_ADMIN
-check. If there was a good reason, I forgot it.
+The patches 1 and 2 add macros to allow architectures to define their own checks
+if the soft-dirty / uffd_wp PTE bits are available, in other words for RISC-V,
+the Svrsw60t59b extension is supported on which device the kernel is running.
+Also patch1-2 are removing "ifdef CONFIG_MEM_SOFT_DIRTY"
+"ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP" and
+"ifdef CONFIG_PTE_MARKER_UFFD_WP" in favor of checks which if not overridden by
+the architecture, no change in behavior is expected.
 
-The problem is that while fuse-iomap fs is only expected to open
-a handful of backing devs, we would like to prevent abuse of this ioctl
-by a buggy or malicious user.
+This patchset has been tested with kselftest mm suite in which soft-dirty, 
+madv_populate, test_unmerge_uffd_wp, and uffd-unit-tests run and pass,
+and no regressions are observed in any of the other tests.
 
-I think that if you want to avoid CAP_SYS_ADMIN here you should
-enforce a limit on the number of backing bdevs.
+This patchset applies on top of the lastest mm-new branch.
 
-If you accept my suggestion to mutually exclude passthrough and
-iomap features per fs, then you'd just need to keep track on numbers
-of fuse_backing ids and place a limit for iomap fs.
+[1] https://github.com/riscv-non-isa/riscv-iommu/pull/543
 
-BTW, I think it is enough keep track of the number of backing ids
-and no need to keep track of the number of fuse_backing objects
-(which can outlive a backing id), because an "anonymous" fuse_backing
-object is always associated with an open fuse file - that's the same as
-an overlayfs backing file, which is not accounted for in ulimit.
+V13:
+- Rebase on mm-new branch;
+- Fixed build errors;
+- Add more exactly descriptions in commit message in patch 1-2;
+- Replace '__always_inline' with 'inline' for uffd_supports_wp_markeruffd_supports_wp_marker();
+- Add description to the extensions dt-binding in patch 6.
 
-Thanks,
-Amir.
+V12: https://lore.kernel.org/all/20250915101343.1449546-1-zhangchunyan@iscas.ac.cn/
+- Rename the macro API to pgtable_supports_soft_dirty/uffd_wp();
+- Add changes for setting VM_SOFTDIRTY flags conditionally;
+- Drop changes to show_smap_vma_flags();
+- Drop CONFIG_MEM_SOFT_DIRTY compile condition of clear_soft_dirty() and clear_soft_dirty_pmd();
+- Fix typos;
+- Add uffd_supports_wp_marker() and drop some ifdef CONFIG_PTE_MARKER_UFFD_WP.
+
+V11: https://lore.kernel.org/all/20250911095602.1130290-1-zhangchunyan@iscas.ac.cn/
+- Rename the macro API to pgtable_*_supported() since we also have PMD support;
+- Change the default implementations of two macros, make CONFIG_MEM_SOFT_DIRTY or
+  CONFIG_HAVE_ARCH_USERFAULTFD_WP part of the macros;
+- Correct the order of insertion of RISCV_ISA_EXT_SVRSW60T59B;
+- Rephrase some comments.
+
+V10: https://lore.kernel.org/all/20250909095611.803898-1-zhangchunyan@iscas.ac.cn/
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
+
+V9: https://lore.kernel.org/all/20250905103651.489197-1-zhangchunyan@iscas.ac.cn/
+- Add pte_soft_dirty/uffd_wp_available() API to allow dynamically checking
+  if the PTE bit is available for the platform on which the kernel is running.
+
+V8: https://lore.kernel.org/all/20250619065232.1786470-1-zhangchunyan@iscas.ac.cn/)
+- Rebase on v6.16-rc1;
+- Add dependencies to MMU && 64BIT for RISCV_ISA_SVRSW60T59B;
+- Use 'Svrsw60t59b' instead of 'SVRSW60T59B' in Kconfig help paragraph;
+- Add Alex's Reviewed-by tag in patch 1.
+
+V7: https://lore.kernel.org/all/20250409095320.224100-1-zhangchunyan@iscas.ac.cn/
+- Add Svrsw60t59b [1] extension support;
+- Have soft-dirty and uffd-wp depending on the Svrsw60t59b extension to
+  avoid crashes for the hardware which don't have this extension.
+
+V6: https://lore.kernel.org/all/20250408084301.68186-1-zhangchunyan@iscas.ac.cn/
+- Changes to use bits 59-60 which are supported by extension Svrsw60t59b
+  for soft dirty and userfaultfd write protect tracking.
+
+V5: https://lore.kernel.org/all/20241113095833.1805746-1-zhangchunyan@iscas.ac.cn/
+- Fixed typos and corrected some words in Kconfig and commit message;
+- Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste
+  error;
+- Added Alex's Reviewed-by tag in patch 2.
+
+V4: https://lore.kernel.org/all/20240830011101.3189522-1-zhangchunyan@iscas.ac.cn/
+- Added bit(4) descriptions into "Format of swap PTE".
+
+V3: https://lore.kernel.org/all/20240805095243.44809-1-zhangchunyan@iscas.ac.cn/
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
+
+V2: https://lore.kernel.org/all/20240731040444.3384790-1-zhangchunyan@iscas.ac.cn/
+- Add uffd-wp supported;
+- Make soft-dirty uffd-wp and devmap mutually exclusive which all use
+  the same PTE bit;
+- Add test results of CRIU in the cover-letter.
+
+Chunyan Zhang (6):
+  mm: softdirty: Add pgtable_supports_soft_dirty()
+  mm: userfaultfd: Add pgtable_supports_uffd_wp()
+  riscv: Add RISC-V Svrsw60t59b extension support
+  riscv: mm: Add soft-dirty page tracking support
+  riscv: mm: Add userfaultfd write-protect support
+  dt-bindings: riscv: Add Svrsw60t59b extension description
+
+ .../devicetree/bindings/riscv/extensions.yaml |   6 +
+ arch/riscv/Kconfig                            |  16 ++
+ arch/riscv/include/asm/hwcap.h                |   1 +
+ arch/riscv/include/asm/pgtable-bits.h         |  37 +++++
+ arch/riscv/include/asm/pgtable.h              | 143 +++++++++++++++++-
+ arch/riscv/kernel/cpufeature.c                |   1 +
+ fs/proc/task_mmu.c                            |  15 +-
+ fs/userfaultfd.c                              |  22 +--
+ include/asm-generic/pgtable_uffd.h            |  17 +++
+ include/linux/mm.h                            |   3 +
+ include/linux/mm_inline.h                     |  12 +-
+ include/linux/pgtable.h                       |  12 ++
+ include/linux/userfaultfd_k.h                 | 114 ++++++++------
+ mm/debug_vm_pgtable.c                         |  10 +-
+ mm/huge_memory.c                              |  13 +-
+ mm/internal.h                                 |   2 +-
+ mm/memory.c                                   |   6 +-
+ mm/mmap.c                                     |   6 +-
+ mm/mremap.c                                   |  13 +-
+ mm/userfaultfd.c                              |  10 +-
+ mm/vma.c                                      |   6 +-
+ mm/vma_exec.c                                 |   5 +-
+ 22 files changed, 365 insertions(+), 105 deletions(-)
+
+-- 
+2.34.1
+
 
