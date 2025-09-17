@@ -1,83 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-61976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E7FB812F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 19:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE64AB81382
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 19:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023B7626331
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99AF6271FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAB82FDC4C;
-	Wed, 17 Sep 2025 17:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127032FF155;
+	Wed, 17 Sep 2025 17:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wr9Pzivg"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="W0N5zbha"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B261C84C0;
-	Wed, 17 Sep 2025 17:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF2F229B18
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 17:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758130467; cv=none; b=Wt+U8OrsC4bTxdNMHUjuuiRMAUMWPkTrwBJFMqJ6VlSOkyy/dOJdXnFAbWoxZU9fRLDwShgsQTL/2OxWAaY2aHhEtD//ijySSGf0aCWShzYTGlIDpNxsIRJKrVgdnQ2kio1lgpQkcNCfp76RksXJJA64gi+fEYRlYLY8Wcn9l5k=
+	t=1758131036; cv=none; b=kXx8ucWRCuNtTNy98M0Dj1PEch0oJuGM++o9kbVRvMt1j9/HNAayqm9OCKiO8cxYj3QbXPN8VYnAzGlQ2J+gfW58hStel32v2cXG7oYlUc+SpLXs8T9TnkC9WxIVQMsti6Qm7b5TPhhRh/m63NbHc0lsV2JC4RY5kyjGsWz3r30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758130467; c=relaxed/simple;
-	bh=bgcVqmixOn47G6EpqaXlR06xxVFF4RoZW9BetbI6TZY=;
+	s=arc-20240116; t=1758131036; c=relaxed/simple;
+	bh=mTzbSQfrwv0ktwAc3tVKlpKttHS6ocipL63XYhYBmJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjuZOCUZMSbKA6+0Kbw1LdoKEClTRLuRt1Q3ykhrcGCTnygzv+ioO63uR8PzIaRVP5wpTLtW3CYlcf1FWRexEXCxMqhwR3ck3cYfDdJSeMLlIhJC/iJ+IdeLQBm0s+XDev6mzaI2yuHJE92mcdoBZpgia29eNW7dwZLeFyewcuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=wr9Pzivg; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHs7AHLaZLghQDH26paBdHeGJiXkhx+JGO+1vkqwPq9tn1yJJQC2+tHmbkf3nIjxfaOBiyZKlJCpjBZ2+F71q+tu5ZZ6jlruIjZ0wM4QqDAG4U/th8PhWSKFCpddR1boXlE1Ib/AUq7PUT98bvRbDTB0y8hh9gEPCMixJ5M9DwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=W0N5zbha; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=re9XiQwZHyoGrJmwBRzeNqQiLmgFq6r4H1Yj73RZIV8=; b=wr9Pzivg4eMg+afHKT1BIf6dDL
-	Q4WjVxrBc0RMofwJb53n409SGCq035N3e91aPMXt47MwNYA9yEhewMvTDAR69hT5H45W1sktyPL4D
-	nJqQM5Ze4peqVjOJYjvdLJhMaWb3Hk1GCpwyB9MeUYULC+lsqJag91Fo2goJ8S/nDlWnRFIRs2VwB
-	OESogtTWXLz49g6qJ/ax/byne2afQNrq/7hNHyIxgElulMsYptKIy5JYhpyG62HfRP/fPgeKFMoGF
-	B5lry83DH8O6pkJ0/3cNDFq0lNh25J6Zb7iZkW/R5ofgIx9J0tmY0STZe4bZNS5Rlna7AUq2QWlkf
-	imnUJ98Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44040)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uyw2u-000000005Pd-0r9U;
-	Wed, 17 Sep 2025 18:34:20 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uyw2p-000000000Nu-3wy6;
-	Wed, 17 Sep 2025 18:34:15 +0100
-Date: Wed, 17 Sep 2025 18:34:15 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	kernel test robot <lkp@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
- __get_user_asm_dword()
-Message-ID: <aMrxF3AnFox0LH8V@shell.armlinux.org.uk>
-References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk>
- <875xdhaaun.ffs@tglx>
- <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
- <87y0qd89q9.ffs@tglx>
- <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
- <20250917171424.GB1457869@ax162>
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mFVoSwzrnGc7DnvSDYD7RlfIAqnxbtLGf1OPdWnH0y0=; b=W0N5zbhasu7AlHiSUZy4j59ZVM
+	JHppaRPTMqq/C2JLiCKyfI/R8x0D3HEKRq2UlBjutx5LLY0Wyp9Sli9NHiytosbpOsreRdCixqK5+
+	fZxmVUtdcHDMUMmloptzyWKo0ZmhOYxiL+s8NJIvCpDZAU8aT27ch3GUveYnJsVon2ZpBdOrBH5FJ
+	I1WR9e0Ek8/itAT34UiMicV0GNNM+NOxUrZvmn5G2UEhS8IjXPE/SkxZeW1tuyB7wpOPvzlfSgGYr
+	wha4Sbto1JDy1HFSd8VouKb4n37dhJOBbS0RELWH8g62Ww7t0z7ASjjN1hRplyS+qJyY+nusVxKxq
+	aTaMS4kQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uywC6-000000050xY-2cjQ;
+	Wed, 17 Sep 2025 17:43:50 +0000
+Date: Wed, 17 Sep 2025 18:43:50 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+	NeilBrown <neil@brown.name>
+Subject: Re: [PATCH] fuse: prevent exchange/revalidate races
+Message-ID: <20250917174350.GW39973@ZenIV>
+References: <20250917153031.371581-1-mszeredi@redhat.com>
+ <20250917153655.GU39973@ZenIV>
+ <CAJfpegsZT4X5sZUyNd9An-LxQQAV=T1AEPUYQJUUX4bZzUwJUg@mail.gmail.com>
+ <20250917164148.GV39973@ZenIV>
+ <CAJfpegvYJD8UUuukNY7oj7-PSu48y6hXn+iV9iHzrO4fdgWXQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,31 +64,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917171424.GB1457869@ax162>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <CAJfpegvYJD8UUuukNY7oj7-PSu48y6hXn+iV9iHzrO4fdgWXQw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 17, 2025 at 10:14:24AM -0700, Nathan Chancellor wrote:
-> On Wed, Sep 17, 2025 at 04:17:38PM +0100, Russell King (Oracle) wrote:
-> > For me, this produces:
-> > 
-> > get-user-test.c:41:16: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-> >    41 |         (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;                \
-> >       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > with arm-linux-gnueabihf-gcc (Debian 14.2.0-19) 14.2.0
-> > 
-> > Maybe you're using a different compiler that doesn't issue that warning?
+On Wed, Sep 17, 2025 at 07:27:25PM +0200, Miklos Szeredi wrote:
+> On Wed, 17 Sept 2025 at 18:41, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Wed, Sep 17, 2025 at 05:42:18PM +0200, Miklos Szeredi wrote:
+> > > > ... and if the call of ->d_revalidate() had been with parent locked, you've
+> > > > just got a deadlock in that case.
+> > >
+> > > Why?
+> >
+> > Because the locking order on directories is "ancestors first"; you are trying
+> > to grab an inode that is also a directory and might be anywhere in the tree
+> > by that point - that's precisely what you are trying to check, isn't it?
 > 
-> Maybe because the kernel uses -fno-strict-aliasing, which presumably
-> turns off -Wstrict-aliasing?
+> But if parent is locked, it must not have been renamed, hence
+> parent-child relationship holds.
 
-Thanks, I'd forgotten to pick the -f flags for building the out of tree
-test. Yes, that does work, but I wonder whether the powerpc 32-bit
-approach with __long_type() that Christophe mentioned would be better.
-That also appears to avoid all issues, and doesn't need the use of
-the nasty __force, address-of and deref trick.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Not if parent is held shared.
 
