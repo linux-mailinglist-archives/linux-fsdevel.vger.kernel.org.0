@@ -1,144 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-61950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A8FB80788
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:18:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93A5B807BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 17:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90949587F17
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:17:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1DA1BC2832
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB35A33592B;
-	Wed, 17 Sep 2025 15:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D64333A90;
+	Wed, 17 Sep 2025 15:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AXqMWWLO"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y90Y8EaR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3plVSZ8s";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y90Y8EaR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3plVSZ8s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B228C22576E;
-	Wed, 17 Sep 2025 15:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E4B220F5C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 15:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122269; cv=none; b=QNCAp32MKxElWCX4JYxkyuRIYZ/EwP7tl/7BgjG57dqc+LcNH7CbuRsuwts2F5GVaCEpfgVRnUL+AnEX2F/u3Jv9kjt5mUnUPOU+J/0M+P5rUy0YnrJQtBDq3GbBcGGMaRRVUD3BLkbMpH1rupy/FmoWcJY8ZtvrBe94w+ogfs4=
+	t=1758122438; cv=none; b=udpmKNyoJGMcBSS0v71+VMoeWqi/5DYSBsd4urk/s27uP6fKTGTlpDqKymgNqPMoZiaE6Am0DLUQ0fRLTm4mSpVW3bnmPLOHYaBSol+RE2Rm9ga7/FSibPWY0uJw+Qy/pltM/HnANkxKWoUnFPTto+iMRIEZy/rLS+RK3xQkZRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122269; c=relaxed/simple;
-	bh=dr4qqB+gUQjpx9BPl5XmLoEZyK9T8SJYsWEaVlVRIQo=;
+	s=arc-20240116; t=1758122438; c=relaxed/simple;
+	bh=/LO4PR4MHCg4VJdLZXiWotYb16n75l2OrLKP76EGfx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rG/bScRPit3e/nWanfgM7MjaEgHYmCarHJlhNAQ49QzgYGjBRWl2I/N3See1FTPu68zoWrjyN1lo66sh7INVBgJenhUXsbADu/tQ7QmmN0AxCwk35+aryEOU3dM5hh6jRWVcLNfXx2Lme2eO6R0nzPvjz0F9gDw2MgMAJ6DGK6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AXqMWWLO; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=d2rOtavN8Yu5wp1NcVsRpxDZLel/3IAuBK2KE2s78bs=; b=AXqMWWLOmPyRphOsbmVfXMxScx
-	BvFgiufLKJWsHtvi3uUbeWEc2oY0SA/fHNKXxM650FCV4woIljD4ramthXo4iNMBYhqK3UpJ8urAI
-	oNYWczNXp8U4ZI2MPeCdij3j7WPW5tN8oYv5wUaPNzUZYuG3/fYejTM4KsEMC/uuEhOzAum5lSUev
-	y6iVlG6nM9qom0+6IU8Skhg3J5m/d0bWYCArtFXZMmkqhVWA/O+xCZzKQQZ+KT81ZxGJ9KpLwqQ+l
-	ry/4hO5Nnr8PyWYjPO8CTax/TsxCv6qEdYqI4F2UHngp6KcQASfyK7LOAiiaLMzdejC+XOAwgT1jY
-	Mylix9gQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46120)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uytug-000000004qV-2pGK;
-	Wed, 17 Sep 2025 16:17:42 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uytud-000000000ID-028Q;
-	Wed, 17 Sep 2025 16:17:39 +0100
-Date: Wed, 17 Sep 2025 16:17:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	kernel test robot <lkp@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
- __get_user_asm_dword()
-Message-ID: <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
-References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk>
- <875xdhaaun.ffs@tglx>
- <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
- <87y0qd89q9.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg5AkRhvUPrZrjr/Gkia9Ogdzrj8UP1epgZnjC0NB58xGpO79gQQse7oxuvXqTOgpv8Gfkwgm2uMNXNruAukllLvdX35Z2TQM3pUnS5A3CMAwhnC+LFJtD+GGaSxF1OoP1t2XLw6M4dcY4G7OJaT5nWLLIzFByCg/FtyQBCzgFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y90Y8EaR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3plVSZ8s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y90Y8EaR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3plVSZ8s; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 72046206BE;
+	Wed, 17 Sep 2025 15:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758122434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
+	b=y90Y8EaRXeKbmQM8CZaMvsN0nOr1ZJi0pOTV6rxulwfLrxW2ebeQPIrpTpHChGA9HPsyl6
+	4j8CkR/QqaXXR14Y7ovf+Npsik/u/nS3pMMjRFl+3K+z+69duwT29VWceUstsR5/aT2Rj3
+	UlccGbg79S7FYmt/YNMGxMdcKRCqvqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758122434;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
+	b=3plVSZ8sUJRShcLCni69PgPQMfIgPE2fk0dU+D6nLxYgB9b3ZOJ1jL/3cpKKq3x+HjMgQQ
+	Qwr2+/UXX40imqDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758122434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
+	b=y90Y8EaRXeKbmQM8CZaMvsN0nOr1ZJi0pOTV6rxulwfLrxW2ebeQPIrpTpHChGA9HPsyl6
+	4j8CkR/QqaXXR14Y7ovf+Npsik/u/nS3pMMjRFl+3K+z+69duwT29VWceUstsR5/aT2Rj3
+	UlccGbg79S7FYmt/YNMGxMdcKRCqvqo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758122434;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O30QVKalEyJcj8v2V+u+N14GAJfliqbqZqVd3cyCdF8=;
+	b=3plVSZ8sUJRShcLCni69PgPQMfIgPE2fk0dU+D6nLxYgB9b3ZOJ1jL/3cpKKq3x+HjMgQQ
+	Qwr2+/UXX40imqDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60EA4137C3;
+	Wed, 17 Sep 2025 15:20:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9HdfF8LRymgeHAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 15:20:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E5BF9A077E; Wed, 17 Sep 2025 17:20:29 +0200 (CEST)
+Date: Wed, 17 Sep 2025 17:20:29 +0200
+From: Jan Kara <jack@suse.cz>
+To: Pavel Emelyanov <xemul@scylladb.com>
+Cc: linux-fsdevel@vger.kernel.org, 
+	"Raphael S . Carvalho" <raphaelsc@scylladb.com>
+Subject: Re: [PATCH] inode: Relax RWF_NOWAIT restriction for EINTR in
+ file_modified_flags()
+Message-ID: <5pzb4pxshhgytfki6s52jhnuyxa3hgsyzhcwkdz4qlvpkwimwp@ngsfvqn7i4yc>
+References: <20250912142626.4018-1-xemul@scylladb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87y0qd89q9.ffs@tglx>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250912142626.4018-1-xemul@scylladb.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Wed, Sep 17, 2025 at 03:55:10PM +0200, Thomas Gleixner wrote:
-> On Wed, Sep 17 2025 at 10:41, Russell King wrote:
-> > On Wed, Sep 17, 2025 at 07:48:00AM +0200, Thomas Gleixner wrote:
-> >
-> > Putting together a simple test case, where the only change is making
-> > __gu_val an unsigned long long:
-> >
-> > t.c: In function ‘get_ptr’:
-> > t.c:40:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> >    40 |         (x) = (__typeof__(*(ptr)))__gu_val;                             \
-> >       |               ^
-> > t.c:21:9: note: in expansion of macro ‘__get_user_err’
-> >    21 |         __get_user_err((x), (ptr), __gu_err, TUSER());                  \
-> >       |         ^~~~~~~~~~~~~~
-> > t.c:102:16: note: in expansion of macro ‘__get_user’
-> >   102 |         return __get_user(p, ptr);
-> >       |                ^~~~~~~~~~
-> >
-> > In order for the code you are modifying to be reachable, you need to
-> > build with CONFIG_CPU_SPECTRE disabled. This is produced by:
-> >
-> > int get_ptr(void **ptr)
-> > {
-> >         void *p;
-> >
-> >         return __get_user(p, ptr);
-> > }
+Hello!
+
+On Fri 12-09-25 17:26:26, Pavel Emelyanov wrote:
+> When performing AIO write, the file_modified_flags() function checks
+> whether or not to update inode times. In case update is needed and iocb
+> carries the RWF_NOWAIT flag, the check return EINTR error that quickly
+> propagates into iocb completion without doing any IO.
 > 
-> Duh, yes. I hate get_user() and I did not notice, because the
-> allmodconfig build breaks early due to frame size checks, so I was too
-> lazy to find that config knob and built only a couple of things and an
-> artificial test case for u64.
+> This restriction effectively prevents doing AIO writes with nowait flag,
+> as file modifications really imply time update.
 > 
-> But it actually can be solved solvable by switching the casting to:
+> However, in the filesystem is mounted with SB_LAZYTIME flag, this
+> restriction can be raised, as updating inode times should happen in a
+> lazy manner, by marking the inode dirty and postponing on-disk updates
+> that may require locking.
 > 
->     (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;
-> 
-> Not pretty, but after upping the frame size limit it builds an
-> allmodconfig kernel.
+> Signed-off-by: Pavel Emelyanov <xemul@scylladb.com>
+...
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 01ebdc40021e..d65584d25a00 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2369,7 +2369,7 @@ static int file_modified_flags(struct file *file, int flags)
+>  	ret = inode_needs_update_time(inode);
+>  	if (ret <= 0)
+>  		return ret;
+> -	if (flags & IOCB_NOWAIT)
+> +	if ((flags & IOCB_NOWAIT) && !(inode->i_sb->s_flags & SB_LAZYTIME))
+>  		return -EAGAIN;
 
-For me, this produces:
+The idea isn't bad but this implementation is wrong for several reasons.
+Firstly, if S_VERSION is set in 'ret', then generic_update_time() will call
+__mark_inode_dirty(I_DIRTY_SYNC) which generally means blocking inside the
+filesystem. This is easy to fix. Secondly, there are filesystems
+implementing their ->update_time method which may (and does for some
+filesystems) block. Hence for this to work we need to propagate the
+information about RWF_NOWAIT into inode_update_time() and ->update_time
+callbacks or at the very least keep the old behavior if ->update_time is
+set - depending on which filesystems you're more interested in ;).
 
-get-user-test.c:41:16: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-   41 |         (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;                \
-      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-with arm-linux-gnueabihf-gcc (Debian 14.2.0-19) 14.2.0
-
-Maybe you're using a different compiler that doesn't issue that warning?
-
+								Honza
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
