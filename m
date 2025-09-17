@@ -1,136 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-62019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871A6B81CBC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 22:39:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B560CB81CF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 22:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358101C07B46
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 20:40:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F3747BC627
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 20:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AA42DAFCA;
-	Wed, 17 Sep 2025 20:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541512E0406;
+	Wed, 17 Sep 2025 20:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rf6BtZd5"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NNss7U4D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810112288D5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 20:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E635B34BA47;
+	Wed, 17 Sep 2025 20:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141578; cv=none; b=JEIMUpDZvBKpeqecwCPsKgUYcnqOzFr5z4juJEBOGRtFW3x/ZbRuUe08aYJJ4SH2PieixQYhVM42bt/M1mcFK9zbIufQxkVFo2JUe7JUkXw791YcBrdiP0yjxNdO9ZSeLWqwn/7iFko7ebdMOitCjBTEk9WySGm2AXV2xpFy84k=
+	t=1758141724; cv=none; b=nM0OcTMaEhYKwT2y1PHHq9I7zteg3KRLZ8zIrJs7jSRBvJxab05gUGC35CQXiLxWCDS5m3PfU5WWR9AEmZdtPWKrfeQWkwZz+mHfKn/RRV7SmOoPq/J7xMHHeOmzBTeAurwdms1cSDG0V5KoZnE92tsV3Jc8I2j78F6W5pEbh0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141578; c=relaxed/simple;
-	bh=BebIfPKMuviYRuRYSLWRfv2JJQg0blZwV/yFP6rqZes=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RErvnYOrXqBOnk63pFbZUMMDaH1muiD8ez9uHWRlHuaUhMJhlO/cPNZAtWSZ4PYotoMTH8F3eD4z/9llieepSm7teQSlzD5UB24KtyIA9dtjISFAVQrwYTlRSZZfLYsq63suE6zU5MYwYlD1XOQMJmp7jvPs0Ew2jX7xG5kT2n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rf6BtZd5; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so31948766b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 13:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758141575; x=1758746375; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v2kzkQ4aOmc8N9K5jIReO5F0CstRjbfQHaSb2cVdK+0=;
-        b=Rf6BtZd5px5DWAIkVIE9JOgUV/0HNpaeamtT0X0mALWjo99TurpXoMdIgbbOvCKctP
-         RjNiEdUnPfFaY6wePSf37AxssgfZtXpGBuIlvy8buKj4TdCcGIGv7wdBPCSCnozZ3vck
-         lRptCX3XMLus2nriTHhhMwv6GWWp0DyZv3TPmHqm839XLtputx2MPCx6iP81SDmYIrg5
-         1aHwPfD4AqH+vloPmjtX0qP8m2aIXY1/hzS9aXIBerfAzgWDKOD7vI/azpH8sZMXxwi5
-         nhGWyyAQasRVDu4xelsR4aQhAm2OUVJ5jCpYt4HanPcYSjuQ/oAhBE8wy0yOwbH1m++f
-         Feww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758141575; x=1758746375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v2kzkQ4aOmc8N9K5jIReO5F0CstRjbfQHaSb2cVdK+0=;
-        b=AO/9T5mEx2/50n7chKJ9K/qO5ivSziuR0MZJsx4Y0XjybKwAd8KHDTf9/fVnMP9D0S
-         6yAUsgQQU/Cvh9AATHoZU5HkMgOQ8U0H9VX1yxbTiqpw9pJgI+2kdd2xtXqNbQJMzTKr
-         EihcOLo6x8g56gIth5knxA+YyViAPWZrky9c1U/yi8KHPrEZK6WzytyV/gToODk4ZVXO
-         meP7gpg3wyXnax/2yYXWrNQPomMU6QGkx2dFlLVr7t9C0dBivXVyJzXC++dZS7o//L+U
-         v3B3q0DtRxV2zKGJqwkwDnBR0nuJsFBIGMEHSfR2JIatCfA/CI5JXu1Z0RWed6NwRe6F
-         DnCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIjD5sQO/TzNrau+CU4OdjIcC6uGERDcWULNBPN4dGkdzHBrYLfhxkuG61COtFkR28dvYQQYe9ihZL3T0l@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeBtuFn90kxuSos8CQ/6+94JW4M6Gv0nmGHILTk9RlwnW48VUY
-	yT/j1bw+6YZk4AfPbCWRc+5HGn6XHRv0UTkOP/w/Ewh7C3M4Rl3PzmKtu1sr5tolPnypMrM1rnM
-	acwiF52uHYWnTmh/lQr/Eu19LhnL6lro=
-X-Gm-Gg: ASbGncsdSfRQ9wFmU403wivOXjXqXyyPzOtGZbzp7jt4HO5LQUW9C6nRNOCvwNVx3yw
-	FBs07dqJKzy9OouDd5pihml7QKYRkewCZBNyej2nRW/bzV1FOE3mJifP8HGbpA33xmapqPK1aXo
-	ko/8CUeiAXwb6M9DlXzYWjA5a/zq5UzA8TIFIzzpCKMjuq89iDB5AdVa0jea6TOTq+DqV5WE5wO
-	0siRXdVk7wgOqJMrfNTe/At29oSrsiDc4mKEiY=
-X-Google-Smtp-Source: AGHT+IFrI9fhyiOasqs7aFU5vuu3zzSapgEYvzTIhik4QC4sPMRAXmiqTqntHyu9WssGZGcjsazcwAN0AhwUJFXW33A=
-X-Received: by 2002:a17:907:6d11:b0:b07:cf04:8a43 with SMTP id
- a640c23a62f3a-b1bb7d41abemr393772266b.41.1758141574464; Wed, 17 Sep 2025
- 13:39:34 -0700 (PDT)
+	s=arc-20240116; t=1758141724; c=relaxed/simple;
+	bh=GkCmDPW/1syrsYw1G+YvayDwOfOwzuCS/5C5ZTGXcbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DDWGR9Pr+G9Xn5BsuUGv2RuKJlkBf8xnuveUYJnZnKRz/+INDxpRmJUWOQgyO1HXMpaQauarnnTvDAW4jCDAABNFirizmUuZhIp9J/76ohx/8etj/MIAMnjkHiuvcqVPv2rYJdPNdUaMGPpY5VT41uC357sRvkYygml91n/j8SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NNss7U4D; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rNKB4VtExzuPbc4Hd37NwogNpAaP97VYa9OnljT/b9E=; b=NNss7U4DEBakFnvQygITpcjDWe
+	12Ciy5WVlrHsRsn5cI32Mba/U4Z9Rbntizwj0kkYXgGSWcLQo6+zchYqjpsrAzdczp09xuT7oolf5
+	gzkhmdrW/Yr2LXKjEQtC+uQ+PtHtZtfk7RDX22uyyNpyYLAodm2UZiC92b2GJ9STuuZ9D7z+dlpnz
+	umGb7+gGwvjPzi92nuT08LPP/oL+1m1/PoUwoWcq6mhCtWh11QcB+i9H6YnIED7zLvkIpmkI1RFwG
+	dkzqPG7hRkICMHY57abE/CYGb7BfvsN7WRXgoQ4CjgRRd8OicK9TQtwfz0uXZ7nSGZcc77IUGIjjD
+	ifEixOGg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyyyW-000000084Iv-1L50;
+	Wed, 17 Sep 2025 20:42:00 +0000
+Date: Wed, 17 Sep 2025 21:42:00 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jakub Acs <acsjakub@amazon.de>,
+	linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <20250917204200.GB39973@ZenIV>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+ <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+ <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
- <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
- <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
- <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
- <20250917201408.GX39973@ZenIV> <CAGudoHFEE4nS_cWuc3xjmP=OaQSXMCg0eBrKCBHc3tf104er3A@mail.gmail.com>
- <20250917203435.GA39973@ZenIV>
-In-Reply-To: <20250917203435.GA39973@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 22:39:22 +0200
-X-Gm-Features: AS18NWAETzz-YcBQYRqakGPsgrcnxDdpvhBGhjX9-5GcpAybEJQMsj_xDszE9Ik
-Message-ID: <CAGudoHGDW9yiROidHio8Ow-yZb8uY7wMBjx94fJ7zTkL+rVAFg@mail.gmail.com>
-Subject: Re: Need advice with iput() deadlock during writeback
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Max Kellermann <max.kellermann@ionos.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 17, 2025 at 10:34=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
->
-> On Wed, Sep 17, 2025 at 10:23:00PM +0200, Mateusz Guzik wrote:
->
-> > This should be equivalent to some random piece of code holding onto a
-> > reference for a time.
->
-> As in "Busy inodes after unmount"?
->
+On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
 
-Where I'm from (the BSD land) vnodes (the "inode" equivalent) are the
-base object if you will.
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 60046ae23d514..8c9d0d6bb0045 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
+> 
+>         if (root_inode) {
+>                 res = d_alloc_anon(root_inode->i_sb);
+> -               if (res)
+> +               if (res) {
+> +                       root_inode->i_opflags |= IOP_ROOT;
+>                         d_instantiate(res, root_inode);
 
-If there are busy inodes and you want to unmount, it fails. If you
-force an unmount, there is some shenanigans, but it ultimately waits
-for inodes to disappear.
+Umm...  Not a good idea - if nothing else, root may end up
+being attached someplace (normal with nfs, for example).
 
-Linux has to have something of the sort for dentries, otherwise the
-current fput stuff would not be safe. I find it surprising to learn
-inodes are treated differently.
+But more fundamentally, once we are into ->kill_sb(), let alone
+generic_shutdown_super(), nobody should be playing silly buggers
+with the filesystem.  Sure, RCU accesses are possible, but messing
+around with fhandles?  ->s_root is not the only thing that might
+be no longer there.
 
-> > I would expect whatever unmount/other teardown would proceed after it
-> > gets rid of it.
->
-> Gets rid of it how, exactly?
->
-
-In this context I mean whatever code holding onto it stopped.
-
-> > Although for the queue at hand something can force flush it.
->
-> Suppose two threads do umount() on two different filesystems.  The first
-> one to flush picks *everything* you've delayed and starts handling that.
-> The second sees nothing to do and proceeds to taking the filesystem
-> it's unmounting apart, right under the nose of the first thread doing
-> work on both filesystems...
-
-Per the above, the assumption was unmount would stall waiting for
-these inodes to get processed.
+What the fuck is fsnotify playing at?
 
