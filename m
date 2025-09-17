@@ -1,265 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-61922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44323B7CCE3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 678A1B7D5BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 14:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE413B71E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 11:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E245D4880E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 11:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4711D36997B;
-	Wed, 17 Sep 2025 11:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED58536C081;
+	Wed, 17 Sep 2025 11:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fxQsuJDb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MQ0cdVXu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fxQsuJDb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MQ0cdVXu"
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="J7W0TKO9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE93369987
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 11:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F862EB5D5;
+	Wed, 17 Sep 2025 11:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.34.181.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758108747; cv=none; b=By8XOACyU5XuCbKT0oLjWIncQTaZCWo31IbSv1/6cWWqiVgZEOHhz14zFNVA/S3b8xP/hkewkGnG7wlL5Xf/MFCxxwug9sjRDyJNaaAGrnUHT574I90/CoV3lpKKHeIfI8fOWJ1zT5LwONEo9YGLM9PKOJ8FIjyPdU+GD+df0ao=
+	t=1758108996; cv=none; b=iqT5kqZylJcWoHiS2bCZFNIHVpo9ucUIx6HT2Zer0Wm74SlAFEEphFn+2kMyQE7Oe88HZE0Nz6x5wtPJj7KEAselwLwjUq5A62z7PUbHSLy6Tu8B1xiV/NJ8pZtD5s8IiVEGwQ02CO2y4nxUf8519ElzmKupCTZx4oMFNvFuB2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758108747; c=relaxed/simple;
-	bh=3LlU8D5Tj8BOKkc9McIo8H1J7S9pib7vCnIKwhUAK1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6Je9Qi8RaTk5WuYo3YnDvdQJ4ic0S9nFfEn/X3MUriBVgEc0aiSLXw7kI5VPzHOlPzZe+QjB2J0aCx81mmoh5J28JTrgVywYAAhBHPGpvGyrY/l7q/5cN+HVw9LSlyC7ywa2Rsg9mLNhongWEGrkEoVXU/F8f1K7TRGiVkDw+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fxQsuJDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MQ0cdVXu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fxQsuJDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MQ0cdVXu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 99E6921D3E;
-	Wed, 17 Sep 2025 11:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758108739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
-	b=fxQsuJDbFPJ+Aq2i2N1EojNI/Hd1bpt5cNweVpv6AUqFIxUOJbm2qY66huYbwL8Tm3GUz5
-	SwH8SBvGIvkqn12PaatbE30ebxk6Fodkbs4w5BuVb54khNk0vMRWP/YIASKCUV0kXQR0cJ
-	CDZdoO2GTvamVOJk2LCTJZWR9rZcfqg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758108739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
-	b=MQ0cdVXu/Fgwg2bcVUOI0ttAv/c4z/ykaLMQuBWxTsaAFW5ZdcGVoWzN/qQnuXyDWnG4qD
-	lXTBNkGr95Rj2EDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758108739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
-	b=fxQsuJDbFPJ+Aq2i2N1EojNI/Hd1bpt5cNweVpv6AUqFIxUOJbm2qY66huYbwL8Tm3GUz5
-	SwH8SBvGIvkqn12PaatbE30ebxk6Fodkbs4w5BuVb54khNk0vMRWP/YIASKCUV0kXQR0cJ
-	CDZdoO2GTvamVOJk2LCTJZWR9rZcfqg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758108739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
-	b=MQ0cdVXu/Fgwg2bcVUOI0ttAv/c4z/ykaLMQuBWxTsaAFW5ZdcGVoWzN/qQnuXyDWnG4qD
-	lXTBNkGr95Rj2EDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 202B113A92;
-	Wed, 17 Sep 2025 11:32:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GSeHBECcymi0TAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 11:32:16 +0000
-Date: Wed, 17 Sep 2025 12:32:10 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
-	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 08/13] mm: add ability to take further action in
- vm_area_desc
-Message-ID: <wabzfghapygwy3fzexbplmasrdzttt3nsgpmoj4kr6g7ldstkg@tthpx7de6tqk>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <9171f81e64fcb94243703aa9a7da822b5f2ff302.1758031792.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1758108996; c=relaxed/simple;
+	bh=wRXgDn7HywfAgrTjrDN0yqYd57MJsiJj40hGha2SdgA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEAUdPxDYuK7SJxoaxPVR9+musAETjQpNd9JyzeCdXBBAh89pNl3C4YDyr1eRnNtmkmmiAUWBddrLiTilLOgOp8sfVAc+sCrhVajzinpsItiZbuJ1UZo6CAkocuUrDy/L5SUT0L/jg2MqfOf0GGl84zQUcYEUbCGR3YuFMpw+X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=J7W0TKO9; arc=none smtp.client-ip=52.34.181.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1758108994; x=1789644994;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dWbPeUw7wRMdj3193lZI9i/Wb7Z9FK8CyLLo3CIDTyU=;
+  b=J7W0TKO9JJbtwzA/KDWqDK0oSH7h8b6rDkysJ29/nwBk/k/r5pNoat1e
+   7MIiLQxSt4djiCdB9ZXVTEfCVT6GV1QaHwF69P/zrLnAKU937F2TGSIPy
+   FKtHtrBvzqiwJnE05uBWJHorC+8PrZmvjeUKgWsmpQDuHaCYYS/MP9lTI
+   z1ooHGTk8EXOVg4wn9qcnDVcmnRq8yFaOX/9KoODiwI9yeJIt7s4ujdOe
+   QPBzne+lkpuM+OJc9n/KoDi/xPO3EvkZU5ITE2d0I8mnAqqMl9OFPEGz6
+   e9FqmhhCKM8KbbV1sucbMrU1Jd5gEVWCdW1r9uLN5LkFCHb0cgUwmkgqv
+   g==;
+X-CSE-ConnectionGUID: 3Vojkt4tS96bxJte7xtpaw==
+X-CSE-MsgGUID: OVp1OPtcR5+yogFIzkg6NQ==
+X-IronPort-AV: E=Sophos;i="6.18,263,1751241600"; 
+   d="scan'208";a="3150228"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 11:36:32 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:33744]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.60:2525] with esmtp (Farcaster)
+ id 7ed5f850-98bb-4f32-9e4d-0ddd3fe41eee; Wed, 17 Sep 2025 11:36:31 +0000 (UTC)
+X-Farcaster-Flow-ID: 7ed5f850-98bb-4f32-9e4d-0ddd3fe41eee
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 17 Sep 2025 11:36:31 +0000
+Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
+ (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 17 Sep 2025
+ 11:36:30 +0000
+Date: Wed, 17 Sep 2025 11:36:27 +0000
+From: Jakub Acs <acsjakub@amazon.de>
+To: Amir Goldstein <amir73il@gmail.com>
+CC: Jan Kara <jack@suse.cz>, <linux-unionfs@vger.kernel.org>, Miklos Szeredi
+	<miklos@szeredi.hu>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <20250917113627.GA51799@dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+ <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+ <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <9171f81e64fcb94243703aa9a7da822b5f2ff302.1758031792.git.lorenzo.stoakes@oracle.com>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[62];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.30
+In-Reply-To: <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-ClientProxiedBy: EX19D033UWA001.ant.amazon.com (10.13.139.103) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Tue, Sep 16, 2025 at 03:11:54PM +0100, Lorenzo Stoakes wrote:
-> Some drivers/filesystems need to perform additional tasks after the VMA is
-> set up.  This is typically in the form of pre-population.
+On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
+> Might something naive as this be enough?
 > 
-> The forms of pre-population most likely to be performed are a PFN remap
-> or the insertion of normal folios and PFNs into a mixed map.
+> Thanks,
+> Amir.
 > 
-> We start by implementing the PFN remap functionality, ensuring that we
-> perform the appropriate actions at the appropriate time - that is setting
-> flags at the point of .mmap_prepare, and performing the actual remap at the
-> point at which the VMA is fully established.
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 60046ae23d514..8c9d0d6bb0045 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
 > 
-> This prevents the driver from doing anything too crazy with a VMA at any
-> stage, and we retain complete control over how the mm functionality is
-> applied.
+>         if (root_inode) {
+>                 res = d_alloc_anon(root_inode->i_sb);
+> -               if (res)
+> +               if (res) {
+> +                       root_inode->i_opflags |= IOP_ROOT;
+>                         d_instantiate(res, root_inode);
+> -               else
+> +               } else {
+>                         iput(root_inode);
+> +               }
+>         }
+>         return res;
+>  }
+> diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
+> index 3334c394ce9cb..809a09c6a89e0 100644
+> --- a/fs/gfs2/export.c
+> +++ b/fs/gfs2/export.c
+> @@ -46,7 +46,7 @@ static int gfs2_encode_fh(struct inode *inode, __u32
+> *p, int *len,
+>         fh[3] = cpu_to_be32(ip->i_no_addr & 0xFFFFFFFF);
+>         *len = GFS2_SMALL_FH_SIZE;
 > 
-> Unfortunately callers still do often require some kind of custom action,
-> so we add an optional success/error _hook to allow the caller to do
-> something after the action has succeeded or failed.
-
-Do we have any idea for rules regarding ->mmap_prepare() and ->*_hook()?
-It feels spooky to e.g grab locks in mmap_prepare, and hold them across core
-mmap(). And I guess it might be needed?
-
+> -       if (!parent || inode == d_inode(sb->s_root))
+> +       if (!parent || is_root_inode(inode))
+>                 return *len;
 > 
-> This is done at the point when the VMA has already been established, so
-> the harm that can be done is limited.
+>         ip = GFS2_I(parent);
+> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> index 83f80fdb15674..7827c63354ad5 100644
+> --- a/fs/overlayfs/export.c
+> +++ b/fs/overlayfs/export.c
+> @@ -199,7 +199,7 @@ static int ovl_check_encode_origin(struct inode *inode)
+>          * Root is never indexed, so if there's an upper layer, encode upper for
+>          * root.
+>          */
+> -       if (inode == d_inode(inode->i_sb->s_root))
+> +       if (is_root_inode(inode))
+>                 return 0;
 > 
-> The error hook can be used to filter errors if necessary.
+>         /*
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ec867f112fd5f..ed84379aa06ca 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -665,6 +665,7 @@ is_uncached_acl(struct posix_acl *acl)
+>  #define IOP_DEFAULT_READLINK   0x0010
+>  #define IOP_MGTIME     0x0020
+>  #define IOP_CACHED_LINK        0x0040
+> +#define IOP_ROOT       0x0080
+>   /*
+>   * Keep mostly read-only and often accessed (especially for
+> @@ -2713,6 +2714,11 @@ static inline bool is_mgtime(const struct inode *inode)
+>         return inode->i_opflags & IOP_MGTIME;
+>  }
 > 
-> If any error arises on these final actions, we simply unmap the VMA
-> altogether.
-> 
-> Also update the stacked filesystem compatibility layer to utilise the
-> action behaviour, and update the VMA tests accordingly.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-<snip>
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 31b27086586d..aa1e2003f366 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -775,6 +775,49 @@ struct pfnmap_track_ctx {
->  };
->  #endif
->  
-> +/* What action should be taken after an .mmap_prepare call is complete? */
-> +enum mmap_action_type {
-> +	MMAP_NOTHING,		/* Mapping is complete, no further action. */
-> +	MMAP_REMAP_PFN,		/* Remap PFN range. */
-> +};
+> +static inline bool is_root_inode(const struct inode *inode)
+> +{
+> +       return inode->i_opflags & IOP_ROOT;
+> +}
 > +
-> +/*
-> + * Describes an action an mmap_prepare hook can instruct to be taken to complete
-> + * the mapping of a VMA. Specified in vm_area_desc.
-> + */
-> +struct mmap_action {
-> +	union {
-> +		/* Remap range. */
-> +		struct {
-> +			unsigned long start;
-> +			unsigned long start_pfn;
-> +			unsigned long size;
-> +			pgprot_t pgprot;
-> +			bool is_io_remap;
-> +		} remap;
-> +	};
-> +	enum mmap_action_type type;
-> +
-> +	/*
-> +	 * If specified, this hook is invoked after the selected action has been
-> +	 * successfully completed. Note that the VMA write lock still held.
-> +	 *
-> +	 * The absolute minimum ought to be done here.
-> +	 *
-> +	 * Returns 0 on success, or an error code.
-> +	 */
-> +	int (*success_hook)(const struct vm_area_struct *vma);
-> +
-> +	/*
-> +	 * If specified, this hook is invoked when an error occurred when
-> +	 * attempting the selection action.
-> +	 *
-> +	 * The hook can return an error code in order to filter the error, but
-> +	 * it is not valid to clear the error here.
-> +	 */
-> +	int (*error_hook)(int err);
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>         int flags, const char *dev_name, void *data,
+>         int (*fill_super)(struct super_block *, void *, int));
+> 
 
-Do we need two hooks? It might be more ergonomic to simply have a:
+This would prevent the null-ptr-deref, but the encoding procedure would
+continue (for non-root inode), potentially reaching other code paths
+that assume fs is still mounted - could that maybe be a problem?
 
-	int (*finish)(int err);
+I had considered similar direction initially, too, but then decided I'm
+unable to verify the paths and that it's safer to just fail if we detect
+no root (or cannot take the lock).
+
+Am I thinking wrong?
+
+Jakub
 
 
-	int random_driver_finish(int err)
-	{
-		if (err)
-			pr_err("ahhhhhhhhh\n");
-		mutex_unlock(&big_lock);
-		return err;
-	}
 
-It's also unclear to me if/why we need the capability to switch error codes,
-but I might've missed some discussion on this.
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
-
--- 
-Pedro
 
