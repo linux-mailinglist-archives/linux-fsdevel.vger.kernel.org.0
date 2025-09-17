@@ -1,156 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-61891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E13B7F8F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 15:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7EAB7FBE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C76FC3284A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 09:20:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62557461135
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 09:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8332EA727;
-	Wed, 17 Sep 2025 09:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031F330AAAD;
+	Wed, 17 Sep 2025 09:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="d52FgUFz"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rXA53Na3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QfYxN+DA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rXA53Na3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QfYxN+DA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264CE2D7DF2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB113090CF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 09:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758100848; cv=none; b=LssCw7hDIWZJYFNhMu9pkx9vbjZ84Yuj7HOhXm797kR4QW+S3xlkfzLx4VmLWI5JjNmnsPmnEZ3VruNAmrEtSzCE0dwu7xauUmQbvBWgsxos1niNhw45s/LwOx5jZkCDdTrb/PUjSNkzmZrOickRWjRO40EJ6F+SNWcjmt0pIkU=
+	t=1758101159; cv=none; b=sMS4pDLkMsQUJcun/W2lJqipkS3xRPBmN5+X+mVH1QKQJkpPCnOLmtxQDOpzhPhe542EYe6FT2iefXlWQkfWYGVy2GF2+vas0WRLdu8dkeSxKV9Dt1Ij/KxOLLAdufbiQLKsk7/hEc9ndD0kiqZsPNSootcTj3T6cwy7WM6jcBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758100848; c=relaxed/simple;
-	bh=tbSJkIij2c0zcGKXfLRJg+LHmV+4oS0vVsJc36lMj/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S3rrr7FPa+excRCrojE44DRPp0LxAw4ceVm2F1GOb6QKGmuEl9uNvH/WI2MuJaxSSdUduEqfUBWegF23u9qKb37GqJ5mOQkXzhDmlrfFV6TBhOLBFmitU68Eo/SOOnfH38xJPxJN6sJYykl02PT1+GzNaPgMXwCSWBdgi4kRAZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=d52FgUFz; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b04770a25f2so890910166b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 02:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758100844; x=1758705644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mfy72Mb7ZknB0z0xXbtqc/r/yzrvqlFzmLASJN5p7Tc=;
-        b=d52FgUFztRr/4cxBj/gphtly4pye/j68ubyHKwV5Mqr7Q8QWzQMTrPt7cflhYtY+Gc
-         nptEPaWNdMSQtYm+XFi6oDXK1+1gQAMbaG/iuAhEFEh8gcaNET8uQ60MJ7qXnfdhLBal
-         /hi7YAi2NNwQ6vbIjl8kFhjilXCIjTLVnNy2cwiw+brRpWQJfJsvuh19BENxV09dTOJu
-         UIlwHIm2abEYfAWxx6YtTKB9QcC+RCv5ZhXMXSbjXt22TvP5kUNOfIT5mkzMEB2B7ZZ3
-         +UCHT3nvFHNyuMXc+/I/UcAvCdQz+Ne0dZVBbqsM2hky/NTeBQ20fRJY1Tk8I3Tzd4VN
-         7XUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758100844; x=1758705644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mfy72Mb7ZknB0z0xXbtqc/r/yzrvqlFzmLASJN5p7Tc=;
-        b=V3pKyDTXEMqnjSLYb8rpUKjNpfxP6CeMM8Nj6OVhZWajHnzIOvOpSl6usJABoS0mb7
-         69smLjMupM18zkIIy2rV3CupEO/SvOcECElX3OQuMEXdsQVklSjtQoxAyfeNB8RtyIw+
-         4s/AHmwn4TEdYAt84VbXrixASbP4SrkEydClH0lS2c9Oad4iovgJQgQlA3Zr8kdTf8Qg
-         aFNQPA0IebVqrQzXfNuyjpbW37swELwY7ffUrNcTRWi8PyJ9D852Q49SI7Vx/v+mCHQs
-         H+qfKhiRNO2QZBGW2y3US6mWSX55Ey8U2+vewT3DaHQ4Vrn4gNim6uTZysVen+SAdUBF
-         4XAA==
-X-Gm-Message-State: AOJu0YzrA84QGnQpGcZTwvZ+k339RRmSGVMhq6Q2AU7LcvGMIkU2iOKo
-	03Z57bWLT1bQs4obkfNryG6qurjSKRAo1WbOdHK+BlcALMSa0rMDQibYFlIYpH5oHKdZhDHi0i/
-	JLE7hb2btgqlliK4xEZdMdvk73ibcqd6ClOaSEw5JOHig/P5Se2SH
-X-Gm-Gg: ASbGncv0yES25Y5IML4dwlH3JDU5tXcxsL3w/tZe0wnImMvDZ4B9dCgTk12DY/bDu2+
-	Kj5ek6XitJHiny/wRclzedJvuNMqNN+gBxyf/iLkvbkS/qVHkYrJ23uf8TO+8PVFnb8SSs9q5Gj
-	eaDs/SdnS9RJEskHovV453IUpmuWYk7eKNRxJ+ks+GV0XMEhUeTH+1k4l8iA6+etbwW7NKnDL5m
-	nM637/dHm4LZSVlgAkK4NPh3v31aHP1/GVO2RBsdIOeQAA=
-X-Google-Smtp-Source: AGHT+IEuwtAHMUHjO1x3ENSlxdOmbju+xnSnCyHh4cRztllkF7bNH5RwzXT8gyIuvTUrZr4/rmjjgYdEHERK/tIiwXE=
-X-Received: by 2002:a17:907:94c3:b0:b14:53a0:5c61 with SMTP id
- a640c23a62f3a-b1bb4337342mr176847366b.12.1758100844320; Wed, 17 Sep 2025
- 02:20:44 -0700 (PDT)
+	s=arc-20240116; t=1758101159; c=relaxed/simple;
+	bh=4K0/uDyh0N2jSVSiI9BnT+ixAAltLBYZPqeVtm8penU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jQ1FHwlH+y9kLBthnvDQcCA8iHeCwbMjuW/SJOb+prh0IlBQZb8zqCvXe5C0KvYe9RPkifk52F03+m18yT1/2N3oXaiBT+WjISWxu/GQzOdjqJy7Axb14mqATJgvIW9rFp3Zc2yr79eM3yK//sD4yIUL/5xuZARm+Ss6157qe2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rXA53Na3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QfYxN+DA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rXA53Na3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QfYxN+DA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D476E221BB;
+	Wed, 17 Sep 2025 09:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758101155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=npyqCYOpAVQtfheVWz9FUR0zQlUjwxKOcsEta6egfl0=;
+	b=rXA53Na3hQ+Va5FJaq3gz86Q0x77gH9synOxP/ZoZTpS4vUcmo4WAM5iEBnJHhMhxSnBOE
+	F6ICHFhf5IpGLpblfA61X1i/5UV9bti/me5SYOA9YEeDAFjr8p3xtoWWv1UUyiPIthxlng
+	nuYfa/0WL0xDFPct/IKX10J4imRdNY8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758101155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=npyqCYOpAVQtfheVWz9FUR0zQlUjwxKOcsEta6egfl0=;
+	b=QfYxN+DAa+H4YDGoII46Am9P75PICnbp8NNQ+uVfWm29Nc/iyE70EbHAbpzVhbpM0qL4IO
+	9IKuZMZPoeMc4qDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758101155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=npyqCYOpAVQtfheVWz9FUR0zQlUjwxKOcsEta6egfl0=;
+	b=rXA53Na3hQ+Va5FJaq3gz86Q0x77gH9synOxP/ZoZTpS4vUcmo4WAM5iEBnJHhMhxSnBOE
+	F6ICHFhf5IpGLpblfA61X1i/5UV9bti/me5SYOA9YEeDAFjr8p3xtoWWv1UUyiPIthxlng
+	nuYfa/0WL0xDFPct/IKX10J4imRdNY8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758101155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=npyqCYOpAVQtfheVWz9FUR0zQlUjwxKOcsEta6egfl0=;
+	b=QfYxN+DAa+H4YDGoII46Am9P75PICnbp8NNQ+uVfWm29Nc/iyE70EbHAbpzVhbpM0qL4IO
+	9IKuZMZPoeMc4qDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C89FD137C3;
+	Wed, 17 Sep 2025 09:25:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QLv2MKN+ymhbHwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 09:25:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6EFF7A0A95; Wed, 17 Sep 2025 11:25:55 +0200 (CEST)
+Date: Wed, 17 Sep 2025 11:25:55 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jakub Acs <acsjakub@amazon.de>, 
+	linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
- <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
- <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com> <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
-In-Reply-To: <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 11:20:33 +0200
-X-Gm-Features: AS18NWB7XvnaQ-WcvFZZGW6kOLpaf69Y5rLJa_6Q1pxrO9zJ4eZ1OfMv2xVqu3c
-Message-ID: <CAKPOu+_B=0G-csXEw2OshD6ZJm0+Ex9dRNf6bHpVuQFgBB7-Zw@mail.gmail.com>
-Subject: Re: Need advice with iput() deadlock during writeback
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Wed, Sep 17, 2025 at 10:59=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
-> There happens to be a temporarily inactive discussion related to it, see:
-> https://lore.kernel.org/linux-fsdevel/cover.1756222464.git.josef@toxicpan=
-da.com/
->
-> but also the followup:
-> https://lore.kernel.org/linux-fsdevel/eeu47pjcaxkfol2o2bltigfjvrz6eecdjwt=
-ilnmnprqh7dhdn7@rqi35ya5ilmv/
->
-> The patchset posted there retains inode_wait_for_writeback().
-
-That is indeed a very interesting thread tackling a very similar
-problem. I guess I can learn a bit from the discussion.
-
-> > My idea was something like iput_safe() and that function would defer
-> > the actual iput() call if the reference counter is 1 (i.e. the caller
-> > is holding the last reference).
+On Tue 16-09-25 15:29:35, Amir Goldstein wrote:
+> On Tue, Sep 16, 2025 at 1:30 PM Jan Kara <jack@suse.cz> wrote:
 > >
->
-> That's the same as my proposal.
+> > On Mon 15-09-25 17:29:40, Amir Goldstein wrote:
+> > > On Mon, Sep 15, 2025 at 4:07 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> > > > > > index 83f80fdb1567..424c73188e06 100644
+> > > > > > --- a/fs/overlayfs/export.c
+> > > > > > +++ b/fs/overlayfs/export.c
+> > > > > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct inode *inode)
+> > > > > >         if (!ovl_inode_lower(inode))
+> > > > > >                 return 0;
+> > > > > >
+> > > > > > +       if (!inode->i_sb->s_root)
+> > > > > > +               return -ENOENT;
+> > > > >
+> > > > > For a filesystem method to have to check that its own root is still alive sounds
+> > > > > like the wrong way to me.
+> > > > > That's one of the things that should be taken for granted by fs code.
+> > > > >
+> > > > > I don't think this is an overlayfs specific issue, because other fs would be
+> > > > > happy if encode_fh() would be called with NULL sb->s_root.
+> > > >
+> > > > Actually, I don't see where that would blow up? Generally references to
+> > > > sb->s_root in filesystems outside of mount / remount code are pretty rare.
+> > > > Also most of the code should be unreachable by the time we set sb->s_root
+> > > > to NULL because there are no open files at that moment, no exports etc. But
+> > > > as this report shows, there are occasional surprises (I remember similar
+> > > > issue with ext4 sysfs files handlers using s_root without checking couple
+> > > > years back).
+> > > >
+> > >
+> > > I am not sure that I understand what you are arguing for.
+> > > I did a very naive grep s_root fs/*/export.c and quickly found:
+> >
+> > You're better with grep than me ;). I was grepping for '->s_root' as well
+> > but all the hits I had looked into were related to mounting and similar and
+> > eventually I got bored. Restricting the grep to export ops indeed shows
+> > ceph, gfs2 and overlayfs are vulnerable to this kind of problem.
+> >
+> > > static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
+> > >                           struct inode *parent)
+> > > {
+> > > ...
+> > >         if (!parent || inode == d_inode(sb->s_root))
+> > >                 return *len;
+> > >
+> > > So it's not an overlayfs specific issue, just so happens that zysbot
+> > > likes to test overlayfs.
+> > >
+> > > Are you suggesting that we fix all of those one by one?
+> >
+> > No. I agree we need to figure out a way to make sure export ops are not
+> > called on a filesystem being unmounted. Standard open_by_handle() or NFS
+> > export cannot race with generic_shutdown_super() (they hold the fs mounted)
+> > so fsnotify is a special case here.
+> >
+> > I actually wonder if fanotify event (e.g. from inode deletion postponed to
+> > some workqueue or whatever) cannot race with umount as well and cause the
+> > same problem...
+> >
+> 
+> Oy. I was thinking that all event happen when holding some mnt ref
+> but yeh fsnotify_inoderemove() does look like it could be a problem
+> from sb shutdown context.
 
-The real difference (aside from naming) is that I wanted to change
-only callers in unsafe contexts to the new function. But I guess most
-people calling iput() are not aware of its dangers and if we look
-closer, more existing bugs may be revealed.
+Well, but there's also fun like fs/kernfs/file.c: kernfs_notify() which
+queues work which calls fsnotify for some inodes and, frankly, proper
+exclusion with umount seems non-existent there (but I can be missing
+something).
 
-For example, the Ceph bugs only occur under memory pressure (via
-memcg) - only when the dcache happens to be flushed and the process
-doing the writes had already exited, thus nobody else was still
-holding a reference to the inode. These are rare circumstances for
-normal people, but on our servers, that happens all the time.
+Also we have fsnotify_sb_error() which can happen practically anytime
+before the fs gets fully shutdown in ->kill_sb() and may try to encode fh
+of an inode.
 
-> Note  that vast majority of real-world calls to iput already come with
-> a count of 1, but it may be this is not true for ceph.
+So there are not many cases where this can happen but enough that I'd say
+that handling some events specially to avoid encoding fh on fs while it is
+unmounted is fragile and prone to breaking again sooner or later.
 
-Not my experience - I traced iput() and found that this was very rare
-- because the dcache is almost always holding a reference and inodes
-are only ever evicted if the dcache decides to drop them.
+> How about skipping fsnotify_inoderemove() in case sb is in shutdown?
 
-> I suspect the best short-term fix is to implement ceph-private async
-> iput with linkage coming from struct ceph_inode_info or whatever other
-> struct applicable.
+Also how would you like to handle that in a race-free manner? We'd need to
+hold s_umount for that which we cannot really afford in that context. But
+maybe you have some better idea...
 
-I had already started writing exactly this, very similar to your
-sketch. That's what I'm going to finish now - and it will produce a
-patch that will hopefully be appropriate for a stable backport. This
-Ceph deadlock bug appears to affect all Linux versions.
+> > > > > Can we change the order of generic_shutdown_super() so that
+> > > > > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
+> > > > >
+> > > > > Or is there a better solution for this race?
+> > > >
+> > > > Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
+> > > > In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
+> > > > evict_inodes")) we've moved the call after evict_inodes() because otherwise
+> > > > we were just wasting cycles scanning many inodes without watches. So moving
+> > > > it earlier wouldn't be great...
+> > >
+> > > Yes, I noticed that and I figured there were subtleties.
+> >
+> > Right. After thinking more about it I think calling fsnotify_sb_delete()
+> > earlier is the only practical choice we have (not clearing sb->s_root isn't
+> > much of an option - we need to prune all dentries to quiesce the filesystem
+> > and leaving s_root alive would create odd corner cases). But you don't want
+> > to be iterating millions of inodes just to clear couple of marks so we'll
+> > have to figure out something more clever there.
+> 
+> I think we only need to suppress the fsnotify_inoderemove() call.
+> It sounds doable and very local to fs/super.c.
+> 
+> Regarding show_mark_fhandle() WDYT about my suggestion to
+> guard it with super_trylock_shared()?
 
->         if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
->                 init_task_work(&ci->async_task_work, __ceph_iput_async);
->                 if (!task_work_add(task, &ci->async_task_work, TWA_RESUME=
-))
->                         return;
->         }
+Yes, super_trylock_shared() for that callsite looks like a fine solution
+for that call site. Occasional random failures in encoding fh because the
+trylock fails are unlikely to have any bad consequences there. But I think
+we need to figure out other possibly racing call-sites as well first.
 
-This part isn't useful for inodes, is it? I suppose this code exists
-in fput() only to guarantee that all file handles are really closed
-before returning to userspace, right? And we don't need that for
-inodes?
+								Honza
 
-Thanks for your helpful advice, Mateusz!
-
-Max
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
