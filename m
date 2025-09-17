@@ -1,132 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-61958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-61959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9193B80EE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 18:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC10B80FB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 18:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB921C81393
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7117E188A6BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Sep 2025 16:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309172FC865;
-	Wed, 17 Sep 2025 16:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA6A28E5F3;
+	Wed, 17 Sep 2025 16:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzJjqcZx"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HC6D3Red";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s43KVGfF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HC6D3Red";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s43KVGfF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35B32FC01F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 16:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD36F34BA3C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 16:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758125337; cv=none; b=BEK5M8+WiGKmJZTyVOt9H5lpHW8M0QI4hanzYvag8gQTdxlJtXtA7uKq0qrXWA8F9NsCYDhajG/jCiVvK9fvV+e8i5x0qwMaeLC725dYYb/xdNQACryXRjN/uRrEinQ1ZWI5MfxULrsF7AFEircxKP5UXeR5Na82l3EFBdP4PbU=
+	t=1758126364; cv=none; b=CmWnRzHJMcWbD/Ih9MHLiy2MMtEqlImJThGNnUBgnUjg9eD004pTI8bIQbN52OKrjRxuYRFs+mMV3sXNEsFdPsGUXxT6EQJfB3dnqX8pp2FWV7OhXMf7JPOjIC8NvIc0yM6Abb4sYvJTLfGL1/DulXpY92899ze1Qg99wh9hvoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758125337; c=relaxed/simple;
-	bh=Kr3gqWKbVlIGwo9cD0/OQm+KVwsdtYQ0965Lj/PoWnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XU/ND14HU/0NHtK1FJ10cBBciVYRJo24IpUxT0DnK7R+nE9hKZ2J2Vl91muEc5IWOGBx4NGM40YLI8grbCP42D07Zd52JAurY6/SaU8Z/RjAbntrFptKjaBqXLXYullK5kGpNlXwPLwxrtirOFIzJ1XeSAgEnBWhmPvUGA5ScsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzJjqcZx; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62f4a8dfadcso4589825a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 09:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758125334; x=1758730134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kr3gqWKbVlIGwo9cD0/OQm+KVwsdtYQ0965Lj/PoWnU=;
-        b=VzJjqcZxYA3erzmSv1+Gm41JHdb95987L7OsKUf4tYF1aZ103ndDt9D2n9L5UX/iyR
-         Oq+lWdgL7xoAzYV1HZHdv3y3WYgpPtHQnyQgcMW91V7NbXG3zabz0leuOrkPuMeta8WS
-         uNs5Yyx16VjZ0llaa0UOxNekJGpvl7Ax1VNuJ5SGuLyyWQ74/XXoqW7d9YfGukfsM1NO
-         5IBZh2au7giOwNwKvk0s0/GIbnYR4gA3hkaM26+h8jhSSQ98mZBPZl/fjjlJBNRHHqeo
-         LkCTyEaGVppvMgv/fCRep0OPMWncQPxNVsv3cxn6iAEyDwP0qlywPjkGwVKJaTzjFW98
-         4rzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758125334; x=1758730134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kr3gqWKbVlIGwo9cD0/OQm+KVwsdtYQ0965Lj/PoWnU=;
-        b=sW5B9nxhYhMQJBBL/wwZOkACOL+3JncmSUeGKLIGbMPv8kuvrRSVf/y371GRNh6JD5
-         rkqVgqX+W7n2BcDmSw7SzFrVvj6/bxKdgAUjsetlKwDMYqsu4s9Cb/cW4r8Olio8rtK4
-         Dntqo5pUL/V6fRXd1m2REZNAReDqSm1KzE43++pOgn3VkQYaAZbSrtv/tO15Awf/1PLl
-         4u3OZbGR1ykHQ3ywmjsuzjS05l8zZMYYbVE3iiW2NFnHqLTzwEKVXadTSKlyYy96RSIE
-         54pAqvHVpCFvCDZIpTJXMr8mnBGCdr/6Afi3bKda1PIB7+KGHvfjeBqMrhn2khAkSR5N
-         GMzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWf23I2IBJLaQtIXkybXKrD+bqkqZCmpGOI/aKpXIOC+rPn7RIm25w7ntt5kDXwd0NqFxEN3G86dYzoskyX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxov8IO+DDUOaVgRH+7ipdHEgNrSxUKKxYoNV7smI/50Mi7pIva
-	QtiNqKsiR0El7mWPaXMhlLgHOTMG0YnvYPZS8XjeI5Klzya8kdXv+CDh5S0RSK2NhAzzm5Tfk2D
-	kjr6C98K0Wd5TfUACd6Dk9E8aV+pHlKM=
-X-Gm-Gg: ASbGnctx4ZnRmrQ51F36ogg3126cUcDF8kJqGhO1rhDpyqoGXfYR30lbdbv3mEprNY+
-	VT71oVxRtqpBfnjFczddRGfPlBlw9xk6AyHmgKBsKWqQWUq7pYZJlT3FW6eOlUzmvw2SfQlaOOp
-	BHdT27KpDE5UtX1PkeHlOgKxppVLpNwe9yGmp92ku+hSEB5j+6Wru2PCTrCl65dPGl3VcqoVxlT
-	69Z9+rwfTn7nMv/muFXupo52qlRQ2k9Fg2YoHc=
-X-Google-Smtp-Source: AGHT+IFfkw3ZhHCyvQ/zqYdJnCid9nGZ71xvQ4q8PPdeMSagiSD+1jRHqhMt2JVe+mHbWhpBVrm4H+NXXW402BjcU/Q=
-X-Received: by 2002:a05:6402:50c8:b0:62f:492d:57df with SMTP id
- 4fb4d7f45d1cf-62f83e2ee50mr2738250a12.13.1758125333841; Wed, 17 Sep 2025
- 09:08:53 -0700 (PDT)
+	s=arc-20240116; t=1758126364; c=relaxed/simple;
+	bh=NuedsL0u0jTMe5e963phUNbN5qwo3sq686mjG/Qm3ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOWFdvZYpU2qPLtwjs2lY96E2CFXftF7qi/zWI43hKBKPVfEKACL/YGMOxZ1vLYfFGDcu8nd3M5IuS4cJQRlqL/ghFO65JS/R1fCB0VdtZ6zESt9CPwxcZBLu9HJjR8imDvagW9WsO9cQZod5cWdrUft4jIqPKrDXcBllFv5e7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HC6D3Red; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s43KVGfF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HC6D3Red; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s43KVGfF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EA230218F1;
+	Wed, 17 Sep 2025 16:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758126361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
+	b=HC6D3Red6ZMCagXz6VhZuw2776xmW9QjS9PRYQXyx4/imvzewtef8k/CWoZZ2dvzX3UKeW
+	41ciJw33CQrcMWLar1CCl58cyXhwVWKI13YIfY9viND9OnILeKB47Mi218N1hYydkC9wd0
+	lEJRdFYGM2NVX5HJVD0HkUq936aCQv4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758126361;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
+	b=s43KVGfF3mcyEVqWiHDE87iRXJGMrhPq7n8S4Wod7psNXyKCL2H3TvgCE6yXiB8lNFMzHC
+	yu4fzvL2IdqPCiBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HC6D3Red;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=s43KVGfF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758126361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
+	b=HC6D3Red6ZMCagXz6VhZuw2776xmW9QjS9PRYQXyx4/imvzewtef8k/CWoZZ2dvzX3UKeW
+	41ciJw33CQrcMWLar1CCl58cyXhwVWKI13YIfY9viND9OnILeKB47Mi218N1hYydkC9wd0
+	lEJRdFYGM2NVX5HJVD0HkUq936aCQv4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758126361;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
+	b=s43KVGfF3mcyEVqWiHDE87iRXJGMrhPq7n8S4Wod7psNXyKCL2H3TvgCE6yXiB8lNFMzHC
+	yu4fzvL2IdqPCiBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4A701368D;
+	Wed, 17 Sep 2025 16:26:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A5qkLxjhymhKMQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 16:26:00 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1C9A2A083B; Wed, 17 Sep 2025 18:26:00 +0200 (CEST)
+Date: Wed, 17 Sep 2025 18:26:00 +0200
+From: Jan Kara <jack@suse.cz>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: add might_sleep() annotation to iput() and more
+Message-ID: <4hczbhmpigwkkeeqaq2kgw4wumsbrlgis4ld7jz5lq2wdjsnzb@oolwamox5glq>
+References: <20250917153632.2228828-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1752824628.git.namcao@linutronix.de> <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
- <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
- <87zfat19i7.fsf@yellow.woof> <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
-In-Reply-To: <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 18:08:40 +0200
-X-Gm-Features: AS18NWC1EPmJdyZY3bQd_3V_8f7tgIP7U6oPJlspQMEqezDw5kgn80teldh6eoI
-Message-ID: <CAGudoHE=iaZp66pTBYTpgcqis25rU--wFJecJP-fq78hmPViCg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
-To: Nam Cao <namcao@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Shuah Khan <shuah@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, Khazhismel Kumykov <khazhy@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917153632.2228828-1-max.kellermann@ionos.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: EA230218F1
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -4.01
 
-On Wed, Sep 17, 2025 at 6:05=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Wed, Sep 17, 2025 at 3:41=E2=80=AFPM Nam Cao <namcao@linutronix.de> wr=
-ote:
-> > My question is whether the performance of epoll_wait() with zero
-> > timeout is really that important that we have to complicate
-> > things. If epoll_wait() with zero timeout is called repeatedly in a loo=
-p
-> > but there is no event, I'm sure there will be measurabled performance
-> > drop. But sane user would just use timeout in that case.
-> >
-> > epoll's data is protected by a lock. Therefore I think the most
-> > straightforward solution is just taking the lock before reading the
-> > data.
-> >
->
-> I have no idea what the original use case is. I see the author of the
-> patch is cc'ed, so hopefully they will answer.
->
-> > Lockless is hard to get right and may cause hard-to-debug problems. So
-> > unless this performance drop somehow bothers someone, I would prefer
-> > "keep it simple, stupid".
-> >
->
-> Well epoll is known to suffer from lock contention, so I would like to
-> think the lockless games were motivated by a real-world need, but I'm
-> not going peruse the history to find out.
->
-> I can agree the current state concerning ep_events_available() is
-> avoidably error prone and something(tm) should be done. fwiw the
-> refcount thing is almost free on amd64, I have no idea how this pans
-> out on arm64.
+On Wed 17-09-25 17:36:31, Max Kellermann wrote:
+> When iput() drops the reference counter to zero, it may sleep via
+> inode_wait_for_writeback().  This happens rarely because it's usually
+> the dcache which evicts inodes, but really iput() should only ever be
+> called in contexts where sleeping is allowed.  This annotation allows
+> finding buggy callers.
+> 
+> Additionally, this patch annotates a few low-level functions that can
+> call iput() conditionally.
+> 
+> Cc: Mateusz Guzik <mjguzik@gmail.com>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-erm, seqcount
+Looks sensible. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> For discussion of a loosely-related Ceph deadlock bug, see:
+>  https://lore.kernel.org/ceph-devel/CAKPOu+-xr+nQuzfjtQCgZCqPtec=8uQiz29H5+5AeFzTbp=1rw@mail.gmail.com/T/
+>  https://lore.kernel.org/ceph-devel/CAGudoHF0+JfqxB_fQxeo7Pbadjq7UA1JFH4QmfFS1hDHunNmtw@mail.gmail.com/T/
+> ---
+>  fs/inode.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index fc2edb5a4dbe..ec9339024ac3 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1279,6 +1279,8 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+>  	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+>  	struct inode *old;
+>  
+> +	might_sleep();
+> +
+>  again:
+>  	spin_lock(&inode_hash_lock);
+>  	old = find_inode(inode->i_sb, head, test, data, true);
+> @@ -1382,6 +1384,8 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
+>  	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+>  	struct inode *inode, *new;
+>  
+> +	might_sleep();
+> +
+>  again:
+>  	inode = find_inode(sb, head, test, data, false);
+>  	if (inode) {
+> @@ -1422,6 +1426,9 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+>  {
+>  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+>  	struct inode *inode;
+> +
+> +	might_sleep();
+> +
+>  again:
+>  	inode = find_inode_fast(sb, head, ino, false);
+>  	if (inode) {
+> @@ -1605,6 +1612,9 @@ struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+>  		int (*test)(struct inode *, void *), void *data)
+>  {
+>  	struct inode *inode;
+> +
+> +	might_sleep();
+> +
+>  again:
+>  	inode = ilookup5_nowait(sb, hashval, test, data);
+>  	if (inode) {
+> @@ -1630,6 +1640,9 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
+>  {
+>  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+>  	struct inode *inode;
+> +
+> +	might_sleep();
+> +
+>  again:
+>  	inode = find_inode_fast(sb, head, ino, false);
+>  
+> @@ -1780,6 +1793,8 @@ int insert_inode_locked(struct inode *inode)
+>  	ino_t ino = inode->i_ino;
+>  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+>  
+> +	might_sleep();
+> +
+>  	while (1) {
+>  		struct inode *old = NULL;
+>  		spin_lock(&inode_hash_lock);
+> @@ -1826,6 +1841,8 @@ int insert_inode_locked4(struct inode *inode, unsigned long hashval,
+>  {
+>  	struct inode *old;
+>  
+> +	might_sleep();
+> +
+>  	inode->i_state |= I_CREATING;
+>  	old = inode_insert5(inode, hashval, test, NULL, data);
+>  
+> @@ -1908,6 +1925,7 @@ static void iput_final(struct inode *inode)
+>   */
+>  void iput(struct inode *inode)
+>  {
+> +	might_sleep();
+>  	if (unlikely(!inode))
+>  		return;
+>  
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
