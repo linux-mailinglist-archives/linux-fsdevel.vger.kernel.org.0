@@ -1,65 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-62159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E103B8651B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 19:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77735B86597
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 20:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680C23A073E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 17:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7391CC478D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 18:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B9128135D;
-	Thu, 18 Sep 2025 17:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBCC28C860;
+	Thu, 18 Sep 2025 18:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRY4LbNn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWN6i1s9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A955F2749EA;
-	Thu, 18 Sep 2025 17:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE5428B3E2;
+	Thu, 18 Sep 2025 18:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758217802; cv=none; b=dl8z5CLe1VxNW1qzv6PV8RO6onp3+i/0D1pu1SJGst63dzUbeqkE1stTGm7CCwa0t1sxyJP2rzAA1iK7jDN0zW8y2trMl9uFUvC8+rzYebNPAHM/BZ0exAKcM4Nkl3F+VxmMvjVbuc/gzzlkHQpf0tkr3RHZyCAcPgbfzo8Vcwo=
+	t=1758218547; cv=none; b=B2JAj6wZcvd3XdOVmU9n/N3ndctQDVqNWsOqs2b5zsmBuI+7it139VTqFMtkq+bj1EGIg5rNvXux6x1RkCzHJ42KIORM6r6CNBJ9IethFpKtK32wU6IaU0zFYO46Byc6O/KFPNv7p0iTumxq0Tlhd+KWRtvTZEiDjMEeITiujho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758217802; c=relaxed/simple;
-	bh=Fviy6AooPqBlirFUNgRWQ/yLPYm3xPrD+KZwS6ZCyzc=;
+	s=arc-20240116; t=1758218547; c=relaxed/simple;
+	bh=e82aIZt1Reiu+WLwhM+bQ4KSAAViaAd5w0OyCeb+0aE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n5Ftj1DGg3oAHVYnm1d5QmtFnId440tE9NOSHkw9r3BnnHPpU2v7GO5OBXXhmJoHAXzk06oDfe7IzQO7XNNgWOVoEbVYJqrQRiCaip6Nt2y6WIiGVug+ogI6CpdYZvNBQNZb3nWeZJUsNyXGqqERLx54AekVk7qyGE+o9G20pAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRY4LbNn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23325C4CEE7;
-	Thu, 18 Sep 2025 17:50:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSkRr+rk3Kd6/taPK0VqoKuwKiYF3e+IqFW7QySdRzg7wlKX61m1rM48QrPFlAybwjE9WoEhZZ6PHMcw8U/v8CDYzfs2UloXIfexQ/jURdfF01BNqcdlm0tPm0yRtRdombEsxfwOc7cSC5REHy5LbaXEcNeB4fsRaQ6D+2hiWmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWN6i1s9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B16BC4CEE7;
+	Thu, 18 Sep 2025 18:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758217802;
-	bh=Fviy6AooPqBlirFUNgRWQ/yLPYm3xPrD+KZwS6ZCyzc=;
+	s=k20201202; t=1758218547;
+	bh=e82aIZt1Reiu+WLwhM+bQ4KSAAViaAd5w0OyCeb+0aE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vRY4LbNnxf2Er3fVU5TS418YAf3komQjHsYNi162woTgtAJhhZx0xsEw3IJnEUGMP
-	 QXQDRDqlmIVTjTr+g2ta1SkRaF2TXfTcj8Dor7CxtfLlBZ4QDW1rQovmdf4Sf6yYBW
-	 QEtHMGY/bMIVKYAFSRW6Kw73Q1bQ1zTuaTdyXcTUAqSaDT9b9SC+iBkLDEdj03TpR8
-	 9Fs7lJfvoqJKkgeLI56CUTfyoOw0hy2GMGdjAOu9m9z51I+IYvV1d18wc8JTrhbMJw
-	 Sc0rIrGEQIrb4wyfRs0QnSQV6tpx1QRvZckMW4JrcHvU7oXb7WR38CcJ8kbG+S8KOX
-	 o7royO5PkW+QA==
-Date: Thu, 18 Sep 2025 10:50:01 -0700
+	b=pWN6i1s9GzOyDX+GWO8THe/UW/s4QnEQ1XQbCYimYByR7k8PlQ4QbjuYNd8ZszUVZ
+	 UgaZc/r77GieX5LxNNRaWG3V20nK+rZuYIpmN4w1nCo6guEJTRcDIYk9vcqto5M8ul
+	 6vLqfx6NIQaYvh5Yql0bEzH6m7aGISJHbIRKb6eB0BANgMi6A4/e/T/B2DrVWqh4Rh
+	 tx0ZRs5udTzFR/oKAR/P7vsOY2vXI3mgquYRo3s9btSUsotCu7LKJRqmS2lWE8c6FA
+	 k5IYrJagAAocZKwq3xzauYaCWd3x264Jbzt6suMcjR0VXqj8XgGX3kg6hj6JzILXuX
+	 NchJO0boeBEbw==
+Date: Thu, 18 Sep 2025 11:02:26 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Luis Henriques <luis@igalia.com>,
-	Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250918175001.GY8117@frogsfrogsfrogs>
-References: <8734abgxfl.fsf@igalia.com>
- <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
- <20250912145857.GQ8117@frogsfrogsfrogs>
- <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
- <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
- <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs>
- <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, linux-xfs@vger.kernel.org,
+	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev,
+	joannelkoong@gmail.com
+Subject: Re: [PATCH 3/5] fuse: move the passthrough-specific code back to
+ passthrough.c
+Message-ID: <20250918180226.GZ8117@frogsfrogsfrogs>
+References: <175798150680.382479.9087542564560468560.stgit@frogsfrogsfrogs>
+ <175798150773.382479.13993075040890328659.stgit@frogsfrogsfrogs>
+ <CAOQ4uxigBL4pCDXjRYX0ftCMyQibRPuRJP7+KhC7Jr=yEM=DUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,197 +62,458 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxigBL4pCDXjRYX0ftCMyQibRPuRJP7+KhC7Jr=yEM=DUw@mail.gmail.com>
 
-On Tue, Sep 16, 2025 at 09:59:36AM +0200, Amir Goldstein wrote:
-> On Tue, Sep 16, 2025 at 4:53 AM Darrick J. Wong <djwong@kernel.org> wrote:
+On Wed, Sep 17, 2025 at 04:47:19AM +0200, Amir Goldstein wrote:
+> On Tue, Sep 16, 2025 at 2:27 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
-> > > On Mon, Sep 15, 2025 at 10:27 AM Bernd Schubert <bernd@bsbernd.com> wrote:
-> > > >
-> > > >
-> > > >
-> > > > On 9/15/25 09:07, Amir Goldstein wrote:
-> > > > > On Fri, Sep 12, 2025 at 4:58 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > > >>
-> > > > >> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
-> > > > >>>
-> > > > >>>
-> > > > >>> On 9/12/25 13:41, Amir Goldstein wrote:
-> > > > >>>> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
-> > > > >>>>>
-> > > > >>>>>
-> > > > >>>>>
-> > > > >>>>> On 8/1/25 12:15, Luis Henriques wrote:
-> > > > >>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
-> > > > >>>>>>
-> > > > >>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
-> > > > >>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
-> > > > >>>>>>>>>
-> > > > >>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> > > > >>>>>>>>> could restart itself.  It's unclear if doing so will actually enable us
-> > > > >>>>>>>>> to clear the condition that caused the failure in the first place, but I
-> > > > >>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> > > > >>>>>>>>> aren't totally crazy.
-> > > > >>>>>>>>
-> > > > >>>>>>>> I'm trying to understand what the failure scenario is here.  Is this
-> > > > >>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
-> > > > >>>>>>>> is supposed to happen with respect to open files, metadata and data
-> > > > >>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
-> > > > >>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
-> > > > >>>>>>>> potentally to be out of sync, right?
-> > > > >>>>>>>>
-> > > > >>>>>>>> What are the recovery semantics that we hope to be able to provide?
-> > > > >>>>>>>
-> > > > >>>>>>> <echoing what we said on the ext4 call this morning>
-> > > > >>>>>>>
-> > > > >>>>>>> With iomap, most of the dirty state is in the kernel, so I think the new
-> > > > >>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
-> > > > >>>>>>> would initiate GETATTR requests on all the cached inodes to validate
-> > > > >>>>>>> that they still exist; and then resend all the unacknowledged requests
-> > > > >>>>>>> that were pending at the time.  It might be the case that you have to
-> > > > >>>>>>> that in the reverse order; I only know enough about the design of fuse
-> > > > >>>>>>> to suspect that to be true.
-> > > > >>>>>>>
-> > > > >>>>>>> Anyhow once those are complete, I think we can resume operations with
-> > > > >>>>>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
-> > > > >>>>>>> fuse_make_bad'd, which effectively revokes them.
-> > > > >>>>>>
-> > > > >>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
-> > > > >>>>>> but probably GETATTR is a better option.
-> > > > >>>>>>
-> > > > >>>>>> So, are you currently working on any of this?  Are you implementing this
-> > > > >>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
-> > > > >>>>>> look at fuse2fs too.
-> > > > >>>>>
-> > > > >>>>> Sorry for joining the discussion late, I was totally occupied, day and
-> > > > >>>>> night. Added Kevin to CC, who is going to work on recovery on our
-> > > > >>>>> DDN side.
-> > > > >>>>>
-> > > > >>>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
-> > > > >>>>> server restart we want kernel to recover inodes and their lookup count.
-> > > > >>>>> Now inode recovery might be hard, because we currently only have a
-> > > > >>>>> 64-bit node-id - which is used my most fuse application as memory
-> > > > >>>>> pointer.
-> > > > >>>>>
-> > > > >>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
-> > > > >>>>> outstanding requests. And that ends up in most cases in sending requests
-> > > > >>>>> with invalid node-IDs, that are casted and might provoke random memory
-> > > > >>>>> access on restart. Kind of the same issue why fuse nfs export or
-> > > > >>>>> open_by_handle_at doesn't work well right now.
-> > > > >>>>>
-> > > > >>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
-> > > > >>>>> would not return a 64-bit node ID, but a max 128 byte file handle.
-> > > > >>>>> And then FUSE_REVALIDATE_FH on server restart.
-> > > > >>>>> The file handles could be stored into the fuse inode and also used for
-> > > > >>>>> NFS export.
-> > > > >>>>>
-> > > > >>>>> I *think* Amir had a similar idea, but I don't find the link quickly.
-> > > > >>>>> Adding Amir to CC.
-> > > > >>>>
-> > > > >>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
-> > > > >>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> > > > >>>
-> > > > >>> Thanks for the reference Amir! I even had been in that thread.
-> > > > >>>
-> > > > >>>>
-> > > > >>>>>
-> > > > >>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
-> > > > >>>>> will iterate over all superblock inodes and mark them with fuse_make_bad.
-> > > > >>>>> Any objections against that?
-> > > > >>
-> > > > >> What if you actually /can/ reuse a nodeid after a restart?  Consider
-> > > > >> fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
-> > > > >> you can reconnect the fuse_inode to the ondisk inode, assuming recovery
-> > > > >> didn't delete it, obviously.
-> > > > >
-> > > > > FUSE_LOOKUP_HANDLE is a contract.
-> > > > > If fuse4fs can reuse nodeid after restart then by all means, it should sign
-> > > > > this contract, otherwise there is no way for client to know that the
-> > > > > nodeids are persistent.
-> > > > > If fuse4fs_handle := nodeid, that will make implementing the lookup_handle()
-> > > > > API trivial.
-> > > > >
-> > > > >>
-> > > > >> I suppose you could just ask for refreshed stat information and either
-> > > > >> the server gives it to you and the fuse_inode lives; or the server
-> > > > >> returns ENOENT and then we mark it bad.  But I'd have to see code
-> > > > >> patches to form a real opinion.
-> > > > >>
-> > > > >
-> > > > > You could make fuse4fs_handle := <nodeid:fuse_instance_id>
-> > > > > where fuse_instance_id can be its start time or random number.
-> > > > > for auto invalidate, or maybe the fuse_instance_id should be
-> > > > > a native part of FUSE protocol so that client knows to only invalidate
-> > > > > attr cache in case of fuse_instance_id change?
-> > > > >
-> > > > > In any case, instead of a storm of revalidate messages after
-> > > > > server restart, do it lazily on demand.
-> > > >
-> > > > For a network file system, probably. For fuse4fs or other block
-> > > > based file systems, not sure. Darrick has the example of fsck.
-> > > > Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
-> > > > fuse-server gets restarted, fsck'ed and some files get removed.
-> > > > Now reading these inodes would still work - wouldn't it
-> > > > be better to invalidate the cache before going into operation
-> > > > again?
-> > >
-> > > Forgive me, I was making a wrong assumption that fuse4fs
-> > > was using ext4 filehandle as nodeid, but of course it does not.
+> > From: Darrick J. Wong <djwong@kernel.org>
 > >
-> > Well now that you mention it, there /is/ a risk of shenanigans like
-> > that.  Consider:
+> > In preparation for iomap, move the passthrough-specific validation code
+> > back to passthrough.c and create a new Kconfig item for conditional
+> > compilation of backing.c.  In the next patch, iomap will share the
+> > backing structures.
 > >
-> > 1) fuse4fs mount an ext4 filesystem
-> > 2) crash the fuse4fs server
-> > <fuse4fs server restart stalls...>
-> > 3) e2fsck -fy /dev/XXX deletes inode 17
-> > 4) someone else mounts the fs, makes some changes that result in 17
-> >    being reallocated, user says "OOOOOPS", unmounts it
-> > 5) fuse4fs server finally restarts, and reconnects to the kernel
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/fuse/fuse_i.h          |   23 +++++++++--
+> >  include/uapi/linux/fuse.h |    8 +++-
+> >  fs/fuse/Kconfig           |    4 ++
+> >  fs/fuse/Makefile          |    3 +
+> >  fs/fuse/backing.c         |   95 ++++++++++++++++++++++++++++++++++-----------
+> >  fs/fuse/dev.c             |    4 +-
+> >  fs/fuse/inode.c           |    4 +-
+> >  fs/fuse/passthrough.c     |   37 +++++++++++++++++-
+> >  8 files changed, 144 insertions(+), 34 deletions(-)
 > >
-> > Hey, inode 17 is now a different file!!
 > >
-> > So maybe the nodeid has to be an actual file handle.  Oh wait, no,
-> > everything's (potentially) fine because fuse4fs supplied i_generation to
-> > the kernel, and fuse_stale_inode will mark it bad if that happens.
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 52db609e63eb54..4560687d619d76 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -96,10 +96,21 @@ struct fuse_submount_lookup {
+> >         struct fuse_forget_link *forget;
+> >  };
 > >
-> > Hm ok then, at least there's a way out. :)
-> >
+> > +struct fuse_conn;
+> > +
+> > +/** Operations for subsystems that want to use a backing file */
+> > +struct fuse_backing_ops {
+> > +       int (*may_admin)(struct fuse_conn *fc, uint32_t flags);
+> > +       int (*may_open)(struct fuse_conn *fc, struct file *file);
+> > +       int (*may_close)(struct fuse_conn *fc, struct file *file);
+> > +       unsigned int type;
+> > +};
+> > +
+> >  /** Container for data related to mapping to backing file */
+> >  struct fuse_backing {
+> >         struct file *file;
+> >         struct cred *cred;
+> > +       const struct fuse_backing_ops *ops;
 > 
-> Right.
-> 
-> > > The reason I made this wrong assumption is because fuse4fs *can*
-> > > already use ext4 (64bit) file handle as nodeid, with existing FUSE protocol
-> > > which is what my fuse passthough library [1] does.
-> > >
-> > > My claim was that although fuse4fs could support safe restart, which
-> > > cannot read from recycled inode number with current FUSE protocol,
-> > > doing so with FUSE_HANDLE protocol would express a commitment
-> >
-> > Pardon my naïvete, but what is FUSE_HANDLE?
-> >
-> > $ git grep -w FUSE_HANDLE fs
-> > $
-> 
-> Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
-> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> 
-> Which means to communicate a variable sized "nodeid"
-> which can also be declared as an object id that survives server restart.
-> 
-> Basically, the reason that I brought up LOOKUP_HANDLE is to
-> properly support NFS export of fuse filesystems.
-> 
-> My incentive was to support a proper fuse server restart/remount/re-export
-> with the same fsid in /etc/exports, but this gives us a better starting point
-> for fuse server restart/re-connect.
+> Please argue why we need a mix of passthrough backing
+> files and iomap backing bdev on the same filesystem.
 
-Ah.  I don't think that's necessary for ext4, but probably desirable for
-fancy filesystems that support things like subvolumes or do weird stuff.
+I've no particular reason to allow both on the same filesystem.  I
+simply didn't want to add restrictions to existing functionality.
+
+> Same as my argument against passthrough/iomap on
+> same fuse_backing:
+> If you do not plan to test it, and nobody asked for it, please do
+> not allow it - it's bad for code test coverage.
+> 
+> I think at this point in time FUSE_PASSTHROUGH and
+> FUSE_IOMAP should be mutually exclusive and
+> fuse_backing_ops could be set at fc level.
+> If we want to move them for per fuse_backing later
+> we can always do that when the use cases and tests arrive.
+
+With Miklos' ok I'll constrain fuse not to allow passthrough and iomap
+files on the same filesystem, but as it is now there's no technical
+reason to make it so that they can't coexist.
 
 --D
 
 > Thanks,
 > Amir.
+> 
+> >
+> >         /** refcount */
+> >         refcount_t count;
+> > @@ -968,7 +979,7 @@ struct fuse_conn {
+> >         /* New writepages go into this bucket */
+> >         struct fuse_sync_bucket __rcu *curr_bucket;
+> >
+> > -#ifdef CONFIG_FUSE_PASSTHROUGH
+> > +#ifdef CONFIG_FUSE_BACKING
+> >         /** IDR for backing files ids */
+> >         struct idr backing_files_map;
+> >  #endif
+> > @@ -1571,10 +1582,12 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+> >                        unsigned int open_flags, fl_owner_t id, bool isdir);
+> >
+> >  /* backing.c */
+> > -#ifdef CONFIG_FUSE_PASSTHROUGH
+> > +#ifdef CONFIG_FUSE_BACKING
+> >  struct fuse_backing *fuse_backing_get(struct fuse_backing *fb);
+> >  void fuse_backing_put(struct fuse_backing *fb);
+> > -struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc, int backing_id);
+> > +struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc,
+> > +                                        const struct fuse_backing_ops *ops,
+> > +                                        int backing_id);
+> >  #else
+> >
+> >  static inline struct fuse_backing *fuse_backing_get(struct fuse_backing *fb)
+> > @@ -1631,6 +1644,10 @@ static inline struct file *fuse_file_passthrough(struct fuse_file *ff)
+> >  #endif
+> >  }
+> >
+> > +#ifdef CONFIG_FUSE_PASSTHROUGH
+> > +extern const struct fuse_backing_ops fuse_passthrough_backing_ops;
+> > +#endif
+> > +
+> >  ssize_t fuse_passthrough_read_iter(struct kiocb *iocb, struct iov_iter *iter);
+> >  ssize_t fuse_passthrough_write_iter(struct kiocb *iocb, struct iov_iter *iter);
+> >  ssize_t fuse_passthrough_splice_read(struct file *in, loff_t *ppos,
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 1d76d0332f46f6..31b80f93211b81 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -1114,9 +1114,15 @@ struct fuse_notify_retrieve_in {
+> >         uint64_t        dummy4;
+> >  };
+> >
+> > +#define FUSE_BACKING_TYPE_MASK         (0xFF)
+> > +#define FUSE_BACKING_TYPE_PASSTHROUGH  (0)
+> > +#define FUSE_BACKING_MAX_TYPE          (FUSE_BACKING_TYPE_PASSTHROUGH)
+> > +
+> > +#define FUSE_BACKING_FLAGS_ALL         (FUSE_BACKING_TYPE_MASK)
+> > +
+> >  struct fuse_backing_map {
+> >         int32_t         fd;
+> > -       uint32_t        flags;
+> > +       uint32_t        flags; /* FUSE_BACKING_* */
+> >         uint64_t        padding;
+> >  };
+> >
+> > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> > index a774166264de69..9563fa5387a241 100644
+> > --- a/fs/fuse/Kconfig
+> > +++ b/fs/fuse/Kconfig
+> > @@ -59,12 +59,16 @@ config FUSE_PASSTHROUGH
+> >         default y
+> >         depends on FUSE_FS
+> >         select FS_STACK
+> > +       select FUSE_BACKING
+> >         help
+> >           This allows bypassing FUSE server by mapping specific FUSE operations
+> >           to be performed directly on a backing file.
+> >
+> >           If you want to allow passthrough operations, answer Y.
+> >
+> > +config FUSE_BACKING
+> > +       bool
+> > +
+> >  config FUSE_IO_URING
+> >         bool "FUSE communication over io-uring"
+> >         default y
+> > diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+> > index 8ddd8f0b204ee5..36be6d715b111a 100644
+> > --- a/fs/fuse/Makefile
+> > +++ b/fs/fuse/Makefile
+> > @@ -13,7 +13,8 @@ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+> >  fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
+> >  fuse-y += iomode.o
+> >  fuse-$(CONFIG_FUSE_DAX) += dax.o
+> > -fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o backing.o
+> > +fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+> > +fuse-$(CONFIG_FUSE_BACKING) += backing.o
+> >  fuse-$(CONFIG_SYSCTL) += sysctl.o
+> >  fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
+> >
+> > diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+> > index 4afda419dd1416..da0dff288396ed 100644
+> > --- a/fs/fuse/backing.c
+> > +++ b/fs/fuse/backing.c
+> > @@ -6,6 +6,7 @@
+> >   */
+> >
+> >  #include "fuse_i.h"
+> > +#include "fuse_trace.h"
+> >
+> >  #include <linux/file.h>
+> >
+> > @@ -69,32 +70,53 @@ static int fuse_backing_id_free(int id, void *p, void *data)
+> >         struct fuse_backing *fb = p;
+> >
+> >         WARN_ON_ONCE(refcount_read(&fb->count) != 1);
+> > +
+> >         fuse_backing_free(fb);
+> >         return 0;
+> >  }
+> >
+> >  void fuse_backing_files_free(struct fuse_conn *fc)
+> >  {
+> > -       idr_for_each(&fc->backing_files_map, fuse_backing_id_free, NULL);
+> > +       idr_for_each(&fc->backing_files_map, fuse_backing_id_free, fc);
+> >         idr_destroy(&fc->backing_files_map);
+> >  }
+> >
+> > +static inline const struct fuse_backing_ops *
+> > +fuse_backing_ops_from_map(const struct fuse_backing_map *map)
+> > +{
+> > +       switch (map->flags & FUSE_BACKING_TYPE_MASK) {
+> > +#ifdef CONFIG_FUSE_PASSTHROUGH
+> > +       case FUSE_BACKING_TYPE_PASSTHROUGH:
+> > +               return &fuse_passthrough_backing_ops;
+> > +#endif
+> > +       default:
+> > +               break;
+> > +       }
+> > +
+> > +       return NULL;
+> > +}
+> > +
+> >  int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
+> >  {
+> >         struct file *file;
+> > -       struct super_block *backing_sb;
+> >         struct fuse_backing *fb = NULL;
+> > +       const struct fuse_backing_ops *ops = fuse_backing_ops_from_map(map);
+> > +       uint32_t op_flags = map->flags & ~FUSE_BACKING_TYPE_MASK;
+> >         int res;
+> >
+> >         pr_debug("%s: fd=%d flags=0x%x\n", __func__, map->fd, map->flags);
+> >
+> > -       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
+> > -       res = -EPERM;
+> > -       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> > +       res = -EOPNOTSUPP;
+> > +       if (!ops)
+> > +               goto out;
+> > +       WARN_ON(ops->type != (map->flags & FUSE_BACKING_TYPE_MASK));
+> > +
+> > +       res = ops->may_admin ? ops->may_admin(fc, op_flags) : 0;
+> > +       if (res)
+> >                 goto out;
+> >
+> >         res = -EINVAL;
+> > -       if (map->flags || map->padding)
+> > +       if (map->padding)
+> >                 goto out;
+> >
+> >         file = fget_raw(map->fd);
+> > @@ -102,14 +124,8 @@ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
+> >         if (!file)
+> >                 goto out;
+> >
+> > -       /* read/write/splice/mmap passthrough only relevant for regular files */
+> > -       res = d_is_dir(file->f_path.dentry) ? -EISDIR : -EINVAL;
+> > -       if (!d_is_reg(file->f_path.dentry))
+> > -               goto out_fput;
+> > -
+> > -       backing_sb = file_inode(file)->i_sb;
+> > -       res = -ELOOP;
+> > -       if (backing_sb->s_stack_depth >= fc->max_stack_depth)
+> > +       res = ops->may_open ? ops->may_open(fc, file) : 0;
+> > +       if (res)
+> >                 goto out_fput;
+> >
+> >         fb = kmalloc(sizeof(struct fuse_backing), GFP_KERNEL);
+> > @@ -119,14 +135,15 @@ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
+> >
+> >         fb->file = file;
+> >         fb->cred = prepare_creds();
+> > +       fb->ops = ops;
+> >         refcount_set(&fb->count, 1);
+> >
+> >         res = fuse_backing_id_alloc(fc, fb);
+> >         if (res < 0) {
+> >                 fuse_backing_free(fb);
+> >                 fb = NULL;
+> > +               goto out;
+> >         }
+> > -
+> >  out:
+> >         pr_debug("%s: fb=0x%p, ret=%i\n", __func__, fb, res);
+> >
+> > @@ -137,41 +154,71 @@ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map)
+> >         goto out;
+> >  }
+> >
+> > +static struct fuse_backing *__fuse_backing_lookup(struct fuse_conn *fc,
+> > +                                                 int backing_id)
+> > +{
+> > +       struct fuse_backing *fb;
+> > +
+> > +       rcu_read_lock();
+> > +       fb = idr_find(&fc->backing_files_map, backing_id);
+> > +       fb = fuse_backing_get(fb);
+> > +       rcu_read_unlock();
+> > +
+> > +       return fb;
+> > +}
+> > +
+> >  int fuse_backing_close(struct fuse_conn *fc, int backing_id)
+> >  {
+> > -       struct fuse_backing *fb = NULL;
+> > +       struct fuse_backing *fb, *test_fb;
+> > +       const struct fuse_backing_ops *ops;
+> >         int err;
+> >
+> >         pr_debug("%s: backing_id=%d\n", __func__, backing_id);
+> >
+> > -       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
+> > -       err = -EPERM;
+> > -       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> > -               goto out;
+> > -
+> >         err = -EINVAL;
+> >         if (backing_id <= 0)
+> >                 goto out;
+> >
+> >         err = -ENOENT;
+> > -       fb = fuse_backing_id_remove(fc, backing_id);
+> > +       fb = __fuse_backing_lookup(fc, backing_id);
+> >         if (!fb)
+> >                 goto out;
+> > +       ops = fb->ops;
+> >
+> > -       fuse_backing_put(fb);
+> > +       err = ops->may_admin ? ops->may_admin(fc, 0) : 0;
+> > +       if (err)
+> > +               goto out_fb;
+> > +
+> > +       err = ops->may_close ? ops->may_close(fc, fb->file) : 0;
+> > +       if (err)
+> > +               goto out_fb;
+> > +
+> > +       err = -ENOENT;
+> > +       test_fb = fuse_backing_id_remove(fc, backing_id);
+> > +       if (!test_fb)
+> > +               goto out_fb;
+> > +
+> > +       WARN_ON(fb != test_fb);
+> >         err = 0;
+> > +       fuse_backing_put(test_fb);
+> > +out_fb:
+> > +       fuse_backing_put(fb);
+> >  out:
+> >         pr_debug("%s: fb=0x%p, err=%i\n", __func__, fb, err);
+> >
+> >         return err;
+> >  }
+> >
+> > -struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc, int backing_id)
+> > +struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc,
+> > +                                        const struct fuse_backing_ops *ops,
+> > +                                        int backing_id)
+> >  {
+> >         struct fuse_backing *fb;
+> >
+> >         rcu_read_lock();
+> >         fb = idr_find(&fc->backing_files_map, backing_id);
+> > +       if (fb && fb->ops != ops)
+> > +               fb = NULL;
+> >         fb = fuse_backing_get(fb);
+> >         rcu_read_unlock();
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index e5aaf0c668bc11..281bc81f3b448b 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -2654,7 +2654,7 @@ static long fuse_dev_ioctl_backing_open(struct file *file,
+> >         if (IS_ERR(fud))
+> >                 return PTR_ERR(fud);
+> >
+> > -       if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> > +       if (!IS_ENABLED(CONFIG_FUSE_BACKING))
+> >                 return -EOPNOTSUPP;
+> >
+> >         if (copy_from_user(&map, argp, sizeof(map)))
+> > @@ -2671,7 +2671,7 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+> >         if (IS_ERR(fud))
+> >                 return PTR_ERR(fud);
+> >
+> > -       if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> > +       if (!IS_ENABLED(CONFIG_FUSE_BACKING))
+> >                 return -EOPNOTSUPP;
+> >
+> >         if (get_user(backing_id, argp))
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 14c35ce12b87d6..1e7298b2b89b58 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -995,7 +995,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+> >         fc->name_max = FUSE_NAME_LOW_MAX;
+> >         fc->timeout.req_timeout = 0;
+> >
+> > -       if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> > +       if (IS_ENABLED(CONFIG_FUSE_BACKING))
+> >                 fuse_backing_files_init(fc);
+> >
+> >         INIT_LIST_HEAD(&fc->mounts);
+> > @@ -1032,7 +1032,7 @@ void fuse_conn_put(struct fuse_conn *fc)
+> >                         WARN_ON(atomic_read(&bucket->count) != 1);
+> >                         kfree(bucket);
+> >                 }
+> > -               if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> > +               if (IS_ENABLED(CONFIG_FUSE_BACKING))
+> >                         fuse_backing_files_free(fc);
+> >                 call_rcu(&fc->rcu, delayed_release);
+> >         }
+> > diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+> > index e0b8d885bc81f3..9792d7b12a775b 100644
+> > --- a/fs/fuse/passthrough.c
+> > +++ b/fs/fuse/passthrough.c
+> > @@ -164,7 +164,7 @@ struct fuse_backing *fuse_passthrough_open(struct file *file,
+> >                 goto out;
+> >
+> >         err = -ENOENT;
+> > -       fb = fuse_backing_lookup(fc, backing_id);
+> > +       fb = fuse_backing_lookup(fc, &fuse_passthrough_backing_ops, backing_id);
+> >         if (!fb)
+> >                 goto out;
+> >
+> > @@ -197,3 +197,38 @@ void fuse_passthrough_release(struct fuse_file *ff, struct fuse_backing *fb)
+> >         put_cred(ff->cred);
+> >         ff->cred = NULL;
+> >  }
+> > +
+> > +static int fuse_passthrough_may_admin(struct fuse_conn *fc, unsigned int flags)
+> > +{
+> > +       /* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
+> > +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> > +               return -EPERM;
+> > +
+> > +       if (flags)
+> > +               return -EINVAL;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int fuse_passthrough_may_open(struct fuse_conn *fc, struct file *file)
+> > +{
+> > +       struct super_block *backing_sb;
+> > +       int res;
+> > +
+> > +       /* read/write/splice/mmap passthrough only relevant for regular files */
+> > +       res = d_is_dir(file->f_path.dentry) ? -EISDIR : -EINVAL;
+> > +       if (!d_is_reg(file->f_path.dentry))
+> > +               return res;
+> > +
+> > +       backing_sb = file_inode(file)->i_sb;
+> > +       if (backing_sb->s_stack_depth >= fc->max_stack_depth)
+> > +               return -ELOOP;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +const struct fuse_backing_ops fuse_passthrough_backing_ops = {
+> > +       .type = FUSE_BACKING_TYPE_PASSTHROUGH,
+> > +       .may_admin = fuse_passthrough_may_admin,
+> > +       .may_open = fuse_passthrough_may_open,
+> > +};
+> >
+> >
 
