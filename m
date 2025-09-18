@@ -1,163 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-62148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341E6B85C6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 17:51:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32B4B85C87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 17:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF01170105
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 15:49:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFC1F7A11D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 15:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A85722D7B5;
-	Thu, 18 Sep 2025 15:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB42313D47;
+	Thu, 18 Sep 2025 15:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eAOavc2C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAxccBgH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D630DD26
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 15:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841B3314D13;
+	Thu, 18 Sep 2025 15:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758210522; cv=none; b=jtUr4lvkm5/rAOknHpGaGCpnR0kks/14yIUxVkzgWDf/7cRoyNHnaSTp3eq9wLw9GNFBWKydnz2C4i+uRIOPxV0IK2j0m7HeLV1wyaTaBeaWF/vEncvo07LPv4DzmbGmq4r57NvWhDYI1Y9MnhBXZLp0midKbV5/QPm9eJ0A0D0=
+	t=1758210677; cv=none; b=NWhNupRl+9BBIZ+pdOOUQOTqUjiMUoq+mQ+HbPJgntjPA069sf9lMnIOiOUpgJohdB6CvolhyJusNnqMu9A5ryQmEXPLX/vQTx9QZg8KK2gx0BOtm+TAVSVq9cMgdXNaFpZ61CeLDhwjCzY/sTXftmj52d85q7sk+9GRI4v7XHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758210522; c=relaxed/simple;
-	bh=3fuPAHF2wqUzCF+Ih+V96s2Pa8BfHBVrf909ozzJYxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iXe0IaSVURIvi4B17lGVddLRKKebGqp5YdfZblnJTdoTn1Chh5PxiKs7hG/9iBXWsu5FgltetAAuPd8kgN9gwx5ua3kFz77d4xSxBAiZYjqtOZs9Uhe0HNP1gTtjOdHKg/M67Zb4DehyDgsQTIVD2CJABQkslyiJt9Rt/c0zwKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eAOavc2C; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-621b965a114so598587eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 08:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758210520; x=1758815320; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fuPAHF2wqUzCF+Ih+V96s2Pa8BfHBVrf909ozzJYxs=;
-        b=eAOavc2CN3hKS95ih6fHrGk7HQYI14S9OGRboWaVhlIeSO+Siqxx6vtu4Fl75VShUA
-         LFUlJB0hQTDvqMb+/ypW9RfbOVQcZ7S+pncqwJ2jtRXaSJOq4a2SIf5XLmgBS2y8+6Kk
-         dxiFvkxUZt2A+13w0SonMvcT3N653WVBTXiCV/FHeN4/5ZrKJpSMujE7gFlWJVS3Xxy+
-         qOvEnthHP6wMEhDH9I1y2nXWSnFvZb0rlGAE8VBoDEjch1ROO0nbPsNP+dIN5F/86Jox
-         lfV2dgUthYT4i3k2/kSAQ338iJ0Lq+E7ZO+ysx+GVp+mALPXS/0U0YhCDCbeJDc7N1UE
-         +6/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758210520; x=1758815320;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3fuPAHF2wqUzCF+Ih+V96s2Pa8BfHBVrf909ozzJYxs=;
-        b=fdYdrV4xdVk81fE0/ovLqjMzUfC0nVC2UAAjQLFZlsB94ypRshyw+f3stOwxvW25PO
-         R4gAhIjBuVcS4LILA/DehxVFAK7r/8wMNGk2HZL3khRFFAY76HBWW7gly8H1j/zTkvvF
-         k4uYXDUbfVdyrUWKqM2FbYg0fIix6d6Io/lHFj3ir/rZDdRpwD3EUxcPG4Q0z+oOOrJ1
-         P5ReG4QkYH3vzYf1GkgANOLyXFHF2mFpcP8wesE+LuAFzaTjkgOBgrUNY/DtpQkaqK6o
-         oLNzHG8JkEF2DSB0pv6jn9mVcgWHCcHVBrGFURtQfVhxm2W2X6DFNiEgexWWdvt5b7nA
-         sZmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaG61ned8kAAh5p+88n20cagxsHd6ZAidDG8s/8ikHyeuk1eeeJvKbywVRmhyRR8VTB5vn9mwu3kwt7mZn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz1IJ8CPYu0YzuI2HcrsgwkYsplJOB/4XMX5H0Vc+PA5vTKc2U
-	0OH5GCKnsgBivPtPOqjAA5Cx1SsEe94INoZhvrKxk3uPcCJoor87dS/mo01xW6DtyGClq1E/3l7
-	V42hpkOvAr1hRSUz9uo9b5T4ORvWjlU1YYAGigJN4
-X-Gm-Gg: ASbGnct2/w79VgTYJ7jahUnw7RsKByP2ZUgl/54Ln7nv9P+671EBzWr9fEFi6eBB8qI
-	2zqsqMQg5fk/4XyrccjCsiQMSgWGMLjL1rwD8AcFNt5SZ6YDY6BjpPklGR3LuD2Th7hJ12+EZyc
-	jldc4bSIAfa4em+1b8DGYWEEQfgEMS6ndyjz60gHlOC6CqFudFeoK3kOT00I8yo3U+mKYdbX5c2
-	BvlkHSEg7I52emeHadJGyJQcu+Je+THTkLBN5HY5PzQuA97Pp57yziALfjKpuc=
-X-Google-Smtp-Source: AGHT+IGZQIGtkvyQ7wUbXbPktQnaEGHmteV66ZUVON5NljKX83ZF9JtYWo+pN7TerpN49zbUut8goBymhFyWExBBTaQ=
-X-Received: by 2002:a05:6820:c006:b0:624:abae:b650 with SMTP id
- 006d021491bc7-624abaeb894mr2040726eaf.0.1758210519920; Thu, 18 Sep 2025
- 08:48:39 -0700 (PDT)
+	s=arc-20240116; t=1758210677; c=relaxed/simple;
+	bh=e6XJbeklgFNXwruDywAZe7vowNbZUbwBKpZS63m54og=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YSXPJ3tti4lzkiCYhxc0Ef9l4a45T2AaiS3YIu3rV2l6gSZjk2hbT3NWkxesZyTWif7TcAG9xmzoUmtbJY53E1lshvud4Q0H5VZlWgUqqa5VJuzutYgXiLZoWAhu6axDN3LmWCi8F76DOdapIAdSeYxB/bLyd+PxM6opRJaE4GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAxccBgH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D77DBC4CEE7;
+	Thu, 18 Sep 2025 15:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758210677;
+	bh=e6XJbeklgFNXwruDywAZe7vowNbZUbwBKpZS63m54og=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=lAxccBgHQJMGKL6W5XO/kIBHMi2AladIz8qPWx4MBG7gpBrzHZckIimBwgkALGSoK
+	 RTpLe7661eFC5B/7BhfypSLu8ciNLbjbhnW0/Uiw7F9qtuf/K/hOn+NGzmTK4Elius
+	 Puw/h1XtP570vHRTCm/o6CmMUjRekyChiJ42E7YZlGDJw6uFwLqKV4izLQfNVxc+1W
+	 3GgwOdBMEpO6bPhXxyYgbuGAlwFII7VeYUA20OL3bsW1JzfLATB4CEE7Um16odYOB9
+	 O8FOQqOy+9iE5VgV50GipK6qrDd5viCwdSnAqnhpyMVlV7VT8suWp23kcrZWa2l0BA
+	 qFbk69uCk7f8g==
+Date: Thu, 18 Sep 2025 09:51:07 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Simon Schuster <schuster.simon@siemens-energy.com>
+cc: Dinh Nguyen <dinguyen@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+    Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, 
+    David Hildenbrand <david@redhat.com>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+    Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+    Juri Lelli <juri.lelli@redhat.com>, 
+    Vincent Guittot <vincent.guittot@linaro.org>, 
+    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+    Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+    Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+    Kees Cook <kees@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+    Alexandre Ghiti <alex@ghiti.fr>, Guo Ren <guoren@kernel.org>, 
+    Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+    Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+    Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+    =?ISO-8859-15?Q?Michal_Koutn=FD?= <mkoutny@suse.com>, 
+    Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+    James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+    Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+    Frederic Weisbecker <frederic@kernel.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    Masami Hiramatsu <mhiramat@kernel.org>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+    Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+    Adrian Hunter <adrian.hunter@intel.com>, 
+    John Johansen <john.johansen@canonical.com>, 
+    Stephen Smalley <stephen.smalley.work@gmail.com>, 
+    Ondrej Mosnacek <omosnace@redhat.com>, 
+    Kentaro Takeda <takedakn@nttdata.co.jp>, 
+    Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, 
+    Richard Henderson <richard.henderson@linaro.org>, 
+    Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
+    Russell King <linux@armlinux.org.uk>, 
+    Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+    Brian Cain <bcain@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+    WANG Xuerui <kernel@xen0n.name>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Michal Simek <monstr@monstr.eu>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Jonas Bonn <jonas@southpole.se>, 
+    Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
+    Stafford Horne <shorne@gmail.com>, 
+    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+    Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+    Christophe Leroy <christophe.leroy@csgroup.eu>, 
+    Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+    Alexander Gordeev <agordeev@linux.ibm.com>, 
+    Christian Borntraeger <borntraeger@linux.ibm.com>, 
+    Sven Schnelle <svens@linux.ibm.com>, 
+    Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+    Andreas Larsson <andreas@gaisler.com>, Richard Weinberger <richard@nod.at>, 
+    Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+    Johannes Berg <johannes@sipsolutions.net>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+    "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, 
+    Max Filippov <jcmvbkbc@gmail.com>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+    linux-csky@vger.kernel.org, linux-block@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+    netdev@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+    apparmor@lists.ubuntu.com, selinux@vger.kernel.org, 
+    linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+    linux-arm-kernel@lists.infradead.org, linux-hexagon@vger.kernel.org, 
+    loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
+    linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+    linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+    linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+    sparclinux@vger.kernel.org, linux-um@lists.infradead.org
+Subject: Re: [PATCH v2 3/4] arch: copy_thread: pass clone_flags as u64
+In-Reply-To: <20250901-nios2-implement-clone3-v2-3-53fcf5577d57@siemens-energy.com>
+Message-ID: <ffb22e54-6b7d-5b88-4217-e67870051c6e@kernel.org>
+References: <20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com> <20250901-nios2-implement-clone3-v2-3-53fcf5577d57@siemens-energy.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916234425.1274735-1-joannelkoong@gmail.com>
- <68ca71bd.050a0220.2ff435.04fc.GAE@google.com> <CAJnrk1YKPWkaBXe7D2mftN2DMEBqFow80reUGE=2_U8oVFc1tQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1YKPWkaBXe7D2mftN2DMEBqFow80reUGE=2_U8oVFc1tQ@mail.gmail.com>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Thu, 18 Sep 2025 17:48:28 +0200
-X-Gm-Features: AS18NWAU9uKKLdv_CQUnITI5tezk67S_wzRhWyVluYMjy37dGuE_05c1-3Y9NYc
-Message-ID: <CANp29Y5Y8iO+UbKHtDEc=0d+76WxbWJK1asLaux++_n+Pr+d5g@mail.gmail.com>
-Subject: Re: [syzbot ci] Re: fuse: use iomap for buffered reads + readahead
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: syzbot ci <syzbot+ci9b5a486340e6bcdf@syzkaller.appspotmail.com>, 
-	syzbot <syzkaller@googlegroups.com>, brauner@kernel.org, djwong@kernel.org, 
-	gfs2@lists.linux.dev, hch@infradead.org, hch@lst.de, 
-	hsiangkao@linux.alibaba.com, kernel-team@meta.com, 
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, miklos@szeredi.hu, 
-	syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Joanne,
+On Mon, 1 Sep 2025, Simon Schuster via B4 Relay wrote:
 
-On Wed, Sep 17, 2025 at 9:59=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Wed, Sep 17, 2025 at 1:37=E2=80=AFAM syzbot ci
-> <syzbot+ci9b5a486340e6bcdf@syzkaller.appspotmail.com> wrote:
-> >
-> > syzbot ci has tested the following series
-> >
-> > [v3] fuse: use iomap for buffered reads + readahead
-> > https://lore.kernel.org/all/20250916234425.1274735-1-joannelkoong@gmail=
-.com
-> > * [PATCH v3 01/15] iomap: move bio read logic into helper function
-> > * [PATCH v3 02/15] iomap: move read/readahead bio submission logic into=
- helper function
-> > * [PATCH v3 03/15] iomap: store read/readahead bio generically
-> > * [PATCH v3 04/15] iomap: iterate over entire folio in iomap_readpage_i=
-ter()
-> > * [PATCH v3 05/15] iomap: rename iomap_readpage_iter() to iomap_read_fo=
-lio_iter()
-> > * [PATCH v3 06/15] iomap: rename iomap_readpage_ctx struct to iomap_rea=
-d_folio_ctx
-> > * [PATCH v3 07/15] iomap: track read/readahead folio ownership internal=
-ly
-> > * [PATCH v3 08/15] iomap: add public start/finish folio read helpers
-> > * [PATCH v3 09/15] iomap: add caller-provided callbacks for read and re=
-adahead
-> > * [PATCH v3 10/15] iomap: add bias for async read requests
-> > * [PATCH v3 11/15] iomap: move buffered io bio logic into new file
-> > * [PATCH v3 12/15] iomap: make iomap_read_folio() a void return
-> > * [PATCH v3 13/15] fuse: use iomap for read_folio
-> > * [PATCH v3 14/15] fuse: use iomap for readahead
-> > * [PATCH v3 15/15] fuse: remove fc->blkbits workaround for partial writ=
-es
-> >
-> > and found the following issues:
-> > * WARNING in iomap_iter_advance
-> > * WARNING in iomap_readahead
-> > * kernel BUG in folio_end_read
-> >
-> > Full report is available here:
-> > https://ci.syzbot.org/series/6845596a-1ec9-4396-b9c4-48bddc606bef
-> >
-> > ***
-> >
-> Thanks. Do you get run on every patchset that is sent upstream or is
-> it random? Trying to figure out if this means v2 is right and i just
-> messed up v3 or if you just didn't run on v2.
+> From: Simon Schuster <schuster.simon@siemens-energy.com>
+> 
+> With the introduction of clone3 in commit 7f192e3cd316 ("fork: add
+> clone3") the effective bit width of clone_flags on all architectures was
+> increased from 32-bit to 64-bit, with a new type of u64 for the flags.
+> However, for most consumers of clone_flags the interface was not
+> changed from the previous type of unsigned long.
+> 
+> While this works fine as long as none of the new 64-bit flag bits
+> (CLONE_CLEAR_SIGHAND and CLONE_INTO_CGROUP) are evaluated, this is still
+> undesirable in terms of the principle of least surprise.
+> 
+> Thus, this commit fixes all relevant interfaces of the copy_thread
+> function that is called from copy_process to consistently pass
+> clone_flags as u64, so that no truncation to 32-bit integers occurs on
+> 32-bit architectures.
+> 
+> Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
 
-The intent is to run on every patchset, but since the system is
-currently still in the experimental state, some of the series are
-skipped due to various reasons. E.g. syzbot tried to process v2, but
-failed to find the kernel tree to which the series applies without
-problems: https://ci.syzbot.org/series/7085b21e-ae1e-4bf9-b486-24a82ea9b37d
+Acked-by: Paul Walmsley <pjw@kernel.org> # for RISC-V
 
-In the original email, there are links to the C reproducers, so these
-can be used locally to determine if v1/v2 were affected.
+Thanks!
 
---=20
-Aleksandr
 
->
-> Thanks,
-> Joanne
->
+- Paul
 
