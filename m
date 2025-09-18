@@ -1,153 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-62179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A6BB87343
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 00:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6B7B873BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 00:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678707A5B45
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 22:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7185A3B7823
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 22:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04812FB625;
-	Thu, 18 Sep 2025 22:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A5630DD14;
+	Thu, 18 Sep 2025 22:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvVKSg1v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAHOXEOj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E722217F27
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 22:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24FC306D47;
+	Thu, 18 Sep 2025 22:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758233432; cv=none; b=XCx/5Qp95+ga+SNLzZlZPDBiX32ilhdxcBt2JceeUNJliVm84kjBjd4Ix0vlHtUhjjxLYPzPfQdfGywhgqe+2Snv5BTnIuuXw2/sxCNs5ORq3MndBn9rCgNyk2/d8NVqz/JPsCGq4HA/0t4f9ewYntpGKrt17vHSXy/DuQIM6i8=
+	t=1758234621; cv=none; b=XbCy79QMAKitQ8xmZoXnWw8k5Vdz23eH6KOCcaO233k1FaSiMx3g/7Yo4bF+kteD+7iKuVRf1IBI1n0ldaob0YD4UpZIMRQzaU1GYz/UErUcwPQaUOTkIpwPckwp1+dQiYAT4OxGx1E/g8x96lF/p7f4jNoymN8wWM9T8pYrf5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758233432; c=relaxed/simple;
-	bh=6VwWe0xPzmV6FnfeDnW6efYh9BxtkUPEBFMEiPZsQos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UxL+ZoaBQ7c7T3+JmndkqfYk/DiwYVg8ILr2h9kE8nhZSaMLKzawVKrrXZpqeJa4Qp6EKTDNzpJTXkgMkZ0fMyZtSuUkjdd/J2uEZJ+3otZL6g7p5EVnKq9BNgXbtGlvTOl/6/NFZmgxWczKDx5P4aoZs0TGh62tcA3hvrPqpnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvVKSg1v; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b5f7fe502dso8291001cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 15:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758233429; x=1758838229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BMLjismdPXyhxGkoMZ3Owc4rCn1icqDpq8x4V7KOiNo=;
-        b=YvVKSg1vRUDnooP/KlKT4sMOj/sSYAcgeM87AvYjQKoPq1uKuVYipDyIQfck4quKJD
-         jFXyQEVrVjWg6CHdpMlzXzf3j1PBTF4ZnTG/4PAXD0os3RYzp8iN+pGoxwqt2txSAD5i
-         DTM6SRd49p5nPy1Pe+8nAsVj3uQZMs7cv3dHXjIP18dMoHVTPrHliL5CW6OgcWv5Hl/g
-         dkg8pgIdkSKATj2g2/nHCeux9ZUiba4j4elOL7VLUQHVYKKjbJUiwPs0FSpX8NLPXqKf
-         IT9M5OdHEMnzsrKwgYHPJQoWJkej+ulYnTKxDbdoNMeDU/3RNOyAx3aS1wOQyU611666
-         KEYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758233429; x=1758838229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BMLjismdPXyhxGkoMZ3Owc4rCn1icqDpq8x4V7KOiNo=;
-        b=WyxnQnnkU5beYg8mfLADUOclPqNGMUAnIb3FUaPLAYlydf7YwYZRICIE/IXYVr8f3F
-         xZt3cdDI7g14ilgPpHeP6BC7WFFgoYvkKTWFsjV5QLlHjZLAzziVnDMRMbnoEpfDDso+
-         ZS23bnJh3C7MrUyYiMeqCZj/k9uQMLepc7CjkCiAAPG2EqwbZAPT3Z0CuzwcdAanfNdu
-         99QayIeeJW/roeAHKAOZfn/ILuxKzY3U8B60HsxJ99OtAQmaXzVwQ0Bact0j4DYsj6/T
-         6slluvKEzK+qh36RdgVkAXNbNXPgz2mfpmzLJLT0qDOAUk8WAZa4zPprjtwcCuwUO2bF
-         iP4g==
-X-Forwarded-Encrypted: i=1; AJvYcCW555z19hyNp7uh16m8KiwN9MMdlpAKauLsJLMO9Y1l1OJfCHj2eP+hsapTWp1PwVEVYzhcAd98oNr2yszI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsqxRHqC33TnNS48SSRsAHcd8M3juAU/uNKL/mhhuDTnOrrXG6
-	Gk5eCCkzMzmS/QvfSQtC3V9rUPh+HZG4jrXvUfvnenfxkabbZmYVcdVdZSAmehe6GYXzy9nTDce
-	b5junVifxiBooSmAOwFikbUePhFzo5LsZLjV9IcM=
-X-Gm-Gg: ASbGnct0HQOHtsm1CY1xpy319ynhb8+YRxn69UfDyErpEjU0Xrq2qv5xb6zUlKed9gD
-	JgbCCzWvXmUL9dc+ct+4aDnHedc4zHq1rujQPagAnjY4yMQ7MWMXsyAmlGKNyCaAgBCpPB6u8x1
-	BWb/ZCKR6vRwbYxdHJg31rpNdevyz7/UqZCX4n5Xrl7dJhMvuaYnCknPIPkWJRIC9RXg6IaVJqH
-	Fg49kL7cNkGYM0DG5+r9266+1fUSaN9ZIEb8ry0Sv6qhpXVOpNxaLxCtYc=
-X-Google-Smtp-Source: AGHT+IGjdL034BALwTmUdxjSXlOGWZyplNPvLP19rLkgfseOZk3Ugy7fDNveBvPN8Hi+/A69y1Rk5PPcZKYyk2nw0cw=
-X-Received: by 2002:a05:622a:11cc:b0:4b7:976e:8c48 with SMTP id
- d75a77b69052e-4c06e3fab4emr12835861cf.14.1758233429428; Thu, 18 Sep 2025
- 15:10:29 -0700 (PDT)
+	s=arc-20240116; t=1758234621; c=relaxed/simple;
+	bh=7Bl1V2o/RMjdnd2WG+3hxDxqvKlTqca40A7h0y6talg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEw7PFOKX9DTYzESf1mRkd8L0ygnXHBC80uG4TX8jqIPeCERpm57ax4JRootIxe37GKsUX4q3/ufYUUNDl8yRP/dh4jv9pTHy3jHwt53ZiDtjKQYR2Enu5s7ICUm/jRylVw5e4XdwV/K8C374DkLMbxgQXHQhGfVW4q1nR1fyUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAHOXEOj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79216C4CEE7;
+	Thu, 18 Sep 2025 22:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758234619;
+	bh=7Bl1V2o/RMjdnd2WG+3hxDxqvKlTqca40A7h0y6talg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iAHOXEOjeKvnm1VefaotNFOexkCo4x4lgpYCptWVG5OOAQ119fDJKR4pTqvhLr2S6
+	 YhNllpwQ2k3ti8rsdxw0gpHGcx/vg2UKFFR+S9S8O2GRhdlw50Cyl/neS01GOJrfqh
+	 HDHh65YuVt1hI7RxBxU/4SXtxAWQkGnH99G4Jb2K0s2krNZ4qtWVKX6ezOCOvWfKgq
+	 M0RV09See1lljTjRzluFYvNpRi0SFYH9vwXPVqRFBQUQw803f/SFt1Vg6XN/ADtsMO
+	 52FDv4Dmqbzayx3hbLRXmPsQTsO11xs28vdacnnGjS/urjFikw86f+UfsPfsYdtLmW
+	 9PgUS7RjEYInQ==
+Date: Thu, 18 Sep 2025 15:30:18 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
+	hsiangkao@linux.alibaba.com, linux-block@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com, linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 10/15] iomap: add bias for async read requests
+Message-ID: <20250918223018.GY1587915@frogsfrogsfrogs>
+References: <20250916234425.1274735-1-joannelkoong@gmail.com>
+ <20250916234425.1274735-11-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917004001.2602922-1-joannelkoong@gmail.com>
- <aMqzoK1BAq0ed-pB@bfoster> <CAJnrk1ZeYWseb0rpTT7w5S-c1YuVXe-w-qMVCAiwTJRpgm+fbQ@mail.gmail.com>
- <aMvtlfIRvb9dzABh@bfoster> <aMwW0Zp2hdXfTGos@infradead.org> <aMxpFWnIDOpEWR1U@bfoster>
-In-Reply-To: <aMxpFWnIDOpEWR1U@bfoster>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 18 Sep 2025 15:10:18 -0700
-X-Gm-Features: AS18NWDwA7X-ONVkveKmDgwbimKxayr87pUKVFaacfpPIbDZBHVxH8s9c2UeJHs
-Message-ID: <CAJnrk1azO4iZD05atv9VJCG9f1G=8YCW6cyUw2LbW=4_ufi8gw@mail.gmail.com>
-Subject: Re: [PATCH v1] iomap: simplify iomap_iter_advance()
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916234425.1274735-11-joannelkoong@gmail.com>
 
-On Thu, Sep 18, 2025 at 1:14=E2=80=AFPM Brian Foster <bfoster@redhat.com> w=
-rote:
->
-> On Thu, Sep 18, 2025 at 07:27:29AM -0700, Christoph Hellwig wrote:
-> > On Thu, Sep 18, 2025 at 07:31:33AM -0400, Brian Foster wrote:
-> > > IME the __iomap_iter_advance() would be the most low level and flexib=
-le
-> > > version, whereas the wrappers simplify things. There's also the point
-> > > that the wrapper seems the more common case, so maybe that makes thin=
-gs
-> > > cleaner if that one is used more often.
-> > >
-> > > But TBH I'm not sure there is strong precedent. I'm content if we can
-> > > retain the current variant for the callers that take advantage of it.
-> > > Another idea is you could rename the current function to
-> > > iomap_iter_advance_and_update_length_for_loopy_callers() and see what
-> > > alternative suggestions come up. ;)
-> >
-> > Yeah, __ names are a bit nasty.  I prefer to mostly limit them to
-> > local helpers, or to things with an obvious inline wrapper for the
-> > fast path.  So I your latest suggestions actually aims in the right
-> > directly, but maybe we can shorten the name a little and do something
-> > like:
-> >
-> > iomap_iter_advance_and_update_len
-> >
-> > although even that would probably lead a few lines to spill.
-> > iomap_iter_advance_len would be a shorter, but a little more confusing,
-> > but still better than __-naming, so maybe it should be fine with a good
-> > kerneldoc comment?
-> >
->
-> Ack, anything like that is fine with me, even something like
-> iomap_iter_advance_and_length() with a comment that just points out it
-> also calls iomap_length().
->
-> Another thought was to have one helper that returns the remaining length
-> or error and then a wrapper that translates the return (i.e. return ret
-> >=3D 0 ? 0 : ret). But when I thought more about it seemed like it just
-> created confusion.
->
-> Brian
->
+On Tue, Sep 16, 2025 at 04:44:20PM -0700, Joanne Koong wrote:
+> Non-block-based filesystems will be using iomap read/readahead. If they
+> handle reading in ranges asynchronously and fulfill those read requests
+> on an ongoing basis (instead of all together at the end), then there is
+> the possibility that the read on the folio may be prematurely ended if
+> earlier async requests complete before the later ones have been issued.
+> 
+> For example if there is a large folio and a readahead request for 16
+> pages in that folio, if doing readahead on those 16 pages is split into
+> 4 async requests and the first request is sent off and then completed
+> before we have sent off the second request, then when the first request
+> calls iomap_finish_folio_read(), ifs->read_bytes_pending would be 0,
+> which would end the read and unlock the folio prematurely.
+> 
+> To mitigate this, a "bias" is added to ifs->read_bytes_pending before
+> the first range is forwarded to the caller and removed after the last
+> range has been forwarded.
+> 
+> iomap writeback does this with their async requests as well to prevent
+> prematurely ending writeback.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/iomap/buffered-io.c | 55 ++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 47 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 561378f2b9bb..667a49cb5ae5 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -420,6 +420,38 @@ const struct iomap_read_ops iomap_bio_read_ops = {
+>  };
+>  EXPORT_SYMBOL_GPL(iomap_bio_read_ops);
+>  
+> +/*
+> + * Add a bias to ifs->read_bytes_pending to prevent the read on the folio from
+> + * being ended prematurely.
+> + *
+> + * Otherwise, if the ranges are read asynchronously and read requests are
+> + * fulfilled on an ongoing basis, there is the possibility that the read on the
+> + * folio may be prematurely ended if earlier async requests complete before the
+> + * later ones have been issued.
+> + */
+> +static void iomap_read_add_bias(struct folio *folio)
+> +{
+> +	iomap_start_folio_read(folio, 1);
 
-I'm looking at this patch again and wondering if the second helper is
-all that necessary. I feel like if we're adding it because the caller
-could be confused/unclear about needing to update their local length
-variable, then wouldn't they also be confused about having to use
-iomap_iter_advance_and_length() instead of iomap_iter_advance()? I
-feel like if they know enough to know that they need to use
-iomap_iter_advance_and_length() instead of iomap_iter_advance(), then
-they know enough to update their local length variable themsevles
-through iomap_length(). imo it seems cleaner / less cluttery to just
-have iomap_iter_advance(). But I'm happy to add the
-"iomap_advance_and_length()" helper for v2 if you guys disagree and
-prefer having a 2nd helper.
+I wonder, could you achieve the same effect by elevating
+read_bytes_pending by the number of bytes that we think we have to read,
+and subtracting from it as the completions come in or we decide that no
+read is necessary?
 
+(That might just be overthinking the plumbing though)
 
-Thanks,
-Joanne
+--D
+
+> +}
+> +
+> +static void iomap_read_remove_bias(struct folio *folio, bool *cur_folio_owned)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	bool finished, uptodate;
+> +
+> +	if (ifs) {
+> +		spin_lock_irq(&ifs->state_lock);
+> +		ifs->read_bytes_pending -= 1;
+> +		finished = !ifs->read_bytes_pending;
+> +		if (finished)
+> +			uptodate = ifs_is_fully_uptodate(folio, ifs);
+> +		spin_unlock_irq(&ifs->state_lock);
+> +		if (finished)
+> +			folio_end_read(folio, uptodate);
+> +		*cur_folio_owned = true;
+> +	}
+> +}
+> +
+>  static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  		struct iomap_read_folio_ctx *ctx, bool *cur_folio_owned)
+>  {
+> @@ -429,7 +461,7 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  	struct folio *folio = ctx->cur_folio;
+>  	size_t poff, plen;
+>  	loff_t delta;
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (iomap->type == IOMAP_INLINE) {
+>  		ret = iomap_read_inline_data(iter, folio);
+> @@ -441,6 +473,8 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  	/* zero post-eof blocks as the page may be mapped */
+>  	ifs_alloc(iter->inode, folio, iter->flags);
+>  
+> +	iomap_read_add_bias(folio);
+> +
+>  	length = min_t(loff_t, length,
+>  			folio_size(folio) - offset_in_folio(folio, pos));
+>  	while (length) {
+> @@ -448,16 +482,18 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  				&plen);
+>  
+>  		delta = pos - iter->pos;
+> -		if (WARN_ON_ONCE(delta + plen > length))
+> -			return -EIO;
+> +		if (WARN_ON_ONCE(delta + plen > length)) {
+> +			ret = -EIO;
+> +			break;
+> +		}
+>  		length -= delta + plen;
+>  
+>  		ret = iomap_iter_advance(iter, &delta);
+>  		if (ret)
+> -			return ret;
+> +			break;
+>  
+>  		if (plen == 0)
+> -			return 0;
+> +			break;
+>  
+>  		if (iomap_block_needs_zeroing(iter, pos)) {
+>  			folio_zero_range(folio, poff, plen);
+> @@ -466,16 +502,19 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  			*cur_folio_owned = true;
+>  			ret = ctx->ops->read_folio_range(iter, ctx, plen);
+>  			if (ret)
+> -				return ret;
+> +				break;
+>  		}
+>  
+>  		delta = plen;
+>  		ret = iomap_iter_advance(iter, &delta);
+>  		if (ret)
+> -			return ret;
+> +			break;
+>  		pos = iter->pos;
+>  	}
+> -	return 0;
+> +
+> +	iomap_read_remove_bias(folio, cur_folio_owned);
+> +
+> +	return ret;
+>  }
+>  
+>  int iomap_read_folio(const struct iomap_ops *ops,
+> -- 
+> 2.47.3
+> 
+> 
 
