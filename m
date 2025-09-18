@@ -1,185 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-62115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82CEB845DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 13:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CB6B8459F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 13:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E364A2E96
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 11:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3478E4A83BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 11:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07385303A06;
-	Thu, 18 Sep 2025 11:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E6C3064A8;
+	Thu, 18 Sep 2025 11:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lhdT2L1t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RiyRI2no";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mZ/uXFCm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F4mpeiMA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f81hF/a4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901F62F6189
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 11:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D3530216D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 11:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195104; cv=none; b=AetmHIm4rqQUbRHwp77d7aSo1dE0gtZdwsrV6YVsk2RvE2ZZvTWankZQwLQCCjXGWlOFtAL/505YrlTZskdg0lWHFpvlBTlYDXqSCLjDh+RAsDMcavk0J22bZuYYh7DyinYQY/KHtyuE6IlJ3KiroRhDChCSA/YdjwDkLaC5N5g=
+	t=1758194860; cv=none; b=NV7ipyG18C2Ip8FmoWB+RVnQBpGLfsr085ywutSDxgUQevQ00+Q/+QBpFJ2KGPlqy8W8Hkm4VTZjufqk8EVkqguDLtzeinLXQXnvJ6ZqlVo6olmECgvcT4ksTVcPfJmG7m2+NtxEzuDJ6uTLNLm5AZ+1JeB6MBlNpS6wzLxstJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195104; c=relaxed/simple;
-	bh=MLl6OKx32oF/mUyZeLnKIVTtA/C1JJP+sSJUZhdTOM8=;
+	s=arc-20240116; t=1758194860; c=relaxed/simple;
+	bh=wjS64QDMlqkfgw27qhtCy4/2laqAX4mv8HYIWp4czpE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGvTpshiz/S4kApePYhHxgM1IXeHC3dCnXFSKPtIA6b+jVQqQR+Hwj0d1o5rk/01wAPvsuH6/v3saHYJT19m4SqCqxleec2USdDStKT7Z1HWvRjkU1o0sBPdEjIPmtMpfErAPvnl47rTfbjQnqE9gxNf2ZWwjbSgXzPPFB44JCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lhdT2L1t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RiyRI2no; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mZ/uXFCm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F4mpeiMA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gi8q0hrdmrnInFYSm/hqgV3pj8UiZQcF4sib2U0/HiP+ixm55V4qPssB9cybqqs2kKzEtNiMwxGZ9xZKj4x209B8HyhquXWcvgOaV1mXBXXDx6QC9+ARxwc2bknOyaXCzDlj1oginEmijS2u0p3Anh0Y5UC74jd9ANZm6GRVxy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f81hF/a4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758194857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hoawklc8os3fAwaoE2OiqJO7AK5pZxPz65KbJfbQGfU=;
+	b=f81hF/a4TzTyLAEPHzoJb5dN7WZa7L9Pin8gJAVroCOai3vJGfXV16gZAPX5Y6rla5yHbH
+	4/pneoEhAp1LrDQWOhqRODOuTwrg6KL/wAcikjd7clzS315StMeZTMo9lNJ18cIzLcWS6I
+	+iaXC0eVCqv9ip72FWJIqXcgjn2aJ4c=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-IYQ1ZjJDPiKMpVs4mku6-w-1; Thu,
+ 18 Sep 2025 07:27:31 -0400
+X-MC-Unique: IYQ1ZjJDPiKMpVs4mku6-w-1
+X-Mimecast-MFC-AGG-ID: IYQ1ZjJDPiKMpVs4mku6-w_1758194850
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8AE0233791;
-	Thu, 18 Sep 2025 11:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758195099; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=lhdT2L1tZ/eU01dAvv55m+bCEsqSXn9IA/5PI3U3FxpNs0aIVG5VXdU/1hy0iSeEN7Pw79
-	Bofhd8h+Lu/NUDQgTx+DFJ2rfruf0Ez7PC6X5J22of1d6Wb9cAQUAzeg5iFC2cXxYAzxBy
-	JAGOlD4SlPjr6tEiifhJG8ab/O4KClw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758195099;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=RiyRI2nob+MF0STXidJ4xVHvz+Hvs6a7btnXjChpqptOZmH1OMRuQau6ztX6QilOsI19tM
-	mWjgrlV4vqR3/4AQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="mZ/uXFCm";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=F4mpeiMA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758195098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=mZ/uXFCm/LcB68G+Pulz+vmUd3OkOcAShB69OktBNN3CDzNOUlingOy/CvYD7qdUPgI1pD
-	SIT86IppWhAFXzD3Adv0o6HXgCYSPrRAOiK85uI5+GizLBu7dT+PSMZDf/D257u/Ah4LNl
-	j2rcNCxlLRaGLIFjVQ9W0ZkBFdbN/vw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758195098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=F4mpeiMAiFwgKtIBR86KL8f7OjWr7aG5rnz8aOXCA4LWMC1X5SXu1uiugKiTYOreT33gH6
-	4P4VfZBx5MQ+j7Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80F0C13A51;
-	Thu, 18 Sep 2025 11:31:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r3swHJjty2gJBQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 18 Sep 2025 11:31:36 +0000
-Date: Thu, 18 Sep 2025 12:31:30 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	kernel-team@android.com, android-mm@google.com, stable@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] mm: fix off-by-one error in VMA count limit checks
-Message-ID: <zol3d77dnwgrkbwc7lui3qm2mkwqftzifr6gn7smtbg4jo4bte@y4dzwfvt2xtj>
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-2-kaleshsingh@google.com>
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBE0519560A0;
+	Thu, 18 Sep 2025 11:27:29 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.134])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF4C11800447;
+	Thu, 18 Sep 2025 11:27:28 +0000 (UTC)
+Date: Thu, 18 Sep 2025 07:31:33 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, hch@infradead.org, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] iomap: simplify iomap_iter_advance()
+Message-ID: <aMvtlfIRvb9dzABh@bfoster>
+References: <20250917004001.2602922-1-joannelkoong@gmail.com>
+ <aMqzoK1BAq0ed-pB@bfoster>
+ <CAJnrk1ZeYWseb0rpTT7w5S-c1YuVXe-w-qMVCAiwTJRpgm+fbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915163838.631445-2-kaleshsingh@google.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8AE0233791
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLg31yqq1xypujqsbh8raoa6zf)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.de:dkim,suse.de:email]
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZeYWseb0rpTT7w5S-c1YuVXe-w-qMVCAiwTJRpgm+fbQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, Sep 15, 2025 at 09:36:32AM -0700, Kalesh Singh wrote:
-> The VMA count limit check in do_mmap() and do_brk_flags() uses a
-> strict inequality (>), which allows a process's VMA count to exceed
-> the configured sysctl_max_map_count limit by one.
+On Wed, Sep 17, 2025 at 02:54:09PM -0700, Joanne Koong wrote:
+> On Wed, Sep 17, 2025 at 6:08 AM Brian Foster <bfoster@redhat.com> wrote:
+> >
+> > On Tue, Sep 16, 2025 at 05:40:01PM -0700, Joanne Koong wrote:
+> > > Most callers of iomap_iter_advance() do not need the remaining length
+> > > returned. Get rid of the extra iomap_length() call that
+> > > iomap_iter_advance() does. If the caller wants the remaining length,
+> > > they can make the call to iomap_length().
+> > >
+> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > ---
+> >
+> > Indeed this does clean up some of the calls that create a local var
+> > purely to work around the interface. OTOH, the reason I made the advance
+> > update the length was so it was clear the remaining length would be used
+> > correctly in those looping callers. Otherwise I'm not sure it's clear
+> > the bytes/length value needs to be updated and that felt like an easy
+> > mistake to make to me.
+> >
+> > I don't really have a strong preference so I'll defer to whatever the
+> > majority opinion is. I wonder though if something else worth considering
+> > is to rename the current helper to __iomap_iter_advance() (or whatever)
+> > and make your updated variant of iomap_iter_advance() into a wrapper of
+> > it.
 > 
-> A process with mm->map_count == sysctl_max_map_count will incorrectly
-> pass this check and then exceed the limit upon allocation of a new VMA
-> when its map_count is incremented.
+> That idea sounds good to me too, though I wonder for the naming of it
+> if iomap_iter_advance() should remain the current helper and
+> __iomap_iter_advance() should be for this more-minimal version of it.
+> From what I've seen elsewhere, it seems like the __ prefix is used for
+> minimum behavior and then the non-__ version of it is for that
+> behavior + extra stuff.
 > 
-> Other VMA allocation paths, such as split_vma(), already use the
-> correct, inclusive (>=) comparison.
-> 
-> Fix this bug by changing the comparison to be inclusive in do_mmap()
-> and do_brk_flags(), bringing them in line with the correct behavior
-> of other allocation paths.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: <stable@vger.kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Pedro Falcato <pfalcato@suse.de>
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 
+IME the __iomap_iter_advance() would be the most low level and flexible
+version, whereas the wrappers simplify things. There's also the point
+that the wrapper seems the more common case, so maybe that makes things
+cleaner if that one is used more often.
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+But TBH I'm not sure there is strong precedent. I'm content if we can
+retain the current variant for the callers that take advantage of it.
+Another idea is you could rename the current function to
+iomap_iter_advance_and_update_length_for_loopy_callers() and see what
+alternative suggestions come up. ;)
 
--- 
-Pedro
+Brian
+
+> 
+> Thanks,
+> Joanne
+> >
+> > Brian
+> 
+
 
