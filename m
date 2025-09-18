@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-62156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A04DB8620A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 18:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C85B8634F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 19:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD007E26BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 16:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D041C286D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 17:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E932125C6FF;
-	Thu, 18 Sep 2025 16:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422A4314A6C;
+	Thu, 18 Sep 2025 17:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQmjGM5Y"
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="sj5M8gan"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-106110.protonmail.ch (mail-106110.protonmail.ch [79.135.106.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B80248F57;
-	Thu, 18 Sep 2025 16:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548F6259CB2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 17:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758214349; cv=none; b=hB3Q+8rjJpFDmH+9yWQufUBCKlXMHYHno5kiaMh5gFfTerOuORX15InfKF5/3DmrRjHtKghqG4icAq1wwWnTM8FPtwmiF7GS0Vlo3EjktYjuvLbybcFjUTYhfF11opfKfDeTNa4H21RQ7oJmZzVooLQHOVXJrMOmAV6MK8o8vwg=
+	t=1758216628; cv=none; b=brAysTLazZ++wT4FeoDJLWqDXBM5exYU05NHv4/RkJkuiVCR0G56w9862h2bEf1vLIH5XwBWPheNIAkUmHITlB33mkQcS8+ywNd8eKB6TOo/swoRGmJwrzbYq7vV3XbdlLap7jhDpEkeQYljInaH63hdX+SojnTBCGQCC0fcFbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758214349; c=relaxed/simple;
-	bh=9fORnitY7ZI2TjH9uFpqE0qNhXm/u+HoTqtDe5oKrio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYpz7tZ/w8cZa5dtdhUNB+HfBXy9LVpGfjtRueaxndRUemwik8YhtcS+SIBwwgXwB03vNmQ8pyFsGzT0ImAgHNqRRiJBIQIjMQ/6VYEaPhWajIXv+KpMBZOacmZGrE94idI7X5xnyPHKZoL5z8Z9gyYCRaFsmssejpKIW/4H2MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQmjGM5Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3066C4CEE7;
-	Thu, 18 Sep 2025 16:52:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758214347;
-	bh=9fORnitY7ZI2TjH9uFpqE0qNhXm/u+HoTqtDe5oKrio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DQmjGM5Yx8vLRkzLo8vqYPMoUDt93nt/XjJHRjo8sRMQq0F2iu6Kaz0HaJ4OqkFZy
-	 jMxt5tcgxsJI5pq88E5F4PPAQm13gNPJEgDyFEOiWxQOhkbHoH4y+iTidPKCDHFk3M
-	 wnDiL08av25tAKRfJ5nDemTd/sDltwwYMFusxrkKR3Wf5ca0gSdwZ/3dWv7+2hWk+h
-	 hGlcUuvfQcTnSKWgzUXx/3SkE+xNKrsfnQN1BBvu1MVN/CPhYapYIuxneaz4xEDVPr
-	 QLQfZdk0uXMcvWQuJpVJCip4U36ylE3VYxzGGpNPyYn2WEU6p645sPrQpm44OooPZB
-	 nf+8Eul0dcquQ==
-Date: Thu, 18 Sep 2025 09:52:27 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, bernd@bsbernd.com, linux-xfs@vger.kernel.org,
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev
-Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
- local fs behaviors
-Message-ID: <20250918165227.GX8117@frogsfrogsfrogs>
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
- <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
+	s=arc-20240116; t=1758216628; c=relaxed/simple;
+	bh=jNT7NsEMRuj8wCXtxJyomrcmRAYdUu7xw3SsvTQHZ4I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tl588q7NFJzrzCZnmAu/Bhr9XyfgEPIEj36GSeSQ+O8Dj4gyPDoKSvGyHIxljaaoIvXaHKvdwXene5ufOBQj0vWbzIPM0L67p40d4oY5uGQDaJl6rXkmGBBen3VqLfW0FVwd17iv1/rQDVPDfiRLmfRtzSdybyjSxFFLRE8fJw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=sj5M8gan; arc=none smtp.client-ip=79.135.106.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1758216140; x=1758475340;
+	bh=jNT7NsEMRuj8wCXtxJyomrcmRAYdUu7xw3SsvTQHZ4I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=sj5M8gan1fuxkC0HR5kJhRA1bWT4D5YBPatPda/mnbfYCde3JGuqC8sFTZnFdR9Sf
+	 DtY9DncF24mG9xZiMb2wY2TwhXMS7YQ+VXBYXWGYY347ibtJnaXW2UI5+9p2NzTmeb
+	 yjcDXMpyLzkAxkruFCx0YUxke0fcAj6darY/OCwfzzctKeAyS8o0StOVY/AkJiBylP
+	 53Ff5v9J1u5g3cabyIwaonW071ePluev+OsDbimffG5/UtBOAMmIp06Ojyd+LQcQ2n
+	 Yc/iOTgfI/HvnvQt4m2DhJ9sApTxvxPZJQMkdyW4EnJydExZ2QGEpTmZN4tjYVy576
+	 VrKDjZ39dVt5w==
+Date: Thu, 18 Sep 2025 17:22:14 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: ManeraKai <manerakai@protonmail.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>, "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] rust: miscdevice: Implemented `read` and `write`
+Message-ID: <d90b10f1-2634-481a-beec-ce9f31aadb74@protonmail.com>
+In-Reply-To: <CAH5fLgiDJbtqYHJFmt-2HNpDVENAvm+Cu82pTuuhUvgScgM0iw@mail.gmail.com>
+References: <20250918144356.28585-1-manerakai@protonmail.com> <20250918144356.28585-3-manerakai@protonmail.com> <CAH5fLgiDJbtqYHJFmt-2HNpDVENAvm+Cu82pTuuhUvgScgM0iw@mail.gmail.com>
+Feedback-ID: 38045798:user:proton
+X-Pm-Message-ID: e0c2ba71e39bfc9d433a41b48e14f54805f8b739
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,84 +60,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 10:18:40AM -0700, Joanne Koong wrote:
-> On Mon, Sep 15, 2025 at 5:25 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > Create a new fuse context flag that indicates that the kernel should
-> > implement various local filesystem behaviors instead of passing vfs
-> > commands straight through to the fuse server and expecting the server to
-> > do all the work.  For example, this means that we'll use the kernel to
-> > transform some ACL updates into mode changes, and later to do
-> > enforcement of the immutable and append iflags.
-> >
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > ---
-> >  fs/fuse/fuse_i.h |    4 ++++
-> >  fs/fuse/inode.c  |    2 ++
-> >  2 files changed, 6 insertions(+)
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index e93a3c3f11d901..e13e8270f4f58d 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -603,6 +603,7 @@ struct fuse_fs_context {
-> >         bool no_control:1;
-> >         bool no_force_umount:1;
-> >         bool legacy_opts_show:1;
-> > +       bool local_fs:1;
-> >         enum fuse_dax_mode dax_mode;
-> >         unsigned int max_read;
-> >         unsigned int blksize;
-> > @@ -901,6 +902,9 @@ struct fuse_conn {
-> >         /* Is link not implemented by fs? */
-> >         unsigned int no_link:1;
-> >
-> > +       /* Should this filesystem behave like a local filesystem? */
-> > +       unsigned int local_fs:1;
-> > +
-> >         /* Use io_uring for communication */
-> >         unsigned int io_uring;
-> >
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index c94aba627a6f11..c8dd0bcb7e6f9f 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -1862,6 +1862,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
-> >         fc->destroy = ctx->destroy;
-> >         fc->no_control = ctx->no_control;
-> >         fc->no_force_umount = ctx->no_force_umount;
-> > +       fc->local_fs = ctx->local_fs;
-> >
-> 
-> If I'm understanding it correctly, fc->local_fs is set to true if it's
-> a fuseblk device? Why do we need a new "ctx->local_fs" instead of
-> reusing ctx->is_bdev?
+ > We already merged read_iter / write_iter functions for miscdevice this
+ > cycle.
 
-Eventually, enabling iomap will also set local_fs=1, as Miklos and I
-sort of touched on a couple weeks ago:
+I couldn't find it. Can you send me a link please?
 
-https://lore.kernel.org/linux-fsdevel/CAJfpegvmXnZc=nC4UGw5Gya2cAr-kR0s=WNecnMhdTM_mGyuUg@mail.gmail.com/
-
---D
-
-> Thanks,
-> Joanne
-> 
-> >         err = -ENOMEM;
-> >         root = fuse_get_root_inode(sb, ctx->rootmode);
-> > @@ -2029,6 +2030,7 @@ static int fuse_init_fs_context(struct fs_context *fsc)
-> >         if (fsc->fs_type == &fuseblk_fs_type) {
-> >                 ctx->is_bdev = true;
-> >                 ctx->destroy = true;
-> > +               ctx->local_fs = true;
-> >         }
-> >  #endif
-> >
-> >
 
