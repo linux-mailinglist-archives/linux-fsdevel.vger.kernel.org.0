@@ -1,82 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-62090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59186B83EBB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 11:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA3BB83F15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 11:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3C7482152
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 09:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCEA2A7B41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 09:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D0B2C026D;
-	Thu, 18 Sep 2025 09:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC482F25E9;
+	Thu, 18 Sep 2025 09:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEz2t9aX"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GuC4/0E";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6C39Yrta";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GuC4/0E";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6C39Yrta"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0741F09BF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 09:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA112E264C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 09:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758189181; cv=none; b=W+QgK30HO06mU5QJ0tVK70a6FolCdhJPc3pG76ER2M9y4nrXB9zbpaKN3WRv0c/8m7zKFqzYrFHR5Jcznmw1agG88eS/KZAsJol2PcPhPdHseZ9mo5hwB05KfEz4M8ZNkqz+AoVZGVvDXfxvy6Kd8oyRwNwa5V4DuRym1+tI8Dk=
+	t=1758189559; cv=none; b=uNNT5yYOhjJZJBHfBVK0voejWaenh0GjPN/6COBOkPh8Nv6dnaXSodfh1Fp0q2gvtAR1uCtKq0E8FSGxOucBV6N/oLxKYoG3hh6BpLvJK1IVgv25CaM88XMjZYDfxNaG5VbY/aw2aq43VYLyade1YPsMGL7nUojCfti1qGYlJ9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758189181; c=relaxed/simple;
-	bh=9NUcHiuwJ7yy7eIocMusuxX8hrBc3RhlUO2hxypoQxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TSX4G3+d4cKIasHq+vFD2UsZzTqIo7yHzEN8kmaedEx3rZo+PW1Z+MOQJNiVis11qnaZv7DSfR9+JY8FMjTtp+Eyzo8RsxHuuWGjwLpq8k0pk98aaitzNK0gKf+7dlK66UjezQbdenlEseFA3EUw2YYTHXt1h2sFWA3bwoctRow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEz2t9aX; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4619eb18311so4931465e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 02:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758189178; x=1758793978; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xrCiUL75bZCAw4+y+WgmkA8zlr1SQwxLhmhWl+htlwk=;
-        b=hEz2t9aXKEhir5Nk+ChxtrHLhkKTvBCvU8rvrYUqU9/elQhInakzHeH1I0/E/AQ/5s
-         kyNqv+dia2t4sN1VM/p1pScq1GP/AOTaYGpY1ot32zt+YVFevgXxLCR/Jd74vZB1eJUH
-         ritJ/aCGZt8wq9mi9FaLkP75Wdcu5YDK4QCTrUXiSRAJRGbKlsTAUBOB3K02U7e2Idlo
-         +OUkATFJ0usreNE4gQp683D+zFQOAERQP+vaqf45poWsgmCt1NxFxGeRrL1+OVebBsCj
-         n95uh3SWMw1T8+xKfTvQacb0b9fOm/6kcyvNmCVTxpgyGITWX3L2hlLnMe0dg0zOf5Oc
-         5egQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758189178; x=1758793978;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrCiUL75bZCAw4+y+WgmkA8zlr1SQwxLhmhWl+htlwk=;
-        b=SqnVFreCB/C5WBhHwKt/8SNRyH5wEBzcC0MOF5yGyh6u4c4ZNLMuhlvHCymKkwQpOv
-         z1rk/e3aB7bjMreBT9VPaTrLJKXR2jFFyVkjnhzKcKruDHsiClIlkTYQrlrJiMo3US89
-         JB3wxSI7vymsn+elhJ+lWyObY6MlWndS+XjNDHHqjnJLWp/MldxYI0qCRnFEJq+4mZww
-         IRkJwXaL7bjcQ36FPtzTH2alMkdZj/YFktc1mNFfPyM81FOTZrJz/umAUW/x+KA8ei0w
-         aKNkvAvfzlEd+27wY7Y5rxYJwRiSJRtMwFNPJTtIucTyQInkcJ8XC9jdy9sxGAO3x830
-         6Fzg==
-X-Gm-Message-State: AOJu0YwYgnJdUtdDf3HtBvy/CXrtZWOXZHkDdHtc8PRuMpP/PsUVmmdF
-	Dwoo988Y9xFJUJJl9Q+a/3/enKdRvfCrWBulUhuwvH9xS4BZWAxaMTsrWLv/G0kkIK0=
-X-Gm-Gg: ASbGncumh0UuP+qdhGF0vtQDPJRXEh1RXL5pu8g6+OPukPu9f4kSSnNtrGgCnNA7MY5
-	RKrsmBDXkSNR8bowj1y1a/NGY4aMzz7gDBwxfeTUZRkEYWJRZOWsdb4G8HH1sRn0z9ht8y2w1X9
-	yZXFYjJEici8R0sxo8zn0llpUvcRX6DNuFiwGM+WnpaQ9NHLAU14l/Azh0dHExM9+x6SPAzkVzZ
-	LnFepCYTBdSwfrDZsRapfYcxJOeZWd2DFUb3uVvcNLFKSAc1/G2HY3heWLlmvDKQ37NIlYThpPh
-	jKmiv+SfYD+rNBZR6PBem6I63a0bSOwxlvu+iwwtsUDDl5ICk/Fhad4I22R+WyLgPADStGEGCCt
-	SqvOeEbPLtFU4MjsvhqR9yYEUKRYLI0DLuVgWayBmVT7U5g==
-X-Google-Smtp-Source: AGHT+IEuhQYgzgTFbOZXUjahrTWsABPfUZy194AF4v8KaCUe4OxfBmwdar9IdKHdJilo4IGaTHcK7g==
-X-Received: by 2002:a05:6000:22c1:b0:3ec:248f:f86a with SMTP id ffacd0b85a97d-3ecdfa37807mr4725910f8f.48.1758189177722;
-        Thu, 18 Sep 2025 02:52:57 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee1385adebsm1167298f8f.42.2025.09.18.02.52.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 02:52:57 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:52:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [bug report] writeback: Avoid contention on wb->list_lock when
- switching inodes
-Message-ID: <aMvWdo1EjHoPA-BH@stanley.mountain>
+	s=arc-20240116; t=1758189559; c=relaxed/simple;
+	bh=0RqsuiwyKINatYSR4jMGpA2kcsw74TNDR71ONXIxGVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=agPRdmjZyW8zZR/uQozeBrdfFq77EPEdSggvYHGGIegt09vh5ZhR1EVQnniQ6QrfmrwKsF3OSnxcQvIz1B+nq3qhHPaGzaq/vHbdjWbrQ4ATFCvO5Uk2GDuuo/DlA2Fr46LQPKBM8SsQ1VObo9kwQXMBNnMngTgvgkByN6wrkvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GuC4/0E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6C39Yrta; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GuC4/0E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6C39Yrta; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A50FF3370E;
+	Thu, 18 Sep 2025 09:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758189555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
+	b=3GuC4/0ESPjQC3pmzIZ8bUCKHTf/JnNQrCqYYL9kmgf85s872lNOzwXwhKUuxkWBLC2WyB
+	s2R6wFu5VsG+nCwu65iLBy8RDidVPcj+vriWINrK6M18sij6Y/TJ2um4t+qOLPBnx4drYq
+	bL0D9MtXtRERWp3NFmAKgwD1rwe74LA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758189555;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
+	b=6C39YrtawpyxD3kT6zBqWw3NoYY63UzNAjAlne7/PNQwND2TcTzmnUMngyuaa7EIaYb43S
+	t41Z2/gB+1zvY9DA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758189555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
+	b=3GuC4/0ESPjQC3pmzIZ8bUCKHTf/JnNQrCqYYL9kmgf85s872lNOzwXwhKUuxkWBLC2WyB
+	s2R6wFu5VsG+nCwu65iLBy8RDidVPcj+vriWINrK6M18sij6Y/TJ2um4t+qOLPBnx4drYq
+	bL0D9MtXtRERWp3NFmAKgwD1rwe74LA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758189555;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
+	b=6C39YrtawpyxD3kT6zBqWw3NoYY63UzNAjAlne7/PNQwND2TcTzmnUMngyuaa7EIaYb43S
+	t41Z2/gB+1zvY9DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 902A913A51;
+	Thu, 18 Sep 2025 09:59:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C//kIvPXy2giZQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 18 Sep 2025 09:59:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DA616A09B1; Thu, 18 Sep 2025 11:59:14 +0200 (CEST)
+Date: Thu, 18 Sep 2025 11:59:14 +0200
+From: Jan Kara <jack@suse.cz>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Jakub Acs <acsjakub@amazon.de>, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <vtan7uaf5mf35zxy6pma6sdahxr7idv2awaf7yh7vtyhxsoram@2au7ec4hto7i>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+ <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+ <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+ <20250917204200.GB39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,50 +112,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250917204200.GB39973@ZenIV>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz,amazon.de,vger.kernel.org,szeredi.hu,kernel.org];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-Hello Jan Kara,
+On Wed 17-09-25 21:42:00, Al Viro wrote:
+> On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
+> 
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index 60046ae23d514..8c9d0d6bb0045 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
+> > 
+> >         if (root_inode) {
+> >                 res = d_alloc_anon(root_inode->i_sb);
+> > -               if (res)
+> > +               if (res) {
+> > +                       root_inode->i_opflags |= IOP_ROOT;
+> >                         d_instantiate(res, root_inode);
+> 
+> Umm...  Not a good idea - if nothing else, root may end up
+> being attached someplace (normal with nfs, for example).
+> 
+> But more fundamentally, once we are into ->kill_sb(), let alone
+> generic_shutdown_super(), nobody should be playing silly buggers
+> with the filesystem.  Sure, RCU accesses are possible, but messing
+> around with fhandles?  ->s_root is not the only thing that might
+> be no longer there.
+> 
+> What the fuck is fsnotify playing at?
 
-Commit 67c312b4e9bf ("writeback: Avoid contention on wb->list_lock
-when switching inodes") from Sep 12, 2025 (linux-next), leads to the
-following Smatch static checker warning:
+The problem is fsnotify marks aren't shutdown until generic_shutdown_super()
+calls fsnotify_sb_delete(). So until that moment fsnotify can be generating
+events for the filesystem. Sure, userspace has no longer access to the fs
+but stuff like delayed inode deletion or other in-kernel users can still
+result in events being generated and these events may end up creating file
+handles to report to userspace.
 
-	fs/fs-writeback.c:730 cleanup_offline_cgwb()
-	error: uninitialized symbol 'new_wb'.
+We have already uncovered with Amir quite a few moments how this is broken
+so I agree that the best solution is to shutdown fsnotify before we call
+shrink_dcache_for_umount(). The slight problem is this means iterating all
+inodes in the sb which is costly when you have millions of them (this is
+the reason why fsnotify_sb_delete() is currently called after
+evict_inodes()). So it needs more work on fsnotify side...
 
-fs/fs-writeback.c
-    709 bool cleanup_offline_cgwb(struct bdi_writeback *wb)
-    710 {
-    711         struct cgroup_subsys_state *memcg_css;
-    712         struct inode_switch_wbs_context *isw;
-    713         struct bdi_writeback *new_wb;
-    714         int nr;
-    715         bool restart = false;
-    716 
-    717         isw = kzalloc(struct_size(isw, inodes, WB_MAX_INODES_PER_ISW),
-    718                       GFP_KERNEL);
-    719         if (!isw)
-    720                 return restart;
-    721 
-    722         atomic_inc(&isw_nr_in_flight);
-    723 
-    724         for (memcg_css = wb->memcg_css->parent; memcg_css;
-    725              memcg_css = memcg_css->parent) {
-
-The concern here is that do we know for sure that we enter the loop?
-
-    726                 new_wb = wb_get_create(wb->bdi, memcg_css, GFP_KERNEL);
-    727                 if (new_wb)
-    728                         break;
-    729         }
---> 730         if (unlikely(!new_wb))
-                              ^^^^^^
-These are a common source of false positives, but I just wanted to be
-sure.  Thanks!
-
-    731                 new_wb = &wb->bdi->wb; /* wb_get() is noop for bdi's wb */
-    732 
-    733         nr = 0;
-
-regards,
-dan carpenter
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
