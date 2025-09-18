@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-62100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90577B83FFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 12:15:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA72B83FEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 12:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3910F7AF96E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 10:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5485A4A7BCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 10:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2602286427;
-	Thu, 18 Sep 2025 10:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F82302158;
+	Thu, 18 Sep 2025 10:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcK18o2F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFFBIQsK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE172F39CF;
-	Thu, 18 Sep 2025 10:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E335528643F;
+	Thu, 18 Sep 2025 10:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190348; cv=none; b=KjuBSqJLUG3TaKgMIX1XhL/+g2aDon5RgoHls/ZMt/D8tXyYcWWm/d46zbWA0PALc9TpXYIfmFdsBqBxkoi/ufxesZuj/9rGaxkjuzdQR6iSj6sxg31Z+fEr6VuuRaqXgTVS4/qePtSK7VVNmGLfSvmAD26WK9LR49MEy4HVcVE=
+	t=1758190353; cv=none; b=jbDVuZP6kNLIBLSjkdlgpDse1Jglnma1VhMZYJMP7fve+hJBbgMFJE+D0HcWXqpYaSU5cFA4lWP7u+pPnHr8gfCiCK/xf+JxzWLtIhuN8UjlkZxSig0R9SVNTAeZdF724qac7r0f3XFrFmuSXyuakbx6nodJwKBXF5G5wrtAbd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758190348; c=relaxed/simple;
-	bh=5NGIqPGYw+T/9FWphbn7aLdjuEXBOiEmvs9M0qqiQu4=;
+	s=arc-20240116; t=1758190353; c=relaxed/simple;
+	bh=JQj+hKUFm8QJxn9wbCfJ1lqCGI1ADoO5H9i3MIyjzas=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JPxzPhCt0kP2MHphdEXix96BRJ9CSKakiPAr/s6ebTqEuKfepCOkHRttiIaZrHdufMbMkVawHHgJEWIv64WnmYdbO7IaoUsiho6Ds+jMRfqtpmSJ+ofa4J5Xb0CmhWmFjKY9dgh0fRdcBmSF3xS+O30ejK6uhHvXX6r5/wKy/g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcK18o2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67ACC4CEF1;
-	Thu, 18 Sep 2025 10:12:23 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XolWt3nXH/GJ6zuvIBy3JEELvuWEdhK4x5vLUA0k0XL7tv8FvD/iyKbBPdJMlWi/IhK/4AVI0jFDysTfghn78vv5/LCs9pCIHjkxDSG++BJ/o1FZqEcxFH45WfscFf88dw5KB3JE6CifUkklybro+H3M0P7qsaz+s78lNHVKl4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFFBIQsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE5DC4CEF0;
+	Thu, 18 Sep 2025 10:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758190348;
-	bh=5NGIqPGYw+T/9FWphbn7aLdjuEXBOiEmvs9M0qqiQu4=;
+	s=k20201202; t=1758190352;
+	bh=JQj+hKUFm8QJxn9wbCfJ1lqCGI1ADoO5H9i3MIyjzas=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NcK18o2Fu7rBhYM8IDKQIrJ491P91WuvxXo5Js10Zviv+V155UHN4af2zTORodQDE
-	 tdzXM7WhpuUNxJcQYoxfqSbBajoNbAPaTP+nw7cbhFEkoBqPgM76bmpHLx870InEMs
-	 1ip3OPX7uksd1hLIWjuZqjqGOcPXW86IvB6KCpxwZRS6ULXdmhbiNYfFn0tmwlvn6L
-	 pavHFZuzqmauPbB9VsZGo2Zp0DBdItmpcnNXCR/neQQyGgYTs+a36ArYT/8qeAoJKo
-	 nTfO7sUlpFHOkzNhjLotx9TkrukO7sR23nx3utGDrJMjlLKNhgJ1KG12XqngCNu838
-	 Fr+KOLO2uPO4Q==
+	b=mFFBIQsKlKP2ldt3wifPwejDmvkJh2rAdLxHuSR4r110O9y++g6G3uuyreE5ttmOO
+	 x6hBSn2A4X5qcTv3ZFHy7hDHJYfe3eDsB0l/gzBTxIBdtixSjMIPTSbrH9iyhRovUq
+	 YCZL+xTWlx1giEvp4ziYos0tN8X27LUlxkhpJpDCuq/7AoT2nl0VsBX084x0xPvGcc
+	 3oNE182z5C8WR951txiGuuB/Z/gizbLtHtj+CS2reC04pEyrTipmKPFf440Hp0OVIh
+	 x2Fac2XflAAT3Sf6mJGVvo7bjyzbiivczxUlz/hDP2SOTl0LoE9Wm6tZcni6n5sQfu
+	 xKlREslXiQc8A==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 18 Sep 2025 12:11:52 +0200
-Subject: [PATCH 07/14] user: port to ns_ref_*() helpers
+Date: Thu, 18 Sep 2025 12:11:53 +0200
+Subject: [PATCH 08/14] net-sysfs: use check_net()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-work-namespace-ns_ref-v1-7-1b0a98ee041e@kernel.org>
+Message-Id: <20250918-work-namespace-ns_ref-v1-8-1b0a98ee041e@kernel.org>
 References: <20250918-work-namespace-ns_ref-v1-0-1b0a98ee041e@kernel.org>
 In-Reply-To: <20250918-work-namespace-ns_ref-v1-0-1b0a98ee041e@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -72,57 +72,53 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-56183
 X-Developer-Signature: v=1; a=openpgp-sha256; l=1415; i=brauner@kernel.org;
- h=from:subject:message-id; bh=5NGIqPGYw+T/9FWphbn7aLdjuEXBOiEmvs9M0qqiQu4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScvvXsMtvhiapbDj0Jf11/kkuI24B1j8yGDXN0BQ+Ib
- g/Ir3S+3lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR+IuMDA+v82hPCzjuMzPx
- LNMD5bDH0/cKu2wwn1p2cTe/6lbHRymMDCcXm1sJnlng6T658O+t3a8lL3Kc1jdMnphlNv30+qs
- 3uTkA
+ h=from:subject:message-id; bh=JQj+hKUFm8QJxn9wbCfJ1lqCGI1ADoO5H9i3MIyjzas=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScvvXMdrrzK4VDX09wXDnabSld+U2MyfqnxZpeXe2X9
+ 76qZ5cYdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExk5guG/3HZVofT4iNezC5t
+ qTpQtMn0sFPTQ58f5VxzJzTbebi/v8/wP0b13VTLTcoy3RrtF3yXrgg9scW8R+Z++3Ot4ANvKt0
+ kGQE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Stop accessing ns.count directly.
+Don't directly acess the namespace count. There's even a dedicated
+helper for this.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/user_namespace.h | 4 ++--
- kernel/user_namespace.c        | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ net/core/net-sysfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index a09056ad090e..9a9aebbf96b9 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -176,7 +176,7 @@ static inline struct user_namespace *to_user_ns(struct ns_common *ns)
- static inline struct user_namespace *get_user_ns(struct user_namespace *ns)
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index c28cd6665444..3c2dc4c5e683 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -1328,7 +1328,7 @@ net_rx_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
+ 		struct netdev_rx_queue *queue = &dev->_rx[i];
+ 		struct kobject *kobj = &queue->kobj;
+ 
+-		if (!refcount_read(&dev_net(dev)->ns.count))
++		if (!check_net(dev_net(dev)))
+ 			kobj->uevent_suppress = 1;
+ 		if (dev->sysfs_rx_queue_group)
+ 			sysfs_remove_group(kobj, dev->sysfs_rx_queue_group);
+@@ -2061,7 +2061,7 @@ netdev_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
+ 	while (--i >= new_num) {
+ 		struct netdev_queue *queue = dev->_tx + i;
+ 
+-		if (!refcount_read(&dev_net(dev)->ns.count))
++		if (!check_net(dev_net(dev)))
+ 			queue->kobj.uevent_suppress = 1;
+ 
+ 		if (netdev_uses_bql(dev))
+@@ -2315,7 +2315,7 @@ void netdev_unregister_kobject(struct net_device *ndev)
  {
- 	if (ns)
--		refcount_inc(&ns->ns.count);
-+		ns_ref_inc(ns);
- 	return ns;
- }
+ 	struct device *dev = &ndev->dev;
  
-@@ -186,7 +186,7 @@ extern void __put_user_ns(struct user_namespace *ns);
+-	if (!refcount_read(&dev_net(ndev)->ns.count))
++	if (!check_net(dev_net(ndev)))
+ 		dev_set_uevent_suppress(dev, 1);
  
- static inline void put_user_ns(struct user_namespace *ns)
- {
--	if (ns && refcount_dec_and_test(&ns->ns.count))
-+	if (ns && ns_ref_put(ns))
- 		__put_user_ns(ns);
- }
- 
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 32406bcab526..f9df45c46235 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -225,7 +225,7 @@ static void free_user_ns(struct work_struct *work)
- 		kfree_rcu(ns, ns.ns_rcu);
- 		dec_user_namespaces(ucounts);
- 		ns = parent;
--	} while (refcount_dec_and_test(&parent->ns.count));
-+	} while (ns_ref_put(parent));
- }
- 
- void __put_user_ns(struct user_namespace *ns)
+ 	kobject_get(&dev->kobj);
 
 -- 
 2.47.3
