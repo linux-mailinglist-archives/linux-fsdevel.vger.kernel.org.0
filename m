@@ -1,128 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-62075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A84B838D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 10:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD82B8390E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 10:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25821B2172D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 08:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827124A370E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 08:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F152F83C4;
-	Thu, 18 Sep 2025 08:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263D52F7459;
+	Thu, 18 Sep 2025 08:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="lYGWU1n9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jDXhMLqq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CA22D7DC5;
-	Thu, 18 Sep 2025 08:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC74D2F3C21
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 08:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758184714; cv=none; b=pifV7qT8MRjGVhSO2++IpShX80Dt7ZT0kCFI8l0bP+7XpBQJQ99VcW6JEpmrqm7gwaPsHEN2yJcq43csSZvokADNCaUX4fRVIotTiOCl8VA3mvObXkHsItTn98FVPbYgEJBj9NRIcvdlDYY1AIJ11UMws6e7DKeJmCOqZoUj3/g=
+	t=1758184735; cv=none; b=CaUtZgJbiVXQ3CAjcjXtS3EC5HN9gRTNh85TUbkeNVCy6Tk+q9308/bDEZADczc+tqV0Iqwi+aanKlz0JlAGBbIrqK+jfBFGnPNhZuzaLlwUAISGI1aUvgqVmYjgQU3DVukGSXmc8aCezWQxcM6SFCh2HzomtTL47L+HtPc9n/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758184714; c=relaxed/simple;
-	bh=bh7TiF2/u+ION7/jOBx/5Kjhw2z5A7uyM9jF5mU7ang=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qgKuPbOoa/Z6Z+jkBLq1pJAZJxQbiqyYs4zfoQ8VbANuESiA9R01N4OfNFLzl+NuLV/zmVL5LRgVbBo8FC53ULlWzJSEr94CEAz3asaV8R2m57vtj+oq2uL72XorwzcjCyrPSAiXOwWBekXh2Mb+lbDjI0OEmGmyXbBE5fm5kxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.101])
-	by APP-03 (Coremail) with SMTP id rQCowACnu4XjxMtolHKCAw--.43062S8;
-	Thu, 18 Sep 2025 16:38:05 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V14 6/6] dt-bindings: riscv: Add Svrsw60t59b extension description
-Date: Thu, 18 Sep 2025 16:37:31 +0800
-Message-Id: <20250918083731.1820327-7-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250918083731.1820327-1-zhangchunyan@iscas.ac.cn>
-References: <20250918083731.1820327-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1758184735; c=relaxed/simple;
+	bh=G8WzSGFPHxEstLChRXKwgJv1NUV4+915caYraa9HJfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=A3xBGOFSlPbBBBbadGbEZ1mAhhhYP5myjbEY9+nOcBPG68R02VTb/v5QdeePcVb9BOmjw+vbmAIp9K2MGinDLF6EcwyKoU7o49uiTe768y5nvAB9a9MyuYZzK9OYFmS+sFet3KfgiBY5i1UWRlIsVgQpmPlHYw1uo0zNP0Nk6bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=lYGWU1n9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jDXhMLqq; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id CE9D31D00308;
+	Thu, 18 Sep 2025 04:38:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Thu, 18 Sep 2025 04:38:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1758184730;
+	 x=1758271130; bh=FYmQvDTRl040Q1SYSX7rEdiO8HJKUj/rnYo0a6lVRH0=; b=
+	lYGWU1n9M53lph8vec8HYBFJjL+ewVP4ogMcgRKgdlvXXqu1KsslqZeDi+rCzp3V
+	WY1JETp6ZdIwLViAry3Wi5TA2orSq7FGOW8tIGyYVdIM6ULpg15dlERnD1WseJXe
+	CDvoIyBn4lzlhvUZk4r9c2WVp5P9uEOntPo/PhK3sh00py4zEIXlXMD8BNmaeF84
+	vnzD2/QPkP7XDqumAyG0Sa0XoUvmVsOqXeYg5ZibQSkZIWzg9W/sRYzHlklWGz7d
+	pWNyDlTy2fayEP0vceD6wiej4BJLiffeWKpEXtJCXXxqEgTr5zyddsRf2JB8eNFI
+	OZ96UeJDAWAHN0RiFEO9pQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758184730; x=
+	1758271130; bh=FYmQvDTRl040Q1SYSX7rEdiO8HJKUj/rnYo0a6lVRH0=; b=j
+	DXhMLqqRxm0S9Xf6sMy/jDOj82vXlHI1/gfPwCnrYY6fKbZYT0Ef7PQY1Ife9r2A
+	kJIrGA9LYQPR/ZXiEC130mji+V9v3Bqzhvd3XIznGoVUkwE5BO3mOgWTx/ESp/iK
+	jUxZBGjnk1/xg3AR552/X15Tmh8TXFRkcAIvjlXfNnR8dcRLt0VKbkq9z5aNcbUj
+	J52rsXUixEvQodBOqcQ+/sK2McxOBu+zH/q8jaY8koNfarXEeErMYx5uqW7OCFbk
+	DJnVsz1kwSZcCnyzCUPHDG/uutEDiErHiG1Ne4VDmHDtvm7zNz5st+njPyl8IPUC
+	T5g/jQvWxzfLNCmz0QsEA==
+X-ME-Sender: <xms:GsXLaNHIEj2IuMbaNXpH650BYU8hnAo63MZJh2w7iFiiHnltNRzssw>
+    <xme:GsXLaCg9YHRaltgj6InTO-7wgPMqVLLz1XsLx8uX0ys2IDjH0CZGOk_miaJGYX_cn
+    RsYcSKewA2AWUf2>
+X-ME-Received: <xmr:GsXLaA9DpjzxKqk0pwG6KB_3gBYOnakf0HOac724rbnCii203hRXuPsFj3NWIviLqDsG10TuY3FSB8xPwSBMbEkpa6HrJzDXF3kHkwqUFfzJ8aGfwU69>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheekjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvfhfhvegjtgfgsehtjeertd
+    dtvdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgs
+    vghrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeffveekieelleeifefhieekveefve
+    eiteejleejfeetffffhfegheehteethfelhfenucffohhmrghinhepghhithhhuhgsrdgt
+    ohhmpdhlkhhmlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthho
+    pedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegutghhghdvtddttdesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:GsXLaBqFpPDeIJSI0Z7fetfT3tdesJgGxnC52RUDe3HzHYoELRRrOw>
+    <xmx:GsXLaH_zMSOuIIAf_-kKOMUPxN7ipOaQ6W8XbyEdWhUAeX2t17Ic2w>
+    <xmx:GsXLaNV5sVOxs0Szk8Dsy83fWJvjtMJreZqngg4jvCRKeraC8Vd-mw>
+    <xmx:GsXLaFA1NM6vs5TDjQgsDS8x2v8r-pxBL8X4VH_tx0zKOf9XDfyK2Q>
+    <xmx:GsXLaNonF7if4KspKOiw4ksipDyAAS3Up5h5tNQRM1JARARKoGEp-NbJ>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 18 Sep 2025 04:38:50 -0400 (EDT)
+Message-ID: <dbb91af0-ef9d-4a17-852e-ffaa1c759661@bsbernd.com>
+Date: Thu, 18 Sep 2025 10:38:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACnu4XjxMtolHKCAw--.43062S8
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr1xtry3AFykZFyktFy7KFg_yoWkXrg_Ja
-	n7Zw1kZ3yUtFnYqF4qvrW8Gry3ZanakrWDC3ZxtF4vka47WFZ8KF9rt345Ar47ur4fu3Za
-	kFn7XrWagrnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbkAYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7
-	IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0
-	c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2
-	IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E
-	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
-	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxUa0tCDUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBgsJB2jLv7wXwAAAs0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fuse over io_uring mode cannot handle iodepth > 1 case properly
+ like the default mode
+To: Gang He <dchg2000@gmail.com>
+References: <CAGmFzScM+UFXCuw5F3B3rZ8iFFyZxwSwBHJD6XwPnHVtqr5JMg@mail.gmail.com>
+ <E1CDDCDF-0461-4522-985E-07EF212FE927@bsbernd.com>
+ <CAGmFzSe+Qcpmtrav_LUxJtehwXQ3K=5Srd1Y2mvs4Y-k7m05zQ@mail.gmail.com>
+ <5f63c8e3-c246-442a-a3a6-d455c0ee9302@bsbernd.com>
+ <CAGmFzSe66awps9Tbnzex3J8Tn18Q6aEVF3uJnwJfVAsn36_yrg@mail.gmail.com>
+ <CAGmFzSdD71SxAxCJp5BbJZ7-JVARtoDPPScGvxhTF=+HQ+D6jw@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <CAGmFzSdD71SxAxCJp5BbJZ7-JVARtoDPPScGvxhTF=+HQ+D6jw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add description for the Svrsw60t59b extension (PTE Reserved for SW
-bits 60:59) extension which was ratified recently in
-riscv-non-isa/riscv-iommu.
+[Added back fsdevel into CC]
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi Gang,
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index ede6a58ccf53..bce4132f9c89 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -217,6 +217,12 @@ properties:
-             memory types as ratified in the 20191213 version of the privileged
-             ISA specification.
- 
-+        - const: svrsw60t59b
-+          description:
-+            The Svrsw60t59b extension for providing two more bits[60:59] to
-+            PTE/PMD entry as ratified at commit 28bde925e7a7 ("PTE Reserved
-+            for SW bits 60:59") of riscv-non-isa/riscv-iommu.
-+
-         - const: svvptc
-           description:
-             The standard Svvptc supervisor-level extension for
--- 
-2.34.1
+On 9/18/25 05:05, Gang He wrote:
+> Hi Bernd,
+> 
+> Sorry for interruption again.
+> About enable fuse over io_uring feature, I can back-port the related
+> kernel patch set.
+> But, for user-space libfuse, when will you or the team release a
+> tag(e.g. 3.18)? then I can upgrade the libfuse directly, rather than
+> back-port patches.
+> Second, Fuse over io_uring mode cannot handle iodepth > 1 case
+> quickly, I feel this is a by-design issue, the iouring uses the own
+> thread queue to handle the requests from the user space. I write a
+> kernel patch, which can fix this case, but for the most cases, we
+> still use the current design. the patch is attached, could you take a
+> look at it, to see if this patch make sense, or not.
 
+
+I will try to find time to release libfuse-3.18 today, one io-uring
+related patch is missing (re-init of some fields in struct fuse_req) and
+then just the release process.
+
+Regarding queue balancing, please have a look here:
+
+https://github.com/bsbernd/linux/commits/reduced-nr-ring-queues_3.1/
+
+
+The tricky part and which is why I didn't publish v2 of this series is
+to keep performance for blocking/sync requests (like DIO, metadata,
+etc). At DDN we run with an additional workaround patch that disables
+migration in fuse_request_end(), which results in kind of
+wake_up_on_current_cpu(). Adding in wake_up_on_current_cpu() to fuse is
+simple, I have the patch, problem is more that wake_up_on_current_cpu()
+is not perfect. I'm just in the middle to walk through scheduler code.
+For example, wake_up_on_current_cpu() gets perfect after increasing
+/sys/kernel/debug/sched/migration_cost_ns
+Now I don't want to change system wide migration costs, but it needs to
+be time limited change when waking up from fuse. Additionally it needs
+to be a hint, depending on if the queue has more pending work - that is
+the part that gets even more complex with reduced queues and queue
+balancing.
+
+Also see https://lkml.org/lkml/2023/5/3/646 and related threads for
+reference.
+
+Thanks,
+Bernd
 
