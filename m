@@ -1,162 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-62168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57DDB86CD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 21:58:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE26B86DE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 22:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 698BA16CEF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 19:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C2A5B620C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 20:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAE130BF65;
-	Thu, 18 Sep 2025 19:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780A731BCA3;
+	Thu, 18 Sep 2025 20:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNlT1dRM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNfr2VjN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C1307AD8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 19:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A4031BC86
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 20:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758225500; cv=none; b=QTwrg0s79BCs+autUd2LDRJkGcDQD9UGKCxM1oegdASVR7si0h2u79R1ga8+mfLcd4SAo0YWDUtETzDS9N1EW0Am8Dsm5SdM/eyOc4paoSysbDBhIPkrH3th874JTpFjs9U2odD7+amMyO0H808vL03ZsNmeV7cB9f2dphifduM=
+	t=1758226475; cv=none; b=IUrsI3XmAESj5oFH7scajS4BgrEYvCkPsncyA5EmoezB61iF7Cccqvs4vnV+29VgJFqjDTtQkLZk0r7JCIIlRvSs4kiR6yohAq/D0jFvu0jN1opDIP2h56c8DRWRepm1nbcjccqfYoU7EiJv8ebU400aQ9Cwrky5k1BsDNr3FNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758225500; c=relaxed/simple;
-	bh=hrTKVKMuOKbLilzSA+VEl+XSSF0VIocT2KvCzkuRjcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f1t2Uut8X0vjHihrfCxVizQx3oAuiXtbEMNuxUGbeTeANElP+n+8kVqPaX5vSXPNhpixLZ4XTUGM7jyyz80nSDh/C9k9foNUqACygyJ6Y5+tUQ1/Mk7uUAwRPZVV5Q5FTUWQYFvTUFJFp4p801sMMc1U4qqh7Ec9drnq0SsFgxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNlT1dRM; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62f4a8dfadcso1604122a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 12:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758225496; x=1758830296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9McvDjxp1cOQ8m8DQ7zr8KAOkClRv+R613f7KwPZqLk=;
-        b=hNlT1dRMFhV3nNEO8OCPXfEiZjy7HadMXu4vRgp3Ipj8QW/pTjkxFRxYZEa69pe80J
-         R5WZR6uBlmeIbF+VQhBUi3wnRJuDxh3ZSYPm2HtEzHdmYgYFzaLOTkBNZpxqwUsXFCi5
-         xh48TC/I8mOWxP2I4D6qthvi1wAkVJadHw9+Q6aETqCdcS+tzshGNcO1qODnTVXpUxR3
-         DzGuLf7FRf7YNLECrqzb9ayMBLdTqRvBk0ivmzKueGmRkmu1GRq1Uqn5Uc0kg8EqXgPJ
-         5wCj9Urjk2M3jfgX+oYXsBuDx3I+zNM2GW5fMn6rB/kk6qlx/ZV55XBxceRxo80pIEfP
-         n68Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758225496; x=1758830296;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9McvDjxp1cOQ8m8DQ7zr8KAOkClRv+R613f7KwPZqLk=;
-        b=A/f+yVPfHeGP/G5o9hG9wWIfCtfOtg4b7Ls0Eu0Mfliqfulbp9LnW2vEVf8YxSUyiN
-         YBvjEuNjooLK1ByLO3ziWx+OoT/PlIAeAHD9Em4+PkLvBHIl++hE75pIngyV9Td3QyEX
-         8Gb8p4XTIbRAO1mbmJ1JWv5YYDU4JpBXcwHKqxZbc5Q9OvaSqW71Cb9Mhtutynv7y4Gm
-         f9ybhu4dXEtXDjlkchW3WXDpCOG/cZKs2tW/zWPbDcDKOuJ7UbCOvH4T/mUH71BnRfLI
-         Q2LckLD5/wRPFLdQUVVN5tK7ljwGZh5bmUbxc1iLLJXYTvJ55gxYEi3WrK3FjUy/2l14
-         o5fA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7x/zgK2td6xi7Myq0GlaOC4pCymXfBC9PWCBNl79dG0WGDqYLxpv/1MtgD89DRyE1YwWnva+H5bpVj7Q+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgPISaK0UIGOYBQu+diqhMH6i+9qNOx0ixWGoApwt9h+cY3Zrj
-	AFwkmNQYj8HSlb8Tj7TiS6pqA/PfnEc4xsB75+LmXLt/bY4V/8ksNqhZ
-X-Gm-Gg: ASbGncuHSx5Abf4XD/fzZFCYoBvkv8ryMAPsMkG5qneJh1VYduSlOr2Gb2WOKhVSrcv
-	Bcuwjfn4zRbadXdGKibtL9oqVMizffWdmtYJqMOGMW5vMBLRtK2GW442JLfATo9fdxxi9IeZnpz
-	eLsbw7wbOR+GrbyHm/qDM2br5ozpKhN8DepNioHXzMJTPJywsW9aQE7u0VZcALxQ5SmwFDk/OH9
-	/m6NYX4WHjzKWmtkDz5AM677pE1mk9+J9yt7VWxUf3FLjBwirCfXokZCKcvJdd3ubqS34t49+rz
-	Vnw+1f1r+cEEd9XPt4EJL96Rp8hlUtKDDbNcpolxQx05BI0H3egLqYTWrHKCqZEYv17fJj6UBZb
-	dovbwNY5mrOsTHyvzQC2Qt/WalisWFmbYq0B3Sg==
-X-Google-Smtp-Source: AGHT+IH2NBu6L+bASXNqg9sJUcZ42MFCB2aqzEFiqoDEW6um54A4CtHcJnO37auTgFbi6nwycKDm8A==
-X-Received: by 2002:a17:907:a089:b0:b19:969a:86 with SMTP id a640c23a62f3a-b24f35aa177mr45885966b.37.1758225496090;
-        Thu, 18 Sep 2025 12:58:16 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fd1101c44sm264530466b.82.2025.09.18.12.58.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 12:58:15 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: nschichan@freebox.fr
-Cc: akpm@linux-foundation.org,
-	andy.shevchenko@gmail.com,
-	axboe@kernel.dk,
-	brauner@kernel.org,
-	cyphar@cyphar.com,
-	devicetree@vger.kernel.org,
-	ecurtin@redhat.com,
-	email2tema@gmail.com,
-	graf@amazon.com,
-	gregkh@linuxfoundation.org,
-	hca@linux.ibm.com,
-	hch@lst.de,
-	hsiangkao@linux.alibaba.com,
-	initramfs@vger.kernel.org,
-	jack@suse.cz,
-	julian.stecklina@cyberus-technology.de,
-	kees@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org,
-	linux-csky@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev,
-	mcgrof@kernel.org,
-	mingo@redhat.com,
-	monstr@monstr.eu,
-	mzxreary@0pointer.de,
-	patches@lists.linux.dev,
-	rob@landley.net,
-	safinaskar@gmail.com,
-	sparclinux@vger.kernel.org,
-	thomas.weissschuh@linutronix.de,
-	thorsten.blum@linux.dev,
-	torvalds@linux-foundation.org,
-	tytso@mit.edu,
-	viro@zeniv.linux.org.uk,
-	x86@kernel.org
-Subject: Re: [PATCH RESEND 00/62] initrd: remove classic initrd support
-Date: Thu, 18 Sep 2025 22:58:06 +0300
-Message-ID: <20250918195806.6337-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250918152830.438554-1-nschichan@freebox.fr>
-References: <20250918152830.438554-1-nschichan@freebox.fr>
+	s=arc-20240116; t=1758226475; c=relaxed/simple;
+	bh=K/jaPhDCfjYhLpQMObBGLkP1U31NxY6X9mfRyW5UpxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0E47HmDp5lvs1/qSTqV4u3GYcjCRCu5bDjZo1BI2x36FASQ/U+YYHFYFH74n7sHUMWXXHqkLr1JJzBWvK3xWOclrUY+L+7vnGVEKr0hI8KnjIpmXwGTqymvyNoBnGK6OQ8rV2Dz+fY0pK/AzWlHk8m1oVt6g+Ff08rHOg1ud0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNfr2VjN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758226473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jIDyIwPGLIVAqXvlX9X2afBhZSX5daSvzk10wkDvdZQ=;
+	b=VNfr2VjNIvzUROvTerPgixYXWeMrfEf4p35py0bkQdmtLjQD82fKUiVQyN7ToVBppOQG4V
+	4udh6XP9vQub+FsM949Rdy7y5dXs0fINrgKhByepO9C6muAsHpD48HPW5kDRDtkk5Z/HCR
+	Kwb6LuH8SA03rXb+7NOFy+XoVlLB79I=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-LWVzhj8xPmO85ni729s47w-1; Thu,
+ 18 Sep 2025 16:14:27 -0400
+X-MC-Unique: LWVzhj8xPmO85ni729s47w-1
+X-Mimecast-MFC-AGG-ID: LWVzhj8xPmO85ni729s47w_1758226466
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E9E81800447;
+	Thu, 18 Sep 2025 20:14:26 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.134])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 71C2930002C5;
+	Thu, 18 Sep 2025 20:14:25 +0000 (UTC)
+Date: Thu, 18 Sep 2025 16:18:29 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] iomap: simplify iomap_iter_advance()
+Message-ID: <aMxpFWnIDOpEWR1U@bfoster>
+References: <20250917004001.2602922-1-joannelkoong@gmail.com>
+ <aMqzoK1BAq0ed-pB@bfoster>
+ <CAJnrk1ZeYWseb0rpTT7w5S-c1YuVXe-w-qMVCAiwTJRpgm+fbQ@mail.gmail.com>
+ <aMvtlfIRvb9dzABh@bfoster>
+ <aMwW0Zp2hdXfTGos@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMwW0Zp2hdXfTGos@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-> When booting with root=/dev/ram0 in the kernel commandline,
-> handle_initrd() where the deprecation message resides is never called,
-> which is rather unfortunate (init/do_mounts_initrd.c):
+On Thu, Sep 18, 2025 at 07:27:29AM -0700, Christoph Hellwig wrote:
+> On Thu, Sep 18, 2025 at 07:31:33AM -0400, Brian Foster wrote:
+> > IME the __iomap_iter_advance() would be the most low level and flexible
+> > version, whereas the wrappers simplify things. There's also the point
+> > that the wrapper seems the more common case, so maybe that makes things
+> > cleaner if that one is used more often.
+> > 
+> > But TBH I'm not sure there is strong precedent. I'm content if we can
+> > retain the current variant for the callers that take advantage of it.
+> > Another idea is you could rename the current function to
+> > iomap_iter_advance_and_update_length_for_loopy_callers() and see what
+> > alternative suggestions come up. ;)
+> 
+> Yeah, __ names are a bit nasty.  I prefer to mostly limit them to
+> local helpers, or to things with an obvious inline wrapper for the
+> fast path.  So I your latest suggestions actually aims in the right
+> directly, but maybe we can shorten the name a little and do something
+> like:
+> 
+> iomap_iter_advance_and_update_len
+> 
+> although even that would probably lead a few lines to spill.
+> iomap_iter_advance_len would be a shorter, but a little more confusing,
+> but still better than __-naming, so maybe it should be fine with a good
+> kerneldoc comment?
+> 
 
-Yes, this is unfortunate.
+Ack, anything like that is fine with me, even something like
+iomap_iter_advance_and_length() with a comment that just points out it
+also calls iomap_length().
 
-I personally still think that initrd should be removed.
+Another thought was to have one helper that returns the remaining length
+or error and then a wrapper that translates the return (i.e. return ret
+>= 0 ? 0 : ret). But when I thought more about it seemed like it just
+created confusion.
 
-I suggest using workaround I described in cover letter.
+Brian
 
-Also, for unknown reasons I didn't get your letter in my inbox.
-(Not even in spam folder.) I ocasionally found it on lore.kernel.org .
-
--- 
-Askar Safin
 
