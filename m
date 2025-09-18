@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-62138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0474DB8558D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 16:50:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D17B855FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 16:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C65817A8C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 14:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61C51C84A49
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 14:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C873123AE87;
-	Thu, 18 Sep 2025 14:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C3930C0E8;
+	Thu, 18 Sep 2025 14:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lbU3SiG5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XUIJoHTE"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pV+AO8he";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j6g8Lh2R"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACBD1DDE9;
-	Thu, 18 Sep 2025 14:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF88727147D;
+	Thu, 18 Sep 2025 14:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758206949; cv=fail; b=pgfw2CYXb3Rl5xI/J2y9fVYXkSCc4qp9L8HI5/dS1uqkMd4KKAhy9JtUhgPam1wx/+0HJFhELny9B0AXPcdr1NuWkbZ8yUWX5LCR07N0hY6bucAvYJWw7zYBm6KyCeE3wUVJ0QBTeBI16oMUX8mRqFnrl8Xy6XFhx83CSSDlvT4=
+	t=1758207178; cv=fail; b=W1Fxq1yu8IWcaX6MXMy6DUKyOrZg+/My9oQvgOspTfazNobni//AHT3clVb/4Aj6RRRYVcmysVRXDn9P5Q4VQaiLIXo6bVWt47bxRz4WDcCwKTUYe/4NFgND0mP1c0Dj52yeJuk2UBL/wNEnRB1CevU1RQkBkyxgUl58gviJszg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758206949; c=relaxed/simple;
-	bh=uHhREnKpqrM98ptvHxubtDCy1yk1WBuElsE0a9XvtAs=;
+	s=arc-20240116; t=1758207178; c=relaxed/simple;
+	bh=sR5JHgEUZ6wQumNNgk86NDaysXqTLwV1pddmAjld7+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jBdn3GOU2tSN4ufi0jiICeTPI4Wn2IIocdk52lNAh7XDTgBLUR0q5lUXp8ui3F/cNYiSvPFhjTve7DdXYpG2CVT/0YPeYGgsoAZiFZ8NskSXUyjcs92u3gSVg0ibPaTxSOe9WMbLry7+VSKsj5GnERMGE3kYyXHASwQxIEjDWDc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lbU3SiG5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XUIJoHTE; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jDZve95MSHXTARWFLJIYpMDwsfpsapACq15VSc7MRgF7CbykSdFMtJHf8tVucK1brK0bf6HxihlwmFORZSkZkRZqBmzpePzM2fc7KX6Q/qBWdX+KCh86Qs9xea6I9V+ruU5fTjQaCB1Dl70RWIa5DGiqW6RO0Ha/OrqH6Hd4boI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=pV+AO8he; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j6g8Lh2R; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I7fv76007031;
-	Thu, 18 Sep 2025 14:48:29 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I7g0Fu007109;
+	Thu, 18 Sep 2025 14:52:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=E56pj9KBj4Yilbs22z
-	3ljyp71HivMlGr5tJQvlL9lts=; b=lbU3SiG5KZU/yRTyFKiUr1pFuNKfPK4zLj
-	doYHjdtctkw+yz+1bE0Xf8QlWhJUrfxDTWHjtzijSGz8eA5Mz0bqIdec8WhfdlRH
-	jke8rIy0Fgvn9vhLqcIHIjuTYwVqFJtREkrFAyNg0xiHGdH4jgbZ8mNDJI4lduTE
-	7pPDvR0EyfeyVYqQyp2g3Hf3COaXiM6CALuOkJlpGpB25tOs9baKNJ7R2fDY0dZy
-	OGuvYVSlII+SNyLpwazL7yIW/+fhA+T06Rjtmd2EKKiSfarbwbN3S1fm91496NIf
-	HIKPCYaXhtOkShDauyzXilIqAq2L9c22Ie+jDzF5KA7AuE/2EhrQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497g0kbqeg-1
+	:references:subject:to; s=corp-2025-04-25; bh=1pWYjnf1djoaDPWk/R
+	K+pFrT+08ASSx1+jpdVdhwOVo=; b=pV+AO8he3r5DDzNe9AQSfKfKQT4qchVpSC
+	EtLcY7lpbdes02wMh73vE/m7O3keYjNGXqWzvMUxzZaFwI9CheTOWnacgayts7Dv
+	7ZorbvW9yAg7FKXSEDMSuT5Z4xLD4LiOrLCFshz3JHfaXHasUaETz1TLxyb0Gvi5
+	020hYG0iT6bri45TSmzYsxZHp6S7HnIKvsSaqPwq7Jnk2V58guODlZFztRvGb7ri
+	Ljx1Fz+CIBpmKGhP5RkMo8BiIfCXuMeR8Y5RKtzyGDeTwBGZyLtpIc2iEVdEsWkj
+	Dg3PxIji2zrZ2+SKz2u6sWPoeOYnJxHM9IdTcpwOxnrn7PRQwm9A==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497g0kbqrw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 14:48:28 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58IDru7V028744;
-	Thu, 18 Sep 2025 14:48:28 GMT
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010071.outbound.protection.outlook.com [52.101.193.71])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 494y2f7yev-1
+	Thu, 18 Sep 2025 14:52:30 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58IEIIrA027219;
+	Thu, 18 Sep 2025 14:52:29 GMT
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010065.outbound.protection.outlook.com [40.93.198.65])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2nh0hm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 14:48:28 +0000
+	Thu, 18 Sep 2025 14:52:29 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IhVVBjQaDpX+Lo6EYYmRs43iWvHHqTEO5AalRaGmDiQDW4w7FiJrhxmCrhBgDYHvh1w3+J0A+8UpF28QGAmpImWodlRyEwmK80R+XXMMpHoQQXXtHHDNPp6K8lFTWSo4nzA+xFDZsBlbh7HKVfhWZ8hDXpG6UOEl+M5TZMQHC5u7Bo5eJ7qvDJ5ERhMoR5xTEq/inyyWD9rbjn4lrknuCC4TV3CT6UKWOPKuVWQxj97FKwYA0F0CPtSmgKie7MkNJVGIoGsqV7E4njBkgsnWDDOckBJekxCVPPpe1EyOOEwU5VxSZttEAeqfYrgAAvqHJ+PYBJANEo4UQkBAVY+/XQ==
+ b=MWq4ll6yDMqLUW4ET1A61Daa+u9qgZMd1OjDbDB61M+wUhQebjFTtVZ04y/Tfv/V/m/iu2xaMPhItIvlUNmBeqBipHf6un/6ZBwpaqKLYsf0iHs4IHHXO1QxUoVDMZXC5pEpUDLcUPCRjnV9NG93nVGZQhcjDd6HzFlsV6sweVMeNm6eEIKMYOM3QVqOhKGlAkESONu/3Z+01WdpD9a8sGJ+dPlpSLgttxMOYSe4uPCcwmijXgKPXVAeQRtufh7EEDYfIlzFBpvHRs1iBq/o8m1c3ZeCh6GkSUiqdMIHwxdwUVXVseHKHSa6Cd3BzE8aQn72JNVrhLu4uXN063T6+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E56pj9KBj4Yilbs22z3ljyp71HivMlGr5tJQvlL9lts=;
- b=nK+Tuki2AlBoMHoNajXUlZZ/2iA9Ly8dyNa6IfoGwziaa3u8/ZAZiTPppE/8QP/v7ki3Ks+xh/HeQUe6DQIPP4xoH7zF1FXl8Y1jCaxF6/FxnE5XxdICI2AEOyyjKuhAQOf4bizZUfDl3xNI0TrMfK6SoSk6fDwac1kzlbL/lzM3S8CttPuUqmcSGwifIDa055yLOyiH7z6Bz+k4HphwriNo2TQdECd5IRD1BPmMZB3nhlJF5RguUuHPz51/RdqGpZwJgjht6T9RlHIsgbqunJrwJ6YnUEXr//3y9ZkK93RFF+eZDC4fo8dR60FDhoeLB6zc2MTBlmL/jJZpDBdIBA==
+ bh=1pWYjnf1djoaDPWk/RK+pFrT+08ASSx1+jpdVdhwOVo=;
+ b=ybJS5KLoHr4+gwjKw9vCvUY7/jts4hU61fe95K+f35HoViXKzYzoOk2yUyKhyyxyzA9Z5szVU1wNxkmRIsJpN7B1g7VBGQVYXgPgk0tvh1MpObPu+63JBcAirGFQdm0bxLcKDLrfxZPkfgp5zLOdHON7sgL0x4nu77eC6IfjbH3GHMpk8Zw/kYwIlnc/jTJ3uoRpx3Ah8O/o+m8oll/BexVFSHyMuv3+jPsLgINp2mFvfYwSxfpX2ifplo1ylLHZi9y5J4bhTKjsg26jcPsaQhW8c/bBDpI5WRBl41rKpZmJKh+D6lo11jLFjTG7WGnPn/5Vw9TtDi1owr57gtLYMQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E56pj9KBj4Yilbs22z3ljyp71HivMlGr5tJQvlL9lts=;
- b=XUIJoHTE15UvHHfVVDWsNK42HjP9p0xeYCBOupPTtXM02MNXXhtdXF8raVCNyiI2O9Yis8lgIb0cCxmvrN3y9gMIIoyVwgNt93QmrCqXybFmMqkVHBGVnoOAsg/H7k0bpjjqsuJHMZy4fr6MyCFQKp2qeAUm43S7tY4plJOA+c8=
+ bh=1pWYjnf1djoaDPWk/RK+pFrT+08ASSx1+jpdVdhwOVo=;
+ b=j6g8Lh2RgiuybiWQzT0fS9sJ+yGV9SigwCT4Zen3fpMhtRSpuGL99L4D6ogt6zm5FoJeKsdVkPZ/9UhM4GUU+bqKCaihqG2PCPB+o3PBnR1MG48b63LXKYRa440NbUgHqUxXIgc51MG7jPExpZ2p7066abAg3elOimIkdD6GiDg=
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH3PPFAEC321F49.namprd10.prod.outlook.com (2603:10b6:518:1::7be) with
+ by MW4PR10MB6370.namprd10.prod.outlook.com (2603:10b6:303:1eb::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Thu, 18 Sep
- 2025 14:48:17 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Thu, 18 Sep
+ 2025 14:52:25 +0000
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 14:48:17 +0000
-Date: Thu, 18 Sep 2025 15:48:15 +0100
+ 14:52:25 +0000
+Date: Thu, 18 Sep 2025 15:52:22 +0100
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Kalesh Singh <kaleshsingh@google.com>
 Cc: akpm@linux-foundation.org, minchan@kernel.org, david@redhat.com,
@@ -101,15 +101,15 @@ Cc: akpm@linux-foundation.org, minchan@kernel.org, david@redhat.com,
         Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] mm: rename mm_struct::map_count to vma_count
-Message-ID: <1eaf4156-9c8b-4a59-88e5-1f04fbebfa10@lucifer.local>
+Subject: Re: [PATCH v2 5/7] mm: harden vma_count against direct modification
+Message-ID: <eb254603-edbd-4bc6-a4bd-57b6a85191b5@lucifer.local>
 References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-5-kaleshsingh@google.com>
+ <20250915163838.631445-6-kaleshsingh@google.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915163838.631445-5-kaleshsingh@google.com>
-X-ClientProxiedBy: LO2P265CA0338.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:d::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+In-Reply-To: <20250915163838.631445-6-kaleshsingh@google.com>
+X-ClientProxiedBy: LO4P265CA0088.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2bc::7) To DM4PR10MB8218.namprd10.prod.outlook.com
  (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -118,119 +118,120 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH3PPFAEC321F49:EE_
-X-MS-Office365-Filtering-Correlation-Id: e550662a-bd3b-4117-017f-08ddf6c26718
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|MW4PR10MB6370:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4876264c-2511-4728-bcd2-08ddf6c2fad0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r0GzjjCEk5Qp9qMJ+OfIlkt5oygO9QmpyKb2CH4fJK0cWY7anU5DXMxuZ4Mi?=
- =?us-ascii?Q?TwhOMclx5QnuCzeE1TjoCB4FlMxMJtPiMr8HrEQzPSNPH4PyY7qcnOEWvNaH?=
- =?us-ascii?Q?rGWejNJFKc1KvrgFclEc7SGc6xQVHga913hegoxCnGNcODkmnwxMSl90qIT/?=
- =?us-ascii?Q?xlkY1JA8Zpor8svP4nLT44x4HoaA8q60Bn7WJZ0Z+X//pM+hmzzIWn4bFkgd?=
- =?us-ascii?Q?BhztVUdSJ6iDrOhq4EsyJ5qbdNpSN7/AzLjVdcR4ObIBmlt/Ly3G9apN2TAH?=
- =?us-ascii?Q?4wyOaNOLVi8x0Ehf4dONyjcISljdV4+B0iumJpPiAVrGeWsZLgDqJtXX4ovS?=
- =?us-ascii?Q?tdYQweFOD8ez6FhIrJwrdLG7cKyuQ71+V8iHumCJ+sldJVJXL+9RCJqB3CEp?=
- =?us-ascii?Q?KgLylrdJ0MYxn09yn/fsawlj9O8oSJKXfRFtaPJDCoi8yoa3BNmrZr2KLCdy?=
- =?us-ascii?Q?xZrg6YXPlrx4j2dom52MN8n2CtVTXVTFbSkHuChJZ6v6TkEfqklMyglJS0V4?=
- =?us-ascii?Q?LssU8EWr3TpjdXrti78XwEN4FNtm0oHFl0oAv1sTY8aQOPqDr9ZFIM8qq18S?=
- =?us-ascii?Q?bG7+GIyS2RY7pz6QFUqvEIyp6kiilD6iw9TPh6arH+AG0L+m65QJZJiAUcyU?=
- =?us-ascii?Q?FP1beFBher8XRvE+LWftl+P9kEcuI5pk9tFkg0WryWfx49vtrZIQkLIwI9Xr?=
- =?us-ascii?Q?my4ghCu43t61Xsm+5VaPdUh6Hx+dN0MqlPEIZiW8AgmX/TWd85d39b5157nw?=
- =?us-ascii?Q?uSV/dgo1oP1ZGXv5R8nuHybGsGvO+0CAPyhEffRAIYeRH3rT0snqHRETgcli?=
- =?us-ascii?Q?Bn/dbm07ALEJBFZdwj2qB9NR6ANPW7zDRgWr6bn/z58Pm+OVoG/1Eyg7Pu00?=
- =?us-ascii?Q?ik/wHfFHMLwIPurq35EgqrykrQhG5mchh2lICkbhmve03GdojNOuck3/yu5d?=
- =?us-ascii?Q?8pqAke32+PdTXDGBbuHFZzHxYtUCqSZHi7oB551/aUldU0P7SRVQ9mbJSfF8?=
- =?us-ascii?Q?LMIR8vPGlw8UuT53fB1d9MnT295lo/PpRHZl0kyUfaUqxt/KoeQuzgN/0pQB?=
- =?us-ascii?Q?5pbJ4FwhpxlKpSsUp3jpqK29tl5VKeMPxY55E7+v7lA6govVyc6OOB6oFWX3?=
- =?us-ascii?Q?tbqbD+Alp/vlu5sYsncUFCmtGHpIfLN7dOHpN+RpTZ1QhYLz2WBHc6Brlgp+?=
- =?us-ascii?Q?rAMg66HcoiRTSE8obuvR4D1ReOM4CSvWC+7yCHLQo9jwRQoHWdhTQpAWLB7X?=
- =?us-ascii?Q?EQmu04WqwSrUEj7GNQGx47K0lo1h1QCRbPcIGmr4EfUKm/7kTI42VhgFEOWf?=
- =?us-ascii?Q?deSnJC5g2+obPdu4rYxBpHKizkd234WH2n7wZyd+qGCP2550yeT08T8m76UQ?=
- =?us-ascii?Q?j3jQGacW5cfJBZ4++pZcnB8bBhAXa0grCuQTS4LM9nTtDLjSkCnebeUYkH4D?=
- =?us-ascii?Q?RfwG5yLGArk=3D?=
+	=?us-ascii?Q?D5Wv/s9bvOeOLzAryYPfgRGPaGVCfSZrsWalVeKPZGH1cqBZG3zKXVDyJGOC?=
+ =?us-ascii?Q?9J1nZS4XWfgL0FC4vQyQFHZuL2JfMpm0Es8fJaokROk86uhqadIHJuiB14rx?=
+ =?us-ascii?Q?00cQMJQrRhq4DaiyKwkEdUj5y/kJ02Ml8uYm1q2nMEEPI8JZFOvJ8nHtA2V1?=
+ =?us-ascii?Q?juiqSh09pVAuxjls1S6MVsZwdFRk8Q9Rr28DXRrZ/E1NnElycVDOOpQkvsc3?=
+ =?us-ascii?Q?8Cb46mw3xFQZTcCACoG05He2hStkci8MZ0xLia9tjDqWafLn34d7WY8OTYCr?=
+ =?us-ascii?Q?UYUec24MzeV1Pqe3Gh1dk5e3iKjJFQNHN5oJnB2lZH0Qs4dceZNceSy8XWSM?=
+ =?us-ascii?Q?HivRNVfHdX4UXTd0l+egEJj+KedIAB/Tl6VOqfzx1jd6GOs7mjcm1Cdt2cz2?=
+ =?us-ascii?Q?JZnbMXINqR0cz0IvHhRqMj8QebIWg7PA9yG9Cx3wwKDeBL7xUXv8wQ6sSCzY?=
+ =?us-ascii?Q?8RgO2o11xNtzwnqCw/ffX83R1qXtQPm1LykyUQthAhLBf2zhT5Z3i2BA1jAd?=
+ =?us-ascii?Q?SFnphand7qGuOFGlvdn3iO/UmlBRrx3PYiRvoQ7eExw4xEG+yLHi83WymnS5?=
+ =?us-ascii?Q?dJCBks3JK5sIbFbsMecodAQyrSS4uKpVw5Qef9aO2qjomNKuUmyp9ddDyDBR?=
+ =?us-ascii?Q?BVV/hhIuWfWIaQC9NEKnoKLfrAGWB3bZUN0X9LnAWCqui1WNsvJwYORn7tpm?=
+ =?us-ascii?Q?89dOjYe6OMdQQ65aqfDC+2k3cfW5CqPfvFyk2lmEfMcIyA+oC+Uh3GoyIfGu?=
+ =?us-ascii?Q?iWoG/oxvTrDwgNEyfuYi+92kXyUdAd8Ha4bnAFNhQIUVxhK4PcB5ho8O2diq?=
+ =?us-ascii?Q?CtNIwpC5MnrRHLAI3ivRNlX6i0kMQkLKEmxzOPWwsh1BwZmnXg24z7QRQts1?=
+ =?us-ascii?Q?kY8oDvwSsQdOIvk8ZqUpOe8r92ZpWZXXqRM1xni9rCqq5QswUyGvkQJ2fofs?=
+ =?us-ascii?Q?CGobsKJhGyXH3UQeDbhMEp6nvRONsx7jA0gNF7ZY0RI7jnPAq9cKQXteQQp9?=
+ =?us-ascii?Q?Ida9FoLS7GW4UnHTPfvkGh2JGaHdE92cG+AlrBHyzzEaSZpIjp1ZyZttkBCo?=
+ =?us-ascii?Q?CUtpRWVRcPgxIgpnAE1K7IKfNoZAgXnL6namU+UMz1n2kI4tf0NyI7tE92cX?=
+ =?us-ascii?Q?a7TGUf+enHPncR0CWsy5URsiRfaTkcB7uiLYlsoVbKoBruNGHgJeEwfr+sdA?=
+ =?us-ascii?Q?yJx7pARNos/5trULFK9AzjqUlKtboJg8Mjigv6vSeoBa50I7raDl/MaIPvMo?=
+ =?us-ascii?Q?zKzKayTUE7WRlzBPvNPvKFXBgj/FLZDUz/txw/vR2t8SXI/YiHsIbj+ok1q0?=
+ =?us-ascii?Q?1RB5lpg9h+ywbRxjE+8CYHCuQI4lEJgVHY78e4Iu6yKzYjlQSYQ8hYz9lPyU?=
+ =?us-ascii?Q?8V3TBcV5h2HFCyVYB/gaz8VcBzjHSOUyidD+LIFAg6oAv65VjHTBLjWKcOLV?=
+ =?us-ascii?Q?ZWgbF2PTpFk=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?O1Qe0AEWzxePp7S8Wus2IWceH+Nn/vDUHBtZeQ3hn1dZZuo6azios2aXSLoY?=
- =?us-ascii?Q?t6UwvNN2PQ2U/wUO2mnGrQfPYjMAFoD8kEAsz8Vg20nfq+f5rNW4w3CJqxPT?=
- =?us-ascii?Q?9f3edP0cr7Hrg96LTlig32ZRQ2+Y7Svub+4M/UV9BNjfAEAlnQwz4RdyjLVc?=
- =?us-ascii?Q?Z5nLEQsKQttuzWLIQO7sTDVffyTV26bIjv+MxJBGahR6wyoUXzGdL6466/Aa?=
- =?us-ascii?Q?DMONVIssPArBD+SQGJ6iTcpkKJN5krIwfCrU5XdZgDheOCnl1+iBBJDbLHxG?=
- =?us-ascii?Q?b9d/rctb91jcgiWIPBw6seKUu7vQoUVLCROXP1qiVJF5VUmNt0c0t63PaZXe?=
- =?us-ascii?Q?+c5Qh8VomHJwhf4tbaiGgTvcChwmipnabB93rOUrjo72bMQYMl2WjYQn5c2v?=
- =?us-ascii?Q?hy/rApoisPYuDfYLaV1Cp7mltTW2IukBjNmod0QD7MVtTxHmM49udPNmfl8k?=
- =?us-ascii?Q?/OYuhHaAhtBebCoNpzWFLsT3DhzTVja6qCxgIcu0rpRPB9p74ToXmquSs6cz?=
- =?us-ascii?Q?FtPZp0S1gp5qamRvd9M0QgUa5Sx+NifvXCGPFVOcO6CER+3d3yaM5d883cCW?=
- =?us-ascii?Q?vfRqGleRceyutggj2TFXoxgoReAyW08efgOWFiEqmvvy97N4BH52ZuxqOX/F?=
- =?us-ascii?Q?w/Ta/f+opEI11QeF83Hpgyk72+hLDzyOzgSj5OH+3y5MYx1+UPSson0wwi/u?=
- =?us-ascii?Q?o6ic7RAw2ZKuOrquSmHwHiRJuzefMATMa9daq99Ky5IQ8XR5dNfSvywuZpcL?=
- =?us-ascii?Q?AlL+xO+NBilQIBJduXaXToF7mGXiKGMCgbL/uLkII26LWLf5F3m5J9+qs+W1?=
- =?us-ascii?Q?/2Nsh6GejxXwt96uuk9ykWEzoyVc6aT45im4APYm9JWFjmz2YNKPsMSWWzyz?=
- =?us-ascii?Q?E18aFKY2Pk53gAPvSVzqTMghZa3FYxWnKFO8ujjYEwxCInC+w4FWaYKlRo6Y?=
- =?us-ascii?Q?rwzgR6I71rgLJNjOYLcGLVy6yGvp2GMW9kX5BKXgkbyD9489Thi86zcgyRLO?=
- =?us-ascii?Q?ZaxTpMG6T1e4Ya0vEbaAyGJCsscjHmYcFaRKFGIlrxxxGfuJ1ypD5ouEDWcI?=
- =?us-ascii?Q?IFdUPpbl2RVdAaoODXDlM2AhHXMgIt3IAzce3PaCcO6h92xs4fooHXmoSthI?=
- =?us-ascii?Q?r9ZXU/xvetMV3PqcLOwHVuBgiXBsGLme6a0dAekbtrBJrBbEBduFZZci7Akc?=
- =?us-ascii?Q?hQZqrQ1+/k8lag3MlTpX9aii9dvKKXdEHB+Dbemg5BCTr2n4oeeSosv/RP8m?=
- =?us-ascii?Q?aegzOm/nMlofWRSgkuvfwYfuc2M8SJuFTiz1nYQI/dVwJx/8Ky/xa6KY+T2K?=
- =?us-ascii?Q?Qkh3RuG1VTVTIqpu9wSKNUS5xiQ1RVE9oQR9OsIToMLJfG7YR21QZFMBm0R4?=
- =?us-ascii?Q?B5PFLURbfXFFI027tl6fUyu1fKVGHgEPPCG5+GhtKDYcFfHBVGhXutn0dPI9?=
- =?us-ascii?Q?MKCY00y9GS/7D+SMB58xxWvtnrBaJhlF97vHJCY3mP1GAKNHozZkLSITr9iB?=
- =?us-ascii?Q?XHACo0IC3s4xvsWj++nWtVfePVWzEHf8c2CxYoLqlfgmzB5JbuqFaUTnp/3m?=
- =?us-ascii?Q?rhVJrR+WzdfoeCLLitgnkmL/aQeuZ3Av6BT4iJPk0T25922t48/pPoC8vd1z?=
- =?us-ascii?Q?aw=3D=3D?=
+	=?us-ascii?Q?f366lktQiFDCGt91rQdouxlHh3IG9/8yoIxu7rYu0DKivTLa8n2+5rqNFUe2?=
+ =?us-ascii?Q?NEMPY4L9ZuX0RWZhLerdFaA9O5xYbQAYfSdRHezrWXMpxTzMVODvLQ+Nqv/7?=
+ =?us-ascii?Q?wF/aHvN5rOoIeyGVvfKUMIZsOE3Xk6gYjfAPhhrmvlynZi6zDGfRjxn8ihGz?=
+ =?us-ascii?Q?zrKJiWuR+eZBZ2VQtUUo/8xJPWcUpJkt4iDFjDjuEAfI8Epy8wTLtqv991AM?=
+ =?us-ascii?Q?L+QUrd7TEkGPbcMS/QvzQFoLWCZo5RpYGEchXwTZ4Pfwkw8RJ+mG71+oMAlA?=
+ =?us-ascii?Q?meg6KeErZ9M3HMr7F/1b8L1bJaBZwOz8KSMYJapjyMt7TNG7Fsxgw75NG9Ih?=
+ =?us-ascii?Q?QAOPV60s03nqn1g1JK7tMYxAGZWIxzLhbfsliqvraLS7bTOPI+DIBtgplhls?=
+ =?us-ascii?Q?i0kv9d31XTP+i9zB/zuogD3WpckVNJQAX43usRrfoQ/XCqVek+yXxG7S14O7?=
+ =?us-ascii?Q?nHexzRv4TahKp0A9E8ADtr5IrmEP8UH5Eizg7cbTPXhpDqMs44V0GKLuFrG1?=
+ =?us-ascii?Q?Xje7OytkdxuRkaN2o+37pUxGKVusfLs5Vcs3S6wDH9OzFsMF+5EWbrKj7tml?=
+ =?us-ascii?Q?Ewln4bGmuvZvTXlb1uc5U9lOax2pokcJrsDSm91vIX2bOh1eF/5I7pXVepcT?=
+ =?us-ascii?Q?4xrQnkHrZccg3zw8+dPM1pQEP7AQ5IdG70hgB4QKz+vtHaDyOjFZMiCScrGK?=
+ =?us-ascii?Q?dAiSW8i5IFmiS5KD79liN/P19MaKWfVcj1nAV4HLFU3y72LSrSurDl2DpfLI?=
+ =?us-ascii?Q?ZkpJjlgSQG9IHnd+HztCJwab+uHajnQIqYl0TIzcDEpUxJmj7MKakYUYsTqi?=
+ =?us-ascii?Q?9pOY5lQxlHJHF0JBEep8QDbO7pktFzlTPpbQ6LHH/dp/uILG6X2b2eGmR2/a?=
+ =?us-ascii?Q?YlEtwfSb4/gESAUO8r3H+vzrc85tqVD+e1tWS9tvLDbU7Nf8iY4GEF3kO0MU?=
+ =?us-ascii?Q?P4QiWRC0wr2rrsU0dCpH+niP0rfVAGduGWZn45NiHIAy5eTwQTSUNBG1ux7S?=
+ =?us-ascii?Q?+4sd+cX0sxxLwayA7Tx3Oy+SQA6kG+uUwu/1zK2k16GXtD9wv54dwWRRFN3s?=
+ =?us-ascii?Q?1B/VVV3uqiBbjOSCL+dLjw72+B2zoz7ig/hUc7BHlvFD8My44hRBhiZcAuwK?=
+ =?us-ascii?Q?8dkNn7/VlsjVB5Hcb7sDaAoU7Z+QEFgl+YGPu0zUJUGvfX6yI4jVU/I3wgie?=
+ =?us-ascii?Q?i2GYzcnK6j5d2TLy82RUUFiRJFIcIoh4Ba6+rYC+pP38qXnA4ZImY4gziFE/?=
+ =?us-ascii?Q?JhsupvIab4cIuJb9q+gY9n7kyPCErBFsCXGgI9jJw3BPs7KEmn2Y9P0OG8ez?=
+ =?us-ascii?Q?j06ms2Dp4UVTbWDvEERNHRXTxbXCj//+X2K2RhG7B0Ik3fjRrdFT5hmjEWj1?=
+ =?us-ascii?Q?/waClnynkcXA7bFVadJHupflYHNnr3ZxOJlZbkzNjm/08NPfnJtoqzFp2Muu?=
+ =?us-ascii?Q?OeN8+JZI66JLcSXP1GnBMgLx7QO02yDBPWkXvYJhF6xZF6tGf2/c/lX1cI9Z?=
+ =?us-ascii?Q?iN1fGJV3c5PkiCTwZsi/TXxSFm8zTJuyP4H6vQrnDKeR7hJEWIKDCZGpjHx0?=
+ =?us-ascii?Q?da97dqHl8BE2JFq7gwsjFWIn1jwaOkAL+B0ejnG665HGY8e8qAnctn6JjVST?=
+ =?us-ascii?Q?iA=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	GN8ai76yqXol/cRrGqwz7Ez5Ss2IuaKbAGBlMvVoLxi9oz2/tudne29oUw6myHo6GIWUtEt0YKGx0wKdaiOHNOzkwjFlI5cKnZe44zUUx/P7XSqithX1tsW5BFD95JnNLxj5jgXhRu3u3nGp7iqht34vmYGwFhcOuxiGljAtKNFxVNXA8eVEZO1RPg+a89tNWgQDinDTfBDtxBr6FjiN8PwZotsBfwsDyOk7lyuohypXUUwXv31jiYA4Qu2OwTbre9dNfrsgmt5kua+BOr4qOoWfVUGzDpIDqvAqvbnsfrA29DuoSZ75wWV4jN05/ctzM0qkByhHFwvmhlxU7cCGve/bs6BeR7vS/mDphqP+o0axLf1+vOhDn+CNn9No5R0BKQw/TCqKtu3aGsxvD0EMhK6WmuLmhyE49kRqyMCg02iqv2qqOiEci6xhsVzwt7bhpCyH8c8mBibjnF+wpmnn+yLl7JWxXoZvVW6Y0TwUf4SFVDv2w30/YdHIawn3t3YLQ2Yt1hNxhO31lpTaA5xCLsyWgwMr3XRKYANDwJdUGov/IFWs/Mm2l5dp0sFKDavDOqenq5qWDY+fbh/rsMYYd0rPdHJO4kBNpXYy0icQiFM=
+	2LdU4r1mOhN/TBSgM5FefeyCvQGPhD7h5rsQV0U7pv09Dftfgna8m5TU4/AI4NYjA3t/V9m0Ts6ZabDkA2wjTzyQBB1GkhAL+mGVwBhCUKG5cJePWVMIFBxNOKi4KHHA7YwQqnPhkgmeJn7/57rpG5Y0W0eKy53Pz+Hkjnmh/j/8EO77e0TmW+BlWsu6iJ+wOo+AAue52X5l2AIGG1IdRvrasTV4mP2+tRnlv72NsmuvdBaJNwca85A+EMInrhIotXaqNGw87IAccjVgfvLSON+GWOHuytRRvjj4L/OoO6Z/FP6+vbsGFAZQal3//+dNOvLc7KWYk6DE+Xto/IeBhydkh6UUWAGW2QaS+2EeffFA09vjHJqk71XGfD/rl+4Zn80haWDORQPQsNS5P85BKvIxkbyN0ihafyznm604uAr3pXzpkLJcQa/+R7hZu17ufKbYkruEGPon0EL8kwEQd/bLjD5NO9VZTFuTmVFgzYVJE14saUcfXEOWElIQfXi1jTyumWbucbrExzxmY4KzwhVSBQoGRRLeEbZV1GhUsUrjAtf/O6ClZNMz5XZ3Fp+oMS5rEmnH3JuzpUl79WpIpIQroao+heJJz8FEfUyZHPU=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e550662a-bd3b-4117-017f-08ddf6c26718
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4876264c-2511-4728-bcd2-08ddf6c2fad0
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 14:48:17.1886
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 14:52:24.9259
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vbH7P70md3MyqF7jo00UfEmcSMIM7sgH0s0gsw32lXmTLn7Ugo15+51nRM0hGuJH7J6eIKi8Bljnz/gAmzwCHDwb8F6RWNwWMu3Uk8poeKs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFAEC321F49
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2CyPISB7seVgM7FWgtGmKPUP3s4eORSUcPb+ieBpvaZQtr+yyho4r9Qsz2HkxLoKj6U8KCNwyv5P5CuhD2xir4zZHNVhrGdV4Hs5Up/SFfo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6370
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-18_01,2025-09-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 phishscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509180133
-X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68cc1bbd cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509180133
+X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68cc1cae b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
  a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
  a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
- a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=LrvgwbZ2T81xXpV5F8gA:9
- a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22
-X-Proofpoint-GUID: LmR2dl0N_j-fvnvwroGwmxlgl3Y8ajtz
-X-Proofpoint-ORIG-GUID: LmR2dl0N_j-fvnvwroGwmxlgl3Y8ajtz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMyBTYWx0ZWRfX+gp9W21Tc1iw
- Y4H8Ufrxes9HRHiLAwQ93SHRr5ZdDk0porjXK79A94KF+7dYakWfX/hPio731OzQZwKU8gXY/3+
- sVmfmQ1Qggr3MhBOkylnB6e6XE1OUlEHpzXZm8ebiKl/ZaP3DG1eyH4nZRfM3SzUxv5/7UtI0Qv
- AjYlRcgroNREMjQWTsNeJkffIAGmHSSM9AO5yMYWYQYxVQHPsCZ5qXnM6xGPXDFzK6jpiWFYtRV
- /+nPUg8ycztJQ7waWXo9JQfT72VsxNxxf9KML9ensm3b9Tao3qlQNleCuZWA4/5t5ZYyjj25ItA
- KNduk/0FSm4vh6Q2QmGzxe5st3gn8BSi8ZLvHofKIysUU65XrR7SlE+MkkfC4vZbYrrD4TG85YP
- ThPyg/Ty
+ a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=ge8nY5yZ1GVF99pibm8A:9
+ a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22 cc=ntf awl=host:12083
+X-Proofpoint-GUID: LxSTB2hr5KNKxGkIqvlTYjtNuYUzlOo-
+X-Proofpoint-ORIG-GUID: LxSTB2hr5KNKxGkIqvlTYjtNuYUzlOo-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMyBTYWx0ZWRfX5mO2IvfQzWTl
+ wJX1+371xemiTq1FytJH5L3oze0nu4h4B7EuM/kqpEc7mc0vyGCOpVQWr4oBi7zbO9P/IZbGpsi
+ V6NF8IGaEPrwYFUcn5fuVIPzmSG8BQP7peJrL1e/61eS23PN6mE4kfjH+jzFKtiZcEqPQb1LWnO
+ +2ErhvZ2M0VC0daTl7pJgMmPzZEZ2wLPzgMkqQxwrYDSlxxBMpKA2lHJHTyfsEZlXS5hfuH6i9v
+ YJppnRh/QDQkNAiitJypWZErAYtktV0rTv38I7CmmDw7YnnFfs+hYL3D9DpE+7UthNo1PDyhdzj
+ 7jEV6KXOuv+idrw/t0UsTnUgScGTiqWPS51CyU2h5KauX7+NFs/dtnjg3YmUq6DJrKAkdTAHTd7
+ DkCQ6zNR3IVfE3R8a/bATAsU8Wgdrw==
 
-On Mon, Sep 15, 2025 at 09:36:35AM -0700, Kalesh Singh wrote:
-> A mechanical rename of the mm_struct->map_count field to
-> vma_count; no functional change is intended.
+On Mon, Sep 15, 2025 at 09:36:36AM -0700, Kalesh Singh wrote:
+> To make VMA counting more robust, prevent direct modification of the
+> mm->vma_count field. This is achieved by making the public-facing
+> member const via a union and requiring all modifications to go
+> through a new set of helper functions the operate on a private
+> __vma_count.
 >
-> The name "map_count" is ambiguous within the memory management subsystem,
-> as it can be confused with the folio/page->_mapcount field, which tracks
-> PTE references.
->
-> The new name, vma_count, is more precise as this field has always
-> counted the number of vm_area_structs associated with an mm_struct.
+> While there are no other invariants tied to vma_count currently, this
+> structural change improves maintainability; as it creates a single,
+> centralized point for any future logic, such as adding debug checks
+> or updating related statistics (in subsequent patches).
 >
 > Cc: Andrew Morton <akpm@linux-foundation.org>
 > Cc: David Hildenbrand <david@redhat.com>
@@ -241,172 +242,115 @@ On Mon, Sep 15, 2025 at 09:36:35AM -0700, Kalesh Singh wrote:
 > Cc: Pedro Falcato <pfalcato@suse.de>
 > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 
-Yeah this is nice thanks, LGTM so:
+Hmmm I"m not sure about this one.
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+I think this is a 'we don't need it' situation, and it's making everything a bit
+uglier.
 
-One small comment below, but I think that change can wait for another series
-probably.
+I especially hate vma_count_add() and vma_count_sub(). You're essentially
+overridding the whole concept in these cases to make stuff that's already in
+place work in those cases
+
+I don't think this really adds much honestly.
+
+(You're also clearly missing cases as the kernel bot has found issues)
 
 > ---
->
->  Changes in v2:
->   - map_count is easily confused with _mapcount rename to vma_count, per David
->
->  fs/binfmt_elf.c                  |  2 +-
->  fs/coredump.c                    |  2 +-
->  include/linux/mm_types.h         |  2 +-
+>  include/linux/mm.h               | 25 +++++++++++++++++++++++++
+>  include/linux/mm_types.h         |  5 ++++-
 >  kernel/fork.c                    |  2 +-
->  mm/debug.c                       |  2 +-
->  mm/mmap.c                        |  6 +++---
->  mm/nommu.c                       |  6 +++---
->  mm/vma.c                         | 24 ++++++++++++------------
->  tools/testing/vma/vma.c          | 32 ++++++++++++++++----------------
->  tools/testing/vma/vma_internal.h |  6 +++---
->  10 files changed, 42 insertions(+), 42 deletions(-)
+>  mm/mmap.c                        |  2 +-
+>  mm/vma.c                         | 12 ++++++------
+>  tools/testing/vma/vma.c          |  2 +-
+>  tools/testing/vma/vma_internal.h | 30 +++++++++++++++++++++++++++++-
+>  7 files changed, 67 insertions(+), 11 deletions(-)
 >
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 264fba0d44bd..52449dec12cb 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1643,7 +1643,7 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
->  	data[0] = count;
->  	data[1] = PAGE_SIZE;
->  	/*
-> -	 * Count usually is less than mm->map_count,
-> +	 * Count usually is less than mm->vma_count,
->  	 * we need to move filenames down.
->  	 */
->  	n = cprm->vma_count - count;
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 60bc9685e149..8881459c53d9 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -1731,7 +1731,7 @@ static bool dump_vma_snapshot(struct coredump_params *cprm)
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 138bab2988f8..8bad1454984c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4219,4 +4219,29 @@ static inline bool snapshot_page_is_faithful(const struct page_snapshot *ps)
 >
->  	cprm->vma_data_size = 0;
->  	gate_vma = get_gate_vma(mm);
-> -	cprm->vma_count = mm->map_count + (gate_vma ? 1 : 0);
-> +	cprm->vma_count = mm->vma_count + (gate_vma ? 1 : 0);
+>  void snapshot_page(struct page_snapshot *ps, const struct page *page);
 >
->  	cprm->vma_meta = kvmalloc_array(cprm->vma_count, sizeof(*cprm->vma_meta), GFP_KERNEL);
->  	if (!cprm->vma_meta) {
+> +static inline void vma_count_init(struct mm_struct *mm)
+> +{
+> +	ACCESS_PRIVATE(mm, __vma_count) = 0;
+> +}
+> +
+> +static inline void vma_count_add(struct mm_struct *mm, int nr_vmas)
+> +{
+> +	ACCESS_PRIVATE(mm, __vma_count) += nr_vmas;
+> +}
+> +
+> +static inline void vma_count_sub(struct mm_struct *mm, int nr_vmas)
+> +{
+> +	vma_count_add(mm, -nr_vmas);
+> +}
+> +
+> +static inline void vma_count_inc(struct mm_struct *mm)
+> +{
+> +	vma_count_add(mm, 1);
+> +}
+> +
+> +static inline void vma_count_dec(struct mm_struct *mm)
+> +{
+> +	vma_count_sub(mm, 1);
+> +}
+> +
+>  #endif /* _LINUX_MM_H */
 > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 08bc2442db93..4343be2f9e85 100644
+> index 4343be2f9e85..2ea8fc722aa2 100644
 > --- a/include/linux/mm_types.h
 > +++ b/include/linux/mm_types.h
-> @@ -1020,7 +1020,7 @@ struct mm_struct {
+> @@ -1020,7 +1020,10 @@ struct mm_struct {
 >  #ifdef CONFIG_MMU
 >  		atomic_long_t pgtables_bytes;	/* size of all page tables */
 >  #endif
-> -		int map_count;			/* number of VMAs */
-> +		int vma_count;			/* number of VMAs */
+> -		int vma_count;			/* number of VMAs */
+> +		union {
+> +			const int vma_count;		/* number of VMAs */
+> +			int __private __vma_count;
+> +		};
 >
 >  		spinlock_t page_table_lock; /* Protects page tables and some
 >  					     * counters
 > diff --git a/kernel/fork.c b/kernel/fork.c
-> index c4ada32598bd..8fcbbf947579 100644
+> index 8fcbbf947579..ea9eff416e51 100644
 > --- a/kernel/fork.c
 > +++ b/kernel/fork.c
 > @@ -1037,7 +1037,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
 >  	mmap_init_lock(mm);
 >  	INIT_LIST_HEAD(&mm->mmlist);
 >  	mm_pgtables_bytes_init(mm);
-> -	mm->map_count = 0;
-> +	mm->vma_count = 0;
+> -	mm->vma_count = 0;
+> +	vma_count_init(mm);
 >  	mm->locked_vm = 0;
 >  	atomic64_set(&mm->pinned_vm, 0);
 >  	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
-> diff --git a/mm/debug.c b/mm/debug.c
-> index b4388f4dcd4d..40fc9425a84a 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -204,7 +204,7 @@ void dump_mm(const struct mm_struct *mm)
->  		mm->pgd, atomic_read(&mm->mm_users),
->  		atomic_read(&mm->mm_count),
->  		mm_pgtables_bytes(mm),
-> -		mm->map_count,
-> +		mm->vma_count,
->  		mm->hiwater_rss, mm->hiwater_vm, mm->total_vm, mm->locked_vm,
->  		(u64)atomic64_read(&mm->pinned_vm),
->  		mm->data_vm, mm->exec_vm, mm->stack_vm,
 > diff --git a/mm/mmap.c b/mm/mmap.c
-> index af88ce1fbb5f..c6769394a174 100644
+> index c6769394a174..30ddd550197e 100644
 > --- a/mm/mmap.c
 > +++ b/mm/mmap.c
-> @@ -1308,7 +1308,7 @@ void exit_mmap(struct mm_struct *mm)
->  		vma = vma_next(&vmi);
->  	} while (vma && likely(!xa_is_zero(vma)));
->
-> -	BUG_ON(count != mm->map_count);
-> +	BUG_ON(count != mm->vma_count);
-
-Be nice to switch this to a WARN_ON_ONCE()... think David mentioned it though.
-
-But maybe not one for this series...
-
->
->  	trace_exit_mmap(mm);
->  destroy:
-> @@ -1517,7 +1517,7 @@ static int sysctl_max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
->   */
->  int vma_count_remaining(const struct mm_struct *mm)
->  {
-> -	const int map_count = mm->map_count;
-> +	const int map_count = mm->vma_count;
->  	const int max_count = sysctl_max_map_count;
->
->  	return (max_count > map_count) ? (max_count - map_count) : 0;
 > @@ -1828,7 +1828,7 @@ __latent_entropy int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
 >  		 */
 >  		vma_iter_bulk_store(&vmi, tmp);
 >
-> -		mm->map_count++;
-> +		mm->vma_count++;
+> -		mm->vma_count++;
+> +		vma_count_inc(mm);
 >
 >  		if (tmp->vm_ops && tmp->vm_ops->open)
 >  			tmp->vm_ops->open(tmp);
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index dd75f2334812..9ab2e5ca736d 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -576,7 +576,7 @@ static void setup_vma_to_mm(struct vm_area_struct *vma, struct mm_struct *mm)
->
->  static void cleanup_vma_from_mm(struct vm_area_struct *vma)
->  {
-> -	vma->vm_mm->map_count--;
-> +	vma->vm_mm->vma_count--;
->  	/* remove the VMA from the mapping */
->  	if (vma->vm_file) {
->  		struct address_space *mapping;
-> @@ -1198,7 +1198,7 @@ unsigned long do_mmap(struct file *file,
->  		goto error_just_free;
->
->  	setup_vma_to_mm(vma, current->mm);
-> -	current->mm->map_count++;
-> +	current->mm->vma_count++;
->  	/* add the VMA to the tree */
->  	vma_iter_store_new(&vmi, vma);
->
-> @@ -1366,7 +1366,7 @@ static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  	setup_vma_to_mm(vma, mm);
->  	setup_vma_to_mm(new, mm);
->  	vma_iter_store_new(vmi, new);
-> -	mm->map_count++;
-> +	mm->vma_count++;
->  	return 0;
->
->  err_vmi_preallocate:
 > diff --git a/mm/vma.c b/mm/vma.c
-> index df0e8409f63d..64f4e7c867c3 100644
+> index 64f4e7c867c3..0cd3cb472220 100644
 > --- a/mm/vma.c
 > +++ b/mm/vma.c
 > @@ -352,7 +352,7 @@ static void vma_complete(struct vma_prepare *vp, struct vma_iterator *vmi,
 >  		 * (it may either follow vma or precede it).
 >  		 */
 >  		vma_iter_store_new(vmi, vp->insert);
-> -		mm->map_count++;
-> +		mm->vma_count++;
+> -		mm->vma_count++;
+> +		vma_count_inc(mm);
 >  	}
 >
 >  	if (vp->anon_vma) {
@@ -414,69 +358,26 @@ But maybe not one for this series...
 >  		}
 >  		if (vp->remove->anon_vma)
 >  			anon_vma_merge(vp->vma, vp->remove);
-> -		mm->map_count--;
-> +		mm->vma_count--;
+> -		mm->vma_count--;
+> +		vma_count_dec(mm);
 >  		mpol_put(vma_policy(vp->remove));
 >  		if (!vp->remove2)
 >  			WARN_ON_ONCE(vp->vma->vm_end < vp->remove->vm_end);
-> @@ -683,13 +683,13 @@ void validate_mm(struct mm_struct *mm)
->  		}
->  #endif
->  		/* Check for a infinite loop */
-> -		if (++i > mm->map_count + 10) {
-> +		if (++i > mm->vma_count + 10) {
->  			i = -1;
->  			break;
->  		}
->  	}
-> -	if (i != mm->map_count) {
-> -		pr_emerg("map_count %d vma iterator %d\n", mm->map_count, i);
-> +	if (i != mm->vma_count) {
-> +		pr_emerg("vma_count %d vma iterator %d\n", mm->vma_count, i);
->  		bug = 1;
->  	}
->  	VM_BUG_ON_MM(bug, mm);
 > @@ -1266,7 +1266,7 @@ static void vms_complete_munmap_vmas(struct vma_munmap_struct *vms,
 >  	struct mm_struct *mm;
 >
 >  	mm = current->mm;
-> -	mm->map_count -= vms->vma_count;
-> +	mm->vma_count -= vms->vma_count;
+> -	mm->vma_count -= vms->vma_count;
+> +	vma_count_sub(mm, vms->vma_count);
 >  	mm->locked_vm -= vms->locked_vm;
 >  	if (vms->unlock)
 >  		mmap_write_downgrade(mm);
-> @@ -1340,14 +1340,14 @@ static int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
->  	if (vms->start > vms->vma->vm_start) {
->
->  		/*
-> -		 * Make sure that map_count on return from munmap() will
-> +		 * Make sure that vma_count on return from munmap() will
->  		 * not exceed its limit; but let map_count go just above
->  		 * its limit temporarily, to help free resources as expected.
->  		 */
->  		if (vms->end < vms->vma->vm_end &&
->  		    !vma_count_remaining(vms->vma->vm_mm)) {
->  			error = -ENOMEM;
-> -			goto map_count_exceeded;
-> +			goto vma_count_exceeded;
->  		}
->
->  		/* Don't bother splitting the VMA if we can't unmap it anyway */
-> @@ -1461,7 +1461,7 @@ static int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
->  modify_vma_failed:
->  	reattach_vmas(mas_detach);
->  start_split_failed:
-> -map_count_exceeded:
-> +vma_count_exceeded:
->  	return error;
->  }
->
 > @@ -1795,7 +1795,7 @@ int vma_link(struct mm_struct *mm, struct vm_area_struct *vma)
 >  	vma_start_write(vma);
 >  	vma_iter_store_new(&vmi, vma);
 >  	vma_link_file(vma);
-> -	mm->map_count++;
-> +	mm->vma_count++;
+> -	mm->vma_count++;
+> +	vma_count_inc(mm);
 >  	validate_mm(mm);
 >  	return 0;
 >  }
@@ -484,8 +385,8 @@ But maybe not one for this series...
 >  	/* Lock the VMA since it is modified after insertion into VMA tree */
 >  	vma_start_write(vma);
 >  	vma_iter_store_new(vmi, vma);
-> -	map->mm->map_count++;
-> +	map->mm->vma_count++;
+> -	map->mm->vma_count++;
+> +	vma_count_inc(map->mm);
 >  	vma_link_file(vma);
 >
 >  	/*
@@ -493,184 +394,69 @@ But maybe not one for this series...
 >  	if (vma_iter_store_gfp(vmi, vma, GFP_KERNEL))
 >  		goto mas_store_fail;
 >
-> -	mm->map_count++;
-> +	mm->vma_count++;
+> -	mm->vma_count++;
+> +	vma_count_inc(mm);
 >  	validate_mm(mm);
 >  out:
 >  	perf_event_mmap(vma);
 > diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/vma.c
-> index 656e1c75b711..69fa7d14a6c2 100644
+> index 69fa7d14a6c2..ee5a1e2365e0 100644
 > --- a/tools/testing/vma/vma.c
 > +++ b/tools/testing/vma/vma.c
 > @@ -261,7 +261,7 @@ static int cleanup_mm(struct mm_struct *mm, struct vma_iterator *vmi)
 >  	}
 >
 >  	mtree_destroy(&mm->mm_mt);
-> -	mm->map_count = 0;
-> +	mm->vma_count = 0;
+> -	mm->vma_count = 0;
+> +	vma_count_init(mm);
 >  	return count;
 >  }
 >
-> @@ -500,7 +500,7 @@ static bool test_merge_new(void)
->  	INIT_LIST_HEAD(&vma_d->anon_vma_chain);
->  	list_add(&dummy_anon_vma_chain_d.same_vma, &vma_d->anon_vma_chain);
->  	ASSERT_FALSE(merged);
-> -	ASSERT_EQ(mm.map_count, 4);
-> +	ASSERT_EQ(mm.vma_count, 4);
->
->  	/*
->  	 * Merge BOTH sides.
-> @@ -519,7 +519,7 @@ static bool test_merge_new(void)
->  	ASSERT_EQ(vma->vm_pgoff, 0);
->  	ASSERT_EQ(vma->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 3);
-> +	ASSERT_EQ(mm.vma_count, 3);
->
->  	/*
->  	 * Merge to PREVIOUS VMA.
-> @@ -536,7 +536,7 @@ static bool test_merge_new(void)
->  	ASSERT_EQ(vma->vm_pgoff, 0);
->  	ASSERT_EQ(vma->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 3);
-> +	ASSERT_EQ(mm.vma_count, 3);
->
->  	/*
->  	 * Merge to NEXT VMA.
-> @@ -555,7 +555,7 @@ static bool test_merge_new(void)
->  	ASSERT_EQ(vma->vm_pgoff, 6);
->  	ASSERT_EQ(vma->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 3);
-> +	ASSERT_EQ(mm.vma_count, 3);
->
->  	/*
->  	 * Merge BOTH sides.
-> @@ -573,7 +573,7 @@ static bool test_merge_new(void)
->  	ASSERT_EQ(vma->vm_pgoff, 0);
->  	ASSERT_EQ(vma->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 2);
-> +	ASSERT_EQ(mm.vma_count, 2);
->
->  	/*
->  	 * Merge to NEXT VMA.
-> @@ -591,7 +591,7 @@ static bool test_merge_new(void)
->  	ASSERT_EQ(vma->vm_pgoff, 0xa);
->  	ASSERT_EQ(vma->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 2);
-> +	ASSERT_EQ(mm.vma_count, 2);
->
->  	/*
->  	 * Merge BOTH sides.
-> @@ -608,7 +608,7 @@ static bool test_merge_new(void)
->  	ASSERT_EQ(vma->vm_pgoff, 0);
->  	ASSERT_EQ(vma->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 1);
-> +	ASSERT_EQ(mm.vma_count, 1);
->
->  	/*
->  	 * Final state.
-> @@ -967,7 +967,7 @@ static bool test_vma_merge_new_with_close(void)
->  	ASSERT_EQ(vma->vm_pgoff, 0);
->  	ASSERT_EQ(vma->vm_ops, &vm_ops);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 2);
-> +	ASSERT_EQ(mm.vma_count, 2);
->
->  	cleanup_mm(&mm, &vmi);
->  	return true;
-> @@ -1017,7 +1017,7 @@ static bool test_merge_existing(void)
->  	ASSERT_EQ(vma->vm_pgoff, 2);
->  	ASSERT_TRUE(vma_write_started(vma));
->  	ASSERT_TRUE(vma_write_started(vma_next));
-> -	ASSERT_EQ(mm.map_count, 2);
-> +	ASSERT_EQ(mm.vma_count, 2);
->
->  	/* Clear down and reset. */
->  	ASSERT_EQ(cleanup_mm(&mm, &vmi), 2);
-> @@ -1045,7 +1045,7 @@ static bool test_merge_existing(void)
->  	ASSERT_EQ(vma_next->vm_pgoff, 2);
->  	ASSERT_EQ(vma_next->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma_next));
-> -	ASSERT_EQ(mm.map_count, 1);
-> +	ASSERT_EQ(mm.vma_count, 1);
->
->  	/* Clear down and reset. We should have deleted vma. */
->  	ASSERT_EQ(cleanup_mm(&mm, &vmi), 1);
-> @@ -1079,7 +1079,7 @@ static bool test_merge_existing(void)
->  	ASSERT_EQ(vma->vm_pgoff, 6);
->  	ASSERT_TRUE(vma_write_started(vma_prev));
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 2);
-> +	ASSERT_EQ(mm.vma_count, 2);
->
->  	/* Clear down and reset. */
->  	ASSERT_EQ(cleanup_mm(&mm, &vmi), 2);
-> @@ -1108,7 +1108,7 @@ static bool test_merge_existing(void)
->  	ASSERT_EQ(vma_prev->vm_pgoff, 0);
->  	ASSERT_EQ(vma_prev->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma_prev));
-> -	ASSERT_EQ(mm.map_count, 1);
-> +	ASSERT_EQ(mm.vma_count, 1);
->
->  	/* Clear down and reset. We should have deleted vma. */
->  	ASSERT_EQ(cleanup_mm(&mm, &vmi), 1);
-> @@ -1138,7 +1138,7 @@ static bool test_merge_existing(void)
->  	ASSERT_EQ(vma_prev->vm_pgoff, 0);
->  	ASSERT_EQ(vma_prev->anon_vma, &dummy_anon_vma);
->  	ASSERT_TRUE(vma_write_started(vma_prev));
-> -	ASSERT_EQ(mm.map_count, 1);
-> +	ASSERT_EQ(mm.vma_count, 1);
->
->  	/* Clear down and reset. We should have deleted prev and next. */
->  	ASSERT_EQ(cleanup_mm(&mm, &vmi), 1);
-> @@ -1540,7 +1540,7 @@ static bool test_merge_extend(void)
->  	ASSERT_EQ(vma->vm_end, 0x4000);
->  	ASSERT_EQ(vma->vm_pgoff, 0);
->  	ASSERT_TRUE(vma_write_started(vma));
-> -	ASSERT_EQ(mm.map_count, 1);
-> +	ASSERT_EQ(mm.vma_count, 1);
->
->  	cleanup_mm(&mm, &vmi);
->  	return true;
-> @@ -1652,7 +1652,7 @@ static bool test_mmap_region_basic(void)
->  			     0x24d, NULL);
->  	ASSERT_EQ(addr, 0x24d000);
->
-> -	ASSERT_EQ(mm.map_count, 2);
-> +	ASSERT_EQ(mm.vma_count, 2);
->
->  	for_each_vma(vmi, vma) {
->  		if (vma->vm_start == 0x300000) {
 > diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-> index 52cd7ddc73f4..15525b86145d 100644
+> index 15525b86145d..6e724ba1adf4 100644
 > --- a/tools/testing/vma/vma_internal.h
 > +++ b/tools/testing/vma/vma_internal.h
-> @@ -251,7 +251,7 @@ struct mutex {};
+> @@ -251,7 +251,10 @@ struct mutex {};
 >
 >  struct mm_struct {
 >  	struct maple_tree mm_mt;
-> -	int map_count;			/* number of VMAs */
-> +	int vma_count;			/* number of VMAs */
+> -	int vma_count;			/* number of VMAs */
+> +	union {
+> +		const int vma_count;		/* number of VMAs */
+> +		int __vma_count;
+> +	};
 >  	unsigned long total_vm;	   /* Total pages mapped */
 >  	unsigned long locked_vm;   /* Pages that have PG_mlocked set */
 >  	unsigned long data_vm;	   /* VM_WRITE & ~VM_SHARED & ~VM_STACK */
-> @@ -1520,10 +1520,10 @@ static inline vm_flags_t ksm_vma_flags(const struct mm_struct *, const struct fi
->  /* Helper to get VMA count capacity */
->  static int vma_count_remaining(const struct mm_struct *mm)
->  {
-> -	const int map_count = mm->map_count;
-> +	const int vma_count = mm->vma_count;
->  	const int max_count = sysctl_max_map_count;
->
-> -	return (max_count > map_count) ? (max_count - map_count) : 0;
-> +	return (max_count > vma_count) ? (max_count - vma_count) : 0;
+> @@ -1526,4 +1529,29 @@ static int vma_count_remaining(const struct mm_struct *mm)
+>  	return (max_count > vma_count) ? (max_count - vma_count) : 0;
 >  }
 >
+> +static inline void vma_count_init(struct mm_struct *mm)
+> +{
+> +	mm->__vma_count = 0;
+> +}
+> +
+> +static inline void vma_count_add(struct mm_struct *mm, int nr_vmas)
+> +{
+> +	mm->__vma_count += nr_vmas;
+> +}
+> +
+> +static inline void vma_count_sub(struct mm_struct *mm, int nr_vmas)
+> +{
+> +	vma_count_add(mm, -nr_vmas);
+> +}
+> +
+> +static inline void vma_count_inc(struct mm_struct *mm)
+> +{
+> +	vma_count_add(mm, 1);
+> +}
+> +
+> +static inline void vma_count_dec(struct mm_struct *mm)
+> +{
+> +	vma_count_sub(mm, 1);
+> +}
+> +
 >  #endif	/* __MM_VMA_INTERNAL_H */
 > --
 > 2.51.0.384.g4c02a37b29-goog
