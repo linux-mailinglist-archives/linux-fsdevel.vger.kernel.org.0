@@ -1,158 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-62070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BFFB83388
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 08:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22AAB8354E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 09:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB27617F967
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 06:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0771C24EE5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 07:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7462DF124;
-	Thu, 18 Sep 2025 06:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B532EA735;
+	Thu, 18 Sep 2025 07:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="caNOf/8b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phtoj2Cx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603CE2BEFE4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 06:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EFD29E0F7;
+	Thu, 18 Sep 2025 07:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178424; cv=none; b=FNVa++kpCNZXMc9LKBiKhHJhCUKMctYaNpC1L3ohbNIM1DQ5bGN/HJ5GTpeAKYpFLaxFsF5fmSDj3xdJ+Xkg4YylkjP6747JkwULysBn2mLvVJaqgUZSzVlhO9lSUsSOiLofdnwmB2EGyDeEARbajQH7BW7UowI4yN4iJN+D/h4=
+	t=1758180883; cv=none; b=qNXgKDI5COfnyn0fvVg5kP/8uD8LG8MHUNgIlH67w9PPkQT6HNd0H0rp0e/A3hRJlQNkM/Xwsw+v2xQZm7+2d8GPlIXTH03GQauF3pBAtMNQcSxIZWH0vz2fpRBk74rwDHvqdYJ7PGofc528Zzm2agk16aa5umaa5PI3C8kn198=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178424; c=relaxed/simple;
-	bh=D2tnMC/HBE68esSjs5GaQ2p4LH2Hgz5G8pAkimgNE84=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=crZHdr9LWMzyOQmw0Rlfzx86pDb/8RwXB74eph2aNoXqblrCHWJEgPrGxxFdIjIFtPIlvHyNHmZSniSr7u+2gys1THnqqTef8Fy72OT+QIsBk5u0mqPhtWVa2S4gzFiyyt0BWG1Q7vRAavxRpnRpjQwaQJ0Vr/Ym9ET/jVULdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=caNOf/8b; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2665e11e120so7285885ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Sep 2025 23:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758178423; x=1758783223; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kdY8CdA7D7v7QlqIXdHWhklcBLDBGklkP9F/ba8VEO0=;
-        b=caNOf/8b48DxO/KqrqevaCee6mjBDFns47DuHJyN8FGo1seRsHuT+EAzls3ObpSEW1
-         OnNvaS7JxBPSIYSoUUd69gqjrrYxhhFtap+BZRJq4Y4UDk/o8yGru9CDRQDQzYw6ykXb
-         0JDsIz/zy5ON5XyCOcw1YxO5agigrZ8TG+2WgmoTd63OfvEcRnPKYWLeUQGaXNiK+dNn
-         Wuvlznw6r7U9/hFfJ4RUsREPjPDuRfMlS15pO+GdOvwl3tLHdPRdOqVmlmP2P+UPYdY1
-         NDhRvNFIZtEObbScuDyscHE32WeaOdZRNYwD30KmY+i2GylczUb+UT+kj+BodNNCS1pQ
-         c4sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758178423; x=1758783223;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kdY8CdA7D7v7QlqIXdHWhklcBLDBGklkP9F/ba8VEO0=;
-        b=DJCCY92b1xg2p863HEm0CNXw+cy98P9M9ist0zYhBmNMCXXQi9HjnRhamblx0vOrsF
-         PWsPaljKqw/1DoZDkUAVuhsHxpph/q4OVo2nzGucbd2vgZSkI/IOH2F3vgNryzxFiVbb
-         n7h5ZNM+hj2OhgFCSCoZN5e8SS/BLKVdVWrxyeHg4Wpri3SkJWVQYbpFNy3eByZTcxTD
-         LtYehmtjGb+2WOjG4eFSYjxSPtJcT5HZnS7owlfoNjYnpvjSA2/cNkxpnZc+B6YaPuVN
-         7K6yGnRx0IVnRIAUo86quaw2ovh8EnBARC7LjUlLp0R1Xovsfi7M1FWmfATsErIl2QX9
-         /WYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfjvSfB7vNHAra7vK5E6d08etzcv3jnXTIG9VCIq7qLebqNXgeshX+R7Cr7zKPq+Blqg5l59LE+MjF7wWU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2stHwI3up6gqcKE8VcRgfmBvcPuWjjgmP1u2OFwbjN6lYoI1P
-	yg76PNm2JpHDJr5uAKInU+jN4jUswGUmBYnpVyJpubvkL7Bl7O2v1tBBm8eQQP2AMKlukWXslwQ
-	RcyGxSBCuoUyALiA6InjOH7kXRw==
-X-Google-Smtp-Source: AGHT+IH4/xFas5qH9WkGtquuXdWcMilu78LEjzqF2BsDWfyKCYslt2SGwsXQ1h75MU0H2eQyEYDJZApNSPXmxa7tZQ==
-X-Received: from pjff12.prod.google.com ([2002:a17:90b:562c:b0:32e:ddac:6ea5])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef0f:b0:24c:965a:f97e with SMTP id d9443c01a7336-26811ba541dmr70869245ad.2.1758178422688;
- Wed, 17 Sep 2025 23:53:42 -0700 (PDT)
-Date: Thu, 18 Sep 2025 06:53:41 +0000
-In-Reply-To: <20250916222801.dlew6mq7kog2q5ni@amd.com>
+	s=arc-20240116; t=1758180883; c=relaxed/simple;
+	bh=iFyl1v+R5r8mqqXN1vgFO7dGvg1TVlgShJSyPTUstxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cOs5HC6hycxFZPtahydUr91DwdltvTHqtjPUmK7J+IN+2wnYytjVPhm0nhpR7klJgiS9j+ITTrzVouzokVTtolqb/xcYGMh4Q4RWJj+SRY4WkT8kGX0MPVkf/YjDe+vLUfrs5pRBB82vhKvwQHTatPnJun4TVu/HGlYXNxWCy1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phtoj2Cx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0550FC4CEE7;
+	Thu, 18 Sep 2025 07:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758180882;
+	bh=iFyl1v+R5r8mqqXN1vgFO7dGvg1TVlgShJSyPTUstxk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=phtoj2CxJPgt5vlwgTN7FnjIQJ+OT78j87ABMY8vPHEow8JDNeDYUmGsE0e8555rC
+	 /o9X3zw9P6cjDhVh0+KUdQ3X2U9KuoOAuAtfs5l86ewubTk0Vo8eLvBU6KbfjC1L/z
+	 gFYxCE7voIAu9TqJ9/blXGUWYCjbXVVuwMD657mnWPpdX+ff9VGS5Lg0m1tp1gDTNr
+	 0k+WKo1DKSQVtZdnWaVeM6THYvacQUQUACPn/NNwGRAQas4dKY6/WMYtnQGRa7fs2M
+	 m2SFtGKk8uCE+nsvOGBF8TL5TGEhJGjP+CcIw70cDPD1gQ3yyFntHhlOpeEiXp424l
+	 wqOuckTojiYEg==
+Message-ID: <eb729729-c7cf-4a15-ab97-27ec21c0891a@kernel.org>
+Date: Thu, 18 Sep 2025 09:34:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
- <20250916222801.dlew6mq7kog2q5ni@amd.com>
-Message-ID: <diqzh5x0p7yi.fsf@google.com>
-Subject: Re: [RFC PATCH v2 35/51] mm: guestmem_hugetlb: Add support for
- splitting and merging pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com, 
-	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/9] simplify vboxsf_dir_atomic_open()
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: v9fs@lists.linux.dev, miklos@szeredi.hu, agruenba@redhat.com,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org
+References: <20250917232416.GG39973@ZenIV>
+ <20250917232736.2556586-1-viro@zeniv.linux.org.uk>
+ <20250917232736.2556586-5-viro@zeniv.linux.org.uk>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250917232736.2556586-5-viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Michael Roth <michael.roth@amd.com> writes:
+Hi,
 
-> On Wed, May 14, 2025 at 04:42:14PM -0700, Ackerley Tng wrote:
->> 
->> [...snip...]
->> 
->
-> Hi Ackerley,
->
-> We've been doing some testing with this series on top of David's
-> guestmemfd-preview branch with some SNP enablement[1][2] to exercise
-> this code along with the NUMA support from Shivank (BTW, I know you
-> have v3 in the works so let me know if we can help with testing that
-> as well).
->
+On 18-Sep-25 1:27 AM, Al Viro wrote:
+> similar to 9p et.al.
+> 
+> Reviewed-by: NeilBrown <neil@brown.name>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Thank you for offering! I'm quite backed up now with some internal
-work. Will definitely appreciate all the help I can get once I manage to
-push out an RFCv3!
+Thanks, patch looks good to me:
 
-> One issue we hit is if you do a split->merge sequence the unstash of the
-> private data will result in folio_test_hugetlb_vmemmap_optimized() reporting
-> true even though the hugetlb_vmemmap_optimize_folio() call hasn't been
-> performed yet, and when that does get called it will be skipped, so some HVO
-> optimization can be lost in this way.
->
-> More troublesome however is if you later split the folio again,
-> hugetlb_vmemmap_restore_folio() may cause a BUG_ON() since the flags are in a
-> state that's not consistent with the state of the folio/vmemmap.
->
-> The following patch seems to resolve the issue but I'm not sure what the
-> best approach would be:
->
->   https://github.com/AMDESE/linux/commit/b1f25956f18d32730b8d4ded6d77e980091eb4d3
->
+Reviewed-by: Hans de Goede <hansg@kernel.org>
 
-I saw your reply on the other thread. Thanks for informing me :)
+Regards,
 
-> Thanks,
->
-> Mike
->
-> [1] https://github.com/AMDESE/linux/commits/snp-hugetlb-v2-wip0/
-> [2] https://github.com/AMDESE/qemu/tree/snp-hugetlb-dev-wip0
+Hans
+
+
+
+> ---
+>  fs/vboxsf/dir.c | 25 +++++++++----------------
+>  1 file changed, 9 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
+> index 770e29ec3557..42bedc4ec7af 100644
+> --- a/fs/vboxsf/dir.c
+> +++ b/fs/vboxsf/dir.c
+> @@ -315,46 +315,39 @@ static int vboxsf_dir_atomic_open(struct inode *parent, struct dentry *dentry,
+>  {
+>  	struct vboxsf_sbi *sbi = VBOXSF_SBI(parent->i_sb);
+>  	struct vboxsf_handle *sf_handle;
+> -	struct dentry *res = NULL;
+>  	u64 handle;
+>  	int err;
+>  
+>  	if (d_in_lookup(dentry)) {
+> -		res = vboxsf_dir_lookup(parent, dentry, 0);
+> -		if (IS_ERR(res))
+> -			return PTR_ERR(res);
+> -
+> -		if (res)
+> -			dentry = res;
+> +		struct dentry *res = vboxsf_dir_lookup(parent, dentry, 0);
+> +		if (res || d_really_is_positive(dentry))
+> +			return finish_no_open(file, res);
+>  	}
+>  
+>  	/* Only creates */
+> -	if (!(flags & O_CREAT) || d_really_is_positive(dentry))
+> -		return finish_no_open(file, res);
+> +	if (!(flags & O_CREAT))
+> +		return finish_no_open(file, NULL);
+>  
+>  	err = vboxsf_dir_create(parent, dentry, mode, false, flags & O_EXCL, &handle);
+>  	if (err)
+> -		goto out;
+> +		return err;
+>  
+>  	sf_handle = vboxsf_create_sf_handle(d_inode(dentry), handle, SHFL_CF_ACCESS_READWRITE);
+>  	if (IS_ERR(sf_handle)) {
+>  		vboxsf_close(sbi->root, handle);
+> -		err = PTR_ERR(sf_handle);
+> -		goto out;
+> +		return PTR_ERR(sf_handle);
+>  	}
+>  
+>  	err = finish_open(file, dentry, generic_file_open);
+>  	if (err) {
+>  		/* This also closes the handle passed to vboxsf_create_sf_handle() */
+>  		vboxsf_release_sf_handle(d_inode(dentry), sf_handle);
+> -		goto out;
+> +		return err;
+>  	}
+>  
+>  	file->private_data = sf_handle;
+>  	file->f_mode |= FMODE_CREATED;
+> -out:
+> -	dput(res);
+> -	return err;
+> +	return 0;
+>  }
+>  
+>  static int vboxsf_dir_unlink(struct inode *parent, struct dentry *dentry)
+
 
