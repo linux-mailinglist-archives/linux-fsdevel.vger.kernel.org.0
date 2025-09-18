@@ -1,126 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-62178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E243FB87310
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 23:56:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A6BB87343
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 00:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB98566DF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 21:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678707A5B45
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Sep 2025 22:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBD62FB0BB;
-	Thu, 18 Sep 2025 21:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04812FB625;
+	Thu, 18 Sep 2025 22:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiKU6bg7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvVKSg1v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EC61DF996;
-	Thu, 18 Sep 2025 21:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E722217F27
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 22:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758232555; cv=none; b=n2mUJsFl05T6HgTogxLErfgPKYL3S5u16cqzOkrkFDiWmdQzn3MHKi+aVvg0YEjh+5ZAybengUAwTNjmTQyVjmbqQepzSqbUhmmMa7/N/UHf24buJfOCdl4D/CMx1zQo4570AvPDfWckan+0VI6un1sYI+sPVKduoIzdzZ3+pwg=
+	t=1758233432; cv=none; b=XCx/5Qp95+ga+SNLzZlZPDBiX32ilhdxcBt2JceeUNJliVm84kjBjd4Ix0vlHtUhjjxLYPzPfQdfGywhgqe+2Snv5BTnIuuXw2/sxCNs5ORq3MndBn9rCgNyk2/d8NVqz/JPsCGq4HA/0t4f9ewYntpGKrt17vHSXy/DuQIM6i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758232555; c=relaxed/simple;
-	bh=3r3FJF7tnBqo8I2mbRhnltq1o3PtuTvWzSRtwmeefYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/jN/f2M9xqeXoKSa/Bw6MQejf7GM9j25HrFz+KSJEcBzEvZgW9JEQMTJoaBZWkKY37aRFzEmprOz1r98Kd2nGXoGvmkFYI2PVpCYXIQ5mmDCL2yh/W6fTisRC5nwsCC63iVLRh/cET5w40DGqLR1p/M08Ss2e4dZjKC9ComnUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiKU6bg7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7EF1C4CEF0;
-	Thu, 18 Sep 2025 21:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758232554;
-	bh=3r3FJF7tnBqo8I2mbRhnltq1o3PtuTvWzSRtwmeefYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XiKU6bg7X20yegJPpWnF4ekbCfkYDOIdWyKV5OmwYG9piT9R4V3DMxTlYKG7xKH26
-	 1bgDh2mZIOfcFvmOazRvjs/j/DjJsjtrrQAQymImbYjEivVkOA1z81aonB0VLT8CcZ
-	 7qgSvVeSfCg9/UGyfC1KMTUfYEiGdcmrsuxnKw4+tOTcBijxkbkGIpgv9f1irTq7ED
-	 lz6ltXV67VBElWTKb5K0gbQhcOWXtwKzh5BUF2QHDGhceCaM0kYDcghD3O01+6w3pg
-	 2+5doHmtHbvK2iVFMgpMqrifVDWx4f6XMZB0rssdZGi+L1unEuqBrk6GqzuwP4nd+q
-	 TvoEA+X7OAWjQ==
-Date: Thu, 18 Sep 2025 14:55:54 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
-	hsiangkao@linux.alibaba.com, linux-block@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com, linux-xfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 12/15] iomap: make iomap_read_folio() a void return
-Message-ID: <20250918215554.GX1587915@frogsfrogsfrogs>
-References: <20250916234425.1274735-1-joannelkoong@gmail.com>
- <20250916234425.1274735-13-joannelkoong@gmail.com>
+	s=arc-20240116; t=1758233432; c=relaxed/simple;
+	bh=6VwWe0xPzmV6FnfeDnW6efYh9BxtkUPEBFMEiPZsQos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UxL+ZoaBQ7c7T3+JmndkqfYk/DiwYVg8ILr2h9kE8nhZSaMLKzawVKrrXZpqeJa4Qp6EKTDNzpJTXkgMkZ0fMyZtSuUkjdd/J2uEZJ+3otZL6g7p5EVnKq9BNgXbtGlvTOl/6/NFZmgxWczKDx5P4aoZs0TGh62tcA3hvrPqpnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvVKSg1v; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b5f7fe502dso8291001cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Sep 2025 15:10:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758233429; x=1758838229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BMLjismdPXyhxGkoMZ3Owc4rCn1icqDpq8x4V7KOiNo=;
+        b=YvVKSg1vRUDnooP/KlKT4sMOj/sSYAcgeM87AvYjQKoPq1uKuVYipDyIQfck4quKJD
+         jFXyQEVrVjWg6CHdpMlzXzf3j1PBTF4ZnTG/4PAXD0os3RYzp8iN+pGoxwqt2txSAD5i
+         DTM6SRd49p5nPy1Pe+8nAsVj3uQZMs7cv3dHXjIP18dMoHVTPrHliL5CW6OgcWv5Hl/g
+         dkg8pgIdkSKATj2g2/nHCeux9ZUiba4j4elOL7VLUQHVYKKjbJUiwPs0FSpX8NLPXqKf
+         IT9M5OdHEMnzsrKwgYHPJQoWJkej+ulYnTKxDbdoNMeDU/3RNOyAx3aS1wOQyU611666
+         KEYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758233429; x=1758838229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BMLjismdPXyhxGkoMZ3Owc4rCn1icqDpq8x4V7KOiNo=;
+        b=WyxnQnnkU5beYg8mfLADUOclPqNGMUAnIb3FUaPLAYlydf7YwYZRICIE/IXYVr8f3F
+         xZt3cdDI7g14ilgPpHeP6BC7WFFgoYvkKTWFsjV5QLlHjZLAzziVnDMRMbnoEpfDDso+
+         ZS23bnJh3C7MrUyYiMeqCZj/k9uQMLepc7CjkCiAAPG2EqwbZAPT3Z0CuzwcdAanfNdu
+         99QayIeeJW/roeAHKAOZfn/ILuxKzY3U8B60HsxJ99OtAQmaXzVwQ0Bact0j4DYsj6/T
+         6slluvKEzK+qh36RdgVkAXNbNXPgz2mfpmzLJLT0qDOAUk8WAZa4zPprjtwcCuwUO2bF
+         iP4g==
+X-Forwarded-Encrypted: i=1; AJvYcCW555z19hyNp7uh16m8KiwN9MMdlpAKauLsJLMO9Y1l1OJfCHj2eP+hsapTWp1PwVEVYzhcAd98oNr2yszI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsqxRHqC33TnNS48SSRsAHcd8M3juAU/uNKL/mhhuDTnOrrXG6
+	Gk5eCCkzMzmS/QvfSQtC3V9rUPh+HZG4jrXvUfvnenfxkabbZmYVcdVdZSAmehe6GYXzy9nTDce
+	b5junVifxiBooSmAOwFikbUePhFzo5LsZLjV9IcM=
+X-Gm-Gg: ASbGnct0HQOHtsm1CY1xpy319ynhb8+YRxn69UfDyErpEjU0Xrq2qv5xb6zUlKed9gD
+	JgbCCzWvXmUL9dc+ct+4aDnHedc4zHq1rujQPagAnjY4yMQ7MWMXsyAmlGKNyCaAgBCpPB6u8x1
+	BWb/ZCKR6vRwbYxdHJg31rpNdevyz7/UqZCX4n5Xrl7dJhMvuaYnCknPIPkWJRIC9RXg6IaVJqH
+	Fg49kL7cNkGYM0DG5+r9266+1fUSaN9ZIEb8ry0Sv6qhpXVOpNxaLxCtYc=
+X-Google-Smtp-Source: AGHT+IGjdL034BALwTmUdxjSXlOGWZyplNPvLP19rLkgfseOZk3Ugy7fDNveBvPN8Hi+/A69y1Rk5PPcZKYyk2nw0cw=
+X-Received: by 2002:a05:622a:11cc:b0:4b7:976e:8c48 with SMTP id
+ d75a77b69052e-4c06e3fab4emr12835861cf.14.1758233429428; Thu, 18 Sep 2025
+ 15:10:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916234425.1274735-13-joannelkoong@gmail.com>
+References: <20250917004001.2602922-1-joannelkoong@gmail.com>
+ <aMqzoK1BAq0ed-pB@bfoster> <CAJnrk1ZeYWseb0rpTT7w5S-c1YuVXe-w-qMVCAiwTJRpgm+fbQ@mail.gmail.com>
+ <aMvtlfIRvb9dzABh@bfoster> <aMwW0Zp2hdXfTGos@infradead.org> <aMxpFWnIDOpEWR1U@bfoster>
+In-Reply-To: <aMxpFWnIDOpEWR1U@bfoster>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 18 Sep 2025 15:10:18 -0700
+X-Gm-Features: AS18NWDwA7X-ONVkveKmDgwbimKxayr87pUKVFaacfpPIbDZBHVxH8s9c2UeJHs
+Message-ID: <CAJnrk1azO4iZD05atv9VJCG9f1G=8YCW6cyUw2LbW=4_ufi8gw@mail.gmail.com>
+Subject: Re: [PATCH v1] iomap: simplify iomap_iter_advance()
+To: Brian Foster <bfoster@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 04:44:22PM -0700, Joanne Koong wrote:
-> No errors are propagated in iomap_read_folio(). Change
-> iomap_read_folio() to a void return to make this clearer to callers.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+On Thu, Sep 18, 2025 at 1:14=E2=80=AFPM Brian Foster <bfoster@redhat.com> w=
+rote:
+>
+> On Thu, Sep 18, 2025 at 07:27:29AM -0700, Christoph Hellwig wrote:
+> > On Thu, Sep 18, 2025 at 07:31:33AM -0400, Brian Foster wrote:
+> > > IME the __iomap_iter_advance() would be the most low level and flexib=
+le
+> > > version, whereas the wrappers simplify things. There's also the point
+> > > that the wrapper seems the more common case, so maybe that makes thin=
+gs
+> > > cleaner if that one is used more often.
+> > >
+> > > But TBH I'm not sure there is strong precedent. I'm content if we can
+> > > retain the current variant for the callers that take advantage of it.
+> > > Another idea is you could rename the current function to
+> > > iomap_iter_advance_and_update_length_for_loopy_callers() and see what
+> > > alternative suggestions come up. ;)
+> >
+> > Yeah, __ names are a bit nasty.  I prefer to mostly limit them to
+> > local helpers, or to things with an obvious inline wrapper for the
+> > fast path.  So I your latest suggestions actually aims in the right
+> > directly, but maybe we can shorten the name a little and do something
+> > like:
+> >
+> > iomap_iter_advance_and_update_len
+> >
+> > although even that would probably lead a few lines to spill.
+> > iomap_iter_advance_len would be a shorter, but a little more confusing,
+> > but still better than __-naming, so maybe it should be fine with a good
+> > kerneldoc comment?
+> >
+>
+> Ack, anything like that is fine with me, even something like
+> iomap_iter_advance_and_length() with a comment that just points out it
+> also calls iomap_length().
+>
+> Another thought was to have one helper that returns the remaining length
+> or error and then a wrapper that translates the return (i.e. return ret
+> >=3D 0 ? 0 : ret). But when I thought more about it seemed like it just
+> created confusion.
+>
+> Brian
+>
 
-Yesssssss
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+I'm looking at this patch again and wondering if the second helper is
+all that necessary. I feel like if we're adding it because the caller
+could be confused/unclear about needing to update their local length
+variable, then wouldn't they also be confused about having to use
+iomap_iter_advance_and_length() instead of iomap_iter_advance()? I
+feel like if they know enough to know that they need to use
+iomap_iter_advance_and_length() instead of iomap_iter_advance(), then
+they know enough to update their local length variable themsevles
+through iomap_length(). imo it seems cleaner / less cluttery to just
+have iomap_iter_advance(). But I'm happy to add the
+"iomap_advance_and_length()" helper for v2 if you guys disagree and
+prefer having a 2nd helper.
 
---D
 
-> ---
->  fs/iomap/buffered-io.c | 9 +--------
->  include/linux/iomap.h  | 2 +-
->  2 files changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 72258b0109ec..be535bd3aeca 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -450,7 +450,7 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
->  	return ret;
->  }
->  
-> -int iomap_read_folio(const struct iomap_ops *ops,
-> +void iomap_read_folio(const struct iomap_ops *ops,
->  		struct iomap_read_folio_ctx *ctx)
->  {
->  	struct folio *folio = ctx->cur_folio;
-> @@ -477,13 +477,6 @@ int iomap_read_folio(const struct iomap_ops *ops,
->  
->  	if (!cur_folio_owned)
->  		folio_unlock(folio);
-> -
-> -	/*
-> -	 * Just like mpage_readahead and block_read_full_folio, we always
-> -	 * return 0 and just set the folio error flag on errors.  This
-> -	 * should be cleaned up throughout the stack eventually.
-> -	 */
-> -	return 0;
->  }
->  EXPORT_SYMBOL_GPL(iomap_read_folio);
->  
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 4a168ebb40f5..fa55ec611fff 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -340,7 +340,7 @@ static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
->  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
->  		const struct iomap_ops *ops,
->  		const struct iomap_write_ops *write_ops, void *private);
-> -int iomap_read_folio(const struct iomap_ops *ops,
-> +void iomap_read_folio(const struct iomap_ops *ops,
->  		struct iomap_read_folio_ctx *ctx);
->  void iomap_readahead(const struct iomap_ops *ops,
->  		struct iomap_read_folio_ctx *ctx);
-> -- 
-> 2.47.3
-> 
-> 
+Thanks,
+Joanne
 
