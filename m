@@ -1,594 +1,399 @@
-Return-Path: <linux-fsdevel+bounces-62262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812BFB8B511
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 23:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545F1B8B62F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 23:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375153B24F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 21:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E8516B7BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 21:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3762D0C78;
-	Fri, 19 Sep 2025 21:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716A32D374D;
+	Fri, 19 Sep 2025 21:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="1fn2JUX/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhPHqaeb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1022BD5A1;
-	Fri, 19 Sep 2025 21:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D15226B76A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 21:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316791; cv=none; b=Vl+4Dltq1mm9RQ25JevHlvlSYBsIEbbOmpcM35oKNNAmpejBS4kXiOtR2rIJwyMGKR+pNyqZd5Yqmt1PhoZ22kLEdRJww8RU4/cz4vpXZBxCMKBuFEI6DkgOCC+6k9StNx9N0g35EzqZC2Ps4yFYjgSBB/UaI3tJNIo6ex67G1c=
+	t=1758318259; cv=none; b=kIlZ8f3Q9EMBTEeMSuTygF2e/IPiFOu3nnUdY06lJgd3TR9XJ8k5WxKMFaANYBOGhIX8ql+31UnoZIdn3vTXNGZlrsBneHGbaCxFDGcqdWdJgmn9zFKIlh591szaprp1mAUrIcDYa0yA/ECtMSK9QsEt2aqBlVv8CNu/gT0FkyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316791; c=relaxed/simple;
-	bh=s0HhEoGl6Ah9IyRnh5qMy54eW4AmNow1pqSTOHC9apE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhBc0Xc8GylRnTtZWB2Ar+YYw5hx8m2Vs0r7pKtP4wqO562IY+z6WvP2VsIXWOinZpKUdu4LRRJy7EQD/GRm3KZVIEecMyAaAfuBwzYfSTO4scqZBdDMqXfZg9r7XTWmEnhkBS8VBA/CNlW4ZfNnyDFD20BbK9vtY1GdrhVT27E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=1fn2JUX/; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cT54H6rr9z9spD;
-	Fri, 19 Sep 2025 23:19:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1758316784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtZqqfVftOfDACfEWFFn2mmk4WyTVtJ53JZTGafoHBU=;
-	b=1fn2JUX/mwjocEAHvaC6cZKMZsWeYGuqnBv1bqmBQPc33T/ZQYnIzePUa7I9mfvbMqG5pD
-	jKolFZ7xZiSOlWhYldAyZ3PaugDhlbnU+o8r2VMtU6XXKGvJoFBOPK3ZrcUjFUgvXbaKfb
-	Ii3sjgBbJ3ycjXb1YR9W0oKVG8o71WMjwLrmIbRJRoSgGz2aen1hcP2obKNt8mzg2T1ZVM
-	L694neaz6DpKoOnXAZmTHZIUZx/kZt/BxwEtk5Wyn7PFSxNvh3+KlOHg+9sdkynkvHI0f1
-	+PINY18fsB4cft4YDpog9vMXDdfBbGi3cekDdZ/HP/OmKQdoEcCjDLVpXAFK0w==
-Date: Sat, 20 Sep 2025 07:19:28 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 02/10] man/man2/fsopen.2: document "new" mount API
-Message-ID: <2025-09-19-movable-minty-stopper-posse-7AufW3@cyphar.com>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-2-1261201ab562@cyphar.com>
- <zrifsd6vqj6ve25uipyeteuztncgwtzfmfnfsxhcjwcnxf2wen@xjx3y2g77uin>
+	s=arc-20240116; t=1758318259; c=relaxed/simple;
+	bh=dzfLM/82+JxX9V2WeG5Z7WbY5zSyeHOs5SzYw+9rdWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q1u/2MvadKNYuD2NHqpdLLWzxGyUeboZkUAStBGaUmO9u8SKKfJ8rtpl7MUiH+gdHiD/SSoBKkA/6qnTM85IOOnquLoZYgCZQpZVXRn0YA/l+Evciz+gPUQBdledRa0dy8ziL3+wAduLcg86bZd+Gn3+Q91bJUtxinNg3iHDvv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhPHqaeb; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b551b040930so695970a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 14:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758318257; x=1758923057; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b3gOft1CQ8ZEnAwSpPiegFF6d8oz+KFXcTmKlmNsfto=;
+        b=jhPHqaeb/oInoNS0qjbE8uFA0R7Rt7+v4n7/ejKX1wSBTW949u/ZWxVkvoJhrbS5Iu
+         msRerntgF9wfqLdoonNMB+BIVX0WmDBii0c//J6V3jixye8CHuM6oJB6KN/A9lQjLLwb
+         d/o9FMm7mM37rAc5Lw6RVwjmTavN5gbZSxLQSen4z3pGsvi9Sryv6cn52nQc9tBzHlKH
+         DIfDyMiTAo/St3qJxm9EGfn08v1GHlGMa1+1M/QOFMZ653NIuLPpNhtBqpvGXoGdeD/h
+         qHGQwcTw/npmsZk9xR2tBMoMHOMHl5h7JiOEDb9kib4u7PjVOQbqqH3DG4GSZo0t3nNA
+         z95g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758318257; x=1758923057;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b3gOft1CQ8ZEnAwSpPiegFF6d8oz+KFXcTmKlmNsfto=;
+        b=Glm5hVe9ZRbt9u4uobAqfqVeK2/FPvdGCEhmU59BWm0XyD/T8w7zaIDBQNDzI1jIGL
+         6+7sXi9MAQ7gIHtwhdYgbpAf7Nxnlr9YLdo6iE2Z/Z+qzCqRPgh0EDaX+S5/SvXFZFDf
+         ZT88BKVga5MqF7KHkKrUttqQFZbaCkSEwPB9OW5EH8JrcAeYw8+/l9okxUqxxzQXJTog
+         edjFBnk74acQJVyHkrSaIWkBeJsxxr8OBe2yrRGKmL6ROjGKPvhztEJqTRD9MFy0AMz2
+         B+z2LfUdGm7sUt8YyeVxL5QiwCdjn7jTuoc3zWjqE6VXgjNptcplNbIHcgzMPXSfVUVW
+         Zr2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXX/FFKSmT080sbsVzFav2QiWaX7U2nYxoIzOFqGqeUlhDH7Pma8vyoOQVgbjwEch7vg1v9HqU3xAQ6dVFn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFySrtTIiH6NGwfJd1yeP16VL3no8sLh2WOQKJ+0tg34nm9xE7
+	BM80O9XmgQG7jG80v/6L5H8hl4t73ltL+2EE7fQEnlB3Gs7TcEhdgj2Z
+X-Gm-Gg: ASbGncvzrhaBikQtZNOUb7C9W4O2FTWX43ENfP59luEijXPt1tQgDwaX0Lgu3G1biRA
+	GJ54SpIVW6OgZn3JucliVsA8QS+NaNxMwkDFWZFriwlN2H1H6Camk+vsSaI6Q3mV9rKsT0kAt9J
+	fMiUDcvraP1AOs9hzVaCOz6ISGyJWlWnziyOOL9QW54tcmGwT1lIxnK1bzypv+X+QM9USRq21og
+	teg4as6L6CN3tTdaxKG9AosdZ7VqbkMhUJH5O13kK7MixLPdWzrHS6QednV/kPNiGs7IzbIvM27
+	gEr2riItovaPNA/Kvl4/HZu6aoEXQHFgPWxe2F7V0FnYY9Qa4ljs2nPcLPAgbf8NKn1gqKfBpyQ
+	nA6RO4NRd030IpjalG3CDF6Neb5TlLZmz0yPakZBjvU5GkHZHwGLOV/yN
+X-Google-Smtp-Source: AGHT+IE5lKsgNP+6i0AqceL/mh+GjClgKv34vusumIwtkS3yPLQ8bxBvFolt/deCdINCwKQXcEo14g==
+X-Received: by 2002:a17:90b:288f:b0:32b:d8af:b636 with SMTP id 98e67ed59e1d1-330983570demr5628799a91.19.1758318257369;
+        Fri, 19 Sep 2025 14:44:17 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3306085c115sm6270063a91.27.2025.09.19.14.44.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 14:44:17 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: brauner@kernel.org
+Cc: bfoster@redhat.com,
+	hch@infradead.org,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] iomap: simplify iomap_iter_advance()
+Date: Fri, 19 Sep 2025 14:42:50 -0700
+Message-ID: <20250919214250.4144807-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="whsbzd3onxrzy63r"
-Content-Disposition: inline
-In-Reply-To: <zrifsd6vqj6ve25uipyeteuztncgwtzfmfnfsxhcjwcnxf2wen@xjx3y2g77uin>
+Content-Transfer-Encoding: 8bit
 
+Most callers of iomap_iter_advance() do not need the remaining length
+returned. Get rid of the extra iomap_length() call that
+iomap_iter_advance() does.
 
---whsbzd3onxrzy63r
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 02/10] man/man2/fsopen.2: document "new" mount API
-MIME-Version: 1.0
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+---
+ fs/dax.c               | 30 ++++++++++++------------------
+ fs/iomap/buffered-io.c | 18 +++++++++---------
+ fs/iomap/direct-io.c   |  6 +++---
+ fs/iomap/iter.c        | 14 +++++---------
+ fs/iomap/seek.c        |  8 ++++----
+ include/linux/iomap.h  |  6 ++----
+ 6 files changed, 35 insertions(+), 47 deletions(-)
 
-On 2025-09-19, Alejandro Colomar <alx@kernel.org> wrote:
-> Hi Aleksa,
->=20
-> On Fri, Sep 19, 2025 at 11:59:43AM +1000, Aleksa Sarai wrote:
-> > This is loosely based on the original documentation written by David
-> > Howells and later maintained by Christian Brauner, but has been
-> > rewritten to be more from a user perspective (as well as fixing a few
-> > critical mistakes).
-> >=20
-> > Co-authored-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Co-authored-by: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> >  man/man2/fsopen.2 | 384 ++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 384 insertions(+)
-> >=20
-> > diff --git a/man/man2/fsopen.2 b/man/man2/fsopen.2
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..7cdbeac7d64b7e5c969dee6=
-19a039ec947d1e981
-> > --- /dev/null
-> > +++ b/man/man2/fsopen.2
-> > @@ -0,0 +1,384 @@
-> > +.\" Copyright, the authors of the Linux man-pages project
-> > +.\"
-> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> > +.\"
-> > +.TH fsopen 2 (date) "Linux man-pages (unreleased)"
-> > +.SH NAME
-> > +fsopen \- create a new filesystem context
-> > +.SH LIBRARY
-> > +Standard C library
-> > +.RI ( libc ,\~ \-lc )
-> > +.SH SYNOPSIS
-> > +.nf
-> > +.B #include <sys/mount.h>
-> > +.P
-> > +.BI "int fsopen(const char *" fsname ", unsigned int " flags );
-> > +.fi
-> > +.SH DESCRIPTION
-> > +The
-> > +.BR fsopen ()
-> > +system call is part of
-> > +the suite of file descriptor based mount facilities in Linux.
->=20
-> Minor nitpick (I can amend that; no worries):
->=20
-> Because 'file-descriptor-based' works as a single modifier of
-> facilities, it goes with hyphens.
+diff --git a/fs/dax.c b/fs/dax.c
+index 20ecf652c129..039ad6c3c2b1 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1534,7 +1534,7 @@ static int dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 
+ 	/* already zeroed?  we're done. */
+ 	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+-		return iomap_iter_advance(iter, &length);
++		return iomap_iter_advance(iter, length);
+ 
+ 	/*
+ 	 * invalidate the pages whose sharing state is to be changed
+@@ -1563,10 +1563,10 @@ static int dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		ret = iomap_iter_advance(iter, &length);
++		ret = iomap_iter_advance(iter, length);
+ 		if (ret)
+ 			return ret;
+-	} while (length > 0);
++	} while ((length = iomap_length(iter)) > 0);
+ 
+ 	if (did_zero)
+ 		*did_zero = true;
+@@ -1624,7 +1624,7 @@ static int dax_iomap_iter(struct iomap_iter *iomi, struct iov_iter *iter)
+ 
+ 		if (iomap->type == IOMAP_HOLE || iomap->type == IOMAP_UNWRITTEN) {
+ 			done = iov_iter_zero(min(length, end - pos), iter);
+-			return iomap_iter_advance(iomi, &done);
++			return iomap_iter_advance(iomi, done);
+ 		}
+ 	}
+ 
+@@ -1708,12 +1708,12 @@ static int dax_iomap_iter(struct iomap_iter *iomi, struct iov_iter *iter)
+ 			xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
+ 					map_len, iter);
+ 
+-		length = xfer;
+-		ret = iomap_iter_advance(iomi, &length);
++		ret = iomap_iter_advance(iomi, xfer);
+ 		if (!ret && xfer == 0)
+ 			ret = -EFAULT;
+ 		if (xfer < map_len)
+ 			break;
++		length = iomap_length(iomi);
+ 	}
+ 	dax_read_unlock(id);
+ 
+@@ -1946,10 +1946,8 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, unsigned long *pfnp,
+ 			ret |= VM_FAULT_MAJOR;
+ 		}
+ 
+-		if (!(ret & VM_FAULT_ERROR)) {
+-			u64 length = PAGE_SIZE;
+-			iter.status = iomap_iter_advance(&iter, &length);
+-		}
++		if (!(ret & VM_FAULT_ERROR))
++			iter.status = iomap_iter_advance(&iter, PAGE_SIZE);
+ 	}
+ 
+ 	if (iomap_errp)
+@@ -2061,10 +2059,8 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, unsigned long *pfnp,
+ 			continue; /* actually breaks out of the loop */
+ 
+ 		ret = dax_fault_iter(vmf, &iter, pfnp, &xas, &entry, true);
+-		if (ret != VM_FAULT_FALLBACK) {
+-			u64 length = PMD_SIZE;
+-			iter.status = iomap_iter_advance(&iter, &length);
+-		}
++		if (ret != VM_FAULT_FALLBACK)
++			iter.status = iomap_iter_advance(&iter, PMD_SIZE);
+ 	}
+ 
+ unlock_entry:
+@@ -2190,7 +2186,6 @@ static int dax_range_compare_iter(struct iomap_iter *it_src,
+ 	const struct iomap *smap = &it_src->iomap;
+ 	const struct iomap *dmap = &it_dest->iomap;
+ 	loff_t pos1 = it_src->pos, pos2 = it_dest->pos;
+-	u64 dest_len;
+ 	void *saddr, *daddr;
+ 	int id, ret;
+ 
+@@ -2223,10 +2218,9 @@ static int dax_range_compare_iter(struct iomap_iter *it_src,
+ 	dax_read_unlock(id);
+ 
+ advance:
+-	dest_len = len;
+-	ret = iomap_iter_advance(it_src, &len);
++	ret = iomap_iter_advance(it_src, len);
+ 	if (!ret)
+-		ret = iomap_iter_advance(it_dest, &dest_len);
++		ret = iomap_iter_advance(it_dest, len);
+ 	return ret;
+ 
+ out_unlock:
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 8b847a1e27f1..6cc2ee44bbca 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -376,7 +376,7 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
+ 		ret = iomap_read_inline_data(iter, folio);
+ 		if (ret)
+ 			return ret;
+-		return iomap_iter_advance(iter, &length);
++		return iomap_iter_advance(iter, length);
+ 	}
+ 
+ 	/* zero post-eof blocks as the page may be mapped */
+@@ -437,7 +437,7 @@ static int iomap_readpage_iter(struct iomap_iter *iter,
+ 	 * iteration.
+ 	 */
+ 	length = pos - iter->pos + plen;
+-	return iomap_iter_advance(iter, &length);
++	return iomap_iter_advance(iter, length);
+ }
+ 
+ static int iomap_read_folio_iter(struct iomap_iter *iter,
+@@ -1041,7 +1041,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+ 			}
+ 		} else {
+ 			total_written += written;
+-			iomap_iter_advance(iter, &written);
++			iomap_iter_advance(iter, written);
+ 		}
+ 	} while (iov_iter_count(i) && iomap_length(iter));
+ 
+@@ -1310,7 +1310,7 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
+ 	int status;
+ 
+ 	if (!iomap_want_unshare_iter(iter))
+-		return iomap_iter_advance(iter, &bytes);
++		return iomap_iter_advance(iter, bytes);
+ 
+ 	do {
+ 		struct folio *folio;
+@@ -1334,10 +1334,10 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
+ 
+ 		balance_dirty_pages_ratelimited(iter->inode->i_mapping);
+ 
+-		status = iomap_iter_advance(iter, &bytes);
++		status = iomap_iter_advance(iter, bytes);
+ 		if (status)
+ 			break;
+-	} while (bytes > 0);
++	} while ((bytes = iomap_length(iter)) > 0);
+ 
+ 	return status;
+ }
+@@ -1412,10 +1412,10 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+ 		if (WARN_ON_ONCE(!ret))
+ 			return -EIO;
+ 
+-		status = iomap_iter_advance(iter, &bytes);
++		status = iomap_iter_advance(iter, bytes);
+ 		if (status)
+ 			break;
+-	} while (bytes > 0);
++	} while ((bytes = iomap_length(iter)) > 0);
+ 
+ 	if (did_zero)
+ 		*did_zero = true;
+@@ -1526,7 +1526,7 @@ static int iomap_folio_mkwrite_iter(struct iomap_iter *iter,
+ 		folio_mark_dirty(folio);
+ 	}
+ 
+-	return iomap_iter_advance(iter, &length);
++	return iomap_iter_advance(iter, length);
+ }
+ 
+ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops,
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 46aa85af13dc..ec8e7a26c9ab 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -496,7 +496,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 	/* Undo iter limitation to current extent */
+ 	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
+ 	if (copied)
+-		return iomap_iter_advance(iter, &copied);
++		return iomap_iter_advance(iter, copied);
+ 	return ret;
+ }
+ 
+@@ -507,7 +507,7 @@ static int iomap_dio_hole_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+ 	dio->size += length;
+ 	if (!length)
+ 		return -EFAULT;
+-	return iomap_iter_advance(iter, &length);
++	return iomap_iter_advance(iter, length);
+ }
+ 
+ static int iomap_dio_inline_iter(struct iomap_iter *iomi, struct iomap_dio *dio)
+@@ -542,7 +542,7 @@ static int iomap_dio_inline_iter(struct iomap_iter *iomi, struct iomap_dio *dio)
+ 	dio->size += copied;
+ 	if (!copied)
+ 		return -EFAULT;
+-	return iomap_iter_advance(iomi, &copied);
++	return iomap_iter_advance(iomi, copied);
+ }
+ 
+ static int iomap_dio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+index cef77ca0c20b..91d2024e00da 100644
+--- a/fs/iomap/iter.c
++++ b/fs/iomap/iter.c
+@@ -13,17 +13,13 @@ static inline void iomap_iter_reset_iomap(struct iomap_iter *iter)
+ 	memset(&iter->srcmap, 0, sizeof(iter->srcmap));
+ }
+ 
+-/*
+- * Advance the current iterator position and output the length remaining for the
+- * current mapping.
+- */
+-int iomap_iter_advance(struct iomap_iter *iter, u64 *count)
++/* Advance the current iterator position and decrement the remaining length */
++int iomap_iter_advance(struct iomap_iter *iter, u64 count)
+ {
+-	if (WARN_ON_ONCE(*count > iomap_length(iter)))
++	if (WARN_ON_ONCE(count > iomap_length(iter)))
+ 		return -EIO;
+-	iter->pos += *count;
+-	iter->len -= *count;
+-	*count = iomap_length(iter);
++	iter->pos += count;
++	iter->len -= count;
+ 	return 0;
+ }
+ 
+diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+index 56db2dd4b10d..6cbc587c93da 100644
+--- a/fs/iomap/seek.c
++++ b/fs/iomap/seek.c
+@@ -16,13 +16,13 @@ static int iomap_seek_hole_iter(struct iomap_iter *iter,
+ 		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
+ 				iter->pos, iter->pos + length, SEEK_HOLE);
+ 		if (*hole_pos == iter->pos + length)
+-			return iomap_iter_advance(iter, &length);
++			return iomap_iter_advance(iter, length);
+ 		return 0;
+ 	case IOMAP_HOLE:
+ 		*hole_pos = iter->pos;
+ 		return 0;
+ 	default:
+-		return iomap_iter_advance(iter, &length);
++		return iomap_iter_advance(iter, length);
+ 	}
+ }
+ 
+@@ -59,12 +59,12 @@ static int iomap_seek_data_iter(struct iomap_iter *iter,
+ 
+ 	switch (iter->iomap.type) {
+ 	case IOMAP_HOLE:
+-		return iomap_iter_advance(iter, &length);
++		return iomap_iter_advance(iter, length);
+ 	case IOMAP_UNWRITTEN:
+ 		*hole_pos = mapping_seek_hole_data(iter->inode->i_mapping,
+ 				iter->pos, iter->pos + length, SEEK_DATA);
+ 		if (*hole_pos < 0)
+-			return iomap_iter_advance(iter, &length);
++			return iomap_iter_advance(iter, length);
+ 		return 0;
+ 	default:
+ 		*hole_pos = iter->pos;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 73dceabc21c8..4469b2318b08 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -245,7 +245,7 @@ struct iomap_iter {
+ };
+ 
+ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops);
+-int iomap_iter_advance(struct iomap_iter *iter, u64 *count);
++int iomap_iter_advance(struct iomap_iter *iter, u64 count);
+ 
+ /**
+  * iomap_length_trim - trimmed length of the current iomap iteration
+@@ -282,9 +282,7 @@ static inline u64 iomap_length(const struct iomap_iter *iter)
+  */
+ static inline int iomap_iter_advance_full(struct iomap_iter *iter)
+ {
+-	u64 length = iomap_length(iter);
+-
+-	return iomap_iter_advance(iter, &length);
++	return iomap_iter_advance(iter, iomap_length(iter));
+ }
+ 
+ /**
+-- 
+2.47.3
 
-Will do for all of the new pages.
-
-> > +.P
-> > +.BR fsopen ()
-> > +creates a blank filesystem configuration context within the kernel
-> > +for the filesystem named by
-> > +.I fsname
-> > +and places it into creation mode.
-> > +A new file descriptor
-> > +associated with the filesystem configuration context
-> > +is then returned.
-> > +The calling process must have the
-> > +.B \%CAP_SYS_ADMIN
-> > +capability in order to create a new filesystem configuration context.
-> > +.P
-> > +A filesystem configuration context is
-> > +an in-kernel representation of a pending transaction,
-> > +containing a set of configuration parameters that are to be applied
-> > +when creating a new instance of a filesystem
-> > +(or modifying the configuration of an existing filesystem instance,
-> > +such as when using
-> > +.BR fspick (2)).
-> > +.P
-> > +After obtaining a filesystem configuration context with
-> > +.BR fsopen (),
-> > +the general workflow for operating on the context looks like the follo=
-wing:
-> > +.IP (1) 5
-> > +Pass the filesystem context file descriptor to
-> > +.BR fsconfig (2)
-> > +to specify any desired filesystem parameters.
-> > +This may be done as many times as necessary.
-> > +.IP (2)
-> > +Pass the same filesystem context file descriptor to
-> > +.BR fsconfig (2)
-> > +with
-> > +.B \%FSCONFIG_CMD_CREATE
-> > +to create an instance of the configured filesystem.
-> > +.IP (3)
-> > +Pass the same filesystem context file descriptor to
-> > +.BR fsmount (2)
-> > +to create a new detached mount object for
-> > +the root of the filesystem instance,
-> > +which is then attached to a new file descriptor.
-> > +(This also places the filesystem context file descriptor into
-> > +reconfiguration mode,
-> > +similar to the mode produced by
-> > +.BR fspick (2).)
-> > +Once a mount object has been created with
-> > +.BR fsmount (2),
-> > +the filesystem context file descriptor can be safely closed.
-> > +.IP (4)
-> > +Now that a mount object has been created,
-> > +you may
-> > +.RS
-> > +.IP (4.1) 7
-> > +use the detached mount object file descriptor as a
-> > +.I dirfd
-> > +argument to "*at()" system calls; and/or
-> > +.IP (4.2) 7
->=20
-> I'll paste here the formatted part of this page:
->=20
->         (4)  Now that a mount object has been created, you may
-> =20
->              (4.1)  use the detached mount object file descrip=E2=80=90
->                     tor as a dirfd argument to "*at()" system
->                     calls; and/or
-> =20
->              (4.2)  attach the mount object to a mount point by
->                     passing the mount object file descriptor to
->                     move_mount(2).  This will also prevent the
->                     mount object from being unmounted and de=E2=80=90
->                     stroyed when the mount object file descrip=E2=80=90
->                     tor is closed.
->=20
->              The mount object file descriptor will remain asso=E2=80=90
->              ciated with the mount object even after doing the
->              above operations, so you may repeatedly use the
->              mount object file descriptor with move_mount(2)
->              and/or "*at()" system calls as many times as neces=E2=80=90
->              sary.
->=20
-> That sublist seems to be an unordered one.  I think we should use
-> a bullet list for those items (the outer list 1,2,3,4 is okay as is).
->=20
->        Bullet lists
->               Elements are preceded by bullet symbols  (\[bu]).
->               Anything  that  doesn't  fit elsewhere is usually
->               covered by this type of list.
-
-I think I originally planned to reference the inner list (which would
-require non-bullets), but it seems I dropped that text later. I'll fix
-this up.
-
-> > +attach the mount object to a mount point
-> > +by passing the mount object file descriptor to
-> > +.BR move_mount (2).
-> > +This will also prevent the mount object from
-> > +being unmounted and destroyed when
-> > +the mount object file descriptor is closed.
-> > +.RE
-> > +.IP
-> > +The mount object file descriptor will
-> > +remain associated with the mount object
-> > +even after doing the above operations,
-> > +so you may repeatedly use the mount object file descriptor with
-> > +.BR move_mount (2)
-> > +and/or "*at()" system calls
-> > +as many times as necessary.
-> > +.P
-> > +A filesystem context will move between different modes
-> > +throughout its lifecycle
-> > +(such as the creation phase
-> > +when created with
-> > +.BR fsopen (),
-> > +the reconfiguration phase
-> > +when an existing filesystem instance is selected with
-> > +.BR fspick (2),
-> > +and the intermediate "awaiting-mount" phase
-> > +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
-> > +between
-> > +.BR \%FSCONFIG_CMD_CREATE
-> > +and
-> > +.BR fsmount (2)),
-> > +which has an impact on
-> > +what operations are permitted on the filesystem context.
-> > +.P
-> > +The file descriptor returned by
-> > +.BR fsopen ()
-> > +also acts as a channel for filesystem drivers to
-> > +provide more comprehensive diagnostic information
-> > +than is normally provided through the standard
-> > +.BR errno (3)
-> > +interface for system calls.
-> > +If an error occurs at any time during the workflow mentioned above,
-> > +calling
-> > +.BR read (2)
-> > +on the filesystem context file descriptor
-> > +will retrieve any ancillary information about the encountered errors.
-> > +(See the "Message retrieval interface" section
-> > +for more details on the message format.)
-> > +.P
-> > +.I flags
-> > +can be used to control aspects of
-> > +the creation of the filesystem configuration context file descriptor.
-> > +A value for
-> > +.I flags
-> > +is constructed by bitwise ORing
-> > +zero or more of the following constants:
-> > +.RS
-> > +.TP
-> > +.B FSOPEN_CLOEXEC
-> > +Set the close-on-exec
-> > +.RB ( FD_CLOEXEC )
-> > +flag on the new file descriptor.
-> > +See the description of the
-> > +.B O_CLOEXEC
-> > +flag in
-> > +.BR open (2)
-> > +for reasons why this may be useful.
-> > +.RE
-> > +.P
-> > +A list of filesystems supported by the running kernel
-> > +(and thus a list of valid values for
-> > +.IR fsname )
-> > +can be obtained from
-> > +.IR /proc/filesystems .
-> > +(See also
-> > +.BR proc_filesystems (5).)
-> > +.SS Message retrieval interface
-> > +When doing operations on a filesystem configuration context,
-> > +the filesystem driver may choose to provide
-> > +ancillary information to userspace
-> > +in the form of message strings.
-> > +.P
-> > +The filesystem context file descriptors returned by
-> > +.BR fsopen ()
-> > +and
-> > +.BR fspick (2)
-> > +may be queried for message strings at any time by calling
-> > +.BR read (2)
-> > +on the file descriptor.
-> > +Each call to
-> > +.BR read (2)
-> > +will return a single message,
-> > +prefixed to indicate its class:
-> > +.RS
-> > +.TP
-> > +\fBe\fP <\fImessage\fP>
->=20
-> We don't use '<' and '>' for indicating variable parts.  We already use
-> italics for that.  The reason to avoid the '<' and '>' is that it is
-> confusing: it is often unclear if the '<' are literal or placeholders.
->=20
-> We only use '<' when they're literal.
->=20
-> I suspect your want
->=20
-> 	.BI e\~ message
->=20
-> BTW, I'm assuming there's one space between the letter and the message,
-> and there are no literal '<'/'>', right?
-
-No there aren't literal '<' / '>' characters, it's just a regular
-string. I guess I was struggling with the (lack of) distinction between
-using italics for variable names and things that are variable.
-
-> Have a lovely day!
-> Alex
->=20
-> > +An error message was logged.
-> > +This is usually associated with an error being returned
-> > +from the corresponding system call which triggered this message.
-> > +.TP
-> > +\fBw\fP <\fImessage\fP>
-> > +A warning message was logged.
-> > +.TP
-> > +\fBi\fP <\fImessage\fP>
-> > +An informational message was logged.
-> > +.RE
-> > +.P
-> > +Messages are removed from the queue as they are read.
-> > +Note that the message queue has limited depth,
-> > +so it is possible for messages to get lost.
-> > +If there are no messages in the message queue,
-> > +.B read(2)
-> > +will return \-1 and
-> > +.I errno
-> > +will be set to
-> > +.BR \%ENODATA .
-> > +If the
-> > +.I buf
-> > +argument to
-> > +.BR read (2)
-> > +is not large enough to contain the entire message,
-> > +.BR read (2)
-> > +will return \-1 and
-> > +.I errno
-> > +will be set to
-> > +.BR \%EMSGSIZE .
-> > +(See BUGS.)
-> > +.P
-> > +If there are multiple filesystem contexts
-> > +referencing the same filesystem instance
-> > +(such as if you call
-> > +.BR fspick (2)
-> > +multiple times for the same mount),
-> > +each one gets its own independent message queue.
-> > +This does not apply to multiple file descriptors that are
-> > +tied to the same underlying open file description
-> > +(such as those created with
-> > +.BR dup (2)).
-> > +.P
-> > +Message strings will usually be prefixed by
-> > +the name of the filesystem or kernel subsystem
-> > +that logged the message,
-> > +though this may not always be the case.
-> > +See the Linux kernel source code for details.
-> > +.SH RETURN VALUE
-> > +On success, a new file descriptor is returned.
-> > +On error, \-1 is returned, and
-> > +.I errno
-> > +is set to indicate the error.
-> > +.SH ERRORS
-> > +.TP
-> > +.B EFAULT
-> > +.I fsname
-> > +is NULL
-> > +or a pointer to a location
-> > +outside the calling process's accessible address space.
-> > +.TP
-> > +.B EINVAL
-> > +.I flags
-> > +had an invalid flag set.
-> > +.TP
-> > +.B EMFILE
-> > +The calling process has too many open files to create more.
-> > +.TP
-> > +.B ENFILE
-> > +The system has too many open files to create more.
-> > +.TP
-> > +.B ENODEV
-> > +The filesystem named by
-> > +.I fsname
-> > +is not supported by the kernel.
-> > +.TP
-> > +.B ENOMEM
-> > +The kernel could not allocate sufficient memory to complete the operat=
-ion.
-> > +.TP
-> > +.B EPERM
-> > +The calling process does not have the required
-> > +.B \%CAP_SYS_ADMIN
-> > +capability.
-> > +.SH STANDARDS
-> > +Linux.
-> > +.SH HISTORY
-> > +Linux 5.2.
-> > +.\" commit 24dcb3d90a1f67fe08c68a004af37df059d74005
-> > +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> > +glibc 2.36.
-> > +.SH BUGS
-> > +.SS Message retrieval interface and \fB\%EMSGSIZE\fP
-> > +As described in the "Message retrieval interface" subsection above,
-> > +calling
-> > +.BR read (2)
-> > +with too small a buffer to contain
-> > +the next pending message in the message queue
-> > +for the filesystem configuration context
-> > +will cause
-> > +.BR read (2)
-> > +to return \-1 and set
-> > +.BR errno (3)
-> > +to
-> > +.BR \%EMSGSIZE .
-> > +.P
-> > +However,
-> > +this failed operation still
-> > +consumes the message from the message queue.
-> > +This effectively discards the message silently,
-> > +as no data is copied into the
-> > +.BR read (2)
-> > +buffer.
-> > +.P
-> > +Programs should take care to ensure that
-> > +their buffers are sufficiently large
-> > +to contain any reasonable message string,
-> > +in order to avoid silently losing valuable diagnostic information.
-> > +.\" Aleksa Sarai
-> > +.\"   This unfortunate behaviour has existed since this feature was me=
-rged, but
-> > +.\"   I have sent a patchset which will finally fix it.
-> > +.\"   <https://lore.kernel.org/r/20250807-fscontext-log-cleanups-v3-1-=
-8d91d6242dc3@cyphar.com/>
-> > +.SH EXAMPLES
-> > +To illustrate the workflow for creating a new mount,
-> > +the following is an example of how to mount an
-> > +.BR ext4 (5)
-> > +filesystem stored on
-> > +.I /dev/sdb1
-> > +onto
-> > +.IR /mnt .
-> > +.P
-> > +.in +4n
-> > +.EX
-> > +int fsfd, mntfd;
-> > +\&
-> > +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
-> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
-> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
-> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
-> > +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> > +.EE
-> > +.in
-> > +.P
-> > +First,
-> > +an ext4 configuration context is created and attached to the file desc=
-riptor
-> > +.IR fsfd .
-> > +Then, a series of parameters
-> > +(such as the source of the filesystem)
-> > +are provided using
-> > +.BR fsconfig (2),
-> > +followed by the filesystem instance being created with
-> > +.BR \%FSCONFIG_CMD_CREATE .
-> > +.BR fsmount (2)
-> > +is then used to create a new mount object attached to the file descrip=
-tor
-> > +.IR mntfd ,
-> > +which is then attached to the intended mount point using
-> > +.BR move_mount (2).
-> > +.P
-> > +The above procedure is functionally equivalent to
-> > +the following mount operation using
-> > +.BR mount (2):
-> > +.P
-> > +.in +4n
-> > +.EX
-> > +mount("/dev/sdb1", "/mnt", "ext4", MS_RELATIME,
-> > +      "ro,noatime,acl,user_xattr,iversion");
-> > +.EE
-> > +.in
-> > +.P
-> > +And here's an example of creating a mount object
-> > +of an NFS server share
-> > +and setting a Smack security module label.
-> > +However, instead of attaching it to a mount point,
-> > +the program uses the mount object directly
-> > +to open a file from the NFS share.
-> > +.P
-> > +.in +4n
-> > +.EX
-> > +int fsfd, mntfd, fd;
-> > +\&
-> > +fsfd =3D fsopen("nfs", 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "example.com/pub/linux",=
- 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
-> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
-> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> > +mntfd =3D fsmount(fsfd, 0, MOUNT_ATTR_NODEV);
-> > +fd =3D openat(mntfd, "src/linux-5.2.tar.xz", O_RDONLY);
-> > +.EE
-> > +.in
-> > +.P
-> > +Unlike the previous example,
-> > +this operation has no trivial equivalent with
-> > +.BR mount (2),
-> > +as it was not previously possible to create a mount object
-> > +that is not attached to any mount point.
-> > +.SH SEE ALSO
-> > +.BR fsconfig (2),
-> > +.BR fsmount (2),
-> > +.BR fspick (2),
-> > +.BR mount (2),
-> > +.BR mount_setattr (2),
-> > +.BR move_mount (2),
-> > +.BR open_tree (2),
-> > +.BR mount_namespaces (7)
-> >=20
-> > --=20
-> > 2.51.0
-> >=20
->=20
-> --=20
-> <https://www.alejandro-colomar.es>
-> Use port 80 (that is, <...:80/>).
-
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---whsbzd3onxrzy63r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaM3I4BsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/C4AEAyF7iSxlSGm+Yvr6Rk5kb
-cqWFhEfQ4Ce1FNnCd2Qbr9MA/jxSu59NzzmV1K7ADani7HaUsDP1VdC5pVPHZnJX
-fooI
-=LkNg
------END PGP SIGNATURE-----
-
---whsbzd3onxrzy63r--
 
