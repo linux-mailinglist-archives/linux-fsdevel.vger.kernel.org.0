@@ -1,311 +1,594 @@
-Return-Path: <linux-fsdevel+bounces-62261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F039FB8B101
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 21:13:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812BFB8B511
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 23:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9780172FC3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 19:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375153B24F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 21:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE8F287250;
-	Fri, 19 Sep 2025 19:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3762D0C78;
+	Fri, 19 Sep 2025 21:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="S9m159eV"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="1fn2JUX/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036A3284B4C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 19:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1022BD5A1;
+	Fri, 19 Sep 2025 21:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758309196; cv=none; b=AmbU9uqLq3596R5WBcfvkG48t+bgDkko3TXlwNZ/EMw9iIYh1LSgIlJIHQl4M4t4C9C2kB9u5WVmFp6kYjE1q0U8dldgCmUft7WK3WDbLrHS+VZ7SYEEl3L0kvEElLcHBDdGIya5cP0LFl2Z2MV2uhjrAktAyv0lcQfFFr33Dus=
+	t=1758316791; cv=none; b=Vl+4Dltq1mm9RQ25JevHlvlSYBsIEbbOmpcM35oKNNAmpejBS4kXiOtR2rIJwyMGKR+pNyqZd5Yqmt1PhoZ22kLEdRJww8RU4/cz4vpXZBxCMKBuFEI6DkgOCC+6k9StNx9N0g35EzqZC2Ps4yFYjgSBB/UaI3tJNIo6ex67G1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758309196; c=relaxed/simple;
-	bh=ez54BGJROdGhYyTFjQIxGAZjWXn17iU4Q4A9Vj9H5mw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CWII2A6UmRrwGPopHBMlZHHEtGyIBWtTgmiME8SJQ2LshXoYPtJOetZjMc6OCiIiabt8EuSnCm8f1B034Jj6rNlETSJB65lU65I239uhv7RdjLYlV5UaPkQ+NnmXOHm0TGFY7Z96xl0YwBU5ynJWzZtMlneC9zIuTc66jdqIxFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=S9m159eV; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-ea5c1a18acfso2759007276.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 12:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1758309193; x=1758913993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PqZtH5BbhZkYrEC8+05XmAhFcU8RpANTNqQFiM/rtgo=;
-        b=S9m159eVOI2MhtQ7M9cORS9LUwerZOF24EAjI+EcotTdNAEFfiIPiEUZF0cTjXmDmT
-         rFud2oY4nqK605s1epaWZZWyvbW0UVUXA+HrabGtyckZupvJCYXjpg/Q+G2BFJTrENNk
-         XUWYTDhwhnHO3AIEmIQjUk5X2Fga0POdxaJXvVsCJyIocoyMXOART1s8PwVmDpc0576h
-         P8zpT0QkxL5wZlBGjKehK9rxD03sKq/Jm7wPkltYjQCnHR1jUGs+LRfeAFJgcJB66CVI
-         /ocEVc0vehoM7F0QVJfFoz2KojKKlxzNsXa23tAJYKJP4UYMGMNimGpF57qmvj7IWLpK
-         4G3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758309193; x=1758913993;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PqZtH5BbhZkYrEC8+05XmAhFcU8RpANTNqQFiM/rtgo=;
-        b=AIZncOofGgu8I3Y91ly5E9T5Hz87NTekkTu+4b87YUMl3VG1Rf/0xjvs4Fu/B3c8Ad
-         Gc8w8iQmlqQInsMiN6ZLRmNOnuuH+af8GS3TuJGcjaD62C+7QKFh6NxlNv3npSWJEQp/
-         2GjjEvm1SHe9GU3drfWTyOnQ/VtWVB2av833C8oxmoqkN8pcjexFz0zh6MCycyHzc6Hk
-         53RltBNLfFaAYOtq7CArsGQlvWJE7SanO8NSM6XgD/KQ++IdUm73ITyVjJzr4KB95k9d
-         y/L9Or6HnYhcxvWy/cDhwNEsjVVdIgDL6lkqwNXOdD0hT2Gcy5y6TC5jDeFk1HVMR8cX
-         mLiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3cgFmqLpOtmV/6VFEyuCTZmW+56CBAvMQ6YvWXyMpTcbKC7WV6gb3HWaZKc0UHOl02eAjC2lRLSpU8ttI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw66hDZo4CKBqTdl3bLDRWRb2jvoUVfSMoWLxzj1OzmtCt+LsWn
-	Inci36m8vr4R6Q79+WfIT/k0VfGe7XbhvzJxUAn+BkLiU9MAcJX1Ws6q3lLr4PU5cV23rCKQ0vH
-	Q6Hwh86I=
-X-Gm-Gg: ASbGncvyLRrGcxgRjLrYgU6v1RTBXrzb3ntlIQiB9VOVoJlGYlTUI1Z2yH1RYwW///l
-	ZXV2x5VW8FL4mTkma2fp6733eFfc08KDClKJOn5yy+hmsHyXpoOndP4tEmPnSsgKbDsvc3Sdm1M
-	Zqr7jsjHAXh0a6OWuZGRiOHD26ZJGKnExpUw4g+mM2ReSMT4823Kwxq1MP1DAsl03ws5XCr8u35
-	CdbVdqZyghZ9ftx3IMRmA0d1b9+NKqexfUUJbU0fn5285NkmA+1uL5/TgXe6j1ZS9V1aie5GyP1
-	UFAIO4EvEL/iEFJprj2eS0nPIwvUs+xzcJPCc1Tz4/q/zvPwTjswA21FmIQme9MEbrMRsoBrwuo
-	cGY2NwuDTXdYI+iJBtwTwjYEA6FZpplBD
-X-Google-Smtp-Source: AGHT+IHtIuMza5ZgldZbvHV1n3MCmzAJOqNYupyRpFUzpHfca72SDVjVXOovCQ3Cx4zwLdsoX56t+w==
-X-Received: by 2002:a05:690e:249b:b0:634:94a:3e65 with SMTP id 956f58d0204a3-6347f567b49mr2920629d50.24.1758309192747;
-        Fri, 19 Sep 2025 12:13:12 -0700 (PDT)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:dc6d:9e5d:c44a:ee7])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-739716bf24dsm16479457b3.7.2025.09.19.12.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 12:13:12 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	frank.li@vivo.com
-Cc: Slava.Dubeyko@ibm.com,
-	r772577952@gmail.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	syzkaller@googlegroups.com
-Subject: [PATCH v2] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
-Date: Fri, 19 Sep 2025 12:12:44 -0700
-Message-Id: <20250919191243.1370388-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758316791; c=relaxed/simple;
+	bh=s0HhEoGl6Ah9IyRnh5qMy54eW4AmNow1pqSTOHC9apE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lhBc0Xc8GylRnTtZWB2Ar+YYw5hx8m2Vs0r7pKtP4wqO562IY+z6WvP2VsIXWOinZpKUdu4LRRJy7EQD/GRm3KZVIEecMyAaAfuBwzYfSTO4scqZBdDMqXfZg9r7XTWmEnhkBS8VBA/CNlW4ZfNnyDFD20BbK9vtY1GdrhVT27E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=1fn2JUX/; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cT54H6rr9z9spD;
+	Fri, 19 Sep 2025 23:19:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1758316784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mtZqqfVftOfDACfEWFFn2mmk4WyTVtJ53JZTGafoHBU=;
+	b=1fn2JUX/mwjocEAHvaC6cZKMZsWeYGuqnBv1bqmBQPc33T/ZQYnIzePUa7I9mfvbMqG5pD
+	jKolFZ7xZiSOlWhYldAyZ3PaugDhlbnU+o8r2VMtU6XXKGvJoFBOPK3ZrcUjFUgvXbaKfb
+	Ii3sjgBbJ3ycjXb1YR9W0oKVG8o71WMjwLrmIbRJRoSgGz2aen1hcP2obKNt8mzg2T1ZVM
+	L694neaz6DpKoOnXAZmTHZIUZx/kZt/BxwEtk5Wyn7PFSxNvh3+KlOHg+9sdkynkvHI0f1
+	+PINY18fsB4cft4YDpog9vMXDdfBbGi3cekDdZ/HP/OmKQdoEcCjDLVpXAFK0w==
+Date: Sat, 20 Sep 2025 07:19:28 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 02/10] man/man2/fsopen.2: document "new" mount API
+Message-ID: <2025-09-19-movable-minty-stopper-posse-7AufW3@cyphar.com>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-2-1261201ab562@cyphar.com>
+ <zrifsd6vqj6ve25uipyeteuztncgwtzfmfnfsxhcjwcnxf2wen@xjx3y2g77uin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="whsbzd3onxrzy63r"
+Content-Disposition: inline
+In-Reply-To: <zrifsd6vqj6ve25uipyeteuztncgwtzfmfnfsxhcjwcnxf2wen@xjx3y2g77uin>
 
-The hfsplus_strcasecmp() logic can trigger the issue:
 
-[  117.317703][ T9855] ==================================================================
-[  117.318353][ T9855] BUG: KASAN: slab-out-of-bounds in hfsplus_strcasecmp+0x1bc/0x490
-[  117.318991][ T9855] Read of size 2 at addr ffff88802160f40c by task repro/9855
-[  117.319577][ T9855]
-[  117.319773][ T9855] CPU: 0 UID: 0 PID: 9855 Comm: repro Not tainted 6.17.0-rc6 #33 PREEMPT(full)
-[  117.319780][ T9855] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  117.319783][ T9855] Call Trace:
-[  117.319785][ T9855]  <TASK>
-[  117.319788][ T9855]  dump_stack_lvl+0x1c1/0x2a0
-[  117.319795][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
-[  117.319803][ T9855]  ? __pfx_dump_stack_lvl+0x10/0x10
-[  117.319808][ T9855]  ? rcu_is_watching+0x15/0xb0
-[  117.319816][ T9855]  ? lock_release+0x4b/0x3e0
-[  117.319821][ T9855]  ? __kasan_check_byte+0x12/0x40
-[  117.319828][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
-[  117.319835][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
-[  117.319842][ T9855]  print_report+0x17e/0x7e0
-[  117.319848][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
-[  117.319855][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
-[  117.319862][ T9855]  ? __phys_addr+0xd3/0x180
-[  117.319869][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
-[  117.319876][ T9855]  kasan_report+0x147/0x180
-[  117.319882][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
-[  117.319891][ T9855]  hfsplus_strcasecmp+0x1bc/0x490
-[  117.319900][ T9855]  ? __pfx_hfsplus_cat_case_cmp_key+0x10/0x10
-[  117.319906][ T9855]  hfs_find_rec_by_key+0xa9/0x1e0
-[  117.319913][ T9855]  __hfsplus_brec_find+0x18e/0x470
-[  117.319920][ T9855]  ? __pfx_hfsplus_bnode_find+0x10/0x10
-[  117.319926][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
-[  117.319933][ T9855]  ? __pfx___hfsplus_brec_find+0x10/0x10
-[  117.319942][ T9855]  hfsplus_brec_find+0x28f/0x510
-[  117.319949][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
-[  117.319956][ T9855]  ? __pfx_hfsplus_brec_find+0x10/0x10
-[  117.319963][ T9855]  ? __kmalloc_noprof+0x2a9/0x510
-[  117.319969][ T9855]  ? hfsplus_find_init+0x8c/0x1d0
-[  117.319976][ T9855]  hfsplus_brec_read+0x2b/0x120
-[  117.319983][ T9855]  hfsplus_lookup+0x2aa/0x890
-[  117.319990][ T9855]  ? __pfx_hfsplus_lookup+0x10/0x10
-[  117.320003][ T9855]  ? d_alloc_parallel+0x2f0/0x15e0
-[  117.320008][ T9855]  ? __lock_acquire+0xaec/0xd80
-[  117.320013][ T9855]  ? __pfx_d_alloc_parallel+0x10/0x10
-[  117.320019][ T9855]  ? __raw_spin_lock_init+0x45/0x100
-[  117.320026][ T9855]  ? __init_waitqueue_head+0xa9/0x150
-[  117.320034][ T9855]  __lookup_slow+0x297/0x3d0
-[  117.320039][ T9855]  ? __pfx___lookup_slow+0x10/0x10
-[  117.320045][ T9855]  ? down_read+0x1ad/0x2e0
-[  117.320055][ T9855]  lookup_slow+0x53/0x70
-[  117.320065][ T9855]  walk_component+0x2f0/0x430
-[  117.320073][ T9855]  path_lookupat+0x169/0x440
-[  117.320081][ T9855]  filename_lookup+0x212/0x590
-[  117.320089][ T9855]  ? __pfx_filename_lookup+0x10/0x10
-[  117.320098][ T9855]  ? strncpy_from_user+0x150/0x290
-[  117.320105][ T9855]  ? getname_flags+0x1e5/0x540
-[  117.320112][ T9855]  user_path_at+0x3a/0x60
-[  117.320117][ T9855]  __x64_sys_umount+0xee/0x160
-[  117.320123][ T9855]  ? __pfx___x64_sys_umount+0x10/0x10
-[  117.320129][ T9855]  ? do_syscall_64+0xb7/0x3a0
-[  117.320135][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.320141][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.320145][ T9855]  do_syscall_64+0xf3/0x3a0
-[  117.320150][ T9855]  ? exc_page_fault+0x9f/0xf0
-[  117.320154][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.320158][ T9855] RIP: 0033:0x7f7dd7908b07
-[  117.320163][ T9855] Code: 23 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 08
-[  117.320167][ T9855] RSP: 002b:00007ffd5ebd9698 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-[  117.320172][ T9855] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7dd7908b07
-[  117.320176][ T9855] RDX: 0000000000000009 RSI: 0000000000000009 RDI: 00007ffd5ebd9740
-[  117.320179][ T9855] RBP: 00007ffd5ebda780 R08: 0000000000000005 R09: 00007ffd5ebd9530
-[  117.320181][ T9855] R10: 00007f7dd799bfc0 R11: 0000000000000202 R12: 000055e2008b32d0
-[  117.320184][ T9855] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[  117.320189][ T9855]  </TASK>
-[  117.320190][ T9855]
-[  117.351311][ T9855] Allocated by task 9855:
-[  117.351683][ T9855]  kasan_save_track+0x3e/0x80
-[  117.352093][ T9855]  __kasan_kmalloc+0x8d/0xa0
-[  117.352490][ T9855]  __kmalloc_noprof+0x288/0x510
-[  117.352914][ T9855]  hfsplus_find_init+0x8c/0x1d0
-[  117.353342][ T9855]  hfsplus_lookup+0x19c/0x890
-[  117.353747][ T9855]  __lookup_slow+0x297/0x3d0
-[  117.354148][ T9855]  lookup_slow+0x53/0x70
-[  117.354514][ T9855]  walk_component+0x2f0/0x430
-[  117.354921][ T9855]  path_lookupat+0x169/0x440
-[  117.355325][ T9855]  filename_lookup+0x212/0x590
-[  117.355740][ T9855]  user_path_at+0x3a/0x60
-[  117.356115][ T9855]  __x64_sys_umount+0xee/0x160
-[  117.356529][ T9855]  do_syscall_64+0xf3/0x3a0
-[  117.356920][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.357429][ T9855]
-[  117.357636][ T9855] The buggy address belongs to the object at ffff88802160f000
-[  117.357636][ T9855]  which belongs to the cache kmalloc-2k of size 2048
-[  117.358827][ T9855] The buggy address is located 0 bytes to the right of
-[  117.358827][ T9855]  allocated 1036-byte region [ffff88802160f000, ffff88802160f40c)
-[  117.360061][ T9855]
-[  117.360266][ T9855] The buggy address belongs to the physical page:
-[  117.360813][ T9855] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21608
-[  117.361562][ T9855] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[  117.362285][ T9855] flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-[  117.362929][ T9855] page_type: f5(slab)
-[  117.363282][ T9855] raw: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
-[  117.364015][ T9855] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  117.364750][ T9855] head: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
-[  117.365491][ T9855] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  117.366232][ T9855] head: 00fff00000000003 ffffea0000858201 00000000ffffffff 00000000ffffffff
-[  117.366968][ T9855] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-[  117.367711][ T9855] page dumped because: kasan: bad access detected
-[  117.368259][ T9855] page_owner tracks the page as allocated
-[  117.368745][ T9855] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN1
-[  117.370541][ T9855]  post_alloc_hook+0x240/0x2a0
-[  117.370954][ T9855]  get_page_from_freelist+0x2101/0x21e0
-[  117.371435][ T9855]  __alloc_frozen_pages_noprof+0x274/0x380
-[  117.371935][ T9855]  alloc_pages_mpol+0x241/0x4b0
-[  117.372360][ T9855]  allocate_slab+0x8d/0x380
-[  117.372752][ T9855]  ___slab_alloc+0xbe3/0x1400
-[  117.373159][ T9855]  __kmalloc_cache_noprof+0x296/0x3d0
-[  117.373621][ T9855]  nexthop_net_init+0x75/0x100
-[  117.374038][ T9855]  ops_init+0x35c/0x5c0
-[  117.374400][ T9855]  setup_net+0x10c/0x320
-[  117.374768][ T9855]  copy_net_ns+0x31b/0x4d0
-[  117.375156][ T9855]  create_new_namespaces+0x3f3/0x720
-[  117.375613][ T9855]  unshare_nsproxy_namespaces+0x11c/0x170
-[  117.376094][ T9855]  ksys_unshare+0x4ca/0x8d0
-[  117.376477][ T9855]  __x64_sys_unshare+0x38/0x50
-[  117.376879][ T9855]  do_syscall_64+0xf3/0x3a0
-[  117.377265][ T9855] page last free pid 9110 tgid 9110 stack trace:
-[  117.377795][ T9855]  __free_frozen_pages+0xbeb/0xd50
-[  117.378229][ T9855]  __put_partials+0x152/0x1a0
-[  117.378625][ T9855]  put_cpu_partial+0x17c/0x250
-[  117.379026][ T9855]  __slab_free+0x2d4/0x3c0
-[  117.379404][ T9855]  qlist_free_all+0x97/0x140
-[  117.379790][ T9855]  kasan_quarantine_reduce+0x148/0x160
-[  117.380250][ T9855]  __kasan_slab_alloc+0x22/0x80
-[  117.380662][ T9855]  __kmalloc_noprof+0x232/0x510
-[  117.381074][ T9855]  tomoyo_supervisor+0xc0a/0x1360
-[  117.381498][ T9855]  tomoyo_env_perm+0x149/0x1e0
-[  117.381903][ T9855]  tomoyo_find_next_domain+0x15ad/0x1b90
-[  117.382378][ T9855]  tomoyo_bprm_check_security+0x11c/0x180
-[  117.382859][ T9855]  security_bprm_check+0x89/0x280
-[  117.383289][ T9855]  bprm_execve+0x8f1/0x14a0
-[  117.383673][ T9855]  do_execveat_common+0x528/0x6b0
-[  117.384103][ T9855]  __x64_sys_execve+0x94/0xb0
-[  117.384500][ T9855]
-[  117.384706][ T9855] Memory state around the buggy address:
-[  117.385179][ T9855]  ffff88802160f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  117.385854][ T9855]  ffff88802160f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  117.386534][ T9855] >ffff88802160f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  117.387204][ T9855]                       ^
-[  117.387566][ T9855]  ffff88802160f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  117.388243][ T9855]  ffff88802160f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  117.388918][ T9855] ==================================================================
+--whsbzd3onxrzy63r
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 02/10] man/man2/fsopen.2: document "new" mount API
+MIME-Version: 1.0
 
-The issue takes place if the length field of struct hfsplus_unistr
-is bigger than HFSPLUS_MAX_STRLEN. The patch simply checks
-the length of comparing strings. And if the strings' length
-is bigger than HFSPLUS_MAX_STRLEN, then it is corrected
-to this value.
+On 2025-09-19, Alejandro Colomar <alx@kernel.org> wrote:
+> Hi Aleksa,
+>=20
+> On Fri, Sep 19, 2025 at 11:59:43AM +1000, Aleksa Sarai wrote:
+> > This is loosely based on the original documentation written by David
+> > Howells and later maintained by Christian Brauner, but has been
+> > rewritten to be more from a user perspective (as well as fixing a few
+> > critical mistakes).
+> >=20
+> > Co-authored-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Co-authored-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  man/man2/fsopen.2 | 384 ++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 384 insertions(+)
+> >=20
+> > diff --git a/man/man2/fsopen.2 b/man/man2/fsopen.2
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..7cdbeac7d64b7e5c969dee6=
+19a039ec947d1e981
+> > --- /dev/null
+> > +++ b/man/man2/fsopen.2
+> > @@ -0,0 +1,384 @@
+> > +.\" Copyright, the authors of the Linux man-pages project
+> > +.\"
+> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> > +.\"
+> > +.TH fsopen 2 (date) "Linux man-pages (unreleased)"
+> > +.SH NAME
+> > +fsopen \- create a new filesystem context
+> > +.SH LIBRARY
+> > +Standard C library
+> > +.RI ( libc ,\~ \-lc )
+> > +.SH SYNOPSIS
+> > +.nf
+> > +.B #include <sys/mount.h>
+> > +.P
+> > +.BI "int fsopen(const char *" fsname ", unsigned int " flags );
+> > +.fi
+> > +.SH DESCRIPTION
+> > +The
+> > +.BR fsopen ()
+> > +system call is part of
+> > +the suite of file descriptor based mount facilities in Linux.
+>=20
+> Minor nitpick (I can amend that; no worries):
+>=20
+> Because 'file-descriptor-based' works as a single modifier of
+> facilities, it goes with hyphens.
 
-v2
-The string length correction has been added for hfsplus_strcmp().
+Will do for all of the new pages.
 
-Reported-by: Jiaming Zhang <r772577952@gmail.com>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-cc: syzkaller@googlegroups.com
----
- fs/hfsplus/unicode.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> > +.P
+> > +.BR fsopen ()
+> > +creates a blank filesystem configuration context within the kernel
+> > +for the filesystem named by
+> > +.I fsname
+> > +and places it into creation mode.
+> > +A new file descriptor
+> > +associated with the filesystem configuration context
+> > +is then returned.
+> > +The calling process must have the
+> > +.B \%CAP_SYS_ADMIN
+> > +capability in order to create a new filesystem configuration context.
+> > +.P
+> > +A filesystem configuration context is
+> > +an in-kernel representation of a pending transaction,
+> > +containing a set of configuration parameters that are to be applied
+> > +when creating a new instance of a filesystem
+> > +(or modifying the configuration of an existing filesystem instance,
+> > +such as when using
+> > +.BR fspick (2)).
+> > +.P
+> > +After obtaining a filesystem configuration context with
+> > +.BR fsopen (),
+> > +the general workflow for operating on the context looks like the follo=
+wing:
+> > +.IP (1) 5
+> > +Pass the filesystem context file descriptor to
+> > +.BR fsconfig (2)
+> > +to specify any desired filesystem parameters.
+> > +This may be done as many times as necessary.
+> > +.IP (2)
+> > +Pass the same filesystem context file descriptor to
+> > +.BR fsconfig (2)
+> > +with
+> > +.B \%FSCONFIG_CMD_CREATE
+> > +to create an instance of the configured filesystem.
+> > +.IP (3)
+> > +Pass the same filesystem context file descriptor to
+> > +.BR fsmount (2)
+> > +to create a new detached mount object for
+> > +the root of the filesystem instance,
+> > +which is then attached to a new file descriptor.
+> > +(This also places the filesystem context file descriptor into
+> > +reconfiguration mode,
+> > +similar to the mode produced by
+> > +.BR fspick (2).)
+> > +Once a mount object has been created with
+> > +.BR fsmount (2),
+> > +the filesystem context file descriptor can be safely closed.
+> > +.IP (4)
+> > +Now that a mount object has been created,
+> > +you may
+> > +.RS
+> > +.IP (4.1) 7
+> > +use the detached mount object file descriptor as a
+> > +.I dirfd
+> > +argument to "*at()" system calls; and/or
+> > +.IP (4.2) 7
+>=20
+> I'll paste here the formatted part of this page:
+>=20
+>         (4)  Now that a mount object has been created, you may
+> =20
+>              (4.1)  use the detached mount object file descrip=E2=80=90
+>                     tor as a dirfd argument to "*at()" system
+>                     calls; and/or
+> =20
+>              (4.2)  attach the mount object to a mount point by
+>                     passing the mount object file descriptor to
+>                     move_mount(2).  This will also prevent the
+>                     mount object from being unmounted and de=E2=80=90
+>                     stroyed when the mount object file descrip=E2=80=90
+>                     tor is closed.
+>=20
+>              The mount object file descriptor will remain asso=E2=80=90
+>              ciated with the mount object even after doing the
+>              above operations, so you may repeatedly use the
+>              mount object file descriptor with move_mount(2)
+>              and/or "*at()" system calls as many times as neces=E2=80=90
+>              sary.
+>=20
+> That sublist seems to be an unordered one.  I think we should use
+> a bullet list for those items (the outer list 1,2,3,4 is okay as is).
+>=20
+>        Bullet lists
+>               Elements are preceded by bullet symbols  (\[bu]).
+>               Anything  that  doesn't  fit elsewhere is usually
+>               covered by this type of list.
 
-diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
-index 36b6cf2a3abb..ebd326799f35 100644
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -40,6 +40,18 @@ int hfsplus_strcasecmp(const struct hfsplus_unistr *s1,
- 	p1 = s1->unicode;
- 	p2 = s2->unicode;
- 
-+	if (len1 > HFSPLUS_MAX_STRLEN) {
-+		len1 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s1->length), len1);
-+	}
-+
-+	if (len2 > HFSPLUS_MAX_STRLEN) {
-+		len2 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s2->length), len2);
-+	}
-+
- 	while (1) {
- 		c1 = c2 = 0;
- 
-@@ -74,6 +86,18 @@ int hfsplus_strcmp(const struct hfsplus_unistr *s1,
- 	p1 = s1->unicode;
- 	p2 = s2->unicode;
- 
-+	if (len1 > HFSPLUS_MAX_STRLEN) {
-+		len1 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s1->length), len1);
-+	}
-+
-+	if (len2 > HFSPLUS_MAX_STRLEN) {
-+		len2 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s2->length), len2);
-+	}
-+
- 	for (len = min(len1, len2); len > 0; len--) {
- 		c1 = be16_to_cpu(*p1);
- 		c2 = be16_to_cpu(*p2);
--- 
-2.43.0
+I think I originally planned to reference the inner list (which would
+require non-bullets), but it seems I dropped that text later. I'll fix
+this up.
 
+> > +attach the mount object to a mount point
+> > +by passing the mount object file descriptor to
+> > +.BR move_mount (2).
+> > +This will also prevent the mount object from
+> > +being unmounted and destroyed when
+> > +the mount object file descriptor is closed.
+> > +.RE
+> > +.IP
+> > +The mount object file descriptor will
+> > +remain associated with the mount object
+> > +even after doing the above operations,
+> > +so you may repeatedly use the mount object file descriptor with
+> > +.BR move_mount (2)
+> > +and/or "*at()" system calls
+> > +as many times as necessary.
+> > +.P
+> > +A filesystem context will move between different modes
+> > +throughout its lifecycle
+> > +(such as the creation phase
+> > +when created with
+> > +.BR fsopen (),
+> > +the reconfiguration phase
+> > +when an existing filesystem instance is selected with
+> > +.BR fspick (2),
+> > +and the intermediate "awaiting-mount" phase
+> > +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
+> > +between
+> > +.BR \%FSCONFIG_CMD_CREATE
+> > +and
+> > +.BR fsmount (2)),
+> > +which has an impact on
+> > +what operations are permitted on the filesystem context.
+> > +.P
+> > +The file descriptor returned by
+> > +.BR fsopen ()
+> > +also acts as a channel for filesystem drivers to
+> > +provide more comprehensive diagnostic information
+> > +than is normally provided through the standard
+> > +.BR errno (3)
+> > +interface for system calls.
+> > +If an error occurs at any time during the workflow mentioned above,
+> > +calling
+> > +.BR read (2)
+> > +on the filesystem context file descriptor
+> > +will retrieve any ancillary information about the encountered errors.
+> > +(See the "Message retrieval interface" section
+> > +for more details on the message format.)
+> > +.P
+> > +.I flags
+> > +can be used to control aspects of
+> > +the creation of the filesystem configuration context file descriptor.
+> > +A value for
+> > +.I flags
+> > +is constructed by bitwise ORing
+> > +zero or more of the following constants:
+> > +.RS
+> > +.TP
+> > +.B FSOPEN_CLOEXEC
+> > +Set the close-on-exec
+> > +.RB ( FD_CLOEXEC )
+> > +flag on the new file descriptor.
+> > +See the description of the
+> > +.B O_CLOEXEC
+> > +flag in
+> > +.BR open (2)
+> > +for reasons why this may be useful.
+> > +.RE
+> > +.P
+> > +A list of filesystems supported by the running kernel
+> > +(and thus a list of valid values for
+> > +.IR fsname )
+> > +can be obtained from
+> > +.IR /proc/filesystems .
+> > +(See also
+> > +.BR proc_filesystems (5).)
+> > +.SS Message retrieval interface
+> > +When doing operations on a filesystem configuration context,
+> > +the filesystem driver may choose to provide
+> > +ancillary information to userspace
+> > +in the form of message strings.
+> > +.P
+> > +The filesystem context file descriptors returned by
+> > +.BR fsopen ()
+> > +and
+> > +.BR fspick (2)
+> > +may be queried for message strings at any time by calling
+> > +.BR read (2)
+> > +on the file descriptor.
+> > +Each call to
+> > +.BR read (2)
+> > +will return a single message,
+> > +prefixed to indicate its class:
+> > +.RS
+> > +.TP
+> > +\fBe\fP <\fImessage\fP>
+>=20
+> We don't use '<' and '>' for indicating variable parts.  We already use
+> italics for that.  The reason to avoid the '<' and '>' is that it is
+> confusing: it is often unclear if the '<' are literal or placeholders.
+>=20
+> We only use '<' when they're literal.
+>=20
+> I suspect your want
+>=20
+> 	.BI e\~ message
+>=20
+> BTW, I'm assuming there's one space between the letter and the message,
+> and there are no literal '<'/'>', right?
+
+No there aren't literal '<' / '>' characters, it's just a regular
+string. I guess I was struggling with the (lack of) distinction between
+using italics for variable names and things that are variable.
+
+> Have a lovely day!
+> Alex
+>=20
+> > +An error message was logged.
+> > +This is usually associated with an error being returned
+> > +from the corresponding system call which triggered this message.
+> > +.TP
+> > +\fBw\fP <\fImessage\fP>
+> > +A warning message was logged.
+> > +.TP
+> > +\fBi\fP <\fImessage\fP>
+> > +An informational message was logged.
+> > +.RE
+> > +.P
+> > +Messages are removed from the queue as they are read.
+> > +Note that the message queue has limited depth,
+> > +so it is possible for messages to get lost.
+> > +If there are no messages in the message queue,
+> > +.B read(2)
+> > +will return \-1 and
+> > +.I errno
+> > +will be set to
+> > +.BR \%ENODATA .
+> > +If the
+> > +.I buf
+> > +argument to
+> > +.BR read (2)
+> > +is not large enough to contain the entire message,
+> > +.BR read (2)
+> > +will return \-1 and
+> > +.I errno
+> > +will be set to
+> > +.BR \%EMSGSIZE .
+> > +(See BUGS.)
+> > +.P
+> > +If there are multiple filesystem contexts
+> > +referencing the same filesystem instance
+> > +(such as if you call
+> > +.BR fspick (2)
+> > +multiple times for the same mount),
+> > +each one gets its own independent message queue.
+> > +This does not apply to multiple file descriptors that are
+> > +tied to the same underlying open file description
+> > +(such as those created with
+> > +.BR dup (2)).
+> > +.P
+> > +Message strings will usually be prefixed by
+> > +the name of the filesystem or kernel subsystem
+> > +that logged the message,
+> > +though this may not always be the case.
+> > +See the Linux kernel source code for details.
+> > +.SH RETURN VALUE
+> > +On success, a new file descriptor is returned.
+> > +On error, \-1 is returned, and
+> > +.I errno
+> > +is set to indicate the error.
+> > +.SH ERRORS
+> > +.TP
+> > +.B EFAULT
+> > +.I fsname
+> > +is NULL
+> > +or a pointer to a location
+> > +outside the calling process's accessible address space.
+> > +.TP
+> > +.B EINVAL
+> > +.I flags
+> > +had an invalid flag set.
+> > +.TP
+> > +.B EMFILE
+> > +The calling process has too many open files to create more.
+> > +.TP
+> > +.B ENFILE
+> > +The system has too many open files to create more.
+> > +.TP
+> > +.B ENODEV
+> > +The filesystem named by
+> > +.I fsname
+> > +is not supported by the kernel.
+> > +.TP
+> > +.B ENOMEM
+> > +The kernel could not allocate sufficient memory to complete the operat=
+ion.
+> > +.TP
+> > +.B EPERM
+> > +The calling process does not have the required
+> > +.B \%CAP_SYS_ADMIN
+> > +capability.
+> > +.SH STANDARDS
+> > +Linux.
+> > +.SH HISTORY
+> > +Linux 5.2.
+> > +.\" commit 24dcb3d90a1f67fe08c68a004af37df059d74005
+> > +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> > +glibc 2.36.
+> > +.SH BUGS
+> > +.SS Message retrieval interface and \fB\%EMSGSIZE\fP
+> > +As described in the "Message retrieval interface" subsection above,
+> > +calling
+> > +.BR read (2)
+> > +with too small a buffer to contain
+> > +the next pending message in the message queue
+> > +for the filesystem configuration context
+> > +will cause
+> > +.BR read (2)
+> > +to return \-1 and set
+> > +.BR errno (3)
+> > +to
+> > +.BR \%EMSGSIZE .
+> > +.P
+> > +However,
+> > +this failed operation still
+> > +consumes the message from the message queue.
+> > +This effectively discards the message silently,
+> > +as no data is copied into the
+> > +.BR read (2)
+> > +buffer.
+> > +.P
+> > +Programs should take care to ensure that
+> > +their buffers are sufficiently large
+> > +to contain any reasonable message string,
+> > +in order to avoid silently losing valuable diagnostic information.
+> > +.\" Aleksa Sarai
+> > +.\"   This unfortunate behaviour has existed since this feature was me=
+rged, but
+> > +.\"   I have sent a patchset which will finally fix it.
+> > +.\"   <https://lore.kernel.org/r/20250807-fscontext-log-cleanups-v3-1-=
+8d91d6242dc3@cyphar.com/>
+> > +.SH EXAMPLES
+> > +To illustrate the workflow for creating a new mount,
+> > +the following is an example of how to mount an
+> > +.BR ext4 (5)
+> > +filesystem stored on
+> > +.I /dev/sdb1
+> > +onto
+> > +.IR /mnt .
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +int fsfd, mntfd;
+> > +\&
+> > +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
+> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
+> > +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> > +.EE
+> > +.in
+> > +.P
+> > +First,
+> > +an ext4 configuration context is created and attached to the file desc=
+riptor
+> > +.IR fsfd .
+> > +Then, a series of parameters
+> > +(such as the source of the filesystem)
+> > +are provided using
+> > +.BR fsconfig (2),
+> > +followed by the filesystem instance being created with
+> > +.BR \%FSCONFIG_CMD_CREATE .
+> > +.BR fsmount (2)
+> > +is then used to create a new mount object attached to the file descrip=
+tor
+> > +.IR mntfd ,
+> > +which is then attached to the intended mount point using
+> > +.BR move_mount (2).
+> > +.P
+> > +The above procedure is functionally equivalent to
+> > +the following mount operation using
+> > +.BR mount (2):
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +mount("/dev/sdb1", "/mnt", "ext4", MS_RELATIME,
+> > +      "ro,noatime,acl,user_xattr,iversion");
+> > +.EE
+> > +.in
+> > +.P
+> > +And here's an example of creating a mount object
+> > +of an NFS server share
+> > +and setting a Smack security module label.
+> > +However, instead of attaching it to a mount point,
+> > +the program uses the mount object directly
+> > +to open a file from the NFS share.
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +int fsfd, mntfd, fd;
+> > +\&
+> > +fsfd =3D fsopen("nfs", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "example.com/pub/linux",=
+ 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> > +mntfd =3D fsmount(fsfd, 0, MOUNT_ATTR_NODEV);
+> > +fd =3D openat(mntfd, "src/linux-5.2.tar.xz", O_RDONLY);
+> > +.EE
+> > +.in
+> > +.P
+> > +Unlike the previous example,
+> > +this operation has no trivial equivalent with
+> > +.BR mount (2),
+> > +as it was not previously possible to create a mount object
+> > +that is not attached to any mount point.
+> > +.SH SEE ALSO
+> > +.BR fsconfig (2),
+> > +.BR fsmount (2),
+> > +.BR fspick (2),
+> > +.BR mount (2),
+> > +.BR mount_setattr (2),
+> > +.BR move_mount (2),
+> > +.BR open_tree (2),
+> > +.BR mount_namespaces (7)
+> >=20
+> > --=20
+> > 2.51.0
+> >=20
+>=20
+> --=20
+> <https://www.alejandro-colomar.es>
+> Use port 80 (that is, <...:80/>).
+
+
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--whsbzd3onxrzy63r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaM3I4BsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/C4AEAyF7iSxlSGm+Yvr6Rk5kb
+cqWFhEfQ4Ce1FNnCd2Qbr9MA/jxSu59NzzmV1K7ADani7HaUsDP1VdC5pVPHZnJX
+fooI
+=LkNg
+-----END PGP SIGNATURE-----
+
+--whsbzd3onxrzy63r--
 
