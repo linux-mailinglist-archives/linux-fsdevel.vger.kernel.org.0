@@ -1,109 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-62204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22564B88325
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:38:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72CFB88490
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BFE16AC07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028F67C5782
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096C2D1F42;
-	Fri, 19 Sep 2025 07:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A522EB866;
+	Fri, 19 Sep 2025 07:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="IVyHIPov"
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="uXIO/rdj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11EA2D46B5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 07:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83272EAD13;
+	Fri, 19 Sep 2025 07:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267260; cv=none; b=FrF+5IAXJpCcRm8d+uWHKgubpVYril6i24FuHadKX3XApHG7B0pNE4oPghBuh19vkkxbZfgrOQMMgfubjPkCAvzkCxk6umk/s5awK2UrTWTO/D4IrrC+DuUnf6EpnzHo8nkiKaFLy5icsaFwCbW+j03o5dJSx25+L2MJKpc64sc=
+	t=1758268458; cv=none; b=TI+d4KsBzQPJUsGEJpG78S52e0zKE0fJtiun5CrOZTmuKOJpOrKHWL/QgxyTbiskU+qLiyZdqexaO3AMrKNGCOeLZBbwgOjl4cc2inOgH99DkZPdwDLJObc2M8D0dWhv8eKEVyZxsq8OaK8VDJlLpPdCbn9OAAPNmA5cEPqSrqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267260; c=relaxed/simple;
-	bh=UDbgq5I7/fiN9GyHTHOeYNojRIjPFBceV29A28/FmKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ObH6yq0V1NAyyo4yj63+HkOQtTDCYzrS8Vuj6CiwgB0EGTyzZ+qGLce6FhLQWyGKGt6aPpy7b0dW0a/G8+Ybg12wEiPntvq1jWWj4YivxMvlfVE1tOSkW8HvK5b09gHW1QeZFovUb/bOLbpLrnaUZeFk+c5zhdZNTzlIScWdT5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=IVyHIPov; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8287fa098e8so179629885a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 00:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758267257; x=1758872057; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1RChfYMo6l3NlpB1CtytFiCPlXnFT8/eeYYewFlQyV0=;
-        b=IVyHIPovg6fIybeWuYJk3D6SVydMvkoKvdKP2HGgSJbeuqsLPHKEHK1zaxocvpapHD
-         LH4/tLRdB7jOOkOs35t21z/rss58mqp8vXqemb/bHZqnmmdkT/rKssfDWRj4ToCAgQqV
-         hQZbSI/HO4zq9Z86UU8aIuokWmbqo9VBDKBCQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758267257; x=1758872057;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1RChfYMo6l3NlpB1CtytFiCPlXnFT8/eeYYewFlQyV0=;
-        b=j2SkWzbMfLgixzo7VCyVyaid34kmqAzmtwJCX9bMg0fVhZIX+EjjFK/9Jk7a66CEIs
-         hott0UhH4k4yG87GnoQ4+YsO4Y1HSky0G7unefejqMEZxxVokScuKz7XuVNChXZWG6we
-         ZeZevrJ5J2dNBuGYfWyEhUqFFZ+SV/9+ARHoZW04YTgcsQWAqFXsUUvbYEmGWX6ZjXJh
-         wg9QRvUm/BcbR5Ms3B6gtZufFrIfskmWLMOqB53iMwF3XbasxcC1bNKCaroB1zOFAob4
-         OwRVFEFURjy85ZoQt7NnpoJpusO5+d5e3q6j8pXp/WSArm1EnC0j4lygeOHPaa5MCxN6
-         qcvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6sT/4OEXeujgixjxgbS0ucdfqFgmPO0T49jhpkKWnmOxmyR24lpEo4ra6jC1aWfHHtzhJ7ISvOSWxvLHZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YysMwugffYeKBtk8VwWTFthBp9G/vlZRZM1NkdNmI0ckUiMC+GX
-	0VvuAX//fdTFFV2QNG6GyXtz/ggPL5m0SuhyVlD3lnQ40iRRsVSJjovO9MPRG9F5/fuemIltcJS
-	xrwnTSKbhs+S7m+N4mnschvhn8iBDC7cGErJoT4iAFw==
-X-Gm-Gg: ASbGncu8SEl4g3MNbf64qR1BTBy39vyb4GWQYwJi65ov4exd0Z9Ge5BnItjZyVlY7Fw
-	PXKCqpLqY3Msj25CU16mY/DqY3EWzOXNtV8zrwHnyuEAvTm0hkBxefuHlG34PkZI/3old5Mo2Vp
-	5wfduXDKZaD2y1g6ZtiDa+Gn3AAtEfrEJ6Vx4ab/S8sCaiZpSzAVGnW8UjKDr1GZvItnQdZ1Wpp
-	Zkd2Fu2QqFOGSWOFo8DapPLkDR+JJRzU4/Zd+Mm9QLBopcsCA==
-X-Google-Smtp-Source: AGHT+IFH6/yIRQX6FHwVT74Oelgtb0ePNHcn9mX2qFQVBfBdaPpXLeRzP/soCW4TNqD+cygmZmF7/8DbipcgqrdjYnY=
-X-Received: by 2002:a05:620a:4b48:b0:817:d6c5:41ea with SMTP id
- af79cd13be357-83babfe7d1amr196695285a.51.1758267257515; Fri, 19 Sep 2025
- 00:34:17 -0700 (PDT)
+	s=arc-20240116; t=1758268458; c=relaxed/simple;
+	bh=75n6SNqaNnGpdqrhOoCTwrIeBO+OZXMa5XD33nnFx+4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZFdGxSRUzKMAF1PoXpjOQIsRbrQ5J4d25KM92ioWI8o6Y83osSb4UE5ZqtxQk8pkwtj6mdp6SeP9wye+aED/Iu3hrP1SjCOOSDfFEW5owJ/t33xnixQ9ySdwbsAdVZEWIXB6XPmmXC7LPKn49KW9hrAX3J7LOu6E9ig9UTyvvGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=uXIO/rdj; arc=none smtp.client-ip=91.198.250.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cSlBj6z40z9y1q;
+	Fri, 19 Sep 2025 09:54:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1758268446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75n6SNqaNnGpdqrhOoCTwrIeBO+OZXMa5XD33nnFx+4=;
+	b=uXIO/rdjJd8hAI4ksLQBu8+7wi4x4K7rnQG7tMImo/Eqm4WU4PrJVe5qfblfySMVQYu3gO
+	MXau2mxhwiQcpDy9wY9syjmJqOzVAx7fG+/SiXj1Ug4FWNg52TJGBqiIl7c0kOteM35Xvt
+	/Hha3eAScpISlafD9pxujFgjaCIXjv3M3MOygsVz628T/e77r4bjkVTDVJOxYW7BjLWVJe
+	+4zVTVv6uuTGWvabcw0N8JtIVIAE/TlzIVe7M2hTi0cgncJln/fsZcmZzrx/2zS4xP5USD
+	vWcl0OPdWmGQQreR0GIobMcPUGVwknJINFwa3veeegPh2FwJXJlgKkEjkU1TCw==
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: fuse: Use strscpy instead of strcpy
+In-Reply-To: <CAJfpegvt8ydN0uKYpbWVAmzZtHJ2kg3PwffZYvB33G_4fnq7BQ@mail.gmail.com>
+	(Miklos Szeredi's message of "Fri, 19 Sep 2025 08:43:22 +0200")
+References: <20250917205533.214336-1-mssola@mssola.com>
+	<CAJfpegvt8ydN0uKYpbWVAmzZtHJ2kg3PwffZYvB33G_4fnq7BQ@mail.gmail.com>
+Date: Fri, 19 Sep 2025 09:54:03 +0200
+Message-ID: <87qzw2ubc4.fsf@>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798150680.382479.9087542564560468560.stgit@frogsfrogsfrogs>
- <175798150773.382479.13993075040890328659.stgit@frogsfrogsfrogs>
- <CAOQ4uxigBL4pCDXjRYX0ftCMyQibRPuRJP7+KhC7Jr=yEM=DUw@mail.gmail.com> <20250918180226.GZ8117@frogsfrogsfrogs>
-In-Reply-To: <20250918180226.GZ8117@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 19 Sep 2025 09:34:06 +0200
-X-Gm-Features: AS18NWDnMUFDnNKztB29fevuAtOKBB3TGWjBAViz5bbTsRot9HiaHDnPQnmtPns
-Message-ID: <CAJfpegsN32gJohjiqdqKqLqwnu7BOchfqrjJEKVo33M1gMgmgg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] fuse: move the passthrough-specific code back to passthrough.c
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
-	joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On Thu, 18 Sept 2025 at 20:02, Darrick J. Wong <djwong@kernel.org> wrote:
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+Miklos Szeredi @ 2025-09-19 08:43 +02:
+
+> On Wed, 17 Sept 2025 at 22:55, Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssol=
+a.com> wrote:
+>>
+>> As pointed out in [1], strcpy() is deprecated in favor of
+>> strscpy().
+>>
+>> Furthermore, the length of the name to be copied is well known at this
+>> point since we are going to move the pointer by that much on the next
+>> line. Hence, it's safe to assume 'namelen' for the length of the string
+>> to be copied.
 >
-> On Wed, Sep 17, 2025 at 04:47:19AM +0200, Amir Goldstein wrote:
-
-> > I think at this point in time FUSE_PASSTHROUGH and
-> > FUSE_IOMAP should be mutually exclusive and
-> > fuse_backing_ops could be set at fc level.
-> > If we want to move them for per fuse_backing later
-> > we can always do that when the use cases and tests arrive.
+> By "length of a string" usually the number of non-null chars is meant
+> (i.e. strlen(str)).
 >
-> With Miklos' ok I'll constrain fuse not to allow passthrough and iomap
-> files on the same filesystem, but as it is now there's no technical
-> reason to make it so that they can't coexist.
+> So the variable 'namelen' is confusingly named, a better one would be nam=
+esize.
 
-Is there a good reason to add the restriction?   If restricting it
-doesn't simplify anything or even makes it more complex, then I'd opt
-for leaving it more general, even if it doesn't seem to make sense.
+That's a good point. If you want I can add a commit renaming this
+variable for v2.
+
+>
+>>
+>> [1] KSPP#88
+>
+> I don't understand this notation.
+
+This is because it refers to an issue on Github that is tracking the
+effort to move away from strcpy in favor of strscpy. I've seen many
+commits tracked there that followed this notation and thus I thought
+that was the right thing. Anyways, if you want I can transform this
+into a Link tag:
+
+Link: https://github.com/KSPP/linux/issues/88
+
+Or otherwise reference it in any other way you feel is more appropiate.
+
+>
+> Patch itself looks good.
+>
+> Thanks,
+> Miklos
 
 Thanks,
-Miklos
+Miquel
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjNDBsbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
+ZUQMD/sETJCe5/FjU3UHVw6VVqw4o/WTF3SFwH3i3akjwR3AyR57/mkry5NaBBVz
+rVTKi99cGVSmozqFOzEBqOybJfRl1yFQBtVGhqnIDUK+cieZGBMrhxRJBEULoCSx
+yrc3wQM70JO6EkzxEvvqO36eY5crOJe7MEfxf/ozKqhYNoSP+iJUlie/umJkBm6q
+yDVwd1IL+rKhQMilxd7VhCQpzqxRKCGl4GwGS18iScTymrMFhMBwdH1Nn9EFanym
+7Fi41xUBBFttNPp3rblBnW8C2fPi6cgz59hf1lhvb2mwM46P8DwUfCpLavq5zRmR
+9ilRFiX75EgOE2nza5VstSr4cvVV4hQiBEvVFZg1mI8pscgOaxGSbRG0/CUz10Z3
+hxeB2GSIALmzUOmMYcDe1EXLO7jUuVsWeH34vplRU5qnV+HzZlDUBTi2vA0kX5MZ
+TDzzNfH2SfgYO9Bv5H9bITPntIuY+GGb4c8s0ZkOD/ZRL7RSczOA1kBo20kqnDmV
+GEohj5VyEF55JVBD/He0oke7XoXjjLjBC1SaBZ9vgJQ/sJYaHYh60dc/VODQtIUl
+47wRmVRPpx8Z1ifMexPrkyaBXiRFzfPvlZgg90wSpiJ2tSbmzjY8ZP6ubB5zd7SQ
+SGwqpuEEMMG+nee3NKT4cc6+bmIzc8bRrg1w8sPwHRuJCju6wg==
+=21PN
+-----END PGP SIGNATURE-----
+--=-=-=--
 
