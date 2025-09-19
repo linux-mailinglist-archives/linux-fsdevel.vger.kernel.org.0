@@ -1,216 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-62230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E04B8983C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 14:44:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A2DB899D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 15:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F4A3B6826
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 12:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97711179822
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 13:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2335221F39;
-	Fri, 19 Sep 2025 12:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9446F30CDA5;
+	Fri, 19 Sep 2025 13:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="kkC/5xUZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQIPISGy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ECF21B9C5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 12:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093F2ED845
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 13:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285877; cv=none; b=M0sR+w9ui0+0hnC9cBYKOaU53Yw1LLvYgoPYu2q4qwyLaW2IdUovl+Ntw3MZMuR2MnDgWwueg5kEJG1+1zmK8Vw6kdmTSZpIyYCbJdCZZ9vCAsdFwrLLvV4+fUfg15kgiId6AF1g4EvNrACMr9EPdDb53FJiiU9/R5JgF+UfbKY=
+	t=1758287374; cv=none; b=ZWe+jMQ91so511kYVCtbT1LQ1YPvOTJx+epOX6vUA9gXHYysiAW3Q4c+Q1LHR8DIu6fZqNSdSnixCAkGffwqpR2IRDdN98CNe62+QfYARcvmiSkvyH9eIW/iIBCCgRTKzqKPKZuf5nFGgaYf/E/E87sSkGcl6eaHc96szkoLzSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285877; c=relaxed/simple;
-	bh=r9NdBC7S4y0MQGeGmusoFjVRvk5bdEwLh+OJBdq4aT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZJQLJjcjNGpGjLwFAe/qPGeBxGYwHTqwK04TINGVivdgDYunx2KOdMomukuldOuX+BjsWk7u7PyNcDSS7th/2E2DR+uoi/XZYDJPRcq4kQMoojfkMOw1Mz/g/0j3Nn8Ae5atWV4p2q4dgRsFoFP421y6s8SQYLsia1pS3V/Rbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=kkC/5xUZ; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cSsdq05Ccz9t4w;
-	Fri, 19 Sep 2025 14:44:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1758285871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T6gZQImpoZO7PeK+0O4VfnNlV9ykNSvzjS1vojQaKBY=;
-	b=kkC/5xUZYgFDfaMyaK/ydHeVW09dGjeOnvo3QlQHnvSRsTpwjfHCuOLviNYNB1bsr46U30
-	Z34XOaHPPdMsinE0XFedxioLbFpvZD4NluBeEA89jLcXqlZ2n0RRzdmEXAUpmcQaOZ/ELQ
-	K8cuoMfY2EI7Be8xpjh8z/KRY9tj/AFblPoVVO+lF+DPvJomlW91LbfnzVlC1ukWLBz+lf
-	10LjsKtCGPhvP1V01HoRDlDECeLs0I0AziIIzepmA078HBlwJZROc5+66wNJPfGsCXAcB1
-	yQsWXUeNGB3PsWTT8vg0lf+dHlzEg7LUHf0P0sOwbqaikDkWjDYzY+0Y8KMSxQ==
-Date: Fri, 19 Sep 2025 22:44:19 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] selftests/namespaces: verify initial namespace inode
- numbers
-Message-ID: <2025-09-19-askew-endless-sugars-pokers-Xf6Mrf@cyphar.com>
-References: <20250919-work-namespace-selftests-v1-1-be04cbf4bc37@kernel.org>
+	s=arc-20240116; t=1758287374; c=relaxed/simple;
+	bh=H2nghK4bl/H+DNUfQhtZLwYHG07QNLlFwkEd9mrXbhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QLwqoPYr59pXKAqqvPSDOqsmDeXLncdx6D4kMH/AGSq5rdo27mAc5SfRJRoWYdvNMMACRY9a5v8iJvMp7G61Ar4rBpmnbvzVHiAJ5XuJISqriYGd1VfllopDUt3vLF3zKFZH8j1HcCCyYu911LNAIt5VLjepj9kRm0l1+YqLhtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQIPISGy; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62fc28843ecso1049331a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 06:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758287369; x=1758892169; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H2nghK4bl/H+DNUfQhtZLwYHG07QNLlFwkEd9mrXbhQ=;
+        b=BQIPISGyaL9K2DiFORwYXbLp0t2u4Qq7Wi9F4RNLMuSVpyK66tSAoNsyEIYswqWV26
+         iNyNMFsvPDMLcyCx5Brope1KQRqcyBHMz4yssiys1snjyeR3l1GIcRFDsIjglAi9HvWj
+         IlBVLk4wEYQGTNNyUT7TeWjslzh1k5HuAp+0Qpsn5AsZ2NW8Y5UyHSzN70Zer329AMnZ
+         n996bHOKl75/nauI8STW5nkufGGR6s1xIt3boi1DFvvYhV32fAvcCtgJqEW1NhPtORuX
+         wm9IS6roqrijLmO1HE8RXHPiymNGhW+W2wOGR4/VZPeKOGA6ByVNxAJRMbvc1aw+r+Xm
+         q8TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758287369; x=1758892169;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H2nghK4bl/H+DNUfQhtZLwYHG07QNLlFwkEd9mrXbhQ=;
+        b=axQWVc7/PjbwEHngxN1uncxmdIMJHMxG08FA+JGfAPISsiV+Xukkcpog8GLgFBx8CY
+         nucKI0Fx2VPQcIiKVAx5v/G0unOkOz6YcrtF6WskVSFXPQtT17sCdypFbkAEs1OObID6
+         6iPgERxGzfkn0ST+NxBgmf70pU5Dup4wc+5WMNzuS8pkt/b71iZ8gNAbn+xaEAYXJZUR
+         bvrQHNdD8jRPA4V+5WHYbGomzx3KOOP4nQxAX/5TRaVJMgGARGbv0tQT98Fe1jDmIuhD
+         tIWDgvPcQDNFYOnFn/W94GToutzD90AmP3h12X3jGqw/ich5JIzf0iB5kalPvw8BdBtF
+         GLVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxUV3yxQjTsob9IGB0NShTpC8H6d8zPjrwdgEADmVn1j/3KCHdK6THJwTUQDXgY1Wrc5VM0RGkqyEZAG++@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk49Ih5EcLl67d0m1Z+5HL53ykZfH4PhGLzUoJUL4ZI1QxqUKc
+	iQSbo1+27iRiUPF010InjrQA3g8LsWnzNxfmpkzTdxEAVi970I55/9oPSowlrvb83ymruDRYa8N
+	gmO/d69fVYEEMr7gpjLJhIVraX8yQns0=
+X-Gm-Gg: ASbGncsV6Yq4aqu0ZLpagzHbtoos9BMXKhsLMHqkCVeA+9Z1jl/Ms1Edaf61DueGLlx
+	iqg8XnbAAzNZXKwbo5aRZdGaphzaKk4dQpuAlX2oc1iiLyehNWTxVngs/Ip+c9PBDNFiZWAwj/t
+	lb6HU6C1xqKMB82mBcj2ELbTr0N+gDqqwBVN1jWyRDrws4Peihd1EvFPv8qz8sKUd/xad/DQNkU
+	l1coqngze10lWEOqHQtKKWSW9n1nt0a9DKmgb4=
+X-Google-Smtp-Source: AGHT+IFApfhAHEjMUI5U299k57YwKnPsMN/Ik0b5HX6lVlpdtHbeIxsd1Q0r+GQz5I22vbwNy4Ut9U4zuDgZ7sOE0qo=
+X-Received: by 2002:a05:6402:5343:10b0:62b:2899:5b31 with SMTP id
+ 4fb4d7f45d1cf-62fc08d40ecmr2418056a12.5.1758287368510; Fri, 19 Sep 2025
+ 06:09:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="osaflwzk24ws3fht"
-Content-Disposition: inline
-In-Reply-To: <20250919-work-namespace-selftests-v1-1-be04cbf4bc37@kernel.org>
-
-
---osaflwzk24ws3fht
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250916135900.2170346-1-mjguzik@gmail.com> <20250919-unmotiviert-dankt-40775a34d7a7@brauner>
+In-Reply-To: <20250919-unmotiviert-dankt-40775a34d7a7@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 19 Sep 2025 15:09:16 +0200
+X-Gm-Features: AS18NWD5Om8yGekTULVtEvApOLHSTiZijG74rmoXqBK7CgJeOnhoxL1KEl8c09g
+Message-ID: <CAGudoHFgf3pCAOfp7cXc4Y6pmrVRjG9R79Ak16kcMUq+uQyUfw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/12] hide ->i_state behind accessors
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
+	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] selftests/namespaces: verify initial namespace inode
- numbers
-MIME-Version: 1.0
 
-On 2025-09-19, Christian Brauner <brauner@kernel.org> wrote:
-> Make sure that all works correctly.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Fri, Sep 19, 2025 at 2:19=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Sep 16, 2025 at 03:58:48PM +0200, Mateusz Guzik wrote:
+> > This is generated against:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=
+=3Dvfs-6.18.inode.refcount.preliminaries
+>
+> Given how late in the cycle it is I'm going to push this into the v6.19
+> merge window. You don't need to resend. We might get by with applying
+> and rebasing given that it's fairly mechanincal overall. Objections
+> Mateusz?
 
-Looks good, feel free to take my
+First a nit: if the prelim branch is going in, you may want to adjust
+the dump_inode commit to use icount_read instead of
+atomic_read(&inode->i_count));
 
-Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-
-> ---
->  tools/testing/selftests/namespaces/.gitignore      |  1 +
->  tools/testing/selftests/namespaces/Makefile        |  2 +-
->  tools/testing/selftests/namespaces/init_ino_test.c | 60 ++++++++++++++++=
-++++++
->  3 files changed, 62 insertions(+), 1 deletion(-)
->=20
-> diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testin=
-g/selftests/namespaces/.gitignore
-> index 7639dbf58bbf..ccfb40837a73 100644
-> --- a/tools/testing/selftests/namespaces/.gitignore
-> +++ b/tools/testing/selftests/namespaces/.gitignore
-> @@ -1,2 +1,3 @@
->  nsid_test
->  file_handle_test
-> +init_ino_test
-> diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/=
-selftests/namespaces/Makefile
-> index f6c117ce2c2b..5fe4b3dc07d3 100644
-> --- a/tools/testing/selftests/namespaces/Makefile
-> +++ b/tools/testing/selftests/namespaces/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  CFLAGS +=3D -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-> =20
-> -TEST_GEN_PROGS :=3D nsid_test file_handle_test
-> +TEST_GEN_PROGS :=3D nsid_test file_handle_test init_ino_test
-> =20
->  include ../lib.mk
-> =20
-> diff --git a/tools/testing/selftests/namespaces/init_ino_test.c b/tools/t=
-esting/selftests/namespaces/init_ino_test.c
-> new file mode 100644
-> index 000000000000..ddd5008d46a6
-> --- /dev/null
-> +++ b/tools/testing/selftests/namespaces/init_ino_test.c
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +// Copyright (c) 2025 Christian Brauner <brauner@kernel.org>
-> +
-> +#define _GNU_SOURCE
-> +#include <fcntl.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <sys/stat.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <linux/nsfs.h>
-> +
-> +#include "../kselftest_harness.h"
-> +
-> +struct ns_info {
-> +	const char *name;
-> +	const char *proc_path;
-> +	unsigned int expected_ino;
-> +};
-> +
-> +static struct ns_info namespaces[] =3D {
-> +	{ "ipc",    "/proc/1/ns/ipc",    IPC_NS_INIT_INO },
-> +	{ "uts",    "/proc/1/ns/uts",    UTS_NS_INIT_INO },
-> +	{ "user",   "/proc/1/ns/user",   USER_NS_INIT_INO },
-> +	{ "pid",    "/proc/1/ns/pid",    PID_NS_INIT_INO },
-> +	{ "cgroup", "/proc/1/ns/cgroup", CGROUP_NS_INIT_INO },
-> +	{ "time",   "/proc/1/ns/time",   TIME_NS_INIT_INO },
-> +	{ "net",    "/proc/1/ns/net",    NET_NS_INIT_INO },
-> +	{ "mnt",    "/proc/1/ns/mnt",    MNT_NS_INIT_INO },
-> +};
-> +
-> +TEST(init_namespace_inodes)
-> +{
-> +	struct stat st;
-> +
-> +	for (int i =3D 0; i < sizeof(namespaces) / sizeof(namespaces[0]); i++) {
-> +		int ret =3D stat(namespaces[i].proc_path, &st);
-> +	=09
-> +		/* Some namespaces might not be available (e.g., time namespace on old=
-er kernels) */
-> +		if (ret < 0) {
-> +			if (errno =3D=3D ENOENT) {
-> +				ksft_test_result_skip("%s namespace not available\n", namespaces[i].=
-name);
-> +				continue;
-> +			}
-> +			ASSERT_GE(ret, 0)
-> +				TH_LOG("Failed to stat %s: %s", namespaces[i].proc_path, strerror(er=
-rno));
-> +		}
-> +
-> +		ASSERT_EQ(st.st_ino, namespaces[i].expected_ino) {
-> +			TH_LOG("Namespace %s has inode 0x%lx, expected 0x%x",
-> +			       namespaces[i].name, st.st_ino, namespaces[i].expected_ino);
-> +		}
-> +
-> +		ksft_print_msg("Namespace %s: inode 0x%lx matches expected 0x%x\n",
-> +			       namespaces[i].name, st.st_ino, namespaces[i].expected_ino);
-> +	}
-> +}
-> +
-> +TEST_HARNESS_MAIN
->=20
-> ---
-> base-commit: 5a9b4dfe901cecd4e06692bb877b393459e4d50d
-> change-id: 20250919-work-namespace-selftests-7b478f415792
->=20
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---osaflwzk24ws3fht
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaM1QIxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9QUAD/f+39K9blPSgQzBYAyJrW
-xQ+z3+/ECpUt6jFlM/nEhYcBALGzINB60LRxypzO4t1CHc/ljoGppgdqy8iQoKtN
-DPUD
-=2k8W
------END PGP SIGNATURE-----
-
---osaflwzk24ws3fht--
+Getting this in *now* is indeed not worth it, so I support the idea.
 
