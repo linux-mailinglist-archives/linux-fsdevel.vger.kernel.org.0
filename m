@@ -1,168 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-62212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A991EB88860
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 11:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C511FB8887B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 11:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C882D5A0925
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D44F1C85F6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8521B2F5337;
-	Fri, 19 Sep 2025 09:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634632F291B;
+	Fri, 19 Sep 2025 09:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QuK5wRa0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WYy6M2/T"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jIkfBxWS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566E72E92B7;
-	Fri, 19 Sep 2025 09:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2B32459FF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 09:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758273052; cv=none; b=IGwRc2Jv9RvRMTWz76oQ8DLjsEcUOUh9CwZculV4hZn1AkC1kD6roizCrWJU3Zkab5BHKfTGcF2BushN7nrUReoadxrREsMqFOT9ggvYbM9CRd4PVjS9SmlrNrElBaOA55TSqPPlOb7tXEvfxg8YuRRNhi5e44mxzVRBtoqMqnU=
+	t=1758273396; cv=none; b=KMJpET64gKlf9ZR7NwQyDKYlsWzDcGqH+3BaTRR8h3umG68+G+3q8CvecTxELMFD7yGGAZo5/QH4mJ1mZaZ0brZyeEiJHNQeezLCtgvY/xgnqd0qaJQUmNGDEWWhxL9oVI8S5lQmqDcrN/dYEvpzrWW7ORIs9yWFR5a002YjgQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758273052; c=relaxed/simple;
-	bh=mKK9BZSlGpFwYARvF3teGUSt/yQQr+Sq0fzoXrino+A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gDBENw+VGMadvJH6+U/ANh2G363ogRPUNm+9nIhnC90vyTU9bZXDcTcMVfUwFMyWNcT0V4xP7vNuCHWjUAlNi7/4z5vT/7B8z2b10xJyu2XoQQQft8ud5UjFRWN86XM0iCjV5wyMRcAERgnMoSn9Pj5buz1ZdtdKFUc8MEWV1EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QuK5wRa0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WYy6M2/T; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758273049;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DX7ZWTGcfO6cjMLSuPAPLarY79uM4KjOvmSn3Yf+60k=;
-	b=QuK5wRa0gDQO1gXgXehNLVasmKdIhOap5o64R2lG53jbo6J/WT4kVJ3gBmtdp5Kbz++Us4
-	1xhgDgHTmFas3SJGlGEO3NiLQMIQokw5F3MhYbuQneqBKJB9JczoJF0aNvX417+jxDAs+R
-	X3ywGry7Rp8uEvN21n02DE0781iXrphv/m9W52CXuBkskWKIa6zpRr2PsyQnROEqjXRuHS
-	a08Qf3dsf5uiq2XvNMKmhxGGUK5gidEf4wQJa2LYQr71wqnmxgk5ic9dabJkN6DWw3Okwj
-	uUxA+mg75xRft7B5XFN5q+sYTv8eo+PefhCyqlbpsErvZjxXOu6S8fwJErbhOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758273049;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DX7ZWTGcfO6cjMLSuPAPLarY79uM4KjOvmSn3Yf+60k=;
-	b=WYy6M2/T0lb7WW23IIDdRWWBS23UuLkHY4UK6FOSWYzoGycbAdkixRSpst7y1Vv4h8T1H5
-	1Gf58LjH/I8W1jDw==
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, kernel test robot
- <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Nathan Chancellor
- <nathan@kernel.org>, Darren Hart <dvhart@infradead.org>, Davidlohr Bueso
- <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@igalia.com>,
- x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 3/6] uaccess: Provide scoped masked user access regions
-In-Reply-To: <aMwHHkaSECBDjuir@localhost.localdomain>
-References: <20250916163004.674341701@linutronix.de>
- <20250916163252.164475057@linutronix.de>
- <aMwHHkaSECBDjuir@localhost.localdomain>
-Date: Fri, 19 Sep 2025 11:10:48 +0200
-Message-ID: <87bjn6959j.ffs@tglx>
+	s=arc-20240116; t=1758273396; c=relaxed/simple;
+	bh=3NSAuKg48kDucBl+lQY28yZrJW6O+JKtv/vQq7ZLJw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oIITJt9/zXUm21NUwtUmOki3gQMSYAXQ744blzd4EPFcB5sf5lXDsJOETocRTpH0TP0bwSGKgmTWpb1qgoxjYDa1rPOXI37YNqC6F47+lXVBA8YOCbbdJvAuMC/pIiD6k8PSARecSeSG/+Xa9F7BOfsvskg1boJFrY7yoU53Go0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jIkfBxWS; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b61161c35cso30452021cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 02:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1758273393; x=1758878193; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3NSAuKg48kDucBl+lQY28yZrJW6O+JKtv/vQq7ZLJw4=;
+        b=jIkfBxWSlkjW5STzq37DPgVopUzsqLgx+5lZ5mRKt851bD5CPQ0b1Ki7IlmlwQiMYE
+         H0xpl3LtCSTR/KGE26rJ4q7NsTw9tNEXpOp8fC4wELhU7PtsLQc8OnrHXMG5PofxzC+m
+         GybeLzX+nLQQYDz1fGSuf4OPCRHsRuuf5BOEg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758273393; x=1758878193;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3NSAuKg48kDucBl+lQY28yZrJW6O+JKtv/vQq7ZLJw4=;
+        b=t9HbYbHiSd/4kRnW8X4gDD8giXsdYd8OgsfKumC8vQZIl2KQ4uLpTCgokw4A1SXEzw
+         xveobjIWvxUunURTyDwMcGs407QOJwGw/m+ixDkEYW6N0wx4ZZpYyOBSoRVZtH1eFD6Y
+         NCJ+pgE/gpm7kI84XDhWrgiW40tBlpEm1o85BQUt0omR01cPF8z63EOr9gCc8UdRH8fO
+         BdETF1Cz/BSre05lf8r6/h/xuNfWW09OGSu9atsUlu+7w+5tMhqEsvObCEcbF/2eOmpK
+         XvxvbyXC1XN7VDUfS8jh0+1/0q0vTh1xiRKcNVYl4nR5cW0IgZ15TGp9epVvoxgVT5kc
+         fHdA==
+X-Gm-Message-State: AOJu0Ywwm5bRl+Wzz4/pI1M88HluSa1jF6tKcGmKQHpvdRrbgVCIMFWl
+	cTlwg3gIjVfAp3pj2jQAbeJCmTLlyIv9tIF2VH7cftagu1aEPxNqBi9ACRnv4E+KbjOdhobJqXF
+	xDHzxzhQBVLjYNfu03jbKA40zKZU7RSy6HwSPmhN7Uw==
+X-Gm-Gg: ASbGncub8OgWmV61Z6/D0O8ZsDFS4k+4uaMeavVxug4WiRdyDwKuuvWhzgxrCT5nt9r
+	1G/whfg/PwPUldD2XKZGE9LUBvmfNQKUGXSs48TG1MRG+OfRpZGkeq7WVbiIqdTcFjx9VLLA/Lv
+	8vlvfESAOibVrjpBwCzFNRpOw0X766uV+XGD3/nQG0SRVzDx8vonzdmyn4K18p1WBVi+vAk62m8
+	xAGSlPc8Ncy5xR4ZJG6jL11lAp6d6NOl1o/cSI=
+X-Google-Smtp-Source: AGHT+IEC7DaOiqsDhZ6el+nJAXMCR2LZLpubNGOPgEov0Yiqge6V0MP8FIeK9NIu4a3q26iz/ROtYZA/OmdKQK0CbyY=
+X-Received: by 2002:a05:622a:1189:b0:4b5:ee26:5371 with SMTP id
+ d75a77b69052e-4c06e7cec5emr25872751cf.26.1758273392530; Fri, 19 Sep 2025
+ 02:16:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250917232416.GG39973@ZenIV> <20250917232736.2556586-1-viro@zeniv.linux.org.uk>
+ <20250917232736.2556586-7-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250917232736.2556586-7-viro@zeniv.linux.org.uk>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 19 Sep 2025 11:16:21 +0200
+X-Gm-Features: AS18NWBdR2wSIkWeUQEoOiuG4V2oEtZ00-2g_l56ym-IbHqMpDho5hZu73hYZtE
+Message-ID: <CAJfpegsxUQzZaXKFAOBmThP6e5F=XT=oDn1BDBUO0R35D39P=Q@mail.gmail.com>
+Subject: Re: [PATCH 7/9] simplify fuse_atomic_open()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, v9fs@lists.linux.dev, agruenba@redhat.com, 
+	linux-nfs@vger.kernel.org, hansg@kernel.org, linux-cifs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 18 2025 at 09:20, Mathieu Desnoyers wrote:
-> On 16-Sep-2025 06:33:13 PM, Thomas Gleixner wrote:
->> These patterns beg for scopes with automatic cleanup. The resulting outcome
->> is:
->>     	scoped_masked_user_read_access(from, return -EFAULT,
->> 		scoped_get_user(val, from); );
->> 	return 0;
->
-> I find a few aspects of the proposed API odd:
->
-> - Explicitly implementing the error label within a macro parameter,
+On Thu, 18 Sept 2025 at 01:27, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-Which error label are you talking about?
+Some explanation about the dput() removal would be useful, e.g.:
 
-> - Having the scoped code within another macro parameter.
+Non-null res implies either an error or a positive dentry, hence the
+dput(res) cleanup is unnecessary, since at that point res will always
+be NULL.
 
-Macros are limited and the whole construct requires a closed scope to
-work and to keep the local variables and the jump label local.
+> Reviewed-by: NeilBrown <neil@brown.name>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-> I would rather expect something like this to mimick our expectations
-> in C:
-
-I obviously would love to do it more C style as everyone else.
-If you can come up with a way to do that in full C I'm all ears :)
-
-> int func(void __user *ptr, size_t len, char *val1, char *val2)
-> {
->         int ret;
->
->         scoped_masked_user_read_access(ptr, len, ret) {
->                 scoped_get_user(val1, ptr[0]);
->                 scoped_get_user(val2, ptr[0]);
->         }
->         return ret;
-> }
->
-> Where:
->
-> - ptr is the pointer at the beginning of the range where the userspace
->   access will be done.
-
-That's the case with the proposed interface already, no?
-
-> - len is the length of the range.
-
-The majority of use cases does not need an explicit size because the
-size is determined by the data type. So not forcing everyone to write
-scope(ptr, sizeof(*ptr), ..) is a good thing, no?
-
-Adding a sized interface on top for the others is straight forward
-enough.
-
-> - ret is a variable used as output (set to -EFAULT on error, 0 on
->   success). If the user needs to do something cleverer than
->   get a -EFAULT on error, they can open-code it rather than use
->   the scoped helper.
-
-Just write  "ret = WHATEVER" instead of "return WHATEVER".
-
-> - The scope is presented similarly to a "for ()" loop scope.
-
-It is a loop scope and you can exit it with either return or break.
-
-> Now I have no clue whether preprocessor limitations prevent achieving
-> this somehow, or if it would end up generating poor assembler.
-
-There is no real good way to implement it so that the scope local
-requirements are fulfilled. The only alternative would be to close the
-scope with a bracket after the code:
-
-      scope(....)
-        foo(); }
-
-or for multiline:
-
-      scope(....) {
-           ....
-      ))
-
-The lonely extra bracket screws up reading even more than the code
-within the macro parameter because it's imbalanced. It also makes
-tooling from editors to code checkers mightily unhappy.
-
-Thanks,
-
-        tglx
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
 
