@@ -1,104 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-62226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EACBB896CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 14:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F6CB896E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 14:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A08C97BFF38
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 12:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA9D3AF458
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 12:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2F53101D9;
-	Fri, 19 Sep 2025 12:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35F031079C;
+	Fri, 19 Sep 2025 12:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jS3uOwTZ"
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="W2rZmp6x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC430FF2B;
-	Fri, 19 Sep 2025 12:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B163101DC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 12:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284489; cv=none; b=HVixhXrHknT5jV34kKPhYeSXWjsvN+4k+Gn/jUo9hBJw9pRDTPCyjJ6m0Ut1ZegkeQWOtDcAWgiq7++/hac9NSN7iURpr+r/guhz/tLJOEjQV1SSO5UOBDK1w2Sodm8jb+MN1YPbtzdracwrCwoBCUNvHOM6fNG++7iLqf0W1Nk=
+	t=1758284590; cv=none; b=EQ/cwx0a26PVlozTlO3hL5cVfGrRzsbQmu3uUVrgU/V4KSgf3BqAJ++rlOn0n91e+9tJxFjwFHotqJvqp3C9ZCvAM7CU66HyrvQ6ZU7a7ridPvONTA1lBcCEFyIlsKMFI8YT5SX3T+iITzADc9MLJna4dlF/Qb0MmVdeYhRh8cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284489; c=relaxed/simple;
-	bh=rXIgbfE716xBftqBoD9rprDY7oYuAFMefpcVDwRQo5A=;
+	s=arc-20240116; t=1758284590; c=relaxed/simple;
+	bh=KIJ8hSpUPj5yJOYsOOvoMAboQbBE3gvNf+eNVgk4gUY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qWhRt4643nqkW3fEpjPwNjWkbZWe4RG1joK0B2Qpo07CbsmaCkuOI0ZbYDSTniJ89ZLAP3tCs5F4fX++5kIzKvvgLDzSa65xXYiH8uNYgxQ2qc4zb2KtMl3DHJBhLY/b9jtX5QbFh7B+Ul1xjl750WAEzdvCZSFIsS3md66tqWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jS3uOwTZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E9FC4CEF0;
-	Fri, 19 Sep 2025 12:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758284488;
-	bh=rXIgbfE716xBftqBoD9rprDY7oYuAFMefpcVDwRQo5A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jS3uOwTZccJhGlQ88oY6vvJuMdVS+b4JUvSJbriaEq3zMM1lCDyQ9xLYm8QnjUGxV
-	 Q3e/b0rIOaeuj7qBX/hMTRb+HN3EzUR4GBVnnN6e6+a3hCVk8/rbSaAHapg+7rfn5f
-	 Kez/vxrcEtawHzR1oYKr2pHkAfmQB4A++FXiGpv8bIB131Ho67XBEUG7L1qet/QzFJ
-	 hx02lhcMicvrnnI20mb6NCohsqsSLadMZ6QVNXLCo6YbI7/MXTDduM2siRvwKsLglW
-	 5bPAIurwxJiCxhsthP6Y2/CkJKlYKNkJvG1vB4Mc3tBDEPMWeGMBelSunQX/suE+XH
-	 xAHh6gzh/bbrw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-kernel@vger.kernel.org,
+	 MIME-Version; b=WGH2Jf7cqgRVxdHUvzoC9L9s0OuhUm2JEMgvgN7PDdrYrzSFG7g9haKRJeBc20HsjEA5TgzsnJ3VT0D+/Algvt/yBOJyctP5mbjlRmL+MOnCzwBN1E30EVp3q/6YdqU2dsgRR39Yj8JNEJlJbGgW/GYGcGK0EHazdxFYe/1daaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=W2rZmp6x; arc=none smtp.client-ip=202.108.3.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758284586;
+	bh=MwuO3s4MxolpqYas14pKeShCxVq/OriEAKTj9BTUoq0=;
+	h=From:Subject:Date:Message-ID;
+	b=W2rZmp6xioCesSVbicqcQbBGrsCx6n4rV4IXl6bD30xfbhkKuLp4PV6ehkQYfWAd0
+	 uN0w6PhYDWOBx/yKF/w/zz5T3saKxl5WBjEt5XOtYpu8SsKBcL/sdSZNXGe+ZAkqyj
+	 QWoZ3JnwaaFVR0/JNeG0ZkZubWSAzC2QJUoFOHv8=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68CD4B24000036A3; Fri, 19 Sep 2025 20:23:02 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6774046291924
+X-SMAIL-UIID: 1808608B694D4BA88487F3520188493C-20250919-202302-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	dhowells@redhat.com,
 	linux-fsdevel@vger.kernel.org,
-	Marco Crivellari <marco.crivellari@suse.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 0/3] fs: replace wq users and add WQ_PERCPU to alloc_workqueue() users
-Date: Fri, 19 Sep 2025 14:21:20 +0200
-Message-ID: <20250919-denkfabrik-addition-6e42bfe1d22c@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250916082906.77439-1-marco.crivellari@suse.com>
-References: <20250916082906.77439-1-marco.crivellari@suse.com>
+	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	pc@manguebit.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+Date: Fri, 19 Sep 2025 20:22:52 +0800
+Message-ID: <20250919122253.7178-1-hdanton@sina.com>
+In-Reply-To: <20250919064800.GA20476@redhat.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1441; i=brauner@kernel.org; h=from:subject:message-id; bh=rXIgbfE716xBftqBoD9rprDY7oYuAFMefpcVDwRQo5A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc9Tr81HJRw+naG1dmHH9/oC41h50vo5g3JkVy4VrTq 7x8ixW7OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSVsfwT0d1/QQx1vq9+l0l ar4tcaHVzy+um7d4l0fQp56yZ4v37GRkWGcvrS0xyed19/2W7vQL14u8uGZdNK5cv5NX+bLOEvn /bAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 16 Sep 2025 10:29:03 +0200, Marco Crivellari wrote:
-> Below is a summary of a discussion about the Workqueue API and cpu isolation
-> considerations. Details and more information are available here:
+On Fri, 19 Sep 2025 08:48:00 +0200 Oleg Nesterov wrote:
+> Dominique,
 > 
->         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
->         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> according to
 > 
-> === Current situation: problems ===
+> 	https://lore.kernel.org/all/20250919021852.7157-1-hdanton@sina.com/
+> 	https://lore.kernel.org/all/68ccc372.050a0220.28a605.0016.GAE@google.com/
 > 
-> [...]
+> this is yet another issue seems to be fixed by
+> 
+> 	[PATCH] 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+> 	https://lore.kernel.org/all/20250819161013.GB11345@redhat.com/
+> 
+> are you going to apply it?
+> 
+> Hillf, thanks a lot!
+> 
+Happy to test your fix.
 
-Applied to the vfs-6.18.workqueue branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.workqueue branch should appear in linux-next soon.
+Hillf Danton
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.workqueue
-
-[1/3] fs: replace use of system_unbound_wq with system_dfl_wq
-      https://git.kernel.org/vfs/vfs/c/08621f25a268
-[2/3] fs: replace use of system_wq with system_percpu_wq
-      https://git.kernel.org/vfs/vfs/c/d33fa88429c5
-[3/3] fs: WQ_PERCPU added to alloc_workqueue users
-      https://git.kernel.org/vfs/vfs/c/13549bd48bbf
+> Oleg.
 
