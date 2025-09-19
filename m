@@ -1,148 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-62233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5FEB89B7B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 15:40:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AD2B89DD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 16:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73E03A4ED2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 13:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C73431898A5A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 14:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301BA3112D6;
-	Fri, 19 Sep 2025 13:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16896260578;
+	Fri, 19 Sep 2025 14:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnXbZG+z"
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="Kl86BVcJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB4723BCF3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 13:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B420304BD7;
+	Fri, 19 Sep 2025 14:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.42.203.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758289198; cv=none; b=ZForPU7MNqBkafAKsn5QsjvMhnV6N6nu81m1EGjv4j8xZArguGO6651+MhM9G9Pz/zTmP4LXKcp0Ts39cKA036L1feprANeAouV4RWRyXu4cPgnFcJLIebHRgkl0kAN0ITy+9D3UkUFNVyqewPr/Fn0EyxDwE6QZB7JEc+YdZc4=
+	t=1758291706; cv=none; b=mgjQTGPdnqpzyCkJbgETMXtAiSxnUdbquOwEDDDBOg+3eTYRaj0HBisY85jkNZYZUGrB11VecrTqJAbyUem5aWRqTvqBvpynM4Z+XNWqlcuxYEoC83eEXmL0BnYMT7x49UmE+GcQfcn4UKMj06kyfuqRCMxxUDZiFDaRvvHXitc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758289198; c=relaxed/simple;
-	bh=yS4tjevziR0toZXf/8EWO3F7qazDep+9Exg0qySjl74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n6TNElLXFYlAOKhspAT524ZW6QdSA/zcPqw9yAJlwRVk2VAZiYQf68zrzssLN+3aydF10HAuWKFpeQWeWFVL+o09cVwGXtNRmT+VEKvwa61t6zyIt75j3GhKfm/NYOd+1Vxj7zyaNv40xF+CWFbZa80jSrWf/KzNmm1+14KZDSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jnXbZG+z; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fbd0a9031so1540451a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 06:39:56 -0700 (PDT)
+	s=arc-20240116; t=1758291706; c=relaxed/simple;
+	bh=SNoE37pH9IsrRmPPr6Ks6nLKz8UuVU4Y3Ra1GhalwAY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cnXUI+9mtsLbzLfXho3V+SBlwlRxa12bFXlTec+1Kw73EA145QrYzIrkZIpvyM17tYQnsj3fvoVSL+8HNTvgEZ1btzCm7LTyenzMsEgV8K5iKkq6PLmz2/lBupCCxRDIxW6JNhiTvKTl7G5IkYVcC4ARdOOniV83+3HoZ8eXrMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=Kl86BVcJ; arc=none smtp.client-ip=52.42.203.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758289195; x=1758893995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yS4tjevziR0toZXf/8EWO3F7qazDep+9Exg0qySjl74=;
-        b=jnXbZG+zX9hZ6XwqFUrBGnWw27SogfV9/JKlKEpktyKWb5O2fIVJJEH8q4uuvODhoM
-         724vvfts7YOcJAvxLoeFc/IKQe+Ive081Hyfw6FH7zWqjG9SUeHcESyxxpEnOUvgNiYS
-         g/4hGXkCmSZDuRokbzpe5ZuklfVp+v2XT7rSWspN8SeXk5QrT/+qUN7UOpaJIjf6HLMy
-         b3glQe4a1+2XTUVwoqJOUk+bs1iOIQW1aAk15/oq5o2B+7qpXGgT70twthgf/sMOq7Rc
-         XqVI+L1igrk9IOoUilhvYVXZUFK8nN7jUl7YmCvz2FZIs3cVYMjxEFCNPF4ouhxL3fV2
-         xxNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758289195; x=1758893995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yS4tjevziR0toZXf/8EWO3F7qazDep+9Exg0qySjl74=;
-        b=a2WUoCIMRVqq9DBWCggAxNncq2DQohxLtAdnQxvR6PXx+V761rnkcmiu2z5WSkZ4jU
-         w2fKtT8wIOV4YezYx3ux+iIvET75xfpKm3LTD1lbXt6KsKFUxP1ocoz8kJPorLGFXuH/
-         WX+WPSPcSIcPhIRhQleYuLXNPHirlegc2FrDb5LDLqFx7+UCfyW7l///zYNm2z0uIIMf
-         6dYSeM1JZwHKDaJUP/VwKSwf0aazf9FRibgy3Qar0JxtM1lh3EC3V7XR5i4zDBG40llW
-         F6QTklA2acX61lLuW4a420BeTLDF7bGUfdisdvg7P6lHBwalqYHXHY9qUDxe/jUT8Gtn
-         yVUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhUyuaYZ9K0V9a5behygRl1byKkX7+LigGxq3XTm5FmhExxM5f+XVec8XYD0eAmVzCAPCDwKUqTKZqvluS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwtQhEnx2oOuFjjoljmz33em2kND/LHeRyHbwg81Q/5FNqCPI9
-	onci3NkWuQcZfPsuAeKrWqugRgNvVpv0kchIDaM/xs83BQeJpGFdc5MMmDUeLKXtJdOibaDsAPY
-	KdxkLfrudCVBEjRHUgmgvmpUCqQTtqQ4=
-X-Gm-Gg: ASbGncsfcmPEyxcjZRLp2m22tqGumOUdbIRlRxoriSy1+0snSKLDhH/theXCF2sDJ3D
-	lsAOIAo4JORVy/pRrLisvkUUhV4KxcCf2qRdHn3b7YCJbCpzgqklzDtVURu2JiOVG0w28ovuj5d
-	1RO94p8lBlRSrpCxZxEBH5fFEMtYt3dpmN0jfax1s8tYIocTyUBmKKKKtasI0SYvevCP38zHpUU
-	/IirXoJlEpTVSYIa4yqEuajZp+ZC181L9f5o50=
-X-Google-Smtp-Source: AGHT+IG8y92yXBXG6PZ8P/ch2ZSS1wNstcNcIuj6+aYZ7P6TYOVq/b6w97srocc+Y3Zhyd7rZ7srrxYnAt6SbPx+jsY=
-X-Received: by 2002:a05:6402:4612:b0:62f:36bb:d8ba with SMTP id
- 4fb4d7f45d1cf-62fc0a7af44mr2864980a12.22.1758289194894; Fri, 19 Sep 2025
- 06:39:54 -0700 (PDT)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1758291704; x=1789827704;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SNoE37pH9IsrRmPPr6Ks6nLKz8UuVU4Y3Ra1GhalwAY=;
+  b=Kl86BVcJgYRPnAyMKChI70qieZWVKxiYdo/tUnzRHJTXcF0eODqAxT6p
+   jv5ZQkx3Ch/F/bzFWZcdBVyCj5QhSQVVERHxKP3XUfAHRaxL7FFIReqt4
+   ++O7qM9byBs3Ks/5Y1ToELEHJSNHckQTGGslnUq6nsCfkOKoFtWCJxW1e
+   kQe3LRnyjUE3IxgOMDJsRWe4G60TcIeT2CW0LBz5W7gV3FrDRFeAHWryU
+   OUM4t/UazgboLMb3JyvkXkIaplYh7R4IvPO/V8tBOEwm9d1clocG0bKb7
+   e/yv7HPlYhzT7p8bzYPSHP5jHz23izv2ftI0FZOO+5JHzDVUjWIU1/rA2
+   Q==;
+X-CSE-ConnectionGUID: 3rQ2T0xWQKyMn44LQUihdg==
+X-CSE-MsgGUID: in8j3+qtQTa8prMPIWitiw==
+X-IronPort-AV: E=Sophos;i="6.18,278,1751241600"; 
+   d="scan'208";a="3277338"
+Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
+  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 14:21:42 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:24105]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.168:2525] with esmtp (Farcaster)
+ id f8312997-ebfd-4e7f-b3de-3651e64ad808; Fri, 19 Sep 2025 14:21:42 +0000 (UTC)
+X-Farcaster-Flow-ID: f8312997-ebfd-4e7f-b3de-3651e64ad808
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Fri, 19 Sep 2025 14:21:41 +0000
+Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
+ (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 19 Sep 2025
+ 14:21:39 +0000
+From: Jakub Acs <acsjakub@amazon.de>
+To: <linux-fsdevel@vger.kernel.org>
+CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
+ Hildenbrand" <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, "Lorenzo
+ Stoakes" <lorenzo.stoakes@oracle.com>, Jinjiang Tu <tujinjiang@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>, Penglei Jiang
+	<superman.xpt@gmail.com>, Mark Brown <broonie@kernel.org>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, "Andrei
+ Vagin" <avagin@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?=
+	<mirq-linux@rere.qmqm.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, "Muhammad
+ Usama Anjum" <usama.anjum@collabora.com>, <stable@vger.kernel.org>
+Subject: [PATCH] fs/proc/task_mmu: check cur_buf for NULL
+Date: Fri, 19 Sep 2025 14:21:04 +0000
+Message-ID: <20250919142106.43527-1-acsjakub@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916135900.2170346-1-mjguzik@gmail.com> <20250919-unmotiviert-dankt-40775a34d7a7@brauner>
- <CAGudoHFgf3pCAOfp7cXc4Y6pmrVRjG9R79Ak16kcMUq+uQyUfw@mail.gmail.com>
-In-Reply-To: <CAGudoHFgf3pCAOfp7cXc4Y6pmrVRjG9R79Ak16kcMUq+uQyUfw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 19 Sep 2025 15:39:41 +0200
-X-Gm-Features: AS18NWBesGPMB9d6nHQB7uHFd7U6Qkkb038pDKj5Q9kZX-8UZXEAoD__UTqjpFY
-Message-ID: <CAGudoHFViBUZ4TPNuLWC7qyK0v8LRwxbpZd9Mx3rHdh5GW9CrQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/12] hide ->i_state behind accessors
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On Fri, Sep 19, 2025 at 3:09=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Fri, Sep 19, 2025 at 2:19=E2=80=AFPM Christian Brauner <brauner@kernel=
-.org> wrote:
-> >
-> > On Tue, Sep 16, 2025 at 03:58:48PM +0200, Mateusz Guzik wrote:
-> > > This is generated against:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=
-=3Dvfs-6.18.inode.refcount.preliminaries
-> >
-> > Given how late in the cycle it is I'm going to push this into the v6.19
-> > merge window. You don't need to resend. We might get by with applying
-> > and rebasing given that it's fairly mechanincal overall. Objections
-> > Mateusz?
->
-> First a nit: if the prelim branch is going in, you may want to adjust
-> the dump_inode commit to use icount_read instead of
-> atomic_read(&inode->i_count));
->
-> Getting this in *now* is indeed not worth it, so I support the idea.
+V2hlbiBQQUdFTUFQX1NDQU4gaW9jdGwgaW52b2tlZCB3aXRoIHZlY19sZW4gPSAwIHJlYWNoZXMK
+cGFnZW1hcF9zY2FuX2JhY2tvdXRfcmFuZ2UoKSwga2VybmVsIHBhbmljcyB3aXRoIG51bGwtcHRy
+LWRlcmVmOgoKWyAgIDQ0LjkzNjgwOF0gT29wczogZ2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0LCBw
+cm9iYWJseSBmb3Igbm9uLWNhbm9uaWNhbCBhZGRyZXNzIDB4ZGZmZmZjMDAwMDAwMDAwMDogMDAw
+MCBbIzFdIFNNUCBERUJVR19QQUdFQUxMT0MgS0FTQU4gTk9QVEkKWyAgIDQ0LjkzNzc5N10gS0FT
+QU46IG51bGwtcHRyLWRlcmVmIGluIHJhbmdlIFsweDAwMDAwMDAwMDAwMDAwMDAtMHgwMDAwMDAw
+MDAwMDAwMDA3XQpbICAgNDQuOTM4MzkxXSBDUFU6IDEgVUlEOiAwIFBJRDogMjQ4MCBDb21tOiBy
+ZXByb2R1Y2VyIE5vdCB0YWludGVkIDYuMTcuMC1yYzYgIzIyIFBSRUVNUFQobm9uZSkKWyAgIDQ0
+LjkzOTA2Ml0gSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwg
+MTk5NiksIEJJT1MgcmVsLTEuMTYuMy0wLWdhNmVkNmI3MDFmMGEtcHJlYnVpbHQucWVtdS5vcmcg
+MDQvMDEvMjAxNApbICAgNDQuOTM5OTM1XSBSSVA6IDAwMTA6cGFnZW1hcF9zY2FuX3RocF9lbnRy
+eS5pc3JhLjArMHg3NDEvMHhhODAKCjxzbmlwIHJlZ2lzdGVycywgdW5yZWxpYWJsZSB0cmFjZT4K
+ClsgICA0NC45NDY4MjhdIENhbGwgVHJhY2U6ClsgICA0NC45NDcwMzBdICA8VEFTSz4KWyAgIDQ0
+Ljk0OTIxOV0gIHBhZ2VtYXBfc2Nhbl9wbWRfZW50cnkrMHhlYy8weGZhMApbICAgNDQuOTUyNTkz
+XSAgd2Fsa19wbWRfcmFuZ2UuaXNyYS4wKzB4MzAyLzB4OTEwClsgICA0NC45NTQwNjldICB3YWxr
+X3B1ZF9yYW5nZS5pc3JhLjArMHg0MTkvMHg3OTAKWyAgIDQ0Ljk1NDQyN10gIHdhbGtfcDRkX3Jh
+bmdlKzB4NDFlLzB4NjIwClsgICA0NC45NTQ3NDNdICB3YWxrX3BnZF9yYW5nZSsweDMxZS8weDYz
+MApbICAgNDQuOTU1MDU3XSAgX193YWxrX3BhZ2VfcmFuZ2UrMHgxNjAvMHg2NzAKWyAgIDQ0Ljk1
+Njg4M10gIHdhbGtfcGFnZV9yYW5nZV9tbSsweDQwOC8weDk4MApbICAgNDQuOTU4Njc3XSAgd2Fs
+a19wYWdlX3JhbmdlKzB4NjYvMHg5MApbICAgNDQuOTU4OTg0XSAgZG9fcGFnZW1hcF9zY2FuKzB4
+MjhkLzB4OWMwClsgICA0NC45NjE4MzNdICBkb19wYWdlbWFwX2NtZCsweDU5LzB4ODAKWyAgIDQ0
+Ljk2MjQ4NF0gIF9feDY0X3N5c19pb2N0bCsweDE4ZC8weDIxMApbICAgNDQuOTYyODA0XSAgZG9f
+c3lzY2FsbF82NCsweDViLzB4MjkwClsgICA0NC45NjMxMTFdICBlbnRyeV9TWVNDQUxMXzY0X2Fm
+dGVyX2h3ZnJhbWUrMHg3Ni8weDdlCgp2ZWNfbGVuID0gMCBpbiBwYWdlbWFwX3NjYW5faW5pdF9i
+b3VuY2VfYnVmZmVyKCkgbWVhbnMgbm8gYnVmZmVycyBhcmUKYWxsb2NhdGVkIGFuZCBwLT52ZWNf
+YnVmIHJlbWFpbnMgc2V0IHRvIE5VTEwuCgpUaGlzIGJyZWFrcyBhbiBhc3N1bXB0aW9uIG1hZGUg
+bGF0ZXIgaW4gcGFnZW1hcF9zY2FuX2JhY2tvdXRfcmFuZ2UoKSwKdGhhdCBwYWdlX3JlZ2lvbiBp
+cyBhbHdheXMgYWxsb2NhdGVkIGZvciBwLT52ZWNfYnVmX2luZGV4LgoKRml4IGl0IGJ5IGV4cGxp
+Y2l0bHkgY2hlY2tpbmcgY3VyX2J1ZiBmb3IgTlVMTCBiZWZvcmUgZGVyZWZlcmVuY2luZy4KCk90
+aGVyIHNpdGVzIHRoYXQgbWlnaHQgcnVuIGludG8gc2FtZSBkZXJlZi1pc3N1ZSBhcmUgYWxyZWFk
+eSAoZGlyZWN0bHkKb3IgdHJhbnNpdGl2ZWx5KSBwcm90ZWN0ZWQgYnkgY2hlY2tpbmcgcC0+dmVj
+X2J1Zi4KCk5vdGU6CkZyb20gUEFHRU1BUF9TQ0FOIG1hbiBwYWdlLCBpdCBzZWVtcyB2ZWNfbGVu
+ID0gMCBpcyB2YWxpZCB3aGVuIG5vIG91dHB1dAppcyByZXF1ZXN0ZWQgYW5kIGl0J3Mgb25seSB0
+aGUgc2lkZSBlZmZlY3RzIGNhbGxlciBpcyBpbnRlcmVzdGVkIGluLApoZW5jZSBpdCBwYXNzZXMg
+Y2hlY2sgaW4gcGFnZW1hcF9zY2FuX2dldF9hcmdzKCkuCgpUaGlzIGlzc3VlIHdhcyBmb3VuZCBi
+eSBzeXprYWxsZXIuCgpGaXhlczogNTI1MjZjYTdmZGI5ICgiZnMvcHJvYy90YXNrX21tdTogaW1w
+bGVtZW50IElPQ1RMIHRvIGdldCBhbmQgb3B0aW9uYWxseSBjbGVhciBpbmZvIGFib3V0IFBURXMi
+KQpDYzogQW5kcmV3IE1vcnRvbiA8YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4KQ2M6IERhdmlk
+IEhpbGRlbmJyYW5kIDxkYXZpZEByZWRoYXQuY29tPgpDYzogVmxhc3RpbWlsIEJhYmthIDx2YmFi
+a2FAc3VzZS5jej4KQ2M6IExvcmVuem8gU3RvYWtlcyA8bG9yZW56by5zdG9ha2VzQG9yYWNsZS5j
+b20+CkNjOiBKaW5qaWFuZyBUdSA8dHVqaW5qaWFuZ0BodWF3ZWkuY29tPgpDYzogU3VyZW4gQmFn
+aGRhc2FyeWFuIDxzdXJlbmJAZ29vZ2xlLmNvbT4KQ2M6IFBlbmdsZWkgSmlhbmcgPHN1cGVybWFu
+LnhwdEBnbWFpbC5jb20+CkNjOiBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+CkNjOiBC
+YW9saW4gV2FuZyA8YmFvbGluLndhbmdAbGludXguYWxpYmFiYS5jb20+CkNjOiBSeWFuIFJvYmVy
+dHMgPHJ5YW4ucm9iZXJ0c0Bhcm0uY29tPgpDYzogQW5kcmVpIFZhZ2luIDxhdmFnaW5AZ21haWwu
+Y29tPgpDYzogIk1pY2hhxYIgTWlyb3PFgmF3IiA8bWlycS1saW51eEByZXJlLnFtcW0ucGw+CkNj
+OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KQ2M6IE11aGFtbWFkIFVz
+YW1hIEFuanVtIDx1c2FtYS5hbmp1bUBjb2xsYWJvcmEuY29tPgpsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnCmxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnCkNjOiBzdGFibGVAdmdlci5r
+ZXJuZWwub3JnClNpZ25lZC1vZmYtYnk6IEpha3ViIEFjcyA8YWNzamFrdWJAYW1hem9uLmRlPgoK
+LS0tCiBmcy9wcm9jL3Rhc2tfbW11LmMgfCAzICsrKwogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0
+aW9ucygrKQoKZGlmZiAtLWdpdCBhL2ZzL3Byb2MvdGFza19tbXUuYyBiL2ZzL3Byb2MvdGFza19t
+bXUuYwppbmRleCAyOWNjYTBlNmQwZmYuLjhjMTBhODEzNWU3NCAxMDA2NDQKLS0tIGEvZnMvcHJv
+Yy90YXNrX21tdS5jCisrKyBiL2ZzL3Byb2MvdGFza19tbXUuYwpAQCAtMjQxNyw2ICsyNDE3LDkg
+QEAgc3RhdGljIHZvaWQgcGFnZW1hcF9zY2FuX2JhY2tvdXRfcmFuZ2Uoc3RydWN0IHBhZ2VtYXBf
+c2Nhbl9wcml2YXRlICpwLAogewogCXN0cnVjdCBwYWdlX3JlZ2lvbiAqY3VyX2J1ZiA9ICZwLT52
+ZWNfYnVmW3AtPnZlY19idWZfaW5kZXhdOwogCisJaWYgKCFjdXJfYnVmKQorCQlyZXR1cm47CisK
+IAlpZiAoY3VyX2J1Zi0+c3RhcnQgIT0gYWRkcikKIAkJY3VyX2J1Zi0+ZW5kID0gYWRkcjsKIAll
+bHNlCi0tIAoyLjQ3LjMKCgoKCkFtYXpvbiBXZWIgU2VydmljZXMgRGV2ZWxvcG1lbnQgQ2VudGVy
+IEdlcm1hbnkgR21iSApUYW1hcmEtRGFuei1TdHIuIDEzCjEwMjQzIEJlcmxpbgpHZXNjaGFlZnRz
+ZnVlaHJ1bmc6IENocmlzdGlhbiBTY2hsYWVnZXIKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQg
+Q2hhcmxvdHRlbmJ1cmcgdW50ZXIgSFJCIDI1Nzc2NCBCClNpdHo6IEJlcmxpbgpVc3QtSUQ6IERF
+IDM2NSA1MzggNTk3Cg==
 
-Now that I wrote this I gave it a little bit of thought.
-
-Note almost all of the churn was generated by coccinelle. Few spots
-got adjusted by hand.
-
-Regressions are possible in 3 ways:
-- wrong routine usage (_raw/_once vs plain) leading to lockdep splats
-- incorrect manual adjustment between _raw/_once and plain variants,
-again leading to lockdep splats
-- incorrect manually added usage (e.g., some of the _set stuff and the
-xfs changes were done that way)
-
-The first two become instant non-problems if lockdep gets elided for
-the merge right now.
-
-The last one may be a real concern, to which I have a
-counter-proposal: extended coccinelle to also cover that, leading to
-*no* manual intervention.
-
-Something like that should be perfectly safe to merge, hopefully
-avoiding some churn headache in the next cycle. Worst case the
-_raw/_once usage would be "wrong" and only come out after lockdep is
-restored.
-
-Another option is to make the patchset into a nop by only providing
-the helpers without _raw/_once variants, again fully generated with
-coccinelle. Again should make it easier to shuffle changes in the next
-cycle.
-
-I can prep this today if it sounds like a plan, but I'm not going to
-strongly argue one way or the other.
 
