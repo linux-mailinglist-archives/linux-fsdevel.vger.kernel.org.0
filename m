@@ -1,116 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-62202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014E2B88203
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:14:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13F2B8820C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A509D3B1555
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 798151C861DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1972BF012;
-	Fri, 19 Sep 2025 07:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF37287262;
+	Fri, 19 Sep 2025 07:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JVQrOxNB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKqjoAGz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C81F2BEC3D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 07:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0341A9F93
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 07:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758266047; cv=none; b=ttmCZEHIjzMsrkjY9tU3tui7VxTUBKg9n+Bk/BuwrMTXi9WFcfD6tBNstYBsuboyjjWmGrXyZc8nhcIzGQKCoJB7bXF6pfPsd8yw9yifjujZzHM3ectjFSSJf70ORgrW6rifLlXxDPhcbSJOUODKwP2FIr3M/xswxWasvGP85rE=
+	t=1758266191; cv=none; b=kNiqlycA0AGzLOXBa4b01o4YeD4NYblysuxi3h/2RzkpLCxfqVQD7agFX1ewFODLWdHZrSAFes8EyDErZOcCzwQ6/9h4U02WFHF1ybMUD4yNFCQ1cZ55x7Qjdt1mpPd6RnLwkz1pmHv6F3iL2PlQuQGCNWhB1KDOffZT2coNF7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758266047; c=relaxed/simple;
-	bh=HWdLkZOt1eo65Hw9C2VJLQGvyauAaqfW7dH7XTRry48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=loEtQfkivmPFAZBxDfHtoxgngIvLwjoOAk8ZMAjz+ryCQvVd+QCbuqzk3WyYbVVCs0WfxmmUdJthBjvz2IxrbyEt65L1RJwLI9bOYV+DmqEtaDrBnHd+r9LE2pffAoGMh5OHTAE+kn7MuRVKEqGwdcqgjSr9rJaYZjVTpjXwU0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JVQrOxNB; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b5e88d9994so20514871cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 00:14:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758266044; x=1758870844; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5FwZbH6t8CGqEFqmrm0ZFV29P2Rt2NmMLrFnZUIngW4=;
-        b=JVQrOxNB9aklAqUCsbrzaBhSVhLRu1ViPAdrmaaCv+00+KH7K8IDB2fqaT0xPhCk/F
-         GwhtwHi2DsiJO4ar4JKuAOymywdrOGeH8AHCnoiiD3jn/WceRCJIRe9mxJM3WtTmQxkV
-         sVz5y7Z5KjFHcuUXUkcDHOj2mO/QidX/CrOPo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758266044; x=1758870844;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5FwZbH6t8CGqEFqmrm0ZFV29P2Rt2NmMLrFnZUIngW4=;
-        b=gxsYZEYyPqxikIrYQwBCKtU/jHNlF2kCN0qv7tqmRTqCOQsjjS0o0SxGgYBeac/rvG
-         LmZrJQZIwH/AWdFMvme7gHcnw7aC0+5B9D/IJGE7QQyVAMOPwlfmgTdQhaOmxxvthKZN
-         qafjrQTuwvOkUQ8uxhM8Mj2uxLFlEb0aNdDeaxaC7WBFgNo4pnbdkV+6QHSrTtusk24u
-         nV7okUi2DS8pVz9ZrertZ2Rr9UwCXmYV/s2aY/Q3Br9Kq1ptCp8+DU29zL3spd+SOfwt
-         3VJl82FlGtydtpNRViUaRpQSAtonhzAH1QAqOk100PEACpYLORKNI4zH020sfJvNu1HJ
-         ztBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWi1rCnaqnPuO1BdukQMb3dm2CEC4/ysocXC3rD/K4nub/8RpdA98xLXX91KRnMbw5P75rcO7xiHh7wd3p6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr7bjQV5pVgJ1MEjbXb0TtkbsEWTv+In2Knltk81AaZbGuC60c
-	74HBVfCVaUViqs7yzvPoa2ykxaB43dBFAp1i1kVEMqsWuBZrvTGR0aLoi6ytX7tKjFT37DeD/PX
-	UIiMmeEAsNaiiVO79V47yPomXxN6znJgy5ecJ+E7vug==
-X-Gm-Gg: ASbGncts+gOtl3lNvkBBpg9YFeua6l+r+bxI+TyNIgjS1mlg8UoYevBoGrSWScEpZAS
-	RGFwc6jonWix3+gUHyTRGGXfLnfrwhVB1qT/YmoEtKAd+WCOfjrGPzkcYv9703QX60SPn0tS8Os
-	MEXhe/mJfdtfuQSI3nitYnUWHz72Nht8/AuTwJWVPaeX4K8jqqJJCSAKHhlRP9dwXlFfA0E60Z0
-	q01iTaueBH1iMsun2E7Dzq966RotkDwpSwthI14ovYh8cM5Rg==
-X-Google-Smtp-Source: AGHT+IHgJSRV8ByiNY7ouVWHU1k4CdL9EQdnatTgwryNMr4/Omqqdm3U+SYbq5QYyRAZT3wSH4j4TBKjh1SPN/pjHcw=
-X-Received: by 2002:ac8:5754:0:b0:4b7:a885:9659 with SMTP id
- d75a77b69052e-4c0720ad96fmr24093771cf.41.1758266044383; Fri, 19 Sep 2025
- 00:14:04 -0700 (PDT)
+	s=arc-20240116; t=1758266191; c=relaxed/simple;
+	bh=abGph3h2Vv+iWytEEvTIhckiE64woXSmUp537gS9Rfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBPiFjOUD8b1DY/Fiy09logOv7vFem6AxBBoZd1ob0ZnIihWKwHGLq0b5Ei8bDMzNvunkD0bcAYgIeWHt1OU1+wx/i5zIK2g60iU9BmA6G0VG9jHelCzv0cFmiZZsifLVtiv0n2uADnksTz0gnfalAch6q1SyUuS11wp4QcNE4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKqjoAGz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758266189;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=84Etj288ZL1mWyMg4qOb4gbjSyPee4cfVRuJExbnQkA=;
+	b=DKqjoAGzVX++XFzCR1m0tYgwzTcPy19mAiWBqwJ+ECrolr4aemyF1Wkh2ILiP6w+JpFv/F
+	Ualf6l764UvhKH6eMOQf7VzNjOB9zXf2qew9BBVqyGsiOAzUXCEJegAL23c6ZmLV0udoU/
+	DoaptbdZsIvtP3LWcHJ1EZ3h1e3OwCo=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-oerQSmVxMgawAOdC8RF6Kw-1; Fri,
+ 19 Sep 2025 03:16:25 -0400
+X-MC-Unique: oerQSmVxMgawAOdC8RF6Kw-1
+X-Mimecast-MFC-AGG-ID: oerQSmVxMgawAOdC8RF6Kw_1758266183
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B97C180057B;
+	Fri, 19 Sep 2025 07:16:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.65])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 03AF819560BB;
+	Fri, 19 Sep 2025 07:16:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 19 Sep 2025 09:14:59 +0200 (CEST)
+Date: Fri, 19 Sep 2025 09:14:54 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
+	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+	pc@manguebit.org, syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+Message-ID: <20250919071454.GA20615@redhat.com>
+References: <68cb3c24.050a0220.50883.0028.GAE@google.com>
+ <68cca807.050a0220.28a605.0013.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798151087.382724.2707973706304359333.stgit@frogsfrogsfrogs>
- <175798151352.382724.799745519035147130.stgit@frogsfrogsfrogs>
- <CAOQ4uxibHLq7YVpjtXdrHk74rXrOLSc7sAW7s=RADc7OYN2ndA@mail.gmail.com>
- <20250918181703.GR1587915@frogsfrogsfrogs> <CAOQ4uxiH1d3fV0kgiO3-JjqGH4DKboXdtEpe=Z=gKooPgz7B8g@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiH1d3fV0kgiO3-JjqGH4DKboXdtEpe=Z=gKooPgz7B8g@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 19 Sep 2025 09:13:53 +0200
-X-Gm-Features: AS18NWD11PNB3svk5L_DyA4P7FLTVC_7xWPTnVo1mAtDh-XBIofxbbIK0S55ieo
-Message-ID: <CAJfpegsrBN9uSmKzYbrbdbP2mKxFTGkMS_0Hx4094e4PtiAXHg@mail.gmail.com>
-Subject: Re: [PATCH 04/28] fuse: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to
- add new iomap devices
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
-	joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68cca807.050a0220.28a605.0013.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, 18 Sept 2025 at 20:42, Amir Goldstein <amir73il@gmail.com> wrote:
+On 09/18, syzbot wrote:
 >
-> On Thu, Sep 18, 2025 at 8:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
-g> wrote:
-
-> > How about restricting the backing ids to RLIMIT_NOFILE?  The @end param
-> > to idr_alloc_cyclic constrains them in exactly that way.
+> syzbot has bisected this issue to:
 >
-> IDK. My impression was that Miklos didn't like having a large number
-> of unaccounted files, but it's up to him.
+> commit aaec5a95d59615523db03dd53c2052f0a87beea7
+> Author: Oleg Nesterov <oleg@redhat.com>
+> Date:   Thu Jan 2 14:07:15 2025 +0000
+>
+>     pipe_read: don't wake up the writer if the pipe is still full
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=175fa534580000
+> start commit:   46a51f4f5eda Merge tag 'for-v6.17-rc' of git://git.kernel...
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14dfa534580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10dfa534580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3815dce0acab6c55984e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17692f62580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1361f47c580000
+>
+> Reported-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
+> Fixes: aaec5a95d596 ("pipe_read: don't wake up the writer if the pipe is still full")
 
-There's no 1:1 mapping between a fuse instance and a "fuse server
-process", so the question is whose RLIMIT_NOFILE?  Accounting to the
-process that registered the fd would be good, but implementing it
-looks exceedingly complex.  Just taking RLIMIT_NOFILE value from the
-process that is doing the fd registering should work, I guess.
+#syz dup: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
 
-There's still the question of unhiding these files.  Latest discussion
-ended with lets create a proper directory tree for open files in proc.
-I.e. /proc/PID/fdtree/FD/hidden/...
+https://lore.kernel.org/all/68a2de8f.050a0220.e29e5.0097.GAE@google.com/
 
-Thanks,
-Miklos
 
