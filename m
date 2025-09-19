@@ -1,178 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-62217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B74B88BD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 12:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A9BB88C0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 12:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686DF1C80B56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 10:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2031C80C3A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 10:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281AE2F5308;
-	Fri, 19 Sep 2025 10:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176822ECD1D;
+	Fri, 19 Sep 2025 10:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzJdZoGM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDqGYqSi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A482222B4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 10:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65049381BA;
+	Fri, 19 Sep 2025 10:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758276108; cv=none; b=AMiL/nYUzR9+Wp1+PnHbHvITsS80Ej/TILS2ao3i2Z7Tt7v/Z4dOQedXzEif9qyYKTLrwlERBBE2+q5AC+UD3H/I98d9Nkl9Lmf6b03MjrZ6Zbxv2bHf7Al+CGo7ksMawJLtNaQ1A+3b1u+2z9DhJ1ZCoe8ANa45l8aBTeGeY0U=
+	t=1758276323; cv=none; b=fU4G+M6Fx4V/RXXTSK8bTT4denNw/T2uOZtA+iB2KIt/T/Z0+JqmnHRSJ9w571mLpLvqyOaITApSevvQL3WZLQGWfvMPih5iBcYySWXJGq9tDQCOU/bphdHiJ/AChoKVIsEs8HCOK7wsOZtG4MmD3aWLVF0aSiTdxcUUujBotR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758276108; c=relaxed/simple;
-	bh=11pW80UJmh9+JzxjU76gGgINsCsgjYUo14K91xAJe9E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NvJDm9trXVtikNg3PYmBgH64Yq5cx4iIAdJjLku8ZIWFVubFHiwrBi/BEtegvwN/IGkZ/RHtJfLw8Cra+hnyR2KT3iEKcWAQOSyjRIJ2QyzxFN/wdFkrVbhlu6gBdWSl1Nkm54jSw4ldQ8XwW8nPG922jL9FMUahnNFqOrpIKOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzJdZoGM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56F7C4CEF0;
-	Fri, 19 Sep 2025 10:01:45 +0000 (UTC)
+	s=arc-20240116; t=1758276323; c=relaxed/simple;
+	bh=sEGa8QySB41BjFqZ4spjQYxhsr+2LjIMUkSAqVnUoa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZtPa/UfN5rZowXOT3P0gdKjJWnYCBwGahcbW1ZOR+y8ys4cscevPGuAl2uE+Mgdb0rk9/Aeyjdh07gv/0rUwCrlGP89+gZvZe9H31qy4/D1+b9J23TRiFnmGgdruhlQiblOc4UaNSrcejAlhbXIJCw7hqcFiIzanDyNbfVKOQ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDqGYqSi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BB3C4CEF0;
+	Fri, 19 Sep 2025 10:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758276108;
-	bh=11pW80UJmh9+JzxjU76gGgINsCsgjYUo14K91xAJe9E=;
-	h=From:Date:Subject:To:Cc:From;
-	b=KzJdZoGMWm0r6lXZWkMYoVSe+1CmmxM9LyN0A+No4n5b6dwFJyzq+LiqU3zHE7oYE
-	 gtyw3O/9RMw+CPIml9Rv6gSdA9RMSyVBbhIEtkSk7anPrA8psIlMX747XC3aurbHLC
-	 gHHSpBou7m33Wig1U0r7ox+giJV0moU6KeJUZySdwMmUl6Djpfm1n2YLAdnNi+3AJN
-	 ReWC8nHdALTNkGiIuj0i5neVbyyc6VVZHK+39XTg8z9PG6hxgtJlNh0AGUZDfiDjN/
-	 X7MQGxSJRDW8O5+s1tcYjBL3Bs6h7S8RMNrsnIGvtn1/Xp58c9FK6LW8Hydt6e5irn
-	 DrdvqXzvNC+pg==
+	s=k20201202; t=1758276322;
+	bh=sEGa8QySB41BjFqZ4spjQYxhsr+2LjIMUkSAqVnUoa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LDqGYqSi8mm3OlTsQhGhlrHiBLaSuHu8R13V1akS45a7JQ0F0qEA+rr+a5yC7C+4r
+	 DWuhmNK/TP1PE8L+469QTo49Gpk4YqzKC9GAH46ucCaVw4RZ+6aeLHKP+Mpuxu2UPz
+	 M7XJm/qAmYf2mW0ejGJu7B8t7N+JxgrvGqlFtCtqYDnU/6v0I5YfkpQST9F9sC8uI5
+	 KqdIR16Z1nANmnT5t8RscZcYUKHVjkkIOCVasdsKgnuUsICz8/kly+UYL4++qwNNEM
+	 CY2eSZKdP0SmeBnrpVXBjqb7+XAol7lMHWHGitrHBS0Y6tpSYPDRZsC7YInKRXNexZ
+	 r5SOY6snGunvA==
+Date: Fri, 19 Sep 2025 12:05:16 +0200
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 19 Sep 2025 12:01:38 +0200
-Subject: [PATCH] selftests/namespaces: verify initial namespace inode
- numbers
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 2/9] mnt: expose pointer to init_mnt_ns
+Message-ID: <20250919-sense-evaluieren-eade772e2e6c@brauner>
+References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
+ <20250917-work-namespace-ns_common-v1-2-1b3bda8ef8f2@kernel.org>
+ <oqtggwqink4kthsxiv6tv6q6l7tgykosz3tenek2vejqfiuqzl@drczxzwwucfi>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-work-namespace-selftests-v1-1-be04cbf4bc37@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAEqzWgC/0XMMQ7CMAxA0atUnjFqopY0XAUxOMGhEZBWdgVIV
- e9OYGF8w/8rKEtmhWOzgvAza55Khdk1EEcqV8Z8qQbb2r71xuNrkhsWerDOFBmV72lhXRRd6Ny
- QOtM7b6Hms3DK79/6dK4OpIxBqMTxO/wvDnszwLZ9AH0GVwWLAAAA
-X-Change-ID: 20250919-work-namespace-selftests-7b478f415792
-To: linux-fsdevel@vger.kernel.org
-Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- Lennart Poettering <mzxreary@0pointer.de>, Aleksa Sarai <cyphar@cyphar.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-56183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3425; i=brauner@kernel.org;
- h=from:subject:message-id; bh=11pW80UJmh9+JzxjU76gGgINsCsgjYUo14K91xAJe9E=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc1eKMtss8Xepv+/+U6rFjtZzyEqrHE6KMy72v58suO
- lr+2FO2o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKL5zH8M34k0sfQosYkfdkg
- /d/Ggle8a/vunpjRfqboXaDKqvczjRn+GdTFX71s+5YjfYcRz9VN0/27aksmi67y2pPrpmRcbz2
- PCwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: multipart/mixed; boundary="bc6bz2tyopwtmiho"
+Content-Disposition: inline
+In-Reply-To: <oqtggwqink4kthsxiv6tv6q6l7tgykosz3tenek2vejqfiuqzl@drczxzwwucfi>
 
-Make sure that all works correctly.
 
+--bc6bz2tyopwtmiho
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+On Wed, Sep 17, 2025 at 06:28:37PM +0200, Jan Kara wrote:
+> On Wed 17-09-25 12:28:01, Christian Brauner wrote:
+> > There's various scenarios where we need to know whether we are in the
+> > initial set of namespaces or not to e.g., shortcut permission checking.
+> > All namespaces expose that information. Let's do that too.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+I've changed this so it behaves exactly like all the other init
+namespaces. See appended.
+
+--bc6bz2tyopwtmiho
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="v2-0001-mnt-expose-pointer-to-init_mnt_ns.patch"
+
+From 1bf2ddb7bdd1f686d4e083380412e826a211c57d Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Wed, 17 Sep 2025 12:28:01 +0200
+Subject: [PATCH v2] mnt: expose pointer to init_mnt_ns
+
+There's various scenarios where we need to know whether we are in the
+initial set of namespaces or not to e.g., shortcut permission checking.
+All namespaces expose that information. Let's do that too.
+
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/.gitignore      |  1 +
- tools/testing/selftests/namespaces/Makefile        |  2 +-
- tools/testing/selftests/namespaces/init_ino_test.c | 60 ++++++++++++++++++++++
- 3 files changed, 62 insertions(+), 1 deletion(-)
+ fs/namespace.c                | 27 ++++++++++++++++-----------
+ include/linux/mnt_namespace.h |  2 ++
+ 2 files changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
-index 7639dbf58bbf..ccfb40837a73 100644
---- a/tools/testing/selftests/namespaces/.gitignore
-+++ b/tools/testing/selftests/namespaces/.gitignore
-@@ -1,2 +1,3 @@
- nsid_test
- file_handle_test
-+init_ino_test
-diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
-index f6c117ce2c2b..5fe4b3dc07d3 100644
---- a/tools/testing/selftests/namespaces/Makefile
-+++ b/tools/testing/selftests/namespaces/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a68998449698..f0bddc9cf2a6 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -6008,27 +6008,32 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+ 	return ret;
+ }
  
--TEST_GEN_PROGS := nsid_test file_handle_test
-+TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/namespaces/init_ino_test.c b/tools/testing/selftests/namespaces/init_ino_test.c
-new file mode 100644
-index 000000000000..ddd5008d46a6
---- /dev/null
-+++ b/tools/testing/selftests/namespaces/init_ino_test.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2025 Christian Brauner <brauner@kernel.org>
-+
-+#define _GNU_SOURCE
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <linux/nsfs.h>
-+
-+#include "../kselftest_harness.h"
-+
-+struct ns_info {
-+	const char *name;
-+	const char *proc_path;
-+	unsigned int expected_ino;
++struct mnt_namespace init_mnt_ns = {
++	.ns.inum	= PROC_MNT_INIT_INO,
++	.ns.ops		= &mntns_operations,
++	.user_ns	= &init_user_ns,
++	.ns.count	= REFCOUNT_INIT(1),
++	.passive	= REFCOUNT_INIT(1),
++	.mounts		= RB_ROOT,
++	.poll		= __WAIT_QUEUE_HEAD_INITIALIZER(init_mnt_ns.poll),
 +};
 +
-+static struct ns_info namespaces[] = {
-+	{ "ipc",    "/proc/1/ns/ipc",    IPC_NS_INIT_INO },
-+	{ "uts",    "/proc/1/ns/uts",    UTS_NS_INIT_INO },
-+	{ "user",   "/proc/1/ns/user",   USER_NS_INIT_INO },
-+	{ "pid",    "/proc/1/ns/pid",    PID_NS_INIT_INO },
-+	{ "cgroup", "/proc/1/ns/cgroup", CGROUP_NS_INIT_INO },
-+	{ "time",   "/proc/1/ns/time",   TIME_NS_INIT_INO },
-+	{ "net",    "/proc/1/ns/net",    NET_NS_INIT_INO },
-+	{ "mnt",    "/proc/1/ns/mnt",    MNT_NS_INIT_INO },
-+};
+ static void __init init_mount_tree(void)
+ {
+ 	struct vfsmount *mnt;
+ 	struct mount *m;
+-	struct mnt_namespace *ns;
+ 	struct path root;
+ 
+ 	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
+ 	if (IS_ERR(mnt))
+ 		panic("Can't create rootfs");
+ 
+-	ns = alloc_mnt_ns(&init_user_ns, true);
+-	if (IS_ERR(ns))
+-		panic("Can't allocate initial namespace");
+-	ns->ns.inum = PROC_MNT_INIT_INO;
+ 	m = real_mount(mnt);
+-	ns->root = m;
+-	ns->nr_mounts = 1;
+-	mnt_add_to_ns(ns, m);
+-	init_task.nsproxy->mnt_ns = ns;
+-	get_mnt_ns(ns);
++	init_mnt_ns.root = m;
++	init_mnt_ns.nr_mounts = 1;
++	mnt_add_to_ns(&init_mnt_ns, m);
++	init_task.nsproxy->mnt_ns = &init_mnt_ns;
++	get_mnt_ns(&init_mnt_ns);
+ 
+ 	root.mnt = mnt;
+ 	root.dentry = mnt->mnt_root;
+@@ -6036,7 +6041,7 @@ static void __init init_mount_tree(void)
+ 	set_fs_pwd(current->fs, &root);
+ 	set_fs_root(current->fs, &root);
+ 
+-	ns_tree_add(ns);
++	ns_tree_add(&init_mnt_ns);
+ }
+ 
+ void __init mnt_init(void)
+diff --git a/include/linux/mnt_namespace.h b/include/linux/mnt_namespace.h
+index 70b366b64816..6d1c4c218c14 100644
+--- a/include/linux/mnt_namespace.h
++++ b/include/linux/mnt_namespace.h
+@@ -11,6 +11,8 @@ struct fs_struct;
+ struct user_namespace;
+ struct ns_common;
+ 
++extern struct mnt_namespace init_mnt_ns;
 +
-+TEST(init_namespace_inodes)
-+{
-+	struct stat st;
-+
-+	for (int i = 0; i < sizeof(namespaces) / sizeof(namespaces[0]); i++) {
-+		int ret = stat(namespaces[i].proc_path, &st);
-+		
-+		/* Some namespaces might not be available (e.g., time namespace on older kernels) */
-+		if (ret < 0) {
-+			if (errno == ENOENT) {
-+				ksft_test_result_skip("%s namespace not available\n", namespaces[i].name);
-+				continue;
-+			}
-+			ASSERT_GE(ret, 0)
-+				TH_LOG("Failed to stat %s: %s", namespaces[i].proc_path, strerror(errno));
-+		}
-+
-+		ASSERT_EQ(st.st_ino, namespaces[i].expected_ino) {
-+			TH_LOG("Namespace %s has inode 0x%lx, expected 0x%x",
-+			       namespaces[i].name, st.st_ino, namespaces[i].expected_ino);
-+		}
-+
-+		ksft_print_msg("Namespace %s: inode 0x%lx matches expected 0x%x\n",
-+			       namespaces[i].name, st.st_ino, namespaces[i].expected_ino);
-+	}
-+}
-+
-+TEST_HARNESS_MAIN
+ extern struct mnt_namespace *copy_mnt_ns(unsigned long, struct mnt_namespace *,
+ 		struct user_namespace *, struct fs_struct *);
+ extern void put_mnt_ns(struct mnt_namespace *ns);
+-- 
+2.47.3
 
----
-base-commit: 5a9b4dfe901cecd4e06692bb877b393459e4d50d
-change-id: 20250919-work-namespace-selftests-7b478f415792
 
+--bc6bz2tyopwtmiho--
 
