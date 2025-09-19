@@ -1,154 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-62259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF925B8AE92
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 20:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA1DB8AED8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 20:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E0418974A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 18:28:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CE51CC3270
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 18:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C38F25DD0B;
-	Fri, 19 Sep 2025 18:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2152571BC;
+	Fri, 19 Sep 2025 18:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GXdhu2Fz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EEtW+YsE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLRv59a/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7BE34BA40;
-	Fri, 19 Sep 2025 18:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BAF233727
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 18:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758306459; cv=none; b=ZCZROvI5g3nzEoCkg8L0LdjD9g5nhabZ5AIOYIXpvS73RGXwdjn6ZrEhdJVFQuoW95DkZdixh8Tzoe0w7dqsbdYwFo+w2oYof9blkOuJyT1XOSXHcUu2RyPS9JD1vJK7Dcga01Zm2APtQv5ZcDlP88R6M+Bcd0g2D7aKOcd6MN0=
+	t=1758306859; cv=none; b=qbGN0rwCm5OPAK6im4D5de+Hs6W5iomzy1xj8DBUiIuuDGHbOdD1cdI7TnWmHe/bOI6SpaOhkhjb3j1WegX6fwBZM3Y5LwmcJhGnoYOeKm8xROhkDBPSoLI9UsqFSNUem4w5odO9Mnnu3FkKgqISwAblDikuXzAE1MOP29CBmwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758306459; c=relaxed/simple;
-	bh=0oKhf9H/k7koggsl3lirtiUd4RzmGFeXGeZu4pUEecg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NPfmOdEWisnSRDyoBupBeg4U2PaHLKxuhN3i0uWBvg6XWimJDnKu9l+QIK8kZejfNYP5216RO5rSlyddALS8179hE8Ynj9rx1+vybpGxq4Rakpl5T5orV6fCYQFCiJXvXpYDH0z6KBLSKC3ryGg9fMysNN5Gd10Mt/tjyBYHB54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GXdhu2Fz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EEtW+YsE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758306455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d9RBmI2iX1ZX7Pcl3gagxnA4YyfCeH7uHTQOBr1mgec=;
-	b=GXdhu2FzEMNv+9P0OmuXv3lu2UlSEj+3hva8irx706eOUEvt8MONPtaRD5qUyw8hqLkyUe
-	tRYHysAoof5su+qo3ytGTqEu1xQXq43cLUbDTETKZYvohRiNFax9s1Wn6G0/mTdDVP/VwF
-	dIyky3OVenLfCELQPiiGRHJBmSMcKNBY40S3Cv5S2M6I5LHunpW6g3bgztGNdQYGlXYCVG
-	rluSrdYuQ8qnGL5kyGJ5FoEFpgAfkyAnmvuak31DMnFlV536wFsXyjY0a9sM77jDocldeh
-	KSx5SAmM0YrR6TTx031rSS0MoMvgm75gL2V+0+UI+kLoxceUsXeQwhD+iCWMQQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758306455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d9RBmI2iX1ZX7Pcl3gagxnA4YyfCeH7uHTQOBr1mgec=;
-	b=EEtW+YsEucAZH23H4LnoTix/0YV5g6BXxI+zZX4U68FNcAEE5qKUH2st++0/6TSBh/qZR7
-	x9v9Ao7pdxDVWBAg==
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
- <peterz@infradead.org>, kernel test robot <lkp@intel.com>, Russell King
- <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Nathan
- Chancellor <nathan@kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: [patch V2a 1/6] ARM: uaccess: Implement missing __get_user_asm_dword()
-In-Reply-To: <20250916163252.037251747@linutronix.de>
-References: <20250916163004.674341701@linutronix.de>
- <20250916163252.037251747@linutronix.de>
-Date: Fri, 19 Sep 2025 20:27:33 +0200
-Message-ID: <878qia8fhm.ffs@tglx>
+	s=arc-20240116; t=1758306859; c=relaxed/simple;
+	bh=7uX0BeiPsvWw8q8A4083nVg+t12ANac5Jycw2LTy1oc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lRrTZYbO4cUJtvPAHhoGV0qxnziEeRNY0I1WQrq99YnwosdWbmSo+CG61LCbYYZ7qmhZmLh0crlp1Z/Cb4aVVP18TolcwuhxzINTmjEzT1HY8g4P4DX8hERhoLNgFomw26Q1/X69hksyivUZkRQETAZc+AOsWoo4KisTnYP6nGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLRv59a/; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b548745253so39218571cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 11:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758306854; x=1758911654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rhRHN77jwmvAE0x3y6aKKQENztc6fTFsJqlfUz+6jDw=;
+        b=GLRv59a/rTvS4bvW43r7Ii6vk7K8DBPLFhRNBMr9CAnlo2Q0gEijjt9U8vukfU3RgC
+         eQ6/eKyLGpzGLkQHTzdSRIJOzVw0M4elOd06F0zGmVuyRp+ia5SXD1WyQz4GL5oRiLsX
+         opBj/+dM8b49MQTJcGS4mx4Eck+3mesnqmgjnxR4kHntly+mwyOwcD6Ezrlo+OPnlArT
+         uYaVU8T1kwtf7sb6l9Ocsz5rCGf3+udu8r7I4RRAfLZxncnE53WAdPY9ULAnVC8ZkvDU
+         nun7+8TvubmV71s+Iqe8p+qQ/iUBNwXXEWBLRt43hMkyi6/c+PI73KzfmiZtXkLIZt31
+         +Q9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758306854; x=1758911654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rhRHN77jwmvAE0x3y6aKKQENztc6fTFsJqlfUz+6jDw=;
+        b=fhi6KgbEuMC7nR0N0gPr5FZg6uDBEyk7CGRbf6VO+fAIm/1nqdTYz5tGeXtmoFuIVG
+         qg9CO8iKg0VtXbzZjbQSur+9AHZcUydFljl/8IK3auFrqM5R9Ec9pkWlaLbFurjVbGn8
+         Hmc3+KRevJ9A9s3RJWVzYHHkL4IetLfl9eWek75UIyg16ewSvWSSq4IuzjbxbXk05FVD
+         VG9rJLoKbF+H3ExFY6K4yV1jwXMdb/WZkvJsbZ0zoc+fVWdruASiC14ou7yyA6EjtZnZ
+         m19oKZxLYQmHTb4tpLsCYlkeyokLe31PAqoYV7+vtFimoE6Wd1deEwMEIQRa/zH/KCr+
+         c68g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzPC7Rp7/qdeOS6H7mJGwXgXsaX7VE4M4XB4QejrIFfytbutHGpfvBK5HqkiPK5sjVVH+xOOTFyKTifrGs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxemBYNSuv0fPZgMFmLamIrP7dpUsbcD5ziHT1TctlBy79sHN4T
+	TkaYBYtI6OieoQQczOeM2+BgujK5pYHZZGajCJ50srw2ZLhGuadDmBBoMfHQ5+h4EyEejTtTaQc
+	/uuEobFiLIvxVUfWPCEAW5HtYVYkX09s=
+X-Gm-Gg: ASbGncucJkaECAmZU3LAeqLVagDOl0HQPB8GETPrB/LDvgpoYg4botoJ/BszrBCUKqB
+	giLvOKzCSLQzf0q8Uj+ixlYH4TuNmxRFrD6tNqeycbQVPlUrqL62HJGR7GmHL6d/u+wyy5Ehrav
+	ZXXRfA1la6tJlthuBaIfbHQDRgfW9H6RiFjH/Uz1g0lw0f2oUjehRtJHhn3DlF5XHMy2cJfeDS/
+	mOnZCw6ma/ApGftqGdyQad0edgzaajRwUkPw0e5
+X-Google-Smtp-Source: AGHT+IEl3EPErf3c09yltPELq1CrtgsMWd+b8acWGVirSfI9XbkQbByyu5P2kwwv0Ytvm0XcDlRHkOfSCgIJVsMlx8s=
+X-Received: by 2002:a05:622a:1826:b0:4b0:7cb2:cec3 with SMTP id
+ d75a77b69052e-4c07238f39dmr58025631cf.38.1758306854308; Fri, 19 Sep 2025
+ 11:34:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250916234425.1274735-1-joannelkoong@gmail.com>
+ <20250916234425.1274735-11-joannelkoong@gmail.com> <20250918223018.GY1587915@frogsfrogsfrogs>
+In-Reply-To: <20250918223018.GY1587915@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 19 Sep 2025 11:34:03 -0700
+X-Gm-Features: AS18NWA5eATCQro2K3o3en9fIfjv9ya2PYZQVPmIDN-TkbTJuiFMxPoK5v0Ka7I
+Message-ID: <CAJnrk1bB+=J5g5h+asx12SYMogiKSn9SpEvRg11-_N_xWodvSA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/15] iomap: add bias for async read requests
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org, 
+	hsiangkao@linux.alibaba.com, linux-block@vger.kernel.org, 
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM
-variant.  This prevents using get_user(u64) in generic code.
+On Thu, Sep 18, 2025 at 3:30=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Tue, Sep 16, 2025 at 04:44:20PM -0700, Joanne Koong wrote:
+> > Non-block-based filesystems will be using iomap read/readahead. If they
+> > handle reading in ranges asynchronously and fulfill those read requests
+> > on an ongoing basis (instead of all together at the end), then there is
+> > the possibility that the read on the folio may be prematurely ended if
+> > earlier async requests complete before the later ones have been issued.
+> >
+> > For example if there is a large folio and a readahead request for 16
+> > pages in that folio, if doing readahead on those 16 pages is split into
+> > 4 async requests and the first request is sent off and then completed
+> > before we have sent off the second request, then when the first request
+> > calls iomap_finish_folio_read(), ifs->read_bytes_pending would be 0,
+> > which would end the read and unlock the folio prematurely.
+> >
+> > To mitigate this, a "bias" is added to ifs->read_bytes_pending before
+> > the first range is forwarded to the caller and removed after the last
+> > range has been forwarded.
+> >
+> > iomap writeback does this with their async requests as well to prevent
+> > prematurely ending writeback.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 55 ++++++++++++++++++++++++++++++++++++------
+> >  1 file changed, 47 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 561378f2b9bb..667a49cb5ae5 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -420,6 +420,38 @@ const struct iomap_read_ops iomap_bio_read_ops =3D=
+ {
+> >  };
+> >  EXPORT_SYMBOL_GPL(iomap_bio_read_ops);
+> >
+> > +/*
+> > + * Add a bias to ifs->read_bytes_pending to prevent the read on the fo=
+lio from
+> > + * being ended prematurely.
+> > + *
+> > + * Otherwise, if the ranges are read asynchronously and read requests =
+are
+> > + * fulfilled on an ongoing basis, there is the possibility that the re=
+ad on the
+> > + * folio may be prematurely ended if earlier async requests complete b=
+efore the
+> > + * later ones have been issued.
+> > + */
+> > +static void iomap_read_add_bias(struct folio *folio)
+> > +{
+> > +     iomap_start_folio_read(folio, 1);
+>
+> I wonder, could you achieve the same effect by elevating
+> read_bytes_pending by the number of bytes that we think we have to read,
+> and subtracting from it as the completions come in or we decide that no
+> read is necessary?
+>
 
-Implement it as a sequence of two 4-byte reads with LE/BE awareness and
-make the data type for the intermediate variable to read into dependend
-on the target type. For 8,16,32 bit use unsigned long and for 64 bit
-unsigned long long
+This is an interesting idea and I think it works (eg we set
+read_bytes_pending to the folio size, keep track of how many
+non-uptodate bytes are read in, then at the end subtract
+read_bytes_pending by folio_size - bytes_read_in). Personally I find
+this bias incrementing/decrementing by 1 approach simplest and easier
+to read and reason about, but maybe I'm just biased (pun intended, I
+guess :P). I don't feel strongly about this so if you do, I'm happy to
+change this.
 
-The __long_type() macro and the idea to solve it was lifted from
-PowerPC. Thanks to Christophe for pointing it out.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel.com/
----
-V2a: Solve the *ptr issue vs. unsigned long long - Russell/Christophe
-V2: New patch to fix the 0-day fallout
----
- arch/arm/include/asm/uaccess.h |   26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -283,10 +283,17 @@ extern int __put_user_8(void *, unsigned
- 	__gu_err;							\
- })
- 
-+/*
-+ * This is a type: either unsigned long, if the argument fits into
-+ * that type, or otherwise unsigned long long.
-+ */
-+#define __long_type(x) \
-+	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
-+
- #define __get_user_err(x, ptr, err, __t)				\
- do {									\
- 	unsigned long __gu_addr = (unsigned long)(ptr);			\
--	unsigned long __gu_val;						\
-+	__long_type(x) __gu_val;					\
- 	unsigned int __ua_flags;					\
- 	__chk_user_ptr(ptr);						\
- 	might_fault();							\
-@@ -295,6 +302,7 @@ do {									\
- 	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
- 	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
- 	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
-+	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
- 	default: (__gu_val) = __get_user_bad();				\
- 	}								\
- 	uaccess_restore(__ua_flags);					\
-@@ -353,6 +361,22 @@ do {									\
- #define __get_user_asm_word(x, addr, err, __t)			\
- 	__get_user_asm(x, addr, err, "ldr" __t)
- 
-+#ifdef __ARMEB__
-+#define __WORD0_OFFS	4
-+#define __WORD1_OFFS	0
-+#else
-+#define __WORD0_OFFS	0
-+#define __WORD1_OFFS	4
-+#endif
-+
-+#define __get_user_asm_dword(x, addr, err, __t)				\
-+	({								\
-+	unsigned long __w0, __w1;					\
-+	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
-+	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
-+	(x) = ((u64)__w1 << 32) | (u64) __w0;				\
-+})
-+
- #define __put_user_switch(x, ptr, __err, __fn)				\
- 	do {								\
- 		const __typeof__(*(ptr)) __user *__pu_ptr = (ptr);	\
+> (That might just be overthinking the plumbing though)
+>
+> --D
+>
 
