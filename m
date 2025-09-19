@@ -1,112 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-62203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13F2B8820C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:16:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22564B88325
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 798151C861DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:16:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BFE16AC07
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF37287262;
-	Fri, 19 Sep 2025 07:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096C2D1F42;
+	Fri, 19 Sep 2025 07:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKqjoAGz"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="IVyHIPov"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0341A9F93
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 07:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11EA2D46B5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 07:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758266191; cv=none; b=kNiqlycA0AGzLOXBa4b01o4YeD4NYblysuxi3h/2RzkpLCxfqVQD7agFX1ewFODLWdHZrSAFes8EyDErZOcCzwQ6/9h4U02WFHF1ybMUD4yNFCQ1cZ55x7Qjdt1mpPd6RnLwkz1pmHv6F3iL2PlQuQGCNWhB1KDOffZT2coNF7M=
+	t=1758267260; cv=none; b=FrF+5IAXJpCcRm8d+uWHKgubpVYril6i24FuHadKX3XApHG7B0pNE4oPghBuh19vkkxbZfgrOQMMgfubjPkCAvzkCxk6umk/s5awK2UrTWTO/D4IrrC+DuUnf6EpnzHo8nkiKaFLy5icsaFwCbW+j03o5dJSx25+L2MJKpc64sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758266191; c=relaxed/simple;
-	bh=abGph3h2Vv+iWytEEvTIhckiE64woXSmUp537gS9Rfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBPiFjOUD8b1DY/Fiy09logOv7vFem6AxBBoZd1ob0ZnIihWKwHGLq0b5Ei8bDMzNvunkD0bcAYgIeWHt1OU1+wx/i5zIK2g60iU9BmA6G0VG9jHelCzv0cFmiZZsifLVtiv0n2uADnksTz0gnfalAch6q1SyUuS11wp4QcNE4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKqjoAGz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758266189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=84Etj288ZL1mWyMg4qOb4gbjSyPee4cfVRuJExbnQkA=;
-	b=DKqjoAGzVX++XFzCR1m0tYgwzTcPy19mAiWBqwJ+ECrolr4aemyF1Wkh2ILiP6w+JpFv/F
-	Ualf6l764UvhKH6eMOQf7VzNjOB9zXf2qew9BBVqyGsiOAzUXCEJegAL23c6ZmLV0udoU/
-	DoaptbdZsIvtP3LWcHJ1EZ3h1e3OwCo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-oerQSmVxMgawAOdC8RF6Kw-1; Fri,
- 19 Sep 2025 03:16:25 -0400
-X-MC-Unique: oerQSmVxMgawAOdC8RF6Kw-1
-X-Mimecast-MFC-AGG-ID: oerQSmVxMgawAOdC8RF6Kw_1758266183
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B97C180057B;
-	Fri, 19 Sep 2025 07:16:23 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.65])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 03AF819560BB;
-	Fri, 19 Sep 2025 07:16:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 19 Sep 2025 09:14:59 +0200 (CEST)
-Date: Fri, 19 Sep 2025 09:14:54 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	pc@manguebit.org, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
-Message-ID: <20250919071454.GA20615@redhat.com>
-References: <68cb3c24.050a0220.50883.0028.GAE@google.com>
- <68cca807.050a0220.28a605.0013.GAE@google.com>
+	s=arc-20240116; t=1758267260; c=relaxed/simple;
+	bh=UDbgq5I7/fiN9GyHTHOeYNojRIjPFBceV29A28/FmKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ObH6yq0V1NAyyo4yj63+HkOQtTDCYzrS8Vuj6CiwgB0EGTyzZ+qGLce6FhLQWyGKGt6aPpy7b0dW0a/G8+Ybg12wEiPntvq1jWWj4YivxMvlfVE1tOSkW8HvK5b09gHW1QeZFovUb/bOLbpLrnaUZeFk+c5zhdZNTzlIScWdT5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=IVyHIPov; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8287fa098e8so179629885a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 00:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1758267257; x=1758872057; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RChfYMo6l3NlpB1CtytFiCPlXnFT8/eeYYewFlQyV0=;
+        b=IVyHIPovg6fIybeWuYJk3D6SVydMvkoKvdKP2HGgSJbeuqsLPHKEHK1zaxocvpapHD
+         LH4/tLRdB7jOOkOs35t21z/rss58mqp8vXqemb/bHZqnmmdkT/rKssfDWRj4ToCAgQqV
+         hQZbSI/HO4zq9Z86UU8aIuokWmbqo9VBDKBCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758267257; x=1758872057;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1RChfYMo6l3NlpB1CtytFiCPlXnFT8/eeYYewFlQyV0=;
+        b=j2SkWzbMfLgixzo7VCyVyaid34kmqAzmtwJCX9bMg0fVhZIX+EjjFK/9Jk7a66CEIs
+         hott0UhH4k4yG87GnoQ4+YsO4Y1HSky0G7unefejqMEZxxVokScuKz7XuVNChXZWG6we
+         ZeZevrJ5J2dNBuGYfWyEhUqFFZ+SV/9+ARHoZW04YTgcsQWAqFXsUUvbYEmGWX6ZjXJh
+         wg9QRvUm/BcbR5Ms3B6gtZufFrIfskmWLMOqB53iMwF3XbasxcC1bNKCaroB1zOFAob4
+         OwRVFEFURjy85ZoQt7NnpoJpusO5+d5e3q6j8pXp/WSArm1EnC0j4lygeOHPaa5MCxN6
+         qcvA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6sT/4OEXeujgixjxgbS0ucdfqFgmPO0T49jhpkKWnmOxmyR24lpEo4ra6jC1aWfHHtzhJ7ISvOSWxvLHZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMwugffYeKBtk8VwWTFthBp9G/vlZRZM1NkdNmI0ckUiMC+GX
+	0VvuAX//fdTFFV2QNG6GyXtz/ggPL5m0SuhyVlD3lnQ40iRRsVSJjovO9MPRG9F5/fuemIltcJS
+	xrwnTSKbhs+S7m+N4mnschvhn8iBDC7cGErJoT4iAFw==
+X-Gm-Gg: ASbGncu8SEl4g3MNbf64qR1BTBy39vyb4GWQYwJi65ov4exd0Z9Ge5BnItjZyVlY7Fw
+	PXKCqpLqY3Msj25CU16mY/DqY3EWzOXNtV8zrwHnyuEAvTm0hkBxefuHlG34PkZI/3old5Mo2Vp
+	5wfduXDKZaD2y1g6ZtiDa+Gn3AAtEfrEJ6Vx4ab/S8sCaiZpSzAVGnW8UjKDr1GZvItnQdZ1Wpp
+	Zkd2Fu2QqFOGSWOFo8DapPLkDR+JJRzU4/Zd+Mm9QLBopcsCA==
+X-Google-Smtp-Source: AGHT+IFH6/yIRQX6FHwVT74Oelgtb0ePNHcn9mX2qFQVBfBdaPpXLeRzP/soCW4TNqD+cygmZmF7/8DbipcgqrdjYnY=
+X-Received: by 2002:a05:620a:4b48:b0:817:d6c5:41ea with SMTP id
+ af79cd13be357-83babfe7d1amr196695285a.51.1758267257515; Fri, 19 Sep 2025
+ 00:34:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68cca807.050a0220.28a605.0013.GAE@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <175798150680.382479.9087542564560468560.stgit@frogsfrogsfrogs>
+ <175798150773.382479.13993075040890328659.stgit@frogsfrogsfrogs>
+ <CAOQ4uxigBL4pCDXjRYX0ftCMyQibRPuRJP7+KhC7Jr=yEM=DUw@mail.gmail.com> <20250918180226.GZ8117@frogsfrogsfrogs>
+In-Reply-To: <20250918180226.GZ8117@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 19 Sep 2025 09:34:06 +0200
+X-Gm-Features: AS18NWDnMUFDnNKztB29fevuAtOKBB3TGWjBAViz5bbTsRot9HiaHDnPQnmtPns
+Message-ID: <CAJfpegsN32gJohjiqdqKqLqwnu7BOchfqrjJEKVo33M1gMgmgg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] fuse: move the passthrough-specific code back to passthrough.c
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
+	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
+	joannelkoong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 09/18, syzbot wrote:
+On Thu, 18 Sept 2025 at 20:02, Darrick J. Wong <djwong@kernel.org> wrote:
 >
-> syzbot has bisected this issue to:
->
-> commit aaec5a95d59615523db03dd53c2052f0a87beea7
-> Author: Oleg Nesterov <oleg@redhat.com>
-> Date:   Thu Jan 2 14:07:15 2025 +0000
->
->     pipe_read: don't wake up the writer if the pipe is still full
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=175fa534580000
-> start commit:   46a51f4f5eda Merge tag 'for-v6.17-rc' of git://git.kernel...
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14dfa534580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10dfa534580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3815dce0acab6c55984e
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17692f62580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1361f47c580000
->
-> Reported-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
-> Fixes: aaec5a95d596 ("pipe_read: don't wake up the writer if the pipe is still full")
+> On Wed, Sep 17, 2025 at 04:47:19AM +0200, Amir Goldstein wrote:
 
-#syz dup: [syzbot] [fs?] [mm?] INFO: task hung in v9fs_file_fsync
+> > I think at this point in time FUSE_PASSTHROUGH and
+> > FUSE_IOMAP should be mutually exclusive and
+> > fuse_backing_ops could be set at fc level.
+> > If we want to move them for per fuse_backing later
+> > we can always do that when the use cases and tests arrive.
+>
+> With Miklos' ok I'll constrain fuse not to allow passthrough and iomap
+> files on the same filesystem, but as it is now there's no technical
+> reason to make it so that they can't coexist.
 
-https://lore.kernel.org/all/68a2de8f.050a0220.e29e5.0097.GAE@google.com/
+Is there a good reason to add the restriction?   If restricting it
+doesn't simplify anything or even makes it more complex, then I'd opt
+for leaving it more general, even if it doesn't seem to make sense.
 
+Thanks,
+Miklos
 
