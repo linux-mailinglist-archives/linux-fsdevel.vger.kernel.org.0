@@ -1,141 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-62253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE400B8AD32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 19:52:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D209FB8AD68
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 19:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C303A1CC631B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 17:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B5EA03601
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 17:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BAC322C9F;
-	Fri, 19 Sep 2025 17:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C376322A0F;
+	Fri, 19 Sep 2025 17:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rk5VqK6/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAUgVkn6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B754322A2F;
-	Fri, 19 Sep 2025 17:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF37930BB9A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 17:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758304214; cv=none; b=Sdt8AlZ5WGnTvOf7szNwGTF87kZ+0V73qKScMl7PXC8WoctAdQKx0T9i6FtpYToZbeY4rfqifPUHyIW00+8z9hDLLSePTu6aUDnyl01LCRRIU7rI3/m9BQpALO4erNYJOU0koU+7yWZZshH+IMDuUb3sh3HCFJRG+bpy9jRvYK0=
+	t=1758304715; cv=none; b=YIldvg4BzaiTbOIr4ZpNKygEdnhakBjbNER4qL3PS5JVMh34Jxxcx2wNFSv+DCuKQ/1iGTODKWi4/nhhYjBYRukA9d0Mo+H1hX8yj81ZXHxt50llhIZL/OxGnGmZtaWRo9dkyHhPACYq4vEHiTLc0WJ8/7pGR4nKtjEbNjlTMcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758304214; c=relaxed/simple;
-	bh=IEsx63hw+/ywO3aNtqUSlEzmD8l5SSYej+UujfBpxrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1PJtnVEDr+MJa2dAZnfDNUptZhC5rIgIMCcpqvzNPh3AeG/S/uO3n+mtr+fGWxrOUnbvesdua9lcWa2M2Fe5KZAJsuNzK3G69s3bBRjls9Blq1CX7dVuHK9WXnPbUdCb+vIGSYuTuHQk4P1rrUb60V/NQd9usb4gWGzt/uXK6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rk5VqK6/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D152CC4CEF0;
-	Fri, 19 Sep 2025 17:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758304213;
-	bh=IEsx63hw+/ywO3aNtqUSlEzmD8l5SSYej+UujfBpxrA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rk5VqK6/ueyvfU84ZycDjff4pHLOMbuBjtdh1Yhup5dLEvjBUabbX40anbaUjEZ2W
-	 0EfXE42XE8zwjKjh4NLC/T9wmDEmbT7YyJ6zxtHFC6xXdQxYGhqM0Y7frdo6M6oyXL
-	 6W0Fq2sPgjbVw1YDs2VLpNWT7VP1KUjCz6pMwrgJ5Fr6/xfBC6a7WQnpHkfxyUKUQX
-	 vGN8MOPcP/ENDYICZPlFkqHoKHeKHFnB4H/nrLhpD8LpqkG9HZ7kocUtl8xJUnMTxX
-	 L4nNhIgk6Fq7NQ+y7H7fXeT6eIqLmoDW45DBPXlz9H+v/J8p5jevg7J6CrZ8vUug8D
-	 UKeAcsQ5wj4Iw==
-Date: Fri, 19 Sep 2025 10:50:11 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Joanne Koong <joannelkoong@gmail.com>, bernd@bsbernd.com,
-	linux-xfs@vger.kernel.org, John@groves.net,
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev
-Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
- local fs behaviors
-Message-ID: <20250919175011.GG8117@frogsfrogsfrogs>
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
- <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
- <20250918165227.GX8117@frogsfrogsfrogs>
- <CAJfpegt6YzTSKBWSO8Va6bvf2-BA_9+Yo8g-X=fncZfZEbBZWw@mail.gmail.com>
+	s=arc-20240116; t=1758304715; c=relaxed/simple;
+	bh=38Gs1Qar33XAo1Y7OS66uYvLqXMX9a7h0GZW0uT6IT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vCy0bh6XFwVE8o82nJFAIKtG78BdEXk4pj4yUJiYbOTtc9IJCfPTjpLZ7vqiQdMCEptLk+CYCTwuXBT8MOahyCr7nYS3mbMCB9UBoQZejOyrmsJDUSPWUsx5qB+dn2G7OHdqhS5E9R8fk49XLe/7EtJl+V1IiWttRPhqg9fgSVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAUgVkn6; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b61161dd37so15947451cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 10:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758304713; x=1758909513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tKiAXDkgrX2LUhD4TKk8v5QGpSKY+EpT1ETvTouA6rM=;
+        b=RAUgVkn6+ALoQ7bm9NktTxKD4MtFhDkRZbPkjbKVNgh6f1b/Ti6L+dxlX8HBLxF6MQ
+         eg6b1wm6zmGouG7khVZxVAzLFtdHpovQaAFnkm7obdnX9X7EDaJ9SVyR3wDhbVTFLcrb
+         RlyXZdxpSaK46afYxtAZNbSeyjLrrlT+BK8I6cap9Vd6CF6LcY17Gc11c9+13dfiJK/V
+         09IWOojy221xl3LgdPIj4cFcBoZZduF072lkLTEGCKwyx3nJHLdNJA9XWJyq4q1Ig7ER
+         cTIPGvboG8zpy70+QqHkvnWDliEbF6BoJBYlYtUspPHcSYHEYIG1z+uZeWxkdzH9xnji
+         YLOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758304713; x=1758909513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tKiAXDkgrX2LUhD4TKk8v5QGpSKY+EpT1ETvTouA6rM=;
+        b=RLPKoD0qwqeilqQc2n2xHO/uZUztGIfv/bbIKcaRa2WtNXjSCQokJ2b/lkRqXhIKl3
+         c70/HoI4nu/71WR2C0WZDHiWrJwUD4T4K/Nt8Ph1jzmGEupTPrL2y/Tq4e8U1OeuaSZA
+         il93F2g/u4rkQkmdUj931W3oD9mWytZBXSiK1U8WL0sBummlk1gTLm4OPjiRkGTq28Ka
+         vj40hjFGSvQWD6VjYxYzdJGYhvtZWIaZuI9/LR6KTcu2tj5d/fPYpoETisat/HsD2bZM
+         G1sNXOFW/IX4sCvFvxzGKvEXTBdDQhlDTbIuzPGd/2WeC5+8DpP9rtWiKLjUc6iwYL9R
+         LvwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiSKWVXg+C1ARhqj3SIN8sm5RzTGHIE9pRJ1sHWsOs24TdR/UDQ53zfLVdHzLwUGRXJ9VtogvSQUK+NK2Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ8svsX78+qyhvola8rV6untWRCLmZ7Cq+I+vIrXqBESR8SM04
+	7SslIX1Gzle4RGXj928Jf9bQWQut3nuGG3fzCq1pwKRHxNa/woDbSAl4wAIusYs6/W0P30KmXtM
+	b0VOw17CaX4blmMjlzsuuOGYFmHv1ODs=
+X-Gm-Gg: ASbGncukY942PkhY63BRkc+oipEdPGnvJeIA+aOiPf4BbncDGCNyF9lC+Z9EyCatxii
+	DjMzQeeEEjCfkbUP7z6C6HI+xLSvmZ2KQq/BkrUkgN/qHmwCEgmaI4sPn2UxA3WObZj2hEJh73R
+	hPiMEYe8lVqmrXjXq0DPhSplFeMb457Wr2ElTAqTC0GthTQPLZrhW3ferBEwD6navwDvtgvjne3
+	d6Tmij1ON8Vs2grEx+Tl3tTVT94npAKG05hktz6
+X-Google-Smtp-Source: AGHT+IG5Mo3h/1ff88PwcUapAIlS2YVGSiLxAR3AL07FsknEHK18lG+gFQCk2zfPCcdMXf1hLVttPVUfviUqt89STrs=
+X-Received: by 2002:ac8:7f4f:0:b0:4b5:fc2a:f37c with SMTP id
+ d75a77b69052e-4c074b076d7mr48411081cf.74.1758304712602; Fri, 19 Sep 2025
+ 10:58:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegt6YzTSKBWSO8Va6bvf2-BA_9+Yo8g-X=fncZfZEbBZWw@mail.gmail.com>
+References: <20250908185122.3199171-1-joannelkoong@gmail.com>
+ <20250908185122.3199171-13-joannelkoong@gmail.com> <aMKzG3NUGsQijvEg@infradead.org>
+ <CAJnrk1Z2JwUKKoaqExh2gPDxtjRbzSPxzHi3YdBWXKvygGuGFA@mail.gmail.com>
+ <CAJnrk1YmxMbT-z9SLxrnrEwagLeyT=bDMzaONYAO6VgQyFHJOQ@mail.gmail.com> <aM1w77aJZrQPq8Hw@infradead.org>
+In-Reply-To: <aM1w77aJZrQPq8Hw@infradead.org>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 19 Sep 2025 10:58:20 -0700
+X-Gm-Features: AS18NWA4Ectn5ref1Zm-F0jRvHV38iLjidkioHaeJy9w2W9ibGS--sEYKpZ7E2Y
+Message-ID: <CAJnrk1bKijv8cce+NdLV-bOvdU=HdZEb5M=pE5KhqCWX0dAOWA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/16] iomap: add bias for async read requests
+To: Christoph Hellwig <hch@infradead.org>
+Cc: brauner@kernel.org, miklos@szeredi.hu, djwong@kernel.org, 
+	hsiangkao@linux.alibaba.com, linux-block@vger.kernel.org, 
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 11:24:09AM +0200, Miklos Szeredi wrote:
-> On Thu, 18 Sept 2025 at 18:52, Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Wed, Sep 17, 2025 at 10:18:40AM -0700, Joanne Koong wrote:
-> 
-> > > If I'm understanding it correctly, fc->local_fs is set to true if it's
-> > > a fuseblk device? Why do we need a new "ctx->local_fs" instead of
-> > > reusing ctx->is_bdev?
-> >
-> > Eventually, enabling iomap will also set local_fs=1, as Miklos and I
-> > sort of touched on a couple weeks ago:
-> >
-> > https://lore.kernel.org/linux-fsdevel/CAJfpegvmXnZc=nC4UGw5Gya2cAr-kR0s=WNecnMhdTM_mGyuUg@mail.gmail.com/
-> 
-> I think it might be worth making this property per-inode.   I.e. a
-> distributed filesystem could allow one inode to be completely "owned"
-> by one client.  This would be similar to NFSv4 delegations and could
-> be refined to read-only (shared) and read-write (exclusive) ownership.
-> A local filesystem would have all inodes excusively owned.
-> 
-> This's been long on my todo list and also have some prior experiments,
-> so it's a good opportunity to start working on it again:)
-
-Since I already have per-fs and per-inode iomap flags, I can add a
-per-inode localfs flag pretty easily for v6.  ATM I see 2 existing flags
-and 5 proposed (out of 32 possible):
-
-/**
- * fuse_attr flags
- *
- * FUSE_ATTR_SUBMOUNT: Object is a submount root
- * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
- * FUSE_ATTR_IOMAP: Use iomap for this inode
- * FUSE_ATTR_ATOMIC: Enable untorn writes
- * FUSE_ATTR_SYNC: File writes are synchronous
- * FUSE_ATTR_IMMUTABLE: File is immutable
- * FUSE_ATTR_APPEND: File is append-only
- */
-
-So we still have plenty of space.
-
-Would you like to allow any server set the per-inode flag?  Or would you
-rather keep the per-fs flag and require that it's set before setting the
-per-inode flag?  That would be useful for privilege checking of the fuse
-server.
-
---D
-
-> Thanks,
-> Miklos
-> 
-> 
-> 
-> 
-> 
-> 
-> >
-> > --D
-> >
-> > > Thanks,
-> > > Joanne
+On Fri, Sep 19, 2025 at 8:04=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Tue, Sep 16, 2025 at 12:14:05PM -0700, Joanne Koong wrote:
+> > > I think you're right, this is probably clearer without trying to shar=
+e
+> > > the function.
 > > >
-> > > >         err = -ENOMEM;
-> > > >         root = fuse_get_root_inode(sb, ctx->rootmode);
-> > > > @@ -2029,6 +2030,7 @@ static int fuse_init_fs_context(struct fs_context *fsc)
-> > > >         if (fsc->fs_type == &fuseblk_fs_type) {
-> > > >                 ctx->is_bdev = true;
-> > > >                 ctx->destroy = true;
-> > > > +               ctx->local_fs = true;
-> > > >         }
-> > > >  #endif
-> > > >
-> > > >
+> > > I think maybe we can make this even simpler. Right now we mark the
+> > > bitmap uptodate every time a range is read in but I think instead we
+> > > can just do one bitmap uptodate operation for the entire folio when
+> > > the read has completely finished.  If we do this, then we can make
+> > > "ifs->read_bytes_pending" back to an atomic_t since we don't save one
+> > > atomic operation from doing it through a spinlock anymore (eg what
+> > > commit f45b494e2a "iomap: protect read_bytes_pending with the
+> > > state_lock" optimized). And then this bias thing can just become:
+> > >
+> > > if (ifs) {
+> > >     if (atomic_dec_and_test(&ifs->read_bytes_pending))
+> > >         folio_end_read(folio, !ret);
+> > >     *cur_folio_owned =3D true;
+> > > }
+> > >
+> >
+> > This idea doesn't work unfortunately because reading in a range might f=
+ail.
+>
+> As in the asynchronous read generats an error, but finishes faster
+> than the submitting context calling the atomic_dec_and_test here?
+>
+> Yes, that is possible, although rare.  But having a way to pass
+> that information on somehow.  PG_uptodate/folio uptodate would make
+
+We could use the upper bit of read_bytes_pending to track if any error
+occurred, but that still means if there's an error we'd miss marking
+the ranges that were successfully read in as uptodate. But that's a
+great point, maybe that's fine since that should not happen often
+anyways.
+
+> sense for that, but right now we expect folio_end_read to set that.
+> And I fail to understand the logic folio_end_read - it should clear
+> the locked bit and add the updatodate one, but I have no idea how
+> it makes that happen.
+>
+I think that happens in the folio_xor_flags_has_waiters() ->
+xor_unlock_is_negative_byte() call, which does an xor using the
+PG_locked/PG_uptodate mask, but the naming of the function kind of
+obfuscates that.
 
