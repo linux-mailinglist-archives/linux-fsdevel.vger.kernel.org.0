@@ -1,148 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-62216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5332B88AAA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 11:55:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B74B88BD6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 12:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6BE52583A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 09:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686DF1C80B56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 10:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6932E265CCB;
-	Fri, 19 Sep 2025 09:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281AE2F5308;
+	Fri, 19 Sep 2025 10:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0ww+35H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzJdZoGM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FAE2264D5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 09:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A482222B4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 10:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758275694; cv=none; b=kIHDS+YtpUhO3rZTV87ZPJ5N8D1hjQkK4Imq8FbeL0wQ6+Ce2qn0pMHLb6H+UEesT3cvIX7x013cx88jrYIlyha+R9TgXqTat2k7eRlcBtsVWLXV7sG/XFg38w0cGQR9sKneZiAs0zHhvesNZNM+/L72sUyZJv3hGEr/Ek444oU=
+	t=1758276108; cv=none; b=AMiL/nYUzR9+Wp1+PnHbHvITsS80Ej/TILS2ao3i2Z7Tt7v/Z4dOQedXzEif9qyYKTLrwlERBBE2+q5AC+UD3H/I98d9Nkl9Lmf6b03MjrZ6Zbxv2bHf7Al+CGo7ksMawJLtNaQ1A+3b1u+2z9DhJ1ZCoe8ANa45l8aBTeGeY0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758275694; c=relaxed/simple;
-	bh=dgtFOm38P9aI6/915v1yVDS2kMb9u/O/desqpxSnf0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ExmiJxoO2hfidz+bYphlVHmvo77D3854LN5UZ+3RlDVPYWFZj20RwEX0TDM5jH+eDadwnDmZXV/2k6TZEGOGhRJpwkGNEASFItnebhza0pxwcN/llLSPc0PcZxQ5nGXQYDQdTIJoukYP/IubwIeI08rEaRyB5NR12pjBRgRN4uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0ww+35H; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62fbd0a9031so1229150a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 02:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758275691; x=1758880491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D1fKK2VeIGcuA6sZx7T8OVafrUk30/MIz6Mtn0eRk4A=;
-        b=D0ww+35HPYDgbX+WJHvGWzEHxGXOKMQF80wYpwCHYLX/o8mh/QwYse62u6Pl8WvlpB
-         G9vy9O/fn4jSzD9BGizMNga1kdo5J1wAlD5SgH+qdhdhgQrmL1YyYGim3d0lSt1aRY9z
-         g+y2DXGoGOZXWBXTf9xOn5N5j4cc/N3oFG0ah/chZJGQmGQQCMuDAEqijyjxWWZ3xDdO
-         587G7hg0BJlaf6n4/aTdbz31VLrx3a6iABwmyJlhC+AfOyqQWblHEPPdMY2pFRODzSlQ
-         zJYMkLZtsEZMxBDdoGdIVcNpH2sD2fzpwNjnEmDPPb9IAnMzc4tVVa7IFUogZPXR08g9
-         N7uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758275691; x=1758880491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D1fKK2VeIGcuA6sZx7T8OVafrUk30/MIz6Mtn0eRk4A=;
-        b=A75FcdKufzNK1iTRwylCFgqT7a5t9/im0ZIwhoEY4yeyMzGiURyJsTDJX9ga5T/sI6
-         6I46Hp/iimVMCn4HlKySHeNtELHwR6EQqlSFKtmG2jaJgdpjzrFUZaM7AMpYe0RVhg5L
-         Bgs7LhrT21I+O9tmN0n0MKpsLKbwkP5jx8sEkNU4WS3NSg2FTRc2KytAKbnpdERrNCpa
-         ozEhJxxoTf7WwcSFXzbvox4QlaRYaF6sM1/T0YTggnZ/Y7hbxqUlWRdQYBA1ADj4xQrN
-         uPUvP45UqIQRxuQLapBRJ5+r92KaiIosSHmvhAs3CltAK6v3GPDX1HOkGfifh8zxZwto
-         6m1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXWGhrr75WDShJ/R682pI2M5KQxwI+88SldGAOf71y+0RmFntwqwPRXQr7iegsqZowp7dEhr0QdFU5qZL0q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbLb3Ip4jT0RmT6FVN7Pd4bQ1T3npwo2bzd9k0/k+XO1Yucpyl
-	ew9MSIYhnbAersx/u2ahWnKe2m3kbPLLBxIOPn316EAKA2NfTMrGhB8x1Ki0VQZqUTApHdOx/2q
-	O7iwI2Ocqzk1OY9zde4muhvPec0oxU6g=
-X-Gm-Gg: ASbGncuCTC+1FXnirZRc19aKJxMNJbnbJ6FSBjoSrLjikoh5k3KsVBXU5ZqSaZwa5kV
-	Tj/X9l2Jyho1FY/RaBXKlvlODeu4E0BfBz9LqN1MJZoSqasgVq4vAtMLC0OoSjeAV+QU6tF/QfS
-	1dJiWlw1gGZq1h8rFmXDOg/E8tntnO7wazvkCBrykBa37ikbP3+Wz5lmHbwYC4d69ia84kgBr08
-	lb5EBD7fVjBoIjpE/77q/CuUgqRkyLZ0HFF3qHEHDRFXa8=
-X-Google-Smtp-Source: AGHT+IE5oiKuJw8bSM5pCB6RKkNUQyiqR7jU1bNaTBtzzRRL/3JjPFaCojPjFSXwo6+sUUPKTUkwNzO7kN2G6awGZQk=
-X-Received: by 2002:a05:6402:21c6:b0:62f:50b9:2881 with SMTP id
- 4fb4d7f45d1cf-62fc0a7b232mr2468458a12.19.1758275691061; Fri, 19 Sep 2025
- 02:54:51 -0700 (PDT)
+	s=arc-20240116; t=1758276108; c=relaxed/simple;
+	bh=11pW80UJmh9+JzxjU76gGgINsCsgjYUo14K91xAJe9E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NvJDm9trXVtikNg3PYmBgH64Yq5cx4iIAdJjLku8ZIWFVubFHiwrBi/BEtegvwN/IGkZ/RHtJfLw8Cra+hnyR2KT3iEKcWAQOSyjRIJ2QyzxFN/wdFkrVbhlu6gBdWSl1Nkm54jSw4ldQ8XwW8nPG922jL9FMUahnNFqOrpIKOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzJdZoGM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56F7C4CEF0;
+	Fri, 19 Sep 2025 10:01:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758276108;
+	bh=11pW80UJmh9+JzxjU76gGgINsCsgjYUo14K91xAJe9E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=KzJdZoGMWm0r6lXZWkMYoVSe+1CmmxM9LyN0A+No4n5b6dwFJyzq+LiqU3zHE7oYE
+	 gtyw3O/9RMw+CPIml9Rv6gSdA9RMSyVBbhIEtkSk7anPrA8psIlMX747XC3aurbHLC
+	 gHHSpBou7m33Wig1U0r7ox+giJV0moU6KeJUZySdwMmUl6Djpfm1n2YLAdnNi+3AJN
+	 ReWC8nHdALTNkGiIuj0i5neVbyyc6VVZHK+39XTg8z9PG6hxgtJlNh0AGUZDfiDjN/
+	 X7MQGxSJRDW8O5+s1tcYjBL3Bs6h7S8RMNrsnIGvtn1/Xp58c9FK6LW8Hydt6e5irn
+	 DrdvqXzvNC+pg==
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 19 Sep 2025 12:01:38 +0200
+Subject: [PATCH] selftests/namespaces: verify initial namespace inode
+ numbers
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798151087.382724.2707973706304359333.stgit@frogsfrogsfrogs>
- <175798151352.382724.799745519035147130.stgit@frogsfrogsfrogs>
- <CAOQ4uxibHLq7YVpjtXdrHk74rXrOLSc7sAW7s=RADc7OYN2ndA@mail.gmail.com>
- <20250918181703.GR1587915@frogsfrogsfrogs> <CAOQ4uxiH1d3fV0kgiO3-JjqGH4DKboXdtEpe=Z=gKooPgz7B8g@mail.gmail.com>
- <CAJfpegsrBN9uSmKzYbrbdbP2mKxFTGkMS_0Hx4094e4PtiAXHg@mail.gmail.com>
-In-Reply-To: <CAJfpegsrBN9uSmKzYbrbdbP2mKxFTGkMS_0Hx4094e4PtiAXHg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 19 Sep 2025 11:54:39 +0200
-X-Gm-Features: AS18NWA621z2KRPPWOGIYUM6iJJ0YvzsnlUffsLmeJBzhEVFirihKN7gNrA_jS0
-Message-ID: <CAOQ4uxgvzrJVErnbHW5ow1t-++PE8Y3uN-Fc8Vv+Q02RgDHA=Q@mail.gmail.com>
-Subject: Re: [PATCH 04/28] fuse: adapt FUSE_DEV_IOC_BACKING_{OPEN,CLOSE} to
- add new iomap devices
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev, 
-	joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250919-work-namespace-selftests-v1-1-be04cbf4bc37@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAEqzWgC/0XMMQ7CMAxA0atUnjFqopY0XAUxOMGhEZBWdgVIV
+ e9OYGF8w/8rKEtmhWOzgvAza55Khdk1EEcqV8Z8qQbb2r71xuNrkhsWerDOFBmV72lhXRRd6Ny
+ QOtM7b6Hms3DK79/6dK4OpIxBqMTxO/wvDnszwLZ9AH0GVwWLAAAA
+X-Change-ID: 20250919-work-namespace-selftests-7b478f415792
+To: linux-fsdevel@vger.kernel.org
+Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Lennart Poettering <mzxreary@0pointer.de>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-56183
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3425; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=11pW80UJmh9+JzxjU76gGgINsCsgjYUo14K91xAJe9E=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc1eKMtss8Xepv+/+U6rFjtZzyEqrHE6KMy72v58suO
+ lr+2FO2o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKL5zH8M34k0sfQosYkfdkg
+ /d/Ggle8a/vunpjRfqboXaDKqvczjRn+GdTFX71s+5YjfYcRz9VN0/27aksmi67y2pPrpmRcbz2
+ PCwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Fri, Sep 19, 2025 at 9:14=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Thu, 18 Sept 2025 at 20:42, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Thu, Sep 18, 2025 at 8:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
-org> wrote:
->
-> > > How about restricting the backing ids to RLIMIT_NOFILE?  The @end par=
-am
-> > > to idr_alloc_cyclic constrains them in exactly that way.
-> >
-> > IDK. My impression was that Miklos didn't like having a large number
-> > of unaccounted files, but it's up to him.
->
-> There's no 1:1 mapping between a fuse instance and a "fuse server
-> process", so the question is whose RLIMIT_NOFILE?  Accounting to the
-> process that registered the fd would be good, but implementing it
-> looks exceedingly complex.  Just taking RLIMIT_NOFILE value from the
-> process that is doing the fd registering should work, I guess.
->
-> There's still the question of unhiding these files.  Latest discussion
-> ended with lets create a proper directory tree for open files in proc.
-> I.e. /proc/PID/fdtree/FD/hidden/...
->
+Make sure that all works correctly.
 
-Yes, well, fuse_backing_open() says:
-/* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
-So that's the reason I was saying there is no justification to
-relax this for FUSE_IOMAP as long as this issue is not resolved.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ tools/testing/selftests/namespaces/.gitignore      |  1 +
+ tools/testing/selftests/namespaces/Makefile        |  2 +-
+ tools/testing/selftests/namespaces/init_ino_test.c | 60 ++++++++++++++++++++++
+ 3 files changed, 62 insertions(+), 1 deletion(-)
 
-As Darrick writes, fuse4fs needs only 1 backing blockdev
-and other iomap fuse fs are unlikely to need more than a few
-backing blockdevs.
+diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
+index 7639dbf58bbf..ccfb40837a73 100644
+--- a/tools/testing/selftests/namespaces/.gitignore
++++ b/tools/testing/selftests/namespaces/.gitignore
+@@ -1,2 +1,3 @@
+ nsid_test
+ file_handle_test
++init_ino_test
+diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
+index f6c117ce2c2b..5fe4b3dc07d3 100644
+--- a/tools/testing/selftests/namespaces/Makefile
++++ b/tools/testing/selftests/namespaces/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+ 
+-TEST_GEN_PROGS := nsid_test file_handle_test
++TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test
+ 
+ include ../lib.mk
+ 
+diff --git a/tools/testing/selftests/namespaces/init_ino_test.c b/tools/testing/selftests/namespaces/init_ino_test.c
+new file mode 100644
+index 000000000000..ddd5008d46a6
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/init_ino_test.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright (c) 2025 Christian Brauner <brauner@kernel.org>
++
++#define _GNU_SOURCE
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/stat.h>
++#include <unistd.h>
++#include <errno.h>
++#include <string.h>
++#include <linux/nsfs.h>
++
++#include "../kselftest_harness.h"
++
++struct ns_info {
++	const char *name;
++	const char *proc_path;
++	unsigned int expected_ino;
++};
++
++static struct ns_info namespaces[] = {
++	{ "ipc",    "/proc/1/ns/ipc",    IPC_NS_INIT_INO },
++	{ "uts",    "/proc/1/ns/uts",    UTS_NS_INIT_INO },
++	{ "user",   "/proc/1/ns/user",   USER_NS_INIT_INO },
++	{ "pid",    "/proc/1/ns/pid",    PID_NS_INIT_INO },
++	{ "cgroup", "/proc/1/ns/cgroup", CGROUP_NS_INIT_INO },
++	{ "time",   "/proc/1/ns/time",   TIME_NS_INIT_INO },
++	{ "net",    "/proc/1/ns/net",    NET_NS_INIT_INO },
++	{ "mnt",    "/proc/1/ns/mnt",    MNT_NS_INIT_INO },
++};
++
++TEST(init_namespace_inodes)
++{
++	struct stat st;
++
++	for (int i = 0; i < sizeof(namespaces) / sizeof(namespaces[0]); i++) {
++		int ret = stat(namespaces[i].proc_path, &st);
++		
++		/* Some namespaces might not be available (e.g., time namespace on older kernels) */
++		if (ret < 0) {
++			if (errno == ENOENT) {
++				ksft_test_result_skip("%s namespace not available\n", namespaces[i].name);
++				continue;
++			}
++			ASSERT_GE(ret, 0)
++				TH_LOG("Failed to stat %s: %s", namespaces[i].proc_path, strerror(errno));
++		}
++
++		ASSERT_EQ(st.st_ino, namespaces[i].expected_ino) {
++			TH_LOG("Namespace %s has inode 0x%lx, expected 0x%x",
++			       namespaces[i].name, st.st_ino, namespaces[i].expected_ino);
++		}
++
++		ksft_print_msg("Namespace %s: inode 0x%lx matches expected 0x%x\n",
++			       namespaces[i].name, st.st_ino, namespaces[i].expected_ino);
++	}
++}
++
++TEST_HARNESS_MAIN
 
-So maybe, similar to max_stack_depth, we require the server to
-negotiate the max_backing_id at FUSE_INIT time.
+---
+base-commit: 5a9b4dfe901cecd4e06692bb877b393459e4d50d
+change-id: 20250919-work-namespace-selftests-7b478f415792
 
-We could allow any "reasonable" number without any capabilities
-and regardless of RLIMIT_NOFILE or we can account max_backing_id
-in advance for the user setting up the connection.
-
-For backward compat (or for privileged servers) zero max_backing_id
-means unlimited (within the int32 range) and that requires
-CAP_SYS_ADMIN for fuse_backing_open() regardless of which
-type of backing file it is.
-
-WDYT?
-
-Thanks,
-Amir.
 
