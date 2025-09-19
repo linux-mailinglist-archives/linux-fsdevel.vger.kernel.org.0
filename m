@@ -1,134 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-62196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB78B87BFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 04:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28756B87E31
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 07:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29B94E0BBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 02:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2EC1B287F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Sep 2025 05:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E6025A343;
-	Fri, 19 Sep 2025 02:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119B426E6F7;
+	Fri, 19 Sep 2025 05:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Lof1pJiM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="p6KZRzRi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958AB35942;
-	Fri, 19 Sep 2025 02:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594A223958C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Sep 2025 05:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758250223; cv=none; b=GnSDcPbrtCIu0Xeime6PLJm5o2ggNH7ofHhhoqr9XlsVZLck0SPFpT7fbkYoJV1g1EoeDqfCEucPcxGzEyZBIs0tv4h+tVU0JfAs+ZrxCpGkjzw0vphP0ojcOtHCgjVqdStkgdxUmYafNzZyvByMqWfMsDwdz9FYNS7SLJVZk+0=
+	t=1758258409; cv=none; b=NHrPgggUME8dmEhaJqHPOR1sQx0zF55/rkyibYJjijvsFDdFVJcPXrbTv/k5nOS3K+6Jj/bwDFQkfPFZOHUvKPk9nWlcpL7Rj3/5HELl/SdXmiCxLGrPYqTvh3FG7ilfTLnjehf1R+FBILXa4a/LQG/HTdqiXRUYYlqIs9uAZRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758250223; c=relaxed/simple;
-	bh=e61wfCFkrnLoWDwH79oREXQ3lPTB6/MyrBzhdNPwV64=;
+	s=arc-20240116; t=1758258409; c=relaxed/simple;
+	bh=4Oet7IJdgQOZjAS1fulNpokOsnBFwnyLhmecGcXAzzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VKcNGYHcLQkFc2zUZmCHOoPtpxODBdBHFk5KWUHVljL6CA1aiuP4ALBNfbIV9XZbd+wLglF8OG3gsYsGxiN52IYqwGv2wOv9zDARZW0h5GSwwzf+Y5vHanONK4Ts3FGLStfA6KkTr7tHHKGCTdBuaPqPKt5B51I7DwTXlzP/fC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Lof1pJiM; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 1962614C2D3;
-	Fri, 19 Sep 2025 04:50:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1758250213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qDl2rXRvrmQPYT8Y/zyjE3gK9Zfk8+TR4UBbLdUOCIY=;
-	b=Lof1pJiMuy/lokXeXA5XKeYnMfqgxUUQuaxPE/W7du4WGEPqWd9OWVJhYnjRdhQUU9jVuq
-	edkuy45EhidZKnJ3B+5qh06hzRREczyk46Dv9+b+RtdTM+miIkXkmBIz2j746BUUpZnh4H
-	9AXamWTQ9retRwqoYXqNRFmbgflbOKgDpSMyDf3Bpy8gjSxL1bg/Lf1Q123kLwPbNSVTCv
-	PsshlG9DYr1SisSLVW9EI3KGYjMIs8LbMWqNR07QwNj4R+rCkXzdSCXXOVbANHaDpB75+C
-	Tq4diZQsCCPHQFyvdVrlz3y5ssSguW43MzLDpw5xTygGMv/O+cxIwaunybMUpQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 907a32a2;
-	Fri, 19 Sep 2025 02:50:09 +0000 (UTC)
-Date: Fri, 19 Sep 2025 11:49:54 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Remi Pommarel <repk@triplefau.lt>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [RFC PATCH 0/5] 9p: Performance improvements for build workloads
-Message-ID: <aMzE0kbTCADO9QCc@codewreck.org>
-References: <cover.1756635044.git.repk@triplefau.lt>
- <aMa2Q_BUNonUSOjA@codewreck.org>
- <aMxazb_dcK3hTATI@pilgrim>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ciyj6sXuxSRhCZDqX3zEPiAZVq7gjLVHgHJv33YPsVCa90QfiZtC9mcTegsGNG/X6mWpmhLp6hLirVvoJhyJWLmfBGZTou/gFTOuGqqUpvsLtjEIH6Qt3zdHjAuqxiZqktAiZoIOJ+2J4PfmUDue9TIMZVwJsbycNh53NPdHKKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=p6KZRzRi; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yi6AX3ynKuHOwGYc/r0VoNKCmK6aamDJHFP9hiEmb30=; b=p6KZRzRi1jUoQ3vE7HqtFEEsd8
+	skYdlNM0kWUwSCkbky+7CwHYja9lKCPlMmndZXTnLv9js5nRSaNH/4ewj/t73TdtWU2ZLf3sShNGw
+	mNVzBeU6nzf6K6a0rfrsZzoHlHKkgTn3XMdcnGnjGaeoJAwOMG816exb5wkYECHZjvqZsUYKkJAdX
+	yq00kX9pq0qKiebYaeenwMHBf+zbUEemts8sTRiEMJOiK+LFrbNA4uvEYISxc0FC+wE6gIDGDL2kk
+	i/7LyFOstoU1ZUxog4tGcZQrviprnNDnpApCXazhGw7vFib4H1heFNsP0uRAxlD90OjprcxdYKWWr
+	0ag/OvAg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uzTKV-0000000E459-133u;
+	Fri, 19 Sep 2025 05:06:43 +0000
+Date: Fri, 19 Sep 2025 06:06:43 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] debugfs: rename start_creating() to
+ debugfs_start_creating()
+Message-ID: <20250919050643.GI39973@ZenIV>
+References: <20250915021504.2632889-1-neilb@ownmail.net>
+ <20250915021504.2632889-7-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aMxazb_dcK3hTATI@pilgrim>
+In-Reply-To: <20250915021504.2632889-7-neilb@ownmail.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Remi Pommarel wrote on Thu, Sep 18, 2025 at 09:17:33PM +0200:
-> RFC was mainly here to know if a io_wait_event_killable() would made
-> sense before getting the scheduler tree involved. Also as it is my first
-> contribution in v9fs (and fs subsystem) wanted to be sure I wasn't
-> missing something obvious, caching could be a complex subject to grasp.
-> This also comes with some drawbacks, if for example server removes a
-> shared file or modify a symlink the client will be desynchronized, so I
-> wanted first to be sure we were ok with that when using cache=loose.
-
-Ok!
-I think it's completely fine for cache=loose, we're basically telling
-the client we're alone in the world.
-
-> I'll try to monitor the new mount API and rebase the series when that
-> get merged. I'll probably separate the io_wait_event_killable() in its
-> own patchset though.
-
-Thanks, I need to find time to check the v9ses lifetime as I asked about
-after a syzcaller bug showed up[1], so it might not be immediate, but
-I'll get to it eventually
-
-[1] https://lore.kernel.org/v9fs/aKlg5Ci4WC11GZGz@codewreck.org/T/#u
-
-> > Another thing I tried ages ago was making clunk asynchronous,
-> > but that didn't go well;
-> > protocol-wise clunk errors are ignored so I figured it was safe enough
-> > to just fire it in the background, but it caused some regressions I
-> > never had time to look into...
-> > 
-> > As for reusing fids, I'm not sure it's obvious because of things like
-> > locking that basically consider one open file = one fid;
-> > I think we're already re-using fids when we can, but I guess it's
-> > technically possible to mark a fid as shared and only clone it if an
-> > operation that requires an exclusive fid is done...?
-> > I'm not sure I want to go down that hole though, sounds like an easy way
-> > to mess up and give someone access to data they shouldn't be able to
-> > access by sharing a fid opened by another user or something more
-> > subtle..
+On Mon, Sep 15, 2025 at 12:13:46PM +1000, NeilBrown wrote:
+> From: NeilBrown <neil@brown.name>
 > 
-> Yes I gave that a bit more thinking and came up with quite the same
-> conclusion, I then gave up on this idea. The asynchronous clunk seems
-> interesting though, maybe I'll take a look into that.
+> start_creating() is a generic name which I would like to use for a
+> function similar to simple_start_creating(), only not quite so simple.
+> 
+> debugfs is using this name which, though static, will cause complaints
+> if then name is given a different signature in a header file.
+> 
+> So rename it to debugfs_start_creating().
 
-It's been a while, but the last time I rebased the patches was around here:
-https://github.com/martinetd/linux/commits/9p-async-v2/
-(the v1 branch also had clunks async, with this comment
-> This has a few problems, but mostly we can't just replace all clunks
-> with async ones: depending on the server, explicit close() must clunk
-> to make sure the IO is flushed, so these should wait for clunk to finish.
-)
+FWIW, there's one thing that might conflict with.  Take a look at this
+in 3 of 4 callers of that thing:
 
-If you have time to play with this, happy to consider it again, but
-it'll definitely need careful testing (possibly implement the clunk part
-as a non-default option? although I'm not sure how that'd fly, linux
-doesn't really like options that sacrifice reliability for performance...)
+        dentry = start_creating(name, parent);
+ 
+        if (IS_ERR(dentry))
+                return dentry;
+ 
+        if (!(debugfs_allow & DEBUGFS_ALLOW_API)) {
+                failed_creating(dentry);
+                return ERR_PTR(-EPERM);
+        }
 
-Anyway, that's something I definitely don't have time for short term,
-but happy to discuss :)
+Now, note that the very first thing start_creating() does is
 
-Cheers,
--- 
-Dominique Martinet | Asmadeus
+        if (!(debugfs_allow & DEBUGFS_ALLOW_API))  
+                return ERR_PTR(-EPERM);
+
+and that debugfs_allow is assign-once variable - it's set only debugfs_kernel(),
+called only via
+early_param("debugfs", debugfs_kernel);
+
+So that's dead code and had always been such.  All those checks had been added
+at the same point - in a24c6f7bc923 "debugfs: Add access restriction option",
+so at a guess the dead ones are rudiments from an earlier version of that patch
+that hadn't been taken out by an accident - they should've been taken out and
+shot on review, really.
+
+They obviously need to go and that'll be textually close enough to the calls of
+start_creating() to cause conflicts.
 
