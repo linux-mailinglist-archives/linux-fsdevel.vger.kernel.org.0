@@ -1,143 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-62315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545FBB8C366
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 09:52:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446B1B8CA80
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 16:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAF067BE2FD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 07:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB29D56781E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 14:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11A92F90F0;
-	Sat, 20 Sep 2025 07:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C0A2FF151;
+	Sat, 20 Sep 2025 14:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IZeE7J9d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBh26vfu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2232F548E;
-	Sat, 20 Sep 2025 07:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A42FD7B3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Sep 2025 14:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758354494; cv=none; b=sAMLcjiuzy3Ex+b1C5PyZh7xHgBPO3NrEPotpf2XZnglLwtuZqauQs87yailMg7BPVr4KNeVal5jnHAW0p6cnxcPU9aIMvEOQQY3AfwWe95EArPe55F8hDVGfXcTTu2LEfRV5x8xesw8/QbOBj9l8/yyncI9S75Hp4iCyAIk2tY=
+	t=1758379338; cv=none; b=uTYBaEOBxB2jgll5mJRINEZM2/TqLC+MmElGyaM3OGQrTu4//GHFLCxnxnH3DW4qGEHCrjl/pnnsTXKHN+F2P4OxaqhArMNroRIsFeIXDd8/izWhpEHgSxEE4SRxMm0as0yvjtkdJBOjnhGFvPa27VBTwSSyEWldnqrOb1+nkCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758354494; c=relaxed/simple;
-	bh=zPYbbdJMbimCH8CGuafAZf5bHfgge+LaaShYJQxoDwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UtAFdTrc2PKNzZSpQ7YuLtkDSrrh4BVIl8E+idYeXaDWliyleInimTUt5V4d1bNxgA1+7sjish1W2O2gUBrrKJua/Mu9MiTdduZgmiIOYE3nuB50J6mGnpVqRFUyYZLVdWwSMndS/ZqdRm/cEXwjeE+hVZ9xrK331JL14f4bfi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=IZeE7J9d; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=sU0Rwyb1f70hxWqGLaDrX9gfHmhzhxjXEuqfS3xyBnk=; b=IZeE7J9dxm0UIt3ZnyfuObVDeK
-	3JazmOLAU9OCPA74rcy0/qZe/amIJIXMYI3vowai3fBRIW6WPXusEJqIol2DXRDONpRN0ziWNrKds
-	UJaTjYLCpnGBl8X5aqtC4UpNzQNgyicnQj1UmSk3byfQILVQJ8ptSZPmLXEB/PvzR5H/NHPdlc0Lm
-	YX+AfSxoVuXNixjhQhCVMPn5Fi+7eKHA4giy5VAscZluoYRq/mf6No+R0gYK5dczC7u4e7/uZ5Wrd
-	2F5Jfsv7VkSyW3rnhayFqA3BGkuexNvYbvxQOP2TsbscxWeHve2Cw44CJcNoezTZ8MURaejoCTOpc
-	Jf4rvcGw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uzsKI-0000000ExO0-2YpW;
-	Sat, 20 Sep 2025 07:48:10 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	raven@themaw.net,
-	miklos@szeredi.hu,
-	a.hindborg@kernel.org,
-	linux-mm@kvack.org,
-	linux-efi@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev,
-	kees@kernel.org,
-	rostedt@goodmis.org,
-	gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	paul@paul-moore.com,
-	casey@schaufler-ca.com,
-	linuxppc-dev@lists.ozlabs.org,
-	borntraeger@linux.ibm.com
-Subject: [PATCH 39/39] convert hypfs
-Date: Sat, 20 Sep 2025 08:47:58 +0100
-Message-ID: <20250920074759.3564072-39-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
-References: <20250920074156.GK39973@ZenIV>
- <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1758379338; c=relaxed/simple;
+	bh=Usj+C0PegNI69LjXkoxW4n3D3nNnaTN61TPyqGGREUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dkS8yxzYF0WSTi508O6tg+yQJBLo6aYb8TlfGfzPCyGItI3BDCaedvfZfGj39G0amq9859OBYNawaUmRV336ae0GGnZpbjt+1dvdC1IcAiBtdOm6yvHNPhFI2kw/MQAMynJt9KcyNxRkcnqG3ZXhtCLvX6jq9uAWkzNgrdJdoKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBh26vfu; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so958664f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Sep 2025 07:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758379335; x=1758984135; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zEtvZFtGHRjuP+b5JrK4y2e0Le4iom+VLjgkoz3MMAI=;
+        b=WBh26vfuPt1v7nUePPcsFH84PRSWsZRe01lfn30cpMtrepsl71yLYCLV+se2DVfnD2
+         3kBlNEAQdErnoHHlmWYchDCqpeV1WrNmDizsfWReIMYSvZL7NicvIsUtpw96i8jQZ7qE
+         o/Y70ZGKrM0vCd/Hlud7M84kweUA3x6dfKG6m5FMD0AfL0rlzsYCTvDBKdDdVNnPyM0f
+         fw0h+/iH9LxW3p51Qaot0+K5noDp5q28cuEvXVRDIUTRTMoS8VzAB3kP2KtkbfjN8ZvS
+         g31UsestdnSZAKkIgHcIIsi/mufkmwcLqPzkdj9jIGG2ChKnfylNm9TksgHuIlIhelig
+         pOTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758379335; x=1758984135;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zEtvZFtGHRjuP+b5JrK4y2e0Le4iom+VLjgkoz3MMAI=;
+        b=U1NZuY12lEFPKv8APyuFiVblQ/Uuy9zYIIq+zzbbgYWvyaKjwjI7bz20zeSAUjikKQ
+         bwkBCm0zMxoEJahw0T77h8vaGlonXPBAKJvwe0bZupgpWI7IZEF1zo0MyCqDvBf9KasR
+         z/7kWgoq1gi4lgehbXBvgQXYbcP2cZbCoiAGtXGUL8IxYuXmA3nhKtD07wBuoYVs32Dk
+         B9zwNm5K603ZYtSAOlx0C4ZlBIsgCTftDtOTCtVVezSMf+Eozac+LpueWWiGnb45C5x7
+         itOm22TWmYwwtDJy4CGINCcKceJL3b5ZkEKZGWP8amcJV14HDEzm8YWvi8sLzT78N2KS
+         mfWA==
+X-Forwarded-Encrypted: i=1; AJvYcCViLUTftK8CwcFlzCoEe7Jcru8zvQry1PYpgDkI93CWINlFS3TRLsSHLyfnw59ShgQ6NT7pLN77KH+FfZa+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyEJ1Txw9biZiU0+54w8Lxn2rnu0uZ0VVmo0WaDLzoQWLGUFwJ
+	P1JluDNBjkzzqrBSSIXZqaHVHHV2Jq1sMK+R6emb5CbtMCk4iz58h3qk
+X-Gm-Gg: ASbGncs3q/m3m5ms/GU76JgLV+7Q/K2Ti/KlEUnp/EPpx2KwzCWF8gOs19Ae4JTFijG
+	7Ayh3XV14BVfwcdogVs2Yo2VuIqazL01S1Rxv6VA0yU6mOlZFvsBpQ6ZF1vXZ/chsNRaKl8Gcb5
+	zFK8ub7YRbwRdynlVtEHSQdBXR7wQqDf0hLxLa7LhEkP3Pg/hE1Er6cPanwHXN3AAUcn/KWCbvk
+	coQDsn2tbqiezI5cR58RsLGrSxUdmB1r9pbBK2QS9ZF5/8LZ7TfpIbkyCmToN/cepa4S/DjB12R
+	+9cL20pu3ut2O3YLePcNOMJ0CUoPpDodqFjvAvbmYILqeP+yMVtWEh1QjFug9C1gXcqIxlLs+Ss
+	4fhVWisvB4BI1b7YuKu1VqoOa/I9N/vTZxYXL5E2Evn/7bp/ZTNbu0nV1fc+DKCDdO1M3c5g=
+X-Google-Smtp-Source: AGHT+IE1XfrrZKs7jUn/HCTxExNiug3StteTdhLU8bG47WeeJj4XJHY17xNSaGVA8TgcYBm5il8CoA==
+X-Received: by 2002:adf:8bc5:0:b0:3f0:9bf0:a37b with SMTP id ffacd0b85a97d-3f09bf0a4afmr3138635f8f.43.1758379334535;
+        Sat, 20 Sep 2025 07:42:14 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f6695a9dsm132985055e9.24.2025.09.20.07.42.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 07:42:14 -0700 (PDT)
+Date: Sat, 20 Sep 2025 15:42:12 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Nam Cao <namcao@linutronix.de>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, Shuah Khan <shuah@kernel.org>, Davidlohr Bueso
+ <dave@stgolabs.net>, Soheil Hassas Yeganeh <soheil@google.com>, Khazhismel
+ Kumykov <khazhy@google.com>, Willem de Bruijn <willemb@google.com>, Eric
+ Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+Message-ID: <20250920154212.70138da8@pumpkin>
+In-Reply-To: <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
+References: <cover.1752824628.git.namcao@linutronix.de>
+	<43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+	<aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+	<87zfat19i7.fsf@yellow.woof>
+	<CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-just have hypfs_create_file() do the usual simple_start_creating()/
-d_make_persistent()/simple_done_creating() and that's it
+On Wed, 17 Sep 2025 18:05:45 +0200
+Mateusz Guzik <mjguzik@gmail.com> wrote:
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- arch/s390/hypfs/inode.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+> On Wed, Sep 17, 2025 at 3:41=E2=80=AFPM Nam Cao <namcao@linutronix.de> wr=
+ote:
+> > My question is whether the performance of epoll_wait() with zero
+> > timeout is really that important that we have to complicate
+> > things. If epoll_wait() with zero timeout is called repeatedly in a loop
+> > but there is no event, I'm sure there will be measurabled performance
+> > drop. But sane user would just use timeout in that case.
+> >
+> > epoll's data is protected by a lock. Therefore I think the most
+> > straightforward solution is just taking the lock before reading the
+> > data.
+> > =20
+>=20
+> I have no idea what the original use case is. I see the author of the
+> patch is cc'ed, so hopefully they will answer.
+>=20
+> > Lockless is hard to get right and may cause hard-to-debug problems. So
+> > unless this performance drop somehow bothers someone, I would prefer
+> > "keep it simple, stupid".
+> > =20
+>=20
+> Well epoll is known to suffer from lock contention, so I would like to
+> think the lockless games were motivated by a real-world need, but I'm
+> not going peruse the history to find out.
+>=20
+> I can agree the current state concerning ep_events_available() is
+> avoidably error prone and something(tm) should be done. fwiw the
+> refcount thing is almost free on amd64, I have no idea how this pans
+> out on arm64.
 
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index 6a80ab2692be..98952543d593 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -311,7 +311,7 @@ static void hypfs_kill_super(struct super_block *sb)
- 	struct hypfs_sb_info *sb_info = sb->s_fs_info;
- 
- 	hypfs_last_dentry = NULL;
--	kill_litter_super(sb);
-+	kill_anon_super(sb);
- 	kfree(sb_info);
- }
- 
-@@ -321,17 +321,13 @@ static struct dentry *hypfs_create_file(struct dentry *parent, const char *name,
- 	struct dentry *dentry;
- 	struct inode *inode;
- 
--	inode_lock(d_inode(parent));
--	dentry = lookup_noperm(&QSTR(name), parent);
--	if (IS_ERR(dentry)) {
--		dentry = ERR_PTR(-ENOMEM);
--		goto fail;
--	}
-+	dentry = simple_start_creating(parent, name);
-+	if (IS_ERR(dentry))
-+		return ERR_PTR(-ENOMEM);
- 	inode = hypfs_make_inode(parent->d_sb, mode);
- 	if (!inode) {
--		dput(dentry);
--		dentry = ERR_PTR(-ENOMEM);
--		goto fail;
-+		simple_done_creating(dentry);
-+		return ERR_PTR(-ENOMEM);
- 	}
- 	if (S_ISREG(mode)) {
- 		inode->i_fop = &hypfs_file_ops;
-@@ -346,10 +342,9 @@ static struct dentry *hypfs_create_file(struct dentry *parent, const char *name,
- 	} else
- 		BUG();
- 	inode->i_private = data;
--	d_instantiate(dentry, inode);
--fail:
--	inode_unlock(d_inode(parent));
--	return dentry;
-+	d_make_persistent(dentry, inode);
-+	simple_done_creating(dentry);
-+	return dentry;	 // borrowed
- }
- 
- struct dentry *hypfs_mkdir(struct dentry *parent, const char *name)
--- 
-2.47.3
+Atomic operations are anything but free....
+They are likely to be a similar cost to an uncontested spinlock entry.
+
+	David
 
 
