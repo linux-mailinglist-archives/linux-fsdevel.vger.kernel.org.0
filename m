@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-62299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82675B8C2DE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 09:51:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145A4B8C29C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 09:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A2B7BD026
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 07:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32323568306
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 07:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72542EE5FC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817A32ECEA9;
 	Sat, 20 Sep 2025 07:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HiVW9csO"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="i+OJ/PxV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46FC261B9F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F49281375;
 	Sat, 20 Sep 2025 07:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758354489; cv=none; b=pQQWZeD3pJFRDSEtEM3fpYpFpwoPqqvzSzY6zt2vLuO42lkjrPWhsrYlDqmB3AI0G3Fvc8pavQAgAJ4yor0I3IDUYFwynD4XFFLBZkD9gVTjYRbsuUz+xm2E+VDd4bS9zkHSNHhmGqVqCAPMbk3/NULZMcoN+DMXa3xxUOXv6S0=
+	t=1758354488; cv=none; b=g53/KAa5DfwLemP9EY+3BEaolrTXpGyy8oyp7bsjywpU36/YznUgCObxRQtlCc65lSsRou/4KgCT4TMEHOiezKBHPlW91iHb8dRA4apKb8yU8bJaIRz4B01dtYk/FnLMAs1f2pja72k8L8um1zP3mGbIwnd/tcvns/DXGDw4pt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758354489; c=relaxed/simple;
-	bh=TqS9sCmXm7iMo0xK7J9/AQOzp6CfJDfJtQuQ6+4xYuw=;
+	s=arc-20240116; t=1758354488; c=relaxed/simple;
+	bh=AjIrga+xOPOflS5qLphFSMuYpaEzluROEcM9P413l5o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XZPpGcOWxAgQ60TShvNhwMm2zM6nS8V2tXUb4swsBz/eG20jU8FPQjwFq7CkJQaHHepV/atxIPZTQrGprQNUqodxKsWC5TCZojB9kv06h8DjfvWB4Dr4JdrHqyyne72XSeBCtG8DDTTrTs51m3aXZxOEHYdWAppNnOfB6ER9svo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HiVW9csO; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=rKWma3CporMNF91XTfSH8oGNijItVwSuFw6HTgokZjjWr7nEnmqeintcyE0YEdSsNb4tPgc5Ua9Cz5YvSMpGWcFXH849jy7BJSNJs9Jr+aPKdbUScDiPxqfHh+Ldd24W3dcvGk+HsGGGjcqk4i9EzsstXGqBGVAQ2XFlE01QBfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=i+OJ/PxV; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=9n+u5mJZbkVOGppwaF2sYBKKadIdALuqoKRX4rc7ffY=; b=HiVW9csO5wBPzyUh4wvbC9GIYx
-	YKGxOZnoP/Io27DxYX02JMpe8G4cANuBi3Itop3hCVYnYYAyZfVDGg/w4XSPPYbWB33ufeiJgLjBb
-	HwXVmW32L3G0HSw9MordfN1F40Sj/1uLKukoUKkmbjskzbyYATwtnL1flJn2oqPpN1FqXFwY2H2XE
-	R1OGCigYvOp7JKEm01oeADrVHA8pywFCJSeGriFVKr19RZxCb9KGZHnddfbIe1ER76Fn51NqNFHJ3
-	qP6r1xoo1e7B7+cUg5lnU2Dkg4d6pU/ydQ0ARm3LSeYrti+KOoTXA8P81RPltMNGl8j9qkV6NWEBM
-	sDJDZa5w==;
+	bh=tT2z+6P9K4+uWY+P9oa4gJTY9OlBzdKJ3vGtwqwrgNU=; b=i+OJ/PxV0i+zEN1UV/pCBBmAu1
+	GBYoW/VweRbwndK24Xf7NdzHCcO8A6oPJjshziH/PW6H11pmEc/lvptcl3mCt1cKQ27KmKAnLCN8p
+	275aRw1SGU6kXTRihXlSHxM9lKGBXxOVKhxMjhAZdEwseioNCReGQpylOyklWo7FNXwKn/yHkQAwA
+	F5b71tfyHPgUOlR8kfiBq9nob9/7I0lmN+Xlz5lWm6Hy9u+5yJGzf6SXo+GuiMOD3/saKK/YDoSnZ
+	OCzUqvjdRYCk7wJMOWseq21+of+x4i/FNzLvjiHJjPeUUZnt53NpidpOpqLQaLMZfHRiCFg8J2Vwp
+	I1n3Dl/g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uzsKC-0000000ExGF-12mR;
+	id 1uzsKC-0000000ExGi-2cmZ;
 	Sat, 20 Sep 2025 07:48:04 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -63,9 +63,9 @@ Cc: torvalds@linux-foundation.org,
 	casey@schaufler-ca.com,
 	linuxppc-dev@lists.ozlabs.org,
 	borntraeger@linux.ibm.com
-Subject: [PATCH 24/39] convert devpts
-Date: Sat, 20 Sep 2025 08:47:43 +0100
-Message-ID: <20250920074759.3564072-24-viro@zeniv.linux.org.uk>
+Subject: [PATCH 25/39] binderfs: use simple_start_creating()
+Date: Sat, 20 Sep 2025 08:47:44 +0100
+Message-ID: <20250920074759.3564072-25-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
 References: <20250920074156.GK39973@ZenIV>
@@ -79,154 +79,97 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Two kinds of objects there - ptmx and everything else (pty).  The former is
-created on mount and kept until the fs shutdown; the latter get created
-and removed by tty layer (the references are borrowed into tty->driver_data).
-The reference to ptmx dentry is also kept, but we only ever use it to
-find ptmx inode on remount.
-
-* turn d_add() into d_make_persistent() + dput()  both in mknod_ptmx() and
-in devpts_pty_new().
-
-* turn dput() to d_make_discardable() in devpts_pty_kill().
-
-* switch mknod_ptmx() to simple_{start,done}_creating().
-
-* instead of storing a reference to ptmx dentry pts_fs_info, store a reference
-to its inode, seeing that this is what we use it for.
+binderfs_binder_device_create() gets simpler, binderfs_create_dentry() simply
+goes away...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/devpts/inode.c | 57 +++++++++++++++++------------------------------
- 1 file changed, 21 insertions(+), 36 deletions(-)
+ drivers/android/binderfs.c | 43 +++++---------------------------------
+ 1 file changed, 5 insertions(+), 38 deletions(-)
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index fdf22264a8e9..9f3de528c358 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -102,7 +102,7 @@ struct pts_fs_info {
- 	struct ida allocated_ptys;
- 	struct pts_mount_opts mount_opts;
- 	struct super_block *sb;
--	struct dentry *ptmx_dentry;
-+	struct inode *ptmx_inode; // borrowed
- };
+diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+index 0d9d95a7fb60..41a0f3c26fcf 100644
+--- a/drivers/android/binderfs.c
++++ b/drivers/android/binderfs.c
+@@ -181,24 +181,11 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+ 	}
  
- static inline struct pts_fs_info *DEVPTS_SB(struct super_block *sb)
-@@ -259,7 +259,6 @@ static int devpts_parse_param(struct fs_context *fc, struct fs_parameter *param)
- static int mknod_ptmx(struct super_block *sb, struct fs_context *fc)
- {
- 	int mode;
--	int rc = -ENOMEM;
- 	struct dentry *dentry;
- 	struct inode *inode;
- 	struct dentry *root = sb->s_root;
-@@ -268,18 +267,10 @@ static int mknod_ptmx(struct super_block *sb, struct fs_context *fc)
- 	kuid_t ptmx_uid = current_fsuid();
- 	kgid_t ptmx_gid = current_fsgid();
- 
+ 	root = sb->s_root;
 -	inode_lock(d_inode(root));
 -
--	/* If we have already created ptmx node, return */
--	if (fsi->ptmx_dentry) {
--		rc = 0;
--		goto out;
+-	/* look it up */
+-	dentry = lookup_noperm(&QSTR(name), root);
++	dentry = simple_start_creating(root, name);
+ 	if (IS_ERR(dentry)) {
+-		inode_unlock(d_inode(root));
+ 		ret = PTR_ERR(dentry);
+ 		goto err;
+ 	}
+-
+-	if (d_really_is_positive(dentry)) {
+-		/* already exists */
+-		dput(dentry);
+-		inode_unlock(d_inode(root));
+-		ret = -EEXIST;
+-		goto err;
 -	}
 -
--	dentry = d_alloc_name(root, "ptmx");
--	if (!dentry) {
-+	dentry = simple_start_creating(root, "ptmx");
-+	if (IS_ERR(dentry)) {
- 		pr_err("Unable to alloc dentry for ptmx node\n");
--		goto out;
-+		return PTR_ERR(dentry);
- 	}
+ 	inode->i_private = device;
+ 	d_instantiate(dentry, inode);
+ 	fsnotify_create(root->d_inode, dentry);
+@@ -479,24 +466,6 @@ static struct inode *binderfs_make_inode(struct super_block *sb, int mode)
+ 	return ret;
+ }
  
- 	/*
-@@ -287,9 +278,9 @@ static int mknod_ptmx(struct super_block *sb, struct fs_context *fc)
- 	 */
- 	inode = new_inode(sb);
- 	if (!inode) {
-+		simple_done_creating(dentry);
- 		pr_err("Unable to alloc inode for ptmx node\n");
+-static struct dentry *binderfs_create_dentry(struct dentry *parent,
+-					     const char *name)
+-{
+-	struct dentry *dentry;
+-
+-	dentry = lookup_noperm(&QSTR(name), parent);
+-	if (IS_ERR(dentry))
+-		return dentry;
+-
+-	/* Return error if the file/dir already exists. */
+-	if (d_really_is_positive(dentry)) {
 -		dput(dentry);
--		goto out;
-+		return -ENOMEM;
- 	}
- 
- 	inode->i_ino = 2;
-@@ -299,23 +290,18 @@ static int mknod_ptmx(struct super_block *sb, struct fs_context *fc)
- 	init_special_inode(inode, mode, MKDEV(TTYAUX_MAJOR, 2));
- 	inode->i_uid = ptmx_uid;
- 	inode->i_gid = ptmx_gid;
-+	fsi->ptmx_inode = inode;
- 
--	d_add(dentry, inode);
-+	d_make_persistent(dentry, inode);
- 
--	fsi->ptmx_dentry = dentry;
--	rc = 0;
--out:
--	inode_unlock(d_inode(root));
--	return rc;
-+	simple_done_creating(dentry);
-+
-+	return 0;
- }
- 
- static void update_ptmx_mode(struct pts_fs_info *fsi)
- {
--	struct inode *inode;
--	if (fsi->ptmx_dentry) {
--		inode = d_inode(fsi->ptmx_dentry);
--		inode->i_mode = S_IFCHR|fsi->mount_opts.ptmxmode;
+-		return ERR_PTR(-EEXIST);
 -	}
-+	fsi->ptmx_inode->i_mode = S_IFCHR|fsi->mount_opts.ptmxmode;
- }
- 
- static int devpts_reconfigure(struct fs_context *fc)
-@@ -461,7 +447,7 @@ static void devpts_kill_sb(struct super_block *sb)
- 	if (fsi)
- 		ida_destroy(&fsi->allocated_ptys);
- 	kfree(fsi);
--	kill_litter_super(sb);
-+	kill_anon_super(sb);
- }
- 
- static struct file_system_type devpts_fs_type = {
-@@ -534,16 +520,15 @@ struct dentry *devpts_pty_new(struct pts_fs_info *fsi, int index, void *priv)
- 	sprintf(s, "%d", index);
- 
- 	dentry = d_alloc_name(root, s);
--	if (dentry) {
--		dentry->d_fsdata = priv;
--		d_add(dentry, inode);
--		fsnotify_create(d_inode(root), dentry);
--	} else {
-+	if (!dentry) {
- 		iput(inode);
--		dentry = ERR_PTR(-ENOMEM);
-+		return ERR_PTR(-ENOMEM);
- 	}
 -
 -	return dentry;
-+	dentry->d_fsdata = priv;
-+	d_make_persistent(dentry, inode);
-+	fsnotify_create(d_inode(root), dentry);
-+	dput(dentry);
-+	return dentry; // borrowed
- }
+-}
+-
+ struct dentry *binderfs_create_file(struct dentry *parent, const char *name,
+ 				    const struct file_operations *fops,
+ 				    void *data)
+@@ -506,11 +475,10 @@ struct dentry *binderfs_create_file(struct dentry *parent, const char *name,
+ 	struct super_block *sb;
  
- /**
-@@ -573,7 +558,7 @@ void devpts_pty_kill(struct dentry *dentry)
- 	drop_nlink(dentry->d_inode);
- 	d_drop(dentry);
- 	fsnotify_unlink(d_inode(dentry->d_parent), dentry);
--	dput(dentry);	/* d_alloc_name() in devpts_pty_new() */
-+	d_make_discardable(dentry);
- }
+ 	parent_inode = d_inode(parent);
+-	inode_lock(parent_inode);
  
- static int __init init_devpts_fs(void)
+-	dentry = binderfs_create_dentry(parent, name);
++	dentry = simple_start_creating(parent, name);
+ 	if (IS_ERR(dentry))
+-		goto out;
++		return dentry;
+ 
+ 	sb = parent_inode->i_sb;
+ 	new_inode = binderfs_make_inode(sb, S_IFREG | 0444);
+@@ -538,11 +506,10 @@ static struct dentry *binderfs_create_dir(struct dentry *parent,
+ 	struct super_block *sb;
+ 
+ 	parent_inode = d_inode(parent);
+-	inode_lock(parent_inode);
+ 
+-	dentry = binderfs_create_dentry(parent, name);
++	dentry = simple_start_creating(parent, name);
+ 	if (IS_ERR(dentry))
+-		goto out;
++		return dentry;
+ 
+ 	sb = parent_inode->i_sb;
+ 	new_inode = binderfs_make_inode(sb, S_IFDIR | 0755);
 -- 
 2.47.3
 
