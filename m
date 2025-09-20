@@ -1,144 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-62318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EBEB8CCEA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 18:27:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFFBB8CE8B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 20:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22331BC2412
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 16:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141D87C8444
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Sep 2025 18:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB092FD7A5;
-	Sat, 20 Sep 2025 16:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8342830F7FE;
+	Sat, 20 Sep 2025 18:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gF7BFj7s"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NM79fJk4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC8F3F9D2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Sep 2025 16:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465A62F5B;
+	Sat, 20 Sep 2025 18:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758385610; cv=none; b=OhjFc0bLOuVbIp/qogWTNQ8h96uqaRsE8/Uxe1Gm7DANqSuwVdtlQsFWNRh/RgF7/AHXU7kcX29mo9yJRc+3xRHUpGqZcTu6Ttyzy+PMIIkCj43RuzVPYrtZWM3OvURQdICY23SF6c6fKy0qqLZj4RfhsAmudnVp8IVHVJp+9i8=
+	t=1758391768; cv=none; b=T/l/P1LHmtzu5GNPWs3Ay2dZ3XX7PHHpYJ0IdgiGRh/63qppV4MjSq7Zzm2ei5MsMy+EwR0uoqkmD3UmDWXTJLfdMJdkmLJ0WFue6aHPhn6NSSVxbiCSkgPJ9Bds5Qh12L91perIX46Ekqz1TIuV8WA7L8MytiiM2oUG3LOZfN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758385610; c=relaxed/simple;
-	bh=mNO5F5NJlTITJbrMxJ3wyu2jz7VIBwYhTqCKBzbt4xw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HMW8d1/HMTKJHX9wK/1JK2ZZfAV5pudn5jb2Ndt8KRHEa+2Ily52Jp22Cb31ULn7/vH2u2Bt8h9+2aX5N8ZzQ/Hi3hN/AsLI3OdkZjrt1qJvGozFDpOH3sM7AHJyYeWtK+BzEHGLuOBazrZmTvlZpcNUMYevSvZ9TsBoc0tkeNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gF7BFj7s; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07c28f390eso560116666b.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Sep 2025 09:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1758385607; x=1758990407; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvLRCncIiqRrC6qT6Y0+vbtoZaqXeTLbbsZoYra2n2s=;
-        b=gF7BFj7sOv/VqXY+/xuahlh6nSPkoA57qcYvzlRygbgTDQB0zpTeG6kSEMyn5K3Skt
-         QhPUjm18PTTAnaN0fddwPfp0vx6EqqzAVpTVGst7XpeZRQXxoFO8aslfjehbjOBiNgS0
-         nas2kfYKlT6krlS1MKWeVERsGzlqNiJtB7sdE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758385607; x=1758990407;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GvLRCncIiqRrC6qT6Y0+vbtoZaqXeTLbbsZoYra2n2s=;
-        b=sI/FhJOxBzvuI6hSdi4EnbPrCmineFLYxIuILrdW/fG3VecrhJt8uFV2rePQIfSKVo
-         X9/mlbrxiKqY5a2pr1H7edr17khxJZlxDL8AktdKR/Dkre0GquTz+GwxpklERtBJiWBw
-         CrujpbrImOWMInPebXQ5PwoBUvq70Q6CDigndxQPy4YFdsZX9jqkcM5bylhYJtYUne+t
-         HIToKBgmu0caYLMy8tHVT6b13YxmvxC8JfGxqOe1LfSV5N/aSp9HUrGNtFcupoGXl6pd
-         5XOdMMaj2GWdB6S7DZnfbsaCVqh2iSRGTiv1xOztNc//5XPA4Z+s2uHYLkyAMqaswe/5
-         3/8A==
-X-Gm-Message-State: AOJu0YwoVsShai7oC/lSECOZgRWBpSMFPliLSGwcg9uSgn2IeW8nBmHF
-	2aaChowOfPMJeXk5XdZn1hf9HRQvS2ErutHjLit2uqWlyE9iBPsZ1XJDDSZiY2Db0CTe7TtB6sm
-	xDyp9kI8=
-X-Gm-Gg: ASbGncu7Ntm+qqm89hO50PJ0kEo92aQtVG4n6so+Cs7A8YuGBlI0FxFN5I0//MHwap+
-	urYkBG3Rojjx7+jKlyubsZCYG3HLXx26Rl0aNR8aWykNU/qmbjd1h+Hrm8a8QFVH/f8FNBsmChj
-	0zNvwB/OlHqFECokxia0oRuMH0xL8Hdv7DsP9EB4zotdmf0hbsomXK0Y9apxRTdMuAytpVjLEUH
-	CQQgHxkIz51npDCs44qsAZa+GYNqsE2lx0WkHsSiwsrvbXBzZUIuVN4e2ZE01wLqUuldNbtjI6S
-	+hNambL2U9FrntAL0Y5visFBQ3RBQZt1ry8nd4WfTkXdbxjVke1Bo+AYNku4eeUflNcds/rKAL7
-	ApIMCbE/F3vSA7uStamaEWgSeT8Ah8+3+94pOcn+l6G4Ksby5forB++nx/CdGAO+XFcQ2Ailf
-X-Google-Smtp-Source: AGHT+IGCdxu9cly76MdTpITJEuTUi2V1Y0sBAZtPd345ykwXc8MKCWizAzMaxZFRTHHAlF+ZKSUCpA==
-X-Received: by 2002:a17:907:6ea5:b0:afe:cbfc:377a with SMTP id a640c23a62f3a-b24ef976f65mr706555966b.27.1758385606662;
-        Sat, 20 Sep 2025 09:26:46 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd271e5fesm670769466b.95.2025.09.20.09.26.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Sep 2025 09:26:44 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07c28f390eso560110966b.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Sep 2025 09:26:44 -0700 (PDT)
-X-Received: by 2002:a17:907:1c89:b0:b1d:285d:155c with SMTP id
- a640c23a62f3a-b24ed88702cmr706169166b.7.1758385604052; Sat, 20 Sep 2025
- 09:26:44 -0700 (PDT)
+	s=arc-20240116; t=1758391768; c=relaxed/simple;
+	bh=LMPdgJ5xJP991yqk9NU4wcmgCyL9QUZYstLpRktYbYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkl7Sc9htOCMIlaUGkMhxW5RhKfElnbo4TMMP9pmrO2CXSdROO4Zsqi978WQ3Q8O83BtIXIF1/SKzr3PMxIg7yH7xFC0b/E0XtZjQ4yi1R7ZDyhgVNS9CBfd5ZB3QhLeV1MZy2IPK/9A2gqLvz6LXSktbZ2L3gJYnSq/7OUMa7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NM79fJk4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6NL30/0+UZmJ+Ndqi2NTqpdBOV8RvNTpTtq6rtRPK9E=; b=NM79fJk4vVddI7amyfuuFalCjV
+	KCwjdAr3TBi8ShghGh7DNgYuVH9L+WE3QjtxSRg3IZBe1atmcEKyONCQj9I3wo/0CEGQOZou4azRK
+	2+7qBlOTxdA1xp127r7u5bM6TjwF9mONn+nwL5XucvYd3CZuGSX3BA5ysms187Yyj/wF6/86/CmTL
+	WC2z/0mRVx9nm5VEhTaqI7AesxCZh6k1F+Lpz9Pus6qr4SxsrrMPq2R9tjnbIPN4krYN0ZoLm1Cek
+	ZI6tJ4FtKRcLJdSKn5AdIr/wOwwbdc4jFYT2UcYCQC/FIOU5oSOQeuYce7ptP2b4JNzeCtNGNm6Zd
+	bQgwQelw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v021O-000000039W5-3GQv;
+	Sat, 20 Sep 2025 18:09:18 +0000
+Date: Sat, 20 Sep 2025 19:09:18 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Andreas Hindborg <a.hindborg@kernel.org>, linux-mm@kvack.org,
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCHES][RFC] the meat of tree-in-dcache series
+Message-ID: <20250920180918.GL39973@ZenIV>
+References: <20250920074156.GK39973@ZenIV>
+ <CAHk-=wiXPnY9vWFC87sHudSDYY+wpfTrs-uxd7DBypeE+15Y0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250920074156.GK39973@ZenIV>
-In-Reply-To: <20250920074156.GK39973@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 20 Sep 2025 09:26:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiXPnY9vWFC87sHudSDYY+wpfTrs-uxd7DBypeE+15Y0g@mail.gmail.com>
-X-Gm-Features: AS18NWCBuRxfjxFE7tKBAQqhhkva7pQWM9EJwSLVmis6atYjgiGA5eqHrxKhjLE
-Message-ID: <CAHk-=wiXPnY9vWFC87sHudSDYY+wpfTrs-uxd7DBypeE+15Y0g@mail.gmail.com>
-Subject: Re: [PATCHES][RFC] the meat of tree-in-dcache series
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, linux-mm@kvack.org, linux-efi@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev, Kees Cook <kees@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-usb@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linuxppc-dev@lists.ozlabs.org, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiXPnY9vWFC87sHudSDYY+wpfTrs-uxd7DBypeE+15Y0g@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, 20 Sept 2025 at 00:42, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> The branch is -rc5-based; it lives in
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.persistency
+On Sat, Sep 20, 2025 at 09:26:27AM -0700, Linus Torvalds wrote:
 
-I reacted to the "d_make_persistent() + dput()" pattern, and wondered
-if it should just use the refcount that the caller has, but it does
-look like that alternate approach would just result in a
-"d_make_persistent(dget()))" pattern instead.
+> Anyway, apart from that I only had one reaction: I think
+> d_make_discardable() should have a
+> 
+>         WARN_ON(!(dentry->d_flags & DCACHE_PERSISTENT))
+> 
+> because without that I think it can mistakenly be used as some kind of
+> "dput that always takes the dentry lock", which seems bad.
+> 
+> Or was that intentional for some reason?
 
-And I guess you already get the lock for d_make_persistent(), so it's
-better to do the dget while having it - but arguably that is also true
-for the dput().
+In the end - sure, we want that.  But in the meanwhile that would require
+separate variants of simple_unlink()/simple_recursive_removal()/etc.
+for those filesystems that are already marking persistent ones, with
+the only difference being that warning.
 
-I think you did pick the right model, with d_make_persistent() taking
-a ref, and d_make_discardable() releasing it, but this series did make
-me think that the refcounting on the caller side is a bit odd.
+A lot more noise that way.
 
-Because some places would clearly want a "d_make_persistent_and_put()"
-function. But probably not worth the extra interface.
+So I'd prefer to put a warning in the source for the time being.  In principle,
+by the end of series as posted we are down to very few filesystems that use
+simple_unlink() and friends without having marked them persistent in the
+first place, so it would be possible to put a "make d_make_discardable() warn
+if it's not marked persistent, add variants of simple_unlink()/simple_rmdir()/
+simple_recursive_removal()/locked_recursive_removal() that would *NOT* warn
+and switch the handful of unconverted users to calling those", but...
 
-Anyway, apart from that I only had one reaction: I think
-d_make_discardable() should have a
+By the end of series as posted that's down to nfsctl, rpc_pipe, securityfs,
+configfs and apparmorfs.  The first 3 - because they used to have subseries
+of their own in separate branches, with corresponding conversion commits
+sitting on top of merges (#work.nfsctl is the last of those branches).
+No real obstacle to moving them into the queue, I just wanted to post it
+for review before we get to -rc7.
 
-        WARN_ON(!(dentry->d_flags & DCACHE_PERSISTENT))
+The remaining two (configfs and apparmor) are special enough to warrant private
+copies of simple_{unlink,rmdir}().  So I'd rather have that in patch adding
+the warning - simple_recursive_remove() wouldn't need a separate copy that
+way at all.
 
-because without that I think it can mistakenly be used as some kind of
-"dput that always takes the dentry lock", which seems bad.
+configfs has a separate series untangling it, but that's a separate story -
+that work goes back to 2018; I want to resurrect it, but I'm not mixing it
+into this pile.
 
-Or was that intentional for some reason?
-
-Talking about WARN_ON() - please don't add new BUG_ON() cases. I
-realize that those will never trigger, but *if* they were to trigger,
-some of them would do so during early boot and be a pain for people to
-ever even report to us.
-
-BUG_ON() really should be shunned. I think it makes sense to you and
-for automated testing, but it really is absolutely *horrendously* bad
-for the case where the code hits actual users.
-
-                 Linus
+appramor is... special.  They've got locking of their own, completely broken and
+interspersed with regular directory locks.  John Johansen, if I understood him
+correctly, has some plans re fixing that, and I'm happy not to have analysis
+of their locking on my plate.  _Maybe_ it will end up close enough to the usual
+tree-in-dcache to switch to that stuff, but at the moment I'd rather open-code
+simple_{unlink,rmdir} in aafs_remove() and leave it at that.
 
