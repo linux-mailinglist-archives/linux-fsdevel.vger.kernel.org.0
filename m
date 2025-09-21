@@ -1,182 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-62348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F077B8E8C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 00:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EABB8E961
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 01:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3B03BC028
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 22:26:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A968189C13B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 23:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E5D2D0601;
-	Sun, 21 Sep 2025 22:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5D28CF50;
+	Sun, 21 Sep 2025 23:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="usSSiHDQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpBxzyam"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B52A248F47;
-	Sun, 21 Sep 2025 22:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0FA242D90
+	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 23:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758493587; cv=none; b=EdMkwmdZuH2aujFHy4cYr9I/gzqeA99AXEZ6WsIiFsDv2ZSWX7JBOBIa05ZxKCmKFfUIYgoaKjqh1tPauQdgJH9fHdrRAn5VjREaa41AeSadaVjZnWIBSqFN1F/7pDpbynKYqEeNAmBFzlcg97uBhbyS1jQE3cM24sbD4tO2b2s=
+	t=1758496112; cv=none; b=tKU0DduzQ3TEAOFpE3wZd/9Zmm0unURYfrF8noVNyLgB3sw+QMwsvqvJhf7VnE0UpngqXtGltCGgaolzMsndoPSoJHoFcu1O0YCsAtXD1S8ImlXEncLIfoHI0Fzaq1Grc870ox+AVRDEhAvvg+a0GnNI2S6LqI16KW/0e6CVCHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758493587; c=relaxed/simple;
-	bh=Ao7FRcIHDja1QeoCgIQG3DXJaBHIl03/IoyecYtegWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKP7jQ7RR+McKcBtosHxYAKxZSblP7steKk6Nv2BO/mHYzP1QM9jmkB0KnlkGqzLvpe/PZmlRxXR2M0daBaPGVbOdJTvDzzQmPd0DlNxjyoeHZE/eemxDMh1jfkC7/eVVyEZA2hpHFXAVyZyIpwqupfFBdgVJyHqmXbjXEd0HUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=usSSiHDQ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=vlILJqwe+hl8iDH5chyH6rCDu8EauUbPjDhI89Nes6o=; b=usSSiHDQ2Qbq/moPc13PFOUsWD
-	OZvJvj3RMtsst8Itt4LV6ByI/pzdDEGYN59hMSjI9D0WKjMpT8umQJlX0udr+u4Z6EjToaCR2MjnL
-	JebpsLsLxysXhYvgIRefuiFMxaAfazcku591eCGxw6/Bs7jzvr5ECie8rG4QZaTP+dCdYplQgGebB
-	YeDuAM/mp6sz+txh4iD92ykjvSJ0E6qNuH5HhVaoO7funuh+WDy1Dw1yHMep3uwkJGBdVEjnzoTwA
-	wjFjO1cvVgjL6w9gvL00vzdQ4iPjYVLDWXrxzvViNv4wuO++/Zm/0MKeyjfWXJDfNuQ+w27Vk9XKP
-	fM2DzG5w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0SVf-00000003poQ-2RiS;
-	Sun, 21 Sep 2025 22:26:19 +0000
-Date: Sun, 21 Sep 2025 23:26:19 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
-	miklos@szeredi.hu, a.hindborg@kernel.org, linux-mm@kvack.org,
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, casey@schaufler-ca.com,
-	linuxppc-dev@lists.ozlabs.org, borntraeger@linux.ibm.com
-Subject: Re: [PATCH 31/39] convert selinuxfs
-Message-ID: <20250921222619.GO39973@ZenIV>
-References: <20250920074156.GK39973@ZenIV>
- <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
- <20250920074759.3564072-31-viro@zeniv.linux.org.uk>
- <CAHC9VhTRsQtncKx4bkbkSqVXpZyQLHbvKkcaVO-ss21Fq36r+Q@mail.gmail.com>
+	s=arc-20240116; t=1758496112; c=relaxed/simple;
+	bh=kp7sTRbvQCXDyuEv7lCMhx18j8NoJQstWz5bEdlO6i0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=myln1Ka3iZZPsmU7dIKMSHTnFIC1xXkV/az90SL8Pm0MmT/wjOaEbwApENcy/KIqHuptcbk6IZR7kVWBwloKsu5ZXNEiJt9DZGJXxPTlDmZ4iFjroFnVHAFB768Qv7d/76IG8jZn0k7KS9cIWeaENYEOnaFmG9ZCGa4EjAF79Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TpBxzyam; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7322da8so706558066b.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 16:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758496109; x=1759100909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6tuSy0V0l07vFSFy9Q6h9CIcImr/SidadizJrDYoMvw=;
+        b=TpBxzyamd3UoBsYuC7Kxvt8fyDLb5JWbAeYqjsLW+uE1kscQ8YDM0fE39a+IZJDj4p
+         6FvQ6J3Y9eySk9poPZpSf5HrlBLc7dNhHUKSdTp8xGK/btqZtp8G55HthLKgzS3ivoJj
+         CzHvMqA5TGUHWXoUCxHUAo7gse9eaK607GuXpAJ9SQijVj9/jvG8RbYJOe1v71Yrc+0s
+         /VUNWWm8Pvn/qO7nNYSnXwK77iVE04NvWL/q5uJlMBRDVx8CA/t/StpdpYT2Wr1iuaGV
+         W3fpq3NRoVVvKT5BzBBS2z/Nyj0SOCRRJ21eckXkrz59rmoZQdEjRDqadKWlgOkQg8ny
+         lpgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758496109; x=1759100909;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6tuSy0V0l07vFSFy9Q6h9CIcImr/SidadizJrDYoMvw=;
+        b=IsyvaAC5/jtD/uqNlTPT8UzaIxcugfdaAJZvyj0VCxCZR0ut5KaEw+oo57H2Pl8YTs
+         2PlFEyEpNjLzy7Q5v5DMvH0c0UiTRW3nUF5wZRgAm/nAYs4g+ueGEmjeL1zr+l1pXhOR
+         /AGaQWGS7T7m1Yd51gEubRyhEpvskfQ5C9kSefPRSL5BHeI0kFos6wrPCPB1COMdlWCe
+         qy12Rok4CWABgq8gwCepecJLm4lS6oGiXT4NY/xSTfxLaPpUgrn7KIn5OyYPQNhGL6yV
+         DecTYkboF/PgyVzlZdstqyP7oq/RGWprgXsCKc6fwwOzuCZsdKsrSv5EyMHztP4i8WvE
+         SKjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrie57547UTJ3siI/lrq2x1Zb+9KdLrrnm4sU++TmdlK0z6mjOEp25bDc7oyFUIE6nOkGrPwydxwfXA/Ea@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0dzLK8zaIlXdjLGJUis+r/NxN288slsjVD8U5vBvXlIydH9Y5
+	kzuYHGU3RSgYwzgsF7IsErd2f0Pe1VYOJA9eNZGu10ktvj7eCmtlSvkZ
+X-Gm-Gg: ASbGncuJBt57wmDsVDHtNgTo6PqvJcFoN0gFedmCkShQqfWrpdiJzmzzHPx4it17zLn
+	V4lCGnZHz1xchN5THvCuUKnDNTc5KcgF7x47Jn5WxLJwPTUo5e7GfCT+ofBYRoL6kYdR0uESdtR
+	AOgdnVF5t98qmLyUgCa7Te2d9ewL3YgRq3knLg/OvKJp+NaGhIP7o+dVKRK1QU/3375MOSK8rce
+	E2ScsfrnSk+c14xZu8vpNPGUlljUN+ikxosyXphuqLJnfGbt8LiSQ4vnt5Q/e780qMCCrbVTJWb
+	M2RShmSXBIC9O+DGwmAH0/ytK2GKsftFJra2+Zzex6V1WrVOUjEwCrGCMcISJvZ6MhCKgFb1sAA
+	iHyLraT1E1xODVkw05w8=
+X-Google-Smtp-Source: AGHT+IGaYL0rZYaG01O9JWNyxpX9QMFT7dX6PEZPc8o/39RX71pF0AyzIyHiFTeTuo7PDhxHHUV32g==
+X-Received: by 2002:a17:906:6a19:b0:b2c:b12f:429b with SMTP id a640c23a62f3a-b2cb12f63f9mr126937766b.62.1758496108686;
+        Sun, 21 Sep 2025 16:08:28 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fcfe88badsm941730566b.52.2025.09.21.16.08.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Sep 2025 16:08:28 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: cyphar@cyphar.com
+Cc: alx@kernel.org,
+	brauner@kernel.org,
+	dhowells@redhat.com,
+	g.branden.robinson@gmail.com,
+	jack@suse.cz,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-man@vger.kernel.org,
+	mtk.manpages@gmail.com,
+	safinaskar@zohomail.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4 05/10] man/man2/fsmount.2: document "new" mount API
+Date: Mon, 22 Sep 2025 02:08:18 +0300
+Message-ID: <20250921230824.92612-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250919-new-mount-api-v4-5-1261201ab562@cyphar.com>
+References: <20250919-new-mount-api-v4-5-1261201ab562@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTRsQtncKx4bkbkSqVXpZyQLHbvKkcaVO-ss21Fq36r+Q@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Sep 21, 2025 at 04:44:28PM -0400, Paul Moore wrote:
-> On Sat, Sep 20, 2025 at 3:48 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > Tree has invariant part + two subtrees that get replaced upon each
-> > policy load.  Invariant parts stay for the lifetime of filesystem,
-> > these two subdirs - from policy load to policy load (serialized
-> > on lock_rename(root, ...)).
-> >
-> > All object creations are via d_alloc_name()+d_add() inside selinuxfs,
-> > all removals are via simple_recursive_removal().
-> >
-> > Turn those d_add() into d_make_persistent()+dput() and that's mostly it.
-> > Don't bother to store the dentry of /policy_capabilities - it belongs
-> > to invariant part of tree and we only use it to populate that directory,
-> > so there's no reason to keep it around afterwards.
-> 
-> Minor comment on that below, as well as a comment style nitpick, but
-> overall no major concerns from me.
+> Note that the unmount operation on close(2) is lazy—akin to calling umount2(2) with MOUNT_DETACH
 
-FWIW, how's this for the preparatory part?
+MNT_DETACH, not MOUNT_DETACH
 
-commit 17f3b70a28233078dd3dae3cf773b68fcd899950
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sun Sep 21 18:09:48 2025 -0400
-
-    selinuxfs: don't stash the dentry of /policy_capabilities
-    
-    Don't bother to store the dentry of /policy_capabilities - it belongs
-    to invariant part of tree and we only use it to populate that directory,
-    so there's no reason to keep it around afterwards.
-    
-    Same situation as with /avc, /ss, etc.  There are two directories that
-    get replaced on policy load - /class and /booleans.  These we need to
-    stash (and update the pointers on policy reload); /policy_capabilities
-    is not in the same boat.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 9aa1d03ab612..482a2cac9640 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -75,7 +75,6 @@ struct selinux_fs_info {
- 	struct dentry *class_dir;
- 	unsigned long last_class_ino;
- 	bool policy_opened;
--	struct dentry *policycap_dir;
- 	unsigned long last_ino;
- 	struct super_block *sb;
- };
-@@ -117,7 +116,6 @@ static void selinux_fs_info_free(struct super_block *sb)
- 
- #define BOOL_DIR_NAME "booleans"
- #define CLASS_DIR_NAME "class"
--#define POLICYCAP_DIR_NAME "policy_capabilities"
- 
- #define TMPBUFLEN	12
- static ssize_t sel_read_enforce(struct file *filp, char __user *buf,
-@@ -1879,23 +1877,24 @@ static int sel_make_classes(struct selinux_policy *newpolicy,
- 	return rc;
- }
- 
--static int sel_make_policycap(struct selinux_fs_info *fsi)
-+static int sel_make_policycap(struct dentry *dir)
- {
-+	struct super_block *sb = dir->d_sb;
- 	unsigned int iter;
- 	struct dentry *dentry = NULL;
- 	struct inode *inode = NULL;
- 
- 	for (iter = 0; iter <= POLICYDB_CAP_MAX; iter++) {
- 		if (iter < ARRAY_SIZE(selinux_policycap_names))
--			dentry = d_alloc_name(fsi->policycap_dir,
-+			dentry = d_alloc_name(dir,
- 					      selinux_policycap_names[iter]);
- 		else
--			dentry = d_alloc_name(fsi->policycap_dir, "unknown");
-+			dentry = d_alloc_name(dir, "unknown");
- 
- 		if (dentry == NULL)
- 			return -ENOMEM;
- 
--		inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
-+		inode = sel_make_inode(sb, S_IFREG | 0444);
- 		if (inode == NULL) {
- 			dput(dentry);
- 			return -ENOMEM;
-@@ -2079,15 +2078,13 @@ static int sel_fill_super(struct super_block *sb, struct fs_context *fc)
- 		goto err;
- 	}
- 
--	fsi->policycap_dir = sel_make_dir(sb->s_root, POLICYCAP_DIR_NAME,
--					  &fsi->last_ino);
--	if (IS_ERR(fsi->policycap_dir)) {
--		ret = PTR_ERR(fsi->policycap_dir);
--		fsi->policycap_dir = NULL;
-+	dentry = sel_make_dir(sb->s_root, "policy_capabilities", &fsi->last_ino);
-+	if (IS_ERR(dentry)) {
-+		ret = PTR_ERR(dentry);
- 		goto err;
- 	}
- 
--	ret = sel_make_policycap(fsi);
-+	ret = sel_make_policycap(dentry);
- 	if (ret) {
- 		pr_err("SELinux: failed to load policy capabilities\n");
- 		goto err;
+-- 
+Askar Safin
 
