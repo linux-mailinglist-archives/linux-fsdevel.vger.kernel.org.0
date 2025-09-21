@@ -1,144 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-62347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D76CB8E8A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 00:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F077B8E8C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 00:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D61CE3BA4AF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 22:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3B03BC028
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 22:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6845E2475C7;
-	Sun, 21 Sep 2025 22:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E5D2D0601;
+	Sun, 21 Sep 2025 22:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="PYp+qLmQ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="usSSiHDQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A363257845
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 22:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B52A248F47;
+	Sun, 21 Sep 2025 22:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758493289; cv=none; b=as2WMCCG6VZ2otJW3GEcqV3DawQUQ2kbPM0wUjnq9q/ExaOp9px9ZYNx2cSdZ5c7Le6hnVsa3uhEcRxJPXOb35QLF0kkaUneBbMQM/umvWHwOMwABZyiP/KsCyPWw3jy4u629qPCmoYHExsJN+8HbWQh4xszcx5Gj6OvV7kvjMQ=
+	t=1758493587; cv=none; b=EdMkwmdZuH2aujFHy4cYr9I/gzqeA99AXEZ6WsIiFsDv2ZSWX7JBOBIa05ZxKCmKFfUIYgoaKjqh1tPauQdgJH9fHdrRAn5VjREaa41AeSadaVjZnWIBSqFN1F/7pDpbynKYqEeNAmBFzlcg97uBhbyS1jQE3cM24sbD4tO2b2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758493289; c=relaxed/simple;
-	bh=6oei0aWXFhVRzFAC+ZsItJg6xnA+dZu9f+eLcagd27c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TxUsQ5ORQJ06rKJI79Xqx21dKfdRTR/LNbGnoyRLUY5/BAOncMunJ3zJqcQLCGR4CazinKSkU3mgR/zmMDszzeMVjYN9QwiLtdymsIxq/ykQLxRtlPaCQgTQK7KLKP+l6ky4SexRQMP/zDivgOIICx0Zeg7hwfdZULapwOAP8Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=PYp+qLmQ; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b794e9a850so30037361cf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 15:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758493287; x=1759098087; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PHLyAWNRRvZ698aiszn9fxUOIJUP3t6BL2WpPwYPRag=;
-        b=PYp+qLmQxDpcmaKJAmXMNT4GUpKlnhY6sJMKA98L5JO9raId4BOtZqe4WvAc8WA1zg
-         tPLT7hLlrHPZWi7qcn9VILdX7yuKmgioYSnnb6UVNzkerEruUta/TsokQD6GY3314ZLk
-         PpFK6/80wRa8dfWftRO3ku1Ayr/N3gSR1QeuLFUNLW0QEChYKfSRh4UDtSAy10HGjtFx
-         8U15lT76FdDnIJqfvDxXx+5aBa/a2jzoc8JBxh6ggMbtcG3XqkYEGyRbJPYeEXA9ae9d
-         mW9rrKbYxoZ2k9LtHic6v7oeBw3FTSwXE8PjL8G/hukziGsKDx+P5tU46dvcVEIuNl1J
-         bDHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758493287; x=1759098087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PHLyAWNRRvZ698aiszn9fxUOIJUP3t6BL2WpPwYPRag=;
-        b=ieW+BpIQPgLn6FLzSBRVWj/SAyQqFENqO4m639yDFMf0bscsvlEwEJLN61M6NMsV/E
-         H7FkdfaPB1EJ85VtUIMDsgQrvUCWHEST+5Up4T8ctzaty4dgHM7N2+88XY+S6N8eSpYg
-         vQl4byDrVH1sHfrX3WN38/VA1xFzLxtpeggukbST5GE+1fbRSP+KryO/QZ9txah4KTU9
-         KOjRhpSJRw6Nm19l28+LIQrtCF3+1hdJ8d0xy5N6EwTQkFLGg21G+zvHi8SxBcdKzzFU
-         nnL2ypfvi3vh+Pf/RYQfc7zM1FkB+gYTQ+ANhcrx/wiQqnX/DnhnRIBvuIAWnwe37rKk
-         yEfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhVdI60RaIgDLLMmvUqfQVF7IDOwbWXigerF5R/4ia03wHrZO8W3fXAj7rI37vivlYJD4fKSDM9hCt8UYV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk9OXPX8CN+bM2te5hEHk03X6qrjYWNDKeElrUkzChzr+NHVxo
-	KO4ljJ+OT2eGMfVRnt4hn6O/HZhzEiAENpq9ELB/grBifsilvtOePnHHD+0KhUvndQ+C2+NsenA
-	5Q5tz4cssULujwx/JAfvRZT/yq3n2T82Nj6si9DMPow==
-X-Gm-Gg: ASbGnctQiswZYMKdi7u7LETE4FpkOag9WuVuPjPMyzXkHzvgvTmkv5YfpsEGq2q74Nd
-	EirXLlVd5S6m8I9ZcN9qcsyYJRL6Adbh+3aBZUgBernMgMC7r++MhBxnPXcmXTW0AoEdyzEvLTz
-	ZV49TqUkDwjLg83BPckksM6ZkPvNr32Y1l5uxaVf0eE+z6/ydOCWL2w+BO5ZpaYdynQX4HfF6UM
-	jwEBXI=
-X-Google-Smtp-Source: AGHT+IF9Bd/LCK7h6/iC83qqAy9wLiFHaZDvz7ruwA4mtaZ7EwXHPx8srwbwmVkArl3yVoSLBLTkv5dGYhCDZ5ZrJps=
-X-Received: by 2002:a05:622a:4c06:b0:4ca:10bd:bae5 with SMTP id
- d75a77b69052e-4ca10bdc5dfmr21648151cf.81.1758493287147; Sun, 21 Sep 2025
- 15:21:27 -0700 (PDT)
+	s=arc-20240116; t=1758493587; c=relaxed/simple;
+	bh=Ao7FRcIHDja1QeoCgIQG3DXJaBHIl03/IoyecYtegWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKP7jQ7RR+McKcBtosHxYAKxZSblP7steKk6Nv2BO/mHYzP1QM9jmkB0KnlkGqzLvpe/PZmlRxXR2M0daBaPGVbOdJTvDzzQmPd0DlNxjyoeHZE/eemxDMh1jfkC7/eVVyEZA2hpHFXAVyZyIpwqupfFBdgVJyHqmXbjXEd0HUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=usSSiHDQ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=vlILJqwe+hl8iDH5chyH6rCDu8EauUbPjDhI89Nes6o=; b=usSSiHDQ2Qbq/moPc13PFOUsWD
+	OZvJvj3RMtsst8Itt4LV6ByI/pzdDEGYN59hMSjI9D0WKjMpT8umQJlX0udr+u4Z6EjToaCR2MjnL
+	JebpsLsLxysXhYvgIRefuiFMxaAfazcku591eCGxw6/Bs7jzvr5ECie8rG4QZaTP+dCdYplQgGebB
+	YeDuAM/mp6sz+txh4iD92ykjvSJ0E6qNuH5HhVaoO7funuh+WDy1Dw1yHMep3uwkJGBdVEjnzoTwA
+	wjFjO1cvVgjL6w9gvL00vzdQ4iPjYVLDWXrxzvViNv4wuO++/Zm/0MKeyjfWXJDfNuQ+w27Vk9XKP
+	fM2DzG5w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0SVf-00000003poQ-2RiS;
+	Sun, 21 Sep 2025 22:26:19 +0000
+Date: Sun, 21 Sep 2025 23:26:19 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
+	miklos@szeredi.hu, a.hindborg@kernel.org, linux-mm@kvack.org,
+	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, casey@schaufler-ca.com,
+	linuxppc-dev@lists.ozlabs.org, borntraeger@linux.ibm.com
+Subject: Re: [PATCH 31/39] convert selinuxfs
+Message-ID: <20250921222619.GO39973@ZenIV>
+References: <20250920074156.GK39973@ZenIV>
+ <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
+ <20250920074759.3564072-31-viro@zeniv.linux.org.uk>
+ <CAHC9VhTRsQtncKx4bkbkSqVXpZyQLHbvKkcaVO-ss21Fq36r+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-8-pasha.tatashin@soleen.com> <20250814132233.GB802098@nvidia.com>
- <aJ756q-wWJV37fMm@kernel.org> <20250818135509.GK802098@nvidia.com>
-In-Reply-To: <20250818135509.GK802098@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 21 Sep 2025 18:20:50 -0400
-X-Gm-Features: AS18NWCcd-5oq0uHFf03h4LWbprCKHRBHh45SwiCRQil-ZYQKwKcHW5Zv6e3HKA
-Message-ID: <CA+CK2bDc+-R=EuGM2pU=Phq8Ui-8xsDm0ppH6yjNR0U_o4TMHg@mail.gmail.com>
-Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
- physical memory ranges
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Mike Rapoport <rppt@kernel.org>, pratyush@kernel.org, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTRsQtncKx4bkbkSqVXpZyQLHbvKkcaVO-ss21Fq36r+Q@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Aug 18, 2025 at 9:55=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Fri, Aug 15, 2025 at 12:12:10PM +0300, Mike Rapoport wrote:
-> > > Which is perhaps another comment, if this __get_free_pages() is going
-> > > to be a common pattern (and I guess it will be) then the API should b=
-e
-> > > streamlined alot more:
-> > >
-> > >  void *kho_alloc_preserved_memory(gfp, size);
-> > >  void kho_free_preserved_memory(void *);
+On Sun, Sep 21, 2025 at 04:44:28PM -0400, Paul Moore wrote:
+> On Sat, Sep 20, 2025 at 3:48 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > This looks backwards to me. KHO should not deal with memory allocation,
-> > it's responsibility to preserve/restore memory objects it supports.
->
-> Then maybe those are luo_ helpers
->
-> But having users open code __get_free_pages() and convert to/from
-> struct page, phys, etc is not a great idea.
+> > Tree has invariant part + two subtrees that get replaced upon each
+> > policy load.  Invariant parts stay for the lifetime of filesystem,
+> > these two subdirs - from policy load to policy load (serialized
+> > on lock_rename(root, ...)).
+> >
+> > All object creations are via d_alloc_name()+d_add() inside selinuxfs,
+> > all removals are via simple_recursive_removal().
+> >
+> > Turn those d_add() into d_make_persistent()+dput() and that's mostly it.
+> > Don't bother to store the dentry of /policy_capabilities - it belongs
+> > to invariant part of tree and we only use it to populate that directory,
+> > so there's no reason to keep it around afterwards.
+> 
+> Minor comment on that below, as well as a comment style nitpick, but
+> overall no major concerns from me.
 
-I added:
+FWIW, how's this for the preparatory part?
 
-void *luo_contig_alloc_preserve(size_t size);
-void luo_contig_free_unpreserve(void *mem, size_t size);
+commit 17f3b70a28233078dd3dae3cf773b68fcd899950
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Sep 21 18:09:48 2025 -0400
 
-Allocate contiguous, zeroed, and preserved memory.
+    selinuxfs: don't stash the dentry of /policy_capabilities
+    
+    Don't bother to store the dentry of /policy_capabilities - it belongs
+    to invariant part of tree and we only use it to populate that directory,
+    so there's no reason to keep it around afterwards.
+    
+    Same situation as with /avc, /ss, etc.  There are two directories that
+    get replaced on policy load - /class and /booleans.  These we need to
+    stash (and update the pointers on policy reload); /policy_capabilities
+    is not in the same boat.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Pasha
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 9aa1d03ab612..482a2cac9640 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -75,7 +75,6 @@ struct selinux_fs_info {
+ 	struct dentry *class_dir;
+ 	unsigned long last_class_ino;
+ 	bool policy_opened;
+-	struct dentry *policycap_dir;
+ 	unsigned long last_ino;
+ 	struct super_block *sb;
+ };
+@@ -117,7 +116,6 @@ static void selinux_fs_info_free(struct super_block *sb)
+ 
+ #define BOOL_DIR_NAME "booleans"
+ #define CLASS_DIR_NAME "class"
+-#define POLICYCAP_DIR_NAME "policy_capabilities"
+ 
+ #define TMPBUFLEN	12
+ static ssize_t sel_read_enforce(struct file *filp, char __user *buf,
+@@ -1879,23 +1877,24 @@ static int sel_make_classes(struct selinux_policy *newpolicy,
+ 	return rc;
+ }
+ 
+-static int sel_make_policycap(struct selinux_fs_info *fsi)
++static int sel_make_policycap(struct dentry *dir)
+ {
++	struct super_block *sb = dir->d_sb;
+ 	unsigned int iter;
+ 	struct dentry *dentry = NULL;
+ 	struct inode *inode = NULL;
+ 
+ 	for (iter = 0; iter <= POLICYDB_CAP_MAX; iter++) {
+ 		if (iter < ARRAY_SIZE(selinux_policycap_names))
+-			dentry = d_alloc_name(fsi->policycap_dir,
++			dentry = d_alloc_name(dir,
+ 					      selinux_policycap_names[iter]);
+ 		else
+-			dentry = d_alloc_name(fsi->policycap_dir, "unknown");
++			dentry = d_alloc_name(dir, "unknown");
+ 
+ 		if (dentry == NULL)
+ 			return -ENOMEM;
+ 
+-		inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
++		inode = sel_make_inode(sb, S_IFREG | 0444);
+ 		if (inode == NULL) {
+ 			dput(dentry);
+ 			return -ENOMEM;
+@@ -2079,15 +2078,13 @@ static int sel_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		goto err;
+ 	}
+ 
+-	fsi->policycap_dir = sel_make_dir(sb->s_root, POLICYCAP_DIR_NAME,
+-					  &fsi->last_ino);
+-	if (IS_ERR(fsi->policycap_dir)) {
+-		ret = PTR_ERR(fsi->policycap_dir);
+-		fsi->policycap_dir = NULL;
++	dentry = sel_make_dir(sb->s_root, "policy_capabilities", &fsi->last_ino);
++	if (IS_ERR(dentry)) {
++		ret = PTR_ERR(dentry);
+ 		goto err;
+ 	}
+ 
+-	ret = sel_make_policycap(fsi);
++	ret = sel_make_policycap(dentry);
+ 	if (ret) {
+ 		pr_err("SELinux: failed to load policy capabilities\n");
+ 		goto err;
 
