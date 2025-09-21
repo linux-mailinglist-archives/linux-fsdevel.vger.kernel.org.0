@@ -1,168 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-62339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1E8B8D965
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 12:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66325B8DAB4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 14:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49E54403C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 10:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A733B6DD9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 12:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECED258EFC;
-	Sun, 21 Sep 2025 10:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAED7274FE0;
+	Sun, 21 Sep 2025 12:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="suPlKyrD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GeQRDIo/"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lohutpMT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEC424A066;
-	Sun, 21 Sep 2025 10:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4850224679E;
+	Sun, 21 Sep 2025 12:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758450150; cv=none; b=jht46VBY4r6rwJpxnaWGCEjGw7P/YhXLmP+6hg66p6vTTYwqlPfY+eJPD4cXTB3OyWZgdcxuWMUsy8yFIpGqbKPgIv9ECv4UND2vRj+100VGFL1qvn8MC763u6TApXZUUpYN9K29876zM5b9VfYJWOd3ofn4w/4NMg23e6mzPAw=
+	t=1758457250; cv=none; b=Z+QXE5g3Qsc2UTzH7fI1IDFvTCl/tN/ODRd1g5V4tPBX5D1N+Jd2wn7mwRZiPBxVvCCmDpU/RGnbSQi5d7sXZbgnCbDd8gNLxw6ACv6bxmNeYU0PO7a05SbfK4MosxQ+isAaEhQc70bDopL8/gngdp3BzzyFpOUAuOwSnu6NuhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758450150; c=relaxed/simple;
-	bh=EuaMo6D/BJKLE6f/Qu2pbLWx6rfoIYSR/NXFNH+/L3U=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=iXigrRaS+OmOAx4XRexOSOGeoV3HJ923aeR5q43WRG+tlXjHO06b41ZinYjIP92FV1ZLFMl27FMPL4F/nnYuTlW7BeDJUFGab3ioxu/bEl7AHtoCTwgL9MLVmENGDx1PVVEIgSM+PM6sfPGCNW7hMvNyvGjDFFfbWY270DZuj50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=suPlKyrD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GeQRDIo/; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 562C314000FC;
-	Sun, 21 Sep 2025 06:22:27 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 21 Sep 2025 06:22:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1758450147; x=1758536547; bh=z4dTzHicOmu0ud13rOeQ61ccyjqJXmSHMtb
-	dd650m2s=; b=suPlKyrDIIb3+IwNlbntYUFM9a0CpPFkrFNA265367EGvWcyL6g
-	Ai3GxZx0x+4ArraDgo85aSSM6UQ4zzFGVA5VIEciOlSm3NNSWX25P5Y03QWE28I3
-	CLe6f2VtSTdh4JJKb+G/1iqdVfzX0vAmv0rw3WzjY6AV5y90Gk3IeMMfARA36sOH
-	HpJc25LV040BNWMua/br1P4ozNIqmfIxCFvLkngByr/O5d1WPsGJ3KRF4kkGQuB9
-	S9eEzNsKbEG3NxPAg9XaP00LN2cp8jxFXUVLY3emc7MIrrwwoRA8u81v7iQcDmwB
-	y1i85q2UsOjLlxCKTdi3KzV5btBgy0j8lkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758450147; x=
-	1758536547; bh=z4dTzHicOmu0ud13rOeQ61ccyjqJXmSHMtbdd650m2s=; b=G
-	eQRDIo/bVDytypOm19Nj87vmudllOQ9j3VlOHWvohikkIUe1MVoAnRfTnb6vhZG5
-	p/cfn+Y69hQFq+LVxWZ+cDO0PRm78tF1WIHNftcRqY4jWKzNPYz/PYCASiN4T7dQ
-	Ff0byzGrYNOTxv9a00wLEgh7Gxodwbti8lnoGpLU6lf/v6i1l7z0vb1Vww21tC7U
-	K5yuRQ00OCVFDsDfZsOmzfTDSHTacSs4GGwG3NyiQgJvWadUrnUBAu+OrOJ+aYl6
-	6m6TGOIv9j/d9/dL6Ak7LlYiyTg58SG9j90U7kwqG7mGOfPxJlTcpdXt+6/6EDcN
-	eM/eiPVRXLdSFxgbW1jzg==
-X-ME-Sender: <xms:4tHPaNn-6gqhyy2fn228rdPkVbYp_Ug6kGDDGg2DHA_UQqBKha9eUw>
-    <xme:4tHPaOnAXRg9ewbcwMnOihWBSq0CcdpuYvlOUopk6I_0inPF1phzlafTbq6JWqCIc
-    p6hDERGz-ekLA>
-X-ME-Received: <xmr:4tHPaBvIC1wTbzMyk6Z6_pupiyb2-fdrDwS3wmltW5QQior3XvDjrxQFy5SPe20vXimLdad3qAUTV9KiHeJdEVBVTaKfgGCxDkhwN4vsSbQB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehgeejvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    ffveejleejheeujeegheelleeuveduheejkeegveeuffetvefhfeevtdeuuefgjeenucff
-    ohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgr
-    ihhlrdhnvghtpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthho
-    pehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdgtihhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegs
-    phhfsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvg
-    drtgii
-X-ME-Proxy: <xmx:4tHPaIJcxLI3mylMD65vcVWusoP2ANC-YLZj18LljgYs_YDW3iCO8g>
-    <xmx:4tHPaGgZA-AHazPVIA52TncFHJ17tXzJ_qghKTM5oUTHW75gg4Kr9g>
-    <xmx:4tHPaEv6cEE7Fyvgf5R_3YeXxs9nKDVZb4dA2WqlhHve4Jshif9Q_w>
-    <xmx:4tHPaIiKeeX1mmr-u8fMPJqBpiX9lJy-gb8Y3tvRhBYBzbFC7qYN4A>
-    <xmx:49HPaJOA2ecx8oezZruDJjk7UiOe6Ag1tYRGEkvQOih3emkbW4M3hGxH>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 21 Sep 2025 06:22:22 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758457250; c=relaxed/simple;
+	bh=0/xFIGPokxVj1/HnD0t8zmXF0Y+RNw3sGgAPWDNgNj8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=rYfzToAXyXRBMJofK3BoUjvPUtJzUdqifQXNkRZdGBEYFCxJIuP7b2itVfImvpH47LCGNcCP0ARs1olRZzJk882u4KYEyZFz9dkJRbx1L8ZFeoysgiFTAva56EbirdjXVvk26cmed1teiBr5a04kxfW98dHcj5Ymvj7pb+zOPy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lohutpMT; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1758457242; bh=KWPqpIEDljNFZNnGmHMkljrvkkUssbDvBzSFH5RWDI0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lohutpMTTJwZiwxwYhNE4SFoweQfzRXSIuaTWghjQ/C3xu6zMd1inuqV4J3UlTa8X
+	 PN0IjvgBAYyMqa9oSfxPOS6rX31YsxqNN7dLLoxKGeE/s9+6XTPFOREKSZqrNL0Ak9
+	 sVsiwWO+f3h8RXLVMVuCHt85Ouc42p4Vatedje7g=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 527B2895; Sun, 21 Sep 2025 20:20:39 +0800
+X-QQ-mid: xmsmtpt1758457239t1no4ihfp
+Message-ID: <tencent_E396D637CE4A26757F761367A83C5D366809@qq.com>
+X-QQ-XMAILINFO: OU6NwKylrhQGAlkituWv7Ky1XwQlq6/5RieMvypAVhGbzSk3PEcZAwg22VJaKH
+	 1Ca83KPtOSNemjIC4ucz0CLaqPU99iokuhd6aTGt/GFtyTz+gePj0+IvBB2hWaYvij2LKcW1ylL4
+	 9uIdXJpnfvIehTObs4XqsKKsgXlBhvJd+/T7ds5RuApZZT6fNUCxxmZOpzJ5SNaBlR/7hTYwPxrr
+	 MrOn7dKM3u/Syo/4JLamfZTBvbMCT/hUf+FqErVV4Eai+nffooF5sAEBjK7DHMbrTLbnZAFe56M1
+	 s9/0VJsG6FPsJr7FIUb+9fESqcAZbP/+W3euhM8Z1RmjNCW6lRbTravB5u7fcV+xmSp8B3HS6SVB
+	 48FlV0ulMHgqq+8N+OScRNTHl2J73vQsaQQk/kQVvJnszUggHq9h2CdUTwYvzjZQUvDDaJ66Adth
+	 3l43UN0VpAQDRFZl2H8Lch37H6tq3ZRqT/xah2Hr+fJ5hgyth6sywrHfMXqWcFkk+Xo2+tUdEyoe
+	 hpoVyNZzTq3cZcWkjZGni4+S5h7FdSbAhlMEawL2tVj5b6+tMaPfoqF8N/S2ZwXnynG/Kl2TR3nb
+	 hSncK3oYK+2jbmMX5cxw4LjsZMrJZtw8YMQwudXgYnYJUWUvAOCU1mm4vF1jIYMKvTfnOzq4bm8X
+	 YTpHUk2gUvNy2hFfqAh6ITuD1JZsoK7frxZ9WVUhhnxOnyhcWSTKUcTAa3E5NFaI/+q12qQ2+faH
+	 yGDZG0sKxlC6a4MPoYR4Q3zoxVpzy1n6AHu1pJnEQuIHs1SajlCvl+uMI/OmexEyCGOA+ZoqJAQw
+	 3xHm3qjxK91p04UotZRZd3s6y8LHRX3ulyh/XuRPnXaQwjPPyto4u0U51dfrgsXAxyEUHIfYk/Un
+	 nN+c4OcJ9PG1AXPmDEI+70Vd8nhCXqrDx0g0adIxYQBLFywCybLEx3fLfJZJVC+k7PVy1x99gke0
+	 EeSZHOhHxQER01FWoRLIC0D3rMdmrJOIPOzBgOBrWhN+8ancdcyVRIIjVl5CvYAGU4DNQUDhs=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
+Cc: dakr@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rafael@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] comedi: Unregister is prohibited when attach fails before register
+Date: Sun, 21 Sep 2025 20:20:35 +0800
+X-OQ-MSGID: <20250921122034.2602371-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
+References: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "kernel test robot" <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- "Amir Goldstein" <amir73il@gmail.com>, linux-doc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, bpf@vger.kernel.org,
- netdev@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
- "Jan Kara" <jack@suse.cz>, oliver.sang@intel.com
-Subject:
- Re: [PATCH v3 5/6] VFS: rename kern_path_locked() and related functions.
-In-reply-to: <202509211121.ebd9f4b0-lkp@intel.com>
-References: <20250915021504.2632889-6-neilb@ownmail.net>,
- <202509211121.ebd9f4b0-lkp@intel.com>
-Date: Sun, 21 Sep 2025 20:22:13 +1000
-Message-id: <175845013376.1696783.14389036029721020068@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Transfer-Encoding: 8bit
 
-On Sun, 21 Sep 2025, kernel test robot wrote:
->=20
-> Hello,
->=20
-> kernel test robot noticed "BUG:unable_to_handle_page_fault_for_address" on:
->=20
-> commit: 747e356babd8bdd569320c29916470345afd3cf7 ("[PATCH v3 5/6] VFS: rena=
-me kern_path_locked() and related functions.")
-> url: https://github.com/intel-lab-lkp/linux/commits/NeilBrown/VFS-ovl-add-l=
-ookup_one_positive_killable/20250915-101929
-> base: https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git vfs.all
-> patch link: https://lore.kernel.org/all/20250915021504.2632889-6-neilb@ownm=
-ail.net/
-> patch subject: [PATCH v3 5/6] VFS: rename kern_path_locked() and related fu=
-nctions.
+The reproducer executed the COMEDI_DEVCONFIG command twice against the
+c6xdigio driver, first for device comedi3 and then for comedi1. Because
+the c6xdigio driver only supports a single port, the COMEDI_DEVCONFIG
+command for device comedi1 failed, and the registered driver was released
+by executing a detach.
 
-This incremental fix should be sufficient.
+Subsequently, another process attempted the same attach, resulting in a
+UAF error when accessing the released drv->p during detach.
 
-Thanks,
-NeilBrown
+When the c6xdigio driver fails to attach, it sets driver to NULL to prevent
+the comedi device from calling the detach command of the underlying c6xdigio
+driver.
 
+syzbot reported:
+CPU: 1 UID: 0 PID: 6035 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full)
+BUG: KASAN: slab-use-after-free in sysfs_remove_file_ns+0x63/0x70 fs/sysfs/file.c:522
+Call Trace:
+ driver_remove_file+0x4a/0x60 drivers/base/driver.c:197
+ bus_remove_driver+0x224/0x2c0 drivers/base/bus.c:743
+ driver_unregister+0x76/0xb0 drivers/base/driver.c:277
+ comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
+ comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
+ comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 5ceb971632fe..92973a7a8091 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2772,7 +2772,7 @@ static struct dentry *__start_removing_path(int dfd, st=
-ruct filename *name,
- 	if (unlikely(type !=3D LAST_NORM))
- 		return ERR_PTR(-EINVAL);
- 	/* don't fail immediately if it's r/o, at least try to report other errors =
-*/
--	error =3D mnt_want_write(path->mnt);
-+	error =3D mnt_want_write(parent_path.mnt);
- 	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
- 	d =3D lookup_one_qstr_excl(&last, parent_path.dentry, 0);
- 	if (IS_ERR(d))
-@@ -2789,7 +2789,7 @@ static struct dentry *__start_removing_path(int dfd, st=
-ruct filename *name,
- unlock:
- 	inode_unlock(parent_path.dentry->d_inode);
- 	if (!error)
--		mnt_drop_write(path->mnt);
-+		mnt_drop_write(parent_path.mnt);
- 	return d;
- }
-=20
+Allocated by task 6034:
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ bus_add_driver+0x92/0x690 drivers/base/bus.c:662
+ driver_register+0x15c/0x4b0 drivers/base/driver.c:249
+ c6xdigio_attach drivers/comedi/drivers/c6xdigio.c:253 [inline]
+
+Freed by task 6034:
+ kobject_put+0x1e7/0x5a0 lib/kobject.c:737
+ bus_remove_driver+0x16e/0x2c0 drivers/base/bus.c:749
+ driver_unregister+0x76/0xb0 drivers/base/driver.c:277
+ comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
+ comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
+ comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
+
+Fixes: 2c89e159cd2f ("Staging: comedi: add c6xdigio driver")
+Reported-by: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a56aa983ce6a1bf12485
+Tested-by: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ drivers/comedi/drivers/c6xdigio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/comedi/drivers/c6xdigio.c b/drivers/comedi/drivers/c6xdigio.c
+index 14b90d1c64dc..023c72e589a7 100644
+--- a/drivers/comedi/drivers/c6xdigio.c
++++ b/drivers/comedi/drivers/c6xdigio.c
+@@ -242,8 +242,10 @@ static int c6xdigio_attach(struct comedi_device *dev,
+ 	int ret;
+ 
+ 	ret = comedi_request_region(dev, it->options[0], 0x03);
+-	if (ret)
++	if (ret) {
++		dev->driver = NULL;
+ 		return ret;
++	}
+ 
+ 	ret = comedi_alloc_subdevices(dev, 2);
+ 	if (ret)
+-- 
+2.43.0
+
 
