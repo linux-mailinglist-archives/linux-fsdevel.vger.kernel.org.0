@@ -1,277 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-62322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F719B8D48C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 06:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57061B8D67E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 09:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DA117ADF0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 04:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A0C44097B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 07:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D5629AAF3;
-	Sun, 21 Sep 2025 04:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497BA2D062E;
+	Sun, 21 Sep 2025 07:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="kyIz7x0A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423E82F56
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 04:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16F235965;
+	Sun, 21 Sep 2025 07:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758427471; cv=none; b=BJTYWkGBsvo6Mi8IRNFWyzD0xXhGhpqSBCErtJ59/CVzN6hW+PuRoSgPVnUiCEf7N1cSrQfDqemH0i7XD6IVQTILV/rFdr1XhDYNRiVCYA74UY6z/bEcsVHUinwMYPhJoYbp/OLQI8GScsyJyxiS3XaiTrAxndP6N10Xhe7XRNQ=
+	t=1758439682; cv=none; b=Ku2EPd+v3KU7WQlPi5AWOO9YDXCc8u5Kgqq4H5LxGNsV2Kqr/BNho4KMxOelmvGNHII+T/3gO7tzqS3DnHG6bJnDdV7i7i3Y6T/igSP80anq2l7cP7oNKVoysNw25x/hs1BPY88xSW5tbbqjT+56wmKtGh5Z554PZpt7S9HFLzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758427471; c=relaxed/simple;
-	bh=uYaPhNV1/+q9/3WTZa/AM3WFWfNB8GDVijY2bznYwP0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dqem1WJMrD68cX8aYH7BeRRBCNDdQ7KXOhNgVcGpeuXZB0YWnvRv525gSMpphC5rJtV87NTLKf9bPWHBTGxn+97beEwlPBEqvUAx8+6badnOfpQQumZJicV6rkRAqd+4+9yMDq4wK27OrW7TIRbU+IFPrtGGgGYArcoHm2JLRMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-424828985d9so22134045ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Sep 2025 21:04:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758427468; x=1759032268;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ND+IRyVoBRx/ziTBiFkTALgcpMRoE1+blRu9ZWJN/k=;
-        b=VYcGirturV0L6wXnh7Q/N9bj8ThuAwiWOpGtcZtXEB+RwRUPJHDPEq7hCGwjj3uvnm
-         AjyabUbdL/coxmB9wvE3qE80iK6kODwxJ8g1/Bw0GTYVLzW3MDH7k9rFZO+WlYdnFzYE
-         Ptq8u8wJqGDE34+2EfcOWWv/dFQGNKKcEL7oiUs9DmW8/GnLGIbpMlPDVDbaPQiXNCvQ
-         cpK6BqSR5Cz8j6buE94r1o3KwQeaX92OHj0XOtXeXDEDIhztSp+WX2UNR6d0ef8YsOxC
-         I+42tIx2Z/+6Io62JGipYR5kYIYGpmfO4sW3CCScfQaUjWmXu5MGwEEJaMf8ejHKGqO4
-         gqPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRIWU7Sei7Yl4qTvFkIFlL6bwOSGl6R0CqWRvXrkVEjPwPtZjBBDonIyXFUHl3QQpBFjB7JkQ9D9B6hNsV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLZGltblzOK0Hp/eEbKYzLfTVcdBUlmx9UpNy8BUpWUAf/ZuDr
-	049l7slAxYLXXRkNLIABbkPrUKB4AD7F4sp0k+yO+1qvj4K0lnOGlN3VMIakdk6rM2Dlm7sj8Jj
-	oM+bVJ+x2tORtknhaPsG2nKDYsrqhHh3DShb64Ow+jL3cphoJrSX9KGrz428=
-X-Google-Smtp-Source: AGHT+IGufy4+nfq2omegs8kz88DcjlzFd1t+cm58oaN1JU+xnapDFfsm78+qyM3U+xr/3DxJlNNOIxGUpIFkKqd1FKqMPdPU6THW
+	s=arc-20240116; t=1758439682; c=relaxed/simple;
+	bh=JqIb/MaIDNjBDV4Eq6eEGvX5RN5p2FW2Okcuox4xXAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLcItc8aNHekNxrOePcM6g5BtKOxn1PwmDsJ8fMjyHTzQKUQWvM70ps4a2i0cTblZRIpoTWgYbqmQKrwt7vzjWQa1p+CzEYAVkrevDGHTXAGOgTJ9QJPhOoI7mUqvzmeJJvCs3zn86xVaelTUu0xzNutEopKi0QOxovXQgkp20I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=kyIz7x0A; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-ID:Content-Description;
+	bh=BgXU7JpzOKWlJQQUnRd3cvmoQ2vgKa6/9nYZ7mnQ5bc=; b=kyIz7x0A58ISblrMPBugmQN27Y
+	181yrLBrTCl0rUfD9f98dvdAoN/a16W0dHyKzk3RCfEy8twgPxHpgQDui49n9kLJj2PnIw/FPHdY0
+	WI1k7TILk1N57TjQ9ubWD8ckymC2cx+R+LS0dTBka87j1PJwZfYLMfcJYklyH/6oafqoKviPiThPu
+	cFVdBjF2PO7Upsglp7P0YLeKKSUFsXDlV0BpJF4jDRe+h1MzrWtR8RXwgqjaD3IH5ci+8qA0rnK+V
+	3nf36FigU/QgNWT3K9kaRAb+SHdWLHheI2o2k6Xkcc0flBPyZ+rJ9zovHbYICF0S5n3DtWSNDgb0e
+	yZ8eUokw==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1v0EAU-00GikC-Ij; Sun, 21 Sep 2025 07:07:30 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 6735DBE2EE7; Sun, 21 Sep 2025 09:07:29 +0200 (CEST)
+Date: Sun, 21 Sep 2025 09:07:29 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: 1111455@bugs.debian.org, 1111455-submitter@bugs.debian.org,
+	Benoit Panizzon <bp@imp.ch>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: Bug#1111455: [bp@imp.ch: Bug#1111455:
+ linux-image-6.12.41+deb13-amd64: kernel BUG at fs/netfs/read_collect.c:316
+ netfs: Can't donate prior to front]
+Message-ID: <aM-kMVtUhnqrcwrc@eldamar.lan>
+References: <175550547264.3745.5845128440223069497.reportbug@go.imp.ch>
+ <aKMdIgkSWw9koCPC@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd84:0:b0:424:89fd:73d6 with SMTP id
- e9e14a558f8ab-42489fd759cmr102691455ab.14.1758427468459; Sat, 20 Sep 2025
- 21:04:28 -0700 (PDT)
-Date: Sat, 20 Sep 2025 21:04:28 -0700
-In-Reply-To: <6888afe6.050a0220.f0410.0005.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
-Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in driver_remove_file
-From: syzbot <syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aKMdIgkSWw9koCPC@eldamar.lan>
+X-Debian-User: carnil
 
-syzbot has found a reproducer for the following issue on:
+Hi Benoit,
 
-HEAD commit:    3b08f56fbbb9 Merge tag 'x86-urgent-2025-09-20' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ce5858580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=a56aa983ce6a1bf12485
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15571534580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152f7e42580000
+On Mon, Aug 18, 2025 at 02:31:30PM +0200, Salvatore Bonaccorso wrote:
+> Hi,
+>=20
+> A user in Debian reported the following kernel oops when running on
+> 6.12.41 (but apparently as well on older versions, though there were
+> several netfs related similar issues, so including Max Kellermann as
+> well in the recipients)
+>=20
+> The report from Benoit Panizzon is as follows:
+>=20
+> > From: Benoit Panizzon <bp@imp.ch>
+> > Resent-From: Benoit Panizzon <bp@imp.ch>
+> > Reply-To: Benoit Panizzon <bp@imp.ch>, 1111455@bugs.debian.org
+> > X-Mailer: reportbug 13.2.0
+> > Date: Mon, 18 Aug 2025 10:24:32 +0200
+> > To: Debian Bug Tracking System <submit@bugs.debian.org>
+> > Subject: Bug#1111455: linux-image-6.12.41+deb13-amd64: kernel BUG at fs=
+/netfs/read_collect.c:316 netfs: Can't donate
+> > 	prior to front
+> > Delivered-To: lists-debian-kernel@bendel.debian.org
+> > Delivered-To: submit@bugs.debian.org
+> > Message-ID: <175550547264.3745.5845128440223069497.reportbug@go.imp.ch>
+> >=20
+> > Package: src:linux
+> > Version: 6.12.41-1
+> > Severity: grave
+> > Justification: renders package unusable
+> > X-Debbugs-Cc: debian-amd64@lists.debian.org
+> > User: debian-amd64@lists.debian.org
+> > Usertags: amd64
+> >=20
+> > Dear Maintainer,
+> >=20
+> > Updated my workstation from Bookworm to Trixie. /home on NFS
+> >=20
+> > Applications accessing data on NFS shares become unresponsive one after=
+ the other after a couple of minutes.
+> >=20
+> > Especially affected:
+> > * Claws-Mail
+> > * Chromium
+> >=20
+> > Suspected cachefsd being the culpit and disabled - issue persists.
+> >=20
+> > It looks like an invalid opcode is being used. Fairly recent CPU in use:
+> >=20
+> > vendor_id	: AuthenticAMD
+> > cpu family	: 25
+> > model		: 80
+> > model name	: AMD Ryzen 7 PRO 5750GE with Radeon Graphics
+> > stepping	: 0
+> > microcode	: 0xa500011
+> >=20
+> > Google found reports of others affected with similar kernel versions mo=
+stly when accessing SMB shares.
+> >=20
+> > [Mo Aug 18 10:11:19 2025] netfs: Can't donate prior to front
+> > [Mo Aug 18 10:11:19 2025] R=3D00001e07[4] s=3D6000-7fff 0/2000/2000
+> > [Mo Aug 18 10:11:19 2025] folio: 4000-7fff
+> > [Mo Aug 18 10:11:19 2025] donated: prev=3D0 next=3D0
+> > [Mo Aug 18 10:11:19 2025] s=3D6000 av=3D2000 part=3D2000
+> > [Mo Aug 18 10:11:19 2025] ------------[ cut here ]------------
+> > [Mo Aug 18 10:11:19 2025] kernel BUG at fs/netfs/read_collect.c:316!
+> > [Mo Aug 18 10:11:19 2025] Oops: invalid opcode: 0000 [#1] PREEMPT SMP N=
+OPTI
+> > [Mo Aug 18 10:11:19 2025] CPU: 5 UID: 0 PID: 115 Comm: kworker/u64:1 No=
+t tainted 6.12.41+deb13-amd64 #1  Debian 6.12.41-1
+> > [Mo Aug 18 10:11:19 2025] Hardware name: LENOVO 11JN000JGE/32E4, BIOS M=
+47KT26A 11/23/2022
+> > [Mo Aug 18 10:11:19 2025] Workqueue: nfsiod rpc_async_release [sunrpc]
+> > [Mo Aug 18 10:11:19 2025] RIP: 0010:netfs_consume_read_data.isra.0+0xb7=
+9/0xb80 [netfs]
+> > [Mo Aug 18 10:11:19 2025] Code: 48 89 ea 31 f6 48 c7 c7 96 95 6f c2 e8 =
+d0 8d a2 e1 48 8b 4c 24 10 4c 89 fe 48 8b 54 24 20 48 c7 c7 b2 95 6f c2 e8 =
+b7 8d a2 e1 <0f> 0b 90 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 9=
+0 90
+> > [Mo Aug 18 10:11:19 2025] RSP: 0018:ffffb4234057bd58 EFLAGS: 00010246
+> > [Mo Aug 18 10:11:19 2025] RAX: 0000000000000018 RBX: ffff9aed62651ec0 R=
+CX: 0000000000000027
+> > [Mo Aug 18 10:11:19 2025] RDX: 0000000000000000 RSI: 0000000000000001 R=
+DI: ffff9af04e4a1740
+> > [Mo Aug 18 10:11:19 2025] RBP: 0000000000000000 R08: 0000000000000000 R=
+09: ffffb4234057bbe8
+> > [Mo Aug 18 10:11:19 2025] R10: ffffffffa50b43a8 R11: 0000000000000003 R=
+12: ffff9aed6c9081e8
+> > [Mo Aug 18 10:11:19 2025] R13: 0000000000004000 R14: ffff9aed6c9081e8 R=
+15: 0000000000006000
+> > [Mo Aug 18 10:11:19 2025] FS:  0000000000000000(0000) GS:ffff9af04e4800=
+00(0000) knlGS:0000000000000000
+> > [Mo Aug 18 10:11:19 2025] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005=
+0033
+> > [Mo Aug 18 10:11:19 2025] CR2: 00003d3407849020 CR3: 00000002f1822000 C=
+R4: 0000000000f50ef0
+> > [Mo Aug 18 10:11:19 2025] PKRU: 55555554
+> > [Mo Aug 18 10:11:19 2025] Call Trace:
+> > [Mo Aug 18 10:11:19 2025]  <TASK>
+> > [Mo Aug 18 10:11:19 2025]  netfs_read_subreq_terminated+0x2ab/0x3e0 [ne=
+tfs]
+> > [Mo Aug 18 10:11:19 2025]  nfs_netfs_read_completion+0x9c/0xc0 [nfs]
+> > [Mo Aug 18 10:11:19 2025]  nfs_read_completion+0xf6/0x130 [nfs]
+> > [Mo Aug 18 10:11:19 2025]  rpc_free_task+0x39/0x60 [sunrpc]
+> > [Mo Aug 18 10:11:19 2025]  rpc_async_release+0x2f/0x40 [sunrpc]
+> > [Mo Aug 18 10:11:19 2025]  process_one_work+0x177/0x330
+> > [Mo Aug 18 10:11:19 2025]  worker_thread+0x251/0x390
+> > [Mo Aug 18 10:11:19 2025]  ? __pfx_worker_thread+0x10/0x10
+> > [Mo Aug 18 10:11:19 2025]  kthread+0xd2/0x100
+> > [Mo Aug 18 10:11:19 2025]  ? __pfx_kthread+0x10/0x10
+> > [Mo Aug 18 10:11:19 2025]  ret_from_fork+0x34/0x50
+> > [Mo Aug 18 10:11:19 2025]  ? __pfx_kthread+0x10/0x10
+> > [Mo Aug 18 10:11:19 2025]  ret_from_fork_asm+0x1a/0x30
+> > [Mo Aug 18 10:11:19 2025]  </TASK>
+> > [Mo Aug 18 10:11:19 2025] Modules linked in: nfsv3 rpcsec_gss_krb5 nfsv=
+4 dns_resolver nfs netfs nft_chain_nat xt_MASQUERADE nf_nat nf_conntrack nf=
+_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c wireguard libcha=
+cha20poly1305 chacha_x86_64 poly1305_x86_64 curve25519_x86_64 libcurve25519=
+_generic libchacha vxlan ip6_udp_tunnel udp_tunnel bridge stp llc btusb btr=
+tl btintel btbcm btmtk bluetooth joydev qrtr nfsd auth_rpcgss binfmt_misc n=
+fs_acl lockd grace nls_ascii nls_cp437 sunrpc vfat fat amd_atl intel_rapl_m=
+sr intel_rapl_common rtw88_8822ce rtw88_8822c edac_mce_amd rtw88_pci snd_so=
+f_amd_rembrandt snd_sof_amd_acp rtw88_core kvm_amd snd_sof_pci snd_sof_xten=
+sa_dsp snd_sof snd_hda_codec_realtek mac80211 kvm snd_hda_codec_generic snd=
+_sof_utils snd_hda_scodec_component snd_soc_core snd_hda_codec_hdmi snd_hda=
+_intel snd_compress snd_intel_dspcfg libarc4 snd_pcm_dmaengine irqbypass sn=
+d_intel_sdw_acpi snd_pci_ps crct10dif_pclmul snd_hda_codec ghash_clmulni_in=
+tel snd_rpl_pci_acp6x cfg80211 snd_hda_core sha512_ssse3 snd_acp_pci
+> > [Mo Aug 18 10:11:19 2025]  sha256_ssse3 snd_acp_legacy_common sha1_ssse=
+3 snd_hwdep snd_pci_acp6x aesni_intel snd_pcm gf128mul snd_pci_acp5x crypto=
+_simd think_lmi snd_timer snd_rn_pci_acp3x cryptd firmware_attributes_class=
+ snd_acp_config wmi_bmof snd snd_soc_acpi ee1004 rapl snd_pci_acp3x pcspkr =
+ccp k10temp rfkill soundcore evdev parport_pc ppdev lp parport configfs efi=
+_pstore nfnetlink efivarfs ip_tables x_tables autofs4 ext4 mbcache jbd2 crc=
+32c_generic hid_plantronics hid_generic usbhid hid amdgpu dm_mod amdxcp drm=
+_exec gpu_sched drm_buddy i2c_algo_bit drm_suballoc_helper drm_display_help=
+er cec rc_core drm_ttm_helper xhci_pci ttm xhci_hcd drm_kms_helper drm r816=
+9 nvme usbcore realtek sp5100_tco nvme_core mdio_devres watchdog libphy crc=
+32_pclmul i2c_piix4 video crc32c_intel usb_common nvme_auth i2c_smbus crc16=
+ wmi button
+> > [Mo Aug 18 10:11:19 2025] ---[ end trace 0000000000000000 ]---
+>=20
+> Any ideas here? Benoit can you please es well test the current 6.16.1
+> ideally to verify if the problem persists there as well?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/50f34afb9e37/disk-3b08f56f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/421a8470ac48/vmlinux-3b08f56f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/218f92cd0c4d/bzImage-3b08f56f.xz
+Can you still reproduce this with a more current 6.12.y version? Can
+you test as well the newest version of the 6.16.y version (even there
+was a major refactoring to see if it affects only the 6.12.y series)?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
-
-comedi comedi1: c6xdigio: I/O port conflict (0x401,3)
-==================================================================
-BUG: KASAN: slab-use-after-free in sysfs_remove_file_ns+0x63/0x70 fs/sysfs/file.c:522
-Read of size 8 at addr ffff88807d7e6e30 by task syz.0.18/6035
-
-CPU: 1 UID: 0 PID: 6035 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- sysfs_remove_file_ns+0x63/0x70 fs/sysfs/file.c:522
- sysfs_remove_file include/linux/sysfs.h:777 [inline]
- driver_remove_file drivers/base/driver.c:201 [inline]
- driver_remove_file+0x4a/0x60 drivers/base/driver.c:197
- remove_bind_files drivers/base/bus.c:605 [inline]
- bus_remove_driver+0x224/0x2c0 drivers/base/bus.c:743
- driver_unregister+0x76/0xb0 drivers/base/driver.c:277
- comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
- comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
- comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
- do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
- comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f623a78ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe5ded2158 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f623a9d5fa0 RCX: 00007f623a78ec29
-RDX: 0000200000000080 RSI: 0000000040946400 RDI: 0000000000000004
-RBP: 00007f623a811e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f623a9d5fa0 R14: 00007f623a9d5fa0 R15: 0000000000000003
- </TASK>
-
-Allocated by task 6034:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- bus_add_driver+0x92/0x690 drivers/base/bus.c:662
- driver_register+0x15c/0x4b0 drivers/base/driver.c:249
- c6xdigio_attach drivers/comedi/drivers/c6xdigio.c:253 [inline]
- c6xdigio_attach+0xa3/0x4b0 drivers/comedi/drivers/c6xdigio.c:238
- comedi_device_attach+0x3b0/0x900 drivers/comedi/drivers.c:1007
- do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
- comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6034:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2422 [inline]
- slab_free mm/slub.c:4695 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4894
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e7/0x5a0 lib/kobject.c:737
- bus_remove_driver+0x16e/0x2c0 drivers/base/bus.c:749
- driver_unregister+0x76/0xb0 drivers/base/driver.c:277
- comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
- comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
- comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
- do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
- comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88807d7e6e00
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 48 bytes inside of
- freed 256-byte region [ffff88807d7e6e00, ffff88807d7e6f00)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7d7e6
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b841b40 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b841b40 dead000000000122 0000000000000000
-head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 00fff00000000001 ffffea0001f5f981 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5959, tgid 5959 (syz-executor), ts 73428545830, free_ts 73053846504
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2492 [inline]
- allocate_slab mm/slub.c:2660 [inline]
- new_slab+0x247/0x330 mm/slub.c:2714
- ___slab_alloc+0xcf2/0x1750 mm/slub.c:3901
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3992
- __slab_alloc_node mm/slub.c:4067 [inline]
- slab_alloc_node mm/slub.c:4228 [inline]
- __do_kmalloc_node mm/slub.c:4375 [inline]
- __kmalloc_noprof+0x2f2/0x510 mm/slub.c:4388
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kmalloc_array_noprof include/linux/slab.h:948 [inline]
- __list_lru_init+0xe8/0x4c0 mm/list_lru.c:588
- alloc_super+0x904/0xbd0 fs/super.c:391
- sget_fc+0x116/0xc20 fs/super.c:761
- vfs_get_super fs/super.c:1320 [inline]
- get_tree_nodev+0x28/0x190 fs/super.c:1344
- vfs_get_tree+0x8e/0x340 fs/super.c:1815
- do_new_mount fs/namespace.c:3808 [inline]
- path_mount+0x1513/0x2000 fs/namespace.c:4123
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount fs/namespace.c:4324 [inline]
- __x64_sys_mount+0x28d/0x310 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-page last free pid 6026 tgid 6026 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- discard_slab mm/slub.c:2758 [inline]
- __put_partials+0x165/0x1c0 mm/slub.c:3223
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_noprof+0x1cb/0x3b0 mm/slub.c:4247
- vm_area_dup+0x27/0x8d0 mm/vma_init.c:122
- __split_vma+0x18e/0x1070 mm/vma.c:515
- vms_gather_munmap_vmas+0x1d2/0x1340 mm/vma.c:1359
- __mmap_prepare mm/vma.c:2359 [inline]
- __mmap_region+0x436/0x27b0 mm/vma.c:2651
- mmap_region+0x1ab/0x3f0 mm/vma.c:2739
- do_mmap+0xa3e/0x1210 mm/mmap.c:558
- vm_mmap_pgoff+0x29e/0x470 mm/util.c:580
- ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:604
- __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
- __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
- __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-
-Memory state around the buggy address:
- ffff88807d7e6d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88807d7e6d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88807d7e6e00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff88807d7e6e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88807d7e6f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Regards,
+Salvatore
 
