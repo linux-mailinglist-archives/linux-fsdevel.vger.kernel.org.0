@@ -1,193 +1,527 @@
-Return-Path: <linux-fsdevel+bounces-62341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBCDB8DCDD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 16:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E38B8DD01
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 16:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E68A7ABE08
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 14:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B234B17A11F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Sep 2025 14:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A22D8DB7;
-	Sun, 21 Sep 2025 14:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DD01B4257;
+	Sun, 21 Sep 2025 14:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpsoZ3cl"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Y5TUP4/O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C196C22FE10
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 14:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6325C2D1;
+	Sun, 21 Sep 2025 14:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758464585; cv=none; b=sbJ5DOpP55Q6/hmmmeopA/UN76ocbDxsM6AmeMFZedfFOwvc3Avgcf5pB4siRwnzRZfGmc5fqtsxVKYmuL1UHQ5GtqscRBXCSGGxScv+yXUylMU3Pidf/XQYg47xK4zf2NGryyimZCyFMloISmwcZdwYPZbLUHbX9w227LW61cA=
+	t=1758466545; cv=none; b=AfX4t0VIBWzAgzve+Zr5oqu8PF+TVT/N85XFM1g/8u356EwvjTzLjZNLgCrCp8ujJK8W2kL+dcCJ5GRAgXmIoOERfnMdts7DQPq8ocw8tRGTNHTTLAh3V1ZQq+GO0Motl5XbJG6IDDr81kXZJ0yMTPyC6Crr1xlkZSVAoplgYhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758464585; c=relaxed/simple;
-	bh=9b6F9D5jje7y6/LmiCOtXxc4p3d9Me4XqnbPLCr+gOw=;
+	s=arc-20240116; t=1758466545; c=relaxed/simple;
+	bh=IuxgQBWxM9ygLmpOeoirh3f+NbyN1PvuH7cg3G+sDU8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VixiZxAKIgHHGqRXzIZCExKUbZk+OxO1GkFj2JduviDxyjto0OHNZnQxmrUlD6PCXdBlZjD2B04aXuzeQZ8oemXflWf+AgcJTfGAw42DZGylg99GAXA+NLZgj+98JisjsLSTXQHvlRPpUtIb605KWY7EsVD9F1BVYSCblzKGPME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpsoZ3cl; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-78393b4490cso31012646d6.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Sep 2025 07:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758464583; x=1759069383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G2S8h80iAduu97mKh30jmuV711hoxhswsxtFwAuztlE=;
-        b=fpsoZ3clVtE2VQnpVEcmrsjhQC/esdC0eyAEaXq2CPXEEFHWzwWCKy8o2ejVwEaSbr
-         kumsFkzbFifzjqxxexFN02i0ngHoXu9qWFPQYhYU6YnhqWwkRA2JYqMtWYA1PRKKR3oy
-         kch7Zo1D6w9FTBNN4rvGL7fRcP0v4dLbs+YewSnr+tlV7mxyIZXCMYi+/mEd5x7b/G8/
-         vKBcWFy4ysrIatIgzDH5kCRl7+l4YcJu7A5ouPZAWZL9HIN6hLIitG/qSbhkdeSUsVvi
-         0bwxSuBiIUPLYz8z/oNB3HcigTh9fu2W0flhTp3XPlo3YqqoxryswoaI6QItcpLsGTOS
-         /Wvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758464583; x=1759069383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G2S8h80iAduu97mKh30jmuV711hoxhswsxtFwAuztlE=;
-        b=arJqtnPKXufnuH068l0lVOajQolygaGTykScJ+saNVaj2PEtNXdXm3e469r4r8P4H0
-         LRdSXXDLDFsj96uiiSjI/OyJmkKJ4YV8sD1Zpqb61eKnuQfGGxA36AMRBSf8VBAF8uxu
-         NRckMSqHeKeQoqn145TqbdUA0tlmBwFrerhLJKMB6z2TdkSd33mLeKTccD+okHkMeq/3
-         Wmkw5+aYAOC9IqwsoSWMvbaqqipYxS/I8c1zpALkHCIGyH1Za7lENAV+7eRcLcgg80PM
-         uDkPKeoMqIDYzvTGvcTXM24n/h5yKamvTUEoYhRpQfDOOCFrdCC6/h9le0t2NPWmfD27
-         Lk7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXQcq8HC1qiKPA59DVrmqcQNt4Ef+oOgt9fpVywP0lL3TlCrEeHQn/mowd8w/nCGxV7QTN+AqCrBtTcZUkt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwArFPo7yGKtG5+pLOxSr96Vmm6NkZKHo+6rmYpYGARsT+hVSGg
-	cQy610/tibJu/xTYj4Z+P0MPgjn30XwPLfFNdTCCj6vVdgBl2kP/ERU2sWRqSkRO7/k=
-X-Gm-Gg: ASbGncugl0U1yFagSPXGCYFGtv3IqgSszGd2lYDFriM3EvWgcKoxEwazsKMybDzvLU/
-	DikTSSVBBjOjRqVzCPsJFRqt2SGsZEMuciyw8Oc3xWVN9umkk7+QlZPr7rZX1uZ34pNwuyr2JWb
-	ydwjT8LbFodNNHasXTE+tHqdfqOWk4l92R1Dl80WFAaeJvCrbdRxCqhGuJYOfF4AALdN69Na0ku
-	N3Dv8252hS1s+cZ9pQS8QrFoknncEOYH87XJsQZqziRRt16R/I3lxfV0x3xzxjm3yjGCDrh8r2Z
-	mwc7B3bqAwBuS97DTkKQA9AAdn7K62onnKiEqnH9PIyoijqQ50Wv9Suj+VW6T7OamY+z9LueXyX
-	SbR2xuOyVWjOK29WGb3CtbnRr8vr4dgdZw9+gAfShgLeW
-X-Google-Smtp-Source: AGHT+IFqbWz5JMCQf7zPfQ4YD0JBq9Wwm4X91v0TnqKyBZ1Ok3eymp4E7AQdn1kaqPdypC5ry9p0dA==
-X-Received: by 2002:ad4:5de1:0:b0:78e:7f26:686b with SMTP id 6a1803df08f44-799137e264bmr109415806d6.21.1758464582548;
-        Sun, 21 Sep 2025 07:23:02 -0700 (PDT)
-Received: from gmail.com ([2600:4041:4491:2000:eae0:9bbb:1dde:89c4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793548c7c21sm58119896d6.59.2025.09.21.07.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 07:23:02 -0700 (PDT)
-Date: Sun, 21 Sep 2025 23:23:00 +0900
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-	jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC] {do_,}lock_mount() behaviour wrt races and move_mount(2)
- with empty to_path (was Re: [PATCH] fs/namespace.c: fix mountpath handling
- in do_lock_mount())
-Message-ID: <aNAKRIcAirFMXWmO@gmail.com>
-References: <20250818172235.178899-1-seokwoo.chung130@gmail.com>
- <20250818201428.GC222315@ZenIV>
- <20250818205606.GD222315@ZenIV>
- <20250819-qualifizieren-draht-f209a541ac6c@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVwmSMut35BmiYOZgHYrR6/HZDjmzivJPpE4MUllkx5VcbJoHRvzPIl0shVHagbRbcILWAIYHuI5WjNtHiPXiLGm29zLIrZBEPywPxLUWvxA5DbR40112IP9k42XaOBkx/dt1x0KVYyj+vDZqLyYassvGC1Qs9ZehiC/Er5YNsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Y5TUP4/O; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cV8S53QSGz9smD;
+	Sun, 21 Sep 2025 16:55:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1758466533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XUF9O+4P8gUoEzDJe6pIN7nXM72zkCCFOQ1IX97fyzw=;
+	b=Y5TUP4/OdqGP0ychke2oPdLPCEuFmQe9oziw4bGzieyeywC5sBCVmz88tEChT0l+0PPsIR
+	DisFYskSfJWf2ZAvyjZIxAuvsNFISdoVd+vS1kGTVzjV/Yf7Drcngtk/CclU3gQCL/Y6n8
+	2EXVsI1RjwcjJXv7h0Qhm+fjJBXCu4c+bCybOS2PYjo6Aeuflzh0f12gGyF+ADUEZHvtxO
+	6KMdcOEAboe1fEFXe4ftJ18MCeMP559fCM96UVPdEqaCLviN8p9eDCbxONxNpdpc7m7O9F
+	hmraAkYDwGMQBnkOBNwgOxshggade4dFsYOJ1Mfvk/mRpcG1BFzKT7VRTVg5gA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Mon, 22 Sep 2025 00:55:13 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
+Message-ID: <2025-09-21-petite-busy-mucus-rite-01PHer@cyphar.com>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+ <y77zyujsduf5furdf2biphuszil63kftb44cs74ed2d2hf2gdr@hci7mzt6yh7b>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6etozccxc3u6ln2x"
 Content-Disposition: inline
-In-Reply-To: <20250819-qualifizieren-draht-f209a541ac6c@brauner>
+In-Reply-To: <y77zyujsduf5furdf2biphuszil63kftb44cs74ed2d2hf2gdr@hci7mzt6yh7b>
+X-Rspamd-Queue-Id: 4cV8S53QSGz9smD
 
-On Tue, Aug 19, 2025 at 11:40:14AM +0200, Christian Brauner wrote:
-> On Mon, Aug 18, 2025 at 09:56:06PM +0100, Al Viro wrote:
-> > On Mon, Aug 18, 2025 at 09:14:28PM +0100, Al Viro wrote:
-> > 
-> > > Alternative would be to treat these races as "act as if we'd won and
-> > > the other guy had overmounted ours", i.e. *NOT* follow mounts.  Again,
-> > > for old syscalls that's fine - if another thread has raced with us and
-> > > mounted something on top of the place we want to mount on, it could just
-> > > as easily have come *after* we'd completed mount(2) and mounted their
-> > > stuff on top of ours.  If userland is not fine with such outcome, it needs
-> > > to provide serialization between the callers.  For move_mount(2)... again,
-> > > the only real question is empty to_path case.
-> > > 
-> > > Comments?
-> > 
-> > Thinking about it a bit more...  Unfortunately, there's another corner
-> > case: "." as mountpoint.  That would affect that old syscalls as well
-> > and I'm not sure that there's no userland code that relies upon the
-> > current behaviour.
-> > 
-> > Background: pathname resolution does *NOT* follow mounts on the starting
-> > point and it does not follow mounts after "."
-> > 
-> > ; mkdir /tmp/foo
-> > ; mount -t tmpfs none /tmp/foo
-> > ; cd /tmp/foo
-> > ; echo under > a
-> > ; cat /tmp/foo/a
-> > under
-> > ; mount -t tmpfs none /tmp/foo
-> > ; cat a
-> > under
-> > ; cat /tmp/foo/a
-> > cat: /tmp/foo/a: no such file or directory
-> > ; echo under > b
-> > ; cat b
-> > under
-> > ; cat /tmp/foo/b
-> > cat: /tmp/foo/b: no such file or directory
-> > ;
-> > 
-> > It's been a bad decision (if it can be called that - it's been more
-> > of an accident, AFAICT), but it's decades too late to change it.
-> > And interaction with mount is also fun: mount(2) *DOES* follow mounts
-> > on the end of any pathname, no matter what.  So in case when we are
-> > standing in an overmounted directory, ls . will show the contents of
-> > that directory, but mount <something> . will mount on top of whatever's
-> > mounted there.
-> > 
-> > So the alternative I've mentioned above would change the behaviour of
-> > old syscalls in a corner case that just might be actually used in userland
-> > code - including the scripts run at the boot time, of all things ;-/
-> > 
-> > IOW, it probably falls under "can't touch that, no matter how much we'd
-> > like to" ;-/  Pity, that...
-> > 
-> > That leaves the question of MOVE_MOUNT_BENEATH with empty pathname -
-> > do we want a variant that would say "slide precisely under the opened
-> > directory I gave you, no matter what might overmount it"?
-> 
-> Afaict, right now MOVE_MOUNT_BENEATH will take the overmount into
-> account even for "." just like mount(2) will lookup the topmost mount no
-> matter what. That is what userspace expects. I don't think we need a
-> variant where "." ignores overmounts for MOVE_MOUNT_BENEATH and really
-> not unless someone has a specific use-case for it. If it comes to that
-> we should probably add a new flag.
-> 
-> > 
-> > At the very least this corner case needs to be documented in move_mount(2)
-> > - behaviour of
-> > 	move_mount(_, _, dir_fd, "",
-> > 		   MOVE_MOUNT_T_EMPTY | MOVE_MOUNT_BENEATH)
-> > has two apriori reasonable variants ("slide right under the top of
-> > whatever pile there might be over dir_fd" and "slide right under dir_fd
-> 
-> Yes, that's what's intended and documented also what I wrote in my
-> commit messages and what the selftests should test for. I specifically
-> did not make it deviate from standard mount(2) behavior.
-> 
-> > itself, no matter what pile might be on top of that") and leaving it
-> > unspecified is not good, IMO...
-> 
-> Sure, Aleksa can pull that into his documentation patches.
 
-Hello all,
+--6etozccxc3u6ln2x
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
+MIME-Version: 1.0
 
-I am writing to follow up on this RFC patch. The last discussion was a
-month ago and it seems like the conversation has stalled.
+On 2025-09-21, Alejandro Colomar <alx@kernel.org> wrote:
+> Hi Aleksa,
+>=20
+> On Fri, Sep 19, 2025 at 11:59:44AM +1000, Aleksa Sarai wrote:
+> > This is loosely based on the original documentation written by David
+> > Howells and later maintained by Christian Brauner, but has been
+> > rewritten to be more from a user perspective (as well as fixing a few
+> > critical mistakes).
+> >=20
+> > Co-authored-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Co-authored-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  man/man2/fspick.2 | 342 ++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 342 insertions(+)
+> >=20
+> > diff --git a/man/man2/fspick.2 b/man/man2/fspick.2
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..1f87293f44658adeb7ab7cf=
+febcac3174888f040
+> > --- /dev/null
+> > +++ b/man/man2/fspick.2
+> > @@ -0,0 +1,342 @@
+> > +.\" Copyright, the authors of the Linux man-pages project
+> > +.\"
+> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> > +.\"
+> > +.TH fspick 2 (date) "Linux man-pages (unreleased)"
+> > +.SH NAME
+> > +fspick \- select filesystem for reconfiguration
+> > +.SH LIBRARY
+> > +Standard C library
+> > +.RI ( libc ,\~ \-lc )
+> > +.SH SYNOPSIS
+> > +.nf
+> > +.BR "#include <fcntl.h>" "          /* Definition of " AT_* " constant=
+s */"
+> > +.B #include <sys/mount.h>
+> > +.P
+> > +.BI "int fspick(int " dirfd ", const char *" path ", unsigned int " fl=
+ags );
+> > +.fi
+> > +.SH DESCRIPTION
+> > +The
+> > +.BR fspick ()
+> > +system call is part of
+> > +the suite of file descriptor based mount facilities in Linux.
+> > +.P
+> > +.BR fspick()
+> > +creates a new filesystem configuration context
+> > +for the extant filesystem instance
+> > +associated with the path described by
+> > +.IR dirfd
+> > +and
+> > +.IR path ,
+> > +places it into reconfiguration mode
+> > +(similar to
+> > +.BR mount (8)
+> > +with the
+> > +.I -o remount
+> > +option).
+> > +A new file descriptor
+> > +associated with the filesystem configuration context
+> > +is then returned.
+> > +The calling process must have the
+> > +.BR CAP_SYS_ADMIN
+>=20
+> This should use '.B. (Bold).  BR means alternating Bold and Roman, but
+> this only has one token, so it can't alternate.
+>=20
+> If you run `make -R build-catman-troff`, this will trigger a diagnostic:
+>=20
+> 	an.tmac: <page>:<line>: style: .BR expects at least 2 arguments, got 1
 
-Thank you.
+Grr, I thought I fixed all of these. I must've changed it in a rework
+and forgot to fix it.
 
-Best regards,
-Ryan Chung
+> > +capability in order to create a new filesystem configuration context.
+> > +.P
+> > +The resultant file descriptor can be used with
+> > +.BR fsconfig (2)
+> > +to specify the desired set of changes to
+> > +filesystem parameters of the filesystem instance.
+> > +Once the desired set of changes have been configured,
+> > +the changes can be effectuated by calling
+> > +.BR fsconfig (2)
+> > +with the
+> > +.B \%FSCONFIG_CMD_RECONFIGURE
+> > +command.
+> > +Please note that\[em]in contrast to
+> > +the behaviour of
+> > +.B MS_REMOUNT
+> > +with
+> > +.BR mount (2)\[em] fspick ()
+>=20
+> Only have one important keyword per macro call.  In this case, I prefer
+> em dashes to only be attached to one side, as if they were parentheses,
+> so we don't need any tricks:
+>=20
+> 	Please note that
+> 	\[em]in contrast to
+> 	...
+> 	.BR mount (2)\[em]
+> 	.BR fspick ()
+
+Based on my testing, doing it that way adds whitespace to one side of
+the em dash and typographically em dashes should not have whitespace on
+either side AFAIK. If there is a way to get the layout right without
+breaking the "one macro per line" rule, I'd love to know! :D
+
+> > +instantiates the filesystem configuration context
+> > +with a copy of
+> > +the extant filesystem's filesystem parameters,
+> > +meaning that a subsequent
+> > +.B \%FSCONFIG_CMD_RECONFIGURE
+> > +operation
+> > +will only update filesystem parameters
+> > +explicitly modified with
+> > +.BR fsconfig (2).
+> > +.P
+> > +As with "*at()" system calls,
+> > +.BR fspick ()
+> > +uses the
+> > +.I dirfd
+> > +argument in conjunction with the
+> > +.I path
+> > +argument to determine the path to operate on, as follows:
+> > +.IP \[bu] 3
+> > +If the pathname given in
+> > +.I path
+> > +is absolute, then
+> > +.I dirfd
+> > +is ignored.
+> > +.IP \[bu]
+> > +If the pathname given in
+> > +.I path
+> > +is relative and
+> > +.I dirfd
+> > +is the special value
+> > +.BR \%AT_FDCWD ,
+> > +then
+> > +.I path
+> > +is interpreted relative to
+> > +the current working directory
+> > +of the calling process (like
+> > +.BR open (2)).
+> > +.IP \[bu]
+> > +If the pathname given in
+> > +.I path
+> > +is relative,
+> > +then it is interpreted relative to
+> > +the directory referred to by the file descriptor
+> > +.I dirfd
+> > +(rather than relative to
+> > +the current working directory
+> > +of the calling process,
+> > +as is done by
+> > +.BR open (2)
+> > +for a relative pathname).
+> > +In this case,
+> > +.I dirfd
+> > +must be a directory
+> > +that was opened for reading
+> > +.RB ( O_RDONLY )
+> > +or using the
+> > +.B O_PATH
+> > +flag.
+> > +.IP \[bu]
+> > +If
+> > +.I path
+> > +is an empty string,
+> > +and
+> > +.I flags
+> > +contains
+> > +.BR \%FSPICK_EMPTY_PATH ,
+> > +then the file descriptor
+> > +.I dirfd
+> > +is operated on directly.
+> > +In this case,
+> > +.I dirfd
+> > +may refer to any type of file,
+> > +not just a directory.
+> > +.P
+> > +See
+> > +.BR openat (2)
+> > +for an explanation of why the
+> > +.I dirfd
+> > +argument is useful.
+> > +.P
+> > +.I flags
+> > +can be used to control aspects of how
+> > +.I path
+> > +is resolved and
+> > +properties of the returned file descriptor.
+> > +A value for
+> > +.I flags
+> > +is constructed by bitwise ORing
+> > +zero or more of the following constants:
+> > +.RS
+> > +.TP
+> > +.B FSPICK_CLOEXEC
+> > +Set the close-on-exec
+> > +.RB ( FD_CLOEXEC )
+> > +flag on the new file descriptor.
+> > +See the description of the
+> > +.B O_CLOEXEC
+> > +flag in
+> > +.BR open (2)
+> > +for reasons why this may be useful.
+> > +.TP
+> > +.B FSPICK_EMPTY_PATH
+> > +If
+> > +.I path
+> > +is an empty string,
+> > +operate on the file referred to by
+> > +.I dirfd
+> > +(which may have been obtained from
+> > +.BR open (2),
+> > +.BR fsmount (2),
+> > +or
+> > +.BR open_tree (2)).
+> > +In this case,
+> > +.I dirfd
+> > +may refer to any type of file,
+> > +not just a directory.
+> > +If
+> > +.I dirfd
+> > +is
+> > +.BR \%AT_FDCWD ,
+> > +.BR fspick ()
+> > +will operate on the current working directory
+> > +of the calling process.
+> > +.TP
+> > +.B FSPICK_SYMLINK_NOFOLLOW
+> > +Do not follow symbolic links
+> > +in the terminal component of
+> > +.IR path .
+> > +If
+> > +.I path
+> > +references a symbolic link,
+> > +the returned filesystem context will reference
+> > +the filesystem that the symbolic link itself resides on.
+> > +.TP
+> > +.B FSPICK_NO_AUTOMOUNT
+> > +Do not automount any automount points encountered
+> > +while resolving
+> > +.IR path .
+> > +This allows you to reconfigure an automount point,
+> > +rather than the location that would be mounted.
+> > +This flag has no effect if
+> > +the automount point has already been mounted over.
+>=20
+> I'll amend other similar issues if I find them, but in general, I'd put
+> the 'if' in the next line, as it is more tied to that part of the
+> sentence (think for example that if you reversed the sentence to say
+> "if ..., then ...", you'd move the 'if' with what follows it.  You don't
+> need to search for all of these and fix them; just keep it in mind for
+> next time.  In general I like the break points you used.
+>=20
+>=20
+> Have a lovely day!
+> Alex
+>=20
+> > +.RE
+> > +.P
+> > +As with filesystem contexts created with
+> > +.BR fsopen (2),
+> > +the file descriptor returned by
+> > +.BR fspick ()
+> > +may be queried for message strings at any time by calling
+> > +.BR read (2)
+> > +on the file descriptor.
+> > +(See the "Message retrieval interface" subsection in
+> > +.BR fsopen (2)
+> > +for more details on the message format.)
+> > +.SH RETURN VALUE
+> > +On success, a new file descriptor is returned.
+> > +On error, \-1 is returned, and
+> > +.I errno
+> > +is set to indicate the error.
+> > +.SH ERRORS
+> > +.TP
+> > +.B EACCES
+> > +Search permission is denied
+> > +for one of the directories
+> > +in the path prefix of
+> > +.IR path .
+> > +(See also
+> > +.BR path_resolution (7).)
+> > +.TP
+> > +.B EBADF
+> > +.I path
+> > +is relative but
+> > +.I dirfd
+> > +is neither
+> > +.B \%AT_FDCWD
+> > +nor a valid file descriptor.
+> > +.TP
+> > +.B EFAULT
+> > +.I path
+> > +is NULL
+> > +or a pointer to a location
+> > +outside the calling process's accessible address space.
+> > +.TP
+> > +.B EINVAL
+> > +Invalid flag specified in
+> > +.IR flags .
+> > +.TP
+> > +.B ELOOP
+> > +Too many symbolic links encountered when resolving
+> > +.IR path .
+> > +.TP
+> > +.B EMFILE
+> > +The calling process has too many open files to create more.
+> > +.TP
+> > +.B ENAMETOOLONG
+> > +.I path
+> > +is longer than
+> > +.BR PATH_MAX .
+> > +.TP
+> > +.B ENFILE
+> > +The system has too many open files to create more.
+> > +.TP
+> > +.B ENOENT
+> > +A component of
+> > +.I path
+> > +does not exist,
+> > +or is a dangling symbolic link.
+> > +.TP
+> > +.B ENOENT
+> > +.I path
+> > +is an empty string, but
+> > +.B \%FSPICK_EMPTY_PATH
+> > +is not specified in
+> > +.IR flags .
+> > +.TP
+> > +.B ENOTDIR
+> > +A component of the path prefix of
+> > +.I path
+> > +is not a directory;
+> > +or
+> > +.I path
+> > +is relative and
+> > +.I dirfd
+> > +is a file descriptor referring to a file other than a directory.
+> > +.TP
+> > +.B ENOMEM
+> > +The kernel could not allocate sufficient memory to complete the operat=
+ion.
+> > +.TP
+> > +.B EPERM
+> > +The calling process does not have the required
+> > +.B \%CAP_SYS_ADMIN
+> > +capability.
+> > +.SH STANDARDS
+> > +Linux.
+> > +.SH HISTORY
+> > +Linux 5.2.
+> > +.\" commit cf3cba4a429be43e5527a3f78859b1bfd9ebc5fb
+> > +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> > +glibc 2.36.
+> > +.SH EXAMPLES
+> > +The following example sets the read-only flag
+> > +on the filesystem instance referenced by
+> > +the mount object attached at
+> > +.IR /tmp .
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +int fsfd =3D fspick(AT_FDCWD, "/tmp", FSPICK_CLOEXEC);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
+> > +.EE
+> > +.in
+> > +.P
+> > +The above procedure is roughly equivalent to
+> > +the following mount operation using
+> > +.BR mount (2):
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +mount(NULL, "/tmp", NULL, MS_REMOUNT | MS_RDONLY, NULL);
+> > +.EE
+> > +.in
+> > +.P
+> > +With the notable caveat that
+> > +in this example,
+> > +.BR mount (2)
+> > +will clear all other filesystem parameters
+> > +(such as
+> > +.B MS_NOSUID
+> > +or
+> > +.BR MS_NOEXEC );
+> > +.BR fsconfig (2)
+> > +will only modify the
+> > +.I ro
+> > +parameter.
+> > +.SH SEE ALSO
+> > +.BR fsconfig (2),
+> > +.BR fsmount (2),
+> > +.BR fsopen (2),
+> > +.BR mount (2),
+> > +.BR mount_setattr (2),
+> > +.BR move_mount (2),
+> > +.BR open_tree (2),
+> > +.BR mount_namespaces (7)
+> > +
+> >=20
+> > --=20
+> > 2.51.0
+> >=20
+>=20
+> --=20
+> <https://www.alejandro-colomar.es>
+> Use port 80 (that is, <...:80/>).
+
+
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--6etozccxc3u6ln2x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaNAR0RsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG++vgD/bcWK/b5PJ2VOEKGHRudy
+SkeYLPfU56mIwvSta/B3tjsBANGKhHpshpyn/JzHawAswD5Lyyl8ThHRXoPkvaRy
+hcoJ
+=8xO8
+-----END PGP SIGNATURE-----
+
+--6etozccxc3u6ln2x--
 
