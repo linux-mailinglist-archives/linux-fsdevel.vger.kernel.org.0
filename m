@@ -1,115 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-62426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4308AB933C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 22:31:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A011B93422
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 22:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593C51906041
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 20:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BF7444935
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 20:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1932C261388;
-	Mon, 22 Sep 2025 20:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD91C78F51;
+	Mon, 22 Sep 2025 20:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvWDYbj3"
+	dkim=pass (2048-bit key) header.d=jjmx-net.20230601.gappssmtp.com header.i=@jjmx-net.20230601.gappssmtp.com header.b="pcQZLPl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381A5212D7C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 20:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF47C2E0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 20:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758573075; cv=none; b=ZwP5+1X8yhJdLpynEr/+pra7vSKkqcEF8/uGW/ggBDA4SG3rSJv6ziH7xI8ukfwZGnmHOnZhjc6vdxAzd66ofXqhqCHjjUnAwpmW9Cx3RIbbWlYMEyiVcibdF61ymtvnv4Z3Rse94LzguIU0uBNp6y5fw1eQ0WAsSWY0OQ77zXg=
+	t=1758573999; cv=none; b=EtyjSCFGUAmeB/jlTVqCw/pv+zqdficinjW3B0Tsm5/DyHAHww3Mn6PQtzf/MsBZfB3v1VZS+cILXiwK9/5D7kT4rHf7jrfQ3z3tGb7E0SAhM9DDzmI81s8o1kfHN+KJaJeVIA56WQ0vLu0gOYtzeDrjq6+jhnzWRrGYa95fRIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758573075; c=relaxed/simple;
-	bh=MJEFNOBSo3SKM5qiYRxxqoiLN0A/+xJxbSym8TLAOgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D/Lz3/rVE2pwowsrcggt4FpZzY5jOfp1lwLb2lOTm22YyeBjeqj85rKD3/IhjfMRmf8HQs4vxKE1rZUFb9kMG3o8OpLg13NCBRAcZbFi5T7htejMQQ0kR0wMUjPcn8BWLMd8jP9EObxyR+nUcnQ1wY/kut0TFcYRaPaen0+Dy70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvWDYbj3; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24602f6d8b6so7178905ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 13:31:12 -0700 (PDT)
+	s=arc-20240116; t=1758573999; c=relaxed/simple;
+	bh=sNif52s5HMeO2NlnrMaxGGClU/Jt3ksk6/Z0pkabfhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMtIjdFmgqrMFochXJdS2OeK+OuBvHLpVt7a4+Ihd8MXNdVrBe8YBg9t3EvU5d1QQHKW2UZwV+6gYD5+TX/KPyDhyfDXHYIuJ4tQd0w+5GmTJYZ0h0IfuPaMRklxZN0ck8936XNCwhJP8EPVCFleNhE0OSO5gT8+nqWkywamD9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jjmx.net; spf=none smtp.mailfrom=jjmx.net; dkim=pass (2048-bit key) header.d=jjmx-net.20230601.gappssmtp.com header.i=@jjmx-net.20230601.gappssmtp.com header.b=pcQZLPl+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jjmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jjmx.net
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2698d47e776so35625865ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 13:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758573072; x=1759177872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
-        b=bvWDYbj3iqME7AmlblHpwc+1M5ztBJOGASqHVlb/kZLva/72avzSR19LqgOH2RelOn
-         7do6odcBZpcHxaeSOMY9yKKjO8m6vuJGhPQNuGl1MSz6SZm4av5TUNbUvXcDiTok23dq
-         TXXZ0tvsHfmZqo1Beaam8sUsNnKpz/4YZOlkdeRD+VcaQNKMfDU8roMZ9yP1PI565mEL
-         NFwlUp4qcAVOoJG/+ugesrgxUdPiCAalF38eZcMsr5RlCgok0as1Y+ukUX5igbaBs8w7
-         LqMfKTRvpJ1VatoFKgNUD21yT3ee1HGZTtLEDCaojN5ZNBXLoFcgkEl3cL/aA0pMQvpc
-         kvwQ==
+        d=jjmx-net.20230601.gappssmtp.com; s=20230601; t=1758573997; x=1759178797; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IVGiCj6E3P2w0QKnUVf/ItLsVX3vc/6pS/TsrG5gIrc=;
+        b=pcQZLPl+6UWudl7enkICtHYMhr6uNZW/D4/P1CiEQ9ySbC0UVPNMECZd7wlvZh8FYn
+         sTubGoviA2i+EHWcFeMTt8kAeTHTHF1UZG310YDRRwENM29pYklxP+xBGifC+6xb64NF
+         SwglEQAVbTbXqSLJrAK++ODwHgnEK1Macnz+bkEGx81PBE+h+zAUiGmtRIid2lXWEhL/
+         uY10WrSvTJieLXqWVGN1gRuSNhWiyoJl+p3iRWVZHscQeulnyV8egxI9Z8khPsUFTkll
+         0E/C5padmmoTgkC70hORPYMCearRyudOgiU4sJN6xSY8194vN+4Mt213nrIJYCwgjfD1
+         eAOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758573072; x=1759177872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
-        b=TcBuhVY4naXAkLX6qCYxQEgTkJzyfuF83BwZlrZemuL3N7w/E6J/D6g1zz1Y7zc1Ha
-         KObXcQ0L/CMFFCE2khnZl1N+a8Oqv/UA05AUlZOoic7TAMjO/OckKs+fxa2WOBnRUDJ5
-         O/NhaAhUuPgjU9rmHbiTnh0eM/sNigzu4HHqeDhEuRMm8M5b5uU0jiqpzERlDtPMyv7n
-         n5WutfytcvesGV70wJQzB7EAJOJDSKivjkkvIt2sqUCO/3LWeVxboaZzi+mYSa0UAcQT
-         gBGvrq7UJlY8bm8EleSpfRuG16BeoBJdX8B+4u4La9QRCvusAKPxVYS4BzObO/Ttj4wI
-         uNoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRF/oM/mY/Q70gFR0vgMjlTJXqd76rKQtafwNnBtW+kLF/Pf39VwX7r7Z7XLe9d0HHLxxvjjanQlMEkUd0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTTwzaxsbbyRjwLwqEvGQoR01XzYenT9k0wZBcKvdLbLPeostV
-	sEwKi/4tJ4syf/bV1aVWVl96iJSlTdJRQg1AoKYrlNakq8g0GHOGZLzdW9MuR4osjiYM+w0PEL7
-	trDjB/Sbps3yhwAB7O+gXtQ1MAgG/Cn0=
-X-Gm-Gg: ASbGncs1UjOXFZCr7Egmw6YLdwmScEjgZdRUY2GDvOOSXrqESqeD5hsO3eOaa48qqnB
-	3hEs20tLbPgjdK5oWMTC6xBUNHZyN4omi4Nb+xX470IeRT+abKyWEa4b+wqoI2drV/1vpOOuZ4u
-	P7L4czjowkPhl7mdarrvG4zlby251k4PHaB5+Oe/2ynhaHthTFjf0p4gjvEUkAfKzgSuBrS0zut
-	P4zStN4No79p4y5DdPk3JTLiVog9/+hcpwIWOZQM8/+sOuwVXP/URqxoOaQoQnhwKW2GC0VJmxK
-	kQXFSIeHKfox0HNEjfljDalbIQ==
-X-Google-Smtp-Source: AGHT+IGXlLgoOnlIi0xB27xbNnE/Gt3cViOhpVvylnU7nHRlbjGJ/bgbhPyP5R4jQ61rPO6JCpcQYEV2WsDmAL4iq+E=
-X-Received: by 2002:a17:902:d48f:b0:272:f27d:33bd with SMTP id
- d9443c01a7336-27cbb8b9fd0mr1155245ad.0.1758573072387; Mon, 22 Sep 2025
- 13:31:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758573997; x=1759178797;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IVGiCj6E3P2w0QKnUVf/ItLsVX3vc/6pS/TsrG5gIrc=;
+        b=U6JNPzLS4X3AOfxfsMxS1o1DXoZKo3TLFmdBFkl3dJrLjELkHXuzNWdxoJHtkpb+IX
+         1GjkRYAg61DaG68fAyBoPiGFN5zlwxiLowQcrRJqqq9+4yj3KqO+E81tWlFwDYPRCEEp
+         0BdxmXcPl+6SOyKl9oWx77WW2w3dD0Y6/91Vqk2ejyee5jS9fUHdnbx+Iq5hbgZA2hHF
+         6gX3DVFtGfFG6DCQK3EThMFeNRP4d8u6Y10k/aUEqCxBYmOJUQjTy5iQlkuYEIrvDr9X
+         7b7PqthMldtl/xuCiTTcfsDsIDokcVEn3gxTL1JiIgeuf6qgRzVk0imzy1akgT798FE9
+         wUdQ==
+X-Gm-Message-State: AOJu0Ywd0n6Y4yJgicpy4g0AUFAekhbPypK5KF0TFxjrTvswjJ0Hq+zz
+	sjmjFVMXcQsmvf29fA+isDiQAY7rcw8zkGnLQbXPi19IlLBipfiZFHe8n0UeCg5llzw=
+X-Gm-Gg: ASbGnctLmmhF4cIP9xr9FXUZd8PfmzEaFkkpNKB5KfeYU+Dcj9paHHkgr2ic5nEQ30Z
+	THM4e9Lil8bmvcEEcBxXSq4NfIhJgi/6JfFwKNWUIObwcJfXwEr/iukjnYE4HhMwbz8qi9mmdde
+	UugvxxTcVE3HPKFgjimfpbw/0lVIOD+gq19gyFacRhOvnNa8XYA1yK2BQOUe79Pffov9yvkjCTJ
+	A3ZjAnJUOOpXQAAFk9hRcSDLuPEZfn9QVzrQJriKLI/bkjzLfqLvBdMntsF1QQw2Be/aScjtMte
+	HCPs6IiotbepVQHxznaz9u6I4J9/cns5P+0j4s03YwC8NDMuROckQ54Wt7RiPdDDle0hcqFB/Vv
+	t74S7eNJnYmj7sQNT0Q==
+X-Google-Smtp-Source: AGHT+IGBzzduIGdXk7smDwhz6jjD79u61jKRRV7zYAexJaW7VRjMNqpCoiLIhN+qiOPpju/KPP3k7w==
+X-Received: by 2002:a17:903:2f82:b0:278:9051:8ea5 with SMTP id d9443c01a7336-27cc2101372mr2088225ad.21.1758573997132;
+        Mon, 22 Sep 2025 13:46:37 -0700 (PDT)
+Received: from [192.168.192.85] ([50.47.129.42])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2698035d337sm138464615ad.139.2025.09.22.13.46.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 13:46:36 -0700 (PDT)
+Message-ID: <d3816b71-b9c5-48da-acb9-a27702c8cf8a@jjmx.net>
+Date: Mon, 22 Sep 2025 13:46:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
-In-Reply-To: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 22 Sep 2025 22:31:00 +0200
-X-Gm-Features: AS18NWB6PmBlAWRUNDsKcUzY6cTwjDnURYFePpOCqHbTRGNIsxmxdgZIFpfQAjE
-Message-ID: <CANiq72nyQiHCvbTw1+njf3ZWYsK-f603iY-oox=9dMyfeCE8rg@mail.gmail.com>
-Subject: Re: [PATCH v15 0/4] rust: replace kernel::str::CStr w/ core::ffi::CStr
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: what's going on with aa_destroy_aafs() call in apparmor_init()?
+To: Al Viro <viro@zeniv.linux.org.uk>, John Johansen <john@apparmor.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20250921073655.GM39973@ZenIV>
+Content-Language: en-US
+From: John Johansen <john@jjmx.net>
+In-Reply-To: <20250921073655.GM39973@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 5:45=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
+On 9/21/25 00:36, Al Viro wrote:
+> 	Correct me if I'm wrong, but as far as I can tell apparmor_init()
+> ends up being called from security_init(), which is called before the call
+> of vfs_caches_init(), not to mention fs_initcall stuff.
+
+sigh, yes that is what is happening.
+
+> 	If that's the case, what is this doing there?
+> error:
+>          aa_destroy_aafs();
+> 	AA_ERROR("Error creating AppArmor securityfs\n");
+> 	return error;
+
+it shouldn't be it should have been dropped ages ago. Its a mess up on a
+patch and then it just got carried forward
+
+> aa_create_aafs() is called via fs_initcall; moreover, it will bail out
+> if called before apparmor_initialized has become true, so...
 >
->       rust: macros: reduce collections in `quote!` macro
+> While we are at it, what will happen if apparmor_init() succeeds, but
+> aa_create_fs() fails afterwards?
 
-Applied this one for the moment -- thanks everyone!
+Yeah that one is ugly. I will have to poke at the best solution atm.
+For current kernels, no policy will load. Backing out the LSM hooks
+isn't going to happen but we will need to just run in an unconfined
+state and make sure any references to the fs handle the null condition.
 
-The others require a bunch of changes in linux-next.
+> If nothing else, aa_null_path will be left {NULL, NULL}, which will
+> immediately oops dentry_open() in aa_inherit_files()...
 
-Cheers,
-Miguel
+indeed, I have to wonder if it was always that way or I just messed up.
+I borrowed the pattern from selinux but should have also dug into what
+it was doing.
+
+regardless it needs to be fixed.
+We can check that its null and set the file to null for replace fds.
+
+Give me a bit to see about some patches.
+
 
