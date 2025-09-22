@@ -1,87 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-62425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5A7B929B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 20:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4308AB933C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 22:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 401C17A413D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 18:32:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593C51906041
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 20:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE031961C;
-	Mon, 22 Sep 2025 18:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1932C261388;
+	Mon, 22 Sep 2025 20:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f1iGZvsI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvWDYbj3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C222D948A;
-	Mon, 22 Sep 2025 18:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381A5212D7C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 20:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758566038; cv=none; b=EXN6wRfeyhYUUoTw6ZecWT936zEfecLUtDZk6oilERgGMN06LXGrYQvUFRER2aRwP7zmQGrsVx7dHi6pEZhsNGY4pQCCVFY3O8BysGH0qxJ7c4O2zuoufxgWm4QOakDsoEjbPOo6XUtfkkZDjqLOSkW63DTh+s8ZZ9l7/IxsJ0s=
+	t=1758573075; cv=none; b=ZwP5+1X8yhJdLpynEr/+pra7vSKkqcEF8/uGW/ggBDA4SG3rSJv6ziH7xI8ukfwZGnmHOnZhjc6vdxAzd66ofXqhqCHjjUnAwpmW9Cx3RIbbWlYMEyiVcibdF61ymtvnv4Z3Rse94LzguIU0uBNp6y5fw1eQ0WAsSWY0OQ77zXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758566038; c=relaxed/simple;
-	bh=7f6X9BK45s8s/WWNImS47ZKqL25dfIRyq6yzpkvPLqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XinDM+98GjGfAWU1B9Inr3drcQGfjuXIS/tKeI3FeofAJR2s6p3KzFIKMguSC2MHWQCjqQHoPxe/Q8OvLs4MfDTadfXF2wdE90XjNpohmHQGGiBO1FH5XY0zsI65VkUy9hRZgbACGxZIfh5t3eUkdm9emETi1upHONDwhJ4zAdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f1iGZvsI; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Pk0qXAy77S9S9BN6W/egzghhkLeJ2kMDcymJHNW+Geo=; b=f1iGZvsI7MMMKm6AlFSw/0gMvE
-	4kXNPJt5mE/WQfL5BfjwBu3uKLri5sv1tm7/Z22oRirtItJW4IDW9fNBItMCI4/xFMmQb0r23sMBs
-	DXihmc7jXuoRR4WLkdIZZT9pnUhnFRJpeELTmHe8Vkc72WbpFYLQyxeAZxE290/KrSOOwX794+06w
-	SXMUlvRPSC+q6DXiXaqZ2N6J4ihxbCdjzzjKxuxjp0kDrVtgKMiXc11Nl5f4z8026GSLnl8nfNVm0
-	OsqTc9nDq1piwbGGfv/lZYpnDroXXhMfxjZ0ZR9+YcoJyGXaW0tCo856iVH3VkeP0scpzGAj+Lwal
-	CILooQbw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0lMI-0000000BFwN-46U7;
-	Mon, 22 Sep 2025 18:33:54 +0000
-Date: Mon, 22 Sep 2025 11:33:54 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, brauner@kernel.org,
-	miklos@szeredi.hu, hch@infradead.org, hsiangkao@linux.alibaba.com,
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Matthew Wilcow <willy@infradead.org>
-Subject: Re: [PATCH v3 10/15] iomap: add bias for async read requests
-Message-ID: <aNGWkujhJ7I4SJoT@infradead.org>
-References: <20250916234425.1274735-1-joannelkoong@gmail.com>
- <20250916234425.1274735-11-joannelkoong@gmail.com>
- <20250918223018.GY1587915@frogsfrogsfrogs>
+	s=arc-20240116; t=1758573075; c=relaxed/simple;
+	bh=MJEFNOBSo3SKM5qiYRxxqoiLN0A/+xJxbSym8TLAOgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D/Lz3/rVE2pwowsrcggt4FpZzY5jOfp1lwLb2lOTm22YyeBjeqj85rKD3/IhjfMRmf8HQs4vxKE1rZUFb9kMG3o8OpLg13NCBRAcZbFi5T7htejMQQ0kR0wMUjPcn8BWLMd8jP9EObxyR+nUcnQ1wY/kut0TFcYRaPaen0+Dy70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvWDYbj3; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24602f6d8b6so7178905ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 13:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758573072; x=1759177872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
+        b=bvWDYbj3iqME7AmlblHpwc+1M5ztBJOGASqHVlb/kZLva/72avzSR19LqgOH2RelOn
+         7do6odcBZpcHxaeSOMY9yKKjO8m6vuJGhPQNuGl1MSz6SZm4av5TUNbUvXcDiTok23dq
+         TXXZ0tvsHfmZqo1Beaam8sUsNnKpz/4YZOlkdeRD+VcaQNKMfDU8roMZ9yP1PI565mEL
+         NFwlUp4qcAVOoJG/+ugesrgxUdPiCAalF38eZcMsr5RlCgok0as1Y+ukUX5igbaBs8w7
+         LqMfKTRvpJ1VatoFKgNUD21yT3ee1HGZTtLEDCaojN5ZNBXLoFcgkEl3cL/aA0pMQvpc
+         kvwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758573072; x=1759177872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IcwSM1XGta2EiHK7PYQk1Nst2JShxKlF4k281BKxKcw=;
+        b=TcBuhVY4naXAkLX6qCYxQEgTkJzyfuF83BwZlrZemuL3N7w/E6J/D6g1zz1Y7zc1Ha
+         KObXcQ0L/CMFFCE2khnZl1N+a8Oqv/UA05AUlZOoic7TAMjO/OckKs+fxa2WOBnRUDJ5
+         O/NhaAhUuPgjU9rmHbiTnh0eM/sNigzu4HHqeDhEuRMm8M5b5uU0jiqpzERlDtPMyv7n
+         n5WutfytcvesGV70wJQzB7EAJOJDSKivjkkvIt2sqUCO/3LWeVxboaZzi+mYSa0UAcQT
+         gBGvrq7UJlY8bm8EleSpfRuG16BeoBJdX8B+4u4La9QRCvusAKPxVYS4BzObO/Ttj4wI
+         uNoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRF/oM/mY/Q70gFR0vgMjlTJXqd76rKQtafwNnBtW+kLF/Pf39VwX7r7Z7XLe9d0HHLxxvjjanQlMEkUd0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTTwzaxsbbyRjwLwqEvGQoR01XzYenT9k0wZBcKvdLbLPeostV
+	sEwKi/4tJ4syf/bV1aVWVl96iJSlTdJRQg1AoKYrlNakq8g0GHOGZLzdW9MuR4osjiYM+w0PEL7
+	trDjB/Sbps3yhwAB7O+gXtQ1MAgG/Cn0=
+X-Gm-Gg: ASbGncs1UjOXFZCr7Egmw6YLdwmScEjgZdRUY2GDvOOSXrqESqeD5hsO3eOaa48qqnB
+	3hEs20tLbPgjdK5oWMTC6xBUNHZyN4omi4Nb+xX470IeRT+abKyWEa4b+wqoI2drV/1vpOOuZ4u
+	P7L4czjowkPhl7mdarrvG4zlby251k4PHaB5+Oe/2ynhaHthTFjf0p4gjvEUkAfKzgSuBrS0zut
+	P4zStN4No79p4y5DdPk3JTLiVog9/+hcpwIWOZQM8/+sOuwVXP/URqxoOaQoQnhwKW2GC0VJmxK
+	kQXFSIeHKfox0HNEjfljDalbIQ==
+X-Google-Smtp-Source: AGHT+IGXlLgoOnlIi0xB27xbNnE/Gt3cViOhpVvylnU7nHRlbjGJ/bgbhPyP5R4jQ61rPO6JCpcQYEV2WsDmAL4iq+E=
+X-Received: by 2002:a17:902:d48f:b0:272:f27d:33bd with SMTP id
+ d9443c01a7336-27cbb8b9fd0mr1155245ad.0.1758573072387; Mon, 22 Sep 2025
+ 13:31:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918223018.GY1587915@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
+In-Reply-To: <20250813-cstr-core-v15-0-c732d9223f4e@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 22 Sep 2025 22:31:00 +0200
+X-Gm-Features: AS18NWB6PmBlAWRUNDsKcUzY6cTwjDnURYFePpOCqHbTRGNIsxmxdgZIFpfQAjE
+Message-ID: <CANiq72nyQiHCvbTw1+njf3ZWYsK-f603iY-oox=9dMyfeCE8rg@mail.gmail.com>
+Subject: Re: [PATCH v15 0/4] rust: replace kernel::str::CStr w/ core::ffi::CStr
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 03:30:18PM -0700, Darrick J. Wong wrote:
-> > +	iomap_start_folio_read(folio, 1);
-> 
-> I wonder, could you achieve the same effect by elevating
-> read_bytes_pending by the number of bytes that we think we have to read,
-> and subtracting from it as the completions come in or we decide that no
-> read is necessary?
+On Wed, Aug 13, 2025 at 5:45=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+>       rust: macros: reduce collections in `quote!` macro
 
-Weren't we going to look into something like that anyway to stop
-the read code from building bios larger than the map to support the
-extN boundary conditions?  I'm trying to find the details of that,
-IIRC willy suggested it.  Because once we touch this area for
-non-trivial changes it might be a good idea to get that done, or at
-least do the prep work.
+Applied this one for the moment -- thanks everyone!
+
+The others require a bunch of changes in linux-next.
+
+Cheers,
+Miguel
 
