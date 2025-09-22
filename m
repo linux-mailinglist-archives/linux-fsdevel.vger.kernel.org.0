@@ -1,127 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-62414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C828AB91E30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 17:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D3FB91ED8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 17:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7198B1676ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 15:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959B2423D5A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 15:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2272DFF1D;
-	Mon, 22 Sep 2025 15:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881642E542C;
+	Mon, 22 Sep 2025 15:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cDie2IVU"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JnCJh8IJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6tDJUbPl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JnCJh8IJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6tDJUbPl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1011D2E091B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 15:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4617260D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 15:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758554483; cv=none; b=BDKohD/jT9etP1mM3808e8d516viZ6AhNqJFMRd9GJGO7YvRzbOluIsi3MymBN/rvd9MMZ3o4U4XbBh4+sX+AyNzvmbL1JjqxCxZwoT507FBmtCS4ylifsGZpVC0E7aZ0pVnlk+hTR2MZEYsupSEZXu4gcP1kTxS6VVHtbUj9cc=
+	t=1758554858; cv=none; b=BNOi6ZzjmQ7CtRlXoPoC84DFql0o9FhhnEubPVk/5+31Q2meCmF6DtRkBK0MN1OljXlvk/ZwEg99oL5CL6xPXouhPaDg5NbIdi85NJwlgGUa9EMQcfcKkkTOr/77d/z8aKdw4jZXoDaMEN00BDw9qu1/SmoY1CabjPZjBbP12OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758554483; c=relaxed/simple;
-	bh=I0AUswnxQZMNWi9R80zf6vvWy6tCAhYx2psliAWUAZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+9AMmnkQKT413PdP0GOC6HYjSFfdRshoPL22rXMT+DEKHfEMhubaw00YJFOx/sGD3pOIu89xYpoEaMjX4aeyBOXmoBf3kOYJsjfAXBNOUDpf+jlPKUWbjUL6Wbmf0z/FisCwsoqRKKuF9SM2G9DmMQf+ddfd83liFuaFxZXB8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=cDie2IVU; arc=none smtp.client-ip=66.163.186.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758554481; bh=4InEgJCpBgl3urehuyUAnpN3vmaPh6mhZWLVpIhzL0s=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=cDie2IVUyWtpxDIWmKwCb2sO7pDFSObBF7FzL+nmkuEnIOa2K7hGsgPcKqL6w2nHUpGZUdJISKQWeTYTq/IVLoNcBD1YOombE036yS87RsBZwEpIdLgw9c7ydWG+q9XatsmT7+k49XijwPvFYdkbg03A4RaC7tEfgpbAUGp2/R7Rzeku1cKBVz3zwHF87o5eIs49nAxSYPF7EE1PP0RwERstae94HbXNXfvaMFoK4QBJi5JVE6AeuQKm0gfIONOnnAS7ruunpGcB/02lKp7ddxaL9O0rzViLD7iC6ZQg+6/kB/GQXE1g4we6tzMDq7J7PDGPwOBR/w7qqIzqdx5+lg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758554481; bh=vMViFR5Dxz90iZKPOtpHfIVlgB5DXizH8PoPPFWEPrg=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=SKFreG6Z6CNBwulZlFChP7OltaP+RyS+cgm2cJEApUEkaPIFdOm79LQrgjwlgdqf3z3hDB3AX/2cOgqRJwd6G5HQz+wOqJxts6FqN9k1/GHgzZF/uHDqeWzKSMpn90LhQ0IKdJdoqw9Eyl8UgEFdA47yB0USeMYA+RdjcECq53d6ghPlM+xptJ2c3xv4y9J+ajteOO+t75CgXRpMc8neiTJ9j0upirxyu4F///g/Se/AFh10F7dMXtVDs/Wl+nFTzvtlVSMSzVP8utv0muLXV+FGyKxiFfeFr5yCbLmpG7z431CiL2CVgvL4OGajzzFduQqRGdUK8q+eps5neCtpaA==
-X-YMail-OSG: a0ShGM0VM1kS5TdAKyhzMZn1kR2BVScsxCyqUC96KXfqWNmQ7dmcDUkr2C6CD8o
- F.nNwGtrFxyWKgcaKU7c7SzY5sLRNB.kOmj5_1Qm6ugm1qKEKbdGmcF7HD5CS6uaMhzE.a9se2Qm
- F1aP8aIzBCHkxN5RNu9eVRSUSnetYV4eQU1XVm4hTaEV4BvxehZwefxFMd6x0JG.j4dEDQi93AD1
- otuyzSX1.GPHdlyHguPAligClB4vPQXogx4pmPFUNZvIgnYUj3ZAP.eaGvtLAJBWwJZIid7F8Yl7
- fS1HoQ7Jn3KoiQxx99h22rBrZa75BNGmyO0gktHMEZP6MXXhe53TSWat_vR8FAYXp_VD4R4oJuz0
- DW.oPlaIk1ghcJ.KbdLt0LsHV4.48F61tmZEA3FvDg6dnsPKuRGJnMhywRU4K6.kIxo9YPvXQjHB
- F0IEgZLPfOcJ8vj_r5t6ph71MsJq.FE_dJwSDuVWC2OfTIwu3UL950I4YXO0txdngQH3weqQJq6v
- Gd0etDBRenLr.nP4ZVooL08C.kalSnyjilbjQ6hVCbAJFQ5ac5tNMA0yqzDKczYaots_sFff8rvv
- U5vBtTDHFGj9pG1htEk98Bie3Sr1Rh3DfjslgmdEQKnh1_RrMAZSOAa.07QtYLdpDe2ASHqoxstq
- qYaXJgEdH5PCYA35nG5kb60ezbJkPPwOgISysqsYtBczyL7aM0o_YWb87zjEpMrncOBftQRPUxzI
- yY2X1SAcAlN74EUshXhNxN7bDz0fJ9pyw6Z2FsRjy8NP0ZZgh77q88u5.20P4ilTVK7xnx3zwYf4
- Uzh2YFJ6lpxu_av3Ty_RSjjqPs_hrHqzS4E2lP1u8zR0J5nKWFZkiuKSJTrN8DJgClAmJqKAahC0
- NDUnpko2yADSzuuEpuBlBsqp8tv6uhW8teFJt.gLBrwD3pm5T1jSk.0wbeWpfWdlekkEEZwV3NPS
- xZ7VgGeoZC1jxaMek4SWmhHxcE34bMEKU.ZgnVDtv1vB2BQqLi_s6d77dWDiquPUaQAUCXKkMaQP
- uhDhqmwm8pzBqj2r0bYaLSBcqFrAk51e5s4ikqTrwey9HRuUMMB8Eh2Y1HQR9LL_GE.p6iKBKxnX
- nIXVe7cgbeMhuuSyEyhK5k_DGnSaPAqBjwhWbkQQ0EBc3l6dBpb4.Oz6IoO_8WCoLqoiiNyfdai.
- bJqa6nOKQrPDM66mVqWCrlXJ6g1wtUV7f9_RR3ivDzll782rXlyXthQ7MUGtc1O4ztwW9feR0AFR
- uC4vfcZi7p42Pwj2PiMqaKleTA3XAs8ovvKSBT_szRVp_5si5CjN8VyeemuMZTkLEg.rLNOiNPCG
- ytsLPAaDfYvVFrPfcdyYVnIQ2F2svsSmcLS6d07AwqKDkUlZFTirlX5SPJb30aKtLsfZA2vXA1dX
- byb6p2XV5WARbEoql4FkflHp67betBxxYfMoBuk5wsBX.R08duRAeIA7ywEmn2K_jb6_P91vCYMA
- AbckozoJFCLrgV6CWtns8rSzy395xhacTQzNQERJ8u6dQJMrmDYQtaS9J7y33Fwf1vHuWoK09FpM
- l8kJwIWULCnK5tjBv7iWW6LyslPyakaCL6mla8FXtIRDOQbAeGbSfW1aSxgcC89DZHcc2bM0x8e5
- sBoSsKO.AGS65jFjJYffvA9clbSmTISPOj4t64jG0sZpeeCe8VIxXz7WWTqU0XxkmCWiYwIn6KV_
- aUtD_EmSIWjW.J3jq2SVufM16hzqmUzhgU1aFQiACBwp.U2rG._edaOcsQrGJYKlS8tWmS4PL22D
- jSQIOAzuGq548u_mkww0AMgNAVQvlG67kcZ6SNXiFjW.k5iAUl1TlfCPEdCqsi8GWQRdneOBomfT
- ueajbwUt99M2nKlAjWvxQ_hy0RWGK3Ij4TWwNUYFNIsCXb0AsEOgYljPYO3dSJ0UbJwD6wzpABrG
- yZP5OsJLBK6ojQjJFmlGDMCbP7c5vxhge0mlgEPh6ACFt6Pqodho68OWazPnWVRIDSME785Zll_g
- CCQ9BuMOs.kMWTm4pGh28YO3BgmPcOl4hV.JK8XCiEgQY.4EQko2_W9u3bFfLa.Rdf_KvchZbSnR
- YcjkZQL3Gjhl21R0v_mm0v7UmSWebJxuIgVF4JOQehB9F_WNlcDfoawNwAtelzKXFXTaFRp_C6wK
- eszOxCUPqTPOQ_dI8MUlSoTR6Ga9y3m4NFIPKfqe_INBR5CwIx2F23bdEgas1vlI64GNmzsihuP2
- lxI_3RbdGVHuDr69RVlRtRbANidYaUSGf53wBBeZlpqudBL7u_btetqsP2Keq_y6GEDrgR_icQFg
- BgrZFVqwNWg479To-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 2c354591-3949-4080-84f2-5cc1785b2062
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 22 Sep 2025 15:21:21 +0000
-Received: by hermes--production-gq1-6f9f7cb74b-2n2jr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a83043d0b8f6a0e34f3bfd1c61ea603;
-          Mon, 22 Sep 2025 15:11:07 +0000 (UTC)
-Message-ID: <8403fd9a-6667-4202-bd5b-5e83172961b3@schaufler-ca.com>
-Date: Mon, 22 Sep 2025 08:11:05 -0700
+	s=arc-20240116; t=1758554858; c=relaxed/simple;
+	bh=Vw6JJ7xrCIwh6MqyjOkTVkannJHgEmX47UGmuXG+9Tc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ol2A74D/t7WNskwD3FZ+dB33RVGv8wkETR0FSZ8hQBSAWHo6NQhplK7n5ihERW5EMwR7jsVPFtXTOSgnL1cW3rKGfM1pz8foaY6pjiTbAXuamxNobhYVvenuTL6FwGNyt/wTvzIWP2xwK4NLIwwd4Q4/1T5CmADwh4DV1/Pisv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JnCJh8IJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6tDJUbPl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JnCJh8IJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6tDJUbPl; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AC9D41F395;
+	Mon, 22 Sep 2025 15:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758554855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
+	b=JnCJh8IJFkuMqJxVQU00Jyy2lJHqLhBBIjbqNFgL5nOeKX/O/TfNKaSvBgDKiHpRSXN46f
+	X4aIKirmoFDIQ6Ke9+rt0kjUUvrhYip+a/Iawy7fdVspYdB7XcV8xFnK7Zvw4SxD5kkook
+	m2/4+HzM9LAfD9G9vyNJZfEF5ZFhUFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758554855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
+	b=6tDJUbPlqJioZyGmF1fM2NZufXV2CD+L8O45l0A4SRfTOdLwBwkpTCdfQrZrjthXcYQFy4
+	aHKQ1hYI+3kzguCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758554855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
+	b=JnCJh8IJFkuMqJxVQU00Jyy2lJHqLhBBIjbqNFgL5nOeKX/O/TfNKaSvBgDKiHpRSXN46f
+	X4aIKirmoFDIQ6Ke9+rt0kjUUvrhYip+a/Iawy7fdVspYdB7XcV8xFnK7Zvw4SxD5kkook
+	m2/4+HzM9LAfD9G9vyNJZfEF5ZFhUFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758554855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rb+DXx+3ADAp+EoOOgHeeXZgUzRoFnTs9AYorQ75bCM=;
+	b=6tDJUbPlqJioZyGmF1fM2NZufXV2CD+L8O45l0A4SRfTOdLwBwkpTCdfQrZrjthXcYQFy4
+	aHKQ1hYI+3kzguCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92CC21388C;
+	Mon, 22 Sep 2025 15:27:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kRbQI+dq0WgYJAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 22 Sep 2025 15:27:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2AB47A07C4; Mon, 22 Sep 2025 17:27:35 +0200 (CEST)
+Date: Mon, 22 Sep 2025 17:27:35 +0200
+From: Jan Kara <jack@suse.cz>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Julian Sun <sunjunchao@bytedance.com>, cgroups@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, akpm@linux-foundation.org, 
+	lance.yang@linux.dev, mhiramat@kernel.org, agruenba@redhat.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev
+Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+Message-ID: <4ntd7nnkoidyakbfm3caieku5tvpmzklhm27vgr3fu746hsrov@wqiqxasc4s7p>
+References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+ <20250922132718.GB49638@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/39] convert smackfs
-To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
- raven@themaw.net, miklos@szeredi.hu, a.hindborg@kernel.org,
- linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
- kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
- linux-usb@vger.kernel.org, paul@paul-moore.com,
- linuxppc-dev@lists.ozlabs.org, borntraeger@linux.ibm.com,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250920074156.GK39973@ZenIV>
- <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
- <20250920074759.3564072-10-viro@zeniv.linux.org.uk>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250920074759.3564072-10-viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24425 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922132718.GB49638@noisy.programming.kicks-ass.net>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On 9/20/2025 12:47 AM, Al Viro wrote:
-> Entirely static tree populated by simple_fill_super().  Can use
-> kill_anon_super() as-is.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+On Mon 22-09-25 15:27:18, Peter Zijlstra wrote:
+> On Mon, Sep 22, 2025 at 05:41:43PM +0800, Julian Sun wrote:
+> > As suggested by Andrew Morton in [1], we need a general mechanism 
+> > that allows the hung task detector to ignore unnecessary hung 
+> > tasks. This patch set implements this functionality.
+> > 
+> > Patch 1 introduces a PF_DONT_HUNG flag. The hung task detector will 
+> > ignores all tasks that have the PF_DONT_HUNG flag set.
+> > 
+> > Patch 2 introduces wait_event_no_hung() and wb_wait_for_completion_no_hung(), 
+> > which enable the hung task detector to ignore hung tasks caused by these
+> > wait events.
+> > 
+> > Patch 3 uses wb_wait_for_completion_no_hung() in the final phase of memcg 
+> > teardown to eliminate the hung task warning.
+> > 
+> > Julian Sun (3):
+> >   sched: Introduce a new flag PF_DONT_HUNG.
+> >   writeback: Introduce wb_wait_for_completion_no_hung().
+> >   memcg: Don't trigger hung task when memcg is releasing.
+> 
+> This is all quite terrible. I'm not at all sure why a task that is
+> genuinely not making progress and isn't killable should not be reported.
 
-Looks fine to me.
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+In principle it is a variation of the old problem where hung task detector
+was reporting tasks that were waiting for IO to complete for too long (e.g.
+if sync(2) took longer than 2 minutes or whatever the limit is set). In
+this case we are waiting for IO in a cgroup to complete which has the
+additional dimension that cgroup IO may be throttled so it progresses extra
+slowly. But the reports of hang check firing for long running IO
+disappeared quite some time ago - I have a vague recollection there were
+some tweaks to it for this case but maybe I'm wrong and people just learned
+to tune the hang check timer :).
 
-> ---
->  security/smack/smackfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index b1e5e62f5cbd..e989ae3890c7 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -2960,7 +2960,7 @@ static int smk_init_fs_context(struct fs_context *fc)
->  static struct file_system_type smk_fs_type = {
->  	.name		= "smackfs",
->  	.init_fs_context = smk_init_fs_context,
-> -	.kill_sb	= kill_litter_super,
-> +	.kill_sb	= kill_anon_super,
->  };
->  
->  static struct vfsmount *smackfs_mount;
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
