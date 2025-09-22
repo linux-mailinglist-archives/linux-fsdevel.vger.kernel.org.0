@@ -1,147 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-62421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922FEB92887
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 20:02:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1944AB928DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 20:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853751905814
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 18:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5AB02A653D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 18:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8883128D3;
-	Mon, 22 Sep 2025 18:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1642431812E;
+	Mon, 22 Sep 2025 18:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xq1SucGT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JSX3p04D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577F2E9731
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 18:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0519313526;
+	Mon, 22 Sep 2025 18:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758564131; cv=none; b=kCJG0OA6ufEs4HIrJi4QUu/QRGw5OZcoiq4XsiTlTKHmcRFm4z7H8CQKD7jqi5NhcHflouGndROwwVpSBh4t5Z+PSw4i0t++rGzl+HHCAdxpUCBl/g4zSAQ1J88/xTul4nLdqYf0ScsuospTkXtJlCrbftdiugKO3Tok1Tko7I8=
+	t=1758564517; cv=none; b=VdZS9yynR3YDebSCTzh51w3f6xHnOcL5Cie6yCMazCYZF4tklBeSDQgDdzq9uG+dOtO4l+IW0Oih2b0VTvVh1tHOYViJU5gr2kRibG2ve0+SERdQ/LIh0R54TEjKhUA4EsN/EpXfTRoixH53qAHsX6kYbEYi1qGvFU0aOP6NKw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758564131; c=relaxed/simple;
-	bh=F1E/F32pkh8zKekUT9NeTJxi9zSoSJwLQjKjPTSiihA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V8f+kwHgqGk3Fn9984yry1hh0hfb2dNznD29jFK/71oqk8MxK3ZF4XFKtbVXDsvABj1IJn/Wt3UTNC/XledA1jb02HDokW85aVNAIEIExaeovT4CqhUeHKwmlvq5XIZF5hmS0puESH3Qyl4UTwa2DwBj9axTAkgB1k96pdlWWxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xq1SucGT; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445824dc27so50418565ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 11:02:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758564129; x=1759168929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSZum0kl/yGKTPgeahrkVYO5w2Dpd2TgmgHE35EMSZI=;
-        b=Xq1SucGTlDxXkouwEB1FAk/B03pHMPjKCAABPI3ahdftgPY1hXEgxJ7v9F9wXfvDT/
-         dsaPcclh9EMMDbpHyDmpw+H1n7FSte0ITjtj3uUjCH2fWtlz8SE2OkWlGNufRYexx75j
-         0ld+W7/o8wge/cayjlhBBcVICdZ9rYTAkNN+ueBTELYG3G0CKeKY1s0HhLa5rZ19rKjh
-         bSFUXV8fDKFG1ovrP4QCe9rQ+Humt1nj7cIrcLRnN+UFyY7L+ZFa1rG0nzxSLYiWl5em
-         VoFWfK3TFCCnGiaNywTAXGDYZOelKPDOm2Lg1Po9yTBlbC1m/0RsNofe88JDXGXaYk6H
-         q5ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758564129; x=1759168929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wSZum0kl/yGKTPgeahrkVYO5w2Dpd2TgmgHE35EMSZI=;
-        b=K4Tf26itqQuH4WCEewpB19UW3V92KVKmHXW7yf4naEeiJkvrcI7eqQBRnl6MdhjF1X
-         4kyU48QlsE6fHbLwZ5nKq3YYYXG7cnN3n55NZQIvoYLd/Dk1pYxcSLsSpSnBhVhPL48m
-         2fpt+60ofgwdkfFskvBLae8VgxDS7rXMGxBwT5ffy5+bL7BoA/EbmyGqX4KUaVEW+b1l
-         TpcuWuAodpiifiwivpNtc6UBNUFdK96Pe9no4CIgOgGOhbFoKFX4A3yXuig3vZsI42Qi
-         stU84IjMIiS1jlULGsZMxSQqWjgl1N0PX89ToCHjC9Or0pX7oDULZRvQGcFx3saexYHY
-         sNug==
-X-Forwarded-Encrypted: i=1; AJvYcCVU7xY3H/25dgpg689mo9+a5MZ0IpN3iaXaNEyayMOxS+laCbUOkjYOH/4zoKUfCvaDegn7IPuSUcYg+Vl/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYFhCVMqsrCZ71THXp/dPd61YehEHPjsTL/dueaD4k5BYLtBNF
-	tDf+pJhQCQ+Kbb+bzMBeQmnTxecYsRTD4L5reWynvfy5Ee3+RftFGBSN
-X-Gm-Gg: ASbGnctZZ5PSh4sAA0D5wuvC9CGEGGAhQ13NOCJwNEFGuLf/F9RFzxxmjBmZ1kfEE/k
-	Jn+kS3xKBOBCGghc4423gPW3MQ9U0rAyFEZJ3lo8TU6/r/EjODSFNsSlE0ISQCH+auEza4azosw
-	eVVeHW8+m19ZG1e34sjNGz1DAWX64g7mOtFvIYnkSuQmJPFVv5A4QjlKEEGjkC3lc7GiJJI8t37
-	6lRuRXTpz35xFZjV+RJr6YTidFVVCppXhyiLjmenCJI0X9pPnjaXhqMOHbQ3XTSxUscDrEZTvOv
-	licOAggg3jasRXAP/FRUpurr7sZU55IRSxWv6yf9jE38MNqyCxCchZ9YT3facq8Nz9deW7VrH2T
-	slYElHKqjUOs+NAlpOVDwRq61Z0yuI/CCy/qbSvQ2Qtw+VzZS
-X-Google-Smtp-Source: AGHT+IGcsuXdGPax9MG6CTe3X37K6r88CvfaIMyZhKg0cOEoXk5XSlm71gAiCfXdaI9HrxlKetC0fw==
-X-Received: by 2002:a17:902:ccd2:b0:246:d769:2fe7 with SMTP id d9443c01a7336-269ba5086ccmr173223885ad.28.1758564128958;
-        Mon, 22 Sep 2025 11:02:08 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:5::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053db2sm139807695ad.2.2025.09.22.11.02.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 11:02:08 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: djwong@kernel.org,
-	hch@infradead.org,
-	bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	syzbot@syzkaller.appspotmail.com
-Subject: [PATCH] iomap: adjust read range correctly for non-block-aligned positions
-Date: Mon, 22 Sep 2025 11:00:42 -0700
-Message-ID: <20250922180042.1775241-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758564517; c=relaxed/simple;
+	bh=tKJT6in7ur7nDpwsOw7KRNMi6M5Kfufpw8RxWEQB3gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ub/OtjqASEajjnQWhx6TfnSsccV/TFUjXEurxeLp9rDEQrOSzw3g8Ed21Nxu9cHYivKCf8/x2vuMOEusvAwynxbDaFblzOsZ7sjRduOBjU4Z4JxZSZTnRMlMXCoXhSxy0aftqeR12TI6DI0+zGyP8x1FSeU78W6o8BL9pEFIBPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JSX3p04D; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jQtZMBG55C+hVDGJ8duLOpG289A0c5o5Wr/sU5kj90Q=; b=JSX3p04DHi9p3pN6jPTS1lw8t3
+	t75xjBNCz5FRbj9NFF4C/pi+LN3Y/djhaRl7yPhdImVPEge4SFFM1b7p6OJ1FCAbgvS+V+CjHm8Dw
+	vWQAfu8z3avjmoqoE2zR6tNR+2+GcPz9RWvuNBUdBfyWrPIB6Db+pAqsuw/Ji3K8qpbYbN7k2vRh3
+	6LKjsmlh3ThsCfeyb/Li/zx3GMrUWxF7X+Tty4UIBkAXclq/Umzo9PVGn52ZTfZZ014H/WSkD4VYs
+	hmNoGJK4p6doKz0gCy2sde4ToIA9zKXQvN5NZTHQnjFcfw8mk4Jh29aMTzAOyjTpOSIQUD1HPm3Gq
+	d0kQivmg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0kxk-0000000BDQU-3Sv6;
+	Mon, 22 Sep 2025 18:08:32 +0000
+Date: Mon, 22 Sep 2025 11:08:32 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Julian Sun <sunjunchao@bytedance.com>, cgroups@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, akpm@linux-foundation.org,
+	lance.yang@linux.dev, mhiramat@kernel.org, agruenba@redhat.com,
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev
+Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+Message-ID: <aNGQoPFTH2_xrd9L@infradead.org>
+References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+ <20250922132718.GB49638@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922132718.GB49638@noisy.programming.kicks-ass.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-iomap_adjust_read_range() assumes that the position and length passed in
-are block-aligned. This is not always the case however, as shown in the
-syzbot generated case for erofs. This causes too many bytes to be
-skipped for uptodate blocks, which results in returning the incorrect
-position and length to read in. If all the blocks are uptodate, this
-underflows length and returns a position beyond the folio.
+On Mon, Sep 22, 2025 at 03:27:18PM +0200, Peter Zijlstra wrote:
+> > Julian Sun (3):
+> >   sched: Introduce a new flag PF_DONT_HUNG.
+> >   writeback: Introduce wb_wait_for_completion_no_hung().
+> >   memcg: Don't trigger hung task when memcg is releasing.
+> 
+> This is all quite terrible. I'm not at all sure why a task that is
+> genuinely not making progress and isn't killable should not be reported.
 
-Fix the calculation to also take into account the block offset when
-calculating how many bytes can be skipped for uptodate blocks.
+The hung device detector is way to aggressive for very slow I/O.
+See blk_wait_io, which has been around for a long time to work
+around just that.  Given that this series targets writeback I suspect
+it is about an overloaded device as well.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Tested-by: syzbot@syzkaller.appspotmail.com
----
- fs/iomap/buffered-io.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8b847a1e27f1..1c95a0a7b302 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -240,17 +240,24 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	 * to avoid reading in already uptodate ranges.
- 	 */
- 	if (ifs) {
--		unsigned int i;
-+		unsigned int i, blocks_skipped;
- 
- 		/* move forward for each leading block marked uptodate */
--		for (i = first; i <= last; i++) {
-+		for (i = first; i <= last; i++)
- 			if (!ifs_block_is_uptodate(ifs, i))
- 				break;
--			*pos += block_size;
--			poff += block_size;
--			plen -= block_size;
--			first++;
-+
-+		blocks_skipped = i - first;
-+		if (blocks_skipped) {
-+			unsigned long block_offset = *pos & (block_size - 1);
-+			unsigned bytes_skipped =
-+				(blocks_skipped << block_bits) - block_offset;
-+
-+			*pos += bytes_skipped;
-+			poff += bytes_skipped;
-+			plen -= bytes_skipped;
- 		}
-+		first = i;
- 
- 		/* truncate len if we find any trailing uptodate block(s) */
- 		while (++i <= last) {
--- 
-2.47.3
-
+> 
+---end quoted text---
 
