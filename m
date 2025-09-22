@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-62360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73F7B8EF0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C793B8EF10
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3BBD7A8270
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 04:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B5A1896E83
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 04:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1174E1F3B98;
-	Mon, 22 Sep 2025 04:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33E61F4E4F;
+	Mon, 22 Sep 2025 04:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="kZUD2uCC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TE2ysOaw"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="u2818ff5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gdLVrCG5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED2E1E0B86
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A8880C02
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758515615; cv=none; b=nHmf0PCUOGLSmAOm1opjqbAfUPDWXTsU17mAckcpR7w6HB/4Hd2JI9gWUkvusfqYzvNoMJq97c9PGl7Ad/xr837hVbhQaMMqBVW0OnPZsqDscTDt4JD4sQX2U6GarO40vDGpLgy2CJcJXqYW7u0XiwC4pMsSg83T0AdqDiymBwg=
+	t=1758515619; cv=none; b=QBIAGfdEIRfwVuXHkEmn6MSpDtTNwd2uzjjCQ/+lO9Dlj1IJoDRN5qQJhb+3OonheC8rAh5Jdjs4sTBreYgrNnWfMyj03U/Fv1uVjeqcc3Be4scT8OIfBrKU7eDpb8w89zL1Is8tGl7N+p63AVlK9e/KXcmHkTMuCPnOGYOdUl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758515615; c=relaxed/simple;
-	bh=qaMQKs+ni/9z+tKkWDWHzH2/ji40cUTAJSW3c9uemec=;
+	s=arc-20240116; t=1758515619; c=relaxed/simple;
+	bh=NfU2WNFVcmJFQqFO8cEqjsg2gtpuMMiH5PMGysDIHO0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bBPbIhPHDudKYOATsOqHux/mIQKQCyTPVpVPnIGtNa3tZgvUmct6ZZ5vWrG7/c0lM8w1jR+47zyfD39NfJKVS2LEPp2F5XQBUkcQ6aL5CoM5O8WqaGwTVZhBNjsap1tI+hq7akFUz3+Znl//Ti8zty/TZzQFjFgl+PSAQUV8sbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=kZUD2uCC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TE2ysOaw; arc=none smtp.client-ip=103.168.172.147
+	 MIME-Version; b=IbyH5Gm6KLK8ghnHviDFqvtHDZQ2AlKc9UNsdq0KRdPQQIiFfanXBTEa3ArUwa0dcczk+nAQBz04av4f+rvHxdeA65PYur31m7jo0Ls6QE3Zi6okw/BibMI3qiOyyJRXOj7xuuQeamnWhXhp4YQJpmN4udmaU7tCElPLstdnTU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=u2818ff5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gdLVrCG5; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 805ECEC008E;
-	Mon, 22 Sep 2025 00:33:32 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Mon, 22 Sep 2025 00:33:32 -0400
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id BAF42EC008E;
+	Mon, 22 Sep 2025 00:33:36 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 22 Sep 2025 00:33:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758515612;
-	 x=1758602012; bh=DmcGNYNHkMHCJpusBgTlvCnP5IiIbkrZP/NI+gd1x0g=; b=
-	kZUD2uCClzc40cphxSU/gEkFgKWrPbOnngkzvpw7uVA0egN3GAKqikghSSPOpORU
-	lwQMBE7IJE7yHSFWbNw7WfBxx2yhSbo0fv1393YyH2buDnr5xCrlXXthFqJ9OnrM
-	dr0bNLkSj1wqbrAOgCPgeJC9nvyIZVs+UiBwwpZ+bIuv9mZi3u83BBvd85qqU4I4
-	8gKmrg5eGQEGA1mm5vBoiO90X+do0FR68y34TJt40u6zE5fqKZwAIIASmLqzHqfe
-	lMjgs0lVo47fauPbHcXs4filh6n+ufP4MPLG73lSGlKEQKT2p6GcjIv35NcoFtx2
-	ylDeb2jytNjGoKcteLzfRg==
+	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758515616;
+	 x=1758602016; bh=0jUV3JLQp2xY6O/3dB/61sNL0UhLEjUQ6SBHk4L82BQ=; b=
+	u2818ff5RijUtM5+v9JJZxmYoQZSYFCuWlRH+A9996lPvO+uSc7XZU5yyBxI8uvX
+	h4ILWhWfhTCjOtnWYczllcYLMpw9gFG7ikwsPbHkB+DbXdVQ0QRuO+9ZnAYr8JKz
+	8EB6ce50wx9vEIPhORx/PokZIdDlodz+3h2L07aIoMX24vP0NarnE/ddYYQLRJGy
+	uCw2vsxmpE6GLphfCdeeLUMj8GxKlH6Hu3ynoSDzlzstCApCtOUQuJFmPjU+KY8w
+	MqSv4+dNnlpNha2HPL1ToXY6aAUOsBNOjyYSgFOh/7PKzLVt6E6HvO3GoIXI2l5l
+	1F5GnTk8Er6R73Zr6ZgT0A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758515612; x=1758602012; bh=D
-	mcGNYNHkMHCJpusBgTlvCnP5IiIbkrZP/NI+gd1x0g=; b=TE2ysOawoOceOcAsn
-	pieGWCUM63PasyyEngtgzGkW0lkF8BMmACN2fWqrDWWOSzh4WTb/J33nq4YHl1Lf
-	L8BvbcXQZrnZ5rlPesDXIVwfQ4qIKbxnIcwsr5wFG/S7jXbVZoz7CQy+PbQ/3mp7
-	z/r1nw332sz1vFvwkxjBqiWbPhcxD3kRHwbcA7jEdDeCW5vrTxmOL99hovhCIceA
-	41W6ZySfiXklgK8KkrKRBY9ibiuj8X8RzxFlFi61ZiDP0YS+djjRPfVdEZMyvKu1
-	mMYLL64R8PhYK5MBGW33bRCj31pYjdjAtjI8/Uz8Dl4zbeaLBUzLjpkt0WW4K+An
-	TndEA==
-X-ME-Sender: <xms:nNHQaFsQR50ReYvQOhhLnMTu2FeEdbZlFVjF1tGwLc_gK-bf8peH2w>
-    <xme:nNHQaF0v4NvHj0-vucyeoj1lVnZ17pQpGpYilE0fX9EbABOl6ZfDnQSLiV9ngrH-2
-    ziirmBdlIu5LA>
-X-ME-Received: <xmr:nNHQaOW8i1ekk57n58w622xl7nqC3PqgskcYE0WNcLwC4Fp5YigX2GtANYVhl_AZkSYUESpfmZX9UPmtvRNCEm38umsHGQHCYScLQAhlKyic>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1758515616; x=1758602016; bh=0
+	jUV3JLQp2xY6O/3dB/61sNL0UhLEjUQ6SBHk4L82BQ=; b=gdLVrCG5+3BZC5Q5P
+	tRBKhbEmyeFoJ/tvu1agOqqZpn5+aOGBg0UYlXfDxzvuUSnCHZs27Yge4CTvSuxl
+	XinbTZ9e3lY6XMiFwKM5E1yvy+baWGFtRDml8Zp2idpyPJbmdA2fzEUDLE8KtGas
+	G6yGRDaXcV9upAIZPfuPQ85K9A5pK1iOahbJmmpig6ByNFdVDGtQ2amJTXfe/YKF
+	lq/3Eukkh4od+7v4dAzF27dSOxm7MR+0YyQ0F4TImAYsaEhBZ9p/2AiKtj4BPbM+
+	82eZ39e0TsQbgm1wXbkadWeKbAQYTwI4vwmzWkeS82of90OUnQG5OQKXoP9AyzDY
+	dl+Xw==
+X-ME-Sender: <xms:oNHQaDczCv2RmIQkVWTwuE0EUnoqvf30YLUzPqvVV9kgGz9o7jq-rA>
+    <xme:oNHQaAmvF96K-cH4zqGqxkna7GLD6-T3No_kEh5_hITst4NosfLaabdruLgCMex7j
+    RPeCLcaF_6rKg>
+X-ME-Received: <xmr:oNHQaCGhcQAO_UBAAW1h7ohGFMY3cLElGVDSDmoHkSR8ZI6TAUCtHcX_cGNJl_5fLju9A1Zlp1e-tceKZmqDopmFZKYkL1IGbF8kB-csI1g2>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehieeltdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
     hrpefhvfevufffkffojghfrhgggfestdekredtredttdenucfhrhhomheppfgvihhluehr
     ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
     evveekffduueevhfeigefhgfdukedtleekjeeitdejudfgueekvdekffdvfedvudenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    lhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
     hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
     thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
     hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
     rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
     hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
     ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:nNHQaIIHlXYmcmdDDVkLNdbqibwuLRRUXLfikwge6938yTAj6QYiLg>
-    <xmx:nNHQaI1suphDsuPxr3L6eXVsQHznTcCUv1IDKSw6XEmyFKy6tX4hqw>
-    <xmx:nNHQaG66lyTvpUuTtQr3zhHsAoNZd4is7kGxzD23fHcOrd4n8S8wHg>
-    <xmx:nNHQaJ-UznnKk45Mogu3KEEmfbCnsD_VT0zMoorwYPVlJI6WCls6EQ>
-    <xmx:nNHQaJlO6F4bRXVsSulrfhmiU8MWOf9Hqea1TVC1vtvgRXOycjFB8j9L>
+X-ME-Proxy: <xmx:oNHQaA4d1Vo8a1IQrpzUgAwF9E48pG4WxchVn4YIUbp-HUxsSJcK5A>
+    <xmx:oNHQaClhb6B4ezzBFykhjJ_U0thCT9CY8wHrMCX-bDRJgQJbaEInfA>
+    <xmx:oNHQaNoIOMhY1vpkrPC0oIUoRRx9we_CBeUT1DIGVnarm_Lnd1Sjhw>
+    <xmx:oNHQaJsAFR8yeO_5Mij7qd7HRp_zK0ix03z5i9JhQha2yuG0h6tF4Q>
+    <xmx:oNHQaBUIk0Q9QWNxgORfuKxWrTDrY0MpCrQOELxt-OJP_pOhJSy05dXE>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 00:33:30 -0400 (EDT)
+ 22 Sep 2025 00:33:34 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
@@ -93,9 +93,9 @@ To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	Jeff Layton <jlayton@kernel.org>
 Cc: "Jan Kara" <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 3/6] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
-Date: Mon, 22 Sep 2025 14:29:50 +1000
-Message-ID: <20250922043121.193821-4-neilb@ownmail.net>
+Subject: [PATCH v4 4/6] VFS/audit: introduce kern_path_parent() for audit
+Date: Mon, 22 Sep 2025 14:29:51 +1000
+Message-ID: <20250922043121.193821-5-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20250922043121.193821-1-neilb@ownmail.net>
 References: <20250922043121.193821-1-neilb@ownmail.net>
@@ -110,200 +110,151 @@ Content-Transfer-Encoding: 8bit
 
 From: NeilBrown <neil@brown.name>
 
-A rename operation can only rename within a single mount.  Callers of
-vfs_rename() must and do ensure this is the case.
+audit_alloc_mark() and audit_get_nd() both need to perform a path
+lookup getting the parent dentry (which must exist) and the final
+target (following a LAST_NORM name) which sometimes doesn't need to
+exist.
 
-So there is no point in having two mnt_idmaps in renamedata as they are
-always the same.  Only one of them is passed to ->rename in any case.
+They don't need the parent to be locked, but use kern_path_locked() or
+kern_path_locked_negative() anyway.  This is somewhat misleading to the
+casual reader.
 
-This patch replaces both with a single "mnt_idmap" and changes all
-callers.
+This patch introduces a more targeted function, kern_path_parent(),
+which returns not holding locks.  On success the "path" will
+be set to the parent, which must be found, and the return value is the
+dentry of the target, which might be negative.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+This will clear the way to rename kern_path_locked() which is
+otherwise only used to prepare for removing something.
+
+It also allows us to remove kern_path_locked_negative(), which is
+transformed into the new kern_path_parent().
+
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/cachefiles/namei.c    |  3 +--
- fs/ecryptfs/inode.c      |  3 +--
- fs/namei.c               | 17 ++++++++---------
- fs/nfsd/vfs.c            |  3 +--
- fs/overlayfs/overlayfs.h |  3 +--
- fs/smb/server/vfs.c      |  3 +--
- include/linux/fs.h       |  6 ++----
- 7 files changed, 15 insertions(+), 23 deletions(-)
+ fs/namei.c              | 23 +++++++++++++++++------
+ include/linux/namei.h   |  2 +-
+ kernel/audit_fsnotify.c | 11 ++++++-----
+ kernel/audit_watch.c    |  3 +--
+ 4 files changed, 25 insertions(+), 14 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 91dfd0231877..d1edb2ac3837 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -387,10 +387,9 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
- 		cachefiles_io_error(cache, "Rename security error %d", ret);
- 	} else {
- 		struct renamedata rd = {
--			.old_mnt_idmap	= &nop_mnt_idmap,
-+			.mnt_idmap	= &nop_mnt_idmap,
- 			.old_parent	= dir,
- 			.old_dentry	= rep,
--			.new_mnt_idmap	= &nop_mnt_idmap,
- 			.new_parent	= cache->graveyard,
- 			.new_dentry	= grave,
- 		};
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 72fbe1316ab8..abd954c6a14e 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -634,10 +634,9 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		goto out_lock;
- 	}
- 
--	rd.old_mnt_idmap	= &nop_mnt_idmap;
-+	rd.mnt_idmap		= &nop_mnt_idmap;
- 	rd.old_parent		= lower_old_dir_dentry;
- 	rd.old_dentry		= lower_old_dentry;
--	rd.new_mnt_idmap	= &nop_mnt_idmap;
- 	rd.new_parent		= lower_new_dir_dentry;
- 	rd.new_dentry		= lower_new_dentry;
- 	rc = vfs_rename(&rd);
 diff --git a/fs/namei.c b/fs/namei.c
-index e2c2ab286bc0..180037b96956 100644
+index 180037b96956..4017bc8641d3 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -5077,20 +5077,20 @@ int vfs_rename(struct renamedata *rd)
- 	if (source == target)
- 		return 0;
+@@ -2781,7 +2781,20 @@ static struct dentry *__kern_path_locked(int dfd, struct filename *name, struct
+ 	return d;
+ }
  
--	error = may_delete(rd->old_mnt_idmap, old_dir, old_dentry, is_dir);
-+	error = may_delete(rd->mnt_idmap, old_dir, old_dentry, is_dir);
- 	if (error)
- 		return error;
- 
- 	if (!target) {
--		error = may_create(rd->new_mnt_idmap, new_dir, new_dentry);
-+		error = may_create(rd->mnt_idmap, new_dir, new_dentry);
- 	} else {
- 		new_is_dir = d_is_dir(new_dentry);
- 
- 		if (!(flags & RENAME_EXCHANGE))
--			error = may_delete(rd->new_mnt_idmap, new_dir,
-+			error = may_delete(rd->mnt_idmap, new_dir,
- 					   new_dentry, is_dir);
- 		else
--			error = may_delete(rd->new_mnt_idmap, new_dir,
-+			error = may_delete(rd->mnt_idmap, new_dir,
- 					   new_dentry, new_is_dir);
- 	}
- 	if (error)
-@@ -5105,13 +5105,13 @@ int vfs_rename(struct renamedata *rd)
- 	 */
- 	if (new_dir != old_dir) {
- 		if (is_dir) {
--			error = inode_permission(rd->old_mnt_idmap, source,
-+			error = inode_permission(rd->mnt_idmap, source,
- 						 MAY_WRITE);
- 			if (error)
- 				return error;
- 		}
- 		if ((flags & RENAME_EXCHANGE) && new_is_dir) {
--			error = inode_permission(rd->new_mnt_idmap, target,
-+			error = inode_permission(rd->mnt_idmap, target,
- 						 MAY_WRITE);
- 			if (error)
- 				return error;
-@@ -5179,7 +5179,7 @@ int vfs_rename(struct renamedata *rd)
- 		if (error)
- 			goto out;
- 	}
--	error = old_dir->i_op->rename(rd->new_mnt_idmap, old_dir, old_dentry,
-+	error = old_dir->i_op->rename(rd->mnt_idmap, old_dir, old_dentry,
- 				      new_dir, new_dentry, flags);
- 	if (error)
- 		goto out;
-@@ -5322,10 +5322,9 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 
- 	rd.old_parent	   = old_path.dentry;
- 	rd.old_dentry	   = old_dentry;
--	rd.old_mnt_idmap   = mnt_idmap(old_path.mnt);
-+	rd.mnt_idmap	   = mnt_idmap(old_path.mnt);
- 	rd.new_parent	   = new_path.dentry;
- 	rd.new_dentry	   = new_dentry;
--	rd.new_mnt_idmap   = mnt_idmap(new_path.mnt);
- 	rd.delegated_inode = &delegated_inode;
- 	rd.flags	   = flags;
- 	error = vfs_rename(&rd);
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index edf050766e57..aa4a95713a48 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1951,10 +1951,9 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 		goto out_dput_old;
- 	} else {
- 		struct renamedata rd = {
--			.old_mnt_idmap	= &nop_mnt_idmap,
-+			.mnt_idmap	= &nop_mnt_idmap,
- 			.old_parent	= fdentry,
- 			.old_dentry	= odentry,
--			.new_mnt_idmap	= &nop_mnt_idmap,
- 			.new_parent	= tdentry,
- 			.new_dentry	= ndentry,
- 		};
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index bb0d7ded8e76..4f84abaa0d68 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -361,10 +361,9 @@ static inline int ovl_do_rename(struct ovl_fs *ofs, struct dentry *olddir,
+-struct dentry *kern_path_locked_negative(const char *name, struct path *path)
++/**
++ * kern_path_parent: lookup path returning parent and target
++ * @name: path name
++ * @path: path to store parent in
++ *
++ * The path @name should end with a normal component, not "." or ".." or "/".
++ * A lookup is performed and if successful the parent information
++ * is store in @parent and the dentry is returned.
++ *
++ * The dentry maybe negative, the parent will be positive.
++ *
++ * Returns:  dentry or error.
++ */
++struct dentry *kern_path_parent(const char *name, struct path *path)
  {
- 	int err;
- 	struct renamedata rd = {
--		.old_mnt_idmap	= ovl_upper_mnt_idmap(ofs),
-+		.mnt_idmap	= ovl_upper_mnt_idmap(ofs),
- 		.old_parent	= olddir,
- 		.old_dentry	= olddentry,
--		.new_mnt_idmap	= ovl_upper_mnt_idmap(ofs),
- 		.new_parent	= newdir,
- 		.new_dentry	= newdentry,
- 		.flags		= flags,
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 04539037108c..07739055ac9f 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -770,10 +770,9 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 		goto out4;
+ 	struct path parent_path __free(path_put) = {};
+ 	struct filename *filename __free(putname) = getname_kernel(name);
+@@ -2794,12 +2807,10 @@ struct dentry *kern_path_locked_negative(const char *name, struct path *path)
+ 		return ERR_PTR(error);
+ 	if (unlikely(type != LAST_NORM))
+ 		return ERR_PTR(-EINVAL);
+-	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
+-	d = lookup_one_qstr_excl(&last, parent_path.dentry, LOOKUP_CREATE);
+-	if (IS_ERR(d)) {
+-		inode_unlock(parent_path.dentry->d_inode);
++
++	d = lookup_noperm_unlocked(&last, parent_path.dentry);
++	if (IS_ERR(d))
+ 		return d;
+-	}
+ 	path->dentry = no_free_ptr(parent_path.dentry);
+ 	path->mnt = no_free_ptr(parent_path.mnt);
+ 	return d;
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 551a1a01e5e7..1d5038c21c20 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -57,12 +57,12 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
+ 				    struct dentry *base,
+ 				    unsigned int flags);
+ extern int kern_path(const char *, unsigned, struct path *);
++struct dentry *kern_path_parent(const char *name, struct path *parent);
+ 
+ extern struct dentry *kern_path_create(int, const char *, struct path *, unsigned int);
+ extern struct dentry *user_path_create(int, const char __user *, struct path *, unsigned int);
+ extern void done_path_create(struct path *, struct dentry *);
+ extern struct dentry *kern_path_locked(const char *, struct path *);
+-extern struct dentry *kern_path_locked_negative(const char *, struct path *);
+ extern struct dentry *user_path_locked_at(int , const char __user *, struct path *);
+ int vfs_path_parent_lookup(struct filename *filename, unsigned int flags,
+ 			   struct path *parent, struct qstr *last, int *type,
+diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+index c565fbf66ac8..b92805b317a2 100644
+--- a/kernel/audit_fsnotify.c
++++ b/kernel/audit_fsnotify.c
+@@ -76,17 +76,18 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
+ 	struct audit_fsnotify_mark *audit_mark;
+ 	struct path path;
+ 	struct dentry *dentry;
+-	struct inode *inode;
+ 	int ret;
+ 
+ 	if (pathname[0] != '/' || pathname[len-1] == '/')
+ 		return ERR_PTR(-EINVAL);
+ 
+-	dentry = kern_path_locked(pathname, &path);
++	dentry = kern_path_parent(pathname, &path);
+ 	if (IS_ERR(dentry))
+ 		return ERR_CAST(dentry); /* returning an error */
+-	inode = path.dentry->d_inode;
+-	inode_unlock(inode);
++	if (d_really_is_negative(dentry)) {
++		audit_mark = ERR_PTR(-ENOENT);
++		goto out;
++	}
+ 
+ 	audit_mark = kzalloc(sizeof(*audit_mark), GFP_KERNEL);
+ 	if (unlikely(!audit_mark)) {
+@@ -100,7 +101,7 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct audit_krule *krule, char *pa
+ 	audit_update_mark(audit_mark, dentry->d_inode);
+ 	audit_mark->rule = krule;
+ 
+-	ret = fsnotify_add_inode_mark(&audit_mark->mark, inode, 0);
++	ret = fsnotify_add_inode_mark(&audit_mark->mark, path.dentry->d_inode, 0);
+ 	if (ret < 0) {
+ 		audit_mark->path = NULL;
+ 		fsnotify_put_mark(&audit_mark->mark);
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 0ebbbe37a60f..a700e3c8925f 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -349,7 +349,7 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+ {
+ 	struct dentry *d;
+ 
+-	d = kern_path_locked_negative(watch->path, parent);
++	d = kern_path_parent(watch->path, parent);
+ 	if (IS_ERR(d))
+ 		return PTR_ERR(d);
+ 
+@@ -359,7 +359,6 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+ 		watch->ino = d_backing_inode(d)->i_ino;
  	}
  
--	rd.old_mnt_idmap	= mnt_idmap(old_path->mnt),
-+	rd.mnt_idmap		= mnt_idmap(old_path->mnt),
- 	rd.old_parent		= old_parent,
- 	rd.old_dentry		= old_child,
--	rd.new_mnt_idmap	= mnt_idmap(new_path.mnt),
- 	rd.new_parent		= new_path.dentry,
- 	rd.new_dentry		= new_dentry,
- 	rd.flags		= flags,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..73b39e5bb9e4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2008,20 +2008,18 @@ int vfs_unlink(struct mnt_idmap *, struct inode *, struct dentry *,
- 
- /**
-  * struct renamedata - contains all information required for renaming
-- * @old_mnt_idmap:     idmap of the old mount the inode was found from
-+ * @mnt_idmap:     idmap of the mount in which the rename is happening.
-  * @old_parent:        parent of source
-  * @old_dentry:                source
-- * @new_mnt_idmap:     idmap of the new mount the inode was found from
-  * @new_parent:        parent of destination
-  * @new_dentry:                destination
-  * @delegated_inode:   returns an inode needing a delegation break
-  * @flags:             rename flags
-  */
- struct renamedata {
--	struct mnt_idmap *old_mnt_idmap;
-+	struct mnt_idmap *mnt_idmap;
- 	struct dentry *old_parent;
- 	struct dentry *old_dentry;
--	struct mnt_idmap *new_mnt_idmap;
- 	struct dentry *new_parent;
- 	struct dentry *new_dentry;
- 	struct inode **delegated_inode;
+-	inode_unlock(d_backing_inode(parent->dentry));
+ 	dput(d);
+ 	return 0;
+ }
 -- 
 2.50.0.107.gf914562f5916.dirty
 
