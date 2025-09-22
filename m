@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-62358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A879EB8EF07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:33:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AA6B8EF0A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC213BC1EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 04:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2EB173F24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 04:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74189217733;
-	Mon, 22 Sep 2025 04:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E5D1F4E4F;
+	Mon, 22 Sep 2025 04:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="ShU1d53a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Oo+r231t"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="cYDVP2zI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P401ZiKn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ED2207A0C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C501E0B86
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758515606; cv=none; b=fKdgp0lSQvQo4Li6LD79LfLgMxjUJ7MO4MXoI/nKD4iexXJDJCHy1EJ0dGDYFn4479AVKZO5Kjq8wh1zCUYrV18Il9hBmNvZXrbin9GSv7a/ZCE1lTsQpIXlGZG/3g3RbqhNaQfONx93ly46kyuVzcLpfFRFBfSv0ugOWDrBsRs=
+	t=1758515611; cv=none; b=pAJ4bXyt1uS63O4qK1IcjqBqZT/JR6dVsNoDOu2MTSrKWTYrBD04gjmoAKKNbXRZaA2KNWkUo2TJzKjcvwDXdle7WFacXjNn47+Ehv1TctCwNSLZkC58kwT9G5DBU5oU8IHeHDO7EwpVHlVuKRKq77GNfL6QUZmFil8meNXlaXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758515606; c=relaxed/simple;
-	bh=DpSzX/obPWbsu4bZlWuFV5gv8R5uSAWOubaWr3KrcQs=;
+	s=arc-20240116; t=1758515611; c=relaxed/simple;
+	bh=vBI6JbCL6XKIQCCvg56AJrKD4SC1IVfXyqKSD1y9al0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DuS+0kCp2GEWMSZgsGt3K/IZqvaWqEAZtaw623VfMPRoIjI9po3px0IGLh4XkngCbWYzLDfsTP/8AeKuzGHX4GjO4gHZhNRXmbivVrwUpkwnjHO2V8rNrO6L7FhGoHNDo9w4rWOjOwrZFzJoqIAXOdO92ZPtKKJc1iBbnDY1nxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=ShU1d53a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Oo+r231t; arc=none smtp.client-ip=103.168.172.147
+	 MIME-Version; b=ZjTHJlAdtJia/Hg4xOoFcZp1PGoO8wpa+XDDtQ2CLwzXHSbQSj+EImAA5fgcoeV9HiwOa5Rvx18LgkObO6feh41U/jPlRMXvjZas9K4TAdCWII93Vrn9tMMId5I3j42ImqZGHd57u1EXVmmktxPjBCQXYzffiqLAHfm1czp2AQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=cYDVP2zI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P401ZiKn; arc=none smtp.client-ip=103.168.172.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0ED6CEC0109;
-	Mon, 22 Sep 2025 00:33:24 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 22 Sep 2025 00:33:24 -0400
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 354D81400065;
+	Mon, 22 Sep 2025 00:33:28 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 22 Sep 2025 00:33:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758515604;
-	 x=1758602004; bh=P0WJFe87YMWp1kH7Wjqlsk6pPv2Fzr/HzavRdhubVM4=; b=
-	ShU1d53aglPb/bovFOFh47lBnRg+VXjwfOjF+S6ykpq5MvXns+q5W/AMJIWblgBe
-	tJmucolxpUp6rTCJ2CnGjZRXisDcbt79t/6HtfD3eh+dRLSFbS5UpPAOhrXTgXeY
-	mm1/4JSdN+jZWVKKJS6SumbE9F7JvOiXuVzaqpOi9XT9u3HszbylHNbYLQSICMJl
-	7cweL3VJZNVvCJB37dII+iFnHPpt1LWBQ9aImMbNR/ABMr1G0Avm58C2SiHigjwr
-	AAc6e0Nkf1SlqF0wRCdiQjBvQXUTh2ckdZeBw9J4kv3l24UA4VQXq5sa+GvLlTqj
-	fpGQaUaljwLxD9BGsBl4kg==
+	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758515608;
+	 x=1758602008; bh=5oFNDVMpcas02lxj1pK7XLFrlruUGw0JYx5Vy6mcZtU=; b=
+	cYDVP2zIt/cyiXRL88+4wg3hX1IdiZL9B0MkyIz18Fyp9cRL7h4aNv3y/7mFUcGh
+	2nVIG+OqXUtcmVnfolEphvJTxCC3L1vs8EgeeXSJAyA6wS8th53i6cRD21Zq7ZeL
+	I5n9B1pUf41O3hgV3uxfhUtQM5upUIYqZmdXMJCHexZs1z2LT4HLETeqlfsKaLxB
+	EuOA4YV+Tvr7S7K0UAeKJlckqQ+y7gUjLL4S/jAIeiAGlWelQ94BobL2DS2bxvfm
+	Q4YwYehh80zH0ebBDDNhM6x6t7vIpPWsVJ2eyQlrifd2k/IXOGQQPB+yg3EH+5Wd
+	ZM80GBxPCZxqQA754FbC3g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758515604; x=1758602004; bh=P
-	0WJFe87YMWp1kH7Wjqlsk6pPv2Fzr/HzavRdhubVM4=; b=Oo+r231tlGVixKWB3
-	gkOtU8ViRgAlrKCK52qxSPRRGblPN0AcPvJFWBtNWHCm1SCZW0xdMyWtzUEy1hwp
-	0ii2L+/6WQ0Ax+sTB+sPLwL7zdWOVv1tPxIA9VTKOKUiDVuYhoclKtCxMMnSSw1f
-	hJY8l4v5DqAADg6sMoWzYzCCzEN7jybyRW5RIz4S4wccH4hCNAn0DY4BXmq6eSJ4
-	/g1e98nE79l9CzJUpN8vu4dNerSwo+vCPlkbwAjotQbuHfM7PCv1A+V3rUwjdhBj
-	wCtgsOyELrzBGW4iAQo1nSnwYBnBG/EM1SQ7m4oly/kF58mSOzuYmD4CyKMe9ME9
-	EAL8Q==
-X-ME-Sender: <xms:k9HQaGrhf1swceFx2vg-0MVommbO_wBgB66lqq5gRd2mQSerhdlMAw>
-    <xme:k9HQaMCsuKGblvnbpMCBa33HtxSSGO9dmBFLQVwYhb6864OAOS6Vb3yfrqENgrvHU
-    YzHWLnjZycC3g>
-X-ME-Received: <xmr:k9HQaAwSpIb4uwiDgqe2twz1uRpgfSFTY3eg5kzki2QqD2y2v2P54M7DPuQ7UgmEBjYT8HnO5kLYxppRTSoRJTR_HhdfnrUFHnEeRVEIIfoU>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1758515608; x=1758602008; bh=5
+	oFNDVMpcas02lxj1pK7XLFrlruUGw0JYx5Vy6mcZtU=; b=P401ZiKnrMSAWULqe
+	J3k1SoOwkMGYiN4H2IwtGMi1Z5iqJ/vsAbW+xvHwNn1kQvRi0uZVHleMiy4/6NyN
+	UH6J6xNS+qhKXyBDAUcydM+ICAoB//7O8oS+SBblzeHaH7C+q3+H41qLeopQWyiz
+	XQdp315NwiJ1qJIVoyDbIZP3RFW9xKQOde3rcrEy8DTO/BATm9Rnp4/jlv4djkaI
+	R9k3ieqfzehku20HE9jpZFIb0ynUlo1MjO6aZebieTlQZ4CsEyXzioWRvUOwkfjF
+	D+7HZ6F4F/MtgCCjIL2ALBHGFuKkiXnH/51Ax8jWNqsYHu3aeT2BM7xyAZ1ftJNQ
+	7zcFA==
+X-ME-Sender: <xms:mNHQaIAn0aSFei3pIYbNImdzE_8PBbU1xzOPSEIRdQtt1hGpy3vCIQ>
+    <xme:mNHQaB5Ik46GslOIaoSSa-BzCNqoT_A4c1SbC4sUYH5Jv_-EEjD_vqJ2pSHFb0Fx8
+    ugoJzIeHWsilw>
+X-ME-Received: <xmr:mNHQaBKt9oXXQJV1wlLNsOY7ueGlUcfMtjStyqfHbIvcAKqqp_EdIvmRtWo4K2iUO1YZtT_4pA12F8wfZS-h7aQ11XJ9_bQhEHzsUwXgCLfr>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehieeltdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -78,14 +78,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehieeltdcutefuodetgg
     rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
     hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
     ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:k9HQaB1TZrLzCgT7g0Ou8ZvAUMJA9MzKLQLC48ZWxj7dq_4R46qkwg>
-    <xmx:k9HQaIzfqDc4AIUu9Nx7b1QO0VjxxDrvQ62kkgyKroR_ob_JlUc6Lg>
-    <xmx:k9HQaAHLgzBKZAhskX1jk8vvfhtF--C858xzMGzsGaayyr9yY2q8uw>
-    <xmx:k9HQaDa1uWUE_Ihf5AdMVUEuAg-gchrwqFfDEOxQyye33bVZqW8u8g>
-    <xmx:lNHQaJAh3W_5wEC5oQIBJGeJZtndXThkCjY3NE7xcb9MX44AjvDXuQLS>
+X-ME-Proxy: <xmx:mNHQaKu4Yb3bhx5S8WSmEDHtin0ds6BKz0sLhxkGzkuHxkjhtkPGoA>
+    <xmx:mNHQaAKx2ISufbR42wVVphZahOnFle2Orst_bwCizdW9PYJzq1NJJQ>
+    <xmx:mNHQaD_-13CpviLKDtn1E9uXdKJ8JGfGgNMc4j2m7M74syQHx0rJmg>
+    <xmx:mNHQaJw6xXD2EhIRu4Ei92Eq49uIjweXJUnGosjGh8GT7Bl7kdc0RA>
+    <xmx:mNHQaLZOC-RY7kValSJ-yWX3nF2S0JRBMlazMt9Hoib5YPdRE9JI2zBP>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 00:33:21 -0400 (EDT)
+ 22 Sep 2025 00:33:26 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
@@ -93,9 +93,9 @@ To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	Jeff Layton <jlayton@kernel.org>
 Cc: "Jan Kara" <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 1/6] VFS/ovl: add lookup_one_positive_killable()
-Date: Mon, 22 Sep 2025 14:29:48 +1000
-Message-ID: <20250922043121.193821-2-neilb@ownmail.net>
+Subject: [PATCH v4 2/6] VFS: discard err2 in filename_create()
+Date: Mon, 22 Sep 2025 14:29:49 +1000
+Message-ID: <20250922043121.193821-3-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20250922043121.193821-1-neilb@ownmail.net>
 References: <20250922043121.193821-1-neilb@ownmail.net>
@@ -110,166 +110,62 @@ Content-Transfer-Encoding: 8bit
 
 From: NeilBrown <neil@brown.name>
 
-ovl wants a lookup which won't block on a fatal signal.  It currently
-uses down_write_killable() and then repeatedly calls to lookup_one()
+Since 204a575e91f3 "VFS: add common error checks to lookup_one_qstr_excl()"
+filename_create() does not need to stash the error value from mnt_want_write()
+into a separate variable - the logic that used to clobber 'error' after the
+call of mnt_want_write() has migrated into lookup_one_qstr_excl().
 
-The lock may not be needed if the name is already in the dcache and it
-aids proposed future changes if the locking is kept internal to namei.c
+So there is no need for two different err variables.
+This patch discards "err2" and uses "error' throughout.
 
-So this patch adds lookup_one_positive_killable() which is like
-lookup_one_positive() but will abort in the face of a fatal signal.
-overlayfs is changed to use this.
-
-Note that instead of always getting an exclusive lock, ovl now only gets
-a shared lock, and only sometimes.  The exclusive lock was never needed.
-
-However down_read_killable() was only added in v4.15 but overlayfs started
-using down_write_killable() here in v4.7.
-
-Note that the linked list ->first_maybe_whiteout ->next_maybe_white is
-local to the thread so there is no concurrency in that list which could
-be threatened by removing the locking.
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/namei.c             | 55 ++++++++++++++++++++++++++++++++++++++++++
- fs/overlayfs/readdir.c | 28 ++++++++++-----------
- include/linux/namei.h  |  3 +++
- 3 files changed, 72 insertions(+), 14 deletions(-)
+ fs/namei.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index cd43ff89fbaa..c7c6b255db2c 100644
+index c7c6b255db2c..e2c2ab286bc0 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1827,6 +1827,20 @@ static struct dentry *lookup_slow(const struct qstr *name,
- 	return res;
- }
+@@ -4169,7 +4169,6 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
+ 	unsigned int create_flags = LOOKUP_CREATE | LOOKUP_EXCL;
+ 	int type;
+-	int err2;
+ 	int error;
  
-+static struct dentry *lookup_slow_killable(const struct qstr *name,
-+					   struct dentry *dir,
-+					   unsigned int flags)
-+{
-+	struct inode *inode = dir->d_inode;
-+	struct dentry *res;
+ 	error = filename_parentat(dfd, name, reval_flag, path, &last, &type);
+@@ -4184,7 +4183,7 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 		goto out;
+ 
+ 	/* don't fail immediately if it's r/o, at least try to report other errors */
+-	err2 = mnt_want_write(path->mnt);
++	error = mnt_want_write(path->mnt);
+ 	/*
+ 	 * Do the final lookup.  Suppress 'create' if there is a trailing
+ 	 * '/', and a directory wasn't requested.
+@@ -4197,17 +4196,16 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+ 	if (IS_ERR(dentry))
+ 		goto unlock;
+ 
+-	if (unlikely(err2)) {
+-		error = err2;
++	if (unlikely(error))
+ 		goto fail;
+-	}
 +
-+	if (inode_lock_shared_killable(inode))
-+		return ERR_PTR(-EINTR);
-+	res = __lookup_slow(name, dir, flags);
-+	inode_unlock_shared(inode);
-+	return res;
-+}
-+
- static inline int may_lookup(struct mnt_idmap *idmap,
- 			     struct nameidata *restrict nd)
- {
-@@ -3010,6 +3024,47 @@ struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap, struct qstr *name,
- }
- EXPORT_SYMBOL(lookup_one_unlocked);
- 
-+/**
-+ * lookup_one_positive_killable - lookup single pathname component
-+ * @idmap:	idmap of the mount the lookup is performed from
-+ * @name:	qstr olding pathname component to lookup
-+ * @base:	base directory to lookup from
-+ *
-+ * This helper will yield ERR_PTR(-ENOENT) on negatives. The helper returns
-+ * known positive or ERR_PTR(). This is what most of the users want.
-+ *
-+ * Note that pinned negative with unlocked parent _can_ become positive at any
-+ * time, so callers of lookup_one_unlocked() need to be very careful; pinned
-+ * positives have >d_inode stable, so this one avoids such problems.
-+ *
-+ * This can be used for in-kernel filesystem clients such as file servers.
-+ *
-+ * It should be called without the parent i_rwsem held, and will take
-+ * the i_rwsem itself if necessary.  If a fatal signal is pending or
-+ * delivered, it will return %-EINTR if the lock is needed.
-+ */
-+struct dentry *lookup_one_positive_killable(struct mnt_idmap *idmap,
-+					    struct qstr *name,
-+					    struct dentry *base)
-+{
-+	int err;
-+	struct dentry *ret;
-+
-+	err = lookup_one_common(idmap, name, base);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	ret = lookup_dcache(name, base, 0);
-+	if (!ret)
-+		ret = lookup_slow_killable(name, base, 0);
-+	if (!IS_ERR(ret) && d_flags_negative(smp_load_acquire(&ret->d_flags))) {
-+		dput(ret);
-+		ret = ERR_PTR(-ENOENT);
-+	}
-+	return ret;
-+}
-+EXPORT_SYMBOL(lookup_one_positive_killable);
-+
- /**
-  * lookup_one_positive_unlocked - lookup single pathname component
-  * @idmap:	idmap of the mount the lookup is performed from
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index b65cdfce31ce..15cb06fa0c9a 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -270,26 +270,26 @@ static bool ovl_fill_merge(struct dir_context *ctx, const char *name,
- 
- static int ovl_check_whiteouts(const struct path *path, struct ovl_readdir_data *rdd)
- {
--	int err;
-+	int err = 0;
- 	struct dentry *dentry, *dir = path->dentry;
- 	const struct cred *old_cred;
- 
- 	old_cred = ovl_override_creds(rdd->dentry->d_sb);
- 
--	err = down_write_killable(&dir->d_inode->i_rwsem);
--	if (!err) {
--		while (rdd->first_maybe_whiteout) {
--			struct ovl_cache_entry *p =
--				rdd->first_maybe_whiteout;
--			rdd->first_maybe_whiteout = p->next_maybe_whiteout;
--			dentry = lookup_one(mnt_idmap(path->mnt),
--					    &QSTR_LEN(p->name, p->len), dir);
--			if (!IS_ERR(dentry)) {
--				p->is_whiteout = ovl_is_whiteout(dentry);
--				dput(dentry);
--			}
-+	while (rdd->first_maybe_whiteout) {
-+		struct ovl_cache_entry *p =
-+			rdd->first_maybe_whiteout;
-+		rdd->first_maybe_whiteout = p->next_maybe_whiteout;
-+		dentry = lookup_one_positive_killable(mnt_idmap(path->mnt),
-+						      &QSTR_LEN(p->name, p->len),
-+						      dir);
-+		if (!IS_ERR(dentry)) {
-+			p->is_whiteout = ovl_is_whiteout(dentry);
-+			dput(dentry);
-+		} else if (PTR_ERR(dentry) == -EINTR) {
-+			err = -EINTR;
-+			break;
- 		}
--		inode_unlock(dir->d_inode);
- 	}
- 	ovl_revert_creds(old_cred);
- 
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 5d085428e471..551a1a01e5e7 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -80,6 +80,9 @@ struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap,
- struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
- 					    struct qstr *name,
- 					    struct dentry *base);
-+struct dentry *lookup_one_positive_killable(struct mnt_idmap *idmap,
-+					    struct qstr *name,
-+					    struct dentry *base);
- 
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
+ 	return dentry;
+ fail:
+ 	dput(dentry);
+ 	dentry = ERR_PTR(error);
+ unlock:
+ 	inode_unlock(path->dentry->d_inode);
+-	if (!err2)
++	if (!error)
+ 		mnt_drop_write(path->mnt);
+ out:
+ 	path_put(path);
 -- 
 2.50.0.107.gf914562f5916.dirty
 
