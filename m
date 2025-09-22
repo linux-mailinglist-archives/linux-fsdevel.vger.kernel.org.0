@@ -1,88 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-62372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE1EB8F8FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 10:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571E1B8F994
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 10:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B97617A6021
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 08:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AB818A11C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47040277CAE;
-	Mon, 22 Sep 2025 08:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C9B27FD43;
+	Mon, 22 Sep 2025 08:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YqOEElXU"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nCUHaBhP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138779463
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 08:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAF125B687;
+	Mon, 22 Sep 2025 08:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529859; cv=none; b=hE8mXNq5kN/N51UWXZNKgPgoL+/YBrBSHJmADY6iC3zo9LrXDpZrS9XaXTkSAZYMMsyCwhO4bCpxM1RX4Kkto2eZ6ghMXtEacSZm8qWn7t00pd32oGM2fom5Q1WOfPpzaJlXsRF6ZTIMbPlsiNYXFqttBDLYOHui4zSjotYLh8Q=
+	t=1758530485; cv=none; b=KKJE2ETIvVHbNPHFiSJ7ke9N7IQ+X7Xk/MytoroFCWiRx3F28CSjpJ5WUqMBRRf+gp8RKccZV3nRjsW82BOcptIiHlGm0URhVKsiaUBFpf5DuVT6vzFZgcqgYbWYQ3D+cSOdJVQUVfd4sIzM8ujB3pULU9sijEmafZsY1MG8CoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529859; c=relaxed/simple;
-	bh=7URL8Whx7YinWepO0tBloI/P9oc2FuIGpO7Ilt8qBZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cigsbiF+mExMZrgVt+6ng8kIxx8rFaZn1lHo10/qTzBWoXtmLxP33NG3TpCKJ+m419TOlkg2/wVBgsoZJVwRa/IABAV/yzslhyaypwM+1jFuyzq9IMTCULCuJbth3yUcu6wuAuHlo09hbxmKJkUITIINyu9W+N8WfWnFxDf7RSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YqOEElXU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758529855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1v7AejRsDx7YJTfIsqR2wjIJYLTYoUc9DZoQno78EIs=;
-	b=YqOEElXUloz8xZ+pmgSKZy6Df9HDsazC69H3PLc0HIwPVNK6uAs8EPegBvYHv9X2C4biQ7
-	MkTYdhiJxennpMkBxZk1lpk78QY7f01mwUcS//PYV+Jn5JGiv70wuYRGWC6dV7dwQiTwhS
-	YM7r8HFI4FzbtvmFpW11q3v4ezJ2SeM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-320-gO5j5x-NOKiHiIoULXva4g-1; Mon, 22 Sep 2025 04:30:54 -0400
-X-MC-Unique: gO5j5x-NOKiHiIoULXva4g-1
-X-Mimecast-MFC-AGG-ID: gO5j5x-NOKiHiIoULXva4g_1758529853
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f93db57449so743501f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 01:30:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758529853; x=1759134653;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1v7AejRsDx7YJTfIsqR2wjIJYLTYoUc9DZoQno78EIs=;
-        b=NOhgKqtn1BZ1aPU2uTJdITfXasf1lXmin+sHg3Uc4FV550+BqjDuXV5/CiQzLgz956
-         t6q0fwBAX3OfHP0KOinuz4hnH4tzfe7etS5pTG05QV96tChuSex4vYfMKG2wLi9sJOd7
-         RBUunhY3J9A13nnHefVS3nlg9eeGW5MivhBjZKbQj2yX+jtwme/Do7R08zNDCY5ikK3S
-         B1eBpxv0XPScs2OdPQTcWrTvFbH85kgvjsx/nOi3RUeSuAtKtRrc3EBWMUYAjjJxYg52
-         FI32u+PdQgeMyozHsGEwLP1mzMASl4pHabhHWsFDs/LZLHcw+5+gHgQrTMJkgp+8/lry
-         DYZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSH4Zrh0ZPzobueaRAJF8G9RcmUN/n2REi7+A1PY3ElBptiRQ0ZtyF7gCC+W52DY4Q8B7MlbmHfFRtUa6u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1jLAPHbRgDW1Nod/uunVBEDCaCinoIz1MMjTgTduBZjvIZbMI
-	fZ7RWLI9YG69dgUmrCHD8v0kuncBz9ZXZrpcocahHoqdplny60C4ZOOBG4omm3g+26OAd5KNCUw
-	INWqzgn5Y1WEF6cm3EKfQBLJ5vrHUwE3x98iivmeL7nM2X7hj0HVJwOlXqAIv0MylG/A=
-X-Gm-Gg: ASbGncvO9sASdCCdTmJ628fP8RfEOO4IAsiFtgfSRgLjaHwP0BvPEkzyDoWM/2ZIpVu
-	nMIGvuY7TpmsUondj3hcdEnNUwHG7JFGc8beBLHaXq04HviDKTHR5v1HKNN7mmQHzUMUi8XYrNK
-	VMBsWBTY/hNMhvR4lmKNkl7lrF2wtzuybnJxsvnQxJetjt+jRNeUBXK79k7ABHU7xJTFUY4UVXe
-	KhI2LxdGc6HCQfTfuUEPKoRV2Fob2g9Ur8Jj4v/Zi3FqHmrY5jqY5EUykCsKfSdv0zzN7/UohwR
-	MbA+grU9SqInIKitPArM5DE+pfycWCphDC04oLC7c2vnUi9qV4fpCqk+O2s+/cKYhx0XI4ntbpo
-	W9baLNDFzKFs2dTM9CfYz/RzpbVBKfHZ2/5tsNyxXKJZScspjQDC344M2qe+MzXU=
-X-Received: by 2002:a05:6000:290a:b0:3ee:14db:701a with SMTP id ffacd0b85a97d-3ee7e1063f3mr7948416f8f.16.1758529853066;
-        Mon, 22 Sep 2025 01:30:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIKEf6CNiFSeyuoRMV+Qi16RvMz8aVWLd4utQVYrC2+GOOlUDYYUCvQGJsHP0Q6y2iPCqQnQ==
-X-Received: by 2002:a05:6000:290a:b0:3ee:14db:701a with SMTP id ffacd0b85a97d-3ee7e1063f3mr7948396f8f.16.1758529852698;
-        Mon, 22 Sep 2025 01:30:52 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2a:e200:f98f:8d71:83f:f88? (p200300d82f2ae200f98f8d71083f0f88.dip0.t-ipconnect.de. [2003:d8:2f2a:e200:f98f:8d71:83f:f88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1227cc37sm17569892f8f.7.2025.09.22.01.30.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 01:30:52 -0700 (PDT)
-Message-ID: <aed8db95-8380-456c-9dc8-d36e58b31e4c@redhat.com>
-Date: Mon, 22 Sep 2025 10:30:50 +0200
+	s=arc-20240116; t=1758530485; c=relaxed/simple;
+	bh=x4aklYGFshEx41NI2ERMJ10pOo0Dk0GTz3xaw/4licM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QXQxzl0PLCHVn0NncoRXwqIgiagk4eKb0jmKVXSRzNSpqp2QIeVOR4E+xBFMwXySWCiI42Sj3cniLYh3NfJLDqctYmTMLgbOIRN6YqNrFhez9kspojpeS6tWGHvGjDa81ggCpbELhHSPmV1KIFZhzzE/4TI+HwY+7jfryu7T1FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nCUHaBhP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758530480;
+	bh=x4aklYGFshEx41NI2ERMJ10pOo0Dk0GTz3xaw/4licM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=nCUHaBhPvG0KaFJG6BOXE4BwhzOe2Q1u5auBLvDgrG8mGKnQIu3OGiwqu00yc2mUa
+	 LdGjScXZHd9FajMF9M2OjqjbKz/kB3fZNug/YUjj3RqzpBRVY1PK5BFG54Zr8xVq67
+	 sn8Hdy/c6Ss5zX+jxF2gtzr+LnSWczBtJjXS20YpSkajSUc3yg9Np6vwptI8lvUlsg
+	 H6y8YeiF06Rj9xev8rcWzkCoBnxHJrK7Gw0f58s7+J6vtMtBeab+H/mHpADS9Tgw+k
+	 IBbSPrRSHpqFuAz9/77RoEAlv1FHRZdShfz8EEjMNk9ZtUcrxQAs8ICaxKVkfh0rhQ
+	 ZCps+Zm2hlkkQ==
+Received: from [192.168.100.175] (unknown [103.151.43.82])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 16B5217E124A;
+	Mon, 22 Sep 2025 10:41:17 +0200 (CEST)
+Message-ID: <a5400d9f-fb72-41ca-bedc-aa1c880a2234@collabora.com>
+Date: Mon, 22 Sep 2025 13:39:02 +0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,71 +57,28 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/proc: check p->vec_buf for NULL
-To: Jakub Acs <acsjakub@amazon.de>, linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>,
+Cc: usama.anjum@collabora.com, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Jinjiang Tu <tujinjiang@huawei.com>, Suren Baghdasaryan <surenb@google.com>,
  Penglei Jiang <superman.xpt@gmail.com>, Mark Brown <broonie@kernel.org>,
  Baolin Wang <baolin.wang@linux.alibaba.com>,
  Ryan Roberts <ryan.roberts@arm.com>, Andrei Vagin <avagin@gmail.com>,
  =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250922081713.77303-1-acsjakub@amazon.de>
-From: David Hildenbrand <david@redhat.com>
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/proc/task_mmu: check p->vec_buf for NULL
+To: Jakub Acs <acsjakub@amazon.de>
+References: <20250922082206.6889-1-acsjakub@amazon.de>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250922081713.77303-1-acsjakub@amazon.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250922082206.6889-1-acsjakub@amazon.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 22.09.25 10:17, Jakub Acs wrote:
+Added mm list to cc as well
+
+On 9/22/25 1:22 PM, Jakub Acs wrote:
 > When PAGEMAP_SCAN ioctl invoked with vec_len = 0 reaches
 > pagemap_scan_backout_range(), kernel panics with null-ptr-deref:
 > 
@@ -194,18 +118,56 @@ On 22.09.25 10:17, Jakub Acs wrote:
 > or transitively) protected by checking p->vec_buf.
 > 
 > Note:
->  From PAGEMAP_SCAN man page, it seems vec_len = 0 is valid when no output
+> From PAGEMAP_SCAN man page, it seems vec_len = 0 is valid when no output
 > is requested and it's only the side effects caller is interested in,
 > hence it passes check in pagemap_scan_get_args().
 > 
 > This issue was found by syzkaller.
 > 
+> Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Jinjiang Tu <tujinjiang@huawei.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Penglei Jiang <superman.xpt@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Andrei Vagin <avagin@gmail.com>
+> Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+> v1 -> v2: check p->vec_buf instead of cur_buf
+> v2 -> v3: fix commit title
+> 
+> v1: https://lore.kernel.org/all/20250919142106.43527-1-acsjakub@amazon.de/ 
+> v2: https://lore.kernel.org/all/20250922081713.77303-1-acsjakub@amazon.de/
+> 
+>  fs/proc/task_mmu.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 29cca0e6d0ff..b26ae556b446 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -2417,6 +2417,9 @@ static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
+>  {
+>  	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
+>  
+> +	if (!p->vec_buf)
+> +		return;
+> +
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Acked-by: David Hildenbrand <david@redhat.com>
 
--- 
-Cheers
-
-David / dhildenb
-
+---
+Thanks,
+Usama
 
