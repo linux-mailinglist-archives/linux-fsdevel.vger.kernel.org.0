@@ -1,246 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-62436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9DBB938D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 01:18:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E6CB938F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 01:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20B819073EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 23:18:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E15044858C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 23:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC70E286427;
-	Mon, 22 Sep 2025 23:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFE62F1FD3;
+	Mon, 22 Sep 2025 23:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="K8wuFhmK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMvz6R8e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC282594B9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 23:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC163283FE2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 23:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758583091; cv=none; b=cxGQ7YY2IlHcazjdAaLRk3ow4kCWmsBqQvL6K7ZqPenrEPgYV93xsk8K+7MCPmq+TbLSYI9N4EMm4iM1a9+f72RlHta6lMQ7+Ok0or1wwbqo/SkfGKt6tL8dOG3K8044iG6nYT7gP0pheUrgDSaxceZZ0MJboU+XIjLqsxVRBOg=
+	t=1758583193; cv=none; b=iNZa5cor+zCPP+iBqqdHHgRV2fJWDB/UHC8daJDmWjNO5WrIUQLkJ8xrWvMGf9AjpScU9MIooICTHKbp715au2iyzTz2R7Vj7QHY23ovOWMBbWdzcgN8twtWl8VdWrYb8QWAST2s5gIp1UC2GjW37GNbCkyG+PiM+rRczCodPjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758583091; c=relaxed/simple;
-	bh=xCV6ojMbzc6eJsEK8QI8aRXOvwRakeEpGB5Uw4nXNXo=;
+	s=arc-20240116; t=1758583193; c=relaxed/simple;
+	bh=/ZGhEdHxAf5En7VuJLPdUgSdRXXJT79QW6EW69v6ge8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pI09jzm7pdCzyELSOoCuVFJLvmHCfS+x3jyNKYjFF5wFyauD81m9l6iHQSVc1vkkaHPiOZ2/aHA5ej45AET0RGg+MSufCBriLPMjxYQqcmAfiCq2ZPpLKtAZ1tIw2OQiE1pE9V7vSK0Pzv2rFCVtPetyIQ4TIwxout6SYTnBeSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=K8wuFhmK; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4c7de9cc647so21217201cf.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 16:18:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=djm8q/Ahh8fl1ysdq2JGfugD2nkePQcaaVuXDRhv0+N36h/PUeujW84BnR2ntk2IxBqJTM1Hj7ouBEFMDA9AyIOtXuGQSowCvdOFFfBZbLR6qY5J4VdQk1JQ8q1VuC6Rl60Q9PemeihbnURdKyG9Wvd+ozhHr0jeCUToCorvVWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMvz6R8e; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4c88e79866aso14052001cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 16:19:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758583088; x=1759187888; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758583190; x=1759187990; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FMhzCZwWvSzmvpHLTjoUKn9VxrN7Ynwi1w+l4sf5xFg=;
-        b=K8wuFhmK1Pm0t4+LoNc6LEVgF0GhPhqaWXNTpmVn4VMSM/Oq40GpqWenZKOi3pHO6z
-         Yhlk8y3diE0WpjFrmsmnfgrsPRUgxjP1I3t+3mZRxtFyN1FQXzQLTDA8ZiB3kiZp/NjU
-         ykTVDZ7wasx6veB3oN30mtOZTqXjSMEp5mipa88xkBYCt7y/NhmqnDSJkDMTGdGA8B/S
-         tIXofJSmY8zC3htL4XAgfhGjPe2Dqf2RBfDJZaXo0y5gmJiEXKOffZjig/OClPd86IiM
-         TQCFOd17GHWPdFHTH2kBQYtYLvT5RMFwNviZ99jRvUgucbImIzK4Ytbp1pFFynsZLlOl
-         7fRw==
+        bh=J5DMISbR66sU4eakY+Mp7FN3sykHlkCNyCvZ3g2bpqQ=;
+        b=IMvz6R8e+adAhzNBIeY3Pu/q+vjscyECu7hdBuFYwqqlT1L7e/gRM4uSZPjPs2Px48
+         2h0h/in+1gq3IgC+rsst+0ovb68qPWb2Y8/QXaNmWauiF6fu2dS/pJcOkAoyv+JlL3wi
+         bAKodXcT8X4gb0rP8v5KeMIp2KBsczPhVh8A2bfqmssQbZDm25ByM27WWADLCKn+yekX
+         pptrTJRBF9QU+O9ygxC3lr4ln/rSXgl5j1mxZig5bfwg4wffXC/0osUz1H8wtp1sHcoT
+         tFV3GrVnLGxFOQmOWq8CPV++tSOkinNHyfZFwbCHzGFd+8QAII32Odv4d2eYmDNCh4+C
+         oZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758583088; x=1759187888;
+        d=1e100.net; s=20230601; t=1758583190; x=1759187990;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FMhzCZwWvSzmvpHLTjoUKn9VxrN7Ynwi1w+l4sf5xFg=;
-        b=QFAc8eZlQnNzjU2+7VKYmfSHLsT/6GamCpPoD/TyUQmI+i7P2g7e5QlDWPrscOCAnW
-         tbb6tBIyGNUzOZ/mkDo/YvujbVhjD+kgQOLXF0pES43YIVXw+A/joYG9jCjiZI6haGRq
-         hY0bXkbPkXy4QgtTKIj2Ibybf6ruEV0fcFo5PgUUIVo4jDEthcUyEs0yL46O4kgk1W9Z
-         jeP1ZVwr6LdoDnQYgaCGPAkkWEVGcUDkeiCca2i3BkZ1hwYSTmDT8R6hRhKEzALxDI6Q
-         klCdDaqf7eByZS3wk6DWplqclCsKWcjleF/w6fFWWfWCUdKx+r24g0zpfR3as0hlo/U1
-         b/tg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVNhM3x3Js4igjJYNnlcQ9mzdi0q8chzmTLI16P82nbpmXHH2M49OOvg8jXCszO1kWsXeUbXGtz2tDE0oF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS03/ziZHVIOIXAaayI4oBM/RUZOkjIlVrvHpMjRW2ShcQZGhj
-	F5E5X6/aSpK0zM137VtXXHpk5MqGsBfd0Zven1RdVN5moQZt5XsLf4s0jOc6XlHYwzSvRx+/gE1
-	PkGm1/nRFPU65KaY8RrMvy6h4KRHFD9As3vdNyemKiw==
-X-Gm-Gg: ASbGncsrc8JOLD3TQvWohvVuUqr8PLXWshoKnWF7BJ8C5hh4JTZHq9/oFao0onDimRp
-	s5qffKuovVY5TYBU3lcRpKFlykbC9zt30amDA2GPKeueB1gq3AOa13TCEIFHXKejXjW+dJzImSf
-	wOXkpOSEMepiOaqkVnDZ2laiwElZjobtUeJHrlsiFUHwrJ+oFKUk5Bq+Y9FGHREAeUiMh2Ue10U
-	kpE
-X-Google-Smtp-Source: AGHT+IHI7fhTCub3gR6FvbuAadFoUObXh5vH4jQwaxG/DrUU33qN/BcWlCQrH5/hzcu886DWWuHj5rfrmRYYSjZ03hs=
-X-Received: by 2002:a05:622a:130b:b0:4b3:140c:ef9f with SMTP id
- d75a77b69052e-4d369eae636mr9141131cf.23.1758583088357; Mon, 22 Sep 2025
- 16:18:08 -0700 (PDT)
+        bh=J5DMISbR66sU4eakY+Mp7FN3sykHlkCNyCvZ3g2bpqQ=;
+        b=GwafpZxvy+2oLg15ZDI8EAqKvXQ9DfM6v0oyar3J7frL0CUpK+tzoHdPf+B+YSkB6/
+         Rk3ABPv8mHZ6T4pMjhjUA5ofXYbAsElYWBD5D8GiJemdJAU+i/sDgPaR6KpCtZQlF+hs
+         68iXEznQShMw6lz4Jr+JGu+D2AfgBGg4hPnCGvzA8qkQG/lB6/1bBJHlXyC6STl7gAcJ
+         ymhE/nmLOG362QkG9uGGsu37VvYcv3UEClFVd+oo/NjAzmhxgjRhpBonTSjs4qu9UQeL
+         7IGN1NR8sW/y8HWyKi0YPqsuPtcZWFTtZUI2pwnjY9fLlf7+xnFQQfh4s7HWQlJZhy6Y
+         ZkHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOLWHqKrQDSfOaeqaPZNPN80LbvkMUtWpcttd0VCCpCvmwoZE3FHfbBjX/VrvOY+2PChRUqldSWwSTwa0g@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7kFZr3vZamLVj6UYPFyjsVonJz6/+iIYDyAekSekHtadbhCwr
+	yQs3YfA73Y22e3IZ2Km2/p8d8k+nubX5S4cfUfygQu7AAoPFhCHaYKkeKkMW1Jg2dLmxGuKUEv9
+	weEIxBGKBApLKYvEva0Ob1XKe4XMs6x8=
+X-Gm-Gg: ASbGncsZ13n/Rnqs5Zyx6F2nMXI3ce16ZMq5whl55nKnQ8fnXutL+huQYK0sOSUTcdB
+	4Nh6Krvv5bLmPzuxlvZmFAiwJsaSJ4k82i/McNhqhyDEbwcIgLAQKLaDABLuKBwo1AV7L4prd1o
+	BDilnHwMI0p/JoaRjNb5LgLbLHoI+WzFULwwaWIlaIL+cm6g7H/0WmEGSkcctlutVe4p4S5OYa3
+	sGCI1nhKvQa1ZRSga+Kx8LZ7i/YfeWTEsPt+QV7
+X-Google-Smtp-Source: AGHT+IFNuzLvdXFomfA1KkmfecMlzvBTRMKqvNIwaHSdYbK7o03YrrosbHbAe4IFOO+/WLrkvS0LLAwLdqLBhZ8+gqc=
+X-Received: by 2002:a05:622a:1496:b0:4b7:a8ce:a419 with SMTP id
+ d75a77b69052e-4d368f50c9fmr8453981cf.26.1758583189669; Mon, 22 Sep 2025
+ 16:19:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-19-pasha.tatashin@soleen.com> <20250814140252.GF802098@nvidia.com>
-In-Reply-To: <20250814140252.GF802098@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 22 Sep 2025 19:17:31 -0400
-X-Gm-Features: AS18NWAv4dGFYOhiSllCg2EpqurnWbzUBhfung7Dsp39jZsN7-oM6V2Ui5LlSZc
-Message-ID: <CA+CK2bB+NRneE=uFxvQ867zT3BHGvfBUz+6Ntqk9p2=wj4JYWQ@mail.gmail.com>
-Subject: Re: [PATCH v3 18/30] liveupdate: luo_files: luo_ioctl: Add ioctls for
- per-file state management
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
+References: <20250916234425.1274735-1-joannelkoong@gmail.com> <20250916234425.1274735-11-joannelkoong@gmail.com>
+In-Reply-To: <20250916234425.1274735-11-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 22 Sep 2025 16:19:38 -0700
+X-Gm-Features: AS18NWAQg0BFCZgWl1vhaunaCTNOq8KGV147wLJZI9ev6DW1qua4YY9D4BQheHU
+Message-ID: <CAJnrk1Y7_P=LzzgeZS9tga4XhEhChrKOYPVZd+D8n69zJ7HXDA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/15] iomap: add bias for async read requests
+To: brauner@kernel.org, miklos@szeredi.hu
+Cc: hch@infradead.org, djwong@kernel.org, hsiangkao@linux.alibaba.com, 
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 10:02=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> w=
-rote:
+On Tue, Sep 16, 2025 at 4:50=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
-> On Thu, Aug 07, 2025 at 01:44:24AM +0000, Pasha Tatashin wrote:
-> > +struct liveupdate_ioctl_get_fd_state {
-> > +     __u32           size;
-> > +     __u8            incoming;
-> > +     __aligned_u64   token;
-> > +     __u32           state;
-> > +};
+> Non-block-based filesystems will be using iomap read/readahead. If they
+> handle reading in ranges asynchronously and fulfill those read requests
+> on an ongoing basis (instead of all together at the end), then there is
+> the possibility that the read on the folio may be prematurely ended if
+> earlier async requests complete before the later ones have been issued.
 >
-> Same remark about explicit padding and checking padding for 0
+> For example if there is a large folio and a readahead request for 16
+> pages in that folio, if doing readahead on those 16 pages is split into
+> 4 async requests and the first request is sent off and then completed
+> before we have sent off the second request, then when the first request
+> calls iomap_finish_folio_read(), ifs->read_bytes_pending would be 0,
+> which would end the read and unlock the folio prematurely.
+>
+> To mitigate this, a "bias" is added to ifs->read_bytes_pending before
+> the first range is forwarded to the caller and removed after the last
+> range has been forwarded.
+>
+> iomap writeback does this with their async requests as well to prevent
+> prematurely ending writeback.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/iomap/buffered-io.c | 55 ++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 47 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 561378f2b9bb..667a49cb5ae5 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -420,6 +420,38 @@ const struct iomap_read_ops iomap_bio_read_ops =3D {
+>  };
+>  EXPORT_SYMBOL_GPL(iomap_bio_read_ops);
+>
+> +/*
+> + * Add a bias to ifs->read_bytes_pending to prevent the read on the foli=
+o from
+> + * being ended prematurely.
+> + *
+> + * Otherwise, if the ranges are read asynchronously and read requests ar=
+e
+> + * fulfilled on an ongoing basis, there is the possibility that the read=
+ on the
+> + * folio may be prematurely ended if earlier async requests complete bef=
+ore the
+> + * later ones have been issued.
+> + */
+> +static void iomap_read_add_bias(struct folio *folio)
+> +{
+> +       iomap_start_folio_read(folio, 1);
+> +}
+> +
+> +static void iomap_read_remove_bias(struct folio *folio, bool *cur_folio_=
+owned)
+> +{
+> +       struct iomap_folio_state *ifs =3D folio->private;
+> +       bool finished, uptodate;
+> +
+> +       if (ifs) {
+> +               spin_lock_irq(&ifs->state_lock);
+> +               ifs->read_bytes_pending -=3D 1;
+> +               finished =3D !ifs->read_bytes_pending;
+> +               if (finished)
+> +                       uptodate =3D ifs_is_fully_uptodate(folio, ifs);
+> +               spin_unlock_irq(&ifs->state_lock);
+> +               if (finished)
+> +                       folio_end_read(folio, uptodate);
+> +               *cur_folio_owned =3D true;
+> +       }
+> +}
+> +
+>  static int iomap_read_folio_iter(struct iomap_iter *iter,
+>                 struct iomap_read_folio_ctx *ctx, bool *cur_folio_owned)
+>  {
+> @@ -429,7 +461,7 @@ static int iomap_read_folio_iter(struct iomap_iter *i=
+ter,
+>         struct folio *folio =3D ctx->cur_folio;
+>         size_t poff, plen;
+>         loff_t delta;
+> -       int ret;
+> +       int ret =3D 0;
+>
+>         if (iomap->type =3D=3D IOMAP_INLINE) {
+>                 ret =3D iomap_read_inline_data(iter, folio);
+> @@ -441,6 +473,8 @@ static int iomap_read_folio_iter(struct iomap_iter *i=
+ter,
+>         /* zero post-eof blocks as the page may be mapped */
+>         ifs_alloc(iter->inode, folio, iter->flags);
+>
+> +       iomap_read_add_bias(folio);
 
-Done
+Same here, it's not guaranteed that the whole folio is parsed here
+because the current iomap mapping may only have part of the folio
+mapped. The bias needs to be added before the first iomap_iter() call
+and removed after all iomap_iter() calls are complete. I'll make this
+change for v4.
 
-> > + * luo_file_get_state - Get the preservation state of a specific file.
-> > + * @token: The token of the file to query.
-> > + * @statep: Output pointer to store the file's current live update sta=
-te.
-> > + * @incoming: If true, query the state of a restored file from the inc=
-oming
-> > + *            (previous kernel's) set. If false, query a file being pr=
-epared
-> > + *            for preservation in the current set.
-> > + *
-> > + * Finds the file associated with the given @token in either the incom=
-ing
-> > + * or outgoing tracking arrays and returns its current LUO state
-> > + * (NORMAL, PREPARED, FROZEN, UPDATED).
-> > + *
-> > + * Return: 0 on success, -ENOENT if the token is not found.
-> > + */
-> > +int luo_file_get_state(u64 token, enum liveupdate_state *statep, bool =
-incoming)
-> > +{
-> > +     struct luo_file *luo_file;
-> > +     struct xarray *target_xa;
-> > +     int ret =3D 0;
-> > +
-> > +     luo_state_read_enter();
+> +
+>         length =3D min_t(loff_t, length,
+>                         folio_size(folio) - offset_in_folio(folio, pos));
+>         while (length) {
+> @@ -448,16 +482,18 @@ static int iomap_read_folio_iter(struct iomap_iter =
+*iter,
+>                                 &plen);
 >
-> Less globals, at this point everything should be within memory
-> attached to the file descriptor and not in globals. Doing this will
-> promote good maintainable structure and not a spaghetti
+>                 delta =3D pos - iter->pos;
+> -               if (WARN_ON_ONCE(delta + plen > length))
+> -                       return -EIO;
+> +               if (WARN_ON_ONCE(delta + plen > length)) {
+> +                       ret =3D -EIO;
+> +                       break;
+> +               }
+>                 length -=3D delta + plen;
 >
-> Also I think a BKL design is not a good idea for new code. We've had
-> so many bad experiences with this pattern promoting uncontrolled
-> incomprehensible locking.
+>                 ret =3D iomap_iter_advance(iter, &delta);
+>                 if (ret)
+> -                       return ret;
+> +                       break;
 >
-> The xarray already has a lock, why not have reasonable locking inside
-> the luo_file? Probably just a refcount?
+>                 if (plen =3D=3D 0)
+> -                       return 0;
+> +                       break;
 >
-> > +     target_xa =3D incoming ? &luo_files_xa_in : &luo_files_xa_out;
-> > +     luo_file =3D xa_load(target_xa, token);
-> > +
-> > +     if (!luo_file) {
-> > +             ret =3D -ENOENT;
-> > +             goto out_unlock;
-> > +     }
-> > +
-> > +     scoped_guard(mutex, &luo_file->mutex)
-> > +             *statep =3D luo_file->state;
-> > +
-> > +out_unlock:
-> > +     luo_state_read_exit();
+>                 if (iomap_block_needs_zeroing(iter, pos)) {
+>                         folio_zero_range(folio, poff, plen);
+> @@ -466,16 +502,19 @@ static int iomap_read_folio_iter(struct iomap_iter =
+*iter,
+>                         *cur_folio_owned =3D true;
+>                         ret =3D ctx->ops->read_folio_range(iter, ctx, ple=
+n);
+>                         if (ret)
+> -                               return ret;
+> +                               break;
+>                 }
 >
-> If we are using cleanup.h then use it for this too..
+>                 delta =3D plen;
+>                 ret =3D iomap_iter_advance(iter, &delta);
+>                 if (ret)
+> -                       return ret;
+> +                       break;
+>                 pos =3D iter->pos;
+>         }
+> -       return 0;
+> +
+> +       iomap_read_remove_bias(folio, cur_folio_owned);
+> +
+> +       return ret;
+>  }
 >
-> But it seems kind of weird, why not just
+>  int iomap_read_folio(const struct iomap_ops *ops,
+> --
+> 2.47.3
 >
-> xa_lock()
-> xa_load()
-> *statep =3D READ_ONCE(luo_file->state);
-> xa_unlock()
->
-> ?
-
-Yes, we can simplify with xa_lock(), thank you for your suggestion.
-
->
-> > +static int luo_ioctl_set_fd_event(struct luo_ucmd *ucmd)
-> > +{
-> > +     struct liveupdate_ioctl_set_fd_event *argp =3D ucmd->cmd;
-> > +     int ret;
-> > +
-> > +     switch (argp->event) {
-> > +     case LIVEUPDATE_PREPARE:
-> > +             ret =3D luo_file_prepare(argp->token);
-> > +             break;
-> > +     case LIVEUPDATE_FREEZE:
-> > +             ret =3D luo_file_freeze(argp->token);
-> > +             break;
-> > +     case LIVEUPDATE_FINISH:
-> > +             ret =3D luo_file_finish(argp->token);
-> > +             break;
-> > +     case LIVEUPDATE_CANCEL:
-> > +             ret =3D luo_file_cancel(argp->token);
-> > +             break;
->
-> The token should be converted to a file here instead of duplicated in
-> each function
-
-struct luo_file is preivate to luo_file.c, and I think it makes sense
-to keep it that way, amount of duplicated code is trivial.00
-
-> >  static int luo_open(struct inode *inodep, struct file *filep)
-> >  {
-> >       if (atomic_cmpxchg(&luo_device_in_use, 0, 1))
-> > @@ -149,6 +191,8 @@ union ucmd_buffer {
-> >       struct liveupdate_ioctl_fd_restore      restore;
-> >       struct liveupdate_ioctl_get_state       state;
-> >       struct liveupdate_ioctl_set_event       event;
-> > +     struct liveupdate_ioctl_get_fd_state    fd_state;
-> > +     struct liveupdate_ioctl_set_fd_event    fd_event;
-> >  };
-> >
-> >  struct luo_ioctl_op {
-> > @@ -179,6 +223,10 @@ static const struct luo_ioctl_op luo_ioctl_ops[] =
-=3D {
-> >                struct liveupdate_ioctl_get_state, state),
-> >       IOCTL_OP(LIVEUPDATE_IOCTL_SET_EVENT, luo_ioctl_set_event,
-> >                struct liveupdate_ioctl_set_event, event),
-> > +     IOCTL_OP(LIVEUPDATE_IOCTL_GET_FD_STATE, luo_ioctl_get_fd_state,
-> > +              struct liveupdate_ioctl_get_fd_state, token),
-> > +     IOCTL_OP(LIVEUPDATE_IOCTL_SET_FD_EVENT, luo_ioctl_set_fd_event,
-> > +              struct liveupdate_ioctl_set_fd_event, token),
-> >  };
->
-> Keep sorted
-
-Done
 
