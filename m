@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-62369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D64B8F75B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 10:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 351C3B8F79D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 10:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C02217F391
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 08:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFFF17FFFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 08:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64C22F659B;
-	Mon, 22 Sep 2025 08:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0682FDC51;
+	Mon, 22 Sep 2025 08:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="N2AD/avK"
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="brvk8si1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+Received: from pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com [34.218.115.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46351277CBF;
-	Mon, 22 Sep 2025 08:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162E61917F1;
+	Mon, 22 Sep 2025 08:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.218.115.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529053; cv=none; b=diuOSdMxH/Ly30pUJL7G0KLGyqG1II5rwoxV/QHRCWHL4ynJlLEwncHOG6m4P7a+MgmXnsuXH1LgOS7MEt4xlbCm/QibNogjM+j2zaRzk/c6rYnTo753mCue8KCMiMp6RTWrFcJ/HggkWW+9bs6LaP83Ag1g2TUrV19pQOymwp8=
+	t=1758529351; cv=none; b=D241zw3ZL/fWfu5oY785bEz/6cE0ad7DFqCKDDRvvbc5pk6F4Ry2gZnLkEZXxfDmCKGdxlZNzMem7z3gr++amE4XElda8XVWQUwevbAhTHlFERWgim2Z+QI3wHQARBrsVDoUaaNyhgotp63U4WOIAFjZuZZbsLi9Xs3X8YOiHNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529053; c=relaxed/simple;
-	bh=ojhBJOxHhGb0SD01wdfc89xOlCTZBkPkITxJQOsz22U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e5v82T9CHcSoSng2BvMe6a6YzQP1wf3SYOKNQyZqF/kR3hcuhUsA5+tJ6bWeEQkLqtmp0ptFv6N/QUu2jeXlvwVf1o7l5AKhCQE8txdP4s2BA6J6RxTOT1RKdcE/IuVqSuPoigxkKw0ddXP+4Ob/oI+wpcOvDaY9y7NbU0dsq6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=N2AD/avK; arc=none smtp.client-ip=35.83.148.184
+	s=arc-20240116; t=1758529351; c=relaxed/simple;
+	bh=caEwddqtPSczT7z3uM0EFNttlXaBLds+C0H31gwqnvE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cEHQ8eS3HgcZSq+PwT1OpkgzPIEUNE1kSyvcwSThbPnWECma65iTdY8Sf1ULhwAAp4XfHWMZvxKzNfr8ijerD0OKC3IKGsGS0oGZ66JvYyK1UqifdZaPy6F3bXo8qmf7tLKcQAoRDgoUfB2XSAHD46n8vWLSMiMaf25eFqXYsWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=brvk8si1; arc=none smtp.client-ip=34.218.115.239
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1758529051; x=1790065051;
+  t=1758529349; x=1790065349;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=ojhBJOxHhGb0SD01wdfc89xOlCTZBkPkITxJQOsz22U=;
-  b=N2AD/avKphuxD/FakiUcMR+tWl0dFTNVv4YXqUPe4gIxweWlbccdxocI
-   OwONHQ0X+9d1OfWMaeznF204KXyBKjdlHtWTzyrIXqLOA6agC7l+UuFR2
-   C0xINl7QI0vAE8sVJNdDc0zx+UBrwXU5qS08sLF6E196QkIer3L9OwxA2
-   L4gQmq5yO1relmclBPEhHaluaWcda4fCCnHXdRe7rBxaLXpRHp2kC6ciy
-   qlepgNdk0xTrA7dpihCjPkj3B5KzfQ7cBcRSQJci9jqcqlELx4K0mszlL
-   zpqnM529TB421RunDIjPWycss295TSt8awy71NStJuwJv91GIcTKGkILX
-   A==;
-X-CSE-ConnectionGUID: K9Z+0Zg9R9y8wImayrYigw==
-X-CSE-MsgGUID: NyDjXeDGQeioh0WBkX8VTQ==
+  bh=caEwddqtPSczT7z3uM0EFNttlXaBLds+C0H31gwqnvE=;
+  b=brvk8si1tG2CB02XN2xyOsPWjpmS9xstQJsiophy17NBiFqEWyGWSsa8
+   fW5GDOWgxYIOOVEaaZ0zrNFLu/kAMfulBporcoZJQmkjkw3iNZ9VlRrOV
+   e7V42J8pNkcKSXvT1HUprjkyr8+G/wUnaJfUtRhqHG4i0Wnosooyh8yya
+   nfx7j06CbHQmPztXbWmQsaW4Le/UbSDU+CZoqMP0SwuAfk5IAUVBSQEcc
+   g7NRLwgiA8WPbqbmjbi0plZZChKkRNDA2mssenrzHqngZCD8KKLFZx5i4
+   NopBpNfAW90zKN0ERyJtq2trLB/VYINUaOhVVq+1B7NHgwJufvKEiTJQ7
+   w==;
+X-CSE-ConnectionGUID: VlXsPdwYSTy5PHFTuTM21w==
+X-CSE-MsgGUID: ZpmByKcYTCOY1UHGBCSrHA==
 X-IronPort-AV: E=Sophos;i="6.18,284,1751241600"; 
-   d="scan'208";a="3343833"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 08:17:29 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:31320]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.189:2525] with esmtp (Farcaster)
- id 9a698592-8561-49e5-b6d8-e6c1950d1a64; Mon, 22 Sep 2025 08:17:29 +0000 (UTC)
-X-Farcaster-Flow-ID: 9a698592-8561-49e5-b6d8-e6c1950d1a64
+   d="scan'208";a="3343440"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-013.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 08:22:26 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:34737]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.172:2525] with esmtp (Farcaster)
+ id c186fab0-1113-419d-8b5c-5c83b9abb535; Mon, 22 Sep 2025 08:22:26 +0000 (UTC)
+X-Farcaster-Flow-ID: c186fab0-1113-419d-8b5c-5c83b9abb535
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
  EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 22 Sep 2025 08:17:28 +0000
+ Mon, 22 Sep 2025 08:22:26 +0000
 Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
  (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Mon, 22 Sep 2025
- 08:17:26 +0000
+ 08:22:23 +0000
 From: Jakub Acs <acsjakub@amazon.de>
 To: <linux-fsdevel@vger.kernel.org>
 CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
@@ -74,9 +74,9 @@ CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
 	<mirq-linux@rere.qmqm.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, "Muhammad
  Usama Anjum" <usama.anjum@collabora.com>, <linux-kernel@vger.kernel.org>,
 	<stable@vger.kernel.org>
-Subject: [PATCH v2] fs/proc: check p->vec_buf for NULL
-Date: Mon, 22 Sep 2025 08:17:13 +0000
-Message-ID: <20250922081713.77303-1-acsjakub@amazon.de>
+Subject: [PATCH v3] fs/proc/task_mmu: check p->vec_buf for NULL
+Date: Mon, 22 Sep 2025 08:22:05 +0000
+Message-ID: <20250922082206.6889-1-acsjakub@amazon.de>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -84,7 +84,7 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D043UWC001.ant.amazon.com (10.13.139.202) To
+X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
@@ -139,18 +139,22 @@ ICJNaWNoYcWCIE1pcm9zxYJhdyIgPG1pcnEtbGludXhAcmVyZS5xbXFtLnBsPgpDYzogU3RlcGhl
 biBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CkNjOiBNdWhhbW1hZCBVc2FtYSBBbmp1
 bSA8dXNhbWEuYW5qdW1AY29sbGFib3JhLmNvbT4KQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
 bC5vcmcKQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnCkNjOiBzdGFibGVAdmdlci5r
-ZXJuZWwub3JnCi0tLQogZnMvcHJvYy90YXNrX21tdS5jIHwgMyArKysKIDEgZmlsZSBjaGFuZ2Vk
-LCAzIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9wcm9jL3Rhc2tfbW11LmMgYi9mcy9w
-cm9jL3Rhc2tfbW11LmMKaW5kZXggMjljY2EwZTZkMGZmLi5iMjZhZTU1NmI0NDYgMTAwNjQ0Ci0t
-LSBhL2ZzL3Byb2MvdGFza19tbXUuYworKysgYi9mcy9wcm9jL3Rhc2tfbW11LmMKQEAgLTI0MTcs
-NiArMjQxNyw5IEBAIHN0YXRpYyB2b2lkIHBhZ2VtYXBfc2Nhbl9iYWNrb3V0X3JhbmdlKHN0cnVj
-dCBwYWdlbWFwX3NjYW5fcHJpdmF0ZSAqcCwKIHsKIAlzdHJ1Y3QgcGFnZV9yZWdpb24gKmN1cl9i
-dWYgPSAmcC0+dmVjX2J1ZltwLT52ZWNfYnVmX2luZGV4XTsKIAorCWlmICghcC0+dmVjX2J1ZikK
-KwkJcmV0dXJuOworCiAJaWYgKGN1cl9idWYtPnN0YXJ0ICE9IGFkZHIpCiAJCWN1cl9idWYtPmVu
-ZCA9IGFkZHI7CiAJZWxzZQotLSAKMi40Ny4zCgoKCgpBbWF6b24gV2ViIFNlcnZpY2VzIERldmVs
-b3BtZW50IENlbnRlciBHZXJtYW55IEdtYkgKVGFtYXJhLURhbnotU3RyLiAxMwoxMDI0MyBCZXJs
-aW4KR2VzY2hhZWZ0c2Z1ZWhydW5nOiBDaHJpc3RpYW4gU2NobGFlZ2VyCkVpbmdldHJhZ2VuIGFt
-IEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQgQgpTaXR6OiBCZXJs
-aW4KVXN0LUlEOiBERSAzNjUgNTM4IDU5Nwo=
+ZXJuZWwub3JnCi0tLQp2MSAtPiB2MjogY2hlY2sgcC0+dmVjX2J1ZiBpbnN0ZWFkIG9mIGN1cl9i
+dWYKdjIgLT4gdjM6IGZpeCBjb21taXQgdGl0bGUKCnYxOiBodHRwczovL2xvcmUua2VybmVsLm9y
+Zy9hbGwvMjAyNTA5MTkxNDIxMDYuNDM1MjctMS1hY3NqYWt1YkBhbWF6b24uZGUvIAp2MjogaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwOTIyMDgxNzEzLjc3MzAzLTEtYWNzamFrdWJA
+YW1hem9uLmRlLwoKIGZzL3Byb2MvdGFza19tbXUuYyB8IDMgKysrCiAxIGZpbGUgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvcHJvYy90YXNrX21tdS5jIGIvZnMvcHJv
+Yy90YXNrX21tdS5jCmluZGV4IDI5Y2NhMGU2ZDBmZi4uYjI2YWU1NTZiNDQ2IDEwMDY0NAotLS0g
+YS9mcy9wcm9jL3Rhc2tfbW11LmMKKysrIGIvZnMvcHJvYy90YXNrX21tdS5jCkBAIC0yNDE3LDYg
+KzI0MTcsOSBAQCBzdGF0aWMgdm9pZCBwYWdlbWFwX3NjYW5fYmFja291dF9yYW5nZShzdHJ1Y3Qg
+cGFnZW1hcF9zY2FuX3ByaXZhdGUgKnAsCiB7CiAJc3RydWN0IHBhZ2VfcmVnaW9uICpjdXJfYnVm
+ID0gJnAtPnZlY19idWZbcC0+dmVjX2J1Zl9pbmRleF07CiAKKwlpZiAoIXAtPnZlY19idWYpCisJ
+CXJldHVybjsKKwogCWlmIChjdXJfYnVmLT5zdGFydCAhPSBhZGRyKQogCQljdXJfYnVmLT5lbmQg
+PSBhZGRyOwogCWVsc2UKLS0gCjIuNDcuMwoKCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZlbG9w
+bWVudCBDZW50ZXIgR2VybWFueSBHbWJIClRhbWFyYS1EYW56LVN0ci4gMTMKMTAyNDMgQmVybGlu
+Ckdlc2NoYWVmdHNmdWVocnVuZzogQ2hyaXN0aWFuIFNjaGxhZWdlcgpFaW5nZXRyYWdlbiBhbSBB
+bXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyB1bnRlciBIUkIgMjU3NzY0IEIKU2l0ejogQmVybGlu
+ClVzdC1JRDogREUgMzY1IDUzOCA1OTcK
 
 
