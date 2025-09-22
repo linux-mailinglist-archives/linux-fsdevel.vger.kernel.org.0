@@ -1,131 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-62356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BA4B8EE60
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:00:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C960B8EF04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 116B47A95AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 03:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40F8173E5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 04:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292FA1D5ABF;
-	Mon, 22 Sep 2025 04:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FEC1F3B98;
+	Mon, 22 Sep 2025 04:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="sI5giXfG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UchXesen"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="j1yaAfC3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JBSFWVa5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DAEC148
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C86A1C69D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758513626; cv=none; b=ScDeDRPIg5DZ8EJKvK5ij+is8vAm3n2+ABn6pMpspv4bpVmCtXht4gvztNT7uveiO/BswdcsSjv/MLTQz8ptSteuCIqqlhEcoLbJbR8Z6pAmx+XNGJG2TVgBKspvE9cW23d9AEs6nCn4TDZgbif0K5ycgdsHNjAQfCZlyW8Rbbw=
+	t=1758515603; cv=none; b=PGxOtRv6dUFANNz7zfQe/kN1LIOvQWhP5Y9TzqRyFyfl1q7Gx9+bHof2j2AoZYKY65JQobcnO3DfFV85YaG08iltd2jCaHk3JyyqblxBdHwUTdVENaed2Lq7fAKNd1yA0IdYkUUEB79I0MorMM1Rp9wKNrRsHSHyleYrvdrQl/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758513626; c=relaxed/simple;
-	bh=0ouheljq5PPsbT+6ecRKGuc96KXVL2Cf81WUbfXmkfs=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=PfjR8yXH6j7WfIueHn45bVgOY1JVYB8fdyhgerErc4/93Od6vUv/y42MuX5l6rEOSTnLV/lUBir+2vpUMiyKfwNGMVr7Ae1/aZy8T2Jn81l2tGEIaC/gR+4tugAtTjNL0fdMKhhsU1d7/1pI5KJ1//xw2p+Aq21BekAvtjFDdH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=sI5giXfG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UchXesen; arc=none smtp.client-ip=103.168.172.147
+	s=arc-20240116; t=1758515603; c=relaxed/simple;
+	bh=rz3CC4OwQAov0zlqNwwOc90Fgo0/syR/2tgT6eF6IH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDwIHWIyoe+iPUdlOPp0QMu6XpWs3taaznZUIWgIbyXGzOQJcwBtdjTacJnwIsW+nl9WO4QKH9Zf4EcnG/SqIqTDSTpuQAa1TKWeeiTq6kOrFUlkXL1iceeVDV1iqyFbXoreDhSJSpvmglSQYXJfZBliRNyBrObtZSpPrGTMd3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=j1yaAfC3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JBSFWVa5; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id D9B2EEC00A5;
-	Mon, 22 Sep 2025 00:00:22 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Mon, 22 Sep 2025 00:00:22 -0400
+	by mailfout.phl.internal (Postfix) with ESMTP id B7F78EC0109;
+	Mon, 22 Sep 2025 00:33:19 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 22 Sep 2025 00:33:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1758513622; x=1758600022; bh=KEvNWZhi0Zc3TXKLKRQxbFkZlm7FTqPfL4j
-	EAoExMtI=; b=sI5giXfG1jUd1EiLUqWzZIzCL6wWKE0zL/vku+XKe09AzjlW1t0
-	lxe/t6KJzOEvGYygtFnoS34Wu00uOR8+8WjceVioq7V6Y/RxKL6nHr2vsAQj8CPs
-	CzmjZ0jxoudb5sjT/PwFbctX6KoEusBnWPD+pkTMGMVWmCsnWzlsQjewHInybSfF
-	0kQIng6Or0ppax3yBKfJs3FsjfS+H1/lNs2u+fUQSQtDY84HQYFm1gqbrUogngw3
-	VnzC2X7Fxq0SnrISoN0J0hedPkWt7QCzDDYZveE35iKWJZCbpx/5J4VOYjHtHhDA
-	gr/1ZcOSV7Jg2t8SVJdAuIWOgb0K9/Q2dNA==
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to; s=fm1; t=1758515599; x=1758601999; bh=rz3CC4OwQA
+	ov0zlqNwwOc90Fgo0/syR/2tgT6eF6IH0=; b=j1yaAfC3OMbtS8j4V+OlzuowQc
+	moNNZPMgNVaqCHMPj1LxlyYYno8m1qBzRW2hwfx8Ss8Ie5eIWfx2rhiq4PhXQTZ+
+	TPtey/IcV627U16MHdHAm3lZ0kNEwwpg8jHth+wA4oSl2RJk0P+1KV1dudvnQ9q2
+	LoamYm5vxdLK5JBS6IRJNBk2aktB4WSRZqMzs/YzwO2+GGkgE9Q68C0w+EtND/7O
+	wLY195hQGnaq5F8JyKt+YKN/1bt4nziY2rvoIRtOAr9vACEZd8M0WT+5OTDygW/S
+	6y4CMR2aw4/GVzpGDqvTHv03wAfWISMAgCL0dadwNnRfNbBkytPBilUpUpBw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758513622; x=
-	1758600022; bh=KEvNWZhi0Zc3TXKLKRQxbFkZlm7FTqPfL4jEAoExMtI=; b=U
-	chXesenf00bKr4Z/xF+C/ciYWi0q+ZLCFFwa0Ga44Rmv+RhH9on27W5l/SZWLyrF
-	m04HdLCeYI0sv8jIn5jKKFltjmqyGs7Q/NqrV5n6d8v+sez6+zXsLrIA3PO5ngUP
-	v4l9vTqHMhFOgKnVSM6Nyye3H+TJv7A1g/Lbu+UzWSK+WlL2yzELLH/RK/0iUt1C
-	q3JE+8Kbj5g9csccRzL8p/lupwiQ669EZKo+UeEAtO0baHt2axmbq7V/OqoYgneq
-	ynTT/TsoXsNecbvqD/fF5F2E5cagCmhAhK78GaqD2nfseWkhVFtu1ZztmdG0WhEN
-	ZNG0x9O/iKMMjoioyxbRw==
-X-ME-Sender: <xms:1snQaIJ82WO6VWh9BaffkC7m0cUp7FsScvtdPM5SK0Y-okwhDHCQVg>
-    <xme:1snQaDDZIdscMieynxRqs3eakeJT_MqV74ub22Pqe-KGcC5QhCsR6rx1Pmnv97Hzx
-    NsG3gsp2PGxcA>
-X-ME-Received: <xmr:1snQaAha-fFTsvVYHr2vXlhgUbbW4Zqp-XTNGB3f8zm0fnDYD8f9UuhqI0lavkughWHsx7wVwKHvdWZ-tSpPL3oWKzx7REzZ_8xsmNq4HKwz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehieekfecutefuodetggdotefrod
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1758515599; x=1758601999; bh=rz3CC4OwQAov0zlqNwwOc90Fgo0/
+	syR/2tgT6eF6IH0=; b=JBSFWVa5v3UwOUiPkrYwYFD4SGWOPSxkAIB/khiFF25u
+	vZhSOSVV067pCwljKUI2trM4eoGclC9gbmEYGIEVmz8wg2TRjr1iK5osjP+iMYnH
+	IAUtfq79QG0cq4l8+y2zTwmS3KlOdkk1s7GhppW8wRqocP7JS/3UsZ6cpc08Tx5I
+	V+Fb7VK2nWNBUtjEOBU6I40euKueV1FvNBumw5Oi0stLgEDXUay20zvDs/MwOH6V
+	12HHUfvD75+XxoaAEr080/Ql8gs9ZZiVuwGTpHd9Vg+p8lwlrHN2FzYuybHYsiN0
+	JHXUk5HJVOq5uyexIs8CBtNelqy41qgNPQHRXumkeQ==
+X-ME-Sender: <xms:j9HQaCHHZix6Fsx14VuS5TpRXZYP5kge7mpBRwMLz9KQddBsEe03qQ>
+    <xme:j9HQaKvlHn14p9qZWh0S6M0lilyjgtk_WzoenRYulw3psZKLwvY3aIEnblskSPVfq
+    a3GDXL5jx7BtA>
+X-ME-Received: <xmr:j9HQaBtw8QpQ_yB2CLQ6S_SAcY-FgG2yA3h3QPXje0xrcH2qxuITgCnYjjJ1Bia2_IKdnxdpzpWDBrmKdsR4i6qmSZrxbiekhuJHyC0Ul1tl>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehieeltdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthejredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    duteefhfduveehvdefueefvdffkeevkefgtdefgffgkeehjeeghfetiefhgffgleenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehmshiivghrvgguihesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:1snQaDmTWGuu2YpGiwyBjjuZaszBE8NM45vW6c16XSLV6AYu6nc1OA>
-    <xmx:1snQaErzp0hKpwegB1dLHIzsv3S5Is0BzJf00Dw3WBQOD08DxpQd5Q>
-    <xmx:1snQaEFIkPW-1eOBVPFTqjXm7tiRLoFF7nfEoDdNTHvTNu_fgRo8JQ>
-    <xmx:1snQaIx323efDHicDS5wAm_NU0LE1jhcGVNXQv3DqH-J2RPSyv7hMQ>
-    <xmx:1snQaPI3rBA8Uc1t5_7wZ5HlP-ZWcBUXgQ_GUePMy6PK_jkxz_YSpg1t>
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdengfhmph
+    hthicushhusghjvggtthculddutddmnecujfgurhephffvvefufffkofhrggfgsedtkeer
+    tdertddtnecuhfhrohhmpefpvghilheurhhofihnuceonhgvihhlsgesohifnhhmrghilh
+    drnhgvtheqnecuggftrfgrthhtvghrnhepgeetfeegtddtvdeigfegueevfeelleelgfej
+    ueefueektdelieeikeevtdelveelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepnhgvihhlsgesohifnhhmrghilhdrnhgvthdpnhgspghrtghp
+    thhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhoseiivghnih
+    hvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtg
+    iipdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    sghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlse
+    hgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:j9HQaIDZrEEokXKpwc2ph9B5d0M9lVXVAsgg1HoCMExFSjDCKbH0gw>
+    <xmx:j9HQaLMJsVKFNvf019VHAWxiKrZ6Op1dfR57HdRbXWEr8cg-9iBnrw>
+    <xmx:j9HQaJzH0LaBRL8AIk3HXoZeGQIW1sJzeZ_cnAw4NYJuv4IwVzMEYg>
+    <xmx:j9HQaDWFWAimdkqyDG_BwNNQDaU2USfKPpqQqUOPddhyC6OFguFPJA>
+    <xmx:j9HQaO8kEqDSyOhisl2RwSfoltzbEle_rDFutihkOjuPnK7P6lAmjmbv>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 00:00:21 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+ 22 Sep 2025 00:33:17 -0400 (EDT)
+From: NeilBrown <neilb@ownmail.net>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Christian Brauner" <brauner@kernel.org>,
+	"Amir Goldstein" <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: "Jan Kara" <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: 
+Date: Mon, 22 Sep 2025 14:29:47 +1000
+Message-ID: <20250922043121.193821-1-neilb@ownmail.net>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Miklos Szeredi" <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, "Al Viro" <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH] namei: fix revalidate vs. rename race
-In-reply-to: <175832640326.1696783.9546171210030422213@noble.neil.brown.name>
-References: <20250919081843.522786-1-mszeredi@redhat.com>,
- <175832640326.1696783.9546171210030422213@noble.neil.brown.name>
-Date: Mon, 22 Sep 2025 14:00:16 +1000
-Message-id: <175851361686.1696783.16398864818078148778@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Transfer-Encoding: 8bit
 
-On Sat, 20 Sep 2025, NeilBrown wrote:
-> 
-> So, at present, I would be in favour of duplicating lookup_dcache() to
-> lookup_dcache_locked() and call lookup_dcache() only when parent isn't
-> locked.
-> Then removed the d_invalidate() calls after a failing d_revalidate() in
-> cases where the parent isn't locked.
-> 
-> I think that is a simple solution that gets us most of what we need.
+This is a re-re-revised selection of cleanups and API renaming which continues
+my work to centralise locking of create/remove/rename operations.
 
-I've been reflecting on this and I'm now not sure sure it is quite
-right.
-It would mean a ->d_revalidate() might do an expensive check when
-unlocked and it might then have to be repeated after taking the lock.
-So I think we need to tell ->d_revalidate() if the lock is held so that
-it can decide if it is worth do an expensive revalidation.
-We could achieve that by passing LOOKUP_RCU.  This could be taken to
-mean "the parent is not locked".  If '1' is returned we could still
-invalidate, but if -ECHILD were returned the revalidate would be retried
-with the parent locked.
+Since v3 I've fixed a bug in 5/6 were I was using path-> where
+I should have been using parent_path.
 
-That needs to provide a good balance to me - though would could introduce
-a new LOOKUP_UNLOCKED rather than overloading LOOKUP_RCU.
-
+Thanks,
 NeilBrown
+
+ [PATCH v4 1/6] VFS/ovl: add lookup_one_positive_killable()
+ [PATCH v4 2/6] VFS: discard err2 in filename_create()
+ [PATCH v4 3/6] VFS: unify old_mnt_idmap and new_mnt_idmap in
+ [PATCH v4 4/6] VFS/audit: introduce kern_path_parent() for audit
+ [PATCH v4 5/6] VFS: rename kern_path_locked() and related functions.
+ [PATCH v4 6/6] debugfs: rename start_creating() to
 
