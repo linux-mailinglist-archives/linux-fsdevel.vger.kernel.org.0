@@ -1,152 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-62389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62390-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00077B90754
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 13:42:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D504CB9078B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 13:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF94420048
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 11:42:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BFE74E10C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 11:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257363064A0;
-	Mon, 22 Sep 2025 11:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136C13054F2;
+	Mon, 22 Sep 2025 11:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuVX1AU9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J7Q2thkq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F100305962
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 11:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F12773EF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 11:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541315; cv=none; b=sjzVDdobNiA0HY0z45s7ZqxdAcQ80NfYWpJwRjnL6xAopTRmG6Ry097IapampVDn7Py2lP3wIRxsMACdff5/HKq2aI1pDZBW01DukmBnMAB/AygL1VVzSOheNtTM0Dr/eNF+eNCBVtt/KmPNL6FGmRK5uFabmj0Rf5AbiEB6NiQ=
+	t=1758541709; cv=none; b=KSunW6R8cX4/cUhE131wrHfOtnVO1EFpLAABdUc7sA8HQGaHQZa3bfKNfSYPAf9JeRr/vlR+YJcajMHMcQHLwxELXsxz3hl50vtBvPmo8qYK9uu7K7AYiJXmXmBpHA6jcIcBNdXrNoJM5ylGQYxRcajgO+lhSfxeipj6Ubzhx8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541315; c=relaxed/simple;
-	bh=C01t2mpoYeYjnOIRq0tSlGySjgXDSbHsQ5Ik9kqEi38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wel1yPdCvb8b9xyERR5AhMVjoW+Veh/ZBh9K7gCnChCusuGgXr6q2Ux2ne8mRDpUs7e0T+0c8S2hAnkY/Qs6f+0FVd+RHUxUByxW+URWhkranf0mRJ+8E5rEEhIaU3G9+6gURgXgQ16y04yNVFUXKO1DkmWbnt18yl6RlTdOOpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WuVX1AU9; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so3109213a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758541312; x=1759146112; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4oxOygCk0VGPCeiSDXfT7In4HSAzQPM3WJ9lPT+HFHo=;
-        b=WuVX1AU9K8db6Rp3W95D7qD/Qj887l0Vfl7kugqoXU5qrx62hqt6sQVJNNaGHcD7tl
-         G4tNt++tceTN5OR3bVD6fOkXDI/Xg9xZ8XI/5g+zUhal3nQeyd7TMJmpY9Q8vqVM5aC9
-         j6QeijKVD4uCs2RdfZuPpFHC6AZoZYesQaU7Asln/rtO5VLKN+jXxPOHgikTwL0DBWbg
-         oiMhTfxl9saiBGZdouYsyAfqsOsg811tYhsNHVsWLpqUVmkFOEYYlSt+1tCrSqmxjxSv
-         Df51QlDaTgY+xmDNHptsjzNcqLOVCa/or/n2HFBCCmqeYGO9svxem1R40yP1S3T5e3rE
-         tMGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758541312; x=1759146112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4oxOygCk0VGPCeiSDXfT7In4HSAzQPM3WJ9lPT+HFHo=;
-        b=F0vrnuRdwJWOV7LUsLxZGq1uslN3YEIFP96YJBU2HRkkwBe3p9HXk3NutbQz+Lpg1h
-         4oWxVJbxpIpRCn1u/jSvtBw+8hMzrkD7pluI43f24cAoeNdodvZvfNZE/um5KixRGG3v
-         4QG74WrT9mxQEmr3Cib0q61mKpbQGTDsRjWwjOt+Wd3mhd8PoaVtfoDe9lkcYeGlR1bj
-         wc76D7QbKeySD9DPJYN7eDQry84y4lezfXGqOvGMChlfQKqeLDOVNA+0XcFylcpkyugy
-         18LlGWLxAVlj0FUn3jd//8FrNIRbpZrzZNF3zHPd0a2qmRudefFdeXoWT6MRZ1CTV3/F
-         hCYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF1+4dmLpAe16QoQo7P5e7gKFaoqk05MQ+TVez6TZdnIuOTPbIME3Kp8Qfh724ZXT9yTrhXES2muFZ/KgL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+nl4sLlLc4ebvivSWQ57IfWTXLf1wLQjohkPAUJCNVFP77P8D
-	7hin+K8dPhOPGlNYH9zhYsM2tPhzhEDekFFZGMURtIh3ruLuYk/3J6NzZgDSdONhzm5/q1Y/Nto
-	QiwDHjaSUk8BjE77ylbImWuZstP3XxG4=
-X-Gm-Gg: ASbGncuoFmaSrFURRalNDRIiVl8+2rq7OhlT+7s9pK9BDtLzXIULa1cKK8PyEn4Bk1U
-	SiVOLG4nZPbE+FUxchHHBknSd0niHZpx7A30HLUV+f4etU3olyyCjRoy8Z9uQU9A1e0LL6vXlDE
-	lqLfHCWQjRbemamy4JD4hSSTuRcA7wjgMAO2qIB3Xc97eMVdeakMst8W6g5hs7zjI5Iw92tBFt2
-	TSTap0FfVffaN+9GS/5hyAvGB+T/azidYeZTQ==
-X-Google-Smtp-Source: AGHT+IFkrvZLkom9QBciHs6IeDWT1d22c0w/ez/+uji1phZB9oJtSgu7MJFyeNNpyTK/5sCVjxhsAiXVpi0xe+B+ZLc=
-X-Received: by 2002:a05:6402:5355:20b0:62f:6860:2d86 with SMTP id
- 4fb4d7f45d1cf-62fc08f2e01mr9371365a12.12.1758541311797; Mon, 22 Sep 2025
- 04:41:51 -0700 (PDT)
+	s=arc-20240116; t=1758541709; c=relaxed/simple;
+	bh=Pregwja20pPdeQ6hBFFCv6+ehyzfjlp1M6LIaaFG39c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FhocSVPLEG91UJYVQKskWVr9yuVSN/FpwEhNMYYQ9kWqadfThXDIFU9n6Nw0YZU7atDPCrR9k4qrj4jnuMumdMSpwsEY8G3Zq1pSPZdLhdf1ugf9j5aWvo/O1Ry4250o1avvqltvcYRiad32I20iMxBonbwnSHcbqZlQL5njqLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J7Q2thkq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758541706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=B8RU7qUq3dY+e3f8Ehx10rzc/Ey4Gre7j1V3AC9ifV8=;
+	b=J7Q2thkqocOGh85JNZjn8+CZ2AcaO06UZm1b9s66XjeaYksyI6HVZHWQv43J/LhRAYrkS7
+	1wYd0uukVpZYq1hEVy8QPvzrHjxoCu3MWVArwscx0k5l/k445pvjBaMjMCm4vGkzKAVzMO
+	tsKjhQpjNWkEAjlYTkFrHzkXx6vml3s=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-154-TiU9SO8qPRKk6tiRbwKv8g-1; Mon,
+ 22 Sep 2025 07:48:23 -0400
+X-MC-Unique: TiU9SO8qPRKk6tiRbwKv8g-1
+X-Mimecast-MFC-AGG-ID: TiU9SO8qPRKk6tiRbwKv8g_1758541702
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5949D19560A2;
+	Mon, 22 Sep 2025 11:48:22 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.224.252])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 15AC31955F21;
+	Mon, 22 Sep 2025 11:48:19 +0000 (UTC)
+Date: Mon, 22 Sep 2025 13:48:16 +0200
+From: Karel Zak <kzak@redhat.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux stable v2.41.2
+Message-ID: <cphv3swx7a3nqmzgxroyezzpxf2rrvfdxrbev55tm6ioeczki3@plvbxfgxkvl4>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919154905.2592318-1-mjguzik@gmail.com> <20250919154905.2592318-4-mjguzik@gmail.com>
- <ayjwe2moaswosrvcv6mhd2wztwvexfjgy6dfnxxegnhppca7ac@75h6kmoj32e6>
-In-Reply-To: <ayjwe2moaswosrvcv6mhd2wztwvexfjgy6dfnxxegnhppca7ac@75h6kmoj32e6>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 22 Sep 2025 13:41:37 +0200
-X-Gm-Features: AS18NWDd4DNKu221LBJSwOQahHDo9s8BoIUAMr0lDu2p-ZCeBCjMIxMDm9gSAD0
-Message-ID: <CAGudoHF6Q4xh=fiRwJ6+qiQSxovj3BeSdZYANAOQ_NnZg3bOXA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] Manual conversion of ->i_state uses
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Sep 22, 2025 at 1:31=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Fri 19-09-25 17:49:03, Mateusz Guzik wrote:
-> > Takes care of spots not converted by coccinelle.
-> >
-> > Nothing to look at with one exception: smp_store_release and
-> > smp_load_acquire pair replaced with a manual store/load +
-> > smb_wmb()/smp_rmb(), see I_WB_SWITCH.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->
-> ...
->
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index 0e9e96f10dd4..745df148baaa 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -478,8 +478,8 @@ static bool inode_do_switch_wbs(struct inode *inode=
-,
-> >        * Paired with load_acquire in unlocked_inode_to_wb_begin() and
-> >        * ensures that the new wb is visible if they see !I_WB_SWITCH.
-> >        */
-> > -     smp_store_release(&inode->i_state,
-> > -                       inode_state_read(inode) & ~I_WB_SWITCH);
-> > +     smp_wmb();
-> > +     inode_state_del(inode, I_WB_SWITCH);
-> >
-> >       xa_unlock_irq(&mapping->i_pages);
-> >       spin_unlock(&inode->i_lock);
->
-> Comments need updating here and in backing-dev.h...
->
 
-turns out func name in the comment is also outdated
+The util-linux stable maintenance release v2.41.2 is now available at
+      
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.41/
+      
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
 
-> > diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> > index e721148c95d0..720e5f8ad782 100644
-> > --- a/include/linux/backing-dev.h
-> > +++ b/include/linux/backing-dev.h
-> > @@ -292,7 +292,8 @@ unlocked_inode_to_wb_begin(struct inode *inode, str=
-uct wb_lock_cookie *cookie)
-> >        * Paired with store_release in inode_switch_wbs_work_fn() and
-> >        * ensures that we see the new wb if we see cleared I_WB_SWITCH.
-> >        */
-> > -     cookie->locked =3D smp_load_acquire(&inode->i_state) & I_WB_SWITC=
-H;
-> > +     cookie->locked =3D inode_state_read(inode) & I_WB_SWITCH;
-> > +     smp_rmb();
-> >
-> >       if (unlikely(cookie->locked))
-> >               xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags=
-);
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+
+util-linux 2.41.2 Release Notes
+===============================
+
+bash-completion:
+    - fix function name of enosys completion (by Koichi Murase)
+    - add choom and coresched (by Karel Zak)
+
+blkid:
+    - correct an erroneous error message (by Benno Schulenberg)
+
+build-sys:
+    - update release dates (by Karel Zak)
+
+docs:
+    - add v2.41.2-ReleaseNotes (by Karel Zak)
+
+findmnt:
+    - (usage) add a needed equals sign before an optional argument (by Benno Schulenberg)
+    - add missing newline in --raw, --pair and --list output formats (by Christian Goeschel Ndjomouo)
+
+fsck.cramfs:
+    - check buffer size for memcpy() (by Karel Zak)
+
+getopt:
+    - document special symbols that should not be used as option characters (by cgoesche)
+
+gitignore:
+    - Ignore tests/diff/ and test/output/ (by Jesse Rosenstock)
+
+hardlink:
+    - (man) add note note about ULFILEEQ_DEBUG= (by Karel Zak)
+
+include/mount-api-utils:
+    - avoid using sys/mount.h (by Karel Zak)
+
+libblkid:
+    - Fix probe_ioctl_tp assigning BLKGETDISKSEQ as physical sector size (by Sam Fink)
+    - (ext) reduce false positive (by 胡玮文)
+    - improve UUID_SUB= description (by Karel Zak)
+
+lib/color-names:
+    - fix stupid bugs (by Karel Zak)
+    - Fix color name canonicalization (by Karel Zak)
+
+libfdisk:
+    - (script) improve separator usage in named-fields dump (by Karel Zak)
+    - (script) fix device name separator parsing (by Karel Zak)
+
+liblastlog2:
+    - markup fixes for man pages (by Mario Blättermann)
+
+libmount:
+    - don't report fsconfig errors with "nofail" (by Karel Zak)
+
+lib/path:
+    - avoid double free() for cpusets (by Karel Zak)
+
+lib/strutils:
+    - add ul_ prefix to strrep() and strrem() functions (by Karel Zak)
+    - add ul_ prefix to split() function (by Karel Zak)
+    - add ul_ prefix to strappend() functions (by Karel Zak)
+    - add ul_ prefix to strconcat() functions (by Karel Zak)
+    - add ul_ prefix to startswith() and endswith() (by Karel Zak)
+
+lib/strv:
+    - use ul_ prefix for strv functions (by Karel Zak)
+
+logger:
+    - fix buffer overflow when read stdin (by Karel Zak)
+    - fix incorrect warning message when both --file and a message are specified (by Alexander Kappner)
+
+lsblk:
+    - fix possible use-after-free (by Karel Zak)
+    - fix memory leak [coverity scan] (by Karel Zak)
+    - use md as fallback TYPE when md/level empty (by codefiles)
+
+lscpu:
+    - New Arm C1 parts (by Jeremy Linton)
+    - Add NVIDIA Olympus arm64 core (by Matthew R. Ochs)
+
+man:
+    - Fixed incorrect ipcrm options (by Prasanna Paithankar)
+    - Replace RETURN VALUE with EXIT STATUS in section 1 (by Jesse Rosenstock)
+
+mkfs.cramfs:
+    - avoid uninitialized value [coverity scan] (by Karel Zak)
+
+more:
+    - temporarily ignore stdin when waiting for stderr (by Karel Zak)
+
+po:
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ko.po (from translationproject.org) (by Seong-ho Cho)
+    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update cs.po (from translationproject.org) (by Petr Písař)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Michał Kułach)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - merge changes (by Karel Zak)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+
+rev:
+    - add --zero option to --help output (by Christian Goeschel Ndjomouo)
+
+setpriv:
+    - Improve getgroups() Portability (by Karel Zak)
+
+sfdisk:
+    - reject spurious arguments for --reorder/--backup-pt-sectors (by Thomas Weißschuh)
+
+tests:
+    - add color names test (by Karel Zak)
+
+tests/helpers/test_sigstate.c:
+    - explicitly reset SIGINT to default action after trapping (by Hongxu Jia)
+
+tools:
+    - add git-version-next script release versioning (by Karel Zak)
+
+zramctl:
+    - ignore ENOENT when setting max_comp_streams (by Jiang XueQian)
+    - fix MEM-USED column description (by Jérôme Poulin)
+
+Misc:
+    - Add missing ;; to -m case (#1) (by Nate Drake)
+
 
