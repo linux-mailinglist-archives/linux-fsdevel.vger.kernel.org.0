@@ -1,179 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-62363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476D9B8EF16
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:33:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6740B8F034
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 07:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F533BC46E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 04:33:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02DF17ABF6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 05:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE1C218AB0;
-	Mon, 22 Sep 2025 04:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E01F2236E8;
+	Mon, 22 Sep 2025 05:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="CiRpUGIj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YL/h/Wim"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NMdcP4Dt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1452010EE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287972F0C63
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 05:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758515627; cv=none; b=qcliguvzApF8ggm1eXRCSVu3T+Ioyes/KTIb02AzKfWKa3OLhmwPNOQk1d9Qt/MarWFqSYtdgWhwvyZHTDB9u9oHzmLtEHGr1WgZOC80aKX1rzx9KVoQxXPZUcw5F7nmRr0fGtvgIdN76tr32QYk8G1w4GzYukC/YRagiIdQ6Wk=
+	t=1758518466; cv=none; b=mcMJwjAJpd2TEo+kQltAq87+wmmCEqO8Y7t57u307m4MDbjREW6SoRhqSyhxH/4qPzG14odnm3LsaL+atzj/G8J/LZwhsvbSMht0zPTMMNEnJZ3LuRAU6++5Hebw4/qrvHB4uNxvuJmeo/gy4cHze0NmEYtd595FTmELcSLu1UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758515627; c=relaxed/simple;
-	bh=dorb3XkAnq3m+Ip/+8OPelvYCsN+wO6LGLRcQiaeqYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cNJVg/eyJTTy4AyPg0eqeS/5YHfkcK46K8pl89uhuKnQw2GQbpK+H9J9L/ZRtZpSxIholTB2HkSks3a0QheAoijxp+iX2PntZx6fTtEeWspeIGHMpIP1v0WmwAjDBJchoqaf1y6aVIKbK8BRkFUJPS44Y3YWpNWud+lIyYDuu58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=CiRpUGIj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YL/h/Wim; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 83A8FEC008E;
-	Mon, 22 Sep 2025 00:33:45 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 22 Sep 2025 00:33:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758515625;
-	 x=1758602025; bh=6iHRI8psVgHHTLvGUROVbKi9+7XOp6D150cYatnnwV8=; b=
-	CiRpUGIjSbaneqDF8Vtkd34vQRXCiVexvq/yUAVxkPwVORNoYwekPF2L1INEO60t
-	ek6cBpxmk6LehZ1Em57yYQEOvCOp2QAMP0Kc+gbn2lGRfg11wntPplrNMJzgBTm7
-	OgwC3i2cIxdExQuvLacNevEhM7uz+6LmXWK429kOLQvdvchjpiLwtndekYc7dvW3
-	y31A8OusgEe6TI+dWxKe7jbCb/QH6DOLC7xVoGeikKtUGYzWLWCpUVQwGuNjqPrx
-	Kg1+LQHAsvj7KyzZTpV7VvYiAcAx6A4cIEZF+QUrB9RgrZqMXBkHrs7ldNGrDsHv
-	1/laQyVpWYmGcNYS+XMmLg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758515625; x=1758602025; bh=6
-	iHRI8psVgHHTLvGUROVbKi9+7XOp6D150cYatnnwV8=; b=YL/h/WimQCu5cS3MX
-	fIJF6VuA31qlXrezuWC0GZkrKxc4lSDj6qYVvrDg5EAOZ9DaEh4h9jEOlxJAV1Wh
-	3c3Gq5tjv8hEfVC/vZpcA4+na+paDTX689p9uoJaZvOvDhShawhlXVwj239zJuWW
-	JnN+38iWxQTGTLqJ2E8dA8YOmJ+Thf5NhwZzZ2qBjtKiTj9SHMBeMabuVTvAW3gB
-	2b1+X22/aEJeqTze7M4dDK6jq7YUStI01eddyHg2butLlLpH/Z2KdHHY9LtkZ3g2
-	zf25mKhRZZq5CSVCa9hn6ztxiOZppY5Fq68Pu4IX8iQwZnyuYqfThgAVL40E2xtV
-	gqTTQ==
-X-ME-Sender: <xms:qdHQaDHnqCEB9ps4QE7utFzwq2GyGxUuYA5_fFZJnHrzIAPsVnhqTw>
-    <xme:qdHQaHvs1MEofANAiT0pyu8UAmT9QrYI4HJifRo8af-6__EmlbxM2cwczPGS-7LEm
-    Vv7FcsbmZa5AA>
-X-ME-Received: <xmr:qdHQaKs2UX4qAT4xPkbfbmAcNmYvBM8wK6OxbnTfMrM-Jcv9bu2l_T1aDwQz5hu3T25JoRqoKec8Mr6newYc8MBd5nJ1zXgiGek7OgA8nlfd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehieeltdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfrhgggfestdekredtredttdenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    evveekffduueevhfeigefhgfdukedtleekjeeitdejudfgueekvdekffdvfedvudenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:qdHQaNDEmVpljO3J1_ZygUWhRJeIlNrbS9zXbCN3TRDznaBLGsetCg>
-    <xmx:qdHQaMMauxiRU5UI0Jti34b-fiFMQ-qLZ6QR6XZdl4Ou3wE7jz_CKA>
-    <xmx:qdHQaGxrLq8oyToh-J35QJn1-0qpYr0-snCJDJmuZw7iOWIiZJhnfw>
-    <xmx:qdHQaMUkJE31aUHzHlZGd4QYflQl5k-IJ8ZbgNtkfEV7hpr0OtvtXQ>
-    <xmx:qdHQaH8-eIg97JX676sCwZgT7dEzVuWIdi0qIadvU5DbALy4rEEIScoI>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 00:33:43 -0400 (EDT)
-From: NeilBrown <neilb@ownmail.net>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"Amir Goldstein" <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: "Jan Kara" <jack@suse.cz>,
+	s=arc-20240116; t=1758518466; c=relaxed/simple;
+	bh=3VL+F8R32wCEbikEcjWZNF4VxAsjRjfejVXk+7Xgd6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OuuEMyKn5mcFFCZlL+0dFRMBA9O7oWfVFx1HHu+z6Qfv/xnuaprxMjAq/CBzMroi/ES9E8WVfdmJXDLTeuL8KJxkhIIb7mTsGbHJUChe1rOOPw/1t7Qd6G0UDBXQaxDkXBJi/aS58SWoafOAQCeWeMfq7zynaV+HS9DoHN1aRjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NMdcP4Dt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xgpzkAdkLG0lw1YyWubZTkRGA6u31MLUEo2h37XUmbg=; b=NMdcP4Dtk+PTSmhdx87d48Uh4S
+	JpoN5hUZKZe3+SmXqSRCJASqtuT7tX6eHDjRkkawQQpKNXj6UF9baew2ss5raheANjMnOh/s3UN/G
+	OnmOqFOI446pTDoVt5hlHLWiP9p4vS9Hek6IIMUg09OwuYFmIJ6+Bbx8sn+UsThwVFTGgGfSg50If
+	J7ijgg0tgrpUv1Gs+SwJY9zjAoMznXAwZht6pzROneYWG2bPxhL2mBWSKtmyzfCYgI/nev1tItvnR
+	AOwv2JlfQ3khSvU9K8Y2o1yK/P3g1xHTTD88RooTahmhGL181H/TuPCDM+ep5xMuuxCdZwHSC39Ey
+	lK0zCbpw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0Yyy-00000008DsL-45S7;
+	Mon, 22 Sep 2025 05:21:01 +0000
+Date: Mon, 22 Sep 2025 06:21:00 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 6/6] debugfs: rename start_creating() to debugfs_start_creating()
-Date: Mon, 22 Sep 2025 14:29:53 +1000
-Message-ID: <20250922043121.193821-7-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20250922043121.193821-1-neilb@ownmail.net>
+Subject: Re: [PATCH v4 5/6] VFS: rename kern_path_locked() and related
+ functions.
+Message-ID: <20250922052100.GQ39973@ZenIV>
 References: <20250922043121.193821-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+ <20250922043121.193821-6-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922043121.193821-6-neilb@ownmail.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: NeilBrown <neil@brown.name>
+On Mon, Sep 22, 2025 at 02:29:52PM +1000, NeilBrown wrote:
+> From: NeilBrown <neil@brown.name>
+> 
+> kern_path_locked() is now only used to prepare for removing an object
+> from the filesystem (and that is the only credible reason for wanting a
+> positive locked dentry).  Thus it corresponds to kern_path_create() and
+> so should have a corresponding name.
+> 
+> Unfortunately the name "kern_path_create" is somewhat misleading as it
+> doesn't actually create anything.  The recently added
+> simple_start_creating() provides a better pattern I believe.  The
+> "start" can be matched with "end" to bracket the creating or removing.
+> 
+> So this patch changes names:
+> 
+>  kern_path_locked -> start_removing_path
+>  kern_path_create -> start_creating_path
+>  user_path_create -> start_creating_user_path
+>  user_path_locked_at -> start_removing_user_path_at
+>  done_path_create -> end_creating_path
+> 
+> and also introduces end_removing_path() which is identical to
+> end_creating_path().
+> 
+> __start_removing_path (which was __kern_path_locked) is enhanced to
+> call mnt_want_write() for consistency with the start_creating_path().
 
-start_creating() is a generic name which I would like to use for a
-function similar to simple_start_creating(), only not quite so simple.
-
-debugfs is using this name which, though static, will cause complaints
-if then name is given a different signature in a header file.
-
-So rename it to debugfs_start_creating().
-
-Signed-off-by: NeilBrown <neil@brown.name>
----
- fs/debugfs/inode.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index c12d649df6a5..661a99a7dfbe 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -362,7 +362,8 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
- }
- EXPORT_SYMBOL_GPL(debugfs_lookup);
- 
--static struct dentry *start_creating(const char *name, struct dentry *parent)
-+static struct dentry *debugfs_start_creating(const char *name,
-+					     struct dentry *parent)
- {
- 	struct dentry *dentry;
- 	int error;
-@@ -428,7 +429,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
- 	if (!(mode & S_IFMT))
- 		mode |= S_IFREG;
- 	BUG_ON(!S_ISREG(mode));
--	dentry = start_creating(name, parent);
-+	dentry = debugfs_start_creating(name, parent);
- 
- 	if (IS_ERR(dentry))
- 		return dentry;
-@@ -577,7 +578,7 @@ EXPORT_SYMBOL_GPL(debugfs_create_file_size);
-  */
- struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
- {
--	struct dentry *dentry = start_creating(name, parent);
-+	struct dentry *dentry = debugfs_start_creating(name, parent);
- 	struct inode *inode;
- 
- 	if (IS_ERR(dentry))
-@@ -624,7 +625,7 @@ struct dentry *debugfs_create_automount(const char *name,
- 					debugfs_automount_t f,
- 					void *data)
- {
--	struct dentry *dentry = start_creating(name, parent);
-+	struct dentry *dentry = debugfs_start_creating(name, parent);
- 	struct inode *inode;
- 
- 	if (IS_ERR(dentry))
-@@ -687,7 +688,7 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
- 	if (!link)
- 		return ERR_PTR(-ENOMEM);
- 
--	dentry = start_creating(name, parent);
-+	dentry = debugfs_start_creating(name, parent);
- 	if (IS_ERR(dentry)) {
- 		kfree(link);
- 		return dentry;
--- 
-2.50.0.107.gf914562f5916.dirty
-
+Documentation/filesystems/porting.rst, please.  Either in this commit,
+or as a followup.
 
