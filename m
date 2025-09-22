@@ -1,99 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-62364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6740B8F034
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 07:22:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B48FB8F241
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 08:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02DF17ABF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 05:22:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF38C188A87A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 06:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E01F2236E8;
-	Mon, 22 Sep 2025 05:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE94620E6E2;
+	Mon, 22 Sep 2025 06:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NMdcP4Dt"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CwsjDxxl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wu4D2YFm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287972F0C63
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 05:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C2C16CD33;
+	Mon, 22 Sep 2025 06:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758518466; cv=none; b=mcMJwjAJpd2TEo+kQltAq87+wmmCEqO8Y7t57u307m4MDbjREW6SoRhqSyhxH/4qPzG14odnm3LsaL+atzj/G8J/LZwhsvbSMht0zPTMMNEnJZ3LuRAU6++5Hebw4/qrvHB4uNxvuJmeo/gy4cHze0NmEYtd595FTmELcSLu1UM=
+	t=1758522397; cv=none; b=Ov0UnjCMlEy9Q6TOoTL39HbNJ1reXImPPWOETnenC74zxjzHcEFjssp5EKcVaJTeExbzMHCQHEnDa3qFeAkZBT6NaA4ZsOGL7eQg/brkbagWECdj2D1aio6PSh7YB1ekWzxB3DBY/5sdvE7wmWaqSuLVw0eqqp8sTQ6a+ja+PJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758518466; c=relaxed/simple;
-	bh=3VL+F8R32wCEbikEcjWZNF4VxAsjRjfejVXk+7Xgd6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuuEMyKn5mcFFCZlL+0dFRMBA9O7oWfVFx1HHu+z6Qfv/xnuaprxMjAq/CBzMroi/ES9E8WVfdmJXDLTeuL8KJxkhIIb7mTsGbHJUChe1rOOPw/1t7Qd6G0UDBXQaxDkXBJi/aS58SWoafOAQCeWeMfq7zynaV+HS9DoHN1aRjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NMdcP4Dt; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xgpzkAdkLG0lw1YyWubZTkRGA6u31MLUEo2h37XUmbg=; b=NMdcP4Dtk+PTSmhdx87d48Uh4S
-	JpoN5hUZKZe3+SmXqSRCJASqtuT7tX6eHDjRkkawQQpKNXj6UF9baew2ss5raheANjMnOh/s3UN/G
-	OnmOqFOI446pTDoVt5hlHLWiP9p4vS9Hek6IIMUg09OwuYFmIJ6+Bbx8sn+UsThwVFTGgGfSg50If
-	J7ijgg0tgrpUv1Gs+SwJY9zjAoMznXAwZht6pzROneYWG2bPxhL2mBWSKtmyzfCYgI/nev1tItvnR
-	AOwv2JlfQ3khSvU9K8Y2o1yK/P3g1xHTTD88RooTahmhGL181H/TuPCDM+ep5xMuuxCdZwHSC39Ey
-	lK0zCbpw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0Yyy-00000008DsL-45S7;
-	Mon, 22 Sep 2025 05:21:01 +0000
-Date: Mon, 22 Sep 2025 06:21:00 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] VFS: rename kern_path_locked() and related
- functions.
-Message-ID: <20250922052100.GQ39973@ZenIV>
-References: <20250922043121.193821-1-neilb@ownmail.net>
- <20250922043121.193821-6-neilb@ownmail.net>
+	s=arc-20240116; t=1758522397; c=relaxed/simple;
+	bh=mTlCST+NV6monq4VDOGsq1nkeaCC9gjKSnK3woeXd44=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=vE5fw6KmIJATxmGCIjO11ILPCZm2BvaRJhtqQCWGPv2+A7f0IZ1vKxnMFbLDsEfeGYLcetA7LONJg3hfwLg+OaK04v8Gp7XCrTj2mcojdGArC29C2pt09J+sgrhvGb1ft35GjeBV3zLc+yPmV3QTFFp1PGgi9NvDGml2tMPhwlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CwsjDxxl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wu4D2YFm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758522392;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mTlCST+NV6monq4VDOGsq1nkeaCC9gjKSnK3woeXd44=;
+	b=CwsjDxxlHNkml+W3XMI/NH9FoEPr3tY3Yipw6ooOdoWPglQmbvWmxh7WpyqD6T/rnr1BoX
+	x8EYY1ToGm6T15s2flEIA8Q+uVu9Fq5dU8PF8pRGRdAafezhgagsUgH7RwPZlfCKbEOwiw
+	EtuQntYV9GyksLRZB3WvX5we5IdsgxClxjspoVdEtlYXRd9NN+JM9cWUE3BuPNeUgB7Mn7
+	M0tov5A0Vry0YCWPREOJp41V58SeLiQ2Z6ivWgjTeQutq8gPRP6RMxrlhlz04m7jgkIWuX
+	uVZ8im9wantJn0jr1Tha+FXSv9cLYzCSrkyYAkJFjjG3YFDDbbifEgpdKbIZ0g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758522392;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mTlCST+NV6monq4VDOGsq1nkeaCC9gjKSnK3woeXd44=;
+	b=wu4D2YFmKcfY9Afa/rL7Stcq7Qf4DibBFtqNw42AMRXDqiOqDyv4xakDvdI1GbFVrge3Sr
+	CiNMfbqm2yd4ErDg==
+To: Mateusz Guzik <mjguzik@gmail.com>, Khazhy Kumykov <khazhy@chromium.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan
+ <shuah@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Soheil Hassas
+ Yeganeh <soheil@google.com>, Willem de Bruijn <willemb@google.com>, Eric
+ Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+In-Reply-To: <CAGudoHF8pKE3ODqY-WnbV=ZpjC9hH+U+COq_KE=aH7mEW8fsKQ@mail.gmail.com>
+References: <cover.1752824628.git.namcao@linutronix.de>
+ <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+ <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+ <87zfat19i7.fsf@yellow.woof>
+ <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
+ <CAGudoHE=iaZp66pTBYTpgcqis25rU--wFJecJP-fq78hmPViCg@mail.gmail.com>
+ <CACGdZYKcQmJtEVt8xoO9Gk53Rq1nmdginH4o5CmS4Kp3yVyM-Q@mail.gmail.com>
+ <CACGdZYLByXsRruwv+BNWG-EqK+-f6V0inki+6gg31PGw5oa90A@mail.gmail.com>
+ <CAGudoHF8pKE3ODqY-WnbV=ZpjC9hH+U+COq_KE=aH7mEW8fsKQ@mail.gmail.com>
+Date: Mon, 22 Sep 2025 08:26:30 +0200
+Message-ID: <87qzvz9f55.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922043121.193821-6-neilb@ownmail.net>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
 
-On Mon, Sep 22, 2025 at 02:29:52PM +1000, NeilBrown wrote:
-> From: NeilBrown <neil@brown.name>
-> 
-> kern_path_locked() is now only used to prepare for removing an object
-> from the filesystem (and that is the only credible reason for wanting a
-> positive locked dentry).  Thus it corresponds to kern_path_create() and
-> so should have a corresponding name.
-> 
-> Unfortunately the name "kern_path_create" is somewhat misleading as it
-> doesn't actually create anything.  The recently added
-> simple_start_creating() provides a better pattern I believe.  The
-> "start" can be matched with "end" to bracket the creating or removing.
-> 
-> So this patch changes names:
-> 
->  kern_path_locked -> start_removing_path
->  kern_path_create -> start_creating_path
->  user_path_create -> start_creating_user_path
->  user_path_locked_at -> start_removing_user_path_at
->  done_path_create -> end_creating_path
-> 
-> and also introduces end_removing_path() which is identical to
-> end_creating_path().
-> 
-> __start_removing_path (which was __kern_path_locked) is enhanced to
-> call mnt_want_write() for consistency with the start_creating_path().
+Mateusz Guzik <mjguzik@gmail.com> writes:
+> a sequence counter around shenanigans will sort it out, but I don't
+> know if it is worth it and don't really want to investigate myself.
 
-Documentation/filesystems/porting.rst, please.  Either in this commit,
-or as a followup.
+The original commit did mention "1% CPU/RPC reduction in RPC benchmarks".
+I'm not sure what "RPC" stands for and which benchmark it is. But if it
+is really important, we must have heard by now.
+
+Nam
 
