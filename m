@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-62412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5896B91D37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 16:58:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35CDB91D5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 17:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB615190069F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 14:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 232333B5114
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 15:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33242D73B3;
-	Mon, 22 Sep 2025 14:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DCA2DC794;
+	Mon, 22 Sep 2025 15:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ZukVEC2T"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="BN15DxHz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35FB2D640D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 14:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC082D6E7C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 15:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758553099; cv=none; b=ZEIcCRS8YxGwZLyEqikfjPkEHXoP8bgQQ3Ow2AZz/d+UKkVuQQaAN/S9u9lOFcRr/ZfoZ3bX11VjzO2avqOxDtSFuqv1HVOIoeCUz2De6a/BOhFKA27whGKzz5uJ+xNuItjkjMCwfEKcCNL72wkOcPZ1cElhaqdjn+RuvQ7QRjc=
+	t=1758553257; cv=none; b=FAvWBm+Jdgf6Rp8JVF/WY690rzvvGdLNA844t/Z4I7NSuCXPqLNmx9f3RLxOTP4p0+r735dbDJV4lwEnAjfOHaoyCGG95mDr0Hu/oR5J8gFxbG34gipJSTgXrbik7itEhIYZJHesYAlFLXw9v9ow62D8eCoQqGyXWLpd0yUGc8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758553099; c=relaxed/simple;
-	bh=bk/uSOBhjlLpezuJ67nR7iyn8eOOajtcOPPkD+iN/3c=;
+	s=arc-20240116; t=1758553257; c=relaxed/simple;
+	bh=kh9XvYd3EybefvfxgcE5HYVIHxtLjRtv+CBZJd9A8sI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuvZLlojGJSsuXsGC/Ss/IwCzbo67g9T7ZwgYanIGw8Syp2haDhwG8skEYir8n3zksPPfz9IdGmidetAaljPG0ax29LwCdHIVV9PsE1IPvw3G5ZBtES1O7M5LT3+iFk0e8i5K7yMu4SQ1RXRS4xetN/R+KHhu1H9fPXIgwL2nHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=ZukVEC2T; arc=none smtp.client-ip=209.85.160.182
+	 To:Cc:Content-Type; b=iVM1Hmit82T/8hm15JkhM4GVe8HOKzIlwn8lYJIVB5g48lkpOxYgHQuFYbdYin7tKAdqYg9pdelaXqOkrsbE0CcDGyviDP7l42BgRiEfFoGDC7/7I2NONozcC02IR5AidQSUB6q7GEhp2gACP0EkbJVOuEnAIoKq2hdgzfHFKgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=BN15DxHz; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b7a967a990so50592411cf.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 07:58:17 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b5f7fe502dso24250711cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 08:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758553097; x=1759157897; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1758553255; x=1759158055; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eFVWZlAioBD8f+qAHkBJ/aidH/GZeFQvA+qClIUvAWI=;
-        b=ZukVEC2TBHAzXAq1pJ57A+FQBf77prwd0uZpcCm7CiP1eyDs3Vm3KRA1I9PFOqLsH2
-         2wPq27j3F3bQuCq5fUt9llx7sjeF0BMZUBWAY8ZQEmyf/liW3pqzv1IOYnT9I2ZBoEPX
-         pswDF/EeI1DbHR/d3UeGJ2PgS1punXOeZhNwsrLv47atcgf9gqpDOTzDmtehGDYkw2O6
-         20nmty0XcDB2YOvGe5MubykrS2Z4b+3MQBtcpKezm3apfn5w0CtFyp8/Pgnr3vWniMoD
-         3szXovJtaP+6UTxvOsxqJmuft80jXG7XKzWwC/W5XaiDnCL1Ah13iLj6JoyKmexoszIY
-         dDqQ==
+        bh=7f6Q5jc1vTYxMw5O1/g4HFLF7Ms2PoeIAA4LcbVkCRg=;
+        b=BN15DxHzbcgH3jO2lx3ZL1eCb8snynPgNtQx8dzHAO+PLekKUG+Q9KEOCCMnFiDQYh
+         N5mwqMCoE62l0XZqEqyjVLe3ngKNivgB84tVGyp4fxKVCEiTww47ujjzS2q6VxJWbVZJ
+         YrC0HYW87Gc+GIuUIh7xPkARpETh08/IWzeEse4gI+r+x4561Q8TcRsF4srRMnZz6F4F
+         PsBvAJCv1mhNof7LM0wRErHT10VivDHJRtkdioWQGQenI0/dZnuUqBU9G+6AQveQhhvN
+         7sM0g4g+36M2useltsF9iAE8CD5yA/1jojShv84pTeMnD6qW1cjt5pG1a2fzFUNnoePT
+         +b3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758553097; x=1759157897;
+        d=1e100.net; s=20230601; t=1758553255; x=1759158055;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eFVWZlAioBD8f+qAHkBJ/aidH/GZeFQvA+qClIUvAWI=;
-        b=lrtWTiMUqSEa6Y/5LDvP6FybFMjcBjfxHxCGgcga0s4xtWdzCmZfmosjanfaQ+3ek/
-         04Dy+d9GJKO+yzp9yqZ8Tbb9P5LQAj31bk7LzCYPZ+tTILYbAYwFRIxm4jN8GIJcWe3l
-         rJEnofujePbOFi5c6mwvNTb3GJUUdeEdrEqqvd6fP+n4HPXWtxosXzvF8EWZFpifE0wH
-         lmxMgdxOmfPmui/Q/8OMvqnWs+I07rQ0Y0l0gCbL6awxhYWoz/RIyIttMduFQt8kY6IK
-         u00kVbtTw9HAU1ovtaXDasYv3EIKUscmy+SAOC7AIdnO3IXSM+sBPuJ2k9TRIcURAfEo
-         7nhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLzs8lm72CW1+oBigwLa6x9EtbZ6CQ/NweQZEA3HvbH4ung6vGvqBMp46eQlPQX6SaZgC6/khTu5SRAz/h@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNleO8wn6UhiLoP2ZQzgVp2SfnMesD0xN6rIR6MnfXX5kktcN8
-	vHAWQ9v40PhJEEOsgIxjuV+/u8j8gKVKpTXkzyJ7XeQZQqDJa1IE709VD+UjOTuihx/hsexKOEi
-	RZ2lehJ9OLB9wvWl5a6OEN14CGtd434ubxQ8JFCIitA==
-X-Gm-Gg: ASbGncssMW8r42sSwIOXrYiLQzuDpVMgfnxOHwY8LV5h0qPM06jAtOTXhLWN/bKHAAM
-	gxyRhmG2HyBwwq4MdH9s611XJ7CGETSu0wmQdmpHix102x8mQ+rOD2rcRPTcmrUFmxHDNVmA7CO
-	54MZIL3RC4axYfM8WoNYrm8S/up0w8E3y/1HwpjxA2moawIB2g1uRf8G5WU3D4XeGDQipttDlLR
-	pMh
-X-Google-Smtp-Source: AGHT+IFB/CQ+Stx8wqmihXNU+u019GIyHx6IROg0+AJtIcKFDHMuxhnTyNrT+0blnUsLunK7sMerRGUSSQ0zeNBJCw8=
-X-Received: by 2002:a05:622a:1aa0:b0:4b5:d70a:2245 with SMTP id
- d75a77b69052e-4c073ab0d34mr174036401cf.77.1758553096737; Mon, 22 Sep 2025
- 07:58:16 -0700 (PDT)
+        bh=7f6Q5jc1vTYxMw5O1/g4HFLF7Ms2PoeIAA4LcbVkCRg=;
+        b=pA+pv3wXUG2LOb6iLx35pIbXMjysOmOFZpJPsT/tQv3GH3GXTUfEEd8A4ptptDjd0z
+         G4hYKTrYY3UqCcazUZjVr38Yx6yKJ1K0trxIegpd6CFP9qdSOSRlErLkOLqCMUIvOdOO
+         SWkpVH625ec9w2O3SIq8NsKgwawTgVLZP0g5D+NgJI5xoxBittbCpShEI+VvWju/7dM9
+         4POgTB+k6gPtYHD5PkB+w6RS1SQKX4nwDcObRooef7xwVIVZ9In67S9/lam8hR3gP7U/
+         TprfRSe1aGd+Xt/S6nmaq2T/ETabYUKTz0Sxx7GgHfdH/FHxSqgwLfrWgVS43E6EusSw
+         GnAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvkxCygYzC7WLroQx4q/M39WaU3HuPju79UbpneHtlCK9930xDRoAFR8sOLebrqPC4UPxUfHg6qgM7MGkE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUEmtM5CQD2KEQEWg/xSg1VOc3EVo9KtJA6lX8IDNB8ZEgOdiy
+	uQLjrFBHaj1DeIO8PUdc3yTU9a2K5CO2gsxdXKFqGNP1AdGOj3Fq4U2Wh27LYYTTyHgqkJN9VYc
+	CRvd4Si+h5CjweTR8jKGlREtPVXYFDwSxpHMlGK02Gg==
+X-Gm-Gg: ASbGncsks1eHM1saU6NLO+RdXLxKuW1GW1ssQCALECtgrCBzkZQ3PBWSIhg982ls83x
+	5uycjRfS64smQyIGNkQk5IxfPEgpF/NvJb9YXPxe28/fJRRSOFXGFz6CApwUisg8E74Skhig3SP
+	Edf72DffSHiKnaHtjplwR6BE5Yh6v27NVXDvjm4ntfnc3rSSESyGXNMtDL2d3JXET+oyFiDULh5
+	Slwg0MO/g65zEc=
+X-Google-Smtp-Source: AGHT+IFODvetLMEI4TglsorFs5/g17pXRnsZ1YySfP9UyB8TJrkLIBj/0y5AS2xiVpb0YAgRS6Chp+Ecl7/RH4sOKKQ=
+X-Received: by 2002:a05:622a:19a7:b0:4b5:781c:8831 with SMTP id
+ d75a77b69052e-4c07482541fmr145941741cf.71.1758553254248; Mon, 22 Sep 2025
+ 08:00:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,13 +76,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-9-pasha.tatashin@soleen.com> <20250814133009.GC802098@nvidia.com>
-In-Reply-To: <20250814133009.GC802098@nvidia.com>
+ <20250807014442.3829950-11-pasha.tatashin@soleen.com> <20250814133151.GD802098@nvidia.com>
+In-Reply-To: <20250814133151.GD802098@nvidia.com>
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 22 Sep 2025 10:57:39 -0400
-X-Gm-Features: AS18NWDigaezp8KdbFsh6YfrVI9s8S_j72gr5tDnCBaGxghJTTvfOltyGvHBbhQ
-Message-ID: <CA+CK2bDDo7xVxFd=-vkkXuUyStj9ShmURmGNPkMyJvi96KrV7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 08/30] kho: don't unpreserve memory during abort
+Date: Mon, 22 Sep 2025 11:00:17 -0400
+X-Gm-Features: AS18NWDWvCmwoZ0UUnsayOxFgu1ddJVOr-n1U4qHAgmRCSllAUpUXvWhJbPgaAE
+Message-ID: <CA+CK2bALMGy8eYpYdsQSJXsCWrusKA0UJfBfv1fbfW-=tYds7g@mail.gmail.com>
+Subject: Re: [PATCH v3 10/30] liveupdate: luo_core: luo_ioctl: Live Update Orchestrator
 To: Jason Gunthorpe <jgg@nvidia.com>
 Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
 	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
@@ -111,41 +111,31 @@ Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 9:30=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+On Thu, Aug 14, 2025 at 9:32=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
 ote:
 >
-> On Thu, Aug 07, 2025 at 01:44:14AM +0000, Pasha Tatashin wrote:
-> >  static int __kho_abort(void)
-> >  {
-> > -     int err =3D 0;
-> > -     unsigned long order;
-> > -     struct kho_mem_phys *physxa;
-> > -
-> > -     xa_for_each(&kho_out.track.orders, order, physxa) {
-> > -             struct kho_mem_phys_bits *bits;
-> > -             unsigned long phys;
-> > -
-> > -             xa_for_each(&physxa->phys_bits, phys, bits)
-> > -                     kfree(bits);
-> > -
-> > -             xa_destroy(&physxa->phys_bits);
-> > -             kfree(physxa);
-> > -     }
-> > -     xa_destroy(&kho_out.track.orders);
+> On Thu, Aug 07, 2025 at 01:44:16AM +0000, Pasha Tatashin wrote:
+> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > @@ -383,6 +383,8 @@ Code  Seq#    Include File                         =
+                    Comments
+> >  0xB8  01-02  uapi/misc/mrvl_cn10k_dpi.h                               =
+ Marvell CN10K DPI driver
+> >  0xB8  all    uapi/linux/mshv.h                                        =
+ Microsoft Hyper-V /dev/mshv driver
+> >                                                                        =
+ <mailto:linux-hyperv@vger.kernel.org>
+> > +0xBA  all    uapi/linux/liveupdate.h                                  =
+ Pasha Tatashin
+> > +                                                                      =
+ <mailto:pasha.tatashin@soleen.com>
 >
-> Now nothing ever cleans this up :\
+> Let's not be greedy ;) Just take 00-0F for the moment
 
-It is solved with stateless KHO. The current implementation is broken,
-dropping everything in abort should never happen for stuff that was
-independently preserved.
-
-> Are you sure the issue isn't in the caller that it shouldn't be
-> calling kho abort until all the other stuff is cleaned up first?
->
-> I feel like this is another case of absuing globals gives an unclear
-> lifecycle model.
-
-Yes. But, we have a fix for that.
+Done.
 
 Pasha
+
+>
+> Jason
 
