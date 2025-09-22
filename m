@@ -1,141 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-62413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35CDB91D5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 17:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C828AB91E30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 17:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 232333B5114
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 15:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7198B1676ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 15:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DCA2DC794;
-	Mon, 22 Sep 2025 15:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2272DFF1D;
+	Mon, 22 Sep 2025 15:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="BN15DxHz"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cDie2IVU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC082D6E7C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 15:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1011D2E091B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 15:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758553257; cv=none; b=FAvWBm+Jdgf6Rp8JVF/WY690rzvvGdLNA844t/Z4I7NSuCXPqLNmx9f3RLxOTP4p0+r735dbDJV4lwEnAjfOHaoyCGG95mDr0Hu/oR5J8gFxbG34gipJSTgXrbik7itEhIYZJHesYAlFLXw9v9ow62D8eCoQqGyXWLpd0yUGc8o=
+	t=1758554483; cv=none; b=BDKohD/jT9etP1mM3808e8d516viZ6AhNqJFMRd9GJGO7YvRzbOluIsi3MymBN/rvd9MMZ3o4U4XbBh4+sX+AyNzvmbL1JjqxCxZwoT507FBmtCS4ylifsGZpVC0E7aZ0pVnlk+hTR2MZEYsupSEZXu4gcP1kTxS6VVHtbUj9cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758553257; c=relaxed/simple;
-	bh=kh9XvYd3EybefvfxgcE5HYVIHxtLjRtv+CBZJd9A8sI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iVM1Hmit82T/8hm15JkhM4GVe8HOKzIlwn8lYJIVB5g48lkpOxYgHQuFYbdYin7tKAdqYg9pdelaXqOkrsbE0CcDGyviDP7l42BgRiEfFoGDC7/7I2NONozcC02IR5AidQSUB6q7GEhp2gACP0EkbJVOuEnAIoKq2hdgzfHFKgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=BN15DxHz; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b5f7fe502dso24250711cf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 08:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758553255; x=1759158055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7f6Q5jc1vTYxMw5O1/g4HFLF7Ms2PoeIAA4LcbVkCRg=;
-        b=BN15DxHzbcgH3jO2lx3ZL1eCb8snynPgNtQx8dzHAO+PLekKUG+Q9KEOCCMnFiDQYh
-         N5mwqMCoE62l0XZqEqyjVLe3ngKNivgB84tVGyp4fxKVCEiTww47ujjzS2q6VxJWbVZJ
-         YrC0HYW87Gc+GIuUIh7xPkARpETh08/IWzeEse4gI+r+x4561Q8TcRsF4srRMnZz6F4F
-         PsBvAJCv1mhNof7LM0wRErHT10VivDHJRtkdioWQGQenI0/dZnuUqBU9G+6AQveQhhvN
-         7sM0g4g+36M2useltsF9iAE8CD5yA/1jojShv84pTeMnD6qW1cjt5pG1a2fzFUNnoePT
-         +b3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758553255; x=1759158055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7f6Q5jc1vTYxMw5O1/g4HFLF7Ms2PoeIAA4LcbVkCRg=;
-        b=pA+pv3wXUG2LOb6iLx35pIbXMjysOmOFZpJPsT/tQv3GH3GXTUfEEd8A4ptptDjd0z
-         G4hYKTrYY3UqCcazUZjVr38Yx6yKJ1K0trxIegpd6CFP9qdSOSRlErLkOLqCMUIvOdOO
-         SWkpVH625ec9w2O3SIq8NsKgwawTgVLZP0g5D+NgJI5xoxBittbCpShEI+VvWju/7dM9
-         4POgTB+k6gPtYHD5PkB+w6RS1SQKX4nwDcObRooef7xwVIVZ9In67S9/lam8hR3gP7U/
-         TprfRSe1aGd+Xt/S6nmaq2T/ETabYUKTz0Sxx7GgHfdH/FHxSqgwLfrWgVS43E6EusSw
-         GnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvkxCygYzC7WLroQx4q/M39WaU3HuPju79UbpneHtlCK9930xDRoAFR8sOLebrqPC4UPxUfHg6qgM7MGkE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEmtM5CQD2KEQEWg/xSg1VOc3EVo9KtJA6lX8IDNB8ZEgOdiy
-	uQLjrFBHaj1DeIO8PUdc3yTU9a2K5CO2gsxdXKFqGNP1AdGOj3Fq4U2Wh27LYYTTyHgqkJN9VYc
-	CRvd4Si+h5CjweTR8jKGlREtPVXYFDwSxpHMlGK02Gg==
-X-Gm-Gg: ASbGncsks1eHM1saU6NLO+RdXLxKuW1GW1ssQCALECtgrCBzkZQ3PBWSIhg982ls83x
-	5uycjRfS64smQyIGNkQk5IxfPEgpF/NvJb9YXPxe28/fJRRSOFXGFz6CApwUisg8E74Skhig3SP
-	Edf72DffSHiKnaHtjplwR6BE5Yh6v27NVXDvjm4ntfnc3rSSESyGXNMtDL2d3JXET+oyFiDULh5
-	Slwg0MO/g65zEc=
-X-Google-Smtp-Source: AGHT+IFODvetLMEI4TglsorFs5/g17pXRnsZ1YySfP9UyB8TJrkLIBj/0y5AS2xiVpb0YAgRS6Chp+Ecl7/RH4sOKKQ=
-X-Received: by 2002:a05:622a:19a7:b0:4b5:781c:8831 with SMTP id
- d75a77b69052e-4c07482541fmr145941741cf.71.1758553254248; Mon, 22 Sep 2025
- 08:00:54 -0700 (PDT)
+	s=arc-20240116; t=1758554483; c=relaxed/simple;
+	bh=I0AUswnxQZMNWi9R80zf6vvWy6tCAhYx2psliAWUAZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d+9AMmnkQKT413PdP0GOC6HYjSFfdRshoPL22rXMT+DEKHfEMhubaw00YJFOx/sGD3pOIu89xYpoEaMjX4aeyBOXmoBf3kOYJsjfAXBNOUDpf+jlPKUWbjUL6Wbmf0z/FisCwsoqRKKuF9SM2G9DmMQf+ddfd83liFuaFxZXB8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=cDie2IVU; arc=none smtp.client-ip=66.163.186.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758554481; bh=4InEgJCpBgl3urehuyUAnpN3vmaPh6mhZWLVpIhzL0s=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=cDie2IVUyWtpxDIWmKwCb2sO7pDFSObBF7FzL+nmkuEnIOa2K7hGsgPcKqL6w2nHUpGZUdJISKQWeTYTq/IVLoNcBD1YOombE036yS87RsBZwEpIdLgw9c7ydWG+q9XatsmT7+k49XijwPvFYdkbg03A4RaC7tEfgpbAUGp2/R7Rzeku1cKBVz3zwHF87o5eIs49nAxSYPF7EE1PP0RwERstae94HbXNXfvaMFoK4QBJi5JVE6AeuQKm0gfIONOnnAS7ruunpGcB/02lKp7ddxaL9O0rzViLD7iC6ZQg+6/kB/GQXE1g4we6tzMDq7J7PDGPwOBR/w7qqIzqdx5+lg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758554481; bh=vMViFR5Dxz90iZKPOtpHfIVlgB5DXizH8PoPPFWEPrg=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=SKFreG6Z6CNBwulZlFChP7OltaP+RyS+cgm2cJEApUEkaPIFdOm79LQrgjwlgdqf3z3hDB3AX/2cOgqRJwd6G5HQz+wOqJxts6FqN9k1/GHgzZF/uHDqeWzKSMpn90LhQ0IKdJdoqw9Eyl8UgEFdA47yB0USeMYA+RdjcECq53d6ghPlM+xptJ2c3xv4y9J+ajteOO+t75CgXRpMc8neiTJ9j0upirxyu4F///g/Se/AFh10F7dMXtVDs/Wl+nFTzvtlVSMSzVP8utv0muLXV+FGyKxiFfeFr5yCbLmpG7z431CiL2CVgvL4OGajzzFduQqRGdUK8q+eps5neCtpaA==
+X-YMail-OSG: a0ShGM0VM1kS5TdAKyhzMZn1kR2BVScsxCyqUC96KXfqWNmQ7dmcDUkr2C6CD8o
+ F.nNwGtrFxyWKgcaKU7c7SzY5sLRNB.kOmj5_1Qm6ugm1qKEKbdGmcF7HD5CS6uaMhzE.a9se2Qm
+ F1aP8aIzBCHkxN5RNu9eVRSUSnetYV4eQU1XVm4hTaEV4BvxehZwefxFMd6x0JG.j4dEDQi93AD1
+ otuyzSX1.GPHdlyHguPAligClB4vPQXogx4pmPFUNZvIgnYUj3ZAP.eaGvtLAJBWwJZIid7F8Yl7
+ fS1HoQ7Jn3KoiQxx99h22rBrZa75BNGmyO0gktHMEZP6MXXhe53TSWat_vR8FAYXp_VD4R4oJuz0
+ DW.oPlaIk1ghcJ.KbdLt0LsHV4.48F61tmZEA3FvDg6dnsPKuRGJnMhywRU4K6.kIxo9YPvXQjHB
+ F0IEgZLPfOcJ8vj_r5t6ph71MsJq.FE_dJwSDuVWC2OfTIwu3UL950I4YXO0txdngQH3weqQJq6v
+ Gd0etDBRenLr.nP4ZVooL08C.kalSnyjilbjQ6hVCbAJFQ5ac5tNMA0yqzDKczYaots_sFff8rvv
+ U5vBtTDHFGj9pG1htEk98Bie3Sr1Rh3DfjslgmdEQKnh1_RrMAZSOAa.07QtYLdpDe2ASHqoxstq
+ qYaXJgEdH5PCYA35nG5kb60ezbJkPPwOgISysqsYtBczyL7aM0o_YWb87zjEpMrncOBftQRPUxzI
+ yY2X1SAcAlN74EUshXhNxN7bDz0fJ9pyw6Z2FsRjy8NP0ZZgh77q88u5.20P4ilTVK7xnx3zwYf4
+ Uzh2YFJ6lpxu_av3Ty_RSjjqPs_hrHqzS4E2lP1u8zR0J5nKWFZkiuKSJTrN8DJgClAmJqKAahC0
+ NDUnpko2yADSzuuEpuBlBsqp8tv6uhW8teFJt.gLBrwD3pm5T1jSk.0wbeWpfWdlekkEEZwV3NPS
+ xZ7VgGeoZC1jxaMek4SWmhHxcE34bMEKU.ZgnVDtv1vB2BQqLi_s6d77dWDiquPUaQAUCXKkMaQP
+ uhDhqmwm8pzBqj2r0bYaLSBcqFrAk51e5s4ikqTrwey9HRuUMMB8Eh2Y1HQR9LL_GE.p6iKBKxnX
+ nIXVe7cgbeMhuuSyEyhK5k_DGnSaPAqBjwhWbkQQ0EBc3l6dBpb4.Oz6IoO_8WCoLqoiiNyfdai.
+ bJqa6nOKQrPDM66mVqWCrlXJ6g1wtUV7f9_RR3ivDzll782rXlyXthQ7MUGtc1O4ztwW9feR0AFR
+ uC4vfcZi7p42Pwj2PiMqaKleTA3XAs8ovvKSBT_szRVp_5si5CjN8VyeemuMZTkLEg.rLNOiNPCG
+ ytsLPAaDfYvVFrPfcdyYVnIQ2F2svsSmcLS6d07AwqKDkUlZFTirlX5SPJb30aKtLsfZA2vXA1dX
+ byb6p2XV5WARbEoql4FkflHp67betBxxYfMoBuk5wsBX.R08duRAeIA7ywEmn2K_jb6_P91vCYMA
+ AbckozoJFCLrgV6CWtns8rSzy395xhacTQzNQERJ8u6dQJMrmDYQtaS9J7y33Fwf1vHuWoK09FpM
+ l8kJwIWULCnK5tjBv7iWW6LyslPyakaCL6mla8FXtIRDOQbAeGbSfW1aSxgcC89DZHcc2bM0x8e5
+ sBoSsKO.AGS65jFjJYffvA9clbSmTISPOj4t64jG0sZpeeCe8VIxXz7WWTqU0XxkmCWiYwIn6KV_
+ aUtD_EmSIWjW.J3jq2SVufM16hzqmUzhgU1aFQiACBwp.U2rG._edaOcsQrGJYKlS8tWmS4PL22D
+ jSQIOAzuGq548u_mkww0AMgNAVQvlG67kcZ6SNXiFjW.k5iAUl1TlfCPEdCqsi8GWQRdneOBomfT
+ ueajbwUt99M2nKlAjWvxQ_hy0RWGK3Ij4TWwNUYFNIsCXb0AsEOgYljPYO3dSJ0UbJwD6wzpABrG
+ yZP5OsJLBK6ojQjJFmlGDMCbP7c5vxhge0mlgEPh6ACFt6Pqodho68OWazPnWVRIDSME785Zll_g
+ CCQ9BuMOs.kMWTm4pGh28YO3BgmPcOl4hV.JK8XCiEgQY.4EQko2_W9u3bFfLa.Rdf_KvchZbSnR
+ YcjkZQL3Gjhl21R0v_mm0v7UmSWebJxuIgVF4JOQehB9F_WNlcDfoawNwAtelzKXFXTaFRp_C6wK
+ eszOxCUPqTPOQ_dI8MUlSoTR6Ga9y3m4NFIPKfqe_INBR5CwIx2F23bdEgas1vlI64GNmzsihuP2
+ lxI_3RbdGVHuDr69RVlRtRbANidYaUSGf53wBBeZlpqudBL7u_btetqsP2Keq_y6GEDrgR_icQFg
+ BgrZFVqwNWg479To-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 2c354591-3949-4080-84f2-5cc1785b2062
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 22 Sep 2025 15:21:21 +0000
+Received: by hermes--production-gq1-6f9f7cb74b-2n2jr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a83043d0b8f6a0e34f3bfd1c61ea603;
+          Mon, 22 Sep 2025 15:11:07 +0000 (UTC)
+Message-ID: <8403fd9a-6667-4202-bd5b-5e83172961b3@schaufler-ca.com>
+Date: Mon, 22 Sep 2025 08:11:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-11-pasha.tatashin@soleen.com> <20250814133151.GD802098@nvidia.com>
-In-Reply-To: <20250814133151.GD802098@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 22 Sep 2025 11:00:17 -0400
-X-Gm-Features: AS18NWDWvCmwoZ0UUnsayOxFgu1ddJVOr-n1U4qHAgmRCSllAUpUXvWhJbPgaAE
-Message-ID: <CA+CK2bALMGy8eYpYdsQSJXsCWrusKA0UJfBfv1fbfW-=tYds7g@mail.gmail.com>
-Subject: Re: [PATCH v3 10/30] liveupdate: luo_core: luo_ioctl: Live Update Orchestrator
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/39] convert smackfs
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
+ raven@themaw.net, miklos@szeredi.hu, a.hindborg@kernel.org,
+ linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+ kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
+ linux-usb@vger.kernel.org, paul@paul-moore.com,
+ linuxppc-dev@lists.ozlabs.org, borntraeger@linux.ibm.com,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250920074156.GK39973@ZenIV>
+ <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
+ <20250920074759.3564072-10-viro@zeniv.linux.org.uk>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250920074759.3564072-10-viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24425 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Aug 14, 2025 at 9:32=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
+On 9/20/2025 12:47 AM, Al Viro wrote:
+> Entirely static tree populated by simple_fill_super().  Can use
+> kill_anon_super() as-is.
 >
-> On Thu, Aug 07, 2025 at 01:44:16AM +0000, Pasha Tatashin wrote:
-> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> > @@ -383,6 +383,8 @@ Code  Seq#    Include File                         =
-                    Comments
-> >  0xB8  01-02  uapi/misc/mrvl_cn10k_dpi.h                               =
- Marvell CN10K DPI driver
-> >  0xB8  all    uapi/linux/mshv.h                                        =
- Microsoft Hyper-V /dev/mshv driver
-> >                                                                        =
- <mailto:linux-hyperv@vger.kernel.org>
-> > +0xBA  all    uapi/linux/liveupdate.h                                  =
- Pasha Tatashin
-> > +                                                                      =
- <mailto:pasha.tatashin@soleen.com>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+Looks fine to me.
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> ---
+>  security/smack/smackfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Let's not be greedy ;) Just take 00-0F for the moment
-
-Done.
-
-Pasha
-
->
-> Jason
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index b1e5e62f5cbd..e989ae3890c7 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -2960,7 +2960,7 @@ static int smk_init_fs_context(struct fs_context *fc)
+>  static struct file_system_type smk_fs_type = {
+>  	.name		= "smackfs",
+>  	.init_fs_context = smk_init_fs_context,
+> -	.kill_sb	= kill_litter_super,
+> +	.kill_sb	= kill_anon_super,
+>  };
+>  
+>  static struct vfsmount *smackfs_mount;
 
