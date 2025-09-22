@@ -1,94 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-62432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2A9B93634
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 23:37:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A31B93667
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 23:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877912E1A64
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 21:37:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC9344141B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 21:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08322FD1DA;
-	Mon, 22 Sep 2025 21:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907EC2F1FD3;
+	Mon, 22 Sep 2025 21:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fuoiYeuE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q8TbGcw8"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IytNp5BD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC17623C516;
-	Mon, 22 Sep 2025 21:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2AF25A34F;
+	Mon, 22 Sep 2025 21:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758577019; cv=none; b=Z/Y6Xaj5am+zJ5kY8arpjifRV2MiYAvTdo3ODKxjBIkzr2gUbz4dKzMZG9tEg7SaxXPag785x31LHzfDLweOxWL68apyCoYagZxFYcWAVTtsMdrkiOnYBWJuLHaqWno43sA3j3LRxOqUKdZncboxTVAWTIXpoxiWnE3bFoRkEwQ=
+	t=1758577848; cv=none; b=l5KcL9h5QsKEQcAVkhBXwZAZfQQR+2o5JiCzjR7ec9e7C7YNSDr4eGZwn2ORXzcuS9xn8GYHW6FiRI2M3i6lESnzVE57Y41XFpetvZ9eZG+qWbUhPVdofXMgvEvjIhrxRS3vVBzVrkKovKpclx79QO0yVBpoSWbAH4iOzeO2yVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758577019; c=relaxed/simple;
-	bh=KC96uCx5DSvhx389nDby1jHwBDrEr4sDKF+iChEG1mU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kjLQCFnLYXrBpkd+ML3JB71OpRKRljrDbo3kQubIdY9iEh85GLjfuzLLdOtPwWblgkcd99S1jU5fDFoZTvIFk02y7LB0KdqRHtEDctygqRhzok8bGTbNiT/DvYmTksXEFd6DEh57yGeOEUGavXzpLCtG+O+WZCHcMW236t7bmPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fuoiYeuE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q8TbGcw8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758577015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s8uS2q661HV+PtHIDEt86BNdyP2JqVrKYxRml3PY7Gk=;
-	b=fuoiYeuErmGIzXsfYRf8I/qnw40UkgsM2hQCOC4SU21p7PVW7vNemjFvJGanmOf8xcmxZU
-	WxwitZF5AIjD2lZGGlDJeVnoD8xHcqjWFH+m+rMcfjo6ysKfqT9j6YTJzasITKNxs5YSeq
-	OZ5L60Nzb5DNpelpA9xwRMfiXpIp0+EnD5qWuVkgRsdZDbsr8nRJMAosv7zAU8KPSodJnP
-	RiYNeuKSZsEvUVMG3pFXIfdyWEKTU2fAC/kOxlp89tFQjahRBqeJbauJ6LykXuVSZSvK9c
-	4jjOeK9RJ7fduRH8zEXNnQbUKwx8SmnSrX0+WA/99HGG/8jZNkAZGSBlXNGIWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758577015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s8uS2q661HV+PtHIDEt86BNdyP2JqVrKYxRml3PY7Gk=;
-	b=Q8TbGcw8AH0H5kK6wnfOpETCALVAyJklHv/VJtrz0zE9VZD4ujt5n/W4OWOqcPicfKZRYH
-	afJ4L3gq0SZYMzDw==
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, Zbigniew
- =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering
- <mzxreary@0pointer.de>, Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?K?=
- =?utf-8?Q?outn=C3=BD?=
- <mkoutny@suse.com>, Jakub Kicinski <kuba@kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 2/3] ns: simplify ns_common_init() further
-In-Reply-To: <20250922-work-namespace-ns_common-fixes-v1-2-3c26aeb30831@kernel.org>
-References: <20250922-work-namespace-ns_common-fixes-v1-0-3c26aeb30831@kernel.org>
- <20250922-work-namespace-ns_common-fixes-v1-2-3c26aeb30831@kernel.org>
-Date: Mon, 22 Sep 2025 23:36:54 +0200
-Message-ID: <87h5wu41ah.ffs@tglx>
+	s=arc-20240116; t=1758577848; c=relaxed/simple;
+	bh=Wnwabh09vJY+JBDnN56wOIT6Td8s6X5xjEdl0uoI3g4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=PmVLAhhm4eCPiLB8CI+AVwSXCXA79Z4FdfmzzuQfYGZ8OTFj3mVlaRXMWw8vA+FC1Ji93YPGZYohwT4Wxy0fkRSkXOvrRPZOV5rCc6uTDCogHCXAvhuiHs84/+5xBWa8QhjTOVlpR9q2nsyz+73Qc2CQweck9DPSPRn00jVNikE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IytNp5BD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B08C4CEF0;
+	Mon, 22 Sep 2025 21:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758577847;
+	bh=Wnwabh09vJY+JBDnN56wOIT6Td8s6X5xjEdl0uoI3g4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IytNp5BDrWaycWN995gdHM+Tb958Qi+N5X2CNhHgCLevtaw5gbSIBX3GexKUYA+D/
+	 Qw+/oyhmq6ulvmZRA6OUiwRDRjPqyUUr/L0n6r1gvYlXSQXjCtJ53NRZRXltlr5+QG
+	 tjljsy9C4funtVRrgEA1Mm76FqKpJuJ/jkJJ8yMQ=
+Date: Mon, 22 Sep 2025 14:50:45 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Julian Sun
+ <sunjunchao@bytedance.com>, cgroups@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, lance.yang@linux.dev,
+ mhiramat@kernel.org, agruenba@redhat.com, hannes@cmpxchg.org,
+ mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev
+Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
+Message-Id: <20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
+In-Reply-To: <aNGQoPFTH2_xrd9L@infradead.org>
+References: <20250922094146.708272-1-sunjunchao@bytedance.com>
+	<20250922132718.GB49638@noisy.programming.kicks-ass.net>
+	<aNGQoPFTH2_xrd9L@infradead.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22 2025 at 14:42, Christian Brauner wrote:
-> Simply derive the ns operations from the namespace type.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/namespace.c            |  4 ++--
->  include/linux/ns_common.h | 30 ++++++++++++++++++++++++++----
->  ipc/namespace.c           |  2 +-
->  kernel/cgroup/namespace.c |  2 +-
->  kernel/pid_namespace.c    |  2 +-
->  kernel/time/namespace.c   |  2 +-
+On Mon, 22 Sep 2025 11:08:32 -0700 Christoph Hellwig <hch@infradead.org> wrote:
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+> On Mon, Sep 22, 2025 at 03:27:18PM +0200, Peter Zijlstra wrote:
+> > > Julian Sun (3):
+> > >   sched: Introduce a new flag PF_DONT_HUNG.
+> > >   writeback: Introduce wb_wait_for_completion_no_hung().
+> > >   memcg: Don't trigger hung task when memcg is releasing.
+> > 
+> > This is all quite terrible. I'm not at all sure why a task that is
+> > genuinely not making progress and isn't killable should not be reported.
+> 
+> The hung device detector is way to aggressive for very slow I/O.
+> See blk_wait_io, which has been around for a long time to work
+> around just that.  Given that this series targets writeback I suspect
+> it is about an overloaded device as well.
+
+Yup, it's writeback - the bug report is in
+https://lkml.kernel.org/r/20250917212959.355656-1-sunjunchao@bytedance.com
+
+Memory is big and storage is slow, there's nothing wrong if a task
+which is designed to wait for writeback waits for a long time.
+
+Of course, there's something wrong if some other task which isn't
+designed to wait for writeback gets stuck waiting for the task which
+*is* designed to wait for writeback, but we'll still warn about that.
+
+
+Regarding an implementation, I'm wondering if we can put a flag in
+`struct completion' telling the hung task detector that this one is
+expected to wait for long periods sometimes.  Probably messy and it
+only works for completions (not semaphores, mutexes, etc).  Just
+putting it out there ;)
+
 
