@@ -1,162 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-62388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B0FB90730
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 13:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00077B90754
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 13:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 686B37A7BC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 11:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF94420048
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Sep 2025 11:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD2F305059;
-	Mon, 22 Sep 2025 11:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257363064A0;
+	Mon, 22 Sep 2025 11:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nde1+5mw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuVX1AU9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8530C27AC2E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 11:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F100305962
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 11:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541260; cv=none; b=f+5ePRheb1b1mF1qzbt+gyynCPwE3yhPQOP6zFjGpXU/132pCyEszUB2XikznANFXlA0pbqpQhYx42BXsJCRAsk7tT59uTZXcdVvmCWB7ppJZ/41AkTC7gZ7pf4D4yL0Z0E9YGQfm4YwRNzwGOfWxduN8yHWNOE9skW6Tl0OrdY=
+	t=1758541315; cv=none; b=sjzVDdobNiA0HY0z45s7ZqxdAcQ80NfYWpJwRjnL6xAopTRmG6Ry097IapampVDn7Py2lP3wIRxsMACdff5/HKq2aI1pDZBW01DukmBnMAB/AygL1VVzSOheNtTM0Dr/eNF+eNCBVtt/KmPNL6FGmRK5uFabmj0Rf5AbiEB6NiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541260; c=relaxed/simple;
-	bh=aPaErGgmbXGqvACGGtV+sP5/Bp1RbgbPMv/32zN9vRQ=;
+	s=arc-20240116; t=1758541315; c=relaxed/simple;
+	bh=C01t2mpoYeYjnOIRq0tSlGySjgXDSbHsQ5Ik9kqEi38=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jMUOjv2UKx9N+Ozkk4BwKc5p7wORzwwM+dDmvd+GQzZDL39dRF6648tI+Fma43k971W0nFZkt0Dft7+seR4Gi7/Lcw9OPuzEp3UOrS+PYnHwqo13Lry5xmcnpGwvNLwPg3VxCx5Oy98gJYZ0S7u07yYIs5HnfX6+riZvdBbylFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nde1+5mw; arc=none smtp.client-ip=209.85.218.42
+	 To:Cc:Content-Type; b=Wel1yPdCvb8b9xyERR5AhMVjoW+Veh/ZBh9K7gCnChCusuGgXr6q2Ux2ne8mRDpUs7e0T+0c8S2hAnkY/Qs6f+0FVd+RHUxUByxW+URWhkranf0mRJ+8E5rEEhIaU3G9+6gURgXgQ16y04yNVFUXKO1DkmWbnt18yl6RlTdOOpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WuVX1AU9; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ae31caso744648866b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:40:58 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so3109213a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 04:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758541257; x=1759146057; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758541312; x=1759146112; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=04z74R98bM0sfCQNq5YpIGFCni5y/NEJwPjehOYmg60=;
-        b=nde1+5mwA9i16f8YMaGTfUf+63P3a0mKZJua8cfOlUxscN2meoJY/GNU1yVjdWfbcC
-         nbsXm+eEIh2jC70c50Lph1jI0q1AQttD6XvMGZR3RrcvsVk4sMzLCqwauomoJNpHN58m
-         wWhbi9CxbaQV2kmd+AK48dmDhaXvCW4FGsIDUUg33cIaQ6k1LeLc3Z5sPZMpFshJ1f68
-         9VmE4hEpEr0tmZnnY5SbSOuIRGh2Ior6rrG61Gaa92lXkTW6DXcrOVDbAAhfhFZJt8CP
-         zFXnOtaDdVEHjSOGpdi9JaQt5n9DM1aPMIQN0wM5K5GwZbuszoAyYs4QjRI5ByNjw2Yn
-         Hd1w==
+        bh=4oxOygCk0VGPCeiSDXfT7In4HSAzQPM3WJ9lPT+HFHo=;
+        b=WuVX1AU9K8db6Rp3W95D7qD/Qj887l0Vfl7kugqoXU5qrx62hqt6sQVJNNaGHcD7tl
+         G4tNt++tceTN5OR3bVD6fOkXDI/Xg9xZ8XI/5g+zUhal3nQeyd7TMJmpY9Q8vqVM5aC9
+         j6QeijKVD4uCs2RdfZuPpFHC6AZoZYesQaU7Asln/rtO5VLKN+jXxPOHgikTwL0DBWbg
+         oiMhTfxl9saiBGZdouYsyAfqsOsg811tYhsNHVsWLpqUVmkFOEYYlSt+1tCrSqmxjxSv
+         Df51QlDaTgY+xmDNHptsjzNcqLOVCa/or/n2HFBCCmqeYGO9svxem1R40yP1S3T5e3rE
+         tMGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758541257; x=1759146057;
+        d=1e100.net; s=20230601; t=1758541312; x=1759146112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=04z74R98bM0sfCQNq5YpIGFCni5y/NEJwPjehOYmg60=;
-        b=u/NTTTw73s6gpgnqQhkBUHnQC786H0AhqG9iF4LfUE8aWHUqsAL+O+NNaicvA8lWcK
-         d/jH/macNRqtSz8xc1f8qfXozyw+srupLVV+ZeD8v5k99BvnYKMcZz1W4caqPVntleYn
-         7tuc651Mqqvs0oIMRVMEZZ7QFHfq8vovVLE/VFKAPDTOFP+ablxXJqD/1uMIzQWZqzLd
-         GTmsWlQ8VEM3RqnxtVEMBHkRBz/B7+zuy+woP893pZb3Qr6JpI4EYfKrttHE1yTVHkH7
-         0XXV7OQMClFxQZ8BVJHz03WgMBE0QJbaBXV94CC8bb2urc7YRtJ6GKWXHuuE5Q0Tcp9M
-         G0mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9GJiHc3ZAbPRYUeQK0J46ZnNKnROBqB5uAiG02asjSKZ37cyx0K4vTk1po71Yzq5+UfvhFtPWcBNumSIT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjFHCqFVuK1Gf0g7N7oyZADIHVZvVSXHgX4frBHFrqnJ/Er/v/
-	NnlbbLPaKvrVaRsQNezBg287jgIVuWI1tAvml5eR1Vyg9ic9J/7oduV40ntHv311ISfivGnU4Ma
-	GcHhJ0Gk6I64rLYgTLrAMIoTVQu+89Jg=
-X-Gm-Gg: ASbGncsEnQq8tyAXITtj5peXaqDRIiH/sI8ID60g98mgShDODiOfGPXQcqQN4Lid00x
-	iW6z0rnsOE/sHBf65PpIeoHbIKUDiB08pLRKjVgFXiJ2weFJwReeA2H9fyfEvSrwsZSvtXMoyxT
-	oyxGrSN/ObBTGbcqNDalyJ96zTvVF53SxhXnrwLpfD+v94aBVwPBH5rY6EtS2/FYBcc++Q/X5oN
-	aeEhxqj3unJ84znx3sWEuYzcQtTYaQDr8jiBw==
-X-Google-Smtp-Source: AGHT+IEoKYUb2hbctltECTBx23lnPTYILMgFVvmf1VmhRMku/GTeHmhyoKuTLZiEJXJZ8X/9p7bnSfuwpO8pk23TruE=
-X-Received: by 2002:a17:907:84d:b0:b04:2452:e267 with SMTP id
- a640c23a62f3a-b24f4ebfebemr1319468866b.56.1758541256657; Mon, 22 Sep 2025
- 04:40:56 -0700 (PDT)
+        bh=4oxOygCk0VGPCeiSDXfT7In4HSAzQPM3WJ9lPT+HFHo=;
+        b=F0vrnuRdwJWOV7LUsLxZGq1uslN3YEIFP96YJBU2HRkkwBe3p9HXk3NutbQz+Lpg1h
+         4oWxVJbxpIpRCn1u/jSvtBw+8hMzrkD7pluI43f24cAoeNdodvZvfNZE/um5KixRGG3v
+         4QG74WrT9mxQEmr3Cib0q61mKpbQGTDsRjWwjOt+Wd3mhd8PoaVtfoDe9lkcYeGlR1bj
+         wc76D7QbKeySD9DPJYN7eDQry84y4lezfXGqOvGMChlfQKqeLDOVNA+0XcFylcpkyugy
+         18LlGWLxAVlj0FUn3jd//8FrNIRbpZrzZNF3zHPd0a2qmRudefFdeXoWT6MRZ1CTV3/F
+         hCYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWF1+4dmLpAe16QoQo7P5e7gKFaoqk05MQ+TVez6TZdnIuOTPbIME3Kp8Qfh724ZXT9yTrhXES2muFZ/KgL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+nl4sLlLc4ebvivSWQ57IfWTXLf1wLQjohkPAUJCNVFP77P8D
+	7hin+K8dPhOPGlNYH9zhYsM2tPhzhEDekFFZGMURtIh3ruLuYk/3J6NzZgDSdONhzm5/q1Y/Nto
+	QiwDHjaSUk8BjE77ylbImWuZstP3XxG4=
+X-Gm-Gg: ASbGncuoFmaSrFURRalNDRIiVl8+2rq7OhlT+7s9pK9BDtLzXIULa1cKK8PyEn4Bk1U
+	SiVOLG4nZPbE+FUxchHHBknSd0niHZpx7A30HLUV+f4etU3olyyCjRoy8Z9uQU9A1e0LL6vXlDE
+	lqLfHCWQjRbemamy4JD4hSSTuRcA7wjgMAO2qIB3Xc97eMVdeakMst8W6g5hs7zjI5Iw92tBFt2
+	TSTap0FfVffaN+9GS/5hyAvGB+T/azidYeZTQ==
+X-Google-Smtp-Source: AGHT+IFkrvZLkom9QBciHs6IeDWT1d22c0w/ez/+uji1phZB9oJtSgu7MJFyeNNpyTK/5sCVjxhsAiXVpi0xe+B+ZLc=
+X-Received: by 2002:a05:6402:5355:20b0:62f:6860:2d86 with SMTP id
+ 4fb4d7f45d1cf-62fc08f2e01mr9371365a12.12.1758541311797; Mon, 22 Sep 2025
+ 04:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919154905.2592318-1-mjguzik@gmail.com> <73885a08-f255-4638-8a53-f136537f4b4c@gmail.com>
- <CAGudoHHnhej-jxkSBG5im+QXh5GZfp1KsO40EV=PPDxuGbco8Q@mail.gmail.com> <ui5ek5me3j56y5iw3lyckwmf7lag4du5w2axfomy73wwijnf4n@rudaeiphf5oi>
-In-Reply-To: <ui5ek5me3j56y5iw3lyckwmf7lag4du5w2axfomy73wwijnf4n@rudaeiphf5oi>
+References: <20250919154905.2592318-1-mjguzik@gmail.com> <20250919154905.2592318-4-mjguzik@gmail.com>
+ <ayjwe2moaswosrvcv6mhd2wztwvexfjgy6dfnxxegnhppca7ac@75h6kmoj32e6>
+In-Reply-To: <ayjwe2moaswosrvcv6mhd2wztwvexfjgy6dfnxxegnhppca7ac@75h6kmoj32e6>
 From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 22 Sep 2025 13:40:43 +0200
-X-Gm-Features: AS18NWBmMTL4ZSFEbiLsT0UBRmQh6SVMkgEq3_7KbEv4DQ9iOTcUeAUpn_jz6r0
-Message-ID: <CAGudoHG6HgXThjeaeDWfngiNCWdikczgN_3Z_T8sKJt4CaR-ow@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] hide ->i_state behind accessors
+Date: Mon, 22 Sep 2025 13:41:37 +0200
+X-Gm-Features: AS18NWDd4DNKu221LBJSwOQahHDo9s8BoIUAMr0lDu2p-ZCeBCjMIxMDm9gSAD0
+Message-ID: <CAGudoHF6Q4xh=fiRwJ6+qiQSxovj3BeSdZYANAOQ_NnZg3bOXA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] Manual conversion of ->i_state uses
 To: Jan Kara <jack@suse.cz>
-Cc: Russell Haley <yumpusamongus@gmail.com>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
+	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
 	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 1:36=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Mon, Sep 22, 2025 at 1:31=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> On Sat 20-09-25 07:47:46, Mateusz Guzik wrote:
-> > On Sat, Sep 20, 2025 at 6:31=E2=80=AFAM Russell Haley <yumpusamongus@gm=
-ail.com> wrote:
-> > >
-> > > On 9/19/25 10:49 AM, Mateusz Guzik wrote:
-> > > > This is generated against:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/=
-?h=3Dvfs-6.18.inode.refcount.preliminaries
-> > > >
-> > > > First commit message quoted verbatim with rationable + API:
-> > > >
-> > > > [quote]
-> > > > Open-coded accesses prevent asserting they are done correctly. One
-> > > > obvious aspect is locking, but significantly more can checked. For
-> > > > example it can be detected when the code is clearing flags which ar=
-e
-> > > > already missing, or is setting flags when it is illegal (e.g., I_FR=
-EEING
-> > > > when ->i_count > 0).
-> > > >
-> > > > Given the late stage of the release cycle this patchset only aims t=
-o
-> > > > hide access, it does not provide any of the checks.
-> > > >
-> > > > Consumers can be trivially converted. Suppose flags I_A and I_B are=
- to
-> > > > be handled, then:
-> > > >
-> > > > state =3D inode->i_state        =3D> state =3D inode_state_read(ino=
-de)
-> > > > inode->i_state |=3D (I_A | I_B)         =3D> inode_state_add(inode,=
- I_A | I_B)
-> > > > inode->i_state &=3D ~(I_A | I_B)        =3D> inode_state_del(inode,=
- I_A | I_B)
-> > > > inode->i_state =3D I_A | I_B    =3D> inode_state_set(inode, I_A | I=
-_B)
-> > > > [/quote]
-> > >
-> > > Drive-by bikeshedding: s/set/replace/g
-> > >
-> > > "replace" removes ambiguity with the concept of setting a bit ( |=3D =
-). An
-> > > alternative would be "set_only".
-> > >
+> On Fri 19-09-25 17:49:03, Mateusz Guzik wrote:
+> > Takes care of spots not converted by coccinelle.
 > >
-> > I agree _set may be ambiguous here. I was considering something like
-> > _assign or _set_value instead.
+> > Nothing to look at with one exception: smp_store_release and
+> > smp_load_acquire pair replaced with a manual store/load +
+> > smb_wmb()/smp_rmb(), see I_WB_SWITCH.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 >
-> I agree _assign might be a better option. In fact my favorite variant wou=
-ld
-> be:
+> ...
 >
-> inode_state_set() - setting bit in state
-> inode_state_clear() - clearing bit in state
-> inode_state_assign() - assigning value to state
+> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> > index 0e9e96f10dd4..745df148baaa 100644
+> > --- a/fs/fs-writeback.c
+> > +++ b/fs/fs-writeback.c
+> > @@ -478,8 +478,8 @@ static bool inode_do_switch_wbs(struct inode *inode=
+,
+> >        * Paired with load_acquire in unlocked_inode_to_wb_begin() and
+> >        * ensures that the new wb is visible if they see !I_WB_SWITCH.
+> >        */
+> > -     smp_store_release(&inode->i_state,
+> > -                       inode_state_read(inode) & ~I_WB_SWITCH);
+> > +     smp_wmb();
+> > +     inode_state_del(inode, I_WB_SWITCH);
+> >
+> >       xa_unlock_irq(&mapping->i_pages);
+> >       spin_unlock(&inode->i_lock);
 >
-> But if you just rename inode_state_set() to inode_state_assign() that wou=
-ld
-> be already good.
+> Comments need updating here and in backing-dev.h...
+>
 
-well renaming is just a matter of sed, so rolling with 3 or 1 does not
-make material difference
-that said, the set/clear/assign trio sgtm, i should have proposed it
-after assign :P
+turns out func name in the comment is also outdated
+
+> > diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+> > index e721148c95d0..720e5f8ad782 100644
+> > --- a/include/linux/backing-dev.h
+> > +++ b/include/linux/backing-dev.h
+> > @@ -292,7 +292,8 @@ unlocked_inode_to_wb_begin(struct inode *inode, str=
+uct wb_lock_cookie *cookie)
+> >        * Paired with store_release in inode_switch_wbs_work_fn() and
+> >        * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+> >        */
+> > -     cookie->locked =3D smp_load_acquire(&inode->i_state) & I_WB_SWITC=
+H;
+> > +     cookie->locked =3D inode_state_read(inode) & I_WB_SWITCH;
+> > +     smp_rmb();
+> >
+> >       if (unlikely(cookie->locked))
+> >               xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags=
+);
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
