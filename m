@@ -1,121 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-62512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBA4B9678C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 17:00:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A826B96A08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 17:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9E33A3CB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 14:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7126B19C053F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 15:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A441F5846;
-	Tue, 23 Sep 2025 14:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89CB242D90;
+	Tue, 23 Sep 2025 15:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="d2yb99Pd"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="XFBsSAOS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B75C1917FB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 14:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CE21B4248
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 15:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639464; cv=none; b=osr6JVAJ7/g84SZa04LJO758xOvyfQX5s9zMRzXd+JYTDceGjyUIWY76cTKuTYNmvF2LFef2wfy8ue8MV0wfC/Udi22N43+6kwTjgvOhT6TTEHvtLwXLAaRotqRmVK+l2Zg7ifzrEjddizfINeOTTaCF7M3HPoH132tdCm9zdsc=
+	t=1758641981; cv=none; b=RCrEUTiajAE+fls/XEOKmeChtLx7J+3kFbjV6pVqMbmPV5hjJfJuwFpefotrfAUXOLxmEEHXYz44lwe8MRzCixwSjkTPjHIHHOptCmON3QZI4g6CEVHvVTfZE9JKGNgNvfDuepUJR6d3kjEPgDOBJUy/+qC+EgnTMZtaTdO8OIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639464; c=relaxed/simple;
-	bh=ado0gGMNGkne3XnnLVKZD75EJqaXJcCVpV/965Q2kqg=;
+	s=arc-20240116; t=1758641981; c=relaxed/simple;
+	bh=leaYlnpusCp0sviLQ30QGe0J2gUEvF7RJCcVhGVbZ14=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lORBFhgA5m0gOb+c7RUpw/Du08sUqc1xCjReDm5XnTJ7FnBqRAhObIQCNRRqHfg1gWskU0Y+ZlFV1NKtX3DTGmIHZ9zzdVc+aH7JAzlAJKPiYq7FoBoFjq5wuaqA9q/0m1UsLN15axn6jMTE7/LMhLDazd9EasCo1mwMVQyronI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=d2yb99Pd; arc=none smtp.client-ip=209.85.160.171
+	 To:Cc:Content-Type; b=LjhhlVyQgAIoDWk/voNi6RZdG3iA56mt3DkP031DpJXwXqdg2S95CiNAX6dBL3rUtlmFM3ZD92YYOCDGmzTshMkT9ybmdRMej9C1oLl/TsAJX79IYw7P36+7lkhKwDb0Y5UlNi5zH8VmPUWBilQ7OJdx/H9iRCC8LT7yLUz3NVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=XFBsSAOS; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4d46af01e95so6437531cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 07:57:42 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b5eee40cc0so56142521cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 08:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758639462; x=1759244262; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1758641979; x=1759246779; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/1Ra3b4AxJkZwWUJJmBUWhCQcrAccc9TuqzrD5b54U=;
-        b=d2yb99PdNM8yv2FIKwXObjYYTO4DGwtSceXqyFrb0+GKhSqFw/WomWP1DOmhyGMGg2
-         VU8KPfMQI5gXsMfpcZ7sBL++FPFGe7KLlTrRQW73u7iL8+LVSqM1MxPM5skv30/wORM8
-         TiqBKw16XLF/tdQn+HxWdRnIXJqOMsNNMYnjs=
+        bh=DZbdjr9165OSR3oEX8S38orQ1XZpFhmOJaG/L+oMydw=;
+        b=XFBsSAOSkNNBCgIHM/jKfQNGj4uSj9EQlt0cFgJHkFOyOKC7kmCDBKNJMj2KeN6n5y
+         v0HP1/T1smZv3jtMbwDhmrogOyQV4/yerCIowlzcsLDu251YPlVtiAaqBbOETPWQ8Mbt
+         Ua9/zrGmL9NHQRBwrwVHf9qE05S6H3Sh2DFCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758639462; x=1759244262;
+        d=1e100.net; s=20230601; t=1758641979; x=1759246779;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=S/1Ra3b4AxJkZwWUJJmBUWhCQcrAccc9TuqzrD5b54U=;
-        b=J4gbcDwLsdySMfwYgtHmdIIAx2cpTkVB8TbKJWsNJ7J1uzZcDq4kBg5kVP+AAghdx5
-         SWTQx1S7EYcZhUjfTcAn5w3fhnASoDfu9Vz3VSqUjHKkKCQLLGG0mcFv9X+iu0rgvM7Z
-         0AdaXJ7ymUoEgxDOOrDF11lI+bk5xI9lplV9zT6igcvNDTVcyxAOnDjkA44u9gBFhjmJ
-         q670zAmN70W68gFlGUkCnbsI8XHvyvoID2tEWEa80i57DX8O2XPkcmRtLdGqi++yzHs7
-         owy8l1B1F1VXGDWnlYxdon1ye9aohF33srfL7q+iBlhsCJcvMXoTdgA6je00iz8Oc5yy
-         Z9DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc64ry6mKtgN9+F1gmajj6HMWX/6u2zeZ9A9QS9eRGnti9hKSWNARh8GT5GlgXN0E7CuGc9mB0n94p2GPj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVdYt+S/HtYvueJmaldo3f42CsHTAM/q+Br9U0hEiCFw5MnPSi
-	MqgOVBr+3+U2r2icBDJdccmV9hkQGMTkXRSPs5qMisN7lYq4cUR4kJu+Vxdc52PDpXY2DylNwV7
-	EAE8eFHKbgKilSvBI6RhEchDZuSIQPfd1JzjEAq7pBQ==
-X-Gm-Gg: ASbGncslJfayY1sNLMdn0zLfedpi/p+eQYftIzvZ5hVmdvkiMKHMbtWl0Daq38KAjvr
-	ITE7uygck/4loJAqwxkq6ikU8QHvX0EZVZG/BcOqX+uroh3DQ4fgVh8XeJC1G1fxxzRHEdQY0j3
-	Ywc6/mioSQRGhT84gp6v0VQDVjF1QgHx4AKlpd/NF2iQ19YWkWzDT7fce8QjmYv2+MOdob2CVGN
-	RYOKiwsEQyw0sUHEdCQ/pMgHtkMbYCIf/d1X1E=
-X-Google-Smtp-Source: AGHT+IH0eM92WwCDRahzcw/O4eqi/MmAUuqF6p3lIqnlhgVoCsqGzUctXBm/mnNB75hLW/j3SDqa2DEtFDBpHTUWSYY=
-X-Received: by 2002:a05:622a:2b08:b0:4d1:9467:dbb7 with SMTP id
- d75a77b69052e-4d36fc02d24mr38698411cf.38.1758639461660; Tue, 23 Sep 2025
- 07:57:41 -0700 (PDT)
+        bh=DZbdjr9165OSR3oEX8S38orQ1XZpFhmOJaG/L+oMydw=;
+        b=fogYUxHh/4KtoxM72CyV3hzNrpYgaNv4K1YE/w54y0Q1i/cY8hH9RxF01NuYE21N+d
+         AJPL2LaWSyj7kzUac4k0zRqtbd2AVQ5AIkcI1Ny72JES40i30jkbFzQy2m10I3Z71FZR
+         ja4cOTWewBydbVbdZVcdWjLTOUhGRzhZLo25/lg21NrFxbEgA/28VltTzElk7RFlabHL
+         z93z4pJT6pfjZ4NwMrs+cN4cGWthgJar6KM8naBdYktvfvXOnNA5kw/hTEbq9f1wtUP7
+         rW6ELBgdgRvZn0erftQwK71RAbek2+JuTz6mNqmjdwryBCxeul/hUQlKPNDBr0yWcnwJ
+         UICA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjYbJuQEkC/GdRzL75uMbEB8ZRQ0Xw+w9OF/SAp1lTrY2jH6SIGZYV8egWS4JHZiJvrwDhPdFJ5ItMvZ+6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP+R2QVPDYwMTvppp5T2yGmdvkxvFwgVhLymD/kJvGaGzB2LTT
+	P/8eU4tBuZ/e1MlAyOlKaPdYaEshg4azn2tRyOYk2Jp5RDesGA+wC1xBnl9aOBE1+28xaS7Fk3A
+	QDlnpVqMi87VqlOsFq8Y8DjE99w+pWSzktBTqgGjGpg==
+X-Gm-Gg: ASbGncvcCFeofh8AudJS1g8OiRL5WC1h4PplqZZJVZFmPUg4s/nYG7FSnWS/lCp8ehJ
+	KRuvtQ5VLgXC3NHDXw7WyXP4BdhPd/EKzbXY9qJCQBjhdP0swFDmfJ4HC1vDboKk3y+wVCbJuHD
+	SnKnzlsVzO9xuZjWYlx4yMoyfp5XITdb7Is5U/3CJFXAYbqus1VnWqeFUAyZ0KC5SmYeUmIsI2o
+	eodLXqnwktk8ckqD9lmurLvvQEHbxYUv/Tkx0AX6CW8Q6/5G+wnN2QtfD2RCXGVpaNxE5yLMwYz
+	UrIOuvU=
+X-Google-Smtp-Source: AGHT+IGspaeUy0TVQz+LKc1fihw58Q7yPvQbyT2d42SL63rUJcZogQsEDyrgJGDuBFJvNYzyLCvEvUn0X00pmc3DhAA=
+X-Received: by 2002:a05:622a:1b13:b0:4ba:c079:b0d8 with SMTP id
+ d75a77b69052e-4d367081860mr29707731cf.17.1758641978539; Tue, 23 Sep 2025
+ 08:39:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
- <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
- <20250918165227.GX8117@frogsfrogsfrogs> <CAJfpegt6YzTSKBWSO8Va6bvf2-BA_9+Yo8g-X=fncZfZEbBZWw@mail.gmail.com>
- <20250919175011.GG8117@frogsfrogsfrogs>
-In-Reply-To: <20250919175011.GG8117@frogsfrogsfrogs>
+References: <20250923002353.2961514-1-joannelkoong@gmail.com> <20250923002353.2961514-14-joannelkoong@gmail.com>
+In-Reply-To: <20250923002353.2961514-14-joannelkoong@gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 23 Sep 2025 16:57:30 +0200
-X-Gm-Features: AS18NWCQpKJJBOwPqVorO2NGt-XmlZBAK8wWQiyLzvCGZrc4s0l4d18vx3t_7WU
-Message-ID: <CAJfpegu3+rDDxEtre-5cFc2n=eQOYbO8sTi1+7UyTYhhyJJ4Zw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
- local fs behaviors
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
-	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev
+Date: Tue, 23 Sep 2025 17:39:13 +0200
+X-Gm-Features: AS18NWD8_t8WUM8mJa_Wrlt8XR1hgYkR6Ub6lG20YNejgtDUqRhxsnnPFLDpPVI
+Message-ID: <CAJfpegsBRg6hozmZ1-kfYaOTjn3HYcYMJrGVE_z-gtqXWbT_=w@mail.gmail.com>
+Subject: Re: [PATCH v4 13/15] fuse: use iomap for read_folio
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org, 
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-doc@vger.kernel.org, hsiangkao@linux.alibaba.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 19 Sept 2025 at 19:50, Darrick J. Wong <djwong@kernel.org> wrote:
+On Tue, 23 Sept 2025 at 02:34, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-> /**
->  * fuse_attr flags
->  *
->  * FUSE_ATTR_SUBMOUNT: Object is a submount root
->  * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
->  * FUSE_ATTR_IOMAP: Use iomap for this inode
->  * FUSE_ATTR_ATOMIC: Enable untorn writes
->  * FUSE_ATTR_SYNC: File writes are synchronous
->  * FUSE_ATTR_IMMUTABLE: File is immutable
->  * FUSE_ATTR_APPEND: File is append-only
->  */
+>  static int fuse_read_folio(struct file *file, struct folio *folio)
+>  {
+>         struct inode *inode = folio->mapping->host;
+> -       int err;
+> +       struct fuse_fill_read_data data = {
+> +               .file = file,
+> +       };
+> +       struct iomap_read_folio_ctx ctx = {
+> +               .cur_folio = folio,
+> +               .ops = &fuse_iomap_read_ops,
+> +               .read_ctx = &data,
 >
-> So we still have plenty of space.
+> -       err = -EIO;
+> -       if (fuse_is_bad(inode))
+> -               goto out;
+> +       };
+>
+> -       err = fuse_do_readfolio(file, folio, 0, folio_size(folio));
+> -       if (!err)
+> -               folio_mark_uptodate(folio);
+> +       if (fuse_is_bad(inode)) {
+> +               folio_unlock(folio);
+> +               return -EIO;
+> +       }
+>
+> +       iomap_read_folio(&fuse_iomap_ops, &ctx);
 
-No, I was thinking of an internal flag or flags.  Exporting this to
-the server will come at some point, but not now.
-
-So for now something like
-
-/** FUSE inode state bits */
-enum {
-...
-    /* Exclusive access to file, either because fs is local or have an
-exclusive "lease" on distributed fs */
-    FUSE_I_EXCLUSIVE,
-};
+Why is the return value ignored?
 
 Thanks,
 Miklos
