@@ -1,159 +1,299 @@
-Return-Path: <linux-fsdevel+bounces-62531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9837BB97C33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 00:59:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6F4B97C90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 01:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60CE42A56A5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 22:59:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11D797B50CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 23:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEE630F542;
-	Tue, 23 Sep 2025 22:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8ECC2E0;
+	Tue, 23 Sep 2025 23:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NznQwDoV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B002ECE86
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 22:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66B130C617;
+	Tue, 23 Sep 2025 23:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758668380; cv=none; b=kG9YXDbnF/fTl8tlKBTNwYEufQacbOQel0n2vlTaICEWiSVuhgUa2fCuYOyY0t0hvOLlpEecnSg/cnFXu74t3mgCLao4w46vNWMCnGNG8XJRMca+cUkQNL/1+LIu/rB50auJjECZaGwYw/8lKnw3rVQ2Aoc4/hm6zakZAVGRnm8=
+	t=1758668894; cv=none; b=sc+2pYUmjmfp+8OAkWIV+1XCbi/XX7HRKCrvpyuf1DDhdR607bRf4LC0bV3KcPtXAKh9fqHmJxgGWqW18e96/Mm9DaZr8LiSoXIjYA+/Or2S9rnZyOFmFSPW2tq47UyTNuaQLXSD2qVdJZZsm5ftRBJR0OvWOXvFAE+kMhE0s+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758668380; c=relaxed/simple;
-	bh=32nlMOHuqrXILU771zwcjQyGHX80yYkORjilKRChStk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VaykLzrEdO7IH49k39IPvJMVLzmoi1Xg/ObD0l6FltW3Rsd1OzrpeSMUNIfuIhBFp/werceYdcWYlSjEQhbgkmsbteKZUhW7Fxcy+6s8aWl24rBUiu1za/oY/nnLPGNXtiw8xjDv5WvK431CvuSUUdGmToEHbAd3bVj3fN+THgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-424861a90dfso60354985ab.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 15:59:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758668377; x=1759273177;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+hA+SpiS5wI5RCtzMYt05Pl9oBH7vt+ljD0YONqRIE=;
-        b=Zvg4QqRIOgR8a5fA0t24lPLUOAzxon7Sk7WdFLAiJ6GazZ3LeczLUpgTB7fWpOteX2
-         /BBdA0/LqsBmaWwm8xtL29Sp89kw4ThUWUBbaCO79uD5hlj8jJhnJPMWHvH2osVJjeID
-         p+qJLNFNQbw5qhilphH/CCkdt4eNCYvJDvgwfWp8gIhk9jqSFq1YcPR2SVKj+1Q+hHe+
-         r7+MsmuhU4nnJxmaN1nxW88F7shJBf2JGu21P0DP75hWe0PA2j8Qd4NRr/t01KNN5oYg
-         tLC20iidq8pOiMoi15Q2E9yJyVA0y+1nPwbD80r3KhiZ+2RkrL3wExPDrB0OTIrsIFR5
-         qsdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvMWCWFQKr67FaF2Pgj3OZ3togl7e5EhWEbgTyaYOXVw+1Bf/3kiab+SrFTk7ScIEMZkrstZ3eNoOtYB1h@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQk0xyX7nMFz6HXJfVMFmyXixkqHCQr/r1kHZpfpI+lzAT9lcl
-	UUcgmJbGh7DMNScGQw+5MBA5hvizrJLcthBqd914IVIWsiuR7xinIEyolhgbIpLHZbnzmFYxp4y
-	3SmBJZDAXKW7XnzOh3XnZaNNc1drIbDmoAGoQ/jJEgUPn3M8NVpXboRt/pKA=
-X-Google-Smtp-Source: AGHT+IG1+xSwmzNVwiXGia9qsKdCe3GJDCcuywjb2bdyNeoxzAguZJorVgPzNk7AGAN8YaVzWtMIvxEj9QSrB1Y9BCknNtTm5Uoc
+	s=arc-20240116; t=1758668894; c=relaxed/simple;
+	bh=IcIGUzxtIiGr7VNVUX7or6KfaHceHh4DBPDlxu41I7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivMX4RIqunLHj5Ea2n+ijCj4JSgSYTrV7SPXNzu09Gwk+NadcYJ8xbfxg7fj88VYZpt3/MEnNjS3ha5DW4F9sBqBFE8RG3LPunlk9dl+S82WyMIXO69D0nREOj6C4F5B6XvLYLR/k6Y6zLipAO4oqdKFsxyJ2T/TSVc78vbH7ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NznQwDoV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A54CC4CEF5;
+	Tue, 23 Sep 2025 23:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758668894;
+	bh=IcIGUzxtIiGr7VNVUX7or6KfaHceHh4DBPDlxu41I7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NznQwDoVyW4jXVSschSsmCoqdiwrqXWxf3Fyu4jTWjiJIbM/g7bTeQ6hQT2Rco6G3
+	 i6XVS647DB2fqccO0+J/C2Ds4d9k46Tpxsi+DqRpzAaoWHL2M4BoLA4fQu6/dohbBg
+	 UdF8JhzaBYrci6xd2WH8ecn1WgPcEFfs/EBHOY+bfogo6yND/iQVRilStlvrtHXmOG
+	 3/8VYKCdBPtuf2AIePnz6ROgZdbDjXX74Ig2KlSxG+6G8A5AIE1G/23x6Z+pl6I82s
+	 XeLFMF2A2A89FDUisdUKCtwp3sQz8fNHO8ecMT3aac3nOBEdfSRxEL0GELCE8InED/
+	 zkztGgHhiD9dw==
+Date: Tue, 23 Sep 2025 16:08:13 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, bernd@bsbernd.com, linux-xfs@vger.kernel.org,
+	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev
+Subject: Re: [PATCH 01/28] fuse: implement the basic iomap mechanisms
+Message-ID: <20250923230813.GK1587915@frogsfrogsfrogs>
+References: <175798151087.382724.2707973706304359333.stgit@frogsfrogsfrogs>
+ <175798151288.382724.14189484118371001092.stgit@frogsfrogsfrogs>
+ <CAJnrk1YtGcWj_0MOxS6atL_vrUjk09MzQhFt40yf32Rq12k0qw@mail.gmail.com>
+ <20250923203246.GG1587915@frogsfrogsfrogs>
+ <CAJnrk1aFEASvZmKftGpvR-P-KWMDLFYzjBCj4OF=EwteWmpECw@mail.gmail.com>
+ <20250923221014.GI8117@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca45:0:b0:425:6f60:5689 with SMTP id
- e9e14a558f8ab-42581e9bcc3mr70731615ab.23.1758668377460; Tue, 23 Sep 2025
- 15:59:37 -0700 (PDT)
-Date: Tue, 23 Sep 2025 15:59:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d32659.a70a0220.4f78.0012.GAE@google.com>
-Subject: [syzbot] [fs?] BUG: sleeping function called from invalid context in hook_sb_delete
-From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250923221014.GI8117@frogsfrogsfrogs>
 
-Hello,
+On Tue, Sep 23, 2025 at 03:10:14PM -0700, Darrick J. Wong wrote:
+> On Tue, Sep 23, 2025 at 02:24:21PM -0700, Joanne Koong wrote:
+> > On Tue, Sep 23, 2025 at 1:32 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > >
+> > > On Fri, Sep 19, 2025 at 03:36:52PM -0700, Joanne Koong wrote:
+> > > > On Mon, Sep 15, 2025 at 5:28 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > > > >
+> > > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > >
+> > > > > Implement functions to enable upcalling of iomap_begin and iomap_end to
+> > > > > userspace fuse servers.
+> > > > >
+> > > > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > > ---
+> > > > >  fs/fuse/fuse_i.h          |   35 ++++
+> > > > >  fs/fuse/iomap_priv.h      |   36 ++++
+> > > > >  include/uapi/linux/fuse.h |   90 +++++++++
+> > > > >  fs/fuse/Kconfig           |   32 +++
+> > > > >  fs/fuse/Makefile          |    1
+> > > > >  fs/fuse/file_iomap.c      |  434 +++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  fs/fuse/inode.c           |    9 +
+> > > > >  7 files changed, 636 insertions(+), 1 deletion(-)
+> > > > >  create mode 100644 fs/fuse/iomap_priv.h
+> > > > >  create mode 100644 fs/fuse/file_iomap.c
+> > > > >
+> > > > > new file mode 100644
+> > > > > index 00000000000000..243d92cb625095
+> > > > > --- /dev/null
+> > > > > +++ b/fs/fuse/iomap_priv.h
+> > > > > @@ -0,0 +1,36 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +/*
+> > > > > + * Copyright (C) 2025 Oracle.  All Rights Reserved.
+> > > > > + * Author: Darrick J. Wong <djwong@kernel.org>
+> > > > > + */
+> > > > > +#ifndef _FS_FUSE_IOMAP_PRIV_H
+> > > > > +#define _FS_FUSE_IOMAP_PRIV_H
+> > > > > +
+> > > > ...
+> > > > > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > > > > index 31b80f93211b81..3634cbe602cd9c 100644
+> > > > > --- a/include/uapi/linux/fuse.h
+> > > > > +++ b/include/uapi/linux/fuse.h
+> > > > > @@ -235,6 +235,9 @@
+> > > > >   *
+> > > > >   *  7.44
+> > > > >   *  - add FUSE_NOTIFY_INC_EPOCH
+> > > > > + *
+> > > > > + *  7.99
+> > > >
+> > > > Just curious, where did you get the .99 from?
+> > >
+> > > Any time I go adding to a versioned ABI, I try to use high numbers (and
+> > > high bits for flags) so that it's really obvious that the new flags are
+> > > in use when I poke through crash/gdb/etc.
+> > >
+> > > For permanent artifacts like an ondisk format, it's convenient to cache
+> > > fs images for fuzz testing, etc.  Using a high bit/number reduces the
+> > > chance that someone else's new feature will get merged and cause
+> > > conflicts, which force me to regenerate all cached images.
+> > >
+> > > Obviously at merge time I change these values to use lower bit positions
+> > > or version numbers to fit the merge target so it doesn't completely
+> > > eliminate the caching problems.
+> > 
+> > Ahh okay I see, thanks for the explanation!
+> > 
+> > >
+> > > > > + *  - add FUSE_IOMAP and iomap_{begin,end,ioend} for regular file operations
+> > > > >   */
+> > > > >
+> > > > >  #ifndef _LINUX_FUSE_H
+> > > > > @@ -270,7 +273,7 @@
+> > > > >  #define FUSE_KERNEL_VERSION 7
+> > > > > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> > > > > index 9563fa5387a241..67dfe300bf2e07 100644
+> > > > > --- a/fs/fuse/Kconfig
+> > > > > +++ b/fs/fuse/Kconfig
+> > > > > @@ -69,6 +69,38 @@ config FUSE_PASSTHROUGH
+> > > > > +config FUSE_IOMAP_DEBUG
+> > > > > +       bool "Debug FUSE file IO over iomap"
+> > > > > +       default n
+> > > > > +       depends on FUSE_IOMAP
+> > > > > +       help
+> > > > > +         Enable debugging assertions for the fuse iomap code paths and logging
+> > > > > +         of bad iomap file mapping data being sent to the kernel.
+> > > > > +
+> > > >
+> > > > I wonder if we should have a general FUSE_DEBUG that this would fall
+> > > > under instead of creating one that's iomap_debug specific
+> > >
+> > > Probably, but I was also trying to keep this as localized to iomap as
+> > > possible.  If Miklos would rather I extend it to all of fuse (which is
+> > > probably a good idea!) then I'm happy to do so.
+> > >
+> > > > >  config FUSE_IO_URING
+> > > > >         bool "FUSE communication over io-uring"
+> > > > >         default y
+> > > > > diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+> > > > > index 46041228e5be2c..27be39317701d6 100644
+> > > > > --- a/fs/fuse/Makefile
+> > > > > +++ b/fs/fuse/Makefile
+> > > > > @@ -18,5 +18,6 @@ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+> > > > >  fuse-$(CONFIG_FUSE_BACKING) += backing.o
+> > > > >  fuse-$(CONFIG_SYSCTL) += sysctl.o
+> > > > >  fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
+> > > > > +fuse-$(CONFIG_FUSE_IOMAP) += file_iomap.o
+> > > > >
+> > > > >  virtiofs-y := virtio_fs.o
+> > > > > diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
+> > > > > new file mode 100644
+> > > > > index 00000000000000..dda757768d3ea6
+> > > > > --- /dev/null
+> > > > > +++ b/fs/fuse/file_iomap.c
+> > > > > @@ -0,0 +1,434 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +/*
+> > > > > + * Copyright (C) 2025 Oracle.  All Rights Reserved.
+> > > > > + * Author: Darrick J. Wong <djwong@kernel.org>
+> > > > > + */
+> > > > > +#include <linux/iomap.h>
+> > > > > +#include "fuse_i.h"
+> > > > > +#include "fuse_trace.h"
+> > > > > +#include "iomap_priv.h"
+> > > > > +
+> > > > > +/* Validate FUSE_IOMAP_TYPE_* */
+> > > > > +static inline bool fuse_iomap_check_type(uint16_t fuse_type)
+> > > > > +{
+> > > > > +       switch (fuse_type) {
+> > > > > +       case FUSE_IOMAP_TYPE_HOLE:
+> > > > > +       case FUSE_IOMAP_TYPE_DELALLOC:
+> > > > > +       case FUSE_IOMAP_TYPE_MAPPED:
+> > > > > +       case FUSE_IOMAP_TYPE_UNWRITTEN:
+> > > > > +       case FUSE_IOMAP_TYPE_INLINE:
+> > > > > +       case FUSE_IOMAP_TYPE_PURE_OVERWRITE:
+> > > > > +               return true;
+> > > > > +       }
+> > > > > +
+> > > > > +       return false;
+> > > > > +}
+> > > >
+> > > > Maybe faster to check by using a bitmask instead?
+> > >
+> > > They're consecutive; one could #define a FUSE_IOMAP_TYPE_MAX to alias
+> > > PURE_OVERWRITE and collapse the whole check to:
+> > >
+> > >         return fuse_type <= FUSE_IOMAP_TYPE_MAX;
 
-syzbot found the following issue on:
+I godbolted this with gcc -O0, and got (arm64):
 
-HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=118724e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
-dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1376e27c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136e78e2580000
+        sub     sp, sp, #16
+        strh    w0, [sp, 14]
+        ldrh    w0, [sp, 14]	/* load first arg in w0 */
+        cmp     w0, 4
+        bgt     .L2		/* goto L2 if arg > _INLINE */
+        cmp     w0, 0
+        bge     .L3		/* goto L3 if _HOLE <= arg <= _INLINE */
+        b       .L4		/* goto L4 if arg < _HOLE */
+.L2:
+        cmp     w0, 255		/* goto L4 if arg != _PURE_OVERWRITE */
+        bne     .L4
+.L3:
+        mov     w0, 1		/* input was good */
+        b       .L5
+.L4:
+        mov     w0, 0		/* input was bad */
+.L5:				/* return result in w0 */
+        add     sp, sp, 16
+        ret
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c30be6f36c31/disk-ce7f1a98.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ae9ea347d4d8/vmlinux-ce7f1a98.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d59682a4f33c/bzImage-ce7f1a98.xz
+The compiler is apparently smart enough to recognize the adjacent case
+statements and merge them into the appropriate integer comparisons.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+--D
 
-BUG: sleeping function called from invalid context at fs/inode.c:1928
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6028, name: syz.0.17
-preempt_count: 1, expected: 0
-RCU nest depth: 0, expected: 0
-2 locks held by syz.0.17/6028:
- #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
- #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
- #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
- #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: hook_sb_delete+0xae/0xbd0 security/landlock/fs.c:1405
-Preemption disabled at:
-[<0000000000000000>] 0x0
-CPU: 0 UID: 0 PID: 6028 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x495/0x610 kernel/sched/core.c:8960
- iput+0x2b/0xc50 fs/inode.c:1928
- hook_sb_delete+0x6b5/0xbd0 security/landlock/fs.c:1468
- security_sb_delete+0x80/0x150 security/security.c:1467
- generic_shutdown_super+0xaa/0x2c0 fs/super.c:634
- kill_anon_super fs/super.c:1281 [inline]
- kill_litter_super+0x76/0xb0 fs/super.c:1291
- deactivate_locked_super+0xbc/0x130 fs/super.c:473
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc08e18eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcd5efff18 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00007fc08e3e5fa0 RCX: 00007fc08e18eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000002c0
-RBP: 00007fc08e211f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fc08e3e5fa0 R14: 00007fc08e3e5fa0 R15: 0000000000000002
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > >
+> > > > > +
+> > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > > > index 1e7298b2b89b58..32f4b7c9a20a8a 100644
+> > > > > --- a/fs/fuse/inode.c
+> > > > > +++ b/fs/fuse/inode.c
+> > > > > @@ -1448,6 +1448,13 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> > > > >
+> > > > >                         if (flags & FUSE_REQUEST_TIMEOUT)
+> > > > >                                 timeout = arg->request_timeout;
+> > > > > +
+> > > > > +                       if ((flags & FUSE_IOMAP) && fuse_iomap_enabled()) {
+> > > > > +                               fc->local_fs = 1;
+> > > > > +                               fc->iomap = 1;
+> > > > > +                               printk(KERN_WARNING
+> > > > > + "fuse: EXPERIMENTAL iomap feature enabled.  Use at your own risk!");
+> > > > > +                       }
+> > > >
+> > > > pr_warn() seems to be the convention elsewhere in the fuse code
+> > >
+> > > Ah, thanks.  Do you know why fuse calls pr_warn("fuse: XXX") instead of
+> > > the usual sequence of
+> > >
+> > > #define pr_fmt(fmt) "fuse: " fmt
+> > >
+> > > so that "fuse: " gets included automatically?
+> > 
+> > I think it does do this, or at least that's what I see in fuse_i.h :D
+> 
+> Whoooops, sorry for the noise :)
+> 
+> --D
+> 
+> > Thanks,
+> > Joanne
+> > >
+> > > --D
+> > >
+> > > >
+> > > > Thanks,
+> > > > Joanne
+> > > > >                 } else {
+> > > > >                         ra_pages = fc->max_read / PAGE_SIZE;
+> > > > >                         fc->no_lock = 1;
+> > > > > @@ -1516,6 +1523,8 @@ static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+> > > > >          */
+> > > > >         if (fuse_uring_enabled())
+> > > > >                 flags |= FUSE_OVER_IO_URING;
+> > > > > +       if (fuse_iomap_enabled())
+> > > > > +               flags |= FUSE_IOMAP;
+> > > > >
+> > > > >         ia->in.flags = flags;
+> > > > >         ia->in.flags2 = flags >> 32;
+> > > > >
+> > > >
+> 
 
