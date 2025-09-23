@@ -1,105 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-62521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34992B9740E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 20:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AD5B976D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 21:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B822F2A6E36
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 18:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7E8425574
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 19:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFFD2E03F3;
-	Tue, 23 Sep 2025 18:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="qqdKydAn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41514304BC5;
+	Tue, 23 Sep 2025 19:59:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EA12D59F7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 18:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614AE3009C1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 19:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758653821; cv=none; b=mYm7THC5OVsTlYCKwdjGP7vS2nUTaNJ4TE/UN19T9IgqWTDDTilVeZWy/KK/ZiYyVHLwTbCDJX74JSm3yvHC7u4O2jwCjXfHI8ozANKaYwNmU4sIcA+ePyWEiSJTqLOblnEE+uxIWwSt5t+ToUiKKQjYPLBcUUAHI3S52/s+HHM=
+	t=1758657544; cv=none; b=E9UVrdwfZCDVXaLdegQfTkcwsixSnIQvOMOxbAJ4KJnkpWYz37PYP0jb7gibXui82vWkQncbL5pqHOd62bzIvafvPTiQfEdOwp1gLqoPvU3OOwVl6QgOyMa1GA4blIzPlf+byk3vtDhYvsQGoqHlnU8HUJMFM+D3tlGqVYR6agk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758653821; c=relaxed/simple;
-	bh=uDFx+7Tt6m0KBD1tdrc8SFB3Uot3XLva9qb9ajxaWY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kGlpRHHbJSM7wUdelYRMqm6BLJGUynwcIqZIuMvxVqJqI9ay7EHJ9a8gA6P0Ge3YHIQzlKqlaMPjHN5iudSpmEdbiPJ+ScERWZdPjIlje7Ii+ty1oDoJ0R13apswRRFYTfYQGuZLGIl8munpFyvZiKPsahISIube1OIsIqNOh9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=qqdKydAn; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4d53d1e9bd7so7311721cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 11:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758653818; x=1759258618; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxNM9Mb37dbb/SiJhSt7Vl3jHZka75Af9EkUQVZtb5E=;
-        b=qqdKydAnMRVCRWfWb7n1QWfudBaKit59wlqDyzIM3Tpp9Vvpk01hnlfS7Xp6ezGkx0
-         Gw9iNwSR1cNxu/0KpJyR2wiWn6Pi4xY77FT+Qrx5QATIghAmuT5/scgsDqRQFprZzlTG
-         jngePpRzTE8M5rK3mwYwrkLg8BhtnEHV7ozes=
+	s=arc-20240116; t=1758657544; c=relaxed/simple;
+	bh=WbRxxvPu2PII9+tVZPTYHIku5xjnJJfqpOzcsOGOcTg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GxmZXzqMyplCvNX9vOYBZGxrurFEpJXngxq98Ab7A/pwDN16ln2pBzC1bgUdYc9CkKGoLgykUDXzqyoXmqPIR1R5OCLe0OcMYTmKPMsdb0wMKXSQNvLgoOVfAtBoAr/rZKJgeRBTpXtnwWd8IfHlvamtDaYQlmMyHGkECk+p1EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42486f6da6fso62901665ab.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 12:59:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758653818; x=1759258618;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZxNM9Mb37dbb/SiJhSt7Vl3jHZka75Af9EkUQVZtb5E=;
-        b=i8I0gI2RfgicB4ZrxEdKhUPAZR3mgHsaEB5uz1KqAUl99CubyPELdkVby/uDXprEOp
-         +ViMXiw+n7l+oMhW14tTGv2rHoLriIhkBL8eEC7BEb7rByirNs54FnRFXuhWfBbp9iAW
-         5XzcDCzPZygyBchavwY/syeW1qCFjDHLhHavR3ZJAFvgfx1zVzsWu9DJv/hkuleJmFJL
-         wU8LqU0kFVlxn5+AoUUTj6HM5kq0yz5kvVY62b/zHtSNQpG7zfoI7xWHGtdLnHAiMX9M
-         wDoY7c44OEPHDpXoQIvpVY/hWrwVY0nCUPOwg/rEFw9msfb3jX8oGJiJqZARnuOSuS+t
-         SB/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVxuu6KvVA26wEe9toWwmq8OOMLfFK6PFUd6oZnU0XJPcCPXwjCeWs8S0hxTh3+5XbLJm4qvsJYGrhF+Bzu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxnL7Cnd+JS4DZZS+6ugm3UXkikmbwZnTUXWKNdL9r34ofdst0
-	SFetBNgd0oysYNCJejzKrAuYhzuSuk7bxbrrjOd3/23AzVCGOgGbz1ssnLRQhPNazkl2HsVqyZQ
-	FG0lu2LtYIw5S4j6s7Hv8vJrZtcW8Cl+X1boU7VMsBRYBsuV0TT2n
-X-Gm-Gg: ASbGncvfJtHwebOsXnG2Vu8Ue9B91FVIoXE1PAXawohyVLH9tlAuT7m/sdUfgAn++iH
-	/uUC4+LMw6lqPzd0KMrEqLrekKLSfzEgieNkvt+QRd5ZirbYCifOW6pA4CxEXmASR5Wbp5Q+uPy
-	VFqPlfxCDQBaPPX0kRquLUgDyG+CPorOoBGKeLFtHxNORehLGL+6JVBaYbBA5D2f1gpbnQEcaEO
-	sXZl0KHNajRTJE7PvDpk1kn0WtolYVlOm9KxYk=
-X-Google-Smtp-Source: AGHT+IEUrKLzK566Rl7e78yFY4lfe2DvcLd+aWPgi3Hp92l/GkUmLofyjJvSU8SdP+RLcBfxgYPP7otw8OxaaoPIFgE=
-X-Received: by 2002:a05:622a:1442:b0:4d3:55f7:ddcd with SMTP id
- d75a77b69052e-4d36fdef829mr46153821cf.59.1758653818451; Tue, 23 Sep 2025
- 11:56:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758657542; x=1759262342;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcaaZPCV5Qrgwa3vKDEUNa/ct40/p9wKCLJtyWA+kyQ=;
+        b=w2BJgm2/pr848bEnBCth1bDb5X/WOQtGw9Bfxj1xv/uXn1+hXMumJoOhk1lkOy4Fw1
+         qeCyFEleOchOAWUhniwrO9k/8RYfBjPgWj9FK2nAuy/Z5/wxWVkaDqF8eC7Pp4x4ooBv
+         fNp+TCn8GuGKcWqaKWvUhIRzl60sKkr0TbvInHIgOwPQs1i+3gYwJfo23HzHTgDQp9ET
+         jwwBooVLbtwTMqeJQZ/qO+TWvGZbizm8hMF5ylo5mv5jKfiGRw+2dx6W3SmRVXBdFocM
+         U1KWXMoB8YSfI2U3fuJW1EayOt4MCt4iYSZT6zKpcVEkguGhQrkJt2+yK/tB+EmRHFVu
+         DfVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcpHPs09ybnqeoyBQwWQEUPHkvfm9Fcgnej+5Il0wSRkaqxfsGi/JEFO+1/UobzY4f8t1KyYAiJcR0DeKC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgcVOTePOuI4vwT4TIuX6ee7Uiz3q9GgVXN/sqtzgqVRp7jizL
+	57socY4VgXynwyj0cfpbi9BSc5ff7IsdHNz7Po6k6sTx9FKBX+JmQbm3irs3MbAcuVj44Wj9HmM
+	p5CZFkh3vs7BOH24+9CwoExxVBvsV8/ewkGDeklghBibWpvWHsqWgI20BYls=
+X-Google-Smtp-Source: AGHT+IH4ryecd7+jD4K6kYGAIwNEyzeiCtIWaDcMQ3DqckIrtsaX5FHyU9Wx/aV8dwEqItA12eZFVdFCQBiegXhWf5yf0gEyZVTH
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150070.381990.9068347413538134501.stgit@frogsfrogsfrogs>
- <CAJfpegtW++UjUioZA3XqU3pXBs29ewoUOVys732jsusMo2GBDA@mail.gmail.com> <20250923145413.GH8117@frogsfrogsfrogs>
-In-Reply-To: <20250923145413.GH8117@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 23 Sep 2025 20:56:47 +0200
-X-Gm-Features: AS18NWA3QczMUqhEwXlbmi3D0vK9ucUWZNSA6Kn3Mm_71aK-n6sNLwsJ3-6KZcg
-Message-ID: <CAJfpegsytZbeQdO3aL+AScJa1Yr8b+_cWxZFqCuJBrV3yaoqNw@mail.gmail.com>
-Subject: Re: [PATCH 2/8] fuse: flush pending fuse events before aborting the connection
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
+X-Received: by 2002:a05:6e02:160f:b0:423:fcd6:5487 with SMTP id
+ e9e14a558f8ab-42581e28b8emr65860075ab.14.1758657542574; Tue, 23 Sep 2025
+ 12:59:02 -0700 (PDT)
+Date: Tue, 23 Sep 2025 12:59:02 -0700
+In-Reply-To: <0000000000002fd2de0618de2e65@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d2fc06.a70a0220.4f78.000d.GAE@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, brauner@kernel.org, danielyangkang@gmail.com, 
+	dhowells@redhat.com, eadavis@qq.com, ericvh@kernel.org, jack@suse.cz, 
+	jlayton@kernel.org, linux-afs@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lizhi.xu@windriver.com, lucho@ionkov.net, 
+	marc.dionne@auristor.com, netfs@lists.linux.dev, pc@manguebit.org, 
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 23 Sept 2025 at 16:54, Darrick J. Wong <djwong@kernel.org> wrote:
+syzbot suspects this issue was fixed by commit:
 
-> I'm not sure what you're referring to by "special" -- are you asking
-> about why I added the touch_softlockup_watchdog() call here but not in
-> fuse_wait_aborted()?  I think it could use that treatment too, but once
-> you abort all the pending requests they tend to go away very quickly.
-> It might be the case that nobody's gotten a warning simply because the
-> aborted requests all go away in under 30 seconds.
+commit a3de58b12ce074ec05b8741fa28d62ccb1070468
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Aug 14 21:45:50 2025 +0000
 
-Maybe I'm not understanding how the softlockup detector works.  I
-thought that it triggers if task is spinning in a tight loop.  That
-precludes any timeouts, since that means that the task went to sleep.
+    netfs: Fix unbuffered write error handling
 
-So what's happening here?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=162dc142580000
+start commit:   5189dafa4cf9 Merge tag 'nfsd-6.11-1' of git://git.kernel.o..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16828c5d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103c7805980000
 
-Thanks,
-Miklos
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: netfs: Fix unbuffered write error handling
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
