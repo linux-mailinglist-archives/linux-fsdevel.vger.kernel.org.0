@@ -1,190 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-62454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E172B93C11
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 02:53:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6B5B93DB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 03:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2790C16EEA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 00:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49E977AD618
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 01:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F211D5CEA;
-	Tue, 23 Sep 2025 00:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kthWvZ6g"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7D62690D9;
+	Tue, 23 Sep 2025 01:29:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012025.outbound.protection.outlook.com [40.107.209.25])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437531B6D08
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 00:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758588826; cv=fail; b=eyqW7tlmwyusnO+DjzNu9hPKyxwPpuMipk9+aJy0By1DF1qmzHBQp0Ohw/VLeZ+zF3BemM9gCT/PNVfd19l/CWxBqYWJ4NTNU9WNRzwW6VZ1x8ivdKatxcEzS8zm4jqDxfu6d7KfHQZqzPrxHM/QA8Jz5A76OJHmsMy2l2qSx6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758588826; c=relaxed/simple;
-	bh=grEEbsVRyfdNpyqw65bLGoZcvBUtVzIdxy1ni7k7rUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=D3rwQkd6aYGNLkiQfLKNodOAav5pw3juoglT7X3K2RleOSYi5d1k6eIyFDGgtwcO2Qe9JvS31z3NLq5QZz7dOe8X+HC8WRyPJfC6pRZv3thvknzTWFzHwoAebAcopishw4qhEDradfkbzV4Kw3himFxSioIVww0play+XcnVsvA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kthWvZ6g; arc=fail smtp.client-ip=40.107.209.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MJw5q/ZxmAkhbJ9HnhI5qyVWPfhC4bVzY1Sk/5BOR5iCvwSe5x30CXcG5NugZ+BgIitzwJs/s4IlSBQx9wNpg/gB9ZbRCWLUd1cECY67CrdnlpGN0Xh6q60DfcBp2momjzoxY+SCyDrlSVCHA85KCU6yHyM0LN8i4J+kMmcdzzfHE5L4hrHBoOMCCLqTQeHXNLH4s4aHKrxBzpwivGfqzlr+TiZB3pcmJo9+iGkaircy1FsKEhmsKZCXe7Fc6CfYPUy6jqwgkq9gF29Pg3jThiDks6f7wJrcUiON5zE3DU/1hsE+yB6m651lDA7wuxqtXStMw8V/BHnYG/xbquH+6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cnztExj7uCVzcewoN5toY9AioZIOheh+gcmvK/WnPm8=;
- b=AXiQ56Zhc6r8BuQa6pwSo+6vRuqr0I+dI7svM8KkFhsvpRFoYw7ox4QrNr/aM/6eM0tYVqNgNfJctuQG0lfcxt6i6TtGR6iu/IGjXyjTq+F5xdGalOKocHyJPKxwN/hxJIgYIi7PH5hrldjmpCr499ppUzlHP2P8sMjRf58QgEg4+uJsOtBLwV1XetNWtzIlv4yCZUFrzx03fTCo9g8fqxf5Z98DImQlZvjvoBWOXSTG4KOV3C1OTHDg+5QimTTK3d5K0VXZyJU38leKAfnXLoVL1xtSjLz+7k9eH/b/JJSwIVsDy+VvJkAQf2IeFQJG9jSJz4rLAJwYrTypZpdW1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cnztExj7uCVzcewoN5toY9AioZIOheh+gcmvK/WnPm8=;
- b=kthWvZ6gxDuMqRd22Yvn+bc/Tf+hmqTJAUaMinTt3Oqgx/1ya+ClLzdr+PNIxMvYdPHNdu7JB+a9MkWW09h0UA5EumZd+sf4s7EUgrkpUtqbMo2M7/zcv09ismo3YOyI1AVxCe3AwYgA03AWYPjGbhIw1XFC+KI4sxVWMP7MJFadpLHeax6mlh73aVL/xc1X42bMjUtGh9FDblWVWd0EqAUIw8WM5WabNq9X2AXOy5UUXAN4gfGpOqNXJUiGu2Wo1p/kqVATNikHpejotOdZtCFzpMmfvvLDfGcHBzRImaXBrKaFF/+9n/rmCeYDncnL9mssixFeEmVUDQoCVpwuow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CH3PR12MB9283.namprd12.prod.outlook.com (2603:10b6:610:1cd::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
- 2025 00:53:40 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 00:53:40 +0000
-From: Alistair Popple <apopple@nvidia.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Haiyue Wang <haiyuewa@163.com>,
-	David Hildenbrand <david@redhat.com>,
-	Nicolas Pitre <nico@fluxnic.net>
-Subject: [PATCH] cramfs: Fix incorrect physical page address calculation
-Date: Tue, 23 Sep 2025 10:53:33 +1000
-Message-ID: <20250923005333.3165032-1-apopple@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY5P300CA0062.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:247::25) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34572C187;
+	Tue, 23 Sep 2025 01:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758590974; cv=none; b=Ayca7/2HLN0YR3zMleTJnrzROwEYw+lclgfveq/GlN0UzUy6ey82pOWQvZpJuYzQAVWYpdla3A0+FkOKFqe0l+QpA/7QLE5vOMBIHIdyGaimVMnL7jmE5Qzrz2ZSEimzCn/9KxC6V24jrIcsbu44IZ3gKj48hEgx0KPfEgfX8Xk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758590974; c=relaxed/simple;
+	bh=eyVuBYg1FvnYQB+7sqdhwPAlANZ1lARKxgQNTFv1iZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C7GKXswjwAGcFLFMor0P0Q+ZPXWrdnQxrLKAbOF4d3gEqlRM4zLi1rIpSH2OZ+o7aBJBlDE/sWbueTjJRChDzuQ1WH46Xb5PBTECXEv0RfJL3igMImvAntoZnG0oIkXVOuHtCwcy9jB8aCgSciBlRssJrfNoRCAjP0jxrt4/SY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cW2St6MpCzYQtHY;
+	Tue, 23 Sep 2025 09:29:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 135041A1300;
+	Tue, 23 Sep 2025 09:29:24 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgAXKWHq99FoGYYGAg--.10941S4;
+	Tue, 23 Sep 2025 09:29:23 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 00/13] ext4: optimize online defragment
+Date: Tue, 23 Sep 2025 09:27:10 +0800
+Message-ID: <20250923012724.2378858-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB9283:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92c6e1dd-4136-48bb-c621-08ddfa3ba2c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EZwUUZlkc3ODO9EIXP20KmbFlmyfvul2pRqgVh115yPaSWuIhmkcD2jBNzcu?=
- =?us-ascii?Q?lNEhwM+068/HAp0xyhgdzgjmw+ckgNzBfx4FKv7hIVLiusLmkrL+j3MgPtfB?=
- =?us-ascii?Q?UB8Gwwcxa+86iPqEhjIaYDYARCECf1ldQ6yE4pEz4rfdHMJ/UoqemVe4HG0L?=
- =?us-ascii?Q?2GrqUShusg6GC99Yjw2P5QVl3LV8kQ/OKBiRb0/J2y5fLNvSAkFluwc2C932?=
- =?us-ascii?Q?ty8+xf5QWWi74ZdyKmSaLYewsu1qi4vcRQGHWoIq5SAaW56YdGWcmf54pnyX?=
- =?us-ascii?Q?PPNm9pzHLkEEgYWHFO41Z0Yr8vh+QLKvifDGyKLpfTLJpNisk/TCuevTBeqq?=
- =?us-ascii?Q?FOz3SRzVFkir5LMIc6y37oW5QDGvTnZFvp7UQB3C4wezq4/CUc05IsNcGjCn?=
- =?us-ascii?Q?018rSStLHXXUssTkWse87n8eUG12PDAkID4nHC5yFSIZfnWg8pdQsYbblFt0?=
- =?us-ascii?Q?oTNqNpnR+zbmwp4LRCh6/fP0VbutJWdvnoX5AW+HkNAnMukWE8NyoU80Yfzm?=
- =?us-ascii?Q?A4fSWqaVR5U0HN27jjUwDPQWm9IM56tx54ZrF8LK+2uAi/BlKAmeB1GGSwpS?=
- =?us-ascii?Q?gwKRKbbDyacPQOyuUcx9JEsqXPeKoNJPb7ydIC9gqjK0pDMOcChWzZ25RRGu?=
- =?us-ascii?Q?TbE94RyGspgIfZXfkddxlGmxqDWF6gluE1563jhWMXx0IOu7VWtGHIXg0SEj?=
- =?us-ascii?Q?RM8xWwqEsFCJnYGXcgWzHHLYurhilFa2g0UHgOmeL1YvnHrUYg0511RclhLu?=
- =?us-ascii?Q?IyW2Uzqesy8T0ptW98ATxjdbtuX5OxoH6Wt6s8bQ2rJpXu4XjnC4QG2ew/r2?=
- =?us-ascii?Q?lTkmM5KC+9+8/9G3Xp7XJq1ofkD348KX9YAQIDccl/Rwh8YEDRS/zEJ1OR+o?=
- =?us-ascii?Q?GYnmA4xucBDCd0ZIbukSpljSbqw210CdmRgDBW/y8hnsvSPn26FwVQgMfonl?=
- =?us-ascii?Q?G0tGwP3U+9xnoz0mTEKG6WI+6pfWDluXpNz+TRjjuR1LJQg/monn5OTjTFs/?=
- =?us-ascii?Q?AR46ecplm9UY20xh+RYctvvnWu9A+yTg81w0+BRKN8PD6Lwl6AEfndn6aF5G?=
- =?us-ascii?Q?a/jtU6HJSNh9tdx5wnjzeejwHfY17d20e8Qz1fyV4qFbMYuXSAfgtpD0ozZn?=
- =?us-ascii?Q?pa7S5nGud+OBntnsckPHjxVBAqZWv6Mm5pePw/M4BdXtTfQVpnEYoYmhRshV?=
- =?us-ascii?Q?Cn1T1XkUPxVFfvnWYrgFQOrZDKK7Hl3XUNl1wQAn4ix5fI4WizwA7nP2mv8b?=
- =?us-ascii?Q?u/aVxuhspQyBss76hMObtUvV94c9Qw01AKCBj6EsL+myndvavmpnHTFTUDY1?=
- =?us-ascii?Q?9cW8MX5+XDyE87JdmVAAScK1YTAaSDgL3HljermFbpLjWmuYseRT/KYEkanX?=
- =?us-ascii?Q?/btWA3y0zkMxqjrHk2QMlVGr9tl1EiTluT0jF8EBR7PIki8pjytsbjsWECMx?=
- =?us-ascii?Q?x6glMgSn1ao=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Or25mewMvtyJLRD6RHyRSfUeChnNVdxKHBlMQv44hICETSpogTN5t/YBojjw?=
- =?us-ascii?Q?yCVVcIfussDpwMDLCPqSnc1ubD2/8vz1fATp9LwMnyHiip5KGhCAee8qjcBS?=
- =?us-ascii?Q?qt12xYx2+CYeOJYaJd9F9S7NIHS2Lj4P7YvRANJJmq+qNKA4Oo+3RnzzSRFv?=
- =?us-ascii?Q?tQFutqQM8nveeqe3sH7ZR9RhWdn76aZqcIJ4FQ5db8qEPjxfWHJg+VacWVDh?=
- =?us-ascii?Q?rClxnMf5JhU+V86eWSznwfQIht46X3Uh/F2TrE7xEMx93ReyIZPEDcmHEUHn?=
- =?us-ascii?Q?gHUMRlhBA6HEqo5soow8nfG9ARCuTitjjgvKSGgEidXV2HcmhgDjRnTjDu+X?=
- =?us-ascii?Q?DCdgqdFP1rsJuQfmNNht7pAuDXqG2AifQaGeNaVqR+Z7VHcpncgWWHDuiLs/?=
- =?us-ascii?Q?4vCYEPn0U67DcoRyyUaJw1WMsLxPMz6DxaJ6AWmNiegPZD9XvYEVQeznVhbw?=
- =?us-ascii?Q?lyfq3uPunjTjziqO2oWioS8vrkqHsawhceD6eTR1fcBBQFgRRFW7B9seWOXG?=
- =?us-ascii?Q?54RA8q/BCgnKLutL+f+Mu79P4Ous8q06pg77c3oyXLPkLOc87ZKm/5lcnGDr?=
- =?us-ascii?Q?UHwL2D59SiNTpEA0X3lvHPbG5H7xcZWbHE7TBSS9Rntif+ftEjs6v2lTRnSm?=
- =?us-ascii?Q?DToqgJsmlCg9mmt1qu8f37/qdphbWKMC1x3Y+lE3rmMD3WXt/ZFOzBt9jyZa?=
- =?us-ascii?Q?4ZbhKvRZNF8zeAusi/qGYeg1aUTZWej8+wPMF3tHb4etMVfscLR7ylzm7Fhv?=
- =?us-ascii?Q?FcB2H7PJyRVoqU7KhLK7d3+Ph4taX3IyeM1wZ8fsYqcGJ4i/W9QWJCtWkjDQ?=
- =?us-ascii?Q?+cG/haN5VaCo5nJoAZrOa5KeAxO5ZI+mBIiYTZcWK66xXm0HlnlPN/Y+cMmn?=
- =?us-ascii?Q?NTIrHaF8udMdALcXLo6FxOnJdvAvnsKnn/Iwz4/LGz5zjD9qY7Buu01QTN+R?=
- =?us-ascii?Q?fvbnyTcaQ1rwxH4dU7SDMuk6/qvDehwG77gBAORT5Q0+tgiQy1E4rljdYcJt?=
- =?us-ascii?Q?XHgOJXd7CFMx/TD86DQ+l0UCBHOZbjKd8bll94FyEaOjWI7Qo4UC2o/MiAHq?=
- =?us-ascii?Q?AZ5MGhEr26gLIcy4c40FcgBWhw7G3L7iru5r5yFaRFb9PavDz5/4nz69s8if?=
- =?us-ascii?Q?8IY/4iX1LF8z9MmQbwfehuXtZJMlWnha9ovNoH1DpUUS9M6hY/YNrNlN9/jN?=
- =?us-ascii?Q?sDSBFpFsFLEPqZAzALksXBMfcUn7QvPZryV7Xzg9DJwdWrfkQa13WY4+xfD4?=
- =?us-ascii?Q?si6oKJJAkv9w3EZGbQTl9moyFF6QCFr8v6CekThSsNylisl6yZbsaE3bmm/4?=
- =?us-ascii?Q?6TRV200mKNGV/Q9/Bqi6QlWOOTNiTlcAoDzHYtVqv7QddcvBEGSLoNE9UKay?=
- =?us-ascii?Q?I6a/DepqlVDc3CgwCJgnrDv7a4cQpjccrRo0uambYDEE4MdKLt4CSckDsqsD?=
- =?us-ascii?Q?S87s7+8FV7OGma5Fd4ifC1/WJmT3At/fYg164nXF6PjNna9KlsM3p0A0RPN0?=
- =?us-ascii?Q?TzYqiXvulYGJwBma4OSjclOSSM6sP9mWUsxA0B77cGgPG+SdjbCqfqs+dMeT?=
- =?us-ascii?Q?ct9G1aIeNBSIX3bkRpqrufDBELlbuZI4Qdm2Fyh5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92c6e1dd-4136-48bb-c621-08ddfa3ba2c1
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 00:53:39.8860
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PfO/MGXaTAac9+TP8P8ktMkHAR/U6UHC/qFdbUuWG7T5jmt4v/Dnnn0SIUbwMCsrTHardICqsGTAxvcApHkvzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9283
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXKWHq99FoGYYGAg--.10941S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxur1rurW8ArWkuFWDWF4UJwb_yoWrZFy3pa
+	yakr1xtrWkJw1kW3yxZFs7XryYk348Gr47CF4UJr15GF1rJFyFqFW8ta98ZFyrAFWxZ34a
+	va1Iyr1Uu3WUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
-incorrectly replaced the pfn with the physical address when calling
-vmf_insert_mixed(). Instead the phys_to_pfn_t() call should have been
-replaced with PHYS_PFN().
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Found by inspection after a similar issue was noted in fuse virtio_fs.
+Hello!
 
-Fixes: 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
+Currently, the online defragmentation of the ext4 is primarily
+implemented through the move extent operation in the kernel. This
+extent-moving operates at the granularity of PAGE_SIZE, iteratively
+performing extent swapping and data movement operations, which is quite
+inefficient. Especially since ext4 now supports large folios, iterations
+at the PAGE_SIZE granularity are no longer practical and fail to
+leverage the advantages of large folios. Additionally, the current
+implementation is tightly coupled with buffer_head, making it unable to
+support after the conversion of buffered I/O processes to the iomap
+infrastructure.
 
-Cc: Haiyue Wang <haiyuewa@163.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Nicolas Pitre <nico@fluxnic.net>
----
- fs/cramfs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch set (based on 6.17-rc7) optimizes the extent-moving process,
+deprecates the old move_extent_per_page() interface, and introduces a
+new mext_move_extent() interface. The new interface iterates over and
+copies data based on the extents of the original file instead of the
+PAGE_SIZE, and supporting large folios. The data processing logic in the
+iteration remains largely consistent with previous versions, with no
+additional optimizations or changes made. 
 
-diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-index b002e9b734f9..56c8005b24a3 100644
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -412,7 +412,7 @@ static int cramfs_physmem_mmap(struct file *file, struct vm_area_struct *vma)
- 			vm_fault_t vmf;
- 			unsigned long off = i * PAGE_SIZE;
- 			vmf = vmf_insert_mixed(vma, vma->vm_start + off,
--					address + off);
-+					PHYS_PFN(address + off));
- 			if (vmf & VM_FAULT_ERROR)
- 				ret = vm_fault_to_errno(vmf, 0);
- 		}
+Additionally, the primary objective of this set of patches is to prepare
+for converting the buffered I/O process for regular files to the iomap
+infrastructure. These patches decouple the buffer_head from the main
+extent-moving process, restricting its use to only the helpers
+mext_folio_mkwrite() and mext_folio_mkuptodate(), which handle updating
+and marking pages in the swapped page cache as dirty. The overall coding
+style of the extent-moving process aligns with the iomap infrastructure,
+laying the foundation for supporting online defragmentation once the
+iomap infrastructure is adopted.
+
+Patch overview:
+
+Patch 1:    Fix an off-by-one issue.
+Patch 2:    Fix a minor issue related to validity checking.
+Patch 3-5:  Introduce a sequence counter for the mapping extent status
+            tree, this also prepares for the iomap infrastructure.
+Patch 6-8:  Refactor the mext_check_arguments() helper function and the
+            validity checking to improve code readability.
+Patch 9-13: Drop move_extent_per_page() and switch to using the new
+            mext_move_extent(). Additionally, add support for large
+            folios.
+
+With this patch set, the efficiency of online defragmentation for the
+ext4 file system can also be improved under general circumstances. Below
+is a set of typical test obtained using the fio e4defrag ioengine on the
+environment with Intel Xeon Gold 6240 CPU, 400G memory and a NVMe SSD
+device.
+
+  [defrag]
+  directory=/mnt
+  filesize=400G
+  buffered=1
+  fadvise_hint=0
+  ioengine=e4defrag
+  bs=4k         # 4k,32k,128k
+  donorname=test.def
+  filename=test
+  inplace=0
+  rw=write
+  overwrite=0   # 0 for unwritten extent and 1 for written extent
+  numjobs=1
+  iodepth=1
+  runtime=30s
+
+  [w/o]
+   U 4k:    IOPS=225k,  BW=877MiB/s      # U: unwritten extent-moving
+   U 32k:   IOPS=33.2k, BW=1037MiB/s
+   U 128k:  IOPS=8510,  BW=1064MiB/s
+   M 4k:    IOPS=19.8k, BW=77.2MiB/s     # M: written extent-moving
+   M 32k:   IOPS=2502,  BW=78.2MiB/s
+   M 128k:  IOPS=635,   BW=79.5MiB/s
+
+  [w]
+   U 4k:    IOPS=246k,  BW=963MiB/s
+   U 32k:   IOPS=209k,  BW=6529MiB/s
+   U 128k:  IOPS=146k,  BW=17.8GiB/s
+   M 4k:    IOPS=19.5k, BW=76.2MiB/s
+   M 32k:   IOPS=4091,  BW=128MiB/s
+   M 128k:  IOPS=2814,  BW=352MiB/s 
+
+
+Best Regards,
+Yi.
+
+
+Zhang Yi (13):
+  ext4: fix an off-by-one issue during moving extents
+  ext4: correct the checking of quota files before moving extents
+  ext4: introduce seq counter for the extent status entry
+  ext4: make ext4_es_lookup_extent() pass out the extent seq counter
+  ext4: pass out extent seq counter when mapping blocks
+  ext4: use EXT4_B_TO_LBLK() in mext_check_arguments()
+  ext4: add mext_check_validity() to do basic check
+  ext4: refactor mext_check_arguments()
+  ext4: rename mext_page_mkuptodate() to mext_folio_mkuptodate()
+  ext4: introduce mext_move_extent()
+  ext4: switch to using the new extent movement method
+  ext4: add large folios support for moving extents
+  ext4: add two trace points for moving extents
+
+ fs/ext4/ext4.h              |   3 +
+ fs/ext4/extents.c           |   2 +-
+ fs/ext4/extents_status.c    |  27 +-
+ fs/ext4/extents_status.h    |   2 +-
+ fs/ext4/inode.c             |  28 +-
+ fs/ext4/ioctl.c             |  10 -
+ fs/ext4/move_extent.c       | 773 ++++++++++++++++--------------------
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |  97 ++++-
+ 9 files changed, 486 insertions(+), 457 deletions(-)
+
 -- 
-2.50.1
+2.46.1
 
 
