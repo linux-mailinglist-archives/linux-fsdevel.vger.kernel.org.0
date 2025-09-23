@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-62465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56611B93DED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 03:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D843B93DFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 03:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A27C19C27B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 01:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479E22E27AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 01:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F61E28A1E6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A935E2C3768;
 	Tue, 23 Sep 2025 01:29:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECF526F296;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C9D2701CC;
 	Tue, 23 Sep 2025 01:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758590977; cv=none; b=mBYnBR78xSovoQXnnkaWQ7TsUks/2zZehjSN4aVwdhUPn/26EsDkglrTSrLP+76wPPIERUZb4VmtqpqwsGIgarg1NkobDnl9tpbI2zgh7r7Rlw3NzyRqH593lLptmtrjFAAPu9LlC7vkN+NFNV9qz9y+S6rXsw6aM+dibAtncuA=
+	t=1758590978; cv=none; b=TACv1PdBCL8qIdvpwD2Fq+rKjXe2BMGt4irLTSAKA+oEYvBKKXnE+afRgcb1xiZQVmKnjU7NPD1G/9kwjYIZjmDneDUgsXktlRUM31/ogtevzbs1twXuHVSDjUsjVqBowUD9BXALzUNEHcnX2sTT4i2H+N2FySGoaoYMIdki1Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758590977; c=relaxed/simple;
-	bh=CyYQn+cOs12tN7/PlpInkSiOd/5MvYS7xR1XrqzTHRc=;
+	s=arc-20240116; t=1758590978; c=relaxed/simple;
+	bh=iYYIRGCB7NPJVlkdCLHGL2lRgfqtqHxpKMJU6D74P5E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y/prZgVsCCfz+QayFwxSY+v75d58EaPQzBjMqb8ZasFAoL4ftuJ7VW9+AlZ4u+utR8wLIIfLHCFr2xmBds7OynImUbWU5sq6tWSPkZXhJHwCoeWXhSxOD+n3XPDObfjpWKEAqXSAK+HHnXnIX3QiOiJ0B+vG6ANtJ1ZhCGhnZtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Vum/uILT4r8N64c/RwzZXlsky3/GYRsGG+IVqpgQC04NCM6JtS6lZALNw09cGZX80ZHI8eZ5+y2y53jFvt0rw2fy83VPugkb93WIvZb6GJkfON1pr4tFFWBMkqWthzsY9Egchk+sP83/KrDBnsNN36A1S23cK06/DuRAOUkO/C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cW2Sv5lxLzYQv4h;
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cW2Sv6LR2zYQv3t;
 	Tue, 23 Sep 2025 09:29:19 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F0DD21A1B01;
-	Tue, 23 Sep 2025 09:29:24 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 0F02C1A104C;
+	Tue, 23 Sep 2025 09:29:25 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP4 (Coremail) with SMTP id gCh0CgAXKWHq99FoGYYGAg--.10941S16;
+	by APP4 (Coremail) with SMTP id gCh0CgAXKWHq99FoGYYGAg--.10941S17;
 	Tue, 23 Sep 2025 09:29:24 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 12/13] ext4: add large folios support for moving extents
-Date: Tue, 23 Sep 2025 09:27:22 +0800
-Message-ID: <20250923012724.2378858-13-yi.zhang@huaweicloud.com>
+Subject: [PATCH 13/13] ext4: add two trace points for moving extents
+Date: Tue, 23 Sep 2025 09:27:23 +0800
+Message-ID: <20250923012724.2378858-14-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250923012724.2378858-1-yi.zhang@huaweicloud.com>
 References: <20250923012724.2378858-1-yi.zhang@huaweicloud.com>
@@ -63,10 +63,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXKWHq99FoGYYGAg--.10941S16
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF1xWrWrJr1rGFWUKrWruFg_yoW5Xw43pF
-	1xKan3tFWkX34I9ry0qay7Zr15Ka4xtr4UWF4fJw1SyFyqvryIgr1jy3WxZFyrtrW8ArWF
-	qF4SkryUWa1Dt3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgAXKWHq99FoGYYGAg--.10941S17
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFyDAF4DAF1kWFykWFykZrb_yoWruw15pF
+	n7AFy5K3ykXaya934xCw48Zr45ua4IkrWUKrySg343XayxtrnFgr4kta1jyF9YyrW8Kryf
+	XFWjyryDKa45W3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -85,78 +85,141 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Pass the moving extent length into mext_folio_double_lock() so that it
-can acquire a higher-order folio if the length exceeds PAGE_SIZE. This
-can speed up extent moving when the extent is larger than one page.
-Additionally, remove the unnecessary comments from
-mext_folio_double_lock().
+To facilitate tracking the length, type, and outcome of the move extent,
+add a trace point at both the entry and exit of mext_move_extent().
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/move_extent.c | 27 ++++++++++-----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
+ fs/ext4/move_extent.c       | 14 ++++++-
+ include/trace/events/ext4.h | 74 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index b478631e243c..c15294ce2aab 100644
+index c15294ce2aab..3ea616b0e929 100644
 --- a/fs/ext4/move_extent.c
 +++ b/fs/ext4/move_extent.c
-@@ -54,23 +54,14 @@ ext4_double_up_write_data_sem(struct inode *orig_inode,
- 	up_write(&EXT4_I(donor_inode)->i_data_sem);
- }
+@@ -13,6 +13,8 @@
+ #include "ext4.h"
+ #include "ext4_extents.h"
  
--/**
-- * mext_folio_double_lock - Grab and lock folio on both @inode1 and @inode2
-- *
-- * @inode1:	the inode structure
-- * @inode2:	the inode structure
-- * @index1:	folio index
-- * @index2:	folio index
-- * @folio:	result folio vector
-- *
-- * Grab two locked folio for inode's by inode order
-- */
--static int
--mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
--		      pgoff_t index1, pgoff_t index2, struct folio *folio[2])
-+/* Grab and lock folio on both @inode1 and @inode2 by inode order. */
-+static int mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
-+				  pgoff_t index1, pgoff_t index2, size_t len,
-+				  struct folio *folio[2])
- {
- 	struct address_space *mapping[2];
- 	unsigned int flags;
-+	fgf_t fgp_flags = FGP_WRITEBEGIN;
++#include <trace/events/ext4.h>
++
+ struct mext_data {
+ 	struct inode *orig_inode;	/* Origin file inode */
+ 	struct inode *donor_inode;	/* Donor file inode */
+@@ -311,10 +313,14 @@ static int mext_move_extent(struct mext_data *mext, u64 *m_len)
+ 	int ret, ret2;
  
- 	BUG_ON(!inode1 || !inode2);
- 	if (inode1 < inode2) {
-@@ -83,14 +74,15 @@ mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
- 	}
+ 	*m_len = 0;
++	trace_ext4_move_extent_enter(orig_inode, orig_map, donor_inode,
++				     mext->donor_lblk);
+ 	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
+ 	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
+-	if (IS_ERR(handle))
+-		return PTR_ERR(handle);
++	if (IS_ERR(handle)) {
++		ret = PTR_ERR(handle);
++		goto out;
++	}
  
- 	flags = memalloc_nofs_save();
--	folio[0] = __filemap_get_folio(mapping[0], index1, FGP_WRITEBEGIN,
-+	fgp_flags |= fgf_set_order(len);
-+	folio[0] = __filemap_get_folio(mapping[0], index1, fgp_flags,
- 			mapping_gfp_mask(mapping[0]));
- 	if (IS_ERR(folio[0])) {
- 		memalloc_nofs_restore(flags);
- 		return PTR_ERR(folio[0]);
- 	}
- 
--	folio[1] = __filemap_get_folio(mapping[1], index2, FGP_WRITEBEGIN,
-+	folio[1] = __filemap_get_folio(mapping[1], index2, fgp_flags,
- 			mapping_gfp_mask(mapping[1]));
- 	memalloc_nofs_restore(flags);
- 	if (IS_ERR(folio[1])) {
-@@ -214,7 +206,8 @@ static int mext_move_begin(struct mext_data *mext, struct folio *folio[2],
- 	orig_pos = ((loff_t)mext->orig_map.m_lblk) << blkbits;
- 	donor_pos = ((loff_t)mext->donor_lblk) << blkbits;
- 	ret = mext_folio_double_lock(orig_inode, donor_inode,
--			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT, folio);
-+			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT,
-+			mext->orig_map.m_len << blkbits, folio);
+ 	ret = mext_move_begin(mext, folio, &move_type);
  	if (ret)
- 		return ret;
+@@ -372,6 +378,10 @@ static int mext_move_extent(struct mext_data *mext, u64 *m_len)
+ 	mext_folio_double_unlock(folio);
+ stop_handle:
+ 	ext4_journal_stop(handle);
++out:
++	trace_ext4_move_extent_exit(orig_inode, orig_map->m_lblk, donor_inode,
++				    mext->donor_lblk, orig_map->m_len, *m_len,
++				    move_type, ret);
+ 	return ret;
  
+ repair_branches:
+diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
+index 6a0754d38acf..a05bdd48e16e 100644
+--- a/include/trace/events/ext4.h
++++ b/include/trace/events/ext4.h
+@@ -3016,6 +3016,80 @@ TRACE_EVENT(ext4_update_sb,
+ 		  __entry->fsblk, __entry->flags)
+ );
+ 
++TRACE_EVENT(ext4_move_extent_enter,
++	TP_PROTO(struct inode *orig_inode, struct ext4_map_blocks *orig_map,
++		 struct inode *donor_inode, ext4_lblk_t donor_lblk),
++
++	TP_ARGS(orig_inode, orig_map, donor_inode, donor_lblk),
++
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(ino_t, orig_ino)
++		__field(ext4_lblk_t, orig_lblk)
++		__field(unsigned int, orig_flags)
++		__field(ino_t, donor_ino)
++		__field(ext4_lblk_t, donor_lblk)
++		__field(unsigned int, len)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= orig_inode->i_sb->s_dev;
++		__entry->orig_ino	= orig_inode->i_ino;
++		__entry->orig_lblk	= orig_map->m_lblk;
++		__entry->orig_flags	= orig_map->m_flags;
++		__entry->donor_ino	= donor_inode->i_ino;
++		__entry->donor_lblk	= donor_lblk;
++		__entry->len		= orig_map->m_len;
++	),
++
++	TP_printk("dev %d,%d origin ino %lu lblk %u flags %s donor ino %lu lblk %u len %u",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
++		  show_mflags(__entry->orig_flags),
++		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
++		  __entry->len)
++);
++
++TRACE_EVENT(ext4_move_extent_exit,
++	TP_PROTO(struct inode *orig_inode, ext4_lblk_t orig_lblk,
++		 struct inode *donor_inode, ext4_lblk_t donor_lblk,
++		 unsigned int m_len, u64 move_len, int move_type, int ret),
++
++	TP_ARGS(orig_inode, orig_lblk, donor_inode, donor_lblk, m_len,
++		move_len, move_type, ret),
++
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(ino_t, orig_ino)
++		__field(ext4_lblk_t, orig_lblk)
++		__field(ino_t, donor_ino)
++		__field(ext4_lblk_t, donor_lblk)
++		__field(unsigned int, m_len)
++		__field(u64, move_len)
++		__field(int, move_type)
++		__field(int, ret)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= orig_inode->i_sb->s_dev;
++		__entry->orig_ino	= orig_inode->i_ino;
++		__entry->orig_lblk	= orig_lblk;
++		__entry->donor_ino	= donor_inode->i_ino;
++		__entry->donor_lblk	= donor_lblk;
++		__entry->m_len		= m_len;
++		__entry->move_len	= move_len;
++		__entry->move_type	= move_type;
++		__entry->ret		= ret;
++	),
++
++	TP_printk("dev %d,%d origin ino %lu lblk %u donor ino %lu lblk %u m_len %u, move_len %llu type %d ret %d",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
++		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
++		  __entry->m_len, __entry->move_len, __entry->move_type,
++		  __entry->ret)
++);
++
+ #endif /* _TRACE_EXT4_H */
+ 
+ /* This part must be outside protection */
 -- 
 2.46.1
 
