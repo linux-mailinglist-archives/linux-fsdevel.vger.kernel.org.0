@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-62476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D545CB94395
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 06:26:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34925B943A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 06:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC182E26F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 04:26:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 024257AF44F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 04:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D7A27F736;
-	Tue, 23 Sep 2025 04:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBF927F732;
+	Tue, 23 Sep 2025 04:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dthun77Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bb8nCN0t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B02027B32D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 04:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843B627F747
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 04:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758601328; cv=none; b=tlp6c4I3n95wWf20yhN2bMQ3Tf1C4Ep3Qxubmt2tIpOGE0QdIKAqLPZZlYRYALQyxcecgdiAdbQH7+IEQGPeYbXFA7KNEAwvkBn8IP3raUv0eG6Ue62okwSg4cZHyx2UO8KL9NBTI0wZb/eMVoKmED8UmuLAhdP8oItcQpSXQEc=
+	t=1758601331; cv=none; b=uhHGFyTUBhDnWoCuytbmu57cVGIXeUkbnhKhZWzQLO3au+YODQpj9TGPFan8x0FRl8BlO+XfNp49o3en3cE9GO4jnCHZK+9UnIXWCrctwpmqPrb1uMC3jXM/7Y2TP6By0OZUGFShrqBvIxzF3mEcO+EzxLHfJ3/ZPhRXrO5CREA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758601328; c=relaxed/simple;
-	bh=dah8ZhgBCCglBmK2Z+eAcnLpuYOrh31bu+S3be/sAjI=;
+	s=arc-20240116; t=1758601331; c=relaxed/simple;
+	bh=5eH935+lsN0R/DItA1U64YcW9yDNKNSWjjrWljodN0E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FUVsyKoIKkdZM9qfMuNHwrMHm9OyHn3dbB6ErutDxOCQfCitnbwGws0fvB9buVyp0I82xrzjdnhPPWO18BnkxXR1ub4vt67GFfO4OFBouYGdVtW5xO7KWVLD52bX3QMHXI3b9gagnDWbcwA4ZfgRYmafbeA8YYbxkERsaEWGwNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dthun77Q; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=MzBlN3FLSO6JI/zHUJbP8VhEtfW83TYcwPNxmkmWjQvrZ1u2JA3UYvAsZNOI6tx9S07J8ygOqXepbJVrPXKHvpJTzGUOq96md6AO5vzSlxug+WMhM1SoROkP2T9nBf+87kJ5brjkFwWvnF2mW6k+X9onjogFQsvgSMY5Qbrvis0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bb8nCN0t; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77d94c6562fso5134502b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 21:22:07 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so5122450b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Sep 2025 21:22:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758601327; x=1759206127; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758601329; x=1759206129; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s/cHPlIzPABEuPSPErkXxAEb1eyYlTFw7Bjb++zcmu4=;
-        b=Dthun77QjAYBxbl7NhtATWcR2H8zHpjyWXjQibe0AzQnD+rSBfC+Z+fHczVXfWM1Dc
-         9npSnr5b5cbDUA/h7UNUQPRaMrYf6FigI0C9sRGwszLyBtnuDYhJ7/k82HvpDmmZhqzx
-         mVo3fzgR1HsTwnswcBZVl/h7MBvbIL6EGU3ir3AqxIoyte7Nq7jWN8ZwS5eD7XVdPxO8
-         K9CVImy1MJpsDrwU4CnBteC3H0kkh2K6oxoFwpMw2Vu2i+tC5927K+WXw9TPBxzaIDFI
-         NJUIrqRVQoKseQuszuyI6KeguRZj2SJjDYg4Z/LtI4MMcGETda8vJu7Huh5TNvA/i/jN
-         4q9w==
+        bh=QTiKYWhp9DqW3xIE0b9hgxXBoYHgu3XtAiRm2w5aZUo=;
+        b=bb8nCN0tbhRXM3QVcmVwW+hzdss3hHiWvKEcGF2RSoxdOMY8JjpT5p4WnaO8m8UTeC
+         J1P008BG3hWRFsIpM4ThVD4XcjYLfqxwyiBkokZtP0f6SuICViCMAZWaheKnkCNX8olo
+         4thsFUf1MB7fDJNjq1CTExjEFTHaEVeUbCQhkGstoG2fueWdu0Rnb0R8U3Tzb+3sXooo
+         hNghaEYu0d/ZSwqAgUZl7YtqSWPkNXmHvvaHh8mYmzQTUiwP7OE89PGnaaD8T/n+7LNq
+         NwAoLdCZZYYyzqVMiaB07oEh7DuJv/WuyDKXZfLHg8e6HkQib+KWSQwSoLJTgEie7Bkb
+         SPJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758601327; x=1759206127;
+        d=1e100.net; s=20230601; t=1758601329; x=1759206129;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s/cHPlIzPABEuPSPErkXxAEb1eyYlTFw7Bjb++zcmu4=;
-        b=DUoe6qYoc4cIBXNhLClYi9hrgeA9vdOZd0qp00NnLt2/SV2qu9Qs6m51Av/Em45AY5
-         WvcB0174HeuINyht+G3689n6ssm/JrkSRBRosZ5gxCMaYZjTJH8cxpyphph8GYeTk8Pl
-         6fIgjjbqW/XWUE5VlLMNSUzjaHrP6wsRbIJZ4yrZY+RXSD0zX0g+S3atdOjA+Y4UcOUS
-         C29z+N/hy85KfKE43MnBsEIC6laATd2Z7GKHZwj9rbfPE9lkiSsQVvjN5uJHMa/IylNr
-         4OyqgQVZZnoqhw3rsb/BcYvFyrCls7kr2JGqkKQp4BnbtRYWKsgUmjYZRYio8e9eea89
-         +SLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8wlBlKXx7tyUEphn1Yx+BrqhFNrU8bs3Oxa/Ok7xrCXvQQ2/GBd1ybl/CKotmhHjOuKgboMsZzATABxrY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Rjji6xwqv57MC4GWC/L/Tpbo4U6FKjSiuH1HFc5hmncFWoG0
-	mVk8ms1cUuvPNsotpdzONs/9A3MNiebbSstj9WQ6mwQGYTZPGuGC9+Bh
-X-Gm-Gg: ASbGncsnyhwssl4eubRpPiYBOOLgCh++kgFLK6ifBZ92XPioH2nKgM3bEbKj9l4EzcJ
-	tAZYcFlmzrNQxxvqrjqzNo+gph4P5oLgAZ/dXYV/zaNmEwjNZP1sp0fivrjaFCZIa5df4upbR2K
-	FBcM90tTY3QdWJk68mgEKnMMBLPb/itX8xZPR+Dyp9z7aikOmx7HXk18Uat9eJoklIUZQYja4Tb
-	icJA3br/8qyC+uLlb3j68A77L/S01p0neyN0SRzSOuZ50IWPNQ32q5TACnT4y8/XCgVn4Xj0eXK
-	miLGE+iS8tWvbl/V+iekc4YmdAaC7ww7PMDwTQH+4mJJnZsBR71GfxwbsdLkLcY3JVWA7/FgSE9
-	WGBE3BDOoei3Xcp+HnPeSeEIZDkl5YCFR/Q==
-X-Google-Smtp-Source: AGHT+IHZAQls+5hMZhGCN0G3+29ESb1NDuuB+LUQQRQtRCIeNRAgRN5oig1MawJfpWsB1afMgMFY0g==
-X-Received: by 2002:a05:6a00:893:b0:77f:1d7a:b97f with SMTP id d2e1a72fcca58-77f53ad04c6mr1449286b3a.28.1758601326763;
-        Mon, 22 Sep 2025 21:22:06 -0700 (PDT)
+        bh=QTiKYWhp9DqW3xIE0b9hgxXBoYHgu3XtAiRm2w5aZUo=;
+        b=ai9w6Rnq4UqdyUHEgL2QZeFuWabIA/941e5+jD7PZw1ozcguXx9yZ2CSF902vafKm8
+         k2hx957Sv1lRefHr9yGpv3Ptdih22j8cbu/ANJ1jvO7Ek38/m/biPOh/ZpaNga4/lKbN
+         zeOWLcJ+cjMlut8HgrdzecAKv8nx6Gykl8rAAGev9taLXGqsAyTwcRcjTjpI10g8kCts
+         YMULXEKu9bp+ZrkoRDTkhZfreoIyEeJWRz4X3XlFrUG2xnoLb4yvTwNWmYhE/ZNl23C2
+         sVkai9JOHMm6rjepTm3Plrx+pd50tZJ9sTK985GzTI4qczKCtqr9gLwOIWcNPi5c2pRq
+         YG8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0FrLYT06XX+rNap5iZYTPXscgAS6m8QVFdyXY9YPE3DXpC4FECY90H1m2NYicP1PcJ7mQ4gHTGqngaMvA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdUpIR64v7nEoGsOqSGAAox/s9SlW4ukdJGtXK/5F5a4PvqzqT
+	UzES7yO59vYRpAe6SKyjyk9A/5LahAtku3zsrIRKYTLUaQV/QmGC0BhVZd8ucak6
+X-Gm-Gg: ASbGncu4Sz8u/GQLTr7QlZdaIl8LW8ULURtsHtgqNlZvDzexFjYIHAkFQ0gs9rsWI3f
+	WVuAH6fbuofB8RadXWiTsTvFU6aydQ//o1jtKcsI/quoucgL6h44uMJp8EGNjcLCxWjyjeajKgA
+	aez4kVWytQl/ZAvknhT0QaGo0ljz3mTdp5hFOn3o464fzSA7Fg1f+XhdWBsv6/ckrGlk8vqNBLz
+	jZfbgBJCKp6I3eHgmJAxI1LYqd1Ys1PSHg7+DrNFVYA3ytuoRX6plRt+VADXwqH8b4N2/53y5bt
+	DbDp4VEZGgPmcL0Xrggy9yY5bcN6/hIqm3GgfQzGSXQULMFXNegEnCmHlf9n8BRfyD/1o/h+Fl+
+	nQsCiC4MntuER1nXYl+Lk6p0Isg3H7LymRg==
+X-Google-Smtp-Source: AGHT+IH6HBhAi03cdQLfqQC6cecOw3p26zijbrqK/kBrzopVVn6ri+wpqvCMc/oJTTwEYKJ19Ui/VQ==
+X-Received: by 2002:a05:6a21:99a7:b0:24b:c7d9:88e4 with SMTP id adf61e73a8af0-2cfece8b630mr1830042637.42.1758601328808;
+        Mon, 22 Sep 2025 21:22:08 -0700 (PDT)
 Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77d8c3adfd4sm13316513b3a.82.2025.09.22.21.22.05
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77d8c3adfd4sm13316513b3a.82.2025.09.22.21.22.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 21:22:06 -0700 (PDT)
+        Mon, 22 Sep 2025 21:22:08 -0700 (PDT)
 From: alexjlzheng@gmail.com
 X-Google-Original-From: alexjlzheng@tencent.com
 To: brauner@kernel.org,
@@ -84,9 +84,9 @@ Cc: linux-xfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	yi.zhang@huawei.com,
 	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v5 2/4] iomap: move iter revert case out of the unwritten branch
-Date: Tue, 23 Sep 2025 12:21:56 +0800
-Message-ID: <20250923042158.1196568-3-alexjlzheng@tencent.com>
+Subject: [PATCH v5 3/4] iomap: make iomap_write_end() return the number of written length again
+Date: Tue, 23 Sep 2025 12:21:57 +0800
+Message-ID: <20250923042158.1196568-4-alexjlzheng@tencent.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250923042158.1196568-1-alexjlzheng@tencent.com>
 References: <20250923042158.1196568-1-alexjlzheng@tencent.com>
@@ -100,49 +100,120 @@ Content-Transfer-Encoding: 8bit
 
 From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-The commit e1f453d4336d ("iomap: do some small logical cleanup in
-buffered write") merged iomap_write_failed() and iov_iter_revert()
-into the branch with written == 0. Because, at the time,
-iomap_write_end() could never return a partial write length.
-
-In the subsequent patch, iomap_write_end() will be modified to allow
-to return block-aligned partial write length (partial write length
-here is relative to the folio-sized write), which violated the above
-patch's assumption.
-
-This patch moves it back out to prepare for the subsequent patches.
+In the next patch, we allow iomap_write_end() to conditionally accept
+partial writes, so this patch makes iomap_write_end() return the number
+of accepted write bytes in preparation for the next patch.
 
 Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 ---
- fs/iomap/buffered-io.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/iomap/buffered-io.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ee1b2cd8a4b4..e130db3b761e 100644
+index e130db3b761e..6e516c7d9f04 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1019,6 +1019,11 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+@@ -873,7 +873,7 @@ static int iomap_write_begin(struct iomap_iter *iter,
+ 	return status;
+ }
  
- 		if (old_size < pos)
- 			pagecache_isize_extended(iter->inode, old_size, pos);
-+		if (written < bytes)
-+			iomap_write_failed(iter->inode, pos + written,
-+					   bytes - written);
-+		if (unlikely(copied != written))
-+			iov_iter_revert(i, copied - written);
+-static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
++static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 		size_t copied, struct folio *folio)
+ {
+ 	flush_dcache_folio(folio);
+@@ -890,11 +890,11 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 	 * redo the whole thing.
+ 	 */
+ 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+-		return false;
++		return 0;
+ 	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+ 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+ 	filemap_dirty_folio(inode->i_mapping, folio);
+-	return true;
++	return copied;
+ }
+ 
+ static void iomap_write_end_inline(const struct iomap_iter *iter,
+@@ -915,10 +915,10 @@ static void iomap_write_end_inline(const struct iomap_iter *iter,
+ }
+ 
+ /*
+- * Returns true if all copied bytes have been written to the pagecache,
+- * otherwise return false.
++ * Returns number of copied bytes have been written to the pagecache,
++ * zero if block is partial update.
+  */
+-static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
++static int iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
+ 		struct folio *folio)
+ {
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+@@ -926,7 +926,7 @@ static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
+ 
+ 	if (srcmap->type == IOMAP_INLINE) {
+ 		iomap_write_end_inline(iter, folio, pos, copied);
+-		return true;
++		return copied;
+ 	}
+ 
+ 	if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
+@@ -934,7 +934,7 @@ static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
+ 
+ 		bh_written = block_write_end(pos, len, copied, folio);
+ 		WARN_ON_ONCE(bh_written != copied && bh_written != 0);
+-		return bh_written == copied;
++		return bh_written;
+ 	}
+ 
+ 	return __iomap_write_end(iter->inode, pos, len, copied, folio);
+@@ -1000,8 +1000,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+ 			flush_dcache_folio(folio);
+ 
+ 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+-		written = iomap_write_end(iter, bytes, copied, folio) ?
+-			  copied : 0;
++		written = iomap_write_end(iter, bytes, copied, folio);
+ 
+ 		/*
+ 		 * Update the in-memory inode size after copying the data into
+@@ -1315,7 +1314,7 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
+ 	do {
+ 		struct folio *folio;
+ 		size_t offset;
+-		bool ret;
++		int ret;
+ 
+ 		bytes = min_t(u64, SIZE_MAX, bytes);
+ 		status = iomap_write_begin(iter, write_ops, &folio, &offset,
+@@ -1327,7 +1326,7 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
+ 
+ 		ret = iomap_write_end(iter, bytes, bytes, folio);
+ 		__iomap_put_folio(iter, write_ops, bytes, folio);
+-		if (WARN_ON_ONCE(!ret))
++		if (WARN_ON_ONCE(ret != bytes))
+ 			return -EIO;
  
  		cond_resched();
- 		if (unlikely(written == 0)) {
-@@ -1028,9 +1033,6 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 			 * halfway through, might be a race with munmap,
- 			 * might be severe memory pressure.
- 			 */
--			iomap_write_failed(iter->inode, pos, bytes);
--			iov_iter_revert(i, copied);
--
- 			if (chunk > PAGE_SIZE)
- 				chunk /= 2;
- 			if (copied) {
+@@ -1388,7 +1387,7 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+ 	do {
+ 		struct folio *folio;
+ 		size_t offset;
+-		bool ret;
++		int ret;
+ 
+ 		bytes = min_t(u64, SIZE_MAX, bytes);
+ 		status = iomap_write_begin(iter, write_ops, &folio, &offset,
+@@ -1406,7 +1405,7 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
+ 
+ 		ret = iomap_write_end(iter, bytes, bytes, folio);
+ 		__iomap_put_folio(iter, write_ops, bytes, folio);
+-		if (WARN_ON_ONCE(!ret))
++		if (WARN_ON_ONCE(ret != bytes))
+ 			return -EIO;
+ 
+ 		status = iomap_iter_advance(iter, &bytes);
 -- 
 2.49.0
 
