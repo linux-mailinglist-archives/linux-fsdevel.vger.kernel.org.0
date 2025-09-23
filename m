@@ -1,164 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-62484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242A9B94B8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 09:16:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0D2B94D0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 09:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1D23AC918
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 07:16:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C5E7B1D35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 07:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336343112C1;
-	Tue, 23 Sep 2025 07:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352D83191BD;
+	Tue, 23 Sep 2025 07:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i/vFblrX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KxS91bKP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C539430F7FE;
-	Tue, 23 Sep 2025 07:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B425C3191AF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 07:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758611792; cv=none; b=Hb11jqLm+lEJylViVLXJN7/YsJe5V7R+MeRJXGs+hLsrmZsnSXNRZcIgDoG9kfDxYRj4qdPiEdj7dBxiMZaG2DonNfTvLoBJhpNaASOuijFl7gfQoEOqmMPUx9Zg+xibw9U7mI85rMTUGxMNeKzVPkp7PWFrMw5j0Bietn3jHq4=
+	t=1758613115; cv=none; b=L4Z99QDbUkExAxK5KkWyo78smWOh3/Mu8cwWaKIKFLfjDltwFozGeKmgLuGxh9awI6INmPFF5eLou24ho2q6qxMblDH7GxCMT0i9XmuLKpqYlyVLcs5cq39mva7l0lCp/9/GpoHy9+ZcNr+dl3kDy/LrsW7DKaeUEquORpemsyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758611792; c=relaxed/simple;
-	bh=5fDKVF0izRWroWruPprDXuZ/aZYH/dSrSsguDThEDK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YN8gflZW+rQoOdUETs1w/aNfDp8LesnZYEP9iderT+NXDK+A5mYYfnzI2GTiLHuRuen80m63ZP6kdQYdk8CUlEYg32nwofTFM0K4qcjWb9G4EEeh96XIwH2MAUqijRtcdvtteVgCgnrSIwcJabNBF7u17VZ6vLoXUuzrzrV12cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i/vFblrX; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gr21sE64KSAPJhmA+bz5GYsvn97jNvphWwGOnPhZYQg=; b=i/vFblrX/G8e6OLXGvktviUrqu
-	/dRaH+KC6I+ldSGmqV3SNGsnvCGwKxxSjC/TZXOWTGXpu4M3dsH17R6MkBkL/d8egR7H16VbAeirY
-	Ej6qwCrx8QSEpuTVex8yVeSs2Owfi2RgeO7SIohXpFb3yaspKtUnnyoBw8GETWq0R+tZPqh/zooX5
-	xYKtBQiZF3wgomx3Bku5NXcBN2yrtijVKq+1WTMU3t1Q+20sVRACkOLDCWHWusoJ85isXxfd5XQqh
-	LRKaggUGUYY/30UY6nFEJQ7YcBf90Tv3/Y/P3sqsLoBsgRIH+ebgSP1KtoCOE6wX9mkIgxktnUWAz
-	rY4pPfig==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0xFw-00000008Ti2-468P;
-	Tue, 23 Sep 2025 07:16:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A3CC530049C; Tue, 23 Sep 2025 09:16:07 +0200 (CEST)
-Date: Tue, 23 Sep 2025 09:16:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Julian Sun <sunjunchao@bytedance.com>, cgroups@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, lance.yang@linux.dev,
-	mhiramat@kernel.org, agruenba@redhat.com, hannes@cmpxchg.org,
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev
-Subject: Re: [PATCH 0/3] Suppress undesirable hung task warnings.
-Message-ID: <20250923071607.GR3245006@noisy.programming.kicks-ass.net>
-References: <20250922094146.708272-1-sunjunchao@bytedance.com>
- <20250922132718.GB49638@noisy.programming.kicks-ass.net>
- <aNGQoPFTH2_xrd9L@infradead.org>
- <20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
+	s=arc-20240116; t=1758613115; c=relaxed/simple;
+	bh=fBafndRrS/cvR4it3eIK+X4JzSp3tuG+7bMO9l104b4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Se+GrxJRdN/+MHNwbYMcIo/MXrKV9fpfB2in3OTFCcnuatqEBCPd8nSq5wr7Fxi1wcOCwMqwphhhYN++Y765nCSpk6v3MLUVZYyhxjVRovRzoYcvGtP1r/aunkWYzwXIYSfglA3HSMR16Shk73PTUlXRmpO6cvVET8WWIkxJfZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KxS91bKP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758613112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3+2f8veuvuQfgX39BgNLfIIBsGS5Oj+VIkm5FraHo3A=;
+	b=KxS91bKPUWuUkwo445OzdzpBrIJId7rNkFJcynPhmPkKVjfcCNYpBs7Jn9rWbQOMQ9Kjwz
+	RAAsyOO4kOKJtgGiI7ZbtQ3KNi/D6H0VN0IQ932Cny5fxDZFt2tkVLq6Yjm5YAfpg8vgRj
+	e1mfuXpixC1LlyjGnwQe5CS1na9cPiI=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-509-c7S9BRRYOd21J27P8_CkmA-1; Tue, 23 Sep 2025 03:38:30 -0400
+X-MC-Unique: c7S9BRRYOd21J27P8_CkmA-1
+X-Mimecast-MFC-AGG-ID: c7S9BRRYOd21J27P8_CkmA_1758613109
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46c84b3b27bso14714815e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 00:38:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758613109; x=1759217909;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3+2f8veuvuQfgX39BgNLfIIBsGS5Oj+VIkm5FraHo3A=;
+        b=AUVG1AhkfQhsiNoKT5jh7JHvuKHCHxKT1Hy+E4LDE9vKt/83RPOt4mXZaO/pOtPb/9
+         IuqMJKt21JzWuLqSPDYkDLPYIlOI8EWDFt+83HtKb66c0On8X+1BOmPYjtHRy9+7r7Zj
+         v2fjqqQ7tDoQfuA9LOpfSoZCCIukB+k12hrS7gh9rl/moWYKU5RK3w+K6BemPNIj7LOw
+         RkWeVJZcV5KNvlk/2yYAR7lP3qlJ9XO3/owwyVdT8rFVOKzSB4bL0u2hV1klNgdE1jCj
+         mW0DMTO8QndNBoyyU/0Bv+kK8aKqoWivT2+SbvvnM4NbMQb6Ekn1n/pZAM8qStshbwyq
+         CxDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOhkbtmSNHPrd1LoYdzZof0NtT7XND4GwYWc5x04LdhlPtOVnR2QoxrW7C2EiJFolwwmNrZ33j8mINadk5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuDEvk/nbUvhS+Quu4jsx6OJ2bidopQJGi9IwAscm81iaKFwS+
+	/zYn+YFasnvejnup3q7KAAefa4y9MnDGfs7WbNLFVaYE01GAn11kWmZcDK/bud1noCjdpsb2Z1L
+	XirNPTDx7PW0MU+UKvZxWb2ozdbjamS2z17m0i2Pp3w5MBXWvsmKeV+ggOfMAF49S9q0=
+X-Gm-Gg: ASbGncvPV2eWKU4IhixSbAMfqrPLfErEkuzXwXWbUDEWQqiHbCbWd0vyuHA4QZdJgPf
+	la8sMv4dZZ9ymuNfkHSV4fMdVZhbdWnEdMm7AQfkgalB3nLs5o+2ME3WoJO9348n/G+jBTNm4G/
+	E+y/p46p4SKQoc53+I2KqMkqh8e6YDhDJJvkvufkCBiEZ3gw8yBK6lqDhO7BxOVuGCOVDnQG0Jb
+	EwcCGuHcKCZ3XdRBdCG7OwT/KCiz0ELbe8wttqYBuRQZOI1Lt/gC15QVjWEXDMdQXqkhB1AgXcZ
+	zZuhy9dX+NlyF1T/G8fP+neZgHvUpouDQJyyc0qAnuo4Q43UxGlrXxBRcJrONAs8Y9dW87k=
+X-Received: by 2002:a05:600c:3541:b0:45f:2843:e779 with SMTP id 5b1f17b1804b1-46e1d97a0ddmr18796925e9.8.1758613109150;
+        Tue, 23 Sep 2025 00:38:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFu/BPEIJsCwjIeyZic5miWaKNTnGiC069S6ggfgPcy4CJzDTmfq1ehSOcS1TWgHULTVLA7jw==
+X-Received: by 2002:a05:600c:3541:b0:45f:2843:e779 with SMTP id 5b1f17b1804b1-46e1d97a0ddmr18796615e9.8.1758613108774;
+        Tue, 23 Sep 2025 00:38:28 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff1fd57.dip0.t-ipconnect.de. [79.241.253.87])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f9c62d083esm10698647f8f.32.2025.09.23.00.38.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 00:38:28 -0700 (PDT)
+Message-ID: <8bef63c3-f424-4b53-9165-b9ad789f1ada@redhat.com>
+Date: Tue, 23 Sep 2025 09:38:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cramfs: Fix incorrect physical page address calculation
+To: Alistair Popple <apopple@nvidia.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, akpm@linux-foundation.org
+Cc: Haiyue Wang <haiyuewa@163.com>, Nicolas Pitre <nico@fluxnic.net>
+References: <20250923005333.3165032-1-apopple@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250923005333.3165032-1-apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 22, 2025 at 02:50:45PM -0700, Andrew Morton wrote:
-> On Mon, 22 Sep 2025 11:08:32 -0700 Christoph Hellwig <hch@infradead.org> wrote:
+On 23.09.25 02:53, Alistair Popple wrote:
+> Commit 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
+> incorrectly replaced the pfn with the physical address when calling
+> vmf_insert_mixed(). Instead the phys_to_pfn_t() call should have been
+> replaced with PHYS_PFN().
 > 
-> > On Mon, Sep 22, 2025 at 03:27:18PM +0200, Peter Zijlstra wrote:
-> > > > Julian Sun (3):
-> > > >   sched: Introduce a new flag PF_DONT_HUNG.
-> > > >   writeback: Introduce wb_wait_for_completion_no_hung().
-> > > >   memcg: Don't trigger hung task when memcg is releasing.
-> > > 
-> > > This is all quite terrible. I'm not at all sure why a task that is
-> > > genuinely not making progress and isn't killable should not be reported.
-> > 
-> > The hung device detector is way to aggressive for very slow I/O.
-> > See blk_wait_io, which has been around for a long time to work
-> > around just that.  Given that this series targets writeback I suspect
-> > it is about an overloaded device as well.
+> Found by inspection after a similar issue was noted in fuse virtio_fs.
 > 
-> Yup, it's writeback - the bug report is in
-> https://lkml.kernel.org/r/20250917212959.355656-1-sunjunchao@bytedance.com
+> Fixes: 21aa65bf82a7 ("mm: remove callers of pfn_t functionality")
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
 > 
-> Memory is big and storage is slow, there's nothing wrong if a task
-> which is designed to wait for writeback waits for a long time.
-> 
-> Of course, there's something wrong if some other task which isn't
-> designed to wait for writeback gets stuck waiting for the task which
-> *is* designed to wait for writeback, but we'll still warn about that.
-> 
-> 
-> Regarding an implementation, I'm wondering if we can put a flag in
-> `struct completion' telling the hung task detector that this one is
-> expected to wait for long periods sometimes.  Probably messy and it
-> only works for completions (not semaphores, mutexes, etc).  Just
-> putting it out there ;)
+> Cc: Haiyue Wang <haiyuewa@163.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Nicolas Pitre <nico@fluxnic.net>
+> ---
 
-So the problem is that there *is* progress (albeit rather slowly), the
-watchdog just doesn't see that. Perhaps that is the thing we should look
-at fixing.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-How about something like the below? That will 'spuriously' wake up the
-waiters as long as there is some progress being made. Thereby increasing
-the context switch counters of the tasks and thus the hung_task watchdog
-sees progress.
+Hopefully that's all now -- scanned the original patch and all 
+phys_to_pfn_t now seem to have a matching PHYS_PFN.
 
-This approach should be safer than the blk_wait_io() hack, which has a
-timer ticking, regardless of actual completions happening or not.
+-- 
+Cheers
 
----
+David / dhildenb
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index a07b8cf73ae2..1326193b4d95 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -174,9 +174,10 @@ static void finish_writeback_work(struct wb_writeback_work *work)
- 		kfree(work);
- 	if (done) {
- 		wait_queue_head_t *waitq = done->waitq;
-+		bool force_wake = (jiffies - done->stamp) > HZ/2;
- 
- 		/* @done can't be accessed after the following dec */
--		if (atomic_dec_and_test(&done->cnt))
-+		if (atomic_dec_and_test(&done->cnt) || force_wake)
- 			wake_up_all(waitq);
- 	}
- }
-@@ -213,7 +214,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
- void wb_wait_for_completion(struct wb_completion *done)
- {
- 	atomic_dec(&done->cnt);		/* put down the initial count */
--	wait_event(*done->waitq, !atomic_read(&done->cnt));
-+	wait_event(*done->waitq, ({ done->stamp = jiffies; !atomic_read(&done->cnt); }));
- }
- 
- #ifdef CONFIG_CGROUP_WRITEBACK
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index 2ad261082bba..197593193ce3 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -63,6 +63,7 @@ enum wb_reason {
- struct wb_completion {
- 	atomic_t		cnt;
- 	wait_queue_head_t	*waitq;
-+	unsigned long		stamp;
- };
- 
- #define __WB_COMPLETION_INIT(_waitq)	\
 
