@@ -1,216 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-62489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F246B951D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 11:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A379B95598
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 11:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E1957A1BA8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 09:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7297318A26A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 09:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2F73203A0;
-	Tue, 23 Sep 2025 09:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7CD320CA4;
+	Tue, 23 Sep 2025 09:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UHX7qx7o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruU2lr8c";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UHX7qx7o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruU2lr8c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307033101B4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 09:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261E518027
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 09:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618212; cv=none; b=lMhkjitXsP0NJvzWihbuefE4OM/0pmW8FBIKvYcmGUxZr5KHSkES1lythq/Hg/3hKxE0+YFgSiqIahqIl6LPjSs8CuGDB8IF2mpEhhjJq/gdpVRSb6ZCu02f0+u0KK59nd+CfTK/LtLTHVN8PPVtCv3tDxHWKHbfDzmnpOjtW7E=
+	t=1758621445; cv=none; b=LBouHFsxEVc98R94lWjXc44drGejnY9R/eqJ5SowzEBw3nnLYC6lzpOYD+a8RmIzZQoF8Q6B4WEA02Wjs744EI5H3So+RPexc9muBAv6/CMFH7coe6CKlzbwFYXadHZOUGGCEg7zVIV+55/lW8dd7w0OxzBlh0Ode6sqmjVZP0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618212; c=relaxed/simple;
-	bh=mg3r2npI7bw50hq57IGL+e3lX0kkSaoEgdvYztM1T+c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Fz/JQqRR7ovc1YB5HuZbPDE7+ZwlnzUbK3iSYIYMY+qNOUsYfGAS57e/83KB2CcL9bR6laF7eRiQHCQelrwDOtX/rimv24Jj2Q1DJ2NM4KXVql8+S09o8G/u52owtHMwrzt+CYzVa/bzENQwpazltBXec9yhjt7Uj3CGSsiKfCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-88e1d74c7e3so947720039f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 02:03:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758618209; x=1759223009;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qawIWc6HWAuv7hppdrKNRGMrCqrgNjhh6jQdGpOVwNo=;
-        b=vJaO56Cb8MEJ5O9GTdmwj/ZxUIfpXJr5JqvbtGqc0HDDElrGmqm7zfkKzMyTb/7KoK
-         YHxm6R3L1nm3J2fM1tTfyu9weNUgJ8m+dh6tpcdtRIsLMEfzMR8+nTgXqZ1XMoaUz8dF
-         DaiegasZEROSBuAAPPCcI4tfCCJW1lOI7Dfwsg3pgukgYe4XsGs7h+Gdcdw9l/WwYuUb
-         sSCLf4rKm+cJ4YF/OH6rPNtQb3M34grFMynx+z5KXRNt+FNG3nAnkiJ1XPzPE4pBMEi9
-         gjoipJ56H8E75Bngjyo0gpFgxjdUWgv4OAq2v8g5KEwUXdAbuEoXlOqsoCJm/kUL2Tgx
-         fWSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfLcslI3lOWGoCj41Ic7vulBTyj90edIVb1MOBEoJPXIVzjudcg/nIz6DuGay+KS+SZiLXyzoQvDqZK4Y1@vger.kernel.org
-X-Gm-Message-State: AOJu0YypNrv4xVeEU/gv7q3RvVYZrkY8WxYuY6C+yG7ojM8ZFtXoGmyv
-	hygOCUKuwEZEJyCLGRRM9Att6G08G7U6/YTqWx9/ph03AzatgHereFa6mDTPrCdvg+05FvThNt4
-	rpVyHdH3tm5koOUS+VV+hbipJQECJaI+DNnUIeeGaS6rpyr0jvJTn8YHpOX0=
-X-Google-Smtp-Source: AGHT+IHJlQAz5UGV5R9SQO4x/bEQmDqd47KX/iH2j0vkgz8h1aDacoLJGydUzrLZxCA2KDvIrVwKxzCeP+1pywKQVSp7kcRis0tr
+	s=arc-20240116; t=1758621445; c=relaxed/simple;
+	bh=/MMAFSrPWQcfJiRsKFcdCNayN8FwsiJm0spR01tbdAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlXPT2+GGTPuuPnaEOkygvjVfN5+r2rmkB2x0wlOdlV4r7qWlz3h/KNO+1IFum6uzKVBklXuCCqTks6p9p6RntqyMnWYuS+Ruj93Fm1w5ANs1onfXnjy/6iWIEP+/IFiJYcaiGgH78te7moYzSR1rmjdPERi9jG7KgEPYijZj1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UHX7qx7o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruU2lr8c; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UHX7qx7o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruU2lr8c; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B2A421FCE;
+	Tue, 23 Sep 2025 09:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758621442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=UHX7qx7o2b6ey5mBgk7knXhSh5NAomprqW21FOo3+i6AoaYjVxzuMInDFqJq5xlD0jN7jE
+	l9RdrJAOT9uA5RmNnoc82zw3jNRxsSqGPknIFbKilV4hihF0zw/YTsm6ByAapLHTsAV9VO
+	57CJylLPXR5bzh84ywSpKTnl/NrVnCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758621442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=ruU2lr8cQiR7fVNcl8XuNGkvChlzJ0Fo5o5rGdZZM/dtI4Hc971GO4eoOvVJcuZVXmHi3x
+	ko66sHZwAV6xxTDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UHX7qx7o;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ruU2lr8c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758621442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=UHX7qx7o2b6ey5mBgk7knXhSh5NAomprqW21FOo3+i6AoaYjVxzuMInDFqJq5xlD0jN7jE
+	l9RdrJAOT9uA5RmNnoc82zw3jNRxsSqGPknIFbKilV4hihF0zw/YTsm6ByAapLHTsAV9VO
+	57CJylLPXR5bzh84ywSpKTnl/NrVnCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758621442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPVjjucApSRx+R2misnP6FirOYmaZeSfZK2uZlsWJVE=;
+	b=ruU2lr8cQiR7fVNcl8XuNGkvChlzJ0Fo5o5rGdZZM/dtI4Hc971GO4eoOvVJcuZVXmHi3x
+	ko66sHZwAV6xxTDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A5E5132C9;
+	Tue, 23 Sep 2025 09:57:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BUaAAgJv0mh0YQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Sep 2025 09:57:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A67B1A09AF; Tue, 23 Sep 2025 11:57:21 +0200 (CEST)
+Date: Tue, 23 Sep 2025 11:57:21 +0200
+From: Jan Kara <jack@suse.cz>
+To: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Nanhai Zou <nanhai.zou@intel.com>, 
+	Gang Deng <gang.deng@intel.com>, Tianyou Li <tianyou.li@intel.com>, 
+	Vinicius Gomes <vinicius.gomes@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
+	Chen Yu <yu.c.chen@intel.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH] mm/readahead: Skip fully overlapped range
+Message-ID: <cghebadvzchca3lo2cakcihwyoexx7fdqtibfywfm4xjo7eyp2@vbccezepgtoe>
+References: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
+ <20250922204921.898740570c9a595c75814753@linux-foundation.org>
+ <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3f0f:b0:424:8d44:a261 with SMTP id
- e9e14a558f8ab-42581e2509cmr27390335ab.11.1758618209571; Tue, 23 Sep 2025
- 02:03:29 -0700 (PDT)
-Date: Tue, 23 Sep 2025 02:03:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d26261.a70a0220.4f78.0004.GAE@google.com>
-Subject: [syzbot] [fs?] [mm?] WARNING: bad unlock balance in hugetlb_vmdelete_list
-From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
-To: david@redhat.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
-	osalvador@suse.de, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1B2A421FCE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-Hello,
+On Tue 23-09-25 13:11:37, Aubrey Li wrote:
+> On 9/23/25 11:49, Andrew Morton wrote:
+> > On Tue, 23 Sep 2025 11:59:46 +0800 Aubrey Li <aubrey.li@linux.intel.com> wrote:
+> > 
+> >> RocksDB sequential read benchmark under high concurrency shows severe
+> >> lock contention. Multiple threads may issue readahead on the same file
+> >> simultaneously, which leads to heavy contention on the xas spinlock in
+> >> filemap_add_folio(). Perf profiling indicates 30%~60% of CPU time spent
+> >> there.
+> >>
+> >> To mitigate this issue, a readahead request will be skipped if its
+> >> range is fully covered by an ongoing readahead. This avoids redundant
+> >> work and significantly reduces lock contention. In one-second sampling,
+> >> contention on xas spinlock dropped from 138,314 times to 2,144 times,
+> >> resulting in a large performance improvement in the benchmark.
+> >>
+> >> 				w/o patch       w/ patch
+> >> RocksDB-readseq (ops/sec)
+> >> (32-threads)			1.2M		2.4M
+> > 
+> > On which kernel version?  In recent times we've made a few readahead
+> > changes to address issues with high concurrency and a quick retest on
+> > mm.git's current mm-stable branch would be interesting please.
+> 
+> I'm on v6.16.7. Thanks Andrew for the information, let me check with mm.git.
 
-syzbot found the following issue on:
+I don't expect much of a change for this load but getting test result with
+mm.git as a confirmation would be nice. Also, based on the fact that the
+patch you propose helps, this looks like there are many threads sharing one
+struct file which race to read the same content. That is actually rather
+problematic for current readahead code because there's *no synchronization*
+on updating file's readhead state. So threads can race and corrupt the
+state in interesting ways under one another's hands. On rare occasions I've
+observed this with heavy NFS workload where the NFS server is
+multithreaded. Since the practical outcome is "just" reduced read
+throughput / reading too much, it was never high enough on my priority list
+to fix properly (I do have some preliminary patch for that laying around
+but there are some open questions that require deeper thinking - like how
+to handle a situation where one threads does readahead, filesystem requests
+some alignment of the request size after the fact, so we'd like to update
+readahead state but another thread has modified the shared readahead state
+in the mean time).  But if we're going to work on improving behavior of
+readahead for multiple threads sharing readahead state, fixing the code so
+that readahead state is at least consistent is IMO the first necessary
+step. And then we can pile more complex logic on top of that.
 
-HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13263534580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-dashboard link: https://syzkaller.appspot.com/bug?extid=62edf7e27b2e8f754525
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a118e2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e204e2580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c53d48022f8a/disk-846bd222.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/483534e784c8/vmlinux-846bd222.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/721b36eec9b3/bzImage-846bd222.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com
-
-=====================================
-WARNING: bad unlock balance detected!
-syzkaller #0 Not tainted
--------------------------------------
-syz.0.8060/30977 is trying to release lock (&vma_lock->rw_sema) at:
-[<ffffffff82903959>] hugetlb_vmdelete_list+0x179/0x1c0 fs/hugetlbfs/inode.c:501
-but there are no more locks to release!
-
-other info that might help us debug this:
-3 locks held by syz.0.8060/30977:
- #0: ffff88807d8da420 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:508
- #1: ffff888034404648 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:985 [inline]
- #1: ffff888034404648 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
- #2: ffff888034404918 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: i_mmap_lock_write include/linux/fs.h:548 [inline]
- #2: ffff888034404918 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: hugetlb_vmtruncate fs/hugetlbfs/inode.c:639 [inline]
- #2: ffff888034404918 (&hugetlbfs_i_mmap_rwsem_key){+.+.}-{4:4}, at: hugetlbfs_setattr+0x489/0x6d0 fs/hugetlbfs/inode.c:879
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 30977 Comm: syz.0.8060 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_unlock_imbalance_bug+0xdc/0xf0 kernel/locking/lockdep.c:5298
- __lock_release kernel/locking/lockdep.c:5537 [inline]
- lock_release+0x269/0x3e0 kernel/locking/lockdep.c:5889
- up_write+0x2d/0x420 kernel/locking/rwsem.c:1642
- hugetlb_vmdelete_list+0x179/0x1c0 fs/hugetlbfs/inode.c:501
- hugetlb_vmtruncate fs/hugetlbfs/inode.c:641 [inline]
- hugetlbfs_setattr+0x4d1/0x6d0 fs/hugetlbfs/inode.c:879
- notify_change+0xc1a/0xf40 fs/attr.c:546
- do_truncate+0x1a4/0x220 fs/open.c:68
- handle_truncate fs/namei.c:3516 [inline]
- do_open fs/namei.c:3899 [inline]
- path_openat+0x306c/0x3830 fs/namei.c:4054
- do_filp_open+0x1fa/0x410 fs/namei.c:4081
- do_sys_openat2+0x121/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_open fs/open.c:1458 [inline]
- __se_sys_open fs/open.c:1454 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdea5b8eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fdea6945038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fdea5de5fa0 RCX: 00007fdea5b8eec9
-RDX: 0000000000000100 RSI: 000000000014927e RDI: 0000200000000340
-RBP: 00007fdea5c11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fdea5de6038 R14: 00007fdea5de5fa0 R15: 00007ffe42e704f8
- </TASK>
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff8880295a5408, owner = 0x1, curr 0xffff8880260d9e40, list empty
-WARNING: kernel/locking/rwsem.c:1381 at __up_write kernel/locking/rwsem.c:1380 [inline], CPU#1: syz.0.8060/30977
-WARNING: kernel/locking/rwsem.c:1381 at up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643, CPU#1: syz.0.8060/30977
-Modules linked in:
-CPU: 1 UID: 0 PID: 30977 Comm: syz.0.8060 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
-RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Code: d0 48 c7 c7 00 f0 aa 8b 48 c7 c6 20 f2 aa 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 b3 39 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 74 0b e5 8f 80 e1 07 80 c1 03
-RSP: 0018:ffffc900051076c8 EFLAGS: 00010282
-RAX: b37f99c54516e500 RBX: ffff8880295a5408 RCX: ffff8880260d9e40
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: dffffc0000000000 R08: ffffc900051073e7 R09: 1ffff92000a20e7c
-R10: dffffc0000000000 R11: fffff52000a20e7d R12: 0000000000000001
-R13: ffff8880295a5460 R14: ffff8880295a5408 R15: 1ffff110052b4a82
-FS:  00007fdea69456c0(0000) GS:ffff8881258a2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fdea51fed58 CR3: 00000000779ba000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- hugetlb_vmdelete_list+0x179/0x1c0 fs/hugetlbfs/inode.c:501
- hugetlb_vmtruncate fs/hugetlbfs/inode.c:641 [inline]
- hugetlbfs_setattr+0x4d1/0x6d0 fs/hugetlbfs/inode.c:879
- notify_change+0xc1a/0xf40 fs/attr.c:546
- do_truncate+0x1a4/0x220 fs/open.c:68
- handle_truncate fs/namei.c:3516 [inline]
- do_open fs/namei.c:3899 [inline]
- path_openat+0x306c/0x3830 fs/namei.c:4054
- do_filp_open+0x1fa/0x410 fs/namei.c:4081
- do_sys_openat2+0x121/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_open fs/open.c:1458 [inline]
- __se_sys_open fs/open.c:1454 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdea5b8eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fdea6945038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fdea5de5fa0 RCX: 00007fdea5b8eec9
-RDX: 0000000000000100 RSI: 000000000014927e RDI: 0000200000000340
-RBP: 00007fdea5c11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fdea5de6038 R14: 00007fdea5de5fa0 R15: 00007ffe42e704f8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
