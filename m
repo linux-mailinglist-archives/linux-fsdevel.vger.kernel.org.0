@@ -1,98 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-62502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8D6B9589D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 12:59:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91D6B9592D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 13:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D61919C165E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 10:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D5718A7E62
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 11:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D58832144D;
-	Tue, 23 Sep 2025 10:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75896321F32;
+	Tue, 23 Sep 2025 11:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bFF1pL6T"
+	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="X7XWgLE4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE1960B8A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 10:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D900A321F59;
+	Tue, 23 Sep 2025 11:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625144; cv=none; b=I/0A2sQghEZTWTN+GeTf4+/AUIbUBv1SAE6gfSy8Xt1171ddRJ5SDc9ptzcQqdlpMpVsN5Gm+/M1mSNZo80gDAz/Rn2KMAmweSELokd/4pdbusacp5XfAVTwkCESLO22Yy77WG2l1vNkns1ht0E74ISAzcZbXk0zbxFyPAAPIRk=
+	t=1758625699; cv=none; b=E1tHDdgKSEvyPLL8h9KdIDIqvMu4o10K4W9YgwZH7ZpIvWycb007DnjhCyW/gn7f2zO+NjnrW+vbELL1YNK9X5M7l9LRpYQ26Zf7tSNGDVTyk3JtCbBH5lOrxJJv5EG9uNPy1CmoUcTCr+KA79ItjR5qvCbevn29gViEIi6fTmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625144; c=relaxed/simple;
-	bh=JllJBNVkryNBCdrJQPmCJJebL4qgT+0NkNM1dIglkHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NqwWzUbCnYjRGeby55XfKVm2Att4pMEwciEAJBHZWPv3f8IKGf/gvyyAVbJ2vE+wNmMw74LeQKlnT34Bg0ExI37xiMOtdUPlN/93vEbKNNOE3U16xq2XoZTJP7nj3ZHMxsk4HzJLV7RMeIp6YRhXZllMEcAQK09qBPUR7ypkF/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bFF1pL6T; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4c7de9cc647so26277481cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 03:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758625142; x=1759229942; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JllJBNVkryNBCdrJQPmCJJebL4qgT+0NkNM1dIglkHM=;
-        b=bFF1pL6TV8vVkhQxmjXvPuIYhFk3EfIH2fIG0kCgZ7+T8VWHj1tEYSSlFQLAovR4rY
-         fJkUMwm3t2wnBf2BoUrBNnQ4XrKi+uvUW59kOFLiOL7YQ8LltWhxx7y3dZG8UCcOxLjI
-         VUNz0F2AAz+N2vFLy3ldnD4ku9s3UBUPT7Kus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758625142; x=1759229942;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JllJBNVkryNBCdrJQPmCJJebL4qgT+0NkNM1dIglkHM=;
-        b=WLEaAqypTf7oYi4ZLCFZeD+ODzHGdQCKjzCmEq/1ki+6Kroy0qcZMrvnXM/QSZX9cA
-         rYDOPstwhRPjWcRRhhzNkRTnzuzfxFWHeh7qQWIXDy/mY/8leIctilM0m0F/eJt1rnVA
-         6mox4nlAqgOcQ9IOLSfPriGljM3HwkS8CmqvSBS9EASHUn+/+w2wRL8bjgu6p+YIt6Bs
-         bgTiv8NYCxQljDHfLPkfYn/0H1ykiZYR3+ib6g8DLkT1+4qhOwePFyAlMmrw+Tw1XfGR
-         4uKg9pHYxj4b99GlR2+knX0GRQrwZqnRUQlm/YN3vQ4Ocx67p1KEVgHArcuO5YL9+L2D
-         jwWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhaaTymePKLGcodLduyTnboqfvCCNNP+j6+i8Kyn4+qB5hj+0VKoNLGA+BOeX2YAd1OrjB/enMiiBK0HUn@vger.kernel.org
-X-Gm-Message-State: AOJu0YweXvvs3oFACPAvkCt8S7fZSkFEhM+kebU/6OoL15pfLNyDk43F
-	qJicDKZksr3WkswynwHtLcAezo05AtEavVXMlVUFgsAYCAYmsfT0AWrkIP07YT4+3j6pLyrsQ4v
-	+Q6lWHCtWozXoVg4vS0+GGqMqXts5vaa0j1P8/rnPww==
-X-Gm-Gg: ASbGncuEIwl5PBo2C3RZ7JcYj+wg8A3FGc1vYz0YYDPeY41Vsy3kF3FKshEFa0zHRvL
-	+pqz/q9DO+z80ztcC0jpvSZ+cqP8PnCXjgtV74iv28LhJBlGKAuh0p2VJJDeWmTRvcWQbx1VgOS
-	L7GNtd+sNx8YLmqbc0tX3T4FyXWE8ubCrSjaRmKOmVTL8qPBLliyhsrTI/6QYLP9ZKNzLLt5wJ7
-	oemXFNTEmyjXxMAmMkXCvaI8jVkLXkcFsynJn4=
-X-Google-Smtp-Source: AGHT+IGVYXFgdT8RYP/th1Bh23LqAzV6VHWIO9kC7E6vKNdXOCdqI74v14xmoLK1WCY+JGm/7UIQQfhOLJ8Z3U9D8YA=
-X-Received: by 2002:a05:622a:5a8b:b0:4cc:25b8:f1a with SMTP id
- d75a77b69052e-4d36fc02d66mr25346611cf.43.1758625141850; Tue, 23 Sep 2025
- 03:59:01 -0700 (PDT)
+	s=arc-20240116; t=1758625699; c=relaxed/simple;
+	bh=5qeN5FB8P5BaSOId1z/zwYvT0pAjQ0vFVZ9LpT3nZKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldSZCJ9SrW+KumD27LfhKBAYGBLOxENBvYDx3GGzzoHdEJKyLJoQ8YhPhwlN0ummc4hzT3b2NcuAMw/XXZ14QNgKOFffsT0AHEZfcpA8Dt356/9dGdOFZ0/znWgBQkm5pADetghGLmGy21uyYSUJW5ltJgV1M/H4a71tDjswcP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=X7XWgLE4; arc=none smtp.client-ip=141.24.179.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
+ i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1758625694; h=from : to
+ : cc : subject : date : message-id : mime-version :
+ content-transfer-encoding : from;
+ bh=5qeN5FB8P5BaSOId1z/zwYvT0pAjQ0vFVZ9LpT3nZKg=;
+ b=X7XWgLE4DvlyeBhulkQJJ60ZpYXkvC2psZDFACpg/LTTzhP8odzLJ14/rkBF49h4EH35c
+ SAzdYe83gOXGJoEB70A0p4xhBNZm/pdvcR19fj3ryh2D2fqr9zne2gLz5kV5WGioy+6MT4u
+ SERNs8mQGxHWXSu3btGIUbxt11EURGXUCgHNcorV1iW4sD+e6ARbGMHyGXqk3cSQ40cRBSi
+ fRLISNHAZfz4DDtWt3PSEP/mrGMkL8A4IN/SCbQMU6c9Ya7AmA23sihMQ17Z9OzgXEir0U5
+ UdLxKBXbZBrUw+XrdLu81dqgjIvhv3iK9rne0JaYhFoRfLE7y5qNBpJhQAJA==
+Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
+	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id B924C5FCF4;
+	Tue, 23 Sep 2025 13:08:14 +0200 (CEST)
+Received: from silenos (unknown [141.24.207.96])
+	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id 9F1025FC67;
+	Tue, 23 Sep 2025 13:08:14 +0200 (CEST)
+From: Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
+To: ceph-devel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	idryomov@gmail.com,
+	xiubli@redhat.com,
+	Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
+Subject: [PATCH] ceph: Fix log output race condition in osd client
+Date: Tue, 23 Sep 2025 13:08:09 +0200
+Message-ID: <20250923110809.3610872-1-simon.buttgereit@tu-ilmenau.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs> <175798150199.381990.15729961810179681221.stgit@frogsfrogsfrogs>
-In-Reply-To: <175798150199.381990.15729961810179681221.stgit@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 23 Sep 2025 12:58:50 +0200
-X-Gm-Features: AS18NWAl-NDDKNv7TZPiJHjt5dfPYp31tw1Z8Xx012NqtqWC-lxHUdlrAfy00Ck
-Message-ID: <CAJfpegvGY8HLEzJFX=j6Mk-hwyeaOBUkSnyEH21US+Xjud_2fw@mail.gmail.com>
-Subject: Re: [PATCH 8/8] fuse: enable FUSE_SYNCFS for all fuseblk servers
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 16 Sept 2025 at 02:26, Darrick J. Wong <djwong@kernel.org> wrote:
->
-> From: Darrick J. Wong <djwong@kernel.org>
->
-> Turn on syncfs for all fuseblk servers so that the ones in the know can
-> flush cached intermediate data and logs to disk.
->
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+OSD client logging has a problem in get_osd() and put_osd().
+For one logging output refcount_read() is called twice. If recount
+value changes between both calls logging output is not consistent.
 
-Applied, thanks.
+This patch adds an additional variable to store the current refcount
+before using it in the logging macro.
 
-Miklos
+Signed-off-by: Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
+---
+ net/ceph/osd_client.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 6664ea73ccf8..b8d20ab1976e 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -1280,8 +1280,9 @@ static struct ceph_osd *create_osd(struct ceph_osd_client *osdc, int onum)
+ static struct ceph_osd *get_osd(struct ceph_osd *osd)
+ {
+ 	if (refcount_inc_not_zero(&osd->o_ref)) {
+-		dout("get_osd %p %d -> %d\n", osd, refcount_read(&osd->o_ref)-1,
+-		     refcount_read(&osd->o_ref));
++		unsigned int refcount = refcount_read(&osd->o_ref);
++
++		dout("get_osd %p %d -> %d\n", osd, refcount - 1, refcount);
+ 		return osd;
+ 	} else {
+ 		dout("get_osd %p FAIL\n", osd);
+@@ -1291,8 +1292,9 @@ static struct ceph_osd *get_osd(struct ceph_osd *osd)
+ 
+ static void put_osd(struct ceph_osd *osd)
+ {
+-	dout("put_osd %p %d -> %d\n", osd, refcount_read(&osd->o_ref),
+-	     refcount_read(&osd->o_ref) - 1);
++	unsigned int refcount = refcount_read(&osd->o_ref);
++
++	dout("put_osd %p %d -> %d\n", osd, refcount, refcount - 1);
+ 	if (refcount_dec_and_test(&osd->o_ref)) {
+ 		osd_cleanup(osd);
+ 		kfree(osd);
+-- 
+2.51.0
+
 
