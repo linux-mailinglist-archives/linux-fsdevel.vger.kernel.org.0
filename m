@@ -1,107 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-62511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82606B9673B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 16:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBA4B9678C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 17:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AE15188612C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 14:54:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9E33A3CB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120C8242D83;
-	Tue, 23 Sep 2025 14:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A441F5846;
+	Tue, 23 Sep 2025 14:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0AxnyUR"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="d2yb99Pd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3D91DF994;
-	Tue, 23 Sep 2025 14:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B75C1917FB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 14:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758639257; cv=none; b=O17uGVsE2zcYcxFI09x3aR+OOu/YzqyMiUmAsmawMRwr7Y2I2l7oMBoxykrplq1Epoh2YKmtxzW9ggDNrIZoCqwREf+sPEvmY8CAy6kdpSB+fwEmmh4929WZl94IIrGv0PaK2iTNXZnK90AjIm68DkK2HF7lB0yaQh7WsM6eck0=
+	t=1758639464; cv=none; b=osr6JVAJ7/g84SZa04LJO758xOvyfQX5s9zMRzXd+JYTDceGjyUIWY76cTKuTYNmvF2LFef2wfy8ue8MV0wfC/Udi22N43+6kwTjgvOhT6TTEHvtLwXLAaRotqRmVK+l2Zg7ifzrEjddizfINeOTTaCF7M3HPoH132tdCm9zdsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758639257; c=relaxed/simple;
-	bh=Q+q/KMy8jASqHkieY8zNx1dSC2KdYN3tgLx54rwnG2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EafwL6f8bQCQst3ftiDRvTvsafvuIgwAkW+HyjjiT412paT4GFJJuLbomHBrdhMzSai1pMsJgNFH4JaZ3ajTtbbTb4JYO4uzCsHOQ/QjG062zxB7QSfazkSy4PhtwQxwCbfht5yyR0hy7pdd2ejoW9VL8BMHKY2XkfDpBh57tSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0AxnyUR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF17C4CEF5;
-	Tue, 23 Sep 2025 14:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758639253;
-	bh=Q+q/KMy8jASqHkieY8zNx1dSC2KdYN3tgLx54rwnG2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c0AxnyUREi1rp+dfFiB0QXwcWfBZJ2RunCDtBOqWcBTI9g5f2u3iL95mtLPCe0xHb
-	 4BnDEeYbtXJq2kFtf8wYLcMTU077KMgVopK3t98hWVBUNnDJCIzAhbHErhblMsSGr3
-	 PRMSX0XhvSUn6sKd13rCWsgxNAX0pYeDNbHbHFYB96iWz/XGNa37MTqH4/6khpbP/k
-	 t5D5Sm7OAwZewNHfmHSiGdsOmbYSBWgcUiPbIWh+CkcAkPWkPZT35h7XphCaqWwZMY
-	 KZL25kobDVBI1EYjq7uk6KvQh4qO5LGOkgW+FuWfHN0RNMnxJojGV1vBkFo+NwJ6WT
-	 iQ1EyELPMWeQg==
-Date: Tue, 23 Sep 2025 07:54:13 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev,
-	joannelkoong@gmail.com
-Subject: Re: [PATCH 2/8] fuse: flush pending fuse events before aborting the
- connection
-Message-ID: <20250923145413.GH8117@frogsfrogsfrogs>
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150070.381990.9068347413538134501.stgit@frogsfrogsfrogs>
- <CAJfpegtW++UjUioZA3XqU3pXBs29ewoUOVys732jsusMo2GBDA@mail.gmail.com>
+	s=arc-20240116; t=1758639464; c=relaxed/simple;
+	bh=ado0gGMNGkne3XnnLVKZD75EJqaXJcCVpV/965Q2kqg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lORBFhgA5m0gOb+c7RUpw/Du08sUqc1xCjReDm5XnTJ7FnBqRAhObIQCNRRqHfg1gWskU0Y+ZlFV1NKtX3DTGmIHZ9zzdVc+aH7JAzlAJKPiYq7FoBoFjq5wuaqA9q/0m1UsLN15axn6jMTE7/LMhLDazd9EasCo1mwMVQyronI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=d2yb99Pd; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4d46af01e95so6437531cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 07:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1758639462; x=1759244262; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S/1Ra3b4AxJkZwWUJJmBUWhCQcrAccc9TuqzrD5b54U=;
+        b=d2yb99PdNM8yv2FIKwXObjYYTO4DGwtSceXqyFrb0+GKhSqFw/WomWP1DOmhyGMGg2
+         VU8KPfMQI5gXsMfpcZ7sBL++FPFGe7KLlTrRQW73u7iL8+LVSqM1MxPM5skv30/wORM8
+         TiqBKw16XLF/tdQn+HxWdRnIXJqOMsNNMYnjs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758639462; x=1759244262;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S/1Ra3b4AxJkZwWUJJmBUWhCQcrAccc9TuqzrD5b54U=;
+        b=J4gbcDwLsdySMfwYgtHmdIIAx2cpTkVB8TbKJWsNJ7J1uzZcDq4kBg5kVP+AAghdx5
+         SWTQx1S7EYcZhUjfTcAn5w3fhnASoDfu9Vz3VSqUjHKkKCQLLGG0mcFv9X+iu0rgvM7Z
+         0AdaXJ7ymUoEgxDOOrDF11lI+bk5xI9lplV9zT6igcvNDTVcyxAOnDjkA44u9gBFhjmJ
+         q670zAmN70W68gFlGUkCnbsI8XHvyvoID2tEWEa80i57DX8O2XPkcmRtLdGqi++yzHs7
+         owy8l1B1F1VXGDWnlYxdon1ye9aohF33srfL7q+iBlhsCJcvMXoTdgA6je00iz8Oc5yy
+         Z9DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVc64ry6mKtgN9+F1gmajj6HMWX/6u2zeZ9A9QS9eRGnti9hKSWNARh8GT5GlgXN0E7CuGc9mB0n94p2GPj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVdYt+S/HtYvueJmaldo3f42CsHTAM/q+Br9U0hEiCFw5MnPSi
+	MqgOVBr+3+U2r2icBDJdccmV9hkQGMTkXRSPs5qMisN7lYq4cUR4kJu+Vxdc52PDpXY2DylNwV7
+	EAE8eFHKbgKilSvBI6RhEchDZuSIQPfd1JzjEAq7pBQ==
+X-Gm-Gg: ASbGncslJfayY1sNLMdn0zLfedpi/p+eQYftIzvZ5hVmdvkiMKHMbtWl0Daq38KAjvr
+	ITE7uygck/4loJAqwxkq6ikU8QHvX0EZVZG/BcOqX+uroh3DQ4fgVh8XeJC1G1fxxzRHEdQY0j3
+	Ywc6/mioSQRGhT84gp6v0VQDVjF1QgHx4AKlpd/NF2iQ19YWkWzDT7fce8QjmYv2+MOdob2CVGN
+	RYOKiwsEQyw0sUHEdCQ/pMgHtkMbYCIf/d1X1E=
+X-Google-Smtp-Source: AGHT+IH0eM92WwCDRahzcw/O4eqi/MmAUuqF6p3lIqnlhgVoCsqGzUctXBm/mnNB75hLW/j3SDqa2DEtFDBpHTUWSYY=
+X-Received: by 2002:a05:622a:2b08:b0:4d1:9467:dbb7 with SMTP id
+ d75a77b69052e-4d36fc02d24mr38698411cf.38.1758639461660; Tue, 23 Sep 2025
+ 07:57:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtW++UjUioZA3XqU3pXBs29ewoUOVys732jsusMo2GBDA@mail.gmail.com>
+References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
+ <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
+ <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
+ <20250918165227.GX8117@frogsfrogsfrogs> <CAJfpegt6YzTSKBWSO8Va6bvf2-BA_9+Yo8g-X=fncZfZEbBZWw@mail.gmail.com>
+ <20250919175011.GG8117@frogsfrogsfrogs>
+In-Reply-To: <20250919175011.GG8117@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 23 Sep 2025 16:57:30 +0200
+X-Gm-Features: AS18NWCQpKJJBOwPqVorO2NGt-XmlZBAK8wWQiyLzvCGZrc4s0l4d18vx3t_7WU
+Message-ID: <CAJfpegu3+rDDxEtre-5cFc2n=eQOYbO8sTi1+7UyTYhhyJJ4Zw@mail.gmail.com>
+Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
+ local fs behaviors
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, bernd@bsbernd.com, linux-xfs@vger.kernel.org, 
+	John@groves.net, linux-fsdevel@vger.kernel.org, neal@gompa.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 23, 2025 at 01:11:39PM +0200, Miklos Szeredi wrote:
-> On Tue, 16 Sept 2025 at 02:24, Darrick J. Wong <djwong@kernel.org> wrote:
-> 
-> > +       /*
-> > +        * Wait for all the events to complete or abort.  Touch the watchdog
-> > +        * once per second so that we don't trip the hangcheck timer while
-> > +        * waiting for the fuse server.
-> > +        */
-> > +       smp_mb();
-> > +       while (wait_event_timeout(fc->blocked_waitq,
-> > +                       !fc->connected || atomic_read(&fc->num_waiting) == 0,
-> > +                       HZ) == 0)
-> 
-> I applied this patch, but then realized that I don't understand what's
-> going on here.
+On Fri, 19 Sept 2025 at 19:50, Darrick J. Wong <djwong@kernel.org> wrote:
 
-We go around this tight loop until either 1 second goes by, the fuse
-connection drops, or the number of fuse commands hits zero.  Non-timeout
-Wakeups are stimulated by the wake_up_all(&fc->blocked_waitq) in
-fuse_drop_waiting() after the request is completed or aborted.
+> /**
+>  * fuse_attr flags
+>  *
+>  * FUSE_ATTR_SUBMOUNT: Object is a submount root
+>  * FUSE_ATTR_DAX: Enable DAX for this file in per inode DAX mode
+>  * FUSE_ATTR_IOMAP: Use iomap for this inode
+>  * FUSE_ATTR_ATOMIC: Enable untorn writes
+>  * FUSE_ATTR_SYNC: File writes are synchronous
+>  * FUSE_ATTR_IMMUTABLE: File is immutable
+>  * FUSE_ATTR_APPEND: File is append-only
+>  */
+>
+> So we still have plenty of space.
 
-The loop body touches the soft lockup watchdog so that we don't get hung
-task warnings while waiting for a possibly large number of RELEASE
-requests (or whatever's queued up at that point) to be processed by the
-server.  I didn't use wait_event_killable_timeout because I don't know
-how to clean up an in-progress unmount midway through.
+No, I was thinking of an internal flag or flags.  Exporting this to
+the server will come at some point, but not now.
 
-> Why is this site special?  Should the other waits for server response
-> be treated like this?
+So for now something like
 
-I'm not sure what you're referring to by "special" -- are you asking
-about why I added the touch_softlockup_watchdog() call here but not in
-fuse_wait_aborted()?  I think it could use that treatment too, but once
-you abort all the pending requests they tend to go away very quickly.
-It might be the case that nobody's gotten a warning simply because the
-aborted requests all go away in under 30 seconds.
+/** FUSE inode state bits */
+enum {
+...
+    /* Exclusive access to file, either because fs is local or have an
+exclusive "lease" on distributed fs */
+    FUSE_I_EXCLUSIVE,
+};
 
---D
-
-> Thanks,
-> Miklos
+Thanks,
+Miklos
 
