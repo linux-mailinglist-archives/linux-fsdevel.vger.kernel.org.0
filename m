@@ -1,95 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-62525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8DAB978B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 22:59:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881E8B978F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 23:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A07E3B96B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 20:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414384C2A88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Sep 2025 21:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6479E30BF4F;
-	Tue, 23 Sep 2025 20:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED8230CB33;
+	Tue, 23 Sep 2025 21:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pvs6xma4"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YQt4yJD4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFDE26CE17;
-	Tue, 23 Sep 2025 20:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26BF309F12;
+	Tue, 23 Sep 2025 21:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758661177; cv=none; b=Fi7KAl3A4owzjU/KUKykYUf4J31oD0yAKq1ErZu5xfqHYY5g4V6Y2SnHQPACwBFA1ZKv1uc4E4m9C7NQbQ2LjDbFprD/wXypn4ZaEMw1UyuubwQjOWVTIpkSWTRthSv8fyld4e2jkO6VYzVlKEeHXF3u057xt23MlfC7rndluEo=
+	t=1758662228; cv=none; b=PVHlDbqMvJZj0ItQGaDgQ+uqwAiaN64FgKa0TKo2KsUWa2H51pg71vABtbhN+1kN6tIMgUVHEXfFvrGsaKyMLj6R7wCeKjaPq6PPL2chUT1rkMLDKYfwnDgSjSnx2JxM3xpFTmcreDIP41Edm73mi0YdfiMxMB2A1ZcqHJeTt3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758661177; c=relaxed/simple;
-	bh=NIbwgI3W7ieltAoE7xVUGc0BdIsHi9VokAUkaobzrUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjS054gm2lVuV8SZyd9R3ruNYFnVCzeA3NgjcGTsXC6drPSMlEFqdU1ZlDonbz0cwOiZL6ZAfFfylmhfqb45+3YSl/u/0KRjg6uv6vP6Pna6wB0L4eTuTnT+NmIXWOMcwt+olrnKN7UBmF5zEwzh10vCWRBJfOUEflkW59sEeYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pvs6xma4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 292ECC4CEF5;
-	Tue, 23 Sep 2025 20:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758661177;
-	bh=NIbwgI3W7ieltAoE7xVUGc0BdIsHi9VokAUkaobzrUg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pvs6xma4n1tE48JixcQLRYWhC4PFCYxSNyEJiUvwjhm3nonZIV+DY3sBthUcjB5/z
-	 JRi8RhX0h3Vy8yGIVCMgRAWD4dT/nf8o0oB95a6F9dLwSizamZMz4V1/jPIIMtp88e
-	 gSRfgzAcV12+NHHcLQfEHWAwucnlDiF3XKj/DBbw7L46h2jPdIGS4Bnpoaqb0xgMC6
-	 57HbcTAntVs4p7uocGtzMAbz1at43P6umzLGKX3uwBA6ZAFep1528QgyQrbi4fcnka
-	 xwZiHt5QIBqRRKI/r5QigBug9GQ4S9E7ApaIMaaGnA0deXeh7McCvCZtoV8sP09J5w
-	 BLzaGI1EQQBEA==
-Date: Tue, 23 Sep 2025 13:59:36 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev,
-	joannelkoong@gmail.com
-Subject: Re: [PATCH 2/8] fuse: flush pending fuse events before aborting the
- connection
-Message-ID: <20250923205936.GI1587915@frogsfrogsfrogs>
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150070.381990.9068347413538134501.stgit@frogsfrogsfrogs>
- <CAJfpegtW++UjUioZA3XqU3pXBs29ewoUOVys732jsusMo2GBDA@mail.gmail.com>
- <20250923145413.GH8117@frogsfrogsfrogs>
- <CAJfpegsytZbeQdO3aL+AScJa1Yr8b+_cWxZFqCuJBrV3yaoqNw@mail.gmail.com>
+	s=arc-20240116; t=1758662228; c=relaxed/simple;
+	bh=9maMwx7/tfxHiKFTD825WGlX9Scv4cfcxvOcT74ZDTg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Pi0DfaJdRl5ndPhT9JZmFJDPc3iVs+8tFZuMJf37jiy6ALr6yMWpKMuN4fNUflp9U2An4pEBQR4Ya4B6fV5NrhXYbo2O3OujraoYOp4x4/LMAHnDdEvBxr79LruOlqifo+gnrVFcTyU5xX+LkTg8gqJ73cpF+YT4kzPUAms4Hrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YQt4yJD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CB1C4CEF5;
+	Tue, 23 Sep 2025 21:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758662227;
+	bh=9maMwx7/tfxHiKFTD825WGlX9Scv4cfcxvOcT74ZDTg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YQt4yJD4LLyMB/AA7fhRdzHKMMyKrYX7tPYO7bcgLcaYZEMTEEDS+V/u87paR8mvk
+	 vaZ6Hf5HJhiz4iN6UcpLvuzXo0K/kulYjPZuGmcFLhgj45aLOuctbBJIR6+SoLAoCq
+	 q1aNHSIO3K1aKeAi1QD+S0yrDrsK77/N3Jf/bOOk=
+Date: Tue, 23 Sep 2025 14:17:04 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jonathan Corbet
+ <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, Guo Ren
+ <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
+ Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ "David S . Miller" <davem@davemloft.net>, Andreas Larsson
+ <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He
+ <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, Dave Young
+ <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, Reinette Chatre
+ <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, James Morse
+ <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>, Pedro Falcato
+ <pfalcato@suse.de>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+ ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+ kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>,
+ iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon
+ <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v4 11/14] mm/hugetlbfs: update hugetlbfs to use
+ mmap_prepare
+Message-Id: <20250923141704.90fba5bdf8c790e0496e6ac1@linux-foundation.org>
+In-Reply-To: <aNKJ6b7kmT_u0A4c@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <cover.1758135681.git.lorenzo.stoakes@oracle.com>
+	<e5532a0aff1991a1b5435dcb358b7d35abc80f3b.1758135681.git.lorenzo.stoakes@oracle.com>
+	<aNKJ6b7kmT_u0A4c@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsytZbeQdO3aL+AScJa1Yr8b+_cWxZFqCuJBrV3yaoqNw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 08:56:47PM +0200, Miklos Szeredi wrote:
-> On Tue, 23 Sept 2025 at 16:54, Darrick J. Wong <djwong@kernel.org> wrote:
+On Tue, 23 Sep 2025 13:52:09 +0200 Sumanth Korikkar <sumanthk@linux.ibm.com> wrote:
+
+> > --- a/fs/hugetlbfs/inode.c
+> > +++ b/fs/hugetlbfs/inode.c
+> > @@ -96,8 +96,15 @@ static const struct fs_parameter_spec hugetlb_fs_parameters[] = {
+> >  #define PGOFF_LOFFT_MAX \
+> >  	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
+> >  
+> > -static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+> > +static int hugetlb_file_mmap_prepare_success(const struct vm_area_struct *vma)
+> >  {
+> > +	/* Unfortunate we have to reassign vma->vm_private_data. */
+> > +	return hugetlb_vma_lock_alloc((struct vm_area_struct *)vma);
+> > +}
 > 
-> > I'm not sure what you're referring to by "special" -- are you asking
-> > about why I added the touch_softlockup_watchdog() call here but not in
-> > fuse_wait_aborted()?  I think it could use that treatment too, but once
-> > you abort all the pending requests they tend to go away very quickly.
-> > It might be the case that nobody's gotten a warning simply because the
-> > aborted requests all go away in under 30 seconds.
+> Hi Lorenzo,
 > 
-> Maybe I'm not understanding how the softlockup detector works.  I
-> thought that it triggers if task is spinning in a tight loop.  That
-> precludes any timeouts, since that means that the task went to sleep.
-> 
-> So what's happening here?
+> The following tests causes the kernel to enter a blocked state,
+> suggesting an issue related to locking order. I was able to reproduce
+> this behavior in certain test runs.
 
-Hrm, I thought the softlockup detector also complains about tasks stuck
-in uninterruptible sleep, but you're right, it *does* schedule() so the
-softlockup detector won't complain about it.
-
-I think.  Let me go try to prove that empirically. :)
-
---D
-
-> Thanks,
-> Miklos
-> 
+Thanks.  I pulled this series out of mm.git's mm-stable branch, put it
+back into mm-unstable.
 
