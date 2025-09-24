@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-62650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A478CB9B5D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 141F9B9B5EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AA02E0129
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6AF2E5C25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEAF32ED20;
-	Wed, 24 Sep 2025 18:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C37D32ED5E;
+	Wed, 24 Sep 2025 18:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yj9/M65W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5ugq89D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC703191B4;
-	Wed, 24 Sep 2025 18:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBEF32ED3B;
+	Wed, 24 Sep 2025 18:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737286; cv=none; b=OXN2svV+rLCaL2bR5sdH/maNzrOmDNHeTnHZFoVTEdIsJtm8m1QUmp/Ze5NtIln6kQicKA/LBsEfDC/uJ3/2l3e+EbvkzZ/LmYrZt9+IHZEyOD6ljw4NiNbvvvydNHmnRaWlieQHU9cvWRzNXwCm0l8jx7In+EZ2iqV/q9+YKBA=
+	t=1758737289; cv=none; b=tweDffNOFEzZYnBSyP3uUIFMXxFntvjtuK5oQ1ZFjSozG0dqbd/xU3Qu9GMhioAtlpl9OYAxueoy0d9ly285Onlesaej3bMWGb92RNrEWOUL/XZx5jcxdr1HDiNB5gKy2OIPD5xPD9kyy/tz2zEk1jXS0Zjtsp5Q7gd3MCI4LS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737286; c=relaxed/simple;
-	bh=Yb0DmRfzIW8mYKknj70/f7qtDH44V7RUbhVqY5+tUj8=;
+	s=arc-20240116; t=1758737289; c=relaxed/simple;
+	bh=y8mQUt4ubFTAVWBVPJkBIXoCbxxWsnY4tR7mdmIz2dw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oKiiqpwA8M2EeBbKi7i+OTh67utm4xqPPf/XyhTwl2XdEhA/5uhtTd+feERklb+lXJcvcup6Q6I4URKX9qeXgF9ANv/4ZMjUbfw5Bul/xqadZn8djEha0lEA1us1Nj9VNzj0XBRtT12xOJbnEjUdqTNtM4IN8NCRDOa8a9jiwnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yj9/M65W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC60CC4CEE7;
-	Wed, 24 Sep 2025 18:08:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=VWr/2xqAHqcU+r0XXU2+EA5y09usaa/4zn0gYHGPjqoZPjWIV6Y5vNi4ubfqfY8eFsNfAGjU2jlct8pI4SgS+zc+x8HI2xFnSg/QZQoq028vLXql3OonE/zr7s5byDDTWRLDUR7mGgqfcGe85p7itgU/Olr2Q1V9vo1Eojnuu/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5ugq89D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40352C116C6;
+	Wed, 24 Sep 2025 18:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758737286;
-	bh=Yb0DmRfzIW8mYKknj70/f7qtDH44V7RUbhVqY5+tUj8=;
+	s=k20201202; t=1758737289;
+	bh=y8mQUt4ubFTAVWBVPJkBIXoCbxxWsnY4tR7mdmIz2dw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Yj9/M65WsfeQKO9eklHqBzQ0nutOo/Yf45CPsyQJm/Hp9BZrGXSe2jBY+5mvwmeUJ
-	 djPDKYepA+DZbA0CPbVmQsvsYmbIuyfalZOtmxUyphhTr+5EZGsWs7M0i1OvFroNyX
-	 VTtCSQhD0shakJWz069XlniBDL20h/h9Y1f3CJVLmPVGaQs1fFH9Cql2wcKJgJZOcA
-	 NtP1iUo/v5U7wSY871kPMRBjUpYY3xr2Vr1x285yZdZHstI60X7v+folzVnOyK2gXn
-	 LA/PuCiCw0EpuMQo3jHvhIRxRELCOMSWjiEb/4bSgkqS8GDaAmThW2T/9BAIgPWnQZ
-	 1+AxQN/0y4Syg==
+	b=k5ugq89DFkIZmTD+MpdsVYZv2uT7V36QDH7Q6PjEktbZdu6C5rzxvWwn4vhPpBx6R
+	 dANpB7fpxZu9xI04BTXLxwSH/QfKewruITyXxQzQplMkCb++e0U1GcLVbtvl2sh2pb
+	 5P1zyyCcKDXGjRKBNwLrwfgVcxOJZVj+RA57J9IHTNik598Q3+diZgmb6Fa8AgwMpI
+	 UR3g2sU35vR9I5MBr9y52Oti4ILikQBUCY0agKsxtGQitc2cX/bpJXaoqeustSai6P
+	 /w14ciTAQGZQP3IQj2lCznMU8P+8m9PmeU8jGNuCBemrHgffj0YHzElKhVjh29iA2h
+	 /KxtrDappDyqw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 24 Sep 2025 14:06:18 -0400
-Subject: [PATCH v3 32/38] nfsd: send basic file attributes in CB_NOTIFY
+Date: Wed, 24 Sep 2025 14:06:19 -0400
+Subject: [PATCH v3 33/38] nfsd: allow encoding a filehandle into fattr4
+ without a svc_fh
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-dir-deleg-v3-32-9f3af8bc5c40@kernel.org>
+Message-Id: <20250924-dir-deleg-v3-33-9f3af8bc5c40@kernel.org>
 References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 In-Reply-To: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -83,101 +84,100 @@ Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org,
  linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2779; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Yb0DmRfzIW8mYKknj70/f7qtDH44V7RUbhVqY5+tUj8=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMRdM/SNrtKr0wfgbfJ/uBdnztZq8wVEs3AK
- TaEZz5WHOGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEQAKCRAADmhBGVaC
- FatnEADVyh8WtE08835RDpDtcQEHIPUIFHo0DMhfwERLMttDavODenEi0QnFiD1Hj426bZ/J5zF
- 7bEt6rcFxjAmyEEAO8zqK1kd/bMLJP3SXe9ThAwneqe+aHrtmQKdaTvFXa737eoG/PDbSawQOz1
- vhoSMZm3eng3/IT0u7Z2kI+E2QLr9Ti3LLqrCIVGR0UUk4+audAOeJFC6OvmDTfyFDjnah4O7/O
- 4VWTx48+GxWB1hYyvSBIWBQxAEzUm2APyfE43HD6dzigt9dSatnvhhV7Q6C+Cbld5wTU3lKgutI
- kd9ykIQqnmQak4y0aPv0tkDN2LIIChrV1QcO+JHHxG3elSCw+IxpsBlXbpCVROhZ1B+hZl20NhB
- h+OlkgJIZ5cp3V2J+hhIDWmOQcbrOF/GDaqhRQRqESyD070T9gKHPT3npy03e0SZBC14vIv2P2i
- vFT6PirzKpLrm/ByCgze6xJag1gJaBQ+X0O0IqyZFjZXiMJ/LbMAwplqC5Jn5g1sQWDrXuFaQBu
- ApSI/uBzBQMTZ6ChlY+RQ2Jcnu+BZNYynY1hur0wwwkPo5jyFj6slOMYzCphQTQEwBj2KdaRAza
- Z+8gnEhXew04i5CBfEKKMbZDoS34WgcrC+vNTRCDOV/muIhHfhxmxwcQFo5gH8arO7KsKqigQ6E
- YieMwjDMcKa20lg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2682; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=y8mQUt4ubFTAVWBVPJkBIXoCbxxWsnY4tR7mdmIz2dw=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMRFMBL+ANAxN5ItGjhz42F8p5Mc2UeHG9yU
+ Wit4EpL5P+JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEQAKCRAADmhBGVaC
+ FV+FEADQSdYQLXkEmAWO3LOSqlsKm339R0KT6cgxDOQrWGJZErkbBMdhPj4djM0yExQpnuvEOef
+ s2Z8xgcOKTQOXUxVDricbqkOZDclGm0dElZSQHwz5XbQLjT072t7g+K+ik39fGL5flzG2MvNg6o
+ jXZD+4GQkkdBcriP3/1psugz/kaiLc+R4OEI8NrV5Em+vYPT3GgHUS14w/IBVqJO4QAH7YFUsRA
+ dXDpvA7B6PPZRWCHbmfUwFGdVyRQSheV8FlnsNVdupcEKUWvHGN9GJeLaWrO+vPX3RYDZZ9OKgH
+ hrlazePROVsoSqb2YGhttR79VTm+ihUem+GuyS1PM/CO6wz61dvV2p0UyE2l5vxpV6e9g5q5Rro
+ Q/ObliBTbeQBSl9oluq50IFm5hbQj0uNd+BsEmniwFlKCi4v1/kT16KHKc2gRqy2SyLwSINdviT
+ dzk13dXEBOq7/ScehuvnCWG13mvRDw7LsdboScW9FXraTZ/Hh61vbhxP5YHhK/0jdBLp9gaGhWz
+ sCXmo1kdT6GeBrwagmZDT8Pbpk8UoVeEIj6K9RICqn1B4OkHrAgxyq39N+SiHZxJSTFYGSrrweH
+ rEQ0bSiXHHeRK7ycSZa1ylYIemvAJVQP6XbugW93x4R7hM4E9VE+fXNkHvxlnf0qNIaqqKkjvjz
+ VFOdITkXPU44SqQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In addition to the filename, send attributes about the inode in a
-CB_NOTIFY event. This patch just adds a the basic inode information that
-can be acquired via GETATTR.
+The current fattr4 encoder requires a svc_fh in order to encode the
+filehandle. This is not available in a CB_NOTIFY callback. Add a a new
+"fhandle" field to struct nfsd4_fattr_args and copy the filehandle into
+there from the svc_fh. CB_NOTIFY will populate it via other means.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4xdr.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ fs/nfsd/nfs4xdr.c | 35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
 diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index d1eba4bd8be243022f89f6ac58067c5469a8feba..1db2bd974bfa9d899f590f4b4e869115ab73aff6 100644
+index 1db2bd974bfa9d899f590f4b4e869115ab73aff6..822a9d47dd88df579e4f57f04dd6737653f71c94 100644
 --- a/fs/nfsd/nfs4xdr.c
 +++ b/fs/nfsd/nfs4xdr.c
-@@ -3758,12 +3758,22 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 	goto out;
+@@ -2561,7 +2561,7 @@ nfsd4_decode_compound(struct nfsd4_compoundargs *argp)
  }
  
-+#define CB_NOTIFY_STATX_REQUEST_MASK (STATX_BASIC_STATS   | \
-+				      STATX_BTIME	  | \
-+				      STATX_CHANGE_COOKIE)
-+
- static bool
- nfsd4_setup_notify_entry4(struct notify_entry4 *ne, struct xdr_stream *xdr,
- 			  struct dentry *dentry, struct nfs4_delegation *dp,
- 			  char *name, u32 namelen)
+ static __be32 nfsd4_encode_nfs_fh4(struct xdr_stream *xdr,
+-				   struct knfsd_fh *fh_handle)
++				   const struct knfsd_fh *fh_handle)
  {
-+	struct nfs4_file *fi = dp->dl_stid.sc_file;
-+	struct path path =  { .mnt = fi->fi_deleg_file->nf_file->f_path.mnt,
-+			      .dentry = dentry };
-+	struct nfsd4_fattr_args args = { };
- 	uint32_t *attrmask;
-+	__be32 status;
-+	int ret;
+ 	return nfsd4_encode_opaque(xdr, fh_handle->fh_raw, fh_handle->fh_size);
+ }
+@@ -2924,6 +2924,7 @@ struct nfsd4_fattr_args {
+ 	struct svc_fh		*fhp;
+ 	struct svc_export	*exp;
+ 	struct dentry		*dentry;
++	struct knfsd_fh		fhandle;
+ 	struct kstat		stat;
+ 	struct kstatfs		statfs;
+ 	struct nfs4_acl		*acl;
+@@ -3129,7 +3130,7 @@ static __be32 nfsd4_encode_fattr4_acl(struct xdr_stream *xdr,
+ static __be32 nfsd4_encode_fattr4_filehandle(struct xdr_stream *xdr,
+ 					     const struct nfsd4_fattr_args *args)
+ {
+-	return nfsd4_encode_nfs_fh4(xdr, &args->fhp->fh_handle);
++	return nfsd4_encode_nfs_fh4(xdr, &args->fhandle);
+ }
  
- 	/* Reserve space for attrmask */
- 	attrmask = xdr_reserve_space(xdr, 3 * sizeof(uint32_t));
-@@ -3774,6 +3784,41 @@ nfsd4_setup_notify_entry4(struct notify_entry4 *ne, struct xdr_stream *xdr,
- 	ne->ne_file.len = namelen;
- 	ne->ne_attrs.attrmask.element = attrmask;
+ static __be32 nfsd4_encode_fattr4_fileid(struct xdr_stream *xdr,
+@@ -3678,19 +3679,23 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		if (err)
+ 			goto out_nfserr;
+ 	}
+-	if ((attrmask[0] & (FATTR4_WORD0_FILEHANDLE | FATTR4_WORD0_FSID)) &&
+-	    !fhp) {
+-		tempfh = kmalloc(sizeof(struct svc_fh), GFP_KERNEL);
+-		status = nfserr_jukebox;
+-		if (!tempfh)
+-			goto out;
+-		fh_init(tempfh, NFS4_FHSIZE);
+-		status = fh_compose(tempfh, exp, dentry, NULL);
+-		if (status)
+-			goto out;
+-		args.fhp = tempfh;
+-	} else
+-		args.fhp = fhp;
++
++	args.fhp = fhp;
++	if ((attrmask[0] & (FATTR4_WORD0_FILEHANDLE | FATTR4_WORD0_FSID))) {
++		if (!args.fhp) {
++			tempfh = kmalloc(sizeof(struct svc_fh), GFP_KERNEL);
++			status = nfserr_jukebox;
++			if (!tempfh)
++				goto out;
++			fh_init(tempfh, NFS4_FHSIZE);
++			status = fh_compose(tempfh, exp, dentry, NULL);
++			if (status)
++				goto out;
++			args.fhp = tempfh;
++		}
++		if (args.fhp)
++			fh_copy_shallow(&args.fhandle, &args.fhp->fh_handle);
++	}
  
-+	/* FIXME: d_find_alias for inode ? */
-+	if (!path.dentry || !d_inode(path.dentry))
-+		goto noattrs;
-+
-+	/*
-+	 * It is possible that the client was granted a delegation when a file
-+	 * was created. Note that we don't issue a CB_GETATTR here since stale
-+	 * attributes are presumably ok.
-+	 */
-+	ret = vfs_getattr(&path, &args.stat, CB_NOTIFY_STATX_REQUEST_MASK, AT_STATX_SYNC_AS_STAT);
-+	if (ret)
-+		goto noattrs;
-+
-+	args.change_attr = nfsd4_change_attribute(&args.stat);
-+
-+	attrmask[0] = FATTR4_WORD0_TYPE | FATTR4_WORD0_CHANGE |
-+		      FATTR4_WORD0_SIZE | FATTR4_WORD0_FILEID;
-+	attrmask[1] = FATTR4_WORD1_MODE | FATTR4_WORD1_NUMLINKS | FATTR4_WORD1_RAWDEV |
-+		      FATTR4_WORD1_SPACE_USED | FATTR4_WORD1_TIME_ACCESS |
-+		      FATTR4_WORD1_TIME_METADATA | FATTR4_WORD1_TIME_MODIFY;
-+	attrmask[2] = 0;
-+
-+	if (args.stat.result_mask & STATX_BTIME)
-+		attrmask[1] |= FATTR4_WORD1_TIME_CREATE;
-+
-+	ne->ne_attrs.attrmask.count = 2;
-+	ne->ne_attrs.attr_vals.data = (u8 *)xdr->p;
-+
-+	status = nfsd4_encode_attr_vals(xdr, attrmask, &args);
-+	if (status != nfs_ok)
-+		goto noattrs;
-+
-+	ne->ne_attrs.attr_vals.len = (u8 *)xdr->p - ne->ne_attrs.attr_vals.data;
-+	return true;
-+noattrs:
- 	attrmask[0] = 0;
- 	attrmask[1] = 0;
- 	attrmask[2] = 0;
+ 	if (attrmask[0] & FATTR4_WORD0_ACL) {
+ 		err = nfsd4_get_nfs4_acl(rqstp, dentry, &args.acl);
 
 -- 
 2.51.0
