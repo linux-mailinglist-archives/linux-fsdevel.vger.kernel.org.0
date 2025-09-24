@@ -1,141 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-62538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADD6B97F92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 03:09:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9AAB98012
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 03:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D025819C78CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 01:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526482E725A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 01:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBA61F09A8;
-	Wed, 24 Sep 2025 01:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C651F4CB3;
+	Wed, 24 Sep 2025 01:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0wWEKd5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJxNz7Cq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3801F1527
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 01:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D971F3B85
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 01:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758676173; cv=none; b=Nzs/1LM48vUj0GF4I4QB+KZeMwkxeC+JWGWxBuSXTBBGDN9BJU8FNvVx4JhxjJnNIaZDmGXBSuLKSfAZmA5cicv3FENrQgqEpLVpeBxnSGwr0DbeWC0r/LAgWUQloitpELxg3+J9HTTJenC1LNiw4OgFJcyW1T4eotTmNdcPrj0=
+	t=1758677304; cv=none; b=J4f7jEkXdjBlFAmHauDHeZmZWRxbz2BTWbBeiqkEa4YWQHRMpL+bDAChdLZ1ox1FQLmNV4AaHb6fqfyQAC57/fCc1vxuDRqlXGbnlri0rJ0nCabgI+Z4OeGrU7WGxJ3IqzoHTLdSbr0wcKGGXbaUxICovOPIewmT+R+fgeOOh8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758676173; c=relaxed/simple;
-	bh=Blu+tUHawvRU8Xs0DUcuclzoQyPlfz7B1WyF4IU8+1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JYi7j7FzeDcUw9/ZW+AbhDq0bmex0aMhVp0eTeCG0RSsWPLtjiCESdGojvjz0HqG8oW6FVF2YAkHf+iSNTmzdluJZikVnEt6Lb1YHTeg4cDqmUXdxItLUFlYtUQz6VTPQ7g6a6fZACzANRSWH7C9kmsGEcC7+ps4zLR/5XV8LzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0wWEKd5; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1758677304; c=relaxed/simple;
+	bh=19hk+LqNI5XDabxjhXafIBVwjhECKzWuy7AL6boNFpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iuQgezAkkjPmeRqp7ZcgLte1+YTy0hnnUzOsxFjwYxaZ4DYyQq5+zuwhv/O/39Pscv4mDJWd3zTbAecAV2tlPVrLpVV/76VqhyfCn1pZUkHcucjIcaOe4u+p+IBVE4bO6C/57STaEi/POm6KHSTric5u3e8t8oFmFV/9tIeZyVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJxNz7Cq; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-36453927ffaso42041681fa.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 18:09:31 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f2e960728so3665552b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 18:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758676170; x=1759280970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lll/ssUUyzpdCEieMHN7OfODTvGl3B3jSAMJ3V0c2x4=;
-        b=S0wWEKd5l5xg9+5BT7CtUUnlPtSeIXHUVRrCS/B2kYs8vbq/7gGFbyipX43FY9PcHF
-         xbUG6hq2GWpWc0GJn02dDjiTSnrfgOX/ieQr8ZHdSDdY/nBrRXO0+IxhHd+g46Q1sWyc
-         O1u4whV2pC6W2isSvBdztI8wUjY4201oA0pI0Ditxaka559vPt5CAvmhWePiyRpvaoT7
-         Vmox6YJUamxAMjt9MrqNASyLNjLzgjOlPE0APHIrhTrIs6bfxt/CpsHx4DBfIIP4HiSd
-         X2EmsSOx8fo0/j3917nGqDqYAmyKkHw4JrFJ2F+tRWDxi50jqOkodBlX9rMmIHmm8Hpa
-         y59A==
+        d=gmail.com; s=20230601; t=1758677302; x=1759282102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNaBmcK1g7tsyculUAXfjKLZdvr7GDVhE7z0HdXPkB8=;
+        b=VJxNz7Cq0Igsm8KBow0N0DGGGhREY9CbrtRb4DthEhSov5A70HWlk7hquA9naJ6Q0o
+         HoAyAUBgLQ4aLMgckm1nOhWJhyAPwZ+rg3F8KBEJznQ7RFyx4ogc7EvjSVkP9gU6lHoZ
+         cZJeyoGYkR1kTVzNMgypelzF24B+fx+CwwfDS1RucauqYKNk1dHhxkhoDTSgba9sxLDE
+         bPuJw7UeOhzobJN/9bZsGWKxcy5zVQt0b+SAIFpZUgg6+EFqgiojfTnuRfIJiJZEDacK
+         iMdlwaotu1tHTCbGogyD+CnOFWvPAc+1bi6iym44iK7qtvN16gG2ns5PRuIS0yDY85I4
+         G5WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758676170; x=1759280970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lll/ssUUyzpdCEieMHN7OfODTvGl3B3jSAMJ3V0c2x4=;
-        b=epxu73+DdYKvzaJPuj+klzS6dx8rPrmQP53KjBRbRM+pMgf8Q1tn3eoJ+Nn0Y6OLsD
-         hJbp4nIvKgNccKRCxf4yqp1DiXYCw+8iNyNC0xSTNFhKc8GNRtQvDQPByTpe4SkrItbK
-         wf6j6tzvEGJyer9GK0c4KknUT2Rm3KRvjIpK69ZpwV9l5Lrb7uKqu7qECmx9hV+4z4O6
-         AJvo3PfXnx/R4LGZe9drnN+qL0n2x3WdwTSbUpGI4JsY57FB5NxCMeANnqu59KCLR5KZ
-         Cfwt7iMBR4CLvpf94qEkPEWK0vKbr7MLzInpJ87bx8+J/h1fgiE6nTj1xeuvLDu387I6
-         nhFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPBubLpviGdMTylNvRTCOSOnClNvJ3n8dVZ56PSw7ZIQEM56A+hCITvHtYYQn+CclDclMkMTDNs3ng/KHb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwklzsSY7kV9nvsjH7o7CkqOgpsO11lMe2ZAYVU/r4ij0akm5r
-	cya2+zx7+lrx6sS3Rn6AhtNCPUkI1SCfrpUvt3HRSfbhoiyYC5vXbZeVkjakEQoyCZ2GW5Dar0Y
-	P1E0FbfUozzkFb7/pibYK7IVLDt43tVU=
-X-Gm-Gg: ASbGncu25L0NBT5BN8EQ4Ko5yh39EXPX4eo5nhv1ZB1+2dJhATqOvQEDBTXKzEMrVwD
-	huC5wkF0wssiA4dCjoleCGn0pL1F6Q9NeNWlYIgXIkZ9PzUCwtybB+h8WiNfohkKxAEOMPaQvUW
-	h/9/J6ieBG2LuWTg+5+nQmAJ57pORgcTxnNP4q6oaKbMHJ2xuUggpQ1+mD7CeXFX6dpQ9G0c8Op
-	mEJi/924WpWD7YTnabtnwy9yuR/FZAwD43dna49cN+fFbTIDTkdM579QGR8tsRc6WRVtco7lLU7
-	pElI2iQQO7w65cSMvILZLw==
-X-Google-Smtp-Source: AGHT+IHbXAiH1s8VtlmDbsaNP/syoKVWdCeZZCRV8zDEN53vF6lttuESXWuJKlJaexy/SVsmDvyy4M/m2cASKJkmK3E=
-X-Received: by 2002:a05:651c:4088:b0:338:bb4:6d6f with SMTP id
- 38308e7fff4ca-36d177d8cf8mr8960551fa.44.1758676169573; Tue, 23 Sep 2025
- 18:09:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758677302; x=1759282102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNaBmcK1g7tsyculUAXfjKLZdvr7GDVhE7z0HdXPkB8=;
+        b=HTbWP2qsibGdVuFz79z93QOjJm1oyRtDEunGMhFaxDK/IOF8o4nHp78Z6+Fvn3yzpA
+         rE5FBHUKAhqG/Y/5K+dyCZWGlG1FQDd/2QaJQpVfy2cAf14e8LH6X2dqcolPbDKwN+kH
+         j1jSVS4gVlXAsBkBkTtJss7oqb1u2ck11xX2twUuOnqMiHE7h7DJN+/XDfFzJlL8u5xF
+         Ib3AHNGa9pmX/scGPO7kYzlrO8k2cQDpMq50r+mBfFJLG9lbFCREoez2JnIMUeQ+tIDp
+         Rq2CUnyYHJhH7btVKigPfDFhBQLcd7oNocD1FVlbg+XgJWN76/oTUGSydH5o5Wr6EosQ
+         zgnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJOeN/vITGOqpjv8Exoyd5WWcxIRt40Tsm+TqqsuPWXpzUv093gRoHqkAv8g5UG5FVTGxoR5K5DOwJko8C@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL0sb65OnfESQiIntE1z+UuGgTNu+FeZha/5G1ZQfyBrNKzEB5
+	CluxMJ2wQ/wkR5+S+ZQ2owm0rlJ9zQiw7FCICPxXGx8kz9E0El56WIcl
+X-Gm-Gg: ASbGncvE/nImQD4qPmt94y61zSe9bWXlrNl1qFKW6L1lHknG+imNYVCQ4LoWXRLtLYN
+	Se48Tf4nu+AyIKrEVvJqLt4KYYBdcb65ZewFe0hUrkX70fnXUGoW/qpT74mQ05YHCsVSH8Jmwpd
+	O9+MedM0LJuuWyDGL9bpXtt/APHBtOl+EuHwWDRlNlnSabzzfOD5ahdztDnKOq8ePYYYxy3+DKX
+	t2fEWxQH5/9bjnxyH4mCeUT7JXZJmnZwE6DCba2WEpw+/KYiQvr4UyBFbyt8wNH+I9yTR3HA8S+
+	6XKBjtU4NoHSh2h+1omfwBiMlnWYoYIE81y/Tqe239XNABB987q9GRSx2RLYpzJlWqfR4RNJcYn
+	ezu3+DaYM5sLYwJYqX10pDTelPN/9Q16eYII3DixEk7NsL3z3ZV21Bv9gfIUXVzZ4eCBbq7ShHk
+	3kUg==
+X-Google-Smtp-Source: AGHT+IEtAt1brf7bOZfywQUNzTcIp9ZaeKJDD5QwEYNs2WxUGFQmKQ2sv8z9OUBVuDDhakBgEvfhEQ==
+X-Received: by 2002:a05:6a20:b298:b0:2df:8271:f079 with SMTP id adf61e73a8af0-2df8271fb80mr400111637.10.1758677302521;
+        Tue, 23 Sep 2025 18:28:22 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:a860:817b:dcc:3e4a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b55199e08f1sm12644501a12.24.2025.09.23.18.28.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 18:28:22 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Subject: [PATCH] nsfs: reject file handles with invalid inode number
+Date: Wed, 24 Sep 2025 06:58:15 +0530
+Message-ID: <20250924012815.1096559-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
- <20250813-core-cstr-fanout-1-v3-9-a15eca059c51@gmail.com> <DC1ZLP61HJAL.3I2YF82Y4T7L9@kernel.org>
-In-Reply-To: <DC1ZLP61HJAL.3I2YF82Y4T7L9@kernel.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 24 Sep 2025 10:08:53 +0900
-X-Gm-Features: AS18NWB5wsxS2a7jxyLos1K4bMIsLFjDF8Ocsoy_wDtXVwMvZmga8KSuS7D7hNE
-Message-ID: <CAJ-ks9=9V5Ex-VuSV7Er-jTLHyMCyVWYOiWF7wpYB9V_F=+QQg@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] rust: device: use `kernel::{fmt,prelude::fmt!}`
-To: Benno Lossin <lossin@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 4:54=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> On Wed Aug 13, 2025 at 5:39 PM CEST, Tamir Duberstein wrote:
-> > Reduce coupling to implementation details of the formatting machinery b=
-y
-> > avoiding direct use for `core`'s formatting traits and macros.
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
->
-> > ---
-> >  rust/kernel/device/property.rs | 23 ++++++++++++-----------
-> >  1 file changed, 12 insertions(+), 11 deletions(-)
->
-> > @@ -413,9 +414,9 @@ fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> =
-core::fmt::Result {
-> >                  // SAFETY: `fwnode_get_name_prefix` returns null or a
-> >                  // valid C string.
-> >                  let prefix =3D unsafe { CStr::from_char_ptr(prefix) };
-> > -                write!(f, "{prefix}")?;
-> > +                fmt::Display::fmt(prefix, f)?;
-> >              }
-> > -            write!(f, "{}", fwnode.display_name())?;
->
-> So we're not able to use `write!` with our `Display` or did you also
-> write a `FmtAdapter` wrapper for that? (don't think we need it now, just
-> wanted to know if we have this issue possibly in the future)
+Reject nsfs file handles that claim to have inode number 0, as no
+legitimate namespace can have inode 0. This prevents a warning in
+nsfs_fh_to_dentry() when open_by_handle_at() is called with malformed
+file handles.
 
-Correct; we cannot use `write!` with our `Display`.
+The issue occurs when userspace provides a file handle with valid
+namespace type and ID but claims the namespace has inode number 0.
+The namespace lookup succeeds but triggers VFS_WARN_ON_ONCE() when
+comparing the real inode number against the impossible claim of 0.
 
-Apologies for the late reply - I had sent this back in August but was
-still being throttled by gmail :(
+Since inode 0 is reserved in all filesystems and no namespace can
+legitimately have inode 0, we can safely reject such handles early
+to prevent reaching the consistency check that triggers the warning.
+
+Testing confirmed that other invalid inode numbers (1, 255) do not
+trigger the same issue, indicating this is specific to inode 0 rather
+than a general problem with incorrect inode numbers.
+
+
+Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Tested-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+
+---
+ fs/nsfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 32cb8c835a2b..42672cec293c 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -469,7 +469,8 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
+ 
+ 	if (fh_len < NSFS_FID_SIZE_U32_VER0)
+ 		return NULL;
+-
++	if (fid->ns_inum == 0)
++		return NULL;
+ 	/* Check that any trailing bytes are zero. */
+ 	if ((fh_len > NSFS_FID_SIZE_U32_LATEST) &&
+ 	    memchr_inv((void *)fid + NSFS_FID_SIZE_U32_LATEST, 0,
+-- 
+2.43.0
+
 
