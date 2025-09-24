@@ -1,152 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-62548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FB9B98FC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 10:53:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34868B990B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 11:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66233A72A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 08:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F1E4A74C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 09:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F202C327E;
-	Wed, 24 Sep 2025 08:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0432D5926;
+	Wed, 24 Sep 2025 09:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq3EnQsE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O4x2mWwc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0E9DF49;
-	Wed, 24 Sep 2025 08:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232DD28136C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 09:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703985; cv=none; b=Uf4/bHe1J13aPDh1k/xFszU2Ug7oIVBc076Fib5iT2sCFWHkLup6rLvlVJJ8ETo5bUkmpPKpo/4rr/d88BeTUY4XP9x6ionA9dTohWvTm/VfjxKRNwfr8gsSJqrTpwqAktkE6euzOUwRlmJDLJF5jQZbG249J1n+cgX3zdKdOZs=
+	t=1758705009; cv=none; b=mzNnFoWnCtXWzpOcS+LFEU1Lkx4CRqFd+xd520stW1MpNy8wfJoSUpzJUpVT0doRJ2RzW80eON1GrBekuve6n+IIx12+TRXsdLFO0UY/SHkHvgyD6OAeeW1ZSk/ciGs69JRe/uJ/J3WIJn+93AIF7ktU5pGKlBfrWhVKXtyhEJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703985; c=relaxed/simple;
-	bh=E6zulzZVYmkbKjQcXuz2AElMWJpbS2jzN2vn6lDDjec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGziGoKisyPdVSVJZqbUfxUVEqXNFxd9i8jdH8CznmdLyx1c1Iuu/i0f1cv2ircckj6rBC5Ri35a8jXAFu+H/0FxU8X/Q2ZALVAtHxxlMcAM69jj/LEah2KbOdPeS3eO9aKZrM8jXS4pPRv789riJo6tw2Ff/HJCYVWW85R42Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq3EnQsE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D35C113CF;
-	Wed, 24 Sep 2025 08:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758703984;
-	bh=E6zulzZVYmkbKjQcXuz2AElMWJpbS2jzN2vn6lDDjec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kq3EnQsERpwcKloItJUo75aeetvZ4zYU7Oh6StYoNsi8L3C5W4Koic3xqdgepj5/9
-	 PgF9uqcu6UkDN1GQ7x4CV3ec56DrjQjEtZo5hFqfFsBNHrCC2ch4YjqXGxZa7uYBWK
-	 PhPGm8LmsPvhbkkBh2+r6thexlDFOJ5D1Ll0SKM8s46psdtTn5Uir/kwrIarXymfgu
-	 lOxmZGgt0k+265h9gBCpTiA8+xLIcX6qG77YK3bYby436L2qd6gikBE9C627+m2wzC
-	 WW+7DIdJG+D0W6eeeSJqaBeMkPP0GrgZncjaJFBR86y1dzF+5Dr3AvWs0LhAJPWPXc
-	 KXEB7nc3B7N2w==
-Date: Wed, 24 Sep 2025 10:52:57 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 04/10] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <rvnb5wxpu2emzbs7iprqzxqom4yioguxsiyl4gfxcyr6hjfs3v@kqrfrrfsoa7s>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-4-1261201ab562@cyphar.com>
- <e4jtqbymqguq64zup5qr6rnppwjyveqdzvqdbnz3c7v55zplbs@6bpdfbv6sh7d>
- <2025-09-24-sterile-elderly-drone-sum-LHA7Fs@cyphar.com>
+	s=arc-20240116; t=1758705009; c=relaxed/simple;
+	bh=c3WYyLfLsNmtvEzF6+B83hsfNUhOUKyRDyy9vNhoLjU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCB3YK2p2HXBDb4x67yUnrZKl9Mtf9h9s5EoqHWBDT03u9/W/kC+QgTksFCWoPnqtYBRJmMUHt7O+TAS7LHGWauCl60QoXL8As6rz1PesEpFZ28yoP3MfyeGRafw0Tt5pE3G66hc5fylOtctdkCU4ItyMCDS5SnBbKuTWSvT4Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O4x2mWwc; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=twv6KxSdXx35qZ3CpUV/NZu9uC6ECLHW8NTgoYmP/QE=; b=O4x2mWwcpmyfC565DMI1tWz2ft
+	2qlkeRwbGTec1Pzgv9mWJMbyuznJ2AlLAvkWcG8tWWhoIncsJ/65FLQGXCyeUSTugED90O54p4yUr
+	s0uwXVlFQivuk46RKsm+1UXZ3UqZPUG3J0uJvsk8jurXbx6SZxAhBOm7m6HuqJ4OuVYswYlJXyfd9
+	CFTEs1anrOjIIRI99RXHHIzZzEH8YnAf6776sF6vtEr9vOgRakTkP/hpYJz5/HA1/7hh9EreSIUTR
+	LXkZ8N6mqVdfugYEd+nkKqTPgffUn/6B/RD7B4ZjpmIiCA9yoeJ9jiP7Kuyr9+IpyMI2V5D5Xk0ji
+	V32gRKFg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1LVi-0000000CXGH-3AmB;
+	Wed, 24 Sep 2025 09:10:02 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	Dave Chinner <david@fromorbit.com>
+Subject: [RFC PATCH 0/2] Defer evicting inodes to a workqueue
+Date: Wed, 24 Sep 2025 10:09:55 +0100
+Message-ID: <20250924091000.2987157-1-willy@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wuex7qtg3b57oloz"
-Content-Disposition: inline
-In-Reply-To: <2025-09-24-sterile-elderly-drone-sum-LHA7Fs@cyphar.com>
+Content-Transfer-Encoding: 8bit
 
+Evicting an inode is a complex process which may require allocating
+memory, running a transaction, etc, etc.  Doing it as part of reclaim
+is a bad idea and leads to hard-to-reproduce bug reports.  This pair of
+patches defers it to a workqueue if we're in reclaim.
 
---wuex7qtg3b57oloz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 04/10] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <rvnb5wxpu2emzbs7iprqzxqom4yioguxsiyl4gfxcyr6hjfs3v@kqrfrrfsoa7s>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-4-1261201ab562@cyphar.com>
- <e4jtqbymqguq64zup5qr6rnppwjyveqdzvqdbnz3c7v55zplbs@6bpdfbv6sh7d>
- <2025-09-24-sterile-elderly-drone-sum-LHA7Fs@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <2025-09-24-sterile-elderly-drone-sum-LHA7Fs@cyphar.com>
+Bugs:
+https://lore.kernel.org/all/CALm_T+3j+dyK02UgPiv9z0f1oj-HM63oxhsB0JF9gVAjeVfm1Q@mail.gmail.com/
+https://lore.kernel.org/all/CALm_T+2cEDUJvjh6Lv+6Mg9QJxGBVAHu-CY+okQgh-emWa7-1A@mail.gmail.com/
+https://lore.kernel.org/all/20250326105914.3803197-1-matt@readmodwrite.com/
 
-Hi Aleksa,
+I don't know if this is a good idea, to be honest.  We're kind of lying
+to reclaim by pretending that we've freed N inodes when actually we've
+just queued them for eviction.  On the other hand, XFS has been doing
+it for years, so perhaps it's not important.
 
-On Wed, Sep 24, 2025 at 04:41:16PM +1000, Aleksa Sarai wrote:
-> On 2025-09-21, Alejandro Colomar <alx@kernel.org> wrote:
-> > On Fri, Sep 19, 2025 at 11:59:45AM +1000, Aleksa Sarai wrote:
-> > > +The list of valid
-> > > +.I cmd
-> > > +values are:
-> >=20
-> > I think I would have this page split into one page per command.
-> >=20
-> > I would keep an overview in this page, of the main system call, and the
-> > descriptions of each subcommand would go into each separate page.
-> >=20
-> > You could have a look at fcntl(2), which has been the most recent page
-> > split, and let me know what you think.
->=20
-> To be honest, I think this makes the page less useful to most readers.
->=20
-> I get that you want to try to improve the "wall of text" problem but as
-> a very regular reader of man-pages, I find indirections annoying every
-> time I have to do deal with them. Maybe there is an argument for
-> fcntl(2) to undergo this treatment (as it has a menagerie of disparate
-> commands) but this applies even less to fsconfig(2) in my view.
->=20
-> If you feel strongly that fsconfig(2) needs this treatment, it would
-> probably be better for you to do it instead. In particular, I would've
-> expected to only have two extra pages if we went that route (one for
-> FSCONFIG_SET_* commands and one for FSCONFIG_CMD_* commands) so I'm not
-> quite sure what you'd like the copy to look like for 10 man-pages...
+I think the real solution here is to convert the Linux VFS to use the
+same inode lifecycle as IRIX, but I don't fully understand the downsides
+of that approach.  One major pro of course is that XFS wouldn't have to
+work around the Linux VFS any more.
 
-Okay, let's keep it as a single page for now.
+I do wonder if a better approach might be:
 
++++ b/fs/inode.c
+@@ -883,6 +883,10 @@ void evict_inodes(struct super_block *sb)
+                        spin_unlock(&inode->i_lock);
+                        continue;
+                }
++               if (in_reclaim() && (inode->i_state & I_DIRTY_ALL)) {
++                       spin_unlock(&inode->i_lock);
++                       continue;
++               }
+ 
+                inode->i_state |= I_FREEING;
+                inode_lru_list_del(inode);
 
-Cheers,
-Alex
+Thoughts?
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+Matthew Wilcox (Oracle) (2):
+  Add in_reclaim()
+  fs: Defer evicting inodes to a workqueue
 
---wuex7qtg3b57oloz
-Content-Type: application/pgp-signature; name="signature.asc"
+ fs/inode.c               | 36 ++++++++++++++++++++++++++++++++++--
+ include/linux/sched/mm.h | 11 +++++++++++
+ mm/page_alloc.c          | 10 +++++-----
+ 3 files changed, 50 insertions(+), 7 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.47.2
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjTsWkACgkQ64mZXMKQ
-wqlFeQ//cy2MCwmXluXXdK1X4kpuKpgRfVUpH5H5qraqVKVY9UOELUGSAe5KMSU8
-cj8s5Pg7979lgXPcaAG1k5+cTIESWj4D78DIOQE1/f28Rp5tZa69YxqcNtvY9gAM
-UkNxghxzeu0iPMna3di90bfiepu9IBqrduHUDRcwOkQKPaYN1YngIBJXJivq2mLv
-q3JhPpmhx9LY4BtMs/wO4ycdy4umbeB6rZ2OriUlGZDh6jeYLfuJwxbjTFFIG1i+
-7eWcm/ZEeTZU2trzXV6hUkwuxGkW08EqvaWTOvY/QjcZDJtwQ+WwGGtDE2VApCcb
-tIEbywnJJLGkqMGu7ljSRZW9ns5qTRQPwYJyouoArIj6pHQ3nEOVe7+maB3ZpDPI
-v8N4lu6CHbWdpdxh+2WCFTLNUVdN13Ppo7KUmBYp8jiXD+Cph1MBWeBh51eE7jdc
-wDH5ceZ89PnIfI/Mi/vmwl51Z1AEsrvNuXAoMCjcP4+j3Mqi0ornnTbKg165l9T1
-72ndSideCquiuZdDKtOLau4CgmnlFYGxL1k40mPW3aKqn1b55hNWtwzAs9HcNpo3
-5CzFKeMjis1Olekcu4e3Er05wv64vpyjeDU0KJdta5qNiMtz9ktADPteTgjAEb2X
-1ZW28V8toGcdZqJy8Ylz3EIoi/Jl6fqk3yZrv4h7MrUuXXPHqEg=
-=tW1A
------END PGP SIGNATURE-----
-
---wuex7qtg3b57oloz--
 
