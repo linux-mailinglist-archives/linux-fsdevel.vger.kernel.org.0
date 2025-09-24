@@ -1,165 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-62583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC9CB9A220
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 15:57:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB870B9A470
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 16:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA80164763
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 13:57:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F067AAFA4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 14:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46CA3009F6;
-	Wed, 24 Sep 2025 13:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF801308F34;
+	Wed, 24 Sep 2025 14:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="Po2DuBhX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sU4qbKHf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B782E2657
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 13:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1611A9FA7;
+	Wed, 24 Sep 2025 14:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758722270; cv=none; b=FTmW0AC+FdFGuVywOTdupcUebty3NEA3bDiG7OrmivvAn78MRhossw9AtU4We9O3+hBnHzHPPPSB3Z3lJRHAS9XoNIQuPzwkYATbtIEia/RjQdxoNSwkphZ93Qq2lTM5/zeAKpmmlITTwi5Ai4+OQ5kTBpvSx1MCrqprvveDPLg=
+	t=1758724585; cv=none; b=mP1N2OvJpCaBKc70UX3oNtuDa93h9IISP3W2rPYrCK+rWvQg9RXQfPWzp2u7HIy+HGuC1QCZ1UyOPHmgS5YE15RxiCIDFGASHm8boJJYibC+n2LRPjDt7Y8bU1nkyjkbPD2JRrEdI9j9fz8+1ZUHrNTmaMOh6oDJhvJhe/88Vxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758722270; c=relaxed/simple;
-	bh=zK0d+jat/vDaaPlGtVMYSekvXbcXkoFLrAu7KvbCrTo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cVS28xWE3NcJtCqRjZ9jpwl8OoYzdbMe4of2wTas2Rc8zEuTb4Gz/+zhoMXGo1UafgzVMRWnO1ssWhtwRml5F0EYRdOFSPKmtxosJDofLSf94xCSO3BxhodLYsDdbAiCXrigqu3Aok2yBgQyvYAX7eGstsraAI1gIuFiEsYJA70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=Po2DuBhX; arc=none smtp.client-ip=141.24.179.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
- i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1758722264; h=message-id
- : subject : from : to : cc : date : in-reply-to : references :
- content-type : content-transfer-encoding : mime-version : from;
- bh=zK0d+jat/vDaaPlGtVMYSekvXbcXkoFLrAu7KvbCrTo=;
- b=Po2DuBhXjvvjs2I+VefxbzzlnVlsIHVz0/Qs96htur7lpWgs2G1AMgfpNPLkvBlPy4bel
- 0Ffe6+7t2/QIDraC+3NM4n+jC5dRtntP9SP46P64nxx2hSS0SmWgokXovzh1zHIKu9YpwNL
- UIRoQokXYwMOLirB/F2ysSWNBAKLxR2rO/4y/1Y+pBCCPSszYj/zoWcAxjgMPG6lslidLBE
- S9Jl+iuOk/POzV38YnbPwkqs2lOMd3kJW8kekXXEw/+GQFs1Ri4SHhpoRgrh9fZlcSCuMnw
- 62zVcS81flJkIGAZCbJ5Fk7PTfqWF/ZFR4LTzKEzbT1Hm3LSomBv/g61rmXA==
-Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
-	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id CA40C5FC04;
-	Wed, 24 Sep 2025 15:57:44 +0200 (CEST)
-Received: from [141.24.207.96] (unknown [141.24.207.96])
-	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id A97285FB67;
-	Wed, 24 Sep 2025 15:57:43 +0200 (CEST)
-Message-ID: <d86114929063d12dce4110c730df2afd2c17a551.camel@tu-ilmenau.de>
-Subject: Re:  [PATCH] ceph: Fix log output race condition in osd client
-From: Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "idryomov@gmail.com" <idryomov@gmail.com>, 
- "linux-fsdevel@vger.kernel.org"
-	 <linux-fsdevel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>
-Date: Wed, 24 Sep 2025 15:57:43 +0200
-In-Reply-To: <0444d05562345bba4509fb017520f05e95a3e1b3.camel@ibm.com>
-References: <20250923110809.3610872-1-simon.buttgereit@tu-ilmenau.de>
-	 <0444d05562345bba4509fb017520f05e95a3e1b3.camel@ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1758724585; c=relaxed/simple;
+	bh=dtMyGOLRj3HY14tPCzeUn90iQCDhGJqxqhE3t2ov7aU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=H7oe+o0hGlCZor2JhJ44f/qqNbSJ+8me/8dG/ciBpOR8tXzzHn8Hj+FOJQCaNmLl6u02xVOhxyUTDcsq3Lq5LTwVqYqLUaXorJ4rXZljz1JRQADtNymT7O/PBPC2/EEw2flU3FEqcc+DBnx1HNEC3VsC423ZNLIRAwkf3K/1mBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sU4qbKHf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F373C4CEE7;
+	Wed, 24 Sep 2025 14:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758724584;
+	bh=dtMyGOLRj3HY14tPCzeUn90iQCDhGJqxqhE3t2ov7aU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=sU4qbKHfWJn/GVEqOSKG90PR7kq8un4mmh2XnGkYWYj96nm0vP3t0kpMc9qgQDF/r
+	 Njj8+x9+98clpezx9Qbexhjiiqb9LgGf2zO7zaasjP6Aw3ZwagcAIEE8M1xw+MaWmu
+	 YUaMY0p/KqRd8zFg6n7QJyC9wlkAy1COyRWfXsjDCyXLlLAmMW+OOVMT0stiJlFThR
+	 pSjukkkFK4og3+n0QfVwwodCBFQYwRR1q0tdqFB+L5GUbegS/N6BCgBwxdv/nKP85r
+	 1KUsbDv30oxCq+omuKsOLciS1wr91DsaxnZLhDWTt7/0uf59+4ZuwoESQ7BQmcDgr0
+	 wKP3Ex22F2I6w==
+Date: Wed, 24 Sep 2025 08:36:11 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    Paul Walmsley <paul.walmsley@sifive.com>, 
+    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
+    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+    Andreas Hindborg <a.hindborg@kernel.org>, 
+    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+    richard.henderson@linaro.org, jim.shu@sifive.com, 
+    Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com, 
+    charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com, 
+    cleger@rivosinc.com, alexghiti@rivosinc.com, samitolvanen@google.com, 
+    broonie@kernel.org, rick.p.edgecombe@intel.com, 
+    rust-for-linux@vger.kernel.org, Zong Li <zong.li@sifive.com>, 
+    David Hildenbrand <david@redhat.com>, Andy Chiu <andybnac@gmail.com>
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+In-Reply-To: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
+Message-ID: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
+References: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, 2025-09-23 at 17:27 +0000, Viacheslav Dubeyko wrote:
-> On Tue, 2025-09-23 at 13:08 +0200, Simon Buttgereit wrote:
-> > OSD client logging has a problem in get_osd() and put_osd().
-> > For one logging output refcount_read() is called twice. If recount
-> > value changes between both calls logging output is not consistent.
-> >=20
-> > This patch adds an additional variable to store the current
-> > refcount
-> > before using it in the logging macro.
-> >=20
-> > Signed-off-by: Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
-> > ---
-> > =C2=A0net/ceph/osd_client.c | 10 ++++++----
-> > =C2=A01 file changed, 6 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> > index 6664ea73ccf8..b8d20ab1976e 100644
-> > --- a/net/ceph/osd_client.c
-> > +++ b/net/ceph/osd_client.c
-> > @@ -1280,8 +1280,9 @@ static struct ceph_osd *create_osd(struct
-> > ceph_osd_client *osdc, int onum)
-> > =C2=A0static struct ceph_osd *get_osd(struct ceph_osd *osd)
-> > =C2=A0{
-> > =C2=A0	if (refcount_inc_not_zero(&osd->o_ref)) {
-> > -		dout("get_osd %p %d -> %d\n", osd,
-> > refcount_read(&osd->o_ref)-1,
-> > -		=C2=A0=C2=A0=C2=A0=C2=A0 refcount_read(&osd->o_ref));
-> > +		unsigned int refcount =3D refcount_read(&osd-
-> > >o_ref);
-> > +
-> > +		dout("get_osd %p %d -> %d\n", osd, refcount - 1,
-> > refcount);
->=20
-> Frankly speaking, I don't see the point in this change. First of all,
-> it's the
-> debug output and to be really precise could be not necessary here.
-> And it is
-> easy to make correct conclusion from the debug output about real
-> value of
-> refcount, even if value changes between both calls. Secondly, more
-> important,
-> currently we have=C2=A0 refcount_read() as part of dout() call. After thi=
-s
-> change,
-> the refcount_read() will be called and assigned to refcount value,
-> even if we
-> don't need in debug output.
->=20
-> Are you sure that you can compile the driver without warnings if
-> CONFIG_DYNAMIC_DEBUG=3Dn?
->=20
-> Thanks,
-> Slava.
->=20
-> > =C2=A0		return osd;
-> > =C2=A0	} else {
-> > =C2=A0		dout("get_osd %p FAIL\n", osd);
-> > @@ -1291,8 +1292,9 @@ static struct ceph_osd *get_osd(struct
-> > ceph_osd *osd)
-> > =C2=A0
-> > =C2=A0static void put_osd(struct ceph_osd *osd)
-> > =C2=A0{
-> > -	dout("put_osd %p %d -> %d\n", osd, refcount_read(&osd-
-> > >o_ref),
-> > -	=C2=A0=C2=A0=C2=A0=C2=A0 refcount_read(&osd->o_ref) - 1);
-> > +	unsigned int refcount =3D refcount_read(&osd->o_ref);
-> > +
-> > +	dout("put_osd %p %d -> %d\n", osd, refcount, refcount -
-> > 1);
-> > =C2=A0	if (refcount_dec_and_test(&osd->o_ref)) {
-> > =C2=A0		osd_cleanup(osd);
-> > =C2=A0		kfree(osd);
+Hi,
 
-Hi Slava,
-thank you for your quick answer.
+On Thu, 31 Jul 2025, Deepak Gupta wrote:
 
-I checked it again: I built the kernel with gcc 15.2.1 with -Werror and
-CONFIG_DYNAMIC_DEBUG=3Dn and everything ran through fine without any
-errors.
-I guess because of the way no_printk(fmt, ...) is built.
+[ ... ]
 
-And for sure, this is only debug output, but right now, there is a race
-condition, which I went into, and in my opinion this should be fixed.
-Another option, which would be completely fine for me, could be to
-remove one recount_read call. This would result in something like:
+> vDSO related Opens (in the flux)
+> =================================
+> 
+> I am listing these opens for laying out plan and what to expect in future
+> patch sets. And of course for the sake of discussion.
+> 
 
-dout("get_osd %p; new refcount =3D %d\n", osd, refcount_read(&osd-
->o_ref));
+[ ... ]
 
-If you have another idea on how to handle this I'm open to your
-suggestions.
+> How many vDSOs
+> ---------------
+> Shadow stack instructions are carved out of zimop (may be operations) and if CPU
+> doesn't implement zimop, they're illegal instructions. Kernel could be running on
+> a CPU which may or may not implement zimop. And thus kernel will have to carry 2
+> different vDSOs and expose the appropriate one depending on whether CPU implements
+> zimop or not.
 
-Best Regards
-Simon
+If we merge this series without this, then when CFI is enabled in the 
+Kconfig, we'll wind up with a non-portable kernel that won't run on older 
+hardware.  We go to great lengths to enable kernel binary portability 
+across the presence or absence of other RISC-V extensions, and I think 
+these CFI extensions should be no different.
+
+So before considering this for merging, I'd like to see at least an 
+attempt to implement the dual-vDSO approach (or something equivalent) 
+where the same kernel binary with CFI enabled can run on both pre-Zimop 
+and post-Zimop hardware, with the existing userspaces that are common 
+today.
+
+thanks Deepak,
+
+- Paul
 
