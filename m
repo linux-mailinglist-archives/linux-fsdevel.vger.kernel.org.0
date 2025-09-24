@@ -1,202 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-62535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308FBB97E03
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 02:28:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADD6B97F92
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 03:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C4A7A17C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 00:27:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D025819C78CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 01:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B6D189BB6;
-	Wed, 24 Sep 2025 00:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBA61F09A8;
+	Wed, 24 Sep 2025 01:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAoNdRWc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0wWEKd5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA4D23AD;
-	Wed, 24 Sep 2025 00:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3801F1527
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 01:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758673713; cv=none; b=iobPGVYJXSS0K8mnk1IYTqHlGsJVb3GjuBD+WOeodjpf5JG+3gHA3zRQNHZMYr51DTCiM4TpXJpssPdSGNxuOohmUISF+pqOwcjR3BKDa5hFv3L6eQijmel5BXZCtP7bM3KeHGogrTyGfnReRSucAOAMyyxP7dpdyxXBMixdCGA=
+	t=1758676173; cv=none; b=Nzs/1LM48vUj0GF4I4QB+KZeMwkxeC+JWGWxBuSXTBBGDN9BJU8FNvVx4JhxjJnNIaZDmGXBSuLKSfAZmA5cicv3FENrQgqEpLVpeBxnSGwr0DbeWC0r/LAgWUQloitpELxg3+J9HTTJenC1LNiw4OgFJcyW1T4eotTmNdcPrj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758673713; c=relaxed/simple;
-	bh=NvXiOkoBMOhyoludx8D3RhL/BwY5aAuKdR/v5OmXcB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtQOcoDbc466ta+NcnONNgsHOZ9K405qjNr4zzOxuQOJ7nB/PCu3VYRHjmk86WF91aRRYA3iOteuX1e0Qih1G2nMmHdyXhoEBfEf50exE4YR92gdZBoWInke6EXZ/IHci9tAyWTaGUI3O/+GHtm/C+1d/nPKCa71zqD4pZ9wIC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAoNdRWc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA469C4CEF5;
-	Wed, 24 Sep 2025 00:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758673712;
-	bh=NvXiOkoBMOhyoludx8D3RhL/BwY5aAuKdR/v5OmXcB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fAoNdRWc2C5qRe8n0tG0oB227VzG9fVOTXlwuzlHtcAJNqO9OPmvn+sQAvMMIzvqU
-	 F2uf5zH8UlyrZxBrDQiP2swPbAh5nlG9exTUf7xCm31qmwRk6nPnGF3Xm0RChk6Ul2
-	 CjQ9DYHem52rayxxiox+BsDt9cwpGp68jdBDMQBZ3KYG/VCPUGm0dzGfWf5wfFTBl3
-	 NFD2KBtfNydqlzNwfWF6yTzs/whO6QKvQiQrBiUheXAMpfJEG44xisroYKOY3UwcD7
-	 tE+EcykXK0fg6n5WHwhP7t2ZSBBA1nakuq1VeVbp2Mj91z7mfy89aAgd9DfDuBycpN
-	 ilmtIEAhFj8Lw==
-Date: Tue, 23 Sep 2025 17:28:32 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hch@infradead.org,
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-doc@vger.kernel.org, hsiangkao@linux.alibaba.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 10/15] iomap: add bias for async read requests
-Message-ID: <20250924002832.GN1587915@frogsfrogsfrogs>
-References: <20250923002353.2961514-1-joannelkoong@gmail.com>
- <20250923002353.2961514-11-joannelkoong@gmail.com>
+	s=arc-20240116; t=1758676173; c=relaxed/simple;
+	bh=Blu+tUHawvRU8Xs0DUcuclzoQyPlfz7B1WyF4IU8+1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JYi7j7FzeDcUw9/ZW+AbhDq0bmex0aMhVp0eTeCG0RSsWPLtjiCESdGojvjz0HqG8oW6FVF2YAkHf+iSNTmzdluJZikVnEt6Lb1YHTeg4cDqmUXdxItLUFlYtUQz6VTPQ7g6a6fZACzANRSWH7C9kmsGEcC7+ps4zLR/5XV8LzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0wWEKd5; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-36453927ffaso42041681fa.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Sep 2025 18:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758676170; x=1759280970; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lll/ssUUyzpdCEieMHN7OfODTvGl3B3jSAMJ3V0c2x4=;
+        b=S0wWEKd5l5xg9+5BT7CtUUnlPtSeIXHUVRrCS/B2kYs8vbq/7gGFbyipX43FY9PcHF
+         xbUG6hq2GWpWc0GJn02dDjiTSnrfgOX/ieQr8ZHdSDdY/nBrRXO0+IxhHd+g46Q1sWyc
+         O1u4whV2pC6W2isSvBdztI8wUjY4201oA0pI0Ditxaka559vPt5CAvmhWePiyRpvaoT7
+         Vmox6YJUamxAMjt9MrqNASyLNjLzgjOlPE0APHIrhTrIs6bfxt/CpsHx4DBfIIP4HiSd
+         X2EmsSOx8fo0/j3917nGqDqYAmyKkHw4JrFJ2F+tRWDxi50jqOkodBlX9rMmIHmm8Hpa
+         y59A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758676170; x=1759280970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lll/ssUUyzpdCEieMHN7OfODTvGl3B3jSAMJ3V0c2x4=;
+        b=epxu73+DdYKvzaJPuj+klzS6dx8rPrmQP53KjBRbRM+pMgf8Q1tn3eoJ+Nn0Y6OLsD
+         hJbp4nIvKgNccKRCxf4yqp1DiXYCw+8iNyNC0xSTNFhKc8GNRtQvDQPByTpe4SkrItbK
+         wf6j6tzvEGJyer9GK0c4KknUT2Rm3KRvjIpK69ZpwV9l5Lrb7uKqu7qECmx9hV+4z4O6
+         AJvo3PfXnx/R4LGZe9drnN+qL0n2x3WdwTSbUpGI4JsY57FB5NxCMeANnqu59KCLR5KZ
+         Cfwt7iMBR4CLvpf94qEkPEWK0vKbr7MLzInpJ87bx8+J/h1fgiE6nTj1xeuvLDu387I6
+         nhFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPBubLpviGdMTylNvRTCOSOnClNvJ3n8dVZ56PSw7ZIQEM56A+hCITvHtYYQn+CclDclMkMTDNs3ng/KHb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwklzsSY7kV9nvsjH7o7CkqOgpsO11lMe2ZAYVU/r4ij0akm5r
+	cya2+zx7+lrx6sS3Rn6AhtNCPUkI1SCfrpUvt3HRSfbhoiyYC5vXbZeVkjakEQoyCZ2GW5Dar0Y
+	P1E0FbfUozzkFb7/pibYK7IVLDt43tVU=
+X-Gm-Gg: ASbGncu25L0NBT5BN8EQ4Ko5yh39EXPX4eo5nhv1ZB1+2dJhATqOvQEDBTXKzEMrVwD
+	huC5wkF0wssiA4dCjoleCGn0pL1F6Q9NeNWlYIgXIkZ9PzUCwtybB+h8WiNfohkKxAEOMPaQvUW
+	h/9/J6ieBG2LuWTg+5+nQmAJ57pORgcTxnNP4q6oaKbMHJ2xuUggpQ1+mD7CeXFX6dpQ9G0c8Op
+	mEJi/924WpWD7YTnabtnwy9yuR/FZAwD43dna49cN+fFbTIDTkdM579QGR8tsRc6WRVtco7lLU7
+	pElI2iQQO7w65cSMvILZLw==
+X-Google-Smtp-Source: AGHT+IHbXAiH1s8VtlmDbsaNP/syoKVWdCeZZCRV8zDEN53vF6lttuESXWuJKlJaexy/SVsmDvyy4M/m2cASKJkmK3E=
+X-Received: by 2002:a05:651c:4088:b0:338:bb4:6d6f with SMTP id
+ 38308e7fff4ca-36d177d8cf8mr8960551fa.44.1758676169573; Tue, 23 Sep 2025
+ 18:09:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923002353.2961514-11-joannelkoong@gmail.com>
+References: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
+ <20250813-core-cstr-fanout-1-v3-9-a15eca059c51@gmail.com> <DC1ZLP61HJAL.3I2YF82Y4T7L9@kernel.org>
+In-Reply-To: <DC1ZLP61HJAL.3I2YF82Y4T7L9@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 24 Sep 2025 10:08:53 +0900
+X-Gm-Features: AS18NWB5wsxS2a7jxyLos1K4bMIsLFjDF8Ocsoy_wDtXVwMvZmga8KSuS7D7hNE
+Message-ID: <CAJ-ks9=9V5Ex-VuSV7Er-jTLHyMCyVWYOiWF7wpYB9V_F=+QQg@mail.gmail.com>
+Subject: Re: [PATCH v3 9/9] rust: device: use `kernel::{fmt,prelude::fmt!}`
+To: Benno Lossin <lossin@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 05:23:48PM -0700, Joanne Koong wrote:
-> Non-block-based filesystems will be using iomap read/readahead. If they
-> handle reading in ranges asynchronously and fulfill those read requests
-> on an ongoing basis (instead of all together at the end), then there is
-> the possibility that the read on the folio may be prematurely ended if
-> earlier async requests complete before the later ones have been issued.
-> 
-> For example if there is a large folio and a readahead request for 16
-> pages in that folio, if doing readahead on those 16 pages is split into
-> 4 async requests and the first request is sent off and then completed
-> before we have sent off the second request, then when the first request
-> calls iomap_finish_folio_read(), ifs->read_bytes_pending would be 0,
-> which would end the read and unlock the folio prematurely.
-> 
-> To mitigate this, a "bias" is added to ifs->read_bytes_pending before
-> the first range is forwarded to the caller and removed after the last
-> range has been forwarded.
-> 
-> iomap writeback does this with their async requests as well to prevent
-> prematurely ending writeback.
+On Thu, Aug 14, 2025 at 4:54=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> On Wed Aug 13, 2025 at 5:39 PM CEST, Tamir Duberstein wrote:
+> > Reduce coupling to implementation details of the formatting machinery b=
+y
+> > avoiding direct use for `core`'s formatting traits and macros.
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+>
+> > ---
+> >  rust/kernel/device/property.rs | 23 ++++++++++++-----------
+> >  1 file changed, 12 insertions(+), 11 deletions(-)
+>
+> > @@ -413,9 +414,9 @@ fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> =
+core::fmt::Result {
+> >                  // SAFETY: `fwnode_get_name_prefix` returns null or a
+> >                  // valid C string.
+> >                  let prefix =3D unsafe { CStr::from_char_ptr(prefix) };
+> > -                write!(f, "{prefix}")?;
+> > +                fmt::Display::fmt(prefix, f)?;
+> >              }
+> > -            write!(f, "{}", fwnode.display_name())?;
+>
+> So we're not able to use `write!` with our `Display` or did you also
+> write a `FmtAdapter` wrapper for that? (don't think we need it now, just
+> wanted to know if we have this issue possibly in the future)
 
-I'm still waiting for responses to the old draft of this patch in the v3
-thread.
+Correct; we cannot use `write!` with our `Display`.
 
---D
-
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/iomap/buffered-io.c | 48 ++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 44 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 81ba0cc7705a..354819facfac 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -430,6 +430,38 @@ const struct iomap_read_ops iomap_bio_read_ops = {
->  };
->  EXPORT_SYMBOL_GPL(iomap_bio_read_ops);
->  
-> +/*
-> + * Add a bias to ifs->read_bytes_pending to prevent the read on the folio from
-> + * being ended prematurely.
-> + *
-> + * Otherwise, if the ranges are read asynchronously and read requests are
-> + * fulfilled on an ongoing basis, there is the possibility that the read on the
-> + * folio may be prematurely ended if earlier async requests complete before the
-> + * later ones have been issued.
-> + */
-> +static void iomap_read_add_bias(struct iomap_iter *iter, struct folio *folio)
-> +{
-> +	ifs_alloc(iter->inode, folio, iter->flags);
-> +	iomap_start_folio_read(folio, 1);
-> +}
-> +
-> +static void iomap_read_remove_bias(struct folio *folio, bool folio_owned)
-> +{
-> +	struct iomap_folio_state *ifs = folio->private;
-> +	bool end_read, uptodate;
-> +
-> +	if (ifs) {
-> +		spin_lock_irq(&ifs->state_lock);
-> +		ifs->read_bytes_pending--;
-> +		end_read = !ifs->read_bytes_pending && folio_owned;
-> +		if (end_read)
-> +			uptodate = ifs_is_fully_uptodate(folio, ifs);
-> +		spin_unlock_irq(&ifs->state_lock);
-> +		if (end_read)
-> +			folio_end_read(folio, uptodate);
-> +	}
-> +}
-> +
->  static int iomap_read_folio_iter(struct iomap_iter *iter,
->  		struct iomap_read_folio_ctx *ctx, bool *folio_owned)
->  {
-> @@ -448,8 +480,6 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
->  		return iomap_iter_advance(iter, length);
->  	}
->  
-> -	ifs_alloc(iter->inode, folio, iter->flags);
-> -
->  	length = min_t(loff_t, length,
->  			folio_size(folio) - offset_in_folio(folio, pos));
->  	while (length) {
-> @@ -505,6 +535,8 @@ int iomap_read_folio(const struct iomap_ops *ops,
->  
->  	trace_iomap_readpage(iter.inode, 1);
->  
-> +	iomap_read_add_bias(&iter, folio);
-> +
->  	while ((ret = iomap_iter(&iter, ops)) > 0)
->  		iter.status = iomap_read_folio_iter(&iter, ctx,
->  				&folio_owned);
-> @@ -512,6 +544,8 @@ int iomap_read_folio(const struct iomap_ops *ops,
->  	if (ctx->ops->submit_read)
->  		ctx->ops->submit_read(ctx);
->  
-> +	iomap_read_remove_bias(folio, folio_owned);
-> +
->  	if (!folio_owned)
->  		folio_unlock(folio);
->  
-> @@ -533,6 +567,8 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
->  	while (iomap_length(iter)) {
->  		if (ctx->cur_folio &&
->  		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-> +			iomap_read_remove_bias(ctx->cur_folio,
-> +					*cur_folio_owned);
->  			if (!*cur_folio_owned)
->  				folio_unlock(ctx->cur_folio);
->  			ctx->cur_folio = NULL;
-> @@ -541,6 +577,7 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
->  			ctx->cur_folio = readahead_folio(ctx->rac);
->  			if (WARN_ON_ONCE(!ctx->cur_folio))
->  				return -EINVAL;
-> +			iomap_read_add_bias(iter, ctx->cur_folio);
->  			*cur_folio_owned = false;
->  		}
->  		ret = iomap_read_folio_iter(iter, ctx, cur_folio_owned);
-> @@ -590,8 +627,11 @@ void iomap_readahead(const struct iomap_ops *ops,
->  	if (ctx->ops->submit_read)
->  		ctx->ops->submit_read(ctx);
->  
-> -	if (ctx->cur_folio && !cur_folio_owned)
-> -		folio_unlock(ctx->cur_folio);
-> +	if (ctx->cur_folio) {
-> +		iomap_read_remove_bias(ctx->cur_folio, cur_folio_owned);
-> +		if (!cur_folio_owned)
-> +			folio_unlock(ctx->cur_folio);
-> +	}
->  }
->  EXPORT_SYMBOL_GPL(iomap_readahead);
->  
-> -- 
-> 2.47.3
-> 
-> 
+Apologies for the late reply - I had sent this back in August but was
+still being throttled by gmail :(
 
