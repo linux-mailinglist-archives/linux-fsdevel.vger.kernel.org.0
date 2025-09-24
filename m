@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-62640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6ABB9B4C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9B8B9B4DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA60A17CE50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:13:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9C2163672
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F64431B809;
-	Wed, 24 Sep 2025 18:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D390B32A810;
+	Wed, 24 Sep 2025 18:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTypNybc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FygU2Epc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810A8329F28;
-	Wed, 24 Sep 2025 18:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095CF31B812;
+	Wed, 24 Sep 2025 18:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737251; cv=none; b=dkq3E5VWfoGejRODhsNyNwdmMhOZoYf+Z+UcMy9mZ2vjpV/iv1jp/ZFlEEAIgrZ6YH31zIvo03INhM70qYikQADt7K0fXlc9hbUDKf7LsOs5/nMojsncWNQmGr16E+ptuIeUxGszFcY+MuJs+E0K150k0JUwhI9ACU8frQEP/co=
+	t=1758737255; cv=none; b=fJUT6OLBkvZlqFF1GX4wmngIQwhOpod8fw0EfiDCWPBpTt1b7MU+ZXcBVM3uCTUp+FIrPXvqXAxnXea4oL0ckVkarpiIuKTcp0lE/Xxgdo8XzsJySF73kxQVBJtKrvGCCNCpJ/1c4qLPtvo0BKS8GTC9/bE4AKKpmP8xuouoAAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737251; c=relaxed/simple;
-	bh=fuOpkGdWy6bkqx9ds6yLB2wvDIxmKfn5FeXIv7UpWV8=;
+	s=arc-20240116; t=1758737255; c=relaxed/simple;
+	bh=jKbdNMRBVIX0B01osOz9mn1qjWvvPHIuxQWeV1raF0E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vBCizHD95IYXZsELjTAn4KaPf2c1cMLpv9h6ULqUF6hLDcwr7kW+OqXXETSfqTaf+DS8nTok3nNtfmr6KP9EGhSzZQ71fSGDatrMFuc4Q3JZDxz+XAxCGHR3Mp9qCuSHtZca71nSOhKs9yzQeQp4iQUtEsHfEaMALKslDw/c9Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTypNybc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6DCC4CEF0;
-	Wed, 24 Sep 2025 18:07:27 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XGB58V2HPrbVj5JLTL0RBNaYcnHCo4ihqgAgItJb2bByn65bL6wb9VE1ZWhJKXEttxTdYgiy8esoqwHLiN5mW1L+hquHamfx/ui+mjSh1mdEEuynBHm5W+0ULB6CnlsF/25BaK52vQ/ulUGwDQoZcOse+G5lvGTa+ZWbF9pu+BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FygU2Epc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 607A8C4CEF4;
+	Wed, 24 Sep 2025 18:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758737251;
-	bh=fuOpkGdWy6bkqx9ds6yLB2wvDIxmKfn5FeXIv7UpWV8=;
+	s=k20201202; t=1758737254;
+	bh=jKbdNMRBVIX0B01osOz9mn1qjWvvPHIuxQWeV1raF0E=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WTypNybc5mWweQLiEoMpMZOu53hkvHYrLfElED9tvDtdd0xTusXh/tbdWdP8yMeK1
-	 gLvHe/TCK6j2ED01hSq1ukwo/zMDtdfGM21bPvj3SBs7WPlYhnjAPyB0UL/vdGH+jU
-	 tbQbRSgVsv80W4KNQGDtH4sh7qe0uOWlCh6+xZxeg5Ly9IG87b/AN4qo6iPjBGqQGR
-	 gqGPBXTx7u8qPEspN5zA0AqkxUXmVB5dfm9gU9m5R4xxjd8KWt1yuvrGyBeXDq8sBE
-	 w4YRN2q3Y41pNKl8PitWfiid+eBYUPDUoVYlNhfKQNj0uQ1g8L+Kf5gqH98R0IdvFi
-	 +Klwj9A0VoswQ==
+	b=FygU2EpcVOlYA/GZWsreqtWS4RdfnkrZ8L0DOODWffe8TcceEDmGe3u+G65IsYrAr
+	 Oa7k4cvYLFr2KdGzw6e8D/XDOmReMwy2Z1bqMPY5ER6h7Sury0eWa3Y2FhSEg3yjPl
+	 Cmk9+YkIeBY778G8TmGjxk9C3KzWkq4ZVYUDXJcgoactCO1l4/1rmBp8XcDTb4OaXW
+	 qjgo6FVDgXAVYZ4sGGhq/eN1+IClzMzOXHytKgepKefSRHAHlUMlYPpB6k/PtSQeel
+	 tfei9pL8yKV9a9tCD7cK1Myzrrx6KE48jTnh4ysKaL2JmQFhzlhG2haRay5AtpNRO5
+	 Z4vFdmPa9FqtQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 24 Sep 2025 14:06:08 -0400
-Subject: [PATCH v3 22/38] vfs: add fsnotify_modify_mark_mask()
+Date: Wed, 24 Sep 2025 14:06:09 -0400
+Subject: [PATCH v3 23/38] nfsd: update the fsnotify mark when setting or
+ removing a dir delegation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-dir-deleg-v3-22-9f3af8bc5c40@kernel.org>
+Message-Id: <20250924-dir-deleg-v3-23-9f3af8bc5c40@kernel.org>
 References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 In-Reply-To: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -83,87 +84,94 @@ Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org,
  linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2504; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=fuOpkGdWy6bkqx9ds6yLB2wvDIxmKfn5FeXIv7UpWV8=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMPam28oyZ5UAyhgM57KvNT0/0ja/FjGutXJ
- pn8TtbBfx2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzDwAKCRAADmhBGVaC
- FX1BD/4/76O+gFuzMzgZb3clpS4WyTNRhq5U56aJl4Z21H7Ujkgz/ayyCkVJBkZCPlxmep9ERLn
- zOqsmd9034xmzAP+GdtZahlZy7FRwF6vaH3U5MBdUKl8G4rO5FDTeDkpPT5E0o0/2xdrQV2h4xA
- x2iA0Ii3vR2Cni80lVNZdIsZa1I87dMQFM5dVqFUYzSV1OxvwctuGpkJv1xizy0WtaB/rx6C3I5
- tCfrETJezDldTRR8cH0DkCTexEmdJGwS4VW6030Yb3EjSRYHOMwOxFXbSa0YmMDKSpM9puqEMgZ
- TZS7apkZLKRAoQEdD84rtc4V1wKSDgViMpFsiP0/STstYDZNkME3J52HxA650ICtIdxqLe0M5zT
- oUVvKu78+PpFFK2Isi4BQLEzTqW5cksmTFTkTGBMQeTq99PMvFhvl3ULBjUv/jHaH44Yn3j+IDU
- 27jQR8Rx0SbI3jWEB2jV/d2yPnceDwXPi9JFpzAvzBdJEMe2/BRYqE1D7aImcOvIR/avRWB1GUj
- bxcyYdTV224l0yWD/Sd9WkmVSco9ObhHkC9YNQ69Z0u1fC0hfgPVFK6tsuMenlFGKRBW/mM3BY4
- A6kARFYvrCYj52quZ4UKvlYGUdiAoYKVd23ch8bQjqE7LilqpMvCNTJrqffTQVY76dpxMerTM9k
- 6o0ZaF8n/UVlFYQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2299; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=jKbdNMRBVIX0B01osOz9mn1qjWvvPHIuxQWeV1raF0E=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMPG85QEzVOwxruh+e7XYVOqNCa6yqZsTbdY
+ qvqbm+fYTaJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzDwAKCRAADmhBGVaC
+ FZlJEACvNpCbUOl/h9fjfmcW35DUUvBSaEij3Pc94L1revgE4+4D93foZg7ON+eKGpJ4CciZSRr
+ 1aw3Re4Cj4BR0jksVSoxiCgQLpDerrtTow5Ooc+GNVkiKXNArHvcP5XYtTfjOHKNYadVqrwtCfj
+ 2eX+oqBLdTM4DzqFU32k5kL2UJu534oUrbV9I/XR/6eAnF4qx9waQTwg4vjaBpQ/ppayLmrg9as
+ D4s5mDO5noinelVdRzC+iA5URX3b4LqUkdy0PLbRT346LHfNXx8ZE0PQURpBwuVDRiNN8iKJv+3
+ 9w6ZC/jm9QDZVuHDpOaPd7U3aAwmwbCbX+M8j3fCmeoJ4ma0sJOF+0swZOq9z6SSEiptMNs1idF
+ 0ZoBt1OHL24B4V54S6c7uivR3kAtfOXDciLiBeMOUavoZ2sizTJWxirU/mQmZilA1LW0X3z/7Uc
+ h2qgpdrofK7EBEllvje4I+YkZtBaPUq2JkEYsfSrsvG2vY352Sfqo+y04MltrK5TquAos8hcyP5
+ wmfgmHJEKD1qhJvktCd9SUYzk3Ffalyf0SsoygohQDY7Y8qE3VqN2vwqvwIEcdXfgaKjvYxEw25
+ dZiGKyXsJZ9tr9/V9rjVjJ4vsGZJoe66fLYZAXMITs5AAR3/xhHP9+8LzJ3cp5ioxngMD28tluV
+ 6FgVIKDrU5/qAEg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-nfsd needs to be able to modify the mask on an existing mark when new
-directory delegations are set or unset. Add an exported function that
-allows the caller to set and clear bits in the mark->mask, and does
-the recalculation if something changed.
+Add a new helper function that will update the mask on the nfsd_file's
+fsnotify_mark to be a union of all current directory delegations on an
+inode. Call that when directory delegations are added or removed.
 
-Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/notify/mark.c                 | 29 +++++++++++++++++++++++++++++
- include/linux/fsnotify_backend.h |  1 +
- 2 files changed, 30 insertions(+)
+ fs/nfsd/nfs4state.c | 36 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 798340db69d761dd05c1b361c251818dee89b9cf..5ed42b24df7f6aa3812a7069b4c37f0c6b3414fa 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -309,6 +309,35 @@ void fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
- 		fsnotify_conn_set_children_dentry_flags(conn);
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index e219556e0959dbf0a8147d5edbb725da125a978f..eac9e9360e568caf1f615d230cff39e022107f12 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -1259,6 +1259,37 @@ static void nfsd4_finalize_deleg_timestamps(struct nfs4_delegation *dp, struct f
+ 	}
  }
  
-+/**
-+ * fsnotify_modify_mark_mask - set and/or clear flags in a mark's mask
-+ * @mark: mark to be modified
-+ * @set: bits to be set in mask
-+ * @clear: bits to be cleared in mask
-+ *
-+ * Modify a fsnotify_mark mask as directed, and update its associated conn.
-+ * The caller is expected to hold a reference to the mark.
-+ */
-+void fsnotify_modify_mark_mask(struct fsnotify_mark *mark, u32 set, u32 clear)
++static void nfsd_fsnotify_recalc_mask(struct nfsd_file *nf)
 +{
-+	bool recalc = false;
-+	u32 mask;
++	struct fsnotify_mark *mark = &nf->nf_mark->nfm_mark;
++	struct inode *inode = file_inode(nf->nf_file);
++	u32 lease_mask, set = 0, clear = 0;
 +
-+	WARN_ON_ONCE(clear & set);
++	/* This is only needed when adding or removing dir delegs */
++	if (!S_ISDIR(inode->i_mode))
++		return;
 +
-+	spin_lock(&mark->lock);
-+	mask = mark->mask;
-+	mark->mask |= set;
-+	mark->mask &= ~clear;
-+	if (mark->mask != mask)
-+		recalc = true;
-+	spin_unlock(&mark->lock);
++	/* Set up notifications for any ignored delegation events */
++	lease_mask = inode_lease_ignore_mask(inode);
 +
-+	if (recalc)
-+		fsnotify_recalc_mask(mark->connector);
++	if (lease_mask & FL_IGN_DIR_CREATE)
++		set |= FS_CREATE;
++	else
++		clear |= FS_CREATE;
++
++	if (lease_mask & FL_IGN_DIR_DELETE)
++		set |= FS_DELETE;
++	else
++		clear |= FS_DELETE;
++
++	if (lease_mask & FL_IGN_DIR_RENAME)
++		set |= FS_RENAME;
++	else
++		clear |= FS_RENAME;
++
++	fsnotify_modify_mark_mask(mark, set, clear);
 +}
-+EXPORT_SYMBOL_GPL(fsnotify_modify_mark_mask);
 +
- /* Free all connectors queued for freeing once SRCU period ends */
- static void fsnotify_connector_destroy_workfn(struct work_struct *work)
+ static void nfs4_unlock_deleg_lease(struct nfs4_delegation *dp)
  {
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index d4034ddaf3926bf98d8801997e50ba7ddf776292..8d50e6aad3c62c67a9bf73a8d9aab78565668c5f 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -912,6 +912,7 @@ extern void fsnotify_get_mark(struct fsnotify_mark *mark);
- extern void fsnotify_put_mark(struct fsnotify_mark *mark);
- extern void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info);
- extern bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info);
-+extern void fsnotify_modify_mark_mask(struct fsnotify_mark *mark, u32 set, u32 clear);
+ 	struct nfs4_file *fp = dp->dl_stid.sc_file;
+@@ -1267,6 +1298,7 @@ static void nfs4_unlock_deleg_lease(struct nfs4_delegation *dp)
+ 	WARN_ON_ONCE(!fp->fi_delegees);
  
- static inline void fsnotify_init_event(struct fsnotify_event *event)
- {
+ 	nfsd4_finalize_deleg_timestamps(dp, nf->nf_file);
++	nfsd_fsnotify_recalc_mask(nf);
+ 	kernel_setlease(nf->nf_file, F_UNLCK, NULL, (void **)&dp);
+ 	put_deleg_file(fp);
+ }
+@@ -9507,8 +9539,10 @@ nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
+ 	spin_unlock(&clp->cl_lock);
+ 	spin_unlock(&state_lock);
+ 
+-	if (!status)
++	if (!status) {
++		nfsd_fsnotify_recalc_mask(nf);
+ 		return dp;
++	}
+ 
+ 	/* Something failed. Drop the lease and clean up the stid */
+ 	kernel_setlease(fp->fi_deleg_file->nf_file, F_UNLCK, NULL, (void **)&dp);
 
 -- 
 2.51.0
