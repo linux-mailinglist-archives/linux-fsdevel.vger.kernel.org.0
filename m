@@ -1,108 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-62577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F90EB99BEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 14:04:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA172B99CF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 14:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0963E1898C79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 12:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143D5176E89
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 12:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2FC2FF175;
-	Wed, 24 Sep 2025 12:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C2A3019AC;
+	Wed, 24 Sep 2025 12:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gI88R5Kb"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="aUkSWYv/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3219C2FE072
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 12:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E492FF178;
+	Wed, 24 Sep 2025 12:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758715475; cv=none; b=DSD9BDSUkFxVUBj88GK2YCxhjD9JtEkaurogVO0+5mzqzqX6l1Q35gMhzEaZvl5oozA96JwEmqzcCWml+4Ii/fV38HbMj1EEE1HEUpqs3e8PZtfimpRy0ij28Gx6ti7uG9qHEsscVsRTV5t2GWUS9uE1nHyFFm0O9Wh5ssQG6ks=
+	t=1758716533; cv=none; b=jJmyghnEMX4IcP4mU4IMbVsuyzjc3lGW86vZudX/OL3cNs/dtM5M5k0tBNjGO9HKNoDxmCI5BKE3Tghjp0ZACVJY4N+PCgghQbqL6jTp2v+eNHjQr5BBOj7xWmUzO52zGEVesF0sfOhwM85gRMaan10SzfNdApj8h+/9VvNBLrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758715475; c=relaxed/simple;
-	bh=9ibOWPuNdaOplH+FBy5QoeKpS1t7hE49sJQ9OEcLq4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lvvoc2zJMP8OsscMGGnsiqY8klXTdAkqVpcpejyaRtoC1On9/tWtUIvY97VHTnitYf3/RYWeCNloe3iQZc9U2zNSYj6/aBHX80Z35venI0940o3tGg/GzwMkT3eQHDSEWiCwftKA3/2iPVkdCvSeh+ukiqASe82E03BRQxMeqp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gI88R5Kb; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4d16cd01907so30898521cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 05:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1758715472; x=1759320272; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ibOWPuNdaOplH+FBy5QoeKpS1t7hE49sJQ9OEcLq4o=;
-        b=gI88R5KbwQep8XLJLqQ1ZJmLlTtTsZwRDdSdybaTdAofHOz79bHjwLnG0svWikFepS
-         rYiXi19QelDa73KcZqFTVdRTD40ZuKEBg45FS/Qt5+9jOgn/VsW5uwccvH7B2N7UqdG/
-         X0iTiTf5N6GX8E0hp2xH/yh2KLir+BG8g0yfY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758715472; x=1759320272;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9ibOWPuNdaOplH+FBy5QoeKpS1t7hE49sJQ9OEcLq4o=;
-        b=TRxFiIoE9umclxLQKnykdQX7Rmi8lGbjhdpT33s2ZMRGtod07iXj2QrPZtKcHAq+9d
-         RqjB9h++Kb/DFeUjw2kKmA047Wu/n8gG0ZAKxnbz0dxQux2I1B/4uwslNPOU+OyMwtn6
-         upUH3EdQ7Tju4KAvsqM++evcPvl7okHrjQ/QdQBHY4NcOh4V5QUB2VjtiIx9LPRbe3fd
-         7fUmUMoFqMDf5oFnoV5KZemDiq2Smf/YNYL0McVmClbIVFd7n2WhtmCIovxFPiUt1AxW
-         p9IAiSxjsr7g15ncLbKbTf06qGgxpnlNHWvcA7NqnqqycuYYDwfsHEdifwlXPANZrs8o
-         MGvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtd2gZwEwJJ3rk7qYmJY/hYv38YLxsYiVgBQ+mpMS1sjsHedgRid9Uiq0wAAYa4fbNNUA6DW2u16NZPmCV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyskp5qUzHMXXXVw6SRixBsKge7UzX4YJtIwYEniY6mb6VWWSLl
-	/3rm2a89n51U5OEPd93W9w9vnWkF0nrir/mzLwwDxg7USsGfqGRlOMJR3EctWcj7+pIw0KXhKYR
-	vUTvRdbYOhFGZCGpJuqci8zFmfw2VOIjHn3TL5ubqvg==
-X-Gm-Gg: ASbGnct+k1hLOSMdV2LjnOsFmL3t0Mbc8ttPLokUhJE7XMKWXZM4HQy+1aV9dMl9+pc
-	JnFNX1Z0Tp3+r2DgZVQmC/A2MS/6mruiNg9BDG+IdKgWd0/SVLhz1gAZ0OFyz2gT5PYGn3JVvuE
-	60QJlVIcdcmjd7sSt5xxfEydc2K49QFjwxSnZghfIr8WhbN3BuOOCdPj5jLFHGKWWM9Z4GvfAzH
-	wasZnSSEWVjHUcZZrJhjYb9hW6ptVRkCbwhnwYBcJnnqceKRg==
-X-Google-Smtp-Source: AGHT+IFzX+IW76Y9GPEZbQ1y6EX1pULnJsvnodAmkX3ktuNW0oM3kKJxbWcPTYg+rr2jPsvmhkcmNpkPJ/6Wb9P1WbQ=
-X-Received: by 2002:a05:622a:1442:b0:4d3:55f7:ddcd with SMTP id
- d75a77b69052e-4d36fdef829mr76582171cf.59.1758715472064; Wed, 24 Sep 2025
- 05:04:32 -0700 (PDT)
+	s=arc-20240116; t=1758716533; c=relaxed/simple;
+	bh=bqTKrflqoFKb+KvIzK7aHbTYzdFvTkRlEkTvMK3xmps=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UKlqEIErgRp1LXhgUT/w8hcKFRhvK5ZhonYY57SyNv4jc3qBpZyTkXRn00xjIuKDb6C1WijrqKX15fUn6p2pX4Xt7HXFFLanNFpqJOzXXulVE9YntmEonNFgxXXt05TNDIBMlQae0irmLLrOugRUcjbDaal1zEYto2KGxG56Duo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=aUkSWYv/; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Z8
+	2WjIETvp5eMahxiXZwu3eU3ZUHjjoSziDDqMHpAgk=; b=aUkSWYv/0RT59CqTkO
+	SmS3XJ80PXPQbo89A2dWZlfzCRAGvZEcbclr4m5XO72aX0KmRJMasP45JBeaEMVu
+	/6hQWzqvd3QcQ/D5Kd56Vq8Z2QbFthvkMEelkHB/db3fTknvV4Aa7S6b//2twQzz
+	Um1ihf/LPKLRO7vfp+f6VY5u0=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHC9Be4tNo3HSsDw--.178S2;
+	Wed, 24 Sep 2025 20:21:52 +0800 (CST)
+From: zhouyuhang <zhouyuhang1010@163.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhou Yuhang <zhouyuhang@kylinos.cn>
+Subject: [PATCH] fs: update comment in init_file()
+Date: Wed, 24 Sep 2025 20:21:39 +0800
+Message-Id: <20250924122139.698134-1-zhouyuhang1010@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
- <175798150070.381990.9068347413538134501.stgit@frogsfrogsfrogs>
- <CAJfpegtW++UjUioZA3XqU3pXBs29ewoUOVys732jsusMo2GBDA@mail.gmail.com>
- <20250923145413.GH8117@frogsfrogsfrogs> <CAJfpegsytZbeQdO3aL+AScJa1Yr8b+_cWxZFqCuJBrV3yaoqNw@mail.gmail.com>
- <20250923205936.GI1587915@frogsfrogsfrogs> <20250923223447.GJ1587915@frogsfrogsfrogs>
-In-Reply-To: <20250923223447.GJ1587915@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 24 Sep 2025 14:04:20 +0200
-X-Gm-Features: AS18NWDcnShhwKGclrcwGUaZj51GkpVzLGQIL0hjgTsrUfuhKR0cDZo_FZLUM_g
-Message-ID: <CAJfpegthiP32O=O5O8eAEjYbY2sAJ1SFA0nS8NGjM85YvWBNuA@mail.gmail.com>
-Subject: Re: [PATCH 2/8] fuse: flush pending fuse events before aborting the connection
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net, 
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev, joannelkoong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgDHC9Be4tNo3HSsDw--.178S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKF45KF4xArW5tr48KFyUWrg_yoW3Zwb_GF
+	y5KaykCFZ5Krs7Aw1xurZ5JFyvg3WUGrZxZ3yftF9Fyw4Fg393urWqvryI9Fn8W3y3JFn0
+	kr1vqry3Cr42kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU84KZJUUUUU==
+X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiYhfSJmjT3uhjJQAAsK
 
-On Wed, 24 Sept 2025 at 00:34, Darrick J. Wong <djwong@kernel.org> wrote:
+From: Zhou Yuhang <zhouyuhang@kylinos.cn>
 
-> Conclusion: The loop is necessary to avoid softlockup warnings while the
-> fuse requests are processed by the server, but it is not necessary to
-> touch the watchdog in the loop body.
+The f_count member in struct file has been replaced by f_ref,
+so update f_count to f_ref in the comment.
 
-I'm still confused.
+Signed-off-by: Zhou Yuhang <zhouyuhang@kylinos.cn>
+---
+ fs/file_table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What is the kernel message you get?
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 81c72576e548..d606a86a4695 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -192,7 +192,7 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
+ 	f->f_sb_err	= 0;
+ 
+ 	/*
+-	 * We're SLAB_TYPESAFE_BY_RCU so initialize f_count last. While
++	 * We're SLAB_TYPESAFE_BY_RCU so initialize f_ref last. While
+ 	 * fget-rcu pattern users need to be able to handle spurious
+ 	 * refcount bumps we should reinitialize the reused file first.
+ 	 */
+-- 
+2.27.0
 
-"watchdog: BUG: soft lockup - CPU#X stuck for NNs!"
-
-or
-
-"INFO: task PROC blocked for more than NN seconds."
-
-Thanks,
-Miklos
 
