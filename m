@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-62646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2361AB9B59D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:16:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D8CB9B57C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0583A9BFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:15:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF171BC1782
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073C632C324;
-	Wed, 24 Sep 2025 18:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6803B32CF85;
+	Wed, 24 Sep 2025 18:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MD27wo4p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8wgb/kc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB6C32BF5B;
-	Wed, 24 Sep 2025 18:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D7C32CF62;
+	Wed, 24 Sep 2025 18:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737272; cv=none; b=lE0DsNR4JaPM5/caqcJdh901YBNrbjNUVmn/YEhRhFwA9UsWYNbgj/S/Z0p/dpf3yNleAQBEra94EX6RJrd75n8ktq7rDQUgxmew3Ob5EtXkHpkCtC/1ldmacmA/Jm5b7fRshddiuz8Ub4uzhAbFysDvx9BpC/OwbdtyRCQmi3c=
+	t=1758737275; cv=none; b=eI9OLykaCqvUQSdAC/FoEnDCmUyuMH3BabsR1PaiLXKwsp1vambPsAHaREGjZGJv3njh1mJZsy12s6Uds1jd2KVCkUAwaC0CapmWbVyOY7AV/A+5JyHj9IlU4VQPVmuEjlYzVMz5WTQB914mr8cIF95spH7JJSUfbRt3GMm7Fdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737272; c=relaxed/simple;
-	bh=GFt/XQXg2dRZWwqUa59cIFQemMF2hIJF8NPQx8IYZWM=;
+	s=arc-20240116; t=1758737275; c=relaxed/simple;
+	bh=K5hsMYtQXjyOKS60Uf3VyfFpCL0/dbOW4BLDAmfK1SA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OsW/cnatcn620S68xvU7UGU9h/w9AM5AkE6HFVNTqaRJXFxfFeFMJ4APsoTYBR5CrkVgixO4fdTCGobb/bkBqXebXICoanfr0o1yWGlgMZ8puSoY+I1VgdPktXT+mcaJkeoj2Syd80mIzo277Vz/T4Ch7Boc4gyM+KpfWTfViy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MD27wo4p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76EAC4CEE7;
-	Wed, 24 Sep 2025 18:07:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KcLQOskIRtlXtjsdQgcBeXtPSqQcQOo7bcaW+7KRCNIKhmeeoG8hOCp1mbOqH36AGnQAxyUG8aX83rsZpJYbZijJIBR6x5qGfIOvx0NdDGgDRR0szGG9fXNT1VYhkbXuHtcCKMc7VyWzbWXM2KWqqFtOvvmmTXZucFTywD7H9OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8wgb/kc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4798BC4CEF8;
+	Wed, 24 Sep 2025 18:07:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758737272;
-	bh=GFt/XQXg2dRZWwqUa59cIFQemMF2hIJF8NPQx8IYZWM=;
+	s=k20201202; t=1758737275;
+	bh=K5hsMYtQXjyOKS60Uf3VyfFpCL0/dbOW4BLDAmfK1SA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MD27wo4py3W5JChD7JGB8qiRHh4x/mVXCy3wH8xk6VEZjZ/IDSI3a8X05j7R57Ane
-	 qPyzLUa0PuT7AGKsBxF4XE41fp/qygw7ZM1OkZrFlO8sLjR1H5dAk9f1hVmytmB9Vt
-	 I/hR/QXWWXB69Qm24jpi3MjaTVXODvWIawsRQg++T6qYF9bIlxVXtp4m1ulTEb/c2X
-	 hzCAZuuPCHYYC1VRh5UlU1x2sewHYcQlfJDcQ/A446XmJ9ctvEMD/iJ0kzQ1RGGjtx
-	 g2njlQzQnEdS0u8acPxOu3QIbOur+kHWt5j12fZlm8pHENjfAK5D1BTeq09tu7ULww
-	 2K1Mwijj0AJzQ==
+	b=R8wgb/kc3BcqZjJXY3FbPlzAU6Vrgmhur+I4rs4sh3hsSw1VKfcMmDykLvJAAi+yX
+	 FDRRFPUFxEmlYLZrEne6kMUnQZyt/4b19+zrX27VxIdXkNTtnQuXRCHamCrSSeRTHD
+	 3A0DAGmc6sBQqfpJpRxJh4eyYnldnW78qqo+McztfFStlc6u/CnEobMhmzjUu1UAS4
+	 zJHVlXB1D2scXPpER5qlL5/SFecvaYGJUDWoSqI1qtDwQ1cq/zFlnkBv+M+FHFs14h
+	 /GIWI4vo67GFKoJqVRa3ao7tZCHgNfa61Y6R1xVPF72UFyvWs9V24TDK5sdVvtK2Ew
+	 0Gc19yWlkGJZA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 24 Sep 2025 14:06:14 -0400
-Subject: [PATCH v3 28/38] nfsd: add tracepoint to dir_event handler
+Date: Wed, 24 Sep 2025 14:06:15 -0400
+Subject: [PATCH v3 29/38] nfsd: apply the notify mask to the delegation
+ when requested
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-dir-deleg-v3-28-9f3af8bc5c40@kernel.org>
+Message-Id: <20250924-dir-deleg-v3-29-9f3af8bc5c40@kernel.org>
 References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 In-Reply-To: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -83,75 +84,72 @@ Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org,
  linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1797; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=GFt/XQXg2dRZWwqUa59cIFQemMF2hIJF8NPQx8IYZWM=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMQREfN8nuevFO3OObbGgLagh2K7PJ6GskFe
- /Gcrrf338OJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEAAKCRAADmhBGVaC
- FQOBEADGS8aO/CcIL+9lxtnRfAYYup52yK72zEtZ3ppq24ymwhzfti0UV1tBZmzGrH8ypUm3h8M
- Hniqo/Lvq7PGmRHzCc0YYXhzBFFE18I+lOM/Z7JKKnB1mFQyWyEj/+gLWXUFGloUpm6JwtWPf0i
- rSDTn8gGHNsGIqSIAwfnz50fJWvVei87SRQ0sJeaDd347Skl2dWtgzfWRwEWekUAmBj2g2dob2u
- cLdzyBd64EeCJg/NuGorlotC7VMQ1BhWNY70ymvXKdzqrcbg2Xv5lEuNq2lQpz1Gu7oHqBsEcHL
- CdSFggmhQAYvo7wXmZW2nuwNIkdhKc+DpRI6Gf6lq9GlkrzNRUvkjRFWosguA+HjhUV7cK70Zgb
- WXmUR1+ztarUkcyyb5I62PSzdF+en9bglbvXeFhXgdljqtnTPuOnDmSarzljw+KoovKOpx/+2HI
- a/XQmA1jZ7RNwvnO+i9CyFQKVDZpc4zXSzhmKW6vkkyfpbyE4N6PSsQ5NVUQAkU/sox650GnQQV
- hs+DF4myr/rJfvZyKp4iDYtCGA3c0kpOvM9KFjspLhUy+iMxGgQy9sCisyB4u+5C37QmitqaqYu
- JBe0TWgcg5hoJvxzlXEk8W6ffqlqI2VoD/RBzHJqxab7rg2fdo/VyABHnzLZiXHsSSVeCIYgMbG
- m/CriOkV3bnEBsw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1776; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=K5hsMYtQXjyOKS60Uf3VyfFpCL0/dbOW4BLDAmfK1SA=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMQMvdIPknrW1MptHugAUEwdl5e8EknKuE4Z
+ twhQAq1pquJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEAAKCRAADmhBGVaC
+ FbujEACfsaYwLWDSW6Lh5L7Qsm8v5al2ixv2jZXI0EFbS0n1ea0TAMjKIgzplkSJso2yLfIKt75
+ VpgKTfBEtcZQwMfctH2bshZzdq9k2tKdjTu/QKfCm+Aigc4kI2ukPPOBHrBHqwrillvbz06m88M
+ jcsr3iVvfR+0qrTzM/Yo21oLBQXSSZ8ILrhvPyWBcqyrRnMtbSg0Sxt0+kYIomTlIKT+aUfSMBq
+ IfE4sgrVIuWR2JGcTIKmtwmP8xBv7fvbX9R8zig49GE+0pohNv56RbEzxoEZd+haIS0Yq9noMyh
+ C8C8wHcpFsNJgLgWceYxAyAKiAQ3wvlY6X7FaD7eLcbnFs5RoNlaYUIlSyS8Ku3ZVQ3p1jwnMeI
+ 1QnuQsRsoLNRDEUob6HTefy2KTYnjabvfb1tD9upClOXZjsrqH6kNEPvpD21E4sYQbEtJXD6ET8
+ 7LqNrpMhuyBN9UIf/gIbI71dgELiZmGCZyKDiDptsn/IzpfSV+x9YcHRZ47HlS+67xZSpCEnMvo
+ phq9Evav58WwFDcsfCCdRo8QBBl+cLx8YR9sD1nNr3KqFUz9I1jho0HfADJL+pZ7iJc1ze2Kqop
+ JJW7pFIjXwMuQbknSnV82o99RgH5lLUGr4EdJqAIdfIagQpRk7bhmb40ET1h3ASKqXGpYdxwDD6
+ ratkwwRo2WZ/kOg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add some extra visibility around the fsnotify handlers.
+If the client requests a directory delegation with notifications
+enabled, set the appropriate return mask in gddr_notification[0]. This
+will ensure the lease acquisition sets the appropriate ignore mask.
+
+If the client doesn't set NOTIFY4_GFLAG_EXTEND, then don't offer any
+notifications, as nfsd won't provide directory offset information, and
+"classic" notifications require them.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4state.c |  2 ++
- fs/nfsd/trace.h     | 20 ++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ fs/nfsd/nfs4proc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index f3d3e3faf7d5f1b2ee39abb7eabd2fa406bbac21..2147b5f80ca0e650e9dbdb63de7c9af6f4bc7bff 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -9796,6 +9796,8 @@ nfsd_handle_dir_event(u32 mask, const struct inode *dir, const void *data,
- 	struct file_lock_core *flc;
- 	struct nfsd_notify_event *evt;
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 277022d437cec18e527c836f108f0e97c6844b23..220fc873db8f08a90ac74e51ac9d931fe7edb9e4 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -2335,12 +2335,18 @@ nfsd4_verify(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	return status == nfserr_same ? nfs_ok : status;
+ }
  
-+	trace_nfsd_file_fsnotify_handle_dir_event(mask, dir, name);
++#define SUPPORTED_NOTIFY_MASK	(BIT(NOTIFY4_REMOVE_ENTRY) |	\
++				 BIT(NOTIFY4_ADD_ENTRY) |	\
++				 BIT(NOTIFY4_RENAME_ENTRY) |	\
++				 BIT(NOTIFY4_GFLAG_EXTEND))
 +
- 	ctx = locks_inode_context(dir);
- 	if (!ctx || list_empty(&ctx->flc_lease))
- 		return 0;
-diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
-index 01380425347b946bbf5a70a2ba10190ae4ec6303..d8b6d87f1ec09ca80fe4218fd79aaa803a316619 100644
---- a/fs/nfsd/trace.h
-+++ b/fs/nfsd/trace.h
-@@ -1311,6 +1311,26 @@ TRACE_EVENT(nfsd_file_fsnotify_handle_event,
- 			__entry->nlink, __entry->mode, __entry->mask)
- );
+ static __be32
+ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
+ 			 struct nfsd4_compound_state *cstate,
+ 			 union nfsd4_op_u *u)
+ {
+ 	struct nfsd4_get_dir_delegation *gdd = &u->get_dir_delegation;
++	u32 requested = gdd->gdda_notification_types[0];
+ 	struct nfs4_delegation *dd;
+ 	struct nfsd_file *nf;
+ 	__be32 status;
+@@ -2349,6 +2355,12 @@ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
+ 	if (status != nfs_ok)
+ 		return status;
  
-+TRACE_EVENT(nfsd_file_fsnotify_handle_dir_event,
-+	TP_PROTO(u32 mask, const struct inode *dir, const struct qstr *name),
-+	TP_ARGS(mask, dir, name),
-+	TP_STRUCT__entry(
-+		__field(u32, mask)
-+		__field(dev_t, s_dev)
-+		__field(ino_t, i_ino)
-+		__string_len(name, name->name, name->len)
-+	),
-+	TP_fast_assign(
-+		__entry->mask = mask;
-+		__entry->s_dev = dir->i_sb->s_dev;
-+		__entry->i_ino = dir->i_ino;
-+		__assign_str(name);
-+	),
-+	TP_printk("inode=0x%x:0x%x:0x%lx mask=0x%x name=%s",
-+			MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
-+			__entry->i_ino, __entry->mask, __get_str(name))
-+);
++	/* No notifications if you don't set NOTIFY4_GFLAG_EXTEND! */
++	if (!(requested & BIT(NOTIFY4_GFLAG_EXTEND)))
++		requested = 0;
 +
- DECLARE_EVENT_CLASS(nfsd_file_gc_class,
- 	TP_PROTO(
- 		const struct nfsd_file *nf
++	gdd->gddr_notification[0] = requested & SUPPORTED_NOTIFY_MASK;
++
+ 	/*
+ 	 * RFC 8881, section 18.39.3 says:
+ 	 *
 
 -- 
 2.51.0
