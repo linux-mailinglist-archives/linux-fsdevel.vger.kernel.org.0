@@ -1,75 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-62612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A600B9AEE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0DBB9B115
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 19:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D9D174402
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 16:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD91E19C3F71
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 17:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68195314A9E;
-	Wed, 24 Sep 2025 16:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A87314A64;
+	Wed, 24 Sep 2025 17:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=infradead.org header.i=@infradead.org header.b="ADQuNtgD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYw6vdL5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB461A254E;
-	Wed, 24 Sep 2025 16:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E97A42AA3;
+	Wed, 24 Sep 2025 17:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733008; cv=none; b=aSUiDncyEy3DBZM4Dl1zw6CDu7VGSJMNa+FaJJ22hF6pr+ecbvVYfstXibadMP1MHqnTXtSQn4Vh//7+rgaDBquAmp8mKZcAh9o0mf0kIFCaze9CCIKQTqvW83s7OW/kPWiuy7t9QX205FoCECtAgTjucejHoNdog82HFA7WT0Q=
+	t=1758735097; cv=none; b=ai+YORuwCGxOR1doMlEGJPcnejt0w1j2kFo9TVttSmttSMCnG2vmQyXupmwEacjywnQpAuptB8Scm36c5LsE7jXrwlXd2QkY2wCba93AM0a8dEJQwp9lgusKqn2O+3CyuVMQ8/gGwWkqvRCIRTVN7luQXnsZXVzLANQSLPQD6Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733008; c=relaxed/simple;
-	bh=MTtS4DGnmn/dmi9j0JsSf5aBSRH5Nl/ESP4A4KaeUNw=;
+	s=arc-20240116; t=1758735097; c=relaxed/simple;
+	bh=JrNEtEpUlUBo/yNXBCCKs8RXyHetG/9gogTA0lVgpdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwpLaExYknqTk+1UFwzEDKuh8h8WnJ2mGBTY4UttE3+zjdPvA2kEFqSH2ZxfoTSEMd4QVVrAEMidhtGj5UsUvLEboAeR6cfCdvkTpWRopf38pEmHTsSxOskxiKbdr/vedUOtiWjHDo39r9+NFuZfhTRbIOyp7YmNHhCAo/+o2rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=fail (0-bit key) header.d=infradead.org header.i=@infradead.org header.b=ADQuNtgD reason="key not found in DNS"; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wItarYwJVipfmi89AjibX164xiYQ1sw1xgqIMHATn9c=; b=ADQuNtgDqCh42nShQdrRdwoDNL
-	naHjDqhRxe/feBE3gx7YI+GF3SiATwjEKGTxF5HTe/Rd8zeJIPmiziHcLoJCArwg1LMjkST8yjMX2
-	ICMQXn/VCEHj9XYcI5uyQ+z2vU1vDXRjgolv9kx1bsRE24R9kbKPxdEuZwyofsQb1h+8kmqDxmSvE
-	RFGVyb/ITBh0FNHHuxEIh9mQxZOJejY+vTU5rnl3xDxkQaIqjkZC/dq692Uo/WRCE5uDVByN675eh
-	qEjeBUgMKKK9qemuFENVjEtRnyWVd9FbPVfb+wYmBC8z4RcHVsS9yZrtq+r6BEE1D0owQ3AOE/asm
-	tCqspHew==;
-Received: from jlbec by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1SnC-00000008hCv-35Ks;
-	Wed, 24 Sep 2025 16:56:34 +0000
-Date: Wed, 24 Sep 2025 09:56:30 -0700
-From: Joel Becker <jlbec@evilplan.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
-	miklos@szeredi.hu, a.hindborg@kernel.org, linux-mm@kvack.org,
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, paul@paul-moore.com,
-	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org,
-	borntraeger@linux.ibm.com
-Subject: Re: [PATCH 08/39] configfs, securityfs: kill_litter_super() not
- needed
-Message-ID: <aNQivg5O_Rx3WxlG@google.com>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
-	miklos@szeredi.hu, a.hindborg@kernel.org, linux-mm@kvack.org,
-	linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, paul@paul-moore.com,
-	casey@schaufler-ca.com, linuxppc-dev@lists.ozlabs.org,
-	borntraeger@linux.ibm.com
-References: <20250920074156.GK39973@ZenIV>
- <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
- <20250920074759.3564072-8-viro@zeniv.linux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsfYgP8tHn5m3AFGGmVAQpt3gNPMcTY/iYkqqoaiGDbG0kU2yGWBmz7K3m4mZHuKSWvSwuQfU/8bb5Hq3/pheM22C1DQWHuxJkEDv+y9q4vPOuEOVqmnOlvT97TpsK0874cs1RR65dEKKVFVt56J0JBkd7xXoj7TOCHFDMUKPvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYw6vdL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C00AC4CEE7;
+	Wed, 24 Sep 2025 17:31:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758735097;
+	bh=JrNEtEpUlUBo/yNXBCCKs8RXyHetG/9gogTA0lVgpdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nYw6vdL5MrqWBPTnSgxMTyvD4PBJY6IVrgqZiJbIiq+xwKpAPHOHplzXXvM+PLqDp
+	 auPLQr7s136MR+3OqBIcqtokFqpfq0h1i0d0BFYTfYCECaq9FpQuzksPbMcds5Al1b
+	 UtMIDUXnRw9XPrbcaGY+Mex7DqkxNBDRrQFm2cCCe3pCjWWKvDCj/FkoE++woyDiyJ
+	 +S56geN3EBV+seWiiXxZ3kn4bOx3eCOGvr0lLwUfQHBOZeg1AZ4Jn8csH0RZVYruG5
+	 li0XXXGnp8mopk45v3S+FISCs9rG3o9gn1FPngTe0mizKFZ0SSws9eRQ0Lw0txs+RN
+	 yO4iW3HI7XieQ==
+Date: Wed, 24 Sep 2025 10:31:36 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>, bernd@bsbernd.com,
+	linux-xfs@vger.kernel.org, John@groves.net,
+	linux-fsdevel@vger.kernel.org, neal@gompa.dev
+Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
+ local fs behaviors
+Message-ID: <20250924173136.GN8117@frogsfrogsfrogs>
+References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
+ <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
+ <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
+ <20250918165227.GX8117@frogsfrogsfrogs>
+ <CAJfpegt6YzTSKBWSO8Va6bvf2-BA_9+Yo8g-X=fncZfZEbBZWw@mail.gmail.com>
+ <20250919175011.GG8117@frogsfrogsfrogs>
+ <CAJfpegu3+rDDxEtre-5cFc2n=eQOYbO8sTi1+7UyTYhhyJJ4Zw@mail.gmail.com>
+ <20250923205143.GH1587915@frogsfrogsfrogs>
+ <CAJfpeguq-kyMVoc2-zxHhwbxAB0g84CbOKM-MX3geukp3YeYuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,69 +67,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250920074759.3564072-8-viro@zeniv.linux.org.uk>
-X-Burt-Line: Trees are cool.
-X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
- come to perfection.
-Sender: Joel Becker <jlbec@ftp.linux.org.uk>
+In-Reply-To: <CAJfpeguq-kyMVoc2-zxHhwbxAB0g84CbOKM-MX3geukp3YeYuQ@mail.gmail.com>
 
-Reviewed-by: Joel Becker <jlbec@evilplan.org>
+On Wed, Sep 24, 2025 at 03:55:48PM +0200, Miklos Szeredi wrote:
+> On Tue, 23 Sept 2025 at 22:51, Darrick J. Wong <djwong@kernel.org> wrote:
+> 
+> > Oh, ok.  I can do that.  Just to be clear about what I need to do for
+> > v6:
+> >
+> > * fuse_conn::is_local goes away
+> > * FUSE_I_* gains a new FUSE_I_EXCLUSIVE flag
+> > * "local" operations check for FUSE_I_EXCLUSIVE instead of local_fs
+> > * fuseblk filesystems always set FUSE_I_EXCLUSIVE
+> 
+> Not sure if we want to touch fuseblk, as that carries a risk of regressions.
 
-On Sat, Sep 20, 2025 at 08:47:27AM +0100, Al Viro wrote:
-> These are guaranteed to be empty by the time they are shut down;
-> both are single-instance and there is an internal mount maintained
-> for as long as there is any contents.
-> 
-> Both have that internal mount pinned by every object in root.
-> 
-> In other words, kill_litter_super() boils down to kill_anon_super()
-> for those.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/configfs/mount.c | 2 +-
->  security/inode.c    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
-> index 740f18b60c9d..fa66e25f0d75 100644
-> --- a/fs/configfs/mount.c
-> +++ b/fs/configfs/mount.c
-> @@ -116,7 +116,7 @@ static struct file_system_type configfs_fs_type = {
->  	.owner		= THIS_MODULE,
->  	.name		= "configfs",
->  	.init_fs_context = configfs_init_fs_context,
-> -	.kill_sb	= kill_litter_super,
-> +	.kill_sb	= kill_anon_super,
->  };
->  MODULE_ALIAS_FS("configfs");
->  
-> diff --git a/security/inode.c b/security/inode.c
-> index 43382ef8896e..bf7b5e2e6955 100644
-> --- a/security/inode.c
-> +++ b/security/inode.c
-> @@ -70,7 +70,7 @@ static struct file_system_type fs_type = {
->  	.owner =	THIS_MODULE,
->  	.name =		"securityfs",
->  	.init_fs_context = securityfs_init_fs_context,
-> -	.kill_sb =	kill_litter_super,
-> +	.kill_sb =	kill_anon_super,
->  };
->  
->  /**
-> -- 
-> 2.47.3
-> 
-> 
+Hrm.  As it stands today, setting FUSE_I_EXCLUSIVE in fuseblk mode
+solves various mode/acl failures in fstests.
 
--- 
+On the other hand, mounting with fuseblk requires fsname to point to a
+block device that the mount()ing process can open, and if you're working
+with a local filesystem on a block device, why wouldn't you use iomap
+mode?
 
-The Graham Corollary:
+Add to that Ted's reluctance to merge the fuseblk support patches into
+fuse2fs, and perhaps I should take that as a sign to abandon fuseblk
+work entirely.  It'd get rid of an entire test configuration, since I'd
+only have to check fuse4fs-iomap on a bdev; and classic fuse4fs on a
+regular file.  Even in that second case, fuse4fs could losetup to take
+advantage of iomap mode.
 
-	The longer a socially-moderated news website exists, the
-	probability of an old Paul Graham link appearing at the top
-	approaches certainty.
+Yeah ok I've persuaded myself to drop the fuseblk stuff entirely.  If
+anyone /really/ wants me to keep it, holler in the next couple of hours.
 
-			http://www.jlbec.org/
-			jlbec@evilplan.org
+> > * iomap filesystems (when they arrive) always set FUSE_I_EXCLUSIVE
+> 
+> Yes.
+
+Ok, thanks for the quick responses! :)
+
+--D
+
+> Thanks,
+> Miklos
 
