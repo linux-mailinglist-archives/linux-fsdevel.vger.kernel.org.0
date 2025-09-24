@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-62638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B05B9B4A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:13:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5C1B9B4EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE9D176D6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFE64E629F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C8B31B11A;
-	Wed, 24 Sep 2025 18:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E531D31353E;
+	Wed, 24 Sep 2025 18:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEcB0y+e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbwacgYA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED9631353E;
-	Wed, 24 Sep 2025 18:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AB4329511;
+	Wed, 24 Sep 2025 18:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737244; cv=none; b=MRrcqsnooow8i6v6Pm9ho9Zm/vR8jEhVgI9yvXSokNwJTrFCPqmoe+FkYOZFuPjTXTWuRBda+lgZ+TvSfW4O/oCAYHdsN+617yHadx5F7EPr26wy0pV2ToYxjEprqjsGot2xCZmxFZvvAO3Ou1XxNnknjvSvViZmkhnBKxmi1tU=
+	t=1758737248; cv=none; b=rbAwkD+IQyZbv7ENO9kioqDckZd3dJUyRbm6hAH3iP1bU9C8yZUmuQs5NXB5OlrZmv94E69uaGDMNEyLkJY6+1yLqZ8JuHruG7hrgaRNtR+mnKdQL5e7rwIeLRmg4vvqosyTMyMPEa+aEH9bYdRck4vHQbq00BAoIG35bTA8Puw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737244; c=relaxed/simple;
-	bh=91FD/w4C9BXtWMza+TaMsFzE6zmBagNb79CWMkeMirQ=;
+	s=arc-20240116; t=1758737248; c=relaxed/simple;
+	bh=qEI2qG6B94ryuzfyU9tWgRMgSSWABwtmqXuABHuQPck=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fAUjnDfwSwnDiA+bc+advKA8+CudxjIYmWFI4VEiu8pYDFtJ+mncR0vMHs+vblzt3/te8Tv0BdQUYFWOTQ5uDtxhh5C9whR9szP9Iq1es4V/znbrtPA4yTBBWtOUct0mnKQekgaNIjh0QhHOEIXRWTJXZZQYh+BTHYGrtUsA2sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEcB0y+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB4A9C4CEF8;
-	Wed, 24 Sep 2025 18:07:20 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=HZ06wmYq0t0i9bXr9xuWZS5a88qB4rkLeUQWmOEUUx8AkQHA3hWE7B/RTW9XLRicdvW9usbe2E2XfphAwHI9vZs2XCjokFM4IAyF3opuZ0D0/jBbEiyIWwCq9w2JVGnI648lktM0DPJLyrpW/0Wh2X7IZiMVtVcWeo/lHKfHG+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbwacgYA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B409C4CEE7;
+	Wed, 24 Sep 2025 18:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758737244;
-	bh=91FD/w4C9BXtWMza+TaMsFzE6zmBagNb79CWMkeMirQ=;
+	s=k20201202; t=1758737247;
+	bh=qEI2qG6B94ryuzfyU9tWgRMgSSWABwtmqXuABHuQPck=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lEcB0y+ecnebgp4qXWnZBhoG8fohQYrwKQnffnfqfa/zdCVVhJkexGMtU++KgL3v6
-	 ETI6j068dvCGIWMVdCbOnnn4AMAyoNXQBPIxZbENvAvwLackToYOjcantIjObLjUIv
-	 lSjK6Lew4OwVPmScYwGVtSugVGnJSkCMw9EU2qkVHrhfNs1pT1LWBvX68YWLX/v88N
-	 cbf/zHOxT63FNFpx1uZYPY1xWeOBszUlJE8lvUhm0+oLJ7LPTYs+806fQ1v6BOxqfB
-	 7NjoW1QkTn9pvZzoa4ck+Kn0XzQod3F6uqO1/+3/ddV6RZPvXhCVC/fmlSO+Xf22DB
-	 zWl6trMMAbKcw==
+	b=qbwacgYA82Vs+rxINnhl799D+Dsm92hDcuwB4pmB8Ngov6MqW9LuBO8h0UIjKd5bI
+	 NCwoU/SOPog1cs1qCgLise4zOIduzMDmkMfb4hYVwqpyuNSxx2+QrheYQi4iL5AibJ
+	 7XtwQS2o1V7hPywCNRwjYPbwAsr9ySfDIQIbdECA8yJTNxHAvPGWDqMGWK/DDWAJ2w
+	 b/im62fXgtSVLU0mN0altWojvoD7waOMlo9bjqJJ5XL0cMeuo9r8rNvKvAo3pN13hH
+	 9eF5nUygtcSwOtUROtMtLl3QWc+B90mmUquFgTMuZcMTedNmqBG+GypnjKNZIAxuBa
+	 57STgFvf1VPRg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 24 Sep 2025 14:06:06 -0400
-Subject: [PATCH v3 20/38] nfs_common: add new NOTIFY4_* flags proposed in
- RFC8881bis
+Date: Wed, 24 Sep 2025 14:06:07 -0400
+Subject: [PATCH v3 21/38] nfsd: allow nfsd to get a dir lease with an
+ ignore mask
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-dir-deleg-v3-20-9f3af8bc5c40@kernel.org>
+Message-Id: <20250924-dir-deleg-v3-21-9f3af8bc5c40@kernel.org>
 References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 In-Reply-To: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -84,118 +84,92 @@ Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org,
  linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3811; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=91FD/w4C9BXtWMza+TaMsFzE6zmBagNb79CWMkeMirQ=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMOgkIu/flu3bMKmfF4Wdt6EtMq+0kSSxydY
- nDbfljhVVKJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzDgAKCRAADmhBGVaC
- FXWID/4xFQMWheV5W92PCvn9BoPjSC6jQrUW2QGWk7fTtFhHg5BW1HWpUdFILFjAvdd/quWJXqB
- T067WKMm1oK8c5uzvUaX6dIo1VDsuqdURIxYgaRypZ/fjTeY5wLDuAWcrmbbmfbO2NC6GmiMtHR
- qEUDKk32f7hVvt7XOKUhUvdya/U/GPaeka/47opwwHePHZmxNj0APlXVmBk/AuFH4Q8MX2KAr+j
- xhkdlL85z9e9n6R7TsGpkrTpKfgzFNRGLba1z39NelzTPDCI0kQsrIP+gKUiLRfdJFhXvBJanGk
- NhBkpw2YmMkdThCANIvOckzAT+qcJ+MLv69RN7pkxo3/6Qlf5//4vuAJYsdV5dx3n9upnlkxBFe
- gkySwOJEBrHbelRIBc7s/jVk708hNTs/P08XQSnPcGK3BYbJXCDfNZccUbjRBOvwmdACNgra3nU
- QGaFvJRLmVQVFGaSq+9nHz8PI9WbsXNs8iYK9Q+LCngBjypOXvtPlUmtsC/A/Y64rFsoX+/qffw
- idKid2IKODyYjg6asyxkldsREZQNMwSS7pGQ4HA4IHTla8jUFlp+0vcu95/jFsZvtxdkvTlvWyT
- hHjsDFpi5tzZj810DAMxeIrBbOORtkIIiiiIVTMXdGCDxAUmWxhMQQj0arD2JMhn/c9T1IqE8OW
- Jy8KRlRdBxzMrmg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2200; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=qEI2qG6B94ryuzfyU9tWgRMgSSWABwtmqXuABHuQPck=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMPvzaFVMcmP8JG8qGXV74JlsqhlgfupiImc
+ H5gwQinmaOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzDwAKCRAADmhBGVaC
+ FYFyEAC947Rkeb1RkjSUjRgeUL7acwPrr4hGNluZJT8kbf0YJGH1+HclwDoXjJcRTyL+xmoEDYN
+ uQITRHqwAM2eYx2eg/0IxFcuSjP20zARM6Sa++8qpkevecxcxRvlLu3fF0WOZa9WsDkzt+yyIDR
+ L8FCKuu9EBilht79LvV2CCjRNjzdXGYrfnD3rAcfKjWSh7WVcXcaLZIWBc5VeQ3nXeLTj767UiA
+ 8RYQkHCBPRRX3FIgXbrDh82XZInG+5IQ3y12wIrp9MqR7Anr0Z7/CV+IhzGZyeJ3MOhpaqXTsNz
+ yXytqLESWgUHD1llpKZZw96bswByl6zEL/1a3z1o6rxqanS+/LgMam4hDmGwtWn2zmFsn8N/IZE
+ goKRgiDR0MtOkI342672fJP00ehfrLwYep4e+9XA7fboMkmoLndeNhdYmEYNutgayJS0ltdsxTH
+ Tr8JmHEulTEk7eIVXJcqlmK8Kdv+lUHR/XUezzw6zsU6wSwUbMyiEZUyyEF3OIrxjz6h+vugu0n
+ Dx1PxTZOVmlp1eIzxvBQx0jBFs+PG3WscvQnPdv2IfEMJ2nx49nBJKGIo9lr8TJldqUoWzqiPwo
+ Kd79SqSCWUbs8PUjNKMOji6SQymA3anpN/2RD0XWPkd4Z4M/CxIF2D/18uIcArw+LlUoehWQmQj
+ +MueBGkQwdN7lEw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-RFC8881bis adds some new flags to GET_DIR_DELEGATION that we very much
-need to support.
+When requesting a directory lease, enable the FL_IGN_DIR_* bits that
+correspond to the requested notification types.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- Documentation/sunrpc/xdr/nfs4_1.x    | 16 +++++++++++++++-
- fs/nfsd/nfs4xdr_gen.c                |  2 +-
- fs/nfsd/nfs4xdr_gen.h                |  2 +-
- include/linux/sunrpc/xdrgen/nfs4_1.h | 13 ++++++++++++-
- 4 files changed, 29 insertions(+), 4 deletions(-)
+ fs/nfsd/nfs4state.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/sunrpc/xdr/nfs4_1.x b/Documentation/sunrpc/xdr/nfs4_1.x
-index 9e00910c02e0aecfb0f86ff7b534049d2c588cf3..d25e2f5489ea44b74c423702feceb563a1aaa7a4 100644
---- a/Documentation/sunrpc/xdr/nfs4_1.x
-+++ b/Documentation/sunrpc/xdr/nfs4_1.x
-@@ -358,7 +358,21 @@ enum notify_type4 {
-         NOTIFY4_REMOVE_ENTRY = 2,
-         NOTIFY4_ADD_ENTRY = 3,
-         NOTIFY4_RENAME_ENTRY = 4,
--        NOTIFY4_CHANGE_COOKIE_VERIFIER = 5
-+        NOTIFY4_CHANGE_COOKIE_VERIFIER = 5,
-+        /*
-+         * Added in NFSv4.1 bis document
-+         */
-+        NOTIFY4_GFLAG_EXTEND = 6,
-+        NOTIFY4_AUFLAG_VALID = 7,
-+        NOTIFY4_AUFLAG_USER = 8,
-+        NOTIFY4_AUFLAG_GROUP = 9,
-+        NOTIFY4_AUFLAG_OTHER = 10,
-+        NOTIFY4_CHANGE_AUTH = 11,
-+        NOTIFY4_CFLAG_ORDER = 12,
-+        NOTIFY4_AUFLAG_GANOW = 13,
-+        NOTIFY4_AUFLAG_GALATER = 14,
-+        NOTIFY4_CHANGE_GA = 15,
-+        NOTIFY4_CHANGE_AMASK = 16
- };
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index d1d586ec0e4e2bef908dc0671c34edab9cad5ba2..e219556e0959dbf0a8147d5edbb725da125a978f 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5937,14 +5937,30 @@ static bool nfsd4_cb_channel_good(struct nfs4_client *clp)
+ 	return clp->cl_minorversion && clp->cl_cb_state == NFSD4_CB_UNKNOWN;
+ }
  
- /* Changed entry information.  */
-diff --git a/fs/nfsd/nfs4xdr_gen.c b/fs/nfsd/nfs4xdr_gen.c
-index 306a4c30c3a4e6b9066c5ad41c1f0f7ffbb27bae..e713ca9b15203c1f5fcd14fbf70492a6b0907b40 100644
---- a/fs/nfsd/nfs4xdr_gen.c
-+++ b/fs/nfsd/nfs4xdr_gen.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- // Generated by xdrgen. Manual edits will be lost.
- // XDR specification file: ../../Documentation/sunrpc/xdr/nfs4_1.x
--// XDR specification modification time: Wed Sep 24 09:38:03 2025
-+// XDR specification modification time: Wed Sep 24 09:39:12 2025
+-static struct file_lease *nfs4_alloc_init_lease(struct nfs4_delegation *dp)
++static unsigned int
++nfsd_notify_to_ignore(u32 notify)
++{
++	unsigned int mask = 0;
++
++	if (notify & BIT(NOTIFY4_REMOVE_ENTRY))
++		mask |= FL_IGN_DIR_DELETE;
++	if (notify & BIT(NOTIFY4_ADD_ENTRY))
++		mask |= FL_IGN_DIR_CREATE;
++	if (notify & BIT(NOTIFY4_RENAME_ENTRY))
++		mask |= FL_IGN_DIR_RENAME;
++
++	return mask;
++}
++
++static struct file_lease *nfs4_alloc_init_lease(struct nfs4_delegation *dp, u32 notify)
+ {
+ 	struct file_lease *fl;
  
- #include <linux/sunrpc/svc.h>
+ 	fl = locks_alloc_lease();
+ 	if (!fl)
+ 		return NULL;
+-	fl->c.flc_flags = FL_DELEG;
++
++	fl->c.flc_flags = FL_DELEG | nfsd_notify_to_ignore(notify);
+ 	fl->c.flc_type = deleg_is_read(dp->dl_type) ? F_RDLCK : F_WRLCK;
+ 	fl->c.flc_owner = (fl_owner_t)dp;
+ 	fl->c.flc_pid = current->tgid;
+@@ -6161,7 +6177,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+ 	if (!dp)
+ 		goto out_delegees;
  
-diff --git a/fs/nfsd/nfs4xdr_gen.h b/fs/nfsd/nfs4xdr_gen.h
-index e8f8dd65d58a23f39d432bed02ac21cb0640261f..50e474a1cd8225108c83bb01caaa5a0a56384413 100644
---- a/fs/nfsd/nfs4xdr_gen.h
-+++ b/fs/nfsd/nfs4xdr_gen.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Generated by xdrgen. Manual edits will be lost. */
- /* XDR specification file: ../../Documentation/sunrpc/xdr/nfs4_1.x */
--/* XDR specification modification time: Wed Sep 24 09:38:03 2025 */
-+/* XDR specification modification time: Wed Sep 24 09:39:12 2025 */
+-	fl = nfs4_alloc_init_lease(dp);
++	fl = nfs4_alloc_init_lease(dp, 0);
+ 	if (!fl)
+ 		goto out_clnt_odstate;
  
- #ifndef _LINUX_XDRGEN_NFS4_1_DECL_H
- #define _LINUX_XDRGEN_NFS4_1_DECL_H
-diff --git a/include/linux/sunrpc/xdrgen/nfs4_1.h b/include/linux/sunrpc/xdrgen/nfs4_1.h
-index 7d9f4c5f169bc47ddf31ff5b1b96db30329e8ad2..ad31d2ec7ce050c6a5900732628e4e7607dabcae 100644
---- a/include/linux/sunrpc/xdrgen/nfs4_1.h
-+++ b/include/linux/sunrpc/xdrgen/nfs4_1.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Generated by xdrgen. Manual edits will be lost. */
- /* XDR specification file: ../../Documentation/sunrpc/xdr/nfs4_1.x */
--/* XDR specification modification time: Wed Sep 24 09:38:03 2025 */
-+/* XDR specification modification time: Wed Sep 24 09:39:12 2025 */
+@@ -9468,12 +9484,11 @@ nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
+ 	if (!dp)
+ 		goto out_delegees;
  
- #ifndef _LINUX_XDRGEN_NFS4_1_DEF_H
- #define _LINUX_XDRGEN_NFS4_1_DEF_H
-@@ -294,6 +294,17 @@ enum notify_type4 {
- 	NOTIFY4_ADD_ENTRY = 3,
- 	NOTIFY4_RENAME_ENTRY = 4,
- 	NOTIFY4_CHANGE_COOKIE_VERIFIER = 5,
-+	NOTIFY4_GFLAG_EXTEND = 6,
-+	NOTIFY4_AUFLAG_VALID = 7,
-+	NOTIFY4_AUFLAG_USER = 8,
-+	NOTIFY4_AUFLAG_GROUP = 9,
-+	NOTIFY4_AUFLAG_OTHER = 10,
-+	NOTIFY4_CHANGE_AUTH = 11,
-+	NOTIFY4_CFLAG_ORDER = 12,
-+	NOTIFY4_AUFLAG_GANOW = 13,
-+	NOTIFY4_AUFLAG_GALATER = 14,
-+	NOTIFY4_CHANGE_GA = 15,
-+	NOTIFY4_CHANGE_AMASK = 16,
- };
- typedef enum notify_type4 notify_type4;
+-	fl = nfs4_alloc_init_lease(dp);
++	fl = nfs4_alloc_init_lease(dp, gdd->gddr_notification[0]);
+ 	if (!fl)
+ 		goto out_put_stid;
  
+-	status = kernel_setlease(nf->nf_file,
+-				 fl->c.flc_type, &fl, NULL);
++	status = kernel_setlease(nf->nf_file, fl->c.flc_type, &fl, NULL);
+ 	if (fl)
+ 		locks_free_lease(fl);
+ 	if (status)
 
 -- 
 2.51.0
