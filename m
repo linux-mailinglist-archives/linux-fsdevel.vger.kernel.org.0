@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-62561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC7AB99989
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 13:34:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6C9B99992
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 13:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F294C59E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 11:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4FD188563B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 11:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5B02FDC4A;
-	Wed, 24 Sep 2025 11:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4352FD1C2;
+	Wed, 24 Sep 2025 11:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jk1hnEN8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeK1xsWA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F972FC011;
-	Wed, 24 Sep 2025 11:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368072FDC56;
+	Wed, 24 Sep 2025 11:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713652; cv=none; b=Kg5E8fc4aXpruKnxASVPdvc5zyzH3dTiZbY7Q3jFAposNjUzYuP7DaaNGw2GwU2ZIKio2/558jHai5ffA8tTiZbTI2Gsgr0O0pSxiR9l3m1+bqEFjAnExoAVk5mZh6hWS8jmcSgiYNFQuhf3g+95R4Lid96UIqO+cUYYMI7dvHg=
+	t=1758713656; cv=none; b=br83YWFQoSJKLfVNCgkcoGPh/wuajJW/ZAPJ4mdjKaYx4V1yaEO+82+arhSqCugualzAwCaltGDCPFph4ub+VGWSiXaD++0zv0XnN5xMp4nMjwf1ucPM1aP8N8bFkLXS6BhuXcrKLT/6BbYzbc5plnGr00X+pZ4zWAJynw5UBQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713652; c=relaxed/simple;
-	bh=/ezYUcqnip5J6jqaTEpaDvjUfR7giuaSikKG8yRZwBc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cBe+oZv7Btp3eV1DYUbLS/1XXwJvUti70qARZYIPxLXCFXlmYl9Cs3b/EcUmRXafFOZlDplpYMF19+Po3YpFK2qU0ES2Z7p0mWMyZiTgNIy53E+oFh+39j/Qp+dVKkle9l0Gh12xDxiPQauJTcNCbZxh4CxQ27hI3tyLX60Tk1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jk1hnEN8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8268C19422;
-	Wed, 24 Sep 2025 11:34:07 +0000 (UTC)
+	s=arc-20240116; t=1758713656; c=relaxed/simple;
+	bh=zo0abxKTr1ANwWoChblQKIxscmAB5HLy8zkYWZ3S40E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FidD4LXjhYhhbRUATrMgI1A6yJYm9snmN03FTvbf/BXfCixmgD6HuwAL8wAqNuku2DhP/Ezn7v2k9ACCGdIGYFns2ex60hjZ+umCJlttNU0SXx075To6dqHJkFB78mveg1JGHvqzCuGMx1El+rUsNp+7RQXltfWnS6JtcZ3EUr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeK1xsWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0451AC19425;
+	Wed, 24 Sep 2025 11:34:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758713651;
-	bh=/ezYUcqnip5J6jqaTEpaDvjUfR7giuaSikKG8yRZwBc=;
-	h=From:Subject:Date:To:Cc:From;
-	b=jk1hnEN8qankoJ/FNrwmre+6GPzRS4KY13pRpnEIjo9dc01ZDY8Ww3pT6I0OTXz2d
-	 pqfDAjRfQo4gAn93M7toNw5ttyW8DyEITN6r0CLyC1xVvIP8sfQW7E4Bo5i0iZNp3g
-	 2cijDCcMBRwLaXfnueMsIDTt7jpNi6LYO8V7/gFyvvHQwgb84HlCBDyiyZg29A7aSH
-	 rqKvtmcZ5qJSWpYTJSKS6Sv7kzpQfAzvR6Ab551CvR3Eai900z7JaNKspkz58ZyJp4
-	 BjqZQANaUcwvkaUq1ANrZN7JAjWwMQq7FtnRSkjbdrVCfe2c7ULvi1AXMDzzQQjKQf
-	 iYjfnRauM4RMQ==
+	s=k20201202; t=1758713655;
+	bh=zo0abxKTr1ANwWoChblQKIxscmAB5HLy8zkYWZ3S40E=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=NeK1xsWAzNKRLHBfWUa7fNilEk934HBWn/B3AB+e/zd5+HHnFy2QEXcwmBEi7ZFoe
+	 y6O7iwKd6FStLzCUnNwvqz+s1MUXmSJlyco0tTmRmXGBpL9fYJc2CJQ5KCTTGDt6dF
+	 agjc4rCpeG6SODaii2Fc+dEudXyyg5m2TizK9SYKKv3snepkOjQpyb+emgWhwV6Y+n
+	 s4iHeCBYuAj44c/i/adAVTKsp9klHIxpBONU+dSHKioHZ251TUQ8r+wT1ka9OHOZAG
+	 xiQiv5RQupUBKvaKQaLhMRqbNWkeW6zYqguxg/yYcmR7vOo9R9yokAkaPvrd+au7L+
+	 PB2seCm0cSLEQ==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 0/3] ns: tweak ns common handling
-Date: Wed, 24 Sep 2025 13:33:57 +0200
-Message-Id: <20250924-work-namespaces-fixes-v1-0-8fb682c8678e@kernel.org>
+Date: Wed, 24 Sep 2025 13:33:58 +0200
+Subject: [PATCH 1/3] nstree: make struct ns_tree private
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +52,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACXX02gC/z2MQQrCMBBFr1Jm7WgTtDReRVxMk7EdrEmZgAqld
- 3d04ebD4/PeCpVVuMK5WUH5KVVKNnC7BuJEeWSUZAy+9ac2+CO+it4x04PrQpEr3uRtG0Jqo4v
- sU9+BuYvy7zD1cjUeqDIOSjlO31pRGSUjzfPhn8Ju73rYtg9tKdwrkwAAAA==
-X-Change-ID: 20250924-work-namespaces-fixes-99d0c1ce2d86
+Message-Id: <20250924-work-namespaces-fixes-v1-1-8fb682c8678e@kernel.org>
+References: <20250924-work-namespaces-fixes-v1-0-8fb682c8678e@kernel.org>
+In-Reply-To: <20250924-work-namespaces-fixes-v1-0-8fb682c8678e@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
  Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
@@ -70,59 +69,73 @@ Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
  Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
  netdev@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-56183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1709; i=brauner@kernel.org;
- h=from:subject:message-id; bh=/ezYUcqnip5J6jqaTEpaDvjUfR7giuaSikKG8yRZwBc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcvq6vtnv3jc8Ll6qoL709dZvGwXSrYGOWuRnMKgvF0
- pLk6pbt7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgIdzwjwycxxRlxpnIKOzxN
- n6+fsl1qQRzbvOq3+00Dtsy6+1vq6U9GhmtKPkUiDmmcC048Mft9oDR6psbiBeHXpBdFZN1xZtC
- azg8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1694; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=zo0abxKTr1ANwWoChblQKIxscmAB5HLy8zkYWZ3S40E=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcvq6fd0HqOJ9+/ufleZabE7X1Veq0mWsrv/1dkHCk+
+ keS2oqnHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5MoeRYbfTl78vyl1ebVfq
+ 0I0KUA6Qkmc885RXT2im7+HZf3f6dDL8U2qL7pzfdNUuc9rbMLOjE0UPnPHYwnbFaVvjNpX89VN
+ /MAMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-This contains three minor tweaks for namespace handling:
-
-* Make struct ns_tree private. There's no need for anything to access
-  that directly.
-
-* Drop a debug assert that would trigger in conditions that are benign.
-
-* Move the type of the namespace out of struct proc_ns_operations and
-  into struct ns_common. This eliminates a pointer dereference and also
-  allows assertions to work when the namespace type is disabled and the
-  operations field set to NULL.
-
-"Trust me, just one more fixes series, bro. Just one more, bro."
+Don't expose it directly. There's no need to do that.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
-Christian Brauner (3):
-      nstree: make struct ns_tree private
-      ns: move ns type into struct ns_common
-      ns: drop assert
+ include/linux/nstree.h | 13 -------------
+ kernel/nstree.c        | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
- fs/namespace.c            |  6 +++---
- fs/nsfs.c                 | 18 +++++++++---------
- include/linux/ns_common.h | 30 +++++++++++++++++++++++++-----
- include/linux/nstree.h    | 13 -------------
- include/linux/proc_ns.h   |  1 -
- init/version-timestamp.c  |  1 +
- ipc/msgutil.c             |  1 +
- ipc/namespace.c           |  1 -
- kernel/cgroup/cgroup.c    |  1 +
- kernel/cgroup/namespace.c |  1 -
- kernel/nscommon.c         |  7 +++----
- kernel/nsproxy.c          |  4 ++--
- kernel/nstree.c           | 21 +++++++++++++++++----
- kernel/pid.c              |  1 +
- kernel/pid_namespace.c    |  2 --
- kernel/time/namespace.c   |  3 +--
- kernel/user.c             |  1 +
- kernel/user_namespace.c   |  1 -
- kernel/utsname.c          |  1 -
- net/core/net_namespace.c  |  1 -
- 20 files changed, 65 insertions(+), 50 deletions(-)
----
-base-commit: d969328c513c6679b4be11a995ffd4d184c25b34
-change-id: 20250924-work-namespaces-fixes-99d0c1ce2d86
+diff --git a/include/linux/nstree.h b/include/linux/nstree.h
+index 29ad6402260c..8b8636690473 100644
+--- a/include/linux/nstree.h
++++ b/include/linux/nstree.h
+@@ -9,19 +9,6 @@
+ #include <linux/rculist.h>
+ #include <linux/cookie.h>
+ 
+-/**
+- * struct ns_tree - Namespace tree
+- * @ns_tree: Rbtree of namespaces of a particular type
+- * @ns_list: Sequentially walkable list of all namespaces of this type
+- * @ns_tree_lock: Seqlock to protect the tree and list
+- */
+-struct ns_tree {
+-	struct rb_root ns_tree;
+-	struct list_head ns_list;
+-	seqlock_t ns_tree_lock;
+-	int type;
+-};
+-
+ extern struct ns_tree cgroup_ns_tree;
+ extern struct ns_tree ipc_ns_tree;
+ extern struct ns_tree mnt_ns_tree;
+diff --git a/kernel/nstree.c b/kernel/nstree.c
+index bbe8bedc924c..113d681857f1 100644
+--- a/kernel/nstree.c
++++ b/kernel/nstree.c
+@@ -4,6 +4,19 @@
+ #include <linux/proc_ns.h>
+ #include <linux/vfsdebug.h>
+ 
++/**
++ * struct ns_tree - Namespace tree
++ * @ns_tree: Rbtree of namespaces of a particular type
++ * @ns_list: Sequentially walkable list of all namespaces of this type
++ * @ns_tree_lock: Seqlock to protect the tree and list
++ */
++struct ns_tree {
++       struct rb_root ns_tree;
++       struct list_head ns_list;
++       seqlock_t ns_tree_lock;
++       int type;
++};
++
+ struct ns_tree mnt_ns_tree = {
+ 	.ns_tree = RB_ROOT,
+ 	.ns_list = LIST_HEAD_INIT(mnt_ns_tree.ns_list),
+
+-- 
+2.47.3
 
 
