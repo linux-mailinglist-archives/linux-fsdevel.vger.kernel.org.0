@@ -1,130 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-62584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB870B9A470
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 16:37:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2ABB9A90D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 17:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F067AAFA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 14:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13511B27229
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 15:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF801308F34;
-	Wed, 24 Sep 2025 14:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0390B30EF99;
+	Wed, 24 Sep 2025 15:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sU4qbKHf"
+	dkim=pass (2048-bit key) header.d=lmu.de header.i=@campus.lmu.de header.b="hVFE+7S8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from postout2.mail.lrz.de (postout2.mail.lrz.de [129.187.255.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1611A9FA7;
-	Wed, 24 Sep 2025 14:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D44C309DB5;
+	Wed, 24 Sep 2025 15:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.187.255.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758724585; cv=none; b=mP1N2OvJpCaBKc70UX3oNtuDa93h9IISP3W2rPYrCK+rWvQg9RXQfPWzp2u7HIy+HGuC1QCZ1UyOPHmgS5YE15RxiCIDFGASHm8boJJYibC+n2LRPjDt7Y8bU1nkyjkbPD2JRrEdI9j9fz8+1ZUHrNTmaMOh6oDJhvJhe/88Vxc=
+	t=1758727071; cv=none; b=ROeTEiEq11g7ZX/aV7NJUak4jbe8EIqtNAKu4CX/lrKB2SHa1Yperar8+ONCTX7fLRHI5cwidtZaWgLt1kTu0Tm1Us/4JPuBFZm4axe9B5YiH/mchnM8snRcVIn+QqNAfUuAs6FtyMup26XQvZu3NJGGvMtdIqS6KcQhQLuq0p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758724585; c=relaxed/simple;
-	bh=dtMyGOLRj3HY14tPCzeUn90iQCDhGJqxqhE3t2ov7aU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=H7oe+o0hGlCZor2JhJ44f/qqNbSJ+8me/8dG/ciBpOR8tXzzHn8Hj+FOJQCaNmLl6u02xVOhxyUTDcsq3Lq5LTwVqYqLUaXorJ4rXZljz1JRQADtNymT7O/PBPC2/EEw2flU3FEqcc+DBnx1HNEC3VsC423ZNLIRAwkf3K/1mBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sU4qbKHf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F373C4CEE7;
-	Wed, 24 Sep 2025 14:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758724584;
-	bh=dtMyGOLRj3HY14tPCzeUn90iQCDhGJqxqhE3t2ov7aU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=sU4qbKHfWJn/GVEqOSKG90PR7kq8un4mmh2XnGkYWYj96nm0vP3t0kpMc9qgQDF/r
-	 Njj8+x9+98clpezx9Qbexhjiiqb9LgGf2zO7zaasjP6Aw3ZwagcAIEE8M1xw+MaWmu
-	 YUaMY0p/KqRd8zFg6n7QJyC9wlkAy1COyRWfXsjDCyXLlLAmMW+OOVMT0stiJlFThR
-	 pSjukkkFK4og3+n0QfVwwodCBFQYwRR1q0tdqFB+L5GUbegS/N6BCgBwxdv/nKP85r
-	 1KUsbDv30oxCq+omuKsOLciS1wr91DsaxnZLhDWTt7/0uf59+4ZuwoESQ7BQmcDgr0
-	 wKP3Ex22F2I6w==
-Date: Wed, 24 Sep 2025 08:36:11 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Andreas Hindborg <a.hindborg@kernel.org>, 
-    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, 
-    Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com, 
-    charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com, 
-    cleger@rivosinc.com, alexghiti@rivosinc.com, samitolvanen@google.com, 
-    broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org, Zong Li <zong.li@sifive.com>, 
-    David Hildenbrand <david@redhat.com>, Andy Chiu <andybnac@gmail.com>
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-In-Reply-To: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
-Message-ID: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
-References: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
+	s=arc-20240116; t=1758727071; c=relaxed/simple;
+	bh=qHJFbsYgS91YYDoS3pNiLv0mtvxMAELdSxOXkcm25+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YlAdYo7LAvOzhUuPe6Op4rqXxTAoL7Jg6hHd9BRhgSOZTsMBJeQBxRftugFC6wS7HqFNQaBgFXvjfKm/l0kLNFkYXds7CvW+jyWCg69mkyUk8kIo4Ny/XyCZy7AeChfwB+pSagndSkG1f/R6gdjPVUHmeLbCgkFDQPq7WU55pac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=campus.lmu.de; spf=pass smtp.mailfrom=campus.lmu.de; dkim=pass (2048-bit key) header.d=lmu.de header.i=@campus.lmu.de header.b=hVFE+7S8; arc=none smtp.client-ip=129.187.255.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=campus.lmu.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=campus.lmu.de
+Received: from lxmhs52.srv.lrz.de (localhost [127.0.0.1])
+	by postout2.mail.lrz.de (Postfix) with ESMTP id 4cX0fy3FrjzySk;
+	Wed, 24 Sep 2025 17:11:22 +0200 (CEST)
+Authentication-Results: postout.lrz.de (amavis); dkim=pass (2048-bit key)
+ reason="pass (just generated, assumed good)" header.d=lmu.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lmu.de; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=
+	lm-postout21; i=@campus.lmu.de; t=1758726681; bh=T6LxtLsJSjh5VFa
+	qIEo/5wr5RrqvMX416qBvYTVfg0E=; b=hVFE+7S8Fn4/3XjSufKRyxWHwW1bTtz
+	VmlF6g1t4TlmQrUK2g6F6vLFlU40czoRwEq0RsFT/3IH7GMQ5G2Ibu8haG+BFOfJ
+	8zZe76T3pWxXCby+AgHbP88DGrWGP+ho9qz0miGx/2adAFJYmk7+vs2VjMqiu7Xh
+	yASlcM7coWzhItLtC4rvkK5u/f1ktq9yjN1Sax5zRaIXtvfODBmowx5M8OtnLBnM
+	79T3dgWtXp1eUoF/g2u9tss/ucgkyjOiwJdjoUojvziOhDN9PlPFzEFrj0M3Pn5p
+	JmU6RCdR9hpgfd6nTab7IgTRGw3ihak6ss8Sxi5Aq73ihDT6fW4jgKA==
+X-Virus-Scanned: by amavisd-new at lrz.de in lxmhs52.srv.lrz.de
+X-Spam-Flag: NO
+X-Spam-Score: -2.886
+X-Spam-Level:
+Received: from postout2.mail.lrz.de ([127.0.0.1])
+ by lxmhs52.srv.lrz.de (lxmhs52.srv.lrz.de [127.0.0.1]) (amavis, port 20024)
+ with LMTP id zUqMeowYmgiG; Wed, 24 Sep 2025 17:11:21 +0200 (CEST)
+Received: from spacestation.cable.virginm.net (oxfd-27-b2-v4wan-164230-cust474.vm42.cable.virginm.net [86.22.133.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by postout2.mail.lrz.de (Postfix) with ESMTPSA id 4cX0fr09PgzyS8;
+	Wed, 24 Sep 2025 17:11:15 +0200 (CEST)
+From: Patrick Roy <patrick.roy@campus.lmu.de>
+To: 
+Cc: Patrick Roy <roypat@amazon.co.uk>,
+	pbonzini@redhat.com,
+	corbet@lwn.net,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	song@kernel.org,
+	jolsa@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	peterx@redhat.com,
+	jannh@google.com,
+	pfalcato@suse.de,
+	shuah@kernel.org,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	xmarcalx@amazon.co.uk,
+	kalyazin@amazon.co.uk,
+	jackabt@amazon.co.uk,
+	derekmn@amazon.co.uk,
+	tabba@google.com,
+	ackerleytng@google.com
+Subject: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
+Date: Wed, 24 Sep 2025 16:10:40 +0100
+Message-ID: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+From: Patrick Roy <roypat@amazon.co.uk>
 
-On Thu, 31 Jul 2025, Deepak Gupta wrote:
+[ based on kvm/next ]
 
-[ ... ]
+Unmapping virtual machine guest memory from the host kernel's direct map is a
+successful mitigation against Spectre-style transient execution issues: If the
+kernel page tables do not contain entries pointing to guest memory, then any
+attempted speculative read through the direct map will necessarily be blocked
+by the MMU before any observable microarchitectural side-effects happen. This
+means that Spectre-gadgets and similar cannot be used to target virtual machine
+memory. Roughly 60% of speculative execution issues fall into this category [1,
+Table 1].
 
-> vDSO related Opens (in the flux)
-> =================================
-> 
-> I am listing these opens for laying out plan and what to expect in future
-> patch sets. And of course for the sake of discussion.
-> 
+This patch series extends guest_memfd with the ability to remove its memory
+from the host kernel's direct map, to be able to attain the above protection
+for KVM guests running inside guest_memfd.
 
-[ ... ]
+Additionally, a Firecracker branch with support for these VMs can be found on
+GitHub [2].
 
-> How many vDSOs
-> ---------------
-> Shadow stack instructions are carved out of zimop (may be operations) and if CPU
-> doesn't implement zimop, they're illegal instructions. Kernel could be running on
-> a CPU which may or may not implement zimop. And thus kernel will have to carry 2
-> different vDSOs and expose the appropriate one depending on whether CPU implements
-> zimop or not.
+For more details, please refer to the v5 cover letter [v5]. No
+substantial changes in design have taken place since.
 
-If we merge this series without this, then when CFI is enabled in the 
-Kconfig, we'll wind up with a non-portable kernel that won't run on older 
-hardware.  We go to great lengths to enable kernel binary portability 
-across the presence or absence of other RISC-V extensions, and I think 
-these CFI extensions should be no different.
+=== Changes Since v6 ===
 
-So before considering this for merging, I'd like to see at least an 
-attempt to implement the dual-vDSO approach (or something equivalent) 
-where the same kernel binary with CFI enabled can run on both pre-Zimop 
-and post-Zimop hardware, with the existing userspaces that are common 
-today.
+- Drop patch for passing struct address_space to ->free_folio(), due to
+  possible races with freeing of the address_space. (Hugh)
+- Stop using PG_uptodate / gmem preparedness tracking to keep track of
+  direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
+- Do direct map removal when establishing mapping of gmem folio instead
+  of at allocation time, due to impossibility of handling direct map
+  removal errors in kvm_gmem_populate(). (Patrick)
+- Do TLB flushes after direct map removal, and provide a module
+  parameter to opt out from them, and a new patch to export
+  flush_tlb_kernel_range() to KVM. (Will)
 
-thanks Deepak,
+[1]: https://download.vusec.net/papers/quarantine_raid23.pdf
+[2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
+[RFCv1]: https://lore.kernel.org/kvm/20240709132041.3625501-1-roypat@amazon.co.uk/
+[RFCv2]: https://lore.kernel.org/kvm/20240910163038.1298452-1-roypat@amazon.co.uk/
+[RFCv3]: https://lore.kernel.org/kvm/20241030134912.515725-1-roypat@amazon.co.uk/
+[v4]: https://lore.kernel.org/kvm/20250221160728.1584559-1-roypat@amazon.co.uk/
+[v5]: https://lore.kernel.org/kvm/20250828093902.2719-1-roypat@amazon.co.uk/
+[v6]: https://lore.kernel.org/kvm/20250912091708.17502-1-roypat@amazon.co.uk/
 
-- Paul
+
+Patrick Roy (12):
+  arch: export set_direct_map_valid_noflush to KVM module
+  x86/tlb: export flush_tlb_kernel_range to KVM module
+  mm: introduce AS_NO_DIRECT_MAP
+  KVM: guest_memfd: Add stub for kvm_arch_gmem_invalidate
+  KVM: guest_memfd: Add flag to remove from direct map
+  KVM: guest_memfd: add module param for disabling TLB flushing
+  KVM: selftests: load elf via bounce buffer
+  KVM: selftests: set KVM_MEM_GUEST_MEMFD in vm_mem_add() if guest_memfd
+    != -1
+  KVM: selftests: Add guest_memfd based vm_mem_backing_src_types
+  KVM: selftests: cover GUEST_MEMFD_FLAG_NO_DIRECT_MAP in existing
+    selftests
+  KVM: selftests: stuff vm_mem_backing_src_type into vm_shape
+  KVM: selftests: Test guest execution from direct map removed gmem
+
+ Documentation/virt/kvm/api.rst                |  5 ++
+ arch/arm64/include/asm/kvm_host.h             | 12 ++++
+ arch/arm64/mm/pageattr.c                      |  1 +
+ arch/loongarch/mm/pageattr.c                  |  1 +
+ arch/riscv/mm/pageattr.c                      |  1 +
+ arch/s390/mm/pageattr.c                       |  1 +
+ arch/x86/include/asm/tlbflush.h               |  3 +-
+ arch/x86/mm/pat/set_memory.c                  |  1 +
+ arch/x86/mm/tlb.c                             |  1 +
+ include/linux/kvm_host.h                      |  9 +++
+ include/linux/pagemap.h                       | 16 +++++
+ include/linux/secretmem.h                     | 18 -----
+ include/uapi/linux/kvm.h                      |  2 +
+ lib/buildid.c                                 |  4 +-
+ mm/gup.c                                      | 19 ++----
+ mm/mlock.c                                    |  2 +-
+ mm/secretmem.c                                |  8 +--
+ .../testing/selftests/kvm/guest_memfd_test.c  |  2 +
+ .../testing/selftests/kvm/include/kvm_util.h  | 37 ++++++++---
+ .../testing/selftests/kvm/include/test_util.h |  8 +++
+ tools/testing/selftests/kvm/lib/elf.c         |  8 +--
+ tools/testing/selftests/kvm/lib/io.c          | 23 +++++++
+ tools/testing/selftests/kvm/lib/kvm_util.c    | 61 +++++++++--------
+ tools/testing/selftests/kvm/lib/test_util.c   |  8 +++
+ tools/testing/selftests/kvm/lib/x86/sev.c     |  1 +
+ .../selftests/kvm/pre_fault_memory_test.c     |  1 +
+ .../selftests/kvm/set_memory_region_test.c    | 50 ++++++++++++--
+ .../kvm/x86/private_mem_conversions_test.c    |  7 +-
+ virt/kvm/guest_memfd.c                        | 66 +++++++++++++++++--
+ virt/kvm/kvm_main.c                           |  8 +++
+ 30 files changed, 290 insertions(+), 94 deletions(-)
+
+
+base-commit: a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
+-- 
+2.51.0
+
 
