@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-62647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D8CB9B57C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5B6B9B5A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 20:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF171BC1782
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26741BC1F56
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 18:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6803B32CF85;
-	Wed, 24 Sep 2025 18:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B6E32D5DE;
+	Wed, 24 Sep 2025 18:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8wgb/kc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUHRGFWC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D7C32CF62;
-	Wed, 24 Sep 2025 18:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F8032CF62;
+	Wed, 24 Sep 2025 18:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737275; cv=none; b=eI9OLykaCqvUQSdAC/FoEnDCmUyuMH3BabsR1PaiLXKwsp1vambPsAHaREGjZGJv3njh1mJZsy12s6Uds1jd2KVCkUAwaC0CapmWbVyOY7AV/A+5JyHj9IlU4VQPVmuEjlYzVMz5WTQB914mr8cIF95spH7JJSUfbRt3GMm7Fdo=
+	t=1758737279; cv=none; b=tlCyhB9u1nDgN6IeNTf+Mi3U+l1A0f5naezT/rj9STLM1+pbzOBEQXjzkF2xQBXIgrfnP+Iy4KxMt69oGW6nJfb8yCCP/e0ogy6mPJz2BEpsxSiiCzrwS/HvTxtJZaSlj8qSGAwYAQZMLXnzDBnevO1RtSATs1HrbC8c3JsKW8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737275; c=relaxed/simple;
-	bh=K5hsMYtQXjyOKS60Uf3VyfFpCL0/dbOW4BLDAmfK1SA=;
+	s=arc-20240116; t=1758737279; c=relaxed/simple;
+	bh=Z3UMAzxGm3i4wJZpGYv0qnn3VbVaB61UVqmGkwfa8JQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KcLQOskIRtlXtjsdQgcBeXtPSqQcQOo7bcaW+7KRCNIKhmeeoG8hOCp1mbOqH36AGnQAxyUG8aX83rsZpJYbZijJIBR6x5qGfIOvx0NdDGgDRR0szGG9fXNT1VYhkbXuHtcCKMc7VyWzbWXM2KWqqFtOvvmmTXZucFTywD7H9OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8wgb/kc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4798BC4CEF8;
-	Wed, 24 Sep 2025 18:07:52 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=apfaYMUu2SbMcmgR7a/ye11GtGmYoawPP+rt8MKQZU7d15enfG1OKgrGDf7IOkTMFcGMsOgOKHYH+dVcnmesq1C2hpsS358T6kF0Gp8zdrHagTOmitYEHfIpXDTWiC+6ZOr1yCL9NhRvm2vC1rSEd1bl73YFkG/sg7c3EH56dVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUHRGFWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDBF8C19421;
+	Wed, 24 Sep 2025 18:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758737275;
-	bh=K5hsMYtQXjyOKS60Uf3VyfFpCL0/dbOW4BLDAmfK1SA=;
+	s=k20201202; t=1758737279;
+	bh=Z3UMAzxGm3i4wJZpGYv0qnn3VbVaB61UVqmGkwfa8JQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=R8wgb/kc3BcqZjJXY3FbPlzAU6Vrgmhur+I4rs4sh3hsSw1VKfcMmDykLvJAAi+yX
-	 FDRRFPUFxEmlYLZrEne6kMUnQZyt/4b19+zrX27VxIdXkNTtnQuXRCHamCrSSeRTHD
-	 3A0DAGmc6sBQqfpJpRxJh4eyYnldnW78qqo+McztfFStlc6u/CnEobMhmzjUu1UAS4
-	 zJHVlXB1D2scXPpER5qlL5/SFecvaYGJUDWoSqI1qtDwQ1cq/zFlnkBv+M+FHFs14h
-	 /GIWI4vo67GFKoJqVRa3ao7tZCHgNfa61Y6R1xVPF72UFyvWs9V24TDK5sdVvtK2Ew
-	 0Gc19yWlkGJZA==
+	b=DUHRGFWCl7pJWEugoO/4mOtpq9EBWr/F23TkIp9V7KFk+cGAa1JMUv6peQDBAPM+8
+	 FkbPDSCDiWUG6n12GYIMcjrtgN5d2WwuvyULFe22i3FVmVtBe2pcgROMX7TOvOvu1D
+	 l+gP/gURUyW5GNZTO72LF3Ltxr2Cq+Ph1SVxDSAkbgJc+jAF/RAoexQrxVZUfWhv1v
+	 ZB8Fl1yurJIFI9UTmAmWYw94hsElegtgrYu0wOT+z7bjlsW9oPuL/o10vfHas+u/LG
+	 DHbkhhdzVlYE89+fO0GEfNH0mlCDsvFGSroQ3kU2sgI98A5xQQr+sQtxHy91/YYe0q
+	 HYsdBsRYe9VlQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 24 Sep 2025 14:06:15 -0400
-Subject: [PATCH v3 29/38] nfsd: apply the notify mask to the delegation
- when requested
+Date: Wed, 24 Sep 2025 14:06:16 -0400
+Subject: [PATCH v3 30/38] nfsd: add helper to marshal a fattr4 from
+ completed args
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-dir-deleg-v3-29-9f3af8bc5c40@kernel.org>
+Message-Id: <20250924-dir-deleg-v3-30-9f3af8bc5c40@kernel.org>
 References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 In-Reply-To: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -84,72 +84,122 @@ Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org,
  linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1776; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=K5hsMYtQXjyOKS60Uf3VyfFpCL0/dbOW4BLDAmfK1SA=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMQMvdIPknrW1MptHugAUEwdl5e8EknKuE4Z
- twhQAq1pquJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEAAKCRAADmhBGVaC
- FbujEACfsaYwLWDSW6Lh5L7Qsm8v5al2ixv2jZXI0EFbS0n1ea0TAMjKIgzplkSJso2yLfIKt75
- VpgKTfBEtcZQwMfctH2bshZzdq9k2tKdjTu/QKfCm+Aigc4kI2ukPPOBHrBHqwrillvbz06m88M
- jcsr3iVvfR+0qrTzM/Yo21oLBQXSSZ8ILrhvPyWBcqyrRnMtbSg0Sxt0+kYIomTlIKT+aUfSMBq
- IfE4sgrVIuWR2JGcTIKmtwmP8xBv7fvbX9R8zig49GE+0pohNv56RbEzxoEZd+haIS0Yq9noMyh
- C8C8wHcpFsNJgLgWceYxAyAKiAQ3wvlY6X7FaD7eLcbnFs5RoNlaYUIlSyS8Ku3ZVQ3p1jwnMeI
- 1QnuQsRsoLNRDEUob6HTefy2KTYnjabvfb1tD9upClOXZjsrqH6kNEPvpD21E4sYQbEtJXD6ET8
- 7LqNrpMhuyBN9UIf/gIbI71dgELiZmGCZyKDiDptsn/IzpfSV+x9YcHRZ47HlS+67xZSpCEnMvo
- phq9Evav58WwFDcsfCCdRo8QBBl+cLx8YR9sD1nNr3KqFUz9I1jho0HfADJL+pZ7iJc1ze2Kqop
- JJW7pFIjXwMuQbknSnV82o99RgH5lLUGr4EdJqAIdfIagQpRk7bhmb40ET1h3ASKqXGpYdxwDD6
- ratkwwRo2WZ/kOg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3503; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Z3UMAzxGm3i4wJZpGYv0qnn3VbVaB61UVqmGkwfa8JQ=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMQRc16ykCn/Jr1MPeUXrGeEsBatqqAtUnDd
+ jNHs3Yj46GJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEAAKCRAADmhBGVaC
+ FT/oD/0dnQZLbzhF4JYHcgCLeenPT5jeYRMBzGaLSyj/cRQ6+u2MPbzYfwt1jrPgKKf/Tnt/J+P
+ xail/Qx1a2pID/Bcgg9Ucv/hM90x/VYICu8El2VUcNpmTfKQRrZE7LWsGtEUOBVA16oMKrGcl3/
+ U6mp29V/FcaUlRYrB0KQPLItJvoQ6X9YHTZU6HzZ3t0Qo/SwigmxR91byXbswYqN0LpcJykmR+g
+ zPLhldvdqw0R01bec7jyHfrg3YsiVQgcar6vUuCAUgvZP55tqgxfkiTHt1LBpUAP7vfL+ykCHpt
+ lypFrJKMOTPj87tuJU5IZ9fudolAhCrWmqL/ODnCOjW2obTpjXzZE5j0Hct8ioDWQ56I5TW0EUE
+ xRtM1ggeTeZ+G0ntOeD2FYYxfyO8YkVTaOHgCYy2JVjwkwRkFd16gTVpiPbaYSUzIrsEgOLuj8M
+ 9JdjfYIzbSGc2qPKthW0mTGMsNkgxgNKLvSMSHQBLdxmJIAqNC6gTL+oz3uA3Wl594ONPyprwpJ
+ NWFhjcqH7qSN8InkWt6VipgujZGhJpFkod7bl4NU+3QnEAiNQe4J/ymrN0O6OyaZntHGa9Dsq2M
+ nGs2Uvv7qGk4TXjgYSHsqY0+o4P1e2hrEH9/vcFbjuDezbIfNw2OCCRO72q/3JWOdRdQ25S5Ayl
+ SNvcdcWYmvdLWSA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-If the client requests a directory delegation with notifications
-enabled, set the appropriate return mask in gddr_notification[0]. This
-will ensure the lease acquisition sets the appropriate ignore mask.
-
-If the client doesn't set NOTIFY4_GFLAG_EXTEND, then don't offer any
-notifications, as nfsd won't provide directory offset information, and
-"classic" notifications require them.
+Break the loop that encodes the actual attr_vals field into a separate
+function.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4proc.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/nfsd/nfs4xdr.c | 46 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 277022d437cec18e527c836f108f0e97c6844b23..220fc873db8f08a90ac74e51ac9d931fe7edb9e4 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2335,12 +2335,18 @@ nfsd4_verify(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	return status == nfserr_same ? nfs_ok : status;
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 4a40d5e07fa3343a9b645c3b267897a31491e8e9..9a463f9c8a67704d90d1551b7de59e4e89a2a81d 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3565,6 +3565,22 @@ static const nfsd4_enc_attr nfsd4_enc_fattr4_encode_ops[] = {
+ 	[FATTR4_OPEN_ARGUMENTS]		= nfsd4_encode_fattr4_open_arguments,
+ };
+ 
++static __be32
++nfsd4_encode_attr_vals(struct xdr_stream *xdr, u32 *attrmask, struct nfsd4_fattr_args *args)
++{
++	DECLARE_BITMAP(attr_bitmap, ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops));
++	unsigned long bit;
++	__be32 status;
++
++	bitmap_from_arr32(attr_bitmap, attrmask, ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops));
++	for_each_set_bit(bit, attr_bitmap, ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops)) {
++		status = nfsd4_enc_fattr4_encode_ops[bit](xdr, args);
++		if (status != nfs_ok)
++			return status;
++	}
++	return nfs_ok;
++}
++
+ /*
+  * Note: @fhp can be NULL; in this case, we might have to compose the filehandle
+  * ourselves.
+@@ -3575,7 +3591,6 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		    struct dentry *dentry, const u32 *bmval,
+ 		    int ignore_crossmnt)
+ {
+-	DECLARE_BITMAP(attr_bitmap, ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops));
+ 	struct nfs4_delegation *dp = NULL;
+ 	struct nfsd4_fattr_args args;
+ 	struct svc_fh *tempfh = NULL;
+@@ -3590,7 +3605,6 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		.mnt	= exp->ex_path.mnt,
+ 		.dentry	= dentry,
+ 	};
+-	unsigned long bit;
+ 
+ 	WARN_ON_ONCE(bmval[1] & NFSD_WRITEONLY_ATTRS_WORD1);
+ 	WARN_ON_ONCE(!nfsd_attrs_supported(minorversion, bmval));
+@@ -3710,27 +3724,22 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ #endif /* CONFIG_NFSD_V4_SECURITY_LABEL */
+ 
+ 	/* attrmask */
+-	status = nfsd4_encode_bitmap4(xdr, attrmask[0], attrmask[1],
+-				      attrmask[2]);
++	status = nfsd4_encode_bitmap4(xdr, attrmask[0], attrmask[1], attrmask[2]);
+ 	if (status)
+-		goto out;
++		return status;
+ 
+ 	/* attr_vals */
+ 	attrlen_offset = xdr->buf->len;
+-	if (unlikely(!xdr_reserve_space(xdr, XDR_UNIT)))
+-		goto out_resource;
+-	bitmap_from_arr32(attr_bitmap, attrmask,
+-			  ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops));
+-	for_each_set_bit(bit, attr_bitmap,
+-			 ARRAY_SIZE(nfsd4_enc_fattr4_encode_ops)) {
+-		status = nfsd4_enc_fattr4_encode_ops[bit](xdr, &args);
+-		if (status != nfs_ok)
+-			goto out;
++	if (unlikely(!xdr_reserve_space(xdr, XDR_UNIT))) {
++		status = nfserr_resource;
++		goto out;
+ 	}
+-	attrlen = cpu_to_be32(xdr->buf->len - attrlen_offset - XDR_UNIT);
+-	write_bytes_to_xdr_buf(xdr->buf, attrlen_offset, &attrlen, XDR_UNIT);
+-	status = nfs_ok;
+ 
++	status = nfsd4_encode_attr_vals(xdr, attrmask, &args);
++	if (status == nfs_ok) {
++		attrlen = cpu_to_be32(xdr->buf->len - attrlen_offset - XDR_UNIT);
++		write_bytes_to_xdr_buf(xdr->buf, attrlen_offset, &attrlen, XDR_UNIT);
++	}
+ out:
+ #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
+ 	if (args.context.context)
+@@ -3747,9 +3756,6 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ out_nfserr:
+ 	status = nfserrno(err);
+ 	goto out;
+-out_resource:
+-	status = nfserr_resource;
+-	goto out;
  }
  
-+#define SUPPORTED_NOTIFY_MASK	(BIT(NOTIFY4_REMOVE_ENTRY) |	\
-+				 BIT(NOTIFY4_ADD_ENTRY) |	\
-+				 BIT(NOTIFY4_RENAME_ENTRY) |	\
-+				 BIT(NOTIFY4_GFLAG_EXTEND))
-+
- static __be32
- nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
- 			 struct nfsd4_compound_state *cstate,
- 			 union nfsd4_op_u *u)
- {
- 	struct nfsd4_get_dir_delegation *gdd = &u->get_dir_delegation;
-+	u32 requested = gdd->gdda_notification_types[0];
- 	struct nfs4_delegation *dd;
- 	struct nfsd_file *nf;
- 	__be32 status;
-@@ -2349,6 +2355,12 @@ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
- 	if (status != nfs_ok)
- 		return status;
- 
-+	/* No notifications if you don't set NOTIFY4_GFLAG_EXTEND! */
-+	if (!(requested & BIT(NOTIFY4_GFLAG_EXTEND)))
-+		requested = 0;
-+
-+	gdd->gddr_notification[0] = requested & SUPPORTED_NOTIFY_MASK;
-+
- 	/*
- 	 * RFC 8881, section 18.39.3 says:
- 	 *
+ static bool
 
 -- 
 2.51.0
