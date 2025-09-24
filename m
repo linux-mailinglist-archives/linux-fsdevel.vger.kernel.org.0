@@ -1,222 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-62566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A79B999CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 13:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEAFB999D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 13:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B76188345B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 11:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F83818833CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Sep 2025 11:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DDB2FDC49;
-	Wed, 24 Sep 2025 11:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740E42FE052;
+	Wed, 24 Sep 2025 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tf3jv/BN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lXhVBoP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2/yvRRoc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B86njsF6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nB1Rk2bz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1C82E173D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 11:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6105A2E7BA9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 11:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713854; cv=none; b=Bdq/Nt0Osc9YIztkD/P0M+Oh6fARQ7n5HKRyH45anL+YuRhE+5dX0ydaPcQHKXkI1g+rBk9THAdowIwTGTZUjXbZKKHS6BBUY1PQOQA8ONnXnSfN7jEZLVsEOX0l1pVg3LfX8LLlasCSkqWlkuwJKyS81C3yoyVa/us+J8njqm4=
+	t=1758713875; cv=none; b=n33oJMCr2Rfj5BM/ApVVAp5FD7Ano0K8tqGDq6T07rbyQtCwx43MswnSqFJll71u5rAK55uEUFhnGu2KM2e4r/sx1h64J9Dzadx2+pT+O85toWvlyzVcgpCBEVJ/mzppBJ32Hg83hs6kZ5jUDk2+dTP8R3HMSeiQmcgNdv9LU3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713854; c=relaxed/simple;
-	bh=uH+LLl++HnxLepDtLUttWF83jJeR+uOZVzaKeNc3Ddc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gyn5AzYmGiommawnhDSWna1X3anWvGLdNnDQ1LLDJeFkg3zgpQuiG/WhmdL1qvCgrABzEqi9xiaQgF268Wc8L4NFMYsba8L/oeKgrjtSnwSVV0wvLkQV4YB6hSeIssIvU20DXyGIHNphsfrsHzNdDSyYAAp7HLuOrpnbO3juTek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tf3jv/BN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lXhVBoP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2/yvRRoc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B86njsF6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DB0AC229D4;
-	Wed, 24 Sep 2025 11:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758713847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9K4fWuWQadxiqdj4KQnSwwhZNnSiXNbuiWczmOmss0=;
-	b=tf3jv/BNK5LvDDer2hpCL4vWpcXmZV00aK3S2gLqEk+CD4NWHvVybjSZC9IXUBvqr8Hl4/
-	vzo5xo0oIaMcb5+hdquZrn/NzCcGm3AbfOnMtwJQn6vCxCdAFidksunYACVwudzVPCLHt0
-	KvGXP5YJ951At6RTvfLmPN2ifoK3Dys=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758713847;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9K4fWuWQadxiqdj4KQnSwwhZNnSiXNbuiWczmOmss0=;
-	b=4lXhVBoPYmsI9tYh/gQXHeIGxnm157erD1SqGQlDGsxsp5FOehfTv5VIkdR4tki3uv14Po
-	Y5C4CxpI9VGYN3BA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758713846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9K4fWuWQadxiqdj4KQnSwwhZNnSiXNbuiWczmOmss0=;
-	b=2/yvRRocpudkJcpQtdKSrnbzTRVHzhgfTemq1TEvKPE8WxgxwNIXLeHKn7r85K24LZY9W9
-	xkMczE61w1neZNnHZBUFFwJGIUdGsbICE/qUTo0Os0/vVy7O69fSvpo06qoKLF9mN5zy2E
-	mfCGurZpaPHt3JKJEAinPT56Or5TBus=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758713846;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9K4fWuWQadxiqdj4KQnSwwhZNnSiXNbuiWczmOmss0=;
-	b=B86njsF6RPUywIRvYt3ld3+86EgsuGQCo/C6pv0l8ZDFhLHQJ5Zn7abnIoNzKHMtSUABu7
-	y7MBUN5PXQ9e0VCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D0CEA13A61;
-	Wed, 24 Sep 2025 11:37:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HRb5MvbX02jPQAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Sep 2025 11:37:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8ABFAA0A9A; Wed, 24 Sep 2025 13:37:18 +0200 (CEST)
-Date: Wed, 24 Sep 2025 13:37:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Dave Chinner <david@fromorbit.com>
-Subject: Re: [RFC PATCH 1/2] Add in_reclaim()
-Message-ID: <aoztdpmjelyqarfcjtmg2dmfong5u5p3vjjl3tk4trjloua6ss@5bnseemz2bbw>
-References: <20250924091000.2987157-1-willy@infradead.org>
- <20250924091000.2987157-2-willy@infradead.org>
+	s=arc-20240116; t=1758713875; c=relaxed/simple;
+	bh=BTgYPkpXWTJ3wzKg6hY80hLuF/ObCRTOY4tFMAsjuro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ogjux1DsbUNlCjwkl/qKW1sqo2A589M0gHDbjDSTHpnl+POhYrWGfwLxGh+omdlJn6qti1/hZTGOD+4/h6F9vC+zG+PR15WkycqV/hfDJ3yasH6euho9q6+WYOJFiwufYrwS8NAKWMV6rbjoDG3xSUh2VeOxlh2v4BlVcDLrt0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nB1Rk2bz; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3306d93e562so5996840a91.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 04:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758713873; x=1759318673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mRYVyzheAwZ8osfGPBBGeLi3ZyBejqOSryW/UzRDTV0=;
+        b=nB1Rk2bzs2f+Gbpuzl24dZZltbI5F33Nxgde5I/FmZAgFPzlJLbOI7CPbjZJLWySKx
+         7nTtWJv69ytqpNYPRxFwz0d2hNPhMp7VCOcExELioCCAD0YBbag9Kp7+MKNkv4AygdhM
+         DyviLrnaGsG7+hb6sqI5uAf11+TL3EYLzZEx0yhRG5zJL+esc26j9+12lODmlRJRgqaT
+         IZtbmGIk6JQFJhIMJhvJK3noeSc/x3ReTQ2BgAH4XETIdNLkkC3b1bF8M0Da8BD0O4Gr
+         HD0DNRiV/iTsF+2RuhBCfCvWmgR4PHNVHWNxY8/w6mkQ9RHSRXmajPqbAObe9jj2J9f/
+         5sAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758713873; x=1759318673;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mRYVyzheAwZ8osfGPBBGeLi3ZyBejqOSryW/UzRDTV0=;
+        b=w9jCbtmmFAQVFhaJ8nt1xDcqCIQkayjB+qNSi0NYvt9yIbSZ6UtPgV+0f0CICgHFwQ
+         o9SX1aZQIAMv2jwzGTT+UIG2lj9ULF8DuMEEh7f+EZ9qXf0FVSIUfJ55gtK8M2fpNRbD
+         EI8cYR2UqyJ/DAIY2CwXmGc3ToroF3Q3VMX1dHGQ0NQD35J6Wa8y5tfMuPp/ivq9cyrQ
+         1mEFRhKKL94EdmIn4yBJtvoDXItlLd/aI9i4ydW73Tnz215HykQlOKI+QO6E2QR3ZZi5
+         tvAhMtxZ9XzMNPyd8JzioOT9ANbu1w6V20IwGrDvIkFHR05+FccbbuZ34macvF+89gw1
+         FeMg==
+X-Forwarded-Encrypted: i=1; AJvYcCURCr0sKEqXGFtkdz1vSyKTM+x8oUuHBw8IR/7kIWsyGbgJr3mOqV9DsDqBrcWbaaucwtdXFuPBTbmLUJM6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjcd9O3L9KQebxcRpoqji6PxRRPASE0PMpsBKT+88kga84L3GB
+	jmmoPj86AvRDcawRpVqPu+tdvcZ3rdhCDRtYqdxC3woGoP1nnzYWPCmV
+X-Gm-Gg: ASbGncteY52GIBlsi0BuEPW7CRVT5zCXfizCKh6vLiP3ZiVhhgXfHqzCrLnXQaohnAt
+	HcUx1fJ4BoH9icgQjaSKaO/KHY+MXg2h+ZYbLpVWHb6zVxnrQve6A8fHjaLIW9QCnco/Zh3/kSN
+	kYlv/O5H4f+WhGdMR2OWZzqLZXqD5ndF+EcNdpdQYH+HgPf7Hl/3sY3DCqCRGBL8JxBAJB4nw0z
+	bHiXWzoXBdj5BUxiEggCkfK3OuFiMyXFz/j50Cs/O6OgNaNcrt7bsuoJkVzNqLKjkwqM8XUwKRR
+	9QTGhErm+/O8t465waxTEiYf2ZxgLc8r+q4Nw7qjy0eAzMu0X+teJe836vSzr6Th+qlBEy4FRGR
+	6a+4kWdigCGE80352pLR4FcdBjrBONeCUTgdvNKNLQzvYhdr1yPRCzEC1ZOq0q3TcX9TLgo/zWk
+	QN7gs=
+X-Google-Smtp-Source: AGHT+IGmHCwTlAKe5f/2j+sj15VZ0PFrj6hvwkJrV/TiWCLkMkocBxV38Ih1VWWQnTvSw4cvbpsxbA==
+X-Received: by 2002:a17:90b:3d09:b0:32e:753d:76da with SMTP id 98e67ed59e1d1-332a95e9263mr7253575a91.20.1758713873531;
+        Wed, 24 Sep 2025 04:37:53 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:e599:c13c:81b7:3864])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-332a96fc922sm2462606a91.4.2025.09.24.04.37.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 04:37:52 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Subject: [PATCH v2] nsfs: handle inode number mismatches gracefully in file handles
+Date: Wed, 24 Sep 2025 17:07:45 +0530
+Message-ID: <20250924113745.1262174-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924091000.2987157-2-willy@infradead.org>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
 
-On Wed 24-09-25 10:09:56, Matthew Wilcox (Oracle) wrote:
-> This is more meaningful than checking PF_MEMALLOC.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Replace VFS_WARN_ON_ONCE() with graceful error handling when file
+handles contain inode numbers that don't match the actual namespace
+inode. This prevents userspace from triggering kernel warnings by
+providing malformed file handles to open_by_handle_at().
 
-This is IMO a good cleanup regardless of the other change. I always have to
-lookup details in reclaim code when I need to deal with PF_MEMALLOC :).
-Feel free to add:
+The issue occurs when userspace provides a file handle with valid
+namespace type and ID that successfully locates a namespace, but
+specifies an incorrect inode number. Previously, this would trigger
+VFS_WARN_ON_ONCE() when comparing the real inode number against the
+provided value.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Since file handle data is user-controllable, inode number mismatches
+should be treated as invalid input rather than kernel consistency
+errors. Handle this case by returning NULL to indicate the file
+handle is invalid, rather than warning about what is essentially
+user input validation.
 
-								Honza
+Changes in v2:
+- Handle all inode number mismatches, not just zero, as suggested by Jan Kara
+- Replace warning with graceful error handling for better architecture
 
-> ---
->  include/linux/sched/mm.h | 11 +++++++++++
->  mm/page_alloc.c          | 10 +++++-----
->  2 files changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index 2201da0afecc..a9825ea7c331 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -468,6 +468,17 @@ static inline void memalloc_pin_restore(unsigned int flags)
->  	memalloc_flags_restore(flags);
->  }
->  
-> +/**
-> + * in_reclaim - Is the current task doing reclaim?
-> + *
-> + * This is true if the current task is kswapd or if we've entered
-> + * direct reclaim.
-> + */
-> +static inline bool in_reclaim(void)
-> +{
-> +	return current->flags & PF_MEMALLOC;
-> +}
-> +
->  #ifdef CONFIG_MEMCG
->  DECLARE_PER_CPU(struct mem_cgroup *, int_active_memcg);
->  /**
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d1d037f97c5f..d27265df56b5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4220,7 +4220,7 @@ static bool __need_reclaim(gfp_t gfp_mask)
->  		return false;
->  
->  	/* this guy won't enter reclaim */
-> -	if (current->flags & PF_MEMALLOC)
-> +	if (in_reclaim())
->  		return false;
->  
->  	if (gfp_mask & __GFP_NOLOCKDEP)
-> @@ -4455,10 +4455,10 @@ static inline int __gfp_pfmemalloc_flags(gfp_t gfp_mask)
->  		return 0;
->  	if (gfp_mask & __GFP_MEMALLOC)
->  		return ALLOC_NO_WATERMARKS;
-> -	if (in_serving_softirq() && (current->flags & PF_MEMALLOC))
-> +	if (in_serving_softirq() && in_reclaim())
->  		return ALLOC_NO_WATERMARKS;
->  	if (!in_interrupt()) {
-> -		if (current->flags & PF_MEMALLOC)
-> +		if (in_reclaim())
->  			return ALLOC_NO_WATERMARKS;
->  		else if (oom_reserves_allowed(current))
->  			return ALLOC_OOM;
-> @@ -4627,7 +4627,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  		 * because we cannot reclaim anything and only can loop waiting
->  		 * for somebody to do a work for us.
->  		 */
-> -		WARN_ON_ONCE(current->flags & PF_MEMALLOC);
-> +		WARN_ON_ONCE(in_reclaim());
->  	}
->  
->  restart:
-> @@ -4774,7 +4774,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  		goto nopage;
->  
->  	/* Avoid recursion of direct reclaim */
-> -	if (current->flags & PF_MEMALLOC)
-> +	if (in_reclaim())
->  		goto nopage;
->  
->  	/* Try direct reclaim and then allocating */
-> -- 
-> 2.47.2
-> 
+Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/nsfs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 32cb8c835a2b..002d424d9fa6 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -490,8 +490,9 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
+ 
+ 		VFS_WARN_ON_ONCE(ns->ns_id != fid->ns_id);
+ 		VFS_WARN_ON_ONCE(ns->ops->type != fid->ns_type);
+-		VFS_WARN_ON_ONCE(ns->inum != fid->ns_inum);
+-
++		/* Someone is playing games and passing invalid file handles? */
++		if (ns->inum != fid->ns_inum)
++			return NULL;
+ 		if (!refcount_inc_not_zero(&ns->count))
+ 			return NULL;
+ 	}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
