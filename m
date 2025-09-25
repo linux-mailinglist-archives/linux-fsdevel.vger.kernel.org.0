@@ -1,66 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-62802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E4ABA11EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 21:09:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F4FBA124A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 21:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5792A7BE0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 19:09:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15A304E2D0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 19:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B6631AF1F;
-	Thu, 25 Sep 2025 19:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CA313635E;
+	Thu, 25 Sep 2025 19:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="As6QhTNP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ck+3DGWu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1002D23A9B3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 19:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2022367D2;
+	Thu, 25 Sep 2025 19:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758827389; cv=none; b=e2NXPp5+xpNpO7zZhnp4TWas3twsZq7SevwtIaZy2QCU7Mh0VVJL9zwMjSTnt/0xm4Rs4Po0pvSsc435Ih9OdJzPLpqIRhdcGgc8DCtC8KeN34RAVO38lwdAeSym8l8VyaSL9EmUTyMV647iXezVpoyWVNDUBn+3Z7pNYfAIz2M=
+	t=1758827853; cv=none; b=FwOBtri4CSfa7CrAoBCKavDXucC0d0OFbngOYDsYagSKyZrr4fejC3LviXH1X0b1BgK6DodW2GdkE1AldGvxgV9zOU5ZGxjNwkuk4VxE010aZaF3BQbaX1IpEcQuiPqvFzqpzYB7OFkZbanIvqNkTaVx7nwEiKqeitaQYy7DfOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758827389; c=relaxed/simple;
-	bh=KtumJgUnYRvu8n3cfnuLbT8a6QzaxrLVr3bf66ymrwI=;
+	s=arc-20240116; t=1758827853; c=relaxed/simple;
+	bh=qYmTRlf2w+gXgULOx0tRCwzsF7coFT9V078i5CXXgpA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C3W6my7DMDp52WyBfI6ELHQPXRCdgs2HBRzx66WFf0VBvZWYrftLDFOnsncdwesZBIJS6auWL15jfyQAB9/xL6p5xNrcegxDjMl9MavOEq28lpGv6pKiaNfC1dmK/fsWvXcPmGwZsUHsC9pnQfNxTea1/FyXAwc5lEUk6fSDIs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=As6QhTNP; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wzFQN6J3dgr6UNXYiPbBN37Tlk6eroTAdPERoAaZ/Xc=; b=As6QhTNPduRONfAxPG5NruavyQ
-	ggGpM4WzILjC9buBXL0WHUyiyDimLn+nyTd1ZG6sPUq/YWKQ9Qn+y/N5LTX5xWyekwpB2n73M+yuq
-	nAMGQ5hTWKYOlyxZCa/Z+QJeXxY1UgAOKyjpPA1NKWtGgNjFZFItrQpkcdYzvJFCwQybMk89p8Mli
-	3jeyQNqgXu9wi55VwALYZxCbT7prmCa14I/LmeYZ7lOuDZkN1ZX+JXH/JM4LLch0+vYt2QBAqLD18
-	ZmYCJDdeOLbcBH1Zg9pbMiUHAC2NvRV8CTfy97ZQZCRky+3G5RMMrAUEIiSG50cruLXqj3jK0Hp32
-	KjuandZg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1rLc-0000000A35t-06wZ;
-	Thu, 25 Sep 2025 19:09:44 +0000
-Date: Thu, 25 Sep 2025 20:09:44 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	John Johansen <john@apparmor.net>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] kernel/acct.c: saner struct file treatment
-Message-ID: <20250925190944.GA39973@ZenIV>
-References: <20250906090738.GA31600@ZenIV>
- <20250906091339.GB31600@ZenIV>
- <4892af80-8e0b-4ee5-98ac-1cce7e252b6a@sirena.org.uk>
- <klzgui6d2jo2tng5py776uku2xnwzcwi4jt5qf5iulszdtoqxo@q6o2zmvvxcuz>
- <20250925185630.GZ39973@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IBNR35142ybor7gkHPQFyd+N4g1hONJrWpX4959l4uE2oQaKHlzjKEBtllg73awAnc+7iLIlJbRqnaLfbMatXe8trwJzGPNGCZ82hjSkiASaQyy45XcHmTFjiuIx6kVTK2YPyDpGdhrd51M873k+SMudXfDqJnZUriSUUuJ4gN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ck+3DGWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD7E8C4CEF0;
+	Thu, 25 Sep 2025 19:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758827852;
+	bh=qYmTRlf2w+gXgULOx0tRCwzsF7coFT9V078i5CXXgpA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ck+3DGWu/o6kz0M3FW3fduAkwUs1EZLytBadi6UqqQuFbVQ/6xUOLPulIst2Ow5z6
+	 z1Aj9vM3ewN0VFDXCsPHPaJA28UGH1gXoFOiCjI98md1pmuxzUfPTwgdDT65huZPI8
+	 CXT9BEmbqDzVsVnUvrzIqKBpP0BsCMhAJ+U39cezfbJ3PlagxkXqQje+P9Vu35+zfA
+	 KXc5zAlng8R6Wb61bcEp9vILFmv8sFEZsHU96WwXQIJxQTu3yQwXHkcED3DavHNOpA
+	 uWPymHlMCSIL0jsQYHZW8Ahx5FdTB3VuDXqyOylZjduZXxyMGFDnlsL114AHmyPK7k
+	 VTnVPqVadFmcg==
+Date: Thu, 25 Sep 2025 12:17:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>, bernd@bsbernd.com,
+	linux-xfs@vger.kernel.org, John@groves.net,
+	linux-fsdevel@vger.kernel.org, neal@gompa.dev
+Subject: Re: [PATCH 4/8] fuse: signal that a fuse filesystem should exhibit
+ local fs behaviors
+Message-ID: <20250925191732.GY8096@frogsfrogsfrogs>
+References: <175798149979.381990.14913079500562122255.stgit@frogsfrogsfrogs>
+ <175798150113.381990.4002893785000461185.stgit@frogsfrogsfrogs>
+ <CAJnrk1YWtEJ2O90Z0+YH346c3FigVJz4e=H6qwRYv7xLdVg1PA@mail.gmail.com>
+ <20250918165227.GX8117@frogsfrogsfrogs>
+ <CAJfpegt6YzTSKBWSO8Va6bvf2-BA_9+Yo8g-X=fncZfZEbBZWw@mail.gmail.com>
+ <20250919175011.GG8117@frogsfrogsfrogs>
+ <CAJfpegu3+rDDxEtre-5cFc2n=eQOYbO8sTi1+7UyTYhhyJJ4Zw@mail.gmail.com>
+ <20250923205143.GH1587915@frogsfrogsfrogs>
+ <CAJfpeguq-kyMVoc2-zxHhwbxAB0g84CbOKM-MX3geukp3YeYuQ@mail.gmail.com>
+ <20250924173136.GN8117@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,68 +68,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925185630.GZ39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250924173136.GN8117@frogsfrogsfrogs>
 
-On Thu, Sep 25, 2025 at 07:56:30PM +0100, Al Viro wrote:
-> On Thu, Sep 25, 2025 at 02:28:16PM +0200, Jan Kara wrote:
+On Wed, Sep 24, 2025 at 10:31:36AM -0700, Darrick J. Wong wrote:
+> On Wed, Sep 24, 2025 at 03:55:48PM +0200, Miklos Szeredi wrote:
+> > On Tue, 23 Sept 2025 at 22:51, Darrick J. Wong <djwong@kernel.org> wrote:
+> > 
+> > > Oh, ok.  I can do that.  Just to be clear about what I need to do for
+> > > v6:
+> > >
+> > > * fuse_conn::is_local goes away
+> > > * FUSE_I_* gains a new FUSE_I_EXCLUSIVE flag
+> > > * "local" operations check for FUSE_I_EXCLUSIVE instead of local_fs
+> > > * fuseblk filesystems always set FUSE_I_EXCLUSIVE
+> > 
+> > Not sure if we want to touch fuseblk, as that carries a risk of regressions.
 > 
-> > This is mostly harmless (just the returned error code changed) but it is a
-> > side effect of one thing I'd like to discuss: The original code uses
-> > file_open_name(O_WRONLY|O_APPEND|O_LARGEFILE) to open the file to write
-> > data to. The new code uses dentry_open() for that. Now one important
-> > difference between these two is that dentry_open() doesn't end up calling
-> > may_open() on the path and hence now acct_on() fails to check file
-> > permissions which looks like a bug? Am I missing something Al?
+> Hrm.  As it stands today, setting FUSE_I_EXCLUSIVE in fuseblk mode
+> solves various mode/acl failures in fstests.
 > 
-> You are not; a bug it is.  FWIW, I suspect that the right approach would
-> be to keep file_open_name(), do all checks on result of that, then use
-> 	mnt = mnt_clone_internal(&original_file->f_path);
-> and from that point on same as now - opening the file to be used with
-> dentry_open(), etc.  Original file would get dropped in the end of acct_on().
-> I'll put together something along those lines and post it.
+> On the other hand, mounting with fuseblk requires fsname to point to a
+> block device that the mount()ing process can open, and if you're working
+> with a local filesystem on a block device, why wouldn't you use iomap
+> mode?
+> 
+> Add to that Ted's reluctance to merge the fuseblk support patches into
+> fuse2fs, and perhaps I should take that as a sign to abandon fuseblk
+> work entirely.  It'd get rid of an entire test configuration, since I'd
+> only have to check fuse4fs-iomap on a bdev; and classic fuse4fs on a
+> regular file.  Even in that second case, fuse4fs could losetup to take
+> advantage of iomap mode.
+> 
+> Yeah ok I've persuaded myself to drop the fuseblk stuff entirely.  If
+> anyone /really/ wants me to keep it, holler in the next couple of hours.
 
-Something like this for incremental (completely untested at that point):
+Ted agrees with this, so I'm dropping fuseblk support for fuse[24]fs.
 
-diff --git a/kernel/acct.c b/kernel/acct.c
-index 30ae403ee322..61630110e29d 100644
---- a/kernel/acct.c
-+++ b/kernel/acct.c
-@@ -218,19 +218,21 @@ static int acct_on(const char __user *name)
- 	/* Difference from BSD - they don't do O_APPEND */
- 	const int open_flags = O_WRONLY|O_APPEND|O_LARGEFILE;
- 	struct pid_namespace *ns = task_active_pid_ns(current);
--	struct path path __free(path_put) = {};		// in that order
-+	struct filename *pathname __free(putname) = getname(name);
-+	struct file *original_file __free(fput) = NULL;	// in that order
- 	struct path internal __free(path_put) = {};	// in that order
- 	struct file *file __free(fput_sync) = NULL;	// in that order
- 	struct bsd_acct_struct *acct;
- 	struct vfsmount *mnt;
- 	struct fs_pin *old;
--	int err;
- 
--	err = user_path_at(AT_FDCWD, name, LOOKUP_FOLLOW, &path);
--	if (err)
--		return err;
-+	if (IS_ERR(pathname))
-+		return PTR_ERR(pathname);
-+	original_file = file_open_name(pathname, open_flags, 0);
-+	if (IS_ERR(original_file))
-+		return PTR_ERR(original_file);
- 
--	mnt = mnt_clone_internal(&path);
-+	mnt = mnt_clone_internal(&original_file->f_path);
- 	if (IS_ERR(mnt))
- 		return PTR_ERR(mnt);
- 
-@@ -268,7 +270,7 @@ static int acct_on(const char __user *name)
- 	INIT_WORK(&acct->work, close_work);
- 	init_completion(&acct->done);
- 	mutex_lock_nested(&acct->lock, 1);	/* nobody has seen it yet */
--	pin_insert(&acct->pin, path.mnt);
-+	pin_insert(&acct->pin, original_file->f_path.mnt);
- 
- 	rcu_read_lock();
- 	old = xchg(&ns->bacct, &acct->pin);
+--D
+
+> > > * iomap filesystems (when they arrive) always set FUSE_I_EXCLUSIVE
+> > 
+> > Yes.
+> 
+> Ok, thanks for the quick responses! :)
+> 
+> --D
+> 
+> > Thanks,
+> > Miklos
+> 
 
