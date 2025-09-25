@@ -1,497 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-62717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E45B9EE03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:14:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A176B9EE15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166614A581E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 11:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88221BC0738
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 11:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B424C2F7AD9;
-	Thu, 25 Sep 2025 11:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD732F617E;
+	Thu, 25 Sep 2025 11:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sdm1rnC4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hR/tfPno";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fr2unMqP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hR/tfPno";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fr2unMqP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9352F658D;
-	Thu, 25 Sep 2025 11:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC18C226D04
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 11:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758798849; cv=none; b=t+2OduItFL/QBvew7qDRd5Uo6nqffvz4cgOts+1UzYPIXQIhZ8adlMdFxdEkAx2zN1rYYapnyZZalWwVXfOvJURVaoGPiUuS9JjnVtwVr0Egwnmh/DwOalIBCU58hr5cMF+seMjN87893x6p8joAJTHKYF/yHoHE4IxnZGf5ZoI=
+	t=1758798952; cv=none; b=DulczBSFUKu59E+w0xovnR6Dt8mZKd71E4ggA5pagPxdaD2q+eE06Gs5jHc0ipx1kLXahoDG5ckX90VgEDQM3HxpA8LacmXh271MNlxMR4uyxvK0Mz1QlDNl0qaHSGHSd2AkAgTefQTSwJNQtt1nsi+tfxm9qKQhHnCiO2miCc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758798849; c=relaxed/simple;
-	bh=HXdms738iii1gu+WP51RNhCSVlSguhPtVCo/7QA9JIM=;
+	s=arc-20240116; t=1758798952; c=relaxed/simple;
+	bh=4+83uNj7FLjIilIC1KgRlb9om6bxirO7EEyFX1Pwp8k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSRW7qha+HJHqYdkYFmS+CJLuo9JopI11RQ1Uekj2vyqH3YERl0kU94hL+pOcNJvQbwt1d20MxVb9qP7NglKm4FGY0mgRJrz+Ho3jJJaCqlOjH6lD/faM6WPIyzAf3uKGUf++Ab+LRYpKCSPLxt8lnTVukrTlPl6Jv7zffoKQbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sdm1rnC4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60312C4CEF5;
-	Thu, 25 Sep 2025 11:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758798848;
-	bh=HXdms738iii1gu+WP51RNhCSVlSguhPtVCo/7QA9JIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sdm1rnC4VyVwmfEU53wWi5C7GHBJyxvsXk8atikzA2/Z7AGku391WjHG4XOZG2/NR
-	 AgoS/Foa7sAqDoHyQMYl2gUPovftpwYqolIbfNINxu2wxah2gY6BMZUq0650VtIodY
-	 I0pu5iaZL5le/Mz4AMO0lFrXbh+VeAozjFrEcm/qY7leRPmLr8aa4T4Lw/6TIrddGN
-	 +stU7alqkTQHAUNt3qNfv4N4FD8gzN1+D35CuF3N2YsMOpI/sJtWSu9kNkhjaf/17i
-	 lmzvH7vWvyrCzfkJiaTa3EcIyXp7iYagsTORY1ZFAVPONtOtUMlbSN8EAPgsRC7KnR
-	 /aH1ToZsT+3oQ==
-Date: Thu, 25 Sep 2025 13:14:00 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 2/8] man/man2/fspick.2: document "new" mount API
-Message-ID: <alqttpsi7tu5jdhjcjygfs4qd2vmarhoemntj5thhqjithwdnw@zjjh3ey7dju3>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-2-028fb88023f2@cyphar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqYjFlr6B2fQwIA0ysrAImQ6OiFyw1Ouh8T3islyBLvma33EF0Ii2AKFUo+3TpU3GUwY4XvieHIjf/Hw3T6eJhbtVkRVpAH0E8UaWyFTIs11maMEfJyCvvaDYLx7xUpdsFzTLjdw5J7SRW+KYLsDY4D6vCaxS6fLhzpza6qsVxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hR/tfPno; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fr2unMqP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hR/tfPno; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fr2unMqP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B1E613F6F;
+	Thu, 25 Sep 2025 11:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758798948; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0xQSYS96X0CCzsC2Hn3fZEFseD4jJSukmCKDmDMAS8=;
+	b=hR/tfPno5srkyp1kecJxgvySH/8IMi+5Ntg8GcCantnyY7yDoeC8uv9y60mWiu9dWVlMzg
+	MxPy3NJvf3I8zR7JfAlg4a+8QPvDHhywmnCEoCtjxWNIngyVuuh4JTB8CAQvNEpryJKPsn
+	cdWXIP0vQ4RwepPAdLGdQsqh1E8LRpA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758798948;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0xQSYS96X0CCzsC2Hn3fZEFseD4jJSukmCKDmDMAS8=;
+	b=Fr2unMqPJjULsPWpU+mpBYI9HwPdWcC4l1ffc49bQxqol6H0cVTLEsxRRcV49jj4GqWI/6
+	5aoBs+r3cHxS0RCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758798948; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0xQSYS96X0CCzsC2Hn3fZEFseD4jJSukmCKDmDMAS8=;
+	b=hR/tfPno5srkyp1kecJxgvySH/8IMi+5Ntg8GcCantnyY7yDoeC8uv9y60mWiu9dWVlMzg
+	MxPy3NJvf3I8zR7JfAlg4a+8QPvDHhywmnCEoCtjxWNIngyVuuh4JTB8CAQvNEpryJKPsn
+	cdWXIP0vQ4RwepPAdLGdQsqh1E8LRpA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758798948;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0xQSYS96X0CCzsC2Hn3fZEFseD4jJSukmCKDmDMAS8=;
+	b=Fr2unMqPJjULsPWpU+mpBYI9HwPdWcC4l1ffc49bQxqol6H0cVTLEsxRRcV49jj4GqWI/6
+	5aoBs+r3cHxS0RCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6A2213869;
+	Thu, 25 Sep 2025 11:15:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id E0OpKGQk1WjWfwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Sep 2025 11:15:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4F862A0AA0; Thu, 25 Sep 2025 13:15:48 +0200 (CEST)
+Date: Thu, 25 Sep 2025 13:15:48 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Dave Chinner <david@fromorbit.com>
+Subject: Re: [RFC PATCH 0/2] Defer evicting inodes to a workqueue
+Message-ID: <4klhsgin7x366lye57ne6cebydannae2z7xhhgou2y7orhgeeq@ovmq46yxbyhh>
+References: <20250924091000.2987157-1-willy@infradead.org>
+ <wuel5bsbfa7t5s6g6hgifgvkhuwpwiapgepq3no3gjftodiojc@savimjoqup56>
+ <CAJnrk1YjoB4A_iS-VS1T059yNuVjm2hAAJJfnMAmXgLZwQyf=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nwrtrv3k3kjchnt2"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250925-new-mount-api-v5-2-028fb88023f2@cyphar.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1YjoB4A_iS-VS1T059yNuVjm2hAAJJfnMAmXgLZwQyf=A@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
+On Wed 24-09-25 10:45:35, Joanne Koong wrote:
+> On Wed, Sep 24, 2025 at 4:35 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 24-09-25 10:09:55, Matthew Wilcox (Oracle) wrote:
+> > > +++ b/fs/inode.c
+> > > @@ -883,6 +883,10 @@ void evict_inodes(struct super_block *sb)
+> >
+> > Why evict_inodes? I think you want prune_icache_sb() -> inode_lru_isolate()?
+> 
+> I think prune_dcache_sb() can lead to inode eviction in reclaim as
+> well (eg prune_dcache_sb() -> shrink_dentry_list() -> shrink_kill() ->
+> __dentry_kill() -> dentry_unlink_inode() -> evict()), so maybe this
+> should also be done there too.
 
---nwrtrv3k3kjchnt2
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 2/8] man/man2/fspick.2: document "new" mount API
-Message-ID: <alqttpsi7tu5jdhjcjygfs4qd2vmarhoemntj5thhqjithwdnw@zjjh3ey7dju3>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-2-028fb88023f2@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250925-new-mount-api-v5-2-028fb88023f2@cyphar.com>
+Well, this will end up removing the inode only in some corner cases (like
+inode being deleted or when I_DONTCACHE flags is set. But in the most
+common case iput_final() will just insert the inode into the LRU list.
+But you're right that if we want kind of guarantee that reclaim won't block
+on inode eviction, then this path should be handled as well.
 
-Hi Aleksa,
-
-On Thu, Sep 25, 2025 at 01:31:24AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
->=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-
-Patch applied (with minor amends; see below).  Thanks!
-
-> ---
->  man/man2/fspick.2 | 343 ++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 343 insertions(+)
->=20
-> diff --git a/man/man2/fspick.2 b/man/man2/fspick.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..800aed81d38384be4563f2558=
-e3cef846d7e7cee
-> --- /dev/null
-> +++ b/man/man2/fspick.2
-> @@ -0,0 +1,343 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH fspick 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +fspick \- select filesystem for reconfiguration
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.BR "#include <fcntl.h>" "          /* Definition of " AT_* " constants =
-*/"
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int fspick(int " dirfd ", const char *" path ", unsigned int " flag=
-s );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR fspick ()
-> +system call is part of
-> +the suite of file-descriptor-based mount facilities in Linux.
-> +.P
-> +.BR fspick ()
-> +creates a new filesystem configuration context
-> +for the extant filesystem instance
-> +associated with the path described by
-> +.I dirfd
-> +and
-> +.IR path ,
-> +places it into reconfiguration mode
-> +(similar to
-> +.BR mount (8)
-> +with the
-> +.I \-o\~remount
-
-I've changed this to bold.  Command options are literal, and thus we
-document them with bold (see for example ldd(1)).
-
-> +option).
-> +A new file descriptor
-> +associated with the filesystem configuration context
-> +is then returned.
-> +The calling process must have the
-> +.B \%CAP_SYS_ADMIN
-> +capability in order to create a new filesystem configuration context.
-> +.P
-> +The resultant file descriptor can be used with
-> +.BR fsconfig (2)
-> +to specify the desired set of changes to
-> +filesystem parameters of the filesystem instance.
-> +Once the desired set of changes have been configured,
-> +the changes can be effectuated by calling
-> +.BR fsconfig (2)
-> +with the
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +command.
-> +In contrast to
-> +the behaviour of
-> +.B MS_REMOUNT
-> +with
-> +.BR mount (2),
-> +.BR fspick ()
-> +instantiates the filesystem configuration context
-> +with a copy of
-> +the extant filesystem's filesystem parameters;
-> +thus,
-> +subsequent
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +operations
-> +will only update filesystem parameters
-> +explicitly modified with
-> +.BR fsconfig (2).
-> +.P
-> +As with "*at()" system calls,
-> +.BR fspick ()
-> +uses the
-> +.I dirfd
-> +argument in conjunction with the
-> +.I path
-> +argument to determine the path to operate on, as follows:
-> +.IP \[bu] 3
-> +If the pathname given in
-> +.I path
-> +is absolute, then
-> +.I dirfd
-> +is ignored.
-> +.IP \[bu]
-> +If the pathname given in
-> +.I path
-> +is relative and
-> +.I dirfd
-> +is the special value
-> +.BR \%AT_FDCWD ,
-> +then
-> +.I path
-> +is interpreted relative to
-> +the current working directory
-> +of the calling process (like
-> +.BR open (2)).
-> +.IP \[bu]
-> +If the pathname given in
-> +.I path
-> +is relative,
-> +then it is interpreted relative to
-> +the directory referred to by the file descriptor
-> +.I dirfd
-> +(rather than relative to
-> +the current working directory
-> +of the calling process,
-> +as is done by
-> +.BR open (2)
-> +for a relative pathname).
-> +In this case,
-> +.I dirfd
-> +must be a directory
-> +that was opened for reading
-> +.RB ( O_RDONLY )
-> +or using the
-> +.B O_PATH
-> +flag.
-> +.IP \[bu]
-> +If
-> +.I path
-> +is an empty string,
-> +and
-> +.I flags
-> +contains
-> +.BR \%FSPICK_EMPTY_PATH ,
-> +then the file descriptor
-> +.I dirfd
-> +is operated on directly.
-> +In this case,
-> +.I dirfd
-> +may refer to any type of file,
-> +not just a directory.
-> +.P
-> +See
-> +.BR openat (2)
-> +for an explanation of why the
-> +.I dirfd
-> +argument is useful.
-> +.P
-> +.I flags
-> +can be used to control aspects of how
-> +.I path
-> +is resolved and
-> +properties of the returned file descriptor.
-> +A value for
-> +.I flags
-> +is constructed by bitwise ORing
-> +zero or more of the following constants:
-> +.RS
-> +.TP
-> +.B FSPICK_CLOEXEC
-> +Set the close-on-exec
-> +.RB ( FD_CLOEXEC )
-> +flag on the new file descriptor.
-> +See the description of the
-> +.B O_CLOEXEC
-> +flag in
-> +.BR open (2)
-> +for reasons why this may be useful.
-> +.TP
-> +.B FSPICK_EMPTY_PATH
-> +If
-> +.I path
-> +is an empty string,
-> +operate on the file referred to by
-> +.I dirfd
-> +(which may have been obtained from
-> +.BR open (2),
-> +.BR fsmount (2),
-> +or
-> +.BR open_tree (2)).
-> +In this case,
-> +.I dirfd
-> +may refer to any type of file,
-> +not just a directory.
-> +If
-> +.I dirfd
-> +is
-> +.BR \%AT_FDCWD ,
-> +.BR fspick ()
-> +will operate on the current working directory
-> +of the calling process.
-> +.TP
-> +.B FSPICK_SYMLINK_NOFOLLOW
-> +Do not follow symbolic links
-> +in the terminal component of
-> +.IR path .
-> +If
-> +.I path
-> +references a symbolic link,
-> +the returned filesystem context will reference
-> +the filesystem that the symbolic link itself resides on.
-> +.TP
-> +.B FSPICK_NO_AUTOMOUNT
-> +Do not automount the terminal ("basename") component of
-> +.I path
-> +if it is a directory that is an automount point.
-> +This allows you to reconfigure an automount point,
-> +rather than the location that would be mounted.
-> +This flag has no effect
-> +if the automount point has already been mounted over.
-> +.RE
-> +.P
-> +As with filesystem contexts created with
-> +.BR fsopen (2),
-> +the file descriptor returned by
-> +.BR fspick ()
-> +may be queried for message strings at any time by calling
-> +.BR read (2)
-> +on the file descriptor.
-> +(See the "Message retrieval interface" subsection in
-> +.BR fsopen (2)
-> +for more details on the message format.)
-> +.SH RETURN VALUE
-> +On success, a new file descriptor is returned.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +.TP
-> +.B EACCES
-> +Search permission is denied
-> +for one of the directories
-> +in the path prefix of
-> +.IR path .
-> +(See also
-> +.BR path_resolution (7).)
-> +.TP
-> +.B EBADF
-> +.I path
-> +is relative but
-> +.I dirfd
-> +is neither
-> +.B \%AT_FDCWD
-> +nor a valid file descriptor.
-> +.TP
-> +.B EFAULT
-> +.I path
-> +is NULL
-> +or a pointer to a location
-> +outside the calling process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +Invalid flag specified in
-> +.IR flags .
-> +.TP
-> +.B ELOOP
-> +Too many symbolic links encountered when resolving
-> +.IR path .
-> +.TP
-> +.B EMFILE
-> +The calling process has too many open files to create more.
-> +.TP
-> +.B ENAMETOOLONG
-> +.I path
-> +is longer than
-> +.BR PATH_MAX .
-> +.TP
-> +.B ENFILE
-> +The system has too many open files to create more.
-> +.TP
-> +.B ENOENT
-> +A component of
-> +.I path
-> +does not exist,
-> +or is a dangling symbolic link.
-> +.TP
-> +.B ENOENT
-> +.I path
-> +is an empty string, but
-> +.B \%FSPICK_EMPTY_PATH
-> +is not specified in
-> +.IR flags .
-> +.TP
-> +.B ENOTDIR
-> +A component of the path prefix of
-> +.I path
-> +is not a directory;
-> +or
-> +.I path
-> +is relative and
-> +.I dirfd
-> +is a file descriptor referring to a file other than a directory.
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B EPERM
-> +The calling process does not have the required
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit cf3cba4a429be43e5527a3f78859b1bfd9ebc5fb
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH EXAMPLES
-> +The following example sets the read-only flag
-> +on the filesystem instance referenced by
-> +the mount object attached at
-> +.IR /tmp .
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd =3D fspick(AT_FDCWD, "/tmp", FSPICK_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-> +.EE
-> +.in
-> +.P
-> +The above procedure is roughly equivalent to
-> +the following mount operation using
-> +.BR mount (2):
-> +.P
-> +.in +4n
-> +.EX
-> +mount(NULL, "/tmp", NULL, MS_REMOUNT | MS_RDONLY, NULL);
-> +.EE
-> +.in
-> +.P
-> +With the notable caveat that
-> +in this example,
-> +.BR mount (2)
-> +will clear all other filesystem parameters
-> +(such as
-> +.B MS_DIRSYNC
-> +or
-> +.BR MS_SYNCHRONOUS );
-> +.BR fsconfig (2)
-> +will only modify the
-> +.I ro
-
-I've also changed this to bold, as it's something literal.
-
-
-Cheers,
-Alex
-
-> +parameter.
-> +.SH SEE ALSO
-> +.BR fsconfig (2),
-> +.BR fsmount (2),
-> +.BR fsopen (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR move_mount (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---nwrtrv3k3kjchnt2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjVI/IACgkQ64mZXMKQ
-wqkghBAAhWHBW0ud8ynAc0PwJ7hS/6WG7QwOvnJaVV5MZCyW1ZPHDwlGrk1rbcq9
-e7b7dSLbLZM5ZLRyhrdElMeAC0Yc7DOASAUEeR2ZJS2Zo4D6gSUTh6vtmEibLSgR
-3bmcanlH1QNjMu+7EfRxEPSv+/iJf0/cOURb+/fNCVhohEgSieW3dEwMQTCIQwek
-0p790Vn5TpodtU2oXBKl04RV6HoXlNhDe+Xp00RgAOHJFIswWaH1E56l5ml/1dXa
-SUkOPqxmF0UDJpSLBSEhUVsPAFhhg1Euz2ART4HPAWgY/cNcUzp/2HvslhCc/H9f
-aVWrESFro5LnuawLEEy36xr6/vt328zXTP70C7t91TO45/mJvShO1rekIZ0tPIRl
-Gh1Dyim8ilQDByCZK0qCLk0OiQDj+PL97QFOriDrjjSbUUGqIgymOB9HidJV6/mZ
-YNhPu2CoJeAbS2ly+ZFLgyQ8vLqy1eDXGDehsJxYpUU5gsWGpyq9uqx3hptaSr6e
-cqyAYBoGKqSFq0r3IMkeECeJqmrf6j5VRuQFEH+2mQSneiggy6ctXDPYsfwaI0mt
-6zUzRDFIMbj3t/5g5bYnryOLFh2FvdmWYp9uJ2fAgvGQBrb+XNJ8jizujZ6+H3C3
-G9TLeLo1MgV67MzoXp3NKEu3V7RqSf8a9/9ujYBN1X9bAqNBSEI=
-=hyaY
------END PGP SIGNATURE-----
-
---nwrtrv3k3kjchnt2--
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
