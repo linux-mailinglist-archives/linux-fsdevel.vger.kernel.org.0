@@ -1,458 +1,539 @@
-Return-Path: <linux-fsdevel+bounces-62711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D4BB9E8F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 12:07:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4734B9E962
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 12:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1347D4E325D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 10:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8502B16B487
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 10:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A728C2EA485;
-	Thu, 25 Sep 2025 10:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C0B2EA49C;
+	Thu, 25 Sep 2025 10:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co/lHs+q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlFkghCc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDEA2882B6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 10:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A9928850B;
+	Thu, 25 Sep 2025 10:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758794851; cv=none; b=S0IK1qno1aEMZ6DtXJ58qcy7ClUYoRAA4Zxlm0qCRcRW9Y4Nz1JHYNw06KzTpSH6x3iZo+OrdRrhfqe70y/hve74qHryZSrlQG494YlH+bgNaFW5qiTwm3f0uUc6HXaA/F38K8PrviLH4AG91NOHy08lG62pWycBFE1tE35JQ4Y=
+	t=1758795214; cv=none; b=l4FnO0f9sdBFJpfwqbgcqpV3JoK3pVr1B/Z8y1rs5Dq7I7Z1Q2pw0M/ku9QpzPx7ABtVYP4adBr+JOI0apJ1xmIcOOHrp0V6EXbRgx896z3BPEEPhCxrqXFvMbLn2kgMrIxdGwwwPsiRu9M+vcpzxvJw5Dz8e5YTJ/fx/+U3cEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758794851; c=relaxed/simple;
-	bh=rFy/sAVpE33mTE9Ro6oXr14+P+7ZyrAS5jnU7fHzki4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WWGZWNIjqGJQrIHtgRoS9wXtwKH7qjjJycJfXv36GtDKOF2MEtzxtXQvRIphmrS77uov33urVspmow7dZp2huU0k9e6TUeicTcF5YgtV14vuUZjAzVnAfsDWmjBNk/vrvR/SPMdxO8uZlDJxmmnVKLTgtcQgVA4yP7Kp5xeXLkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co/lHs+q; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b07e3a77b72so317175666b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 03:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758794847; x=1759399647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PUW/6o2CHQs8nlFUZsHr+ogKyFCjqfHWD4lpshBRaKQ=;
-        b=co/lHs+q9tCk6n63T7oEqDY5tUvNB/rzjvdylC087NLiKPwT1Zxgh6gEciLY1Shz43
-         AJDJ8e1D/iZGh4DUX0+YpqWrXJvBxs1iEGAksjdLwPwIDm9Q+Tzz63GMHG03c52OnQSF
-         gYmNOGv8OaJdnMg4U9ADZLxGBV+usv/qIPeCSMfyJcKbMZk0A+fo4zPToTmPQLaGv4ii
-         SSMvWUKHf9DZo/F0rRsByFoLyZR9FEhRbAG5+w8CAR1qmyo+1R2xtWrTMi1Haq8T+oWR
-         M8t5ORjCixyofiAj3UrdtIWdz9pU3bxqpzojxcnru9wYR7TxE4DvyINcLo6ZEbljJ/Tb
-         1ArA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758794847; x=1759399647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUW/6o2CHQs8nlFUZsHr+ogKyFCjqfHWD4lpshBRaKQ=;
-        b=pFUCW33a1p3LiN4oVtkMuMQHwNtti9jAoJAiAXs++HHKCEkk2HRtUwrCG7NnyDLMsF
-         lSNp2HvuJQocGLKt23xKyj4OZRcHtayfdyJIlDnWt09TN78xVWeygB1ktee9HMO6STuZ
-         1J+51AKIWeYAIagGXpm/6oVBYL4Qww87/CvjW86zEef88Ka47vKVFoiUSZMPcFEajoyL
-         Mx3HzlRsl1sWTC5Yq9DKBnCx0Ab5sOYCnSRQq4u5i49XVLy/uFQ6TWKJyqYyL9n+WxAy
-         3UJAV7gw22DClVUVb0WsoxcaNXjSLqfCExNTlIxf3SCTO26YEbmPCy7AU3TZXJI4v9/A
-         0juQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAVVfUNLf/d/rhOlpUk/4gLeC2wGDQY4kY/KX7Ii8DP2XyrzxOfAlLto5v2NWmQw8EeNOnOCKdjo07V5B6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWcGzjK+/rD8nARi3Yz+ge8dPQVPt91HGhd4RcEFH+HjzFhXs1
-	zYSU9eeLaXNDgi4STA3YaKuFVZPZcBjb7GD7mRu0ClLGBMwjqJe5w+q6lYYmYKJHAhXyMS9EnsF
-	SnWp3Bph1A5obckIgHlTthNDidBNElrM=
-X-Gm-Gg: ASbGncummcb9qQNvzY1LA62IdYfgkzwjPbSYpGTSvi/7+cIdOU2W8fLhDfIcJ461zqq
-	4eSC1qh34dljb3YG/rr0t91zbamXNR+GRwmqHWjP+VtzTqWK0KstchnCQNxldMNJ9veyot1YYyX
-	aHUO7OdkxDNra9VZSrrP5ctmSRW5NBz+w3XG3bfJAnL6cQpLC+POFGf3sFCdRcu8AZTjFZXP0EB
-	9zV+2OjynxRycUeQUEtLrFIARFDFa7W9fd9pw==
-X-Google-Smtp-Source: AGHT+IHnjX1pG8TAryPQlkrDhzXnesEsM78CxhQPCj7SV7L5RRG+rd032XQ0sOmqzmFns8RoyZIP2E4vF4R8O9SgsVc=
-X-Received: by 2002:a17:907:720b:b0:b2d:38eb:d12f with SMTP id
- a640c23a62f3a-b354cc2c49fmr191751466b.19.1758794846407; Thu, 25 Sep 2025
- 03:07:26 -0700 (PDT)
+	s=arc-20240116; t=1758795214; c=relaxed/simple;
+	bh=FmmuoEdPE7PUu8EUIKJubbTNL4XAhktWLkvzsHWpSvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdwmcvSGJMg8xtOdizJ8+gMSzz0bcSsNbnrboB1cW92R4tMp91J4K+OE8tAXODq0aUPO48WaYCLxRAqD89Wo4FRpefSWHHpaT0taLfeG9IVFx70HEHuxWspfS83ZaKSZfeEHPgyRIpGTuD7AZ++xc9Sog1sjqd8sYBmG1CfwdRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlFkghCc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CFE8C4CEF0;
+	Thu, 25 Sep 2025 10:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758795212;
+	bh=FmmuoEdPE7PUu8EUIKJubbTNL4XAhktWLkvzsHWpSvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OlFkghCc6+fVtW7KxixRsN/MLQmVsuJAzZicn5vI4qD0tURLypZjo2Wr8Cy3r0q5H
+	 U0Y1Nz6F5OH3mkb1baXv3H9SjkmwMVcuSHvSNUCEuWYKngygnjZVPwSX5ss2g2ZZNT
+	 p+8SpZYJSe8i9QRTfDowFmNsDHEyIZ77WnMfLeE+0WuIpExNxOG+yPmcn24GEI78/x
+	 uYMUTjPFSWhQR1c9dVu6SCHEw1x1BBgjweVJ6pOKRIWjtJ/60ooeLfgW06Gt4eMQyp
+	 fdaSrPjU8B/RJZOfOUdP3DWoITxotHmCIiYuRpRwkiZc/AOmybqe1QHqNxZ3cqL5c/
+	 c0EtNVghyFrbA==
+Date: Thu, 25 Sep 2025 12:13:25 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 1/8] man/man2/fsopen.2: document "new" mount API
+Message-ID: <5u62uts47ui54bcw6pmjyuop6tazpxjdrezw46t5ygcfzbnonb@yipwnslfinwh>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923104710.2973493-1-mjguzik@gmail.com> <20250923104710.2973493-4-mjguzik@gmail.com>
-In-Reply-To: <20250923104710.2973493-4-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 25 Sep 2025 12:07:13 +0200
-X-Gm-Features: AS18NWBbppLQvOh16nxVRueCI4eRmKFPlkIfNmlj21eycccVTLBfnR3npYDOJvk
-Message-ID: <CAGudoHGuFSfSCZcoky+5wX1QfVpg-tj42c2SJijfT7ke_6tR7Q@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] Manual conversion of ->i_state uses
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="um5fosvnozlmkdra"
+Content-Disposition: inline
+In-Reply-To: <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
+
+
+--um5fosvnozlmkdra
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 1/8] man/man2/fsopen.2: document "new" mount API
+Message-ID: <5u62uts47ui54bcw6pmjyuop6tazpxjdrezw46t5ygcfzbnonb@yipwnslfinwh>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
 
-allmodconfig build was done on this patchset but somehow one failure was mi=
-ssed:
+Hi Aleksa,
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index e9538e91f848..71ec043f7569 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -427,7 +427,7 @@ static void afs_fetch_status_success(struct
-afs_operation *op)
-        struct afs_vnode *vnode =3D vp->vnode;
-        int ret;
+On Thu, Sep 25, 2025 at 01:31:23AM +1000, Aleksa Sarai wrote:
+> This is loosely based on the original documentation written by David
+> Howells and later maintained by Christian Brauner, but has been
+> rewritten to be more from a user perspective (as well as fixing a few
+> critical mistakes).
+>=20
+> Co-authored-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-authored-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
--       if (vnode->netfs.inode.i_state & I_NEW) {
-+       if (inode_state_read(&vnode->netfs.inode) & I_NEW) {
-                ret =3D afs_inode_init_from_status(op, vp, vnode);
-                afs_op_set_error(op, ret);
-                if (ret =3D=3D 0)
+Patch applied.  Thanks!
 
 
-I reran the thing with this bit and now it's all clean. I think this
-can be folded into the manual fixup patch (the one i'm responding to)
-instead of resending the patchset
+Have a lovely day!
+Alex
 
-On Tue, Sep 23, 2025 at 12:47=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
->
-> Takes care of spots not converted by coccinelle.
->
-> Nothing to look at with one exception: smp_store_release and
-> smp_load_acquire pair replaced with a manual store/load +
-> smb_wmb()/smp_rmb(), see I_WB_SWITCH.
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > ---
->  Documentation/filesystems/porting.rst | 2 +-
->  fs/bcachefs/fs.c                      | 8 ++++----
->  fs/btrfs/inode.c                      | 8 ++++----
->  fs/dcache.c                           | 2 +-
->  fs/fs-writeback.c                     | 6 +++---
->  fs/inode.c                            | 8 ++++----
->  fs/ocfs2/inode.c                      | 2 +-
->  fs/xfs/xfs_reflink.h                  | 2 +-
->  include/linux/backing-dev.h           | 7 ++++---
->  include/linux/fs.h                    | 2 +-
->  include/linux/writeback.h             | 4 ++--
->  include/trace/events/writeback.h      | 8 ++++----
->  12 files changed, 30 insertions(+), 29 deletions(-)
->
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
-stems/porting.rst
-> index 85f590254f07..0629611600f1 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -211,7 +211,7 @@ test and set for you.
->  e.g.::
->
->         inode =3D iget_locked(sb, ino);
-> -       if (inode->i_state & I_NEW) {
-> +       if (inode_state_read(inode) & I_NEW) {
->                 err =3D read_inode_from_disk(inode);
->                 if (err < 0) {
->                         iget_failed(inode);
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index 687af0eea0c2..8c7efc194ad0 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -347,7 +347,7 @@ static struct bch_inode_info *bch2_inode_hash_find(st=
-ruct bch_fs *c, struct btre
->                         spin_unlock(&inode->v.i_lock);
->                         return NULL;
->                 }
-> -               if ((inode->v.i_state & (I_FREEING|I_WILL_FREE))) {
-> +               if ((inode_state_read(&inode->v) & (I_FREEING|I_WILL_FREE=
-))) {
->                         if (!trans) {
->                                 __wait_on_freeing_inode(c, inode, inum);
->                         } else {
-> @@ -411,7 +411,7 @@ static struct bch_inode_info *bch2_inode_hash_insert(=
-struct bch_fs *c,
->                  * only insert fully created inodes in the inode hash tab=
-le. But
->                  * discard_new_inode() expects it to be set...
->                  */
-> -               inode->v.i_state |=3D I_NEW;
-> +               inode_state_set(&inode->v, I_NEW);
->                 /*
->                  * We don't want bch2_evict_inode() to delete the inode o=
-n disk,
->                  * we just raced and had another inode in cache. Normally=
- new
-> @@ -2224,8 +2224,8 @@ void bch2_evict_subvolume_inodes(struct bch_fs *c, =
-snapshot_id_list *s)
->                 if (!snapshot_list_has_id(s, inode->ei_inum.subvol))
->                         continue;
->
-> -               if (!(inode->v.i_state & I_DONTCACHE) &&
-> -                   !(inode->v.i_state & I_FREEING) &&
-> +               if (!(inode_state_read(&inode->v) & I_DONTCACHE) &&
-> +                   !(inode_state_read(&inode->v) & I_FREEING) &&
->                     igrab(&inode->v)) {
->                         this_pass_clean =3D false;
->
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 8e2ab3fb9070..d2f7e7c57a36 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -3856,7 +3856,7 @@ static int btrfs_add_inode_to_root(struct btrfs_ino=
-de *inode, bool prealloc)
->                 ASSERT(ret !=3D -ENOMEM);
->                 return ret;
->         } else if (existing) {
-> -               WARN_ON(!(existing->vfs_inode.i_state & (I_WILL_FREE | I_=
-FREEING)));
-> +               WARN_ON(!(inode_state_read(&existing->vfs_inode) & (I_WIL=
-L_FREE | I_FREEING)));
->         }
->
->         return 0;
-> @@ -5745,7 +5745,7 @@ struct btrfs_inode *btrfs_iget_path(u64 ino, struct=
- btrfs_root *root,
->         if (!inode)
->                 return ERR_PTR(-ENOMEM);
->
-> -       if (!(inode->vfs_inode.i_state & I_NEW))
-> +       if (!(inode_state_read(&inode->vfs_inode) & I_NEW))
->                 return inode;
->
->         ret =3D btrfs_read_locked_inode(inode, path);
-> @@ -5769,7 +5769,7 @@ struct btrfs_inode *btrfs_iget(u64 ino, struct btrf=
-s_root *root)
->         if (!inode)
->                 return ERR_PTR(-ENOMEM);
->
-> -       if (!(inode->vfs_inode.i_state & I_NEW))
-> +       if (!(inode_state_read(&inode->vfs_inode) & I_NEW))
->                 return inode;
->
->         path =3D btrfs_alloc_path();
-> @@ -7435,7 +7435,7 @@ static void btrfs_invalidate_folio(struct folio *fo=
-lio, size_t offset,
->         u64 page_start =3D folio_pos(folio);
->         u64 page_end =3D page_start + folio_size(folio) - 1;
->         u64 cur;
-> -       int inode_evicting =3D inode->vfs_inode.i_state & I_FREEING;
-> +       int inode_evicting =3D inode_state_read(&inode->vfs_inode) & I_FR=
-EEING;
->
->         /*
->          * We have folio locked so no new ordered extent can be created o=
-n this
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 2cb340c52191..bc275f7364db 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1981,7 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct=
- inode *inode)
->         spin_lock(&inode->i_lock);
->         __d_instantiate(entry, inode);
->         WARN_ON(!(inode_state_read(inode) & I_NEW));
-> -       inode->i_state &=3D ~I_NEW & ~I_CREATING;
-> +       inode_state_clear(inode, I_NEW | I_CREATING);
->         /*
->          * Pairs with the barrier in prepare_to_wait_event() to make sure
->          * ___wait_var_event() either sees the bit cleared or
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index f521ef30d9a4..72424d3314aa 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -475,11 +475,11 @@ static bool inode_do_switch_wbs(struct inode *inode=
-,
->         switched =3D true;
->  skip_switch:
->         /*
-> -        * Paired with load_acquire in unlocked_inode_to_wb_begin() and
-> +        * Paired with smp_rmb in unlocked_inode_to_wb_begin() and
->          * ensures that the new wb is visible if they see !I_WB_SWITCH.
->          */
-> -       smp_store_release(&inode->i_state,
-> -                         inode_state_read(inode) & ~I_WB_SWITCH);
-> +       smp_wmb();
-> +       inode_state_clear(inode, I_WB_SWITCH);
->
->         xa_unlock_irq(&mapping->i_pages);
->         spin_unlock(&inode->i_lock);
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 4b54aba2e939..f9f3476c773b 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -829,7 +829,7 @@ static void evict(struct inode *inode)
->          * This also means we don't need any fences for the call below.
->          */
->         inode_wake_up_bit(inode, __I_NEW);
-> -       BUG_ON(inode->i_state !=3D (I_FREEING | I_CLEAR));
-> +       BUG_ON(inode_state_read(inode) !=3D (I_FREEING | I_CLEAR));
->
->         destroy_inode(inode);
->  }
-> @@ -1895,7 +1895,7 @@ static void iput_final(struct inode *inode)
->
->         state =3D inode_state_read(inode);
->         if (!drop) {
-> -               WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> +               inode_state_set(inode, I_WILL_FREE);
->                 spin_unlock(&inode->i_lock);
->
->                 write_inode_now(inode, 1);
-> @@ -1906,7 +1906,7 @@ static void iput_final(struct inode *inode)
->                 state &=3D ~I_WILL_FREE;
->         }
->
-> -       WRITE_ONCE(inode->i_state, state | I_FREEING);
-> +       inode_state_assign(inode, state | I_FREEING);
->         if (!list_empty(&inode->i_lru))
->                 inode_lru_list_del(inode);
->         spin_unlock(&inode->i_lock);
-> @@ -2964,7 +2964,7 @@ void dump_inode(struct inode *inode, const char *re=
-ason)
->         pr_warn("%s encountered for inode %px\n"
->                 "fs %s mode %ho opflags 0x%hx flags 0x%x state 0x%x count=
- %d\n",
->                 reason, inode, sb->s_type->name, inode->i_mode, inode->i_=
-opflags,
-> -               inode->i_flags, inode->i_state, atomic_read(&inode->i_cou=
-nt));
-> +               inode->i_flags, inode_state_read(inode), atomic_read(&ino=
-de->i_count));
->  }
->
->  EXPORT_SYMBOL(dump_inode);
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index 549f9c145dcc..50218209d04d 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -152,7 +152,7 @@ struct inode *ocfs2_iget(struct ocfs2_super *osb, u64=
- blkno, unsigned flags,
->                 mlog_errno(PTR_ERR(inode));
->                 goto bail;
->         }
-> -       trace_ocfs2_iget5_locked(inode->i_state);
-> +       trace_ocfs2_iget5_locked(inode_state_read(inode));
->         if (inode_state_read(inode) & I_NEW) {
->                 rc =3D ocfs2_read_locked_inode(inode, &args);
->                 unlock_new_inode(inode);
-> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-> index 36cda724da89..86e87e5936b5 100644
-> --- a/fs/xfs/xfs_reflink.h
-> +++ b/fs/xfs/xfs_reflink.h
-> @@ -17,7 +17,7 @@ xfs_can_free_cowblocks(struct xfs_inode *ip)
->  {
->         struct inode *inode =3D VFS_I(ip);
->
-> -       if ((inode->i_state & I_DIRTY_PAGES) ||
-> +       if ((inode_state_read(inode) & I_DIRTY_PAGES) ||
->             mapping_tagged(inode->i_mapping, PAGECACHE_TAG_DIRTY) ||
->             mapping_tagged(inode->i_mapping, PAGECACHE_TAG_WRITEBACK) ||
->             atomic_read(&inode->i_dio_count))
-> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> index e721148c95d0..07a60bbbf668 100644
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -289,10 +289,11 @@ unlocked_inode_to_wb_begin(struct inode *inode, str=
-uct wb_lock_cookie *cookie)
->         rcu_read_lock();
->
->         /*
-> -        * Paired with store_release in inode_switch_wbs_work_fn() and
-> -        * ensures that we see the new wb if we see cleared I_WB_SWITCH.
-> +        * Paired with smp_wmb in inode_do_switch_wbs() and ensures that =
-we see
-> +        * the new wb if we see cleared I_WB_SWITCH.
->          */
-> -       cookie->locked =3D smp_load_acquire(&inode->i_state) & I_WB_SWITC=
-H;
-> +       cookie->locked =3D inode_state_read(inode) & I_WB_SWITCH;
-> +       smp_rmb();
->
->         if (unlikely(cookie->locked))
->                 xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags=
-);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 06bece8d1f18..73f3ce5add6b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2656,7 +2656,7 @@ static inline int icount_read(const struct inode *i=
-node)
->   */
->  static inline bool inode_is_dirtytime_only(struct inode *inode)
->  {
-> -       return (inode->i_state & (I_DIRTY_TIME | I_NEW |
-> +       return (inode_state_read(inode) & (I_DIRTY_TIME | I_NEW |
->                                   I_FREEING | I_WILL_FREE)) =3D=3D I_DIRT=
-Y_TIME;
->  }
->
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index a2848d731a46..5fcb5ab4fa47 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -193,7 +193,7 @@ void inode_io_list_del(struct inode *inode);
->  static inline void wait_on_inode(struct inode *inode)
->  {
->         wait_var_event(inode_state_wait_address(inode, __I_NEW),
-> -                      !(READ_ONCE(inode->i_state) & I_NEW));
-> +                      !(inode_state_read(inode) & I_NEW));
->  }
->
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> @@ -234,7 +234,7 @@ static inline void inode_attach_wb(struct inode *inod=
-e, struct folio *folio)
->  static inline void inode_detach_wb(struct inode *inode)
->  {
->         if (inode->i_wb) {
-> -               WARN_ON_ONCE(!(inode->i_state & I_CLEAR));
-> +               WARN_ON_ONCE(!(inode_state_read(inode) & I_CLEAR));
->                 wb_put(inode->i_wb);
->                 inode->i_wb =3D NULL;
->         }
-> diff --git a/include/trace/events/writeback.h b/include/trace/events/writ=
-eback.h
-> index 1e23919c0da9..70c496954473 100644
-> --- a/include/trace/events/writeback.h
-> +++ b/include/trace/events/writeback.h
-> @@ -120,7 +120,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
->                 /* may be called for files on pseudo FSes w/ unregistered=
- bdi */
->                 strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
->                 __entry->ino            =3D inode->i_ino;
-> -               __entry->state          =3D inode->i_state;
-> +               __entry->state          =3D inode_state_read(inode);
->                 __entry->flags          =3D flags;
->         ),
->
-> @@ -719,7 +719,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
->                 strscpy_pad(__entry->name,
->                             bdi_dev_name(inode_to_bdi(inode)), 32);
->                 __entry->ino            =3D inode->i_ino;
-> -               __entry->state          =3D inode->i_state;
-> +               __entry->state          =3D inode_state_read(inode);
->                 __entry->dirtied_when   =3D inode->dirtied_when;
->                 __entry->cgroup_ino     =3D __trace_wb_assign_cgroup(inod=
-e_to_wb(inode));
->         ),
-> @@ -758,7 +758,7 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
->                 strscpy_pad(__entry->name,
->                             bdi_dev_name(inode_to_bdi(inode)), 32);
->                 __entry->ino            =3D inode->i_ino;
-> -               __entry->state          =3D inode->i_state;
-> +               __entry->state          =3D inode_state_read(inode);
->                 __entry->dirtied_when   =3D inode->dirtied_when;
->                 __entry->writeback_index =3D inode->i_mapping->writeback_=
-index;
->                 __entry->nr_to_write    =3D nr_to_write;
-> @@ -810,7 +810,7 @@ DECLARE_EVENT_CLASS(writeback_inode_template,
->         TP_fast_assign(
->                 __entry->dev    =3D inode->i_sb->s_dev;
->                 __entry->ino    =3D inode->i_ino;
-> -               __entry->state  =3D inode->i_state;
-> +               __entry->state  =3D inode_state_read(inode);
->                 __entry->mode   =3D inode->i_mode;
->                 __entry->dirtied_when =3D inode->dirtied_when;
->         ),
-> --
-> 2.43.0
->
+>  man/man2/fsopen.2 | 385 ++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 385 insertions(+)
+>=20
+> diff --git a/man/man2/fsopen.2 b/man/man2/fsopen.2
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7fbc6c3d28e2e741cd9003c10=
+5621b4242abd487
+> --- /dev/null
+> +++ b/man/man2/fsopen.2
+> @@ -0,0 +1,385 @@
+> +.\" Copyright, the authors of the Linux man-pages project
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH fsopen 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +fsopen \- create a new filesystem context
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ,\~ \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.B #include <sys/mount.h>
+> +.P
+> +.BI "int fsopen(const char *" fsname ", unsigned int " flags );
+> +.fi
+> +.SH DESCRIPTION
+> +The
+> +.BR fsopen ()
+> +system call is part of
+> +the suite of file-descriptor-based mount facilities in Linux.
+> +.P
+> +.BR fsopen ()
+> +creates a blank filesystem configuration context within the kernel
+> +for the filesystem named by
+> +.I fsname
+> +and places it into creation mode.
+> +A new file descriptor
+> +associated with the filesystem configuration context
+> +is then returned.
+> +The calling process must have the
+> +.B \%CAP_SYS_ADMIN
+> +capability in order to create a new filesystem configuration context.
+> +.P
+> +A filesystem configuration context is
+> +an in-kernel representation of a pending transaction,
+> +containing a set of configuration parameters that are to be applied
+> +when creating a new instance of a filesystem
+> +(or modifying the configuration of an existing filesystem instance,
+> +such as when using
+> +.BR fspick (2)).
+> +.P
+> +After obtaining a filesystem configuration context with
+> +.BR fsopen (),
+> +the general workflow for operating on the context looks like the followi=
+ng:
+> +.IP (1) 5
+> +Pass the filesystem context file descriptor to
+> +.BR fsconfig (2)
+> +to specify any desired filesystem parameters.
+> +This may be done as many times as necessary.
+> +.IP (2)
+> +Pass the same filesystem context file descriptor to
+> +.BR fsconfig (2)
+> +with
+> +.B \%FSCONFIG_CMD_CREATE
+> +to create an instance of the configured filesystem.
+> +.IP (3)
+> +Pass the same filesystem context file descriptor to
+> +.BR fsmount (2)
+> +to create a new detached mount object for
+> +the root of the filesystem instance,
+> +which is then attached to a new file descriptor.
+> +(This also places the filesystem context file descriptor into
+> +reconfiguration mode,
+> +similar to the mode produced by
+> +.BR fspick (2).)
+> +Once a mount object has been created with
+> +.BR fsmount (2),
+> +the filesystem context file descriptor can be safely closed.
+> +.IP (4)
+> +Now that a mount object has been created,
+> +you may
+> +.RS
+> +.IP \[bu] 3
+> +use the detached mount object file descriptor as a
+> +.I dirfd
+> +argument to "*at()" system calls;
+> +and/or
+> +.IP \[bu]
+> +attach the mount object to a mount point
+> +by passing the mount object file descriptor to
+> +.BR move_mount (2).
+> +This will also prevent the mount object from
+> +being unmounted and destroyed when
+> +the mount object file descriptor is closed.
+> +.RE
+> +.IP
+> +The mount object file descriptor will
+> +remain associated with the mount object
+> +even after doing the above operations,
+> +so you may repeatedly use the mount object file descriptor with
+> +.BR move_mount (2)
+> +and/or "*at()" system calls
+> +as many times as necessary.
+> +.P
+> +A filesystem context will move between different modes
+> +throughout its lifecycle
+> +(such as the creation phase
+> +when created with
+> +.BR fsopen (),
+> +the reconfiguration phase
+> +when an existing filesystem instance is selected with
+> +.BR fspick (2),
+> +and the intermediate "awaiting-mount" phase
+> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
+> +between
+> +.B \%FSCONFIG_CMD_CREATE
+> +and
+> +.BR fsmount (2)),
+> +which has an impact on
+> +what operations are permitted on the filesystem context.
+> +.P
+> +The file descriptor returned by
+> +.BR fsopen ()
+> +also acts as a channel for filesystem drivers to
+> +provide more comprehensive diagnostic information
+> +than is normally provided through the standard
+> +.BR errno (3)
+> +interface for system calls.
+> +If an error occurs at any time during the workflow mentioned above,
+> +calling
+> +.BR read (2)
+> +on the filesystem context file descriptor
+> +will retrieve any ancillary information about the encountered errors.
+> +(See the "Message retrieval interface" section
+> +for more details on the message format.)
+> +.P
+> +.I flags
+> +can be used to control aspects of
+> +the creation of the filesystem configuration context file descriptor.
+> +A value for
+> +.I flags
+> +is constructed by bitwise ORing
+> +zero or more of the following constants:
+> +.RS
+> +.TP
+> +.B FSOPEN_CLOEXEC
+> +Set the close-on-exec
+> +.RB ( FD_CLOEXEC )
+> +flag on the new file descriptor.
+> +See the description of the
+> +.B O_CLOEXEC
+> +flag in
+> +.BR open (2)
+> +for reasons why this may be useful.
+> +.RE
+> +.P
+> +A list of filesystems supported by the running kernel
+> +(and thus a list of valid values for
+> +.IR fsname )
+> +can be obtained from
+> +.IR /proc/filesystems .
+> +(See also
+> +.BR proc_filesystems (5).)
+> +.SS Message retrieval interface
+> +When doing operations on a filesystem configuration context,
+> +the filesystem driver may choose to provide
+> +ancillary information to userspace
+> +in the form of message strings.
+> +.P
+> +The filesystem context file descriptors returned by
+> +.BR fsopen ()
+> +and
+> +.BR fspick (2)
+> +may be queried for message strings at any time by calling
+> +.BR read (2)
+> +on the file descriptor.
+> +Each call to
+> +.BR read (2)
+> +will return a single message,
+> +prefixed to indicate its class:
+> +.RS
+> +.TP
+> +.BI e\~ message
+> +An error message was logged.
+> +This is usually associated with an error being returned
+> +from the corresponding system call which triggered this message.
+> +.TP
+> +.BI w\~ message
+> +A warning message was logged.
+> +.TP
+> +.BI i\~ message
+> +An informational message was logged.
+> +.RE
+> +.P
+> +Messages are removed from the queue as they are read.
+> +Note that the message queue has limited depth,
+> +so it is possible for messages to get lost.
+> +If there are no messages in the message queue,
+> +.B read(2)
+> +will return \-1 and
+> +.I errno
+> +will be set to
+> +.BR \%ENODATA .
+> +If the
+> +.I buf
+> +argument to
+> +.BR read (2)
+> +is not large enough to contain the entire message,
+> +.BR read (2)
+> +will return \-1 and
+> +.I errno
+> +will be set to
+> +.BR \%EMSGSIZE .
+> +(See BUGS.)
+> +.P
+> +If there are multiple filesystem contexts
+> +referencing the same filesystem instance
+> +(such as if you call
+> +.BR fspick (2)
+> +multiple times for the same mount),
+> +each one gets its own independent message queue.
+> +This does not apply to multiple file descriptors that are
+> +tied to the same underlying open file description
+> +(such as those created with
+> +.BR dup (2)).
+> +.P
+> +Message strings will usually be prefixed by
+> +the name of the filesystem or kernel subsystem
+> +that logged the message,
+> +though this may not always be the case.
+> +See the Linux kernel source code for details.
+> +.SH RETURN VALUE
+> +On success, a new file descriptor is returned.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +.SH ERRORS
+> +.TP
+> +.B EFAULT
+> +.I fsname
+> +is NULL
+> +or a pointer to a location
+> +outside the calling process's accessible address space.
+> +.TP
+> +.B EINVAL
+> +.I flags
+> +had an invalid flag set.
+> +.TP
+> +.B EMFILE
+> +The calling process has too many open files to create more.
+> +.TP
+> +.B ENFILE
+> +The system has too many open files to create more.
+> +.TP
+> +.B ENODEV
+> +The filesystem named by
+> +.I fsname
+> +is not supported by the kernel.
+> +.TP
+> +.B ENOMEM
+> +The kernel could not allocate sufficient memory to complete the operatio=
+n.
+> +.TP
+> +.B EPERM
+> +The calling process does not have the required
+> +.B \%CAP_SYS_ADMIN
+> +capability.
+> +.SH STANDARDS
+> +Linux.
+> +.SH HISTORY
+> +Linux 5.2.
+> +.\" commit 24dcb3d90a1f67fe08c68a004af37df059d74005
+> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> +glibc 2.36.
+> +.SH BUGS
+> +.SS Message retrieval interface and \fB\%EMSGSIZE\fP
+> +As described in the "Message retrieval interface" subsection above,
+> +calling
+> +.BR read (2)
+> +with too small a buffer to contain
+> +the next pending message in the message queue
+> +for the filesystem configuration context
+> +will cause
+> +.BR read (2)
+> +to return \-1 and set
+> +.BR errno (3)
+> +to
+> +.BR \%EMSGSIZE .
+> +.P
+> +However,
+> +this failed operation still
+> +consumes the message from the message queue.
+> +This effectively discards the message silently,
+> +as no data is copied into the
+> +.BR read (2)
+> +buffer.
+> +.P
+> +Programs should take care to ensure that
+> +their buffers are sufficiently large
+> +to contain any reasonable message string,
+> +in order to avoid silently losing valuable diagnostic information.
+> +.\" Aleksa Sarai
+> +.\"   This unfortunate behaviour has existed since this feature was merg=
+ed, but
+> +.\"   I have sent a patchset which will finally fix it.
+> +.\"   <https://lore.kernel.org/r/20250807-fscontext-log-cleanups-v3-1-8d=
+91d6242dc3@cyphar.com/>
+> +.SH EXAMPLES
+> +To illustrate the workflow for creating a new mount,
+> +the following is an example of how to mount an
+> +.BR ext4 (5)
+> +filesystem stored on
+> +.I /dev/sdb1
+> +onto
+> +.IR /mnt .
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd;
+> +\&
+> +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
+> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.P
+> +First,
+> +an ext4 configuration context is created and attached to the file descri=
+ptor
+> +.IR fsfd .
+> +Then, a series of parameters
+> +(such as the source of the filesystem)
+> +are provided using
+> +.BR fsconfig (2),
+> +followed by the filesystem instance being created with
+> +.BR \%FSCONFIG_CMD_CREATE .
+> +.BR fsmount (2)
+> +is then used to create a new mount object attached to the file descriptor
+> +.IR mntfd ,
+> +which is then attached to the intended mount point using
+> +.BR move_mount (2).
+> +.P
+> +The above procedure is functionally equivalent to
+> +the following mount operation using
+> +.BR mount (2):
+> +.P
+> +.in +4n
+> +.EX
+> +mount("/dev/sdb1", "/mnt", "ext4", MS_RELATIME,
+> +      "ro,noatime,acl,user_xattr,iversion");
+> +.EE
+> +.in
+> +.P
+> +And here's an example of creating a mount object
+> +of an NFS server share
+> +and setting a Smack security module label.
+> +However, instead of attaching it to a mount point,
+> +the program uses the mount object directly
+> +to open a file from the NFS share.
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd, fd;
+> +\&
+> +fsfd =3D fsopen("nfs", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "example.com/pub", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, 0, MOUNT_ATTR_NODEV);
+> +fd =3D openat(mntfd, "src/linux-5.2.tar.xz", O_RDONLY);
+> +.EE
+> +.in
+> +.P
+> +Unlike the previous example,
+> +this operation has no trivial equivalent with
+> +.BR mount (2),
+> +as it was not previously possible to create a mount object
+> +that is not attached to any mount point.
+> +.SH SEE ALSO
+> +.BR fsconfig (2),
+> +.BR fsmount (2),
+> +.BR fspick (2),
+> +.BR mount (2),
+> +.BR mount_setattr (2),
+> +.BR move_mount (2),
+> +.BR open_tree (2),
+> +.BR mount_namespaces (7)
+>=20
+> --=20
+> 2.51.0
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--um5fosvnozlmkdra
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjVFcUACgkQ64mZXMKQ
+wql6KBAAuha3I2afI78syc7a2g2hlFBtv8tpd+j+4dSzZyJLs0pcC0mGbU38Dy1q
+q+E6JBJu3nvS64bh0VfE/PBqb6zx1i2pak3Vlk5+FnffSM1GPTRGjNiWOOq/L7mL
+QbxRULDspCER2CLYqW4wZdLShwZnNt84178puIx797JqAKoHl2YbdHSbUj8hDwKw
+1tfkt2jwhxP78jhavnTBL54KRs56Z0k7OvQY6b8xKFeJYATT9R72Ghiu7uiI/7sn
+/3zzsjf8IRI6P90vW9/NHnYudJOdKhgx1EwRbBwFQq7UDQHQxHpuxTBGh6KQHQ9a
+nb4BWuSPugLQ185KLakpaQ72vUDNYHWFRcFKKsyvMf6rlCCJWwDJ49ZY6WsSKLLT
+h3GziIKFxddRnjErAAS1x+s1MXfI9I+TrSeWvo+h6hLNvY6QHxRP54/1TlRoBX0S
+s4ry732X4SMUYXQsxwEjXOVxGgvRGN7pCPz6bijWbfhi51Gq6Ny1IkX2RCtyTjGH
+EiFoTTz9Ytpui+/cQrBYg/+LWu9bSj99k44eIqtN9doDGLsIgRCVB7cZ6b2QFjvL
+uJPJRPNGY81mG0NAm8Mdbh/Bk12NyEQCT2bpoMlRSzZvXfHUi4mHfeFLAzfValRt
+wlFFXuC1bHVu4Um+w8HKWeldLKI2oPgrmpBFL7ehI5W4DvyjAKM=
+=H9w2
+-----END PGP SIGNATURE-----
+
+--um5fosvnozlmkdra--
 
