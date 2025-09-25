@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-62799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CC6BA1183
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 20:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207B2BA11A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 20:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5365E176063
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 18:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544201C25625
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 18:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890073148CD;
-	Thu, 25 Sep 2025 18:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8C31B13A;
+	Thu, 25 Sep 2025 18:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8EAaxQj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1tpGH+P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E11C315D31
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 18:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156B7319877
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 18:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758826597; cv=none; b=GnTeI0T83fDCUl8/ca7CD8TFu2VSyHfzeyWiQQBGWMn1tAObWZbh8WFm2KQH7ftyyp7vzXH1INWl/dlN2c65H4W2V/S9NyUJmOE1xt6AWumqXR7Pm0HFtbU9NQBpqxmz0DGf6pj8MMWLWk12eqe/M1AKME0A8p8QWUKaRnkPFF0=
+	t=1758826653; cv=none; b=Ux5I4/+Z1daTw29f8NGgz6xH1Q46tZiOviJxZ6edIsr5zPUbYW/2fHmUvsUv/Ph3F2w6aA06CGgDPl71+Gi6sQQ9i03iXEDMG6VZoLD/5OgN0ovrDvSCRJS3fUl0e4rRAfbfygM9xfY/LXz972m1+o6/sDHNyo/hNAkzdOenF0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758826597; c=relaxed/simple;
-	bh=5awjZi6LAQKGTPl9pWzSg2NbxiVJDN/C6wLGHG2Zvhc=;
+	s=arc-20240116; t=1758826653; c=relaxed/simple;
+	bh=j5gkSv/3UaxKbaNRZmLoYcyk0+yVwcOA5OeU8sjTjKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaZcbLtArBNas+FUOaw40De1JMgHSrNc41P7mW/HP4NWl/zAHvFiY0P6g4Dc0zYuOiIifEUzBhyOoMUZgvUZkZJJUJ6Kr9VjjTO5890g3/kynppid9QkNNycib9PbABh4Bc95RytbQ/cXFR7Y8AioNaDj0IVlPBHyB7KkvnVdTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8EAaxQj; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4oWTPbEdPjfojk0O0G4BIC1tUNy4YnwHiI7aKipWF34S2mjnTk95XoxNcBQdVoslSywwrX4SPDUhfZJfm2vdq1ZxK+uePaMh/b6at7l1dCUKfDyn9avHSkvuJT2JJ7yckSPMo6nIvhp0NvkUVxPHN8XUxJGz27grscEIBkjinw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f1tpGH+P; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758826594;
+	s=mimecast20190719; t=1758826650;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F/Yt2WnuBhEjL/U2P+Vd5YgyHfunjh4/CMHN3cS8jjI=;
-	b=a8EAaxQj8idWa/cZ9FFZs2bcO8zUXx076EA5Yzhl5iZjYXAcpQbmjamJL2vh8ijVfJ+F2I
-	u48YJb6DmkKoi8W4lSip8soowgTewGqyele7zKeZNYSUmdE+50Rp7cpkHWS/Yo+ERv5sHu
-	M/05wWQks/3J7XXVbEa7/Fc/4DmG+Hs=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=xDIYoUk2aYSVEyb/ZokojK1Od3xlyMIfNybo+1mukeM=;
+	b=f1tpGH+PEwMwKfgPIQq+ihXCCwpuTrTgnozyllGk5D/91rJw8g7QjIbW8Mdzk7tl6q2jxp
+	yYDDHm8ElCFt3RNu1g2/VXyWNWTDqseTQHvkrgzRe1HTsLz7hYY20cTNsF46/Pg4bg9dSm
+	76jfgyNr1/NE+oS4+AHDjUoaIMrr9mc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-388-9Tq7xlPfNPuX-ZHG7_ohcQ-1; Thu,
- 25 Sep 2025 14:56:30 -0400
-X-MC-Unique: 9Tq7xlPfNPuX-ZHG7_ohcQ-1
-X-Mimecast-MFC-AGG-ID: 9Tq7xlPfNPuX-ZHG7_ohcQ_1758826588
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-Jl37rhTYO5y7Vs-CMSSc-A-1; Thu,
+ 25 Sep 2025 14:57:26 -0400
+X-MC-Unique: Jl37rhTYO5y7Vs-CMSSc-A-1
+X-Mimecast-MFC-AGG-ID: Jl37rhTYO5y7Vs-CMSSc-A_1758826645
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 04F9A1800378;
-	Thu, 25 Sep 2025 18:56:28 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CA5C19560B5;
+	Thu, 25 Sep 2025 18:57:25 +0000 (UTC)
 Received: from bfoster (unknown [10.22.64.134])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBD9B30002D1;
-	Thu, 25 Sep 2025 18:56:25 +0000 (UTC)
-Date: Thu, 25 Sep 2025 15:00:35 -0400
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 61553300021A;
+	Thu, 25 Sep 2025 18:57:23 +0000 (UTC)
+Date: Thu, 25 Sep 2025 15:01:33 -0400
 From: Brian Foster <bfoster@redhat.com>
 To: alexjlzheng@gmail.com
 Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org,
 	kernel@pankajraghav.com, linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	yi.zhang@huawei.com, Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [PATCH v5 3/4] iomap: make iomap_write_end() return the number
- of written length again
-Message-ID: <aNWRUyZhdhX7lzig@bfoster>
+Subject: Re: [PATCH v5 4/4] iomap: don't abandon the whole copy when we have
+ iomap_folio_state
+Message-ID: <aNWRjekDBHRelmbS@bfoster>
 References: <20250923042158.1196568-1-alexjlzheng@tencent.com>
- <20250923042158.1196568-4-alexjlzheng@tencent.com>
+ <20250923042158.1196568-5-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,111 +76,173 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250923042158.1196568-4-alexjlzheng@tencent.com>
+In-Reply-To: <20250923042158.1196568-5-alexjlzheng@tencent.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Sep 23, 2025 at 12:21:57PM +0800, alexjlzheng@gmail.com wrote:
+On Tue, Sep 23, 2025 at 12:21:58PM +0800, alexjlzheng@gmail.com wrote:
 > From: Jinliang Zheng <alexjlzheng@tencent.com>
 > 
-> In the next patch, we allow iomap_write_end() to conditionally accept
-> partial writes, so this patch makes iomap_write_end() return the number
-> of accepted write bytes in preparation for the next patch.
+> Currently, if a partial write occurs in a buffer write, the entire write will
+> be discarded. While this is an uncommon case, it's still a bit wasteful and
+> we can do better.
 > 
+> With iomap_folio_state, we can identify uptodate states at the block
+> level, and a read_folio reading can correctly handle partially
+> uptodate folios.
+> 
+> Therefore, when a partial write occurs, accept the block-aligned
+> partial write instead of rejecting the entire write.
+> 
+> For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+> bytes are 2MB-3kB.
+> 
+> Without this patchset, we'd need to recopy from the beginning of the
+> folio in the next iteration, which means 2MB-3kB of bytes is copy
+> duplicately.
+> 
+>  |<-------------------- 2MB -------------------->|
+>  +-------+-------+-------+-------+-------+-------+
+>  | block |  ...  | block | block |  ...  | block | folio
+>  +-------+-------+-------+-------+-------+-------+
+>  |<-4kB->|
+> 
+>  |<--------------- copied 2MB-3kB --------->|       first time copied
+>  |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+>                          |<-------- 1MB -------->|  next next time we need copy.
+> 
+>  |<------ 2MB-3kB bytes duplicate copy ---->|
+> 
+> With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+> This means we only need to process the remaining 4kB in the next iteration,
+> which means there's only 1kB we need to copy duplicately.
+> 
+>  |<-------------------- 2MB -------------------->|
+>  +-------+-------+-------+-------+-------+-------+
+>  | block |  ...  | block | block |  ...  | block | folio
+>  +-------+-------+-------+-------+-------+-------+
+>  |<-4kB->|
+> 
+>  |<--------------- copied 2MB-3kB --------->|       first time copied
+>                                          |<-4kB->|  next time we need copy
+> 
+>                                          |<>|
+>                               only 1kB bytes duplicate copy
+> 
+> Although partial writes are inherently a relatively unusual situation and do
+> not account for a large proportion of performance testing, the optimization
+> here still makes sense in large-scale data centers.
+> 
+
+Thanks for the nice writeup and diagrams.
+
 > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 > ---
->  fs/iomap/buffered-io.c | 27 +++++++++++++--------------
->  1 file changed, 13 insertions(+), 14 deletions(-)
+>  fs/iomap/buffered-io.c | 44 +++++++++++++++++++++++++++++++++---------
+>  1 file changed, 35 insertions(+), 9 deletions(-)
 > 
 > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index e130db3b761e..6e516c7d9f04 100644
+> index 6e516c7d9f04..3304028ce64f 100644
 > --- a/fs/iomap/buffered-io.c
 > +++ b/fs/iomap/buffered-io.c
-...
-> @@ -915,10 +915,10 @@ static void iomap_write_end_inline(const struct iomap_iter *iter,
+> @@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
+>  	return status;
 >  }
 >  
->  /*
-> - * Returns true if all copied bytes have been written to the pagecache,
-> - * otherwise return false.
-> + * Returns number of copied bytes have been written to the pagecache,
-> + * zero if block is partial update.
->   */
-> -static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
-> +static int iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
->  		struct folio *folio)
->  {
->  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> @@ -926,7 +926,7 @@ static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
->  
->  	if (srcmap->type == IOMAP_INLINE) {
->  		iomap_write_end_inline(iter, folio, pos, copied);
-> -		return true;
-> +		return copied;
->  	}
->  
->  	if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
-> @@ -934,7 +934,7 @@ static bool iomap_write_end(struct iomap_iter *iter, size_t len, size_t copied,
->  
->  		bh_written = block_write_end(pos, len, copied, folio);
->  		WARN_ON_ONCE(bh_written != copied && bh_written != 0);
-> -		return bh_written == copied;
-> +		return bh_written;
+> +static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
+> +		size_t copied, struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	unsigned block_size, last_blk, last_blk_bytes;
+> +
+> +	if (!ifs || !copied)
+> +		return 0;
+> +
+> +	block_size = 1 << inode->i_blkbits;
 
-I notice block_write_end() actually returns an int. Not sure it's an
-issue really, but perhaps we should just change the type of bh_written
-here as well. Otherwise seems reasonable.
+I'd move this assignment to declaration time.
+
+> +	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
+> +	last_blk_bytes = (pos + copied) & (block_size - 1);
+> +
+> +	if (!ifs_block_is_uptodate(ifs, last_blk))
+> +		copied -= min(copied, last_blk_bytes);
+
+So I think I follow the idea here and it seems reasonable at first
+glance. IIUC, the high level issue is that for certain writes we don't
+read blocks up front if the write is expected to fully overwrite
+blocks/folios, as we can just mark things uptodate on write completion.
+If the write is short however, we now have a partial write to a
+!uptodate block, so have to toss the write.
+
+A few initial thoughts..
+
+1. I don't really love the function name here. Maybe something like
+iomap_write_end_short() or something would be more clear, but maybe
+there are other opinions.
+
+2. It might be helpful to move some of the comment below up to around
+here where we actually trim the copied value.
+
+3. I see that in __iomap_write_begin() we don't necessarily always
+attach ifs if a write is expected to fully overwrite the entire folio.
+It looks like that is handled with the !ifs check above, but it also
+makes me wonder how effective this change is.
+
+For example, the example in the commit log description appears to be a
+short write of an attempted overwrite of a 2MB folio, right? Would we
+expect to have ifs in that situation?
+
+I don't really object to having the logic even if it is a real corner
+case, but it would be good to have some test coverage to verify
+behavior. Do you have a test case or anything (even if contrived) along
+those lines? Perhaps we could play some games with badly formed
+syscalls. A quick test to call pwritev() with a bad iov_base pointer
+seems to produce a short write, but I haven't confirmed that's
+sufficient for testing here..
 
 Brian
 
->  	}
->  
->  	return __iomap_write_end(iter->inode, pos, len, copied, folio);
-> @@ -1000,8 +1000,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
->  			flush_dcache_folio(folio);
->  
->  		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
-> -		written = iomap_write_end(iter, bytes, copied, folio) ?
-> -			  copied : 0;
-> +		written = iomap_write_end(iter, bytes, copied, folio);
->  
->  		/*
->  		 * Update the in-memory inode size after copying the data into
-> @@ -1315,7 +1314,7 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
->  	do {
->  		struct folio *folio;
->  		size_t offset;
-> -		bool ret;
-> +		int ret;
->  
->  		bytes = min_t(u64, SIZE_MAX, bytes);
->  		status = iomap_write_begin(iter, write_ops, &folio, &offset,
-> @@ -1327,7 +1326,7 @@ static int iomap_unshare_iter(struct iomap_iter *iter,
->  
->  		ret = iomap_write_end(iter, bytes, bytes, folio);
->  		__iomap_put_folio(iter, write_ops, bytes, folio);
-> -		if (WARN_ON_ONCE(!ret))
-> +		if (WARN_ON_ONCE(ret != bytes))
->  			return -EIO;
->  
->  		cond_resched();
-> @@ -1388,7 +1387,7 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
->  	do {
->  		struct folio *folio;
->  		size_t offset;
-> -		bool ret;
-> +		int ret;
->  
->  		bytes = min_t(u64, SIZE_MAX, bytes);
->  		status = iomap_write_begin(iter, write_ops, &folio, &offset,
-> @@ -1406,7 +1405,7 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero,
->  
->  		ret = iomap_write_end(iter, bytes, bytes, folio);
->  		__iomap_put_folio(iter, write_ops, bytes, folio);
-> -		if (WARN_ON_ONCE(!ret))
-> +		if (WARN_ON_ONCE(ret != bytes))
->  			return -EIO;
->  
->  		status = iomap_iter_advance(iter, &bytes);
+> +
+> +	return copied;
+> +}
+> +
+>  static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  		size_t copied, struct folio *folio)
+>  {
+> @@ -881,17 +900,24 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	/*
+>  	 * The blocks that were entirely written will now be uptodate, so we
+>  	 * don't have to worry about a read_folio reading them and overwriting a
+> -	 * partial write.  However, if we've encountered a short write and only
+> -	 * partially written into a block, it will not be marked uptodate, so a
+> -	 * read_folio might come in and destroy our partial write.
+> +	 * partial write.
+>  	 *
+> -	 * Do the simplest thing and just treat any short write to a
+> -	 * non-uptodate page as a zero-length write, and force the caller to
+> -	 * redo the whole thing.
+> +	 * However, if we've encountered a short write and only partially
+> +	 * written into a block, we must discard the short-written _tail_ block
+> +	 * and not mark it uptodate in the ifs, to ensure a read_folio reading
+> +	 * can handle it correctly via iomap_adjust_read_range(). It's safe to
+> +	 * keep the non-tail block writes because we know that for a non-tail
+> +	 * block:
+> +	 * - is either fully written, since copy_from_user() is sequential
+> +	 * - or is a partially written head block that has already been read in
+> +	 *   and marked uptodate in the ifs by iomap_write_begin().
+>  	 */
+> -	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+> -		return 0;
+> -	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+> +	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
+> +		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
+> +		if (!copied)
+> +			return 0;
+> +	}
+> +	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
+>  	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+>  	filemap_dirty_folio(inode->i_mapping, folio);
+>  	return copied;
 > -- 
 > 2.49.0
 > 
