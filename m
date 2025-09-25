@@ -1,182 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-62792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59381BA103C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 20:28:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E6FBA105D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 20:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6B516D979
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 18:28:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35BF07A2F2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 18:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641353168EC;
-	Thu, 25 Sep 2025 18:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99E23191AD;
+	Thu, 25 Sep 2025 18:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TnVkZeCy"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AfashHh6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB0D314B83;
-	Thu, 25 Sep 2025 18:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C993164DF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 18:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758824880; cv=none; b=JFzVpo76yMFKrCmKKoe8t4XvJKOpP8YvXB7VFDrNGCeXyQox6yeL5+99KlbaK1WTUJG1PAnqDK4ECGx3DxvpYDKn8g9/er9LBPYdtmj/jCrqlngPu8oE7YXf/PVeR/8H7l4Qor4oFYHHOeq5F6IzYyJ0siYQu87w/SrHo/mvk1w=
+	t=1758825022; cv=none; b=Hz/5UCOH0WUtV+ecJbPlmGIs2frvnMC84WGEbM5Bw2BnR9D+wa47/GFs3ZO0VjDd7iLjBI2cnXpgkE/AjkiRqL3ZJuDTU5DNHs1lQn6gA5muxSBcaYtVdgIVEI/6HoyAiLjS3iG6d6HhFZlhQcl6M3AtZFCAAWILqJO/f6aVhYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758824880; c=relaxed/simple;
-	bh=gllL0jFsSMTv+WKLgz1TzNrM4HELZ+1hcm3IMJUm3Jk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uet3InTZk5zCGYywPBUvVgcrkZF1zCHp6FmG08TLLFSBRFVdpRy4KpTPFP6fXq0UmQMV+ZINVlbVxLzgpFtxxr4YrdDIY51mH3isdmPCr9PYJVoNKBMdp4Z9fQqNKmW6Jcb32HtG8F25ydF9XkrSROQn0svSREUx95kP4aqb0Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TnVkZeCy; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758824880; x=1790360880;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gllL0jFsSMTv+WKLgz1TzNrM4HELZ+1hcm3IMJUm3Jk=;
-  b=TnVkZeCyWUmzloGVxvu1+LPZPYu/t1GCxgqq0gdM2BT12NCFKcEyxtx6
-   C64FUzQ7cUWRvJbvNB94jq6GrMZH2rC+dTF69BUXKmOgbkXvNmLsmhG6L
-   trzUVQ6kZD8osK/F+bOCMH+6iUlqsP/PB6AQvMr+NGHKmcgdCSNMSUHAy
-   xYlsQMtrsgEGXM4c3Mk0Nsqy7tGY+Z3QvRBGGaNeMr4kHiwohqdmCYZwl
-   vJATxhdi583V/fX2YgmfE5rtUE+bg2XduvdibE/CiadOLmkq/dnrNcpTo
-   fY5lsgQdeLbHr1lhOftM6qjbe73yBUyVoYt5MSiVGrjMUdJxdEYyCSUfq
-   g==;
-X-CSE-ConnectionGUID: lcHsZjvjSyi27uvf95B5EA==
-X-CSE-MsgGUID: sH897NYKRqC6ddjGo9K1+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="61206585"
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="61206585"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 11:27:58 -0700
-X-CSE-ConnectionGUID: QhFvsIm2QUGJPg2v+owCag==
-X-CSE-MsgGUID: O2Oud7SaSaypMhr6Xe/2hA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="208338229"
-Received: from unknown (HELO [10.24.81.144]) ([10.24.81.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 11:27:54 -0700
-Message-ID: <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
-Date: Thu, 25 Sep 2025 11:27:53 -0700
+	s=arc-20240116; t=1758825022; c=relaxed/simple;
+	bh=tCSiCHjiYLBxiKxlzQijJtKjNIcmFyJ2Vn54zVJDrFE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=UAwoCpOlSNJs4HJsdcg30B7Y3QnNx8sRkEjDl184rp8Q4v5UcCWvoL4/uZlJDQjD8gxEDpK/NbGSqV0o2xx5+RuKL55jBc28gDm36yt6YT7GKzNMYyqtyMibwn1G9qcc9RCef0ILHNhd0PsVPxRJElA9bVJxqmBi/UhX1PgLGgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AfashHh6; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-279e2554c8fso13061635ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 11:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758825019; x=1759429819; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AD3Aprn/2Yo5LyXOC6U3dPN+8zQtQVUv9tcaZi7+WVY=;
+        b=AfashHh6rUbxAMRwzk2ib/8WUrYt49OEOg7pkBw6020hcJCRp3m+5dojxs8adEG1z2
+         bF7znesG3ylX424JTj45YkHo36IBa4d2zvunbj1ziB6bRNQMuOEfV4eRCO5hhQsBnQyY
+         fh/AS4h6WEl12ZemG5cxhecy+aVkaOtYQawiWLYpdtx4N2bmR4toyP+ryD+0naFTrfY5
+         A3Yyfw9iAX9PafpglLzK9stvVkyRKMYCPIaJJ1lOmhivC7TYQR4gEdXejAie+4Fe/XAj
+         s5HBYrJzUFBoWCAqYRjdoa6npu6z73qaWK1sM45ct/yTBsj0P4Bdp3/AZna0N4coaN+x
+         YoGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758825019; x=1759429819;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AD3Aprn/2Yo5LyXOC6U3dPN+8zQtQVUv9tcaZi7+WVY=;
+        b=jmNzas3QiQp8eIxeDBEAVd3uuTjA3bm2hrs9csI6zAHMacClkKsL+x3gGhcvV+cX8w
+         eHFEl9jH5l1GRuBCyZyRnEneUDDt64IXPzLz8YcXSa22DukeWfjXC4KUXnoH8B7nqmWB
+         ppJt3jaYqKsp1Kr9uP/lh/ebPFMgXmxhuPMvoJNuwwrOSWvFio2BZ0+wcxd2EV4I9QWF
+         0UUaOluuGBT+sMC2gYypR/jVM/GPPe+hM3r4Qt8Em4SlPTYGIIthnStWWy8bV9nWTqwv
+         0kwg0rQQu6R+td5PAyUW5ayfoAu5HIMZduwSGCVGv227Y4Q9P7jGwdraWIIH8cF4M0YS
+         bw0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDVTDlFwUgubxOoa0J+agLgIfFr1ubtDKrcScJxzHVng9sBrlkjVpY8B3/Rtrx91oisjCMTXYWneHL3y+C@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+5iJu/Rn4iJVdT90ibtjgLPvVnsnz3AxNsdcjxn1Xjm+dHySm
+	fEzRdSar2I7f5/BjZtUCVtB+bptkHkWjMRT0PdMtmzdMNgKecRN4rQJCe/7X4qjx8aVo58vGCkq
+	cnuvkRktoSM26o+Cdfnr56hJr+3Yv0bGEytA93+C+xQ==
+X-Gm-Gg: ASbGnctAm/0NNcK8qvmiCEWAk1H9/I8UXkETZma4hwiaqg/c6szB5KdrE0kHz+3zX9X
+	qt+d/3kCKaiB+N3vfqT/q5Tx6tdatA31/emRKJEx+wpq35kRwkS11uH3bcWQRZqIVcTzf/wcBFS
+	95tpNIWK2rGurCP17xhRNgX2THeJFfxEC/fzh96gkY8MsSgH+ISl/a1R85dRSJvT9G3LJQkYLtG
+	8UETgEmiimevxbpn8RgcM7nwuiMLh2/buxsB9iI
+X-Google-Smtp-Source: AGHT+IG0aEHA+SJ8POTvI7rXmHNNRmnCFjhfAJmzMzYuwnnWzgcjC3HMZZQWT5S9lDAxvmI0iW8mMspWOZ82crH3Q5k=
+X-Received: by 2002:a17:902:fccf:b0:273:31fb:a872 with SMTP id
+ d9443c01a7336-27ed4a06cefmr33651145ad.6.1758825019214; Thu, 25 Sep 2025
+ 11:30:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
- TLB flushing
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "joey.gouly@arm.com" <joey.gouly@arm.com>,
- "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
- "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "luto@kernel.org" <luto@kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "willy@infradead.org" <willy@infradead.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "david@redhat.com" <david@redhat.com>,
- "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
- "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
- "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
- "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
- <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
- "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>,
- "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
- "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
- "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
- <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
- "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
- "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
- <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
- "shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com"
- <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "Cali, Marco" <xmarcalx@amazon.co.uk>,
- "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
- "Thomson, Jack" <jackabt@amazon.co.uk>,
- "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
- "tabba@google.com" <tabba@google.com>,
- "ackerleytng@google.com" <ackerleytng@google.com>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-3-roypat@amazon.co.uk>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250924152214.7292-3-roypat@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 26 Sep 2025 00:00:08 +0530
+X-Gm-Features: AS18NWDtBpm_KTK7hpnu3EgD5L63hZbjcu26dinYNzF8NjUERzFkzicBNK0EhOQ
+Message-ID: <CA+G9fYueO8kP8mXVNmbHkyrFPKpt-onPfeyNXLuLGGjiO1WFfQ@mail.gmail.com>
+Subject: next-20250924: Internal error: Oops: mnt_ns_release
+ (fs/namespace.c:148) __arm64_sys_listmount (fs/namespace.c:5936)
+To: "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/24/25 08:22, Roy, Patrick wrote:
-> Add an option to not perform TLB flushes after direct map manipulations.
+While running LTP syscalls tests on Linux next-20250924 tag build
+the following kernel oops noticed on arm64 and x86_64 devices.
 
-I'd really prefer this be left out for now. It's a massive can of worms.
-Let's agree on something that works and has well-defined behavior before
-we go breaking it on purpose.
+First seen on next-20250924
+Good: next-20250923
+Bad: next-2025094
+
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
+
+Test regression: next-20250924: Internal error: Oops: mnt_ns_release
+(fs/namespace.c:148) __arm64_sys_listmount (fs/namespace.c:5936)
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+$  git log --oneline next-20250923..next-20250924  -- fs/namespace.c
+c54644c3221b6 (next/fs-next) Merge branch 'for-next' of
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
+1f28cc19559a8 Merge branch 'namespace-6.18' into vfs.all
+e2c277f720291 Merge branch 'kernel-6.18.clone3' into vfs.all
+b2af83d5b8223 Merge branch 'vfs-6.18.mount' into vfs.all
+29ecd1ca48ec2 Merge branch 'vfs-6.18.misc' into vfs.all
+d7610cb7454bb ns: simplify ns_common_init() further
+59bfb66816809 listmount: don't call path_put() under namespace semaphore
+2bc5bfbfd3f27 statmount: don't call path_put() under namespace semaphore
+
+
+## Test log
+[   41.821877] Internal error: Oops: 0000000096000005 [#1]  SMP
+[   41.919038] Modules linked in: cdc_ether usbnet sm3_ce sha3_ce nvme
+xhci_pci_renesas nvme_core arm_cspmu_module arm_spe_pmu ipmi_devintf
+ipmi_msghandler arm_cmn cppc_cpufreq drm fuse backlight
+[   41.944048] CPU: 14 UID: 0 PID: 6416 Comm: listmount04 Not tainted
+6.17.0-rc7-next-20250924 #1 PREEMPT
+[   41.958197] Hardware name: Inspur NF5280R7/Mitchell MB, BIOS
+04.04.00004001 2025-02-04 22:23:30 02/04/2025
+[   41.967837] pstate: 63400009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+[   41.974958] pc : mnt_ns_release
+(arch/arm64/include/asm/atomic_lse.h:62 (discriminator 1)
+arch/arm64/include/asm/atomic_lse.h:76 (discriminator 1)
+arch/arm64/include/asm/atomic.h:51 (discriminator 1)
+include/linux/atomic/atomic-arch-fallback.h:944 (discriminator 1)
+include/linux/atomic/atomic-instrumented.h:401 (discriminator 1)
+include/linux/refcount.h:389 (discriminator 1)
+include/linux/refcount.h:432 (discriminator 1)
+include/linux/refcount.h:450 (discriminator 1) fs/namespace.c:148
+(discriminator 1))
+[   41.981910] lr : __arm64_sys_listmount (fs/namespace.c:5936)
+[   41.993467] sp : ffff8000ff5afd50
+[   42.000329] x29: ffff8000ff5afd50 x28: fff00001bd947380 x27: 0000000000000000
+[   42.007454] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000100
+[   42.030726] x23: 0000000000000000 x22: 0000000000000020 x21: ffff8000ff5afdc8
+[   42.038281] x20: 0000aaaabd6a1110 x19: 0000000000000000 x18: 0000000000000000
+[   42.045405] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[   42.052528] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+[   42.075541] x11: 0000000000000000 x10: 0000000000000000 x9 : ffffda68dcdbbe30
+[   42.082835] x8 : ffff8000ff5afda0 x7 : fefefefefefefefe x6 : ffffda68df5e9000
+[   42.096212] x5 : fff00001bd947380
+[   42.108978]  x4 : fff00001bd947380 x3 : 0000000000000000
+[   42.114449] x2 : 0000000000000000 x1 : 00000000ffffffff x0 : 00000000000000b8
+[   42.134515] Call trace:
+[   42.139725]  mnt_ns_release (arch/arm64/include/asm/atomic_lse.h:62
+(discriminator 1) arch/arm64/include/asm/atomic_lse.h:76
+(discriminator 1) arch/arm64/include/asm/atomic.h:51 (discriminator 1)
+include/linux/atomic/atomic-arch-fallback.h:944 (discriminator 1)
+include/linux/atomic/atomic-instrumented.h:401 (discriminator 1)
+include/linux/refcount.h:389 (discriminator 1)
+include/linux/refcount.h:432 (discriminator 1)
+include/linux/refcount.h:450 (discriminator 1) fs/namespace.c:148
+(discriminator 1)) (P)
+[   42.143811]  __arm64_sys_listmount (fs/namespace.c:5936)
+[   42.148327]  invoke_syscall.constprop.0
+(arch/arm64/include/asm/syscall.h:61 arch/arm64/kernel/syscall.c:54)
+[   42.159193]  do_el0_svc (include/linux/thread_info.h:135
+(discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2)
+arch/arm64/kernel/syscall.c:151 (discriminator 2))
+[   42.163970]  el0_svc (arch/arm64/include/asm/irqflags.h:82
+(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+arch/arm64/kernel/entry-common.c:102 (discriminator 1)
+arch/arm64/kernel/entry-common.c:745 (discriminator 1))
+[   42.173791]  el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:764)
+[   42.185342]  el0t_64_sync (arch/arm64/kernel/entry.S:596)
+[   42.189165] Code: aa0003f3 9102e000 d503201f 12800001 (b8610001)
+All code
+========
+   0: aa0003f3 mov x19, x0
+   4: 9102e000 add x0, x0, #0xb8
+   8: d503201f nop
+   c: 12800001 mov w1, #0xffffffff            // #-1
+  10:* b8610001 ldaddl w1, w1, [x0] <-- trapping instruction
+
+Code starting with the faulting instruction
+===========================================
+   0: b8610001 ldaddl w1, w1, [x0]
+[   42.211485] ---[ end trace 0000000000000000 ]---
+
+## Source
+* Kernel version: 6.17.0-rc7
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe:  6.17.0-rc7-next-20250924
+* Git commit: b5a4da2c459f79a2c87c867398f1c0c315779781
+* Architectures: arm64, x86_64
+* Toolchains: gcc-13
+* Kconfigs: defconfig+lkftconfig
+
+## Build
+* Test log arm64: https://qa-reports.linaro.org/api/testruns/30007634/log_file/
+* Test log x86_64: https://qa-reports.linaro.org/api/testruns/30000230/log_file/
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master-ampere/next-20250924/log-parser-test/internal-error-oops-oops-smp/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/ampere/projects/ci/tests/339teV8pAwrsgeSJq9beV5V11U8
+* Build link: https://storage.tuxsuite.com/public/ampere/ci/builds/339teBhKZ4DENKbJJNnbWKh5ud1/
+* Kernel config:
+https://storage.tuxsuite.com/public/ampere/ci/builds/339teBhKZ4DENKbJJNnbWKh5ud1/config
+
+--
+Linaro LKFT
 
