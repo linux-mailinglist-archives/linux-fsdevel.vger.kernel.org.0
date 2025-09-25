@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-62814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1237BA1C05
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 00:12:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A793BA1C27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 00:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBAC1C27231
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 22:12:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57F6D7B41D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 22:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDCA321F2A;
-	Thu, 25 Sep 2025 22:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72A9322778;
+	Thu, 25 Sep 2025 22:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTWBqhfZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UheZZzsD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0A0235358;
-	Thu, 25 Sep 2025 22:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3C2E8B6B;
+	Thu, 25 Sep 2025 22:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758838340; cv=none; b=WRyxPvZSdl1f8/xFIg91nVUZqFvydUg6j9NwO4tGzdrvmHRZrLtWYeNugo+sdx9s9MZrwQE22ZCzEecDMvqhWiJzWyzQ4329SVKacJNNecoOE3mQSnNYg0QYOTT7ZYvWl+gjG2XX4Fs4aJ78R/pUi3vdEeG5abw8blVAM33LKqE=
+	t=1758838357; cv=none; b=qbIt9MjWiAQjGyLBwhy4gLSM2fYozrbeUnhU63Mrfck7qyS7qvoxUF4+tMg83YQbpaM8dEzhM05OmxVSKjTBtIEzYQ4fmEAsldPAOvhDuiwiWWS5+hWQgRpbumkrQuiGfu9H+ORlWPFRipGURy9uTRi16I+PX1qmXf71mwsQF1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758838340; c=relaxed/simple;
-	bh=c7108jwqpOV4+pWr+PhgmM1iKDmFVdJiyCtcy1mN2cY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uFMc8n1x2uc33QxPaTXpwANG/F3V/KVZ66ciIgadO+oILGUaPZ1O1t98BTFu0PRn5cmJXyctiqsoGRuJ5k7bpXfWJiYIq2yeL6NqK0ZYjJCgtOi34meIvh0HnTQvFLT7jeKBeSfSlvLTgDyZdRQHoznxRtTuVq2CT1O6BqNDDSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTWBqhfZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34ABBC4CEF0;
-	Thu, 25 Sep 2025 22:12:08 +0000 (UTC)
+	s=arc-20240116; t=1758838357; c=relaxed/simple;
+	bh=EhzcAQQNefG/rpYum9YccukxD+KTEFef1Ilrcnpn4P0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=ZcaLeMWsMUh/sYLLGgNhh3xiky0/o7hvpJjqFkPG58K28HfxoXziu8gM0Cn0gtCeDmv5vqkQMYYQhs2WZBTDg0QdWAmdS0wDC4mH4nkLNXa72Ph15gjpnp393DQOuepMiZtX4gjgTvnA3VBeBCn+vpSixPP1R95jqip9OEALtMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UheZZzsD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2E0C4CEF0;
+	Thu, 25 Sep 2025 22:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758838339;
-	bh=c7108jwqpOV4+pWr+PhgmM1iKDmFVdJiyCtcy1mN2cY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=JTWBqhfZxOwUEuDpU8HMg9wskI7rQ2bhGgOMM5JaFNn7OZZFkUYF4DgZwGNQkmdSW
-	 uUwJNNV218XJp0cK8cfwzwLs7Y7nccd+DXiv+vZwJwGkE0zT8ajUaBaFMKgRE9gt3J
-	 9wJxt7DaG1GR5DAVStev5fRHal9v7CCXed3tI99B/OCRd4Hn5VB67ZOu9Qx6V2G49c
-	 ygdytilAIcB13MK2jUDvK/mgpCE2ElRi29eO4U51HhfN/tOS9AdZ7GDL4qtZp63cLK
-	 RRkdPTmB5EafZ3qqXa1AHfBZRax0WxluH7Pa0aPnnXhrY9IMZpWhF2xxg8bk9Nq1xl
-	 ctKy2Ch/HdHxA==
+	s=k20201202; t=1758838356;
+	bh=EhzcAQQNefG/rpYum9YccukxD+KTEFef1Ilrcnpn4P0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UheZZzsDqVS/T1S0NHm17iuakVk3H2l9brDM9QIXLAuY0wKGMLmRiYjpp89q0C8X/
+	 2FzvAozPaMetlj/nSrxpYLGI5rromLbcpcX1lERjrDEbKnkp/jZDf4aHlR8iGLmTFy
+	 xZVJvNmF2OJH8ZoU1jzrfE0p0nk9jqKeq53Z8ntPzAczsETq7DoxaudpFpPCx11Mog
+	 x1IpQgfvMft+m4pH+d+daW6Kiz4zdidGcDJHPvJr9Yvxc9uOz15ZlCmhTmYp4qRmKx
+	 aISM7Bq7GZlncnq5sETnKuNKp99a58hU/m1fHpK0s69q0B4rxh1xK8d9sBQV9eKMfj
+	 CHAMGigKTh34Q==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,16 +49,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 26 Sep 2025 00:12:06 +0200
-Message-Id: <DD285GJWLA78.10DN8N20YVHQI@kernel.org>
-Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 18/19] rust: io: replace `kernel::c_str!` with
- C-Strings
+Date: Fri, 26 Sep 2025 00:12:24 +0200
+Message-Id: <DD285OOFRWDT.PCU1N6M0XNJ4@kernel.org>
 From: "Benno Lossin" <lossin@kernel.org>
 To: "Tamir Duberstein" <tamird@gmail.com>, "Rafael J. Wysocki"
  <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Miguel
@@ -87,10 +79,18 @@ To: "Tamir Duberstein" <tamird@gmail.com>, "Rafael J. Wysocki"
  "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
  <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>, "Liam Girdwood"
  <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>
+Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+ <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 19/19] rust: regulator: replace `kernel::c_str!` with
+ C-Strings
 X-Mailer: aerc 0.21.0
 References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
- <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
-In-Reply-To: <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
+ <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
+In-Reply-To: <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
 
 On Thu Sep 25, 2025 at 3:54 PM CEST, Tamir Duberstein wrote:
 > C-String literals were added in Rust 1.77. Replace instances of
@@ -105,6 +105,6 @@ Cheers,
 Benno
 
 > ---
->  rust/kernel/io/mem.rs | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  rust/kernel/regulator.rs | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
