@@ -1,58 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-62719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489EEB9EEA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C87B9EF2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02DA3859F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 11:32:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFF63860CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 11:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9728E2F9DA8;
-	Thu, 25 Sep 2025 11:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DB42FB975;
+	Thu, 25 Sep 2025 11:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZSRDNib"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNkm6EQF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837A2F9D95;
-	Thu, 25 Sep 2025 11:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1FA1B21BD
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 11:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758799937; cv=none; b=Pw4VMc3rG9IHgVMe7XEHbX3JqCjX6qtd3RJvjpklPg6FRsD3qD3lTONGFrq/CsZWEApZey6hkIGfIVM10rotUib6JTt0AI9M57B3aNPzLNc/LpTPU6H398TKt+KdrYir0s3v3OK02sqcwsnEGJ1UhG5ytMj00q+J1ATcZfPs1j4=
+	t=1758800407; cv=none; b=F7ZbskirvLBSltzeQq9rFuA9dbfMmCpEtQR4Ca1b7ujtBl96mESpMP89zDltNz0UBMkNKxeH0IkcdGoUkLvD2KzhCLjpo83RuX2YG6G0zzdSx1iHgQXLl5nOEhgg9mtesbXF8s07mqPujMvQ0S9yV8VDF6U9yQ0jSXNoVk3rMQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758799937; c=relaxed/simple;
-	bh=tXGQs4PCcoVS8d8vf3xLaYGItw8hP7gn7LZzDeZoGx4=;
+	s=arc-20240116; t=1758800407; c=relaxed/simple;
+	bh=hVwsfUu24/mMs5ElRG+LeSj6JbLZslOQ7+fXUfMkdPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHb4X0zEaKfilZGPPwkxVjwGouWVInd9VGkp520f1MFwGT2sZVhwdeToYINcN3X7JhlG2KnvsnMJRRjAHYK/UcSl1YhjLDHip9McjCx6N/mVsSt4Vg8lL4XABrPMwclsBANDnW0priScCLk7bIREmyGKM8DjrIJ/oIertf4i0Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZSRDNib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC7ABC4CEF7;
-	Thu, 25 Sep 2025 11:32:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aug3qop0WEPMdGhsusikE8p03Tlx5yoZypnySvM78fl1jhU0Lhvdoea/3T8Z8t/1NVbD/Nyoi589aVPEGqULGE6gj15rEPa8GJNbpf0sJWgh3yaKbqq7ipVdBwJKvUG6xSLSEeYyTfoKZnJxH6Dq/9Zf+1mLe375VTDc9/c4QO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNkm6EQF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96C8C4CEF0;
+	Thu, 25 Sep 2025 11:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758799936;
-	bh=tXGQs4PCcoVS8d8vf3xLaYGItw8hP7gn7LZzDeZoGx4=;
+	s=k20201202; t=1758800406;
+	bh=hVwsfUu24/mMs5ElRG+LeSj6JbLZslOQ7+fXUfMkdPM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NZSRDNib2ggkJaGNbggL8B93RKxD6KNmgBnoR5i/EnenqSFUBtxai/jxg7DJvM45T
-	 rFzAy4Hc0yN1Ptk4r1Ghd4qTfs2plSzHW9kapSNJhQCDXpile+SXKhaXoMd5J1NOTC
-	 79R+tlND6Mv4amQoPnY55BAdq/5HCkXGIOHFDYZe6jNa5GJjFAwvKCl2EwHzDH3Z6p
-	 d2dc1ihXopGO/Y0tsW6/unzaibhNI79uNcpCWan8fQKOnTxcqKQHFJ/2rSRThbgMzL
-	 zTmiI5DCl6QIi5fylwOQ1P508rRIIANY/OvDd15jo+d0RCXj0l4y957HNDvG33oMNc
-	 rdju5vSqwKNqw==
-Date: Thu, 25 Sep 2025 13:32:09 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 3/8] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <brqynohvpwo4hqdepvqks3hluq3jng6bnd7xtensee5adgtxem@3ughtcvv57si>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
+	b=tNkm6EQFT80N8CaWgWpiTHkh32I22BAPWv9ar/a+cffkY7Hz8sACWluPUM3P/gs6S
+	 a+Uo0ilG/S9UzTx6P/8+gIAyaPyTdWMijGwPbu0rcgqJvkNCwcMXqYFmj14nZiD/J5
+	 LRk0VqgP2Rgti9Iil9ZWs1wVvMg4tPQzuyzJLl4+hkDtS7OVwOZMoM+ggjNL8H9Bdc
+	 E7rmWNFnzlqCjlggKllI4AkvloIny2Lpl7UqPAw/Se6FsTmSFrvMCIueKWmuVQiEfU
+	 NH+rfsDIw33GeOhkkR01HGO6GggkQbaIU40MDK7pxrmuiBGFIeDFW6HHRJESEhyP8G
+	 NeC2K9eo+KpQw==
+Date: Thu, 25 Sep 2025 12:40:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	John Johansen <john@apparmor.net>
+Subject: Re: [PATCH 1/2] kernel/acct.c: saner struct file treatment
+Message-ID: <4892af80-8e0b-4ee5-98ac-1cce7e252b6a@sirena.org.uk>
+References: <20250906090738.GA31600@ZenIV>
+ <20250906091339.GB31600@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,827 +62,582 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="22f5tmtkurpbpcq3"
+	protocol="application/pgp-signature"; boundary="NAwfs9xQKvqEWjrj"
 Content-Disposition: inline
-In-Reply-To: <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
+In-Reply-To: <20250906091339.GB31600@ZenIV>
+X-Cookie: Cynic, n.:
 
 
---22f5tmtkurpbpcq3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--NAwfs9xQKvqEWjrj
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 3/8] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <brqynohvpwo4hqdepvqks3hluq3jng6bnd7xtensee5adgtxem@3ughtcvv57si>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
 
-Hi Aleksa,
-
-On Thu, Sep 25, 2025 at 01:31:25AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
+On Sat, Sep 06, 2025 at 10:13:39AM +0100, Al Viro wrote:
+> [first commit in work.f_path]
 >=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  man/man2/fsconfig.2 | 729 ++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 729 insertions(+)
->=20
-> diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a2d844a105c74f17af640d699=
-1046dbd5fa69cf0
-> --- /dev/null
-> +++ b/man/man2/fsconfig.2
-> @@ -0,0 +1,729 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH fsconfig 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +fsconfig \- configure new or existing filesystem context
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int fsconfig(int " fd ", unsigned int " cmd ,
-> +.BI "             const char *_Nullable " key ,
-> +.BI "             const void *_Nullable " value ", int " aux );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR fsconfig ()
-> +system call is part of
-> +the suite of file-descriptor-based mount facilities in Linux.
-> +.P
-> +.BR fsconfig ()
-> +is used to supply parameters to
-> +and issue commands against
-> +the filesystem configuration context
-> +associated with the file descriptor
-> +.IR fd .
-> +Filesystem configuration contexts can be created with
-> +.BR fsopen (2)
-> +or be instantiated from an extant filesystem instance with
-> +.BR fspick (2).
-> +.P
-> +The
-> +.I cmd
-> +argument indicates the command to be issued.
-> +Some commands supply parameters to the context
-> +(equivalent to mount options specified with
-> +.BR mount (8)),
-> +while others are meta-operations on the filesystem context.
-> +The list of valid
-> +.I cmd
-> +values are:
-> +.RS
-> +.TP
-> +.B FSCONFIG_SET_FLAG
-> +Set the flag parameter named by
-> +.IR key .
-> +.I value
-> +must be NULL,
-> +and
-> +.I aux
-> +must be 0.
-> +.TP
-> +.B FSCONFIG_SET_STRING
-> +Set the string parameter named by
-> +.I key
-> +to the value specified by
-> +.IR value .
-> +.I value
-> +points to a null-terminated string,
-> +and
-> +.I aux
-> +must be 0.
-> +.TP
-> +.B FSCONFIG_SET_BINARY
-> +Set the blob parameter named by
-> +.I key
-> +to the contents of the binary blob
-> +specified by
-> +.IR value .
-> +.I value
-> +points to
-> +the start of a buffer
-> +that is
-> +.I aux
-> +bytes in length.
-> +.TP
-> +.B FSCONFIG_SET_FD
-> +Set the file parameter named by
-> +.I key
-> +to the open file description
-> +referenced by the file descriptor
-> +.IR aux .
-> +.I value
-> +must be NULL.
-> +.IP
-> +You may also use
-> +.B \%FSCONFIG_SET_STRING
-> +for file parameters,
-> +with
-> +.I value
-> +set to a null-terminated string
-> +containing a base-10 representation
-> +of the file descriptor number.
-> +This mechanism is primarily intended for compatibility
-> +with older
-> +.BR mount (2)-based
-> +programs,
-> +and only works for parameters
-> +that
-> +.I only
-> +accept file descriptor arguments.
-> +.TP
-> +.B FSCONFIG_SET_PATH
-> +Set the path parameter named by
-> +.I key
-> +to the object at a provided path,
-> +resolved in a similar manner to
-> +.BR openat (2).
-> +.I value
-> +points to a null-terminated pathname string,
-> +and
-> +.I aux
-> +is equivalent to the
-> +.I dirfd
-> +argument to
-> +.BR openat (2).
-> +See
-> +.BR openat (2)
-> +for an explanation of the need for
-> +.BR \%FSCONFIG_SET_PATH .
-> +.IP
-> +You may also use
-> +.B \%FSCONFIG_SET_STRING
-> +for path parameters,
-> +the behaviour of which is equivalent to
-> +.B \%FSCONFIG_SET_PATH
-> +with
-> +.I aux
-> +set to
-> +.BR \%AT_FDCWD .
-> +.TP
-> +.B FSCONFIG_SET_PATH_EMPTY
-> +As with
-> +.BR \%FSCONFIG_SET_PATH ,
-> +except that if
-> +.I value
-> +is an empty string,
-> +the file descriptor specified by
-> +.I aux
-> +is operated on directly
-> +and may be any type of file
-> +(not just a directory).
-> +This is equivalent to the behaviour of
-> +.B \%AT_EMPTY_PATH
-> +with most "*at()" system calls.
-> +If
-> +.I aux
-> +is
-> +.BR \%AT_FDCWD ,
-> +the parameter will be set to
-> +the current working directory
-> +of the calling process.
-> +.TP
-> +.B FSCONFIG_CMD_CREATE
-> +This command instructs the filesystem driver
-> +to instantiate an instance of the filesystem in the kernel
-> +with the parameters specified in the filesystem configuration context.
-> +.I key
-> +and
-> +.I value
-> +must be NULL,
-> +and
-> +.I aux
-> +must be 0.
-> +.IP
-> +This command can only be issued once
-> +in the lifetime of a filesystem context.
-> +If the operation succeeds,
-> +the filesystem context
-> +associated with file descriptor
-> +.I fd
-> +now references the created filesystem instance,
-> +and is placed into a special "awaiting-mount" mode
-> +that allows you to use
-> +.BR fsmount (2)
-> +to create a mount object from the filesystem instance.
-> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
-> +If the operation fails,
-> +in most cases
-> +the filesystem context is placed in a failed mode
-> +and cannot be used for any further
-> +.BR fsconfig ()
-> +operations
-> +(though you may still retrieve diagnostic messages
-> +through the message retrieval interface,
-> +as described in
-> +the corresponding subsection of
-> +.BR fsopen (2)).
-> +.IP
-> +This command can only be issued against
-> +filesystem configuration contexts
-> +that were created with
-> +.BR fsopen (2).
-> +In order to create a filesystem instance,
-> +the calling process must have the
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.IP
-> +An important thing to be aware of is that
-> +the Linux kernel will
-> +.I silently
-> +reuse extant filesystem instances
-> +depending on the filesystem type
-> +and the configured parameters
-> +(each filesystem driver has
-> +its own policy for
-> +how filesystem instances are reused).
-> +This means that
-> +the filesystem instance "created" by
-> +.B \%FSCONFIG_CMD_CREATE
-> +may, in fact, be a reference
-> +to an extant filesystem instance in the kernel.
-> +(For reference,
-> +this behaviour also applies to
-> +.BR mount (2).)
-> +.IP
-> +One side-effect of this behaviour is that
-> +if an extant filesystem instance is reused,
-> +.I all
-> +parameters configured
-> +for this filesystem configuration context
-> +are
-> +.I silently ignored
-> +(with the exception of the
-> +.I ro
-> +and
-> +.I rw
-> +flag parameters;
-> +if the state of the read-only flag in the
-> +extant filesystem instance and the filesystem configuration context
-> +do not match, this operation will return
-> +.BR EBUSY ).
-> +This also means that
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +commands issued against
-> +the "created" filesystem instance
-> +will also affect any mount objects associated with
-> +the extant filesystem instance.
-> +.IP
-> +Programs that need to ensure
-> +that they create a new filesystem instance
-> +with specific parameters
-> +(notably, security-related parameters
-> +such as
-> +.I acl
-> +to enable POSIX ACLs\[em]\c
-> +as described in
-> +.BR acl (5))
-> +should use
-> +.B \%FSCONFIG_CMD_CREATE_EXCL
-> +instead.
-> +.TP
-> +.BR FSCONFIG_CMD_CREATE_EXCL " (since Linux 6.6)"
-> +.\" commit 22ed7ecdaefe0cac0c6e6295e83048af60435b13
-> +.\" commit 84ab1277ce5a90a8d1f377707d662ac43cc0918a
-> +As with
-> +.BR \%FSCONFIG_CMD_CREATE ,
-> +except that the kernel is instructed
-> +to not reuse extant filesystem instances.
-> +If the operation
-> +would be forced to
-> +reuse an extant filesystem instance,
-> +this operation will return
-> +.B EBUSY
-> +instead.
-> +.IP
-> +As a result (unlike
-> +.BR \%FSCONFIG_CMD_CREATE ),
-> +if this operation succeeds
-> +then the calling process can be sure that
-> +all of the parameters successfully configured with
-> +.BR fsconfig ()
-> +will actually be applied
-> +to the created filesystem instance.
-> +.TP
-> +.B FSCONFIG_CMD_RECONFIGURE
-> +This command instructs the filesystem driver
-> +to apply the parameters specified in the filesystem configuration context
-> +to the extant filesystem instance
-> +referenced by the filesystem configuration context.
-> +.I key
-> +and
-> +.I value
-> +must be NULL,
-> +and
-> +.I aux
-> +must be 0.
-> +.IP
-> +This is primarily intended for use with
-> +.BR fspick (2),
-> +but may also be used to modify
-> +the parameters of a filesystem instance
-> +after
-> +.B \%FSCONFIG_CMD_CREATE
-> +was used to create it
-> +and a mount object was created using
-> +.BR fsmount (2).
-> +In order to reconfigure an extant filesystem instance,
-> +the calling process must have the
-> +.B CAP_SYS_ADMIN
-> +capability.
-> +.IP
-> +If the operation succeeds,
-> +the filesystem context is reset
-> +but remains in reconfiguration mode
-> +and thus can be reused for subsequent
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +commands.
-> +If the operation fails,
-> +in most cases
-> +the filesystem context is placed in a failed mode
-> +and cannot be used for any further
-> +.BR fsconfig ()
-> +operations
-> +(though you may still retrieve diagnostic messages
-> +through the message retrieval interface,
-> +as described in
-> +the corresponding subsection of
-> +.BR fsopen (2)).
-> +.RE
-> +.P
-> +Parameters specified with
-> +.BI FSCONFIG_SET_ *
-> +do not take effect
-> +until a corresponding
-> +.B \%FSCONFIG_CMD_CREATE
-> +or
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +command is issued.
-> +.SH RETURN VALUE
-> +On success,
-> +.BR fsconfig ()
-> +returns 0.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +If an error occurs, the filesystem driver may provide
-> +additional information about the error
-> +through the message retrieval interface for filesystem configuration con=
-texts.
-> +This additional information can be retrieved at any time by calling
-> +.BR read (2)
-> +on the filesystem instance or filesystem configuration context
-> +referenced by the file descriptor
-> +.IR fd .
-> +(See the "Message retrieval interface" subsection in
-> +.BR fsopen (2)
-> +for more details on the message format.)
-> +.P
-> +Even after an error occurs,
-> +the filesystem configuration context is
-> +.I not
-> +invalidated,
-> +and thus can still be used with other
-> +.BR fsconfig ()
-> +commands.
-> +This means that users can probe support for filesystem parameters
-> +on a per-parameter basis,
-> +and adjust which parameters they wish to set.
-> +.P
-> +The error values given below result from
-> +filesystem type independent errors.
-> +Each filesystem type may have its own special errors
-> +and its own special behavior.
-> +See the Linux kernel source code for details.
-> +.TP
-> +.B EACCES
-> +A component of a path
-> +provided as a path parameter
-> +was not searchable.
-> +(See also
-> +.BR path_resolution (7).)
-> +.TP
-> +.B EACCES
-> +.B \%FSCONFIG_CMD_CREATE
-> +was attempted
-> +for a read-only filesystem
-> +without specifying the
-> +.RB ' ro '
-> +flag parameter.
-> +.TP
-> +.B EACCES
-> +A specified block device parameter
-> +is located on a filesystem
-> +mounted with the
-> +.B \%MS_NODEV
-> +option.
-> +.TP
-> +.B EBADF
-> +The file descriptor given by
-> +.I fd
-> +(or possibly by
-> +.IR aux ,
-> +depending on the command)
-> +is invalid.
-> +.TP
-> +.B EBUSY
-> +The filesystem context associated with
-> +.I fd
-> +is in the wrong state
-> +for the given command.
-> +.TP
-> +.B EBUSY
-> +The filesystem instance cannot be reconfigured as read-only
-> +with
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +because some programs
-> +still hold files open for writing.
-> +.TP
-> +.B EBUSY
-> +A new filesystem instance was requested with
-> +.B \%FSCONFIG_CMD_CREATE_EXCL
-> +but a matching superblock already existed.
-> +.TP
-> +.B EFAULT
-> +One of the pointer arguments
-> +points to a location
-> +outside the calling process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +.I fd
-> +does not refer to
-> +a filesystem configuration context
-> +or filesystem instance.
-> +.TP
-> +.B EINVAL
-> +One of the values of
-> +.IR name ,
-> +.IR value ,
-> +and/or
-> +.I aux
-> +were set to a non-zero value when
-> +.I cmd
-> +required that they be zero
-> +(or NULL).
-> +.TP
-> +.B EINVAL
-> +The parameter named by
-> +.I name
-> +cannot be set
-> +using the type specified with
-> +.IR cmd .
-> +.TP
-> +.B EINVAL
-> +One of the source parameters
-> +referred to
-> +an invalid superblock.
-> +.TP
-> +.B ELOOP
-> +Too many links encountered
-> +during pathname resolution
-> +of a path argument.
-> +.TP
-> +.B ENAMETOOLONG
-> +A path argument was longer than
-> +.BR PATH_MAX .
-> +.TP
-> +.B ENOENT
-> +A path argument had a non-existent component.
-> +.TP
-> +.B ENOENT
-> +A path argument is an empty string,
-> +but
-> +.I cmd
-> +is not
-> +.BR \%FSCONFIG_SET_PATH_EMPTY .
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B ENOTBLK
-> +The parameter named by
-> +.I name
+> 	Instead of switching ->f_path.mnt of an opened file to internal
+> clone, resolve the pathname, get a struct path with ->mnt set to internal
+> clone, then dentry_open() that to get the file with right ->f_path.mnt
+> from the very beginning.
 
-There's no such parameter.  (I guess you meant 'key'?)
+I'm seeing test failures in -next on the LTP acct01 test which bisect to
+this patch.  The test fails with:
 
+acct01.c:123: TFAIL: acct(.) expected EISDIR: EACCES (13)
+acct01.c:123: TPASS: acct(/dev/null) : EACCES (13)
+acct01.c:123: TPASS: acct(/tmp/does/not/exist) : ENOENT (2)
+acct01.c:123: TPASS: acct(./tmpfile/) : ENOTDIR (20)
+acct01.c:123: TPASS: acct(./tmpfile) : EPERM (1)
+acct01.c:123: TPASS: acct(NULL) : EPERM (1)
+acct01.c:123: TPASS: acct(test_file_eloop1) : ELOOP (40)
+acct01.c:123: TPASS: acct(aaaa...) : ENAMETOOLONG (36)
+acct01.c:123: TPASS: acct(ro_mntpoint/file) : EROFS (30)
+acct01.c:123: TPASS: acct(Invalid address) : EFAULT (14)
+Summary:
+passed   9
+failed   1
+broken   0
+skipped  0
+warnings 0
 
-Cheers,
-Alex
+Full log:
 
-> +must be a block device,
-> +but the provided parameter value was not a block device.
-> +.TP
-> +.B ENOTDIR
-> +A component of the path prefix
-> +of a path argument
-> +was not a directory.
-> +.TP
-> +.B EOPNOTSUPP
-> +The command given by
-> +.I cmd
-> +is not valid.
-> +.TP
-> +.B ENXIO
-> +The major number
-> +of a block device parameter
-> +is out of range.
-> +.TP
-> +.B EPERM
-> +The command given by
-> +.I cmd
-> +was
-> +.BR \%FSCONFIG_CMD_CREATE ,
-> +.BR \%FSCONFIG_CMD_CREATE_EXCL ,
-> +or
-> +.BR \%FSCONFIG_CMD_RECONFIGURE ,
-> +but the calling process does not have the required
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit ecdab150fddb42fe6a739335257949220033b782
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH NOTES
-> +.SS Generic filesystem parameters
-> +Each filesystem driver is responsible for
-> +parsing most parameters specified with
-> +.BR fsconfig (),
-> +meaning that individual filesystems
-> +may have very different behaviour
-> +when encountering parameters with the same name.
-> +In general,
-> +you should not assume that the behaviour of
-> +.BR fsconfig ()
-> +when specifying a parameter to one filesystem type
-> +will match the behaviour of the same parameter
-> +with a different filesystem type.
-> +.P
-> +However,
-> +the following generic parameters
-> +apply to all filesystems and have unified behaviour.
-> +They are set using the listed
-> +.BI \%FSCONFIG_SET_ *
-> +command.
-> +.TP
-> +\fIro\fP and \fIrw\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether the filesystem instance is read-only.
-> +.TP
-> +\fIdirsync\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Make directory changes on this filesystem instance synchronous.
-> +.TP
-> +\fIsync\fP and \fIasync\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether writes on this filesystem instance
-> +will be made synchronous
-> +(as though the
-> +.B O_SYNC
-> +flag to
-> +.BR open (2)
-> +was specified for
-> +all file opens in this filesystem instance).
-> +.TP
-> +\fIlazytime\fP and \fInolazytime\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether to reduce on-disk updates
-> +of inode timestamps on this filesystem instance
-> +(as described in the
-> +.B \%MS_LAZYTIME
-> +section of
-> +.BR mount (2)).
-> +.TP
-> +\fImand\fP and \fInomand\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether the filesystem instance should permit mandatory lockin=
-g.
-> +Since Linux 5.15,
-> +.\" commit f7e33bdbd6d1bdf9c3df8bba5abcf3399f957ac3
-> +mandatory locking has been deprecated
-> +and setting this flag is a no-op.
-> +.TP
-> +\fIsource\fP (\fB\%FSCONFIG_SET_STRING\fP)
-> +This parameter is equivalent to the
-> +.I source
-> +parameter passed to
-> +.BR mount (2)
-> +for the same filesystem type,
-> +and is usually the pathname of a block device
-> +containing the filesystem.
-> +This parameter may only be set once
-> +per filesystem configuration context transaction.
-> +.P
-> +In addition,
-> +any filesystem parameters associated with
-> +Linux Security Modules (LSMs)
-> +are also generic with respect to the underlying filesystem.
-> +See the documentation for the LSM you wish to configure for more details.
-> +.SH CAVEATS
-> +.SS Filesystem parameter types
-> +As a result of
-> +each filesystem driver being responsible for
-> +parsing most parameters specified with
-> +.BR fsconfig (),
-> +some filesystem drivers
-> +may have unintuitive behaviour
-> +with regards to which
-> +.BI \%FSCONFIG_SET_ *
-> +commands are permitted
-> +to configure a given parameter.
-> +.P
-> +In order for
-> +filesystem parameters to be backwards compatible with
-> +.BR mount (2),
-> +they must be parseable as strings;
-> +this almost universally means that
-> +.B \%FSCONFIG_SET_STRING
-> +can also be used to configure them.
-> +.\" Aleksa Sarai
-> +.\"   Theoretically, a filesystem could check fc->oldapi and refuse
-> +.\"   FSCONFIG_SET_STRING if the operation is coming from the new API, b=
-ut no
-> +.\"   filesystems do this (and probably never will).
-> +However, other
-> +.BI \%FSCONFIG_SET_ *
-> +commands need to be opted into
-> +by each filesystem driver's parameter parser.
-> +.P
-> +One of the most user-visible instances of
-> +this inconsistency is that
-> +many filesystems do not support
-> +configuring path parameters with
-> +.B \%FSCONFIG_SET_PATH
-> +(despite the name),
-> +which can lead to somewhat confusing
-> +.B EINVAL
-> +errors.
-> +(For example, the generic
-> +.I source
-> +parameter\[em]\c
-> +which is usually a path\[em]\c
-> +can only be configured
-> +with
-> +.BR \%FSCONFIG_SET_STRING .)
-> +.P
-> +When writing programs that use
-> +.BR fsconfig ()
-> +to configure parameters
-> +with commands other than
-> +.BR \%FSCONFIG_SET_STRING ,
-> +users should verify
-> +that the
-> +.BI \%FSCONFIG_SET_ *
-> +commands used to configure each parameter
-> +are supported by the corresponding filesystem driver.
-> +.\" Aleksa Sarai
-> +.\"   While this (quite confusing) inconsistency in behaviour is true to=
-day
-> +.\"   (and has been true since this was merged), this appears to mostly =
-be an
-> +.\"   unintended consequence of filesystem drivers hand-coding fsparam p=
-arsing.
-> +.\"   Path parameters are the most eggregious causes of confusion.
-> +.\"   Hopefully we can make this no longer the case in a future kernel.
-> +.SH EXAMPLES
-> +To illustrate the different kinds of flags that can be configured with
-> +.BR fsconfig (),
-> +here are a few examples of some different filesystems being created:
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd, mntfd;
-> +\&
-> +fsfd =3D fsopen("tmpfs", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "inode64", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "uid", "1234", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "huge", "never", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "casefold", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOEXEC);
-> +move_mount(mntfd, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH);
-> +\&
-> +fsfd =3D fsopen("erofs", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "/dev/loop0", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE_EXCL, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOSUID);
-> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +Usually,
-> +specifying the same parameter named by
-> +.I key
-> +multiple times with
-> +.BR fsconfig ()
-> +causes the parameter value to be replaced.
-> +However, some filesystems may have unique behaviour:
-> +.P
-> +.in +4n
-> +.EX
-> +\&
-> +int fsfd, mntfd;
-> +int lowerdirfd =3D open("/o/ctr/lower1", O_DIRECTORY | O_CLOEXEC);
-> +\&
-> +fsfd =3D fsopen("overlay", FSOPEN_CLOEXEC);
-> +/* "lowerdir+" appends to the lower dir stack each time */
-> +fsconfig(fsfd, FSCONFIG_SET_FD, "lowerdir+", NULL, lowerdirfd);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower2", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower3", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower4", 0);
-> +.\" fsconfig(fsfd, FSCONFIG_SET_PATH, "lowerdir+", "/o/ctr/lower5", AT_F=
-DCWD);
-> +.\" fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "lowerdir+", "", lowerdirfd);
-> +.\" Aleksa Sarai: Hopefully these will also be supported in the future.
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "xino", "auto", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfs_export", "off", 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +And here is an example of how
-> +.BR fspick (2)
-> +can be used with
-> +.BR fsconfig ()
-> +to reconfigure the parameters
-> +of an extant filesystem instance
-> +attached to
-> +.IR /proc :
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd =3D fspick(AT_FDCWD, "/proc", FSPICK_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "hidepid", "ptraceable", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "subset", "pid", 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-> +.EE
-> +.in
-> +.SH SEE ALSO
-> +.BR fsmount (2),
-> +.BR fsopen (2),
-> +.BR fspick (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR move_mount (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
->=20
-> --=20
-> 2.51.0
->=20
->=20
+   https://lava.sirena.org.uk/scheduler/job/1882210#L7052
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+Bisect log with links to more test runs, it looks like the bisect got
+very lucky and tested this patch first for some reason:
 
---22f5tmtkurpbpcq3
+# bad: [b5a4da2c459f79a2c87c867398f1c0c315779781] Add linux-next specific f=
+iles for 20250924
+# good: [69ed2a71d8f82f4304aa52c2c4abf41d1c1f4c7e] Merge branch 'for-linux-=
+next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+# good: [e609438851928381e39b5393f17156955a84122a] regulator: dt-bindings: =
+qcom,sdm845-refgen-regulator: document more platforms
+# good: [5fa7d739f811bdffb5fc99696c2e821344fe0b88] regulator: dt-bindings: =
+qcom,sdm845-refgen-regulator: document more platforms
+# good: [f98cabe3f6cf6396b3ae0264800d9b53d7612433] SPI: Add virtio SPI driv=
+er
+# good: [ad4728740bd68d74365a43acc25a65339a9b2173] spi: rpc-if: Add resume =
+support for RZ/G3E
+# good: [63b4c34635cf32af023796b64c855dd1ed0f0a4f] tas2783A: Add acpi match=
+ changes for Intel MTL
+# good: [46c8b4d2a693eca69a2191436cffa44f489e98c7] ASoC: cs35l41: Fallback =
+to reading Subsystem ID property if not ACPI
+# good: [e336ab509b43ea601801dfa05b4270023c3ed007] spi: rename SPI_CS_CNT_M=
+AX =3D> SPI_DEVICE_CS_CNT_MAX
+# good: [878702702dbbd933a5da601c75b8e58eadeec311] spi: ljca: Remove Wenton=
+g's e-mail address
+# good: [20253f806818e9a1657a832ebcf4141d0a08c02a] spi: atmel-quadspi: Add =
+support for sama7d65 QSPI
+# good: [2aa28b748fc967a2f2566c06bdad155fba8af7d8] ASoC: da7213: Convert to=
+ DEFINE_RUNTIME_DEV_PM_OPS()
+# good: [cb3c715d89607f8896c0f20fe528a08e7ebffea9] ASoC: soc-dapm: add snd_=
+soc_dapm_set_idle_bias()
+# good: [2c618f361ae6b9da7fafafc289051728ef4c6ea3] ASoC: fsl: fsl_qmc_audio=
+: Drop struct qmc_dai_chan
+# good: [0f67557763accbdd56681f17ed5350735198c57b] spi: spi-nxp-fspi: Add O=
+CT-DTR mode support
+# good: [0266f9541038b9b98ddd387132b5bdfe32a304e3] ASoC: codecs: wcd937x: g=
+et regmap directly
+# good: [a24802b0a2a238eaa610b0b0e87a4500a35de64a] spi: spi-qpic-snand: sim=
+plify clock handling by using devm_clk_get_enabled()
+# good: [abe962346ef420998d47ba1c2fe591582f69e92e] regulator: Fix MAX77838 =
+selection
+# good: [ab63e9910d2d3ea4b8e6c08812258a676defcb9c] spi: mt65xx: add dual an=
+d quad mode for standard spi device
+# good: [88d0d17192c5a850dc07bb38035b69c4cefde270] ASoC: dt-bindings: add b=
+indings for pm4125 audio codec
+# good: [8b84d712ad849172f6bbcad57534b284d942b0b5] regulator: spacemit: sup=
+port SpacemiT P1 regulators
+# good: [8d7de4a014f589c1776959f7fdadbf7b12045aac] ASoC: dt-bindings: asahi=
+-kasei,ak4458: Reference common DAI properties
+# good: [6a1f303cba45fa3b612d5a2898b1b1b045eb74e3] regulator: max77838: add=
+ max77838 regulator driver
+# good: [4d906371d1f9fc9ce47b2c8f37444680246557bc] nsfs: drop tautological =
+ioctl() check
+# good: [f8527a29f4619f74bc30a9845ea87abb9a6faa1e] nsfs: validate extensibl=
+e ioctls
+# good: [8b184c34806e5da4d4847fabd3faeff38b47e70a] ASoC: Intel: hda-sdw-bpt=
+: set persistent_buffer false
+# good: [18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4] spi: amlogic: Fix error =
+checking on regmap_write call
+# good: [1217b573978482ae7d21dc5c0bf5aa5007b24f90] ASoC: codecs: pcm1754: a=
+dd pcm1754 dac driver
+# good: [59ba108806516adeaed51a536d55d4f5e9645881] ASoC: dt-bindings: linux=
+,spdif: Add "port" node
+# good: [30db1b21fa37a2f37c7f4d71864405a05e889833] spi: axi-spi-engine: use=
+ adi_axi_pcore_ver_gteq()
+# good: [2e0fd4583d0efcdc260e61a22666c8368f505353] rust: regulator: add dev=
+m_enable and devm_enable_optional
+# good: [6a129b2ca5c533aec89fbeb58470811cc4102642] MAINTAINERS: Add an entr=
+y for Amlogic spifc driver
+# good: [d9e33b38c89f4cf8c32b8481dbcf3a6cdbba4595] spi: cadence-quadspi: Us=
+e BIT() macros where possible
+# good: [e5b4ad2183f7ab18aaf7c73a120d17241ee58e97] ASoC: cs-amp-lib-test: A=
+dd test for getting cal data from HP EFI
+# good: [1cf87861a2e02432fb68f8bcc8f20a8e42acde59] ASoC: codecs: tlv320dac3=
+3: Convert to use gpiod api
+# good: [5bad16482c2a7e788c042d98f3e97d3b2bbc8cc5] regulator: dt-bindings: =
+rpi-panel: Split 7" Raspberry Pi 720x1280 v2 binding
+# good: [4336efb59ef364e691ef829a73d9dbd4d5ed7c7b] ASoC: Intel: bytcr_rt565=
+1: Fix invalid quirk input mapping
+# good: [2c625f0fe2db4e6a58877ce2318df3aa312eb791] spi: dt-bindings: samsun=
+g: Drop S3C2443
+# good: [7d083666123a425ba9f81dff1a52955b1f226540] ASoC: renesas: rz-ssi: U=
+se guard() for spin locks
+# good: [b497e1a1a2b10c4ddb28064fba229365ae03311a] regulator: pf530x: Add a=
+ driver for the NXP PF5300 Regulator
+# good: [9e5eb8b49ffe3c173bf7b8c338a57dfa09fb4634] ASoC: replace use of sys=
+tem_unbound_wq with system_dfl_wq
+# good: [0ccc1eeda155c947d88ef053e0b54e434e218ee2] ASoC: dt-bindings: wlf,w=
+m8960: Document routing strings (pin names)
+# good: [7748328c2fd82efed24257b2bfd796eb1fa1d09b] ASoC: dt-bindings: qcom,=
+lpass-va-macro: Update bindings for clocks to support ADSP
+# good: [dd7ae5b8b3c291c0206f127a564ae1e316705ca0] ASoC: cs42l43: Shutdown =
+jack detection on suspend
+# good: [94b39cb3ad6db935b585988b36378884199cd5fc] spi: mxs: fix "transfere=
+d"->"transferred"
+# good: [5cc49b5a36b32a2dba41441ea13b93fb5ea21cfd] spi: spi-fsl-dspi: Repor=
+t FIFO overflows as errors
+# good: [ce1a46b2d6a8465a86f7a6f71beb4c6de83bce5c] ASoC: codecs: lpass-wsa-=
+macro: add Codev version 2.9
+# good: [06dd3eda0e958cdae48ca755eb5047484f678d78] Merge branch 'vfs-6.18.r=
+ust' into vfs.all
+# good: [ce57b718006a069226b5e5d3afe7969acd59154e] ASoC: Intel: avs: ssm456=
+7: Adjust platform name
+# good: [3279052eab235bfb7130b1fabc74029c2260ed8d] ASoC: SOF: ipc4-topology=
+: Fix a less than zero check on a u32
+# good: [6d33ce3634f99e0c6c9ce9fc111261f2c411cb48] selftests/nolibc: fix EX=
+PECT_NZ macro
+# good: [8f57dcf39fd0864f5f3e6701fe885e55f45d0d3a] ASoC: qcom: audioreach: =
+convert to cpu endainess type before accessing
+# good: [9d35d068fb138160709e04e3ee97fe29a6f8615b] regulator: scmi: Use int=
+ type to store negative error codes
+# good: [8a9772ec08f87c9e45ab1ad2c8d2b8c1763836eb] ASoC: soc-dapm: rename s=
+nd_soc_kcontrol_component() to snd_soc_kcontrol_to_component()
+# good: [3d439e1ec3368fae17db379354bd7a9e568ca0ab] ASoC: sof: ipc4-topology=
+: Add support to sched_domain attribute
+# good: [5c39bc498f5ff7ef016abf3f16698f3e8db79677] ASoC: SOF: Intel: only d=
+etect codecs when HDA DSP probe
+# good: [07752abfa5dbf7cb4d9ce69fa94dc3b12bc597d9] ASoC: SOF: sof-client: I=
+ntroduce sof_client_dev_entry structure
+# good: [f7c41911ad744177d8289820f01009dc93d8f91c] ASoC: SOF: ipc4-topology=
+: Add support for float sample type
+# good: [f522da9ab56c96db8703b2ea0f09be7cdc3bffeb] ASoC: doc: Internally li=
+nk to Writing an ALSA Driver docs
+# good: [d57d27171c92e9049d5301785fb38de127b28fbf] ASoC: SOF: sof-client-pr=
+obes: Add available points_info(), IPC4 only
+# good: [a37280daa4d583c7212681c49b285de9464a5200] ASoC: Intel: avs: Allow =
+i2s test and non-test boards to coexist
+# good: [b088b6189a4066b97cef459afd312fd168a76dea] ASoC: mediatek: common: =
+Switch to for_each_available_child_of_node_scoped()
+# good: [c42e36a488c7e01f833fc9f4814f735b66b2d494] spi: Drop dev_pm_domain_=
+detach() call
+# good: [ff9a7857b7848227788f113d6dc6a72e989084e0] spi: rb4xx: use devm for=
+ clk_prepare_enable
+# good: [f4672dc6e9c07643c8c755856ba8e9eb9ca95d0c] regmap: use int type to =
+store negative error codes
+# good: [edb5c1f885207d1d74e8a1528e6937e02829ee6e] ASoC: renesas: msiof: st=
+art DMAC first
+# good: [6c177775dcc5e70a64ddf4ee842c66af498f2c7c] Merge branch 'next/drive=
+rs' into for-next
+# good: [11f5c5f9e43e9020bae452232983fe98e7abfce0] ASoC: qcom: use int type=
+ to store negative error codes
+# good: [899fb38dd76dd3ede425bbaf8a96d390180a5d1c] regulator: core: Remove =
+redundant ternary operators
+# good: [5b4dcaf851df8c414bfc2ac3bf9c65fc942f3be4] ASoC: amd: acp: Remove (=
+explicitly) unused header
+# good: [e2ab5f600bb01d3625d667d97b3eb7538e388336] rust: regulator: use `to=
+_result` for error handling
+# good: [a12b74d2bd4724ee1883bc97ec93eac8fafc8d3c] ASoC: tlv320aic32x4: use=
+ dev_err_probe() for regulators
+# good: [f840737d1746398c2993be34bfdc80bdc19ecae2] ASoC: SOF: imx: Remove t=
+he use of dev_err_probe()
+# good: [d78e48ebe04e9566f8ecbf51471e80da3adbceeb] ASoC: dt-bindings: Minor=
+ whitespace cleanup in example
+# good: [136d029662cdde77d3e4db5c07de655f35f0239f] Documentation/staging: F=
+ix typo and incorrect citation in crc32.rst
+# good: [96bcb34df55f7fee99795127c796315950c94fed] ASoC: test-component: Us=
+e kcalloc() instead of kzalloc()
+# good: [c232495d28ca092d0c39b10e35d3d613bd2414ab] ASoC: dt-bindings: omap-=
+twl4030: convert to DT schema
+# good: [ec0be3cdf40b5302248f3fb27a911cc630e8b855] regulator: consumer.rst:=
+ document bulk operations
+# good: [27848c082ba0b22850fd9fb7b185c015423dcdc7] spi: s3c64xx: Remove the=
+ use of dev_err_probe()
+# good: [c1dd310f1d76b4b13f1854618087af2513140897] spi: SPISG: Use devm_kca=
+lloc() in aml_spisg_clk_init()
+# good: [da9881d00153cc6d3917f6b74144b1d41b58338c] ASoC: qcom: audioreach: =
+add support for SMECNS module
+# good: [cf65182247761f7993737b710afe8c781699356b] ASoC: codecs: wsa883x: H=
+andle shared reset GPIO for WSA883x speakers
+# good: [550bc517e59347b3b1af7d290eac4fb1411a3d4e] regulator: bd718x7: Use =
+kcalloc() instead of kzalloc()
+# good: [2a55135201d5e24b80b7624880ff42eafd8e320c] ASoC: Intel: avs: Stream=
+line register-component function names
+# good: [daf855f76a1210ceed9541f71ac5dd9be02018a6] ASoC: es8323: enable DAP=
+M power widgets for playback DAC
+# good: [0056b410355713556d8a10306f82e55b28d33ba8] spi: offload trigger: ad=
+i-util-sigma-delta: clean up imports
+# good: [90179609efa421b1ccc7d8eafbc078bafb25777c] spi: spl022: use min_t()=
+ to improve code
+# good: [258384d8ce365dddd6c5c15204de8ccd53a7ab0a] ASoC: es8323: enable DAP=
+M power widgets for playback DAC and output
+# good: [48124569bbc6bfda1df3e9ee17b19d559f4b1aa3] spi: remove unneeded 'fa=
+st_io' parameter in regmap_config
+# good: [6d068f1ae2a2f713d7f21a9a602e65b3d6b6fc6d] regulator: rt5133: Fix s=
+pelling mistake "regualtor" -> "regulator"
+# good: [0e62438e476494a1891a8822b9785bc6e73e9c3f] ASoC: Intel: sst: Remove=
+ redundant semicolons
+# good: [37533933bfe92cd5a99ef4743f31dac62ccc8de0] regulator: remove unneed=
+ed 'fast_io' parameter in regmap_config
+# good: [a46e95c81e3a28926ab1904d9f754fef8318074d] ASoC: wl1273: Remove
+# good: [5c36b86d2bf68fbcad16169983ef7ee8c537db59] regmap: Remove superfluo=
+us check for !config in __regmap_init()
+# good: [714165e1c4b0d5b8c6d095fe07f65e6e7047aaeb] regulator: rt5133: Add R=
+T5133 PMIC regulator Support
+# good: [9c45f95222beecd6a284fd1284d54dd7a772cf59] spi: spi-qpic-snand: han=
+dle 'use_ecc' parameter of qcom_spi_config_cw_read()
+# good: [bab4ab484a6ca170847da9bffe86f1fa90df4bbe] ASoC: dt-bindings: Conve=
+rt brcm,bcm2835-i2s to DT schema
+# good: [b832b19318534bb4f1673b24d78037fee339c679] spi: loopback-test: Don'=
+t use %pK through printk
+# good: [8c02c8353460f8630313aef6810f34e134a3c1ee] ASoC: dt-bindings: realt=
+ek,alc5623: convert to DT schema
+# good: [6b7e2aa50bdaf88cd4c2a5e2059a7bf32d85a8b1] spi: spi-qpic-snand: rem=
+ove 'clr*status' members of struct 'qpic_ecc'
+# good: [a54ef14188519a0994d0264f701f5771815fa11e] regulator: dt-bindings: =
+Clean-up active-semi,act8945a duplication
+# good: [2291a2186305faaf8525d57849d8ba12ad63f5e7] MAINTAINERS: Add entry f=
+or FourSemi audio amplifiers
+# good: [cf25eb8eae91bcae9b2065d84b0c0ba0f6d9dd34] ASoC: soc-component: unp=
+ack snd_soc_component_init_bias_level()
+# good: [595b7f155b926460a00776cc581e4dcd01220006] ASoC: Intel: avs: Condit=
+ional-path support
+# good: [a1d0b0ae65ae3f32597edfbb547f16c75601cd87] spi: spi-qpic-snand: avo=
+id double assignment in qcom_spi_probe()
+# good: [3059067fd3378a5454e7928c08d20bf3ef186760] ASoC: cs48l32: Use PTR_E=
+RR_OR_ZERO() to simplify code
+# good: [9a200cbdb54349909a42b45379e792e4b39dd223] rust: regulator: impleme=
+nt Send and Sync for Regulator<T>
+# good: [2d86d2585ab929a143d1e6f8963da1499e33bf13] ASoC: pxa: add GPIOLIB_L=
+EGACY dependency
+# good: [162e23657e5379f07c6404dbfbf4367cb438ea7d] regulator: pf0900: Add P=
+MIC PF0900 support
+# good: [886f42ce96e7ce80545704e7168a9c6b60cd6c03] regmap: mmio: Add missin=
+g MODULE_DESCRIPTION()
+git bisect start 'b5a4da2c459f79a2c87c867398f1c0c315779781' '69ed2a71d8f82f=
+4304aa52c2c4abf41d1c1f4c7e' 'e609438851928381e39b5393f17156955a84122a' '5fa=
+7d739f811bdffb5fc99696c2e821344fe0b88' 'f98cabe3f6cf6396b3ae0264800d9b53d76=
+12433' 'ad4728740bd68d74365a43acc25a65339a9b2173' '63b4c34635cf32af023796b6=
+4c855dd1ed0f0a4f' '46c8b4d2a693eca69a2191436cffa44f489e98c7' 'e336ab509b43e=
+a601801dfa05b4270023c3ed007' '878702702dbbd933a5da601c75b8e58eadeec311' '20=
+253f806818e9a1657a832ebcf4141d0a08c02a' '2aa28b748fc967a2f2566c06bdad155fba=
+8af7d8' 'cb3c715d89607f8896c0f20fe528a08e7ebffea9' '2c618f361ae6b9da7fafafc=
+289051728ef4c6ea3' '0f67557763accbdd56681f17ed5350735198c57b' '0266f9541038=
+b9b98ddd387132b5bdfe32a304e3' 'a24802b0a2a238eaa610b0b0e87a4500a35de64a' 'a=
+be962346ef420998d47ba1c2fe591582f69e92e' 'ab63e9910d2d3ea4b8e6c08812258a676=
+defcb9c' '88d0d17192c5a850dc07bb38035b69c4cefde270' '8b84d712ad849172f6bbca=
+d57534b284d942b0b5' '8d7de4a014f589c1776959f7fdadbf7b12045aac' '6a1f303cba4=
+5fa3b612d5a2898b1b1b045eb74e3' '4d906371d1f9fc9ce47b2c8f37444680246557bc' '=
+f8527a29f4619f74bc30a9845ea87abb9a6faa1e' '8b184c34806e5da4d4847fabd3faeff3=
+8b47e70a' '18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4' '1217b573978482ae7d21d=
+c5c0bf5aa5007b24f90' '59ba108806516adeaed51a536d55d4f5e9645881' '30db1b21fa=
+37a2f37c7f4d71864405a05e889833' '2e0fd4583d0efcdc260e61a22666c8368f505353' =
+'6a129b2ca5c533aec89fbeb58470811cc4102642' 'd9e33b38c89f4cf8c32b8481dbcf3a6=
+cdbba4595' 'e5b4ad2183f7ab18aaf7c73a120d17241ee58e97' '1cf87861a2e02432fb68=
+f8bcc8f20a8e42acde59' '5bad16482c2a7e788c042d98f3e97d3b2bbc8cc5' '4336efb59=
+ef364e691ef829a73d9dbd4d5ed7c7b' '2c625f0fe2db4e6a58877ce2318df3aa312eb791'=
+ '7d083666123a425ba9f81dff1a52955b1f226540' 'b497e1a1a2b10c4ddb28064fba2293=
+65ae03311a' '9e5eb8b49ffe3c173bf7b8c338a57dfa09fb4634' '0ccc1eeda155c947d88=
+ef053e0b54e434e218ee2' '7748328c2fd82efed24257b2bfd796eb1fa1d09b' 'dd7ae5b8=
+b3c291c0206f127a564ae1e316705ca0' '94b39cb3ad6db935b585988b36378884199cd5fc=
+' '5cc49b5a36b32a2dba41441ea13b93fb5ea21cfd' 'ce1a46b2d6a8465a86f7a6f71beb4=
+c6de83bce5c' '06dd3eda0e958cdae48ca755eb5047484f678d78' 'ce57b718006a069226=
+b5e5d3afe7969acd59154e' '3279052eab235bfb7130b1fabc74029c2260ed8d' '6d33ce3=
+634f99e0c6c9ce9fc111261f2c411cb48' '8f57dcf39fd0864f5f3e6701fe885e55f45d0d3=
+a' '9d35d068fb138160709e04e3ee97fe29a6f8615b' '8a9772ec08f87c9e45ab1ad2c8d2=
+b8c1763836eb' '3d439e1ec3368fae17db379354bd7a9e568ca0ab' '5c39bc498f5ff7ef0=
+16abf3f16698f3e8db79677' '07752abfa5dbf7cb4d9ce69fa94dc3b12bc597d9' 'f7c419=
+11ad744177d8289820f01009dc93d8f91c' 'f522da9ab56c96db8703b2ea0f09be7cdc3bff=
+eb' 'd57d27171c92e9049d5301785fb38de127b28fbf' 'a37280daa4d583c7212681c49b2=
+85de9464a5200' 'b088b6189a4066b97cef459afd312fd168a76dea' 'c42e36a488c7e01f=
+833fc9f4814f735b66b2d494' 'ff9a7857b7848227788f113d6dc6a72e989084e0' 'f4672=
+dc6e9c07643c8c755856ba8e9eb9ca95d0c' 'edb5c1f885207d1d74e8a1528e6937e02829e=
+e6e' '6c177775dcc5e70a64ddf4ee842c66af498f2c7c' '11f5c5f9e43e9020bae4522329=
+83fe98e7abfce0' '899fb38dd76dd3ede425bbaf8a96d390180a5d1c' '5b4dcaf851df8c4=
+14bfc2ac3bf9c65fc942f3be4' 'e2ab5f600bb01d3625d667d97b3eb7538e388336' 'a12b=
+74d2bd4724ee1883bc97ec93eac8fafc8d3c' 'f840737d1746398c2993be34bfdc80bdc19e=
+cae2' 'd78e48ebe04e9566f8ecbf51471e80da3adbceeb' '136d029662cdde77d3e4db5c0=
+7de655f35f0239f' '96bcb34df55f7fee99795127c796315950c94fed' 'c232495d28ca09=
+2d0c39b10e35d3d613bd2414ab' 'ec0be3cdf40b5302248f3fb27a911cc630e8b855' '278=
+48c082ba0b22850fd9fb7b185c015423dcdc7' 'c1dd310f1d76b4b13f1854618087af25131=
+40897' 'da9881d00153cc6d3917f6b74144b1d41b58338c' 'cf65182247761f7993737b71=
+0afe8c781699356b' '550bc517e59347b3b1af7d290eac4fb1411a3d4e' '2a55135201d5e=
+24b80b7624880ff42eafd8e320c' 'daf855f76a1210ceed9541f71ac5dd9be02018a6' '00=
+56b410355713556d8a10306f82e55b28d33ba8' '90179609efa421b1ccc7d8eafbc078bafb=
+25777c' '258384d8ce365dddd6c5c15204de8ccd53a7ab0a' '48124569bbc6bfda1df3e9e=
+e17b19d559f4b1aa3' '6d068f1ae2a2f713d7f21a9a602e65b3d6b6fc6d' '0e62438e4764=
+94a1891a8822b9785bc6e73e9c3f' '37533933bfe92cd5a99ef4743f31dac62ccc8de0' 'a=
+46e95c81e3a28926ab1904d9f754fef8318074d' '5c36b86d2bf68fbcad16169983ef7ee8c=
+537db59' '714165e1c4b0d5b8c6d095fe07f65e6e7047aaeb' '9c45f95222beecd6a284fd=
+1284d54dd7a772cf59' 'bab4ab484a6ca170847da9bffe86f1fa90df4bbe' 'b832b193185=
+34bb4f1673b24d78037fee339c679' '8c02c8353460f8630313aef6810f34e134a3c1ee' '=
+6b7e2aa50bdaf88cd4c2a5e2059a7bf32d85a8b1' 'a54ef14188519a0994d0264f701f5771=
+815fa11e' '2291a2186305faaf8525d57849d8ba12ad63f5e7' 'cf25eb8eae91bcae9b206=
+5d84b0c0ba0f6d9dd34' '595b7f155b926460a00776cc581e4dcd01220006' 'a1d0b0ae65=
+ae3f32597edfbb547f16c75601cd87' '3059067fd3378a5454e7928c08d20bf3ef186760' =
+'9a200cbdb54349909a42b45379e792e4b39dd223' '2d86d2585ab929a143d1e6f8963da14=
+99e33bf13' '162e23657e5379f07c6404dbfbf4367cb438ea7d' '886f42ce96e7ce805457=
+04e7168a9c6b60cd6c03'
+# test job: [e609438851928381e39b5393f17156955a84122a] https://lava.sirena.=
+org.uk/scheduler/job/1868301
+# test job: [5fa7d739f811bdffb5fc99696c2e821344fe0b88] https://lava.sirena.=
+org.uk/scheduler/job/1868351
+# test job: [f98cabe3f6cf6396b3ae0264800d9b53d7612433] https://lava.sirena.=
+org.uk/scheduler/job/1862378
+# test job: [ad4728740bd68d74365a43acc25a65339a9b2173] https://lava.sirena.=
+org.uk/scheduler/job/1862571
+# test job: [63b4c34635cf32af023796b64c855dd1ed0f0a4f] https://lava.sirena.=
+org.uk/scheduler/job/1863569
+# test job: [46c8b4d2a693eca69a2191436cffa44f489e98c7] https://lava.sirena.=
+org.uk/scheduler/job/1862012
+# test job: [e336ab509b43ea601801dfa05b4270023c3ed007] https://lava.sirena.=
+org.uk/scheduler/job/1862870
+# test job: [878702702dbbd933a5da601c75b8e58eadeec311] https://lava.sirena.=
+org.uk/scheduler/job/1863783
+# test job: [20253f806818e9a1657a832ebcf4141d0a08c02a] https://lava.sirena.=
+org.uk/scheduler/job/1848487
+# test job: [2aa28b748fc967a2f2566c06bdad155fba8af7d8] https://lava.sirena.=
+org.uk/scheduler/job/1848316
+# test job: [cb3c715d89607f8896c0f20fe528a08e7ebffea9] https://lava.sirena.=
+org.uk/scheduler/job/1847531
+# test job: [2c618f361ae6b9da7fafafc289051728ef4c6ea3] https://lava.sirena.=
+org.uk/scheduler/job/1850256
+# test job: [0f67557763accbdd56681f17ed5350735198c57b] https://lava.sirena.=
+org.uk/scheduler/job/1848730
+# test job: [0266f9541038b9b98ddd387132b5bdfe32a304e3] https://lava.sirena.=
+org.uk/scheduler/job/1848825
+# test job: [a24802b0a2a238eaa610b0b0e87a4500a35de64a] https://lava.sirena.=
+org.uk/scheduler/job/1847698
+# test job: [abe962346ef420998d47ba1c2fe591582f69e92e] https://lava.sirena.=
+org.uk/scheduler/job/1840610
+# test job: [ab63e9910d2d3ea4b8e6c08812258a676defcb9c] https://lava.sirena.=
+org.uk/scheduler/job/1838203
+# test job: [88d0d17192c5a850dc07bb38035b69c4cefde270] https://lava.sirena.=
+org.uk/scheduler/job/1834007
+# test job: [8b84d712ad849172f6bbcad57534b284d942b0b5] https://lava.sirena.=
+org.uk/scheduler/job/1834035
+# test job: [8d7de4a014f589c1776959f7fdadbf7b12045aac] https://lava.sirena.=
+org.uk/scheduler/job/1833177
+# test job: [6a1f303cba45fa3b612d5a2898b1b1b045eb74e3] https://lava.sirena.=
+org.uk/scheduler/job/1830452
+# test job: [4d906371d1f9fc9ce47b2c8f37444680246557bc] https://lava.sirena.=
+org.uk/scheduler/job/1832437
+# test job: [f8527a29f4619f74bc30a9845ea87abb9a6faa1e] https://lava.sirena.=
+org.uk/scheduler/job/1832501
+# test job: [8b184c34806e5da4d4847fabd3faeff38b47e70a] https://lava.sirena.=
+org.uk/scheduler/job/1829208
+# test job: [18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4] https://lava.sirena.=
+org.uk/scheduler/job/1829126
+# test job: [1217b573978482ae7d21dc5c0bf5aa5007b24f90] https://lava.sirena.=
+org.uk/scheduler/job/1809935
+# test job: [59ba108806516adeaed51a536d55d4f5e9645881] https://lava.sirena.=
+org.uk/scheduler/job/1812752
+# test job: [30db1b21fa37a2f37c7f4d71864405a05e889833] https://lava.sirena.=
+org.uk/scheduler/job/1811000
+# test job: [2e0fd4583d0efcdc260e61a22666c8368f505353] https://lava.sirena.=
+org.uk/scheduler/job/1806799
+# test job: [6a129b2ca5c533aec89fbeb58470811cc4102642] https://lava.sirena.=
+org.uk/scheduler/job/1805795
+# test job: [d9e33b38c89f4cf8c32b8481dbcf3a6cdbba4595] https://lava.sirena.=
+org.uk/scheduler/job/1800095
+# test job: [e5b4ad2183f7ab18aaf7c73a120d17241ee58e97] https://lava.sirena.=
+org.uk/scheduler/job/1799490
+# test job: [1cf87861a2e02432fb68f8bcc8f20a8e42acde59] https://lava.sirena.=
+org.uk/scheduler/job/1795075
+# test job: [5bad16482c2a7e788c042d98f3e97d3b2bbc8cc5] https://lava.sirena.=
+org.uk/scheduler/job/1795939
+# test job: [4336efb59ef364e691ef829a73d9dbd4d5ed7c7b] https://lava.sirena.=
+org.uk/scheduler/job/1795892
+# test job: [2c625f0fe2db4e6a58877ce2318df3aa312eb791] https://lava.sirena.=
+org.uk/scheduler/job/1794526
+# test job: [7d083666123a425ba9f81dff1a52955b1f226540] https://lava.sirena.=
+org.uk/scheduler/job/1794861
+# test job: [b497e1a1a2b10c4ddb28064fba229365ae03311a] https://lava.sirena.=
+org.uk/scheduler/job/1780204
+# test job: [9e5eb8b49ffe3c173bf7b8c338a57dfa09fb4634] https://lava.sirena.=
+org.uk/scheduler/job/1779465
+# test job: [0ccc1eeda155c947d88ef053e0b54e434e218ee2] https://lava.sirena.=
+org.uk/scheduler/job/1773032
+# test job: [7748328c2fd82efed24257b2bfd796eb1fa1d09b] https://lava.sirena.=
+org.uk/scheduler/job/1773343
+# test job: [dd7ae5b8b3c291c0206f127a564ae1e316705ca0] https://lava.sirena.=
+org.uk/scheduler/job/1773264
+# test job: [94b39cb3ad6db935b585988b36378884199cd5fc] https://lava.sirena.=
+org.uk/scheduler/job/1768594
+# test job: [5cc49b5a36b32a2dba41441ea13b93fb5ea21cfd] https://lava.sirena.=
+org.uk/scheduler/job/1769303
+# test job: [ce1a46b2d6a8465a86f7a6f71beb4c6de83bce5c] https://lava.sirena.=
+org.uk/scheduler/job/1768977
+# test job: [06dd3eda0e958cdae48ca755eb5047484f678d78] https://lava.sirena.=
+org.uk/scheduler/job/1832025
+# test job: [ce57b718006a069226b5e5d3afe7969acd59154e] https://lava.sirena.=
+org.uk/scheduler/job/1768708
+# test job: [3279052eab235bfb7130b1fabc74029c2260ed8d] https://lava.sirena.=
+org.uk/scheduler/job/1762443
+# test job: [6d33ce3634f99e0c6c9ce9fc111261f2c411cb48] https://lava.sirena.=
+org.uk/scheduler/job/1780072
+# test job: [8f57dcf39fd0864f5f3e6701fe885e55f45d0d3a] https://lava.sirena.=
+org.uk/scheduler/job/1760110
+# test job: [9d35d068fb138160709e04e3ee97fe29a6f8615b] https://lava.sirena.=
+org.uk/scheduler/job/1758669
+# test job: [8a9772ec08f87c9e45ab1ad2c8d2b8c1763836eb] https://lava.sirena.=
+org.uk/scheduler/job/1758549
+# test job: [3d439e1ec3368fae17db379354bd7a9e568ca0ab] https://lava.sirena.=
+org.uk/scheduler/job/1753438
+# test job: [5c39bc498f5ff7ef016abf3f16698f3e8db79677] https://lava.sirena.=
+org.uk/scheduler/job/1752464
+# test job: [07752abfa5dbf7cb4d9ce69fa94dc3b12bc597d9] https://lava.sirena.=
+org.uk/scheduler/job/1752286
+# test job: [f7c41911ad744177d8289820f01009dc93d8f91c] https://lava.sirena.=
+org.uk/scheduler/job/1752277
+# test job: [f522da9ab56c96db8703b2ea0f09be7cdc3bffeb] https://lava.sirena.=
+org.uk/scheduler/job/1751873
+# test job: [d57d27171c92e9049d5301785fb38de127b28fbf] https://lava.sirena.=
+org.uk/scheduler/job/1752634
+# test job: [a37280daa4d583c7212681c49b285de9464a5200] https://lava.sirena.=
+org.uk/scheduler/job/1746884
+# test job: [b088b6189a4066b97cef459afd312fd168a76dea] https://lava.sirena.=
+org.uk/scheduler/job/1746221
+# test job: [c42e36a488c7e01f833fc9f4814f735b66b2d494] https://lava.sirena.=
+org.uk/scheduler/job/1746231
+# test job: [ff9a7857b7848227788f113d6dc6a72e989084e0] https://lava.sirena.=
+org.uk/scheduler/job/1746324
+# test job: [f4672dc6e9c07643c8c755856ba8e9eb9ca95d0c] https://lava.sirena.=
+org.uk/scheduler/job/1747874
+# test job: [edb5c1f885207d1d74e8a1528e6937e02829ee6e] https://lava.sirena.=
+org.uk/scheduler/job/1746145
+# test job: [6c177775dcc5e70a64ddf4ee842c66af498f2c7c] https://lava.sirena.=
+org.uk/scheduler/job/1780443
+# test job: [11f5c5f9e43e9020bae452232983fe98e7abfce0] https://lava.sirena.=
+org.uk/scheduler/job/1747495
+# test job: [899fb38dd76dd3ede425bbaf8a96d390180a5d1c] https://lava.sirena.=
+org.uk/scheduler/job/1747371
+# test job: [5b4dcaf851df8c414bfc2ac3bf9c65fc942f3be4] https://lava.sirena.=
+org.uk/scheduler/job/1747664
+# test job: [e2ab5f600bb01d3625d667d97b3eb7538e388336] https://lava.sirena.=
+org.uk/scheduler/job/1746572
+# test job: [a12b74d2bd4724ee1883bc97ec93eac8fafc8d3c] https://lava.sirena.=
+org.uk/scheduler/job/1734064
+# test job: [f840737d1746398c2993be34bfdc80bdc19ecae2] https://lava.sirena.=
+org.uk/scheduler/job/1727349
+# test job: [d78e48ebe04e9566f8ecbf51471e80da3adbceeb] https://lava.sirena.=
+org.uk/scheduler/job/1706173
+# test job: [136d029662cdde77d3e4db5c07de655f35f0239f] https://lava.sirena.=
+org.uk/scheduler/job/1780406
+# test job: [96bcb34df55f7fee99795127c796315950c94fed] https://lava.sirena.=
+org.uk/scheduler/job/1699603
+# test job: [c232495d28ca092d0c39b10e35d3d613bd2414ab] https://lava.sirena.=
+org.uk/scheduler/job/1699550
+# test job: [ec0be3cdf40b5302248f3fb27a911cc630e8b855] https://lava.sirena.=
+org.uk/scheduler/job/1694311
+# test job: [27848c082ba0b22850fd9fb7b185c015423dcdc7] https://lava.sirena.=
+org.uk/scheduler/job/1693098
+# test job: [c1dd310f1d76b4b13f1854618087af2513140897] https://lava.sirena.=
+org.uk/scheduler/job/1692990
+# test job: [da9881d00153cc6d3917f6b74144b1d41b58338c] https://lava.sirena.=
+org.uk/scheduler/job/1693415
+# test job: [cf65182247761f7993737b710afe8c781699356b] https://lava.sirena.=
+org.uk/scheduler/job/1687536
+# test job: [550bc517e59347b3b1af7d290eac4fb1411a3d4e] https://lava.sirena.=
+org.uk/scheduler/job/1685913
+# test job: [2a55135201d5e24b80b7624880ff42eafd8e320c] https://lava.sirena.=
+org.uk/scheduler/job/1685775
+# test job: [daf855f76a1210ceed9541f71ac5dd9be02018a6] https://lava.sirena.=
+org.uk/scheduler/job/1685463
+# test job: [0056b410355713556d8a10306f82e55b28d33ba8] https://lava.sirena.=
+org.uk/scheduler/job/1685632
+# test job: [90179609efa421b1ccc7d8eafbc078bafb25777c] https://lava.sirena.=
+org.uk/scheduler/job/1686082
+# test job: [258384d8ce365dddd6c5c15204de8ccd53a7ab0a] https://lava.sirena.=
+org.uk/scheduler/job/1673404
+# test job: [48124569bbc6bfda1df3e9ee17b19d559f4b1aa3] https://lava.sirena.=
+org.uk/scheduler/job/1670194
+# test job: [6d068f1ae2a2f713d7f21a9a602e65b3d6b6fc6d] https://lava.sirena.=
+org.uk/scheduler/job/1673155
+# test job: [0e62438e476494a1891a8822b9785bc6e73e9c3f] https://lava.sirena.=
+org.uk/scheduler/job/1669533
+# test job: [37533933bfe92cd5a99ef4743f31dac62ccc8de0] https://lava.sirena.=
+org.uk/scheduler/job/1668976
+# test job: [a46e95c81e3a28926ab1904d9f754fef8318074d] https://lava.sirena.=
+org.uk/scheduler/job/1673737
+# test job: [5c36b86d2bf68fbcad16169983ef7ee8c537db59] https://lava.sirena.=
+org.uk/scheduler/job/1667939
+# test job: [714165e1c4b0d5b8c6d095fe07f65e6e7047aaeb] https://lava.sirena.=
+org.uk/scheduler/job/1667687
+# test job: [9c45f95222beecd6a284fd1284d54dd7a772cf59] https://lava.sirena.=
+org.uk/scheduler/job/1667605
+# test job: [bab4ab484a6ca170847da9bffe86f1fa90df4bbe] https://lava.sirena.=
+org.uk/scheduler/job/1664696
+# test job: [b832b19318534bb4f1673b24d78037fee339c679] https://lava.sirena.=
+org.uk/scheduler/job/1659192
+# test job: [8c02c8353460f8630313aef6810f34e134a3c1ee] https://lava.sirena.=
+org.uk/scheduler/job/1659256
+# test job: [6b7e2aa50bdaf88cd4c2a5e2059a7bf32d85a8b1] https://lava.sirena.=
+org.uk/scheduler/job/1656575
+# test job: [a54ef14188519a0994d0264f701f5771815fa11e] https://lava.sirena.=
+org.uk/scheduler/job/1656016
+# test job: [2291a2186305faaf8525d57849d8ba12ad63f5e7] https://lava.sirena.=
+org.uk/scheduler/job/1655762
+# test job: [cf25eb8eae91bcae9b2065d84b0c0ba0f6d9dd34] https://lava.sirena.=
+org.uk/scheduler/job/1654786
+# test job: [595b7f155b926460a00776cc581e4dcd01220006] https://lava.sirena.=
+org.uk/scheduler/job/1653153
+# test job: [a1d0b0ae65ae3f32597edfbb547f16c75601cd87] https://lava.sirena.=
+org.uk/scheduler/job/1654229
+# test job: [3059067fd3378a5454e7928c08d20bf3ef186760] https://lava.sirena.=
+org.uk/scheduler/job/1654000
+# test job: [9a200cbdb54349909a42b45379e792e4b39dd223] https://lava.sirena.=
+org.uk/scheduler/job/1654755
+# test job: [2d86d2585ab929a143d1e6f8963da1499e33bf13] https://lava.sirena.=
+org.uk/scheduler/job/1654130
+# test job: [162e23657e5379f07c6404dbfbf4367cb438ea7d] https://lava.sirena.=
+org.uk/scheduler/job/1652972
+# test job: [886f42ce96e7ce80545704e7168a9c6b60cd6c03] https://lava.sirena.=
+org.uk/scheduler/job/1654301
+# test job: [b5a4da2c459f79a2c87c867398f1c0c315779781] https://lava.sirena.=
+org.uk/scheduler/job/1882210
+# bad: [b5a4da2c459f79a2c87c867398f1c0c315779781] Add linux-next specific f=
+iles for 20250924
+git bisect bad b5a4da2c459f79a2c87c867398f1c0c315779781
+# test job: [ccc54b556054d20a1e04eac48200e63e6b87fe1c] https://lava.sirena.=
+org.uk/scheduler/job/1818582
+# bad: [ccc54b556054d20a1e04eac48200e63e6b87fe1c] kernel/acct.c: saner stru=
+ct file treatment
+git bisect bad ccc54b556054d20a1e04eac48200e63e6b87fe1c
+# test job: [b320789d6883cc00ac78ce83bccbfe7ed58afcf0] https://lava.sirena.=
+org.uk/scheduler/job/1756559
+# good: [b320789d6883cc00ac78ce83bccbfe7ed58afcf0] Linux 6.17-rc4
+git bisect good b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+# first bad commit: [ccc54b556054d20a1e04eac48200e63e6b87fe1c] kernel/acct.=
+c: saner struct file treatment
+
+--NAwfs9xQKvqEWjrj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjVKDIACgkQ64mZXMKQ
-wqntERAAiDY2vjaGN0Ex0POakH9zwsWJsbo2XzdBCQJ+A5AY8MN4qDdkVO0w7mBN
-ZSuJa3M1QwMO3eocjW4qYErR4Jt+GYrXyRvcA7s3NpQ0KthkGfw8rt1qrxPLuJQH
-saR6KdigCOYDnTl9N5kz1iV5Gjc3D/V6LjONcbZVVbqP5VK8prugosbCU6tz1a4g
-f6JKOE+BWKni8rIXpGcwdWfnqoPxyxOyOjTnxKnSOQQDnia2qOCnwM6/4m+DoWEj
-DXIo+FCHdfIhqhIy3IBqWXdHRIXWSQA0imdrRUG/kl03sI7FBT66lzwMXQZ7HiQV
-7nD1aSckXP6pf2wot4g/hvItrLvO/ZrAJntjH1ugaov+NIRD+H7VlLZCB6is8EEX
-BexVFxtNz/bnxKhFWUIe7zheauWJWA/IrjvDlnFtCwOG2AV46BHP0M5zVfsRQsoS
-n7h8fnXDJucNsQV0bVTQPFoEhvHuGSG4lXeMTt4IH8nCWlF1OloBcItrTYw4Ybmn
-boKwyF/brbGbO7BlDh4Ddx+ciwdIdVuM3GcsG+Vf4+PMcDxaRvZOiB7Zn7u/amva
-F80JP9NYjqvWkunQqdnjscpXtBwvf9IwmdajHD5HT/QHE6OrAwVpvK4H8mqDn0wN
-FPl/JN7dUR4s2qWqjT8qE+Jss7v/Ckm0cYaia1Hzv2tfiXjer3E=
-=JXIc
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVKhEACgkQJNaLcl1U
+h9ABmgf/SR7psb5UlUSoNo2DZ9MmHiHBis1pKSXnhP7lL3dqykkMLUfGWZUPETOe
+jpuRo86JhsaxC8TbaJemtM9sz3AmXiaogR9Q9c5kUqeVVjC8Kt2TY9EALNWmhbk2
+H/RLYuFAyGTfUizdFdi9y6JF2C/bIE/NSinghvC24r4UwLGG2XwtFyt0l/Syuzt4
+ZYFgQOH0hZHAJ0QqndWochsQwLYGjaRk1EspRHeewSXwEkPbCtF/p3EdwTC+RHzQ
+qmkrWvsDVTVsr4oAd/eyVV6uESlDlBvN8WGulFaorGJVBFFvEKcYiZBMsPt5nZu6
+yIVtkbrfnuvDiHlnw3nChFiCpp2EIQ==
+=DkNJ
 -----END PGP SIGNATURE-----
 
---22f5tmtkurpbpcq3--
+--NAwfs9xQKvqEWjrj--
 
