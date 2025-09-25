@@ -1,233 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-62773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940D9BA0736
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:50:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79682BA0742
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DBE33A8D96
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09FF17F13A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C5E3016F7;
-	Thu, 25 Sep 2025 15:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C2F2FFFBE;
+	Thu, 25 Sep 2025 15:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cpgEc8qK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IkI9+abl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cpgEc8qK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IkI9+abl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iY7XgZl3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCC32FFFBE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 15:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E646B2FB976
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 15:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758815416; cv=none; b=Im9eXZQMXc/nBXRWKcDiTAL0BAGNDPe4DqCdsgwawTg5/7d34ecEGEBimDqutoANpWPR2Ulh/XyxJEdTttMaKz+X2FZWTXNgHPeBETW4aUZo6fPUbkIuujltJOYE7YGtouLLc5zloZnNyUPRs0dVnWTod1+5V4ubiUYr3z21v+Y=
+	t=1758815463; cv=none; b=Ibej4b8yVwXwAwfmc8cQbmeERu2loY3Jf9AVBbUpBBVsrhl8C/DCbmh2QI2wmN4iwooPvYfLnfDE7caHgxR3aF8lsyTOJOCfIwmwesa0Gt3m5g6xvmgGdgMR1G9EG5hkhTW43CBp16jYlSifHQ9uNY/Q8zkWara/gLwYIjfe8Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758815416; c=relaxed/simple;
-	bh=m6QpFkawOmNhd7oWD+5jM7932immcIjNUJPNoGbbhJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DdinlalJ115LygmSdcFm0A1VTbVI6WAAu6qee2WeaPjySaAkKUSElbLpmFMA/dHSEh5WzkNteGXr3CH+kle7AedDw2kRCfK1sGbyJtbxda8oKeKnTZPOYjleuwtLhsvyNLsSFgPdEiFq8LZuI2KgE0QDAJn7zGtDa+ImhDCBdXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cpgEc8qK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IkI9+abl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cpgEc8qK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IkI9+abl; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A007F6C201;
-	Thu, 25 Sep 2025 15:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758815411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=npyjLIAhWT4lA3Ad1zBxTWNYe7yHm1djiA0bY7sYY5w=;
-	b=cpgEc8qKjm4aPAoxXDmt6+/5y5ekg+AORLSL8Xp9cK0Pasex+iS5bWwE2iolNf4lbBz7Wy
-	Q8f95/u4Inv2doM1sA69HerhXnG7T2k48vJuIHZodQvT82TfWkugTfOFFAlgZ5l/H0BwUx
-	dbv5OD/2rTfaPuzfLRPwbBOUL1M9V9I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758815411;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=npyjLIAhWT4lA3Ad1zBxTWNYe7yHm1djiA0bY7sYY5w=;
-	b=IkI9+ablHR65/GBROEZLxndPdM5+1dZOUgcGiyb07mj/bP+pwkQC9/aHFbN54Kl8zfujot
-	G1I/49D7EmRNhRBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758815411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=npyjLIAhWT4lA3Ad1zBxTWNYe7yHm1djiA0bY7sYY5w=;
-	b=cpgEc8qKjm4aPAoxXDmt6+/5y5ekg+AORLSL8Xp9cK0Pasex+iS5bWwE2iolNf4lbBz7Wy
-	Q8f95/u4Inv2doM1sA69HerhXnG7T2k48vJuIHZodQvT82TfWkugTfOFFAlgZ5l/H0BwUx
-	dbv5OD/2rTfaPuzfLRPwbBOUL1M9V9I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758815411;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=npyjLIAhWT4lA3Ad1zBxTWNYe7yHm1djiA0bY7sYY5w=;
-	b=IkI9+ablHR65/GBROEZLxndPdM5+1dZOUgcGiyb07mj/bP+pwkQC9/aHFbN54Kl8zfujot
-	G1I/49D7EmRNhRBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C3A413869;
-	Thu, 25 Sep 2025 15:50:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id U1njIbNk1WgwWwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Sep 2025 15:50:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1D429A0AA0; Thu, 25 Sep 2025 17:50:07 +0200 (CEST)
-Date: Thu, 25 Sep 2025 17:50:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Paulo Alcantara <pc@manguebit.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Rick Macklem <rick.macklem@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 22/38] vfs: add fsnotify_modify_mark_mask()
-Message-ID: <mr6lfsrdp77g7ndnhignxby6fniku2fb3u5yykvwng67sneo7o@d6dozubh4t4c>
-References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
- <20250924-dir-deleg-v3-22-9f3af8bc5c40@kernel.org>
+	s=arc-20240116; t=1758815463; c=relaxed/simple;
+	bh=bqup4E+Z4LYVlj/a9cb1gPbIL51orOjXv5Sja43sUbc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j+rAaQKzOH2+qimrkoilguCZEnR/3QgVyBLTfyx6cH4qQHrmrLL1fnbHSBVtl8YFyLKWl037ImibTyFfIL3+mkK9s6Al7o0IsQj5cyn4rT8rdXDuAzAkB4ir9FxraxsE7anZ7m1mXP5rTyEfn/dSEWnXj40aBWHVHEdUoI6PC+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iY7XgZl3; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62fc28843ecso1409726a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 08:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758815460; x=1759420260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8pkBkCfzzGdkuWc/HhosQmhWOM0aTTicipXFn1WFKUs=;
+        b=iY7XgZl3CUVbARqjTBzgBZlbHnruBEfqbcILUqCkFf03LMoXHc1VqKP4IZ1j2/t0fi
+         FIKoJ8kqortoCrvZvWc3WlqzvO5dOfsgRUygx40+5XbwygOkecx4O+SquB52zRpbWfuo
+         RfEdlBQQDkPogGkeg+F7JlAf/jdMmVCLOpGW1QujNbSQuH0uduOnbuIsOSmoNSSy/koL
+         63g7jg7eV1RRLL/RkCMrqetIRffD144AAmKTznZVL4gh3fnO0d2Ya3Qgq2Zz025DfXtc
+         eGnJQ1SiKAZJtdArrsxcrFLRIM15gKql3d3dT+idetJ++b9cklFnN3x0qb7MX8MMizbY
+         Q26A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758815460; x=1759420260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8pkBkCfzzGdkuWc/HhosQmhWOM0aTTicipXFn1WFKUs=;
+        b=L2vOaaM1V5AENMz8SMP+0Rl4hEUZSzLICxzLjmYpEUUJEwjJIpa2Oxv3nno86ET20S
+         td0E9nFom3Q/wTczm1f2O7XPf9GFa4YWyb7o+zI+rb4oVTyLlSZX9yDBQs3q3RklELJp
+         pxxjJy3lQAN6oRTpXC26Nk8Jn66GZsmAw4Il7sLMzgJHkutJFKBucrRpmUMESOPHd+/y
+         fjYYU46mIKuGOfSkI77aLtp7aS6OmLDCagCrWWz1yAHsAmkF8fWoDPyGfnHZDAHczs9L
+         6J+gEABtp3FFJ2lCenUFgrWqEShLAPFNhEFGdCin90/m5FXaJnePr8xhdXEMIfbIqk2g
+         KoiA==
+X-Gm-Message-State: AOJu0YxTV+P6NEz5qYK1Zh1yY94wZXsPkexuIDTlglzvhrNvb9XO7Bt3
+	A+lU6nDdpeEC5jz7YWqIq1jIcn5ev0fOKyxDeLVCq7uZl/xsfXS9NUZ6uHlYvHRgJ77brmanCXA
+	KjsklfHIRNaEP7ftmbqQ8965QP27vMNY=
+X-Gm-Gg: ASbGncvef6PfhlbO5uTC0mg6cEmpAiEqzPTDDtKpQbUPBcr/Rp83b19AC6EuVDOcb2K
+	DwHsJMXgW7iJaWDjfeAnOkPwKZskmI281FppZzWvh7SXNQsSjXovLk1Ve/AwcEod8iJWRoGbftS
+	ZC2frHMRCKEJA75LmGE7CB5PEGWWIpoibdHPlIXMeWH5f8nJvPuvOjnT7Vb2idZqdydxUPlFrks
+	D3SZ+mcbSXsfWqw4BjXQ/vQHFyCiQfKHc6v0t4VcA==
+X-Google-Smtp-Source: AGHT+IEPELCD3OHR2BGTubqUw5ydVo0EBqdmNaM5DUUzIA4oXmm6t1IFpxRmnv1QnAOHXgoMgCOHn19rV0i1+BCN878=
+X-Received: by 2002:a05:6402:5189:b0:628:6fc1:a3f with SMTP id
+ 4fb4d7f45d1cf-6349fa7e3c0mr3078578a12.17.1758815459987; Thu, 25 Sep 2025
+ 08:50:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924-dir-deleg-v3-22-9f3af8bc5c40@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,microsoft.com,talpey.com,brown.name,redhat.com,lwn.net,szeredi.hu,manguebit.org,linuxfoundation.org,tyhicks.com,chromium.org,goodmis.org,efficios.com,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL63fqwwx8ot6gmekemcs76f9d)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+References: <20250925151140.57548-1-cel@kernel.org>
+In-Reply-To: <20250925151140.57548-1-cel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 25 Sep 2025 17:50:48 +0200
+X-Gm-Features: AS18NWDi1hkVUuMtcyKFJEsHH4fQmmUb6QosD-2WEc6arB-jdISZEtt1CuTxQwI
+Message-ID: <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
+To: Chuck Lever <cel@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Volker Lendecke <Volker.Lendecke@sernet.de>, Gabriel Krisman Bertazi <krisman@kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 24-09-25 14:06:08, Jeff Layton wrote:
-> nfsd needs to be able to modify the mask on an existing mark when new
-> directory delegations are set or unset. Add an exported function that
-> allows the caller to set and clear bits in the mark->mask, and does
-> the recalculation if something changed.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-Looks good. Feel free to add:
-
-Acked-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Thu, Sep 25, 2025 at 5:21=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
+>
+> From: Chuck Lever <chuck.lever@oracle.com>
+>
+> Both the NFSv3 and NFSv4 protocols enable NFS clients to query NFS
+> servers about the case sensitivity and case preservation behaviors
+> of shared file systems. Today, the Linux NFSD implementation
+> unconditionally returns "the export is case sensitive and case
+> preserving".
+>
+> However, a few Linux in-tree file system types appear to have some
+> ability to handle case-folded filenames. Some of our users would
+> like to exploit that functionality from their non-POSIX NFS clients.
+>
+> Enable upper layers such as NFSD to retrieve case sensitivity
+> information from file systems by adding a statx API for this
+> purpose. Introduce a sample producer and a sample consumer for this
+> information.
+>
+> If this mechanism seems sensible, a future patch might add a similar
+> field to the user-space-visible statx structure. User-space file
+> servers already use a variety of APIs to acquire this information.
+>
+> Suggested-by: Jeff Layton <jlayton@kernel.org>
+> Cc: Volker Lendecke <Volker.Lendecke@sernet.de>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 > ---
->  fs/notify/mark.c                 | 29 +++++++++++++++++++++++++++++
->  include/linux/fsnotify_backend.h |  1 +
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-> index 798340db69d761dd05c1b361c251818dee89b9cf..5ed42b24df7f6aa3812a7069b4c37f0c6b3414fa 100644
-> --- a/fs/notify/mark.c
-> +++ b/fs/notify/mark.c
-> @@ -309,6 +309,35 @@ void fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
->  		fsnotify_conn_set_children_dentry_flags(conn);
+>  fs/fat/file.c             |  5 +++++
+>  fs/nfsd/nfs3proc.c        | 35 +++++++++++++++++++++++++++--------
+>  include/linux/stat.h      |  1 +
+>  include/uapi/linux/stat.h | 15 +++++++++++++++
+>  4 files changed, 48 insertions(+), 8 deletions(-)
+>
+> I'm certain this RFC patch has a number of problems, but it should
+> serve as a discussion point.
+>
+>
+> diff --git a/fs/fat/file.c b/fs/fat/file.c
+> index 4fc49a614fb8..8572e36d8f27 100644
+> --- a/fs/fat/file.c
+> +++ b/fs/fat/file.c
+> @@ -413,6 +413,11 @@ int fat_getattr(struct mnt_idmap *idmap, const struc=
+t path *path,
+>                 stat->result_mask |=3D STATX_BTIME;
+>                 stat->btime =3D MSDOS_I(inode)->i_crtime;
+>         }
+> +       if (request_mask & STATX_CASE_INFO) {
+> +               stat->result_mask |=3D STATX_CASE_INFO;
+> +               /* STATX_CASE_PRESERVING is cleared */
+> +               stat->case_info =3D statx_case_ascii;
+> +       }
+>
+>         return 0;
 >  }
->  
-> +/**
-> + * fsnotify_modify_mark_mask - set and/or clear flags in a mark's mask
-> + * @mark: mark to be modified
-> + * @set: bits to be set in mask
-> + * @clear: bits to be cleared in mask
-> + *
-> + * Modify a fsnotify_mark mask as directed, and update its associated conn.
-> + * The caller is expected to hold a reference to the mark.
-> + */
-> +void fsnotify_modify_mark_mask(struct fsnotify_mark *mark, u32 set, u32 clear)
+> diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
+> index b6d03e1ef5f7..b319d1c4385c 100644
+> --- a/fs/nfsd/nfs3proc.c
+> +++ b/fs/nfsd/nfs3proc.c
+> @@ -697,6 +697,31 @@ nfsd3_proc_fsinfo(struct svc_rqst *rqstp)
+>         return rpc_success;
+>  }
+>
+> +static __be32
+> +nfsd3_proc_case(struct svc_fh *fhp, struct nfsd3_pathconfres *resp)
 > +{
-> +	bool recalc = false;
-> +	u32 mask;
+> +       struct path p =3D {
+> +               .mnt            =3D fhp->fh_export->ex_path.mnt,
+> +               .dentry         =3D fhp->fh_dentry,
+> +       };
+> +       u32 request_mask =3D STATX_CASE_INFO;
+> +       struct kstat stat;
+> +       __be32 nfserr;
 > +
-> +	WARN_ON_ONCE(clear & set);
+> +       nfserr =3D nfserrno(vfs_getattr(&p, &stat, request_mask,
+> +                                     AT_STATX_SYNC_AS_STAT));
+> +       if (nfserr !=3D nfs_ok)
+> +               return nfserr;
+> +       if (!(stat.result_mask & STATX_CASE_INFO))
+> +               return nfs_ok;
 > +
-> +	spin_lock(&mark->lock);
-> +	mask = mark->mask;
-> +	mark->mask |= set;
-> +	mark->mask &= ~clear;
-> +	if (mark->mask != mask)
-> +		recalc = true;
-> +	spin_unlock(&mark->lock);
-> +
-> +	if (recalc)
-> +		fsnotify_recalc_mask(mark->connector);
+> +       resp->p_case_insensitive =3D
+> +               stat.case_info & STATX_CASE_FOLDING_TYPE ? 0 : 1;
+> +       resp->p_case_preserving =3D
+> +               stat.case_info & STATX_CASE_PRESERVING ? 1 : 0;
+> +       return nfs_ok;
 > +}
-> +EXPORT_SYMBOL_GPL(fsnotify_modify_mark_mask);
 > +
->  /* Free all connectors queued for freeing once SRCU period ends */
->  static void fsnotify_connector_destroy_workfn(struct work_struct *work)
->  {
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index d4034ddaf3926bf98d8801997e50ba7ddf776292..8d50e6aad3c62c67a9bf73a8d9aab78565668c5f 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -912,6 +912,7 @@ extern void fsnotify_get_mark(struct fsnotify_mark *mark);
->  extern void fsnotify_put_mark(struct fsnotify_mark *mark);
->  extern void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info);
->  extern bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info);
-> +extern void fsnotify_modify_mark_mask(struct fsnotify_mark *mark, u32 set, u32 clear);
->  
->  static inline void fsnotify_init_event(struct fsnotify_event *event)
->  {
-> 
-> -- 
+>  /*
+>   * Get pathconf info for the specified file
+>   */
+> @@ -722,17 +747,11 @@ nfsd3_proc_pathconf(struct svc_rqst *rqstp)
+>         if (resp->status =3D=3D nfs_ok) {
+>                 struct super_block *sb =3D argp->fh.fh_dentry->d_sb;
+>
+> -               /* Note that we don't care for remote fs's here */
+> -               switch (sb->s_magic) {
+> -               case EXT2_SUPER_MAGIC:
+> +               if (sb->s_magic =3D=3D EXT2_SUPER_MAGIC) {
+>                         resp->p_link_max =3D EXT2_LINK_MAX;
+>                         resp->p_name_max =3D EXT2_NAME_LEN;
+> -                       break;
+> -               case MSDOS_SUPER_MAGIC:
+> -                       resp->p_case_insensitive =3D 1;
+> -                       resp->p_case_preserving  =3D 0;
+> -                       break;
+>                 }
+> +               resp->status =3D nfsd3_proc_case(&argp->fh, resp);
+>         }
+>
+>         fh_put(&argp->fh);
+> diff --git a/include/linux/stat.h b/include/linux/stat.h
+> index e3d00e7bb26d..abb47cbb233a 100644
+> --- a/include/linux/stat.h
+> +++ b/include/linux/stat.h
+> @@ -59,6 +59,7 @@ struct kstat {
+>         u32             atomic_write_unit_max;
+>         u32             atomic_write_unit_max_opt;
+>         u32             atomic_write_segments_max;
+> +       u32             case_info;
+>  };
+>
+>  /* These definitions are internal to the kernel for now. Mainly used by =
+nfsd. */
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 1686861aae20..e929b30d64b6 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -219,6 +219,7 @@ struct statx {
+>  #define STATX_SUBVOL           0x00008000U     /* Want/got stx_subvol */
+>  #define STATX_WRITE_ATOMIC     0x00010000U     /* Want/got atomic_write_=
+* fields */
+>  #define STATX_DIO_READ_ALIGN   0x00020000U     /* Want/got dio read alig=
+nment info */
+> +#define STATX_CASE_INFO                0x00040000U     /* Want/got case =
+folding info */
+>
+>  #define STATX__RESERVED                0x80000000U     /* Reserved for f=
+uture struct statx expansion */
+>
+> @@ -257,4 +258,18 @@ struct statx {
+>  #define STATX_ATTR_WRITE_ATOMIC                0x00400000 /* File suppor=
+ts atomic write operations */
+>
+>
+> +/*
+> + * File system support for case folding is available via a bitmap.
+> + */
+> +#define STATX_CASE_PRESERVING          0x80000000 /* File name case is p=
+reserved */
+> +
+> +/* Values stored in the low-order byte of .case_info */
+> +enum {
+> +       statx_case_sensitive =3D 0,
+> +       statx_case_ascii,
+> +       statx_case_utf8,
+> +       statx_case_utf16,
+> +};
+> +#define STATX_CASE_FOLDING_TYPE                0x000000ff
+> +
+>  #endif /* _UAPI_LINUX_STAT_H */
+> --
 > 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+
+CC unicode maintainer and SMB list.
+
+Thanks,
+Amir.
 
