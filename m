@@ -1,425 +1,497 @@
-Return-Path: <linux-fsdevel+bounces-62730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDB5B9F6CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:08:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80A7B9F75C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4642B7B307F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6358338621C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BEE218592;
-	Thu, 25 Sep 2025 13:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B142264CA;
+	Thu, 25 Sep 2025 13:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StX7G1x9"
+	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="CRz+5vlS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B92F212548
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 13:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E0022424C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 13:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758805713; cv=none; b=pb/I7hT6BIg+EwhArrNIRt4CmliF2Z2EReMdwzcLWu2fsos222FFOAuzDCAw4maZN52dkBtG6dktoxvVRideCHEAngkIJABg+oZlnZXWp0OlN9Ac7BcU3/SOdAS+yemQgMWWUY3UgEhMUyCKpVWgMhlzVKRVhE7MEizWF6tcwf0=
+	t=1758805953; cv=none; b=mQmcKZDh+RuR8L5DBDtIFYcOxJDhb8aVy93svYOuqoAGDuwBvSYfqdZnVxIaqEtDEgeWvX/7qupwqNaGmyM4QIJKJvTdBCD0JBdTKU9VNsuD1CnyaUAaphwgntknhO2p4gphwI66l8hmFf5z60tpxmkeWCNO9SC6B6+yH+CY8QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758805713; c=relaxed/simple;
-	bh=YRJJmmXKNbfhABbQyRQerUqXKWEQWKDTlYkhnT4dyg0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=uJPanG7BYNjptEfIGk/7HfBYmXMiiSBhGksr2+J2uf6EeZrkq99ZQxCLYM0CUU4ovY6/iwsWR4/6cwmHfBu/1oKBxK6Avwn2/5ClGrfk/puKsQZjTNKWoF/eWjtpI9RBSB1CSa8DxOM66MicnbkDx7VOCN5hbhe4PTddtuOTvXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StX7G1x9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758805709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e6WH7NPNAfBZ8hnDGigIxW/W6oqhD+jWMoR9pdfeRFs=;
-	b=StX7G1x94uuEBMTBbUUTpmwNb+OAk5hFpC/FfTJjHaUydqHtRHNHXPYBqqaNjq1tdSJejk
-	4nMlKGrtOyfofcgsheuLPR64gJsg80CgnJxXco6yRnj9lMDOoFsOhSA6eIBeHQQ8wtiSdW
-	9rdmK70i5QfU9eYz157+eP759FBxzpQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-p5G3CBt4OaeguhJuKzTTIw-1; Thu,
- 25 Sep 2025 09:08:25 -0400
-X-MC-Unique: p5G3CBt4OaeguhJuKzTTIw-1
-X-Mimecast-MFC-AGG-ID: p5G3CBt4OaeguhJuKzTTIw_1758805704
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E77B81800285;
-	Thu, 25 Sep 2025 13:08:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D78071800446;
-	Thu, 25 Sep 2025 13:08:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <928357.1758793097@warthog.procyon.org.uk>
-References: <928357.1758793097@warthog.procyon.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
-    Paulo Alcantara <pc@manguebit.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    stable@vger.kernel.org
-Subject: [PATCH v3 REPOST] netfs: fix reference leak
+	s=arc-20240116; t=1758805953; c=relaxed/simple;
+	bh=9AXpZB1bwcU/tOfhENucqnGAndFUojEuOkjiz/Zv4RQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ogYry3VhC1DjqjEvUoX2hHhSL3OeG9XWf/S3RgcIXvbNU7Te0FATpQ5rbdWsW6PhLMFA/RDnTnittWfNKcCTjNsih1Sm7HiOM8SqUYu7DheSlWacd4NKSr92taM88PGNzAmaHSN5FxEqBkhxkkA/HoC9TF+YAXZd1eEdRaLPBJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=CRz+5vlS; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3fc36b99e92so1277635f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 06:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1758805948; x=1759410748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NfJVwYFcsQ06QJkEnurciWiF3KgCM9rgqn4VVbABEtQ=;
+        b=CRz+5vlS551m+/ibrrRNCR05aMB/XHm006u7vorJTWL8KnZICEOAUANVKfnYA17O6n
+         CNSPshs989BTySJxhVJjDQVgMGaKDdMiH3CECJdyi/M1fe2VRT3raSjIKb/Hlvwh7G6v
+         JeK6qKCSPjuD07vK1RwG2F5a4t5BpVDGoO8/gxEqKiTZfKvqJWXcWT9pTCarqVnQsLHE
+         5ucPrcXT5w4T3QmqA0pfGPahpuB/tMMPUBNHICg7bBcyx9MvrPir/Z3ASpVDEUZRuat+
+         Emr0AO0ruL/nGstrHje868zLQxrrGECkqEwR4Q0rk20LDfrLBaIEK7TCh5xcMBb3bFRm
+         o72A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758805948; x=1759410748;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NfJVwYFcsQ06QJkEnurciWiF3KgCM9rgqn4VVbABEtQ=;
+        b=UkkUUolKpnWheYx2stchJqLu/+YQNt/gui4r6CcAKBpFR8zXO42Gl6+/LMKARE4ak8
+         8meCPkOqvIlpYtE3Us8LJWHmeSkodBzb0m3U7lasVGC60tVIDAAmEy1TzmUQDzN6jtsy
+         roS8YGtrrwu8AQu+YT1Dp6/w3qUiC6TdjyugX0WqfTWdxUbFM4/RkQC37ARUFf/zkfEg
+         BHTRFEzd9CBSuLE34F6SfcclCs0t2dLOGXNSELAx7VYvDl8ps1OSCLUKEE9m2LnwyvMP
+         WzJt4Y3YSky4JaVaoLcxqMvjqnmWeqAWeQ3sle9HmJ3ez6iXiakMshklE3nKHUPQ1WVB
+         Jvow==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Ch0euNzDVYK2wSFH8bqrAsQytzJIJEkLjuAQocRTJsDdO/WQmsNmxgOjvdEpcKicR4B06AaezXA9sL+h@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBuRHipXCAP+Zzas+t4OBKvcAQAefd1T8x0FAxwu0YOb2asih/
+	n2x+xshYxgH5FcQeRB1w3SS7y9c726JhMO8drn3Hci4aBH/8PaScvG+SYO1wpO1pEUY=
+X-Gm-Gg: ASbGncsBHF5KFBPkiIs4yhyVjaNzLx7S1874Ud1IV4Zcq2ieiZJ7i3zsNz7T2sHlsdL
+	gscVZw4Iv/KtJuX97qWRB5XPvsOLyXqsWrbStrPWesshjbHaG2T4fN+5jcL7otaYbx2t5fDpua7
+	IcFsvhG8j5xidlzbXQCUxNWsKLHN8l0L3nfWSTucACCNmMANHPukNb5yb1x2maM0W0t+wp2LDoD
+	yo0Coh2fzue0E8xJUKuunSCGL3EEMnQUiyDEj5qQ3n8TWUpaVWT/Fc33kffuySkCYZtOTDCwUOU
+	o702mrLE2pj4rhNO/Pq6D8jGNC1cTzLHSkbrQsBDGs8RitI++F+sIChlVoYZiIiiD3KDT0k+hiu
+	v12aKWvIKDkPE6H+RzEtNiEU6G/eY0/16EeVEoRj7fKhLfeWLrQ==
+X-Google-Smtp-Source: AGHT+IGfEDsgYy1Y3V7mn/9vw12xwbotyOf9S0qvgxiLF/dTs1GE6jSNXI03j1w/2hgZi5tVGzAx+Q==
+X-Received: by 2002:a05:6000:290e:b0:3fc:cbfc:fbee with SMTP id ffacd0b85a97d-40f65bbb807mr2115268f8f.19.1758805948078;
+        Thu, 25 Sep 2025 06:12:28 -0700 (PDT)
+Received: from daria.iliad.local (freebox.vlq16.iliad.fr. [213.36.7.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bef4b4sm32929635e9.20.2025.09.25.06.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 06:12:27 -0700 (PDT)
+From: nschichan@freebox.fr
+To: nschichan@freebox.fr
+Cc: akpm@linux-foundation.org,
+	andy.shevchenko@gmail.com,
+	axboe@kernel.dk,
+	brauner@kernel.org,
+	cyphar@cyphar.com,
+	devicetree@vger.kernel.org,
+	ecurtin@redhat.com,
+	email2tema@gmail.com,
+	graf@amazon.com,
+	gregkh@linuxfoundation.org,
+	hca@linux.ibm.com,
+	hch@lst.de,
+	hsiangkao@linux.alibaba.com,
+	initramfs@vger.kernel.org,
+	jack@suse.cz,
+	julian.stecklina@cyberus-technology.de,
+	kees@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org,
+	linux-csky@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev,
+	mcgrof@kernel.org,
+	mingo@redhat.com,
+	monstr@monstr.eu,
+	mzxreary@0pointer.de,
+	patches@lists.linux.dev,
+	rob@landley.net,
+	safinaskar@gmail.com,
+	sparclinux@vger.kernel.org,
+	thomas.weissschuh@linutronix.de,
+	thorsten.blum@linux.dev,
+	torvalds@linux-foundation.org,
+	tytso@mit.edu,
+	viro@zeniv.linux.org.uk,
+	x86@kernel.org
+Subject: [PATCH-RFC] init: simplify initrd code (was Re: [PATCH RESEND 00/62] initrd: remove classic initrd support).
+Date: Thu, 25 Sep 2025 15:10:56 +0200
+Message-Id: <20250925131055.3933381-1-nschichan@freebox.fr>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
+References: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <936423.1758805700.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 25 Sep 2025 14:08:20 +0100
-Message-ID: <936424.1758805700@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
 
-From: Max Kellermann <max.kellermann@ionos.com>
+From: Nicolas Schichan <nschichan@freebox.fr>
 
-Commit 20d72b00ca81 ("netfs: Fix the request's work item to not
-require a ref") modified netfs_alloc_request() to initialize the
-reference counter to 2 instead of 1.  The rationale was that the
-requet's "work" would release the second reference after completion
-(via netfs_{read,write}_collection_worker()).  That works most of the
-time if all goes well.
+- drop prompt_ramdisk and ramdisk_start kernel parameters
+- drop compression support
+- drop image autodetection, the whole /initrd.image content is now
+  copied into /dev/ram0
+- remove rd_load_disk() which doesn't seem to be used anywhere.
 
-However, it leaks this additional reference if the request is released
-before the I/O operation has been submitted: the error code path only
-decrements the reference counter once and the work item will never be
-queued because there will never be a completion.
+There is now no more limitation on the type of initrd filesystem that
+can be loaded since the code trying to guess the initrd filesystem
+size is gone (the whole /initrd.image file is used).
 
-This has caused outages of our whole server cluster today because
-tasks were blocked in netfs_wait_for_outstanding_io(), leading to
-deadlocks in Ceph (another bug that I will address soon in another
-patch).  This was caused by a netfs_pgpriv2_begin_copy_to_cache() call
-which failed in fscache_begin_write_operation().  The leaked
-netfs_io_request was never completed, leaving `netfs_inode.io_count`
-with a positive value forever.
-
-All of this is super-fragile code.  Finding out which code paths will
-lead to an eventual completion and which do not is hard to see:
-
-- Some functions like netfs_create_write_req() allocate a request, but
-  will never submit any I/O.
-
-- netfs_unbuffered_read_iter_locked() calls netfs_unbuffered_read()
-  and then netfs_put_request(); however, netfs_unbuffered_read() can
-  also fail early before submitting the I/O request, therefore another
-  netfs_put_request() call must be added there.
-
-A rule of thumb is that functions that return a `netfs_io_request` do
-not submit I/O, and all of their callers must be checked.
-
-For my taste, the whole netfs code needs an overhaul to make reference
-counting easier to understand and less fragile & obscure.  But to fix
-this bug here and now and produce a patch that is adequate for a
-stable backport, I tried a minimal approach that quickly frees the
-request object upon early failure.
-
-I decided against adding a second netfs_put_request() each time
-because that would cause code duplication which obscures the code
-further.  Instead, I added the function netfs_put_failed_request()
-which frees such a failed request synchronously under the assumption
-that the reference count is exactly 2 (as initially set by
-netfs_alloc_request() and never touched), verified by a
-WARN_ON_ONCE().  It then deinitializes the request object (without
-going through the "cleanup_work" indirection) and frees the allocation
-(with RCU protection to protect against concurrent access by
-netfs_requests_seq_start()).
-
-All code paths that fail early have been changed to call
-netfs_put_failed_request() instead of netfs_put_request().
-Additionally, I have added a netfs_put_request() call to
-netfs_unbuffered_read() as explained above because the
-netfs_put_failed_request() approach does not work there.
-
-Fixes: 20d72b00ca81 ("netfs: Fix the request's work item to not require a =
-ref")
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: netfs@lists.linux.dev,
-cc: linux-fsdevel@vger.kernel.org,
-cc: stable@vger.kernel.org
+A few global variables in do_mounts_rd.c are now put as local
+variables in rd_load_image() since they do not need to be visible
+outside this function.
 ---
- Changes
- =3D=3D=3D=3D=3D=3D=3D
- ver #3)
-  - Log the refcount in the tracepoint in netfs_put_failed_request().
- =
 
- ver #2)
-  - Fix missing RCU handling in netfs_put_failed_request().
+Hello,
 
- fs/netfs/buffered_read.c |   10 +++++-----
- fs/netfs/direct_read.c   |    7 ++++++-
- fs/netfs/direct_write.c  |    6 +++++-
- fs/netfs/internal.h      |    1 +
- fs/netfs/objects.c       |   30 +++++++++++++++++++++++++++---
- fs/netfs/read_pgpriv2.c  |    2 +-
- fs/netfs/read_single.c   |    2 +-
- fs/netfs/write_issue.c   |    3 +--
- 8 files changed, 47 insertions(+), 14 deletions(-)
+Hopefully my email config is now better and reaches gmail users
+correctly.
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 18b3dc74c70e..37ab6f28b5ad 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -369,7 +369,7 @@ void netfs_readahead(struct readahead_control *ractl)
- 	return netfs_put_request(rreq, netfs_rreq_trace_put_return);
- =
+The patch below could probably split in a few patches, but I think
+this simplify the code greatly without removing the functionality we
+depend on (and this allows now to use EROFS initrd images).
 
- cleanup_free:
--	return netfs_put_request(rreq, netfs_rreq_trace_put_failed);
-+	return netfs_put_failed_request(rreq);
- }
- EXPORT_SYMBOL(netfs_readahead);
- =
+Coupled with keeping the function populate_initrd_image() in
+init/initramfs.c, this will keep what we need from the initrd code.
 
-@@ -472,7 +472,7 @@ static int netfs_read_gaps(struct file *file, struct f=
-olio *folio)
- 	return ret < 0 ? ret : 0;
- =
+This removes support of loading bzip/gz/xz/... compressed images as
+well, not sure if many user depend on this feature anymore.
 
- discard:
--	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
-+	netfs_put_failed_request(rreq);
- alloc_error:
- 	folio_unlock(folio);
- 	return ret;
-@@ -532,7 +532,7 @@ int netfs_read_folio(struct file *file, struct folio *=
-folio)
- 	return ret < 0 ? ret : 0;
- =
+No signoff because I'm only seeking comments about those changes right
+now.
 
- discard:
--	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
-+	netfs_put_failed_request(rreq);
- alloc_error:
- 	folio_unlock(folio);
- 	return ret;
-@@ -699,7 +699,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
- 	return 0;
- =
+ init/do_mounts.h    |   2 -
+ init/do_mounts_rd.c | 243 +-------------------------------------------
+ 2 files changed, 4 insertions(+), 241 deletions(-)
 
- error_put:
--	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
-+	netfs_put_failed_request(rreq);
- error:
- 	if (folio) {
- 		folio_unlock(folio);
-@@ -754,7 +754,7 @@ int netfs_prefetch_for_write(struct file *file, struct=
- folio *folio,
- 	return ret < 0 ? ret : 0;
- =
-
- error_put:
--	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
-+	netfs_put_failed_request(rreq);
- error:
- 	_leave(" =3D %d", ret);
- 	return ret;
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index a05e13472baf..a498ee8d6674 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -131,6 +131,7 @@ static ssize_t netfs_unbuffered_read(struct netfs_io_r=
-equest *rreq, bool sync)
- =
-
- 	if (rreq->len =3D=3D 0) {
- 		pr_err("Zero-sized read [R=3D%x]\n", rreq->debug_id);
-+		netfs_put_request(rreq, netfs_rreq_trace_put_discard);
- 		return -EIO;
- 	}
- =
-
-@@ -205,7 +206,7 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb=
- *iocb, struct iov_iter *i
- 	if (user_backed_iter(iter)) {
- 		ret =3D netfs_extract_user_iter(iter, rreq->len, &rreq->buffer.iter, 0)=
-;
- 		if (ret < 0)
--			goto out;
-+			goto error_put;
- 		rreq->direct_bv =3D (struct bio_vec *)rreq->buffer.iter.bvec;
- 		rreq->direct_bv_count =3D ret;
- 		rreq->direct_bv_unpin =3D iov_iter_extract_will_pin(iter);
-@@ -238,6 +239,10 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kioc=
-b *iocb, struct iov_iter *i
- 	if (ret > 0)
- 		orig_count -=3D ret;
- 	return ret;
-+
-+error_put:
-+	netfs_put_failed_request(rreq);
-+	return ret;
- }
- EXPORT_SYMBOL(netfs_unbuffered_read_iter_locked);
- =
-
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index a16660ab7f83..a9d1c3b2c084 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -57,7 +57,7 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb =
-*iocb, struct iov_iter *
- 			n =3D netfs_extract_user_iter(iter, len, &wreq->buffer.iter, 0);
- 			if (n < 0) {
- 				ret =3D n;
--				goto out;
-+				goto error_put;
- 			}
- 			wreq->direct_bv =3D (struct bio_vec *)wreq->buffer.iter.bvec;
- 			wreq->direct_bv_count =3D n;
-@@ -101,6 +101,10 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kio=
-cb *iocb, struct iov_iter *
- out:
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	return ret;
-+
-+error_put:
-+	netfs_put_failed_request(wreq);
-+	return ret;
- }
- EXPORT_SYMBOL(netfs_unbuffered_write_iter_locked);
- =
-
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index d4f16fefd965..4319611f5354 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -87,6 +87,7 @@ struct netfs_io_request *netfs_alloc_request(struct addr=
-ess_space *mapping,
- void netfs_get_request(struct netfs_io_request *rreq, enum netfs_rreq_ref=
-_trace what);
- void netfs_clear_subrequests(struct netfs_io_request *rreq);
- void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref=
-_trace what);
-+void netfs_put_failed_request(struct netfs_io_request *rreq);
- struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_reques=
-t *rreq);
- =
-
- static inline void netfs_see_request(struct netfs_io_request *rreq,
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index e8c99738b5bb..40a1c7d6f6e0 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -116,10 +116,8 @@ static void netfs_free_request_rcu(struct rcu_head *r=
-cu)
- 	netfs_stat_d(&netfs_n_rh_rreq);
- }
- =
-
--static void netfs_free_request(struct work_struct *work)
-+static void netfs_deinit_request(struct netfs_io_request *rreq)
+diff --git a/init/do_mounts.h b/init/do_mounts.h
+index 6069ea3eb80d..c0028ee3cff6 100644
+--- a/init/do_mounts.h
++++ b/init/do_mounts.h
+@@ -24,12 +24,10 @@ static inline __init int create_dev(char *name, dev_t dev)
+ 
+ #ifdef CONFIG_BLK_DEV_RAM
+ 
+-int __init rd_load_disk(int n);
+ int __init rd_load_image(char *from);
+ 
+ #else
+ 
+-static inline int rd_load_disk(int n) { return 0; }
+ static inline int rd_load_image(char *from) { return 0; }
+ 
+ #endif
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa..5a69ff43f5ee 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -14,173 +14,9 @@
+ 
+ #include <linux/decompress/generic.h>
+ 
+-static struct file *in_file, *out_file;
+-static loff_t in_pos, out_pos;
+-
+-static int __init prompt_ramdisk(char *str)
+-{
+-	pr_warn("ignoring the deprecated prompt_ramdisk= option\n");
+-	return 1;
+-}
+-__setup("prompt_ramdisk=", prompt_ramdisk);
+-
+-int __initdata rd_image_start;		/* starting block # of image */
+-
+-static int __init ramdisk_start_setup(char *str)
+-{
+-	rd_image_start = simple_strtol(str,NULL,0);
+-	return 1;
+-}
+-__setup("ramdisk_start=", ramdisk_start_setup);
+-
+-static int __init crd_load(decompress_fn deco);
+-
+-/*
+- * This routine tries to find a RAM disk image to load, and returns the
+- * number of blocks to read for a non-compressed image, 0 if the image
+- * is a compressed image, and -1 if an image with the right magic
+- * numbers could not be found.
+- *
+- * We currently check for the following magic numbers:
+- *	minix
+- *	ext2
+- *	romfs
+- *	cramfs
+- *	squashfs
+- *	gzip
+- *	bzip2
+- *	lzma
+- *	xz
+- *	lzo
+- *	lz4
+- */
+-static int __init
+-identify_ramdisk_image(struct file *file, loff_t pos,
+-		decompress_fn *decompressor)
+-{
+-	const int size = 512;
+-	struct minix_super_block *minixsb;
+-	struct romfs_super_block *romfsb;
+-	struct cramfs_super *cramfsb;
+-	struct squashfs_super_block *squashfsb;
+-	int nblocks = -1;
+-	unsigned char *buf;
+-	const char *compress_name;
+-	unsigned long n;
+-	int start_block = rd_image_start;
+-
+-	buf = kmalloc(size, GFP_KERNEL);
+-	if (!buf)
+-		return -ENOMEM;
+-
+-	minixsb = (struct minix_super_block *) buf;
+-	romfsb = (struct romfs_super_block *) buf;
+-	cramfsb = (struct cramfs_super *) buf;
+-	squashfsb = (struct squashfs_super_block *) buf;
+-	memset(buf, 0xe5, size);
+-
+-	/*
+-	 * Read block 0 to test for compressed kernel
+-	 */
+-	pos = start_block * BLOCK_SIZE;
+-	kernel_read(file, buf, size, &pos);
+-
+-	*decompressor = decompress_method(buf, size, &compress_name);
+-	if (compress_name) {
+-		printk(KERN_NOTICE "RAMDISK: %s image found at block %d\n",
+-		       compress_name, start_block);
+-		if (!*decompressor)
+-			printk(KERN_EMERG
+-			       "RAMDISK: %s decompressor not configured!\n",
+-			       compress_name);
+-		nblocks = 0;
+-		goto done;
+-	}
+-
+-	/* romfs is at block zero too */
+-	if (romfsb->word0 == ROMSB_WORD0 &&
+-	    romfsb->word1 == ROMSB_WORD1) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: romfs filesystem found at block %d\n",
+-		       start_block);
+-		nblocks = (ntohl(romfsb->size)+BLOCK_SIZE-1)>>BLOCK_SIZE_BITS;
+-		goto done;
+-	}
+-
+-	if (cramfsb->magic == CRAMFS_MAGIC) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: cramfs filesystem found at block %d\n",
+-		       start_block);
+-		nblocks = (cramfsb->size + BLOCK_SIZE - 1) >> BLOCK_SIZE_BITS;
+-		goto done;
+-	}
+-
+-	/* squashfs is at block zero too */
+-	if (le32_to_cpu(squashfsb->s_magic) == SQUASHFS_MAGIC) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: squashfs filesystem found at block %d\n",
+-		       start_block);
+-		nblocks = (le64_to_cpu(squashfsb->bytes_used) + BLOCK_SIZE - 1)
+-			 >> BLOCK_SIZE_BITS;
+-		goto done;
+-	}
+-
+-	/*
+-	 * Read 512 bytes further to check if cramfs is padded
+-	 */
+-	pos = start_block * BLOCK_SIZE + 0x200;
+-	kernel_read(file, buf, size, &pos);
+-
+-	if (cramfsb->magic == CRAMFS_MAGIC) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: cramfs filesystem found at block %d\n",
+-		       start_block);
+-		nblocks = (cramfsb->size + BLOCK_SIZE - 1) >> BLOCK_SIZE_BITS;
+-		goto done;
+-	}
+-
+-	/*
+-	 * Read block 1 to test for minix and ext2 superblock
+-	 */
+-	pos = (start_block + 1) * BLOCK_SIZE;
+-	kernel_read(file, buf, size, &pos);
+-
+-	/* Try minix */
+-	if (minixsb->s_magic == MINIX_SUPER_MAGIC ||
+-	    minixsb->s_magic == MINIX_SUPER_MAGIC2) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: Minix filesystem found at block %d\n",
+-		       start_block);
+-		nblocks = minixsb->s_nzones << minixsb->s_log_zone_size;
+-		goto done;
+-	}
+-
+-	/* Try ext2 */
+-	n = ext2_image_size(buf);
+-	if (n) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: ext2 filesystem found at block %d\n",
+-		       start_block);
+-		nblocks = n;
+-		goto done;
+-	}
+-
+-	printk(KERN_NOTICE
+-	       "RAMDISK: Couldn't find valid RAM disk image starting at %d.\n",
+-	       start_block);
+-
+-done:
+-	kfree(buf);
+-	return nblocks;
+-}
+-
+ static unsigned long nr_blocks(struct file *file)
  {
--	struct netfs_io_request *rreq =3D
--		container_of(work, struct netfs_io_request, cleanup_work);
- 	struct netfs_inode *ictx =3D netfs_inode(rreq->inode);
- 	unsigned int i;
- =
-
-@@ -149,6 +147,14 @@ static void netfs_free_request(struct work_struct *wo=
-rk)
- =
-
- 	if (atomic_dec_and_test(&ictx->io_count))
- 		wake_up_var(&ictx->io_count);
-+}
-+
-+static void netfs_free_request(struct work_struct *work)
-+{
-+	struct netfs_io_request *rreq =3D
-+		container_of(work, struct netfs_io_request, cleanup_work);
-+
-+	netfs_deinit_request(rreq);
- 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
+-	struct inode *inode = file->f_mapping->host;
+-
+-	if (!S_ISBLK(inode->i_mode))
+-		return 0;
+-	return i_size_read(inode) >> 10;
++	return i_size_read(file->f_mapping->host) >> 10;
  }
- =
-
-@@ -167,6 +173,24 @@ void netfs_put_request(struct netfs_io_request *rreq,=
- enum netfs_rreq_ref_trace
+ 
+ int __init rd_load_image(char *from)
+@@ -190,10 +26,11 @@ int __init rd_load_image(char *from)
+ 	int nblocks, i;
+ 	char *buf = NULL;
+ 	unsigned short rotate = 0;
+-	decompress_fn decompressor = NULL;
+ #if !defined(CONFIG_S390)
+ 	char rotator[4] = { '|' , '/' , '-' , '\\' };
+ #endif
++	struct file *in_file, *out_file;
++	loff_t in_pos = 0, out_pos = 0;
+ 
+ 	out_file = filp_open("/dev/ram", O_RDWR, 0);
+ 	if (IS_ERR(out_file))
+@@ -203,17 +40,6 @@ int __init rd_load_image(char *from)
+ 	if (IS_ERR(in_file))
+ 		goto noclose_input;
+ 
+-	in_pos = rd_image_start * BLOCK_SIZE;
+-	nblocks = identify_ramdisk_image(in_file, in_pos, &decompressor);
+-	if (nblocks < 0)
+-		goto done;
+-
+-	if (nblocks == 0) {
+-		if (crd_load(decompressor) == 0)
+-			goto successful_load;
+-		goto done;
+-	}
+-
+ 	/*
+ 	 * NOTE NOTE: nblocks is not actually blocks but
+ 	 * the number of kibibytes of data to load into a ramdisk.
+@@ -228,10 +54,7 @@ int __init rd_load_image(char *from)
+ 	/*
+ 	 * OK, time to copy in the data
+ 	 */
+-	if (strcmp(from, "/initrd.image") == 0)
+-		devblocks = nblocks;
+-	else
+-		devblocks = nr_blocks(in_file);
++	nblocks = devblocks = nr_blocks(in_file);
+ 
+ 	if (devblocks == 0) {
+ 		printk(KERN_ERR "RAMDISK: could not determine device size\n");
+@@ -264,7 +87,6 @@ int __init rd_load_image(char *from)
  	}
+ 	pr_cont("done.\n");
+ 
+-successful_load:
+ 	res = 1;
+ done:
+ 	fput(in_file);
+@@ -275,60 +97,3 @@ int __init rd_load_image(char *from)
+ 	init_unlink("/dev/ram");
+ 	return res;
  }
- =
-
-+/*
-+ * Free a request (synchronously) that was just allocated but has
-+ * failed before it could be submitted.
-+ */
-+void netfs_put_failed_request(struct netfs_io_request *rreq)
-+{
-+	int r =3D refcount_read(&rreq->ref);
-+
-+	/* new requests have two references (see
-+	 * netfs_alloc_request(), and this function is only allowed on
-+	 * new request objects
-+	 */
-+	WARN_ON_ONCE(r !=3D 2);
-+
-+	trace_netfs_rreq_ref(rreq->debug_id, r, netfs_rreq_trace_put_failed);
-+	netfs_free_request(&rreq->cleanup_work);
-+}
-+
- /*
-  * Allocate and partially initialise an I/O request structure.
-  */
-diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index 8097bc069c1d..a1489aa29f78 100644
---- a/fs/netfs/read_pgpriv2.c
-+++ b/fs/netfs/read_pgpriv2.c
-@@ -118,7 +118,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
-py_to_cache(
- 	return creq;
- =
-
- cancel_put:
--	netfs_put_request(creq, netfs_rreq_trace_put_return);
-+	netfs_put_failed_request(creq);
- cancel:
- 	rreq->copy_to_cache =3D ERR_PTR(-ENOBUFS);
- 	clear_bit(NETFS_RREQ_FOLIO_COPY_TO_CACHE, &rreq->flags);
-diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
-index fa622a6cd56d..5c0dc4efc792 100644
---- a/fs/netfs/read_single.c
-+++ b/fs/netfs/read_single.c
-@@ -189,7 +189,7 @@ ssize_t netfs_read_single(struct inode *inode, struct =
-file *file, struct iov_ite
- 	return ret;
- =
-
- cleanup_free:
--	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
-+	netfs_put_failed_request(rreq);
- 	return ret;
- }
- EXPORT_SYMBOL(netfs_read_single);
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 0584cba1a043..dd8743bc8d7f 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -133,8 +133,7 @@ struct netfs_io_request *netfs_create_write_req(struct=
- address_space *mapping,
- =
-
- 	return wreq;
- nomem:
--	wreq->error =3D -ENOMEM;
--	netfs_put_request(wreq, netfs_rreq_trace_put_failed);
-+	netfs_put_failed_request(wreq);
- 	return ERR_PTR(-ENOMEM);
- }
- =
+-
+-int __init rd_load_disk(int n)
+-{
+-	create_dev("/dev/root", ROOT_DEV);
+-	create_dev("/dev/ram", MKDEV(RAMDISK_MAJOR, n));
+-	return rd_load_image("/dev/root");
+-}
+-
+-static int exit_code;
+-static int decompress_error;
+-
+-static long __init compr_fill(void *buf, unsigned long len)
+-{
+-	long r = kernel_read(in_file, buf, len, &in_pos);
+-	if (r < 0)
+-		printk(KERN_ERR "RAMDISK: error while reading compressed data");
+-	else if (r == 0)
+-		printk(KERN_ERR "RAMDISK: EOF while reading compressed data");
+-	return r;
+-}
+-
+-static long __init compr_flush(void *window, unsigned long outcnt)
+-{
+-	long written = kernel_write(out_file, window, outcnt, &out_pos);
+-	if (written != outcnt) {
+-		if (decompress_error == 0)
+-			printk(KERN_ERR
+-			       "RAMDISK: incomplete write (%ld != %ld)\n",
+-			       written, outcnt);
+-		decompress_error = 1;
+-		return -1;
+-	}
+-	return outcnt;
+-}
+-
+-static void __init error(char *x)
+-{
+-	printk(KERN_ERR "%s\n", x);
+-	exit_code = 1;
+-	decompress_error = 1;
+-}
+-
+-static int __init crd_load(decompress_fn deco)
+-{
+-	int result;
+-
+-	if (!deco) {
+-		pr_emerg("Invalid ramdisk decompression routine.  "
+-			 "Select appropriate config option.\n");
+-		panic("Could not decompress initial ramdisk image.");
+-	}
+-
+-	result = deco(NULL, 0, compr_fill, compr_flush, NULL, NULL, error);
+-	if (decompress_error)
+-		result = 1;
+-	return result;
+-}
+-- 
+2.34.1
 
 
