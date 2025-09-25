@@ -1,189 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-62787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A077BA0D43
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 19:26:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE80BA0F9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 20:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E316C0EAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1C11BC6A32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 18:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CE930DD06;
-	Thu, 25 Sep 2025 17:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpwD4ftG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C836313281;
+	Thu, 25 Sep 2025 18:11:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A734217704
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 17:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C718C18C02E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 18:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758821170; cv=none; b=PeO6i9GXU2IkHK8HqTrWXuRY6MJdfgI3UrMlDlw2hNrq71tvZZesf5e59Rg4tG9oum9kuNoMpNX8ZRj3QPG+kddxDGpr1qw0hLCb8ev9gGW+tgma0H3u3b43UwclWo+LstK2TWxTLjDkvY9kMHcmtuYgs6K37PC6LYVbkqMKhao=
+	t=1758823864; cv=none; b=pxT0HXfqtkUQW8lpUAG1zHxaJTFf1Lne9TPBmQpOcwMbWFdwv8vBDIuPlvx8c+zTu3uHC5/LCR/daEXa8MnJfpYIuUDdazcapCsAeIwE148x0/xv4iMKVo+Tz+NgvQje9RFzw6ah3VRxcZElwA7AictORZxlYc3xeYcsftHrFJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758821170; c=relaxed/simple;
-	bh=H67Sb6S85F7sQKs6V/VU5yfv0XnrQx+pr9y3JRLPiEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLpyRyR4hhZoeHV4NCPQHUyUxSW1yq0wiSIMTXprixG7wpQW4a3o5QoDce5L/X8EIMjGUAfFD37lMbb6xLKSzVQDB3j2sy4z73DocOsSkrhpR2dKVzMJzy83Zqa3XxTuezUVBHhRVMSGWffUBRuKXAw27TiWriLENqz55m8Xghk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IpwD4ftG; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso9202205e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 10:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758821167; x=1759425967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tXSdRU5DiYVwLdzAHJkuUpk0QScKJI6kmuRehqav+00=;
-        b=IpwD4ftGIdlScVSLTUPVvI2EZcLljt3+u97RnelkKEQ2Tx0QpRro8FCjgOZIqvWFzE
-         uIbckAjoSYa2szMGfwptcwaV65kd2/113ZVULIPQfEMoPvMpGyyLQJHJGu60pDYv9o9F
-         L6eNYPZgAEO51HfgunbOoRd1U6cZjtA/CXgIlbW8f+NT4FdfZwbB4ZN2ApsRyTk9sQc+
-         rF7GZ54Fl9znGdNQ5kepFLTdc5M4bgqWwk4wS3fbS/f1h6xREBvYCvC8ZIlEbXmO9zao
-         FwF7dmu7dHZX/Ti41M7dWYc9LnVaCrYkys1lD81DcnPLaqOwY9q6xwEyVOFcsPpb5s1J
-         fm1A==
+	s=arc-20240116; t=1758823864; c=relaxed/simple;
+	bh=1KluphwMLCuewgVUSw3CRvK8MbveYqDcj6Fy65KQC7M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W/H4Lg8Fmfm0zHw6rhTXni55UWeYAHqhE0SEQxxpLn2Y5UNo24k5CNkFhmNghIMOWG+QG77T99oHKrNA5J99fny/xwdnqiAdENI6/PaMbLONlDrWpqtuFM5gzBQipw5+XS9PfUwverJJfhK6Ajqi9WCO2CS4HVNfx0orUk76Erk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-425787ea1ceso16814605ab.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 11:11:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758821167; x=1759425967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tXSdRU5DiYVwLdzAHJkuUpk0QScKJI6kmuRehqav+00=;
-        b=jJhqAhFJn0mIJOlIJcJyPLPxDysPaTKaecqtDh5iKMMlcGVmJ+3MVvh5D0MAsvEonG
-         EcesR856U27vB0EHM7aH+FLgcqoiNMNeL6dPCS5NjKeRBkTZr4SviMlKiuXXBvx9Al5o
-         57FdS+hedxJl8up6CwcZ2ySupZnMiDNcU/alB1IrmUXy/fboier7dn/tyvDwMFMKvRy8
-         kKOYtYIJ8lgKM0izjp0ryA9NtSysxpg7n3QKt+diu/pWpo4pZjEaIUGZmGrLXVFj/UWq
-         k2LCfv6dp+5QJWe5aytkjrMy9V6btklWYbjBojUkl6dMcIEIUUkOmEmfrVIJ9muausOp
-         8jog==
-X-Gm-Message-State: AOJu0Yz16zsJ3RE27vdBv1uR1+2exH39rMHLCyvLxfoFOeBmKQ0FNkyK
-	8trib8TaVH9HqUyTmTQDotEQUBEj2Ddqc5vkMePbTVBja+EnFP3AbXCreFSi9Q==
-X-Gm-Gg: ASbGncurn0XC255IOmXJTnwXZdUnu6hjPBgtN3lFX/a1BJ36sF4Pop9C6XvFXkFURu/
-	Bk+4vj/uA1r55yfKGXzHJDisYsKVbol/AmxP/AVlCU6zhvy1ubUpsZ3c83UH3ZmEc8Ki02U0z6d
-	VWF0JZJFU6wjJRx2ScPA8bv24k2VDK05F28PLZmt6W5GWsfPRpzSS6Bnqcx3LUlyj5KMlRkvO/d
-	DEzTKQ88XzGG5WX3DdEom7SMivPpipCX+J1+HMJmXITgi74wShjIO5JAcv9m1BOt7Jv1Mr9YHu/
-	6QuguTVf7BQJ2JfeNxXRinXHvpGTZYa6iMvvGLTFPTf8XM3rpI4DtjsVUDBIF5PI1yyzRB4nLMK
-	KdqEmDHuMXdoS7YaYUawkvmaOrDI4bMamw8bjoAUCaNF9pnxc4m8BpiJLRuQEgP1qzOg=
-X-Google-Smtp-Source: AGHT+IGQBGrTF35EEW/xQ1PexeeoQNFhzCOCpdTjPNtLc1NGsLj2W8QRya2mTBCB16JsOxFNp4rO/w==
-X-Received: by 2002:a05:600c:1f16:b0:45f:2cf9:c229 with SMTP id 5b1f17b1804b1-46e3292ea63mr42890265e9.0.1758821166311;
-        Thu, 25 Sep 2025 10:26:06 -0700 (PDT)
-Received: from f (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e330fbcc5sm21339405e9.4.2025.09.25.10.26.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 10:26:05 -0700 (PDT)
-Date: Thu, 25 Sep 2025 19:25:57 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, peterz@infradead.org
-Subject: Re: [PATCH] write-back: Wake up waiting tasks when finishing the
- writeback of a chunk.
-Message-ID: <fylfqtj5wob72574qjkm7zizc7y4ieb2tanzqdexy4wcgtgov4@h25bh2fsklfn>
-References: <20250925132239.2145036-1-sunjunchao@bytedance.com>
+        d=1e100.net; s=20230601; t=1758823862; x=1759428662;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0imfd9vZPOuVKqBVa4eNQjiYQlE6ICEpheLW0pgY4ac=;
+        b=CHIkEL08k5/SCpam/AmmX9UzYTrxxenXalBJ/PcBMswz7hK942p5uxL790z4C3hj2m
+         c4QW3eLRbi4tDdq2Q96OSd28PmJEa77fPgVC24xzs0d8Bl3fll0h46yb3tXanqH9T2JU
+         5it9O1IVQj1J3GC2vv43VlYQVYxzxUcn+wuMpSs7n/zFGUMTr5XjJR23o0uhNprteKvz
+         jvnFt6cE7+lTMFVkx02yPolGXWA4X/qCvTNJ+XxxgmludI/Y8qQ+YJBHZcSD3UhXrufb
+         JEwv4gDt8Z9Kfb64nrSUHe1j7F4Ciw2ldij6d/xlpK+BkD1OD7gSzmFsStE2YpxHLUGv
+         ZyBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2sG1Q8ybG8x0U/LlaOYOBYy4+mH7gL37OQ+B+8qnBlZ6qCG0HZnsA5rrP2+BeCYc9boWfILLrVDvA8ko@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1dGv5GpE2HFNZtnpZDf9GhCN56JM2uSmelW0H+/q1hcU5blQK
+	X2nIxEYhAhirlmPuh1YBClJsCnBzLsnH2AdzC0aY0or3PaoezP/w9/P0JqwebiiTA9TKc7zVRZe
+	qsv45NGfcpWGYJm/VxueablSsAg7rWFbNVgGFVYh+lr0pcdziBnOgE1fynIc=
+X-Google-Smtp-Source: AGHT+IFfo4CCN1VExDGe7ySETsOckDKT7bpTKkgpjs+7DJpkO9BSPMOA+TjShxL153gE03y8I6ihreghe4wXBrwyHq+NirOd5CQx
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250925132239.2145036-1-sunjunchao@bytedance.com>
+X-Received: by 2002:a92:cd8e:0:b0:425:73c6:9041 with SMTP id
+ e9e14a558f8ab-4259563e023mr64234675ab.17.1758823861958; Thu, 25 Sep 2025
+ 11:11:01 -0700 (PDT)
+Date: Thu, 25 Sep 2025 11:11:01 -0700
+In-Reply-To: <68d46aed.050a0220.57ae1.0002.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d585b5.050a0220.25d7ab.0056.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_nls
+From: syzbot <syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com>
+To: Yuezhang.Mo@sony.com, ekffu200098@gmail.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pedrodemargomes@gmail.com, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 25, 2025 at 09:22:39PM +0800, Julian Sun wrote:
-> Writing back a large number of pages can take a lots of time.
-> This issue is exacerbated when the underlying device is slow or
-> subject to block layer rate limiting, which in turn triggers
-> unexpected hung task warnings.
-> 
-> We can trigger a wake-up once a chunk has been written back and the
-> waiting time for writeback exceeds half of
-> sysctl_hung_task_timeout_secs.
-> This action allows the hung task detector to be aware of the writeback
-> progress, thereby eliminating these unexpected hung task warnings.
-> 
+syzbot has bisected this issue to:
 
-If I'm reading correctly this is also messing with stats how long the
-thread was stuck to begin with.
+commit acab02ffcd6b1e796570ffa9658c90c8f09caae3
+Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Date:   Thu Sep 11 08:54:31 2025 +0000
 
-Perhaps it would be better to have a var in task_struct which would
-serve as an indicator of progress being made (e.g., last time stamp of
-said progress).
+    exfat: support modifying mount options via remount
 
-task_struct already has numerous holes so this would not have to grow it
-above what it is now.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1617ace2580000
+start commit:   b5a4da2c459f Add linux-next specific files for 20250924
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1517ace2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1117ace2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc64d939cce41d2
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e9cb93e3c5f90d28e19
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e7d4e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14596142580000
 
+Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
+Fixes: acab02ffcd6b ("exfat: support modifying mount options via remount")
 
-> This patch has passed the xfstests 'check -g quick' test based on ext4,
-> with no additional failures introduced.
-> 
-> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> ---
->  fs/fs-writeback.c                | 13 +++++++++++--
->  include/linux/backing-dev-defs.h |  1 +
->  2 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index a07b8cf73ae2..475d52abfb3e 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -14,6 +14,7 @@
->   *		Additions for address_space-based writeback
->   */
->  
-> +#include <linux/sched/sysctl.h>
->  #include <linux/kernel.h>
->  #include <linux/export.h>
->  #include <linux/spinlock.h>
-> @@ -174,9 +175,12 @@ static void finish_writeback_work(struct wb_writeback_work *work)
->  		kfree(work);
->  	if (done) {
->  		wait_queue_head_t *waitq = done->waitq;
-> +		/* Report progress to inform the hung task detector of the progress. */
-> +		bool force_wake = (jiffies - done->stamp) >
-> +				   sysctl_hung_task_timeout_secs * HZ / 2;
->  
->  		/* @done can't be accessed after the following dec */
-> -		if (atomic_dec_and_test(&done->cnt))
-> +		if (atomic_dec_and_test(&done->cnt) || force_wake)
->  			wake_up_all(waitq);
->  	}
->  }
-> @@ -213,7 +217,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
->  void wb_wait_for_completion(struct wb_completion *done)
->  {
->  	atomic_dec(&done->cnt);		/* put down the initial count */
-> -	wait_event(*done->waitq, !atomic_read(&done->cnt));
-> +	wait_event(*done->waitq, ({ done->stamp = jiffies; !atomic_read(&done->cnt); }));
->  }
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> @@ -1975,6 +1979,11 @@ static long writeback_sb_inodes(struct super_block *sb,
->  		 */
->  		__writeback_single_inode(inode, &wbc);
->  
-> +		/* Report progress to inform the hung task detector of the progress. */
-> +		if (work->done && (jiffies - work->done->stamp) >
-> +		    HZ * sysctl_hung_task_timeout_secs / 2)
-> +			wake_up_all(work->done->waitq);
-> +
->  		wbc_detach_inode(&wbc);
->  		work->nr_pages -= write_chunk - wbc.nr_to_write;
->  		wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
-> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-> index 2ad261082bba..c37c6bd5ef5c 100644
-> --- a/include/linux/backing-dev-defs.h
-> +++ b/include/linux/backing-dev-defs.h
-> @@ -63,6 +63,7 @@ enum wb_reason {
->  struct wb_completion {
->  	atomic_t		cnt;
->  	wait_queue_head_t	*waitq;
-> +	unsigned long stamp;
->  };
->  
->  #define __WB_COMPLETION_INIT(_waitq)	\
-> -- 
-> 2.39.5
-> 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
