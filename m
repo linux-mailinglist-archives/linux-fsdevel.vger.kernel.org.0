@@ -1,208 +1,449 @@
-Return-Path: <linux-fsdevel+bounces-62688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7484DB9D020
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 03:22:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACE4B9D3D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 04:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B113833B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 01:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87D52E62F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 02:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEBE2DE702;
-	Thu, 25 Sep 2025 01:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A45C2E6CDF;
+	Thu, 25 Sep 2025 02:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="BjlZsONY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q0fmER6p"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTL4+4/l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B7E1F95C;
-	Thu, 25 Sep 2025 01:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E8B2E5B26
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 02:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758763341; cv=none; b=npD3gtUKzZ7JtxBjwLffCaDhRRiOu5JvEtLpBJ4BCL5by08Nx5NR2YaNOd15GbJsubHMV6rHlrhUoJucd80aJWLoA8wURfjtZvUGmw91QisUPxsmVbEwUiicGaY2EJ3Y1Hl4VmQ01jBLxlmJV6E/IC87FN0gq7+R5qrJB0J6568=
+	t=1758768634; cv=none; b=ZfbArMMluEr5DarswG7Pmzfguu327IHM5Ws2deyXCiylG3z9PdLtuq+wpFl1t+7zorS3i/fUfD0BBJ9M+r7vJUVXMXqzL6CunDR1aVtihLtSEUG7WBV0f3746qRTRrPvEWU2i5vLjZYRKvfL9HVUfOf/gIJ/VPuq4wooAUQTEGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758763341; c=relaxed/simple;
-	bh=Op3p78ZmpI7tXuvElbNdODY09SqsPNMQiDpe8YM00PI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UWpS4KyM6VV96DpehGHt4RdzydTg9twc2ENX8qtAge1vQHbJtvgEr3dQesCgqVvfPX16qu6tZJDf5lUDPotHUCi7gka0g29nE2/DQkWvA0uaOjJwMN7gdvdD6dKFSevBA0Cil2YQigfsvnBfDR144l11C071uqqfEGJ+olv5AOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=BjlZsONY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q0fmER6p; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4FB391400151;
-	Wed, 24 Sep 2025 21:22:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 24 Sep 2025 21:22:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758763338;
-	 x=1758849738; bh=sn2OwsVC7zbU/PDdlrfGFiV5QXKG++7/o9iHx3iLyh4=; b=
-	BjlZsONYeNjd+JUyHEJHZ8SiYv81aJm/3ymR09U/+2/4xig8LgZgKaRUGQVnH1OM
-	M0K56qvRY4i+PYXmFHJiiZCNiiIdVqHrp1+VGLYypz7ucONJrxNWFByQ7izisY5Q
-	738NuEpWFGWLWdnRo5XVZdPSatU8WUDr2fqHHnd+gqzeraU+Zy5jWzhqseDhIPxd
-	jnC/+XPe0fCGtFG+NBPhNybjWKOI4K06SbCnsO9GzZzORw4cMLKxFnv+N4lDn0p4
-	hIDVM22piLFCMuwU51riJmebaxiMYuUMmkkVSJPKtkCwZj8pF5Mwef9rxvR6A7by
-	8iNW4y5cqPpv8PZaNQaimQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758763338; x=1758849738; bh=s
-	n2OwsVC7zbU/PDdlrfGFiV5QXKG++7/o9iHx3iLyh4=; b=Q0fmER6phC4rRkMoE
-	zUhxiHc9gsauSQ+Y41yDaFI2+LpOI98ejkJBGm/yW7bD3VPqKI5AFHfsxXO7P/k2
-	T0OPb+rtF2GisRiDZ7wO6XI/6DQ64MB7Zikn0fluI7Sz7y/OLwR5L6f5MIbVLcWo
-	DJ5nk6BxNSA8vO+j3BoDp2gHqtJUluPD3r98/xme7w1cOG80R8fhsVra4i036+Z6
-	cZ74CmejWnsXBV/7aMOlTYz/LJSArmvFkaU9fGbKBeaN2lXcnNK1c4i+L7DaCu0e
-	BQjSdn0MoM5uNKMqPpn3LFu/3O81/Z5G3Ztt1T5EWRjKljo6bNfXcc2Pp0Z5mflW
-	bRqzQ==
-X-ME-Sender: <xms:SpnUaIMp9hJFbL1m1igHhF4nGM4hyDq44HoF2x0gidx24YtyxwKTzg>
-    <xme:SpnUaOBZSKmWW2eQZOTfllBSIfLKae4Hg4IlRaXiSnjB7ec5bm8o9gvszmPiz22w1
-    dZRdN7KCoohJpjd6w3MLVPN-o5db2qtUwSjUx_Ykkh2yf-BAw>
-X-ME-Received: <xmr:SpnUaFdCmsJC4KT__LlRkB-j0uSFU2Y9nVQYbM-hW42MiTV4snsEEQScvhwxaYJ84gZz30oq_BAl5S7vWSOUFzhPWlXVuSnwg8fi1jI1UpDH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiheduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfrhgggfestdekredtredttdenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    evveekffduueevhfeigefhgfdukedtleekjeeitdejudfgueekvdekffdvfedvudenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepthhrohhnughmhieskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:SpnUaNOGZYJa2_dGau0P1DLBtqrAVDtV8aOCwYnIorAttvWoMhlznw>
-    <xmx:SpnUaFKIHimFYfrXL41aZSOpI195a4ojblSwHuhvM7WxjkyBPQ7U4w>
-    <xmx:SpnUaNK0yZjM7AGSL-hCgWLkBta_GQSlZxL6YGZyOoQ5BgrRSLg0rA>
-    <xmx:SpnUaP75sZZqlQX8jtYPt-_ZiOpkZHlmPT9NlDuRwuz02ewWVGENcQ>
-    <xmx:SpnUaBgRNwtThWpFXFBnTE79BFCPABAGvexNlvdsTW5MjmmqKwPsXEQA>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Sep 2025 21:22:15 -0400 (EDT)
-From: NeilBrown <neilb@ownmail.net>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH v2 2/2] VFS: don't call ->atomic_open on cached negative without O_CREAT
-Date: Thu, 25 Sep 2025 11:17:53 +1000
-Message-ID: <20250925012129.1340971-3-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20250925012129.1340971-1-neilb@ownmail.net>
-References: <20250925012129.1340971-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+	s=arc-20240116; t=1758768634; c=relaxed/simple;
+	bh=E/2zkY+laEgtf0hi012ZsFGuFgF/uxt8cYftM4Aj9CI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Cho9bMRjLntaW8dX9RXYC8Ddq8dMHBgJxKJ5UKSQNZgpAH49SsDcsvHfAdXoUAAj+OSzzkaUH4O1gJcEE4ztQ3OeeFk80z23aom/KjoDLt/RuFBRPsULEjDiqrtr3OKd29Ek4NTDXqlEEFJsRwN33ZDmv9rPGT6GRkx9XKIf870=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DTL4+4/l; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6ee6so5178425ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 19:50:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758768631; x=1759373431; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtyEMQPJo4fqytrWkgTZ3RdyfRt093nOgUIpQGdycFA=;
+        b=DTL4+4/lMjhhsDylR6AIPVgrvDE/Ruo/1CUOZZ/VvVtgSeFMOXQEDfEIzbwL67oSZK
+         mVe08kSve1q3RIr7/0hyPXaiNUs8eBZsxX+2RFR3IYHJ2t21qWyoQznBs6Qkvs9JtoQB
+         Ihu8gzRar+Hx4/42DtEkCrdl3BAqAkGsBWG9uQuPJGgrI5VHn9pYg08aaB5Tmmqfw5Fm
+         fV0mc6r5TBcXTIjk4CESUew1abD0JZhJpCETVFUsYn+IgkzMc0BQi/YJe/bz+/7W6QXy
+         R5MIEzpEPmNdI7mjlA1lQ+HTrIjl6B76I1AUnHO3wXf1LJEvcS4681rKB3unWFkb+xwa
+         nADQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758768631; x=1759373431;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtyEMQPJo4fqytrWkgTZ3RdyfRt093nOgUIpQGdycFA=;
+        b=DcVoK+5BEufoRzmentQww3npd8V8HPPUsxGggmAlF/ncwMxrxXADm29M2ExxK660Mh
+         EZZLhNxsqo6E+1WMVWlofMdyZywYIm5Kz9Adi4v995XB68G8jgDJ/13VksnFMNQQFBV+
+         JYUJV58ZbVPstRo94UeWrnvWp0lD2BoR9NV1xq9wJ6Tb5I5Nig+RR+GyR1gxLMhjzk1G
+         UKO1b74QTKssLZVnH5o8UtdhYSxDK1PfV3m8EftZo7L2AlCezYc6TwzGCk77XOBYOAtD
+         Cr1fZkeuWw6D9E5EACBi1l5aCoWI40eNPAvAyRekI3DTeObU8VmWOXyMNbUY1Md06fkr
+         sojw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYVW479AQsPfPcXO6k+DolJvFRN0r5OoPBrnEHR4n2YUN9KnV6tWgZQL6rKF3Dsx1upqeTJdDYyCheLbP7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuTRrdNMzirbSxoVtaXUTXOFy1SQ35pRSbbBV/vZR1LdpXpXY5
+	esKfSe+fg8jRyH7OFx6uSxI3QKcyMRNzQHNliQgB6lHTsGB7mJ36RuiqifSLnIQeg5S/EV+qWsK
+	e71+kHQ==
+X-Google-Smtp-Source: AGHT+IFUzTzL+1uqRK/gqbR3SSwstvzUfWk/CsgKEnRDPuVsxH9OFn3e2zcGuFZY0INSLtUo/3MF8Uc68Iw=
+X-Received: from pjbnn3.prod.google.com ([2002:a17:90b:38c3:b0:32d:e264:a78e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b0b:b0:266:f01a:98d5
+ with SMTP id d9443c01a7336-27ed4ab37a2mr23319415ad.57.1758768631155; Wed, 24
+ Sep 2025 19:50:31 -0700 (PDT)
+Date: Wed, 24 Sep 2025 19:50:29 -0700
+In-Reply-To: <diqztt1sbd2v.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
+ <diqztt1sbd2v.fsf@google.com>
+Message-ID: <aNSt9QT8dmpDK1eE@google.com>
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Shivank Garg <shivankg@amd.com>, willy@infradead.org, akpm@linux-foundation.org, 
+	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
+	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
+	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
+	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
+	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
+	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
+	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
+	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-From: NeilBrown <neil@brown.name>
+My apologies for the super late feedback.  None of this is critical (mechanical
+things that can be cleaned up after the fact), so if there's any urgency to
+getting this series into 6.18, just ignore it.
 
-If the dentry is found to be negative (not d_in_lookup() and not
-positive) and if O_CREATE wasn't requested then we do not have exclusive
-access the dentry.
+On Wed, Aug 27, 2025, Ackerley Tng wrote:
+> Shivank Garg <shivankg@amd.com> writes:
+> @@ -463,11 +502,70 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
+>  	return true;
+>  }
+> 
+> +static struct inode *kvm_gmem_inode_create(const char *name, loff_t size,
+> +					   u64 flags)
+> +{
+> +	struct inode *inode;
+> +
+> +	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
+> +	if (IS_ERR(inode))
+> +		return inode;
+> +
+> +	inode->i_private = (void *)(unsigned long)flags;
+> +	inode->i_op = &kvm_gmem_iops;
+> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
+> +	inode->i_mode |= S_IFREG;
+> +	inode->i_size = size;
+> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> +	mapping_set_inaccessible(inode->i_mapping);
+> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
+> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+> +
+> +	return inode;
+> +}
+> +
+> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
+> +						  u64 flags)
+> +{
+> +	static const char *name = "[kvm-gmem]";
+> +	struct inode *inode;
+> +	struct file *file;
+> +	int err;
+> +
+> +	err = -ENOENT;
+> +	/* __fput() will take care of fops_put(). */
+> +	if (!fops_get(&kvm_gmem_fops))
+> +		goto err;
+> +
+> +	inode = kvm_gmem_inode_create(name, size, flags);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		goto err_fops_put;
+> +	}
+> +
+> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
+> +				 &kvm_gmem_fops);
+> +	if (IS_ERR(file)) {
+> +		err = PTR_ERR(file);
+> +		goto err_put_inode;
+> +	}
+> +
+> +	file->f_flags |= O_LARGEFILE;
+> +	file->private_data = priv;
+> +
+> +	return file;
+> +
+> +err_put_inode:
+> +	iput(inode);
+> +err_fops_put:
+> +	fops_put(&kvm_gmem_fops);
+> +err:
+> +	return ERR_PTR(err);
+> +}
 
-If we pass it to ->atomic_open() the filesystem will need to ensure any
-lookup+open operations are serialised so that two threads don't both try
-to instantiate the dentry.  This is an unnecessary burden to put on the
-filesystem.
+I don't see any reason to add two helpers.  It requires quite a bit more lines
+of code due to adding more error paths and local variables, and IMO doesn't make
+the code any easier to read.
 
-If the filesystem wants to perform such a lookup+open operation when a
-negative dentry is found, it should return 0 from ->d_revalidate in that
-case (when LOOKUP_OPEN) so that the calls serialise in
-d_alloc_parallel().
+Passing in "gmem" as @priv is especially ridiculous, as it adds code and
+obfuscates what file->private_data is set to.
 
-All filesystems with ->atomic_open() currently handle the case of a
-negative dentry without O_CREAT either by returning -ENOENT or by
-calling finish_no_open() with a NULL dentry.  These have the same effect
-of causing atomic_open() to return -ENOENT.
+I get the sense that the code was written to be a "replacement" for common APIs,
+but that is nonsensical (no pun intended).
 
-For filesystems without ->atomic_open(), lookup_open() will, in this
-case, also return -ENOENT.
+>  static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  {
+> -	const char *anon_name = "[kvm-gmem]";
+>  	struct kvm_gmem *gmem;
+> -	struct inode *inode;
+>  	struct file *file;
+>  	int fd, err;
+> 
+> @@ -481,32 +579,16 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  		goto err_fd;
+>  	}
+> 
+> -	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+> -					 O_RDWR, NULL);
+> +	file = kvm_gmem_inode_create_getfile(gmem, size, flags);
+>  	if (IS_ERR(file)) {
+>  		err = PTR_ERR(file);
+>  		goto err_gmem;
+>  	}
+> 
+> -	file->f_flags |= O_LARGEFILE;
+> -
+> -	inode = file->f_inode;
+> -	WARN_ON(file->f_mapping != inode->i_mapping);
+> -
+> -	inode->i_private = (void *)(unsigned long)flags;
+> -	inode->i_op = &kvm_gmem_iops;
+> -	inode->i_mapping->a_ops = &kvm_gmem_aops;
+> -	inode->i_mode |= S_IFREG;
+> -	inode->i_size = size;
+> -	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> -	mapping_set_inaccessible(inode->i_mapping);
+> -	/* Unmovable mappings are supposed to be marked unevictable as well. */
+> -	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+> -
+>  	kvm_get_kvm(kvm);
+>  	gmem->kvm = kvm;
+>  	xa_init(&gmem->bindings);
+> -	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
+> +	list_add(&gmem->entry, &file_inode(file)->i_mapping->i_private_list);
 
-So this patch removes the burden from filesystems by returning -ENOENT
-early on a negative cached dentry when O_CREAT isn't requested.
+I don't understand this change?  Isn't file_inode(file) == inode?
 
-With this change any ->atomic_open() function can be certain that it has
-exclusive access to the dentry, either because an exclusive lock is held
-on the parent directory or because DCACHE_PAR_LOOKUP is set implying an
-exclusive lock on the dentry itself.
+Compile tested only, and again not critical, but it's -40 LoC...
 
-Signed-off-by: NeilBrown <neil@brown.name>
+
 ---
- Documentation/filesystems/porting.rst | 10 ++++++++++
- Documentation/filesystems/vfs.rst     |  4 ++++
- fs/namei.c                            |  9 +++++++++
- 3 files changed, 23 insertions(+)
+ include/uapi/linux/magic.h |  1 +
+ virt/kvm/guest_memfd.c     | 75 ++++++++++++++++++++++++++++++++------
+ virt/kvm/kvm_main.c        |  7 +++-
+ virt/kvm/kvm_mm.h          |  9 +++--
+ 4 files changed, 76 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index ab48ab3f6eb2..0ce53a9d36ec 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1297,3 +1297,13 @@ a different length, use
- 	vfs_parse_fs_qstr(fc, key, &QSTR_LEN(value, len))
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index bb575f3ab45e..638ca21b7a90 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -103,5 +103,6 @@
+ #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+ #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+ #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
++#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
  
- instead.
-+
-+---
-+
-+**mandatory**
-+
-+If a filesystem provides ->atomic_open and needs to handle non-creating
-+open of a cached-negative dentry, it should provide a ->d_revalidate
-+that returns zero for a negative dentry when LOOKUP_OPEN is set.
-+In return it is guaranteed exclusive access to any dentry passed to
-+->atomic_open.
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 486a91633474..6ef17a97064f 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -678,6 +678,10 @@ otherwise noted.
- 	flag should be set in file->f_mode.  In case of O_EXCL the
- 	method must only succeed if the file didn't exist and hence
- 	FMODE_CREATED shall always be set on success.
-+	atomic_open() will always have exclusive access to the dentry,
-+	as if O_CREAT hasn't caused the directory to be locked exclusively,
-+	then the dentry will have DCACHE_PAR_LOOKUP which also
-+	provides exclusivity.
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 08a6bc7d25b6..73c9791879d5 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -1,12 +1,16 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/anon_inodes.h>
+ #include <linux/backing-dev.h>
+ #include <linux/falloc.h>
++#include <linux/fs.h>
+ #include <linux/kvm_host.h>
++#include <linux/pseudo_fs.h>
+ #include <linux/pagemap.h>
+-#include <linux/anon_inodes.h>
  
- ``tmpfile``
- 	called in the end of O_TMPFILE open().  Optional, equivalent to
-diff --git a/fs/namei.c b/fs/namei.c
-index ba8bf73d2f9c..520296f70f34 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3647,6 +3647,15 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 		/* Cached positive dentry: will open in f_op->open */
- 		return dentry;
+ #include "kvm_mm.h"
+ 
++static struct vfsmount *kvm_gmem_mnt;
++
+ struct kvm_gmem {
+ 	struct kvm *kvm;
+ 	struct xarray bindings;
+@@ -385,9 +389,45 @@ static struct file_operations kvm_gmem_fops = {
+ 	.fallocate	= kvm_gmem_fallocate,
+ };
+ 
+-void kvm_gmem_init(struct module *module)
++static int kvm_gmem_init_fs_context(struct fs_context *fc)
++{
++	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
++		return -ENOMEM;
++
++	fc->s_iflags |= SB_I_NOEXEC;
++	fc->s_iflags |= SB_I_NODEV;
++
++	return 0;
++}
++
++static struct file_system_type kvm_gmem_fs = {
++	.name		 = "guest_memfd",
++	.init_fs_context = kvm_gmem_init_fs_context,
++	.kill_sb	 = kill_anon_super,
++};
++
++static int kvm_gmem_init_mount(void)
++{
++	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
++
++	if (IS_ERR(kvm_gmem_mnt))
++		return PTR_ERR(kvm_gmem_mnt);
++
++	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
++	return 0;
++}
++
++int kvm_gmem_init(struct module *module)
+ {
+ 	kvm_gmem_fops.owner = module;
++
++	return kvm_gmem_init_mount();
++}
++
++void kvm_gmem_exit(void)
++{
++	kern_unmount(kvm_gmem_mnt);
++	kvm_gmem_mnt = NULL;
+ }
+ 
+ static int kvm_gmem_migrate_folio(struct address_space *mapping,
+@@ -465,7 +505,7 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
+ 
+ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ {
+-	const char *anon_name = "[kvm-gmem]";
++	static const char *name = "[kvm-gmem]";
+ 	struct kvm_gmem *gmem;
+ 	struct inode *inode;
+ 	struct file *file;
+@@ -481,17 +521,17 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 		goto err_fd;
  	}
-+	if ((open_flag & O_CREAT) == 0 && !d_in_lookup(dentry)) {
-+		/* Cached negative dentry and no create requested.
-+		 * If a filesystem wants to be called in this case
-+		 * it should trigger dentry invalidation in
-+		 * ->d_revalidate(.., LOOKUP_OPEN).
-+		 */
-+		error = -ENOENT;
-+		goto out_dput;
+ 
+-	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+-					 O_RDWR, NULL);
+-	if (IS_ERR(file)) {
+-		err = PTR_ERR(file);
++	/* __fput() will take care of fops_put(). */
++	if (!fops_get(&kvm_gmem_fops)) {
++		err = -ENOENT;
+ 		goto err_gmem;
+ 	}
+ 
+-	file->f_flags |= O_LARGEFILE;
+-
+-	inode = file->f_inode;
+-	WARN_ON(file->f_mapping != inode->i_mapping);
++	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
++	if (IS_ERR(inode)) {
++		err = PTR_ERR(inode);
++		goto err_fops;
 +	}
  
- 	if (open_flag & O_CREAT)
- 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
--- 
-2.50.0.107.gf914562f5916.dirty
+ 	inode->i_private = (void *)(unsigned long)flags;
+ 	inode->i_op = &kvm_gmem_iops;
+@@ -503,6 +543,15 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 	/* Unmovable mappings are supposed to be marked unevictable as well. */
+ 	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+ 
++	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, &kvm_gmem_fops);
++	if (IS_ERR(file)) {
++		err = PTR_ERR(file);
++		goto err_inode;
++	}
++
++	file->f_flags |= O_LARGEFILE;
++	file->private_data = gmem;
++
+ 	kvm_get_kvm(kvm);
+ 	gmem->kvm = kvm;
+ 	xa_init(&gmem->bindings);
+@@ -511,6 +560,10 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 	fd_install(fd, file);
+ 	return fd;
+ 
++err_inode:
++	iput(inode);
++err_fops:
++	fops_put(&kvm_gmem_fops);
+ err_gmem:
+ 	kfree(gmem);
+ err_fd:
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 18f29ef93543..301d48d6e00d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -6489,7 +6489,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+ 	if (WARN_ON_ONCE(r))
+ 		goto err_vfio;
+ 
+-	kvm_gmem_init(module);
++	r = kvm_gmem_init(module);
++	if (r)
++		goto err_gmem;
+ 
+ 	r = kvm_init_virtualization();
+ 	if (r)
+@@ -6510,6 +6512,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+ err_register:
+ 	kvm_uninit_virtualization();
+ err_virt:
++	kvm_gmem_exit();
++err_gmem:
+ 	kvm_vfio_ops_exit();
+ err_vfio:
+ 	kvm_async_pf_deinit();
+@@ -6541,6 +6545,7 @@ void kvm_exit(void)
+ 	for_each_possible_cpu(cpu)
+ 		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
+ 	kmem_cache_destroy(kvm_vcpu_cache);
++	kvm_gmem_exit();
+ 	kvm_vfio_ops_exit();
+ 	kvm_async_pf_deinit();
+ 	kvm_irqfd_exit();
+diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
+index 31defb08ccba..9fcc5d5b7f8d 100644
+--- a/virt/kvm/kvm_mm.h
++++ b/virt/kvm/kvm_mm.h
+@@ -68,17 +68,18 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
+ #endif /* HAVE_KVM_PFNCACHE */
+ 
+ #ifdef CONFIG_KVM_GUEST_MEMFD
+-void kvm_gmem_init(struct module *module);
++int kvm_gmem_init(struct module *module);
++void kvm_gmem_exit(void);
+ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
+ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 		  unsigned int fd, loff_t offset);
+ void kvm_gmem_unbind(struct kvm_memory_slot *slot);
+ #else
+-static inline void kvm_gmem_init(struct module *module)
++static inline int kvm_gmem_init(struct module *module)
+ {
+-
++	return 0;
+ }
+-
++static inline void kvm_gmem_exit(void) {};
+ static inline int kvm_gmem_bind(struct kvm *kvm,
+ 					 struct kvm_memory_slot *slot,
+ 					 unsigned int fd, loff_t offset)
 
+base-commit: d133892dddd6607de651b7e32510359a6af97c4c
+--
 
