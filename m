@@ -1,120 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-62685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E0DB9CF6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 02:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA07BB9D014
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 03:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92DF4239FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 00:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7452F3A6176
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 01:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A742D8779;
-	Thu, 25 Sep 2025 00:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C482DE717;
+	Thu, 25 Sep 2025 01:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmnOFBKE"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="ZaMqplNn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hwp5FFOk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FCB2D73A6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 00:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB512F84F;
+	Thu, 25 Sep 2025 01:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758761782; cv=none; b=t7/3+DyfeVFib4HW1+ZRji+ghDXseZ1FTo0xYP8DXsz9mDg6l+1AJj5AmD4gZ6SPrrqBtJEVZCfG8OPBIWd7OigaVt2+k+cPLnGDfDmohocp0eDDVZtK3FxpA+li4GeXWsxNQ9yy1kyOmSatulYLQqwE2x/1IPG4hSYEwYxcApQ=
+	t=1758763326; cv=none; b=OX4375mm+jcOk8N9codAYwKorr41nYcISEjrgS0EcCV42ESVjIGpLarEqhwr+aDu0WP06E0HB1og+NvwUbjuVh3Gc1ZE2TfU3UK53fK+ZbCr8otusYCFwHT0/c1Zrq7k8kD2juq4hVWfHMgUCCwX+qHHoe+dEaVL7eKtBV+LvNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758761782; c=relaxed/simple;
-	bh=mX6INriWejRKeV/G//8ic0/tfI0+R32fXWg4I9UX+TA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sa2WrGXTv6voHD1RiFqxCH3Z6uNwemlYa3Au4NFq1fXvmJRmArU4a78LT/WPuqfuTBHex2qR5QB3U8d7yWZKz86VrV9lYv5NMLNj++gxLPItyqmHowKzkOXyARHZDmRtnVqTRglYoTZl9MVhyuVqVDE1nJr9F1bojrhOs8i4n6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmnOFBKE; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-ea3dbcc5410so351207276.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Sep 2025 17:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758761779; x=1759366579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6OaoaSI0ufd97cnRnxkA92AvR8C6GxXblYJSwWrjko=;
-        b=LmnOFBKEA2SHSga2Gy8MaR2oHrQEmEVPbUKEzayfY/66r1y4oy7G+MGdU2MVW8uYqb
-         uPb0pdgJv+Vv/5VoRByLALvXim6cRx0IpDDZGJFQWBfKlV/XYyNyM/5/1xYEoyhIGo3+
-         pGbF7Fftyi99OG+bhfZRH2pTUcBZ6mY685RYyTgJSKsH7KWce8NQhKHUOJFnVGycY5j7
-         y+JfRNdGow++nThfp8sshkPlBmeYoPIQJfSTK8fhH4qytoeOUYLa19EuaDO90DWJuwWg
-         XPxhcm9XAKFbjLg60EFSxfwE0cOU1rHm0b4/KhMVLi1bSrTkl2wBhfUbEyKLCp6Z+vXB
-         BJ4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758761779; x=1759366579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q6OaoaSI0ufd97cnRnxkA92AvR8C6GxXblYJSwWrjko=;
-        b=KdsQB8Xy0sCzYN1ua4t2ok/zWXuC0RIvJB51C56BmBRqonlmTez2pIFZ4dDFRer6HO
-         cfxbRqhEgaCDFhe8t3XUwkmvL/abjZCxEE0DUBZ4Dn3epM3nxLQAOamvbHPx/daz+BRI
-         OWXriaLmqVnB57zynX5Ou7T+BenJCEWt0/qdvnj1I9NiypCjI8NY9vuyRRBUs2h1YEu/
-         hR96YkeEXGdYeSZfxToSQ0H27+pBSgTAhXsX72UovK+dKcsnUZZkR45mjm00cvLLZ/ui
-         S3ziz0OTdPaz00SA4f/M7HwK5i2o4KW04tQLAWFY9LefkJL0PCWHaBJWPceBemJvRl1/
-         naLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlIwDnDzQ6EzXCpM9w7Kci8pEaIbWbmGCqoZaGP7i1jsI1L0ewVjYWhAYSoHH+SxUIrded4YECqoxVu5jQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq6IrCmZD1TYeP+YBReJyj+U24Azf2DImm0S3G7+19p7PO9Qz+
-	BgnKGoAjbFpcAjGRdjhSKi09aS2LfZa4+qkLTQfhrdp2uKHVW6StB9cwmt5QRhYq50Wt+fWUPsO
-	t3JPD8M9lPm1sFmE2pAbRkc3SwdRxcTI=
-X-Gm-Gg: ASbGnctWOtPc7CozTu1sjoTeE6MQFNFlr6POgHFyhHR6ys95rUbYCfbMfszkN96AFEJ
-	cE0CDBu/dw0kHlABJe8gq1SdAKKahODk9vjRuv/BPGPBYpG2X/3dNnaQKnqXXzptw1Tp5GjzCms
-	cCOXlK4aBEINyVw0BZtUKy9udZ6JJjGBEk8BAm5ee0i6pVMOpMh7LfYrK0ij3JaS/J6rulAJ2D1
-	IwIwySaW/djWqYjr8rYxpMPXqzvOKjpbUBbsrCm
-X-Google-Smtp-Source: AGHT+IFgcRPcyol1t+usjIzlNyHAv8M4r+C+ZOx7LYDKRxogbF8wDH5IwaTwpGDQgVRTX3xqCI3pTJJ60ACg9S/p7Yg=
-X-Received: by 2002:a05:6902:2089:b0:eae:987a:1e32 with SMTP id
- 3f1490d57ef6-eb37fbfc092mr1795120276.16.1758761779385; Wed, 24 Sep 2025
- 17:56:19 -0700 (PDT)
+	s=arc-20240116; t=1758763326; c=relaxed/simple;
+	bh=YdDmNoi4VG/ibhB+Od0cWZXiHImCKkMC3iccKlZuAeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFW1UIkf4cdA1lpj+EkUMunjUQ66fkxtR1UsRHKdWCK16RaztEEuOzeZmigQo81fVhdfzsp9uN+R7mZzI2ziSqNiVrNcYdIufPmL8phTsWbAiTiBx+Bh8PCewNw/UZj5VZC5rrZMNwytI6/lL99QvhfP1Bl9HD0klvhHazZk5nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=ZaMqplNn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hwp5FFOk; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 3CCE3EC01A3;
+	Wed, 24 Sep 2025 21:22:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 24 Sep 2025 21:22:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to; s=fm1; t=1758763323; x=1758849723; bh=ykqbCNnzPq
+	n5P6VIp5/7eU1qjm3yp/m1ikX7a0JcGDc=; b=ZaMqplNnGC07sHYWcaqgONVUnd
+	dayMMrIpP1kmeuZBe9e8JnoU+t3kBEOZWclApGGcx9pyFZeDtZhGQOz/lzaY5rKx
+	rWHxESokke0IM/QWEOeM4fvNhYwx9hCSZtajC2SOrfNokojo5aqgcjJaMOMeOsHM
+	+HUf85AK5nZovg8CSnfTVCRdOoCPkAXyfBy1CpGLqca0MDRep26tEnvTO2PbA9mm
+	rJbRAVRdjt7968f0mzZb2p7ZTwDlLdhtTXaE/992oaqrvzRUVZcafVteAeevVyOQ
+	4+b8xfakP58goVf4y5WsCkqdsUJ5R4ttwJGBOgShoHJEbRgkq8AXg+d+vivA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1758763323; x=1758849723; bh=ykqbCNnzPqn5P6VIp5/7eU1qjm3y
+	p/m1ikX7a0JcGDc=; b=Hwp5FFOkOLm07a9xCxxdC2zTAI+9KGTJDZpLrwlIYasd
+	D5p6nT0tbWGeNrpRKWcvbbTG2V2Eiz08Rxql+C2Otu5nklBDaqQ2dkzU+c/hE0gp
+	cZcm2IMjNBdMrBQFOq/bWxEp9JTW6b6v1tL/0B6dbp2ogkvKSAUK9zmZ0fYmunk9
+	wXA+RDDuQLqug1yhvxnvSMSYxYrj6ZSA3HayjbCYPTSf619XOvR8DdsdQp7RzEqd
+	1K78N5UYwGKeGaoUa8Cwoe9xBdvzKbnxpmHK8Uc1AxJbobnqRX/a3BtIiVlQwYlN
+	mOVAfPHBwet0EhNJGB2r+rfgARGyZUzuQ+L+tCz+6g==
+X-ME-Sender: <xms:OpnUaLHJ2BuT32iE26SbyNn_9HuVBFkh92g6eNg1jvq-oSi1cMbJ9w>
+    <xme:OpnUaHbhF5xbx7nUd3N3KeLmAVgmRN9dDo0oAgwJjxRmiF63-NwPBe5z37pyrohSt
+    ZilsN_-c6Ej-lp38q_Qob42K-Ai1M-WDWFHM47AKLENrhsK8Q>
+X-ME-Received: <xmr:OpnUaDXBD6t1etTF_m-8TWv6zM-3w_IRC4VEqe1E8aLeT_AzlqVqNmNVYQ5BJq6a37YB7BkO8QmU89BbEwjeII-k9_kIRF1RPN6TCoPrsmaX>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiheduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkfforhgggfestdekredtredttdenucfhrhhomheppfgvihhluehrohif
+    nhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeegte
+    efgedttddviefggeeuveefleellefgjeeufeeukedtleeiieekvedtleevleenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofi
+    hnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpth
+    htoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepthhrohhnughmhieskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:OpnUaFn_D4UXgmd7AdiWvWdUUAJJOuZ2QraP8GhS4DBikYXwsJr8pw>
+    <xmx:OpnUaGA9hMPaltBo2IkwwittTm5FmxXuZINEjiMxhHAhBT-J9EsnkA>
+    <xmx:OpnUaMhfqsNfNxwKJ0i3-Hkknwa985lpCr6JdqeiqWNcaReHVYjwoA>
+    <xmx:OpnUaLzIu6A00e1aFN98cwbugGoo9i5vHtCtIqx5Kv3VxBjqDHlZ_w>
+    <xmx:O5nUaD5DvdVogJrd4yrIbw9Hbo8jMvtj4jNs4Bqejbj06IpwVmlY-vLD>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Sep 2025 21:22:00 -0400 (EDT)
+From: NeilBrown <neilb@ownmail.net>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH v2 0/2] VFS: change ->atomic_open() calling to always have exclusive access
+Date: Thu, 25 Sep 2025 11:17:51 +1000
+Message-ID: <20250925012129.1340971-1-neilb@ownmail.net>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924232434.74761-1-dwindsor@gmail.com> <20250924232434.74761-2-dwindsor@gmail.com>
- <20250924235518.GW39973@ZenIV> <CAEXv5_jveHxe9sT3BcQAuXEVjrXqiRpMvi6qyRv32oHXOq4M7g@mail.gmail.com>
- <20250925002901.GX39973@ZenIV> <CAEXv5_hEXggxe5EwSHV8SK21e6HNmfYFSE9kx=ojwEobtTTGLA@mail.gmail.com>
- <20250925004725.GY39973@ZenIV>
-In-Reply-To: <20250925004725.GY39973@ZenIV>
-From: David Windsor <dwindsor@gmail.com>
-Date: Wed, 24 Sep 2025 20:56:08 -0400
-X-Gm-Features: AS18NWBw4o9R2McXNk54g7ZfUjE76HZ6zEiUz3X5_jWTBum_bwxA5JL2dug5JMs
-Message-ID: <CAEXv5_hD_4ON3MVBa7+gpapQs+Vkvo6Ln+BKT+Qz_S7x+Up6hg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: Add dentry kfuncs for BPF LSM programs
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, song@kernel.org, kpsingh@kernel.org, 
-	john.fastabend@gmail.com, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 24, 2025 at 8:47=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Wed, Sep 24, 2025 at 08:44:24PM -0400, David Windsor wrote:
->
-> > > You can safely clone and retain file references.  You can't do that
-> > > to dentries unless you are guaranteed an active reference to superblo=
-ck
-> > > to stay around for as long as you are retaining those.  Note that
-> > > LSM hooks might be called with ->s_umount held by caller, so the lock=
-ing
-> > > environment for superblocks depends upon the hook in question.
-> >
-> > Yeah good point about ->s_umount, why don't we just create a new "safe
-> > dentry hooks" BTF ID set and restrict this to those and filter in
-> > bpf_fs_kfuncs_filter, where there's existing filtering going on
-> > anyway?
->
-> Again, you can't just call dget(), stash the reference into a map and mov=
-e
-> on.  That's asking for UAF.
+->atomic_open() is called with only a shared lock on the directory when
+O_CREAT wasn't requested.  If the dentry is negative it is still called
+because the filesystem might want to revalidate-and-open in an atomic
+operations.  NFS does this to fullfil close-to-open consistency
+requirements.
 
-These can't be stored in a map (guaranteed by verifier during addr leak che=
-cks)
+NFS has complex code to drop the dentry and reallocate with
+d_alloc_parallel() in this case to ensure that only one lookup/open
+happens at a time.  It would be simpler to have NFS return zero from
+->d_revalidate in this case so that d_alloc_parallel() will be called
+in lookup_open() and NFS wan't need to worry about concurrency.
+
+So this series makes that change to NFS to simplify atomic_open and remove
+the d_drop() and d_alloc_parallel(), and then changes lookup_open() so that
+atomic_open() can never be called without exclusive access to the dentry.
+
+The v2 fixes a couple couple of bugs and revises the documentation to
+remove the claim that ->atomic_open will not not be called with a
+negative dentry and not O_CREAT.  As O_CREAT can be cleared late, that
+combination is still possible.  The important property is that
+->atomic_open will now always have exclusive access to the dentry.
+
+NeilBrown
+
+
+ [PATCH v2 1/2] NFS: remove d_drop()/d_alloc_parallel() from
+ [PATCH v2 2/2] VFS: don't call ->atomic_open on cached negative
 
