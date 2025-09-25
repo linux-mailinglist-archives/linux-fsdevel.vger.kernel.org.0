@@ -1,139 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-62740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5ED0B9FA52
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:45:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB2CB9FA19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2793A030F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8950A2E3B12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 13:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9289273D9A;
-	Thu, 25 Sep 2025 13:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04E2271A94;
+	Thu, 25 Sep 2025 13:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gwqrv2UA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hzgsiAoK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFC62750FA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 13:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD69273D77
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 13:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807899; cv=none; b=FTvy2zwNW//c6nuNNPDifaFLpZyyHJvXXVwCK7c3Ft9JFK2Jxo2vLl6/Y5BXn0OA36QysYGdAtBJ42lX1TDUCOdG/075X96C3uTQsukPVwlD0jWOU8k58spLMKb9p+1MxXAs++3ayoRFBRzi3IoaVVqejQESE3opfXMppgvWOag=
+	t=1758807750; cv=none; b=CPSwelkPtF+HmyZsZswTTeQqe5VAbHbqytKrxb9TBRx2ctOZeKJEaAt/kXmKzt5/hCOke635tf44bp2/IkO6Jgo3I2lmDyMBiZSQmEi0qot2cd6gx1urIavIl9NheTw9fIRNJ59bMnkm4LOjrz4ecY1PV8yHRcizGZHUxofofwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807899; c=relaxed/simple;
-	bh=Z0F6rvv+vHHHgqN2/7WrnWaBdoTfLfsx+4E1sr2dpYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tIwlnq1m1dA580Q8eRa5tmqJDpM79as+4i3CJMNxRkWS31zeA69WqA4BdMmZ52GRf6662p7SNGGYW5JU6Ahff6E1jvcQXnBqoDo4dC8Hx/qoERB9ufW6u6Ai7Y8Erq+jW2cnOTHKgjZ5rwYXiJZHep+Y8ZDHuY3eqiqRVg/zEgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gwqrv2UA; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4bb7209ec97so1147451cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 06:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758807896; x=1759412696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
-        b=Gwqrv2UA8Ax9RMydlVr9JpasaE19jt+Hwkk1c1vdYAnZtfqiEPHsQxMynF99pQG/IS
-         S8OZxZo7rqlTttZ3/KiyDoN0eF9CvW3U1Icncy+Vggtt5ITg3cvEEsINE3Bdw+YLiJwU
-         ZojJSpH0r+jF79v9bGTUMSEHIqlAHs1SqWv4KwDamrYyOyvJ5/Y+CRDgO6R6/M02lhWf
-         yoJjCmNGR924SUhz6cp0Tw82lX9eW9B3yhFYRk1nxobrOLdS0qBVgDRUn84dFLu3YqcN
-         UIXJRlB4/unDwbCsUBg7V+Mm9yc+pUkWa6oPuU2w03cAMTxNxJ4MXZtvPj58sDGwGO7S
-         /v5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807896; x=1759412696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
-        b=npQXQ5O5WXH75i3wwK/rBfhE4AbBXOpbH3Z0klZ9X8KvdUCpacY6M+9xXprc7ZKtSF
-         z7aBev52PECKHaY4ZFE33DEgJk16yBO9DABOM87jQ9Ph6PQuLgkBV7S/bcJg5RRPpNRQ
-         EjKxjGbTSG1ZRPrFuFWFi7J+903l5JOTBzpsHQL3F/sLZgEUcNvCyTxks9rZf+BIOFg+
-         zcPbvAwtek8VD45J572vW2io9twlJHn7GDnkfFRimFBSNbTVYVj8Ih4khdotabeSNc+I
-         QECyDIpBtJaKPtQ+AkjrjpukCW2GrliZFQf3eAYFfzTxU5FSTeKRMWWzSEr0TN0mTafT
-         6gZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7jEoDskbc8PwmLuD+s7yhUXNbHMdDdLvbqFSLXQvDSek04gW53yNQmNyydRZKO/bOKtJMe/YazTrRHqCn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOaHnpSwDMmRj/aYp/NNys7dQGdyvyKLTfR2oVvsVu5MAhk2zJ
-	mi01NWvUrgL6bBIoj0i239JPzobvSNIx6Q44WAUjZ5+nsFV8TX6JoABeFFJspyYZUu6nVQUvJ1/
-	5zFZmaXMBGt6WltcIXpTNWutj/irKx2/Id4f4Sv4I
-X-Gm-Gg: ASbGnctoJkSl+ZZm53nsyGYnd+H9u5ReTooyrrHTPgq9xhdDuuBcFObsnVYzoUfEutx
-	Jxkdv4Gxm3Ye3v9tVKRv14d3BvdlotvdczZTPZH2UflBjDr710XiJOiL9zqjcPim14k5BSijbCm
-	v6/JQ0bGCvw3wtqE1r/P4ciZNxFl8Us9VCVB+cf9rnHuCTXcGSjykkkSgknUTbht+x4tB4vz1H9
-	jt5Y6gILvqmQVmJYrafMTsWIg==
-X-Google-Smtp-Source: AGHT+IHMjlzJoU4go98o9OLI3ONqf4XSyVwqhgPkrMYYKQ3q5Z+I56IySJAtT5Z6pWwXAgA4n71MeTiHJXaU1zjAWA0=
-X-Received: by 2002:ac8:5996:0:b0:4b6:2d44:13c4 with SMTP id
- d75a77b69052e-4da2f12a974mr6481551cf.10.1758807895145; Thu, 25 Sep 2025
- 06:44:55 -0700 (PDT)
+	s=arc-20240116; t=1758807750; c=relaxed/simple;
+	bh=Y+Z5VweaxNo98sxze2uq71chnnEKKyIcAUcYSz2klsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGaAx2+jlr0f0rrFjhcHjrxkcFZenOLQ3Z1VDXL6uGMmXHkAZbfkj+suOV6WBdrJOoQhHTzd4BqjicMNlsfaHCgZ+WEePoZUZEj9lwCwRKZMX2AfocCGyPj443YIiqvXltdkxgcGMcVXfOSLvdx8heHMo1gbSbuSLAelfraWvGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hzgsiAoK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758807747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DsqFl/Do4XNVgzaopDPTKMKOMfF8uLBrpBiM7b5J/1I=;
+	b=hzgsiAoK3XwEnoOJyWrEzFDHfDyW+DOkR8IWNjf9R01xxznzbQHOeYA721zpQ0hWWznWh2
+	qUXZ93Ozb+gFAvdDCfngBF4aYFYsQ0eWcGmd0+80gCzyjGPGLkW3AzEKBcmvgY3+jFWEQo
+	iurQnKmsIrARlqBz/AqH54jFmGtbxGM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-253-SJBbuv2-P8KTz3OtAFZ55Q-1; Thu,
+ 25 Sep 2025 09:42:23 -0400
+X-MC-Unique: SJBbuv2-P8KTz3OtAFZ55Q-1
+X-Mimecast-MFC-AGG-ID: SJBbuv2-P8KTz3OtAFZ55Q_1758807741
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 996D11955F18;
+	Thu, 25 Sep 2025 13:42:21 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.134])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AED230002DA;
+	Thu, 25 Sep 2025 13:42:20 +0000 (UTC)
+Date: Thu, 25 Sep 2025 09:46:30 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org,
+	linux-fsdevel@vger.kernel.org, syzbot@syzkaller.appspotmail.com
+Subject: Re: [PATCH] iomap: adjust read range correctly for non-block-aligned
+ positions
+Message-ID: <aNVHtoCIJOOG966b@bfoster>
+References: <20250922180042.1775241-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
- <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
- <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
- <aNVFrZDAkHmgNNci@google.com>
-In-Reply-To: <aNVFrZDAkHmgNNci@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Thu, 25 Sep 2025 14:44:18 +0100
-X-Gm-Features: AS18NWD8QPp_e9025CtzHt-1GmqDfc-4KC-skp25M5mSn0nTsRNLyfZiLblKLT4
-Message-ID: <CA+EHjTz=PnAOdjaPuHRnXE+CTUHCKVSnf-LA6bgwKpWbapy_0Q@mail.gmail.com>
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-To: Sean Christopherson <seanjc@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
-	Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
-	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
-	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
-	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
-	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
-	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
-	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
-	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com, 
-	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922180042.1775241-1-joannelkoong@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, 25 Sept 2025 at 14:41, Sean Christopherson <seanjc@google.com> wrote:
->
-> On Thu, Sep 25, 2025, David Hildenbrand wrote:
-> > On 25.09.25 13:44, Garg, Shivank wrote:
-> > > On 9/25/2025 8:20 AM, Sean Christopherson wrote:
-> > > I did functional testing and it works fine.
-> >
-> > I can queue this instead. I guess I can reuse the patch description and add
-> > Sean as author + add his SOB (if he agrees).
->
-> Eh, Ackerley and Fuad did all the work.  If I had provided feedback earlier,
-> this would have been handled in a new version.  If they are ok with the changes,
-> I would prefer they remain co-authors.
+On Mon, Sep 22, 2025 at 11:00:42AM -0700, Joanne Koong wrote:
+> iomap_adjust_read_range() assumes that the position and length passed in
+> are block-aligned. This is not always the case however, as shown in the
+> syzbot generated case for erofs. This causes too many bytes to be
+> skipped for uptodate blocks, which results in returning the incorrect
+> position and length to read in. If all the blocks are uptodate, this
+> underflows length and returns a position beyond the folio.
+> 
+> Fix the calculation to also take into account the block offset when
+> calculating how many bytes can be skipped for uptodate blocks.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Tested-by: syzbot@syzkaller.appspotmail.com
+> ---
 
-These changes are ok by me.
-/fuad
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-> Regarding timing, how much do people care about getting this into 6.18 in
-> particular?  AFAICT, this hasn't gotten any coverage in -next, which makes me a
-> little nervous.
+>  fs/iomap/buffered-io.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 8b847a1e27f1..1c95a0a7b302 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -240,17 +240,24 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+>  	 * to avoid reading in already uptodate ranges.
+>  	 */
+>  	if (ifs) {
+> -		unsigned int i;
+> +		unsigned int i, blocks_skipped;
+>  
+>  		/* move forward for each leading block marked uptodate */
+> -		for (i = first; i <= last; i++) {
+> +		for (i = first; i <= last; i++)
+>  			if (!ifs_block_is_uptodate(ifs, i))
+>  				break;
+> -			*pos += block_size;
+> -			poff += block_size;
+> -			plen -= block_size;
+> -			first++;
+> +
+> +		blocks_skipped = i - first;
+> +		if (blocks_skipped) {
+> +			unsigned long block_offset = *pos & (block_size - 1);
+> +			unsigned bytes_skipped =
+> +				(blocks_skipped << block_bits) - block_offset;
+> +
+> +			*pos += bytes_skipped;
+> +			poff += bytes_skipped;
+> +			plen -= bytes_skipped;
+>  		}
+> +		first = i;
+>  
+>  		/* truncate len if we find any trailing uptodate block(s) */
+>  		while (++i <= last) {
+> -- 
+> 2.47.3
+> 
+
 
