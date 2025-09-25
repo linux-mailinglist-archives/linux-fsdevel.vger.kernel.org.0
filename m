@@ -1,260 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-62774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79682BA0742
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC75BA0754
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09FF17F13A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB73C1BC7490
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 15:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C2F2FFFBE;
-	Thu, 25 Sep 2025 15:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156693043C8;
+	Thu, 25 Sep 2025 15:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iY7XgZl3"
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="nMRP0eTn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.57.120.243])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E646B2FB976
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 15:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5263009E7;
+	Thu, 25 Sep 2025 15:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.57.120.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758815463; cv=none; b=Ibej4b8yVwXwAwfmc8cQbmeERu2loY3Jf9AVBbUpBBVsrhl8C/DCbmh2QI2wmN4iwooPvYfLnfDE7caHgxR3aF8lsyTOJOCfIwmwesa0Gt3m5g6xvmgGdgMR1G9EG5hkhTW43CBp16jYlSifHQ9uNY/Q8zkWara/gLwYIjfe8Mo=
+	t=1758815470; cv=none; b=k3cgL7xICyJ0Fx1koQvUJo69qZQ/e9Ex+3d/zJ8X/NkMwgoMPa6WTQnDPmvGCCk/IB0W/ZusmFt4ImGRE5aySJ5g56Z6gvpPm6PWJAvlIhhM0jDWI9SN1msOIICh9huoh/YD4ipi0ZKblmt2mlYPIazxatzEU+qkREacabTB368=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758815463; c=relaxed/simple;
-	bh=bqup4E+Z4LYVlj/a9cb1gPbIL51orOjXv5Sja43sUbc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j+rAaQKzOH2+qimrkoilguCZEnR/3QgVyBLTfyx6cH4qQHrmrLL1fnbHSBVtl8YFyLKWl037ImibTyFfIL3+mkK9s6Al7o0IsQj5cyn4rT8rdXDuAzAkB4ir9FxraxsE7anZ7m1mXP5rTyEfn/dSEWnXj40aBWHVHEdUoI6PC+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iY7XgZl3; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62fc28843ecso1409726a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 08:51:01 -0700 (PDT)
+	s=arc-20240116; t=1758815470; c=relaxed/simple;
+	bh=1zJrM66fVkwnfU3UUcGE70VbzHy7CLNUeSpYY+Xki2w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mrk/gkFTyH8bntvfoEvX1g20sv8dbD1HWURB84mYogFJ7ueBLKk9KOtXGE9A/+hhocfBIRu0uizRKso+fXocAlfNnDVp93Ubh7eEi7Q0QjKjvMDEiD2BBoDmSsxTWdjJJrHWoSXV92bjepb9YviaGEvK7z6WcOXF+qJ5xy4zsBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=nMRP0eTn; arc=none smtp.client-ip=52.57.120.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758815460; x=1759420260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8pkBkCfzzGdkuWc/HhosQmhWOM0aTTicipXFn1WFKUs=;
-        b=iY7XgZl3CUVbARqjTBzgBZlbHnruBEfqbcILUqCkFf03LMoXHc1VqKP4IZ1j2/t0fi
-         FIKoJ8kqortoCrvZvWc3WlqzvO5dOfsgRUygx40+5XbwygOkecx4O+SquB52zRpbWfuo
-         RfEdlBQQDkPogGkeg+F7JlAf/jdMmVCLOpGW1QujNbSQuH0uduOnbuIsOSmoNSSy/koL
-         63g7jg7eV1RRLL/RkCMrqetIRffD144AAmKTznZVL4gh3fnO0d2Ya3Qgq2Zz025DfXtc
-         eGnJQ1SiKAZJtdArrsxcrFLRIM15gKql3d3dT+idetJ++b9cklFnN3x0qb7MX8MMizbY
-         Q26A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758815460; x=1759420260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8pkBkCfzzGdkuWc/HhosQmhWOM0aTTicipXFn1WFKUs=;
-        b=L2vOaaM1V5AENMz8SMP+0Rl4hEUZSzLICxzLjmYpEUUJEwjJIpa2Oxv3nno86ET20S
-         td0E9nFom3Q/wTczm1f2O7XPf9GFa4YWyb7o+zI+rb4oVTyLlSZX9yDBQs3q3RklELJp
-         pxxjJy3lQAN6oRTpXC26Nk8Jn66GZsmAw4Il7sLMzgJHkutJFKBucrRpmUMESOPHd+/y
-         fjYYU46mIKuGOfSkI77aLtp7aS6OmLDCagCrWWz1yAHsAmkF8fWoDPyGfnHZDAHczs9L
-         6J+gEABtp3FFJ2lCenUFgrWqEShLAPFNhEFGdCin90/m5FXaJnePr8xhdXEMIfbIqk2g
-         KoiA==
-X-Gm-Message-State: AOJu0YxTV+P6NEz5qYK1Zh1yY94wZXsPkexuIDTlglzvhrNvb9XO7Bt3
-	A+lU6nDdpeEC5jz7YWqIq1jIcn5ev0fOKyxDeLVCq7uZl/xsfXS9NUZ6uHlYvHRgJ77brmanCXA
-	KjsklfHIRNaEP7ftmbqQ8965QP27vMNY=
-X-Gm-Gg: ASbGncvef6PfhlbO5uTC0mg6cEmpAiEqzPTDDtKpQbUPBcr/Rp83b19AC6EuVDOcb2K
-	DwHsJMXgW7iJaWDjfeAnOkPwKZskmI281FppZzWvh7SXNQsSjXovLk1Ve/AwcEod8iJWRoGbftS
-	ZC2frHMRCKEJA75LmGE7CB5PEGWWIpoibdHPlIXMeWH5f8nJvPuvOjnT7Vb2idZqdydxUPlFrks
-	D3SZ+mcbSXsfWqw4BjXQ/vQHFyCiQfKHc6v0t4VcA==
-X-Google-Smtp-Source: AGHT+IEPELCD3OHR2BGTubqUw5ydVo0EBqdmNaM5DUUzIA4oXmm6t1IFpxRmnv1QnAOHXgoMgCOHn19rV0i1+BCN878=
-X-Received: by 2002:a05:6402:5189:b0:628:6fc1:a3f with SMTP id
- 4fb4d7f45d1cf-6349fa7e3c0mr3078578a12.17.1758815459987; Thu, 25 Sep 2025
- 08:50:59 -0700 (PDT)
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazoncorp2; t=1758815468; x=1790351468;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=WShG4YI0EGKByiTLIIIv3ML54YmgGR7q846KIAo0FmA=;
+  b=nMRP0eTn4yjAeULMcJ/LseWpqFTFGyC0dxKGAfigGbkc336t72YRe7YG
+   ouYk5hxZ4+AdEK9RmjoqQUp8vcaTokaj5zvpIVklugM2fVlVkowv6YkET
+   Ju3JLRTPcQp/g3UOs/TJtv4LvEVY+Kui6/EigqpcCozKmXd1Dk9211LSG
+   DyJALc5Rn3nQx/1Cy3k+9KUSV+ojuGz31m1GtsBVxQr3BLgbVyrzhr9w2
+   0bf7m/XYtE98SOXAJb7kw3FyywCq1kuWpSztclT5gLwgr3Y+68jlZ/JLz
+   4bLYWyfe+YYfGoIzb/PTnTL7qDEvS+YX/5gAFsXca6M3H9OEILbNE5982
+   g==;
+X-CSE-ConnectionGUID: MbVH1R0YThKQmA86zMa6Xg==
+X-CSE-MsgGUID: 2fM976tAQQK5Fw3KY2GCFw==
+X-IronPort-AV: E=Sophos;i="6.18,292,1751241600"; 
+   d="scan'208";a="2580762"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 15:50:57 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:31648]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.9.61:2525] with esmtp (Farcaster)
+ id 1b0aa563-dc9d-47cc-b8c8-5261ca8f0b3b; Thu, 25 Sep 2025 15:50:57 +0000 (UTC)
+X-Farcaster-Flow-ID: 1b0aa563-dc9d-47cc-b8c8-5261ca8f0b3b
+Received: from EX19D015EUB001.ant.amazon.com (10.252.51.114) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 25 Sep 2025 15:50:54 +0000
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19D015EUB001.ant.amazon.com (10.252.51.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 25 Sep 2025 15:50:53 +0000
+Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
+ EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
+ 15.02.2562.020; Thu, 25 Sep 2025 15:50:53 +0000
+From: "Roy, Patrick" <roypat@amazon.co.uk>
+To: "david@redhat.com" <david@redhat.com>
+CC: "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"ackerleytng@google.com" <ackerleytng@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "andrii@kernel.org"
+	<andrii@kernel.org>, "ast@kernel.org" <ast@kernel.org>, "bp@alien8.de"
+	<bp@alien8.de>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "corbet@lwn.net"
+	<corbet@lwn.net>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>, "eddyz87@gmail.com"
+	<eddyz87@gmail.com>, "haoluo@google.com" <haoluo@google.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "Thomson, Jack" <jackabt@amazon.co.uk>, "jannh@google.com"
+	<jannh@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com"
+	<jhubbard@nvidia.com>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "jolsa@kernel.org"
+	<jolsa@kernel.org>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, "luto@kernel.org"
+	<luto@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"maz@kernel.org" <maz@kernel.org>, "mhocko@suse.com" <mhocko@suse.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "oliver.upton@linux.dev"
+	<oliver.upton@linux.dev>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"peterx@redhat.com" <peterx@redhat.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "pfalcato@suse.de" <pfalcato@suse.de>, "Roy, Patrick"
+	<roypat@amazon.co.uk>, "rppt@kernel.org" <rppt@kernel.org>, "sdf@fomichev.me"
+	<sdf@fomichev.me>, "seanjc@google.com" <seanjc@google.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "song@kernel.org" <song@kernel.org>,
+	"surenb@google.com" <surenb@google.com>, "suzuki.poulose@arm.com"
+	<suzuki.poulose@arm.com>, "tabba@google.com" <tabba@google.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"will@kernel.org" <will@kernel.org>, "willy@infradead.org"
+	<willy@infradead.org>, "x86@kernel.org" <x86@kernel.org>, "Cali, Marco"
+	<xmarcalx@amazon.co.uk>, "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+Thread-Topic: [PATCH v7 06/12] KVM: guest_memfd: add module param for
+ disabling TLB flushing
+Thread-Index: AQHcLjQso34Q5KN2CUWRdaSrXlVTqQ==
+Date: Thu, 25 Sep 2025 15:50:53 +0000
+Message-ID: <20250925155051.2959-1-roypat@amazon.co.uk>
+References: <cf57bdec-6a2d-4d6a-b27c-991a7e2833ab@redhat.com>
+In-Reply-To: <cf57bdec-6a2d-4d6a-b27c-991a7e2833ab@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925151140.57548-1-cel@kernel.org>
-In-Reply-To: <20250925151140.57548-1-cel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 25 Sep 2025 17:50:48 +0200
-X-Gm-Features: AS18NWDi1hkVUuMtcyKFJEsHH4fQmmUb6QosD-2WEc6arB-jdISZEtt1CuTxQwI
-Message-ID: <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-To: Chuck Lever <cel@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Volker Lendecke <Volker.Lendecke@sernet.de>, Gabriel Krisman Bertazi <krisman@kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 5:21=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
->
-> From: Chuck Lever <chuck.lever@oracle.com>
->
-> Both the NFSv3 and NFSv4 protocols enable NFS clients to query NFS
-> servers about the case sensitivity and case preservation behaviors
-> of shared file systems. Today, the Linux NFSD implementation
-> unconditionally returns "the export is case sensitive and case
-> preserving".
->
-> However, a few Linux in-tree file system types appear to have some
-> ability to handle case-folded filenames. Some of our users would
-> like to exploit that functionality from their non-POSIX NFS clients.
->
-> Enable upper layers such as NFSD to retrieve case sensitivity
-> information from file systems by adding a statx API for this
-> purpose. Introduce a sample producer and a sample consumer for this
-> information.
->
-> If this mechanism seems sensible, a future patch might add a similar
-> field to the user-space-visible statx structure. User-space file
-> servers already use a variety of APIs to acquire this information.
->
-> Suggested-by: Jeff Layton <jlayton@kernel.org>
-> Cc: Volker Lendecke <Volker.Lendecke@sernet.de>
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  fs/fat/file.c             |  5 +++++
->  fs/nfsd/nfs3proc.c        | 35 +++++++++++++++++++++++++++--------
->  include/linux/stat.h      |  1 +
->  include/uapi/linux/stat.h | 15 +++++++++++++++
->  4 files changed, 48 insertions(+), 8 deletions(-)
->
-> I'm certain this RFC patch has a number of problems, but it should
-> serve as a discussion point.
->
->
-> diff --git a/fs/fat/file.c b/fs/fat/file.c
-> index 4fc49a614fb8..8572e36d8f27 100644
-> --- a/fs/fat/file.c
-> +++ b/fs/fat/file.c
-> @@ -413,6 +413,11 @@ int fat_getattr(struct mnt_idmap *idmap, const struc=
-t path *path,
->                 stat->result_mask |=3D STATX_BTIME;
->                 stat->btime =3D MSDOS_I(inode)->i_crtime;
->         }
-> +       if (request_mask & STATX_CASE_INFO) {
-> +               stat->result_mask |=3D STATX_CASE_INFO;
-> +               /* STATX_CASE_PRESERVING is cleared */
-> +               stat->case_info =3D statx_case_ascii;
-> +       }
->
->         return 0;
->  }
-> diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-> index b6d03e1ef5f7..b319d1c4385c 100644
-> --- a/fs/nfsd/nfs3proc.c
-> +++ b/fs/nfsd/nfs3proc.c
-> @@ -697,6 +697,31 @@ nfsd3_proc_fsinfo(struct svc_rqst *rqstp)
->         return rpc_success;
->  }
->
-> +static __be32
-> +nfsd3_proc_case(struct svc_fh *fhp, struct nfsd3_pathconfres *resp)
-> +{
-> +       struct path p =3D {
-> +               .mnt            =3D fhp->fh_export->ex_path.mnt,
-> +               .dentry         =3D fhp->fh_dentry,
-> +       };
-> +       u32 request_mask =3D STATX_CASE_INFO;
-> +       struct kstat stat;
-> +       __be32 nfserr;
-> +
-> +       nfserr =3D nfserrno(vfs_getattr(&p, &stat, request_mask,
-> +                                     AT_STATX_SYNC_AS_STAT));
-> +       if (nfserr !=3D nfs_ok)
-> +               return nfserr;
-> +       if (!(stat.result_mask & STATX_CASE_INFO))
-> +               return nfs_ok;
-> +
-> +       resp->p_case_insensitive =3D
-> +               stat.case_info & STATX_CASE_FOLDING_TYPE ? 0 : 1;
-> +       resp->p_case_preserving =3D
-> +               stat.case_info & STATX_CASE_PRESERVING ? 1 : 0;
-> +       return nfs_ok;
-> +}
-> +
->  /*
->   * Get pathconf info for the specified file
->   */
-> @@ -722,17 +747,11 @@ nfsd3_proc_pathconf(struct svc_rqst *rqstp)
->         if (resp->status =3D=3D nfs_ok) {
->                 struct super_block *sb =3D argp->fh.fh_dentry->d_sb;
->
-> -               /* Note that we don't care for remote fs's here */
-> -               switch (sb->s_magic) {
-> -               case EXT2_SUPER_MAGIC:
-> +               if (sb->s_magic =3D=3D EXT2_SUPER_MAGIC) {
->                         resp->p_link_max =3D EXT2_LINK_MAX;
->                         resp->p_name_max =3D EXT2_NAME_LEN;
-> -                       break;
-> -               case MSDOS_SUPER_MAGIC:
-> -                       resp->p_case_insensitive =3D 1;
-> -                       resp->p_case_preserving  =3D 0;
-> -                       break;
->                 }
-> +               resp->status =3D nfsd3_proc_case(&argp->fh, resp);
->         }
->
->         fh_put(&argp->fh);
-> diff --git a/include/linux/stat.h b/include/linux/stat.h
-> index e3d00e7bb26d..abb47cbb233a 100644
-> --- a/include/linux/stat.h
-> +++ b/include/linux/stat.h
-> @@ -59,6 +59,7 @@ struct kstat {
->         u32             atomic_write_unit_max;
->         u32             atomic_write_unit_max_opt;
->         u32             atomic_write_segments_max;
-> +       u32             case_info;
->  };
->
->  /* These definitions are internal to the kernel for now. Mainly used by =
-nfsd. */
-> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> index 1686861aae20..e929b30d64b6 100644
-> --- a/include/uapi/linux/stat.h
-> +++ b/include/uapi/linux/stat.h
-> @@ -219,6 +219,7 @@ struct statx {
->  #define STATX_SUBVOL           0x00008000U     /* Want/got stx_subvol */
->  #define STATX_WRITE_ATOMIC     0x00010000U     /* Want/got atomic_write_=
-* fields */
->  #define STATX_DIO_READ_ALIGN   0x00020000U     /* Want/got dio read alig=
-nment info */
-> +#define STATX_CASE_INFO                0x00040000U     /* Want/got case =
-folding info */
->
->  #define STATX__RESERVED                0x80000000U     /* Reserved for f=
-uture struct statx expansion */
->
-> @@ -257,4 +258,18 @@ struct statx {
->  #define STATX_ATTR_WRITE_ATOMIC                0x00400000 /* File suppor=
-ts atomic write operations */
->
->
-> +/*
-> + * File system support for case folding is available via a bitmap.
-> + */
-> +#define STATX_CASE_PRESERVING          0x80000000 /* File name case is p=
-reserved */
-> +
-> +/* Values stored in the low-order byte of .case_info */
-> +enum {
-> +       statx_case_sensitive =3D 0,
-> +       statx_case_ascii,
-> +       statx_case_utf8,
-> +       statx_case_utf16,
-> +};
-> +#define STATX_CASE_FOLDING_TYPE                0x000000ff
-> +
->  #endif /* _UAPI_LINUX_STAT_H */
-> --
-> 2.51.0
->
-
-CC unicode maintainer and SMB list.
-
-Thanks,
-Amir.
+On Thu, 2025-09-25 at 12:02 +0100, David Hildenbrand wrote:=0A=
+> On 24.09.25 17:22, Roy, Patrick wrote:=0A=
+>> Add an option to not perform TLB flushes after direct map manipulations.=
+=0A=
+>> TLB flushes result in a up to 40x elongation of page faults in=0A=
+>> guest_memfd (scaling with the number of CPU cores), or a 5x elongation=
+=0A=
+>> of memory population, which is inacceptable when wanting to use direct=
+=0A=
+>> map removed guest_memfd as a drop-in replacement for existing workloads.=
+=0A=
+>>=0A=
+>> TLB flushes are not needed for functional correctness (the virt->phys=0A=
+>> mapping technically stays "correct", the kernel should simply not use it=
+=0A=
+>> for a while), so we can skip them to keep performance in-line with=0A=
+>> "traditional" VMs.=0A=
+>>=0A=
+>> Enabling this option means that the desired protection from=0A=
+>> Spectre-style attacks is not perfect, as an attacker could try to=0A=
+>> prevent a stale TLB entry from getting evicted, keeping it alive until=
+=0A=
+>> the page it refers to is used by the guest for some sensitive data, and=
+=0A=
+>> then targeting it using a spectre-gadget.=0A=
+>>=0A=
+>> Cc: Will Deacon <will@kernel.org>=0A=
+>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>=0A=
+>> ---=0A=
+>>   include/linux/kvm_host.h | 1 +=0A=
+>>   virt/kvm/guest_memfd.c   | 3 ++-=0A=
+>>   virt/kvm/kvm_main.c      | 3 +++=0A=
+>>   3 files changed, 6 insertions(+), 1 deletion(-)=0A=
+>>=0A=
+>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h=0A=
+>> index 73a15cade54a..4d2bc18860fc 100644=0A=
+>> --- a/include/linux/kvm_host.h=0A=
+>> +++ b/include/linux/kvm_host.h=0A=
+>> @@ -2298,6 +2298,7 @@ extern unsigned int halt_poll_ns;=0A=
+>>   extern unsigned int halt_poll_ns_grow;=0A=
+>>   extern unsigned int halt_poll_ns_grow_start;=0A=
+>>   extern unsigned int halt_poll_ns_shrink;=0A=
+>> +extern bool guest_memfd_tlb_flush;=0A=
+>>=0A=
+>>   struct kvm_device {=0A=
+>>       const struct kvm_device_ops *ops;=0A=
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c=0A=
+>> index b7129c4868c5..d8dd24459f0d 100644=0A=
+>> --- a/virt/kvm/guest_memfd.c=0A=
+>> +++ b/virt/kvm/guest_memfd.c=0A=
+>> @@ -63,7 +63,8 @@ static int kvm_gmem_folio_zap_direct_map(struct folio =
+*folio)=0A=
+>>       if (!r) {=0A=
+>>               unsigned long addr =3D (unsigned long) folio_address(folio=
+);=0A=
+>>               folio->private =3D (void *) ((u64) folio->private & KVM_GM=
+EM_FOLIO_NO_DIRECT_MAP);=0A=
+>> -             flush_tlb_kernel_range(addr, addr + folio_size(folio));=0A=
+>> +             if (guest_memfd_tlb_flush)=0A=
+>> +                     flush_tlb_kernel_range(addr, addr + folio_size(fol=
+io));=0A=
+>>       }=0A=
+>>=0A=
+>>       return r;=0A=
+>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c=0A=
+>> index b5e702d95230..753c06ebba7f 100644=0A=
+>> --- a/virt/kvm/kvm_main.c=0A=
+>> +++ b/virt/kvm/kvm_main.c=0A=
+>> @@ -95,6 +95,9 @@ unsigned int halt_poll_ns_shrink =3D 2;=0A=
+>>   module_param(halt_poll_ns_shrink, uint, 0644);=0A=
+>>   EXPORT_SYMBOL_GPL(halt_poll_ns_shrink);=0A=
+>>=0A=
+>> +bool guest_memfd_tlb_flush =3D true;=0A=
+>> +module_param(guest_memfd_tlb_flush, bool, 0444);=0A=
+> =0A=
+> The parameter name is a bit too generic. I think you somehow have to=0A=
+> incorporate the "direct_map" aspects.=0A=
+=0A=
+Fair :)=0A=
+=0A=
+> Also, I wonder if this could be a capability per vm/guest_memfd?=0A=
+=0A=
+I don't really have any opinions on how to expose this knob, but I=0A=
+thought capabilities should be additive? (e.g. we only have=0A=
+KVM_ENABLE_EXTENSION(), and then having a capability with a negative=0A=
+polarity "enable to _not_ do TLB flushes" is a bit weird in my head).=0A=
+Then again, if people are fine having TLB flushes be opt-in instead of=0A=
+opt-out (Will's comment on v6 makes me believe that the opt-out itself=0A=
+might already be controversial for arm64), a capability would work.=0A=
+=0A=
+> Then, you could also nicely document the semantics, considerations,=0A=
+> impact etc :)=0A=
+=0A=
+Yup, I got so lost in trying to figure out why flush_kernel_tlb_range()=0A=
+didnt refused to let itself be exported that docs slipped my mind haha.=0A=
+=0A=
+> -- =0A=
+> Cheers=0A=
+> =0A=
+> David / dhildenb=0A=
+> =0A=
+=0A=
+Best,=0A=
+Patrick=0A=
+=0A=
 
