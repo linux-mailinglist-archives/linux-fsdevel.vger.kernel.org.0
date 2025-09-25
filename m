@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-62759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE74B9FCFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 16:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC59FB9FD09
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 16:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2BE3BD1FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 14:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7015E0889
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 14:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D14C286422;
-	Thu, 25 Sep 2025 13:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1991296BC4;
+	Thu, 25 Sep 2025 13:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHFNSybA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MB0/rmK3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3881298CDE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 13:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302A83019BB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 13:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808570; cv=none; b=cjlKlfNV0qzm9IEgaz7ie9TDmLIy8LwUXwpjtNAAPJNAwxtYGOjNQJGDwocn9SzY/AXEggrSnWycnzCvx0YxjzwMfbMahcr7REpzP/X9eyw83/UfV+dHjjl5aLlBBiG5aBbQ63DbsPyI9IPc1FuxxaS9kM+tqVYmkYTByReQAjw=
+	t=1758808576; cv=none; b=n/FcCgm0m03C5tdpW8T5GB4tPpyhsn4lsi8z82W3t2mWu59Myw/DQRBJh4FVUAxQL7tLSYC3b5y+Pu7OC4insCdyiRIWL3ZX2M1IX3JQ1+wbWvpPv9GpG8CzyHYotU51d2p0c3ZNt/GOinwDNYKFg/k/iHSkPItqgaVui343PVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808570; c=relaxed/simple;
-	bh=cd10vY+LdNFm15kjf9buohLVZDsgfigdMJZaOhvjUZ4=;
+	s=arc-20240116; t=1758808576; c=relaxed/simple;
+	bh=O/wu2Lf29nUdzSaspIKYEix0WPxikVmVfF3mQ9scbuU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dA5ZhYG6/FLhaGcrzFAtG26aYFQ2TPWMKYUd3FJa3P6x1j1vMoNBflUUA/RL//bzLQ+YchtrB9ab6VxAvibbozL0L0nKCiOCKDLFhyUCp90x3M6DY0K3KfiotJT1uSzuR3uagSrnNXoOyNJiqMWoNSuj/IpitYfpOeTBXlGDFbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHFNSybA; arc=none smtp.client-ip=209.85.219.41
+	 In-Reply-To:To:Cc; b=p3QLYPKquKxIqOwxhOMiMUEmTO3R59B4T84vhvJI7m4PFzUJVE6/TlhEg2qg+G7XuoK9yI9CcuAchxUeqrg9qH4za2fLb0baxUM9ySQL9NLvT3LVkSg+eq4cBILk0DVHOobMV/VaJuQ/PB+UV68Nyx2aZ3+BfcIQ0YWBmPMFVtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MB0/rmK3; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-78eba712e89so7111036d6.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 06:56:08 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-856701dc22aso99762285a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 06:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758808568; x=1759413368; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758808573; x=1759413373; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Sq31dC2vDN2a94utvC/B02Ptv/MXvCOxOItQtZFE3ic=;
-        b=kHFNSybAgLMmKvNMEsbdEliOxzUGNfq9vagPqAa/2P2ouxseJFVuYbQskZ+4fD8YM9
-         9NIt3mmdbJMC+i3qWvQ08fGJ8MT9hIqSisd4lnXj5EEj6rC0nyJF4/rRHWEqGVdMJ5TL
-         gEoIayc33yVrGOkqeZtXbi0WrcUmsIFnAkJ5nPhsZg4FZWVokLo9MqKqI85+ltSjprJy
-         5PQRU4ClR3AHlJGgrE4p1TO/3VoLha0O/Nxi6ls+OYPcDCcsvgCCn9ibTvMFoc3nz5wB
-         YfKsEWSRaFBxKQW9z03Jvmyf/Nx9L7D2xx/tZWHSPqvJNdBIGECg11eC0myYQxueOI66
-         jyQw==
+        bh=67z28WQrX/ogTxUcpWCJ1GAunLtCBeF3o3dpHhKNjK8=;
+        b=MB0/rmK3l+ZRaaJREG3duYQEux480HIjS3w7cDDn9IykqdqjNqzjOjDqQVDV0/G/4s
+         UPQkg6GOHh6MdmyUN6KUCiYfeHXt7DkQt1w2k0lMIuHYcsWvF8ztNoFG/9gzlWWZH+F/
+         bvdDMJX9OXV4YCVBRzPmCkv84aUyg5kQxj24i5gOa0jFxhQ1URlSiQCapmMwlPYF6LCG
+         aEEg39hR2APw6sgoqVJt4aYQ7gpqspPtBL8ekCXej+8wDl/h9lDuCqJ7XJWYmbiOEbg8
+         mgv7+3GJPG0OhDg7h8khmsT5dex/FwZGLyfFAa3f90dGucAi8zN50dLJkhBTAHTQN+LR
+         wgnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758808568; x=1759413368;
+        d=1e100.net; s=20230601; t=1758808573; x=1759413373;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sq31dC2vDN2a94utvC/B02Ptv/MXvCOxOItQtZFE3ic=;
-        b=swQa6+EvCx3K/mLh/1mBqsR3XYhPpHtoFMnwP193ykzu8HxG6O2yzVEx0EYKjSSKJ/
-         WaCyIKcqnJBIgSWlEIH6T4+8YKgmWSW72HYTYhvaer5C4KqwR1xYKZuVWwuxRRsWO2QV
-         4qzf+arMUzcbGnk9lH4XkdUX5Yy+aSqfw5Q3FN9I+aC9+RQxzOMLGaMJDTsqdv/0wfLD
-         3ubPQVXcOMkCRrhr9AtSI5evY44T2dFz1F2ZuP+O+qKX1LCfvGYTw6zVnJRaXVhkRl1J
-         x+QwG2MoTvlKNvZqpeTmpSsFMIYxXMC+dts12uCWrDQl9/wWTHnqUoasKbQZG74jtzFk
-         IMAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjpy1DgGCH4FGtaujvCJ/Z8KMxiOyiKvlKQ3vqi/vQYNcNyHFdqfZV1BwboLAZsFTJO0wbEcmYgrIDqYtS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfDM7j22PMroOb1YVolAba6eHA0m7M+ykjR/vAQPKTJnjzZ2U9
-	A8a1VFyolQ2YG+6rS/wGzza+bxaNdJOMmSxN6Oa4R7SjS0vyRspZbcu0
-X-Gm-Gg: ASbGncuCgJHMILdDlqyq1BXvAriNsPnha6OV3E2OUxIRzuXuUQ8yvQ/8QcMClH21sz5
-	QEL+MKgTOpPfCMQFIOz4nz5PH9qH8/nacuB33n5o6I9cHaIyiVU190clF322wjwe4UP8Op3N42w
-	kpMWIcigBtl3NkC5tXqqqpEfY2sY8CoyUi7JMsGXDx9tk8fMUGmo215qYIHj9p7OQXSquzhLs4q
-	qB0BTM+7d8VN/i6LtkcpLNYzS0hl6XCiSvg4qkYEg+qVREckIdXLflfKkIEXDnHNj6bb0TldN3I
-	8nk9TmJxB1p2c4CgeB4fTb7lxqx1V4XnUcTUDWQ5jLHHrjfXDW7Eqo2tFMhv1MkIpv92rOEn3qp
-	m6BeBsDr+RDn/ahHYb1yknxezX95ynbXELIWIrMz8DQM3l1jmKsVTmDFoDwLi0oy0oGtlDc7lSl
-	SfEN7B4ruvQbng1QYMtQOeqdN5S/p9WRXwSOkXgBESvjTvQOqCxKSj1il69UtCvRPD8cVDYvzeI
-	wDRKKw=
-X-Google-Smtp-Source: AGHT+IEZhM30AGXNdbFILEQiyz/kr05nZm4O0BE8w754iMuzz8n1eM1enRH3Kra7C8BiuYUbQtPrdA==
-X-Received: by 2002:a05:6214:3014:b0:80e:4f6d:23be with SMTP id 6a1803df08f44-80e4f6d25a9mr15832686d6.62.1758808567133;
-        Thu, 25 Sep 2025 06:56:07 -0700 (PDT)
+        bh=67z28WQrX/ogTxUcpWCJ1GAunLtCBeF3o3dpHhKNjK8=;
+        b=Al+ilAsebAHnSvvsa5+jP3QRb/O6WSbPd0j5nhEuGxTHGYVb3MpwRiK/NGVMW34jeI
+         VGlRp5IQKU/fZfk9aurNVEMsyalJRbQhtuB2OWGfxhSjQawoKzk9iz/A0lHSEKyBr84t
+         3VgYpfsQ51HFPeCaHo9XJyWUkr/NZeI3byp4HtfQuHbIllt1arrD3hi75pPTj4LK2ImU
+         byTbjujBNHx08CC6zXhOmcwaZqcQ0lTrAioHhg7y+Qx/32hOUtIsUSL0ZIrXA7TO0r2p
+         ruLLm+zpzaKifG3qOulpA6BA6z4zYUKs0SzsqZlCjZgtqGUWmcsRGXxEAdJ5LkQHpvtd
+         Pk0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVSXeNTpu8gx8qtBwCSX7+b2ptbzR9AKwMeKvqM6INdZu+Q5JzKm2qbXoMw99DmpAsk3r6x5/01jX5mkwHS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRQ6Mu9K37wWtLQTel5Cwx5HvGa+z1dGhIre3V8UOgyr+RBiFh
+	bCTo5D8ciUd+r06euCktf7Yw1EQEmB490HgDFNn8lZjBnznJ1bc8m5DL
+X-Gm-Gg: ASbGncvlUBllAYjgEC1Q61Yen7LJxB2nODg7/1uzv2KQhY6Y66dQPYesZKdEfvLD5Sp
+	hZH8CnoG/7734hG9sLjOUXDD6qH05OV+Lvc3Awl5JB8XHeRY6U4daQY/lOSPpsjqAOLLGiNl21u
+	8WFpYyq8X3JTn175D3h+5koensKM3HOUAm+rrZ4T0zd9tGbfo6h78/ES/ivk8Ghxg9Jc5668wWf
+	XrfnyL3mmx2a/6lDlyjj0h5GxdGnoCI3d6VliTwlICkd6pjKuiAoomsRGTd1V+elJTh/g7q0d4S
+	WixxD6NQHEkIVSZ1iLRf0m84vQvLKzTI4DuQy2NNRWKVZ12bsiKM2dFhfSTbdj0L4Kf4Ow9bSCb
+	x/R9B8K1E2g/VOlGYLL3Yvg4/a+11fRrFQcEm71DPABbwpV6spBx99BH2Nz9ZpZYmKbxU198oOh
+	dOQFw8C5eZSQmcwILedxPW9nrLYoKWccxtPTicPJzm+HLFFrr/16in5FyvKKpLvwhu5o6S
+X-Google-Smtp-Source: AGHT+IFqm26OFmsSA0nKzITzw08x0KzoFRvLAeGfptjPnF7Ljbfyc5/369jW8FthqI8ZOsSRAhkw7g==
+X-Received: by 2002:a05:6214:1cc4:b0:786:e3b6:bb99 with SMTP id 6a1803df08f44-7fc3128e0c3mr48349976d6.29.1758808572677;
+        Thu, 25 Sep 2025 06:56:12 -0700 (PDT)
 Received: from 137.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:7c:b286:dba3:5ba8])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135968d5esm11536916d6.12.2025.09.25.06.56.01
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135968d5esm11536916d6.12.2025.09.25.06.56.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 06:56:06 -0700 (PDT)
+        Thu, 25 Sep 2025 06:56:12 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 25 Sep 2025 09:54:06 -0400
-Subject: [PATCH v2 18/19] rust: io: replace `kernel::c_str!` with C-Strings
+Date: Thu, 25 Sep 2025 09:54:07 -0400
+Subject: [PATCH v2 19/19] rust: regulator: replace `kernel::c_str!` with
+ C-Strings
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,7 +86,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
+Message-Id: <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
 References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
 In-Reply-To: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -126,13 +126,13 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1758808438; l=1724;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1758808439; l=2550;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=cd10vY+LdNFm15kjf9buohLVZDsgfigdMJZaOhvjUZ4=;
+ bh=O/wu2Lf29nUdzSaspIKYEix0WPxikVmVfF3mQ9scbuU=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QNf162nJINfyau54ApOtSNUKBNqSEvAN/RUj/VaS1rCjXvJ9mtYy/yqZWgJQlP/HSnYEPjCYYdQ
- IPwDjgyMc4w4=
+ QFsLawjfMUC3xaiUohpUXzdZt822yLFxnKyQ3hJFQI3UAkDtLeyUoqZ2lgOdZhmeuCD54hWBgXN
+ /2qfobXSOOAA=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
@@ -141,48 +141,58 @@ C-String literals were added in Rust 1.77. Replace instances of
 
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- rust/kernel/io/mem.rs | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ rust/kernel/regulator.rs | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/rust/kernel/io/mem.rs b/rust/kernel/io/mem.rs
-index 6f99510bfc3a..2e42eb906061 100644
---- a/rust/kernel/io/mem.rs
-+++ b/rust/kernel/io/mem.rs
-@@ -4,7 +4,6 @@
- 
- use core::ops::Deref;
- 
--use crate::c_str;
- use crate::device::Bound;
- use crate::device::Device;
- use crate::devres::Devres;
-@@ -44,7 +43,7 @@ pub(crate) unsafe fn new(device: &'a Device<Bound>, resource: &'a Resource) -> S
-     /// illustration purposes.
-     ///
-     /// ```no_run
--    /// use kernel::{bindings, c_str, platform, of, device::Core};
-+    /// use kernel::{bindings, platform, of, device::Core};
-     /// struct SampleDriver;
-     ///
-     /// impl platform::Driver for SampleDriver {
-@@ -102,7 +101,7 @@ pub fn iomap_exclusive_sized<const SIZE: usize>(
-     /// illustration purposes.
-     ///
-     /// ```no_run
--    /// use kernel::{bindings, c_str, platform, of, device::Core};
-+    /// use kernel::{bindings, platform, of, device::Core};
-     /// struct SampleDriver;
-     ///
-     /// impl platform::Driver for SampleDriver {
-@@ -164,7 +163,7 @@ impl<const SIZE: usize> ExclusiveIoMem<SIZE> {
-     fn ioremap(resource: &Resource) -> Result<Self> {
-         let start = resource.start();
-         let size = resource.size();
--        let name = resource.name().unwrap_or(c_str!(""));
-+        let name = resource.name().unwrap_or_default();
- 
-         let region = resource
-             .request_region(
+diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+index 65f3a125348f..dff8fb00566f 100644
+--- a/rust/kernel/regulator.rs
++++ b/rust/kernel/regulator.rs
+@@ -98,12 +98,11 @@ pub struct Error<State: RegulatorState> {
+ ///
+ /// ```
+ /// # use kernel::prelude::*;
+-/// # use kernel::c_str;
+ /// # use kernel::device::Device;
+ /// # use kernel::regulator::{Voltage, Regulator, Disabled, Enabled};
+ /// fn enable(dev: &Device, min_voltage: Voltage, max_voltage: Voltage) -> Result {
+ ///     // Obtain a reference to a (fictitious) regulator.
+-///     let regulator: Regulator<Disabled> = Regulator::<Disabled>::get(dev, c_str!("vcc"))?;
++///     let regulator: Regulator<Disabled> = Regulator::<Disabled>::get(dev, c"vcc")?;
+ ///
+ ///     // The voltage can be set before enabling the regulator if needed, e.g.:
+ ///     regulator.set_voltage(min_voltage, max_voltage)?;
+@@ -142,12 +141,11 @@ pub struct Error<State: RegulatorState> {
+ ///
+ /// ```
+ /// # use kernel::prelude::*;
+-/// # use kernel::c_str;
+ /// # use kernel::device::Device;
+ /// # use kernel::regulator::{Voltage, Regulator, Enabled};
+ /// fn enable(dev: &Device) -> Result {
+ ///     // Obtain a reference to a (fictitious) regulator and enable it.
+-///     let regulator: Regulator<Enabled> = Regulator::<Enabled>::get(dev, c_str!("vcc"))?;
++///     let regulator: Regulator<Enabled> = Regulator::<Enabled>::get(dev, c"vcc")?;
+ ///
+ ///     // Dropping an enabled regulator will disable it. The refcount will be
+ ///     // decremented.
+@@ -193,7 +191,6 @@ pub struct Error<State: RegulatorState> {
+ ///
+ /// ```
+ /// # use kernel::prelude::*;
+-/// # use kernel::c_str;
+ /// # use kernel::device::Device;
+ /// # use kernel::regulator::{Regulator, Dynamic};
+ /// struct PrivateData {
+@@ -203,7 +200,7 @@ pub struct Error<State: RegulatorState> {
+ /// // A fictictious probe function that obtains a regulator and sets it up.
+ /// fn probe(dev: &Device) -> Result<PrivateData> {
+ ///     // Obtain a reference to a (fictitious) regulator.
+-///     let mut regulator = Regulator::<Dynamic>::get(dev, c_str!("vcc"))?;
++///     let mut regulator = Regulator::<Dynamic>::get(dev, c"vcc")?;
+ ///
+ ///     Ok(PrivateData { regulator })
+ /// }
 
 -- 
 2.51.0
