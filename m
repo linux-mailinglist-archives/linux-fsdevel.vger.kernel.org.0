@@ -1,49 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-62785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1699BA0C73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 19:14:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DB8BA0CC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 19:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1333AEB79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:14:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E25157BE7A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 17:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B1130C613;
-	Thu, 25 Sep 2025 17:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CE130C622;
+	Thu, 25 Sep 2025 17:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvgPAcRN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdU0ZkTf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEA830ACEC;
-	Thu, 25 Sep 2025 17:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09CB125A0;
+	Thu, 25 Sep 2025 17:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820434; cv=none; b=pGuAhztjwnBh/djHWC+ImFgg6qJ9KHoO8egRvfzuhgLmwbAkOnJl8aeJjs5iGEKa9q3qX+VyI58K3l7xOPiyefPG5VjKm98eA5s8zAiUvSGV4sbc1lnIfcDL/P34cieWdHvFeq1BsHQVDm0NblqiL25uNZYRYNY7UHqbIYGg8PI=
+	t=1758820559; cv=none; b=KV+MGs+KECVEfIrjSR8Btf1IV9bAbxG5r3kjRfCOEOlef2ISAkM9wbqz3pGRNRG9DW7scZXrC9qcnPdffGxKBzXLK4L5QO4UyXMTRSadsT9d47ZZxhAY8fx3Zscg7V26pgwpPO9dH7ZtqO3lhDskNtKoKSUlMGQ3TWjokFUsk1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820434; c=relaxed/simple;
-	bh=5eJ4xJy2YsIUNbtCnDVHJz0ZvNav85P1yeKen4Lh940=;
+	s=arc-20240116; t=1758820559; c=relaxed/simple;
+	bh=9E/YarR1AvErY3Hcy0HXVAIjT+5GipGA6Rrdw49owKc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=okaiz3pqKR7mdQi658J0muOXuErBHz8/IEAcFXXuyczyZMOeM6zKEPC8eich5MIh7A9GH/E/wZoHtZt76Cp67/ieEeCmEUoo+RczPIfIbsVvdMRYmNkTsl5/D4AUZu5UE9OJICjsit0saP8OkuD5e3ybWZasNr6Yah+wJrEyF8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvgPAcRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0DDC116B1;
-	Thu, 25 Sep 2025 17:13:50 +0000 (UTC)
+	 Content-Type:MIME-Version; b=SWgBvQVjwXj1o8m6Xo8JvPaCubi9fBzQguMx/E25fSKrGyOZpnbUd681E/Wzm4IlTW4sUHdTl6qUtE9CUUK8Wnbg1VXhBnkcAxO+/zkwiYSn7UU1WjckMbPY0Pvt59OqoOWW2jIhb7AXkLPEotpjU12mav75hXCyv2miMXoUBUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdU0ZkTf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615F9C4CEF4;
+	Thu, 25 Sep 2025 17:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758820433;
-	bh=5eJ4xJy2YsIUNbtCnDVHJz0ZvNav85P1yeKen4Lh940=;
+	s=k20201202; t=1758820558;
+	bh=9E/YarR1AvErY3Hcy0HXVAIjT+5GipGA6Rrdw49owKc=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=PvgPAcRNh1V4EAn9JxwSRHQ1uvlRA6u3Oe9FPG/t93wKPQ8OzPCZD4Pmkh+to1wHq
-	 QGMucr9rw0GBGwxwaqsMNf90M8PVmVukleoXGmtSa/SW+nL5ZbL7YgKaooQOk5A47a
-	 YWpDDly0/g1a+4tv4ktjpWY7Ex42LMnYyJcQMfLeyY/Qh3gQkEsxvKZnD4eRSLtLwc
-	 gwHP+TUmHoSIahCtlxAlKFkMdDqFVWBbtnD8Oj5BcKzNVN9lF9cRZ7shhTfkFw/8PL
-	 27lSbXFXtmE/z1BQd/1/nXWdjGTVl0fdbFo4NArRSLKgFMhEq88qnrL+zgOTY0ZGfG
-	 eE6O7bfuFcM0g==
-Message-ID: <f39798ab980e546a822fc83d7f2c5d2b619e6c2a.camel@kernel.org>
-Subject: Re: [PATCH v3 05/38] vfs: allow rmdir to wait for delegation break
- on parent
+	b=kdU0ZkTfzaBQHMEcB5lcNWndfks/mhZyClmDQxA0ck71wvhUJH23AukGvLIGCbcsX
+	 hcTqui5pg5CqWDBaQqaKz7AgrAnmBdyYpLYBgiv/HuJalzQdYxU7ECtQEOCOLldaUG
+	 0LLyWKCYMG6cYdu8Yje3H8W7RbbFLe+19Fa6vBayDMxXLEvPbKrQ5LE+KXwwx1hVjl
+	 mW3Wck0PNt5MjP77YOC9exxU/96M6ziYLwfFcaIgY18LTnYWrVDDMnNSqexdVycl+Z
+	 e5+HLgXixc1vQs+ACWvh2VJ32muj4xmPcDL9TQ8gsM6jwOrf41G8PS0CWxDxx9Ztqt
+	 OkI8QEK0Mlk5w==
+Message-ID: <8e5d91125e171f8ee3cd6a10dfb47a6d25fb83c9.camel@kernel.org>
+Subject: Re: [PATCH v3 27/38] nfsd: add notification handlers for dir events
 From: Jeff Layton <jlayton@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner	
  <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever	
@@ -68,10 +67,10 @@ Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org,
 	linux-doc@vger.kernel.org, netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
  	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org
-Date: Thu, 25 Sep 2025 13:13:49 -0400
-In-Reply-To: <20250924-dir-deleg-v3-5-9f3af8bc5c40@kernel.org>
+Date: Thu, 25 Sep 2025 13:15:54 -0400
+In-Reply-To: <20250924-dir-deleg-v3-27-9f3af8bc5c40@kernel.org>
 References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
-	 <20250924-dir-deleg-v3-5-9f3af8bc5c40@kernel.org>
+	 <20250924-dir-deleg-v3-27-9f3af8bc5c40@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -156,136 +155,70 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-09-24 at 14:05 -0400, Jeff Layton wrote:
-> In order to add directory delegation support, we need to break
-> delegations on the parent whenever there is going to be a change in the
-> directory.
+On Wed, 2025-09-24 at 14:06 -0400, Jeff Layton wrote:
+> Add the necessary parts to accept a fsnotify callback for directory
+> change event and create a CB_NOTIFY request for it. When a dir nfsd_file
+> is created set a handle_event callback to handle the notification.
 >=20
-> Rename vfs_rmdir as __vfs_rmdir, make it static and add a new
-> delegated_inode parameter. Add a vfs_rmdir wrapper that passes in a NULL
-> pointer for it. Add the necessary try_break_deleg calls to
-> __vfs_rmdir(). Convert do_rmdir to use __vfs_rmdir and wait for the
-> delegation break to complete before proceeding.
+> Use that to allocate a nfsd_notify_event object and then hand off a
+> reference to each delegation's CB_NOTIFY. If anything fails along the
+> way, recall any affected delegations.
 >=20
-
-I've fixed this patch along the lines of the vfs_mkdir() patch
-(eliminating the wrapper and just adding the extra parameter). The
-updated patch is in my dir-deleg branch.
-
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/namei.c | 51 ++++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 34 insertions(+), 17 deletions(-)
+>  fs/nfsd/filecache.c    |  51 ++++++++++----
+>  fs/nfsd/nfs4callback.c |  19 +++--
+>  fs/nfsd/nfs4state.c    | 185 +++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  fs/nfsd/nfs4xdr.c      |  95 +++++++++++++++++++++++++
+>  fs/nfsd/state.h        |   2 +
+>  fs/nfsd/xdr4.h         |   2 +
+>  6 files changed, 337 insertions(+), 17 deletions(-)
 >=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index c939a58f16f9c4edded424475aff52f2c423d301..4e058b00208c1663ba828c6f8=
-ed1f82c26a4f136 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -4433,22 +4433,8 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathna=
-me, umode_t, mode)
->  	return do_mkdirat(AT_FDCWD, getname(pathname), mode);
->  }
-> =20
-> -/**
-> - * vfs_rmdir - remove directory
-> - * @idmap:	idmap of the mount the inode was found from
-> - * @dir:	inode of the parent directory
-> - * @dentry:	dentry of the child directory
-> - *
-> - * Remove a directory.
-> - *
-> - * If the inode has been found through an idmapped mount the idmap of
-> - * the vfsmount must be passed through @idmap. This function will then t=
-ake
-> - * care to map the inode according to @idmap before checking permissions=
-.
-> - * On non-idmapped mounts or if permission checking is to be performed o=
-n the
-> - * raw inode simply pass @nop_mnt_idmap.
-> - */
-> -int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
-> -		     struct dentry *dentry)
-> +static int __vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
-> +		       struct dentry *dentry, struct inode **delegated_inode)
->  {
->  	int error =3D may_delete(idmap, dir, dentry, 1);
-> =20
-> @@ -4470,6 +4456,10 @@ int vfs_rmdir(struct mnt_idmap *idmap, struct inod=
-e *dir,
->  	if (error)
->  		goto out;
-> =20
-> +	error =3D try_break_deleg(dir, delegated_inode);
-> +	if (error)
-> +		goto out;
-> +
->  	error =3D dir->i_op->rmdir(dir, dentry);
->  	if (error)
->  		goto out;
-> @@ -4486,6 +4476,26 @@ int vfs_rmdir(struct mnt_idmap *idmap, struct inod=
-e *dir,
->  		d_delete_notify(dir, dentry);
->  	return error;
->  }
-> +
-> +/**
-> + * vfs_rmdir - remove directory
-> + * @idmap:	idmap of the mount the inode was found from
-> + * @dir:	inode of the parent directory
-> + * @dentry:	dentry of the child directory
-> + *
-> + * Remove a directory.
-> + *
-> + * If the inode has been found through an idmapped mount the idmap of
-> + * the vfsmount must be passed through @idmap. This function will then t=
-ake
-> + * care to map the inode according to @idmap before checking permissions=
-.
-> + * On non-idmapped mounts or if permission checking is to be performed o=
-n the
-> + * raw inode simply pass @nop_mnt_idmap.
-> + */
-> +int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
-> +		     struct dentry *dentry)
-> +{
-> +	return __vfs_rmdir(idmap, dir, dentry, NULL);
-> +}
->  EXPORT_SYMBOL(vfs_rmdir);
-> =20
->  int do_rmdir(int dfd, struct filename *name)
-> @@ -4496,6 +4506,7 @@ int do_rmdir(int dfd, struct filename *name)
->  	struct qstr last;
->  	int type;
->  	unsigned int lookup_flags =3D 0;
-> +	struct inode *delegated_inode =3D NULL;
->  retry:
->  	error =3D filename_parentat(dfd, name, lookup_flags, &path, &last, &typ=
-e);
->  	if (error)
-> @@ -4525,7 +4536,8 @@ int do_rmdir(int dfd, struct filename *name)
->  	error =3D security_path_rmdir(&path, dentry);
->  	if (error)
->  		goto exit4;
-> -	error =3D vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode, dentry);
-> +	error =3D __vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode,
-> +			    dentry, &delegated_inode);
->  exit4:
->  	dput(dentry);
->  exit3:
-> @@ -4533,6 +4545,11 @@ int do_rmdir(int dfd, struct filename *name)
->  	mnt_drop_write(path.mnt);
->  exit2:
->  	path_put(&path);
-> +	if (delegated_inode) {
-> +		error =3D break_deleg_wait(&delegated_inode);
-> +		if (!error)
-> +			goto retry;
-> +	}
->  	if (retry_estale(error, lookup_flags)) {
->  		lookup_flags |=3D LOOKUP_REVAL;
->  		goto retry;
 
+[...]
+
+> +
+> +int
+> +nfsd_handle_dir_event(u32 mask, const struct inode *dir, const void *dat=
+a,
+> +		      int data_type, const struct qstr *name)
+> +{
+> +	struct dentry *dentry =3D fsnotify_data_dentry(data, data_type);
+> +	struct file_lock_context *ctx;
+> +	struct file_lock_core *flc;
+> +	struct nfsd_notify_event *evt;
+> +
+> +	ctx =3D locks_inode_context(dir);
+> +	if (!ctx || list_empty(&ctx->flc_lease))
+> +		return 0;
+> +
+> +	evt =3D alloc_nfsd_notify_event(mask, name, dentry);
+> +	if (!evt) {
+> +		nfsd_recall_all_dir_delegs(dir);
+> +		return 0;
+> +	}
+> +
+> +	spin_lock(&ctx->flc_lock);
+> +	list_for_each_entry(flc, &ctx->flc_lease, flc_list) {
+> +		struct file_lease *fl =3D container_of(flc, struct file_lease, c);
+> +		struct nfs4_delegation *dp =3D flc->flc_owner;
+> +		struct nfsd4_cb_notify *ncn =3D &dp->dl_cb_notify;
+> +
+> +		if (!should_notify_deleg(mask, fl))
+> +			continue;
+> +
+> +		spin_lock(&ncn->ncn_lock);
+> +		if (ncn->ncn_evt_cnt >=3D NOTIFY4_EVENT_QUEUE_SIZE) {
+> +			/* We're generating notifications too fast. Recall. */
+> +			spin_unlock(&ncn->ncn_lock);
+> +			nfsd_break_deleg_cb(fl);
+> +			continue;
+> +		}
+> +		ncn->ncn_evt[ncn->ncn_evt_cnt++] =3D nfsd_notify_event_get(evt);
+
+The above nfsd_notify_event_get() causes a refcount leak. Fixed in
+tree.
 --=20
 Jeff Layton <jlayton@kernel.org>
 
