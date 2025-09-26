@@ -1,800 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-62866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09D3BA31C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 11:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE87BA3377
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 11:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84BCB325B76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 09:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C2D4A0700
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9895226F477;
-	Fri, 26 Sep 2025 09:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221C22BDC34;
+	Fri, 26 Sep 2025 09:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XzGF7xNp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iBUdyE5B";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XzGF7xNp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iBUdyE5B"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YNZESI5h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093B7265623
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 09:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C282BD037
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 09:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758878350; cv=none; b=CpCVwPiyvW8RpgNX9eVV+X/B3Rq+y0LCJwE7YUEskSo7+WB1IfOODoVoNVoK+yVuawJD4PowhZQhnqg5MQadJ/c0wvMVyVD0iJQVaQGjxV/h9Kk9489iKXtb5B0b3bbUOU4kUge3F30G4feK40h5W8gG7uACJ/l/z6f9Me/laGA=
+	t=1758879995; cv=none; b=XzeP6dXZdSIR802C3kuj84nDvrTZZk6Hed4Xu8varwReQfKl7cZjjPdEj9f/ELuXQlz/wJ9PwRAjdny9eSwpEaBnzamD4Oy/9EBe9NMQvLiFEEx2hodHdOKj3Q+yNZXICtSF+O5Hj/dTx7xjPDyu42/1fV0d9ZKzZ34bUA2OCtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758878350; c=relaxed/simple;
-	bh=I7SkO7vZ9SgQcbpLyD2Varou8U6x9BTx3nR3oyd9Z0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKm3NmnL/w7jZU8gtgEtSup9sLZH7wUyyfpp9PQomxEjgIwXW4Wep/+7mua2FGPfToiaCj2ldwpMHMrbpZE6+39nfpXqKaf25kE7chSTVyhkNoKyZiE7I8DE7jQfAKtVgKm88QRManYIrjICvq9diBHUvi7gljlbDVhc2J7W6oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XzGF7xNp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iBUdyE5B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XzGF7xNp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iBUdyE5B; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 084E424028;
-	Fri, 26 Sep 2025 09:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758878344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1758879995; c=relaxed/simple;
+	bh=hUMRS7DJvk7Xj1VzsmX84BYsYqaTZzC1ukrIfumPYIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pMvVhKUirlXoxgxzBMCR0GQFUfcBRshGlPRUGi3C6EFQBICO4DTPBRPVrv+dvvHJLTLGTolgCVRAVvZ6YxAUpiyP4d4Ru9GVShUQ9ZOCy5Z8QyVCNznPBdOgGD1my3fjoANF9+LVor0B+AGizZsG/AlY7sXwlxZokrPgY5AIaVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YNZESI5h; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758879980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oz9oXrr0GmBGTK3eR8QugTyfYGzI3VB6BGwiEaz2WoM=;
-	b=XzGF7xNpdG21P4tFEJWb/tFIJJHJ5WUXQd/QfFIujwIcOR/q3mSImkYW0MQRx+a65YGfA5
-	9Vu6sJbIYHNw46hN5i2kKOsi4Tcphx3FW2Z1yWuKG8PjJQkLaFD1RaoMAm1Ei5CMCe3VrC
-	3z092mB7EOHUa3S1O/7jxWQ1vtaYzwU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758878344;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oz9oXrr0GmBGTK3eR8QugTyfYGzI3VB6BGwiEaz2WoM=;
-	b=iBUdyE5BKta11dMq08ZNZEL6USTM3mU+ptOt5sD2zdVQpFGjPNMNa4oxChul3xqZg7UIZK
-	mnHdd6iC3OvLFZBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XzGF7xNp;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iBUdyE5B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758878344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oz9oXrr0GmBGTK3eR8QugTyfYGzI3VB6BGwiEaz2WoM=;
-	b=XzGF7xNpdG21P4tFEJWb/tFIJJHJ5WUXQd/QfFIujwIcOR/q3mSImkYW0MQRx+a65YGfA5
-	9Vu6sJbIYHNw46hN5i2kKOsi4Tcphx3FW2Z1yWuKG8PjJQkLaFD1RaoMAm1Ei5CMCe3VrC
-	3z092mB7EOHUa3S1O/7jxWQ1vtaYzwU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758878344;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oz9oXrr0GmBGTK3eR8QugTyfYGzI3VB6BGwiEaz2WoM=;
-	b=iBUdyE5BKta11dMq08ZNZEL6USTM3mU+ptOt5sD2zdVQpFGjPNMNa4oxChul3xqZg7UIZK
-	mnHdd6iC3OvLFZBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E2C4B1386E;
-	Fri, 26 Sep 2025 09:19:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IkBcN4da1mhfBwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Sep 2025 09:19:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 59479A0AA5; Fri, 26 Sep 2025 11:19:03 +0200 (CEST)
-Date: Fri, 26 Sep 2025 11:19:03 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: LTP listmount04 failures after "listmount: don't call path_put()
- under namespace semaphore"
-Message-ID: <z5yqsdap4dciknml4zkv3z6gfjwbt7vpwwiqkvcsntcrus4bhm@3r7ysmsxpbqu>
-References: <3f916c7a-ae8e-4e38-8006-9dd54b8f3746@sirena.org.uk>
+	bh=wL/DKY7lmmAFsSL3d0RvnMPd7olra+yxGHLjKGhoofY=;
+	b=YNZESI5h/jXNDiLLb7j86+j+TkXx1nKw543VaKtpr8w5CCCBn8PBOYUz9LE0gA3VqxAeTq
+	vk8gHrlHjKvE2h5y4LlVK9XHV23gdoSJUvecSr6p74DcXM6u9ckDN633ckuAjfmHnKaOOB
+	P/laAqnp0QFmiI8hpwCxa0nGYMdpMzQ=
+Date: Fri, 26 Sep 2025 10:46:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3f916c7a-ae8e-4e38-8006-9dd54b8f3746@sirena.org.uk>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 084E424028
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-
-On Thu 25-09-25 13:10:08, Mark Brown wrote:
-> I'm seeing test failures in -next on the LTP listmount04 test which
-> bisect to 59bfb6681680 (listmount: don't call path_put() under namespace
-> semaphore) which I can't seem to find on lore.  The test causes a NULL
-> pointer dereference:
->=20
-> [   39.325361] Unable to handle kernel NULL pointer dereference at virtua=
-l address 00000000000000b8
-
-Thanks for report. For reference Al already analyzed this here:
-
-https://lore.kernel.org/all/20250926064801.GE39973@ZenIV
-
-								Honza
->=20
-> ...
->=20
-> [   39.585813] Call trace:
-> [   39.588284]  mnt_ns_release+0x50/0x108 (P)
-> [   39.592426]  __arm64_sys_listmount+0xc0/0x540
-> [   39.596831]  invoke_syscall+0x48/0x104
-> [   39.600620]  el0_svc_common.constprop.0+0x40/0xe0
-> [   39.605379]  do_el0_svc+0x1c/0x28
-> [   39.608728]  el0_svc+0x34/0xec
-> [   39.611811]  el0t_64_sync_handler+0xa0/0xf0
-> [   39.616051]  el0t_64_sync+0x198/0x19c
-> [   39.619747] Code: d65f03c0 9102e265 52800022 f98000b1 (885f7ca1)=20
-> [   39.625913] ---[ end trace 0000000000000000 ]---
->=20
-> Full log:
->=20
->    https://lava.sirena.org.uk/scheduler/job/1882244#L2944
->=20
-> Bisect log:
->=20
-> # bad: [b5a4da2c459f79a2c87c867398f1c0c315779781] Add linux-next specific=
- files for 20250924
-> # good: [69ed2a71d8f82f4304aa52c2c4abf41d1c1f4c7e] Merge branch 'for-linu=
-x-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
-> # good: [e609438851928381e39b5393f17156955a84122a] regulator: dt-bindings=
-: qcom,sdm845-refgen-regulator: document more platforms
-> # good: [5fa7d739f811bdffb5fc99696c2e821344fe0b88] regulator: dt-bindings=
-: qcom,sdm845-refgen-regulator: document more platforms
-> # good: [63b4c34635cf32af023796b64c855dd1ed0f0a4f] tas2783A: Add acpi mat=
-ch changes for Intel MTL
-> # good: [f98cabe3f6cf6396b3ae0264800d9b53d7612433] SPI: Add virtio SPI dr=
-iver
-> # good: [ad4728740bd68d74365a43acc25a65339a9b2173] spi: rpc-if: Add resum=
-e support for RZ/G3E
-> # good: [46c8b4d2a693eca69a2191436cffa44f489e98c7] ASoC: cs35l41: Fallbac=
-k to reading Subsystem ID property if not ACPI
-> # good: [e336ab509b43ea601801dfa05b4270023c3ed007] spi: rename SPI_CS_CNT=
-_MAX =3D> SPI_DEVICE_CS_CNT_MAX
-> # good: [878702702dbbd933a5da601c75b8e58eadeec311] spi: ljca: Remove Went=
-ong's e-mail address
-> # good: [2c618f361ae6b9da7fafafc289051728ef4c6ea3] ASoC: fsl: fsl_qmc_aud=
-io: Drop struct qmc_dai_chan
-> # good: [20253f806818e9a1657a832ebcf4141d0a08c02a] spi: atmel-quadspi: Ad=
-d support for sama7d65 QSPI
-> # good: [cb3c715d89607f8896c0f20fe528a08e7ebffea9] ASoC: soc-dapm: add sn=
-d_soc_dapm_set_idle_bias()
-> # good: [2aa28b748fc967a2f2566c06bdad155fba8af7d8] ASoC: da7213: Convert =
-to DEFINE_RUNTIME_DEV_PM_OPS()
-> # good: [0266f9541038b9b98ddd387132b5bdfe32a304e3] ASoC: codecs: wcd937x:=
- get regmap directly
-> # good: [0f67557763accbdd56681f17ed5350735198c57b] spi: spi-nxp-fspi: Add=
- OCT-DTR mode support
-> # good: [a24802b0a2a238eaa610b0b0e87a4500a35de64a] spi: spi-qpic-snand: s=
-implify clock handling by using devm_clk_get_enabled()
-> # good: [abe962346ef420998d47ba1c2fe591582f69e92e] regulator: Fix MAX7783=
-8 selection
-> # good: [ab63e9910d2d3ea4b8e6c08812258a676defcb9c] spi: mt65xx: add dual =
-and quad mode for standard spi device
-> # good: [8d7de4a014f589c1776959f7fdadbf7b12045aac] ASoC: dt-bindings: asa=
-hi-kasei,ak4458: Reference common DAI properties
-> # good: [88d0d17192c5a850dc07bb38035b69c4cefde270] ASoC: dt-bindings: add=
- bindings for pm4125 audio codec
-> # good: [8b84d712ad849172f6bbcad57534b284d942b0b5] regulator: spacemit: s=
-upport SpacemiT P1 regulators
-> # good: [6a1f303cba45fa3b612d5a2898b1b1b045eb74e3] regulator: max77838: a=
-dd max77838 regulator driver
-> # good: [4d906371d1f9fc9ce47b2c8f37444680246557bc] nsfs: drop tautologica=
-l ioctl() check
-> # good: [f8527a29f4619f74bc30a9845ea87abb9a6faa1e] nsfs: validate extensi=
-ble ioctls
-> # good: [8b184c34806e5da4d4847fabd3faeff38b47e70a] ASoC: Intel: hda-sdw-b=
-pt: set persistent_buffer false
-> # good: [18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4] spi: amlogic: Fix erro=
-r checking on regmap_write call
-> # good: [1217b573978482ae7d21dc5c0bf5aa5007b24f90] ASoC: codecs: pcm1754:=
- add pcm1754 dac driver
-> # good: [59ba108806516adeaed51a536d55d4f5e9645881] ASoC: dt-bindings: lin=
-ux,spdif: Add "port" node
-> # good: [30db1b21fa37a2f37c7f4d71864405a05e889833] spi: axi-spi-engine: u=
-se adi_axi_pcore_ver_gteq()
-> # good: [2e0fd4583d0efcdc260e61a22666c8368f505353] rust: regulator: add d=
-evm_enable and devm_enable_optional
-> # good: [6a129b2ca5c533aec89fbeb58470811cc4102642] MAINTAINERS: Add an en=
-try for Amlogic spifc driver
-> # good: [d9e33b38c89f4cf8c32b8481dbcf3a6cdbba4595] spi: cadence-quadspi: =
-Use BIT() macros where possible
-> # good: [e5b4ad2183f7ab18aaf7c73a120d17241ee58e97] ASoC: cs-amp-lib-test:=
- Add test for getting cal data from HP EFI
-> # good: [1cf87861a2e02432fb68f8bcc8f20a8e42acde59] ASoC: codecs: tlv320da=
-c33: Convert to use gpiod api
-> # good: [5bad16482c2a7e788c042d98f3e97d3b2bbc8cc5] regulator: dt-bindings=
-: rpi-panel: Split 7" Raspberry Pi 720x1280 v2 binding
-> # good: [4336efb59ef364e691ef829a73d9dbd4d5ed7c7b] ASoC: Intel: bytcr_rt5=
-651: Fix invalid quirk input mapping
-> # good: [2c625f0fe2db4e6a58877ce2318df3aa312eb791] spi: dt-bindings: sams=
-ung: Drop S3C2443
-> # good: [7d083666123a425ba9f81dff1a52955b1f226540] ASoC: renesas: rz-ssi:=
- Use guard() for spin locks
-> # good: [b497e1a1a2b10c4ddb28064fba229365ae03311a] regulator: pf530x: Add=
- a driver for the NXP PF5300 Regulator
-> # good: [9e5eb8b49ffe3c173bf7b8c338a57dfa09fb4634] ASoC: replace use of s=
-ystem_unbound_wq with system_dfl_wq
-> # good: [0ccc1eeda155c947d88ef053e0b54e434e218ee2] ASoC: dt-bindings: wlf=
-,wm8960: Document routing strings (pin names)
-> # good: [7748328c2fd82efed24257b2bfd796eb1fa1d09b] ASoC: dt-bindings: qco=
-m,lpass-va-macro: Update bindings for clocks to support ADSP
-> # good: [dd7ae5b8b3c291c0206f127a564ae1e316705ca0] ASoC: cs42l43: Shutdow=
-n jack detection on suspend
-> # good: [5cc49b5a36b32a2dba41441ea13b93fb5ea21cfd] spi: spi-fsl-dspi: Rep=
-ort FIFO overflows as errors
-> # good: [94b39cb3ad6db935b585988b36378884199cd5fc] spi: mxs: fix "transfe=
-red"->"transferred"
-> # good: [06dd3eda0e958cdae48ca755eb5047484f678d78] Merge branch 'vfs-6.18=
-=2Erust' into vfs.all
-> # good: [ce1a46b2d6a8465a86f7a6f71beb4c6de83bce5c] ASoC: codecs: lpass-ws=
-a-macro: add Codev version 2.9
-> # good: [ce57b718006a069226b5e5d3afe7969acd59154e] ASoC: Intel: avs: ssm4=
-567: Adjust platform name
-> # good: [3279052eab235bfb7130b1fabc74029c2260ed8d] ASoC: SOF: ipc4-topolo=
-gy: Fix a less than zero check on a u32
-> # good: [8f57dcf39fd0864f5f3e6701fe885e55f45d0d3a] ASoC: qcom: audioreach=
-: convert to cpu endainess type before accessing
-> # good: [9d35d068fb138160709e04e3ee97fe29a6f8615b] regulator: scmi: Use i=
-nt type to store negative error codes
-> # good: [8a9772ec08f87c9e45ab1ad2c8d2b8c1763836eb] ASoC: soc-dapm: rename=
- snd_soc_kcontrol_component() to snd_soc_kcontrol_to_component()
-> # good: [3d439e1ec3368fae17db379354bd7a9e568ca0ab] ASoC: sof: ipc4-topolo=
-gy: Add support to sched_domain attribute
-> # good: [5c39bc498f5ff7ef016abf3f16698f3e8db79677] ASoC: SOF: Intel: only=
- detect codecs when HDA DSP probe
-> # good: [07752abfa5dbf7cb4d9ce69fa94dc3b12bc597d9] ASoC: SOF: sof-client:=
- Introduce sof_client_dev_entry structure
-> # good: [f7c41911ad744177d8289820f01009dc93d8f91c] ASoC: SOF: ipc4-topolo=
-gy: Add support for float sample type
-> # good: [d57d27171c92e9049d5301785fb38de127b28fbf] ASoC: SOF: sof-client-=
-probes: Add available points_info(), IPC4 only
-> # good: [f522da9ab56c96db8703b2ea0f09be7cdc3bffeb] ASoC: doc: Internally =
-link to Writing an ALSA Driver docs
-> # good: [c42e36a488c7e01f833fc9f4814f735b66b2d494] spi: Drop dev_pm_domai=
-n_detach() call
-> # good: [a37280daa4d583c7212681c49b285de9464a5200] ASoC: Intel: avs: Allo=
-w i2s test and non-test boards to coexist
-> # good: [b088b6189a4066b97cef459afd312fd168a76dea] ASoC: mediatek: common=
-: Switch to for_each_available_child_of_node_scoped()
-> # good: [ff9a7857b7848227788f113d6dc6a72e989084e0] spi: rb4xx: use devm f=
-or clk_prepare_enable
-> # good: [f4672dc6e9c07643c8c755856ba8e9eb9ca95d0c] regmap: use int type t=
-o store negative error codes
-> # good: [edb5c1f885207d1d74e8a1528e6937e02829ee6e] ASoC: renesas: msiof: =
-start DMAC first
-> # good: [e2ab5f600bb01d3625d667d97b3eb7538e388336] rust: regulator: use `=
-to_result` for error handling
-> # good: [11f5c5f9e43e9020bae452232983fe98e7abfce0] ASoC: qcom: use int ty=
-pe to store negative error codes
-> # good: [5b4dcaf851df8c414bfc2ac3bf9c65fc942f3be4] ASoC: amd: acp: Remove=
- (explicitly) unused header
-> # good: [899fb38dd76dd3ede425bbaf8a96d390180a5d1c] regulator: core: Remov=
-e redundant ternary operators
-> # good: [a12b74d2bd4724ee1883bc97ec93eac8fafc8d3c] ASoC: tlv320aic32x4: u=
-se dev_err_probe() for regulators
-> # good: [f840737d1746398c2993be34bfdc80bdc19ecae2] ASoC: SOF: imx: Remove=
- the use of dev_err_probe()
-> # good: [d78e48ebe04e9566f8ecbf51471e80da3adbceeb] ASoC: dt-bindings: Min=
-or whitespace cleanup in example
-> # good: [96bcb34df55f7fee99795127c796315950c94fed] ASoC: test-component: =
-Use kcalloc() instead of kzalloc()
-> # good: [c232495d28ca092d0c39b10e35d3d613bd2414ab] ASoC: dt-bindings: oma=
-p-twl4030: convert to DT schema
-> # good: [ec0be3cdf40b5302248f3fb27a911cc630e8b855] regulator: consumer.rs=
-t: document bulk operations
-> # good: [27848c082ba0b22850fd9fb7b185c015423dcdc7] spi: s3c64xx: Remove t=
-he use of dev_err_probe()
-> # good: [da9881d00153cc6d3917f6b74144b1d41b58338c] ASoC: qcom: audioreach=
-: add support for SMECNS module
-> # good: [c1dd310f1d76b4b13f1854618087af2513140897] spi: SPISG: Use devm_k=
-calloc() in aml_spisg_clk_init()
-> # good: [cf65182247761f7993737b710afe8c781699356b] ASoC: codecs: wsa883x:=
- Handle shared reset GPIO for WSA883x speakers
-> # good: [550bc517e59347b3b1af7d290eac4fb1411a3d4e] regulator: bd718x7: Us=
-e kcalloc() instead of kzalloc()
-> # good: [2a55135201d5e24b80b7624880ff42eafd8e320c] ASoC: Intel: avs: Stre=
-amline register-component function names
-> # good: [daf855f76a1210ceed9541f71ac5dd9be02018a6] ASoC: es8323: enable D=
-APM power widgets for playback DAC
-> # good: [0056b410355713556d8a10306f82e55b28d33ba8] spi: offload trigger: =
-adi-util-sigma-delta: clean up imports
-> # good: [90179609efa421b1ccc7d8eafbc078bafb25777c] spi: spl022: use min_t=
-() to improve code
-> # good: [48124569bbc6bfda1df3e9ee17b19d559f4b1aa3] spi: remove unneeded '=
-fast_io' parameter in regmap_config
-> # good: [258384d8ce365dddd6c5c15204de8ccd53a7ab0a] ASoC: es8323: enable D=
-APM power widgets for playback DAC and output
-> # good: [6d068f1ae2a2f713d7f21a9a602e65b3d6b6fc6d] regulator: rt5133: Fix=
- spelling mistake "regualtor" -> "regulator"
-> # good: [37533933bfe92cd5a99ef4743f31dac62ccc8de0] regulator: remove unne=
-eded 'fast_io' parameter in regmap_config
-> # good: [0e62438e476494a1891a8822b9785bc6e73e9c3f] ASoC: Intel: sst: Remo=
-ve redundant semicolons
-> # good: [a46e95c81e3a28926ab1904d9f754fef8318074d] ASoC: wl1273: Remove
-> # good: [5c36b86d2bf68fbcad16169983ef7ee8c537db59] regmap: Remove superfl=
-uous check for !config in __regmap_init()
-> # good: [714165e1c4b0d5b8c6d095fe07f65e6e7047aaeb] regulator: rt5133: Add=
- RT5133 PMIC regulator Support
-> # good: [9c45f95222beecd6a284fd1284d54dd7a772cf59] spi: spi-qpic-snand: h=
-andle 'use_ecc' parameter of qcom_spi_config_cw_read()
-> # good: [bab4ab484a6ca170847da9bffe86f1fa90df4bbe] ASoC: dt-bindings: Con=
-vert brcm,bcm2835-i2s to DT schema
-> # good: [b832b19318534bb4f1673b24d78037fee339c679] spi: loopback-test: Do=
-n't use %pK through printk
-> # good: [8c02c8353460f8630313aef6810f34e134a3c1ee] ASoC: dt-bindings: rea=
-ltek,alc5623: convert to DT schema
-> # good: [6b7e2aa50bdaf88cd4c2a5e2059a7bf32d85a8b1] spi: spi-qpic-snand: r=
-emove 'clr*status' members of struct 'qpic_ecc'
-> # good: [a54ef14188519a0994d0264f701f5771815fa11e] regulator: dt-bindings=
-: Clean-up active-semi,act8945a duplication
-> # good: [2291a2186305faaf8525d57849d8ba12ad63f5e7] MAINTAINERS: Add entry=
- for FourSemi audio amplifiers
-> # good: [595b7f155b926460a00776cc581e4dcd01220006] ASoC: Intel: avs: Cond=
-itional-path support
-> # good: [cf25eb8eae91bcae9b2065d84b0c0ba0f6d9dd34] ASoC: soc-component: u=
-npack snd_soc_component_init_bias_level()
-> # good: [a1d0b0ae65ae3f32597edfbb547f16c75601cd87] spi: spi-qpic-snand: a=
-void double assignment in qcom_spi_probe()
-> # good: [3059067fd3378a5454e7928c08d20bf3ef186760] ASoC: cs48l32: Use PTR=
-_ERR_OR_ZERO() to simplify code
-> # good: [9a200cbdb54349909a42b45379e792e4b39dd223] rust: regulator: imple=
-ment Send and Sync for Regulator<T>
-> # good: [2d86d2585ab929a143d1e6f8963da1499e33bf13] ASoC: pxa: add GPIOLIB=
-_LEGACY dependency
-> # good: [886f42ce96e7ce80545704e7168a9c6b60cd6c03] regmap: mmio: Add miss=
-ing MODULE_DESCRIPTION()
-> # good: [162e23657e5379f07c6404dbfbf4367cb438ea7d] regulator: pf0900: Add=
- PMIC PF0900 support
-> git bisect start 'b5a4da2c459f79a2c87c867398f1c0c315779781' '69ed2a71d8f8=
-2f4304aa52c2c4abf41d1c1f4c7e' 'e609438851928381e39b5393f17156955a84122a' '5=
-fa7d739f811bdffb5fc99696c2e821344fe0b88' '63b4c34635cf32af023796b64c855dd1e=
-d0f0a4f' 'f98cabe3f6cf6396b3ae0264800d9b53d7612433' 'ad4728740bd68d74365a43=
-acc25a65339a9b2173' '46c8b4d2a693eca69a2191436cffa44f489e98c7' 'e336ab509b4=
-3ea601801dfa05b4270023c3ed007' '878702702dbbd933a5da601c75b8e58eadeec311' '=
-2c618f361ae6b9da7fafafc289051728ef4c6ea3' '20253f806818e9a1657a832ebcf4141d=
-0a08c02a' 'cb3c715d89607f8896c0f20fe528a08e7ebffea9' '2aa28b748fc967a2f2566=
-c06bdad155fba8af7d8' '0266f9541038b9b98ddd387132b5bdfe32a304e3' '0f67557763=
-accbdd56681f17ed5350735198c57b' 'a24802b0a2a238eaa610b0b0e87a4500a35de64a' =
-'abe962346ef420998d47ba1c2fe591582f69e92e' 'ab63e9910d2d3ea4b8e6c08812258a6=
-76defcb9c' '8d7de4a014f589c1776959f7fdadbf7b12045aac' '88d0d17192c5a850dc07=
-bb38035b69c4cefde270' '8b84d712ad849172f6bbcad57534b284d942b0b5' '6a1f303cb=
-a45fa3b612d5a2898b1b1b045eb74e3' '4d906371d1f9fc9ce47b2c8f37444680246557bc'=
- 'f8527a29f4619f74bc30a9845ea87abb9a6faa1e' '8b184c34806e5da4d4847fabd3faef=
-f38b47e70a' '18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4' '1217b573978482ae7d2=
-1dc5c0bf5aa5007b24f90' '59ba108806516adeaed51a536d55d4f5e9645881' '30db1b21=
-fa37a2f37c7f4d71864405a05e889833' '2e0fd4583d0efcdc260e61a22666c8368f505353=
-' '6a129b2ca5c533aec89fbeb58470811cc4102642' 'd9e33b38c89f4cf8c32b8481dbcf3=
-a6cdbba4595' 'e5b4ad2183f7ab18aaf7c73a120d17241ee58e97' '1cf87861a2e02432fb=
-68f8bcc8f20a8e42acde59' '5bad16482c2a7e788c042d98f3e97d3b2bbc8cc5' '4336efb=
-59ef364e691ef829a73d9dbd4d5ed7c7b' '2c625f0fe2db4e6a58877ce2318df3aa312eb79=
-1' '7d083666123a425ba9f81dff1a52955b1f226540' 'b497e1a1a2b10c4ddb28064fba22=
-9365ae03311a' '9e5eb8b49ffe3c173bf7b8c338a57dfa09fb4634' '0ccc1eeda155c947d=
-88ef053e0b54e434e218ee2' '7748328c2fd82efed24257b2bfd796eb1fa1d09b' 'dd7ae5=
-b8b3c291c0206f127a564ae1e316705ca0' '5cc49b5a36b32a2dba41441ea13b93fb5ea21c=
-fd' '94b39cb3ad6db935b585988b36378884199cd5fc' '06dd3eda0e958cdae48ca755eb5=
-047484f678d78' 'ce1a46b2d6a8465a86f7a6f71beb4c6de83bce5c' 'ce57b718006a0692=
-26b5e5d3afe7969acd59154e' '3279052eab235bfb7130b1fabc74029c2260ed8d' '8f57d=
-cf39fd0864f5f3e6701fe885e55f45d0d3a' '9d35d068fb138160709e04e3ee97fe29a6f86=
-15b' '8a9772ec08f87c9e45ab1ad2c8d2b8c1763836eb' '3d439e1ec3368fae17db379354=
-bd7a9e568ca0ab' '5c39bc498f5ff7ef016abf3f16698f3e8db79677' '07752abfa5dbf7c=
-b4d9ce69fa94dc3b12bc597d9' 'f7c41911ad744177d8289820f01009dc93d8f91c' 'd57d=
-27171c92e9049d5301785fb38de127b28fbf' 'f522da9ab56c96db8703b2ea0f09be7cdc3b=
-ffeb' 'c42e36a488c7e01f833fc9f4814f735b66b2d494' 'a37280daa4d583c7212681c49=
-b285de9464a5200' 'b088b6189a4066b97cef459afd312fd168a76dea' 'ff9a7857b78482=
-27788f113d6dc6a72e989084e0' 'f4672dc6e9c07643c8c755856ba8e9eb9ca95d0c' 'edb=
-5c1f885207d1d74e8a1528e6937e02829ee6e' 'e2ab5f600bb01d3625d667d97b3eb7538e3=
-88336' '11f5c5f9e43e9020bae452232983fe98e7abfce0' '5b4dcaf851df8c414bfc2ac3=
-bf9c65fc942f3be4' '899fb38dd76dd3ede425bbaf8a96d390180a5d1c' 'a12b74d2bd472=
-4ee1883bc97ec93eac8fafc8d3c' 'f840737d1746398c2993be34bfdc80bdc19ecae2' 'd7=
-8e48ebe04e9566f8ecbf51471e80da3adbceeb' '96bcb34df55f7fee99795127c796315950=
-c94fed' 'c232495d28ca092d0c39b10e35d3d613bd2414ab' 'ec0be3cdf40b5302248f3fb=
-27a911cc630e8b855' '27848c082ba0b22850fd9fb7b185c015423dcdc7' 'da9881d00153=
-cc6d3917f6b74144b1d41b58338c' 'c1dd310f1d76b4b13f1854618087af2513140897' 'c=
-f65182247761f7993737b710afe8c781699356b' '550bc517e59347b3b1af7d290eac4fb14=
-11a3d4e' '2a55135201d5e24b80b7624880ff42eafd8e320c' 'daf855f76a1210ceed9541=
-f71ac5dd9be02018a6' '0056b410355713556d8a10306f82e55b28d33ba8' '90179609efa=
-421b1ccc7d8eafbc078bafb25777c' '48124569bbc6bfda1df3e9ee17b19d559f4b1aa3' '=
-258384d8ce365dddd6c5c15204de8ccd53a7ab0a' '6d068f1ae2a2f713d7f21a9a602e65b3=
-d6b6fc6d' '37533933bfe92cd5a99ef4743f31dac62ccc8de0' '0e62438e476494a1891a8=
-822b9785bc6e73e9c3f' 'a46e95c81e3a28926ab1904d9f754fef8318074d' '5c36b86d2b=
-f68fbcad16169983ef7ee8c537db59' '714165e1c4b0d5b8c6d095fe07f65e6e7047aaeb' =
-'9c45f95222beecd6a284fd1284d54dd7a772cf59' 'bab4ab484a6ca170847da9bffe86f1f=
-a90df4bbe' 'b832b19318534bb4f1673b24d78037fee339c679' '8c02c8353460f8630313=
-aef6810f34e134a3c1ee' '6b7e2aa50bdaf88cd4c2a5e2059a7bf32d85a8b1' 'a54ef1418=
-8519a0994d0264f701f5771815fa11e' '2291a2186305faaf8525d57849d8ba12ad63f5e7'=
- '595b7f155b926460a00776cc581e4dcd01220006' 'cf25eb8eae91bcae9b2065d84b0c0b=
-a0f6d9dd34' 'a1d0b0ae65ae3f32597edfbb547f16c75601cd87' '3059067fd3378a5454e=
-7928c08d20bf3ef186760' '9a200cbdb54349909a42b45379e792e4b39dd223' '2d86d258=
-5ab929a143d1e6f8963da1499e33bf13' '886f42ce96e7ce80545704e7168a9c6b60cd6c03=
-' '162e23657e5379f07c6404dbfbf4367cb438ea7d'
-> # test job: [e609438851928381e39b5393f17156955a84122a] https://lava.siren=
-a.org.uk/scheduler/job/1868298
-> # test job: [5fa7d739f811bdffb5fc99696c2e821344fe0b88] https://lava.siren=
-a.org.uk/scheduler/job/1868334
-> # test job: [63b4c34635cf32af023796b64c855dd1ed0f0a4f] https://lava.siren=
-a.org.uk/scheduler/job/1863533
-> # test job: [f98cabe3f6cf6396b3ae0264800d9b53d7612433] https://lava.siren=
-a.org.uk/scheduler/job/1862338
-> # test job: [ad4728740bd68d74365a43acc25a65339a9b2173] https://lava.siren=
-a.org.uk/scheduler/job/1862573
-> # test job: [46c8b4d2a693eca69a2191436cffa44f489e98c7] https://lava.siren=
-a.org.uk/scheduler/job/1862020
-> # test job: [e336ab509b43ea601801dfa05b4270023c3ed007] https://lava.siren=
-a.org.uk/scheduler/job/1862904
-> # test job: [878702702dbbd933a5da601c75b8e58eadeec311] https://lava.siren=
-a.org.uk/scheduler/job/1863785
-> # test job: [2c618f361ae6b9da7fafafc289051728ef4c6ea3] https://lava.siren=
-a.org.uk/scheduler/job/1850254
-> # test job: [20253f806818e9a1657a832ebcf4141d0a08c02a] https://lava.siren=
-a.org.uk/scheduler/job/1848543
-> # test job: [cb3c715d89607f8896c0f20fe528a08e7ebffea9] https://lava.siren=
-a.org.uk/scheduler/job/1847548
-> # test job: [2aa28b748fc967a2f2566c06bdad155fba8af7d8] https://lava.siren=
-a.org.uk/scheduler/job/1848330
-> # test job: [0266f9541038b9b98ddd387132b5bdfe32a304e3] https://lava.siren=
-a.org.uk/scheduler/job/1848801
-> # test job: [0f67557763accbdd56681f17ed5350735198c57b] https://lava.siren=
-a.org.uk/scheduler/job/1848729
-> # test job: [a24802b0a2a238eaa610b0b0e87a4500a35de64a] https://lava.siren=
-a.org.uk/scheduler/job/1847555
-> # test job: [abe962346ef420998d47ba1c2fe591582f69e92e] https://lava.siren=
-a.org.uk/scheduler/job/1840595
-> # test job: [ab63e9910d2d3ea4b8e6c08812258a676defcb9c] https://lava.siren=
-a.org.uk/scheduler/job/1838208
-> # test job: [8d7de4a014f589c1776959f7fdadbf7b12045aac] https://lava.siren=
-a.org.uk/scheduler/job/1833226
-> # test job: [88d0d17192c5a850dc07bb38035b69c4cefde270] https://lava.siren=
-a.org.uk/scheduler/job/1833988
-> # test job: [8b84d712ad849172f6bbcad57534b284d942b0b5] https://lava.siren=
-a.org.uk/scheduler/job/1834038
-> # test job: [6a1f303cba45fa3b612d5a2898b1b1b045eb74e3] https://lava.siren=
-a.org.uk/scheduler/job/1830431
-> # test job: [4d906371d1f9fc9ce47b2c8f37444680246557bc] https://lava.siren=
-a.org.uk/scheduler/job/1832438
-> # test job: [f8527a29f4619f74bc30a9845ea87abb9a6faa1e] https://lava.siren=
-a.org.uk/scheduler/job/1832502
-> # test job: [8b184c34806e5da4d4847fabd3faeff38b47e70a] https://lava.siren=
-a.org.uk/scheduler/job/1829207
-> # test job: [18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4] https://lava.siren=
-a.org.uk/scheduler/job/1829155
-> # test job: [1217b573978482ae7d21dc5c0bf5aa5007b24f90] https://lava.siren=
-a.org.uk/scheduler/job/1809957
-> # test job: [59ba108806516adeaed51a536d55d4f5e9645881] https://lava.siren=
-a.org.uk/scheduler/job/1809987
-> # test job: [30db1b21fa37a2f37c7f4d71864405a05e889833] https://lava.siren=
-a.org.uk/scheduler/job/1811004
-> # test job: [2e0fd4583d0efcdc260e61a22666c8368f505353] https://lava.siren=
-a.org.uk/scheduler/job/1806809
-> # test job: [6a129b2ca5c533aec89fbeb58470811cc4102642] https://lava.siren=
-a.org.uk/scheduler/job/1805765
-> # test job: [d9e33b38c89f4cf8c32b8481dbcf3a6cdbba4595] https://lava.siren=
-a.org.uk/scheduler/job/1806672
-> # test job: [e5b4ad2183f7ab18aaf7c73a120d17241ee58e97] https://lava.siren=
-a.org.uk/scheduler/job/1799495
-> # test job: [1cf87861a2e02432fb68f8bcc8f20a8e42acde59] https://lava.siren=
-a.org.uk/scheduler/job/1795064
-> # test job: [5bad16482c2a7e788c042d98f3e97d3b2bbc8cc5] https://lava.siren=
-a.org.uk/scheduler/job/1795963
-> # test job: [4336efb59ef364e691ef829a73d9dbd4d5ed7c7b] https://lava.siren=
-a.org.uk/scheduler/job/1795901
-> # test job: [2c625f0fe2db4e6a58877ce2318df3aa312eb791] https://lava.siren=
-a.org.uk/scheduler/job/1794545
-> # test job: [7d083666123a425ba9f81dff1a52955b1f226540] https://lava.siren=
-a.org.uk/scheduler/job/1794830
-> # test job: [b497e1a1a2b10c4ddb28064fba229365ae03311a] https://lava.siren=
-a.org.uk/scheduler/job/1780236
-> # test job: [9e5eb8b49ffe3c173bf7b8c338a57dfa09fb4634] https://lava.siren=
-a.org.uk/scheduler/job/1779444
-> # test job: [0ccc1eeda155c947d88ef053e0b54e434e218ee2] https://lava.siren=
-a.org.uk/scheduler/job/1773056
-> # test job: [7748328c2fd82efed24257b2bfd796eb1fa1d09b] https://lava.siren=
-a.org.uk/scheduler/job/1773396
-> # test job: [dd7ae5b8b3c291c0206f127a564ae1e316705ca0] https://lava.siren=
-a.org.uk/scheduler/job/1773239
-> # test job: [5cc49b5a36b32a2dba41441ea13b93fb5ea21cfd] https://lava.siren=
-a.org.uk/scheduler/job/1769271
-> # test job: [94b39cb3ad6db935b585988b36378884199cd5fc] https://lava.siren=
-a.org.uk/scheduler/job/1768632
-> # test job: [06dd3eda0e958cdae48ca755eb5047484f678d78] https://lava.siren=
-a.org.uk/scheduler/job/1832033
-> # test job: [ce1a46b2d6a8465a86f7a6f71beb4c6de83bce5c] https://lava.siren=
-a.org.uk/scheduler/job/1768996
-> # test job: [ce57b718006a069226b5e5d3afe7969acd59154e] https://lava.siren=
-a.org.uk/scheduler/job/1768710
-> # test job: [3279052eab235bfb7130b1fabc74029c2260ed8d] https://lava.siren=
-a.org.uk/scheduler/job/1762434
-> # test job: [8f57dcf39fd0864f5f3e6701fe885e55f45d0d3a] https://lava.siren=
-a.org.uk/scheduler/job/1760117
-> # test job: [9d35d068fb138160709e04e3ee97fe29a6f8615b] https://lava.siren=
-a.org.uk/scheduler/job/1758668
-> # test job: [8a9772ec08f87c9e45ab1ad2c8d2b8c1763836eb] https://lava.siren=
-a.org.uk/scheduler/job/1758573
-> # test job: [3d439e1ec3368fae17db379354bd7a9e568ca0ab] https://lava.siren=
-a.org.uk/scheduler/job/1753483
-> # test job: [5c39bc498f5ff7ef016abf3f16698f3e8db79677] https://lava.siren=
-a.org.uk/scheduler/job/1751941
-> # test job: [07752abfa5dbf7cb4d9ce69fa94dc3b12bc597d9] https://lava.siren=
-a.org.uk/scheduler/job/1752234
-> # test job: [f7c41911ad744177d8289820f01009dc93d8f91c] https://lava.siren=
-a.org.uk/scheduler/job/1752282
-> # test job: [d57d27171c92e9049d5301785fb38de127b28fbf] https://lava.siren=
-a.org.uk/scheduler/job/1752640
-> # test job: [f522da9ab56c96db8703b2ea0f09be7cdc3bffeb] https://lava.siren=
-a.org.uk/scheduler/job/1751874
-> # test job: [c42e36a488c7e01f833fc9f4814f735b66b2d494] https://lava.siren=
-a.org.uk/scheduler/job/1746243
-> # test job: [a37280daa4d583c7212681c49b285de9464a5200] https://lava.siren=
-a.org.uk/scheduler/job/1746913
-> # test job: [b088b6189a4066b97cef459afd312fd168a76dea] https://lava.siren=
-a.org.uk/scheduler/job/1746192
-> # test job: [ff9a7857b7848227788f113d6dc6a72e989084e0] https://lava.siren=
-a.org.uk/scheduler/job/1746337
-> # test job: [f4672dc6e9c07643c8c755856ba8e9eb9ca95d0c] https://lava.siren=
-a.org.uk/scheduler/job/1747888
-> # test job: [edb5c1f885207d1d74e8a1528e6937e02829ee6e] https://lava.siren=
-a.org.uk/scheduler/job/1746128
-> # test job: [e2ab5f600bb01d3625d667d97b3eb7538e388336] https://lava.siren=
-a.org.uk/scheduler/job/1746591
-> # test job: [11f5c5f9e43e9020bae452232983fe98e7abfce0] https://lava.siren=
-a.org.uk/scheduler/job/1747485
-> # test job: [5b4dcaf851df8c414bfc2ac3bf9c65fc942f3be4] https://lava.siren=
-a.org.uk/scheduler/job/1747668
-> # test job: [899fb38dd76dd3ede425bbaf8a96d390180a5d1c] https://lava.siren=
-a.org.uk/scheduler/job/1747385
-> # test job: [a12b74d2bd4724ee1883bc97ec93eac8fafc8d3c] https://lava.siren=
-a.org.uk/scheduler/job/1734043
-> # test job: [f840737d1746398c2993be34bfdc80bdc19ecae2] https://lava.siren=
-a.org.uk/scheduler/job/1727325
-> # test job: [d78e48ebe04e9566f8ecbf51471e80da3adbceeb] https://lava.siren=
-a.org.uk/scheduler/job/1706193
-> # test job: [96bcb34df55f7fee99795127c796315950c94fed] https://lava.siren=
-a.org.uk/scheduler/job/1699558
-> # test job: [c232495d28ca092d0c39b10e35d3d613bd2414ab] https://lava.siren=
-a.org.uk/scheduler/job/1699583
-> # test job: [ec0be3cdf40b5302248f3fb27a911cc630e8b855] https://lava.siren=
-a.org.uk/scheduler/job/1694320
-> # test job: [27848c082ba0b22850fd9fb7b185c015423dcdc7] https://lava.siren=
-a.org.uk/scheduler/job/1693115
-> # test job: [da9881d00153cc6d3917f6b74144b1d41b58338c] https://lava.siren=
-a.org.uk/scheduler/job/1693374
-> # test job: [c1dd310f1d76b4b13f1854618087af2513140897] https://lava.siren=
-a.org.uk/scheduler/job/1692987
-> # test job: [cf65182247761f7993737b710afe8c781699356b] https://lava.siren=
-a.org.uk/scheduler/job/1687545
-> # test job: [550bc517e59347b3b1af7d290eac4fb1411a3d4e] https://lava.siren=
-a.org.uk/scheduler/job/1685911
-> # test job: [2a55135201d5e24b80b7624880ff42eafd8e320c] https://lava.siren=
-a.org.uk/scheduler/job/1685795
-> # test job: [daf855f76a1210ceed9541f71ac5dd9be02018a6] https://lava.siren=
-a.org.uk/scheduler/job/1685505
-> # test job: [0056b410355713556d8a10306f82e55b28d33ba8] https://lava.siren=
-a.org.uk/scheduler/job/1685609
-> # test job: [90179609efa421b1ccc7d8eafbc078bafb25777c] https://lava.siren=
-a.org.uk/scheduler/job/1686053
-> # test job: [48124569bbc6bfda1df3e9ee17b19d559f4b1aa3] https://lava.siren=
-a.org.uk/scheduler/job/1670178
-> # test job: [258384d8ce365dddd6c5c15204de8ccd53a7ab0a] https://lava.siren=
-a.org.uk/scheduler/job/1673374
-> # test job: [6d068f1ae2a2f713d7f21a9a602e65b3d6b6fc6d] https://lava.siren=
-a.org.uk/scheduler/job/1673136
-> # test job: [37533933bfe92cd5a99ef4743f31dac62ccc8de0] https://lava.siren=
-a.org.uk/scheduler/job/1668972
-> # test job: [0e62438e476494a1891a8822b9785bc6e73e9c3f] https://lava.siren=
-a.org.uk/scheduler/job/1669548
-> # test job: [a46e95c81e3a28926ab1904d9f754fef8318074d] https://lava.siren=
-a.org.uk/scheduler/job/1673781
-> # test job: [5c36b86d2bf68fbcad16169983ef7ee8c537db59] https://lava.siren=
-a.org.uk/scheduler/job/1668601
-> # test job: [714165e1c4b0d5b8c6d095fe07f65e6e7047aaeb] https://lava.siren=
-a.org.uk/scheduler/job/1667730
-> # test job: [9c45f95222beecd6a284fd1284d54dd7a772cf59] https://lava.siren=
-a.org.uk/scheduler/job/1667595
-> # test job: [bab4ab484a6ca170847da9bffe86f1fa90df4bbe] https://lava.siren=
-a.org.uk/scheduler/job/1664669
-> # test job: [b832b19318534bb4f1673b24d78037fee339c679] https://lava.siren=
-a.org.uk/scheduler/job/1659221
-> # test job: [8c02c8353460f8630313aef6810f34e134a3c1ee] https://lava.siren=
-a.org.uk/scheduler/job/1659272
-> # test job: [6b7e2aa50bdaf88cd4c2a5e2059a7bf32d85a8b1] https://lava.siren=
-a.org.uk/scheduler/job/1656576
-> # test job: [a54ef14188519a0994d0264f701f5771815fa11e] https://lava.siren=
-a.org.uk/scheduler/job/1656018
-> # test job: [2291a2186305faaf8525d57849d8ba12ad63f5e7] https://lava.siren=
-a.org.uk/scheduler/job/1655765
-> # test job: [595b7f155b926460a00776cc581e4dcd01220006] https://lava.siren=
-a.org.uk/scheduler/job/1653110
-> # test job: [cf25eb8eae91bcae9b2065d84b0c0ba0f6d9dd34] https://lava.siren=
-a.org.uk/scheduler/job/1654803
-> # test job: [a1d0b0ae65ae3f32597edfbb547f16c75601cd87] https://lava.siren=
-a.org.uk/scheduler/job/1654219
-> # test job: [3059067fd3378a5454e7928c08d20bf3ef186760] https://lava.siren=
-a.org.uk/scheduler/job/1653991
-> # test job: [9a200cbdb54349909a42b45379e792e4b39dd223] https://lava.siren=
-a.org.uk/scheduler/job/1654737
-> # test job: [2d86d2585ab929a143d1e6f8963da1499e33bf13] https://lava.siren=
-a.org.uk/scheduler/job/1655874
-> # test job: [886f42ce96e7ce80545704e7168a9c6b60cd6c03] https://lava.siren=
-a.org.uk/scheduler/job/1654309
-> # test job: [162e23657e5379f07c6404dbfbf4367cb438ea7d] https://lava.siren=
-a.org.uk/scheduler/job/1652988
-> # test job: [b5a4da2c459f79a2c87c867398f1c0c315779781] https://lava.siren=
-a.org.uk/scheduler/job/1882244
-> # bad: [b5a4da2c459f79a2c87c867398f1c0c315779781] Add linux-next specific=
- files for 20250924
-> git bisect bad b5a4da2c459f79a2c87c867398f1c0c315779781
-> # test job: [0472b4c78c217f5ee557b636857bce6a4417fb66] https://lava.siren=
-a.org.uk/scheduler/job/1882666
-> # bad: [0472b4c78c217f5ee557b636857bce6a4417fb66] Merge branch 'main' of =
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-> git bisect bad 0472b4c78c217f5ee557b636857bce6a4417fb66
-> # test job: [6610ba341bd7cfeb4cc00d0365c82b4ce961d4cb] https://lava.siren=
-a.org.uk/scheduler/job/1882922
-> # bad: [6610ba341bd7cfeb4cc00d0365c82b4ce961d4cb] Merge branch 'fs-next' =
-of linux-next
-> git bisect bad 6610ba341bd7cfeb4cc00d0365c82b4ce961d4cb
-> # skip: [7d14bf61ad6bcfd7063346d41bf728f3c358b144] Merge branch 'for-next=
-' of https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git
-> git bisect skip 7d14bf61ad6bcfd7063346d41bf728f3c358b144
-> # test job: [3e6db854a22e728b58ed2ef200495521a89ad6e1] https://lava.siren=
-a.org.uk/scheduler/job/1883359
-> # good: [3e6db854a22e728b58ed2ef200495521a89ad6e1] Merge branch 'for-next=
-' of https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git
-> git bisect good 3e6db854a22e728b58ed2ef200495521a89ad6e1
-> # test job: [a22a9e1271fb505f2c85d526d05aad5dde2f50e1] https://lava.siren=
-a.org.uk/scheduler/job/1883508
-> # good: [a22a9e1271fb505f2c85d526d05aad5dde2f50e1] ARM: dts: imx6ul-tx6ul=
-: Switch away from deprecated `phy-reset-gpios`
-> git bisect good a22a9e1271fb505f2c85d526d05aad5dde2f50e1
-> # test job: [ae014fbc99c7f986ee785233e7a5336834e39af4] https://lava.siren=
-a.org.uk/scheduler/job/1883688
-> # good: [ae014fbc99c7f986ee785233e7a5336834e39af4] arm64: dts: renesas: r=
-zg2lc-smarc: Disable CAN-FD channel0
-> git bisect good ae014fbc99c7f986ee785233e7a5336834e39af4
-> # skip: [5fc6bef178f1b644f1439e520c8f83bfc83a1252] cgroup: split namespac=
-e into separate header
-> git bisect skip 5fc6bef178f1b644f1439e520c8f83bfc83a1252
-> # skip: [2b8b848817ef69f59a9bf6846a44b9f8809a7875] Merge branch 'for-next=
-' of https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux.git
-> git bisect skip 2b8b848817ef69f59a9bf6846a44b9f8809a7875
-> # test job: [aac9b7716efe1815a2026ba6c3d4a3d10b39fd0f] https://lava.siren=
-a.org.uk/scheduler/job/1883993
-> # skip: [aac9b7716efe1815a2026ba6c3d4a3d10b39fd0f] scsi: Always define bl=
-ogic_pci_tbl structure
-> git bisect skip aac9b7716efe1815a2026ba6c3d4a3d10b39fd0f
-> # test job: [ab6d91d141a801dadf9eed7860b2ea09c9268149] https://lava.siren=
-a.org.uk/scheduler/job/1884076
-> # good: [ab6d91d141a801dadf9eed7860b2ea09c9268149] dt-bindings: clock: gc=
-c-sdm660: Add LPASS/CDSP vote clocks/GDSCs
-> git bisect good ab6d91d141a801dadf9eed7860b2ea09c9268149
-> # test job: [2742d963e1dd7f4a3d0505044323b091daffcddc] https://lava.siren=
-a.org.uk/scheduler/job/1884218
-> # good: [2742d963e1dd7f4a3d0505044323b091daffcddc] arm64: dts: ti: k3-j78=
-4s4-ti-ipc-firmware: Refactor IPC cfg into new dtsi
-> git bisect good 2742d963e1dd7f4a3d0505044323b091daffcddc
-> # test job: [bdd235f2df6d5d6cf00cdf474970b1e6d177f2bd] https://lava.siren=
-a.org.uk/scheduler/job/1884384
-> # good: [bdd235f2df6d5d6cf00cdf474970b1e6d177f2bd] arm64: dts: qcom: sm85=
-50: move dp0 data-lanes to SoC dtsi
-> git bisect good bdd235f2df6d5d6cf00cdf474970b1e6d177f2bd
-> # test job: [55b7522ef2e142964595a73cc2ec0b704a353dc6] https://lava.siren=
-a.org.uk/scheduler/job/1884699
-> # good: [55b7522ef2e142964595a73cc2ec0b704a353dc6] mm/vma: rename __mmap_=
-prepare() function to avoid confusion
-> git bisect good 55b7522ef2e142964595a73cc2ec0b704a353dc6
-> # test job: [46961265bdfb9c237cb03ea6b640b8e7588a982a] https://lava.siren=
-a.org.uk/scheduler/job/1884880
-> # good: [46961265bdfb9c237cb03ea6b640b8e7588a982a] arm64: dts: fsl-ls1046=
-a: Add default GIC address cells
-> git bisect good 46961265bdfb9c237cb03ea6b640b8e7588a982a
-> # test job: [abfbfb98acfe6fd603d48424e32f8d99922e70b9] https://lava.siren=
-a.org.uk/scheduler/job/1885006
-> # good: [abfbfb98acfe6fd603d48424e32f8d99922e70b9] Merge tag 'amlogic-arm=
-64-dt-for-v6.18' of https://git.kernel.org/pub/scm/linux/kernel/git/amlogic=
-/linux into soc/dt
-> git bisect good abfbfb98acfe6fd603d48424e32f8d99922e70b9
-> # test job: [5c3d22b9ba905785648ff7117f86787f41d899bd] https://lava.siren=
-a.org.uk/scheduler/job/1885153
-> # good: [5c3d22b9ba905785648ff7117f86787f41d899bd] Merge branch 'for-next=
-' of https://github.com/Xilinx/linux-xlnx.git
-> git bisect good 5c3d22b9ba905785648ff7117f86787f41d899bd
-> # test job: [c54644c3221b6230a9fc0f9f09630b4ef7a6bd79] https://lava.siren=
-a.org.uk/scheduler/job/1885310
-> # bad: [c54644c3221b6230a9fc0f9f09630b4ef7a6bd79] Merge branch 'for-next'=
- of https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
-> git bisect bad c54644c3221b6230a9fc0f9f09630b4ef7a6bd79
-> # test job: [8558791888761953dc60f8d2925f7299e65b2052] https://lava.siren=
-a.org.uk/scheduler/job/1885393
-> # good: [8558791888761953dc60f8d2925f7299e65b2052] Merge branch 'for-next=
-' of https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-> git bisect good 8558791888761953dc60f8d2925f7299e65b2052
-> # test job: [a5b2913640341a5260a4b5db20dd2ecf807700f2] https://lava.siren=
-a.org.uk/scheduler/job/1885427
-> # bad: [a5b2913640341a5260a4b5db20dd2ecf807700f2] Merge branch 'vfs-6.18.=
-writeback' into vfs.all
-> git bisect bad a5b2913640341a5260a4b5db20dd2ecf807700f2
-> # test job: [5890f504ef543190beae2a4e244bbfa7c3e0b57c] https://lava.siren=
-a.org.uk/scheduler/job/1885602
-> # good: [5890f504ef543190beae2a4e244bbfa7c3e0b57c] ns: add ns_debug()
-> git bisect good 5890f504ef543190beae2a4e244bbfa7c3e0b57c
-> # test job: [7617579235071cb597297ff92c8648dfe712a041] https://lava.siren=
-a.org.uk/scheduler/job/1885955
-> # bad: [7617579235071cb597297ff92c8648dfe712a041] Merge branch 'vfs-6.18.=
-workqueue' into vfs.all
-> git bisect bad 7617579235071cb597297ff92c8648dfe712a041
-> # test job: [29ecd1ca48ec2bd1761e82d69f76d34411c88eb4] https://lava.siren=
-a.org.uk/scheduler/job/1886008
-> # bad: [29ecd1ca48ec2bd1761e82d69f76d34411c88eb4] Merge branch 'vfs-6.18.=
-misc' into vfs.all
-> git bisect bad 29ecd1ca48ec2bd1761e82d69f76d34411c88eb4
-> # test job: [afd77d2050c35aee0d51ab7fb5b36a0fcabd4eee] https://lava.siren=
-a.org.uk/scheduler/job/1886080
-> # good: [afd77d2050c35aee0d51ab7fb5b36a0fcabd4eee] initramfs: Replace str=
-cpy() with strscpy() in find_link()
-> git bisect good afd77d2050c35aee0d51ab7fb5b36a0fcabd4eee
-> # test job: [2bc5bfbfd3f27f87e70e840fee6a403051b763fa] https://lava.siren=
-a.org.uk/scheduler/job/1886130
-> # good: [2bc5bfbfd3f27f87e70e840fee6a403051b763fa] statmount: don't call =
-path_put() under namespace semaphore
-> git bisect good 2bc5bfbfd3f27f87e70e840fee6a403051b763fa
-> # test job: [e6524dd4c06824737d6a8f5eb7d0827cbe08a64a] https://lava.siren=
-a.org.uk/scheduler/job/1886155
-> # bad: [e6524dd4c06824737d6a8f5eb7d0827cbe08a64a] fcntl: trim arguments
-> git bisect bad e6524dd4c06824737d6a8f5eb7d0827cbe08a64a
-> # test job: [59bfb66816809996618dc4270845036ba02d8837] https://lava.siren=
-a.org.uk/scheduler/job/1886305
-> # bad: [59bfb66816809996618dc4270845036ba02d8837] listmount: don't call p=
-ath_put() under namespace semaphore
-> git bisect bad 59bfb66816809996618dc4270845036ba02d8837
-> # first bad commit: [59bfb66816809996618dc4270845036ba02d8837] listmount:=
- don't call path_put() under namespace semaphore
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+To: David Hildenbrand <david@redhat.com>, Dave Hansen
+ <dave.hansen@intel.com>, "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
+ "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
+ <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
+ "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
+ <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
+ "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
+ "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
+ <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
+ "shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com"
+ <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "Cali, Marco" <xmarcalx@amazon.co.uk>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+ "Thomson, Jack" <jackabt@amazon.co.uk>,
+ "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
+ "tabba@google.com" <tabba@google.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+ <20250924152214.7292-1-roypat@amazon.co.uk>
+ <20250924152214.7292-3-roypat@amazon.co.uk>
+ <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
+ <c1875a54-0c87-450f-9370-29e7ec4fea3d@redhat.com>
+ <82bff1c4-987f-46cb-833c-bd99eaa46e7a@intel.com>
+ <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Patrick Roy <patrick.roy@linux.dev>
+Content-Language: en-US
+In-Reply-To: <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
---=20
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+On Thu, 2025-09-25 at 21:13 +0100, David Hildenbrand wrote:
+> On 25.09.25 21:59, Dave Hansen wrote:
+>> On 9/25/25 12:20, David Hildenbrand wrote:
+>>> On 25.09.25 20:27, Dave Hansen wrote:
+>>>> On 9/24/25 08:22, Roy, Patrick wrote:
+>>>>> Add an option to not perform TLB flushes after direct map manipulations.
+>>>>
+>>>> I'd really prefer this be left out for now. It's a massive can of worms.
+>>>> Let's agree on something that works and has well-defined behavior before
+>>>> we go breaking it on purpose.
+>>>
+>>> May I ask what the big concern here is?
+>>
+>> It's not a _big_ concern. 
+> 
+> Oh, I read "can of worms" and thought there is something seriously problematic :)
+> 
+>> I just think we want to start on something
+>> like this as simple, secure, and deterministic as possible.
+> 
+> Yes, I agree. And it should be the default. Less secure would have to be opt-in and documented thoroughly.
+
+Yes, I am definitely happy to have the 100% secure behavior be the
+default, and the skipping of TLB flushes be an opt-in, with thorough
+documentation!
+
+But I would like to include the "skip tlb flushes" option as part of
+this patch series straight away, because as I was alluding to in the
+commit message, with TLB flushes this is not usable for Firecracker for
+performance reasons :(
+
+>>
+>> Let's say that with all the unmaps that load_unaligned_zeropad() faults
+>> start to bite us. It'll take longer to find them if the TLB isn't flushed.
+>>
+>> Basically, it'll make the bad things happen sooner rather than later.
+> 
+> Agreed.
+> 
+
+Best,
+Patrick
 
