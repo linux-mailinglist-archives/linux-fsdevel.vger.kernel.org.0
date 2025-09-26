@@ -1,117 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-62908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04D5BA4C3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 19:18:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FA8BA4DB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 20:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DF12A7B7B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 17:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB09B3BEA41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 18:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18413002CA;
-	Fri, 26 Sep 2025 17:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MypcvIuK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9E62FFDD3;
+	Fri, 26 Sep 2025 18:13:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57A21FAC34
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 17:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8DC277C9D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 18:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758907087; cv=none; b=p2DKAanV1x5dpOWlQWMHZBzwTK5FHUdqs+i85vrhdBUDExK/rf5T354j/XsGaykFqccm43vnrDorHSlvRbSeNJkabZHjNSW3R9vtPfpH6tuQSb6SlID/r4TCD7NMn+HQ9CqBu1Qk6kWSJ2MHizTSe5DIe5cgzMUOk0+g8fT5Na8=
+	t=1758910412; cv=none; b=cJxONZHXzxLujIi+JxQdi44mLHrWRNjSSji4T5Cq1+p3+37Koi+Yb5pNTGerE3Of9SY7byqwRPuvChXAYjqvmD7UT6MV73WL7jjuSzn1iE+4Yo9nUzanWDQL4xcgIomsHa5Rv8+3wHswK7f/+4GqOTkX8VhjuPZO0Ob6r6UlTVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758907087; c=relaxed/simple;
-	bh=twsiJ2qakSUahgfw3UafpVybSK1kHf5zT13jX0k1knI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWk4fKBlQL8LXVm10HfqBoaIVfhooSbZvpW4GImV5RFBiIeHD8JvLq06mCRugo+HcQTcXB5ct3701UzrIQzQYjrWGegAe1mPl2Tx8wxHdsdsRPwPsn3tnCoj4Q32R8VpOGFJTgFo4+gHQdpbRjLApj+cv8NmVgd98uBbeDhd7og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MypcvIuK; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758907085; x=1790443085;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=twsiJ2qakSUahgfw3UafpVybSK1kHf5zT13jX0k1knI=;
-  b=MypcvIuKA4QXYeFjmsTyld1E2r2/jOUmbs5jMdbqT+dDM5HsTs/T8wsp
-   aKYnAjgDUQGdtotu0S+iY9Sx4boxkEDkUh+115r0Ase2vYynEoQW7hH1g
-   M+/yajaL7BiYAyme7q8yHu6VuuBC6k81fziAguFPRX/q0oRXnS78Sk5pJ
-   uNYN2Ou2vNzb48B2tB3v3h1VttcT5Ml4RnJXDV3hd6bZFdMCtAg9T3wcx
-   D0PrLB9BilR1ceBfhX9b2LsDbJIWkfcsG8ZOimq839WUaTTSY5Lshk0Ye
-   AHdbjI4ZtFGIqqSCMeKfCEwjFSbIPeC3gGdJoME3u3m6/JpvXKYv8q1C+
-   Q==;
-X-CSE-ConnectionGUID: kCQ7LqHsSEaKfqN96U73Uw==
-X-CSE-MsgGUID: KRhSX1+9RKaAq33/Ek79dA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="86688823"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="86688823"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 10:18:05 -0700
-X-CSE-ConnectionGUID: T7ilq8D8R3e2X6iZgxzwFg==
-X-CSE-MsgGUID: Toex+4s5TAm/oJqPr9lAlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177511108"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 26 Sep 2025 10:18:03 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2C52-0006St-18;
-	Fri, 26 Sep 2025 17:18:00 +0000
-Date: Sat, 27 Sep 2025 01:17:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neilb@ownmail.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/11] VFS/ovl/smb: introduce start_renaming_dentry()
-Message-ID: <202509270016.YwqJ8gSc-lkp@intel.com>
-References: <20250926025015.1747294-10-neilb@ownmail.net>
+	s=arc-20240116; t=1758910412; c=relaxed/simple;
+	bh=Y4MacUweR9Sb2UzA5K/8xmpkwo1sje1B0Bb3PUY6nFU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i2GD9NZUxsmahtMxIW2dF/XmPIIHAKCncSFtZIseGM/a3TXi994lomH5CEzbfwrWz7IYyBQQcQ/zrDE9tEiQcIYuGEb62s/FVBTzqJZ1SipXNaRnexetiWoxGRWup9dLO7pgJFQoAi3Aq1HNxPa31Jluj+lCxLiK/Jr7JAeUmDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42486f6da6fso35461255ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 11:13:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758910410; x=1759515210;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=trW/5NZOPRaukq5PbeSv7HCfuq1dc+w+tUhzCR2hFEg=;
+        b=Lk1/Q5KOSl6nIIVK7Sl52U0X0fSVLi/X1EIdov5gnZOzmbSyUlDQU0idS27WdhDC+w
+         +/jMTf4L4Rz1+lBigaAOA2XHBYGYOul55Udp6ufWSyRObjVup508Ip/KtL2qpX/6oH6d
+         4nWrZ3cgtQehCwZvEGJwaddghSeN2Y7z2k3pErH6BAk+HbkKY6P94Nq1ROGN45iIxKPd
+         HUrFDMmLtQpp3lb51K/mgrBOnrcVn066dXztCZP8vFAxYAmT9gkNH51hhIYnPdNgUOGc
+         QCQitzZpjxG5p4xLZXQr/0ByJNXvMKJbC7Y45GfIl0s/38SaYWWzJNGnTVjnFMTDJ9n+
+         s3HA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbCYn1Qm2RGXejRObAokWtYe4yWsGQbSs8IiycOiog2vBX3u5l4hy+nlsEPzV76kHS3zWe4hm2NUf2+TJw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlzXF3jHzS0tUpauWGA90zMuaaKelm2RFy13ER0rJmCQa7UFcG
+	BEVq8+Q3I+L+rdaR3uFteWB10rs1VrsnqU1cGEZQN+hPe+Ox1MvrNWcfx8qCymuRwJkoO1ySl0q
+	lMjNGZSwbmgfcgQy1tvwqvPoIH9BTRlVLNyWwmjCqw4JFHlO4GFuoOMgaMeQ=
+X-Google-Smtp-Source: AGHT+IErxeL7xZBwcqKbjwuUdAQvqvclikF1LKb7JolrauwF35tFenXJzZr4pP+7hdqoDn64jIhyZX+nNkIE7fTJaGjGtUTAaizL
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926025015.1747294-10-neilb@ownmail.net>
+X-Received: by 2002:a92:ce90:0:b0:40d:e7d8:63fa with SMTP id
+ e9e14a558f8ab-42595650bd3mr89971875ab.26.1758910409965; Fri, 26 Sep 2025
+ 11:13:29 -0700 (PDT)
+Date: Fri, 26 Sep 2025 11:13:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d6d7c9.a00a0220.102ee.0008.GAE@google.com>
+Subject: [syzbot] Monthly exfat report (Sep 2025)
+From: syzbot <syzbot+list5c996330145ae76e69a2@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi NeilBrown,
+Hello exfat maintainers/developers,
 
-kernel test robot noticed the following build errors:
+This is a 31-day syzbot report for the exfat subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/exfat
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on next-20250926]
-[cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus viro-vfs/for-next linus/master v6.17-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 36 have already been fixed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/debugfs-rename-end_creating-to-debugfs_end_creating/20250926-105302
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250926025015.1747294-10-neilb%40ownmail.net
-patch subject: [PATCH 09/11] VFS/ovl/smb: introduce start_renaming_dentry()
-config: x86_64-buildonly-randconfig-005-20250926 (https://download.01.org/0day-ci/archive/20250927/202509270016.YwqJ8gSc-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509270016.YwqJ8gSc-lkp@intel.com/reproduce)
+Some of the still happening issues:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509270016.YwqJ8gSc-lkp@intel.com/
+Ref Crashes Repro Title
+<1> 485     Yes   WARNING in rcu_sync_dtor (2)
+                  https://syzkaller.appspot.com/bug?extid=823cd0d24881f21ab9f1
+<2> 78      Yes   kernel BUG in folio_set_bh
+                  https://syzkaller.appspot.com/bug?extid=f4f84b57a01d6b8364ad
+<3> 16      Yes   WARNING in fanotify_handle_event (2)
+                  https://syzkaller.appspot.com/bug?extid=318aab2cf26bb7d40228
+<4> 5       Yes   INFO: task hung in lock_two_directories (4)
+                  https://syzkaller.appspot.com/bug?extid=1bfacdf603474cfa86bd
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->> ERROR: modpost: "start_renaming_dentry" [fs/overlayfs/overlay.ko] undefined!
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
