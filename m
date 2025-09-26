@@ -1,254 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-62912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEC3BA4FAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 21:36:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CC8BA5009
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 21:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7629A1C25406
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 19:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12983253FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 19:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE22A283142;
-	Fri, 26 Sep 2025 19:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E430E2848AE;
+	Fri, 26 Sep 2025 19:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j8q28ATJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRHhKXJT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A9F27FB10
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 19:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C9D283CA7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 19:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758915392; cv=none; b=Ls1GQaCzUqw4zOwRO2spZ+ILvTYsISDzctlvFl/j7vCCOhXUpIIPzuFmNESHgIzj+ogvPnjausGUZf5g9KONa7O6/mR1TbrC4tHLyUYXm/kDMG3OdMRxyLW1I1JN/mVf0TeS+/Hq+ySSDs/4v1OYhGySUGABC+zmzd0Gs6LIvZA=
+	t=1758916369; cv=none; b=F1vymPQMFU3fOBijU4q/jqqIxxWHMwKxHWPpYeOdE+4QRZlO37US/Ra7sJv9poI6fi8TrDY4Q54c4rDmezn4msATkIzMCM3JUY7w7v1Q7Mxs9/wjq6J7bhidKuVYxemJHCpBtZqAyodFEXXhqBxC6/vdQJrgmPmqW4xyK4sFPCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758915392; c=relaxed/simple;
-	bh=mSQKwT+RgGBH3fgRBwHxAMNFrCKxSsVizA+2Gjhn/pY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iGs8ZKnkZf/VAnHcy6e/fHJDn5PneXYvpDoiuZ1SgA/FRfL/vjYTKLb4/Zuz3cwcULx/az+8reAmEaS8UTzLsU8x5dSNbk2vIB5InF06TzFuv/6mnP/a/lVW1k+mPbf0Y4ewQMJ0EgzI9o9o4EIqfcNUllZVerXFoAcPbZF20io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j8q28ATJ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3307af9b595so2356085a91.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 12:36:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758915389; x=1759520189; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ob/iOTJHVtIxulD10+qfYKaLq05XmILMIQZZtCe3LNU=;
-        b=j8q28ATJXP6njsfMncRoTLIPRIZOM6TE6yvS0FWfgG9oEGpEjpU5QpwTkfS2MhxmOT
-         1WnZ3dk97n6mJLnqIYRvGKm1tUWygYHs95kuxhokBn9aO9RA1XUNY7DN17Q5T1gbSffp
-         P8WsrJuo9tYImTPRk5pu5Fp/kL5Rz2UKC420dK3FSmNh+Xr7sdZzm5kam8Oi0gzgwoX6
-         36VJZSVNuL0mnfDe6/FOqXW7SbQ2YLXEL7NNTot3y7a4uykb9cHCv9EH2EzWB3jZ17Uz
-         ry7y+KqDaMrsA3AHIPC0dEf4lqAwkkAR4r5FfFfvF1ng9ggW9GDE4eP7vjtSrwB8SDYw
-         aCgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758915389; x=1759520189;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ob/iOTJHVtIxulD10+qfYKaLq05XmILMIQZZtCe3LNU=;
-        b=cd/NlhkeM0Lq8PM/rRnkxNkVwJIRFXMDdCfh57MSgCS7Euo563bTlWItz+38VAji/w
-         u87mysJckDZi0SrGxvX7P7f/o1pCMuDD1bI44bwuqLAgoaA7nXCqdBXjZjKAslm5AxIu
-         yCJSSxMszqSE9qE3LogDinvx4Kg+Tkmj2NPFB5qWIM17lNywsy8M5Cfgsj6oBE6hUHWs
-         hH9vpBwPCqU/Jgm6ScHYla7QPEL8K10xzN5IdyxtaMa0sNR9WEVhhupPS6HhUt1GboUx
-         FQZTorES8upZk5YjKkzePdotn51pUKm/+1xRw1RDM2TPs2Vs0bXOHpB8GamG6lPRG9m2
-         /biw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVkuYtxLgHMEPKL4bN/f8TXDkonm1sNT9YGSmvDOm9X26Fhg6PYWJEdY/h/ye9uWKrY5ecKXybhnBnUU6L@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFAnJMhA9SoOv7ww1feh8/1g34kpsFqIqcq09dV9wiX59SjBua
-	nxQei0HLYxF+mbpBRCLAclw5lSsCX1Ar2WNQ2yzKQ6e88IWZVZeFG9+X6ZEXK7vuWLZC+CxMBM2
-	cMBt9WA==
-X-Google-Smtp-Source: AGHT+IFDksLZfiXKr/BILK4eWMYTpySqi06A6DOxX2zeNKzHO6pmJyAGRZ48y/vvPgWC6WRjoIw3qUZ+1+0=
-X-Received: from pjbaz14.prod.google.com ([2002:a17:90b:28e:b0:32d:e264:a78e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1808:b0:32b:d8bf:c785
- with SMTP id 98e67ed59e1d1-3342a2c3979mr8949944a91.20.1758915388771; Fri, 26
- Sep 2025 12:36:28 -0700 (PDT)
-Date: Fri, 26 Sep 2025 12:36:27 -0700
-In-Reply-To: <aNVQJqYLX17v-fsf@google.com>
+	s=arc-20240116; t=1758916369; c=relaxed/simple;
+	bh=oO+7zCRCpcn8afztGwY+HzbQXwPySfZfX7HQqZPBq4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pPPR3EPHw68QJDD6WTWdblyURbO3MLUqZOevQ43PfJIKdT8udSMno4VpTddWsRWnbksxSfkQIkpxt61oVhhhQPNH0c8RRF25v06kmRuA8y5W/uSbaWmfvgWBYKuOqIOacg9qvEtAAOLXyfRg6hkfPxqcj2XEB0/zCSiHB53078A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRHhKXJT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758916366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XHvwAIHkoSzj/0sM3EQyAOJu3zkKVKdDZuOCGzwODmg=;
+	b=eRHhKXJTjouWf/y91w+UTVWCgXOMJrFz9jv7vQYWD8JbcWbZCS/7PT9iQ6P3jS4suZUuc7
+	PXPNiIwyF09alRL+wqMiutZ8SkhPnGdfOY6djzTWmlxEzXm/R8spXL/QDpv0Fri4hUAAlP
+	16HiBbatRZFAaMouzl6J4jKGkh1VbUg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-41-t223hT9KN56yp_SnsKdUYg-1; Fri,
+ 26 Sep 2025 15:52:43 -0400
+X-MC-Unique: t223hT9KN56yp_SnsKdUYg-1
+X-Mimecast-MFC-AGG-ID: t223hT9KN56yp_SnsKdUYg_1758916362
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B7A41800452;
+	Fri, 26 Sep 2025 19:52:42 +0000 (UTC)
+Received: from cmirabil.redhat.com (unknown [10.22.90.77])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71B901800446;
+	Fri, 26 Sep 2025 19:52:30 +0000 (UTC)
+From: Charles Mirabile <cmirabil@redhat.com>
+To: cmirabil@redhat.com
+Cc: Liam.Howlett@oracle.com,
+	a.hindborg@kernel.org,
+	akpm@linux-foundation.org,
+	alex.gaynor@gmail.com,
+	alexghiti@rivosinc.com,
+	aliceryhl@google.com,
+	alistair.francis@wdc.com,
+	andybnac@gmail.com,
+	aou@eecs.berkeley.edu,
+	arnd@arndb.de,
+	atishp@rivosinc.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	bp@alien8.de,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	charlie@rivosinc.com,
+	cleger@rivosinc.com,
+	conor+dt@kernel.org,
+	conor@kernel.org,
+	corbet@lwn.net,
+	dave.hansen@linux.intel.com,
+	david@redhat.com,
+	debug@rivosinc.com,
+	devicetree@vger.kernel.org,
+	ebiederm@xmission.com,
+	evan@rivosinc.com,
+	gary@garyguo.net,
+	hpa@zytor.com,
+	jannh@google.com,
+	jim.shu@sifive.com,
+	kees@kernel.org,
+	kito.cheng@sifive.com,
+	krzk+dt@kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org,
+	lorenzo.stoakes@oracle.com,
+	lossin@kernel.org,
+	mingo@redhat.com,
+	ojeda@kernel.org,
+	oleg@redhat.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	peterz@infradead.org,
+	pjw@kernel.org,
+	richard.henderson@linaro.org,
+	rick.p.edgecombe@intel.com,
+	robh@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	samitolvanen@google.com,
+	shuah@kernel.org,
+	tglx@linutronix.de,
+	tmgross@umich.edu,
+	vbabka@suse.cz,
+	x86@kernel.org,
+	zong.li@sifive.com
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+Date: Fri, 26 Sep 2025 15:52:24 -0400
+Message-ID: <20250926195224.351862-1-cmirabil@redhat.com>
+In-Reply-To: <20250926192919.349578-1-cmirabil@redhat.com>
+References: <20250926192919.349578-1-cmirabil@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-9-shivankg@amd.com>
- <aNVQJqYLX17v-fsf@google.com>
-Message-ID: <aNbrO7A7fSjb4W84@google.com>
-Subject: Re: [PATCH kvm-next V11 6/7] KVM: guest_memfd: Enforce NUMA mempolicy
- using shared policy
-From: Sean Christopherson <seanjc@google.com>
-To: Shivank Garg <shivankg@amd.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
-	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
-	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
-	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
-	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
-	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, tabba@google.com, 
-	ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
-	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org, 
-	cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com, 
-	roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org, 
-	ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com, 
-	gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, 
-	yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Sep 25, 2025, Sean Christopherson wrote:
-> On Wed, Aug 27, 2025, Shivank Garg wrote:
-> > @@ -26,6 +28,9 @@ static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
-> >  	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
-> >  }
-> >  
-> > +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
-> > +						   pgoff_t index);
-> > +
-> >  /**
-> >   * folio_file_pfn - like folio_file_page, but return a pfn.
-> >   * @folio: The folio which contains this index.
-> > @@ -112,7 +117,25 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
-> >  {
-> >  	/* TODO: Support huge pages. */
-> > -	return filemap_grab_folio(inode->i_mapping, index);
-> > +	struct mempolicy *policy;
-> > +	struct folio *folio;
-> > +
-> > +	/*
-> > +	 * Fast-path: See if folio is already present in mapping to avoid
-> > +	 * policy_lookup.
-> > +	 */
-> > +	folio = __filemap_get_folio(inode->i_mapping, index,
-> > +				    FGP_LOCK | FGP_ACCESSED, 0);
-> > +	if (!IS_ERR(folio))
-> > +		return folio;
-> > +
-> > +	policy = kvm_gmem_get_pgoff_policy(KVM_GMEM_I(inode), index);
-> > +	folio = __filemap_get_folio_mpol(inode->i_mapping, index,
-> > +					 FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-> > +					 mapping_gfp_mask(inode->i_mapping), policy);
-> > +	mpol_cond_put(policy);
-> > +
-> > +	return folio;
-> >  }
-> >  
-> >  static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
-> > @@ -372,8 +395,45 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
-> >  	return ret;
-> >  }
-> >  
-> > +#ifdef CONFIG_NUMA
-> > +static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
-> > +{
-> > +	struct inode *inode = file_inode(vma->vm_file);
-> > +
-> > +	return mpol_set_shared_policy(&KVM_GMEM_I(inode)->policy, vma, mpol);
-> > +}
-> > +
-> > +static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-> > +					     unsigned long addr, pgoff_t *pgoff)
-> > +{
-> > +	struct inode *inode = file_inode(vma->vm_file);
-> > +
-> > +	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> > +	return mpol_shared_policy_lookup(&KVM_GMEM_I(inode)->policy, *pgoff);
-> > +}
-> > +
-> > +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
-> > +						   pgoff_t index)
-> 
-> I keep reading this is "page offset policy", as opposed to "policy given a page
-> offset".  Another oddity that is confusing is that this helper explicitly does
-> get_task_policy(current), while kvm_gmem_get_policy() lets the caller do that.
-> The end result is the same, but I think it would be helpful for gmem to be
-> internally consistent.
-> 
-> If we have kvm_gmem_get_policy() use this helper, then we can kill two birds with
-> one stone:
-> 
-> static struct mempolicy *__kvm_gmem_get_policy(struct gmem_inode *gi,
-> 					       pgoff_t index)
-> {
-> 	struct mempolicy *mpol;
-> 
-> 	mpol = mpol_shared_policy_lookup(&gi->policy, index);
-> 	return mpol ? mpol : get_task_policy(current);
-> }
-> 
-> static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-> 					     unsigned long addr, pgoff_t *pgoff)
-> {
-> 	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> 
-> 	return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
+Hi -
 
-Argh!!!!!  This breaks the selftest because do_get_mempolicy() very specifically
-falls back to the default_policy, NOT to the current task's policy.  That is
-*exactly* the type of subtle detail that needs to be commented, because there's
-no way some random KVM developer is going to know that returning NULL here is
-important with respect to get_mempolicy() ABI.
+Sorry for my previous email, I realized I was mistaken...
 
-On a happier note, I'm very glad you wrote a testcase :-)
+On Fri, Sep 26, 2025 at 03:29:19PM -0400, Charles Mirabile wrote:
+> Hi - 
+> 
+> Hoping that I got everything right with git-send-email so that this is
+> delivered alright...
+> 
+> Wanted to jump in to head off a potential talking past one another / 
+> miscommunication situation I see here.
+> 
+> On Wed, Sep 24, 2025 at 08:36:11AM -0600, Paul Walmsley wrote:
+> > Hi,
+> > 
+> > On Thu, 31 Jul 2025, Deepak Gupta wrote:
+> > 
+> > [ ... ]
+> > 
+> > > vDSO related Opens (in the flux)
+> > > =================================
+> > > 
+> > > I am listing these opens for laying out plan and what to expect in future
+> > > patch sets. And of course for the sake of discussion.
+> > > 
+> > 
+> > [ ... ]
+> > 
+> > > How many vDSOs
+> > > ---------------
+> > > Shadow stack instructions are carved out of zimop (may be operations) and if CPU
+> > > doesn't implement zimop, they're illegal instructions. Kernel could be running on
+> > > a CPU which may or may not implement zimop. And thus kernel will have to carry 2
+> > > different vDSOs and expose the appropriate one depending on whether CPU implements
+> > > zimop or not.
+> > 
+> > If we merge this series without this, then when CFI is enabled in the 
+> > Kconfig, we'll wind up with a non-portable kernel that won't run on older 
+> > hardware.  We go to great lengths to enable kernel binary portability 
+> > across the presence or absence of other RISC-V extensions, and I think 
+> > these CFI extensions should be no different.
+> 
+> That is not true, this series does not contain the VDSO changes so it can
+> be merged as is.
 
-I've got this as fixup-to-the-fixup:
+Oops... no sorry, it looks like it does. See 19/27. I was misled by the
+cover letter which said to pick that patch separately. I completely agree
+that that needs to not be included if this is to be merged.
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index e796cc552a96..61130a52553f 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -114,8 +114,8 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
-        return r;
- }
- 
--static struct mempolicy *__kvm_gmem_get_policy(struct gmem_inode *gi,
--                                              pgoff_t index)
-+static struct mempolicy *kvm_gmem_get_folio_policy(struct gmem_inode *gi,
-+                                                  pgoff_t index)
- {
- #ifdef CONFIG_NUMA
-        struct mempolicy *mpol;
-@@ -151,7 +151,7 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
-        if (!IS_ERR(folio))
-                return folio;
- 
--       policy = __kvm_gmem_get_policy(GMEM_I(inode), index);
-+       policy = kvm_gmem_get_folio_policy(GMEM_I(inode), index);
-        folio = __filemap_get_folio_mpol(inode->i_mapping, index,
-                                         FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-                                         mapping_gfp_mask(inode->i_mapping), policy);
-@@ -431,9 +431,18 @@ static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpo
- static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-                                              unsigned long addr, pgoff_t *pgoff)
- {
-+       struct inode *inode = file_inode(vma->vm_file);
-+
-         *pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
- 
--        return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
-+       /*
-+        * Note!  Directly return whatever the lookup returns, do NOT return
-+        * the current task's policy as is done when looking up the policy for
-+        * a specific folio.  Kernel ABI for get_mempolicy() is to return
-+        * MPOL_DEFAULT when there is no defined policy, not whatever the
-+        * default policy resolves to.
-+        */
-+        return mpol_shared_policy_lookup(&GMEM_I(inode)->policy, *pgoff);
- }
- #endif /* CONFIG_NUMA */
- 
+> 
+> > 
+> > So before considering this for merging, I'd like to see at least an 
+> > attempt to implement the dual-vDSO approach (or something equivalent) 
+> > where the same kernel binary with CFI enabled can run on both pre-Zimop 
+> > and post-Zimop hardware, with the existing userspaces that are common 
+> > today.
+> 
+> I agree that when the VDSO patches are submitted for inclusion they should
+> be written in a way that avoids limiting the entire kernel to either
+> pre-Zimop or post-Zimop hardware based on the config, but I think it
+> should be quite possible to perform e.g. runtime patching of the VDSO
+> to replace the Zimop instructions with nops if the config is enabled but
+> the hardware does not support Zimop.
+> 
+> However, that concern should not hold up this patch series. Raise it again
+> when the VDSO patches are posted.
+
+@Deepak, would it be possible to just resend this without the VDSO patch?
+
+Or to rework as I had alluded to to check for the presense of the extension
+and remove the instructions from the VDSO at boot if it is not found?
+
+> 
+> > 
+> > thanks Deepak,
+> > 
+> > - Paul
+> 
+> Best - Charlie
+> 
+
+Best - Charlie
 
 
