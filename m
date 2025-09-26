@@ -1,165 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-62891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C25BA41F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 16:22:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF480BA448F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 16:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5219F1C05827
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 14:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896BD622671
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 14:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEB922B8B0;
-	Fri, 26 Sep 2025 14:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC431CAA7B;
+	Fri, 26 Sep 2025 14:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqoCtWTE"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p0uimPCK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55B2248AE;
-	Fri, 26 Sep 2025 14:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C17199FBA;
+	Fri, 26 Sep 2025 14:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896362; cv=none; b=UaDAePn0Dh+dlWp7wksPIaKkaMvPQGbIFGYT9I2/VWLdg8xqfz+A6eYo6oejRhnrqQ/qyUz8gEVXyht9MvOQcugt/+pbh5zkRG5PuB3VMPQH43u/vSCmXibr141DZrE6nwlN6KOmjBze8T6S0wmoSt7IT2/Dq4FeDIy2xxMOR1c=
+	t=1758898173; cv=none; b=Fie7LPtj5zL+qCSKEwxHWzL8ZTtSph0Daro1RXJHKFeXqquSIcNNy57/KegBnixOjbNVsloxkbvaj2Ej8Vh843c20as9QCYbXo3NLG8gmcROvbF4dFR3snzWhUkHG+20rbc1ejWJRya/BF7Aazz0/E63TMLnI//TtJWMCnk0/HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896362; c=relaxed/simple;
-	bh=+mF3f5ZuZvF0EbugEE0LrQfm8njKZn68VeofxNQK/80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AlwXFPjewTc1e46WHSlFf4CSi14Rs54hBZFgGiJzAVjZij1WSmSOXgPHxnGbVUfzlW0GzkgWmRRVMWfzz2XcExpxx48ll7YLxpbI9FqPjPC8E70XdtvlKlaeAx80sG7FqbbrtKgSG2tui5btYteK0wp5oSs8HUytm2tvwN7gGBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqoCtWTE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78978C4CEF7;
-	Fri, 26 Sep 2025 14:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758896362;
-	bh=+mF3f5ZuZvF0EbugEE0LrQfm8njKZn68VeofxNQK/80=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZqoCtWTEXTK5whUjOQHMhVcHSV5/a2XqH+HuetiDLn8afsS5OaHisrdBQwoEyIuQJ
-	 KN/b2mz3hGa/HcrlN07or5Uff/0K0G+Q/dH7lxBH1jRHNgPqzp7rgEXtIyrWbw1CAE
-	 xQoQeb87YjmNMQzcpN9xBlmXlm0jA3QI4Z4wdstC+xOpd9nlZ7BNMx3PD+Th4kzyz/
-	 8Y9bdfnWzUxqTm2oSWZmdH/89ZblURkhTE5d4gn64nMeud18d/Z5lXZ6xKQxG5vSNi
-	 dHk0kyD0AY5yKdhgg1HdLT2sMT0FwFXq/5xNJOJx8k/ykhpx6l8KeFf7DDL4aqDXsZ
-	 LGKqKsInDCGAA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 12/12 for v6.18] async directory preliminaries
-Date: Fri, 26 Sep 2025 16:19:06 +0200
-Message-ID: <20250926-vfs-async-920f57c61768@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250926-vfs-618-e880cf3b910f@brauner>
-References: <20250926-vfs-618-e880cf3b910f@brauner>
+	s=arc-20240116; t=1758898173; c=relaxed/simple;
+	bh=X4MWoMvZpNFx+OVJEAY7k+/NlF9jfSSaTBDZkjwLetc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CmXvn2wVr5z7JzPj343KDVFF0HpDQrZtk4Dol4t2VTz2IpIoRZ3uZxSkiZTwHaN3ra4axQIbVqlP0ZZAk4mzUCciXaStm8XtWO9lZlsDI3ls+xsvbrY6hVoG4Xi+63Poc0WQ8+7ybIxl6lfB7NPD+clKfZKppmhRNgfN3ZxFRlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p0uimPCK; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <32608c1b-6da5-4a06-9790-58dfd4ba2011@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758898159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gXM7GNVXlwNM6qgC8RcEz4DIWXulx4en7MnJK64sYug=;
+	b=p0uimPCKzx+0lRZWcpXNlJCkvBNo1Ljba0JQRRiJr1JwGeyRPb/ZvYNiwaZnqmaqBF7Hfc
+	3c7Khai3reWQ5g+jEsG9PV/jiNF/B/MaQknVMCzw1Eig28PrpuaUFhS2uvhY6e0GXpTSzo
+	qpRv/xQvchLVI0CesjUiAFowJOpaF6Q=
+Date: Fri, 26 Sep 2025 15:49:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3822; i=brauner@kernel.org; h=from:subject:message-id; bh=+mF3f5ZuZvF0EbugEE0LrQfm8njKZn68VeofxNQK/80=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcW3CxVMtw37zW3rsuHUWW7q0x65XfdCQqXJMvMvtxb dsJF71vHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJ4GZkeHz8ZrlpkOWT4LsB QqZf3Jx0r62+aOS31Nxv5dvEgFmTtjIybHj7qODzAqsFN5gYyl7+WCbj90D5OXuhte3EPZeT35r P4wYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from direct
+ map
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "david@redhat.com" <david@redhat.com>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
+ "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
+ <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
+ "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
+ <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
+ "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
+ "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
+ <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
+ "shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com"
+ <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "Cali, Marco" <xmarcalx@amazon.co.uk>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+ "Thomson, Jack" <jackabt@amazon.co.uk>,
+ "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
+ "tabba@google.com" <tabba@google.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+ <20250924152214.7292-1-roypat@amazon.co.uk>
+ <20250924152214.7292-2-roypat@amazon.co.uk>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Patrick Roy <patrick.roy@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20250924152214.7292-2-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hey Linus,
 
-/* Summary */
-This contains further preparatory changes for the asynchronous directory
-locking scheme:
 
-* Add lookup_one_positive_killable() which allows overlayfs to perform
-  lookup that won't block on a fatal signal.
+On Wed, 2025-09-24 at 16:22 +0100, "Roy, Patrick" wrote:
 
-* Unify the mount idmap handling in struct renamedata as a rename can
-  only happen within a single mount.
+[...]
 
-* Introduce kern_path_parent() for audit which sets the path to the
-  parent and returns a dentry for the target without holding any locks
-  on return.
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 55b8d739779f..b7129c4868c5 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -4,6 +4,9 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/set_memory.h>
+> +
+> +#include <asm/tlbflush.h>
+>  
+>  #include "kvm_mm.h"
+>  
+> @@ -42,6 +45,44 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+>  	return 0;
+>  }
+>  
+> +#define KVM_GMEM_FOLIO_NO_DIRECT_MAP BIT(0)
+> +
+> +static bool kvm_gmem_folio_no_direct_map(struct folio *folio)
+> +{
+> +	return ((u64) folio->private) & KVM_GMEM_FOLIO_NO_DIRECT_MAP;
+> +}
+> +
+> +static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
+> +{
+> +	if (kvm_gmem_folio_no_direct_map(folio))
+> +		return 0;
+> +
+> +	int r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
+> +					 false);
+> +
+> +	if (!r) {
+> +		unsigned long addr = (unsigned long) folio_address(folio);
+> +		folio->private = (void *) ((u64) folio->private & KVM_GMEM_FOLIO_NO_DIRECT_MAP);
+> +		flush_tlb_kernel_range(addr, addr + folio_size(folio));
+> +	}
+> +
+> +	return r;
+> +}
 
-* Rename kern_path_locked() as it is only used to prepare for the
-  removal of an object from the filesystem:
+No idea how I managed to mess this function up so completely, but it
+should be more like
 
-   kern_path_locked()    => start_removing_path()
-   kern_path_create()    => start_creating_path()
-   user_path_create()    => start_creating_user_path()
-   user_path_locked_at() => start_removing_user_path_at()
-   done_path_create()    => end_creating_path()
-   NA                    => end_removing_path()
+static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
+{
+	int r = 0;
+	unsigned long addr = (unsigned long) folio_address(folio);
+	u64 gmem_flags = (u64) folio_inode(folio)->i_private;
 
-/* Testing */
+	if (kvm_gmem_folio_no_direct_map(folio) || !(gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP))
+		goto out;
 
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3+b1)
+	r = set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio), false);
 
-No build failures or warnings were observed.
+	if (r)
+		goto out;
 
-/* Conflicts */
+	folio->private = (void *) KVM_GMEM_FOLIO_NO_DIRECT_MAP;
+	flush_tlb_kernel_range(addr, addr + folio_size(folio));
 
-Merge conflicts with mainline
-=============================
+out:
+	return r;
+}
 
-No known conflicts.
+the version I sent (a) does not respect the flags passed to guest_memfd
+on creation, and (b) does not correctly set the bit in folio->private.
 
-Merge conflicts with other trees
-================================
+> +static void kvm_gmem_folio_restore_direct_map(struct folio *folio)
+> +{
+> +	/*
+> +	 * Direct map restoration cannot fail, as the only error condition
+> +	 * for direct map manipulation is failure to allocate page tables
+> +	 * when splitting huge pages, but this split would have already
+> +	 * happened in set_direct_map_invalid_noflush() in kvm_gmem_folio_zap_direct_map().
+> +	 * Thus set_direct_map_valid_noflush() here only updates prot bits.
+> +	 */
+> +	if (kvm_gmem_folio_no_direct_map(folio))
+> +		set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
+> +					 true);
+> +}
+> +
+>  static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>  {
+>  	folio_mark_uptodate(folio);
+> @@ -324,13 +365,14 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>  	struct folio *folio;
+>  	vm_fault_t ret = VM_FAULT_LOCKED;
+> +	int err;
+>  
+>  	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+>  		return VM_FAULT_SIGBUS;
+>  
+>  	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
+>  	if (IS_ERR(folio)) {
+> -		int err = PTR_ERR(folio);
+> +		err = PTR_ERR(folio);
+>  
+>  		if (err == -EAGAIN)
+>  			return VM_FAULT_RETRY;
+> @@ -348,6 +390,13 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+>  		kvm_gmem_mark_prepared(folio);
+>  	}
+>  
+> +	err = kvm_gmem_folio_zap_direct_map(folio);
+> +
+> +	if (err) {
+> +		ret = vmf_error(err);
+> +		goto out_folio;
+> +	}
+> +
+>  	vmf->page = folio_file_page(folio, vmf->pgoff);
+>  
+>  out_folio:
+> @@ -435,6 +484,8 @@ static void kvm_gmem_free_folio(struct folio *folio)
+>  	kvm_pfn_t pfn = page_to_pfn(page);
+>  	int order = folio_order(folio);
+>  
+> +	kvm_gmem_folio_restore_direct_map(folio);
+> +
+>  	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
+>  }
+>  
+> @@ -499,6 +550,9 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  	/* Unmovable mappings are supposed to be marked unevictable as well. */
+>  	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>  
+> +	if (flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)
+> +		mapping_set_no_direct_map(inode->i_mapping);
+> +
+>  	kvm_get_kvm(kvm);
+>  	gmem->kvm = kvm;
+>  	xa_init(&gmem->bindings);
+> @@ -523,6 +577,9 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+>  	if (kvm_arch_supports_gmem_mmap(kvm))
+>  		valid_flags |= GUEST_MEMFD_FLAG_MMAP;
+>  
+> +	if (kvm_arch_gmem_supports_no_direct_map())
+> +		valid_flags |= GUEST_MEMFD_FLAG_NO_DIRECT_MAP;
+> +
+>  	if (flags & ~valid_flags)
+>  		return -EINVAL;
+>  
+> @@ -687,6 +744,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+>  	if (!is_prepared)
+>  		r = kvm_gmem_prepare_folio(kvm, slot, gfn, folio);
+>  
+> +	kvm_gmem_folio_zap_direct_map(folio);
+> +
+>  	folio_unlock(folio);
+>  
+>  	if (!r)
 
-[1] https://lore.kernel.org/linux-next/aNOyrz1bd1WTrZgc@finisterre.sirena.org.uk
-
-[2] https://lore.kernel.org/linux-next/aNU3FtEZ3w_NcYwI@sirena.org.uk
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.18-rc1.async
-
-for you to fetch changes up to 4f5ea5aa0dcdd3c7487fbabad5b86b3cd7d2b8c4:
-
-  Merge patch series "vfs: preparatory changes to centralize locking of create/remove/rename" (2025-09-23 12:37:42 +0200)
-
-Please consider pulling these changes from the signed vfs-6.18-rc1.async tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.18-rc1.async
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Merge patch series "vfs: preparatory changes to centralize locking of create/remove/rename"
-
-NeilBrown (6):
-      VFS/ovl: add lookup_one_positive_killable()
-      VFS: discard err2 in filename_create()
-      VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
-      VFS/audit: introduce kern_path_parent() for audit
-      VFS: rename kern_path_locked() and related functions.
-      debugfs: rename start_creating() to debugfs_start_creating()
-
- Documentation/filesystems/porting.rst        |  12 ++
- arch/powerpc/platforms/cell/spufs/syscalls.c |   4 +-
- drivers/base/devtmpfs.c                      |  22 ++--
- fs/bcachefs/fs-ioctl.c                       |  10 +-
- fs/cachefiles/namei.c                        |   3 +-
- fs/debugfs/inode.c                           |  11 +-
- fs/ecryptfs/inode.c                          |   3 +-
- fs/init.c                                    |  17 +--
- fs/namei.c                                   | 164 ++++++++++++++++++++-------
- fs/nfsd/vfs.c                                |   3 +-
- fs/ocfs2/refcounttree.c                      |   4 +-
- fs/overlayfs/overlayfs.h                     |   3 +-
- fs/overlayfs/readdir.c                       |  28 ++---
- fs/smb/server/vfs.c                          |  11 +-
- include/linux/fs.h                           |   6 +-
- include/linux/namei.h                        |  21 ++--
- kernel/audit_fsnotify.c                      |  11 +-
- kernel/audit_watch.c                         |   3 +-
- kernel/bpf/inode.c                           |   4 +-
- net/unix/af_unix.c                           |   6 +-
- 20 files changed, 216 insertions(+), 130 deletions(-)
+[...]
 
