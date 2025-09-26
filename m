@@ -1,90 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-62878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23802BA3C0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:05:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC09EBA4179
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 16:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AFAF7AB4AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 13:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE391C0497D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 14:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1782F5A0C;
-	Fri, 26 Sep 2025 13:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5111E1BD035;
+	Fri, 26 Sep 2025 14:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+hGShpQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MR9VgGgM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40673279907;
-	Fri, 26 Sep 2025 13:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E2E34BA4D;
+	Fri, 26 Sep 2025 14:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891923; cv=none; b=hWoPvt/cDc17tRGcMSmyzIxIDIG9coKN9YZetZF72/l2WfxVdCJagzrVa1mpS640tDvhRbdCzt/NGgtkenhwJspo5Ps1oFZIV11BAH4Ohr+kZ9PdynmLxyvfRuRmw0Z38SGLJIIYfxtjISaiMOqNx6SC7cMB3GdhFtRPOMfG/pM=
+	t=1758896344; cv=none; b=AMjjZwSbc7t6JBwL4y6DQzqgPfEliRCmM0lAp6k52Nk8EsdUqsOsb4sx2nYYS8NtEM0/U9AZ9vkWK3gM2ImQqVb5xHAUFSB1dsQ4UWyieiwzXmGK7FuEzwcLmyzLRu94cMALmc1tI6dvAxOJgAgjn2Yz149T3o6XTUVltc48YqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891923; c=relaxed/simple;
-	bh=+drV6HJHMDiVWXsRI1t2fojc5Ew0Gr1Z3BP7jR4SjQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SXXvQpmDGkVluY01nFnw5fzcGDW6BIAg/otN2xWWVEtCv6iCexzqBKRJQHseoc6B5AHT0zkPgfqUB9aU6Fhz0qoxlL448/Jr/e7EwZWk5vIaWudE0pTzfJJnbalMAVm/VFEw15hmi9No7At9+d6ccSgYXAJTyYCidKlvh3hkpYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+hGShpQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736E4C4CEF4;
-	Fri, 26 Sep 2025 13:05:22 +0000 (UTC)
+	s=arc-20240116; t=1758896344; c=relaxed/simple;
+	bh=n/Im3YAEhZ0ns6j5YoTZc/FyFFGFx/x0pD4YYo08oX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sJlaVnUORKgFOjJBlnh/zr5MTajz7ZLDmUwdvAEaIWBVz5/Sr4daBwuYFPIbiz1fHbgvRUduoWex7B+0QwKXg3ryrDjjKRw80OSnNPw8+xcKs2LkCX4ndPE0fb46oQuADHYhKUJ+caUTw10IdIjlF4q8mKpYdZPmXK/TfEEdUoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MR9VgGgM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2320FC4CEF4;
+	Fri, 26 Sep 2025 14:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891922;
-	bh=+drV6HJHMDiVWXsRI1t2fojc5Ew0Gr1Z3BP7jR4SjQA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R+hGShpQWYEqjAySfOn5yg/y2FmA7HWRFYY5oGCNKU9UigdPJUx4wzd0v3HBSjca/
-	 zKqf40OKcovmkY8fwgJivElnLItgkr64JU6s7h+dBVwhyeOLozHpKvMUJtr57uKWBX
-	 QSg8mrpnTP1hjGiZDYg7j6m6DuGGibEyPRbe4YJ5Ht920XH30LO/EzbeIboJNNyvHO
-	 2KUdu9//DiGV/0UXV4KwYOv73xENzBefMA0fvycw9I81asq1VSRR7KPEXlX8QETzk9
-	 q36ya5/31OB3puSfp6nix25vSSqGwKdqgFWI+EhCUXm+zmXXdn4jWUm+QudLUCpybX
-	 fbeH/1PxyCaJQ==
-Message-ID: <39397920-3dc0-4295-b34d-67a298bf861b@kernel.org>
-Date: Fri, 26 Sep 2025 09:05:21 -0400
+	s=k20201202; t=1758896344;
+	bh=n/Im3YAEhZ0ns6j5YoTZc/FyFFGFx/x0pD4YYo08oX4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MR9VgGgMy0PQYez/PGalaBjbXuYhNjpIWUS16H49KjhRyi/O3fvGPOp1wy2FVmelw
+	 ztmyRSbkmJk5+XcqG8NCkx8g2ikHvt2x0IDiFRWP173tVkY5bUJsok9V0A6lfENaLz
+	 IbyiFrq7ZLCXfMUYxundKBRt6LTjsxhyeTfZj9jjxDHTRoKWH60+w5QCyAzj5WQy36
+	 a5QTKMuiDIGBc1s3dXRLRsStMkVpBw63QZoy5FBMtZfxzNcVvWeN+2BW1DXXpmWOuG
+	 IwDHUZkI/q1at+K8Nl6QL512WeNivNInMbqlX2vWeQQtQaAK8vkbmg/wiCrOJB+iEG
+	 j4P8Y0/jRtTUA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL 00/12 for v6.18] vfs 6.18
+Date: Fri, 26 Sep 2025 16:18:54 +0200
+Message-ID: <20250926-vfs-618-e880cf3b910f@brauner>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-To: Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Cc: Chuck Lever <chuck.lever@oracle.com>,
- Volker Lendecke <Volker.Lendecke@sernet.de>
-References: <20250925151140.57548-1-cel@kernel.org>
- <ad767899918d26817e44f1af213a8dfdce26508a.camel@kernel.org>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <ad767899918d26817e44f1af213a8dfdce26508a.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3431; i=brauner@kernel.org; h=from:subject:message-id; bh=n/Im3YAEhZ0ns6j5YoTZc/FyFFGFx/x0pD4YYo08oX4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcW3B+jSdb3IyNU6X/uXF4fF90941RZV9Mw+FvhiY3n oS/M1u1s6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiV+YzMjwNfnK/8FObmsfu p1XJflEm8atO98/ZslLr/EvRmQ8b1vcx/DP6vd/aZd8nv5O8jIxFhWnBPEVaryeuKHbOdDj4m29 yDhsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 9/26/25 3:00 AM, Jeff Layton wrote:
->> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
->> index 1686861aae20..e929b30d64b6 100644
->> --- a/include/uapi/linux/stat.h
->> +++ b/include/uapi/linux/stat.h
->> @@ -219,6 +219,7 @@ struct statx {
->>  #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
->>  #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
->>  #define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
->> +#define STATX_CASE_INFO		0x00040000U	/* Want/got case folding info */
->>
->>
-> Do you intend to expose this new attribute to userland? If not, then it
-> should probably snuggle up next to STATX_CHANGE_COOKIE. If so, then you
-> need to claim a field for it in struct statx, and populate it.
+Hey Linus,
 
-As I mentioned in the patch description, exposing to user space can be
-done as a next step if we decide to pursue this proposal further. Yes,
-that is something I have in mind.
+This is the batch of pull requests for the v6.18 merge window!
 
+This was a pretty usual cycle. Not light, not particularly heavy.
 
--- 
-Chuck Lever
+There are a few minor filesystem specific changes such as afs and pidfs
+but nothing that's really worth mentioning. Same goes for iomap and
+rust. There are some changes around clone3() and copy_process() that
+lead to some cleanups.
+
+There's some workqueue chagnes that affect all of fs but it's not all
+that exciting and we don't have to care once all the cleanup is done and
+the semantics for per-cpu and unbounded workqueues are simplified and
+clarified.
+
+There's a pretty interesting writeback series by Jan Kara that fixes a
+nasty issue causing lockups reported by users when a systemd unit
+reading lots of files from a filesystem mounted with the lazytime mount
+option exits.
+
+With the lazytime mount option enabled we can be switching many dirty
+inodes on cgroup exit to the parent cgroup. The numbers observed in
+practice when a systemd slice of a large cron job exits can easily reach
+hundreds of thousands or millions.
+
+The overall time complexity of switching all the inodes to the correct
+wb is quadratic leading to workers being pegged for hours consuming 100%
+of the CPU and switching inodes to the parent wb.
+
+That issue should be gone.
+
+We also have a series that shrinks struct inode by 16 bytes. This is
+really something I care about because struct inode in contrast to struct
+file and struct dentry both of which are meticulously clean by now (I
+mean, it could alwasy be better, but you know...) struct inode is still
+a giant dumping ground where everyone is made to pay for features that
+only 3 filesystems actually end up using. First step, I've moved fscrpt
+and fsverity pointers out of struct inode and into the individual
+filesystems that care about this. Hopefully more to come in that area.
+
+There's also some preliminary cleanup related to the inode lifetime
+rework that is currently under way leading to less open-coded accesses
+to internal inode members and some simplifications for iput_final().
+
+Last but not least there's a bunch of namespace related rework this cycle.
+This specifically also addresses a complaint you had a few weeks back
+about ns_alloc_inum(). That's now completely gone and so is the
+special-casing of the init network namespace initialization.
+
+Initialization, reference counting, and cleanup are now unified and
+statically derived from the namespace type allowing the compiler to
+catch obvious bugs.
+
+The namespace iterator infrastructure I did for the mount namespace some
+time back is now extended and generalized to cover all other namespace
+types. As a first step this allows the implemenation of namespace file
+handles.
+
+As with pidfs file handles, namespace file handles are exhaustive,
+meaning it is not required to actually hold a reference to nsfs to be
+able to decode aka open_by_handle_at() a namespace file handle. It has
+the same advantage as pidfs file handles have. It's possible to reliably
+and for the lifetime of the system refer to a namespace without pinning
+any resources and to compare them trivially.
+
+The namespace file handle layout is exposed as uapi and has a stable and
+extensible format. The stable format means that userspace may construct
+its own namespace file handles without going through name_to_handle_at().
+
+Thanks!
+Christian
 
