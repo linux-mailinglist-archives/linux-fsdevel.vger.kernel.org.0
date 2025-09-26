@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-62833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140DEBA216E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 02:31:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A79BA2171
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 02:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B18927B8098
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 00:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BDB1C21A24
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 00:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFAC1E1C1A;
-	Fri, 26 Sep 2025 00:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A657B1534EC;
+	Fri, 26 Sep 2025 00:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6X+FMtn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPyWRK44"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB5B1C700B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 00:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5D61DFE26
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 00:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758846583; cv=none; b=I5LnyvF9mlXLFtvbKXyIhN1PsHWfLwtdzgiQFo2IjSXU8l9VM216LXuzm+qwjLql2MIOUSZETW6lkKjapPUZdPDUbYU0821Ysh0HF1piHdbQivo0Pmw7oNseEc9MK9AKy23qPSjeAgKTJxMO4N96fuj/E3Mk5MdKuB2+fCllhIM=
+	t=1758846586; cv=none; b=SgwzKYzQNlWQw4zb2yBwv3Wa9ijtTwChjwZN77l4JDXlH12o58BSDuQs9xhB9ahJU4jYlPPQuw0JDPJjo4F3gJPpyicawrl3Er6ct6Eyb/QxRxYL7ttkZucEK5Wstr+n3UCml/vhiPKCM6GCo1QbvqvEbGQaZcNX82AInvczAuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758846583; c=relaxed/simple;
-	bh=ZJKn2aUxwVXrXo21+pZx6cBCh+fmZr2QcyaMhglPP5A=;
+	s=arc-20240116; t=1758846586; c=relaxed/simple;
+	bh=K4U/CA7tbg/bUek9YcVC9Q6ozcjFrUj/3jdxNsXhIUA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jbjdpIsDdofXqDvPDhZllnlva4uZUEPnQ8sy8JIPEAf3oogrgmwtk1tVdNy653OyCLcqkEeLAa226Ni3pRziAU7eZ/3RgRcrjjQUUDx2pUlog20xrF7xnuLVSb/LPXh7YFHXl/XSSceWt+2pmym7bHm6dM1lgAIbTdghMaQGB6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6X+FMtn; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=KEBFOIoFlUM+qetEqKTSPyYIlUlwoDn2C4RkdHGZXRGvFki97Te5rEBfXNMc2hfjAaOq2Hcefd9wtRUm+Yk9rcaCtfXFK1DTlIN8myzAAgRGf+GpllHhwFpQ1qwKLgp1+ZWlQ+xf6AVvQIHnhc8T6DwgdA5Njm8HCn9eMDyBObw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPyWRK44; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b5565f0488bso1128191a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 17:29:42 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso1660826a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 17:29:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758846582; x=1759451382; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758846583; x=1759451383; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cfpa58E21gi9e/RAKTk39wwAnWAES7lJ4fXxRAP7/fA=;
-        b=E6X+FMtnWLfGdD87MYCUgtYFZjE3zqbtYDcgYbH3CRPmFvbyanYQU657FEQFv88noW
-         F20yLDpYiV1n39fCL9p2NPB9r+Q3xV0Ro/zv9jvwWSgeVqN6zxTQxcuy6NPOGL4dn8Zy
-         gFySXlXBJB42W+qrt+nft0juLEIvtqwcYlo7KmwsXXNk08ZhCqzz3KHduVe11p4KTR9y
-         s/MkzsLHxwgzDEKRyFG4Hzb3RA5no639i4v/z+n8nio8zOMsX+iD9ht9bZwhJnwShFUq
-         5l69L/tXfgU1qwmUeoCLofYA6vkwlRCME7H9fT9jyw5u87pHhWmQNY6uaY/R1pjVDgC/
-         XSIg==
+        bh=cnw5A92oVT9gS4E1+yrEsisFkg+/g1YXgFVE1vK/hEw=;
+        b=QPyWRK44jKM9h0nlW1qwvNRtnVA/3vxNlJ9vaOftxKLhmrMhpKm1x+0pigvVHGLmTJ
+         a8pKU6/KthmMGAZXtD2MppiVcrpADe/1w0rIqTgucSvHsaav0TdakPXHfoKPbZkQNb/u
+         PMxZGc+qH261BK70S6EJrDKQXTo9k3LZvX5Z1vm5ZLtiSvHVd1KaiJ656MiINaCcmz+9
+         DGBf+xMlfzPbWxwwjRi2sDAY1++wSs7Rldv2k9pB0mtAo/F8XKb+wfTLG5k9cSPPSfEd
+         a5VKxgfIE+zLPiq/avRCLsU+s/Z1N1EUz6TclKq8e3rFsJVBH6YmcqTst7nT9Me0U81Q
+         K3cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758846582; x=1759451382;
+        d=1e100.net; s=20230601; t=1758846583; x=1759451383;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cfpa58E21gi9e/RAKTk39wwAnWAES7lJ4fXxRAP7/fA=;
-        b=CtWnDF7MFaESSPP+OAQPrrSLJzvmEg+SikS8ITHvcb64GAmgVokfkm4TZ+DhIS0qx4
-         IcAOpF3TiH65dfj74RlmzZUdE9ELNidqrc1WwqvtwIgNbScc7Rt+Mn3eBWGnHOZRpGnn
-         9YrlWtLe7s1P0EYB6V3gveR+HzV+RjoSsmSTpRf85Ao8mYgLbxfpiIsN2byrt7m3aVlx
-         00+a4uo+TFtgSoYYzBOSY1LNh7nedmAugwAoWrJ077ypIj7dGX8tc2m6lZTeOl2mu/mR
-         YIeolAOG/3muWWxH/Lh5bj/kOSWWPTnkCZJCL2aQ3cWUd9EvflK3l/V2nYkHp4z2ngE7
-         ndNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDeoTNGyYz3xKTmtP3lgA5T5Bl1mKNcIv9wyVBFxwMWjlQqkOgqpS585Q0apzggmHhGSPxkHyVlwI5HEaP@vger.kernel.org
-X-Gm-Message-State: AOJu0YznyhCUqnDnrzWtpLLtwhD0ej1tMnZ2mjER9KfTCT9reSMFcVEa
-	CUljBGkNCcmJcHcKITSNf6xieOekaAV2ZlDicb/3VIWerP9K29BZYp1g
-X-Gm-Gg: ASbGncvp697brrHdlYTmHPfSX6RZ0AyovopAGSjuzYVpUy6A7WqUBIZshqyCJrvHJGQ
-	WdsZA0fui4o4HXNU+/8X1TY1pGnFh+JUxTgz7lz8dAm3zS37Y+8ZDXT1bNnPUvOs1cRk8WfDQN8
-	iqCsShUBCeTjJInFY04yiOQIJRG1utK7t+8FYvn5+gakzD+u16sqrXaBwOq2vpI2n+2M5mdP99W
-	js8PVrVyLVwFXJZ6qMytBoSc/HR3awB6P5RReHYhmyHBIhhvGe5dYL5uEtPBMpx9Kqcuu+Q/qUl
-	s2V5AybmzQ3nFpXOLeUn7kaqj2OV+gVPtKea9HzIRZ4dTAK/PvjioHqF6YNb0elEt+I5D/SIIWz
-	BspgamLRFiKEqk7dt4WLuT8KH63f83excQ3RvJaTh/9DKdrtx58ciUDv9iWE=
-X-Google-Smtp-Source: AGHT+IEkvHARpHr6lASCpYYJKhWtkl83Q5YPMtQqvQsOsQI6v9aOaa5WPfigq1o+4kPYb7qTz8Gvvw==
-X-Received: by 2002:a17:903:b06:b0:276:d3e:6844 with SMTP id d9443c01a7336-27ed4a7e7d9mr49611825ad.33.1758846581629;
-        Thu, 25 Sep 2025 17:29:41 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:4::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6716240sm36366015ad.54.2025.09.25.17.29.41
+        bh=cnw5A92oVT9gS4E1+yrEsisFkg+/g1YXgFVE1vK/hEw=;
+        b=iSO7Nf13uB7aA+S59tJm1JBX34N3ziWnrcFyCM0q4Ree+fwhcXkv1ctBYQQuztMg7k
+         13MjCSBER9cEmeaM2fZZX/oUAus84Wff9Dn9RT3vgSYNLcftcF8eLJbv/aSdF7z41oAO
+         AGf2wC0T+f4VD8MpXR3OQAKMAyytLDlIuZOad6DL/zMxN/XCwiurqntZSW9zF4Ng/6lj
+         2r8KpdhpG0hRqM6biX4mog0UOaFBR3gBd8KoPZLmahiPccmgftuvSVHoXS1ZQqigZlOy
+         RGsphq72NQrmI0DoEMNrSJT5q5BwrFWXCY9rxhtQDmQIaPstqIzYlh7ouRCXNcFWdD7l
+         LrBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKiPaclwkbSCacGYpT+0drlJHFpYC8d9JVvopJBDFfRtyPDjCjZ5+l3EXOCxQ8wVFs5xtVf6UaoU9fciRe@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgX046m0rSJXXskUTd83ww/HMzONJ5+3gL6F/WOv1r8ZVd+wFS
+	+/sRqeASldTZtTouJOGGZ8q+YqJ0CP8YNMbdmh/w69mtvRjyYxnhc8b/
+X-Gm-Gg: ASbGnctw04/kwHmtRKzlonNozNFKp1tCO9njsdzAZpFVKdSATp19k3Y9Yznp7wKWcz1
+	T93aF00oKeDhq1uqDkq7uHPN4CT6DIA6iiBof+psFrftOePUybPdx474R/IpDI+3Nw7JP2GQCsk
+	N2YbMhaAdPGH6x3H+RUtBwIi+hRycU+Ht6kipsrzmunQsPa0yE/IiXE5wIFNC9x8XGgbLJon16G
+	hmjvyuRApismEkjI/xhXsqZc0wz/Okf3CYOrLsCy7H5CnHmvdZUVrTSyeX/Ww5b88uVd6MnR8sj
+	xmnV8WkwQfwObGq32VAz+cRpjVDMW8/UA04AoWtmC0eHViJ+mS6ula0ynqeNgAvCCuhtwQpZ1ev
+	ZYlifZSzn6gjLYxOCHJ1Eaz64s85rnHmn6UljQyzOihaaIiCU
+X-Google-Smtp-Source: AGHT+IFgIIl1rPGc21eAT8naPz071UhBkST8ixc2RolNH6OJ4L9deyZJbJu4MjaCN5pTwkxEVsJ2zA==
+X-Received: by 2002:a17:90b:1808:b0:32d:4187:7bc8 with SMTP id 98e67ed59e1d1-3342a2b11acmr5934143a91.27.1758846582994;
+        Thu, 25 Sep 2025 17:29:42 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:9::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3347472e49esm3605217a91.21.2025.09.25.17.29.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 17:29:41 -0700 (PDT)
+        Thu, 25 Sep 2025 17:29:42 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: brauner@kernel.org,
 	miklos@szeredi.hu
@@ -85,9 +85,9 @@ Cc: djwong@kernel.org,
 	kernel-team@meta.com,
 	linux-xfs@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: [PATCH v5 11/14] iomap: make iomap_read_folio() a void return
-Date: Thu, 25 Sep 2025 17:26:06 -0700
-Message-ID: <20250926002609.1302233-12-joannelkoong@gmail.com>
+Subject: [PATCH v5 12/14] fuse: use iomap for read_folio
+Date: Thu, 25 Sep 2025 17:26:07 -0700
+Message-ID: <20250926002609.1302233-13-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250926002609.1302233-1-joannelkoong@gmail.com>
 References: <20250926002609.1302233-1-joannelkoong@gmail.com>
@@ -99,56 +99,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No errors are propagated in iomap_read_folio(). Change
-iomap_read_folio() to a void return to make this clearer to callers.
+Read folio data into the page cache using iomap. This gives us granular
+uptodate tracking for large folios, which optimizes how much data needs
+to be read in. If some portions of the folio are already uptodate (eg
+through a prior write), we only need to read in the non-uptodate
+portions.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/iomap/buffered-io.c | 9 +--------
- include/linux/iomap.h  | 2 +-
- 2 files changed, 2 insertions(+), 9 deletions(-)
+ fs/fuse/file.c | 80 +++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 56 insertions(+), 24 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 86c8094e5cc8..f9ae72713f74 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -459,7 +459,7 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 4adcf09d4b01..db93c83ee4a3 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -828,23 +828,69 @@ static int fuse_do_readfolio(struct file *file, struct folio *folio,
  	return 0;
  }
  
--int iomap_read_folio(const struct iomap_ops *ops,
-+void iomap_read_folio(const struct iomap_ops *ops,
- 		struct iomap_read_folio_ctx *ctx)
++static int fuse_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
++			    unsigned int flags, struct iomap *iomap,
++			    struct iomap *srcmap)
++{
++	iomap->type = IOMAP_MAPPED;
++	iomap->length = length;
++	iomap->offset = offset;
++	return 0;
++}
++
++static const struct iomap_ops fuse_iomap_ops = {
++	.iomap_begin	= fuse_iomap_begin,
++};
++
++struct fuse_fill_read_data {
++	struct file *file;
++};
++
++static int fuse_iomap_read_folio_range_async(const struct iomap_iter *iter,
++					     struct iomap_read_folio_ctx *ctx,
++					     size_t len)
++{
++	struct fuse_fill_read_data *data = ctx->read_ctx;
++	struct folio *folio = ctx->cur_folio;
++	loff_t pos =  iter->pos;
++	size_t off = offset_in_folio(folio, pos);
++	struct file *file = data->file;
++	int ret;
++
++	/*
++	 *  for non-readahead read requests, do reads synchronously since
++	 *  it's not guaranteed that the server can handle out-of-order reads
++	 */
++	ret = fuse_do_readfolio(file, folio, off, len);
++	iomap_finish_folio_read(folio, off, len, ret);
++	return ret;
++}
++
++static const struct iomap_read_ops fuse_iomap_read_ops = {
++	.read_folio_range = fuse_iomap_read_folio_range_async,
++};
++
+ static int fuse_read_folio(struct file *file, struct folio *folio)
  {
- 	struct folio *folio = ctx->cur_folio;
-@@ -480,13 +480,6 @@ int iomap_read_folio(const struct iomap_ops *ops,
- 		ctx->ops->submit_read(ctx);
+ 	struct inode *inode = folio->mapping->host;
+-	int err;
++	struct fuse_fill_read_data data = {
++		.file = file,
++	};
++	struct iomap_read_folio_ctx ctx = {
++		.cur_folio = folio,
++		.ops = &fuse_iomap_read_ops,
++		.read_ctx = &data,
  
- 	iomap_read_end(folio, bytes_pending);
--
--	/*
--	 * Just like mpage_readahead and block_read_full_folio, we always
--	 * return 0 and just set the folio error flag on errors.  This
--	 * should be cleaned up throughout the stack eventually.
--	 */
--	return 0;
+-	err = -EIO;
+-	if (fuse_is_bad(inode))
+-		goto out;
++	};
+ 
+-	err = fuse_do_readfolio(file, folio, 0, folio_size(folio));
+-	if (!err)
+-		folio_mark_uptodate(folio);
++	if (fuse_is_bad(inode)) {
++		folio_unlock(folio);
++		return -EIO;
++	}
+ 
++	iomap_read_folio(&fuse_iomap_ops, &ctx);
+ 	fuse_invalidate_atime(inode);
+- out:
+-	folio_unlock(folio);
+-	return err;
++	return 0;
  }
- EXPORT_SYMBOL_GPL(iomap_read_folio);
  
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 37435b912755..6d864b446b6e 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -338,7 +338,7 @@ static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops,
- 		const struct iomap_write_ops *write_ops, void *private);
--int iomap_read_folio(const struct iomap_ops *ops,
-+void iomap_read_folio(const struct iomap_ops *ops,
- 		struct iomap_read_folio_ctx *ctx);
- void iomap_readahead(const struct iomap_ops *ops,
- 		struct iomap_read_folio_ctx *ctx);
+ static int fuse_iomap_read_folio_range(const struct iomap_iter *iter,
+@@ -1394,20 +1440,6 @@ static const struct iomap_write_ops fuse_iomap_write_ops = {
+ 	.read_folio_range = fuse_iomap_read_folio_range,
+ };
+ 
+-static int fuse_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+-			    unsigned int flags, struct iomap *iomap,
+-			    struct iomap *srcmap)
+-{
+-	iomap->type = IOMAP_MAPPED;
+-	iomap->length = length;
+-	iomap->offset = offset;
+-	return 0;
+-}
+-
+-static const struct iomap_ops fuse_iomap_ops = {
+-	.iomap_begin	= fuse_iomap_begin,
+-};
+-
+ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
 -- 
 2.47.3
 
