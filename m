@@ -1,133 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-62821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F1BBA1F0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 01:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2CABA20E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 02:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0AC7405E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Sep 2025 23:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A407656062E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 00:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853AE2EDD44;
-	Thu, 25 Sep 2025 23:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B355813B7A3;
+	Fri, 26 Sep 2025 00:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sVbDYwXa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjtJb4tm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492CA86353
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 23:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5E1DDA9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 00:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758841977; cv=none; b=DqyF4AfBunrBbLO5iEw7WX6PbI1Hs2o1PQ2wgdy6gwzhj81snl7BJvhzG/AyAs/sa3FUeu9nzFV2mm/i31NP3VpF0dXplQC4IBZrQW0JoZnO/9u7nISpomqnKI5I0UGao9+9WcHq2o/v6nvE3jx8jewmODj9Su4ysGmlneyX1P0=
+	t=1758846566; cv=none; b=LZ43JCLNX7WH3Lt1qzlIjOAyeONotHZ/g1/mjOTzY5uxLoD+jyOHj60kpR0lvD+HDByBn9iyBpRa1ySuH8oa/3eEDNtDawgzK1I5BjiAEgaaqem+kA93VokQ4kRLi5blmErnunJZGMobITRamMo2FcqEMs1zd2h5whB7q6jI10A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758841977; c=relaxed/simple;
-	bh=s9eeTE4+TFjXly65mL70gO5Nj1aP2Sg3pnQCFQVgq5c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gFf9LvLxZnHl0UTJj1IT6XeCiYQ8v0245ad1vwEl0N4WQGkuS4+2QFoLpu2vHgzeFBKH92wlVXztwA7tNtEfrvJbr2FGVpMghL1pmSKAG1lieHsdhAq0ZZNQlhkFNksfgj2Wpg18P48Qw2q3JRdD2vEHjUiw7FnkhgqEXmPTX3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sVbDYwXa; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2681623f927so14656865ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 16:12:56 -0700 (PDT)
+	s=arc-20240116; t=1758846566; c=relaxed/simple;
+	bh=0W/7hs78HuUmwTCQkUj3WBChFwPbbkB8GVUDQwx06qI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rA6i+16DdNGxDr0SfXt0SpzB6JRwx9SWlKy81oo4lHH+787TlWkLsOPWg1SrsJNho0R5iaSsLGXu6CCtXVCNWCqTWNLDc/IbR2JGJmPQvHUBMARRiBoTsb6roWVdmcSlUSqbagQ1P4VcmKP0RffKRiv4vdTPir0YWBU3Y0Jpi1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjtJb4tm; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-271d1305ad7so23129585ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 17:29:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758841976; x=1759446776; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGCCSnKnyPGGdnUTp10aKL37FULfLm3dyeD1VoFdI2I=;
-        b=sVbDYwXasc2mcrj61avHgC1rB4YS0wPRRtbb4hZag5XVUbPrS7XQbZSXAOeH9jVejv
-         Lt9oPzSl/U1GW2nDxx0Umcn/39IAfO2vqIjTuyLV/iNKTF3pjM306hf8KFdMUYd7uK5F
-         UmGtT8DDR027cKAPDEEkorjVd2HIwGcJf9hCl/irDGiSLK5wDccG7kUlDD5gEgr2CPZG
-         IwAzCrxniJa9Z38PYAkkm2LMqGtuV+jSvkBm4t7N9ryIAvVWkvD5bLByKskb1WvHeuDA
-         ikqy2CYzoPapkeA4WyWnowQjrjZ4YOOaRktX3nOFshQHQi6FA9M5SvxyUH7k4HTpUiEJ
-         Gz1w==
+        d=gmail.com; s=20230601; t=1758846564; x=1759451364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HMJD9Q3ddlq5CyOM+oz055Su9+4BhIKjGA1980+1kzg=;
+        b=ZjtJb4tmQ+8Sf1otFalVt2FYW3yYYOD1XWHW/rmw19AOD7BGG3coOU9qgdfQk3gmBu
+         qin6/N3qTtMiToBGpgide3O7zs7Z6oJAA+04s7HlUkFaljeodWd+TyKVesYXKpZ1IpQi
+         0Jnmz2P5MiMbcwmMdI+/m9VFNjE7GPQdGxtg/5qJlW9hjmBU88OyL6Jm1Q6G9gqhZOGV
+         tbzKJbpDRL4yLbJQfISIIMTF0N9mg0LJ7x2wp1RbFEDpZmUXHq1Kd04viTXor01+7fb4
+         pK6XKMmPvssTDM9HuSv2dZRbSh8irsvuX5PQguwghAagy3eSCu+Ihsa4VM1h1HWMBlga
+         pHhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758841976; x=1759446776;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGCCSnKnyPGGdnUTp10aKL37FULfLm3dyeD1VoFdI2I=;
-        b=tiXrP4Ee6dJmrVrOmDcEBVApmWYSaMNGLH/dFZg2jsYIVjdP+7pnruLdpzZoWfvHRD
-         zoaSQlbDkJk8GjK/pYJ4vGtOgTz6KUTlloTuDCZbsl3yFk/zaStYBgQzX2i1Vg/NwS7c
-         PLLnZ44t2tL4TrJt79KBJi42wQb4AaVIG8ncujUmpY6LTC0EOIizhBkDl+Lwd/Wg/sF5
-         f2qcwobAfkZ+EakmFa02iDU4bsP4cKPWIkoTL85qxtw3MrTPGpA06v2uoIZJAX6VAPHh
-         qtZvReZpk1EuazJQQeemqLdbqsjqTousXtTfNcZq2beXV8WQOtj7Ss2zTZfgpvQ8/k3m
-         ECEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCb8FIvQlayhwCf3U+9i+lzQLwXua5wIy93wlt0IWVirPwheZuQbtLgmxxVvkFLQAlePIgi0TytTHKRJor@vger.kernel.org
-X-Gm-Message-State: AOJu0YytSxeU6fByGniKd9sAwF2siWQNKNCPuDzawf09sL157Amc1KBx
-	4ObKFVG0lW4vo3A9R5y8TlOjb/6z+OYS0Z/5Bcfh0WpmWvt5dHgjTp9A4v/e9jivCIlbjsg5k6X
-	bEGHRgg==
-X-Google-Smtp-Source: AGHT+IFE8gFtFdnHNmX2p6THQrFO41fYST4gwotcfBj6rGswgxHnE9CG8NuKci3w5GnRskLMvJFI/+Q8X0o=
-X-Received: from pjbjz6.prod.google.com ([2002:a17:90b:14c6:b0:330:9af8:3e1d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e883:b0:262:79a:93fb
- with SMTP id d9443c01a7336-27ed4a7ecbdmr51468535ad.32.1758841975402; Thu, 25
- Sep 2025 16:12:55 -0700 (PDT)
-Date: Thu, 25 Sep 2025 16:12:53 -0700
-In-Reply-To: <20250925230420.GC2617119@nvidia.com>
+        d=1e100.net; s=20230601; t=1758846564; x=1759451364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HMJD9Q3ddlq5CyOM+oz055Su9+4BhIKjGA1980+1kzg=;
+        b=EgrzCy55c+HPOr6oaKDYOq7DUWErweyXUY+2/zgPfYeLNaA9v5ixUlt0BQAcWWtlRd
+         jcS1a4yczsJsuSxAUFVXTqYPSx13SNyKUyPJ+nDk0yKR4jfe3zcL0PV8YrbDgUbXDQVe
+         WmYPcWbSnPSAvSX2WWajixmL+mGfWrQXLP+ddLkYC720O0fQqfghap4O/99EIFUNR6l1
+         ad94e0zXwxESicegGgRUSvQRTrYwrXzK4KH32wK47M2gRiO9X3GT8eiCUEuLrsXXotzq
+         TQ8eLYiTjvGhV4ejbC0ghOezYl50hDV6xtDkaKPNY/Z66q4fNwwrgL9v3QMQKb0St4R0
+         bXtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8Lwf/qxedqXdSM7UG6e46SY3LgiNuN/B1kWWw1jFJRUVLMUg8dmF6JLJPEQJnj1mOygUVemcGe29TjYA4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgW9VOtzFTFL3r1VEKojj+Fu/a8GgQl+cs6BAovnJVf8MDMikm
+	wM3Z3z5k1vI9nDfKuTuNhVl+z8RwW4vZ013zXz9ELewmoVcTjWIcEpRZ
+X-Gm-Gg: ASbGncs7nzyjTz4rfxwU62SlHH7YQHj26xt7Hc5SL1Gp8guVswKy5BB6C554Jza8Fr4
+	U1ZLe7qhy62aONJWuwTWVJJFvIYGPDBA2PlnancuSqI93N8yqTPaoevYuFcQlX/OzKikEy5v7bL
+	EnVUW1LMrJe6H11uXCVYysPGuwvkCklpe+Fj4Fp3rKphYzRhFWtU3RWNN1VpARARbP9UXHxnvHM
+	tkbt/CJ6F7xrpi911fq90qDhOUPwttoS1LT4fOnKUipBY01BV7P1HXF+Nknq1Jh4uCOpCeEcbH+
+	KTeubpn31emqPzR/lv2JGqwSHU6ELEeZIFvQtaa8UWId3mB3YKY4uzzVLIH1j8OGZSVo86z5nQB
+	B9sZC+A6HYWiUlt6RN4Bx8SDraOAfbPna8LXIKeia6ANR5SnD
+X-Google-Smtp-Source: AGHT+IFBOC7sSbj5IFvRNx7Jv4sa7XYTGAtKLXSj+8uiMY+K39fFGvNnEV8ul9fibW4RMGLttUsXrQ==
+X-Received: by 2002:a17:903:1209:b0:267:44e6:11d3 with SMTP id d9443c01a7336-27ed49d2bf5mr60472315ad.21.1758846563773;
+        Thu, 25 Sep 2025 17:29:23 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:8::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed671d8a2sm36696485ad.55.2025.09.25.17.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 17:29:23 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: brauner@kernel.org,
+	miklos@szeredi.hu
+Cc: djwong@kernel.org,
+	hch@infradead.org,
+	hsiangkao@linux.alibaba.com,
+	linux-block@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com,
+	linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v5 00/14] fuse: use iomap for buffered reads + readahead
+Date: Thu, 25 Sep 2025 17:25:55 -0700
+Message-ID: <20250926002609.1302233-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-10-shivankg@amd.com>
- <aNW1l-Wdk6wrigM8@google.com> <20250925230420.GC2617119@nvidia.com>
-Message-ID: <aNXMdSZkqDtsGRLm@google.com>
-Subject: Re: [PATCH kvm-next V11 7/7] KVM: guest_memfd: selftests: Add tests
- for mmap and NUMA policy support
-From: Sean Christopherson <seanjc@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Shivank Garg <shivankg@amd.com>, willy@infradead.org, akpm@linux-foundation.org, 
-	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
-	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
-	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025, Jason Gunthorpe wrote:
-> On Thu, Sep 25, 2025 at 02:35:19PM -0700, Sean Christopherson wrote:
-> > >  LDLIBS += -ldl
-> > > +LDLIBS += -lnuma
-> > 
-> > Hrm, this is going to be very annoying.  I don't have libnuma-dev installed on
-> > any of my <too many> systems, and I doubt I'm alone.  Installing the package is
-> > trivial, but I'm a little wary of foisting that requirement on all KVM developers
-> > and build bots.
-> 
-> Wouldn't it be great if the kselftest build system used something like
-> meson and could work around these little issues without breaking the
-> whole build ? :(
-> 
-> Does anyone else think this?
-> 
-> Every time I try to build kselftsts I just ignore all the errors the
-> fly by because the one bit I wanted did build properly anyhow.
+This series adds fuse iomap support for buffered reads and readahead.
+This is needed so that granular uptodate tracking can be used in fuse when
+large folios are enabled so that only the non-uptodate portions of the folio
+need to be read in instead of having to read in the entire folio. It also is
+needed in order to turn on large folios for servers that use the writeback
+cache since otherwise there is a race condition that may lead to data
+corruption if there is a partial write, then a read and the read happens
+before the write has undergone writeback, since otherwise the folio will not
+be marked uptodate from the partial write so the read will read in the entire
+folio from disk, which will overwrite the partial write.
 
-I'm indifferent, as I literally never build all of kselftests, I just build KVM
-selftests.  But I'm probably in the minority for the kernel overall.
+This is on top of two locally-patched iomap patches [1] [2] patched on top of
+commit f1c864be6e88 ("Merge branch 'vfs-6.18.async' into vfs.all") in
+Christian's vfs.all tree.
+
+This series was run through fstests on fuse passthrough_hp with an
+out-of kernel patch enabling fuse large folios.
+
+This patchset does not enable large folios on fuse yet. That will be part
+of a different patchset.
+
+Thanks,
+Joanne
+
+[1] https://lore.kernel.org/linux-fsdevel/20250919214250.4144807-1-joannelkoong@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/20250922180042.1775241-1-joannelkoong@gmail.com/
+
+Changelog
+---------
+v4: 
+https://lore.kernel.org/linux-fsdevel/20250923002353.2961514-1-joannelkoong@gmail.com/
+v4 -> v5:
+* Add commit for tracking pending read bytes more optimally (patch 7), which
+  was suggested by Darrick and improves both the performance and the interface
+* Merged "track read/readahead folio ownership internally" patch into patch 7
+* Split iomap iter pos change into its own commit (Darrick) (patch 8)
+
+v3:
+https://lore.kernel.org/linux-fsdevel/20250916234425.1274735-1-joannelkoong@gmail.com/
+v3 -> v4:
+* Rebase this on top of patches [1] and [2]
+* Fix readahead logic back to checking offset == 0 (patch 4)
+* Bias needs to be before/after iomap_iter() (patch 10)
+* Rename cur_folio_owned to folio_owned for read_folio (patch 7) (Darrick)
+
+v2:
+https://lore.kernel.org/linux-fsdevel/20250908185122.3199171-1-joannelkoong@gmail.com/
+v2 -> v3:
+* Incorporate Christoph's feedback
+- Change naming to iomap_bio_* instead of iomap_xxx_bio
+- Take his patch for moving bio logic into its own file (patch 11)
+- Make ->read_folio_range interface not need pos arg (patch 9)
+- Make ->submit_read return void (patch 9)
+- Merge cur_folio_in_bio rename w/ tracking folio_owned internally (patch 7)
+- Drop patch propagating error and replace with void return (patch 12)
+- Make bias code better to read (patch 10)
+* Add WARN_ON_ONCE check in iteration refactoring (patch 4)
+* Rename ->read_submit to ->submit_read (patch 9)
+
+v1:
+https://lore.kernel.org/linux-fsdevel/20250829235627.4053234-1-joannelkoong@gmail.com/
+v1 -> v2:
+* Don't pass in caller-provided arg through iter->private, pass it through
+  ctx->private instead (Darrick & Christoph)
+* Separate 'bias' for ifs->read_bytes_pending into separate patch (Christoph)
+* Rework read/readahead interface to take in struct iomap_read_folio_ctx
+  (Christoph)
+* Add patch for removing fuse fc->blkbits workaround, now that Miklos's tree
+  has been merged into Christian's
+
+Joanne Koong (14):
+  iomap: move bio read logic into helper function
+  iomap: move read/readahead bio submission logic into helper function
+  iomap: store read/readahead bio generically
+  iomap: iterate over folio mapping in iomap_readpage_iter()
+  iomap: rename iomap_readpage_iter() to iomap_read_folio_iter()
+  iomap: rename iomap_readpage_ctx struct to iomap_read_folio_ctx
+  iomap: track pending read bytes more optimally
+  iomap: set accurate iter->pos when reading folio ranges
+  iomap: add caller-provided callbacks for read and readahead
+  iomap: move buffered io bio logic into new file
+  iomap: make iomap_read_folio() a void return
+  fuse: use iomap for read_folio
+  fuse: use iomap for readahead
+  fuse: remove fc->blkbits workaround for partial writes
+
+ .../filesystems/iomap/operations.rst          |  44 +++
+ block/fops.c                                  |   5 +-
+ fs/erofs/data.c                               |   5 +-
+ fs/fuse/dir.c                                 |   2 +-
+ fs/fuse/file.c                                | 288 +++++++++++-------
+ fs/fuse/fuse_i.h                              |   8 -
+ fs/fuse/inode.c                               |  13 +-
+ fs/gfs2/aops.c                                |   6 +-
+ fs/iomap/Makefile                             |   3 +-
+ fs/iomap/bio.c                                |  88 ++++++
+ fs/iomap/buffered-io.c                        | 246 +++++++--------
+ fs/iomap/internal.h                           |  12 +
+ fs/xfs/xfs_aops.c                             |   5 +-
+ fs/zonefs/file.c                              |   5 +-
+ include/linux/iomap.h                         |  63 +++-
+ 15 files changed, 505 insertions(+), 288 deletions(-)
+ create mode 100644 fs/iomap/bio.c
+
+-- 
+2.47.3
+
 
