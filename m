@@ -1,295 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-62897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6FABA46F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 17:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A53EBA471A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 17:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C033B382DB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:34:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD9A383E7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798CB224B04;
-	Fri, 26 Sep 2025 15:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0E82135B8;
+	Fri, 26 Sep 2025 15:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hPN1Q/Z2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qvsmI3WJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hPN1Q/Z2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qvsmI3WJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UV4Gn/aa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A65223DF9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 15:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562E2216E1B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 15:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758900805; cv=none; b=bh1jefQ20inJbfc1HrgInA1Z1eYsca67j9yAVjcSxGbUFg+bGX9iP6Fpc9+xfcWzyaFNyIlM5IflJu7/h00t12CfD8ul2HOq/k0akvmrpSXjhpXEvwd48PY6shTtGscH5QZmf2w7lCCfJlb4rR9mmxh1cVxn30KrBNkDaozpDB4=
+	t=1758900937; cv=none; b=DGEIOniT2xigcWJrsjNMrOEsgU1hcM4uFq2J3LkaXiZ3hHPViXcMmxHvsyWPl59hy+sCrrn97ba8WyURZ/n0XoARvU1gjOq0T5mqoJdCVzo+Un+2rdjUjSQfMSbXB6FBlxcjui4SqYS5RLABGkpAG52W3w7mQ791ZBRxnnxQa1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758900805; c=relaxed/simple;
-	bh=kd7bEABZ+uROS4oY4S3a/bjeGAoTAcj6vtm7z/gmab4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3Ov3xHPhFAWgYo8i6yeiBvQCrtEtY4On6GPjESnifko9IVAB0e4IevDdO8mKPi2o1O3iXel88g84edtkAFwOkTgr1qrAKa/tlbYtFMDvY6ZhvD/CKxiW3t8aZpLtCCcwX0mkP9vGvZb3qSlKdCqBgpVqmfFjWghw9NKtUusW+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hPN1Q/Z2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qvsmI3WJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hPN1Q/Z2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qvsmI3WJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1F8DD1F84F;
-	Fri, 26 Sep 2025 15:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758900800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=hPN1Q/Z2I0LleaVvFRVk+yXLW6mKv8nxGbCL4ruk19wSvq+3uPTxnoPMPL2ZdNeXu68zEE
-	ZHfIFjmXeybYmlsuTT/gGyP5+++DS0qkKLPB1nUbM6a2ZIIau/UlRX0DENJipCwjcahyG7
-	kcnHCmHP8mfbc/flUmB1bDEzR5g62Ls=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758900800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=qvsmI3WJwdxotgPOWL64XgiQ7XQul3VTfRbYUxHg3hVGT+gxhleujtTOPyvGFODFYUjNhk
-	Ub5wEs52eNFsq7BQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="hPN1Q/Z2";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qvsmI3WJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758900800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=hPN1Q/Z2I0LleaVvFRVk+yXLW6mKv8nxGbCL4ruk19wSvq+3uPTxnoPMPL2ZdNeXu68zEE
-	ZHfIFjmXeybYmlsuTT/gGyP5+++DS0qkKLPB1nUbM6a2ZIIau/UlRX0DENJipCwjcahyG7
-	kcnHCmHP8mfbc/flUmB1bDEzR5g62Ls=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758900800;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glSyxRB6Xj36ASiIjA+TJGgbXUZyzaV6dbkxB9p11to=;
-	b=qvsmI3WJwdxotgPOWL64XgiQ7XQul3VTfRbYUxHg3hVGT+gxhleujtTOPyvGFODFYUjNhk
-	Ub5wEs52eNFsq7BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CA6E1386E;
-	Fri, 26 Sep 2025 15:33:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Wk0VA0Cy1mj4AgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Sep 2025 15:33:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B7903A0AA0; Fri, 26 Sep 2025 17:33:19 +0200 (CEST)
-Date: Fri, 26 Sep 2025 17:33:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Paulo Alcantara <pc@manguebit.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Rick Macklem <rick.macklem@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/38] vfs: make vfs_create break delegations on
- parent directory
-Message-ID: <jshbhldhrbr2vbzfvuary3qowbfavcgkjznbgnjwhnxvmudvhw@c2uam4vtghcw>
-References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
- <20250924-dir-deleg-v3-7-9f3af8bc5c40@kernel.org>
- <otguskcvjqwcojy6tsw7yimvshsgtj4vl7ciwksxazx7z5s2ko@vjyf5plolvvf>
+	s=arc-20240116; t=1758900937; c=relaxed/simple;
+	bh=6bQ8+f5PBov8iIBeCvczEDonTphL8cBkOFcdiqz2eng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HspyICPnuLEo95uMsH4uEgQeD4CwbWPlvGZXwMxS5LS7kkixEhrJKTBT5KK7oN+ycHz4bHPwmccAui/V/e7BaQ170HpnPhCYrvylrsmAh0JemZxjnItLcSKXf5oOYUAFL62ztt0wLl8TMVtFjJ8zf2zZWITSQrfMPAAgcUoG6KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UV4Gn/aa; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7810289cd4bso2085161b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 08:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758900935; x=1759505735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t3QolWh9yQNhYU+vX6JITZzux4tGJdvU1Io4E63l5RY=;
+        b=UV4Gn/aajIH3ROux6+Xq3a1HPREJrAU0tPa4nQQhe2LUzWbdTHVpDneOP34xeAaM8u
+         DNczL717hqw2aItiHVzRGqjEHCYpBSTWU+HTnOgspjbPF9G6kQE7hwmQgP8Q5oBE2dS5
+         svi9GF/8pQsQxS9DLWdm960Qsz+t8vQj57XT1pQlFfDcgyGnXUL01AG5RLlD81cQ/SBl
+         XaG/+S4YtZmeLUZJ9eLgE7NyYb8v9tnc58S1XqqKHIvTrWP0i7CcHCX8MX0R9letvMfu
+         xrB6UWbEpeeVOI9CMpH5+55e/jbBfN9v9BV98ocBqlqcNBQHYOEtXWSCDeZPc0LX/VRC
+         Lzkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758900935; x=1759505735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t3QolWh9yQNhYU+vX6JITZzux4tGJdvU1Io4E63l5RY=;
+        b=ttUGJMETkXZGjTapP80tfExvAx+vYl+PK3piUMIMC6BpS7FNfs4jdur0a3Pbm7idR4
+         jEIfQ2VPKMXSUYZ/LKZud51R7jy7kVtegaBnvNJ0PS7qa54vus+oomi5E3C3reJS9HHQ
+         EFf4FtIvC24Os07dByRiJESL+kJwurFfYT1+OVIAc5zV2QC2Bh8hp7HyEsZtO2bO1jYM
+         RXjUHua4Kh85bkN2SHnbWqQyeCdVtpqQKZPLf7CUm9lvpqcS02V2p1877Ly4tHu+ispX
+         fU6fArIixKQiMNuncmioP8OcAIRLl3wvFc+6pqA+flviQcDbgnH/CLbIBNTpiqv9Ibw4
+         zfHw==
+X-Gm-Message-State: AOJu0YwMJ7I2kw+IuXecovXXFZRS8MdZWSxq9b8qaXXZRRpKWKrGtsFL
+	msbaaR0isdBXCfJBRV2t+1rpRPHz5perhTy3TaztWeNRjwwHOjG8SfaK
+X-Gm-Gg: ASbGncsWDda5Js3qcloMVa7rj371XNVDUSeoeSZvg/CI+yXgq06vxbJXLKUkegc8hXV
+	sxpfxO6c2DM3VeCgFuwwHy/lBs6WNPjyHjqvovLjLNtjYcpGSudHauLGGhaSYl+dhzVih3XCpzT
+	4cW25M9sbpEK1E+FVY2NeCD4LNGgQqcVK5vkd0n6aHEzIhvazfz4I9l/PbHBAA+8smNXWX1a6bc
+	EHfO9519UIm32yeNFwd67VXgiLdS+xOPME7E6uFqy+fQkzFAhlZNU3190CmX9G44K+fU2fSbL82
+	nN1osgqYxOGhlbUyeeUc8qTQS19sV4zdwwkAUelRWyJTO3g6R4C23KK3wseaoKhxELDWDY7qKwA
+	wrCnjiO58DyuEskiS9o/GhMGQvak=
+X-Google-Smtp-Source: AGHT+IF3S7EfQN9PdbP2G4VJKj9LRuJ1Ck86dbGS/Ex74BrmT0AVyyBaUL2/KOyZVJIrdv8WsTZYGw==
+X-Received: by 2002:a05:6a00:2da2:b0:781:1bf7:8c5a with SMTP id d2e1a72fcca58-7811bf798d4mr2285167b3a.1.1758900935397;
+        Fri, 26 Sep 2025 08:35:35 -0700 (PDT)
+Received: from ubuntu.. ([110.9.142.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c279f8sm4786497b3a.98.2025.09.26.08.35.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 08:35:35 -0700 (PDT)
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Cc: linux-fsdevel@vger.kernel.org,
+	Sang-Heon Jeon <ekffu200098@gmail.com>,
+	syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
+Subject: [PATCH v2] exfat: combine iocharset and utf8 option setup
+Date: Sat, 27 Sep 2025 00:35:22 +0900
+Message-ID: <20250926153522.922821-1-ekffu200098@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <otguskcvjqwcojy6tsw7yimvshsgtj4vl7ciwksxazx7z5s2ko@vjyf5plolvvf>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1F8DD1F84F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,microsoft.com,talpey.com,brown.name,redhat.com,lwn.net,szeredi.hu,manguebit.org,linuxfoundation.org,tyhicks.com,chromium.org,goodmis.org,efficios.com,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLpnapcpkwxdkc5mopt1ezhhna)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: 8bit
 
-On Fri 26-09-25 17:23:41, Jan Kara wrote:
-> On Wed 24-09-25 14:05:53, Jeff Layton wrote:
-> > In order to add directory delegation support, we need to break
-> > delegations on the parent whenever there is going to be a change in the
-> > directory.
-> > 
-> > Rename vfs_create as __vfs_create, make it static, and add a new
-> > delegated_inode parameter. Fix do_mknodat to call __vfs_create and wait
-> > for a delegation break if there is one. Add a new exported vfs_create
-> > wrapper that passes in NULL for delegated_inode.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+Currently, exfat utf8 mount option depends on the iocharset option
+value. After exfat remount, utf8 option may become inconsistent with
+iocharset option.
 
-Sorry, I've sent this twise by mistake.
+If the options are inconsistent; (specifically, iocharset=utf8 but
+utf8=0) readdir may reference uninitalized NLS, leading to a null
+pointer dereference.
 
-								Honza
+Extract and combine utf8/iocharset setup logic into exfat_set_iocharset().
+Then Replace iocharset setup logic to exfat_set_iocharset to prevent
+utf8/iocharset option inconsistentcy after remount.
 
-> > ---
-> >  fs/namei.c | 55 ++++++++++++++++++++++++++++++++++++-------------------
-> >  1 file changed, 36 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 903b70a82530938a0fdf10508529a1b7cc38136d..d4b8330a3eb97e205dc2e71766fed1e45503323b 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3370,6 +3370,32 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
-> >  	return mode;
-> >  }
-> >  
-> > +static int __vfs_create(struct mnt_idmap *idmap, struct inode *dir,
-> > +			struct dentry *dentry, umode_t mode, bool want_excl,
-> > +			struct inode **delegated_inode)
-> > +{
-> > +	int error;
-> > +
-> > +	error = may_create(idmap, dir, dentry);
-> > +	if (error)
-> > +		return error;
-> > +
-> > +	if (!dir->i_op->create)
-> > +		return -EACCES;	/* shouldn't it be ENOSYS? */
-> > +
-> > +	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
-> > +	error = security_inode_create(dir, dentry, mode);
-> > +	if (error)
-> > +		return error;
-> > +	error = try_break_deleg(dir, delegated_inode);
-> > +	if (error)
-> > +		return error;
-> > +	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
-> > +	if (!error)
-> > +		fsnotify_create(dir, dentry);
-> > +	return error;
-> > +}
-> > +
-> >  /**
-> >   * vfs_create - create new file
-> >   * @idmap:	idmap of the mount the inode was found from
-> > @@ -3389,23 +3415,7 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
-> >  int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
-> >  	       struct dentry *dentry, umode_t mode, bool want_excl)
-> >  {
-> > -	int error;
-> > -
-> > -	error = may_create(idmap, dir, dentry);
-> > -	if (error)
-> > -		return error;
-> > -
-> > -	if (!dir->i_op->create)
-> > -		return -EACCES;	/* shouldn't it be ENOSYS? */
-> > -
-> > -	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
-> > -	error = security_inode_create(dir, dentry, mode);
-> > -	if (error)
-> > -		return error;
-> > -	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
-> > -	if (!error)
-> > -		fsnotify_create(dir, dentry);
-> > -	return error;
-> > +	return __vfs_create(idmap, dir, dentry, mode, want_excl, NULL);
-> >  }
-> >  EXPORT_SYMBOL(vfs_create);
-> >  
-> > @@ -4278,6 +4288,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> >  	struct path path;
-> >  	int error;
-> >  	unsigned int lookup_flags = 0;
-> > +	struct inode *delegated_inode = NULL;
-> >  
-> >  	error = may_mknod(mode);
-> >  	if (error)
-> > @@ -4296,8 +4307,9 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> >  	idmap = mnt_idmap(path.mnt);
-> >  	switch (mode & S_IFMT) {
-> >  		case 0: case S_IFREG:
-> > -			error = vfs_create(idmap, path.dentry->d_inode,
-> > -					   dentry, mode, true);
-> > +			error = __vfs_create(idmap, path.dentry->d_inode,
-> > +					     dentry, mode, true,
-> > +					     &delegated_inode);
-> >  			if (!error)
-> >  				security_path_post_mknod(idmap, dentry);
-> >  			break;
-> > @@ -4312,6 +4324,11 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> >  	}
-> >  out2:
-> >  	done_path_create(&path, dentry);
-> > +	if (delegated_inode) {
-> > +		error = break_deleg_wait(&delegated_inode);
-> > +		if (!error)
-> > +			goto retry;
-> > +	}
-> >  	if (retry_estale(error, lookup_flags)) {
-> >  		lookup_flags |= LOOKUP_REVAL;
-> >  		goto retry;
-> > 
-> > -- 
-> > 2.51.0
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3e9cb93e3c5f90d28e19
+Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+Fixes: acab02ffcd6b ("exfat: support modifying mount options via remount")
+Tested-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
+---
+Changes from v1 [1]
+- extract utf8/iocharset setup logic to tiny function
+- apply utf8/iocharset setup to exfat_init_fs_context()
+
+[1] https://lore.kernel.org/all/20250925184040.692919-1-ekffu200098@gmail.com/
+---
+ fs/exfat/super.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index e1cffa46eb73..7f9592856bf7 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -31,6 +31,16 @@ static void exfat_free_iocharset(struct exfat_sb_info *sbi)
+ 		kfree(sbi->options.iocharset);
+ }
+ 
++static void exfat_set_iocharset(struct exfat_mount_options *opts,
++				char *iocharset)
++{
++	opts->iocharset = iocharset;
++	if (!strcmp(opts->iocharset, "utf8"))
++		opts->utf8 = 1;
++	else
++		opts->utf8 = 0;
++}
++
+ static void exfat_put_super(struct super_block *sb)
+ {
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+@@ -292,7 +302,7 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 	case Opt_charset:
+ 		exfat_free_iocharset(sbi);
+-		opts->iocharset = param->string;
++		exfat_set_iocharset(opts, param->string);
+ 		param->string = NULL;
+ 		break;
+ 	case Opt_errors:
+@@ -664,8 +674,8 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	/* set up enough so that it can read an inode */
+ 	exfat_hash_init(sb);
+ 
+-	if (!strcmp(sbi->options.iocharset, "utf8"))
+-		opts->utf8 = 1;
++	if (sbi->options.utf8)
++		set_default_d_op(sb, &exfat_utf8_dentry_ops);
+ 	else {
+ 		sbi->nls_io = load_nls(sbi->options.iocharset);
+ 		if (!sbi->nls_io) {
+@@ -674,12 +684,8 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 			err = -EINVAL;
+ 			goto free_table;
+ 		}
+-	}
+-
+-	if (sbi->options.utf8)
+-		set_default_d_op(sb, &exfat_utf8_dentry_ops);
+-	else
+ 		set_default_d_op(sb, &exfat_dentry_ops);
++	}
+ 
+ 	root_inode = new_inode(sb);
+ 	if (!root_inode) {
+@@ -809,8 +815,8 @@ static int exfat_init_fs_context(struct fs_context *fc)
+ 	sbi->options.fs_fmask = current->fs->umask;
+ 	sbi->options.fs_dmask = current->fs->umask;
+ 	sbi->options.allow_utime = -1;
+-	sbi->options.iocharset = exfat_default_iocharset;
+ 	sbi->options.errors = EXFAT_ERRORS_RO;
++	exfat_set_iocharset(&sbi->options, exfat_default_iocharset);
+ 
+ 	fc->s_fs_info = sbi;
+ 	fc->ops = &exfat_context_ops;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
