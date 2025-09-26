@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-62877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574F4BA3BF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:03:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23802BA3C0B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AE2626BBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 13:03:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AFAF7AB4AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 13:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319042F5A10;
-	Fri, 26 Sep 2025 13:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1782F5A0C;
+	Fri, 26 Sep 2025 13:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9DG3Roo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+hGShpQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850A32750F3;
-	Fri, 26 Sep 2025 13:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40673279907;
+	Fri, 26 Sep 2025 13:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891780; cv=none; b=W3GP02VOk815AzLDKFAf6TrkrgXavHG7u9ihe9ss9XCr5sA1dPPyvfU/WI24cSfN7P+mG+9seXnxww6zLc+H7bGQtdFnBxqNUxbIq8TE1V6nTNpIgZHJA+gfK0hUhWgWioTqPTQVsas/e6Xe/S+Hi+v0rwYbqjzxgNbVes9kC98=
+	t=1758891923; cv=none; b=hWoPvt/cDc17tRGcMSmyzIxIDIG9coKN9YZetZF72/l2WfxVdCJagzrVa1mpS640tDvhRbdCzt/NGgtkenhwJspo5Ps1oFZIV11BAH4Ohr+kZ9PdynmLxyvfRuRmw0Z38SGLJIIYfxtjISaiMOqNx6SC7cMB3GdhFtRPOMfG/pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891780; c=relaxed/simple;
-	bh=8ID9kGz/82/5N4qiWEJYj9mxFgAxoPaXujfJi5jWldY=;
+	s=arc-20240116; t=1758891923; c=relaxed/simple;
+	bh=+drV6HJHMDiVWXsRI1t2fojc5Ew0Gr1Z3BP7jR4SjQA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jZfVAapNN+rK3vJvgPahufbjnkbmDd16kUg/Q+8xOL/UOX88Bqc8NPA4eaUK64f2zLe+7sHnn+c25TVyHA9ik12eYwYfA5QRQZGbOt7yyhlF113Mt93ualVJYpVUT8SYGRwqzXEHjfhzf3Y1TuIJy34Hon6yEg4NbI3rNlryXVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9DG3Roo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36FCC4CEF4;
-	Fri, 26 Sep 2025 13:02:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SXXvQpmDGkVluY01nFnw5fzcGDW6BIAg/otN2xWWVEtCv6iCexzqBKRJQHseoc6B5AHT0zkPgfqUB9aU6Fhz0qoxlL448/Jr/e7EwZWk5vIaWudE0pTzfJJnbalMAVm/VFEw15hmi9No7At9+d6ccSgYXAJTyYCidKlvh3hkpYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+hGShpQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736E4C4CEF4;
+	Fri, 26 Sep 2025 13:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891780;
-	bh=8ID9kGz/82/5N4qiWEJYj9mxFgAxoPaXujfJi5jWldY=;
+	s=k20201202; t=1758891922;
+	bh=+drV6HJHMDiVWXsRI1t2fojc5Ew0Gr1Z3BP7jR4SjQA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P9DG3Roo0YahBPpM1s9x1TtrXqzuQai1Ss9HiKgxBz45f6Qx0B2Bz6mw47xXRXYZI
-	 4b1o4oUM8RgevdgET4g06PvTq37v4s4eBGbmPwocN5sEuGiqEm5mY/BBzbfk1xOSAZ
-	 mfcR91ADhP/4+/smxsSP6VeC+wHZ3Weoue4BCz9BAjZLGaa4SYy8WMgkPk3cROk6QF
-	 HqqE3QKVCy49QXZVsEbcsG0su9BrfkrIYH+lV7m8k8xkaZ1hGpUQxyw9k5i8cRVFjZ
-	 BfgzTWKni4KhIaYbuQqUW+Wj/Yqv/A2oRNASOJQTwTH2xnn8wtSi3qLzVx1bHOa/mb
-	 QuVdLmwTeMZSg==
-Message-ID: <a99fdcba-ab77-4a40-bc97-9794ebfdb059@kernel.org>
-Date: Fri, 26 Sep 2025 09:02:58 -0400
+	b=R+hGShpQWYEqjAySfOn5yg/y2FmA7HWRFYY5oGCNKU9UigdPJUx4wzd0v3HBSjca/
+	 zKqf40OKcovmkY8fwgJivElnLItgkr64JU6s7h+dBVwhyeOLozHpKvMUJtr57uKWBX
+	 QSg8mrpnTP1hjGiZDYg7j6m6DuGGibEyPRbe4YJ5Ht920XH30LO/EzbeIboJNNyvHO
+	 2KUdu9//DiGV/0UXV4KwYOv73xENzBefMA0fvycw9I81asq1VSRR7KPEXlX8QETzk9
+	 q36ya5/31OB3puSfp6nix25vSSqGwKdqgFWI+EhCUXm+zmXXdn4jWUm+QudLUCpybX
+	 fbeH/1PxyCaJQ==
+Message-ID: <39397920-3dc0-4295-b34d-67a298bf861b@kernel.org>
+Date: Fri, 26 Sep 2025 09:05:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,64 +51,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+To: Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+Cc: Chuck Lever <chuck.lever@oracle.com>,
  Volker Lendecke <Volker.Lendecke@sernet.de>
 References: <20250925151140.57548-1-cel@kernel.org>
- <aNYUfyiVMaWtQ0V5@infradead.org>
+ <ad767899918d26817e44f1af213a8dfdce26508a.camel@kernel.org>
 Content-Language: en-US
 From: Chuck Lever <cel@kernel.org>
 Organization: kernel.org
-In-Reply-To: <aNYUfyiVMaWtQ0V5@infradead.org>
+In-Reply-To: <ad767899918d26817e44f1af213a8dfdce26508a.camel@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/25/25 9:20 PM, Christoph Hellwig wrote:
-> On Thu, Sep 25, 2025 at 11:11:40AM -0400, Chuck Lever wrote:
->> +	if (request_mask & STATX_CASE_INFO) {
->> +		stat->result_mask |= STATX_CASE_INFO;
->> +		/* STATX_CASE_PRESERVING is cleared */
->> +		stat->case_info = statx_case_ascii;
-> 
-> FAT is using code pages specified on the command line for it's case
-> insensitivity handling, which coverse much more than ASCISS.
+On 9/26/25 3:00 AM, Jeff Layton wrote:
+>> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+>> index 1686861aae20..e929b30d64b6 100644
+>> --- a/include/uapi/linux/stat.h
+>> +++ b/include/uapi/linux/stat.h
+>> @@ -219,6 +219,7 @@ struct statx {
+>>  #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
+>>  #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
+>>  #define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
+>> +#define STATX_CASE_INFO		0x00040000U	/* Want/got case folding info */
+>>
+>>
+> Do you intend to expose this new attribute to userland? If not, then it
+> should probably snuggle up next to STATX_CHANGE_COOKIE. If so, then you
+> need to claim a field for it in struct statx, and populate it.
 
-I noticed that a mount option controls whether the filename encoding is
-UTF-8. Clearly this will need more logic to set the correct bit.
-
-
->> +/* Values stored in the low-order byte of .case_info */
->> +enum {
->> +	statx_case_sensitive = 0,
->> +	statx_case_ascii,
->> +	statx_case_utf8,
->> +	statx_case_utf16,
->> +};
-> 
-> What are these supposed to mean?
-
-For the moment, the meaning is unclear because I simply wanted to
-demonstrate that more than one behavior can be reported. Someone with
-greater expertise than mine can help refine the specific semantics.
-
-
-> ASCII, utf8 and utf16 are all
-> encodings and not case folding algorithms.  While the folding is obvious
-> for ASCII, it is not for unicode and there are all kinds of different
-> variants.
-
-Fair enough... this is the right spot to report those variants. Or we
-can decide that is inconsequential or impossible and simply reduce this
-to a single "filename case is {in}sensitive" bit.
-
-
-> Also I don't know of any file systems using utf16 encoding
-> and even if it did, it would interact with the VFS and nfsd using
-> utf8.  Note that the 16-bit ucs-2 encoding used by windows file systems
-> is a different things than unicode encodings like utf16.
-
-Sure, UTF16 can be dropped or replaced.
+As I mentioned in the patch description, exposing to user space can be
+done as a next step if we decide to pursue this proposal further. Yes,
+that is something I have in mind.
 
 
 -- 
