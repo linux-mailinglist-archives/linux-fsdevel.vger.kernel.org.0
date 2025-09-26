@@ -1,166 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-62870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31490BA3665
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 12:53:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0AB9BA3753
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 13:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C11C7AB3FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 10:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEB062505E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 11:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0349B2F49F2;
-	Fri, 26 Sep 2025 10:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA0024635E;
+	Fri, 26 Sep 2025 11:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uD1JE0tX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKa3UyoW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40324374C4;
-	Fri, 26 Sep 2025 10:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D15935963
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 11:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758884006; cv=none; b=S2AR9BlTavjGPILdjCnsn5zcQgsT79FWVsUxDcMev2O/8NCuOBnCiE0YJ7yFlbuP/Tzrk3am13HOzLFd2r2WDFr2oXiS1i5z9AHDs9s3SjKix+nHyaQkz0gsV5Z+kXt5s03qTCCZ30QpSd0cJmYyp5gvmNnVbRk/cIhE2DlDxEY=
+	t=1758885442; cv=none; b=vCa3ynOgA4oZtTbENnFPdjsT0UOpl63bZO07Mpk6tiIsnWBqbByGMYYtChKYT6lSITHEcRcnTlxWOzX2VBQmBJ1AG0K68RBXLxAsf5LCLSk2z8jZn53+ROl0uvGYgd3KbP6+6//O9QAdEe2uW098dsM2CsbxRbDhY9sOKK8V/8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758884006; c=relaxed/simple;
-	bh=7hmmYSJPRgv/HC65SCjVCWih93S3343uLCIvyfBCuoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jv5ZpxRLEmuLamgxBVYX/dtNj6nfGWPzBPldSzmpQkzlUIy3+ynOceroNyVjen2sUfBXO+7kYOrMVgrt3ffohpJcx2mywkDiZQsaxdHKO2krHk8MC3+G/L6S361qCWnXnbHZsPTktnmA3ow+mleYGawFZBUwq8fiLvSqApCgnMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uD1JE0tX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D44C4CEF4;
-	Fri, 26 Sep 2025 10:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758884005;
-	bh=7hmmYSJPRgv/HC65SCjVCWih93S3343uLCIvyfBCuoY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uD1JE0tXSNlpM8sPhyTXW479bU0LI8INqzK4TERYGl4X7uWhmA9lmVftkg1kWXZ5R
-	 77GIltP55fsK1VaNF04SNJorVj4he00rts0ps3WabgzU+pkpIwJ4s8I+R0hmUJnUtU
-	 RiaA5H5VESS2asBJWt7pSZgGaIv0Nm+KYRCGG+rPlSqbN+Dbh5Z/Txoz0wlINXpYEV
-	 XpuzK1hMtXmi8NPXs68yGAwo2DcoOz/MQPBrQn8al4WKuMkf07ZITw6sd0eQuO6+Q/
-	 NxEbMuIeeoejXQN3nR+oF+rAs5zBbLTi3No4iK9EUmEyBi7Uiryz2YSyhJ74rbGMLA
-	 g299/90nvCdmA==
-Date: Fri, 26 Sep 2025 11:53:12 +0100
-From: Will Deacon <will@kernel.org>
-To: Patrick Roy <patrick.roy@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	"Roy, Patrick" <roypat@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"rppt@kernel.org" <rppt@kernel.org>,
-	"surenb@google.com" <surenb@google.com>,
-	"mhocko@suse.com" <mhocko@suse.com>,
-	"song@kernel.org" <song@kernel.org>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>,
-	"haoluo@google.com" <haoluo@google.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>,
-	"peterx@redhat.com" <peterx@redhat.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>,
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>,
-	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
-	"tabba@google.com" <tabba@google.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>
-Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for
- disabling TLB flushing
-Message-ID: <aNZwmPFAxm_HRYpC@willie-the-truck>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-3-roypat@amazon.co.uk>
- <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
- <c1875a54-0c87-450f-9370-29e7ec4fea3d@redhat.com>
- <82bff1c4-987f-46cb-833c-bd99eaa46e7a@intel.com>
- <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
- <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
+	s=arc-20240116; t=1758885442; c=relaxed/simple;
+	bh=/D/LcGt4F8aQYTdHpUG9hSMl11BBCHQM490BthpgDBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pys1g2gztxnmXiWj0ldphinns/HL3LaJcfWk7NXI2DMFRz1r8oQZq+qahdDgRPYDXH43NslzPQKj4Njrl5gPmAMoVBTd6jbgNGUOP56kpM90UDhNLzEV+5ubAaqK/hPd3pPyrrYL7oNX8E+vufzTHhVsUFufLd0PgqdwVAobTTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKa3UyoW; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso4132118a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 04:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758885439; x=1759490239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zNOorhd6M74qLleN1Die/vRTuCIo1nkdqHcqtDXx7Q8=;
+        b=ZKa3UyoWMRgh2lgR+MXHtI4rFA/J9H/pwuKEVB+vhLl6JZSryqb1bjZksVbZzjO+L0
+         UpqUZGZN7/Lti/XNkb9IcSzE3KQehkuFdxGb404S3E2B7sXAKbkf6swrV1d88AXZAGrg
+         pMibjlOe3lpaeDLe2CgZGn8aBgSbyWBLYRzjmKr7U72JY15CJmHM7aKyUX5csSfIhpy7
+         SFS5+TbL8m3MuzPOH33+3Y2c/2bHKrEl69ksVVAbxGvaYs6zW+z82pPhex+iEr7AmOOE
+         RaPxa5EYgPhiMvsBvyfX+9DUfovS/OAZH0V4uerztuhAWhuAw00SQztNItprfO2Ss3Wl
+         UKwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758885439; x=1759490239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zNOorhd6M74qLleN1Die/vRTuCIo1nkdqHcqtDXx7Q8=;
+        b=P0mzKtCfolIgiSIPFtPqvxRt99Sw7nxpv+DFBtoIow0MOdqcK49hamM8FMeJ4Sk5B5
+         /gQxRlHKO0D2cTw3/JaWtMzdr6thMD5c3p398BuiU6fgUez0kUQT0Hy3PvDFe/vPLRdc
+         5id8GIG972KDcsn7L+CEE/PEngDnRCqNFqUkzdW71YGJz99FsAH5IsMn/kRfzSNOw2FM
+         vl81u5iGA3YZelIfyq2j8TO/iFLMRPOxHuISmbgvwre5ryEZwsQLt1tzqIsn4VKe9s5/
+         o9tgi1TT0mmh2pbH6GmeQOdN+3/sIK7A8aHGU99Ijn4UpWVoznntZfeHwcBqo57OJfzD
+         +LAg==
+X-Gm-Message-State: AOJu0YyQ2QASOP3q8tegl66wyFrh4pRGgSklY0NXKv/RNBqJQONfiugT
+	p09bJDtQh9XZh1aHdhwOm3iZRhm7l1i8QhGF/PdeGtnBP10rTpgAfSywgt/kTtLOCkm/FFpLSfm
+	niJE9l0RMYXlHtazERDcI6Td5NFvvfMw=
+X-Gm-Gg: ASbGncsowRDOgIX7i1yskB/G+aHc4ksY007C2tvKb0epKWQHoTteZj890BQWCuSmeFj
+	0up+tJr4bjzFjNF8i/FcvN56MRxEGgD/sFbz6a2day2ia6U8y3FegMvnbzNf1qWn7fEfo+/o8ye
+	hiFiEHt7vQWOa/2a9Y52diVdyMpKtqrLY/Ou1V5TRH+crKr/QI/6hq54gRskS0lpCr3Fjs61DZb
+	vZt3LBsKi2DUNAp2mwwdzkYf0plFwFzkbS2O7ybJRIE9j3j6Mha
+X-Google-Smtp-Source: AGHT+IE8r26967zraCBiRObEI4Jz8j/FetRHIfWBY2uj8Gc+AAgLr5HP+N54vrFBw4YoJ9A6MotRIjIPZlwnQSGdsVg=
+X-Received: by 2002:a05:6402:234d:b0:634:54f3:2fbb with SMTP id
+ 4fb4d7f45d1cf-634a292cddcmr6132869a12.3.1758885438931; Fri, 26 Sep 2025
+ 04:17:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
+References: <20250925132239.2145036-1-sunjunchao@bytedance.com>
+ <fylfqtj5wob72574qjkm7zizc7y4ieb2tanzqdexy4wcgtgov4@h25bh2fsklfn> <5622443b-b5b4-4b19-8a7b-f3923f822dda@bytedance.com>
+In-Reply-To: <5622443b-b5b4-4b19-8a7b-f3923f822dda@bytedance.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 26 Sep 2025 13:17:05 +0200
+X-Gm-Features: AS18NWDFRZ_Z5-4R4C62-4XeD8xSioY1-AHcWYMM0cNJ3m5XFL4GkO_4tw7tvcw
+Message-ID: <CAGudoHGigCyz60ec6Mv3NL2-x7tfLWYdK1M=Rj2OHRAgqHKOdg@mail.gmail.com>
+Subject: Re: [PATCH] write-back: Wake up waiting tasks when finishing the
+ writeback of a chunk.
+To: Julian Sun <sunjunchao@bytedance.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, peterz@infradead.org, akpm@linux-foundation.org, 
+	Lance Yang <lance.yang@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 10:46:15AM +0100, Patrick Roy wrote:
-> 
-> 
-> On Thu, 2025-09-25 at 21:13 +0100, David Hildenbrand wrote:
-> > On 25.09.25 21:59, Dave Hansen wrote:
-> >> On 9/25/25 12:20, David Hildenbrand wrote:
-> >>> On 25.09.25 20:27, Dave Hansen wrote:
-> >>>> On 9/24/25 08:22, Roy, Patrick wrote:
-> >>>>> Add an option to not perform TLB flushes after direct map manipulations.
-> >>>>
-> >>>> I'd really prefer this be left out for now. It's a massive can of worms.
-> >>>> Let's agree on something that works and has well-defined behavior before
-> >>>> we go breaking it on purpose.
-> >>>
-> >>> May I ask what the big concern here is?
+On Fri, Sep 26, 2025 at 4:26=E2=80=AFAM Julian Sun <sunjunchao@bytedance.co=
+m> wrote:
+>
+> On 9/26/25 1:25 AM, Mateusz Guzik wrote:
+> > On Thu, Sep 25, 2025 at 09:22:39PM +0800, Julian Sun wrote:
+> >> Writing back a large number of pages can take a lots of time.
+> >> This issue is exacerbated when the underlying device is slow or
+> >> subject to block layer rate limiting, which in turn triggers
+> >> unexpected hung task warnings.
 > >>
-> >> It's not a _big_ concern. 
-> > 
-> > Oh, I read "can of worms" and thought there is something seriously problematic :)
-> > 
-> >> I just think we want to start on something
-> >> like this as simple, secure, and deterministic as possible.
-> > 
-> > Yes, I agree. And it should be the default. Less secure would have to be opt-in and documented thoroughly.
-> 
-> Yes, I am definitely happy to have the 100% secure behavior be the
-> default, and the skipping of TLB flushes be an opt-in, with thorough
-> documentation!
-> 
-> But I would like to include the "skip tlb flushes" option as part of
-> this patch series straight away, because as I was alluding to in the
-> commit message, with TLB flushes this is not usable for Firecracker for
-> performance reasons :(
+> >> We can trigger a wake-up once a chunk has been written back and the
+> >> waiting time for writeback exceeds half of
+> >> sysctl_hung_task_timeout_secs.
+> >> This action allows the hung task detector to be aware of the writeback
+> >> progress, thereby eliminating these unexpected hung task warnings.
+> >>
+> >
+> > If I'm reading correctly this is also messing with stats how long the
+> > thread was stuck to begin with.
+>
+> IMO, it will not mess up the time. Since it only updates the time when
+> we can see progress (which is not a hang). If the task really hangs for
+> a long time, then we can't perform the time update=E2=80=94so it will not=
+ mess
+> up the time.
+>
 
-I really don't want that option for arm64. If we're going to bother
-unmapping from the linear map, we should invalidate the TLB.
+My point is that if you are stuck in the kernel for so long for the
+hung task detector to take notice, that's still something worth
+reporting in some way, even if you are making progress. I presume with
+the patch at hand this information is lost.
 
-Will
+For example the detector could be extended to drop a one-liner about
+encountering a thread which was unable to leave the kernel for a long
+time, even though it is making progress. Bonus points if the message
+contained info this is i/o and for which device.
+
+> cc Lance and Andrew.
+> >
+> > Perhaps it would be better to have a var in task_struct which would
+> > serve as an indicator of progress being made (e.g., last time stamp of
+> > said progress).
+> >
+> > task_struct already has numerous holes so this would not have to grow i=
+t
+> > above what it is now.
+> >
+> >
+> >> This patch has passed the xfstests 'check -g quick' test based on ext4=
+,
+> >> with no additional failures introduced.
+> >>
+> >> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+> >> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> >> ---
+> >>   fs/fs-writeback.c                | 13 +++++++++++--
+> >>   include/linux/backing-dev-defs.h |  1 +
+> >>   2 files changed, 12 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> >> index a07b8cf73ae2..475d52abfb3e 100644
+> >> --- a/fs/fs-writeback.c
+> >> +++ b/fs/fs-writeback.c
+> >> @@ -14,6 +14,7 @@
+> >>    *         Additions for address_space-based writeback
+> >>    */
+> >>
+> >> +#include <linux/sched/sysctl.h>
+> >>   #include <linux/kernel.h>
+> >>   #include <linux/export.h>
+> >>   #include <linux/spinlock.h>
+> >> @@ -174,9 +175,12 @@ static void finish_writeback_work(struct wb_write=
+back_work *work)
+> >>              kfree(work);
+> >>      if (done) {
+> >>              wait_queue_head_t *waitq =3D done->waitq;
+> >> +            /* Report progress to inform the hung task detector of th=
+e progress. */
+> >> +            bool force_wake =3D (jiffies - done->stamp) >
+> >> +                               sysctl_hung_task_timeout_secs * HZ / 2=
+;
+> >>
+> >>              /* @done can't be accessed after the following dec */
+> >> -            if (atomic_dec_and_test(&done->cnt))
+> >> +            if (atomic_dec_and_test(&done->cnt) || force_wake)
+> >>                      wake_up_all(waitq);
+> >>      }
+> >>   }
+> >> @@ -213,7 +217,7 @@ static void wb_queue_work(struct bdi_writeback *wb=
+,
+> >>   void wb_wait_for_completion(struct wb_completion *done)
+> >>   {
+> >>      atomic_dec(&done->cnt);         /* put down the initial count */
+> >> -    wait_event(*done->waitq, !atomic_read(&done->cnt));
+> >> +    wait_event(*done->waitq, ({ done->stamp =3D jiffies; !atomic_read=
+(&done->cnt); }));
+> >>   }
+> >>
+> >>   #ifdef CONFIG_CGROUP_WRITEBACK
+> >> @@ -1975,6 +1979,11 @@ static long writeback_sb_inodes(struct super_bl=
+ock *sb,
+> >>               */
+> >>              __writeback_single_inode(inode, &wbc);
+> >>
+> >> +            /* Report progress to inform the hung task detector of th=
+e progress. */
+> >> +            if (work->done && (jiffies - work->done->stamp) >
+> >> +                HZ * sysctl_hung_task_timeout_secs / 2)
+> >> +                    wake_up_all(work->done->waitq);
+> >> +
+> >>              wbc_detach_inode(&wbc);
+> >>              work->nr_pages -=3D write_chunk - wbc.nr_to_write;
+> >>              wrote =3D write_chunk - wbc.nr_to_write - wbc.pages_skipp=
+ed;
+> >> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-=
+dev-defs.h
+> >> index 2ad261082bba..c37c6bd5ef5c 100644
+> >> --- a/include/linux/backing-dev-defs.h
+> >> +++ b/include/linux/backing-dev-defs.h
+> >> @@ -63,6 +63,7 @@ enum wb_reason {
+> >>   struct wb_completion {
+> >>      atomic_t                cnt;
+> >>      wait_queue_head_t       *waitq;
+> >> +    unsigned long stamp;
+> >>   };
+> >>
+> >>   #define __WB_COMPLETION_INIT(_waitq)       \
+> >> --
+> >> 2.39.5
+> >>
+>
+> Thanks,
+> --
+> Julian Sun <sunjunchao@bytedance.com>
 
