@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-62858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2677BA2CAF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 09:32:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7852BBA2CBE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 09:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FDC6262D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 07:31:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D4316A243
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 07:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8262877D3;
-	Fri, 26 Sep 2025 07:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5842848A4;
+	Fri, 26 Sep 2025 07:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C6K6JIY9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iqVzYAeh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7225263F32
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 07:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634A819E7F9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 07:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758871890; cv=none; b=C8KmsCJn2WRTaC3yBdvsVX0eTvYUTzh+vt6n6cOQYckru3NALURcmNVrYHbHhgDT8phw7WgOmBeHLPerQXsEqzJa4bMyGzdS+/VMak5sGfO9CptVcs/g/mw+CU6tvNKNxVKlbBp7mOTroc8P96Am+Y2z+H2BiPl9JdSgw/clBIE=
+	t=1758871962; cv=none; b=h8Z8B7CQKPWhM692bZBShPupid8pghy/G8mrJNE2dWepW65NFVTOpeDSePY28OkSi7jH0n3uCry8BSEyZRaRSIOZiXPK1uvqkpwfLZX4w2lFQpl5tXvo6UX53jdPUgooq+QSB5BgSsBV6uoBIDZhJrpQDmcZnvsT0UtvGvy3uZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758871890; c=relaxed/simple;
-	bh=KufU9ZWO/kLUGrCXDHaZph7HljBItyQP4ERJy1huuTc=;
+	s=arc-20240116; t=1758871962; c=relaxed/simple;
+	bh=95cIlEvWWj/uZmzswSkexkoWlvLONx/96Ut9/9TQYtc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=som4MErXeRWu5QH8Q0DIjGyYm/Z4+XO/dDeKBPGLdWE7aK39KafX68EMN7F4OexurX1WiWaUfKAiKCfnl0JYLYsXpdgeBUefDpSRxwvzLP0r4+Qd2eOr9vw5SQHMjD2vqHE0muSRm2adIJsz9OJZbYGq9fIOYL3I4YJrDi0DsVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C6K6JIY9; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=TCbrv4OuczIZ/ztfJmgt/EiWsRYKa3R18wI7B5gwztQiW5jWbDgIhfz+wTOZmQG4qe30bcNc00UREMsI4NKP0JgmGiPXiRcwm5GZ7KJpSmt4Ia6WRrTywEdL22fF7K3mjV5DfrUOiBSNClStlxAgCvOg4DuDa96nWkJqX7jXfYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iqVzYAeh; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758871887;
+	s=mimecast20190719; t=1758871960;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zN4peVxWL0zSknKb/nxU8BZxb2xqfgd1C45ub1DITH8=;
-	b=C6K6JIY9uJPtNjlhYFiJW74bil6xsRncDiBoNbtCMf/1OS8SQMkPMfZzoXGDoMRrKx5RR3
-	USu+P+thlLncZjbscdTukSFO1WYwCclQfJl8bJSpjHxwvkC9actWPNYx/af46x64IcFAVR
-	bnjc4v0rWDgdLOnz3dkIu6m1FXwaTI0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=K7lJCWxVdcfCha/v9DrcwqFYgZ0VcwRUn4ecEZCiSv8=;
+	b=iqVzYAehNJszn6+illvte8jcIxUk54jvUytI+5+g9gih7J7lEg20lljzSQWfH30ZpjQpGi
+	ZemAl7/lH9YLlzDXNwIW8Qp7HqsgsufR6/S92Mmhfo4KVvbNu1brQb/BFDI/NEx8hkWIpS
+	rdV6MMH5IZ27tW6InnDha6FlrWoAVVU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-215-y4Z8V6MZNDy3odC2lIDKOw-1; Fri, 26 Sep 2025 03:31:26 -0400
-X-MC-Unique: y4Z8V6MZNDy3odC2lIDKOw-1
-X-Mimecast-MFC-AGG-ID: y4Z8V6MZNDy3odC2lIDKOw_1758871885
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46da436df64so19390495e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 00:31:26 -0700 (PDT)
+ us-mta-605-jRHdI2XkMmS6g0WmeG-LTw-1; Fri, 26 Sep 2025 03:32:38 -0400
+X-MC-Unique: jRHdI2XkMmS6g0WmeG-LTw-1
+X-Mimecast-MFC-AGG-ID: jRHdI2XkMmS6g0WmeG-LTw_1758871958
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e41c32209so276385e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 00:32:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758871885; x=1759476685;
+        d=1e100.net; s=20230601; t=1758871957; x=1759476757;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zN4peVxWL0zSknKb/nxU8BZxb2xqfgd1C45ub1DITH8=;
-        b=P1Fztz5KocdrerRKuEtoOJ80/WZ7YyNYLpP9/YLsMWTlchgwqCoAFA6ZBIDrVw8EU4
-         CIguF5/6Kzupc8tSgv8I21b5KctNBjclsRNiliwtP8jWlDXyBKW/1CySOb37gtd/wf+v
-         Y7WK6leW7qUKhAzYzjXp5ojC+mjQm19McIwtq01kJfbZscEhYpXvy6IcjTvnSIsxwGKU
-         zCSBTcmV79XRnUAgtkqn2ujkKmesucuko2OSzwRx6lnH3qwbeChEoDML7LcTvsqSn25K
-         qA4acCw39Xe45vt9Sgeywu2y6hlkxqdgzKG9vYxBUZ2QNml13Y0P9kU2xqkjIqa8mXxm
-         G0Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXl8zIjw1PLT3AaI2aPUvGLaIbYKOvaz9zNCIkd8XcmFM1Gx+1NCQDROyRP7HGkxnlUFzj4/nCqipn/ZjQt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJMzmkSRZYPPramp5oLLNU545OODbzYK1emjMFtMAbRkXEhnW/
-	hpVihwf9SFz+VTaoF54YQWU9oO3lPvzrPYXVfxcyUMcgRJagmQWcNObQprrR0Mbx7ySP8Wk2Nhm
-	fBz5EenWgFlxHuTrJBHC58adIdxR1OWjPs9d/cE/grb/E3zzWlKMRJW1zb6X+L1jXHkY=
-X-Gm-Gg: ASbGncu32NgiRjKC7uEEwbxZ/btdLCGhFdprxNv8oVA834GIac6YUv8nSHToJ/DQbQ+
-	4otz+tC61jnRTJE3oNXzMl+tY1Rk6EJ/7wZSf61IchSBHc+8W+53Lukd0qPG2+VN0gR65WYxjCp
-	Cw5SPrJmaxG2hj8WO4ef0xL/+RUrv5WV6l2v1YxVYwhci/swdXfkmeH8czHvW0LVBS1dfOyMnI/
-	rZjmOUm8700nBZXXaSWgJ6UM8QrEUtvcsG617r3W5T2qtqqqaQ2Bl6GlxkHBHKq4i3V/4TRHhOg
-	MHlDHI7HX/HHBfkNwv1WbUrvx6TYqh9b7Pn1F4fpR02MpNRexQSRQc5Jus9z5gMHC89+/2duqHo
-	ZIjr303ouXPWBlMPsoWNyUh61WYU4Qv0GLooqFZrFDaDFN1/i5e3KfYKi88+RlpdrfvfY
-X-Received: by 2002:a05:600c:3ba9:b0:45d:d2d2:f081 with SMTP id 5b1f17b1804b1-46e329f9c61mr65568275e9.20.1758871884733;
-        Fri, 26 Sep 2025 00:31:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdCFTWN0OMV/8re7i7X1C3LDq1oeLqj0b7w/lVtU1L4ASh3eR7s8IXfpyY0kZjgB5RF7jO9w==
-X-Received: by 2002:a05:600c:3ba9:b0:45d:d2d2:f081 with SMTP id 5b1f17b1804b1-46e329f9c61mr65567615e9.20.1758871884155;
-        Fri, 26 Sep 2025 00:31:24 -0700 (PDT)
+        bh=K7lJCWxVdcfCha/v9DrcwqFYgZ0VcwRUn4ecEZCiSv8=;
+        b=LRFrkm7mpIwKpX9x0hkZfqJPNb897GjAXjfix8BwYZGJTkPOT6XLygeLI6EvAOQeg2
+         ExYy1J40W0FnJObXKM8LIH/RvRwlJkCO9us4A6KmktY21BKk0QvysetdTbGnWasaSP1R
+         31UWHvSWGb1v4GZOblb7LK4GTk8HfUPDzymg+aSi+09NgKbDiZ6kaQMFMt07HB+37kVW
+         qlxtABSoHaFa00tua/rg9AEAQPchoTQY4V7TOI6Lr6UxGt8yVemyDTXBHIzsAV9HxeAA
+         t4jjFx2+4pr4wKWaRTfUKvltO3RCB4qlPLnhyIJDC20TeJqLec2K3jixV4Ywsddnhlou
+         jj4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYD2sfeOBmWDUt+d47K0Q4Wbb+Xc5XUU0/SaHJKyciIQZOd0KK0F02UMS/a4o2L6UWFpZzucYtrM7cTuCI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLZbr9yvmCFRHMtYGhCWBrc8sP/LqzwUJVgqyJGo8vEVQhuLPn
+	gZR7eWwHzlhIhv9MC2tbbm6j9VfQKLqO0V4+3MhaWLLXvZ6MkmCRjkmoycraWjZWfA1FesbGWFk
+	fY0Yayo2GKcKrYkcBnNLLd9ORMtZA5VEhJ6ZCC5pzqjn7shvY0dcdoQDk9NjN6sUJQVw=
+X-Gm-Gg: ASbGnct/g2eHXOJSJhIj7IYZOy/g0sx0+B/rG2MHYcFoI/kMxQTqXZvJihw7DIZKwdl
+	7XWxefV+RCZMEiRFolr3jLffBzyVEXgN4GxJMOuvy/E5I2+l2ficJ59waqXBzIsS3qxjCl8mNJO
+	4PkkGeN/glzr3dw8SUibGBL3F3z+1sOdynlWXjrTl2q51YniRpZML5xDe2LEH9znVYAPOdcWTGz
+	HxErvCmF5/pZkl/4jaBdLJ5/IJPiTQS9OOljApeVZOBnK0f7JqkIe70mOFBqmNTYd6DfmCXsT5z
+	svz4HYjTFrefb/ixwTe7TUkklu7nqN/IRVTNxrLtXeZEKgZgKDB6JOTzB6ja/2lYToUGFaxoWEZ
+	QF8ZNhWBxDjS59/UwQ25uxPlZ0M15634pB2aa0w0Mr3F4ZqldPyfs0ML9yFL1Tndk+SYi
+X-Received: by 2002:a05:600c:a43:b0:46d:d949:daba with SMTP id 5b1f17b1804b1-46e329a7fe3mr62998735e9.4.1758871957440;
+        Fri, 26 Sep 2025 00:32:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtL4vBtb4UkKxYY+8AUu50LpG2eTQL/mEdtyu+TBsZgjy08g9xtyeO4upwKha/FYi9Pburtw==
+X-Received: by 2002:a05:600c:a43:b0:46d:d949:daba with SMTP id 5b1f17b1804b1-46e329a7fe3mr62997645e9.4.1758871956911;
+        Fri, 26 Sep 2025 00:32:36 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f34:c100:5d3c:50c0:398a:3ac9? (p200300d82f34c1005d3c50c0398a3ac9.dip0.t-ipconnect.de. [2003:d8:2f34:c100:5d3c:50c0:398a:3ac9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab61eecsm105756545e9.20.2025.09.26.00.31.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc72b0aeesm6112695f8f.49.2025.09.26.00.32.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 00:31:23 -0700 (PDT)
-Message-ID: <95ace421-36d2-48af-b527-7e799722eb17@redhat.com>
-Date: Fri, 26 Sep 2025 09:31:19 +0200
+        Fri, 26 Sep 2025 00:32:36 -0700 (PDT)
+Message-ID: <a127971f-d1e7-4fea-a16a-c2bae34b4ad3@redhat.com>
+Date: Fri, 26 Sep 2025 09:32:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,23 +92,23 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH kvm-next V11 7/7] KVM: guest_memfd: selftests: Add tests
  for mmap and NUMA policy support
-To: Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
- shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org,
- viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org,
- chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com,
- kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com,
- dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- tabba@google.com, ackerleytng@google.com, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
- Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+To: Jason Gunthorpe <jgg@nvidia.com>, Sean Christopherson <seanjc@google.com>
+Cc: Shivank Garg <shivankg@amd.com>, willy@infradead.org,
+ akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org,
+ vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ dsterba@suse.com, xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org,
+ clm@fb.com, josef@toxicpanda.com, kent.overstreet@linux.dev,
+ zbestahu@gmail.com, jefflexu@linux.alibaba.com, dhavale@google.com,
+ lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, ziy@nvidia.com,
+ matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, tabba@google.com, ackerleytng@google.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, kalyazin@amazon.com, peterx@redhat.com,
  jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
  ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
  chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
@@ -123,6 +123,7 @@ Cc: willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
  linux-coco@lists.linux.dev
 References: <20250827175247.83322-2-shivankg@amd.com>
  <20250827175247.83322-10-shivankg@amd.com> <aNW1l-Wdk6wrigM8@google.com>
+ <20250925230420.GC2617119@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -169,51 +170,30 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <aNW1l-Wdk6wrigM8@google.com>
+In-Reply-To: <20250925230420.GC2617119@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25.09.25 23:35, Sean Christopherson wrote:
-> On Wed, Aug 27, 2025, Shivank Garg wrote:
->> Add tests for NUMA memory policy binding and NUMA aware allocation in
->> guest_memfd. This extends the existing selftests by adding proper
->> validation for:
->> - KVM GMEM set_policy and get_policy() vm_ops functionality using
->>    mbind() and get_mempolicy()
->> - NUMA policy application before and after memory allocation
+On 26.09.25 01:04, Jason Gunthorpe wrote:
+> On Thu, Sep 25, 2025 at 02:35:19PM -0700, Sean Christopherson wrote:
+>>>   LDLIBS += -ldl
+>>> +LDLIBS += -lnuma
 >>
->> These tests help ensure NUMA support for guest_memfd works correctly.
->>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->>   tools/testing/selftests/kvm/Makefile.kvm      |   1 +
->>   .../testing/selftests/kvm/guest_memfd_test.c  | 121 ++++++++++++++++++
->>   2 files changed, 122 insertions(+)
->>
->> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
->> index 90f03f00cb04..c46cef2a7cd7 100644
->> --- a/tools/testing/selftests/kvm/Makefile.kvm
->> +++ b/tools/testing/selftests/kvm/Makefile.kvm
->> @@ -275,6 +275,7 @@ pgste-option = $(call try-run, echo 'int main(void) { return 0; }' | \
->>   	$(CC) -Werror -Wl$(comma)--s390-pgste -x c - -o "$$TMP",-Wl$(comma)--s390-pgste)
->>   
->>   LDLIBS += -ldl
->> +LDLIBS += -lnuma
+>> Hrm, this is going to be very annoying.  I don't have libnuma-dev installed on
+>> any of my <too many> systems, and I doubt I'm alone.  Installing the package is
+>> trivial, but I'm a little wary of foisting that requirement on all KVM developers
+>> and build bots.
 > 
-> Hrm, this is going to be very annoying.  I don't have libnuma-dev installed on
-> any of my <too many> systems, and I doubt I'm alone.  Installing the package is
-> trivial, but I'm a little wary of foisting that requirement on all KVM developers
-> and build bots.
+> Wouldn't it be great if the kselftest build system used something like
+> meson and could work around these little issues without breaking the
+> whole build ? :(
 > 
-> I'd be especially curious what ARM and RISC-V think, as NUMA is likely a bit less
-> prevelant there.
+> Does anyone else think this?
+> 
+> Every time I try to build kselftsts I just ignore all the errors the
+> fly by because the one bit I wanted did build properly anyhow.
 
-We unconditionally use it in the mm tests for ksm and migration tests, 
-so it's not particularly odd to require it here as well.
-
-What we do with liburing in mm selftests is to detect presence at 
-compile time and essentially make the tests behave differently based on 
-availability (see check_config.sh).
+When I'm in a hurry I even do the same within mm selftests.
 
 -- 
 Cheers
