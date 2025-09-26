@@ -1,207 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-62837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00387BA2356
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 04:26:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBECBA23E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 04:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C04C4A6E8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 02:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4554A385C78
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 02:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96603259C98;
-	Fri, 26 Sep 2025 02:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA3F246BA4;
+	Fri, 26 Sep 2025 02:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KApluC9Q"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="I6qyT/Ne";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cqiIoHAe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18AA1388
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 02:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E7B17996
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 02:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758853603; cv=none; b=r9yttx2T6KkTlvJK8dzUMbGgYZTD00S/fWj+Px08mYnqjgUAbsbq+OppV4V85WN8z0qAB3TFXus8eVx+mxSFnsaJ0lOsEX0q6JD7sZ4oXFi/IapYS0XYC0C9T8nAhyOO0hUXMtYEZmchKbpuwYw7VzGQ//q7BHjyr8G7CG50qWI=
+	t=1758855032; cv=none; b=c4xQkjCHHxBKowlJ/pvvPqbK7x5ZAJEH44Ii8HWb6EXD8dVKORIntJwW0U5OTyXOrmmHBA6DHnvwnmC9tFl8+4fGqul3GxkMU5pHaou+f5PidmIZwhvueElzkelUK7/vqeXT27EUi4mU8LU02xKw9CkfYffICarB0Hm7qzQMRz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758853603; c=relaxed/simple;
-	bh=jfnSzU3dZK3BO37TuzoBWFX44wM3mMtuQgcYXze0CnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WwyBIQp28t4zJ7yJ/2T623McW8ve3IxvFug+vAE5VcV0RNdvKvJuEln7gTjhHPbb9m76IF5IwXCLVTdwdgaFcZN4uBwZQb7KytXH6JPKXpnuBa1oUP8VzkcIjZCeQMX9G3x0dVDdEcb0o5ElYw9cOSIoC4VWRgN2zUFz94D/Zpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KApluC9Q; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-780292fcf62so1336686b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Sep 2025 19:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758853600; x=1759458400; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oTpV4QZGIdxsr8ocAUHxkEKZk+k5fpbR8T9ErdIO/tE=;
-        b=KApluC9QZSMlXJ1PIogkJrvEAk4KXRTa2BtI7iCXyGZv4EiBuesHA3pU3RIFsQriom
-         sUHm3HUbNSfMx/gXX4I2ee5NUqalfh6L2CRC6xCCdgn2WJAIPrMyNl/nhlKFdOarnSWj
-         tpNg9ruHj11Z+Sh6jFEcbx8077gwVqdZ34/6bGLIF+DM7IATfJhY0Ho1Mn5xguDhqmEg
-         MOBe0/sE6u4SpRz6/RNVGUMobgkKpRJByB2K+bG2h8BneGtabu6oDyN3vbeFHrSzfjGz
-         kfQUZ+acWNykuhBify3N/cCB6uIMUzR9LGlIUyCBsbDe0tXJY4e8oH7tQTkIqVSWmBzZ
-         ISfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758853600; x=1759458400;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oTpV4QZGIdxsr8ocAUHxkEKZk+k5fpbR8T9ErdIO/tE=;
-        b=FPl2MlC7jYCZfEfQuo8kUhUNMy2s9xLfhm1AVh1NQDVVF4D+7nBT7S7bh/oBSq24Ry
-         D7BHgsq0vid8u1mVgBH8zlDBhJvTBpxt6z2FIM/caiInzTn4iAAn1lPuN2th2Go1Uxk6
-         t3qWYX3uTn7gIfBECDjuWKs0Q2QdsIRhKaiV8NLVI088GQcd0VvurUWJpDvHqqfSVoZA
-         rthkwy8/zIWxhSFr3X2Db6jz/c7QyOrjPOM0KOAIkZivVFyHXc1CFOTQmkz16LK8Pjeo
-         8Zl3veGMfX1LRCvenCC7og2XuL5hjgBrcXGjWNClVa5G0OK3s+4U0Q5p6REX7UHRRx/W
-         CHWw==
-X-Gm-Message-State: AOJu0Yy8w49i/ZA3rB+lko8EESrA2ydpGYlkMX+WXy+fnfOG80V+QYW2
-	fLagHxle//LwXguGjYl/3IYcJ+RSVN0jwfetHibLlXzV+WIW0PUdjJGDJxNq1xpoOMmzHtHy1hI
-	araRQ1KZlPQ==
-X-Gm-Gg: ASbGncsGIPPADkmtS380CTtXGNNB65m2Ro6GhOvrYQenR59ClJm8+hhccb4qGz15Yq+
-	h9sT6I0mHEwmGwqlGbG/qnxuL0y37pn3FHaLioVixPHQbDhW7Yg91dEKVhvZV53oBJFFrlnX7I6
-	w1f7PWfMuHM5vB+0XGFxNZpvOMeFABTmdbdwEvUrjNzIFX0ivTRKuUQVkdjqZqRxpmDD7ZCalnt
-	ZSmwGkVpZmmkdDFj2qeX1+x+IUbdTWxpC+ImBVpYJMZyn7IFqnkN3G896axHmyObUfB4JPJQEaC
-	61rnE9a7DA/0BjvRG7EsXw8VVCRyfUiJV0cyC9o0CBsOsuhwZTIejok0W2MGhIHk+ziohqPmriJ
-	isRDYl9LEWEHv+n+DUIw+piLWJYmJqB9cj3RUgt4my4ZD/Zhg5zKrxxwC7fxt2OkBjPDgyhxOZA
-	==
-X-Google-Smtp-Source: AGHT+IFKoTqYLzKYzMSXCB6584955xfpSDmgTfD78tM5lhmwgiiY+LxiDmokP1F+c3a+mRaimu6yBA==
-X-Received: by 2002:a05:6a00:2186:b0:77f:2899:d443 with SMTP id d2e1a72fcca58-780fce1d14fmr4907298b3a.10.1758853600013;
-        Thu, 25 Sep 2025 19:26:40 -0700 (PDT)
-Received: from [10.88.210.107] ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023c203dsm3115356b3a.22.2025.09.25.19.26.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 19:26:39 -0700 (PDT)
-Message-ID: <5622443b-b5b4-4b19-8a7b-f3923f822dda@bytedance.com>
-Date: Fri, 26 Sep 2025 10:26:34 +0800
+	s=arc-20240116; t=1758855032; c=relaxed/simple;
+	bh=pMsOS46pP3H8EbGB5G7zt8nO6cxr7IMFmPwgjYllMYE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EyrXchYjNldfuxKNI+0JP7KSS7uqZx033z7Wa10UP/BMbj/qsCLR5YbMKLJsOiDRy34obsNrwbFDH2Q9lbf+mH5H8mHf2i6aiCspG5GtNZeQ7UMD6UTdwdoS8QFmA81UQdXsbkwDB24AnIsi6zI+xpRDqFRL7Ej2O/fSlKCQWyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=I6qyT/Ne; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cqiIoHAe; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id BF332EC01C9;
+	Thu, 25 Sep 2025 22:50:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Thu, 25 Sep 2025 22:50:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to; s=fm1; t=1758855028; x=1758941428; bh=oc3B3OciCa
+	x6/pGQStW4nJhpQLXcaiUUlsGiXwIpV10=; b=I6qyT/NeNicgnKgQMVJE6/1LQD
+	cLLEfXu/OGE33nET4K2Mo4IOKhQShyaBnTZO/NRuN1l7Z3ZIOqEq/z8RkS341TOa
+	fUa5fxLnwOBApcNiYWcQuXI2ptefdssDXHMGd3rPRdnGDEcHQImj6xRiY6kwZfHl
+	3kFHl+prIpTSEKBuS7z1dfUY2x/zmmQp5PQU6Lyezng64/rvaE9u54FYWjna6XXw
+	JMswm7n3pWxZGoeFXNIiGBCMPp/BCGpTOkeCYh5ut508idZEMePvdWq8iqCqOVlG
+	HtP7gtFPigTD1EmCdWI8oXp0qKhU19YuIhgYoTBJg8yX2Gld9kompLRF00Kw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1758855028; x=1758941428; bh=oc3B3OciCax6/pGQStW4nJhpQLXc
+	aiUUlsGiXwIpV10=; b=cqiIoHAefjacZrSkW2QjTnBEZgF4EwD6tk1RSsp38U7N
+	0rB3fCl09dL5URwR6jIz0SRqdL9HINAzFCA9wqHB8huMtAx/+67slY8CZKdPdwCN
+	xH7dF1kGUuxJHDOvGbcYjJLXIg9H6JEzeyHnj5XXEit6XkMdcuM1Imgh53b0L86V
+	+S0j5NBn700kvLxPrRe6sUc7oFhgeVfzG4zAELfYwU1TDl+YmE7BnOQQtk7le5eF
+	mffa6m2EP9VtqCm2arAJc+W9oQaImrzIUru6qI6Q5AIugehzgR94KkhLa/YgcN0Q
+	UBGT7NKVg0qC7fqM+OQt42Pvq2Ih4dpfqqe/75cJBQ==
+X-ME-Sender: <xms:dP_VaOviogB_xLGFCkKpfPgIYXfJRFA-JedEMBfRa8WHz32c8J-P1Q>
+    <xme:dP_VaObeDScHb7AFHx7Pk3TPP1BMVcPDDlnkITIHQPVv0tla6Cl7VyN7zcrsO7sUs
+    JsTnG9tXN8TWrk9qJFE6xjAuOSLZQhIleLO7H2F1mH3XeqsbQ>
+X-ME-Received: <xmr:dP_VaIwCOxXRLID7CvVfJfidPjs4XxBpA2GhfX-2ckw4h4rOwbJlhBut3tzEP-4BHQYjO54qrysf4rmR9kG0tnxgAhzUOdo1KjQyB15Rz3KP>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeikedvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkfforhgggfestdekredtredttdenucfhrhhomheppfgvihhluehrohif
+    nhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeegte
+    efgedttddviefggeeuveefleellefgjeeufeeukedtleeiieekvedtleevleenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofi
+    hnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpth
+    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:dP_VaOjhR871biz_YcQKmYWbXb-0oOSBy-SS5rT5DH0BeqtazjKL8w>
+    <xmx:dP_VaMl7tcZiq2ogsPKrhgDcBbxK5lZYAnsW867KMoj1ZEFof5nziA>
+    <xmx:dP_VaMi4d6KkqmPhLOH3x-xJO3tfoQ7xYdWR3oivVqsn9zsC8sXSfw>
+    <xmx:dP_VaI0xEs0n0JfdWgjuZ3SwM8aLJxRDtqjYkNCWKg-Ytf5h_jLPmQ>
+    <xmx:dP_VaKzkk6xIl-Ikzf6nOjA1T0MdWqwFrgYKhfMyVw9EBjg4ZpVOy83i>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Sep 2025 22:50:26 -0400 (EDT)
+From: NeilBrown <neilb@ownmail.net>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Christian Brauner" <brauner@kernel.org>,
+	"Amir Goldstein" <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: "Jan Kara" <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 00/11] Create APIs to centralise locking for directory ops
+Date: Fri, 26 Sep 2025 12:49:04 +1000
+Message-ID: <20250926025015.1747294-1-neilb@ownmail.net>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] write-back: Wake up waiting tasks when finishing the
- writeback of a chunk.
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org,
- viro@zeniv.linux.org.uk, peterz@infradead.org, akpm@linux-foundation.org,
- Lance Yang <lance.yang@linux.dev>
-References: <20250925132239.2145036-1-sunjunchao@bytedance.com>
- <fylfqtj5wob72574qjkm7zizc7y4ieb2tanzqdexy4wcgtgov4@h25bh2fsklfn>
-From: Julian Sun <sunjunchao@bytedance.com>
-In-Reply-To: <fylfqtj5wob72574qjkm7zizc7y4ieb2tanzqdexy4wcgtgov4@h25bh2fsklfn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/26/25 1:25 AM, Mateusz Guzik wrote:
-> On Thu, Sep 25, 2025 at 09:22:39PM +0800, Julian Sun wrote:
->> Writing back a large number of pages can take a lots of time.
->> This issue is exacerbated when the underlying device is slow or
->> subject to block layer rate limiting, which in turn triggers
->> unexpected hung task warnings.
->>
->> We can trigger a wake-up once a chunk has been written back and the
->> waiting time for writeback exceeds half of
->> sysctl_hung_task_timeout_secs.
->> This action allows the hung task detector to be aware of the writeback
->> progress, thereby eliminating these unexpected hung task warnings.
->>
-> 
-> If I'm reading correctly this is also messing with stats how long the
-> thread was stuck to begin with.
+This is the next batch in my ongoing work to change directory op locking.
 
-IMO, it will not mess up the time. Since it only updates the time when 
-we can see progress (which is not a hang). If the task really hangs for 
-a long time, then we can't perform the time update—so it will not mess 
-up the time.
+The series creates a number of interfaces that combine locking and lookup, or
+sometimes do the locking without lookup.
+After this series there are still a few places where non-VFS code knows
+about the locking rules.  Places that call simple_start_creating()
+still have explicit unlock on the parent (I think).  Al is doing work
+on those places so I'll wait until he is finished.
+Also there explicit locking one place in nfsd which is changed by an
+in-flight patch.  That lands it can be updated to use these interfaces.
 
-cc Lance and Andrew.
-> 
-> Perhaps it would be better to have a var in task_struct which would
-> serve as an indicator of progress being made (e.g., last time stamp of
-> said progress).
-> 
-> task_struct already has numerous holes so this would not have to grow it
-> above what it is now.
-> 
-> 
->> This patch has passed the xfstests 'check -g quick' test based on ext4,
->> with no additional failures introduced.
->>
->> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
->> Suggested-by: Peter Zijlstra <peterz@infradead.org>
->> ---
->>   fs/fs-writeback.c                | 13 +++++++++++--
->>   include/linux/backing-dev-defs.h |  1 +
->>   2 files changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
->> index a07b8cf73ae2..475d52abfb3e 100644
->> --- a/fs/fs-writeback.c
->> +++ b/fs/fs-writeback.c
->> @@ -14,6 +14,7 @@
->>    *		Additions for address_space-based writeback
->>    */
->>   
->> +#include <linux/sched/sysctl.h>
->>   #include <linux/kernel.h>
->>   #include <linux/export.h>
->>   #include <linux/spinlock.h>
->> @@ -174,9 +175,12 @@ static void finish_writeback_work(struct wb_writeback_work *work)
->>   		kfree(work);
->>   	if (done) {
->>   		wait_queue_head_t *waitq = done->waitq;
->> +		/* Report progress to inform the hung task detector of the progress. */
->> +		bool force_wake = (jiffies - done->stamp) >
->> +				   sysctl_hung_task_timeout_secs * HZ / 2;
->>   
->>   		/* @done can't be accessed after the following dec */
->> -		if (atomic_dec_and_test(&done->cnt))
->> +		if (atomic_dec_and_test(&done->cnt) || force_wake)
->>   			wake_up_all(waitq);
->>   	}
->>   }
->> @@ -213,7 +217,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
->>   void wb_wait_for_completion(struct wb_completion *done)
->>   {
->>   	atomic_dec(&done->cnt);		/* put down the initial count */
->> -	wait_event(*done->waitq, !atomic_read(&done->cnt));
->> +	wait_event(*done->waitq, ({ done->stamp = jiffies; !atomic_read(&done->cnt); }));
->>   }
->>   
->>   #ifdef CONFIG_CGROUP_WRITEBACK
->> @@ -1975,6 +1979,11 @@ static long writeback_sb_inodes(struct super_block *sb,
->>   		 */
->>   		__writeback_single_inode(inode, &wbc);
->>   
->> +		/* Report progress to inform the hung task detector of the progress. */
->> +		if (work->done && (jiffies - work->done->stamp) >
->> +		    HZ * sysctl_hung_task_timeout_secs / 2)
->> +			wake_up_all(work->done->waitq);
->> +
->>   		wbc_detach_inode(&wbc);
->>   		work->nr_pages -= write_chunk - wbc.nr_to_write;
->>   		wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
->> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
->> index 2ad261082bba..c37c6bd5ef5c 100644
->> --- a/include/linux/backing-dev-defs.h
->> +++ b/include/linux/backing-dev-defs.h
->> @@ -63,6 +63,7 @@ enum wb_reason {
->>   struct wb_completion {
->>   	atomic_t		cnt;
->>   	wait_queue_head_t	*waitq;
->> +	unsigned long stamp;
->>   };
->>   
->>   #define __WB_COMPLETION_INIT(_waitq)	\
->> -- 
->> 2.39.5
->>
+The first patch here should have been part of the last patch of the
+previous series - sorry for leaving it out.  It should probably be
+squashed into that patch.
 
-Thanks,
--- 
-Julian Sun <sunjunchao@bytedance.com>
+I've combined the new interface with changes is various places to use
+the new interfaces.  I think it is easier to reveiew the design that way.
+If necessary I can split these out to have separate patches for each place
+that new APIs are used if the general design is accepted.
+
+NeilBrown
+
+ [PATCH 01/11] debugfs: rename end_creating() to
+ [PATCH 02/11] VFS: introduce start_dirop() and end_dirop()
+ [PATCH 03/11] VFS/nfsd/cachefiles/ovl: add start_creating() and
+ [PATCH 04/11] VFS/nfsd/cachefiles/ovl: introduce start_removing() and
+ [PATCH 05/11] VFS: introduce start_creating_noperm() and
+ [PATCH 06/11] VFS: introduce start_removing_dentry()
+ [PATCH 07/11] VFS: add start_creating_killable() and
+ [PATCH 08/11] VFS/nfsd/ovl: introduce start_renaming() and
+ [PATCH 09/11] VFS/ovl/smb: introduce start_renaming_dentry()
+ [PATCH 10/11] Add start_renaming_two_dentrys()
+ [PATCH 11/11] ecryptfs: use new start_creaing/start_removing APIs
 
