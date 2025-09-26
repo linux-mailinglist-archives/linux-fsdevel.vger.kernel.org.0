@@ -1,116 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-62855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D6CBA2917
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 08:48:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E422FBA2929
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 08:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C101C25BEC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 06:48:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D51C561293
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 06:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECAD27E040;
-	Fri, 26 Sep 2025 06:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2274127E040;
+	Fri, 26 Sep 2025 06:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SLCLAiPj"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uX46Uslm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5808F6F;
-	Fri, 26 Sep 2025 06:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8BA8F6F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 06:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758869287; cv=none; b=gLb3dbRosgAgbKrx0akqPBrfwo2/WUJgfYEkf+ehGPNBoYt+HC2n6Ul29vVyTp2hF57lyzq3DD4nUPEx7lQUVUhh9qxfBVS9YhBCa0PDH3JJME+jEENpxdxe2uUKakWcK6sjN26e0aaK/04d006TDtYjTQr4UN/5Hcig9m4q0Qw=
+	t=1758869486; cv=none; b=SSPlYuTJZgyt8WbLZBWlhwUeNmQOzjhjvBLINjU0SujPx/rwx78Y75aW+24twJwBg6fufsQ4kNzWQzOUXCn2OeBhbaVLBw+BYn3Siv/EWmGC4sRLiUOp946buRKrY6LnO8oO4X8ixEPaYytuVi7Oa4dyavkLv/6h/dXCzIerAQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758869287; c=relaxed/simple;
-	bh=+yA/JJLiAgN8GgnTni7nhwSz3g3A80NM5yHtKOcsFi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTxFIWTZB3VjOD/hJ7S+DheTs2dHnvAH2JFo2o40sJzZHhbJuYoQ3wNw7uZeoBORLG/btUef3nYfmpK9F0be4p0aOKZBV184rCY7aQxOzvqVyZJn1rrPHPTMGi7883q/zmMjmNrpsjEYs08gzSDodvv7SiMXxvkclU1t4E6hM4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SLCLAiPj; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=K0XisOwhWijwoOa3QwHt0TYzTp5652DJvsJj1cLXIWI=; b=SLCLAiPj29jDcqxXPuaTmqA86E
-	5YmcTYDmxJWZjZSjr44Pk1Phg74DUVX3KVmfbihnjgyPkkhrddR2cb4g7bRYVYeHnbwLHoEHu4TGA
-	5rCvc/wxjMU5yrJeZHuGDwzKpI3ewlEIs0WF3FBP6kEYIP6FkKQgEOD3L7boKxClHGdvElFvN9X/u
-	OJXrFKYc0vg96vpJTd9SQak2y95eLkvlbZHuNJ2IJ0Z9fsQs/qq6hGyw6/mmjT0971eP5xwMq2rkW
-	IMy7tQl4gxCkaOaXfOHCroj5okY1+N48ltFUAD2yPc9t24nY/Mp6zRM0vgsvvr5QLF+53Hac1WiPg
-	kSjV3zLA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v22FO-00000000tSF-0E7U;
-	Fri, 26 Sep 2025 06:48:02 +0000
-Date: Fri, 26 Sep 2025 07:48:01 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: next-20250924: Internal error: Oops: mnt_ns_release
- (fs/namespace.c:148) __arm64_sys_listmount (fs/namespace.c:5936)
-Message-ID: <20250926064801.GE39973@ZenIV>
-References: <CA+G9fYueO8kP8mXVNmbHkyrFPKpt-onPfeyNXLuLGGjiO1WFfQ@mail.gmail.com>
+	s=arc-20240116; t=1758869486; c=relaxed/simple;
+	bh=WXfE+LXS/Yiy6bRhiqAga5w4ZYut1d3bFkYwQbG/WEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HDlI3Z8ueCwj50LgTGwGSwY6iKGZtvOfSOfH4cza4EllxFT5KGMhopet1i5WcJ0aqQR0oDl9hlCmDvez8NtDlIuZqG2G9inaeL7g9/fS9Ve8tspo+KW0vr+IoJLc3wdOARosLDs7SgXFm2kfwxv1QnaRwm5uxddz4dMHU+9Y95Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uX46Uslm; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758869480; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Ip5hN/44P066cFFw+TgO2eakpnDyrva+k8hvkcPUjqY=;
+	b=uX46Uslmb/Bs9rcGPc4f7bZTjhugUq+PpZfpU251zXs2PzOOHH6u4jXwhBSR7A/Uyx6nE6zpzpH6GaV6RlSmp0qbG6/RG/TRJfpwwXxihc2R+7yJ7RGHgsmjt/vXRabS7mKzWWrTexkD2k+Gxb5FYUZ++raDl2WFjAJBN4cUC9s=
+Received: from 30.221.128.184(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WorGYBo_1758869479 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 26 Sep 2025 14:51:19 +0800
+Message-ID: <dc3fbd15-1234-485e-a11d-4e468db635cd@linux.alibaba.com>
+Date: Fri, 26 Sep 2025 14:51:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYueO8kP8mXVNmbHkyrFPKpt-onPfeyNXLuLGGjiO1WFfQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: fix readahead reclaim deadlock
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, osandov@fb.com, kernel-team@meta.com
+References: <20250925224404.2058035-1-joannelkoong@gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250925224404.2058035-1-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 26, 2025 at 12:00:08AM +0530, Naresh Kamboju wrote:
 
-[snip]
 
-With 59bfb6681680 "listmount: don't call path_put() under namespace semaphore"
-we get this:
+On 2025/9/26 06:44, Joanne Koong wrote:
+> A deadlock can occur if the server triggers reclaim while servicing a
+> readahead request, and reclaim attempts to evict the inode of the file
+> being read ahead:
+> 
+>>>> stack_trace(1504735)
+>   folio_wait_bit_common (mm/filemap.c:1308:4)
+>   folio_lock (./include/linux/pagemap.h:1052:3)
+>   truncate_inode_pages_range (mm/truncate.c:336:10)
+>   fuse_evict_inode (fs/fuse/inode.c:161:2)
+>   evict (fs/inode.c:704:3)
+>   dentry_unlink_inode (fs/dcache.c:412:3)
+>   __dentry_kill (fs/dcache.c:615:3)
+>   shrink_kill (fs/dcache.c:1060:12)
+>   shrink_dentry_list (fs/dcache.c:1087:3)
+>   prune_dcache_sb (fs/dcache.c:1168:2)
+>   super_cache_scan (fs/super.c:221:10)
+>   do_shrink_slab (mm/shrinker.c:435:9)
+>   shrink_slab (mm/shrinker.c:626:10)
+>   shrink_node (mm/vmscan.c:5951:2)
+>   shrink_zones (mm/vmscan.c:6195:3)
+>   do_try_to_free_pages (mm/vmscan.c:6257:3)
+>   do_swap_page (mm/memory.c:4136:11)
+>   handle_pte_fault (mm/memory.c:5562:10)
+>   handle_mm_fault (mm/memory.c:5870:9)
+>   do_user_addr_fault (arch/x86/mm/fault.c:1338:10)
+>   handle_page_fault (arch/x86/mm/fault.c:1481:3)
+>   exc_page_fault (arch/x86/mm/fault.c:1539:2)
+>   asm_exc_page_fault+0x22/0x27
+> 
+> During readahead, the folio is locked. When fuse_evict_inode() is
+> called, it attempts to remove all folios associated with the inode from
+> the page cache (truncate_inode_pages_range()), which requires acquiring
+> the folio lock. If the server triggers reclaim while servicing a
+> readahead request, reclaim will block indefinitely waiting for the folio
+> lock, while readahead cannot relinquish the lock because it is itself
+> blocked in reclaim, resulting in a deadlock.
+> 
+> The inode is only evicted if it has no remaining references after its
+> dentry is unlinked. Since readahead is asynchronous, it is not
+> guaranteed that the inode will have any references at this point.
+> 
+> This fixes the deadlock by holding a reference on the inode while
+> readahead is in progress, which prevents the inode from being evicted
+> until readahead completes. Additionally, this also prevents a malicious
+> or buggy server from indefinitely blocking kswapd if it never fulfills a
+> readahead request.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reported-by: Omar Sandoval <osandov@fb.com>
+> ---
+>   fs/fuse/file.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index f1ef77a0be05..8e759061b843 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -893,6 +893,7 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+>   	if (ia->ff)
+>   		fuse_file_put(ia->ff, false);
+>   
+> +	iput(inode);
 
-static void __free_klistmount_free(const struct klistmount *kls)
-{
-	path_put(&kls->root);
-	kvfree(kls->kmnt_ids);
-	mnt_ns_release(kls->ns);
-}
+It's somewhat odd to use `igrab` and `iput` in the read(ahead)
+context.
 
-...
+I wonder for FUSE, if it's possible to just wait ongoing
+locked folios when i_count == 0 (e.g. in .drop_inode) before
+adding into lru so that the final inode eviction won't wait
+its readahead requests itself so that deadlock like this can
+be avoided.
 
-SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
-		u64 __user *, mnt_ids, size_t, nr_mnt_ids, unsigned int, flags)
-{
-	struct klistmount kls __free(klistmount_free) = {};
-	const size_t maxcount = 1000000;
-	struct mnt_id_req kreq;
-	ssize_t ret;
-		   
-	if (flags & ~LISTMOUNT_REVERSE)
-		return -EINVAL;
+Thanks,
+Gao Xiang
 
-which will oops if it takes that failure exit - if you are initializing
-something with any kind of cleanup on it, you'd better make sure
-the cleanup will survive being called for the initial value...
 
-Christian, that's your branch and I don't want to play with rebasing
-it - had it been mine, the fix would be folded into commit in question,
-with the rest of the branch cherry-picked on top of fixed commit,
-but everyone got their own preferences in how to do such stuff.
+>   	fuse_io_free(ia);
+>   }
+>   
+> @@ -973,6 +974,12 @@ static void fuse_readahead(struct readahead_control *rac)
+>   		ia = fuse_io_alloc(NULL, cur_pages);
+>   		if (!ia)
+>   			break;
+> +		/*
+> +		 *  Acquire the inode ref here to prevent reclaim from
+> +		 *  deadlocking. The ref gets dropped in fuse_readpages_end().
+> +		 */
+> +		igrab(inode);
+> +
+>   		ap = &ia->ap;
+>   
+>   		while (pages < cur_pages) {
 
-Minimal fix would be to make mnt_ns_release(NULL) a no-op.
-
-BTW, I suspect that one of the sources of confusion had been the fact that
-__free(mnt_ns_release) *does* treat NULL as no-op; in statmount(2) you
-are using that and get away with NULL as initializer.  In listmount(2)),
-OTOH, you are dealing with the function call - same identifier, different
-behaviour...
 
