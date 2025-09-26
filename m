@@ -1,192 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-62899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D1BBA476A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 17:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D16BA47B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 17:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DED77561305
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D8453AC012
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C5E21FF5F;
-	Fri, 26 Sep 2025 15:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9DB223DFF;
+	Fri, 26 Sep 2025 15:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FeqtM1Fz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVykgIaL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B668321CC6A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 15:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654FC15530C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 15:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758901443; cv=none; b=GBrwfPOKYI2yAuRCIGxlSwRNEZSnJGSHz655qfvIWzzMdez0g5SOXkGUa2TVNwsDq9SH7Ji7MRkRfZWRkO1WMslsCReARb/LUfgR+0s8NwhNboYR7G65fUszTsjNMal58jImKurE5R6sfWuLwaq+jk3taa+RWjlHSkypbnHSR2g=
+	t=1758901682; cv=none; b=p2nN7K9MoOwDKgxLbB2hqHtmbEquTGk4zX9CqV6Au1sL/mllKRmlu9Q2j+nuioTBDSvUJZfBOIvRUn9GsHfoe9A5MoAeBG7S7N1qf6k35sf4LC0MqfTcuXsDS0N3ia572OyPzY39uiehghAW1nTyP3qPFiuX559tgn2OKrxvcp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758901443; c=relaxed/simple;
-	bh=KrFHYS000e/atb+UXTsqQIPzMGvQL/wJ1Q0Fg5BR+eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dV53QY4yS9f4Ab62zWNxMu/R4KTA51kQE0+Ji/QqywUJm86KaDd6kDUSN3yyVX2CDc7EWwYFnOlMws1gj00hEPkY2aAVar/I+sydP3v3P76mwtPnj20tVrLLPfnKKEeYFZXPrM/Xvn0AhfPLmeMZoxMSLQsNGPgvva6BAoSR3/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FeqtM1Fz; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758901442; x=1790437442;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KrFHYS000e/atb+UXTsqQIPzMGvQL/wJ1Q0Fg5BR+eI=;
-  b=FeqtM1FzAxXOOKD3G9pVr6hX4rzorvuICLOvxA/r0RWwKk1hyi3fW6cT
-   5gPQ64GggLnUSZm0IUZTbC2hBnisgyK5LihFN0hu5849xDAjNkPVRKnrE
-   QZFURCbrhP9884hDVDj8g3y2rPZ+GUayzt4LWydYFw6QWCzeBxJBql1YY
-   E/eHsB+b4v3Kywx912GVQcty/614TLdDqwqqjqDNFiLll0ZZokcLVcHfB
-   ompRkwWrP4uBcyzGD1+rtBPWFzswnANwpX7Buo74r+dFGFhBMwFx4VTLX
-   +kmoqSTRkaIX7DDx4zZElsax2vNVkk1DJvOJQaY/vFt/7BoSWv8nxtyDO
-   w==;
-X-CSE-ConnectionGUID: T+LoHwzeRBWCW6PCVsD7Lg==
-X-CSE-MsgGUID: 1WHMSfVGQKm8GDh7FvlAhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="60274913"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="60274913"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:44:01 -0700
-X-CSE-ConnectionGUID: 1h3MiBORRjGUmn+o96KvzQ==
-X-CSE-MsgGUID: W6xLYoPkRlKK+WBc1iknuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="182047538"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 26 Sep 2025 08:43:59 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2Abj-0006NL-0h;
-	Fri, 26 Sep 2025 15:43:42 +0000
-Date: Fri, 26 Sep 2025 23:43:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: NeilBrown <neilb@ownmail.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/11] VFS/ovl/smb: introduce start_renaming_dentry()
-Message-ID: <202509262345.LLJy17UN-lkp@intel.com>
-References: <20250926025015.1747294-10-neilb@ownmail.net>
+	s=arc-20240116; t=1758901682; c=relaxed/simple;
+	bh=3oPDSFUJ0lyja2RjyxHKZDYFVvUU6sMYbOL+xVaLgXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZKUIleFyCTFFSWIE/d1RyTt+zRzoJK71UMZ6R/SSqRgOPcI7XJxaPxvHpRvVYTAbcFaRUpYtUhTY9vtsw6EMES0hINqJJYpjxCpnHhawaM7KdimLaFot+48rwjMGRdKpxxXRVZPUf3ocd5uA173+Dw6MEtbkoMbQ+ANot8mYzgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVykgIaL; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b2d92b52149so467700666b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 08:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758901679; x=1759506479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=klXEiQwOC07mduQthD5dYDmzUkII4CIPfD13syHRtGw=;
+        b=OVykgIaLNt1J2ANV/KfKKaXG6Z0fV0w5ko/sn0eNQets6KplboEJSyoP4YWDRRWfiV
+         AJ/Y1w7Q6njYTzfhY/E4m8uOfEpnmE+nTaXbCwL+eRHke2xe4lG4+DOdKjKf4yd9ElDS
+         VKPNo3Ane/P8j9RdHSfARNEUHPbI2cnTwn7vPe1gdmP0emXBcEvXhrEAXURCmJ2GxWer
+         UgOtN3gbguCNf7AeE+ahG/LOGY3vQ5/yJqZq/lB3kCwysO4oQR8/cZkPfwBNaAyKewGf
+         Zs+QoxCzONe9V/nJHvDOSrz7wNo1CAr6YZqeC+8o1cZsEQQSD45rkwLK4g7koV/fdql1
+         bjQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758901679; x=1759506479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=klXEiQwOC07mduQthD5dYDmzUkII4CIPfD13syHRtGw=;
+        b=sa9XfGyMaSqYlo+fOsULy9OrYTcmKpPakQYd/tAbZ2mO+0TUoILhnAqxhxr1H7Ykh2
+         ODEWt92oL0goChDk1qHFAD1ahlG5EuoZq24WHLo4BlasjN5ExSiCX6RmSpgTGPelynTr
+         lCkmEoj4/ObZAGov4GYclIADZ3ryn8KPjy6wxPqjYn2Hf2gKAGnOH7IA/iZUS7ZhGwWh
+         HStH6RlQxQlKbAaCZujBmu/ZlLwUlvlYC6mFpGFp2+ppcECQEtiSTUC6xu7s3Vmjjv1H
+         3zfkB1x7eqOB313GWMJ67GZ4kuNYaIsbiazoXgQ5XTQIJjuY9sRp0Y3e3/QCXnfg8vYC
+         HhTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAUKeeHaAsv3WqPENIF6N+oBgCDrUlNAky3pa/OSKDbU9KwfPSfexL0beE5TqeDBb7MfyTUzMIRhvlthSq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2hf9SBKWCXnpJUUhexdbOfBtw83N1huuBput+uviWvYQSNorL
+	Y7ioz9+D2hL+aCbvSNziM54e0lOAl/iHZHC02zhkY8MtLXOMYhtT/enXRmkMm3oW7m33NeEfLSo
+	TWvnx9US6GFB4y2e3ETGMMsSwUqN25bE=
+X-Gm-Gg: ASbGnctMeOjFAfLxu3iTRrN8NvVfwdRf466mt+1HG+zty/zeW34AaxbPor6R77IQjxS
+	Z8FJjXqlfo9SN6lct8dZJgSSVlnsKcDo9AiB9KLCsgCKdj4lKeCNLRLJRvQeBe1VcX+3ptfuE4s
+	DnfA1y77uvwg7kt49E4/sLLKv2XjzhWQTyaIkAG+W2fCGhGRs7WyjESxMlPFlV2o/BrKqHqpQQV
+	SHHkLGCeI5Y5jw+IXuJDQub31lJBZvRgu2drg==
+X-Google-Smtp-Source: AGHT+IHdOXiPucslloAUUiiiyAUMj+ohe/e6na6Rez1580AV41MXzucvD+1uDdrYWalAA27Ihkivj+rE46/XuOnAOto=
+X-Received: by 2002:a17:907:2da7:b0:b30:daf3:a5a0 with SMTP id
+ a640c23a62f3a-b34bad2253cmr909891966b.42.1758901678534; Fri, 26 Sep 2025
+ 08:47:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926025015.1747294-10-neilb@ownmail.net>
+References: <20250926025015.1747294-1-neilb@ownmail.net>
+In-Reply-To: <20250926025015.1747294-1-neilb@ownmail.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 26 Sep 2025 17:47:47 +0200
+X-Gm-Features: AS18NWAdVeBYjIHAvAl47A3RQm6oXzfRe2fw8RpZ3dkou8_fOIeOTwp6H1h351A
+Message-ID: <CAOQ4uxhr+pFGa+SW-pJgeNpK5BYPxr6VVvq5LLQV4M59UBrVbw@mail.gmail.com>
+Subject: Re: [PATCH 00/11] Create APIs to centralise locking for directory ops
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi NeilBrown,
+On Fri, Sep 26, 2025 at 4:50=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote=
+:
+>
+> This is the next batch in my ongoing work to change directory op locking.
+>
+> The series creates a number of interfaces that combine locking and lookup=
+, or
+> sometimes do the locking without lookup.
+> After this series there are still a few places where non-VFS code knows
+> about the locking rules.  Places that call simple_start_creating()
+> still have explicit unlock on the parent (I think).  Al is doing work
+> on those places so I'll wait until he is finished.
+> Also there explicit locking one place in nfsd which is changed by an
+> in-flight patch.  That lands it can be updated to use these interfaces.
+>
+> The first patch here should have been part of the last patch of the
+> previous series - sorry for leaving it out.  It should probably be
+> squashed into that patch.
+>
+> I've combined the new interface with changes is various places to use
+> the new interfaces.  I think it is easier to reveiew the design that way.
+> If necessary I can split these out to have separate patches for each plac=
+e
+> that new APIs are used if the general design is accepted.
+>
+> NeilBrown
+>
+>  [PATCH 01/11] debugfs: rename end_creating() to
+>  [PATCH 02/11] VFS: introduce start_dirop() and end_dirop()
+>  [PATCH 03/11] VFS/nfsd/cachefiles/ovl: add start_creating() and
+>  [PATCH 04/11] VFS/nfsd/cachefiles/ovl: introduce start_removing() and
+>  [PATCH 05/11] VFS: introduce start_creating_noperm() and
+>  [PATCH 06/11] VFS: introduce start_removing_dentry()
+>  [PATCH 07/11] VFS: add start_creating_killable() and
+>  [PATCH 08/11] VFS/nfsd/ovl: introduce start_renaming() and
+>  [PATCH 09/11] VFS/ovl/smb: introduce start_renaming_dentry()
+>  [PATCH 10/11] Add start_renaming_two_dentrys()
+>  [PATCH 11/11] ecryptfs: use new start_creaing/start_removing APIs
 
-kernel test robot noticed the following build warnings:
+Overall looks like nice abstractions.
+Will try to look closer in next few days.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on next-20250925]
-[cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus viro-vfs/for-next linus/master v6.17-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Can you please share a branch for testing.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/debugfs-rename-end_creating-to-debugfs_end_creating/20250926-105302
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20250926025015.1747294-10-neilb%40ownmail.net
-patch subject: [PATCH 09/11] VFS/ovl/smb: introduce start_renaming_dentry()
-config: x86_64-buildonly-randconfig-001-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262345.LLJy17UN-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509262345.LLJy17UN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509262345.LLJy17UN-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> fs/overlayfs/super.c:609:7: warning: variable 'dest' is uninitialized when used here [-Wuninitialized]
-     609 |         dput(dest);
-         |              ^~~~
-   fs/overlayfs/super.c:559:21: note: initialize the variable 'dest' to silence this warning
-     559 |         struct dentry *dest;
-         |                            ^
-         |                             = NULL
-   1 warning generated.
-
-
-vim +/dest +609 fs/overlayfs/super.c
-
-6ee8acf0f72b89 Miklos Szeredi    2017-11-09  550  
-cad218ab332078 Amir Goldstein    2020-02-20  551  /*
-cad218ab332078 Amir Goldstein    2020-02-20  552   * Returns 1 if RENAME_WHITEOUT is supported, 0 if not supported and
-cad218ab332078 Amir Goldstein    2020-02-20  553   * negative values if error is encountered.
-cad218ab332078 Amir Goldstein    2020-02-20  554   */
-576bb263450bbb Christian Brauner 2022-04-04  555  static int ovl_check_rename_whiteout(struct ovl_fs *ofs)
-cad218ab332078 Amir Goldstein    2020-02-20  556  {
-576bb263450bbb Christian Brauner 2022-04-04  557  	struct dentry *workdir = ofs->workdir;
-cad218ab332078 Amir Goldstein    2020-02-20  558  	struct dentry *temp;
-cad218ab332078 Amir Goldstein    2020-02-20  559  	struct dentry *dest;
-cad218ab332078 Amir Goldstein    2020-02-20  560  	struct dentry *whiteout;
-cad218ab332078 Amir Goldstein    2020-02-20  561  	struct name_snapshot name;
-18cc48cabac8b0 NeilBrown         2025-09-26  562  	struct renamedata rd = {};
-18cc48cabac8b0 NeilBrown         2025-09-26  563  	char name2[OVL_TEMPNAME_SIZE];
-cad218ab332078 Amir Goldstein    2020-02-20  564  	int err;
-cad218ab332078 Amir Goldstein    2020-02-20  565  
-576bb263450bbb Christian Brauner 2022-04-04  566  	temp = ovl_create_temp(ofs, workdir, OVL_CATTR(S_IFREG | 0));
-cad218ab332078 Amir Goldstein    2020-02-20  567  	err = PTR_ERR(temp);
-cad218ab332078 Amir Goldstein    2020-02-20  568  	if (IS_ERR(temp))
-d2c995581c7c5d NeilBrown         2025-07-16  569  		return err;
-cad218ab332078 Amir Goldstein    2020-02-20  570  
-18cc48cabac8b0 NeilBrown         2025-09-26  571  	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
-18cc48cabac8b0 NeilBrown         2025-09-26  572  	rd.old_parent = workdir;
-18cc48cabac8b0 NeilBrown         2025-09-26  573  	rd.new_parent = workdir;
-18cc48cabac8b0 NeilBrown         2025-09-26  574  	rd.flags = RENAME_WHITEOUT;
-18cc48cabac8b0 NeilBrown         2025-09-26  575  	ovl_tempname(name2);
-18cc48cabac8b0 NeilBrown         2025-09-26  576  	err = start_renaming_dentry(&rd, 0, temp, &QSTR(name2));
-d2c995581c7c5d NeilBrown         2025-07-16  577  	if (err) {
-d2c995581c7c5d NeilBrown         2025-07-16  578  		dput(temp);
-d2c995581c7c5d NeilBrown         2025-07-16  579  		return err;
-d2c995581c7c5d NeilBrown         2025-07-16  580  	}
-cad218ab332078 Amir Goldstein    2020-02-20  581  
-cad218ab332078 Amir Goldstein    2020-02-20  582  	/* Name is inline and stable - using snapshot as a copy helper */
-cad218ab332078 Amir Goldstein    2020-02-20  583  	take_dentry_name_snapshot(&name, temp);
-18cc48cabac8b0 NeilBrown         2025-09-26  584  	err = ovl_do_rename_rd(&rd);
-18cc48cabac8b0 NeilBrown         2025-09-26  585  	end_renaming(&rd);
-cad218ab332078 Amir Goldstein    2020-02-20  586  	if (err) {
-cad218ab332078 Amir Goldstein    2020-02-20  587  		if (err == -EINVAL)
-cad218ab332078 Amir Goldstein    2020-02-20  588  			err = 0;
-cad218ab332078 Amir Goldstein    2020-02-20  589  		goto cleanup_temp;
-cad218ab332078 Amir Goldstein    2020-02-20  590  	}
-cad218ab332078 Amir Goldstein    2020-02-20  591  
-09d56cc88c2470 NeilBrown         2025-07-16  592  	whiteout = ovl_lookup_upper_unlocked(ofs, name.name.name,
-09d56cc88c2470 NeilBrown         2025-07-16  593  					     workdir, name.name.len);
-cad218ab332078 Amir Goldstein    2020-02-20  594  	err = PTR_ERR(whiteout);
-cad218ab332078 Amir Goldstein    2020-02-20  595  	if (IS_ERR(whiteout))
-cad218ab332078 Amir Goldstein    2020-02-20  596  		goto cleanup_temp;
-cad218ab332078 Amir Goldstein    2020-02-20  597  
-bc8df7a3dc0359 Alexander Larsson 2023-08-23  598  	err = ovl_upper_is_whiteout(ofs, whiteout);
-cad218ab332078 Amir Goldstein    2020-02-20  599  
-cad218ab332078 Amir Goldstein    2020-02-20  600  	/* Best effort cleanup of whiteout and temp file */
-cad218ab332078 Amir Goldstein    2020-02-20  601  	if (err)
-fe4d3360f9cbb5 NeilBrown         2025-07-16  602  		ovl_cleanup(ofs, workdir, whiteout);
-cad218ab332078 Amir Goldstein    2020-02-20  603  	dput(whiteout);
-cad218ab332078 Amir Goldstein    2020-02-20  604  
-cad218ab332078 Amir Goldstein    2020-02-20  605  cleanup_temp:
-fe4d3360f9cbb5 NeilBrown         2025-07-16  606  	ovl_cleanup(ofs, workdir, temp);
-cad218ab332078 Amir Goldstein    2020-02-20  607  	release_dentry_name_snapshot(&name);
-cad218ab332078 Amir Goldstein    2020-02-20  608  	dput(temp);
-cad218ab332078 Amir Goldstein    2020-02-20 @609  	dput(dest);
-cad218ab332078 Amir Goldstein    2020-02-20  610  
-cad218ab332078 Amir Goldstein    2020-02-20  611  	return err;
-cad218ab332078 Amir Goldstein    2020-02-20  612  }
-cad218ab332078 Amir Goldstein    2020-02-20  613  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Amir.
 
