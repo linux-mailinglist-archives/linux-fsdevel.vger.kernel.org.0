@@ -1,233 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-62903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73DBCBA483A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 17:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 989D8BA48B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 18:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907471C065ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 15:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82A941B26EE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 16:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3157722424C;
-	Fri, 26 Sep 2025 15:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707C7233149;
+	Fri, 26 Sep 2025 16:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZgAZFrk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KAxhEVTZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZgAZFrk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KAxhEVTZ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpTvJD6k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB388224240
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 15:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A018287E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 16:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758902154; cv=none; b=GPHzubO4RAGEvQ/AtzfumouHYJwjZOG3L/n6YCq1locXFHToCUIZV3ii1yI2nuGJwqoFYsEZ4Is5iyEww/JdW1d8QWt41J8bxWFisaVrqk+flADiMMB6W6UN1acZKM/iwFDcc+VqRO14T1iS7m9lPdlBRXaxVbZA3AGjFTHbHFs=
+	t=1758902704; cv=none; b=tkNrPBSbXxulJngSbg5zWk9iR+YkAuxCMZ9T6FARgdXrxqzs5OlyuBb9vG/1fbHEvump3gNBPc0mrQRVdCKZRfRywPDfXg634EyYfze0lMcFoHP8xXMqPlxWxCih9DyykI7VxldXNiXxMAiZZv4QHzxre9DJb1V5oQQHLhjYw6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758902154; c=relaxed/simple;
-	bh=elgYVV7Yt2w31P89M88TuIf6Pr72yi7Lqlmu1YhdFlo=;
+	s=arc-20240116; t=1758902704; c=relaxed/simple;
+	bh=wUGJE+ti/MRdA0xp+XI2NHmw0de32U8bLNCQZPLQAFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WG9W5qEimYfls6Q8dcI1SoDj0hP7/psTwcXr01gpcNQvzzCtOl6PwKr21bNbRY+wMOCY1xgmHgDQS/GHqbv55wLrO0eVdW09ugxl5z/a8rBOK+LM1VKsvpHp9KXyDJpfpj9hP9KkedAl3/sNYWiophBKsS2ws4qQKIpEetXrsK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZgAZFrk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KAxhEVTZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZgAZFrk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KAxhEVTZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B9D683F48D;
-	Fri, 26 Sep 2025 15:55:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758902150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kC8Phlndb0wDab4iVYcdTlbtV7zJBXm9PxYdFxTriDQ=;
-	b=QZgAZFrkDjd6JloaA7EBWiNkvbxBA6lDgrABuRAY8IsaSc5BIbvOn4Nd3ZrjSLXxdEjVJo
-	Fw6knz8hoq55BAsC/PUyIVhaGuf6TYpUhfZfT9rvAxYoVcJoK592GMK17WgQVkr35Z8hkf
-	+VNDLVWMVofZB8g1UoJDi4qOCkGmSnM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758902150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kC8Phlndb0wDab4iVYcdTlbtV7zJBXm9PxYdFxTriDQ=;
-	b=KAxhEVTZsrHtvbMM85WeTon+TY6dFZkv0slOXRISEk0ViM/JPU+0gQH8nLVi0sOPLoBtkm
-	1/zarfsXBwPrY+CA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QZgAZFrk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=KAxhEVTZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758902150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kC8Phlndb0wDab4iVYcdTlbtV7zJBXm9PxYdFxTriDQ=;
-	b=QZgAZFrkDjd6JloaA7EBWiNkvbxBA6lDgrABuRAY8IsaSc5BIbvOn4Nd3ZrjSLXxdEjVJo
-	Fw6knz8hoq55BAsC/PUyIVhaGuf6TYpUhfZfT9rvAxYoVcJoK592GMK17WgQVkr35Z8hkf
-	+VNDLVWMVofZB8g1UoJDi4qOCkGmSnM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758902150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kC8Phlndb0wDab4iVYcdTlbtV7zJBXm9PxYdFxTriDQ=;
-	b=KAxhEVTZsrHtvbMM85WeTon+TY6dFZkv0slOXRISEk0ViM/JPU+0gQH8nLVi0sOPLoBtkm
-	1/zarfsXBwPrY+CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AEF581373E;
-	Fri, 26 Sep 2025 15:55:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a5axKoa31mjcCQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Sep 2025 15:55:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5BF0BA0AA0; Fri, 26 Sep 2025 17:55:46 +0200 (CEST)
-Date: Fri, 26 Sep 2025 17:55:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Julian Sun <sunjunchao@bytedance.com>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	peterz@infradead.org, akpm@linux-foundation.org, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH] write-back: Wake up waiting tasks when finishing the
- writeback of a chunk.
-Message-ID: <dvfobm24dgl4hhvirwabai47toypkvrimv7rthevrcvig6xmjf@scpmbv7qucme>
-References: <20250925132239.2145036-1-sunjunchao@bytedance.com>
- <fylfqtj5wob72574qjkm7zizc7y4ieb2tanzqdexy4wcgtgov4@h25bh2fsklfn>
- <5622443b-b5b4-4b19-8a7b-f3923f822dda@bytedance.com>
- <CAGudoHGigCyz60ec6Mv3NL2-x7tfLWYdK1M=Rj2OHRAgqHKOdg@mail.gmail.com>
- <14ee6648-1878-4b46-9e46-d275cc50bf0a@bytedance.com>
- <CAGudoHEkJfenk7ePETr3PCCqb9AYo7F4Ha754EjV4rT+U6_qoQ@mail.gmail.com>
- <xetmahjj5tlxksfxfkronyam6ppdeiobpdz2zuvigichqkqcos@6hembfwhlayn>
- <CAGudoHETCiATjWYcHbO_SBkE-X0fWWi0YCkn51+VLcjw7620oA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E98/0yQnVi5BRD1eQKBiVMunE/i4zjodI2FTOttRL9/6UgWnpxMfXakynGGcBJQFAUvwBX0q5N4wHQ6xMAXb+kR8Bv2WA0irE3DXL5XRRyAVmJPjxVkejnH9KsvMblCPZYni2AkzRHCUl//HpJfMxcB3tkt8IIhyIMU04vew6P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpTvJD6k; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758902703; x=1790438703;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wUGJE+ti/MRdA0xp+XI2NHmw0de32U8bLNCQZPLQAFE=;
+  b=UpTvJD6kbb4Vwbw2sdFONbAMDIu9OjnLG9VBCcyoxqtQ/dwu4v7Z+4CT
+   H4Z86T2KJCLvAotOMaQ3jKLyo8p/xBqPakU6hmUQho1DXzYCkpAfvXudX
+   g+ThFAr8EnEwnB36QM4K7AMw3A3L5Or8iv2O8PFpp3qrChRZGn/BZrsTf
+   ofahaszXU19AyCsEvE+DQ/XyIztKzTXBEDMZkpy5BKRbeSF9WbeaS70Qe
+   31NUBoQsS7biEWzTxRvtbcjOBJhZmk1r4y2HKvMp4i9VMnU+PzJSB0wjm
+   0bj8wbLRleGARYOa6hlYPjr1WYq285++xQ2ngwvgjull9ZWb3WLJRNSYn
+   w==;
+X-CSE-ConnectionGUID: kyu4lADiTRCFk7UaPbW60A==
+X-CSE-MsgGUID: x41J9Q0sQFa3xbc6aEOv6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="83850156"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="83850156"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:05:02 -0700
+X-CSE-ConnectionGUID: CndS3x/QQduuWq+XClxM8A==
+X-CSE-MsgGUID: bjQGFKfXRwiA8SLER519ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="208393799"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 26 Sep 2025 09:05:00 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v2AwG-0006OZ-1s;
+	Fri, 26 Sep 2025 16:04:54 +0000
+Date: Sat, 27 Sep 2025 00:03:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: NeilBrown <neilb@ownmail.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 11/11] ecryptfs: use new start_creaing/start_removing APIs
+Message-ID: <202509262333.TsoLDUkJ-lkp@intel.com>
+References: <20250926025015.1747294-12-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHETCiATjWYcHbO_SBkE-X0fWWi0YCkn51+VLcjw7620oA@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: B9D683F48D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+In-Reply-To: <20250926025015.1747294-12-neilb@ownmail.net>
 
-On Fri 26-09-25 17:50:43, Mateusz Guzik wrote:
-> On Fri, Sep 26, 2025 at 5:48 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 26-09-25 14:05:59, Mateusz Guzik wrote:
-> > > On Fri, Sep 26, 2025 at 1:43 PM Julian Sun <sunjunchao@bytedance.com> wrote:
-> > > >
-> > > > On 9/26/25 7:17 PM, Mateusz Guzik wrote:
-> > > > > On Fri, Sep 26, 2025 at 4:26 AM Julian Sun <sunjunchao@bytedance.com> wrote:
-> > > > >>
-> > > > >> On 9/26/25 1:25 AM, Mateusz Guzik wrote:
-> > > > >>> On Thu, Sep 25, 2025 at 09:22:39PM +0800, Julian Sun wrote:
-> > > > >>>> Writing back a large number of pages can take a lots of time.
-> > > > >>>> This issue is exacerbated when the underlying device is slow or
-> > > > >>>> subject to block layer rate limiting, which in turn triggers
-> > > > >>>> unexpected hung task warnings.
-> > > > >>>>
-> > > > >>>> We can trigger a wake-up once a chunk has been written back and the
-> > > > >>>> waiting time for writeback exceeds half of
-> > > > >>>> sysctl_hung_task_timeout_secs.
-> > > > >>>> This action allows the hung task detector to be aware of the writeback
-> > > > >>>> progress, thereby eliminating these unexpected hung task warnings.
-> > > > >>>>
-> > > > >>>
-> > > > >>> If I'm reading correctly this is also messing with stats how long the
-> > > > >>> thread was stuck to begin with.
-> > > > >>
-> > > > >> IMO, it will not mess up the time. Since it only updates the time when
-> > > > >> we can see progress (which is not a hang). If the task really hangs for
-> > > > >> a long time, then we can't perform the time update—so it will not mess
-> > > > >> up the time.
-> > > > >>
-> > > > >
-> > > > > My point is that if you are stuck in the kernel for so long for the
-> > > > > hung task detector to take notice, that's still something worth
-> > > > > reporting in some way, even if you are making progress. I presume with
-> > > > > the patch at hand this information is lost.
-> > > > >
-> > > > > For example the detector could be extended to drop a one-liner about
-> > > > > encountering a thread which was unable to leave the kernel for a long
-> > > > > time, even though it is making progress. Bonus points if the message
-> > > > > contained info this is i/o and for which device.
-> > > >
-> > > > Let me understand: you want to print logs when writeback is making
-> > > > progress but is so slow that the task can't exit, correct?
-> > > > I see this as a new requirement different from the existing hung task
-> > > > detector: needing to print info when writeback is slow.
-> > > > Indeed, the existing detector prints warnings in two cases: 1) no
-> > > > writeback progress; 2) progress is made but writeback is so slow it will
-> > > > take too long.
-> > >
-> > > I am saying it would be a nice improvement to extend the htd like that.
-> > >
-> > > And that your patch as proposed would avoidably make it harder -- you
-> > > can still get what you are aiming for without the wakeups.
-> > >
-> > > Also note that when looking at a kernel crashdump it may be beneficial
-> > > to know when a particular thread got first stuck in the kernel, which
-> > > is again gone with your patch.
-> >
-> > I understand your concerns but I think it's stretching the goals for this
-> > patch a bit too much.  I'm fine with the patch going in as is and if Julian
-> > is willing to work on this additional debug features, then great!
-> >
-> 
-> I am not asking the patch does all that work, merely that it gets
-> implemented in a way which wont require a rewrite should the above
-> work get done. Which boils down to storing the timestamp somewhere in
-> task_struct.
+Hi NeilBrown,
 
-Well, but that doesn't really make much sense without the debug patch
-itself, does it? And it could be a potential discussion point. So I think
-the debug patch should just move the timestamp from the wb completion to
-task_struct if that's needed...
+kernel test robot noticed the following build errors:
 
-								Honza
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on next-20250925]
+[cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus viro-vfs/for-next linus/master v6.17-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/debugfs-rename-end_creating-to-debugfs_end_creating/20250926-105302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250926025015.1747294-12-neilb%40ownmail.net
+patch subject: [PATCH 11/11] ecryptfs: use new start_creaing/start_removing APIs
+config: x86_64-buildonly-randconfig-003-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262333.TsoLDUkJ-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509262333.TsoLDUkJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509262333.TsoLDUkJ-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   Warning: fs/namei.c:2815 function parameter 'de' not described in 'end_dirop'
+   Warning: fs/namei.c:2836 function parameter 'de' not described in 'end_dirop_mkdir'
+   Warning: fs/namei.c:2836 function parameter 'parent' not described in 'end_dirop_mkdir'
+   Warning: fs/namei.c:3276 function parameter 'idmap' not described in 'start_creating'
+   Warning: fs/namei.c:3276 function parameter 'parent' not described in 'start_creating'
+   Warning: fs/namei.c:3276 function parameter 'name' not described in 'start_creating'
+   Warning: fs/namei.c:3303 function parameter 'idmap' not described in 'start_removing'
+   Warning: fs/namei.c:3303 function parameter 'parent' not described in 'start_removing'
+   Warning: fs/namei.c:3303 function parameter 'name' not described in 'start_removing'
+   Warning: fs/namei.c:3332 function parameter 'idmap' not described in 'start_creating_killable'
+   Warning: fs/namei.c:3332 function parameter 'parent' not described in 'start_creating_killable'
+   Warning: fs/namei.c:3332 function parameter 'name' not described in 'start_creating_killable'
+   Warning: fs/namei.c:3363 function parameter 'idmap' not described in 'start_removing_killable'
+   Warning: fs/namei.c:3363 function parameter 'parent' not described in 'start_removing_killable'
+   Warning: fs/namei.c:3363 function parameter 'name' not described in 'start_removing_killable'
+   Warning: fs/namei.c:3386 function parameter 'parent' not described in 'start_creating_noperm'
+   Warning: fs/namei.c:3386 function parameter 'name' not described in 'start_creating_noperm'
+   Warning: fs/namei.c:3411 function parameter 'parent' not described in 'start_removing_noperm'
+   Warning: fs/namei.c:3411 function parameter 'name' not described in 'start_removing_noperm'
+>> Warning: fs/namei.c:3437 function parameter 'parent' not described in 'start_creating_dentry'
+>> Warning: fs/namei.c:3437 function parameter 'child' not described in 'start_creating_dentry'
+   Warning: fs/namei.c:3470 function parameter 'parent' not described in 'start_removing_dentry'
+   Warning: fs/namei.c:3470 function parameter 'child' not described in 'start_removing_dentry'
+--
+   fs/ecryptfs/inode.c: In function 'ecryptfs_rename':
+>> fs/ecryptfs/inode.c:630:14: error: implicit declaration of function 'start_renaming_two_dentry'; did you mean 'start_renaming_two_dentrys'? [-Wimplicit-function-declaration]
+     630 |         rc = start_renaming_two_dentry(&rd, lower_old_dentry, lower_new_dentry);
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |              start_renaming_two_dentrys
+
+
+vim +630 fs/ecryptfs/inode.c
+
+   602	
+   603	static int
+   604	ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+   605			struct dentry *old_dentry, struct inode *new_dir,
+   606			struct dentry *new_dentry, unsigned int flags)
+   607	{
+   608		int rc;
+   609		struct dentry *lower_old_dentry;
+   610		struct dentry *lower_new_dentry;
+   611		struct dentry *lower_old_dir_dentry;
+   612		struct dentry *lower_new_dir_dentry;
+   613		struct inode *target_inode;
+   614		struct renamedata rd = {};
+   615	
+   616		if (flags)
+   617			return -EINVAL;
+   618	
+   619		lower_old_dir_dentry = ecryptfs_dentry_to_lower(old_dentry->d_parent);
+   620		lower_new_dir_dentry = ecryptfs_dentry_to_lower(new_dentry->d_parent);
+   621	
+   622		lower_old_dentry = ecryptfs_dentry_to_lower(old_dentry);
+   623		lower_new_dentry = ecryptfs_dentry_to_lower(new_dentry);
+   624	
+   625		target_inode = d_inode(new_dentry);
+   626	
+   627		rd.mnt_idmap  = &nop_mnt_idmap;
+   628		rd.old_parent = lower_old_dir_dentry;
+   629		rd.new_parent = lower_new_dir_dentry;
+ > 630		rc = start_renaming_two_dentry(&rd, lower_old_dentry, lower_new_dentry);
+   631		if (rc)
+   632			return rc;
+   633	
+   634		rc = vfs_rename(&rd);
+   635		if (rc)
+   636			goto out_lock;
+   637		if (target_inode)
+   638			fsstack_copy_attr_all(target_inode,
+   639					      ecryptfs_inode_to_lower(target_inode));
+   640		fsstack_copy_attr_all(new_dir, d_inode(lower_new_dir_dentry));
+   641		if (new_dir != old_dir)
+   642			fsstack_copy_attr_all(old_dir, d_inode(lower_old_dir_dentry));
+   643	out_lock:
+   644		end_renaming(&rd);
+   645		return rc;
+   646	}
+   647	
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
