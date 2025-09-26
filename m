@@ -1,491 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-62849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7B0BA2407
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 04:51:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71058BA259F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 05:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7965B385CA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 02:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245F94C49CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Sep 2025 03:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428EA1FCFEF;
-	Fri, 26 Sep 2025 02:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E54526CE2C;
+	Fri, 26 Sep 2025 03:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="BdVsN/Q1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ohnmpe6z"
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="hE271fNf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4861EB9E1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 02:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758855082; cv=none; b=tToXcBNJlfhbkv98dcLOKmmT8arYUz0+Vxo/UZDxYNXDnDMSmXXtyLyIhinWmKMudseTV0PAB5I6fZNv75apTGjytEGw81X0PvzAeBtpeCk/ypdGoS3XCv9AB9mm9aeACeq33eu8XMhnNi+cJMLogSgp0i6Mttw4TqDWYBZ3re4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758855082; c=relaxed/simple;
-	bh=DrWgMT0yHvuUGV1jXUjj8lGm226bGy2AXXR6MUPZiWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BMGP92Gc0V0LlZmf67sxH8Yq1Upc7Yzf3pL93SinIxK5XB+f0abWiAfWWFCV9abNjGeWSGD0z8IV2x3OaEqzMRY/zl6OaV7TIb0/M5/weH2LeJejhDFV/ZGDuIAlzG/7TUG06qYALpVZN8KFx4GTV28ez6MrfIcbIwnsTXLs7dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=BdVsN/Q1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ohnmpe6z; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 9BA931400040;
-	Thu, 25 Sep 2025 22:51:19 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Thu, 25 Sep 2025 22:51:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm1; t=1758855079;
-	 x=1758941479; bh=XRCtpsZVqyTHYwZAxZIsQh/VJWkjEnq0XAvEosHEW20=; b=
-	BdVsN/Q16ec4Ff5qrVgNAyKGuk5YtEIsnHchAGy7G/Rrs1u0Qrfjf4qdp0+Zh/Zx
-	GF1y3e1Bd4B/OKXBfeTC5mnnWeS2MQ4kawQkoz9TF/fNqUJWh8REBwncytK26FZU
-	53I84XIsmjzY3ST+nza3lJ190r1DELbolHJOaOIXhCHG9nfnsAVbLQS86fR2Ya6D
-	mSV3tFt21Hp+DegTFBhRY4iBq5OualpZ0vszneqp16JRpRiOKakLzHttDytiruwR
-	RM9ods9lkKiYh7+h4t0a62eT/cn+Xp++dJ9B4RAkmtPJJFfuAYNU7FmAJz/EOuqX
-	3TQbpTPn1E0pYw5C8ot5Xw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758855079; x=1758941479; bh=X
-	RCtpsZVqyTHYwZAxZIsQh/VJWkjEnq0XAvEosHEW20=; b=Ohnmpe6zmVGUABwFP
-	MXGia91tz4Y4TB7psMCIzt5krlcAq1DWsMqBKWslus5FCnTGNh6fExPeFRVz2hZG
-	O39F7mahcnUQF6FvHHbySTw277X/3fMumW78o7dcnPx1wjXRPtyehUTqAinnpv6o
-	cU+eMcPuaBMRjZpRMq8uZ0oLCZI/0cGbi2ntwHilBN+8LwNZBx3oN67AyzkGjIV7
-	KM1PfrmqtWQ4iWGZCl7JTtgohkLcLAJei52IWwiEY5U+P777Lmc6FfgeIS+KLydd
-	hlFuw7T0EPcv7+d3J7K2UiMTKJw3zrFbAtff1BTpjDEQMyFYC0DKlGDCPPBN/kdP
-	s0JXw==
-X-ME-Sender: <xms:p__VaMwjZz03z3QNDP7sMOx_b9HP-357jDju_LIuA2NilpSeFWDt2A>
-    <xme:p__VaLOkU0ZyiJ5H11iMZjW3rJXbwVfXLJH_FjShyYqLqIjgYCRft9P9Y3OVvrb1_
-    woACxnXvb6gPKnFI2OckUzINoIbcssTCkAyfL6RLAdwE9OoPA>
-X-ME-Received: <xmr:p__VaNVoojQadBA69iLwRhSmJ2GVL2vHWtY8Hw-YSXL4CfPjsayea40NdUM8XMFf7d9W_lGUDOUc0GAZuJV2Xr-aWsLn5GqNjvn_8vL-gkBM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeikedvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfrhgggfestdekredtredttdenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    evveekffduueevhfeigefhgfdukedtleekjeeitdejudfgueekvdekffdvfedvudenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
-    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:p__VaP0EgKwfbm5B677Pn6bX1oBdC4azFRzwOcpGGzRi-X-0pKRZRw>
-    <xmx:p__VaLpJfWEyopfe0sq8NfaYlsWlU3wyzVfgBj-sEs6BLCw-0U-oJA>
-    <xmx:p__VaGXuvOS1oPfV4KGUVrSgK9UL0vlt_edH3GboKXtyiWIvOA0sLw>
-    <xmx:p__VaGYTccXsjz_lNT7ejCprFQ1PnT-VClpInsDYWhIRR9YwiEwJ2g>
-    <xmx:p__VaLIgZqM6_BKrDKVuoKs_kLNjRUNjcDNFbP3a8t9MlbLINFG51lUL>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 22:51:17 -0400 (EDT)
-From: NeilBrown <neilb@ownmail.net>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"Amir Goldstein" <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: "Jan Kara" <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 11/11] ecryptfs: use new start_creaing/start_removing APIs
-Date: Fri, 26 Sep 2025 12:49:15 +1000
-Message-ID: <20250926025015.1747294-12-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20250926025015.1747294-1-neilb@ownmail.net>
-References: <20250926025015.1747294-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CD272633
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Sep 2025 03:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758858718; cv=fail; b=fHohq2F5IKODwz/oOM8XiTqFP1Ps5Dh9x0NM0MU4KO9yqT2mouaTBR0urj7NxYtDOAwK9yb+DxKtvcS+7ZJd4tUyU420RQ5i6kD4YBlM7OMHolM1dkbE9SgCiz5I11FL3T+zyrWJZOK29bPE8zsDjnAZOjySWKe/hZrvQHjSr6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758858718; c=relaxed/simple;
+	bh=XaFVy6J0+5ym+3ThjYHqz1euWWpp4cOhHxv5OO3hiLc=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MnGCcYZhV65og2qK/RIaW+tDlC4qzatV/lc51Qe2hyHUtafSXAluEkI/lfQcsnFR9Rgve987AtYuGGCElv9FFqf+Kt3fkLRcTcvCapJqeq5UGJ36gbUGkeqNXNm/BU8a+olp7n02OBO0TnsmXsZIkK82PVoGR3jAd66e00DEihA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=hE271fNf; arc=fail smtp.client-ip=185.183.30.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+Received: from pps.filterd (m0209318.ppops.net [127.0.0.1])
+	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PMmSKq012061;
+	Fri, 26 Sep 2025 03:40:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=S1; bh=XWmhpQw0iip3GRU8klbFGulRom0zz
+	HcctiRJW82wC1k=; b=hE271fNfKpeKpM0RTjdMbOjp95ALl8TxTOTY/sX+F9jLm
+	Jdkt/T31KCMbnbS5IHjtjCRekMyMiPfkdEtXIFmpvNCQvtpFsBVBih9EQIk8HQML
+	UjVgwOvqzULUL1gebXeW9x6nqamHpWTxAUVW9A+JC2EPgYxvlvhxfVfmfU41siTw
+	U31zkq89IGn2nvWZ6DLb2xlPX8+9oowTMtr7QO7MAKAvpXUdndSzQ98+ERAivkZV
+	hfY4wQ/t26bkr8DWMeT6efxnxCFSPjvs10KWQ0VUzznLmllVNl29SRmqlCSPFb6q
+	sZybovxz0QGtbQSBZlr+MQoucpSO0rgF3YRNiTxNg==
+Received: from typpr03cu001.outbound.protection.outlook.com (mail-japaneastazon11012062.outbound.protection.outlook.com [52.101.126.62])
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 49daw70g3t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Sep 2025 03:40:55 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nSUhWX2hJOdmfnrDIbswYaCnkTbPVXF3RxOcJlRcqboyYZCwf4HPsgLme3kbnkCmaYze4PzSPJjyAIKpPvlXalrcNlPFcy53xb75FAoGErQ/HFglTWAwoNSY53HitT84Nzesg/JxTUmySzXhomMmKkq3Zf+2JhKXlnQfKr29zEzthEhJtNZi+KZOnrlDcNjXDbBjBx8gbO5j4Bgv1HUOj8S5+EHxvgD7tM2dHEvM3ygrwBqFDunOYup810ohB5qX/jJc7QewLVHVOpJYSpW1AuYOE0wFatLDrizttNVgQgQuQvqkLYbNmERSGd8M5bYAnENMSU31EScOuCpfdgH4SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XWmhpQw0iip3GRU8klbFGulRom0zzHcctiRJW82wC1k=;
+ b=y5aDLvyckNPQhbmvJ6PXOHelLzOX70gDSfHpzUixVFf8RGShrF6WWf01fHojEXPUfc/zpcfADNsoOL4UV8EzCbFlQNOElx27d5dku7cbgivLL98QbYKu1QS5lV4EB6T4cv3SXO5va8w8/YVqWRy7ACNbaz2Np/i/5h9bQgMW2MukJxJ/knZCto8kRX2dMh8v+DN8uEMZDHbdZlfEUTPl6F3+fx402V94a34YEaubGDt/i+MH+T8AkViHW65cwUmng3m6h/Yags9zG2Dm2frraQvor3VapOdYhKtmH9RfdbWYtdVmIhe+DdHPF4bI4B7UIiGHp4h6BeTt1xk+8eysCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
+ by KL1PR0401MB6587.apcprd04.prod.outlook.com (2603:1096:820:b5::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 03:40:49 +0000
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::409e:64d3:cee0:7b06%7]) with mapi id 15.20.9137.018; Fri, 26 Sep 2025
+ 03:40:48 +0000
+From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+To: "ekffu200098@gmail.com" <ekffu200098@gmail.com>
+CC: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+Subject: Re: [PATCH] exfat: move utf8 mount option setup to
+ exfat_parse_param()
+Thread-Topic: [PATCH] exfat: move utf8 mount option setup to
+ exfat_parse_param()
+Thread-Index: AQHcLpc7P634kEkOY0iGrMX887YZqQ==
+Date: Fri, 26 Sep 2025 03:40:48 +0000
+Message-ID:
+ <PUZPR04MB631693B0709951113DC1B8DB811EA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|KL1PR0401MB6587:EE_
+x-ms-office365-filtering-correlation-id: d588eb6e-0073-4d59-e951-08ddfcae7baf
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?EwayJzX23zNmv9eeg4XsegsAo57hoHpZWCdvakxzBUbn//tlB3SdIN/er5?=
+ =?iso-8859-1?Q?Yyp7u3diybolLk7jJaCk39nBxWVEAjQYH6gnmQ2HeVN4XShe3+d790GlGC?=
+ =?iso-8859-1?Q?SUhq4p3sE7BkoT7AJLdVCFpHmmu10WBh0waWjYfvBqeST2htT8WVBUDqFa?=
+ =?iso-8859-1?Q?QqH3YOPZLfIu3ONiJ659xpQ16L0N15RVIOWf6PNAJ7FCdlSL3jOotp7lTZ?=
+ =?iso-8859-1?Q?vxBUrXQt2jpcMbOd8aYAstzL97bI5wiqPstKWTQl7XiI8rLD9EN8RfG7Pz?=
+ =?iso-8859-1?Q?++cvh4u3+ofX3yEXdiX2tTRxdgiVf2fba2LD6K5PRijlC5344zVJeu/3E3?=
+ =?iso-8859-1?Q?mBVNa4T7ce451VaEH47VTv/C+4DmJReq+ahfBOjEtRKijySpAjKxABRm27?=
+ =?iso-8859-1?Q?uBIXETzw4HAElNAYge/J6AqaUfPR07iSsQM4n4g417WDZixB/WHabPFi/4?=
+ =?iso-8859-1?Q?kw4dJ3jK5Tsp0JuBDO/WLpheMfFNFHocmNCt6LesDDXxXja+xXMxqT6n+B?=
+ =?iso-8859-1?Q?tzIEE68D4nM6tvdfzwK5YA4SgNaToKvBlIZ9aOgKXPp7up9wr+B1YpR51N?=
+ =?iso-8859-1?Q?LP34LCyb3p8mKKsq/nfHRWvjJlgfPBXraGNN4v/UMQj4d717dKVqpfPb4w?=
+ =?iso-8859-1?Q?b9YSm2H6bIr0jJiBk1qxa1ZJjv4bXWjeEUqNkCW6SoSuEvW4nobJSc5hy1?=
+ =?iso-8859-1?Q?0sxotdtijtcHKx23uk4ysAswB6b4yYgS5UuwJ2zUqv5DrCgK/YbYP39WB6?=
+ =?iso-8859-1?Q?CLTmZatQeCzfhqX5i6pCZHvSqG3iNSD1S+R/uIKgwdxeK5J2irh3UMUNR1?=
+ =?iso-8859-1?Q?ci7DY9Y26IT9Q9qFjia1AHCRohmropgCS4+yTKJw0w74fcJ3laI23qVohN?=
+ =?iso-8859-1?Q?lgUnMD5Tc++zFUqlU63Uu/G0sno2ifXrquWoc628GTqyQmOkN6g6tHUsdH?=
+ =?iso-8859-1?Q?nGnHfoUYpXM6r2WTjZGYSwrKPtJKji+rp4h+xwxQ7tbeqxvaK+ni4MqsaR?=
+ =?iso-8859-1?Q?qS8CuETEGGByHQO0qYeRkKeVXw8i9EduuhJtcwnXalD7Vu6zW2nwjPt7r5?=
+ =?iso-8859-1?Q?U69db5YcBgT2DjByGu2KQ2vnxlHHNrX33hP0ddtS+c5Ner/oIHuDfGNoLO?=
+ =?iso-8859-1?Q?uNjHOi4Yn9Pe3q+zeGs9oNzNLGMV9J9ePuuOG+3VIv2wIqIWhre6Z9h3Ec?=
+ =?iso-8859-1?Q?O/ad2sHUq26In5dXte4qA5krbfALF/ntGlz6n0WensL0XAz42XKPzCcD/l?=
+ =?iso-8859-1?Q?vLQBTyCs9gM4haAmUbhviSh75e8F7wM+N40pnCNokeWrWTX05ZIEIhhFP/?=
+ =?iso-8859-1?Q?zEJpJoRlvHH6OYNR3UtTlNEHjXk8Pcx9EGAn0r/8R1FV+QH44K0AL09m/1?=
+ =?iso-8859-1?Q?YqfiJj/lrRNH+DHgunvPi+8tHp96u9bWmEn2ZTKNg4HHX0VklsN3O1OgEF?=
+ =?iso-8859-1?Q?QV2Pml8xkKbzBvRnb5EmSRwDq3WHZYn1HXfvOk4Uxj5NL6A/WE2qYU92MD?=
+ =?iso-8859-1?Q?Y=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?GGza3WnPb5wFK0GBmY/5emV8ri6JFUJ2gOeoAZASgpUV3LApMopx/OF/Z4?=
+ =?iso-8859-1?Q?HinUV0p2DDGyDdwnQOLA0rOhW+R5Jznzz1MO8q6p7a2db8VsBV/NtirOnB?=
+ =?iso-8859-1?Q?mFMxdzSusgS1m5mmh5pzGdczUCTOHDfHtwHQixXG09VCBIR0SGx/S5Tg+N?=
+ =?iso-8859-1?Q?DrV2fWVmOF/6UFCSJzn8x7ex3x41qpzGLhgybCYiqUKfQs0eMHxeb0tlh+?=
+ =?iso-8859-1?Q?AOOgAG06bkeuepHHPHaqQIF7QdJ/dxler7M7hNiqjcxIM35QqsO57cU3+e?=
+ =?iso-8859-1?Q?aWS9v2FzC8l8mkAox5Kcukm4sEYBa+s44PwCgG3u77tHAZLzoutNqrEc1m?=
+ =?iso-8859-1?Q?+uISf+1zqWDAe3R1q2sj//40kCvqC6+MEPPKyn8R5hdB/vJ6e3K5DxC7ZT?=
+ =?iso-8859-1?Q?e43UOtpgx2IIgPuwob5LLuDkQQ8NJFRX5d748kQJO79vOHIyrU2rSz7lRW?=
+ =?iso-8859-1?Q?RdIsgbcpzL24BxoPcTWNs3p8RVs055LBkXuUIAMqAanXv+SrIPqLdeoZcy?=
+ =?iso-8859-1?Q?v1x4JIg0xe1iZ7fyAWrhF+NngYZk8NstY166w0Xs/lnJUP26+KUuMNfqs3?=
+ =?iso-8859-1?Q?joeVrveky7BNQez4+wPvwzvCdeEIztudNAgISw1sH0/4E3wheojbq4ng3F?=
+ =?iso-8859-1?Q?gYp60Apz92N7s6muNNyyqaHP5nwxgKoxmzuiXMjxabEI7EOxlY7bkI7Wbg?=
+ =?iso-8859-1?Q?20BCVWgjT8UwO42RZkHZ3kRvgtKZL5bw1aNYUwfabJFCwxGoeTFAu13LDE?=
+ =?iso-8859-1?Q?Aa6Xg6mzET3sex/dBTDpkUwMXgEFGJaP84VMaS7XzxKhk7w43QEYn3aaNG?=
+ =?iso-8859-1?Q?LDTw2PbR3ytztvvj4KWA69KdaV40ypi3UhSqN1o+BoJ1q/+jpvCVombUtb?=
+ =?iso-8859-1?Q?TInLqFU8ol/xYvFFDyIxJ0vD93cddhtyWDxmv78QlyGOZ/3m1Xw3woIE9T?=
+ =?iso-8859-1?Q?X0mUlw7s2w1pGVl9mOXTl7rJWj+6t87375bei+U9kd6gnomzlVNGwRV0hZ?=
+ =?iso-8859-1?Q?vNZ+jleK6xvHqVHrxxNxYweZoNuvMaWZ2hxLjgvisAb5tN1inEkXg7Ld24?=
+ =?iso-8859-1?Q?mcnO8h/zycakHzqmiGzB0BlrAYim5Vlkyg0AUmBlBhcutGjSeExOVMwYzV?=
+ =?iso-8859-1?Q?KfOXbfzcR6JpB/6Cb/CKQ6StmExUlWih9ACrLnxKPGuturd21fosIaTsTy?=
+ =?iso-8859-1?Q?rglcS6oEbxJnx+AkjyPhXG8nQj37A+lgs8xGJTCiT6EXoQ5uTg8f7fKgym?=
+ =?iso-8859-1?Q?NU+4RsxRqWXnzOWepFF066oA5pi8JMZmMpJsbfPfGQawts9YvFHBRu2gxD?=
+ =?iso-8859-1?Q?Y3cdwqUl6UZ47GwdhjqUxn44b2fRMkXj32FgLqiCrPdDTuNS7Y+YNgvVLr?=
+ =?iso-8859-1?Q?Tw/WxVpK39gxbRasld9ebpOW7iVunyYjl+q1oRh6S6YOOSSknvjbJMXUgN?=
+ =?iso-8859-1?Q?v0LW5cY5O9Zx+q3fDr0ddn0uKhb7yYbdxLC58DEZ+75CDgwPZjfEqsw5yr?=
+ =?iso-8859-1?Q?0EXxeiks/vTsIyKhgYMNthBjT2BwGQon63aM5889o3YMvIbVNB2CKWctzh?=
+ =?iso-8859-1?Q?KUwrGCzecCEd1fAwCB1kbqZS4EIZvZnKOaqmpjKfaf8S+jnY0/ngNPwIUH?=
+ =?iso-8859-1?Q?IcCORc4cTFPpLWQOxVxBT7fq0a1iy5JTz5hw8+7hQKlAAZjC1ZmZK3Yg?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	eIy/r3tJ3+jE/Z6K6AQ2NNhA86SbOQgegvrNNLSe+rHqBtx5gGk6fxmiSmxOPqiG4ZSJDxy1pc1IQwVM4s942V8BATWNRfPrOFQGYlNmkO8fqqeBJMWadHatkXq8ARVuzvTDJ+39+/vx1nxdZNrTJUfFaHKFCNtWyCYH2K5GgciwT5XgXykpfn2jv+LTv/MbiQ7prUun1EICy3UQQevbOwHl4Q6wpFwagI+jYiF3CoHBBMwP19ADzfMJvEb3k0CjN5V6hpcsgUv2CzZuYQlBk1C7yOrugDEH0ZwFYL5cF47ztchOE2oKgMjcIYJJFjTw+b+8qwQi6Xxb9ETEZJxJItHmc4xjqL/bbe4S9H2k66HOOvo+I09CDwXVhzE1XY39omiBb1I8qo/ncd0v4QqQIUpYGcouR+OHBqVY4Dj70gawwL3wyrk7Gp+hzCl0QX+MSm9zO2e9yaOd96Z7fTN6PxEKq1u9fhYN7VB0+wQB00/dkhXFz+a1FY7SyCUWr9rEMhNPBh00ujpyt8RViZJrW9Ee+CLJJ614znVR2jjxu01ur9Cpd/i+kfiie0Oks6NaVSz3fLkjtPj1ngdRPEKE4h30MjwMYOUTLPbuzeQpt7dNlzw8fnaH8sklpDgw8gFu
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d588eb6e-0073-4d59-e951-08ddfcae7baf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2025 03:40:48.5782
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wZq9uisb69kclo3cf0l56YY8AyBXXmvHW4Ov3Opg5zK99JnRpiJ7rkAlkB1lOgZAFZ1SAtUMOSSkUUhRE2S+EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0401MB6587
+X-Proofpoint-GUID: O1Z2-cySSZAVAtEh3L8tUGlvwV4rkWqk
+X-Authority-Analysis: v=2.4 cv=dYONHHXe c=1 sm=1 tr=0 ts=68d60b48 cx=c_pps a=Qj2SXdm9e47dEnvLI+3zSQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=7j0FZ4iXMVMA:10 a=xR56lInIT_wA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=pGLkceISAAAA:8 a=8xTHmjjxzrKjsBCNXdoA:9 a=wPNLvfGTeEIA:10 a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22
+ a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=jd6J4Gguk5HxikPWLKER:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MCBTYWx0ZWRfX9OOMF32KsBiE OTv0Qjalue/XsZhSAiXwjRU4oqrNphYxZ+2w8wtTKM5cGN/clB1ZLJQ4jIEzIe0FFFja59Zhe1o o90vffhGrLjBj6wrALmjFaDMml4OVjNzxY0p4Yk9UGCWJ6YXnhSVUvAqEuSREl2bzU2c2WPQFrf
+ GXk0quta1HBqCyayaI+xngjgTX5AA6HgnF6oT7zxY4CKefSUVRyVfprBhIgHKGrru5Sb/5QI2+R k7FspgoA07QbiSQ8zG9OOYDvgrHsZKNrgNO1/ffptW0izEE9liVu3h/PZivU0m1OnD2KOooMxT3 AqnxfB1uUkzys5/KL/Bg4NcvdnXkSvh0X8D3M96YTPpy1YG/XTiPquvX74O2RYhYQ3bEFbIWECr
+ /wzgtUYAp/nLxoS7IWwwOX0CgVUM2w==
+X-Proofpoint-ORIG-GUID: O1Z2-cySSZAVAtEh3L8tUGlvwV4rkWqk
+X-Sony-Outbound-GUID: O1Z2-cySSZAVAtEh3L8tUGlvwV4rkWqk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_01,2025-09-25_01,2025-03-28_01
 
-From: NeilBrown <neil@brown.name>
-
-This requires the addition of start_creating_dentry().
-
-Signed-off-by: NeilBrown <neil@brown.name>
----
- fs/ecryptfs/inode.c   | 153 ++++++++++++++++++++----------------------
- fs/namei.c            |  41 ++++++++++-
- include/linux/namei.h |   2 +
- 3 files changed, 113 insertions(+), 83 deletions(-)
-
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index abd954c6a14e..25ef6ea8b150 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -24,18 +24,26 @@
- #include <linux/unaligned.h>
- #include "ecryptfs_kernel.h"
- 
--static int lock_parent(struct dentry *dentry,
--		       struct dentry **lower_dentry,
--		       struct inode **lower_dir)
-+static struct dentry *ecryptfs_start_creating_dentry(struct dentry *dentry)
- {
--	struct dentry *lower_dir_dentry;
-+	struct dentry *parent = dget_parent(dentry->d_parent);
-+	struct dentry *ret;
- 
--	lower_dir_dentry = ecryptfs_dentry_to_lower(dentry->d_parent);
--	*lower_dir = d_inode(lower_dir_dentry);
--	*lower_dentry = ecryptfs_dentry_to_lower(dentry);
-+	ret = start_creating_dentry(ecryptfs_dentry_to_lower(parent),
-+				    ecryptfs_dentry_to_lower(dentry));
-+	dput(parent);
-+	return ret;
-+}
- 
--	inode_lock_nested(*lower_dir, I_MUTEX_PARENT);
--	return (*lower_dentry)->d_parent == lower_dir_dentry ? 0 : -EINVAL;
-+static struct dentry *ecryptfs_start_removing_dentry(struct dentry *dentry)
-+{
-+	struct dentry *parent = dget_parent(dentry->d_parent);
-+	struct dentry *ret;
-+
-+	ret = start_removing_dentry(ecryptfs_dentry_to_lower(parent),
-+				    ecryptfs_dentry_to_lower(dentry));
-+	dput(parent);
-+	return ret;
- }
- 
- static int ecryptfs_inode_test(struct inode *inode, void *lower_inode)
-@@ -141,15 +149,12 @@ static int ecryptfs_do_unlink(struct inode *dir, struct dentry *dentry,
- 	struct inode *lower_dir;
- 	int rc;
- 
--	rc = lock_parent(dentry, &lower_dentry, &lower_dir);
--	dget(lower_dentry);	// don't even try to make the lower negative
--	if (!rc) {
--		if (d_unhashed(lower_dentry))
--			rc = -EINVAL;
--		else
--			rc = vfs_unlink(&nop_mnt_idmap, lower_dir, lower_dentry,
--					NULL);
--	}
-+	lower_dentry = ecryptfs_start_removing_dentry(dentry);
-+	if (IS_ERR(lower_dentry))
-+		return PTR_ERR(lower_dentry);
-+
-+	lower_dir = lower_dentry->d_parent->d_inode;
-+	rc = vfs_unlink(&nop_mnt_idmap, lower_dir, lower_dentry, NULL);
- 	if (rc) {
- 		printk(KERN_ERR "Error in vfs_unlink; rc = [%d]\n", rc);
- 		goto out_unlock;
-@@ -158,8 +163,7 @@ static int ecryptfs_do_unlink(struct inode *dir, struct dentry *dentry,
- 	set_nlink(inode, ecryptfs_inode_to_lower(inode)->i_nlink);
- 	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
- out_unlock:
--	dput(lower_dentry);
--	inode_unlock(lower_dir);
-+	end_removing(lower_dentry);
- 	if (!rc)
- 		d_drop(dentry);
- 	return rc;
-@@ -186,10 +190,12 @@ ecryptfs_do_create(struct inode *directory_inode,
- 	struct inode *lower_dir;
- 	struct inode *inode;
- 
--	rc = lock_parent(ecryptfs_dentry, &lower_dentry, &lower_dir);
--	if (!rc)
--		rc = vfs_create(&nop_mnt_idmap, lower_dir,
--				lower_dentry, mode, true);
-+	lower_dentry = ecryptfs_start_creating_dentry(ecryptfs_dentry);
-+	if (IS_ERR(lower_dentry))
-+		return ERR_CAST(lower_dentry);
-+	lower_dir = lower_dentry->d_parent->d_inode;
-+	rc = vfs_create(&nop_mnt_idmap, lower_dir,
-+			lower_dentry, mode, true);
- 	if (rc) {
- 		printk(KERN_ERR "%s: Failure to create dentry in lower fs; "
- 		       "rc = [%d]\n", __func__, rc);
-@@ -205,7 +211,7 @@ ecryptfs_do_create(struct inode *directory_inode,
- 	fsstack_copy_attr_times(directory_inode, lower_dir);
- 	fsstack_copy_inode_size(directory_inode, lower_dir);
- out_lock:
--	inode_unlock(lower_dir);
-+	end_creating(lower_dentry, NULL);
- 	return inode;
- }
- 
-@@ -442,10 +448,12 @@ static int ecryptfs_link(struct dentry *old_dentry, struct inode *dir,
- 
- 	file_size_save = i_size_read(d_inode(old_dentry));
- 	lower_old_dentry = ecryptfs_dentry_to_lower(old_dentry);
--	rc = lock_parent(new_dentry, &lower_new_dentry, &lower_dir);
--	if (!rc)
--		rc = vfs_link(lower_old_dentry, &nop_mnt_idmap, lower_dir,
--			      lower_new_dentry, NULL);
-+	lower_new_dentry = ecryptfs_start_creating_dentry(new_dentry);
-+	if (IS_ERR(lower_new_dentry))
-+		return PTR_ERR(lower_new_dentry);
-+	lower_dir = lower_new_dentry->d_parent->d_inode;
-+	rc = vfs_link(lower_old_dentry, &nop_mnt_idmap, lower_dir,
-+		      lower_new_dentry, NULL);
- 	if (rc || d_really_is_negative(lower_new_dentry))
- 		goto out_lock;
- 	rc = ecryptfs_interpose(lower_new_dentry, new_dentry, dir->i_sb);
-@@ -457,7 +465,7 @@ static int ecryptfs_link(struct dentry *old_dentry, struct inode *dir,
- 		  ecryptfs_inode_to_lower(d_inode(old_dentry))->i_nlink);
- 	i_size_write(d_inode(new_dentry), file_size_save);
- out_lock:
--	inode_unlock(lower_dir);
-+	end_creating(lower_new_dentry, NULL);
- 	return rc;
- }
- 
-@@ -477,9 +485,11 @@ static int ecryptfs_symlink(struct mnt_idmap *idmap,
- 	size_t encoded_symlen;
- 	struct ecryptfs_mount_crypt_stat *mount_crypt_stat = NULL;
- 
--	rc = lock_parent(dentry, &lower_dentry, &lower_dir);
--	if (rc)
--		goto out_lock;
-+	lower_dentry = ecryptfs_start_creating_dentry(dentry);
-+	if (IS_ERR(lower_dentry))
-+		return PTR_ERR(lower_dentry);
-+	lower_dir = lower_dentry->d_parent->d_inode;
-+
- 	mount_crypt_stat = &ecryptfs_superblock_to_private(
- 		dir->i_sb)->mount_crypt_stat;
- 	rc = ecryptfs_encrypt_and_encode_filename(&encoded_symname,
-@@ -499,7 +509,7 @@ static int ecryptfs_symlink(struct mnt_idmap *idmap,
- 	fsstack_copy_attr_times(dir, lower_dir);
- 	fsstack_copy_inode_size(dir, lower_dir);
- out_lock:
--	inode_unlock(lower_dir);
-+	end_creating(lower_dentry, NULL);
- 	if (d_really_is_negative(dentry))
- 		d_drop(dentry);
- 	return rc;
-@@ -510,12 +520,14 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- {
- 	int rc;
- 	struct dentry *lower_dentry;
-+	struct dentry *lower_dir_dentry;
- 	struct inode *lower_dir;
- 
--	rc = lock_parent(dentry, &lower_dentry, &lower_dir);
--	if (rc)
--		goto out;
--
-+	lower_dentry = ecryptfs_start_creating_dentry(dentry);
-+	if (IS_ERR(lower_dentry))
-+		return lower_dentry;
-+	lower_dir_dentry = dget(lower_dentry->d_parent);
-+	lower_dir = lower_dir_dentry->d_inode;
- 	lower_dentry = vfs_mkdir(&nop_mnt_idmap, lower_dir,
- 				 lower_dentry, mode);
- 	rc = PTR_ERR(lower_dentry);
-@@ -531,7 +543,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	fsstack_copy_inode_size(dir, lower_dir);
- 	set_nlink(dir, lower_dir->i_nlink);
- out:
--	inode_unlock(lower_dir);
-+	end_creating(lower_dentry, lower_dir_dentry);
- 	if (d_really_is_negative(dentry))
- 		d_drop(dentry);
- 	return ERR_PTR(rc);
-@@ -543,21 +555,18 @@ static int ecryptfs_rmdir(struct inode *dir, struct dentry *dentry)
- 	struct inode *lower_dir;
- 	int rc;
- 
--	rc = lock_parent(dentry, &lower_dentry, &lower_dir);
--	dget(lower_dentry);	// don't even try to make the lower negative
--	if (!rc) {
--		if (d_unhashed(lower_dentry))
--			rc = -EINVAL;
--		else
--			rc = vfs_rmdir(&nop_mnt_idmap, lower_dir, lower_dentry);
--	}
-+	lower_dentry = ecryptfs_start_removing_dentry(dentry);
-+	if (IS_ERR(lower_dentry))
-+		return PTR_ERR(lower_dentry);
-+	lower_dir = lower_dentry->d_parent->d_inode;
-+
-+	rc = vfs_rmdir(&nop_mnt_idmap, lower_dir, lower_dentry);
- 	if (!rc) {
- 		clear_nlink(d_inode(dentry));
- 		fsstack_copy_attr_times(dir, lower_dir);
- 		set_nlink(dir, lower_dir->i_nlink);
- 	}
--	dput(lower_dentry);
--	inode_unlock(lower_dir);
-+	end_removing(lower_dentry);
- 	if (!rc)
- 		d_drop(dentry);
- 	return rc;
-@@ -571,10 +580,12 @@ ecryptfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	struct dentry *lower_dentry;
- 	struct inode *lower_dir;
- 
--	rc = lock_parent(dentry, &lower_dentry, &lower_dir);
--	if (!rc)
--		rc = vfs_mknod(&nop_mnt_idmap, lower_dir,
--			       lower_dentry, mode, dev);
-+	lower_dentry = ecryptfs_start_creating_dentry(dentry);
-+	if (IS_ERR(lower_dentry))
-+		return PTR_ERR(lower_dentry);
-+	lower_dir = lower_dentry->d_parent->d_inode;
-+
-+	rc = vfs_mknod(&nop_mnt_idmap, lower_dir, lower_dentry, mode, dev);
- 	if (rc || d_really_is_negative(lower_dentry))
- 		goto out;
- 	rc = ecryptfs_interpose(lower_dentry, dentry, dir->i_sb);
-@@ -583,7 +594,7 @@ ecryptfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	fsstack_copy_attr_times(dir, lower_dir);
- 	fsstack_copy_inode_size(dir, lower_dir);
- out:
--	inode_unlock(lower_dir);
-+	end_removing(lower_dentry);
- 	if (d_really_is_negative(dentry))
- 		d_drop(dentry);
- 	return rc;
-@@ -599,7 +610,6 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	struct dentry *lower_new_dentry;
- 	struct dentry *lower_old_dir_dentry;
- 	struct dentry *lower_new_dir_dentry;
--	struct dentry *trap;
- 	struct inode *target_inode;
- 	struct renamedata rd = {};
- 
-@@ -614,31 +624,13 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 
- 	target_inode = d_inode(new_dentry);
- 
--	trap = lock_rename(lower_old_dir_dentry, lower_new_dir_dentry);
--	if (IS_ERR(trap))
--		return PTR_ERR(trap);
--	dget(lower_new_dentry);
--	rc = -EINVAL;
--	if (lower_old_dentry->d_parent != lower_old_dir_dentry)
--		goto out_lock;
--	if (lower_new_dentry->d_parent != lower_new_dir_dentry)
--		goto out_lock;
--	if (d_unhashed(lower_old_dentry) || d_unhashed(lower_new_dentry))
--		goto out_lock;
--	/* source should not be ancestor of target */
--	if (trap == lower_old_dentry)
--		goto out_lock;
--	/* target should not be ancestor of source */
--	if (trap == lower_new_dentry) {
--		rc = -ENOTEMPTY;
--		goto out_lock;
--	}
-+	rd.mnt_idmap  = &nop_mnt_idmap;
-+	rd.old_parent = lower_old_dir_dentry;
-+	rd.new_parent = lower_new_dir_dentry;
-+	rc = start_renaming_two_dentry(&rd, lower_old_dentry, lower_new_dentry);
-+	if (rc)
-+		return rc;
- 
--	rd.mnt_idmap		= &nop_mnt_idmap;
--	rd.old_parent		= lower_old_dir_dentry;
--	rd.old_dentry		= lower_old_dentry;
--	rd.new_parent		= lower_new_dir_dentry;
--	rd.new_dentry		= lower_new_dentry;
- 	rc = vfs_rename(&rd);
- 	if (rc)
- 		goto out_lock;
-@@ -649,8 +641,7 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	if (new_dir != old_dir)
- 		fsstack_copy_attr_all(old_dir, d_inode(lower_old_dir_dentry));
- out_lock:
--	dput(lower_new_dentry);
--	unlock_rename(lower_old_dir_dentry, lower_new_dir_dentry);
-+	end_renaming(&rd);
- 	return rc;
- }
- 
-diff --git a/fs/namei.c b/fs/namei.c
-index 23f9adb43401..80a687a95da0 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3418,6 +3418,39 @@ struct dentry *start_removing_noperm(struct dentry *parent,
- }
- EXPORT_SYMBOL(start_removing_noperm);
- 
-+/**
-+ * start_creating_dentry - prepare to create a given dentry
-+ * @parent - directory from which dentry should be removed
-+ * @child - the dentry to be removed
-+ *
-+ * A lock is taken to protect the dentry again other dirops and
-+ * the validity of the dentry is checked: correct parent and still hashed.
-+ *
-+ * If the dentry is valid and negative a reference is taken and
-+ * returned.  If not an error is returned.
-+ *
-+ * end_creating() should be called when creation is complete, or aborted.
-+ *
-+ * Returns: the valid dentry, or an error.
-+ */
-+struct dentry *start_creating_dentry(struct dentry *parent,
-+				     struct dentry *child)
-+{
-+	inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-+	if (unlikely(IS_DEADDIR(parent->d_inode) ||
-+		     child->d_parent != parent ||
-+		     d_unhashed(child))) {
-+		inode_unlock(parent->d_inode);
-+		return ERR_PTR(-EINVAL);
-+	}
-+	if (d_is_positive(child)) {
-+		inode_unlock(parent->d_inode);
-+		return ERR_PTR(-EEXIST);
-+	}
-+	return dget(child);
-+}
-+EXPORT_SYMBOL(start_creating_dentry);
-+
- /**
-  * start_removing_dentry - prepare to remove a given dentry
-  * @parent - directory from which dentry should be removed
-@@ -3426,8 +3459,8 @@ EXPORT_SYMBOL(start_removing_noperm);
-  * A lock is taken to protect the dentry again other dirops and
-  * the validity of the dentry is checked: correct parent and still hashed.
-  *
-- * If the dentry is valid a reference is taken and returned.  If not
-- * an error is returned.
-+ * If the dentry is valid and positive a reference is taken and
-+ * returned.  If not an error is returned.
-  *
-  * end_removing() should be called when removal is complete, or aborted.
-  *
-@@ -3443,6 +3476,10 @@ struct dentry *start_removing_dentry(struct dentry *parent,
- 		inode_unlock(parent->d_inode);
- 		return ERR_PTR(-EINVAL);
- 	}
-+	if (d_is_negative(child)) {
-+		inode_unlock(parent->d_inode);
-+		return ERR_PTR(-ENOENT);
-+	}
- 	return dget(child);
- }
- EXPORT_SYMBOL(start_removing_dentry);
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 434b10476e40..7ed299567da8 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -100,6 +100,8 @@ struct dentry *start_removing_killable(struct mnt_idmap *idmap,
- 				       struct qstr *name);
- struct dentry *start_creating_noperm(struct dentry *parent, struct qstr *name);
- struct dentry *start_removing_noperm(struct dentry *parent, struct qstr *name);
-+struct dentry *start_creating_dentry(struct dentry *parent,
-+				     struct dentry *child);
- struct dentry *start_removing_dentry(struct dentry *parent,
- 				     struct dentry *child);
- 
--- 
-2.50.0.107.gf914562f5916.dirty
-
+On 2025/9/26 2:40, Sang-Heon Jeon wrote:=0A=
+> Currently, exfat utf8 mount option depends on the iocharset option=0A=
+> value. After exfat remount, utf8 option may become inconsistent with=0A=
+> iocharset option.=0A=
+> =0A=
+> If the options are inconsistent; (specifically, iocharset=3Dutf8 but=0A=
+> utf8=3D0) readdir may reference uninitalized NLS, leading to a null=0A=
+> pointer dereference.=0A=
+> =0A=
+> Move utf8 option setup logic from exfat_fill_super() to=0A=
+> exfat_parse_param() to prevent utf8/iocharset option inconsistency=0A=
+> after remount.=0A=
+> =0A=
+> Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com=0A=
+> Closes: https://syzkaller.appspot.com/bug?extid=3D3e9cb93e3c5f90d28e19=0A=
+> Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>=0A=
+> Fixes: acab02ffcd6b ("exfat: support modifying mount options via remount"=
+)=0A=
+> Tested-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com=0A=
+> ---=0A=
+> Instead of moving `utf8` mount option (also, can resolve this problem)=0A=
+> setup to exfat_parse_param(), we can re-setup `utf8` mount option on=0A=
+> exfat_reconfigure(). IMHO, it's better to move setup logic to parse=0A=
+> section in terms of consistency.=0A=
+> =0A=
+> If my analysis is wrong or If there is better approach, please let me=0A=
+> know. Thanks for your consideration.=0A=
+=0A=
+It makes sense to put settings utf8 and iocharset together.=0A=
+=0A=
+If so, utf8 is also needed to set in exfat_init_fs_context(), otherwise=0A=
+utf8 will not be initialized if mounted without specifying iocharset.=0A=
+=0A=
+> ---=0A=
+>  fs/exfat/super.c | 16 +++++++++-------=0A=
+>  1 file changed, 9 insertions(+), 7 deletions(-)=0A=
+> =0A=
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c=0A=
+> index e1cffa46eb73..3b07b2a5502d 100644=0A=
+> --- a/fs/exfat/super.c=0A=
+> +++ b/fs/exfat/super.c=0A=
+> @@ -293,6 +293,12 @@ static int exfat_parse_param(struct fs_context *fc, =
+struct fs_parameter *param)=0A=
+>  	case Opt_charset:=0A=
+>  		exfat_free_iocharset(sbi);=0A=
+>  		opts->iocharset =3D param->string;=0A=
+> +=0A=
+> +		if (!strcmp(opts->iocharset, "utf8"))=0A=
+> +			opts->utf8 =3D 1;=0A=
+> +		else=0A=
+> +			opts->utf8 =3D 0;=0A=
+> +=0A=
+>  		param->string =3D NULL;=0A=
+>  		break;=0A=
+>  	case Opt_errors:=0A=
+> @@ -664,8 +670,8 @@ static int exfat_fill_super(struct super_block *sb, s=
+truct fs_context *fc)=0A=
+>  	/* set up enough so that it can read an inode */=0A=
+>  	exfat_hash_init(sb);=0A=
+>  =0A=
+> -	if (!strcmp(sbi->options.iocharset, "utf8"))=0A=
+> -		opts->utf8 =3D 1;=0A=
+> +	if (sbi->options.utf8)=0A=
+> +		set_default_d_op(sb, &exfat_utf8_dentry_ops);=0A=
+>  	else {=0A=
+>  		sbi->nls_io =3D load_nls(sbi->options.iocharset);=0A=
+>  		if (!sbi->nls_io) {=0A=
+> @@ -674,12 +680,8 @@ static int exfat_fill_super(struct super_block *sb, =
+struct fs_context *fc)=0A=
+>  			err =3D -EINVAL;=0A=
+>  			goto free_table;=0A=
+>  		}=0A=
+> -	}=0A=
+> -=0A=
+> -	if (sbi->options.utf8)=0A=
+> -		set_default_d_op(sb, &exfat_utf8_dentry_ops);=0A=
+> -	else=0A=
+>  		set_default_d_op(sb, &exfat_dentry_ops);=0A=
+> +	}=0A=
+>  =0A=
+>  	root_inode =3D new_inode(sb);=0A=
+>  	if (!root_inode) {=0A=
+=0A=
 
