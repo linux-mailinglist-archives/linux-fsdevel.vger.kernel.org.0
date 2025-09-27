@@ -1,98 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-62937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A49FBA6361
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 22:43:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BB5BA646B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Sep 2025 00:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0E397A1E5F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 20:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F85218995CE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 22:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4ED23B60C;
-	Sat, 27 Sep 2025 20:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0C123C506;
+	Sat, 27 Sep 2025 22:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="eKyDbvq/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Fj1sP+JD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B78234966
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Sep 2025 20:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CB628682;
+	Sat, 27 Sep 2025 22:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759005814; cv=none; b=tec+yufsVeOa/Mk9Cai1QbvGdSpdAy8x+fG1pafxfhhQB8gtUqtI6rj0FQ0/9310wIQR2/aNwwUrJEgQ8pdfT1nCmw1s8pRObg8hO1voCW9yxNxlpBrD/m9xtp0knbUOxOxA/aFMIyQbvLXcGY76vPgBAk9OTlnVyltkLs45+Y8=
+	t=1759013620; cv=none; b=VrSoRTWshsBVANG/oIoX7ucNTANcArQE7FlcAPKUoei6lqgNXPMr3IVf1q9HkzYqeT8eYLSlDDF83zBA7H2/PbLC7zbzfSe0pZVMYfccV4jhaPhlgLQjLicYFemlvzTeF47/locnoRcx9lw2khMqGXosnTTF/WRKzV9qn3B5lH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759005814; c=relaxed/simple;
-	bh=qqBNq/oUNzv1hAru+OxUOa6rS5cuxigsQJFLGKWRZdo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MfDJVuAabIHmRQzrXS7cUrgcs/fJbOHB7cpa57d4un9ZhzYB6qOHuiIC7DX8g0ZbWXcm19pXwk8/KA35duwxoSuSnfofyCGKjh/34ru9cx9FayvheTqtQy2G+ZtQrqNFcq3P6SvYdx2bUW2krG0aJnNRKBSUf1ib0bud0jwtosY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42640cbf7f2so73306355ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Sep 2025 13:43:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759005812; x=1759610612;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FgBEakLBjEpirRPbTwgwa5y0PQU9iFXK7podnyDdGFo=;
-        b=kuszTBJizfK08NdReX9MTDYz+uo4JgP5aR05SU902qnMKFcpt7k0/HE/lPi73SaCFB
-         CxifsM6RLKIGM2n1IiS0m95vl5qe2TtGoHya1rAkJUDLDEd9TdfCZbwP6ApwrF+ox7FP
-         9E+A6ABoaM/wKuqvETIsnoYhO8iu4z/Xw5sI5EDVj4mA9gu/vKGfpObGlYqG8E3LzY+I
-         z7zWMTkaQNC+Aaw8VDfr4f5hhTiK76bd0Fa/F56izibzjjWUF2/TvrRwinEjV5m10d1W
-         XjY/Atd3mTKC1W/ABV2iKLpvbfIGXOz5nLteioEQkItV3/jEHHWp9IbrKZ5FsEYw5KPL
-         uFJw==
-X-Gm-Message-State: AOJu0YycQl1Xiw1ZcQc6rZfi639Z98mX82TFXFKplaz9bcMCtAgPSmou
-	Pzfb4jWXNuCnIhgErHzGI9h8rJ7rMYR2wQUkkHexPOZzMP9+zVY3GdJ/uheoKiEh0RbeK6ifa6u
-	UXOEOcTOOJNbEVU/b58jtiL3m7MJcWVVOc13ht51IQ4SJh9bBFHUheCj3HcM=
-X-Google-Smtp-Source: AGHT+IHcWSgPNFSvO6mQyB/YDZRCjBZCIJ25Cpiocke9IOek7/btuCYSMPD3yyQtTw736wjaRKzMuhgG5Vt+bT39t1euh/0Cp1I2
+	s=arc-20240116; t=1759013620; c=relaxed/simple;
+	bh=waBb0hPPk6mLfv0mSvcbxDflqmx7x/HwJzr4j44b6IA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rcN9gerGku7r76VfXLT8uUnuiC/wctu3R/gxa3+g6CnaOFgO13JxeWYs3WQ+WW4uH8CvsMOIjqAUjK2HvOWgo0jDUscAlJLHRNPyqbnA5ss7aMrm9XZl6v+SLOd9ycdKqzU1ajJ157WRS5c4bMr0UEtn9URHM13S026dxVIHx6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=eKyDbvq/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Fj1sP+JD; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 953A81D00099;
+	Sat, 27 Sep 2025 18:53:37 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Sat, 27 Sep 2025 18:53:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759013617;
+	 x=1759100017; bh=r8nlJBu4+DGKY/5R6PObJknBEO1eOAjKoGLmmZK/l90=; b=
+	eKyDbvq/Eh8iaSy38AvYlWf4aOL1JcMHoMq5lQFzbZf/qVYYvwiJuSRXUw2wRkyi
+	W84xxvDk7NHfE7DZlg+9RbWhBBAbvx9m+wRV2YfUavMdLu0A9IFeFXSLv+TF1krR
+	QW7xfCZNiUiTZbltC0iQRuK1utU2zvflFuo7E1KSoGrSnZ57pKS5hP4tSDVieF4n
+	i0vqcjPvxi/QhbwdZD9O5A7k7Mar+4XxER3w17Q9sHTBUdbwDMT/hwnZ/5eyITVA
+	+QuHLcyNnrsiCOrW8BRrFOOPYSurbe9qzWPZvvGmQzjkIedVMiYZqhLQxtRydMow
+	A3aFFVEY9aOfzVKVSCM+Fg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759013617; x=
+	1759100017; bh=r8nlJBu4+DGKY/5R6PObJknBEO1eOAjKoGLmmZK/l90=; b=F
+	j1sP+JDD2LW7MH/hNDFObuIAHmvl4ktCJ9AAQMa3ZLeuGnsUe12x/HDf49NpLFFA
+	htpaRVtzbHRuNFngwO8J6C2vX2NiZqvsCL+lTmcwy9jEErKo/PAaYqnxfp07fUCl
+	vivDRwyOJspJ9inMbZbV/JswgJxiTuuLyuEwgJH2sRhfvANygX3Ix8zThfN2/zV3
+	eO+fOgoBl58o3v/nUh0kAmQiV2GY6T28DNqhbz8bTEXYqDtd3C/6bvC+wBFCgLFK
+	yn8skA2xg5yv6/SFUn4mNvvjEdME0UAcEAfSQ0HtZdn3o40dnCtKCWAPKmGzg2v6
+	UMwMVXiVRDH2+Q+ARjfpg==
+X-ME-Sender: <xms:72rYaOxzkHf1iBPn_ki2J2OddRSi2ii6KjXiEPLleocB1ub2u_NlzQ>
+    <xme:72rYaDqvnQf9m9t4eNo7xSt3ZYBmgM2QeaIeq8ZHkPw4jJbAHxKFKpPEp3uG09Mc4
+    qLRj7lsY84FsoH8J-iKxBm4Jt--fYdvGw5eeNNrUunwDbU57zWDUsI>
+X-ME-Received: <xmr:72rYaI31CI8BKu4N9Vm3gp_EKrk6hqqtvzfVMmR7yPk7mbOLlzaFOdmLGPtwjkWm5a7SjmU_LPrsd8SZM6nePVaN>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejfeeglecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
+    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
+    drohhrghdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhrohhugheskhgroh
+    gurdhorhhgpdhrtghpthhtoheplhhinhhugigpohhsshestghruhguvggshihtvgdrtgho
+    mhdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtph
+    htthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhutghhohes
+    ihhonhhkohhvrdhnvghtpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrd
+    guvghvpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthho
+    pehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:72rYaEC5odOfJqOYh5CMS46GpTM6xDb9AVvtOmNS_6861b1DtbsztQ>
+    <xmx:72rYaBNm-I01NRZ7X-TivQQ5r7FXtHG9_K3YPl08Zvco5qyjf6D3Ww>
+    <xmx:72rYaARSft9Pt3RFDwW19UffJldfrP84_MOYoOmm6R_M_zdt2Mdogw>
+    <xmx:72rYaB4mHnSpi0BBxfmydVJphgXGQj3ht06s42pDFl2BJTwV-n3H9A>
+    <xmx:8WrYaBidm_w-c5MxqEUeR0C1ovUZt-MHB6emscia4wEALnuJnqC2crNk>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 27 Sep 2025 18:53:33 -0400 (EDT)
+Message-ID: <dd5f424b-c6a8-4d0d-9ec0-1447fce7de39@maowtm.org>
+Date: Sat, 27 Sep 2025 23:53:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc8:b0:428:76ec:b2ba with SMTP id
- e9e14a558f8ab-42876ecb4a2mr68817625ab.12.1759005812046; Sat, 27 Sep 2025
- 13:43:32 -0700 (PDT)
-Date: Sat, 27 Sep 2025 13:43:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d84c74.a00a0220.102ee.001c.GAE@google.com>
-Subject: [syzbot] Monthly fuse report (Sep 2025)
-From: syzbot <syzbot+lista4945a96c9c404d48254@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Greg Kurz <groug@kaod.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, v9fs@lists.linux.dev, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>, linux-security-module@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+ Matthew Bobrowski <repnop@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ qemu-devel@nongnu.org
+References: <aMih5XYYrpP559de@codewreck.org> <3070012.VW4agfvzBM@silver>
+ <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org> <3774641.iishnSSGpB@silver>
+ <20250917.Eip1ahj6neij@digikod.net>
+ <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
+ <20250927.ahGhiiy0koo0@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250927.ahGhiiy0koo0@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello fuse maintainers/developers,
+On 9/27/25 19:27, Mickaël Salaün wrote:
+> Adding Greg Kurz too.
+> 
+> On Sun, Sep 21, 2025 at 05:24:49PM +0100, Tingmao Wang wrote:
+>> On 9/17/25 16:00, Mickaël Salaün wrote:
+>>> [...]
+>>
+>> Alternatively if we believe this to be a QEMU issue, maybe
+>> Landlock don't need to work around it and should just hold fids (and use
+>> QIDs to key the rules) anyway despite server quirks like these.  This can
+>> perhaps then be fixed in QEMU?
+> 
+> Yes, I think it would make sense for Landlock to open and keep open a
+> fid (and hopefully the related remote file).  However, the v9fs umount
+> should be handled gracefully the same way Landlock tag inodes are
+> handled.  This should come with a QEMU patch to fix the consistency
+> issue.
+> 
+>>
+>> (I guess the fact that QEMU is doing path tracking in the first place does
+>> gives more precedent for justifying doing path tracking in v9fs as well,
+>> but maybe that's the wrong way to think about it)
+> 
+> Anyway, if QEMU does it, wouldn't it be the same for Landlock to just
+> rely on fid?
 
-This is a 31-day syzbot report for the fuse subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fuse
+The fid can't be relied on because it's just a handle.  The client can
+open multiple fids pointing to the same file (and in fact this is what
+v9fs does - new fid for each open())
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 45 have already been fixed.
+> If QEMU uses FD+O_PATH, then Landlock would work even for
+> server-moved files.
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 454     Yes   INFO: task hung in __fuse_simple_request
-                  https://syzkaller.appspot.com/bug?extid=0dbb0d6fda088e78a4d8
-<2> 46      Yes   INFO: task hung in fuse_lookup (3)
-                  https://syzkaller.appspot.com/bug?extid=b64df836ad08c8e31a47
-<3> 2       No    KMSAN: uninit-value in fuse_dentry_revalidate
-                  https://syzkaller.appspot.com/bug?extid=743e3f809752d6f7934f
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+(With this new approach, Landlock would have to key the rules based on
+qid, but it also needs to hold an open fid to prevent that qid from being
+reused (due to ext4 inode number reuse, etc))
 
