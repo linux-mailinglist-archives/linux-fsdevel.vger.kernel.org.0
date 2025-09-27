@@ -1,139 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-62933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86CAFBA5EC9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 14:19:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D79CBA62F5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 21:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4159A3BDF0C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 12:19:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76B367A977C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Sep 2025 19:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146502BE655;
-	Sat, 27 Sep 2025 12:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5AA1FA859;
+	Sat, 27 Sep 2025 19:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIdW4hqV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+c75Nqd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DE51F541E;
-	Sat, 27 Sep 2025 12:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1F428371;
+	Sat, 27 Sep 2025 19:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758975556; cv=none; b=QBcL2pUSMF6JBNIS+KDgp21vAoeftlq1MoYms8dTtPOtnPNWUUBrYUeZqhlw9uFf2O7pp+2Xcbpv9mHhpZJ4vkW13icDYb/0hs/MjKdeIG3sJKmZhxVpizdFrqFLX2t3AcYuHWxJ5577kLY1Xm55rEHfVnhbbcHUwxuePB1g8RE=
+	t=1759002499; cv=none; b=usEnp0GF6q12r9KTw4G2od6FeSlshADV8c+9UKMNf+wXA/AOMQG6Ljo9uyHrH82NX9IIyWONCnmPa4YkNxD2BD15J3OnCAYSfELombUxYKKl8b0QVuIuo02YJtHrxioeOouM1l31yVIorNMFiQ194qTgyom2WhOnQAXU7LOe54M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758975556; c=relaxed/simple;
-	bh=T18AFQPV0MqC4eP1QNbHAm7Tj9EiTL+jqR5RzMVcfw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqaJ718dMAC6OKXJ0qpw1Sa6+g/Uia/P/h9T3NwiO3PdGyd7WdOCfp7pqk/V7LqkMs+IfwRp2Qh+WGohnxminHMmY82bGgHPbChRD7wbmdLvWPd2chmBQGo1Gr0otfD4RHTYE0nWdCfxS3MoFedcndYV0twPftFe3t49sa5ChjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIdW4hqV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC5BC4CEE7;
-	Sat, 27 Sep 2025 12:19:13 +0000 (UTC)
+	s=arc-20240116; t=1759002499; c=relaxed/simple;
+	bh=QBA3zI/gBN7kvMlUos4rsKwGEVoup2MTT6dIRmJogTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uTBmag/oxLSfPVQP7gwo9Lnm/uFPJjtrpzLyNXvwOYHICzJoLmwvUrquTUDcjKySuU7OjNI8OdCuacjQE5UIA6dVu6yIhvHZJKJtUwb34V+UPM7R6Myd6O1wghhkKNNfleIlNBBBW8DbO1rcMx5ev0vZPKyMUluBhhG282DFa+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+c75Nqd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70FBAC4CEE7;
+	Sat, 27 Sep 2025 19:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758975553;
-	bh=T18AFQPV0MqC4eP1QNbHAm7Tj9EiTL+jqR5RzMVcfw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIdW4hqV7deZSJ9rbd4yBnHD/YIUHeDqqp12+mc6a3zvGxd/BufovKwvgW2MNiWxU
-	 4D9VR+PDpyu9uglrODOzF8Qut+YBrrNZbRaLv4QSkl9L3bFCJNzO578Cd7C6uz6IGh
-	 kv1m/6k7kJ3Gi1hpF4Shyd11qycDIxNapKhY9LX9bJkUapWbK0zH2TJea7rk9VLsmE
-	 fwoigjdjzA2VnhrklQTlxPJZpaWbj19UAx+e8oMF7RQaDtSeYxKYoVgw19XB+WJJ6u
-	 aLjbaMP7MoNo8A3zNnY8pX9Ge+/an1tBl7ZOXHE909c42qNwmEUCj+ebd5HyZY/4rl
-	 laR/YGLkTF5LQ==
-Date: Sat, 27 Sep 2025 08:19:12 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 08/12 for v6.18] core kernel
-Message-ID: <aNfWQL6nLBrPNQTs@laps>
-References: <20250926-vfs-618-e880cf3b910f@brauner>
- <20250926-vfs-core-kernel-eab0f97f9342@brauner>
+	s=k20201202; t=1759002499;
+	bh=QBA3zI/gBN7kvMlUos4rsKwGEVoup2MTT6dIRmJogTU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=U+c75NqdMSVuNnLZeADwRQlC5+UwoybGxFf59qBy0bLWflW0gSQ9L11MB7PdqD/sQ
+	 mnZkFiAtuIYtIrm4eN8RRQsVkhKadSD13019JFGpEXDNWIlcKFiiM7Ii8v2i8xBrLd
+	 tOZtPJ0MFEJECug+n5HXvGZZF8JxQekKP8ZDxkhTk+2XUiTj06v519a/c/lbUm5wK3
+	 xDOB4Hxg4yuFvnMu7Jr7lwouZth/EFm2QhMKwvkonrsLXK1wxKZ3D4KfUUsAwNTel+
+	 /e740d+iFOoBOq0E52j3GUHjjJhu3P9GSNKsPD9SX5/WzUwm3QtfNiQh9lhhWCn2kL
+	 PH6DATyDlHSdQ==
+Date: Sat, 27 Sep 2025 12:48:16 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [GIT PULL] fscrypt updates for 6.18
+Message-ID: <20250927194816.GA8682@quark>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926-vfs-core-kernel-eab0f97f9342@brauner>
 
-On Fri, Sep 26, 2025 at 04:19:02PM +0200, Christian Brauner wrote:
->Hey Linus,
->
->/* Testing */
->This contains the changes to enable support for clone3() on nios2 which
->apparently is still a thing. The more exciting part of this is that it
->cleans up the inconsistency in how the 64-bit flag argument is passed
->from copy_process() into the various other copy_*() helpers.
->
->gcc (Debian 14.2.0-19) 14.2.0
->Debian clang version 19.1.7 (3+b1)
->
->No build failures or warnings were observed.
->
->/* Conflicts */
->
->Merge conflicts with mainline
->=============================
->
->No known conflicts.
->
->Merge conflicts with other trees
->================================
->
->No known conflicts.
->
->The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
->
->  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->
->are available in the Git repository at:
->
->  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/kernel-6.18-rc1.clone3
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Hi Christian,
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-After pulling this tag, I started seeing a build failure.
+are available in the Git repository at:
 
-a9769a5b9878 ("rv: Add support for LTL monitors") which was merged a few weeks
-ago added a usage of task_newtask:
+  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
-	static void handle_task_newtask(void *data, struct task_struct *task, unsigned long flags)
+for you to fetch changes up to 19591f7e781fd1e68228f5b3bee60be6425af886:
 
-But commit edd3cb05c00a ("copy_process: pass clone_flags as u64 across
-calltree") from this pull request modified the signature without updating rv.
+  fscrypt: use HMAC-SHA512 library for HKDF (2025-09-05 21:01:51 -0700)
 
-./include/rv/ltl_monitor.h: In function ‘ltl_monitor_init’:
-./include/rv/ltl_monitor.h:75:51: error: passing argument 1 of ‘check_trace_callback_type_task_newtask’ from incompatible pointer type [-Wincompatible-pointer-types]
-    75 |         rv_attach_trace_probe(name, task_newtask, handle_task_newtask);
-       |                                                   ^~~~~~~~~~~~~~~~~~~
-       |                                                   |
-       |                                                   void (*)(void *, struct task_struct *, long unsigned int)
-./include/rv/instrumentation.h:18:48: note: in definition of macro ‘rv_attach_trace_probe’
-    18 |                 check_trace_callback_type_##tp(rv_handler);                             \
-       |                                                ^~~~~~~~~~
+----------------------------------------------------------------
 
-I've fixed it up by simply:
+Make fs/crypto/ use the HMAC-SHA512 library functions instead of
+crypto_shash. This is simpler, faster, and more reliable.
 
-diff --git a/include/rv/ltl_monitor.h b/include/rv/ltl_monitor.h
-index 67031a774e3d3..5368cf5fd623e 100644
---- a/include/rv/ltl_monitor.h
-+++ b/include/rv/ltl_monitor.h
-@@ -56,7 +56,7 @@ static void ltl_task_init(struct task_struct *task, bool task_creation)
-         ltl_atoms_fetch(task, mon);
-  }
-  
--static void handle_task_newtask(void *data, struct task_struct *task, unsigned long flags)
-+static void handle_task_newtask(void *data, struct task_struct *task, u64 flags)
-  {
-         ltl_task_init(task, true);
-  }
+----------------------------------------------------------------
+Eric Biggers (1):
+      fscrypt: use HMAC-SHA512 library for HKDF
 
--- 
-Thanks,
-Sasha
+Qianfeng Rong (1):
+      fscrypt: Remove redundant __GFP_NOWARN
+
+ fs/crypto/Kconfig           |   5 +-
+ fs/crypto/bio.c             |   2 +-
+ fs/crypto/fname.c           |   1 -
+ fs/crypto/fscrypt_private.h |  26 ++++-------
+ fs/crypto/hkdf.c            | 109 ++++++++++++++++----------------------------
+ fs/crypto/hooks.c           |   2 +-
+ fs/crypto/keyring.c         |  30 ++++--------
+ fs/crypto/keysetup.c        |  65 ++++++++------------------
+ fs/crypto/policy.c          |   4 +-
+ 9 files changed, 83 insertions(+), 161 deletions(-)
 
