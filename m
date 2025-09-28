@@ -1,60 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-62948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8A2BA70EA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Sep 2025 15:29:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F199BA70ED
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Sep 2025 15:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 261F5179E1E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Sep 2025 13:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20F3179A9D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Sep 2025 13:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133227260A;
-	Sun, 28 Sep 2025 13:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE93E2DEA70;
+	Sun, 28 Sep 2025 13:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R8dV3Lom"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2GhHIFV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF363C38
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Sep 2025 13:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A6B2DE717
+	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Sep 2025 13:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759066186; cv=none; b=tkyEQNT6n0A7yzJtFhVyswaSUUz7ybK9y30Olx4YkXNQ6PDm7QmIg5qV6Q/G2m0mEgQrEEtc6VGzmVnL9bQvT8tVas3vSrkoX7W03MwOFvETTcM7H1/GnTzM2bEEsF08onEBZnwTZDUEG56IyHbHJXEor8YbUBn+j9Yk/MJYaXM=
+	t=1759066189; cv=none; b=JF3pUNr5OUt5dSthJMjTKplR3/kO9daagIciGeWhDfI4WLkQDe2QEM0epwotY2Y5two8AUH6/IOeH/TEC05T/D8q827UUuZCXuAqz6C3asPFQExKivI3D8XW3Ph+341hZJbTGA9q3LCU5bKPOnUjiECZ8fbdCKwlYeNhzUjyT6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759066186; c=relaxed/simple;
-	bh=///aUcQy0v9442typo3axUep//i/bEYnLz4udP9IjM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E4aWf7kjgHVcZxO9SMgBwrsiDcVJeZsMOQkkT9asoQFFf+olCn8J3O/3YvYevdzyYv3itl2BaiFSATdICLSaCH8UbU0GIiig+N+MkEqpplPAk1PxU+rljilT5ohSYNfdrgYwETvOYZobUbrO39IzldmIC5bZFRFPH74VsvGlqlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R8dV3Lom; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1759066189; c=relaxed/simple;
+	bh=ZKQYV7aISWHH9C10tbIWtRgz1+vhqEO64vVYOFrQ8UY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mF5xZo/Bm+Ijpg6gdmDThIY4a3d+nNXtjvbsYVxtPKzEfyPHXQMgT6POAxGIjj091BUaV68HVaF7IjwKfNbpF4UIehaiJN/FSz7VgF2n4Havvjq3NjQm4d22rxuVFmORhSr+++qWzV/mCoujeXdbLlEHNtci20S8/Udx0IfKGIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2GhHIFV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759066182;
+	s=mimecast20190719; t=1759066186;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=S+kukYCOkKsdLW+UC0jrCN+E3CIedC+GJBiA+P7BUCY=;
-	b=R8dV3LomdGL3tTLnHww2+0PAKQE0dw8gOr95rip7OGKCUTN3AUU8D1CrK1+jA0eE9rGzGG
-	LefbM5I/XJA8wMGz1Ev6FWZr/AOqrb2I3dTpVqrBcVdqATcSB4BAaHkxGf3dk4OJdL13Nl
-	UIf5cHKhv1Tq+QsBgo3B5BO4+I3W4Og=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MMONmUM6gayoqIXLJGw4GQd0IzRDlol0YYWX4b80ytA=;
+	b=H2GhHIFV+sGwwQMwXAWHpfd46m/kt69sON3dpZG3ELUpDl3BLwSTg/Up6BOlFovme29e7g
+	8LAssUTFFPmsPtaKG64SP6wxV+9wD0ZxNHtaIwzba2eogL77/Uo98ShPWhZdUwKzH0ofse
+	O15LXfYB97xtgQ2fpVI3r13RkvVf4zs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-294-Sz53dQEVN_atXDaj1SfKXg-1; Sun,
- 28 Sep 2025 09:29:38 -0400
-X-MC-Unique: Sz53dQEVN_atXDaj1SfKXg-1
-X-Mimecast-MFC-AGG-ID: Sz53dQEVN_atXDaj1SfKXg_1759066177
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-486-mOVN4p68OxaZ2a1KbwXgEQ-1; Sun,
+ 28 Sep 2025 09:29:42 -0400
+X-MC-Unique: mOVN4p68OxaZ2a1KbwXgEQ-1
+X-Mimecast-MFC-AGG-ID: mOVN4p68OxaZ2a1KbwXgEQ_1759066181
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03BAE197740B;
-	Sun, 28 Sep 2025 13:29:37 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3ADFA1800451;
+	Sun, 28 Sep 2025 13:29:41 +0000 (UTC)
 Received: from localhost (unknown [10.72.120.3])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 596E330001A4;
-	Sun, 28 Sep 2025 13:29:34 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2607430001A4;
+	Sun, 28 Sep 2025 13:29:39 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	linux-block@vger.kernel.org
@@ -63,9 +65,11 @@ Cc: Mikulas Patocka <mpatocka@redhat.com>,
 	Dave Chinner <dchinner@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V4 0/6] loop: improve loop aio perf by IOCB_NOWAIT
-Date: Sun, 28 Sep 2025 21:29:19 +0800
-Message-ID: <20250928132927.3672537-1-ming.lei@redhat.com>
+Subject: [PATCH V4 1/6] loop: add helper lo_cmd_nr_bvec()
+Date: Sun, 28 Sep 2025 21:29:20 +0800
+Message-ID: <20250928132927.3672537-2-ming.lei@redhat.com>
+In-Reply-To: <20250928132927.3672537-1-ming.lei@redhat.com>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,50 +79,51 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hello Jens,
+Add lo_cmd_nr_bvec() and prepare for refactoring lo_rw_aio().
 
-This patchset improves loop aio perf by using IOCB_NOWAIT for avoiding to queue aio
-command to workqueue context, meantime refactor lo_rw_aio() a bit.
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ drivers/block/loop.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-In my test VM, loop disk perf becomes very close to perf of the backing block
-device(nvme/mq virtio-scsi).
-
-And Mikulas verified that this way can improve 12jobs sequential rw io by
-~5X, and basically solve the reported problem together with loop MQ change.
-
-https://lore.kernel.org/linux-block/a8e5c76a-231f-07d1-a394-847de930f638@redhat.com/
-
-Zhaoyang Huang also mentioned it may fix their performance issue on Android
-use case.
-
-The loop MQ change will be posted as standalone patch, because it needs
-losetup change.
-
-V4:
-	- rebase
-	- re-organize and make it more readable 
-
-V3:
-	- add reviewed-by tag
-	- rename variable & improve commit log & comment on 5/5(Christoph)
-
-V2:
-	- patch style fix & cleanup (Christoph)
-	- fix randwrite perf regression on sparse backing file
-	- drop MQ change
-
-
-Ming Lei (6):
-  loop: add helper lo_cmd_nr_bvec()
-  loop: add helper lo_rw_aio_prep()
-  loop: add lo_submit_rw_aio()
-  loop: move command blkcg/memcg initialization into loop_queue_work
-  loop: try to handle loop aio command via NOWAIT IO first
-  loop: add hint for handling aio via IOCB_NOWAIT
-
- drivers/block/loop.c | 227 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 188 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 053a086d547e..af443651dff5 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -337,6 +337,19 @@ static void lo_rw_aio_complete(struct kiocb *iocb, long ret)
+ 	lo_rw_aio_do_completion(cmd);
+ }
+ 
++static inline unsigned lo_cmd_nr_bvec(struct loop_cmd *cmd)
++{
++	struct request *rq = blk_mq_rq_from_pdu(cmd);
++	struct req_iterator rq_iter;
++	struct bio_vec tmp;
++	int nr_bvec = 0;
++
++	rq_for_each_bvec(tmp, rq, rq_iter)
++		nr_bvec++;
++
++	return nr_bvec;
++}
++
+ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 		     loff_t pos, int rw)
+ {
+@@ -348,12 +361,9 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 	struct file *file = lo->lo_backing_file;
+ 	struct bio_vec tmp;
+ 	unsigned int offset;
+-	int nr_bvec = 0;
++	int nr_bvec = lo_cmd_nr_bvec(cmd);
+ 	int ret;
+ 
+-	rq_for_each_bvec(tmp, rq, rq_iter)
+-		nr_bvec++;
+-
+ 	if (rq->bio != rq->biotail) {
+ 
+ 		bvec = kmalloc_array(nr_bvec, sizeof(struct bio_vec),
 -- 
 2.47.0
 
