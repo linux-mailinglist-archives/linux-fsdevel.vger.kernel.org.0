@@ -1,260 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-62999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84486BA88F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E45DBA893C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD6D7A2719
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376253AA575
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F3D283FE0;
-	Mon, 29 Sep 2025 09:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9BE284B29;
+	Mon, 29 Sep 2025 09:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Hq4pd3FL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b25DWtEA";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hMG0X5o7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZWV8cEdM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQM5kN0/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFC2283FFB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 09:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D0234BA41
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 09:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137226; cv=none; b=IkIvqkNAQvrdvS2KqYQnMYfkmK7Y2IQErnBy0bZgPgp6Q9192ctfyjKtUeKczHcKx9zburUaGix2RLFnsitWwfVafh6hk2tfshe/Vznq+OkRq8wPes1QTzQOUw1Gdbvv0BWQpT4vFjHYouj9l6KeVk76j+bJkykXtoy/vOU6yAc=
+	t=1759137553; cv=none; b=JeepGq1X06JtOeC5M5YJiet4LTjlBJ/hBGrbqMzA2ph9URb98fg+BujYdczgtGxymq6YlJQoG5/A6oe/oDpS6sVheNdlZ3rsl/BwlCAZDd8PowpzIr1AM14AVM0JWIoH9Pp3Lr16Kx0jj0VX+qS4bIGOQJLN56SF3xn8LVuRXjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137226; c=relaxed/simple;
-	bh=jtJHKeg4V3hrJtslZs+qvCCY9ECaZmET93hB+vqILeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=guWj08s9oDxaai9BQpI4QQWkrVI8FaIb0IbWYzbHmBlqv+XcEyMaRSiz/BC9ejkf71OdlC07tfvttdzR/n/Y1rLkDmkyGeAphSc4pqalDTfHWznWbC1tKzzXMkW9hh8uTstxta0Lk8vJke/+kDCbo6Np16ZHIHz9snt0ush+6Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Hq4pd3FL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b25DWtEA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hMG0X5o7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZWV8cEdM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1759137553; c=relaxed/simple;
+	bh=aJIXFbQzD7C3Q3cbP/Y2zZW3bB3oSP9uA7tGjZg9Ygw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lh6orufiEdw+DbsY56Gvkl4eG+FN2JqnLk1GQLdLxR6wC0ZbyWk6X42pGQmm4wGOSO1GLmcMWqNiHP6VLulr6hWCXn3//kQgbyVRHcdV68gz8ggL8Ploh564HapbWZeZd3GoKfzT7hIomZOgDsLDSzLJ8ncI0KfYar69/hbIZLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NQM5kN0/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759137551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m14nFMin7/94WpJU41b6+xjuPj85lzMdm8NE7gofAB4=;
+	b=NQM5kN0/qOV+BaMIq3veXsOtRoloDZ3aG0hfXaw1Mzkyqkl5oAUze2XbZQ+4KcN73KyFqZ
+	nMIE7dssvN8B1LI245pdEJFKEnDymr1q+4EZzB6LkDQNvYXUR/Oq3l0lIxwwPUpgyfKIZo
+	H2sh/Zti0ZJiQcwuPbd2gXIPtgip9lQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-itVRuzJYO8qR-gRmwG7xDA-1; Mon,
+ 29 Sep 2025 05:19:05 -0400
+X-MC-Unique: itVRuzJYO8qR-gRmwG7xDA-1
+X-Mimecast-MFC-AGG-ID: itVRuzJYO8qR-gRmwG7xDA_1759137543
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A184628A42;
-	Mon, 29 Sep 2025 09:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759137220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
-	b=Hq4pd3FLlIHlpsq/WIWIpKTQIK1u5uVC206WcP0fQUSFrI19DANzMPCVUP75KY+hBZcL0Q
-	dtdVgf8LzRHS+mLGqBHxvAYy4l40BsAWLIlpobyu01j8D02b0I98f1+p5dw6q44ptuX62H
-	m9Zo3mhg2ZXRKipx4DYunUuhbPd04E4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759137220;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
-	b=b25DWtEAGkPFc4sT9issDmqy/BMl9Qbnlh5ruisp0J1gFMCT/qNvoATff8AwO5EUhSceEL
-	kSBiQsu7tqSUuVAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hMG0X5o7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ZWV8cEdM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759137219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
-	b=hMG0X5o7qx5uLzOvtPU6oAOR/sM1jQy2B6QsQik0JJGzKLSrpedSDbKzqP6/qSgL4E6z5c
-	PYEIwt7LMqEi6gairxqjXKFRdyD4dFJYTy2ovOneowKDznaaZr9VZ4B/+OwUlRFxMrvTSI
-	pzIsg61tXM/wB+hrp8gOffgcwit1QxI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759137219;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=krawKFrMK6CfXJGZRbum6m0whh/VNnnKuCLw/mlg22U=;
-	b=ZWV8cEdMR8rl5mD9g70Zqdfp6Osb2Z+ASfy/UIiBlSB9+DmXXVL0n2mnz3VGfUEWe6Zu2m
-	Fw46i1nCG69w1gBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB9D413782;
-	Mon, 29 Sep 2025 09:13:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id q2iJILJN2mgkQwAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Mon, 29 Sep 2025 09:13:22 +0000
-Date: Mon, 29 Sep 2025 19:13:16 +1000
-From: David Disseldorp <ddiss@suse.de>
-To: nschichan@freebox.fr
-Cc: akpm@linux-foundation.org, andy.shevchenko@gmail.com, axboe@kernel.dk,
- brauner@kernel.org, cyphar@cyphar.com, devicetree@vger.kernel.org,
- ecurtin@redhat.com, email2tema@gmail.com, graf@amazon.com,
- gregkh@linuxfoundation.org, hca@linux.ibm.com, hch@lst.de,
- hsiangkao@linux.alibaba.com, initramfs@vger.kernel.org, jack@suse.cz,
- julian.stecklina@cyberus-technology.de, kees@kernel.org,
- linux-acpi@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
- linux-csky@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-hexagon@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
- mcgrof@kernel.org, mingo@redhat.com, monstr@monstr.eu,
- mzxreary@0pointer.de, patches@lists.linux.dev, rob@landley.net,
- safinaskar@gmail.com, sparclinux@vger.kernel.org,
- thomas.weissschuh@linutronix.de, thorsten.blum@linux.dev,
- torvalds@linux-foundation.org, tytso@mit.edu, viro@zeniv.linux.org.uk,
- x86@kernel.org
-Subject: Re: [PATCH-RFC] init: simplify initrd code (was Re: [PATCH RESEND
- 00/62] initrd: remove classic initrd support).
-Message-ID: <20250929171652.50b7a959.ddiss@suse.de>
-In-Reply-To: <20250925131055.3933381-1-nschichan@freebox.fr>
-References: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
-	<20250925131055.3933381-1-nschichan@freebox.fr>
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13CEB19560B3;
+	Mon, 29 Sep 2025 09:19:03 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 206F530001A4;
+	Mon, 29 Sep 2025 09:18:56 +0000 (UTC)
+Date: Mon, 29 Sep 2025 17:18:51 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH V4 5/6] loop: try to handle loop aio command via NOWAIT
+ IO first
+Message-ID: <aNpOiQbgrSukFaUT@fedora>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-6-ming.lei@redhat.com>
+ <d043680f-1d7a-bcb8-2588-4eae403f050d@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A184628A42
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gmail.com,kernel.dk,kernel.org,cyphar.com,vger.kernel.org,redhat.com,amazon.com,linuxfoundation.org,linux.ibm.com,lst.de,linux.alibaba.com,suse.cz,cyberus-technology.de,lists.infradead.org,lists.linux-m68k.org,lists.ozlabs.org,lists.linux.dev,monstr.eu,0pointer.de,landley.net,linutronix.de,linux.dev,mit.edu,zeniv.linux.org.uk];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL4bphh9snz1w7feaus4qmzef6)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[56];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
-X-Spam-Score: -2.01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d043680f-1d7a-bcb8-2588-4eae403f050d@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Nicolas,
+On Mon, Sep 29, 2025 at 02:44:53PM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/09/28 21:29, Ming Lei 写道:
+> > Try to handle loop aio command via NOWAIT IO first, then we can avoid to
+> > queue the aio command into workqueue. This is usually one big win in
+> > case that FS block mapping is stable, Mikulas verified [1] that this way
+> > improves IO perf by close to 5X in 12jobs sequential read/write test,
+> > in which FS block mapping is just stable.
+> > 
+> > Fallback to workqueue in case of -EAGAIN. This way may bring a little
+> > cost from the 1st retry, but when running the following write test over
+> > loop/sparse_file, the actual effect on randwrite is obvious:
+> > 
+> > ```
+> > truncate -s 4G 1.img    #1.img is created on XFS/virtio-scsi
+> > losetup -f 1.img --direct-io=on
+> > fio --direct=1 --bs=4k --runtime=40 --time_based --numjobs=1 --ioengine=libaio \
+> > 	--iodepth=16 --group_reporting=1 --filename=/dev/loop0 -name=job --rw=$RW
+> > ```
+> > 
+> > - RW=randwrite: obvious IOPS drop observed
+> > - RW=write: a little drop(%5 - 10%)
+> > 
+> > This perf drop on randwrite over sparse file will be addressed in the
+> > following patch.
+> > 
+> > BLK_MQ_F_BLOCKING has to be set for calling into .read_iter() or .write_iter()
+> > which might sleep even though it is NOWAIT, and the only effect is that rcu read
+> > lock is replaced with srcu read lock.
+> > 
+> > Link: https://lore.kernel.org/linux-block/a8e5c76a-231f-07d1-a394-847de930f638@redhat.com/ [1]
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >   drivers/block/loop.c | 62 ++++++++++++++++++++++++++++++++++++++++----
+> >   1 file changed, 57 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > index 99eec0a25dbc..57e33553695b 100644
+> > --- a/drivers/block/loop.c
+> > +++ b/drivers/block/loop.c
+> > @@ -90,6 +90,8 @@ struct loop_cmd {
+> >   #define LOOP_IDLE_WORKER_TIMEOUT (60 * HZ)
+> >   #define LOOP_DEFAULT_HW_Q_DEPTH 128
+> > +static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd);
+> > +
+> >   static DEFINE_IDR(loop_index_idr);
+> >   static DEFINE_MUTEX(loop_ctl_mutex);
+> >   static DEFINE_MUTEX(loop_validate_mutex);
+> > @@ -321,6 +323,15 @@ static void lo_rw_aio_do_completion(struct loop_cmd *cmd)
+> >   	if (!atomic_dec_and_test(&cmd->ref))
+> >   		return;
+> > +
+> > +	/* -EAGAIN could be returned from bdev's ->ki_complete */
+> > +	if (cmd->ret == -EAGAIN) {
+> > +		struct loop_device *lo = rq->q->queuedata;
+> > +
+> > +		loop_queue_work(lo, cmd);
+> > +		return;
+> > +	}
+> > +
+> >   	kfree(cmd->bvec);
+> >   	cmd->bvec = NULL;
+> >   	if (req_op(rq) == REQ_OP_WRITE)
+> > @@ -436,16 +447,40 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+> >   	int nr_bvec = lo_cmd_nr_bvec(cmd);
+> >   	int ret;
+> > -	ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
+> > -	if (unlikely(ret))
+> > -		return ret;
+> > +	/* prepared already for aio from nowait code path */
+> > +	if (!cmd->use_aio) {
+> > +		ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
+> > +		if (unlikely(ret))
+> > +			goto fail;
+> > +	}
+> > +	cmd->iocb.ki_flags &= ~IOCB_NOWAIT;
+> >   	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
+> > +fail:
+> >   	if (ret != -EIOCBQUEUED)
+> >   		lo_rw_aio_complete(&cmd->iocb, ret);
+> >   	return -EIOCBQUEUED;
+> >   }
+> > +static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
+> > +			    int rw)
+> > +{
+> > +	struct request *rq = blk_mq_rq_from_pdu(cmd);
+> > +	loff_t pos = ((loff_t) blk_rq_pos(rq) << 9) + lo->lo_offset;
+> > +	int nr_bvec = lo_cmd_nr_bvec(cmd);
+> > +	int ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
+> > +
+> > +	if (unlikely(ret))
+> > +		goto fail;
+> > +
+> > +	cmd->iocb.ki_flags |= IOCB_NOWAIT;
+> > +	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
+> 
+> Should you also check if backing device/file support nowait? Otherwise
+> bio will fail with BLK_STS_NOTSUPP from submit_bio_noacct().
 
-On Thu, 25 Sep 2025 15:10:56 +0200, nschichan@freebox.fr wrote:
+Good catch, nowait should only be applied in case of FMODE_NOWAIT, will add the
+check.
 
-> From: Nicolas Schichan <nschichan@freebox.fr>
-> 
-> - drop prompt_ramdisk and ramdisk_start kernel parameters
-> - drop compression support
-> - drop image autodetection, the whole /initrd.image content is now
->   copied into /dev/ram0
-> - remove rd_load_disk() which doesn't seem to be used anywhere.
-> 
-> There is now no more limitation on the type of initrd filesystem that
-> can be loaded since the code trying to guess the initrd filesystem
-> size is gone (the whole /initrd.image file is used).
-> 
-> A few global variables in do_mounts_rd.c are now put as local
-> variables in rd_load_image() since they do not need to be visible
-> outside this function.
-> ---
-> 
-> Hello,
-> 
-> Hopefully my email config is now better and reaches gmail users
-> correctly.
-> 
-> The patch below could probably split in a few patches, but I think
-> this simplify the code greatly without removing the functionality we
-> depend on (and this allows now to use EROFS initrd images).
-> 
-> Coupled with keeping the function populate_initrd_image() in
-> init/initramfs.c, this will keep what we need from the initrd code.
-> 
-> This removes support of loading bzip/gz/xz/... compressed images as
-> well, not sure if many user depend on this feature anymore.
-> 
-> No signoff because I'm only seeking comments about those changes right
-> now.
-> 
->  init/do_mounts.h    |   2 -
->  init/do_mounts_rd.c | 243 +-------------------------------------------
->  2 files changed, 4 insertions(+), 241 deletions(-)
 
-This seems like a reasonable improvement to me. FWIW, one alternative
-approach to clean up the FS specific code here was proposed by Al:
-https://lore.kernel.org/all/20250321020826.GB2023217@ZenIV/
+Thanks,
+Ming
 
-...
-> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-> index ac021ae6e6fa..5a69ff43f5ee 100644
-> --- a/init/do_mounts_rd.c
-> +++ b/init/do_mounts_rd.c
-> @@ -14,173 +14,9 @@
->  
->  #include <linux/decompress/generic.h>
->  
-> -static struct file *in_file, *out_file;
-> -static loff_t in_pos, out_pos;
-> -
-> -static int __init prompt_ramdisk(char *str)
-> -{
-> -	pr_warn("ignoring the deprecated prompt_ramdisk= option\n");
-> -	return 1;
-> -}
-> -__setup("prompt_ramdisk=", prompt_ramdisk);
-> -
-> -int __initdata rd_image_start;		/* starting block # of image */
-> -
-> -static int __init ramdisk_start_setup(char *str)
-> -{
-> -	rd_image_start = simple_strtol(str,NULL,0);
-> -	return 1;
-> -}
-> -__setup("ramdisk_start=", ramdisk_start_setup);
-
-There are a couple of other places that mention these parameters, which
-should also be cleaned up.
-
-...
->  static unsigned long nr_blocks(struct file *file)
->  {
-> -	struct inode *inode = file->f_mapping->host;
-> -
-> -	if (!S_ISBLK(inode->i_mode))
-> -		return 0;
-> -	return i_size_read(inode) >> 10;
-> +	return i_size_read(file->f_mapping->host) >> 10;
-
-This should be >> BLOCK_SIZE_BITS, and dropped as a wrapper function
-IMO.
 
