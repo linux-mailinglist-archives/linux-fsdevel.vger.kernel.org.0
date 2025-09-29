@@ -1,151 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-63035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6F0BA96EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 15:51:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062FBBA9C82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 17:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278D2188D17E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 13:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A644816F663
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 15:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312CD308F35;
-	Mon, 29 Sep 2025 13:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76502FE044;
+	Mon, 29 Sep 2025 15:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="UVEYZsJ0"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BV72zwdi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AM+TGOKK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B66k1ACt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="n5hcf4ww"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FAB2AD24;
-	Mon, 29 Sep 2025 13:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8922C2F068C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 15:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759153861; cv=none; b=IHGk8sVINSIeZFhHdLP8k5sYYT29IiwQyLjpKrXrPPONJSkMnLAld5c2C/oWm1aMWk4RDfLdVL1hEHnI4bpJhcrURkpjwbpJxvxXzaqNIJ0uAStnUeSVJJz8pTmI6q7dVbOj+/jYO6qDNreNaAGHgW1+OA3RnSuQrdZumsxmRDw=
+	t=1759159269; cv=none; b=YgqMgX1nSjxq7PEl7HsIFuDxW8Lf3s1wKoDFY9zcazyAJ/wx/tuzWNoki0j9TgxNMC8DTb5MuYlH4+JB4KgpA943FZYVax9K34ijT7q4qDvr8/e1kyUEHO4XN5QoGxXLZIK/4R3AFmIO4kA2Zg4UJ+b8iOikjzrVnofTF388c2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759153861; c=relaxed/simple;
-	bh=FCGLJ3gQ1x8pq+r+RPbGA0WUBLPRRV6F5YOHY/KaNQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=De+OkOnEiLK+K/92kwkkADoegOJg8s+ne3JtjrZkJH+Kd2Hz1W21E5Wc+XW0s51uUjUwqvFP97VN8jsTiyeFjVNjX8yyBi5gDg4wMGjn4/H9ba0yQwFenryqnVasss/1XgHBHfZK5xNKbWaDwvZgp699Dos1a9Y/Y5y4YVXR5/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=UVEYZsJ0; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=U6p5OzRV8NVMjy5kzKrrKHfil5LPBKG7T0tsPVsqnzI=; b=UVEYZsJ0K538ZWZ1EieZNxfF9H
-	p+8GxHeSHMULkws3bfrOst6rZyz24n7Bsvxd1g0QjwcQK4d9pHRxi/DcwrPmmIuMfD2Zi0mDoerQl
-	zH3AcfJbwSwiC1lTYEo5vwaPMduW1hwwPpeuzOlPxCdwYbtkUzOvlak6prs/hWO/UsBSToUyVX3hx
-	qFLivs3RCU77K/x3J7wqJYAqAAJQmN9zuSVm7RvEdlbGF9ie3EF3S8/fKGUXJ3cVuXNM2OxuMMBX9
-	bzLjSfeUKIhlGubBYvtJRf0x7t/k0IeQPJGWBtvrbb20jHJCLv9qaLVMNuT5gD/WFQbPeGGMvbYGL
-	dz2q7R7oo2aDRtjWaG2NBpJMw6EwGlyLPcf9tcH25wRdmSgUkEZ8oGLko38a+cnP7QtaG9g2sbduA
-	Wl/dMvFvfkmKk9lcMJrDdT7ZuTZTEt0z6g08CuAeO2iOXw2SKDhLNSImw/d2PmyXhULgmvn82BAF1
-	OnqtL0B8MJ0JEorALvE3QasTNEdA+ScfVGEGt2xw4GuSN7UNUN70guHROG/dMfXbhGZ7I+SCSr9ai
-	812H/aXsDoOQhXpOLVVKpKhqSs1IxYwXJwps85bQFCJ9AlUiGmUU2owkl8P2iB3zBfu8Om4bKmNt8
-	ZoLVN8UxciL1w24c6DNUhQw20CnUvQg3toB4BlYB0=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
- Dominique Martinet <asmadeus@codewreck.org>, qemu-devel@nongnu.org,
- Greg Kurz <groug@kaod.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
- =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
- linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
- Tingmao Wang <m@maowtm.org>
-Subject:
- Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
-Date: Mon, 29 Sep 2025 15:06:59 +0200
-Message-ID: <3061192.c3ltI2prpg@silver>
-In-Reply-To: <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
-References:
- <aMih5XYYrpP559de@codewreck.org> <20250917.Eip1ahj6neij@digikod.net>
- <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
+	s=arc-20240116; t=1759159269; c=relaxed/simple;
+	bh=P5lCD/i4triwAj7G9NXdbQz0j34MeienIMlFSSa57hU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uiCxhgvfQo/aOdQ3Rb7hZ/5fdS3eBgwaCEwDCxVOc9t98hoCJq5IJcSOIVnFT65bV7QyGtD0wYWc1X/RoJbWZ4SPLt4smhuwPgra3fUjDq5Uj8XqYHYo6nsQH4RlGPSsgWBYP9qRNUAsytk3kXXX2Wg4UY4pmCjL43wswZlTCGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BV72zwdi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AM+TGOKK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=B66k1ACt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=n5hcf4ww; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CF74C3079E;
+	Mon, 29 Sep 2025 15:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759159264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hX4a/QaXdnBMrooqLs/pC+YOO/DCfIizLJPKMaec8vY=;
+	b=BV72zwdi5toRVJnMFuG9Yh78qsvn32TWqbXI6H75Lo9mhNixQtg8KhTgGWmcCS2jCtEta3
+	zF9DRMsjf3bIAsb6Ie3lTdYftGQRDLDlN64qoZUlrixBjNodwBRsvPRd2Uy47VdT0/+nap
+	9ng0r2tmgOW0CflYfxx06FEVDYdfZGI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759159264;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hX4a/QaXdnBMrooqLs/pC+YOO/DCfIizLJPKMaec8vY=;
+	b=AM+TGOKKCGlmh61c2750/cRjI5kygKa9a7PkVIt/NqVAMI/fyYVSBAcKc34J7EuLZ/JMBj
+	XwROoFbkH3cPayAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759159263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hX4a/QaXdnBMrooqLs/pC+YOO/DCfIizLJPKMaec8vY=;
+	b=B66k1ACtCPpr9fYA4s1U4peZUEyh3q75dJSRic4ukmJukhwbZP1p8jSAfH6KpPNwJg3DIk
+	ePUPhcxfM4RQ4TCnShzFck0WzR4jTARTkK/55yj6VrLh7tSg37FkjfJk9yA2FeM+QzXn1o
+	TvctbcFBu6HakGcfFEZpJdopyJWfZf8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759159263;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hX4a/QaXdnBMrooqLs/pC+YOO/DCfIizLJPKMaec8vY=;
+	b=n5hcf4wwj60iedbYmFMJ0RPPW9D6jC5WK5Ws4WMTyOoL32Dd77DWH54T0bzlgnLz8GP/Rv
+	YZLQRp6CmrbzwtBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B82CB13782;
+	Mon, 29 Sep 2025 15:21:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AKjvLN+j2mh1QgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 29 Sep 2025 15:21:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2931BA2B46; Mon, 29 Sep 2025 17:21:03 +0200 (CEST)
+Date: Mon, 29 Sep 2025 17:21:03 +0200
+From: Jan Kara <jack@suse.cz>
+To: Julian Sun <sunjunchao@bytedance.com>
+Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com
+Subject: Re: [PATCH v2 1/2] writeback: Wake up waiting tasks when finishing
+ the writeback of a chunk.
+Message-ID: <q4flookdnrppc3xtc4vcme6k77toqrv2qgagw65d5vrg43gvgw@6lkewzmdxjyo>
+References: <20250929122850.586278-1-sunjunchao@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929122850.586278-1-sunjunchao@bytedance.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Sunday, September 21, 2025 6:24:49 PM CEST Tingmao Wang wrote:
-> On 9/17/25 16:00, Micka=EBl Sala=FCn wrote:
-[...]
+On Mon 29-09-25 20:28:49, Julian Sun wrote:
+> Writing back a large number of pages can take a lots of time.
+> This issue is exacerbated when the underlying device is slow or
+> subject to block layer rate limiting, which in turn triggers
+> unexpected hung task warnings.
+> 
+> We can trigger a wake-up once a chunk has been written back and the
+> waiting time for writeback exceeds half of
+> sysctl_hung_task_timeout_secs.
+> This action allows the hung task detector to be aware of the writeback
+> progress, thereby eliminating these unexpected hung task warnings.
+> 
+> This patch has passed the xfstests 'check -g quick' test based on ext4,
+> with no additional failures introduced.
+> 
+> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
 
-Hi Greg,
+Looks good. Feel free to add:
 
-I'd appreciate comments from your side as well, as you are much on longer on
-the QEMU 9p front than me.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I know you won't have the time to read up on the entire thread so I try to
-summarize: basically this is yet another user-after-unlink issue, this time=
- on
-directories instead of files.
+								Honza
 
-> So I did some quick debugging and realized that I had a wrong
-> understanding of how fids relates to opened files on the host, under QEMU.
-> It turns out that in QEMU's 9p server implementation, a fid does not
-> actually correspond to any opened file descriptors - it merely represents
-> a (string-based) path that QEMU stores internally.  It only opens the
-> actual file if the client actually does an T(l)open, which is in fact
-> separate from acquiring the fid with T(l)walk.  The reason why renaming
-> file/dirs from the client doesn't break those fids is because QEMU will
-> actually fix those paths when a rename request is processed - c.f.
-> v9fs_fix_fid_paths [1].
-
-Correct, that's based on what the 9p protocols define: a FID does not exact=
-ly
-translate to what a file handle is on a local system. Even after acquiring a
-new FID by sending a Twalk request, subsequently client would still need to
-send a Topen for server to actually open that file/directory.
-
-And yes, QEMU's 9p server "fixes" the path string of a FID if it was moved
-upon client request. If the move happened on host side, outside of server's
-knowledge, then this won't happen ATM and hence it would break your use
-case.
-
-> It turns out that even if a guest process opens the file with O_PATH, that
-> file descriptor does not cause an actual Topen, and therefore QEMU does
-> not open the file on the host, and later on reopening that fd with another
-> mode (via e.g. open("/proc/self/fd/...", O_RDONLY)) will fail if the file
-> has moved on the host without QEMU's knowledge.  Also, openat will fail if
-> provided with a dir fd that "points" to a moved directory, regardless of
-> whether the fd is opened with O_PATH or not, since path walk in QEMU is
-> completely string-based and does not actually issue openat on the host fs
-> [2].
-
-I don't think the problem here is the string based walk per se, but rather
-that the string based walk always starts from the export root:
-
-https://github.com/qemu/qemu/blob/4975b64efb5aa4248cbc3760312bbe08d6e71638/=
-hw/9pfs/9p-local.c#L64
-
-I guess that's something that could be changed in QEMU such that the walk
-starts from FID's fs point, as the code already uses openat() to walk relat=
-ive
-to a file descriptor (for security reasons actually), Greg?
-
-That alone would still not fix your use case though: things being moved on
-host side. For this to work, it would require to already have a fd open on
-host for the FID. This could be done by server for each FID as you suggeste=
-d,
-or it could be done by client by opening the FID.
-
-Also keep in mind: once the open file descriptor limit on host is exhausted,
-QEMU is forced to close older open file desciptors to keep the QEMU process
-alive. So this might still break what you are trying to achieve there.
-
-Having said that, I wonder whether it'd be simpler for server to track for
-file tree changes (inotify API) and fix the pathes accordingly for host
-side changes as well?
-
-/Christian
-
-
+> ---
+>  Changes in v2:
+>   * remove code in finish_writeback_work()
+>   * rename stamp to progress_stamp
+>   * only report progress if there's any task waiting
+> 
+>  fs/fs-writeback.c                | 11 ++++++++++-
+>  include/linux/backing-dev-defs.h |  1 +
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index a07b8cf73ae2..61785a9d6669 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -14,6 +14,7 @@
+>   *		Additions for address_space-based writeback
+>   */
+>  
+> +#include <linux/sched/sysctl.h>
+>  #include <linux/kernel.h>
+>  #include <linux/export.h>
+>  #include <linux/spinlock.h>
+> @@ -213,7 +214,8 @@ static void wb_queue_work(struct bdi_writeback *wb,
+>  void wb_wait_for_completion(struct wb_completion *done)
+>  {
+>  	atomic_dec(&done->cnt);		/* put down the initial count */
+> -	wait_event(*done->waitq, !atomic_read(&done->cnt));
+> +	wait_event(*done->waitq,
+> +		   ({ done->progress_stamp = jiffies; !atomic_read(&done->cnt); }));
+>  }
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+> @@ -1893,6 +1895,7 @@ static long writeback_sb_inodes(struct super_block *sb,
+>  	long write_chunk;
+>  	long total_wrote = 0;  /* count both pages and inodes */
+>  	unsigned long dirtied_before = jiffies;
+> +	unsigned long progress_stamp;
+>  
+>  	if (work->for_kupdate)
+>  		dirtied_before = jiffies -
+> @@ -1975,6 +1978,12 @@ static long writeback_sb_inodes(struct super_block *sb,
+>  		 */
+>  		__writeback_single_inode(inode, &wbc);
+>  
+> +		/* Report progress to inform the hung task detector of the progress. */
+> +		progress_stamp = work->done->progress_stamp;
+> +		if (work->done && progress_stamp && (jiffies - progress_stamp) >
+> +		    HZ * sysctl_hung_task_timeout_secs / 2)
+> +			wake_up_all(work->done->waitq);
+> +
+>  		wbc_detach_inode(&wbc);
+>  		work->nr_pages -= write_chunk - wbc.nr_to_write;
+>  		wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
+> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+> index 2ad261082bba..1057060bb2aa 100644
+> --- a/include/linux/backing-dev-defs.h
+> +++ b/include/linux/backing-dev-defs.h
+> @@ -63,6 +63,7 @@ enum wb_reason {
+>  struct wb_completion {
+>  	atomic_t		cnt;
+>  	wait_queue_head_t	*waitq;
+> +	unsigned long progress_stamp;	/* The jiffies when slow progress is detected */
+>  };
+>  
+>  #define __WB_COMPLETION_INIT(_waitq)	\
+> -- 
+> 2.39.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
