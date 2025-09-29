@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-62985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5A5BA7BD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 03:11:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A745FBA7B23
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 03:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B5843B86E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 01:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF19B7AAF9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 01:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E862C11F5;
-	Mon, 29 Sep 2025 01:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67411F3FEC;
+	Mon, 29 Sep 2025 01:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fImHCNq3"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FUvUjTul"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D621D5AA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 01:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12CB19EED3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 01:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759107899; cv=none; b=GXNp+jVw/kZM3EE28x4TGfQvlNotITswjlc+31c0iFNx4LcnyCw7hBsQJ6kc13DWYKLJJssmAPLQxHgdfWOfzg5CpLpKa4vsKOu6bYZ+vykDNWSqY0f2dt7gp+lKedUZbiw2O+9v4oh2hL9PCxfMegX5WBfvWBKjpLpGeA4lH4w=
+	t=1759107873; cv=none; b=lixej3tze+IuSyvhSiVy+Pf12nxkjbWk+4iOXtwaA2/vKcOv1giRlRiQeGYRDHn2RGpGy36clWt8WgoszkFGQaw7Z5tK1tx/ZdoEaKC4VlWef+ux1HOIexOj2j6E1vIpBaWA5E2aLDCTJYSJ+UGe3pyqWrB5pwRfPMMc7FvlYnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759107899; c=relaxed/simple;
-	bh=y18JrZ+RKa4FFiODMr7HVly8Elqh7J5PFIpDsoHY7Xk=;
+	s=arc-20240116; t=1759107873; c=relaxed/simple;
+	bh=Y7nqGbM4CxQL86kixsX259srVrd5urtxz+FvNAryO8g=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PnnhXpw0dImV/X5bHKwvgetazg9RZ/jdSX+P6aZMu+mFtyWwt6vcUbLrbob5R4W2+N9hQTPjDPCpcD0XdIS2fPaw6qNmjyxJHgyP/iah7wz2cqo+US53DKIxqrWqKqsvdPaxzokKce7UuGKrHNGbdRUexR4Daex/jbEUOq31Jeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=fImHCNq3; arc=none smtp.client-ip=209.85.222.181
+	 MIME-Version; b=pBaePG8CkyXBQDXpMaDq+yGnMZDa20IsPImO7H3JyY+jpbShNArWUzdihhLN9D0j2l6C8A38Tg98H0GFc+SagtrBXt5UU8sOlHtbGkL6V/imhHxC8yuxy1CzJEA80h4h0UD8kq7908N3+DdasQ6JLle+6/KPPVAR4kPEOFi3sIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=FUvUjTul; arc=none smtp.client-ip=209.85.160.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-854fcb187b2so458013485a.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Sep 2025 18:04:54 -0700 (PDT)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4df4d23fb59so16774011cf.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Sep 2025 18:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759107893; x=1759712693; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1759107870; x=1759712670; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0YV/C30kHxyQuWB9Hp3Rra2QjX9aAIcMuuehexAQLV8=;
-        b=fImHCNq3Z+iWOH0FqMxafwEwGN3QB8QUeXbZqbZ8yDThHT2/HRYwWQ0G+6NRO7Jsyn
-         omYctiAJvYV1uyXoWM92vaotqfA/gAIVqnbQydQrOmTmsJxdmusjzlvWVOqx8vymBUMa
-         dEYTRX/UCSR4qBo7ivPRifZB/+zi34kexc+bo+sRcspYeSik00+0k4aIiajM1p4/Irix
-         kSfE11nF5N9EPyt9aeS6l14dnYN5AKZlMEseuTOKkZ4uHD5SDYmh3+FNuubpCsEv6sCY
-         x+O5qKEIJxLCOB/anxKcjYpBe+fF0gRPAFQTYj8Snv0puabwP24RI0guVayanVwsyTxO
-         zUhA==
+        bh=zcSgDH9VLG2SUi6g3+OVDiDVEtFrrRUlaRrL6JR5uy0=;
+        b=FUvUjTulAcdL0Hy8nICHHKSiz4BRUYwCLvUG/OMnwizHU3hoOuUCwkFFK5kO5eFjtH
+         WN61fs5sMjCB53dKMEEmdviCxsa1QIqH20uoxvDJgRv6R12h+RyjmYBYxRg9M/7L8TMh
+         HkP3nK7MZdlZqoW27b5GfnzBLpcMDypmFiByGIbJriynIkEKNZ6kpO7nir/2DcaUuC+m
+         iD9Eivck40OG/ruaBuaUNyym9Aebljh9NoDsQCq4v2Ks3/ADahe65xDmLno6h8AODh2v
+         o1/PZh4G3/n/0wSi9XWVq3wkP+XWrYs2IxvzviHlkp0aOjs/FB2hjAxRYtcXaTWSWfxm
+         FUlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759107893; x=1759712693;
+        d=1e100.net; s=20230601; t=1759107870; x=1759712670;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0YV/C30kHxyQuWB9Hp3Rra2QjX9aAIcMuuehexAQLV8=;
-        b=jAoOY6neaOGduCC4fH9fES3QP3P2CmUtK2YSpODXWMLeTi67zijNd97IsHPgwFNSt0
-         0XeJe5LJ96xQJhtqobluOMPyhJ5HmTGwxKS0fpPbWmdlNuOdX4d07TyKOuI4OJcISAVO
-         LYlqW37BsaGOH6wyFKf0op0LTQBvx4zoZGeV8DOksaJRIssUBu6GtRWOjpcUuDjOkX8s
-         UGbcsSxiKwdcuB3Zx/moxfwRQIX+3PvpNkBfkdJRw4XKr3gy1C+sQt6Un0GP39j2vsKA
-         fv1PKbPoIpGCYAWB3j0ed0jC/MmCXjKSl40QVUJjjOzWpq8NhW4Qe4VauV/EI6ubdZz2
-         occQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9s2t1xzFEKwJsp9TQj9QJ7XDNwZaBajHtvRV6r5zjpMjWIXRs7CfOnwg2CPZ46Mrnomj2rbxRALY9GGfS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCoqxZgTRUOgbbb1apcFzQIx7xxqncsTnHrA/MZzLqgqZanjMy
-	Qlyc2xzJMl2n/4MtNRs5cMU+B7uQemgLJ0tXCjnCFbeTjAfLAuUzQzvWjme136UctQ0=
-X-Gm-Gg: ASbGncsx3NWn5ji0woqaLwXk/F54DKgn2aLL8m7HQp+lKhZRkqhqndVuC5Dlklu5jjZ
-	EQqvHuSNHMUpgx9reaugTeR+PZzUNvpP55Wq9bO1IEy5ls6SzNsH9nA3nfKfoF2Er/hB1LVtLfq
-	c/aTYNIBNZ7Xwr52Lx0pMHyxq/qnTkjuFQAgryO4h2lpPV9hxzo/OTmhEbqLIRJfypFX4YpJ3LM
-	YF2flFSOotBtcIvmDutOho7xeg+SFXJlzusxxBMrrVYIf8mHvG7JnkbSchcQBnEeun4/AHqDNHX
-	yvvwJX8d8fgpUoJOlpqrb6EXfBxKaxwvfPW0ZDDpSIjwjZC5+d+v5yOJ2ufdH+XehUcL5gGbUFs
-	Kr+caZNtSVIx57ijINYkaB3HnO4SLbyl/SCebyhtK0Qexu9Vema2PPWuIYyMzGKQxLkIB0CUHWf
-	20LIV9zNyEbr1SRZOo4g==
-X-Google-Smtp-Source: AGHT+IE/2gkO6BHU1Wstnbl9JT+BQr3NoLV1YqF2Ma44UH3Fg76MALcfhQNt/9B9O7w+tSiqkpudoA==
-X-Received: by 2002:a05:620a:2805:b0:849:8fcc:69e4 with SMTP id af79cd13be357-85ae8c269e3mr1755065285a.68.1759107827446;
-        Sun, 28 Sep 2025 18:03:47 -0700 (PDT)
+        bh=zcSgDH9VLG2SUi6g3+OVDiDVEtFrrRUlaRrL6JR5uy0=;
+        b=a+vbZXQkeevA57dKAg9EyFfcjGVTdZ/aFHnh7mecZNCtMERc326D1vr6wEUixpHkiL
+         /BsiRh1LrXKRGotzI6zSIwN1pbD4lZnq6sTLUYyxD50UZrY9dXZCi2obYkJiFSGBmfCD
+         ScJwMNiZI2REAKnEC1lYWTimemoJh+foFvqItHBnO50bny4sosG2O5mRObST6VIWFvNq
+         R+G2UOPisdK4yRjl+msimoYJCa6xxyIAJuIssFfX7bRN0UGEbcwn1giE2JgT26A0NR7t
+         zHGDpOrRIq9TVKjQs+G9CC4Jdz2W9rXi9D5Cr86qwvKu6+4Ca5jkH00BfBduDrMOlyYz
+         Vyvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlS4EabgG55CEHN1z6WwOZNdZz+EnhBOufxUDy7OFRMk5GuGcQCOmQIC1gPOT2JMWPREeYhRXpIFh+1pz/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf9uRrh8uTjm+LH8UT+Lw+zfuxDr4HtK/H6MfOBENXSSUG/DLS
+	98nXeZU8QSABhpidhkQEvYnxvaMokdCvRSm7uITptSJZkbJaugv0NADoaYU4dffQO4o=
+X-Gm-Gg: ASbGncsMefCMjkNFdKbp9tuixBYbLie8zKMdDUKhCMU4mlWNIOs1UcigwNbkzuqh27F
+	B90LLbUNf0ARghGkgJT3g8Jn/rUi9yAoEXJUFTjfO4zQ6doW74UmshCSNTLrt2lMu5aOaxkqn+3
+	73oyN0ABR1DKGSPwEZx2vWb6aGW9xaK/2gqdi530ya0e+6dJgUQhQ/uu9DPz8BVrtXHCSMHthQJ
+	1Whljv6ziKy/MgyooaBp3wro+BoDxgeYhPLt093TjOur1GeYkuiAk8dn3NPoCd7aFGLvrYov64D
+	aQB1v6SAsDAGEOz/8XMrcVWauzjfu8Vqrog+8LlEbNAdpWfSLntUihSc8vlc+cwxl9x3XDdosXT
+	TwLtuazUWkYhlTZJ15DlW0hYTfjqmur3uwsp5qFicBS9gJYFi/d7jVKipscX/1TDA48rVe7nZbk
+	b1tt/O9gfE6jo/fKlIig==
+X-Google-Smtp-Source: AGHT+IGF0S9IclOBJkoE08yEa53PAxQoR+uRPkimKbM/oD4UzxexMGmwGzEkKHwSpei9vqN/FCsqQA==
+X-Received: by 2002:ac8:5f53:0:b0:4b9:d7c2:756a with SMTP id d75a77b69052e-4da4cd49c0cmr194938831cf.77.1759107869557;
+        Sun, 28 Sep 2025 18:04:29 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db0c0fbe63sm64561521cf.23.2025.09.28.18.03.46
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db0c0fbe63sm64561521cf.23.2025.09.28.18.04.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 18:03:46 -0700 (PDT)
+        Sun, 28 Sep 2025 18:04:28 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -151,9 +151,9 @@ To: pratyush@kernel.org,
 	skhawaja@google.com,
 	chrisl@kernel.org,
 	steven.sistare@oracle.com
-Subject: [PATCH v4 11/30] liveupdate: luo_session: Add sessions support
-Date: Mon, 29 Sep 2025 01:03:02 +0000
-Message-ID: <20250929010321.3462457-12-pasha.tatashin@soleen.com>
+Subject: [PATCH v4 12/30] liveupdate: luo_ioctl: add user interface
+Date: Mon, 29 Sep 2025 01:03:03 +0000
+Message-ID: <20250929010321.3462457-13-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
 In-Reply-To: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
 References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
@@ -165,711 +165,526 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce concept of "Live Update Sessions" within the LUO framework.
-LUO sessions provide a mechanism to group and manage `struct file *`
-instances (representing file descriptors) that need to be preserved
-across a kexec-based live update.
+Introduce the user-space interface for the Live Update Orchestrator
+via ioctl commands, enabling external control over the live update
+process and management of preserved resources.
 
-Each session is identified by a unique name and acts as a container
-for file objects whose state is critical to a userspace workload, such
-as a virtual machine or a high-performance database, aiming to maintain
-their functionality across a kernel transition.
+The idea is that there is going to be a single userspace agent driving
+the live update, therefore, only a single process can ever hold this
+device opened at a time.
 
-This groundwork establishes the framework for preserving file-backed
-state across kernel updates, with the actual file data preservation
-mechanisms to be implemented in subsequent patches.
+The following ioctl commands are introduced:
+
+LIVEUPDATE_IOCTL_GET_STATE
+Allows userspace to query the current state of the LUO state machine
+(e.g., NORMAL, PREPARED, UPDATED).
+
+LIVEUPDATE_IOCTL_SET_EVENT
+Enables userspace to drive the LUO state machine by sending global
+events. This includes:
+
+LIVEUPDATE_PREPARE
+To begin the state-saving process.
+
+LIVEUPDATE_FINISH
+To signal completion of restoration in the new kernel.
+
+LIVEUPDATE_CANCEL
+To abort a prepared update.
+
+LIVEUPDATE_IOCTL_CREATE_SESSION
+Provides a way for userspace to create a named session for grouping file
+descriptors that need to be preserved. It returns a new file descriptor
+representing the session.
+
+LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+Allows the userspace agent in the new kernel to reclaim a preserved
+session by its name, receiving a new file descriptor to manage the
+restored resources.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- include/uapi/linux/liveupdate.h  |   3 +
- kernel/liveupdate/Makefile       |   1 +
- kernel/liveupdate/luo_internal.h |  34 ++
- kernel/liveupdate/luo_session.c  | 607 +++++++++++++++++++++++++++++++
- 4 files changed, 645 insertions(+)
- create mode 100644 kernel/liveupdate/luo_session.c
+ include/uapi/linux/liveupdate.h  | 199 ++++++++++++++++++++++++++++++
+ kernel/liveupdate/luo_internal.h |  20 +++
+ kernel/liveupdate/luo_ioctl.c    | 201 +++++++++++++++++++++++++++++++
+ 3 files changed, 420 insertions(+)
 
 diff --git a/include/uapi/linux/liveupdate.h b/include/uapi/linux/liveupdate.h
-index 3cb09b2c4353..e8c0c210a790 100644
+index e8c0c210a790..2e38ef3094aa 100644
 --- a/include/uapi/linux/liveupdate.h
 +++ b/include/uapi/linux/liveupdate.h
-@@ -91,4 +91,7 @@ enum liveupdate_event {
- 	LIVEUPDATE_CANCEL = 3,
- };
- 
-+/* The maximum length of session name including null termination */
-+#define LIVEUPDATE_SESSION_NAME_LENGTH 56
-+
- #endif /* _UAPI_LIVEUPDATE_H */
-diff --git a/kernel/liveupdate/Makefile b/kernel/liveupdate/Makefile
-index 2881bab0c6df..f64cfc92cbf0 100644
---- a/kernel/liveupdate/Makefile
-+++ b/kernel/liveupdate/Makefile
-@@ -3,6 +3,7 @@
- luo-y :=								\
- 		luo_core.o						\
- 		luo_ioctl.o						\
-+		luo_session.o						\
- 		luo_subsystems.o
- 
- obj-$(CONFIG_KEXEC_HANDOVER)		+= kexec_handover.o
-diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_internal.h
-index c62fbbb0790c..9223f71844ca 100644
---- a/kernel/liveupdate/luo_internal.h
-+++ b/kernel/liveupdate/luo_internal.h
-@@ -32,6 +32,40 @@ void *luo_contig_alloc_preserve(size_t size);
- void luo_contig_free_unpreserve(void *mem, size_t size);
- void luo_contig_free_restore(void *mem, size_t size);
+@@ -14,6 +14,32 @@
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
  
 +/**
-+ * struct luo_session - Represents an active or incoming Live Update session.
-+ * @name:      A unique name for this session, used for identification and
-+ *             retrieval.
-+ * @files_xa:  An xarray used to store the files associated with this session.
-+ * @ser:       Pointer to the serialized data for this session.
-+ * @count:     A counter tracking the number of files currently stored in the
-+ *             @files_xa for this session.
-+ * @list:      A list_head member used to link this session into a global list
-+ *             of either outgoing (to be preserved) or incoming (restored from
-+ *             previous kernel) sessions.
-+ * @retrieved: A boolean flag indicating whether this session has been retrieved
-+ *             by a consumer in the new kernel. Valid only during the
-+ *             LIVEUPDATE_STATE_UPDATED state.
-+ * @mutex:     Session lock, protects files_xa, and count.
-+ * @state:     State of this session: prepared/frozen/updated/normal.
-+ * @files:     The physical address of a contiguous memory block that holds
-+ *             the serialized state of files.
++ * DOC: General ioctl format
++ *
++ * The ioctl interface follows a general format to allow for extensibility. Each
++ * ioctl is passed in a structure pointer as the argument providing the size of
++ * the structure in the first u32. The kernel checks that any structure space
++ * beyond what it understands is 0. This allows userspace to use the backward
++ * compatible portion while consistently using the newer, larger, structures.
++ *
++ * ioctls use a standard meaning for common errnos:
++ *
++ *  - ENOTTY: The IOCTL number itself is not supported at all
++ *  - E2BIG: The IOCTL number is supported, but the provided structure has
++ *    non-zero in a part the kernel does not understand.
++ *  - EOPNOTSUPP: The IOCTL number is supported, and the structure is
++ *    understood, however a known field has a value the kernel does not
++ *    understand or support.
++ *  - EINVAL: Everything about the IOCTL was understood, but a field is not
++ *    correct.
++ *  - ENOENT: A provided token does not exist.
++ *  - ENOMEM: Out of memory.
++ *  - EOVERFLOW: Mathematics overflowed.
++ *
++ * As well as additional errnos, within specific ioctls.
 + */
-+struct luo_session {
-+	char name[LIVEUPDATE_SESSION_NAME_LENGTH];
-+	struct xarray files_xa;
-+	struct luo_session_ser *ser;
-+	long count;
-+	struct list_head list;
-+	bool retrieved;
-+	struct mutex mutex;
-+	enum liveupdate_state state;
-+	u64 files;
++
+ /**
+  * enum liveupdate_state - Defines the possible states of the live update
+  * orchestrator.
+@@ -94,4 +120,177 @@ enum liveupdate_event {
+ /* The maximum length of session name including null termination */
+ #define LIVEUPDATE_SESSION_NAME_LENGTH 56
+ 
++/* The ioctl type, documented in ioctl-number.rst */
++#define LIVEUPDATE_IOCTL_TYPE		0xBA
++
++/* The /dev/liveupdate ioctl commands */
++enum {
++	LIVEUPDATE_CMD_BASE = 0x00,
++	LIVEUPDATE_CMD_GET_STATE = LIVEUPDATE_CMD_BASE,
++	LIVEUPDATE_CMD_SET_EVENT = 0x01,
++	LIVEUPDATE_CMD_CREATE_SESSION = 0x02,
++	LIVEUPDATE_CMD_RETRIEVE_SESSION = 0x03,
 +};
 +
-+int luo_session_create(const char *name, struct file **filep);
-+int luo_session_retrieve(const char *name, struct file **filep);
-+
- void luo_subsystems_startup(void *fdt);
- int luo_subsystems_fdt_setup(void *fdt);
- int luo_do_subsystems_prepare_calls(void);
-diff --git a/kernel/liveupdate/luo_session.c b/kernel/liveupdate/luo_session.c
-new file mode 100644
-index 000000000000..74dee42e24b7
---- /dev/null
-+++ b/kernel/liveupdate/luo_session.c
-@@ -0,0 +1,607 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (c) 2025, Google LLC.
-+ * Pasha Tatashin <pasha.tatashin@soleen.com>
++/**
++ * struct liveupdate_ioctl_get_state - ioctl(LIVEUPDATE_IOCTL_GET_STATE)
++ * @size:  Input; sizeof(struct liveupdate_ioctl_get_state)
++ * @state: Output; The current live update state.
++ *
++ * Query the current state of the live update orchestrator.
++ *
++ * The kernel fills the @state with the current
++ * state of the live update subsystem. Possible states are:
++ *
++ * - %LIVEUPDATE_STATE_NORMAL:   Default state; no live update operation is
++ *                               currently in progress.
++ * - %LIVEUPDATE_STATE_PREPARED: The preparation phase (triggered by
++ *                               %LIVEUPDATE_PREPARE) has completed
++ *                               successfully. The system is ready for the
++ *                               reboot transition. Note that some
++ *                               device operations (e.g., unbinding, new DMA
++ *                               mappings) might be restricted in this state.
++ * - %LIVEUPDATE_STATE_UPDATED:  The system has successfully rebooted into the
++ *                               new kernel via live update. It is now running
++ *                               the new kernel code and is awaiting the
++ *                               completion signal from user space via
++ *                               %LIVEUPDATE_FINISH after restoration tasks are
++ *                               done.
++ *
++ * See the definition of &enum liveupdate_state for more details on each state.
++ *
++ * Return: 0 on success, negative error code on failure.
 + */
++struct liveupdate_ioctl_get_state {
++	__u32	size;
++	__u32	state;
++};
++
++#define LIVEUPDATE_IOCTL_GET_STATE					\
++	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_GET_STATE)
 +
 +/**
-+ * DOC: LUO Sessions
++ * struct liveupdate_ioctl_set_event - ioctl(LIVEUPDATE_IOCTL_SET_EVENT)
++ * @size:  Input; sizeof(struct liveupdate_ioctl_set_event)
++ * @event: Input; The live update event.
 + *
-+ * LUO Sessions provide the core mechanism for grouping and managing file
-+ * descriptors that need to be preserved across a kexec-based live update.
-+ * Each session acts as a named container for a set of file objects, allowing
-+ * a userspace agent (e.g., a Live Update Orchestration Daemon) to manage the
-+ * lifecycle of resources critical to a workload.
++ * Notify live update orchestrator about global event, that causes a state
++ * transition.
 + *
-+ * Core Concepts:
++ * Event, can be one of the following:
 + *
-+ * - Named Containers: Sessions are identified by a unique, user-provided name,
-+ *   which is used for both creation and retrieval.
++ * - %LIVEUPDATE_PREPARE: Initiates the live update preparation phase. This
++ *                        typically triggers the saving process for items marked
++ *                        via the PRESERVE ioctls. This typically occurs
++ *                        *before* the "blackout window", while user
++ *                        applications (e.g., VMs) may still be running. Kernel
++ *                        subsystems receiving the %LIVEUPDATE_PREPARE event
++ *                        should serialize necessary state. This command does
++ *                        not transfer data.
++ * - %LIVEUPDATE_FINISH:  Signal restoration completion and triggercleanup.
 + *
-+ * - Userspace Interface: Session management is driven from userspace via
-+ *   ioctls on /dev/liveupdate (e.g., CREATE_SESSION, RETRIEVE_SESSION).
++ *                        Signals that user space has completed all necessary
++ *                        restoration actions in the new kernel (after a live
++ *                        update reboot). Calling this ioctl triggers the
++ *                        cleanup phase: any resources that were successfully
++ *                        preserved but were *not* subsequently restored
++ *                        (reclaimed) via the RESTORE ioctls will have their
++ *                        preserved state discarded and associated kernel
++ *                        resources released. Involved devices may be reset. All
++ *                        desired restorations *must* be completed *before*
++ *                        this. Kernel callbacks for the %LIVEUPDATE_FINISH
++ *                        event must not fail. Successfully completing this
++ *                        phase transitions the system state from
++ *                        %LIVEUPDATE_STATE_UPDATED back to
++ *                        %LIVEUPDATE_STATE_NORMAL. This command does
++ *                        not transfer data.
++ * - %LIVEUPDATE_CANCEL:  Cancel the live update preparation phase.
 + *
-+ * - Serialization: Session metadata is preserved using the KHO framework.
-+ *   During the 'prepare' phase, an array of `struct luo_session_ser` is
-+ *   allocated and preserved. An FDT node is also created, containing the
-+ *   count of sessions and the physical address of this array.
++ *                        Notifies the live update subsystem to abort the
++ *                        preparation sequence potentially initiated by
++ *                        %LIVEUPDATE_PREPARE event.
 + *
-+ * Session Lifecycle and State Management:
++ *                        When triggered, subsystems receiving the
++ *                        %LIVEUPDATE_CANCEL event should revert any state
++ *                        changes or actions taken specifically for the aborted
++ *                        prepare phase (e.g., discard partially serialized
++ *                        state). The kernel releases resources allocated
++ *                        specifically for this *aborted preparation attempt*.
 + *
-+ * 1.  Creation: A userspace agent calls `luo_session_create()` to create a new,
-+ *     empty session, receiving a file descriptor handle. This can be done in
-+ *     the NORMAL or UPDATED states.
++ *                        This operation cancels the current *attempt* to
++ *                        prepare for a live update but does **not** remove
++ *                        previously validated items from the internal list
++ *                        of potentially preservable resources.
 + *
-+ * 2.  Name Collision: In the UPDATED state, `luo_session_create()` checks for
-+ *     name conflicts against sessions preserved from the previous kernel to
-+ *     prevent ambiguity.
++ *                        This command does not transfer data. Kernel callbacks
++ *                        for the %LIVEUPDATE_CANCEL event must not fail.
 + *
-+ * 3.  Preparation (`prepare` callback): When the global LUO PREPARE event is
-+ *     triggered, the list of all created sessions is serialized. The main
-+ *     `ser` array is allocated, and each active `struct luo_session` is given
-+ *     a direct pointer to its corresponding entry in this array.
++ * See the definition of &enum liveupdate_event for more details on each state.
 + *
-+ * 4.  Release After Prepare: When a session FD is closed *after* the PREPARE
-+ *     event, the `.release` handler uses the session's direct pointer to
-+ *     `memset(0)` its entry in the `ser` array. This effectively marks the
-+ *     session as defunct without needing to resize the already-preserved
-+ *     memory.
++ * Return: 0 on success, negative error code on failure.
++ */
++struct liveupdate_ioctl_set_event {
++	__u32	size;
++	__u32	event;
++};
++
++#define LIVEUPDATE_IOCTL_SET_EVENT					\
++	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SET_EVENT)
++
++/**
++ * struct liveupdate_ioctl_create_session - ioctl(LIVEUPDATE_IOCTL_CREATE_SESSION)
++ * @size:	Input; sizeof(struct liveupdate_ioctl_create_session)
++ * @fd:		Output; The new file descriptor for the created session.
++ * @name:	Input; A null-terminated string for the session name, max
++ *		length %LIVEUPDATE_SESSION_NAME_LENGTH including termination
++ *		char.
 + *
-+ * 5.  Boot (`boot` callback): In the new kernel, the FDT is read to locate
-+ *     the preserved `ser` array. The metadata (count, physical address) is
-+ *     stored in the `luo_session` global.
++ * Creates a new live update session for managing preserved resources.
++ * This ioctl can only be called on the main /dev/liveupdate device.
 + *
-+ * 6.  Lazy Deserialization: The actual `luo_session` list is populated on
-+ *     first use (e.g., by `retrieve`, `finish`, or `create`). During this
-+ *     process, any zeroed-out entries from step 4 are skipped.
++ * Return: 0 on success, negative error code on failure.
++ */
++struct liveupdate_ioctl_create_session {
++	__u32		size;
++	__s32		fd;
++	__u8		name[LIVEUPDATE_SESSION_NAME_LENGTH];
++};
++
++#define LIVEUPDATE_IOCTL_CREATE_SESSION					\
++	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_CREATE_SESSION)
++
++/**
++ * struct liveupdate_ioctl_retrieve_session - ioctl(LIVEUPDATE_IOCTL_RETRIEVE_SESSION)
++ * @size:    Input; sizeof(struct liveupdate_ioctl_retrieve_session)
++ * @fd:      Output; The new file descriptor for the retrieved session.
++ * @name:    Input; A null-terminated string identifying the session to retrieve.
++ *           The name must exactly match the name used when the session was
++ *           created in the previous kernel.
 + *
-+ * 7.  Retrieval: The userspace agent calls `luo_session_retrieve()` in the new
-+ *     kernel to get a new FD handle for a preserved session by its name.
++ * Retrieves a handle (a new file descriptor) for a preserved session by its
++ * name. This is the primary mechanism for a userspace agent to regain control
++ * of its preserved resources after a live update.
 + *
-+ * 8.  Finalization (`finish` callback): When the global LUO FINISH event is
-+ *     sent, any preserved sessions that were successfully retrieved are moved
-+ *     to the `luo_session_global` list, making them available for a subsequent
-+ *     live update. Any sessions that were not retrieved are considered stale
-+ *     and are cleaned up.
++ * The userspace application provides the null-terminated `name` of a session
++ * it created before the live update. If a preserved session with a matching
++ * name is found, the kernel instantiates it and returns a new file descriptor
++ * in the `fd` field. This new session FD can then be used for all file-specific
++ * operations, such as restoring individual file descriptors with
++ * LIVEUPDATE_SESSION_RESTORE_FD.
++ *
++ * It is the responsibility of the userspace application to know the names of
++ * the sessions it needs to retrieve. If no session with the given name is
++ * found, the ioctl will fail with -ENOENT.
++ *
++ * This ioctl can only be called on the main /dev/liveupdate device when the
++ * system is in the LIVEUPDATE_STATE_UPDATED state.
++ */
++struct liveupdate_ioctl_retrieve_session {
++	__u32		size;
++	__s32		fd;
++	__u8		name[64];
++};
++
++#define LIVEUPDATE_IOCTL_RETRIEVE_SESSION \
++	_IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_RETRIEVE_SESSION)
+ #endif /* _UAPI_LIVEUPDATE_H */
+diff --git a/kernel/liveupdate/luo_internal.h b/kernel/liveupdate/luo_internal.h
+index 9223f71844ca..a14e0b685ccb 100644
+--- a/kernel/liveupdate/luo_internal.h
++++ b/kernel/liveupdate/luo_internal.h
+@@ -17,6 +17,26 @@
+  */
+ #define luo_restore_fail(__fmt, ...) panic(__fmt, ##__VA_ARGS__)
+ 
++struct luo_ucmd {
++	void __user *ubuffer;
++	u32 user_size;
++	void *cmd;
++};
++
++static inline int luo_ucmd_respond(struct luo_ucmd *ucmd,
++				   size_t kernel_cmd_size)
++{
++	/*
++	 * Copy the minimum of what the user provided and what we actually
++	 * have.
++	 */
++	if (copy_to_user(ucmd->ubuffer, ucmd->cmd,
++			 min_t(size_t, ucmd->user_size, kernel_cmd_size))) {
++		return -EFAULT;
++	}
++	return 0;
++}
++
+ int luo_cancel(void);
+ int luo_prepare(void);
+ int luo_freeze(void);
+diff --git a/kernel/liveupdate/luo_ioctl.c b/kernel/liveupdate/luo_ioctl.c
+index fc2afb450ad5..01ccb8a6d3f4 100644
+--- a/kernel/liveupdate/luo_ioctl.c
++++ b/kernel/liveupdate/luo_ioctl.c
+@@ -5,6 +5,25 @@
+  * Pasha Tatashin <pasha.tatashin@soleen.com>
+  */
+ 
++/**
++ * DOC: LUO ioctl Interface
++ *
++ * The IOCTL user-space control interface for the LUO subsystem.
++ * It registers a character device, typically found at ``/dev/liveupdate``,
++ * which allows a userspace agent to manage the LUO state machine and its
++ * associated resources, such as preservable file descriptors.
++ *
++ * To ensure that the state machine is controlled by a single entity, access
++ * to this device is exclusive: only one process is permitted to have
++ * ``/dev/liveupdate`` open at any given time. Subsequent open attempts will
++ * fail with -EBUSY until the first process closes its file descriptor.
++ * This singleton model simplifies state management by preventing conflicting
++ * commands from multiple userspace agents.
 + */
 +
 +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +
-+#include <linux/anon_inodes.h>
-+#include <linux/errno.h>
-+#include <linux/file.h>
-+#include <linux/fs.h>
-+#include <linux/libfdt.h>
-+#include <linux/liveupdate.h>
-+#include <uapi/linux/liveupdate.h>
-+#include "luo_internal.h"
-+
-+#define LUO_SESSION_NODE_NAME	"luo-session"
-+#define LUO_SESSION_COMPATIBLE	"luo-session-v1"
-+
-+/**
-+ * struct luo_session_ser - Represents the serialized metadata for a LUO session.
-+ * @name:    The unique name of the session, copied from the `luo_session`
-+ *           structure.
-+ * @files:   The physical address of a contiguous memory block that holds
-+ *           the serialized state of files.
-+ * @pgcnt:   The number of pages occupied by the `files` memory block.
-+ * @count:   The total number of files that were part of this session during
-+ *           serialization. Used for iteration and validation during
-+ *           restoration.
-+ *
-+ * This structure is used to package session-specific metadata for transfer
-+ * between kernels via Kexec Handover. An array of these structures (one per
-+ * session) is created and passed to the new kernel, allowing it to reconstruct
-+ * the session context.
-+ *
-+ * If this structure is modified, LUO_SESSION_COMPATIBLE must be updated.
-+ */
-+struct luo_session_ser {
-+	char name[LIVEUPDATE_SESSION_NAME_LENGTH];
-+	u64 files;
-+	u64 pgcnt;
-+	u64 count;
-+} __packed;
-+
-+/**
-+ * struct luo_session_global - Global container for managing LUO sessions.
-+ * @count: The number of sessions currently tracked in the @list.
-+ * @list:  The head of the linked list of `struct luo_session` instances.
-+ * @rwsem: A read-write semaphore providing synchronized access to the session
-+ *         list and other fields in this structure.
-+ * @ser:   A pointer to the contiguous block of memory holding the serialized
-+ *         session data (an array of `struct luo_session_ser`). For `_out`, this
-+ *         is allocated and populated during `prepare`. For `_in`, this points
-+ *         to the data restored from the previous kernel.
-+ * @pgcnt: The size, in pages, of the memory block pointed to by @ser.
-+ * @fdt:   A pointer to the FDT blob that contains the metadata for this group
-+ *         of sessions. This FDT is what is ultimately passed to the parent LUO
-+ *         subsystem for preservation.
-+ */
-+struct luo_session_global {
-+	long count;
-+	struct list_head list;
-+	struct rw_semaphore rwsem;
-+	struct luo_session_ser *ser;
-+	u64 pgcnt;
-+	void *fdt;
-+	long ser_count;
++#include <linux/atomic.h>
+ #include <linux/errno.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
+@@ -19,10 +38,191 @@
+ 
+ struct luo_device_state {
+ 	struct miscdevice miscdev;
++	atomic_t in_use;
 +};
 +
-+static struct luo_session_global luo_session_global;
-+
-+static struct luo_session *luo_session_alloc(const char *name)
++static int luo_ioctl_get_state(struct luo_ucmd *ucmd)
 +{
-+	struct luo_session *session = kzalloc(sizeof(*session), GFP_KERNEL);
++	struct liveupdate_ioctl_get_state *argp = ucmd->cmd;
 +
-+	if (!session)
-+		return NULL;
++	argp->state = liveupdate_get_state();
 +
-+	strscpy(session->name, name, sizeof(session->name));
-+	xa_init(&session->files_xa);
-+	session->count = 0;
-+	INIT_LIST_HEAD(&session->list);
-+	mutex_init(&session->mutex);
-+	session->state = LIVEUPDATE_STATE_NORMAL;
-+
-+	return session;
++	return luo_ucmd_respond(ucmd, sizeof(*argp));
 +}
 +
-+static void luo_session_free(struct luo_session *session)
++static int luo_ioctl_set_event(struct luo_ucmd *ucmd)
 +{
-+	WARN_ON(session->count);
-+	xa_destroy(&session->files_xa);
-+	mutex_destroy(&session->mutex);
-+	kfree(session);
-+}
++	struct liveupdate_ioctl_set_event *argp = ucmd->cmd;
++	int ret;
 +
-+static int luo_session_insert(struct luo_session *session)
-+{
-+	struct luo_session *it;
-+
-+	lockdep_assert_held_write(&luo_session_global.rwsem);
-+	/*
-+	 * For small number of sessions this loop won't hurt performance
-+	 * but if we ever start using a lot of sessions, this might
-+	 * become a bottle neck during deserialization time, as it would
-+	 * cause O(n*n) complexity.
-+	 */
-+	list_for_each_entry(it, &luo_session_global.list, list) {
-+		if (!strncmp(it->name, session->name, sizeof(it->name)))
-+			return -EEXIST;
-+	}
-+	list_add_tail(&session->list, &luo_session_global.list);
-+	luo_session_global.count++;
-+
-+	return 0;
-+}
-+
-+static void luo_session_remove(struct luo_session *session)
-+{
-+	lockdep_assert_held_write(&luo_session_global.rwsem);
-+	list_del(&session->list);
-+	luo_session_global.count--;
-+}
-+
-+/* One session switches from the updated state to  normal state */
-+static void luo_session_finish_one(struct luo_session *session)
-+{
-+}
-+
-+/* Cancel one session from frozen or prepared state, back to normal */
-+static void luo_session_cancel_one(struct luo_session *session)
-+{
-+}
-+
-+/* One session is changed from normal to prepare state */
-+static int luo_session_prepare_one(struct luo_session *session)
-+{
-+	return 0;
-+}
-+
-+static int luo_session_release(struct inode *inodep, struct file *filep)
-+{
-+	struct luo_session *session = filep->private_data;
-+
-+	scoped_guard(rwsem_read, &luo_session_global.rwsem) {
-+		scoped_guard(mutex, &session->mutex) {
-+			if (session->ser) {
-+				memset(session->ser, 0,
-+				       sizeof(struct luo_session_ser));
-+			}
-+		}
++	switch (argp->event) {
++	case LIVEUPDATE_PREPARE:
++		ret = luo_prepare();
++		break;
++	case LIVEUPDATE_FINISH:
++		ret = luo_finish();
++		break;
++	case LIVEUPDATE_CANCEL:
++		ret = luo_cancel();
++		break;
++	default:
++		ret = -EOPNOTSUPP;
 +	}
 +
-+	if (session->state == LIVEUPDATE_STATE_UPDATED)
-+		luo_session_finish_one(session);
-+	if (session->state == LIVEUPDATE_STATE_PREPARED ||
-+	    session->state == LIVEUPDATE_STATE_FROZEN) {
-+		luo_session_cancel_one(session);
-+	}
-+
-+	scoped_guard(rwsem_write, &luo_session_global.rwsem)
-+		luo_session_remove(session);
-+	luo_session_free(session);
-+
-+	return 0;
++	return ret;
 +}
 +
-+static const struct file_operations luo_session_fops = {
-+	.owner = THIS_MODULE,
-+	.release = luo_session_release,
-+};
-+
-+static void luo_session_deserialize(void)
++static int luo_ioctl_create_session(struct luo_ucmd *ucmd)
 +{
-+	static int visited;
-+	int i;
-+
-+	if (visited)
-+		return;
-+
-+	guard(rwsem_write)(&luo_session_global.rwsem);
-+	if (visited)
-+		return;
-+	visited++;
-+	for (i = 0; i < luo_session_global.ser_count; i++) {
-+		struct luo_session *session;
-+
-+		/*
-+		 * If there is no name, this session was remove from
-+		 * preservation after prepare. So, skip it.
-+		 */
-+		if (!luo_session_global.ser[i].name[0])
-+			continue;
-+
-+		session = luo_session_alloc(luo_session_global.ser[i].name);
-+		if (!session)
-+			luo_restore_fail("Failed to allocate session on boot\n");
-+
-+		if (luo_session_insert(session)) {
-+			luo_restore_fail("Failed to insert session due to name conflict [%s]\n",
-+					 session->name);
-+		}
-+
-+		session->state = LIVEUPDATE_STATE_UPDATED;
-+		session->count = luo_session_global.ser[i].count;
-+		session->files = luo_session_global.ser[i].files;
-+	}
-+}
-+
-+/* Create a "struct file" for session, and delete it on case of failure */
-+static int luo_session_getfile(struct luo_session *session, struct file **filep)
-+{
-+	char name_buf[128];
++	struct liveupdate_ioctl_create_session *argp = ucmd->cmd;
 +	struct file *file;
-+
-+	scoped_guard(mutex, &session->mutex) {
-+		lockdep_assert_held(&session->mutex);
-+		snprintf(name_buf, sizeof(name_buf), "[luo_session] %s",
-+			 session->name);
-+		file = anon_inode_getfile(name_buf, &luo_session_fops, session,
-+					  O_RDWR);
-+	}
-+	if (IS_ERR(file)) {
-+		scoped_guard(rwsem_write, &luo_session_global.rwsem)
-+			luo_session_remove(session);
-+		luo_session_free(session);
-+		return PTR_ERR(file);
-+	}
-+
-+	*filep = file;
-+	return 0;
-+}
-+
-+int luo_session_create(const char *name, struct file **filep)
-+{
-+	struct luo_session *session;
 +	int ret;
 +
-+	guard(rwsem_read)(&luo_state_rwsem);
++	argp->fd = get_unused_fd_flags(O_CLOEXEC);
++	if (argp->fd < 0)
++		return argp->fd;
 +
-+	/* New sessions cannot be added after prepared state */
-+	if (!liveupdate_state_normal() && !liveupdate_state_updated())
-+		return -EAGAIN;
-+
-+	session = luo_session_alloc(name);
-+	if (!session)
-+		return -ENOMEM;
-+
-+	scoped_guard(rwsem_write, &luo_session_global.rwsem)
-+		ret = luo_session_insert(session);
-+	if (ret) {
-+		luo_session_free(session);
-+		return ret;
-+	}
-+
-+	return luo_session_getfile(session, filep);
-+}
-+
-+int luo_session_retrieve(const char *name, struct file **filep)
-+{
-+	struct luo_session *session = NULL;
-+	struct luo_session *it;
-+
-+	guard(rwsem_read)(&luo_state_rwsem);
-+
-+	/* Can only retrieve in the updated state */
-+	if (!liveupdate_state_updated())
-+		return -EAGAIN;
-+
-+	luo_session_deserialize();
-+	scoped_guard(rwsem_read, &luo_session_global.rwsem) {
-+		list_for_each_entry(it, &luo_session_global.list, list) {
-+			if (!strncmp(it->name, name, sizeof(it->name))) {
-+				session = it;
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (!session)
-+		return -ENOENT;
-+
-+	scoped_guard(mutex, &session->mutex) {
-+		/*
-+		 * Session already retrieved or a session with the same name was
-+		 * created during updated state
-+		 */
-+		if (session->retrieved || session->state != LIVEUPDATE_STATE_UPDATED)
-+			return -EADDRINUSE;
-+
-+		session->retrieved = true;
-+	}
-+
-+	return luo_session_getfile(session, filep);
-+}
-+
-+static void luo_session_global_preserved_cleanup(void)
-+{
-+	lockdep_assert_held_write(&luo_session_global.rwsem);
-+	if (luo_session_global.ser && !IS_ERR(luo_session_global.ser)) {
-+		luo_contig_free_unpreserve(luo_session_global.ser,
-+					   luo_session_global.pgcnt << PAGE_SHIFT);
-+	}
-+	if (luo_session_global.fdt && !IS_ERR(luo_session_global.fdt))
-+		luo_contig_free_unpreserve(luo_session_global.fdt, PAGE_SIZE);
-+
-+	luo_session_global.fdt = NULL;
-+	luo_session_global.ser = NULL;
-+	luo_session_global.ser_count = 0;
-+	luo_session_global.pgcnt = 0;
-+}
-+
-+static int luo_session_fdt_setup(void)
-+{
-+	u64 ser_pa;
-+	int ret;
-+
-+	lockdep_assert_held_write(&luo_session_global.rwsem);
-+	luo_session_global.pgcnt = DIV_ROUND_UP(luo_session_global.count *
-+				sizeof(struct luo_session_ser), PAGE_SIZE);
-+
-+	if (luo_session_global.pgcnt > 0) {
-+		size_t ser_size = luo_session_global.pgcnt << PAGE_SHIFT;
-+
-+		luo_session_global.ser = luo_contig_alloc_preserve(ser_size);
-+		if (IS_ERR(luo_session_global.ser)) {
-+			ret = PTR_ERR(luo_session_global.ser);
-+			goto exit_cleanup;
-+		}
-+	}
-+
-+	luo_session_global.fdt = luo_contig_alloc_preserve(PAGE_SIZE);
-+	if (IS_ERR(luo_session_global.fdt)) {
-+		ret = PTR_ERR(luo_session_global.fdt);
-+		goto exit_cleanup;
-+	}
-+
-+	ret = fdt_create(luo_session_global.fdt, PAGE_SIZE);
-+	if (ret < 0)
-+		goto exit_cleanup;
-+
-+	ret = fdt_finish_reservemap(luo_session_global.fdt);
-+	if (ret < 0)
-+		goto exit_finish;
-+
-+	ret = fdt_begin_node(luo_session_global.fdt, LUO_SESSION_NODE_NAME);
-+	if (ret < 0)
-+		goto exit_finish;
-+
-+	ret = fdt_property_string(luo_session_global.fdt, "compatible",
-+				  LUO_SESSION_COMPATIBLE);
-+	if (ret < 0)
-+		goto exit_end_node;
-+
-+	ret = fdt_property_u64(luo_session_global.fdt, "count",
-+			       luo_session_global.count);
-+	if (ret < 0)
-+		goto exit_end_node;
-+
-+	ser_pa = luo_session_global.ser ? __pa(luo_session_global.ser) : 0;
-+	ret = fdt_property_u64(luo_session_global.fdt, "data", ser_pa);
-+	if (ret < 0)
-+		goto exit_end_node;
-+
-+	ret = fdt_property_u64(luo_session_global.fdt, "pgcnt",
-+			       luo_session_global.pgcnt);
-+	if (ret < 0)
-+		goto exit_end_node;
-+
-+	ret = fdt_end_node(luo_session_global.fdt);
-+	if (ret < 0)
-+		goto exit_finish;
-+
-+	ret = fdt_finish(luo_session_global.fdt);
-+	if (ret < 0)
-+		goto exit_cleanup;
-+
-+	return 0;
-+
-+exit_end_node:
-+	fdt_end_node(luo_session_global.fdt);
-+exit_finish:
-+	fdt_finish(luo_session_global.fdt);
-+exit_cleanup:
-+	luo_session_global_preserved_cleanup();
-+
-+	return ret;
-+}
-+
-+/*
-+ * Change all sessions to normal state: make every file within each session
-+ * to be in the normal state.
-+ */
-+static void luo_session_cancel(struct liveupdate_subsystem *h, u64 data)
-+{
-+	struct luo_session *it;
-+
-+	guard(rwsem_write)(&luo_session_global.rwsem);
-+	list_for_each_entry(it, &luo_session_global.list, list)
-+		luo_session_cancel_one(it);
-+	luo_session_global_preserved_cleanup();
-+}
-+
-+static int luo_session_prepare(struct liveupdate_subsystem *h, u64 *data)
-+{
-+	struct luo_session_ser *ser;
-+	struct luo_session *it;
-+	int ret;
-+
-+	scoped_guard(rwsem_write, &luo_session_global.rwsem) {
-+		ret = luo_session_fdt_setup();
-+		if (ret)
-+			return ret;
-+
-+		ser = luo_session_global.ser;
-+		list_for_each_entry(it, &luo_session_global.list, list) {
-+			if (it->state == LIVEUPDATE_STATE_NORMAL) {
-+				ret = luo_session_prepare_one(it);
-+				if (ret)
-+					break;
-+			}
-+			strscpy(ser->name, it->name, sizeof(ser->name));
-+			ser->count = it->count;
-+			ser->files = it->files;
-+			it->ser = ser;
-+			ser++;
-+		}
-+
-+		if (!ret)
-+			*data = __pa(luo_session_global.fdt);
-+	}
-+
++	ret = luo_session_create(argp->name, &file);
 +	if (ret)
-+		luo_session_cancel(h, 0);
++		return ret;
 +
-+	return ret;
-+}
-+
-+static int luo_session_freeze(struct liveupdate_subsystem *h, u64 *data)
-+{
-+	return 0;
-+}
-+
-+/*
-+ * Finish every file within each session. If session has not been reclaimed
-+ * remove it, otherwise keep this session, so it can participate in the
-+ * next live update.
-+ */
-+static void luo_session_finish(struct liveupdate_subsystem *h, u64 data)
-+{
-+	struct luo_session *session, *tmp;
-+
-+	luo_session_deserialize();
-+
-+	list_for_each_entry_safe(session, tmp, &luo_session_global.list, list) {
-+		/*
-+		 * Skip sessions that were created in new kernel or have been
-+		 * finished already.
-+		 */
-+		if (session->state != LIVEUPDATE_STATE_UPDATED)
-+			continue;
-+		luo_session_finish_one(session);
-+		if (!session->retrieved) {
-+			pr_warn("Removing unreclaimed session[%s]\n",
-+				session->name);
-+			scoped_guard(rwsem_write, &luo_session_global.rwsem)
-+				luo_session_remove(session);
-+			luo_session_free(session);
-+		}
-+	}
-+
-+	scoped_guard(rwsem_write, &luo_session_global.rwsem)
-+		luo_session_global_preserved_cleanup();
-+}
-+
-+static void luo_session_boot(struct liveupdate_subsystem *h, u64 data)
-+{
-+	u64 count, data_pa, pgcnt;
-+	const void *prop;
-+	int prop_len;
-+	void *fdt;
-+
-+	fdt = __va(data);
-+	if (fdt_node_check_compatible(fdt, 0, LUO_SESSION_COMPATIBLE))
-+		luo_restore_fail("luo-session FDT incompatible\n");
-+
-+	prop = fdt_getprop(fdt, 0, "count", &prop_len);
-+	if (!prop || prop_len != sizeof(u64))
-+		luo_restore_fail("luo-session FDT missing or invalid 'count'\n");
-+	count = be64_to_cpup(prop);
-+
-+	prop = fdt_getprop(fdt, 0, "data", &prop_len);
-+	if (!prop || prop_len != sizeof(u64))
-+		luo_restore_fail("luo-session FDT missing or invalid 'data'\n");
-+	data_pa = be64_to_cpup(prop);
-+
-+	prop = fdt_getprop(fdt, 0, "pgcnt", &prop_len);
-+	if (!prop || prop_len != sizeof(u64))
-+		luo_restore_fail("luo-session FDT missing or invalid 'pgcnt'\n");
-+	pgcnt = be64_to_cpup(prop);
-+
-+	if (!count)
-+		return;
-+
-+	guard(rwsem_write)(&luo_session_global.rwsem);
-+	luo_session_global.fdt = fdt;
-+	luo_session_global.ser = __va(data_pa);
-+	luo_session_global.ser_count = count;
-+	luo_session_global.pgcnt = pgcnt;
-+}
-+
-+static const struct liveupdate_subsystem_ops luo_session_subsys_ops = {
-+	.prepare = luo_session_prepare,
-+	.freeze = luo_session_freeze,
-+	.cancel = luo_session_cancel,
-+	.boot = luo_session_boot,
-+	.finish = luo_session_finish,
-+	.owner = THIS_MODULE,
-+};
-+
-+static struct liveupdate_subsystem luo_session_subsys = {
-+	.ops = &luo_session_subsys_ops,
-+	.name = LUO_SESSION_COMPATIBLE,
-+};
-+
-+static int __init luo_session_startup(void)
-+{
-+	int ret;
-+
-+	if (!liveupdate_enabled())
-+		return 0;
-+
-+	init_rwsem(&luo_session_global.rwsem);
-+	INIT_LIST_HEAD(&luo_session_global.list);
-+
-+	ret = liveupdate_register_subsystem(&luo_session_subsys);
++	ret = luo_ucmd_respond(ucmd, sizeof(*argp));
 +	if (ret) {
-+		pr_warn("Failed to register luo_session subsystem [%d]\n", ret);
++		fput(file);
++		put_unused_fd(argp->fd);
 +		return ret;
 +	}
 +
-+	return ret;
++	fd_install(argp->fd, file);
++
++	return 0;
 +}
-+late_initcall(luo_session_startup);
++
++static int luo_ioctl_retrieve_session(struct luo_ucmd *ucmd)
++{
++	struct liveupdate_ioctl_retrieve_session *argp = ucmd->cmd;
++	struct file *file;
++	int ret;
++
++	argp->fd = get_unused_fd_flags(O_CLOEXEC);
++	if (argp->fd < 0)
++		return argp->fd;
++
++	ret = luo_session_retrieve(argp->name, &file);
++	if (ret < 0) {
++		put_unused_fd(argp->fd);
++
++		return ret;
++	}
++
++	ret = luo_ucmd_respond(ucmd, sizeof(*argp));
++	if (ret) {
++		fput(file);
++		put_unused_fd(argp->fd);
++		return ret;
++	}
++
++	fd_install(argp->fd, file);
++
++	return 0;
++}
++
++static int luo_open(struct inode *inodep, struct file *filep)
++{
++	struct luo_device_state *ldev = container_of(filep->private_data,
++						     struct luo_device_state,
++						     miscdev);
++
++	if (atomic_cmpxchg(&ldev->in_use, 0, 1))
++		return -EBUSY;
++
++	return 0;
++}
++
++static int luo_release(struct inode *inodep, struct file *filep)
++{
++	struct luo_device_state *ldev = container_of(filep->private_data,
++						     struct luo_device_state,
++						     miscdev);
++	atomic_set(&ldev->in_use, 0);
++
++	return 0;
++}
++
++union ucmd_buffer {
++	struct liveupdate_ioctl_create_session create;
++	struct liveupdate_ioctl_get_state state;
++	struct liveupdate_ioctl_retrieve_session retrieve;
++	struct liveupdate_ioctl_set_event event;
+ };
+ 
++struct luo_ioctl_op {
++	unsigned int size;
++	unsigned int min_size;
++	unsigned int ioctl_num;
++	int (*execute)(struct luo_ucmd *ucmd);
++};
++
++#define IOCTL_OP(_ioctl, _fn, _struct, _last)                                  \
++	[_IOC_NR(_ioctl) - LIVEUPDATE_CMD_BASE] = {                            \
++		.size = sizeof(_struct) +                                      \
++			BUILD_BUG_ON_ZERO(sizeof(union ucmd_buffer) <          \
++					  sizeof(_struct)),                    \
++		.min_size = offsetofend(_struct, _last),                       \
++		.ioctl_num = _ioctl,                                           \
++		.execute = _fn,                                                \
++	}
++
++static const struct luo_ioctl_op luo_ioctl_ops[] = {
++	IOCTL_OP(LIVEUPDATE_IOCTL_CREATE_SESSION, luo_ioctl_create_session,
++		 struct liveupdate_ioctl_create_session, name),
++	IOCTL_OP(LIVEUPDATE_IOCTL_GET_STATE, luo_ioctl_get_state,
++		 struct liveupdate_ioctl_get_state, state),
++	IOCTL_OP(LIVEUPDATE_IOCTL_RETRIEVE_SESSION, luo_ioctl_retrieve_session,
++		 struct liveupdate_ioctl_retrieve_session, name),
++	IOCTL_OP(LIVEUPDATE_IOCTL_SET_EVENT, luo_ioctl_set_event,
++		 struct liveupdate_ioctl_set_event, event),
++};
++
++static long luo_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
++{
++	const struct luo_ioctl_op *op;
++	struct luo_ucmd ucmd = {};
++	union ucmd_buffer buf;
++	unsigned int nr;
++	int ret;
++
++	nr = _IOC_NR(cmd);
++	if (nr < LIVEUPDATE_CMD_BASE ||
++	    (nr - LIVEUPDATE_CMD_BASE) >= ARRAY_SIZE(luo_ioctl_ops)) {
++		return -EINVAL;
++	}
++
++	ucmd.ubuffer = (void __user *)arg;
++	ret = get_user(ucmd.user_size, (u32 __user *)ucmd.ubuffer);
++	if (ret)
++		return ret;
++
++	op = &luo_ioctl_ops[nr - LIVEUPDATE_CMD_BASE];
++	if (op->ioctl_num != cmd)
++		return -ENOIOCTLCMD;
++	if (ucmd.user_size < op->min_size)
++		return -EINVAL;
++
++	ucmd.cmd = &buf;
++	ret = copy_struct_from_user(ucmd.cmd, op->size, ucmd.ubuffer,
++				    ucmd.user_size);
++	if (ret)
++		return ret;
++
++	return op->execute(&ucmd);
++}
++
+ static const struct file_operations luo_fops = {
+ 	.owner		= THIS_MODULE,
++	.open		= luo_open,
++	.release	= luo_release,
++	.unlocked_ioctl	= luo_ioctl,
+ };
+ 
+ static struct luo_device_state luo_dev = {
+@@ -31,6 +231,7 @@ static struct luo_device_state luo_dev = {
+ 		.name  = "liveupdate",
+ 		.fops  = &luo_fops,
+ 	},
++	.in_use = ATOMIC_INIT(0),
+ };
+ 
+ static int __init liveupdate_init(void)
 -- 
 2.51.0.536.g15c5d4f767-goog
 
