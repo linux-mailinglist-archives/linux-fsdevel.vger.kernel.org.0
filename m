@@ -1,207 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-63008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4492FBA8B10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:41:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB14ABA8B2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728D33A77CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50ACE3B0496
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7892D663F;
-	Mon, 29 Sep 2025 09:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F0B2D6E5A;
+	Mon, 29 Sep 2025 09:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjdRWxta"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F3B2C15B4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 09:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E086C2C3250;
+	Mon, 29 Sep 2025 09:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138713; cv=none; b=smCLkdURzIPFzPbg6G1VBIsH3MLPSJ7jMMdROHF//EjNmwZDjN1r4qEcFDEqzqVG8ErY3U5uD2bY3yM1pveGV835FA8oYju6TgzX2np733/aOav3rpbRTGLvM/76f7EbItQuoUOF8SgwxzY+BGWj0CWYd8FQEVa5gIN3dhKWQEc=
+	t=1759138745; cv=none; b=LYpf8COBsB5qmx6M4i7ZMaDyd+lVNHJ0OzFCyZWVzenL8ClbVvwMZh410ywuXRJIghYbBbtHg9buuuWweNh5fZ3MsYpw32mfoT9lEGv0uCjeN/0rrvurgRfHY6DnxpyvBoRKgF+yz0jO1EpMwYeBXi0J6ExmbNHYD4MBHU8V80o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138713; c=relaxed/simple;
-	bh=o0IirqPLTD59VJ0fkv+jMuzLOTY7bT4uP9ThimL+zio=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tVn9Ul99Y7dj4brHqaiAAZZ0UqyRe3YVFzvbpbEPCfKD37EjCxwwWCK7/7vF6AzINlKzKRsTagIh6VUpzqYd3iaJO2Twvxi/n4QY/288Uv5OZf/EjZEMmLdaRmDo+HQKUuJEyZQ3meDPexgCGBHUdZy1QNYKDTrkZbT6sZ5KQsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-54aa6a0babeso3966714e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 02:38:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759138711; x=1759743511;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZZOWUVpIw61KHM85AdnPz6vomTChz2t/QIwYRGjaPM8=;
-        b=mfvlbT8P86ACY7SdV4LWW/x1XsN/Wfexu2Y0WfmUJAi3D1O2gzuyTeSzxxpZIqK2Cj
-         DGnEjpMHk2ZorEUKbopQWHkQhU/9zg9afLRdocFEAstra69QU9TyRrg6XYLH1SWgoa5a
-         ygPX6c3na9fCd/LEqZ7Fj9k/aeuvyOuDz+hwyWkDp1KGGHjCdokE4mylE+2SJjKI4+Fv
-         iA/HuZWb7/Sp20Sjn9akkjdfJffQiy215+eNoZMUYuUS/3Ol/YGrgxMG2SfNcfZv6fwm
-         oc3m8BDooktVdp4MDi72Z8DmIOdg8Zg0+WvkPeZZ1qZU2hJNW6SXHZSwL3rqSQg6abhE
-         D0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXohh4m+BySx09cJU9etkVc7aoScCHUhS+QAefvUekh6ij8JVSR/xd0aeoVnEK0+ONGkWxbawHxfs0yaA/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHFMIkELex8Nm1Kj6HNOEv2eudH+CZ3F7WJz+Jg6/D6SBWcmhc
-	h0IdqEFsw+cQhmYvr26XChQ0+KdKL/aPRbEzu5KVo4Dxhhc+jLlBGreGLnXfp59u
-X-Gm-Gg: ASbGncv0DBvd0dJcKZfTgrh21y87DWW5ozDznK4MgCpPK0PS3hs2VP4PBmt15FNvhh+
-	BfZSizRsIaddN9bxOP+Ek48mt45WUsNWL6hjuNhGmlTPWQJqSqBHnF9MMFvrYuWpuvjAMrAfSaQ
-	iK7rjRuL2NAWM+ia3+V5rbjOMDNJHGyqBcB5BmF7n9YvCBs1EupfuOYMxEiujC8hJD03wM0VKuF
-	XcmG5hBHK2xsvjqRocQUnBvV/DXPs90s3MRd7KWM1EY5k2QX+w2oN7sjzZRUBLfBC2yCF+CTezk
-	oZxd4OQLBWjwu1FegzaZtvwpQfa2bDpzb14PujT9H/ax+x2sK0Vc7wd2SCprJ0uW1oF4qL8qXpn
-	5wbfj339VLGLRtSPjBLy2oS1g5DSz8sajbHD0tkB2HU9iQWREs6GG0Cd/eu2vuSpRvCqvido=
-X-Google-Smtp-Source: AGHT+IExgcKeCUaNsmiQvfV0HUfplrSN3tSCOr0kNlOBJBSov8MTw/yfmd2ADyrVqogNVh/79sjprQ==
-X-Received: by 2002:a05:6122:2c31:b0:54a:8deb:21a7 with SMTP id 71dfb90a1353d-54c0c3d487bmr2164148e0c.4.1759138710555;
-        Mon, 29 Sep 2025 02:38:30 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54bed8a1775sm2179933e0c.8.2025.09.29.02.38.29
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 02:38:29 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-8eafd5a7a23so2360094241.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 02:38:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUoV2m7onfaYIAN/0moQl6rwrSjoyyPxa/tftOPtlJpl3dTb009cnzwpWJD2J1Zc6bL6X1KP1uGR1eg1flr@vger.kernel.org
-X-Received: by 2002:a05:6102:44da:10b0:5cd:e513:384d with SMTP id
- ada2fe7eead31-5cde51341ffmr109116137.0.1759138709242; Mon, 29 Sep 2025
- 02:38:29 -0700 (PDT)
+	s=arc-20240116; t=1759138745; c=relaxed/simple;
+	bh=oug/PLMLLW7/ZVdQh5G7ABppQ7HlQRSRolzg1A9Qm7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n1oqvBmLEKdqYyTW0ZJtfIII3lhRdsqRNN+uS4lI5fU2C8qRGIpqR8O6hr4//FJcI3ntVC4sDLPVgZr5tjhymQGetB5qbNlmIFUPyUPg4f4W41QQilCmOZ6NyVdXor5hC8obWcW2UnrbYf43k8TiCkCbAVjeTqyfqITGDZjcABA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjdRWxta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F0EC4CEF4;
+	Mon, 29 Sep 2025 09:39:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759138744;
+	bh=oug/PLMLLW7/ZVdQh5G7ABppQ7HlQRSRolzg1A9Qm7s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IjdRWxtaUXAOawilIoA5EK1zaNWzq8SuG/RGnayTEvvTw8zkBFRbc95h1U8UXOXtI
+	 o+ChdWCOB1cSxsYTmhEnF4EZvWega7fq9Q5hvzFnoW/4vjE2MrI4IG5yeRG/g18Kp8
+	 gvohG7Zo7gpwrczplAyjI1Bsbj7IcC2iEs/HHL3fNdJRECFzrJnxHGS85figtNoTTA
+	 G/sSMaqFdX1Ohy+mgONJzGFTPJ6Tj3xM+34a0qPEkFNl8UKzwfbwSK9qeMto4zgEj3
+	 57f/S1bg5BHZsmE1HoHkUD56LCkL2l6h69d5wjUgsMUnyn3fypZtpxRVJ1itvbpKr3
+	 HiGZLKyS/z25w==
+From: Christian Brauner <brauner@kernel.org>
+To: miklos@szeredi.hu,
+	Joanne Koong <joannelkoong@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	djwong@kernel.org,
+	hch@infradead.org,
+	linux-block@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com,
+	linux-xfs@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Gao Xiang <xiang@kernel.org>
+Subject: Re: [PATCH v5 00/14] fuse: use iomap for buffered reads + readahead
+Date: Mon, 29 Sep 2025 11:38:52 +0200
+Message-ID: <20250929-salzbergwerk-ungnade-8a16d724415e@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250926002609.1302233-1-joannelkoong@gmail.com>
+References: <20250926002609.1302233-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916163004.674341701@linutronix.de> <20250916163252.100835216@linutronix.de>
- <20250916184440.GA1245207@ax162> <87ikhi9lhg.ffs@tglx> <87frcm9kvv.ffs@tglx>
-In-Reply-To: <87frcm9kvv.ffs@tglx>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Sep 2025 11:38:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVvAQbN8g7TJyK2MCLusGPwDbzrQJHw8uxDhOvjAh7_Pw@mail.gmail.com>
-X-Gm-Features: AS18NWBdCAubwt71LwkVRoRA7LVpa5BFQK_dgundxdrnw5KTmaxVCF_m7ZP3vyo
-Message-ID: <CAMuHMdVvAQbN8g7TJyK2MCLusGPwDbzrQJHw8uxDhOvjAh7_Pw@mail.gmail.com>
-Subject: Re: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang <
- version 17
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3113; i=brauner@kernel.org; h=from:subject:message-id; bh=oug/PLMLLW7/ZVdQh5G7ABppQ7HlQRSRolzg1A9Qm7s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTcCt4U9G+2seCNkLbaHYktsafTZ5w7c6Oz0+SjoPRM9 4sH77rs7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIpjLDb/ZKb+HfvbbTPqW+ 7T4i9pm515tNlnXnxUVa0/f1bd5RNZvhn/WbmlifgLUasz7qfTzIrLqL8UR9ReulTOaO2bv3S8m +ZAcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
+On Thu, 25 Sep 2025 17:25:55 -0700, Joanne Koong wrote:
+> This series adds fuse iomap support for buffered reads and readahead.
+> This is needed so that granular uptodate tracking can be used in fuse when
+> large folios are enabled so that only the non-uptodate portions of the folio
+> need to be read in instead of having to read in the entire folio. It also is
+> needed in order to turn on large folios for servers that use the writeback
+> cache since otherwise there is a race condition that may lead to data
+> corruption if there is a partial write, then a read and the read happens
+> before the write has undergone writeback, since otherwise the folio will not
+> be marked uptodate from the partial write so the read will read in the entire
+> folio from disk, which will overwrite the partial write.
+> 
+> [...]
 
-On Wed, 17 Sept 2025 at 07:51, Thomas Gleixner <tglx@linutronix.de> wrote:
-> clang < 17 fails to use scope local labels with CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y:
->
->      {
->         __label__ local_lbl;
->         ...
->         unsafe_get_user(uval, uaddr, local_lbl);
->         ...
->         return 0;
->         local_lbl:
->                 return -EFAULT;
->      }
->
-> when two such scopes exist in the same function:
->
->   error: cannot jump from this asm goto statement to one of its possible targets
->
-> There are other failure scenarios. Shuffling code around slightly makes it
-> worse and fail even with one instance.
->
-> That issue prevents using local labels for a cleanup based user access
-> mechanism.
->
-> After failed attempts to provide a simple enough test case for the 'depends
-> on' test in Kconfig, the initial cure was to mark ASM goto broken on clang
-> versions < 17 to get this road block out of the way.
->
-> But Nathan pointed out that this is a known clang issue and indeed affects
-> clang < version 17 in combination with cleanup(). It's not even required to
-> use local labels for that.
->
-> The clang issue tracker has a small enough test case, which can be used as
-> a test in the 'depends on' section of CC_HAS_ASM_GOTO_OUTPUT:
->
-> void bar(void **);
-> void* baz();
->
-> int  foo (void) {
->     {
->             asm goto("jmp %l0"::::l0);
->             return 0;
-> l0:
->             return 1;
->     }
->     void *x __attribute__((cleanup(bar))) = baz();
->     {
->             asm goto("jmp %l0"::::l1);
->             return 42;
-> l1:
->             return 0xff;
->     }
-> }
->
-> Add another dependency to config CC_HAS_ASM_GOTO_OUTPUT for it and use the
-> clang issue tracker test case for detection by condensing it to obfuscated
-> C-code contest format. This reliably catches the problem on clang < 17 and
-> did not show any issues on the non known to be broken GCC versions.
->
-> That test might be sufficient to catch all issues and therefore could
-> replace the existing test, but keeping that around does no harm either.
->
-> Thanks to Nathan for pointing to the relevant clang issue!
->
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1886
-> Link: https://github.com/llvm/llvm-project/commit/f023f5cdb2e6c19026f04a15b5a935c041835d14
+Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
 
-Thanks for your patch, which is now commit e2ffa15b9baa447e ("kbuild:
-Disable CC_HAS_ASM_GOTO_OUTPUT on clang < 17") in v6.17.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -99,7 +99,10 @@ config GCC_ASM_GOTO_OUTPUT_BROKEN
->  config CC_HAS_ASM_GOTO_OUTPUT
->         def_bool y
->         depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
-> +       # Find basic issues
->         depends on $(success,echo 'int foo(int x) { asm goto ("": "=r"(x) ::: bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
-> +       # Detect buggy clang, fixed in clang-17
-> +       depends on $(success,echo 'void b(void **);void* c();int f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribute__((cleanup(b))) = c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}}' | $(CC) -x c - -c -o /dev/null)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-This is supposed to affect only clang builds, right?  I am using
-gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) to build for
-arm32/arm64/riscv, and thus have:
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-    CONFIG_CC_IS_GCC=y
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.iomap
 
-Still, this commit causes
-
-    CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y
-    CONFIG_CC_HAS_ASM_GOTO_TIED_OUTPUT=y
-
-to disappear from my configs? Is that expected?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[01/14] iomap: move bio read logic into helper function
+        https://git.kernel.org/vfs/vfs/c/4b1f54633425
+[02/14] iomap: move read/readahead bio submission logic into helper function
+        https://git.kernel.org/vfs/vfs/c/22159441469a
+[03/14] iomap: store read/readahead bio generically
+        https://git.kernel.org/vfs/vfs/c/7c732b99c04f
+[04/14] iomap: iterate over folio mapping in iomap_readpage_iter()
+        https://git.kernel.org/vfs/vfs/c/3b404627d3e2
+[05/14] iomap: rename iomap_readpage_iter() to iomap_read_folio_iter()
+        https://git.kernel.org/vfs/vfs/c/bf8b9f4ce6a9
+[06/14] iomap: rename iomap_readpage_ctx struct to iomap_read_folio_ctx
+        https://git.kernel.org/vfs/vfs/c/abea60c60330
+[07/14] iomap: track pending read bytes more optimally
+        https://git.kernel.org/vfs/vfs/c/13cc90f6c38e
+[08/14] iomap: set accurate iter->pos when reading folio ranges
+        https://git.kernel.org/vfs/vfs/c/63adb033604e
+[09/14] iomap: add caller-provided callbacks for read and readahead
+        https://git.kernel.org/vfs/vfs/c/56b6f5d3792b
+[10/14] iomap: move buffered io bio logic into new file
+        https://git.kernel.org/vfs/vfs/c/80cd9857c47f
+[11/14] iomap: make iomap_read_folio() a void return
+        https://git.kernel.org/vfs/vfs/c/434651f1a9b7
+[12/14] fuse: use iomap for read_folio
+        https://git.kernel.org/vfs/vfs/c/12cae30dc565
+[13/14] fuse: use iomap for readahead
+        https://git.kernel.org/vfs/vfs/c/0853f58ed0b4
+[14/14] fuse: remove fc->blkbits workaround for partial writes
+        https://git.kernel.org/vfs/vfs/c/bb944dc82db1
 
