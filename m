@@ -1,747 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-63026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11186BA8FFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 13:23:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D892BA91EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 13:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0B0E4E1809
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38280188BC94
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9B43002A1;
-	Mon, 29 Sep 2025 11:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851D430505E;
+	Mon, 29 Sep 2025 11:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KG5Igbka"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x7XE9PkW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wot1Z8VS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x7XE9PkW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wot1Z8VS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03E518FDAF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 11:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545FC301010
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 11:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759145025; cv=none; b=pKWr/G7sdjKiwOhrv1JXFbFlNlqvOUmlILYdBlHuJ1dnFMHu1GiqZkLMwOCC5XC/XOiRJDKSKb5pXera1Ddj8GqnXO+zZc0R8bggtYEVKQXyJBiJi8dQoZm9/Kx/wbClbRnDUO4EhCUzAvpT9BYUkjrVYqe0kgf0W1HyMDrGLHE=
+	t=1759146614; cv=none; b=ZRaeAL0Vot6B4y/02F3BfIwQOOi20NOM03vv0bzUOUUt7004VrhOjHrQo2MD8U6GT9/eaPNtC3aqTbj8Qm22hjnh1gH2qzcLYf6L5DAAQJYC8LbaCt4Tu+QBb60NGlqT90JHdNx81VYJ4LnrhuFeYkEdO6SmmcsXExf0m3UJ5xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759145025; c=relaxed/simple;
-	bh=ex4JcxZ8dh3HCFck01yfW4ZOuuc1Hhj5Y2lwDCnB1sY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CLP7rljx+2ZrCXuUVuT/dJT7b7goAI895So0ZxDa+HQBWFRoi18b7WbJxmMGhgP3xHelXphWEuYdU4xHFIla2E2b2FtsADkBQ2FTgv8WXVWg7/TwAafhbQcbmWKdsWFsohSFWMNfMDnLKXerZb7jSy6suFOSKTDZyPx9SpBqxrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KG5Igbka; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3c2db014easo284200866b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 04:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759145021; x=1759749821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nh3ywIwary6Vj2AudMRSeRIaft+tH6rG7ygMgMyuo7I=;
-        b=KG5IgbkaM30D9gRnne6itusJWXLC78DeGcdEaPpcWamN0s3x1kctcpMfv+JdTNqVIE
-         gmMOBMMtiEGzFPtraX5VoQ3Ej+wA1dZjOK446uQuTECcuGAr2XgU+Gp17cy91iX51H7I
-         7t4Fygpco0TcxdofyJ7mnHUM9h8fj8HWtJOkOSluNSGwdKd4PyL45R2MeoJuiSsRySeX
-         wS3KtfWA6EviiufHiSvJJPlSrLkY6PIU8+rY8XeZwWaLEpPdkJmSZUS2wUXH4yMIkNNb
-         B/A3OOPxrkigQ5XNBm1+AAPkqOkpcYmhXWZSN3XNlhfeWyk/qm2sAA9KCUrbB9YqLJ/n
-         HVIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759145021; x=1759749821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nh3ywIwary6Vj2AudMRSeRIaft+tH6rG7ygMgMyuo7I=;
-        b=PDtPSn91i/ZK+xXrNHOSTTC0IHAftQ/hVpuqXUU5ARpvhJ6xI6wRCjdTUkK5fvgZLk
-         PSWIcMlYyaarKhZyi2Y6YopqQeP7YS77vUsShyZYUGxL5hY3RrbkIz56HKCbNT074/ip
-         NTcj5RPER5XfWYO5WPHTW4hoFpW9RKen/rrCsCP90KaQjZa5Vs/uuveCgQrsMP0ge8Ae
-         IxljbHXtnwcjiCaOiVPdhjZDEzfaRzDX/zeO71s8VY3auiV+39GA8KTRMefwTJUV164w
-         R8lY6aqb7Ojhra5nu2U6aMNLQBq5Rd4Hel3fTC6ksZE+cCEFVEQIjL1Wp1LRIPjpqAq/
-         03iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyWv6Yc3T53XocGiMRx5h4nTOpAWQAu8TjGcHCvj4G+xzKfMjNNXa5DWHktoMONrPOCuP+S+nqD/rJtZyh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzaown2dxyxjC4f9zT+7tvbcY+lwS4zHSIXjRaamNfk/KF1sOdu
-	Rnprx2ktUN7lsvDAtb1VPgdOHcoQ2qhmNwiBQhiHZwBttuVAjZFRyaPO+RaOkTqIA3/4iSPKSWn
-	2wdJ1i3quVNw8yz5bGf2z/Tu7Y65TeII=
-X-Gm-Gg: ASbGncvStIfhkLogJDhWOTkrL5j8/f8aGfv+MdStVw0lBr1HdsAwrF/L3J5OJ4aNjcz
-	dKp5+INCNW+pL9cqnLcxhWeyKDkWHeFiRFALkO7sBFhn1NwNkASmgM1sk75QTBHX3LjmGhcJknY
-	ZXMDB/rj1mLUiYXcldut7ZDPMsZm+n3RNLRFOZ8LrenxUqZ+V2XNWk8wJqzHmFF863XhreUoHRG
-	68QmqAdv5Y7gk/eYDycSRCHfPaNe1TSsD8f9Q3KLEFJcyi6U00V
-X-Google-Smtp-Source: AGHT+IHI8OegT6dfJEfY+215vl7nSyCJvxOFncVxZ3aL7chwK1AiGcZKM3j4qIvLHh66LjecszKKJHXRubwgCngkzpk=
-X-Received: by 2002:a17:907:7f0f:b0:aff:16eb:8b09 with SMTP id
- a640c23a62f3a-b34b6449b22mr1536380866b.5.1759145020650; Mon, 29 Sep 2025
- 04:23:40 -0700 (PDT)
+	s=arc-20240116; t=1759146614; c=relaxed/simple;
+	bh=9j/gKWeBV8W7Xm1Kjn/LCWNqEr5BuINKb/yoKy/Ifx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpdQr4DxEYpTbo4VO51qvrg1buUzWmk//RrkEHoZVAX9E24TjwAsgMqqeXjh4Ucj4F+0qcxjWkTAeKPjg6BgIQGTyx9qnl73dCdWGGBey6jLAB/0cJ4q9W2rVawSUsD0PuQlKxN+TE1ZUOb5ef0vS9ZY68wPoh5G56yWjEEwOxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x7XE9PkW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wot1Z8VS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x7XE9PkW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wot1Z8VS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2361A31AF3;
+	Mon, 29 Sep 2025 11:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759146609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mhU1lqYXGXju5aeAWCfAkcmAEShO+lmEqPcT3URjaMo=;
+	b=x7XE9PkW9wQizwWe9LaNBRgqIZz17riSNCIn9Q9RnwOrAklEvW5ERjTJ9AuQSkibGT+l9d
+	psN9vSNirJxSyMtJe1YOL/9+WshUo7EmJB6v/s5i/tTppxHQdQ49drNU3fBbcsiw8bDAC2
+	UItS76CngkZDV5kZz4sQ8LscEl/J5RA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759146609;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mhU1lqYXGXju5aeAWCfAkcmAEShO+lmEqPcT3URjaMo=;
+	b=Wot1Z8VSPEtL8dVJWulj7w4q79zowLcGsJughLOgRdcw506Kveu5SNU1EWMps3R9hUb5pv
+	mrrmdGF39r+PurDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759146609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mhU1lqYXGXju5aeAWCfAkcmAEShO+lmEqPcT3URjaMo=;
+	b=x7XE9PkW9wQizwWe9LaNBRgqIZz17riSNCIn9Q9RnwOrAklEvW5ERjTJ9AuQSkibGT+l9d
+	psN9vSNirJxSyMtJe1YOL/9+WshUo7EmJB6v/s5i/tTppxHQdQ49drNU3fBbcsiw8bDAC2
+	UItS76CngkZDV5kZz4sQ8LscEl/J5RA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759146609;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mhU1lqYXGXju5aeAWCfAkcmAEShO+lmEqPcT3URjaMo=;
+	b=Wot1Z8VSPEtL8dVJWulj7w4q79zowLcGsJughLOgRdcw506Kveu5SNU1EWMps3R9hUb5pv
+	mrrmdGF39r+PurDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1035713A21;
+	Mon, 29 Sep 2025 11:50:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FnXuA3Fy2mjAdwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 29 Sep 2025 11:50:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B51B2A0A96; Mon, 29 Sep 2025 13:50:08 +0200 (CEST)
+Date: Mon, 29 Sep 2025 13:50:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Julian Sun <sunjunchao@bytedance.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-ext4@vger.kernel.org, ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	clm@fb.com, dsterba@suse.com, xiubli@redhat.com, idryomov@gmail.com, 
+	tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org, 
+	willy@infradead.org, jack@suse.cz, brauner@kernel.org, agruenba@redhat.com
+Subject: Re: [PATCH v2] fs: Make wbc_to_tag() inline and use it in fs.
+Message-ID: <77x7h6m5klki4pish2i3fhza26i6mhjw3cx66cpokg5kopthzk@7umq2wu7hyol>
+References: <20250929111349.448324-1-sunjunchao@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926025015.1747294-1-neilb@ownmail.net> <20250926025015.1747294-9-neilb@ownmail.net>
-In-Reply-To: <20250926025015.1747294-9-neilb@ownmail.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 29 Sep 2025 13:23:28 +0200
-X-Gm-Features: AS18NWAcqcWEep_RlcBjVwo6saLQA5rbnr1crT1W8hk9tgayk0tmHH8JbhogxLg
-Message-ID: <CAOQ4uxh+NcAv9v6NtVRrLCMYbpd0ajtvsd6c9-W2a7+vur0UJQ@mail.gmail.com>
-Subject: Re: [PATCH 08/11] VFS/nfsd/ovl: introduce start_renaming() and end_renaming()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929111349.448324-1-sunjunchao@bytedance.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.sourceforge.net,fb.com,suse.com,redhat.com,gmail.com,mit.edu,dilger.ca,kernel.org,infradead.org,suse.cz];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Fri, Sep 26, 2025 at 4:51=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote=
-:
->
-> From: NeilBrown <neil@brown.name>
->
-> start_renaming() combines name lookup and locking to prepare for rename.
-> It is used when two names need to be looked up as in nfsd and overlayfs -
-> cases where one or both dentrys are already available will be handled
-> separately.
->
-> __start_renaming() avoids the inode_permission check and hash
-> calculation and is suitable after filename_parentat() in do_renameat2().
-> It subsumes quite a bit of code from that function.
->
-> start_renaming() does calculate the hash and check X permission and is
-> suitable elsewhere:
-> - nfsd_rename()
-> - ovl_rename()
->
-> Signed-off-by: NeilBrown <neil@brown.name>
+On Mon 29-09-25 19:13:49, Julian Sun wrote:
+> The logic in wbc_to_tag() is widely used in file systems, so modify this
+> function to be inline and use it in file systems.
+> 
+> This patch has only passed compilation tests, but it should be fine.
+> 
+> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  fs/namei.c               | 197 ++++++++++++++++++++++++++++-----------
->  fs/nfsd/vfs.c            |  73 +++++----------
->  fs/overlayfs/dir.c       |  72 ++++++--------
->  fs/overlayfs/overlayfs.h |  14 +++
->  include/linux/namei.h    |   3 +
->  5 files changed, 214 insertions(+), 145 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index f5c96f801b74..79a8b3b47e4d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3684,6 +3684,129 @@ void unlock_rename(struct dentry *p1, struct dent=
-ry *p2)
->  }
->  EXPORT_SYMBOL(unlock_rename);
->
-> +/**
-> + * __start_renaming - lookup and lock names for rename
-> + * @rd:           rename data containing parent and flags, and
-> + *                for receiving found dentries
-> + * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
-> + *                LOOKUP_NO_SYMLINKS etc).
-> + * @old_last:     name of object in @rd.old_parent
-> + * @new_last:     name of object in @rd.new_parent
-> + *
-> + * Look up two names and ensure locks are in place for
-> + * rename.
-> + *
-> + * On success the found dentrys are stored in @rd.old_dentry,
-
-Any reason for this odd spelling of dentries?
-
-> + * @rd.new_dentry.  These references and the lock are dropped by
-> + * end_renaming().
-> + *
-> + * The passed in qstrs must have the hash calculated, and no permission
-> + * checking is performed.
-> + *
-> + * Returns: zero or an error.
-> + */
-> +static int
-> +__start_renaming(struct renamedata *rd, int lookup_flags,
-> +                struct qstr *old_last, struct qstr *new_last)
-> +{
-> +       struct dentry *trap;
-> +       struct dentry *d1, *d2;
-> +       int target_flags =3D LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
-> +       int err;
-> +
-> +       if (rd->flags & RENAME_EXCHANGE)
-> +               target_flags =3D 0;
-> +       if (rd->flags & RENAME_NOREPLACE)
-> +               target_flags |=3D LOOKUP_EXCL;
-> +
-> +       trap =3D lock_rename(rd->old_parent, rd->new_parent);
-> +       if (IS_ERR(trap))
-> +               return PTR_ERR(trap);
-> +
-> +       d1 =3D lookup_one_qstr_excl(old_last, rd->old_parent,
-> +                                 lookup_flags);
-err =3D IS_ERR(d1);
-> +       if (IS_ERR(d1))
-> +               goto out_unlock_1;
-> +
-> +       d2 =3D lookup_one_qstr_excl(new_last, rd->new_parent,
-> +                                 lookup_flags | target_flags);
-err =3D IS_ERR(d2);
-> +       if (IS_ERR(d2))
-> +               goto out_unlock_2;
-> +
-> +       if (d1 =3D=3D trap) {
-> +               /* source is an ancestor of target */
-> +               err =3D -EINVAL;
-> +               goto out_unlock_3;
-> +       }
-> +
-> +       if (d2 =3D=3D trap) {
-> +               /* target is an ancestor of source */
-> +               if (rd->flags & RENAME_EXCHANGE)
-> +                       err =3D -EINVAL;
-> +               else
-> +                       err =3D -ENOTEMPTY;
-> +               goto out_unlock_3;
-> +       }
-> +
-> +       rd->old_dentry =3D d1;
-> +       rd->new_dentry =3D d2;
-> +       return 0;
-> +
-
-I'd rather avoid meaningless label names.
-
-> +out_unlock_3:
-out_dput_d2:
-> +       dput(d2);
-> +       d2 =3D ERR_PTR(err);
-
-This is not pretty IMO, much cleaner to assign err before goto
-
-> +out_unlock_2:
-out_dput_d1:
-> +       dput(d1);
-> +       d1 =3D d2;
-
-This is not pretty IMO, much cleaner to assign err before goto
-
-> +out_unlock_1:
-out_unlock:
-> +       unlock_rename(rd->old_parent, rd->new_parent);
-> +       return PTR_ERR(d1);
-
-return err;
-> +}
-> +
-> +/**
-> + * start_renaming - lookup and lock names for rename with permission che=
-cking
-> + * @rd:           rename data containing parent and flags, and
-> + *                for receiving found dentries
-> + * @lookup_flags: extra flags to pass to ->lookup (e.g. LOOKUP_REVAL,
-> + *                LOOKUP_NO_SYMLINKS etc).
-> + * @old_last:     name of object in @rd.old_parent
-> + * @new_last:     name of object in @rd.new_parent
-> + *
-> + * Look up two names and ensure locks are in place for
-> + * rename.
-> + *
-> + * On success the found dentrys are stored in @rd.old_dentry,
-> + * @rd.new_dentry.  These references and the lock are dropped by
-> + * end_renaming().
-> + *
-> + * The passed in qstrs need not have the hash calculated, and basic
-> + * eXecute permission checking is performed against @rd.mnt_idmap.
-> + *
-> + * Returns: zero or an error.
-> + */
-> +int start_renaming(struct renamedata *rd, int lookup_flags,
-> +                  struct qstr *old_last, struct qstr *new_last)
-> +{
-> +       int err;
-> +
-> +       err =3D lookup_one_common(rd->mnt_idmap, old_last, rd->old_parent=
-);
-> +       if (err)
-> +               return err;
-> +       err =3D lookup_one_common(rd->mnt_idmap, new_last, rd->new_parent=
-);
-> +       if (err)
-> +               return err;
-> +       return __start_renaming(rd, lookup_flags, old_last, new_last);
-> +}
-> +EXPORT_SYMBOL(start_renaming);
-> +
-> +void end_renaming(struct renamedata *rd)
-> +{
-> +       unlock_rename(rd->old_parent, rd->new_parent);
-> +       dput(rd->old_dentry);
-> +       dput(rd->new_dentry);
-> +}
-> +EXPORT_SYMBOL(end_renaming);
-> +
->  /**
->   * vfs_prepare_mode - prepare the mode to be used for a new inode
->   * @idmap:     idmap of the mount the inode was found from
-> @@ -5509,14 +5632,11 @@ int do_renameat2(int olddfd, struct filename *fro=
-m, int newdfd,
->                  struct filename *to, unsigned int flags)
->  {
->         struct renamedata rd;
-> -       struct dentry *old_dentry, *new_dentry;
-> -       struct dentry *trap;
->         struct path old_path, new_path;
->         struct qstr old_last, new_last;
->         int old_type, new_type;
->         struct inode *delegated_inode =3D NULL;
-> -       unsigned int lookup_flags =3D 0, target_flags =3D
-> -               LOOKUP_RENAME_TARGET | LOOKUP_CREATE;
-> +       unsigned int lookup_flags =3D 0;
->         bool should_retry =3D false;
->         int error =3D -EINVAL;
->
-> @@ -5527,11 +5647,6 @@ int do_renameat2(int olddfd, struct filename *from=
-, int newdfd,
->             (flags & RENAME_EXCHANGE))
->                 goto put_names;
->
-> -       if (flags & RENAME_EXCHANGE)
-> -               target_flags =3D 0;
-> -       if (flags & RENAME_NOREPLACE)
-> -               target_flags |=3D LOOKUP_EXCL;
-> -
+>  fs/btrfs/extent_io.c      | 5 +----
+>  fs/ceph/addr.c            | 6 +-----
+>  fs/ext4/inode.c           | 5 +----
+>  fs/f2fs/data.c            | 5 +----
+>  fs/gfs2/aops.c            | 5 +----
+>  include/linux/writeback.h | 7 +++++++
+>  mm/page-writeback.c       | 6 ------
+>  7 files changed, 12 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index b21cb72835cc..0fea58287175 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -2390,10 +2390,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
+>  			       &BTRFS_I(inode)->runtime_flags))
+>  		wbc->tagged_writepages = 1;
+>  
+> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> -		tag = PAGECACHE_TAG_TOWRITE;
+> -	else
+> -		tag = PAGECACHE_TAG_DIRTY;
+> +	tag = wbc_to_tag(wbc);
 >  retry:
->         error =3D filename_parentat(olddfd, from, lookup_flags, &old_path=
-,
->                                   &old_last, &old_type);
-> @@ -5561,66 +5676,40 @@ int do_renameat2(int olddfd, struct filename *fro=
-m, int newdfd,
->                 goto exit2;
->
->  retry_deleg:
-> -       trap =3D lock_rename(new_path.dentry, old_path.dentry);
-> -       if (IS_ERR(trap)) {
-> -               error =3D PTR_ERR(trap);
-> +       rd.old_parent      =3D old_path.dentry;
-> +       rd.mnt_idmap       =3D mnt_idmap(old_path.mnt);
-> +       rd.new_parent      =3D new_path.dentry;
-> +       rd.delegated_inode =3D &delegated_inode;
-> +       rd.flags           =3D flags;
-> +
-> +       error =3D __start_renaming(&rd, lookup_flags, &old_last, &new_las=
-t);
-> +       if (error)
->                 goto exit_lock_rename;
-> -       }
->
-> -       old_dentry =3D lookup_one_qstr_excl(&old_last, old_path.dentry,
-> -                                         lookup_flags);
-> -       error =3D PTR_ERR(old_dentry);
-> -       if (IS_ERR(old_dentry))
-> -               goto exit3;
-> -       new_dentry =3D lookup_one_qstr_excl(&new_last, new_path.dentry,
-> -                                         lookup_flags | target_flags);
-> -       error =3D PTR_ERR(new_dentry);
-> -       if (IS_ERR(new_dentry))
-> -               goto exit4;
->         if (flags & RENAME_EXCHANGE) {
-> -               if (!d_is_dir(new_dentry)) {
-> +               if (!d_is_dir(rd.new_dentry)) {
->                         error =3D -ENOTDIR;
->                         if (new_last.name[new_last.len])
-> -                               goto exit5;
-> +                               goto exit_unlock;
->                 }
->         }
->         /* unless the source is a directory trailing slashes give -ENOTDI=
-R */
-> -       if (!d_is_dir(old_dentry)) {
-> +       if (!d_is_dir(rd.old_dentry)) {
->                 error =3D -ENOTDIR;
->                 if (old_last.name[old_last.len])
-> -                       goto exit5;
-> +                       goto exit_unlock;
->                 if (!(flags & RENAME_EXCHANGE) && new_last.name[new_last.=
-len])
-> -                       goto exit5;
-> -       }
-> -       /* source should not be ancestor of target */
-> -       error =3D -EINVAL;
-> -       if (old_dentry =3D=3D trap)
-> -               goto exit5;
-> -       /* target should not be an ancestor of source */
-> -       if (!(flags & RENAME_EXCHANGE))
-> -               error =3D -ENOTEMPTY;
-> -       if (new_dentry =3D=3D trap)
-> -               goto exit5;
-> +                       goto exit_unlock;
-> +       }
->
-> -       error =3D security_path_rename(&old_path, old_dentry,
-> -                                    &new_path, new_dentry, flags);
-> +       error =3D security_path_rename(&old_path, rd.old_dentry,
-> +                                    &new_path, rd.new_dentry, flags);
->         if (error)
-> -               goto exit5;
-> +               goto exit_unlock;
->
-> -       rd.old_parent      =3D old_path.dentry;
-> -       rd.old_dentry      =3D old_dentry;
-> -       rd.mnt_idmap       =3D mnt_idmap(old_path.mnt);
-> -       rd.new_parent      =3D new_path.dentry;
-> -       rd.new_dentry      =3D new_dentry;
-> -       rd.delegated_inode =3D &delegated_inode;
-> -       rd.flags           =3D flags;
->         error =3D vfs_rename(&rd);
-> -exit5:
-> -       dput(new_dentry);
-> -exit4:
-> -       dput(old_dentry);
-> -exit3:
-> -       unlock_rename(new_path.dentry, old_path.dentry);
-> +exit_unlock:
-> +       end_renaming(&rd);
->  exit_lock_rename:
->         if (delegated_inode) {
->                 error =3D break_deleg_wait(&delegated_inode);
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index d5b4550fd8f6..091112d931f9 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1862,11 +1862,12 @@ __be32
->  nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, in=
-t flen,
->                             struct svc_fh *tfhp, char *tname, int tlen)
->  {
-> -       struct dentry   *fdentry, *tdentry, *odentry, *ndentry, *trap;
-> +       struct dentry   *fdentry, *tdentry;
->         int             type =3D S_IFDIR;
-> +       struct renamedata rd =3D {};
->         __be32          err;
->         int             host_err;
-> -       bool            close_cached =3D false;
-> +       struct dentry   *close_cached;
->
->         trace_nfsd_vfs_rename(rqstp, ffhp, tfhp, fname, flen, tname, tlen=
-);
->
-> @@ -1892,15 +1893,22 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh=
- *ffhp, char *fname, int flen,
->                 goto out;
->
+>  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+>  		tag_pages_for_writeback(mapping, index, end);
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 322ed268f14a..63b75d214210 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1045,11 +1045,7 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
+>  	ceph_wbc->index = ceph_wbc->start_index;
+>  	ceph_wbc->end = -1;
+>  
+> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages) {
+> -		ceph_wbc->tag = PAGECACHE_TAG_TOWRITE;
+> -	} else {
+> -		ceph_wbc->tag = PAGECACHE_TAG_DIRTY;
+> -	}
+> +	ceph_wbc->tag = wbc_to_tag(wbc);
+>  
+>  	ceph_wbc->op_idx = -1;
+>  	ceph_wbc->num_ops = 0;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..196eba7fa39c 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -2619,10 +2619,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+>  	handle_t *handle = NULL;
+>  	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
+>  
+> -	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
+> -		tag = PAGECACHE_TAG_TOWRITE;
+> -	else
+> -		tag = PAGECACHE_TAG_DIRTY;
+> +	tag = wbc_to_tag(mpd->wbc);
+>  
+>  	mpd->map.m_len = 0;
+>  	mpd->next_pos = mpd->start_pos;
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7961e0ddfca3..101e962845db 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3003,10 +3003,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>  		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
+>  			range_whole = 1;
+>  	}
+> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> -		tag = PAGECACHE_TAG_TOWRITE;
+> -	else
+> -		tag = PAGECACHE_TAG_DIRTY;
+> +	tag = wbc_to_tag(wbc);
 >  retry:
-> +       close_cached =3D NULL;
->         host_err =3D fh_want_write(ffhp);
->         if (host_err) {
->                 err =3D nfserrno(host_err);
->                 goto out;
->         }
->
-> -       trap =3D lock_rename(tdentry, fdentry);
-> -       if (IS_ERR(trap)) {
-> -               err =3D nfserr_xdev;
-> +       rd.mnt_idmap    =3D &nop_mnt_idmap;
-> +       rd.old_parent   =3D fdentry;
-> +       rd.new_parent   =3D tdentry;
-> +
-> +       host_err =3D start_renaming(&rd, 0, &QSTR_LEN(fname, flen),
-> +                                 &QSTR_LEN(tname, tlen));
-> +
-> +       if (host_err) {
-> +               err =3D nfserrno(host_err);
->                 goto out_want_write;
->         }
->         err =3D fh_fill_pre_attrs(ffhp);
-> @@ -1910,48 +1918,23 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh=
- *ffhp, char *fname, int flen,
->         if (err !=3D nfs_ok)
->                 goto out_unlock;
->
-> -       odentry =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(fname, flen), fd=
-entry);
-> -       host_err =3D PTR_ERR(odentry);
-> -       if (IS_ERR(odentry))
-> -               goto out_nfserr;
-> +       type =3D d_inode(rd.old_dentry)->i_mode & S_IFMT;
-> +
-> +       if (d_inode(rd.new_dentry))
-> +               type =3D d_inode(rd.new_dentry)->i_mode & S_IFMT;
->
-> -       host_err =3D -ENOENT;
-> -       if (d_really_is_negative(odentry))
-> -               goto out_dput_old;
-> -       host_err =3D -EINVAL;
-> -       if (odentry =3D=3D trap)
-> -               goto out_dput_old;
-> -       type =3D d_inode(odentry)->i_mode & S_IFMT;
-> -
-> -       ndentry =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(tname, tlen), td=
-entry);
-> -       host_err =3D PTR_ERR(ndentry);
-> -       if (IS_ERR(ndentry))
-> -               goto out_dput_old;
-> -       if (d_inode(ndentry))
-> -               type =3D d_inode(ndentry)->i_mode & S_IFMT;
-> -       host_err =3D -ENOTEMPTY;
-> -       if (ndentry =3D=3D trap)
-> -               goto out_dput_new;
-> -
-> -       if ((ndentry->d_sb->s_export_op->flags & EXPORT_OP_CLOSE_BEFORE_U=
-NLINK) &&
-> -           nfsd_has_cached_files(ndentry)) {
-> -               close_cached =3D true;
-> -               goto out_dput_old;
-> +       if ((rd.new_dentry->d_sb->s_export_op->flags & EXPORT_OP_CLOSE_BE=
-FORE_UNLINK) &&
-> +           nfsd_has_cached_files(rd.new_dentry)) {
-> +               close_cached =3D dget(rd.new_dentry);
-> +               goto out_unlock;
->         } else {
-> -               struct renamedata rd =3D {
-> -                       .mnt_idmap      =3D &nop_mnt_idmap,
-> -                       .old_parent     =3D fdentry,
-> -                       .old_dentry     =3D odentry,
-> -                       .new_parent     =3D tdentry,
-> -                       .new_dentry     =3D ndentry,
-> -               };
->                 int retries;
->
->                 for (retries =3D 1;;) {
->                         host_err =3D vfs_rename(&rd);
->                         if (host_err !=3D -EAGAIN || !retries--)
->                                 break;
-> -                       if (!nfsd_wait_for_delegreturn(rqstp, d_inode(ode=
-ntry)))
-> +                       if (!nfsd_wait_for_delegreturn(rqstp, d_inode(rd.=
-old_dentry)))
->                                 break;
->                 }
->                 if (!host_err) {
-> @@ -1960,11 +1943,6 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh =
-*ffhp, char *fname, int flen,
->                                 host_err =3D commit_metadata(ffhp);
->                 }
->         }
-> - out_dput_new:
-> -       dput(ndentry);
-> - out_dput_old:
-> -       dput(odentry);
-> - out_nfserr:
->         if (host_err =3D=3D -EBUSY) {
->                 /*
->                  * See RFC 8881 Section 18.26.4 para 1-3: NFSv4 RENAME
-> @@ -1983,7 +1961,7 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *=
-ffhp, char *fname, int flen,
->                 fh_fill_post_attrs(tfhp);
->         }
->  out_unlock:
-> -       unlock_rename(tdentry, fdentry);
-> +       end_renaming(&rd);
->  out_want_write:
->         fh_drop_write(ffhp);
->
-> @@ -1994,9 +1972,8 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *=
-ffhp, char *fname, int flen,
->          * until this point and then reattempt the whole shebang.
->          */
->         if (close_cached) {
-> -               close_cached =3D false;
-> -               nfsd_close_cached_files(ndentry);
-> -               dput(ndentry);
-> +               nfsd_close_cached_files(close_cached);
-> +               dput(close_cached);
->                 goto retry;
->         }
->  out:
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 74b1ef5860a4..b37aefe465a2 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -1099,9 +1099,7 @@ static int ovl_rename(struct mnt_idmap *idmap, stru=
-ct inode *olddir,
->         int err;
->         struct dentry *old_upperdir;
->         struct dentry *new_upperdir;
-> -       struct dentry *olddentry =3D NULL;
-> -       struct dentry *newdentry =3D NULL;
-> -       struct dentry *trap, *de;
-> +       struct renamedata rd =3D {};
->         bool old_opaque;
->         bool new_opaque;
->         bool cleanup_whiteout =3D false;
-> @@ -1208,29 +1206,21 @@ static int ovl_rename(struct mnt_idmap *idmap, st=
-ruct inode *olddir,
->                 }
->         }
->
-> -       trap =3D lock_rename(new_upperdir, old_upperdir);
-> -       if (IS_ERR(trap)) {
-> -               err =3D PTR_ERR(trap);
-> -               goto out_revert_creds;
-> -       }
-> +       rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
-> +       rd.old_parent =3D old_upperdir;
-> +       rd.new_parent =3D new_upperdir;
-> +       rd.flags =3D flags;
->
-> -       de =3D ovl_lookup_upper(ofs, old->d_name.name, old_upperdir,
-> -                             old->d_name.len);
-> -       err =3D PTR_ERR(de);
-> -       if (IS_ERR(de))
-> -               goto out_unlock;
-> -       olddentry =3D de;
-> +       err =3D start_renaming(&rd, 0,
-> +                            &QSTR_LEN(old->d_name.name, old->d_name.len)=
-,
-> +                            &QSTR_LEN(new->d_name.name, new->d_name.len)=
-);
->
-> -       err =3D -ESTALE;
-> -       if (!ovl_matches_upper(old, olddentry))
-> -               goto out_unlock;
-> +       if (err)
-> +               goto out_revert_creds;
->
-> -       de =3D ovl_lookup_upper(ofs, new->d_name.name, new_upperdir,
-> -                             new->d_name.len);
-> -       err =3D PTR_ERR(de);
-> -       if (IS_ERR(de))
-> +       err =3D -ESTALE;
-> +       if (!ovl_matches_upper(old, rd.old_dentry))
->                 goto out_unlock;
-> -       newdentry =3D de;
->
->         old_opaque =3D ovl_dentry_is_opaque(old);
->         new_opaque =3D ovl_dentry_is_opaque(new);
-> @@ -1238,15 +1228,15 @@ static int ovl_rename(struct mnt_idmap *idmap, st=
-ruct inode *olddir,
->         err =3D -ESTALE;
->         if (d_inode(new) && ovl_dentry_upper(new)) {
->                 if (opaquedir) {
-> -                       if (newdentry !=3D opaquedir)
-> +                       if (rd.new_dentry !=3D opaquedir)
->                                 goto out_unlock;
->                 } else {
-> -                       if (!ovl_matches_upper(new, newdentry))
-> +                       if (!ovl_matches_upper(new, rd.new_dentry))
->                                 goto out_unlock;
->                 }
->         } else {
-> -               if (!d_is_negative(newdentry)) {
-> -                       if (!new_opaque || !ovl_upper_is_whiteout(ofs, ne=
-wdentry))
-> +               if (!d_is_negative(rd.new_dentry)) {
-> +                       if (!new_opaque || !ovl_upper_is_whiteout(ofs, rd=
-.new_dentry))
->                                 goto out_unlock;
->                 } else {
->                         if (flags & RENAME_EXCHANGE)
-> @@ -1254,19 +1244,14 @@ static int ovl_rename(struct mnt_idmap *idmap, st=
-ruct inode *olddir,
->                 }
->         }
->
-> -       if (olddentry =3D=3D trap)
-> -               goto out_unlock;
-> -       if (newdentry =3D=3D trap)
-> -               goto out_unlock;
-> -
-> -       if (olddentry->d_inode =3D=3D newdentry->d_inode)
-> +       if (rd.old_dentry->d_inode =3D=3D rd.new_dentry->d_inode)
->                 goto out_unlock;
->
->         err =3D 0;
->         if (ovl_type_merge_or_lower(old))
->                 err =3D ovl_set_redirect(old, samedir);
->         else if (is_dir && !old_opaque && ovl_type_merge(new->d_parent))
-> -               err =3D ovl_set_opaque_xerr(old, olddentry, -EXDEV);
-> +               err =3D ovl_set_opaque_xerr(old, rd.old_dentry, -EXDEV);
->         if (err)
->                 goto out_unlock;
->
-> @@ -1274,19 +1259,22 @@ static int ovl_rename(struct mnt_idmap *idmap, st=
-ruct inode *olddir,
->                 err =3D ovl_set_redirect(new, samedir);
->         else if (!overwrite && new_is_dir && !new_opaque &&
->                  ovl_type_merge(old->d_parent))
-> -               err =3D ovl_set_opaque_xerr(new, newdentry, -EXDEV);
-> +               err =3D ovl_set_opaque_xerr(new, rd.new_dentry, -EXDEV);
->         if (err)
->                 goto out_unlock;
->
-> -       err =3D ovl_do_rename(ofs, old_upperdir, olddentry,
-> -                           new_upperdir, newdentry, flags);
-> -       unlock_rename(new_upperdir, old_upperdir);
-> +       err =3D ovl_do_rename_rd(&rd);
-> +
-> +       dget(rd.new_dentry);
-> +       end_renaming(&rd);
-> +
-> +       if (!err && cleanup_whiteout) {
-> +               ovl_cleanup(ofs, old_upperdir, rd.new_dentry);
-> +       }
-> +       dput(rd.new_dentry);
-
-I would restructure this for better clarity:
-
-        if (!err && cleanup_whiteout)
-                whiteout =3D dget(rd.new_dentry);
-        end_renaming(&rd);
-
-        if (err)
-                goto out_revert_creds;
-
-        if (whiteout) {
-                ovl_cleanup(ofs, old_upperdir, whiteout);
-                dput(whiteout);
-        }
-
->         if (err)
->                 goto out_revert_creds;
->
-> -       if (cleanup_whiteout)
-> -               ovl_cleanup(ofs, old_upperdir, newdentry);
-> -
->         if (overwrite && d_inode(new)) {
->                 if (new_is_dir)
->                         clear_nlink(d_inode(new));
-> @@ -1311,14 +1299,12 @@ static int ovl_rename(struct mnt_idmap *idmap, st=
-ruct inode *olddir,
->         else
->                 ovl_drop_write(old);
->  out:
-> -       dput(newdentry);
-> -       dput(olddentry);
->         dput(opaquedir);
->         ovl_cache_free(&list);
->         return err;
->
->  out_unlock:
-> -       unlock_rename(new_upperdir, old_upperdir);
-> +       end_renaming(&rd);
->         goto out_revert_creds;
+>  	retry = 0;
+>  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+> index 47d74afd63ac..12394fc5dd29 100644
+> --- a/fs/gfs2/aops.c
+> +++ b/fs/gfs2/aops.c
+> @@ -311,10 +311,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>  			range_whole = 1;
+>  		cycled = 1; /* ignore range_cyclic tests */
+>  	}
+> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> -		tag = PAGECACHE_TAG_TOWRITE;
+> -	else
+> -		tag = PAGECACHE_TAG_DIRTY;
+> +	tag = wbc_to_tag(wbc);
+>  
+>  retry:
+>  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index a2848d731a46..dde77d13a200 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -240,6 +240,13 @@ static inline void inode_detach_wb(struct inode *inode)
+>  	}
 >  }
->
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 915af58459b7..181fc46195f2 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -378,6 +378,20 @@ static inline int ovl_do_rename(struct ovl_fs *ofs, =
-struct dentry *olddir,
->         return err;
->  }
->
-> +static inline int ovl_do_rename_rd(struct renamedata *rd)
+>  
+> +static inline xa_mark_t wbc_to_tag(struct writeback_control *wbc)
 > +{
-> +       int err;
-> +
-> +       pr_debug("rename(%pd2, %pd2, 0x%x)\n", rd->old_dentry, rd->new_de=
-ntry,
-> +                rd->flags);
-> +       err =3D vfs_rename(rd);
-> +       if (err) {
-> +               pr_debug("...rename(%pd2, %pd2, ...) =3D %i\n",
-> +                        rd->old_dentry, rd->new_dentry, err);
-> +       }
-> +       return err;
+> +	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> +		return PAGECACHE_TAG_TOWRITE;
+> +	return PAGECACHE_TAG_DIRTY;
 > +}
 > +
-
-This was factored out of ovl_do_rename().
-Please avoid duplication and call this from ovl_do_rename().
-Even if you are going to remove ovl_do_rename() which has no callers
-at the end of your series still, please avoid copying this code mid series.
-
-Thanks,
-Amir.
+>  void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
+>  		struct inode *inode);
+>  
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 3e248d1c3969..ae1181a46dea 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2434,12 +2434,6 @@ static bool folio_prepare_writeback(struct address_space *mapping,
+>  	return true;
+>  }
+>  
+> -static xa_mark_t wbc_to_tag(struct writeback_control *wbc)
+> -{
+> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+> -		return PAGECACHE_TAG_TOWRITE;
+> -	return PAGECACHE_TAG_DIRTY;
+> -}
+>  
+>  static pgoff_t wbc_end(struct writeback_control *wbc)
+>  {
+> -- 
+> 2.39.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
