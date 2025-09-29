@@ -1,149 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-63023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A084DBA8F84
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 13:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82183BA8FD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 13:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C1C16B883
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC551C1600
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3B2FF664;
-	Mon, 29 Sep 2025 11:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YpGC4Dnb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932402FF679;
+	Mon, 29 Sep 2025 11:16:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB6C2EF671
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 11:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1ED1373
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 11:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759144104; cv=none; b=lq9DbOpsyPpPqhjHH4rsdkryO3uvEsNlrnB5grRojxojZM3lnv1ploR/54makc7EwvCswhkGSeakMTbI/2XfHCexV4fwF5UwlVctyLqel0uHBOpiRnUF1740WrqhSyuGwEC2jdkpDnsBEG2Fnl+PGGuzaT/Qgv88J4Iz4PxaQjE=
+	t=1759144590; cv=none; b=PXmA5PKydN4/xvO+4h4EuJpz9W2aEw55wlXV6Qcm9LJW4fxG0r2H0ojk0sMAwW3NLAA5W1Q8xX5NLhskvtLetD058AvAlOGDXY5fjMs5nHcSYsZJ6a/JAaa7BWOS+a4NdSYprwUFHX1I0r4bhAKSGsqKbZxgoWVmK/n2fBeECCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759144104; c=relaxed/simple;
-	bh=dBr0+uM+oBGc7F4T5g3s46PYXfGGAx7fz9yGZkSl77o=;
+	s=arc-20240116; t=1759144590; c=relaxed/simple;
+	bh=Vub8S/uaeeP/i/sARgDCmpVy3EEPQtjFb9sPbB8ndsI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/I2Qs9yVFJnywBpM6v3zPtBhDWv3mwu5hXFavQFeNxKtPXFM97NPyLt4iF6I1IthkLD/eTY+IeQ3nWqM4a9SuEwGL281pWL82lUqmXv6Z0Eu5RutKPl7h5RBpc4V/X2DVMdmfqyANQLbcCYuxp0KzZJlzkEk4ZMc8NSH30AoHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YpGC4Dnb; arc=none smtp.client-ip=74.125.224.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-6089a139396so4710204d50.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 04:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759144101; x=1759748901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZHdk9n/dbsdHiY2GbqkVoyMnPe37kuuY1TZLcqs/Bm8=;
-        b=YpGC4DnbqYb38jMn3heev8BEMBmahwQCpFO7z24o8ADeZkf77cgrNpX6G23Em0tRT7
-         kkW4hLy/m/EywJv/b8K8ueFF3GzhwCbgt5EokbcQYd6fCC9yfu62Wx+scNwmiB026GFv
-         mbRHkBZm1+Stt5vZtO7FbRXTSXS9NR0g95+1buhnl7YrHdtNgy1S50furpl4dX5M3nd9
-         4iWhXR6Jorrri8FcUdChZbOkDXkYySopnJvvIemB4O8w0nd6mKpoqrJPgqoBs0UJnpwL
-         JfpIabfj1foNDpdZIkkVSw6mrz4cJKf2u7bRxY5bxr7q7bXmXT7SiZabDDhiy2NZjoG8
-         4QVA==
+	 To:Cc:Content-Type; b=RXBU34VTZttcSwsAU96FVzxLi4B4LdLLOZxuli5TwNhFsd8aoJHLR5NwsRj0x+ylgZXOTX5Jh+vJ//BYsd73U+Fc4LHtGCwg5B4bDNCeF2ZbrzCLbDqlC4YN0YTmnoQo98l0hAvkZCvqMIJaTmJGMn8i6Bi8zSNZTFYhnNRLpqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-36af61f2946so2640455fac.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 04:16:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759144101; x=1759748901;
+        d=1e100.net; s=20230601; t=1759144587; x=1759749387;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZHdk9n/dbsdHiY2GbqkVoyMnPe37kuuY1TZLcqs/Bm8=;
-        b=lg6PAuScb8ubUDVqQqUnP/fSr7UWXpjlJeVSuAOuELu41UxvCxjU0yguFIajarwIVF
-         1YErtRalCZgc+n0vybAAjTWYBbUvYwB0wfN8PDQJAQ+hoQ1juP590SIFha4dgQWPc/Mx
-         TiCIBqhMCB17YTeLym2W6FW2qyV64EZHhXhMv4RIOsnonX/MloebIehbG2j9ARPvMyfL
-         BTx+4K15aXIpqWuYYkSShKnu3Y69STktX+0dITMndM4XXUvojkIDZA92tcxGms8ijLiy
-         OL/k/9lRCEdPsIaiWuGGWpgoyPc3wY0Is0LXvpSDVy3uCwx9KoWvu6c4J4t8lWr2b8PW
-         M7yA==
-X-Gm-Message-State: AOJu0Yy5/5D+FUd3mSA7cQEJfBxocXAf3vKb3sC935TB/ABZlp3Cexka
-	ec/VNDSkrj/hkmOcTT8efrlRNcLQj7iIfVo/DXhrDra0/jifAEGFycYk/GFzhTvl7L/4dHxuk0I
-	+nqlZqQaerICCP0Es7cNsKCOqFcmXRdYJZLcg9uZQs41MxBOj9yRgkrY=
-X-Gm-Gg: ASbGncsnk5vhZySveotFoGl1slAnuxyAafAJ0y8GhLOX/iL9RBwURnmaYoyBu+x9gxU
-	yrGWIMYxNCQVueeOFYd0drPf0KtZIj2SyRzl+BPxzLEtRL1rbRdBOzzQY2KSbqk9NhDQ7w2d2+M
-	dDOxsfuEIMGFadjhlWwNK3UPVk2Qq3vD8+WSXxoB7Q7gi50hUGspaC/At0HYVV9bt9UWf8lswDb
-	4RxIn6athctHQB9ncEvsNnSzzBnfvqTJCAhVg==
-X-Google-Smtp-Source: AGHT+IE5I9eh19vkNZmJKn2wf6TV+r9uvrC2Pak5ON72RmwuRxE8TstIKAO3rn35Ob4YtfGHGo0RsYddDcbQRrxc+a0=
-X-Received: by 2002:a05:690e:1a44:b0:635:4ed0:571f with SMTP id
- 956f58d0204a3-63b59afddadmr108278d50.23.1759144101167; Mon, 29 Sep 2025
- 04:08:21 -0700 (PDT)
+        bh=CLLC+wbxjpk4XmEv75JaQLpBxns7cUiLP7TpNdTyiBs=;
+        b=tYHXd3rNstMWiPM2fHBf3VhzOli4RUE+bVcoeOZKSY6hbxiZqwKDmh8G+xwmsqnNsv
+         lQYVA1QTwQg1PtOqbgxmEus4tu5Zf766PCFXvbAEbuv9ZUioDmtHqVYCNwQZ2qlInD+6
+         YfjRNwplUutZIPDTS/KiBksU06a8+ubMv9aYl5sRtPb4y5hYBO7gJzpwnV/Tp9z3kkkT
+         Anb1M/bpJcuX+D61/5sIiW9tYtsjn7e/PUqXJYcfKgwJExgw2GHfTiFA++pM2jBiFFdU
+         DpsaptYQWW9O5RH9KPKC+Ww94VH8Usy1MiBKdOU2thp5HbFQmcImMKzYL3+JCZyVI4w/
+         xPMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEYnCpf9ZTG/+54/MSI1MTyM+FskwP1LDLQOFUZmsSyr1uPBRp1RNnbZxoOKiMfwVyyErjlPEUPp7/axBS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNCNRhcBLZlUsxTufd9XchI3MxNwUcF8p/s3ubiQBcNUon2gxs
+	ab40L407lsj4ocqCH9i3IcFugBG+slEO2MFe8yIY0e4X4JbEzRqDP/de9eWyVw4W
+X-Gm-Gg: ASbGncsDukNvSJQv++X46MJtOkBMRVPZHIjVts74XAirbtcX+IenP66dP9JSBJ+g3Jf
+	Ek6ltYbdk83yBbMhISMBUR+qezpd1FEsOfgNjLm6ivyHEz7J18lQ2wSNOPb+dYZbadhUknadIAJ
+	GTm6W+6iyNKZ8Ptj+t8kkwtSpW1wSpi/AE4h1pe//ML2tBvomM37HueoNP3Lu8JDDLhOURg3ocI
+	nyPNi3UVWXx7TGBz3IKkiDNW3yLptb8eU3V8bhoquC9E4Mu1lRMUNKVx7bomqP84Qfs2dnCq78J
+	b/S8nHmBpmdk4ASYx0Vr3PYPQlxEguhmvDBtFeIqhjydoRCM5rPkNlWf0Rl3H9L8IUbZIios6NS
+	+sg5aQA8i+it64CELA2GmhIPGqqgIFrRj6d8GxRhsColRZ2ETHpPXHbKes0RcVHmZORvIZm8PaF
+	W6YqAvkA==
+X-Google-Smtp-Source: AGHT+IFU4Npgz+tgkjqEr3h/0ZNArSzG7kXL4tjdDrVxjVfnAl33CAcQJjJ3ft+swkuL4iRBePOkcw==
+X-Received: by 2002:a05:6871:29a:b0:333:494c:2720 with SMTP id 586e51a60fabf-37e5e1e32c3mr2924519fac.19.1759144587364;
+        Mon, 29 Sep 2025 04:16:27 -0700 (PDT)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-363a3d46f3fsm3587913fac.9.2025.09.29.04.16.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 04:16:27 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7a9a2b27c44so2527813a34.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 04:16:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSKE7EboHDpaKLW13tns/0iqX77JPweFOk5vd/orJ1wT/goqt9/Q4ubgjjgtXCJ9e9PZ2mpSnCTkqRxuTO@vger.kernel.org
+X-Received: by 2002:a05:6122:e004:10b0:54a:89a2:21ad with SMTP id
+ 71dfb90a1353d-54fc419339bmr57791e0c.0.1759144227855; Mon, 29 Sep 2025
+ 04:10:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929092304.245154-1-sunjunchao@bytedance.com> <oz7nuthlqf42jzaqnm7xzwxddxpb2a7tmkkziljtzz4e3rlctc@6jvdfvuyexru>
-In-Reply-To: <oz7nuthlqf42jzaqnm7xzwxddxpb2a7tmkkziljtzz4e3rlctc@6jvdfvuyexru>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Mon, 29 Sep 2025 19:08:08 +0800
-X-Gm-Features: AS18NWCDTpjbm5Tg3peRniPhBE4NZearthxy_WpnM2hyxrn1olVyfH-WN7nVY4M
-Message-ID: <CAHSKhtec_hKLXiaVr+cwj+AyGACkf6EZw2u4NefpfDi1SK1wqQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 1/2] writeback: Wake up waiting tasks when
- finishing the writeback of a chunk.
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	mjguzik@gmail.com
+References: <20250916163004.674341701@linutronix.de> <20250916163252.100835216@linutronix.de>
+ <20250916184440.GA1245207@ax162> <87ikhi9lhg.ffs@tglx> <87frcm9kvv.ffs@tglx>
+ <CAMuHMdVvAQbN8g7TJyK2MCLusGPwDbzrQJHw8uxDhOvjAh7_Pw@mail.gmail.com>
+ <20250929100852.GD3245006@noisy.programming.kicks-ass.net>
+ <CAMuHMdW_5QOw69Uyrrw=4BPM3DffG2=k5BAE4Xr=gfei7vV=+g@mail.gmail.com> <20250929110400.GL3419281@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250929110400.GL3419281@noisy.programming.kicks-ass.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Sep 2025 13:10:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWtE_E75_2peNaNDEcV6+5=hqJdi=FD37a3fazSNNeUSg@mail.gmail.com>
+X-Gm-Features: AS18NWD0T2ErSWY-q1jXuUccpNHEsRySEci4kvFa-MWsnKplWNByVUEA9VYZXc0
+Message-ID: <CAMuHMdWtE_E75_2peNaNDEcV6+5=hqJdi=FD37a3fazSNNeUSg@mail.gmail.com>
+Subject: Re: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang <
+ version 17
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Nathan Chancellor <nathan@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2025 at 6:21=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 29-09-25 17:23:03, Julian Sun wrote:
-> > Writing back a large number of pages can take a lots of time.
-> > This issue is exacerbated when the underlying device is slow or
-> > subject to block layer rate limiting, which in turn triggers
-> > unexpected hung task warnings.
-> >
-> > We can trigger a wake-up once a chunk has been written back and the
-> > waiting time for writeback exceeds half of
-> > sysctl_hung_task_timeout_secs.
-> > This action allows the hung task detector to be aware of the writeback
-> > progress, thereby eliminating these unexpected hung task warnings.
-> >
-> > This patch has passed the xfstests 'check -g quick' test based on ext4,
-> > with no additional failures introduced.
-> >
-> > Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
-> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
->
-> One question that appeared to me now below:
->
-> > @@ -174,9 +175,12 @@ static void finish_writeback_work(struct wb_writeb=
-ack_work *work)
-> >               kfree(work);
-> >       if (done) {
-> >               wait_queue_head_t *waitq =3D done->waitq;
-> > +             /* Report progress to inform the hung task detector of th=
-e progress. */
-> > +             bool force_wake =3D (jiffies - done->stamp) >
-> > +                                sysctl_hung_task_timeout_secs * HZ / 2=
-;
-> >
-> >               /* @done can't be accessed after the following dec */
-> > -             if (atomic_dec_and_test(&done->cnt))
-> > +             if (atomic_dec_and_test(&done->cnt) || force_wake)
-> >                       wake_up_all(waitq);
-> >       }
->
-> Is this hunk actually useful for anything? Given how wb_completions work
-> finish_writeback_work() gets called at the moment when we should be wakin=
-g
-> up waiters anyway so there's no point in messing with hung task detector =
-in
-> this place?
+Hoi Peter,
 
-Ah.. Exactly, will remove it in next version:)
+On Mon, 29 Sept 2025 at 13:04, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Sep 29, 2025 at 12:58:14PM +0200, Geert Uytterhoeven wrote:
+> > On Mon, 29 Sept 2025 at 12:09, Peter Zijlstra <peterz@infradead.org> wr=
+ote:
+> > > On Mon, Sep 29, 2025 at 11:38:17AM +0200, Geert Uytterhoeven wrote:
+> > >
+> > > > > +       # Detect buggy clang, fixed in clang-17
+> > > > > +       depends on $(success,echo 'void b(void **);void* c();int =
+f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribut=
+e__((cleanup(b))) =3D c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}=
+}' | $(CC) -x c - -c -o /dev/null)
+> > > >
+> > > > This is supposed to affect only clang builds, right?  I am using
+> > > > gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04) to build for
+> > > > arm32/arm64/riscv, and thus have:
+> > > >
+> > > >     CONFIG_CC_IS_GCC=3Dy
+> > > >
+> > > > Still, this commit causes
+> > > >
+> > > >     CONFIG_CC_HAS_ASM_GOTO_OUTPUT=3Dy
+> > > >     CONFIG_CC_HAS_ASM_GOTO_TIED_OUTPUT=3Dy
+> > > >
+> > > > to disappear from my configs? Is that expected?
+> > >
+> > > Not expected -- that means your GCC is somehow failing that test case=
+.
+> > > Ideally some GCC person will investigate why this is so.
+> >
+> > Oh, "jmp" is not a valid mnemonic on arm and riscv, and several other
+> > architectures...
 >
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> Ah, d'0h indeed.
+>
+> void b(void **);void* c();int f(void){{asm goto(""::::l0);return 0;l0:ret=
+urn 1;}void *x __attribute__((cleanup(b))) =3D c();{asm goto(""::::l1);retu=
+rn 2;l1:return 1;}}
+>
+> Seems to still finger the issue on x86_64. That should build on !x86
+> too, right?
 
+Thanks, builds fine on arm32, arm64, riscv, m68k, powerpc, mips, s390.
 
-Thanks,
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --=20
-Julian Sun <sunjunchao@bytedance.com>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
