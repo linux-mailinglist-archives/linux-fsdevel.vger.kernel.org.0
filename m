@@ -1,193 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-63000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E45DBA893C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:19:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5744ABA899C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376253AA575
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A92EF7A738B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9BE284B29;
-	Mon, 29 Sep 2025 09:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600212C0F64;
+	Mon, 29 Sep 2025 09:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQM5kN0/"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bIKjmpAa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D0234BA41
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 09:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0FA29AAF7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 09:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759137553; cv=none; b=JeepGq1X06JtOeC5M5YJiet4LTjlBJ/hBGrbqMzA2ph9URb98fg+BujYdczgtGxymq6YlJQoG5/A6oe/oDpS6sVheNdlZ3rsl/BwlCAZDd8PowpzIr1AM14AVM0JWIoH9Pp3Lr16Kx0jj0VX+qS4bIGOQJLN56SF3xn8LVuRXjo=
+	t=1759137790; cv=none; b=dl0dKC1JodntD77dPcxKFJUjUO8xFVDIjnvNlPSc90+o0m642vF2TrpUQTD+tFcIXpxQ6f5xQZ3q/kV+7vwNJ++FfWEipH5UPW4hRbzVfA8FZjXHAIWxgSUNKmh+99Q6yjhfoSxPGKv9JKlibXHj3qJl+xrU3kNOOLSyeHsHrfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759137553; c=relaxed/simple;
-	bh=aJIXFbQzD7C3Q3cbP/Y2zZW3bB3oSP9uA7tGjZg9Ygw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lh6orufiEdw+DbsY56Gvkl4eG+FN2JqnLk1GQLdLxR6wC0ZbyWk6X42pGQmm4wGOSO1GLmcMWqNiHP6VLulr6hWCXn3//kQgbyVRHcdV68gz8ggL8Ploh564HapbWZeZd3GoKfzT7hIomZOgDsLDSzLJ8ncI0KfYar69/hbIZLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NQM5kN0/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759137551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m14nFMin7/94WpJU41b6+xjuPj85lzMdm8NE7gofAB4=;
-	b=NQM5kN0/qOV+BaMIq3veXsOtRoloDZ3aG0hfXaw1Mzkyqkl5oAUze2XbZQ+4KcN73KyFqZ
-	nMIE7dssvN8B1LI245pdEJFKEnDymr1q+4EZzB6LkDQNvYXUR/Oq3l0lIxwwPUpgyfKIZo
-	H2sh/Zti0ZJiQcwuPbd2gXIPtgip9lQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-itVRuzJYO8qR-gRmwG7xDA-1; Mon,
- 29 Sep 2025 05:19:05 -0400
-X-MC-Unique: itVRuzJYO8qR-gRmwG7xDA-1
-X-Mimecast-MFC-AGG-ID: itVRuzJYO8qR-gRmwG7xDA_1759137543
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13CEB19560B3;
-	Mon, 29 Sep 2025 09:19:03 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.12])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 206F530001A4;
-	Mon, 29 Sep 2025 09:18:56 +0000 (UTC)
-Date: Mon, 29 Sep 2025 17:18:51 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH V4 5/6] loop: try to handle loop aio command via NOWAIT
- IO first
-Message-ID: <aNpOiQbgrSukFaUT@fedora>
-References: <20250928132927.3672537-1-ming.lei@redhat.com>
- <20250928132927.3672537-6-ming.lei@redhat.com>
- <d043680f-1d7a-bcb8-2588-4eae403f050d@huaweicloud.com>
+	s=arc-20240116; t=1759137790; c=relaxed/simple;
+	bh=1YggO7OihELgT79u9I8E65hdl8AIFfAm07zmQv+aOfw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SBIK3UwKao93z7B8VfuUabWLOaza+sbA4Ls7MQIH43AKXrUlcXJyPvUzUfV34NlXHxWSepp6TpRZemtyn7C4iuJmTA4S9y6GzjiG6kYx1d4UOp9sl2PYq3pLACjRS4ndY3Ynck8XY4+Pcbptl4JADZvudbvoMspKmAMFdIn8y9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bIKjmpAa; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b57f361a8fdso1795861a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 02:23:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1759137788; x=1759742588; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PzjPo65cxLYpEK3Hjlxv1zJc8azjHQuUeAyKRYFZOwQ=;
+        b=bIKjmpAaNVHu5M+VDBlZ7VMsLiZMF31PX5mYIh724xkjfHbarE4D5XQp56Yb/qqhym
+         YwpoYfGbUvDruVFbQMc0/GcXUGNX1Uz4/IPZT2ruayrMmKsSbJuOpBIN+GwgvuCr/5xW
+         yc0+XF8Iqba8xFFOpB81Lab85qb8mTcHIub+t3n6lPNbV/LTa7CJg+hKnCXFyaVZ6BcT
+         P98LGaPwf23c2vnOErHmj94UNVtGN80xfnlJomxhVcNWUTHsSt0dx9Zi/M9mD20dQ27s
+         bmDO9n9FBe1ZsBadaBfQtrRmBOEuq7tW38xKliIy4fZXTVkzOqNJU7tS+9wyfGxIUMv4
+         4PBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759137788; x=1759742588;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PzjPo65cxLYpEK3Hjlxv1zJc8azjHQuUeAyKRYFZOwQ=;
+        b=KXT7dg3yM1o4GtDANUVjT2ESkYW/sa+zkfIWkyuo6jwJueK6k/1QZ3BxxIfDAS96fd
+         S6hrP75crCHRNkpiAqCNbenZTD3MbQERSF6vsqSRSSdVi+QGyOXvG11bhXkKrVItT1jO
+         1iE7JmAghwIHzzzIrW0Ony4IaTG8SJ/XcehIXdMfsmm/+OMLP+JbauYHtbDfKfs7wBKK
+         4lFlqs6aoami1Q3xpIFyx4ZwP3vIugn60eItFQUlPsRQCMPVlXR6Qu1ReazBnLY8hTgj
+         Y1E63ophtJXiSXjjF+qiFJjDYdNDwPxJ3HA7vyXTAUYARDJvCoeiS7td1BT+UL5xcT+/
+         mLhg==
+X-Gm-Message-State: AOJu0Yy17gSL7XAQ4CVtbxz904mnHOiabyaSLCAA/WoLWfJay/d/dTOb
+	F3Y4y3/mczOh5gQ2sEo56U6judAjY6mRz2G7tZ/qdQoc/Wbtvr3bcY7mBvDI2+sntYRNkE/b6Tg
+	D2gkulY4=
+X-Gm-Gg: ASbGncvvwnfE+tBWOY0llyPChbpWBAan7Y0yQxw8goYRMWo3iBWLTAUSB9xMB3KacOx
+	+bXRblcokW/tkVwPPJSd0GhOX+nadPo8s2AIMJZZxAq1h/Wn4PvkO2zX2Pl+QXg1WpmRF1YS58L
+	k2daZorax0hhOPx4x6PlVoyXgUriK7ghm+TEpqjxrIjALtuLZ6HSstAX70+ygb/khCSAq1LES9L
+	iY/voIj8c4NaBV/cM2VJh7glmTmDJHZrkpCRmlxacLaEWhhKY3DaX5UX/40lQ9zAcI8GeUl+D/p
+	JtKeXdy24yyRQEFDbCtF1gj0HIu6tvSuLTNzvD57P4YOY4a6HaqYUtJ9F1/W0cuRPF9doXeT3ar
+	W8u35hGu3yXvGW2uKpbYa1Kk5SA8Wmt4RbA==
+X-Google-Smtp-Source: AGHT+IGjL6zq3nbFqpLCareQ03AHwRmG2eIHWWDcSr2s2oB0pyMmV29XLdTJUX3/q1vwlw6h+lme2Q==
+X-Received: by 2002:a17:903:1b63:b0:269:a4ed:13c3 with SMTP id d9443c01a7336-27ed49df688mr212333405ad.5.1759137787723;
+        Mon, 29 Sep 2025 02:23:07 -0700 (PDT)
+Received: from localhost ([106.38.226.154])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69bd869sm125517025ad.120.2025.09.29.02.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 02:23:07 -0700 (PDT)
+From: Julian Sun <sunjunchao@bytedance.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com
+Subject: [PATCH 1/2] writeback: Wake up waiting tasks when finishing the writeback of a chunk.
+Date: Mon, 29 Sep 2025 17:23:03 +0800
+Message-Id: <20250929092304.245154-1-sunjunchao@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d043680f-1d7a-bcb8-2588-4eae403f050d@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Sep 29, 2025 at 02:44:53PM +0800, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/09/28 21:29, Ming Lei 写道:
-> > Try to handle loop aio command via NOWAIT IO first, then we can avoid to
-> > queue the aio command into workqueue. This is usually one big win in
-> > case that FS block mapping is stable, Mikulas verified [1] that this way
-> > improves IO perf by close to 5X in 12jobs sequential read/write test,
-> > in which FS block mapping is just stable.
-> > 
-> > Fallback to workqueue in case of -EAGAIN. This way may bring a little
-> > cost from the 1st retry, but when running the following write test over
-> > loop/sparse_file, the actual effect on randwrite is obvious:
-> > 
-> > ```
-> > truncate -s 4G 1.img    #1.img is created on XFS/virtio-scsi
-> > losetup -f 1.img --direct-io=on
-> > fio --direct=1 --bs=4k --runtime=40 --time_based --numjobs=1 --ioengine=libaio \
-> > 	--iodepth=16 --group_reporting=1 --filename=/dev/loop0 -name=job --rw=$RW
-> > ```
-> > 
-> > - RW=randwrite: obvious IOPS drop observed
-> > - RW=write: a little drop(%5 - 10%)
-> > 
-> > This perf drop on randwrite over sparse file will be addressed in the
-> > following patch.
-> > 
-> > BLK_MQ_F_BLOCKING has to be set for calling into .read_iter() or .write_iter()
-> > which might sleep even though it is NOWAIT, and the only effect is that rcu read
-> > lock is replaced with srcu read lock.
-> > 
-> > Link: https://lore.kernel.org/linux-block/a8e5c76a-231f-07d1-a394-847de930f638@redhat.com/ [1]
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >   drivers/block/loop.c | 62 ++++++++++++++++++++++++++++++++++++++++----
-> >   1 file changed, 57 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> > index 99eec0a25dbc..57e33553695b 100644
-> > --- a/drivers/block/loop.c
-> > +++ b/drivers/block/loop.c
-> > @@ -90,6 +90,8 @@ struct loop_cmd {
-> >   #define LOOP_IDLE_WORKER_TIMEOUT (60 * HZ)
-> >   #define LOOP_DEFAULT_HW_Q_DEPTH 128
-> > +static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd);
-> > +
-> >   static DEFINE_IDR(loop_index_idr);
-> >   static DEFINE_MUTEX(loop_ctl_mutex);
-> >   static DEFINE_MUTEX(loop_validate_mutex);
-> > @@ -321,6 +323,15 @@ static void lo_rw_aio_do_completion(struct loop_cmd *cmd)
-> >   	if (!atomic_dec_and_test(&cmd->ref))
-> >   		return;
-> > +
-> > +	/* -EAGAIN could be returned from bdev's ->ki_complete */
-> > +	if (cmd->ret == -EAGAIN) {
-> > +		struct loop_device *lo = rq->q->queuedata;
-> > +
-> > +		loop_queue_work(lo, cmd);
-> > +		return;
-> > +	}
-> > +
-> >   	kfree(cmd->bvec);
-> >   	cmd->bvec = NULL;
-> >   	if (req_op(rq) == REQ_OP_WRITE)
-> > @@ -436,16 +447,40 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
-> >   	int nr_bvec = lo_cmd_nr_bvec(cmd);
-> >   	int ret;
-> > -	ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
-> > -	if (unlikely(ret))
-> > -		return ret;
-> > +	/* prepared already for aio from nowait code path */
-> > +	if (!cmd->use_aio) {
-> > +		ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
-> > +		if (unlikely(ret))
-> > +			goto fail;
-> > +	}
-> > +	cmd->iocb.ki_flags &= ~IOCB_NOWAIT;
-> >   	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
-> > +fail:
-> >   	if (ret != -EIOCBQUEUED)
-> >   		lo_rw_aio_complete(&cmd->iocb, ret);
-> >   	return -EIOCBQUEUED;
-> >   }
-> > +static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
-> > +			    int rw)
-> > +{
-> > +	struct request *rq = blk_mq_rq_from_pdu(cmd);
-> > +	loff_t pos = ((loff_t) blk_rq_pos(rq) << 9) + lo->lo_offset;
-> > +	int nr_bvec = lo_cmd_nr_bvec(cmd);
-> > +	int ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
-> > +
-> > +	if (unlikely(ret))
-> > +		goto fail;
-> > +
-> > +	cmd->iocb.ki_flags |= IOCB_NOWAIT;
-> > +	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
-> 
-> Should you also check if backing device/file support nowait? Otherwise
-> bio will fail with BLK_STS_NOTSUPP from submit_bio_noacct().
+Writing back a large number of pages can take a lots of time.
+This issue is exacerbated when the underlying device is slow or
+subject to block layer rate limiting, which in turn triggers
+unexpected hung task warnings.
 
-Good catch, nowait should only be applied in case of FMODE_NOWAIT, will add the
-check.
+We can trigger a wake-up once a chunk has been written back and the
+waiting time for writeback exceeds half of
+sysctl_hung_task_timeout_secs.
+This action allows the hung task detector to be aware of the writeback
+progress, thereby eliminating these unexpected hung task warnings.
 
+This patch has passed the xfstests 'check -g quick' test based on ext4,
+with no additional failures introduced.
 
-Thanks,
-Ming
+Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+ fs/fs-writeback.c                | 13 +++++++++++--
+ include/linux/backing-dev-defs.h |  1 +
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..475d52abfb3e 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -14,6 +14,7 @@
+  *		Additions for address_space-based writeback
+  */
+ 
++#include <linux/sched/sysctl.h>
+ #include <linux/kernel.h>
+ #include <linux/export.h>
+ #include <linux/spinlock.h>
+@@ -174,9 +175,12 @@ static void finish_writeback_work(struct wb_writeback_work *work)
+ 		kfree(work);
+ 	if (done) {
+ 		wait_queue_head_t *waitq = done->waitq;
++		/* Report progress to inform the hung task detector of the progress. */
++		bool force_wake = (jiffies - done->stamp) >
++				   sysctl_hung_task_timeout_secs * HZ / 2;
+ 
+ 		/* @done can't be accessed after the following dec */
+-		if (atomic_dec_and_test(&done->cnt))
++		if (atomic_dec_and_test(&done->cnt) || force_wake)
+ 			wake_up_all(waitq);
+ 	}
+ }
+@@ -213,7 +217,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
+ void wb_wait_for_completion(struct wb_completion *done)
+ {
+ 	atomic_dec(&done->cnt);		/* put down the initial count */
+-	wait_event(*done->waitq, !atomic_read(&done->cnt));
++	wait_event(*done->waitq, ({ done->stamp = jiffies; !atomic_read(&done->cnt); }));
+ }
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
+@@ -1975,6 +1979,11 @@ static long writeback_sb_inodes(struct super_block *sb,
+ 		 */
+ 		__writeback_single_inode(inode, &wbc);
+ 
++		/* Report progress to inform the hung task detector of the progress. */
++		if (work->done && (jiffies - work->done->stamp) >
++		    HZ * sysctl_hung_task_timeout_secs / 2)
++			wake_up_all(work->done->waitq);
++
+ 		wbc_detach_inode(&wbc);
+ 		work->nr_pages -= write_chunk - wbc.nr_to_write;
+ 		wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 2ad261082bba..c37c6bd5ef5c 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -63,6 +63,7 @@ enum wb_reason {
+ struct wb_completion {
+ 	atomic_t		cnt;
+ 	wait_queue_head_t	*waitq;
++	unsigned long stamp;
+ };
+ 
+ #define __WB_COMPLETION_INIT(_waitq)	\
+-- 
+2.39.5
 
 
