@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-62989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-62990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4133BA7C5E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 03:45:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C33BA7FD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 07:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 152F77A8BA0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 01:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B404163BE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 05:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2721F4617;
-	Mon, 29 Sep 2025 01:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55E628152B;
+	Mon, 29 Sep 2025 05:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="r5D3Qdzg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="os5Iltrk"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="iyItz6to";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ApvXz//n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E721C2324
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 01:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9F01F428F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Sep 2025 05:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759110312; cv=none; b=LAr7SWgjZl8OZP0n8Zg2EcqzSysTkzaNBt8k3lONK40wf9yyc7w4li8RcPpM47E0IaMko/lnPzeUQhvJCaH9GsHrAZ/9tCRiQcosEDsHUlhy7Fs9aGsPkxAzEmo2do5WtU2RpIQja6k8EAULGgYtsbXZ9Y7lHcvo8avw6JogQTc=
+	t=1759123600; cv=none; b=Sv4T39q3l/exQkwc+ZdX5kNeirx49niA8rrc3e60527BFXExNz6WIlbIq6QJAKwV1ZF2dLxdnfjMeR8ATnKs0EWGqNkVf4+lwRX7K195vxW0FN0eSYDwfjqlF9hhS2p2T/ynC4MzwdTDyHDbxkzcsojIhs+5J0+17DVplF2KY68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759110312; c=relaxed/simple;
-	bh=ZaKaXqheqK29EBgLNYw81zL15dmCevkUf6kvYd6k/GE=;
+	s=arc-20240116; t=1759123600; c=relaxed/simple;
+	bh=9E9tsWmj1hn/ltRRNgg2l5FFveve3kddM6p030+Sp0Q=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Pzo3Ve586d00btWswTu9tdqKWAPPCQBWtVghdsp8kzOMPqA+SYgCQm6N43M36/KsWlK/nFepDuMlNdb7C71xg9gxgWhXQV2d/lpGa/xsO2iuBnIHmDahhCieFvDMeQqpYS1QgPOC0oUziIIA7VcpKk2NSoYdvBM5ukMILkdYkBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=r5D3Qdzg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=os5Iltrk; arc=none smtp.client-ip=103.168.172.159
+	 References:Date:Message-id; b=WJTtCbacCQbotyf4C15raPoyERN8rLEsveZ4p+j6QXSesNWBVSy6Pi0UfJHQu+KQZwuCXCTtI3p9YeJaHROyUG398i8ZRHY7uHuKNU13Z1WYxBe/Ld78NqSL9jqcjipTWx3GCdCcmzQwVfv+b6SSRE9cAAhhMAXbrAaZmmFvwX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=iyItz6to; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ApvXz//n; arc=none smtp.client-ip=103.168.172.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 567C7140007F;
-	Sun, 28 Sep 2025 21:45:09 -0400 (EDT)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 4BBE01400188;
+	Mon, 29 Sep 2025 01:26:37 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Sun, 28 Sep 2025 21:45:09 -0400
+  by phl-compute-06.internal (MEProxy); Mon, 29 Sep 2025 01:26:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1759110309; x=1759196709; bh=lCsJA4G318vtVlApDofwn4/fI+tiKW3b118
-	OaVC0z5Q=; b=r5D3QdzghrkCnj8t4BoqEl7ompGdKLzKxEBvJuivPBSRYdj/9aX
-	OKaZfRtL1yYjgvUJAFgy0kZlba4mLOfT9wZHKNYYlMH9hLoYLPhYNIMd29Kh3uyk
-	WRy86otsh72lBnqeNmkWqGmay5bqY34iV9SWtP7w57iUdc+iI3h+X6Vq8WRjZCM0
-	Sp5qxrTEQjxoBEi847Cjnuttgq8bBFFVSP2B+Sc3IGNyDQTnnc6OXMvqhZEyYjpY
-	iGdhiE/ZjPrPI62pL6hn3vudUwUP6l+W6A/vd6qqgRJjXO/gRCk3zDPK4WDOvO5v
-	aCKs2YFs2rXMydW9w9qU4GPdmNWijY6Vkvg==
+	1759123597; x=1759209997; bh=alFrK5MaZuJdGXk9NECeV8tiLKJ0lAgsCVA
+	qJz9dVhs=; b=iyItz6tolNPjouWvOHmuK/ARXew4445X1igl0iBPPlxC5sNgsos
+	wit92f6jCqRo/PwRWwlIu4mn1sAL43ZP1Xg8YNesQtgJrQmbTKd6kxxc7+rjD8aO
+	gjLRKIPN8ZADhHKi6Rmaa5GWkhcFFnm9WBkkEHKtUQuGn+cOmlsD0zN73LgIayAB
+	7prJrh7IHvDSN88YiHq1KWfWi0NuLI9KB42EUgdyaFfMvSIWjtCDjM6FpiNGmChn
+	KoW5MnUEAjQvFRFStfN3ox2Yr0hllQK+wEgqxz2kfHZlU+687ANEyMkMjfajSQIu
+	omhiZfNFPWozkWngDbNskATd15v21yRzyoQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759110309; x=
-	1759196709; bh=lCsJA4G318vtVlApDofwn4/fI+tiKW3b118OaVC0z5Q=; b=o
-	s5IltrkB2A3p8N56RmgFa5g/eRDhT8Bc/wgc+0XlYJu7aI0ISkI+0SZTRgxSJCIX
-	ucdxR03SgMFmXdfGcpuHSwACDfJwMsP5eRsRgHJBxf0vNSyZN56eJ8/SPYsQwuOF
-	SB8ixIYdNBbT7rkqhX2lHWIcK1KHdKPdSgpkfoQtdS3SO5vT8pdhnVP3YaBsSFc2
-	x9dtxbmTrKuQhPI3eeFMyJj6MVqhGuziMLZ9uHi2LrsKvaaLhXpGNE8cRrox/gNO
-	81HgSfLX7fY+4Gx5ISdGy3waO68W4egP46zzHCF5XB15njZdGgQZvSL3BbBk0EOw
-	okP6+kMvnNgE9LqTdPpOA==
-X-ME-Sender: <xms:pOTZaMoVN4DHjyw8oV-dwbElFDj0H4gfNzhxsQTch5Ih0Go8A0wwGg>
-    <xme:pOTZaNnhb-YIQWgRPUxXZgdYFnvBWU3ovm0afKf9PiikJCZBb9RzLiiqVHSLSvFX9
-    B66Kwfdc13K2gqCOgFmsmfPyWVfuFOrEQycAcIWzYzf9NHv>
-X-ME-Received: <xmr:pOTZaAOWoBKNYYKHLD5W0vvQdoM3bmeFgmb5giFgzsQC5s84CRoit8F9pxULbl4Xzw5Sk0yT3fsWxjN6DkQYhQ7EvHBf-dd_fvZOcHtCCnSy>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejieejvdcutefuodetggdotefrod
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759123597; x=
+	1759209997; bh=alFrK5MaZuJdGXk9NECeV8tiLKJ0lAgsCVAqJz9dVhs=; b=A
+	pvXz//nTriyt+pJIhlhm/D6PE15s44SKcCeWVqbCM/bn57dr+DizK/WZ9G8IxkcS
+	1zfwmyzO190rJnn5c6DfzV3wmGLJZBXHJlZzR/VItqa+MBJcVL5LLsWRabrGLwRO
+	I6fFpG1KEdJ1DCIlYBtxLFRQb3scQ7XrBiaDzA89jkzXQ2BTkFUb12mS1+nr4xeD
+	5darJcLOGdck2437QDg6rA8aljOjFTbTr4kvMAfN1T8/jMRvR9ASDdAVdFbM2ArF
+	GZHKULhkPT0RdbrwB4ps+jYTq3xKkrf3/Z0TPke2sFVt7wkSwlHvOX+Th7XV8CSO
+	lGuA7CnJV/kUC4DEPma9Q==
+X-ME-Sender: <xms:jBjaaHklgYgqJjuddgXTDmZUk0uaKzHpc67fdQLpwMy6Jg4gthW_0w>
+    <xme:jBjaaCMhPK61qR48JjT6bXpNIWqMBfZqEgpke2K8VuopQ24hb1SxoeVY1op_-N_b7
+    uR1crm-I6560uoElrnAyRNA29_xGroEKNOfhVEGDLr20CnKcg>
+X-ME-Received: <xmr:jBjaaDOScRqkZs0eC2QWn0DWXMGxOHvopfOj4Iqm6FlD_t-UjmlGS7jmsL8C2V7prGwCNRy6cUwt2f-ldACrt8n6ui0tnyOsA9iZsviUeWA3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejjeduiecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthekredttddtjeenucfhrhhomheppfgvihhluehr
+    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
     ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    dvhffgheekkeeitdelfeehhfekvedvgeffhffgudffieevleffheelhfefheevteenucev
+    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
     lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
     hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhu
     thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
@@ -78,16 +78,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejieejvdcutefuodetgg
     rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
     hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
     ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:pOTZaJOVuBhcpbJGhW2Kbw3gFfUJ3kG0NWLdezh0jlwDiySRjNntIw>
-    <xmx:pOTZaJidwaWXbIRohUwvBnniLQlZ--4AtoDpM053Gn7SQbS-GtQy7A>
-    <xmx:pOTZaOsX1i3qfsJ-AXvCxQQRHwGUmvHwIMqH1q55m-Uik4IWbS2SLw>
-    <xmx:pOTZaHQl_vtWWX4kSB4MWpN9bURSpZoLeN0S9wmzmHjaK0gr29R6hg>
-    <xmx:peTZaICjW_KlcT7HW9g7fuX7LCVUln4dFmpEauPptCJFi0AqiM7Zhx-a>
+X-ME-Proxy: <xmx:jBjaaLjt_DeE3_OzZgLYrIY10RrCW9CkKVIc21oW56WLtXq-X9tfKg>
+    <xmx:jBjaaIv1k1itoedYfsON-eCYq_1NR7zbZE7maxHjvCpeWqqBhf11TQ>
+    <xmx:jBjaaJRCc9NBufPL2vDM73NYCL7kjjDP2GAbHiVxOOkTIBR07xE_-g>
+    <xmx:jBjaaM2woaCObgUPyicmZ6aGoovKklG35CK3HGobXAtroNcieZOJ7Q>
+    <xmx:jRjaaIevWzX1gJ7-l5bfCZKGJeuglDrNPt3g9ls--boHO2vH5ZovH3oI>
 Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 28 Sep 2025 21:45:06 -0400 (EDT)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 29 Sep 2025 01:26:34 -0400 (EDT)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,51 +99,73 @@ To: "Amir Goldstein" <amir73il@gmail.com>
 Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
  "Christian Brauner" <brauner@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
  "Jan Kara" <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/11] VFS: add start_creating_killable() and
- start_removing_killable()
+Subject: Re: [PATCH 11/11] ecryptfs: use new start_creaing/start_removing APIs
 In-reply-to:
- <CAOQ4uxhb-fKixuGz-XS09qktVmm5DwK6oUf8ufV_vqKiA2YPww@mail.gmail.com>
+ <CAOQ4uxjkJ4dvOkHHgSJV61ZGdCYOxc8JJ+C0EOZAG49XWKN3Pw@mail.gmail.com>
 References: <20250926025015.1747294-1-neilb@ownmail.net>,
- <20250926025015.1747294-8-neilb@ownmail.net>,
- <CAOQ4uxhb-fKixuGz-XS09qktVmm5DwK6oUf8ufV_vqKiA2YPww@mail.gmail.com>
-Date: Mon, 29 Sep 2025 11:44:58 +1000
-Message-id: <175911029880.1696783.10540839124796610279@noble.neil.brown.name>
+ <20250926025015.1747294-12-neilb@ownmail.net>,
+ <CAOQ4uxjkJ4dvOkHHgSJV61ZGdCYOxc8JJ+C0EOZAG49XWKN3Pw@mail.gmail.com>
+Date: Mon, 29 Sep 2025 15:26:27 +1000
+Message-id: <175912358745.1696783.16384196748395150231@noble.neil.brown.name>
 Reply-To: NeilBrown <neil@brown.name>
 
 On Sun, 28 Sep 2025, Amir Goldstein wrote:
-> On Fri, Sep 26, 2025 at 4:51 AM NeilBrown <neilb@ownmail.net> wrote:
+> On Fri, Sep 26, 2025 at 4:51=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
 > >
 > > From: NeilBrown <neil@brown.name>
 > >
-> > These are similar to start_creating() and start_removing(), but allow a
-> > fatal signal to abort waiting for the lock.
+> > This requires the addition of start_creating_dentry().
 > >
-> > They are used in btrfs for subvol creation and removal.
+...
+> > @@ -186,10 +190,12 @@ ecryptfs_do_create(struct inode *directory_inode,
+> >         struct inode *lower_dir;
+> >         struct inode *inode;
 > >
-> > btrfs_may_create() no longer needs IS_DEADDIR() and
-> > start_creating_killable() includes that check.
-> 
-> TBH, I think there is not much to gain from this removal
-> and now the comment
-> /* copy of may_create in fs/namei.c() */
-> is less accurate, so I would not change btrfs_may_create()
+> > -       rc =3D lock_parent(ecryptfs_dentry, &lower_dentry, &lower_dir);
+> > -       if (!rc)
+> > -               rc =3D vfs_create(&nop_mnt_idmap, lower_dir,
+> > -                               lower_dentry, mode, true);
+> > +       lower_dentry =3D ecryptfs_start_creating_dentry(ecryptfs_dentry);
+> > +       if (IS_ERR(lower_dentry))
+> > +               return ERR_CAST(lower_dentry);
+> > +       lower_dir =3D lower_dentry->d_parent->d_inode;
+> > +       rc =3D vfs_create(&nop_mnt_idmap, lower_dir,
+> > +                       lower_dentry, mode, true);
+> >         if (rc) {
+> >                 printk(KERN_ERR "%s: Failure to create dentry in lower fs=
+; "
+> >                        "rc =3D [%d]\n", __func__, rc);
+> > @@ -205,7 +211,7 @@ ecryptfs_do_create(struct inode *directory_inode,
+> >         fsstack_copy_attr_times(directory_inode, lower_dir);
+> >         fsstack_copy_inode_size(directory_inode, lower_dir);
+> >  out_lock:
+> > -       inode_unlock(lower_dir);
+> > +       end_creating(lower_dentry, NULL);
+>=20
+> These calls were surprising to me.
+> I did not recall any documentation that @parent could be NULL
+> when calling end_creating(). In fact, the documentation specifically
+> says that it should be the parent used for start_creating().
 
-That is reasonable.  I actually wanted to remove btrfs_may_create()
-completely but found that some of it was still needed.
+I've updated the documentation for end_creating() say that the parent is
+not needed when vfs_mkdir() wasn't used.
 
-I had another look and I think that if an idmap arg is added to
-vfs_mkobj(), then using that is the "correct" way to create arbitrary
-objects, and that is really what btrfs is doing here.  vfs_mkobj()
-incorporates the may_create() test itself.
+>=20
+> So either introduce end_creating_dentry(), which makes it clear
+> that it does not take an ERR_PTR child,
 
-> 
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> 
-> Apart from that and the other comment below, the callers look good
-> so you may add:
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+it would be end_creating_not_mkdir() :-)
 
-Thanks,
+> Or add WARN_ON to end_creating() in case it is called with NULL
+> parent and an ERR_PTR child to avoid dereferencing parent->d_inode
+> in that case.
+
+I don't think a WARN_ON is particularly useful immediately before a
+NULL-pointer dereference.
+
+Thanks for highlighting this - clarification of the documentation is
+needed.
+
 NeilBrown
+
 
