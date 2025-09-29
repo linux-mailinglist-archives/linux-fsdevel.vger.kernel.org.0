@@ -1,111 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-63004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0093BA8A0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:32:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35C3BA8A2C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 11:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591DD188C098
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:32:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D8D04E0386
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Sep 2025 09:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CA02D24A0;
-	Mon, 29 Sep 2025 09:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4592D372E;
+	Mon, 29 Sep 2025 09:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhqAqq8z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1E0bFEF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449472857DE;
-	Mon, 29 Sep 2025 09:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DFD2C21E2;
+	Mon, 29 Sep 2025 09:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138227; cv=none; b=srEbxrArybjW32WmAG+eCXbYe38+v8IhwJK2Q9o/oc/LhUhmeloE9FP4d7l0e/iIh2QQHqBPzC6OXb7ULhBhZ/nkDmI5/XIsqpdRfFN1+dgsmNkNj5IpZQptrYit/+ZcE84TYz74eiUdURq2GktuXGmO7kt1Su0gxwANTSn4/rQ=
+	t=1759138241; cv=none; b=OI9gZ+n3fsg5k3trW0j7Bz7/dyr8zGdZ+1C8Scz0K3BePiZhhSeUdNaYoWJgj2asRkB5Xox+GkwASvWC59JYIAxNQAqS9pDeHrtVQkv9QVxTJVZWzKxbVFBxV1E0QoIpGCu2jrNGQi/idNyrxKGnAITwFi8/8jvLnhuj8qGpRKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138227; c=relaxed/simple;
-	bh=Xt+H00FTwMgNX3FYouX/B0DyHS064YKeIo3w5xZa1CM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WLuL33Ye07+Fn7HGCEgWu9t8OgKQF8rZAo3pQASJQYQnTVD+6Xht5PxHikAr37u2hZu87c5g25WD49wXzL+2cBaywCW0hGFtD3nzq6WZymFROUMQEJQkjJOnb/MaMnc9uC0HCelRs/CIh5ygCkJ1TIqozrk4g1YufYv6F8cG2q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhqAqq8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4277C4CEF4;
-	Mon, 29 Sep 2025 09:30:23 +0000 (UTC)
+	s=arc-20240116; t=1759138241; c=relaxed/simple;
+	bh=BKoHIf138/hk6lID8rDiMQKSjSDMPFy5kMeGNrQHa04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUZFIF8SjISX6IHW3VziwETxtqt79TSaN2SAzx7BlRX5AetkmQnu/BDUFbQed2BKEgEQll6M5JfQzb1ERr8WqKqEjktXso/mtkrLqkSnemz0dVCAs9XDx0AwK3yZ6tR2RTLBvUZHLVE4qsbFEHlplQMXJGjQ9xaeKhAGwFcnK8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1E0bFEF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851E1C4CEF4;
+	Mon, 29 Sep 2025 09:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759138226;
-	bh=Xt+H00FTwMgNX3FYouX/B0DyHS064YKeIo3w5xZa1CM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uhqAqq8zY56VNaNn7XJMxLgA0BQhSL4pZ+0ry3mEDg3zt5W0rO/j78IQzJo5c+ZWM
-	 /vInMRN1VI6KhEnBPdyshEe7Cga1YyQ4YQZbRN8fCG5Pm3gJl6tn+YxECxu8G6FJR9
-	 lBz+v1bjpkWv3Omy4DirbyRGKviSXKAnJDXDHvW+SLHwyXi7aOlI6m1r8vXU3lca+V
-	 lnSx6VrVKnaFVJCT0GEi9/mVt0O19yBRXlxQtIUYRext/rX2zTExmuMG+j+pqyWqhs
-	 M2hjPTlbLXq/3xSEINOvx4lbYJnU8zhm+Co/dka6V9xZpxXoP/Zp74DZqGt1Xyh1SS
-	 HO4J0eV0iHkDA==
+	s=k20201202; t=1759138241;
+	bh=BKoHIf138/hk6lID8rDiMQKSjSDMPFy5kMeGNrQHa04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F1E0bFEFCiAXU2bhcNOwjJji/CUotsAqJvRtzFFy/aiEKsKjYjjOZvuLL1tKGA6kP
+	 vxBHVvvTVrgrl1/QyFhyyjW0rZS1zdqq6CEfPxPGxs7qdLJukbjh3fvKIl1mg6RnoZ
+	 ODxxKZFAwse7zViONdtFCW5T8h6Tis9KW6gk+6D7VKOstEz98e9zuVaMKiILkEM3JD
+	 5qSe77Ehh7DHt4kmv/KaZvKr0hh1uDu9D5Jy0v+3MdltzMwFNq7v7slLy4dGyiPW3t
+	 NxK+gBALjPugIX+bPaVh7k75QrAsWD6QY+id3CF9d50CUXAugTdT0kfdk0Q5w95uX9
+	 lZLFSjxC3iJfg==
+Date: Mon, 29 Sep 2025 11:30:36 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com,
-	kernel-team@fb.com,
-	amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
-Date: Mon, 29 Sep 2025 11:30:17 +0200
-Message-ID: <20250929-samstag-unkenntlich-623abeff6085@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250923104710.2973493-1-mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v6 3/4] Manual conversion of ->i_state uses
+Message-ID: <20250929-babysitten-weinlaune-9cf5da52b8b2@brauner>
 References: <20250923104710.2973493-1-mjguzik@gmail.com>
+ <20250923104710.2973493-4-mjguzik@gmail.com>
+ <CAGudoHGuFSfSCZcoky+5wX1QfVpg-tj42c2SJijfT7ke_6tR7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1536; i=brauner@kernel.org; h=from:subject:message-id; bh=Xt+H00FTwMgNX3FYouX/B0DyHS064YKeIo3w5xZa1CM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTcClyT3LTLJ3nizG/bpjn01Su9D9eJyliz15U3esO6R uFEjtjLHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpADdZmuG/+/fNU37Ep5o4VrTn Xs8QNxL9qu7C+SMiasej7JjOMxrTGP77d/tIL30g93KOe8uORyZP/t3aIPije1VW8qfW9nmxKWf 5AA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGudoHGuFSfSCZcoky+5wX1QfVpg-tj42c2SJijfT7ke_6tR7Q@mail.gmail.com>
 
-On Tue, 23 Sep 2025 12:47:06 +0200, Mateusz Guzik wrote:
-> First commit message quoted verbatim with rationable + API:
+On Thu, Sep 25, 2025 at 12:07:13PM +0200, Mateusz Guzik wrote:
+> allmodconfig build was done on this patchset but somehow one failure was missed:
 > 
-> [quote]
-> Open-coded accesses prevent asserting they are done correctly. One
-> obvious aspect is locking, but significantly more can checked. For
-> example it can be detected when the code is clearing flags which are
-> already missing, or is setting flags when it is illegal (e.g., I_FREEING
-> when ->i_count > 0).
+> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+> index e9538e91f848..71ec043f7569 100644
+> --- a/fs/afs/inode.c
+> +++ b/fs/afs/inode.c
+> @@ -427,7 +427,7 @@ static void afs_fetch_status_success(struct
+> afs_operation *op)
+>         struct afs_vnode *vnode = vp->vnode;
+>         int ret;
 > 
-> [...]
+> -       if (vnode->netfs.inode.i_state & I_NEW) {
+> +       if (inode_state_read(&vnode->netfs.inode) & I_NEW) {
+>                 ret = afs_inode_init_from_status(op, vp, vnode);
+>                 afs_op_set_error(op, ret);
+>                 if (ret == 0)
+> 
+> 
+> I reran the thing with this bit and now it's all clean. I think this
+> can be folded into the manual fixup patch (the one i'm responding to)
+> instead of resending the patchset
 
-Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.inode branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.inode
-
-[1/4] fs: provide accessors for ->i_state
-      https://git.kernel.org/vfs/vfs/c/e9d1a9abd054
-[2/4] Convert the kernel to use ->i_state accessors
-      https://git.kernel.org/vfs/vfs/c/67d2f3e3d033
-[3/4] Manual conversion of ->i_state uses
-      https://git.kernel.org/vfs/vfs/c/b8173a2f1a0a
-[4/4] fs: make plain ->i_state access fail to compile
-      https://git.kernel.org/vfs/vfs/c/3c2b8d921da8
+Folded, thanks!
 
