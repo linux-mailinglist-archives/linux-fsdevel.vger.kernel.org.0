@@ -1,112 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-63098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62227BABEA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 09:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C847BABF09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 09:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C562E1893383
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 07:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0911926683
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 07:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F022D29A9;
-	Tue, 30 Sep 2025 07:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0262C11C9;
+	Tue, 30 Sep 2025 07:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dklnDDVg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BC07D07D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 07:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659A92C0F87
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759218998; cv=none; b=lmA571YloT7/gwtQY54MtreetXiWhpvjD1rh3CyQwLKLsSA8O5qfyzLltFRlVkwLCp4XD6vFIK4r7lsG2ZZqHXJs2Xo6qdk3zmfA/j6+tzT6wxEiSC+bfqHfaf23qvEnwvcFtUKfr9EhbFSROvTnzd+E2Jk+fLGob5HZQObQJ2o=
+	t=1759219130; cv=none; b=f3Lavob6wirK9a4xdnkT3Pv4ncELJ1qXfnIJ+rGsafFwLY0AXVYSJRUD6gF2aalFoON9lAP7UBxZE2e87aEvbv219n9EFmKRtpeAlVm8Xf1sZJIPlRMMhIie+J+pzQdCNpol4YqVr8joz8r1mdKCrmg6dFWRxQuRyD7olBJpL/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759218998; c=relaxed/simple;
-	bh=Uv75VHzwzodN/iFg2QyyTKYBfqgugtw4uy9y1OMCQRU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WUfmmXX1+/8uMm2rEDlCA1krcbE74/el3Ey4UPa6ZGo5G2+VUYtvCcaS/R7qVobDVyxg44n6/WRBevfiQNNVnLWMM189Ck64hl5F3YfdaNqoiUQ66E6b63B2fGN5UZqg+E+rV5T5qgW8ChQjGKnUUY8LDVu0aPWtxWWTHGMuQJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8870219dce3so578585439f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 00:56:37 -0700 (PDT)
+	s=arc-20240116; t=1759219130; c=relaxed/simple;
+	bh=GW0+t7xjQhqLAlZvuCH2wFM1HzLxDXq+6ZhGCWe3SNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y251rgh4srlaJ0KwOjs2wgiKYFTv6lXEWINp9u+VZLjl/uUXAjjO/RWRLAV1hYBhSdwsK5+9UN1vSdsuaOEUUV4ud6SkEvvb7IHF2MOvkmLDuCDPmPO3ZfN7T/cK04DtmdxSbtgdtJrUKtAEZHp0IxEvaLujSmO9KXw4/1IAnSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dklnDDVg; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3b27b50090so500444466b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 00:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759219127; x=1759823927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tdLjLEy0U0fuaZSofLkGJRFfTbY7z9ZRmrdaFEYCljA=;
+        b=dklnDDVgYKA85Rr7+3/jwHGln3VPS0ttkTDCk27L66JX5qndCzYAXP6de+DxZz+9l5
+         QJShijegUtztNrDYHVfbCMjUAy1aT92iyC1/V6BW7s08QXu4xfspPl74LYsMGkk11MFH
+         +vxJxixnaXVpOfxl5dvrMSCoaKE5qO4ek6htQ5lT5zvxLuAlMMCQPajAP7fcqzPEgqHy
+         2ghC1WEuu8/tUp5TjsAN30IosSxh7JiskKjNWK6ERuG5fYrX2bDbI4ANWZ7jZO76HN1h
+         xYdLEFNCG07EEjsCwDrEU6YekH5AwAjmTADNfJSZhCd/LEOwnG/MMhqmCUefftGHOmBv
+         pArQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759218996; x=1759823796;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IbNYsaEk58vNzaUVYv+66XCe3nNgMD1F6rNfOCmPIOw=;
-        b=tbVcwLmNgVOw8CYmymb2gbhZf8f/SvB5K0IuyQNWssbMuNTs+2r8PEpnI1MVqr5+Ap
-         xTlLf9TeemgoYOxJt7Gg9gSac8Q4co/7SlMIwUHRlJfxz2cv5NG2uTzAzNuFesuS1cen
-         4YQVPhqE8AUl3U2uAf+Y9LPCXLuoXeAAeL+p7xd3b1c6h8FVGDHpmBJ2y3y0YgEwY3vy
-         xl6H54V/XERxoW7is3ZPKZbhNZJ5dGfhAr/9iXAUBnTR3xd69r1165f1YT2FNwut8MIp
-         9xTkLy3XfPQeLM3u/wSb5YTKOAl7mEYwSuryztW2R0JjZxWTosKLQ+O2OR6uNT8AWr+q
-         iMyg==
-X-Gm-Message-State: AOJu0YxCLyMOe0qAKyhg3vF9SHWbgT8rKE/jdNl/KybWujG6w7OcezKm
-	GVm/EAwhtdVH7oe96p7/1q1xdXBxR4JYH8sqhYCEfssNsek9GTlQ0Z3beQ6rGgEJkf/2sHREIwe
-	kSYH3eJOEFJCTq6MBYq+6KKhheW/jQc6SAb2bTRUfNxhUF4XCyGUPyM5ogd0=
-X-Google-Smtp-Source: AGHT+IGsuontnO7CZFIc60QbGnMZ6HvvL5aTlAE/tmbnY9fG+eDHbgg8Y+vxPaW6+01fJXiGOjyYjk313njPTeqSPLze7IevnF6I
+        d=1e100.net; s=20230601; t=1759219127; x=1759823927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tdLjLEy0U0fuaZSofLkGJRFfTbY7z9ZRmrdaFEYCljA=;
+        b=spWXV1OYMXu295MI/BaDXo/Yx1I3vP7VNpZ0LYle8OvyByjZN3u/6NMdQbuxQYs4rD
+         TsHTgOkAuOJb+45q/Q5J6CCPwbzH9tEEkXHrV3kaLZzsIF0v6hKTXDQBbBTEHbupf04r
+         /SWPwSNvNvmVW7+/pOMcVKxjJFrhqutXhJjsP7FYbFpmHoR8HKH7/+AeqU330Bv8C+z0
+         yEBl/B2I+lTBpeVroPvc+cIaRG+bMNQBbUAxCUdWDwiZkt4SjYBl28kTkzV1hu9AC+1H
+         gL96BzBYgfNxWe5aBCOfs3tj+624ltyEeEFR19nMos7uuK/Vg+ZKbTJ1tv6mbmvBSvjI
+         7VBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJAiShgn+Ic7aFi3AjeImbiGNbRss5WT5AZNSMdm+9WLDuDuuwH0YIwpbSILCEd8jKq1rZsTsyIFfYUsi3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGrLDl4vwy8Ws0cXXOe7pVL1aziJSKEG6giiPWVgOZzOaZLpb+
+	GaojuK8wHm12MI9WrmHIU/uSYjz16c8do8azXxCUb1HC2NdvBZJ0HiEN
+X-Gm-Gg: ASbGncvXZ7BX2OtQfwNKTVDqxNCiEMdm6n7SFeKATEXEGHHvxXhwheLK3KDqX/EfGGG
+	jGQOJgLeJRjVsCXQdxL+2p0aFXwFFwIJ1iXgLz7CaBbZ/rW6boCMwZI2U5rJ/1xyzEjnIGF0K+h
+	vOQigcucjXRSZGlLIn7GfNrx0y7ciNVGZwElf/sbwPt9DmXKVnHJxuUKXCpDg/WpdC9MAlhmJay
+	TJhl/rE1C8cQBJuREOQwOViU6n7unMTRAfAh52MU4M7xSwq/zJFp9UB+xaeJN5HxVbSBtmOodZy
+	FAnBolelAC1mXDTYfxlMYuG1IzS9zZC5YkRKk/unCPSIYDOzEWATycs1l9RycqC1/NzdKRazURM
+	/5Hiw7a9O1vZBDTJih3OaEWAQ6jCJzq8cJQz3uSjTj4jE0qm/OayWSd5uB7aEbNwHs764CfLdWe
+	vdIAZ8dd6VrlO3BQJbYHENiBF0NF+tfX6DzlojDNrcRIYBJJ7/mRbO9mm6h2JkN5GyB2NUHapEn
+	Uym
+X-Google-Smtp-Source: AGHT+IG74fN0DIkyOhjohxH9Y+ip3FELgnzPQxo8Ns4r1Man0mPD+YCE6s+wO1i6xseHx0QHtnzQkA==
+X-Received: by 2002:a17:906:f5a3:b0:b3e:e16a:8ce4 with SMTP id a640c23a62f3a-b3ee18913d0mr757795866b.3.1759219126556;
+        Tue, 30 Sep 2025 00:58:46 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (2001-1c00-570d-ee00-b818-b60f-e9a4-67a5.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:b818:b60f:e9a4:67a5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b37b3b46ba0sm905613366b.2.2025.09.30.00.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 00:58:46 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Gabriel Krisman Bertazi <gabriel@krisman.be>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs updates for 6.18
+Date: Tue, 30 Sep 2025 09:57:38 +0200
+Message-ID: <20250930075738.731439-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d8e:b0:92e:298e:eeac with SMTP id
- ca18e2360f4ac-92e298ef01bmr663554239f.2.1759218996480; Tue, 30 Sep 2025
- 00:56:36 -0700 (PDT)
-Date: Tue, 30 Sep 2025 00:56:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68db8d34.a70a0220.10c4b.011f.GAE@google.com>
-Subject: [syzbot] Monthly fs report (Sep 2025)
-From: syzbot <syzbot+list350c6536db9fa6ce459e@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=true
+Content-Transfer-Encoding: 8bit
 
-Hello fs maintainers/developers,
+Hi Linus,
 
-This is a 31-day syzbot report for the fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fs
+Please pull overlayfs updates for 6.18.
 
-During the period, 4 new issues were detected and 1 were fixed.
-In total, 58 issues are still open and 395 have already been fixed.
+This branch has been sitting in linux-next for a few weeks,
+but I added some RVB last week.
 
-Some of the still happening issues:
+It has gone through the usual overlayfs test routines.
 
-Ref  Crashes Repro Title
-<1>  6883    Yes   WARNING in inc_nlink (3)
-                   https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
-<2>  6287    Yes   possible deadlock in input_event (2)
-                   https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
-<3>  4544    Yes   INFO: task hung in path_openat (7)
-                   https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
-<4>  3991    Yes   BUG: unable to handle kernel NULL pointer dereference in filemap_read_folio (4)
-                   https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-<5>  3207    Yes   INFO: task hung in __iterate_supers
-                   https://syzkaller.appspot.com/bug?extid=b10aefdd9ef275e9368d
-<6>  2287    Yes   INFO: task hung in filename_create (4)
-                   https://syzkaller.appspot.com/bug?extid=72c5cf124089bc318016
-<7>  1886    Yes   INFO: task hung in lookup_slow (3)
-                   https://syzkaller.appspot.com/bug?extid=7cfc6a4f6b025f710423
-<8>  1292    Yes   KASAN: use-after-free Read in hpfs_get_ea
-                   https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-<9>  1066    Yes   INFO: task hung in synchronize_rcu (4)
-                   https://syzkaller.appspot.com/bug?extid=222aa26d0a5dbc2e84fe
-<10> 931     Yes   INFO: task hung in user_get_super (2)
-                   https://syzkaller.appspot.com/bug?extid=ba09f4a317431df6cddf
+The branch merges cleanly with master branch of the moment.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Note that there is a small change to fs.h in this PR for the
+sb encoding helpers.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+This change is reviewed by Gabriel and Christian has agreed that I will
+merge it through the ovl tree.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Thanks,
+Amir.
 
-You may send multiple commands in a single email message.
+----------------------------------------------------------------
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.18
+
+for you to fetch changes up to ad1423922781e6552f18d055a5742b1cff018cdc:
+
+  ovl: make sure that ovl_create_real() returns a hashed dentry (2025-09-23 12:29:36 +0200)
+
+----------------------------------------------------------------
+overlayfs updates for 6.18
+
+- Work by André Almeida to support case-insensitive overlayfs
+
+  Underlying case-insensitive filesystems casefolding is per directory,
+  but for overlayfs it is all-or-nothing.  It supports layers where
+  all directories are casefolded (with same encoding) or layers where
+  no directories are casefolded.
+
+- A fix for a "bug" in Neil's ovl directory lock changes,
+  which only manifested itself with casefold enabled layers
+  which may return an unhashed negative dentry from lookup.
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      ovl: make sure that ovl_create_real() returns a hashed dentry
+
+André Almeida (9):
+      fs: Create sb_encoding() helper
+      fs: Create sb_same_encoding() helper
+      ovl: Prepare for mounting case-insensitive enabled layers
+      ovl: Create ovl_casefold() to support casefolded strncmp()
+      ovl: Ensure that all layers have the same encoding
+      ovl: Set case-insensitive dentry operations for ovl sb
+      ovl: Add S_CASEFOLD as part of the inode flag to be copied
+      ovl: Check for casefold consistency when creating new dentries
+      ovl: Support mounting case-insensitive enabled layers
+
+ fs/overlayfs/copy_up.c   |   2 +-
+ fs/overlayfs/dir.c       |  29 ++++++++++-
+ fs/overlayfs/inode.c     |   1 +
+ fs/overlayfs/namei.c     |  17 ++++---
+ fs/overlayfs/overlayfs.h |   8 +--
+ fs/overlayfs/ovl_entry.h |   1 +
+ fs/overlayfs/params.c    |  15 ++++--
+ fs/overlayfs/params.h    |   1 +
+ fs/overlayfs/readdir.c   | 126 +++++++++++++++++++++++++++++++++++++++--------
+ fs/overlayfs/super.c     |  64 +++++++++++++++++++++++-
+ fs/overlayfs/util.c      |   6 +--
+ include/linux/fs.h       |  27 +++++++++-
+ 12 files changed, 254 insertions(+), 43 deletions(-)
 
