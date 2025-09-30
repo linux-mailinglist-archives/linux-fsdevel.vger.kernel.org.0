@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-63127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFB6BAE82F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 22:17:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9289EBAE829
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 22:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E963254B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 20:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0420E1923A0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 20:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50A9271456;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FCC24678F;
 	Tue, 30 Sep 2025 20:17:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80751D516C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696D91946AA
 	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 20:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263457; cv=none; b=qEHR7iIrHWDVp491mgsM0G98tFzT3Xd0opNrByB3X5yQoA3u9FzZP/DnPQrPT6eLQQL3s2JYCVsPQr5e8HEUGvQME0EdO0vMnN1go7KFGtLL/kfkZlg++BOe4ZuGeeCUVi0YPatT4FZmnPFaSfxE0mewSlxvSwe+rEVoEhcAvfE=
+	t=1759263457; cv=none; b=cTllEQJgMGLTq5WxpMQ3i1fZ7rmXw14DkIpUVTFdIKzkhRJgp1a2Oinz0DD1GTc83egtWn1VvhmErLHFpz6vgaFcSWtUmRdAKLN2bp9XaHKyr+tpeF23+x/Obe1iD3U909/9+xNRu+XakLD1IaFs2kkPm3TvTHVq9Xede1e5wlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759263457; c=relaxed/simple;
-	bh=XtreJdnQuuYeaIcZ8Juz1KCPjR+edY1Ffz0apbbCTEQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HxtWtuOEdQkfmWgypaK1fejo8bQ9x73gsqhQXaa0xI8inlYQdeCAJnBH+cydu9AsuAJ6//GTmP2vu3nnLEmaUpI4/UsPtTn7j6xrOf3SHuN8jAcgYRmF3tAYJZXSnhS1kkZsFq3KmYI25Ux/NpA5xqn+VDk3uFxqdNDZfe+XDZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+	bh=TDH8vzFsIMP+FaLjeKsxVQ8JrIFaIwg82WMRO0n46Is=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=os2ELWK0+1kO91yFbIPmtsQor7YuV4vDHTtqbKCrZzfzeDKThJ2fxTsm0Nf4jMBxrtyFoC549uJeRw9dzfSHCO0KJBDYZmJ0ELB00q4fYDZ6FTbpYTHc/M3q0K3fbxTCvI4wGULX+Okc8tzNWjaDzHB6ERwvDzP2P3X7xj34T50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-90f6e3cd204so550017139f.2
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9143e8a4c5eso1208827739f.3
         for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 13:17:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759263455; x=1759868255;
+        d=1e100.net; s=20230601; t=1759263454; x=1759868254;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tSAWtj1RDBXdJgZr9yOe92W4TRPCsog5bKILrPHk5f8=;
-        b=HMdafT2zjChKr7iNC2chhibwWparvABHJKrEZjv5CH1MWzPkAZgkQPZRfGCubokr93
-         MVRgQ9VA2JJwwKEHIUM5mJOoofhIDKtaLgBzE4xub58vy9O1JTBSTqf3pd9W30eDfbE5
-         QDgqCxcQ2KIT5vEK6cF/nLWYLjMfqpzFxtVCoUCNtoPGwlyZBKpNOlghibnc1pFKZgLA
-         ocbJk1FRw6B/gQs0TenxL2fuWWr8DY+2av+1RoCIcJHRV++JypnQ28/MHhHTXKa5KsKf
-         7XoIm0CUmJNcrYWJ6ykvzFWYr6ZgwqShfVec53gWP7X8pmp8BdzvqB5wQWOusI1kfgH1
-         sCfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDFiWaR+O9hnTgxMxELG2JVkrXIi+5jBG+pk8mvAC8P5LFLOXZowT5KfHeJn1i/IiypW1bHf2DO4TcMEd1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUdIC/ulU2gK8DFjDATcbB/TngMYP7g3rtEP/WPC2+IwQCkj9l
-	hEU4LQrp225j38SVAx06en103AW22kKpo/cl+uONyTY/5H2359g1txVs17y3in8ozkYGjc5y9WP
-	ef9TxKC7pKGfCoS5Ckn2lIi7mYkrpZlQ7cFuIVBEEIk7tIK8gnOzhpvjnUag=
-X-Google-Smtp-Source: AGHT+IHmkt02t9H7XVuLG0CXb97MIBC7P5H1LMRNwv0cGGXg0vbEiTZcdjKS9KTFK+UvYgDruji6b6LXKNVkIhxUmviz1H287H9K
+        bh=LGrzJ6TsXsD4qZJxnOtOJPRd2gsGL0hMKZMMty4R1hw=;
+        b=JHQ1MWahQ1ZnIHcGAOWwaDAL8KTAdLHuhgnu7ddwGfUaNwffi2n4IzJWesKxkt7e1j
+         2UR674fNVlLrfbdLniVH91FVT+9ps4lBUD78RTBc23YRNHm5wkOzEyVDsm+ZXAXqno4Z
+         0wFrUZnMxqXjNJtB/7tUxTxSEFXeCua2udyh8znziuXI4FgphHwErylRiyagVxwG5RU3
+         JabrFE9Z55JxeWl/QOnmBfagcThrzIOT43PO0N84a8g6fKZQ7XHrA7g4gBKrh/VJXbWW
+         ZysdV+jGcQple5FkLc1+qbP63K0HhYRuhQmgW5JlDl7QjEGxqrBFuopSU2WaVPunpTF/
+         e4rw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwNqxFoYHTRnYPVWmnkn+V+AXRwAMn2qzsol09CSbgLjmH3iO5ycdGL+kWQls0t4U9WDeD3Hz523mKLeqy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX/gVeMTKKOZvULj4Qvfa5KtUUPgNGOed/Stm9yPyhBePANA6y
+	s4UuBTd7s7JEMkPatkhkrJkv6T8873F0ax1DtwnuG7WHA6sPUHQGW+Cv/lw97mYs3bH4zRNxIgI
+	aE+ZIHhPgm3doVIKl4eFY/Ze5LvSWXvim2sDPAGneTiiD7GRSqURM1vXK24I=
+X-Google-Smtp-Source: AGHT+IHIF7h447lb4NOR0bEvL5jEo3qx5Gy/t+7sjkLJjjoo7TxArWm1exNmogDkZgcACqCgR+3UluJFFNB1t/ywcjQtYM+ytjYF
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1787:b0:42d:7d52:db53 with SMTP id
- e9e14a558f8ab-42d81614fe1mr17397045ab.15.1759263454886; Tue, 30 Sep 2025
+X-Received: by 2002:a05:6e02:1aad:b0:426:a2d3:28d3 with SMTP id
+ e9e14a558f8ab-42d815f51a5mr19496315ab.13.1759263454583; Tue, 30 Sep 2025
  13:17:34 -0700 (PDT)
 Date: Tue, 30 Sep 2025 13:17:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dc3ade.a70a0220.10c4b.015d.GAE@google.com>
-Subject: [syzbot] [isofs?] VFS: Busy inodes after unmount (use-after-free) (3)
-From: syzbot <syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com>
+Message-ID: <68dc3ade.a70a0220.10c4b.015c.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING in free_mnt_ns
+From: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
 To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
 	viro@zeniv.linux.org.uk
@@ -70,76 +70,68 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    30d4efb2f5a5 Merge tag 'for-linus-6.18-rc1-tag' of git://g..
+HEAD commit:    449c2b302c8e Merge tag 'vfs-6.18-rc1.async' of git://git.k..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1350d05b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5eb55ce880562a8c
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d79ebe5383fc016cf07
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f17c14580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d80a7c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b43858580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=595e5938a1dd5b4e
+dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c9ad04580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160bf27c580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b7f58792107b/disk-30d4efb2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9a0647491b90/vmlinux-30d4efb2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9829a72408d5/bzImage-30d4efb2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ec44ab2c5fdc/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/ddc1ff1fc7e3/disk-449c2b30.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/92fc60e0e9d5/vmlinux-449c2b30.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e50a03ce90e3/bzImage-449c2b30.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
+Reported-by: syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
 
-VFS: Busy inodes after unmount of loop0 (iso9660)
 ------------[ cut here ]------------
-kernel BUG at fs/super.c:653!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5985 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+ida_free called for id=1125 which is not allocated.
+WARNING: CPU: 1 PID: 6109 at lib/idr.c:592 ida_free+0x1f9/0x2e0 lib/idr.c:592
+Modules linked in:
+CPU: 1 UID: 0 PID: 6109 Comm: syz.1.23 Not tainted syzkaller #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:generic_shutdown_super+0x2bc/0x2c0 fs/super.c:651
-Code: 03 42 80 3c 28 00 74 08 4c 89 f7 e8 6e 32 f3 ff 49 8b 16 48 81 c3 d0 07 00 00 48 c7 c7 60 90 d8 8a 48 89 de e8 85 59 fe fe 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f
-RSP: 0018:ffffc9000419fd20 EFLAGS: 00010246
-RAX: 0000000000000031 RBX: ffff88803956a7d0 RCX: 8b706059fb7f3300
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 1ffff110072ad51b R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffff52000833f49 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffffffff8d5b82e0 R15: ffff88803956a8d8
-FS:  0000555590698500(0000) GS:ffff888127125000(0000) knlGS:0000000000000000
+RIP: 0010:ida_free+0x1f9/0x2e0 lib/idr.c:592
+Code: 33 f6 41 83 fe 3e 76 72 e8 14 31 33 f6 48 8b 7c 24 28 4c 89 ee e8 57 65 0d 00 90 48 c7 c7 e0 17 16 8d 89 ee e8 78 13 f2 f5 90 <0f> 0b 90 90 e8 ee 30 33 f6 48 b8 00 00 00 00 00 fc ff df 48 01 c3
+RSP: 0018:ffffc90003037980 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 1ffff92000606f31 RCX: ffffffff817a02f8
+RDX: ffff88802c8ebc00 RSI: ffffffff817a0305 RDI: 0000000000000001
+RBP: 0000000000000465 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffff8880791f7f00
+R13: 0000000000000293 R14: 0000000000000065 R15: ffff8880791f7f08
+FS:  0000000000000000(0000) GS:ffff8881247b3000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055bb0ed4b1b8 CR3: 0000000028c78000 CR4: 00000000003526f0
+CR2: 00007fe8d5f156c0 CR3: 000000007680c000 CR4: 00000000003526f0
 Call Trace:
  <TASK>
- kill_block_super+0x44/0x90 fs/super.c:1723
- deactivate_locked_super+0xb9/0x130 fs/super.c:474
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1318
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ free_mnt_ns+0xe0/0x110 fs/namespace.c:4096
+ namespace_unlock+0x542/0x920 fs/namespace.c:1701
+ put_mnt_ns fs/namespace.c:6135 [inline]
+ put_mnt_ns+0xf5/0x120 fs/namespace.c:6126
+ free_nsproxy+0x3a/0x400 kernel/nsproxy.c:188
+ put_nsproxy include/linux/nsproxy.h:107 [inline]
+ switch_task_namespaces+0xeb/0x100 kernel/nsproxy.c:241
+ do_exit+0x86a/0x2bf0 kernel/exit.c:960
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
+ get_signal+0x2673/0x26d0 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x8f/0x790 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x84/0x110 kernel/entry/common.c:40
  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ do_syscall_64+0x41c/0x4c0 arch/x86/entry/syscall_64.c:100
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff17a1f01f7
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007fff2497d5b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00007ff17a271d7d RCX: 00007ff17a1f01f7
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff2497d670
-RBP: 00007fff2497d670 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007fff2497e700
-R13: 00007ff17a271d7d R14: 000000000001bfd3 R15: 00007fff2497e740
+RIP: 0033:0x7f5cffd8eec9
+Code: Unable to access opcode bytes at 0x7f5cffd8ee9f.
+RSP: 002b:00007f5d00ba0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: fffffffffffffff4 RBX: 00007f5cfffe5fa0 RCX: 00007f5cffd8eec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000020000
+RBP: 00007f5cffe11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f5cfffe6038 R14: 00007f5cfffe5fa0 R15: 00007ffee87a9438
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:generic_shutdown_super+0x2bc/0x2c0 fs/super.c:651
-Code: 03 42 80 3c 28 00 74 08 4c 89 f7 e8 6e 32 f3 ff 49 8b 16 48 81 c3 d0 07 00 00 48 c7 c7 60 90 d8 8a 48 89 de e8 85 59 fe fe 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f
-RSP: 0018:ffffc9000419fd20 EFLAGS: 00010246
-RAX: 0000000000000031 RBX: ffff88803956a7d0 RCX: 8b706059fb7f3300
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 1ffff110072ad51b R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffff52000833f49 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffffffff8d5b82e0 R15: ffff88803956a8d8
-FS:  0000555590698500(0000) GS:ffff888127125000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055bb0ed4b1b8 CR3: 0000000028c78000 CR4: 00000000003526f0
 
 
 ---
