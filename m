@@ -1,371 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-63118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C983BAD935
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 17:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD5FBADFA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 17:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1223A372A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 15:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899E84C1EFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 15:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B24330597A;
-	Tue, 30 Sep 2025 15:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63077308F24;
+	Tue, 30 Sep 2025 15:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fLB3o2Rk"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Oe2z1UoB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF092236EB;
-	Tue, 30 Sep 2025 15:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C632505AA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 15:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759244905; cv=none; b=klOegp/W8LxnDqUSFyXXEmh20lVg9VGBO9p/WjSdxg/SUYyoyYRLPgH9cvXZng4dqf7I62vwPrsSgc3e5e/juVw4Y0mUQKsFcRx2iq/IWbhlWhdSptqbCmSpsX7Xt8dId0ZM223Rh3gai7OqNBsjFPHVp3vfgDWPa1gT+udFcFY=
+	t=1759247534; cv=none; b=Lf+Qj/Bpf2gGc6tWRemIUamhzxCQ9ihZTPge4g6ebiSzIzeJpA01IV+Z75t1WFwq9NmD67/aAnh9YkGssafsXHirfVUsDWuGISk+3Jb4WnS2zqADBbmkOq5IKjQF8sKgM/aRtiUuuz+ZJ2I0mmL8Km4HQwZrjGM3sgo3wCcgvDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759244905; c=relaxed/simple;
-	bh=uaKFsbYWFe/oVSKXL982miuGa8roWsZYIphEteojVDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mqqYV0y+LpGQg5XhFMd1dmxledsVTnrQjSYN1ItDKuOmkynmasUFQQ/cECD0xRGWv/nJ3N4j3P/+WnIO2weQsMLKvgotgiOeNbHZVEBgeSS1zSfssQ7D4fiUYekXl2cBXqSaZAYAIfnoKgcwBwiL0su+Sz4ToRGbwtEgsBkF9gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fLB3o2Rk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A303C4CEF0;
-	Tue, 30 Sep 2025 15:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759244905;
-	bh=uaKFsbYWFe/oVSKXL982miuGa8roWsZYIphEteojVDU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fLB3o2RkTzjklmp8tEzgfatMe5SlfrtqDK/yxywzSQpp6GumxQdFChbYDtT5gMdl/
-	 FCl4OyX0CnZWYA06i/F3vPSoRSyftkg/XxCN812at0pvHzekrc4kkr52sklbFryKXx
-	 +tFaYJt9AQWHs9+rnAdZq/UeGesis/M8YUV1j6ZE=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Max Kellermann <max.kellermann@ionos.com>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 6.16 129/143] netfs: fix reference leak
-Date: Tue, 30 Sep 2025 16:47:33 +0200
-Message-ID: <20250930143836.371690436@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250930143831.236060637@linuxfoundation.org>
-References: <20250930143831.236060637@linuxfoundation.org>
-User-Agent: quilt/0.69
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1759247534; c=relaxed/simple;
+	bh=Jwo1nfDGTjIWmG9cvdjgJDXOj/gGfPJGkekPHSQ7lu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4cOt8ik0JHXTAFhKUDZAX7KYjMjEFIdwG/vlZkuVFjhfYWiUwSqRDqa09lKzuYVjyNoXL8gUa/ONacW0vZxvvaSE4loaDVv7swDRdJjKCVs327B1KFXxjVRpTsUEICHof9Sti9jGtbjmZt9HotDoQrSuqBK10qYx3frHC9v8ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Oe2z1UoB; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cbjHC39Qrz9tSL;
+	Tue, 30 Sep 2025 17:52:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1759247527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CdiBOlpd/2drqikpy3t44xz7MPgX0WLp0RFYtq9hFyU=;
+	b=Oe2z1UoB2s0QeorJ9E7bZSpCl+R6Yro5JsjTyQ4aiFMacXf+Zmm9nSskuva51P2tYpHp0E
+	EcwspjrVM2JbMcwONBh1uh363QXjgu9f4+emt35fzs9wnDlqp/zOmh9R1OUX+jGK5rAkY5
+	4TZdnX439TFzWWho86WSQjVEcwbrasHB0EULh1xCWL5nezIgMiCaJT1d+mLHPF6mYx9f6k
+	55kJzQVCcQyx8qfcv6Z/vvNXLzzrJk49wXhEGFviWGlWjJpxOt8mOtB2MOgM7WGDRCpJ3m
+	AsNIRCbGgqdpP7lvRS3Z/YDex0pEU/uHSa1ehSNAhBax6QpxAPR/sK88m7D9HA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 1 Oct 2025 01:51:53 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: brauner@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH RFC 0/6] proc: restrict overmounting of ephemeral entities
+Message-ID: <2025-09-30-emerald-unsure-pillow-prism-nKVGLB@cyphar.com>
+References: <20240806-work-procfs-v1-0-fb04e1d09f0c@kernel.org>
+ <20240806-work-procfs-v1-0-fb04e1d09f0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-6.16-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Max Kellermann <max.kellermann@ionos.com>
-
-commit 4d428dca252c858bfac691c31fa95d26cd008706 upstream.
-
-Commit 20d72b00ca81 ("netfs: Fix the request's work item to not
-require a ref") modified netfs_alloc_request() to initialize the
-reference counter to 2 instead of 1.  The rationale was that the
-requet's "work" would release the second reference after completion
-(via netfs_{read,write}_collection_worker()).  That works most of the
-time if all goes well.
-
-However, it leaks this additional reference if the request is released
-before the I/O operation has been submitted: the error code path only
-decrements the reference counter once and the work item will never be
-queued because there will never be a completion.
-
-This has caused outages of our whole server cluster today because
-tasks were blocked in netfs_wait_for_outstanding_io(), leading to
-deadlocks in Ceph (another bug that I will address soon in another
-patch).  This was caused by a netfs_pgpriv2_begin_copy_to_cache() call
-which failed in fscache_begin_write_operation().  The leaked
-netfs_io_request was never completed, leaving `netfs_inode.io_count`
-with a positive value forever.
-
-All of this is super-fragile code.  Finding out which code paths will
-lead to an eventual completion and which do not is hard to see:
-
-- Some functions like netfs_create_write_req() allocate a request, but
-  will never submit any I/O.
-
-- netfs_unbuffered_read_iter_locked() calls netfs_unbuffered_read()
-  and then netfs_put_request(); however, netfs_unbuffered_read() can
-  also fail early before submitting the I/O request, therefore another
-  netfs_put_request() call must be added there.
-
-A rule of thumb is that functions that return a `netfs_io_request` do
-not submit I/O, and all of their callers must be checked.
-
-For my taste, the whole netfs code needs an overhaul to make reference
-counting easier to understand and less fragile & obscure.  But to fix
-this bug here and now and produce a patch that is adequate for a
-stable backport, I tried a minimal approach that quickly frees the
-request object upon early failure.
-
-I decided against adding a second netfs_put_request() each time
-because that would cause code duplication which obscures the code
-further.  Instead, I added the function netfs_put_failed_request()
-which frees such a failed request synchronously under the assumption
-that the reference count is exactly 2 (as initially set by
-netfs_alloc_request() and never touched), verified by a
-WARN_ON_ONCE().  It then deinitializes the request object (without
-going through the "cleanup_work" indirection) and frees the allocation
-(with RCU protection to protect against concurrent access by
-netfs_requests_seq_start()).
-
-All code paths that fail early have been changed to call
-netfs_put_failed_request() instead of netfs_put_request().
-Additionally, I have added a netfs_put_request() call to
-netfs_unbuffered_read() as explained above because the
-netfs_put_failed_request() approach does not work there.
-
-Fixes: 20d72b00ca81 ("netfs: Fix the request's work item to not require a ref")
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/netfs/buffered_read.c | 10 +++++-----
- fs/netfs/direct_read.c   |  7 ++++++-
- fs/netfs/direct_write.c  |  6 +++++-
- fs/netfs/internal.h      |  1 +
- fs/netfs/objects.c       | 30 +++++++++++++++++++++++++++---
- fs/netfs/read_pgpriv2.c  |  2 +-
- fs/netfs/read_single.c   |  2 +-
- fs/netfs/write_issue.c   |  3 +--
- 8 files changed, 47 insertions(+), 14 deletions(-)
-
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 18b3dc74c70e..37ab6f28b5ad 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -369,7 +369,7 @@ void netfs_readahead(struct readahead_control *ractl)
- 	return netfs_put_request(rreq, netfs_rreq_trace_put_return);
- 
- cleanup_free:
--	return netfs_put_request(rreq, netfs_rreq_trace_put_failed);
-+	return netfs_put_failed_request(rreq);
- }
- EXPORT_SYMBOL(netfs_readahead);
- 
-@@ -472,7 +472,7 @@ static int netfs_read_gaps(struct file *file, struct folio *folio)
- 	return ret < 0 ? ret : 0;
- 
- discard:
--	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
-+	netfs_put_failed_request(rreq);
- alloc_error:
- 	folio_unlock(folio);
- 	return ret;
-@@ -532,7 +532,7 @@ int netfs_read_folio(struct file *file, struct folio *folio)
- 	return ret < 0 ? ret : 0;
- 
- discard:
--	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
-+	netfs_put_failed_request(rreq);
- alloc_error:
- 	folio_unlock(folio);
- 	return ret;
-@@ -699,7 +699,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
- 	return 0;
- 
- error_put:
--	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
-+	netfs_put_failed_request(rreq);
- error:
- 	if (folio) {
- 		folio_unlock(folio);
-@@ -754,7 +754,7 @@ int netfs_prefetch_for_write(struct file *file, struct folio *folio,
- 	return ret < 0 ? ret : 0;
- 
- error_put:
--	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
-+	netfs_put_failed_request(rreq);
- error:
- 	_leave(" = %d", ret);
- 	return ret;
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index a05e13472baf..a498ee8d6674 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -131,6 +131,7 @@ static ssize_t netfs_unbuffered_read(struct netfs_io_request *rreq, bool sync)
- 
- 	if (rreq->len == 0) {
- 		pr_err("Zero-sized read [R=%x]\n", rreq->debug_id);
-+		netfs_put_request(rreq, netfs_rreq_trace_put_discard);
- 		return -EIO;
- 	}
- 
-@@ -205,7 +206,7 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_iter *i
- 	if (user_backed_iter(iter)) {
- 		ret = netfs_extract_user_iter(iter, rreq->len, &rreq->buffer.iter, 0);
- 		if (ret < 0)
--			goto out;
-+			goto error_put;
- 		rreq->direct_bv = (struct bio_vec *)rreq->buffer.iter.bvec;
- 		rreq->direct_bv_count = ret;
- 		rreq->direct_bv_unpin = iov_iter_extract_will_pin(iter);
-@@ -238,6 +239,10 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_iter *i
- 	if (ret > 0)
- 		orig_count -= ret;
- 	return ret;
-+
-+error_put:
-+	netfs_put_failed_request(rreq);
-+	return ret;
- }
- EXPORT_SYMBOL(netfs_unbuffered_read_iter_locked);
- 
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index a16660ab7f83..a9d1c3b2c084 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -57,7 +57,7 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- 			n = netfs_extract_user_iter(iter, len, &wreq->buffer.iter, 0);
- 			if (n < 0) {
- 				ret = n;
--				goto out;
-+				goto error_put;
- 			}
- 			wreq->direct_bv = (struct bio_vec *)wreq->buffer.iter.bvec;
- 			wreq->direct_bv_count = n;
-@@ -101,6 +101,10 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- out:
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	return ret;
-+
-+error_put:
-+	netfs_put_failed_request(wreq);
-+	return ret;
- }
- EXPORT_SYMBOL(netfs_unbuffered_write_iter_locked);
- 
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index d4f16fefd965..4319611f5354 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -87,6 +87,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- void netfs_get_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace what);
- void netfs_clear_subrequests(struct netfs_io_request *rreq);
- void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace what);
-+void netfs_put_failed_request(struct netfs_io_request *rreq);
- struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_request *rreq);
- 
- static inline void netfs_see_request(struct netfs_io_request *rreq,
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index e8c99738b5bb..40a1c7d6f6e0 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -116,10 +116,8 @@ static void netfs_free_request_rcu(struct rcu_head *rcu)
- 	netfs_stat_d(&netfs_n_rh_rreq);
- }
- 
--static void netfs_free_request(struct work_struct *work)
-+static void netfs_deinit_request(struct netfs_io_request *rreq)
- {
--	struct netfs_io_request *rreq =
--		container_of(work, struct netfs_io_request, cleanup_work);
- 	struct netfs_inode *ictx = netfs_inode(rreq->inode);
- 	unsigned int i;
- 
-@@ -149,6 +147,14 @@ static void netfs_free_request(struct work_struct *work)
- 
- 	if (atomic_dec_and_test(&ictx->io_count))
- 		wake_up_var(&ictx->io_count);
-+}
-+
-+static void netfs_free_request(struct work_struct *work)
-+{
-+	struct netfs_io_request *rreq =
-+		container_of(work, struct netfs_io_request, cleanup_work);
-+
-+	netfs_deinit_request(rreq);
- 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
- }
- 
-@@ -167,6 +173,24 @@ void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace
- 	}
- }
- 
-+/*
-+ * Free a request (synchronously) that was just allocated but has
-+ * failed before it could be submitted.
-+ */
-+void netfs_put_failed_request(struct netfs_io_request *rreq)
-+{
-+	int r = refcount_read(&rreq->ref);
-+
-+	/* new requests have two references (see
-+	 * netfs_alloc_request(), and this function is only allowed on
-+	 * new request objects
-+	 */
-+	WARN_ON_ONCE(r != 2);
-+
-+	trace_netfs_rreq_ref(rreq->debug_id, r, netfs_rreq_trace_put_failed);
-+	netfs_free_request(&rreq->cleanup_work);
-+}
-+
- /*
-  * Allocate and partially initialise an I/O request structure.
-  */
-diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index 8097bc069c1d..a1489aa29f78 100644
---- a/fs/netfs/read_pgpriv2.c
-+++ b/fs/netfs/read_pgpriv2.c
-@@ -118,7 +118,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_copy_to_cache(
- 	return creq;
- 
- cancel_put:
--	netfs_put_request(creq, netfs_rreq_trace_put_return);
-+	netfs_put_failed_request(creq);
- cancel:
- 	rreq->copy_to_cache = ERR_PTR(-ENOBUFS);
- 	clear_bit(NETFS_RREQ_FOLIO_COPY_TO_CACHE, &rreq->flags);
-diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
-index fa622a6cd56d..5c0dc4efc792 100644
---- a/fs/netfs/read_single.c
-+++ b/fs/netfs/read_single.c
-@@ -189,7 +189,7 @@ ssize_t netfs_read_single(struct inode *inode, struct file *file, struct iov_ite
- 	return ret;
- 
- cleanup_free:
--	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
-+	netfs_put_failed_request(rreq);
- 	return ret;
- }
- EXPORT_SYMBOL(netfs_read_single);
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 0584cba1a043..dd8743bc8d7f 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -133,8 +133,7 @@ struct netfs_io_request *netfs_create_write_req(struct address_space *mapping,
- 
- 	return wreq;
- nomem:
--	wreq->error = -ENOMEM;
--	netfs_put_request(wreq, netfs_rreq_trace_put_failed);
-+	netfs_put_failed_request(wreq);
- 	return ERR_PTR(-ENOMEM);
- }
- 
--- 
-2.51.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cmo3t3oeowmhuf2q"
+Content-Disposition: inline
+In-Reply-To: <20240806-work-procfs-v1-0-fb04e1d09f0c@kernel.org>
+X-Rspamd-Queue-Id: 4cbjHC39Qrz9tSL
 
 
+--cmo3t3oeowmhuf2q
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 0/6] proc: restrict overmounting of ephemeral entities
+MIME-Version: 1.0
 
+On 2025-09-30, Petr Vorel <pvorel@suse.cz> wrote:
+> From: Christian Brauner <brauner@kernel.org>
+>=20
+> Hi Christian, all,
+>=20
+> > (Preface because I've been panick-approached by people at conference
+> >  when we discussed this before: overmounting any global procfs files
+> >  such as /proc/status remains unaffected and is an existing and
+> >  supported use-case.)
+>=20
+> > It is currently possible to mount on top of various ephemeral entities
+> > in procfs. This specifically includes magic links. To recap, magic links
+> > are links of the form /proc/<pid>/fd/<nr>. They serve as references to
+> > a target file and during path lookup they cause a jump to the target
+> > path. Such magic links disappear if the corresponding file descriptor is
+> > closed.
+>=20
+> > Currently it is possible to overmount such magic links:
+>=20
+> > int fd =3D open("/mnt/foo", O_RDONLY);
+> > sprintf(path, "/proc/%d/fd/%d", getpid(), fd);
+> > int fd2 =3D openat(AT_FDCWD, path, O_PATH | O_NOFOLLOW);
+> > mount("/mnt/bar", path, "", MS_BIND, 0);
+>=20
+> > Arguably, this is nonsensical and is mostly interesting for an attacker
+> > that wants to somehow trick a process into e.g., reopening something
+> > that they didn't intend to reopen or to hide a malicious file
+> > descriptor.
+>=20
+> > But also it risks leaking mounts for long-running processes. When
+> > overmounting a magic link like above, the mount will not be detached
+> > when the file descriptor is closed. Only the target mountpoint will
+> > disappear. Which has the consequence of making it impossible to unmount
+> > that mount afterwards. So the mount will stick around until the process
+> > exits and the /proc/<pid>/ directory is cleaned up during
+> > proc_flush_pid() when the dentries are pruned and invalidated.
+>=20
+> > That in turn means it's possible for a program to accidentally leak
+> > mounts and it's also possible to make a task leak mounts without it's
+> > knowledge if the attacker just keeps overmounting things under
+> > /proc/<pid>/fd/<nr>.
+>=20
+> > I think it's wrong to try and fix this by us starting to play games with
+> > close() or somewhere else to undo these mounts when the file descriptor
+> > is closed. The fact that we allow overmounting of such magic links is
+> > simply a bug and one that we need to fix.
+>=20
+> > Similar things can be said about entries under fdinfo/ and map_files/ so
+> > those are restricted as well.
+>=20
+> > I have a further more aggressive patch that gets out the big hammer and
+> > makes everything under /proc/<pid>/*, as well as immediate symlinks such
+> > as /proc/self, /proc/thread-self, /proc/mounts, /proc/net that point
+> > into /proc/<pid>/ not overmountable. Imho, all of this should be blocked
+> > if we can get away with it. It's only useful to hide exploits such as i=
+n [1].
+>=20
+> > And again, overmounting of any global procfs files remains unaffected
+> > and is an existing and supported use-case.
+>=20
+> > Link: https://righteousit.com/2024/07/24/hiding-linux-processes-with-bi=
+nd-mounts [1]
+>=20
+> this is fixing a security issue, right? Wouldn't it be worth to backport =
+these
+> commits to active stable/LTS kernels. I guess it was considered as a new =
+feature
+> that's why it was not backported (looking at 6.11, 6.6 and 6.1).
+
+It's a security hardening against some attack methods, but it's not
+necessarily fixing a specific security issue. It is possible to operate
+on such paths safely in most situations[1] so it's not a critical issue
+(though I am happy to see the fix, as it makes openat2 more trivially
+useful for this case and protects unprivileged programs).
+
+I suspect Christian didn't mark it for stable because there was a risk
+of breaking programs (fwiw, it did "break" some tests I had for the
+library I linked in [1] since we had test scenarios to make sure we
+handled this attack pattern safely, but that was expected -- I don't
+think any actual user was affected by this change). And yes, it's
+arguably a new feature.
+
+[1]: https://docs.rs/pathrs/latest/pathrs/procfs/struct.ProcfsHandle.html#m=
+ethod.open_follow
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--cmo3t3oeowmhuf2q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaNv8lhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG8fSwD/amnUy59ZXiYnRHP57VD+
+tQhEMHExuVlXOzo8smNcGgEA/i+mdFEKtXi1x9Odgj5aB58eKZdaIdVgERnl2Z7Y
+AlwM
+=b80l
+-----END PGP SIGNATURE-----
+
+--cmo3t3oeowmhuf2q--
 
