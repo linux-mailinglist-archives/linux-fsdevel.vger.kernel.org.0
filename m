@@ -1,74 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-63121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD2CBAE577
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 20:47:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2DABAE5F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 20:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C101678B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 18:47:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECFC64E297A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 18:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443E7239E7F;
-	Tue, 30 Sep 2025 18:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4522773D4;
+	Tue, 30 Sep 2025 18:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THfRFIZj"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HsQi4k5Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F414F22126D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 18:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01E934BA50
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 18:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759258063; cv=none; b=DnSlg4TCyyMPU1kkjc5BIMzjDp6cxOyepVurjn/+yRs9n2X5fxRKNy/MJPHFHFcG4PO8OjcX14TJgl+uNuqMMc8aU+zENx7lV7nkn7e8M9/96EZq6HkA4aqvQ84m35QLElSz4nlvplEXudADjxAC2QRrz84Wefp8EGm1Eh2hV5M=
+	t=1759258556; cv=none; b=MNlgDcelky2NH7hjHOVLTU8ptuyCaCjmEhEd4Z2gr6aMYue5bYZCTpKuJWrwRAtia73yUzrC5kRAH6kSxqW147gm9S4FWawHxQgLfeBoehtb8xXqe7LkJIM5g+usvH0gO/p6OE8LiJ7SJ9eqGQex7ihWME0DsHjwQjbfKf2HSF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759258063; c=relaxed/simple;
-	bh=WVJvVzVNCAGgw9/uh8MrdFGl+TSWah5yn/zC0RJzb6E=;
+	s=arc-20240116; t=1759258556; c=relaxed/simple;
+	bh=g4XTpAdzBEBKTpeuRPJ1fQ2ET0Hk7V6k94DiU7N+Pwg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i26QEVtjpj8xfgkR6ysAESzp41pb6CzAF/piHIwXKbmNqJvar6fkYgqbt6RX6/3N11NJxRpi3sY9AJ3dHM953s+PgNCAtFp7sI5oEXIrVkDNOIHFoUmIzX3DOIEKE581frQhJZA4xcbkfKOW2w2zCQ+OpJvdWvs67sefZ0dp1D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THfRFIZj; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4de2c597965so44221721cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 11:47:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=eb6JvacwRBYd0cia/F39lhUVb7rsb1FmmK4osqzw8sXgJNArzDcGTzkrlzMTpjRaC/z4O7tumj4rIwuyKhIZFUYgqz7bTZ5eTKP4GvPyPFocfuKh2BthALjOoqeDYOQOyR1nuLFpr/Krrw8ybea6hU9HjAN1sato9ZXbobKwKg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HsQi4k5Q; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-854585036e8so640240585a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 11:55:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759258061; x=1759862861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WVJvVzVNCAGgw9/uh8MrdFGl+TSWah5yn/zC0RJzb6E=;
-        b=THfRFIZju6c2vCBzO5KEb6+LtA29S/5qnLQfbDLxUlEFrcCNFMbjnPTcOyEW5TigAM
-         ESsFV4WtWyHI0fHcLasfcTHiuA0DHT8fqxds1EowOZVLPwsWGF6grT1Jd+D5QXRHsUlq
-         bgC4o3bsUChlBnV5ZtJDAWsT99aAs96owns/fHWtehzaOwF3TWl99cqbtMPZwqdmGfn7
-         DWwsg7kJEXlQDRv5DBhx3UdEOIvoFNqlHuUItxPxCuDxqaDGarDBaivbx8yrw5P7yruJ
-         9iUF6gKf1v721Bwy9yyTWli84+pDmOWx9W5NRUqlbrjS55A1b050J4fyGzq11dy8MuBS
-         tEZw==
+        d=szeredi.hu; s=google; t=1759258552; x=1759863352; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g4XTpAdzBEBKTpeuRPJ1fQ2ET0Hk7V6k94DiU7N+Pwg=;
+        b=HsQi4k5QI+dsMSrnatjfS23eksYqhwF6gEX3ptmN7aDUsuwXan4pqrrPwFdyjSczAE
+         Av3/xxr1WlzZcTbGXzEYU5I7Mrxr9jk8cjyBRwJzUpmvj8rCAtfCB8OoAncOVIAmgpCT
+         cU8tcLh8qNWBvOC2h+rZT3xcXqqd4YBaPB+/Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759258061; x=1759862861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WVJvVzVNCAGgw9/uh8MrdFGl+TSWah5yn/zC0RJzb6E=;
-        b=oGUJw43Ugincl1LJLo5kZB4oeuD2XlvbqpHa8QehJAuAE9fJpWH+Kf1phS0wHmOYCE
-         i4BPDz9dT8V0XhZxNrK7hjmnBuW0EhUxyqfZyitfPJsMej6OUKhBjF0ijM8De2lznc1l
-         0v50SjWuiDg4Rik0snr+JSQ08IBLDvY1oR0ib2UIcqE7bXPbEZ44lyguVZeiEjhCm3Qg
-         9Qznl1EtVC4RcG4Xvh8BIq/rl2AsOEsw26xYAiS1KXshGscQX0lfeBhmDA7LLqknmr8U
-         QMhWZs87V1DUjjLLC9sAQuEVnE+A1LQRTX1mjyo3QwMctU4rq1UNugtW2ULf0yJUk87i
-         E09w==
-X-Forwarded-Encrypted: i=1; AJvYcCXKQagG0joQV4K9UjgPaSq62ih2G9zL25vL/xwnJcwnQnDzrDBFvX1GVgKEfDg835dnoUnaqZQAhxeaG/1I@vger.kernel.org
-X-Gm-Message-State: AOJu0YyweDOF9oRdaC+n1tLcuIFSc6254SID13MveKtJtZLny84OQ6WZ
-	XVasfP/Je3m15lQTCOsDJ+nCvtTllSJiHbmOhTcFLEUDSJtyGlMdC97824WuZUsVq7sIA51IhdP
-	koW4luwpwgg6vo8wihGCzcbNPPjXJ3uQ=
-X-Gm-Gg: ASbGncuhBgJggMTfj4TZlEi9SV0IJ85vGYiimVhB35c4dfYl/0h+CsiIOFGf/ONf+eq
-	P+YPAnM3jCL6Pxd67OXVQsd5Pk8Cpik9PmHQ0XMDQRJ3AOWo63w8rCmUnWPXcC90cS2R5+ozevW
-	1RLvEoiKMJCt+TbgnR5v+wbg5e8KbIsPZRTkh1nJpcuGS1s6KwDQS+HMWuMwiY7adGnYsdMEKSY
-	XM2Qiwpe0BHnmpm2fXUbnmbr8B7NrgKoCzEisqg6Hgs0s/53cisejWjRLSDH9yWn2D6+ugKlA==
-X-Google-Smtp-Source: AGHT+IHnNH3cXy8KGwTJmzEcyqjfdHhD4WvC7JISJfcMY9H1uN4hZgRw6ez0hFTTxAwM0BBtYsW/C0cVQflVYq6zKFA=
-X-Received: by 2002:a05:622a:590b:b0:4b7:90e2:40df with SMTP id
- d75a77b69052e-4e41c548ea2mr8963721cf.1.1759258060730; Tue, 30 Sep 2025
- 11:47:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759258552; x=1759863352;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g4XTpAdzBEBKTpeuRPJ1fQ2ET0Hk7V6k94DiU7N+Pwg=;
+        b=YLAu42H2lheAmdLTLJPp6T8BePhPbQ07DtrNCh2E85RT6E4vOyrqEX1LyroSW40QN5
+         0fvD74VbKjq5bxJjf9cYBSCjAzI89RgIQ+ueVZT5IZ0FMKqeW08fw3TfA6Dj4ZJhGjih
+         USiicPTga4J5GdRY8DhClw6iWzTSqBscMamaXwrDzcHoJXjwcFjnYY44HmVofSVleK+n
+         jjWs0uWCEgetjbpguFY7m72F7IDHqCt/rEG6joGp+ZAxS7d5dIcgShKb52Uvf3yQ4hWl
+         3xHuTIKTsxj3jxbXplNt6/ljs+TWvd9hfPLNBUT+l2qdDI8Vp6/uiKFdyxfkON3rhemJ
+         NaQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUomasxXkn+UqHRyv65hbDNbWwHJP3m6uZttmm5G49pwQUTTJ617wTHT6vu7ZgIhhPvF1ZeOpiRgMf1VStw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH5IVCurHMEmSzytiJmcuV2W+Z51GJF7foeX94EGRlrutegT/0
+	HLh7flnBr1ynVLS2oQ4QAhPwmc4XSyCaQ9jwyfEbP399b5Wel/nYOL3rZjXyXEKPB53LuQxfLwM
+	YScwKXrjjK+2HlYjd4CW8TbqgzFwoDSUZCLC8+UF1aw==
+X-Gm-Gg: ASbGncvm7k5kg8hHsHQEblDr9pbAFww7vyYPPR1gpRQVCHgK8Dax33sILljehXUur4A
+	cnA59Dp20QHwi6AwVGsMSig9ZqNL+ryK7hhMzi5Rn06NJGTUDM9lTZ+cWnsAiaA+Ti+Ht7om1YM
+	LotJN7az4+OQgqt22aMwSuhSEvWJ9FF9lQ09KNVxKmWEfPgrKvzHY0hphJ6Xgq3AH3g12xJ6olP
+	8u+QtD3LxVFY0LBdKj1szGns/BBDz93zI9E3/TCDp/EPJb6lGl6VW47jtPxIEwDtdNZfFIFUA==
+X-Google-Smtp-Source: AGHT+IG/ZPEKi2JV0RVi3jzJKUTH5YPQu8q3kYXKaLZtfsXYVvNsvLw53Yg9spS5dgANf/c68MWlKQD07UbtcgTVB+4=
+X-Received: by 2002:a05:620a:444d:b0:85e:24c3:a60f with SMTP id
+ af79cd13be357-87376d724camr128659385a.65.1759258552385; Tue, 30 Sep 2025
+ 11:55:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,58 +75,28 @@ References: <20250925224404.2058035-1-joannelkoong@gmail.com>
  <dc3fbd15-1234-485e-a11d-4e468db635cd@linux.alibaba.com> <9e9d5912-db2f-4945-918a-9c133b6aff81@linux.alibaba.com>
  <CAJnrk1b=0ug8RMZEggVQpcQzG=Q=msZimjeoEPwwp260dbZ1eg@mail.gmail.com>
  <a517168d-840f-483b-b9a1-4b9c417df217@linux.alibaba.com> <CAJfpeguSW1mSjdDZg2AnTGmRqe7F9+WhCHd3Byt2J7v4vscrsA@mail.gmail.com>
-In-Reply-To: <CAJfpeguSW1mSjdDZg2AnTGmRqe7F9+WhCHd3Byt2J7v4vscrsA@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 30 Sep 2025 11:47:29 -0700
-X-Gm-Features: AS18NWDp1Mi0jDVHhAelI6qsmniuwTxmDCAOEjxJb7wz_yDyViUsjcoMw90-8wA
-Message-ID: <CAJnrk1Zty=+n4JEeOAWywhtBNQ5cNzHVFzPVY=KSHhX5Qs_1Yw@mail.gmail.com>
+ <CAJnrk1Zty=+n4JEeOAWywhtBNQ5cNzHVFzPVY=KSHhX5Qs_1Yw@mail.gmail.com>
+In-Reply-To: <CAJnrk1Zty=+n4JEeOAWywhtBNQ5cNzHVFzPVY=KSHhX5Qs_1Yw@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 30 Sep 2025 20:55:41 +0200
+X-Gm-Features: AS18NWD1B251ySV0EM_70-IOaQSJw8RDYl4Ze6XrCBrm3FrADWB8fP5ZukH_jKw
+Message-ID: <CAJfpegta+q6vz0KWji62cvB2VPG6qscKERC7iH8ZR-_et3AAaQ@mail.gmail.com>
 Subject: Re: [PATCH] fuse: fix readahead reclaim deadlock
-To: Miklos Szeredi <miklos@szeredi.hu>
+To: Joanne Koong <joannelkoong@gmail.com>
 Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
 	osandov@fb.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 3:09=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Tue, 30 Sept 2025 at 04:21, Gao Xiang <hsiangkao@linux.alibaba.com> wr=
-ote:
->
-> > In principle, typical the kernel filesystem holds a valid `file`
-> > during the entire buffered read (file)/mmap (vma->vm_file)
->
-> Actually, fuse does hold a ref to fuse_file, which should make sure
-> that the inode is not released while the readahead is ongoing.
->
-> See igrab() in fuse_prepare_release() and iput() in fuse_release_end().
+On Tue, 30 Sept 2025 at 20:47, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-If the file is mmaped, couldn't the release happen before the page fault?
+> Or am I missing something here? I'm not super familiar with the mmap
+> code but as far as I can tell from the logic in vm_mmap_pgoff() ->
+> do_mmap() -> __mmap_region(), it doesn't grab a refcount on the inode
+> or the file descriptor.
 
-This is the chain of events I'm thinking of:
-file is opened, file is mmapped, file is closed (which triggers the
-igrab() and iput() you mentioned in
-fuse_prepare_release()/fuse_release_end()), then client tries to read
-from the mmapped address which triggers a page fault which triggers
-readahead.
-
-Or am I missing something here? I'm not super familiar with the mmap
-code but as far as I can tell from the logic in vm_mmap_pgoff() ->
-do_mmap() -> __mmap_region(), it doesn't grab a refcount on the inode
-or the file descriptor.
-
->
-> So I don't understand what's going on.
->
-> Joanne, do you have a reproducer?
-
-I don't have a reproducer but we saw the stack trace in the commit
-message on our servers a couple of times and used drgn to pinpoint
-that there was a readahead request submitted.
+mmap keeps a ref on the file (vma->vm_file), so only munmap() will
+trigger ->release().
 
 Thanks,
-Joanne
->
-> Thanks,
-> Miklos
+Miklos
 
