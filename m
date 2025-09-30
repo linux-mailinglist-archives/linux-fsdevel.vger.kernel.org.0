@@ -1,132 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-63129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E30CBAEC61
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 01:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C0CBAECD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 01:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E50A3C7A8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 23:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E6A4A225C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 23:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F7E2D0C68;
-	Tue, 30 Sep 2025 23:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF22D2495;
+	Tue, 30 Sep 2025 23:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPDDThNY"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="NwodKnn3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22D02D1F44
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 23:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A5D24E4AF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 23:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759275008; cv=none; b=mbf8d4lnMrDwazpKHHLyDhcqiTcMiIU6PgPdkQZZM1JounEm3B60HmjUo9C8akuBvKOEr8I4uiZjZ8WLmEQ6D419GVP26FjoOM6iFyxP9HZvKQGlzgKn7wwrBqdhI7+zgu1spgoADI8AaRp5xNoSPyWJLvx6r1jjGQwHtL41pdQ=
+	t=1759276127; cv=none; b=qSySsxJiZyC/69b0xQ6Ef1i36GKQfQIGDYyuypuwOUT28LBU3NuZqy7d8n2mNl42FaWovqBdCyQ6KFi2S3CnSVWG8A07QJTGyGocH5KunjAH0+fTTCInCenVzYTN5aaK8K/42RN96LacCfig1c3xbDYG//skrslhRonJMkA+xbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759275008; c=relaxed/simple;
-	bh=gWZTJSIIbrP380uCP//L36Rf0RBfgxrLDVwOgWvpHuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZQhGShRWr+xcwamEWoTUTmBF5yfiPYjkGmJDbmGuBrDyB70waRebB8N02jKrJ2ce2lp27TddFx30EyV1t3pvyeAQYSmLS9uIL0edcc54PclEfKbfHJGDIlHem05CZcdpds1SmIzYybTd82RD8Qj8z5mUAWK80SnlF6hUsMfr+7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPDDThNY; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e2e363118so62673905e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 16:30:05 -0700 (PDT)
+	s=arc-20240116; t=1759276127; c=relaxed/simple;
+	bh=4bm7dBKTe7VHUpax5O4A5sblWjBcLkrJbyIa/W7uP1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=geDGUtLPuaCOo9Sy5UmUj9NX5B6U/ReZIU5VV2vs3RMWKDOsKs32nQ0R4EPsEmRwa4YJuWD2Y7LwPOIf1B13qby8RDoiV5aF+H8w3EY6Injj1i2YVPU5O3lepHjR1tCG99m5/o95uwVlHU8KbXoWojzJiblRvuo9cMkjo1PAAws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=NwodKnn3; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-267facf9b58so48198925ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 16:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759275004; x=1759879804; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WKocoFyhYs5voJ1j0rINOqN8fPDxe4oLJZbuE7DLMzA=;
-        b=aPDDThNYGfv4RuuzIaALIH+FJDaJ9rnuS84vRUSXVvQovK25+wvuQPWWO3Tq9CsSqv
-         XHSGh/Y0qgkmqIaKTMtfjr0ZIK/4hwoOEMCKnkYIMBiN54jxbmCWeCbsnEFamQhGzxev
-         EKHjaDDA1G4346OD5SyprKz1xEoL63o0a+mxUzstxwmF2Vly1Y2fkBW9GrNYfiXwn6vY
-         a08Ww5KPI/kfCDg+VfPK1fXPxlD/5i+DCPSMoPStkeA1qv1U0lXCHi0ZIaPr0y5/Ol/R
-         ZRmXpjgCIu6y4A1Cgt0IUxPlbb2ydOJGYEw5jDi441rSX1POfLYwtAqN6N1JVvd6Mkrt
-         xJNw==
+        d=rivosinc.com; s=google; t=1759276125; x=1759880925; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bm7dBKTe7VHUpax5O4A5sblWjBcLkrJbyIa/W7uP1A=;
+        b=NwodKnn39OQecdVF6d8bOQQDGJ3Gwu3/er8rraGYUv3SuTXqM7jJoNUUTX1ncfQeNO
+         aVL4BoTscyDkvFc/witRmX7H6DznBmneHqFSGq3Gw/pALqTtgcSRSchoeu47dGxoazx1
+         vqzpdHAOZHplVP0PIE4cJJloFy+YxjIo6e6/dS1lqIhFdxN4cJggB67Lvl3YcPYVKqIO
+         t9iibATEJDpJ6slDDzqH5n/R/L9p/WJP9toJHOK5HynjH+6rGAsd3nQ7A2Dn0wRPOdoJ
+         ivtTlLJXlIqfICiwwgqY4RDnnVBPjUZkF97UFWMXLGl4JJCZRaYbJ1HTv2rAzyPZyCdN
+         B3uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759275004; x=1759879804;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WKocoFyhYs5voJ1j0rINOqN8fPDxe4oLJZbuE7DLMzA=;
-        b=rVVQwa3kH/Qklk4/vnooK/r9phgQx6KCpw4RF0t/Wj/I0o36YjTxsiJD0C2nVne94W
-         2WzxglMhqvKWTTDQVKsQHSIhKL4sEDbeWxFXEZS2xxw+rgXDpWaZ50nY1RnNmglrYJXP
-         ApXKNnaLUq+Epr2BKB9IOXFqe6TN9nd6HBL4Qwpqam/WKdtvyKy9/67GiOdMwQpD+kRA
-         xebDXqii8igTRfGeX2AJbIemwpn4NyjXWX/qNcvVmCDnVDB/dxJPs1hENwIWm5m+eyBy
-         GQW+XnziQVvrq7WbLtTl0wLPsZTKAj/AK/kDIAb9d5ef8m7TmmeMXJvRr5/3JHuiQV0+
-         wXKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl2nVxp3uz2o9x1sGXFizbewplJWG7bTg2WKi6xh5X5hXorHFFL4zfu6f9DUD/8p5DUiX4uqyzrobLDCdy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZtUGs7pIoA5R/JOyZDyVcDEvbB1iGYfgwUr2x96LtDIiJPDW9
-	Ie+Z4gf0DbEsEVR9G+I0ldLu69k5gCZaspV15lcuUOzfJBJxW6q1jqvY
-X-Gm-Gg: ASbGncuAR2K8qiJHsyS+x+c1pK0S7fLuwkq/wccjeFwhdX5VFGnr4qwzFRRZIAMN/5r
-	HdYEAc70HX21IoBioZs9hD2sWIlPBm6HrpG3Qem5UZs3Wywn8F4wMnh+p8y+ZAg0xzpfDztUrr/
-	uIR+PIW/SLqcEhl9JYB+JE29G6qIH+NrSQDr2mV509FbUUpCUxYx48GfgZZhD8bxwE7AmK/ZwYN
-	BjtJOHb1WHSoYbmP8KJGyiI3G24AiKEkS914rvZCaRAsBXukeiZjRBx4kys6AXso9I0cvdv9ce7
-	w/oryTLbVxKk87o+pnSsSorLYN3rOWL3A8WHTb/+N8vHHzoZZYuGzR3uk7q73226mnIl6N2GNiJ
-	CDU01WxlcARFgnAu6UrprNHY4MAiHVwKRYo88+W7J9gZRpRtchIjmdb+20YwfYdinyC9t5Lm1E3
-	Ci7Odtul+xaw8/fEyLoEI3Fw==
-X-Google-Smtp-Source: AGHT+IGrlrBcqkdbjFn8gHHNIH9V5H/OJUSkp8w+fjG+KJIkz3Qh/I+P4TAxPxRIKI9Oo1ZDCt+OuA==
-X-Received: by 2002:a05:6000:2381:b0:3ec:e0d0:60e5 with SMTP id ffacd0b85a97d-425577f0a74mr1070502f8f.15.1759275003933;
-        Tue, 30 Sep 2025 16:30:03 -0700 (PDT)
-Received: from f.. (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb2eesm25156984f8f.12.2025.09.30.16.30.01
+        d=1e100.net; s=20230601; t=1759276125; x=1759880925;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4bm7dBKTe7VHUpax5O4A5sblWjBcLkrJbyIa/W7uP1A=;
+        b=m0j7RC/u+rOZFqFJ5/EbApSuR4dNRPHFs3EsRVFd5HdBHOyZN5T8w4Mp7SPHxK1NRA
+         fuk8IhQYa4Uva/6zE9a17Xx0XgkAhVx/0oBDJ65X8gOjCw7k8VxIWBwr9i2WK0sGwxUW
+         djiMtgvqC377idVHDGCW10hb7i2GLh2/i3SDlJtOFxXWEt6dO+JmbiWs+ZqZs+cYdTIy
+         SX4O2Kf5Y9MS4CzZ5LXaYxy45xnqJ+O6dtZP1xY6c3C3LNk+mKzSLKgLZAsaAbQT/j55
+         mak1fDz39NTwtAV7n9Vh7QHB7WcFb7tQdOxRsHxG8VUbnttLmHsDwSwOhyNCYP1vgegj
+         g/0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWq1VZEN2E179jqnNqO+0Fu8UomDoUbXeNUfrZhJMF7GP2Qy4M1bDu/3EVvi/xTWpNi+33eluRRK7tQyrOT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygs6CkfJC5wzKk3DoyzckLe48yGkUC9SFWK80IuOjKM5Cop2jM
+	HqCN6iqi56vfbD/YhLhEN3N9DHQpkmYOZymZhYHd4CNtWFsifN3q7LP7EtYHR41akHY=
+X-Gm-Gg: ASbGncuSqm65vyqgdVbuy1Bi4cBHBu1RMm8j/45Sp8s8vXt5kx5HngVbgwqJRgnH2p2
+	TC2rsWM36xwBh9mO8I4g5e8FaCXerc1wY4VC6cR8+Dws3DR5+OHBTbBWI/6q6xVt0fxqjb4vRAx
+	gcnvytWT7tErP2il26wzwjEbqHl1fGOkBMGvNpAyHRPJ2y6FmKEv4teknS4NOi59HcVyWxp8U5a
+	SRp9uEeBoyM5dXUXI9+bXUmXpu3OJ0JtEtLT+0SETc3txa/yWtCVWl9f23x+AiWVBcpv3qihVWb
+	RcNvrtNou2gNgzoni6iSq2jgJ75ZKr4ujE7Mg95TJNdw6U0/Mjby/VHRzpHhHc2jUCC/WFRyY9p
+	MeYQziDnj4g0IFNO70KAc/kfrtofqfahji4JPSqtd3SP0Y7G715vZpnTE
+X-Google-Smtp-Source: AGHT+IHuRRsekWNjgE7yCPLG9pq3eS/GOyyUhj/f2Q9rAEjbYAirvs/e72q2qhgNkEK8PrNvRevQ9g==
+X-Received: by 2002:a17:903:3d06:b0:27e:ea82:5ce8 with SMTP id d9443c01a7336-28e7f291db3mr15309515ad.14.1759276125338;
+        Tue, 30 Sep 2025 16:48:45 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882133sm171972415ad.89.2025.09.30.16.48.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 16:30:03 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com,
-	oe-lkp@lists.linux.dev,
-	linux-f2fs-devel@lists.sourceforge.net,
-	ltp@lists.linux.it,
-	oliver.sang@intel.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] f2fs: don't call iput() from f2fs_drop_inode()
-Date: Wed,  1 Oct 2025 01:29:57 +0200
-Message-ID: <20250930232957.14361-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202509301450.138b448f-lkp@intel.com>
-References: <202509301450.138b448f-lkp@intel.com>
+        Tue, 30 Sep 2025 16:48:44 -0700 (PDT)
+Date: Tue, 30 Sep 2025 16:48:41 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Charles Mirabile <cmirabil@redhat.com>, pjw@kernel.org,
+	Liam.Howlett@oracle.com, a.hindborg@kernel.org,
+	akpm@linux-foundation.org, alex.gaynor@gmail.com,
+	alexghiti@rivosinc.com, aliceryhl@google.com,
+	alistair.francis@wdc.com, andybnac@gmail.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, atishp@rivosinc.com, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, bp@alien8.de, brauner@kernel.org,
+	broonie@kernel.org, charlie@rivosinc.com, cleger@rivosinc.com,
+	conor+dt@kernel.org, conor@kernel.org, corbet@lwn.net,
+	dave.hansen@linux.intel.com, david@redhat.com,
+	devicetree@vger.kernel.org, ebiederm@xmission.com,
+	evan@rivosinc.com, gary@garyguo.net, hpa@zytor.com,
+	jannh@google.com, jim.shu@sifive.com, kees@kernel.org,
+	kito.cheng@sifive.com, krzk+dt@kernel.org,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
+	lossin@kernel.org, mingo@redhat.com, ojeda@kernel.org,
+	oleg@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	peterz@infradead.org, richard.henderson@linaro.org,
+	rick.p.edgecombe@intel.com, robh@kernel.org,
+	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
+	shuah@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
+	vbabka@suse.cz, x86@kernel.org, zong.li@sifive.com
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+Message-ID: <aNxsWYYnj22G5xuX@debug.ba.rivosinc.com>
+References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
+ <20250926192919.349578-1-cmirabil@redhat.com>
+ <aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
+ <CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
+ <aNcAela5tln5KTUI@debug.ba.rivosinc.com>
+ <lhu3484i9en.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <lhu3484i9en.fsf@oldenburg.str.redhat.com>
 
-iput() calls the problematic routine, which does a ->i_count inc/dec
-cycle. Undoing it with iput() recurses into the problem.
+On Tue, Sep 30, 2025 at 11:20:32AM +0200, Florian Weimer wrote:
+>* Deepak Gupta:
+>
+>> In case of shadow stack, it similar situation. If enabled compiler
+>> decides to insert sspush and sspopchk. They necessarily won't be
+>> prologue or epilogue but somewhere in function body as deemed fit by
+>> compiler, thus increasing the complexity of runtime patching.
+>>
+>> More so, here are wishing for kernel to do this patching for usermode
+>> vDSO when there is no guarantee of such of rest of usermode (which if
+>> was compiled with shadow stack would have faulted before vDSO's
+>> sspush/sspopchk if ran on pre-zimop hardware)
+>
+>I think this capability is desirable so that you can use a distribution
+>kernel during CFI userspace bringup.
 
-Note f2fs should not be playing games with the refcount to begin with,
-but that will be handled later. Right now solve the immediate
-regression.
+I didn't get it, can you elaborate more.
 
-Fixes: bc986b1d756482a ("fs: stop accessing ->i_count directly in f2fs and gfs2")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202509301450.138b448f-lkp@intel.com
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why having kernel carry two vDSO (one with shadow stack and one without) would
+be required to for CFI userspace bringup?
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 2619cbbd7d2d..26ec31eb8c80 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1769,7 +1769,7 @@ static int f2fs_drop_inode(struct inode *inode)
- 			sb_end_intwrite(inode->i_sb);
- 
- 			spin_lock(&inode->i_lock);
--			iput(inode);
-+			atomic_dec(&inode->i_count);
- 		}
- 		trace_f2fs_drop_inode(inode, 0);
- 		return 0;
--- 
-2.43.0
+If Distro is compiling for RVA23 CONFIG_RISCV_USERCFI has to be selected yes,
+kernel can have vDSO with shadow stack. Distro can light this option only when
+its compiling entire distro for RVA23.
 
+If distro is not compiling for RVA23, then anyways CONFIG_RISCV_USERCFI is by
+default "N". This would simply build vDSO without shadow stack.
+
+>
+>Thanks,
+>Florian
+>
 
