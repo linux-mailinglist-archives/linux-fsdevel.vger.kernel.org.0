@@ -1,130 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-63120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CDBBAE404
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 19:56:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD2CBAE577
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 20:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9458D192397C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 17:57:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C101678B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 18:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5595125C804;
-	Tue, 30 Sep 2025 17:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443E7239E7F;
+	Tue, 30 Sep 2025 18:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqkiA8q+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THfRFIZj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9C31C860F;
-	Tue, 30 Sep 2025 17:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F414F22126D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 18:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759254994; cv=none; b=bGbOHt+I0ZZdr1TEwMuhXcMOi5QZ+r7FSvlB3+GzywDPQRXTH2Tb4o/a3mgAIWYoJUABRSA2FHDwoddU9vAIJKnqRsYB5ejtsnEP4zAv6NX76kHmeGcYBJPvxQ7Knq3tFljNHxD6n3ML9nCYCSkf8J0PV9R5qJ2zjAB83X0kP4U=
+	t=1759258063; cv=none; b=DnSlg4TCyyMPU1kkjc5BIMzjDp6cxOyepVurjn/+yRs9n2X5fxRKNy/MJPHFHFcG4PO8OjcX14TJgl+uNuqMMc8aU+zENx7lV7nkn7e8M9/96EZq6HkA4aqvQ84m35QLElSz4nlvplEXudADjxAC2QRrz84Wefp8EGm1Eh2hV5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759254994; c=relaxed/simple;
-	bh=rpAqBN6DoV7Aez42y6SIifZ7vtMitRdhOyUJO2U6BtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLcX6/MQz2pwcNmuCpyzpRfT9pjVbGZKyRRebqZemK94mzzwZnPCEh6g2weRPToglxZgPT6tJXNG4SBYZay1tpFMKz21GF1of2FQbXcZFF0JAcpV6yf7nMlBy69eEM+Dbh6TmUXpCddFeIFxyszSeGBMIp5koh1sRjLA/qG7rOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqkiA8q+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31226C4CEF0;
-	Tue, 30 Sep 2025 17:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759254994;
-	bh=rpAqBN6DoV7Aez42y6SIifZ7vtMitRdhOyUJO2U6BtY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqkiA8q+LPr4e8LwLaeqOSom8wUeitG454sg9Y43pYLxCL4CmPpvX5DE/u0UHC/c0
-	 c+6GpFk+GhzZ/o3VAuN9eFMzT5bNk30kUMep2n+paX5n2yqQ894ptu1ZIbnC5+lOTd
-	 PUaHzSUOCEp37Tn/FUTImYxo8vzuAUCCGectlGGx3TCIz/WTjuthmEt1hWcCde6U3q
-	 UgpqCc8WIj0vQPgUPSwhffE2ZSoSeWb9ytu4HpFE7C9E70zNPYmJFUYmpUfyi0p7Wr
-	 s+2YZ5/+ST+lPoLsc/huwd238hx6etnuG4Ncld7OrIk1/dvHak1MhYtGUQJ4CYlpfE
-	 elmFNbJ4MA5qQ==
-Date: Tue, 30 Sep 2025 10:56:33 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: bernd@bsbernd.com, linux-xfs@vger.kernel.org, John@groves.net,
-	linux-fsdevel@vger.kernel.org, neal@gompa.dev,
-	joannelkoong@gmail.com
-Subject: Re: [PATCH 2/8] fuse: flush pending fuse events before aborting the
- connection
-Message-ID: <20250930175633.GQ8117@frogsfrogsfrogs>
-References: <CAJfpegtW++UjUioZA3XqU3pXBs29ewoUOVys732jsusMo2GBDA@mail.gmail.com>
- <20250923145413.GH8117@frogsfrogsfrogs>
- <CAJfpegsytZbeQdO3aL+AScJa1Yr8b+_cWxZFqCuJBrV3yaoqNw@mail.gmail.com>
- <20250923205936.GI1587915@frogsfrogsfrogs>
- <20250923223447.GJ1587915@frogsfrogsfrogs>
- <CAJfpegthiP32O=O5O8eAEjYbY2sAJ1SFA0nS8NGjM85YvWBNuA@mail.gmail.com>
- <20250924175056.GO8117@frogsfrogsfrogs>
- <CAJfpegsCBnwXY8BcnJkSj0oVjd-gHUAoJFssNjrd3RL_3Dr3Xw@mail.gmail.com>
- <20250924205426.GO1587915@frogsfrogsfrogs>
- <CAJfpegshs37-R9HZEba=sPi=YT2bph4WxMDZB3gd9P8sUpTq0w@mail.gmail.com>
+	s=arc-20240116; t=1759258063; c=relaxed/simple;
+	bh=WVJvVzVNCAGgw9/uh8MrdFGl+TSWah5yn/zC0RJzb6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i26QEVtjpj8xfgkR6ysAESzp41pb6CzAF/piHIwXKbmNqJvar6fkYgqbt6RX6/3N11NJxRpi3sY9AJ3dHM953s+PgNCAtFp7sI5oEXIrVkDNOIHFoUmIzX3DOIEKE581frQhJZA4xcbkfKOW2w2zCQ+OpJvdWvs67sefZ0dp1D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THfRFIZj; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4de2c597965so44221721cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 11:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759258061; x=1759862861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WVJvVzVNCAGgw9/uh8MrdFGl+TSWah5yn/zC0RJzb6E=;
+        b=THfRFIZju6c2vCBzO5KEb6+LtA29S/5qnLQfbDLxUlEFrcCNFMbjnPTcOyEW5TigAM
+         ESsFV4WtWyHI0fHcLasfcTHiuA0DHT8fqxds1EowOZVLPwsWGF6grT1Jd+D5QXRHsUlq
+         bgC4o3bsUChlBnV5ZtJDAWsT99aAs96owns/fHWtehzaOwF3TWl99cqbtMPZwqdmGfn7
+         DWwsg7kJEXlQDRv5DBhx3UdEOIvoFNqlHuUItxPxCuDxqaDGarDBaivbx8yrw5P7yruJ
+         9iUF6gKf1v721Bwy9yyTWli84+pDmOWx9W5NRUqlbrjS55A1b050J4fyGzq11dy8MuBS
+         tEZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759258061; x=1759862861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WVJvVzVNCAGgw9/uh8MrdFGl+TSWah5yn/zC0RJzb6E=;
+        b=oGUJw43Ugincl1LJLo5kZB4oeuD2XlvbqpHa8QehJAuAE9fJpWH+Kf1phS0wHmOYCE
+         i4BPDz9dT8V0XhZxNrK7hjmnBuW0EhUxyqfZyitfPJsMej6OUKhBjF0ijM8De2lznc1l
+         0v50SjWuiDg4Rik0snr+JSQ08IBLDvY1oR0ib2UIcqE7bXPbEZ44lyguVZeiEjhCm3Qg
+         9Qznl1EtVC4RcG4Xvh8BIq/rl2AsOEsw26xYAiS1KXshGscQX0lfeBhmDA7LLqknmr8U
+         QMhWZs87V1DUjjLLC9sAQuEVnE+A1LQRTX1mjyo3QwMctU4rq1UNugtW2ULf0yJUk87i
+         E09w==
+X-Forwarded-Encrypted: i=1; AJvYcCXKQagG0joQV4K9UjgPaSq62ih2G9zL25vL/xwnJcwnQnDzrDBFvX1GVgKEfDg835dnoUnaqZQAhxeaG/1I@vger.kernel.org
+X-Gm-Message-State: AOJu0YyweDOF9oRdaC+n1tLcuIFSc6254SID13MveKtJtZLny84OQ6WZ
+	XVasfP/Je3m15lQTCOsDJ+nCvtTllSJiHbmOhTcFLEUDSJtyGlMdC97824WuZUsVq7sIA51IhdP
+	koW4luwpwgg6vo8wihGCzcbNPPjXJ3uQ=
+X-Gm-Gg: ASbGncuhBgJggMTfj4TZlEi9SV0IJ85vGYiimVhB35c4dfYl/0h+CsiIOFGf/ONf+eq
+	P+YPAnM3jCL6Pxd67OXVQsd5Pk8Cpik9PmHQ0XMDQRJ3AOWo63w8rCmUnWPXcC90cS2R5+ozevW
+	1RLvEoiKMJCt+TbgnR5v+wbg5e8KbIsPZRTkh1nJpcuGS1s6KwDQS+HMWuMwiY7adGnYsdMEKSY
+	XM2Qiwpe0BHnmpm2fXUbnmbr8B7NrgKoCzEisqg6Hgs0s/53cisejWjRLSDH9yWn2D6+ugKlA==
+X-Google-Smtp-Source: AGHT+IHnNH3cXy8KGwTJmzEcyqjfdHhD4WvC7JISJfcMY9H1uN4hZgRw6ez0hFTTxAwM0BBtYsW/C0cVQflVYq6zKFA=
+X-Received: by 2002:a05:622a:590b:b0:4b7:90e2:40df with SMTP id
+ d75a77b69052e-4e41c548ea2mr8963721cf.1.1759258060730; Tue, 30 Sep 2025
+ 11:47:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegshs37-R9HZEba=sPi=YT2bph4WxMDZB3gd9P8sUpTq0w@mail.gmail.com>
+References: <20250925224404.2058035-1-joannelkoong@gmail.com>
+ <dc3fbd15-1234-485e-a11d-4e468db635cd@linux.alibaba.com> <9e9d5912-db2f-4945-918a-9c133b6aff81@linux.alibaba.com>
+ <CAJnrk1b=0ug8RMZEggVQpcQzG=Q=msZimjeoEPwwp260dbZ1eg@mail.gmail.com>
+ <a517168d-840f-483b-b9a1-4b9c417df217@linux.alibaba.com> <CAJfpeguSW1mSjdDZg2AnTGmRqe7F9+WhCHd3Byt2J7v4vscrsA@mail.gmail.com>
+In-Reply-To: <CAJfpeguSW1mSjdDZg2AnTGmRqe7F9+WhCHd3Byt2J7v4vscrsA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 30 Sep 2025 11:47:29 -0700
+X-Gm-Features: AS18NWDp1Mi0jDVHhAelI6qsmniuwTxmDCAOEjxJb7wz_yDyViUsjcoMw90-8wA
+Message-ID: <CAJnrk1Zty=+n4JEeOAWywhtBNQ5cNzHVFzPVY=KSHhX5Qs_1Yw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix readahead reclaim deadlock
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
+	osandov@fb.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 12:29:30PM +0200, Miklos Szeredi wrote:
-> On Wed, 24 Sept 2025 at 22:54, Darrick J. Wong <djwong@kernel.org> wrote:
-> 
-> > I think we don't want stuck task warnings because the "stuck" task
-> > (umount) is not the task that is actually doing the work.
-> 
-> Agreed.
-> 
-> I do wonder why this isn't happening during normal operation.  There
-> could be multiple explanations:
-> 
->  - release is async, so this particular case would not trigger the hang warning
+On Tue, Sep 30, 2025 at 3:09=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Tue, 30 Sept 2025 at 04:21, Gao Xiang <hsiangkao@linux.alibaba.com> wr=
+ote:
+>
+> > In principle, typical the kernel filesystem holds a valid `file`
+> > during the entire buffered read (file)/mmap (vma->vm_file)
+>
+> Actually, fuse does hold a ref to fuse_file, which should make sure
+> that the inode is not released while the readahead is ongoing.
+>
+> See igrab() in fuse_prepare_release() and iput() in fuse_release_end().
 
-<nod> I confirm that a normal release takes place asynchronously, so
-nothing in the kernel gets hung up if ->release takes a long time.
+If the file is mmaped, couldn't the release happen before the page fault?
 
-It's only my new code that causes the hang warnings, and only because
-it's using the non-interruptible wait_event variant to flush the
-requests.
+This is the chain of events I'm thinking of:
+file is opened, file is mmapped, file is closed (which triggers the
+igrab() and iput() you mentioned in
+fuse_prepare_release()/fuse_release_end()), then client tries to read
+from the mmapped address which triggers a page fault which triggers
+readahead.
 
-(I /could/ solve the problem differently by calling
-wait_event_interruptible in a loop and ignoring the EINTR, but that
-seems like a misuse of APIs.)
+Or am I missing something here? I'm not super familiar with the mmap
+code but as far as I can tell from the logic in vm_mmap_pgoff() ->
+do_mmap() -> __mmap_region(), it doesn't grab a refcount on the inode
+or the file descriptor.
 
->  - some other op could be taking a long time to complete (fsync?), but
-> request_wait_answer() starts with interruptible sleep and falls back
-> to uninterruptible sleep after a signal is received.  So unless
-> there's a signal, even a very slow request would fail to trigger the
-> hang warning.
+>
+> So I don't understand what's going on.
+>
+> Joanne, do you have a reproducer?
 
-Yes, that's what happens if I inject a "stall" into, say, fallocate by
-adding a gdb breakpoint on the fallocate handler in fuse4fs.  The xfs_io
-process calling fallocate() then just blocks in interruptible sleep
-and I see no complaints from the hangcheck timer.  But it's fallocate(),
-which is quite interruptible.
+I don't have a reproducer but we saw the stack trace in the commit
+message on our servers a couple of times and used drgn to pinpoint
+that there was a readahead request submitted.
 
-Unmount is different -- the kernel has already torn down some of the
-mount state, so we can't back out after some sort of interruption.
-
-> A more generic solution would be to introduce a mechanism that would
-> tell the kernel that while the request is taking long, it's not
-> stalled (e.g. periodic progress reports).
-> 
-> But I also get the feeling that this is not very urgent and possibly
-> more of a test checkbox than a real life issue.
-
-It's probably not an issue for 99% of filesystems and use cases, but
-unprivileged userspace can set up the conditions for a stall warning.
-Some customers file bug reports for /any/ kernel backtrace, even if it's
-a stall warning caused by slow IO, so I'd prefer not to create a new
-opening for this to happen.
-
---D
-
-> 
+Thanks,
+Joanne
+>
 > Thanks,
 > Miklos
 
