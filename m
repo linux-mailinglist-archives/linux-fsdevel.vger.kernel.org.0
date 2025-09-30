@@ -1,59 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-63089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDDABABB6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 09:00:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3C9BABB78
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 09:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E28C189AE55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 07:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD8E189E601
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 07:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310432BE036;
-	Tue, 30 Sep 2025 07:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027982367CF;
+	Tue, 30 Sep 2025 07:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eDq6+kj8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9611CC8FE;
-	Tue, 30 Sep 2025 07:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA471EBA14
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 07:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759215619; cv=none; b=m269s4YGHSj6483O1ynqJ05+RlbGqGhfPc3jn63rb9JYxtJaDp00fcOb5vN16R2tkSnZ4KaMm+X1YR9A5OmU5mRfzNIvfxk4OIGI7AVGNzfK0nfllbY2s9RZU1R/gVrT8nH1rBCWNAPx0AM2sqyVq2W4Yy/JYHy6YxbLtxOCOn8=
+	t=1759215740; cv=none; b=Xwptl/PQYGDNxuQ1Ng8IoDNC/WqlA3dCy0tNHY06GyBWb4fdllIKI8XznMGeE0dmCga68M/5jzOtb00F2WLwpmU4NTBrvWonIPxl9OUxanW5+SAF2XwDqmbdjS8c5IbMh4dvoTk/5ZArRvG8tAZUJ7fwNkWDti0J2eKeIZ6WOVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759215619; c=relaxed/simple;
-	bh=1nRzo+4if6eps77k90YPPpU5HTbEPWG80Uu568W2D4c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UjVXEm6HWwQJpq3O/RwJbLbtSatOrbCHM1+6f3W6dMEWY6L7ATPgrURlI530hQujJ+oVN1/ozC4+8zhure766j3uH/Lait6+rgYtjaMon4Tsv6Qa7ktbcLcGu0tfsshYwQZGGXMc5CmZ9kDyLjw1wT3mBsXg5WlcQ7y+2qlo/I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cbTT86GP1zYQtvr;
-	Tue, 30 Sep 2025 14:59:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 166801A0F03;
-	Tue, 30 Sep 2025 15:00:14 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAn6mH5f9tojSc3BQ--.45680S4;
-	Tue, 30 Sep 2025 15:00:11 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: axboe@kernel.dk
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	stable@vger.kernel.org,
-	jack@suse.cz,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH 6.6.y] loop: Avoid updating block size under exclusive owner
-Date: Tue, 30 Sep 2025 14:49:33 +0800
-Message-Id: <20250930064933.1188006-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1759215740; c=relaxed/simple;
+	bh=vtZqfx5aLNB8FIs5TObu9jAz9+3C8kYeRglc7s2VL/s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VY4uj2ynuU5ZNEPdOzQmaJDdPsUKI45rvbPNWqJst7cm3zT7slAADJx9An/bRV8JEEjro8gv99t2hDfFRbs2/UGiCYKpZBYe3BipG2EhSuWb7i1fKgDNuD38PqAqx9Jsumd6qYLhe6nsPjkfabrr7sE+c6VMqfHUakibdII5fJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eDq6+kj8; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26e68904f0eso56225255ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 00:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1759215737; x=1759820537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBwyQ/z4D76upaf9pWlk10o8fDDESc85qDeto4y3UsA=;
+        b=eDq6+kj80TVhw1WDaHCKyXbgQKT+h19xAQR634VMHkRMYW5nbZ2h7bCq9TkRF03EcG
+         lXrDS2KOC9a4NlVeQAilfxhC+j5Kt76WOqWrO+787hiVfFC8PjbGfd57w+AwvfdM42iK
+         hOvl8xTL9+CY02bxsXsHo/vjvnEVZUgEp02EwSXA/UtP1UB/xmez8coH4tfKsbbFwlrL
+         RXz1fcreewJjwZT3qlvloEi04FHn4FVE66Oty9pwYLG1BUlAENihmF1BCzldbk5F5q6o
+         DM/N8LF4WVrad4Udsm8zqMTf+Zl7gqicPE8GrxLUtaMbdkUmZQegNXa3dd300qzT4x9R
+         k0BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759215737; x=1759820537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bBwyQ/z4D76upaf9pWlk10o8fDDESc85qDeto4y3UsA=;
+        b=k4dpqSZpNu4Ax3IGgbPSXOO0hAHLwmFGn3mD1QhPD/xBj8GeTyKklQvfAOV9AET+BP
+         TgTFx3Qd6nc8vZxrn+T5ZxGHb0gxumiU1g6fFxA+WYZqpNYYxNcAFYlZ8uZswVGxzn+5
+         E5rPFCUrDpDtF3SM9Allh56Mcurxbd6GNSmq+TPaze0gEbI9e8XTjpcgTOUxsH9ZhIoy
+         i2ix2BjXhA5ccHh8vk4+Xytyld+tnNNSu2tZn6PC7xWY25mhGCBtYi19lH1bB4GhCeTh
+         CVMCtrdisrIPxoiD3Cf6k9P8KNEs033tHfHFVB26bL0CjbcZ9Q4CMQc/1Abcp1P+dx7e
+         2WCw==
+X-Gm-Message-State: AOJu0YyXenidgQuoaCpmeBdzESmmFOY+aoEUxKvwWJZFYPw/rXVH9St8
+	17ikIz9xbYKXAyUY3qRnCTk4TsaU3M6HYZxdWnJX2jZpOkKp/+oMdLEdYXLxiQ/jBR3BSvLWVld
+	XZpKLIww=
+X-Gm-Gg: ASbGncuipzJPKuYEHqjYm+5DbwUAiLZlwsU6drFET4V0qZWwH6aXkJGki3S8J/KrfK9
+	zHwlkbdu485ts67DKFUZnAqLe9oYzFU17Fi9+N/v2dJpXueiIzpnViCQ/X0JMgeXZBc4PQ3qk8p
+	KqMEKaviL86sNwOhHJFxmlR8q3T5jH7e4StMR/pZjSdHwTOBJANM7XfnDYwjHAPnSURWbvLT6Kf
+	CXzQPYueb9Rnqfke4VweCfYjTjEt7q0E9DqbiO6MbeSpdH+EbdKkAoUG8S96Mrn3ke3J1pn7F+9
+	65LFkv7liueqlkl0xCnSlnPg5rmJdpv6yzTuSqeT1ebQS5/JGIWTwgu+ZtmhuGFEt6uXNyu9r/P
+	mqphXHVnLus30Y6BO1DUuIYQ4bqLgRPI2ItxxntPF9kSUl7fa8fT4dK8ulRsnF+p3Tg==
+X-Google-Smtp-Source: AGHT+IHEqC3FH5VudccYGfiiwZUEef4f53nULaclNX1m5iWXOq06gw84MTDIhF9Z8gZ9lbELfdHr3w==
+X-Received: by 2002:a17:902:f544:b0:246:7a43:3f66 with SMTP id d9443c01a7336-27ed4a06c04mr215836635ad.7.1759215737009;
+        Tue, 30 Sep 2025 00:02:17 -0700 (PDT)
+Received: from localhost ([106.38.226.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ab640esm150614485ad.128.2025.09.29.23.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 00:02:16 -0700 (PDT)
+From: Julian Sun <sunjunchao@bytedance.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Subject: [PATCH v3 1/2] writeback: Wake up waiting tasks when finishing the writeback of a chunk.
+Date: Tue, 30 Sep 2025 14:56:36 +0800
+Message-Id: <20250930065637.1876707-1-sunjunchao@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,135 +87,91 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAn6mH5f9tojSc3BQ--.45680S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFWDGryxtF45AF1UGrWUCFg_yoW5Kw13pF
-	42gFW5trWvgFW2gFWavw1vvry5Gw1xG3y7GFy2gw1j9ayUJ3sI9w1xJr90grW0qr93WFZ8
-	X39xJFW8uF1UJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+Writing back a large number of pages can take a lots of time.
+This issue is exacerbated when the underlying device is slow or
+subject to block layer rate limiting, which in turn triggers
+unexpected hung task warnings.
 
-From: Jan Kara <jack@suse.cz>
+We can trigger a wake-up once a chunk has been written back and the
+waiting time for writeback exceeds half of
+sysctl_hung_task_timeout_secs.
+This action allows the hung task detector to be aware of the writeback
+progress, thereby eliminating these unexpected hung task warnings.
 
-[ Upstream commit 7e49538288e523427beedd26993d446afef1a6fb ]
+This patch has passed the xfstests 'check -g quick' test based on ext4,
+with no additional failures introduced.
 
-Syzbot came up with a reproducer where a loop device block size is
-changed underneath a mounted filesystem. This causes a mismatch between
-the block device block size and the block size stored in the superblock
-causing confusion in various places such as fs/buffer.c. The particular
-issue triggered by syzbot was a warning in __getblk_slow() due to
-requested buffer size not matching block device block size.
-
-Fix the problem by getting exclusive hold of the loop device to change
-its block size. This fails if somebody (such as filesystem) has already
-an exclusive ownership of the block device and thus prevents modifying
-the loop device under some exclusive owner which doesn't expect it.
-
-Reported-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
-Tested-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/20250711163202.19623-2-jack@suse.cz
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- drivers/block/loop.c | 40 +++++++++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 9 deletions(-)
+ Changes in v2:
+  * remove code in finish_writeback_work()
+  * rename stamp to progress_stamp
+  * only report progress if there's any task waiting
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 455e2a2b149f..6fe9180aafb3 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1472,19 +1472,36 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- 	return error;
- }
+
+ fs/fs-writeback.c                | 11 ++++++++++-
+ include/linux/backing-dev-defs.h |  1 +
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..61785a9d6669 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -14,6 +14,7 @@
+  *		Additions for address_space-based writeback
+  */
  
--static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
-+static int loop_set_block_size(struct loop_device *lo, blk_mode_t mode,
-+			       struct block_device *bdev, unsigned long arg)
++#include <linux/sched/sysctl.h>
+ #include <linux/kernel.h>
+ #include <linux/export.h>
+ #include <linux/spinlock.h>
+@@ -213,7 +214,8 @@ static void wb_queue_work(struct bdi_writeback *wb,
+ void wb_wait_for_completion(struct wb_completion *done)
  {
- 	int err = 0;
- 
--	if (lo->lo_state != Lo_bound)
--		return -ENXIO;
-+	/*
-+	 * If we don't hold exclusive handle for the device, upgrade to it
-+	 * here to avoid changing device under exclusive owner.
-+	 */
-+	if (!(mode & BLK_OPEN_EXCL)) {
-+		err = bd_prepare_to_claim(bdev, loop_set_block_size, NULL);
-+		if (err)
-+			return err;
-+	}
-+
-+	err = mutex_lock_killable(&lo->lo_mutex);
-+	if (err)
-+		goto abort_claim;
-+
-+	if (lo->lo_state != Lo_bound) {
-+		err = -ENXIO;
-+		goto unlock;
-+	}
- 
- 	err = blk_validate_block_size(arg);
- 	if (err)
--		return err;
-+		goto unlock;
- 
- 	if (lo->lo_queue->limits.logical_block_size == arg)
--		return 0;
-+		goto unlock;
- 
- 	sync_blockdev(lo->lo_device);
- 	invalidate_bdev(lo->lo_device);
-@@ -1496,6 +1513,11 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- 	loop_update_dio(lo);
- 	blk_mq_unfreeze_queue(lo->lo_queue);
- 
-+unlock:
-+	mutex_unlock(&lo->lo_mutex);
-+abort_claim:
-+	if (!(mode & BLK_OPEN_EXCL))
-+		bd_abort_claiming(bdev, loop_set_block_size);
- 	return err;
+ 	atomic_dec(&done->cnt);		/* put down the initial count */
+-	wait_event(*done->waitq, !atomic_read(&done->cnt));
++	wait_event(*done->waitq,
++		   ({ done->progress_stamp = jiffies; !atomic_read(&done->cnt); }));
  }
  
-@@ -1514,9 +1536,6 @@ static int lo_simple_ioctl(struct loop_device *lo, unsigned int cmd,
- 	case LOOP_SET_DIRECT_IO:
- 		err = loop_set_dio(lo, arg);
- 		break;
--	case LOOP_SET_BLOCK_SIZE:
--		err = loop_set_block_size(lo, arg);
--		break;
- 	default:
- 		err = -EINVAL;
- 	}
-@@ -1571,9 +1590,12 @@ static int lo_ioctl(struct block_device *bdev, blk_mode_t mode,
- 		break;
- 	case LOOP_GET_STATUS64:
- 		return loop_get_status64(lo, argp);
-+	case LOOP_SET_BLOCK_SIZE:
-+		if (!(mode & BLK_OPEN_WRITE) && !capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+		return loop_set_block_size(lo, mode, bdev, arg);
- 	case LOOP_SET_CAPACITY:
- 	case LOOP_SET_DIRECT_IO:
--	case LOOP_SET_BLOCK_SIZE:
- 		if (!(mode & BLK_OPEN_WRITE) && !capable(CAP_SYS_ADMIN))
- 			return -EPERM;
- 		fallthrough;
+ #ifdef CONFIG_CGROUP_WRITEBACK
+@@ -1893,6 +1895,7 @@ static long writeback_sb_inodes(struct super_block *sb,
+ 	long write_chunk;
+ 	long total_wrote = 0;  /* count both pages and inodes */
+ 	unsigned long dirtied_before = jiffies;
++	unsigned long progress_stamp;
+ 
+ 	if (work->for_kupdate)
+ 		dirtied_before = jiffies -
+@@ -1975,6 +1978,12 @@ static long writeback_sb_inodes(struct super_block *sb,
+ 		 */
+ 		__writeback_single_inode(inode, &wbc);
+ 
++		/* Report progress to inform the hung task detector of the progress. */
++		progress_stamp = work->done->progress_stamp;
++		if (work->done && progress_stamp && (jiffies - progress_stamp) >
++		    HZ * sysctl_hung_task_timeout_secs / 2)
++			wake_up_all(work->done->waitq);
++
+ 		wbc_detach_inode(&wbc);
+ 		work->nr_pages -= write_chunk - wbc.nr_to_write;
+ 		wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 2ad261082bba..1057060bb2aa 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -63,6 +63,7 @@ enum wb_reason {
+ struct wb_completion {
+ 	atomic_t		cnt;
+ 	wait_queue_head_t	*waitq;
++	unsigned long progress_stamp;	/* The jiffies when slow progress is detected */
+ };
+ 
+ #define __WB_COMPLETION_INIT(_waitq)	\
 -- 
-2.39.2
+2.39.5
 
 
