@@ -1,237 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-63105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C6FBAC262
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 10:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FF9BAC415
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 11:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E4C16BBCB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 08:59:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528E232198D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Sep 2025 09:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3004C2F3C3A;
-	Tue, 30 Sep 2025 08:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD6A2F49FE;
+	Tue, 30 Sep 2025 09:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jv94TX/2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dACoQ9eC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jv94TX/2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dACoQ9eC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q2cKba2a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13DC2BD034
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 08:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2B2268688
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 09:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759222785; cv=none; b=oEcejmIwANrx4ZvqmBkP83HQknwUgQCwf1BmypoDhRbtDQwklhRLGI8vaqKnXDr7JGOFzCaNkoNn+sWXTXC+ujPSfAWMuunFKWofERpvHHkYwDfNR1Dzmo9vyBUhjeSKIBKm3a632nmQXxwyryRFyXTzcptIV5ypG2rLDHk8ug0=
+	t=1759224059; cv=none; b=tXuVZyrz2XZ+oputS8bypUNaPX0eCBl8XIlPb6PVNRD5DRoneTLaoUZhy+V2ZMXiKEJaGQmPVfso6VfAvkOFPjfmCfBkicZ6YxJ9qpgEB2CjTj4+71QJ361oDpopf5EYj9mFLQ51+90wBpti3BIWuNZeYymakRo9nWn7YBbCzlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759222785; c=relaxed/simple;
-	bh=Krx2gB9DW4EFhcWe35aenDw48Mjx+VQGROEgPqwpmqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBaXcEYmKWQPCCA80XmCfIQBCdZcASx2P+4Aym6/JthcTUp9IcQQbH/Db2hR0K6GjFtBOLN5XE0H706pg3eXdK20LOa2dfesYrosherJP1PyB2htDY6fzylasSoMgVG7+HnUzUgIrzEMMlPqGmgfA9ybbDOwSUI70TGwY/lcklk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jv94TX/2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dACoQ9eC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jv94TX/2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dACoQ9eC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1759224059; c=relaxed/simple;
+	bh=9lQSfvfcTNySF441awH7y9u1KuhzkH5FEbQXswdQdkk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NZszp/uc1CtTKne7LvOb7iyd3veS/owS+OxG4c336QHKeg56QMz7LX6wSZ0B8idIPZ0hPBhP4phsXCalc0dWMV/N0q6N8bcFeu/1ixtX9Os00xoGXvhjG2AtN1kc2W1ojSDOG5kTM/+jftQs8hO+wji+yAud5ybfBkcS/P88mrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q2cKba2a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759224057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9lQSfvfcTNySF441awH7y9u1KuhzkH5FEbQXswdQdkk=;
+	b=Q2cKba2aUiNkGEnG1OFv+AGAxRUMQGgNxyTHvOhC7HrjjpFlPMBjRRP85oFpyH9I6IDAPZ
+	GNu1NPzDTYXyn/ZnDw6te4h+JVggHcyl7ZE/tO+F7J5njwlkm0vi2x25LhjR0RGyIu9JSp
+	aPR0DSIeiu35/tvVWBEBvP8jvsOVFKE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-njD2j-MWOdSpapmyRlXfEg-1; Tue,
+ 30 Sep 2025 05:20:53 -0400
+X-MC-Unique: njD2j-MWOdSpapmyRlXfEg-1
+X-Mimecast-MFC-AGG-ID: njD2j-MWOdSpapmyRlXfEg_1759224052
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0DA3C33718;
-	Tue, 30 Sep 2025 08:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759222781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAlASGSsrW4YNDKN0K0Ldqhng3BcUvS6Iqba5cCODyY=;
-	b=Jv94TX/29a3DR7AGStvypHa2E/G9sshCjUWUdQWFjirjH+/3fGi62xGePNVMtekS/K71Hs
-	x8+NJEdIa5nNzWSCRhXAd345JsYDNsgXxa9Q+UKM8WfmgGUlwns8osV0rBuv5Lr8gizL1j
-	GtPnZZWp6wXB/m3xQ/6Eo1xe6R5h3bI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759222781;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAlASGSsrW4YNDKN0K0Ldqhng3BcUvS6Iqba5cCODyY=;
-	b=dACoQ9eCmyIl/Ll0zf27XVo7gL1euJZ7UsiDbLZkrLHiolofdLEaGPAeGaAufakmceIcwu
-	QhdKxGF88OM7iCAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Jv94TX/2";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=dACoQ9eC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759222781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAlASGSsrW4YNDKN0K0Ldqhng3BcUvS6Iqba5cCODyY=;
-	b=Jv94TX/29a3DR7AGStvypHa2E/G9sshCjUWUdQWFjirjH+/3fGi62xGePNVMtekS/K71Hs
-	x8+NJEdIa5nNzWSCRhXAd345JsYDNsgXxa9Q+UKM8WfmgGUlwns8osV0rBuv5Lr8gizL1j
-	GtPnZZWp6wXB/m3xQ/6Eo1xe6R5h3bI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759222781;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAlASGSsrW4YNDKN0K0Ldqhng3BcUvS6Iqba5cCODyY=;
-	b=dACoQ9eCmyIl/Ll0zf27XVo7gL1euJZ7UsiDbLZkrLHiolofdLEaGPAeGaAufakmceIcwu
-	QhdKxGF88OM7iCAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 04AB713A3F;
-	Tue, 30 Sep 2025 08:59:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LFQaAf2b22gcbQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 30 Sep 2025 08:59:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B6D8AA2BF0; Tue, 30 Sep 2025 10:59:40 +0200 (CEST)
-Date: Tue, 30 Sep 2025 10:59:40 +0200
-From: Jan Kara <jack@suse.cz>
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v3 1/2] writeback: Wake up waiting tasks when finishing
- the writeback of a chunk.
-Message-ID: <lw33zem5n7piki65lvm34kmsj3c2aq7b2op4gu73b4rcxdv6je@n4fni6ambblt>
-References: <20250930065637.1876707-1-sunjunchao@bytedance.com>
- <20250930085315.2039852-1-sunjunchao@bytedance.com>
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C2A919560B8;
+	Tue, 30 Sep 2025 09:20:52 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.33.56])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 051C1180035E;
+	Tue, 30 Sep 2025 09:20:34 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Charles Mirabile <cmirabil@redhat.com>,  pjw@kernel.org,
+  Liam.Howlett@oracle.com,  a.hindborg@kernel.org,
+  akpm@linux-foundation.org,  alex.gaynor@gmail.com,
+  alexghiti@rivosinc.com,  aliceryhl@google.com,  alistair.francis@wdc.com,
+  andybnac@gmail.com,  aou@eecs.berkeley.edu,  arnd@arndb.de,
+  atishp@rivosinc.com,  bjorn3_gh@protonmail.com,  boqun.feng@gmail.com,
+  bp@alien8.de,  brauner@kernel.org,  broonie@kernel.org,
+  charlie@rivosinc.com,  cleger@rivosinc.com,  conor+dt@kernel.org,
+  conor@kernel.org,  corbet@lwn.net,  dave.hansen@linux.intel.com,
+  david@redhat.com,  devicetree@vger.kernel.org,  ebiederm@xmission.com,
+  evan@rivosinc.com,  gary@garyguo.net,  hpa@zytor.com,  jannh@google.com,
+  jim.shu@sifive.com,  kees@kernel.org,  kito.cheng@sifive.com,
+  krzk+dt@kernel.org,  linux-arch@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  linux-mm@kvack.org,  linux-riscv@lists.infradead.org,
+  lorenzo.stoakes@oracle.com,  lossin@kernel.org,  mingo@redhat.com,
+  ojeda@kernel.org,  oleg@redhat.com,  palmer@dabbelt.com,
+  paul.walmsley@sifive.com,  peterz@infradead.org,
+  richard.henderson@linaro.org,  rick.p.edgecombe@intel.com,
+  robh@kernel.org,  rust-for-linux@vger.kernel.org,
+  samitolvanen@google.com,  shuah@kernel.org,  tglx@linutronix.de,
+  tmgross@umich.edu,  vbabka@suse.cz,  x86@kernel.org,  zong.li@sifive.com
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+In-Reply-To: <aNcAela5tln5KTUI@debug.ba.rivosinc.com> (Deepak Gupta's message
+	of "Fri, 26 Sep 2025 14:07:06 -0700")
+References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
+	<20250926192919.349578-1-cmirabil@redhat.com>
+	<aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
+	<CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
+	<aNcAela5tln5KTUI@debug.ba.rivosinc.com>
+Date: Tue, 30 Sep 2025 11:20:32 +0200
+Message-ID: <lhu3484i9en.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930085315.2039852-1-sunjunchao@bytedance.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0DA3C33718
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,bytedance.com:email,suse.com:email]
-X-Spam-Score: -4.01
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue 30-09-25 16:53:15, Julian Sun wrote:
-> Writing back a large number of pages can take a lots of time.
-> This issue is exacerbated when the underlying device is slow or
-> subject to block layer rate limiting, which in turn triggers
-> unexpected hung task warnings.
-> 
-> We can trigger a wake-up once a chunk has been written back and the
-> waiting time for writeback exceeds half of
-> sysctl_hung_task_timeout_secs.
-> This action allows the hung task detector to be aware of the writeback
-> progress, thereby eliminating these unexpected hung task warnings.
-> 
-> This patch has passed the xfstests 'check -g quick' test based on ext4,
-> with no additional failures introduced.
-> 
-> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+* Deepak Gupta:
 
-Looks good. Feel free to add:
+> In case of shadow stack, it similar situation. If enabled compiler
+> decides to insert sspush and sspopchk. They necessarily won't be
+> prologue or epilogue but somewhere in function body as deemed fit by
+> compiler, thus increasing the complexity of runtime patching.
+>
+> More so, here are wishing for kernel to do this patching for usermode
+> vDSO when there is no guarantee of such of rest of usermode (which if
+> was compiled with shadow stack would have faulted before vDSO's
+> sspush/sspopchk if ran on pre-zimop hardware)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I think this capability is desirable so that you can use a distribution
+kernel during CFI userspace bringup.
 
-								Honza
+Thanks,
+Florian
 
-> ---
->  Hi, the previous patch sent unupdated code due to an mistake; 
->  this version is the genuine v3.
-> 
->  Changes in v3:
->   * Fix null-ptr-deref issue.
-> 
->  Changes in v2:
->   * remove code in finish_writeback_work()
->   * rename stamp to progress_stamp
->   * only report progress if there's any task waiting
-> 
-> 
->  fs/fs-writeback.c                | 10 +++++++++-
->  include/linux/backing-dev-defs.h |  1 +
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index a07b8cf73ae2..40954040fd69 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -14,6 +14,7 @@
->   *		Additions for address_space-based writeback
->   */
->  
-> +#include <linux/sched/sysctl.h>
->  #include <linux/kernel.h>
->  #include <linux/export.h>
->  #include <linux/spinlock.h>
-> @@ -213,7 +214,8 @@ static void wb_queue_work(struct bdi_writeback *wb,
->  void wb_wait_for_completion(struct wb_completion *done)
->  {
->  	atomic_dec(&done->cnt);		/* put down the initial count */
-> -	wait_event(*done->waitq, !atomic_read(&done->cnt));
-> +	wait_event(*done->waitq,
-> +		   ({ done->progress_stamp = jiffies; !atomic_read(&done->cnt); }));
->  }
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> @@ -1975,6 +1977,12 @@ static long writeback_sb_inodes(struct super_block *sb,
->  		 */
->  		__writeback_single_inode(inode, &wbc);
->  
-> +		/* Report progress to inform the hung task detector of the progress. */
-> +		if (work->done && work->done->progress_stamp &&
-> +		   (jiffies - work->done->progress_stamp) > HZ *
-> +		   sysctl_hung_task_timeout_secs / 2)
-> +			wake_up_all(work->done->waitq);
-> +
->  		wbc_detach_inode(&wbc);
->  		work->nr_pages -= write_chunk - wbc.nr_to_write;
->  		wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
-> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-> index 2ad261082bba..1057060bb2aa 100644
-> --- a/include/linux/backing-dev-defs.h
-> +++ b/include/linux/backing-dev-defs.h
-> @@ -63,6 +63,7 @@ enum wb_reason {
->  struct wb_completion {
->  	atomic_t		cnt;
->  	wait_queue_head_t	*waitq;
-> +	unsigned long progress_stamp;	/* The jiffies when slow progress is detected */
->  };
->  
->  #define __WB_COMPLETION_INIT(_waitq)	\
-> -- 
-> 2.39.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
