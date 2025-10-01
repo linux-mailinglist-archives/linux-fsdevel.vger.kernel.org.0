@@ -1,143 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-63189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E57BB0B27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 16:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8312FBB0C59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 16:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B761C5578
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 14:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F32A2A4653
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 14:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791742BEFF9;
-	Wed,  1 Oct 2025 14:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA39303C81;
+	Wed,  1 Oct 2025 14:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnWtCV45"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FlY5Ewtb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7942253EB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 14:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A39303A22
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 14:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328911; cv=none; b=TRW+vOqah11mu4/VunwfRxjoG7j8DVpTCCFLLMYSj3U7SwWXuXZDXf+9IInXMwXrEbriZhzHARrvwKCOr2YT2rieIjj1EKCROFx/l41iUF0yYUIOyAJVlPCjNDgqNCfP5M0lL/BHAgKj3Vhp4OX206KG/wVjeYXKZ4wfcjSVdAQ=
+	t=1759329895; cv=none; b=Bq5d9Kg2ETDq4bDtEdraaQZkAHu/V2ZGfjC+5I0ei/D6teJcwQH3sS4Agywv0ey18AOZ3vQIb+O715Zv21VcBU9W88GaOg9NBw/1BnWpIIlRdT+3Do0HUg+HE8HEWuSU3ZKWV2usMFhbnpuV2S9VoPrk2K8NyWf+sO0n9i9Iw9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759328911; c=relaxed/simple;
-	bh=GbvR03dxXETujTTMYAeyEO4LzE9c9HuXvowi1p4nKyM=;
+	s=arc-20240116; t=1759329895; c=relaxed/simple;
+	bh=Dh9Vk3lsU9opZp6yE7atY739gzW3haUvwNHyRQpKYLs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O50KR+/y+DoI8h0fzYRP6NHBbCnsAgnOvIK50nTwXuUOHd5X4tnjxrT9KWsWfT9KFzd4RI2guTZu2QNKkOMY0SgNDMBPeZvU6yxVuO+9wpooE8etxFRm8ssiQhP7O4w39s+3/jpnfXrr0en88d83hhZmxieHhCnWufVuLRDmTgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NnWtCV45; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63163a6556bso2226220a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Oct 2025 07:28:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=D539ubkW2ULd7LeVyUxoxB/ecqN3HVzYejI67y5iv6cENpbV5BYn0XNsaDgvXwPSfWyhJq/d4WCEYGg+biybFhz5zWfSecQYyk62+0/FKIfYqlB1UT7jY+GBgeO728cxHpYP61SBWovQ7Q6s8V6KFoojz1ObVpV4+7MmDlGHh+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FlY5Ewtb; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-85e76e886a0so557734985a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Oct 2025 07:44:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759328908; x=1759933708; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s/WXZxUw7oHyyOQg8NfrAdp+ICRxshn3JIQTTWtfAqg=;
-        b=NnWtCV4564GxHSD4bhNeBPC893cn03b8hx2eeftoYFxu79KsK6vMf260Vrd9iaKzzJ
-         /Rc491TZDNl+7q1/kT+boqCfwtFRSFOmm5s7HRcS/yT7CNR6iJ/Bd8Aqh0kHahJ90Whp
-         Cpz6RD0irfC2jVvc1dXXBxKoUshQHa/mj4GobAGe9NRH1ftT+fUaTKzvAhgfeHAQJfxA
-         h0blax623loSsUACIlm8z88KYiarZZmKmZt0WKZNADJ2vLW02BKXKXOMsfr0v+MZGfgO
-         hSyKcUH7vf5lYMUhFWKKpISSMG82C33JJFDPkUVopwN1LyqAn73VK2SSUOdXxWjcKTpC
-         UWWw==
+        d=szeredi.hu; s=google; t=1759329891; x=1759934691; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dh9Vk3lsU9opZp6yE7atY739gzW3haUvwNHyRQpKYLs=;
+        b=FlY5EwtboSAswiFQ1gyPxOmEkZX7rjHrGs5wFPA+MTIxp6nNClNl44/ZiWnA4kpDFH
+         yuH89Hx5goWyqtqmadGkhkV7V5qtuxD1lCH26BcJCoGdO1WPez0zuWmfsLfXGKv8B43k
+         2zqLOEZ4ofwaFtO3lYl1WVZLjfq06Uw22ZI/0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759328908; x=1759933708;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s/WXZxUw7oHyyOQg8NfrAdp+ICRxshn3JIQTTWtfAqg=;
-        b=p2OkcJdufScG8sYWbfmZmYA6yTBti/RLiJCha1MbaycOh9Obs3zQUQ6WuJuy5ZoMhP
-         1qQXya4sa3+lDu3IsZInX1yyfZq8Sd3qP+yJ/uV8vblsuAWQOPUxElCCga6DiZXf5S9S
-         7t96UV+KpYIqG0mr3sAD11FFLLOgAkmeLky7iyCz66OcndkNLA1bt30iHysE5W111ejX
-         iLCEnvT0wFHqruiY292M5t4o5Y9L9U0T0+ipvoWUPpgEouUEMJJOgX2EK1ColtnqIHPs
-         aCqk3ArHM0o78csW02uinPoKDKgyTnfSQ87ADsN3KfAXkdnt/huCEwgQ0CxBEgDgCbdn
-         Lm2A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5dO3wk/IgBApdqzYpSIEC3UmKXXc87C1DNL6RrHCHsZDFDmt7WiCBGV7nFmbgxogwA7JESUGDnOvE3eTy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvraRbFgjDhUmmu5hj696RBv5n6iUxGush+ANCCDEoUHo0NKOo
-	Zci0CuJhA2rf00QLW7fq/T1Ky/UKfbEwkg3MAldf19Y5DYI/VxrsLDCYO1lv26GptZIcYp7EWSx
-	CgJvIJ5Lr2mUxLQTCjWu1P3IIlvAmleY=
-X-Gm-Gg: ASbGncvCDP67vPCJZsvoyUDxpLNJbwc5eK2E/X60rEYrYkjErlVBfGQ4+v3qg+hWm9B
-	Otlq4POs7J31XA7t8yhtcINxaZ+s8NhPImJuCp6oF4RsYBg03U8U0tYjaYg6Du+iGEMudIyiFwt
-	NqAZk0tpYcjhcxc6La27tVtIjgdhB9Y0Yf4LlBFiPu0RUwI42ZiLJ46vwWiOrDfqgIdA74RWPCC
-	pd0nzc12v1j4mT0eKNHRH+sW03oUHqNr2moBUhM1qwfhvf0a2RKVoi4zVSxsXH/Ow==
-X-Google-Smtp-Source: AGHT+IFq01GvQ7V/roDstIdITtS1FOfvHlX1CJiRzI+PFE++QOPBlUqdMnJR34IbYO8qBIvS8/YN4fRt9HSq8uVd530=
-X-Received: by 2002:a17:907:1c27:b0:b04:6546:345a with SMTP id
- a640c23a62f3a-b46ea414afamr473078766b.52.1759328908103; Wed, 01 Oct 2025
- 07:28:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759329891; x=1759934691;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dh9Vk3lsU9opZp6yE7atY739gzW3haUvwNHyRQpKYLs=;
+        b=Snt2oBcSsZkAkaedcvhYXKAF5OpPAf+oyeoEH3l47fn03nqlAHtNRNmnRAQd7yJZ7Z
+         rgE8z+pj1VPw8UHG+DvLvuIrwlBhjEpnIj3D8i9BO6hzpwpg02Oh1UJe6rzJm0gR3LsV
+         WaGRS+r2N8mG5tMDUeDADCWrQ6DXe9eSrXMGys+Kv5oa4kc2I1SBI/ZyGU+6uufwbsIi
+         LDowV5K4VRqCO/AQRBI98Khut9Si23HU7KWS+LYqJnT6F4H1umjFbIEPvNRt52Iz34ZS
+         N3dHDragNwt1cyl/8/l3U2Eokt6ZIPgUfUjO+rbE1k+0wRktQxh/sl9OYqFxzLP3kV66
+         FWgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvG9rcvk9lF9A9MqZ3wEHDfYKgDnYI+GMxrDBP/N8k36UUUDQM8SPrlR0Fx3qh2eiGCzV0z+5KQmAbEgVw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx73SkuCgIL3mpslv+tLC5q1jdjmgtlGTzQsYwTr6p+XlxE71zO
+	0orrH6mqJ4mH4vuCE5PfndYbcUcGFahvr3DajOXInU/sWqSmJb4LwKaxFFoocSmpSF1L++aHZLQ
+	MggDkRzus7PZJerpjGekKYG18X7XeRLmITdlb706Quw==
+X-Gm-Gg: ASbGncuNbp9mJPMq4imAOw/3Ugwe567pC6KwT7L1n69AZefyENKA4n3wR3rw0sL1h3Y
+	b54bSeCBxjDj5Y/l9aIWQkEQ4O+8isyQcpEzQj/4Vvbad6wkfDXC8Zeo5rbhg5PCynu/2gYalkP
+	zGpOH75Bd4GjXXW5W1L4hk68hON4mg0ffwJh4QKaB6D0VhFoJ+FaC57Th6Qzg7HBWK+jZE0uDxv
+	KIePU0wY2YiTuiVB8Len9pckKg3nKs7Uc2X7ATLC6ZM1jCm0HhG7QuoM8Ysrsc=
+X-Google-Smtp-Source: AGHT+IEyYHojEYwroDNW11OsucxHghsFMn962fyw0ZuaI+QtQp6ib9TfoyVtVolV1YcJhyMwLYRULoG+X+s0YRP6A9Q=
+X-Received: by 2002:a05:620a:4722:b0:82a:6774:618c with SMTP id
+ af79cd13be357-8737575fefemr549615785a.41.1759329891441; Wed, 01 Oct 2025
+ 07:44:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001010010.9967-1-mjguzik@gmail.com> <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
- <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com> <7ck3szsab4zb3uzgh6aub5kmvm2slold5la2oyi264klwjel36@crjlqzwdmrgh>
-In-Reply-To: <7ck3szsab4zb3uzgh6aub5kmvm2slold5la2oyi264klwjel36@crjlqzwdmrgh>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 1 Oct 2025 16:28:15 +0200
-X-Gm-Features: AS18NWC1p8ZeqS1QFssgX9aALc1_ZmNcgJPJSm6GufAV4Iachp7Xflo0_OGuOhk
-Message-ID: <CAGudoHFAar2rHaCDWP4uD2QD_BO42-Fi6b9uxwFvHTmkXTCQfA@mail.gmail.com>
-Subject: Re: [PATCH] fs: assert on ->i_count in iput_final()
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+References: <20250902144148.716383-1-mszeredi@redhat.com> <20250902144148.716383-4-mszeredi@redhat.com>
+ <602c8ecc-d802-4a21-9295-8800f7a3cf11@bsbernd.com>
+In-Reply-To: <602c8ecc-d802-4a21-9295-8800f7a3cf11@bsbernd.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 1 Oct 2025 16:44:40 +0200
+X-Gm-Features: AS18NWBl12YpEp7hZKqQSOFHlh7KZ14KNiEeqywA6rNpBi-sblShI4uvBsiB2WM
+Message-ID: <CAJfpegtVJ3W8SzrQ8sYciYxbRQS6+A3HRkSDHzLC84-CPdYPEQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] fuse: add prune notification
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jim Harris <jiharris@nvidia.com>, Yong Ze Chen <yochen@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 1, 2025 at 3:08=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 01-10-25 14:12:13, Mateusz Guzik wrote:
-> > On Wed, Oct 1, 2025 at 2:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > > diff --git a/fs/inode.c b/fs/inode.c
-> > > > index ec9339024ac3..fa82cb810af4 100644
-> > > > --- a/fs/inode.c
-> > > > +++ b/fs/inode.c
-> > > > @@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
-> > > >       int drop;
-> > > >
-> > > >       WARN_ON(inode->i_state & I_NEW);
-> > > > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
-> > >
-> > > This seems pointless given when iput_final() is called...
-> > >
-> >
-> > This and the other check explicitly "wrap" the ->drop_inode call.
->
-> I understand but given iput() has just decremented i_count to 0 before
-> calling iput_final() this beginning of the "wrap" looks pretty pointless =
-to
-> me.
->
+On Wed, 1 Oct 2025 at 14:29, Bernd Schubert <bernd@bsbernd.com> wrote:
 
-To my understanding you are not NAKing the patch, are merely not
-particularly fond of it. ;)
+> I also wonder if FUSE_NOTIFY_PRUNE shouldn't handle dir inodes and
+> call d_invalidate() to also prune child entries.
 
-Given that these asserts don't show up in production kernels, the
-layer should be moving towards always spelling out all assumptions at
-the entry point. Worst case does not hurt in production anyway, best
-case it will catch something.
+d_invalidate unconditionally unhashes the dentry, which this interface
+should only do if the dentry is unused.
 
-For iput_final specifically, at the moment there is only one consumer
-so this indeed may look overzealous.
+However, it could call shrink_dcache_parent() before trying to prune the dentry.
 
-But for the sake of argument suppose someone noticed that
-dentry_unlink_inode() performs:
-        spin_unlock(&inode->i_lock);
-        if (!inode->i_nlink)
-                fsnotify_inoderemove(inode);
-        if (dentry->d_op && dentry->d_op->d_iput)
-                dentry->d_op->d_iput(dentry, inode);
-        else
-                iput(inode);
-
-... and that with some minor rototoiling the inode lock can survive
-both fsnotify and custom d_iput in the common case. Should that
-happen, iput_locked() could be added to shave off a lock trip in the
-common case of whacking the inode. But then there is 2 consumers of
-iput_final. etc.
+Thanks,
+Miklos
 
