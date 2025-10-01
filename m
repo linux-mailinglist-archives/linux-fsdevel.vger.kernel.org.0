@@ -1,97 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-63134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C472BAEE5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 02:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5398BAEEAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 03:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6551921CB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 00:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5968F1941F3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 01:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3141DF97C;
-	Wed,  1 Oct 2025 00:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429D323B61E;
+	Wed,  1 Oct 2025 01:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTT9/K0O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YY+d0cNy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994811DBB3A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 00:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF547263B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 01:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759279133; cv=none; b=TOSBFP7R4B76fPNhJBgz/flnng8E1VsqHJDYhwZtqz4LI/VQYGIfnmiV1J5YJeZ07mUP7tBMk/bX1rw5UO71rKIP+jqka0131885kFFsqHDFZD4XOXIgfJ/BI0GVEq+wtdS0gPIbTlog5txry3hDtMpbfugg9fjDamDoCjbBWOk=
+	t=1759280418; cv=none; b=kQUXus3SC9ZT2OfK4KFDvGhwUfG4rBD5R7b6E0xjXg4lYgb+wxo4nEGGAmxkXBFPLUUsqY7L+R2cW+6Yb9szgAkfgBHgj6cjSymfd2QiCU8wflqo/nHtVlChzO9hpXcJK1/FuidDwprgMZ+SwaTru7h0zoNDodi3UfyOC7Qe4Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759279133; c=relaxed/simple;
-	bh=pTt+ujkaZVjzP+3E74ZC6wkNRrnymwupPOqQi4vVrqY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tWAVP+dI5dfon8KVo3Q0i4rPRZYN0sMNqP244ocu0p+aQHTZZmvZI2yeklC0e4b9VOlylBBS6BYv+gIdv20k310t13G92kaxJ5o4JFzd8P1ob6nZFQA0T3lieVclmaziJeGSqFnbSkIOSo8YKWLUG7jPdAE4a7bgnER+txWt81w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTT9/K0O; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1759280418; c=relaxed/simple;
+	bh=6jXxieDqFD8fazb/6FJlIG0MiiYnqGvFkdIC+NnRbnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hIkooYSLLoxyXHvWnPQ++NMC17ItbJjkng/yB7BSZsqVTZ5XUcJ4h438z3qf7ekdEU3+IL6JApRX6k8zjlNK+o0qvcRbCeHAyGTvdpE7Q5CsAiDrsNh5pWNohkvTUJV0P6HLO1u0tQr/vw7padQUelY56atfqMNCqy/0yr5P3aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YY+d0cNy; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3ee18913c0so501844466b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 17:38:51 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e5b7dfeb0so7052425e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Sep 2025 18:00:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759279130; x=1759883930; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=80RkSLcN1Mqe0fHp8+5X2rCf+ePo64S5nx0U5sFjDh4=;
-        b=VTT9/K0O0oDwmgwwY5vi6S7WOAik3VQgHyiT/6SxbK9ZUHaQ5GSAQI1JI/zqRxoJvk
-         Kpyry0MQK1AOkFagG9dCMZLm5/jCxooEDL98twvPRdWhfuU/aXm2Dj5YTX13PN+Z2K7R
-         aMEaLi83fby6RYzPt6HA05Qd+CVGNAXXrj8OB1VvkUd4JfcbQRPyeycTWQgHJYt2AX9g
-         1hedhTKYBu/9+doVgrWQbvqIgaBTGRyq7ZU6gc2/Wd+6XoaTvp2WOVs6uG+vGNewgpuf
-         HDNYBAkj4AJIOLVZax9WwsowRmQn4BcoADFixmMr327lncWOMgkKMxI/yJgbqz3pIWMI
-         MC6Q==
+        d=gmail.com; s=20230601; t=1759280414; x=1759885214; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rCvWtFisL/5u6+Z59vMZno7OXVHIR/I5WLUeHX/+HKo=;
+        b=YY+d0cNyzGEQfdBce34CnY8Y5J0nP6MHNXNoHn/YixzcOFLd+SR9NgoJBy0PPOURB2
+         JXhjTrcMblGwUX9mZIXoftj9SBuwk8ywxzgcHZu6Pv2+xFTJ/91jHS9DfI4vqWfVJW3b
+         DPujH12xm7XUmqmzwWoCxs8RGWj6zb/aM6K8bR2cbyURjTErna8D6kZU57Xb5zmK2GBF
+         L30jTbNB9IZRMRq7RGtyzCC3+nBhl1VqdeTeQYqGKADTgsk0vGmd5So0oLd5HRFLRuQV
+         ECwZPDHPsfBMiXtCh4J9tJd+2h4RkcoMUxYaj5OSwl+2VOK9shk1pNIHLZxwlvCGS6de
+         d6iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759279130; x=1759883930;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=80RkSLcN1Mqe0fHp8+5X2rCf+ePo64S5nx0U5sFjDh4=;
-        b=fp2+tidsxxqcs3RsAQKEltJkKpFPgk69YoUkzCDQuKK7GoM8mdzFJ25KTpwst5+087
-         H24ouLdmpgeDb53sk3eOCOFBKaOpHM6MsDlq7v9PLw6yhI03heHDhFkGeU06wX+SmlDg
-         Iq4Aux5yFaqksxqm65UO/aUWH8kDKjG2udbNS3csHpVVApLGKiCCB7Q+CoTOhza1eRFz
-         3yGmMkEHMBeezxjg1cgmMih4oJ72DOaMYN3FEgipdxHb3kohC3O6pCT6PfxOk6ZABvOB
-         CG8ERYKbcgQeHfGnyeUZOowbVE6cfhRU9mMaakqAC3EusHAtbKPPe8K+yW6nlJNksmI6
-         f6Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUEFhdsxRpbMnQoSdY9MIvaTtuW5yy61SzFg6N6W7qWln1MkFngoxIixv5a/5tOnrr5yKre6EE9wykYUDG2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkmQuZcCCFK7sh2znj+r62q587LbXIAac0CTgd7ApKJohySEP1
-	m4PqopxAV4pnsKF/Lc9ugaa06jwqqRLvb6rfOIq1kyCz3YF3EFG9MN5U
-X-Gm-Gg: ASbGncvzwXKjbwX8ZF1KH15a0tIxlDH3tm8TxoNplsXawV8CBP0bnOQkkQ7rkY3633M
-	jFQJUjSXEr2AJ1XmMrUVIy4aisaqz5V1apfV1G2aMQUtA2S0ntRNnhM7JYUxz8RSKZ/YRncLQN/
-	/C2yKPzW1MwK2gpJ02mSET6z2CWiqPG0Tp/uEMgldeah/aH9Fdzw4GWK+iTQWg140GVe1BvUHcg
-	GymbtXCfZWCfLQSQUjxQIZQWkINPD67dG1qyoclpb9VCmbzSEk8oasKUa+KMlFmx+g9Xyvysgvk
-	2jVQaW277a5Q7lCxlAChihRjzp9WjuMm9+FjrcPH5fpBnSMscXC1zsDuwu5ta/LQB+oStx8FXqR
-	eFy/Qb9PyQcqk/lJLzU5FYpEyUcNpvVopeAMj80eDAvU=
-X-Google-Smtp-Source: AGHT+IHK0/LlHSuoPWFmCm2v5eRSFa2VBRwHPtGKfZiRLiGohR1gYvmPq6f/J2GBYW0sSTfFl1HKAw==
-X-Received: by 2002:a17:906:c156:b0:b28:f64f:2fdb with SMTP id a640c23a62f3a-b46e2626cccmr167161366b.4.1759279129687;
-        Tue, 30 Sep 2025 17:38:49 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b35446f79besm1255821866b.69.2025.09.30.17.38.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 17:38:49 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: cyphar@cyphar.com
-Cc: alx@kernel.org,
-	brauner@kernel.org,
-	dhowells@redhat.com,
-	g.branden.robinson@gmail.com,
+        d=1e100.net; s=20230601; t=1759280414; x=1759885214;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rCvWtFisL/5u6+Z59vMZno7OXVHIR/I5WLUeHX/+HKo=;
+        b=F+yION0DJh4U9+l+bdI4pQJ3r4UTv6MajVxFkPHjUE+Qcm+xzlNiMQORjWd/9VDLoB
+         MoIOFDFsC25McP53vAK49mOjC530dhp3CPi1PZUjlmdwWWq73adTDj5NapajcMg0ENJh
+         xEOtSzPHpFnfH3sDVBQ84eOxsvrpeiYFSAclfJgwF1TciZmmvoM1T44LfIAjqTAb2UwI
+         F3qNWNgDZZ210dlap02Am3n4Jt/6EBCcez8lryr4YTg9J0VUUpoqkprMY58G03SpBJ3i
+         fQ8YTSgPUeBbBSk/wLO21cBaBc3BZb9re8bWodevUmderCjaL/3tMnBL5TRaLhyQz8BY
+         Varw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxVmw15NQJeOd02mEQs8bF6Gv8l2cIeyP/tHZXONTTZxgDYokC136hX87ixwyiWdY7caIxPRQjSR5BHbul@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmC7BkatXqLruQHVw7+Q2v2AqtkaemjXzhX88qu/DpIfiVjYN3
+	CKcNeHmerzw/sj7zbPqQ51JPp0taz9hpVtD5jWutXzNclINzSMR7rl11
+X-Gm-Gg: ASbGncu3mbXKl8WzIczymMgc8R1jtZUUKA+L43sSZFHfmbNcSu4bgftDLlpVOYMyMTs
+	idmqQG6x+3VKhXPGcBCElW/ooWbYtPsJud9TzVZtfXBY7ms8oLuhXo2oTxEPpncYCoelTMc/X9p
+	YYM82ajivb1tETS8tH/R/OzQkiP4lHu6L8bN4GBURIX+9CqQ6elDbSzOsSHWrggGCcRk3XQefxU
+	0zV+IUfPXV5fgziPPClmdfj1TWvP8ud0f+3PmTlUD/pDpuA5HLOvWf5dbsme6Ak8Da+mcNMXWHq
+	AiRp/2WMYj5BAxLylaaasz7NHurjbVkqINE+MSs7Jt7en+2KMhJp7oddiwVSYLZMWWT3M9K40Of
+	cwjf/+kS/bHdnsoBVp5ua7bBl7kQR8+7U0PPLrnlQG0u6H8/6N1Dz9TGk1PKtOVj/50M+AbRXsg
+	OxJuHVlvE+SjfDBpPm2kE/jdQ=
+X-Google-Smtp-Source: AGHT+IEKINZ8voVJfqELLMtiD76UXBJ16fK/Vnhpwcd4y7UWCbT3YRZ4FZ+yoP1+6vpFBcsBZnBwNg==
+X-Received: by 2002:a05:600c:3543:b0:46e:4921:9443 with SMTP id 5b1f17b1804b1-46e612e3f92mr13029195e9.37.1759280414007;
+        Tue, 30 Sep 2025 18:00:14 -0700 (PDT)
+Received: from f.. (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b9c88sm14576005e9.22.2025.09.30.18.00.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 18:00:13 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
 	jack@suse.cz,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	mtk.manpages@gmail.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new open_tree_attr() API
-Date: Wed,  1 Oct 2025 03:38:41 +0300
-Message-ID: <20251001003841.510494-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
-References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: assert on ->i_count in iput_final()
+Date: Wed,  1 Oct 2025 03:00:10 +0200
+Message-ID: <20251001010010.9967-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,27 +91,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Aleksa Sarai <cyphar@cyphar.com>:
-> +mntfd2 = open_tree(mntfd1, "", OPEN_TREE_CLONE,
-> +                   &attr, sizeof(attr));
+Notably make sure the count is 0 after the return from ->drop_inode(),
+provided we are going to drop.
 
-Your whole so-called "open_tree_attr example" doesn't contain any open_tree_attr
-calls. :)
+Inspired by suspicious games played by f2fs.
 
-I think you meant open_tree_attr here.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> +\&
-> +/* Create a new copy with the id-mapping cleared */
-> +memset(&attr, 0, sizeof(attr));
-> +attr.attr_clr = MOUNT_ATTR_IDMAP;
-> +mntfd3 = open_tree(mntfd1, "", OPEN_TREE_CLONE,
-> +                   &attr, sizeof(attr));
+boots on ext4 without splats
 
-And here.
+ fs/inode.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Otherwise your whole patchset looks good. Add to whole patchset:
-Reviewed-by: Askar Safin <safinaskar@gmail.com>
-
+diff --git a/fs/inode.c b/fs/inode.c
+index ec9339024ac3..fa82cb810af4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
+ 	int drop;
+ 
+ 	WARN_ON(inode->i_state & I_NEW);
++	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
+ 
+ 	if (op->drop_inode)
+ 		drop = op->drop_inode(inode);
+@@ -1893,6 +1894,12 @@ static void iput_final(struct inode *inode)
+ 		return;
+ 	}
+ 
++	/*
++	 * Re-check ->i_count in case the ->drop_inode() hooks played games.
++	 * Note we only execute this if the verdict was to drop the inode.
++	 */
++	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
++
+ 	state = inode->i_state;
+ 	if (!drop) {
+ 		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
 -- 
-Askar Safin
+2.34.1
+
 
