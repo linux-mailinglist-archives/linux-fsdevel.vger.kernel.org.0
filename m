@@ -1,209 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-63148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35248BAFB47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 10:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD7ABAFC2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 11:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5F1189A61F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 08:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013B63B5EB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 09:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC25284B50;
-	Wed,  1 Oct 2025 08:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09A02D9499;
+	Wed,  1 Oct 2025 09:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3yM1iOb"
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="gq5cdMSm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA227B35D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 08:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A48326CE37;
+	Wed,  1 Oct 2025 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759307995; cv=none; b=HMkyiPlhwQxw3Q0RzLpINoh6Qz4iD7JbOo7SJyKh9/NxXyEVrwf5ZvI6gVkF1IHLy1vlv0BG3ycbvEloqtpU8NC2QU7uDPWYWLsfwkE2H0DaV4m+kv9k/s65cggv7qjtnXpFYhNkBd9gthQzetaU/6k8GnVZQJftrsKdqI6u+Og=
+	t=1759309429; cv=none; b=oiccb/u5KGGDFDuzQEvdB76p7d4sE5zOxF5S81GJcyMWE4bmE1Pq3jyMqoaAMbcCf37d6/Pr7I9Ke6Lp/ogExS7nA/29YTl5HY2+T8iz93SIqpX5jALmoBIJjDYjagx50weXAZRTqr0RENA56Xvos4QQzbH+4rnHyHdDNIm2YwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759307995; c=relaxed/simple;
-	bh=VyoVY4Q4GDe6RMQi5QGg4ffoiIPwM6SwqIJ2pC+aeyo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ezj7dCRWAWkQJuhnLKK94bmNwjRCoGLAa6KA7aFQch3c6WpOhWWv/p9JqMGvoN7fsm7/ckWmQqNw7mR36JboxWTLr/xKFkqSxnJCcKeGrucZfbu3rGeYffuRp7NiL5pELyw06hc65RzadGXPG32YZisGyPgXIsFgB1kWpdW4U1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3yM1iOb; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2897522a1dfso34339695ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Oct 2025 01:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759307992; x=1759912792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4FfG++OYH0UQ2cb2chNsj++JT4lH4Ovdjh6P4PE8Qc=;
-        b=g3yM1iObHwRxcTDwKEb4hPnaH5qID9F2qO/PBYntzF0jaxWD7P+SV/5VQ3KFwxtu+N
-         sqPq26lmHKC7XiFRj/qXOcn5oWzLr4zv7pz03nIbJLgx5WPgXFsjd63aFesxxJ67qDMw
-         ySFCbPyH9sByfJZKjYIRhfgt+F+MlqRw6dR5Mq/Y+4eY/VCylI/JtiiixVWnB81wts1K
-         nXaBmrPSdIzOSFzO0Y6VHjWYbWmiU7VsCkjrIAhLda5k70ObaAkrUz1VUMv7qdRPvaNq
-         M17uu9Xqwq1kawq9QDiLIgyiISmLgK5rjESsQKWzCPNPzJ9zX1HxaZ8gmOsatG7VRrrL
-         YsoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759307992; x=1759912792;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D4FfG++OYH0UQ2cb2chNsj++JT4lH4Ovdjh6P4PE8Qc=;
-        b=hOkrigTjLTbp7/0EQpLegqfeGhR2O5ik9ytsB8x5ZqSLG9HeclL4oJXXzoBtIA3K9Y
-         rMQnmgyFG1PJ9ybbwR97jGRizpgbgJbbC+shEHvOZe8pisWryCMsh7SqUtr4KkQs+4Bh
-         /ay86fsuMxDqYaJ+lzvND7bQaBNWQD9w5Ih+BDw87st4/idVgHs3jdBhZb0j9354XafZ
-         PPEj8lqCmv6TqEkrNI29CIFzwheQmRwykiKU51oKNqubAuZBRk9n3MkAiqNHEEecX7SM
-         FeHtWnLgLh9Ekuh+6Apmnu8u/qYVYGsZ1PsTwLxgsHfE30tqTE/53lUN3x4RKy1TKcZg
-         OiXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcS59sgPIeSG75MbE8iCF66Qf6IF8Ol2ns6COX+7IoQhT9cDaUkGxJ1LdjjSX8Gm95wQevHaPtrrchRUKX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPon79JRrNKbSQrmr+jef7qK3YgEXnv2Lg5RubyuBA6PrrAdYb
-	eNMeeE7WyGt+9CjyqLWGvxgMQ1X/FMwtESmmDjQfwtYJM21PXVa9473oc2/p2ush
-X-Gm-Gg: ASbGnctZlU2v6ExysWxQywFi/rtMBIS1343IpmJmA/akEXXzooOyzhByav0LLtoRkHh
-	qM8V+pRHX1x5y5jqvw0SSVSGqeCl4dX6fs8idR3vISADWluLQmsM9hWNItf2q3EdzVw3cQmGAlw
-	8TLw8+zN0rxF6sSzQQQcIb/+LoCfO0B16w1ZBIGoQr59shBuEBfp0/BaouVLMq5IkSfEhWRmrCu
-	hLs106SSmbx1NvHvP6Np442QXnwjfa/O1d4iDYFuAnV6qmBuPx4WgSRyIyjgUj4yLT5NGgeviT6
-	cbCLNlNUVVqcXmJ+lXEVWHUCqhQkB/bO31l4ZGGFRhX1e2GIIdTkI83AQHiN63qwiYW0v3RUA59
-	k2OBBVeP2QPDqEw2Rzniz1XpD8VWr5myJ6Tk+T5GQzZjefPhyUe/+z/JZL9C9kxg5oJCd/Qk9Ww
-	==
-X-Google-Smtp-Source: AGHT+IGDAA5bS+9IItYzYTvHt755RN1Ht/RXQRCnt03we0AczFtZuNBaAi5b7oWoS/mnvJ+e//+JYg==
-X-Received: by 2002:a17:903:11c7:b0:269:8407:5ae3 with SMTP id d9443c01a7336-28e7f4b6843mr37492805ad.54.1759307991850;
-        Wed, 01 Oct 2025 01:39:51 -0700 (PDT)
-Received: from ti-am64x-sdk.. ([157.50.93.46])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ad1d45sm179473835ad.141.2025.10.01.01.39.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 01:39:51 -0700 (PDT)
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Carlos Maiolino <cem@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>,
-	linux-bcachefs@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Subject: [PATCH] fs: doc: Fix typos
-Date: Wed,  1 Oct 2025 14:09:31 +0530
-Message-Id: <20251001083931.44528-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759309429; c=relaxed/simple;
+	bh=JGTVZKqlDvgAlmZDqY993i//RJ29Pi67qV7iYqgd7q8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MJ8e6WYCkxcO62Ujy7Mrph+hFzOdCVceixyuL4UgkhHhyhwraJmM8b+j8CfwSYRbWJiVDM0oNjHchYdwaewlcVkyO9hqn6n9qkzxoemGwJdwvS5mCh8MIyH4FQffjkxHPA8g7VoBDvm908gQWu1FR5qhfGa9XQ2mpCUXJI5dgkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=gq5cdMSm; arc=none smtp.client-ip=109.224.244.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1759309417; x=1759568617;
+	bh=k2cd0h/lNPW6oKirfHBNFEiPHjT+8NPzCf04+VSLOsg=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=gq5cdMSmMRJ5eEdQ74b46Afg4C59ln8vt80/KmbouM+MFTl2033f/pBX9xzcIeq3c
+	 enT4MAXopZCXXM6u8MfmhBxjUT6n5m1ghFZIaA2NLIUKRLBpebo7Nl/W+xz25bSdkL
+	 pM227Wrf+Pf1aQ+0s6p0RpRpMvHjcnf3aX8YNIB7KGbhAhc8bcRGXGXurIHssikDkl
+	 1q8ZroZcQt16iBc6K+0cXAsicmMEPNQQEwLMybDsThZ0uWpfeXrXHudarIT9Ec323i
+	 DZ8DMK1X2WbiT+Fk9grZNvAGMjnvy5Kb/X5WF3YPKUnQOnedseFZJOWs8WudYT4Zme
+	 ksS29du6VknaQ==
+Date: Wed, 01 Oct 2025 09:03:31 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
+	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v12 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
+Message-ID: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 05f6e75cf8354eecb1d79bcf61223bca92da5f3d
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Fix typos in doc comments
+This allows to convert between ARef<T> and Owned<T> by
+implementing the new trait OwnedRefCounted.
 
-Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+This way we will have a shared/unique reference counting scheme
+for types with built-in refcounts in analogy to Arc/UniqueArc.
+
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
 ---
- Note: No change in functionality intended.
+Changes in v12:
+-
+- Rebase onto v6.17-rc1 (Andreas's work).
+- moved kernel/types/ownable.rs to kernel/owned.rs
+- Drop OwnableMut, make DerefMut depend on Unpin instead. I understood
+  ML discussion as that being okay, but probably needs further scrunity.
+- Lots of more documentation changes suggested by reviewers.
+- Usage example for Ownable/Owned.
+- Link to v11: https://lore.kernel.org/r/20250618-unique-ref-v11-0-49eadcdc=
+0aa6@pm.me
 
- Documentation/filesystems/bcachefs/future/idle_work.rst  | 6 +++---
- Documentation/filesystems/xfs/xfs-online-fsck-design.rst | 2 +-
- fs/netfs/buffered_read.c                                 | 2 +-
- fs/xfs/xfs_linux.h                                       | 2 +-
- include/linux/fs.h                                       | 4 ++--
- 5 files changed, 8 insertions(+), 8 deletions(-)
+Changes in v11:
+- Rework of documentation. I tried to honor all requests for changes "in
+  spirit" plus some clearifications and corrections of my own.
+- Dropping `SimpleOwnedRefCounted` by request from Alice, as it creates a
+  potentially problematic blanket implementation (which a derive macro that
+  could be created later would not have).
+- Dropping Miguel's "kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol"
+  patch, as it is not needed anymore after dropping `SimpleOwnedRefCounted`=
+.
+  (I can add it again, if it is considered useful anyway).
+- Link to v10: https://lore.kernel.org/r/20250502-unique-ref-v10-0-25de64c0=
+307f@pm.me
 
-diff --git a/Documentation/filesystems/bcachefs/future/idle_work.rst b/Documentation/filesystems/bcachefs/future/idle_work.rst
-index 59a332509dcd..f1202113dde0 100644
---- a/Documentation/filesystems/bcachefs/future/idle_work.rst
-+++ b/Documentation/filesystems/bcachefs/future/idle_work.rst
-@@ -11,10 +11,10 @@ idle" so the system can go to sleep. We don't want to be dribbling out
- background work while the system should be idle.
- 
- The complicating factor is that there are a number of background tasks, which
--form a heirarchy (or a digraph, depending on how you divide it up) - one
-+form a hierarchy (or a digraph, depending on how you divide it up) - one
- background task may generate work for another.
- 
--Thus proper idle detection needs to model this heirarchy.
-+Thus proper idle detection needs to model this hierarchy.
- 
- - Foreground writes
- - Page cache writeback
-@@ -51,7 +51,7 @@ IDLE REGIME
- When the system becomes idle, we should start flushing our pending work
- quicker so the system can go to sleep.
- 
--Note that the definition of "idle" depends on where in the heirarchy a task
-+Note that the definition of "idle" depends on where in the hierarchy a task
- is - a task should start flushing work more quickly when the task above it has
- stopped generating new work.
- 
-diff --git a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-index e231d127cd40..e872d480691b 100644
---- a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-+++ b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-@@ -4179,7 +4179,7 @@ When the exchange is initiated, the sequence of operations is as follows:
-    This will be discussed in more detail in subsequent sections.
- 
- If the filesystem goes down in the middle of an operation, log recovery will
--find the most recent unfinished maping exchange log intent item and restart
-+find the most recent unfinished mapping exchange log intent item and restart
- from there.
- This is how atomic file mapping exchanges guarantees that an outside observer
- will either see the old broken structure or the new one, and never a mismash of
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 37ab6f28b5ad..c81be6390309 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -329,7 +329,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq,
-  * the netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O
-  * requests from different sources will get munged together.  If necessary, the
-  * readahead window can be expanded in either direction to a more convenient
-- * alighment for RPC efficiency or to make storage in the cache feasible.
-+ * alignment for RPC efficiency or to make storage in the cache feasible.
-  *
-  * The calling netfs must initialise a netfs context contiguous to the vfs
-  * inode before calling this.
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index 9a2221b4aa21..fdf3cd8c4d19 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -145,7 +145,7 @@ static inline void delay(long ticks)
- /*
-  * XFS wrapper structure for sysfs support. It depends on external data
-  * structures and is embedded in various internal data structures to implement
-- * the XFS sysfs object heirarchy. Define it here for broad access throughout
-+ * the XFS sysfs object hierarchy. Define it here for broad access throughout
-  * the codebase.
-  */
- struct xfs_kobj {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 601d036a6c78..72e82a4a0bbc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1040,7 +1040,7 @@ struct fown_struct {
-  * struct file_ra_state - Track a file's readahead state.
-  * @start: Where the most recent readahead started.
-  * @size: Number of pages read in the most recent readahead.
-- * @async_size: Numer of pages that were/are not needed immediately
-+ * @async_size: Number of pages that were/are not needed immediately
-  *      and so were/are genuinely "ahead".  Start next readahead when
-  *      the first of these pages is accessed.
-  * @ra_pages: Maximum size of a readahead request, copied from the bdi.
-@@ -3149,7 +3149,7 @@ static inline void kiocb_start_write(struct kiocb *iocb)
- 
- /**
-  * kiocb_end_write - drop write access to a superblock after async file io
-- * @iocb: the io context we sumbitted the write with
-+ * @iocb: the io context we submitted the write with
-  *
-  * Should be matched with a call to kiocb_start_write().
-  */
--- 
-2.34.1
+Changes in v10:
+- Moved kernel/ownable.rs to kernel/types/ownable.rs
+- Fixes in documentation / comments as suggested by Andreas Hindborg
+- Added Reviewed-by comment for Andreas Hindborg
+- Fix rustfmt of pid_namespace.rs
+- Link to v9: https://lore.kernel.org/r/20250325-unique-ref-v9-0-e91618c1de=
+26@pm.me
+
+Changes in v9:
+- Rebase onto v6.14-rc7
+- Move Ownable/OwnedRefCounted/Ownable, etc., into separate module
+- Documentation fixes to Ownable/OwnableMut/OwnableRefCounted
+- Add missing SAFETY documentation to ARef example
+- Link to v8: https://lore.kernel.org/r/20250313-unique-ref-v8-0-3082ffc67a=
+31@pm.me
+
+Changes in v8:
+- Fix Co-developed-by and Suggested-by tags as suggested by Miguel and Boqu=
+n
+- Some small documentation fixes in Owned/Ownable patch
+- removing redundant trait constraint on DerefMut for Owned as suggested by=
+ Boqun Feng
+- make SimpleOwnedRefCounted no longer implement RefCounted as suggested by=
+ Boqun Feng
+- documentation for RefCounted as suggested by Boqun Feng
+- Link to v7: https://lore.kernel.org/r/20250310-unique-ref-v7-0-4caddb78aa=
+05@pm.me
+
+Changes in v7:
+- Squash patch to make Owned::from_raw/into_raw public into parent
+- Added Signed-off-by to other people's commits
+- Link to v6: https://lore.kernel.org/r/20250310-unique-ref-v6-0-1ff5355861=
+7e@pm.me
+
+Changes in v6:
+- Changed comments/formatting as suggested by Miguel Ojeda
+- Included and used new config flag RUSTC_HAS_DO_NOT_RECOMMEND,
+  thus no changes to types.rs will be needed when the attribute
+  becomes available.
+- Fixed commit message for Owned patch.
+- Link to v5: https://lore.kernel.org/r/20250307-unique-ref-v5-0-bffeb63327=
+7e@pm.me
+
+Changes in v5:
+- Rebase the whole thing on top of the Ownable/Owned traits by Asahi Lina.
+- Rename AlwaysRefCounted to RefCounted and make AlwaysRefCounted a
+  marker trait instead to allow to obtain an ARef<T> from an &T,
+  which (as Alice pointed out) is unsound when combined with UniqueRef/Owne=
+d.
+- Change the Trait design and naming to implement this feature,
+  UniqueRef/UniqueRefCounted is dropped in favor of Ownable/Owned and
+  OwnableRefCounted is used to provide the functions to convert
+  between Owned and ARef.
+- Link to v4: https://lore.kernel.org/r/20250305-unique-ref-v4-1-a8fdef7b1c=
+2c@pm.me
+
+Changes in v4:
+- Just a minor change in naming by request from Andreas Hindborg,
+  try_shared_to_unique() -> try_from_shared(),
+  unique_to_shared() -> into_shared(),
+  which is more in line with standard Rust naming conventions.
+- Link to v3: https://lore.kernel.org/r/Z8Wuud2UQX6Yukyr@mango
+
+---
+Asahi Lina (1):
+      rust: types: Add Ownable/Owned types
+
+Oliver Mangold (3):
+      `AlwaysRefCounted` is renamed to `RefCounted`.
+      rust: Add missing SAFETY documentation for `ARef` example
+      rust: Add `OwnableRefCounted`
+
+ rust/kernel/auxiliary.rs        |   7 +-
+ rust/kernel/block/mq/request.rs |  14 +-
+ rust/kernel/cred.rs             |   7 +-
+ rust/kernel/device.rs           |   9 +-
+ rust/kernel/device/property.rs  |   7 +-
+ rust/kernel/drm/device.rs       |   9 +-
+ rust/kernel/drm/gem/mod.rs      |   7 +-
+ rust/kernel/fs/file.rs          |  13 +-
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/mm.rs               |  12 +-
+ rust/kernel/mm/mmput_async.rs   |   7 +-
+ rust/kernel/opp.rs              |   7 +-
+ rust/kernel/owned.rs            | 318 ++++++++++++++++++++++++++++++++++++=
+++++
+ rust/kernel/pci.rs              |   7 +-
+ rust/kernel/pid_namespace.rs    |   7 +-
+ rust/kernel/platform.rs         |   7 +-
+ rust/kernel/sync/aref.rs        |  67 ++++++---
+ rust/kernel/task.rs             |   7 +-
+ rust/kernel/types.rs            |   4 +-
+ 19 files changed, 474 insertions(+), 43 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250305-unique-ref-29fcd675f9e9
+
+Best regards,
+--=20
+Oliver Mangold <oliver.mangold@pm.me>
+
 
 
