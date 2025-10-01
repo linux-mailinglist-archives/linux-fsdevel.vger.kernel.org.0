@@ -1,179 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-63169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E418BB048D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 14:10:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4704BB0499
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 14:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C481942274
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 12:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904CB2A2187
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 12:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF09270EDE;
-	Wed,  1 Oct 2025 12:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643E12E92D1;
+	Wed,  1 Oct 2025 12:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IxmtHI7Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haK9n6CH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B072A1DF742
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 12:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2992C537E9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 12:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759320635; cv=none; b=alPiTsxYne8a6ceh6G6Yxh6h/Xz4iL5oPVIwSfRQQd8JY70M7Y2IdzXlzboOLk3hJKOGCUcJYsLQgaAcCF8PBcbfwIgzk4ZhEnXg9zopWmkT1jau7EMK8OExN/MLBVKTh/mv8+mPJmqspaqIIIH+niAkb6+gFS1PIPv923xDOck=
+	t=1759320748; cv=none; b=pRYEJBEwv/tU1gn17M2WJPvqmuv9w8GTMWqnMAKvGKfWSj1yFigH6+jIiLiq62f1pOwQcAuza7RonahNvh/Hr3mPd/C0GqHaFDrIVIPxxSlLeIW6q4WtQ4W22NgicZJSZlJTxcTeb6tAlwDIUqzrOO04MKFFgwErj8SiEvcVkQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759320635; c=relaxed/simple;
-	bh=pvMGaqY63vMpQ2YYUKa3njQxeuJ6aYGwkhm8mUrKcsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TcGo7E+mzuEwXEpZfVTq5SLScnmtySM1q9l4A3lXwYMo6UlGWGyX49mcmBxhOY0P8toPzgqoUNK2jKoqM2PUV+wX6byTbpFOZHtJy5rpmwUHqvaE4/XVdTTCyx2G+zlAmpSRj6Tk+Y+JYjRptMZ4efdZGe8Vm4SXcb/2lodcLLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IxmtHI7Y; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so68399555e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Oct 2025 05:10:32 -0700 (PDT)
+	s=arc-20240116; t=1759320748; c=relaxed/simple;
+	bh=wm1BeP3OIG/CEpv0bx0FPzGIxfrbnvmyJFFdHO4c9MM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=goVs4YEdXMbXWfEueVAZAtECIj1EPO/0dC2wlGcTbVIVntLnhgHzQqU0bqOJKs3ck2XmilAAH7YBKJMm8WSWLby44VokC3c3zPzBmXm5Y7Bkh7osNJ1uHx2rwl/3EquMDCOVXyDWJKIDHzztIwr4M5KuYUrO+g+u/Yz7TXpHZ00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haK9n6CH; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3727611d76so1063837566b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Oct 2025 05:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759320631; x=1759925431; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yt2/RiqsQaPl/L3x5B+o48QDSFj5vHrC7SC05R42/Fw=;
-        b=IxmtHI7Y69zAjJ/ziiSmBhgdrCkeVRXMqEXyJy2a/Ix8jn1NlGTTQRWSKvc0MnQzC2
-         cLtCM559tjNu2ckFN/xBUiBzhD5QQThxV7HwGUFDwrn0GPhE+kCJNBjvH62sJUBtuhDi
-         YbN/4dx9pSOPIb/P+G2iYvnLn3fEVx59So7sMeiH/INXclr8csTh/IB/GwsoUAq5XTDt
-         59D0p/liLSCx32xAXIBK7vqanTk5f2OunXaOHeMaiGItIgq7UDx9UlHe4KY3n2aY1s/R
-         DZcBFsBIa1t1HWuTJZ1lNk+xsfve+rG6IXpClj513KxKybUHANqI9wgL5yrthLhsiTKS
-         DLew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759320631; x=1759925431;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759320745; x=1759925545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yt2/RiqsQaPl/L3x5B+o48QDSFj5vHrC7SC05R42/Fw=;
-        b=jyOruqa8kv/bnkhpbzYMMTZKuvErFdtMH3hTVEfJaKka3hUAQ3sPVKExdEMH+fscUp
-         Ls6TR4cDKqRfaOTrEoYRghtO7O2s86DhEcDIbOfbRkPULwvR5wmiujytyTJoYOk7oUN5
-         wCfkDewhBihmu9Z/r9w+NGrFK6ln5tyS5MTj3v6PSqG3BT+NV4VC4N23/HFwRPtvveki
-         xHyTn/vAEgDzi3YIDRVOOgUDfK1x7jvUacfK2VkZnmpAAC8y3pVgzqdbkpgYBREJ75lk
-         TYLGgcy9hd162Tzqt65jJJs8QyqavN7HMXAczAukit9HoNd+QPh6DUNgvwgRjFV3vgYr
-         9NQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe8XWnOFErXCOqQ0ExArqwOV/vmnqimTSHSI6frd1zs07H/ORcDdW42GlXq7dljUHqjQRqj+cvH93QbVyO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIu8Bcg9lXt6RIHpsACMJd5k5hOIE0DnSw1f3dilV++m6pV/aU
-	k9BdzbNNGWO7UuIJDjqPi3Xn8q41eCcVT6aZ3dahzVwICsJc5iGYDGZppIDE4cB3uQc=
-X-Gm-Gg: ASbGncs/I5Ox6dJkoPdxoEcDBWo2ufADEbigPFikXClmGmPrFjOaP7X031hL/fuxi3H
-	TMq4+OiZubzPg1c0m5p4U9RxbU5JSYN0NOm74C5xgpODsNr+xleIJsaCkWiyvN38XAjRZhlOd+5
-	LOBiTnDur+rW6fZE2F9IbQnV8f3eaoyqCp07+rgyWx1Op+0NZkKLmLzsjNLkPQ8BLtgYvSX/1bC
-	G8Tp74AIo2GlRi35JbLN2nZOrMFRtFYeWWZKdmzVzkpqrwMoBuXgPc3Tv2ZowRsJQc8midrkubf
-	YhRLl6MMxkHARNbd9+F8rpg61xDDwKsfF14TB6aXSEgR80+dJgbZBPXxSrtLOvxEGWLlMzSuA9c
-	yszfxceWemHOFkZVPpFNfBa86+QEgRLYV4IjHvTSkjwTyrpMQhf0tEXJN3UiPyDw=
-X-Google-Smtp-Source: AGHT+IG4Fv3Ws0T0hfn9FRi9J8Hy8qhXiWqsQ+7mqBAvBUVbcM7w8H1ZOknsFTXOA3cvm76Wrim5lg==
-X-Received: by 2002:a05:600c:8206:b0:45b:88d6:8db5 with SMTP id 5b1f17b1804b1-46e612192d5mr31099915e9.12.1759320630850;
-        Wed, 01 Oct 2025 05:10:30 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fb72fb21esm26937295f8f.7.2025.10.01.05.10.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 05:10:30 -0700 (PDT)
-Date: Wed, 1 Oct 2025 15:10:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-fsdevel@vger.kernel.org,
-	linux-block <linux-block@vger.kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-Message-ID: <aN0aMyU1D3N4WQy4@stanley.mountain>
-References: <20250930143822.939301999@linuxfoundation.org>
- <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
- <2025100105-strewn-waving-35de@gregkh>
+        bh=HMNKUKq4O6fuNIsiIVyyJX5XuuNZnMram+bZtI5+QUE=;
+        b=haK9n6CH8B3B7s+yzcJ09ROj+WyVMVy/FAF8imtoDJQsyRuh0He8kPCEZlYBT8unTG
+         joyKlviP7y6nZmKKMhmjpMBghtWqYXV/C9JOmDP3qxGA/vP+iHZ4fUtf0hDFqKTw3JC9
+         WxK9S0FRLoAolwCnMdXNrGskEXEJCXsvnrKxq5aTwxumpol5y/rwTZP3E+m8lcQJMvek
+         HWff+Xp1TXNlIUSIIpJYws7uCz/kcLMna9o2plD8NnYkrmyh1rSdoh0Zm4TQszTEVwtH
+         E+LiJTUtHTLUqrq7kAIpfVo0zt7KX1PSAID5aAsfGP/VFu2dJxKG9jaDP/wq6/8P42qP
+         iBZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759320745; x=1759925545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HMNKUKq4O6fuNIsiIVyyJX5XuuNZnMram+bZtI5+QUE=;
+        b=DTaC0jT9kg7ht0mhlMvicpW5FUQHqgd4SBQW0U9YitjeotS2+/Ec1IfvmRuEoIF9uf
+         eQBk5EA/Jfpy1Fa0Pmi9ons7PyU7z+XD9N+WbEVlkQNlQVwVCxdLp5tT1PiMESrm7szv
+         ptGxhfgrDNk4TTWhxXTs2M0JBBxKDemKSuhIn5OzBHhUk3q2BDBFk/CX8sh+GVeXfyTw
+         1X4Y8phC0x9FVwz8KQ25GBUzGDX4d15yrveww6/LwyhzQAiMv4yHjFUnfPppJKrBlF3q
+         r7OHxZe8YSASKsw2KWlc7ffO8zxWBa4ys5pkzA3PTH74de2vGSrY2iNqYROcl4QewkJ7
+         MkQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5zXUTu8ZzOLhhOIIdnCK7QZwaqzDXB78oCRy2i9mmRfqO9PceI1nxCDFE+xJpie2e7U8hpKPEZNLhBJQT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwgq3cEFLtmfcs9f2wbQpnudJsFLiqIjpqWulKzfUgc22O1fwY
+	h5FLLKDdb5VN0dyLB2lby1WQlyDmxK4RMzatUAhzJVRFwf1lL/HLh/gAOMdE4xQ3evgY3kdubPp
+	hrpc7zqCo1brZSWEcbc/9KHJR4/rZO54=
+X-Gm-Gg: ASbGncsq8tKgRgcBFx6t1x/nE4mCv1pBFP3uW+rZx8H9Mo9BLRd1FxxwpWWzLWCZWBG
+	y8y5XZHMymxKrnAJ+7bGIHKwCHxgdSe6rpji2IHEiWSLs58OXJVr60S2szomZ7YyySlBe+uZX0U
+	LU37K/xGzHUIZyRvSb22Abn3WZQRWbiByLokJMDAu5uU9GQb+3ANuqFFsUXKjQLBtYRPGZKkG//
+	+csJlP7mOHB5b2Fqsx2P+Ry1GdkJkHD8ru/gcR697rtkGJQyPYSZU9ZmTz6HiCUWA==
+X-Google-Smtp-Source: AGHT+IF8r80Y0ZoXsIQn0Y5R+RdX9mAD1JyxavDsPaW3QjZWyIinKq3HCORm57T6oAyaRkcFtYjYf2FoIDT7QGrslA8=
+X-Received: by 2002:a17:906:dc8a:b0:b10:9e5d:d173 with SMTP id
+ a640c23a62f3a-b46e6339e6bmr357263366b.41.1759320745155; Wed, 01 Oct 2025
+ 05:12:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025100105-strewn-waving-35de@gregkh>
+References: <20251001010010.9967-1-mjguzik@gmail.com> <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
+In-Reply-To: <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 1 Oct 2025 14:12:13 +0200
+X-Gm-Features: AS18NWBAHDbuuueF6_VwFlNYhEG4JuTxqmkvI17PQrp5AyJYj9GIJmIn87xJWkQ
+Message-ID: <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com>
+Subject: Re: [PATCH] fs: assert on ->i_count in iput_final()
+To: Jan Kara <jack@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025 at 12:50:13PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Oct 01, 2025 at 12:57:27AM +0530, Naresh Kamboju wrote:
-> > On Tue, 30 Sept 2025 at 20:24, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 5.10.245 release.
-> > > There are 122 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > 
-> > The following LTP syscalls failed on stable-rc 5.10.
-> > Noticed on both 5.10.243-rc1 and 5.10.245-rc1
-> > 
-> > First seen on 5.10.243-rc1.
-> > 
-> >  ltp-syscalls
-> >   - fanotify13
-> >   - fanotify14
-> >   - fanotify15
-> >   - fanotify16
-> >   - fanotify21
-> >   - landlock04
-> >   - ioctl_ficlone02
-> > 
-> > Test regression: LTP syscalls fanotify13/14/15/16/21 TBROK: mkfs.vfat
-> > failed with exit code 1
-> > 
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > 
-> > We are investigating and running bisections.
-> > 
-> > ### Test log
-> > tst_test.c:1888: TINFO: === Testing on vfat ===
-> > tst_test.c:1217: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
-> > mkfs.vfat: Partitions or virtual mappings on device '/dev/loop0', not
-> > making filesystem (use -I to override)
-> > tst_test.c:1217: TBROK: mkfs.vfat failed with exit code 1
-> > HINT: You _MAY_ be missing kernel fixes:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c285a2f01d69
-> 
-> You are not missing this "fix".
-> 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bc2473c90fca
-> 
-> You are missing that one, but why is a overlayfs commit being cared
-> about for vfat?
-> 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c45beebfde34a
-> 
-> Another overlayfs patch that is not backported that far.  Again, why is
-> this a hint for vfat?
+On Wed, Oct 1, 2025 at 2:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index ec9339024ac3..fa82cb810af4 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
+> >       int drop;
+> >
+> >       WARN_ON(inode->i_state & I_NEW);
+> > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
+>
+> This seems pointless given when iput_final() is called...
+>
 
-That's test output, not something we added.  LTP tests can have a list
-of suggested commits.  LTP doesn't know what kernel you're running, it
-just prints out the list of commits.
+This and the other check explicitly "wrap" the ->drop_inode call.
 
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/fanotify/fanotify13.c#L436
+> >       if (op->drop_inode)
+> >               drop =3D op->drop_inode(inode);
+> > @@ -1893,6 +1894,12 @@ static void iput_final(struct inode *inode)
+> >               return;
+> >       }
+> >
+> > +     /*
+> > +      * Re-check ->i_count in case the ->drop_inode() hooks played gam=
+es.
+> > +      * Note we only execute this if the verdict was to drop the inode=
+.
+> > +      */
+> > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
+> > +
+>
+> I'm not sure this can catch much but OK...
+>
 
-regards,
-dan carpenter
+It can catch drop routines which bumped the ref but did not release
+it, or which indicated to continue with drop while someone else
+snatched the reference.
 
+Preferaby the APIs would prevent that in the first place, but there is
+quite a bit of shit-shoveling before that happens.
 
