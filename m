@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-63140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0729BAF0E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 05:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81D4BAF13E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 06:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9851E3AA0AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 03:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EEF4A3D59
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 04:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153A32D640E;
-	Wed,  1 Oct 2025 03:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9A92D6E5A;
+	Wed,  1 Oct 2025 04:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="EndgJMUY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DC6Q/PyU"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="KfbmBv3J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="giGZL3A2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC2A2D63F8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 03:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3B8239E70
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 04:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759288534; cv=none; b=qMpo2cy5cRymXitYJyMN1GhYL66++Wvsgy/aVFcW+FBE2jSfIxGqHPKSe/uKVXJ117JD/L+Hk4aXwYPLtZAwdPquyl9G+wHYZaScuTcLLTo/ynL9jV7ipPGAB+B9yHpkLOMSvaGzS511QTzeWa7MbFpjQ5Vceq+HV4kUFUdHoVE=
+	t=1759292057; cv=none; b=VgtwQBeqxP+qQBeltQGONPgbUEDzK6tSM5bNXoluWRsNBgYjwkFCNCupDSSq73Ki7hGb1R6bwYIyZ7dTT+mMYgLKhNTRiD8BPRkeUc5pe+Nyx0YRonoEi6x23RjpSLVktMoHouqPrNXpxj+Ph7yLxjlA1xxmnSagdSW+ay0EdNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759288534; c=relaxed/simple;
-	bh=0XTpPCL94gtQW+JGJ1rO/d+QVAlxCEPcAFyG/HsOGQI=;
+	s=arc-20240116; t=1759292057; c=relaxed/simple;
+	bh=Tv8C4YkbipJn78Nk1Px2BZcJSkKcCsCCdkbiOk9wNv4=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=O3RIKVaroX9EQ/K9L1udhMxRKDgJxeyHqtbmmTdxfgIxjsawTMm+nfHczwgmjJgyhU8kBBFIXqLXRYk4h1VVOMMF5IV7WYxkdJ9LbOxU1qp+s0umt5FgoAL6Ir0FnBuwmQRtouoata8C/AoSVW+xj0cJOgJAQoU+yEHByV2qeZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=EndgJMUY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DC6Q/PyU; arc=none smtp.client-ip=103.168.172.150
+	 References:Date:Message-id; b=BzdjBfY7AoEhrUtXX4TgTT1YTenokC05sMwpgkKyn90tFpBBntDeWRAiqPjJQs5/p7Qw9/MBBTuctdWfv5zfj1qBhrrBr8V+gVFI5PPSGGrBPAhkRJPd/F4LyhJcChDN4vYEcMc0901tnVSsTnWNl+Z/HBJQdeVfDm2oWovDCXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=KfbmBv3J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=giGZL3A2; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8C5C4EC01B4;
-	Tue, 30 Sep 2025 23:15:29 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Tue, 30 Sep 2025 23:15:29 -0400
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4D479EC017B;
+	Wed,  1 Oct 2025 00:14:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 01 Oct 2025 00:14:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1759288529; x=1759374929; bh=rowmHRx/6oDUi+Hez5j09l50ExOwClNCKr5
-	CKLKUu28=; b=EndgJMUYsSeots4IgVIDqNLtlcsykJEHq99/TqgG3ArK4nWs5sn
-	m3U0gjJSIp/Ng8ii0Su9ZIbTv6dGYKnrTsy6j3+bSD1sDay8yGZ6yCPNM1ex0Yzz
-	ArtxNnfzHiDId1SKJY7pjUHTnqdFE1iGOOhGpCk9wIFbq35hK7V1I6SwcBB8VJeA
-	7Cf3//o/UpIBf1U8eg8fel44g0bE/QdQmRo7ysmXU8mo07ODNwFhhMlKrIPMV4D6
-	/vXVfgJgw56g/Gv6dLY5MFzmQB6E90wqHMKGDJlQ0GVprYDuvV+cPNXD4FLtlqm8
-	5Ri5MVGVOKy7/p4bXgf/TPHLsR0P5Zn6Bhw==
+	1759292054; x=1759378454; bh=aTU1tOEimNicu448C+PYcVmDCX7arTmiFxw
+	XyyJPwN8=; b=KfbmBv3J3+uvKh3L0fYkMUotUfTOBlwrRp3ATyfzkb5j3PzqGxi
+	81xK/yABHI6k+uTvU8wALUhMwyEgZcEMm2f2Fs2ja4ISxi5CT1J/hw+bf2NvmFpo
+	vA1fgZ0gNTnOARYmXHNS3/mjX47LemgJ2GDiuMckQ8vjiQWhnuD9fnEkAzrjP8Q2
+	R87VjDyYIo/dZJ4ZM3q5zucb7eNR80l7X6uzcIgxakfMiOk2d6M6aIgWZojMzKmI
+	782mt1O5lX2+xJIPqnxrRtAab46UTk/nsnn0smEPl0MHj+U4b4l99eCiqJxQw+gz
+	Aa0MAbhvHYF0TVY/wtoPbysPdsHfqVq+rMA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759288529; x=
-	1759374929; bh=rowmHRx/6oDUi+Hez5j09l50ExOwClNCKr5CKLKUu28=; b=D
-	C6Q/PyU+Fl2mDzB/Azf3uJpINnDHkU4W+YOCxpE9eJ0PXeyMdnvGzv6sL8p2bK+o
-	KRNWlz9qn5+W50rkHjBRRmrLb1mhQAUznn12jVoFZr1BcNewoscMLK307ssHIycv
-	jd4QO8VKUAQHDyYUr6RK+2AhozucVwwNXt4WhK0KTxxkM7mOPpOsM0GOKhPDAGjc
-	DB5EEXZ08YTVy4sb3HvqKhUfz1i7mTbGIlMQIo7KfSh38eT7vlXDmCt8SLFM1Ff9
-	kD752II453y8cX7gK92lLFp5bvDeYF0tanZWlgFaJlyRp/Tnu+Pb7UCcnCx/kTCF
-	H0Bxd5rcbeM/AAqEqUUMw==
-X-ME-Sender: <xms:0JzcaMoRWUVe4tbnGgl2BwpmLxr1_WmUvD6Df4CTnTJ4nvmZwtAEag>
-    <xme:0JzcaNktUK4s5YJpJyPSJo1rgjjVuEQxAI3A3Z0j5BhcG8PudnqiRxHg4sxW_S8CO
-    zZJMrQ7R8yOR6e5DMxojyRTiqStQX3vg93eo8yEGfHIinKJIw>
-X-ME-Received: <xmr:0JzcaAPyaMGhm-ksLdaGwPH37I4wV-ljz2NqYuVHmfZzWkbxlaJMfh2CBqr9cGtcqHfiSdxKdpOAAENh2bnlp7R-60OIGGq8_07vQNmpm6w7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekvddtfecutefuodetggdotefrod
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759292054; x=
+	1759378454; bh=aTU1tOEimNicu448C+PYcVmDCX7arTmiFxwXyyJPwN8=; b=g
+	iGZL3A29igcViQKlRrjcH+mHoy3EpZZ5+F0ZJzfbOPG1mYJl9BbbnFPfzSpRIa7K
+	2fZ2BiUMfVn++BRP8RhG2MaxWdmRk1w1+jvhOA/cue4pEgS3M4VpMsEOD8MnsB6j
+	e3aayB9uDvgTqpHRH1+xZtUkwcAq7pyIuYc/XSE7gXoIPCgkcrtrR+1INhd8VshI
+	9ZPIHfS9o1at8pkb7vBezH+qozEQy5tn/StZeAEBhcE/OYCRmKsbOXi2CRjLaxi6
+	efFLV1Eg6T0Z5hAqQapBivL7CvzrYATN0aFqbGcxRLbROKYByDVxbGqJDgIn3mkL
+	RdtNAUnpRNt688ejkOHCA==
+X-ME-Sender: <xms:larcaE0Te9FOFg5ZxLgsJlxW2CaA4atNSp_SXo70SeTHshe46XcSrA>
+    <xme:larcaKCE6uTWa7dDx1Auq4bGM9eqmiAK7P-OthkTaP15n5EpKw2pdJVNxJpoAlcwi
+    hui42VkZorUFT4LGAp4Aa3_uA3VeJq_n9VwvMM7Z0H4bur2Ug>
+X-ME-Received: <xmr:larcaL6uijwwPydsCQyxYBM0lZCO5F1GRLzDQwx0ppNAm6Wbiah3CsSdiJ64Zhf_IzP6jifZh60Dx-f7_iINYnzUret_0qbxXZdiaMuDA7fr>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekvdduhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
     hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
@@ -78,14 +78,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekvddtfecutefuodetgg
     rhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjlhgrhihtohhnse
     hkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhr
     ghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:0JzcaJPBr1YmTRKecnNblWHNJuS-WzccSBXJDTa4EENqQwGxyz2YLw>
-    <xmx:0JzcaJhZh6lpsHfmQQSgTY-VmrQBQ_0TQ01ls0tyDhNRtjfdk_yVCA>
-    <xmx:0JzcaOsj779WhgzNNI_p03Ztmf30m1-OShWLp5x1Ia6f9yLyiyhKWA>
-    <xmx:0JzcaHRBcMEPXZ5dn4A_MxbAVR9odPz3o-4Ij1AUhAmK6BzM2k4sEw>
-    <xmx:0ZzcaIA_b8FlZnrfxXDpLtgxTxqLtJxlg7FRuQOEqMdm52t54LBfQQNk>
+X-ME-Proxy: <xmx:larcaDIfATp-o4Lqb_9ucL5LbOWtE9K2VTT9Ekk9WLloSwgY4kOp2Q>
+    <xmx:larcaEsQ3b3O0GbHItz5X-u7NnHALZmDtnXlZkiWE2MWWFIvpz3eaw>
+    <xmx:larcaCLAlhGY4a8Glpc5ApoAdjZjyZ3L_nVfKlru9dM_4OJwuYuRdA>
+    <xmx:larcaN8u29DMH06Fe8g8MhWDjYvmwXbWe0CBHnK2z798ZyS25OUHpA>
+    <xmx:lqrcaMvTmFVDHzjC3cs3adxZxmkrvj2XjEV2JVJ77QeDsyulWLDzNRNB>
 Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 30 Sep 2025 23:15:26 -0400 (EDT)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 1 Oct 2025 00:14:11 -0400 (EDT)
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -99,965 +99,388 @@ To: "Amir Goldstein" <amir73il@gmail.com>
 Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
  "Christian Brauner" <brauner@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
  "Jan Kara" <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/11] VFS/nfsd/cachefiles/ovl: add start_creating() and
- end_creating()
+Subject: Re: [PATCH 10/11] Add start_renaming_two_dentrys()
 In-reply-to:
- <CAOQ4uxidJeex=7H9z8rNEm5OrLqEQ-RRzTU8V3Rt_05Jr4iMPw@mail.gmail.com>
+ <CAOQ4uxhftW72em_nQRcxREprYrJM591C6WrAvjxzQYdX4XRPwA@mail.gmail.com>
 References: <20250926025015.1747294-1-neilb@ownmail.net>,
- <20250926025015.1747294-4-neilb@ownmail.net>,
- <CAOQ4uxidJeex=7H9z8rNEm5OrLqEQ-RRzTU8V3Rt_05Jr4iMPw@mail.gmail.com>
-Date: Wed, 01 Oct 2025 13:15:15 +1000
-Message-id: <175928851519.1696783.18251672083984186640@noble.neil.brown.name>
+ <20250926025015.1747294-11-neilb@ownmail.net>,
+ <CAOQ4uxhftW72em_nQRcxREprYrJM591C6WrAvjxzQYdX4XRPwA@mail.gmail.com>
+Date: Wed, 01 Oct 2025 14:14:07 +1000
+Message-id: <175929204714.1696783.14507048973444099320@noble.neil.brown.name>
 Reply-To: NeilBrown <neil@brown.name>
 
 On Tue, 30 Sep 2025, Amir Goldstein wrote:
-> On Fri, Sep 26, 2025 at 4:50=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
+> On Fri, Sep 26, 2025 at 4:51=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
 > >
 > > From: NeilBrown <neil@brown.name>
 > >
-> > start_creating() is similar to simple_start_creating() but is not so
-> > simple.
-> > It takes a qstr for the name, includes permission checking, and does NOT
-> > report an error if the name already exists, returning a positive dentry
-> > instead.
+> > A few callers want to lock for a rename and already have both dentrys.
+> > Also debugfs does want to perform a lookup but doesn't want permission
+> > checking, so start_renaming_dentry() cannot be used.
 > >
-> > This is currently used by nfsd, cachefiles, and overlayfs.
+> > This patch introduces start_renaming_two_dentrys() which is given both
+> > dentrys.  debugfs performs one lookup itself.  As it will only continue
+> > with a negative dentry and as those cannot be renamed or unlinked, it is
+> > safe to do the lookup before getting the rename locks.
 > >
-> > end_creating() is called after the dentry has been used.
-> > end_creating() drops the reference to the dentry as it is generally no
-> > longer needed.  This is exactly end_dirop_mkdir(),
-> > but using that everywhere looks a bit odd...
+> > overlayfs uses start_renaming_two_dentrys() in three places and  selinux
+> > uses it twice in sel_make_policy_nodes().
 > >
-> > These calls help encapsulate locking rules so that directory locking can
-> > be changed.
-> >
-> > Occasionally this change means that the parent lock is held for a
-> > shorter period of time, for example in cachefiles_commit_tmpfile().
-> > As this function now unlocks after an unlink and before the following
-> > lookup, it is possible that the lookup could again find a positive
-> > dentry, so a while loop is introduced there.
-> >
-> > In overlayfs the ovl_lookup_temp() function has ovl_tempname()
-> > split out to be used in ovl_start_creating_temp().  The other use
-> > of ovl_lookup_temp() is preparing for a rename.  When rename handling
-> > is updated, ovl_lookup_temp() will be removed.
-> >
+>=20
+> start_renaming_two_dentries() please
+
+I don't really like "two_dentries" as you wouldn't find it when
+searching for "dentry".  But maybe that doesn't matter.  I can't think
+of a better name so I've made the change as you suggest.
+
+>=20
 > > Signed-off-by: NeilBrown <neil@brown.name>
 > > ---
-> >  fs/cachefiles/namei.c    | 37 ++++++++--------
-> >  fs/namei.c               | 27 ++++++++++++
-> >  fs/nfsd/nfs3proc.c       | 14 +++---
-> >  fs/nfsd/nfs4proc.c       | 14 +++---
-> >  fs/nfsd/nfs4recover.c    | 16 +++----
-> >  fs/nfsd/nfsproc.c        | 11 +++--
-> >  fs/nfsd/vfs.c            | 42 +++++++-----------
-> >  fs/overlayfs/copy_up.c   | 19 ++++----
-> >  fs/overlayfs/dir.c       | 94 ++++++++++++++++++++++++----------------
-> >  fs/overlayfs/overlayfs.h |  8 ++++
-> >  fs/overlayfs/super.c     | 32 +++++++-------
-> >  include/linux/namei.h    | 18 ++++++++
-> >  12 files changed, 187 insertions(+), 145 deletions(-)
+> >  fs/debugfs/inode.c           | 48 +++++++++++++--------------
+> >  fs/namei.c                   | 63 ++++++++++++++++++++++++++++++++++++
+> >  fs/overlayfs/dir.c           | 42 ++++++++++++++++--------
+> >  include/linux/namei.h        |  2 ++
+> >  security/selinux/selinuxfs.c | 27 ++++++++++------
+> >  5 files changed, 133 insertions(+), 49 deletions(-)
 > >
-> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> > index d1edb2ac3837..965b22b2f58d 100644
-> > --- a/fs/cachefiles/namei.c
-> > +++ b/fs/cachefiles/namei.c
-> > @@ -93,12 +93,11 @@ struct dentry *cachefiles_get_directory(struct cachef=
-iles_cache *cache,
-> >         _enter(",,%s", dirname);
+> > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+> > index b863c8d0cbcd..2aad67b8174e 100644
+> > --- a/fs/debugfs/inode.c
+> > +++ b/fs/debugfs/inode.c
+> > @@ -842,7 +842,8 @@ int __printf(2, 3) debugfs_change_name(struct dentry =
+*dentry, const char *fmt, .
+> >         int error =3D 0;
+> >         const char *new_name;
+> >         struct name_snapshot old_name;
+> > -       struct dentry *parent, *target;
+> > +       struct dentry *target;
+> > +       struct renamedata rd =3D {};
+> >         struct inode *dir;
+> >         va_list ap;
 > >
-> >         /* search the current directory for the element name */
-> > -       inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
+> > @@ -855,36 +856,31 @@ int __printf(2, 3) debugfs_change_name(struct dentr=
+y *dentry, const char *fmt, .
+> >         if (!new_name)
+> >                 return -ENOMEM;
 > >
-> >  retry:
-> >         ret =3D cachefiles_inject_read_error();
-> >         if (ret =3D=3D 0)
-> > -               subdir =3D lookup_one(&nop_mnt_idmap, &QSTR(dirname), dir=
-);
-> > +               subdir =3D start_creating(&nop_mnt_idmap, dir, &QSTR(dirn=
-ame));
-> >         else
-> >                 subdir =3D ERR_PTR(ret);
-> >         trace_cachefiles_lookup(NULL, dir, subdir);
-> > @@ -141,7 +140,7 @@ struct dentry *cachefiles_get_directory(struct cachef=
-iles_cache *cache,
-> >                 trace_cachefiles_mkdir(dir, subdir);
+> > -       parent =3D dget_parent(dentry);
+> > -       dir =3D d_inode(parent);
+> > -       inode_lock(dir);
+> > +       rd.old_parent =3D dget_parent(dentry);
+> > +       rd.new_parent =3D rd.old_parent;
+> > +       rd.flags =3D RENAME_NOREPLACE;
+> > +       target =3D lookup_noperm_unlocked(&QSTR(new_name), rd.new_parent);
+> > +       if (IS_ERR(target))
+> > +               return PTR_ERR(target);
 > >
-> >                 if (unlikely(d_unhashed(subdir) || d_is_negative(subdir))=
-) {
-> > -                       dput(subdir);
-> > +                       end_creating(subdir, dir);
-> >                         goto retry;
-> >                 }
-> >                 ASSERT(d_backing_inode(subdir));
-> > @@ -154,7 +153,8 @@ struct dentry *cachefiles_get_directory(struct cachef=
-iles_cache *cache,
-> >
-> >         /* Tell rmdir() it's not allowed to delete the subdir */
-> >         inode_lock(d_inode(subdir));
-> > -       inode_unlock(d_inode(dir));
-> > +       dget(subdir);
-> > +       end_creating(subdir, dir);
-> >
-> >         if (!__cachefiles_mark_inode_in_use(NULL, d_inode(subdir))) {
-> >                 pr_notice("cachefiles: Inode already in use: %pd (B=3D%lx=
-)\n",
-> > @@ -196,14 +196,11 @@ struct dentry *cachefiles_get_directory(struct cach=
-efiles_cache *cache,
-> >         return ERR_PTR(-EBUSY);
-> >
-> >  mkdir_error:
-> > -       inode_unlock(d_inode(dir));
-> > -       if (!IS_ERR(subdir))
-> > -               dput(subdir);
-> > +       end_creating(subdir, dir);
-> >         pr_err("mkdir %s failed with error %d\n", dirname, ret);
-> >         return ERR_PTR(ret);
-> >
-> >  lookup_error:
-> > -       inode_unlock(d_inode(dir));
-> >         ret =3D PTR_ERR(subdir);
-> >         pr_err("Lookup %s failed with error %d\n", dirname, ret);
-> >         return ERR_PTR(ret);
-> > @@ -679,36 +676,37 @@ bool cachefiles_commit_tmpfile(struct cachefiles_ca=
-che *cache,
-> >
-> >         _enter(",%pD", object->file);
-> >
-> > -       inode_lock_nested(d_inode(fan), I_MUTEX_PARENT);
-> >         ret =3D cachefiles_inject_read_error();
-> >         if (ret =3D=3D 0)
-> > -               dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(object->d_nam=
-e), fan);
-> > +               dentry =3D start_creating(&nop_mnt_idmap, fan, &QSTR(obje=
-ct->d_name));
-> >         else
-> >                 dentry =3D ERR_PTR(ret);
-> >         if (IS_ERR(dentry)) {
-> >                 trace_cachefiles_vfs_error(object, d_inode(fan), PTR_ERR(=
-dentry),
-> >                                            cachefiles_trace_lookup_error);
-> >                 _debug("lookup fail %ld", PTR_ERR(dentry));
-> > -               goto out_unlock;
-> > +               goto out;
+> > -       take_dentry_name_snapshot(&old_name, dentry);
+> > -
+> > -       if (WARN_ON_ONCE(dentry->d_parent !=3D parent)) {
+> > -               error =3D -EINVAL;
+> > -               goto out;
+> > -       }
+> > -       if (strcmp(old_name.name.name, new_name) =3D=3D 0)
+> > -               goto out;
+> > -       target =3D lookup_noperm(&QSTR(new_name), parent);
+> > -       if (IS_ERR(target)) {
+> > -               error =3D PTR_ERR(target);
+> > -               goto out;
+> > -       }
+> > -       if (d_really_is_positive(target)) {
+> > -               dput(target);
+> > -               error =3D -EINVAL;
+> > +       error =3D start_renaming_two_dentrys(&rd, dentry, target);
+> > +       if (error) {
+> > +               if (error =3D=3D -EEXIST && target =3D=3D dentry)
+> > +                       /* it isn't an error to rename a thing to itself =
+*/
+> > +                       error =3D 0;
+> >                 goto out;
 > >         }
-> >
-> > -       if (!d_is_negative(dentry)) {
-> > +       while (!d_is_negative(dentry)) {
-> >                 ret =3D cachefiles_unlink(volume->cache, object, fan, den=
-try,
-> >                                         FSCACHE_OBJECT_IS_STALE);
-> >                 if (ret < 0)
-> > -                       goto out_dput;
-> > +                       goto out_end;
+> > -       simple_rename_timestamp(dir, dentry, dir, target);
+> > -       d_move(dentry, target);
+> > -       dput(target);
 > > +
-> > +               end_creating(dentry, fan);
-> >
-> > -               dput(dentry);
-> >                 ret =3D cachefiles_inject_read_error();
-> >                 if (ret =3D=3D 0)
-> > -                       dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(objec=
-t->d_name), fan);
-> > +                       dentry =3D start_creating(&nop_mnt_idmap, fan,
-> > +                                               &QSTR(object->d_name));
-> >                 else
-> >                         dentry =3D ERR_PTR(ret);
-> >                 if (IS_ERR(dentry)) {
-> >                         trace_cachefiles_vfs_error(object, d_inode(fan), =
-PTR_ERR(dentry),
-> >                                                    cachefiles_trace_looku=
-p_error);
-> >                         _debug("lookup fail %ld", PTR_ERR(dentry));
-> > -                       goto out_unlock;
-> > +                       goto out;
-> >                 }
-> >         }
-> >
-> > @@ -729,10 +727,9 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cac=
-he *cache,
-> >                 success =3D true;
-> >         }
-> >
-> > -out_dput:
-> > -       dput(dentry);
-> > -out_unlock:
-> > -       inode_unlock(d_inode(fan));
-> > +out_end:
-> > +       end_creating(dentry, fan);
+> > +       dir =3D d_inode(rd.old_parent);
+> > +       take_dentry_name_snapshot(&old_name, dentry);
+> > +       simple_rename_timestamp(dir, dentry, dir, rd.new_dentry);
+> > +       d_move(dentry, rd.new_dentry);
+> >         fsnotify_move(dir, dir, &old_name.name, d_is_dir(dentry), NULL, d=
+entry);
+> > -out:
+> >         release_dentry_name_snapshot(&old_name);
+> > -       inode_unlock(dir);
+> > -       dput(parent);
+> > +       end_renaming(&rd);
 > > +out:
-> >         _leave(" =3D %u", success);
-> >         return success;
+> > +       dput(rd.old_parent);
+> > +       dput(target);
+> >         kfree_const(new_name);
+> >         return error;
 > >  }
 > > diff --git a/fs/namei.c b/fs/namei.c
-> > index 81cbaabbbe21..064cb44a3a46 100644
+> > index aca6de83d255..23f9adb43401 100644
 > > --- a/fs/namei.c
 > > +++ b/fs/namei.c
-> > @@ -3242,6 +3242,33 @@ struct dentry *lookup_noperm_positive_unlocked(str=
-uct qstr *name,
+> > @@ -3892,6 +3892,69 @@ int start_renaming_dentry(struct renamedata *rd, i=
+nt lookup_flags,
+> >         return __start_renaming_dentry(rd, lookup_flags, old_dentry, new_=
+last);
 > >  }
-> >  EXPORT_SYMBOL(lookup_noperm_positive_unlocked);
 > >
 > > +/**
-> > + * start_creating - prepare to create a given name with permission check=
-ing
-> > + * @idmap - idmap of the mount
-> > + * @parent - directory in which to prepare to create the name
-> > + * @name - the name to be created
-> > + *
-> > + * Locks are taken and a lookup in performed prior to creating
+> > + * start_renaming_two_dentrys - Lock to dentries in given parents for re=
+name
 >=20
-> typo: is performed
+> two_dentries please
 >=20
-> > + * an object in a directory.  Permission checking (MAY_EXEC) is performed
-> > + * against @idmap.
+> > + * @rd:           rename data containing parent
+> > + * @old_dentry:   dentry of name to move
+> > + * @new_dentry:   dentry to move to
 > > + *
-> > + * If the name already exists, a positive dentry is returned, so
-> > + * behaviour is similar to O_CREAT without O_EXCL, which doesn't fail
-> > + * with -EEXIST.
+> > + * Ensure locks are in place for rename and check parentage is still cor=
+rect.
 > > + *
-> > + * Returns: a negative or positive dentry, or an error.
+> > + * On success the two dentrys are stored in @rd.old_dentry and @rd.new_d=
+entry and
+> > + * @rd.old_parent and @rd.new_parent are confirmed to be the parents of =
+the dentruies.
+>=20
+> typo: dentruies
+>=20
+> > + *
+> > + * References and the lock can be dropped with end_renaming()
+> > + *
+> > + * Returns: zero or an error.
 > > + */
-> > +struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *pa=
-rent,
-> > +                             struct qstr *name)
+> > +int
+> > +start_renaming_two_dentrys(struct renamedata *rd,
+> > +                          struct dentry *old_dentry, struct dentry *new_=
+dentry)
 > > +{
-> > +       int err =3D lookup_one_common(idmap, name, parent);
+> > +       struct dentry *trap;
+> > +       int err;
 > > +
-> > +       if (err)
-> > +               return ERR_PTR(err);
-> > +       return start_dirop(parent, name, LOOKUP_CREATE);
-> > +}
-> > +EXPORT_SYMBOL(start_creating);
-> > +
-> >  #ifdef CONFIG_UNIX98_PTYS
-> >  int path_pts(struct path *path)
-> >  {
-> > diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-> > index b6d03e1ef5f7..e2aac0def2cb 100644
-> > --- a/fs/nfsd/nfs3proc.c
-> > +++ b/fs/nfsd/nfs3proc.c
-> > @@ -281,14 +281,11 @@ nfsd3_create_file(struct svc_rqst *rqstp, struct sv=
-c_fh *fhp,
-> >         if (host_err)
-> >                 return nfserrno(host_err);
-> >
-> > -       inode_lock_nested(inode, I_MUTEX_PARENT);
-> > -
-> > -       child =3D lookup_one(&nop_mnt_idmap,
-> > -                          &QSTR_LEN(argp->name, argp->len),
-> > -                          parent);
-> > +       child =3D start_creating(&nop_mnt_idmap, parent,
-> > +                              &QSTR_LEN(argp->name, argp->len));
-> >         if (IS_ERR(child)) {
-> >                 status =3D nfserrno(PTR_ERR(child));
-> > -               goto out;
-> > +               goto out_write;
-> >         }
-> >
-> >         if (d_really_is_negative(child)) {
-> > @@ -367,9 +364,8 @@ nfsd3_create_file(struct svc_rqst *rqstp, struct svc_=
-fh *fhp,
-> >         status =3D nfsd_create_setattr(rqstp, fhp, resfhp, &attrs);
-> >
-> >  out:
-> > -       inode_unlock(inode);
-> > -       if (child && !IS_ERR(child))
-> > -               dput(child);
-> > +       end_creating(child, parent);
-> > +out_write:
-> >         fh_drop_write(fhp);
-> >         return status;
-> >  }
-> > diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> > index 71b428efcbb5..35d48221072f 100644
-> > --- a/fs/nfsd/nfs4proc.c
-> > +++ b/fs/nfsd/nfs4proc.c
-> > @@ -264,14 +264,11 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct sv=
-c_fh *fhp,
-> >         if (is_create_with_attrs(open))
-> >                 nfsd4_acl_to_attr(NF4REG, open->op_acl, &attrs);
-> >
-> > -       inode_lock_nested(inode, I_MUTEX_PARENT);
-> > -
-> > -       child =3D lookup_one(&nop_mnt_idmap,
-> > -                          &QSTR_LEN(open->op_fname, open->op_fnamelen),
-> > -                          parent);
-> > +       child =3D start_creating(&nop_mnt_idmap, parent,
-> > +                              &QSTR_LEN(open->op_fname, open->op_fnamele=
-n));
-> >         if (IS_ERR(child)) {
-> >                 status =3D nfserrno(PTR_ERR(child));
-> > -               goto out;
-> > +               goto out_write;
-> >         }
-> >
-> >         if (d_really_is_negative(child)) {
-> > @@ -379,10 +376,9 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct svc=
-_fh *fhp,
-> >         if (attrs.na_aclerr)
-> >                 open->op_bmval[0] &=3D ~FATTR4_WORD0_ACL;
-> >  out:
-> > -       inode_unlock(inode);
-> > +       end_creating(child, parent);
-> >         nfsd_attrs_free(&attrs);
-> > -       if (child && !IS_ERR(child))
-> > -               dput(child);
-> > +out_write:
-> >         fh_drop_write(fhp);
-> >         return status;
-> >  }
-> > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > index 2231192ec33f..93b2a3e764db 100644
-> > --- a/fs/nfsd/nfs4recover.c
-> > +++ b/fs/nfsd/nfs4recover.c
-> > @@ -216,13 +216,11 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
-> >                 goto out_creds;
-> >
-> >         dir =3D nn->rec_file->f_path.dentry;
-> > -       /* lock the parent */
-> > -       inode_lock(d_inode(dir));
-> >
-> > -       dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(dname), dir);
-> > +       dentry =3D start_creating(&nop_mnt_idmap, dir, &QSTR(dname));
-> >         if (IS_ERR(dentry)) {
-> >                 status =3D PTR_ERR(dentry);
-> > -               goto out_unlock;
-> > +               goto out;
-> >         }
-> >         if (d_really_is_positive(dentry))
-> >                 /*
-> > @@ -233,15 +231,13 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
-> >                  * In the 4.0 case, we should never get here; but we may
-> >                  * as well be forgiving and just succeed silently.
-> >                  */
-> > -               goto out_put;
-> > +               goto out_end;
-> >         dentry =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWX=
-U);
-> >         if (IS_ERR(dentry))
-> >                 status =3D PTR_ERR(dentry);
-> > -out_put:
-> > -       if (!status)
-> > -               dput(dentry);
-> > -out_unlock:
-> > -       inode_unlock(d_inode(dir));
-> > +out_end:
-> > +       end_creating(dentry, dir);
-> > +out:
-> >         if (status =3D=3D 0) {
-> >                 if (nn->in_grace)
-> >                         __nfsd4_create_reclaim_record_grace(clp, dname,
-> > diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
-> > index 8f71f5748c75..ee1b16e921fd 100644
-> > --- a/fs/nfsd/nfsproc.c
-> > +++ b/fs/nfsd/nfsproc.c
-> > @@ -306,18 +306,16 @@ nfsd_proc_create(struct svc_rqst *rqstp)
-> >                 goto done;
-> >         }
-> >
-> > -       inode_lock_nested(dirfhp->fh_dentry->d_inode, I_MUTEX_PARENT);
-> > -       dchild =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(argp->name, argp-=
->len),
-> > -                           dirfhp->fh_dentry);
-> > +       dchild =3D start_creating(&nop_mnt_idmap, dirfhp->fh_dentry,
-> > +                               &QSTR_LEN(argp->name, argp->len));
-> >         if (IS_ERR(dchild)) {
-> >                 resp->status =3D nfserrno(PTR_ERR(dchild));
-> > -               goto out_unlock;
-> > +               goto out_write;
-> >         }
-> >         fh_init(newfhp, NFS_FHSIZE);
-> >         resp->status =3D fh_compose(newfhp, dirfhp->fh_export, dchild, di=
-rfhp);
-> >         if (!resp->status && d_really_is_negative(dchild))
-> >                 resp->status =3D nfserr_noent;
-> > -       dput(dchild);
-> >         if (resp->status) {
-> >                 if (resp->status !=3D nfserr_noent)
-> >                         goto out_unlock;
-> > @@ -423,7 +421,8 @@ nfsd_proc_create(struct svc_rqst *rqstp)
-> >         }
-> >
-> >  out_unlock:
-> > -       inode_unlock(dirfhp->fh_dentry->d_inode);
-> > +       end_creating(dchild, dirfhp->fh_dentry);
-> > +out_write:
-> >         fh_drop_write(dirfhp);
-> >  done:
-> >         fh_put(dirfhp);
-> > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > index aa4a95713a48..90c830c59c60 100644
-> > --- a/fs/nfsd/vfs.c
-> > +++ b/fs/nfsd/vfs.c
-> > @@ -1605,19 +1605,16 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh=
- *fhp,
-> >         if (host_err)
-> >                 return nfserrno(host_err);
-> >
-> > -       inode_lock_nested(dentry->d_inode, I_MUTEX_PARENT);
-> > -       dchild =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(fname, flen), den=
-try);
-> > +       dchild =3D start_creating(&nop_mnt_idmap, dentry, &QSTR_LEN(fname=
-, flen));
-> >         host_err =3D PTR_ERR(dchild);
-> > -       if (IS_ERR(dchild)) {
-> > -               err =3D nfserrno(host_err);
-> > -               goto out_unlock;
-> > -       }
-> > +       if (IS_ERR(dchild))
-> > +               return nfserrno(host_err);
-> > +
-> >         err =3D fh_compose(resfhp, fhp->fh_export, dchild, fhp);
-> >         /*
-> >          * We unconditionally drop our ref to dchild as fh_compose will h=
-ave
-> >          * already grabbed its own ref for it.
-> >          */
-> > -       dput(dchild);
-> >         if (err)
-> >                 goto out_unlock;
-> >         err =3D fh_fill_pre_attrs(fhp);
-> > @@ -1626,7 +1623,7 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *=
-fhp,
-> >         err =3D nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
-> >         fh_fill_post_attrs(fhp);
-> >  out_unlock:
-> > -       inode_unlock(dentry->d_inode);
-> > +       end_creating(dchild, dentry);
-> >         return err;
-> >  }
-> >
-> > @@ -1712,11 +1709,9 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh=
- *fhp,
-> >         }
-> >
-> >         dentry =3D fhp->fh_dentry;
-> > -       inode_lock_nested(dentry->d_inode, I_MUTEX_PARENT);
-> > -       dnew =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(fname, flen), dentr=
-y);
-> > +       dnew =3D start_creating(&nop_mnt_idmap, dentry, &QSTR_LEN(fname, =
-flen));
-> >         if (IS_ERR(dnew)) {
-> >                 err =3D nfserrno(PTR_ERR(dnew));
-> > -               inode_unlock(dentry->d_inode);
-> >                 goto out_drop_write;
-> >         }
-> >         err =3D fh_fill_pre_attrs(fhp);
-> > @@ -1729,11 +1724,11 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_f=
-h *fhp,
-> >                 nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
-> >         fh_fill_post_attrs(fhp);
-> >  out_unlock:
-> > -       inode_unlock(dentry->d_inode);
-> > +       end_creating(dnew, dentry);
-> >         if (!err)
-> >                 err =3D nfserrno(commit_metadata(fhp));
-> > -       dput(dnew);
-> > -       if (err=3D=3D0) err =3D cerr;
-> > +       if (!err)
-> > +               err =3D cerr;
-> >  out_drop_write:
-> >         fh_drop_write(fhp);
-> >  out:
-> > @@ -1788,32 +1783,31 @@ nfsd_link(struct svc_rqst *rqstp, struct svc_fh *=
-ffhp,
-> >
-> >         ddir =3D ffhp->fh_dentry;
-> >         dirp =3D d_inode(ddir);
-> > -       inode_lock_nested(dirp, I_MUTEX_PARENT);
-> > +       dnew =3D start_creating(&nop_mnt_idmap, ddir, &QSTR_LEN(name, len=
-));
-> >
-> > -       dnew =3D lookup_one(&nop_mnt_idmap, &QSTR_LEN(name, len), ddir);
-> >         if (IS_ERR(dnew)) {
-> >                 host_err =3D PTR_ERR(dnew);
-> > -               goto out_unlock;
-> > +               goto out_drop_write;
-> >         }
-> >
-> >         dold =3D tfhp->fh_dentry;
-> >
-> >         err =3D nfserr_noent;
-> >         if (d_really_is_negative(dold))
-> > -               goto out_dput;
+> > +       /* Already have the dentry - need to be sure to lock the correct =
+parent */
+> > +       trap =3D lock_rename_child(old_dentry, rd->new_parent);
+> > +       if (IS_ERR(trap))
+> > +               return PTR_ERR(trap);
+> > +       err =3D -EINVAL;
+> > +       if (d_unhashed(old_dentry) ||
+> > +           (rd->old_parent && rd->old_parent !=3D old_dentry->d_parent))
+> > +               /* old_dentry was removed, or moved and explicit parent r=
+equested */
 > > +               goto out_unlock;
-> >         err =3D fh_fill_pre_attrs(ffhp);
-> >         if (err !=3D nfs_ok)
-> > -               goto out_dput;
+> > +       if (d_unhashed(new_dentry) ||
+> > +           rd->new_parent !=3D new_dentry->d_parent)
+> > +               /* new_dentry was removed or moved */
 > > +               goto out_unlock;
-> >         host_err =3D vfs_link(dold, &nop_mnt_idmap, dirp, dnew, NULL);
-> >         fh_fill_post_attrs(ffhp);
-> > -       inode_unlock(dirp);
+> > +
+> > +       if (old_dentry =3D=3D trap)
+> > +               /* source is an ancestor of target */
+> > +               goto out_unlock;
+> > +
+> > +       if (new_dentry =3D=3D trap) {
+> > +               /* target is an ancestor of source */
+> > +               if (rd->flags & RENAME_EXCHANGE)
+> > +                       err =3D -EINVAL;
+> > +               else
+> > +                       err =3D -ENOTEMPTY;
+> > +               goto out_unlock;
+> > +       }
+> > +
+> > +       err =3D -EEXIST;
+> > +       if (d_is_positive(new_dentry) && (rd->flags & RENAME_NOREPLACE))
+> > +               goto out_unlock;
+> > +
+> > +       rd->old_dentry =3D dget(old_dentry);
+> > +       rd->new_dentry =3D dget(new_dentry);
+> > +       rd->old_parent =3D dget(old_dentry->d_parent);
+>=20
+> This asymmetry between old_parent and new_parent is especially
+> odd with two dentries and particularly with RENAME_EXCHANGE
+> where the two dentries are alike.
+>=20
+> Is the old_parent ref really needed?
+
+Yes, as end_renaming() needs to know it can still use the ref.
+
+I've added a note to the start_renaming_dentry() to say why the
+reference is taken.
+
+
+>=20
+> > +       return 0;
+> > +
 > > +out_unlock:
-> > +       end_creating(dnew, ddir);
-> >         if (!host_err) {
-> >                 host_err =3D commit_metadata(ffhp);
-> >                 if (!host_err)
-> >                         host_err =3D commit_metadata(tfhp);
-> >         }
-> >
-> > -       dput(dnew);
-> >  out_drop_write:
-> >         fh_drop_write(tfhp);
-> >         if (host_err =3D=3D -EBUSY) {
-> > @@ -1828,12 +1822,6 @@ nfsd_link(struct svc_rqst *rqstp, struct svc_fh *f=
-fhp,
-> >         }
-> >  out:
-> >         return err !=3D nfs_ok ? err : nfserrno(host_err);
-> > -
-> > -out_dput:
-> > -       dput(dnew);
-> > -out_unlock:
-> > -       inode_unlock(dirp);
-> > -       goto out_drop_write;
-> >  }
-> >
-> >  static void
-> > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> > index 27396fe63f6d..6a31ea34ff80 100644
-> > --- a/fs/overlayfs/copy_up.c
-> > +++ b/fs/overlayfs/copy_up.c
-> > @@ -613,9 +613,9 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
-> >         if (err)
-> >                 goto out;
-> >
-> > -       inode_lock_nested(udir, I_MUTEX_PARENT);
-> > -       upper =3D ovl_lookup_upper(ofs, c->dentry->d_name.name, upperdir,
-> > -                                c->dentry->d_name.len);
-> > +       upper =3D ovl_start_creating_upper(ofs, upperdir,
-> > +                                        &QSTR_LEN(c->dentry->d_name.name,
-> > +                                                  c->dentry->d_name.len)=
-);
-> >         err =3D PTR_ERR(upper);
-> >         if (!IS_ERR(upper)) {
-> >                 err =3D ovl_do_link(ofs, ovl_dentry_upper(c->dentry), udi=
-r, upper);
-> > @@ -626,9 +626,8 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
-> >                         ovl_dentry_set_upper_alias(c->dentry);
-> >                         ovl_dentry_update_reval(c->dentry, upper);
-> >                 }
-> > -               dput(upper);
-> > +               end_creating(upper, upperdir);
-> >         }
-> > -       inode_unlock(udir);
-> >         if (err)
-> >                 goto out;
-> >
-> > @@ -894,16 +893,14 @@ static int ovl_copy_up_tmpfile(struct ovl_copy_up_c=
-tx *c)
-> >         if (err)
-> >                 goto out;
-> >
-> > -       inode_lock_nested(udir, I_MUTEX_PARENT);
-> > -
-> > -       upper =3D ovl_lookup_upper(ofs, c->destname.name, c->destdir,
-> > -                                c->destname.len);
-> > +       upper =3D ovl_start_creating_upper(ofs, c->destdir,
-> > +                                        &QSTR_LEN(c->destname.name,
-> > +                                                  c->destname.len));
-> >         err =3D PTR_ERR(upper);
-> >         if (!IS_ERR(upper)) {
-> >                 err =3D ovl_do_link(ofs, temp, udir, upper);
-> > -               dput(upper);
-> > +               end_creating(upper, c->destdir);
-> >         }
-> > -       inode_unlock(udir);
-> >
-> >         if (err)
-> >                 goto out;
+> > +       unlock_rename(old_dentry->d_parent, rd->new_parent);
+> > +       return err;
+> > +}
+>=20
+> needs EXPORT_GPL
+
+Yes, thanks.
+
+>=20
+> > +
+> >  void end_renaming(struct renamedata *rd)
+> >  {
+> >         unlock_rename(rd->old_parent, rd->new_parent);
 > > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index dbd63a74df4b..0ae79efbfce7 100644
+> > index 54423ad00e1c..e8c369e3e277 100644
 > > --- a/fs/overlayfs/dir.c
 > > +++ b/fs/overlayfs/dir.c
-> > @@ -59,15 +59,21 @@ int ovl_cleanup(struct ovl_fs *ofs, struct dentry *wo=
-rkdir,
-> >         return 0;
-> >  }
-> >
-> > -struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r)
-> > +#define OVL_TEMPNAME_SIZE 20
-> > +static void ovl_tempname(char name[OVL_TEMPNAME_SIZE])
+> > @@ -125,6 +125,7 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, stru=
+ct dentry *dir,
+> >                              struct dentry *dentry)
 > >  {
-> > -       struct dentry *temp;
-> > -       char name[20];
-> >         static atomic_t temp_id =3D ATOMIC_INIT(0);
-> >
-> >         /* counter is allowed to wrap, since temp dentries are ephemeral =
-*/
-> > -       snprintf(name, sizeof(name), "#%x", atomic_inc_return(&temp_id));
-> > +       snprintf(name, OVL_TEMPNAME_SIZE, "#%x", atomic_inc_return(&temp_=
-id));
-> > +}
-> > +
-> > +struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r)
-> > +{
-> > +       struct dentry *temp;
-> > +       char name[OVL_TEMPNAME_SIZE];
-> >
-> > +       ovl_tempname(name);
-> >         temp =3D ovl_lookup_upper(ofs, name, workdir, strlen(name));
-> >         if (!IS_ERR(temp) && temp->d_inode) {
-> >                 pr_err("workdir/%s already exists\n", name);
-> > @@ -78,6 +84,16 @@ struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, str=
-uct dentry *workdir)
-> >         return temp;
-> >  }
-> >
-> > +static struct dentry *ovl_start_creating_temp(struct ovl_fs *ofs,
-> > +                                             struct dentry *workdir)
-> > +{
-> > +       char name[OVL_TEMPNAME_SIZE];
-> > +
-> > +       ovl_tempname(name);
-> > +       return start_creating(ovl_upper_mnt_idmap(ofs), workdir,
-> > +                             &QSTR(name));
-> > +}
-> > +
-> >  static struct dentry *ovl_whiteout(struct ovl_fs *ofs)
-> >  {
+> >         struct dentry *whiteout;
+> > +       struct renamedata rd =3D {};
 > >         int err;
-> > @@ -88,35 +104,31 @@ static struct dentry *ovl_whiteout(struct ovl_fs *of=
-s)
-> >         guard(mutex)(&ofs->whiteout_lock);
+> >         int flags =3D 0;
 > >
-> >         if (!ofs->whiteout) {
-> > -               inode_lock_nested(wdir, I_MUTEX_PARENT);
-> > -               whiteout =3D ovl_lookup_temp(ofs, workdir);
-> > -               if (!IS_ERR(whiteout)) {
-> > -                       err =3D ovl_do_whiteout(ofs, wdir, whiteout);
-> > -                       if (err) {
-> > -                               dput(whiteout);
-> > -                               whiteout =3D ERR_PTR(err);
-> > -                       }
-> > -               }
-> > -               inode_unlock(wdir);
-> > +               whiteout =3D ovl_start_creating_temp(ofs, workdir);
-> >                 if (IS_ERR(whiteout))
-> >                         return whiteout;
-> > -               ofs->whiteout =3D whiteout;
-> > +               err =3D ovl_do_whiteout(ofs, wdir, whiteout);
-> > +               if (!err)
-> > +                       ofs->whiteout =3D dget(whiteout);
-> > +               end_creating(whiteout, workdir);
-> > +               if (err)
-> > +                       return ERR_PTR(err);
+> > @@ -136,10 +137,13 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
+ruct dentry *dir,
+> >         if (d_is_dir(dentry))
+> >                 flags =3D RENAME_EXCHANGE;
+> >
+> > -       err =3D ovl_lock_rename_workdir(ofs->workdir, whiteout, dir, dent=
+ry);
+> > +       rd.old_parent =3D ofs->workdir;
+> > +       rd.new_parent =3D dir;
+> > +       rd.flags =3D flags;
+> > +       err =3D start_renaming_two_dentrys(&rd, whiteout, dentry);
+> >         if (!err) {
+> > -               err =3D ovl_do_rename(ofs, ofs->workdir, whiteout, dir, d=
+entry, flags);
+> > -               unlock_rename(ofs->workdir, dir);
+> > +               err =3D ovl_do_rename_rd(&rd);
+> > +               end_renaming(&rd);
 > >         }
-> >
-> >         if (!ofs->no_shared_whiteout) {
-> > -               inode_lock_nested(wdir, I_MUTEX_PARENT);
-> > -               whiteout =3D ovl_lookup_temp(ofs, workdir);
-> > -               if (!IS_ERR(whiteout)) {
-> > -                       err =3D ovl_do_link(ofs, ofs->whiteout, wdir, whi=
-teout);
-> > -                       if (err) {
-> > -                               dput(whiteout);
-> > -                               whiteout =3D ERR_PTR(err);
-> > -                       }
-> > -               }
-> > -               inode_unlock(wdir);
-> > -               if (!IS_ERR(whiteout))
-> > +               struct dentry *ret =3D NULL;
->=20
-> For clarity please name this var "link".
-
-Is "link" really clearer than "ret"?
-
-Maybe if I make it
-   struct dentry *link;
-   link =3D ovl_start_creating_temp(ofs, workdir);
-   if (IS_ERR(link))
-          return link;
-   err =3D ovl_do_link(ofs, ofs->whiteout, wdir, link);
-   if (!err)
-         whiteout =3D dget(link);
-   end_creating(whiteout, workdir);
-   if (!err)
-         return whiteout;
-
-Then "link" makes sense to me.
-
->=20
-> > +
-> > +               whiteout =3D ovl_start_creating_temp(ofs, workdir);
-> > +               if (IS_ERR(whiteout))
-> >                         return whiteout;
-> > -               if (PTR_ERR(whiteout) !=3D -EMLINK) {
-> > +               err =3D ovl_do_link(ofs, ofs->whiteout, wdir, whiteout);
-> > +               if (!err)
-> > +                       ret =3D dget(whiteout);
-> > +               end_creating(whiteout, workdir);
-> > +               if (ret)
-> > +                       return ret;
-> > +
-> > +               if (err !=3D -EMLINK) {
-> >                         pr_warn("Failed to link whiteout - disabling whit=
-eout inode sharing(nlink=3D%u, err=3D%lu)\n",
-> >                                 ofs->whiteout->d_inode->i_nlink,
-> >                                 PTR_ERR(whiteout));
-> > @@ -225,10 +237,13 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, =
-struct dentry *workdir,
-> >                                struct ovl_cattr *attr)
-> >  {
-> >         struct dentry *ret;
-> > -       inode_lock_nested(workdir->d_inode, I_MUTEX_PARENT);
-> > -       ret =3D ovl_create_real(ofs, workdir,
-> > -                             ovl_lookup_temp(ofs, workdir), attr);
-> > -       inode_unlock(workdir->d_inode);
-> > +       ret =3D ovl_start_creating_temp(ofs, workdir);
-> > +       if (IS_ERR(ret))
-> > +               return ret;
-> > +       ret =3D ovl_create_real(ofs, workdir, ret, attr);
-> > +       if (!IS_ERR(ret))
-> > +               dget(ret);
-> > +       end_creating(ret, workdir);
-> >         return ret;
-> >  }
-> >
-> > @@ -327,18 +342,21 @@ static int ovl_create_upper(struct dentry *dentry, =
-struct inode *inode,
-> >  {
+> >         if (err)
+> >                 goto kill_whiteout;
+> > @@ -363,6 +367,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
+dentry,
 > >         struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+> >         struct dentry *workdir =3D ovl_workdir(dentry);
 > >         struct dentry *upperdir =3D ovl_dentry_upper(dentry->d_parent);
-> > -       struct inode *udir =3D upperdir->d_inode;
+> > +       struct renamedata rd =3D {};
+> >         struct path upperpath;
+> >         struct dentry *upper;
+> >         struct dentry *opaquedir;
+> > @@ -388,7 +393,11 @@ static struct dentry *ovl_clear_empty(struct dentry =
+*dentry,
+> >         if (IS_ERR(opaquedir))
+> >                 goto out;
+> >
+> > -       err =3D ovl_lock_rename_workdir(workdir, opaquedir, upperdir, upp=
+er);
+> > +       rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
+> > +       rd.old_parent =3D workdir;
+> > +       rd.new_parent =3D upperdir;
+> > +       rd.flags =3D RENAME_EXCHANGE;
+> > +       err =3D start_renaming_two_dentrys(&rd, opaquedir, upper);
+> >         if (err)
+> >                 goto out_cleanup_unlocked;
+> >
+> > @@ -406,8 +415,8 @@ static struct dentry *ovl_clear_empty(struct dentry *=
+dentry,
+> >         if (err)
+> >                 goto out_cleanup;
+> >
+> > -       err =3D ovl_do_rename(ofs, workdir, opaquedir, upperdir, upper, R=
+ENAME_EXCHANGE);
+> > -       unlock_rename(workdir, upperdir);
+> > +       err =3D ovl_do_rename_rd(&rd);
+> > +       end_renaming(&rd);
+> >         if (err)
+> >                 goto out_cleanup_unlocked;
+> >
+> > @@ -420,7 +429,7 @@ static struct dentry *ovl_clear_empty(struct dentry *=
+dentry,
+> >         return opaquedir;
+> >
+> >  out_cleanup:
+> > -       unlock_rename(workdir, upperdir);
+> > +       end_renaming(&rd);
+> >  out_cleanup_unlocked:
+> >         ovl_cleanup(ofs, workdir, opaquedir);
+> >         dput(opaquedir);
+> > @@ -443,6 +452,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
+ntry, struct inode *inode,
+> >         struct ovl_fs *ofs =3D OVL_FS(dentry->d_sb);
+> >         struct dentry *workdir =3D ovl_workdir(dentry);
+> >         struct dentry *upperdir =3D ovl_dentry_upper(dentry->d_parent);
+> > +       struct renamedata rd =3D {};
+> >         struct dentry *upper;
 > >         struct dentry *newdentry;
 > >         int err;
-> >
-> > -       inode_lock_nested(udir, I_MUTEX_PARENT);
-> > -       newdentry =3D ovl_create_real(ofs, upperdir,
-> > -                                   ovl_lookup_upper(ofs, dentry->d_name.=
-name,
-> > -                                                    upperdir, dentry->d_=
-name.len),
-> > -                                   attr);
-> > -       inode_unlock(udir);
-> > +       newdentry =3D ovl_start_creating_upper(ofs, upperdir,
-> > +                                            &QSTR_LEN(dentry->d_name.nam=
-e,
-> > +                                                      dentry->d_name.len=
-));
+> > @@ -474,7 +484,11 @@ static int ovl_create_over_whiteout(struct dentry *d=
+entry, struct inode *inode,
 > >         if (IS_ERR(newdentry))
-> >                 return PTR_ERR(newdentry);
-> > +       newdentry =3D ovl_create_real(ofs, upperdir, newdentry, attr);
-> > +       if (IS_ERR(newdentry)) {
-> > +               end_creating(newdentry, upperdir);
-> > +               return PTR_ERR(newdentry);
-> > +       }
-> > +       dget(newdentry);
-> > +       end_creating(newdentry, upperdir);
->=20
-> See suggestion below to make this:
->=20
->         newdentry =3D end_creating_dentry(newdentry, upperdir);
->         if (IS_ERR(newdentry))
->                    return PTR_ERR(newdentry);
->=20
+> >                 goto out_dput;
 > >
-> >         if (ovl_type_merge(dentry->d_parent) && d_is_dir(newdentry) &&
-> >             !ovl_allow_offline_changes(ofs)) {
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index 4f84abaa0d68..c24c2da953bd 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -415,6 +415,14 @@ static inline struct dentry *ovl_lookup_upper_unlock=
-ed(struct ovl_fs *ofs,
-> >                                    &QSTR_LEN(name, len), base);
-> >  }
+> > -       err =3D ovl_lock_rename_workdir(workdir, newdentry, upperdir, upp=
+er);
+> > +       rd.mnt_idmap =3D ovl_upper_mnt_idmap(ofs);
+> > +       rd.old_parent =3D workdir;
+> > +       rd.new_parent =3D upperdir;
+> > +       rd.flags =3D 0;
+> > +       err =3D start_renaming_two_dentrys(&rd, newdentry, upper);
+> >         if (err)
+> >                 goto out_cleanup_unlocked;
 > >
-> > +static inline struct dentry *ovl_start_creating_upper(struct ovl_fs *ofs,
-> > +                                                     struct dentry *pare=
-nt,
-> > +                                                     struct qstr *name)
-> > +{
-> > +       return start_creating(ovl_upper_mnt_idmap(ofs),
-> > +                             parent, name);
-> > +}
-> > +
-> >  static inline bool ovl_open_flags_need_copy_up(int flags)
-> >  {
-> >         if (!flags)
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index bd3d7ba8fb95..67abb62e205b 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -300,8 +300,7 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
-s *ofs,
-> >         bool retried =3D false;
-> >
-> >  retry:
-> > -       inode_lock_nested(dir, I_MUTEX_PARENT);
-> > -       work =3D ovl_lookup_upper(ofs, name, ofs->workbasedir, strlen(nam=
-e));
-> > +       work =3D ovl_start_creating_upper(ofs, ofs->workbasedir, &QSTR(na=
-me));
-> >
-> >         if (!IS_ERR(work)) {
-> >                 struct iattr attr =3D {
-> > @@ -310,14 +309,13 @@ static struct dentry *ovl_workdir_create(struct ovl=
-_fs *ofs,
-> >                 };
-> >
-> >                 if (work->d_inode) {
-> > +                       dget(work);
-> > +                       end_creating(work, ofs->workbasedir);
-> > +                       if (persist)
-> > +                               return work;
-> >                         err =3D -EEXIST;
-> > -                       inode_unlock(dir);
-> >                         if (retried)
-> >                                 goto out_dput;
-> > -
-> > -                       if (persist)
-> > -                               return work;
-> > -
-> >                         retried =3D true;
-> >                         err =3D ovl_workdir_cleanup(ofs, ofs->workbasedir=
-, mnt, work, 0);
-> >                         dput(work);
-> > @@ -328,7 +326,9 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
-s *ofs,
-> >                 }
-> >
-> >                 work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
-> > -               inode_unlock(dir);
-> > +               if (!IS_ERR(work))
-> > +                       dget(work);
-> > +               end_creating(work, ofs->workbasedir);
-> >                 err =3D PTR_ERR(work);
-> >                 if (IS_ERR(work))
-> >                         goto out_err;
-> > @@ -366,7 +366,6 @@ static struct dentry *ovl_workdir_create(struct ovl_f=
-s *ofs,
+> > @@ -511,16 +525,16 @@ static int ovl_create_over_whiteout(struct dentry *=
+dentry, struct inode *inode,
 > >                 if (err)
-> >                         goto out_dput;
+> >                         goto out_cleanup;
+> >
+> > -               err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, =
+upper,
+> > -                                   RENAME_EXCHANGE);
+> > -               unlock_rename(workdir, upperdir);
+> > +               rd.flags =3D RENAME_EXCHANGE;
+> > +               err =3D ovl_do_rename_rd(&rd);
+> > +               end_renaming(&rd);
+> >                 if (err)
+> >                         goto out_cleanup_unlocked;
+> >
+> >                 ovl_cleanup(ofs, workdir, upper);
 > >         } else {
-> > -               inode_unlock(dir);
-> >                 err =3D PTR_ERR(work);
-> >                 goto out_err;
+> > -               err =3D ovl_do_rename(ofs, workdir, newdentry, upperdir, =
+upper, 0);
+> > -               unlock_rename(workdir, upperdir);
+> > +               err =3D ovl_do_rename_rd(&rd);
+> > +               end_renaming(&rd);
+> >                 if (err)
+> >                         goto out_cleanup_unlocked;
 > >         }
-> > @@ -616,14 +615,17 @@ static struct dentry *ovl_lookup_or_create(struct o=
-vl_fs *ofs,
-> >                                            struct dentry *parent,
-> >                                            const char *name, umode_t mode)
-> >  {
-> > -       size_t len =3D strlen(name);
-> >         struct dentry *child;
+> > @@ -540,7 +554,7 @@ static int ovl_create_over_whiteout(struct dentry *de=
+ntry, struct inode *inode,
+> >         return err;
 > >
-> > -       inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> > -       child =3D ovl_lookup_upper(ofs, name, parent, len);
-> > -       if (!IS_ERR(child) && !child->d_inode)
-> > -               child =3D ovl_create_real(ofs, parent, child, OVL_CATTR(m=
-ode));
-> > -       inode_unlock(parent->d_inode);
-> > +       child =3D ovl_start_creating_upper(ofs, parent, &QSTR(name));
-> > +       if (!IS_ERR(child)) {
-> > +               if (!child->d_inode)
-> > +                       child =3D ovl_create_real(ofs, parent, child,
-> > +                                               OVL_CATTR(mode));
-> > +               if (!IS_ERR(child))
-> > +                       dget(child);
-> > +               end_creating(child, parent);
+> >  out_cleanup:
+> > -       unlock_rename(workdir, upperdir);
+> > +       end_renaming(&rd);
+> >  out_cleanup_unlocked:
+> >         ovl_cleanup(ofs, workdir, newdentry);
+> >         dput(newdentry);
 >=20
-> We have a few of those things open code which are not so pretty IMO.
-> How about:
+> ovl changes look fine to me.
 >=20
-> child =3D end_creating_dentry(child, parent);
->=20
-> Which is a variant of the void end_creating() which does dget()
-> in the non error case?
+> with change of helper name and typo fixes feel free to add:
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-I have experimented with that idea.  I'm not convinced.
+Done.  Thanks for you help.
 
-There are six places where it would help.
-One is in cachefiles, the rest are in overlayfs.
-Two of them are just=20
-   dget()
-   end_creating()
+NeilBrown
 
-There other have some sort of condition on error as you pointed out
-above.
-
-That is out of nearly 30 uses for end_creating().
-
-I would rather declare the dentry variable as __free(end_dirop)
-or similar so that "end_creating()" would not appear and the dget()
-would stand alone with (hopefully) a clear meaning.
-But I can't do that until the vfs_mkdir() issue is resolved.
-
-Maybe it would end up being cleaner having and alternate form of
-end_creating() which returns a reference.  But I'm not convinced yet.
 
 >=20
-> end_creating_dentry() could be matched with start_creating_dentry()
-> in common cases where we had a ref on the child before creating and
-> we want to keep the ref on the child after creating.
-
-I don't think there is a useful connection between end_creating_dentry()
-and start_creating_dentry(), so I wouldn't use that name.
-end_creating_return() maybe, or end_creating_keep().
-
-start_creating_dentry() takes an extra ref so it is always correct to
-use end_creating() and you don't need a dget() because you already have
-a ref.  You only need the dget() (or to avoid the dput()) if a lookup
-was performed by start_creating().
-
->=20
-> > +       }
-> >         dput(parent);
-> >
-> >         return child;
-> > diff --git a/include/linux/namei.h b/include/linux/namei.h
-> > index a7800ef04e76..4cbe930054a1 100644
-> > --- a/include/linux/namei.h
-> > +++ b/include/linux/namei.h
-> > @@ -88,6 +88,24 @@ struct dentry *lookup_one_positive_killable(struct mnt=
-_idmap *idmap,
-> >                                             struct qstr *name,
-> >                                             struct dentry *base);
-> >
-> > +struct dentry *start_creating(struct mnt_idmap *idmap, struct dentry *pa=
-rent,
-> > +                             struct qstr *name);
-> > +
-> > +/* end_creating - finish action started with start_creating
-> > + * @child - dentry returned by start_creating()
-> > + * @parent - dentry given to start_creating()
-> > + *
-> > + * Unlock and release the child.
-> > + *
-> > + * Unlike end_dirop() this can only be called if start_creating() succee=
-ded.
-> > + * It handles @child being and error as vfs_mkdir() might have converted=
- the
-> > + * dentry to an error - in that case the parent still needs to be unlock=
-ed.
-> > + */
-> > +static inline void end_creating(struct dentry *child, struct dentry *par=
-ent)
-> > +{
-> > +       end_dirop_mkdir(child, parent);
-> > +}
-> > +
->=20
-> That concludes my out-of-order review of this series.
->=20
-> The ovl changes look overall good to me.
-> I will wait for v2 without end_dirop_mkdir() to re-review this patch.
->=20
-> Feel free to take or discard my suggestion for end_creating_dentry().
->=20
-> I agree with Jeff that the conversion of if condition to a while loop in
-> cachefiles feels odd, because it is not clear if there should be a stop
-> condition. Anyway, best if cachefiles developers could review this
-> code anyway.
 >=20
 > Thanks,
 > Amir.
 >=20
 
-Thanks a lot of the thorough review - I really appreciate it.
-
-NeilBrown
 
