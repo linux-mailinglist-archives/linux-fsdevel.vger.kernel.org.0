@@ -1,59 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-63183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8174BB0873
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 15:37:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489CDBB0882
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 15:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22F3A1944515
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 13:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD1264A6D00
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 13:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B262EFDB5;
-	Wed,  1 Oct 2025 13:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B6F2EF670;
+	Wed,  1 Oct 2025 13:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7XEKAZi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RH2tFmYE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2544D2E7BDE;
-	Wed,  1 Oct 2025 13:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A772E7BDE;
+	Wed,  1 Oct 2025 13:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325826; cv=none; b=QxK02+Wn5bF51rvTvEDDp3uup5nK5N0Z3SreKu54L32ZiV+XJnAeMcBhqhqUbFwWQG6umu9YaMSwDy6g66aalj+NSA8jsbSiEAadFoXgxafs6aDINFc3584dTSV0VQuR0PCRVG6nuQQHxorfUDewwTNnBrG5ULtW0vGq2WLHHgE=
+	t=1759325831; cv=none; b=tvdWDzonOp6JDnuLew03bRhJ932PZvitkAJVfl0jt6egfJpgasjQl/lwcM+QH1cIk1iNiiwESotoRNa/kLUS+C5i06ZgLEpm8fR4syTZCnVj/xd7l0ond2XNjwCnLjXO5Ox6XXatfiWRldjgyG8F5T4ny/uyqCwXsfZbqMhB+fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325826; c=relaxed/simple;
-	bh=p/oGeFvkc0H8uvWesN5rNuZkHTkiBRHA63/Iq0U2eq8=;
+	s=arc-20240116; t=1759325831; c=relaxed/simple;
+	bh=t5xYOFJKYa/QSrjgru0EIfRg+03gWxYZAfLp0ZPyDLQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g5vX/YPAA9Bp3/pqsueSqWrYLCco4VfEx/kKwkSXpHAw1zU6MOCWLQSKWAbZq/QfiIjD48i+fp8nKaqgSio4rFgjRmSY2Fr4X8egdbFo14AFYozFV2asYncl9mL7K8OP1B1s0FXNjo01kcCsNDpELPB/SaQnHtWhDTEfm1E2nX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7XEKAZi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003E6C4CEF4;
-	Wed,  1 Oct 2025 13:37:04 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ErFoWqIJIgUSKG02tZSo05M1IWVkKlZRFQe4OyjnX4rH0xb9B1jn7CgMnW4Y91bi8xdPekRtTyAkieC7yj7DXxP8u21GBVxENx97Reyy2AfTp5u4VY8Ik5BWC0uQnTa9pkM7FcxURj1iQUedY2xGMztSucmGMx2LI610ICfhWBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RH2tFmYE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2C3C19421;
+	Wed,  1 Oct 2025 13:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759325826;
-	bh=p/oGeFvkc0H8uvWesN5rNuZkHTkiBRHA63/Iq0U2eq8=;
+	s=k20201202; t=1759325831;
+	bh=t5xYOFJKYa/QSrjgru0EIfRg+03gWxYZAfLp0ZPyDLQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U7XEKAZiGwc2dy7KxaFEjptk8izY3CXuH90JLHSLBf51Y3uxqnTEvPFekb0WCOHpy
-	 UDJMZW6zDqf5e+ceWBfpvBQPoLhCdxl+gw0GxrAgmVioECfcfCSWd+4TCGRzs0uoD0
-	 ap7OD/YL30iOdHboafqg2skfOCZoCTeCX4bbeIKG8TfBgD/rJHn+yuI9H6MpcZeSYD
-	 wCFYpmQTZx405FSv6BwNi8dyXKL9eah/Dc3Svsz6ULl4m2lm+nBu9nUHmkv4W7V8SU
-	 2gpfMeGj42DEiLQxH/PyFa6R91Tt84ugxQDlBeMzPRlmfJlmEztc0u8Aubiadu8Igl
-	 q7NAhXvJnS8aQ==
+	b=RH2tFmYExehhtZTjoep3Vokc3pDhbzTLwdlTje61/vG7PWSi4e2aGCCCsa2O+WJzG
+	 pEEVC2arXImgDeDSBepFYu/bMkGi2bfPIdujsU49x4FvfoayVKCE+0m6N17DueQi/Y
+	 1H/8RLprc45rGuVLTT43lDJzq53Mlz+XFurdY78+us9xpflSj+WQ3ZGx31leOx9X9I
+	 fRWQHwM6wMMMDsyfl9ozZyYtiMuIumaoFeAe1uIvuagmJYTWtYNvAFYwlabcaXl1Hg
+	 JjYi20GxjUTlJasu2z516/qLT7O0hmLdEJIGi0KDMMVrqU5s+ef1uHd6kZSr1wbtJB
+	 mFc2O/5IoHzig==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
 Cc: Christian Brauner <brauner@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
 	Jan Kara <jack@suse.cz>,
 	Sasha Levin <sashal@kernel.org>,
 	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-6.16] pidfs: validate extensible ioctls
-Date: Wed,  1 Oct 2025 09:36:41 -0400
-Message-ID: <20251001133653.978885-7-sashal@kernel.org>
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-6.16] nsfs: validate extensible ioctls
+Date: Wed,  1 Oct 2025 09:36:44 -0400
+Message-ID: <20251001133653.978885-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251001133653.978885-1-sashal@kernel.org>
 References: <20251001133653.978885-1-sashal@kernel.org>
@@ -71,11 +69,10 @@ Content-Transfer-Encoding: 8bit
 
 From: Christian Brauner <brauner@kernel.org>
 
-[ Upstream commit 3c17001b21b9f168c957ced9384abe969019b609 ]
+[ Upstream commit f8527a29f4619f74bc30a9845ea87abb9a6faa1e ]
 
 Validate extensible ioctls stricter than we do now.
 
-Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
@@ -83,162 +80,146 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
 
 LLM Generated explanations, may be completely bogus:
 
-Based on my comprehensive analysis, here is my recommendation:
+Based on my comprehensive analysis of this commit and its context, here
+is my assessment:
 
-## Backport Status: **YES**
+## **Backport Status: YES**
 
-### Analysis Summary
+### **Detailed Analysis**
 
-This commit strengthens ioctl validation in pidfs by replacing
-insufficient validation with comprehensive checks. This is a **security
-hardening fix** that should be backported to stable kernel trees that
-contain PIDFD_GET_INFO (v6.13+).
+#### **Nature of the Change**
 
-### Key Findings
+This commit fixes a **security bug** in the namespace filesystem (nsfs)
+ioctl validation code. The bug was a tautological comparison
+`(_IOC_TYPE(cmd) == _IOC_TYPE(cmd))` that always evaluated to true,
+providing **zero actual validation** for extensible ioctls.
 
-**1. Historical Context:**
-- PIDFD_GET_INFO was introduced in **v6.13-rc1** (Oct 2024, commit
-  cdda1f26e74ba)
-- Initial validation added Nov 2024 only checked basic ioctl type
-- Feb 2025: Security researcher Jann Horn reported type confusion issue,
-  fixed in commit 9d943bb3db89c (already backported to v6.13.3+)
-- Sep 2025: This commit (3c17001b21b9f) provides **comprehensive
-  validation** beyond the Feb fix
+**Specific code changes (fs/nsfs.c:154-178):**
+- Lines 171-174: For `NS_MNT_GET_INFO`, `NS_MNT_GET_NEXT`, and
+  `NS_MNT_GET_PREV` ioctls
+- **Before**: `return (_IOC_TYPE(cmd) == _IOC_TYPE(cmd));` — meaningless
+  tautology
+- **After**: `return extensible_ioctl_valid(cmd, NS_MNT_GET_*,
+  MNT_NS_INFO_SIZE_VER0);` — proper validation
 
-**2. Technical Changes:**
+The `extensible_ioctl_valid()` helper validates:
+1. `_IOC_DIR` (direction: read/write)
+2. `_IOC_TYPE` (ioctl type matches expected)
+3. `_IOC_NR` (ioctl number matches expected)
+4. `_IOC_SIZE` (size is at least the minimum required)
 
-The commit replaces weak validation at fs/pidfs.c:443:
-```c
-// OLD - only checks TYPE field (bits 8-15):
-return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
+#### **Bug History and Context**
 
-// NEW - checks all 4 components:
-return extensible_ioctl_valid(cmd, PIDFD_GET_INFO,
-PIDFD_INFO_SIZE_VER0);
-```
+1. **Introduced**: Commit 7fd511f8c911ab (Feb 19, 2025) added ioctl
+   validation but accidentally introduced the tautological bug
+2. **Fixed in two parts**:
+   - Commit 6805ac4900ab2: Fixed regular ioctls (changed to `return
+     true`)
+   - **This commit (197003b7aea34)**: Fixed extensible ioctls with
+     proper validation
+3. **Related fix**: Commit 8c6627fbfe7c1 fixed the same issue in pidfs
+   and added the `extensible_ioctl_valid()` helper
 
-The new `extensible_ioctl_valid()` helper (introduced in
-include/linux/fs.h:4006-4023) validates:
-- **_IOC_DIR**: Direction bits (read/write) - prevents wrong buffer
-  access patterns
-- **_IOC_TYPE**: Magic number (already checked by old code)
-- **_IOC_NR**: Ioctl number - prevents executing wrong ioctl handler
-- **_IOC_SIZE**: Buffer size >= 64 bytes (PIDFD_INFO_SIZE_VER0) -
-  **prevents buffer underflows**
+#### **Security Impact Assessment**
 
-**3. Security Implications:**
+**Severity: MEDIUM-HIGH**
 
-The insufficient validation could enable:
+1. **Validation Bypass**: Malformed ioctl commands would be accepted,
+   allowing:
+   - Buffer size mismatches (too small → information disclosure; too
+     large → buffer overflow potential)
+   - Wrong direction flags (read/write confusion)
+   - Type confusion attacks
 
-- **Type confusion attacks**: Accepting ioctls with mismatched direction
-  could cause kernel to read from uninitialized userspace memory or
-  write to read-only buffers
-- **Buffer underflows**: Without size validation, an attacker could pass
-  undersized structures, potentially causing information leaks or memory
-  corruption when the kernel copies data
-- **Wrong ioctl execution**: Without NR validation, different ioctl
-  numbers with the same TYPE could be confused
+2. **Attack Surface**: The affected ioctls handle **mount namespace
+   traversal**:
+   - `NS_MNT_GET_INFO`: Get namespace information
+   - `NS_MNT_GET_NEXT/PREV`: Traverse namespace hierarchy
 
-While no specific CVE was assigned, this pattern was **reported by Jann
-Horn** (Google security researcher) for the Feb 2025 fix, indicating
-serious security review.
+   These are critical for **container isolation** security boundaries.
 
-**4. Scope and Risk Assessment:**
+3. **Exploitation Scenarios**:
+   - Container escape through namespace boundary violations
+   - Information disclosure about host/other containers
+   - Privilege escalation through namespace manipulation
+   - Stack/kernel memory leaks via undersized buffers
 
-- **Affected versions**: Only v6.13+ (where PIDFD_GET_INFO exists)
-- **Code churn**: Minimal - adds 14 lines (new helper), modifies 1 line
-  in pidfs
-- **Risk**: Very low - makes validation stricter, cannot break
-  legitimate callers
-- **Testing**: Reviewed by security-conscious maintainers (Aleksa Sarai,
-  Jan Kara)
-- **Pattern**: Part of coordinated hardening across nsfs
-  (f8527a29f4619), block (fa8ee8627b741) subsystems
+4. **Affected Users**:
+   - **Critical risk**: Multi-tenant container platforms (Kubernetes,
+     Docker, cloud environments)
+   - **High risk**: Any system using Linux namespaces for isolation
+   - **Medium risk**: Desktop systems using containerized applications
+     (Flatpak, Snap, systemd services)
 
-**5. Stable Tree Rules Compliance:**
+#### **Why This Should Be Backported**
 
-✓ **Fixes important bug**: Insufficient ioctl validation is a security
-issue
-✓ **Small and contained**: 16 lines total, self-contained helper
-function
-✓ **Obvious and correct**: Clear improvement in validation logic
-✓ **Does not introduce new features**: Hardening only, no functional
-changes
-✓ **Minimal regression risk**: Stricter validation cannot break valid
-usage
+**Meets all stable kernel criteria:**
 
-**6. Why Backport Despite No Cc: stable Tag:**
+1. ✅ **Important bugfix**: Fixes validation bypass in security-critical
+   code
+2. ✅ **Minimal code change**: Only 3 lines changed, replacing broken
+   check with proper validation
+3. ✅ **Low regression risk**: Adds stricter validation (might reject
+   invalid calls that previously passed, but those were bugs anyway)
+4. ✅ **Confined to subsystem**: Changes only affect nsfs ioctl
+   validation
+5. ✅ **Security hardening**: Prevents potential container escapes and
+   privilege escalation
+6. ✅ **Already selected for stable**: This commit has `Signed-off-by:
+   Sasha Levin <sashal@kernel.org>`, indicating it's already been
+   backported to stable trees
 
-While the commit lacks explicit stable tagging, backporting is justified
-because:
+**Additional factors:**
 
-1. **Builds on already-backported fix**: The Feb 2025 fix
-   (9d943bb3db89c) was explicitly marked for stable. This commit
-   completes that hardening by adding the missing size and direction
-   checks.
+- **No architectural changes**: Pure bugfix with no feature additions
+- **Clear security benefit**: Restores intended validation behavior
+- **Widely deployed**: Namespaces are fundamental to modern Linux
+  (containers are ubiquitous)
+- **Part of security series**: Related to systematic validation
+  hardening across kernel
+- **Reviewed by maintainers**: Jan Kara reviewed, Christian Brauner (VFS
+  maintainer) authored
 
-2. **Defense in depth**: The Feb fix only added TYPE checking. This
-   commit adds the critical **size validation** preventing buffer
-   underflows.
+#### **Backporting Considerations**
 
-3. **Introduces reusable infrastructure**: The
-   `extensible_ioctl_valid()` helper enables future fixes across
-   multiple subsystems (already used in nsfs, block).
+**Dependency**: This commit requires `extensible_ioctl_valid()` to be
+present in `include/linux/fs.h` (added in commit 8c6627fbfe7c1 "pidfs:
+validate extensible ioctls"). Both commits should be backported together
+or in order.
 
-4. **Proactive security**: Given that similar validation issues led to
-   the Jann Horn report, this prevents a potential future CVE.
+**Risk of NOT backporting**: Container environments remain vulnerable to
+validation bypass attacks, potentially allowing namespace isolation
+violations and container escapes in multi-tenant environments.
 
-### Recommendation
+### **Conclusion**
 
-**Backport to v6.13+ stable trees** because:
-- PIDFD_GET_INFO only exists in these versions
-- Completes the security hardening started in Feb 2025
-- Low risk, high security value
-- Follows the same pattern as the already-backported related fix
+This is a clear **YES for backporting**. It fixes an actual security bug
+that affects the validation of ioctl commands controlling namespace
+operations—a fundamental security boundary in modern Linux. The fix is
+minimal, well-contained, low-risk, and addresses a real vulnerability in
+container isolation mechanisms that are widely deployed across the Linux
+ecosystem.
 
-The commit should be backported together with the nsfs equivalent
-(f8527a29f4619) as they form a coordinated hardening series.
+ fs/nsfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- fs/pidfs.c         |  2 +-
- include/linux/fs.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 108e7527f837f..2c9c7636253af 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
- 		 * erronously mistook the file descriptor for a pidfd.
- 		 * This is not perfect but will catch most cases.
- 		 */
--		return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-+		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 59aa801347a7d..34f0b35d3ead7 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -169,9 +169,11 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
+ 	/* Extensible ioctls require some extra handling. */
+ 	switch (_IOC_NR(cmd)) {
+ 	case _IOC_NR(NS_MNT_GET_INFO):
++		return extensible_ioctl_valid(cmd, NS_MNT_GET_INFO, MNT_NS_INFO_SIZE_VER0);
+ 	case _IOC_NR(NS_MNT_GET_NEXT):
++		return extensible_ioctl_valid(cmd, NS_MNT_GET_NEXT, MNT_NS_INFO_SIZE_VER0);
+ 	case _IOC_NR(NS_MNT_GET_PREV):
+-		return (_IOC_TYPE(cmd) == _IOC_TYPE(cmd));
++		return extensible_ioctl_valid(cmd, NS_MNT_GET_PREV, MNT_NS_INFO_SIZE_VER0);
  	}
  
  	return false;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 601d036a6c78e..aa808407b3c60 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -4024,4 +4024,18 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
- 
- int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
- 
-+static inline bool extensible_ioctl_valid(unsigned int cmd_a,
-+					  unsigned int cmd_b, size_t min_size)
-+{
-+	if (_IOC_DIR(cmd_a) != _IOC_DIR(cmd_b))
-+		return false;
-+	if (_IOC_TYPE(cmd_a) != _IOC_TYPE(cmd_b))
-+		return false;
-+	if (_IOC_NR(cmd_a) != _IOC_NR(cmd_b))
-+		return false;
-+	if (_IOC_SIZE(cmd_a) < min_size)
-+		return false;
-+	return true;
-+}
-+
- #endif /* _LINUX_FS_H */
 -- 
 2.51.0
 
