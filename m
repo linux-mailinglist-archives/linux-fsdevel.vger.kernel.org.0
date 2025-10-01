@@ -1,141 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-63176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8546BBB069B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 15:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4F5BB06AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 01 Oct 2025 15:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44372194617E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 13:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B84189D840
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Oct 2025 13:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A6921ADB9;
-	Wed,  1 Oct 2025 13:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF3D2EC568;
+	Wed,  1 Oct 2025 13:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Se7Sz0lV"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C73SZ3ou";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="T54pUyfT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ugGB9i4n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lgKgLzzr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07E21F461A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 13:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18B02EC54D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Oct 2025 13:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759323932; cv=none; b=JCFAkGBb3nQAF3hPPdBnpgC5EJnWKsni8VeJMKSedfV5LGQ5s2iSJA2umKv/hEA26fY2s+IleqfqxMbn9MNozCXT3mQOKmJkh6kpu0DhL1zBgBzAQN73S2K3+c0z2epat8SNM5YwFsnJFCp8WeUWsVg5ukySUjkzgWfdSjd3YaM=
+	t=1759324087; cv=none; b=tI55rB6/C0BMv4gnIdpV4aDknyPvSFOlsM7xthzVBUuXslB5HavsDspF/MZD/VFh1ojlGUL4PW5vMbcXUQNGo+wakq01ACGxfWtFGspUvfEIk1oifuQZcYtzcLXstQQ4LgHU7rb4WZW4pWuOhFyH3UDeTkVX6lyVbG+UpBYT9f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759323932; c=relaxed/simple;
-	bh=jBmuWH0YUH02uvaUnpyESyNBWMLetO9tuvs3IcDBVZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m5J71BwfPZN2is5hdvy835WtQ0lUqaYFMJWAjC1YNEgyoLJ3pUJ+8oAbF7O3C42oCAq+oK0mcACZS1CPSL6GzCKBv7NCNXznKDIokhce6yh1lWP0acWdNLL4iXROLFNsrS/xY4zXVraOIH72kDlwFShb6qSIf5F1XdYl3r9RPbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Se7Sz0lV; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47174b335bso820112a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Oct 2025 06:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759323930; x=1759928730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OW6l6wKrmChiKbh7o74M96nQdgGsULiYNKDhud2+Lm0=;
-        b=Se7Sz0lVmzUHFL7SsLjlQGxP0QJykPNzaNC0heYDRZkQHijNIQeJm8ud/pKzvfPwvy
-         s6HOgrWLdXNNJmEjRTrA8cbq0eMzo9kXgmye38cuuxlEtpzulRQGZflPMn3dXl8KEyb/
-         w5RzSPChuKTODquLAL6bAXpm433q6Ffi/X5v8czctQ7TjgLTr54mrlWNQ/DLJKmI9Y0k
-         ogxI2rlwLCyshPXOHrP/I8wPezbT2E+okvex62ukiYTqb20lrnLcVPJroRox8T8nDO3Q
-         2cbKRBF/mpBdpGOBxMWqLBf6feE7iJ0lJg1lQcUEBqNS4r5q4eqzdNcUe2e69BSlNj69
-         n6eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759323930; x=1759928730;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OW6l6wKrmChiKbh7o74M96nQdgGsULiYNKDhud2+Lm0=;
-        b=B081JqkP5ETx1IomykDrVHNNZqBRjA91BT62U3YRK7QFGivNt+N4o9PF/rsCGY/6yP
-         tudgEpCi4E3UrafbqBWsYCx22y9Xr0zSeetq1CO40fwZw9e+EqP6YIqPFPOWkHV9rXAx
-         wj2b8nmLGT5Ss1hMhl/rHpx14AispWGMjIaCjf+oGytHGjsQFb0a+XGlvCTwKQK3sZGX
-         XpCXHFQjouyWSziLIQbchDa1mNu+O9ZoiAryy6q0NbdsuRRTHhgX3SdvMkS9D76KiOVx
-         aKK4ujYwFmUDkZc/1GQZ4AcsHZl2PZP162jdCHBPaErrcWYG906XhHs9zBWX4BArP7iX
-         7Gtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQFsZq1bynrEq2XR20E2lATT1J2F855eMqDSMIrxIa9lvOw6hWaYlmd1hxr4qeiwAwqn30+gR5myue8tnY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEVXhwaaPOuoq7TD0n640D3YXNvksXLT7KCajykfGcuZah5of7
-	vr+REji1WpLL5sk5NTk7kRfj/UIggS7Dvj6sH5/VZbtJyRZhszgDCBzm
-X-Gm-Gg: ASbGncswsDhf8u0jfN0M0TRxl3LBir8JdlhDYWfV58CJwNsXalIe3zVQy9FqXBBgYhO
-	SHonlnEKu1GuJywpBpPXGtlmz2WkeXN+EEMsAwLetNcfkRLsPEl6mjPI8TMRwuI6C85rBYOEGgv
-	r2z+uBEpUIHUYP2wYaMLL4tyeCZj966ndwfCwMLzTu/mKCmXCHbJnAwTMBJsxo39E/ZbtVpaJH9
-	HF3kjy6vYN+fp0ilaE3bFxdlxPeZkf7Tf/CIE3V1/gq8SpGALGCorsI4pbMBeee8/vKhksn68Ys
-	WLEcOuL/E/zd7Ldpqe46ZU3GYqUQP/PBwSYXgCHkxyshvhHafO2h1SIHE9FZgpYHGCUe8OolZS4
-	3XGHi+VfiF2Qh20vYcd0ebKQgpmTHxG9losoOBjCUi+ny76lkGsWYNlRi+6ZI6QLcWB+ADir89g
-	sxUT1Oa9aanHYfh7uoFtY=
-X-Google-Smtp-Source: AGHT+IHoa5xa4f1XTAIYI78HgS2grI+zOJxKw/L/F6af+N9ErpstXh/VbzIlNsFq6puzwXgpQewq9A==
-X-Received: by 2002:a05:6a21:32a0:b0:2e3:a914:aabe with SMTP id adf61e73a8af0-321d882a178mr2574832637.2.1759323929715;
-        Wed, 01 Oct 2025 06:05:29 -0700 (PDT)
-Received: from [172.20.45.103] (S0106a85e45f3df00.vc.shawcable.net. [174.7.235.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c557500dsm16012934a12.34.2025.10.01.06.05.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 06:05:29 -0700 (PDT)
-Message-ID: <bfba2ef9-ecb7-4917-a7db-01b252d7be04@gmail.com>
-Date: Wed, 1 Oct 2025 06:05:28 -0700
+	s=arc-20240116; t=1759324087; c=relaxed/simple;
+	bh=5DLcHOoX9VrKRa+fcanJh9nwu+xxw6WNlyYp9tKftF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHflHxjXYM2jdYcU9yJ4IKXQ82jXCKoQGVmDN8lauGEHyftaJs6th3u2JEgIg4BiQRvX1atQXo4ty2rDdd3RD80f05L6ogCGNmGoUV/viszW2M5C5RwBaC/N94L7dqwT//ElR9YWfy3NDVV9Vni7fpqjFWM9GxvNlBpn5J8PecU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C73SZ3ou; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=T54pUyfT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ugGB9i4n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lgKgLzzr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8D6B71FB66;
+	Wed,  1 Oct 2025 13:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759324083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=C73SZ3outgK4mQS4I4+1ZHk2Eypnp+02eeC0yJt9T4RKXkgfrLtF2XMZ3QYHijLht07xzo
+	kNQqntAPmMSyCOi2VJbpbiIP2egoPxUlBuCItMzuhE7BCkmEcR8QwmV23dPOBALzaTYlUh
+	aEP3my+QSkYWTqX9bkuU6J/Kp93/3q0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759324083;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=T54pUyfT6XxVwf8wIwAnLT3unxuFqBGUd+/1fQW2+YweA25yIi3VA3Gq6KdieN1guh5DXX
+	oEpQmbGUvTFxAtAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ugGB9i4n;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=lgKgLzzr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759324082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=ugGB9i4nrvaCXQLUE1GiGbWKQWCw4veUIf8IFBraUNiE2CSa6B5tea9DAX6BC6kIIz0H2G
+	k//EBsWAPpcv8qK5uLeGShR783T9ugStnHx3pL973RaskqxQe+e72hmOG5tt6XLNDavLVf
+	1Hoamwt/YumTO8RuKvKBGmBCVnLUuQA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759324082;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=lgKgLzzrzq1h/XxcpFycm3PPEcQz2c5ysZrDE6tf4uI40vzPFsUCnN4GjPne4t3en5U5wv
+	l3mqQRuUKjt6iRAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 81B4213A3F;
+	Wed,  1 Oct 2025 13:08:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZcKhH7In3WjXDAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 13:08:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2C315A094B; Wed,  1 Oct 2025 15:07:58 +0200 (CEST)
+Date: Wed, 1 Oct 2025 15:07:58 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert on ->i_count in iput_final()
+Message-ID: <7ck3szsab4zb3uzgh6aub5kmvm2slold5la2oyi264klwjel36@crjlqzwdmrgh>
+References: <20251001010010.9967-1-mjguzik@gmail.com>
+ <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
+ <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning
- caused by lock dependency in elv_iosched_store
-From: Kyle Sanderson <kyle.leet@gmail.com>
-To: Nilay Shroff <nilay@linux.ibm.com>, linux-block@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, axboe@kernel.dk
-Cc: hch@lst.de, ming.lei@redhat.com, hare@suse.de, sth@linux.ibm.com,
- gjoyce@ibm.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250730074614.2537382-1-nilay@linux.ibm.com>
- <20250730074614.2537382-3-nilay@linux.ibm.com>
- <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com>
-Content-Language: en-CA
-In-Reply-To: <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 8D6B71FB66
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email,suse.com:email]
+X-Spam-Score: -4.01
 
-On 9/30/2025 10:20 PM, Kyle Sanderson wrote:
-> On 7/30/2025 12:46 AM, Nilay Shroff wrote:
->> To address this, move all sched_tags allocations and deallocations 
->> outside
->> of both the ->elevator_lock and the ->freeze_lock.
+On Wed 01-10-25 14:12:13, Mateusz Guzik wrote:
+> On Wed, Oct 1, 2025 at 2:07 PM Jan Kara <jack@suse.cz> wrote:
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index ec9339024ac3..fa82cb810af4 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
+> > >       int drop;
+> > >
+> > >       WARN_ON(inode->i_state & I_NEW);
+> > > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
+> >
+> > This seems pointless given when iput_final() is called...
+> >
 > 
-> Hi Nilay,
+> This and the other check explicitly "wrap" the ->drop_inode call.
+
+I understand but given iput() has just decremented i_count to 0 before
+calling iput_final() this beginning of the "wrap" looks pretty pointless to
+me.
+
+> > >       if (op->drop_inode)
+> > >               drop = op->drop_inode(inode);
+> > > @@ -1893,6 +1894,12 @@ static void iput_final(struct inode *inode)
+> > >               return;
+> > >       }
+> > >
+> > > +     /*
+> > > +      * Re-check ->i_count in case the ->drop_inode() hooks played games.
+> > > +      * Note we only execute this if the verdict was to drop the inode.
+> > > +      */
+> > > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
+> > > +
+> >
+> > I'm not sure this can catch much but OK...
+> >
 > 
-> I am coming off of a 36 hour travel stint, and 6.16.7 (I do not have 
-> that log, and it mightily messed up my xfs root requiring offline 
-> repair), 6.16.9, and 6.17.0 simply do not boot on my system. After 
-> unlocking with LUKS I get this panic consistently and immediately, and I 
-> believe this is the problematic commit which was unfortunately carried 
-> to the previous and current stable. I am using this udev rule: 
-> `ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*", ATTR{queue/ 
-> scheduler}="bfq"`
+> It can catch drop routines which bumped the ref but did not release
+> it, or which indicated to continue with drop while someone else
+> snatched the reference.
 
-Hi Greg,
+Right. 
 
-Slept for a couple hours. This appears to be well known in block (the 
-fix is in the 6.18 pull) that it is causing panics on stable, and didn't 
-make it back to 6.17 past the initial merge window (as well as 6.16).
+> Preferaby the APIs would prevent that in the first place, but there is
+> quite a bit of shit-shoveling before that happens.
 
-Presumably adjusting the request depth isn't common (if this is indeed 
-the problem)?
+Agreed.
 
-I also have ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*", 
-ATTR{queue/nr_requests}="1024" as a udev rule.
+								Honza
 
-Jens, is this the only patch from August that is needed to fix this panic?
-
-https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-6.18/block&id=ba28afbd9eff2a6370f23ef4e6a036ab0cfda409
-
-Kyle.
-
-https://lore.kernel.org/all/37087b24-24f7-46a9-95c4-2a2f3dced09b@niklasfi.de/
-
-https://lore.kernel.org/all/175710207227.395498.3249940818566938241.b4-ty@kernel.dk/
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
