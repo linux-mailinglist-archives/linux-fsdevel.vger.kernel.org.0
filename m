@@ -1,95 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-63328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA54BB59BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 01:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A43BB5A4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 01:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2085484C3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 23:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D87488188
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 23:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1724528C87D;
-	Thu,  2 Oct 2025 23:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AB928488F;
+	Thu,  2 Oct 2025 23:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xts0w2OB"
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="mf9i2fKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D74289821
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 23:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2985C3BB44
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 23:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759447430; cv=none; b=jP4O1DZyDTJHgtpdZBJJU/cdX/Y1D+cyQtpjsgQ6VaK9QfYQ6/zdNUmkjhQzA9iN1+aCXNU12bk0ueXVfQpaRG7g8LKFSQkVPpsZpTV57hOjrdU+9P+5LOlVvUgeV7Os4ZhoYUWkAZX0J4ZrZYVn1U7EGtWKik5ZiKMFTZpRI+k=
+	t=1759449366; cv=none; b=DJ/1cwCMAXQWl88exPjVp1C5V9I3nsdRdcdibTa5dTGUGYSRAaIvoIanyPneAbunn0q9ebFGR7MOozx2WEsh9OjMVhmCYksXsPUb+E49OhclXEuTwFv2waKi9o1ifNlYLZWgrV9ZQfbPPLlGrf0LX043nTVUm+H39ZmQ4wf7+0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759447430; c=relaxed/simple;
-	bh=nOMVwT72cCpGcGX15qYmwGV4jcaP3lFEyBnC4b2ruHw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hsCXgNI09ZTM+JJQxSJrNHiy/ZhfP+w/Q8Qo0uNK9DAitee8inswvsAzZnGREr41WpfShZTf7zAxIryCDBAx0Wg7cRVI7Y2JQeQYcfCkPAYMyUNkGDVwAWu3ZFCzGURAzOqCaRwaIfrkSWsOKb+7TTcvcd6M2DuuZKOCbY4TIUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xts0w2OB; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1360137b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 16:23:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759447428; x=1760052228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uvy7c1caOkRuXqR4gTnvA1e7HoOq2YmnWX/AduSHR6I=;
-        b=Xts0w2OBRkl4axRxwnizKAGBkr5+9nbadFLuUATvCE2F8JeAEo9mheBkx2+A2eZVPI
-         AviFr2IdJHQz//lAxd41/iQDjZY7xna+gHjkF6RcrsYxqK5RE1/GnRgDHbpSftKT7a+h
-         z6IsBwJW4U6dXI93pZflGNv16opYi7SBaC7AQXZfTg0b/qHB8t+OZkCmeFHBVjRmm1X3
-         qCL5GBCBrC9xLKCSWoMgvbj+GEDj+/hR1Xn5cq+tI1Ky4+6Ksb+U/L4lHq9L5Nrh47O4
-         fN1u6v9Pk6dVDh5esrQySslU8nzMcdaSrb2x0tMLVHQ+e1/XEh/kx3HUhNHTjTiZc325
-         H7gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759447428; x=1760052228;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Uvy7c1caOkRuXqR4gTnvA1e7HoOq2YmnWX/AduSHR6I=;
-        b=o51PIerDWrBDMqYWoArAo2QEsujxMZqFJtztw9E0wlmTBua9Uri6Ocq70AfKMcU53p
-         YF2B1fTlZLg6i4LDU5V73L+OImQyzhEkjKn6P79QiuACgdDVhLfmMpP2Drhu5yoEZqnx
-         5xlAA6hfqRw7GwGp0ZUIhpy8U0v5yQFl77PwPBZqR2vrkQoKDX44FLj7XE3b4hBz9eEI
-         mE5KySTheU4RWHjXbZrcbDb8V9MfzZ1MP5pShbDhdjgCXG0HzEcTnoy3UP8ELd/Sc3nQ
-         51wMPiPD74uOPKkqP2PPRaczLM6iU/zZZCgmo/32q2UevCOAHS+d31VpaXF3A7XimaIh
-         IXRw==
-X-Gm-Message-State: AOJu0YwIJ+v/L2TVQLWP/PMcqhtSuZn42jnSVK/ZVFZ6+5I709XXXBr3
-	lkEqkoE7ZFokUOFgdJYZw5/0KsqVerwvYSxxIHqTZZefikIbka+zbjDTenmboWo/
-X-Gm-Gg: ASbGncsMTRzCm6tXLLvMbxWsSdsliWOSNrtAp8ouY66Wh11jli3Us5JM822rjWeo6+i
-	wmX6S3RG0a7gbaBuRbosX1j3oFLGnymUvI+2NDbLRtQ3M++SAlOdy6N2a/g4E7GM2B54kb45EAE
-	yJporMbfjiI8s5LCxsFtbq1mcQiKA7xp64VzCWai26174snyoXfb9hb8cmCSUAeNGr4dLMKFIJt
-	G2WDTQwgRitczfea3zHZhWpKbBHgq3COuWEiA/J7xuWcWOhsQv7bhO7pRM80fKRBt75JCHb/kji
-	wnPuc/L/eikZefVEcrdu7BjU1wTQs2+oeCbPxCNxRfP0RGRF6uDR7st18Kq6pKsz2yYWfSNlTyK
-	GHPtzVO6wxM+7ZxDzSnm7DmFNfhUH0BOqhXqNCuqprOENbz8JyePKNQCzhxwsKC/C6jYhsMccEb
-	vjCefOLsxF0z2f46UeMdz2omydIA==
-X-Google-Smtp-Source: AGHT+IED1715mCa6muA00tzaJAIUYwL/txfIyf/f+YjgmKfe9Jg3tH8dykIAwOJr5bWJwjqUHsB4xg==
-X-Received: by 2002:a05:6a00:3c94:b0:78a:f4e6:847f with SMTP id d2e1a72fcca58-78b0220510dmr5840731b3a.6.1759447428451;
-        Thu, 02 Oct 2025 16:23:48 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:38c3:a5e9:d69a:7a4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01fb1902sm3148802b3a.31.2025.10.02.16.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 16:23:47 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] isofs: fix inode leak caused by disconnected dentries from exportfs
-Date: Fri,  3 Oct 2025 04:53:41 +0530
-Message-ID: <20251002232341.2396110-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759449366; c=relaxed/simple;
+	bh=Eb5OQR27ga/yjnkst0mpugvtgWDcxwNr0mU+lkYSMr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MP0ZveaQyG0+FfTIZ0FkSChnj/qhC03O9KCbEmJ7aO4e43MYckYv242rTFMe+W9Pu5oy/aNGSpQDPfj5ckMXn4lHMgfgEQV3WY6z2ndKOpEnwQ+1UChb7NgdKYpv0Ei1olDDwYLrWcAgXgEeTvkueNHt9tJSov0SFwFqZj1e5o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=mf9i2fKM; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+Date: Fri, 3 Oct 2025 00:55:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1759449351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c/yi1yEqAwTei7shT0eMG6OETQS6KDTsPMIjRznx84I=;
+	b=mf9i2fKMfu4NSJVwaGCCrDEaA3tvS7wZCFnwQDJpGc60+9Bm2wHVZ0Pk9KYAnESjj6Nogw
+	z5EWMrj7TINjpzr+30xi3LQRMpQMDAa4UNTsKFRdkNyC/Xu/g3zovZ12h7IiVppK7Y6ayl
+	4xc3R9peKElKrN6zWifdcweEW/BDgHcfuWEAS1EgsUn331MPc25syxXpd8SYIdyNNzDvr7
+	4PvpGqfe5MBlB9BkaWHuhK0xqksIuivH6bAxou6UQlqUSjcF1W/an9TTPifkVEP1aJxa/q
+	iIlrHuSI9/YYdP3f42uGIycvf1GxMQ5UGtHJzz8kL1SU1j/hsqRyVbqnTaLCXQ==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: George Anthony Vernon <contact@gvernon.com>
+To: syzbot <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
+Cc: damien.lemoal@opensource.wdc.com, jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Subject: Re: [syzbot] [hfs?] kernel BUG in hfs_write_inode
+Message-ID: <aN8RBYdn6lxRz6Wl@Bertha>
+References: <aN6laD5P8zq0F5ns@Bertha>
+ <68dea8c7.050a0220.25d7ab.07ce.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="0hSeNZu02imxeqa6"
+Content-Disposition: inline
+In-Reply-To: <68dea8c7.050a0220.25d7ab.07ce.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Thank you for debugging this properly and providing the correct analysis. I clearly missed the actual root cause. 
-I'll study your patch to understand what I got wrong.
 
-Best regards,
-Deepanshu
+--0hSeNZu02imxeqa6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Oct 02, 2025 at 09:31:03AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> kernel BUG in hfs_write_inode
+> 
+> ------------[ cut here ]------------
+> kernel BUG at fs/hfs/inode.c:444!
+
+Attaching a patch since I'm failing to reproduce locally on mainline.
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.17
+
+Thanks,
+
+George
+
+--0hSeNZu02imxeqa6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename=0001-hfs-Validate-CNIDs-in-hfs_read_inode.patch
+
+From 40db09869bfabf51593f9a638aff09c72d9c8f1e Mon Sep 17 00:00:00 2001
+From: George Anthony Vernon <contact@gvernon.com>
+Date: Fri, 3 Oct 2025 00:32:06 +0100
+Subject: [PATCH] hfs: Validate CNIDs in hfs_read_inode
+
+hfs_read_inode previously did not validate CNIDs read from disk,
+thereby allowing bad inodes to be placed on the dirty list and written
+back.
+
+Validate reserved CNIDs according to Apple technical note TN1150.
+
+Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+Signed-off-by: George Anthony Vernon <contact@gvernon.com>
+---
+ fs/hfs/inode.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index a81ce7a740b9..ab71493cf501 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -310,6 +310,34 @@ static int hfs_test_inode(struct inode *inode, void *data)
+ 	}
+ }
+ 
++/*
++ * is_valid_cnid
++ *
++ * Validate the catalog number of an inode read from disk
++ */
++static bool is_valid_cnid(unsigned long cnid, s8 type)
++{
++	if (likely(cnid >= HFS_FIRSTUSER_CNID))
++		return true;
++
++	switch (cnid) {
++	case HFS_POR_CNID:
++		return type == HFS_CDR_DIR;
++	case HFS_ROOT_CNID:
++		return type == HFS_CDR_DIR;
++	case HFS_EXT_CNID:
++		return type == HFS_CDR_FIL;
++	case HFS_CAT_CNID:
++		return type == HFS_CDR_FIL;
++	case HFS_BAD_CNID:
++		return type == HFS_CDR_FIL;
++	case HFS_EXCH_CNID:
++		return type == HFS_CDR_FIL;
++	default:
++		return false;
++	}
++}
++
+ /*
+  * hfs_read_inode
+  */
+@@ -348,6 +376,11 @@ static int hfs_read_inode(struct inode *inode, void *data)
+ 		}
+ 
+ 		inode->i_ino = be32_to_cpu(rec->file.FlNum);
++		if (!is_valid_cnid(inode->i_ino, HFS_CDR_FIL)) {
++			printk(KERN_WARNING "hfs: rejected cnid %lu\n", inode->i_ino);
++			make_bad_inode(inode);
++			break;
++		}
+ 		inode->i_mode = S_IRUGO | S_IXUGO;
+ 		if (!(rec->file.Flags & HFS_FIL_LOCK))
+ 			inode->i_mode |= S_IWUGO;
+@@ -361,6 +394,11 @@ static int hfs_read_inode(struct inode *inode, void *data)
+ 		break;
+ 	case HFS_CDR_DIR:
+ 		inode->i_ino = be32_to_cpu(rec->dir.DirID);
++		if (!is_valid_cnid(inode->i_ino, HFS_CDR_DIR)) {
++			printk(KERN_WARNING "hfs: rejected cnid %lu\n", inode->i_ino);
++			make_bad_inode(inode);
++			break;
++		}
+ 		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
+ 		HFS_I(inode)->fs_blocks = 0;
+ 		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
+-- 
+2.50.1
+
+
+--0hSeNZu02imxeqa6--
 
