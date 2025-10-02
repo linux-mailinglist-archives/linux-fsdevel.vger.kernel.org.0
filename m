@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-63225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE084BB2E0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 10:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E122BB2E43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 10:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB2819E09FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 08:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1DC4A31E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 08:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41592EFDA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2919E2EE5FC;
 	Thu,  2 Oct 2025 08:13:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8482EAB89;
-	Thu,  2 Oct 2025 08:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8257D2EB849;
+	Thu,  2 Oct 2025 08:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759392810; cv=none; b=mpWvZ0fEUN5KsWf8Fw56iEDHhLmzuUxjzOjJWeXqYJm5GyzemtJu69JOvUh5DUYlJZORyg8FiOlXPdnsLSqsBS8HkmLmtZYBtg8jDGynm+6tEkj4X54ZcF3epaycLQ9JEXkFPZl/lS1njeZAKeT0NdAqKhtU4k1yEFG/qICvoFA=
+	t=1759392809; cv=none; b=slZS15mlPcUt7O7pozG6/brYr6mAWW/kXxpeyEPhEM90t1yxXlx9eQlgC5kEpxfU6tu64+6tMh1yrCMkOmPxZwVpwXlsxqHeETRKE45IRVtToJIMId+LvzrB9fLTDBqQ42UfO75u83PkziyEN/R1r4z/n1Hysp+1AVs2fe1QqdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759392810; c=relaxed/simple;
-	bh=h//iPHlnVuvuWZaoIOCavmQljq7ds4KVfkx9Jf/hjms=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=SH/3Fo/sxpiB2bUc/l6F6l9PV6lEG/VuB7YBIKxnu/V6foiu6HVrJfDbMkJkMkr8n6l2nPecwQpaDQypmbMZpX+HxEPOn2kpqjTeMUfa4zCPPGSkYUOS//+zuD2Ut6pflo922lyrxjN5HaVW52CRjY060ZdcrbKMneYjpGWY/qw=
+	s=arc-20240116; t=1759392809; c=relaxed/simple;
+	bh=ARgkPBXeh3Qqcqmd0S+vaMsLgXB5DnOPrEodx89W1JU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=UrPyVJA1dHJYBKJfjd6bpVGreLXt3jJI/Sv3ay4RGKsCcLT2LQrSUKK+muYwJIFlCs4E9quiBUptArd610675aqtoOwvMmdgiJ7QtVbe7xOovwzdN3Cr/KYzdvD9VMl0dwnt/5ZO2UtRtWQltbSei0IuMP15wuK2njpbTFKs+Oc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-34-68de340dfdf5
+X-AuditID: a67dfc5b-c45ff70000001609-5e-68de340df6e9
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -177,44 +177,43 @@ Cc: kernel_team@skhynix.com,
 	rcu@vger.kernel.org,
 	linux-nfs@vger.kernel.org,
 	linux-rt-devel@lists.linux.dev
-Subject: [PATCH v17 09/47] arm64, dept: add support CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
-Date: Thu,  2 Oct 2025 17:12:09 +0900
-Message-Id: <20251002081247.51255-10-byungchul@sk.com>
+Subject: [PATCH v17 10/47] dept: distinguish each work from another
+Date: Thu,  2 Oct 2025 17:12:10 +0900
+Message-Id: <20251002081247.51255-11-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251002081247.51255-1-byungchul@sk.com>
 References: <20251002081247.51255-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzXSbUxTZxQHcJ/72laqN9W46/tSQ4z4MjGdOSY6F2OyJ4vTReMHZ6I2cLUN
-	ULQowrJlVQEZbpE0KUYq0MJSm1Id3hKVag2ChWGjtKEKgxXsZJ0ESrMGMAjYtRi//fI//3M+
-	HQmp6KdXSLS6s4Jep85VMjJKFk2zbparBjVbXZ3roFy8TsPQZDmCtzNmEkpbEhTMGTtYmJge
-	YCHh6UBQFTCS4Gy+QMBoexyBKTzMwLWRCxTEbL8gqI6YWRjxfgWJ0L8E9E6NIbANvydguPUy
-	grmqHKirdzEw86ybhGsmPwJrOETCm6bksLljEIHHfpGBnuFFEJyMMdBlusJANHCDgPEmBiwX
-	PTRcavidgaoakYKWV24WAqOzBDSK38CQLUKBr7KeANOtBwRM2xws2AzpYH7WQ8Pf9moWZsOZ
-	ELpqouB2tJuGrsGXNIxGjAwMdZbRcM/wigXxTy+CiWCYgHL3JAXi62TF078RrGW/UfDQ00VB
-	+dwEgh73DQYGnQkaDOa3NPhbffSX2djhuktgZ60T4Zl3RoRLK5NqH4uR2DNlofDTeh63VIdY
-	XPKon8UW8Rx22TNww8MRAlvjkzQWHT8zWIwbWWydeUN+m/GdbGe2kKstFPSffXFCpil7fpM8
-	7VYUea+M0waUWFSBpBKeU/G+jjr6o/3eF/NmuPV8X980mfJS7lPe9WtkPic53yr+ZWBTyku4
-	I7ylt5tNmeLS+YmrMSJlObedf94eJD7cXMs3NrXO35Em856wj0pZwX3Ol8ZKkh1ZsmOW8i7D
-	ffbDwnL+sb2PqkRyC1rgQAqtrjBPrc1VbdEU67RFW7Ly80SU/Djbj7NH76O4/1Ab4iRImSb3
-	p4c0ClpdWFCc14Z4CalcKj9h/0ujkGeri78X9PnH9edyhYI2tFJCKT+Rb5s6n63gTqnPCjmC
-	cFrQf5wSEukKA1p217KjQnIoZ1/+vsTC1dFdG4N75+4Ew48GOjuNUd2GP8YHTgpZGxY7PKea
-	G2uLBw7SGeZ7x97/U6ssxWmXb++MZN766b+KJyU18sNbl1lVbmlDVV7hmu171nyte1rnP0mE
-	dnfdWe60vdvvrVEtYIpKxnqXHPjh6Jm4eSiwPwubbduUVIFGnZlB6gvU/wN4eVhLbQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+5/rHK4OS+p0gWIg0U0rKl5MoojwkFT2oSwJ8pCHNryylWUQ
-	aLqU1mUNpuW0puISt8xcVkss0RzUMl2W3ZxzskxRG9SmmZe1FX15+b3P8/LwfHhFuPQRuVyk
-	yDotKLP4DBklJsQHdhRujNw6IN/kdMZDX0EbAQF/CQEV9y0UlDTdIqGnwYzAHShBMDVjwEFt
-	CxIwp7PT4J/+QkOw1Y6g1KnDwfKwAIOfjfMUjHX8QKD3eCkoGy0gwGe6gqB82EDDaGcCTLhb
-	SAi6vmHwYXIcgck7j4G3rRjBXGk63Km2UjDT1Y1Dmb4HQZXHhcNIY8h8aB9A0Fp3kYKv2mYc
-	er0L4V3AR8FLvYaCCWcFBt8bKTBebCWh0qBDUFhzn4LSyiYCbINPaXCOzWLQX6rDwNy0H9ym
-	YQIc2mos1C909WApGMoKsdAYwUB/rwWDaVM9Da9r+gkw5UeDoauXhKG6chpmPZshaMwGu/kb
-	Da7regIaJrrJXXrETamvEVy99RHGqd/OUZzltgVxM791iPPXFuKcWhtaO8Z9OFdkPcvVOsYp
-	7nfgPcW1ThoJ7lU1y93o2sjZyl00V/TsM50UlyKOTxMyFLmCMnZnqlh+6c1dPOep9Fyn5juZ
-	j4ILL6MIEctsZXs635Nhppg17MeP03iYo5jVrPXq8F8dZxwr2T7nhjAvZo6xxg/ddJgJJpr1
-	X/dhYZYw29k3He+wf5mrWHNj29+ciJDe63EQYZYy21i1rwjTIrERLahHUYqs3ExekbEtRpUu
-	z8tSnIs5mZ3ZhELfZLowe+MJ8vcmtCNGhGSREme0Sy4l+VxVXmY7YkW4LEqSWtcvl0rS+Lzz
-	gjL7hPJMhqBqRytEhGypZF+ykCplTvGnhXRByBGU/11MFLE8H1XHP/5xaTrtS0rC0bhjY4mj
-	OQNWR17S8b2Et2L9nqOJh7GzaGTDfGX9p1jvQa1Fk/LrfPMi0ZZAM286kmiLrJpNWuUZinuh
-	ObnJ9/xrjX+Snhp6bI6y7WlJXsv33TzkLR7/uWTlbvv2B37NMtu64gsRybGDn3piqlxu42CJ
-	29swIyNUcn7zOlyp4v8Aa9MXtkkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXSa0hTYRgH8N5zzs7ZlqvTEjqVUCyki2kaFk8XpLDgDQqCgrI+5MxDW80p
+	00yDatIF80ZZy/SoaV5aXrBm0XQT1NLKG/PSvLSZlmWZJllpucS80Lcf/+d5/p8eMSlPEa0Q
+	q7VRvE6r1ChoKSUdccv1lvn3qnz7473AHldNQbwpXQQTLoGEqdR6Bqar6hHcaU0loeRJHAFf
+	n48hmHYOEtA5PowgzWBD8PHGUxI6fo3S8NqQSENFXyUDxaYDcOfxMhDSLhNgKLUQIDS3i+C9
+	MYOBZ/o+BkzddQiqerwg91o+BenZDhqsVa8paK/MpEEvTIigrdhGQdlgFwGN9a8oKOhsJaC8
+	uYmEl8nVBDhShijo6LYgGMzIIqDB+YOBW205NJSbDCTYU+/RIMSlIIh/MU5C1k8/+FlcREPp
+	lB2BUNfL7PLFJdklCLsmUxF+PjxK4oLGYRpP/npD44oMJ4NzTGdxuXEDzrN+IbCp6DqNc12f
+	SeywW2n8raWFwRX92/BARxqBc/UG8qDHMenOUF6jjuZ1mwKCpaoBSw0d8Y2JuZaUzeiRlU5A
+	EjHH+nMDnZnov9umyuZMs2u5rq4/5Kzd2dVcefIn0axJttGDs7dunPVSNpB7e3t6rodiPbmc
+	OoGZtYzdyjW8u0vNd67iih9Vz/VIZvL2/sa5XM5u4a6OXiESkHRmR5BwBbYWZv5gOVdj7KJu
+	IFkOWlCE5GptdJhSrfH3UcVq1TE+J8PDTGjmSwov/D1uRmO2Q7WIFSOFm8zm6VTJRcroyNiw
+	WsSJSYW7LNjoUMllocrY87wu/ITurIaPrEUrxZRimWzz+LlQOXtKGcWf4fkIXvd/SoglK/Qo
+	yRrSh2vzFrl+D6XsDw744CPprnI6913cK9csWXz/4Y6xpnUtHH0z38ys6Yk6mhyISo2C2TLl
+	lqf0LjKPrPc+cvVSoCuo94Fls3kwseD0iLZnXLenM6r51sEQbXtN//bMD4UhcQ0Lv8te7K5U
+	x5z6fdiLCwsNOu2kpt84OlCsh4KKVCn9NpC6SOU/yH4ksyEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbUhTcRTG+99797/baHVZQheLipUVYS9CxbEieoNuRRF9KSrIUZe2nBpb
+	WUaSb0upLB1O05u1lIa5paZl6VrZwlEtyWnvOpexNNFlpBambm1GXw6/8zznPJwPR0zK60WR
+	YnXiCV6bqNQosJSS7lqbuVS2sku1wtUsg3fpTRSMDOdQcK3aiiGntlgErVUWBN6RHAS/xwQS
+	9A1BCiYMThqGRztoCNqdCArdBhKs99IJGKoJYOh/9hOBsduHoagvnYJB8yUEJT0CDX3NW8Hv
+	tYkg6Okl4P2vAQRmX4AAX1M2gonCeLhRVodhrOU1CUXGVgQ3uz0kfKsJmfecXQjsFRkYvubd
+	J6HdNw3ejAxieGG8iMHvvkbA9xoMpgy7CEoFA4LM8moMhaW1FDR8bqTB3T9OQGehgQBL7U7w
+	mnsocOWVEaH7QlN3Z4JQlEmEyjcCjHdsBIyaK2l4Vd5JgTktCoSWdhF8qSihYbw7BoKmJHBa
+	emnwXDFSUOV/LdpgRNxv/WWKq6yrJzh92wTmrNetiBv7Y0Dc8K1MktPnhdpnA4Mkl1V3irvl
+	GsDcn5G3mLP/MlHcyzKWy29ZyjWUeGgu6/Enevea/dJ1R3iNOpnXLl8fJ1X5bE/x8e/06fOX
+	rtNp6BG+gCRillnJtk1UozBjZhH74cMoGeYIZh5bl9sjCjPJuGaz79zRYZ7BbGY7CoKTuxQT
+	xZqaBTrMMmY1+9J7lfqXOZe11DRN5khCenu3a1KXM6tY/WAWkYekJjSlEkWoE5MTlGrNqmW6
+	eFVKovr0ssNJCbUo9E3m1PH8h2i4fasDMWKkmCpzR3lUcpEyWZeS4ECsmFREyOIqOlVy2RFl
+	yhlem3RIe1LD6xxolphSzJRt38vHyZmjyhN8PM8f57X/XUIsiUxDh/mOB1FnHZskuv5T+X6y
+	6Llv+tX7e7Y1OlxO4es5Z0zpDv9zx8edkhw7J3xJjaX3WS1Zqi0FHfho9OwHT4VIZmFr6fyN
+	Tz4XrCmO4zdWxV6x9QcCrkMSY5eKppgVgYPRP1Lb6g8UaOYcWxBL3m70qm1Nlt7s8r4tQ8WL
+	c3uNCkqnUsYsIbU65V94koK6SQMAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -222,82 +221,38 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-dept needs to notice every entrance from user to kernel mode to treat
-every kernel context independently when tracking wait-event dependencies.
-Roughly, system call and user oriented fault are the cases.
+Workqueue already provides concurrency control.  By that, any wait in a
+work doesn't prevents events in other works with the control enabled.
+Thus, each work would better be considered a different context.
 
-Make dept aware of the entrances of arm64 and add support
-CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
+So let dept assign a different context id to each work.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- arch/arm64/Kconfig          | 1 +
- arch/arm64/kernel/syscall.c | 7 +++++++
- arch/arm64/mm/fault.c       | 7 +++++++
- 3 files changed, 15 insertions(+)
+ kernel/workqueue.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index e9bbfacc35a6..a8fab2c052dc 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -281,6 +281,7 @@ config ARM64
- 	select USER_STACKTRACE_SUPPORT
- 	select VDSO_GETRANDOM
- 	select VMAP_STACK
-+	select ARCH_HAS_DEPT_SUPPORT
- 	help
- 	  ARM 64-bit (AArch64) Linux support.
- 
-diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-index c442fcec6b9e..bbd306335179 100644
---- a/arch/arm64/kernel/syscall.c
-+++ b/arch/arm64/kernel/syscall.c
-@@ -7,6 +7,7 @@
- #include <linux/ptrace.h>
- #include <linux/randomize_kstack.h>
- #include <linux/syscalls.h>
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index c6b79b3675c3..0e05648b4501 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -55,6 +55,7 @@
+ #include <linux/kvm_para.h>
+ #include <linux/delay.h>
+ #include <linux/irq_work.h>
 +#include <linux/dept.h>
  
- #include <asm/debug-monitors.h>
- #include <asm/exception.h>
-@@ -96,6 +97,12 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
- 	 * (Similarly for HVC and SMC elsewhere.)
- 	 */
+ #include "workqueue_internal.h"
  
-+	/*
-+	 * This is a system call from user mode.  Make dept work with a
-+	 * new kernel mode context.
-+	 */
+@@ -3153,6 +3154,8 @@ __acquires(&pool->lock)
+ 
+ 	lockdep_copy_map(&lockdep_map, &work->lockdep_map);
+ #endif
 +	dept_update_cxt();
 +
- 	if (flags & _TIF_MTE_ASYNC_FAULT) {
- 		/*
- 		 * Process the asynchronous tag check fault before the actual
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index d816ff44faff..96827b999d18 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -26,6 +26,7 @@
- #include <linux/pkeys.h>
- #include <linux/preempt.h>
- #include <linux/hugetlb.h>
-+#include <linux/dept.h>
- 
- #include <asm/acpi.h>
- #include <asm/bug.h>
-@@ -622,6 +623,12 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 	if (!(mm_flags & FAULT_FLAG_USER))
- 		goto lock_mmap;
- 
-+	/*
-+	 * This fault comes from user mode.  Make dept work with a new
-+	 * kernel mode context.
-+	 */
-+	dept_update_cxt();
-+
- 	vma = lock_vma_under_rcu(mm, addr);
- 	if (!vma)
- 		goto lock_mmap;
+ 	/* ensure we're on the correct CPU */
+ 	WARN_ON_ONCE(!(pool->flags & POOL_DISASSOCIATED) &&
+ 		     raw_smp_processor_id() != pool->cpu);
 -- 
 2.17.1
 
