@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-63204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CD9BB2450
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 03:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4C5BB263E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 04:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4699D3A38F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 01:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95924A2FCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 02:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544A586250;
-	Thu,  2 Oct 2025 01:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12522874F5;
+	Thu,  2 Oct 2025 02:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mgDTtnKa"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TBaOH67e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A1639FD9;
-	Thu,  2 Oct 2025 01:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E44F24CEE8;
+	Thu,  2 Oct 2025 02:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759368522; cv=none; b=eLZROFc0ZvtFfFPwPcT22XoNJjG2XL09lBbbRvITqLgJ/uqmZrs0aKLps3MpBS6nTkUp2TZBy5/JsV7R16F76oFuVWr0ot8T3S5VfjyyKHf1ipWY6ILHLp5at1rTXtwQKKQkl0/uOoLsjpWUe6GQUzB7QyzqXl6wv+8/W5psZMI=
+	t=1759372624; cv=none; b=X0Bm1Zjts+F1Wmt1jqv2joz/WK6U32JgpGq1KnlLjJbOq50HLxMtG4H6JE3l+kY+Sqwh/a0gKLa0Qsx9FKkJ51inRN+Qs4H5pMVNqJp6NItYSz4cGZjZ3mGbE2NkqPZt3TRmXw06KMinClDUfosIWBkb+CIW3sxA7213oa0+efM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759368522; c=relaxed/simple;
-	bh=GDw2hhC18B0vG17fcYodmwY3BvS34Tx45EDeiSEF3J8=;
+	s=arc-20240116; t=1759372624; c=relaxed/simple;
+	bh=KtziNFN2HjCmKyFttsjFKPM+bPdEFJbnW6oLxKpZjAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+7lOriL1ehSh0YCtBZcetvlyZhucpQbaDewwfVoMwE9og2BJLHn4c3xfJsbCGvWgyx08hQEJAFqtCDAqwhd9aLqBr7KlpAiLr8LN1ijMivndjFO3E/dtFrMW+eBuyUVHEtDoJJ9XpfFzn/7uzIyiMKTEzmZD/HjVR8u3D5zSJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mgDTtnKa; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRqVeRAfvY0GX2fI6kQhiaGRJ1yRKXwE0WzuWQo9zF50dKNsnWATVwC6McT68pbexIrWLZYOWWVLi9YcQTLzV3D6huNZ1mAz+KrLWJbtfg5yS18VUwHbZPmvA+UH3JISacE4Xmpj/BZz69uDsu7l+kXES/jcAqDVycCSRNhY2Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TBaOH67e; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GDw2hhC18B0vG17fcYodmwY3BvS34Tx45EDeiSEF3J8=; b=mgDTtnKaXu2XHTT4ekUgFIPVE5
-	K3K+gsbUdIC2NhfRPB1RmvvMqFxgrXTdiPKnaOoFMDUE6Br4LPM3zpmh1ruZrHksjTFMLjhkT14k6
-	9+gazCS6aDORwwmVj0hpiNzplxHZrhonpYWcwQVJx1jKvHZ/VN6D6sOH48PowwrKgY4fKbsRIQiLV
-	zEudFdLdVf78P4SFixTOHG8I77HGEuLBa22VTOCJoIh2y8yGg/Hsxi5eS/hC81UmJWlSHWx+fz/Gs
-	J3p7lk5xrrnvseZPp1QaX8zD/tzbW2poypeQPg/iRIQMOf6g5OOdU5VR3Kc3nZSHi4ByHo+MyQjGg
-	0YGpmVZQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v487Z-00000005Iat-36G8;
-	Thu, 02 Oct 2025 01:28:37 +0000
-Date: Thu, 2 Oct 2025 02:28:37 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: torvalds@linux-foundation.org, ntfs3@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] ntfs3: bugfixes for 6.18
-Message-ID: <aN3VRbTc2v0kYS5v@casper.infradead.org>
-References: <20250930130833.4866-1-almaz.alexandrovich@paragon-software.com>
+	bh=1PtrvZw9Xx0nfWQJFaBeBCNE0Kgw4sZ0jqy1AeaLn9g=; b=TBaOH67eOfKfJRh5NoIukfzqA8
+	cudUZlZHBZ/+iywfg6GN+cpMDPZHqw6MPXF42/6clUfRCmd1S/24oQSFYKL4zSTgp7BnYuEPkow4V
+	q38T7PJm/YsccTuNPY2ub8UuW+MHPC0vXxc1A8LUqyM8eIXBJyFsz7Puw8Gx7cX3XZCQ5MUwdqr5h
+	kyowmUd7whkryT3Wq06SGILfIgcwvd00taUOI+8wcMUkO3UZkp4m7BL9K6YOaeyYREPbwZYdLyeMV
+	X5ewq/RBEPB3f6nCv83qDvds95uOzjtaNH/HhFpnNs8PXKp22Tmzu5090De2fJhDKLcWiclje02Te
+	89nx6Bpw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v49Bh-00000009GBr-13zP;
+	Thu, 02 Oct 2025 02:36:57 +0000
+Date: Thu, 2 Oct 2025 03:36:57 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] init: Use kcalloc() instead of kzalloc()
+Message-ID: <20251002023657.GF39973@ZenIV>
+References: <20250930083542.18915-1-mehdi.benhadjkhelifa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,13 +62,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930130833.4866-1-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20250930083542.18915-1-mehdi.benhadjkhelifa@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Sep 30, 2025 at 03:08:33PM +0200, Konstantin Komarov wrote:
-> Please pull this branch containing ntfs3 code for 6.18.
+On Tue, Sep 30, 2025 at 09:35:37AM +0100, Mehdi Ben Hadj Khelifa wrote:
+> Replace kzalloc() with kcalloc() in init/initramfs_test.c since the
+> calculation inside kzalloc is dynamic and could overflow.
 
-What happened to
-https://lore.kernel.org/linux-fsdevel/20250718195400.1966070-1-willy@infradead.org/
-?
+Really?  Could you explain how
+	a) ARRAY_SIZE(local variable) * (CPIO_HDRLEN + PATH_MAX + 3)
+could possibly be dynamic and
+	b) just how large would that array have to be for it to "overflow"?
 
+Incidentally, here the use of kcalloc would be unidiomatic - it's _not_
+allocating an array of that many fixed-sized elements.  CPIO_HDRLEN +
+PATH_MAX + 3 is not an element size - it's an upper bound on the amount
+of space we might need for a single element.  Chunks of data generated
+from array elements are placed into that buffer without any gaps -
+it's really an array of bytes, large enough to fit all of them.
 
