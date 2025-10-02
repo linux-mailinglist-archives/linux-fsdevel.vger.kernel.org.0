@@ -1,174 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-63311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37813BB495E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 18:45:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79662BB4982
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 18:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39D432142E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 16:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D7719E02BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 16:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D50239E9A;
-	Thu,  2 Oct 2025 16:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC6626B777;
+	Thu,  2 Oct 2025 16:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="MnCNTtKy"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AxlQeLEl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C90238C1B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 16:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23D8239E9A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 16:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759423546; cv=none; b=JMhRRod6a3sp+HEuPeAxwqqexsFEgH+WqryzfhKQ2Jdx4xLdxVBDXPPuHNZp2G63b7MlWJBMx9Vre6nXUhUSOG0pjgrelX/2+RHDrU0eWo0mAeF/Ts86oKGpr7g6hc2kTvrvoBcy3wLs94nAUV8mzDrSmqZ1AV9WEGAUE8RUVKo=
+	t=1759423781; cv=none; b=CM3kq1YEli6F9hHHFvnS+ckg5qX7BpByWkYXnG+a3W2e9ZrpvIfZnsS77ggiaAFuWD2QaJ+E+srAiNM2vs9TOQo/XJpSVeQWPV0m3le8+NAU9Ty7HTME6WxiliFFjwjbeFyzJP0QRycgdqCq4qxgTlgbIV5w7o3Kj8FdtPFCdCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759423546; c=relaxed/simple;
-	bh=1A9QR3g98F/jojxQcsQCrmr26ivi3VklZB9Uaf1MTlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nO2OXIhx3wC30oq3M2IdAws56rsduLup1vHLHLZrZ1ld1cMfdOMv8KSg2ZC5Qz47BzslKcc0jMyYFW3tRYv8DylwIY9s/QrZgDpMTP3XSfyM0U5pjFAosgxG3V8QxKBAOGlY5ORYwVb5udQPKYWSi45qPIKcgJMUqw3co/qUYBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=MnCNTtKy; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5579235200so884207a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 09:45:44 -0700 (PDT)
+	s=arc-20240116; t=1759423781; c=relaxed/simple;
+	bh=GPNKqk2IjCezt+iOiIGHZBvYwRYM9eI/at8SyT0aJvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CI8AqV63l+ktcxO+X9GbKFKYVsy7YX4P9DgEBZZipUYy2VANoF9tgGlrq2nlRuT1EkaycpkpesAyfTzj1iQB1YP4Iq2rV0HWnz9XGcc/PL/L9wBudxN7GCrYeCRWxJGVPV7L96Xak7sAOuQK6pFHZ3B4jDEt3yP1tU8bqR55nxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AxlQeLEl; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fc89cd68bso2233105a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 09:49:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1759423544; x=1760028344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1A9QR3g98F/jojxQcsQCrmr26ivi3VklZB9Uaf1MTlU=;
-        b=MnCNTtKyaUFuYYeEXqZEKsPn1vNDgYmRgHmoSDQ8pqXwUSDg16tnaJOgTbmxgYCSvL
-         ttR2mJcpVSyIWsNEzqKaewCXI+Uay0LF2DDWupFbx5qC+TzrL3zZWA9hdFKOXXZVA5qK
-         Y1FaX6+H91TwLVFtSs9nB4NLFg/L8P8mEIWc7t+8xMfrysxek/vB8TIdxtYPttEjse2z
-         Y55kKHaAckwEyWi/CGg8BQ2bDzcVi95jfBDWStSUhFArx5zXdaw2gxxGx45GVeMuVQ4x
-         DVR4wQa2JaTxA7N3eLWIVOtBzIDk3bxnp+uXhzQhEyT9dpbD3pRdCf9WzKl7ERe2SexX
-         7DcA==
+        d=linux-foundation.org; s=google; t=1759423777; x=1760028577; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ri4QyfvFryudbRTr4zjJak2/cwqBuXGVPepccBH1HNc=;
+        b=AxlQeLElIi1tgzW0Xa49BWGvyXrG6bFPHJtslsFFETI4dTNNDjRuAzVayqe7DRxthj
+         bobx66wtxCU+Qt2ArxD4Va2QDhZJD6ONF3umpFSCbbRQP5AXPHeK3hVAuUukuwcD60uK
+         XgS+hhJsYKOkHjWqkqRdmpgvVvYaEvg2kgCxU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759423544; x=1760028344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1A9QR3g98F/jojxQcsQCrmr26ivi3VklZB9Uaf1MTlU=;
-        b=AWwYrg+un/kzFgnlX2lAPZ5mltsO7q06jLMDUeNsYW8oqFB+4eiYrtW2QHbvpWgIB2
-         rKmY/W1xhNzWXlyPFlE5FlJ6q/uz3Es6M3tWslK4QCa33z66IqkBAk8WEwtms6Nf1M3w
-         ZP+6QASbyDCsJwZHf/OJQ5pR0CTG0epO+uaRIgLCaGXJL0IwfGxj+RYt8LTremWg2KVM
-         W/qV2ksDOb3RmL8uQ64/E84CjW+9GbhXPdN7bK3+29cF+QoCWHcYRP1sIzIP86DfJXPP
-         BNUzK4yRIZIsjd/6y7LQUCeWZc3zEUi4hJhfhw71MIlT/SxxKAmag+ukmnRe6JK6OB9M
-         mJkA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9zmUBybCpcMTs7ITcFO7dmtVOg41KqV6Q9w1JMOHI5CCqxY9WcX+LKZb7nOgsSZoe6olliE9VDhoJLhyn@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCBUH5fpyNjY0YcnAyswAqPW7HiqJdkG/BaGUGw9JiDdo9uYNJ
-	y+ZJ++Jv3JO4gGQGD6GdSdpEkj7x/6N9KxJQ+McfCBAX16KSkqFRCBRDDUtlbOkUI/g=
-X-Gm-Gg: ASbGncsy+qAO99xctBwW0DcRxkLZbJqukrMZawth++zYmVC3r56iMRHM10Zq8UnWdjI
-	E6hBMT57PjPbobRF4c1Ltvp4ve8Xo+T+/9iuQPaBlWxcF3uq2CODfy0vH6qOBo1RM89hGKgAERc
-	W0fv8yx7ZXmfiFO3NtNYyD2PqbCMwchbh3J1IWG0FyPssQRYPZOmC2z2BvaYZgp/8YS0HkmJ6Ep
-	sthzLrBCHSlz1CJDEg9vXyoZ4uSMIx0Kb7iv1mcSzZf8/q3xQozRt1tQPlOWgNMB+z2KVZfKei7
-	o/E+wYdvv8Zs3zRZvf/TczxHlrLHiBS0sxC83wLSORQK+x47AXyR7v2uHXiuwwrITcsmfTjcpZz
-	M70/yo3UdAlGVlQhA9F2rrY7VB8xmA/5dIVLMwICFZtt/fN26aJCeKIiE
-X-Google-Smtp-Source: AGHT+IGOeNAivntNqMaBDACXUIJXINgHBVnHmalDozgA9lIHXQF1UAZCwzUqmrzChLzk9pEqivj7cA==
-X-Received: by 2002:a17:90a:e70f:b0:32e:e186:726d with SMTP id 98e67ed59e1d1-339c27a1901mr8380a91.31.1759423544003;
-        Thu, 02 Oct 2025 09:45:44 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339b4f3ceedsm2812742a91.18.2025.10.02.09.45.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 09:45:43 -0700 (PDT)
-Date: Thu, 2 Oct 2025 09:45:40 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Charles Mirabile <cmirabil@redhat.com>, pjw@kernel.org,
-	Liam.Howlett@oracle.com, a.hindborg@kernel.org,
-	akpm@linux-foundation.org, alex.gaynor@gmail.com,
-	alexghiti@rivosinc.com, aliceryhl@google.com,
-	alistair.francis@wdc.com, andybnac@gmail.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, atishp@rivosinc.com, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, bp@alien8.de, brauner@kernel.org,
-	broonie@kernel.org, charlie@rivosinc.com, cleger@rivosinc.com,
-	conor+dt@kernel.org, conor@kernel.org, corbet@lwn.net,
-	dave.hansen@linux.intel.com, david@redhat.com,
-	devicetree@vger.kernel.org, ebiederm@xmission.com,
-	evan@rivosinc.com, gary@garyguo.net, hpa@zytor.com,
-	jannh@google.com, jim.shu@sifive.com, kees@kernel.org,
-	kito.cheng@sifive.com, krzk+dt@kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
-	lossin@kernel.org, mingo@redhat.com, ojeda@kernel.org,
-	oleg@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	peterz@infradead.org, richard.henderson@linaro.org,
-	rick.p.edgecombe@intel.com, robh@kernel.org,
-	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
-	shuah@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
-	vbabka@suse.cz, x86@kernel.org, zong.li@sifive.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <aN6sNFBzx8NPU3Th@debug.ba.rivosinc.com>
-References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
- <20250926192919.349578-1-cmirabil@redhat.com>
- <aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
- <CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
- <aNcAela5tln5KTUI@debug.ba.rivosinc.com>
- <lhu3484i9en.fsf@oldenburg.str.redhat.com>
- <aNxsWYYnj22G5xuX@debug.ba.rivosinc.com>
- <lhuwm5dh6hf.fsf@oldenburg.str.redhat.com>
+        d=1e100.net; s=20230601; t=1759423777; x=1760028577;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ri4QyfvFryudbRTr4zjJak2/cwqBuXGVPepccBH1HNc=;
+        b=w05zfrlCbM0kZ1DeYLr9h+HZp5X6KQNb3p1mqdqNXta++F9wZhTPyrb9t+gemcvTU1
+         9CxVv5pilo2IAY5+uxSmmkRJaJXezwVnIEEhj1IkZqio5JVnUIcAx30P5M+Cb5CYoy0Q
+         GdFXUSOxByEdEJL4T21pLLihFW5wHilM8450p7ArZglujQvPE2XJcLlP9BeVl+TRBGDt
+         iri8fB5PjZkp61zZiEq87aQxaom2daz9Omrm/TX/Batm0o2DRXs3WC+/7Ob36i5VdBvV
+         gakBQ4bCWuPbOYfBiJZAjArVjrtb/j8Wb5rDa789k6LLg4HwjNStmjM7pqs0hIkUrA0A
+         bCVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDIhyNyIIZh2f8GJ6Ou8HaOxhuj8LvX+nZEWNoQWqVI8gqyksmnxJ0FysCWRiL+ANeqIAXmuh3KqAusRq1@vger.kernel.org
+X-Gm-Message-State: AOJu0YypBdU9EHHx3uvn6dflT/Fow4X7bCHDPctC0sDnTVAz1k/dXs73
+	dO4BEMVxijC6KnkCc/GEyVm1+A+RlZF7PBShnV+3+cNreTMSttEMlHUd3SLTCekog3LYTepTp1S
+	/m2gTBB4=
+X-Gm-Gg: ASbGnctJg6MclDdghp1I6XTaweRhBZeOmE80bD6/dT02sqFcgvL7UwKFn71Yx8m/2vL
+	ddVrCwXeGTyQ2U9+Ezerk+XukaVYPeFPp8Ln+WWkd5xBuJxr521ERiPW3PisSHwE0TuHZF+yxs9
+	vuCAwkiAp69sTNe/gYKjhEXe8IzRPmWwmTOU8gPOQD4XWCJtFjQlOynt9mY2YeVbuC9oyvqYeCW
+	hH50d2v8pMtp/DxXKVV5StQY91r3PUc/2GWSrey7JVM6QkWfeRpI9gcfcH97HnSJabRhslkxEJT
+	tlP82fCO6HegQ5jyynPOFPaScRjsrjI9Y9zW3xszklzPOuOxpN8RVl/dHpKzV1JmcCQ2eSrAn1f
+	s8Qzv98eq0QMr6ti8JbxXl5bt0Kg5CcE59OakLDUDslYr7V5IiyPYAIauIhfq+4a8XpMDl02V6U
+	AVHRVrijkU6e3Gdx/EOX1UPyecWldv3jY=
+X-Google-Smtp-Source: AGHT+IFjZMaUKm3fkOwN4tSWLPRCFlw2MmEZJD9MWb3aSVIwCUDbLLNqeCTOL3BTGtukOV09bb2jLQ==
+X-Received: by 2002:a05:6402:26c4:b0:637:ec31:be93 with SMTP id 4fb4d7f45d1cf-637ec31c3cfmr2277401a12.2.1759423776878;
+        Thu, 02 Oct 2025 09:49:36 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63788112bbdsm2170421a12.41.2025.10.02.09.49.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 09:49:35 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b3e25a4bfd5so249102166b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 09:49:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXKFusslhwg2IUB3uxWm7/7o95FaIp7J4IdR3H2AhLYGXZSn+50VvAwN4gaQ3wmECGsPtzNg6wISWvoh65J@vger.kernel.org
+X-Received: by 2002:a17:906:6a25:b0:b3e:c7d5:4cc2 with SMTP id
+ a640c23a62f3a-b49c39360f6mr14187866b.38.1759423774528; Thu, 02 Oct 2025
+ 09:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <lhuwm5dh6hf.fsf@oldenburg.str.redhat.com>
+References: <20250730074614.2537382-1-nilay@linux.ibm.com> <20250730074614.2537382-3-nilay@linux.ibm.com>
+ <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com> <bfba2ef9-ecb7-4917-a7db-01b252d7be04@gmail.com>
+ <05b105b8-1382-4ef3-aaaa-51b7b1927036@linux.ibm.com> <1b952f48-2808-4da8-ada2-84a62ae1b124@kernel.dk>
+In-Reply-To: <1b952f48-2808-4da8-ada2-84a62ae1b124@kernel.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 2 Oct 2025 09:49:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjf1HX1WwREHPs7V_1Hg_54sqOVSr9rNObudEpT9VgQDw@mail.gmail.com>
+X-Gm-Features: AS18NWAX_XbsCSn1cSvTBt8Jd93mNINtxqs7sE9J-usQvnLgAAKgdff6fAuW3Hk
+Message-ID: <CAHk-=wjf1HX1WwREHPs7V_1Hg_54sqOVSr9rNObudEpT9VgQDw@mail.gmail.com>
+Subject: Re: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning
+ caused by lock dependency in elv_iosched_store
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Nilay Shroff <nilay@linux.ibm.com>, Kyle Sanderson <kyle.leet@gmail.com>, 
+	linux-block@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, hch@lst.de, 
+	ming.lei@redhat.com, hare@suse.de, sth@linux.ibm.com, gjoyce@ibm.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 02, 2025 at 01:45:48PM +0200, Florian Weimer wrote:
->* Deepak Gupta:
+On Thu, 2 Oct 2025 at 08:58, Jens Axboe <axboe@kernel.dk> wrote:
 >
->> On Tue, Sep 30, 2025 at 11:20:32AM +0200, Florian Weimer wrote:
->>>* Deepak Gupta:
->>>
->>>> In case of shadow stack, it similar situation. If enabled compiler
->>>> decides to insert sspush and sspopchk. They necessarily won't be
->>>> prologue or epilogue but somewhere in function body as deemed fit by
->>>> compiler, thus increasing the complexity of runtime patching.
->>>>
->>>> More so, here are wishing for kernel to do this patching for usermode
->>>> vDSO when there is no guarantee of such of rest of usermode (which if
->>>> was compiled with shadow stack would have faulted before vDSO's
->>>> sspush/sspopchk if ran on pre-zimop hardware)
->>>
->>>I think this capability is desirable so that you can use a distribution
->>>kernel during CFI userspace bringup.
->>
->> I didn't get it, can you elaborate more.
->>
->> Why having kernel carry two vDSO (one with shadow stack and one without) would
->> be required to for CFI userspace bringup?
->>
->> If Distro is compiling for RVA23 CONFIG_RISCV_USERCFI has to be selected yes,
->> kernel can have vDSO with shadow stack. Distro can light this option only when
->> its compiling entire distro for RVA23.
->
->I think it boils down to whether you want CFI bringup contributions from
->people who do not want to or cannot build their own custom RVA23
->kernels.
+> Sorry missed thit - yes that should be enough, and agree we should get
+> it into stable. Still waiting on Linus to actually pull my trees though,
+> so we'll have to wait for that to happen first.
 
-How will they contribute to CFI bringup without having a CFI compiled usersapce?
-If their userspace is compiled with shadow stack instructions and they can't take
-this userspace to old hardware else it'll start faulting as soon as control is
-given to userspace (first sspush or sspopcheck in userspace).
+Literally next in my queue, so that will happen in minutes..
 
->
->Another use case would be running container images with CFI on a
->distribution kernel which supports pre-RVA23 hardware.
-
-Container image with CFI will have glibc and ld (and all other userspace) also
-compiled with shadow stack instructions in it. As soon as you take this
-container image to a pre-RVA23 hardware, you won't even reach vDSO. It'll break
-much before that, unless kernel is taking a trap on all sspush/sspopchk
-instructions in prologue/epilogue of functions in userspace (glibc, ld, etc)
-
->
->Thanks,
->Florian
->
+           Linus
 
