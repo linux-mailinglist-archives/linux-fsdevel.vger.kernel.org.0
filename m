@@ -1,146 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-63322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CD7BB4EE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 20:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045FEBB507A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 21:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC779423418
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 18:48:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8AD165E15
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 19:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5EA27A446;
-	Thu,  2 Oct 2025 18:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUMrSvKv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF23D2882D0;
+	Thu,  2 Oct 2025 19:42:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD71B15539A
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 18:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9996128726E
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 19:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759430910; cv=none; b=VfwZ4dUk2wEuu5hw/l01zft9O7Uz7hL7o8fzb3i3r+CoIz9WZWpmdLjHR6EEbR+I2fIsF5Cu87/yPf2OJtYFEALmB5yZMV5XyFKx0UtNnmv2A9QFtboLrNSJKRbp3GgFoEC8Pi744vFqoiwoCdZ/l577eXl6SxFijyoGpvtRVZA=
+	t=1759434150; cv=none; b=OsvKSbLRnRXc5v/CDhKug51SDjzDeUfvibTrOkQ/usZxHJfowQpgnVUbROPisbWrceuCVQKJ5wHBI7KwqsFWknNzmbppK+vUVy+OAtwNIkJmswQrpWMCJSTuuLKxQWoFg1M3NKpNKN7AEfF0lMrayMOGBqs2Gp8uHV1hGxCBDY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759430910; c=relaxed/simple;
-	bh=doOvg/9J4AUYwzmUXltPYDkCP5ehIFVQlI77JtYdodY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AIXD0EvowPucq+wlaPO9wITCHH/czYZFSBRrQ2lBjx83ExMbd4xhCKKYJt6qiNG22xSITT0XAVo1m3rfQKEqJqSrCER2amamgQ4sPIrYiUVQq4EwpBB28Dv1TRBC5MVn9pQGFjuEse3M6JOHBYNetUCod+w/3EoOMcLqFY62juI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUMrSvKv; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso943722f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 11:48:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759430907; x=1760035707; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fgjf4Q8TmMxBgFclVgV3Hi99Hhu3hDBuYkmCSxYCGGs=;
-        b=VUMrSvKvH42kNeYxO3CURO3jIlY+hKi5ZVACWW0HOxw8sMp61LVIQzM3vFNTY9s9ns
-         uNspZRAb5hWzaHMugEmjLMKauzhoseYEG6MvWENkXZ/dDvgIi+y1aDKUMmmzrFDozJwO
-         YrS7yDwGbU5KhrxT+Y+YTHEFhfHTwbBOdBc68EjzNryhjRExhJnQ9KYrvovc40yCEvJ8
-         mYvkdUE0uWAiN+/WKqwFzhroI0bxR39mCddIFsu7OGpZUTXSBFKO5G7F8VDGdW50csHj
-         CWLfIqmGKWxp8ISTUFniitcJegdmmvpMk7SVESOOzJ5VyFYyC7/pzzBGqxI0Q9Uph0Kr
-         iaAA==
+	s=arc-20240116; t=1759434150; c=relaxed/simple;
+	bh=3Dp6vEI+NZmOP+OmAZzPl19dhORww3b+5ZehyD+d1y0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eTscShU5oeuGicfTa047F1c43/LRDZEYq+/GA2kmYKnq8/o/jkl3G8mjZbkCoWf7NplmeQ7iuEZ/zpgv7vg+ZP3nGFjoeF2bWi6xvJnhv0uU56EtIP5iaIHj+jAsc1F41fsiO/VMiQ4Pk6vJb2JKxMANKJajek5hjWMvex893Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-42d8a33a27aso35356365ab.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 12:42:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759430907; x=1760035707;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fgjf4Q8TmMxBgFclVgV3Hi99Hhu3hDBuYkmCSxYCGGs=;
-        b=wCfx2hZ4Z+CTQsv3hLofbsphg8zdT4tRsbOkI6bipsHBI/5iPzWnqWnQEVY4qS9kCO
-         sZU6D3f+zRngPEuWLqEtxJDd1u3c+t5iJ6MD3DfLBMNAUN4fXKrwa4ULFSAH43+GzVMt
-         dRsOd/TSYRW0Ev9/2qS0rKIsYVbKNZ8UrzBySHpDswpOZqn/M/90IAzhdTaE+4cdndAU
-         O4i32n3PL0bEiRSNpUb720zhswOzsmtKkmE3Gal35kT5uC6fkGgOp1sIrMHx1+Qsz7z2
-         ZFzdsCrCdi9NDfgGg7vsI9Waodfqoj7tgZccHLPkPYtUXqHyiS2WR93pHp/MsSAB5Z4a
-         vVOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYz7NGbJxdT9nMWZZrprArCWoo8vT9Yh3cPG5WYTGNaoe44pQTe9uogvVuEFbV+D3LJQBOdwL6ueDTSzD7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtM6Pj8dOn1h4vaq6SX/PS4uZfFklZ+rK5JKj1P6tR2mwl8NpL
-	AtNjznS8933fwZf09+5iKE3E8zzvVyFXdkbAG9Qohj0udqm5H1y2js8q
-X-Gm-Gg: ASbGnctU4+PTW8YB6AKKTbHBZe8z5XCrLrSqGc/T1Oksd2tH5o2iRviBGf8loTGb54J
-	s6WABnfPxspWDX2DkXd4ZZcWuGhnQ5GBrg/KwPbSq7Sue68VG0Yi+kbQQM01L8W2ST4fZSN5sBB
-	HsfaoM9/i4MWn2oh+p90t9lHFV7aqSs1rN1ZpdyETXEx66LteSA21QDmM6UENvEpDYTokUjSYjW
-	bJRJbbz3zXnYauJ5UWBRuKvdJ1A+UdQjU3LFiMC9UY0UvpmkaHTCxDoyko2UJ8eLJw9XZ/1fZqe
-	Aa9lL89mYAt+JazpBpQmfHSkSeqAx8/7YIJ9X49DKLoQCnkvOsEkZhbFQnzy8iFdI7pcwetmtj7
-	io4kgtQxotG9c53n6AkrsVsRflQmGap2JmuQGTJ6Se+5NNNGv0SocqHBbd5h15hHxdOQDVUr9ca
-	REmdI8meFvuNHk
-X-Google-Smtp-Source: AGHT+IGPZyy98EunzVJ6yivTxgcZu+hh+n+arOejBmpGA2ZRyOHrbEnCoAuwnsGkUwYPhwrqhwXocA==
-X-Received: by 2002:a05:6000:603:b0:3ee:3dce:f672 with SMTP id ffacd0b85a97d-4256712a5dcmr209162f8f.4.1759430906615;
-        Thu, 02 Oct 2025 11:48:26 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f083asm4640243f8f.43.2025.10.02.11.48.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 11:48:26 -0700 (PDT)
-Date: Thu, 2 Oct 2025 19:47:34 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Nathan
- Chancellor <nathan@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel
- test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?B?QW5kcsOp?= Almeida
- <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang
- < version 17
-Message-ID: <20251002194734.7cb2be8e@pumpkin>
-In-Reply-To: <CAHk-=whmf8OKRBKW_xi6SLrvicif8a2e7Pn9v6Qi+ioDJxnqmg@mail.gmail.com>
-References: <20250916163004.674341701@linutronix.de>
-	<20250916163252.100835216@linutronix.de>
-	<20250916184440.GA1245207@ax162>
-	<87ikhi9lhg.ffs@tglx>
-	<87frcm9kvv.ffs@tglx>
-	<CAMuHMdVvAQbN8g7TJyK2MCLusGPwDbzrQJHw8uxDhOvjAh7_Pw@mail.gmail.com>
-	<20250929100852.GD3245006@noisy.programming.kicks-ass.net>
-	<CAMuHMdW_5QOw69Uyrrw=4BPM3DffG2=k5BAE4Xr=gfei7vV=+g@mail.gmail.com>
-	<20250929110400.GL3419281@noisy.programming.kicks-ass.net>
-	<CAMuHMdWtE_E75_2peNaNDEcV6+5=hqJdi=FD37a3fazSNNeUSg@mail.gmail.com>
-	<CAHk-=whmf8OKRBKW_xi6SLrvicif8a2e7Pn9v6Qi+ioDJxnqmg@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1759434147; x=1760038947;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IHWoufPOT2ZPXNRc5DoYz+FwJd3fX1cS0hwyHgiBJhE=;
+        b=MpN5ecKdgsR7OjyOPxJLAHfYxlisYJu4XEo7M1AJu49+xFKXBrQjC+kyT3XomGbTr7
+         ptNTXlvxGoIsALzByaDDd+oTxtudmZTynedI7/zMhVhlFiTG53FYtF5c3YIoOVPch/he
+         f1cYn2eMqLXSjNvkkP6tWchE3VfmDCN03XBt6p1owf7dtQMwtjueCHeHhHIP7nm7EcNq
+         FJ3tTPDHNgULlTwjN6jQ9VA95kBMztgp6XEoCz25NkpdRgMC1MmwWio5u0NKcK82pKtn
+         1L0GC87YBLLjFnboJzFKUprSdEoBtA5W84barQsfn8fJuQDNvlXYXPVfPO+orwLIIgg+
+         Fd+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnqBjJCjLRL7lMvJDel2j7Gyo6FSxDPgWAOIw/rR7bY+mYvpgwwTsSjYKh12rP/lc1PsBu3Ba+o6S8f9jI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXufHN9emiDZxis6nhAXp0znNj8C7mCzBzVdt42zFC0rHXeMfb
+	tfTBkrfaUMTumxRXIY5KxpaDIo4v/Zt4vxQZPfbEYs3pGVHZE7Xqv+Yic1I9fc3l0LsG6c6Fpy0
+	nF5KN5HUsW76h2ukdo7UzBjslyRnSYk8NBQTEmVFxcPbQ56X9XXvTyZNKh7E=
+X-Google-Smtp-Source: AGHT+IEU/OOOMA49KmfXt1XRj8L46i3dX/8quLElMh47ODydo8OUZNrWsPpf6M7lZE1c/RoGQ7sTiG8ceohhIa5t+PXrLgW2CxEE
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b41:b0:42d:7dea:1e09 with SMTP id
+ e9e14a558f8ab-42e7ad6ea2fmr6404525ab.21.1759434147612; Thu, 02 Oct 2025
+ 12:42:27 -0700 (PDT)
+Date: Thu, 02 Oct 2025 12:42:27 -0700
+In-Reply-To: <68c6c3b1.050a0220.2ff435.0382.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ded5a3.050a0220.1696c6.0036.GAE@google.com>
+Subject: Re: [syzbot] [fs?] kernel BUG in qlist_free_all (2)
+From: syzbot <syzbot+8715dd783e9b0bef43b1@syzkaller.appspotmail.com>
+To: bp@alien8.de, brauner@kernel.org, dave.hansen@linux.intel.com, 
+	hpa@zytor.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	viro@zeniv.linux.org.uk, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 29 Sep 2025 08:53:37 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+syzbot has found a reproducer for the following issue on:
 
-> On Mon, 29 Sept 2025 at 04:10, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >  
-> > >
-> > > Ah, d'0h indeed.
-> > >
-> > > void b(void **);void* c();int f(void){{asm goto(""::::l0);return 0;l0:return 1;}void *x __attribute__((cleanup(b))) = c();{asm goto(""::::l1);return 2;l1:return 1;}}
+HEAD commit:    7f7072574127 Merge tag 'kbuild-6.18-1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1234b092580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b78ebc06b51acd7e
+dashboard link: https://syzkaller.appspot.com/bug?extid=8715dd783e9b0bef43b1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bc1092580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176bfd04580000
 
-Should that be 'void *c(void);' (with an extra void) to avoid failing because
-of the K&R function declaration?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/70468cf24114/disk-7f707257.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8126ac85fc8f/vmlinux-7f707257.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0b72e383dd9d/bzImage-7f707257.xz
 
-	David
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8715dd783e9b0bef43b1@syzkaller.appspotmail.com
 
-> > >
-> > > Seems to still finger the issue on x86_64. That should build on !x86
-> > > too, right?  
-> >
-> > Thanks, builds fine on arm32, arm64, riscv, m68k, powerpc, mips, s390.  
-> 
-> Ok, I just applied that fix directly. It's clearly not a fatal bug
-> since it just falls back on the non-optimal code, but it's one of
-> those "silly and subtle code generation issues" so I'd rather have it
-> fixed asap in the upstream kernel.
-> 
-> Geert, thanks for noticing.
-> 
->              Linus
-> 
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:28!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5927 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:__phys_addr+0x173/0x180 arch/x86/mm/physaddr.c:28
+Code: e8 72 22 49 00 48 c7 c7 90 ce 21 8d 48 89 de 4c 89 f2 e8 b0 03 39 03 e9 4d ff ff ff e8 56 22 49 00 90 0f 0b e8 4e 22 49 00 90 <0f> 0b e8 46 22 49 00 90 0f 0b 0f 1f 00 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003fbfcd8 EFLAGS: 00010293
+RAX: ffffffff81740d22 RBX: 0000607fffd49468 RCX: ffff8880256c1e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffe8ffffd49468 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1d6b7e7 R12: ffffea0000000000
+R13: 0000000000000000 R14: 000000000000002e R15: 0000000000000001
+FS:  000055558ba17500(0000) GS:ffff888127122000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc7f61af40 CR3: 00000000350ca000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ virt_to_folio include/linux/mm.h:1180 [inline]
+ virt_to_slab mm/slab.h:187 [inline]
+ qlink_to_cache mm/kasan/quarantine.c:131 [inline]
+ qlist_free_all+0x39/0x140 mm/kasan/quarantine.c:176
+ kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:340
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4191 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ kmem_cache_alloc_noprof+0x114/0x2d0 mm/slub.c:4247
+ getname_flags+0xb8/0x540 fs/namei.c:146
+ user_path_at+0x24/0x60 fs/namei.c:3214
+ ksys_umount fs/namespace.c:2055 [inline]
+ __do_sys_umount fs/namespace.c:2063 [inline]
+ __se_sys_umount fs/namespace.c:2061 [inline]
+ __x64_sys_umount+0xee/0x160 fs/namespace.c:2061
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f62cb4c01f7
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffc7f61a098 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: ffffffffffffffda RBX: 00007f62cb541d7d RCX: 00007f62cb4c01f7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc7f61b1e0
+RBP: 00007ffc7f61b1cc R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc7f61b1e0
+R13: 00007f62cb541d7d R14: 0000000000022677 R15: 00007ffc7f61b220
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__phys_addr+0x173/0x180 arch/x86/mm/physaddr.c:28
+Code: e8 72 22 49 00 48 c7 c7 90 ce 21 8d 48 89 de 4c 89 f2 e8 b0 03 39 03 e9 4d ff ff ff e8 56 22 49 00 90 0f 0b e8 4e 22 49 00 90 <0f> 0b e8 46 22 49 00 90 0f 0b 0f 1f 00 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003fbfcd8 EFLAGS: 00010293
+RAX: ffffffff81740d22 RBX: 0000607fffd49468 RCX: ffff8880256c1e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffe8ffffd49468 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1d6b7e7 R12: ffffea0000000000
+R13: 0000000000000000 R14: 000000000000002e R15: 0000000000000001
+FS:  000055558ba17500(0000) GS:ffff888127122000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc7f61af40 CR3: 00000000350ca000 CR4: 00000000003526f0
 
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
