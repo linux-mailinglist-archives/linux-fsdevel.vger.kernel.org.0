@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-63257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFB4BB32DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 10:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7781ABB3314
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 10:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1318A465A92
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 08:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D292C4C834D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 08:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FC93191DB;
-	Thu,  2 Oct 2025 08:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61224319843;
+	Thu,  2 Oct 2025 08:14:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C402F310785;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E9831195D;
 	Thu,  2 Oct 2025 08:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759392854; cv=none; b=GHfGpSo2Ly3tuwiSHxp96rgWl0RS1ryovY0NILoUNXLRyvAfz9UiPsfmOYAsuwK4TIpBhBg2vP7LJ9anveXmT57B2cDT+iuAm4dJnoHfADZw0p6SKtPzDTqWErvsibxurSDq1qiD184QNRDoWwDu1jIROIRGKyS+tojWB2SSosQ=
+	t=1759392853; cv=none; b=ZWCDMZ7zjJ6NM/RfNZOJYyHRstqBwIPxYA4hpcBC83PudDjIvtXu8YQhn9W18cs+wCANCTOaHVL8M10CegHC3c5INF+u9FnChsstOGQ7xmjbCuKl4hDpBwNC3EfvlpGEjNR79sHizv2lNgMideLjo8uxU3TdjqeBJcg+Thxr2qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759392854; c=relaxed/simple;
-	bh=Vg0cL3qHe4cP/WpcIVBPLLHPUcknH8bXkySiCGRbfqw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=jP7UYy+W8odX15nRSkPiH9j6iM4QGw8saybtBapBw2fFEHy0OJIOJOxFxuXEbMZ1sBdOsr+vPEArFg3DbnVc0Vb86w7O6ohUtG3yOm3OEzeRgDEQCo/Kd1NJ0WUNeK0KzqhvNQK+NDS8mdehKZQMm64F13vN9JO/r2b/DqR2ws4=
+	s=arc-20240116; t=1759392853; c=relaxed/simple;
+	bh=maf1QCGEx8ZicvuvjSO5P8pPxIBgYfqjp+uEFuf+J5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=FJonGQALPaPxrZf0VNNr1hQNV/R1tjEkvRFXe/5nCCnDgKpAaIlJkm57bNipNFduH4bQAe1ulY+usFb/v+2xM30xyHjLUtsLJJTKXcPa8Eajy8Sc4sUsQdN6Ir6udXid+RCWkB4YswEh4EMdEfxzLGSkbhuO4TMnpGZ09lUHdUw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-3c-68de34142829
+X-AuditID: a67dfc5b-c2dff70000001609-59-68de3414a856
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -177,43 +177,45 @@ Cc: kernel_team@skhynix.com,
 	rcu@vger.kernel.org,
 	linux-nfs@vger.kernel.org,
 	linux-rt-devel@lists.linux.dev
-Subject: [PATCH v17 39/47] dept: add module support for struct dept_event_site and dept_event_site_dep
-Date: Thu,  2 Oct 2025 17:12:39 +0900
-Message-Id: <20251002081247.51255-40-byungchul@sk.com>
+Subject: [PATCH v17 40/47] dept: introduce event_site() to disable event tracking if it's recoverable
+Date: Thu,  2 Oct 2025 17:12:40 +0900
+Message-Id: <20251002081247.51255-41-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251002081247.51255-1-byungchul@sk.com>
 References: <20251002081247.51255-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTcRSH+7+3zeHgZUq+aVSMpKi8JBqnKKk+5Ft9qAiCCsqlr265TdnM
-	0igGppVpxMqilqKka+nK6dLULOcFRLxtZTK8TK0wy9ZleWlq2mb55fDw/H4czofDx0U3yUC+
-	TJnKqZQSuZgSEAKnb3GIf6RDGj5mCQXrs3IEM3M6HCbdAzy4a9PiMNHiQqD/uIDBXFcPDuOm
-	qwja829Q4LQ9xCDzUQUFdSP1PBjWjxFwtzIAdPcyMc8Yx8CtL+NB56NBAvSaYFgsSoZ2Rx8J
-	w23ZJEz2jmJgzB3D4VX/ZijOLiGg4VU7AW/rH1LgMC6SoNHNkGC1dJDwptxKQMUnOwY99U9J
-	GB2xk2Du6sShujELgatkmoDsXwsktOVZMOjSdZPQWvECgypjHwWzQ7UkuAo8aVaumwfXWqdx
-	MP18TO0OZ8vMNRhrLDQidrI0E2dLO75SbN2DIR5rNmxii11TJNs/sYutKrtOsVUuLY/NcfZi
-	7GBfA8V+6+7msYXtR9jGAiOPHVj4gB8OOiHYGc/JZWmcKiw6ViBtrLlDpUzsuzDQ9IHUoJId
-	OciHz9CRjGnEhi/z89cm5GWK3sDY7e4l70+vY8x5Y6SXcbpjNdNn2+JlPzqBqXlqoLxM0MFM
-	YaF5qS+ktzE/nAvo3861TLnJsuR9PP7taAfhZREdxWR9v4LlIIGno/NhzOOO/0esYpoMduIW
-	EhahFWVIJFOmKSQyeWSoNF0puxAal6yoQp4v0V+aP1mLXNajzYjmI7Gv0Bo8JBWRkjR1uqIZ
-	MXxc7C+MNQxKRcJ4SXoGp0o+rTon59TNKIhPiAOEEdPn40V0oiSVS+K4FE61nGJ8n0ANYriD
-	4nnt/PT6iT1Rmne5N77sDbuVcFYToNFrezKSZi+2tLZGO6Tv14Q8ed0sOBNj+X1qqDoOTVUe
-	0FySxwS/ayu+fChvZeBUxp/tNj/oNdb2J/zyde5VtX0tiYydzbotjlCH5ie+bAkoPR/0QKml
-	FPlXOr8c32jQBe3/fNt4/84xMaGWSrZuwlVqyV+gbAE+IQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTcRTG+7/XOVq8LMEXi4qZRGE3yjpkVBLUS3SjiKgP5aq3NnS6NrMs
-	gnlZSjfnbIoubWmu4SWXM8tEMyOplrm1LqIus5ZlakZ5QZ2urejL4Xee5+HwfDgCXFxLhgrk
-	8Ym8Kl4aJ6GEhHBnVNrS4NUfZCtuu4TwLqWJgJHhTAKuV1VQkFmdT4LjTjmC7pFMBGOTRhy0
-	dT4CpvQtNAyPd9Lga2hBkOvU41BRk4LBb+s0Bf1PfiEw9HgoyOtLIWDIfBlBQa+Rhr6nW2Gw
-	u54En/srBu9HBxCYPdMYeJoyEEzlxsKNYhsFk61tOOQZHAhu9rhx+Gb1mzUtHxA0WFIp+KK7
-	h4PLMwvejAxR8NxwiYJB53UMflgpMKU2kFBo1CNIK6miILewmoC6jw9pcPZ7MejK1WNQXr0D
-	us29BNh1xZi/nz91NwSMeWmYf3zDwFBZj8G4uYyGlyVdBJg14WBsdZHwyVJAg7dnJfhMCdBS
-	/pUGd5aBgDuDbeQmA+LGtFcJrsxWi3Ha11MUV1FUgbjJCT3ihkvTcE6r869PBoZwLt12miu1
-	D1DcxMhbimsYNRHci2KWy25dytUVuGkuvbGD3r3uoHD9MT5OnsSrlm+IEcoe1V6jlP1bznQ+
-	/kxq0K11F1GQgGVWszWNVhRgilnEtreP4wEOZhawtiu9ZIBxxj6XfeeMCPBs5jhbW2mhAkww
-	4WxRke1vXsSsYX8OTqN/N+ez5damv3qQX3f12IkAi5lIVjuUjumQ0IRmlKFgeXySQiqPi1ym
-	jpUlx8vPLDuaoKhG/m8yn/dmP0DDrq3NiBEgyUyRM9wtE5PSJHWyohmxAlwSLIqxdMnEomPS
-	5LO8KuGw6lQcr25GcwSEJES0bT8fI2ZOSBP5WJ5X8qr/LiYICtWgFyWku+/l/aDoaGPGWOhD
-	y4LtTZ1RodGnckwa7bO8+7x80wFx/SFBlpPzeN/uXZu/UbkZ3HMX1vctrorI/vLz3JEsx74w
-	ZcdjBdNmdxkSlPnKMYUDT9Ls0YUVjiYul0ZnHBU/L51w+eatWCWLSl14/Dv+tCQn+8LJulfe
-	XY5LkRJCLZOuXIKr1NI/6YdU+EkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSb2xTZRTGfe9979u7supNwXgFFdNYJROYykYOiRg/mPCqMSFijIpGGnez
+	FrZBulGYoo5u1WUbc9R0k63MjjKy0QKjZcomk7HBYjfIWsrgBkZZZX9YttJktpsMRm0hfvvl
+	eZ7znJzk8Kxa5pbyhoIiyVigy9MQJVZG0ptWPZ0V0r9W285DPFaOwX7CTaDcc4AD/3EXgrn7
+	DSxYOhIYFqx9Cojdu6GARFcfgtqAlQX3qb0M/NP2kMBU7wwCW3iUQN3kXgzRI1UI6scbFDB5
+	YQNEbv3BwbXZaQSj3T8i+PWQl8CpvhCCrhYzgbGadhaCo0/ClXiUgM9WSSASsDNwt42Aw9zF
+	Qe1BD4aOkU4FBKYeMDBca2XA5fkguYlAQ10pAxedwxgaLgU5OB4Z5MAXusrB1LiVQOxKmAF3
+	1TgL5Z1xDJ7bSaPph8MYDjQOEzjT5cNQvhBDEOy0E6hqa+cg5E4kL+8e4OCyy4/hxITMgK++
+	FcNg5zEOwiMyB95LF1mYrV4G/v37OJBrxtDbOXTOUo3pUe9vDLVcXiDU3ehG9P68FdFYcylL
+	e6ejLC3z7qLNA9OEzseHCO0/JNKO+psKWvbndQV1eHZSb0sGdZ6ZZDau/Ez5Zo6UZzBJxsy3
+	tij1F/odeMftF3b3nl1fgprFCpTGi0KW6KgMKioQ/4in5tenZCK8IsryPTbFS4QXRe++cS7F
+	rDDwnHg1sDIVXyxI4sSx71MyFrSic2ROkWKVsFZMmE+ix+3LRVdb96OatKQeDA/gFKuFbNES
+	LWMqkDKZcaWJTf+ex48HnhXPtci4Bqkc6ImjSG0oMOXrDHlZq/XFBYbdq7/anu9ByX878u2D
+	zafRjH9TDxJ4pElX+bU39WpOZyoszu9BIs9qlqi2tAzr1aocXfHXknH7l8adeVJhD1rGY80z
+	qjdmd+WohVxdkbRNknZIxv9dhk9bWoJero6bXn1eXrR/6LA2s8T+hdkZFbNzfzmb2frT5s9t
+	Gct7fbn+dxPOflfouztDM+d+r3wqxH/zsdmybs/Gd0Kf6g5uOmn8y7H1WsgWCaSvzbaP/axd
+	1Hc6PPuRaWHx37b35RVb6d0PY2u0HSucwboNg6WfTBQ1rntpovW93IdVg+fnivQaXKjXvZ7B
+	Ggt1/wEbQeYJawMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbUxTdxTG/d/7772Xxuq14rgRM0kX2MJENFE58YVs2QdujJvTL25LjDRy
+	Y5tCMa1DWDKFvkSGm4MmLYHyUiE0DQWsFM3QgAQCySgMuwq+UZHZFZCXJgISKFDbJfty8jvP
+	8+Tk+XAYUuoW7WaU6iuCRi3PlVFiLP7mmD4t/tArxYG6hQQYK+nBsLxUiqHmTgsFpe1VInjc
+	5kQwsVyKYCVsJcHYGcGwYRqgYWn1JQ2RrgEEFq+JhJaOEgIWXZsUzPa9Q2CeDFBQOVOCIWT/
+	FUF10ErDTH8WzE88FEHEP0XA0/dzCOyBTQICPTcQbFhUUN/gpiA8PEJCpfkxgtuTfhKmXVGz
+	Y+AVgi6HjoJ/y++R4AtsgyfLIQr+NN+kYN5bQ8CCiwKbrksEtVYTAn3jHQoste0YOl8/oME7
+	u07AuMVEgLP9a5iwBzF4yhuIaL9o6m4CWCv1RHRME2BufUjAqr2ZhqHGcQz24mSwDvtE8I+j
+	mob1yYMQseXDgHOKBv/vZgxt8yOiL8yIXzHewnyz+z7BG//eoPiWuhbEh9dMiF9q0pO8sTy6
+	9s2FSN7gvso3eeYofm15lOK73tswP9jA8RXDaXxntZ/mDd0v6G+P/iA+niPkKgsETXpmtljR
+	P2jDl998XNj36EQxauLKEMNw7CFudu1EGYpjKPZT7tmzVTLG8WwS5/4tKIoxyXr2cGPefbH4
+	Tlbgplqvx2TMJnONr1foGEvYI1xEdxfFmGP3ck5Xz39n4qK6b9KDYyxlD3PGkIEoR2Ib2tKM
+	4pXqgjy5Mvfwfq1KUaRWFu6/mJ/XjqKvZP95veIPtOTL6kUsg2RbJd5kv0Iqkhdoi/J6EceQ
+	snhJtmNcIZXkyIt+EjT5FzQ/5graXpTIYFmC5OQ5IVvKXpJfEVSCcFnQ/O8STNzuYnQmaHIl
+	ln1lw4spnYmXVMeqrB69z7Bz1InSdYHztpyZNPXp9GFLpa6wP/Xi8+/eyk9Vf57RzagyPurY
+	1fxL6WY4tcOxHQ2V/SXOHEtZufXZl63mPTsMfFKv4hNjf2Zove7q0LUKV1ZBd73j+9GEpH3o
+	rP6cgkg/EBbejAzm3zwvw1qF/GAqqdHKPwDtVNImRgMAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -221,283 +223,128 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-struct dept_event_site and struct dept_event_site_dep have been
-introduced to track dependencies between multi event sites for a single
-wait, that will be loaded to data segment.  Plus, a custom section,
-'.dept.event_sites', also has been introduced to keep pointers to the
-objects to make sure all the event sites defined exist in code.
+With multi event sites for a single wait, dept allows to skip tracking
+an event that is recoverable by other recover paths.
 
-dept should work with the section and segment of module.  Add the
-support to handle the section and segment properly whenever modules are
-loaded and unloaded.
+Introduce an API, event_site(), to skip tracking the event in the case.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/dept.h     | 14 +++++++
- include/linux/module.h   |  5 +++
- kernel/dependency/dept.c | 79 +++++++++++++++++++++++++++++++++++-----
- kernel/module/main.c     | 15 ++++++++
- 4 files changed, 103 insertions(+), 10 deletions(-)
+ include/linux/dept.h     | 30 ++++++++++++++++++++++++++++++
+ include/linux/sched.h    |  6 ++++++
+ kernel/dependency/dept.c | 20 ++++++++++++++++++++
+ 3 files changed, 56 insertions(+)
 
 diff --git a/include/linux/dept.h b/include/linux/dept.h
-index 988aceee36ad..25fdd324614a 100644
+index 25fdd324614a..0ac13129f308 100644
 --- a/include/linux/dept.h
 +++ b/include/linux/dept.h
-@@ -414,6 +414,11 @@ struct dept_event_site {
- 	struct dept_event_site		*bfs_parent;
- 	struct list_head		bfs_node;
- 
-+	/*
-+	 * for linking all dept_event_site's
-+	 */
-+	struct list_head		all_node;
-+
- 	/*
- 	 * flag indicating the event is not only declared but also
- 	 * actually used in code
-@@ -430,6 +435,11 @@ struct dept_event_site_dep {
- 	 */
- 	struct list_head		dep_node;
- 	struct list_head		dep_rev_node;
-+
-+	/*
-+	 * for linking all dept_event_site_dep's
-+	 */
-+	struct list_head		all_node;
- };
- 
- #define DEPT_EVENT_SITE_INITIALIZER(es)					\
-@@ -441,6 +451,7 @@ struct dept_event_site_dep {
- 	.bfs_gen = 0,							\
- 	.bfs_parent = NULL,						\
- 	.bfs_node = LIST_HEAD_INIT((es).bfs_node),			\
-+	.all_node = LIST_HEAD_INIT((es).all_node),			\
- 	.used = false,							\
- }
- 
-@@ -450,6 +461,7 @@ struct dept_event_site_dep {
- 	.recover_site = NULL,						\
- 	.dep_node = LIST_HEAD_INIT((esd).dep_node),			\
- 	.dep_rev_node = LIST_HEAD_INIT((esd).dep_rev_node),		\
-+	.all_node = LIST_HEAD_INIT((esd).all_node),			\
- }
- 
- struct dept_event_site_init {
-@@ -473,6 +485,7 @@ extern void dept_init(void);
- extern void dept_task_init(struct task_struct *t);
- extern void dept_task_exit(struct task_struct *t);
+@@ -487,6 +487,31 @@ extern void dept_task_exit(struct task_struct *t);
  extern void dept_free_range(void *start, unsigned int sz);
-+extern void dept_mark_event_site_used(void *start, void *end);
+ extern void dept_mark_event_site_used(void *start, void *end);
  
++extern void disable_event_track(void);
++extern void enable_event_track(void);
++
++#define event_site(es, evt_func, ...)					\
++do {									\
++	unsigned long _flags;						\
++	bool _disable;							\
++									\
++	local_irq_save(_flags);						\
++	dept_event_site_used(es);					\
++	/*								\
++	 * If !list_empty(&(es)->dept_head), the event site can be	\
++	 * recovered by others.  Do not track event dependency if so.	\
++	 */								\
++	_disable = !list_empty(&(es)->dep_head);			\
++	if (_disable)							\
++		disable_event_track();					\
++									\
++	evt_func(__VA_ARGS__);						\
++									\
++	if (_disable)							\
++		enable_event_track();					\
++	local_irq_restore(_flags);					\
++} while (0)
++
  extern void dept_map_init(struct dept_map *m, struct dept_key *k, int sub_u, const char *n);
  extern void dept_map_reinit(struct dept_map *m, struct dept_key *k, int sub_u, const char *n);
-@@ -536,6 +549,7 @@ struct dept_event_site { };
- #define dept_task_init(t)				do { } while (0)
+ extern void dept_ext_wgen_init(struct dept_ext_wgen *ewg);
+@@ -550,6 +575,11 @@ struct dept_event_site { };
  #define dept_task_exit(t)				do { } while (0)
  #define dept_free_range(s, sz)				do { } while (0)
-+#define dept_mark_event_site_used(s, e)			do { } while (0)
+ #define dept_mark_event_site_used(s, e)			do { } while (0)
++#define event_site(es, evt_func, ...)					\
++do {									\
++	(void)(es);							\
++	evt_func(__VA_ARGS__);						\
++} while (0)
  
  #define dept_map_init(m, k, su, n)			do { (void)(n); (void)(k); } while (0)
  #define dept_map_reinit(m, k, su, n)			do { (void)(n); (void)(k); } while (0)
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 3319a5269d28..4f360c7c9e96 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -29,6 +29,7 @@
- #include <linux/srcu.h>
- #include <linux/static_call_types.h>
- #include <linux/dynamic_debug.h>
-+#include <linux/dept.h>
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a01c10f28dfd..24a9dc9d6f5f 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -876,6 +876,11 @@ struct dept_task {
+ 	 */
+ 	int				missing_ecxt;
  
- #include <linux/percpu.h>
- #include <asm/module.h>
-@@ -579,6 +580,10 @@ struct module {
- #ifdef CONFIG_DYNAMIC_DEBUG_CORE
- 	struct _ddebug_info dyndbg_info;
- #endif
-+#ifdef CONFIG_DEPT
-+	struct dept_event_site **dept_event_sites;
-+	unsigned int num_dept_event_sites;
-+#endif
- } ____cacheline_aligned __randomize_layout;
- #ifndef MODULE_ARCH_INIT
- #define MODULE_ARCH_INIT {}
++	/*
++	 * not to track events
++	 */
++	int				disable_event_track_cnt;
++
+ 	/*
+ 	 * for tracking IRQ-enable state
+ 	 */
+@@ -913,6 +918,7 @@ struct dept_task {
+ 	.stage_wait_stack = NULL,				\
+ 	.stage_lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED,\
+ 	.missing_ecxt = 0,					\
++	.disable_event_track_cnt = 0,				\
+ 	.hardirqs_enabled = false,				\
+ 	.softirqs_enabled = false,				\
+ 	.task_exit = false,					\
 diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index b14400c4f83b..07d883579269 100644
+index 07d883579269..3c3ec2701bd6 100644
 --- a/kernel/dependency/dept.c
 +++ b/kernel/dependency/dept.c
-@@ -984,6 +984,9 @@ static void bfs(void *root, struct bfs_ops *ops, void *in, void **out)
-  * event sites.
-  */
- 
-+static LIST_HEAD(dept_event_sites);
-+static LIST_HEAD(dept_event_site_deps);
-+
- /*
-  * Print all events in the circle.
-  */
-@@ -2043,6 +2046,33 @@ static void del_dep_rcu(struct rcu_head *rh)
- 	preempt_enable();
+@@ -2573,6 +2573,23 @@ static void __dept_wait(struct dept_map *m, unsigned long w_f,
+ 	}
  }
  
-+/*
-+ * NOTE: Must be called with dept_lock held.
-+ */
-+static void disconnect_event_site_dep(struct dept_event_site_dep *esd)
++void disable_event_track(void)
 +{
-+	list_del_rcu(&esd->dep_node);
-+	list_del_rcu(&esd->dep_rev_node);
++	dept_task()->disable_event_track_cnt++;
 +}
++EXPORT_SYMBOL_GPL(disable_event_track);
 +
-+/*
-+ * NOTE: Must be called with dept_lock held.
-+ */
-+static void disconnect_event_site(struct dept_event_site *es)
++void enable_event_track(void)
 +{
-+	struct dept_event_site_dep *esd, *next_esd;
++	dept_task()->disable_event_track_cnt--;
++}
++EXPORT_SYMBOL_GPL(enable_event_track);
 +
-+	list_for_each_entry_safe(esd, next_esd, &es->dep_head, dep_node) {
-+		list_del_rcu(&esd->dep_node);
-+		list_del_rcu(&esd->dep_rev_node);
-+	}
-+
-+	list_for_each_entry_safe(esd, next_esd, &es->dep_rev_head, dep_rev_node) {
-+		list_del_rcu(&esd->dep_node);
-+		list_del_rcu(&esd->dep_rev_node);
-+	}
++static bool event_track_disabled(void)
++{
++	return !!dept_task()->disable_event_track_cnt;
 +}
 +
  /*
-  * NOTE: Must be called with dept_lock held.
+  * Called between dept_enter() and dept_exit().
   */
-@@ -2384,6 +2414,8 @@ void dept_free_range(void *start, unsigned int sz)
- {
- 	struct dept_task *dt = dept_task();
- 	struct dept_class *c, *n;
-+	struct dept_event_site_dep *esd, *next_esd;
-+	struct dept_event_site *es, *next_es;
- 	unsigned long flags;
+@@ -2585,6 +2602,9 @@ static void __dept_event(struct dept_map *m, struct dept_map *real_m,
+ 	struct dept_key *k;
+ 	int e;
  
- 	if (unlikely(!dept_working()))
-@@ -2405,6 +2437,24 @@ void dept_free_range(void *start, unsigned int sz)
- 	while (unlikely(!dept_lock()))
- 		cpu_relax();
- 
-+	list_for_each_entry_safe(esd, next_esd, &dept_event_site_deps, all_node) {
-+		if (!within((void *)esd, start, sz))
-+			continue;
++	if (event_track_disabled())
++		return;
 +
-+		disconnect_event_site_dep(esd);
-+		list_del(&esd->all_node);
-+	}
-+
-+	list_for_each_entry_safe(es, next_es, &dept_event_sites, all_node) {
-+		if (!within((void *)es, start, sz) &&
-+		    !within(es->name, start, sz) &&
-+		    !within(es->func_name, start, sz))
-+			continue;
-+
-+		disconnect_event_site(es);
-+		list_del(&es->all_node);
-+	}
-+
- 	list_for_each_entry_safe(c, n, &dept_classes, all_node) {
- 		if (!within((void *)c->key, start, sz) &&
- 		    !within(c->name, start, sz))
-@@ -3337,6 +3387,7 @@ void __dept_recover_event(struct dept_event_site_dep *esd,
+ 	e = find_first_bit(&e_f, DEPT_MAX_SUBCLASSES_EVT);
  
- 	list_add(&esd->dep_node, &es->dep_head);
- 	list_add(&esd->dep_rev_node, &rs->dep_rev_head);
-+	list_add(&esd->all_node, &dept_event_site_deps);
- 	check_recover_dl_bfs(esd);
- unlock:
- 	dept_unlock();
-@@ -3347,6 +3398,23 @@ EXPORT_SYMBOL_GPL(__dept_recover_event);
- 
- #define B2KB(B) ((B) / 1024)
- 
-+void dept_mark_event_site_used(void *start, void *end)
-+{
-+	struct dept_event_site_init **evtinitpp;
-+
-+	for (evtinitpp = (struct dept_event_site_init **)start;
-+	     evtinitpp < (struct dept_event_site_init **)end;
-+	     evtinitpp++) {
-+		(*evtinitpp)->evt_site->used = true;
-+		(*evtinitpp)->evt_site->func_name = (*evtinitpp)->func_name;
-+		list_add(&(*evtinitpp)->evt_site->all_node, &dept_event_sites);
-+
-+		pr_info("dept_event_site %s@%s is initialized.\n",
-+				(*evtinitpp)->evt_site->name,
-+				(*evtinitpp)->evt_site->func_name);
-+	}
-+}
-+
- extern char __dept_event_sites_start[], __dept_event_sites_end[];
- 
- /*
-@@ -3356,20 +3424,11 @@ extern char __dept_event_sites_start[], __dept_event_sites_end[];
- void __init dept_init(void)
- {
- 	size_t mem_total = 0;
--	struct dept_event_site_init **evtinitpp;
- 
- 	/*
- 	 * dept recover dependency tracking works from now on.
- 	 */
--	for (evtinitpp = (struct dept_event_site_init **)__dept_event_sites_start;
--	     evtinitpp < (struct dept_event_site_init **)__dept_event_sites_end;
--	     evtinitpp++) {
--		(*evtinitpp)->evt_site->used = true;
--		(*evtinitpp)->evt_site->func_name = (*evtinitpp)->func_name;
--		pr_info("dept_event %s@%s is initialized.\n",
--				(*evtinitpp)->evt_site->name,
--				(*evtinitpp)->evt_site->func_name);
--	}
-+	dept_mark_event_site_used(__dept_event_sites_start, __dept_event_sites_end);
- 	dept_recover_ready = true;
- 
- 	local_irq_disable();
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 6ad78f0a58b6..fe0b62a45ed2 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2720,6 +2720,11 @@ static int find_module_sections(struct module *mod, struct load_info *info)
- 						&mod->dyndbg_info.num_classes);
- #endif
- 
-+#ifdef CONFIG_DEPT
-+	mod->dept_event_sites = section_objs(info, ".dept.event_sites",
-+					sizeof(*mod->dept_event_sites),
-+					&mod->num_dept_event_sites);
-+#endif
- 	return 0;
- }
- 
-@@ -3346,6 +3351,14 @@ static int early_mod_check(struct load_info *info, int flags)
- 	return err;
- }
- 
-+static void dept_mark_event_site_used_module(struct module *mod)
-+{
-+#ifdef CONFIG_DEPT
-+	dept_mark_event_site_used(mod->dept_event_sites,
-+			     mod->dept_event_sites + mod->num_dept_event_sites);
-+#endif
-+}
-+
- /*
-  * Allocate and load the module: note that size of section 0 is always
-  * zero, and we rely on this for optional sections.
-@@ -3508,6 +3521,8 @@ static int load_module(struct load_info *info, const char __user *uargs,
- 	/* Done! */
- 	trace_module_load(mod);
- 
-+	dept_mark_event_site_used_module(mod);
-+
- 	return do_init_module(mod);
- 
-  sysfs_cleanup:
+ 	if (DEPT_WARN_ON(e >= DEPT_MAX_SUBCLASSES_EVT))
 -- 
 2.17.1
 
