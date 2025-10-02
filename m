@@ -1,143 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-63277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B616BB3CEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 13:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FEBBB3D36
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 13:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5AE16D0A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 11:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1D2188BC96
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 11:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2255830FC38;
-	Thu,  2 Oct 2025 11:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1A30F94E;
+	Thu,  2 Oct 2025 11:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P6Q//6Wb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJx09Q2U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B8F22ACF3
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 11:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4F1304BC6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Oct 2025 11:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759405577; cv=none; b=MlRRg3GnmxwD0j3R3biTLlNtQnwQnvIXWdjlz0Lsc9iJFZpd3okf67laN4wHxGk5xKRAevMHLQ5OkmsYzpS9guPDEc+jbKrnft0/iI/EFzZVyoE7e6ohPFHnAleeefd3zB85rQWCXzOmm1fuCZF0Dl7yQdq6tT0vLlCfnMO24f4=
+	t=1759406092; cv=none; b=gm859oq4aN7t9fX4trRF3jqxiAF5Tq9dMbwtJzKxSpuI7BK4bZT4/NxNgb6HC4KlAoUM5onlU9alGQfCcVX0R3f9ZeeAiI+POxjDxL87Fa5WWPvhxGAb8wMAoOKX6Rmf3eB+gQd+vHXpMiXdIwZSpAV93RSfD5+jZMDKeGjEkhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759405577; c=relaxed/simple;
-	bh=XAW7j/GiCX4Ldk1pbIGoe/EzygOj7TZ3MCMZKOX1tCA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LRGhXkcmPNK9RC+yCJZe0CoWN0GBuRJouaEkCFtOXTUDt80d7yIO57G/AJW0kFLziuJ38c4mr/d22ntTrPRIW32VDatu+rP1cktiTue17mPpjoa66fZ/HXa1ViWP13hRoWtukPYb3Mfeljn0/FPKjTGkC4oPp1hrTzXPkzvJHq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P6Q//6Wb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759405575;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XAW7j/GiCX4Ldk1pbIGoe/EzygOj7TZ3MCMZKOX1tCA=;
-	b=P6Q//6WbxvOPrmOAakylzN2FYlQJiTvZhwV3xK/RfoLPJNFM7eJSJo5SdrQt6GR3WXwYOt
-	9mWpCJvSYJhJNUXan84fdGinOpi+Y+4mMdZfxeLgddt365FHBpL0tGtXtgCgivB/QUFevk
-	W6TaAQgKiCuhtgMu9Fvp0WbhOLok3hk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-389-r_CZXO_aN_O1Oc8BoJrm0Q-1; Thu,
- 02 Oct 2025 07:46:11 -0400
-X-MC-Unique: r_CZXO_aN_O1Oc8BoJrm0Q-1
-X-Mimecast-MFC-AGG-ID: r_CZXO_aN_O1Oc8BoJrm0Q_1759405570
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49A29180034D;
-	Thu,  2 Oct 2025 11:46:10 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.225])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83FCA300018D;
-	Thu,  2 Oct 2025 11:45:51 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Charles Mirabile <cmirabil@redhat.com>,  pjw@kernel.org,
-  Liam.Howlett@oracle.com,  a.hindborg@kernel.org,
-  akpm@linux-foundation.org,  alex.gaynor@gmail.com,
-  alexghiti@rivosinc.com,  aliceryhl@google.com,  alistair.francis@wdc.com,
-  andybnac@gmail.com,  aou@eecs.berkeley.edu,  arnd@arndb.de,
-  atishp@rivosinc.com,  bjorn3_gh@protonmail.com,  boqun.feng@gmail.com,
-  bp@alien8.de,  brauner@kernel.org,  broonie@kernel.org,
-  charlie@rivosinc.com,  cleger@rivosinc.com,  conor+dt@kernel.org,
-  conor@kernel.org,  corbet@lwn.net,  dave.hansen@linux.intel.com,
-  david@redhat.com,  devicetree@vger.kernel.org,  ebiederm@xmission.com,
-  evan@rivosinc.com,  gary@garyguo.net,  hpa@zytor.com,  jannh@google.com,
-  jim.shu@sifive.com,  kees@kernel.org,  kito.cheng@sifive.com,
-  krzk+dt@kernel.org,  linux-arch@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
-  linux-mm@kvack.org,  linux-riscv@lists.infradead.org,
-  lorenzo.stoakes@oracle.com,  lossin@kernel.org,  mingo@redhat.com,
-  ojeda@kernel.org,  oleg@redhat.com,  palmer@dabbelt.com,
-  paul.walmsley@sifive.com,  peterz@infradead.org,
-  richard.henderson@linaro.org,  rick.p.edgecombe@intel.com,
-  robh@kernel.org,  rust-for-linux@vger.kernel.org,
-  samitolvanen@google.com,  shuah@kernel.org,  tglx@linutronix.de,
-  tmgross@umich.edu,  vbabka@suse.cz,  x86@kernel.org,  zong.li@sifive.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-In-Reply-To: <aNxsWYYnj22G5xuX@debug.ba.rivosinc.com> (Deepak Gupta's message
-	of "Tue, 30 Sep 2025 16:48:41 -0700")
-References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
-	<20250926192919.349578-1-cmirabil@redhat.com>
-	<aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
-	<CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
-	<aNcAela5tln5KTUI@debug.ba.rivosinc.com>
-	<lhu3484i9en.fsf@oldenburg.str.redhat.com>
-	<aNxsWYYnj22G5xuX@debug.ba.rivosinc.com>
-Date: Thu, 02 Oct 2025 13:45:48 +0200
-Message-ID: <lhuwm5dh6hf.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1759406092; c=relaxed/simple;
+	bh=CiQaJSolDkLTBiP7d22ebBS222iLR/eWy9VY4O24jAk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=u9eQMerFF347lI09rHx8ymH23O1LRYzmmWyRaAUCkeCHyUXp5zAAtf2OB/qjKuNJFrIxeP3fI/5JbTncEJL6pSdRLC+OwqPbNd8Yh7obVFbZaDCTxhPqf8IVo4DpDQIH2fxbAh48dT35s+sMP9h7bJOPjCrNuxeEs7WI75FzKZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJx09Q2U; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3352018e050so951994a91.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Oct 2025 04:54:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759406090; x=1760010890; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2MEPE2QW27JrdMKZac1PCB7F11qUoZlbdLVQjAYukwQ=;
+        b=kJx09Q2UwYLYuuX1l4+GF5GgZ/A9zAetWQ5ZeJ3sN2NHLX0qbc5ZBsl/Ffp+XbUOnL
+         tOL746TKMTy1l7OIIW2P5+vued2ejIfGS7XuWeBw6P07wRrPMdHAqosjQaqgYzzLJxcg
+         8LtbCD1qNrFEO1SfqzkZSxk+9lg3KlbN2CfZVzYg2RiegFA4F09fAUVNBHqD4NcKcOOy
+         7fijxndreAZyH4dtt3FCayiWl12qfXfK3fH26qGYeaeE6HG7lS5aqd7saLIzRLEB+cWj
+         Gm+4BoeQYivnvT0fgHEJKD/rQGHFTHoKVMyMGqqRnmIQhSsBZQv7lrqmn6KfWm3FdtrK
+         w9Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759406090; x=1760010890;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2MEPE2QW27JrdMKZac1PCB7F11qUoZlbdLVQjAYukwQ=;
+        b=TdL7BOPXLK0wsZ7lJ8/EspeHmB511V6ctiC4EtATjqGAosa9N3kRYznVIYdLsh3LuF
+         J8+VxmuD6AlFkMuaVbWw2lS5Wxokj0YtvbPnpuPne/+AiN3GEkgfpPq31X7bbg1LDotG
+         YykccRskrtHENVVtbFYxmDY0PdgnqSVNcemwsa92pnU9n5d9DW8467Tn/fubc+hAD0yg
+         famMG8WxaNZsqCNzIoApRwsUxdEw1db8PlNYenyFpovHGYnviVpYKQWTCgGG+FRGiHf/
+         RKj6E1qVHaHTPpWPjL6nGu3FMoeS5EoOwr9fO1z/XSfsnwiM9RYRH+u4cHgxPHG3cpQe
+         zlAA==
+X-Gm-Message-State: AOJu0Yyr/zTksk1yfKymrco8+A6ngBjC7L35NjNVBal42TkazBo0XNc7
+	6WFPGW3L/NRAQChyyhnmeDvo5VfDcsPDCc0jRhkGUh5BLJq0eQ96VC1i7Ms0YGtDtcUWWCN7SoE
+	TRHgnRCSTbfh3vIsExAbVOvGVCbd/HJ42xsyi
+X-Gm-Gg: ASbGncs4UbXYd8sZRJ7MFq5OkuqDjUHuTjiUXsmGIj+S7rEP35Ndo/C+9EGHn0JunOZ
+	3TUBp2UPoKb25auqtLjynU+EXfwjTTe6wOTesjWCnr/G2uMUFdSVN2GkXQzMu4CeiFuTuAN5tDs
+	rnU9U3cgpjPQ33K0bW6QIocV5r38TFrBCmzQZP7tLozrvHWDyxA69ouHvLNYiODKVEb5tzndPtL
+	rhD7ZciqIkqp2g7tQJ53yrhDO1+JHp9
+X-Google-Smtp-Source: AGHT+IFk3aIF0BG78wY22RKlYck29nzFIPPMLeLKddhrrMy+aWAB21y8ywch6FZgzUnECSW1RTfR/W5JHH1RtZxtsV8=
+X-Received: by 2002:a17:90b:1c8b:b0:335:2823:3689 with SMTP id
+ 98e67ed59e1d1-339a6e63b9cmr7968173a91.4.1759406089883; Thu, 02 Oct 2025
+ 04:54:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+From: =?UTF-8?Q?Miroslav_Crni=C4=87?= <mcrnic@gmail.com>
+Date: Thu, 2 Oct 2025 12:54:38 +0100
+X-Gm-Features: AS18NWCej9-rA4yLi-eBlqunvC9hk6YieElLY_L85oOVRpimzMC-pVpTqhQn8WU
+Message-ID: <CAD8Qqac-3Oss=M4aU0B_gKCzBhuUo0ChH+8wFkWDPz=mQVqSiQ@mail.gmail.com>
+Subject: shrink_dcache_parent contention can make it stall for hours
+To: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-* Deepak Gupta:
+The current code can hit a substantial lock starvation on
+parent->d_lock when shrinking a large amount of children.
 
-> On Tue, Sep 30, 2025 at 11:20:32AM +0200, Florian Weimer wrote:
->>* Deepak Gupta:
->>
->>> In case of shadow stack, it similar situation. If enabled compiler
->>> decides to insert sspush and sspopchk. They necessarily won't be
->>> prologue or epilogue but somewhere in function body as deemed fit by
->>> compiler, thus increasing the complexity of runtime patching.
->>>
->>> More so, here are wishing for kernel to do this patching for usermode
->>> vDSO when there is no guarantee of such of rest of usermode (which if
->>> was compiled with shadow stack would have faulted before vDSO's
->>> sspush/sspopchk if ran on pre-zimop hardware)
->>
->>I think this capability is desirable so that you can use a distribution
->>kernel during CFI userspace bringup.
->
-> I didn't get it, can you elaborate more.
->
-> Why having kernel carry two vDSO (one with shadow stack and one without) would
-> be required to for CFI userspace bringup?
->
-> If Distro is compiling for RVA23 CONFIG_RISCV_USERCFI has to be selected yes,
-> kernel can have vDSO with shadow stack. Distro can light this option only when
-> its compiling entire distro for RVA23.
+Scenario:
+- Parent passed to function has a large amount of children.
+- shrink_dcache_parent is called concurrently from multiple threads.
+- Thread one collects all children into a dispose list.
+  To delete each one it needs to grab parent->d_lock.
+- Other threads keep looping over children.
+  This holds parent->d_lock stopping deletion work of the first thread.
+- Work stealing does not help as it steals at most 1 item at a time.
 
-I think it boils down to whether you want CFI bringup contributions from
-people who do not want to or cannot build their own custom RVA23
-kernels.
+We hit the scenario above in production in a cluster running a distributed
+file system (TernFS). If you have ~100k children and 8 threads calling
+shrink_dcache_parent can result in all threads being stuck in
+shrink_dcache_parent for multiple hours.
 
-Another use case would be running container images with CFI on a
-distribution kernel which supports pre-RVA23 hardware.
+I think there are two possible approaches to remove this pathological behavior:
 
-Thanks,
-Florian
+Option 1:
+Don't differentiate between work stealing and own work.
+Collect items for work stealing in the disposal list along with regular items.
+Fight out the contention per item with try_lock and continue through the list.
 
+Option 2:
+Change shrink_dcache_parent to collect a dispose list for one unique parent.
+Split out unlinking from parent from __dentry_kill.
+Run over the disposal list in 2 passes.
+First pass does everything except unlink parent.
+Second pass does all unlinking under a single parent->d_lock grab.
+
+I'm happy to submit a patch for either approach, but wanted to validate the
+proposed solutions first.
+
+Thanks
+// Miroslav
 
