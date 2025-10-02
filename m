@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-63265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E95BB33E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 10:43:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77ADBBB340A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 02 Oct 2025 10:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CACF11883361
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 08:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CD031899E6D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Oct 2025 08:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C0C2FD1CE;
-	Thu,  2 Oct 2025 08:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5212C2FFDCB;
+	Thu,  2 Oct 2025 08:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="i5+HKGpb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Bu2eH7XH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC45E2D46DA;
-	Thu,  2 Oct 2025 08:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF682EFDBE;
+	Thu,  2 Oct 2025 08:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759393492; cv=none; b=FG1uUYWxwWOE7JW2qXI15uYPFlyk5sJSGrH/xeRv2OHpGlMr7pP2QvAJDDyzNGqY201GlFTYT5qadDXvWWY9b6tGE+E+LBX0reL5Nej40d+pC35prINKj8SClq2ert5OG1/3EAg1wkWkithQdrTyGhPh5es0vjmF1gBc5k7SwwQ=
+	t=1759393540; cv=none; b=Egg4qyEYfQExX6/eXYwBCAjFqHGI3ys4NcdLZM+L52pqe0zrRob4la6fg/lbsCh46gO25yehput+AAYZSLcNepVznswdhWkzoPA1Z5yc5NbFZaMxMiGVTQsUIzzlymwlz5+bIO7TUcRMb/GdZEuqUSBxoHVTEmRyxh0j0mMHXhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759393492; c=relaxed/simple;
-	bh=EGta/OBizNM09PGf6rEuH2ZEVwPb5dGKC+KMXznpC2w=;
+	s=arc-20240116; t=1759393540; c=relaxed/simple;
+	bh=rUYgOjZIb4WBFkTgqPyZeDyE4Q7jwjqmDpE7Z7xG6nM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qkgpazbu6iD0LhzA4OXGZZtmgo2tseuTqBGzg5oTt1DpZH1n91jz8DTZcQqc4Wro+jXKxQogwoVReuBrz1gHMkzhqOsj+gnMHzJwHu0k8BsfkQvvEtJUHNl7kirmz1rpMm+9va4RiM2wdcrw29UlOlBTfurF4r81lk+lAjj6THE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=i5+HKGpb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A32C4CEF4;
-	Thu,  2 Oct 2025 08:24:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnPZLQDgLjlZfPIDw3GM2yS3nV8GJNOHjZyQsCfiS/Xen/5CElgQMCK/FnBXqw+1532A8sc1QiLPb0WPg8Ip0jJb+2CBvL8wlFVbB+QktFipykDMEH1BrseDXYo8qXnT3QFOo5DBGhjQokVMo64rI0tOIaZSdMbak6dKTZXsk6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Bu2eH7XH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC4C9C4CEF4;
+	Thu,  2 Oct 2025 08:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759393491;
-	bh=EGta/OBizNM09PGf6rEuH2ZEVwPb5dGKC+KMXznpC2w=;
+	s=korg; t=1759393539;
+	bh=rUYgOjZIb4WBFkTgqPyZeDyE4Q7jwjqmDpE7Z7xG6nM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i5+HKGpbYKH37uF6UEmHuZtFQv6O5ZG1HxMQr8kvde7omSAD+zel/Z4+s6JwdJrZv
-	 Ur3S6DldaheLi+GEdKKHX1ZJ+iRyil+oU4pwd+w36q87VybbM/v+qrAgAFV69+RNbv
-	 WsN8AOHH246elLsfI0Z+lVr0mIU6QpnW71c2yL1s=
-Date: Thu, 2 Oct 2025 10:24:41 +0200
+	b=Bu2eH7XHdLHePX4Bf9lC5g6VKtI9ke1uBOEcSnJHwXk92fJhzOASc8OM213ef4BG5
+	 q4GhQcZBnpHEGQKe8BKzoeZ2FDvVw/OAegY+rlI5qeXGG5B3lb6rK7guEI3fkTUc8R
+	 Vz92RglvCXUVsjfgg5oOym6M1SHpU7RZx/f0N6Sg=
+Date: Thu, 2 Oct 2025 10:25:35 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Byungchul Park <byungchul@sk.com>
 Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
@@ -100,11 +100,10 @@ Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
 	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
 	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
 	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 01/47] llist: move llist_{head,node} definition to
- types.h
-Message-ID: <2025100230-grafted-alias-22a2@gregkh>
+Subject: Re: [PATCH v17 02/47] dept: implement DEPT(DEPendency Tracker)
+Message-ID: <2025100255-tapestry-elite-31b0@gregkh>
 References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-2-byungchul@sk.com>
+ <20251002081247.51255-3-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -113,19 +112,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251002081247.51255-2-byungchul@sk.com>
+In-Reply-To: <20251002081247.51255-3-byungchul@sk.com>
 
-On Thu, Oct 02, 2025 at 05:12:01PM +0900, Byungchul Park wrote:
-> llist_head and llist_node can be used by some other header files.  For
-> example, dept for tracking dependencies uses llist in its header.  To
-> avoid header dependency, move them to types.h.
+> @@ -0,0 +1,446 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * DEPT(DEPendency Tracker) - runtime dependency tracker
+> + *
+> + * Started by Byungchul Park <max.byungchul.park@gmail.com>:
+> + *
+> + *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
+> + *  Copyright (c) 2024 SK hynix, Inc., Byungchul Park
 
-If you need llist in your code, then include llist.h.  Don't force all
-types.h users to do so as there is not a dependency in types.h for
-llist.h.
-
-This patch shouldn't be needed as you are hiding "header dependency" for
-other files.
+Nit, it's now 2025 :)
 
 thanks,
 
