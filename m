@@ -1,122 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-63380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706D0BB7546
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 17:34:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2D6BB766F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 17:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45D8486DE4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 15:34:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE4324ED763
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 15:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C432A8634F;
-	Fri,  3 Oct 2025 15:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA76288C0E;
+	Fri,  3 Oct 2025 15:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXsl4Bk0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYnpt0QV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F02C1E51EF;
-	Fri,  3 Oct 2025 15:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27C813AD05;
+	Fri,  3 Oct 2025 15:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759505660; cv=none; b=d+UzotIQf6axZdJf1wjucKNlX+Zy9v7UKTsl6mFIPiwGeUie9l2vz+FUw3IpdvOCLdtRKD1/HRhgpyGHqHfZNaW4uHBm812SEb9if9fXWwB3K/lI4fxfAe4cOMQzNQL9DZHyuHsshh8hGx3IDpA3gErzT+5uI1ZDmzi00N4jJp0=
+	t=1759506729; cv=none; b=M9cNa80t9J0/vE+V7M+HXgR0yeiRP0dA9ZNRYdCctNgb3tVIMba2+86FCGEGzaKjR3EIeoOxQm09dq/A+M5iiuNWP37GEcg1M6X5aGwUDwlD1M8zBr33bPcCazTrWT7kibX+jKM+gmHctLwBZ1hx/EFuFH8TUOkR6zryaTybLLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759505660; c=relaxed/simple;
-	bh=34Oe3kkIvVXPNFYZj3oBbSWA8hLsUlehHfqT+ggMRUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WgFqRFdHhyoMi6OcXahKgfb2pHCIWUOF0IeqBCVtB4Dq8yOsbokzELljECrt7lOXtk2N+PK5xEil2VYPLgn6k0J6CtFpnIcvTjTYayPAawV01CEjXlh1pzZOSYnQckeErH5BpJkm5SSc6B5j0ozv/UymYqgOUXsiIoKJHknb04Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXsl4Bk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DB1C4CEF5;
-	Fri,  3 Oct 2025 15:34:17 +0000 (UTC)
+	s=arc-20240116; t=1759506729; c=relaxed/simple;
+	bh=3W/B7yr0TP3RVj4O6JgUMcihRtNr2fM0e+nfFmSLnXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQZ35FqAc0f+SHqEL9xr7Fm1NGWcLyX+7LfK1y0yWEdKLbEedbEOVFy/HVRVHzC7BIToh05e5FqkRtXvurFfQ1qm/4TP2qyXiVPk1TvpJ0RJbe98spifZFiCRyF9DOUxjpajdeKZ53aopqKL0jjzG4LEgZ1N2ibFmpYz1uMVJMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYnpt0QV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46554C4CEF5;
+	Fri,  3 Oct 2025 15:52:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759505658;
-	bh=34Oe3kkIvVXPNFYZj3oBbSWA8hLsUlehHfqT+ggMRUw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CXsl4Bk0Fj5qEAD2O2MjUbvQHXgWqGzEFtWsfGMIYi1mj605pyHK3cTOms8hI5RY1
-	 dt3P9gmnNyikqJBKZmUeS//EB3SWgSD7F2VEjCqEdmOfwV5Q2e7VWFJroi0KaVJsn9
-	 G60G0dkZeKQCpo2QoSwFMZBq0UusGXZJYOxk+ny6kSFndooGsw2P3uZFbFmfS96HtJ
-	 XDk9A3NUBgx4ptXkKubhAONaWd7rIDDTRgml1T2QCLn6Sci7pNqKsIrG4pgrqmQI9f
-	 bWQ1OGbA54b+cyww9eSzImJEviiX33/AexQY6iVxuiunMF/e9HPhtuEQX9ANPa6C6p
-	 G1mw6PC+6rOxA==
-Message-ID: <28ffeb31-beec-4c7a-ad41-696d0fd54afe@kernel.org>
-Date: Fri, 3 Oct 2025 11:34:17 -0400
+	s=k20201202; t=1759506729;
+	bh=3W/B7yr0TP3RVj4O6JgUMcihRtNr2fM0e+nfFmSLnXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qYnpt0QV5dqgLdyy9PKpBnNSjoro13pjU+CPLy07ZjCKa3R8O/jTQRHcaIiYBSBVH
+	 jD+vAmjrrSJHDPvCJbhWx+XG4yS83yJBkdsdTFgei9gjhk5LRo+UlOp8CumBhxqaWC
+	 uQUugl61rwN9rRZewNfSfpTan81MgLGlTVlEUN1g3rgPVm+8zIY2ApNOvm9xkmdyql
+	 /UPcVqcoaG6Vs1GKV5rzz0fCMiXyi076gtR6C72ocwe+PnQ802jREblO1zvHFWcQLg
+	 oIN9jxxGqCNZv0wecr9ZkqvcYVDuKY7QbVzRHl+ZHpOq4Xl5T57PQYCLkMP4kRnVbf
+	 o820Zofzfigtg==
+Date: Fri, 3 Oct 2025 17:52:01 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
+	Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>, 
+	Paulo Alcantara <pc@manguebit.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-bcachefs@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+Subject: Re: [PATCH] fs: doc: Fix typos
+Message-ID: <6t4scagcatuba7hjy4aib5hqfgyhc4wofegr2jrl34wwa7fsyq@5uwpzmpixm7o>
+References: <DrG_H24-pk-ha8vkOEHoZYVXyMFA60c_g4l7cZX4Z7lnKQIM4FjdI_qS-UIpFxa-t7T_JDAOSqKjew7M0wmYYw==@protonmail.internalid>
+ <20251001083931.44528-1-bhanuseshukumar@gmail.com>
+ <kp4tzf7hvtorldoktxelrvway6w4v4idmu5q3egeaacs7eg2tz@dovkk323ir3b>
+ <yms8llJZQiWYVxnbeWEQJ0B_S6JRxR0LQKB1FwVe0Tw66ezuA-H1qZVCyuCUDtsw7s7h4jHTwTh98XivLW3vvw==@protonmail.internalid>
+ <425ef7bd-011c-4b05-99fe-2b0e3313c3ce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>,
- Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Volker Lendecke <Volker.Lendecke@sernet.de>,
- CIFS <linux-cifs@vger.kernel.org>
-References: <20250925151140.57548-1-cel@kernel.org>
- <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
- <87tt0gqa8f.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <87tt0gqa8f.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <425ef7bd-011c-4b05-99fe-2b0e3313c3ce@gmail.com>
 
-On 10/3/25 11:24 AM, Gabriel Krisman Bertazi wrote:
-> Amir Goldstein <amir73il@gmail.com> writes:
+On Wed, Oct 01, 2025 at 07:19:13PM +0530, Bhanu Seshu Kumar Valluri wrote:
+> On 01/10/25 17:32, Carlos Maiolino wrote:
+> > On Wed, Oct 01, 2025 at 02:09:31PM +0530, Bhanu Seshu Kumar Valluri wrote:
+> >> Fix typos in doc comments
+> >>
+> >> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+> >
+> > Perhaps would be better to split this into subsystem-specific patches?
+> >
+> > This probably needs to be re-sent anyway as bcachefs was removed from
+> > mainline.
+> >
+> I just did a google search and understood about frozen state of bcachefs
+> in linux kernel since 6.17 release onward. It is going to be maintained
+> externally.
 > 
->> On Thu, Sep 25, 2025 at 5:21 PM Chuck Lever <cel@kernel.org> wrote:
+> Thanks for your comment. I will resend the patch excluding bcachefs.
 
->>> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
->>> index 1686861aae20..e929b30d64b6 100644
->>> --- a/include/uapi/linux/stat.h
->>> +++ b/include/uapi/linux/stat.h
->>> @@ -219,6 +219,7 @@ struct statx {
->>>  #define STATX_SUBVOL           0x00008000U     /* Want/got stx_subvol */
->>>  #define STATX_WRITE_ATOMIC     0x00010000U     /* Want/got atomic_write_* fields */
->>>  #define STATX_DIO_READ_ALIGN   0x00020000U     /* Want/got dio read alignment info */
->>> +#define STATX_CASE_INFO                0x00040000U     /* Want/got case folding info */
->>>
->>>  #define STATX__RESERVED                0x80000000U     /* Reserved for future struct statx expansion */
->>>
->>> @@ -257,4 +258,18 @@ struct statx {
->>>  #define STATX_ATTR_WRITE_ATOMIC                0x00400000 /* File supports atomic write operations */
->>>
->>>
->>> +/*
->>> + * File system support for case folding is available via a bitmap.
->>> + */
->>> +#define STATX_CASE_PRESERVING          0x80000000 /* File name case is preserved */
->>> +
->>> +/* Values stored in the low-order byte of .case_info */
->>> +enum {
->>> +       statx_case_sensitive = 0,
->>> +       statx_case_ascii,
->>> +       statx_case_utf8,
->>> +       statx_case_utf16,
->>> +};
->>> +#define STATX_CASE_FOLDING_TYPE                0x000000ff
+It's not only bcachefs. But most of subsystems and documents you touch
+have different maintainers, so beyond removing bcachefs bits, I'd
+suggest looking at MAINTAINERS file and send specific patches targeting
+each subsystem. It makes maintainer's lives easier, at least for me.
+
+
 > 
-> Does the protocol care about unicode version?  For userspace, it would
-> be very relevant to expose it, as well as other details such as
-> decomposition type.
-
-For the purposes of indicating case sensitivity and preservation, the
-NFS protocol does not currently care about unicode version.
-
-But this is a very flexible proposal right now. Please recommend what
-you'd like to see here. I hope I've given enough leeway that a unicode
-version could be provided for other API consumers.
-
-(As I mentioned to Jeff, there is no user space statx component in the
-current proposal, but it should get one if it is agreed that's useful to
-include).
-
--- 
-Chuck Lever
+> Thanks.
+> 
+> 
 
