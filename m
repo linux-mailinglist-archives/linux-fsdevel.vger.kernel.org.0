@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-63352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD41EBB662B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 11:35:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851DBBB6628
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 11:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 34585344CFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 09:35:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2579719E66CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 09:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CFA2DECA0;
-	Fri,  3 Oct 2025 09:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C172DEA7A;
+	Fri,  3 Oct 2025 09:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="djqqn6FY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aA1Iu6rX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0D22DCBEE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D05D2DCBEB
 	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 09:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759484125; cv=none; b=PQKGDjePYU8eatsTrYtSNYb81YhPt1pFgu06ueueepMCvYhxGvVpBwX92Pan+iWy2QgGP75k0qfPg42iOv9lTQHimDmU2/OWvIf/Rtw10zJBkTTtVmMRexCQeB92+jxoUepQmqIXQDzdMV2PBVvw3OFyrQQeF6pnFxiugic920M=
+	t=1759484124; cv=none; b=U0QUA4iWHs9DK+Q9CG10WSnTxvO26Dk9obUIldmXyZAxOSj3htcgj4REZutBHZLGYhhkLwnE7BjToKG2VimbuyMHF2eMNfA+cDGVlkzL6yKA72c/+o5dWfnEUbF6mMmOrMXerowcc68an2wcX4ckSznUL5HXGPi8cogL862gRfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759484125; c=relaxed/simple;
-	bh=iP704VcV9TwuIpm8jhivhPESkzrVpMnittyD2c4PXZg=;
+	s=arc-20240116; t=1759484124; c=relaxed/simple;
+	bh=4dypLPu6DNf9DAMNJyF5UXwIvayiqJK8XG4EG3pgjZo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iFt4g8siaHk4YMBXSeKLJg5F9lFL+tVscveMNgP+4iCmDx4afN3bI5rdQM5SNEshrNf0a1elHWTU4PbNm4EbItYJ+nsDqDmbJJK8/1gvIAeHRE4kVgMHy7ESI0mlBQ7cFr8SN0HefcL5PgWJC5I91SW6rixkgIPB32LXJz3QKRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=djqqn6FY; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=e/IXjreLVia3/JH4pAwyw+8RprIolG1fFVprmAr8X1MxD+pgHutavbwix6aHn1lXOilN4pUiOe+osQGp+yuZHwdNicIBU817z5qMlEGh5ntaa4dE/c1m8Vs0Tv6Mgr2ud7xReaRe+OgV4ayYRgGDbfifo/guvWgqPyl2/7SSk1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aA1Iu6rX; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -37,53 +37,53 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9PoxSHvCbr1UV4RUhVsu0NexP55KnHGnjc+JW7ihq9M=;
-	b=djqqn6FYkq4uZW7hfJM4mA8kc5FYjjMSkkkYrHFtwoJQ8/tpphEPgUeG0Ejc/0DDufsBhR
-	RUQYGbOX52+8nDqRzAk8aKfs9e1NmJVz2SUqCC7oVwRpvGg8Pr+wt3lbsx5SbFNzbuq3vL
-	XoGCfFWuni+n7yhQmWIY3A84TDWTXnE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=GpNh9Npv8ACuKwnSClKnKFFRR5xgF6p+DJW3Gcbr8Pk=;
+	b=aA1Iu6rXsXIxeM/lbfEpPHURq8rZWBdM9/S2MePv/d6tyPrKyll43biWMhxGxSjE39TtUI
+	4bnoKhHq/8GyeZxqBXTve7BWx3R+s4Z9EozkX7gV1RIpPe1esuslP2HejDrcoyktY3t/be
+	heLdV7ibSxtIsol3VYJXGCknhauAi4A=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-690-7dIsBIsGMFKjBxj9rOVPkQ-1; Fri, 03 Oct 2025 05:35:18 -0400
-X-MC-Unique: 7dIsBIsGMFKjBxj9rOVPkQ-1
-X-Mimecast-MFC-AGG-ID: 7dIsBIsGMFKjBxj9rOVPkQ_1759484118
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e35baddc1so13917225e9.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 02:35:18 -0700 (PDT)
+ us-mta-676-GFzRUYXQNB-4EAQGnosfMw-1; Fri, 03 Oct 2025 05:35:20 -0400
+X-MC-Unique: GFzRUYXQNB-4EAQGnosfMw-1
+X-Mimecast-MFC-AGG-ID: GFzRUYXQNB-4EAQGnosfMw_1759484119
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e3ef2dd66so11561105e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 02:35:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759484117; x=1760088917;
+        d=1e100.net; s=20230601; t=1759484118; x=1760088918;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9PoxSHvCbr1UV4RUhVsu0NexP55KnHGnjc+JW7ihq9M=;
-        b=L7fzX9tBzbM/5HTkqQtbwOM9o0T6S87Xkj6uv9awKp0/DNp/GdGAXa1jxJ7rqowdlI
-         KdA4qzsqiqt7nl7x118ZmrEAy3WGRg2g/qrLKmk3HaB/bT9O1QuxeBd9ZhgieYCe/3yg
-         QNlgefxbCynE2w1OiyXsnZsuajMYEWcXiaWcYbOFkPCt5m4rPhccvgyBRRmOOGjkpCYT
-         /+FzY8IWFBG6EJdUXriaK4wWnaVRqiVmGr0bRBIXtetuFuY+W1eNDTLsX+RmMGZPkdbc
-         h/tDUEviLJO0FzAiXMNmdtqL8xYybDJiyNsOfHP74yBlfZn1kpOdQeAXgzpsEIQcJpXM
-         4Jew==
-X-Forwarded-Encrypted: i=1; AJvYcCWbAVV3w04iIZo/ArWhcWXlQjnG4bd/LsugwLEcT+tvXKjYoGTYq24aANHHmINFw3DTlqmmpnes5EtIV6y/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyREt1l/5AwGnJfzAfWMLT9x6R4AGpw4vCigjaaZ2OssRPdxbYs
-	KS/Ko/GqCF0C/RwTTdDELU5RJfsFR7BJRSvU1YKEniRLqXYGYFP3pJmrenroCZ8O/2f2jOU9kvN
-	7jrdJvgwxcsLUdvDsy62zAys8PkBNWg2wZbK1GyL0c7Tccm5Y5iC3Mmgs5hOm+g5HjA==
-X-Gm-Gg: ASbGncs2T4YaJPdqeoxR9+XYesuD696nFK5lv3SjA+yirZeRaI63dz5QeQq8EbU8I8T
-	crjpiyb+FoKBMG6XrFc2y/XgRqsCPM63VWXogGljY3tQxyg8qd+ruLF2DizXkLscQT9eL8D5u9s
-	ez8LUcwZoqEksHNAzK4r0mxCiG9Wb7gjctlUKfskydmYQRBMBGMRVQgThlubkYzRhpqeEOe5LxC
-	JUQXFqy21UB16rsglpHNi+71EhTz5NCEk6OU5848pn7Fl7Ido2przRDld5RQUG+z7gQUNHtff5D
-	U7qG01D+KMOZ4r1yDbzUdtsGOqHVzM1q5AON3CPmlD5ggtOe99CeXsKZqshpTAmhs+kiMGOM
-X-Received: by 2002:a05:600c:3b0a:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-46e71140bbemr14206215e9.23.1759484116839;
-        Fri, 03 Oct 2025 02:35:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfbd3Ro3K1biENsTxKxXhS4/gs2QzktTtVsOnNuk3kWFxKAkDjJiRqxFPJQlkIu74ous66XQ==
-X-Received: by 2002:a05:600c:3b0a:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-46e71140bbemr14206035e9.23.1759484116280;
-        Fri, 03 Oct 2025 02:35:16 -0700 (PDT)
+        bh=GpNh9Npv8ACuKwnSClKnKFFRR5xgF6p+DJW3Gcbr8Pk=;
+        b=EkIOR3wnmrfJ11GjYYG7h7bXTYDrotCYRpA4el4ZmSIQKitcIgujLKxB7vhkf0oFT9
+         K6V7w9oVzFQhrD/TWU8k4UmEiKj6/b/blxBzm6/cE8BPWhk3uFIcefAvABH+nmmOc54A
+         cufhemplDjfeI7WurGLtEIIe9jx8bZ5+7LNphTGP8d5EC4M+voIYiCCXYb9idlbLGjfZ
+         zMj4SxEz0rxEMsM3oTx1gwE4+8iYvc6LvvdnUbBess+5eyouefESI2viYkiV19l0RDD1
+         UuwjphGf1jS53ka0gn85A6mgnPQX5fUpdkXX/7ARFxGADU6I4HgI+XlyZiUT3nhgqUjk
+         YL/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWSwNe8ilT0vo5E9Yz7kausCwksL2tnLpnzN0tEyvBo0Q0YAYjK6Go+YFYMR+2HOXdLYCc0RrUQ9XwlpY3z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzusXDEAR6GpvAL4DBg0YMCPLjTCtbei7lwGORkuxtXggOnSAh0
+	3wAAjYIkSuYOrlCs753oSMXraf3JJq33kYRi8owcV3QnWALnayZos91kC0JEuMK3GVrjhUVX6NM
+	Odyvsunli2BVKicmHdz0qhe6y+o50atsU5b9BgyxBrTs3hIy9qBj/nP9pqYJD0DSZofUxyobBFw
+	==
+X-Gm-Gg: ASbGncvqlDXUND6ftv66y6u/olZTq62hz973Jik1GHeCTeNdYFt6BEBtzB7f+noLmFr
+	FmkDH4tiz82VCOZLFJQ1lhPxmNwaNb02toXUSpwsDEaNbF+lFGOrSNe249vePgNFd0S392zUho+
+	ZVa8zVN0QmWJGiHI3nhTWDpTGgAw/S5xzxEz6+h2WNxmFVy75YaSd72/i5NpnkSajOvRSBWGvze
+	IFQF5oiG12Jo7cR9OXe4EtPY5J+R7oEqBUDClqLoVmM/+zRPeCDV9VBZrl9Z2IJuBsJN8E2VbPj
+	557dS9Q/PSBvEst0uRNIfXAPxHX/2de8kFPYPw9g6nraz+tccKFqKiDwdAa4pJ4Xy4qcTWb3
+X-Received: by 2002:a05:600c:3e86:b0:46e:59bd:f7e2 with SMTP id 5b1f17b1804b1-46e70c9bfc4mr17218285e9.11.1759484117793;
+        Fri, 03 Oct 2025 02:35:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHaVK2zkQzqZL+45iS+eowvlr1TZYdXk2TM+UdvH8rZKcjeAYKqZl5Bkkez7g33XvcXMDW1g==
+X-Received: by 2002:a05:600c:3e86:b0:46e:59bd:f7e2 with SMTP id 5b1f17b1804b1-46e70c9bfc4mr17218095e9.11.1759484117313;
+        Fri, 03 Oct 2025 02:35:17 -0700 (PDT)
 Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a020a3sm121695005e9.10.2025.10.03.02.35.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a020a3sm121695005e9.10.2025.10.03.02.35.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 02:35:15 -0700 (PDT)
+        Fri, 03 Oct 2025 02:35:16 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Fri, 03 Oct 2025 11:32:45 +0200
-Subject: [PATCH v4 2/3] generic: introduce test to test
- file_getattr/file_setattr syscalls
+Date: Fri, 03 Oct 2025 11:32:46 +0200
+Subject: [PATCH v4 3/3] xfs: test quota's project ID on special files
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,100 +92,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-xattrat-syscall-v4-2-1cfe6411c05f@kernel.org>
+Message-Id: <20251003-xattrat-syscall-v4-3-1cfe6411c05f@kernel.org>
 References: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
 In-Reply-To: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
 To: fstests@vger.kernel.org
 Cc: zlang@redhat.com, linux-fsdevel@vger.kernel.org, 
  linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>, 
+ Andrey Albershteyn <aalbersh@redhat.com>, 
  "Darrick J. Wong" <djwong@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6564; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=iP704VcV9TwuIpm8jhivhPESkzrVpMnittyD2c4PXZg=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMu7PuKgWMC+IR/2ErFGLHN8WUZnjTKUWB2v37JdnO
- H9vWvb0RYs7SlkYxLgYZMUUWdZJa01NKpLKP2JQIw8zh5UJZAgDF6cATMQgmpGh12H2wvfGa7u/
- ncz4NuPvqh2Xs9+umR0eb2XjxD1fI0N3IsNPxuN7TuQ2P/XKdJCbdmzmkzm6ccemKm74VBX8j/u
- X8yJGdgDdH0iv
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4010; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=NFXZJCDM6gddTTqUPtjzyqiRjXXUpTibfg7JUhy4vGI=;
+ b=kA0DAAoWRqfqGKwz4QgByyZiAGjfmNGjEfRawp+TuEJCq7YK7NXEttgOFnnnI1oUi99RCp/hT
+ Yh1BAAWCgAdFiEErhsqlWJyGm/EMHwfRqfqGKwz4QgFAmjfmNEACgkQRqfqGKwz4Qh9xwD+Nm5y
+ 0G9xcswpBLFUaAWc9n3mCZRuVoP0DyYJ85y/y54A/0d7ACTsygBK/TxnCKuH2DYoGTH5aol4X5z
+ KDx/agcYH
 X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
  fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-Add a test to test basic functionality of file_getattr() and
-file_setattr() syscalls. Most of the work is done in file_attr
-utility.
+From: Andrey Albershteyn <aalbersh@redhat.com>
+
+With addition of file_getattr() and file_setattr(), xfs_quota now can
+set project ID on filesystem inodes behind special files. Previously,
+quota reporting didn't count inodes of special files created before
+project initialization. Only new inodes had project ID set.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- common/filter          |  15 +++++++
- tests/generic/2000     | 109 +++++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/2000.out |  37 +++++++++++++++++
- 3 files changed, 161 insertions(+)
+ tests/xfs/2000     | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/xfs/2000.out | 15 +++++++++++
+ 2 files changed, 88 insertions(+)
 
-diff --git a/common/filter b/common/filter
-index bbe13f4c8a8d..b330b27827d0 100644
---- a/common/filter
-+++ b/common/filter
-@@ -683,5 +683,20 @@ _filter_sysfs_error()
- 	sed 's/.*: \(.*\)$/\1/'
- }
- 
-+# Filter file attributes (aka lsattr/chattr)
-+# To filter X:
-+# 	... | _filter_file_attributes X
-+# Or to filter all except X
-+# 	... | _filter_file_attributes ~X
-+_filter_file_attributes()
-+{
-+	if [[ $1 == ~* ]]; then
-+		regex=$(echo "[aAcCdDeEFijmNPsStTuxVX]" | tr -d "$1")
-+	else
-+		regex="$1"
-+	fi
-+	awk "{ printf \"%s \", gensub(\"$regex\", \"-\", \"g\", \$1) } {print \$2}"
-+}
-+
- # make sure this script returns success
- /bin/true
-diff --git a/tests/generic/2000 b/tests/generic/2000
+diff --git a/tests/xfs/2000 b/tests/xfs/2000
 new file mode 100755
-index 000000000000..16045829031a
+index 000000000000..413022dd5d8a
 --- /dev/null
-+++ b/tests/generic/2000
-@@ -0,0 +1,109 @@
++++ b/tests/xfs/2000
+@@ -0,0 +1,73 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 Red Hat Inc.  All Rights Reserved.
++# Copyright (c) 2025 Red Hat.  All Rights Reserved.
 +#
 +# FS QA Test No. 2000
 +#
-+# Test file_getattr/file_setattr syscalls
++# Test that XFS can set quota project ID on special files
 +#
 +. ./common/preamble
-+_begin_fstest auto
++_begin_fstest auto quota
 +
++# Import common functions.
++. ./common/quota
 +. ./common/filter
 +
 +# Modify as appropriate.
 +_require_scratch
++_require_xfs_quota
 +_require_test_program "af_unix"
 +_require_test_program "file_attr"
 +_require_symlinks
 +_require_mknod
 +
 +_scratch_mkfs >>$seqres.full 2>&1
++_qmount_option "pquota"
 +_scratch_mount
-+
-+file_attr () {
-+	$here/src/file_attr $*
-+}
 +
 +create_af_unix () {
 +	$here/src/af_unix $* || echo af_unix failed
 +}
 +
-+projectdir=$SCRATCH_MNT/prj
++filter_quota() {
++	_filter_quota | sed "s~$tmp.projects~PROJECTS_FILE~"
++}
 +
-+# Create normal files and special files
++projectdir=$SCRATCH_MNT/prj
++id=42
++
 +mkdir $projectdir
 +mkfifo $projectdir/fifo
 +mknod $projectdir/chardev c 1 1
@@ -197,113 +179,51 @@ index 000000000000..16045829031a
 +ln -s $projectdir/bar $projectdir/broken-symlink
 +rm -f $projectdir/bar
 +
-+echo "Error codes"
-+# wrong AT_ flags
-+file_attr --get --invalid-at $projectdir ./foo
-+file_attr --set --invalid-at $projectdir ./foo
-+# wrong fsxattr size (too big, too small)
-+file_attr --get --too-big-arg $projectdir ./foo
-+file_attr --get --too-small-arg $projectdir ./foo
-+file_attr --set --too-big-arg $projectdir ./foo
-+file_attr --set --too-small-arg $projectdir ./foo
-+# out of fsx_xflags mask
-+file_attr --set --new-fsx-flag $projectdir ./foo
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "project -cp $projectdir $id" $SCRATCH_DEV | filter_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "report -inN -p" $SCRATCH_DEV | _filter_project_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
 +
-+echo "Initial attributes state"
-+file_attr --get $projectdir | _filter_scratch | _filter_file_attributes ~d
-+file_attr --get $projectdir ./fifo | _filter_file_attributes ~d
-+file_attr --get $projectdir ./chardev | _filter_file_attributes ~d
-+file_attr --get $projectdir ./blockdev | _filter_file_attributes ~d
-+file_attr --get $projectdir ./socket | _filter_file_attributes ~d
-+file_attr --get $projectdir ./foo | _filter_file_attributes ~d
-+file_attr --get $projectdir ./symlink | _filter_file_attributes ~d
-+
-+echo "Set FS_XFLAG_NODUMP (d)"
-+file_attr --set --set-nodump $projectdir
-+file_attr --set --set-nodump $projectdir ./fifo
-+file_attr --set --set-nodump $projectdir ./chardev
-+file_attr --set --set-nodump $projectdir ./blockdev
-+file_attr --set --set-nodump $projectdir ./socket
-+file_attr --set --set-nodump $projectdir ./foo
-+file_attr --set --set-nodump $projectdir ./symlink
-+
-+echo "Read attributes"
-+file_attr --get $projectdir | _filter_scratch | _filter_file_attributes ~d
-+file_attr --get $projectdir ./fifo | _filter_file_attributes ~d
-+file_attr --get $projectdir ./chardev | _filter_file_attributes ~d
-+file_attr --get $projectdir ./blockdev | _filter_file_attributes ~d
-+file_attr --get $projectdir ./socket | _filter_file_attributes ~d
-+file_attr --get $projectdir ./foo | _filter_file_attributes ~d
-+file_attr --get $projectdir ./symlink | _filter_file_attributes ~d
-+
-+echo "Set attribute on broken link with AT_SYMLINK_NOFOLLOW"
-+file_attr --set --set-nodump $projectdir ./broken-symlink
-+file_attr --get $projectdir ./broken-symlink
-+
-+file_attr --set --no-follow --set-nodump $projectdir ./broken-symlink
-+file_attr --get --no-follow $projectdir ./broken-symlink | _filter_file_attributes ~d
-+
-+cd $SCRATCH_MNT
-+touch ./foo2
-+echo "Initial state of foo2"
-+file_attr --get --at-cwd ./foo2 | _filter_file_attributes ~d
-+echo "Set attribute relative to AT_FDCWD"
-+file_attr --set --at-cwd --set-nodump ./foo2
-+file_attr --get --at-cwd ./foo2 | _filter_file_attributes ~d
-+
-+echo "Set attribute on AT_FDCWD"
-+mkdir ./bar
-+file_attr --get --at-cwd ./bar | _filter_file_attributes ~d
-+cd ./bar
-+file_attr --set --at-cwd --set-nodump ""
-+file_attr --get --at-cwd . | _filter_file_attributes ~d
++# Let's check that we can recreate the project (flags were cleared out)
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "report -inN -p" $SCRATCH_DEV | _filter_project_quota
++$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
++	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
 +
 +# success, all done
 +status=0
 +exit
-diff --git a/tests/generic/2000.out b/tests/generic/2000.out
+diff --git a/tests/xfs/2000.out b/tests/xfs/2000.out
 new file mode 100644
-index 000000000000..e6fc7381709b
+index 000000000000..e53ceb959775
 --- /dev/null
-+++ b/tests/generic/2000.out
-@@ -0,0 +1,37 @@
++++ b/tests/xfs/2000.out
+@@ -0,0 +1,15 @@
 +QA output created by 2000
-+Error codes
-+Can not get fsxattr on ./foo: Invalid argument
-+Can not get fsxattr on ./foo: Invalid argument
-+Can not get fsxattr on ./foo: Argument list too long
-+Can not get fsxattr on ./foo: Invalid argument
-+Can not get fsxattr on ./foo: Argument list too long
-+Can not get fsxattr on ./foo: Invalid argument
-+Can not set fsxattr on ./foo: Invalid argument
-+Initial attributes state
-+----------------- SCRATCH_MNT/prj
-+----------------- ./fifo
-+----------------- ./chardev
-+----------------- ./blockdev
-+----------------- ./socket
-+----------------- ./foo
-+----------------- ./symlink
-+Set FS_XFLAG_NODUMP (d)
-+Read attributes
-+------d---------- SCRATCH_MNT/prj
-+------d---------- ./fifo
-+------d---------- ./chardev
-+------d---------- ./blockdev
-+------d---------- ./socket
-+------d---------- ./foo
-+------d---------- ./symlink
-+Set attribute on broken link with AT_SYMLINK_NOFOLLOW
-+Can not get fsxattr on ./broken-symlink: No such file or directory
-+Can not get fsxattr on ./broken-symlink: No such file or directory
-+------d---------- ./broken-symlink
-+Initial state of foo2
-+----------------- ./foo2
-+Set attribute relative to AT_FDCWD
-+------d---------- ./foo2
-+Set attribute on AT_FDCWD
-+----------------- ./bar
-+------d---------- .
++Setting up project 42 (path SCRATCH_MNT/prj)...
++Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
++Checking project 42 (path SCRATCH_MNT/prj)...
++Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
++#42 8 20 20 00 [--------]
++
++Clearing project 42 (path SCRATCH_MNT/prj)...
++Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
++Setting up project 42 (path SCRATCH_MNT/prj)...
++Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
++#42 8 20 20 00 [--------]
++
++Clearing project 42 (path SCRATCH_MNT/prj)...
++Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
 
 -- 
 2.50.1
