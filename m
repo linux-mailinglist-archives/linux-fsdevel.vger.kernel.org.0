@@ -1,128 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-63356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715D4BB678F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 12:41:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4785BB68AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 13:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB89B3C4726
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 10:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3138219C45C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 11:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476C22EB849;
-	Fri,  3 Oct 2025 10:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BEC2EC54D;
+	Fri,  3 Oct 2025 11:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvjsH6za"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFzKRkRA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CF82EB5C8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 10:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F32527EC99;
+	Fri,  3 Oct 2025 11:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759488010; cv=none; b=f8lHgsRwa97xVZmmZdC+CNu7SH1wFA629Og3k8gLh+CL2hFJmtDlm9Xcbujn4Gi0S5diR4BZSSmxyQ0QrIq5l80DQk5odvrTCRMaQpiYikYj2fns4/QjgXPO9Ds7ddx6Y2C8MCMHHFaZ3qHhluJG2QJvmCGKtx6VWNQu5/ENFQM=
+	t=1759491220; cv=none; b=PCztNRJGzLy2NUIwoOLg01XTAv1rbIGtDCFvul92yK6tjt/e/7ISwWFbyIuZ3Hm2wbhaLHb4iw/iUSAM6+dpiBgDy4/XAtwTu8xB/TlXnVZBpBKAwnt1Kdqvyfom2wYNdRZVmJjtYGLM+T/nqwiCbvLWc9L2FDYE5CZ4QcU8ZWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759488010; c=relaxed/simple;
-	bh=uixQ6kyH22/C96wbs0ukOXrsC4/qnZ7ssmSzbpApo70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=azCWWjN7ZdbxEsAqKx8rgRXj82uj/mZmLOiugLQ/N0zUW2Y18errOGbtWNW2SZeftvAuTNOozA4/Lwnfzz1zdpt8WoLpVz4z2LSJgXWu6qCMiaUZOT7aFCntVpBVVRHzecLQ1ETlsknVOXOKVkyUU0lnNsOwFCqEoYLfJyxL3TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvjsH6za; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f5d2d99b8fso75192f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 03:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759488007; x=1760092807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ZzWimyXaZpxT4HA9s/MOFmVrRgLJpUiUIoVWOcDDp0=;
-        b=dvjsH6zaGEZEyk8hTMUf80P+bHiazsAsPlyimwuYg1i0yGVMjF9cqFdp5PqC/zuEbK
-         zhSWR+sfwcOVJEZHyYP3gxsVJoyRnbX2soDpqTNvB+jRSO2pdUXa220OcEuQru5bDWc1
-         NIl+INqg98f3ha7JxSwagRHi3Qo0hUxzwD5sO5/cOs+LBkKPJsfFWZg9IeD+cE+TFPDd
-         z1aM047F2/XgxTPB/R4H0Q1ugaeg7FXrnsQ/35YsjVEnN/pfN7J3EJ19FYG3VKUVN5cq
-         TOcIkPZsiXiUo/dBzT+nN2IYX/hd+/OYHF56shf3at0yqcIEHeJQBIJV7VUzoEU7ifLr
-         sSyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759488007; x=1760092807;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ZzWimyXaZpxT4HA9s/MOFmVrRgLJpUiUIoVWOcDDp0=;
-        b=bWUdVFBAfmygrq9+USu9/IijZY9rGJ78L8sV4mcYHhz0cI7mBlRiwFszQAATx5+OII
-         XaI92ydZNQZWzkKxdeDJNBSr+k7svRRNunhfFNS6jrdnlKMjSSgUzOOHcAd5EbYsbeiJ
-         nqvbiVj8O1AypyDPyYYlWpEpjG++kyrqNBM9PFAoMDoJDE8Pq/eLhpwuizPS7K0nc5pY
-         con7weY7MNbJtnxxbxhI911ONIWuxc7vF8CgBfkj9H4HULwuXIto/2s5wN0Vv42aG2cx
-         SQjQCkpLN8RVlwcoO2cr7W0yzm/ixYCtGBn+yrECowaNJkypA6Jliyyb4VjWL7r8YCDB
-         pk0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZbfL/9CF1HvgHsTo+silcWwSeHbw5nedit80NhGUAigyliskklvFjINB7nT5488XaFqoQUC7H3MC+4MuV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/xwDldrnwkdwrPQHG06JTxex59gHfC2PIljNAIMxU7dgg9/ED
-	KhUjejxv0JzZEaBz+yCd8mVmhZ2ql/jXtFcT5J2MS4Cilyri/l3J7XVyb0t6dQ==
-X-Gm-Gg: ASbGncsdKIuEPDLQ2s+2yPYe0B0vp9bgYi4Pi4N4icZooXJLPmMgkYqr/UhQKC0M30+
-	1JSXUl0vreWy6QTDyBnpqg7V5Bn66M15N1tHbIA4f9jfN/pPfQfaYik95YOCqMeCHwMQH2q0yuM
-	34TbE1QXWUVsCmm4d2WvPGodXspfBrckVB+XsPopA6gKWZVh7Q3kgMTlt5zMqgelsmiKLuoroql
-	p6JBV8gqV4vWmvYSy0UR37PP+DNO7oss8324diQ5IsjJGrry4XRcXeQmU7yp+qBH77Ga9i4wk30
-	Twony1rwQkZYD9XjXGXbO3Hc9zrJfkTzUHuar4muN5WkQgZpoCilIesJQWgMdH//9Iwi74vbxZN
-	/RSzpr4PBDKb/5auLmZffyE088VoBFknzmra2ZHYVeYSQqoY+d+vNbkxy3trouXz1kfKRAQw=
-X-Google-Smtp-Source: AGHT+IFUSvvSSGhE/OmU6U3tpy7UKk+VR5GvbEDJyFIQIUGJpgNu1HB76w5/4UMrESS3rJMjujyoOQ==
-X-Received: by 2002:a05:6000:3105:b0:407:4a78:fff0 with SMTP id ffacd0b85a97d-4256715ac7fmr802161f8f.4.1759488007012;
-        Fri, 03 Oct 2025 03:40:07 -0700 (PDT)
-Received: from [192.168.100.179] ([102.171.6.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm7468725f8f.49.2025.10.03.03.40.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 03:40:06 -0700 (PDT)
-Message-ID: <b0388977-413c-46d0-b0e1-fc8d26ef9323@gmail.com>
-Date: Fri, 3 Oct 2025 11:40:17 +0100
+	s=arc-20240116; t=1759491220; c=relaxed/simple;
+	bh=8JvzZz+MrzjUmB/qmn12k1T1z8wI8NEqkWeYCArS4nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnZaFvAfyHdSfOhsi4zZO7HXEiqZ2z5JEhvwYIXKpeLTEPPEEXgkjdhswYZbOoRbbG0vI7lh5oUb3Wn3ol2puwzP7WwkfmmBQ7/Z9owv59PQsYgiqxh96PhXpd/qfsP+fv5K7qaVIPp8zPLV9dnq3BdpJfG1p+aibtaQLoNdFwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFzKRkRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B48C4CEF5;
+	Fri,  3 Oct 2025 11:33:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759491219;
+	bh=8JvzZz+MrzjUmB/qmn12k1T1z8wI8NEqkWeYCArS4nA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lFzKRkRAagp0TVhUdTwIsW0EPgf7xwe5vUnZsgItAsbqWLbYcv7v2Q3oCdo6pdbpH
+	 TxK4cHFxGzDDbQDQTmmTAALXtRce7awXslf/w51ZRllOlHQfykkv/S85tSAEJm9jFJ
+	 GYwvA6uugwAlC/eFWM7ehADw13/t37TYV5luOUQD7lDrfqGG54YTKnaTyEWvTdRb0c
+	 orc+Nn8y24EKqDs+XjojdkthXLkOB/CpwUkMKq+3hkvcz1Knd27dZO22vw3HIZH/oz
+	 KeJJqGDMye/t+diEqfyZzsugo6eKkklnr+1Zd5LuUfHG/pa69kR/h1070kPLMeXwGn
+	 kaCdIbmTIMmYw==
+Date: Fri, 3 Oct 2025 12:33:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	kevin.brodsky@arm.com, dwmw@amazon.co.uk, shakeel.butt@linux.dev,
+	ast@kernel.org, ziy@nvidia.com, yuzhao@google.com,
+	baolin.wang@linux.alibaba.com, usamaarif642@gmail.com,
+	joel.granados@kernel.org, richard.weiyang@gmail.com,
+	geert+renesas@glider.be, tim.c.chen@linux.intel.com,
+	linux@treblig.org, alexander.shishkin@linux.intel.com,
+	lillian@star-ark.net, chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 09/47] arm64, dept: add support
+ CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
+Message-ID: <b69ab7d0-ba5e-4d22-88ef-53e0ebf07869@sirena.org.uk>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-10-byungchul@sk.com>
+ <a7f41101-d80a-4cee-ada5-9c591321b1d7@sirena.org.uk>
+ <20251003014641.GF75385@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] init: Use kcalloc() instead of kzalloc()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20250930083542.18915-1-mehdi.benhadjkhelifa@gmail.com>
- <20251002023657.GF39973@ZenIV>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <20251002023657.GF39973@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CPEOfhRT6FsWLRqF"
+Content-Disposition: inline
+In-Reply-To: <20251003014641.GF75385@system.software.com>
+X-Cookie: hangover, n.:
 
-On 10/2/25 3:36 AM, Al Viro wrote:
-> On Tue, Sep 30, 2025 at 09:35:37AM +0100, Mehdi Ben Hadj Khelifa wrote:
->> Replace kzalloc() with kcalloc() in init/initramfs_test.c since the
->> calculation inside kzalloc is dynamic and could overflow.
-> 
-> Really?  Could you explain how
-> 	a) ARRAY_SIZE(local variable) * (CPIO_HDRLEN + PATH_MAX + 3)
-> could possibly be dynamic and
-I missed that c is in local scope.It's already of size 3 and since 
-CPIO_HDRLEN is 110 and PATH_MAX is 4096 + 3, it's far from the limit and 
-it is calculated at compile time since all values are deducible.> 	b) 
-just how large would that array have to be for it to "overflow"?
-If c could be of any size, it would have to be of size 1,020,310 for 
-32-bit kernels and a lot for 64-bit kernels around 4.4 quadrillion 
-elements. Which is unrealistic.
 
-> Incidentally, here the use of kcalloc would be unidiomatic - it's _not_
-> allocating an array of that many fixed-sized elements.  CPIO_HDRLEN +
-> PATH_MAX + 3 is not an element size - it's an upper bound on the amount
-> of space we might need for a single element.  Chunks of data generated
-> from array elements are placed into that buffer without any gaps -
-> it's really an array of bytes, large enough to fit all of them.
-Yes I get it now. But Even if the CPIO_HDRLEN + PATH_MAX + 3 is the 
-upper bound on the amount of space and in use it doesn't have any gaps 
-in memory, Shouldn't we change kzalloc() to kcalloc() since kzalloc() is 
-deprecated[1]?
-Regards,
-Mehdi Ben Hadj Khelifa
+--CPEOfhRT6FsWLRqF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1]:https://docs.kernel.org/process/deprecated.html
+On Fri, Oct 03, 2025 at 10:46:41AM +0900, Byungchul Park wrote:
+> On Thu, Oct 02, 2025 at 12:39:31PM +0100, Mark Brown wrote:
+> > On Thu, Oct 02, 2025 at 05:12:09PM +0900, Byungchul Park wrote:
+> > > dept needs to notice every entrance from user to kernel mode to treat
+> > > every kernel context independently when tracking wait-event dependenc=
+ies.
+> > > Roughly, system call and user oriented fault are the cases.
+
+> > > Make dept aware of the entrances of arm64 and add support
+> > > CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
+
+> > The description of what needs to be tracked probably needs some
+> > tightening up here, it's not clear to me for example why exceptions for
+> > mops or the vector extensions aren't included here, or what the
+> > distinction is with error faults like BTI or GCS not being tracked?
+
+> Thanks for the feedback but I'm afraid I don't get you.  Can you explain
+> in more detail with example?
+
+Your commit log says we need to track every entrance from user mode to
+kernel mode but the code only adds tracking to syscalls and some memory
+faults.  The exception types listed above (and some others) also result
+in entries to the kernel from userspace.
+
+> JFYI, pairs of wait and its event need to be tracked to see if each
+> event can be prevented from being reachable by other waits like:
+
+>    context X				context Y
+>=20
+>    lock L
+>    ...
+>    initiate event A context		start toward event A
+>    ...					...
+>    wait A // wait for event A and	lock L // wait for unlock L and
+>           // prevent unlock L		       // prevent event A
+>    ...					...
+>    unlock L				unlock L
+> 					...
+> 					event A
+
+> I meant things like this need to be tracked.
+
+I don't think that's at all clear from the above context, and the
+handling for some of the above exception types (eg, the vector
+extensions) includes taking locks.
+
+--CPEOfhRT6FsWLRqF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjftG4ACgkQJNaLcl1U
+h9AJAwf9GUZ8nquWa7D1no47c5NWSm5cMwwvmTjDaPtYC52seNgxT47rqiAa032b
+rbQuOcdIvbMOoRrk3oOjch4rbo2VSgw1bzxKncoUyWrQ1rw9rhdfmdQpZZSbT1XQ
+ZE3VcLNDV3bfjO2GU8cTjiUDwM29qIeTSzCIn9ubfHcuEvoaYes1/BrQYAwB6ghQ
+7LjwZANFGJdatftOLPlVL8kKM/B5H6eSUlr8bUS9hlZE2g39/1LLb9UexVvnMj8u
+6gPRXHiHF5Vzad2FqVmWKt4F1F39CJ4g1c624zJiIGAWP9iBONB8dIyQPlTmK4U7
+mnXQy7USXtlxU+Xw5RCO9fy5x0Ahxw==
+=LMdg
+-----END PGP SIGNATURE-----
+
+--CPEOfhRT6FsWLRqF--
 
