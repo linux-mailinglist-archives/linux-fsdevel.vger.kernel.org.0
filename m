@@ -1,129 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-63400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D559BBB82C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 23:12:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C44EBB82D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 23:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85DB54E9DD4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 21:12:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBE1E4E9984
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 21:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D4D25A651;
-	Fri,  3 Oct 2025 21:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D673E260565;
+	Fri,  3 Oct 2025 21:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKtHKuj/"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uQzkKuSF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3173D25B687
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 21:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A8219DFA2
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 21:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759525916; cv=none; b=F+WItmn3lsR16qTDmXXCueeIjdiAOC8sztUR5OUvCrJ2OzfgUrPCuPfHqfU4N4WCQfm1QjdBljNSrxde1gsq4AW3laCw3TtuTi3wsLdJSe5l0e6XO18o7Tw2sAKFPA9XGo6tUAFi8Emz+kck9x4wKRo2DqhKFx/mtjt7HGuG3QE=
+	t=1759526037; cv=none; b=Sf+zXlG+Xp/uDUaPYq/leB0VICUVmFuvhjEYhiLXpd3+wDXFEDCJ/FjSBmPB2SX+Z2bllb5Y1mxQcZx7Vg+/3nO9xW6DedwnRJ0v5UeHbq08LUsRARo5PbxMyZepKsupFdhr8M5Yq8LRtY+c+Owd0s9eaFlhvvZMTHm5sD+MK3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759525916; c=relaxed/simple;
-	bh=ZarWfiHXGHHB+8+MSp0i9XDvXuhv0vsLNGhp2CdvMMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQriZ7qffwwbApCmGjGeX1BPQxTv6wX5+6tH0yhAbc1FiF0FKST66oozS6C+YHaaKmNincyse74efSpgOF+wZr46pE6oiTIyiSz5rDyqxofcneR7o3kOiUE5+h7nFhoQSf+UdR3Os2Un2T3OC1Wd6BkHBbvFuiX76xs3V95xPaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKtHKuj/; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27eceb38eb1so27316135ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 14:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759525914; x=1760130714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=idBH2LpwUFgIevwHzdiFY2NPh0U8IEm5opIuykd/Lyg=;
-        b=CKtHKuj/srV5fMgPA/8UKXuZ+AH0o9p4JSfYK6byxC8/tN+tJjWv2sbSwcZC4afpaq
-         8NsNQPEy6wd9NJHd5DY3UWlGkw1QPY2FRSZ9j2K9QzhZ/BmnTiKA0O5JCg/j55QM8lqL
-         4tIcXPl1Yly/KcgS9D5g0RCFklKjijD2IDHrC/SPSkVv5OmM4FdkzSslmdqNBKRpUBwA
-         RrL+BAYMi79h/b7++/24/CMfyTRJNhlOeXxaTJF3LK6zzQUqPcNAqC2db6/H0oGTvZDB
-         WOPLnBlCcSJUagCFk+fUUIjTs97puhBjDskZ+bG6jEyyjc7GFthqzL5jfeyhIwI/YOhS
-         Fdrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759525914; x=1760130714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=idBH2LpwUFgIevwHzdiFY2NPh0U8IEm5opIuykd/Lyg=;
-        b=LHsl0utEcOjFPqPhI7f3J8MAxmwzYxKEB+caIK49+q5s40Ed+gIO/B32oNSR8jNldK
-         ar+n6EO1FyqiX0vD5tiZO2/g1on/4QogFF/shEdv9Mg1AjI1VSCcyX+KZtm9PfOmiYA8
-         /ZaN4XuK/c3+BV/xgiCzLMgRKY2qI2hVGFwENpQY1Y0PNv7ah2R2ho5txr1mUwA9EQHx
-         FNwV6rfJy61aMlPCCorzJlDpEdv3L/w9wcGy5lf/WS2vSDWzrS8wFg1zF2x3LuINvQjk
-         XkcD+0M1MuETSd4SQOHjfcgvijfWgJXMFGbaP1WaTdl9RFPeQ7wCa+93LHEtvhkJX5N4
-         uVwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5zUlAjznObbBB/rqu3eImj4NO/2x/WQ/Ycwy1JvXjp00DXkatsUQMhwZCwIgSxlKOenGuimqaQ8+EO5F/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+M/WfbHs+yWaxC76U3JwueCjSV4djFNCCMiGJ9CG4RjugazF1
-	2tfuqjElYBltwdRdXGtBZ9LHn0DODaY1SNpYQ6KY+x4akLHxWhmzLI3nePY7aqudpINqBNt0dze
-	hkT4LQSb9HvxgP3bKtw/Fx9+QitGSYaU=
-X-Gm-Gg: ASbGnctkj8igD59MhbdNJwNyhMJeaehaRG4GLKVeihALppy2MHgF8KqY3ibETDIuLk8
-	XYlIhaPCyJwh6gbFq95yKLwC8UkxsVtCbwDZew/gVrZzDtL8OIPWNfXXp8lw1QZbm6EWoNqeAQE
-	7gQyaocldPQ4pcuSkUdOHUzoltROBGhZnCB1VTJdxyiKpwWMrqUxo9i90b+UyEaYEmd+6DVwLnC
-	swRhl4FEZ5XMy4bSY7mwuBL9f2WHQuq5AchzsZ0aHQDpSzG+TS0sDo2pU0t8NmONmu0/X9Ma/Iw
-	gOEHkwza7kC1t3bH
-X-Google-Smtp-Source: AGHT+IESj68bldZNCi4hadzfEkfqbbyvi1Q2I7xucoG5vjfeN4926Z6GVHXgpJPrrPd5ZgEQ+C8FE3WQZyqrwWDH5rM=
-X-Received: by 2002:a17:903:230a:b0:24c:965a:f94d with SMTP id
- d9443c01a7336-28e9a62016amr51310735ad.46.1759525914501; Fri, 03 Oct 2025
- 14:11:54 -0700 (PDT)
+	s=arc-20240116; t=1759526037; c=relaxed/simple;
+	bh=V7PoEKXD0Q+mloNd3mDO2GE3C6oMT+qrDx1rM2JOF4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLHWUGaUw/86Syac8O5jIZArXKg/4gIVQWz+W863cSOnAZ8heN3tKfwx7KpVR73b0ieprkA9dYgQnkd0xZJdmUySs57CVXLdcOD0Z34KPq6LSaLZBGyoC6Z2bbj130zfRgyWG9ePB4DbaDDGJCjYmoKfe4Nzw3Haop4zzMT1mFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uQzkKuSF; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lJ99lNLZkUvQkZPEYCEupRh0DEOKIbn96zZC8vCF48o=; b=uQzkKuSFUXl/SozgpOGarA9Xu/
+	AV1uuAG8JbVL7NG/ZcOpiXtewen48pBn9at/Gk6yFtAJPmG6AgR1ickQ39ApHGm/YY3SoVozNwuRc
+	TMfW0JRdd7iHBj5/dy6/Ie+gzjLZpb0Kv0Gjyft03y739yPe1s3D7K621aDB4x5vMe4+9vh7BtNl3
+	2zkM6KJm+zzkQfdXYCwlszMZtarsHYvhU3cD+nMjrsFVAy2ZlypalCwl7qY4fN5PEqcTyRye3cI9K
+	hZciZu9hFpIbiEa5j3b1CKXFgTetqIOcW/CRfTRGyGgu2m0P/TYVAp1rXPJbQkX716SL0hA6+F90w
+	UiRaBQ/A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v4n67-0000000A1sw-3bcY;
+	Fri, 03 Oct 2025 21:13:51 +0000
+Date: Fri, 3 Oct 2025 22:13:51 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [git pull] pile 1: mount stuff
+Message-ID: <20251003211351.GA1738725@ZenIV>
+References: <20251002055437.GG39973@ZenIV>
+ <CAHk-=wjwQpQQb8A5594h8fTODkLHLBuw23TK1jL=Y9CLckR0kw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925151140.57548-1-cel@kernel.org> <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
- <87tt0gqa8f.fsf@mailhost.krisman.be> <28ffeb31-beec-4c7a-ad41-696d0fd54afe@kernel.org>
- <87plb3ra1z.fsf@mailhost.krisman.be> <4a31ae5c-ddb2-40ae-ae8d-747479da69e3@kernel.org>
-In-Reply-To: <4a31ae5c-ddb2-40ae-ae8d-747479da69e3@kernel.org>
-From: ronnie sahlberg <ronniesahlberg@gmail.com>
-Date: Sat, 4 Oct 2025 07:11:42 +1000
-X-Gm-Features: AS18NWC1ODU0PD3hd2knk4ObBSOEE8H2Tv-wusAALRmCDLFFlJTzSTlYgqVa4x0
-Message-ID: <CAN05THRXfkRMNiE36ksR5ULFC38Ru3PX7Tbv2w-m03=NEk+Hqw@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-To: Chuck Lever <cel@kernel.org>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Volker Lendecke <Volker.Lendecke@sernet.de>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjwQpQQb8A5594h8fTODkLHLBuw23TK1jL=Y9CLckR0kw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, 4 Oct 2025 at 07:05, Chuck Lever <cel@kernel.org> wrote:
->
-> On 10/3/25 4:43 PM, Gabriel Krisman Bertazi wrote:
-> > Chuck Lever <cel@kernel.org> writes:
-> >
-> >> On 10/3/25 11:24 AM, Gabriel Krisman Bertazi wrote:
->
-> >>> Does the protocol care about unicode version?  For userspace, it would
-> >>> be very relevant to expose it, as well as other details such as
-> >>> decomposition type.
-> >>
-> >> For the purposes of indicating case sensitivity and preservation, the
-> >> NFS protocol does not currently care about unicode version.
-> >>
-> >> But this is a very flexible proposal right now. Please recommend what
-> >> you'd like to see here. I hope I've given enough leeway that a unicode
-> >> version could be provided for other API consumers.
-> >
-> > But also, encoding version information is filesystem-wide, so it would
-> > fit statfs.
->
-> ext4 appears to have the ability to set the case folding behavior
-> on each directory, that's why I started with statx.
+On Fri, Oct 03, 2025 at 10:45:02AM -0700, Linus Torvalds wrote:
 
-I think that is effectively also the case for cifs.
-Perhaps not for normal directories but when following DFS links or reparse
-points you can traverse between servers/shares that have different
-case handling.
-So I think statx would make sense here too.
+> What do you think? This patch is ENTIRELY UNTESTED. It compiled for
+> me, that's all I can say. It *looks* fine, and it reads nicely and
+> groups those variables with the lock that protects them. But it's a
+> quick throw-away patch for "maybe something like this?"
 
->
->
-> --
-> Chuck Lever
->
+Gathering those into a single object makes sense, the only thing that
+worries me is that it is suggesting that we might want to have multiple
+instances of the entire thing...
+
+One obvious problem is notify_list and mnt_notify_add(); it's not
+impossible to deal with.  The only reason it's not static is the
+call in reparent(), and I'm not at all sure it needs to be there -
+we are sliding something from under an overmount and I don't see
+why would anybody want a notification for watchers of that
+overmount, especially since nothing is generated for the things
+overmounting it, etc.
+
+Last cycle's pile had been way too large as it is, so I decided to
+leave dealign with that magical mystery shite for later; might as well
+do it this cycle...
+
+>  /*
+> - * locks: mount_lock [read_seqlock_excl], namespace_sem [excl]
+> + * locks: mount_lock [read_seqlock_excl], fs_namespace.sem [excl]
+
+ * locks: mount_locked_reader, namespace_excl
+
+would be better, IMO.  I didn't switch those comments since the series had
+already been getting too long, but I think refering to locking conditions
+by guard names is better than going by lock name + type of access.
+
+> -/* iterator; we want it to have access to namespace_sem, thus here... */
+> +/* iterator; we want it to have access to fs_namespace.sem, thus here... */
+
+Stale comment, really - mnt_find_id_at() is static, to start with...
+Originally it had been explaining why that thing (used in fs/proc_namespace.c)
+stayed behind in fs/namespace.c; these days it's not obvious that comment is
+needed in the first place, but if we want to explain that, we would be better
+off with something like "iterator; used only by fs/proc_namespace.c, kept here
+since it uses mount rbtree of namespace and we don't want to expose the details
+of that outside of fs/namespace.c"...
+
+> -		emptied_ns = m->mnt_ns;
+> +		fs_namespace.emptied_ns = m->mnt_ns;
+
+Might be worth an inlined helper...
+
+> -	rwsem_assert_held(&namespace_sem);
+> +	rwsem_assert_held(&fs_namespace.sem);
+
+... as well as this one, really.
 
