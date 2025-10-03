@@ -1,272 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-63376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFF2BB7317
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 16:35:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA52BB7350
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 16:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4D319E7E81
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 14:36:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8DAA44ECC5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 14:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFAB23D7FA;
-	Fri,  3 Oct 2025 14:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xhCX0EiJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9C12472A6;
+	Fri,  3 Oct 2025 14:37:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E9C347DD
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 14:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8396139E;
+	Fri,  3 Oct 2025 14:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759502121; cv=none; b=I28auM5Yc41H1HCFFyEMHgsRz4aRMr9mf6oKHfnirMvyg9nV8hXqS8nGOYEfZQSOHDikZkJWFhq4e3vYrPLWC+dKrAf5XB8jf3MbHV1tIWxW67VRlsZHTsaA2W5UIWcWrFF2npnmAfHs0P2wmUwisRhT1g3qx/myFIq0fhHr15o=
+	t=1759502235; cv=none; b=D25l0+KTvICCJwZbCyV10c5Guqp9obZqZxtoAUTm32L3Fc6cPiY7wUspKmW8nRXHssjNpZVrs8+d86fPEo7KYY07ioRQa8UkJ6bnEoWG9tofdcUdWcHotaZ2WfDfxbcG4FA22Bbfo4eb9p7DcGdK0Yi5LBjjdd75CfNwjIFNXCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759502121; c=relaxed/simple;
-	bh=Q4wvhKK1SLC7lyGyvNT/vgYSM+5FbboY05jYhys6UEU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c/NSw87Jv8Gwv4jPabhZ139Ar5OiG4R/C80rfeFuH+VFismqGDXiwstsHi3CkCSYjUx8QTeLbN0WXjHfB5orn3qwjbgeQosXmC6QPVRjWqHU5azyBrVpA4Jq2LWQGyS01iohOc0sAB2j4W1PVUAYZsXc0oMXGWHdaa9SM1JMstQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xhCX0EiJ; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b57cf8dba28so2146667a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 07:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759502119; x=1760106919; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iz/kuorGnhS1JOjPWbMWU1uMXuAxZjX5KeqruEHo5gU=;
-        b=xhCX0EiJWFYwAOJ9Hx1CL2LrSi4BlAnCg5AMuvjvqS6xZuUsBwXwmKLxgXRgOTiF6r
-         W4OXOTn5Y9+HaEghznHKnFZPcaK+Bu65bV+IG6LiryzVzvgotPDM1KYNfRxM5qpYB1lz
-         k0FulPSDye9EQQuMwcXTSgHTEolLffJFBsaJn/WZ4JJX7B1tcYlZ8kC18TlP5LpEbWfr
-         MxkGAjcwDUXa8SgvxJJ3TUqrZEJyE5OvhMfp1frqyTH5FmvL0OGJyHeACEnEtPQ7FURI
-         wj9cbjhtyz8qQPSJk0bYQS9IA12E7q3wcsA1aDG1iKu4lCKkG3W7qRpVal/A1iZS2cB3
-         veJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759502119; x=1760106919;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iz/kuorGnhS1JOjPWbMWU1uMXuAxZjX5KeqruEHo5gU=;
-        b=NTZHb6HtLn48CHJNp1SqTVudcgWgtBgsF7Lr1c38PZO0N30ReOr/lnJlUkt1hDNPX9
-         4QPp36/f9+K5if87gja7HyWoCe7EK+7QuEPIYru9w/GTN3z/O9sRlsRaNBKopiGsVqy9
-         HgGpziZQERk+Za5ZqohnHFwsOcdO0stAYjkkIrfd3bDiKI2QVswyHv+ZkFflwOVJ7PrM
-         Gyg5q/nVnRH/aQFWl4dsRtSw1zAi/nVyYB17Gj0xyM2TIkshHJ995P2VQVm5g1cigB2d
-         IHC3mEI2LJqbD+Hc4byPuec7HtdVHvTx0Bx7r2bTdwztp1Kjew9WnQl452nxSuSCRPrI
-         yRtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAoFLAy+dad9lt/CqZyPizImxWeXAQ1sxL+NkDxFCUVa6DLIDCaDTMxcE6flmQA57lA9lzD+yaOvbrDEi0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKcb+dyH6BREv0mQAWqUkQjd9ud227wilcRKQq9WHIhZhrMJ63
-	FWCXPOBtl5YPs9/T8KMDiX9ihdiL5JQVaoPOozz46I4i+xx+xt0+WsmmcPROxk3TZ0mUEg7o3Rb
-	eF4ZpLg==
-X-Google-Smtp-Source: AGHT+IFUN7Oe4z6ZymRlBXqr3L4kG4PYp2PMFWWKwKk/eG/6YDVO+WPrjEYPY3MOxRYFU3HuhZBFs27G7uM=
-X-Received: from pjpy4.prod.google.com ([2002:a17:90a:a404:b0:32b:95bb:dbc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a11:b0:32e:e18a:3691
- with SMTP id 98e67ed59e1d1-339c27b3cf0mr3856927a91.35.1759502118454; Fri, 03
- Oct 2025 07:35:18 -0700 (PDT)
-Date: Fri, 3 Oct 2025 07:35:16 -0700
-In-Reply-To: <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
+	s=arc-20240116; t=1759502235; c=relaxed/simple;
+	bh=ify0TfiFKa3Hes8KZtJjaG2GeXYqffaYoF8Y5oCDXXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6cE2diKRDWdmOgbZp5W0Q018xpyzLFAzYyIbMQ/ZEyxi2OrmtuIgrcpmDS1WC4dIZ0EcSNlZhka4rqrK/hq8gdn21NR1WGbNKUeXG6kAXxetZi8vqANffhmh6hqZZA5Of4sQnEwaQT26qoqUf1ika7R7wrW2QvHdd6TilZUPwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09D741A9A;
+	Fri,  3 Oct 2025 07:37:04 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8693C3F5A1;
+	Fri,  3 Oct 2025 07:36:47 -0700 (PDT)
+Date: Fri, 3 Oct 2025 15:36:42 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 09/47] arm64, dept: add support
+ CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
+Message-ID: <aN_fel4Rpqz6TPsD@J2N7QTR9R3>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-10-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
-Message-ID: <aN_fJEZXo6wkcHOh@google.com>
-Subject: Re: [RFC PATCH v2 29/51] mm: guestmem_hugetlb: Wrap HugeTLB as an
- allocator for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002081247.51255-10-byungchul@sk.com>
 
-On Wed, May 14, 2025, Ackerley Tng wrote:
-> guestmem_hugetlb is an allocator for guest_memfd. It wraps HugeTLB to
-> provide huge folios for guest_memfd.
+On Thu, Oct 02, 2025 at 05:12:09PM +0900, Byungchul Park wrote:
+> dept needs to notice every entrance from user to kernel mode to treat
+> every kernel context independently when tracking wait-event dependencies.
+> Roughly, system call and user oriented fault are the cases.
 > 
-> This patch also introduces guestmem_allocator_operations as a set of
-> operations that allocators for guest_memfd can provide. In a later
-> patch, guest_memfd will use these operations to manage pages from an
-> allocator.
+> Make dept aware of the entrances of arm64 and add support
+> CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
 > 
-> The allocator operations are memory-management specific and are placed
-> in mm/ so key mm-specific functions do not have to be exposed
-> unnecessarily.
-
-This code doesn't have to be put in mm/, all of the #includes are to <linux/xxx.h>.
-Unless I'm missing something, what you actually want to avoid is _exporting_ mm/
-APIs, and for that all that is needed is ensure the code is built-in to the kernel
-binary, not to kvm.ko.
-
-diff --git a/virt/kvm/Makefile.kvm b/virt/kvm/Makefile.kvm
-index d047d4cf58c9..c18c77e8a638 100644
---- a/virt/kvm/Makefile.kvm
-+++ b/virt/kvm/Makefile.kvm
-@@ -13,3 +13,5 @@ kvm-$(CONFIG_HAVE_KVM_IRQ_ROUTING) += $(KVM)/irqchip.o
- kvm-$(CONFIG_HAVE_KVM_DIRTY_RING) += $(KVM)/dirty_ring.o
- kvm-$(CONFIG_HAVE_KVM_PFNCACHE) += $(KVM)/pfncache.o
- kvm-$(CONFIG_KVM_GUEST_MEMFD) += $(KVM)/guest_memfd.o
-+
-+obj-$(subst m,y,$(CONFIG_KVM_GUEST_MEMFD)) += $(KVM)/guest_memfd_hugepages.o
-\ No newline at end of file
-
-People may want the code to live in mm/ for maintenance and ownership reasons
-(or not, I haven't followed the discussions on hugepage support), but that's a
-very different justification than what's described in the changelog.
-
-And if the _only_ user is guest_memfd, putting this in mm/ feels quite weird.
-And if we anticipate other users, the name guestmem_hugetlb is weird, because
-AFAICT there's nothing in here that is in any way guest specific, it's just a
-few APIs for allocating and accounting hugepages.
-
-Personally, I don't see much point in trying to make this a "generic" library,
-in quotes because the whole guestmem_xxx namespace makes it anything but generic.
-I don't see anything in mm/guestmem_hugetlb.c that makes me go "ooh, that's nasty,
-I'm glad this is handled by a library".  But if we want to go straight to a
-library, it should be something that is really truly generic, i.e. not "guest"
-specific in any way.
-
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> 
-> Change-Id: I3cafe111ea7b3c84755d7112ff8f8c541c11136d
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
 > ---
->  include/linux/guestmem.h      |  20 +++++
->  include/uapi/linux/guestmem.h |  29 +++++++
->  mm/Kconfig                    |   5 +-
->  mm/guestmem_hugetlb.c         | 159 ++++++++++++++++++++++++++++++++++
->  4 files changed, 212 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/guestmem.h
->  create mode 100644 include/uapi/linux/guestmem.h
+>  arch/arm64/Kconfig          | 1 +
+>  arch/arm64/kernel/syscall.c | 7 +++++++
+>  arch/arm64/mm/fault.c       | 7 +++++++
+>  3 files changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index e9bbfacc35a6..a8fab2c052dc 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -281,6 +281,7 @@ config ARM64
+>  	select USER_STACKTRACE_SUPPORT
+>  	select VDSO_GETRANDOM
+>  	select VMAP_STACK
+> +	select ARCH_HAS_DEPT_SUPPORT
+>  	help
+>  	  ARM 64-bit (AArch64) Linux support.
+>  
+> diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
+> index c442fcec6b9e..bbd306335179 100644
+> --- a/arch/arm64/kernel/syscall.c
+> +++ b/arch/arm64/kernel/syscall.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/ptrace.h>
+>  #include <linux/randomize_kstack.h>
+>  #include <linux/syscalls.h>
+> +#include <linux/dept.h>
+>  
+>  #include <asm/debug-monitors.h>
+>  #include <asm/exception.h>
+> @@ -96,6 +97,12 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+>  	 * (Similarly for HVC and SMC elsewhere.)
+>  	 */
+>  
+> +	/*
+> +	 * This is a system call from user mode.  Make dept work with a
+> +	 * new kernel mode context.
+> +	 */
+> +	dept_update_cxt();
 
+As Mark Brown pointed out in his replies, this patch is missing a whole
+bunch of cases and does not work correctly as-is.
 
-..
+As Dave Hansen pointed out on the x86 patch, you shouldn't do this
+piecemeal in architecture code, and should instead work with the
+existing context tracking, e.g. by adding logic to
+enter_from_user_mode() and exit_to_user_mode(), or by reusing some
+existing context tracking logic that's called there.
 
-> diff --git a/include/uapi/linux/guestmem.h b/include/uapi/linux/guestmem.h
-> new file mode 100644
-> index 000000000000..2e518682edd5
-> --- /dev/null
-> +++ b/include/uapi/linux/guestmem.h
-
-With my KVM hat on, NAK to defining uAPI in a library like this.  This subtly
-defines uAPI for KVM, and effectively any other userspace-facing entity that
-utilizes the library/allocator.  KVM's uAPI needs to be defined by KVM, period.
-
-There's absolutely zero reason to have guestmem_hugetlb_setup() take in flags.
-Explicitly pass the page size, or if preferred, the page_size_log, and let the
-caller figure out how to communicate the size to the kernel.
-
-IMO, the whole MAP_HUGE_xxx approach is a (clever) hack to squeeze the desired
-size into mmap() flags.  I don't see any reason to carry that forward to guest_memfd.
-For once, we had the foresight to reserve some space in KVM's uAPI structure, so
-there's no need to squeeze things into flags.
-
-E.g. we could do something like this:
-
-diff --git include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-index 42053036d38d..b79914472d27 100644
---- include/uapi/linux/kvm.h
-+++ include/uapi/linux/kvm.h
-@@ -1605,11 +1605,16 @@ struct kvm_memory_attributes {
- #define KVM_CREATE_GUEST_MEMFD _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
- #define GUEST_MEMFD_FLAG_MMAP          (1ULL << 0)
- #define GUEST_MEMFD_FLAG_INIT_SHARED   (1ULL << 1)
-+#define GUEST_MEMFD_FLAG_HUGE_PAGES    (1ULL << 2)
- 
- struct kvm_create_guest_memfd {
-        __u64 size;
-        __u64 flags;
--       __u64 reserved[6];
-+       __u8 huge_page_size_log2;
-+       __u8 reserve8;
-+       __u16 reserve16;
-+       __u32 reserve32;
-+       __u64 reserved[5];
- };
- 
- #define KVM_PRE_FAULT_MEMORY   _IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
-
-And not have to burn 6 bits of flags to encode the size in a weird location.
-
-But that's a detail for KVM to sort out, which is exactly my point; how this is
-presented to userspace for guest_memfd is question for KVM.
-
-> @@ -0,0 +1,29 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_LINUX_GUESTMEM_H
-> +#define _UAPI_LINUX_GUESTMEM_H
-> +
-> +/*
-> + * Huge page size must be explicitly defined when using the guestmem_hugetlb
-> + * allocator for guest_memfd.  It is the responsibility of the application to
-> + * know which sizes are supported on the running system.  See mmap(2) man page
-> + * for details.
-> + */
-> +
-> +#define GUESTMEM_HUGETLB_FLAG_SHIFT	58
-> +#define GUESTMEM_HUGETLB_FLAG_MASK	0x3fUL
-> +
-> +#define GUESTMEM_HUGETLB_FLAG_16KB	(14UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_64KB	(16UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_512KB	(19UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_1MB	(20UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_2MB	(21UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_8MB	(23UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_16MB	(24UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_32MB	(25UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_256MB	(28UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_512MB	(29UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_1GB	(30UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_2GB	(31UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_16GB	(34UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +
-> +#endif /* _UAPI_LINUX_GUESTMEM_H */
-
-...
-
-> +const struct guestmem_allocator_operations guestmem_hugetlb_ops = {
-> +	.inode_setup = guestmem_hugetlb_setup,
-> +	.inode_teardown = guestmem_hugetlb_teardown,
-> +	.alloc_folio = guestmem_hugetlb_alloc_folio,
-> +	.nr_pages_in_folio = guestmem_hugetlb_nr_pages_in_folio,
-> +};
-> +EXPORT_SYMBOL_GPL(guestmem_hugetlb_ops);
-
-Why are these bundled into a structure?  AFAICT, that adds layers of indirection
-for absolutely no reason.  And especially on the KVM guest_memfd side, implementing
-a pile of infrastructure to support "custom" allocators is very premature.  Without
-a second "custom" allocator, it's impossible to determine if the indirection
-provided is actually a good design.  I.e. all of the kvm_gmem_has_custom_allocator()
-logic in guest_memfd.c is just HugeTLB logic buried behind a layer of unnecessary
-indirection.
+Mark.
 
