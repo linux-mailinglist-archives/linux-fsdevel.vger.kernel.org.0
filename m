@@ -1,248 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-63414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CB7BB8530
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 00:32:46 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB33ABB8539
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 00:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F1E74EFB5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 22:32:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A01B9348F19
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 22:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA79928D84F;
-	Fri,  3 Oct 2025 22:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E129627602B;
+	Fri,  3 Oct 2025 22:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmIy24l6"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PUKIc59B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4A3289374
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 22:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1145C275B16
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 22:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759530492; cv=none; b=FDFnklzhrvK2MdQ+bTm8+1vOXcPzp2/CUVUGODV8hVYLSldwPnZhmO9a7uPTTBvWiqSKlVphWPFtlr/fHyJLjsXfcVvsG/2uy4V63IG5/l8sA5lZ+g/g5xziJztBVQ2oAXTABeofA11JzSRuB4FWcsUrZ8zA7RHqujytfHegqtk=
+	t=1759530706; cv=none; b=eIgY0LSoDCT7TkyzNXG+13wQc0P9nDvuQYW8LHFgTHJXUOG2IP1OuOK8eqHQsZQfpAotfqP+t7K13IhqIB+mVmLQbpkCi4d0hV09PQsKXzXJnURqwBL9qc6JS/37Roajly8GQNmrbSC5+fJFJx6/+2feZx+5dky867a/Y7VP2mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759530492; c=relaxed/simple;
-	bh=7yNexokwfYgH5UzPI0yK7HWgKr/le2gf4eF7yR40vb4=;
+	s=arc-20240116; t=1759530706; c=relaxed/simple;
+	bh=VS33BNFgRTESYybs2GpN/LJYI2/xJwzVvqMvSGy/PBQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JkkwkTqL/WrW8h7PnI5hr0bqpLovUeqjSHiBIeZ/PdwzJXM89iqjlzR6TokAaHpFVAHsPhDARYVlU1vjqEVVWQU1qBzsiuyLsNgdpMPrvzYccpYQSnXCT6S2NLddLacmK/IKwubDukgv+OlBlqN0o/srRnHlFR5J8SItjmaAhy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmIy24l6; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4de8bd25183so38721721cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 15:28:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=t1/J/6eWRezt1SfoG2hUkz+X72ZKQ5xikHMj7lX/EFcraFvOHUx8HG/nPJ9mIuTAy0gQZL5pyERdIo0cJFmaz66HT0iDZzGI2IyEUtppUN2dWE3YdIBEhK/+JD5AfjYaWAkVDPlfIdxmDYkz4brdvM9cCpILrA9zhMM8QZjz7rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PUKIc59B; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6318855a83fso5623213a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 15:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759530488; x=1760135288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GsrTjFioBDXPrtMuXAmVmhBbhuBxugl8WE75QZEEBM8=;
-        b=AmIy24l6aVxfeQ+Bzf1oy0dCu1P+ioJDDXHFBoJ64IBTKvuJYRFJuZ/SPRoU9nsIz2
-         yupEvKA9MvSH/1hG1sajcZNwrG+6dhPq0+s09aQXMOgwp8nrt5awwJm2SYKo4LrVYlma
-         phhJGatZbc7R158TkWQ/n0qvBTYcY3PAjIztpDojLgeBEGwXPMdUN4+0zhv2SqEPJ0+e
-         uDlTfz2qtILl/2l6wVvqLqb906vwXBSaST2Mv9EqDg/neeXPL1tH0ResYH2SJ/nmA80M
-         xi3Td+rGUxImBdO/Kg9dqVZgQsrtQM4Hu+uCmkvxWHFPFuC8VHfTENov58zgOKLADBaC
-         4mxA==
+        d=linux-foundation.org; s=google; t=1759530702; x=1760135502; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAKmPQNlXCGxdE2EH2ZWnLv+RHeolnck79An1P1bDWM=;
+        b=PUKIc59BLxp0/pDFOzL3SOd+xf9DSSFqnNQ8lo0/8mKn21giOXFTMBnTUocCLVN4h7
+         pTyXx1XN6I8rnoaLLCq6lzrr7oYTbHjkINEShUCkfCAqkV2/hRyAj7Lo4m+lZzFH/1Df
+         XvTnmjf/YusfYZ//v9yF6d/ES25s77Y7DPnB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759530488; x=1760135288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GsrTjFioBDXPrtMuXAmVmhBbhuBxugl8WE75QZEEBM8=;
-        b=syfEe9t876h67IFsmnsk19xQthl/a/l9IMEXAMqAeqiCGadUXL2xl+qgg51ohmYcQW
-         OZc+XyLMdtf4ouMgJCSmKL3SJsq/o0JojFgDlCV8gPO7oqfGa75KlFbVAmWyHSDWrwHp
-         OoIfJzxWZnGI268rWI/K/p+DbxiQhQmaOgCLE/WRqeCBe3GVxmszjn0oAE/aoMDtlLWJ
-         Ve2WIPdisjz/t9F2cvFL27mV2gpXHuV1+fMvuDxW5SoM6jGk9n+PyS8rSClPc8RxzkCs
-         riHe2x1Ic4fLDwtzCpx6zWZyKfNl/gTrS/JrYlB7lAXEXvTTbB9UCeGRcRg+LTwEzHFv
-         vB2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMbh62zIM+c9wn/kkgfGV01PXv0FUk1OCr+5ssVeOfjDog7dZbgm73VOwYDtePqdpPhGPm0Nc+Vp9uSMt4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk6Cl090QraczQTB7X92ioIEILU4RoPmy18zT8XYnLteM/O3nE
-	6SGMQqMx4n+240hq2uN3gq0QiWU/t9ukrUqryw5AFt/VscSVZ1pmGAtSB7jTfABzE+RBKsR3I8r
-	ydviBJPDLUoHFfYb3SivuCP5fKGnsK3w=
-X-Gm-Gg: ASbGnctD30O4D6ZaQl0mUPN9dKneaPacOJnvGsaAAYF07mjzrVUcl27HEMWLD6YdqH5
-	UD/XmVjBpZ6nd64B7cbfvB9C5GbOjo+9iM6M1vEBrdg0dJmkkHX3d7Z+z/CNPBW4Y8MzrXiyjtl
-	IFg9g3/9Gup8ikkHfbumL/03OqA8MLgqy8x5aRdw+3i47rwm+YgYosy4aLRvWDum0IqSGzFkOpu
-	MQ86vx0EWdELXMuztkmk9sGxtFGXYvOVEBL2OTGx/BvD4cDLBJaEtIosBkrJTwmJGC6FkFTng==
-X-Google-Smtp-Source: AGHT+IEZXwB540cqRy8ufe9EvtDcaXb1ZxNBsYiEfhRvJvMgYSfsbmIjKWzMnu3HjZAnRxDOgf8vaW0o0avV6CEzCVs=
-X-Received: by 2002:a05:622a:728d:b0:4dd:7572:216f with SMTP id
- d75a77b69052e-4e57e29e758mr27614521cf.32.1759530488122; Fri, 03 Oct 2025
- 15:28:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759530702; x=1760135502;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MAKmPQNlXCGxdE2EH2ZWnLv+RHeolnck79An1P1bDWM=;
+        b=UqC7pHou6qa4ZHE4pCkCCISCddBjAizAwqkCFvxA6RXX86UCX6EKxupk4/WEP5qdOA
+         tPuARDZUBQ6TJNQ349zREvlHiB3GG1zv41A2yB694MhdYXXw7gC+RBuPBofm4ru2S4PR
+         Da+MJRm7cMG+x9lVG85Minz/+ORcSkWIUiqwgf+Qif+ItnyxA0/NIRk6zBaIFqP36aWF
+         CSIiu5Z4iApePnsoSLi/6WoEBR2QSiadrjZ31vQlvsLJeyiU+U8JyWCcmr2GsnFAnUhE
+         BaVHXm7CXEXs5QJ2sxF0pfRzPGe+fFptqm64B+zLuCyi0lfvUNNoGxCYn8MKFJUVjbNx
+         AbhQ==
+X-Gm-Message-State: AOJu0YxFaERsVN6NBm0zQ/zSWN1otdVufyeH0oODMXsgkdrzcPu4wM4g
+	z0tbNAGEDFhEF83B9KFxh+BSIFMS8cs+eHCMm/7BMxWrJSiT2lCfDxm01tvWxVb3ofwqIYbvKNc
+	tA+3UT1U=
+X-Gm-Gg: ASbGnctu7e+nlqAUlWjv/LZ99t52O+jgToiHYCd1fi9UZrfNrq2kLn9OqWX5kX1S3u3
+	ZhvFDbV9mfOWzPYCEqDDnJw2xfvbGzrHStxykaEl4g06l6jRAifJBW901uhfBFtUcjK5xXQbg6H
+	rOTm9BG8t6D5VJAdzMTmI7dQdHLKmeGznVhfZK65+Ii9H2iK5UXlSskeGxIRqovGtAoGw5zakiJ
+	vPe9RDxoxNFKPoXVyX2W8U5oz9goDUMq3/CuKUfiIFMAyyplcNXAsfPoRe07Ds2TpA2utD/OxxL
+	65K7ZE3i+I+lawCFOW6Agz/V4HPt7LvU+V8wAOmCJHnM1dGCkevUxfpCFZGTbTlEU9upvbn5Wd8
+	HyZUmb771dapLCXJ9ITL9bfzSJSAJWBpdPBPKgYXq5YBkTH+5YTHFKxRwpL7X9IQ8GkCMorIcz9
+	akc7YbS1Jj3tW3lFPGnPGO
+X-Google-Smtp-Source: AGHT+IHuy2Iqfe0MwyKCUzJO3kI602wS3AOJeEpnbQuAyedlBzmUJ4dsbUrk9pnwPSFBdp3Uech4XA==
+X-Received: by 2002:a05:6402:34c6:b0:638:1599:6c34 with SMTP id 4fb4d7f45d1cf-63939c24f04mr4578892a12.21.1759530702212;
+        Fri, 03 Oct 2025 15:31:42 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6376b78a90bsm4870347a12.19.2025.10.03.15.31.40
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 15:31:41 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6364eb29e74so5546091a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 15:31:40 -0700 (PDT)
+X-Received: by 2002:a17:907:944b:b0:b41:c602:c747 with SMTP id
+ a640c23a62f3a-b49c146ca44mr563103466b.7.1759530700049; Fri, 03 Oct 2025
+ 15:31:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829233942.3607248-1-joannelkoong@gmail.com>
- <20250829233942.3607248-11-joannelkoong@gmail.com> <aLiOrcetNAvjvjtk@bfoster> <20250903195913.GI1587915@frogsfrogsfrogs>
-In-Reply-To: <20250903195913.GI1587915@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 3 Oct 2025 15:27:57 -0700
-X-Gm-Features: AS18NWDO6cSZMS7k5N8NjuFZJ24A4w4G8fBvn2duyG_c1N7JYvgnUloVpDvQoYo
-Message-ID: <CAJnrk1ZT8w6p3Mnqx8R3dWUF1NFOYT95tkKFq5LGcS4=01fGsg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/12] iomap: refactor dirty bitmap iteration
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Brian Foster <bfoster@redhat.com>, linux-mm@kvack.org, brauner@kernel.org, 
-	willy@infradead.org, jack@suse.cz, hch@infradead.org, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+References: <20251003221558.GA2441659@ZenIV>
+In-Reply-To: <20251003221558.GA2441659@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 3 Oct 2025 15:31:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjXC6mo5rFHbqsvJeTjjmw=PeoT9EfSE6KmL21Giej7MA@mail.gmail.com>
+X-Gm-Features: AS18NWBciXrwCCJ9MXR64vNDovQv-gQ77u2qIRNRv9Ko8NQC31QgzexDCznuiNo
+Message-ID: <CAHk-=wjXC6mo5rFHbqsvJeTjjmw=PeoT9EfSE6KmL21Giej7MA@mail.gmail.com>
+Subject: Re: [git pull] pile 6: f_path stuff
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 3, 2025 at 12:59=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
+On Fri, 3 Oct 2025 at 15:16, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On Wed, Sep 03, 2025 at 02:53:33PM -0400, Brian Foster wrote:
-> > On Fri, Aug 29, 2025 at 04:39:40PM -0700, Joanne Koong wrote:
-> > > Use find_next_bit()/find_next_zero_bit() for iomap dirty bitmap
-> > > iteration. This uses __ffs() internally and is more efficient for
-> > > finding the next dirty or clean bit than manually iterating through t=
-he
-> > > bitmap range testing every bit.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > > ---
-> > >  fs/iomap/buffered-io.c | 67 ++++++++++++++++++++++++++++++----------=
---
-> > >  1 file changed, 48 insertions(+), 19 deletions(-)
-> > >
-> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > index fd827398afd2..dc1a1f371412 100644
-> > > --- a/fs/iomap/buffered-io.c
-> > > +++ b/fs/iomap/buffered-io.c
+>   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git pull-f_path
 
-Sorry for the late reply on this, I didn't realize you and Brian had
-commented on this.
+I see the branch 'work.f_path', but no such tag. Forgot to push out?
 
-I'm going to pull this and the next patch (the uptodate bitmap
-refactoring one) out of this series and put them instead on top of
-this other patchset that does some other optimizations.
-
-> > >
-> > >  static unsigned ifs_find_dirty_range(struct folio *folio,
-> > > @@ -92,18 +121,15 @@ static unsigned ifs_find_dirty_range(struct foli=
-o *folio,
-> > >             offset_in_folio(folio, *range_start) >> inode->i_blkbits;
-> > >     unsigned end_blk =3D min_not_zero(
-> > >             offset_in_folio(folio, range_end) >> inode->i_blkbits,
-> > > -           i_blocks_per_folio(inode, folio));
-> > > -   unsigned nblks =3D 1;
-> > > +           i_blocks_per_folio(inode, folio)) - 1;
-> > > +   unsigned nblks;
-> > >
-> > > -   while (!ifs_block_is_dirty(folio, ifs, start_blk))
-> > > -           if (++start_blk =3D=3D end_blk)
-> > > -                   return 0;
-> > > +   start_blk =3D ifs_next_dirty_block(folio, start_blk, end_blk);
-> > > +   if (start_blk > end_blk)
-> > > +           return 0;
-> > >
-> > > -   while (start_blk + nblks < end_blk) {
-> > > -           if (!ifs_block_is_dirty(folio, ifs, start_blk + nblks))
-> > > -                   break;
-> > > -           nblks++;
-> > > -   }
-> > > +   nblks =3D ifs_next_clean_block(folio, start_blk + 1, end_blk)
-> > > +           - start_blk;
-> >
-> > Not a critical problem since it looks like the helper bumps end_blk, bu=
-t
-> > something that stands out to me here as mildly annoying is that we chec=
-k
-> > for (start > end) just above, clearly implying that start =3D=3D end is
-> > possible, then go and pass start + 1 and end to the next call. It's not
-> > clear to me if that's worth changing to make end exclusive, but may be
-> > worth thinking about if you haven't already..
-
-My thinking with having 'end' be inclusive is that it imo makes the
-interface a lot more intuitive.
-
-For example, for
-    next =3D ifs_next_clean_block(folio, start, end);
-
-with end being inclusive, then nothing in that range is clean if next > end
-Whereas with end being exclusive, that's only true if next >=3D end,
-which imo is more confusing.
-
-If you and Darrick still much prefer having end be exclusive though,
-then I'm happy to make that change.
-
->
-> <nod> I was also wondering if there were overflow possibilities here.
-
-I'm not sure what you had in mind for what would overflow, the end_blk
-being beyond the end of the bitmap? The
-find_next_bit()/find_next_zero_bit() interfaces protect against that.
-Or maybe you're referring to something else?
-
->
-> > Brian
-> >
-> > >
-> > >     *range_start =3D folio_pos(folio) + (start_blk << inode->i_blkbit=
-s);
-> > >     return nblks << inode->i_blkbits;
-> > > @@ -1077,7 +1103,7 @@ static void iomap_write_delalloc_ifs_punch(stru=
-ct inode *inode,
-> > >             struct folio *folio, loff_t start_byte, loff_t end_byte,
-> > >             struct iomap *iomap, iomap_punch_t punch)
-> > >  {
-> > > -   unsigned int first_blk, last_blk, i;
-> > > +   unsigned int first_blk, last_blk;
-> > >     loff_t last_byte;
-> > >     u8 blkbits =3D inode->i_blkbits;
-> > >     struct iomap_folio_state *ifs;
-> > > @@ -1096,10 +1122,13 @@ static void iomap_write_delalloc_ifs_punch(st=
-ruct inode *inode,
-> > >                     folio_pos(folio) + folio_size(folio) - 1);
-> > >     first_blk =3D offset_in_folio(folio, start_byte) >> blkbits;
-> > >     last_blk =3D offset_in_folio(folio, last_byte) >> blkbits;
-> > > -   for (i =3D first_blk; i <=3D last_blk; i++) {
-> > > -           if (!ifs_block_is_dirty(folio, ifs, i))
-> > > -                   punch(inode, folio_pos(folio) + (i << blkbits),
-> > > -                               1 << blkbits, iomap);
-> > > +   while (first_blk <=3D last_blk) {
-> > > +           first_blk =3D ifs_next_clean_block(folio, first_blk, last=
-_blk);
-> > > +           if (first_blk > last_blk)
-> > > +                   break;
->
-> I was wondering if the loop control logic would be cleaner done as a for
-> loop and came up with this monstrosity:
->
->         for (first_blk =3D ifs_next_clean_block(folio, first_blk, last_bl=
-k);
->              first_blk <=3D last_blk;
->              first_blk =3D ifs_next_clean_block(folio, first_blk + 1, las=
-t_blk)) {
->                 punch(inode, folio_pos(folio) + (first_blk << blkbits),
->                       1 << blkbits, iomap);
->         }
->
-> Yeah.... better living through macros?
->
-> #define for_each_clean_block(folio, blk, last_blk) \
->         for ((blk) =3D ifs_next_clean_block((folio), (blk), (last_blk));
->              (blk) <=3D (last_blk);
->              (blk) =3D ifs_next_clean_block((folio), (blk) + 1, (last_blk=
-)))
->
-> Somewhat cleaner:
->
->         for_each_clean_block(folio, first_blk, last_blk)
->                 punch(inode, folio_pos(folio) + (first_blk << blkbits),
->                       1 << blkbits, iomap);
->
-
-Cool, this macro looks nice! I'll use this in the next version.
-
-Thanks,
-Joanne
-
-> <shrug>
->
-> --D
->
+           Linus
 
