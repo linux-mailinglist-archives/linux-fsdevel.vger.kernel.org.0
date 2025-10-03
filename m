@@ -1,129 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-63378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026D4BB7407
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 16:56:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE493BB7461
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 17:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A28F3346778
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 14:56:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17CC34ED346
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164E1281371;
-	Fri,  3 Oct 2025 14:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0129C169AE6;
+	Fri,  3 Oct 2025 15:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="VDMPP8mr"
+	dkim=pass (2048-bit key) header.d=mazzo.li header.i=@mazzo.li header.b="Ugyn4DBJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wSexZcdJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75478218EB1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 14:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8791928312E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 15:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759503397; cv=none; b=EYuy6+d8s4lSZLCJ/kSExdbyenrJqjcAI/K4U9lY2JLHeyvhs/sgYQXcK+4QaWp5vAGLOp0l6o6T+z6io7njf6nxPJzRs8rs7BwiheTSYJ4uapyqVlc/gaf2Xg6Qj1lMryzsCMzhYPUU97dOTO7KnYq1GlyKJT7V8vh4mcuSYxg=
+	t=1759503764; cv=none; b=fKIexWA9x8hZGxwGxh4C4sGjmEaDKAdn3TmCe2uuTx/n1qC91BYHn5NdeFn1o9cSGdDntN695fl8mjQVRDemXLn29hxY1E9KtofGCTYq5gEZBETz4IaNhGqXIthV2qz1OSo+r57juu3mJJ+muna046Hp5ygiYq/rwTllez6a8Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759503397; c=relaxed/simple;
-	bh=kRj9cnzzDxPKkfplHIrlfHEtlWfmNsk6zc5kNwv4ZXo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Vl4tOuWkNm+egELP/deEVSvK7KWwgSNDbb05RFcDKrrq8l7fQpGjvWjQKHXqr7G6Fv0ze9s7YUo3zxT/7Tv4jN4cGyBGyXpfUMf5BDQl7VxNodJgwIvECUTA0733rpvSRa+9K8TMLutUXxkc1ac0G/NPTHGL9zudqSbeWkta9mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=VDMPP8mr; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33082aed31dso2719230a91.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 07:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1759503392; x=1760108192; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SD/Rf1gCAPCc5tsJMPCFcW90YTI81aVrrWFvusMY6q8=;
-        b=VDMPP8mrbgWBDihoyrN5JC7z6nBky2x5rvaLBGndMLLHa3DicwncZAP3BVftvHdKhU
-         SaEQW78pJbzMDqgnzXcNIvTbwGbdxcVHIcmTlo9v/5FfoFUYtnuv3LJwUWRqUwGGRcA3
-         rz0P3nw7kDtrOXhixfFVQj8Og4D5V7uHwTGihN8QFAkvOmsnCZzaSGyc1SOHCj/YW5/H
-         AbB6FcrfSCHXpon+4ZAJ4wbqg4tmZLzu386YVOMZ5P+rzORUSaXqbihumJzfugEo+5UD
-         VIexJ9h7w/K1GB4MsAHaiSOsaRb0gAJX5Jaz1eC0afngJKeSR59tLMmOyEIpFiGNYuyX
-         Bi8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759503392; x=1760108192;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SD/Rf1gCAPCc5tsJMPCFcW90YTI81aVrrWFvusMY6q8=;
-        b=vZG91lREgbBCbnimRoU9c6cgYttdZFGmCe3L3Q/zP2bnxOoNEdOTtUat7CYVW0muQw
-         6kaU3tETaXn12V1nE+1advRBd3ORYEcG4lC5jBnkAYdf1F2CXzyt0XX3zgyCKB0d+Q/O
-         XLvu/+m6sqBIlo74fZyqB1CoagkOKZPpINUY1/R8C0rk/c/+7Aw3fgTKOlGwRkgYObkP
-         UKnbkrjEtt8I/yhvFLmz0OB6qaAjjNwssu2aIF00VkTzwnY9YqYB7zED5/MAYQDNdH7o
-         Yy/6s20EwgujTBeGB3mjF3FIcb99vTfXjozszd+er9BwAyyw801XcIkk3T3kDKFGqFFD
-         uymw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw/xO88jKJI/RMLUw6Ph+hJaoQ6lEyg4uM/JUpc36N6ADfXfMLFeLc1GtVhvL0J5GzYeEmP7WB5KZRDlbs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK0TiuSOhA6WNyTlP2GLXW4uSPgS6qEJzz3WuCrf/SVtt5qp9f
-	cIdPblaRvMfJAVp8cDXXWosD3d64nWY3P8zSXFp+sGCRmp5PG3CApZ4GCy3cEuaDRRF9HOkPMa8
-	BgGOEBCyy2EVS1G8IDaKj4AnZTSVguMp6dwUutpD3AUKtA/hjdyybBQ==
-X-Gm-Gg: ASbGncv1HhifIKyFABwofz8G7oc1G5FxI8IGSuaeDlJ248TXVt37RVgKLP85eIEZcw9
-	qVJPecrrfQvFb8499gr2uY4Py/6ofPfcBagkhsIctRSuJCeepDJGZ5/tMcoo9VsMRSJ/YDQlIeg
-	gTzt87vFavTGEe+iEIY+I2kQIP3T7IVMrKE7Zp0aWz/CFjsCZfk+jeC/Ik/jMC0Z02oz9Pq85L3
-	Rx4CdN05e87xBU/sLn9etxzVXLLsg8IadhSO9JF2ACW9qR+Fep4hQ==
-X-Google-Smtp-Source: AGHT+IEIrPOlEncwSJEitbVSigZrsUsg6UHectGuyzjvz1wPMpDHxQ4+vsg81mtHKrYIY+R8qpcCRCCgEzi7hqwVfa4=
-X-Received: by 2002:a17:90b:4ac4:b0:332:2773:e7bf with SMTP id
- 98e67ed59e1d1-339c278d70bmr3789915a91.18.1759503391675; Fri, 03 Oct 2025
- 07:56:31 -0700 (PDT)
+	s=arc-20240116; t=1759503764; c=relaxed/simple;
+	bh=N1mXVJT4bduMMsYAi9qHWRwth+oiwNSW4i0kA+U3hcU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IY+G8DpD2DkyYw8X3jk58KXv5keQ/g/t30bV2NlCr/tThY+4QfR+6lV8HwPBbJLGgIOwMKTjabGmyRHlte61aLFL3G15FAKC8TdO/d5WpAvvsfe9j+6P9cdX38FmDiJMpFeP7idxSxyMU2ebLESz2GkTcvr+Tfa/eDqBKXGxjfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mazzo.li; spf=pass smtp.mailfrom=mazzo.li; dkim=pass (2048-bit key) header.d=mazzo.li header.i=@mazzo.li header.b=Ugyn4DBJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wSexZcdJ; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mazzo.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mazzo.li
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 854D1EC01EF;
+	Fri,  3 Oct 2025 11:02:40 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-05.internal (MEProxy); Fri, 03 Oct 2025 11:02:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mazzo.li; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759503760;
+	 x=1759590160; bh=/OdHW84fKKP0jMsRETX5xqrNjwoBqKzr6SPCGUttL2E=; b=
+	Ugyn4DBJXL2L0CzpQP8HJOgMRQ3bE4e4EF6+RlNtnp43awQrSDmmPn5u7lerWONC
+	UVA2OZPbwVEjZOyRvnF/QFGZx+ToRp21dIS8+h/thAdZWLGSHYp5u1TSUaPpEfIY
+	BcKwKtwqS4cLdJaPGBM+he8AE9arOG8oBJXRNzJWTen4UNiFLmwztnQOLSvU8ewd
+	l9HPE/912QY3E+e/Eib1c3UC6u1vK9yrq2nrT7j+vFztlWHlV8vCsjI8lyJqtNup
+	eyhnIbo47ItmYwNj3IFCHzV2M4XokRMOlZvFfjuiaQ8XEqqa88eI0XfPMh8nAxZx
+	j0Y6JnExcF8d5KpNhETooA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759503760; x=
+	1759590160; bh=/OdHW84fKKP0jMsRETX5xqrNjwoBqKzr6SPCGUttL2E=; b=w
+	SexZcdJhT3MwgL3rsqsMvJ2RiJWEgGbXSP8/mpAj77d1+zHkCjsRG3AU+zCkYyj8
+	/FpIkquB/nzwxSPFqhPQSZfAYQXq8hYRACnusqhDwM/hGJhH3rodP62v2vWlOMcz
+	lBEYGWK7cN264Dw0K2nRX9FXXnPPmDGedeecxjOiwGflr3OUcMMSJHDjYq4uJOlg
+	egI86oIBbJ2ADDfC76ibn0DCGZb7eNLU7W7yMcQ7whMjwLCnzkpUAXeF9D5xDv/z
+	Tl0eWzJLncIZ5kAcd1pyeE6Z5cviCgn86DUD8q6RpqlmgCBcrXxGv1J7aK//e7Uq
+	oiDQXrtWJH627Wj86FEVQ==
+X-ME-Sender: <xms:j-XfaPqfsGLRrtCai4yN5ZuNch7j6nOK92l6AAK6syXvVeBJe07aCw>
+    <xme:j-XfaEeN9da-glPxju-FIk5AFZV8di35uskP7xOYsFnGG2THEdy9s6Zi7oG7H5P1b
+    wdURlX0mcBjUNEd0jxzApcfYMUsFxsZ4JDmOlRzxvs5hXjidfWc-ds>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekledvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfhrhgrnhgt
+    vghstghoucforgiiiiholhhifdcuoehfsehmrgiiiihordhliheqnecuggftrfgrthhtvg
+    hrnhepteeihfetffefieffffetledvueeuhfdvtdeuleekfeeludeuheduuedvleeiveff
+    necuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehfsehmrgiiiihordhlihdpnhgspghrtghpthht
+    ohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhho
+    shesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:kOXfaPWua9cj-SSEPo9TltJp88cZ3FR2tWO1Ytv1M9Shd-iU6iELYQ>
+    <xmx:kOXfaA4M0xtuOTFxFygkqSUqud-sfQqa_TMFTEJu7RnKNVofxu7jEg>
+    <xmx:kOXfaCqFDh2mfvU5tnexGzKNy1GEdLjjghexv_KMJ3VC0q3TmkQiLA>
+    <xmx:kOXfaLmNuigzjS_CgQmxh8f9KmYC3H-3JxriElsXCw6LrwyOHbuSoQ>
+    <xmx:kOXfaCjX7l9lFKwTfJqvI9NSq3C1yiFOT7ogmdj7fWirIVF6E5VSUNIz>
+Feedback-ID: i78a648d4:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D6C95216005F; Fri,  3 Oct 2025 11:02:39 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Fri, 3 Oct 2025 10:56:20 -0400
-X-Gm-Features: AS18NWDh8ij92WhGeaq38hAaZiepUoHv1NoMS1-qtC_7rlKzcYiapsTFf99LenA
-Message-ID: <CAOg9mSRFjtB4fSwU1Cv+V1vYJSppd4=5UcnO7M95yXnULMoZzg@mail.gmail.com>
-Subject: [GIT PULL] orangefs pull request for 6.18
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>, 
-	devel@lists.orangefs.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: AKLrIgF2TFVc
+Date: Fri, 03 Oct 2025 16:01:56 +0100
+From: "Francesco Mazzoli" <f@mazzo.li>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, "Christian Brauner" <brauner@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ "Bernd Schubert" <bernd.schubert@fastmail.fm>,
+ "Miklos Szeredi" <miklos@szeredi.hu>
+Message-Id: <34918add-4215-4bd3-b51f-9e47157501a3@app.fastmail.com>
+In-Reply-To: 
+ <CAOQ4uxi_Pas-kd+WUG0NFtFZHkvJn=vgp4TCr0bptCaFpCzDyw@mail.gmail.com>
+References: <bc883a36-e690-4384-b45f-6faf501524f0@app.fastmail.com>
+ <CAOQ4uxi_Pas-kd+WUG0NFtFZHkvJn=vgp4TCr0bptCaFpCzDyw@mail.gmail.com>
+Subject: Re: Mainlining the kernel module for TernFS, a distributed filesystem
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
+On Fri, Oct 3, 2025, at 15:22, Amir Goldstein wrote:
+> First of all, the project looks very impressive!
+> 
+> The first thing to do to understand the prospect of upstreaming is exactly
+> what you did - send this email :)
+> It is very detailed and the linked design doc is very thorough.
 
-  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+Thanks for the kind words!
 
-are available in the Git repository at:
+> A codebase code with only one major user is a red flag.
+> I am sure that you and your colleagues are very talented,
+> but if your employer decides to cut down on upstreaming budget,
+> the kernel maintainers would be left with an effectively orphaned filesystem.
+> 
+> This is especially true when the client is used in house, most likely
+> not on a distro running the latest upstream kernel.
+> 
+> So yeh, it's a bit of a chicken and egg problem,
+> but if you get community adoption for the server code,
+> it will make a big difference on the prospect of upstreaming the client code.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-6.18-ofs1
+Understood, we can definitely wait and see if TernFS gains wider adoption
+before making concrete plans to upstream.
 
-for you to fetch changes up to 11f6bce77e27e82015a0d044e6c1eec8b139831a:
+> I am very interested in this part, because that is IMO a question that
+> we need to ask every new filesystem upstream attempt:
+> "Can it be implemented in FUSE?"
 
-  fs/orangefs: Replace kzalloc + copy_from_user with memdup_user_nul
-(2025-09-30 10:23:24 -0400)
+Yes, and we have done so:
+<https://github.com/XTXMarkets/ternfs/blob/main/go/ternfuse/ternfuse.go>.
 
-----------------------------------------------------------------
-orangefs: Two cleanups and a bug fix.
+> So my question is:
+> Why is the FUSE client slower?
+> Did you analyse the bottlenecks?
+> Do these bottlenecks exist when using the FUSE-iouring channel?
+> Mind you that FUSE-iouring was developed by DDN developers specifically
+> for the use case of very fast distributed filesystems in userspace.
+> ...
+> I mean it sounds very cool from an engineering POV that you managed to
+> remove unneeded constraints (a.k.a POSIX standard) and make a better
+> product due to the simplifications, but that's exactly what userspace
+> filesystems
+> are for - for doing whatever you want ;)
 
-Remove unused type in macro fill_default_sys_attrs
-  Zhen Ni <zhen.ni@easystack.cn>
+These are all good questions, and while we have not profiled the FUSE driver
+extensively, my impression is that relying critically on FUSE would be risky.
+There are some specific things that would be difficult today. For instance
+FUSE does not expose `d_revalidate`, which means that dentries would be dropped
+needlessly in cases where we know they can be left in place.
 
-Replace kzalloc + copy_from_user with memdup_user_nul
-  Thorsten Blum <thorsten.blum@linux.dev>
+There are also some more high level FUSE design points which we were concerned
+by (although I'm not up to speed with the FUSE over io_uring work). One obvious
+concern is the fact that with FUSE it's much harder to minimize copying.
+FUSE passthrough helps but it would have made the read path significantly more
+complex given the need to juggle file descriptors between user space and the
+kernel. Also, TernFS uses Reed-Solomon to recover from situations where some
+parts of a file is unreadable, and in that case we'd have had to fall back to
+a non-passthrough version. Another possible FUSE performance pitfall is that
+you're liable to be bottlenecked by the FUSE request queue, while if you work
+directly within the kernel you're not.
 
-fix xattr related buffer overflow...
-  A message was forwarded to me from Disclosure <disclosure@aisle.com>
-  indicating a problem with a loop condition in our xattr code. When I
-  fixed the problem it exposed a related memory leak problem, and I
-  fixed that too.
+And of course before BPF we wouldn't have been able to track the nature of
+file closes to a degree where the FUSE driver can implement TernFS semantics
+correctly.
 
-----------------------------------------------------------------
-Mike Marshall (1):
-      orangefs: fix xattr related buffer overflow...
+This is not to say that a FUSE driver couldn't possibly work, but I think there
+are good reason for wanting to work directly with the kernel if you want to be
+sure to utilize resources effectively.
 
-Thorsten Blum (1):
-      fs/orangefs: Replace kzalloc + copy_from_user with memdup_user_nul
+> Except for the wide adoption of the open source ceph server ;)
 
-Zhen Ni (1):
-      orangefs: Remove unused type in macro fill_default_sys_attrs
+Oh, absolutely, I was just talking about how the code would look :).
 
- fs/orangefs/namei.c            | 10 +++-------
- fs/orangefs/orangefs-debugfs.c | 11 +++++------
- fs/orangefs/orangefs-kernel.h  |  2 +-
- fs/orangefs/xattr.c            | 12 +++++++-----
- 4 files changed, 16 insertions(+), 19 deletions(-)
+Thanks,
+Francesco
 
