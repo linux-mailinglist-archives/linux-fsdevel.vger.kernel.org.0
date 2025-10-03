@@ -1,133 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-63395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1102CBB7F27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 21:01:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DC6BB8188
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 22:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1934A8265
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 19:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0D719E6E07
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 20:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACD518A6AD;
-	Fri,  3 Oct 2025 19:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6988122D780;
+	Fri,  3 Oct 2025 20:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mazzo.li header.i=@mazzo.li header.b="N7eHQQdC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nERDKEfE"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=infradead.org header.i=@infradead.org header.b="uDwkzeuy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C0512E1E9
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 19:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C1317A2E1;
+	Fri,  3 Oct 2025 20:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759518113; cv=none; b=rxKMjvk6vcKbcT0hN+Q4Ho1Nqf+/yS7YNNHK3v0dsbYgceJcac+d+amXakc4bKArlIbJDb2wCQxqO/SNTKBHv+rNscLLw7mVh2arXUXhZByvx3BqImj2fJ4DeaUFXN7OgEdpFDRAJSCM5qUM0gYJwGeMLItv9TIPFKsv4im7vzw=
+	t=1759522963; cv=none; b=noh0IPtfRoE2kEbWsXMHCswXvQqlhD485wZqd1RUaVaqJe/PE0qfYNGj3XLHLb5tMMiQNeuMRy91mKbI0F3WPqhqpLKipAdDHCb88g4ZDQjq7s0QPPl5KqArFUvPUuQjxq9+8Mm3sPcRftXel+ZBQ9L2/rR+1ADwtjGECYkT084=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759518113; c=relaxed/simple;
-	bh=fAESD0xt5PDOtMe/OTDiIdCzE3ko8ptcxV9mqYhXLYQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Kd+WYMeqTNBxHHwXUZv0ORE5XLkul9SYL7eIlwgExSgjznPaXg0I4/aQjg+cJKHrZz7pc5IXS716XPdKnYu7G61NSCbYyvc/08ljmstZnNdB9a2d//lkA15VhCO6vRuVdjnOt+bFqJnvQNSCG+cYCPaDSnV2RxKaMQOlpgSuWfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mazzo.li; spf=pass smtp.mailfrom=mazzo.li; dkim=pass (2048-bit key) header.d=mazzo.li header.i=@mazzo.li header.b=N7eHQQdC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nERDKEfE; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mazzo.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mazzo.li
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B75717A007A;
-	Fri,  3 Oct 2025 15:01:49 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-05.internal (MEProxy); Fri, 03 Oct 2025 15:01:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mazzo.li; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759518109;
-	 x=1759604509; bh=87biOegKfy5ZB95f/XtxaKY5KyoML/0rFh/X4Jb/7so=; b=
-	N7eHQQdCSElF53uUdo0zOVIIAulDCJjnZXOjbfimWWlJnpUw8U1vHRAlTJnBgKPi
-	zqPiJ0OOsOvR00i53S7cAJJLzGFNRqmB3q6VE7KgdLj8fC2s+8x31xmLgy7WUwlg
-	YbGHbNqAxEHDzkvD/wI8JfFzK3rXD+K3+wqICSsCelgl3uZp7ljZWhDA2n5KAOYi
-	AOoIKCi+mJG4bpNhaGC/5sGPO6BMRN9UGeawLHlLH+qBTtgzwYPwEy76QbdVfqk/
-	K9fCrsu0ZmB465T6OJPZc7/3EyGhD3DwzR9ovLV/AZZk8zA7/AWZcFDx9J5PNYbM
-	aKQ972zZd/ZdnBpGOnpbiw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759518109; x=
-	1759604509; bh=87biOegKfy5ZB95f/XtxaKY5KyoML/0rFh/X4Jb/7so=; b=n
-	ERDKEfEueUHBYivZBim7ckG1fI9a9bQ40Uw6zRylmO8LvSPd1TxILjawRGGo98k1
-	/mbx1jBD3GEPAiWdcyIMEp1BkFtmqgwnhJKr503OVebaCKAeJtM1LYGI6q/e3mJ0
-	XMdtPMYLogTv58olQd608kv8AB5dh7L9Vo+qfqAjAQSoRMagkCDH5+gOP0aZlKfj
-	K4DBbfbLOj+1MJxj9KBQJ5yhd9V7GWZP/l/cEM22CpYiW5/POZdU8Z1dWb/kEqiV
-	8aaB9ZAKgpNs9j0U5jcOcq3jOvtw/mTaVaa7BQPaQM7xSUkysw8ZXIwLCe4naqx6
-	9zPGVpeKGeO2tWPT9lN4w==
-X-ME-Sender: <xms:nR3gaHYdDQNF9UQ-B43AgDViSqQpvnsbuTrqyIh-LC58gUak1t8z-w>
-    <xme:nR3gaBNjZG1D9MsPlJDPqYtc8Om1P6Y85kzC_zJn14oBIEFbwpKix0YbIEDjC-nWh
-    8gOQAWudxx2UkMLTCeKDa17BH8jwRg7bBfTRzkB3NiXPjV25gtb5ho>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekleeikecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfhrhgrnhgt
-    vghstghoucforgiiiiholhhifdcuoehfsehmrgiiiihordhliheqnecuggftrfgrthhtvg
-    hrnhepffejgfevkefhiedtgfehudfgueeiuefgveehgfevffejveetfefgfffgiefgfffh
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhesmh
-    griiiiohdrlhhipdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdprhgtph
-    htthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopegsrhgruhhn
-    vghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthho
-    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:nR3gaPENbFXjOjVNguhazJ-GV5tyY_mACap6uHjjy26dRcGpd0VSXQ>
-    <xmx:nR3gaFrloS8lXb98ETq0zJL5qnjrdu0btiWJIJ8iYYzw5ZTHASqwYg>
-    <xmx:nR3gaIZSa506wuzXVb69FO89-VVz7YAs3nrQKH9AxGPWJGpTw3_l_Q>
-    <xmx:nR3gaOWljkm42Y2lRGPh1dq44j-iUsKsJ7XUOMtqJcrmH4_tyMg7iw>
-    <xmx:nR3gaBTxZYa9LNV-prddrkHMahB9JtWw_22Yzjc2JCMvESJQS9eAFcOt>
-Feedback-ID: i78a648d4:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 30D50216005F; Fri,  3 Oct 2025 15:01:49 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759522963; c=relaxed/simple;
+	bh=ZWuAYLzcB5M0YLrWElkToEmrzc++2vCARxZvzmBun/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bKjrvDmRL+ghTe+NwZk30ZMXVbn03yr+VPjg7vT1706lN1EqyCymoZraOyox9I+NDn3h/aeN/3/MNye5s05CyVzhAnewgPVvdVL0Wy8vgd4uyPXYQOgRoUHSIzWTMUo14DteS0n4w6OXzyWXkKJgAQhTJDt/0EQLdQGOaCVtdT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=fail (0-bit key) header.d=infradead.org header.i=@infradead.org header.b=uDwkzeuy reason="key not found in DNS"; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ie7VpTVQGHumN0D6yzqUveYN7Cgx4KCz/Feuh+IPz94=; b=uDwkzeuyhuN5TZvMem00DJ1Kij
+	OwzoBqHmEYUuFPejuGg4uFGc4AQEJ9l4Lbxsegjwmizr0TStvq5OcU5m/31aurpc6fMKnNiuehkui
+	AUWQb+wDGUjf75Rl4mHDu8UlVObtrUfo8X5jCaghcFNrKom5Ft64KhwivOGrHdsPwEdbbPjdAb3yn
+	RtSyiA2TJfPhK1SLdQVqr5z5I8ktKT4zg314+Gb9hD4s/5J5wuH0tYvCFat7yk6WOJc2LYhfjzpUx
+	w9IxWkktR/hMNFXlEcBmcVZ/S3jZVCSS5AGvDq4siFZVr7/m2CCFmUoHGEUeqeUnBHXTPWVQu6vaY
+	PkcOTYxw==;
+Received: from jlbec by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v4mIS-000000095Ew-0kqB;
+	Fri, 03 Oct 2025 20:22:32 +0000
+Date: Fri, 3 Oct 2025 13:22:28 -0700
+From: Joel Becker <jlbec@evilplan.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: ocfs2-devel@lists.linux.dev, jack@suse.cz, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joseph.qi@linux.alibaba.com, brauner@kernel.org
+Subject: Re: [PATCH v2] ocfs2: retire ocfs2_drop_inode() and I_WILL_FREE usage
+Message-ID: <aOAwhPT-rlnxmEtS@google.com>
+Mail-Followup-To: Mateusz Guzik <mjguzik@gmail.com>,
+	ocfs2-devel@lists.linux.dev, jack@suse.cz, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joseph.qi@linux.alibaba.com, brauner@kernel.org
+References: <20251003023652.249775-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AKLrIgF2TFVc
-Date: Fri, 03 Oct 2025 20:01:28 +0100
-From: "Francesco Mazzoli" <f@mazzo.li>
-To: "Bernd Schubert" <bernd.schubert@fastmail.fm>,
- "Amir Goldstein" <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, "Christian Brauner" <brauner@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>, "Miklos Szeredi" <miklos@szeredi.hu>
-Message-Id: <b9fee7c9-b3a0-487a-aa97-7f2e0b8e8d04@app.fastmail.com>
-In-Reply-To: <8e7a527f-2536-45d2-891a-3e203a5011ab@app.fastmail.com>
-References: <bc883a36-e690-4384-b45f-6faf501524f0@app.fastmail.com>
- <CAOQ4uxi_Pas-kd+WUG0NFtFZHkvJn=vgp4TCr0bptCaFpCzDyw@mail.gmail.com>
- <34918add-4215-4bd3-b51f-9e47157501a3@app.fastmail.com>
- <7747f95d-b766-4528-91c5-87666624289e@fastmail.fm>
- <8e7a527f-2536-45d2-891a-3e203a5011ab@app.fastmail.com>
-Subject: Re: Mainlining the kernel module for TernFS, a distributed filesystem
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003023652.249775-1-mjguzik@gmail.com>
+X-Burt-Line: Trees are cool.
+X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
+ come to perfection.
+Sender: Joel Becker <jlbec@ftp.linux.org.uk>
 
-On Fri, Oct 3, 2025, at 19:18, Francesco Mazzoli wrote:
-> > I agree on copying, but with io-uring I'm not sure about a request queue issue.
-> > At best missing is a dynamic size of ring entries, which would reduce memory
-> > usage. And yeah, zero-copy would help as well, but we at DDN buffer access
-> > with erase coding, compression, etc - maybe possible at some with bpf, but right
-> > now too hard.
+
+Since this is in `iput_final()`, it's outside of OCFS2 cluster locking.
+The only work `ocfs_drop_inode()` does is to juggle the spinlock and
+state while writing the inode.  `evict()` does this just a little later
+in `iput_final()`, and there's no real way the flow gets interrupted, so
+it is not even moving the writeout that far.
+
+Reviewed-by: Joel Becker <jlbec@evilplan.org>
+
+On Fri, Oct 03, 2025 at 04:36:52AM +0200, Mateusz Guzik wrote:
+> This postpones the writeout to ocfs2_evict_inode(), which I'm told is
+> fine (tm).
 > 
-> I'll have to take a look at FUSE + io_uring, won't comment on that until I'm
-> familiar with it :).
+> The intent is to retire the I_WILL_FREE flag.
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> v2:
+> - rebase -- generic_delete_inode -> inode_just_drop
+> 
+> The original posting got derailed and then this got lost in the shuffle,
+> see: https://lore.kernel.org/linux-fsdevel/20250904154245.644875-1-mjguzik@gmail.com/
+> 
+> This is the only filesystem using the flag. The only other spot is in
+> iput_final().
+> 
+> I have a wip patch to sort out the writeback vs iput situation a little
+> bit and need this out of the way.
+> 
+> Even if said patch does not go in, this clearly pushes things forward by
+> removing flag usage.
+> 
+>  fs/ocfs2/inode.c       | 23 ++---------------------
+>  fs/ocfs2/inode.h       |  1 -
+>  fs/ocfs2/ocfs2_trace.h |  2 --
+>  fs/ocfs2/super.c       |  2 +-
+>  4 files changed, 3 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> index fcc89856ab95..84115bf8b464 100644
+> --- a/fs/ocfs2/inode.c
+> +++ b/fs/ocfs2/inode.c
+> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode)
+>  
+>  void ocfs2_evict_inode(struct inode *inode)
+>  {
+> +	write_inode_now(inode, 1);
+> +
+>  	if (!inode->i_nlink ||
+>  	    (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
+>  		ocfs2_delete_inode(inode);
+> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
+>  	ocfs2_clear_inode(inode);
+>  }
+>  
+> -/* Called under inode_lock, with no more references on the
+> - * struct inode, so it's safe here to check the flags field
+> - * and to manipulate i_nlink without any other locks. */
+> -int ocfs2_drop_inode(struct inode *inode)
+> -{
+> -	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+> -
+> -	trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
+> -				inode->i_nlink, oi->ip_flags);
+> -
+> -	assert_spin_locked(&inode->i_lock);
+> -	inode->i_state |= I_WILL_FREE;
+> -	spin_unlock(&inode->i_lock);
+> -	write_inode_now(inode, 1);
+> -	spin_lock(&inode->i_lock);
+> -	WARN_ON(inode->i_state & I_NEW);
+> -	inode->i_state &= ~I_WILL_FREE;
+> -
+> -	return 1;
+> -}
+> -
+>  /*
+>   * This is called from our getattr.
+>   */
+> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
+> index accf03d4765e..07bd838e7843 100644
+> --- a/fs/ocfs2/inode.h
+> +++ b/fs/ocfs2/inode.h
+> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACHE(struct inode *inode)
+>  }
+>  
+>  void ocfs2_evict_inode(struct inode *inode);
+> -int ocfs2_drop_inode(struct inode *inode);
+>  
+>  /* Flags for ocfs2_iget() */
+>  #define OCFS2_FI_FLAG_SYSFILE		0x1
+> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
+> index 54ed1495de9a..4b32fb5658ad 100644
+> --- a/fs/ocfs2/ocfs2_trace.h
+> +++ b/fs/ocfs2/ocfs2_trace.h
+> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inode);
+>  
+>  DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
+>  
+> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
+> -
+>  TRACE_EVENT(ocfs2_inode_revalidate,
+>  	TP_PROTO(void *inode, unsigned long long ino,
+>  		 unsigned int flags),
+> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+> index 53daa4482406..2c7ba1480f7a 100644
+> --- a/fs/ocfs2/super.c
+> +++ b/fs/ocfs2/super.c
+> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops = {
+>  	.statfs		= ocfs2_statfs,
+>  	.alloc_inode	= ocfs2_alloc_inode,
+>  	.free_inode	= ocfs2_free_inode,
+> -	.drop_inode	= ocfs2_drop_inode,
+> +	.drop_inode	= inode_just_drop,
+>  	.evict_inode	= ocfs2_evict_inode,
+>  	.sync_fs	= ocfs2_sync_fs,
+>  	.put_super	= ocfs2_put_super,
+> -- 
+> 2.43.0
+> 
+> 
 
-Oh, one more point on copying: when reconstructing using Reed-Solomon, you want to
-read and write to the page cache to fetch pages that you need for reconstruction
-if you have them already, and store the additional pages you fetch. Again I'd
-imagine this to be hard to do with FUSE in a zero-copy way.
+-- 
 
-All of this should not detract from the point that I'm sure a very performant
-TernFS driver can be written, but I'm not convinced it would be the better option
-all things considered.
+"Hell is oneself, hell is alone, the other figures in it, merely projections."
+        - T. S. Eliot
 
-Francesco 
+			http://www.jlbec.org/
+			jlbec@evilplan.org
 
