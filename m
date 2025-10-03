@@ -1,89 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851DBBB6628
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 11:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8CCBB674D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 12:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2579719E66CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 09:36:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0713B2750
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 10:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C172DEA7A;
-	Fri,  3 Oct 2025 09:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013852EA756;
+	Fri,  3 Oct 2025 10:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aA1Iu6rX"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="gcYEPwaH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from outbound-ip191b.ess.barracuda.com (outbound-ip191b.ess.barracuda.com [209.222.82.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D05D2DCBEB
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 09:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759484124; cv=none; b=U0QUA4iWHs9DK+Q9CG10WSnTxvO26Dk9obUIldmXyZAxOSj3htcgj4REZutBHZLGYhhkLwnE7BjToKG2VimbuyMHF2eMNfA+cDGVlkzL6yKA72c/+o5dWfnEUbF6mMmOrMXerowcc68an2wcX4ckSznUL5HXGPi8cogL862gRfA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759484124; c=relaxed/simple;
-	bh=4dypLPu6DNf9DAMNJyF5UXwIvayiqJK8XG4EG3pgjZo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e/IXjreLVia3/JH4pAwyw+8RprIolG1fFVprmAr8X1MxD+pgHutavbwix6aHn1lXOilN4pUiOe+osQGp+yuZHwdNicIBU817z5qMlEGh5ntaa4dE/c1m8Vs0Tv6Mgr2ud7xReaRe+OgV4ayYRgGDbfifo/guvWgqPyl2/7SSk1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aA1Iu6rX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759484121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GpNh9Npv8ACuKwnSClKnKFFRR5xgF6p+DJW3Gcbr8Pk=;
-	b=aA1Iu6rXsXIxeM/lbfEpPHURq8rZWBdM9/S2MePv/d6tyPrKyll43biWMhxGxSjE39TtUI
-	4bnoKhHq/8GyeZxqBXTve7BWx3R+s4Z9EozkX7gV1RIpPe1esuslP2HejDrcoyktY3t/be
-	heLdV7ibSxtIsol3VYJXGCknhauAi4A=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-676-GFzRUYXQNB-4EAQGnosfMw-1; Fri, 03 Oct 2025 05:35:20 -0400
-X-MC-Unique: GFzRUYXQNB-4EAQGnosfMw-1
-X-Mimecast-MFC-AGG-ID: GFzRUYXQNB-4EAQGnosfMw_1759484119
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e3ef2dd66so11561105e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 02:35:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759484118; x=1760088918;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GpNh9Npv8ACuKwnSClKnKFFRR5xgF6p+DJW3Gcbr8Pk=;
-        b=EkIOR3wnmrfJ11GjYYG7h7bXTYDrotCYRpA4el4ZmSIQKitcIgujLKxB7vhkf0oFT9
-         K6V7w9oVzFQhrD/TWU8k4UmEiKj6/b/blxBzm6/cE8BPWhk3uFIcefAvABH+nmmOc54A
-         cufhemplDjfeI7WurGLtEIIe9jx8bZ5+7LNphTGP8d5EC4M+voIYiCCXYb9idlbLGjfZ
-         zMj4SxEz0rxEMsM3oTx1gwE4+8iYvc6LvvdnUbBess+5eyouefESI2viYkiV19l0RDD1
-         UuwjphGf1jS53ka0gn85A6mgnPQX5fUpdkXX/7ARFxGADU6I4HgI+XlyZiUT3nhgqUjk
-         YL/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSwNe8ilT0vo5E9Yz7kausCwksL2tnLpnzN0tEyvBo0Q0YAYjK6Go+YFYMR+2HOXdLYCc0RrUQ9XwlpY3z@vger.kernel.org
-X-Gm-Message-State: AOJu0YzusXDEAR6GpvAL4DBg0YMCPLjTCtbei7lwGORkuxtXggOnSAh0
-	3wAAjYIkSuYOrlCs753oSMXraf3JJq33kYRi8owcV3QnWALnayZos91kC0JEuMK3GVrjhUVX6NM
-	Odyvsunli2BVKicmHdz0qhe6y+o50atsU5b9BgyxBrTs3hIy9qBj/nP9pqYJD0DSZofUxyobBFw
-	==
-X-Gm-Gg: ASbGncvqlDXUND6ftv66y6u/olZTq62hz973Jik1GHeCTeNdYFt6BEBtzB7f+noLmFr
-	FmkDH4tiz82VCOZLFJQ1lhPxmNwaNb02toXUSpwsDEaNbF+lFGOrSNe249vePgNFd0S392zUho+
-	ZVa8zVN0QmWJGiHI3nhTWDpTGgAw/S5xzxEz6+h2WNxmFVy75YaSd72/i5NpnkSajOvRSBWGvze
-	IFQF5oiG12Jo7cR9OXe4EtPY5J+R7oEqBUDClqLoVmM/+zRPeCDV9VBZrl9Z2IJuBsJN8E2VbPj
-	557dS9Q/PSBvEst0uRNIfXAPxHX/2de8kFPYPw9g6nraz+tccKFqKiDwdAa4pJ4Xy4qcTWb3
-X-Received: by 2002:a05:600c:3e86:b0:46e:59bd:f7e2 with SMTP id 5b1f17b1804b1-46e70c9bfc4mr17218285e9.11.1759484117793;
-        Fri, 03 Oct 2025 02:35:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHaVK2zkQzqZL+45iS+eowvlr1TZYdXk2TM+UdvH8rZKcjeAYKqZl5Bkkez7g33XvcXMDW1g==
-X-Received: by 2002:a05:600c:3e86:b0:46e:59bd:f7e2 with SMTP id 5b1f17b1804b1-46e70c9bfc4mr17218095e9.11.1759484117313;
-        Fri, 03 Oct 2025 02:35:17 -0700 (PDT)
-Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a020a3sm121695005e9.10.2025.10.03.02.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 02:35:16 -0700 (PDT)
-From: Andrey Albershteyn <aalbersh@redhat.com>
-X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Fri, 03 Oct 2025 11:32:46 +0200
-Subject: [PATCH v4 3/3] xfs: test quota's project ID on special files
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBE581720
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 10:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759487962; cv=fail; b=Rp5GXUDgG79PuJA4Q9pRSCZoHPI8DxMuthw0MWysYumQwZ5pN78aiVjR5BM5x1uWxjpvQUzwKIqVQO9h4s5rAZtIKB9gxgQuyIprh4O3lJmeeoDUYYjERnTx7oeVpvH1dWw8xJ+/rKAigbhFlqMb57lZQ+RMOhrZXy55AGabKhg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759487962; c=relaxed/simple;
+	bh=oOiG3k/HM+GFPqoFhUUgZhWb8JYtwrJ+O1axAEZMenc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W/tAoAwo4V8TGWJoTUjHQqSstzzAg3oTTYL9OZaXA2cRNUt1irpJu/afIu80ycVlwq6H/HQqKJChHmYdNwMa9JZDXCgzNFZXT/lCzVf0ersePMXi+fzFDDm9lg7/AaLcmXX0yU9p2USibLu+cuOXFj7vntt4vXlxaP0/ucJOl1I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=gcYEPwaH; arc=fail smtp.client-ip=209.222.82.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11022108.outbound.protection.outlook.com [40.107.209.108]) by mx-outbound23-140.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Fri, 03 Oct 2025 10:39:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GmJOeYhVqeemzKwbQYf9IX6rkX7IAPnE/R+lbOsSWwFVkq+RyeEHSm6l+Qbg4XALQCayu4e97uoMkrQjGfTneME14i9APkRRc4mX78TvIhC6OGOl33ut1Npw8XNH2U7U2oC9sC+i6HT8jkhw/dg4UdVJAGXqgnbO7ouKL0VZQsacN1F7mW7RjpSzD9Bxvf2aERCiOpxOHF3IUD/CYJ/ydKALwUP3SL4RZ+9bFtwv4RHWL9DKr4TjJ88dDNehfzi5YBUI2Ue5dIQZdi5aX+eEHDrYC2Wymvk8KetbPMky0YkjH7bFCOoFfQI5sTwlC1lGO8fgHSmFNIj1EPR8jevz7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2DvDQx/vlEwICa9fKcIl21xKVQJI5eN7aLsCrYixpKc=;
+ b=Wy0Ww2Wrs8OSLxJPiwQViXgndK0xAfmrBdDPzdrUZo0NwvwBbRECqoOF2DmASdQyL6w9vu60fAnGkKtLyIZFc1fDd95hAUpyV36L3q+OiHwGdn0LLOas6WzVRtkZVUcXNiVcW7zQ3tby8CVmR22nE1ctgywGITene+ehqPAnYiXKCnQdqcnPsKYg35Zv5NnWPX41hZkcp6i7dawW1zJcaEv5Oqb3ymok+qjNaz3r9TmQ7Cpe8eYnkhV/p0cDHIR606MUzhKcDRwZMUmC5RrQaaUtYW+RpbswjY7SO4ycECcmZ3WPMkTwsZK1Abn+/9Szh6NBlPUAOpYs1Kgj+2bSHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=arm.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2DvDQx/vlEwICa9fKcIl21xKVQJI5eN7aLsCrYixpKc=;
+ b=gcYEPwaH2TfskQj/Q4MpTlpIACDF7rCvf7YFHZJNc46/VUJSA7yXLA/TEbQ8u4b5lmxZuIFALEFrjKu4kgvcvm4A7g8Lx3a3FS2LEpop28JfOdlK80gLRTRHec0KxwVI/CAT0ZKquLxrNh89UJXl1y7ifeBvITywDGv3FhPmd+Q=
+Received: from BYAPR11CA0067.namprd11.prod.outlook.com (2603:10b6:a03:80::44)
+ by CY8PR19MB6939.namprd19.prod.outlook.com (2603:10b6:930:60::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 10:06:44 +0000
+Received: from SJ5PEPF000001E9.namprd05.prod.outlook.com
+ (2603:10b6:a03:80:cafe::86) by BYAPR11CA0067.outlook.office365.com
+ (2603:10b6:a03:80::44) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.16 via Frontend Transport; Fri,
+ 3 Oct 2025 10:06:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ SJ5PEPF000001E9.mail.protection.outlook.com (10.167.242.197) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15
+ via Frontend Transport; Fri, 3 Oct 2025 10:06:43 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id E86E663;
+	Fri,  3 Oct 2025 10:06:42 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Subject: [PATCH v2 0/7] fuse: {io-uring} Allow to reduce the number of
+ queues and request distribution
+Date: Fri, 03 Oct 2025 12:06:41 +0200
+Message-Id: <20251003-reduced-nr-ring-queues_3-v2-0-742ff1a8fc58@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,140 +82,146 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-xattrat-syscall-v4-3-1cfe6411c05f@kernel.org>
-References: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
-In-Reply-To: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
-To: fstests@vger.kernel.org
-Cc: zlang@redhat.com, linux-fsdevel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>, 
- Andrey Albershteyn <aalbersh@redhat.com>, 
- "Darrick J. Wong" <djwong@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4010; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=NFXZJCDM6gddTTqUPtjzyqiRjXXUpTibfg7JUhy4vGI=;
- b=kA0DAAoWRqfqGKwz4QgByyZiAGjfmNGjEfRawp+TuEJCq7YK7NXEttgOFnnnI1oUi99RCp/hT
- Yh1BAAWCgAdFiEErhsqlWJyGm/EMHwfRqfqGKwz4QgFAmjfmNEACgkQRqfqGKwz4Qh9xwD+Nm5y
- 0G9xcswpBLFUaAWc9n3mCZRuVoP0DyYJ85y/y54A/0d7ACTsygBK/TxnCKuH2DYoGTH5aol4X5z
- KDx/agcYH
-X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
- fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
+X-B4-Tracking: v=1; b=H4sIADGg32gC/42NQQ6CMBBFr0Jm7RgokYIr72GIqZ0RZmHRqRAN6
+ d2tnMDle8l/f4XIKhzhWKygvEiUKWQwuwL86MLAKJQZTGkOpTUGlWn2TBgUVcKAz5lnjpcaG+e
+ vtiNHnW0hzx/KN3lv6XOfeZT4mvSzPS3Vz/4RXSos0bmWa+u4s9yciMLeT3foU0pfwBWmO74AA
+ AA=
+X-Change-ID: 20250722-reduced-nr-ring-queues_3-6acb79dad978
+To: Miklos Szeredi <miklos@szeredi.hu>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759486002; l=1868;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=oOiG3k/HM+GFPqoFhUUgZhWb8JYtwrJ+O1axAEZMenc=;
+ b=h/t+kzY79wBiup3+deHFCyZVnD5OTfTfXSnl/aMSqwAB8BH4Os9WipTbHY+Rek32U5CPf2eb/
+ CC0HoxNzrxCAOoQBA6QtIVKhk1ElAgz6ucxkNITEnTAXJrDEDWDUJ/b
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E9:EE_|CY8PR19MB6939:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96f95dd4-4744-4d3b-694e-08de02648e47
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|82310400026|7416014|376014|36860700013|1800799024|13003099007|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?NVNRZUZwblB4UUV3eG9VMkZXeHd3WkVKTWRpRnhFYjEvQzJiNzhrUktiQ2R2?=
+ =?utf-8?B?Slc1TEd5Z0c3OVkrek1TaU9BaHJnaWtIN08xdXoydEwxZWFtNkdDaHMyYk0y?=
+ =?utf-8?B?MklNUitoeTZpTlFWY084N2hkR2F0Kzlva1dCK1hpajExZzE4WHdXQXF0WnZG?=
+ =?utf-8?B?ejBDWmV5dkFpamdtVTQydm1XMzRBV1lrWDc4bjZseHZwY0d3emZ2anZNRWlm?=
+ =?utf-8?B?R2NLMGNtVEJiY0VITmhFbjFnTUE5bTdGL00wdW10Q25KUW9Iam9ibEwxMy8z?=
+ =?utf-8?B?QUJMdTRYQytSNWg5OWNMOVpTMmR5azJVRk9VTmtpaWFqQURJWmFoN21SWkgx?=
+ =?utf-8?B?RjhsUHdXQlRRWkN3ZGRycmNYNXpJOHJ1clFEL2JHQ3NIczBqSlMvZzdzN2JS?=
+ =?utf-8?B?UC9HLytaRHV4NDQwMUsxZ0pldjNESDJUSVFIYkFqUjdSOGVEK2kza2xNTmdv?=
+ =?utf-8?B?Uzg4RjR5WkRFWDNGMXpMWnhvbFptUjNHUTlhbFdSOHRKQ3UvTFFpRXNNcEVF?=
+ =?utf-8?B?Q2IvVXZpSWdsQ2I3SVZ5alFnS09PQnA1VmxaaTVvZy8wSkQ5SzBjTlBlQmZl?=
+ =?utf-8?B?NERRbnQybEFoNGV4MmJyVWJYUWFMWUVWQnB1elQ1ajYrYXRwZVc5YzcwMjR2?=
+ =?utf-8?B?YmsxamRPSkRYdnIxc0V2d3Yxb0hlL25CT1ppQ2hoditqMTFaN3FNS2h2WGl0?=
+ =?utf-8?B?cnlDbDVKcEV4bGo2bmNmYjdCMDM3a1FnQjZ0S29wQ2lKNmpIWXdMQUNsd096?=
+ =?utf-8?B?T3UzbytWR3ZxeVo0akFhWkxxK0VONXpnSm1kNkdSSHdjQ1RWTEJuSUp5OWc5?=
+ =?utf-8?B?d203VXpJMXhLWUhvOGxKZFM2aWRWMy9UMVhKcUNGdjF3UEZiWHQzenNBdFRR?=
+ =?utf-8?B?bW40NnE4elJwcEpYOVRXWlhTMGNiOWRqbFJmK2piaG95Q3gzSDg2N3NmRFRU?=
+ =?utf-8?B?MTQwTC81Q3VVN1F2N1NDVnVTMDVpNElyWHdLNTBRMnozcGhpSEdabzhTbWxX?=
+ =?utf-8?B?b3IxaUVkMnJxUVB5QUc5bmE2ZTNYbTg2RUpFS1oyY1JQRjVkUTZPbUJpRTAr?=
+ =?utf-8?B?MUtLWndjMVNkdU8zK2V3TE95cFZUNkFoYmFKcGQ1WFRIZHlnNmszSzU4SklJ?=
+ =?utf-8?B?a0hvYXoxUW95Q0hTWExpb3hSZkFJS0NzSG9NNnl6TmJLbzlHaHBlQkdIZWgw?=
+ =?utf-8?B?dmhWamVkL0ZRVEJCWWcvbjJ4RjlkSktES3NMditOMVJ0WUhRR3hzMk95WUVV?=
+ =?utf-8?B?TC9pU2t5QTFhYVhERmFqNjdIT3NoMGRLOWZXNTJGYkpqa0F4c2w3aGE0dnAw?=
+ =?utf-8?B?eFBYbnJMNEI5anF2c3NBdG0rbzRGK3pleE9tVEthVFRhOWZ5akRrdlBERWUw?=
+ =?utf-8?B?VmdBbHdWTnBtUWJaOWIzY1pCRG4xZTZEbHByZzlZZ2o5QUpLbUxKN3o2ajhu?=
+ =?utf-8?B?RWQzV3pOV25GanVsMzlZbTQvTS92bVc3SWtKSjBTbnFvdDUwcHVJSGFwSG9h?=
+ =?utf-8?B?UlkvN1ZtZ0NnYUR6QWY3ZEdnSk44Vk1SQ0UweDQyMW1takZPbDZaa0hvNEdD?=
+ =?utf-8?B?Tk52eG9BZnQwVDV0RVNua3hwVHA0dFZrNFZQUmN5NzlPQmlrVDRTa1k1aXB5?=
+ =?utf-8?B?RWJYRGh2K1U3aFZINXA1N2dmVENDdkN4elVzd0RodDVkTG1aYXBveEk5SkpV?=
+ =?utf-8?B?ck1HVkdFakpJRGpMcituUnFjZEhJdTRHc3dPekF6YmwrNTRMVkRMNll6aGdX?=
+ =?utf-8?B?Ujk3dnduSDhyZ0IzYXdvQk9WZlppbTdyajVyTzBsNGZ2RHlwYkJWRHV1T3Zq?=
+ =?utf-8?B?NFNPZGlVMXQxSjJWK1J1MVVGVHZlNkJqUzE5cmEvUU9CQUtOaC9IbGlnSUp3?=
+ =?utf-8?B?cm1rN2liTG9LT3R1dU9wV2F0ZVhiNE1iSGc5RllXVnBQcy9VRXFoY01hV091?=
+ =?utf-8?B?ZGQwQ282RHZnUStNbkFBdGpYWFMzQ0pmSENiUjgyZ29xeUk4SlVNTEl6UVVr?=
+ =?utf-8?B?MnlLajNoK1lzNjhtZEFiVWpWa0VIT1g4L3NGdXhBRzhDcHh0TGZacW5ndHZa?=
+ =?utf-8?B?dzFJcWpFMFpyRUtmL0x4Tld1eTV5WGxLaDRJY2drZmdQODg1QWw3K2QvZ2dH?=
+ =?utf-8?Q?GHqFzxMoftCu5W/i+zCzNjruL?=
+X-Forefront-Antispam-Report:
+ CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(19092799006)(82310400026)(7416014)(376014)(36860700013)(1800799024)(13003099007)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+ fjnVGzGP9+ZJzAhcZ2KUPAuAgi8YsrnBykmU8glDb3/ifX5z2Ip05SDreEe0L4C93adpZorQv/vJ2/nIJbbmVyCJxZDZvSKbbpXL8zsX7cS87BxabiVsv3vtOQwvYvJMr7FNjRmzx+ZviplmVpuj17g2G55Rux3/ndNTAP+PJ2WGzYEl4VZ/4OwjDXg1NKJTIND5/bh1A/zEfLGT1rcs7QxBdtbS+L2jQNGbozBXP56RjWdM/KQSrOfpfhN+zYrk+iaK3uZIn/V+wMb+grOcIhvHjEqV8gsRqO9yYtg8qIicSSKTSre65Ds9nGNmPqW9kVG6MDidCbjTExmaCinjM6jx7tE8ecYaOtcAJxJRZU/4t7fLOzXRUx16nJDTiyM6q4L+5pii/mJtPtcAfLk/kUxRF6JltVfhwRkQQPZIbOApraWJz6lU+hJax6D9oa6GzVnBf0wQenHDBsOA1ncZ03v5j/yw8kaJlMygPa9V5x33BIUNX3YDv/XXajUFmgh8/1HnJXdiILkcTYRJ2Rw6/XQYiWQP0crruFzn3vONUbfQ2Z24qS5hxqFof6tUk9bWDBU2CMuJ5Rl+x9PZvhSENmqyi5nKVCmDXxDKHLgQNnZ02oW9aGo0aQck288/AmpDvP19oZlLNj0/xj1q8obUVg==
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 10:06:43.9243
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96f95dd4-4744-4d3b-694e-08de02648e47
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+ SJ5PEPF000001E9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR19MB6939
+X-OriginatorOrg: ddn.com
+X-BESS-ID: 1759487950-106028-2393-1717-1
+X-BESS-VER: 2019.1_20251001.1803
+X-BESS-Apparent-Source-IP: 40.107.209.108
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoYWRqZAVgZQ0NIk0djYyCgl0c
+	jAIsnAwjg5Ndko0SzZMsk4zdTU1DhNqTYWADs/LIBBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.267935 [from 
+	cloudscan18-188.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-From: Andrey Albershteyn <aalbersh@redhat.com>
+This adds bitmaps that track which queues are registered and which queues
+do not have queued requests.
+These bitmaps are then used to map from request core to queue
+and also allow load distribution. NUMA affinity is handled and
+fuse client/server protocol does not need changes, all is handled
+in fuse client internally.
 
-With addition of file_getattr() and file_setattr(), xfs_quota now can
-set project ID on filesystem inodes behind special files. Previously,
-quota reporting didn't count inodes of special files created before
-project initialization. Only new inodes had project ID set.
-
-Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- tests/xfs/2000     | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/xfs/2000.out | 15 +++++++++++
- 2 files changed, 88 insertions(+)
+Changes in v2:
+- Overall code/logic changes, avail_q_masks were removed,
+  decision which queue to use for a reqest was re-worked
+  to achieve better balancing and performance
+- Addressed Joannes comments. Thanks a lot for 
+  kcalloc(..., sizeof(cpumask_var_t))!
+- Added back optimizations that were part of fuse-io-uring to RFCv2,
+  i.e. wake_up_on_current_cpu() for sync requests and
+  queuing on a different cpu queue for async requests
+- Added some benchmarks on the optimization commits.
+- Link to v1: https://lore.kernel.org/r/20250722-reduced-nr-ring-queues_3-v1-0-aa8e37ae97e6@ddn.com
 
-diff --git a/tests/xfs/2000 b/tests/xfs/2000
-new file mode 100755
-index 000000000000..413022dd5d8a
---- /dev/null
-+++ b/tests/xfs/2000
-@@ -0,0 +1,73 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 Red Hat.  All Rights Reserved.
-+#
-+# FS QA Test No. 2000
-+#
-+# Test that XFS can set quota project ID on special files
-+#
-+. ./common/preamble
-+_begin_fstest auto quota
-+
-+# Import common functions.
-+. ./common/quota
-+. ./common/filter
-+
-+# Modify as appropriate.
-+_require_scratch
-+_require_xfs_quota
-+_require_test_program "af_unix"
-+_require_test_program "file_attr"
-+_require_symlinks
-+_require_mknod
-+
-+_scratch_mkfs >>$seqres.full 2>&1
-+_qmount_option "pquota"
-+_scratch_mount
-+
-+create_af_unix () {
-+	$here/src/af_unix $* || echo af_unix failed
-+}
-+
-+filter_quota() {
-+	_filter_quota | sed "s~$tmp.projects~PROJECTS_FILE~"
-+}
-+
-+projectdir=$SCRATCH_MNT/prj
-+id=42
-+
-+mkdir $projectdir
-+mkfifo $projectdir/fifo
-+mknod $projectdir/chardev c 1 1
-+mknod $projectdir/blockdev b 1 1
-+create_af_unix $projectdir/socket
-+touch $projectdir/foo
-+ln -s $projectdir/foo $projectdir/symlink
-+touch $projectdir/bar
-+ln -s $projectdir/bar $projectdir/broken-symlink
-+rm -f $projectdir/bar
-+
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "project -cp $projectdir $id" $SCRATCH_DEV | filter_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "report -inN -p" $SCRATCH_DEV | _filter_project_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
-+
-+# Let's check that we can recreate the project (flags were cleared out)
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "project -sp $projectdir $id" $SCRATCH_DEV | filter_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "limit -p isoft=20 ihard=20 $id " $SCRATCH_DEV | filter_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "report -inN -p" $SCRATCH_DEV | _filter_project_quota
-+$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid -x \
-+	-c "project -Cp $projectdir $id" $SCRATCH_DEV | filter_quota
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/xfs/2000.out b/tests/xfs/2000.out
-new file mode 100644
-index 000000000000..e53ceb959775
---- /dev/null
-+++ b/tests/xfs/2000.out
-@@ -0,0 +1,15 @@
-+QA output created by 2000
-+Setting up project 42 (path SCRATCH_MNT/prj)...
-+Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-+Checking project 42 (path SCRATCH_MNT/prj)...
-+Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-+#42 8 20 20 00 [--------]
-+
-+Clearing project 42 (path SCRATCH_MNT/prj)...
-+Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-+Setting up project 42 (path SCRATCH_MNT/prj)...
-+Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
-+#42 8 20 20 00 [--------]
-+
-+Clearing project 42 (path SCRATCH_MNT/prj)...
-+Processed 1 (PROJECTS_FILE and cmdline) paths for project 42 with recursion depth infinite (-1).
+---
+Bernd Schubert (7):
+      fuse: {io-uring} Add queue length counters
+      fuse: {io-uring} Rename ring->nr_queues to max_nr_queues
+      fuse: {io-uring} Use bitmaps to track registered queues
+      fuse: {io-uring} Distribute load among queues
+      fuse: {io-uring} Allow reduced number of ring queues
+      fuse: {io-uring} Queue background requests on a different core
+      fuse: Wake requests on the same cpu
 
+ fs/fuse/dev.c         |   8 +-
+ fs/fuse/dev_uring.c   | 253 +++++++++++++++++++++++++++++++++++++++-----------
+ fs/fuse/dev_uring_i.h |  14 ++-
+ include/linux/wait.h  |   6 +-
+ kernel/sched/wait.c   |  12 +++
+ 5 files changed, 234 insertions(+), 59 deletions(-)
+---
+base-commit: 8b789f2b7602a818e7c7488c74414fae21392b63
+change-id: 20250722-reduced-nr-ring-queues_3-6acb79dad978
+
+Best regards,
 -- 
-2.50.1
+Bernd Schubert <bschubert@ddn.com>
 
 
