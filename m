@@ -1,172 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-63366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422C2BB7069
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 15:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A5BBB710E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 03 Oct 2025 15:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12E73B0465
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 13:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F4B1AE1B25
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Oct 2025 13:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1821DE892;
-	Fri,  3 Oct 2025 13:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1D11FC0E2;
+	Fri,  3 Oct 2025 13:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="08eoz1gI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Z+Qo1Dm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="08eoz1gI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Z+Qo1Dm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ebtyc4pZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828D41C2334
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 13:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB731F3FF8
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Oct 2025 13:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759498435; cv=none; b=rH9S1g6aIw4eqqzgz1YlnMk8OpH1hYIGT1T3Nnsm/rWDGxwmQlvvzx3sRaBRcU4D5gWu1QepRmeI8RPaM4e256l9lbHRF1PKEhBIXEEFOD4rnJ23xd+fp2Vx/xJJ7AOPQENiuNEZCg2MlX85QoKBFfSaKrv3Xa/qgymWjzhZ+9w=
+	t=1759498962; cv=none; b=oBwuLQtqUBhAW9zb9/5PMjlVrwUEKBNp8YKFn7W5/y8rRid7SscCEZ4BnI3O0ftIB+8UbAljELX/YnF5VfwmcMHxdXsD+NNzTX/rKzh25uS152qo/Ec7/H9DLkKw3TZ08YgVfIQmIgsGS3Q1AHeqw7oUai0XwuuQOFczUzjQCbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759498435; c=relaxed/simple;
-	bh=WvqA0odo4vJ7K3VDGIPqkqKMlhtKxFxMNaxBV+LA+nI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/0jTINCT3TASA3EjsMAJeSL5LvzYjDOeo6u34Lwc0HKniDK45tRbjhcS4xkMeMS826URCbnz2kK8HTe7L1e5iT/TQwlUk1RAdS19k3j83RcHpuPt5O6uhUCPpWPzlbXDtHT6OhDJRvmOZVJzPNO0d6zWCE8gsqJ5S1G0jyz/VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=08eoz1gI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Z+Qo1Dm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=08eoz1gI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Z+Qo1Dm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1759498962; c=relaxed/simple;
+	bh=9K/pcAJIAmNaWqCWy4cG3ZYxLZ/lu/7uNK022qUCius=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rvo+yElGASC3svpC51G/lco46bF1/WnAAV5HSRX3Yk02GDT1gAsi+EF9b//52YkOurNj1R7L2d5pw61P7kCOEUA3tVdz8jdEo32bsyJzN6YhuDUxUjh/gUohk/rQaHpVRByVk0/ritufAhIqQkaxiXCa2p1ipsOpse0g8BocACU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ebtyc4pZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759498960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xfXtIfWkcf4xqLvnSN5itUWF/K16TMTPz0JBNVG+WgY=;
+	b=Ebtyc4pZ01Pb40/yylQv/fb4tIiebyzjBJrVZ5ikbzNCaosBII5BFnAljtohxc94UK1y4s
+	s0QrLEIvZG3PvhUZfymuRMesUJWgtm7xkrD+ioKP8RcKy34Xh56EjXW+CPY+sQLEnD0oVD
+	dzMeSLfqVuecVFgv2QTRsFKvgolB8ZA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-6BpUaV_fOEO8LMYSqWcAgw-1; Fri,
+ 03 Oct 2025 09:42:34 -0400
+X-MC-Unique: 6BpUaV_fOEO8LMYSqWcAgw-1
+X-Mimecast-MFC-AGG-ID: 6BpUaV_fOEO8LMYSqWcAgw_1759498953
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 541D833906;
-	Fri,  3 Oct 2025 13:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759498412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X26N7+coLhPtysSvgG++2IwZmuSczwN6ZHetWwJ4SnI=;
-	b=08eoz1gIYV/e/WHayg0E93/lShV4nRIFDoegdx8F9/IV110aH2yK8RJReunGssKfdUyD2J
-	Xq1N39kf20eEU8gY98ncDkhoEmyrJmnf765E9JAJbrhFz3q6g1/L4q70DvlrK3m4CvDXQN
-	I4bUWuk2xzIZW2VdbWHq0wqCIwVETeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759498412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X26N7+coLhPtysSvgG++2IwZmuSczwN6ZHetWwJ4SnI=;
-	b=0Z+Qo1DmdAH55xhD0wahxbeZsFYq4WqGMcKclzqvaOnpRtz1vfdt4tRv/FI2aMBR8GvS1O
-	slpbU0LWcPUXwyBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=08eoz1gI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0Z+Qo1Dm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759498412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X26N7+coLhPtysSvgG++2IwZmuSczwN6ZHetWwJ4SnI=;
-	b=08eoz1gIYV/e/WHayg0E93/lShV4nRIFDoegdx8F9/IV110aH2yK8RJReunGssKfdUyD2J
-	Xq1N39kf20eEU8gY98ncDkhoEmyrJmnf765E9JAJbrhFz3q6g1/L4q70DvlrK3m4CvDXQN
-	I4bUWuk2xzIZW2VdbWHq0wqCIwVETeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759498412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X26N7+coLhPtysSvgG++2IwZmuSczwN6ZHetWwJ4SnI=;
-	b=0Z+Qo1DmdAH55xhD0wahxbeZsFYq4WqGMcKclzqvaOnpRtz1vfdt4tRv/FI2aMBR8GvS1O
-	slpbU0LWcPUXwyBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35F5D13990;
-	Fri,  3 Oct 2025 13:33:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KuvmDKzQ32hFRgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 03 Oct 2025 13:33:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 46729A0A58; Fri,  3 Oct 2025 15:33:27 +0200 (CEST)
-Date: Fri, 3 Oct 2025 15:33:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Deepanshu Kartikey <kartikey406@gmail.com>, 
-	syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com, stable@vger.kernel.org
-Subject: Re: [PATCH] vfs: Don't leak disconnected dentries on umount
-Message-ID: <c5cztgzzigretiyl2nilxusa32i2uuepwziltsoipsnxnzoebj@6phxi6h5sxyu>
-References: <20251002155506.10755-2-jack@suse.cz>
- <20251002163649.GO39973@ZenIV>
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 971C819560B0;
+	Fri,  3 Oct 2025 13:42:32 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.64.54])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E0B7C19560B8;
+	Fri,  3 Oct 2025 13:42:30 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	hch@infradead.org,
+	djwong@kernel.org,
+	willy@infradead.org,
+	brauner@kernel.org
+Subject: [PATCH v5 0/7] iomap: zero range folio batch support
+Date: Fri,  3 Oct 2025 09:46:34 -0400
+Message-ID: <20251003134642.604736-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002163649.GO39973@ZenIV>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[1d79ebe5383fc016cf07];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,kernel.org,vger.kernel.org,gmail.com,syzkaller.appspotmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 541D833906
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu 02-10-25 17:36:49, Al Viro wrote:
-> On Thu, Oct 02, 2025 at 05:55:07PM +0200, Jan Kara wrote:
-> 
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index 65cc11939654..3ec21f9cedba 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -2557,6 +2557,8 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
-> >  	spin_lock(&parent->d_lock);
-> >  	new->d_parent = dget_dlock(parent);
-> >  	hlist_add_head(&new->d_sib, &parent->d_children);
-> > +	if (parent->d_flags & DCACHE_DISCONNECTED)
-> > +		new->d_flags |= DCACHE_DISCONNECTED;
-> >  	spin_unlock(&parent->d_lock);
-> 
-> Not a good place for that |=, IMO...
+Hi all,
 
-The second place I was considering was a bit earlier where we set
-DCACHE_PAR_LOOKUP in new->d_flags but then I've decided to put this under
-parent's d_lock so that parent->d_flags cannot change under us. But in
-principle that race is harmless so do you prefer to move this setting out
-of parent->d_lock critical section?
+Only minor changes in v5 to the XFS errortag patch. I've kept the R-b
+tags because the fundamental logic is the same, but the errortag
+mechanism has been reworked and so that one needed a rebase (which turns
+out much simpler). A second look certainly couldn't hurt, but otherwise
+the associated fstest still works as expected.
 
-								Honza
+Note that the force zeroing fstests test has since been merged as
+xfs/131. Otherwise I still have some followup patches to this work re:
+the ext4 on iomap work, but it would be nice to move this along before
+getting too far ahead with that.
+
+Brian
+
+--- Original cover letter ---
+
+Hi all,
+
+Here's a first real v1 of folio batch support for iomap. This initially
+only targets zero range, the use case being zeroing of dirty folios over
+unwritten mappings. There is potential to support other operations in
+the future: iomap seek data/hole has similar raciness issues as zero
+range, the prospect of using this for buffered write has been raised for
+granular locking purposes, etc.
+
+The one major caveat with this zero range implementation is that it
+doesn't look at iomap_folio_state to determine whether to zero a
+sub-folio portion of the folio. Instead it just relies on whether the
+folio was dirty or not. This means that spurious zeroing of unwritten
+ranges is possible if a folio is dirty but the target range includes a
+subrange that is not.
+
+The reasoning is that this is essentially a complexity tradeoff. The
+current use cases for iomap_zero_range() are limited mostly to partial
+block zeroing scenarios. It's relatively harmless to zero an unwritten
+block (i.e. not a correctness issue), and this is something that
+filesystems have done in the past without much notice or issue. The
+advantage is less code and this makes it a little easier to use a
+filemap lookup function for the batch rather than open coding more logic
+in iomap. That said, this can probably be enhanced to look at ifs in the
+future if the use case expands and/or other operations justify it.
+
+WRT testing, I've tested with and without a local hack to redirect
+fallocate zero range calls to iomap_zero_range() in XFS. This helps test
+beyond the partial block/folio use case, i.e. to cover boundary
+conditions like full folio batch handling, etc. I recently added patch 7
+in spirit of that, which turns this logic into an XFS errortag. Further
+comments on that are inline with patch 7.
+
+Thoughts, reviews, flames appreciated.
+
+Brian
+
+v5:
+- Rebased across XFS errortag mechanism rework.
+v4: https://lore.kernel.org/linux-fsdevel/20250807144711.564137-1-bfoster@redhat.com/
+- Update commit log description in patch 3.
+- Added remaining R-b tags.
+v3: https://lore.kernel.org/linux-fsdevel/20250714204122.349582-1-bfoster@redhat.com/
+- Update commit log description in patch 2.
+- Improve comments in patch 7.
+v2: https://lore.kernel.org/linux-fsdevel/20250714132059.288129-1-bfoster@redhat.com/
+- Move filemap patch to top. Add some comments and drop export.
+- Drop unnecessary BUG_ON()s from iomap_write_begin() instead of moving.
+- Added folio mapping check to batch codepath, improved comments.
+v1: https://lore.kernel.org/linux-fsdevel/20250605173357.579720-1-bfoster@redhat.com/
+- Dropped most prep patches from previous version (merged separately).
+- Reworked dirty folio lookup to use find_get_entry() loop (new patch
+  for filemap helper).
+- Misc. bug fixes, code cleanups, comments, etc.
+- Added (RFC) prospective patch for wider zero range test coverage.
+RFCv2: https://lore.kernel.org/linux-fsdevel/20241213150528.1003662-1-bfoster@redhat.com/
+- Port onto incremental advance, drop patch 1 from RFCv1.
+- Moved batch into iomap_iter, dynamically allocate and drop flag.
+- Tweak XFS patch to always trim zero range on EOF boundary.
+RFCv1: https://lore.kernel.org/linux-fsdevel/20241119154656.774395-1-bfoster@redhat.com/
+
+Brian Foster (7):
+  filemap: add helper to look up dirty folios in a range
+  iomap: remove pos+len BUG_ON() to after folio lookup
+  iomap: optional zero range dirty folio processing
+  xfs: always trim mapping to requested range for zero range
+  xfs: fill dirty folios on zero range of unwritten mappings
+  iomap: remove old partial eof zeroing optimization
+  xfs: error tag to force zeroing on debug kernels
+
+ fs/iomap/buffered-io.c       | 117 +++++++++++++++++++++++++----------
+ fs/iomap/iter.c              |   6 ++
+ fs/xfs/libxfs/xfs_errortag.h |   6 +-
+ fs/xfs/xfs_file.c            |  29 ++++++---
+ fs/xfs/xfs_iomap.c           |  38 +++++++++---
+ include/linux/iomap.h        |   4 ++
+ include/linux/pagemap.h      |   2 +
+ mm/filemap.c                 |  58 +++++++++++++++++
+ 8 files changed, 210 insertions(+), 50 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.0
+
 
