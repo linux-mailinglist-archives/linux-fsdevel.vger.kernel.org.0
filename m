@@ -1,236 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-63427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD76BB886A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 04:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F2FBB88A6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 04:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF4419E09BD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 02:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B5719E74A6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 02:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2FE20C029;
-	Sat,  4 Oct 2025 02:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832D720DD48;
+	Sat,  4 Oct 2025 02:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="GyM7ZH9q"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="qMsrJk/Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F43515C0
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 02:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368892AE77
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 02:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759545470; cv=none; b=ZZVGnSABDvtc3oc35T2AfFjvLJ4tUQess7w7pl8e3qTZycdC16TS1Ti2SV9GF1sxxClDeNTFLfEiXIj/WsDO/c4SUvCQLhepAcaES1j3WbA1+alCd4Dn/sqJhQ49YIXet2wTfot1foOVL8hi9I1RnsUu/WH/P5p6+P8ychTZ9tY=
+	t=1759546398; cv=none; b=SViv62Jmejx30snt0r/5cgRe0w7MjNvcQ3i1aMf4lB4Njsyb1LFqzw432KRSbFegmdH6onmfJLMNykxryGhhrMSrp9kYLEwLNIXP5SXcPv4SYBf4hQyhlFm8C24kvotEMrjyG5CKcfKVuUerXCvRVw18Hk7rKxOH0mQ6UdcE/1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759545470; c=relaxed/simple;
-	bh=z8FEWYioRZsia1D0UVZElrLnWOE6tccgR6dAs9tkFMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AH3SI2pC0+0Nuqbz/FH9VS3MSFioB0t3raY3pwy++bvLVljtoakDi1oh9Hc6tT9PCYl2+eRo/EFpFNju+RUGH007OZ2vF6husePfI0iPtaGh7YviQEc7eo6uiyrGsgFA/Ogrt2GRds53ODNHyw7nAnwGqsrfCv+PiyoWiX1ZKhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=GyM7ZH9q; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8571a0947d1so304386885a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 19:37:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759545467; x=1760150267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WX2AvTRjoMsNn7rSSXm6NpMJfKCTCSB0TADy4mhOSmg=;
-        b=GyM7ZH9qwtF2cHGRWxs17OA2fPZjLHFBhSh3a6J52ZHrLJYQncuHmqlhKTWNAUe3YN
-         DQNFHE4zxiiL7GXAu0utoiuL7orUv2aAYNCcQoF2k8sTlIXU2kwGSpW2R/y+/gu3TaAj
-         Kk2Kuj0IWw9Waz6GfsBxk5Dtl5JTYcmvdcqDrLAq8p/jaF+bLVxvoBtO9gB2kOWoIm2v
-         gI3Evie6M5MRI/mBzItMGa2/5srVpYDyDAYeU4k3/Ng8gEHKV/63WlBtRa4qXNJqL4dk
-         cVRn4dmTwTKgtPk6W7Rl9eQHIazyLY8qdwx1Bim0x+dqcl896qSZP5K7qL7k5h3RSvUF
-         OrJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759545467; x=1760150267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WX2AvTRjoMsNn7rSSXm6NpMJfKCTCSB0TADy4mhOSmg=;
-        b=c5PJCNrlDKsqr7iVuzbXuyHy0QySvUBl1sf7FmW0BMpV6zM/wTfMO0EukJ3UK7OjWw
-         90pgkjwqLChe/frz6mJBgJQdmKWo6swL8vbwrtVmgo9yxxTSdUbH4LRKL2SeBWtiYP+0
-         KgIIvKGtQ4qcBVWd3OXRC6X6NvF80D8cIWrOeUKC9e7cA0Bzl4mAdSXa7OUs9E0vZwrd
-         SDTBO533by8D2r85c6a5bIBoh9m66ul7NE1I3HOikblnMcWI7824CgDy5RAE1HvKJqhr
-         7MMz7xRWnADWkoDhsANEUMAcK3/bM0Y2rHsjZVjncjo3Izd0Ec3+lNS5K8VWRXS/dPvy
-         c6Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1tuwi8ElI+6n6HTLzA1gLzV1S2uaageI8s95dN6cyoEkSiUApvigq2cUDJZ33FhnyC3GM8/Ng1f/mSZ3N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh3QmV3RYcbsSZTmPC+TGP/LAYusotPmTWk4LcvYWvFOGloy68
-	N6kXzIb8fG7B4NF/m52KobB/IKY2CTes1gsz/7cAgyE5V2NuwdaKZeGF9iPiPPsPfuV6QQq53dx
-	cQbMAPoS/rwlS4WHMJ5A2Pl7eFRUJRQjdEn8wASY+fw==
-X-Gm-Gg: ASbGnctsc+C5H1BqTZho8ZnAspZkvehMpQnAJoSq6pukB1FDpHHCvy/mz4M41s1aj2Q
-	Pp4i70W+g1Pt0G5VH8GoktZGvHwhhWP+izE9v+ssNpWfomd8eHkW8FnTObF95/Gvs/QN1wzFoFj
-	B6ATd0tIBWKp5F0hRk/mj/vtdC8gOsFhKCxRTl2KIBYDyUz+US9Xy9tuN0sYC+JzEPOgb5YEYeG
-	sEZ3jDpFGnXZK5cu729jtSSVIfk
-X-Google-Smtp-Source: AGHT+IHpXmfwm/zD9D+zvb53ixNC14PQWRGIATDbgGewBobYXO/nEIYfu9ZMcBO3awLQMttSyQvIKLOwmKCMpwF49ms=
-X-Received: by 2002:a05:620a:1a0e:b0:828:804a:47f2 with SMTP id
- af79cd13be357-87a32af5f30mr715143885a.9.1759545467113; Fri, 03 Oct 2025
- 19:37:47 -0700 (PDT)
+	s=arc-20240116; t=1759546398; c=relaxed/simple;
+	bh=yeC3KsfD2nh9bIyCmrT85tDHKKNrI2mGOS5OAW6L31s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbUpnMCPpEvRTaVxEXUg66twaApP2KDAEdbRpUi8+g1oV2XgSID7R05QGO5oFr3HQGtMYogRE/D1sFvXYov2f/O+eKa/2EGp/QZuT0updYssijMhnwoIlADR7pqOAj84Z5zstwESVmh09TOooNoTzenDxyrbH0Y44kaYnbmDQI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=qMsrJk/Y; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-108-49-45-174.bstnma.fios.verizon.net [108.49.45.174])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5942ql3i023854
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 3 Oct 2025 22:52:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1759546376; bh=RO5kDuu2G5eNwHxj6/FPijVwvswe7D2xQUzS2yP8aWw=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=qMsrJk/Y9eKB5norApw1qpR6Gd2pszhb1oXeY2yd3+Qr4yHADfLBnz0V5PDu3G7nb
+	 sxptLnSOg5br2RBzaMt4rhh73k6T4lg+jpJVesik7u6Xs7rT//tKB88nPca+57GvKq
+	 ilw2FUO3wNSZZbfpWsPGJMmyfBhLshTv3mgrNaFZpH5uGz99TVJ/86h4gm9XUz6T1j
+	 qrElW1NRkLIRV6NbIv8ucbHTIQbuohmRMSKCwFGpvDX7O8AlEl82Tg2c3U3B+aCBpR
+	 9FdZdVcsdHM/MO96dchXUj7hHDlfIul6aBhRBiN3TvmJhSDyxX7ZWsqkgszGgLDvkd
+	 lfLg1o1rKfMOg==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id BCDB52E00D9; Fri, 03 Oct 2025 22:52:47 -0400 (EDT)
+Date: Fri, 3 Oct 2025 22:52:47 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Francesco Mazzoli <f@mazzo.li>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: Mainlining the kernel module for TernFS, a distributed filesystem
+Message-ID: <20251004025247.GD386127@mit.edu>
+References: <bc883a36-e690-4384-b45f-6faf501524f0@app.fastmail.com>
+ <CAOQ4uxi_Pas-kd+WUG0NFtFZHkvJn=vgp4TCr0bptCaFpCzDyw@mail.gmail.com>
+ <34918add-4215-4bd3-b51f-9e47157501a3@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <20250929010321.3462457-27-pasha.tatashin@soleen.com> <20251003225120.GA2035091.vipinsh@google.com>
- <CA+CK2bBuO5YaL8MNqb5Xo_us600vTe2SF_yMNU-O9D2_RBoMag@mail.gmail.com>
-In-Reply-To: <CA+CK2bBuO5YaL8MNqb5Xo_us600vTe2SF_yMNU-O9D2_RBoMag@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 3 Oct 2025 22:37:10 -0400
-X-Gm-Features: AS18NWAFqUB-LYy2SykxO160YAKxge0tVD8HRG9MgImFDuYaat9DVXaJFYTvN7M
-Message-ID: <CA+CK2bBSObHG=9Rj623mahyhE81DhhKbN09aHS96p==8y_mCGw@mail.gmail.com>
-Subject: Re: [PATCH v4 26/30] selftests/liveupdate: Add multi-kexec session
- lifecycle test
-To: Vipin Sharma <vipinsh@google.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org, steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34918add-4215-4bd3-b51f-9e47157501a3@app.fastmail.com>
 
-On Fri, Oct 3, 2025 at 10:07=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> On Fri, Oct 3, 2025 at 6:51=E2=80=AFPM Vipin Sharma <vipinsh@google.com> =
-wrote:
-> >
-> > On 2025-09-29 01:03:17, Pasha Tatashin wrote:
-> > > diff --git a/tools/testing/selftests/liveupdate/.gitignore b/tools/te=
-sting/selftests/liveupdate/.gitignore
-> > > index af6e773cf98f..de7ca45d3892 100644
-> > > --- a/tools/testing/selftests/liveupdate/.gitignore
-> > > +++ b/tools/testing/selftests/liveupdate/.gitignore
-> > > @@ -1 +1,2 @@
-> > >  /liveupdate
-> > > +/luo_multi_kexec
-> >
-> > In next patches new tests are not added to gitignore.
->
-> Will fix it, thanks.
->
-> >
-> > > diff --git a/tools/testing/selftests/liveupdate/Makefile b/tools/test=
-ing/selftests/liveupdate/Makefile
-> > > index 2a573c36016e..1cbc816ed5c5 100644
-> > > --- a/tools/testing/selftests/liveupdate/Makefile
-> > > +++ b/tools/testing/selftests/liveupdate/Makefile
-> > > @@ -1,7 +1,38 @@
-> > >  # SPDX-License-Identifier: GPL-2.0-only
-> > > +
-> > > +KHDR_INCLUDES ?=3D -I../../../usr/include
-> >
-> > If make is run from the tools/testing/selftests/liveupdate directory, t=
-his
-> > will not work because it needs one more "..".
-> >
-> > If this is built using selftest Makefile from root directory
-> >
-> >   make -C tools/testing/selftests TARGETS=3Dliveupdate
-> >
-> > there will not be build errors because tools/testing/selftests/Makefile
-> > defines KHDR_INCLUDES, so above definition will never happen.
-> >
-> > >  CFLAGS +=3D -Wall -O2 -Wno-unused-function
-> > >  CFLAGS +=3D $(KHDR_INCLUDES)
-> > > +LDFLAGS +=3D -static
-> >
-> > Why static? Can't we let user pass extra flags if they prefer static
->
-> Because these tests are executed in a VM and not on the host, static
-> makes sense to be able to run in a different environment.
->
-> > > +
-> > > +# --- Test Configuration (Edit this section when adding new tests) -=
---
-> > > +LUO_SHARED_SRCS :=3D luo_test_utils.c
-> > > +LUO_SHARED_HDRS +=3D luo_test_utils.h
-> > > +
-> > > +LUO_MANUAL_TESTS +=3D luo_multi_kexec
-> > > +
-> > > +TEST_FILES +=3D do_kexec.sh
-> > >
-> > >  TEST_GEN_PROGS +=3D liveupdate
-> > >
-> > > +# --- Automatic Rule Generation (Do not edit below) ---
-> > > +
-> > > +TEST_GEN_PROGS_EXTENDED +=3D $(LUO_MANUAL_TESTS)
-> > > +
-> > > +# Define the full list of sources for each manual test.
-> > > +$(foreach test,$(LUO_MANUAL_TESTS), \
-> > > +     $(eval $(test)_SOURCES :=3D $(test).c $(LUO_SHARED_SRCS)))
-> > > +
-> > > +# This loop automatically generates an explicit build rule for each =
-manual test.
-> > > +# It includes dependencies on the shared headers and makes the outpu=
-t
-> > > +# executable.
-> > > +# Note the use of '$$' to escape automatic variables for the 'eval' =
-command.
-> > > +$(foreach test,$(LUO_MANUAL_TESTS), \
-> > > +     $(eval $(OUTPUT)/$(test): $($(test)_SOURCES) $(LUO_SHARED_HDRS)=
- \
-> > > +             $(call msg,LINK,,$$@) ; \
-> > > +             $(Q)$(LINK.c) $$^ $(LDLIBS) -o $$@ ; \
-> > > +             $(Q)chmod +x $$@ \
-> > > +     ) \
-> > > +)
-> > > +
-> > >  include ../lib.mk
-> >
-> > make is not building LUO_MANUAL_TESTS, it is only building liveupdate.
-> > How to build them?
->
-> I am building them out of tree:
-> make O=3Dx86_64 -s -C tools/testing/selftests TARGETS=3Dliveupdate instal=
-l
-> make O=3Dx86_64 -s -C tools/testing/selftests TARGETS=3Dkho install
+On Fri, Oct 03, 2025 at 04:01:56PM +0100, Francesco Mazzoli wrote:
+> 
+> > A codebase code with only one major user is a red flag.
+> > I am sure that you and your colleagues are very talented,
+> > but if your employer decides to cut down on upstreaming budget,
+> > the kernel maintainers would be left with an effectively orphaned filesystem.
 
-Actually, I just tested in-tree and everything works for me, could you
-please verify:
+I'd go further than that.  Expanding your user base is definitely a
+good thing, but I'd go further than that; see if you can expand your
+developer community so that some of your users are finding enough
+value that they are willing to contribute to the development of the
+your file system.  Perhaps there are some use cases which aren't
+important to you, so it's not something that you can justifying
+pursuing, but perhaps it would be high value for some other company
+with a similar, but not identical, use case?
 
-make mrproper  # Clean the tree
-cat tools/testing/selftests/liveupdate/config > .config # Copy LUO depends.
-make olddefconfig  # make a def config with LUO
-make kvm_guest.config # Build minimal KVM guest with LUO
-make headers # Make uAPI headers
-make -C tools/testing/selftests TARGETS=3Dliveupdate install # make and
-install liveupdate selftests
+To do that, some recommendations:
 
-# Show that self tests are properly installed:
-ls -1 tools/testing/selftests/kselftest_install/liveupdate/
-config
-do_kexec.sh
-liveupdate
-luo_multi_file
-luo_multi_kexec
-luo_multi_session
-luo_unreclaimed
+*) Have good developer's documentation; not just how to start using
+   it, but how to get started understanding the code base.  That is,
+   things like the layout of the code base, how to debug problems,
+   etc.  I see that you have documentation on how to run regression
+   tests, which is great.
 
-Pasha
+*) At the moment, it looks like your primary focus for the client is
+   the Ubuntu LTS kernel.  That makes sense, but if you are are going
+   for upstream inclusion, it might be useful to have a version of the
+   codebase which is sync'ed to the upstream kernel, and then having an
+   adaption layer which allows the code to be compiled as a module on
+   distribution kernels.
+   
+*) If you have a list of simple starter projects that you could hand
+   off to someone who is intersted, that would be useful.  (For
+   example, one such starter project might be adding dkms support for
+   other distributions beyond Ubuntu, which might be useful for other
+   potential users.  Do you have a desire for more tests?  In general,
+   in my experience, most projects always could use more testing.)
+
+Looking the documentation, here are some notes:
+
+* "We don't expect new directories to be created often, and files (or
+  directories) to be moved between directories often."  I *think*
+  "don't expect" binds to both parts of the conjuction.  So can you
+  confirm that whatw as meant is "... nor do we expect that files
+  (or directries) to be moved frequently."
+
+* If that's true, it means that you *do* expect that files and
+  directories can be moved around.  What are the consistency
+  expectations when a file is renamed/moved?  I assume that since
+  clients might be scattered across the world, there is some period
+  where different clients might have different views.  Is there some
+  kind of guarantee about when the eventual consistency will
+  definitely be resolved?
+
+* In the description of the filesystem data or metadata, there is no
+  mention of whether there are checksums at rest or not.  Given the
+  requirements that there be protections against hard disk bitrot, I
+  assume there would be -- but what is the granularity?  Every 4092
+  bytes (as in GFS)?   Every 1M?   Every 4M?   Are the checksums verified
+  on the server when the data is read?  Or by the client?   Or both?
+  What is the recovery path if the checksum doesn't verify?
+
+* Some of the above are about the protocol, and that would be good to
+  document.  What if any are the authentication and authorization
+  checking that gets done?  Are there any cryptographic protection for
+  either encryption or data integrity?  I've seen some companies who
+  consider their LLM to highly proprietary, to the extent that they
+  want to use confidential compute VM's.  Or if you are using the file
+  system for training data, the training data might have PII.
+
+> These are all good questions, and while we have not profiled the
+> FUSE driver extensively...
+
+There has been some really interesting work that that Darrick Wong has
+been doing using the low-level fuse API.  The low-level FUSE is Linux
+only, but using that with fs-iomap patches, Darrick has managed to get
+basically get equivalent performance for direct and buffered I/O
+comparing the native ext4 file system driver with his patched fuse2fs
+and low-level fuse fs-iomap implementation.  His goal was to provide
+better security for untrusted containers that want to mount images
+that might be carefully, maiciously trusted, but it does demonstrate
+that you aren't particularly worried about metadata-heavy workloads,
+and are primarily concerend about data plane performance, uisng the
+low-level (linux-only) FUSE interface might work well for you.
+
+> There are some specific things that would be difficult today. For
+> instance FUSE does not expose `d_revalidate`, which means that
+> dentries would be dropped needlessly in cases where we know they can
+> be left in place.
+
+I belive the low-level FUSE interface does expose dentry revalidation.
+
+
+> parts of a file is unreadable, and in that case we'd have had to
+> fall back to a non-passthrough version.
+
+Ah, you are using erasure codes; what was the design considerations of
+using RS as opposed to having multiple copies of data blocks.  Or do
+you support both?
+
+This would be great to document --- or maybe you might want to
+consider creating a "Design and Implementation of TernFS" paper and
+submitting to a conference like FAST.  :-)
+
+Cheers,
+
+						- Ted
+						
 
