@@ -1,79 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-63420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C814BB8758
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 02:44:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290C1BB876A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 03:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9413A348AFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 00:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076134C2781
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 01:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6170314F70;
-	Sat,  4 Oct 2025 00:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bL+zrO89"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3DC2AE77;
+	Sat,  4 Oct 2025 01:04:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC532EEAB
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 00:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9359C141
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 01:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759538649; cv=none; b=oZFeuHc3KtzP/Vaejg0szMFzePFbmufxDUKqmQiSrJYATSDL4kd8D2wdHQseFxIdf6/V2GOIl0gRhJeW0w+K62xeGMpAI65AmTTyR0RgE1kmQvMeiMi03e+O2FotyBo/zvrB93AEphO9cfDM03XswpVQZA8i3WJ6/hIHur5u7lM=
+	t=1759539845; cv=none; b=SDbO7mAZHkabWtqGkkC+gyt5Sjt5npcbJXdFovuL2hOGJeQhADbwga37XP3dK7wH0jXaBZ0bGSSP+/H54jiDGjyPkDIMDjJV2wn0DnYU31uOCUji4vpoQAIPq+pITjj2CKN2T7fdyc40h44OdFAYz7o9dyKZ/1d0c7J8bPBQp8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759538649; c=relaxed/simple;
-	bh=flVL6uTAhoY7Cv7M9eQ1yHEX2OqNrG7cuum3RxyZ0KI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=NEIuxOr/7Gbhag6edeK8Dqb5HnCTuGR8s2N1uGg/cjgzAjPPossyCUziAGkB17zVt6rIdDBqfEWoifKNsCmol9qHAbzgliV6d1HF7lUqmXDUS1zyk7Vne4ocQWzpUbD0JNa+dsFVH8IWNxiLyeHdFaj2mg9eDrsTcUW4IV+9TVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bL+zrO89; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DDADC4CEF5;
-	Sat,  4 Oct 2025 00:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759538649;
-	bh=flVL6uTAhoY7Cv7M9eQ1yHEX2OqNrG7cuum3RxyZ0KI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=bL+zrO89dChXbFKAj+kib6Z/z/5jKFAQVF6Kl62k8SSU+SjWYNDRWORmdaaMR3JjN
-	 c0UwOgek8lPw9EK1EGa1PeN3ihzUb1mqNkyGEepRnVwY1RxZrwbwQvO8tcyygpKRuy
-	 0kV8Zzildw3mZ+UN4ksP6x4G4iGRvlqM/y+gHWQB/BUfKdOlcMzQTxAV1R0CBojFY0
-	 PKOkY95EpZlsGOQw8aWB4/JILczjYs5DLukvbpQCeANp7IdYu2l7Y6M1RxZIjcfdV9
-	 6330GIRbJjDSsC46G2q3/aj1/1OXsWXpnUyDhwdxVNqbmQ4OMlRY+dRaf9xMkEopdM
-	 gLB1yxAfw3zlw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0E439D0C1A;
-	Sat,  4 Oct 2025 00:44:01 +0000 (UTC)
-Subject: Re: [git pull] pile 6: f_path stuff
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251003221558.GA2441659@ZenIV>
-References: <20251003221558.GA2441659@ZenIV>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251003221558.GA2441659@ZenIV>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git pull-f_path
-X-PR-Tracked-Commit-Id: 2f7d98f10b8f64525b2c74cae7d70ae5278eb654
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 50647a1176b7abd1b4ae55b491eb2fbbeef89db9
-Message-Id: <175953864053.132476.13453428282617421391.pr-tracker-bot@kernel.org>
-Date: Sat, 04 Oct 2025 00:44:00 +0000
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+	s=arc-20240116; t=1759539845; c=relaxed/simple;
+	bh=SOcgETh5xeubM838LXHr8nv9pfekOTux79h+0vKGLd0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HbMWl+Atha4iu/VVTBPo4uqPkONW6DRocgfKPylGZxwgoS+RwQHNpY01UyQQtVGlSekdoaWHfYj9ntkXnA14PbOMTsWtHa21rC+Sm7na4cIQJRwMrDaaGs4xJ89sjmcxMwDFMEpLP7zGTYrxwiGuH1Pfl7HCwbUEjK+qQRwp+kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42f6639fb22so22905ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 18:04:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759539843; x=1760144643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HBSZwqSDmh1BSWgw4JtT806Jg7bQjBuA+gVX18qZT4E=;
+        b=d7Qdnt+8yLrM/RNHSKB2PpZy0cA3b/bMbq7Gb38ncnxMl9CxgMomCv44CQl0/bSuM6
+         DB/1OMJSlFP3xYBFmeXSmoHCQH9XMvge0Y/pguRSeJy2+5a6ODVybQSMfztzGjZIBu/p
+         4CZ88lqLWUXYliyyZQwdy8sqXHNdJfyf9bZndxYwNwkLVL0dq84bYMDty/D3m9LlQB9b
+         0fvlUW+EPXFSlm6qKmlufGRGmf8euC8SnIDLTsepDnUBzNMDnFOYsdfKQ/p5ANZWj6Q+
+         gTYZ2UDGyXyVDH4CPHER8kp2j9X3FoFrrCX2F951P33HbInl1+JBx9pAvSSW5hzNP6ns
+         2F2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmmBa2y/rl6gFUHUoPvgsSb9hxwKNWkG+ByKAcXuFnS9V7C/Cb9dyZ26Wi4uUJ0gXLS9Pl2xyIRkunisDP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7NDVMrVEGrndCdIxckrO5bhzhOapM39rIc2GbGbiWRgi5JOFr
+	9tqYgoE/jtjXKN4THlrH9xh3osFqCWcTSZQoip8D8VyvD6EsfoJRBt9r6ENxqfxvka9yxco0ej9
+	JeLcZIsRgyxvi1DGXGo7Seikx5nQ53SErG/1cB3yRXt6Z1d/seXtd2sndRvo=
+X-Google-Smtp-Source: AGHT+IG5JM3/o6FGfsB9hA9pW+iiPTtSAdodFWPBkviXe5k4KQ+1mesDPtmy+8ZNmTIw34B4iexXbVyss3CJ246tUdhyhjSRaavg
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a92:ca0d:0:b0:42e:6e3a:3075 with SMTP id
+ e9e14a558f8ab-42e7ad84876mr59415045ab.21.1759539843090; Fri, 03 Oct 2025
+ 18:04:03 -0700 (PDT)
+Date: Fri, 03 Oct 2025 18:04:03 -0700
+In-Reply-To: <68c6c3b1.050a0220.2ff435.0382.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e07283.a00a0220.102ee.0118.GAE@google.com>
+Subject: Re: [syzbot] [fs?] kernel BUG in qlist_free_all (2)
+From: syzbot <syzbot+8715dd783e9b0bef43b1@syzkaller.appspotmail.com>
+To: bigeasy@linutronix.de, boqun.feng@gmail.com, bp@alien8.de, 
+	brauner@kernel.org, clrkwllms@kernel.org, dave.hansen@linux.intel.com, 
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, hpa@zytor.com, jack@suse.cz, kprateek.nayak@amd.com, 
+	kuba@kernel.org, kuniyu@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, luto@kernel.org, 
+	mingo@redhat.com, ncardwell@google.com, neil@brown.name, 
+	netdev@vger.kernel.org, pabeni@redhat.com, peterz@infradead.org, 
+	rostedt@goodmis.org, ryotkkr98@gmail.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, viro@zeniv.linux.org.uk, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Fri, 3 Oct 2025 23:15:58 +0100:
+syzbot has bisected this issue to:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git pull-f_path
+commit 3253cb49cbad4772389d6ef55be75db1f97da910
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Thu Sep 4 14:25:25 2025 +0000
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/50647a1176b7abd1b4ae55b491eb2fbbeef89db9
+    softirq: Allow to drop the softirq-BKL lock on PREEMPT_RT
 
-Thank you!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17566a7c580000
+start commit:   7f7072574127 Merge tag 'kbuild-6.18-1' of git://git.kernel..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14d66a7c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10d66a7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b78ebc06b51acd7e
+dashboard link: https://syzkaller.appspot.com/bug?extid=8715dd783e9b0bef43b1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ba76e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17741ee2580000
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Reported-by: syzbot+8715dd783e9b0bef43b1@syzkaller.appspotmail.com
+Fixes: 3253cb49cbad ("softirq: Allow to drop the softirq-BKL lock on PREEMPT_RT")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
