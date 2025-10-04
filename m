@@ -1,97 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-63429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0405BB896E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 06:27:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47770BB8982
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 06:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41CF19C358A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 04:27:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E57C4E8C76
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 04:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E6420298C;
-	Sat,  4 Oct 2025 04:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DFF22068D;
+	Sat,  4 Oct 2025 04:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V6Fhv3/P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNluNx03"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BF1C2E0;
-	Sat,  4 Oct 2025 04:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948EA208D0
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 04:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759552013; cv=none; b=EvPfTuUv2iZ24SpK7Pc9nuTj7Gce2nF0qzBrHPjzcYcw/kXebSsO1z4382iY13A4RL877ySX/IEY0Ri+1H7UjyU/lMZ7ibtKAH3nanax8SUroKAXioCABuzHRh8pDJDo3dAN6erKXCSv5bouHaQ+GDZ+vGzNQCXDPxGeZ2RF+qQ=
+	t=1759552271; cv=none; b=OEdQOwEcBQCXoPoAjJJ48veEM2dPcINnyrtiRbw7qFR6gvry8uim+QszJCmK1MFB1uZOnZVo89SEtE/V+70YseGucTrCnRWduORZKRgOwS2/8VijF0il3FZY85kB7rurUSgvtFrSYd7/pUl5xF349tYj03JDi58n0/DJIIYg5kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759552013; c=relaxed/simple;
-	bh=uILPRqJhMy7fWt3OsCdb6ZPe6JPwhZZa5v2gQXhmWiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hamC/ayb5X99MChVJmzGOt+5fXwaLX74IJLhNoNyfffp71YXL/TdjyHxHvrL05xNogODViRsBM2WPPfQFVtf2StLJls0lP0u9T77hYgHA+vLHlIkgY4W1Attt93xr9dHR/VaDK+Wkr2uaSY9f3DC5HOX0EnrPE/0DxHFxFAM0ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V6Fhv3/P; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=h5jDZRPaN/sMtBt59YwcIKCH/2rUKbVLwKIWK3iryyw=; b=V6Fhv3/P8wMUzY3hBwpGNRmtw4
-	SZuF3Dw6a6l2mBnGXKOqVoviIyYeCMuhMpbmbDrbVEly6K9LJK880SQjE7iZhrMD1pjfF4zh9tNSx
-	APx41E+Joei4c7WFyeMB/RClpx7CW8fchT/rS55JwVGej0FQMmU33z0vcLGfohg3alnC337wF7Y8l
-	XzxiBYg4sae3VAC8L9CD3gA9oMz2/4Jx/I7Ed0NYYNF9NiHPRE8YW9rY5X84nWstmle+vMBZLaC44
-	CNeh2BVV9xctbuKHTzqIHHOLIDc6rHukiULDvjGtcjSZ3I9Fzi59SX+097lYlgo3WOPzI8Kj+iI0A
-	kbw9McNg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v4tr8-0000000DRu3-3PVu;
-	Sat, 04 Oct 2025 04:26:50 +0000
-Date: Fri, 3 Oct 2025 21:26:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Pavel Emelyanov <xemul@scylladb.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	"Raphael S . Carvalho" <raphaelsc@scylladb.com>,
-	linux-api@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] fs: Propagate FMODE_NOCMTIME flag to user-facing
- O_NOCMTIME
-Message-ID: <aOCiCkFUOBWV_1yY@infradead.org>
-References: <20251003093213.52624-1-xemul@scylladb.com>
+	s=arc-20240116; t=1759552271; c=relaxed/simple;
+	bh=enoINwlA9+PevoMLkOQfPIAcWmrKh+doHnEubrvsPIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=se6vBQIyGqvKGF3vQ6d/Slcye8TmNRfE6oo5cHkMWnqdA3NC7Y1i2cVsyXd1Z9yn3FEEVDnHTTspPhCbVj/IQic7i3XSyzP6KQwVk2JnKUFbMuJcDqGGY/H6r8HJ0f1r8LxwR5xO2L+B7LIAaFzW2OJgltuLgrpnnLj6lzSlKA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nNluNx03; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77c1814ca1dso2178042b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 21:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759552268; x=1760157068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=StwDBKa8ZRSfrd7VD6MhCNqBvOmQ/m+xhmau3mnSCHE=;
+        b=nNluNx03FQ5vYhQMHrgA8/vPRPScDDajqnNVNYS0jm2ld3ie4869R/szYqKIg4i/K/
+         6D60GvxXCvd+Mgebdcs2V9VIuXLGqaEwGASbNLRHMgst39FzOMCwd15sw9IjO6QgzBUb
+         DLzi+mBRzyB6m6bRfnyO/O+23K4JlPsOS3FHDy6wh6ZXJZao0/H4lhzi4vxRSkfBYema
+         KfjLNVY5NMtsqvagPTAVR2iKsktEj+nQZO3YvkyAFbXp9DhpCDq9Wc8OKqa8qqCeEsl5
+         mVhlR5h1uul5mfBU7AsBEZX2znYqX15CcE5N7xSPnXmyH56GiSHlUBGMJiHCEccQ+wF9
+         N1ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759552268; x=1760157068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=StwDBKa8ZRSfrd7VD6MhCNqBvOmQ/m+xhmau3mnSCHE=;
+        b=DRNaHHKy6xAyQWbGyIwhiDsTg+o2EbHX9aUdz7sIyhbRvczEJxFRolp4xH9poiI1ah
+         XKnDZjsOQlljR3Rnsh0jo5EDOj5PfY1GoNBlkjCFLEtbTEEsMhs4/vXiroEfLIrp01Go
+         tFjbjBFUeKb+KYq6e2/zYJryYZ/czSMvKGqlkpQZOlIOEAgTIqMOjxAgARhwlmo3foP4
+         6whYcD7uvovNjcEiPjBX5BVt3DkGZmgcGvUYw8mAHBKG7vZcQhIRqxLe2BGF7k1OvHco
+         op48spm9ZQShOZUrzo3RVFeeCPpgKejbtCTv3VMGF/S9uX5RM71RK4LMDbPd7vtZViHf
+         NBkw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9he8Q6lS5n+v/flmGGguM/cGWeCbh4ZqNgCKM08VzE4F2pozS3/EYqlCxrQ4kugOU0QUGYB+jiIy8ixs5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp5nzOY1d2Co+khVbbIF2u9s8gfsJMVshZQJ6w0iZtLLICD6Bg
+	qBDIfc7oF3TGD4F0PRQxQQjsY+P1liwtm0iYfz8WzBPxUyVP324Ud5fP
+X-Gm-Gg: ASbGnctIlWa1vfzLjYqtNtyap0833SXkDBuumgyo9wu/faigv2QXFmbbMATq7oE75u4
+	o2DP6NgcuOyk+kUX0n0NhtJZfwKgBwJy/Ad8B2UPiyG+m/Bt4MpLPe/rY6ngftaOPSBsn0DhF6M
+	6vdvkg4LdFEn6b+5Ym0Mhy/uGl3NSEc+ZLWuSMzPMFS9Hb5xlKepWWzKtPXz2WPFECD+Yfer7xK
+	1Dohe5GOqc6GS4dw6pQJCe+Ym0yw0m2TlfQVVr6+zw9ttpfj90WGt7ZDtx+XUNjhxowaSYLFwj5
+	3SdppGXQxfScicLzsNw7ahMsipfgdFdHZH6WCOKt5ZOrw6iDxljiOS5m0Buxd65w38veV1PUph/
+	79PdLgS3k34d5ZcGkvz5nqUte+nouQ3+fLZpZGGi266FoVZG6dS0mParkKVfrE6Vx1BOhM3o=
+X-Google-Smtp-Source: AGHT+IGFVdu0idHFioNc6W6G3QpB4+em7I6xbQXdwjM7auYWjIP5jrn2CpWgS3aswdOPecIYETyQ3A==
+X-Received: by 2002:a05:6a20:72a8:b0:2f6:cabe:a7b3 with SMTP id adf61e73a8af0-32b62107c29mr7468985637.50.1759552267731;
+        Fri, 03 Oct 2025 21:31:07 -0700 (PDT)
+Received: from [10.0.2.15] ([157.50.90.152])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01fb1b73sm6413167b3a.28.2025.10.03.21.31.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 21:31:07 -0700 (PDT)
+Message-ID: <9a7072cb-840f-472a-9e22-a5252e52ef48@gmail.com>
+Date: Sat, 4 Oct 2025 10:01:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251003093213.52624-1-xemul@scylladb.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: doc: Fix typos
+To: Carlos Maiolino <cem@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+ Paulo Alcantara <pc@manguebit.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, linux-bcachefs@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com
+References: <DrG_H24-pk-ha8vkOEHoZYVXyMFA60c_g4l7cZX4Z7lnKQIM4FjdI_qS-UIpFxa-t7T_JDAOSqKjew7M0wmYYw==@protonmail.internalid>
+ <20251001083931.44528-1-bhanuseshukumar@gmail.com>
+ <kp4tzf7hvtorldoktxelrvway6w4v4idmu5q3egeaacs7eg2tz@dovkk323ir3b>
+ <yms8llJZQiWYVxnbeWEQJ0B_S6JRxR0LQKB1FwVe0Tw66ezuA-H1qZVCyuCUDtsw7s7h4jHTwTh98XivLW3vvw==@protonmail.internalid>
+ <425ef7bd-011c-4b05-99fe-2b0e3313c3ce@gmail.com>
+ <6t4scagcatuba7hjy4aib5hqfgyhc4wofegr2jrl34wwa7fsyq@5uwpzmpixm7o>
+Content-Language: en-US
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <6t4scagcatuba7hjy4aib5hqfgyhc4wofegr2jrl34wwa7fsyq@5uwpzmpixm7o>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 03, 2025 at 12:32:13PM +0300, Pavel Emelyanov wrote:
-> The FMODE_NOCMTIME flag tells that ctime and mtime stamps are not
-> updated on IO. The flag was introduced long ago by 4d4be482a4 ([XFS]
-> add a FMODE flag to make XFS invisible I/O less hacky. Back then it
-> was suggested that this flag is propagated to a O_NOCMTIME one.
+On 03/10/25 21:22, Carlos Maiolino wrote:
+> On Wed, Oct 01, 2025 at 07:19:13PM +0530, Bhanu Seshu Kumar Valluri wrote:
+>> On 01/10/25 17:32, Carlos Maiolino wrote:
+>>> On Wed, Oct 01, 2025 at 02:09:31PM +0530, Bhanu Seshu Kumar Valluri wrote:
+>>>> Fix typos in doc comments
+>>>>
+>>>> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+>>>
+>>> Perhaps would be better to split this into subsystem-specific patches?
+>>>
+>>> This probably needs to be re-sent anyway as bcachefs was removed from
+>>> mainline.
+>>>
+>> I just did a google search and understood about frozen state of bcachefs
+>> in linux kernel since 6.17 release onward. It is going to be maintained
+>> externally.
+>>
+>> Thanks for your comment. I will resend the patch excluding bcachefs.
+> 
+> It's not only bcachefs. But most of subsystems and documents you touch
+> have different maintainers, so beyond removing bcachefs bits, I'd
+> suggest looking at MAINTAINERS file and send specific patches targeting
+> each subsystem. It makes maintainer's lives easier, at least for me.
+> 
+> 
+>>
+>> Thanks.
+>>
+>>
+Hi,
+Thank you for the suggestion. I will split it.
 
-skipping c/mtime is dangerous.  The XFS handle code allows it to
-support HSM where data is migrated out to tape, and requires
-CAP_SYS_ADMIN.  Allowing it for any file owner would expand the scope
-for too much as now everyone could skip timestamp updates.
-
-> It can be used by workloads that want to write a file but don't care
-> much about the preciese timestamp on it and can update it later with
-> utimens() call.
-
-The workload might not care, the rest of the system does.  ctime can't
-bet set to arbitrary values, so it is important for backups and as
-an audit trail.
-
-> There's another reason for having this patch. When performing AIO write,
-> the file_modified_flags() function checks whether or not to update inode
-> times. In case update is needed and iocb carries the RWF_NOWAIT flag,
-> the check return EINTR error that quickly propagates into cb completion
-> without doing any IO. This restriction effectively prevents doing AIO
-> writes with nowait flag, as file modifications really imply time update.
-
-Well, we'll need to look into that, including maybe non-blockin
-timestamp updates.
-
+Regards,
+Bhanu Seshu Kumar Valluri
 
