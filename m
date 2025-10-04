@@ -1,87 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-63435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081BDBB8FAE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 18:15:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60DEBB8FE2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 18:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210C3189B3C8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 16:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484303C0D6D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 16:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9C327E058;
-	Sat,  4 Oct 2025 16:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CA31917CD;
+	Sat,  4 Oct 2025 16:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1aES74q"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PNedKPiX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB4127E04F
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 16:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC52280004
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 16:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759594505; cv=none; b=p2M0Fvn6lQhVYoDt6FiEs3ezjESbRx9L6n0MzxNiZEmHTe1EqvzCvFlFZd66spShC/qECMLyLsajSLFYruGhed0A8Yf2tnJZFkwLXShx610cBUEHYoBNCR5YvhDQ10bpOjY8DDF7bF6Vz+BeVZVFvvh8DYQLwkiHi3QDsACEvbE=
+	t=1759595994; cv=none; b=EMdgwUzJIUTG7OtSfZVXc4XWiDkYhvl0jVHsxVs5car6q5PBt3GOYZO67+hXeO7fEOcTbGKks/gn65DFpWpuynSi5fvTw6Hhk/pA4MTt5TsaUVHIpt71DCMXqTBS3r2EloRZkvVfaxaV62fDLEk5rNeg03VVRBDUjv9w6V6eqBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759594505; c=relaxed/simple;
-	bh=8o6UQf+gZU1yTFkaOSCz+N2+6NM/LJ0GmW6jYusoJmA=;
+	s=arc-20240116; t=1759595994; c=relaxed/simple;
+	bh=RpD4KNUBmJSgm0bHWcZ0DvqxhqkKLHESkzxfIrCF35M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnkFSV8lSP2zrcQNthSxervWSqPJkzKjVM0hz8Jqlob58mWBLYkq6STifYfKLAwUFJoSkEaIrSGln745vugcmo6pImkWEsXoi+FGmG83KSfUKHv+H2nBb7tQ4jV/NY8eyPZOegCeOdIU6cIFMRh5ippsZxyI8vbEHt4qr+LXndc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1aES74q; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77f5d497692so4191254b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Oct 2025 09:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759594503; x=1760199303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FYj820t12DuT/Y3GHE/koJeP+yNK86CimN/bpcr4Dww=;
-        b=K1aES74qTP40KTvUiLJM0zZhVG8djUVvVJqkHmhB/ArPWtyiyrVPxFyph8ci65JMeQ
-         k+H56e8DBk0IpONMBtD+YpDQuQFi5T1TOHwpfoMCNd/UjLw8cLQL4i9B/vwPJw4Y9Uhp
-         K+yGms1mq9lditqZjPb4E3eAEEJ3FxLufvuSawg3Kh0PfVjdVW77DPSQ7f8n+xSLiPyw
-         t++rbHlt6cJjdGddYtXBYVHmntzMIa8xvzrAnQHHfmmsWvfvd2wThkEtCHahIp6kA/cL
-         SDhsbm9ownR4Q/t9/mnpZVBhB5g0fUA7Xu5YPAZjtcRT8xyAsrKhXUARsKbadsjLI7g0
-         +6DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759594503; x=1760199303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FYj820t12DuT/Y3GHE/koJeP+yNK86CimN/bpcr4Dww=;
-        b=GQF/HzLawk9S7PizeROWNKEb7TdVH4dJ1jEuM8Ew2KM0l7Yj7lksnlEin1mYgbYAx/
-         zjKyqG/EerItCLlGKb+jdIJVNsuY4uACrz4CQ5aSnxLTJHjEL8EIYtlMKd8rJhhOv4mD
-         iZm2Nr/rJ6vIpRFT47U9BN4k8j+/o34xKeBA2z3sDBjiKyRMpsZpVOSKwejuL464qwTz
-         15gRvov5+PNFZ8lJpkn0HdTq7iuof3YPu8PsOSumud2vyYIsdgRuUqsL1nz3leqhfBww
-         446RMaa+X9qdlIPnmjs1ijDEx/kt+9AR484eEYgzvcsFOJSSE0u/Ef77TxklLhMfnbsp
-         VngA==
-X-Forwarded-Encrypted: i=1; AJvYcCWju1OvuXy9ih8FCdLt9tKkT02gEexV9zD1/3yUPkB7PDd3gogx1btJI0W663nJ1UQxWmhZ5HDahqEdfc/j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4ETmFZFhaxJgg5FuaPdyizpCcpQcKzMPJeE+E4Y8BrPP76mJz
-	7+Dq8nv+BRNTZi5JSBzD4n+pIaxqJ4lGSnN+DtdULdX0d6X8qUrsKiZoAecSvQ==
-X-Gm-Gg: ASbGncvI+E+hcK5JCpQo9WZ8S31Fg3Xkae3fGcgoByW6u3PEwbQhqwLhKzfSqNm83KF
-	7bf1nyio//F2OzJqNcrIDFIC8UxdPmsKP2qT8gfzTCuboDG3BHmPPw17x6WDeAmAL2mJ6+LiCRE
-	qiBaPLDznezL8Bw9G6Got6SRrI/t1uPY3ZUW2POTbXMeOI5/k/UdosmrlCcjsE74iFoimybax7k
-	TKI/TrQ4BBAX8TsdgYLJFRpr5VUlhP83ZR8pIxSkat+Lz3N/Ts+y+j/hUEvR/6KFmCV7su0uOCd
-	ObGMFgmLYm7pZp5NHrsWKu9RCgei4p8J5duhTkZzBSrAv1TRSs+NQRbcOKawNzXzV686ErWX9Ks
-	RFKhE4XTHGpf3HftPASBi0d40Q4gXPQE7ig3pCc8fiCNEk9Xv/IQqLWaNRevWjmu9TNF9jVDlAX
-	KWzlyYEggmRjoGKzPqY1xE
-X-Google-Smtp-Source: AGHT+IF5mMKQuy9GbvEclpfP5REvAas2+KA/9E9J64gOa1xJUCOWS7yTi4xFt+uA0ZVQvUiQ8KofXw==
-X-Received: by 2002:a05:6a00:b54:b0:781:9f2:efb1 with SMTP id d2e1a72fcca58-78c98caeeb6mr7980762b3a.15.1759594502888;
-        Sat, 04 Oct 2025 09:15:02 -0700 (PDT)
-Received: from MacBook-Pro-49.local ([2001:558:600a:7:f9d8:fc98:ee10:581e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0206ea2fsm7848831b3a.66.2025.10.04.09.15.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Oct 2025 09:15:02 -0700 (PDT)
-Date: Sat, 4 Oct 2025 09:15:00 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, rongtao@cestc.cn, 
-	bpf@vger.kernel.org
-Subject: Re: [git pull] pile 6: f_path stuff
-Message-ID: <7dhno3gp6f6wkgzndanvzyiwzwfkccgahx7bmlqzr65zytupnr@2r3v2lxvgyyc>
-References: <20251003221558.GA2441659@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4eHLRecxEBqO9evah2OdBYFaTth4n7KXozOLZahanmTPmK3PQcJKzAMZ2/rh2weT61c3EOj1tk2kM7buPDcBt25YCyjgO/6XZt2pfQNl+BPK9aKbN4kVK/XCyqYYlcpL+96OdNQAEKtMueMTn8WqWms7uVH/ncWTTpVdb//P2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PNedKPiX; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=oYWX
+	AVcToZjL216N14wevIUTr5XEGs+BI72TKUQOPN8=; b=PNedKPiX4oCj4bpedhVz
+	E+/1zG4RS6etGvHx7daU2DUWMNccTF0z1BMx94C/uGTZ5muouJ1sCi+Rrrn+I0yb
+	QX0tCQTPUifcb+5NvLnilNYtzPuaMC9afpJzRPyfpW8YSMz2Kk2sAGveGofpt2/U
+	FgjEfDef1ztsgRt/i/fhnznfm7TM0Tf+A/tZDrAPd+4jSPssQfBLtqCfRE58HIfm
+	D8PcLW9fA6b0Ln4SDcQwSOwdrXhoroqBaJXPWi2lQd/dVTkvYzyJpOcaiTLwaahq
+	J+U+4x2W131yohhie5t+CaEw/7wpjC2Zja7YEDIcma8nk3Y5vfr5rBO/vRmlQllV
+	Rw==
+Received: (qmail 1087916 invoked from network); 4 Oct 2025 18:39:44 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Oct 2025 18:39:44 +0200
+X-UD-Smtp-Session: l3s3148p1@ZNCL3VdA3IqSRnW9
+Date: Sat, 4 Oct 2025 18:39:43 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 35/47] i2c: rename wait_for_completion callback to
+ wait_for_completion_cb
+Message-ID: <aOFNz2mKXCXUImwO@shikoro>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-36-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,28 +119,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003221558.GA2441659@ZenIV>
+In-Reply-To: <20251002081247.51255-36-byungchul@sk.com>
 
-On Fri, Oct 03, 2025 at 11:15:58PM +0100, Al Viro wrote:
-> ----------------------------------------------------------------
-> file->f_path constification
+On Thu, Oct 02, 2025 at 05:12:35PM +0900, Byungchul Park wrote:
+> Functionally no change.  This patch is a preparation for DEPT(DEPendency
+> Tracker) to track dependencies related to a scheduler API,
+> wait_for_completion().
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Unfortunately, struct i2c_algo_pca_data has a callback member named
+> wait_for_completion, that is the same as the scheduler API, which makes
+> it hard to change the scheduler API to a macro form because of the
+> ambiguity.
 > 
-> ----------------------------------------------------------------
-> Al Viro (24):
->       backing_file_user_path(): constify struct path *
->       constify path argument of vfs_statx_path()
->       filename_lookup(): constify root argument
->       done_path_create(): constify path argument
->       bpf...d_path(): constify path argument
+> Add a postfix _cb to the callback member to remove the ambiguity.
+> 
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
 
-This commit broke bpf, since you didn't update include/uapi/linux/bpf.h
-and other places.
+This patch seems reasonable in any case. I'll pick it, so you have one
+dependency less. Good luck with the series!
 
-bpf mailing list was never cc-ed :(
-
-Pushed the fix to bpf tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git/commit/?id=de7342228b7343774d6a9981c2ddbfb5e201044b
+Applied to for-next, thanks!
 
 
