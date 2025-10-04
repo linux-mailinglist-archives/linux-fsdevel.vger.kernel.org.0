@@ -1,143 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-63436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60DEBB8FE2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 18:40:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A858BB9088
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 19:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484303C0D6D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 16:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB613C5027
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 17:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CA31917CD;
-	Sat,  4 Oct 2025 16:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1F828506A;
+	Sat,  4 Oct 2025 17:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PNedKPiX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9lhms3/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC52280004
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 16:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFE813A3ED;
+	Sat,  4 Oct 2025 17:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759595994; cv=none; b=EMdgwUzJIUTG7OtSfZVXc4XWiDkYhvl0jVHsxVs5car6q5PBt3GOYZO67+hXeO7fEOcTbGKks/gn65DFpWpuynSi5fvTw6Hhk/pA4MTt5TsaUVHIpt71DCMXqTBS3r2EloRZkvVfaxaV62fDLEk5rNeg03VVRBDUjv9w6V6eqBs=
+	t=1759598848; cv=none; b=Zj91Bz52UTIE6jx8sQJCJDQtZyQDat79Db/yMnd+C7usxp4HZ7+jkOaM2vBkGywgEAeq2v1L6ElYSEazl+00a38f4aHIm6CnmUMIlFnA9JJOsIuaCKoMsC6NuxLA32IEzGcU5R4uEBPSN8Y5+H5IxSWAmLq3UtG3kDtkjPhltck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759595994; c=relaxed/simple;
-	bh=RpD4KNUBmJSgm0bHWcZ0DvqxhqkKLHESkzxfIrCF35M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4eHLRecxEBqO9evah2OdBYFaTth4n7KXozOLZahanmTPmK3PQcJKzAMZ2/rh2weT61c3EOj1tk2kM7buPDcBt25YCyjgO/6XZt2pfQNl+BPK9aKbN4kVK/XCyqYYlcpL+96OdNQAEKtMueMTn8WqWms7uVH/ncWTTpVdb//P2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PNedKPiX; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=oYWX
-	AVcToZjL216N14wevIUTr5XEGs+BI72TKUQOPN8=; b=PNedKPiX4oCj4bpedhVz
-	E+/1zG4RS6etGvHx7daU2DUWMNccTF0z1BMx94C/uGTZ5muouJ1sCi+Rrrn+I0yb
-	QX0tCQTPUifcb+5NvLnilNYtzPuaMC9afpJzRPyfpW8YSMz2Kk2sAGveGofpt2/U
-	FgjEfDef1ztsgRt/i/fhnznfm7TM0Tf+A/tZDrAPd+4jSPssQfBLtqCfRE58HIfm
-	D8PcLW9fA6b0Ln4SDcQwSOwdrXhoroqBaJXPWi2lQd/dVTkvYzyJpOcaiTLwaahq
-	J+U+4x2W131yohhie5t+CaEw/7wpjC2Zja7YEDIcma8nk3Y5vfr5rBO/vRmlQllV
-	Rw==
-Received: (qmail 1087916 invoked from network); 4 Oct 2025 18:39:44 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Oct 2025 18:39:44 +0200
-X-UD-Smtp-Session: l3s3148p1@ZNCL3VdA3IqSRnW9
-Date: Sat, 4 Oct 2025 18:39:43 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 35/47] i2c: rename wait_for_completion callback to
- wait_for_completion_cb
-Message-ID: <aOFNz2mKXCXUImwO@shikoro>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-36-byungchul@sk.com>
+	s=arc-20240116; t=1759598848; c=relaxed/simple;
+	bh=uu7HOOFyGfgn7/79Ck9Jdp8RAV01CwyMxkrU7USL9Zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h3oEJl2l+4e9VBpJELEwmmrHgQUiQNh7ZswJq3fxbNr6FpssrGFKBFVzNEyccu8XhQ9Tr6dxrO4JCbod80y63jijn4EUTEZw+D9kRrVDEztiKehFwbjoYVZ9CGdkMsnQEgTzFyndGkVwqXcyeGQaQbOSo7RUo21fg4kpGVMGOZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9lhms3/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7725EC4CEF1;
+	Sat,  4 Oct 2025 17:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759598848;
+	bh=uu7HOOFyGfgn7/79Ck9Jdp8RAV01CwyMxkrU7USL9Zc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I9lhms3/42LXr3Rt51KchF2ZIJhunQIA54dRMkkPjDnz2gwa83F2Vxcx5HbANUH+8
+	 tUYaI7zFKK+J2l8/WjiR2eWhh+qUkNzxT05H6qg56FtCcH3fgkUZ9qULPV4SVt35us
+	 6qI3x2IzPEmnx2LJ0gi215ZaDu3e+sSMZ6cEP70ELlmiZkvXk0RnqK9f6l+3mtY0IU
+	 tV+FusQYVNrkYKEVjPqNwcHPFiQosKDnESupiqT4iK16p30mVrv+rA1UrjTqANW9zY
+	 1qei6hAjkKr+BaTNipbo11X1M6Z9y5M7XY7ND/2b0Ov913wFYS3lio5T7A8ExtS4Wd
+	 CbzWVfo0oiKbw==
+Message-ID: <afda62fa-d39a-4487-9c25-c409369bd667@kernel.org>
+Date: Sat, 4 Oct 2025 13:27:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002081247.51255-36-byungchul@sk.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Volker Lendecke
+ <Volker.Lendecke@sernet.de>, CIFS <linux-cifs@vger.kernel.org>
+References: <20250925151140.57548-1-cel@kernel.org>
+ <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
+ <87tt0gqa8f.fsf@mailhost.krisman.be>
+ <28ffeb31-beec-4c7a-ad41-696d0fd54afe@kernel.org>
+ <87plb3ra1z.fsf@mailhost.krisman.be>
+ <4a31ae5c-ddb2-40ae-ae8d-747479da69e3@kernel.org>
+ <87ldlrr8k3.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <87ldlrr8k3.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025 at 05:12:35PM +0900, Byungchul Park wrote:
-> Functionally no change.  This patch is a preparation for DEPT(DEPendency
-> Tracker) to track dependencies related to a scheduler API,
-> wait_for_completion().
+On 10/3/25 5:15 PM, Gabriel Krisman Bertazi wrote:
+> Chuck Lever <cel@kernel.org> writes:
 > 
-> Unfortunately, struct i2c_algo_pca_data has a callback member named
-> wait_for_completion, that is the same as the scheduler API, which makes
-> it hard to change the scheduler API to a macro form because of the
-> ambiguity.
+>> On 10/3/25 4:43 PM, Gabriel Krisman Bertazi wrote:
+>>> Chuck Lever <cel@kernel.org> writes:
+>>>
+>>>> On 10/3/25 11:24 AM, Gabriel Krisman Bertazi wrote:
+>>
+>>>>> Does the protocol care about unicode version?  For userspace, it would
+>>>>> be very relevant to expose it, as well as other details such as
+>>>>> decomposition type.
+>>>>
+>>>> For the purposes of indicating case sensitivity and preservation, the
+>>>> NFS protocol does not currently care about unicode version.
+>>>>
+>>>> But this is a very flexible proposal right now. Please recommend what
+>>>> you'd like to see here. I hope I've given enough leeway that a unicode
+>>>> version could be provided for other API consumers.
+>>>
+>>> But also, encoding version information is filesystem-wide, so it would
+>>> fit statfs.
+>>
+>> ext4 appears to have the ability to set the case folding behavior
+>> on each directory, that's why I started with statx.
 > 
-> Add a postfix _cb to the callback member to remove the ambiguity.
+> Yes. casefold is set per directory, but the unicode version and
+> casefolding semantics used by those casefolded directories are defined
+> for the entire filesystem.
 > 
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
 
-This patch seems reasonable in any case. I'll pick it, so you have one
-dependency less. Good luck with the series!
+Got it. That keeps the proposed statx changes simple. Let me look at how
+extensible the statfs API is. Actually that falls a little outside of
+the mission to support NFS's needs, so perhaps that should be a separate
+effort? Let me know what you think.
 
-Applied to for-next, thanks!
 
+-- 
+Chuck Lever
 
