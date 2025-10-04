@@ -1,271 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-63422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A481CBB87A7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 03:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D4CBB87BD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 04 Oct 2025 03:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C12334887B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 01:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E1083AEB27
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Oct 2025 01:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4741484A35;
-	Sat,  4 Oct 2025 01:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71E61519B4;
+	Sat,  4 Oct 2025 01:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0Xqa4t8"
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="bHm/JpiG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DA278F36
-	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 01:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE8B146593
+	for <linux-fsdevel@vger.kernel.org>; Sat,  4 Oct 2025 01:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759540320; cv=none; b=tFZug4xHXoPSgATJgQ9PqCYqNsxeejfZnEE93Uxzlb9v9kMrO1yuqm+HAAAsEj2A63dVe9XfoV/FTCJzJkjz4Yvv9GV4KJymsKwwzVo09bgWjErjU1MvNScIlsHct3qXAef3sONVgeS83IQp9/QNM/eeAbnJXOnxOKA8gogsGUo=
+	t=1759541129; cv=none; b=Dy9Z5yjObOlkS74yNcqIO/EWWShi2ulvona9eLNuzeoRY5UnlaiUQ0zydEFt5KEB4uQfYxftg7Y0HV0y4ZCsXNfBaNxNS7oxmLEx/fquJm1EyM5jHFZ5kmZ/h8laYCgajKd3tGdxHuYsx51wHOQ+9iJIbCOGgQjQua9hjNyjsDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759540320; c=relaxed/simple;
-	bh=8Hg8vsRUU/rATEEsBzde7aNvQwbT5coAYTwEFk+UUW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uBfByJyvcDieAhy3vH7H6LMVSh5czlQ6Q1l0cbxd7ZKtMrUIK77DHOw8FX7Gve8SuL7z/bGUwad8gLcqj6cLxSt9wT/l0VbSC6pSiTtUSNAAZtV8slwhy68/BFYslUOG/lj96ELQJObKAl7zvcgyDCnN5PWkTxcj8MMpc13vPsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0Xqa4t8; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-854585036e8so293409485a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Oct 2025 18:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759540318; x=1760145118; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cg/o+1i1wgPcPhnANrnCwbeCVtTSpoAQZ0dnG9C/p9k=;
-        b=H0Xqa4t8P7BWFcdtfGG7K6HfPcLvoHP7VzEBdqhxOYL8SrBJsqcCkDN7ojKEblmc3S
-         +1+lrlY0+y0PKNZAG+wOBhGWlhBlWLaqfOX4dsTU3bu2kH684HRw65DsoLLrb0yiix3U
-         902lxrGmMfJwdwWBXwGKYcdQqE7G+VnR1xc+M7hrycN1jbkenMMPpoSxWxpvTUBgyLLM
-         D9xbLw7NqIQOjiX/FixSQmLwNNwSCO14Iyu9rAIAXOhNNnWEFluMbheqAPPMdNLjiecM
-         RP1FVHVyvuqfY9FJAboJ/rvBp6PEIt7S2anZZLHD9NzyVOY6wM2aEDU55cIziuZY+R7o
-         5Wvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759540318; x=1760145118;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cg/o+1i1wgPcPhnANrnCwbeCVtTSpoAQZ0dnG9C/p9k=;
-        b=T/J16cEL/m3X2pIJxqJoK+eJaazrSbyx1vhDz9A+nXsDLTWmdRm2lqgGJA3BXbyPwC
-         nwRfCn5zCks6HPB3ddTVHpMZIrUzgVVkK3KUZE7QguXUUXQC0+4q5uC8fPqC/eZxVhAd
-         6HEoiikgs2EzazmyZrdMP64Z3OtunSMmbYEvyGDTPNlaSbRNwpbEmjFwYmclpL3RXMvg
-         Km5yec9btQFpJQt2CWxML361zjHRD+04i+Fv4SW9JJDoMvYWYp9rmUKIvBFSdByhL0SD
-         jHpri4LPZMzJNpOK1vyEMMDDB0GBtlL/7DjBc9LPZjyOM6RMJgMJg0L8bJFhe1cOlvf5
-         ZMqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0J9s2JY+NpPxJK65aOd0ANCtiKKztzdigqq+tBPyQbUvDrUrhkaselOkc/TwmQ4TjM/hWM8tywBG+WKeZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzID/j28AUXaRgfgnBjsi6h3gwN+nEmHR5LM7wC1SMlamZdQ6P5
-	L1hxIhe7zsMWuK7oBKHbH8qII0ppqdObnK9X/r+DAHDXdZB/qmp5Hwz29ejJjFcvP2tpwVL3EPV
-	c8hZxE2Xn/tZx8HNWB7XwMr1Y2gFQKzk=
-X-Gm-Gg: ASbGncuJD5hX77SeSkF45L7m7joSWpJ9tVDJcpWWO+9kEradF2MYeL57NJxJxYuguZA
-	IRAY4rpXnwqNrdWkqfe1iPuZmGo+1REREbtARRj2aRQx6dUq5BibFT5JTIYmTMWp3GYE+L+D7mp
-	NRIqjw9mdRWSDXFgTdl0/bnDmFWaQcOzsJVavxavvrd39pnLQf8fSVQ958wdTVTXE//JTbIKzh6
-	PaSDJKhwWH/+tEVVlCttiZNMOFyK96I5zwXDmU0nZAGQ3df2m9PYES2BsqQ5bcJwItS4PlxCA==
-X-Google-Smtp-Source: AGHT+IFLvYyMiPRzs9rrQMqs2JnG0v1Bz/iHHaMqXs7Ifgi0InrWOPxE8NIVym22Jcei5iLGhrb8hDuNGJz6rr/Jh4M=
-X-Received: by 2002:a05:620a:1729:b0:85e:24c3:a60f with SMTP id
- af79cd13be357-87a3adf2c75mr747203585a.65.1759540317558; Fri, 03 Oct 2025
- 18:11:57 -0700 (PDT)
+	s=arc-20240116; t=1759541129; c=relaxed/simple;
+	bh=FDkFCEGWhZHa1Woj7m+2H/+uk27BBMDyqk5dQoPv0vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AipjJ7mvfdRJqUNud09ja4hb2Mwj/OyX4dm4HlViH1b7sQhI6LQRGCrJKe1m7uq9HhspcFBADuAWj8XC2z4O6Bb4i4nBI4dfJjm90qCoNvAaqmYfttASSLSAd9YMIir+wcqtLMXk8+IsaLwQJ8fLJvufTdKicSux4mur9Ep3RC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=bHm/JpiG; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+Date: Sat, 4 Oct 2025 02:25:16 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1759541121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vxMDW/Dq4L6kXa9Vwh1VX6wM7Gn8hhMzHJhGHctQQmc=;
+	b=bHm/JpiGEzh6zFXYgcRBqn76ahirD+9VZqXqBdohezHrI1PWNVzOf19YSoH5H5cWy56Qz7
+	VMTRVN0/k+c+w8Kj2onD/wdeH/lPhAEnKU9e6UWG+A6J0TG2G6iBek0Lv57q6Xu8TuUzHI
+	sFlVM8vDH0X5HhbUsAH0nWEIso5cCEz7Oyu5k0M+O+up971afmUtWrVjSZ1+livCFqcG/E
+	n7AEq1j34CyGZNM4Av5r7ve3g4mr7Y369+vzJys2n9cCb3UawmvQNx5XbsHznnVXOzkvGu
+	KwKoIxdQlh9f9ljVkhtDaEQBPXPzAovh88oY84hGa8RLlz03kwl9nfmlW48Amw==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: George Anthony Vernon <contact@gvernon.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
+	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
+Message-ID: <aOB3fME3Q4GfXu0O@Bertha>
+References: <20251003024544.477462-1-contact@gvernon.com>
+ <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829233942.3607248-1-joannelkoong@gmail.com>
- <20250829233942.3607248-11-joannelkoong@gmail.com> <aLiOrcetNAvjvjtk@bfoster>
- <20250903195913.GI1587915@frogsfrogsfrogs> <CAJnrk1ZT8w6p3Mnqx8R3dWUF1NFOYT95tkKFq5LGcS4=01fGsg@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZT8w6p3Mnqx8R3dWUF1NFOYT95tkKFq5LGcS4=01fGsg@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 3 Oct 2025 18:11:46 -0700
-X-Gm-Features: AS18NWBK4HC9BGpRE6C1zBBeHEWzv0WiMOcZUgcfeGJPNXvBrfXXNYrG_x2NsQA
-Message-ID: <CAJnrk1ayPGD5h+zHzHrdW5CvyJuhEZ38DD1+ZqAK3vo46wtd=A@mail.gmail.com>
-Subject: Re: [PATCH v2 10/12] iomap: refactor dirty bitmap iteration
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Brian Foster <bfoster@redhat.com>, linux-mm@kvack.org, brauner@kernel.org, 
-	willy@infradead.org, jack@suse.cz, hch@infradead.org, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 3, 2025 at 3:27=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Wed, Sep 3, 2025 at 12:59=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
-g> wrote:
-> >
-> > On Wed, Sep 03, 2025 at 02:53:33PM -0400, Brian Foster wrote:
-> > > On Fri, Aug 29, 2025 at 04:39:40PM -0700, Joanne Koong wrote:
-> > > > Use find_next_bit()/find_next_zero_bit() for iomap dirty bitmap
-> > > > iteration. This uses __ffs() internally and is more efficient for
-> > > > finding the next dirty or clean bit than manually iterating through=
- the
-> > > > bitmap range testing every bit.
-> > > >
-> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > > > ---
-> > > >  fs/iomap/buffered-io.c | 67 ++++++++++++++++++++++++++++++--------=
-----
-> > > >  1 file changed, 48 insertions(+), 19 deletions(-)
-> > > >
-> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > > index fd827398afd2..dc1a1f371412 100644
-> > > > --- a/fs/iomap/buffered-io.c
-> > > > +++ b/fs/iomap/buffered-io.c
->
-> Sorry for the late reply on this, I didn't realize you and Brian had
-> commented on this.
->
-> I'm going to pull this and the next patch (the uptodate bitmap
-> refactoring one) out of this series and put them instead on top of
-> this other patchset that does some other optimizations.
->
-> > > >
-> > > >  static unsigned ifs_find_dirty_range(struct folio *folio,
-> > > > @@ -92,18 +121,15 @@ static unsigned ifs_find_dirty_range(struct fo=
-lio *folio,
-> > > >             offset_in_folio(folio, *range_start) >> inode->i_blkbit=
-s;
-> > > >     unsigned end_blk =3D min_not_zero(
-> > > >             offset_in_folio(folio, range_end) >> inode->i_blkbits,
-> > > > -           i_blocks_per_folio(inode, folio));
-> > > > -   unsigned nblks =3D 1;
-> > > > +           i_blocks_per_folio(inode, folio)) - 1;
-> > > > +   unsigned nblks;
-> > > >
-> > > > -   while (!ifs_block_is_dirty(folio, ifs, start_blk))
-> > > > -           if (++start_blk =3D=3D end_blk)
-> > > > -                   return 0;
-> > > > +   start_blk =3D ifs_next_dirty_block(folio, start_blk, end_blk);
-> > > > +   if (start_blk > end_blk)
-> > > > +           return 0;
-> > > >
-> > > > -   while (start_blk + nblks < end_blk) {
-> > > > -           if (!ifs_block_is_dirty(folio, ifs, start_blk + nblks))
-> > > > -                   break;
-> > > > -           nblks++;
-> > > > -   }
-> > > > +   nblks =3D ifs_next_clean_block(folio, start_blk + 1, end_blk)
-> > > > +           - start_blk;
-> > >
-> > > Not a critical problem since it looks like the helper bumps end_blk, =
-but
-> > > something that stands out to me here as mildly annoying is that we ch=
-eck
-> > > for (start > end) just above, clearly implying that start =3D=3D end =
-is
-> > > possible, then go and pass start + 1 and end to the next call. It's n=
-ot
-> > > clear to me if that's worth changing to make end exclusive, but may b=
-e
-> > > worth thinking about if you haven't already..
->
-> My thinking with having 'end' be inclusive is that it imo makes the
-> interface a lot more intuitive.
->
-> For example, for
->     next =3D ifs_next_clean_block(folio, start, end);
->
-> with end being inclusive, then nothing in that range is clean if next > e=
-nd
-> Whereas with end being exclusive, that's only true if next >=3D end,
-> which imo is more confusing.
+On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
+> Let's pay respect to previous efforts. I am suggesting to add this line:
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> 
+> Are you OK with it?
+I agree with paying respect to Tetsuo. The kernel docs indicate that the SoB tag
+isn't used like that. Would the Suggested-by: tag be more appropriate?
 
-Ah I guess for the exclusive case you could just write it as
-     next =3D ifs_next_clean_block(folio, start, end + 1);
-which would let you make the check "if (next > end)".
+> I think we can declare like this:
+> 
+> static inline
+> bool is_valid_cnid(unsigned long cnid, s8 type)
+> 
+> Why cnid has unsigned long type? The u32 is pretty enough.
+Because struct inode's inode number is an unsigned long.
+> 
+> Why type has signed type (s8)? We don't expect negative values here. Let's use
+> u8 type.
+Because the type field of struct hfs_cat_rec is an s8. Is there anything to gain
+by casting the s8 to a u8?
 
-I'll play around with both versions and see which one looks better.
-You and Darrick may be right that we should just make it exclusive.
+> 
+> > +{
+> > +	if (likely(cnid >= HFS_FIRSTUSER_CNID))
+> > +		return true;
+> > +
+> > +	switch (cnid) {
+> > +	case HFS_POR_CNID:
+> > +	case HFS_ROOT_CNID:
+> > +		return type == HFS_CDR_DIR;
+> > +	case HFS_EXT_CNID:
+> > +	case HFS_CAT_CNID:
+> > +	case HFS_BAD_CNID:
+> > +	case HFS_EXCH_CNID:
+> > +		return type == HFS_CDR_FIL;
+> > +	default:
+> > +		return false;
+> 
+> We can simply have default that is doing nothing:
+> 
+> default:
+>     /* continue logic */
+>     break;
+> 
+> > +	}
+> 
+> I believe that it will be better to return false by default here (after switch).
+We can do that, but why would it be better, is it an optimisation? We don't have
+any logic to continue.
 
-Thanks,
-Joanne
+> > +			break;
+> > +		}
+> >  		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
+> >  		HFS_I(inode)->fs_blocks = 0;
+> >  		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
+> 
+> We have practically the same check for the case of hfs_write_inode():
+> 
+> int hfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+> {
+> 	struct inode *main_inode = inode;
+> 	struct hfs_find_data fd;
+> 	hfs_cat_rec rec;
+> 	int res;
+> 
+> 	hfs_dbg("ino %lu\n", inode->i_ino);
+> 	res = hfs_ext_write_extent(inode);
+> 	if (res)
+> 		return res;
+> 
+> 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
+> 		switch (inode->i_ino) {
+> 		case HFS_ROOT_CNID:
+> 			break;
+> 		case HFS_EXT_CNID:
+> 			hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
+> 			return 0;
+> 		case HFS_CAT_CNID:
+> 			hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
+> 			return 0;
+> 		default:
+> 			BUG();
+> 			return -EIO;
+> 
+> I think we need to select something one here. :) I believe we need to remove
+> BUG() and return -EIO, finally. What do you think? 
 
->
-> If you and Darrick still much prefer having end be exclusive though,
-> then I'm happy to make that change.
->
-> >
-> > <nod> I was also wondering if there were overflow possibilities here.
->
-> I'm not sure what you had in mind for what would overflow, the end_blk
-> being beyond the end of the bitmap? The
-> find_next_bit()/find_next_zero_bit() interfaces protect against that.
-> Or maybe you're referring to something else?
->
-> >
-> > > Brian
-> > >
-> > > >
-> > > >     *range_start =3D folio_pos(folio) + (start_blk << inode->i_blkb=
-its);
-> > > >     return nblks << inode->i_blkbits;
-> > > > @@ -1077,7 +1103,7 @@ static void iomap_write_delalloc_ifs_punch(st=
-ruct inode *inode,
-> > > >             struct folio *folio, loff_t start_byte, loff_t end_byte=
-,
-> > > >             struct iomap *iomap, iomap_punch_t punch)
-> > > >  {
-> > > > -   unsigned int first_blk, last_blk, i;
-> > > > +   unsigned int first_blk, last_blk;
-> > > >     loff_t last_byte;
-> > > >     u8 blkbits =3D inode->i_blkbits;
-> > > >     struct iomap_folio_state *ifs;
-> > > > @@ -1096,10 +1122,13 @@ static void iomap_write_delalloc_ifs_punch(=
-struct inode *inode,
-> > > >                     folio_pos(folio) + folio_size(folio) - 1);
-> > > >     first_blk =3D offset_in_folio(folio, start_byte) >> blkbits;
-> > > >     last_blk =3D offset_in_folio(folio, last_byte) >> blkbits;
-> > > > -   for (i =3D first_blk; i <=3D last_blk; i++) {
-> > > > -           if (!ifs_block_is_dirty(folio, ifs, i))
-> > > > -                   punch(inode, folio_pos(folio) + (i << blkbits),
-> > > > -                               1 << blkbits, iomap);
-> > > > +   while (first_blk <=3D last_blk) {
-> > > > +           first_blk =3D ifs_next_clean_block(folio, first_blk, la=
-st_blk);
-> > > > +           if (first_blk > last_blk)
-> > > > +                   break;
-> >
-> > I was wondering if the loop control logic would be cleaner done as a fo=
-r
-> > loop and came up with this monstrosity:
-> >
-> >         for (first_blk =3D ifs_next_clean_block(folio, first_blk, last_=
-blk);
-> >              first_blk <=3D last_blk;
-> >              first_blk =3D ifs_next_clean_block(folio, first_blk + 1, l=
-ast_blk)) {
-> >                 punch(inode, folio_pos(folio) + (first_blk << blkbits),
-> >                       1 << blkbits, iomap);
-> >         }
-> >
-> > Yeah.... better living through macros?
-> >
-> > #define for_each_clean_block(folio, blk, last_blk) \
-> >         for ((blk) =3D ifs_next_clean_block((folio), (blk), (last_blk))=
-;
-> >              (blk) <=3D (last_blk);
-> >              (blk) =3D ifs_next_clean_block((folio), (blk) + 1, (last_b=
-lk)))
-> >
-> > Somewhat cleaner:
-> >
-> >         for_each_clean_block(folio, first_blk, last_blk)
-> >                 punch(inode, folio_pos(folio) + (first_blk << blkbits),
-> >                       1 << blkbits, iomap);
-> >
->
-> Cool, this macro looks nice! I'll use this in the next version.
->
+I think that with validation of inodes in hfs_read_inode this code path should
+no longer be reachable by poking the kernel interface from userspace. If it is
+ever reached, it means kernel logic is broken, so it should be treated as a bug.
+
+> 
+> 		}
+> 	}
+> 
+> <skipped>
+> }
+> 
+> What's about to use your check here too?
+
+Let's do that, I'll include it in V2.
+
+> 
+> Mostly, I like your approach but the patch needs some polishing yet. ;)
+> 
 > Thanks,
-> Joanne
->
-> > <shrug>
-> >
-> > --D
-> >
+> Slava.
+
+Thank you for taking the time to give detailed feedback, I really appreciate it.
+
+George
 
