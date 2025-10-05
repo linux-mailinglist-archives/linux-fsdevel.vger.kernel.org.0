@@ -1,154 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-63445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202A2BBCCF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 00:06:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A983BBBCDC6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 01:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05EE74E285A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Oct 2025 22:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644C83AD1A2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Oct 2025 23:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39251136E37;
-	Sun,  5 Oct 2025 22:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220C71E1E1E;
+	Sun,  5 Oct 2025 23:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="wZBCwzMP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/2M55xr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F6C1922F6
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Oct 2025 22:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF49A34BA3E
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Oct 2025 23:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759702006; cv=none; b=BvYJJNQ70HT8P8YWs8J/cBQSbUp7Kh73fubQqIEQj1qJc5kUkn1r49o740HUnFwkjOSgQ0g+GID7oYW0bk5nf56nsbjbHjemsT3UBSC6Bw92gxnncBc53D1DMrZghYEDJGGB/cc8SKD8WCrO7NDuD7fR2ataughrDnCpsWLbFrY=
+	t=1759706135; cv=none; b=ImqyoxMWiYYcisnokIAyCQmWOVMU0FYnHSN//pE8F99RQMg9f9kppnnUhO87a+4sVWJIB6XlKFrP2THSoFUT2J+80F5WtOH12MmPvzt3kytJIJH/RLnfxIfO37dlKEsIRDP85cD93QFsHQNtXOqkZzHVXxMQj1x7LwY1fGS5cto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759702006; c=relaxed/simple;
-	bh=ghK5/Akxyskde6VGn6Ahjhb7SpOkpwGVxVDkbDa5JHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cb9s1aRQHkyGL2DXGRPx9qTCg20gZB3Br127ozRm+t0AO4d2OjpyD6GKNBQWjxnq6VRCLmo20KM4RJdsyzoDrffx1vOGIr+d3FiVsri8Gvu0OuEbXX8mSogpQagHPdeCS9WyarW0d97Gf/y9p0A+g0fcqZ/xtFLAgmb1R7EU2SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=wZBCwzMP; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b55517e74e3so4961441a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Oct 2025 15:06:44 -0700 (PDT)
+	s=arc-20240116; t=1759706135; c=relaxed/simple;
+	bh=fybNiBAefFTh//jSRU2sf0Ny8KCLWtk1ph7b062OZqI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGv6uqEedMRmFcMmtrQ3MtEHw2YQEGeBC6UnLX7WPGv+3KTAZmspko8dICocHAX/MmKPzjslCTvNJVBGn7hv+8aMHUCDq+6JmsXHlw7Nx4Yz1+BG3JB2CW94McvdX49lepp4/DboriGzdEX0+MdTBIaLrQr6mbvtx3EhrANOIVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/2M55xr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so40510685e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Oct 2025 16:15:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1759702004; x=1760306804; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EfB79PgOGfvIs0AN5btrRu7ltzbFZlxj1NUbJbf87SE=;
-        b=wZBCwzMPOFZBmauIC3yw6qRd3Sykz5c41p4OyQrG7RW1fqeUVQVk4+mfyM1AevAKc1
-         X3CNKtkrVkVwGxHS4GSCfu3viAmYXxbexjaDViFry9rBARBCcEv7pAqnB30zvTurTMSo
-         ySylK2bcuJtlFWgHiUImDjfDfksXzOAzufpJHwfBsyZPBePY489kw9DUfFfOAUuC4Z2u
-         nrSD3sltjbgbhrvL9Ru6C9W+9NuMNXwg27vo9iJ9iNMlyGyoxLOfHvcmS7YZ1vUz6vNg
-         tVFSaRWyR3S4PzXDIKUy1sfNMftKsb077+bSXLRau2LyPrSCH/F4tw8ItMuGH4GDxKtZ
-         MQpQ==
+        d=gmail.com; s=20230601; t=1759706132; x=1760310932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IZVLKUfxISrsNrnwMvWMj0ZRjTubuXUM3Dffz3zRah8=;
+        b=N/2M55xroM1u/eI1YLJLxLzvNfaoPyUk03HUDeaUbmX2GzfN/UDduSpOaD4e7CMH2O
+         fsrcK2N5kZrdXKuCd04emIeCbJ0gVEWdWieln+QGisIvgGcTyE+02ghAJPP8NEp0uiOL
+         df2iuoD66DOAhoxLSGkw16wVERTxy9xHarxXuFYDSRHIlgc2daiC53O3fwETY44gSENU
+         R3otJ5srvh2uKoE3SAIisLz0Yl1zP6UfTVzk9ql8sOyHyHjJvu9FS0j5k50eDaP6J6pC
+         8DmMotN6BOh+UBgwCHnvwz5AdQY45D3m+Kf+Jlq0f5TIirioB6iAnx5UjfBqHKVwwC+P
+         YEkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759702004; x=1760306804;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EfB79PgOGfvIs0AN5btrRu7ltzbFZlxj1NUbJbf87SE=;
-        b=qkz5ptHCyV3GkI0FC2PFvpxG1EOgwlXgvQ+ECrG/ypBuEOGx1Zbsm1KjBO5pZ/iFmV
-         A81iw15w5QA8zy732FUidW5zdgcFcFIu+i7XgSwNjROuKg7LCJ7yOhX43ffY+DxoVMxU
-         4DqgRxB+whWECU9dc+PcC4lcgVoOOLTXLpyzcKv+ncUp52DpysIvOkVuXgSZUPtXCxXv
-         5Grourw7stAqqKy0uB2F6rTDdUklLWHD/DCXeCl7mK9Vy8qUDkWbOgYCt96SBsxqiILx
-         YUtGRX2tdVXkLYIZfrh+WjVCyM5Dk+yAvyAiopLpQRKAczAmLFXJXr3Fox6iwxNB7Em3
-         Pkpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLri0JqbStHCBtN1ZmnzMyoVdCTuYFnPokpok0Ly1RK6H33RrUi0Le0j1j8LXFGoErbmz99A/lnusJGRAK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJrmRWpPi+2DwAsU4J2DVXBqr11ofyiHOIsTBPOKJWblphint/
-	Keg8Gr24sLiw1o5T6CEFeRuJB1U5sjmpyxOuD6Gr43g6VhAD85Gx48o7fKBPyXsAgBfsC27DtnP
-	Mq78G
-X-Gm-Gg: ASbGncvFCUw7Nx8I1E0VNnNjCmbFE3DkNmRm2//EHJjPKfVaX72grXfV8SBFKUU6cdP
-	sRcPmbpAKVPrgQQ+2JHReg897U60v4vVvk8Dd+BmmMN/eQ70mrsC+OdPpmshe6zQRTNpQgpfmJj
-	IjqiH3DoSPPzyN4updbLP0RoK54EHKeMr/sXFGmKFfOnWPyunfq2/GjmmItXxu7F+JReNPeJqd+
-	vy7MXop6n8YwsqS++5uyzMsGXm8vx7n3pFVGM9+YvWCYhr9TxTHTkLmek6CBy9oqLIRf/YIDm0n
-	89PHI2aKYz2Vw90QLVxlX9Lj2WkTueRfhoLSetMFi3eCGkIyusKqhFbJ3YHxH1KfUjC/xEB+ljf
-	rkuFlHtp/Li3Ce2AUC46cZjh5HFSom7qnGnmaxrDAY3J4UKjDmlvrLC8i4oiLfHF7AjdZe84jNa
-	qT+Io0xSXiuuta3a9NP4f4yqADO0tDp1Ay
-X-Google-Smtp-Source: AGHT+IENWyTXPDADMQ43Q+qUkEcxH8/Cfr1KV4BDn/buPYFW/8tWf4Jvv5Qv2AAxqHLtTLmLsOKCaA==
-X-Received: by 2002:a17:903:3c48:b0:269:805c:9447 with SMTP id d9443c01a7336-28e9a5bd2c0mr110553955ad.4.1759702004172;
-        Sun, 05 Oct 2025 15:06:44 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1269b8sm111302175ad.50.2025.10.05.15.06.43
+        d=1e100.net; s=20230601; t=1759706132; x=1760310932;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IZVLKUfxISrsNrnwMvWMj0ZRjTubuXUM3Dffz3zRah8=;
+        b=coXPAirG4WiPMo+V6D4z2eAQChCfLumuC3x8HilRcPqNAlzCUOY6F5CDmq7Q6K5MpQ
+         51HX788iXXcCSrpsq9p4dD6tfvoIJh29IXq4hOLBf7wB/GqcQX6rAiCEZU/E0LaM4nXP
+         N2jTMQwmtVVTwK0BMqiJwfd9xacNgE4/cO5fnFMGkx7KTLdnK3R45FM3DHXNMCu3aL+V
+         TRyPN6BT0PMHylH+OqeZbSQoflKF8jQ4j0lpCbsTzJdrU/iCXAgOXciTL00R+jQookML
+         4sgUEB6IYsULJTV1c3DA27FEEZVqmGc20V/+uARrjyue02N6IuceJBwxYZm7LcKwFjbA
+         uhag==
+X-Forwarded-Encrypted: i=1; AJvYcCWfoLOUCkt3CZmszWWHJpRiIDV201GLWfGVisg/cBktnQ30NXBfGtfJ6OA/BCbWxUMwlE5etONIATo6RVbA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhwWNKen5bVS1WZugj1ZcA7s5b4UwC6fhe9prh/IIPc/45eUdb
+	KDmGMxlyhL7Gk6KM6zkEmJKEqGWMg8mfDBIEbOqsFCm1vDH5cNyTWSFv
+X-Gm-Gg: ASbGncsQma+fydRywOyU1h2RlAUk/aDmTOsilZjzMUEQKvXlCAiLtM8GNaElCYL2cL7
+	/tWoV1ItQkuDtl2CnKN+7dOAlTAi94uJWT9TqdgdnyxhdjzgP7fD7fDDH8MLtrETDRZumYibVuI
+	QRZEVsi5KBNK1LPf5wOVdWnI6kR8kIOdgN2rBJB0po8eZ3bn3CKPLJFDEMm+c1i/3Es2lQb4+YR
+	usFfI2neEfN1ELNW+m7qgQKp/K3H53WRfsY92QV8DYUFOjzVDEq27TPI2ZpPaiafs3Pq7KOTXUL
+	V8pSNf3c5tcEeD03CbToIkUIUpjxRYtSsDCnGO2qFnSTbE1tYC94PRRxhfdmWrJDfvXyk5Lx8MO
+	TrKUfLSDcra7J5jx1mbl7SRSw5LHKNzjplKNmkXA3gDhYUbBsfHfmMQC7YqSUJ4drSqTluaaJEG
+	QCxTtTLrFkAmeTKRH8kOHBfJRFujWz7Hqg
+X-Google-Smtp-Source: AGHT+IEO23zbV1o6Dod3OnepyrZ499l60l15zhzyFc5iTDUQFeRUVPj+KaAJtZN9R8sEfUGcnJfl7Q==
+X-Received: by 2002:a05:600c:34ce:b0:46e:4ac4:b7b8 with SMTP id 5b1f17b1804b1-46e7114e923mr68621845e9.25.1759706131907;
+        Sun, 05 Oct 2025 16:15:31 -0700 (PDT)
+Received: from f.. (cst-prg-79-205.cust.vodafone.cz. [46.135.79.205])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9780sm17920640f8f.29.2025.10.05.16.15.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Oct 2025 15:06:43 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1v5WsK-0000000B0Wz-40rk;
-	Mon, 06 Oct 2025 09:06:40 +1100
-Date: Mon, 6 Oct 2025 09:06:40 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Pavel Emelyanov <xemul@scylladb.com>, linux-fsdevel@vger.kernel.org,
-	"Raphael S . Carvalho" <raphaelsc@scylladb.com>,
-	linux-api@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] fs: Propagate FMODE_NOCMTIME flag to user-facing
- O_NOCMTIME
-Message-ID: <aOLr8M6s1W2qC5-Q@dread.disaster.area>
-References: <20251003093213.52624-1-xemul@scylladb.com>
- <aOCiCkFUOBWV_1yY@infradead.org>
+        Sun, 05 Oct 2025 16:15:31 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: add missing fences to I_NEW handling
+Date: Mon,  6 Oct 2025 01:15:26 +0200
+Message-ID: <20251005231526.708061-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOCiCkFUOBWV_1yY@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 03, 2025 at 09:26:50PM -0700, Christoph Hellwig wrote:
-> On Fri, Oct 03, 2025 at 12:32:13PM +0300, Pavel Emelyanov wrote:
-> > The FMODE_NOCMTIME flag tells that ctime and mtime stamps are not
-> > updated on IO. The flag was introduced long ago by 4d4be482a4 ([XFS]
-> > add a FMODE flag to make XFS invisible I/O less hacky. Back then it
-> > was suggested that this flag is propagated to a O_NOCMTIME one.
-> 
-> skipping c/mtime is dangerous.  The XFS handle code allows it to
-> support HSM where data is migrated out to tape, and requires
-> CAP_SYS_ADMIN.  Allowing it for any file owner would expand the scope
-> for too much as now everyone could skip timestamp updates.
-> 
-> > It can be used by workloads that want to write a file but don't care
-> > much about the preciese timestamp on it and can update it later with
-> > utimens() call.
+Suppose there are 2 CPUs racing inode hash lookup func (say ilookup5())
+and unlock_new_inode().
 
-If you don't care about accurate c/mtime, then mount the filesystem
-with '-o lazytime' to degrade c/mtime updates to "eventual
-consistency" behaviour for IO operations. If inode metadata is
-otherwise modified (e.g. block allocation during IO) or the
-application then calls utimens(), it will update the recorded
-in-memory timestamps in a persistent manner immediately.
+In principle the latter can clear the I_NEW flag before prior stores
+into the inode were made visible.
 
-> The workload might not care, the rest of the system does.  ctime can't
-> bet set to arbitrary values, so it is important for backups and as
-> an audit trail.
+The former can in turn observe I_NEW is cleared and proceed to use the
+inode, while possibly reading from not-yet-published areas.
 
-But we can (and do) delay the persistence of IO-based timestamp
-updates with the lazytime option.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> > There's another reason for having this patch. When performing AIO write,
-> > the file_modified_flags() function checks whether or not to update inode
-> > times. In case update is needed and iocb carries the RWF_NOWAIT flag,
-> > the check return EINTR error that quickly propagates into cb completion
-> > without doing any IO. This restriction effectively prevents doing AIO
-> > writes with nowait flag, as file modifications really imply time update.
-> 
-> Well, we'll need to look into that, including maybe non-blockin
-> timestamp updates.
+I don't think this is a serious bug in the sense I doubt anyone ever ran
+into it, but this is an issue on paper.
 
-Lazytime updates can generally be done in a non-blocking manner
-right now (someone raised that in the context of io-uring on #xfs
-about a month ago), but the NOWAIT behaviour for timestamp updates
-is done at a higher level in the VFS and does not take into account
-filesystem specific non-blocking lazytime updates at all.  If we
-push the NOWAIT checking behaviour down to the filesystem, we can do
-this.
+I'm doing some changes in the area and I figured I'll get this bit out
+of the way.
 
--Dave.
+ fs/dcache.c               | 4 ++++
+ fs/inode.c                | 8 ++++++++
+ include/linux/writeback.h | 4 ++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index a067fa0a965a..806d6a665124 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1981,6 +1981,10 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+ 	spin_lock(&inode->i_lock);
+ 	__d_instantiate(entry, inode);
+ 	WARN_ON(!(inode->i_state & I_NEW));
++	/*
++	 * Pairs with smp_rmb in wait_on_inode().
++	 */
++	smp_wmb();
+ 	inode->i_state &= ~I_NEW & ~I_CREATING;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+diff --git a/fs/inode.c b/fs/inode.c
+index ec9339024ac3..842ee973c8b6 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1181,6 +1181,10 @@ void unlock_new_inode(struct inode *inode)
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	spin_lock(&inode->i_lock);
+ 	WARN_ON(!(inode->i_state & I_NEW));
++	/*
++	 * Pairs with smp_rmb in wait_on_inode().
++	 */
++	smp_wmb();
+ 	inode->i_state &= ~I_NEW & ~I_CREATING;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+@@ -1198,6 +1202,10 @@ void discard_new_inode(struct inode *inode)
+ 	lockdep_annotate_inode_mutex_key(inode);
+ 	spin_lock(&inode->i_lock);
+ 	WARN_ON(!(inode->i_state & I_NEW));
++	/*
++	 * Pairs with smp_rmb in wait_on_inode().
++	 */
++	smp_wmb();
+ 	inode->i_state &= ~I_NEW;
+ 	/*
+ 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 22dd4adc5667..e1e1231a6830 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -194,6 +194,10 @@ static inline void wait_on_inode(struct inode *inode)
+ {
+ 	wait_var_event(inode_state_wait_address(inode, __I_NEW),
+ 		       !(READ_ONCE(inode->i_state) & I_NEW));
++	/*
++	 * Pairs with routines clearing I_NEW.
++	 */
++	smp_rmb();
+ }
+ 
+ #ifdef CONFIG_CGROUP_WRITEBACK
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
