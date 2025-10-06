@@ -1,329 +1,319 @@
-Return-Path: <linux-fsdevel+bounces-63459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F325BBD854
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 11:54:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D6DBBD878
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 11:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98553B9C26
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 09:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86E83B9AB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 09:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C49B2135AD;
-	Mon,  6 Oct 2025 09:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE126217716;
+	Mon,  6 Oct 2025 09:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eOUo9vJm"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="co9k+qrD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD80212546
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 09:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92051215F7D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 09:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759744458; cv=none; b=gKNrOJ21Qqn+PTuHjVq5x3oACFfkDncfpsO18nhgZQv3KyYEbWFPx3FiZCK0qcTBJ1Zir/LDBBXLr3th7/MieoFzPXdN05QFhSq4YmlScweqy4zyGNZrKD/0zd39OQceUuBCTalpe30hhDW7EDVnqzAANG7Wmde5Razux4rf3hU=
+	t=1759744571; cv=none; b=g4ZsWMkhOnhRjRAr2D4cQAuiM5ttp8MerVpgFz+2yVoEVL7YuESq3nAEN2xdVQDI+YDZmrsje5N4fSxCFZja6zR5d8mHZpfMrgAjJuDWt/YoG5SwHBOLJTvE7DdSP53vSZx5fwv1vhZhVKs5s8J48yVflQEEovuCTkk3RehAoTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759744458; c=relaxed/simple;
-	bh=akNrM7++aRw9u4eBDhm9xCnL/bK//DLcxj/PeLViLTA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hPeeOvgC9Lv96yTizCs+pEp9u6WHU8BdPloNIb/kXP82Sj5MPba/77uZDNQNmZABoOD6zksCqMfX2sl5mldIOWlWowcBtCODF+ihpcHKCLgo8JISYC7Kyk6eH14uBK9ygYaRVmxhCSDPqVFbFucB3420mI0gc/l16ShbFV33Rb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eOUo9vJm; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=uG57dcu+vI3dyGnXVF4SS6xUmbdA5xvT+PrmlV09mR4=; b=eOUo9vJmbu3/1RIl106E+MjBMr
-	G2/pQeU/QMnYG3GDaUmt9EMFoDdwAa1ljB06IDYx5H/j1hugqTIopR9poJtrdB5q+WdliweJbCTa9
-	0vzOh4ZbYbxOGFkUoTcokpczt6d3FMfBmaS2NNEsiArRLwfx/jNA8KjpEOmTwKIVXjeaCWIgx0j8Q
-	WHiMIPRVt9Mk3UbK0bsZGqjxw3Xy6Eze1vaeCf1f/UNLvG4y8Z0tk7XUEO07IzVdI6dQH0ivjEOkq
-	Fawm6k9MjVbgldjGk0jNk0DnV6OlBPzz47ByPriWHWFrUVDve6/Bogz0N9/CYNY4CHUbWU3q48oqc
-	siq/Br6Q==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1v5hup-005J1l-9M; Mon, 06 Oct 2025 11:53:59 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Ingo Molnar <mingo@redhat.com>,
-  Peter Zijlstra <peterz@infradead.org>,  Juri Lelli
- <juri.lelli@redhat.com>,  Vincent Guittot <vincent.guittot@linaro.org>,
-  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
- <rostedt@goodmis.org>,  Ben Segall <bsegall@google.com>,  Mel Gorman
- <mgorman@suse.de>,  Valentin Schneider <vschneid@redhat.com>,  Joanne
- Koong <joannelkoong@gmail.com>,  linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] fuse: {io-uring} Queue background requests on a
- different core
-In-Reply-To: <20251003-reduced-nr-ring-queues_3-v2-6-742ff1a8fc58@ddn.com>
-	(Bernd Schubert's message of "Fri, 03 Oct 2025 12:06:47 +0200")
-References: <20251003-reduced-nr-ring-queues_3-v2-0-742ff1a8fc58@ddn.com>
-	<20251003-reduced-nr-ring-queues_3-v2-6-742ff1a8fc58@ddn.com>
-Date: Mon, 06 Oct 2025 10:53:58 +0100
-Message-ID: <87frbwe4p5.fsf@wotan.olymp>
+	s=arc-20240116; t=1759744571; c=relaxed/simple;
+	bh=NahU/+V4n1+IDk7/jTnSOYcbHuz1ozZre0J4OPBcXvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DggkwGl2WtadYZfGQCItyMJfflDYBRwuUqUenRNoNnUVMdDWUarsP1KZka/6dbbPGNby/+O7bRfuYKMorYQvzoms2tIWXVinMh1isU841dMwJv1z1fLAiD1fXGQAdFVOxGhEOg9edYX0OK9/m8pNFCt5qzzY0RA/lHyfM1GQbY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=co9k+qrD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759744568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/TtWqsB+vL29f+WqHIVh0uOt8o6InBJTuTjqBkW5psw=;
+	b=co9k+qrDFkMYhMi1R6ODQ0nSkRuE2aPbFJAwqRzqzSPvgkOcCoh8O93hyNiyw5Od+ZxD4G
+	Weh4jwPOTrPUy5gbNDxBpFcgB23zzLYZZwgFUJkSJ7bLQFRy0di/O54KxvxBbv2RWvyg2A
+	hGghMcyftqU/qFAOTERqeivwOvahZLo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-166-xGGIuf3TP7eUOIhnO_ZLGg-1; Mon, 06 Oct 2025 05:56:07 -0400
+X-MC-Unique: xGGIuf3TP7eUOIhnO_ZLGg-1
+X-Mimecast-MFC-AGG-ID: xGGIuf3TP7eUOIhnO_ZLGg_1759744566
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f42b54d159so3769997f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 02:56:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759744565; x=1760349365;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/TtWqsB+vL29f+WqHIVh0uOt8o6InBJTuTjqBkW5psw=;
+        b=AsWIozNinHXwueAlfMnwIYApwwbT+kPesYAU9fRH1+Dr0xy0jFheDnJf4J4/AmF9oJ
+         Z1tE2PYVoyX5fPur4hcOl63hX2uWitjBP9YveVrB//cBarH//pjCsu6PyikPwjJS7pKh
+         QCRGYnKLDSBn28PkT+ldGbHEjtoeLG20Q3QuBYuPHv92jUFCS8+4xiNsHBHpBvfa+4gy
+         FOmAuvCndbd5LC5sMehW4VXNAwTceDn+9vnAlTaM008LFjhnmVMkYywkCRw/HmvNwfQ7
+         mK0U21+pZ4cj4/081CpSN4TolCT2w+FSUzV/5RzmC9lOwrmTI+h0v292ycKRgU1STLwD
+         avJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVU3G54yxEUqkv0xGOzmBWYYnrVZ4uvKeP4eWBOrA940yuyOC3CNVPWnMg6Cmrb9JgBYwxrq2ccZCQXSJXY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ/XwZ8zYYSefDdstG/TIXtqAgd6sc7Qhc9eNDSFAi392gEsIJ
+	BWUEQgeDHbmv6OwJIRzAyG6a52BdEq2/kDhe57HVe348v4Tf7UH+4NNFtKezXON36pMbx337+a0
+	10/anQHndX6Z9D1yZQp+hKvy+Sw3XcTmsoEtsM23zwsF/aodrhbun0X1DWZQOFucUTA==
+X-Gm-Gg: ASbGncvo9sMf6Jbm9PRkIdli7qIQT3861lPy9jrsmTSdkARTQS7vjyga0i9Dnfe/VlC
+	JxbAxJAtKQ1dv1N81A83/+M6Vl0tqP3lwX3riZcKJaayELu59/d3Gnb/ZNTwiX9oTBd44TD+6mZ
+	NfOeHJV2k+TifkGoQtNKnidgbAtPbfZllNYl304+eQxbb0bMwosEZWwgWipAzqolRVA4DHu9qP4
+	8ZoVH5D168UZlsBI2S1D4gmn/Q5qm6fMg7guv31IRk1OkJ5qLNDJD8oEU9PKQTgwriIiU3cg4C0
+	5Bignzf+dmFsoDaOfZf/aENB0S2YKJ2RKDzyeP5+VThHQvK/wmcBbysPKAWiSjQfdw==
+X-Received: by 2002:a05:6000:2890:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-425671ab32fmr8219357f8f.47.1759744565081;
+        Mon, 06 Oct 2025 02:56:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESIFH0nsmLTuTfpAn77LYDu6eTjChPZl8GGpx/iU11/r7ZbfgkcR1RO/Syy2wrlHG4ldNS8Q==
+X-Received: by 2002:a05:6000:2890:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-425671ab32fmr8219344f8f.47.1759744564452;
+        Mon, 06 Oct 2025 02:56:04 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6c49sm20213119f8f.3.2025.10.06.02.56.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 02:56:04 -0700 (PDT)
+Date: Mon, 6 Oct 2025 11:55:33 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: fstests@vger.kernel.org
+Cc: zlang@redhat.com, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v4 2/3] generic: introduce test to test
+ file_getattr/file_setattr syscalls
+Message-ID: <zg4q7gnriwp64i7elakbvfxcukva7neq5qqcg7lyzglmmdduxm@6texsbefmit6>
+References: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
+ <20251003-xattrat-syscall-v4-2-1cfe6411c05f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003-xattrat-syscall-v4-2-1cfe6411c05f@kernel.org>
 
-On Fri, Oct 03 2025, Bernd Schubert wrote:
+On 2025-10-03 11:32:45, Andrey Albershteyn wrote:
+> Add a test to test basic functionality of file_getattr() and
+> file_setattr() syscalls. Most of the work is done in file_attr
+> utility.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-> Running background IO on a different core makes quite a difference.
->
-> fio --directory=3D/tmp/dest --name=3Diops.\$jobnum --rw=3Drandread \
-> --bs=3D4k --size=3D1G --numjobs=3D1 --iodepth=3D4 --time_based\
-> --runtime=3D30s --group_reporting --ioengine=3Dio_uring\
->  --direct=3D1
->
-> unpatched
->    READ: bw=3D272MiB/s (285MB/s), 272MiB/s-272MiB/s ...
-> patched
->    READ: bw=3D760MiB/s (797MB/s), 760MiB/s-760MiB/s ...
->
-> With --iodepth=3D8
->
-> unpatched
->    READ: bw=3D466MiB/s (489MB/s), 466MiB/s-466MiB/s ...
-> patched
->    READ: bw=3D966MiB/s (1013MB/s), 966MiB/s-966MiB/s ...
-> 2nd run:
->    READ: bw=3D1014MiB/s (1064MB/s), 1014MiB/s-1014MiB/s ...
->
-> Without io-uring (--iodepth=3D8)
->    READ: bw=3D729MiB/s (764MB/s), 729MiB/s-729MiB/s ...
->
-> Without fuse (--iodepth=3D8)
->    READ: bw=3D2199MiB/s (2306MB/s), 2199MiB/s-2199MiB/s ...
->
-> (Test were done with
-> <libfuse>/example/passthrough_hp -o allow_other --nopassthrough  \
-> [-o io_uring] /tmp/source /tmp/dest
-> )
->
-> Additional notes:
->
-> With FURING_NEXT_QUEUE_RETRIES=3D0 (--iodepth=3D8)
->    READ: bw=3D903MiB/s (946MB/s), 903MiB/s-903MiB/s ...
->
-> With just a random qid (--iodepth=3D8)
->    READ: bw=3D429MiB/s (450MB/s), 429MiB/s-429MiB/s ...
->
-> With --iodepth=3D1
-> unpatched
->    READ: bw=3D195MiB/s (204MB/s), 195MiB/s-195MiB/s ...
-> patched
->    READ: bw=3D232MiB/s (243MB/s), 232MiB/s-232MiB/s ...
->
-> With --iodepth=3D1 --numjobs=3D2
-> unpatched
->    READ: bw=3D966MiB/s (1013MB/s), 966MiB/s-966MiB/s ...
-> patched
->    READ: bw=3D1821MiB/s (1909MB/s), 1821MiB/s-1821MiB/s ...
->
-> With --iodepth=3D1 --numjobs=3D8
-> unpatched
->    READ: bw=3D1138MiB/s (1193MB/s), 1138MiB/s-1138MiB/s ...
-> patched
->    READ: bw=3D1650MiB/s (1730MB/s), 1650MiB/s-1650MiB/s ...
-> fuse without io-uring
->    READ: bw=3D1314MiB/s (1378MB/s), 1314MiB/s-1314MiB/s ...
-> no-fuse
->    READ: bw=3D2566MiB/s (2690MB/s), 2566MiB/s-2566MiB/s ...
->
-> In summary, for async requests the core doing application IO is busy
-> sending requests and processing IOs should be done on a different core.
-> Spreading the load on random cores is also not desirable, as the core
-> might be frequency scaled down and/or in C1 sleep states. Not shown here,
-> but differnces are much smaller when the system uses performance govenor
-> instead of schedutil (ubuntu default). Obviously at the cost of higher
-> system power consumption for performance govenor - not desirable either.
->
-> Results without io-uring (which uses fixed libfuse threads per queue)
-> heavily depend on the current number of active threads. Libfuse uses
-> default of max 10 threads, but actual nr max threads is a parameter.
-> Also, no-fuse-io-uring results heavily depend on, if there was already
-> running another workload before, as libfuse starts these threads
-> dynamically - i.e. the more threads are active, the worse the
-> performance.
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+ops, Darrick, I forgot to drop your rvb tag as I changed this a bit,
+let me know if you have any comments or if I need to resend without
+it
+
 > ---
->  fs/fuse/dev_uring.c | 61 +++++++++++++++++++++++++++++++++++++++++++----=
-------
->  1 file changed, 50 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index f5946bb1bbea930522921d49c04e047c70d21ee2..296592fe3651926ab4982b8d8=
-0694b3dac8bbffa 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -22,6 +22,7 @@ MODULE_PARM_DESC(enable_uring,
->  #define FURING_Q_LOCAL_THRESHOLD 2
->  #define FURING_Q_NUMA_THRESHOLD (FURING_Q_LOCAL_THRESHOLD + 1)
->  #define FURING_Q_GLOBAL_THRESHOLD (FURING_Q_LOCAL_THRESHOLD * 2)
-> +#define FURING_NEXT_QUEUE_RETRIES 2
->=20=20
->  bool fuse_uring_enabled(void)
->  {
-> @@ -1262,7 +1263,8 @@ static void fuse_uring_send_in_task(struct io_uring=
-_cmd *cmd,
->   *  (Michael David Mitzenmacher, 1991)
->   */
->  static struct fuse_ring_queue *fuse_uring_best_queue(const struct cpumas=
-k *mask,
-> -						     struct fuse_ring *ring)
-> +						     struct fuse_ring *ring,
-> +						     bool background)
->  {
->  	unsigned int qid1, qid2;
->  	struct fuse_ring_queue *queue1, *queue2;
-> @@ -1277,9 +1279,14 @@ static struct fuse_ring_queue *fuse_uring_best_que=
-ue(const struct cpumask *mask,
->  	}
->=20=20
->  	/* Get two different queues using optimized bounded random */
-> -	qid1 =3D cpumask_nth(get_random_u32_below(weight), mask);
-> +
-> +	do {
-> +		qid1 =3D cpumask_nth(get_random_u32_below(weight), mask);
-> +	} while (background && qid1 =3D=3D task_cpu(current));
->  	queue1 =3D READ_ONCE(ring->queues[qid1]);
->=20=20
-> +	return queue1;
-
-Hmmm?  I guess this was left from some local testing, right?
-
-Cheers,
---=20
-Lu=C3=ADs
-
-
-> +
->  	do {
->  		qid2 =3D cpumask_nth(get_random_u32_below(weight), mask);
->  	} while (qid2 =3D=3D qid1);
-> @@ -1298,12 +1305,14 @@ static struct fuse_ring_queue *fuse_uring_best_qu=
-eue(const struct cpumask *mask,
->  /*
->   * Get the best queue for the current CPU
->   */
-> -static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring *ri=
-ng)
-> +static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring *ri=
-ng,
-> +						    bool background)
->  {
->  	unsigned int qid;
->  	struct fuse_ring_queue *local_queue, *best_numa, *best_global;
->  	int local_node;
->  	const struct cpumask *numa_mask, *global_mask;
-> +	int retries =3D 0;
->=20=20
->  	qid =3D task_cpu(current);
->  	if (WARN_ONCE(qid >=3D ring->max_nr_queues,
-> @@ -1311,16 +1320,44 @@ static struct fuse_ring_queue *fuse_uring_get_que=
-ue(struct fuse_ring *ring)
->  		      ring->max_nr_queues))
->  		qid =3D 0;
->=20=20
-> -	local_queue =3D READ_ONCE(ring->queues[qid]);
->  	local_node =3D cpu_to_node(qid);
->=20=20
-> -	/* Fast path: if local queue exists and is not overloaded, use it */
-> -	if (local_queue && local_queue->nr_reqs <=3D FURING_Q_LOCAL_THRESHOLD)
-> +	local_queue =3D READ_ONCE(ring->queues[qid]);
-> +
-> +retry:
-> +	/*
-> +	 * For background requests, try next CPU in same NUMA domain.
-> +	 * I.e. cpu-0 creates async requests, cpu-1 io processes.
-> +	 * Similar for foreground requests, when the local queue does not
-> +	 * exist - still better to always wake the same cpu id.
-> +	 */
-> +	if (background || !local_queue) {
-> +		numa_mask =3D ring->numa_registered_q_mask[local_node];
-> +		int weight =3D cpumask_weight(numa_mask);
-> +
-> +		if (weight > 0) {
-> +			int idx =3D (qid + 1) % weight;
-> +
-> +			qid =3D cpumask_nth(idx, numa_mask);
-> +		} else {
-> +			qid =3D cpumask_first(numa_mask);
-> +		}
-> +
-> +		local_queue =3D READ_ONCE(ring->queues[qid]);
-> +	}
-> +
-> +	if (local_queue && local_queue->nr_reqs <=3D FURING_Q_NUMA_THRESHOLD)
->  		return local_queue;
->=20=20
-> +	if (retries < FURING_NEXT_QUEUE_RETRIES) {
-> +		retries++;
-> +		local_queue =3D NULL;
-> +		goto retry;
-> +	}
-> +
->  	/* Find best NUMA-local queue */
->  	numa_mask =3D ring->numa_registered_q_mask[local_node];
-> -	best_numa =3D fuse_uring_best_queue(numa_mask, ring);
-> +	best_numa =3D fuse_uring_best_queue(numa_mask, ring, background);
->=20=20
->  	/* If NUMA queue is under threshold, use it */
->  	if (best_numa && best_numa->nr_reqs <=3D FURING_Q_NUMA_THRESHOLD)
-> @@ -1328,7 +1365,7 @@ static struct fuse_ring_queue *fuse_uring_get_queue=
-(struct fuse_ring *ring)
->=20=20
->  	/* NUMA queues above threshold, try global queues */
->  	global_mask =3D ring->registered_q_mask;
-> -	best_global =3D fuse_uring_best_queue(global_mask, ring);
-> +	best_global =3D fuse_uring_best_queue(global_mask, ring, background);
->=20=20
->  	/* Might happen during tear down */
->  	if (!best_global)
-> @@ -1338,8 +1375,10 @@ static struct fuse_ring_queue *fuse_uring_get_queu=
-e(struct fuse_ring *ring)
->  	if (best_global->nr_reqs <=3D FURING_Q_GLOBAL_THRESHOLD)
->  		return best_global;
->=20=20
-> +	return best_global;
-> +
->  	/* Fall back to best available queue */
-> -	return best_numa ? best_numa : best_global;
-> +	// return best_numa ? best_numa : best_global;
+>  common/filter          |  15 +++++++
+>  tests/generic/2000     | 109 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/2000.out |  37 +++++++++++++++++
+>  3 files changed, 161 insertions(+)
+> 
+> diff --git a/common/filter b/common/filter
+> index bbe13f4c8a8d..b330b27827d0 100644
+> --- a/common/filter
+> +++ b/common/filter
+> @@ -683,5 +683,20 @@ _filter_sysfs_error()
+>  	sed 's/.*: \(.*\)$/\1/'
 >  }
->=20=20
->  static void fuse_uring_dispatch_ent(struct fuse_ring_ent *ent)
-> @@ -1360,7 +1399,7 @@ void fuse_uring_queue_fuse_req(struct fuse_iqueue *=
-fiq, struct fuse_req *req)
->  	int err;
->=20=20
->  	err =3D -EINVAL;
-> -	queue =3D fuse_uring_get_queue(ring);
-> +	queue =3D fuse_uring_get_queue(ring, false);
->  	if (!queue)
->  		goto err;
->=20=20
-> @@ -1405,7 +1444,7 @@ bool fuse_uring_queue_bq_req(struct fuse_req *req)
->  	struct fuse_ring_queue *queue;
->  	struct fuse_ring_ent *ent =3D NULL;
->=20=20
-> -	queue =3D fuse_uring_get_queue(ring);
-> +	queue =3D fuse_uring_get_queue(ring, true);
->  	if (!queue)
->  		return false;
->=20=20
->
-> --=20
-> 2.43.0
->
->
+>  
+> +# Filter file attributes (aka lsattr/chattr)
+> +# To filter X:
+> +# 	... | _filter_file_attributes X
+> +# Or to filter all except X
+> +# 	... | _filter_file_attributes ~X
+> +_filter_file_attributes()
+> +{
+> +	if [[ $1 == ~* ]]; then
+> +		regex=$(echo "[aAcCdDeEFijmNPsStTuxVX]" | tr -d "$1")
+> +	else
+> +		regex="$1"
+> +	fi
+> +	awk "{ printf \"%s \", gensub(\"$regex\", \"-\", \"g\", \$1) } {print \$2}"
+> +}
+> +
+
+this is new
+
+>  # make sure this script returns success
+>  /bin/true
+> diff --git a/tests/generic/2000 b/tests/generic/2000
+> new file mode 100755
+> index 000000000000..16045829031a
+> --- /dev/null
+> +++ b/tests/generic/2000
+> @@ -0,0 +1,109 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 Red Hat Inc.  All Rights Reserved.
+> +#
+> +# FS QA Test No. 2000
+> +#
+> +# Test file_getattr/file_setattr syscalls
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto
+> +
+> +. ./common/filter
+> +
+> +# Modify as appropriate.
+> +_require_scratch
+> +_require_test_program "af_unix"
+> +_require_test_program "file_attr"
+> +_require_symlinks
+> +_require_mknod
+> +
+> +_scratch_mkfs >>$seqres.full 2>&1
+> +_scratch_mount
+> +
+> +file_attr () {
+> +	$here/src/file_attr $*
+> +}
+> +
+> +create_af_unix () {
+> +	$here/src/af_unix $* || echo af_unix failed
+> +}
+> +
+> +projectdir=$SCRATCH_MNT/prj
+> +
+> +# Create normal files and special files
+> +mkdir $projectdir
+> +mkfifo $projectdir/fifo
+> +mknod $projectdir/chardev c 1 1
+> +mknod $projectdir/blockdev b 1 1
+> +create_af_unix $projectdir/socket
+> +touch $projectdir/foo
+> +ln -s $projectdir/foo $projectdir/symlink
+> +touch $projectdir/bar
+> +ln -s $projectdir/bar $projectdir/broken-symlink
+> +rm -f $projectdir/bar
+> +
+> +echo "Error codes"
+> +# wrong AT_ flags
+> +file_attr --get --invalid-at $projectdir ./foo
+> +file_attr --set --invalid-at $projectdir ./foo
+> +# wrong fsxattr size (too big, too small)
+> +file_attr --get --too-big-arg $projectdir ./foo
+> +file_attr --get --too-small-arg $projectdir ./foo
+> +file_attr --set --too-big-arg $projectdir ./foo
+> +file_attr --set --too-small-arg $projectdir ./foo
+> +# out of fsx_xflags mask
+> +file_attr --set --new-fsx-flag $projectdir ./foo
+> +
+> +echo "Initial attributes state"
+> +file_attr --get $projectdir | _filter_scratch | _filter_file_attributes ~d
+
+						 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+						 this filter is new
+						 in the test
+
+-- 
+- Andrey
+
+> +file_attr --get $projectdir ./fifo | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./chardev | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./blockdev | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./socket | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./foo | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./symlink | _filter_file_attributes ~d
+> +
+> +echo "Set FS_XFLAG_NODUMP (d)"
+> +file_attr --set --set-nodump $projectdir
+> +file_attr --set --set-nodump $projectdir ./fifo
+> +file_attr --set --set-nodump $projectdir ./chardev
+> +file_attr --set --set-nodump $projectdir ./blockdev
+> +file_attr --set --set-nodump $projectdir ./socket
+> +file_attr --set --set-nodump $projectdir ./foo
+> +file_attr --set --set-nodump $projectdir ./symlink
+> +
+> +echo "Read attributes"
+> +file_attr --get $projectdir | _filter_scratch | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./fifo | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./chardev | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./blockdev | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./socket | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./foo | _filter_file_attributes ~d
+> +file_attr --get $projectdir ./symlink | _filter_file_attributes ~d
+> +
+> +echo "Set attribute on broken link with AT_SYMLINK_NOFOLLOW"
+> +file_attr --set --set-nodump $projectdir ./broken-symlink
+> +file_attr --get $projectdir ./broken-symlink
+> +
+> +file_attr --set --no-follow --set-nodump $projectdir ./broken-symlink
+> +file_attr --get --no-follow $projectdir ./broken-symlink | _filter_file_attributes ~d
+> +
+> +cd $SCRATCH_MNT
+> +touch ./foo2
+> +echo "Initial state of foo2"
+> +file_attr --get --at-cwd ./foo2 | _filter_file_attributes ~d
+> +echo "Set attribute relative to AT_FDCWD"
+> +file_attr --set --at-cwd --set-nodump ./foo2
+> +file_attr --get --at-cwd ./foo2 | _filter_file_attributes ~d
+> +
+> +echo "Set attribute on AT_FDCWD"
+> +mkdir ./bar
+> +file_attr --get --at-cwd ./bar | _filter_file_attributes ~d
+> +cd ./bar
+> +file_attr --set --at-cwd --set-nodump ""
+> +file_attr --get --at-cwd . | _filter_file_attributes ~d
+> +
+> +# success, all done
+> +status=0
+> +exit
+> diff --git a/tests/generic/2000.out b/tests/generic/2000.out
+> new file mode 100644
+> index 000000000000..e6fc7381709b
+> --- /dev/null
+> +++ b/tests/generic/2000.out
+> @@ -0,0 +1,37 @@
+> +QA output created by 2000
+> +Error codes
+> +Can not get fsxattr on ./foo: Invalid argument
+> +Can not get fsxattr on ./foo: Invalid argument
+> +Can not get fsxattr on ./foo: Argument list too long
+> +Can not get fsxattr on ./foo: Invalid argument
+> +Can not get fsxattr on ./foo: Argument list too long
+> +Can not get fsxattr on ./foo: Invalid argument
+> +Can not set fsxattr on ./foo: Invalid argument
+> +Initial attributes state
+> +----------------- SCRATCH_MNT/prj
+> +----------------- ./fifo
+> +----------------- ./chardev
+> +----------------- ./blockdev
+> +----------------- ./socket
+> +----------------- ./foo
+> +----------------- ./symlink
+> +Set FS_XFLAG_NODUMP (d)
+> +Read attributes
+> +------d---------- SCRATCH_MNT/prj
+> +------d---------- ./fifo
+> +------d---------- ./chardev
+> +------d---------- ./blockdev
+> +------d---------- ./socket
+> +------d---------- ./foo
+> +------d---------- ./symlink
+> +Set attribute on broken link with AT_SYMLINK_NOFOLLOW
+> +Can not get fsxattr on ./broken-symlink: No such file or directory
+> +Can not get fsxattr on ./broken-symlink: No such file or directory
+> +------d---------- ./broken-symlink
+> +Initial state of foo2
+> +----------------- ./foo2
+> +Set attribute relative to AT_FDCWD
+> +------d---------- ./foo2
+> +Set attribute on AT_FDCWD
+> +----------------- ./bar
+> +------d---------- .
+> 
+> -- 
+> 2.50.1
+> 
 
 
