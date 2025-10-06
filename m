@@ -1,122 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-63515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E369EBBEE5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 20:15:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50439BBF06C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 20:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9A164E74F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 18:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0283A628F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 18:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CC51D61A3;
-	Mon,  6 Oct 2025 18:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1CE2DE6F7;
+	Mon,  6 Oct 2025 18:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IwdhxAVq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZc/yqqJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19DD246766
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 18:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5651B042E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 18:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759774513; cv=none; b=Zlo+GW/2PXUFKFPeNvzXroBaH0m2qHeVxVo9ocWmWIzfTFZ1PyQ6u72e5QX91hW5HfYE842rrP+yrvAKDv2rpaHhuA0P5X9rVjoE7dkK9Lkeyrwi6zaiwLKYzq88+I/wojpG+UMSoma5TzOYEMN3FI5sTNfnB4asJLW/tcpet98=
+	t=1759776789; cv=none; b=g06+wLxU10rvwik/38xDsk7yTJvOJmH1PIs+4j3v7F0cGFURbttjFblAChlekNBquDVF+mvWlF8H5bUjEEkPIXjVqTSnH2Wp9aoaWsnn7+lQTYzXxVDGNP11TxLreHM1Hw/kxwDAYsqsP2rpiqpOLUS/Uyh8tIb42oNp26Gm5S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759774513; c=relaxed/simple;
-	bh=6KBDZHR58px1OGgtFtHwdWI93G3z3DNj8TlLWsV5yeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J3PumvhHGI8A8ToTH2/+mmPNiz+diidH/dl8N9OcnzlDO2RZpkcsDVPzyGstKD2tk9SHqtEtGcp4geBWpSCQuxkvbriyjWOXkZbFDQxYQXUkdYoCBOCwF2Co7yA2Ua/LmlP4uLMI9q83kEr7ui0Y7ILQ2niq+EKuaJrJklSMMCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IwdhxAVq; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3d5088259eso770232366b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 11:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759774509; x=1760379309; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+IrJM7m+IGfKJ5wujAoW0yQ4XN9nNk26XjqZOP2OaE=;
-        b=IwdhxAVqRIb/gGCvT1z8AQyAX7LBwJMDryxGsdq9IIePf9O9ujtWl7cj1IjSfLdSMq
-         UIQH3oLb5c6+1EI6KbGNiJ2XHCBCxbOzQWK5wf26Xnwi/3zaatmJJgdNQ3b4tVjZaSjI
-         4N6+n4krA3Bil31Z9lUtO8ilmMZqOetJ0LkwA=
+	s=arc-20240116; t=1759776789; c=relaxed/simple;
+	bh=eWI9PmOJt9WIaRlYjU78S12UG6uSHamRZWNSsCfgWvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUpgF6/K0azngmbd9z7XTt2ieEgB4+nLfLTOHHUktyCU6u7HzgG/9ZZlXa8+8EK8Mm1Uj/0uH4yBmDqqZu8BQrv0lgxffe8clEl5rAlehckLbLXL/DmkBEDFKSGiPrNXQqR4JY7TUU0NRGDpI87zkXq9Ep+kIhrh45i7IzQwCxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cZc/yqqJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759776787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3AELUvjO0N+ODGhRgLstmsznCqJ4q95SzfBUYFo2Qts=;
+	b=cZc/yqqJJlIIHPvNRrGGmAXMLPQwyPGyz9dgu3x+zm4Ea2kU3jYMdgh87eqsC7rAzyD4Ek
+	jMzl9/uCDYuDaze+LRHfxLZufcieVFrfUvJV2DSs7QGiStH9Y3bwvxtEdyYX1uQIT8/WXY
+	zBwQuCe4ZjILxjlM0lWgy0nPGgXgb4c=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-656-YIp2QpV-PYixaiqB4_0Oeg-1; Mon, 06 Oct 2025 14:53:06 -0400
+X-MC-Unique: YIp2QpV-PYixaiqB4_0Oeg-1
+X-Mimecast-MFC-AGG-ID: YIp2QpV-PYixaiqB4_0Oeg_1759776785
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e31191379so32871815e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 11:53:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759774509; x=1760379309;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G+IrJM7m+IGfKJ5wujAoW0yQ4XN9nNk26XjqZOP2OaE=;
-        b=kwEECG1BEidsCdwYR4uukf9Iscyw0zmhKJUsaE00SeHUjPGE11IPMY76v6CIUBX//8
-         uG5P4fZVfNEeMZmPGCUmnzdLoFAPNdWotmgH2q66K7Is9O4SkOMTmblbpjFrj5pr2+fB
-         RVifOljnHhlMe23WR0rFJrCvUTA9qBAxTWWvp/+8ekNKqBbsf2sLiv7+CwJvjhXbkqlf
-         kiguz2H9w9HI7JRvtT7nvkuhkc4PTPp+MUMj4dr6dt6e8OqwsrPEv01Ce3wY3o+MRFpZ
-         xFHK5g6OqPpa1o02+avD70RpW5AxVRGXG/5hnJUwnweuQ1JOeEB/gjw3oJCk8m5UA4P2
-         XiXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVv9457MT73GEt4ZAbiUNYm9h4V4cq8S4mVnNHR2h2IIkqEDfSVCwH72b7WpdBdg8OoEmXjrlUNPuJIgHjP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3b+y0typjkTWVAEt0YvaGz5yQw7PHbCTIn/gY4D4X9NlIOUL0
-	ep7VyH+F5AQe4sCQCqT0uXSfvecj4Mqq/Kj1qTaMIw/R9KhhO8gmAq4pgau0pI05QStWgZtSr4A
-	WI0TKJhA=
-X-Gm-Gg: ASbGncvkwZ6Vv+aTogFFBqzhVSmuxbgFwwORsKMxTsk2XZSvLiLI1Xrio0yT6P7PU3q
-	y6GaH7ZI0hlU5gEUBVENEFemTYYliDzvk9mJLf0FqgMVE8a+jpQzPcqt7OV35vmPF5SkL1Kif5g
-	I4GviiRgMc5pKSmMG+9zhBWnRqQZISNiYTn4v5wIm2O5vQHudb50bL/LlEd1BD2ZGGCNMgGgiEI
-	h18RXhGbRMrCXACBqyh6jtPs2sXZASSt39fNjlWQCTrevEa0u3vYVn9MmpVS10yn9S0/nfoH+rU
-	0hZODrwjjr1A+bIQX7E4bZu2hdvXEwdm2Y82zODxbUE/GR7MbtsZYvNryhO1sXB//pFYJ9S5lgg
-	+JEDADXhLsZg5gC0mMYjKBl4CWFser2a1GLi9i9Y4yh+px4EWLWuP6QB9UFMIah6QrT2c+ZbV+9
-	pGflajOB+fOeGSx7QBe0d3UJb2tgrekzc=
-X-Google-Smtp-Source: AGHT+IF8yLpaJWQcjZwsg8lUnRCx9n94Q/NTxHPPoqX2bBETelZY+5QeQKKaeGVBi5Vh2+L9T5WpOA==
-X-Received: by 2002:a17:907:94d4:b0:b45:7cb4:7d3 with SMTP id a640c23a62f3a-b49c3b25ecamr1766552766b.32.1759774508755;
-        Mon, 06 Oct 2025 11:15:08 -0700 (PDT)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865986505sm1189147766b.23.2025.10.06.11.15.08
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 11:15:08 -0700 (PDT)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7a16441so860236766b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 11:15:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVGpicl5PzIsoOiRVb4DhyrO7MxQ/wSFkfc1qhPrEsqdEISB46HEGGJlokXdicGPa3QuqgVIUrXDp4xq3YJ@vger.kernel.org
-X-Received: by 2002:a17:907:97c8:b0:b3f:b7ca:26c5 with SMTP id
- a640c23a62f3a-b49c44b0c80mr1722317966b.59.1759774507739; Mon, 06 Oct 2025
- 11:15:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759776785; x=1760381585;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3AELUvjO0N+ODGhRgLstmsznCqJ4q95SzfBUYFo2Qts=;
+        b=wLEwGOUGSaMlIDlrz43ElaptGTTHFtnsG8M1fTSjW7ohQcxQO2pKSHi6MZjRlzFVGr
+         KItBmjCtI08QuC+mZcFTAxvfEQbHxYgjP/u0XvZ4tWPp/DGA/F7QrthU/3zyAvcKenwG
+         cuakSpiBj370uNkBqdE/CSpxAC2J4JV+Gx9qqEfkgOfHIV3MQoMCUGxkfoOLUMVsZrTQ
+         nShUGD8JQ7aUjnzz0/5UNRAuRdzkflCrjf04+aAxFJsb7M1AhAVNRmi5SxjCtI617AjW
+         S36EmmWLyaXwXKsZnb3KyWzXQBhE5+ClJi0sA5cMp85I9JbT0KM91RqactiwCHGGrEW5
+         x4xA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNdpAbHX028y3lBCRX01cLZlXkx+Fpq8bqY39aD/QfYHXxbzV7dz9cZJPpxuW4p8hCorapT0LASgiRP5EL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhZyBBGG7RRIV0yoY4ZTL1G67p/7tFgwRBHv8ZooB6Bl9hHxop
+	bn81PiW4toTbpAtVxFYEOvAHyQcS5VsvX6FPkjloAULdkfySAoPO6voF8DC83ZKM81dGGUNKh5a
+	aZUbCY0mmzDY2lsViJsEBdlXL+s9P44/mALcO1hpCvbbSYAbEgmnvisEGobgzz/Q+dQ==
+X-Gm-Gg: ASbGncu+2kSBmGGdoo3R3t5vMSM0HHpdr1RKN25X0Hv3deHcCdlGQpVK/v8RZ60r9K7
+	cky5ZrjWDwkgtIsEXd9PCuVQeQO145RiPQYQqpk6tP/g6JaPdngsDPjqS7dkMQ23Vzk/4h8qSdG
+	PVkXG9maCXv6yabQpZJJYdFhcSUzNffNmp3pnXwkrPUyY7yiNHxFq+9YurENKtL72TaFAr4V4D6
+	lUghx++1XGrk8S6fr9P0VB02UectbpuIDNGGnthxWol5xv6ciQ5zTExFRdEJHdBxNL7KSoDNEOC
+	PywILBTmukGbgeNN/wziV1usiwAoIO6fAqaEyhJnzzIxsxLIjHF05qk6c4WjM3axpw==
+X-Received: by 2002:a05:6000:2303:b0:3ec:1154:7dec with SMTP id ffacd0b85a97d-42567164b20mr8887680f8f.25.1759776784555;
+        Mon, 06 Oct 2025 11:53:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcKlhLopprqD0ctLDeK3ZiOapzKNjpNRXsOsRWDtqgxDtwJuOl9eDtA1aAuyt6f3P21Qd/GA==
+X-Received: by 2002:a05:6000:2303:b0:3ec:1154:7dec with SMTP id ffacd0b85a97d-42567164b20mr8887653f8f.25.1759776783878;
+        Mon, 06 Oct 2025 11:53:03 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm22533134f8f.49.2025.10.06.11.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 11:53:03 -0700 (PDT)
+Date: Mon, 6 Oct 2025 20:52:32 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+Message-ID: <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+ <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+ <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wj00-nGmXEkxY=-=Z_qP6kiGUziSFvxHJ9N-cLWry5zpA@mail.gmail.com>
- <flg637pjmcnxqpgmsgo5yvikwznak2rl4il2srddcui2564br5@zmpwmxibahw2>
- <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
- <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
- <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
- <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
- <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
- <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com> <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
-In-Reply-To: <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 6 Oct 2025 11:14:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whG4TYkS+Ns0hbx4XNbvQN-BAvq9_ABJz1bgBsA4NPDAw@mail.gmail.com>
-X-Gm-Features: AS18NWBukV_xtmU11JJsDRqxO_VMhKc_Ul7jDhpyeBLq29Yx3q9wMoG-6X-gkno
-Message-ID: <CAHk-=whG4TYkS+Ns0hbx4XNbvQN-BAvq9_ABJz1bgBsA4NPDAw@mail.gmail.com>
-Subject: Re: Optimizing small reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
 
-On Mon, 6 Oct 2025 at 11:04, Kiryl Shutsemau <kirill@shutemov.name> wrote:
-> >
-> > So I think you can just change the seqcount_spinlock_t to a plain
-> > seqcount_t with no locking at all, and document that external locking.
->
-> That is not a spinlock. It is lockdep annotation that we expect this
-> spinlock to be held there for seqcount write to be valid.
->
-> It is NOP with lockdep disabled.
+On 2025-10-06 17:39:46, Jan Kara wrote:
+> On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
+> > On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
+> > > Future patches will add new syscalls which use these functions. As
+> > > this interface won't be used for ioctls only, the EOPNOSUPP is more
+> > > appropriate return code.
+> > > 
+> > > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
+> > > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
+> > > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> > > 
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ...
+> > > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> > >   			fileattr_fill_flags(&fa, flags);
+> > >   			err = vfs_fileattr_set(idmap, dentry, &fa);
+> > >   			mnt_drop_write_file(file);
+> > > +			if (err == -EOPNOTSUPP)
+> > > +				err = -ENOIOCTLCMD;
+> > 
+> > This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
+> > ENOIOCTLCMD/ENOTTY:
+> > https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
+> > 
+> > I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
+> > return EOPNOTSUPP.
+> > 
+> > This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
+> > &FS_NODUMP_FL):
+> > https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
+> > 
+> > dumps in 6.16:
+> > sf: ioctl: Operation not supported
+> > 
+> > with the above patch:
+> > sf: ioctl: Inappropriate ioctl for device
+> > 
+> > Is this expected?
+> 
+> No, that's a bug and a clear userspace regression so we need to fix it. I
+> think we need to revert this commit and instead convert ENOIOCTLCMD from
+> vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
 
-Ahh, right you are. Complaint withdrawn. I had the "lockref" kind of
-thing in mind, but yes, the seqcount thing already have an external
-lock model.
+I will prepare a patch soon
 
-           Linus
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> 
+
+-- 
+- Andrey
+
 
