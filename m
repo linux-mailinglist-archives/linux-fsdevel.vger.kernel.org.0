@@ -1,198 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-63504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58B5BBE8D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 17:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1786BBE9DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 18:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99A618981BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 15:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73D251899ED7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 16:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD81F2D8DBD;
-	Mon,  6 Oct 2025 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9104C2D480F;
+	Mon,  6 Oct 2025 16:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ecV6VXC+"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="VKxnlQon"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF822D879B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 15:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E892F1E5201
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 16:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759765878; cv=none; b=stMIS4a6yr52LD/kce7WtvP+oljAHdOgVGg6nj43SfuJti0enW/Q6gV6C09q0hvFP2Qybdm4rzNecvFkkZ2GZL8+c3Jw31C0AXCKRhmwCC6CcP82fC3n5uTMXhb5O7KAvOI/Gs7bxKbh0SYVoH0znBzagXD+r4+ynBRdIlX7RZI=
+	t=1759767518; cv=none; b=iOun5EWB72hWAt6ZECKp3U5mtR8G1y97OiulLYXtamoHPYCWaAt5I1TIG62QwyGm9ooff9b+UIQ8rBkTgTA1qFYkOptWJYqL30L5j8hJX0NSVnqtolfXdSkhSQ1rPF+dwQSMFiaDuzATWLIkPrNy9zuR67Fi0RShTvZCye2dqDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759765878; c=relaxed/simple;
-	bh=eB34U1ni3DWg+YCHHtomG5k29cqI5tvTHpZiu6jVJDU=;
+	s=arc-20240116; t=1759767518; c=relaxed/simple;
+	bh=Qz9D6w3G/yjpN7oFudrZ5DCv7qahcZFISREkkOiWrf8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZ5aqcLpOOFYytilspglNr0JAnO9Lg0xW0q/K2bGwdOspmULZF0DFF2f7UYRDhnIoOWNZHA7mAmpXGRZYim46OPczuptcwSt+fr6Iuwt8MnCoA6UOavTYmaFApzhslMHRlDloVH/+b0fmMvSjH3SMoocMGZKL60DmNmCRKJFpTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ecV6VXC+; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3ee18913c0so796979466b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 08:51:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=goBmlau6GQXRFkrl2Rx1ivvHihX+mwKWdaODbvGTV50A5nMaQHh7alcYvtABpW0/B8O2NeRDFCZDWA9E/ay7D+5A4NRPFFWCCcm3OHw8y6qyAC1GwbcOK5hZc+M1sqhZRDY4oe7z31JB8D1GOvlQeZytSvnIfoa07gqJz/xZ4zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=VKxnlQon; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4e6d9573c2aso10699471cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 09:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759765873; x=1760370673; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sMoomnihbSwUNorrh09eu+PuWRV7U6fAeqINMFRwMBE=;
-        b=ecV6VXC+Kfnr22zSM2KDsWtBNy/7p3NpQrRH+s6/5CYgqtyYgR7OqvdCvOAdPRZT6f
-         c76EIYlV/IhFX2Nw1FfOTXt/3ortDsMD9wjTUY/OnxZ32ssSfw1AvWJmyDkzmP8hvJEe
-         BD1RbmNF3tExosUGbhJMTHVAYyBw5GqAYb9YA=
+        d=soleen.com; s=google; t=1759767514; x=1760372314; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XrjZ2N3nijkKvhfmQO1vA7QLR5P8LLIRs7v5R7YmxE0=;
+        b=VKxnlQonDU17q6xDTEbfLgRYJ+JTaCw5HtH8g+bESBjpYEk2C9DC3hHwnntK3WJk/S
+         2cp2hYKdkul/t9YZsAH7knaUSNCfjIu9aahu6mtuB0LfLfc5jlD3QS2E/c/oJTRH9X5/
+         W/tougYGwUK6/pLT0sX0zvBkKVYRJFJzrX0xKDHX9H/ch2fPrDSwTvs3HHnuvK1Y7yQM
+         M4RGvtAWl3DwYiPBesEhuN97tpbhLOUqYxVdlbiBeljlK1en4sSOZ9Iq+qtcDEY1p74U
+         kQbnNPVWRxMSAhooqBAru8reNiFSoQlPZghLznA59oQkzSIQ2W5DDBo+TtDBhQWkuZD3
+         b28w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759765873; x=1760370673;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sMoomnihbSwUNorrh09eu+PuWRV7U6fAeqINMFRwMBE=;
-        b=S3tIF/SSQYgkq42YlCI6t8E4HrandafGTiKVFWRkhgDq98Odjv4xEX120Ac7ef+vU4
-         aSpAp+/zNw0FsyyUllG2J08+2AwZ9/VDG8eSDRduDnIwW5YNBr9y/hICELANzNxaZ5LI
-         qQ+VU6T94xwlWXMQkG8R6njug7XKdZXlJ+s0JwT6XOCKKGuV0qRnZSkk/ZGsdWmO5ocL
-         IWCqscbj4LsfDMUiS6p5u2PPSDQysarOpsKjRAPz0brsdFzrJ4VjVvJCFklAb6IB4XGW
-         CZKNh2GW5wR0XT2N2q70ssMp9DOyR8CzJR/Fr1ihIz18fafIqODJ1JxpxPk0sjuhEMD5
-         fvaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoiB5v2LwQWpfy8yonY/kXikSSsCD14c3pwNcmml4nJlI7j1PDoVgPK3ZNAojm6a2w60+rPbQPJINGmP35@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIB4+e6gs8QxWEmsmku4us1XR5GxDMPZFVe3Mo1tuaEFXNxieh
-	5HaE//bAtwVgKHrQMH+PCzi3+Nb3pm4TCeD/37EhqZD3jLKWuF8AVz/Cc57qgkTv/MsAqguQssF
-	z83G4Rio=
-X-Gm-Gg: ASbGnctfk8p+kCkPsDZY/tWcdvkgad7/BgFbDJNv2tUsuVkqwl6EzuVsK0/+bUWIuK3
-	aMC0fObvuvoI862tRrMDSS4amdSHxrNlXTLSZNX+0taNmGCT3jwQxWJfqvDwwqP6UJe8ZSjnshN
-	XcDxoCKDC7RmFgfGb4T/umappeqiSvHb4v0emhKM7o3XgfmSx9198awNAz9nS3RVI43pPY7xTQT
-	QlIxlbx84uhVMmzTph9izuqz6g7mCpUgXWUxNUVZRs/SEMb0DQYqs58ET9TPMqTmjCauNCLZvo9
-	uiGGEpMOYON/G8kmdw0bSOUGkZYucA+rjaQcj6SgmxxuVbkK2eiJcqSVRNTS8gvTaNNxBxAjQVv
-	Q2B/PnpGhZn8+Tf48oSOmfcHuUzqmHrV3W7IKAKBbpm7PLBj7ZNiC7nvk86L3UgorWYxKRr4MCY
-	KDlXcStbpvD7oPZ/F/+eJjvMkaotp5PHU=
-X-Google-Smtp-Source: AGHT+IEGovermZQm8jJ0UVmO5KYf4LzLYCOGwHISrNLCxQlLrk9UFfEaqroWE5SruE1uzGe2AkPiXg==
-X-Received: by 2002:a17:907:944d:b0:b46:897b:d759 with SMTP id a640c23a62f3a-b49c3350408mr1685471166b.40.1759765873353;
-        Mon, 06 Oct 2025 08:51:13 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869b4f1d1sm1159726266b.71.2025.10.06.08.51.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 08:51:12 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso9290179a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 08:51:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ92RF7Vn2+dpDeRvfzuvgi7fDbPsL6u78suDu8dQ66+CJ2st3zPei0sY4Z7rBB89YEluoJstSNzj2mUDV@vger.kernel.org
-X-Received: by 2002:a17:907:3ea1:b0:b04:563f:e120 with SMTP id
- a640c23a62f3a-b49c3d71bbfmr1705204466b.53.1759765872029; Mon, 06 Oct 2025
- 08:51:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759767514; x=1760372314;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XrjZ2N3nijkKvhfmQO1vA7QLR5P8LLIRs7v5R7YmxE0=;
+        b=j4mg2mL5JkKpF/DqpIJF/zpnptVhNZPR3fafGcf1JBY5VGCZjZMGDunyfVJ+oHsOlv
+         E7O9cQYwyoasyjF9ALS58Somcd5KWaszoYzyVVM5c1fGCR/49lyu/QSHhS7u0nM0752k
+         YV5EK/A7GA8WksDSkC5NTa4va5RB7g+MU+TPDNLIyArhpC6QUnrCHXuAfHJX1K+nAR/h
+         qoDNQk7tq9IXo3vR/niknaiXbXtdcF6QYB8OlsN6bRt0n3WDJp6ee7Uq2riXBzAyypGJ
+         cdS0oCFTpgqfbuXxQi81+TyHrNJKvynoXNyQs9BmKO/L+/n6+iOXd7qeDvGwyiS4kBke
+         z5Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWcKTLoE6kiqJfji+QLyaL+I4/sGSXBaaCvZITXoU2jsq121Ht4GUYs/cymw1lhTp5EeILKu+gt1LNnB0nr@vger.kernel.org
+X-Gm-Message-State: AOJu0YynRcNzEadv1HQA5YKtX2PgRCXNQUdWFtJazP2239ZVNdAhbGbX
+	LSFATKPqNB1H5z60fAZ/J7lQ5tNwnTwhNEUHpnV8Z+j2qWNLBtlpYHvp5+sdr5VL0KPkop1WwRu
+	2rRZm76BMmz/hMJCfGMNftJkkuXlhbynik0JUzdBx/w==
+X-Gm-Gg: ASbGncs4hPRCTbTW6UAS8cnH0nyzwM3upifOH6PF/EwjMF7zdb9jtOWoz0XW3YIKTaP
+	2Rb1aJ3x51YqGsQ07p37Ca54zOix/nF2mzeBJT1Ikq55rO0GoqMPfx0c5dJyeC0LK+9hhc7RHDd
+	VH1WfkXqq+dQkd+FJvp9+14gPpbvE0z5efIfy80t9QhW0YKgm+f7aZw7wA1LyzVoUACv68OgjCP
+	L1lBcxgFddHepaHo6tUNx707Y3zZiQwvKtrC8I=
+X-Google-Smtp-Source: AGHT+IFwm4V/zCKBkbgm7pfKIp77PJD1NOmB2z+7xVCEcG6LKB3NFoKIKgya5mufGjYCV3AhGt61yn25CRIzX8BM9QU=
+X-Received: by 2002:ac8:5fc5:0:b0:4b7:a7b6:eafc with SMTP id
+ d75a77b69052e-4e576a5c404mr198174771cf.13.1759767511840; Mon, 06 Oct 2025
+ 09:18:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wj00-nGmXEkxY=-=Z_qP6kiGUziSFvxHJ9N-cLWry5zpA@mail.gmail.com>
- <flg637pjmcnxqpgmsgo5yvikwznak2rl4il2srddcui2564br5@zmpwmxibahw2>
- <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
- <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
- <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
- <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com> <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
-In-Reply-To: <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 6 Oct 2025 08:50:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
-X-Gm-Features: AS18NWDwictm2mx4ddQEHSIlRgCT4GuM73mcD9dZ1kxxXns9_MP73AOoOkea4BU
-Message-ID: <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
-Subject: Re: Optimizing small reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <20250929010321.3462457-4-pasha.tatashin@soleen.com> <mafs0bjmkp0gb.fsf@kernel.org>
+In-Reply-To: <mafs0bjmkp0gb.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 6 Oct 2025 12:17:53 -0400
+X-Gm-Features: AS18NWC8dVdnh9WrIeR8a0qx05q3jEVozl0VBzvOu40iLLzMHk8IAd4vKASusLs
+Message-ID: <CA+CK2bBS-v_djpvw3v-xumPizzmOaiPsuPpoxnSUub-LocghjQ@mail.gmail.com>
+Subject: Re: [PATCH v4 03/30] kho: drop notifiers
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
+	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 6 Oct 2025 at 04:45, Kiryl Shutsemau <kirill@shutemov.name> wrote:
+On Mon, Oct 6, 2025 at 10:30=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
 >
-> Below is my take on this. Lightly tested.
+> Hi Pasha,
+>
+> On Mon, Sep 29 2025, Pasha Tatashin wrote:
+>
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> >
+> > The KHO framework uses a notifier chain as the mechanism for clients to
+> > participate in the finalization process. While this works for a single,
+> > central state machine, it is too restrictive for kernel-internal
+> > components like pstore/reserve_mem or IMA. These components need a
+> > simpler, direct way to register their state for preservation (e.g.,
+> > during their initcall) without being part of a complex,
+> > shutdown-time notifier sequence. The notifier model forces all
+> > participants into a single finalization flow and makes direct
+> > preservation from an arbitrary context difficult.
+> > This patch refactors the client participation model by removing the
+> > notifier chain and introducing a direct API for managing FDT subtrees.
+> >
+> > The core kho_finalize() and kho_abort() state machine remains, but
+> > clients now register their data with KHO beforehand.
+> >
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>
+> This patch breaks build of test_kho.c (under CONFIG_TEST_KEXEC_HANDOVER):
+>
+>         lib/test_kho.c:49:14: error: =E2=80=98KEXEC_KHO_ABORT=E2=80=99 un=
+declared (first use in this function)
+>            49 |         case KEXEC_KHO_ABORT:
+>               |              ^~~~~~~~~~~~~~~
+>         [...]
+>         lib/test_kho.c:51:14: error: =E2=80=98KEXEC_KHO_FINALIZE=E2=80=99=
+ undeclared (first use in this function)
+>            51 |         case KEXEC_KHO_FINALIZE:
+>               |              ^~~~~~~~~~~~~~~~~~
+>         [...]
+>
+> I think you need to update it as well to drop notifier usage.
 
-Thanks.
+Yes, thank you Pratyush. I missed this change in my patch.
 
-That looked even simpler than what I thought it would be, although I
-worry a bit about the effect on page_cache_delete() now being much
-more expensive with that spinlock.
-
-And the spinlock actually looks unnecessary, since page_cache_delete()
-already relies on being serialized by holding the i_pages lock.
-
-So I think you can just change the seqcount_spinlock_t to a plain
-seqcount_t with no locking at all, and document that external locking.
-
->  - Do we want a bounded retry on read_seqcount_retry()?
->    Maybe upto 3 iterations?
-
-No., I don't think it ever triggers, and I really like how this looks.
-
-And I'd go even further, and change that first
-
-        seq = read_seqcount_begin(&mapping->i_pages_delete_seqcnt);
-
-into a
-
-        if (!raw_seqcount_try_begin(&mapping->i_pages_delete_seqcnt);
-                return 0;
-
-so that you don't even wait for any existing case.
-
-That you could even do *outside* the RCU section, but I'm not sure
-that buys us anything.
-
-*If* somebody ever hits it we can revisit, but I really think the
-whole point of this fast-path is to just deal with the common case
-quickly.
-
-There are going to be other things that are much more common and much
-more realistic, like "this is the first read, so I need to set the
-accessed bit".
-
->  - HIGHMEM support is trivial with memcpy_from_file_folio();
-
-Good call. I didn't even want to think about it, and obviously never did.
-
->  - I opted for late partial read check. It would be nice allow to read
->    across PAGE_SIZE boundary as long as it is in the same folio
-
-Sure,
-
-When I wrote that patch, I actually worried more about the negative
-overhead of it not hitting at all, so I tried very hard to minimize
-the cases where we look up a folio speculatively only to then decide
-we can't use it.
-
-But as long as that
-
-        if (iov_iter_count(iter) <= sizeof(area)) {
-
-is there to protect the really basic rule, I guess it's not a huge deal.
-
->  - Move i_size check after uptodate check. It seems to be required
->    according to the comment in filemap_read(). But I cannot say I
->    understand i_size implications here.
-
-I forget too, and it might be voodoo programming.
-
->  - Size of area is 256 bytes. I wounder if we want to get the fast read
->    to work on full page chunks. Can we dedicate a page per CPU for this?
->    I expect it to cover substantially more cases.
-
-I guess a percpu page would be good, but I really liked using the
-buffer we already ended up having for that page array.
-
-Maybe worth playing around with.
-
-> Any comments are welcome.
-
-See above: the only think I think you should change - at least for a
-first version - is to not even do the spinlock and just rely on the
-locks we already hold in the removal path. That page_cache_delete()
-already requires locks for the
-
-        mapping->nrpages -= nr;
-
-logic later (and for other reasons anyway).
-
-And, obviously, this needs testing. I've never seen an issue with my
-non-sequence case, so I think a lot of xfstests...
-
-                     Linus
+Pasha
 
