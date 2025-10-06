@@ -1,106 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-63498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0081EBBE4FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 16:18:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DF3BBE58C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 16:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C8B54EEF85
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 14:18:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A6DE4EE6B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 14:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85372D4B7A;
-	Mon,  6 Oct 2025 14:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECA22D5921;
+	Mon,  6 Oct 2025 14:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XnHVGFwe"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ci3p08+M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B2329A31C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A142D2489
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 14:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759760311; cv=none; b=QGIFklEAwx0zvDK7RJtiPWPoJAdvAp60Fi9X0ZkMtm1/gK3kSooyMDn33vq7iYGV/1JPheHeG0Rcv65NMsW1wohq48baS8p62FO+A/cXjjwNwmD5tfArBcPmbTVuvfv0gpzwlkkkNnSVxxj7TL3M6gJaYQ1ewG48/pKUU2uPZE4=
+	t=1759760978; cv=none; b=cccW5BZ1RdbjgEFLTVNUX5j3+JAYXtn44QaWAokMJZRAkBfeEnbW6ItS6nrNRzYVxVCpiLpPfniEdWFyn9oVO7wg3oh5nZOFd4NKrTbOtnwgvLkCt9wAp5WnFqIUQRyDH2Gkyf+cPhTOV+CFaP8vYx+XfvMzWLSWdoT0bUgrx7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759760311; c=relaxed/simple;
-	bh=lD+gJOH7BbrAfztkPzkBUkg4YmpmpiNcVfG5FaH5V0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PKAHXHxVuIN5g+E+ZbsjLXbvlr2wGh2n8jsgnEFhrdEww747p6kyzwag6VkyVjHgsl+4HFajUq9I73C5VGJobqdg/QnQIalA8LFY0mp3gNOTvt9Tvcak7Z/Je/xyn1eFI/0lX+TRcZDO1tvd5oTSQdTzgnBLMIVW3m8VPJMasmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XnHVGFwe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759760308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6VD2zsKbVIO0/etmD/GaqQQpyf9O3SbQk82/C3h0JpE=;
-	b=XnHVGFwe11CVpLFBJTPucRAqfl7k6hReu+f1ZwxJpV/VRI4ZE93m4U33DnAFM3BUHJ0JBj
-	H1EeFpy5PsfkzawWQxYhblxxj6Ws+6gzWtv4ZB/IKCb2rcclcAKY7JOStHlvGPf1N60xXH
-	5ilCnhyL6ghlmwD0nhjymZ+FiVxq0JI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-290-nfW2r-0WP_-7PdbSSG4qIA-1; Mon,
- 06 Oct 2025 10:18:25 -0400
-X-MC-Unique: nfW2r-0WP_-7PdbSSG4qIA-1
-X-Mimecast-MFC-AGG-ID: nfW2r-0WP_-7PdbSSG4qIA_1759760304
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC28B195609E;
-	Mon,  6 Oct 2025 14:18:23 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.2])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AD0EC30002CC;
-	Mon,  6 Oct 2025 14:18:17 +0000 (UTC)
-Date: Mon, 6 Oct 2025 22:18:12 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
-Message-ID: <aOPPpEPnClM-4CSy@fedora>
-References: <20250928132927.3672537-1-ming.lei@redhat.com>
- <20250928132927.3672537-7-ming.lei@redhat.com>
- <aN92BCY1GQZr9YB-@infradead.org>
+	s=arc-20240116; t=1759760978; c=relaxed/simple;
+	bh=E1oFUaetIN3J9BbLXWw81KQZaVbHVxYOQAA3OKovtV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f9OooSJaMgyT7LVQSpsAcUiryE4z2YGz3dcnLSoPbUQbsw/j8rV+m/6Ghm/i0BlcSDh+H/prZ/0tzO2s1qYHrW71spC633CzmH1XQGSQgTI6VBF43JzRGM9xiaix5ZXzJRwUtjfHNtAdzy6t/YjsoFN8D2Y09rBgolOcfjlN7Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ci3p08+M; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-635349b6fe6so4060259d50.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 07:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1759760975; x=1760365775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PJnug6q8HPEpXIFL/wDOLMWojEn9p0rWq/or/bnemmM=;
+        b=Ci3p08+M8xpkARtZPZOS4iqS+RdaAaX6AZD/lwE432f1Lqx4Fl2472Ane9CwZXTnDa
+         wr2j2Y3EFtPvgwwhhhEmfxR9/MDJbWyp/JLmBNJ3SprOERHkkgubb2J5fzfIMFn/oLzu
+         J/e1TfjjlRlBHST8/mT/P9V7wTLk+ny28zIMqMXhidLR8+d9D66tfLKlXgryJVd+aANC
+         AX9uxmykc8l6kvwEhFICry+Rimb9EORnfzBPm6NQv/oIhXESm8HEOc+32Pz+LEWzz9hy
+         wKYEALLo87qRB/+fJ6hKXSOytfVEbkwoa1hFDnl7LwxKtkt/4StIc8mYVB/JbcuCVmkj
+         qRmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759760975; x=1760365775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PJnug6q8HPEpXIFL/wDOLMWojEn9p0rWq/or/bnemmM=;
+        b=jNjw76DYdIib/W2DiFDp9LB9lo51wYYfU2we2/d60nBra3GtjGbjDsbdmKegMpOlG+
+         MzHI1vsoevWQmzQ16GeCmMo135fEalRwR/YqaEDDS55c65wuclWJK/b/HXGOQoLdKWLg
+         f0vmZ+MxVytqJBc+tqKxcSqDb1ywqnbdPnRQjShixAmMR6ABvPivph5lL4rez7T7PfrO
+         32o5bsXvEZRxuDEJWY64RPGauwZrGz/GIZJt5FAsNgec/+UOeEe8ik2ftB/SwL8ypUQY
+         Pa9L2ZHpW05eSMDQX4tHvILjYey8Ge5ZrEseLuEBlg/XQ+owcaFo4ukQ3gssti9Cy4Di
+         1VHw==
+X-Gm-Message-State: AOJu0Yxz9hPXXfIYdDinedLXNBuM/qJElGsAqIgUo0XmV4CU9LsH2TOV
+	X8xW6l2Amwfo8Q9+ZrzTwf7Sqi/h8+i4fCsy9fxvGF9jslJJNW1NpLZ6YQBVPAtSgzmaMHNDIg3
+	KTXBh4/WyDj33SZ7bDh2x9ZvHmt2va7yrwffyubc9W4QZhCJ5gkPrE8Q=
+X-Gm-Gg: ASbGnctijUBsTNQ9wQUfNGD+KZByKIYh2iykx9ZmjqytPN3PGwQheBBd1Pq0BgfrAYA
+	NR1z0c4wvaQR3fXG20jlo/mCkVwxSfsjNP8c0dzAeM+422uWF/Qg9GMEdbapCpA+WO4r7pb1Lw/
+	Ft5WIw62wArv0oWLtHgBcr8uBkClGMWs61OlR7Yjt5iOdRTS2E0syzPeGqwuA7tyKYg1e2NzPbi
+	eFdqyeagfit4IG3FHz17X2LmhBVGSWEgeJonP01Qr/i3rmqKA==
+X-Google-Smtp-Source: AGHT+IEphe+jpr4i9iNOYvMrbl6mnzcpI8NSqKVNsLCn2RITk7Tut1rz1dRJ62vywpRLtrLtjwpgHodNVUg3+fDBx0Y=
+X-Received: by 2002:a53:ac48:0:b0:63a:d45a:8a55 with SMTP id
+ 956f58d0204a3-63b9a0f4993mr9638461d50.42.1759760975073; Mon, 06 Oct 2025
+ 07:29:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aN92BCY1GQZr9YB-@infradead.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250930065637.1876707-1-sunjunchao@bytedance.com> <20251006-zenit-ozonwerte-32bf073c7a02@brauner>
+In-Reply-To: <20251006-zenit-ozonwerte-32bf073c7a02@brauner>
+From: Julian Sun <sunjunchao@bytedance.com>
+Date: Mon, 6 Oct 2025 22:29:23 +0800
+X-Gm-Features: AS18NWDjbDOol8a1ZfvjT51FTwV90CBDkU9pBegkp2IEyx7dcFVL0jp3S6uVzJw
+Message-ID: <CAHSKhte2naFFF+xDFQt=jQ+S-HaNQ_s7wBkxjaO+QwKmnmqVgg@mail.gmail.com>
+Subject: Re: [External] Re: (subset) [PATCH v3 1/2] writeback: Wake up waiting
+ tasks when finishing the writeback of a chunk.
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 12:06:44AM -0700, Christoph Hellwig wrote:
-> On Sun, Sep 28, 2025 at 09:29:25PM +0800, Ming Lei wrote:
-> > - there isn't any queued blocking async WRITEs, because NOWAIT won't cause
-> > contention with blocking WRITE, which often implies exclusive lock
-> 
-> Isn't this a generic thing we should be doing in core code so that
-> it applies to io_uring I/O as well?
+Hi Christian,
 
-No.
+It looks like an earlier version of my patch was merged, which may
+cause a null pointer dereference issue. The latest and correct version
+can be found here:
+https://lore.kernel.org/linux-fsdevel/20250930085315.2039852-1-sunjunchao@b=
+ytedance.com/.
 
-It is just policy of using NOWAIT or not, so far:
+Sorry for the confusion, and thank you for your time and help!
 
-- RWF_NOWAIT can be set from preadv/pwritev
+Best,
 
-- used for handling io_uring FS read/write
 
-Even though loop's situation is similar with io-uring, however, both two are
-different subsystem, and there is nothing `core code` for both, more importantly
-it is just one policy: use it or not use it, each subsystem can make its
-own decision based on subsystem internal.
+On Mon, Oct 6, 2025 at 6:44=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Tue, 30 Sep 2025 14:56:36 +0800, Julian Sun wrote:
+> > Writing back a large number of pages can take a lots of time.
+> > This issue is exacerbated when the underlying device is slow or
+> > subject to block layer rate limiting, which in turn triggers
+> > unexpected hung task warnings.
+> >
+> > We can trigger a wake-up once a chunk has been written back and the
+> > waiting time for writeback exceeds half of
+> > sysctl_hung_task_timeout_secs.
+> > This action allows the hung task detector to be aware of the writeback
+> > progress, thereby eliminating these unexpected hung task warnings.
+> >
+> > [...]
+>
+> Applied to the vfs-6.19.writeback branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.19.writeback branch should appear in linux-next soon=
+.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.19.writeback
+>
+> [1/2] writeback: Wake up waiting tasks when finishing the writeback of a =
+chunk.
+>       https://git.kernel.org/vfs/vfs/c/334b83b3ed81
 
-Thanks, 
-Ming
 
+
+--=20
+Julian Sun <sunjunchao@bytedance.com>
 
