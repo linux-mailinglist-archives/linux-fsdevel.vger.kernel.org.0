@@ -1,62 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-63477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8856BBDD90
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 13:19:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C1CBBDD99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 13:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB7424EC91E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 11:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8B21895BB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 11:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23D7233155;
-	Mon,  6 Oct 2025 11:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B0026C391;
+	Mon,  6 Oct 2025 11:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmMudmN7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMs2nIz1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEDF1E1A3D;
-	Mon,  6 Oct 2025 11:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D4C215198;
+	Mon,  6 Oct 2025 11:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759749575; cv=none; b=GaQYZu0CowIIAaHKrI0Ax2H6Gn3RLRmwKMGJxjezSZ11Brx/0ygy1ZrPobcs3kP6QixipQfp0RC4sl9GbCSZlbMUoYYivCbNQHfBbXcno0DA4hD5cFAxzYVOheYEnwaUpWCMahJVcU3qoXnNIduSuf+oXhLx3e6tuXdiLExiHXo=
+	t=1759749688; cv=none; b=LKUanut/inq1ZYeXGPSm1fuBmMpxU7lqCnhY3QspdwyN8CePyvocPmt4aKLhB5Hiixm/jU5RnFBBoEMdfI3MjzVVfRn8QbRZedF4+6O/Bd9xKIhcn6avZeJqJyy6UYPiJNnNvUmRPoBPwDO/HKbq41w+Gws/gStYxEl4lXNs0qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759749575; c=relaxed/simple;
-	bh=Hpvnf+j1mxtW51BviaDXUsv7YwPa75uCcO9uFatVCrI=;
+	s=arc-20240116; t=1759749688; c=relaxed/simple;
+	bh=9kHxnnWakzqIdiZvArQ58Wnu6eTlglYNhJNBz0MQgd0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIT4k07SRjMcYmvlmKcGrdYyes195AY6ouJ+eNiHHF6K8HVLtnqv5dj/dUaMsmdP6vVdcX3nlrJBrK2+gbJi/pj43GbxYgQXv/mXmBKiKE6E7gEzdsS8/Y9tF5VAMYTpnH44M4bAH3GngAdzVN+mJ20/7KjTdWEzx7wJk9oUItw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmMudmN7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9E9C4CEF5;
-	Mon,  6 Oct 2025 11:19:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gu7PC1osKgpWyO8NmAERFvSkb8g/q7Ckp0svUxIE4IqI7f7Kr5tvJxvN5HvGu3VzhNe5bwJQGELHeIJcy/ECCuU4Q5maFbaEC7ljQjnRM0fQ2e4BtDqWEYyQUo6ZtqIQKBvfRbd4B8BWqpHgczqMwhG7u0MBgV3EmaZc9N2O4YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMs2nIz1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55E3C4CEF5;
+	Mon,  6 Oct 2025 11:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759749574;
-	bh=Hpvnf+j1mxtW51BviaDXUsv7YwPa75uCcO9uFatVCrI=;
+	s=k20201202; t=1759749688;
+	bh=9kHxnnWakzqIdiZvArQ58Wnu6eTlglYNhJNBz0MQgd0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BmMudmN7W7uy1Ymw0EABoTYSzlU3Qfjeu9UysvjEA0EnjNtXbCYzI9ZoVcKOJIfkW
-	 wKneuAhi/tDRGlbdtt2XX+UrQPFO7t1yxOPws7UydGfUrqESkwQ6SFnGXk1oW5mdcu
-	 sDZtEPy9zhm9DM8PEsSRF/0L8ypx/RtYGBOp2QvY86N+UTprw94ehAlXOiziX3wiHI
-	 zO88sv6j2hxnRWu7OLf+SZge1w/d4jMiuT98YeHpfGfjFGHVSba0MmbkxFfQ4wDdi4
-	 aHFi4my1/guoEk7w3EGRctQYSedoLTZa1IdHoQIaDJ7aOPfQMd4Rp+bLvbDRfbT/A8
-	 8W8vksM4tih5Q==
-Date: Mon, 6 Oct 2025 13:19:30 +0200
+	b=EMs2nIz1R7UjlcuYJd6p0EPnsBVGZ6A1fCRcmx0Oj0nngyfW8Gbzs+Nfjk1AVZ2zR
+	 LR9Ceq0BFnajFMi55JvJCM6qOyevR9pYS0Ir4AEplsQyTkwgCdXz/zhCqtMFIIYQ84
+	 rlYxMbOuxDEerkJXgnUDhtoiZ4L4PCieWFvGa87PxEirpV5Ndj7IWY8FNY6ZqFW7bM
+	 onZHk3yJDcRP3uyc7oX08vzYZqJlWpu9zOXgsBgT6HhqolcyiJpmyTu4Za5sfrXCUC
+	 lK8pyIU1ra/Indl2ffm/dygRdy75CIfcaC2zTxHWBWY9os+qZ+e5q95QvoB+gSRDKI
+	 mJvH3FCsfY7NA==
+Date: Mon, 6 Oct 2025 13:21:24 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: Chuck Lever <cel@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Volker Lendecke <Volker.Lendecke@sernet.de>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-Message-ID: <20251006-zypressen-paarmal-4167375db973@brauner>
-References: <20250925151140.57548-1-cel@kernel.org>
- <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
- <87tt0gqa8f.fsf@mailhost.krisman.be>
- <28ffeb31-beec-4c7a-ad41-696d0fd54afe@kernel.org>
- <87plb3ra1z.fsf@mailhost.krisman.be>
- <4a31ae5c-ddb2-40ae-ae8d-747479da69e3@kernel.org>
- <87ldlrr8k3.fsf@mailhost.krisman.be>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] nsfs: handle inode number mismatches gracefully in
+ file handles
+Message-ID: <20251006-ganoven-normen-afe23381aa3d@brauner>
+References: <20251004013452.5934-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,52 +58,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87ldlrr8k3.fsf@mailhost.krisman.be>
+In-Reply-To: <20251004013452.5934-1-kartikey406@gmail.com>
 
-On Fri, Oct 03, 2025 at 05:15:24PM -0400, Gabriel Krisman Bertazi wrote:
-> Chuck Lever <cel@kernel.org> writes:
+On Sat, Oct 04, 2025 at 07:04:52AM +0530, Deepanshu Kartikey wrote:
+> Hi,
 > 
-> > On 10/3/25 4:43 PM, Gabriel Krisman Bertazi wrote:
-> >> Chuck Lever <cel@kernel.org> writes:
-> >> 
-> >>> On 10/3/25 11:24 AM, Gabriel Krisman Bertazi wrote:
-> >
-> >>>> Does the protocol care about unicode version?  For userspace, it would
-> >>>> be very relevant to expose it, as well as other details such as
-> >>>> decomposition type.
-> >>>
-> >>> For the purposes of indicating case sensitivity and preservation, the
-> >>> NFS protocol does not currently care about unicode version.
-> >>>
-> >>> But this is a very flexible proposal right now. Please recommend what
-> >>> you'd like to see here. I hope I've given enough leeway that a unicode
-> >>> version could be provided for other API consumers.
-> >> 
-> >> But also, encoding version information is filesystem-wide, so it would
-> >> fit statfs.
-> >
-> > ext4 appears to have the ability to set the case folding behavior
-> > on each directory, that's why I started with statx.
+> I wanted to follow up on the v2 patch addressing the nsfs file handle 
+> validation issue. Jan Kara has provided his Reviewed-by, and Christian 
+> mentioned plans for future changes with the unified nstree work.
 > 
-> Yes. casefold is set per directory, but the unicode version and
-> casefolding semantics used by those casefolded directories are defined
-> for the entire filesystem.
+> Could you please let me know the status of this patch? Is there anything 
+> else needed from my side for it to be considered for merging?
+> 
+> Thanks for your time and feedback.
 
-I'm not too fond of wasting statx() space for this. Couldn't this be
-exposed via the new file_getattr() system call?:
-
-/*
- * Variable size structure for file_[sg]et_attr().
- *
- * Note. This is alternative to the structure 'struct file_kattr'/'struct fsxattr'.
- * As this structure is passed to/from userspace with its size, this can
- * be versioned based on the size.
- */
-struct file_attr {
-        __u64 fa_xflags;        /* xflags field value (get/set) */
-        __u32 fa_extsize;       /* extsize field value (get/set)*/
-        __u32 fa_nextents;      /* nextents field value (get)   */
-        __u32 fa_projid;        /* project identifier (get/set) */
-        __u32 fa_cowextsize;    /* CoW extsize field value (get/set) */
-};
+It's in the vfs.fixes tree and will go out with the first set of fixes
+for this cycle.
 
