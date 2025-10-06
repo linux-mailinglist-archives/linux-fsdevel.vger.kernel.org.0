@@ -1,71 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-63472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36DCBBDD30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 13:02:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268BABBDD33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 13:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8486C4E3D08
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 11:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D2C1891415
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 11:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A105F2676DE;
-	Mon,  6 Oct 2025 11:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC6E2676DE;
+	Mon,  6 Oct 2025 11:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TK8ne2oZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJ/TUbHD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08717212569
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 11:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47630212569
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 11:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759748534; cv=none; b=L4vmfd/0V05YWxvC0yGVCbODZkRcBLo+mM0ew4aAsf9hmLljZ0nmj8MJkcF2fa9/auCRxgzzn+12Z6ZZ1XF0FushHX/VWeUQysBbngpLgK+RgHmqj3KkQtWhrzTgOQQ9RayapMr+pbnQr8ztt6VjnX4ag1BPTjLmN/GoCM81p/4=
+	t=1759748602; cv=none; b=Od0eT+2VFVJUrkGUlSWe87A1ai6eStHgHtGAVsKIil/z+Rdhh5ND2CvjUHgUg7t8+DO5sQkfKdzYedmqJB1lyv+AiWxPXmsavCL/OLwBG/+d06YbDRyrKuftzux/8u2+vMMneGkosr6ff8WNO1OOrvzqUupGxcb3YHi0WUxqF8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759748534; c=relaxed/simple;
-	bh=trC4doR8JaY+67i1lCFdQ30RPlKGs06XX/QzFtkZSdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iP5zeizB0pFnE5dAdMlTXrBlm5G7f9WwxneEx14YUDntAeji1c9DSZnwCO8LauH9hYWTHmQdONsDg1FIE88l9z0bby9QMDG1UZGAf+xNiG8+4gnWb1dWSGlPi4D7iU+qusDhBm6BlAL/yrxNyxAA/i5ZLzA3zBiUdaghRPNGCfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TK8ne2oZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896A9C4CEF5;
-	Mon,  6 Oct 2025 11:02:11 +0000 (UTC)
+	s=arc-20240116; t=1759748602; c=relaxed/simple;
+	bh=cotaFjgWgMCiyxFcNvHTXRimWlvPi7waTGL1vtrVTDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kZN7eX7no59511RY0phDR4P9jNSHnTbEAaqrlAGdcjXb/+P0ib5T+XR2neh+oNDNrNXNLlvlUPvGqhRB+mvYESyzuR8g3omfKgt0VObH4aRyQJ3MNEUIpgVx4wJdGgbtchsysOZhWAzoylLjqhx56beQ7woAOyvhHEP1GDV+sHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJ/TUbHD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61938C4CEF5;
+	Mon,  6 Oct 2025 11:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759748532;
-	bh=trC4doR8JaY+67i1lCFdQ30RPlKGs06XX/QzFtkZSdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TK8ne2oZOalNb4WXlaEmW5rSuRiZIVDzmK1WaJYw/Nab2RqHdWkhTES0Sw7SclkaZ
-	 71LF2nF6dcHLqXZjVeaY3vxXiWZ1QOF0QMtGWaHYpcvN0/ApPiJixLKYzeQJ8izIZq
-	 kKmX7Y60xN3zrUf07tzRI/VwwkoRoJBwkvIO0NMZWlq3VvfEgBioEzdLu8JE4rS+VN
-	 TimQTjYHE2iI2BLx5GMjz8eM+mnIRWqkf/ArN9byr0A70s1tDaJTfyH2VemmtNJ0Ck
-	 D8esvPwWoKd82+U3L061vkVpYQcc0gJ0XwMgErWBf0V1ilXZcbWY3ga9CFTbqu4b0j
-	 hN14mXqvCvLdw==
-Date: Mon, 6 Oct 2025 13:02:09 +0200
+	s=k20201202; t=1759748601;
+	bh=cotaFjgWgMCiyxFcNvHTXRimWlvPi7waTGL1vtrVTDs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gJ/TUbHDK2algle7TkQqgToaJ2yiYL5Go/LVWHKbHsE4B9SlM4mYv8uiSOxY4F0Qa
+	 YnBwqOG6j8/Ph8PcOK0UWbZ/9ZScjvA+Phk9dJMuIPFPQl4la7dtdvxNOuENvpHyUS
+	 Ojh0fswrt0+9TTZv0u6QoqEGcRY6Waqrt0TP8be4Q8hYq4jr/Egro2pparM4GJwvIZ
+	 8E1Hbfv4URIJNtSoq+kVaanRDO3QXXbrjv+zsXHY/jeO08osoks5yPWHv5/cpw9Ftl
+	 GlZrZnyP7NEFxNfFvL3NVojhM7lewvP65prv/TjTaQPdIQwoEMtCQjk662bBPWXD/y
+	 KSQ6AArbQkhJQ==
 From: Christian Brauner <brauner@kernel.org>
 To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] expfs: Fix exportfs_can_encode_fh() for EXPORT_FH_FID
-Message-ID: <20251006-umsturz-begriffen-0ecd57a1fa37@brauner>
-References: <20251001145218.24219-2-jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com,
+	syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
+Subject: Re: [PATCH] ns: Fix mnt ns ida handling in copy_mnt_ns()
+Date: Mon,  6 Oct 2025 13:03:15 +0200
+Message-ID: <20251006-rammen-nerven-f7dff27e8e43@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251002161039.12283-2-jack@suse.cz>
+References: <20251002161039.12283-2-jack@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251001145218.24219-2-jack@suse.cz>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=959; i=brauner@kernel.org; h=from:subject:message-id; bh=cotaFjgWgMCiyxFcNvHTXRimWlvPi7waTGL1vtrVTDs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8Xvh1NefL+YJJScfveXMtVE/zZ7u01LzSu2CR8pmim qqbGyWudZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE5CTDf8cj4is4hY/UBize YHv8hO2s9WEhD5p5X8/eILnx+J3szSGMDC92X2aY3hvFamSm+7PGg0HqV6uxmNlFt7SMtvwXjn3 K3AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 01, 2025 at 04:52:19PM +0200, Jan Kara wrote:
-> After commit 5402c4d4d200 ("exportfs: require ->fh_to_parent() to encode
-> connectable file handles") we will fail to create non-decodable file
-> handles for filesystems without export operations. Fix it.
+On Thu, 02 Oct 2025 18:10:40 +0200, Jan Kara wrote:
+> Commit be5f21d3985f ("ns: add ns_common_free()") modified error cleanup
+> and started to free wrong inode number from the ida. Fix it.
 > 
-> Fixes: 5402c4d4d200 ("exportfs: require ->fh_to_parent() to encode connectable file handles")
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
+> 
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] ns: Fix mnt ns ida handling in copy_mnt_ns()
+      https://git.kernel.org/vfs/vfs/c/502f6e0e7b72
 
