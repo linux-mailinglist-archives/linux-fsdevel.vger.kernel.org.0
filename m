@@ -1,327 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-63484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41395BBDE82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 13:45:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2605EBBDE8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 13:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C281D34AD64
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 11:45:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D51594E9FB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 11:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361CC271467;
-	Mon,  6 Oct 2025 11:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF542270EAB;
+	Mon,  6 Oct 2025 11:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="MXKOjOLh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OPT1V0fd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRADCv4A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4F02459F8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 11:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE7E21CC5B
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 11:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759751108; cv=none; b=ndLo8DgiOo84KhWstm4G2+rDhbTieDgSdZDYUVQftuuQquUJyVDufQqCNjTwQ+BBrOK3s3tOh/wsjcu1ArhECZ/JHifdOwgVwdEtSjilIGyEZCT15jLVGPT4MXa1PQ6u1xQEWW3afpkI7px9VD9BxKnEhpRLLpeX1gZoSzzfxdk=
+	t=1759751138; cv=none; b=rFYfWIygCnCuP9vjymi/psznroN8GElnm8JEiwVQ9ZIbrmZnbcgLRr1H9ykyFcy+F9yl2xmU3s9JpZESAS3LMPIn7uPgkZL6+LFti0At5AKaSODQ8D6UOTjfCEufod+vjWqp2aCYkVfZ8ULCI7MeH2wJ6cS2Oek/UW5MetWUEik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759751108; c=relaxed/simple;
-	bh=GdLez5nhlThmMuVoD6pMOFD5mhk9Cm8hjfHqRLlDURQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7TL8HP5tli/o/FZs4e4bZ5OB3VMZDVslIj2tVQarHeWTUj/bJJst4FftUv584/buA9Lx7PIIENiLZ2VgjTE9QexA/ZAOFNYp2RdqcUlEO64W4bVqzvyrzYZSx0shR1ozw6YUeYq0zm+yeCBgkfhUlTLZ6kgm3tYe+9e+u2cWbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=MXKOjOLh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OPT1V0fd; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7F59414000B7;
-	Mon,  6 Oct 2025 07:45:03 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Mon, 06 Oct 2025 07:45:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1759751103; x=
-	1759837503; bh=HjqEAAukTgzfOHeJKHDdRAAY+8Vu3pAM3H7CL2nOoeI=; b=M
-	XKOjOLhmgf2LnK44hgEMW8QcIjoh9davzquDZHeKPKgpHtmrbSnOHdrqoxDV/cC5
-	ABHMLYgzAQPh1+b4wGuPB2koo69Bs+NbUgYU770mmTeUwPyulZz+i2S+Q9mwvxJQ
-	wz7QnSL0MA4uXgzbTW9dtZx/6A6C4dekxcyh6XoWkLW+etIQvfmhD9gEY/ObffGx
-	GtlcqpnVFuEb+mT5SOQn5MByl0GGxjOuoe6XSzbsBB8TX6rnQNyfj40Ynv3S/p39
-	2jHD+fHJPDNgyjrgPCdAZPKnjjfFq93xYW3bm04q0/eWq1fK4kYaZH3G2eUGJ2Tm
-	suhjhGv5Z7YimdzEBkSiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759751103; x=1759837503; bh=HjqEAAukTgzfOHeJKHDdRAAY+8Vu3pAM3H7
-	CL2nOoeI=; b=OPT1V0fdLufgqRUk1MBEuWqeTB2fkPeyTQ52GpyFyU5LKgby24H
-	2vJY7+Mz+2d+zn7SzP+GJjC4r/AqpF/b319yATcMd2ZSB5uZYSBd6NT3TWTsepTp
-	IOVd8JNF4ex3XdNMSA+QpNVyehRgHHBg+5QJGN4UZUX55f75/GXc3fG9NBz1p78g
-	DrdYiZ7ZXl9mwPnJYeCVdDCozoELaDn1F1FkBp61TfIXQi0H8dTp1OBownHXrXks
-	HoKuSNDuS0UKwHYkyT8xYAeIze1s7UIa6bNHmhwIO/KitOdvOIoAgXyH+6kCpOC9
-	dLO2IOtJyu/YUzJtBe9wlLRxHXfE1GC+2sQ==
-X-ME-Sender: <xms:vqvjaKNSJbfSKpov_G6G0H4DfcvV8zOj_h2PIm6_o_kraWDtGLniaQ>
-    <xme:vqvjaMCi2zvGFfp7Frhp9RrJ8p1FEnvAW_0T4jjAzlhK8D-5PpZ9ywvn3GuwpO75b
-    VUDeW0Qzn7y5pbF-VrNhIZ6mTEGpKMHoLp7eMuC8NW2OOSzOrSPbqI>
-X-ME-Received: <xmr:vqvjaL6j2rU_yo_zJNTgczcTewGdWWjLCTrQVnOn2BVL73XnKhwNdREF0tbDBw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeljeegiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepuddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugi
-    dqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfihilhhlhiesihhnfhhrrggu
-    vggrugdrohhrghdprhgtphhtthhopehmtghgrhhofheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:v6vjaG7jXm1GsW0jvpVHuC1o6oTXB9UWFX_XdxVJiJNAa57UAUW1iw>
-    <xmx:v6vjaNQS5HIzmlX0E-LJ0j3ln7s11CHdhrQBlvwSMHWsZV0SSR7oyQ>
-    <xmx:v6vjaO-M6MnNIKrP1wGQUIwcgDLhQBJEiD0vSANfYKfHrYBFsbkQ7g>
-    <xmx:v6vjaOZ9cZ5PXKYI4VSouKLFqrqpWsCDWWo9xB7rCTCosS2E59h1yQ>
-    <xmx:v6vjaPyiyO-m4ZzxGIf5bxczMOjchUSB_v6gHA3oqywItLxZcI9vv-PT>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Oct 2025 07:45:02 -0400 (EDT)
-Date: Mon, 6 Oct 2025 12:44:59 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: Optimizing small reads
-Message-ID: <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
-References: <CAHk-=wj00-nGmXEkxY=-=Z_qP6kiGUziSFvxHJ9N-cLWry5zpA@mail.gmail.com>
- <flg637pjmcnxqpgmsgo5yvikwznak2rl4il2srddcui2564br5@zmpwmxibahw2>
- <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
- <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
- <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
- <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
+	s=arc-20240116; t=1759751138; c=relaxed/simple;
+	bh=BNMTecTK7ht2nSD6ZXYzFBe3xWgFyVgzfWdD51vF2ns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QiJzK7kVfyaA5+uELf1+0Fb0sWpkDjrskU5x4j1sd3+TU5gHUH9sTGNWSqymP5jJMcfdE7Rafzz6Ybyhj/rqCK4Q3VrSptNGcyK3iwINC9hG3WZvjujiL31XgiIOKFUbok49Dwq3s3QrczOe5mL7zVGouhfVg+4aUEn15gEHHHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRADCv4A; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b62e7221351so1971722a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 04:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759751136; x=1760355936; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6fpNIGval6qAKSpqRMG3diXPAJYgi/qIqxbDjCK0H4=;
+        b=BRADCv4AmoGrSNykcmZfCU/NW5/7yNOzfyyXh+TlUefpAiPXbXvjsvL6+Mkywkeaux
+         d7RkUdN4FTXhku8uwu8Ynn3ZtHiv6N1kgGjwsZ+etbRxQcY0kvKsZQr0VDnKy0AwVrIS
+         B3ei/oTRLl5WFIXu/soM4vbP+Yuie2aQ60yUFwnBCJVbdKQ9iEQkZrSJjaKx9D1sFIS9
+         U45p5CwcA1iCaoLLBd3lMQKQMC0WomvwA2PpWgYcCD8QZv+oQEn6pdqBTe6nj8HBV7dK
+         Bl+Ap2jftmSXuvc9TvE58gljXCXfJx5jMWUKp1EnAzIPw//8FzM2Zf2OkkJkkUQEHKgV
+         gdqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759751136; x=1760355936;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N6fpNIGval6qAKSpqRMG3diXPAJYgi/qIqxbDjCK0H4=;
+        b=GHPJsfAgeMfXbRm8PtuXja+H50/uibVLIEYcz9PbRkrBcRzCjeISK5Agya//0KcCHV
+         bvntftnHluqK1XKQ0mTRfCTH7ndZkLWGb6i5CVbFrrv/+4iDqU/1UWjMrxUXEBxeLaMg
+         MjDdQC8bLQ+NK7nC6huPN+LBEHBhI9Pl+20WPzEqDsCqS0EvNWaNZK8HadQIysz3Htbz
+         jfw0hSEgb56NfgK8HhH+F3IzIzKxo9/Q2Rypb1I4qfib7il1zKiDAW1iKwlyvnGXjZCE
+         qmLKEjVNd/fKnms8KtnY99fDnyo+WO746Dy7ZTXXjcMEd6cIA2loOO40eZpntMS4g3P4
+         HmVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwyHQZqpBE6N//JC8Akfd9JdgRww8S+KaL1SYLcdtbariz5wO1MrXEdx2KCLl6XnadlcKyngK33YEBLsLi@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfB4zXw1fwxHwIRTuZcYhXcsp9Qg9nNux4tKgUVzKgywMWXARl
+	a773kxDurwYUQHSXr0wCkPymMfM5f4bN5ZfYY7TH/qhj0GxV4rkkMAT4/7ia4KF7
+X-Gm-Gg: ASbGncsnQQ12o8VXWTj04cUxbPw6H6B2fkDOfAkXb0iocy3s1s6KsMWnYo5OCez61ia
+	5CW7WspGW4Y3Pphs8H1PeS4BmX3o5Krg0ulsfi3fUOrpPBEIgup9OxcFHgP/Eit6wxup918Ghrz
+	aeAHp314uBqFJluOtwXuiqCW9tCyid/2WkPb9XLqPEdZQtEZx4rq/MgybbVGhI9k7TqHOjK08uy
+	Ht15WefnaBIrU9j+es/9IY3CEVxTR0mBia4XvznhaWritzBD3+odCzlJ5FwPNsqUenbnxA4AYaE
+	VJYMb2TyEE3RnDCI78tx76pt4dfrR+IqENTgYQzwKfGP8dcY1+ahWqHgmfQHYjviFM5ZTSYN4D2
+	PmzM8z9GzfmBDbiwRey1B3TXTp2o6ljCmc+Zad6lnx0eHABZUt5EoX2qlzGM4q6d0ORSlfLTdzk
+	OCsbxcm2SI
+X-Google-Smtp-Source: AGHT+IFxvKU50K5L0Q+Tb+yTYS0SE7q47+l6oijumnjKnEw2OY+E5WVkaAED+m1lCr0N1DGoF+vVUQ==
+X-Received: by 2002:a17:902:db10:b0:264:8a8d:92dd with SMTP id d9443c01a7336-28e9a58b55emr157083105ad.20.1759751136030;
+        Mon, 06 Oct 2025 04:45:36 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b845bsm130568745ad.79.2025.10.06.04.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 04:45:35 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Cc: viro@zeniv.linux.org.uk,
+	pali@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+Date: Mon,  6 Oct 2025 20:45:07 +0900
+Message-Id: <20251006114507.371788-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 03, 2025 at 10:49:36AM -0700, Linus Torvalds wrote:
-> I'd love it if somebody took a look. I'm definitely not going to spend
-> any more time on this during the merge window...
+After the loop that converts characters to ucs2 ends, the variable i 
+may be greater than or equal to len. However, when checking whether the
+last byte of p_cstring is NULL, the variable i is used as is, resulting
+in an out-of-bounds read if i >= len.
 
-Below is my take on this. Lightly tested.
+Therefore, to prevent this, we need to modify the function to check
+whether i is less than len, and if i is greater than or equal to len,
+to check p_cstring[len - 1] byte.
 
-Some notes:
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=98cc76a76de46b3714d4
+Fixes: 370e812b3ec1 ("exfat: add nls operations")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ fs/exfat/nls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- - Do we want a bounded retry on read_seqcount_retry()?
-   Maybe upto 3 iterations?
-
- - HIGHMEM support is trivial with memcpy_from_file_folio();
-
- - I opted for late partial read check. It would be nice allow to read
-   across PAGE_SIZE boundary as long as it is in the same folio;
-
- - Move i_size check after uptodate check. It seems to be required
-   according to the comment in filemap_read(). But I cannot say I
-   understand i_size implications here.
-
- - Size of area is 256 bytes. I wounder if we want to get the fast read
-   to work on full page chunks. Can we dedicate a page per CPU for this?
-   I expect it to cover substantially more cases.
-
-Any comments are welcome.
-
-diff --git a/fs/inode.c b/fs/inode.c
-index ec9339024ac3..52163d28d630 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -482,6 +482,8 @@ EXPORT_SYMBOL(inc_nlink);
- static void __address_space_init_once(struct address_space *mapping)
- {
- 	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
-+	seqcount_spinlock_init(&mapping->i_pages_delete_seqcnt,
-+			       &mapping->i_pages->xa_lock);
- 	init_rwsem(&mapping->i_mmap_rwsem);
- 	INIT_LIST_HEAD(&mapping->i_private_list);
- 	spin_lock_init(&mapping->i_private_lock);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9e9d7c757efe..a900214f0f3a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -522,6 +522,7 @@ struct address_space {
- 	struct list_head	i_private_list;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	void *			i_private_data;
-+	seqcount_spinlock_t	i_pages_delete_seqcnt;
- } __attribute__((aligned(sizeof(long)))) __randomize_layout;
- 	/*
- 	 * On most architectures that alignment is already the case; but
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 751838ef05e5..fc26c6826392 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -138,8 +138,10 @@ static void page_cache_delete(struct address_space *mapping,
- 
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 
-+	write_seqcount_begin(&mapping->i_pages_delete_seqcnt);
- 	xas_store(&xas, shadow);
- 	xas_init_marks(&xas);
-+	write_seqcount_end(&mapping->i_pages_delete_seqcnt);
- 
- 	folio->mapping = NULL;
- 	/* Leave folio->index set: truncation lookup relies upon it */
-@@ -2659,6 +2661,57 @@ static void filemap_end_dropbehind_read(struct folio *folio)
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index 8243d94ceaf4..a52f3494eb20 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
+ 		unilen++;
  	}
- }
  
-+static inline unsigned long filemap_fast_read(struct address_space *mapping,
-+					      loff_t pos, char *buffer,
-+					      size_t size)
-+{
-+	XA_STATE(xas, &mapping->i_pages, pos >> PAGE_SHIFT);
-+	struct folio *folio;
-+	loff_t file_size;
-+	unsigned int seq;
-+
-+	lockdep_assert_in_rcu_read_lock();
-+
-+	seq = read_seqcount_begin(&mapping->i_pages_delete_seqcnt);
-+
-+	xas_reset(&xas);
-+	folio = xas_load(&xas);
-+	if (xas_retry(&xas, folio))
-+		return 0;
-+
-+	if (!folio || xa_is_value(folio))
-+		return 0;
-+
-+	if (!folio_test_uptodate(folio))
-+		return 0;
-+
-+	/* No fast-case if readahead is supposed to started */
-+	if (folio_test_readahead(folio))
-+		return 0;
-+	/* .. or mark it accessed */
-+	if (!folio_test_referenced(folio))
-+		return 0;
-+
-+	/* i_size check must be after folio_test_uptodate() */
-+	file_size = i_size_read(mapping->host);
-+	if (unlikely(pos >= file_size))
-+		return 0;
-+	if (size > file_size - pos)
-+		size = file_size - pos;
-+
-+	/* Do the data copy */
-+	if (memcpy_from_file_folio(buffer, folio, pos, size) != size) {
-+		/* No partial reads */
-+		return 0;
-+	}
-+
-+	/* Give up and go to slow path if raced with page_cache_delete() */
-+	if (read_seqcount_retry(&mapping->i_pages_delete_seqcnt, seq))
-+		return 0;
-+
-+	return size;
-+}
-+
- /**
-  * filemap_read - Read data from the page cache.
-  * @iocb: The iocb to read.
-@@ -2679,7 +2732,10 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 	struct file_ra_state *ra = &filp->f_ra;
- 	struct address_space *mapping = filp->f_mapping;
- 	struct inode *inode = mapping->host;
--	struct folio_batch fbatch;
-+	union {
-+		struct folio_batch fbatch;
-+		__DECLARE_FLEX_ARRAY(char, buffer);
-+	} area __uninitialized;
- 	int i, error = 0;
- 	bool writably_mapped;
- 	loff_t isize, end_offset;
-@@ -2693,7 +2749,34 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 		return 0;
+-	if (p_cstring[i] != '\0')
++	if (p_cstring[min(i, len - 1)] != '\0')
+ 		lossy |= NLS_NAME_OVERLEN;
  
- 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
--	folio_batch_init(&fbatch);
-+
-+	/*
-+	 * Try a quick lockless read into the 'area' union. Note that
-+	 * this union is intentionally marked "__uninitialized", because
-+	 * any compiler initialization would be pointless since this
-+	 * can fill it will garbage.
-+	 */
-+	if (iov_iter_count(iter) <= sizeof(area)) {
-+		size_t count = iov_iter_count(iter);
-+
-+		/* Let's see if we can just do the read under RCU */
-+		rcu_read_lock();
-+		count = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, count);
-+		rcu_read_unlock();
-+		if (count) {
-+			size_t copied = copy_to_iter(area.buffer, count, iter);
-+			if (unlikely(!copied))
-+				return already_read ? already_read : -EFAULT;
-+			ra->prev_pos = iocb->ki_pos += copied;
-+			file_accessed(filp);
-+			return copied + already_read;
-+		}
-+	}
-+
-+	/*
-+	 * This actually properly initializes the fbatch for the slow case
-+	 */
-+	folio_batch_init(&area.fbatch);
- 
- 	do {
- 		cond_resched();
-@@ -2709,7 +2792,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 		if (unlikely(iocb->ki_pos >= i_size_read(inode)))
- 			break;
- 
--		error = filemap_get_pages(iocb, iter->count, &fbatch, false);
-+		error = filemap_get_pages(iocb, iter->count, &area.fbatch, false);
- 		if (error < 0)
- 			break;
- 
-@@ -2737,11 +2820,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 		 * mark it as accessed the first time.
- 		 */
- 		if (!pos_same_folio(iocb->ki_pos, last_pos - 1,
--				    fbatch.folios[0]))
--			folio_mark_accessed(fbatch.folios[0]);
-+				    area.fbatch.folios[0]))
-+			folio_mark_accessed(area.fbatch.folios[0]);
- 
--		for (i = 0; i < folio_batch_count(&fbatch); i++) {
--			struct folio *folio = fbatch.folios[i];
-+		for (i = 0; i < folio_batch_count(&area.fbatch); i++) {
-+			struct folio *folio = area.fbatch.folios[i];
- 			size_t fsize = folio_size(folio);
- 			size_t offset = iocb->ki_pos & (fsize - 1);
- 			size_t bytes = min_t(loff_t, end_offset - iocb->ki_pos,
-@@ -2772,13 +2855,13 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 			}
- 		}
- put_folios:
--		for (i = 0; i < folio_batch_count(&fbatch); i++) {
--			struct folio *folio = fbatch.folios[i];
-+		for (i = 0; i < folio_batch_count(&area.fbatch); i++) {
-+			struct folio *folio = area.fbatch.folios[i];
- 
- 			filemap_end_dropbehind_read(folio);
- 			folio_put(folio);
- 		}
--		folio_batch_init(&fbatch);
-+		folio_batch_init(&area.fbatch);
- 	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
- 
- 	file_accessed(filp);
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+ 	*uniname = '\0';
+--
 
