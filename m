@@ -1,114 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-63469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7816BBDC92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 12:50:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57515BBDCFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 12:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887AA18986DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 10:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6763B387F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 10:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C1D272E72;
-	Mon,  6 Oct 2025 10:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96D5261B71;
+	Mon,  6 Oct 2025 10:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPLvp5HE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrdX/ZK0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E94272E6D;
-	Mon,  6 Oct 2025 10:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD18247DE1;
+	Mon,  6 Oct 2025 10:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759747675; cv=none; b=sX58/7S+vmtzfzPlZCNC56pLnrwiCS+KohEy9PSQVIEC1cSty6jPgIsBox0Vmh+x5hkgZ0fuHvEVX7TCyaa5+Wmx5rR5K19QEDYOti4uCxdlKIScikxaIYeErY1s8F5i5e3coaRZIlEQIntXkjVBxlzrDRMxuB0vhmavb6vssoM=
+	t=1759748197; cv=none; b=faL/b6ikUDIKx229dlK9TLSnVGaU9jMYwDOnzjloFxIj5Ht7hMgPU4OB7JI54Z+nWbUVmfLtUMeX8MuE0ilGdVMsQs0dv99afuzdG+r1zNKWb8lI2cRDW2lVfidoPJ75ZYuoh03/CgyEvt23TmuObsVydw8aO2S1t6ztHkGbb+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759747675; c=relaxed/simple;
-	bh=zYprqry9t4ZevNtP8tEWITF5icbe5Cfg3GMohDrfass=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7DcxyuZXhjWWOJJbiDKrTa6nj2P/aVUfHDFByXBhvV/MxiBnEGaC5jdz3Rpb0Xl1FXVdhPoyBLyTVM+w8Azd6CcBObOwKOzcUKsCvZspdx4XnUDVCskA5CSK7819o/JFOOZEE1ZZcSy58WWx5iHYnWYqo5TpB2ZIAsHlmRkNEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPLvp5HE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A475C4CEFF;
-	Mon,  6 Oct 2025 10:47:53 +0000 (UTC)
+	s=arc-20240116; t=1759748197; c=relaxed/simple;
+	bh=UAythQDaYi2XxgVjAL308Lv+v+AkGlInraSgKbq0OrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qnHlnzRWKYWiKgNE8hnEu0L/VdcUgf5ROQxjQ7rEHie1Rni38SP5inV7KilG3TUPeuY3R5034OBoHuE8J0nw/6KnSo50F5QIf4VNg6rbjNu6kgjNDsniDu59plrkel5SX/y4GKf+B/4+/N+JAb1ctDgbKbou8nGFJPtq/cx9Szw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrdX/ZK0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78C2C4CEF5;
+	Mon,  6 Oct 2025 10:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759747675;
-	bh=zYprqry9t4ZevNtP8tEWITF5icbe5Cfg3GMohDrfass=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DPLvp5HEFax2cyv0F35o7qNcFd+V3uCO/GgsKz62gZdlgUFE/F/WiLCf22is7pW7g
-	 88hQIm6ZXviepsQ+l3vftDMtMwloggKpUSVlPc+q/sz3RJsxRwzvCNyPo8E4U0jMTV
-	 Cu3Bz7kD5S7I1KfQIIIQwHkFHysx5c/N+ywPYCYVHdi065jf9lyH4Yls/y0m1Zmb8+
-	 Hg5ulviYrgWzJcs7Hj9PclKfTOobNM3EbsHlnSFx3Rv/b0y1ey0EfuqHvpetUrZYT8
-	 Y7qPq+tjTDy+KOAI9umWSWK29pbW6gtUX307GD0bsZgGFxSg+JonW7wlsLQxjuMdta
-	 kRMecoOh8XSjg==
-Date: Mon, 6 Oct 2025 12:47:50 +0200
+	s=k20201202; t=1759748196;
+	bh=UAythQDaYi2XxgVjAL308Lv+v+AkGlInraSgKbq0OrQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HrdX/ZK0YPUePeTD7KR3YeVMhi7OGKDi55b/GODf7zBrXWMr/yWv81nNi10qVB6V+
+	 DCnNvBwgKwregzjBuLkrEH5ApiZQ0ydT0TXoKQNBfzxdipA6veax0UgXPuOa37FIRZ
+	 gLRoyudwZy2VKiv6+q1GOGHMQ473pKzihVo1I0LmI4U8fpwwhWd8FXlUqIwh41A2OY
+	 oRqlC3CUb5y9PJbgfAJ72oVYMekHxHOh/FO7E6edCBq9w5TVN9n42SrvE2n/fsheTo
+	 qsb+JHGJJXuFKFLClGvKTLUC2Bf8mT2WkIs7v7JHmAteJZLeAY0HqGIdsNCci6mee1
+	 +21k+9hxeBpoA==
 From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: syzbot <syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com>, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] [mm?] WARNING in path_noexec (2)
-Message-ID: <20251006-wachsen-zusendung-6cc31055eb75@brauner>
-References: <68dc3ade.a70a0220.10c4b.015b.GAE@google.com>
- <202509301457.30490A014C@keescook>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert ->i_lock held in __iget()
+Date: Mon,  6 Oct 2025 12:56:30 +0200
+Message-ID: <20251006-viermal-sorgsam-9c931bef2f1a@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250930235314.88372-1-mjguzik@gmail.com>
+References: <20250930235314.88372-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202509301457.30490A014C@keescook>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=874; i=brauner@kernel.org; h=from:subject:message-id; bh=UAythQDaYi2XxgVjAL308Lv+v+AkGlInraSgKbq0OrQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8XhDHv2vVo59TOO2fvpY6Jb0k7cznKKXARxJPCvlnP eF36w491FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRulyG/wUvkitfSShLRh0V KHS24WrmDXsaFjhDcOVmo0mhzW//BjL8s1//XSaJb23NXTf57e2/rE8emPgx4F+x9csFLbes5so F8QEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 03:04:22PM -0700, Kees Cook wrote:
-> On Tue, Sep 30, 2025 at 01:17:34PM -0700, syzbot wrote:
-> > Reported-by: syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com
-> > 
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 1 PID: 6000 at fs/exec.c:119 path_noexec+0x1af/0x200 fs/exec.c:118
-> 
-> Christian, this is:
-> 
-> bool path_noexec(const struct path *path)
-> {
->         /* If it's an anonymous inode make sure that we catch any shenanigans. */
->         VFS_WARN_ON_ONCE(IS_ANON_FILE(d_inode(path->dentry)) &&
->                          !(path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC));
->         return (path->mnt->mnt_flags & MNT_NOEXEC) ||
->                (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
-> }
-> 
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e5fd6f980000
-> 
-> I think is from the created fd_dma_buf. I expect this would fix it:
+On Wed, 01 Oct 2025 01:53:14 +0200, Mateusz Guzik wrote:
+> Also remove the now redundant comment.
 > 
 > 
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index 2bcf9ceca997..6e2ab1a4560d 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -189,6 +189,8 @@ static int dma_buf_fs_init_context(struct fs_context *fc)
->  {
->  	struct pseudo_fs_context *ctx;
->  
-> +	fc->s_iflags |= SB_I_NOEXEC;
-> +	fc->s_iflags |= SB_I_NODEV;
 
-Yeah, that seems like a good thing to do.
-I'm quite happy that the VFS_WARN_ON_ONCE() in there is catching all
-this!
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-Do you want to send a real patch I can pick up?
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
->  	ctx = init_pseudo(fc, DMA_BUF_MAGIC);
->  	if (!ctx)
->  		return -ENOMEM;
-> 
-> 
-> Which reminds me, this still isn't landed either for secretmem:
-> https://lore.kernel.org/all/20250707171735.GE1880847@ZenIV/
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-It should be in mainline as:
-commit 98f99394a104cc80296da34a62d4e1ad04127013 ("secretmem: use SB_I_NOEXEC")
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
+
+[1/1] fs: assert ->i_lock held in __iget()
+      https://git.kernel.org/vfs/vfs/c/0cb93842ce06
 
