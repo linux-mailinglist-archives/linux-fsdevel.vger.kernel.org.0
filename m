@@ -1,243 +1,329 @@
-Return-Path: <linux-fsdevel+bounces-63458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE788BBD76C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 11:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F325BBD854
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 11:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12621896175
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 09:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98553B9C26
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 09:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F461E47C5;
-	Mon,  6 Oct 2025 09:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C49B2135AD;
+	Mon,  6 Oct 2025 09:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RvkIYx+O"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eOUo9vJm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AC11F582C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 09:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD80212546
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 09:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759743512; cv=none; b=FWK/WD12KvsAB8VIXxQ1Gp7iVTQ2RLI5FOwYUz0mQFAmPvtVYpbP+Ofa2z9aHX3iqES42pOVBQc2sF50ccDNaMCsmDLDY+yiyRUK5d6ZvFhjWOchvJ1yrPId0TtOHyNNKuSUl6ilB4wGv6MIuRsL5eGYWuHa7irqkc8WL7rrn2s=
+	t=1759744458; cv=none; b=gKNrOJ21Qqn+PTuHjVq5x3oACFfkDncfpsO18nhgZQv3KyYEbWFPx3FiZCK0qcTBJ1Zir/LDBBXLr3th7/MieoFzPXdN05QFhSq4YmlScweqy4zyGNZrKD/0zd39OQceUuBCTalpe30hhDW7EDVnqzAANG7Wmde5Razux4rf3hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759743512; c=relaxed/simple;
-	bh=xz/hZvzoakCriGkhB/bKuYdZ7YxI5bb7fHg5f/gAr14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jE3p1HV9V4UnKzTkAOJoBS8EXPd/DbmK+oXqEJBZ7z92CEhYYZK+wUmyvIqC83wJCbALlLaMrCg/HubgPfdmNnbx4r58zgpcWtEzqGZlplME4qtO0w9dJP0mfhOlmG36sLpG+wayDiD6tE1opD0jZNvQNzfVPX2YqgHhQ3bJxW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RvkIYx+O; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759743508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wsVDhkH03OWQAuqDWfBRNCEFQGrTGPu8ofI2SiM2cKk=;
-	b=RvkIYx+OGsz9McK+uIgc+q7D25+m0RBeNisOKf2fAzSZWCZpZBLkDTrFD07Ffcr5R9cw2A
-	FB0SA9xLKFuX2CiZGOJliJrsVjjOpR5U7IPZ76yf3J9Imss3AE3fXoeT9q2T0Q4W9gR87R
-	kFTy/Riz6yswcl7nr2tCPqpJ2u4/zsg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-176-cAU9wjBYNiS3814yzlZkgA-1; Mon, 06 Oct 2025 05:38:27 -0400
-X-MC-Unique: cAU9wjBYNiS3814yzlZkgA-1
-X-Mimecast-MFC-AGG-ID: cAU9wjBYNiS3814yzlZkgA_1759743506
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e7a2c3773so2514515e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 02:38:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759743506; x=1760348306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wsVDhkH03OWQAuqDWfBRNCEFQGrTGPu8ofI2SiM2cKk=;
-        b=qoQw/AdW63ZmWrdWzmc5v4kdBNuQXw8Weo3/45RI6+gbnHyUQjfZaFuWaipnz6s+NX
-         Yv2NMP49WGpq+ZeBXAnHH//NlKKAtXUGqvnECFinW1QIk4dvPXXsOhYzlNkdj1Qz50TE
-         2Xc6XKu8VIk6GsnksMyIfrtQEkKAi+t76OMrw7HycZ48kwDfnlU0mIWzpI322YZHmdZU
-         017eELu+H/8I7ykmCBfvLG28tkGJnkw9HwR+CDN/DVVR5UuielJX7/Xj3iNY9FDqNkj9
-         fEPweuq9ZvXVCKlKDf1HxpKM2UyEumTzD/igvZf5HDs/Or27NjV9SK6ZlA4z9SxzF7C+
-         Hqcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyZ4vR2P/zA2Ap5T1MoA6quUxlNq5Fd6oiT3rV3SfDBRh6CSuMY7ZDRnbjKD3zmOK82Xgvl+nCOAyTovOF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5UZkyr1Al7Lh1EVDC3QSpBowkosWrHvccqkI5Z3jisfe4fj93
-	kDQw/BygdVHVYE/fm8ERXGpm/84IytKecooh2l9BCDOA4XxOP33Z4Do2rsT/nIN7oVS4Pkjzq+5
-	043YTWADlQ8Hg5OXqRILdGS9ELaQqk//SMZ6ZzE3lreJVywBSBAnLpkH0rauKEQrx0A==
-X-Gm-Gg: ASbGnctr7MX8Vra3rvzeRzNP0PtGhpdkJMejrJQScIKlh5/2YT3in7aXKfSaJ8wmQ50
-	yJ2ZWMOOcekVeFKNX8SN2xtIqA+VZ4DKu8kEYIsHwnsD3D73vmos47WmSAx+5M+CykOR3OZdJ5S
-	+/YX/Oh552/l9m41m/jpA7s+r4FjQErFe5S+j0e1B1X8MNgka/VTkaG3vkqJPIDl+kBS1IX2eya
-	qM/MP91gAaodwGg6mxFLzkKP4AFPVS/Ds/vLopWWcHwg3+cp9tPggV1tWviqPloK90ddjxVa2z3
-	LMlovEdPy3mYQ1ON/OYXfX0lFT+iZwTl0BzTmTdyW+5flmzVjwaPICskUzcLdkTH9g==
-X-Received: by 2002:a05:600c:1f90:b0:45d:dc10:a5ee with SMTP id 5b1f17b1804b1-46e70cab483mr81343165e9.15.1759743505605;
-        Mon, 06 Oct 2025 02:38:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlCYUUFPB4ex5CVbIn5iY3pHvG7kFW2Jjm67YSJUH6t7qfO2Y4261WpJcAoaKplrHvSbogkQ==
-X-Received: by 2002:a05:600c:1f90:b0:45d:dc10:a5ee with SMTP id 5b1f17b1804b1-46e70cab483mr81342845e9.15.1759743504850;
-        Mon, 06 Oct 2025 02:38:24 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6bb2sm19624486f8f.10.2025.10.06.02.38.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 02:38:24 -0700 (PDT)
-Date: Mon, 6 Oct 2025 11:37:53 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v4 1/3] file_attr: introduce program to set/get fsxattr
-Message-ID: <7mytyiatnhgwplgda3cmiqq3hb7z6ulwgvwbkueb5dm2sdxwlg@ijti4d7vgrck>
-References: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
- <20251003-xattrat-syscall-v4-1-1cfe6411c05f@kernel.org>
- <20251005103656.5qu3lmjvlcjkwjx4@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=arc-20240116; t=1759744458; c=relaxed/simple;
+	bh=akNrM7++aRw9u4eBDhm9xCnL/bK//DLcxj/PeLViLTA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hPeeOvgC9Lv96yTizCs+pEp9u6WHU8BdPloNIb/kXP82Sj5MPba/77uZDNQNmZABoOD6zksCqMfX2sl5mldIOWlWowcBtCODF+ihpcHKCLgo8JISYC7Kyk6eH14uBK9ygYaRVmxhCSDPqVFbFucB3420mI0gc/l16ShbFV33Rb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eOUo9vJm; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=uG57dcu+vI3dyGnXVF4SS6xUmbdA5xvT+PrmlV09mR4=; b=eOUo9vJmbu3/1RIl106E+MjBMr
+	G2/pQeU/QMnYG3GDaUmt9EMFoDdwAa1ljB06IDYx5H/j1hugqTIopR9poJtrdB5q+WdliweJbCTa9
+	0vzOh4ZbYbxOGFkUoTcokpczt6d3FMfBmaS2NNEsiArRLwfx/jNA8KjpEOmTwKIVXjeaCWIgx0j8Q
+	WHiMIPRVt9Mk3UbK0bsZGqjxw3Xy6Eze1vaeCf1f/UNLvG4y8Z0tk7XUEO07IzVdI6dQH0ivjEOkq
+	Fawm6k9MjVbgldjGk0jNk0DnV6OlBPzz47ByPriWHWFrUVDve6/Bogz0N9/CYNY4CHUbWU3q48oqc
+	siq/Br6Q==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1v5hup-005J1l-9M; Mon, 06 Oct 2025 11:53:59 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Ingo Molnar <mingo@redhat.com>,
+  Peter Zijlstra <peterz@infradead.org>,  Juri Lelli
+ <juri.lelli@redhat.com>,  Vincent Guittot <vincent.guittot@linaro.org>,
+  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
+ <rostedt@goodmis.org>,  Ben Segall <bsegall@google.com>,  Mel Gorman
+ <mgorman@suse.de>,  Valentin Schneider <vschneid@redhat.com>,  Joanne
+ Koong <joannelkoong@gmail.com>,  linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] fuse: {io-uring} Queue background requests on a
+ different core
+In-Reply-To: <20251003-reduced-nr-ring-queues_3-v2-6-742ff1a8fc58@ddn.com>
+	(Bernd Schubert's message of "Fri, 03 Oct 2025 12:06:47 +0200")
+References: <20251003-reduced-nr-ring-queues_3-v2-0-742ff1a8fc58@ddn.com>
+	<20251003-reduced-nr-ring-queues_3-v2-6-742ff1a8fc58@ddn.com>
+Date: Mon, 06 Oct 2025 10:53:58 +0100
+Message-ID: <87frbwe4p5.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005103656.5qu3lmjvlcjkwjx4@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-10-05 18:36:56, Zorro Lang wrote:
-> On Fri, Oct 03, 2025 at 11:32:44AM +0200, Andrey Albershteyn wrote:
-> > This programs uses newly introduced file_getattr and file_setattr
-> > syscalls. This program is partially a test of invalid options. This will
-> > be used further in the test.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > ---
-> 
-> [snap]
-> 
-> > +	if (!path1 && optind < argc)
-> > +		path1 = argv[optind++];
-> > +	if (!path2 && optind < argc)
-> > +		path2 = argv[optind++];
-> > +
-> > +	if (at_fdcwd) {
-> > +		fd = AT_FDCWD;
-> > +		path = path1;
-> > +	} else if (!path2) {
-> > +		error = stat(path1, &status);
-> > +		if (error) {
-> > +			fprintf(stderr,
-> > +"Can not get file status of %s: %s\n", path1, strerror(errno));
-> > +			return error;
-> > +		}
-> > +
-> > +		if (SPECIAL_FILE(status.st_mode)) {
-> > +			fprintf(stderr,
-> > +"Can not open special file %s without parent dir: %s\n", path1, strerror(errno));
-> > +			return errno;
-> > +		}
-> > +
-> > +		fd = open(path1, O_RDONLY);
-> > +		if (fd == -1) {
-> > +			fprintf(stderr, "Can not open %s: %s\n", path1,
-> > +					strerror(errno));
-> > +			return errno;
-> > +		}
-> > +	} else {
-> > +		fd = open(path1, O_RDONLY);
-> > +		if (fd == -1) {
-> > +			fprintf(stderr, "Can not open %s: %s\n", path1,
-> > +					strerror(errno));
-> > +			return errno;
-> > +		}
-> > +		path = path2;
-> > +	}
-> > +
-> > +	if (!path)
-> > +		at_flags |= AT_EMPTY_PATH;
-> > +
-> > +	error = file_getattr(fd, path, &fsx, fa_size,
-> > +			at_flags);
-> > +	if (error) {
-> > +		fprintf(stderr, "Can not get fsxattr on %s: %s\n", path,
-> > +				strerror(errno));
-> > +		return error;
-> > +	}
-> 
-> We should have a _require_* helper to _notrun your generic and xfs test cases,
-> when system doesn't support the file_getattr/setattr feature. Or we always hit
-> something test errors like below on old system:
-> 
->   +Can not get fsxattr on ./fifo: Operation not supported
-> 
-> Maybe check if the errno is "Operation not supported", or any better idea?
+On Fri, Oct 03 2025, Bernd Schubert wrote:
 
-There's build system check for file_getattr/setattr syscalls, so if
-they aren't in the kernel file_attr will not compile.
+> Running background IO on a different core makes quite a difference.
+>
+> fio --directory=3D/tmp/dest --name=3Diops.\$jobnum --rw=3Drandread \
+> --bs=3D4k --size=3D1G --numjobs=3D1 --iodepth=3D4 --time_based\
+> --runtime=3D30s --group_reporting --ioengine=3Dio_uring\
+>  --direct=3D1
+>
+> unpatched
+>    READ: bw=3D272MiB/s (285MB/s), 272MiB/s-272MiB/s ...
+> patched
+>    READ: bw=3D760MiB/s (797MB/s), 760MiB/s-760MiB/s ...
+>
+> With --iodepth=3D8
+>
+> unpatched
+>    READ: bw=3D466MiB/s (489MB/s), 466MiB/s-466MiB/s ...
+> patched
+>    READ: bw=3D966MiB/s (1013MB/s), 966MiB/s-966MiB/s ...
+> 2nd run:
+>    READ: bw=3D1014MiB/s (1064MB/s), 1014MiB/s-1014MiB/s ...
+>
+> Without io-uring (--iodepth=3D8)
+>    READ: bw=3D729MiB/s (764MB/s), 729MiB/s-729MiB/s ...
+>
+> Without fuse (--iodepth=3D8)
+>    READ: bw=3D2199MiB/s (2306MB/s), 2199MiB/s-2199MiB/s ...
+>
+> (Test were done with
+> <libfuse>/example/passthrough_hp -o allow_other --nopassthrough  \
+> [-o io_uring] /tmp/source /tmp/dest
+> )
+>
+> Additional notes:
+>
+> With FURING_NEXT_QUEUE_RETRIES=3D0 (--iodepth=3D8)
+>    READ: bw=3D903MiB/s (946MB/s), 903MiB/s-903MiB/s ...
+>
+> With just a random qid (--iodepth=3D8)
+>    READ: bw=3D429MiB/s (450MB/s), 429MiB/s-429MiB/s ...
+>
+> With --iodepth=3D1
+> unpatched
+>    READ: bw=3D195MiB/s (204MB/s), 195MiB/s-195MiB/s ...
+> patched
+>    READ: bw=3D232MiB/s (243MB/s), 232MiB/s-232MiB/s ...
+>
+> With --iodepth=3D1 --numjobs=3D2
+> unpatched
+>    READ: bw=3D966MiB/s (1013MB/s), 966MiB/s-966MiB/s ...
+> patched
+>    READ: bw=3D1821MiB/s (1909MB/s), 1821MiB/s-1821MiB/s ...
+>
+> With --iodepth=3D1 --numjobs=3D8
+> unpatched
+>    READ: bw=3D1138MiB/s (1193MB/s), 1138MiB/s-1138MiB/s ...
+> patched
+>    READ: bw=3D1650MiB/s (1730MB/s), 1650MiB/s-1650MiB/s ...
+> fuse without io-uring
+>    READ: bw=3D1314MiB/s (1378MB/s), 1314MiB/s-1314MiB/s ...
+> no-fuse
+>    READ: bw=3D2566MiB/s (2690MB/s), 2566MiB/s-2566MiB/s ...
+>
+> In summary, for async requests the core doing application IO is busy
+> sending requests and processing IOs should be done on a different core.
+> Spreading the load on random cores is also not desirable, as the core
+> might be frequency scaled down and/or in C1 sleep states. Not shown here,
+> but differnces are much smaller when the system uses performance govenor
+> instead of schedutil (ubuntu default). Obviously at the cost of higher
+> system power consumption for performance govenor - not desirable either.
+>
+> Results without io-uring (which uses fixed libfuse threads per queue)
+> heavily depend on the current number of active threads. Libfuse uses
+> default of max 10 threads, but actual nr max threads is a parameter.
+> Also, no-fuse-io-uring results heavily depend on, if there was already
+> running another workload before, as libfuse starts these threads
+> dynamically - i.e. the more threads are active, the worse the
+> performance.
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  fs/fuse/dev_uring.c | 61 +++++++++++++++++++++++++++++++++++++++++++----=
+------
+>  1 file changed, 50 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index f5946bb1bbea930522921d49c04e047c70d21ee2..296592fe3651926ab4982b8d8=
+0694b3dac8bbffa 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -22,6 +22,7 @@ MODULE_PARM_DESC(enable_uring,
+>  #define FURING_Q_LOCAL_THRESHOLD 2
+>  #define FURING_Q_NUMA_THRESHOLD (FURING_Q_LOCAL_THRESHOLD + 1)
+>  #define FURING_Q_GLOBAL_THRESHOLD (FURING_Q_LOCAL_THRESHOLD * 2)
+> +#define FURING_NEXT_QUEUE_RETRIES 2
+>=20=20
+>  bool fuse_uring_enabled(void)
+>  {
+> @@ -1262,7 +1263,8 @@ static void fuse_uring_send_in_task(struct io_uring=
+_cmd *cmd,
+>   *  (Michael David Mitzenmacher, 1991)
+>   */
+>  static struct fuse_ring_queue *fuse_uring_best_queue(const struct cpumas=
+k *mask,
+> -						     struct fuse_ring *ring)
+> +						     struct fuse_ring *ring,
+> +						     bool background)
+>  {
+>  	unsigned int qid1, qid2;
+>  	struct fuse_ring_queue *queue1, *queue2;
+> @@ -1277,9 +1279,14 @@ static struct fuse_ring_queue *fuse_uring_best_que=
+ue(const struct cpumask *mask,
+>  	}
+>=20=20
+>  	/* Get two different queues using optimized bounded random */
+> -	qid1 =3D cpumask_nth(get_random_u32_below(weight), mask);
+> +
+> +	do {
+> +		qid1 =3D cpumask_nth(get_random_u32_below(weight), mask);
+> +	} while (background && qid1 =3D=3D task_cpu(current));
+>  	queue1 =3D READ_ONCE(ring->queues[qid1]);
+>=20=20
+> +	return queue1;
 
-Then there's _require_test_program "file_attr" in the tests, so
-these will not run if kernel doesn't have these syscalls.
+Hmmm?  I guess this was left from some local testing, right?
 
-However, for XFS for example, there's [1] and [2] which are
-necessary for these tests to pass. 
+Cheers,
+--=20
+Lu=C3=ADs
 
-So, there a few v6.17 kernels which would still run these tests but
-fail for XFS (and still fails as these commits are in for-next now).
 
-For other filesystems generic/ will also fail on newer kernels as it
-requires similar modifications as in XFS to support changing file
-attributes on special files.
-
-I suppose it make sense for this test to fail for other fs which
-don't implement changing file attributes on special files.
-Otherwise, this test could be split into generic/ (file_get/setattr
-on regular files) and xfs/ (file_get/setattr on special files).
-
-What do you think?
-
-[1]: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/commit/?h=for-next&id=8a221004fe5288b66503699a329a6b623be13f91
-[2]: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/commit/?h=for-next&id=0239bd9fa445a21def88f7e76fe6e0414b2a4da0
-
-> 
-> 
-> Thanks,
-> Zorro
-> 
-> > +	if (action) {
-> > +		fsx.fa_xflags |= (fa_xflags | unknwon_fa_flag);
-> > +
-> > +		error = file_setattr(fd, path, &fsx, fa_size,
-> > +				at_flags);
-> > +		if (error) {
-> > +			fprintf(stderr, "Can not set fsxattr on %s: %s\n", path,
-> > +					strerror(errno));
-> > +			return error;
-> > +		}
-> > +	} else {
-> > +		if (path2)
-> > +			print_xflags(fsx.fa_xflags, 0, 1, path, 0, 1);
-> > +		else
-> > +			print_xflags(fsx.fa_xflags, 0, 1, path1, 0, 1);
-> > +	}
-> > +
-> > +	return error;
-> > +
-> > +usage:
-> > +	printf("Usage: %s [options]\n", argv[0]);
-> > +	printf("Options:\n");
-> > +	printf("\t--get, -g\t\tget filesystem inode attributes\n");
-> > +	printf("\t--set, -s\t\tset filesystem inode attributes\n");
-> > +	printf("\t--at-cwd, -a\t\topen file at current working directory\n");
-> > +	printf("\t--no-follow, -n\t\tdon't follow symlinks\n");
-> > +	printf("\t--set-nodump, -d\t\tset FS_XFLAG_NODUMP on an inode\n");
-> > +	printf("\t--invalid-at, -i\t\tUse invalid AT_* flag\n");
-> > +	printf("\t--too-big-arg, -b\t\tSet fsxattr size bigger than PAGE_SIZE\n");
-> > +	printf("\t--too-small-arg, -m\t\tSet fsxattr size to 19 bytes\n");
-> > +	printf("\t--new-fsx-flag, -x\t\tUse unknown fa_flags flag\n");
-> > +
-> > +	return 1;
-> > +}
-> > 
-> > -- 
-> > 2.50.1
-> > 
-> 
-
--- 
-- Andrey
+> +
+>  	do {
+>  		qid2 =3D cpumask_nth(get_random_u32_below(weight), mask);
+>  	} while (qid2 =3D=3D qid1);
+> @@ -1298,12 +1305,14 @@ static struct fuse_ring_queue *fuse_uring_best_qu=
+eue(const struct cpumask *mask,
+>  /*
+>   * Get the best queue for the current CPU
+>   */
+> -static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring *ri=
+ng)
+> +static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring *ri=
+ng,
+> +						    bool background)
+>  {
+>  	unsigned int qid;
+>  	struct fuse_ring_queue *local_queue, *best_numa, *best_global;
+>  	int local_node;
+>  	const struct cpumask *numa_mask, *global_mask;
+> +	int retries =3D 0;
+>=20=20
+>  	qid =3D task_cpu(current);
+>  	if (WARN_ONCE(qid >=3D ring->max_nr_queues,
+> @@ -1311,16 +1320,44 @@ static struct fuse_ring_queue *fuse_uring_get_que=
+ue(struct fuse_ring *ring)
+>  		      ring->max_nr_queues))
+>  		qid =3D 0;
+>=20=20
+> -	local_queue =3D READ_ONCE(ring->queues[qid]);
+>  	local_node =3D cpu_to_node(qid);
+>=20=20
+> -	/* Fast path: if local queue exists and is not overloaded, use it */
+> -	if (local_queue && local_queue->nr_reqs <=3D FURING_Q_LOCAL_THRESHOLD)
+> +	local_queue =3D READ_ONCE(ring->queues[qid]);
+> +
+> +retry:
+> +	/*
+> +	 * For background requests, try next CPU in same NUMA domain.
+> +	 * I.e. cpu-0 creates async requests, cpu-1 io processes.
+> +	 * Similar for foreground requests, when the local queue does not
+> +	 * exist - still better to always wake the same cpu id.
+> +	 */
+> +	if (background || !local_queue) {
+> +		numa_mask =3D ring->numa_registered_q_mask[local_node];
+> +		int weight =3D cpumask_weight(numa_mask);
+> +
+> +		if (weight > 0) {
+> +			int idx =3D (qid + 1) % weight;
+> +
+> +			qid =3D cpumask_nth(idx, numa_mask);
+> +		} else {
+> +			qid =3D cpumask_first(numa_mask);
+> +		}
+> +
+> +		local_queue =3D READ_ONCE(ring->queues[qid]);
+> +	}
+> +
+> +	if (local_queue && local_queue->nr_reqs <=3D FURING_Q_NUMA_THRESHOLD)
+>  		return local_queue;
+>=20=20
+> +	if (retries < FURING_NEXT_QUEUE_RETRIES) {
+> +		retries++;
+> +		local_queue =3D NULL;
+> +		goto retry;
+> +	}
+> +
+>  	/* Find best NUMA-local queue */
+>  	numa_mask =3D ring->numa_registered_q_mask[local_node];
+> -	best_numa =3D fuse_uring_best_queue(numa_mask, ring);
+> +	best_numa =3D fuse_uring_best_queue(numa_mask, ring, background);
+>=20=20
+>  	/* If NUMA queue is under threshold, use it */
+>  	if (best_numa && best_numa->nr_reqs <=3D FURING_Q_NUMA_THRESHOLD)
+> @@ -1328,7 +1365,7 @@ static struct fuse_ring_queue *fuse_uring_get_queue=
+(struct fuse_ring *ring)
+>=20=20
+>  	/* NUMA queues above threshold, try global queues */
+>  	global_mask =3D ring->registered_q_mask;
+> -	best_global =3D fuse_uring_best_queue(global_mask, ring);
+> +	best_global =3D fuse_uring_best_queue(global_mask, ring, background);
+>=20=20
+>  	/* Might happen during tear down */
+>  	if (!best_global)
+> @@ -1338,8 +1375,10 @@ static struct fuse_ring_queue *fuse_uring_get_queu=
+e(struct fuse_ring *ring)
+>  	if (best_global->nr_reqs <=3D FURING_Q_GLOBAL_THRESHOLD)
+>  		return best_global;
+>=20=20
+> +	return best_global;
+> +
+>  	/* Fall back to best available queue */
+> -	return best_numa ? best_numa : best_global;
+> +	// return best_numa ? best_numa : best_global;
+>  }
+>=20=20
+>  static void fuse_uring_dispatch_ent(struct fuse_ring_ent *ent)
+> @@ -1360,7 +1399,7 @@ void fuse_uring_queue_fuse_req(struct fuse_iqueue *=
+fiq, struct fuse_req *req)
+>  	int err;
+>=20=20
+>  	err =3D -EINVAL;
+> -	queue =3D fuse_uring_get_queue(ring);
+> +	queue =3D fuse_uring_get_queue(ring, false);
+>  	if (!queue)
+>  		goto err;
+>=20=20
+> @@ -1405,7 +1444,7 @@ bool fuse_uring_queue_bq_req(struct fuse_req *req)
+>  	struct fuse_ring_queue *queue;
+>  	struct fuse_ring_ent *ent =3D NULL;
+>=20=20
+> -	queue =3D fuse_uring_get_queue(ring);
+> +	queue =3D fuse_uring_get_queue(ring, true);
+>  	if (!queue)
+>  		return false;
+>=20=20
+>
+> --=20
+> 2.43.0
+>
+>
 
 
