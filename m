@@ -1,144 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-63499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DF3BBE58C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 16:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81262BBE59E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 16:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A6DE4EE6B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 14:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101183B107B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 14:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECA22D5921;
-	Mon,  6 Oct 2025 14:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30142D5C91;
+	Mon,  6 Oct 2025 14:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ci3p08+M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyayRvWM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A142D2489
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 14:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383FB137923;
+	Mon,  6 Oct 2025 14:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759760978; cv=none; b=cccW5BZ1RdbjgEFLTVNUX5j3+JAYXtn44QaWAokMJZRAkBfeEnbW6ItS6nrNRzYVxVCpiLpPfniEdWFyn9oVO7wg3oh5nZOFd4NKrTbOtnwgvLkCt9wAp5WnFqIUQRyDH2Gkyf+cPhTOV+CFaP8vYx+XfvMzWLSWdoT0bUgrx7g=
+	t=1759761023; cv=none; b=fUUEoDFWjMph29akdWy3MDQulSxRraPXcvHWwSdRt7nHj1QgygO+fgrTvfSEmGMyJlYjWUw5NSOLtxBhk+M9xkoylJv+mrjQmVIudcLMtcTw+XBNzPAVnMmXx01xkgRGse1U3aOfpYbVxpTD0J8CSwJhmPijkaDFdG498YS2t/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759760978; c=relaxed/simple;
-	bh=E1oFUaetIN3J9BbLXWw81KQZaVbHVxYOQAA3OKovtV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f9OooSJaMgyT7LVQSpsAcUiryE4z2YGz3dcnLSoPbUQbsw/j8rV+m/6Ghm/i0BlcSDh+H/prZ/0tzO2s1qYHrW71spC633CzmH1XQGSQgTI6VBF43JzRGM9xiaix5ZXzJRwUtjfHNtAdzy6t/YjsoFN8D2Y09rBgolOcfjlN7Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ci3p08+M; arc=none smtp.client-ip=74.125.224.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-635349b6fe6so4060259d50.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 07:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759760975; x=1760365775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJnug6q8HPEpXIFL/wDOLMWojEn9p0rWq/or/bnemmM=;
-        b=Ci3p08+M8xpkARtZPZOS4iqS+RdaAaX6AZD/lwE432f1Lqx4Fl2472Ane9CwZXTnDa
-         wr2j2Y3EFtPvgwwhhhEmfxR9/MDJbWyp/JLmBNJ3SprOERHkkgubb2J5fzfIMFn/oLzu
-         J/e1TfjjlRlBHST8/mT/P9V7wTLk+ny28zIMqMXhidLR8+d9D66tfLKlXgryJVd+aANC
-         AX9uxmykc8l6kvwEhFICry+Rimb9EORnfzBPm6NQv/oIhXESm8HEOc+32Pz+LEWzz9hy
-         wKYEALLo87qRB/+fJ6hKXSOytfVEbkwoa1hFDnl7LwxKtkt/4StIc8mYVB/JbcuCVmkj
-         qRmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759760975; x=1760365775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJnug6q8HPEpXIFL/wDOLMWojEn9p0rWq/or/bnemmM=;
-        b=jNjw76DYdIib/W2DiFDp9LB9lo51wYYfU2we2/d60nBra3GtjGbjDsbdmKegMpOlG+
-         MzHI1vsoevWQmzQ16GeCmMo135fEalRwR/YqaEDDS55c65wuclWJK/b/HXGOQoLdKWLg
-         f0vmZ+MxVytqJBc+tqKxcSqDb1ywqnbdPnRQjShixAmMR6ABvPivph5lL4rez7T7PfrO
-         32o5bsXvEZRxuDEJWY64RPGauwZrGz/GIZJt5FAsNgec/+UOeEe8ik2ftB/SwL8ypUQY
-         Pa9L2ZHpW05eSMDQX4tHvILjYey8Ge5ZrEseLuEBlg/XQ+owcaFo4ukQ3gssti9Cy4Di
-         1VHw==
-X-Gm-Message-State: AOJu0Yxz9hPXXfIYdDinedLXNBuM/qJElGsAqIgUo0XmV4CU9LsH2TOV
-	X8xW6l2Amwfo8Q9+ZrzTwf7Sqi/h8+i4fCsy9fxvGF9jslJJNW1NpLZ6YQBVPAtSgzmaMHNDIg3
-	KTXBh4/WyDj33SZ7bDh2x9ZvHmt2va7yrwffyubc9W4QZhCJ5gkPrE8Q=
-X-Gm-Gg: ASbGnctijUBsTNQ9wQUfNGD+KZByKIYh2iykx9ZmjqytPN3PGwQheBBd1Pq0BgfrAYA
-	NR1z0c4wvaQR3fXG20jlo/mCkVwxSfsjNP8c0dzAeM+422uWF/Qg9GMEdbapCpA+WO4r7pb1Lw/
-	Ft5WIw62wArv0oWLtHgBcr8uBkClGMWs61OlR7Yjt5iOdRTS2E0syzPeGqwuA7tyKYg1e2NzPbi
-	eFdqyeagfit4IG3FHz17X2LmhBVGSWEgeJonP01Qr/i3rmqKA==
-X-Google-Smtp-Source: AGHT+IEphe+jpr4i9iNOYvMrbl6mnzcpI8NSqKVNsLCn2RITk7Tut1rz1dRJ62vywpRLtrLtjwpgHodNVUg3+fDBx0Y=
-X-Received: by 2002:a53:ac48:0:b0:63a:d45a:8a55 with SMTP id
- 956f58d0204a3-63b9a0f4993mr9638461d50.42.1759760975073; Mon, 06 Oct 2025
- 07:29:35 -0700 (PDT)
+	s=arc-20240116; t=1759761023; c=relaxed/simple;
+	bh=Z0Xk1zutYNK5fdV7Q90ItmYTFXFrXh0MnKPjPEQpcec=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g3OKUAqKLoJGjxlTIe4Zykw2vf9sIGyqTigTcXzQS6gxsdBif2WKIafm/sWL/GXZo/mbUzwAMM7Jxksxn+fNTpWbj/SCyr8Fi7G6wKEIlXePsoi0yuYCCZgkX0gXzRu3IY22ayf/pqq3fOTcVdOtu+KKMs07cwbBGW+WkzE3UMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyayRvWM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E25C4CEF5;
+	Mon,  6 Oct 2025 14:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759761022;
+	bh=Z0Xk1zutYNK5fdV7Q90ItmYTFXFrXh0MnKPjPEQpcec=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CyayRvWM7fCrhPL8SVjOSeWTov06Ps1dORhh0sl9klxAwOkyK7ONJ6lZE2eVvrvFl
+	 mgInnab3z3wKW99UU9pD8ZuQf2Bw0/9ib8mfYNQzjTW3DmCxEx1RFB6nGo4lOu7CzF
+	 hMtJn3RZ+OrtUP8mFaUi86/tZi35QjBlQuR8RYrgWneX3WVmBbg7jndHayNovJMUuC
+	 uWpOU/jICq82izj2NxgEyPAjvZkgJ46SG/GvvA3u4cxkkQStzdUHi0wkPwMa6lcX/i
+	 BRde4WsDzdeDSTTrafTTHcRA7U22BRlDcJusZ5J9SnjMbh+SfAH3bGkkt4WKFEKf5i
+	 HSZ5diknL9v6g==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
+  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
+  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 03/30] kho: drop notifiers
+In-Reply-To: <20250929010321.3462457-4-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Mon, 29 Sep 2025 01:02:54 +0000")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
+Date: Mon, 06 Oct 2025 16:30:12 +0200
+Message-ID: <mafs0bjmkp0gb.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930065637.1876707-1-sunjunchao@bytedance.com> <20251006-zenit-ozonwerte-32bf073c7a02@brauner>
-In-Reply-To: <20251006-zenit-ozonwerte-32bf073c7a02@brauner>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Mon, 6 Oct 2025 22:29:23 +0800
-X-Gm-Features: AS18NWDjbDOol8a1ZfvjT51FTwV90CBDkU9pBegkp2IEyx7dcFVL0jp3S6uVzJw
-Message-ID: <CAHSKhte2naFFF+xDFQt=jQ+S-HaNQ_s7wBkxjaO+QwKmnmqVgg@mail.gmail.com>
-Subject: Re: [External] Re: (subset) [PATCH v3 1/2] writeback: Wake up waiting
- tasks when finishing the writeback of a chunk.
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+Hi Pasha,
 
-It looks like an earlier version of my patch was merged, which may
-cause a null pointer dereference issue. The latest and correct version
-can be found here:
-https://lore.kernel.org/linux-fsdevel/20250930085315.2039852-1-sunjunchao@b=
-ytedance.com/.
+On Mon, Sep 29 2025, Pasha Tatashin wrote:
 
-Sorry for the confusion, and thank you for your time and help!
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> The KHO framework uses a notifier chain as the mechanism for clients to
+> participate in the finalization process. While this works for a single,
+> central state machine, it is too restrictive for kernel-internal
+> components like pstore/reserve_mem or IMA. These components need a
+> simpler, direct way to register their state for preservation (e.g.,
+> during their initcall) without being part of a complex,
+> shutdown-time notifier sequence. The notifier model forces all
+> participants into a single finalization flow and makes direct
+> preservation from an arbitrary context difficult.
+> This patch refactors the client participation model by removing the
+> notifier chain and introducing a direct API for managing FDT subtrees.
+>
+> The core kho_finalize() and kho_abort() state machine remains, but
+> clients now register their data with KHO beforehand.
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Best,
+This patch breaks build of test_kho.c (under CONFIG_TEST_KEXEC_HANDOVER):
 
+	lib/test_kho.c:49:14: error: =E2=80=98KEXEC_KHO_ABORT=E2=80=99 undeclared =
+(first use in this function)
+	   49 |         case KEXEC_KHO_ABORT:
+	      |              ^~~~~~~~~~~~~~~
+	[...]
+	lib/test_kho.c:51:14: error: =E2=80=98KEXEC_KHO_FINALIZE=E2=80=99 undeclar=
+ed (first use in this function)
+	   51 |         case KEXEC_KHO_FINALIZE:
+	      |              ^~~~~~~~~~~~~~~~~~
+	[...]
 
-On Mon, Oct 6, 2025 at 6:44=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Tue, 30 Sep 2025 14:56:36 +0800, Julian Sun wrote:
-> > Writing back a large number of pages can take a lots of time.
-> > This issue is exacerbated when the underlying device is slow or
-> > subject to block layer rate limiting, which in turn triggers
-> > unexpected hung task warnings.
-> >
-> > We can trigger a wake-up once a chunk has been written back and the
-> > waiting time for writeback exceeds half of
-> > sysctl_hung_task_timeout_secs.
-> > This action allows the hung task detector to be aware of the writeback
-> > progress, thereby eliminating these unexpected hung task warnings.
-> >
-> > [...]
->
-> Applied to the vfs-6.19.writeback branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.19.writeback branch should appear in linux-next soon=
-.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.19.writeback
->
-> [1/2] writeback: Wake up waiting tasks when finishing the writeback of a =
-chunk.
->       https://git.kernel.org/vfs/vfs/c/334b83b3ed81
+I think you need to update it as well to drop notifier usage.
 
-
+[...]
 
 --=20
-Julian Sun <sunjunchao@bytedance.com>
+Regards,
+Pratyush Yadav
 
