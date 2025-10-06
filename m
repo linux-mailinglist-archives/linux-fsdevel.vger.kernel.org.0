@@ -1,97 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-63514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721D6BBEE1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 20:04:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E369EBBEE5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 20:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12CCF3B240D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 18:04:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9A164E74F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 18:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3223246766;
-	Mon,  6 Oct 2025 18:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CC51D61A3;
+	Mon,  6 Oct 2025 18:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="YEIRcNUY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Auk/0g+h"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IwdhxAVq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C4621C179
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 18:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19DD246766
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 18:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759773874; cv=none; b=D5t+O2MBd29FqlQMCSQiLacnNX+0kcxPPGdpnC4VHg7mETdTYNvMVavLcvfgbpTq1hpR2SA17qAhxZNQo6r+lnMtIEiGovrHOWu98WOUQ/1RHkYuRJBq50l4ydmKx6wtY2qUKhYhaV0sW1dqc4AJ2vdImOXGLGVLIqBUuVkUppY=
+	t=1759774513; cv=none; b=Zlo+GW/2PXUFKFPeNvzXroBaH0m2qHeVxVo9ocWmWIzfTFZ1PyQ6u72e5QX91hW5HfYE842rrP+yrvAKDv2rpaHhuA0P5X9rVjoE7dkK9Lkeyrwi6zaiwLKYzq88+I/wojpG+UMSoma5TzOYEMN3FI5sTNfnB4asJLW/tcpet98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759773874; c=relaxed/simple;
-	bh=LrFVzIkHIWTHuI4rXTBWGV+v/+f1YiSTPEZ9/vbskyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRk38D6ZMZKNrbKzyMv96dNPLESiV1qUVNo3NiyQiWt4KpGWeqreTQV10vKIPcYgxQV8On7Uxx3fIdo/yBjwbl1XEpyofeOPUFyVqrvaoZQM/oFAS+nOG5VqaXWAx52855HI/XJmt88XRsR50/7zSTi2ZllUjUUqK0m3mJ40Agk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=YEIRcNUY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Auk/0g+h; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DF4167A0127;
-	Mon,  6 Oct 2025 14:04:29 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Mon, 06 Oct 2025 14:04:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1759773869; x=
-	1759860269; bh=mvRmitREcUsAIl3c+ISPdevfWOPSl1oIN+oRFP6Q4Mc=; b=Y
-	EIRcNUYhfrPGY19vO2hpSwLknu6Q4o6tCDjyHmm8v+9rU12jnkWTkXJi00vm0Kf/
-	5JoEk2CifeTzzxv9CJKgQX1gX1GBgmyW1gHFhHKcC23Eix7raf0mEDhwcXtKa4eg
-	HMMrILVv8x7qTinIxgRVnbMl8538/zxxY+K0ozoh7yZVxq3qoSxKL2C64QkuPZIQ
-	nSyy07if6Pp8OFcuprt8KElOhYlciQ92qnqbgpnGY7lZkATVvOCT0ckS56upNcDD
-	s8x4Bxx65xcLtJIOKoFAerSBJ61/tLmdY68p1FNZwELg/i3s04IoZBPlntKVXZDG
-	Xz5QW2qj6OdRJlcxfwlhA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759773869; x=1759860269; bh=mvRmitREcUsAIl3c+ISPdevfWOPSl1oIN+o
-	RFP6Q4Mc=; b=Auk/0g+hdxoQ3NNFMr1/+2KxC1flPJFtsHTJHXIrFFDmJzuJ4On
-	0yAG0FoK04ncv5SVUN6Lz3D1dODTYdKIpbf6Q5VTFAefiQvIb0YdaSm21ogqmEXo
-	jZ+OkCO7wE2AIyGZPkYckyYSmS7h/1rqTkp7er3hqQPw5AYclOVdCdzZ3Tut0Wff
-	G/oBE+j6qqPuBvuZpzdcKSLjRhBci48Hp1zeGrMFmeh5CPfFpS+i9VnhDBvSVnQ+
-	1o8Ngzeyb7Glrup2L6vHTIS5/yfXhAg3S3BpKhMFjTmP3nrzhZyE1uA5dGS96cxk
-	ZADkyCJgGjRSX6kcqBra2E0x0MD6Dz+ABqA==
-X-ME-Sender: <xms:rQTkaNw84cZ5zCKLnFQ_I-ArYHhp9lCooWVyw2Was1QbpvH7_xAxNQ>
-    <xme:rQTkaAWT2R0eNX6ZfL_2MTvT7-5IQ7ZKOrTFqa3Z7L6slwgzQfIi3nN4bT7P5QuTb
-    7HmFWtsSYhJ0SP8HkdtJn3Lug9PkLI8B-2NNx8o9NezaUrOxqFY_l0>
-X-ME-Received: <xmr:rQTkaB_vc2qTV3Bb69BpuzJOmNUVzz6sPKQbZc4xXjDFdj-4QYCNQeh-cpzc1A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelkedvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepuddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugi
-    dqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfihilhhlhiesihhnfhhrrggu
-    vggrugdrohhrghdprhgtphhtthhopehmtghgrhhofheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:rQTkaLshyacJTOxqkAYV_Mq3psXLsryU-csILR2ICVVXNMthP85QwA>
-    <xmx:rQTkaJ3HFfs5bn3Sz3X9Up-7-8CMZxnST_jVVVDt5CT1IP7fISuyfw>
-    <xmx:rQTkaIQcy2Z0EL9aAdbAsUlNMqEWIprPGhmJ0l1P9k9szOgHTiYI4w>
-    <xmx:rQTkaFd-RIs73pUY1abGNwXqu7TqMFPJAGAxtP9ZaBIiF_i0ZWnnPA>
-    <xmx:rQTkaOVgd5OZygrHjAovjkvWOnGwKWmsAixlN7Cm4w3ouWWnmCAP96nJ>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Oct 2025 14:04:28 -0400 (EDT)
-Date: Mon, 6 Oct 2025 19:04:26 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: Optimizing small reads
-Message-ID: <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+	s=arc-20240116; t=1759774513; c=relaxed/simple;
+	bh=6KBDZHR58px1OGgtFtHwdWI93G3z3DNj8TlLWsV5yeg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J3PumvhHGI8A8ToTH2/+mmPNiz+diidH/dl8N9OcnzlDO2RZpkcsDVPzyGstKD2tk9SHqtEtGcp4geBWpSCQuxkvbriyjWOXkZbFDQxYQXUkdYoCBOCwF2Co7yA2Ua/LmlP4uLMI9q83kEr7ui0Y7ILQ2niq+EKuaJrJklSMMCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IwdhxAVq; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3d5088259eso770232366b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 11:15:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759774509; x=1760379309; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+IrJM7m+IGfKJ5wujAoW0yQ4XN9nNk26XjqZOP2OaE=;
+        b=IwdhxAVqRIb/gGCvT1z8AQyAX7LBwJMDryxGsdq9IIePf9O9ujtWl7cj1IjSfLdSMq
+         UIQH3oLb5c6+1EI6KbGNiJ2XHCBCxbOzQWK5wf26Xnwi/3zaatmJJgdNQ3b4tVjZaSjI
+         4N6+n4krA3Bil31Z9lUtO8ilmMZqOetJ0LkwA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759774509; x=1760379309;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G+IrJM7m+IGfKJ5wujAoW0yQ4XN9nNk26XjqZOP2OaE=;
+        b=kwEECG1BEidsCdwYR4uukf9Iscyw0zmhKJUsaE00SeHUjPGE11IPMY76v6CIUBX//8
+         uG5P4fZVfNEeMZmPGCUmnzdLoFAPNdWotmgH2q66K7Is9O4SkOMTmblbpjFrj5pr2+fB
+         RVifOljnHhlMe23WR0rFJrCvUTA9qBAxTWWvp/+8ekNKqBbsf2sLiv7+CwJvjhXbkqlf
+         kiguz2H9w9HI7JRvtT7nvkuhkc4PTPp+MUMj4dr6dt6e8OqwsrPEv01Ce3wY3o+MRFpZ
+         xFHK5g6OqPpa1o02+avD70RpW5AxVRGXG/5hnJUwnweuQ1JOeEB/gjw3oJCk8m5UA4P2
+         XiXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv9457MT73GEt4ZAbiUNYm9h4V4cq8S4mVnNHR2h2IIkqEDfSVCwH72b7WpdBdg8OoEmXjrlUNPuJIgHjP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3b+y0typjkTWVAEt0YvaGz5yQw7PHbCTIn/gY4D4X9NlIOUL0
+	ep7VyH+F5AQe4sCQCqT0uXSfvecj4Mqq/Kj1qTaMIw/R9KhhO8gmAq4pgau0pI05QStWgZtSr4A
+	WI0TKJhA=
+X-Gm-Gg: ASbGncvkwZ6Vv+aTogFFBqzhVSmuxbgFwwORsKMxTsk2XZSvLiLI1Xrio0yT6P7PU3q
+	y6GaH7ZI0hlU5gEUBVENEFemTYYliDzvk9mJLf0FqgMVE8a+jpQzPcqt7OV35vmPF5SkL1Kif5g
+	I4GviiRgMc5pKSmMG+9zhBWnRqQZISNiYTn4v5wIm2O5vQHudb50bL/LlEd1BD2ZGGCNMgGgiEI
+	h18RXhGbRMrCXACBqyh6jtPs2sXZASSt39fNjlWQCTrevEa0u3vYVn9MmpVS10yn9S0/nfoH+rU
+	0hZODrwjjr1A+bIQX7E4bZu2hdvXEwdm2Y82zODxbUE/GR7MbtsZYvNryhO1sXB//pFYJ9S5lgg
+	+JEDADXhLsZg5gC0mMYjKBl4CWFser2a1GLi9i9Y4yh+px4EWLWuP6QB9UFMIah6QrT2c+ZbV+9
+	pGflajOB+fOeGSx7QBe0d3UJb2tgrekzc=
+X-Google-Smtp-Source: AGHT+IF8yLpaJWQcjZwsg8lUnRCx9n94Q/NTxHPPoqX2bBETelZY+5QeQKKaeGVBi5Vh2+L9T5WpOA==
+X-Received: by 2002:a17:907:94d4:b0:b45:7cb4:7d3 with SMTP id a640c23a62f3a-b49c3b25ecamr1766552766b.32.1759774508755;
+        Mon, 06 Oct 2025 11:15:08 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865986505sm1189147766b.23.2025.10.06.11.15.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 11:15:08 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7a16441so860236766b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 11:15:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGpicl5PzIsoOiRVb4DhyrO7MxQ/wSFkfc1qhPrEsqdEISB46HEGGJlokXdicGPa3QuqgVIUrXDp4xq3YJ@vger.kernel.org
+X-Received: by 2002:a17:907:97c8:b0:b3f:b7ca:26c5 with SMTP id
+ a640c23a62f3a-b49c44b0c80mr1722317966b.59.1759774507739; Mon, 06 Oct 2025
+ 11:15:07 -0700 (PDT)
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 References: <CAHk-=wj00-nGmXEkxY=-=Z_qP6kiGUziSFvxHJ9N-cLWry5zpA@mail.gmail.com>
  <flg637pjmcnxqpgmsgo5yvikwznak2rl4il2srddcui2564br5@zmpwmxibahw2>
  <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
@@ -99,116 +91,32 @@ References: <CAHk-=wj00-nGmXEkxY=-=Z_qP6kiGUziSFvxHJ9N-cLWry5zpA@mail.gmail.com>
  <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
  <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
  <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
- <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
+ <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com> <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+In-Reply-To: <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 6 Oct 2025 11:14:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whG4TYkS+Ns0hbx4XNbvQN-BAvq9_ABJz1bgBsA4NPDAw@mail.gmail.com>
+X-Gm-Features: AS18NWBukV_xtmU11JJsDRqxO_VMhKc_Ul7jDhpyeBLq29Yx3q9wMoG-6X-gkno
+Message-ID: <CAHk-=whG4TYkS+Ns0hbx4XNbvQN-BAvq9_ABJz1bgBsA4NPDAw@mail.gmail.com>
+Subject: Re: Optimizing small reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 06, 2025 at 08:50:55AM -0700, Linus Torvalds wrote:
-> On Mon, 6 Oct 2025 at 04:45, Kiryl Shutsemau <kirill@shutemov.name> wrote:
+On Mon, 6 Oct 2025 at 11:04, Kiryl Shutsemau <kirill@shutemov.name> wrote:
 > >
-> > Below is my take on this. Lightly tested.
-> 
-> Thanks.
-> 
-> That looked even simpler than what I thought it would be, although I
-> worry a bit about the effect on page_cache_delete() now being much
-> more expensive with that spinlock.
+> > So I think you can just change the seqcount_spinlock_t to a plain
+> > seqcount_t with no locking at all, and document that external locking.
 >
-> And the spinlock actually looks unnecessary, since page_cache_delete()
-> already relies on being serialized by holding the i_pages lock.
-> 
-> So I think you can just change the seqcount_spinlock_t to a plain
-> seqcount_t with no locking at all, and document that external locking.
+> That is not a spinlock. It is lockdep annotation that we expect this
+> spinlock to be held there for seqcount write to be valid.
+>
+> It is NOP with lockdep disabled.
 
-That is not a spinlock. It is lockdep annotation that we expect this
-spinlock to be held there for seqcount write to be valid.
+Ahh, right you are. Complaint withdrawn. I had the "lockref" kind of
+thing in mind, but yes, the seqcount thing already have an external
+lock model.
 
-It is NOP with lockdep disabled.
-
-pidfs does the same: pidmap_lock_seq tied to pidmap_lock. And for
-example for code flow: free_pid() takes pidmap_lock and calls
-pidfs_remove_pid() that takes pidmap_lock_seq.
-
-It also takes care about preemption disabling if needed.
-
-Unless I totally misunderstood how it works... :P
-
-> >  - Do we want a bounded retry on read_seqcount_retry()?
-> >    Maybe upto 3 iterations?
-> 
-> No., I don't think it ever triggers, and I really like how this looks.
-> 
-> And I'd go even further, and change that first
-> 
->         seq = read_seqcount_begin(&mapping->i_pages_delete_seqcnt);
-> 
-> into a
-> 
->         if (!raw_seqcount_try_begin(&mapping->i_pages_delete_seqcnt);
->                 return 0;
-> 
-> so that you don't even wait for any existing case.
-
-Ack.
-
-> That you could even do *outside* the RCU section, but I'm not sure
-> that buys us anything.
-> 
-> *If* somebody ever hits it we can revisit, but I really think the
-> whole point of this fast-path is to just deal with the common case
-> quickly.
-> 
-> There are going to be other things that are much more common and much
-> more realistic, like "this is the first read, so I need to set the
-> accessed bit".
-> 
-> >  - HIGHMEM support is trivial with memcpy_from_file_folio();
-> 
-> Good call. I didn't even want to think about it, and obviously never did.
-> 
-> >  - I opted for late partial read check. It would be nice allow to read
-> >    across PAGE_SIZE boundary as long as it is in the same folio
-> 
-> Sure,
-> 
-> When I wrote that patch, I actually worried more about the negative
-> overhead of it not hitting at all, so I tried very hard to minimize
-> the cases where we look up a folio speculatively only to then decide
-> we can't use it.
-
-Consider it warming up CPU cache for slow path :P
-
-> But as long as that
-> 
->         if (iov_iter_count(iter) <= sizeof(area)) {
-> 
-> is there to protect the really basic rule, I guess it's not a huge deal.
-> 
-> >  - Move i_size check after uptodate check. It seems to be required
-> >    according to the comment in filemap_read(). But I cannot say I
-> >    understand i_size implications here.
-> 
-> I forget too, and it might be voodoo programming.
-> 
-> >  - Size of area is 256 bytes. I wounder if we want to get the fast read
-> >    to work on full page chunks. Can we dedicate a page per CPU for this?
-> >    I expect it to cover substantially more cases.
-> 
-> I guess a percpu page would be good, but I really liked using the
-> buffer we already ended up having for that page array.
-> 
-> Maybe worth playing around with.
-
-With page size buffer we might consider serving larger reads in the same
-manner with loop around filemap_fast_read().
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+           Linus
 
