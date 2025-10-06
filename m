@@ -1,159 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-63494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612A3BBE347
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 15:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634C7BBE350
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 06 Oct 2025 15:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A3704E2B16
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 13:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C8C189557F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Oct 2025 13:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B5C2C375E;
-	Mon,  6 Oct 2025 13:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27722D24A7;
+	Mon,  6 Oct 2025 13:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boEiDFdW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yh5lXy4d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FCF2D2491
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Oct 2025 13:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0683B27EFEF;
+	Mon,  6 Oct 2025 13:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759758312; cv=none; b=oIbe4v061wru3YYCyrlJqog0J91vM1UfIcFsDVCQzXz05vZcpIhC+msSFZO2eqy4SDvPpSCfnC/NhDjHCYB0tlzNJHeFsh1IA7jF7DETp4kP9EOjgQ0XIxJTvzFFZYkA24otFF6SGJn7TnFW7HfBbalNctRCSTby/+U6WAXUzWA=
+	t=1759758332; cv=none; b=hqpLWA0+uov+XtqFGvWnqUXNaVKVYUElC/R+Q+S3X//z5nlXZpPgI2ovv01HvsOVPNGUu9S3EEXtARGOYu1P+3m4DFvxXw7ZDaqFeMGDB7PgUZDveu6fnf7JcBAXdjFHeTQcN02zoC9QW2ojZFJWAiTpOXRpmpU+F56jvf/8t1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759758312; c=relaxed/simple;
-	bh=gY7Cn0R4j+C/xwAHqXy0vJMKwmEkQ6eYzuuBQMAJA+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQGNRCtXTHC2FpIvh86/HoE6bCNF3MPzN16ZzTjmNGvuXE8XMjE5jN2hiJh384Q+JU6sQAFoD5PEuKwzbXDZlnAcyN7up5+gyS2/pTh7dfBQRGJGtPSaBzHMj+/ayVWdr2oxZPKSk8lSAxoFBjtshck62JoeUQ/Ltmz/loffnv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boEiDFdW; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-72e565bf2f0so55211677b3.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Oct 2025 06:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759758310; x=1760363110; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Dd+0F85GMq0hM6baKNKYaOpWODHWFkc8dJOJcvzgTI=;
-        b=boEiDFdWZHHln+EkAvNcsacP54pU8mzHIPHWgfL7/u1lHux/xLTXhnVlptnMYuJYrg
-         Q6qWxtE9qPavVUN7Yx9s4/QnvZGZdMO7iw3LVYTfXUsbX66b0gXMvJsaFoJ9TMFAb/wt
-         I+RT9MsR2Dn/gPZfdo7cdnKo8fV0SoTiGJUgeQtdp7xtDCMbdEMDEGJL+hwUQZWynGyK
-         H59SeYbA5eb1CeKfpoPnkcIV24oSNyIS4VB5J6jkthUkIcqDn2zVfZnvjMpJZvvKd/iT
-         MFSTrFbPEXdQ7sv8mhvbm9uidDh7TrFvXASoEfEYNyrrMU30kLSxH+wTxBlr7cTiiXhp
-         sczA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759758310; x=1760363110;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Dd+0F85GMq0hM6baKNKYaOpWODHWFkc8dJOJcvzgTI=;
-        b=mkjYhG0eUOVQVAKZ/dnmRASraNjjSP03w1ZtsIYRxUyZBbiVaM8zAo+dFXOXxADlkO
-         /lhX1+PSq233DwUZ6aNJa4yJqxjO2qKLe1OV5MnfE20lughXc1M3bAOEkZcwC+mkeh/7
-         //C4f3j5ratDCKwO8jpPEsY5HlJ8J4F734NnDqMMswSEuZ9XZy/VjUw5FPUw5i++94zA
-         Y3f3T2OkUGEA4mAhmCmuH1hNuuMlUxHY1EBPHmxAvPI658qGKoXu5Wh6L9WyZXQ4ERHz
-         tsrDltM0PX8O1Nm6CFjaXtYnnznLDE6hzRNIlCZOMmHfg4ULQQHU/U4L37ApRJ3oOcKA
-         Clvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXux5yIMTPwLJdvLTK+HIOspMIJj4Ro8BouLRI56CCVSl1jX8xmv4a4qqerc2JXBUx9mWxDZSsZHiW4cZ2n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4SW9ZxGjfIQhGttJEUyKUHwhw0lJGHy2wZHgH/njz9tCezYUu
-	e8OC2Gy02pVy0JWrqPiTxcCIWj11/ljMpwTXz0OgplzSCaXeSZwww+MiNwRtT+MyNuwUF15jwJw
-	AHzZ+5Ra7ybC5H26yqqyvuu+X0xHAuRah8Q==
-X-Gm-Gg: ASbGncvhvZkzN+JqBEnFJSvHBCBJ4OeQKugq952sBiaFpgMQH4Ykz6ctTfO4vzC1C3i
-	1f4V+fKL8B0R0/hedZu76fnOGX93iHZkqOTQsbGlGaUiAQyFfgpk90UFLHrR3nraFnO7oF0cXMx
-	ugHf17DhdIfN+kUkprBqeMB3jwWLmLsnEogY7pY7aWQ+QpV0iY7CSqLKj5nVWgw9SKKAm80xPe/
-	+G41wlmSa6UZZzBEcSAWHmZQSq6ma80byGVyCAu+dx948mqJR1s9CHrYKsWBH/QYw==
-X-Google-Smtp-Source: AGHT+IHQwe+SGELlw17QoqUaDR48CNJzbFKCXDf24eF0PDCKb0qGt1k9M3lm6p2y0fByz0S88DfeYE4HF56d4946CUA=
-X-Received: by 2002:a53:ba44:0:b0:636:5ea:a88a with SMTP id
- 956f58d0204a3-63b9a0ddd2cmr8692889d50.32.1759758309634; Mon, 06 Oct 2025
- 06:45:09 -0700 (PDT)
+	s=arc-20240116; t=1759758332; c=relaxed/simple;
+	bh=SX2ygkhw/OQ0Zoqp5Tpkx6/pqRhwo4i1bVnZXTz9i98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbSkEmvP8gUzXLTAdnGCUAQclsy1RSfoNG/2QPCXtx1rD4VGxWi1MkAhkZSVQUlgJxJgKWoDp8r5DKKejo7ovQ8JpCq9QAIi6OL/FyUqUKrhmPbu0MMGjD8RAv+PSHw69pghiTp8A3G3aR8dH/pgTL0kawoIcqHfJbN6+nn7V8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yh5lXy4d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 523D6C4CEFF;
+	Mon,  6 Oct 2025 13:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759758331;
+	bh=SX2ygkhw/OQ0Zoqp5Tpkx6/pqRhwo4i1bVnZXTz9i98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yh5lXy4djsm9iiOTnJJEO5UokrBtD2E0UKFWthi9jS+Xqn/+I2rQ08NZPiTk2URdd
+	 51AY/gqvxgJxNIJTt8z+AanAb3yUWVcwFx0eakygtlCTlhFErQJ3gVsJ+3kHin8EQX
+	 cwvyFtRHEGi6iOUlF5eU8C2WxvMdy1QwhDH98ww2gKWFc3XduMRnYVgT+3KhazED8h
+	 prLD/Yst6YLiNB8cvypOigSNG0X1z6rdPR5m8NX+CgQ532h8VmoIJ91skb3l91QvMI
+	 ntjvxH4T3OcDJX8GCZxAHDgo8rAgTLcr0394eoNQaa1FRs/v06TBqNHDDsGcYxTZpu
+	 LiQkIudF7hztg==
+Date: Mon, 6 Oct 2025 15:45:26 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Bhavik Sachdev <b.sachdev1904@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, Andrei Vagin <avagin@gmail.com>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH 2/4] fs/namespace: add umounted mounts to umount_mnt_ns
+Message-ID: <20251006-erlesen-anlagen-9af59899a969@brauner>
+References: <20251002125422.203598-1-b.sachdev1904@gmail.com>
+ <20251002125422.203598-3-b.sachdev1904@gmail.com>
+ <20251002163427.GN39973@ZenIV>
+ <7e4d9eb5-6dde-4c59-8ee3-358233f082d0@virtuozzo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006103852.506614-1-luca.boccassi@gmail.com>
- <2hg43wshc3iklydtwx25ulqadzyuldkyi6wylgztzwendi5zhw@kw223cxay7qn>
- <CAMw=ZnR6QMNevxtxWysqi5UkDmbD68Ge=R5cVAxskqtmhb5m5A@mail.gmail.com>
- <bywtfrezkfevzz7y2ecq4w75nfjhz2qqu2cugwl3ml57jlom5k@b5bebz4f24sd>
- <CAMw=ZnSZmW=BFbLLSKsn7sze-FXZroQw6o4eJU9675VmGjzDRw@mail.gmail.com>
- <rleqiwn4mquteybmica3jwilel3mbmaww5p3wr7ju7tfj2d6wt@g6rliisekp2e>
- <CAMw=ZnTDw59GqW-kQkf1aTEHgmBRzcD0z9Rk+wpE_REEmaEJBw@mail.gmail.com> <2025-10-06-brief-vague-spines-berms-pzthvt@cyphar.com>
-In-Reply-To: <2025-10-06-brief-vague-spines-berms-pzthvt@cyphar.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Mon, 6 Oct 2025 14:44:58 +0100
-X-Gm-Features: AS18NWDRQ4-uECnyKD_NRVG1xEcLayj4FX-gUnSa68oTI5fxVqr5Z_z4LyCUsx4
-Message-ID: <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
-Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7e4d9eb5-6dde-4c59-8ee3-358233f082d0@virtuozzo.com>
 
-On Mon, 6 Oct 2025 at 14:41, Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> On 2025-10-06, Luca Boccassi <luca.boccassi@gmail.com> wrote:
-> > On Mon, 6 Oct 2025 at 12:57, Alejandro Colomar <alx@kernel.org> wrote:
-> > >
-> > > Hi Luca,
-> > >
-> > > On Mon, Oct 06, 2025 at 12:46:41PM +0100, Luca Boccassi wrote:
-> > > > > > > >  .TP
-> > > > > > > > +.B EINVAL
-> > > > > > > > +The source mount is already mounted somewhere else. Clone it via
-> > > > > [...]
-> > > > > > > > +.BR open_tree (2)
-> > > > > > > > +with
-> > > > > > > > +.B \%OPEN_TREE_CLONE
-> > > > > > > > +and use that as the source instead (since Linux 6.15).
-> > > > > > >
-> > > > > > > The parenthetical in that position makes it unclear if you're saying
-> > > > > > > that one should use open_tree(2) with OPEN_TREE_CLONE since Linux 6.15,
-> > > > > > > or if you're saying that this error can happen since that version.
-> > > > > > > Would you mind clarifying?  I think if you mean that the error can
-> > > > > > > happen since Linux 6.15, we could make it part of the paragraph tag, as
-> > > > > > > in unshare(2).
-> > > > > >
-> > > > > > I meant the former, the error is always there, but OPEN_TREE_CLONE can
-> > > > > > be used since 6.15 to avoid it. Sent v2 with this and the other fix,
-> > > > > > thanks for the prompt review.
-> > > > >
-> > > > > Hmmm, I see.  Why not use open_tree(2) and OPEN_TREE_CLONE before 6.15?
-> > > > > The syscall and flag existed, AFAICS.  I think we should clarify --at
-> > > > > least in the commit message--, why that version is important.
-> > > >
-> > > > It was just not supported at all, so it would still fail with EINVAL
-> > > > before 6.15 even with the clone.
-> > >
-> > > Thanks!  What's the exact commit (or set of commits) that changed this?
-> > > That would be useful for the commit message.
-> > >
-> > > > Would you like me to send a v3 or would you prefer to amend the commit
-> > > > message yourself?
-> > >
-> > > I can amend myself.
-> >
-> > Sorry, I am not a kernel dev so I do not know where it was introduced
-> > exactly, and quickly skimming the commits list doesn't immediately
-> > reveal anything. I only know that by testing it, it works on 6.15 and
-> > fails earlier.
->
-> If I'm understanding the new error entry correctly, this might be commit
-> c5c12f871a30 ("fs: create detached mounts from detached mounts"), but
-> Christian can probably verify that.
->
-> Just to double check that I understand this new error explanation -- the
-> issue is that you had a file descriptor that you thought was a detached
-> mount object but it was actually attached at some point, and the
-> suggestion is to create a new detached bind-mount to use with
-> move_mount(2)? Do you really get EINVAL in that case or does this move
-> the mount?
+On Fri, Oct 03, 2025 at 01:03:46PM +0800, Pavel Tikhomirov wrote:
+> 
+> 
+> On 10/3/25 00:34, Al Viro wrote:
+> > On Thu, Oct 02, 2025 at 06:18:38PM +0530, Bhavik Sachdev wrote:
+> > 
+> > > @@ -1438,6 +1440,18 @@ static void mntput_no_expire(struct mount *mnt)
+> > >   	mnt->mnt.mnt_flags |= MNT_DOOMED;
+> > >   	rcu_read_unlock();
+> > > +	if (mnt_ns_attached(mnt)) {
+> > > +		struct mnt_namespace *ns;
+> > > +
+> > > +		move_from_ns(mnt);
+> > > +		ns = mnt->mnt_ns;
+> > > +		if (ns) {
+> > > +			ns->nr_mounts--;
+> > > +			__touch_mnt_namespace(ns);
+> > > +		}
+> > > +		mnt->mnt_ns = NULL;
+> > > +	}
+> > 
+> > Sorry, no.  You are introducing very special locking for one namespace's rbtree.
+> > Not gonna fly.
+> > 
+> > NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> Thank you for looking into it.
+> 
+> Sorry, we didn't have any intent to break locking, we would like to
+> improve/rework the patch if we can.
+> 
+> 1) I see that I missed that __touch_mnt_namespace requires vfsmount lock
+> (according to it's comment) and we don't have it in this code path, so that
+> is one problem.
+> 
+> I also see that it sends wake up for mounts_poll() waiters, but since no-one
+> can join umount_mnt_ns, there is no point in sending wakeup as no-one can
+> poll on /proc/mounts for this namespace. So we can remove the use of
+> __touch_mnt_namespace seemingly safely and remove this incorrect locking
+> case.
+> 
+> 2) Another thing is, previously when we were at this point in code we were
+> already out of namespace rbtree strictly before the reference from namespace
+> was put (namespace_unlock()->mntput()). So no-one could've lookup-ed us, but
+> after this change one can lookup us from umount_mnt_ns rbtree while we are
+> in mntput_no_expire().
+> 
+> This one is a hard one, in this implementation at the minimum we can end up
+> using the mount after it was freed due to this.
+> 
+> Previously mount lookup was protected by namespace_sem, and now when I use
+> move_from_ns out of namespace_sem this protection is broken.
+> 
+> One stupid idea to fix it is to leave one reference to mount from detatched
+> mntns, and have an asynchronous mechanism which detects last reference (in
+> mntput_no_expire) and (under namespace_sem) first disconnects mount from
+> umount_mnt_ns and only then calls final mntput.
+> 
+> We will think more on this one, maybe we will come up with something
+> smarter.
+> 
+> 3) We had an alternative approach to make unmounted mounts mountinfo visible
+> for the user, by allowing fd-based statmount() https://github.com/bsach64/linux/commit/ac0c03d44fb1e6f0745aec81079fca075e75b354
+> 
+> But we also recognize a problem with it that it would require getting
+> mountinfo from fd which is not root dentry of the mount, but any dentry (as
+> we (CRIU) don't really have an option to choose which fd will be given to
+> us).
 
-Almost - the use case is that I prep an image as a detached mount, and
-then I want to apply it multiple times, without having to reopen it
-again and again. If I just do 'move_mount()' multiple times, the
-second one returns EINVAL. From 6.15, I can do open_tree with
-OPEN_TREE_CLONE before applying with move_mount, and everything works.
+The part about this just using an fd is - supresses gag reflex - fine.
+We do that with the mount namespaces for listmount() already via
+mnt_req->spare.
+
+The part that I dislike is exactly the one you pointed out: using an
+arbitrary fd to retrieve information about the mount but it's probably
+something we can live with since the alternative is complicating the
+lifetime rules of the mount and namespace interaction.
+
+I had thought about a way to tie the _internal_ lifetime of the
+namespace to the lifetime of unmounted mounts through the passive
+reference count by moving them to a separate rb_root unmounted in the
+namespace instance.
+
+This would mean we'd have the owning namespace information around and
+we'd also don't have to have any separate namespace around. The ->mnt_ns
+field could work exactly the same. But alongside the ->mnt_ns pointer
+we'd also have the ->mnt_ns_id of the container mount namespace stored.
+
+On umount we'd move the mount to the unmounted mount tree in the same
+namespace instance and take a passive reference to it. IOW, the
+unmounted mounts keep the namespace alive but only internally.
+
+So basically - handwaving - like this:
+
+diff --git a/fs/mount.h b/fs/mount.h
+index 97737051a8b9..4d3db03c8a82 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -14,6 +14,7 @@ struct mnt_namespace {
+                struct rb_root  mounts;          /* Protected by namespace_sem */
+                struct rb_node  *mnt_last_node;  /* last (rightmost) mount in the rbtree */
+                struct rb_node  *mnt_first_node; /* first (leftmost) mount in the rbtree */
++               struct rb_root  unmounted;       /* unmounted mounts that are still active */
+        };
+        struct user_namespace   *user_ns;
+        struct ucounts          *ucounts;
+@@ -72,7 +73,10 @@ struct mount {
+        struct hlist_head mnt_slave_list;/* list of slave mounts */
+        struct hlist_node mnt_slave;    /* slave list entry */
+        struct mount *mnt_master;       /* slave is on master->mnt_slave_list */
+-       struct mnt_namespace *mnt_ns;   /* containing namespace */
++       struct {
++               struct mnt_namespace *mnt_ns;   /* containing namespace */
++               u64 mnt_ns_id;                  /* id of the containing mount namespace */
++       }
+        struct mountpoint *mnt_mp;      /* where is it mounted */
+        union {
+                struct hlist_node mnt_mp_list;  /* list mounts with the same mountpoint */
+
+->mnt_ns NULL still means as before that this is unmounted. The
+containing namespace is alive (internally) and can still be looked up
+via mnt->mnt_ns_id in the namespace tree. I stopped thinking here
+because this has severe drawbacks:
+
+* The scope of the namespace semaphore has to be extended to cover these
+  mounts as well possibly even having to take it in cleanup_mnt() which
+  is ugly and probably performance sensitive as it increases the
+  codepaths that hammer on the semaphore.
+
+  Alternative is a separate locking scheme. And if it's one thing that
+  we don't need is another complex locking scheme in this code.
+
+* The passive lifetime of the namespace would have to cover unmounted
+  mounts which betrays the intent of the passive reference count. That's
+  not supposed to regulate lifetimes beyond the namespace struct itself
+  nor be bound to other objects in complex ways.
+
+  Possibly we'd also have to tie the lifetime of the owning userns to
+  the passive count so permission checking just works out of the box
+  (One could also put that on the plus side of things but meh.).
+
+* It's very weird to be able to statmount() unmounted mounts via the
+  mount id if the actual mount namespace is indeed already dead.
+
+  To put it another way: listmount() wouldn't surface the mount anymore
+  - and rightly so - because it's not tied to any mount namespace
+  anymore. But somehow we magically synthesize it into existence via
+  statmount().
+
+* While a mount is attached to a mount namespace said namespace is the
+  rightful owner of the mount. Once the mount is unmounted that
+  ownership is moved from the mount namespace and becomes inherently
+  bound to processes that hold an active reference to that mount via
+  file descriptors.
+
+  But statmount() and listmount() are inherently about the mount
+  namespace as the main container of the mount imho.
+
+  Allowing an fd is probably be fine though but it dilutes the concept a
+  bit which I'm not too fond of. Oh well.
+
+The list continues...
+
+So if you can make the fd-based statmount() work for your use-case then
+this is probably the thing we should do.
 
