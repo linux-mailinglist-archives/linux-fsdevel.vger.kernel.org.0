@@ -1,301 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-63550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A0CBC18AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 15:41:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DCCBC19CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 15:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FB91886784
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 13:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00565189AC8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 13:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF082E0B6A;
-	Tue,  7 Oct 2025 13:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1902E1EEC;
+	Tue,  7 Oct 2025 13:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="3JbK6vld"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kc0DNiPQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FF22D46BB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 13:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBE82E1EEE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 13:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759844458; cv=none; b=qDdQAs1Yf4e/eIKLm1HoaJ7pDbU3E23+rHcYSzWsNmRgjEjxNPm97LrKqpIIeQKUwcvKea/qoD40aFAMQrSjAtV5kIW0tlXNi6+fXpayPgVNJW3EmERgPBkiS5YLy4kWXDnJ4SZKnYuwHQPZjYdJlU9jBBCZ3LwJT75EeKy4Pnw=
+	t=1759845503; cv=none; b=lX0CbWUcEdFSXOjASno59n6lzRxG5HWmPNmDOkj+elJ18KAgJk1Vwq4eh1gvsB9u9K2XI8of4bmc09obfRGKI7rZQOQGV7Rc7cPrtfDiCeucu/MDwK5Yg370xVybCzcbWlTjxHMYuu/FAsQ0klODQY06GoIUoEkWJ130VI3HDjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759844458; c=relaxed/simple;
-	bh=maR5I0NRG+pVQzt1ZqXCzGrjCBiXFmvoqkdMd1ZLotw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LxK/ReCiggeu0dagGlV2NFyKtJ9i7+Bf9g8YpCvkX5QIe/E0+t8CIrbfqHKaMfu3i1f5XHm9pOEtOVZyuSL+qvWQWuBY7lCaFTqYu+Hz++fMbfdXN18IPCENLFDezHeU6Q3KZeCZkZSx4O0Te0SfEZazdRI02sGitfV2vQ6/4GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=3JbK6vld; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-36bf096b092so60879311fa.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 06:40:56 -0700 (PDT)
+	s=arc-20240116; t=1759845503; c=relaxed/simple;
+	bh=2p6sw/d5o9WykeyOnWT+2vs8b7uJ9tBZ8iAVCQgjDZQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TZxQWBMJde0OuGMpwz93RWk4hHlA8t6/28jcahh2IR1NILdhL+nE7mLZuyeRx9Nw1zJOWOiPtfpD6hT4E/kiX3KwY/KB1hCWV/3oQ6d8bZdXgkCw4scZCammYvMvnNDjWerTWXsNX4zUNRcNO219m6nk+SiL6rt6YzWWWYfO8ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kc0DNiPQ; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee4998c50so5558460a91.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 06:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1759844455; x=1760449255; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xRBV/A+wYkc5dgFJj6Y8p0jl0ix5QJORnEw5CJQ5ixk=;
-        b=3JbK6vldew0Ih99+2O5z+sPBU1+pXLud6Z5ZFXgS8qonCHWcVHJVL/gMdEsJwJlvmT
-         bjuhhLadvVxU8Q5Tps/QHY5Pnmtfg5+njXNVwccNEasAKvw2k/XumkQf7QHGTAH/hMRe
-         WRMIlcbWyShAyEiwqlenIMrXhTHVHRhvjZmjRfu0KxGZuMHBIATZTJuP+gL4jRYNaKGe
-         sGvWS8/DjJu/mZY4ZRzpaHgHiSXG5UiEg3pr3EvsEflD8QtzQnLKgP/gIc7WbKRLdAuY
-         LIvMgUwh2HVvoYzI1vc+DsUrteMLPeSkQufo9fS4ByVDZ9VHvFNhknzF4OkLoe0xKy2l
-         YbCg==
+        d=google.com; s=20230601; t=1759845500; x=1760450300; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rlYUY99rqPM8GfD927WUvhieIqn1G/yd0+acs0pn14=;
+        b=Kc0DNiPQcf/Yg01kLqjQ2vgJ4iF8e+BxDeVfek9w09kHNgTtWfloa6M9vZfkcMndko
+         P7OcTak5OqvEIPyvXQWKAWL+I8ggor676Gl/ZAi6tD9BKnndGPwZ7BvztfkW2AhvCb8R
+         tR/GD/91sPOM597EU4hYlxBCxNUOtcOS//siFo9xeGqGNy3zDONYdoD96hDRtLWBhXcm
+         Byeq6nHbFyFT30rJHeC0Nb+6pxh9lH0EVYDxKzB8NWOQutGWPYb4A/qE1Rls4U8bZcHz
+         mYIIdEVyiOuvl7+VmIUkr5Wvefplcgdtd4zFb3OLTfwSavPlW1rnb+pi87r3npqnyNeN
+         Bt2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759844455; x=1760449255;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xRBV/A+wYkc5dgFJj6Y8p0jl0ix5QJORnEw5CJQ5ixk=;
-        b=Bmddd8yKVnkD1hLiS2SRX/ZdaN+35w0uDvOCxcJZV/Y/mHMlNEsuH70v84rwtiQWa3
-         4CLeQEGMA5FHhFbuUQJ5BwTM0XdlahHvHCpPhPnMrZkDY4ykB1wkeQdpUOwLD0Qk+j6z
-         C6K5k0rrN300rsqEfbeL1DyU1kfWChElWLE90n8NhbVUpt4qu1izMDEEgPfY2zrdx1jK
-         DBgATGEb+tXGUFv78QnilDr54cNV1KTtBP0TlCNinN+Kd/EwzFCVJzidBgJXWVTBXQBP
-         lC/OOsl8gM6Ut6AzHyRx16E0H0Vj72umM0Od0xBq1WJFUny1uKATvTUweUeh8lTomsvF
-         8qEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOhz6PxoZIYRiPYcGOoDKDuvft/S3lpWqWmVlTyIjskOyMLpw+dT8muyz3lZd+axGypUJzgH61Hv819dyd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp2jIAO+gfJlQITVgYQY9+2NKWqBOmX4s4v/5WQN7Lsp0C+cm4
-	fWTNRuq+zgaV9zHxIcgavh+qn0ptguCVK0Bq7CkUaasrmopatc/E9XZ/BcEdTXH4P/K9TGQuEbt
-	d95kyabc=
-X-Gm-Gg: ASbGncuYRTydpw/TofVA4FbDwx5fuXsCRwvG1V//gA0ClvSlACiFNs4D/LlgaC+S6qf
-	g+Z/XR3RC1r+y530tgbmBxqA/aoYd+MnMGvITx5s08bVsBAzp3hcMDOb6XK0RhWhB+929yutf9s
-	WcCewHgU1mVxD/ZnOKfwtIA2oNP45/zNmo8uvSzfIPQaadhYsOPbASR1NzJCF/cSGSdF6j+49sU
-	+IOHh7kv6xbMbk6ZqLTHStLhrfgKl0JAx3yjcnE1Rx+FJ789Dn8QbVKJyJkQeo1aj7rV6QhJJkn
-	X2CSnAe2yV6NMac2wmylWjK5XwOM+Wy/2kfeqqYGRyITs5JFyT75C4dUTGhsD9Me8zJ4qnQCszx
-	+YGqErpQfttUopP7hGLgRQSlt7eBpyr/ZCfSbWpE86LNrqwbMiwGkM/1DRcg=
-X-Google-Smtp-Source: AGHT+IFHxO2m8T/MgbMT85edP7c603ruD5Ye6htT8rb/M8e+XOKBexOHQ+jUa0yBLYyuI5v4+gKA8w==
-X-Received: by 2002:a05:6512:1245:b0:58a:92cc:581d with SMTP id 2adb3069b0e04-58cbbbee331mr4524737e87.50.1759844454433;
-        Tue, 07 Oct 2025 06:40:54 -0700 (PDT)
-Received: from [10.78.74.174] ([212.248.24.216])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59067823d9esm350641e87.69.2025.10.07.06.40.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 06:40:53 -0700 (PDT)
-Message-ID: <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
-Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: George Anthony Vernon <contact@gvernon.com>, Viacheslav Dubeyko
-	 <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, 
- "frank.li@vivo.com"	 <frank.li@vivo.com>, "skhan@linuxfoundation.org"
- <skhan@linuxfoundation.org>,  "linux-fsdevel@vger.kernel.org"	
- <linux-fsdevel@vger.kernel.org>, "linux-kernel-mentees@lists.linux.dev"	
- <linux-kernel-mentees@lists.linux.dev>, 
- "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"	
- <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>, 
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
-Date: Tue, 07 Oct 2025 06:40:50 -0700
-In-Reply-To: <aOB3fME3Q4GfXu0O@Bertha>
-References: <20251003024544.477462-1-contact@gvernon.com>
-	 <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
-	 <aOB3fME3Q4GfXu0O@Bertha>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 (flatpak git) 
+        d=1e100.net; s=20230601; t=1759845500; x=1760450300;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rlYUY99rqPM8GfD927WUvhieIqn1G/yd0+acs0pn14=;
+        b=smjOUhU5+8pARe1tU05CGdYv/tjW6RH/odGdP5JwUCz3J5Ui9ElrONaeWs5cj+iB9c
+         XNEG54njhZGMI7NsxviqCY+l/qiB0/tFbvAUQcJq4zh9kU1ZnxoBt/iQzfW+7u7valNa
+         Fvs8xXTfuTeU++PeBVjMyvdM4IlDCr1HnaItVU78hxdJ61CCPCPicHbzZ7PoGDhrnwur
+         VprJinbRWGOpqGCAWFuJjReBv/RWAwHQ+wgrQMP47u6Sn0FUxctqrccwlxmrZ5PbqWO4
+         SCx+nwzqjKn3LLwUbKVXvQxFoV0ZMbxt2fNuaYEWXvvKLHX5DqczsVJFVzQrLo6HCaeF
+         uSiw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Etpl/Ii24GqH3ZCTUlYtRghE8/mE+Ps/MpppT7xVP1l8TnnudQ5Ab4IeQQCktVJHJDerIqexpBIa8orw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpMKyIVa0caLr65TwDu7WarZT3eMod1PDDIR1RMEXCoY9hK2O9
+	cIObNXzQkrNM3imxaSRdk4pIkqMRSHHI3bPgPkIddFELFI9C5oWer8LxsbaUP+7s4bMgK6UkgjW
+	ftVS2rg==
+X-Google-Smtp-Source: AGHT+IH44LYFtR2Z9aj26aSM38dj+lWGcrky74kzzSLe1xZuZzZCEhZOyIjquiME0rIkS/AaVEe3J4tloO4=
+X-Received: from pjbmw12.prod.google.com ([2002:a17:90b:4d0c:b0:329:b272:45a7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c05:b0:335:2823:3686
+ with SMTP id 98e67ed59e1d1-339c274089dmr20831446a91.2.1759845499915; Tue, 07
+ Oct 2025 06:58:19 -0700 (PDT)
+Date: Tue, 7 Oct 2025 06:58:18 -0700
+In-Reply-To: <fc0bb268-07b7-41ef-9a82-791d381f56ac@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20231105163040.14904-1-pbonzini@redhat.com> <20231105163040.14904-16-pbonzini@redhat.com>
+ <fc0bb268-07b7-41ef-9a82-791d381f56ac@amazon.com>
+Message-ID: <aOUceqlAnsjQ8mo4@google.com>
+Subject: Re: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Anish Moorthy <amoorthy@google.com>, David Matlack <dmatlack@google.com>, 
+	Yu Zhang <yu.c.zhang@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Maciej Szmigiero <mail@maciej.szmigiero.name>, David Hildenbrand <david@redhat.com>, 
+	Quentin Perret <qperret@google.com>, Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Sat, 2025-10-04 at 02:25 +0100, George Anthony Vernon wrote:
-> On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
-> > Let's pay respect to previous efforts. I am suggesting to add this
-> > line:
-> >=20
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> >=20
-> > Are you OK with it?
-> I agree with paying respect to Tetsuo. The kernel docs indicate that
-> the SoB tag
-> isn't used like that. Would the Suggested-by: tag be more
-> appropriate?
->=20
+On Fri, Oct 03, 2025, Nikita Kalyazin wrote:
+> On 05/11/2023 16:30, Paolo Bonzini wrote:
+> > From: Sean Christopherson <seanjc@google.com>
+> > 
+> > Introduce an ioctl(), KVM_CREATE_GUEST_MEMFD, to allow creating file-based
+> > memory that is tied to a specific KVM virtual machine and whose primary
+> > purpose is to serve guest memory.
+> 
+> ...
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index f1a575d39b3b..8f46d757a2c5 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> 
+> ...
+> 
+> > -static int check_memory_region_flags(const struct kvm_userspace_memory_region2 *mem)
+> > +static int check_memory_region_flags(struct kvm *kvm,
+> > +				     const struct kvm_userspace_memory_region2 *mem)
+> >   {
+> >   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+> > +	if (kvm_arch_has_private_mem(kvm))
+> > +		valid_flags |= KVM_MEM_GUEST_MEMFD;
+> > +
+> > +	/* Dirty logging private memory is not currently supported. */
+> > +	if (mem->flags & KVM_MEM_GUEST_MEMFD)
+> > +		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
+> 
+> I was wondering whether this restriction is still required at this stage or
+> can be lifted in cases where the guest memory is accessible by the host.
 
-Frankly speaking, I don't see how Suggested-by is applicable here. :)
-My point was that if you mentioned the previous discussion, then it
-means that you read it. And it sounds to me that your patch is
-following to the points are discussed there. So, your code is
-inevitably based on the code is shared during that discussion. This is
-why I suggested the Signed-off-by. But if you think that it's not
-correct logic for you, then I am completely OK. :)
+Off the top of my head, I can't think of any reason why dirty logging wouldn't
+work with guest_memfd for non-CoCo VMs.  We'd likely need to explicitly enumerate
+support to userspace, and there might be some assumptions lurking in KVM, but
+fundamentally it should Just Work (TM).
 
-> > I think we can declare like this:
-> >=20
-> > static inline
-> > bool is_valid_cnid(unsigned long cnid, s8 type)
-> >=20
-> > Why cnid has unsigned long type? The u32 is pretty enough.
-> Because struct inode's inode number is an unsigned long.
-
-The Catalog Node ID (CNID) is identification number of item in Catalog
-File of HFS/HFS+ file system. And it hasn't direct relation with inode
-number. The Technical Note TN1150 [1] define it as:
-
-The catalog node ID is defined by the CatalogNodeID data type.
-
-typedef UInt32 HFSCatalogNodeID;
-
-The hfs.h declares CNID as __be32 always. Also, hfsplus_raw.h defines
-CNID as: typedef __be32 hfsplus_cnid;.
-
-So, it cannot be bigger than 32 bits. But unsigned long could be bigger
-than unsigned int. Potentially, unsigned long could be 64 bits on some
-platforms.
-
-> >=20
-> > Why type has signed type (s8)? We don't expect negative values
-> > here. Let's use
-> > u8 type.
-> Because the type field of struct hfs_cat_rec is an s8. Is there
-> anything to gain
-> by casting the s8 to a u8?
->=20
-
-I am not completely sure that s8 was correct declaration type in struct
-hfs_cat_rec and other ones. But if we will use s8 as input parameter,
-then we could have soon another syzbot report about crash because this
-framework has generated negative values as input parameter. And I would
-like to avoid such situation by using u8 data type. Especially,
-because, negative values don't make sense for type of object.
-
-> >=20
-> > > +{
-> > > +	if (likely(cnid >=3D HFS_FIRSTUSER_CNID))
-> > > +		return true;
-> > > +
-> > > +	switch (cnid) {
-> > > +	case HFS_POR_CNID:
-> > > +	case HFS_ROOT_CNID:
-> > > +		return type =3D=3D HFS_CDR_DIR;
-> > > +	case HFS_EXT_CNID:
-> > > +	case HFS_CAT_CNID:
-> > > +	case HFS_BAD_CNID:
-> > > +	case HFS_EXCH_CNID:
-> > > +		return type =3D=3D HFS_CDR_FIL;
-> > > +	default:
-> > > +		return false;
-> >=20
-> > We can simply have default that is doing nothing:
-> >=20
-> > default:
-> > =C2=A0=C2=A0=C2=A0 /* continue logic */
-> > =C2=A0=C2=A0=C2=A0 break;
-> >=20
-> > > +	}
-> >=20
-> > I believe that it will be better to return false by default here
-> > (after switch).
-> We can do that, but why would it be better, is it an optimisation? We
-> don't have
-> any logic to continue.
-
-We have this function flow:
-
-bool is_valid_cnid()
-{
-   if (condition)
-      return <something>;
-
-   switch () {
-   case 1:
-      return something;
-   }
-}
-
-Some compilers can treat this like function should return value but has
-no return by default. And it could generate warnings. So, this is why I
-suggested to have return at the end of function by default.
-
->=20
-> > > +			break;
-> > > +		}
-> > > =C2=A0		inode->i_size =3D be16_to_cpu(rec->dir.Val) + 2;
-> > > =C2=A0		HFS_I(inode)->fs_blocks =3D 0;
-> > > =C2=A0		inode->i_mode =3D S_IFDIR | (S_IRWXUGO & ~hsb-
-> > > >s_dir_umask);
-> >=20
-> > We have practically the same check for the case of
-> > hfs_write_inode():
-> >=20
-> > int hfs_write_inode(struct inode *inode, struct writeback_control
-> > *wbc)
-> > {
-> > 	struct inode *main_inode =3D inode;
-> > 	struct hfs_find_data fd;
-> > 	hfs_cat_rec rec;
-> > 	int res;
-> >=20
-> > 	hfs_dbg("ino %lu\n", inode->i_ino);
-> > 	res =3D hfs_ext_write_extent(inode);
-> > 	if (res)
-> > 		return res;
-> >=20
-> > 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
-> > 		switch (inode->i_ino) {
-> > 		case HFS_ROOT_CNID:
-> > 			break;
-> > 		case HFS_EXT_CNID:
-> > 			hfs_btree_write(HFS_SB(inode->i_sb)-
-> > >ext_tree);
-> > 			return 0;
-> > 		case HFS_CAT_CNID:
-> > 			hfs_btree_write(HFS_SB(inode->i_sb)-
-> > >cat_tree);
-> > 			return 0;
-> > 		default:
-> > 			BUG();
-> > 			return -EIO;
-> >=20
-> > I think we need to select something one here. :) I believe we need
-> > to remove
-> > BUG() and return -EIO, finally. What do you think?=20
->=20
-> I think that with validation of inodes in hfs_read_inode this code
-> path should
-> no longer be reachable by poking the kernel interface from userspace.
-> If it is
-> ever reached, it means kernel logic is broken, so it should be
-> treated as a bug.
->=20
-
-We already have multiple syzbot reports with kernel crashes for
-likewise BUG() statements in HFS/HFS+ code. From one point of view, it
-is better to return error instead of crashing kernel. From another
-point of view, the 'return -EIO' is never called because we have BUG()
-before. So, these two statements together don't make sense. This is why
-I am suggesting to rework this code.
-
-Thanks,
-Slava.
-
-> >=20
-> > 		}
-> > 	}
-> >=20
-> > <skipped>
-> > }
-> >=20
-> > What's about to use your check here too?
->=20
-> Let's do that, I'll include it in V2.
->=20
-> >=20
-> > Mostly, I like your approach but the patch needs some polishing
-> > yet. ;)
-> >=20
-> > Thanks,
-> > Slava.
->=20
-> Thank you for taking the time to give detailed feedback, I really
-> appreciate it.
->=20
-> George
-
-[1]
-https://dubeyko.com/development/FileSystems/HFSPLUS/tn1150.html#CatalogFile
+> Specifically, it would be useful to support differential memory snapshots
+> based on dirty page tracking in Firecracker [1] or in live migration.  As an
+> experiment, I removed the check and was able to produce a diff snapshot and
+> restore a Firecracker VM from it.
+> 
+> [1] https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/snapshot-support.md#creating-diff-snapshots
+> 
+> > +
+> >   #ifdef __KVM_HAVE_READONLY_MEM
+> >   	valid_flags |= KVM_MEM_READONLY;
+> >   #endif
+> > @@ -2018,7 +2029,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+> >   	int as_id, id;
+> >   	int r;
+> > -	r = check_memory_region_flags(mem);
+> > +	r = check_memory_region_flags(kvm, mem);
+> >   	if (r)
+> >   		return r;
 
