@@ -1,55 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-63538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E78BBC10EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 12:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55756BC1102
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 13:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C133C7012
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 10:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA603C027B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 11:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828A52D879B;
-	Tue,  7 Oct 2025 10:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D662D97B0;
+	Tue,  7 Oct 2025 11:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNgvoIHf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiHeVisf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75392D7DEB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 10:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74622D94B6;
+	Tue,  7 Oct 2025 11:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759834695; cv=none; b=MBU6IhizHgVHcvCFYMsGWY+aKhEs2QtU3F1YMWSekLjiIwZG1NybxLkh5ojtYiJFPpABq0fCig68oAGHZE0Ty8kc2DtLp0T7AM3niIabVu4rPitP5D46oI7t2Pn57qo1rC4edJR4hSXp6Ces7aNOKhxYHrk8G5gC+obAUfRyjek=
+	t=1759834817; cv=none; b=hpHHG7LscRc76doT5sp2IuXnwjAhQ3hCrSspEsDcmuuuBFycjK6AropXT7aDkIWnULdCGTiFFeIh/ZFheriUy5IzxX0mn+gVBPUPur4AlU+JOt73oW0eIoC3JvZ2fMwdw5laATg7dZsJ33imVX2R2RxXHrQtBeNXPXxrUynMNbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759834695; c=relaxed/simple;
-	bh=jINHaYNUA48cBodauGfsNBnC9bN+xSxE7V7GOdRUUps=;
+	s=arc-20240116; t=1759834817; c=relaxed/simple;
+	bh=/2VIdMWbboXqCq5v9dnulh2ZyDJ42EWteyguSk+LUQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6p21sGmo3TN/fI4uUTuYgFNDyhlCe24yyVmfTwME8L7eR/kHJd48+SQX8N9A6JabYqOEkgF0TMjMXAzsUZEWr7Is/kdA33a49HQ4hgzCp1UgDLSEJbHOc8WtzqkOI4dhhy9CCooOEuwMQYk16GwBBMEyuG8BvF3r0gAZfju9yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNgvoIHf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BE2C4CEF1;
-	Tue,  7 Oct 2025 10:58:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jn2tNGJaE6EoDjBGolixuF906ftuemsAAhcFNqMujY2UX5wCdi7fDwHwEUv/3JSomyKRqQejxJ6P7jnSjGNOacXJSOuO/mQOD7QDKVIRZQhtVdCNL/buu8SWERFJE4GcmNAfAwkes16uzkF/z+wLK/WSyXjWiUeCaVVilPnkp2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiHeVisf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DB3C4CEF1;
+	Tue,  7 Oct 2025 11:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759834695;
-	bh=jINHaYNUA48cBodauGfsNBnC9bN+xSxE7V7GOdRUUps=;
+	s=k20201202; t=1759834816;
+	bh=/2VIdMWbboXqCq5v9dnulh2ZyDJ42EWteyguSk+LUQo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fNgvoIHf+9ZFxHCzS304Oo8AiIqrHgbALW+EqLDLRn1NJZD1nd7XzXkvTGA9vhoC9
-	 El7p/8Komm/vRpFxQZ7y4di8mE6KDF0ApLBSBrnByudDTydhcxEkDoCpa7aqaguKRu
-	 1aJVGOL52ktTm3xLaMXPwtMwU/wCGbYXX4wOn16s4FTcMr9deDhekYYwdQrYeSlep3
-	 p3+Cvc0uIWJr5uW2+zW7zBvYHvXW8NxDqbCm8vUf19oWOl5UlyKQcBphxNSBiDA2Jv
-	 xAVnQEfdl4IJurGUL4tDDtlUBSRX0s6V99qljMfgK8AW2oXlA2LXNGsmmL4TIccrEs
-	 rLuf2nd3iJfYA==
-Date: Tue, 7 Oct 2025 12:58:11 +0200
+	b=UiHeVisfkY334uI4HpUo6w2kkokFLO6eSqGtCgtKtpTrQ+8Qcwb2HUCCyG1VcHWbn
+	 mvj5HtNTiOXq4RTVkUbodi7e35ozsWpNgcx2q+Oc+dp+LWgLlrHwCjAjcuYdPa9Xie
+	 knl+V7fA7fUvrZsEDkeUBLuIxI3kctX2Fex4gEmvDYd5iM5RyN1ImrksR3BzcLCP/y
+	 7bPAcDjDkoUotQ4nsmGZ5OgSwIHycWfbJVEfNdPUgQvEhMu8/88FC8Q357QXyyvX3j
+	 vEghprV6rvHauu2CYpxbLEzWok6pi4g4km6NDIFc3yybMfUD/Z4WQ4/MlqD3DxV9bi
+	 X3hevpycblFfA==
+Date: Tue, 7 Oct 2025 13:00:11 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, 
-	syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com, syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
-Subject: Re: [PATCH] ns: Fix mnt ns ida handling in copy_mnt_ns()
-Message-ID: <20251007-atomkraftgegner-warnung-6b02ea18eb2c@brauner>
-References: <20251002161039.12283-2-jack@suse.cz>
- <20251006-rammen-nerven-f7dff27e8e43@brauner>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+Message-ID: <20251007-talent-extern-cda07dfddd11@brauner>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+ <a622643f-1585-40b0-9441-cf7ece176e83@kernel.org>
+ <jp3vopwtpik7bj77aejuknaziecuml6x2l2dr3oe2xoats6tls@yskzvehakmkv>
+ <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,36 +65,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251006-rammen-nerven-f7dff27e8e43@brauner>
+In-Reply-To: <eyl6bzyi33tn6uys2ba5xjluvw7yjempqnla3jaih76mtgxgxq@i6xe2nquwqaf>
 
-On Mon, Oct 06, 2025 at 01:03:15PM +0200, Christian Brauner wrote:
-> On Thu, 02 Oct 2025 18:10:40 +0200, Jan Kara wrote:
-> > Commit be5f21d3985f ("ns: add ns_common_free()") modified error cleanup
-> > and started to free wrong inode number from the ida. Fix it.
-> > 
-> > 
-> 
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
-> 
-> [1/1] ns: Fix mnt ns ida handling in copy_mnt_ns()
->       https://git.kernel.org/vfs/vfs/c/502f6e0e7b72
+On Mon, Oct 06, 2025 at 08:52:32PM +0200, Andrey Albershteyn wrote:
+> On 2025-10-06 17:39:46, Jan Kara wrote:
+> > On Mon 06-10-25 13:09:05, Jiri Slaby wrote:
+> > > On 30. 06. 25, 18:20, Andrey Albershteyn wrote:
+> > > > Future patches will add new syscalls which use these functions. As
+> > > > this interface won't be used for ioctls only, the EOPNOSUPP is more
+> > > > appropriate return code.
+> > > > 
+> > > > This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
+> > > > vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
+> > > > EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> > > > 
+> > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > > ...
+> > > > @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+> > > >   			fileattr_fill_flags(&fa, flags);
+> > > >   			err = vfs_fileattr_set(idmap, dentry, &fa);
+> > > >   			mnt_drop_write_file(file);
+> > > > +			if (err == -EOPNOTSUPP)
+> > > > +				err = -ENOIOCTLCMD;
+> > > 
+> > > This breaks borg code (unit tests already) as it expects EOPNOTSUPP, not
+> > > ENOIOCTLCMD/ENOTTY:
+> > > https://github.com/borgbackup/borg/blob/1c6ef7a200c7f72f8d1204d727fea32168616ceb/src/borg/platform/linux.pyx#L147
+> > > 
+> > > I.e. setflags now returns ENOIOCTLCMD/ENOTTY for cases where 6.16 used to
+> > > return EOPNOTSUPP.
+> > > 
+> > > This minimal testcase program doing ioctl(fd2, FS_IOC_SETFLAGS,
+> > > &FS_NODUMP_FL):
+> > > https://github.com/jirislaby/collected_sources/tree/master/ioctl_setflags
+> > > 
+> > > dumps in 6.16:
+> > > sf: ioctl: Operation not supported
+> > > 
+> > > with the above patch:
+> > > sf: ioctl: Inappropriate ioctl for device
+> > > 
+> > > Is this expected?
 
-Jan, I think Al fixed this in his series on accident in upstream.
-So I think we can drop your patch. emptied_ns is cleaned up after
-namespace_unlock() and will call free_mnt_ns() which will call
-ns_common_free(). Please take a look at what's in mainline and let me
-know if you read it the same way!
+Nope, unintentional regression as Arnd noted.
+
+> > 
+> > No, that's a bug and a clear userspace regression so we need to fix it. I
+> > think we need to revert this commit and instead convert ENOIOCTLCMD from
+> > vfs_fileattr_get/set() to EOPNOTSUPP in appropriate places. Andrey?
+> 
+> I will prepare a patch soon
+
+Thanks!
 
