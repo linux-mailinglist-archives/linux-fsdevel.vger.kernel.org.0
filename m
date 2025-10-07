@@ -1,160 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-63551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DCCBC19CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 15:58:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313D9BC1B47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 16:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00565189AC8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 13:59:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C222C34E728
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 14:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1902E1EEC;
-	Tue,  7 Oct 2025 13:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC492E1C6F;
+	Tue,  7 Oct 2025 14:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kc0DNiPQ"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="xzyJa7Yr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBE82E1EEE
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 13:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5522DFA2B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759845503; cv=none; b=lX0CbWUcEdFSXOjASno59n6lzRxG5HWmPNmDOkj+elJ18KAgJk1Vwq4eh1gvsB9u9K2XI8of4bmc09obfRGKI7rZQOQGV7Rc7cPrtfDiCeucu/MDwK5Yg370xVybCzcbWlTjxHMYuu/FAsQ0klODQY06GoIUoEkWJ130VI3HDjI=
+	t=1759846981; cv=none; b=bnHe1AtV8luUKg+k+/H25o4+fr3jXNWQZ/ysHd6o4zN5XKF4Tj76Aw/wnvTptEJ41DoKfTbTqa8oA+Xvu0kuPxpSssWd541I6+37s3Qp0b5YgiqG6jpSoG779+p1nLSdtjZqnxKo5pwxhD9jVaeK5BHOllto1d99W32A2eK3nyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759845503; c=relaxed/simple;
-	bh=2p6sw/d5o9WykeyOnWT+2vs8b7uJ9tBZ8iAVCQgjDZQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TZxQWBMJde0OuGMpwz93RWk4hHlA8t6/28jcahh2IR1NILdhL+nE7mLZuyeRx9Nw1zJOWOiPtfpD6hT4E/kiX3KwY/KB1hCWV/3oQ6d8bZdXgkCw4scZCammYvMvnNDjWerTWXsNX4zUNRcNO219m6nk+SiL6rt6YzWWWYfO8ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kc0DNiPQ; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee4998c50so5558460a91.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 06:58:20 -0700 (PDT)
+	s=arc-20240116; t=1759846981; c=relaxed/simple;
+	bh=tokGYqRJ676PTVUntDb8ZAGQKTgwiBhs3xhbI07if84=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K6OmQsr7b+5wB0DO+oyKEcuvt4Y0sE9AJNQJUdGb+EZejUjCwdlfP9byhncJhIO39tW8/ZwpDWjEnhsrwDhcYFw8MewYCt4oAVb+sfqMk6na04b+O/CZl7tiYpBfdzlFvb0TlHynnXsF6WUuasf9ZP6WoNDpdGhQ8Do4PYNbMA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=xzyJa7Yr; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5818de29d15so7864190e87.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 07:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759845500; x=1760450300; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rlYUY99rqPM8GfD927WUvhieIqn1G/yd0+acs0pn14=;
-        b=Kc0DNiPQcf/Yg01kLqjQ2vgJ4iF8e+BxDeVfek9w09kHNgTtWfloa6M9vZfkcMndko
-         P7OcTak5OqvEIPyvXQWKAWL+I8ggor676Gl/ZAi6tD9BKnndGPwZ7BvztfkW2AhvCb8R
-         tR/GD/91sPOM597EU4hYlxBCxNUOtcOS//siFo9xeGqGNy3zDONYdoD96hDRtLWBhXcm
-         Byeq6nHbFyFT30rJHeC0Nb+6pxh9lH0EVYDxKzB8NWOQutGWPYb4A/qE1Rls4U8bZcHz
-         mYIIdEVyiOuvl7+VmIUkr5Wvefplcgdtd4zFb3OLTfwSavPlW1rnb+pi87r3npqnyNeN
-         Bt2A==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1759846977; x=1760451777; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lq1P3EW7tGfQMqIQTuDaYae4Y7ieatBHo8HzSfhOj0g=;
+        b=xzyJa7YrGfWsIkrECvqWbphWIuAjP+ZlFN3+Yp/uwyl1Xlxipdu4yxRspAH3hbh41m
+         TOPzRVHH9hk5e3hd3SItTHrWipr7m6LZSdBuOHrJFCkvhzCLruTGOydfM3A70AYBzY6u
+         i7m6GLEpDzxoVUVNbcCvUxTUCGyp9KfZgp8i2R3H8/KDgByxfSZdC88viCGrYo1gV80m
+         dD88foSnjZizeT3sLOPP5nLH/vDgudkzpquaoQNY0SscNKymYWtoCMAZ0wSETSm4fAH8
+         YUF0xiocHIK841zXhv+N0+JIPAOFt+urYG/NvY3uae5VFDeNOe2crrIGISo3bNWiRsdK
+         O3JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759845500; x=1760450300;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rlYUY99rqPM8GfD927WUvhieIqn1G/yd0+acs0pn14=;
-        b=smjOUhU5+8pARe1tU05CGdYv/tjW6RH/odGdP5JwUCz3J5Ui9ElrONaeWs5cj+iB9c
-         XNEG54njhZGMI7NsxviqCY+l/qiB0/tFbvAUQcJq4zh9kU1ZnxoBt/iQzfW+7u7valNa
-         Fvs8xXTfuTeU++PeBVjMyvdM4IlDCr1HnaItVU78hxdJ61CCPCPicHbzZ7PoGDhrnwur
-         VprJinbRWGOpqGCAWFuJjReBv/RWAwHQ+wgrQMP47u6Sn0FUxctqrccwlxmrZ5PbqWO4
-         SCx+nwzqjKn3LLwUbKVXvQxFoV0ZMbxt2fNuaYEWXvvKLHX5DqczsVJFVzQrLo6HCaeF
-         uSiw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Etpl/Ii24GqH3ZCTUlYtRghE8/mE+Ps/MpppT7xVP1l8TnnudQ5Ab4IeQQCktVJHJDerIqexpBIa8orw@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpMKyIVa0caLr65TwDu7WarZT3eMod1PDDIR1RMEXCoY9hK2O9
-	cIObNXzQkrNM3imxaSRdk4pIkqMRSHHI3bPgPkIddFELFI9C5oWer8LxsbaUP+7s4bMgK6UkgjW
-	ftVS2rg==
-X-Google-Smtp-Source: AGHT+IH44LYFtR2Z9aj26aSM38dj+lWGcrky74kzzSLe1xZuZzZCEhZOyIjquiME0rIkS/AaVEe3J4tloO4=
-X-Received: from pjbmw12.prod.google.com ([2002:a17:90b:4d0c:b0:329:b272:45a7])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c05:b0:335:2823:3686
- with SMTP id 98e67ed59e1d1-339c274089dmr20831446a91.2.1759845499915; Tue, 07
- Oct 2025 06:58:19 -0700 (PDT)
-Date: Tue, 7 Oct 2025 06:58:18 -0700
-In-Reply-To: <fc0bb268-07b7-41ef-9a82-791d381f56ac@amazon.com>
+        d=1e100.net; s=20230601; t=1759846977; x=1760451777;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Lq1P3EW7tGfQMqIQTuDaYae4Y7ieatBHo8HzSfhOj0g=;
+        b=qHZF7FptL6opPmtqHkLOKJ+r/xdFmzlO1+/XPuB4dIpQUq7tQ/JGmMZlNGT93GwT4l
+         Tho5d7exjElucW06sRS2z9zldoQixOpFsvIV5sauQQmKADdNlqZ7ZBqvkMTA134f0rF6
+         MauZg7ooBVWyNl4xva5LgLfuJBic0p7r+k8HaBUlOCj35C37dmgyLY+2dzXiWMkoKk6S
+         M15UrlxJb40YH+IR+/XoqrDYdB7ANKSZaW1wsuBa3OJL+C4+vEKtSOzWh3Ovc4kI1nWu
+         VUDobD+57eUqv+LLXi3ioeHtY9Y5Ai5zj/NsuFzXaA8lKnQNCzR3Lsdq54W1ebfw2NEU
+         ifwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUswWqQKFcGipbmlHhkiHSwWdVwyjGNHUvqvyQEo/Av/60wiAP9quZqCD8cggZlZrgfarHjacGa3FfgsX+Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxphZWJPMsRtyt2aFFSCA/BejEPamYHO0NwdrZCwOi7fdwdZVDi
+	ht7OLIojtuTI8afzIyAObVs2WKJQ/4nz2T738UU0wFWmYon4yB8mkFSaVpYBkEWO2XA=
+X-Gm-Gg: ASbGnct+VDxe8BlfNAnS48JwFUN8gdAOqU/hxeaX7t+SMbw3CFP+VrzxNK5m6jYRZlW
+	IZStsXcYEq/OmqZR5XL04YOisWZ49oNWpWC0pe/d8g/+DMAi+AcDBAfR3SHM5NTSWy9bxQPvmW4
+	h7vGtgMyoHpJUW956hfdkx7jGbMy/X0cwaqj+g0IIJBIyAjyTyt7nP+QZtA2u8eI/HEGofeURLy
+	GIAy0jWDU65loV9xv0i/v+O/B88ujH94FUFtxAwlyuyFvX+PINqXbhHfO24uwx95pa2XSB6m71Y
+	EsBIgujSergkr2a+3HCaLS2SYDRy2N7cI5XpShgB4+vrV7V0fVYEyIbOogCoTelH6fGhO+BV430
+	yfS/dmOj5VVVTy3mqWV88WNniJh31UGeiUvIHwxkTquu9pLTp
+X-Google-Smtp-Source: AGHT+IEALbTTgMjCiz8CxCAPbQOF2VKZvelp7EZdNpBPhA+VZY+jCEOuA0LvBTVpjgGkefZxVK9TVA==
+X-Received: by 2002:a05:6512:1195:b0:57b:c798:9edf with SMTP id 2adb3069b0e04-58cbc589a2dmr4959770e87.56.1759846977167;
+        Tue, 07 Oct 2025 07:22:57 -0700 (PDT)
+Received: from [10.78.74.174] ([212.248.24.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d6e6sm6144451e87.78.2025.10.07.07.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 07:22:56 -0700 (PDT)
+Message-ID: <bfad42ac8e1710e26329b7f1f816199cb1cf0c88.camel@dubeyko.com>
+Subject: Re: [PATCH] hfsplus: Verify inode mode when loading from disk
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, John Paul Adrian
+ Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>,
+ linux-fsdevel	 <linux-fsdevel@vger.kernel.org>
+Date: Tue, 07 Oct 2025 07:22:53 -0700
+In-Reply-To: <10028383-1d85-402a-a390-3639e49a9b52@I-love.SAKURA.ne.jp>
+References: <10028383-1d85-402a-a390-3639e49a9b52@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 (flatpak git) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231105163040.14904-1-pbonzini@redhat.com> <20231105163040.14904-16-pbonzini@redhat.com>
- <fc0bb268-07b7-41ef-9a82-791d381f56ac@amazon.com>
-Message-ID: <aOUceqlAnsjQ8mo4@google.com>
-Subject: Re: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From: Sean Christopherson <seanjc@google.com>
-To: Nikita Kalyazin <kalyazin@amazon.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
-	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Anish Moorthy <amoorthy@google.com>, David Matlack <dmatlack@google.com>, 
-	Yu Zhang <yu.c.zhang@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, 
-	Maciej Szmigiero <mail@maciej.szmigiero.name>, David Hildenbrand <david@redhat.com>, 
-	Quentin Perret <qperret@google.com>, Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
-	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Fri, Oct 03, 2025, Nikita Kalyazin wrote:
-> On 05/11/2023 16:30, Paolo Bonzini wrote:
-> > From: Sean Christopherson <seanjc@google.com>
-> > 
-> > Introduce an ioctl(), KVM_CREATE_GUEST_MEMFD, to allow creating file-based
-> > memory that is tied to a specific KVM virtual machine and whose primary
-> > purpose is to serve guest memory.
-> 
-> ...
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index f1a575d39b3b..8f46d757a2c5 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> 
-> ...
-> 
-> > -static int check_memory_region_flags(const struct kvm_userspace_memory_region2 *mem)
-> > +static int check_memory_region_flags(struct kvm *kvm,
-> > +				     const struct kvm_userspace_memory_region2 *mem)
-> >   {
-> >   	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> > +	if (kvm_arch_has_private_mem(kvm))
-> > +		valid_flags |= KVM_MEM_GUEST_MEMFD;
-> > +
-> > +	/* Dirty logging private memory is not currently supported. */
-> > +	if (mem->flags & KVM_MEM_GUEST_MEMFD)
-> > +		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
-> 
-> I was wondering whether this restriction is still required at this stage or
-> can be lifted in cases where the guest memory is accessible by the host.
+On Sat, 2025-10-04 at 22:34 +0900, Tetsuo Handa wrote:
+> The inode mode loaded from corrupted disk can be invalid. Do like
+> what
+> commit 0a9e74051313 ("isofs: Verify inode mode when loading from
+> disk")
+> does.
+>=20
+> Reported-by: syzbot
+> <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=3D895c23f6917da440ed0d
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+> =C2=A0fs/hfsplus/inode.c | 8 +++++++-
+> =C2=A01 file changed, 7 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+> index b51a411ecd23..53f653019904 100644
+> --- a/fs/hfsplus/inode.c
+> +++ b/fs/hfsplus/inode.c
+> @@ -558,9 +558,15 @@ int hfsplus_cat_read_inode(struct inode *inode,
+> struct hfs_find_data *fd)
+> =C2=A0			inode->i_op =3D
+> &page_symlink_inode_operations;
+> =C2=A0			inode_nohighmem(inode);
+> =C2=A0			inode->i_mapping->a_ops =3D &hfsplus_aops;
+> -		} else {
+> +		} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode-
+> >i_mode) ||
+> +			=C2=A0=C2=A0 S_ISFIFO(inode->i_mode) ||
+> S_ISSOCK(inode->i_mode)) {
 
-Off the top of my head, I can't think of any reason why dirty logging wouldn't
-work with guest_memfd for non-CoCo VMs.  We'd likely need to explicitly enumerate
-support to userspace, and there might be some assumptions lurking in KVM, but
-fundamentally it should Just Work (TM).
+As far as I can see, we operate by inode->i_mode here. But if inode
+mode has been corrupted on disk, then we assigned wrong value before.
+And HFS+ has hfsplus_get_perms() method that assigns perms->mode to
+inode->i_mode. So, I think we need to rework hfsplus_get_perms() for
+checking the correctness of inode mode before assigning it to inode-
+>i_mode.
 
-> Specifically, it would be useful to support differential memory snapshots
-> based on dirty page tracking in Firecracker [1] or in live migration.  As an
-> experiment, I removed the check and was able to produce a diff snapshot and
-> restore a Firecracker VM from it.
-> 
-> [1] https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/snapshot-support.md#creating-diff-snapshots
-> 
-> > +
-> >   #ifdef __KVM_HAVE_READONLY_MEM
-> >   	valid_flags |= KVM_MEM_READONLY;
-> >   #endif
-> > @@ -2018,7 +2029,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> >   	int as_id, id;
-> >   	int r;
-> > -	r = check_memory_region_flags(mem);
-> > +	r = check_memory_region_flags(kvm, mem);
-> >   	if (r)
-> >   		return r;
+Thanks,
+Slava.
+
+> =C2=A0			init_special_inode(inode, inode->i_mode,
+> =C2=A0					=C2=A0=C2=A0 be32_to_cpu(file-
+> >permissions.dev));
+> +		} else {
+> +			printk(KERN_DEBUG "hfsplus: Invalid file
+> type 0%04o for inode %lu.\n",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 inode->i_mode, inode->i_ino);
+> +			res =3D -EIO;
+> +			goto out;
+> =C2=A0		}
+> =C2=A0		inode_set_atime_to_ts(inode, hfsp_mt2ut(file-
+> >access_date));
+> =C2=A0		inode_set_mtime_to_ts(inode,
 
