@@ -1,62 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-63533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DBABC02C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 07:10:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC77BC0587
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 08:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29F0189C3C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 05:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A533C379C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 06:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ED11DDA1E;
-	Tue,  7 Oct 2025 05:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF83221FDC;
+	Tue,  7 Oct 2025 06:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z6Lu+2ZJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlGBxVrO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D914C6C;
-	Tue,  7 Oct 2025 05:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39EC1D7E41;
+	Tue,  7 Oct 2025 06:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759813834; cv=none; b=JZu+c2Nn5DZj4qioVvkGUt9xGytE4A8HZ1qXa65ogfZViUX3wBtWX5G2cJHO4V1V4IauNamg1EpE/ogrknsV/uBZoNymVvThxPOuwRy+OK/VuwySBpGotWH+8VPiUR7Ks9Th78ubTSzvkaHYiamcjF6yl7yGLDmuiDR5QYcC4Bs=
+	t=1759818802; cv=none; b=lPiXWB7j6m0AdsrTvKJm5EYuYm/uxHoShYkpdtQI8+q0kaeLaANAHOdACvSrCZHQOE6MaV5kOdFweMKwFODqcdb68CH2JAVWBFXu4SAQ2/ts8s7ZR0F/fucVBLsZCs7aRmlJicClElcQrwGEee3iTXc9Dt5lDIlDjkA+b04ZPJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759813834; c=relaxed/simple;
-	bh=RTEiExciP8/R4hGtwF66A3na/tFaTqWtPRoTMHyhGVQ=;
+	s=arc-20240116; t=1759818802; c=relaxed/simple;
+	bh=6WXeHyLqz/3hzI1qpD8zClbG7l4RzXiMFgiQMqQvHdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VwUkE+fCJ5ApOxnd6ra527kVparPmuQ3r5xKC7mJp/dokwMLHZ19Y+58P0KVuF/110qLQCwKryT+gbweIts7a6bP5C3vy4SdJHdEnAZsn+v37oaH7wNLXS3Xi511AuK0IqMNqTkWZgvHXlG6Yy6mWXV022mWBhgUoXUsnE8kXwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=z6Lu+2ZJ; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAea3eDzC6btOs/m3i8TwkJEeLPHxbWI01+C8ypcCrgVqm6cW+ptPYKYsSnOFkR8cZ/e8HqoT/jHsb92NUzyU9pU94+SlOPL9xfPo7f+gaS8/+UXE833ZppbiDL1kGJBZqT8PEWeOYNxs7qqy8TUbMOmO+0b0psz+QBcRaswu0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XlGBxVrO; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=H7+kqJdrOtlrnhWTU+oo8aVXwAXn0Jj3b2J0DwZYPa4=; b=z6Lu+2ZJWEM4PGwIYsZF4X6mp/
-	zeB3ivMcxgMAynWW1oqk4lWBLhDDWqZUwpdnwJBKFDZx5abS6bg78IZhNjWgAStDOI4cEthI/P1ty
-	gyW1Ml8U20NvfCCO3bJY10DMRTSpW6IO+DPVwQkEIl/p1tlDCSWKaENhAoXTn/8iHARjy5m7EIoTB
-	Anlv/Z/j/KWyohmaYSFtgbO40W8kHO7HPj8fBl5dNgJa53Ox2ULHwvgEME6XlH+JZmVfiSvjX/9Pv
-	xUMD4UYoNl8D1ijFrZ5B1AwnB61+tE/iBxAjala8PvY9k5Bn9GMn5vvGjlFhUjIk2z0osv7OCbTP5
-	sx/DQ7dg==;
+	bh=8nHrEDFMgU2PWvCGKXkRqt0J6PV5fTZTmGr4X1Gx/wM=; b=XlGBxVrO/oeHup++rky/KRKst1
+	/QBvNwL9RcmvU7llfXtCT7s3vkglGimotL3mBCaNN2FMNPWvAZWJCSJ6EgIcXlzOZHrCGnHi/RICK
+	lCRC3Bd0BZnRM/NoK5AhmmoIOU54bbK/OkjLK2mWzW26FrV1e2mqbU10QLwoZ+ORXZ9+5M68JJ9vI
+	HIj17T6l+pvCPONdPSkeji+VoY2bmF2MJW3xmmfXp9wJ/IeKKfUNg1CQ0zu2ndT5ImO9tlTnaL1Hx
+	b6CblLMKCRIAoo9by1fzNUR8HjrdfOxNVFPFdT/4vNZD/5cw9ORRzHzcoIfRP9akerZu1hg/x/ADO
+	HnnGHfVw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v5zy4-00000001GzI-1bbO;
-	Tue, 07 Oct 2025 05:10:32 +0000
-Date: Mon, 6 Oct 2025 22:10:32 -0700
+	id 1v61G9-00000001N5L-3jLs;
+	Tue, 07 Oct 2025 06:33:17 +0000
+Date: Mon, 6 Oct 2025 23:33:17 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Pavel Emelyanov <xemul@scylladb.com>, linux-fsdevel@vger.kernel.org,
-	"Raphael S . Carvalho" <raphaelsc@scylladb.com>,
-	linux-api@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] fs: Propagate FMODE_NOCMTIME flag to user-facing
- O_NOCMTIME
-Message-ID: <aOSgyIqL3DS-ida1@infradead.org>
-References: <20251003093213.52624-1-xemul@scylladb.com>
- <aOCiCkFUOBWV_1yY@infradead.org>
- <aOLr8M6s1W2qC5-Q@dread.disaster.area>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOS0LdM6nMVcLPv_@infradead.org>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,27 +66,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOLr8M6s1W2qC5-Q@dread.disaster.area>
+In-Reply-To: <aOPPpEPnClM-4CSy@fedora>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Oct 06, 2025 at 09:06:40AM +1100, Dave Chinner wrote:
-> If you don't care about accurate c/mtime, then mount the filesystem
-> with '-o lazytime' to degrade c/mtime updates to "eventual
-> consistency" behaviour for IO operations.
+On Mon, Oct 06, 2025 at 10:18:12PM +0800, Ming Lei wrote:
+> On Fri, Oct 03, 2025 at 12:06:44AM -0700, Christoph Hellwig wrote:
+> > On Sun, Sep 28, 2025 at 09:29:25PM +0800, Ming Lei wrote:
+> > > - there isn't any queued blocking async WRITEs, because NOWAIT won't cause
+> > > contention with blocking WRITE, which often implies exclusive lock
+> > 
+> > Isn't this a generic thing we should be doing in core code so that
+> > it applies to io_uring I/O as well?
+> 
+> No.
+> 
+> It is just policy of using NOWAIT or not, so far:
+> 
+> - RWF_NOWAIT can be set from preadv/pwritev
+> 
+> - used for handling io_uring FS read/write
+> 
+> Even though loop's situation is similar with io-uring, however, both two are
+> different subsystem, and there is nothing `core code` for both, more importantly
+> it is just one policy: use it or not use it, each subsystem can make its
+> own decision based on subsystem internal.
 
-Exactly.
-
-> Lazytime updates can generally be done in a non-blocking manner
-> right now (someone raised that in the context of io-uring on #xfs
-> about a month ago), but the NOWAIT behaviour for timestamp updates
-> is done at a higher level in the VFS and does not take into account
-> filesystem specific non-blocking lazytime updates at all.  If we
-> push the NOWAIT checking behaviour down to the filesystem, we can do
-> this.
-
-We might not even have to push it out, but just make the VFS/rw helper
-check aware of lazytime.  Either way currently even a lazytime
-timestampt update will cause a write to block, which renders the
-nowait writes pretty useless on anything but block devices.
+I fail to parse what you say here.  You are encoding special magic
+about what underlying file systems do in an upper layer.  I'd much
+rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+limitation clear rather then opencoding it in the loop driver while
+leabing the primary user of RWF_NOWAIT out in the cold.
 
 
