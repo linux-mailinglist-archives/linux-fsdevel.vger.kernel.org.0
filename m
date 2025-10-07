@@ -1,258 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-63545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CD5BC1506
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 14:10:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB95BC153F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 14:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4447D3C6421
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 12:10:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 194164F52B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 12:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7162DC334;
-	Tue,  7 Oct 2025 12:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E5F2DC76B;
+	Tue,  7 Oct 2025 12:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LD9oTq4j"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g3I1okBM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274A72D97BC;
-	Tue,  7 Oct 2025 12:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB91E244685
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 12:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759839010; cv=none; b=P/sRUKYVhyH5J+pFDgnnriidGS+YPzZw38Dk6rfYJQMc0kdF9hgBaTv3VKayc+nS/HPZnd4jSDzq/i1eplDt8JYSKvrOstE5o4Cwo0ByokTAJ4xPsY+GfyftyQW/mm4H2gkW3BWGGMfpPGdC+03tWp5uCO07eS6zdqLOrp8kEHw=
+	t=1759839325; cv=none; b=VCSlhW8l54gEsdmA4tFVmPzkW6J2Ud3qH5DZRvsFa2FIJJx17THV6voXM70pjTkd77XMzNrO3KzeAaFZ4QyIqrzn52oY2nPHgghqeZVl5dCXFqHoFHmovCfpOm592iplLUhrV3vFD4XH9XxgrEKSnrWPMeAwrIUk5sWXUm0wI2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759839010; c=relaxed/simple;
-	bh=N6Czb2+ZTAi8kRLBoW7s3ZRCalj0NwNMB9s+8L5BhWg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uyggjI7CHx3fgpBlz9EadIrOKd/3YMllqf61jMow47O/d0mhGT+AG5uAYPJT6J5YMk0lQOS0+PX+2v9BPgCJw6E1iVYbg//4O4Sg/A5VigfUYOFQZ/d0Rq++7uKaZBVaC6iHXW6kHKb3z9gfkexckYnGCZFbd9UPdgGdKSAqiQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LD9oTq4j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FBADC4CEF1;
-	Tue,  7 Oct 2025 12:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759839008;
-	bh=N6Czb2+ZTAi8kRLBoW7s3ZRCalj0NwNMB9s+8L5BhWg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LD9oTq4jq08CjZmVNJWgEnuAZwVCZdv8sfwkIEAh/c+Oe5kq8WPOa5ZPTqlZfQB1Y
-	 CzDX/Z7o44Wj8DXBVHBYcbqxShGD991305RNKl9tWQjsBR9vCMG0D0Jpu0JZgXock7
-	 M5TpqpIefyey4KfjdjXqQVvtUTKqxuF018Nec1Xegu5HV6SkxCOc34z/TWxWsHGFrl
-	 ire6hI4YY9Ko51XhW8NG3YXirlw0Ij4LdPq2q0ry2dv2pYYxPeXmLtd2sgWiBaiGT/
-	 v2MFPjwtTslmDq8xIix4nsIVroVpF5lL/UYQu/0PaqsgEUR9Uzu6tf6whF285JRFM7
-	 h3OqwGMuIFkwA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
-  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 03/30] kho: drop notifiers
-In-Reply-To: <CA+CK2bA2qfLF1Mbyvnat+L9+5KAw6LnhYETXVoYcMGJxwTGahg@mail.gmail.com>
-	(Pasha Tatashin's message of "Mon, 6 Oct 2025 13:21:20 -0400")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
-	<mafs0tt0cnevi.fsf@kernel.org>
-	<CA+CK2bA2qfLF1Mbyvnat+L9+5KAw6LnhYETXVoYcMGJxwTGahg@mail.gmail.com>
-Date: Tue, 07 Oct 2025 14:09:57 +0200
-Message-ID: <mafs0playoqui.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1759839325; c=relaxed/simple;
+	bh=fo6pGF/05nRifFRGjSV3VXNDzv5Fx2eHt3ktwmRtiaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8MSTpyoNQRb4Oj44taLl069fMpT6fMgQ4nlmysoxM2hBydR2XxiFkxLmIk0Yj/DM/0g04fxJNx544IU5kf4mjMjhGo1P5AHqMzO8bx7kQ6LUZ2FosK3xCo9Lz2l6HQgANC79wDFsW30Vf8YQQiJrVjw2JQ8+VvVrAKFfitPJKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g3I1okBM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759839322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5DnkYJLI8htZkMXuJF0q4DWlwEkO+3Xhphxedhtl6T4=;
+	b=g3I1okBMRoAQwTsDcXS8KXBsetaUmMkp8G1EsS23I9i+qfY9J5MMNEck80XauC5jdDx0j4
+	nSdTrJJeL17g6KqL8JdlGAOVG/eo/55Pm24CKkiST/OLRdJhK3oHM9fPljYpbvuip91vu2
+	q5WUyiKRvk71NUifaLYbwReSpgRbVAw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-3TEzadJFMhC2jlxP1HdfDQ-1; Tue,
+ 07 Oct 2025 08:15:19 -0400
+X-MC-Unique: 3TEzadJFMhC2jlxP1HdfDQ-1
+X-Mimecast-MFC-AGG-ID: 3TEzadJFMhC2jlxP1HdfDQ_1759839318
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3360195608E;
+	Tue,  7 Oct 2025 12:15:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.2])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7583A30002CC;
+	Tue,  7 Oct 2025 12:15:10 +0000 (UTC)
+Date: Tue, 7 Oct 2025 20:15:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOUESdhW-joMHvyW@fedora>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
+ <aOS0LdM6nMVcLPv_@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOS0LdM6nMVcLPv_@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Oct 06 2025, Pasha Tatashin wrote:
+On Mon, Oct 06, 2025 at 11:33:17PM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 06, 2025 at 10:18:12PM +0800, Ming Lei wrote:
+> > On Fri, Oct 03, 2025 at 12:06:44AM -0700, Christoph Hellwig wrote:
+> > > On Sun, Sep 28, 2025 at 09:29:25PM +0800, Ming Lei wrote:
+> > > > - there isn't any queued blocking async WRITEs, because NOWAIT won't cause
+> > > > contention with blocking WRITE, which often implies exclusive lock
+> > > 
+> > > Isn't this a generic thing we should be doing in core code so that
+> > > it applies to io_uring I/O as well?
+> > 
+> > No.
+> > 
+> > It is just policy of using NOWAIT or not, so far:
+> > 
+> > - RWF_NOWAIT can be set from preadv/pwritev
+> > 
+> > - used for handling io_uring FS read/write
+> > 
+> > Even though loop's situation is similar with io-uring, however, both two are
+> > different subsystem, and there is nothing `core code` for both, more importantly
+> > it is just one policy: use it or not use it, each subsystem can make its
+> > own decision based on subsystem internal.
+> 
+> I fail to parse what you say here.  You are encoding special magic
+> about what underlying file systems do in an upper layer.  I'd much
 
-> On Mon, Oct 6, 2025 at 1:01=E2=80=AFPM Pratyush Yadav <pratyush@kernel.or=
-g> wrote:
->>
->> On Mon, Sep 29 2025, Pasha Tatashin wrote:
->>
->> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->> >
->> > The KHO framework uses a notifier chain as the mechanism for clients to
->> > participate in the finalization process. While this works for a single,
->> > central state machine, it is too restrictive for kernel-internal
->> > components like pstore/reserve_mem or IMA. These components need a
->> > simpler, direct way to register their state for preservation (e.g.,
->> > during their initcall) without being part of a complex,
->> > shutdown-time notifier sequence. The notifier model forces all
->> > participants into a single finalization flow and makes direct
->> > preservation from an arbitrary context difficult.
->> > This patch refactors the client participation model by removing the
->> > notifier chain and introducing a direct API for managing FDT subtrees.
->> >
->> > The core kho_finalize() and kho_abort() state machine remains, but
->> > clients now register their data with KHO beforehand.
->> >
->> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> [...]
->> > diff --git a/mm/memblock.c b/mm/memblock.c
->> > index e23e16618e9b..c4b2d4e4c715 100644
->> > --- a/mm/memblock.c
->> > +++ b/mm/memblock.c
->> > @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char *na=
-me)
->> >  #define MEMBLOCK_KHO_FDT "memblock"
->> >  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
->> >  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
->> > -static struct page *kho_fdt;
->> > -
->> > -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
->> > -{
->> > -     int err =3D 0, i;
->> > -
->> > -     for (i =3D 0; i < reserved_mem_count; i++) {
->> > -             struct reserve_mem_table *map =3D &reserved_mem_table[i];
->> > -             struct page *page =3D phys_to_page(map->start);
->> > -             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
->> > -
->> > -             err |=3D kho_preserve_pages(page, nr_pages);
->> > -     }
->> > -
->> > -     err |=3D kho_preserve_folio(page_folio(kho_fdt));
->> > -     err |=3D kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(kho=
-_fdt));
->> > -
->> > -     return notifier_from_errno(err);
->> > -}
->> > -
->> > -static int reserve_mem_kho_notifier(struct notifier_block *self,
->> > -                                 unsigned long cmd, void *v)
->> > -{
->> > -     switch (cmd) {
->> > -     case KEXEC_KHO_FINALIZE:
->> > -             return reserve_mem_kho_finalize((struct kho_serializatio=
-n *)v);
->> > -     case KEXEC_KHO_ABORT:
->> > -             return NOTIFY_DONE;
->> > -     default:
->> > -             return NOTIFY_BAD;
->> > -     }
->> > -}
->> > -
->> > -static struct notifier_block reserve_mem_kho_nb =3D {
->> > -     .notifier_call =3D reserve_mem_kho_notifier,
->> > -};
->> >
->> >  static int __init prepare_kho_fdt(void)
->> >  {
->> >       int err =3D 0, i;
->> > +     struct page *fdt_page;
->> >       void *fdt;
->> >
->> > -     kho_fdt =3D alloc_page(GFP_KERNEL);
->> > -     if (!kho_fdt)
->> > +     fdt_page =3D alloc_page(GFP_KERNEL);
->> > +     if (!fdt_page)
->> >               return -ENOMEM;
->> >
->> > -     fdt =3D page_to_virt(kho_fdt);
->> > +     fdt =3D page_to_virt(fdt_page);
->> >
->> >       err |=3D fdt_create(fdt, PAGE_SIZE);
->> >       err |=3D fdt_finish_reservemap(fdt);
->> > @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
->> >       err |=3D fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_NOD=
-E_COMPATIBLE);
->> >       for (i =3D 0; i < reserved_mem_count; i++) {
->> >               struct reserve_mem_table *map =3D &reserved_mem_table[i];
->> > +             struct page *page =3D phys_to_page(map->start);
->> > +             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
->> >
->> > +             err |=3D kho_preserve_pages(page, nr_pages);
->> >               err |=3D fdt_begin_node(fdt, map->name);
->> >               err |=3D fdt_property_string(fdt, "compatible", RESERVE_=
-MEM_KHO_NODE_COMPATIBLE);
->> >               err |=3D fdt_property(fdt, "start", &map->start, sizeof(=
-map->start));
->> > @@ -2507,13 +2475,14 @@ static int __init prepare_kho_fdt(void)
->> >               err |=3D fdt_end_node(fdt);
->> >       }
->> >       err |=3D fdt_end_node(fdt);
->> > -
->> >       err |=3D fdt_finish(fdt);
->> >
->> > +     err |=3D kho_preserve_folio(page_folio(fdt_page));
->> > +     err |=3D kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
->> > +
->> >       if (err) {
->> >               pr_err("failed to prepare memblock FDT for KHO: %d\n", e=
-rr);
->> > -             put_page(kho_fdt);
->> > -             kho_fdt =3D NULL;
->> > +             put_page(fdt_page);
->>
->> This adds subtree to KHO even if the FDT might be invalid. And then
->> leaves a dangling reference in KHO to the FDT in case of an error. I
->> think you should either do this check after
->> kho_preserve_folio(page_folio(fdt_page)) and do a clean error check for
->> kho_add_subtree(), or call kho_remove_subtree() in the error block.
->
-> I agree, I do not like these err |=3D stuff, we should be checking
-> errors cleanly, and do proper clean-ups.
+NOWAIT is obviously interface provided by FS, here loop just wants to try
+NOWAIT first in block layer dispatch context for avoiding the extra wq
+schedule latency.
 
-Yeah, this is mainly a byproduct of using FDTs. Getting and setting
-simple properties also needs error checking and that can get tedious
-real quick. Which is why this pattern has shown up I suppose.
+But for write on sparse file, trying NOWAIT first may bring extra retry
+cost, that is why the hint is added. It is very coarse, but potential
+regression can be avoided.
 
->
->> I prefer the former since if kho_add_subtree() is the one that fails,
->> there is little sense in removing a subtree that was never added.
->>
->> >       }
->> >
->> >       return err;
->> > @@ -2529,13 +2498,6 @@ static int __init reserve_mem_init(void)
->> >       err =3D prepare_kho_fdt();
->> >       if (err)
->> >               return err;
->> > -
->> > -     err =3D register_kho_notifier(&reserve_mem_kho_nb);
->> > -     if (err) {
->> > -             put_page(kho_fdt);
->> > -             kho_fdt =3D NULL;
->> > -     }
->> > -
->> >       return err;
->> >  }
->> >  late_initcall(reserve_mem_init);
->>
->> --
->> Regards,
->> Pratyush Yadav
+> rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+> limitation clear rather then opencoding it in the loop driver while
 
---=20
-Regards,
-Pratyush Yadav
+What is the limitation?
+
+> leabing the primary user of RWF_NOWAIT out in the cold.
+
+FOP_DIO_PARALLEL_WRITE is one static FS feature, but here it is FS
+runtime behavior, such as if the write can be blocked because of space
+allocation, so it can't be done by one static flag.
+
+io-uring shares nothing with loop in this area, it is just one policy wrt.
+use NOWAIT or not. I don't understand why you insist on covering both
+from FS internal...
+
+
+
+Thanks,
+Ming
+
 
