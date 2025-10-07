@@ -1,171 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-63556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46C6BC2147
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 18:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234C5BC21A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 18:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7928C4F62B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 16:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD95D3B2135
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 16:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CD22E7193;
-	Tue,  7 Oct 2025 16:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421AB2E7F29;
+	Tue,  7 Oct 2025 16:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TR+wuHLO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTO/FuVc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567D6214228
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 16:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D328113FEE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 16:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759853854; cv=none; b=E+clMJaJS+l0FWPYE6jDsa+wtd/hVD93lqJ5KykBemPi/W3YAIkwYrK5PQQefGoiV1wJAm3N2tDykGM6Ic0IfcRUVfq9FL6u7vBSNCxsfezw2+18uzcs4dAvdtEqH9HUeR053CqFaszwl5W47m/u9EAY/Jp93fkNA/MOS8bbabI=
+	t=1759854118; cv=none; b=UrgRUoUTho7VlBZ1NcyzAJwQmhRsrOvVpdnX+/qlh2VIlg9vjfwBfLb1KHSlyoGmoHWc6Md+cUGkabD2NQ8GnDNhNVbaQsjG7HnylKKUao+mMbzJg0d55zCgL3FkJkif97nNQcAPXBC2uhLTF/033jqGsXOU/oG85jgvyYgFzNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759853854; c=relaxed/simple;
-	bh=zKULPQQuwiOMb26v+cKjhqRJho79LgmVc0rOc9shKDs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JSeNNNFzkXi4Sx6hqWYnXf9XJlS/rl+S8RsINNtjd1pP9XK4R4DDft8orsHpORE949/z8SrgxbYT3QWjJoX56YBY6+Rt+FqaqtBMoR/S6k39l6l5XBu2DPm4cgteJ+G7Eg377sytAEho9UhPV4tgueWFTlseBhrX5FLVTeDBKKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TR+wuHLO; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-8cf4f90b6f0so523392439f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 09:17:32 -0700 (PDT)
+	s=arc-20240116; t=1759854118; c=relaxed/simple;
+	bh=lvPYZKSeQucFx2SgeOdYOtw4O2ksAxgo0FsweuBHcec=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c3M0xIYyeaFg5TQ4iy/DwqTrDNT0wXuQ+3oHRfztyU+qx7A2eiH/YPgVG8Mu92gf6K2f0ucW0kZAt8dLUPaWD0YOPfHeRi20tIQ8mAewbmlJQnDm3KxupnaiQgqqzCchzsWrp5AtDN5r2DRMrsgAIFrsimPq8RsOuxETQeG4ryo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RTO/FuVc; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e4d34ff05so31202495e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 09:21:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759853851; x=1760458651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zKULPQQuwiOMb26v+cKjhqRJho79LgmVc0rOc9shKDs=;
-        b=TR+wuHLO585PamBK2WXdvWMukywEPATm2ScA8Xy93Y6vh160rpd0C3R7UeVBy/ECfJ
-         AGs1noKFh5iDXRRceDbIEMGvhxm7m6Pzmj4QgQtlAbG/kjCrp+mDmsZgo4IlWV0Wqm6+
-         7ohVwKGrvDOQYPXdPfoJMaXrI1kRzn8aoBh1o4Rai4WOflmO7BiHDt3POJ0M8e17MDvM
-         tBvyUUmoi5fYjgRf0KOtIbncmZRMEBfmxXcyxm1bDwgX3Xz43p6S5B4EmHS6bh+WjoAf
-         XLmm/IDdOiHnkkALeZDOMaFA7eSQJsFukwUI3U2PUu/9NRcb1bzRMNwrZZlah+WwzosZ
-         DsBw==
+        d=google.com; s=20230601; t=1759854115; x=1760458915; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPke7s3EpbXC6ErmX/FPvC/unGHuc//hg1lOBj1qibA=;
+        b=RTO/FuVcWAZEL7PyaNzslaeUaM2MzZd2AkBd4aCwmY/eTVfp7SC7HJ1ssF0PXWT08e
+         maZManOa5G3BTLFmqySoNEw3vwwlVwoNXIAxXCNrsWAOjv3SOVw07aBFhUiFB77wXtz3
+         6nhD2+W0v88ruT10Aig3zmbiv0c0nFaQ6eTDlcToDuP9tb8F9SbODraysTlHVItw6RP1
+         A1XEvtCN3aEgO6ciA9e2aLZLR8rnAVxuHPyI5hzvTnpKt1VoigO81QBdrYn6xPUlMwTH
+         p6sxaNchGfarQYj6DmEzhcNtoeIkgaKzHbiY5wn8o3E3F16Zq4WvO4unMKqAYwhA9Ohx
+         ueJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759853851; x=1760458651;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zKULPQQuwiOMb26v+cKjhqRJho79LgmVc0rOc9shKDs=;
-        b=Cl7vW0kPC5OkyxBcvM4wCJpeKp6CldcVwUiuVa7Wo0fWgCcni+1jKv1eNQ94S66LI1
-         7smUEgcdMSzgeNSU6nBgpSZysYDuwsopHfMdB5GOQZTbxVPxmTDGhBOBIDhO8H6W6XRp
-         BJ/jSuF5NnzVVFV9jRkacYG11GU4UReEMsl3D/tu7p6C9+o33yJ/a0b7iGVh8E5rxU3S
-         5OrindKjte5IHqmE/eChByVDt/ujn35dh1gf+ZewpMIcnSdl18Ho8770EkyBwsy6Pl9L
-         hKAfL32UJtPamaG8bP3yr2Xl/RAMYzuxNXm0RSZRK2sIszP+mcXySmrhh9Z+zwI4HKWb
-         pIwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVsQvC/zfyEPoKHQJMggUldWcQTMd4D5X2O2gkr/ip4aLpdlxifyyTiV+wF9vikd9ifTyGBPQt4K2dD19J@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv11Vkv1uA/nQzHHTAWLp5Z/VDiGrriFXD6gMyohyVkbZM6vOz
-	L2N1+4SaQpBtdjh9mJBc+1Vket8AjVXk+ylrHXR0tnxYN48NIT/3r3bp
-X-Gm-Gg: ASbGncvM5D+atVTlKedcv5v4GNBnQH5CloyIUaN2k1B9wln4ywHTcz4367H3ZSofjFB
-	pWD/yspMgY10QVWhMjUA8pFGw0J+QjlFXrqcdPjay1rP6F+06WlMCjrH55NTCQpwykjvvNPcNvM
-	MdmzL1UVGB7wcyrVOTWPljE6IlSXRjVxkb5rLIECiT1Z/ga3Tk/P3UMJbNiFMBVPsPAvkmKjYyA
-	IytAh00IYNcGJarqECTkZL/BGBZFgd/U0nW2Xx1ii+16Fl+cxK4veiXgdM3yVVbAQ9ayrzIri6v
-	8tQJ0UEIfhzekKBwrO23Ukcu1FKhnWpFmWww9Z19AYKeEOYvPhW9sOwHEy/Iv3ojMa+2UY6ey2x
-	mzRakax/WvL/pPU7GBsMxJ/C+ccPr/MGeW9x5AafYA8GJdGsnKowoMuI=
-X-Google-Smtp-Source: AGHT+IFyXdSH5lmXmhQmU+6+2rFb2XcvaPsAqqFnlPFjaKItZfU6kDMDObVgHMoy+y6gZCvNhaIPTw==
-X-Received: by 2002:a05:6602:2d91:b0:937:43fd:ee68 with SMTP id ca18e2360f4ac-93b96ac2dbemr2694731539f.18.1759853851293;
-        Tue, 07 Oct 2025 09:17:31 -0700 (PDT)
-Received: from localhost.localdomain ([2601:282:4300:19e0::7bc8])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5e9e8efcsm6273618173.2.2025.10.07.09.17.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 09:17:30 -0700 (PDT)
-From: Joshua Watt <jpewhacker@gmail.com>
-X-Google-Original-From: Joshua Watt <JPEWhacker@gmail.com>
-To: jimzhao.ai@gmail.com
-Cc: akpm@linux-foundation.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	willy@infradead.org,
-	linux-nfs@vger.kernel.org,
-	Joshua Watt <jpewhacker@gmail.com>
-Subject: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic into __wb_calc_thresh
-Date: Tue,  7 Oct 2025 10:17:11 -0600
-Message-ID: <20251007161711.468149-1-JPEWhacker@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20241121100539.605818-1-jimzhao.ai@gmail.com>
-References: <20241121100539.605818-1-jimzhao.ai@gmail.com>
+        d=1e100.net; s=20230601; t=1759854115; x=1760458915;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPke7s3EpbXC6ErmX/FPvC/unGHuc//hg1lOBj1qibA=;
+        b=s6A9+ZSCk/O91gt4wncPtNyGXVntlP0WBpoK3A/63A/Uwfzzub1sYePAg6OKaz0lGN
+         ULlTr9G35TEi/a79c3NPAd3RS5cg1REejkbpoa+ZpwyxUhqyxjVP1su+DvnayBlA+5cv
+         jN2e4LnZKkStFOdnHf0bd/i4JV8UYGjPHej+pMkZ4nzR5DMaVfAgM4uQR5HOLfSmldUV
+         22c7jHkL+MObczltDyXi9OIislsvjIBhWNK/q/gvZnF+KUEmcCBudx+dA1c/R/GJ+N6u
+         +KkWXyB2XHsEBiIxn84dpNwALFCybl3hBuG1Tex/yufR8PicH18LYoipmaZHSkRes268
+         2f0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCLIwJllJFljn8MXh3KLpmyGGE2nQpThHJUqNd1Vw/LWByrc78RbVgxo2ivWhZEsm2+uW5rSrzEXa74XP4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPNd7iHyI6HaM/EUbdsg0J51Tw37CiXkrsQPBvniP3ONO1bFb2
+	KhksdXiCXqz2mLkImhiuDUYT1i3Yk6jEgPERVKU6F1NgcmLEfBGiOtirt/qz5FmVSKKTLPSHTu+
+	kA06prKsGsCVHmiOn8Q==
+X-Google-Smtp-Source: AGHT+IH9zRUnvVJnJ2rKg3ul1/L1v9CwXrOUbkfQHeRTwHBdeUKC3Y5EGru7TMDFalytr+scT+ACzRCj8l6otsM=
+X-Received: from wmri12-n1.prod.google.com ([2002:a05:600c:8a0c:10b0:46e:1110:d730])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1395:b0:46e:27fb:17f0 with SMTP id 5b1f17b1804b1-46fa9aa204cmr1824285e9.9.1759854115350;
+ Tue, 07 Oct 2025 09:21:55 -0700 (PDT)
+Date: Tue,  7 Oct 2025 16:21:36 +0000
+In-Reply-To: <20251002075202.11306-1-acsjakub@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251002075202.11306-1-acsjakub@amazon.de>
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251007162136.1885546-1-aliceryhl@google.com>
+Subject: [PATCH] mm: use enum for vm_flags
+From: Alice Ryhl <aliceryhl@google.com>
+To: acsjakub@amazon.de
+Cc: akpm@linux-foundation.org, axelrasmussen@google.com, 
+	chengming.zhou@linux.dev, david@redhat.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com, 
+	xu.xin16@zte.com.cn, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Joshua Watt <jpewhacker@gmail.com>
+The bindgen tool is better able to handle BIT(_) declarations when used
+in an enum.
 
-This patch strangely breaks NFS 4 clients for me. The behavior is that a
-client will start getting an I/O error which in turn is caused by the client
-getting a NFS3ERR_BADSESSION when attempting to write data to the server. I
-bisected the kernel from the latest master
-(9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). Also,
-when I revert this commit on master the bug disappears.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Hi Jakub,
 
-The server is running kernel 5.4.161, and the client that exhibits the
-behavior is running in qemux86, and has mounted the server with the options
-rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,soft,proto=tcp,port=52049,timeo=600,retrans=2,sec=null,clientaddr=172.16.6.90,local_lock=none,addr=172.16.6.0
+what do you think about modifying the patch like this to use an enum? It
+resolves the issues brought up in
+	https://lore.kernel.org/all/CAH5fLghTu-Zcm9e3Hy07nNtvB_-hRjojAWDoq-hhBYGE7LPEbQ@mail.gmail.com/
 
-The program that I wrote to reproduce this is pretty simple; it does a file
-lock over NFS, then writes data to the file once per second. After about 32
-seconds, it receives the I/O error, and this reproduced every time. I can
-provide the sample program if necessary.
+Feel free to squash this patch into your patch.
 
-I also captured the NFS traffic both in the passing case and the failure case,
-and can provide them if useful.
+ include/linux/mm.h              | 90 +++++++++++++++++----------------
+ rust/bindings/bindings_helper.h |  1 -
+ 2 files changed, 46 insertions(+), 45 deletions(-)
 
-I did look at the two dumps and I'm not exactly sure what the difference is,
-other than with this patch the client tries to write every 30 seconds (and
-fails), where as without it attempts to write back every 5 seconds. I have no
-idea why this patch would cause this problem.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 7916d527f687..69da7ce13e50 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -273,57 +273,58 @@ extern unsigned int kobjsize(const void *objp);
+  * vm_flags in vm_area_struct, see mm_types.h.
+  * When changing, update also include/trace/events/mmflags.h
+  */
+-#define VM_NONE		0
++enum {
++	VM_NONE		= 0,
+ 
+-#define VM_READ		BIT(0)		/* currently active flags */
+-#define VM_WRITE	BIT(1)
+-#define VM_EXEC		BIT(2)
+-#define VM_SHARED	BIT(3)
++	VM_READ		= BIT(0),		/* currently active flags */
++	VM_WRITE	= BIT(1),
++	VM_EXEC		= BIT(2),
++	VM_SHARED	= BIT(3),
+ 
+ /* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
+-#define VM_MAYREAD	BIT(4)		/* limits for mprotect() etc */
+-#define VM_MAYWRITE	BIT(5)
+-#define VM_MAYEXEC	BIT(6)
+-#define VM_MAYSHARE	BIT(7)
++	VM_MAYREAD	= BIT(4),		/* limits for mprotect() etc */
++	VM_MAYWRITE	= BIT(5),
++	VM_MAYEXEC	= BIT(6),
++	VM_MAYSHARE	= BIT(7),
+ 
+-#define VM_GROWSDOWN	BIT(8)		/* general info on the segment */
++	VM_GROWSDOWN	= BIT(8),		/* general info on the segment */
+ #ifdef CONFIG_MMU
+-#define VM_UFFD_MISSING	BIT(9)		/* missing pages tracking */
++	VM_UFFD_MISSING	= BIT(9),		/* missing pages tracking */
+ #else /* CONFIG_MMU */
+-#define VM_MAYOVERLAY	BIT(9)		/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
++	VM_MAYOVERLAY	= BIT(9),		/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
+ #define VM_UFFD_MISSING	0
+ #endif /* CONFIG_MMU */
+-#define VM_PFNMAP	BIT(10)		/* Page-ranges managed without "struct page", just pure PFN */
+-#define VM_UFFD_WP	BIT(12)		/* wrprotect pages tracking */
+-
+-#define VM_LOCKED	BIT(13)
+-#define VM_IO           BIT(14)		/* Memory mapped I/O or similar */
+-
+-					/* Used by sys_madvise() */
+-#define VM_SEQ_READ	BIT(15)		/* App will access data sequentially */
+-#define VM_RAND_READ	BIT(16)		/* App will not benefit from clustered reads */
+-
+-#define VM_DONTCOPY	BIT(17)		/* Do not copy this vma on fork */
+-#define VM_DONTEXPAND	BIT(18)		/* Cannot expand with mremap() */
+-#define VM_LOCKONFAULT	BIT(19)		/* Lock the pages covered when they are faulted in */
+-#define VM_ACCOUNT	BIT(20)		/* Is a VM accounted object */
+-#define VM_NORESERVE	BIT(21)		/* should the VM suppress accounting */
+-#define VM_HUGETLB	BIT(22)		/* Huge TLB Page VM */
+-#define VM_SYNC		BIT(23)		/* Synchronous page faults */
+-#define VM_ARCH_1	BIT(24)		/* Architecture-specific flag */
+-#define VM_WIPEONFORK	BIT(25)		/* Wipe VMA contents in child. */
+-#define VM_DONTDUMP	BIT(26)		/* Do not include in the core dump */
++	VM_PFNMAP	= BIT(10),		/* Page-ranges managed without "struct page", just pure PFN */
++	VM_UFFD_WP	= BIT(12),		/* wrprotect pages tracking */
++
++	VM_LOCKED	= BIT(13),
++	VM_IO           = BIT(14),		/* Memory mapped I/O or similar */
++
++						/* Used by sys_madvise() */
++	VM_SEQ_READ	= BIT(15),		/* App will access data sequentially */
++	VM_RAND_READ	= BIT(16),		/* App will not benefit from clustered reads */
++
++	VM_DONTCOPY	= BIT(17),		/* Do not copy this vma on fork */
++	VM_DONTEXPAND	= BIT(18),		/* Cannot expand with mremap() */
++	VM_LOCKONFAULT	= BIT(19),		/* Lock the pages covered when they are faulted in */
++	VM_ACCOUNT	= BIT(20),		/* Is a VM accounted object */
++	VM_NORESERVE	= BIT(21),		/* should the VM suppress accounting */
++	VM_HUGETLB	= BIT(22),		/* Huge TLB Page VM */
++	VM_SYNC		= BIT(23),		/* Synchronous page faults */
++	VM_ARCH_1	= BIT(24),		/* Architecture-specific flag */
++	VM_WIPEONFORK	= BIT(25),		/* Wipe VMA contents in child. */
++	VM_DONTDUMP	= BIT(26),		/* Do not include in the core dump */
+ 
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+-# define VM_SOFTDIRTY	BIT(27)		/* Not soft dirty clean area */
++	VM_SOFTDIRTY	= BIT(27),		/* Not soft dirty clean area */
+ #else
+ # define VM_SOFTDIRTY	0
+ #endif
+ 
+-#define VM_MIXEDMAP	BIT(28)		/* Can contain "struct page" and pure PFN pages */
+-#define VM_HUGEPAGE	BIT(29)		/* MADV_HUGEPAGE marked this vma */
+-#define VM_NOHUGEPAGE	BIT(30)		/* MADV_NOHUGEPAGE marked this vma */
+-#define VM_MERGEABLE	BIT(31)		/* KSM may merge identical pages */
++	VM_MIXEDMAP	= BIT(28),		/* Can contain "struct page" and pure PFN pages */
++	VM_HUGEPAGE	= BIT(29),		/* MADV_HUGEPAGE marked this vma */
++	VM_NOHUGEPAGE	= BIT(30),		/* MADV_NOHUGEPAGE marked this vma */
++	VM_MERGEABLE	= BIT(31),		/* KSM may merge identical pages */
+ 
+ #ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+ #define VM_HIGH_ARCH_BIT_0	32	/* bit only usable on 64-bit architectures */
+@@ -333,14 +334,15 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_6	38	/* bit only usable on 64-bit architectures */
+-#define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+-#define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+-#define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+-#define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+-#define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+-#define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
+-#define VM_HIGH_ARCH_6	BIT(VM_HIGH_ARCH_BIT_6)
++	VM_HIGH_ARCH_0	= BIT(VM_HIGH_ARCH_BIT_0),
++	VM_HIGH_ARCH_1	= BIT(VM_HIGH_ARCH_BIT_1),
++	VM_HIGH_ARCH_2	= BIT(VM_HIGH_ARCH_BIT_2),
++	VM_HIGH_ARCH_3	= BIT(VM_HIGH_ARCH_BIT_3),
++	VM_HIGH_ARCH_4	= BIT(VM_HIGH_ARCH_BIT_4),
++	VM_HIGH_ARCH_5	= BIT(VM_HIGH_ARCH_BIT_5),
++	VM_HIGH_ARCH_6	= BIT(VM_HIGH_ARCH_BIT_6),
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
++};
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+ # define VM_PKEY_SHIFT VM_HIGH_ARCH_BIT_0
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 2e43c66635a2..04b75d4d01c3 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -108,7 +108,6 @@ const xa_mark_t RUST_CONST_HELPER_XA_PRESENT = XA_PRESENT;
+ 
+ const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC = XA_FLAGS_ALLOC;
+ const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC1 = XA_FLAGS_ALLOC1;
+-const vm_flags_t RUST_CONST_HELPER_VM_MERGEABLE = VM_MERGEABLE;
+ 
+ #if IS_ENABLED(CONFIG_ANDROID_BINDER_IPC_RUST)
+ #include "../../drivers/android/binder/rust_binder.h"
+-- 
+2.51.0.618.g983fd99d29-goog
 
-Any help is appreciated. Thank you.
-
-git bisect start
-# status: waiting for both good and bad commits
-# good: [4fe89d07dcc2804c8b562f6c7896a45643d34b2f] Linux 6.0
-git bisect good 4fe89d07dcc2804c8b562f6c7896a45643d34b2f
-# status: waiting for bad commit, 1 good commit known
-# bad: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
-git bisect bad e5f0a698b34ed76002dc5cff3804a61c80233a7a
-# good: [5f20e6ab1f65aaaaae248e6946d5cb6d039e7de8] Merge tag 'for-netdev' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next
-git bisect good 5f20e6ab1f65aaaaae248e6946d5cb6d039e7de8
-# good: [28eb75e178d389d325f1666e422bc13bbbb9804c] Merge tag 'drm-next-2024-11-21' of https://gitlab.freedesktop.org/drm/kernel
-git bisect good 28eb75e178d389d325f1666e422bc13bbbb9804c
-# bad: [1afba39f9305fe4061a4e70baa6ebab9d41459da] Merge drm/drm-next into drm-misc-next
-git bisect bad 1afba39f9305fe4061a4e70baa6ebab9d41459da
-# bad: [350130afc22bd083ea18e17452dd3979c88b08ff] Merge tag 'ubifs-for-linus-6.14-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs
-git bisect bad 350130afc22bd083ea18e17452dd3979c88b08ff
-# good: [cf33d96f50903214226b379b3f10d1f262dae018] Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-git bisect good cf33d96f50903214226b379b3f10d1f262dae018
-# good: [c9c0543b52d8cfe3a3b15d1e39ab9dbc91be6df4] Merge tag 'platform-drivers-x86-v6.14-1' of git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86
-git bisect good c9c0543b52d8cfe3a3b15d1e39ab9dbc91be6df4
-# good: [40648d246fa4307ef11d185933cb0d79fc9ff46c] Merge tag 'trace-tools-v6.14' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
-git bisect good 40648d246fa4307ef11d185933cb0d79fc9ff46c
-# bad: [125ca745467d4f87ae58e671a4a5714e024d2908] Merge tag 'staging-6.14-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
-git bisect bad 125ca745467d4f87ae58e671a4a5714e024d2908
-# bad: [d1366e74342e75555af2648a2964deb2d5c92200] mm/compaction: fix UBSAN shift-out-of-bounds warning
-git bisect bad d1366e74342e75555af2648a2964deb2d5c92200
-# good: [553e77529fb61e5520b839a0ce412a46cba996e0] mm: pgtable: introduce generic pagetable_dtor_free()
-git bisect good 553e77529fb61e5520b839a0ce412a46cba996e0
-# good: [65a1cf15802c7a571299df507b1b72ba89ef1da8] mm/zsmalloc: convert migrate_zspage() to use zpdesc
-git bisect good 65a1cf15802c7a571299df507b1b72ba89ef1da8
-# good: [136c5b40e0ad84f4b4a38584089cd565b97f799c] selftests/mm: use selftests framework to print test result
-git bisect good 136c5b40e0ad84f4b4a38584089cd565b97f799c
-# good: [fb7d3bc4149395c1ae99029c852eab6c28fc3c88] mm/filemap: drop streaming/uncached pages when writeback completes
-git bisect good fb7d3bc4149395c1ae99029c852eab6c28fc3c88
-# good: [7882d8fc8fe0c2b2a01f09e56edf82df6b3013fd] selftests/mm/mkdirty: fix memory leak in test_uffdio_copy()
-git bisect good 7882d8fc8fe0c2b2a01f09e56edf82df6b3013fd
-# bad: [6aeb991c54b281710591ce388158bc1739afc227] mm/page-writeback: consolidate wb_thresh bumping logic into __wb_calc_thresh
-git bisect bad 6aeb991c54b281710591ce388158bc1739afc227
-# good: [f752e677f85993c812fe9de7b4427f3f18408a11] mm: separate move/undo parts from migrate_pages_batch()
-git bisect good f752e677f85993c812fe9de7b4427f3f18408a11
-# good: [686fa9537d78d2f1bea42bf3891828510202be14] mm/page_alloc: remove the incorrect and misleading comment
-git bisect good 686fa9537d78d2f1bea42bf3891828510202be14
-# first bad commit: [6aeb991c54b281710591ce388158bc1739afc227] mm/page-writeback: consolidate wb_thresh bumping logic into __wb_calc_thresh
 
