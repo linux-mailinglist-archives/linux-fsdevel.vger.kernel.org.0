@@ -1,200 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-63536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B2BBC0E16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 11:42:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708A5BC0F00
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 11:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD99189EBB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 09:43:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 190F84F4349
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 09:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0802D7D35;
-	Tue,  7 Oct 2025 09:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2492D6607;
+	Tue,  7 Oct 2025 09:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nJKa6aIW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ocGYT1lD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nJKa6aIW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ocGYT1lD"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="CAv37Md6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AD83207
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 09:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D407483;
+	Tue,  7 Oct 2025 09:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830156; cv=none; b=NEWgPcpsZ3BwM3JazdvMd6Yx4WrZv6V7zwBcQuj28P3t6r5PGwsCivV6D/cnBooBodfpw0gjQTeW1aWiPxx9IQWDMIOjxO52qSTWZ1X7sXRmTJoLB/gblshfljeQrTM+PXyamUah5dvHlsdAU41+nIqrVs1TpPChjAAc7vGPET0=
+	t=1759831007; cv=none; b=hz7z+DBUa85lFyoiiNH82yG+G5CpYi305KMvjDyeKQhbKUjf2HFMbtHEhr+VqyJJ69WSoUTZngbHSc807ShLw0C4w637+rNSv1n2PLsXtjJ4sgtlFwtZhAd7fMwT0C41y0LhTGtRMmaEl6H/Q+KDIW5N66dlu7GEW+95xjqc8h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759830156; c=relaxed/simple;
-	bh=SX9TtvEtaU8//eJjH2aNmHq9f1adN3qCNI44DgPCUKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qujgNBMg778j+d6FsEe0HXn2FAzDppwF9MrWTCSSVBGCYxksBNky4i8lze2bwCdhJYSWBYJp3ZtsO076ccfq0+9a8GQ/26VHIjZ08IMNr3VafjnsJEoUzd+VLQc+aA8jUlY4Z2/5qBDRQxjAyI9lhDviRSyHfuTG3VubzWn7s4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nJKa6aIW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ocGYT1lD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nJKa6aIW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ocGYT1lD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1759831007; c=relaxed/simple;
+	bh=G+DxoUxu8+GmNziTwmIUe3by9an3Dygxv/SIx3/3X3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F7+LdUiXlF0YbpZZbXs5syqNpFA7wGJoAluAtHEtD0zad1rxq8xvfzh7lRHg5lKv3nLSeA1jMt+5K0xRXbsUVTjqQ5jc+pdnCUR2QPZSmFap7ovLEiUpPaMYxarHXrkH7Z8mflUKQohqeOcqKGdStqedfmlDqh/8r0ck1QcnX1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=CAv37Md6; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BFCEB33714;
-	Tue,  7 Oct 2025 09:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759830152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cgs3s37vVz9t21;
+	Tue,  7 Oct 2025 11:56:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1759831001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7UB+baPB3fVGqfXkTIxd1Owd3tCnYWmAjahqNt3dhE4=;
-	b=nJKa6aIWcGJvP51orLjq22qpHG06Xjx/VDdI6AaIWd4jfzGjXe52XIfbvKdnIad1VV8dtb
-	LOjV7Dttap34z/r5Svk2sv6L8IxcL9Q07Se22W55LXO4591jxGFntDJwTrCm34AxqECsUR
-	pOjq0lAiqEfzK1kMhRU4D1Xfe1l18MU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759830152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7UB+baPB3fVGqfXkTIxd1Owd3tCnYWmAjahqNt3dhE4=;
-	b=ocGYT1lDtNF4qgXl1QWuGJ8pYfAleeYHKj7yn+X76QofmHMW9X+7PpMawBwPORMbvlQqWV
-	UGV9yGUSiEGDSvBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nJKa6aIW;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ocGYT1lD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759830152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7UB+baPB3fVGqfXkTIxd1Owd3tCnYWmAjahqNt3dhE4=;
-	b=nJKa6aIWcGJvP51orLjq22qpHG06Xjx/VDdI6AaIWd4jfzGjXe52XIfbvKdnIad1VV8dtb
-	LOjV7Dttap34z/r5Svk2sv6L8IxcL9Q07Se22W55LXO4591jxGFntDJwTrCm34AxqECsUR
-	pOjq0lAiqEfzK1kMhRU4D1Xfe1l18MU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759830152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7UB+baPB3fVGqfXkTIxd1Owd3tCnYWmAjahqNt3dhE4=;
-	b=ocGYT1lDtNF4qgXl1QWuGJ8pYfAleeYHKj7yn+X76QofmHMW9X+7PpMawBwPORMbvlQqWV
-	UGV9yGUSiEGDSvBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4CC313693;
-	Tue,  7 Oct 2025 09:42:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FyofLIjg5GjeUwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 07 Oct 2025 09:42:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 46DF8A0A58; Tue,  7 Oct 2025 11:42:32 +0200 (CEST)
-Date: Tue, 7 Oct 2025 11:42:32 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Yu Watanabe <watanabe.yu@gmail.com>
-Subject: Re: [PATCH] coredump: fix core_pattern input validation
-Message-ID: <avokp5ifxuojjgblw77bgdvrfyyrnjicijl4qj5yjmyd533b7g@sn4mpwz3g7bf>
-References: <20251007-infizieren-zitat-f736f932b5c4@brauner>
+	bh=ZtIjDefiwflyhrEznLkEY1HOvumLtvPZW9x2sGlBhf8=;
+	b=CAv37Md64AUcXuXeqMhCQ9HMX68A2Ah1AbMVTpZRmJA9c7jcBOEQt+u+Eg3xdlfTu9Zydy
+	XGDfsHKVEmHgHAg4ZVP52/vsw1sRwo78RqWWRXiKPn4VpqRyu3aqDcBJOyh7yKv38ZzkjT
+	KDcucgBmQHVZTDH0e2v0oC3/j+W4VB66yk2wvC4Kr3faFdgoS2GnxyYb5w7W4MClhlGrvq
+	8YwkCg58Z93GUrv8lUNOhG24Xx6vMO+/1BZzQIgMWlZsc9FPZXy0bITr0UqbxAja9Hm+st
+	Clbfzlq/6zCaAncdRVbnG07EVcw9avVb9rIpsUWDqHAxnWh+7nyEjrZq7nVPaw==
+Message-ID: <46ce76f8-479f-4023-9d0f-05c749b1fdf7@pankajraghav.com>
+Date: Tue, 7 Oct 2025 11:56:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007-infizieren-zitat-f736f932b5c4@brauner>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,suse.cz,zeniv.linux.org.uk,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: BFCEB33714
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+Subject: Re: [PATCH] iomap: use largest_zero_folio() in iomap_dio_zero()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ mcgrof@kernel.org, gost.dev@samsung.com, linux-xfs@vger.kernel.org,
+ Pankaj Raghav <p.raghav@samsung.com>, "Darrick J . Wong" <djwong@kernel.org>
+References: <20250814142137.45469-1-kernel@pankajraghav.com>
+Content-Language: en-US
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <20250814142137.45469-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 07-10-25 11:32:42, Christian Brauner wrote:
-> In be1e0283021e ("coredump: don't pointlessly check and spew warnings")
-> we tried to fix input validation so it only happens during a write to
-> core_pattern. This would avoid needlessly logging a lot of warnings
-> during a read operation. However the logic accidently got inverted in
-> this commit. Fix it so the input validation only happens on write and is
-> skipped on read.
-> 
-> Fixes: be1e0283021e ("coredump: don't pointlessly check and spew warnings")
-> Fixes: 16195d2c7dd2 ("coredump: validate socket name as it is written")
-> Reported-by: Yu Watanabe <watanabe.yu@gmail.com>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hi Christian,
 
-Looks good. Feel free to add:
+   I think this patch was dropped from both the trees due to some confusion.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Could you requeue this patch given that the base patches for largest_zero_folio() are already in
+linus's tree[1]?
 
-								Honza
+It applies cleanly on the current master branch.
 
-> ---
->  fs/coredump.c | 2 +-
->  fs/exec.c     | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index b5fc06a092a4..5c1c381ee380 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -1468,7 +1468,7 @@ static int proc_dostring_coredump(const struct ctl_table *table, int write,
->  	ssize_t retval;
->  	char old_core_pattern[CORENAME_MAX_SIZE];
->  
-> -	if (write)
-> +	if (!write)
->  		return proc_dostring(table, write, buffer, lenp, ppos);
->  
->  	retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 6b70c6726d31..4298e7e08d5d 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -2048,7 +2048,7 @@ static int proc_dointvec_minmax_coredump(const struct ctl_table *table, int writ
->  {
->  	int error = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
->  
-> -	if (!error && !write)
-> +	if (!error && write)
->  		validate_coredump_safety();
->  	return error;
->  }
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+[1] https://github.com/torvalds/linux/commit/2d8bd8049e89efe42a5397de4effd899e8dd2249
+--
+Pankaj
+
 
