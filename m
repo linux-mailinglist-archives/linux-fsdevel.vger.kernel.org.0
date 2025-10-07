@@ -1,64 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78A9BC267D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 20:38:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CC9BC268E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 07 Oct 2025 20:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 723934F80F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 18:38:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 551E735062F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Oct 2025 18:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B00C2E9EBC;
-	Tue,  7 Oct 2025 18:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D92E9748;
+	Tue,  7 Oct 2025 18:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="GEHtrzcC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Po8OZugi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6102E975F;
-	Tue,  7 Oct 2025 18:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E04D2E8E05
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Oct 2025 18:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759862275; cv=none; b=RnxqcJ3sZpgT1eBul3Yusqeb8QknG8GxOk8PCr5SCVkLHds4no+woiZQPFw5NT4zsOfO2AeQmxxQ0OnHai7UaZzalO2Ni7ZSrpzIngvPA94Jx54K2nhCWq+i5BbLXCJXrXIAUr5BuLuO9gKxgruAY/Uni/5b81WAWaaRk5EoWK0=
+	t=1759862353; cv=none; b=JH5hsplC99c+kQtLetQdGBoYWQS/eUhI/wp+YesIeMiVEpM3XbV3219Az0Gqgzvp4eU0vL0TPEtBp2OF/2uGfbpWEw63qNIKjl1WTSasyI3fEsWvF2NHWYhWqCusg8VQLndaAiMR8jgfHwcvKZMctTkgCODyJ+eS6CvU7EwtotM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759862275; c=relaxed/simple;
-	bh=OW97Tb/THZ//CY1tv07c5DTEH+1HJto0+UtSzWYSdRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9IeAI7OSyz4tquZCkwFesVQ+Mgmv9g1952muc6x0JkNwK0J+spQaL9nWGe5qiJWLLDULZamJTRFgkwwuJHN3cjaVzk9p/9GPv8OxiY2LQoHkrSr9CxFyjxiFY6gCWjD7lXcwC2fJNML5UC1UtIpT9UV4xdyG+NFw4BWcG1wUXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=GEHtrzcC; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ch4d41s12z9tFt;
-	Tue,  7 Oct 2025 20:37:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1759862264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/07ehBETijAhx+ijXLpSPvP1UzaAqp1PKP1KPLWU09I=;
-	b=GEHtrzcCJ4khorGr18uT9OAuYNsm0qpjFg5HifTbvgPyJ3vW89aYKjCE7ULyRpoNcpfQ7F
-	RiBeSsLTEbU+hDkq/5WCrzHq7D0YDZYV1OOfset9Da/KsXsRrGAMY5Sh6amo6LYS8ffBWh
-	Dh7eGDxnew3fw45z4z2DnyjVelAYXOBhI99vex5XJn5dmMc6c1rMnirkBdPR20bH3a7WlD
-	LNIudR/RYnd3EgpYXFPmCR18KAnEZJ0nt+bjCdvHOmW6okgZ8eXKck/ecgPAxjCFYp9TR3
-	jRn/cenUapunHLLdI6WyY4fpXoJR6uJkHma1NcFCIcgUKsXuvH8NCZSNEOxVrQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Wed, 8 Oct 2025 05:37:32 +1100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Luca Boccassi <luca.boccassi@gmail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, 
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple
- instances
-Message-ID: <2025-10-07-greater-dingy-vendetta-kennel-JrnGHl@cyphar.com>
+	s=arc-20240116; t=1759862353; c=relaxed/simple;
+	bh=ATKQZCRMHg8Cf45pgKwHsOSu1jo4xiNtxORKdi1Fz+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vGohnObyh1nrE/H5gyRbX9h1M4VwAs7mbtQwwNQw+pTxYwxU36Kl5XlD3KRu6DOTvMWhT/h+7e3iLJ+msfFWtK5TvSsokm8uT4CAtVEJrICd3E+ZipBmDXACwAFi/9NB1QUMG9cU56w85SZT4dufY3pLeu9ZvnRul9nesK5y9wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Po8OZugi; arc=none smtp.client-ip=74.125.224.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-635380a4a67so7592771d50.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 11:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759862351; x=1760467151; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7YIIkoab05zGu1Gpmvy2NKeRxtUOvWDZ01jDGCtGLzE=;
+        b=Po8OZugipSUnuCun/IX/t9eVkLco5zJ01KLcdAlKBd2rYLfHLNJjXg9l4ZCNjeIK5K
+         wXHqT4gOIlIoyvy+GdbGYpZYwvEf5PJ8kzcWuxEWwqZDx7kuPRhvEEQUiTOKbIaKUMir
+         uEvOdPWIMXPb/ZCEk4pVSapYYbbqBT+9yYxzudi47KvYnt5bxQQussGdpzMfwm+TFp2i
+         cHbvCrSGiCxv7DJ7aE7SwiJwhq6hQqbyqyEVW06tWCnL5cvXESDou5CVNoZOct7UXAjQ
+         9gsQNJE/asVCdBCUToCQaDMh2aWdU0d36EGjyWt5qxK/dCQfdESghl55Wg6hoROf7F73
+         eMwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759862351; x=1760467151;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7YIIkoab05zGu1Gpmvy2NKeRxtUOvWDZ01jDGCtGLzE=;
+        b=Nen6WSlEE5MeRnRf/3JMl1k2iNG7AaXFaRdfeThw35xs4VVL1b5pJGe3UdcE0QiWvX
+         90BF0N4CCC+uph+ELjxvRIMgwmNJDtS/q/ppF9c72uue8scSOoCufO6W13YzGO/8MI4s
+         f6vQKj8wIN3CP99sxZVP8X9OoY5bUq7kN4sHmFjOKnaZguHk13I4GNntx39OiRGtdW/X
+         sPsNKdU3A80sZyutTY0NE4wm7tOaCIImK2kj2LZBA180nzXDz/1bFw7oTuqVOcg0V4a5
+         I/qRB6EDcUD2RiEtwo3zCrqvKBWDbrOyb42TjX0cd3izyOKHnnvoCpQ3AFvoVbqziny0
+         CEQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLi5HeC3G8dXIPNJhpnOFFMTb0dqW5PtC8VpTJJEMW/YUvzMoHHxKXSR8vIDWf/aH778/21cYJ8MdFuDwc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm1PIu9QbTmXmR5ALHjeI+jLtODqkgKET68e34BYwtTCc4QnS2
+	rNGfjGJlRqZhQez6Flc7iyRwBdDqMRW5jxnev4fHaTkIk8bu8sZcXGUXtzIY2GSExIMP9D4ZGFs
+	qeW6mul85G69JEQRDkbbTtdklwJyElf4=
+X-Gm-Gg: ASbGnctHwd1kAzBHD+io9oGiKxhWN4ueJroO4KrwUZhv539FM0bGiPStf39Ng870rWW
+	6aMxOFlnZ2NiidQyCrLmp9zzC2gcZnx3A+jRcXoXL3CVHBbPKvW2Yd//9OsTYtsUG2QdqSY8zST
+	iWng9MUOCTbrElQtAAIvBCAtnmyUPAy/Rbe5rvie5B4w1W0/TwR6BHXVCRvA3Y1a4j43S4dz/Nx
+	8k4ghSNR4JiiCFsqiyKXC5Rol2W1vLiZg85/f6YCJu7eKGrQfLtv70B9HHne76JIWKrhxKAP+8h
+X-Google-Smtp-Source: AGHT+IG3BPQCGSTA8NQ8dSbRg8uEv/+AMQI1dltOu5JO/t01qZXT+LAFUov2PXREkPKz6oqukYZpf49R/2qfb0BCUIE=
+X-Received: by 2002:a05:690e:6da:b0:636:d6b9:4c91 with SMTP id
+ 956f58d0204a3-63ccb854956mr599331d50.15.1759862350936; Tue, 07 Oct 2025
+ 11:39:10 -0700 (PDT)
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 References: <20251006103852.506614-1-luca.boccassi@gmail.com>
  <2hg43wshc3iklydtwx25ulqadzyuldkyi6wylgztzwendi5zhw@kw223cxay7qn>
  <CAMw=ZnR6QMNevxtxWysqi5UkDmbD68Ge=R5cVAxskqtmhb5m5A@mail.gmail.com>
@@ -66,150 +81,89 @@ References: <20251006103852.506614-1-luca.boccassi@gmail.com>
  <CAMw=ZnSZmW=BFbLLSKsn7sze-FXZroQw6o4eJU9675VmGjzDRw@mail.gmail.com>
  <rleqiwn4mquteybmica3jwilel3mbmaww5p3wr7ju7tfj2d6wt@g6rliisekp2e>
  <CAMw=ZnTDw59GqW-kQkf1aTEHgmBRzcD0z9Rk+wpE_REEmaEJBw@mail.gmail.com>
- <2025-10-06-brief-vague-spines-berms-pzthvt@cyphar.com>
- <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h7uukc27yu7yslll"
-Content-Disposition: inline
-In-Reply-To: <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
-X-Rspamd-Queue-Id: 4ch4d41s12z9tFt
+ <2025-10-06-brief-vague-spines-berms-pzthvt@cyphar.com> <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
+ <2025-10-07-greater-dingy-vendetta-kennel-JrnGHl@cyphar.com>
+In-Reply-To: <2025-10-07-greater-dingy-vendetta-kennel-JrnGHl@cyphar.com>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Tue, 7 Oct 2025 19:38:59 +0100
+X-Gm-Features: AS18NWDnk2thca7COi9O2VMSio-Xfy8UHkLtLOM45h7ztdsuargrdw_VgA2_LfU
+Message-ID: <CAMw=ZnSpgiCy0vB6BfwiZEjONNt6gNxnBtFRZ_4uMpH2ysZUUw@mail.gmail.com>
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
---h7uukc27yu7yslll
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple
- instances
-MIME-Version: 1.0
-
-On 2025-10-06, Luca Boccassi <luca.boccassi@gmail.com> wrote:
-> On Mon, 6 Oct 2025 at 14:41, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> >
-> > On 2025-10-06, Luca Boccassi <luca.boccassi@gmail.com> wrote:
-> > > On Mon, 6 Oct 2025 at 12:57, Alejandro Colomar <alx@kernel.org> wrote:
-> > > >
-> > > > Hi Luca,
-> > > >
-> > > > On Mon, Oct 06, 2025 at 12:46:41PM +0100, Luca Boccassi wrote:
-> > > > > > > > >  .TP
-> > > > > > > > > +.B EINVAL
-> > > > > > > > > +The source mount is already mounted somewhere else. Clon=
-e it via
-> > > > > > [...]
-> > > > > > > > > +.BR open_tree (2)
-> > > > > > > > > +with
-> > > > > > > > > +.B \%OPEN_TREE_CLONE
-> > > > > > > > > +and use that as the source instead (since Linux 6.15).
-> > > > > > > >
-> > > > > > > > The parenthetical in that position makes it unclear if you'=
-re saying
-> > > > > > > > that one should use open_tree(2) with OPEN_TREE_CLONE since=
- Linux 6.15,
-> > > > > > > > or if you're saying that this error can happen since that v=
-ersion.
-> > > > > > > > Would you mind clarifying?  I think if you mean that the er=
-ror can
-> > > > > > > > happen since Linux 6.15, we could make it part of the parag=
-raph tag, as
-> > > > > > > > in unshare(2).
-> > > > > > >
-> > > > > > > I meant the former, the error is always there, but OPEN_TREE_=
-CLONE can
-> > > > > > > be used since 6.15 to avoid it. Sent v2 with this and the oth=
-er fix,
-> > > > > > > thanks for the prompt review.
-> > > > > >
-> > > > > > Hmmm, I see.  Why not use open_tree(2) and OPEN_TREE_CLONE befo=
-re 6.15?
-> > > > > > The syscall and flag existed, AFAICS.  I think we should clarif=
-y --at
-> > > > > > least in the commit message--, why that version is important.
-> > > > >
-> > > > > It was just not supported at all, so it would still fail with EIN=
-VAL
-> > > > > before 6.15 even with the clone.
-> > > >
-> > > > Thanks!  What's the exact commit (or set of commits) that changed t=
-his?
-> > > > That would be useful for the commit message.
-> > > >
-> > > > > Would you like me to send a v3 or would you prefer to amend the c=
-ommit
-> > > > > message yourself?
-> > > >
-> > > > I can amend myself.
+On Tue, 7 Oct 2025 at 19:37, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>
+> On 2025-10-06, Luca Boccassi <luca.boccassi@gmail.com> wrote:
+> > On Mon, 6 Oct 2025 at 14:41, Aleksa Sarai <cyphar@cyphar.com> wrote:
 > > >
-> > > Sorry, I am not a kernel dev so I do not know where it was introduced
-> > > exactly, and quickly skimming the commits list doesn't immediately
-> > > reveal anything. I only know that by testing it, it works on 6.15 and
-> > > fails earlier.
+> > > On 2025-10-06, Luca Boccassi <luca.boccassi@gmail.com> wrote:
+> > > > On Mon, 6 Oct 2025 at 12:57, Alejandro Colomar <alx@kernel.org> wrote:
+> > > > >
+> > > > > Hi Luca,
+> > > > >
+> > > > > On Mon, Oct 06, 2025 at 12:46:41PM +0100, Luca Boccassi wrote:
+> > > > > > > > > >  .TP
+> > > > > > > > > > +.B EINVAL
+> > > > > > > > > > +The source mount is already mounted somewhere else. Clone it via
+> > > > > > > [...]
+> > > > > > > > > > +.BR open_tree (2)
+> > > > > > > > > > +with
+> > > > > > > > > > +.B \%OPEN_TREE_CLONE
+> > > > > > > > > > +and use that as the source instead (since Linux 6.15).
+> > > > > > > > >
+> > > > > > > > > The parenthetical in that position makes it unclear if you're saying
+> > > > > > > > > that one should use open_tree(2) with OPEN_TREE_CLONE since Linux 6.15,
+> > > > > > > > > or if you're saying that this error can happen since that version.
+> > > > > > > > > Would you mind clarifying?  I think if you mean that the error can
+> > > > > > > > > happen since Linux 6.15, we could make it part of the paragraph tag, as
+> > > > > > > > > in unshare(2).
+> > > > > > > >
+> > > > > > > > I meant the former, the error is always there, but OPEN_TREE_CLONE can
+> > > > > > > > be used since 6.15 to avoid it. Sent v2 with this and the other fix,
+> > > > > > > > thanks for the prompt review.
+> > > > > > >
+> > > > > > > Hmmm, I see.  Why not use open_tree(2) and OPEN_TREE_CLONE before 6.15?
+> > > > > > > The syscall and flag existed, AFAICS.  I think we should clarify --at
+> > > > > > > least in the commit message--, why that version is important.
+> > > > > >
+> > > > > > It was just not supported at all, so it would still fail with EINVAL
+> > > > > > before 6.15 even with the clone.
+> > > > >
+> > > > > Thanks!  What's the exact commit (or set of commits) that changed this?
+> > > > > That would be useful for the commit message.
+> > > > >
+> > > > > > Would you like me to send a v3 or would you prefer to amend the commit
+> > > > > > message yourself?
+> > > > >
+> > > > > I can amend myself.
+> > > >
+> > > > Sorry, I am not a kernel dev so I do not know where it was introduced
+> > > > exactly, and quickly skimming the commits list doesn't immediately
+> > > > reveal anything. I only know that by testing it, it works on 6.15 and
+> > > > fails earlier.
+> > >
+> > > If I'm understanding the new error entry correctly, this might be commit
+> > > c5c12f871a30 ("fs: create detached mounts from detached mounts"), but
+> > > Christian can probably verify that.
+> > >
+> > > Just to double check that I understand this new error explanation -- the
+> > > issue is that you had a file descriptor that you thought was a detached
+> > > mount object but it was actually attached at some point, and the
+> > > suggestion is to create a new detached bind-mount to use with
+> > > move_mount(2)? Do you really get EINVAL in that case or does this move
+> > > the mount?
 > >
-> > If I'm understanding the new error entry correctly, this might be commit
-> > c5c12f871a30 ("fs: create detached mounts from detached mounts"), but
-> > Christian can probably verify that.
-> >
-> > Just to double check that I understand this new error explanation -- the
-> > issue is that you had a file descriptor that you thought was a detached
-> > mount object but it was actually attached at some point, and the
-> > suggestion is to create a new detached bind-mount to use with
-> > move_mount(2)? Do you really get EINVAL in that case or does this move
-> > the mount?
->=20
-> Almost - the use case is that I prep an image as a detached mount, and
-> then I want to apply it multiple times, without having to reopen it
-> again and again. If I just do 'move_mount()' multiple times, the
-> second one returns EINVAL. From 6.15, I can do open_tree with
-> OPEN_TREE_CLONE before applying with move_mount, and everything works.
+> > Almost - the use case is that I prep an image as a detached mount, and
+> > then I want to apply it multiple times, without having to reopen it
+> > again and again. If I just do 'move_mount()' multiple times, the
+> > second one returns EINVAL. From 6.15, I can do open_tree with
+> > OPEN_TREE_CLONE before applying with move_mount, and everything works.
+>
+> Before each move_mount(2) or just doing it once before all of them? My
+> quick testing seems to indicate that it needs to be before each one.
 
-Before each move_mount(2) or just doing it once before all of them? My
-quick testing seems to indicate that it needs to be before each one.
-
-I just tried the example in move_mount(2) that I copied from David, and
-it doesn't actually work for the reason you outlined (it doesn't work at
-all without OPEN_TREE_CLONE, with OPEN_TREE_CLONE the first move works
-because it's an attachment but the rest fail with -EINVAL).
-
-   move_mount()  can  also be used in conjunction with file descriptors
-   returned from open_tree(2) or open(2):
-
-       int fd =3D open_tree(AT_FDCWD, "/mnt", 0); /* open("/mnt", O_PATH); =
-*/
-       move_mount(fd, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
-       move_mount(fd, "", AT_FDCWD, "/mnt3", MOVE_MOUNT_F_EMPTY_PATH);
-       move_mount(fd, "", AT_FDCWD, "/mnt4", MOVE_MOUNT_F_EMPTY_PATH);
-
-   This would move the mount object mounted at /mnt to /mnt2, then
-   /mnt3, and then /mnt4.
-
-This example needs to be reworked then...
-
-I'm taking a look at where the error is coming from. As far as I can
-see, I think it's from the check_mnt() section in do_move_mount().
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---h7uukc27yu7yslll
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaOVd7BsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9YOwD/Wu/7k1+5vJL7/1N3LiSo
-XyuH1MIijMTtvz6+Ts0rmJYBAMnQIzwdCXWkFK6DVGUSdE6TdfOx6qnIvEQf7Hwl
-odUB
-=/5cZ
------END PGP SIGNATURE-----
-
---h7uukc27yu7yslll--
+Yep, a clone before each move is what I am doing, otherwise it doesn't work
 
