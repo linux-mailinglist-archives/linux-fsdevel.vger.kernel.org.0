@@ -1,203 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-63620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D261BC6C28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 00:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7982CBC6D73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 01:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D56E4E4832
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 22:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD37406B4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 23:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54322C1597;
-	Wed,  8 Oct 2025 22:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AE2277C9B;
+	Wed,  8 Oct 2025 23:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nh7itxjW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKbQjfER"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A53221FDA;
-	Wed,  8 Oct 2025 22:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024672C031E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 23:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759961381; cv=none; b=m/lGBIwgAwbgJVjIFgrBYB5DC1p5zibwZGn0j61gPn4cEOGQS+Ymf86R24gDOXSvL9burQn9OsqjoAFjlOKbMwV5BGDitvS5+6U+zYqalssm5E2nbRh9YvawNCFJjglwGYyGmBUyFzbda/+g6/XJFpzAo7jS12m37/oddHtnkPM=
+	t=1759965285; cv=none; b=Lx8oqywDREA+ForG7uAURLNaPCMQIlTD4m90HzkIIVz33QgNDqgJtuuk+Nv5981/UfKf6qVoHnGXCc8RbCSyQk6vfNwlebWZyDtIcPKXhCPeeyi1rzcP1BuaQ1GwtsRjh6zrYnQQozntMHklLd7Bg6huEBBliQmXAth7Tpeaxe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759961381; c=relaxed/simple;
-	bh=tjoL8DPttIC6yxJYjGYZmdTZmlKaUXVFyWCT4sRmGzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSTXrpiqqZ/RxoNfIn5YVLWCDpvIW+fhI0kPasm4nYXyUrHkThikg/byBB/0RZe3/F0egCPTSeCx0QE1EC9kB38eB/WddAQ3+Crqq/WlAMyJcFL9Bw0mPMrNmsG5IBXgAGQXPzBCzQ0uvuOnLgi5Z4iVINzDLt+N6M+BD3irZGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nh7itxjW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3516C4CEF8;
-	Wed,  8 Oct 2025 22:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759961380;
-	bh=tjoL8DPttIC6yxJYjGYZmdTZmlKaUXVFyWCT4sRmGzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nh7itxjW9R8ymgo6j1ZCYDwyQlZ3UODIeUuVu8sCcYOKJ8sMi1e2v3EfT/AFbYUNR
-	 cCSKqnHwY0cke0oZwnXi4qPJk9ixhP112SW3TpkqQXcqtYhgOYxINYXW3faR4B8GsC
-	 c8dHYsDJKfYAhzR72IsqMRSLHhitWE23x5/08NvPP0wNQXGKzPtpQP8HWHJt60EQNL
-	 AmtMbAPO8fE2jMt0CzPpvNKxay265oCOFCrmrsR3Hq7nlANDavCtMLlrICYxRoUjgJ
-	 Eeqn674jnHmAFIz01TT64U/Fm5u93Vh5/idt6sH8J/wzyFdiXzqg+H9pXTskka2bQD
-	 0M1K7z5HmU54w==
-Date: Wed, 8 Oct 2025 15:09:40 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: tytso@mit.edu
-Cc: miklos@szeredi.hu, neal@gompa.dev, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, John@groves.net, bernd@bsbernd.com,
-	joannelkoong@gmail.com
-Subject: Re: [PATCH 10/10] libext2fs: add posix advisory locking to the unix
- IO manager
-Message-ID: <20251008220940.GB6170@frogsfrogsfrogs>
-References: <175798161283.390072.8565583077948994821.stgit@frogsfrogsfrogs>
- <175798161504.390072.1450648323017490117.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1759965285; c=relaxed/simple;
+	bh=jVLivBl7pCfYDlt8EIUEeHcqHw9OvdE5U9UTtxMzJsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N3NMP6RGE/b4N2kAOXuPNCD2kc5FN0F12WGDgoGA5ZTjKWRToQaZNz6PTDtFaMfIHKdFCDXdZnKlnt1W85rqemTCJegqk40rpbpAc3KmACBn7Q+BA6rWKevxeF0nfW6ldV6E0jewGHr6+1mXxmQgn4FqZFSmwqCrOQh7R9hdcFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKbQjfER; arc=none smtp.client-ip=74.125.224.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-635401a8f5aso506154d50.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 16:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759965283; x=1760570083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SFbI6yfd+yg4dKJ49IX+g9zgZu5r7fNCwf9LHJwcps4=;
+        b=lKbQjfER508S9eSw/VL2PHKa7VZzMa42jRWBQKUz2/IEgvOUwm3IglyJrsTXSnvw5w
+         HCtYoIXpBBer1vj7G+gmohqwEARI6kkpZ9HoAvjTQByuIYeFuAZ+L9mlcce0moM/F6bx
+         i8bS73QJ5/N5Vwv7KgtjsHW4g8nNqt90vwB2QzUojDijryQP58mzTSAsgiMn72Y+Q+K2
+         EdyXygStc5ZmXdUaG9x2DLvzCBIDr0qBR2WKanRmoj1qbj0QDb/ztdq6E28t5QMSAaEp
+         0r/DuSmVt3366ULvNeJTblh7cCJcmpCHBahRb9PM9F0w1OlbagIreu/4uNvqZoly9AM6
+         LkKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759965283; x=1760570083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SFbI6yfd+yg4dKJ49IX+g9zgZu5r7fNCwf9LHJwcps4=;
+        b=C5IzkRtAjAYQeQpbA5J9NCgWe/1BuQvPEuW9eCfv0bTtb+G0LEyu/0jseNkxsuxfDU
+         Vk05lP8ec+dyd2mCop24PrTKTro//PZRn1aS97JfIQJftyc7kECKI6w8b9+Zm/fVe3Ol
+         wFe/iy8VJDU4d7/qT31JiqqPPqmMF6wqT3ag3wxu8xgX6iFGhHl/meDnvpjHfoDIr+8m
+         VE0PGDEn50xhXpgUxDbeRC6sEsbmPS6UYWs2ya2FR61zsIJz18mb//xVN3XBNE3ec0iH
+         kRqM7fK5lQyZ/NL05WVws6PQNmjiK548wuVELRU/DCzWrH5rc98g4vpmWv+oeWuBdx7C
+         C+xg==
+X-Forwarded-Encrypted: i=1; AJvYcCWS0fI/EWlUZlAm03BlJooFqyqZVFlzl1wC04ua7ryi4NrXXJbwLdIpLft/cyiosa9Rm1cVkzoh5KHgjlSJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXLhxuxlLc1pMqb8XPTcY+aOtweJsVfuBLEv/JtsPFVO3eiyp1
+	UbTjbrh9alqNPO2ZMrHLRzFqvqFPpgy010jcdJFCnlP1XSNQ9a9YVikG9uKstenknVzXQ0qxuqW
+	5ntpRohTVQYXmo3D5jliNN6BFoXUJfis=
+X-Gm-Gg: ASbGncu2EjDRX6q7KlgV/mZWxAAufJGmoH8JoJeh9dap0/+cbpUesC1GNcWQz4JNOpf
+	bKNBSsS3C08v4t3glwi1zm0biAtcxwRWvz7MXccA6cWn0CeAUhKcqulNIecZw3iDGmjv5sx9dk2
+	UIzTijNE9+ymT+eyR8Gb1uLQ4iVL745fNbE5t90whlEMjpfbyzIlkMA4TGhXFDgo2res0AQqAa2
+	vwUde4vnq/RpZAbWvQ9o4/zr5EKBVuUks25k8aXwZCtI/F6f4ssbhbs57XDHRUoHeU=
+X-Google-Smtp-Source: AGHT+IFCEYGN+m/q1FKnlQZmsAbbOkqHlLXzoklzuXn/5KxWd8KUCLsi/0JemznMrYIDBz4LiBajWdwhGS2HtwHJwdw=
+X-Received: by 2002:a05:690e:5ce:b0:62a:38ab:fc31 with SMTP id
+ 956f58d0204a3-63ccb884e07mr3868762d50.14.1759965282757; Wed, 08 Oct 2025
+ 16:14:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175798161504.390072.1450648323017490117.stgit@frogsfrogsfrogs>
+References: <20241121100539.605818-1-jimzhao.ai@gmail.com> <20251007161711.468149-1-JPEWhacker@gmail.com>
+ <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp> <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
+In-Reply-To: <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
+From: Joshua Watt <jpewhacker@gmail.com>
+Date: Wed, 8 Oct 2025 17:14:31 -0600
+X-Gm-Features: AS18NWAhRXVS4bQVIwtYDJ5b-jz2OHqNOhjsxYSwMfqqDJlxC7ftCg-fC_O8rrU
+Message-ID: <CAJdd5GaQ1LdS=n52AWQwZ=Q9woSjFYiVD9E_1SkEeDPoT=bmjw@mail.gmail.com>
+Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
+ into __wb_calc_thresh
+To: Jan Kara <jack@suse.cz>
+Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 05:58:43PM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Add support for using flock() to protect the files opened by the Unix IO
-> manager so that we can't mount the same fs multiple times.  This also
-> prevents systemd and udev from accessing the device while e2fsprogs is
-> doing something with the device.
-> 
-> Link: https://systemd.io/BLOCK_DEVICE_LOCKING/
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+On Wed, Oct 8, 2025 at 8:49=E2=80=AFAM Joshua Watt <jpewhacker@gmail.com> w=
+rote:
+>
+> On Wed, Oct 8, 2025 at 5:14=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> >
+> > Hello!
+> >
+> > On Tue 07-10-25 10:17:11, Joshua Watt wrote:
+> > > From: Joshua Watt <jpewhacker@gmail.com>
+> > >
+> > > This patch strangely breaks NFS 4 clients for me. The behavior is tha=
+t a
+> > > client will start getting an I/O error which in turn is caused by the=
+ client
+> > > getting a NFS3ERR_BADSESSION when attempting to write data to the ser=
+ver. I
+> > > bisected the kernel from the latest master
+> > > (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below)=
+. Also,
+> > > when I revert this commit on master the bug disappears.
+> > >
+> > > The server is running kernel 5.4.161, and the client that exhibits th=
+e
+> > > behavior is running in qemux86, and has mounted the server with the o=
+ptions
+> > > rw,relatime,vers=3D4.1,rsize=3D1048576,wsize=3D1048576,namlen=3D255,s=
+oft,proto=3Dtcp,port=3D52049,timeo=3D600,retrans=3D2,sec=3Dnull,clientaddr=
+=3D172.16.6.90,local_lock=3Dnone,addr=3D172.16.6.0
+> > >
+> > > The program that I wrote to reproduce this is pretty simple; it does =
+a file
+> > > lock over NFS, then writes data to the file once per second. After ab=
+out 32
+> > > seconds, it receives the I/O error, and this reproduced every time. I=
+ can
+> > > provide the sample program if necessary.
+> >
+> > This is indeed rather curious.
+> >
+> > > I also captured the NFS traffic both in the passing case and the fail=
+ure case,
+> > > and can provide them if useful.
+> > >
+> > > I did look at the two dumps and I'm not exactly sure what the differe=
+nce is,
+> > > other than with this patch the client tries to write every 30 seconds=
+ (and
+> > > fails), where as without it attempts to write back every 5 seconds. I=
+ have no
+> > > idea why this patch would cause this problem.
+> >
+> > So the change in writeback behavior is not surprising. The commit does
+> > modify the logic computing dirty limits in some corner cases and your
+> > description matches the fact that previously the computed limits were l=
+ower
+> > so we've started writeback after 5s (dirty_writeback_interval) while wi=
+th
+> > the patch we didn't cross the threshold and thus started writeback only
+> > once the dirty data was old enough, which is 30s (dirty_expire_interval=
+).
+> >
+> > But that's all, you should be able to observe exactly the same writebac=
+k
+> > behavior if you write less even without this patch. So I suspect that t=
+he
+> > different writeback behavior is just triggering some bug in the NFS (ei=
+ther
+> > on the client or the server side). The NFS3ERR_BADSESSION error you're
+> > getting back sounds like something times out somewhere, falls out of ca=
+che
+> > and reports this error (which doesn't happen if we writeback after 5s
+> > instead of 30s). NFS guys maybe have better idea what's going on here.
+> >
+> > You could possibly workaround this problem (and verify my theory) by tu=
+ning
+> > /proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This wi=
+ll
+> > make inode writeback start earlier and thus should effectively mask the
+> > problem again.
+>
+> Changing /proc/sys/vm/dirty_expire_centisecs did indeed prevent the
+> issue from occurring. As an experiment, I tried to see what the lowest
+> value I could use that worked, and it was also 500. Even setting it to
+> 600 would cause it to error out eventually. This would indicate to me
+> a server problem (which is unfortunate because that's much harder for
+> me to debug), but perhaps the NFS folks could weigh in.
 
-This actually causes a lot of problems with fstests -- if fuse2fs
-flock()s the block device, then udevd will spin in a slow trylock loop
-until the bdev can be locked.  Meanwhile, any scripts calling udevadm
-settle will block until fuse2fs exits (or it gives up after 2 minutes go
-by), because udev still has a uevent that it cannot settle.  This causes
-any test that uses udevadm settle to take forever to run.
+I figured out the problem. There was a bug in the NFS client where it
+would not send state renewals within the first 5 minutes after
+booting; prior to this change, that was masked in my test case because
+the 5 second dirty writeback interval would keep the connection alive
+without needing the state renewals (and my test always did a reboot).
+I've submitted a patch to fix the NFS client to the mailing list [1].
 
-In general, we don't want to block udev from reading the block device
-while fuse2fs has it mounted.  For block devices this is unnecessary
-anyway because we have O_EXCL.
+Sorry for the noise, and thanks for your help.
 
-However, the advisory locking is still useful for coordinating access to
-filesystem images in regular files, so I'll rework this to only do it
-for regular files.
-
---D
-
-> ---
->  lib/ext2fs/unix_io.c |   64 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
-> 
-> 
-> diff --git a/lib/ext2fs/unix_io.c b/lib/ext2fs/unix_io.c
-> index 068be689326443..55007ad7d2ae15 100644
-> --- a/lib/ext2fs/unix_io.c
-> +++ b/lib/ext2fs/unix_io.c
-> @@ -65,6 +65,12 @@
->  #include <pthread.h>
->  #endif
->  
-> +#if defined(HAVE_SYS_FILE_H) && defined(HAVE_SIGNAL_H)
-> +# include <sys/file.h>
-> +# include <signal.h>
-> +# define WANT_LOCK_UNIX_FD
-> +#endif
-> +
->  #if defined(__linux__) && defined(_IO) && !defined(BLKROGET)
->  #define BLKROGET   _IO(0x12, 94) /* Get read-only status (0 = read_write).  */
->  #endif
-> @@ -149,6 +155,9 @@ struct unix_private_data {
->  	pthread_mutex_t bounce_mutex;
->  	pthread_mutex_t stats_mutex;
->  #endif
-> +#ifdef WANT_LOCK_UNIX_FD
-> +	int	lock_flags;
-> +#endif
->  };
->  
->  #define IS_ALIGNED(n, align) ((((uintptr_t) n) & \
-> @@ -897,6 +906,47 @@ int ext2fs_fstat(int fd, ext2fs_struct_stat *buf)
->  #endif
->  }
->  
-> +#ifdef WANT_LOCK_UNIX_FD
-> +static void unix_lock_alarm_handler(int signal, siginfo_t *data, void *p)
-> +{
-> +	/* do nothing, the signal will abort the flock operation */
-> +}
-> +
-> +static int unix_lock_fd(int fd, int flags)
-> +{
-> +	struct sigaction newsa = {
-> +		.sa_flags = SA_SIGINFO,
-> +		.sa_sigaction = unix_lock_alarm_handler,
-> +	};
-> +	struct sigaction oldsa;
-> +	const int operation = (flags & IO_FLAG_EXCLUSIVE) ? LOCK_EX : LOCK_SH;
-> +	int ret;
-> +
-> +	/* wait five seconds for the lock */
-> +	ret = sigaction(SIGALRM, &newsa, &oldsa);
-> +	if (ret)
-> +		return ret;
-> +
-> +	alarm(5);
-> +
-> +	ret = flock(fd, operation);
-> +	if (ret == 0)
-> +		ret = operation;
-> +	else if (errno == EINTR) {
-> +		errno = EWOULDBLOCK;
-> +		ret = -1;
-> +	}
-> +
-> +	alarm(0);
-> +	sigaction(SIGALRM, &oldsa, NULL);
-> +	return ret;
-> +}
-> +
-> +static void unix_unlock_fd(int fd)
-> +{
-> +	flock(fd, LOCK_UN);
-> +}
-> +#endif
->  
->  static errcode_t unix_open_channel(const char *name, int fd,
->  				   int flags, io_channel *channel,
-> @@ -935,6 +985,16 @@ static errcode_t unix_open_channel(const char *name, int fd,
->  	if (retval)
->  		goto cleanup;
->  
-> +#ifdef WANT_LOCK_UNIX_FD
-> +	if (flags & IO_FLAG_RW) {
-> +		data->lock_flags = unix_lock_fd(fd, flags);
-> +		if (data->lock_flags < 0) {
-> +			retval = errno;
-> +			goto cleanup;
-> +		}
-> +	}
-> +#endif
-> +
->  	strcpy(io->name, name);
->  	io->private_data = data;
->  	io->block_size = 1024;
-> @@ -1200,6 +1260,10 @@ static errcode_t unix_close(io_channel channel)
->  	if (retval2 && !retval)
->  		retval = retval2;
->  
-> +#ifdef WANT_LOCK_UNIX_FD
-> +	if (data->lock_flags)
-> +		unix_unlock_fd(data->dev);
-> +#endif
->  	if (close(data->dev) < 0 && !retval)
->  		retval = errno;
->  	free_cache(data);
-> 
-> 
+[1]: https://lore.kernel.org/linux-nfs/20251008230935.738405-1-JPEWhacker@g=
+mail.com/T/#u
+>
+> >
+> >                                                                 Honza
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
 
