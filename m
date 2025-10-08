@@ -1,109 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-63578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D68BC451D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 12:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF459BC4853
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 13:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312874E5E9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 10:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46593BFBA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 11:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981D72F5A1C;
-	Wed,  8 Oct 2025 10:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5032F656C;
+	Wed,  8 Oct 2025 11:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="KBzOQphO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qxtypbvC"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVw51J2j";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="33peweNC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kZPVtsqf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uN3dwGld"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7528A24728E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 10:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB1C2F60CC
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 11:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759919329; cv=none; b=EhTIlIkvxx4OwKwZqq2K4fSbmXAANj+mn7b+wN65PfHU4N/XVx1l+PesclNLlTawvkutXPbmnWnMMmx5xram4pmM/uaMsDUxaKLGNutj7evGg8vV1GV+/AJBC6prcWdSfElheHpmW7endsWDqJYg60IMvja4xtUzvpp720zYcFk=
+	t=1759922082; cv=none; b=cqp0qvFXmC0M4emxtntyBRtzJ+cmE+CV6Z8ZgvorMqXI2ksglPLNp4gY4I5sE4QpoXyFBtLjK33EUsKLniRj1XAux4pWjdOtxHQw4yGqYFi0XiZHTtxbWtZP0NxUpWDXJn56OPzUVlFjdlZY/+gThjaii8GuTV31CiALmd5ddU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759919329; c=relaxed/simple;
-	bh=vBXFQ24Np+YODpvPsp7AqrWUIdhj979HQNxIccAGVFo=;
+	s=arc-20240116; t=1759922082; c=relaxed/simple;
+	bh=6DQNYqui5CozLrzJOv+yfVgFFIg4Lgpaj3p9yDDWsoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGK6kDnDJj39XYwTn4LRib5LuvHpwZ7BtNkDJ17IRJXbab3ajOCnWzIn0WqzbenZJr1YrBaiHYxf8tcj+WoNBHxHyuHhbUwT73eChNbr/2JoRxi8LnJmkdIoOHQ4igELpoTgyvETm6AVjphYgrM3BOAJUsQ+4CzVPcn2G5DlP4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=KBzOQphO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qxtypbvC; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 549C07A0199;
-	Wed,  8 Oct 2025 06:28:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 08 Oct 2025 06:28:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1759919326; x=
-	1760005726; bh=8s9JwsgCp3XHvfocy4wxTpe9hcmn8+BULhzOHWqui6A=; b=K
-	BzOQphOoeZLiw7TOjjmlGk6nQLgu+Gi/fX0/Seftx0oBYoWU7tndGQPI/WBhV6Lg
-	0Pht51ip40jWSXJBIAYbxwCeBRNSIqmInhdgWQIOF0PbEe38nvTpc5Tu13jtsQaM
-	A8xbwLSOo2m4dK0maQgmmrW9YQcOL1vumFgklw4wXV5KvjaUiAG2AXbWxkdFJurO
-	JDKK4ea65M5nGZ16Iid+vnirZ6kXJRMxhzEzcNjPEAFWXiDLHN4dgkGQn3XCePhq
-	e/wvP923bVbpcRGthAJyo4QYm0r+jibl3pAn2nSZGKfr/LT9lDBQAQCeL+5c0NBt
-	qlh+y8uvqtObe2xI+AE4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759919326; x=1760005726; bh=8s9JwsgCp3XHvfocy4wxTpe9hcmn8+BULhz
-	OHWqui6A=; b=qxtypbvCaMce7vvdfT8394eCBxgXivc12tZMpMndGyJ1Qztxe4Y
-	UqTIi1V3y6Rvu7UT2XW/UdI/ER/9+vpQdlgnmZ0EByKQMQw6h5ZNpurSESAfCt7D
-	QE/q3pI8kXV9kd1J/7ZsT2SmbCo5gq9gQOqOWskii35rfRE67pUDGCB2eY91IGhl
-	Ggcw6sOwwgNvxDSDP8gSVWJR+AnvywLABNoRZCwCOptv+4OvCLWFy1EgayvFjE09
-	PO2mVE3/GXp9hHi82IbuLZynSgjItMBFzIrFTkL/1Pi3iyIW/Yb/fP9HmzqM0utG
-	WsGOkkAQgXM1qlppy9CKGDKWlvUtAkH2MmA==
-X-ME-Sender: <xms:3TzmaAPkWcuFjSO0zURJMYpZ_qul2uY8Orjd9mxyCnyasI2mCK1Kzw>
-    <xme:3TzmaKDIWVWG4dBgB_jFjXzBCEDA1YdacOMtJyyrCYWzy_ncvZ6iMr3wKGjVKVk7K
-    WnUGKs9g0eUsS55kr5sg7otvsee1bOjqxSCE1PMq5fd3rLxWlK1O0k>
-X-ME-Received: <xmr:3TzmaB4EGBH2_-CI-GoqXjywtnXfJetpTZuoBPl7cV8-L2x3WF6sMNCrvjURAw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeftdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhephefhleekgedvfeffkefhteetjeffhfegffduieeuueekhfejkeeu
-    geelhfekfedvnecuffhomhgrihhnpegrrhgthhgpihhmphhlvghmvghnthhspghflhhush
-    hhpggutggrtghhvggpphgrghgvrdhmmhenucevlhhushhtvghrufhiiigvpedtnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnh
-    gspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhr
-    vhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfi
-    hilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmtghgrhhofheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:3TzmaE4sl4OHaM3c8yxVyg9_bKsiGyP-CtoECDT4kQVQOQPYSDlRUQ>
-    <xmx:3TzmaDRa1OhzGvsAR1I0q3VyJtgLfyK_pw-V5g429YZSbK_C0wzGZQ>
-    <xmx:3TzmaM8w1-3blSi23ay6aagdQ5fEyfHfbXNpng7Hgee9WgeFVcGu2A>
-    <xmx:3TzmaEaEyKSkMlc9BiJxkvVktn4ZsG1Fw4fqWvrRBfNJDNBobt2Xiw>
-    <xmx:3jzmaFyehVO5ipMvNxbrHr-mINfi0cyr2Et4BljQDHZbty_Be-eAK5ml>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 06:28:45 -0400 (EDT)
-Date: Wed, 8 Oct 2025 11:28:42 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: Optimizing small reads
-Message-ID: <bbagpeesjg73emxpwkxnvaepcn5hjrsrabaamtth2m26khhppa@7hpwl2mk3mlc>
-References: <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
- <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
- <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
- <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
- <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
- <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
- <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
- <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
- <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
- <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RzMe6WXRN3IQaTWszB3rwVtduPQfKFLciHkHElj+BR6kuy604xjEk2DX8s1RW0SuDX4RAtK64t8PvkDsu2qkGneBzZdrBw16X9ySlmVoYKsEzJljPmNQGfUGbF3WsinMNy2bosBw8q8Oldi5QwklCy+zDH8DXxaPOLSNXFi7stA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVw51J2j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=33peweNC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kZPVtsqf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uN3dwGld; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C73731F395;
+	Wed,  8 Oct 2025 11:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759922078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=kVw51J2j/E7tVEzyyLxqoBAdREbgmWnsf7WzPsMcIJapYif0H4STyvrK1SMgv22387PxqI
+	iWllC/fTDgNaYsMzOPRNJfRU3i4BtM2copjCIkvFfrTnaixx906B7oZvwmlwWnEEGV8mq8
+	pyBciYIPSqmTg15kLuNUZr0lw252dXE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759922078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=33peweNCNeyqrEz6ctw6e1p+yxnDOi1e0j0cOxH6XAGtg1VtpaoD0rsyURzQ+lsAPoG63b
+	GUvKBK03sGptvNBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kZPVtsqf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uN3dwGld
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759922077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=kZPVtsqfdZ2/Jrw2DnxoypL8H4w9ijLGDAr+bd4fOEHIR4vWQsag1GLODvhW7ST0+TQyd+
+	mmTSJVnAtnPbRi9kA8G1rWBUOg5Sst6e7vlnCo7sJrO9qOAg0nV5CVBlj0dj+p20nyq50o
+	V5jHx7B+iVqolmZVQzvgXCx31OFC+cs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759922077;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=uN3dwGld1DTLfMpItq+thAviWSsxYb24QSwhOHDw+hd5D1u1kB8cdEE+PF4kP/EqVXs1lc
+	fZvmJxbm3ZmFkTBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B498713693;
+	Wed,  8 Oct 2025 11:14:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YQ0FLJ1H5mizIwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:14:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 386DDA0ACD; Wed,  8 Oct 2025 13:14:37 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:14:37 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joshua Watt <jpewhacker@gmail.com>
+Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
+ into __wb_calc_thresh
+Message-ID: <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
+References: <20241121100539.605818-1-jimzhao.ai@gmail.com>
+ <20251007161711.468149-1-JPEWhacker@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -112,169 +106,98 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
+In-Reply-To: <20251007161711.468149-1-JPEWhacker@gmail.com>
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,suse.cz,vger.kernel.org,kvack.org,infradead.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: C73731F395
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
 
-On Tue, Oct 07, 2025 at 03:54:19PM -0700, Linus Torvalds wrote:
-> On Tue, 7 Oct 2025 at 15:35, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > But I think I'll try to boot it next. Wish me luck.
+Hello!
+
+On Tue 07-10-25 10:17:11, Joshua Watt wrote:
+> From: Joshua Watt <jpewhacker@gmail.com>
 > 
-> Bah. It boots - after you fix the stupid double increment of 'already_copied'.
+> This patch strangely breaks NFS 4 clients for me. The behavior is that a
+> client will start getting an I/O error which in turn is caused by the client
+> getting a NFS3ERR_BADSESSION when attempting to write data to the server. I
+> bisected the kernel from the latest master
+> (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). Also,
+> when I revert this commit on master the bug disappears.
 > 
-> I didn't remove the update inside the loop when I made it update it
-> after the loop.
+> The server is running kernel 5.4.161, and the client that exhibits the
+> behavior is running in qemux86, and has mounted the server with the options
+> rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,soft,proto=tcp,port=52049,timeo=600,retrans=2,sec=null,clientaddr=172.16.6.90,local_lock=none,addr=172.16.6.0
 > 
-> So here's the slightly fixed patch that actually does boot - and that
-> I'm running right now. But I wouldn't call it exactly "tested".
+> The program that I wrote to reproduce this is pretty simple; it does a file
+> lock over NFS, then writes data to the file once per second. After about 32
+> seconds, it receives the I/O error, and this reproduced every time. I can
+> provide the sample program if necessary.
+
+This is indeed rather curious.
+
+> I also captured the NFS traffic both in the passing case and the failure case,
+> and can provide them if useful.
 > 
-> Caveat patchor.
+> I did look at the two dumps and I'm not exactly sure what the difference is,
+> other than with this patch the client tries to write every 30 seconds (and
+> fails), where as without it attempts to write back every 5 seconds. I have no
+> idea why this patch would cause this problem.
 
-My take on the same is below.
+So the change in writeback behavior is not surprising. The commit does
+modify the logic computing dirty limits in some corner cases and your
+description matches the fact that previously the computed limits were lower
+so we've started writeback after 5s (dirty_writeback_interval) while with
+the patch we didn't cross the threshold and thus started writeback only
+once the dirty data was old enough, which is 30s (dirty_expire_interval).
 
-The biggest difference is that I drop RCU lock between iterations. But
-as you said, not sure if it is sensible. It allows page faults.
+But that's all, you should be able to observe exactly the same writeback
+behavior if you write less even without this patch. So I suspect that the
+different writeback behavior is just triggering some bug in the NFS (either
+on the client or the server side). The NFS3ERR_BADSESSION error you're
+getting back sounds like something times out somewhere, falls out of cache
+and reports this error (which doesn't happen if we writeback after 5s
+instead of 30s). NFS guys maybe have better idea what's going on here.
 
-Other thing that I noticed that we don't do flush_dcache_folio() in fast
-path. I bypassed fast path if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE.
+You could possibly workaround this problem (and verify my theory) by tuning
+/proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This will
+make inode writeback start earlier and thus should effectively mask the
+problem again.
 
->  mm/filemap.c | 33 +++++++++++++++++++++++++--------
->  1 file changed, 25 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 60a7b9275741..ba11f018ca6b 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2792,20 +2792,37 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
->  	 * any compiler initialization would be pointless since this
->  	 * can fill it will garbage.
->  	 */
-> -	if (iov_iter_count(iter) <= sizeof(area)) {
-> +	if (iov_iter_count(iter) <= PAGE_SIZE) {
-
-PAGE_SIZE is somewhat arbitrary here. We might want to see if we can do
-full length (or until the first failure). But holding RCU read lock whole
-time might not be a good idea in this case.
-
->  		size_t count = iov_iter_count(iter);
-> +		size_t fast_read = 0;
->  
->  		/* Let's see if we can just do the read under RCU */
->  		rcu_read_lock();
-> -		count = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, count);
-> +		pagefault_disable();
-> +		do {
-> +			size_t copied = min(count, sizeof(area));
-> +
-> +			copied = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, copied);
-> +			if (!copied)
-> +				break;
-
-filemap_fast_read() will only read short on EOF. So if it reads short we
-don't need additional iterations.
-
-> +			copied = copy_to_iter(area.buffer, copied, iter);
-> +			if (!copied)
-> +				break;
-> +			fast_read += copied;
-> +			iocb->ki_pos += copied;
-> +			count -= copied;
-> +		} while (count);
-> +		pagefault_enable();
->  		rcu_read_unlock();
-> -		if (count) {
-> -			size_t copied = copy_to_iter(area.buffer, count, iter);
-> -			if (unlikely(!copied))
-> -				return already_read ? already_read : -EFAULT;
-> -			ra->prev_pos = iocb->ki_pos += copied;
-> +
-> +		if (fast_read) {
-> +			ra->prev_pos += fast_read;
-> +			already_read += fast_read;
->  			file_accessed(filp);
-> -			return copied + already_read;
-> +
-> +			/* All done? */
-> +			if (!count)
-> +				return already_read;
->  		}
->  	}
->  
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d9fda3c3ae2c..6b9627cf47af 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2752,29 +2752,48 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
- 
-+	/* Don't bother with flush_dcache_folio() */
-+	if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
-+		goto slowpath;
-+
- 	/*
- 	 * Try a quick lockless read into the 'area' union. Note that
- 	 * this union is intentionally marked "__uninitialized", because
- 	 * any compiler initialization would be pointless since this
- 	 * can fill it will garbage.
- 	 */
--	if (iov_iter_count(iter) <= sizeof(area)) {
--		size_t count = iov_iter_count(iter);
-+	do {
-+		size_t to_read, read, copied;
-+
-+		to_read = min(iov_iter_count(iter), sizeof(area));
- 
- 		/* Let's see if we can just do the read under RCU */
- 		rcu_read_lock();
--		count = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, count);
-+		read = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, to_read);
- 		rcu_read_unlock();
--		if (count) {
--			size_t copied = copy_to_iter(area.buffer, count, iter);
--			if (unlikely(!copied))
--				return already_read ? already_read : -EFAULT;
--			ra->prev_pos = iocb->ki_pos += copied;
--			file_accessed(filp);
--			return copied + already_read;
--		}
--	}
- 
-+		if (!read)
-+			break;
-+
-+		copied = copy_to_iter(area.buffer, read, iter);
-+
-+		already_read += copied;
-+		iocb->ki_pos += copied;
-+		last_pos = iocb->ki_pos;
-+
-+		if (copied < read) {
-+			error = -EFAULT;
-+			goto out;
-+		}
-+
-+		/* filemap_fast_read() only reads short at EOF: Stop. */
-+		if (read != to_read)
-+			goto out;
-+	} while (iov_iter_count(iter));
-+
-+	if (!iov_iter_count(iter))
-+		goto out;
-+slowpath:
- 	/*
- 	 * This actually properly initializes the fbatch for the slow case
- 	 */
-@@ -2865,7 +2884,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
- 		}
- 		folio_batch_init(&area.fbatch);
- 	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
--
-+out:
- 	file_accessed(filp);
- 	ra->prev_pos = last_pos;
- 	return already_read ? already_read : error;
+								Honza
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
