@@ -1,283 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-63597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD1DBC5058
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 14:56:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BFBBC5286
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 15:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48D319E33CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 12:56:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B86C74EFFFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 13:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9626276038;
-	Wed,  8 Oct 2025 12:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D1283FC9;
+	Wed,  8 Oct 2025 13:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uTP0LTdN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XxssVcb3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uTP0LTdN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XxssVcb3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIfpuXSL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933CE2727E5
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F0E189B80
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 13:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928103; cv=none; b=ol4mPf6AvYGs4zuIe6+6BZZ5eILpRmUjWKOh5R7klFNlTruugJgCsTfl8BWOffM6GMmCN/ID2NcGTRJnyCLmomBa30WVOnbjR2Q+byISHZ/5emrfO/TKCtNC8V3FdZ6mY7F8GvxXzDTbPzR8ihp81l2vnW9jdbJe8Sn+fnf6ONw=
+	t=1759929317; cv=none; b=spQuPVkjLz6Rd6VErcHB63AqdSb9PAEkZ3cpn959Igtafb+PX73WoPIORWjBW5S5XRzbp6kSFifJEIhorYClZ3Ey9CNPkWazubzTWuGqkmg4dPFnHgkUt/JtJ0S3o0Omdo3NkB0xp6LXs/vC1/om2vMzmMlUChjG0mudAqGKCsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928103; c=relaxed/simple;
-	bh=UPdWiu75orYUiT/S17D2mvtCcxoV53pfo8sO6VIpeKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9XGLGkkfbk3eH4HApaB1FGOSNeSrLNGHFpegNztxhN5ULsrj+zCA6b8yPPvIvXPFA7N6+0pWcHF85j28ZSzhvPzhm37aBYg+3qF8EQ+65vlc6CuQ4DQYBddQKp68umGF3BZ5vc2RytnVBCjX3bMEXwUgtd5YzBCRB9aAQK7YUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uTP0LTdN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XxssVcb3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uTP0LTdN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XxssVcb3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C677F1FC05;
-	Wed,  8 Oct 2025 12:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759928098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=uTP0LTdNVRqTbtLXZvLoickB5NY6m8Lmbjp1CV/SyhWCAk7bLtD/eGMW8we0WE8PSZpoHl
-	X1tyhSSJ+I5+oO1Ymfo1/SMqi2KBuaeW7RL6q5ppj7kIySMTDmU2+ul+2ggwBrGcvwu417
-	0rXTYjHXHW429Xk9RvckxuQTnGgkouk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759928098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=XxssVcb3huVBKPYWIbiOVZduv9XGAZrN3o/9gQKWUYDgzYiUHVeA6gbAJ58TKXrigByebE
-	s2M7/q/P4mgKWzCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759928098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=uTP0LTdNVRqTbtLXZvLoickB5NY6m8Lmbjp1CV/SyhWCAk7bLtD/eGMW8we0WE8PSZpoHl
-	X1tyhSSJ+I5+oO1Ymfo1/SMqi2KBuaeW7RL6q5ppj7kIySMTDmU2+ul+2ggwBrGcvwu417
-	0rXTYjHXHW429Xk9RvckxuQTnGgkouk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759928098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=XxssVcb3huVBKPYWIbiOVZduv9XGAZrN3o/9gQKWUYDgzYiUHVeA6gbAJ58TKXrigByebE
-	s2M7/q/P4mgKWzCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE5CD13693;
-	Wed,  8 Oct 2025 12:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r8qPKiJf5miURQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:54:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 17A34A0A9C; Wed,  8 Oct 2025 14:54:58 +0200 (CEST)
-Date: Wed, 8 Oct 2025 14:54:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 13/13] ext4: add two trace points for moving extents
-Message-ID: <kkecvhazplnbbvv2omtwae6jckon3onaym5gbxp7bndnoqr5eq@xow35t5dhhph>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-14-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1759929317; c=relaxed/simple;
+	bh=CKys8xJDsixk4GZcRnoL31wC6RicgzU4/uO8xbMBzzA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gdM1+AzZcgOBgPRk8ubpqCJnsGvPbp8q7/qkyG4o8wZx2TcZ2O2rk/cjzmzwKFhP9XTLlURWYhTBZRwYkiv9rVLOJmiE1yy9W1LBHa2SZo9hSfLLMnx/X+XkEEKHKBZA20gyaLBFZ8Wicaey0YAkIEVK65epglKes7YpZGeF3xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIfpuXSL; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e3e177893so40866985e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 06:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759929313; x=1760534113; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3GMh8gF1Uu4hd329Ty2DF0Ok3lYIutJuQKHJlpedSPk=;
+        b=ZIfpuXSLr3xdcpb5YfJg5fSuh09LvdzmtOEF3aTDyXSAxM/rOO2Of7onvS3VH4EH60
+         q5aJRjEsJ17CIocEu0jsjJwXU5DmeHeWVsD8Hn/XaIGFGFOg7gw/QILQdMbNsMWU968E
+         Nfy8n+OH2JkoZnCbC2zKSd37uwWsqYeUnI0KMkMazlQbCS2yRKAmKuxNjN3E8p3HQJGE
+         ykwq7mvj5mwErIjwbo5QPyoXiwI1snZsAJPlTVKXepf0ru0tXBqlkJA3i33VnxV+lFl6
+         ybgXnw7d9mdeXO149uqsVWRp+X5Ln9gI+DwAQrsyfqPxa2u5rbh4KqhSsoOvNrk1CmBu
+         MY3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759929313; x=1760534113;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3GMh8gF1Uu4hd329Ty2DF0Ok3lYIutJuQKHJlpedSPk=;
+        b=Ax2jW0bkqx8F3rBKgX4OpwLCBcPa2HAt0BLf9e5X6olyHh0mBFh2dxKgxEt6u4O7XX
+         J6GTsGoe8rXMtehWMRcurT1EhTmRImobbC2ns03nMo3J8m7HEGsg/QFShRsKn4VdTnNh
+         HtKKZXSGZAGm9bgftSdtk8f4XxIGdBaaRr0dKhD0walOen37oC7CZUrV+dfhjd+McVyi
+         EoENAzrvZGxJvdtemj5e0oWl8qA8PU97xZSb9F+gQ9JdL3a8t4bhfI1KQ22exmBkblZ4
+         M2d6hZOWv5ep5M7gBheR4zBPwV2dn+8qPWCHlszcVRKgLSReJz+kRRrQ3FvyG1Y6ubcR
+         92kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYmFuVNQm/4V3VP35xVLY/kxTyibUgIXUIx7BSzOnSNUrLdwTG99Va1mZLtlUPpay0jpBATJa7sgDnqGRi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwulgqioG6OefqbXfcW2FYhz0A9GfqyDo/Dng8l7BmoUiu44Af5
+	Y/hHBuu5yT3NeCi4R0oDc5aKEW+IE37ChuAaRY0QyQHmIFHWkCucAb7KdscvJHv1Ijasn7WbuhS
+	le4Aj+9tP/MNlo4QR+w==
+X-Google-Smtp-Source: AGHT+IE89beyKsvULLcf3UqV4s6rtxpjy11EnRj5cgsae6DgqsLnVq5SrKgEBnb7OKFnTiIg04Lj/tLVIr0qKRI=
+X-Received: from wmbz6.prod.google.com ([2002:a05:600c:c086:b0:46e:1bcf:3f8])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:c162:b0:45f:2cb5:ecff with SMTP id 5b1f17b1804b1-46fa9b02fa3mr29367005e9.31.1759929313030;
+ Wed, 08 Oct 2025 06:15:13 -0700 (PDT)
+Date: Wed, 8 Oct 2025 13:15:12 +0000
+In-Reply-To: <20251008125427.68735-1-acsjakub@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-14-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Mime-Version: 1.0
+References: <20251007162136.1885546-1-aliceryhl@google.com> <20251008125427.68735-1-acsjakub@amazon.de>
+Message-ID: <aOZj4Jeif1uYXAxZ@google.com>
+Subject: Re: [PATCH] mm: use enum for vm_flags
+From: Alice Ryhl <aliceryhl@google.com>
+To: Jakub Acs <acsjakub@amazon.de>
+Cc: djwong@kernel.org, jhubbard@nvidia.com, akpm@linux-foundation.org, 
+	axelrasmussen@google.com, chengming.zhou@linux.dev, david@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, peterx@redhat.com, rust-for-linux@vger.kernel.org, 
+	xu.xin16@zte.com.cn
+Content-Type: text/plain; charset="utf-8"
 
-On Thu 25-09-25 17:26:09, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Oct 08, 2025 at 12:54:27PM +0000, Jakub Acs wrote:
+> redefine VM_* flag constants with BIT()
 > 
-> To facilitate tracking the length, type, and outcome of the move extent,
-> add a trace point at both the entry and exit of mext_move_extent().
+> Make VM_* flag constant definitions consistent - unify all to use BIT()
+> macro and define them within an enum.
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> The bindgen tool is better able to handle BIT(_) declarations when used
+> in an enum.
+> 
+> Also add enum definitions for tracepoints.
+> 
+> We have previously changed VM_MERGEABLE in a separate bugfix. This is a
+> follow-up to make all the VM_* flag constant definitions consistent, as
+> suggested by David in [1].
+> 
+> [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
+> 
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Xu Xin <xu.xin16@zte.com.cn>
+> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Axel Rasmussen <axelrasmussen@google.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
 > ---
->  fs/ext4/move_extent.c       | 14 ++++++-
->  include/trace/events/ext4.h | 74 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 86 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> index 0fa97c207274..53a8b9caeeda 100644
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -13,6 +13,8 @@
->  #include "ext4.h"
->  #include "ext4_extents.h"
->  
-> +#include <trace/events/ext4.h>
-> +
->  struct mext_data {
->  	struct inode *orig_inode;	/* Origin file inode */
->  	struct inode *donor_inode;	/* Donor file inode */
-> @@ -311,10 +313,14 @@ static int mext_move_extent(struct mext_data *mext, u64 *m_len)
->  	int ret, ret2;
->  
->  	*m_len = 0;
-> +	trace_ext4_move_extent_enter(orig_inode, orig_map, donor_inode,
-> +				     mext->donor_lblk);
->  	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
->  	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
-> -	if (IS_ERR(handle))
-> -		return PTR_ERR(handle);
-> +	if (IS_ERR(handle)) {
-> +		ret = PTR_ERR(handle);
-> +		goto out;
-> +	}
->  
->  	ret = mext_move_begin(mext, folio, &move_type);
->  	if (ret)
-> @@ -372,6 +378,10 @@ static int mext_move_extent(struct mext_data *mext, u64 *m_len)
->  	mext_folio_double_unlock(folio);
->  stop_handle:
->  	ext4_journal_stop(handle);
-> +out:
-> +	trace_ext4_move_extent_exit(orig_inode, orig_map->m_lblk, donor_inode,
-> +				    mext->donor_lblk, orig_map->m_len, *m_len,
-> +				    move_type, ret);
->  	return ret;
->  
->  repair_branches:
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index 6a0754d38acf..a05bdd48e16e 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -3016,6 +3016,80 @@ TRACE_EVENT(ext4_update_sb,
->  		  __entry->fsblk, __entry->flags)
->  );
->  
-> +TRACE_EVENT(ext4_move_extent_enter,
-> +	TP_PROTO(struct inode *orig_inode, struct ext4_map_blocks *orig_map,
-> +		 struct inode *donor_inode, ext4_lblk_t donor_lblk),
-> +
-> +	TP_ARGS(orig_inode, orig_map, donor_inode, donor_lblk),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(ino_t, orig_ino)
-> +		__field(ext4_lblk_t, orig_lblk)
-> +		__field(unsigned int, orig_flags)
-> +		__field(ino_t, donor_ino)
-> +		__field(ext4_lblk_t, donor_lblk)
-> +		__field(unsigned int, len)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->dev		= orig_inode->i_sb->s_dev;
-> +		__entry->orig_ino	= orig_inode->i_ino;
-> +		__entry->orig_lblk	= orig_map->m_lblk;
-> +		__entry->orig_flags	= orig_map->m_flags;
-> +		__entry->donor_ino	= donor_inode->i_ino;
-> +		__entry->donor_lblk	= donor_lblk;
-> +		__entry->len		= orig_map->m_len;
-> +	),
-> +
-> +	TP_printk("dev %d,%d origin ino %lu lblk %u flags %s donor ino %lu lblk %u len %u",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
-> +		  show_mflags(__entry->orig_flags),
-> +		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
-> +		  __entry->len)
-> +);
-> +
-> +TRACE_EVENT(ext4_move_extent_exit,
-> +	TP_PROTO(struct inode *orig_inode, ext4_lblk_t orig_lblk,
-> +		 struct inode *donor_inode, ext4_lblk_t donor_lblk,
-> +		 unsigned int m_len, u64 move_len, int move_type, int ret),
-> +
-> +	TP_ARGS(orig_inode, orig_lblk, donor_inode, donor_lblk, m_len,
-> +		move_len, move_type, ret),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(ino_t, orig_ino)
-> +		__field(ext4_lblk_t, orig_lblk)
-> +		__field(ino_t, donor_ino)
-> +		__field(ext4_lblk_t, donor_lblk)
-> +		__field(unsigned int, m_len)
-> +		__field(u64, move_len)
-> +		__field(int, move_type)
-> +		__field(int, ret)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->dev		= orig_inode->i_sb->s_dev;
-> +		__entry->orig_ino	= orig_inode->i_ino;
-> +		__entry->orig_lblk	= orig_lblk;
-> +		__entry->donor_ino	= donor_inode->i_ino;
-> +		__entry->donor_lblk	= donor_lblk;
-> +		__entry->m_len		= m_len;
-> +		__entry->move_len	= move_len;
-> +		__entry->move_type	= move_type;
-> +		__entry->ret		= ret;
-> +	),
-> +
-> +	TP_printk("dev %d,%d origin ino %lu lblk %u donor ino %lu lblk %u m_len %u, move_len %llu type %d ret %d",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
-> +		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
-> +		  __entry->m_len, __entry->move_len, __entry->move_type,
-> +		  __entry->ret)
-> +);
-> +
->  #endif /* _TRACE_EXT4_H */
->  
->  /* This part must be outside protection */
-> -- 
-> 2.46.1
+> Hi Alice,
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> thanks for the patch, I squashed it in (should I add your signed-off-by
+> too?) and added the TRACE_DEFINE_ENUM calls pointed out by Derrick.
+
+You could add this if you go with the enum approach:
+
+Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+
+> I have the following points to still address, though: 
+> 
+> - can the fact that we're not controlling the type of the values if
+>   using enum be a problem? (likely the indirect control we have through
+>   the highest value is good enough, but I'm not sure)
+
+The compiler should pick the right integer type in this case.
+
+> - where do TRACE_DEFINE_ENUM calls belong?
+>   I see them placed e.g. in include/trace/misc/nfs.h for nfs or
+>   arch/x86/kvm/mmu/mmutrace.h, but I don't see a corresponding file for
+>   mm.h - does this warrant creating a separate file for these
+>   definitions?
+> 
+> - with the need for TRACE_DEFINE_ENUM calls, do we still deem this
+>   to be a good trade-off? - isn't fixing all of these in
+>   rust/bindings/bindings_helper.h better?
+> 
+> @Derrick, can you point me to how to test for the issue you pointed out?
+
+I'm not familiar with the TRACE_DEFINE_ENUM unfortunately.
+
+> +#ifndef CONFIG_MMU
+> +TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
+> +#endif /* CONFIG_MMU */
+
+Here I think you want:
+
+#ifdef CONFIG_MMU
+TRACE_DEFINE_ENUM(VM_UFFD_MISSING);
+#else
+TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
+#endif /* CONFIG_MMU */
+
+> +TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
+
+Here I think you want:
+
+#ifdef CONFIG_MEM_SOFT_DIRTY
+TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
+#endif
+
+Alice
 
