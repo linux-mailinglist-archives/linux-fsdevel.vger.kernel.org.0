@@ -1,149 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-63577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D867BC3F26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 10:53:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D68BC451D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 12:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 960C23514FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 08:53:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312874E5E9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 10:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584282F361E;
-	Wed,  8 Oct 2025 08:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981D72F5A1C;
+	Wed,  8 Oct 2025 10:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7m4j1ko"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="KBzOQphO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qxtypbvC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490B62F3C23
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 08:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7528A24728E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 10:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759913580; cv=none; b=I9MJP8H9baUM3hNypfFrYS+XrkvYEgCorHmgK6eMxwxdMBB3IeSmRgErit+J8qYn1FGK4PbTKtH7QNGbn1wd4voyrnVpjj8K/rE5KeTITnnv2uS6ewczyxR1GSWFX8/LIng5DzztbJyQX6RxfxDKeMc9VUD0ZrRGFBk71/pMxJE=
+	t=1759919329; cv=none; b=EhTIlIkvxx4OwKwZqq2K4fSbmXAANj+mn7b+wN65PfHU4N/XVx1l+PesclNLlTawvkutXPbmnWnMMmx5xram4pmM/uaMsDUxaKLGNutj7evGg8vV1GV+/AJBC6prcWdSfElheHpmW7endsWDqJYg60IMvja4xtUzvpp720zYcFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759913580; c=relaxed/simple;
-	bh=AYlPlEYnalDPu3mU+G9COpLgD9gYXaXXBqfIzZI0NhM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SjUBWidnpHZ3oZYHpyzHidIspfH/F7sLHLZTteAEg0xEYT/JP58Q5k+wCHxqHb4sRnaCEuvMynVWd64MQm67aOR7NuvCoeoj/hkTG0sQhV3VMy93NQtkT5n/F+BKdzfw3gX9t+b4SlTnEGac+oVbhN5T31fyOU6IsllJ64d1ddY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7m4j1ko; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27c369f8986so70083515ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 01:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759913578; x=1760518378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/JRe+Ysw3ed28Q5I6fD0FZJYvYHKIT6y/Zbw+MVV2NU=;
-        b=X7m4j1ko+GpgLoWu+E+qXVENFgOVjCRRloSPKiko6o29gjI+idBHM/4+NvTbmMKc4S
-         wrFJXQH9CUiYZvRRlTyolb+oCtzCgDKGB7S+9C9WLiAbT7D7eaebtGfECTSV1MPosw/x
-         2eMtxarrphPZdU7R3Dc8+laGMb1KIcYliI6dprrV3QeP6GBrCSieQPFgBL0oqTGwI/ub
-         7FciQBAG9qJf8ldOY8p4XfO+AvwUmE5IF39m+qW+D8/xnES9N6x5udqZu//0b/iF1p9k
-         8ryrlxJ0kRVxGRokOTkH+zjIO8cedVeApFs6zGM4eGB3Pwjj6tWILyMMEbR3DKCNd9mD
-         ZT3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759913578; x=1760518378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/JRe+Ysw3ed28Q5I6fD0FZJYvYHKIT6y/Zbw+MVV2NU=;
-        b=XxJjjdB67Z7ek3ryryIbfT6NWZg7WMMBp7lkrRXF4NDHL7el4TETijbRcq+0tP5IyU
-         oTmh1CaPVk4WDp27xqXEif5yJJWKrUGDhaDfjzyvVKbZsJNL4SVOH/Rq1T6VugeFYar4
-         3nkks0yMSth1k5AjJdnck0xyzts4N29LblojJSFQ8KgD7etXqjt6qH4+eCmgbNpwNF3J
-         iSUQmvxAibxZOTeSJbzaJZr2KN7NSuuGrD3M7bVsuB2jR7QH0hoWwH9N2l0T5eESQsL0
-         A5qh6QlJ9J7X37TqO/0MZJGj1KId85MkuHvWD7JHnA5iP+YWH1e4P8OoEEIbh0cBIjlg
-         Pm1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUoCGtxTroeDiNWu9Pj8zgruMcQRUY8O+i4NCv53o4WpuXEydrByZt8c0lF3v1G+150vTJ+8QRG0zD71LC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSMLco3oGXVdAsAOB0HENrXIn/dXTHooVcz0xfASKFLN+R6UPu
-	szqAOqqSGZINVBgm6UQTRVpGbxdtDWuyTza8Edr5mugDrVBAQfOT3DzpF7vFZXSZbK0xREvetru
-	gaEm/ThojlKHLSRYPt1MF6IxyhnIXFgU=
-X-Gm-Gg: ASbGncsfEAoP/JQ5Jyw3qaJPE0mpEOaW07d2+/7rLPZ1RdZe0bPbU3UPr6Yi6kgLhuK
-	Iu9x0ozwmUFE9XmE4nyyLOaCSPc/GUIx0GT+MOMtAANEviEjUfsG7KrkL2zGrC2exgZR0XP/PDZ
-	t6PULMHUJWCzeDPmyl1E4bFiPFmxvvUVdxwbkyO+v2XTSc3VeX76aOtrcqDNSRHyYlK+Uj38Ql6
-	wWdZgK0g/gNU77RUteDOo+qymmb5J2W2m/ZNrH6MffV
-X-Google-Smtp-Source: AGHT+IFKCMDzVKeMBL64zSYDRpRFM0H2rB7wq31qh9YFT8+du8n/p0Y5R8iH/2zbH4uxiGTK7bY6Wyb/b/TqjnRgSmI=
-X-Received: by 2002:a17:902:f607:b0:25c:7434:1c03 with SMTP id
- d9443c01a7336-290273568e4mr34433325ad.10.1759913578515; Wed, 08 Oct 2025
- 01:52:58 -0700 (PDT)
+	s=arc-20240116; t=1759919329; c=relaxed/simple;
+	bh=vBXFQ24Np+YODpvPsp7AqrWUIdhj979HQNxIccAGVFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JGK6kDnDJj39XYwTn4LRib5LuvHpwZ7BtNkDJ17IRJXbab3ajOCnWzIn0WqzbenZJr1YrBaiHYxf8tcj+WoNBHxHyuHhbUwT73eChNbr/2JoRxi8LnJmkdIoOHQ4igELpoTgyvETm6AVjphYgrM3BOAJUsQ+4CzVPcn2G5DlP4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=KBzOQphO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qxtypbvC; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 549C07A0199;
+	Wed,  8 Oct 2025 06:28:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 08 Oct 2025 06:28:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1759919326; x=
+	1760005726; bh=8s9JwsgCp3XHvfocy4wxTpe9hcmn8+BULhzOHWqui6A=; b=K
+	BzOQphOoeZLiw7TOjjmlGk6nQLgu+Gi/fX0/Seftx0oBYoWU7tndGQPI/WBhV6Lg
+	0Pht51ip40jWSXJBIAYbxwCeBRNSIqmInhdgWQIOF0PbEe38nvTpc5Tu13jtsQaM
+	A8xbwLSOo2m4dK0maQgmmrW9YQcOL1vumFgklw4wXV5KvjaUiAG2AXbWxkdFJurO
+	JDKK4ea65M5nGZ16Iid+vnirZ6kXJRMxhzEzcNjPEAFWXiDLHN4dgkGQn3XCePhq
+	e/wvP923bVbpcRGthAJyo4QYm0r+jibl3pAn2nSZGKfr/LT9lDBQAQCeL+5c0NBt
+	qlh+y8uvqtObe2xI+AE4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759919326; x=1760005726; bh=8s9JwsgCp3XHvfocy4wxTpe9hcmn8+BULhz
+	OHWqui6A=; b=qxtypbvCaMce7vvdfT8394eCBxgXivc12tZMpMndGyJ1Qztxe4Y
+	UqTIi1V3y6Rvu7UT2XW/UdI/ER/9+vpQdlgnmZ0EByKQMQw6h5ZNpurSESAfCt7D
+	QE/q3pI8kXV9kd1J/7ZsT2SmbCo5gq9gQOqOWskii35rfRE67pUDGCB2eY91IGhl
+	Ggcw6sOwwgNvxDSDP8gSVWJR+AnvywLABNoRZCwCOptv+4OvCLWFy1EgayvFjE09
+	PO2mVE3/GXp9hHi82IbuLZynSgjItMBFzIrFTkL/1Pi3iyIW/Yb/fP9HmzqM0utG
+	WsGOkkAQgXM1qlppy9CKGDKWlvUtAkH2MmA==
+X-ME-Sender: <xms:3TzmaAPkWcuFjSO0zURJMYpZ_qul2uY8Orjd9mxyCnyasI2mCK1Kzw>
+    <xme:3TzmaKDIWVWG4dBgB_jFjXzBCEDA1YdacOMtJyyrCYWzy_ncvZ6iMr3wKGjVKVk7K
+    WnUGKs9g0eUsS55kr5sg7otvsee1bOjqxSCE1PMq5fd3rLxWlK1O0k>
+X-ME-Received: <xmr:3TzmaB4EGBH2_-CI-GoqXjywtnXfJetpTZuoBPl7cV8-L2x3WF6sMNCrvjURAw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeftdeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhephefhleekgedvfeffkefhteetjeffhfegffduieeuueekhfejkeeu
+    geelhfekfedvnecuffhomhgrihhnpegrrhgthhgpihhmphhlvghmvghnthhspghflhhush
+    hhpggutggrtghhvggpphgrghgvrdhmmhenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnh
+    gspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhr
+    vhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfi
+    hilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmtghgrhhofheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:3TzmaE4sl4OHaM3c8yxVyg9_bKsiGyP-CtoECDT4kQVQOQPYSDlRUQ>
+    <xmx:3TzmaDRa1OhzGvsAR1I0q3VyJtgLfyK_pw-V5g429YZSbK_C0wzGZQ>
+    <xmx:3TzmaM8w1-3blSi23ay6aagdQ5fEyfHfbXNpng7Hgee9WgeFVcGu2A>
+    <xmx:3TzmaEaEyKSkMlc9BiJxkvVktn4ZsG1Fw4fqWvrRBfNJDNBobt2Xiw>
+    <xmx:3jzmaFyehVO5ipMvNxbrHr-mINfi0cyr2Et4BljQDHZbty_Be-eAK5ml>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 06:28:45 -0400 (EDT)
+Date: Wed, 8 Oct 2025 11:28:42 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: Optimizing small reads
+Message-ID: <bbagpeesjg73emxpwkxnvaepcn5hjrsrabaamtth2m26khhppa@7hpwl2mk3mlc>
+References: <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
+ <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
+ <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
+ <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
+ <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
+ <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
+ <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+ <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
+ <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
+ <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006114507.371788-1-aha310510@gmail.com> <CAKYAXd8pyEBm6cOBLQ_yKaoeb2QDkofprMK1Hq1c_r_pumRnxQ@mail.gmail.com>
-In-Reply-To: <CAKYAXd8pyEBm6cOBLQ_yKaoeb2QDkofprMK1Hq1c_r_pumRnxQ@mail.gmail.com>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Wed, 8 Oct 2025 17:52:47 +0900
-X-Gm-Features: AS18NWC61Zud4JgwiWJjoS2O6q9aZLnXpBR98-miFbKRgAfyGTqcKi4hwMhR8L4
-Message-ID: <CAO9qdTHx-EYBeo1mfgVzcwQT5M6iwtVsBZTjAEVQugcfTsVtjA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: sj1557.seo@samsung.com, yuezhang.mo@sony.com, viro@zeniv.linux.org.uk, 
-	pali@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
 
-Hi Namjae,
+On Tue, Oct 07, 2025 at 03:54:19PM -0700, Linus Torvalds wrote:
+> On Tue, 7 Oct 2025 at 15:35, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > But I think I'll try to boot it next. Wish me luck.
+> 
+> Bah. It boots - after you fix the stupid double increment of 'already_copied'.
+> 
+> I didn't remove the update inside the loop when I made it update it
+> after the loop.
+> 
+> So here's the slightly fixed patch that actually does boot - and that
+> I'm running right now. But I wouldn't call it exactly "tested".
+> 
+> Caveat patchor.
 
-Namjae Jeon <linkinjeon@kernel.org> wrote:
->
-> On Mon, Oct 6, 2025 at 8:45=E2=80=AFPM Jeongjun Park <aha310510@gmail.com=
-> wrote:
-> >
-> Hi Jeongjun,
-> > After the loop that converts characters to ucs2 ends, the variable i
-> > may be greater than or equal to len. However, when checking whether the
-> > last byte of p_cstring is NULL, the variable i is used as is, resulting
-> > in an out-of-bounds read if i >=3D len.
-> >
-> > Therefore, to prevent this, we need to modify the function to check
-> > whether i is less than len, and if i is greater than or equal to len,
-> > to check p_cstring[len - 1] byte.
-> I think we need to pass FSLABEL_MAX - 1 to exfat_nls_to_utf16, not FSLABE=
-L_MAX.
-> Can you check it and update the patch?
+My take on the same is below.
 
-If the only reason to change len to FSLABEL_MAX - 1 is to prevent
-out-of-bounds, this isn't a very appropriate solution.
+The biggest difference is that I drop RCU lock between iterations. But
+as you said, not sure if it is sensible. It allows page faults.
 
-Because the return value of exfat_convert_char_to_ucs2() can be greater
-than 1, even if len is set to FSLABEL_MAX - 1, i may still be FSLABEL_MAX
-when the loop ends. Therefore, checking the last byte of p_cstring with
-the min() function is essential to ensure out-of-bounds prevention.
+Other thing that I noticed that we don't do flush_dcache_folio() in fast
+path. I bypassed fast path if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE.
 
-> Thanks.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
-> > Fixes: 370e812b3ec1 ("exfat: add nls operations")
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  fs/exfat/nls.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> > index 8243d94ceaf4..a52f3494eb20 100644
-> > --- a/fs/exfat/nls.c
-> > +++ b/fs/exfat/nls.c
-> > @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb=
-,
-> >                 unilen++;
-> >         }
-> >
-> > -       if (p_cstring[i] !=3D '\0')
-> > +       if (p_cstring[min(i, len - 1)] !=3D '\0')
-> >                 lossy |=3D NLS_NAME_OVERLEN;
-> >
-> >         *uniname =3D '\0';
-> > --
+>  mm/filemap.c | 33 +++++++++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 60a7b9275741..ba11f018ca6b 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2792,20 +2792,37 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+>  	 * any compiler initialization would be pointless since this
+>  	 * can fill it will garbage.
+>  	 */
+> -	if (iov_iter_count(iter) <= sizeof(area)) {
+> +	if (iov_iter_count(iter) <= PAGE_SIZE) {
 
-Regards,
-Jeongjun Park
+PAGE_SIZE is somewhat arbitrary here. We might want to see if we can do
+full length (or until the first failure). But holding RCU read lock whole
+time might not be a good idea in this case.
+
+>  		size_t count = iov_iter_count(iter);
+> +		size_t fast_read = 0;
+>  
+>  		/* Let's see if we can just do the read under RCU */
+>  		rcu_read_lock();
+> -		count = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, count);
+> +		pagefault_disable();
+> +		do {
+> +			size_t copied = min(count, sizeof(area));
+> +
+> +			copied = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, copied);
+> +			if (!copied)
+> +				break;
+
+filemap_fast_read() will only read short on EOF. So if it reads short we
+don't need additional iterations.
+
+> +			copied = copy_to_iter(area.buffer, copied, iter);
+> +			if (!copied)
+> +				break;
+> +			fast_read += copied;
+> +			iocb->ki_pos += copied;
+> +			count -= copied;
+> +		} while (count);
+> +		pagefault_enable();
+>  		rcu_read_unlock();
+> -		if (count) {
+> -			size_t copied = copy_to_iter(area.buffer, count, iter);
+> -			if (unlikely(!copied))
+> -				return already_read ? already_read : -EFAULT;
+> -			ra->prev_pos = iocb->ki_pos += copied;
+> +
+> +		if (fast_read) {
+> +			ra->prev_pos += fast_read;
+> +			already_read += fast_read;
+>  			file_accessed(filp);
+> -			return copied + already_read;
+> +
+> +			/* All done? */
+> +			if (!count)
+> +				return already_read;
+>  		}
+>  	}
+>  
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d9fda3c3ae2c..6b9627cf47af 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2752,29 +2752,48 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 
+ 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
+ 
++	/* Don't bother with flush_dcache_folio() */
++	if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
++		goto slowpath;
++
+ 	/*
+ 	 * Try a quick lockless read into the 'area' union. Note that
+ 	 * this union is intentionally marked "__uninitialized", because
+ 	 * any compiler initialization would be pointless since this
+ 	 * can fill it will garbage.
+ 	 */
+-	if (iov_iter_count(iter) <= sizeof(area)) {
+-		size_t count = iov_iter_count(iter);
++	do {
++		size_t to_read, read, copied;
++
++		to_read = min(iov_iter_count(iter), sizeof(area));
+ 
+ 		/* Let's see if we can just do the read under RCU */
+ 		rcu_read_lock();
+-		count = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, count);
++		read = filemap_fast_read(mapping, iocb->ki_pos, area.buffer, to_read);
+ 		rcu_read_unlock();
+-		if (count) {
+-			size_t copied = copy_to_iter(area.buffer, count, iter);
+-			if (unlikely(!copied))
+-				return already_read ? already_read : -EFAULT;
+-			ra->prev_pos = iocb->ki_pos += copied;
+-			file_accessed(filp);
+-			return copied + already_read;
+-		}
+-	}
+ 
++		if (!read)
++			break;
++
++		copied = copy_to_iter(area.buffer, read, iter);
++
++		already_read += copied;
++		iocb->ki_pos += copied;
++		last_pos = iocb->ki_pos;
++
++		if (copied < read) {
++			error = -EFAULT;
++			goto out;
++		}
++
++		/* filemap_fast_read() only reads short at EOF: Stop. */
++		if (read != to_read)
++			goto out;
++	} while (iov_iter_count(iter));
++
++	if (!iov_iter_count(iter))
++		goto out;
++slowpath:
+ 	/*
+ 	 * This actually properly initializes the fbatch for the slow case
+ 	 */
+@@ -2865,7 +2884,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 		}
+ 		folio_batch_init(&area.fbatch);
+ 	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
+-
++out:
+ 	file_accessed(filp);
+ 	ra->prev_pos = last_pos;
+ 	return already_read ? already_read : error;
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
