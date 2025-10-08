@@ -1,148 +1,312 @@
-Return-Path: <linux-fsdevel+bounces-63593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FE0BC4EB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 14:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5EFDBC4F4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 14:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FE9401428
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 12:45:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E207402BBE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 12:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B541025FA2D;
-	Wed,  8 Oct 2025 12:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F792256C9F;
+	Wed,  8 Oct 2025 12:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HpTP8yIZ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hTznbQdM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u7o1ByH6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hTznbQdM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u7o1ByH6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DA526056C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 12:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96DA20C023
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 12:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759927473; cv=none; b=rSWwQTaQMPUKuuZQiig1BYHNeeas692KPydA2zy+XMhhx9EptlO/8xhFCpphe8zxjlW6WnRbu2SP+ArYyRhlCVbdDMhjK1mRjBJI6GgloNE9IZKUqjZf36Z9tiBIrzbojkq1HtCkAfbvsY1CuWlq2ztSmj3KJ4TMezPxognccBs=
+	t=1759927757; cv=none; b=XnU5y7dTB5AgcDHkPG9VjjewPdyhY6QVSmgWLx7R3y9+QSlyR/IFdFlDUGsUquHjZZNY6ucJ8Yxwr6vsbo7HJmF08skGleg7+6OiZ3QpnZ1ioOFSkXeRo8Twzi28Ikr5Ilf5kr2KC5wWkJk9HQd5yi/HJYYDxecp7VpAKyfb+vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759927473; c=relaxed/simple;
-	bh=0FQzczq+XvPIcLSgmN3fW8/Mf+a99S5LM/p3VLvLUUI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S4xjhpz+gZjRypmZD9v/IZoZKCWXcuPBx16ijOCBWcTdkoKA/hUauBMbAulfr+CmGZz/03Og8GVvjWCB6KW6dDXZarDIhkIgH45yi56KDT5iz74JyjK1fBUGNPyN5ckPTLM3nnzSsB/N7wxEXUKN3CqWxbHzLVT+oOeapDoRrvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HpTP8yIZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759927470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1759927757; c=relaxed/simple;
+	bh=wD4ph7ksr7Y9PqrcdV3UGxg9ldNUcUA7ihnBteSKObU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eUz7txTPMosAXlMqsWgvrAjbp2BlP7AepaZKtiIwInvIlQzOmsMaJ5BmA+8yH95HxWIwxeI8Gt1HljHb6b/9wPoiAN0wV/IoKOBrNFuvb+REvoBRyxv64Di4M1lS7XXFcOrXYF6u2kddydupAcoYcRGPIt8MCB8pHkRyuRZ6Ldo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hTznbQdM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u7o1ByH6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hTznbQdM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u7o1ByH6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C4F9333682;
+	Wed,  8 Oct 2025 12:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759927753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gTuvQMGGyHVj/GABY47oNzO2RJy8snMcE51C98ebSFA=;
-	b=HpTP8yIZWcjqQI2KKV95aoP7teZ7uYi+Mt6IH60k5JUUgbvukdGgCs1Of8hCI8mGKNnvwe
-	Kqizn8GI32rrXT1MgAtI2peVvbniX46PHCrLk9ctyVTObEu+gwplUnz9kgjihEeic1+6jC
-	BBDzMGJMPzQK1vnGZF/X+8O5eGCGyUI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-33-UStUJ8gHNnuqDWWyP3vFPw-1; Wed, 08 Oct 2025 08:44:28 -0400
-X-MC-Unique: UStUJ8gHNnuqDWWyP3vFPw-1
-X-Mimecast-MFC-AGG-ID: UStUJ8gHNnuqDWWyP3vFPw_1759927467
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ee1317b132so4091372f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 05:44:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759927467; x=1760532267;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gTuvQMGGyHVj/GABY47oNzO2RJy8snMcE51C98ebSFA=;
-        b=ml7LpDieed+uqRUjGVORJFiDvHOVjFiSUXFthnonCtlAolFGCX9CCkkyH3c0G4+nQd
-         +1WFqw0HDwryWhBe0HHxTBxllnra6kj/sKeKF6205/F0h8cf8MkeFTNG77t0uNuvoRXU
-         YYyjymz0gPmkmayydN3Y9AADhQRR5G+F8ZltZnhw7o0SA01mOnGsUZgtcFPyViN5rTK7
-         8I83F0L7WOxHbLocrnr/7o6tBG0lIL4+Viza9AnszqXSg0lnjm3+PI0+4X5yPNAsBxv2
-         FQzBerdGzFSBGW2lBZJKNPdl9AFKWon/x1IZ8+zc05xh5DCEiijfy9NqvCfzlmjXc/TI
-         vDzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3z3B626Eky3ImGC7T0iIpzA9RAyfh2GKOl+SpqH6cK+bOExsN/OVJJULPMJ0N2Iq6YYcxn7u51qSeXJuV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy46l67Asbz3zs1wfLklIqy3ue+VBeWQf4Jt021lz33XcKmDNf9
-	t8ieP+Hn99P/5KVzxzuStciwKxpb2MEcZPgacLUP1ixmbN9orGZUIvH6LOj8mjEVw+o7AFqneL+
-	+hW28yTPHnNl/zQz5q68Ze0bsOyjs1oTDS/gpExquW+kYqV8AurW0pe3Qu1AY02G7ZA==
-X-Gm-Gg: ASbGnct32AOp6C5WteXI0QN5G4f4J1TjQXktPxja5cCydF0/Dr43kg+kaQyRQ7OsPI3
-	hfr7Kz+hTfEH91wAqhxMqFYtJDXxex49u/qUI2ySNXUgDKI/0QDdHIUkFuM6jM7p5CHpe5QU6BQ
-	OvCtCl4qGDAcAZoFk5WafZTvanBnFZHcjxk0XHwAZRb0qFR2wCzNKtDYsabnwordr3sSVUyz4D6
-	XkAu/l8OYWsPgeyA5UXaCFjfQ2o5rJ2VukhSEPrmwa6KdKRKK2sfvF1IiN38sv2RnQAqSacU4ry
-	eyzfgpiN2NgbG38GlRVx2H6Qrc5j4JdkBlrosaFl1jm9rr9BQBh+jE8bZRtNzbvdSu2oN9rx
-X-Received: by 2002:a05:600c:4753:b0:46e:1d8d:cfb6 with SMTP id 5b1f17b1804b1-46fa9af0621mr20360725e9.19.1759927467230;
-        Wed, 08 Oct 2025 05:44:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUOOWjGZbNdj8gMQY80gtaJEpiEmEfUTkvwjILGRLj8xEez7HmT/bGwpHIikuJuXE2VGR3WQ==
-X-Received: by 2002:a05:600c:4753:b0:46e:1d8d:cfb6 with SMTP id 5b1f17b1804b1-46fa9af0621mr20360455e9.19.1759927466628;
-        Wed, 08 Oct 2025 05:44:26 -0700 (PDT)
-Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3d438fsm13918765e9.2.2025.10.08.05.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 05:44:23 -0700 (PDT)
-From: Andrey Albershteyn <aalbersh@redhat.com>
-X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Wed, 08 Oct 2025 14:44:18 +0200
-Subject: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr
- syscalls
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=hTznbQdMWZLom2mDKgB/qOLM8wl8Dpviwpwx2rh+h2CbnQN2paWN3wIIKXA379jqECmp9u
+	Q8+9TTEMHspAH9KBP/vyETlQ/mXY+K6yBXADjRUJhyrBnUzyif0DA9tZ/5jilbcMNKeKnA
+	DKl60XpqDesyC8YwLJteGvgAw8VGjlc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759927753;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=u7o1ByH665vxSLDl3GM/W+IZzi0/fmshKy0J4Y7Sm96SRvCGLKdVHePufsvkRSKgkFPDcj
+	4Ftr96m5IB5QGcAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hTznbQdM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=u7o1ByH6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759927753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=hTznbQdMWZLom2mDKgB/qOLM8wl8Dpviwpwx2rh+h2CbnQN2paWN3wIIKXA379jqECmp9u
+	Q8+9TTEMHspAH9KBP/vyETlQ/mXY+K6yBXADjRUJhyrBnUzyif0DA9tZ/5jilbcMNKeKnA
+	DKl60XpqDesyC8YwLJteGvgAw8VGjlc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759927753;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=u7o1ByH665vxSLDl3GM/W+IZzi0/fmshKy0J4Y7Sm96SRvCGLKdVHePufsvkRSKgkFPDcj
+	4Ftr96m5IB5QGcAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A060913693;
+	Wed,  8 Oct 2025 12:49:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D/EiJ8ld5mh8QwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:49:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 08F98A0A9C; Wed,  8 Oct 2025 14:49:09 +0200 (CEST)
+Date: Wed, 8 Oct 2025 14:49:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 11/13] ext4: switch to using the new extent movement
+ method
+Message-ID: <wdluk2p7bmgkh3n3xzep3tf3qb7mv3x2o6ltemjcahgorgmhwb@hfu7t7ar2vol>
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
-References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
-In-Reply-To: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
-To: linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>, 
- Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Andrey Albershteyn <aalbersh@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1018; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=0FQzczq+XvPIcLSgmN3fW8/Mf+a99S5LM/p3VLvLUUI=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMp7FLGXrP8A6vbUxj0FJYk7QpN39id7xEkWd89QkI
- zpFkg//d+woZWEQ42KQFVNkWSetNTWpSCr/iEGNPMwcViaQIQxcnAIwkdJChv81zi23ZYUvSooz
- rV8jnbo2JlSBw+6ARlfjho/CMi9lDOQZ/unft+y8uohbU15J7LPhvrUve3LPuzVyGeXnnAn6cq/
- 9HjcAeUxC6A==
-X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
- fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: C4F9333682
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-These syscalls call to vfs_fileattr_get/set functions which return
-ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
-inode. For syscalls EOPNOTSUPP would be more appropriate return error.
+On Thu 25-09-25 17:26:07, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Now that we have mext_move_extent(), we can switch to this new interface
+> and deprecate move_extent_per_page(). First, after acquiring the
+> i_rwsem, we can directly use ext4_map_blocks() to obtain a contiguous
+> extent from the original inode as the extent to be moved. It can and
+> it's safe to get mapping information from the extent status tree without
+> needing to access the ondisk extent tree, because ext4_move_extent()
+> will check the sequence cookie under the folio lock. Then, after
+> populating the mext_data structure, we call ext4_move_extent() to move
+> the extent. Finally, the length of the extent will be adjusted in
+> mext.orig_map.m_len and the actual length moved is returned through
+> m_len.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
----
- fs/file_attr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Two small comments below:
 
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 460b2dd21a85..5e3e2aba97b5 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
- 	}
- 
- 	error = vfs_fileattr_get(filepath.dentry, &fa);
-+	if (error == -ENOIOCTLCMD)
-+		error = -EOPNOTSUPP;
- 	if (error)
- 		return error;
- 
-@@ -483,6 +485,8 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
- 	if (!error) {
- 		error = vfs_fileattr_set(mnt_idmap(filepath.mnt),
- 					 filepath.dentry, &fa);
-+		if (error == -ENOIOCTLCMD)
-+			error = -EOPNOTSUPP;
- 		mnt_drop_write(filepath.mnt);
- 	}
- 
+> +int ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+> +		      __u64 donor_blk, __u64 len, __u64 *moved_len)
+>  {
+>  	struct inode *orig_inode = file_inode(o_filp);
+>  	struct inode *donor_inode = file_inode(d_filp);
+> -	struct ext4_ext_path *path = NULL;
+> -	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+> -	ext4_lblk_t o_end, o_start = orig_blk;
+> -	ext4_lblk_t d_start = donor_blk;
+> +	struct mext_data mext;
+> +	struct super_block *sb = orig_inode->i_sb;
+> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> +	int retries = 0;
+> +	u64 m_len;
+>  	int ret;
+>  
+> +	*moved_len = 0;
+> +
+>  	/* Protect orig and donor inodes against a truncate */
+>  	lock_two_nondirectories(orig_inode, donor_inode);
+>  
+>  	ret = mext_check_validity(orig_inode, donor_inode);
+>  	if (ret)
+> -		goto unlock;
+> +		goto out;
+>  
+>  	/* Wait for all existing dio workers */
+>  	inode_dio_wait(orig_inode);
+>  	inode_dio_wait(donor_inode);
+>  
+> -	/* Protect extent tree against block allocations via delalloc */
+> -	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+>  	/* Check and adjust the specified move_extent range. */
+>  	ret = mext_check_adjust_range(orig_inode, donor_inode, orig_blk,
+>  				      donor_blk, &len);
+>  	if (ret)
+>  		goto out;
+> -	o_end = o_start + len;
+>  
+> -	*moved_len = 0;
+> -	while (o_start < o_end) {
+> -		struct ext4_extent *ex;
+> -		ext4_lblk_t cur_blk, next_blk;
+> -		pgoff_t orig_page_index, donor_page_index;
+> -		int offset_in_page;
+> -		int unwritten, cur_len;
+> -
+> -		path = get_ext_path(orig_inode, o_start, path);
+> -		if (IS_ERR(path)) {
+> -			ret = PTR_ERR(path);
+> +	mext.orig_inode = orig_inode;
+> +	mext.donor_inode = donor_inode;
+> +	while (len) {
+> +		mext.orig_map.m_lblk = orig_blk;
+> +		mext.orig_map.m_len = len;
+> +		mext.orig_map.m_flags = 0;
+> +		mext.donor_lblk = donor_blk;
+> +
+> +		ret = ext4_map_blocks(NULL, orig_inode, &mext.orig_map, 0);
+> +		if (ret < 0)
+>  			goto out;
+> -		}
+> -		ex = path[path->p_depth].p_ext;
+> -		cur_blk = le32_to_cpu(ex->ee_block);
+> -		cur_len = ext4_ext_get_actual_len(ex);
+> -		/* Check hole before the start pos */
+> -		if (cur_blk + cur_len - 1 < o_start) {
+> -			next_blk = ext4_ext_next_allocated_block(path);
+> -			if (next_blk == EXT_MAX_BLOCKS) {
+> -				ret = -ENODATA;
+> -				goto out;
+> -			}
+> -			d_start += next_blk - o_start;
+> -			o_start = next_blk;
+> -			continue;
+> -		/* Check hole after the start pos */
+> -		} else if (cur_blk > o_start) {
+> -			/* Skip hole */
+> -			d_start += cur_blk - o_start;
+> -			o_start = cur_blk;
+> -			/* Extent inside requested range ?*/
+> -			if (cur_blk >= o_end)
+> +
+> +		/* Skip moving if it is a hole or a delalloc extent. */
+> +		if (mext.orig_map.m_flags &
+> +		    (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
+> +			ret = mext_move_extent(&mext, &m_len);
+> +			if (ret == -ESTALE)
+> +				continue;
+> +			if (ret == -ENOSPC &&
+> +			    ext4_should_retry_alloc(sb, &retries))
+> +				continue;
+
+ENOSPC here could come only from extent tree manipulations right? I was
+wondering for a while why do we check it here :).
+
+> +			if (ret == -EBUSY &&
+> +			    sbi->s_journal && retries++ < 4 &&
+> +			    jbd2_journal_force_commit_nested(sbi->s_journal))
+> +				continue;
+> +			if (ret)
+>  				goto out;
+> -		} else { /* in_range(o_start, o_blk, o_len) */
+> -			cur_len += cur_blk - o_start;
+> +
+> +			*moved_len += m_len;
+> +			retries = 0;
+>  		}
+> -		unwritten = ext4_ext_is_unwritten(ex);
+> -		if (o_end - o_start < cur_len)
+> -			cur_len = o_end - o_start;
+> -
+> -		orig_page_index = o_start >> (PAGE_SHIFT -
+> -					       orig_inode->i_blkbits);
+> -		donor_page_index = d_start >> (PAGE_SHIFT -
+> -					       donor_inode->i_blkbits);
+> -		offset_in_page = o_start % blocks_per_page;
+> -		if (cur_len > blocks_per_page - offset_in_page)
+> -			cur_len = blocks_per_page - offset_in_page;
+> -		/*
+> -		 * Up semaphore to avoid following problems:
+> -		 * a. transaction deadlock among ext4_journal_start,
+> -		 *    ->write_begin via pagefault, and jbd2_journal_commit
+> -		 * b. racing with ->read_folio, ->write_begin, and
+> -		 *    ext4_get_block in move_extent_per_page
+> -		 */
+> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -		/* Swap original branches with new branches */
+> -		*moved_len += move_extent_per_page(o_filp, donor_inode,
+> -				     orig_page_index, donor_page_index,
+> -				     offset_in_page, cur_len,
+> -				     unwritten, &ret);
+> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+> -		if (ret < 0)
+> -			break;
+> -		o_start += cur_len;
+> -		d_start += cur_len;
+> +		orig_blk += mext.orig_map.m_len;
+> +		donor_blk += mext.orig_map.m_len;
+> +		len -= mext.orig_map.m_len;
+
+In case we've called mext_move_extent() we should update everything only by
+m_len, shouldn't we? Although I have somewhat hard time coming up with a
+realistic scenario where m_len != mext.orig_map.m_len for the parameters we
+call ext4_swap_extents() with... So maybe I'm missing something.
+
+								Honza
+
 
 -- 
-2.51.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
