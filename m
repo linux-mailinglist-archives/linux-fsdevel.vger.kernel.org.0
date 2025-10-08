@@ -1,131 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-63607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C517BC604F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:27:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F8DBC605E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DBBD234E3BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3763B0898
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46A02BDC02;
-	Wed,  8 Oct 2025 16:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE218F49;
+	Wed,  8 Oct 2025 16:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="lQj3x4mp"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Oqy7ySvB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541C028FFF6
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FF129B8E5
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940850; cv=none; b=HOoomygWmVwhwTWnGeCzJNj2lWllHdJCyW0KE1wiQqAGWRpyN9uZRSFv91bMFkgxK4MKIaIo02vIuMh8jdYSv01rZZOimvQ4OrvBG4zdXFC+UDSALHhRVbmCRZC8oRQt/T/RSwSG5TcwSXQP+BT88ycVNBEjOCveG18Y6c6my4s=
+	t=1759940885; cv=none; b=WR4XcddWwJF8rEJCoMvAUxvCJgF2nLXzqAMq4ig775/gcOUDdAvfeHM4PfpxyukMmQzTa8vMWtfyhKY8HTtGR3+5LWQDcbMxWgfqjidcTALT5NARk5UXE5GcXyde7EgCfDaTujUsCB6msvRqjshTkDqn/CbOGFRRNj31ipLR7CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940850; c=relaxed/simple;
-	bh=Zq1tEArlsEXQW5eo5xbpfqLn2xRxba9VuPsiYdeTKqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQPmfrjC2tcd30YNZvDxjr1HXaPcqREZ+B2715uO+oAP+VqDXrlyVRWQb86jIsBQnTNQdirbUtGV4sV4PEYCjuGeTw3aJMfEWIGb0nJEW4+U7E5yNeo/F24pPamEVV8FoZIxEk5QqfQbioJkHSifqXSVpSyNUr5rXUMF8fVWhqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=lQj3x4mp; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-102-192.bstnma.fios.verizon.net [173.48.102.192])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 598GQtnk004046
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 Oct 2025 12:26:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1759940818; bh=FCNB/7DTe1EWiGD4bUa1fSOu0PJxVjz3p4YNDqmutQ4=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=lQj3x4mpTVV71WA8iDQZOiOEa6huH2ThKIeMXaudULqBtg6mqTk5n71201FyQAeXH
-	 0Vsikq7SkfBAbrQ9qpIUyjvOLpydg+J75aWzwEQN0cBZzFaTn8Mmeoa8s9q/k6X5m1
-	 a1vy8pdFmIyTzlRW5reka5bZPh0PgKtZyvyGJxWPtO0+cSYhdlq7TGsPer3slMAa/k
-	 79c7nzeDgmrvYWuqCobc7oPfMhiagxXESQesTkxGBxbgP9t0BBUolQmgof+34Lr24p
-	 lgIJipNbOtBWT8KRo+NRX29UU7AzPyvn/TvpOCTGMXtV9PL/fjrcPIfoZvrovSmbUT
-	 kNtf3JSr3FGiw==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 576402E00D9; Wed, 08 Oct 2025 12:26:55 -0400 (EDT)
-Date: Wed, 8 Oct 2025 12:26:55 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: adilger.kernel@dilger.ca, kernel-team@cloudflare.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        Baokun Li <libaokun1@huawei.com>, Jan Kara <jack@suse.cz>
-Subject: Re: ext4 writeback performance issue in 6.12
-Message-ID: <20251008162655.GB502448@mit.edu>
-References: <20251006115615.2289526-1-matt@readmodwrite.com>
- <20251008150705.4090434-1-matt@readmodwrite.com>
+	s=arc-20240116; t=1759940885; c=relaxed/simple;
+	bh=m6uUvqSqb8LfKXllguL5/0G50xrdlHHc0hOb1sIeJEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UDGkD8hl3BVkWfOqvKV8zyPiq+LhwFlXN3aF4OPNhozqPqFpVfEXDSJoIaI7a1Ko5aEdZho1GA5WEJtAYj8aSMTYaO8Ze5RyKSxYkthIojDpEc6ceOWYPH7ywDqScxExAgmzmFuySjQGD7dLeT1hEkY6OVI3d8Y6V2eSnoyAdWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Oqy7ySvB; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3d50882cc2so47041766b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759940880; x=1760545680; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ig2GLHE8hlKLEgmzJH4+emiSgZo32NUB86/I21OU+Y0=;
+        b=Oqy7ySvBmOpdLTOhNBH+0Bi/Ej31uJvNQtTKmYq5FZCJx4zzUKk37t8I8fourVPfw3
+         v33Ke0db9TpYLwe/0zGAwZfCFG6zAtbJFj0jajTgDw6M+qMvH/uR6I5ShWw7UcCBoAe3
+         HisH3/AkYlhukZZ9w9GWYBvj6mcjY43T1C3+4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759940880; x=1760545680;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ig2GLHE8hlKLEgmzJH4+emiSgZo32NUB86/I21OU+Y0=;
+        b=ole44MzweOSJk/VzqoZiA0AENtFk5RMunGNWeXewe7RucdLQak1yVxdIoaMCPw23Nd
+         OQqrTk9nVvMQaEsx96tcn0kUYpv/Rp/xdselBQnCrbGGAzEhuObSMFDBGxsxfZ86TJfJ
+         95Ta0OZqewFv9pwoyKP9sJOEac3DTA43p9EgfwK8ZmJQkxdtF8NL7Itui0t3MVfF966e
+         fYO008+pAyPr/jV8AbawD5GlIx9gx5EGzG/L6J08MpNfahjoSlopeHhv18YKQ3kDZwyX
+         m/qaXDGUZkHDpCgwQm6ktml2k/cEPm+5usbE8+9umPNtLquo84mus9kug2jZ7ABBcQIC
+         2e6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUpouAAUQGnkzEaBlZM502DffPB7XiGaOxDNCM6XiHCcS22dUwLLQYYdvgvmhpxu/CZ4tILj36qNHDYXM+c@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIXRFk+f5FrLHjxKhMIFW237I54THX/bXDkeK+/+6GpkYUgJ3w
+	Mj2DSRuwY5Q3Ts8K7dxGO4kGufgRvIj9ylT/fWz1MSvQRyQu1Jscp6sRzIW9FV87PbMdp/lHl90
+	SGkAAHRI=
+X-Gm-Gg: ASbGncvnoF+7Lp3rJ560mRqaEQX1WL4nzophFos6ViaMVtBYxmeapXqY8zGpEHWFk0S
+	qtDm1U7RVaZz/MfCmLhWvf4DMbFiJFTkNp36BL8FZDG64tYy0o59WxHeyL//cD2sSQgxzjDJIeL
+	umMC1gdxRFzK+pi4FY722ve+wra5+tkFQB0RorDBEcSruJJ2fYb7xoh78uiUTHb1m9I0kB47roL
+	BIiBrvrUHaxzqDifKrnb3VAWZLlfUjzdgbtvNwq6rENqTPD3QZ/rpxYhP3BvYBYIPVj0kOroq1i
+	xR/nUAjOatjWfCWGD+o6Hbif5BMcsmBwohGaC0jhZe3Zr8xkYjhSRa7hDRsm9FAmAA4Zyors6Nd
+	7b+fbho93RWG0q1gGo7/GdEDbOY44aq05Su0rMCjuEvp1AW+rnYNktrQ30DAbA0NgzNyIT1KYdm
+	+o7IwHs+txlBxBfDf7lD+F
+X-Google-Smtp-Source: AGHT+IEt6pt5aohwZYX0SILpnz2yAA57z/0ehZtV4u6/1WABoEtfY68dYXK92EQcx8niGYKDsiWVTg==
+X-Received: by 2002:a17:907:843:b0:b40:98b1:7457 with SMTP id a640c23a62f3a-b50ac5d0901mr417660566b.47.1759940880414;
+        Wed, 08 Oct 2025 09:28:00 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa04bsm1693248266b.6.2025.10.08.09.27.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 09:27:55 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62fc0b7bf62so11631873a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:27:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0X4JyWcX4FcsiRmYsNNJhZur8oF2YOqTWmT/eLYWyNa4gXX46ekezklTgNJkcic4fcSH2c06jcIuW32NZ@vger.kernel.org
+X-Received: by 2002:a05:6402:1d52:b0:633:59dd:3566 with SMTP id
+ 4fb4d7f45d1cf-639d5b5d47emr4199002a12.6.1759940874133; Wed, 08 Oct 2025
+ 09:27:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008150705.4090434-1-matt@readmodwrite.com>
+References: <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
+ <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
+ <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
+ <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
+ <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
+ <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+ <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
+ <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
+ <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
+ <CAHk-=wgbQ-aS3U7gCg=qc9mzoZXaS_o+pKVOLs75_aEn9H_scw@mail.gmail.com> <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
+In-Reply-To: <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 8 Oct 2025 09:27:36 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
+X-Gm-Features: AS18NWDe0QCBO_xfFFVdd4_0oRQnca8OG-hxRX2CoFLKyQS13SPatIyxuAJL3zo
+Message-ID: <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
+Subject: Re: Optimizing small reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 08, 2025 at 04:07:05PM +0100, Matt Fleming wrote:
-> > 
-> > These machines are striped and are using noatime:
-> > 
-> > $ grep ext4 /proc/mounts
-> > /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
-> > 
-> > Is there some tunable or configuration option that I'm missing that
-> > could help here to avoid wasting time in
-> > ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
-> > fail an order 9 allocation anyway?
+On Wed, 8 Oct 2025 at 07:54, Kiryl Shutsemau <kirill@shutemov.name> wrote:
+>
+> The best case scenario looks great. 16 threads hammering the same 4k
+> with 256 bytes read:
+>
+> Baseline:       2892MiB/s
+> Kiryl:          7751MiB/s
+> Linus:          7787MiB/s
 
-Can you try disabling stripe parameter?  If you are willing to try the
-latest mainline kernel, there are some changes that *might* make a
-different, but RAID stripe alignment has been causing problems.
+Yeah, that certainly fixes the performance problem people saw with
+contention on the page count.
 
-In fact, in the latest e2fsprogs release, we have added this change:
+> But when I tried something outside of the best case, it doesn't look
+> good. 16 threads read from 512k file with 4k:
+>
+> Baseline:       99.4GiB/s
+> Kiryl:          40.0GiB/s
+> Linus:          44.0GiB/s
+>
+> I have not profiled it yet.
+>
+> Disabling SMAP (clearcpuid=smap) makes it 45.7GiB/s for mine patch and
+> 50.9GiB/s for yours. So it cannot be fully attributed to SMAP.
 
-commit b61f182b2de1ea75cff935037883ba1a8c7db623
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Sun May 4 14:07:14 2025 -0400
+It's not just smap. It's the iov iterator overheads I mentioned.
 
-    mke2fs: don't set the raid stripe for non-rotational devices by default
-    
-    The ext4 block allocator is not at all efficient when it is asked to
-    enforce RAID alignment.  It is especially bad for flash-based devices,
-    or when the file system is highly fragmented.  For non-rotational
-    devices, it's fine to set the stride parameter (which controls
-    spreading the allocation bitmaps across the RAID component devices,
-    which always makessense); but for the stripe parameter (which asks the
-    ext4 block alocator to try _very_ hard to find RAID stripe aligned
-    devices) it's probably not a good idea.
-    
-    Add new mke2fs.conf parameters with the defaults:
-    
-    [defaults]
-       set_raid_stride = always
-       set_raid_stripe = disk
-    
-    Even for RAID arrays based on HDD's, we can still have problems for
-    highly fragmented file systems.  This will need to solved in the
-    kernel, probably by having some kind of wall clock or CPU time
-    limitation for each block allocation or adding some kind of
-    optimization which is faster than using our current buddy bitmap
-    implementation, especially if the stripe size is not multiple of a
-    power of two.  But for SSD's, it's much less likely to make sense even
-    if we have an optimized block allocator, because if you've paid $$$
-    for a flash-based RAID array, the cost/benefit tradeoffs of doing less
-    optimized stripe RMW cycles versus the block allocator time and CPU
-    overhead is harder to justify without a lot of optimization effort.
-    
-    If and when we can improve the ext4 kernel implementation (and it gets
-    rolled out to users using LTS kernels), we can change the defaults.
-    And of course, system administrators can always change
-    /etc/mke2fs.conf settings.
-    
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Those iov iterators are *slow*. Well, compared to a small memcpy they
+are. They are out-of-line, but they also do a lot of tests for the
+different cases.
 
-							- Ted
+So the baseline obviously still uses the iov_iter code, but it does it
+on full pages, so the overhead is much less noticeable.
+
+This is why I said that I think the next step is to just do the
+user-space case, so that the loop can not only avoid the SMAP overhead
+by using the user_access_begin() model, but so that it also avoids all
+the iov iter costs.
+
+                    Linus
 
