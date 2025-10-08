@@ -1,58 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-63613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3566BC62B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 19:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65624BC636A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 19:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662733B1259
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 17:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE9B3AD5C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 17:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1771A2E9EAA;
-	Wed,  8 Oct 2025 17:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD0B2BFC60;
+	Wed,  8 Oct 2025 17:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyzIJDLP"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vGFFB0PK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890914A0B5;
-	Wed,  8 Oct 2025 17:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6651FFC48
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 17:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759945180; cv=none; b=oVt6OIGQi+o6pTJOQWArkrBPeCbWG2tDXIQnCjBPQ76U9ZsHBdWm3deCVS46Axuf05oczBoiCWBI5Qi8vOoxlkLS9pkGZoD2bZz4H4nnvEnWuo2Fx4jueyXHpeC+Ujqi0sx+UKWjDx0H58dt4u/39be31w8QqmcTPeyfppAHUsU=
+	t=1759946107; cv=none; b=jv7n4jV/l8lQG9AzFF+3PQpLYMKRP3t2rqppaJ5ulQrG1bVtARIXpXaE4ddhfOwq/SHQh8mM6Uz26DvsycWZXASydgvQ51dnL6pJTt9DYeHVN2wNTO4en1prdFqjugZGymwNXj3Zl2s7rbPOvU+crq/SjQpLxgQA6pVIGdu1u/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759945180; c=relaxed/simple;
-	bh=Esnl8ZWaEibgnNlQ6fecomOh+EHOtGe0pfO29l4m024=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z59EjsOJQ2UpyRawxU3ZN+LlTYnGIMB+NJ9qHnEzAsRyd8D2qbP2RtxLNgk8B3AKWfvKiNl21CEnNRYWwjfDbpus5IqHGyRxW9Vy6aX0RiTsoeGSpP8NYf1mbH3Pt8org+6JxYul+SxPQqnPUKWEYPkQY049v9nd3r2NLflev+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyzIJDLP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49A9C4CEE7;
-	Wed,  8 Oct 2025 17:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759945179;
-	bh=Esnl8ZWaEibgnNlQ6fecomOh+EHOtGe0pfO29l4m024=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EyzIJDLPt0VllgsHyLX8SnQyb8ZHWFsuRLKc1Ug1/LKSapbCZKTwDdpfdJSJ6ltgD
-	 toY9+I7/+fQK5UOQDtlCCMUZw+uq6w7LeM0q4yfc2Gy0PNdCCFXWJkjEhhVTGMhDC5
-	 G7byUV2rwMWtREYV3E6/HsW/oqVpzkF86p+9iUQMf2czAkR5BCM/vggGlFt5SB1wR/
-	 IXeOtXCZlYoU18V4dcoioUEmRr4/7oGFqW6k6V4vWhC3Z6AX+7+aZYp54b2pHqNYwB
-	 H/T+j2IBT0OVhaCVHmU7eYagzsSIL/GsLRytPrJsGNciJ5hMjGxh81Zbmi4JrCpMGy
-	 tWKHp5Eb4NJAQ==
-Received: by pali.im (Postfix)
-	id 306A1680; Wed,  8 Oct 2025 19:39:35 +0200 (CEST)
-Date: Wed, 8 Oct 2025 19:39:35 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com,
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-Subject: Re: [PATCH] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-Message-ID: <20251008173935.4skifawm57zqpsai@pali>
-References: <20251006114507.371788-1-aha310510@gmail.com>
+	s=arc-20240116; t=1759946107; c=relaxed/simple;
+	bh=u2DpBaXRZ7mJGKPOLy4KCBidsT0cH9E/K3CtFwps7PY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nq1VNEBG6uNclPS2/2KGkOn5+ECBDWddYOgXIcP4P0XpQ14y9IGFEVoa+qak2toD5465W/+/bqAuxSg+Gbq1clFmBOQu0JfkOfZjiJAbHEDEB/+Z/t+OlsWzIHuMMHLFqERfIgR5HMzTYIjBymdtGKJXbUpHN2Qs45i/3g9FNxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vGFFB0PK; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 8 Oct 2025 13:54:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759946090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=8qejHQWaI1fXqm3UnNSaY0lJza2hZ2urX7Ww1ERGZSs=;
+	b=vGFFB0PKV1J9K7MEq/jCj2J0UL5M8a9+avSZ2Efag3dp+uJpYDjd0p7h5wBJeZ6hi6vlBl
+	BMC5m3Z/kDpkZaWp4GQLwjSkz2JQiogiTZL94rT06wXh42Aecdqjw7kDypGcmLzxQpxPD8
+	/j5oooQ/GbNQblraNYCvuzorG+kZYsQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: v9fs@lists.linux.dev, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>, 
+	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
+	Dominique Martinet <asmadeus@codewreck.org>
+Subject: -ENODATA from read syscall on 9p
+Message-ID: <hexeb4tmfqsugdy442mkkomevnhjzpuwtsslypeo3lnbbtmpmk@ibrapupausp7>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,63 +57,99 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251006114507.371788-1-aha310510@gmail.com>
-User-Agent: NeoMutt/20180716
+X-Migadu-Flow: FLOW_OUT
 
-Hello!
+So I recently rebased my xfstests branch and started seeing quite the
+strange test failures:
 
-On Monday 06 October 2025 20:45:07 Jeongjun Park wrote:
-> After the loop that converts characters to ucs2 ends, the variable i 
-> may be greater than or equal to len.
+00891     +cat: /ktest-out/xfstests/generic/036.dmesg: No data available
 
-It is really possible to have "i" greater than len? Because I do not see
-from the code how such thing could happen.
+No idea why a userspace update would expose this, it's a kernel bug - in
+the main netfs/9p read path, no less. Upon further investigation, cat is
+indeed receiving -ENODATA from a read syscall.
 
-I see only a case when i is equal to len (which is also overflow).
+No, read(2) is not allowed to return -ENODATA...
 
-My understanding:
-while-loop condition ensures that i cannot be greater than len and i is
-increased by exfat_convert_char_to_ucs2() function which has upper bound
-of "len-i". So value of i can be increased maximally by (len-i) which
-could lead to maximal value of i to be just "len".
+Upon further investigation, the error is generated in
+netfs_read_subreq_terminated():
 
-> However, when checking whether the
-> last byte of p_cstring is NULL, the variable i is used as is, resulting
-> in an out-of-bounds read if i >= len.
-> 
-> Therefore, to prevent this, we need to modify the function to check
-> whether i is less than len, and if i is greater than or equal to len,
-> to check p_cstring[len - 1] byte.
-> 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=98cc76a76de46b3714d4
-> Fixes: 370e812b3ec1 ("exfat: add nls operations")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  fs/exfat/nls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> index 8243d94ceaf4..a52f3494eb20 100644
-> --- a/fs/exfat/nls.c
-> +++ b/fs/exfat/nls.c
-> @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
->  		unilen++;
->  	}
->  
-> -	if (p_cstring[i] != '\0')
-> +	if (p_cstring[min(i, len - 1)] != '\0')
+netfs_wait_for_in_progress (rreq=rreq@entry=0xffff8881032f3980, collector=0xffffffff81542240 <netfs_read_collection>) at /home/kent/linux/fs/netfs/misc.c:468
+468             BUG_ON(ret == -ENODATA);
+(gdb) bt
+#0  netfs_wait_for_in_progress (rreq=rreq@entry=0xffff8881032f3980, collector=0xffffffff81542240 <netfs_read_collection>) at /home/kent/linux/fs/netfs/misc.c:468
+#1  0xffffffff815412f5 in netfs_wait_for_read (rreq=rreq@entry=0xffff8881032f3980) at /home/kent/linux/fs/netfs/misc.c:492
+#2  0xffffffff8153ca41 in netfs_unbuffered_read (rreq=0xffff8881032f3980, sync=<optimized out>) at /home/kent/linux/fs/netfs/direct_read.c:153
+#3  netfs_unbuffered_read_iter_locked (iocb=iocb@entry=0xffffc90003a17e98, iter=iter@entry=0xffffc90003a17e70) at /home/kent/linux/fs/netfs/direct_read.c:234
+#4  0xffffffff8153cb25 in netfs_unbuffered_read_iter (iocb=0xffffc90003a17e98, iter=0xffffc90003a17e70) at /home/kent/linux/fs/netfs/direct_read.c:272
+#5  0xffffffff81498fb0 in new_sync_read (filp=0xffff88811234c180, buf=0x0, len=2147479552, ppos=0xffffc90003a17f00) at /home/kent/linux/fs/read_write.c:491
+#6  vfs_read (file=file@entry=0xffff88811234c180, buf=buf@entry=0x7f0ab1767000 <error: Cannot access memory at address 0x7f0ab1767000>, count=count@entry=262144, pos=pos@entry=0xffffc90003a17f00) at /home/kent/linux/fs/read_write.c:572
+#7  0xffffffff81499a2a in ksys_read (fd=<optimized out>, buf=0x7f0ab1767000 <error: Cannot access memory at address 0x7f0ab1767000>, count=262144) at /home/kent/linux/fs/read_write.c:717
+#8  0xffffffff81bce8cc in do_syscall_x64 (regs=0xffffc90003a17f58, nr=<optimized out>) at /home/kent/linux/arch/x86/entry/syscall_64.c:63
+#9  do_syscall_64 (regs=0xffffc90003a17f58, nr=<optimized out>) at /home/kent/linux/arch/x86/entry/syscall_64.c:94
+#10 0xffffffff810000b0 in entry_SYSCALL_64 () at /home/kent/linux/arch/x86/entry/entry_64.S:121
 
-What about "if (i < len)" condition instead?
+void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq)
+{
+	struct netfs_io_request *rreq = subreq->rreq;
 
-The p_cstring is the nul term string and my understanding is that the
-"p_cstring[i] != '\0'" is checking that i is at position of strlen()+1.
-So should not be "if (i < len)" the same check without need to
-dereference the p_cstring?
+	switch (subreq->source) {
+	case NETFS_READ_FROM_CACHE:
+		netfs_stat(&netfs_n_rh_read_done);
+		break;
+	case NETFS_DOWNLOAD_FROM_SERVER:
+		netfs_stat(&netfs_n_rh_download_done);
+		break;
+	default:
+		break;
+	}
 
->  		lossy |= NLS_NAME_OVERLEN;
->  
->  	*uniname = '\0';
-> --
+	/* Deal with retry requests, short reads and errors.  If we retry
+	 * but don't make progress, we abandon the attempt.
+	 */
+	if (!subreq->error && subreq->transferred < subreq->len) {
+		if (test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags)) {
+			trace_netfs_sreq(subreq, netfs_sreq_trace_hit_eof);
+		} else if (test_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags)) {
+			trace_netfs_sreq(subreq, netfs_sreq_trace_need_clear);
+		} else if (test_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
+			trace_netfs_sreq(subreq, netfs_sreq_trace_need_retry);
+		} else if (test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags)) {
+			__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+			trace_netfs_sreq(subreq, netfs_sreq_trace_partial_read);
+		} else {
+			BUG();								<- ???
+			__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
+			subreq->error = -ENODATA;
+			trace_netfs_sreq(subreq, netfs_sreq_trace_short);
+		}
+	}
+
+	if (unlikely(subreq->error < 0)) {
+		trace_netfs_failure(rreq, subreq, subreq->error, netfs_fail_read);
+		if (subreq->source == NETFS_READ_FROM_CACHE) {
+			netfs_stat(&netfs_n_rh_read_failed);
+			__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+		} else {
+			netfs_stat(&netfs_n_rh_download_failed);
+			__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
+		}
+		trace_netfs_rreq(rreq, netfs_rreq_trace_set_pause);
+		set_bit(NETFS_RREQ_PAUSE, &rreq->flags);
+	}
+
+	trace_netfs_sreq(subreq, netfs_sreq_trace_terminated);
+	netfs_subreq_clear_in_progress(subreq);
+	netfs_put_subrequest(subreq, netfs_sreq_trace_put_terminated);
+}
+
+So, the underlying transport doesn't appear to be making forward
+progress - IOW, this would appear to be a 9p bug - and then netfs
+instead of a WARN() or doing anything to let people know that there's a
+bug and where to look for it, returns a nonstandard error code to
+userspace - fun.
+
+Of course, this being a read, short reads are expected; another thought
+is to wonder why netfs has decided that it should decide this particular
+short read is unexpected instead of leaving the i_size checks to the
+underlying filesystem.
 
