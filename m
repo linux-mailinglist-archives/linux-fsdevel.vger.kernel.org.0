@@ -1,102 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-63583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1528BC490B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 13:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35FBBC495C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 13:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F7734EED83
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 11:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5491890EC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 11:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E462F7449;
-	Wed,  8 Oct 2025 11:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670502F746D;
+	Wed,  8 Oct 2025 11:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="paMqCL3f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="STRGpFEd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="paMqCL3f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="STRGpFEd"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cDXyF6qV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LZfNIq6h";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0emNODP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FyBBMf7g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4322F4A0A
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 11:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5A925C6F1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 11:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922941; cv=none; b=fjUU2PwoA3UZ2+X4cohiSp/gbIDU4ljGzA4kO9iZIBPkBCJPGHsTMZ5ilsG4O44Jwz8r4MzAQeHlGyZi5UPp2hhNsXydBn4RlWygbkwZkA1ABj3pZdQSEDBBAVxIkXI7Q+FeVCO4+sgg5lFF6PAUu5ga48L6YXYiwZ/eZlsPTjs=
+	t=1759923411; cv=none; b=NF5HNfB0FBlRQfhn7pTrxEIxsoj18UAB2ullO0kFdPIpQwbKzLibLEtDzASFf3RGYc3Sg473GXK9U9c+EevL/XHo3HXvVzNUfogXwmPGo4ZGL5dCjJ44cJHh1f8/YwsGd4yaqqGBg0T+9JHQKojuuBTEobT2uiFt3YsanH033UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922941; c=relaxed/simple;
-	bh=W6HYvSTQL+ketjlyhzJdSP6L024Oizxpa9h/796ZCMs=;
+	s=arc-20240116; t=1759923411; c=relaxed/simple;
+	bh=dUA0kycUjCNgoLmLvWW5zC2MSB7Y6zh05/n1UZBgrPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5CbOqJiyao7dfe17ZmTHNVu8zW4meQRtii3IGUgFJ5HGqKoqIJgwvkUtrSQ88xiX2htaKjpbU9lo/a5TSqPUPRj1uAwjH2cW/6VBNClaYLk1htpRv574IoxPwTA+eGi6RkPjsCPdyOJcjPjteD0t42RDVPWK0/UUb/4cpiGbjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=paMqCL3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=STRGpFEd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=paMqCL3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=STRGpFEd; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6yzDYVkSiU3iSL9Xb7AoPqkko27bN+YLNWRyruAyflYSDV0RS03U/5jRyv2PV50MOEkCYZCzR+5VRHCtjRTHWt5KYFp0dLz62QH3IdIGKstFweW2p6YKaq7PYuohtVK4Okte2gicI8D+ReNK/6mcL0chfp52GctMq69UGenq10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cDXyF6qV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LZfNIq6h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0emNODP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FyBBMf7g; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D21B71F395;
-	Wed,  8 Oct 2025 11:28:57 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CAC7C33682;
+	Wed,  8 Oct 2025 11:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759922937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759923408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
-	b=paMqCL3fAwb0fTSPVxSQd8fseTsc4c3+0K+BEuXy1sG+jtqOZr5+bFkTA7kRqsezhJART9
-	XHAwCtiG4AODKd7GPbEvV5lxGeGb+fVK9NF2kdwCdKoS3NzWsuJbPEftXF14a6rVIxYzsj
-	VVhvdVq+UBr59Fv6yNYWPD+YpMcq+Vc=
+	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
+	b=cDXyF6qV01eynbfN74hM9iVNFNSyB1IEb4SkSPMJBhqck4AfX87luVoaJziQg7Esf2jDtJ
+	Ple3AcxnxHEuaLNZLlPIbyIoQQ1HpEwJlJT8ILwYISccAvaDI9f697/Y+m/vJhRtnVQU45
+	HiHfkDWHCgt1RAFT0j6v6QJxlbIAVMc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759922937;
+	s=susede2_ed25519; t=1759923408;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
-	b=STRGpFEdm7btKUZ7Z/tCotIjuRk8ga3uVRciOm9op8ByhePT69VbsRfxrh53w9nzigwhpA
-	hXQHQ3peBHdpBBAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
+	b=LZfNIq6ht+Bxfh0B52NclgW6PVTxVHYv3y1dWaXX2brlPitEpU2R0kTd21Mtm5BDQ95kz3
+	f8DsLR26tCvjAEAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r0emNODP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FyBBMf7g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759922937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759923407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
-	b=paMqCL3fAwb0fTSPVxSQd8fseTsc4c3+0K+BEuXy1sG+jtqOZr5+bFkTA7kRqsezhJART9
-	XHAwCtiG4AODKd7GPbEvV5lxGeGb+fVK9NF2kdwCdKoS3NzWsuJbPEftXF14a6rVIxYzsj
-	VVhvdVq+UBr59Fv6yNYWPD+YpMcq+Vc=
+	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
+	b=r0emNODP1UBpzvDJay464gnGYQZrUqPOIVgzeLkc/SnfiDyc5dyxJGTI9atNamtzWlyj9O
+	g2Rvkj4M14396sX5gaRaLd4C9Y2QnbnEttNlNa+Ieb7d5YrrXeYboShzaEd8s/K79Q1/o7
+	vqp2xRMNDTbwqXJAoaQEC2O0pU3oOZY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759922937;
+	s=susede2_ed25519; t=1759923407;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
-	b=STRGpFEdm7btKUZ7Z/tCotIjuRk8ga3uVRciOm9op8ByhePT69VbsRfxrh53w9nzigwhpA
-	hXQHQ3peBHdpBBAw==
+	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
+	b=FyBBMf7gUwBwOapylXwqKBxhYJrG+jZU5Nd61iR33Th2NskRKjiG0zuFhYrKxsGYpwDc8O
+	wn5sKxGAiLX7nQBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B97A713693;
-	Wed,  8 Oct 2025 11:28:57 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDE7E13A3D;
+	Wed,  8 Oct 2025 11:36:47 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +HpFLflK5mjlKAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:28:57 +0000
+	id R1tWLs9M5mhbKwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:36:47 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3B9DBA0ACD; Wed,  8 Oct 2025 13:28:57 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:28:57 +0200
+	id 580EBA0ACD; Wed,  8 Oct 2025 13:36:43 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:36:43 +0200
 From: Jan Kara <jack@suse.cz>
 To: Zhang Yi <yi.zhang@huaweicloud.com>
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
 	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 04/13] ext4: make ext4_es_lookup_extent() pass out the
- extent seq counter
-Message-ID: <5qdt2outacmgyrz4w5lqokwhp3haifs5z22hrgg22fd4kgbyzt@2y54npfzwwzv>
+Subject: Re: [PATCH v2 05/13] ext4: pass out extent seq counter when mapping
+ blocks
+Message-ID: <uugyelukqaxxipbrdrldvr37eoqn5uqc4x7jhvex6vbdaswgnl@wcwjbfcglxna>
 References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-5-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,41 +106,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-5-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
+In-Reply-To: <20250925092610.1936929-6-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: CAC7C33682
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-On Thu 25-09-25 17:26:00, Zhang Yi wrote:
+On Thu 25-09-25 17:26:01, Zhang Yi wrote:
 > From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> When querying extents in the extent status tree, we should hold the
-> data_sem if we want to obtain the sequence number as a valid cookie
-> simultaneously. However, currently, ext4_map_blocks() calls
-> ext4_es_lookup_extent() without holding data_sem. Therefore, we should
-> acquire i_es_lock instead, which also ensures that the sequence cookie
-> and the extent remain consistent. Consequently, make
-> ext4_es_lookup_extent() to pass out the sequence number when necessary.
+> When creating or querying mapping blocks using the ext4_map_blocks() and
+> ext4_map_{query|create}_blocks() helpers, also pass out the extent
+> sequence number of the block mapping info through the ext4_map_blocks
+> structure. This sequence number can later serve as a valid cookie within
+> iomap infrastructure and the move extents procedure.
 > 
 > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
@@ -150,102 +155,95 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/ext4/extents.c        | 2 +-
->  fs/ext4/extents_status.c | 6 ++++--
->  fs/ext4/extents_status.h | 2 +-
->  fs/ext4/inode.c          | 8 ++++----
->  4 files changed, 10 insertions(+), 8 deletions(-)
+>  fs/ext4/ext4.h  |  1 +
+>  fs/ext4/inode.c | 24 ++++++++++++++++--------
+>  2 files changed, 17 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index ca5499e9412b..c7d219e6c6d8 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -2213,7 +2213,7 @@ static int ext4_fill_es_cache_info(struct inode *inode,
->  	while (block <= end) {
->  		next = 0;
->  		flags = 0;
-> -		if (!ext4_es_lookup_extent(inode, block, &next, &es))
-> +		if (!ext4_es_lookup_extent(inode, block, &next, &es, NULL))
->  			break;
->  		if (ext4_es_is_unwritten(&es))
->  			flags |= FIEMAP_EXTENT_UNWRITTEN;
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index 62886e18e2a3..9bf2f48d8ffe 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -1035,8 +1035,8 @@ void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
->   * Return: 1 on found, 0 on not
->   */
->  int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
-> -			  ext4_lblk_t *next_lblk,
-> -			  struct extent_status *es)
-> +			  ext4_lblk_t *next_lblk, struct extent_status *es,
-> +			  u64 *pseq)
->  {
->  	struct ext4_es_tree *tree;
->  	struct ext4_es_stats *stats;
-> @@ -1095,6 +1095,8 @@ int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
->  			} else
->  				*next_lblk = 0;
->  		}
-> +		if (pseq)
-> +			*pseq = EXT4_I(inode)->i_es_seq;
->  	} else {
->  		percpu_counter_inc(&stats->es_stats_cache_misses);
->  	}
-> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-> index 8f9c008d11e8..f3396cf32b44 100644
-> --- a/fs/ext4/extents_status.h
-> +++ b/fs/ext4/extents_status.h
-> @@ -148,7 +148,7 @@ extern void ext4_es_find_extent_range(struct inode *inode,
->  				      struct extent_status *es);
->  extern int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
->  				 ext4_lblk_t *next_lblk,
-> -				 struct extent_status *es);
-> +				 struct extent_status *es, u64 *pseq);
->  extern bool ext4_es_scan_range(struct inode *inode,
->  			       int (*matching_fn)(struct extent_status *es),
->  			       ext4_lblk_t lblk, ext4_lblk_t end);
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 7b37a661dd37..7f452895ec09 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -260,6 +260,7 @@ struct ext4_map_blocks {
+>  	ext4_lblk_t m_lblk;
+>  	unsigned int m_len;
+>  	unsigned int m_flags;
+> +	u64 m_seq;
+>  };
+>  
+>  /*
 > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..c7fac4b89c88 100644
+> index c7fac4b89c88..d005a4f3f4b3 100644
 > --- a/fs/ext4/inode.c
 > +++ b/fs/ext4/inode.c
-> @@ -649,7 +649,7 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
+> @@ -550,10 +550,13 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
+>  		retval = ext4_ext_map_blocks(handle, inode, map, flags);
+>  	else
+>  		retval = ext4_ind_map_blocks(handle, inode, map, flags);
+> -
+> -	if (retval <= 0)
+> +	if (retval < 0)
+>  		return retval;
+>  
+> +	/* A hole? */
+> +	if (retval == 0)
+> +		goto out;
+> +
+>  	if (unlikely(retval != map->m_len)) {
+>  		ext4_warning(inode->i_sb,
+>  			     "ES len assertion failed for inode "
+> @@ -573,11 +576,13 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
+>  				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+>  		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+>  				      map->m_pblk, status, false);
+> -		return retval;
+> +	} else {
+> +		retval = ext4_map_query_blocks_next_in_leaf(handle, inode, map,
+> +							    orig_mlen);
+>  	}
+> -
+> -	return ext4_map_query_blocks_next_in_leaf(handle, inode, map,
+> -						  orig_mlen);
+> +out:
+> +	map->m_seq = READ_ONCE(EXT4_I(inode)->i_es_seq);
+> +	return retval;
+>  }
+>  
+>  static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
+> @@ -649,7 +654,7 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
 >  	 * extent status tree.
 >  	 */
 >  	if (flags & EXT4_GET_BLOCKS_PRE_IO &&
-> -	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
-> +	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+> -	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+> +	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
 >  		if (ext4_es_is_written(&es))
 >  			return retval;
 >  	}
-> @@ -723,7 +723,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
+> @@ -658,6 +663,7 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
+>  			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+>  	ext4_es_insert_extent(inode, map->m_lblk, map->m_len, map->m_pblk,
+>  			      status, flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE);
+> +	map->m_seq = READ_ONCE(EXT4_I(inode)->i_es_seq);
+>  
+>  	return retval;
+>  }
+> @@ -723,7 +729,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
 >  		ext4_check_map_extents_env(inode);
 >  
 >  	/* Lookup extent status tree firstly */
-> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
-> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
 >  		if (ext4_es_is_written(&es) || ext4_es_is_unwritten(&es)) {
 >  			map->m_pblk = ext4_es_pblock(&es) +
 >  					map->m_lblk - es.es_lblk;
-> @@ -1908,7 +1908,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
->  	ext4_check_map_extents_env(inode);
+> @@ -1979,6 +1985,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
 >  
->  	/* Lookup extent status tree firstly */
-> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
-> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
->  		map->m_len = min_t(unsigned int, map->m_len,
->  				   es.es_len - (map->m_lblk - es.es_lblk));
+>  	map->m_flags |= EXT4_MAP_DELAYED;
+>  	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
+> +	if (!retval)
+> +		map->m_seq = READ_ONCE(EXT4_I(inode)->i_es_seq);
+>  	up_write(&EXT4_I(inode)->i_data_sem);
 >  
-> @@ -1961,7 +1961,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
->  	 * is held in write mode, before inserting a new da entry in
->  	 * the extent status tree.
->  	 */
-> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
-> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
->  		map->m_len = min_t(unsigned int, map->m_len,
->  				   es.es_len - (map->m_lblk - es.es_lblk));
->  
+>  	return retval;
 > -- 
 > 2.46.1
 > 
