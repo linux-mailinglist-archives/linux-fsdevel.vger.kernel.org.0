@@ -1,94 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-63573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58BCBC3661
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 07:52:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132E9BC3679
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 07:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2A03C7CA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 05:52:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B47FC350B54
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 05:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28D32EA49C;
-	Wed,  8 Oct 2025 05:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EFB240604;
+	Wed,  8 Oct 2025 05:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lmszr0oj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00B02E92D2
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 05:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F33E14A09C;
+	Wed,  8 Oct 2025 05:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759902725; cv=none; b=pg+CaU887BLKqwXwx88CUTeaZ2S+Y7M2h7SiffkVMR+QQf3HKRHLXSskqN1v73RkkmtHzNiXZFfYzvKL1wNcFtbGbgLocpT55Okawxb+b+HC8K90tte6gkRqNpMJGaJ5pVPqbvc9AAW193AlDTluyL7B3TeKFdQdp2KYBFsUHKk=
+	t=1759902972; cv=none; b=AbHUbSliu/YcxMOffBlHdEeQbBWI0koy9paHrvKiZ1TqjhfbdeR1vdoHCEhpn+ggGiGwXdSVxL1nuIrwpGorhaXn1brOySj+/hVFbVlLD8fAyxd7hB6Ptuhf2qrG/Cr2UmeH8OAKXXlQKCuFsr/jMFy46Hj4bdyK1HclPQQDZQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759902725; c=relaxed/simple;
-	bh=rISreA05oSPphUeXePaG+iNGh6KKZHmaHX0gxIZn55s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Qdt1v087n0J6/HzPQ4QKbObIIMgj4MSvS9zsNdc/ewGHkC784RAIFHoRedB5gE5kg/y+aRX/SP0Ma/L3yeV8pX/5KrKcdrmo47ErfbHhG0mlvRrrYQwgw4X75CcvInb/KC9ZetBtVJsDxpxxtCGwGgyLF1SFzrQDnOEckZzaKnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42f6639fb22so59724425ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Oct 2025 22:52:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759902723; x=1760507523;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2A6jgIs23tCx0rnkILPWDEiPNOjzuEXCnKHJ2BUu/Ow=;
-        b=pBGzJDAoQmUwQb0cmM/zmDX883Q7uMcU1VwSxYSa5tBQCT4+Bej53ncDMLgMnqDPTF
-         6AMIZKqOnFQRinteGqEELIRGYSNCyklvWDUc6TrFQrgdoSpHTgRqQAw0E/3JrK7xvEYr
-         rErF1cKnhfYDeBwyfMpHnaoA34d8eUPmNMiQEUgryUlcldEzZA596xzrVgxlQQLMdsMs
-         iNGr4a86wnTt/mdBNM2IsKMfNbeCittrL6Zz2Bn9YAog7lFXU/2dqCT5qYQVwiiLXEe1
-         KX7DQ7ReL2DRaTD39HJGQk/Mth0afv5sbpqDHj/39TAPsbwwh1dj3CtpnTBpcNUczoZe
-         BT4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVZka6ld5VtJN+cTJRTU4P4I9ZR9NLUtN1LH0PYie4CveeedNDPjlC5hucf+Sfu9jGbwWN//QgPOCWcSvsl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKqTD8jsWPXKaOoAPXehBBGFugM0m/qRl2X8lajV64qGWgjDkq
-	5taXpRimiJ4IZy9RvntptWp3V5xxs9Pzv2ffrTh9XYGNKw24iqQyQZKQMLpa+m0WbWrT0KNJexv
-	+b+xaB0mJtfFZL0bj2prR94/JV1L4Z0WwJKzG1gGjebwjPqzmOV83r6a/mEY=
-X-Google-Smtp-Source: AGHT+IGptM0/W+RC8JNNbvxwbL47syZs+ieVCOeFF3bOYyE+bsCsNYCyWyGD3xDDyj9zvgbuTmomwlV0EBz0plohKVovC+Xba1uN
+	s=arc-20240116; t=1759902972; c=relaxed/simple;
+	bh=F38Mt2goSKLUsaf0mqFqP8niI3l76+ZAo94FJ+L4YVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwgfq/TwtmVYcKE+ErLeNM+fKmwSBcmHE1I6AKVjBWcVv6k45R6tpk9sTMh3untlRwDgHxV8heLiu/w1nLgZ05ZatYHSreui1i/Xocifk2BBQWbcu2m5LoInVWac3dSFThjX2ePSuqI360O0FLvMQBs2lzSonGUMEeVZIkaT3Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lmszr0oj; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/X26947JAoSSaLr+voBnU4Dp3KYTt3aLBJ6Xsf1gpD0=; b=lmszr0ojI9mQdYgfTYqnyaoeHV
+	9ZDvvcG3tOTjG4m5X+YgY2l+cotTuwVfNFCSJ0oY3t4t6nuMw3e4jIUbAaw3+UFeDdb4vYLIY1w80
+	1NsL6VX0phUO20oqAkI3GLSsAEctWdqAz6Fzw17jbq1yyEhomCwDI18NSeD3QTjfX2bPO7kA/V6ZQ
+	vfHiHgIpY6hUSUxD5QWSGLRjPvP1h6pleDH5NuufJKKDU3pcr+n/7/E9ca4jaYM+bq67TktXyxzQV
+	g9A11TCh5ni3ICAnfs8oZ4I8GNg6QJfM4GvvV+I/d6WYARHXzXBuSoqAFu8fuOEBGm9a/2Sdmfx7r
+	qy8odKEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6N9d-00000003Ez0-18fd;
+	Wed, 08 Oct 2025 05:56:01 +0000
+Date: Tue, 7 Oct 2025 22:56:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+	Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH V4 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Message-ID: <aOX88d7GrbhBkC51@infradead.org>
+References: <20250928132927.3672537-1-ming.lei@redhat.com>
+ <20250928132927.3672537-7-ming.lei@redhat.com>
+ <aN92BCY1GQZr9YB-@infradead.org>
+ <aOPPpEPnClM-4CSy@fedora>
+ <aOS0LdM6nMVcLPv_@infradead.org>
+ <aOUESdhW-joMHvyW@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d98:b0:42d:7f38:a9b4 with SMTP id
- e9e14a558f8ab-42f8741b733mr17558735ab.31.1759902723031; Tue, 07 Oct 2025
- 22:52:03 -0700 (PDT)
-Date: Tue, 07 Oct 2025 22:52:03 -0700
-In-Reply-To: <00000000000054d8540619f43b86@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e5fc03.a00a0220.298cc0.0488.GAE@google.com>
-Subject: Re: [syzbot] [exfat] INFO: task hung in vfs_rmdir (2)
-From: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
-To: brauner@kernel.org, hdanton@sina.com, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
-	yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOUESdhW-joMHvyW@fedora>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-syzbot suspects this issue was fixed by commit:
+On Tue, Oct 07, 2025 at 08:15:05PM +0800, Ming Lei wrote:
+> NOWAIT is obviously interface provided by FS, here loop just wants to try
+> NOWAIT first in block layer dispatch context for avoiding the extra wq
+> schedule latency.
 
-commit 79c1587b6cda74deb0c86fc7ba194b92958c793c
-Author: Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sat Aug 30 05:44:35 2025 +0000
+Yes.
 
-    exfat: validate cluster allocation bits of the allocation bitmap
+> But for write on sparse file, trying NOWAIT first may bring extra retry
+> cost, that is why the hint is added. It is very coarse, but potential
+> regression can be avoided.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1695f92f980000
-start commit:   4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a5b3ec980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
+And that is absolutely not a property of loop, and loop should not have
+to know about.  So this logic needs to be in common code, preferably
+triggered by a fs flag.  Note that this isn't about holes - it is about
+allocating blocks.  For most file systems filling holes or extending
+past i_size is what requires allocating blocks.  But for a out of place
+write file systems like btrfs, or zoned xfs we always need to allocate
+blocks for now.  But I have work that I need to finish off that allows
+for non-blocking block allocation in zoned XFS, at which point you
+don't need this.  I think some of this might be true for network file
+systems already.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> 
+> > rather have a flag similar FOP_DIO_PARALLEL_WRITE that makes this
+> > limitation clear rather then opencoding it in the loop driver while
+> 
+> What is the limitation?
 
-#syz fix: exfat: validate cluster allocation bits of the allocation bitmap
+See above.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > leabing the primary user of RWF_NOWAIT out in the cold.
+> 
+> FOP_DIO_PARALLEL_WRITE is one static FS feature,
+
+It actually isn't :( I need to move it to be a bit more dynamic on a
+per-file basis.
+
+> but here it is FS
+> runtime behavior, such as if the write can be blocked because of space
+> allocation, so it can't be done by one static flag.
+
+Yes, that's why you want a flag to indicate that a file, or maybe file
+operations instance can do non-blocking fill of blocks.  But that's
+for the future, for now I just want your logic lifted to common code
+and shared with io_uring so that we don't have weird hardcoded
+assumptions about file system behavior inside the loop driver.
+
+> io-uring shares nothing with loop in this area, it is just one policy wrt.
+> use NOWAIT or not. I don't understand why you insist on covering both
+> from FS internal...
+
+It's really about all IOCB_NOWAIT users, io_uring being the prime one,
+and the one that we can actually easily write tests for.
+
 
