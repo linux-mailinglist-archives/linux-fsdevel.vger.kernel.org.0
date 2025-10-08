@@ -1,177 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-63602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83DEDBC57A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 16:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B41D9BC57CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 16:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3EAD3C7F89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 14:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829573A811F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 14:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE782EC550;
-	Wed,  8 Oct 2025 14:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4092EC560;
+	Wed,  8 Oct 2025 14:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqCOyJXR"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Q+HbRt8n";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ps8/ZbSd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF662EC099
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 14:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D3324DCF9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 14:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759934974; cv=none; b=C++dhzuhNqXDYcBF42w+1xO+0xpZvvQeKOn4nNCVwckqH0sPYWd5LQAu1dz8jrhiRYsE2800YBSUaBwzT9f1Q8FEqehK2x1ISu1XtHgzgoKgzIjo+nKUBebO5+/UBEKbZkkOd6lvCqVX5q6KRHdEP9xg/leINS+WNlsZbsZTWL0=
+	t=1759935252; cv=none; b=CZQTifoy5cZg7bTqrtGIhiiQ8ngSHjp8Z+X1zGLj+hufRH1/UFChnXDuP5gSjIDZ5bI0EdKNV/Z14tA3JDgEsGdS3m7N4n0wJYCbdyjOexjPfzOx4wKTdwaXE84Najg9P+VkGZKljROoLv4zRZdAhy8a9ZOrEuBow+GarHrjtkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759934974; c=relaxed/simple;
-	bh=2oz4055tSs+ZLXmvAtmckJ9z5uGepgRmiB+RNzcDoZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PmaIyvM4IVrfcH5CYARN+IjdKrOp4lon5s1soIceWq5e0YYbZTORj/x6NdtKLws9ja1cFXYY5vM0IdLIEylfCx1mUcaAhMLFj9QQgxDe/t+Pf8kY6lsj9eNB8wdehnyAavFgxw4VMCc/UxljPxaYVwJqHoIk8qjzOBy2zIQor3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqCOyJXR; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-633be3be1e6so1539665d50.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 07:49:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759934972; x=1760539772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lcyaXLUPShgmIDCl33cHm/vwKuNgk2xrFWZ6LINoljM=;
-        b=fqCOyJXR+xxnYM34HBhJfbxalqBTWYYIDFA+INmQykJpkFZ2+KiTrqJ/37pyAP1FTx
-         QlJx8tvA647GFwCJ67FOKkbmfKemsC7wvb6Mmeyc7WAg7lwbLD4APo0QhX+thwdZfO15
-         vjpKl+7JkxbvcXHcuKjd3OSbPi2Oexpgf2EyGluNjgcYIe9TF3PbszAWxOUjXjF61PUb
-         7YWOA+Dt8NK3nhuUHwe6P5K3tduixazIORhkGl7qptxKpKMxXOxPhY945iLxMuzptFeT
-         +d/K6kG8Ejda4+Z1AoA7rJhTpUmbsgbhaHv5ss7JpcVxm4Qc6gyOuVff8xPtMDsKLEn4
-         /TZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759934972; x=1760539772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lcyaXLUPShgmIDCl33cHm/vwKuNgk2xrFWZ6LINoljM=;
-        b=JGBzyQigkGlLGBVA6CY3SJu9NJIR5yShPNLo6PCAGRzWyqcAEner/QMQesWzijeevk
-         si6M4keRPv3JM/DeV2Xq2kSZugdxejxzD860ORuS7XkF7ZNbdUFHLMuXYsPSCI1sJIR5
-         Ax2uvs0qnIPmAX6HctHktvFJPEbO4Y6LtdBzCiYLfWsdZBygPneJbQzlVWHlJYUhploj
-         VX2zaQi2q3h3qXc3MSq+GP5aJHPe+nufPGte9NfOk3duMYhoO1rk22KCzdtZMeb5n1li
-         zZCZ3r48EXWQbb548ivVAT1W/fNp1qM09awxXNGzX2fb3mpMvURy31SngAz2xwAVBY/s
-         g/Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNW4wvKim27geRMP8rwL04qKdfLmPUz4jHfcNlDtNGZthlBD5SMYnBjsKj7/r8W9gsCdt3r2fQMpIkQhed@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi/8mn2Z+CQ3jF0cnb/5sQI3jKlXSXZTzeoBji4RQfKb6tc+oJ
-	ujIRdSOVWeFOnqQMXncbp44/7Kg/+fKQt5k578lcPIk73XhnG/qqfPBhiyGb1n8VzciggbHFuCU
-	eCKGu7RuG1kKPm1jJZNV70JhliMmirBc=
-X-Gm-Gg: ASbGncsdgVPagM1KKh4MCaN5H59W52uO4tmBEnDvC+Rh3OAjzHX4nUAt1RTUTYQ2JJy
-	VDm00R+tL/7eUkkmjDw3uAoq9FXyWrVHsHiJY8QyRPCXDN3qc1jTbZ+1Dms2q2h5GE9j8cY2lym
-	WogbgdmkOfz+MRKKz8JN2WxtgwW+Vml1OeJvQRTZoo/YpJMgpUC/c+5K3fWZGOKcMF4EmpeT9Ar
-	QRo3uK4JkNyv0USFd9Z2BvI8i/lFQPsfJo8DHN2PpuwfA==
-X-Google-Smtp-Source: AGHT+IEEvRqkuJ82Z/1uDguuR+kVgtpAwObB6vWeI3q8N/eP1FxDL09AonZPB36dClmDoJcAb7GULptIPduQRTZOjdw=
-X-Received: by 2002:a53:b847:0:b0:635:4ecf:f0ce with SMTP id
- 956f58d0204a3-63cbe14cc08mr6282876d50.26.1759934971823; Wed, 08 Oct 2025
- 07:49:31 -0700 (PDT)
+	s=arc-20240116; t=1759935252; c=relaxed/simple;
+	bh=7FHWcQrS8236m+Hy0xeNahUEkkTf8hBjMXHe1XoZ8B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+uHKNM5qLJr7RMUfW4mNNjJ2GoqUPD13xgyAqCkbe4VVkdbwnb3Hkk0IVt6kpkRd1rhxiKsZlR8/2lNn/ScW1pZMyawkddVR++xsLS824gYqac0RLzvhs+i5eT4Jp7UIZuG59IKqOh1p9c9TnDAly8X7Z3j5pfGVRhv4LnJHLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Q+HbRt8n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ps8/ZbSd; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4C5551D00055;
+	Wed,  8 Oct 2025 10:54:08 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 08 Oct 2025 10:54:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1759935248; x=
+	1760021648; bh=cxjXQzbYHa9gdrvaIHZq0mlCekuWfVqLUGcO7cpYi3U=; b=Q
+	+HbRt8n4WWT5Fk6U7SJJvBGgyVjay+Ch3Pnr4JwSiHGIrpFTUvwKJ4DKvpmQYJ3u
+	9StJV4XcgJaPYQRVRNbAr6Y9xpTB1ahmPInLXGI37gRLnaZ9YwugmDMPZ42mCoOG
+	joeHDepYVSf7q5KYfRPSyi3C8f3I6yjKN0AtMH7H1WKGr7k8lvip1IyYXYkGAtIT
+	cGZuNfVpArA2nqowdr1DaXvg8xwvLaKVuRPJNEj1x0yxAmbe/lisRenEv7cyjwTf
+	vnQIVRbf7JUFOdeFef2hXiZ4W1vdAPDfn9N1CHo2c2Oi+rODi0tQZI5sa4i6OGnM
+	2wVjfX0w4XYzIgwyJ6jaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759935248; x=1760021648; bh=cxjXQzbYHa9gdrvaIHZq0mlCekuWfVqLUGc
+	O7cpYi3U=; b=ps8/ZbSdxARwBXdeCKHuJgVwjInbM2/ItY0ahzgp+3NsbHND4am
+	1q8oxD9RJS3sssbZjMZRuB2+Jf1KbXcD0Z2PCoL4JMG4KI2Vlef4+TbCChe9GmEB
+	EQGM0iEtvrjuslO622idvbLETF6lnItWyZJapYAg7JhBpqyh2pkPFtzuVvWzCEmh
+	Lo+4z3qf6mRGYoYxgVT/OhHfetdWC/uTQlkmVkJhnoR6PuBgMu55gJbu1KPXjINN
+	3Hxq1UuYIy0srz4zv4LlBv06BxPk4iTA122Xlz5bxJ9iWn6XGrgub3PBnCHNhK4W
+	AAhlLlG6e5MWxHaE9Y9nu6MtWuBmif4mKIA==
+X-ME-Sender: <xms:D3vmaPkXz-0p-LqJ53si7ifLxQnlRLRatVBcBI_11ctHYmKPFqpMaw>
+    <xme:D3vmaF7st4hBKtzOihNXaUY5agPEZRUdQdzN-LLYy3hXonlHUHN5dcpO7SRyERVV1
+    xWRTe7nBKvhG_xMmPszPbfYvdeoEHX6K6f7acV7PHNZCNW0kfBszOY>
+X-ME-Received: <xmr:D3vmaATwcTvRsJoJH8TVLA-Umga8yui94ZIwajmtSY4tza_p4-L8m8QrU9Be6w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdefheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedu
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghlughssehlihhnuh
+    igqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgr
+    uggvrggurdhorhhgpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:D3vmaDxB2UES1dtMqkK3RIlF6QYxUODmoefxum_9xjhXquPr0yKIig>
+    <xmx:D3vmaIoXLflSPLcHVl_6yOnUQls4R3zAMuoOULjyttPrvkEgv4UZYA>
+    <xmx:D3vmaG0SA70G5S13n9--vCA8EsxzmixMUwNQ5eoJOMLfNoexKp2W7Q>
+    <xmx:D3vmaIyI00jkSyFKEYGX-ud23kYOkogdbyC1HHusVy4-LvdnxnL_xQ>
+    <xmx:EHvmaK6oUWl1iRaqYzM3yV4euRPrYpM1kBQsE3eHFFNe4Tdu4EliPIMP>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 10:54:07 -0400 (EDT)
+Date: Wed, 8 Oct 2025 15:54:05 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: Optimizing small reads
+Message-ID: <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
+References: <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
+ <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
+ <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
+ <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
+ <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
+ <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+ <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
+ <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
+ <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
+ <CAHk-=wgbQ-aS3U7gCg=qc9mzoZXaS_o+pKVOLs75_aEn9H_scw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121100539.605818-1-jimzhao.ai@gmail.com> <20251007161711.468149-1-JPEWhacker@gmail.com>
- <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
-In-Reply-To: <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
-From: Joshua Watt <jpewhacker@gmail.com>
-Date: Wed, 8 Oct 2025 08:49:20 -0600
-X-Gm-Features: AS18NWCpKHFseMz7HnNNaZWGPOtA5ZcFiGPgcQxn7wnVm-h7S75ViS7O41MSTZM
-Message-ID: <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
-Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
- into __wb_calc_thresh
-To: Jan Kara <jack@suse.cz>
-Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgbQ-aS3U7gCg=qc9mzoZXaS_o+pKVOLs75_aEn9H_scw@mail.gmail.com>
 
-On Wed, Oct 8, 2025 at 5:14=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> Hello!
->
-> On Tue 07-10-25 10:17:11, Joshua Watt wrote:
-> > From: Joshua Watt <jpewhacker@gmail.com>
+On Tue, Oct 07, 2025 at 04:30:20PM -0700, Linus Torvalds wrote:
+> On Tue, 7 Oct 2025 at 15:54, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > This patch strangely breaks NFS 4 clients for me. The behavior is that =
-a
-> > client will start getting an I/O error which in turn is caused by the c=
-lient
-> > getting a NFS3ERR_BADSESSION when attempting to write data to the serve=
-r. I
-> > bisected the kernel from the latest master
-> > (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). =
-Also,
-> > when I revert this commit on master the bug disappears.
+> > So here's the slightly fixed patch that actually does boot - and that
+> > I'm running right now. But I wouldn't call it exactly "tested".
 > >
-> > The server is running kernel 5.4.161, and the client that exhibits the
-> > behavior is running in qemux86, and has mounted the server with the opt=
-ions
-> > rw,relatime,vers=3D4.1,rsize=3D1048576,wsize=3D1048576,namlen=3D255,sof=
-t,proto=3Dtcp,port=3D52049,timeo=3D600,retrans=3D2,sec=3Dnull,clientaddr=3D=
-172.16.6.90,local_lock=3Dnone,addr=3D172.16.6.0
-> >
-> > The program that I wrote to reproduce this is pretty simple; it does a =
-file
-> > lock over NFS, then writes data to the file once per second. After abou=
-t 32
-> > seconds, it receives the I/O error, and this reproduced every time. I c=
-an
-> > provide the sample program if necessary.
->
-> This is indeed rather curious.
->
-> > I also captured the NFS traffic both in the passing case and the failur=
-e case,
-> > and can provide them if useful.
-> >
-> > I did look at the two dumps and I'm not exactly sure what the differenc=
-e is,
-> > other than with this patch the client tries to write every 30 seconds (=
-and
-> > fails), where as without it attempts to write back every 5 seconds. I h=
-ave no
-> > idea why this patch would cause this problem.
->
-> So the change in writeback behavior is not surprising. The commit does
-> modify the logic computing dirty limits in some corner cases and your
-> description matches the fact that previously the computed limits were low=
-er
-> so we've started writeback after 5s (dirty_writeback_interval) while with
-> the patch we didn't cross the threshold and thus started writeback only
-> once the dirty data was old enough, which is 30s (dirty_expire_interval).
->
-> But that's all, you should be able to observe exactly the same writeback
-> behavior if you write less even without this patch. So I suspect that the
-> different writeback behavior is just triggering some bug in the NFS (eith=
-er
-> on the client or the server side). The NFS3ERR_BADSESSION error you're
-> getting back sounds like something times out somewhere, falls out of cach=
-e
-> and reports this error (which doesn't happen if we writeback after 5s
-> instead of 30s). NFS guys maybe have better idea what's going on here.
->
-> You could possibly workaround this problem (and verify my theory) by tuni=
-ng
-> /proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This will
-> make inode writeback start earlier and thus should effectively mask the
-> problem again.
+> > Caveat patchor.
+> 
+> From a quick look at profiles, the major issue is that clac/stac is
+> very expensive on the machine I'm testing this on, and that makes the
+> looping over smaller copies unnecessarily costly.
+> 
+> And the iov_iter overhead is quite costly too.
+> 
+> Both would be fixed by instead of just checking the iov_iter_count(),
+> we should likely check just the first iov_iter entry, and make sure
+> it's a user space iterator.
+> 
+> Then we'd be able to use the usual - and *much* cheaper -
+> user_access_begin/end() and unsafe_copy_to_user() functions, and do
+> the iter update at the end outside the loop.
+> 
+> Anyway, this all feels fairly easily fixable and not some difficult
+> fundamental issue, but it just requires being careful and getting the
+> small details right. Not difficult, just "care needed".
+> 
+> But even without that, and in this simplistic form, this should
+> *scale* beautifully, because all the overheads are purely CPU-local.
+> So it does avoid the whole atomic page reference stuff etc
+> synchronization.
 
-Changing /proc/sys/vm/dirty_expire_centisecs did indeed prevent the
-issue from occurring. As an experiment, I tried to see what the lowest
-value I could use that worked, and it was also 500. Even setting it to
-600 would cause it to error out eventually. This would indicate to me
-a server problem (which is unfortunate because that's much harder for
-me to debug), but perhaps the NFS folks could weigh in.
+I tried to look at numbers too.
 
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+The best case scenario looks great. 16 threads hammering the same 4k
+with 256 bytes read:
+
+Baseline:	2892MiB/s
+Kiryl:		7751MiB/s
+Linus:		7787MiB/s
+
+But when I tried something outside of the best case, it doesn't look
+good. 16 threads read from 512k file with 4k:
+
+Baseline:	99.4GiB/s
+Kiryl:		40.0GiB/s
+Linus:		44.0GiB/s
+
+I have not profiled it yet.
+
+Disabling SMAP (clearcpuid=smap) makes it 45.7GiB/s for mine patch and
+50.9GiB/s for yours. So it cannot be fully attributed to SMAP.
+
+Other candidates are iov overhead and multiple xarray lookups.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
