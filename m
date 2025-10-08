@@ -1,103 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-63585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B151BC499F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 13:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E43BC49AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 13:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F19404E239A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 11:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721913AB43B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 11:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE1B2F746D;
-	Wed,  8 Oct 2025 11:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC472F744C;
+	Wed,  8 Oct 2025 11:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yoad3HMS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v8Te+tmI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T/+Bw+7b";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dig4r2Z2"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PTXoeHLk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLlIMfVE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qSCj7zrZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2P9SQZR7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BD62F7443
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 11:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD581DFE0B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 11:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759923866; cv=none; b=encCmp5ht4if8RH8HqfwDMCePKfj2g0HzZ0/URuB6tM/HPH0fwBVZmDMdPGjaoA0eeF9n+5X84i3JnZ2vZnblwRm5lPFNEZlyAf3VuoeRvAhBtaYksV287H4i3UaniyDQI31828lFITcDQXkkQ4cx1xncIgtuOnkd8C3ivj/xMs=
+	t=1759923938; cv=none; b=K3pp/Th4Z/d/VsQlRcMrrOZ4fAd3Ow7s3ozrYD10J6ZkwZiAWFQt2/I1nDElzlO/z/L9k0DJFfaO3XC7ZQSpoXcCju8Qll4cKoLx5MJ6epfDQtTDk9z1Sh/bInzIJk85WRD8joO1pKUq7nbxIq1gIhue2Ppg+dT8Jc5/xUnln7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759923866; c=relaxed/simple;
-	bh=8v7pMj1cNgF/WLXKnpw6wCM56kD68LRugprQ0yOdh/k=;
+	s=arc-20240116; t=1759923938; c=relaxed/simple;
+	bh=0/azAbPvLQ2XUaX8sTpvxeT/nCvBFVBbNF3uz7RMwd0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G749vKBZTpfkbUK3HFvsMGIVXQalhZdP12hnEHnS4IZ27vTvXuM7BTsGNT/zF0OQCjj+6HcfOO4C0BBrRN2YjeIxLWvRq/wxRscULPDL0O5EXyNIE4v92LvfgDuek8f+e/iXVDojc2yRSUoTo9bniqkY8MqI+lsP932K/lIJStM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yoad3HMS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v8Te+tmI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T/+Bw+7b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dig4r2Z2; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=oS3xAeCBJzxLp7eIrBq++PQDHfFKJBqxvOCGDhmiVNUF9BnlU+TPlVo+sc3kpghvMYHMhP6A/prfem240hLx4S7LLxuLuT+8CidprMOSc+7pOHvYuRuMkjuQHhjnXYnU4my2jmI7/k2yMst0gyoNSpXIM3LLskdb2v5xiLyvpeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PTXoeHLk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLlIMfVE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qSCj7zrZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2P9SQZR7; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C4B901F395;
-	Wed,  8 Oct 2025 11:44:22 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EAC911F766;
+	Wed,  8 Oct 2025 11:45:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759923863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759923935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5RgXe54SgiMk7hloWzwKQ+bG1PauvSHuiGRwPmpFZnY=;
-	b=Yoad3HMSSF/s4gg8nHnJ4AOmrlu7NWB0h0YEzuDX7iV1rwlpHkfF55/c6THDxKOOJF9tyY
-	C22rEoCjypYHTJwD1L1ql4sjUnz4FqPaHLgblgiw+UDLnGP4CZL6mi7Ep9yduaDQZZF9J0
-	FDyE8QsUeeuhHdMy4kKW8xeO+ubgDOc=
+	bh=FJyU6dhaUD2vMVT9WUefQeJfTiVF1dSwL+eInA4vJoA=;
+	b=PTXoeHLkFgAnzQEeS38cTt11p6f6VSzD/Rk4HsSLJXTGWA9O5UQ87JTrGXCpWbIXWqMAyd
+	2MClUzrfdGz9KtwcdzxkBAdlltjXOs98VtpG0nBKVIlSYs/HOkPQYZcHYa3gzuBY5zQHmT
+	K0rEqwPv9Sd6NsqwNUxaxHpBMj7/4JQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759923863;
+	s=susede2_ed25519; t=1759923935;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5RgXe54SgiMk7hloWzwKQ+bG1PauvSHuiGRwPmpFZnY=;
-	b=v8Te+tmIAH/k0HXoPG0gZpcEIaUdxyo+dYUCv4VJJ0KI+NUPQCoKQL2X4WqM8LZmVFA8ze
-	zCNNIpv+b+6XisBQ==
+	bh=FJyU6dhaUD2vMVT9WUefQeJfTiVF1dSwL+eInA4vJoA=;
+	b=mLlIMfVE2F9NmPGSkzHt2Vsyl8y88FhKYVo2qqqej0eqVyoj48h31wrLPuS+cqhkLSQmvS
+	Ud5fnCCiFEeKOICA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="T/+Bw+7b";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=dig4r2Z2
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759923862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759923934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5RgXe54SgiMk7hloWzwKQ+bG1PauvSHuiGRwPmpFZnY=;
-	b=T/+Bw+7bQr/qO/bJsWX3jFMb4a7GFlnaWdWnpwhNHxjgwIETkZM4vsQ2Pw+EuJLxY+IMve
-	8JXqqAvP1+O7eFzhmfmqtY3sVEoE1vMprERr7sUFRv+2DWZuxqlF7QgS0nMk50AXzKauwG
-	XQGgcMN1GiGg46Xo/eW0j087DIb0LPg=
+	bh=FJyU6dhaUD2vMVT9WUefQeJfTiVF1dSwL+eInA4vJoA=;
+	b=qSCj7zrZjbyySapgd6XKt/qa+x1mW7rjrYpUYOp7S+RrJ/trkUHG+SL+kGfOL71biXS0h+
+	20ytkgANECvbu+OcSXvY55YvNt7AgdSQdq6UY0rWjETvvPRjUwvVN5GPps/15LgffjzIOZ
+	vrTsn9LJ3mDwV3D7lUv4JdACoHRl9ME=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759923862;
+	s=susede2_ed25519; t=1759923934;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5RgXe54SgiMk7hloWzwKQ+bG1PauvSHuiGRwPmpFZnY=;
-	b=dig4r2Z2KuL+CgzHqAFXlDb2zOcF3I90RToJvjjldDhzdHRANAYI+j3aa55T3ThYEXsrU4
-	AxcjRmhcOgoaUgDA==
+	bh=FJyU6dhaUD2vMVT9WUefQeJfTiVF1dSwL+eInA4vJoA=;
+	b=2P9SQZR7t5BHZV+R01qgviL+Cng+GQvj4oIHbqdoilwVyFx7LUOEzhp16Mrf5z8yVFX47D
+	zMGPmerNRsuJb2CQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4E1613A3D;
-	Wed,  8 Oct 2025 11:44:22 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DADF713A96;
+	Wed,  8 Oct 2025 11:45:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5yAdLJZO5miTLQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:44:22 +0000
+	id P6BuNd5O5mgNLgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:45:34 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 590CBA0ACD; Wed,  8 Oct 2025 13:44:22 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:44:22 +0200
+	id 78AC6A0ACD; Wed,  8 Oct 2025 13:45:30 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:45:30 +0200
 From: Jan Kara <jack@suse.cz>
 To: Zhang Yi <yi.zhang@huaweicloud.com>
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
 	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/13] ext4: introduce seq counter for the extent
- status entry
-Message-ID: <ympvfypw3222g2k4xzd5pba4zhkz5jihw4td67iixvrqhuu43y@wse63ntv4s6u>
+Subject: Re: [PATCH v2 06/13] ext4: use EXT4_B_TO_LBLK() in
+ mext_check_arguments()
+Message-ID: <iz4x2yurkqxd6fzqw3ppf6pevyrzfxg4z3wwbufdwb7vtj6ndt@tnh5k2yts4nv>
 References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-4-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-7-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,92 +105,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-4-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
+In-Reply-To: <20250925092610.1936929-7-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huawei.com:email]
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
 X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C4B901F395
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+X-Spam-Score: -3.80
 
-On Thu 25-09-25 17:25:59, Zhang Yi wrote:
+On Thu 25-09-25 17:26:02, Zhang Yi wrote:
 > From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> In the iomap_write_iter(), the iomap buffered write frame does not hold
-> any locks between querying the inode extent mapping info and performing
-> page cache writes. As a result, the extent mapping can be changed due to
-> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
-> write-back process faces a similar problem: concurrent changes can
-> invalidate the extent mapping before the I/O is submitted.
-> 
-> Therefore, both of these processes must recheck the mapping info after
-> acquiring the folio lock. To address this, similar to XFS, we propose
-> introducing an extent sequence number to serve as a validity cookie for
-> the extent. After commit 24b7a2331fcd ("ext4: clairfy the rules for
-> modifying extents"), we can ensure the extent information should always
-> be processed through the extent status tree, and the extent status tree
-> is always uptodate under i_rwsem or invalidate_lock or folio lock, so
-> it's safe to introduce this sequence number. The sequence number will be
-> increased whenever the extent status tree changes, preparing for the
-> buffered write iomap conversion.
-> 
-> Besides, this mechanism is also applicable for the moving extents case.
-> In move_extent_per_page(), it also needs to reacquire data_sem and check
-> the mapping info again under the folio lock.
+> Switch to using EXT4_B_TO_LBLK() to calculate the EOF position of the
+> origin and donor inodes, instead of using open-coded calculations.
 > 
 > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-One idea for future optimization as I'm reading the series:
+Looks good. Feel free to add:
 
-> @@ -955,6 +961,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->  		}
->  		pending = err3;
->  	}
-> +	ext4_es_inc_seq(inode);
->  error:
->  	write_unlock(&EXT4_I(inode)->i_es_lock);
->  	/*
-
-ext4_es_insert_extent() doesn't always need to increment the sequence
-counter. It is used in two situations:
-
-1) When we found the extent in the on-disk extent tree and want to cache it
-in memory. No increment needed is in this case.
-
-2) When we allocated new blocks or changed their status. Increment needed
-in this case.
-
-Case 1) can be actually pretty frequent on large files and we would be
-unnecessarily invalidating mapping information for operations happening in
-other parts of the file although no allocation information changes are
-actually happening.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+> ---
+>  fs/ext4/move_extent.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+> index 0f4b7c89edd3..6175906c7119 100644
+> --- a/fs/ext4/move_extent.c
+> +++ b/fs/ext4/move_extent.c
+> @@ -461,12 +461,6 @@ mext_check_arguments(struct inode *orig_inode,
+>  		     __u64 donor_start, __u64 *len)
+>  {
+>  	__u64 orig_eof, donor_eof;
+> -	unsigned int blkbits = orig_inode->i_blkbits;
+> -	unsigned int blocksize = 1 << blkbits;
+> -
+> -	orig_eof = (i_size_read(orig_inode) + blocksize - 1) >> blkbits;
+> -	donor_eof = (i_size_read(donor_inode) + blocksize - 1) >> blkbits;
+> -
+>  
+>  	if (donor_inode->i_mode & (S_ISUID|S_ISGID)) {
+>  		ext4_debug("ext4 move extent: suid or sgid is set"
+> @@ -526,6 +520,9 @@ mext_check_arguments(struct inode *orig_inode,
+>  			orig_inode->i_ino, donor_inode->i_ino);
+>  		return -EINVAL;
+>  	}
+> +
+> +	orig_eof = EXT4_B_TO_LBLK(orig_inode, i_size_read(orig_inode));
+> +	donor_eof = EXT4_B_TO_LBLK(donor_inode, i_size_read(donor_inode));
+>  	if (orig_eof <= orig_start)
+>  		*len = 0;
+>  	else if (orig_eof < orig_start + *len - 1)
+> -- 
+> 2.46.1
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
