@@ -1,270 +1,293 @@
-Return-Path: <linux-fsdevel+bounces-63610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22ABCBC6097
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2D6BC60E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 015474E8774
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:35:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3E1E4E98BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F4F2BE03B;
-	Wed,  8 Oct 2025 16:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D652BE056;
+	Wed,  8 Oct 2025 16:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mprtzb6O";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F0ihlidL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FDwob46G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FN7p1RnK"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="b11JwAUF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B512BDC27
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7752228FFF6
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759941338; cv=none; b=iFOAsQKd5RBV7aqLR2Rd47QwEbUtAd723iwoJdwQEZq0EPbM4+mEH3VxZow2+sSYodk9reS1rWx5bpLElLJkE4noYbo8+LI2UACYrvuU1yVZ9dBExdtochrC7fdARTkB8jHn4vlb263WPVHGyCKkljqDB8OxNJBbGRc7WxkJGMo=
+	t=1759941676; cv=none; b=drWwCHUMepJMxUO6dNL5tWJwtXkEiVtsuCxt9a06KPzLp4FjeU6lX5Bg0PaiVpMxVJuTr94/Rl+ikr7s3hN70JvlZN1L0wt3WCf3ZsOiL84HmaClZJQlztaGt3bz9XqWNl3SpuTSCBN58SRvwckEYRDGiSUsNpQYiD7lbiZl58U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759941338; c=relaxed/simple;
-	bh=STlPLILrdbUkehDItZwxZeAIA65ZfO5IjXhUhS+Az7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SKwnTECohTfAsqeUQOe3bsNAY0GAtyeqLntYzg4AiHx2pwHAM7RcqD7O6/wwWoQYCSQBJwrfyJr1LTjNbuvTxSnQn38lqa4xZyusp2gdQ6TqGjvfrVgHek0wpiUEznlyeipb4uaHCcxhweKARU4ex7SINcklYSzb6BuVItFvAC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mprtzb6O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F0ihlidL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FDwob46G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FN7p1RnK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0C4AA219FD;
-	Wed,  8 Oct 2025 16:35:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759941335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
-	b=mprtzb6OshShNCuPggAsQCbGfUvaS6+9ur54jUrXf/nbyG4AHBiyceGcTe8dAwqsqHFcPf
-	pqukcUI5ZqHZOZXrJEXiOS6793Y3dh0zzm8p0kebQrOqosFdqRX1oGJb45ZxhJ9eTnkwWm
-	cBLMgpDE1IaRhGgsFyGTfoTnL0Fu0+k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759941335;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
-	b=F0ihlidLyoYV9Vt+eIAvfM5rdKGXDpIePTQ3D3rlOTUjjRZf0ZAypBxhhrLl+6Niynf+We
-	z4QPdBwU+0crEtAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759941334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
-	b=FDwob46GKJMj/04vQRA0oyIU5xQa9AtP9CRQnA8EN4Y7R6k22cxTAC6VEyldxEMsLbzXQZ
-	5B8zCF43rxtQajuCnnhmrxfje5aLDnjs64spEUDLxvR8WpmHxxRA8+3FVW80v9CuEFacHS
-	Cv1zQiq+zj3la1HNvWrj2HAc7Tsxyeg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759941334;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
-	b=FN7p1RnKM4dHWp5mTs2ADyP3cQOvE+nRa1cd3TkzMF/PnEXpb/qfA2VmA9XB81qgU5ElWQ
-	yh0WO5ZT2I/Y2dAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E474813A3D;
-	Wed,  8 Oct 2025 16:35:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 68+BN9WS5mguEgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 16:35:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 279A2A08E9; Wed,  8 Oct 2025 18:35:29 +0200 (CEST)
-Date: Wed, 8 Oct 2025 18:35:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: adilger.kernel@dilger.ca, kernel-team@cloudflare.com, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tytso@mit.edu, willy@infradead.org, Baokun Li <libaokun1@huawei.com>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: ext4 writeback performance issue in 6.12
-Message-ID: <2nuegl4wtmu3lkprcomfeluii77ofrmkn4ukvbx2gesnqlsflk@yx466sbd7bni>
-References: <20251006115615.2289526-1-matt@readmodwrite.com>
- <20251008150705.4090434-1-matt@readmodwrite.com>
+	s=arc-20240116; t=1759941676; c=relaxed/simple;
+	bh=b4idqNyL4YqtpeHTeTGmVP16fTaIZlheO+egf515s/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pWTVe+A/N92gk+lO4UNb7VbjKYG6XJ+15NzZd21UdUFjIjqolTCamW7jSGehVkUoit+4LYOfXqgsmGeBICim1PL5P9+bAtCpT8vlfE1I00pnARVOZ0kyr38whRTJzNMmIE+cIDzZhQ8uqkpz6Cy2V2L9YksapV3Dw6lIpQqC7t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=b11JwAUF; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-858183680b4so1711285a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:41:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1759941672; x=1760546472; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y0QDDkoHx1oddr1kYoPe9XtgfxjyTTRXUHnhEvUEaHE=;
+        b=b11JwAUFkNkQDWqpvTxV6OoNxFgYVwdp8Zv37cEk+5NbXnkESCTKMtwafnhFWdja6A
+         vB6kFoXITsjhOUnIcULvZRsVQ3Hr3V7oIXlNFLQz3zYkg58qDu6SnfQsfi5fpV6hb/3i
+         imGja1v4XsX7pYnidxP8EuvqA03bSSgWWTfLallqyeBNpTQY78hQWVlMUOGcsQPrTcd9
+         yqgHES5wnUI5OCY+6Ahq3EUPJ3o0vTJNOrEmhHzu7tibvr7xW4dI112D0aaqTfjjjI4y
+         /F6I4pXWDSC6U5dRXCRhJk7X/PKzbFPgADptPekiX0Cp1u+2UFIks1QV+OHs0oV+CbTH
+         gb3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759941672; x=1760546472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y0QDDkoHx1oddr1kYoPe9XtgfxjyTTRXUHnhEvUEaHE=;
+        b=TSNM1YonbA64KBED9md33eem5KHi/JfjX3ewDPxST1kpXCFv9Yf3Eb9dRL5euli9kn
+         UQ//7k52Zg2+owJAcNs0WTdCPOTXMXJlC/ghXcakYt/tF5qf3mSGmJFQl721LkEYufxE
+         I9Ia6dYZXzUWKBv+8FRdKY2jFflso5PvSWRyI6Q4KUxaPrhY/KJazelvnyk7DfZclWtv
+         rFzVLsJCeVooiqZ0OFfRrVAfN2J+XbuxdLYeffZzTPLDXBTsDLJHb8Eonw6/NofyXMuU
+         O8D/YtLuXlApbQ7cjJ5bjSznY2FD5iPFcA/Uzs5CpaOl8w3Ls0u3cKlI5+VgtTww0wHx
+         JXLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt0VZtKng2xfZVg2DvZIHWR5DD+0wSWRet76S2Y0CEFGQ9662zZCNBzOL1UiGJGsa9s62DAL0Hwmiz8mIW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM0x1oxvz9wL2VRbjnBHWRsXfKxOgXYgouF0zozD+GTCDSBH7E
+	FqJ4U+N/jxkbuulC+W0dkwH/5dl95C6ndQFV+ukGy6gMMmYt3S3+YripSbSTiRZzebR4kY3ZdqW
+	2zv1X3Z1A9NVMZaRfoJCaWtNWUiVnwHlXlT4k95f0Rg==
+X-Gm-Gg: ASbGncvcAxwZHfYcIKpHD9shjzjEi11CqjI/fyMDnRog3oVdUyeDakt9ILz+MOS/Xuo
+	Nv+dyOqIq03feILeQjbpAxK3V7s7qnMOkr6Q37EzvkIr0Q4qXLH4Oa7mvFRveszp3YYdtaDosCP
+	qeBBEJXaDBYEEITMhxJmtSLNe02Kc5IdRtJf8hrSTPhS9dkCRMzTE9EjxhmwQDxWTj5eC65zFbE
+	g1w2nkTVbPsUgRJWQv2P9qUwSao
+X-Google-Smtp-Source: AGHT+IE3RKIZb1iIOLaTyMNTcxfyaBM7YSPyWPYytKjmmpW9kMu81LYT+MqTFPjCR/XhBeZkyeuypkTguw/UEdpotf8=
+X-Received: by 2002:a05:620a:410c:b0:829:b669:c791 with SMTP id
+ af79cd13be357-88352d9a448mr549049785a.78.1759941671964; Wed, 08 Oct 2025
+ 09:41:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008150705.4090434-1-matt@readmodwrite.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com> <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
+In-Reply-To: <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 8 Oct 2025 12:40:34 -0400
+X-Gm-Features: AS18NWBehU4q9WUE9mwN1N00X-Mv4SLEo64BJ5126E8o614dVWx--_4ZFo216so
+Message-ID: <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Matt!
+On Wed, Oct 8, 2025 at 3:04=E2=80=AFAM Samiullah Khawaja <skhawaja@google.c=
+om> wrote:
+>
+> On Tue, Oct 7, 2025 at 10:11=E2=80=AFAM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
+> >
+> > On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
+> > <pasha.tatashin@soleen.com> wrote:
+> > >
+> > > This series introduces the Live Update Orchestrator (LUO), a kernel
+> > > subsystem designed to facilitate live kernel updates. LUO enables
+> > > kexec-based reboots with minimal downtime, a critical capability for
+> > > cloud environments where hypervisors must be updated without disrupti=
+ng
+> > > running virtual machines. By preserving the state of selected resourc=
+es,
+> > > such as file descriptors and memory, LUO allows workloads to resume
+> > > seamlessly in the new kernel.
+> > >
+> > > The git branch for this series can be found at:
+> > > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v4
+> > >
+> > > The patch series applies against linux-next tag: next-20250926
+> > >
+> > > While this series is showed cased using memfd preservation. There are
+> > > works to preserve devices:
+> > > 1. IOMMU: https://lore.kernel.org/all/20250928190624.3735830-16-skhaw=
+aja@google.com
+> > > 2. PCI: https://lore.kernel.org/all/20250916-luo-pci-v2-0-c494053c3c0=
+8@kernel.org
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > Changelog since v3:
+> > > (https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@=
+soleen.com):
+> > >
+> > > - The main architectural change in this version is introduction of
+> > >   "sessions" to manage the lifecycle of preserved file descriptors.
+> > >   In v3, session management was left to a single userspace agent. Thi=
+s
+> > >   approach has been revised to improve robustness. Now, each session =
+is
+> > >   represented by a file descriptor (/dev/liveupdate). The lifecycle o=
+f
+> > >   all preserved resources within a session is tied to this FD, ensuri=
+ng
+> > >   automatic cleanup by the kernel if the controlling userspace agent
+> > >   crashes or exits unexpectedly.
+> > >
+> > > - The first three KHO fixes from the previous series have been merged
+> > >   into Linus' tree.
+> > >
+> > > - Various bug fixes and refactorings, including correcting memory
+> > >   unpreservation logic during a kho_abort() sequence.
+> > >
+> > > - Addressing all comments from reviewers.
+> > >
+> > > - Removing sysfs interface (/sys/kernel/liveupdate/state), the state
+> > >   can now be queried  only via ioctl() API.
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Hi all,
+> >
+> > Following up on yesterday's Hypervisor Live Update meeting, we
+> > discussed the requirements for the LUO to track dependencies,
+> > particularly for IOMMU preservation and other stateful file
+> > descriptors. This email summarizes the main design decisions and
+> > outcomes from that discussion.
+> >
+> > For context, the notes from the previous meeting can be found here:
+> > https://lore.kernel.org/all/365acb25-4b25-86a2-10b0-1df98703e287@google=
+.com
+> > The notes for yesterday's meeting are not yes available.
+> >
+> > The key outcomes are as follows:
+> >
+> > 1. User-Enforced Ordering
+> > -------------------------
+> > The responsibility for enforcing the correct order of operations will
+> > lie with the userspace agent. If fd_A is a dependency for fd_B,
+> > userspace must ensure that fd_A is preserved before fd_B. This same
+> > ordering must be honored during the restoration phase after the reboot
+> > (fd_A must be restored before fd_B). The kernel preserve the ordering.
+> >
+> > 2. Serialization in PRESERVE_FD
+> > -------------------------------
+> > To keep the global prepare() phase lightweight and predictable, the
+> > consensus was to shift the heavy serialization work into the
+> > PRESERVE_FD ioctl handler. This means that when userspace requests to
+> > preserve a file, the file handler should perform the bulk of the
+> > state-saving work immediately.
+> >
+> > The proposed sequence of operations reflects this shift:
+> >
+> > Shutdown Flow:
+> > fd_preserve() (heavy serialization) -> prepare() (lightweight final
+> > checks) -> Suspend VM -> reboot(KEXEC) -> freeze() (lightweight)
+> >
+> > Boot & Restore Flow:
+> > fd_restore() (lightweight object creation) -> Resume VM -> Heavy
+> > post-restore IOCTLs (e.g., hardware page table re-creation) ->
+> > finish() (lightweight cleanup)
+> >
+> > This decision primarily serves as a guideline for file handler
+> > implementations. For the LUO core, this implies minor API changes,
+> > such as renaming can_preserve() to a more active preserve() and adding
+> > a corresponding unpreserve() callback to be called during
+> > UNPRESERVE_FD.
+> >
+> > 3. FD Data Query API
+> > --------------------
+> > We identified the need for a kernel API to allow subsystems to query
+> > preserved FD data during the boot process, before userspace has
+> > initiated the restore.
+> >
+> > The proposed API would allow a file handler to retrieve a list of all
+> > its preserved FDs, including their session names, tokens, and the
+> > private data payload.
+> >
+> > Proposed Data Structure:
+> >
+> > struct liveupdate_fd {
+> >         char *session; /* session name */
+> >         u64 token; /* Preserved FD token */
+> >         u64 data; /* Private preserved data */
+> > };
+> >
+> > Proposed Function:
+> > liveupdate_fd_data_query(struct liveupdate_file_handler *h,
+> >                          struct liveupdate_fd *fds, long *count);
+> >
+> > 4. New File-Lifecycle-Bound Global State
+> > ----------------------------------------
+> > A new mechanism for managing global state was proposed, designed to be
+> > tied to the lifecycle of the preserved files themselves. This would
+> > allow a file owner (e.g., the IOMMU subsystem) to save and retrieve
+> > global state that is only relevant when one or more of its FDs are
+> > being managed by LUO.
+> >
+> > The key characteristics of this new mechanism are:
+> > The global state is optionally created on the first preserve() call
+> > for a given file handler.
+> > The state can be updated on subsequent preserve() calls.
+> > The state is destroyed when the last corresponding file is unpreserved
+> > or finished.
+> > The data can be accessed during boot.
+> >
+> > I am thinking of an API like this.
 
-Nice talking to you again :)
+Sami and I discussed this further, and we agree that the proposed API
+will work. We also identified two additional requirements that were
+not mentioned in my previous email:
 
-On Wed 08-10-25 16:07:05, Matt Fleming wrote:
-> (Adding Baokun and Jan in case they have any ideas)
-> On Mon, Oct 06, 2025 at 12:56:15 +0100, Matt Fleming wrote:
-> > Hi,
-> > 
-> > We're seeing writeback take a long time and triggering blocked task
-> > warnings on some of our database nodes, e.g.
-> > 
-> >   INFO: task kworker/34:2:243325 blocked for more than 225 seconds.
-> >         Tainted: G           O       6.12.41-cloudflare-2025.8.2 #1
-> >   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >   task:kworker/34:2    state:D stack:0     pid:243325 tgid:243325 ppid:2      task_flags:0x4208060 flags:0x00004000
-> >   Workqueue: cgroup_destroy css_free_rwork_fn
-> >   Call Trace:
-> >    <TASK>
-> >    __schedule+0x4fb/0xbf0
-> >    schedule+0x27/0xf0
-> >    wb_wait_for_completion+0x5d/0x90
-> >    ? __pfx_autoremove_wake_function+0x10/0x10
-> >    mem_cgroup_css_free+0x19/0xb0
-> >    css_free_rwork_fn+0x4e/0x430
-> >    process_one_work+0x17e/0x330
-> >    worker_thread+0x2ce/0x3f0
-> >    ? __pfx_worker_thread+0x10/0x10
-> >    kthread+0xd2/0x100
-> >    ? __pfx_kthread+0x10/0x10
-> >    ret_from_fork+0x34/0x50
-> >    ? __pfx_kthread+0x10/0x10
-> >    ret_from_fork_asm+0x1a/0x30
-> >    </TASK>
+1. Ordered Un-preservation
+The un-preservation of file descriptors must also be ordered and must
+occur in the reverse order of preservation. For example, if a user
+preserves a memfd first and then an iommufd that depends on it, the
+iommufd must be un-preserved before the memfd when the session is
+closed or the FDs are explicitly un-preserved.
 
-So this particular hang check warning will be silenced by [1]. That being
-said if the writeback is indeed taking longer than expected (depends on
-cgroup configuration etc.) these patches will obviously not fix it. Based
-on what you write below, are you saying that most of the time from these
-225s is spent in the filesystem allocating blocks? I'd expect we'd spend
-most of the time waiting for IO to complete...
+2. New API to Check Preservation Status
+A new LUO API will be needed to check if a struct file is already
+preserved within a session. This is needed for dependency validation.
+The proposed function would look like this:
 
-[1] https://lore.kernel.org/linux-fsdevel/20250930065637.1876707-1-sunjunchao@bytedance.com/
+bool liveupdate_is_file_preserved(struct liveupdate_session *session,
+struct file *file);
 
-> > A large chunk of system time (4.43%) is being spent in the following
-> > code path:
-> > 
-> >    ext4_get_group_info+9
-> >    ext4_mb_good_group+41
-> >    ext4_mb_find_good_group_avg_frag_lists+136
-> >    ext4_mb_regular_allocator+2748
-> >    ext4_mb_new_blocks+2373
-> >    ext4_ext_map_blocks+2149
-> >    ext4_map_blocks+294
-> >    ext4_do_writepages+2031
-> >    ext4_writepages+173
-> >    do_writepages+229
-> >    __writeback_single_inode+65
-> >    writeback_sb_inodes+544
-> >    __writeback_inodes_wb+76
-> >    wb_writeback+413
-> >    wb_workfn+196
-> >    process_one_work+382
-> >    worker_thread+718
-> >    kthread+210
-> >    ret_from_fork+52
-> >    ret_from_fork_asm+26
-> > 
-> > That's the path through the CR_GOAL_LEN_FAST allocator.
-> > 
-> > The primary reason for all these cycles looks to be that we're spending
-> > a lot of time in ext4_mb_find_good_group_avg_frag_lists(). The fragment
-> > lists seem quite big and the function fails to find a suitable group
-> > pretty much every time it's called either because the frag list is empty
-> > (orders 10-13) or the average size is < 1280 (order 9). I'm assuming it
-> > falls back to a linear scan at that point.
-> > 
-> >   https://gist.github.com/mfleming/5b16ee4cf598e361faf54f795a98c0a8
-> > 
-> > $ sudo cat /proc/fs/ext4/md127/mb_structs_summary
-> > optimize_scan: 1
-> > max_free_order_lists:
-> > 	list_order_0_groups: 0
-> > 	list_order_1_groups: 1
-> > 	list_order_2_groups: 6
-> > 	list_order_3_groups: 42
-> > 	list_order_4_groups: 513
-> > 	list_order_5_groups: 62
-> > 	list_order_6_groups: 434
-> > 	list_order_7_groups: 2602
-> > 	list_order_8_groups: 10951
-> > 	list_order_9_groups: 44883
-> > 	list_order_10_groups: 152357
-> > 	list_order_11_groups: 24899
-> > 	list_order_12_groups: 30461
-> > 	list_order_13_groups: 18756
-> > avg_fragment_size_lists:
-> > 	list_order_0_groups: 108
-> > 	list_order_1_groups: 411
-> > 	list_order_2_groups: 1640
-> > 	list_order_3_groups: 5809
-> > 	list_order_4_groups: 14909
-> > 	list_order_5_groups: 31345
-> > 	list_order_6_groups: 54132
-> > 	list_order_7_groups: 90294
-> > 	list_order_8_groups: 77322
-> > 	list_order_9_groups: 10096
-> > 	list_order_10_groups: 0
-> > 	list_order_11_groups: 0
-> > 	list_order_12_groups: 0
-> > 	list_order_13_groups: 0
-> > 
-> > These machines are striped and are using noatime:
-> > 
-> > $ grep ext4 /proc/mounts
-> > /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
-> > 
-> > Is there some tunable or configuration option that I'm missing that
-> > could help here to avoid wasting time in
-> > ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
-> > fail an order 9 allocation anyway?
+This will allow the file handler for one FD (e.g., iommufd) to verify
+during its preserve() callback that its dependencies (e.g., the
+backing memfd) have already been preserved in the same session.
 
-So I'm somewhat confused here. How big is the allocation request? Above you
-write that average size of order 9 bucket is < 1280 which is true and
-makes me assume the allocation is for 1 stripe which is 1280 blocks. But
-here you write about order 9 allocation.
-
-Anyway, stripe aligned allocations don't always play well with
-mb_optimize_scan logic, so you can try mounting the filesystem with
-mb_optimize_scan=0 mount option.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pasha
 
