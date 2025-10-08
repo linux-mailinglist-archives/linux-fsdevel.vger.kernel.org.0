@@ -1,151 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-63605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D3DBC58F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 17:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCE6BC6031
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A3140517C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 15:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A70919E37A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB86228642B;
-	Wed,  8 Oct 2025 15:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC138286D49;
+	Wed,  8 Oct 2025 16:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="wH/TZyCi"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JdVdLmaJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB9F24DCF9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 15:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB1F10957
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759936974; cv=none; b=lbzt6Oh5z0AdRLYMiSwn0orqb8mmzt56uBoTDS/NE89CpENP2m90DGkRcMtp36HOBAcd+toxbd1AipTUdsLgxKsOnDak+PYDBmooOfpV33b6KRaGyIWX5wnyiqDD3NTz85yVukK7vClfl4BpABrn9IQAFcEW6AdY+HzblTr0f64=
+	t=1759940671; cv=none; b=uKG919nRyWXLuM90QzXhqrfptg3RhhQcy0mPDQyxnju4Zl6cW07+xdenZc/MoidDIV21Gnvh4Btvjrlr7LnpY751kFXUV6L5FhvJiubTN50SbCuOSVdxXgbtZE8CTaaXuQCvrq1b54Toq4Ubyk4YjM5R/vY4Dr0VyVrZ76lbtfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759936974; c=relaxed/simple;
-	bh=X1j6nGmDxjSgXJyZIZHORQDEpRM8U3EkbVPt5CtrEb4=;
+	s=arc-20240116; t=1759940671; c=relaxed/simple;
+	bh=bPeXvap2b33+boSy523xIc4pQvXbbjN6Bg6578I0hkI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f08HfRjerLTDnlddUTaoG/ZJqhxIpo/Q2JiabHD5eGVkY8mU0apKu/9Y/AyGWew9K8zxDVOKTj1zKD88GCz27ChzXD/E1U9f/vUGH3C82eypTE4BLSjD0QtAxM7VMLIY870eEPVy6F1Po5MOE4l5WvDT6hPwQzRcPi5iPLuT3AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=wH/TZyCi; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so8898166e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 08:22:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=VoH5uVcLX7UlzZXH6xvm/+1GXRQOjnAbO/J+Qw1gCWZ5kn/Eqp8eIvyE0rpi4bLfzmVg3g451eOhOl2UWNHjVi1VPT+wDtKh+6ViZoxZyc9pTzgcsnQ5uRmhrNuWQouw3Ccvalp66bnK3jSTbAeGdo4LJDnRtSbAp5cAHkJCM7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JdVdLmaJ; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so1235916a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:24:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1759936967; x=1760541767; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJ46KU8vSJ3Y3y6MyDJK8NolTC55ZuDRWc/GesIulFg=;
-        b=wH/TZyCiKjKv7+x1usMnk0IwMqV76nioJGeK3SB6TgBjtGUaOjVjO2oLMrtB/aW9Ll
-         3ipjaBaXOtWsuDOFE1oK5N0VTnHWK8gQIe9JQBRNiHK7+Ml/T9UQxiJebMfWzdqEeU9q
-         rRXR/6OkTFyrrxfYVovb4xylvPM2i57hw1vh4tFL/ym+zb/5DE+ueg8AqnsoXOo0esd7
-         RaRxzHqEfeRIOCEEp9EM5mHhllqnY/Ybco4Ez88jrxn0xfu2vOieDe5wNYC705RLC8jn
-         p7NwpIFk4ctnPptyJVofvapoQk86CjKIPxpY8sIrDRqfpgkR9eVaWad6N7f7zF+3aCfk
-         FqiA==
+        d=linux-foundation.org; s=google; t=1759940667; x=1760545467; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGv8gU8Wgrbxfvqd2t7G8Us4a0ybRRasjTDl8ZOYS+I=;
+        b=JdVdLmaJQgTiCo8v/4Q1xupeDznP4fKOcuJAHOe0E2tkuCkYRFCn8IpTpYhgFDD+KQ
+         C+lYiQ/7HdxYvRAKiM2+e2VJGPLKNkXpPuKCHmTbQWrqs7iwIeK8+vzcYqHRxh3PpPBG
+         026npvBsd8qIKFEx7ilcpmzBB5kOMFh8U7nlY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759936967; x=1760541767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJ46KU8vSJ3Y3y6MyDJK8NolTC55ZuDRWc/GesIulFg=;
-        b=c91LGca1+e2IlGzxYgzO1FUiaie5iRJmL522vUn85BTZA+rN/FEkONpA5n4T4VyG60
-         AZmxyM1Noh/M1mB7/xoUkUMLy6hILQhnAKgfyqfmn8+Gf6NQgh9sq0rgO6DwSP8whaxl
-         /jufvmmtZfD8FN3B8Mh+pJcl/Ce5yFleA4ruOvcUVG5OW/uj4ooLZIPoG7HpM9I00ud8
-         jIvWNOlJkhsgTnfFvDPVh4ASgDfA+YGzZQ9fx4zCh+KtjFIfqBtIrJEx5wqRoA5BaHyo
-         xbee1LfLuQDH6nYfSmEfJzjUYoO5zXT/doItydSY/i6yIr+QQt5R6JtLW6Nr5/FRldcv
-         6mSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVh3lZd1CVw15qGNZU25GT4HRllIGio+Eh/9mOol9Dib6tO02aSHG4ALrvP+eco2ewiuAjJgzI7o3LukY5q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg4AwXy634jaRo2N/P5UpF6V2UuRxE4SPiPfPHTqHJIBPQFbyG
-	ydOH2R4IzMn7oRFkXbDo4Zycbixm/PcV1w2KWbkZIXLPdhxelBxm/l34y7+aEAx7eYr8WY9+2uH
-	J8yEOYYXDMgMYtZslJvY/yxMGcZZCvvIxEZ3ySBk4
-X-Gm-Gg: ASbGncsVHxUihfYmf2gJRq/+ZxAHbYsBMcbHLqlkh/xH7VX/RrmB7ZaiJhh9XfEYpyk
-	cySYGI4EXFaVy4EBWFtUqgrBwnzvUTT9fg3dvxab3eAQlCHQtX746+H734P6hsS1PYibOT7OzW7
-	MbAmyAQNf3J57mBQ+HooRsQuov/ufOZrblKUD5yK6KQrfpE68kETLAvG72zlmXlgLEGoQGXBAOt
-	v6EK4jzmNAb9R/juDnSd2LiUJNv2Q==
-X-Google-Smtp-Source: AGHT+IFiyi5CBclcY4eFXl0Xxb3EcgxnRGKFTun8v5zZ9i8QJErjRPfdIvpLd3dkdEHbDYaPjeMr0Oet9rEeTUSZwKA=
-X-Received: by 2002:a05:6512:1294:b0:57d:d62e:b212 with SMTP id
- 2adb3069b0e04-5906d9e7470mr1160546e87.38.1759936966762; Wed, 08 Oct 2025
- 08:22:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759940667; x=1760545467;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gGv8gU8Wgrbxfvqd2t7G8Us4a0ybRRasjTDl8ZOYS+I=;
+        b=nz8CQSlpcpTcwXkFg9NSM8vuGsuypV6OxBKstjrNQOVbTwksLuixcNf1A18HrIMcKC
+         3jlMHgvUTa+YI9S7Lo9xPbOdCag9d0k8wQZIz4lVbGHcI9JLe9O5t29eeCG9bBP7/9Yp
+         BlL5/BN47kV0pUI6L7cqmgRK2MYblfSzP6vqjUNM6KstxC/f+9EqRh9dH7IBI3qEM13x
+         +7H9+v2W8QoPsk1lJGTVbIRgPZj/BW/7OOB3+AVwNFen3fgcPgOVOG555pv8ngkgRvSB
+         8wdnymJK7K27gSi1ILThgCpihKyrmm92s3XFvrdQWminwC56bvjMNJCuD8uF/Y5G/LzF
+         K9Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGy/hQv7T7+PQVIeyCT6EWVO6nlqJNad4G2fnusgjPIf8RVCP2hS6qw7YpSZ7dILud78p5wDB4dD97V9ar@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4rEDgI0cSdv9Fyn01S6rnBNzcDVz2l4Y/uCjzZn3uGwR6rl9d
+	OEwL0+RnXZuyq8ysdZ+vXGjbXlGh6oL0+2dxn0GI1c3qeXTN2GCnCXQZ5LWgGgNSJ+OXHfrYxJ4
+	DMkEZAeg=
+X-Gm-Gg: ASbGncvzaaMwPkich8wokFp+LaqGswXKp4W3x3bjNnCnz3sgvsZsTzSzKU7nyULZSLk
+	FrcCjWUHXm1NvAQDqIYpFBThPntbAvGAgLTOEAwySaeAgejVu8/KIcMiWdBCv3cEQ/MNuvrumO2
+	NeNJ6q6aglP+xoS6Ht9f4wUzNxR8PnePlwlF0e8mAlQquH2yOsDV9H0J8MPsTMvikaHrs//k2sS
+	Kes0Itb5ZNTGEIC0hlfVs/vR1b3/PEwAtJxDP7aL/V0KBBJ2SY2Dn3hAvU4TcuRv+NwbGpgqYrH
+	whHLDQLmVumvI6bs+DBY5UIOiuu7VMjYvxi4/BI+9NciBKcsFb3U5MTkUm/m3RoYY6bnnevdNFJ
+	/vyGSlRr6dAh/H1hQFCbYAYeUq3KF1+QHKghViERdL+ceT4ph5fKQ7lkqb7Fymw7iuJrFYIuO/Z
+	32riu1X534n5IEOadvMnXE
+X-Google-Smtp-Source: AGHT+IGjHjePxbGZwvJZjBfaryAqADvkTfhJFpET/NE0mk/ANXaMMuN4qzmglvNgDrw4AGEbUpF+ng==
+X-Received: by 2002:a17:906:c141:b0:ad5:d597:561e with SMTP id a640c23a62f3a-b50aca01320mr505050466b.56.1759940666779;
+        Wed, 08 Oct 2025 09:24:26 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639f3d03662sm308950a12.29.2025.10.08.09.24.25
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 09:24:25 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6318855a83fso183103a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:24:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNAz7WSCIrQEANLaq7KO45M9HVAo+9gEcy/Fdrv3sJV7XkZHhiUH3T4viH1qQORGjwuV1P248Zezqa6dfH@vger.kernel.org
+X-Received: by 2002:a05:6402:5193:b0:634:c1a5:3106 with SMTP id
+ 4fb4d7f45d1cf-639d5c5a3dfmr3717885a12.31.1759940665182; Wed, 08 Oct 2025
+ 09:24:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003093213.52624-1-xemul@scylladb.com> <aOCiCkFUOBWV_1yY@infradead.org>
- <CALCETrVsD6Z42gO7S-oAbweN5OwV1OLqxztBkB58goSzccSZKw@mail.gmail.com> <aOSgXXzvuq5YDj7q@infradead.org>
-In-Reply-To: <aOSgXXzvuq5YDj7q@infradead.org>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Wed, 8 Oct 2025 08:22:35 -0700
-X-Gm-Features: AS18NWAsAb31TZfXWvQWDBORzAjx40tnBrYMOReEbyFX0MlBOKne28k_TQuZOBg
-Message-ID: <CALCETrW3iQWQTdMbB52R4=GztfuFYvN_8p52H1fopdS8uExQWg@mail.gmail.com>
-Subject: Re: [PATCH] fs: Propagate FMODE_NOCMTIME flag to user-facing O_NOCMTIME
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Pavel Emelyanov <xemul@scylladb.com>, linux-fsdevel@vger.kernel.org, 
-	"Raphael S . Carvalho" <raphaelsc@scylladb.com>, linux-api@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
+References: <CAHk-=wgy=oOSu+A3cMfVhBK66zdFsstDV3cgVO-=RF4cJ2bZ+A@mail.gmail.com>
+ <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
+ <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
+ <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
+ <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
+ <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
+ <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
+ <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
+ <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
+ <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com> <bbagpeesjg73emxpwkxnvaepcn5hjrsrabaamtth2m26khhppa@7hpwl2mk3mlc>
+In-Reply-To: <bbagpeesjg73emxpwkxnvaepcn5hjrsrabaamtth2m26khhppa@7hpwl2mk3mlc>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 8 Oct 2025 09:24:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiZvzPZbzWt2Cuww3myOjQmvoaRtqme0jRawoUQnvWCrA@mail.gmail.com>
+X-Gm-Features: AS18NWB5H0D_6NxOrszgcVIeZjT3XVd-PPCC5ZrYzJUv77q1XMrMBBR0-VbvhII
+Message-ID: <CAHk-=wiZvzPZbzWt2Cuww3myOjQmvoaRtqme0jRawoUQnvWCrA@mail.gmail.com>
+Subject: Re: Optimizing small reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 6, 2025 at 10:08=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
+On Wed, 8 Oct 2025 at 03:28, Kiryl Shutsemau <kirill@shutemov.name> wrote:
 >
-> On Sat, Oct 04, 2025 at 09:08:05AM -0700, Andy Lutomirski wrote:
-> > > Well, we'll need to look into that, including maybe non-blockin
-> > > timestamp updates.
-> > >
-> >
-> > It's been 12 years (!), but maybe it's time to reconsider this:
-> >
-> > https://lore.kernel.org/all/cover.1377193658.git.luto@amacapital.net/
->
-> I don't see how that is relevant here.  Also writes through shared
-> mmaps are problematic for so many reasons that I'm not sure we want
-> to encourage people to use that more.
->
+> PAGE_SIZE is somewhat arbitrary here. We might want to see if we can do
+> full length (or until the first failure). But holding RCU read lock whole
+> time might not be a good idea in this case.
 
-Because the same exact issue exists in the normal non-mmap write path,
-and I can even quote you upthread :)
+There are other considerations too. If you do large reads, then you
+might want to do the gang lookup of pages etc.
 
-> Well, we'll need to look into that, including maybe non-blockin
-timestamp updates.
+This low-latency path is unlikely to be the best one for big reads, in
+other words.
 
-I assume the code path that inspired this thread in the first place is:
+I agree that the exact point where you do that is pretty arbitrary.
 
-ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from=
-)
-{
-        struct file *file =3D iocb->ki_filp;
-        struct address_space *mapping =3D file->f_mapping;
-        struct inode *inode =3D mapping->host;
-        ssize_t ret;
+> filemap_fast_read() will only read short on EOF. So if it reads short we
+> don't need additional iterations.
 
-        ret =3D file_remove_privs(file);
-        if (ret)
-                return ret;
+That's only true in the current stupid implementation.
 
-        ret =3D file_update_time(file);
+If we actualyl do page crossing reads etc, then filemap_fast_read()
+will return partial reads for when it hits a folio end etc.
 
-and this has *exactly* the same problem as the shared-mmap write path:
-it synchronously updates the time (well, synchronously enough that it
-sometimes blocks), and it does so before updating the file contents
-(although the window during which the timestamp is updated and the
-contents are not is not as absurdly long as it is in the mmap case).
+Right now it does that
 
-Now my series does not change any of this, but I'm thinking more of
-the concept: instead of doing file/inode_update_time when a file is
-logically written (in write_iter, page_mkwrite, etc), set a flag so
-that the writeback code knows that the timestamp needs updating.
-Thinking out loud, to handle both write_iter and mmap, there might
-need to be two bits: one saying "the timestamp needs to be updated"
-and another saying "the timestamp has been updated in the in-memory
-inode, but the inode hasn't been dirtied yet".  And maybe the latter
-is doable entirely within fs-specific code without any help from the
-generic code, but it might still be nice to keep generic_update_time
-usable for filesystems that want to do this.
+                /* No partial reads */
+                return 0;
 
---Andy
+but that's a *current* limitation and only makes sense in the "oh,
+we're going to have to fall back to the slow case anyway" model.
+
+In the "we'll try again" model it's actually not a sensible thing.
+
+            Linus
 
