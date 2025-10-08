@@ -1,168 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-63598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BFBBC5286
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 15:15:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E10BC52DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 15:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B86C74EFFFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 13:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEBC74010AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 13:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D1283FC9;
-	Wed,  8 Oct 2025 13:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715E1284889;
+	Wed,  8 Oct 2025 13:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIfpuXSL"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mUKXEgOG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ea3gOZ88"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F0E189B80
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 13:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D619277009;
+	Wed,  8 Oct 2025 13:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929317; cv=none; b=spQuPVkjLz6Rd6VErcHB63AqdSb9PAEkZ3cpn959Igtafb+PX73WoPIORWjBW5S5XRzbp6kSFifJEIhorYClZ3Ey9CNPkWazubzTWuGqkmg4dPFnHgkUt/JtJ0S3o0Omdo3NkB0xp6LXs/vC1/om2vMzmMlUChjG0mudAqGKCsM=
+	t=1759929832; cv=none; b=SA3k1aWKr0Xz+2d5L+9/ypksmkcuLp2MKd+/c8kxMsIfr7Zvhj+pkcL/cmQLl1H1FDY+mzeqnRNfLzpYyNwaQ7BwBUk3pMemgM0TFL8JAZ1pjlOOBVqQLcWt56r21XiLtYJ+1SDB3GR8bWqeFDjUeLyQwpHrpKWgN3CYLShO7Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929317; c=relaxed/simple;
-	bh=CKys8xJDsixk4GZcRnoL31wC6RicgzU4/uO8xbMBzzA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gdM1+AzZcgOBgPRk8ubpqCJnsGvPbp8q7/qkyG4o8wZx2TcZ2O2rk/cjzmzwKFhP9XTLlURWYhTBZRwYkiv9rVLOJmiE1yy9W1LBHa2SZo9hSfLLMnx/X+XkEEKHKBZA20gyaLBFZ8Wicaey0YAkIEVK65epglKes7YpZGeF3xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIfpuXSL; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e3e177893so40866985e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 06:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759929313; x=1760534113; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3GMh8gF1Uu4hd329Ty2DF0Ok3lYIutJuQKHJlpedSPk=;
-        b=ZIfpuXSLr3xdcpb5YfJg5fSuh09LvdzmtOEF3aTDyXSAxM/rOO2Of7onvS3VH4EH60
-         q5aJRjEsJ17CIocEu0jsjJwXU5DmeHeWVsD8Hn/XaIGFGFOg7gw/QILQdMbNsMWU968E
-         Nfy8n+OH2JkoZnCbC2zKSd37uwWsqYeUnI0KMkMazlQbCS2yRKAmKuxNjN3E8p3HQJGE
-         ykwq7mvj5mwErIjwbo5QPyoXiwI1snZsAJPlTVKXepf0ru0tXBqlkJA3i33VnxV+lFl6
-         ybgXnw7d9mdeXO149uqsVWRp+X5Ln9gI+DwAQrsyfqPxa2u5rbh4KqhSsoOvNrk1CmBu
-         MY3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759929313; x=1760534113;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3GMh8gF1Uu4hd329Ty2DF0Ok3lYIutJuQKHJlpedSPk=;
-        b=Ax2jW0bkqx8F3rBKgX4OpwLCBcPa2HAt0BLf9e5X6olyHh0mBFh2dxKgxEt6u4O7XX
-         J6GTsGoe8rXMtehWMRcurT1EhTmRImobbC2ns03nMo3J8m7HEGsg/QFShRsKn4VdTnNh
-         HtKKZXSGZAGm9bgftSdtk8f4XxIGdBaaRr0dKhD0walOen37oC7CZUrV+dfhjd+McVyi
-         EoENAzrvZGxJvdtemj5e0oWl8qA8PU97xZSb9F+gQ9JdL3a8t4bhfI1KQ22exmBkblZ4
-         M2d6hZOWv5ep5M7gBheR4zBPwV2dn+8qPWCHlszcVRKgLSReJz+kRRrQ3FvyG1Y6ubcR
-         92kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYmFuVNQm/4V3VP35xVLY/kxTyibUgIXUIx7BSzOnSNUrLdwTG99Va1mZLtlUPpay0jpBATJa7sgDnqGRi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwulgqioG6OefqbXfcW2FYhz0A9GfqyDo/Dng8l7BmoUiu44Af5
-	Y/hHBuu5yT3NeCi4R0oDc5aKEW+IE37ChuAaRY0QyQHmIFHWkCucAb7KdscvJHv1Ijasn7WbuhS
-	le4Aj+9tP/MNlo4QR+w==
-X-Google-Smtp-Source: AGHT+IE89beyKsvULLcf3UqV4s6rtxpjy11EnRj5cgsae6DgqsLnVq5SrKgEBnb7OKFnTiIg04Lj/tLVIr0qKRI=
-X-Received: from wmbz6.prod.google.com ([2002:a05:600c:c086:b0:46e:1bcf:3f8])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:c162:b0:45f:2cb5:ecff with SMTP id 5b1f17b1804b1-46fa9b02fa3mr29367005e9.31.1759929313030;
- Wed, 08 Oct 2025 06:15:13 -0700 (PDT)
-Date: Wed, 8 Oct 2025 13:15:12 +0000
-In-Reply-To: <20251008125427.68735-1-acsjakub@amazon.de>
+	s=arc-20240116; t=1759929832; c=relaxed/simple;
+	bh=63LzR7X/Nh1WbOCrqzTruzI/5vXPhk1WxQz2hU/SmW0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lywZX8CFnEe9vmnQePTIkdVxxvdpnREh6xW/miqwGq90A/jhcQyhszeVm0laXKeMCknk1jQvuzCl0eVsMlrw97s4odEnmxEADe7JNr/ukkmJGNY348CyFvhl2qnTK3KmRgVmhwDlBmR6RjZ/tP/e4d9YKdppKWUkRH0GRiou2kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mUKXEgOG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ea3gOZ88; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id ED32CEC0232;
+	Wed,  8 Oct 2025 09:23:48 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 08 Oct 2025 09:23:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759929828;
+	 x=1760016228; bh=63LzR7X/Nh1WbOCrqzTruzI/5vXPhk1WxQz2hU/SmW0=; b=
+	mUKXEgOGAxz9QPlqdp5yD+/sQHMAN7Wfbv+lATjU71v4KbYA5iTJCsUSexFdOf3M
+	NjGRg5BykvMrD0NYR14VOxNXiODiWBlt0He2XGs2cBzeJ54iRFIWZ+y5M3Lau7w2
+	k8Ne/InLXXJYseSBhyTll6rEwqWl6hC710Mm01JdPsRk4CzCcYpRhNyO2xzqbG7Y
+	PXvu9OmJypvoCNJTiTatrC2OXLa14oxL9U0GHK8H3a8r6EMPRCTy4iXBKecDzzsT
+	lIDyrVa9W7XUhfQNXAV57anDpYBFCFkaqF8Mk9WqC6jmdrmTFug+GYWMsyOONAeU
+	44gL+MZN4bPhDMUcyJCAww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759929828; x=
+	1760016228; bh=63LzR7X/Nh1WbOCrqzTruzI/5vXPhk1WxQz2hU/SmW0=; b=E
+	a3gOZ88lGK2PiVL6Ct1aqG0C6VQaWn+X5VBdeVMs2InsxFGuEvpXs+hG275nNfq7
+	ok5RN2cNY/NfsTkgsE2N8ZY5fhBw1APxVqyX6bt+8SGnFr0wyvJrFCmh35nBYgJD
+	evcAAvVdn6II+eBq6t7wA+dWhiXfNN750URb1DcQmj8BDagpWVe531mYw88vDVT+
+	uoeopzqKsp5eJqZjM622GEth3ZNTt3zTInFM5qh+Si31fyGqykJ8cuSOyn3SimS9
+	3QL6JLmwTbDA+HABjwazYoL1cfrM0i05hx63iqo13qT7qUu+nQkjz6TZjTCk+LB2
+	A57sqNbuHD+Fg8d2TACAQ==
+X-ME-Sender: <xms:5GXmaH4b9fW8g1pMA0aRWSSB398qWM_Hu30OLVoQL476ZjtjhsmsSQ>
+    <xme:5GXmaHu8xmecwjnSNPlifG7xSyP2kdmZwb0GmL7vtl9CU_ClioXTGylHA_WljI9Cp
+    kmSdCquptO6blSbHpRM_oCCJ5G6LWv-JHTvzlrRnDXmHQWYnwThKX8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdefgeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprggrlhgsvghrshhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    gsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihhrihhslhgrsgih
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrghlsggvrhhshhesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheplhhinhhu
+    gidqrghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:5GXmaDbtpROmjgydqMuUKqrfyzlZa_5A7qO6XWF3j4lGnLVHlcD5EA>
+    <xmx:5GXmaFeFASN-hNF3ArTS3he1WJHnM84Tr0f6tr4uSvr9aZe-j54-qw>
+    <xmx:5GXmaAnIw_8J33KVl1LtQ5KCt1MsCgoNBvysttAtVQ9Dg1VrImYPcA>
+    <xmx:5GXmaF25YtvRaMtZ7E8Njd66HWKAzvGdXnnRB634U-U4JnKLPCRLOQ>
+    <xmx:5GXmaHeWXam590hkTXUYoSnzMVqh4In3wyi2alVIr1T5y29ecpYeRzIX>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6685C700065; Wed,  8 Oct 2025 09:23:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251007162136.1885546-1-aliceryhl@google.com> <20251008125427.68735-1-acsjakub@amazon.de>
-Message-ID: <aOZj4Jeif1uYXAxZ@google.com>
-Subject: Re: [PATCH] mm: use enum for vm_flags
-From: Alice Ryhl <aliceryhl@google.com>
-To: Jakub Acs <acsjakub@amazon.de>
-Cc: djwong@kernel.org, jhubbard@nvidia.com, akpm@linux-foundation.org, 
-	axelrasmussen@google.com, chengming.zhou@linux.dev, david@redhat.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, peterx@redhat.com, rust-for-linux@vger.kernel.org, 
-	xu.xin16@zte.com.cn
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-ThreadId: AXClXubP6rjF
+Date: Wed, 08 Oct 2025 15:23:28 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andrey Albershteyn" <aalbersh@redhat.com>, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+Cc: "Jan Kara" <jack@suse.cz>, "Jiri Slaby" <jirislaby@kernel.org>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Andrey Albershteyn" <aalbersh@kernel.org>
+Message-Id: <5702a4d0-37f9-4131-bb4b-4a192088ec28@app.fastmail.com>
+In-Reply-To: <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
+References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
+ <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
+Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr syscalls
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08, 2025 at 12:54:27PM +0000, Jakub Acs wrote:
-> redefine VM_* flag constants with BIT()
-> 
-> Make VM_* flag constant definitions consistent - unify all to use BIT()
-> macro and define them within an enum.
-> 
-> The bindgen tool is better able to handle BIT(_) declarations when used
-> in an enum.
-> 
-> Also add enum definitions for tracepoints.
-> 
-> We have previously changed VM_MERGEABLE in a separate bugfix. This is a
-> follow-up to make all the VM_* flag constant definitions consistent, as
-> suggested by David in [1].
-> 
-> [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
-> 
-> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Xu Xin <xu.xin16@zte.com.cn>
-> Cc: Chengming Zhou <chengming.zhou@linux.dev>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Axel Rasmussen <axelrasmussen@google.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
-> 
-> Hi Alice,
-> 
-> thanks for the patch, I squashed it in (should I add your signed-off-by
-> too?) and added the TRACE_DEFINE_ENUM calls pointed out by Derrick.
+On Wed, Oct 8, 2025, at 14:44, Andrey Albershteyn wrote:
+> These syscalls call to vfs_fileattr_get/set functions which return
+> ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
+> inode. For syscalls EOPNOTSUPP would be more appropriate return error.
+>
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 
-You could add this if you go with the enum approach:
-
-Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-
-> I have the following points to still address, though: 
-> 
-> - can the fact that we're not controlling the type of the values if
->   using enum be a problem? (likely the indirect control we have through
->   the highest value is good enough, but I'm not sure)
-
-The compiler should pick the right integer type in this case.
-
-> - where do TRACE_DEFINE_ENUM calls belong?
->   I see them placed e.g. in include/trace/misc/nfs.h for nfs or
->   arch/x86/kvm/mmu/mmutrace.h, but I don't see a corresponding file for
->   mm.h - does this warrant creating a separate file for these
->   definitions?
-> 
-> - with the need for TRACE_DEFINE_ENUM calls, do we still deem this
->   to be a good trade-off? - isn't fixing all of these in
->   rust/bindings/bindings_helper.h better?
-> 
-> @Derrick, can you point me to how to test for the issue you pointed out?
-
-I'm not familiar with the TRACE_DEFINE_ENUM unfortunately.
-
-> +#ifndef CONFIG_MMU
-> +TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
-> +#endif /* CONFIG_MMU */
-
-Here I think you want:
-
-#ifdef CONFIG_MMU
-TRACE_DEFINE_ENUM(VM_UFFD_MISSING);
-#else
-TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
-#endif /* CONFIG_MMU */
-
-> +TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
-
-Here I think you want:
-
-#ifdef CONFIG_MEM_SOFT_DIRTY
-TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
-#endif
-
-Alice
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
