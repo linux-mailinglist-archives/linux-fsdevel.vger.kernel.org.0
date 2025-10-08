@@ -1,148 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-63609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364FFBC6059
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22ABCBC6097
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 08 Oct 2025 18:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BD164E9AD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:28:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 015474E8774
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Oct 2025 16:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5429E2BDC32;
-	Wed,  8 Oct 2025 16:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F4F2BE03B;
+	Wed,  8 Oct 2025 16:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qlt2EHEo"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mprtzb6O";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F0ihlidL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FDwob46G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FN7p1RnK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B8B29B8E5
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B512BDC27
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Oct 2025 16:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940888; cv=none; b=kz0C+pHcqoqvwLabJb8KZzUnYjvBdSaqro0Wp+XDATttiED6xL8RMpRBt36aaxeC3mCBgpuT5RctxqE5jlJBd1BuHFpHw6LfsvRP7bZmGaC7109a+iOVALOInXHAh05/q/FrqIHNMLr8nedGGMxeIN4PaL0k/U0ZgDsxJmCX+mw=
+	t=1759941338; cv=none; b=iFOAsQKd5RBV7aqLR2Rd47QwEbUtAd723iwoJdwQEZq0EPbM4+mEH3VxZow2+sSYodk9reS1rWx5bpLElLJkE4noYbo8+LI2UACYrvuU1yVZ9dBExdtochrC7fdARTkB8jHn4vlb263WPVHGyCKkljqDB8OxNJBbGRc7WxkJGMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940888; c=relaxed/simple;
-	bh=m6uUvqSqb8LfKXllguL5/0G50xrdlHHc0hOb1sIeJEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=noR5L9Ez2ZVMlM/s8jO2u3gEw/7HpuFX2XfSyti8xsrQojXpoFv6JgUb8llFaFJMJ3fgI2EkRViICfo21AZd+rr9zaXE/EWlXF4v0/VdInC96FOBW6PZo5m7BkcD8phzDCpqAWoWk8c/LL9ZikBMQnby+l/wv062Jdcc7Zq7K10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qlt2EHEo; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-634a3327ff7so13362a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759940884; x=1760545684; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ig2GLHE8hlKLEgmzJH4+emiSgZo32NUB86/I21OU+Y0=;
-        b=Qlt2EHEoBkJPvWeCMosjoo1bEtQWMoicy7OuY+Akgkeq7wsSzJlpwurUOAKHSZKYiF
-         1q1nEW7oEbYEGYBLLQoTw977kctAcletbcz5F+JJT1ea8+UxPdagVG7V1+jUj4D/UfX/
-         fCNY3iHnfI0NbIvy4GIuzERj2M7ot5eUo1vwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759940884; x=1760545684;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ig2GLHE8hlKLEgmzJH4+emiSgZo32NUB86/I21OU+Y0=;
-        b=Fh2Pgi3Sxf+/JPW3ytTbqQ5zB4m09K9VkTskVbtijrtWl6A9DPGH+hSSWWTqTZRP+N
-         1w7w3qFePj0WLG7SJmFU8KpyNKTnlAwOzxfnZcHVPBW/lkMd87Xi+NAe+X4sfnm9E8Rc
-         09A/ZX/JrFAr8HLDzXC8sGnQmiCC2WiZnGx5fOF2DvmgE8donl4+3AkHtcwE5grlGmAf
-         Z0U92n6LEm9sa15YufZs8DttqOUQ8jmzgAW4SRzZwA8lhfBVnPYmY0zJmtgmHEShkhAK
-         BZBva5DDHxhDET3qoGdbi6qt45XyVhCVvcrtxAxlG2yQDdvkieTi+g7AC5+94lpb3rdz
-         NhnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpo+ktoE0MhoZoLuydO0OQFmCT9Tj0JF/pRrKUjYLMF7zENX10E+yiDrljbPhHlLNpXTnadtYmEgwxUMdg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7xXaJ+hWpMFbzkEfXCR8xjjhxp/+/ZRid+7mfEwXVQGl/Z+Nv
-	eamX6n6JHXfo4azlwjnfojo0KokiezqwxyahzOSpC9tOw/dpFrNqFHlEVCGMC8FfVEsllrzH0tc
-	BZ4fpUZk=
-X-Gm-Gg: ASbGncvw7VyM4IssdFbQjQ30NxFhqOWIWC1hRGZNIfnGA26lda3ABXgDl1paO4bxgQx
-	RIhYVPKUZOFuYxtT1ZFH85t/YVRPlkPifC6QQbTHWTahzRFGKnyIIfx9fefUIBFX4P9mgLgoMMZ
-	Vg1QFwBQPDDlDl1DksYTbE10DFsl6kQjqBdNvqmkCc84sM+RHmrv0dRuQvF9LKx6QEQEjUYDe+z
-	DuzFqGZaYg+srHuIpp2zvLUYdXLTjBDAB3J2F22R6p10jugomxv49rVIyAYgkmlq1y3QRY1ENn1
-	WFBsFBUf8bpPbDfRFQyGQ3JXM/4g3HHqdMwDyDH678+9dmLoTsjiKyJqL9KPYOa80rAhVVj4zbg
-	enqZ0nTMeGHT7Fg0XOzhG3RVs37ZUbT2G4iJrrVXr18MxLuV7fOhLZUtVwY6I8QjlaurjT947JW
-	oSLS3Lwk4wHwEQYTDf4JfJg3ZOfI3xWUs=
-X-Google-Smtp-Source: AGHT+IEFQJ0WLVVkBnG/7mECXNusIrnT1jiimWdAtzweZJxY6tRHtz954/aNcjTvIIsS1roSeKhJOg==
-X-Received: by 2002:a17:907:3e1e:b0:b3a:b22e:dd35 with SMTP id a640c23a62f3a-b50aa48d854mr458749866b.2.1759940883609;
-        Wed, 08 Oct 2025 09:28:03 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869c4fd9esm1681160766b.76.2025.10.08.09.27.57
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 09:28:02 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so2693393a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Oct 2025 09:27:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0X4JyWcX4FcsiRmYsNNJhZur8oF2YOqTWmT/eLYWyNa4gXX46ekezklTgNJkcic4fcSH2c06jcIuW32NZ@vger.kernel.org
-X-Received: by 2002:a05:6402:1d52:b0:633:59dd:3566 with SMTP id
- 4fb4d7f45d1cf-639d5b5d47emr4199002a12.6.1759940874133; Wed, 08 Oct 2025
- 09:27:54 -0700 (PDT)
+	s=arc-20240116; t=1759941338; c=relaxed/simple;
+	bh=STlPLILrdbUkehDItZwxZeAIA65ZfO5IjXhUhS+Az7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SKwnTECohTfAsqeUQOe3bsNAY0GAtyeqLntYzg4AiHx2pwHAM7RcqD7O6/wwWoQYCSQBJwrfyJr1LTjNbuvTxSnQn38lqa4xZyusp2gdQ6TqGjvfrVgHek0wpiUEznlyeipb4uaHCcxhweKARU4ex7SINcklYSzb6BuVItFvAC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mprtzb6O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F0ihlidL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FDwob46G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FN7p1RnK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0C4AA219FD;
+	Wed,  8 Oct 2025 16:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759941335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
+	b=mprtzb6OshShNCuPggAsQCbGfUvaS6+9ur54jUrXf/nbyG4AHBiyceGcTe8dAwqsqHFcPf
+	pqukcUI5ZqHZOZXrJEXiOS6793Y3dh0zzm8p0kebQrOqosFdqRX1oGJb45ZxhJ9eTnkwWm
+	cBLMgpDE1IaRhGgsFyGTfoTnL0Fu0+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759941335;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
+	b=F0ihlidLyoYV9Vt+eIAvfM5rdKGXDpIePTQ3D3rlOTUjjRZf0ZAypBxhhrLl+6Niynf+We
+	z4QPdBwU+0crEtAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759941334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
+	b=FDwob46GKJMj/04vQRA0oyIU5xQa9AtP9CRQnA8EN4Y7R6k22cxTAC6VEyldxEMsLbzXQZ
+	5B8zCF43rxtQajuCnnhmrxfje5aLDnjs64spEUDLxvR8WpmHxxRA8+3FVW80v9CuEFacHS
+	Cv1zQiq+zj3la1HNvWrj2HAc7Tsxyeg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759941334;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75UfXoGGzzh/57QEN2GVr6tMjNnzbbUsyDdDu88QK2E=;
+	b=FN7p1RnKM4dHWp5mTs2ADyP3cQOvE+nRa1cd3TkzMF/PnEXpb/qfA2VmA9XB81qgU5ElWQ
+	yh0WO5ZT2I/Y2dAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E474813A3D;
+	Wed,  8 Oct 2025 16:35:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 68+BN9WS5mguEgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 16:35:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 279A2A08E9; Wed,  8 Oct 2025 18:35:29 +0200 (CEST)
+Date: Wed, 8 Oct 2025 18:35:29 +0200
+From: Jan Kara <jack@suse.cz>
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: adilger.kernel@dilger.ca, kernel-team@cloudflare.com, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tytso@mit.edu, willy@infradead.org, Baokun Li <libaokun1@huawei.com>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: ext4 writeback performance issue in 6.12
+Message-ID: <2nuegl4wtmu3lkprcomfeluii77ofrmkn4ukvbx2gesnqlsflk@yx466sbd7bni>
+References: <20251006115615.2289526-1-matt@readmodwrite.com>
+ <20251008150705.4090434-1-matt@readmodwrite.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whThZaXqDdum21SEWXjKQXmBcFN8E5zStX8W-EMEhAFdQ@mail.gmail.com>
- <a3nryktlvr6raisphhw56mdkvff6zr5athu2bsyiotrtkjchf3@z6rdwygtybft>
- <CAHk-=wg-eq7s8UMogFCS8OJQt9hwajwKP6kzW88avbx+4JXhcA@mail.gmail.com>
- <4bjh23pk56gtnhutt4i46magq74zx3nlkuo4ym2tkn54rv4gjl@rhxb6t6ncewp>
- <CAHk-=wi4Cma0HL2DVLWRrvte5NDpcb2A6VZNwUc0riBr2=7TXw@mail.gmail.com>
- <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
- <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
- <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
- <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
- <CAHk-=wgbQ-aS3U7gCg=qc9mzoZXaS_o+pKVOLs75_aEn9H_scw@mail.gmail.com> <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
-In-Reply-To: <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 Oct 2025 09:27:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
-X-Gm-Features: AS18NWDe0QCBO_xfFFVdd4_0oRQnca8OG-hxRX2CoFLKyQS13SPatIyxuAJL3zo
-Message-ID: <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
-Subject: Re: Optimizing small reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008150705.4090434-1-matt@readmodwrite.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Wed, 8 Oct 2025 at 07:54, Kiryl Shutsemau <kirill@shutemov.name> wrote:
->
-> The best case scenario looks great. 16 threads hammering the same 4k
-> with 256 bytes read:
->
-> Baseline:       2892MiB/s
-> Kiryl:          7751MiB/s
-> Linus:          7787MiB/s
+Hi Matt!
 
-Yeah, that certainly fixes the performance problem people saw with
-contention on the page count.
+Nice talking to you again :)
 
-> But when I tried something outside of the best case, it doesn't look
-> good. 16 threads read from 512k file with 4k:
->
-> Baseline:       99.4GiB/s
-> Kiryl:          40.0GiB/s
-> Linus:          44.0GiB/s
->
-> I have not profiled it yet.
->
-> Disabling SMAP (clearcpuid=smap) makes it 45.7GiB/s for mine patch and
-> 50.9GiB/s for yours. So it cannot be fully attributed to SMAP.
+On Wed 08-10-25 16:07:05, Matt Fleming wrote:
+> (Adding Baokun and Jan in case they have any ideas)
+> On Mon, Oct 06, 2025 at 12:56:15 +0100, Matt Fleming wrote:
+> > Hi,
+> > 
+> > We're seeing writeback take a long time and triggering blocked task
+> > warnings on some of our database nodes, e.g.
+> > 
+> >   INFO: task kworker/34:2:243325 blocked for more than 225 seconds.
+> >         Tainted: G           O       6.12.41-cloudflare-2025.8.2 #1
+> >   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> >   task:kworker/34:2    state:D stack:0     pid:243325 tgid:243325 ppid:2      task_flags:0x4208060 flags:0x00004000
+> >   Workqueue: cgroup_destroy css_free_rwork_fn
+> >   Call Trace:
+> >    <TASK>
+> >    __schedule+0x4fb/0xbf0
+> >    schedule+0x27/0xf0
+> >    wb_wait_for_completion+0x5d/0x90
+> >    ? __pfx_autoremove_wake_function+0x10/0x10
+> >    mem_cgroup_css_free+0x19/0xb0
+> >    css_free_rwork_fn+0x4e/0x430
+> >    process_one_work+0x17e/0x330
+> >    worker_thread+0x2ce/0x3f0
+> >    ? __pfx_worker_thread+0x10/0x10
+> >    kthread+0xd2/0x100
+> >    ? __pfx_kthread+0x10/0x10
+> >    ret_from_fork+0x34/0x50
+> >    ? __pfx_kthread+0x10/0x10
+> >    ret_from_fork_asm+0x1a/0x30
+> >    </TASK>
 
-It's not just smap. It's the iov iterator overheads I mentioned.
+So this particular hang check warning will be silenced by [1]. That being
+said if the writeback is indeed taking longer than expected (depends on
+cgroup configuration etc.) these patches will obviously not fix it. Based
+on what you write below, are you saying that most of the time from these
+225s is spent in the filesystem allocating blocks? I'd expect we'd spend
+most of the time waiting for IO to complete...
 
-Those iov iterators are *slow*. Well, compared to a small memcpy they
-are. They are out-of-line, but they also do a lot of tests for the
-different cases.
+[1] https://lore.kernel.org/linux-fsdevel/20250930065637.1876707-1-sunjunchao@bytedance.com/
 
-So the baseline obviously still uses the iov_iter code, but it does it
-on full pages, so the overhead is much less noticeable.
+> > A large chunk of system time (4.43%) is being spent in the following
+> > code path:
+> > 
+> >    ext4_get_group_info+9
+> >    ext4_mb_good_group+41
+> >    ext4_mb_find_good_group_avg_frag_lists+136
+> >    ext4_mb_regular_allocator+2748
+> >    ext4_mb_new_blocks+2373
+> >    ext4_ext_map_blocks+2149
+> >    ext4_map_blocks+294
+> >    ext4_do_writepages+2031
+> >    ext4_writepages+173
+> >    do_writepages+229
+> >    __writeback_single_inode+65
+> >    writeback_sb_inodes+544
+> >    __writeback_inodes_wb+76
+> >    wb_writeback+413
+> >    wb_workfn+196
+> >    process_one_work+382
+> >    worker_thread+718
+> >    kthread+210
+> >    ret_from_fork+52
+> >    ret_from_fork_asm+26
+> > 
+> > That's the path through the CR_GOAL_LEN_FAST allocator.
+> > 
+> > The primary reason for all these cycles looks to be that we're spending
+> > a lot of time in ext4_mb_find_good_group_avg_frag_lists(). The fragment
+> > lists seem quite big and the function fails to find a suitable group
+> > pretty much every time it's called either because the frag list is empty
+> > (orders 10-13) or the average size is < 1280 (order 9). I'm assuming it
+> > falls back to a linear scan at that point.
+> > 
+> >   https://gist.github.com/mfleming/5b16ee4cf598e361faf54f795a98c0a8
+> > 
+> > $ sudo cat /proc/fs/ext4/md127/mb_structs_summary
+> > optimize_scan: 1
+> > max_free_order_lists:
+> > 	list_order_0_groups: 0
+> > 	list_order_1_groups: 1
+> > 	list_order_2_groups: 6
+> > 	list_order_3_groups: 42
+> > 	list_order_4_groups: 513
+> > 	list_order_5_groups: 62
+> > 	list_order_6_groups: 434
+> > 	list_order_7_groups: 2602
+> > 	list_order_8_groups: 10951
+> > 	list_order_9_groups: 44883
+> > 	list_order_10_groups: 152357
+> > 	list_order_11_groups: 24899
+> > 	list_order_12_groups: 30461
+> > 	list_order_13_groups: 18756
+> > avg_fragment_size_lists:
+> > 	list_order_0_groups: 108
+> > 	list_order_1_groups: 411
+> > 	list_order_2_groups: 1640
+> > 	list_order_3_groups: 5809
+> > 	list_order_4_groups: 14909
+> > 	list_order_5_groups: 31345
+> > 	list_order_6_groups: 54132
+> > 	list_order_7_groups: 90294
+> > 	list_order_8_groups: 77322
+> > 	list_order_9_groups: 10096
+> > 	list_order_10_groups: 0
+> > 	list_order_11_groups: 0
+> > 	list_order_12_groups: 0
+> > 	list_order_13_groups: 0
+> > 
+> > These machines are striped and are using noatime:
+> > 
+> > $ grep ext4 /proc/mounts
+> > /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
+> > 
+> > Is there some tunable or configuration option that I'm missing that
+> > could help here to avoid wasting time in
+> > ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
+> > fail an order 9 allocation anyway?
 
-This is why I said that I think the next step is to just do the
-user-space case, so that the loop can not only avoid the SMAP overhead
-by using the user_access_begin() model, but so that it also avoids all
-the iov iter costs.
+So I'm somewhat confused here. How big is the allocation request? Above you
+write that average size of order 9 bucket is < 1280 which is true and
+makes me assume the allocation is for 1 stripe which is 1280 blocks. But
+here you write about order 9 allocation.
 
-                    Linus
+Anyway, stripe aligned allocations don't always play well with
+mb_optimize_scan logic, so you can try mounting the filesystem with
+mb_optimize_scan=0 mount option.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
