@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-63698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AD0BCB292
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D663BBCB2D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 01:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7DD33B3090
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61FD1A6468B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 23:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A87E28751A;
-	Thu,  9 Oct 2025 22:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166A62874F9;
+	Thu,  9 Oct 2025 23:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsmcUkZG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeP1ebEf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C064F286D76;
-	Thu,  9 Oct 2025 22:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BBE72625;
+	Thu,  9 Oct 2025 23:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760050680; cv=none; b=M8Q4LlSYwXphboMHCjXDYkqcTV2Yd+D++FMNOLKQwbW93boVCWwYfNQTdjPJLd8W9AbNBVHcc5/4MuJ2iH78+HdgbCB/opN/ZKYQtpeGsh4eo6Gobp+4qWXuQhGYoJEjafioy0iizLPsKR7XifJqBVpC27xG4kOE96fO4SbNNPU=
+	t=1760051549; cv=none; b=srsmDu2axJT2VoIIj6qoIX0v2diLD008d7dc4dcIVauac0OXkIDlfnoPQQssIScCw/aZq6w9m/IvJQud7WhQca0dSZqrjKcOFUxicbEJ5OJ0emCD4x0jtxXAzIIbOFcKg9SvbQvge2KEJBpw9nhuAXlzpEKpAwNex6E0o8J2ezY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760050680; c=relaxed/simple;
-	bh=jy9n9D7ZYvmVySH2g9tp3Ckzl9GwzPglDdLRQQiCCGs=;
+	s=arc-20240116; t=1760051549; c=relaxed/simple;
+	bh=Z0b3bpB7s8l8nb1j4Ch+52gcGrqY0BNRSvWR/Vc+228=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JyRjdtVemSuwMMTRWwR+7U5xX0gwt0PMQf9v/1Bk4ICG+cQFnLb+hkMy0yPShLFTh+EEXpMvf2ybAudf27dR2wKVKSBIjb3/cYEI8sOhiaE8ORANstrLUd7fSb9JRTp7AfYRHaHhuq7q+8i5ls6wldFX52P/Pf9j6BORbSpvpzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsmcUkZG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A298AC4CEF8;
-	Thu,  9 Oct 2025 22:57:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Om4jEQENNIpsKlpydI5xWJ6rMFsYrcIHxJT1mHBYidLWgUm8ZmbgCoOI/iNQc52rKtEDAS8cOxcPxVBCEQza0eje4L/Pf5mFN7/HQ6LQ64AWhnqD3sQsYh292MHsqmbQylh0o//uHWWXr5Y65b3q4YhpRzgfkkboKvjvicUj4Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XeP1ebEf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CC8C4CEE7;
+	Thu,  9 Oct 2025 23:12:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760050680;
-	bh=jy9n9D7ZYvmVySH2g9tp3Ckzl9GwzPglDdLRQQiCCGs=;
+	s=k20201202; t=1760051548;
+	bh=Z0b3bpB7s8l8nb1j4Ch+52gcGrqY0BNRSvWR/Vc+228=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=fsmcUkZG+rOzdyBxI+7M0RRHI8iCH0InxqtSmP9yNCDhGt1Bbr4/Jf2pXUvkz4j88
-	 UDj2naNsOi0VQHsRuuZ+XVqfnznHDoZklQlLmEsL1ZH+zujftUroGA4CagCopBN4Xz
-	 vj1DTaBppGaXMLutBIo9nTWjzscI3qQWSu5T1LRFqzKqosPAtOS1racXWU9cDYO26z
-	 zCNFcdY+M8/5R/4MrzEIPk/9YZpX2joKXVX8G1bcNmk+IR5U392qHwGGDcH6PgYjxP
-	 +NCkkidu7Ix4EvUC/ZUg3baYkFdaMKgtVHuHpeJMGOFww7i1eR6wjV06LGsYJUWNsK
-	 LpFjSmrYG04DQ==
+	b=XeP1ebEfuiBjXqjcQeevK44aYYYNeTPG/dcoQip/pJY1CJsfvQmUvwxWR8TNIbmu3
+	 z36uH+8M6e5FiMhWm56P8q3P7UXHY9OZEViMS9l9btXwcjuj8eSzNbAruipDfd6FJN
+	 vlRIKwOHkFvj+jxAPSMsy204E2OiQpuXIhrtcc3RhDGIpX72Rod947g6w6DU5r9OOQ
+	 bzt5gxSc9tT/qBiShwr/7Wfj1PhA14WAm1o7J5CKUeuwXBwWiPjaxeBguiDXZ1FIjN
+	 TlM0rkP5+LHhf3rWxBlRA0hc51d5O4r0wAydJblwvKFjUqnzWRd3V4UMlxatBokmvw
+	 kCvEfBp7JIY8g==
 From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+To: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  Pratyush Yadav
+ <pratyush@kernel.org>,  jasonmiu@google.com,  graf@amazon.com,
   changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
   rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
   ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
@@ -68,16 +69,20 @@ Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
   stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
   linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
   saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-In-Reply-To: <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-	(Pasha Tatashin's message of "Tue, 7 Oct 2025 13:10:30 -0400")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-Date: Fri, 10 Oct 2025 00:57:49 +0200
-Message-ID: <mafs0ms5zn0nm.fsf@kernel.org>
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state monitoring
+In-Reply-To: <d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev> (Yanjun Zhu's
+	message of "Thu, 9 Oct 2025 10:56:33 -0700")
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-20-pasha.tatashin@soleen.com>
+	<a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
+	<mafs0qzvcmje2.fsf@kernel.org>
+	<CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
+	<dc71808c-c6a4-434a-aee9-b97601814c92@linux.dev>
+	<CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
+	<d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev>
+Date: Fri, 10 Oct 2025 01:12:18 +0200
+Message-ID: <mafs0ecrbmzzh.fsf@kernel.org>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -88,192 +93,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07 2025, Pasha Tatashin wrote:
+On Thu, Oct 09 2025, Yanjun.Zhu wrote:
 
-> On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
-> <pasha.tatashin@soleen.com> wrote:
->>
-[...]
-> 4. New File-Lifecycle-Bound Global State
-> ----------------------------------------
-> A new mechanism for managing global state was proposed, designed to be
-> tied to the lifecycle of the preserved files themselves. This would
-> allow a file owner (e.g., the IOMMU subsystem) to save and retrieve
-> global state that is only relevant when one or more of its FDs are
-> being managed by LUO.
+> On 10/9/25 10:04 AM, Pasha Tatashin wrote:
+>> On Thu, Oct 9, 2025 at 11:35=E2=80=AFAM Zhu Yanjun <yanjun.zhu@linux.dev=
+> wrote:
+>>>
+>>> =E5=9C=A8 2025/10/9 5:01, Pasha Tatashin =E5=86=99=E9=81=93:
+>>>>>> Because the window of kernel live update is short, it is difficult t=
+o statistics
+>>>>>> how many times the kernel is live updated.
+>>>>>>
+>>>>>> Is it possible to add a variable to statistics the times that the ke=
+rnel is live
+>>>>>> updated?
+>>>>> The kernel doesn't do the live update on its own. The process is driv=
+en
+>>>>> and sequenced by userspace. So if you want to keep statistics, you
+>>>>> should do it from your userspace (luod maybe?). I don't see any need =
+for
+>>>>> this in the kernel.
+>>>>>
+>>>> One use case I can think of is including information in kdump or the
+>>>> backtrace warning/panic messages about how many times this machine has
+>>>> been live-updated. In the past, I've seen bugs (related to memory
+>>>> corruption) that occurred only after several kexecs, not on the first
+>>>> one. With live updates, especially while the code is being stabilized,
+>>>> I imagine we might have a similar situation. For that reason, it could
+>>>> be useful to have a count in the dmesg logs showing how many times
+>>>> this machine has been live-updated. While this information is also
+>>>> available in userspace, it would be simpler for kernel developers
+>>>> triaging these issues if everything were in one place.
 
-Is this going to replace LUO subsystems? If yes, then why? The global
-state will likely need to have its own lifecycle just like the FDs, and
-subsystems are a simple and clean abstraction to control that. I get the
-idea of only "activating" a subsystem when one or more of its FDs are
-participating in LUO, but we can do that while keeping subsystems
-around.
+Hmm, good point.
 
+>>> I=E2=80=99m considering this issue from a system security perspective. =
+After the
+>>> kernel is automatically updated, user-space applications are usually
+>>> unaware of the change. In one possible scenario, an attacker could
+>>> replace the kernel with a compromised version, while user-space
+>>> applications remain unaware of it =E2=80=94 which poses a potential sec=
+urity risk.
+
+Wouldn't signing be the way to avoid that? Because if the kernel is
+compromised then it can very well fake the reboot count as well.
+
+>>>
+>>> To mitigate this, it would be useful to expose the number of kernel
+>>> updates through a sysfs interface, so that we can detect whether the
+>>> kernel has been updated and then collect information about the new
+>>> kernel to check for possible security issues.
+>>>
+>>> Of course, there are other ways to detect kernel updates =E2=80=94 for =
+example,
+>>> by using ftrace to monitor functions involved in live kernel updates =
+=E2=80=94
+>>> but such approaches tend to have a higher performance overhead. In
+>>> contrast, adding a simple update counter to track live kernel updates
+>>> would provide similar monitoring capability with minimal overhead.
+>> Would a print during boot, i.e. when we print that this kernel is live
+>> updating, we could include the number, work for you? Otherwise, we
+>> could export this number in a debugfs.
+> Since I received a notification that my previous message was not sent
+> successfully, I am resending it.
 >
-> The key characteristics of this new mechanism are:
-> The global state is optionally created on the first preserve() call
-> for a given file handler.
-> The state can be updated on subsequent preserve() calls.
-> The state is destroyed when the last corresponding file is unpreserved
-> or finished.
-> The data can be accessed during boot.
->
-> I am thinking of an API like this.
->
-> 1. Add three more callbacks to liveupdate_file_ops:
-> /*
->  * Optional. Called by LUO during first get global state call.
->  * The handler should allocate/KHO preserve its global state object and r=
-eturn a
->  * pointer to it via 'obj'. It must also provide a u64 handle (e.g., a ph=
-ysical
->  * address of preserved memory) via 'data_handle' that LUO will save.
->  * Return: 0 on success.
->  */
-> int (*global_state_create)(struct liveupdate_file_handler *h,
->                            void **obj, u64 *data_handle);
->
-> /*
->  * Optional. Called by LUO in the new kernel
->  * before the first access to the global state. The handler receives
->  * the preserved u64 data_handle and should use it to reconstruct its
->  * global state object, returning a pointer to it via 'obj'.
->  * Return: 0 on success.
->  */
-> int (*global_state_restore)(struct liveupdate_file_handler *h,
->                             u64 data_handle, void **obj);
->
-> /*
->  * Optional. Called by LUO after the last
->  * file for this handler is unpreserved or finished. The handler
->  * must free its global state object and any associated resources.
->  */
-> void (*global_state_destroy)(struct liveupdate_file_handler *h, void *obj=
-);
->
-> The get/put global state data:
->
-> /* Get and lock the data with file_handler scoped lock */
-> int liveupdate_fh_global_state_get(struct liveupdate_file_handler *h,
->                                    void **obj);
->
-> /* Unlock the data */
-> void liveupdate_fh_global_state_put(struct liveupdate_file_handler *h);
+> IMO, it would be better to export this number via debugfs. This approach =
+reduces
+> the overhead involved in detecting a kernel live update.
+> If the number is printed in logs instead, the overhead would be higher co=
+mpared
+> to using debugfs.
 
-IMHO this looks clunky and overcomplicated. Each LUO FD type knows what
-its subsystem is. It should talk to it directly. I don't get why we are
-adding this intermediate step.
-
-Here is how I imagine the proposed API would compare against subsystems
-with hugetlb as an example (hugetlb support is still WIP, so I'm still
-not clear on specifics, but this is how I imagine it will work):
-
-- Hugetlb subsystem needs to track its huge page pools and which pages
-  are allocated and free. This is its global state. The pools get
-  reconstructed after kexec. Post-kexec, the free pages are ready for
-  allocation from other "regular" files and the pages used in LUO files
-  are reserved.
-
-- Pre-kexec, when a hugetlb FD is preserved, it marks that as preserved
-  in hugetlb's global data structure tracking this. This is runtime data
-  (say xarray), and _not_ serialized data. Reason being, there are
-  likely more FDs to come so no point in wasting time serializing just
-  yet.
-
-  This can look something like:
-
-  hugetlb_luo_preserve_folio(folio, ...);
-
-  Nice and simple.
-
-  Compare this with the new proposed API:
-
-  liveupdate_fh_global_state_get(h, &hugetlb_data);
-  // This will have update serialized state now.
-  hugetlb_luo_preserve_folio(hugetlb_data, folio, ...);
-  liveupdate_fh_global_state_put(h);
-
-  We do the same thing but in a very complicated way.
-
-- When the system-wide preserve happens, the hugetlb subsystem gets a
-  callback to serialize. It converts its runtime global state to
-  serialized state since now it knows no more FDs will be added.
-
-  With the new API, this doesn't need to be done since each FD prepare
-  already updates serialized state.
-
-- If there are no hugetlb FDs, then the hugetlb subsystem doesn't put
-  anything in LUO. This is same as new API.
-
-- If some hugetlb FDs are not restored after liveupdate and the finish
-  event is triggered, the subsystem gets its finish() handler called and
-  it can free things up.
-
-  I don't get how that would work with the new API.
-
-My point is, I see subsystems working perfectly fine here and I don't
-get how the proposed API is any better.
-
-Am I missing something?
-
->
-> Execution Flow:
-> 1. Outgoing Kernel (First preserve() call):
-> 2. Handler's preserve() is called. It needs the global state, so it calls
->    liveupdate_fh_global_state_get(&h, &obj). LUO acquires h->global_state=
-_lock.
->    It sees h->global_state_obj is NULL.
->    LUO calls h->ops->global_state_create(h, &h->global_state_obj, &handle=
-).
->    The handler allocates its state, preserves it with KHO, and returns it=
-s live
->    pointer and a u64 handle.
-> 3. LUO stores the handle internally for later serialization.
-> 4. LUO sets *obj =3D h->global_state_obj and returns 0 with the lock stil=
-l held.
-> 5. The preserve() callback does its work using the obj.
-> 6. It calls liveupdate_fh_global_state_put(h), which releases the lock.
->
-> Global PREPARE:
-> 1. LUO iterates handlers. If h->count > 0, it writes the stored data_hand=
-le into
->    the LUO FDT.
->
-> Incoming Kernel (First access):
-> 1. When liveupdate_fh_global_state_get(&h, &obj) is called the first time=
-. LUO
->    acquires h->global_state_lock.
-
-The huge page pools are allocated early-ish in boot. On x86, the 1 GiB
-pages are allocated from setup_arch(). Other sizes are allocated later
-in boot from a subsys_initcall. This is way before the first FD gets
-restored, and in 1 GiB case even before LUO gets initialized.
-
-At that point, it would be great if the hugetlb preserved data can be
-retrieved. If not, then there needs to at least be some indication that
-LUO brings huge pages with it, so that the kernel can trust that it will
-be able to successfully get the pages later in boot.
-
-This flow is tricky to implement in the proposed model. With subsystems,
-it might just end up working with some early boot tricks to fetch LUO
-data.
-
-> 2. It sees h->global_state_obj is NULL, but it knows it has a preserved u=
-64
->    handle from the FDT. LUO calls h->ops->global_state_restore()
-> 3. Reconstructs its state object, and returns the live pointer.
-> 4. LUO sets *obj =3D h->global_state_obj and returns 0 with the lock held.
-> 5. The caller does its work.
-> 6. It calls liveupdate_fh_global_state_put(h) to release the lock.
->
-> Last File Cleanup (in unpreserve or finish):
-> 1. LUO decrements h->count to 0.
-> 2. This triggers the cleanup logic.
-> 3. LUO calls h->ops->global_state_destroy(h, h->global_state_obj).
-> 4. The handler frees its memory and resources.
-> 5. LUO sets h->global_state_obj =3D NULL, resetting it for a future live =
-update
->    cycle.
+Yeah, debugfs sounds fine. No ABI at least.
 
 --=20
 Regards,
