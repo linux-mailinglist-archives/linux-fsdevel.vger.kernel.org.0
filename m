@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F713BC7D99
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:00:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9154BBC7DCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3957F3A3378
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:00:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 973DA4F9000
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB842D3EF6;
-	Thu,  9 Oct 2025 07:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E9B2D47F4;
+	Thu,  9 Oct 2025 07:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMirGicO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QK8TLnBV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3362D130B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84342D23B8
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 07:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996786; cv=none; b=IXjU2GDbv0WfnXhHv5S9wlHKFNNmduv4SAtXixRRtpHrS2/YoQ8+N8EHYXInzu/bpPNeBc1RCcklra8dY9ZiK00i1jG2ffmmHGopSQEdecIEMfyjKvZQNcHzzgTRfsV7JGFLGzQBpHG1kLY91tl0zRUjTv/ZFIkF+jnzTALr0Ek=
+	t=1759996787; cv=none; b=VxLY5jVVv0rQ1iEatvMrmcrUVB/4X0op5dh6ehqGWNMJISN5gHUJ+OsW1hpVQZJVgp4OU8j9nDlo/B1L2Gk5nI0bd6QFxR+BhheOr2Qs0Srj0yqpY1xXbt6CG57Eq4MWvxVVfd/OSB4iiTMKHglRhbMUsAHFrOj/jkIXOF9NJ74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996786; c=relaxed/simple;
-	bh=hn/T4KF427I5vM1FE3EEQtD8Ky5WVe1EdG5AuHI54+4=;
+	s=arc-20240116; t=1759996787; c=relaxed/simple;
+	bh=ASNy7RmtSltSBzEynaqDPxE2iqjwE0ZPcjj4whWJ4kU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CTkZEy4PjifQAMqOGID27eoRmuvJnuBZvqgeEN77QmrrojwyCLuSV1a4YNBN1ewt1sgm1LxmHq4Uuxwjia/kP7PYd+FqDWjktBA47eC8df+N+3weWbn781yIDiX6ZLxpGsN5aKghXJ+7Dzj+tti3UkOWstlVpc8oYvU6IdshQUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMirGicO; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=QtoNtp/BCg6ie/tQyaYTMrLWtaqSk4jPrsbTFdxIDcCSDVR4Jxxdrykyt8kpnB6hV+lY9q9Q368exH4U2kykmRWwLJ1Q2+eMRHrxrVYk5j4MLmnoCSSbXyo3ZivX0RZjp4J4MxkqYKvmqhXj8E8ip+iSmQEOAfla2a+aauiTlZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QK8TLnBV; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b41870fef44so112510066b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 00:59:42 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3dbf11fa9eso105131866b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 00:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759996781; x=1760601581; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759996783; x=1760601583; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v56yGNQ37Majx7vHh2h4KlxSuTszWt/5MXXh209zdXY=;
-        b=lMirGicOJdPSNtq9UZZJiIbkDKhy9CQKtYmj64hbx8QVtEfVQuXDHFoFXpPwusWLPp
-         TgB2diOAbyyiUZcXGKKHKQWVgGL1Jx5zQmAsLuWo7rzUL/RHUceQ6EmmLLL7Tuuvpp4o
-         p9ObZpVAYRgOtDSAocog43dOeC1QR+/iw8CnAsNHbYFgI5Ks4nU2NhrpX0ALFEcaEVps
-         HMcARGcAMROGsXQWYoNrwFrRuRN/dEOF92/+8jeLPDMVuQaS266+1IDl1a5rwpVSlF6c
-         2XA+0rOpC18GFVQLbBReMGiW4hLHZ1ZRNPiZz+JymED71pXEAhX8lcUFUw1rNjt8rgI/
-         ickw==
+        bh=hnyVCyplzK+z1W2ORGsEbSjRDIE71IW/QrGYX9ePnTE=;
+        b=QK8TLnBV8F6IPKH9b//mxMoquBU1AYrHverDd2jJnQIsgDXYysnPt+5qBsl4ki720U
+         3ocIW7Jcipyxz+FB5i0HVbJvTq1bAwhiq0szN2RgKkAbWEjK59xK71mA/UXyiIHGLjks
+         i8X1rXeYq/6eOyN9qk6y7SDbeKEfkeMPkSkycmy6w9cX4IbDACFodVHNf7ayS2tuQQzf
+         IKbgSxng/5QEfd21nDFSwlasUSaPDixT4WIxVsZxCU8P/0dDBiGiYR4j/rTXKjR9ALI1
+         mumT8GIbxFNYEvHLNz1UYKyV+o9ECQ3E/6bbvg2TYrcGqhvXosgo02hjcVjVX1duKbm9
+         ES7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996781; x=1760601581;
+        d=1e100.net; s=20230601; t=1759996783; x=1760601583;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v56yGNQ37Majx7vHh2h4KlxSuTszWt/5MXXh209zdXY=;
-        b=V7yOdARBb3ZwP4RWrVK6B696kD5JPEZTvdwPNiLjnTqe2vMi8ajx4Z5SeS0KW8BpYb
-         /g3cb8dgSigQ55kum0f1LpQJQ8/+MiCXmpSzNN9egyO7Gl0U+kmsO0X85MhXaFGBLmE1
-         nzOxww71ilHUWNSkHB5ZwVA5mdiKhKdXXIeCO9j9LA11AkP/WApyxhTyRCD2x5XWecO/
-         idueYj+1mKvJq3ixmFdUotvu7x2V15M4KEuS77zbW+5hysP+cFEcarodVGJRqDyYmMpg
-         QhA9Az6wLVmoOdXrF1Z/JXBFNZi1bQRBnRtBvjIrDLtS0Qf0H906SYkL1ipFxejeFdba
-         kbyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfJDzmNZAJCdbBBUFmsYwjtFAUyqxhDMIdkLVBtWeNL7I31DUy9yPWQ76YYXHU4ip3rmpvzOY+9X8WEg3q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXKrWgZh5F0Mq6f07dmrSjex/o/iFdCmC+lEbxDYqU/iruCwOX
-	tk3o1gFkKsRXzJpuAc2tZnd33rWmVszvjjPzA9DyQi7QL/gNokllHe4q
-X-Gm-Gg: ASbGncv8MJixDpPWvbKAIX6y8+l1fo5ZbH7y/oHQTeqiQUjRpZlJLYkRTTm0obbzVnC
-	QiLGL2HqkmCONZ8ETlTjsYj0DdI3MRPXml/e9sRJyCXGxtARrnqeiOZw/ovj/GU1E2Gr50JphvM
-	mjzQiQooskwau/DIFP+7SbWHyFCK5yMj3G5tbI315PHtUnCzrcc5/H4tPi/tu8oD0+O/Fn6hOey
-	gVIpshV3xCs+0hkQKnSlV24e0VwUa0kPvZBSYPG2LnGHnmqJ3dba8IlF+moQSgSgwND/ULMHQD6
-	1QCNehKde29STwaGZgps1yEAIwpU+Okdb2X8LR1z4S2aoMXNnMWv3vdi3vH3xK21Wx4Wz9NdWGL
-	gd8uKf6Ai9TLhlokQmDiVKaxJLHjL0F4EdG/3+r1SJXvL0Irx00BfJVWg5eY8lGHnmq+RXByWLy
-	beT1eTw3dEOHdghzyi9cSKPrypvxM4/jwE
-X-Google-Smtp-Source: AGHT+IEc4DRH7N7VTwKCGCSJIEPnJelkA9fOKTTSeoDugfMSCygU9n//Fy4KEuh4pwZhlTzmLezAHw==
-X-Received: by 2002:a17:907:3f17:b0:b41:abc9:613c with SMTP id a640c23a62f3a-b50ac5d08e9mr658923266b.51.1759996781064;
-        Thu, 09 Oct 2025 00:59:41 -0700 (PDT)
+        bh=hnyVCyplzK+z1W2ORGsEbSjRDIE71IW/QrGYX9ePnTE=;
+        b=cgUOHTD3Ma7y+dSiUEpHOdbdBkiYmgzovcZWCRUQ8HfCWISxPID10MU1P4SS8uN2D2
+         jD7XxO3RjJME2kIbG9BW2avJYZIKwAiB9L86IMDdDOUzNKLQ1XfJHDIUvY5qH/okLY1Y
+         rZVf+RqG7mMa2XAvHHQQp3+h7rwnm3C08XYAs1X02V7JCH+1pog5B4L17kJZC1vWN/Rh
+         CtYAoKExnET9pNlJffw7kkUg8IoT/P142guPoNMeDGpqL2V7cs7E/mzFsqNJtYDkCsME
+         z+H4ugDYWAG2bxQQ74cPQsCF/qZybgllBv7Gib7WLldVZVU26+Cv019MSkqe2B3qQo09
+         w2Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaf0UR/PfZ8+qtgRQ29zyUemv9n8KJ33pHgUAkx5T72r9hx70SJ1nKTsHxkNtia8avJ7w0BOq7SS0Md3Aa@vger.kernel.org
+X-Gm-Message-State: AOJu0YywaMa62hAQieG+fPgDIpz5yKyThnFGTDyDKrcMgK3DGXR9hDpp
+	pZMyueqAUZ0cpC4Q1yRSu7Tt1VN439/jxTUk0WR65KITX/BavgmeTBLC
+X-Gm-Gg: ASbGncuVEezAbjUcuyNDV8TePlbkCbTLKihvkJqR3LgNJJSW387dkp+ah6rp3t72ZBP
+	RNODJE6WMKY2GWUtyF91zQyo6ExtH0CM+p/cv5AkpVL+3FB/VqnCo/Ohl6NCYKHnAK7iMX0fLCr
+	AglX0GWg/rR90sWa8UV5h/nZhn82RqU1RGbKaPltFEAVtdCzBMGpHpSpxJt6w0p/G/fAaT7bAnf
+	nchSjZ5TKhr/eIZ7e2DjrPOxPnmnau4P9uTlhF6Uv+Q0fsj7IQTyXZ2Q6S2ASOQUYSK4P+uEgap
+	zE8N2W2gil+zbsNm6CW4OPpEfav6RZxoycQ7VQtr9GC0RY0lEsaAo+AFcKqB2smQw8ISl2pP9Xf
+	cH8pVg/D4Tseheg4jnUKam/lYVONoGpJwoQFG68sTULCIjkpEfTyvk9B12DqiFy6UdfwKei/4SX
+	pW0SMmfONaNwmRk8UvbgHb33K1zPU9EYA4
+X-Google-Smtp-Source: AGHT+IHSi6VF6s0uOD+PumlBjGkMUoulpOekOEwVZLQpfCJd1Jc4jSCHGMuyuANtbvnedJ6DnWPu/g==
+X-Received: by 2002:a17:907:7f0e:b0:b48:44bc:44f2 with SMTP id a640c23a62f3a-b50ac8e52b0mr657263766b.43.1759996782956;
+        Thu, 09 Oct 2025 00:59:42 -0700 (PDT)
 Received: from f.. (cst-prg-66-155.cust.vodafone.cz. [46.135.66.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.00.59.38
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.00.59.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 00:59:40 -0700 (PDT)
+        Thu, 09 Oct 2025 00:59:42 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -89,9 +89,9 @@ Cc: viro@zeniv.linux.org.uk,
 	ceph-devel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v7 01/14] fs: move wait_on_inode() from writeback.h to fs.h
-Date: Thu,  9 Oct 2025 09:59:15 +0200
-Message-ID: <20251009075929.1203950-2-mjguzik@gmail.com>
+Subject: [PATCH v7 02/14] fs: spell out fenced ->i_state accesses with explicit smp_wmb/smp_rmb
+Date: Thu,  9 Oct 2025 09:59:16 +0200
+Message-ID: <20251009075929.1203950-3-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251009075929.1203950-1-mjguzik@gmail.com>
 References: <20251009075929.1203950-1-mjguzik@gmail.com>
@@ -103,58 +103,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The only consumer outside of fs/inode.c is gfs2 and it already includes
-fs.h in the relevant file.
+The incomming helpers don't ship with _release/_acquire variants, for
+the time being anyway.
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- include/linux/fs.h        | 10 ++++++++++
- include/linux/writeback.h | 11 -----------
- 2 files changed, 10 insertions(+), 11 deletions(-)
+ fs/fs-writeback.c           | 5 +++--
+ include/linux/backing-dev.h | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ac62b9d10b00..b35014ba681b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -949,6 +949,16 @@ static inline void inode_fake_hash(struct inode *inode)
- 	hlist_add_fake(&inode->i_hash);
- }
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 2b35e80037fe..9cda19a40ca2 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -476,10 +476,11 @@ static bool inode_do_switch_wbs(struct inode *inode,
+ 	switched = true;
+ skip_switch:
+ 	/*
+-	 * Paired with load_acquire in unlocked_inode_to_wb_begin() and
++	 * Paired with an acquire fence in unlocked_inode_to_wb_begin() and
+ 	 * ensures that the new wb is visible if they see !I_WB_SWITCH.
+ 	 */
+-	smp_store_release(&inode->i_state, inode->i_state & ~I_WB_SWITCH);
++	smp_wmb();
++	inode->i_state &= ~I_WB_SWITCH;
  
-+static inline void wait_on_inode(struct inode *inode)
-+{
-+	wait_var_event(inode_state_wait_address(inode, __I_NEW),
-+		       !(READ_ONCE(inode->i_state) & I_NEW));
-+	/*
-+	 * Pairs with routines clearing I_NEW.
-+	 */
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	spin_unlock(&inode->i_lock);
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 3e64f14739dd..065cba5dc111 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -277,10 +277,11 @@ unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+ 	rcu_read_lock();
+ 
+ 	/*
+-	 * Paired with store_release in inode_switch_wbs_work_fn() and
++	 * Paired with a release fence in inode_do_switch_wbs() and
+ 	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+ 	 */
+-	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
++	cookie->locked = inode->i_state & I_WB_SWITCH;
 +	smp_rmb();
-+}
-+
- /*
-  * inode->i_rwsem nesting subclasses for the lock validator:
-  *
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index e1e1231a6830..06195c2a535b 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -189,17 +189,6 @@ void wakeup_flusher_threads_bdi(struct backing_dev_info *bdi,
- void inode_wait_for_writeback(struct inode *inode);
- void inode_io_list_del(struct inode *inode);
  
--/* writeback.h requires fs.h; it, too, is not included from here. */
--static inline void wait_on_inode(struct inode *inode)
--{
--	wait_var_event(inode_state_wait_address(inode, __I_NEW),
--		       !(READ_ONCE(inode->i_state) & I_NEW));
--	/*
--	 * Pairs with routines clearing I_NEW.
--	 */
--	smp_rmb();
--}
--
- #ifdef CONFIG_CGROUP_WRITEBACK
- 
- #include <linux/cgroup.h>
+ 	if (unlikely(cookie->locked))
+ 		xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags);
 -- 
 2.34.1
 
