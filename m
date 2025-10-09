@@ -1,130 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-63655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857F4BC8BDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 13:19:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3E2BC8EF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 14:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D739351CF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 11:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17875420636
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 12:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E76C2DF71E;
-	Thu,  9 Oct 2025 11:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED84D264A86;
+	Thu,  9 Oct 2025 12:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNoiJ37l"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="b+zMQNGz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7C02DC33F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 11:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2DA34BA39
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 12:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760008782; cv=none; b=JFHwL3eLV7qXleFaeBflZcBzhAjlRCVVGmU5NbQa/iQ/SmZ1IfveP9ZYHCnjUn8no+ucV58SYt+M+EEhCTfVfBAcR3Z9lK/9/GQY6J6+Dyt0cD2OXMQOZObtrDOH7Tr8tK/GUkHBBhAlNDKsaWAG73pPjygViLuho9dTH8c86u4=
+	t=1760011318; cv=none; b=dmwJDz1ruifuB2vpW6GEApJWcAwmsWekGrtKuvq5/LsD6MDudaFazlbxzwJLYisgy86oqwjwFtDjq4P4oNmcH90Cboc4oHy4G9NweNdgJWo7wFHMoSTj62ExFDw25dH6sY4F/3/FptYSuUe1DuYDhDzzX2uqmXMj86qcZC3XO18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760008782; c=relaxed/simple;
-	bh=mzeWOdj3lBj+Ke0QviDFWI2aF1kcLsskxWN0A79AnHU=;
+	s=arc-20240116; t=1760011318; c=relaxed/simple;
+	bh=GM7HHu3HbolbVRGEPyllWwUcu2/FcpmuCKiQlqwBpNU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dt+v0fp7UjlosFA26+VcZoX8VEn2AabsA1OteRt+OCkrR5fQT99//rydRsVi5LcvEV7TDjr1lCUDpkWCaslgmof8ODYPTNTsk6DgCQywxIs0Zv/+ffZTo+UoAy3EWQjf23/k0l87h4sMPdlIq3RzLN/nJhwrwEic93SLeLJ/8Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNoiJ37l; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d60501806so8533317b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 04:19:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=Qx7g7P8pqFjy+Gu9GE38TrH6KvMgGI2kjuf7SJMwfJx0onLSnlyRUw/fB2vWIeMyb5fP6cOHoX2trY0+XRMmgLE0DaZb9SVJfZBqR2lSQShVjLnRpUfLJgIBG9YTIyhEPrYSN1JYtMsJV8N1Dw041JQfneyWM4Dhju7PwRVZUu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=b+zMQNGz; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4da7a3d0402so12685991cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 05:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760008779; x=1760613579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mzeWOdj3lBj+Ke0QviDFWI2aF1kcLsskxWN0A79AnHU=;
-        b=jNoiJ37lCUQ9Hrm2hMpur0n3OpmXylsTAvQFzFo0gEHLdPW1H7xLOEfZx9IMP3xJGG
-         VvaFojxgSsr0dFIBvT0p9gx6C2qVKiKNUQeCfRio9yhV6GZjq9rpyyrteqxqW9Ew3dBm
-         wtvaqMjirKwpcBo4MgJpiCLn7sWEkQpEyqFiwGTjc5zHrlT4QCRizWiXWVk6zMf3FYYn
-         bzUTIQSKLADIffCIHWelPhf43EqQYtzVSfMGzuGbrzIwj9QJsP6FN+oluyC+bzTKhDgF
-         5nZ3Uo6yeEy5h0e9DLaazODqWGp9Q080LEkzOtn2P2FcQKQiw+6Kon0LQ4PFBZDDcg2+
-         Grtw==
+        d=soleen.com; s=google; t=1760011316; x=1760616116; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GM7HHu3HbolbVRGEPyllWwUcu2/FcpmuCKiQlqwBpNU=;
+        b=b+zMQNGzBJd1OaeJknxqIgA61IUUVrXkv8oIP3xZ2A0MdE1kUkFPP/N/0/QuUD4AJV
+         N2naFEJj3vuVNfiVA9tpl7OH4gGf5eVN5FROd5V9mKU1OWYCFcuFVssSdauYOi6AUD/6
+         WnMaklKCI1d7IS+RjHFdIpL6cgsbVVuZYf0mekI2EgeAPnUFh0kuUfSy61tIOE+4pa3i
+         MV1oHs6F/pMl5Y8IkkBfyQXR0GRc6waWiZeDGSFpVeE8gLkKgYRBF6vgZfFF8SHims18
+         DJzf5+VMrn7FWtL36gms+zIvDJUV4PXpXGcBx+ITMjtadkuovdUz3uFKpgyR33rvFcGv
+         fCsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760008779; x=1760613579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mzeWOdj3lBj+Ke0QviDFWI2aF1kcLsskxWN0A79AnHU=;
-        b=uQ2awambayWnHt74rdbZa5LgMb39MESCSMNqebSBSufHHEdG/jrlrdD+ArEcpkKnJm
-         q0NMiuVTapFy+GmzW7/rdkQNtLasbG+YXzhkVvPSMAvAnL2cR4pD42KItEd789LI5LQ8
-         XQ8LhaQz0gP15dOSS/IYP9/ozntPdTSjiG3Ef6VSRdEX1QNkcTw+20M+dFK9FeOqS7z8
-         wW+yAqG6VcNx4fTnbybBGdeKOMY5FPgYy70p5WaOv1J6NKxk29uANF8IVDgj53KBVPRY
-         K3z8y2pan1HVcJAz4PzlSCVZwl7+16PdZnQa52OxUS4s3lsEM4vyeOkot9jRi+NCqpYT
-         q4ew==
-X-Gm-Message-State: AOJu0YyqVVGU825epwWPTzWvcf/YIkQuldUisdV2LvX2rTV/FRRgPycj
-	YJZ68D5BJHvgu0Ewh92HhHNYhFB8GSavl1hlQlo+srsI1DBk/CcBGjx2l0IOk5ht7d76xOUyA41
-	x/p/4Ol5Nex8FEHhUDWgOR1/UPKhtn6s=
-X-Gm-Gg: ASbGncszTxI1OWnGK9W4F1xfbpUtfFmI8TjHbr30g9IRugZgRhs6m2gdv3nNIgV8Zm6
-	Yo5TfUceFozPTEdN6/7LhhUMahtTggHPSz/zHBLHb/DisLz34yajg+LvZwg1o3UQWn8rYzSEXBZ
-	roOayckTsZ3+NFuap+w39NoZc/ctKx1v55IA9BwIxuv/Yzq/ikUlVB6PLitubp5mSpdtFKqmEGr
-	nrfoGkHuMxLiUoo7OVsJlpP05PO7Tc=
-X-Google-Smtp-Source: AGHT+IE5U7JyGi1AmeLjDi25hUOta+sU2hpJbVTN9Ai63ARDyOdLqRjdCN3h5Wr4u+tqZlHZJ+/pg/7Xr5jCWFq4BIc=
-X-Received: by 2002:a53:d048:0:10b0:63b:8e80:c017 with SMTP id
- 956f58d0204a3-63ccb672a0emr6807745d50.0.1760008779377; Thu, 09 Oct 2025
- 04:19:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760011316; x=1760616116;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GM7HHu3HbolbVRGEPyllWwUcu2/FcpmuCKiQlqwBpNU=;
+        b=HMAJObrYjRImDTZnydPEK/DwjM9XAh6zZyjrG4vgJm6VmH5XPe9fbGNtynpbJXQ5Ey
+         M8Q4wc6V42YJG4YlVDVYzclkKdp6sNZ4R7Sbay92iD4SW9mPF+I/5FPWF9WDOjG5qlJa
+         15umj/H0n5Zp1vh5n2dl0xlkunmAtxgZ1wMu1uWizFYlWD+sD2NrxxI8a0OjhbipfAv3
+         C26OgJVRqmmChGoMXGkMyzDv1e8BFMPtDhWaXNQqwQgHaqu8e9nAxAXlUKTJlrQMDqj0
+         UGrtityaE4EIvEVUj/BM+/L+ZQaZawWXNC6Om45kIJgU2hnMCxopYzzeBfkes9dR2PYY
+         Ky3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU40Sk/Na48eoEjBCqk9ZnxyB3qxBubO2Z1ZOJt+m9ExFNoLbiygGTvGS4dAb5jYaMn+ql7Jm0Ns1AYv6Q+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiN4sw8XOld4jUH1i8c1Tky5jrWd6PIpAZkaMj8SVGe35UNfNW
+	8T1DehMIamaUCQksoBXr2QWYChm4ghjlxKG9Hdng9wBdQjpc5ZrARp0Gq2mmJm7xkw+WrnQ0sZa
+	WMK0ZofDCShS9ssESgqtzAVlwK6brZdhx4o2LFxj3ZA==
+X-Gm-Gg: ASbGncvV2Gg5E2pl/Zry1/tMB5uABUVI5RxN4R4zhfFRPcTs1hSE7+OzK31rnOzYc5s
+	ZfHqf7BUcW09Jx7s3Z8hlLAJdKspwER09vjqwRadWTmZMjgF++gLjDW/12IPGDk23mpcQ3YF53x
+	sft8/VOLMjJt8OTuZY8WkynsRIznguThoHnWEEnwBi16Qh7EP/wPub3cwq3eOsQjNR1zxqsrU98
+	BMhiAe2FfAyN1u4vTbsov/5PvgM
+X-Google-Smtp-Source: AGHT+IE9zb3wwXEpUh5P+ZmZZJCDFFOKUQIOo3/6KsN55Cs1OSGbV39rZ1DIVG9kDY7HFP8FPvwlsRPNuhjvFarm0hU=
+X-Received: by 2002:ac8:5d4d:0:b0:4d2:ba6f:28fa with SMTP id
+ d75a77b69052e-4e6de8b5d39mr171303161cf.34.1760011310206; Thu, 09 Oct 2025
+ 05:01:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913003842.41944-1-safinaskar@gmail.com> <20250913003842.41944-29-safinaskar@gmail.com>
- <20250913054837.GAaMUFtd4YlaPqL2Ov@fat_crate.local> <20250913055851.GBaMUIGyF8VhpUsOZg@fat_crate.local>
-In-Reply-To: <20250913055851.GBaMUIGyF8VhpUsOZg@fat_crate.local>
-From: Askar Safin <safinaskar@gmail.com>
-Date: Thu, 9 Oct 2025 14:19:03 +0300
-X-Gm-Features: AS18NWAGN6ExXhEWeXK-ERFvGpf6JdjWShiWpIPYOnPjMCR9bXVHwIY8E_1WxIc
-Message-ID: <CAPnZJGBwFqNAybORpTtRfjtGwMQiBtd+rATD=mh8ZgE3owT_ow@mail.gmail.com>
-Subject: Re: [PATCH RESEND 28/62] init: alpha, arc, arm, arm64, csky, m68k,
- microblaze, mips, nios2, openrisc, parisc, powerpc, s390, sh, sparc, um, x86,
- xtensa: rename initrd_{start,end} to virt_external_initramfs_{start,end}
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>, 
-	Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org, initramfs@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	"Theodore Y . Ts'o" <tytso@mit.edu>, linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>, 
-	devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-20-pasha.tatashin@soleen.com> <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
+ <mafs0qzvcmje2.fsf@kernel.org>
+In-Reply-To: <mafs0qzvcmje2.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 9 Oct 2025 08:01:13 -0400
+X-Gm-Features: AS18NWB0gqbxGnAmt0TyUGPWI9yXOeOjTQwVBIB2xaJy4b4dnuqgnZXYRRh26fc
+Message-ID: <CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
+Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state monitoring
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: "yanjun.zhu" <yanjun.zhu@linux.dev>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 13, 2025 at 9:00=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrot=
-e:
-> Ooh, now I see it - you have virtual and physical initramfs address thing=
-s. We
-> usually call those "va" and "pa". So
+> > Because the window of kernel live update is short, it is difficult to statistics
+> > how many times the kernel is live updated.
+> >
+> > Is it possible to add a variable to statistics the times that the kernel is live
+> > updated?
 >
-> initramfs_{va,pa}_{start,end}
+> The kernel doesn't do the live update on its own. The process is driven
+> and sequenced by userspace. So if you want to keep statistics, you
+> should do it from your userspace (luod maybe?). I don't see any need for
+> this in the kernel.
+>
 
-Okay, I will call external_initramfs_{va,pa}_{start,end}
-(after I will remove initrd, which will happen after a year)
+One use case I can think of is including information in kdump or the
+backtrace warning/panic messages about how many times this machine has
+been live-updated. In the past, I've seen bugs (related to memory
+corruption) that occurred only after several kexecs, not on the first
+one. With live updates, especially while the code is being stabilized,
+I imagine we might have a similar situation. For that reason, it could
+be useful to have a count in the dmesg logs showing how many times
+this machine has been live-updated. While this information is also
+available in userspace, it would be simpler for kernel developers
+triaging these issues if everything were in one place.
 
-"external" means "bootloader-supplied" as opposed to builtin initramfs.
-
---=20
-Askar Safin
+Pasha
 
