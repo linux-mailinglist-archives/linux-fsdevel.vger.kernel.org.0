@@ -1,207 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-63644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04A1BC7EBB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:06:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393F9BC8130
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0344C19E81C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B033BE301
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CC62D29CE;
-	Thu,  9 Oct 2025 08:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707AF2D063C;
+	Thu,  9 Oct 2025 08:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbvDejU9"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPpzFfMn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lrMgh0IH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vZGttwaT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="enFzO5An"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB30B2E8E0D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 08:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3002857F2
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 08:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996813; cv=none; b=LfI+ckyVLyN1kyiF5g+5leZ4PIslQuoAu7ggko9AcBfUDvQONg0PNVen2OHYDh6utC+AZ7D+fgJ30A5x1XtdOoFoIzoPvruAigv18mVneckA7OOFyBj3Oh6fxflGGCfWMCaR9PGnnrTTBOD8rite9eogxfvQwyofMziA7A12x0w=
+	t=1759999138; cv=none; b=gJRsDQRMxH3PfRVnrF0f+Nty+b9aonZUYYuPxh7pQjxvqSROYz5cWeQweR8mh8pXEMERGC2BGlOHLGvKJ0RuWyb0DQG72BY81DdU5kc0YQGhOCb31PfhJmJeCA6UyZvQAwb3k+089CiNNtH66nJXKPlCLpUfb0TmxziJT1Mmp80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996813; c=relaxed/simple;
-	bh=xlG7nR5Wpn4toAnFh4yZG5U7bqMO2Ibqli2pgrWdpe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nCvVSyBCuxi4gi9GGB2bJKWfBuCSR1yvmoqHiRrTVW2vmtB1rmfUvmEbdStEPg7l+ME5hMtCTJSwS+PuKVJ3zWnO1f0TMZuASk8jgBTNwsBe7BiriYaDhueVYUqLA4QgA1sKcGRJa4iBhshR9hPw5qB0G8iWKJoZocz+M7AY00A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbvDejU9; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b456d2dc440so97379466b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 01:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759996809; x=1760601609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/5cEv8KCvxqRx2Vo792Uxij3yHT/Pkk8+e6W56mfmGo=;
-        b=SbvDejU9ggXuvwZcyBQN7Wh/w7QFoavPE+9gM8uuiuVmO1ELw5sKW93FFpq0UEpTkq
-         Ryj/7rO/SHMvr+NwtFE5QTSf5WS341LygOQn3KW7t0vLGZCQTLjHrjRyobIyOLnCITUf
-         tzlzCFocGJ4GpNMGGc8xHvX9bSHUppgKd1qcC+NjyZxY8Z7hp+K3ixktQxfiZtv7ESnw
-         xndW9hExYjaGy3CHpa5bkadYCG5PWfhGVNiCZT9uLlc+c8hEjNrRTCQ82+h6MLHDdNu/
-         WvQgPk7LktcDwjsfXh7eYvK/3q2818LaXoD+P0Hwqy+j8s9Z8YVRBE6t9qPBrNSb0JHf
-         54fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996809; x=1760601609;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/5cEv8KCvxqRx2Vo792Uxij3yHT/Pkk8+e6W56mfmGo=;
-        b=RMlYO3Ir7znYRSEIh5/MXrwf6xxf1beWR431/zz4QqSbIaDQNd4h0HOET61Lo3g1km
-         LpN5cFhAfFW6S4Ss7wVREqr4QpCTui6/Qi3ZpkHM6tR5lJebZDIpbpsEksyve/YzMGiU
-         M3RHFffjkfg6kdBUpntYPRkHxVpqJre4I6B3FfqlBBWm7+R6kHy4mrMJ6knEMcV2uQAm
-         4L4uPEPeqXpTu/nhuOUG8OMX1x5iJjUKr8qdXvOjW1sTTEl0aEeXKBIjMyNqASR5JpSE
-         ElfLPkHe0zH4PWMhIW7KjHw4eQgiPIQb1kRJ7Qlk9ptmj21BDyoLDObZIRsO/nG8a7uh
-         9sVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUM6/bqdG26Tws5Ahajt+Jb5oH+nQKMBZBV9t+wZpsvrmOoyoRUJpsTVupDD4dNZJX61bKWQ1GWGUtM8Sxk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym/bcOtMicMRtJIC24dImOsH2t+rMsTM5jwH9D6Fl9wZIMJES5
-	uN5S8rIQ50xNBlo49fKEwtzPUh54HyJ+CaXO42TjMXRdoBE7PBw4zZFn
-X-Gm-Gg: ASbGncu3ij/oxOfKvqOc0LOl/upAMzasmweUi0Empi3+HQaPQVM+OPtuqNJ3ypRahZh
-	6mACtVaN4nzUcmXJ6iA+D4QKeHhQFkOoYIk0dW/+I4RQ0ZlSzgKEeOaEPVcue3lwGU0L1DhkkCW
-	oarEKPkO1j5AU0o8rssnu+Nym9+NTehrmdWVroL6El10gXdkiFLVDpP3C2ehGhK161cI8G/2w4L
-	YfTE2jyrCIO+t9L2mN1EuPy56BLHacXArYNcTQau3rpcYgft0EW6xyvCpdpyivQzAbr6u51mqmX
-	hstWXNMpBpcnsKm6wfgppOGRS9no6HZ1vn26x4WZXAUDzqtn09FBQLvwP203X9j8NE+F3GZJMO7
-	pr3JLgCm0/P0VyxLY5Vxveb1/xYSlpl/rfVjuZG7oZU3wcx4Lcvkl/VaRot1rOlfZ5tEm+xW6wr
-	aMBl+T30KPfZvHsPG3xqqO83yjwQ7u9xD2
-X-Google-Smtp-Source: AGHT+IHLM13r5LQMnt/OJInRecUisomAa2MvrC2cG1/52NjvwtuMZLiyrwCa048XZprJyFm6wajB2w==
-X-Received: by 2002:a17:907:3daa:b0:b40:5dac:ed3f with SMTP id a640c23a62f3a-b50a9d59a8cmr718516366b.7.1759996806312;
-        Thu, 09 Oct 2025 01:00:06 -0700 (PDT)
-Received: from f.. (cst-prg-66-155.cust.vodafone.cz. [46.135.66.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.01.00.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 01:00:05 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com,
-	kernel-team@fb.com,
-	amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v7 14/14] fs: make plain ->i_state access fail to compile
-Date: Thu,  9 Oct 2025 09:59:28 +0200
-Message-ID: <20251009075929.1203950-15-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251009075929.1203950-1-mjguzik@gmail.com>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1759999138; c=relaxed/simple;
+	bh=P/49DWQvaRKreHMlwC13bf/kIQMSa9M93SImmymHGSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3ddPB/oGWScwMwABlmZwDzrbCEWg86HjvZIpGFMgVV8V+2IdU7Fi+Le1aczE3AwN0IicQdf/NAZuc/BKYdj600N2O6JSTV3lFyO3bIeyn/+U3jG4vCoMtNJEo2dvz97bKjuweyWbtUbj9qM4FYo1mzfKHrlnc/9WivpzIhWAO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPpzFfMn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lrMgh0IH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vZGttwaT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=enFzO5An; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DCD661F83F;
+	Thu,  9 Oct 2025 08:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759999135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3vO/c3Nr9/ShdfTU0FdyXLRof5Q362KAvhqM2kcVybQ=;
+	b=LPpzFfMn2Xc71sBNf7SHexb1rKX0SVND+Q7PZQeo2IX+0BPQMjLDBri25PD1hGXJvpQVRF
+	kgWBMnlJF6rOoGtt2vcjPVx+DgJUAC1N2pvkrYM3367uBoh3RCPs2X2EBg1M27qqoSDke0
+	4m50eZ8aoL/h6/QgBMjEW63ON1d8Q0Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759999135;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3vO/c3Nr9/ShdfTU0FdyXLRof5Q362KAvhqM2kcVybQ=;
+	b=lrMgh0IHrMQO2D7tnVV5rWkYXCzXd4D5juj1ccLQrfCjRtHjP74J8zRcedThxGGlHyGvex
+	ImalzjldK6elkhAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vZGttwaT;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=enFzO5An
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759999133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3vO/c3Nr9/ShdfTU0FdyXLRof5Q362KAvhqM2kcVybQ=;
+	b=vZGttwaTa//klyZ7MbT0oDXWp1XVPaQbWw3RWYxBhQtq/mT0p3183aWIZxPQB9OmeYWdGM
+	GmO54daV2M7UHn2g/5oD7Jz5mrm2QE+/rzbqZOiXRH7MV+i45yEQ4AtHgl5mS+KV99udbu
+	ryptJE0bLS8aEaPjtSpbD9turPVobBQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759999133;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3vO/c3Nr9/ShdfTU0FdyXLRof5Q362KAvhqM2kcVybQ=;
+	b=enFzO5AnfFeyCw2dgPggX6k6B7lky/cHhoVPVq1whs5XDCVALJbRn0cAEijZxY9GGivRWM
+	1TUzIetlNiJ/wNAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C676B13AAC;
+	Thu,  9 Oct 2025 08:38:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d8dvMJ1052gEGwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 09 Oct 2025 08:38:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 50ADAA0A71; Thu,  9 Oct 2025 10:38:53 +0200 (CEST)
+Date: Thu, 9 Oct 2025 10:38:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joshua Watt <jpewhacker@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, jimzhao.ai@gmail.com, 
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
+ into __wb_calc_thresh
+Message-ID: <47nzppimqdsltrtjb2qz4ztgtxq73rpugagronbeiod5v6ygzp@nl4lwvjk44lp>
+References: <20241121100539.605818-1-jimzhao.ai@gmail.com>
+ <20251007161711.468149-1-JPEWhacker@gmail.com>
+ <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
+ <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
+ <CAJdd5GaQ1LdS=n52AWQwZ=Q9woSjFYiVD9E_1SkEeDPoT=bmjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJdd5GaQ1LdS=n52AWQwZ=Q9woSjFYiVD9E_1SkEeDPoT=bmjw@mail.gmail.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: DCD661F83F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,linux-foundation.org,vger.kernel.org,kvack.org,infradead.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -2.51
 
-... to make sure all accesses are properly validated.
+On Wed 08-10-25 17:14:31, Joshua Watt wrote:
+> On Wed, Oct 8, 2025 at 8:49 AM Joshua Watt <jpewhacker@gmail.com> wrote:
+> > On Wed, Oct 8, 2025 at 5:14 AM Jan Kara <jack@suse.cz> wrote:
+> > > Hello!
+> > >
+> > > On Tue 07-10-25 10:17:11, Joshua Watt wrote:
+> > > > From: Joshua Watt <jpewhacker@gmail.com>
+> > > >
+> > > > This patch strangely breaks NFS 4 clients for me. The behavior is that a
+> > > > client will start getting an I/O error which in turn is caused by the client
+> > > > getting a NFS3ERR_BADSESSION when attempting to write data to the server. I
+> > > > bisected the kernel from the latest master
+> > > > (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). Also,
+> > > > when I revert this commit on master the bug disappears.
+> > > >
+> > > > The server is running kernel 5.4.161, and the client that exhibits the
+> > > > behavior is running in qemux86, and has mounted the server with the options
+> > > > rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,soft,proto=tcp,port=52049,timeo=600,retrans=2,sec=null,clientaddr=172.16.6.90,local_lock=none,addr=172.16.6.0
+> > > >
+> > > > The program that I wrote to reproduce this is pretty simple; it does a file
+> > > > lock over NFS, then writes data to the file once per second. After about 32
+> > > > seconds, it receives the I/O error, and this reproduced every time. I can
+> > > > provide the sample program if necessary.
+> > >
+> > > This is indeed rather curious.
+> > >
+> > > > I also captured the NFS traffic both in the passing case and the failure case,
+> > > > and can provide them if useful.
+> > > >
+> > > > I did look at the two dumps and I'm not exactly sure what the difference is,
+> > > > other than with this patch the client tries to write every 30 seconds (and
+> > > > fails), where as without it attempts to write back every 5 seconds. I have no
+> > > > idea why this patch would cause this problem.
+> > >
+> > > So the change in writeback behavior is not surprising. The commit does
+> > > modify the logic computing dirty limits in some corner cases and your
+> > > description matches the fact that previously the computed limits were lower
+> > > so we've started writeback after 5s (dirty_writeback_interval) while with
+> > > the patch we didn't cross the threshold and thus started writeback only
+> > > once the dirty data was old enough, which is 30s (dirty_expire_interval).
+> > >
+> > > But that's all, you should be able to observe exactly the same writeback
+> > > behavior if you write less even without this patch. So I suspect that the
+> > > different writeback behavior is just triggering some bug in the NFS (either
+> > > on the client or the server side). The NFS3ERR_BADSESSION error you're
+> > > getting back sounds like something times out somewhere, falls out of cache
+> > > and reports this error (which doesn't happen if we writeback after 5s
+> > > instead of 30s). NFS guys maybe have better idea what's going on here.
+> > >
+> > > You could possibly workaround this problem (and verify my theory) by tuning
+> > > /proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This will
+> > > make inode writeback start earlier and thus should effectively mask the
+> > > problem again.
+> >
+> > Changing /proc/sys/vm/dirty_expire_centisecs did indeed prevent the
+> > issue from occurring. As an experiment, I tried to see what the lowest
+> > value I could use that worked, and it was also 500. Even setting it to
+> > 600 would cause it to error out eventually. This would indicate to me
+> > a server problem (which is unfortunate because that's much harder for
+> > me to debug), but perhaps the NFS folks could weigh in.
+> 
+> I figured out the problem. There was a bug in the NFS client where it
+> would not send state renewals within the first 5 minutes after
+> booting; prior to this change, that was masked in my test case because
+> the 5 second dirty writeback interval would keep the connection alive
+> without needing the state renewals (and my test always did a reboot).
+> I've submitted a patch to fix the NFS client to the mailing list [1].
 
-Merely renaming the var to __i_state still lets the compiler make the
-following suggestion:
-error: 'struct inode' has no member named 'i_state'; did you mean '__i_state'?
+Cool that you've nailed it down :).
 
-Unfortunately some people will add the __'s and call it a day.
+> Sorry for the noise, and thanks for your help.
 
-In order to make it harder to mess up in this way, hide it behind a
-struct. The resulting error message should be convincing in terms of
-checking what to do:
-error: invalid operands to binary & (have 'struct inode_state_flags' and 'int')
+You're welcome.
 
-Of course people determined to do a plain access can still do it, but
-nothing can be done for that case.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/fs.h | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 77b6486dcae7..21c73df3ce75 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -785,6 +785,13 @@ enum inode_state_flags_enum {
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
- #define I_DIRTY_ALL (I_DIRTY | I_DIRTY_TIME)
- 
-+/*
-+ * Use inode_state_read() & friends to access.
-+ */
-+struct inode_state_flags {
-+	enum inode_state_flags_enum __state;
-+};
-+
- /*
-  * Keep mostly read-only and often accessed (especially for
-  * the RCU path lookup and 'stat' data) fields at the beginning
-@@ -843,7 +850,7 @@ struct inode {
- #endif
- 
- 	/* Misc */
--	enum inode_state_flags_enum i_state;
-+	struct inode_state_flags i_state;
- 	/* 32-bit hole */
- 	struct rw_semaphore	i_rwsem;
- 
-@@ -909,19 +916,19 @@ struct inode {
-  */
- static inline enum inode_state_flags_enum inode_state_read_once(struct inode *inode)
- {
--	return READ_ONCE(inode->i_state);
-+	return READ_ONCE(inode->i_state.__state);
- }
- 
- static inline enum inode_state_flags_enum inode_state_read(struct inode *inode)
- {
- 	lockdep_assert_held(&inode->i_lock);
--	return inode->i_state;
-+	return inode->i_state.__state;
- }
- 
- static inline void inode_state_set_raw(struct inode *inode,
- 				       enum inode_state_flags_enum flags)
- {
--	WRITE_ONCE(inode->i_state, inode->i_state | flags);
-+	WRITE_ONCE(inode->i_state.__state, inode->i_state.__state | flags);
- }
- 
- static inline void inode_state_set(struct inode *inode,
-@@ -934,7 +941,7 @@ static inline void inode_state_set(struct inode *inode,
- static inline void inode_state_clear_raw(struct inode *inode,
- 					 enum inode_state_flags_enum flags)
- {
--	WRITE_ONCE(inode->i_state, inode->i_state & ~flags);
-+	WRITE_ONCE(inode->i_state.__state, inode->i_state.__state & ~flags);
- }
- 
- static inline void inode_state_clear(struct inode *inode,
-@@ -947,7 +954,7 @@ static inline void inode_state_clear(struct inode *inode,
- static inline void inode_state_assign_raw(struct inode *inode,
- 					  enum inode_state_flags_enum flags)
- {
--	WRITE_ONCE(inode->i_state, flags);
-+	WRITE_ONCE(inode->i_state.__state, flags);
- }
- 
- static inline void inode_state_assign(struct inode *inode,
-@@ -962,7 +969,7 @@ static inline void inode_state_replace_raw(struct inode *inode,
- 					   enum inode_state_flags_enum setflags)
- {
- 	enum inode_state_flags_enum flags;
--	flags = inode->i_state;
-+	flags = inode->i_state.__state;
- 	flags &= ~clearflags;
- 	flags |= setflags;
- 	inode_state_assign_raw(inode, flags);
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
