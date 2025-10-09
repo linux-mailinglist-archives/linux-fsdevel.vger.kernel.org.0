@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C01BCB27F
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E958BCB27A
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15A3C4E7258
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD8219E7DA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D1B253356;
-	Thu,  9 Oct 2025 22:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61FD286D7D;
+	Thu,  9 Oct 2025 22:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgzPSdqB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cx3heo1+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B69286D7B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F6D28726F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760050667; cv=none; b=HFFussfPkz95VMR2GjW+SvOtMdJSh0YM5gEUb0T9kxh04LUhmWsSC69rlE6EBBgdQkag2FrMwPA7xmZf6YXJmHUETMJcqUm9rdUIfAAvyobu57rbv9ANQ+iGqSLd3QnaUEXLtgMxTpfsQ+G10fFCtiVxo7G/oODoT1c5XlI1GvE=
+	t=1760050669; cv=none; b=eolC8G+dGWfTuuSh+eSVAvAHOYUgQCuWolXsaVLfkqQ9YPjrKXXdvH4aLTgAKp35IZxxub1rQ4CrOGImDxtStCYxH/ARoLDsfFp3pN10PY8sPMQ9g5wpEjGALAxmXmWA4uKbWgCbsQKNL1QJu+0td9whyAmPV5hLNXQHOtb+ZZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760050667; c=relaxed/simple;
-	bh=/PvOPPUDbN1UNVps4CBLHSCEA9h/hCpaFU6uoYMnHxY=;
+	s=arc-20240116; t=1760050669; c=relaxed/simple;
+	bh=JaFvCpxJt7H698xSWoXCZVEBV03S81oZLDdZxi6thhE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L4bbdzb081HnyJctZ5ld5PgZx0o3XPLvKobrIQQc2ZTG+5VaeNiedgC8yNHA4/YuCkE7SlZvOYu1fHWHRq4wK31PNmz/CS3eW3NWcyQE8+iTm1017N+x+1DOvEJaLvvSldXx1UFM+d8SZlBsBnQFGoNGBp+zuia1R8sqtc5yT9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OgzPSdqB; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=fORb0tdLXnOIYUFxh8w+BFh8oK6w4wMCWSAXWhXdN7tCCtkCtFIQR/7AvZFLvaX7KF30sDSXrhYXTl7hXwpPhLJIlVQc1H6mhkvaiUAyLYOjHpGaZlD1LkZpcfE6r7thHYbe4Dg0oEa7V1a7XvVSAA81GleTRktpyyyfEBRSt4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cx3heo1+; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-78118e163e5so1938472b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:45 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso1475942b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760050665; x=1760655465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760050667; x=1760655467; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9Y5ztGWr1mZEoFY4LY860Dvh8itLzE5u9hYi3dyUKfQ=;
-        b=OgzPSdqBx0PBwqdE/mqS8SGCuNe4/35cf+Z5qokXpadh862CoGxGgTCV4mAGS5kAF3
-         xvx5cU2bBp303J3cv+7h3cS0nsExfNhTUNM/lx4f0aNikDLjLM06sf8W5agEqflxbKDs
-         Jtz0b9Tj7z8QhE6PWzz4vrEUGHBe5bkLjrSJGcr3Z7XptYuCAroi9BvsbcxtkULtbDlB
-         fJFDGzshLO/oLyPD7nUPqE3/K9796wdH5zDdMu03k9E/AfXW3CpyXhX7dhFSZKEa73le
-         jIhQcHeEUufXAJH1TY6qnWfbzLoKhrMlGE1xLr17xmH7Rd+n3zaOx2yAA7iKho+fkQEq
-         TqOQ==
+        bh=K+mFPrP6JU0Ki+CeJVAHJiJ12z0FVj6CtZixcmlczTE=;
+        b=Cx3heo1+VOE1mjW9lNFM6mC5DAdW4yJuZJyjvFmvEPvJYQ2jhtUXTET13L/3o1Xz0D
+         jLp4KpAHK8QVUgV2OMf40cF5ZE8UFYDa1ok9Fxm3OO/HbxRIGG4uOVf0J8E4bjlvG6Sa
+         yBJ9dXmrNTXsM1O+addQvaL7JxYVEA/Tln+EKGZRk01zQET2R+umwn2I1UJ48IM3rCZ7
+         wVWnJEcjACxy1YEBfLBqIEqphjjpcACoqbdtgpSH6v98wSkrrl26YfZxJLjrPQf+nwVX
+         dvSEZGtHvg26qSbU6955FFO3prIu5IYOggW4g+mVwxoDFyHo46Gev/4ENMqb+2VBYtnE
+         AcUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760050665; x=1760655465;
+        d=1e100.net; s=20230601; t=1760050667; x=1760655467;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9Y5ztGWr1mZEoFY4LY860Dvh8itLzE5u9hYi3dyUKfQ=;
-        b=RM0ykrvvw7qWhSpgIhZAuUihD59p0MEuIu13LX15DLTy4Jxw96lAADJV3DyTC6P17/
-         FP0fjTZNVWruL99NUQpOm0TdfGwJVpn3bNdtlU3wg3JOdq+SyZ80oXTgPIC+oEA6gPiy
-         yX96QI2tYeWIU8axC+I90MlAkIWj66D8hlrDgrn7Gos4tHeTX0x2EF9uLLvnIXhAlADC
-         HAqlIMytL33TfkSWyMg44nUXR67jAII2BihrkD6df8wc35ejyRzV2NeBLzJ0prO+S1R3
-         GAkBlKaiRnsEpsyYa/8+usFz0yNuzUE81Pi5AGJxE9gSIKzpfUFflKtrgwRxAsgnf5yV
-         Ik/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXhf01MwlDx8lAmn1uxQVehD1VLV68bw6M1qcd0TMw9QS5nN76Ughe8LFP7i7qQBayE8/WFMo3xr5+MSSIr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVk2RP3jo3CFQXzOucu+WqbpVBH8NIc/qixp+RMFPUViy0ZM+h
-	dLP1GctmFlvAnNG/+rzMS9OEUV2hpFCRX4nMK1Gh2lnP73jOoEv96sQ7
-X-Gm-Gg: ASbGnctMNDdhXwQYZ8s2gvm4L5ia1tbssrmE/m+5sgG/XX8qfB2OMiqFoQtr6I50EtK
-	ue65zmCAKiXbz1OYgnFfV2Rwvx5pFxOtsq9Q5Xrg+wPNfSLz/3EgM6U6ySU/eCwA41PjqeaGaZJ
-	lgN8Ba6PYh7UPmQ6BGXr/pRgt7CMxD3LpCVZ3z6Gsf1UNfFDaRar6mqF2gqLe8r8oF8lCxvMsNA
-	iP5h8k1e5LkXzGo9+4jKe+yWU07OrG0nhT2adGuF1qt8O2K6igX6ePOREokcsnAKF94U6S7mDVq
-	Bg5Qb1eyPUD1IQ18XUKF8GKwFcClsd13EcZjzRGijO2UhRx0yaWslS1q+15XOW/OM4gnkB/rROE
-	gjc0nQNFruB7H1zzVz45t5rST2qprdFWTXOUKKerzFoKTDx7UaMcVnCyKWq2qMrHYpnDhm84tjA
+        bh=K+mFPrP6JU0Ki+CeJVAHJiJ12z0FVj6CtZixcmlczTE=;
+        b=FWm2XXrnE64V1b2BcQzDvyht661i+XCD47r3+ItLP9aM6hfycsfBlYY/x6wl4dZv3z
+         WyRHM96ij7+xaCbIV/DK7bPWfa5W5GIwjF0n5WjXLDi9aJKk4d2POHZ0RyGXUaSMrMlT
+         JCbkaw2SoHNJov9So7XYSSq5Qdyit2Mqz2a8WNl5W1msqdyN51jr7AT/OWKlOSlH1I/r
+         tekGmOEljnWs4uq4yDYCo3cTtCpmQo2Y7dnHxL+ngNpb+0WOJBxVzeoLjjTp/8AAfbWR
+         SVnDXi3JWOgPFTNVriWuTDhzvHhsNjOze4ZOWe/4xbom54N4HOJwmVrjGuO+RKjAy11Y
+         kaSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8uSCTlHAiUgBHMzMMl12LdPKG3sigDiMBLIYacUj4UVvPQ1+tCJt8Li5P5z7e1UyfUW9yjjyn2ntNzp9O@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0tZ1VNEVVYY+UB3m0vYl1sXUWk7gVNTgxAN7c/kiSDgVLV2Tw
+	PvESkuMGrwkop0nnmqP2obz94gmg8ScZfAqDkap49lQvowwOkAvYRtQOFsVuyg==
+X-Gm-Gg: ASbGncu66vMB/jwnbm4vhWp3KnwtIoWbva/d5e2RrgJl3RdDQpmh4FXBYJsUwzbIoxR
+	q6RCw5h2HunZpcugEch2iz6APZcb7mQYAweBDwS5MzqnHpvX0gim0gR2tNKVUeg/igMZp/I7A1e
+	CnkIR0Owx0RkMI88IcNTROiOChntgzd0YJqcXc5IBh84D0Vns4iDuGGbRR0lNcuw5e0O2q85JZS
+	B77qzmm6lKx4HLSP7VjQEK16EVo0gzBv6uiWypzlK3gkSMEMZoMGb7Ai66r95NLbpsIxuH09q/v
+	mvEHOd+/bVzkogM1gA5/O55vxhi5XFFaLODww6rF0idaw+ecvz8QwZg/MTIZOtSyU9DY1N8wwla
+	PkrypnP1uMCNOqTfGf6Z0TffxlkgapHFswrA8Y58D6WEtPLfaLKtCFiZPcDriDpRN/YlSNPljWw
 	==
-X-Google-Smtp-Source: AGHT+IHK4O97Rx6YxhmkNDzY+Oqou1vFMCNo1CvFlT6ZvRRQb1itNjZZEmH5p0XrEA3vspY1/o6Yhg==
-X-Received: by 2002:a05:6a21:6d9d:b0:263:616e:b61d with SMTP id adf61e73a8af0-32d96e9c0ccmr18083834637.23.1760050665345;
-        Thu, 09 Oct 2025 15:57:45 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:41::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df740bbsm644434a12.39.2025.10.09.15.57.44
+X-Google-Smtp-Source: AGHT+IFUHjZGH+SjHRh7TXg0yNcqvVp2cSs+oghKJArgrBCNgJPpe+mYTpo/Ik7hD0MiUsxybWB4uQ==
+X-Received: by 2002:a05:6a20:3d86:b0:2ec:4146:6a0f with SMTP id adf61e73a8af0-32da83db568mr12601028637.35.1760050666799;
+        Thu, 09 Oct 2025 15:57:46 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:74::])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678de01aadsm660270a12.17.2025.10.09.15.57.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 15:57:45 -0700 (PDT)
+        Thu, 09 Oct 2025 15:57:46 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: brauner@kernel.org
 Cc: djwong@kernel.org,
@@ -81,9 +81,9 @@ Cc: djwong@kernel.org,
 	bfoster@redhat.com,
 	linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v1 5/9] iomap: simplify when reads can be skipped for writes
-Date: Thu,  9 Oct 2025 15:56:07 -0700
-Message-ID: <20251009225611.3744728-6-joannelkoong@gmail.com>
+Subject: [PATCH v1 6/9] iomap: optimize reads for non-block-aligned writes
+Date: Thu,  9 Oct 2025 15:56:08 -0700
+Message-ID: <20251009225611.3744728-7-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251009225611.3744728-1-joannelkoong@gmail.com>
 References: <20251009225611.3744728-1-joannelkoong@gmail.com>
@@ -95,69 +95,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, the logic for skipping the read range for a write is
+If a write is block-aligned (i.e., write offset and length are both
+block-aligned), no reads should be necessary.
 
-if (!(iter->flags & IOMAP_UNSHARE) &&
-    (from <= poff || from >= poff + plen) &&
-    (to <= poff || to >= poff + plen))
+If the write starts or ends at a non-block-aligned offset, the write
+should only need to read in at most two blocks, the starting block and
+the ending block. Any intermediary blocks should be skipped since they
+will be completely overwritten.
 
-which breaks down to skipping the read if any of these are true:
-a) from <= poff && to <= poff
-b) from <= poff && to >= poff + plen
-c) from >= poff + plen && to <= poff
-d) from >= poff + plen && to >= poff + plen
+Currently for non-block-aligned writes, the entire range gets read in
+including intermediary blocks.
 
-This can be simplified to
-if (!(iter->flags & IOMAP_UNSHARE) &&
-    (from <= poff && to >= poff + plen))
-
-from the following reasoning:
-
-a) from <= poff && to <= poff
-This reduces to 'to <= poff' since it is guaranteed that 'from <= to'
-(since to = from + len). It is not possible for 'from <= to' to be true
-here because we only reach here if plen > 0 (thanks to the preceding 'if
-(plen == 0)' check that would break us out of the loop). If 'to <=
-poff', plen would have to be 0 since poff and plen get adjusted in
-lockstep for uptodate blocks. This means we can eliminate this check.
-
-c) from >= poff + plen && to <= poff
-This is not possible since 'from <= to' and 'plen > 0'. We can eliminate
-this check.
-
-d) from >= poff + plen && to >= poff + plen
-This reduces to 'from >= poff + plen' since 'from <= to'.
-It is not possible for 'from >= poff + plen' to be true here. We only
-reach here if plen > 0 and for writes, poff and plen will always be
-block-aligned, which means poff <= from < poff + plen. We can eliminate
-this check.
-
-The only valid check is b) from <= poff && to >= poff + plen.
+Optimize the logic to read in only the necessary blocks.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/iomap/buffered-io.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/iomap/buffered-io.c | 39 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 7 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index dc05ed647ba5..0ad8c8a218f3 100644
+index 0ad8c8a218f3..372e14f7ab57 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -714,9 +714,12 @@ static int __iomap_write_begin(const struct iomap_iter *iter,
+@@ -686,6 +686,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter,
+ 	loff_t block_size = i_blocksize(iter->inode);
+ 	loff_t block_start = round_down(pos, block_size);
+ 	loff_t block_end = round_up(pos + len, block_size);
++	unsigned int block_bits = iter->inode->i_blkbits;
+ 	unsigned int nr_blocks = i_blocks_per_folio(iter->inode, folio);
+ 	size_t from = offset_in_folio(folio, pos), to = from + len;
+ 	size_t poff, plen;
+@@ -714,13 +715,37 @@ static int __iomap_write_begin(const struct iomap_iter *iter,
  		if (plen == 0)
  			break;
  
-+		/*
-+		 * If the read range will be entirely overwritten by the write,
-+		 * we can skip having to zero/read it in.
-+		 */
- 		if (!(iter->flags & IOMAP_UNSHARE) &&
--		    (from <= poff || from >= poff + plen) &&
--		    (to <= poff || to >= poff + plen))
-+		    (from <= poff && to >= poff + plen))
- 			continue;
+-		/*
+-		 * If the read range will be entirely overwritten by the write,
+-		 * we can skip having to zero/read it in.
+-		 */
+-		if (!(iter->flags & IOMAP_UNSHARE) &&
+-		    (from <= poff && to >= poff + plen))
+-			continue;
++		if (!(iter->flags & IOMAP_UNSHARE)) {
++			/*
++			 * If the read range will be entirely overwritten by the
++			 * write, we can skip having to zero/read it in.
++			 */
++			if (from <= poff && to >= poff + plen)
++				continue;
++
++			/*
++			 * If the write starts at a non-block-aligned offset
++			 * (from > poff), read only the first block. Any
++			 * intermediate blocks will be skipped in the next
++			 * iteration.
++			 *
++			 * Exception: skip this optimization if the write spans
++			 * only two blocks and ends at a non-block-aligned
++			 * offset.
++			 */
++			if (from > poff) {
++			       if ((plen >> block_bits) > 2 ||
++						to >= poff + plen)
++					plen = block_size;
++			} else if (to < poff + plen) {
++				/*
++				 * Else if the write ends at an offset into the
++				 * last block, read in just the last block.
++				 */
++				poff = poff + plen - block_size;
++				plen = block_size;
++			}
++		}
  
  		if (iomap_block_needs_zeroing(iter, block_start)) {
+ 			if (WARN_ON_ONCE(iter->flags & IOMAP_UNSHARE))
 -- 
 2.47.3
 
