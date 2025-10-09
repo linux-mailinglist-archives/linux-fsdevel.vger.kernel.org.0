@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4C4BC7EDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:08:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04A1BC7EBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25ED24FC8ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0344C19E81C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F77F272E56;
-	Thu,  9 Oct 2025 08:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CC62D29CE;
+	Thu,  9 Oct 2025 08:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnp/ZE+S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbvDejU9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2A62E6CB3
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 08:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB30B2E8E0D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 08:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996808; cv=none; b=dSRkF2rTHwG/e+HgP8BbWQGnn24y770x5J7HoW2x9TZoo9KgaZSFCMECwAvWqhPQ3DiuLO5VnI7PchE9amLfsu9l+3XiNPxUYvHd39ckkptbeQfQKuJ4G28QR9tyYc8q+QT8IAxlDS9I3wNXrwivHuvzo2/22pNxs1JVjFPLT/I=
+	t=1759996813; cv=none; b=LfI+ckyVLyN1kyiF5g+5leZ4PIslQuoAu7ggko9AcBfUDvQONg0PNVen2OHYDh6utC+AZ7D+fgJ30A5x1XtdOoFoIzoPvruAigv18mVneckA7OOFyBj3Oh6fxflGGCfWMCaR9PGnnrTTBOD8rite9eogxfvQwyofMziA7A12x0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996808; c=relaxed/simple;
-	bh=+RBRF6meQwn3q9nzPryP2p+8250ep4XlqqidEyLjj2A=;
+	s=arc-20240116; t=1759996813; c=relaxed/simple;
+	bh=xlG7nR5Wpn4toAnFh4yZG5U7bqMO2Ibqli2pgrWdpe4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zw9YpNmvzVqb8wdIU5z6L2yBr/Qb4htupS5HUSAbnH31w+t5kIinj3X42st1OMa6//FzvPPClA+ehmihb0a8WMLKGXWbjq6I75xnBOE70c4y/6d2hRoJhsekhwLgEd2TBRJYHj9ShvDrvTHJuy9Hj7lz4xJNp0yqdHnhpROoBeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnp/ZE+S; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=nCvVSyBCuxi4gi9GGB2bJKWfBuCSR1yvmoqHiRrTVW2vmtB1rmfUvmEbdStEPg7l+ME5hMtCTJSwS+PuKVJ3zWnO1f0TMZuASk8jgBTNwsBe7BiriYaDhueVYUqLA4QgA1sKcGRJa4iBhshR9hPw5qB0G8iWKJoZocz+M7AY00A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbvDejU9; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso1271462a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 01:00:05 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b456d2dc440so97379466b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 01:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759996804; x=1760601604; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759996809; x=1760601609; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XtNZzXzCxxpF7eJNzzGGCepg+EzDGtZJGp4a5sIIOtw=;
-        b=fnp/ZE+SnFGGqdYjPEXfYpM67VICjbU02VFp7wjSOOatBehRt/dBhsNMOHO/6nwVB3
-         jnkwlcziHlgHkK+PG9v4A7K6/v71B1HLzZsRdjyCgik+sJjW2Z4oXjgZnzu2mSWH649Z
-         ok9IUTJdev1mL0m0ApggQrjrtN9Q+Ovi1n6hlLE6mzYX6MbK+6jmx84UkuJKT/vIT7iv
-         nRVPcGAX2ADZuFB3rYRyQwdEw+ZkvvPLvd3/n7bH/wM6y39oc7ln4cYHS3Tx1kaSYZbS
-         cO2kIpTowdX+8+e5lqNGIu/Y75FfzPi8hqZ/Wj+ImxxFdrf/Vg9xCWOEs2BjNuvIHvp/
-         wh6A==
+        bh=/5cEv8KCvxqRx2Vo792Uxij3yHT/Pkk8+e6W56mfmGo=;
+        b=SbvDejU9ggXuvwZcyBQN7Wh/w7QFoavPE+9gM8uuiuVmO1ELw5sKW93FFpq0UEpTkq
+         Ryj/7rO/SHMvr+NwtFE5QTSf5WS341LygOQn3KW7t0vLGZCQTLjHrjRyobIyOLnCITUf
+         tzlzCFocGJ4GpNMGGc8xHvX9bSHUppgKd1qcC+NjyZxY8Z7hp+K3ixktQxfiZtv7ESnw
+         xndW9hExYjaGy3CHpa5bkadYCG5PWfhGVNiCZT9uLlc+c8hEjNrRTCQ82+h6MLHDdNu/
+         WvQgPk7LktcDwjsfXh7eYvK/3q2818LaXoD+P0Hwqy+j8s9Z8YVRBE6t9qPBrNSb0JHf
+         54fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996804; x=1760601604;
+        d=1e100.net; s=20230601; t=1759996809; x=1760601609;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XtNZzXzCxxpF7eJNzzGGCepg+EzDGtZJGp4a5sIIOtw=;
-        b=mqj7TOo25OD2KC9KjBnV9DCA17cPMMb7e9yZ3Yw1rKSBJu/ddySDSqFB+opmYumOu2
-         /prhHhA1QWsAbBEuPKME0HXS7J1GYx+SHEt5k3Oc/6xXevbVpiOm5toRXXGO3JSKiZ8B
-         6Eg69Fsg1OWOPPAN/rDSMkA0b3cB/C2AIEyGAozznLUczVQBEdfM77Cd0hFpahA8hpIy
-         vSY9Pc/RtuHmFK/yj3RtmFJ0mQVMqv6TtPWxDlB2/fEF63DG9s6pa2uOAsj6kSJl4lII
-         9bac5ZEw7KQlRDBJdzw3nLSS1Sgtm7Fjz50hIPBDafow/1c395W5UOJfQHElKjdA3oFO
-         IVfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmc09wysJD/lLrceKetAZC9DgaxrMKb7x5junTkAdkj/UN0RUlifAkBpsa7HQc+GFIXgOr4EULZkotuiAt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzvcSgnY+ebbDp7ILiNd1Fj9JG/5vjm6OYma1+w5TwhFnDesh6
-	tvGAY5DYvZ0yTXKEpgAg0a0FgFSaMKw4iytU7NZEuRAWPSGfhSLU9Q+d
-X-Gm-Gg: ASbGncvo7RBvpCXYTMErJvUag3KuDSXCL8Brd5vSl3JMXuRG+nHvp+4A9i3R9IUapIU
-	k9CXbyqJ0r9iSiewOuEx/eg86lXUi1XeJA2Lls4Me6FMYBh5LshCOXYSpghtl/ATJ/NIvJt1N9O
-	jGWzRiQx2g8MZm/zScYQgZa5mUBtvq7vwp3p0GPvNY+/hQ2nsG+7b+2DJj9sT3jSXlQtybi54cd
-	ZSUhYi5aaFX/KsSVTZeBywIzcPOxIe/oXd3myvMOoaUbm2qEBuqkTiisIQNbKm+D565yfVkrqST
-	3qWTN3cSsQXPr2mFpoMIYZo7S2y+si9Ynz1mazsedSe60Ev8GVBRyGT5RBP5kf+wPLDqawIDcQT
-	hdb834grGfv6z3VeaVm9Dm6Y6qyxucA97Bz0Z+NIHmZ2jjjSFF+Br1d3Ba54MfMNp1O50UY25xi
-	GRZJc6y+VOB2FVAb0IBnjVOLXyJa5sIRDZEjJHyHDSnVc=
-X-Google-Smtp-Source: AGHT+IEouxbTI3/2qFJGFL8V5mVY3HAotK98uqu1QC3hyrh6oGwfceS36G8V1F2YUkpXySTgyqtUfg==
-X-Received: by 2002:a17:907:2d8a:b0:b3e:e16a:8cf2 with SMTP id a640c23a62f3a-b50aca0b087mr678905866b.56.1759996803728;
-        Thu, 09 Oct 2025 01:00:03 -0700 (PDT)
+        bh=/5cEv8KCvxqRx2Vo792Uxij3yHT/Pkk8+e6W56mfmGo=;
+        b=RMlYO3Ir7znYRSEIh5/MXrwf6xxf1beWR431/zz4QqSbIaDQNd4h0HOET61Lo3g1km
+         LpN5cFhAfFW6S4Ss7wVREqr4QpCTui6/Qi3ZpkHM6tR5lJebZDIpbpsEksyve/YzMGiU
+         M3RHFffjkfg6kdBUpntYPRkHxVpqJre4I6B3FfqlBBWm7+R6kHy4mrMJ6knEMcV2uQAm
+         4L4uPEPeqXpTu/nhuOUG8OMX1x5iJjUKr8qdXvOjW1sTTEl0aEeXKBIjMyNqASR5JpSE
+         ElfLPkHe0zH4PWMhIW7KjHw4eQgiPIQb1kRJ7Qlk9ptmj21BDyoLDObZIRsO/nG8a7uh
+         9sVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM6/bqdG26Tws5Ahajt+Jb5oH+nQKMBZBV9t+wZpsvrmOoyoRUJpsTVupDD4dNZJX61bKWQ1GWGUtM8Sxk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym/bcOtMicMRtJIC24dImOsH2t+rMsTM5jwH9D6Fl9wZIMJES5
+	uN5S8rIQ50xNBlo49fKEwtzPUh54HyJ+CaXO42TjMXRdoBE7PBw4zZFn
+X-Gm-Gg: ASbGncu3ij/oxOfKvqOc0LOl/upAMzasmweUi0Empi3+HQaPQVM+OPtuqNJ3ypRahZh
+	6mACtVaN4nzUcmXJ6iA+D4QKeHhQFkOoYIk0dW/+I4RQ0ZlSzgKEeOaEPVcue3lwGU0L1DhkkCW
+	oarEKPkO1j5AU0o8rssnu+Nym9+NTehrmdWVroL6El10gXdkiFLVDpP3C2ehGhK161cI8G/2w4L
+	YfTE2jyrCIO+t9L2mN1EuPy56BLHacXArYNcTQau3rpcYgft0EW6xyvCpdpyivQzAbr6u51mqmX
+	hstWXNMpBpcnsKm6wfgppOGRS9no6HZ1vn26x4WZXAUDzqtn09FBQLvwP203X9j8NE+F3GZJMO7
+	pr3JLgCm0/P0VyxLY5Vxveb1/xYSlpl/rfVjuZG7oZU3wcx4Lcvkl/VaRot1rOlfZ5tEm+xW6wr
+	aMBl+T30KPfZvHsPG3xqqO83yjwQ7u9xD2
+X-Google-Smtp-Source: AGHT+IHLM13r5LQMnt/OJInRecUisomAa2MvrC2cG1/52NjvwtuMZLiyrwCa048XZprJyFm6wajB2w==
+X-Received: by 2002:a17:907:3daa:b0:b40:5dac:ed3f with SMTP id a640c23a62f3a-b50a9d59a8cmr718516366b.7.1759996806312;
+        Thu, 09 Oct 2025 01:00:06 -0700 (PDT)
 Received: from f.. (cst-prg-66-155.cust.vodafone.cz. [46.135.66.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.01.00.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.01.00.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 01:00:03 -0700 (PDT)
+        Thu, 09 Oct 2025 01:00:05 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -89,9 +89,9 @@ Cc: viro@zeniv.linux.org.uk,
 	ceph-devel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v7 13/14] xfs: use the new ->i_state accessors
-Date: Thu,  9 Oct 2025 09:59:27 +0200
-Message-ID: <20251009075929.1203950-14-mjguzik@gmail.com>
+Subject: [PATCH v7 14/14] fs: make plain ->i_state access fail to compile
+Date: Thu,  9 Oct 2025 09:59:28 +0200
+Message-ID: <20251009075929.1203950-15-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251009075929.1203950-1-mjguzik@gmail.com>
 References: <20251009075929.1203950-1-mjguzik@gmail.com>
@@ -103,217 +103,104 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change generated with coccinelle and fixed up by hand as appropriate.
+... to make sure all accesses are properly validated.
+
+Merely renaming the var to __i_state still lets the compiler make the
+following suggestion:
+error: 'struct inode' has no member named 'i_state'; did you mean '__i_state'?
+
+Unfortunately some people will add the __'s and call it a day.
+
+In order to make it harder to mess up in this way, hide it behind a
+struct. The resulting error message should be convincing in terms of
+checking what to do:
+error: invalid operands to binary & (have 'struct inode_state_flags' and 'int')
+
+Of course people determined to do a plain access can still do it, but
+nothing can be done for that case.
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
+ include/linux/fs.h | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-cheat sheet:
-
-If ->i_lock is held, then:
-
-state = inode->i_state          => state = inode_state_read(inode)
-inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
-inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
-inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
-
-If ->i_lock is not held or only held conditionally:
-
-state = inode->i_state          => state = inode_state_read_once(inode)
-inode->i_state |= (I_A | I_B)   => inode_state_set_raw(inode, I_A | I_B)
-inode->i_state &= ~(I_A | I_B)  => inode_state_clear_raw(inode, I_A | I_B)
-inode->i_state = I_A | I_B      => inode_state_assign_raw(inode, I_A | I_B)
-
- fs/xfs/scrub/common.c       | 2 +-
- fs/xfs/scrub/inode_repair.c | 2 +-
- fs/xfs/scrub/parent.c       | 2 +-
- fs/xfs/xfs_bmap_util.c      | 2 +-
- fs/xfs/xfs_health.c         | 4 ++--
- fs/xfs/xfs_icache.c         | 6 +++---
- fs/xfs/xfs_inode.c          | 6 +++---
- fs/xfs/xfs_inode_item.c     | 4 ++--
- fs/xfs/xfs_iops.c           | 2 +-
- fs/xfs/xfs_reflink.h        | 2 +-
- 10 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/fs/xfs/scrub/common.c b/fs/xfs/scrub/common.c
-index 2ef7742be7d3..7bfa37c99480 100644
---- a/fs/xfs/scrub/common.c
-+++ b/fs/xfs/scrub/common.c
-@@ -1249,7 +1249,7 @@ xchk_irele(
- 		 * hits do not clear DONTCACHE, so we must do it here.
- 		 */
- 		spin_lock(&VFS_I(ip)->i_lock);
--		VFS_I(ip)->i_state &= ~I_DONTCACHE;
-+		inode_state_clear(VFS_I(ip), I_DONTCACHE);
- 		spin_unlock(&VFS_I(ip)->i_lock);
- 	}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 77b6486dcae7..21c73df3ce75 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -785,6 +785,13 @@ enum inode_state_flags_enum {
+ #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+ #define I_DIRTY_ALL (I_DIRTY | I_DIRTY_TIME)
  
-diff --git a/fs/xfs/scrub/inode_repair.c b/fs/xfs/scrub/inode_repair.c
-index a90a011c7e5f..4f7040c9ddf0 100644
---- a/fs/xfs/scrub/inode_repair.c
-+++ b/fs/xfs/scrub/inode_repair.c
-@@ -1933,7 +1933,7 @@ xrep_inode_pptr(
- 	 * Unlinked inodes that cannot be added to the directory tree will not
- 	 * have a parent pointer.
- 	 */
--	if (inode->i_nlink == 0 && !(inode->i_state & I_LINKABLE))
-+	if (inode->i_nlink == 0 && !(inode_state_read_once(inode) & I_LINKABLE))
- 		return 0;
++/*
++ * Use inode_state_read() & friends to access.
++ */
++struct inode_state_flags {
++	enum inode_state_flags_enum __state;
++};
++
+ /*
+  * Keep mostly read-only and often accessed (especially for
+  * the RCU path lookup and 'stat' data) fields at the beginning
+@@ -843,7 +850,7 @@ struct inode {
+ #endif
  
- 	/* Children of the superblock do not have parent pointers. */
-diff --git a/fs/xfs/scrub/parent.c b/fs/xfs/scrub/parent.c
-index 3b692c4acc1e..11d5de10fd56 100644
---- a/fs/xfs/scrub/parent.c
-+++ b/fs/xfs/scrub/parent.c
-@@ -915,7 +915,7 @@ xchk_pptr_looks_zapped(
- 	 * Temporary files that cannot be linked into the directory tree do not
- 	 * have attr forks because they cannot ever have parents.
- 	 */
--	if (inode->i_nlink == 0 && !(inode->i_state & I_LINKABLE))
-+	if (inode->i_nlink == 0 && !(inode_state_read_once(inode) & I_LINKABLE))
- 		return false;
+ 	/* Misc */
+-	enum inode_state_flags_enum i_state;
++	struct inode_state_flags i_state;
+ 	/* 32-bit hole */
+ 	struct rw_semaphore	i_rwsem;
  
- 	/*
-diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index 06ca11731e43..2208a720ec3f 100644
---- a/fs/xfs/xfs_bmap_util.c
-+++ b/fs/xfs/xfs_bmap_util.c
-@@ -514,7 +514,7 @@ xfs_can_free_eofblocks(
- 	 * Caller must either hold the exclusive io lock; or be inactivating
- 	 * the inode, which guarantees there are no other users of the inode.
- 	 */
--	if (!(VFS_I(ip)->i_state & I_FREEING))
-+	if (!(inode_state_read_once(VFS_I(ip)) & I_FREEING))
- 		xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL);
- 
- 	/* prealloc/delalloc exists only on regular files */
-diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
-index 7c541fb373d5..3c1557fb1cf0 100644
---- a/fs/xfs/xfs_health.c
-+++ b/fs/xfs/xfs_health.c
-@@ -285,7 +285,7 @@ xfs_inode_mark_sick(
- 	 * is not the case here.
- 	 */
- 	spin_lock(&VFS_I(ip)->i_lock);
--	VFS_I(ip)->i_state &= ~I_DONTCACHE;
-+	inode_state_clear(VFS_I(ip), I_DONTCACHE);
- 	spin_unlock(&VFS_I(ip)->i_lock);
- }
- 
-@@ -309,7 +309,7 @@ xfs_inode_mark_corrupt(
- 	 * is not the case here.
- 	 */
- 	spin_lock(&VFS_I(ip)->i_lock);
--	VFS_I(ip)->i_state &= ~I_DONTCACHE;
-+	inode_state_clear(VFS_I(ip), I_DONTCACHE);
- 	spin_unlock(&VFS_I(ip)->i_lock);
- }
- 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index e44040206851..f3fc4d21bfe1 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -334,7 +334,7 @@ xfs_reinit_inode(
- 	dev_t			dev = inode->i_rdev;
- 	kuid_t			uid = inode->i_uid;
- 	kgid_t			gid = inode->i_gid;
--	unsigned long		state = inode->i_state;
-+	unsigned long		state = inode_state_read_once(inode);
- 
- 	error = inode_init_always(mp->m_super, inode);
- 
-@@ -345,7 +345,7 @@ xfs_reinit_inode(
- 	inode->i_rdev = dev;
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
--	inode->i_state = state;
-+	inode_state_assign_raw(inode, state);
- 	mapping_set_folio_min_order(inode->i_mapping,
- 				    M_IGEO(mp)->min_folio_order);
- 	return error;
-@@ -411,7 +411,7 @@ xfs_iget_recycle(
- 	ip->i_flags |= XFS_INEW;
- 	xfs_perag_clear_inode_tag(pag, XFS_INO_TO_AGINO(mp, ip->i_ino),
- 			XFS_ICI_RECLAIM_TAG);
--	inode->i_state = I_NEW;
-+	inode_state_assign_raw(inode, I_NEW);
- 	spin_unlock(&ip->i_flags_lock);
- 	spin_unlock(&pag->pag_ici_lock);
- 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 36b39539e561..f1f88e48fe22 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -1580,7 +1580,7 @@ xfs_iunlink_reload_next(
- 	next_ip->i_prev_unlinked = prev_agino;
- 	trace_xfs_iunlink_reload_next(next_ip);
- rele:
--	ASSERT(!(VFS_I(next_ip)->i_state & I_DONTCACHE));
-+	ASSERT(!(inode_state_read_once(VFS_I(next_ip)) & I_DONTCACHE));
- 	if (xfs_is_quotacheck_running(mp) && next_ip)
- 		xfs_iflags_set(next_ip, XFS_IQUOTAUNCHECKED);
- 	xfs_irele(next_ip);
-@@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
- 	 */
- 	xfs_setup_iops(tmpfile);
- 	xfs_finish_inode_setup(tmpfile);
--	VFS_I(tmpfile)->i_state |= I_LINKABLE;
-+	inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
- 
- 	*wip = tmpfile;
- 	return 0;
-@@ -2330,7 +2330,7 @@ xfs_rename(
- 		 * flag from the inode so it doesn't accidentally get misused in
- 		 * future.
- 		 */
--		VFS_I(du_wip.ip)->i_state &= ~I_LINKABLE;
-+		inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
- 	}
- 
- out_commit:
-diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
-index 1bd411a1114c..2eb0c6011a2e 100644
---- a/fs/xfs/xfs_inode_item.c
-+++ b/fs/xfs/xfs_inode_item.c
-@@ -113,9 +113,9 @@ xfs_inode_item_precommit(
- 	 * to log the timestamps, or will clear already cleared fields in the
- 	 * worst case.
- 	 */
--	if (inode->i_state & I_DIRTY_TIME) {
-+	if (inode_state_read_once(inode) & I_DIRTY_TIME) {
- 		spin_lock(&inode->i_lock);
--		inode->i_state &= ~I_DIRTY_TIME;
-+		inode_state_clear(inode, I_DIRTY_TIME);
- 		spin_unlock(&inode->i_lock);
- 	}
- 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index caff0125faea..ad94fbf55014 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1420,7 +1420,7 @@ xfs_setup_inode(
- 	bool			is_meta = xfs_is_internal_inode(ip);
- 
- 	inode->i_ino = ip->i_ino;
--	inode->i_state |= I_NEW;
-+	inode_state_set_raw(inode, I_NEW);
- 
- 	inode_sb_list_add(inode);
- 	/* make the inode look hashed for the writeback code */
-diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-index 36cda724da89..9d1ed9bb0bee 100644
---- a/fs/xfs/xfs_reflink.h
-+++ b/fs/xfs/xfs_reflink.h
-@@ -17,7 +17,7 @@ xfs_can_free_cowblocks(struct xfs_inode *ip)
+@@ -909,19 +916,19 @@ struct inode {
+  */
+ static inline enum inode_state_flags_enum inode_state_read_once(struct inode *inode)
  {
- 	struct inode *inode = VFS_I(ip);
+-	return READ_ONCE(inode->i_state);
++	return READ_ONCE(inode->i_state.__state);
+ }
  
--	if ((inode->i_state & I_DIRTY_PAGES) ||
-+	if ((inode_state_read_once(inode) & I_DIRTY_PAGES) ||
- 	    mapping_tagged(inode->i_mapping, PAGECACHE_TAG_DIRTY) ||
- 	    mapping_tagged(inode->i_mapping, PAGECACHE_TAG_WRITEBACK) ||
- 	    atomic_read(&inode->i_dio_count))
+ static inline enum inode_state_flags_enum inode_state_read(struct inode *inode)
+ {
+ 	lockdep_assert_held(&inode->i_lock);
+-	return inode->i_state;
++	return inode->i_state.__state;
+ }
+ 
+ static inline void inode_state_set_raw(struct inode *inode,
+ 				       enum inode_state_flags_enum flags)
+ {
+-	WRITE_ONCE(inode->i_state, inode->i_state | flags);
++	WRITE_ONCE(inode->i_state.__state, inode->i_state.__state | flags);
+ }
+ 
+ static inline void inode_state_set(struct inode *inode,
+@@ -934,7 +941,7 @@ static inline void inode_state_set(struct inode *inode,
+ static inline void inode_state_clear_raw(struct inode *inode,
+ 					 enum inode_state_flags_enum flags)
+ {
+-	WRITE_ONCE(inode->i_state, inode->i_state & ~flags);
++	WRITE_ONCE(inode->i_state.__state, inode->i_state.__state & ~flags);
+ }
+ 
+ static inline void inode_state_clear(struct inode *inode,
+@@ -947,7 +954,7 @@ static inline void inode_state_clear(struct inode *inode,
+ static inline void inode_state_assign_raw(struct inode *inode,
+ 					  enum inode_state_flags_enum flags)
+ {
+-	WRITE_ONCE(inode->i_state, flags);
++	WRITE_ONCE(inode->i_state.__state, flags);
+ }
+ 
+ static inline void inode_state_assign(struct inode *inode,
+@@ -962,7 +969,7 @@ static inline void inode_state_replace_raw(struct inode *inode,
+ 					   enum inode_state_flags_enum setflags)
+ {
+ 	enum inode_state_flags_enum flags;
+-	flags = inode->i_state;
++	flags = inode->i_state.__state;
+ 	flags &= ~clearflags;
+ 	flags |= setflags;
+ 	inode_state_assign_raw(inode, flags);
 -- 
 2.34.1
 
