@@ -1,153 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-63680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2CEBCA70B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 19:57:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD1FBCA94B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 20:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4179C482B2C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 17:57:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDF21A62FD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 18:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1F224729C;
-	Thu,  9 Oct 2025 17:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9C823D7CF;
+	Thu,  9 Oct 2025 18:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RG/PKOX+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="no33XGEe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CD7227EAA
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 17:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C72D1BFE00
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 18:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760032623; cv=none; b=CntH6K6u7oK8/PbD65pesWaBTOnVVQnhf7NVwcf0bzf+FVAqviCYJl/vtB45h7SG/ByUG9YL5ir3yOAh+ATbAukQqqVLOCMRjJjv4XHkbTPC3fv96OY/W1mF6J1qrWUCHvMP8UYXVcbPzi/aBZrU5SGyIkdJM3xeWkE7G77EDPA=
+	t=1760035006; cv=none; b=H9k/iQHKT3G+eDSiISTYa+rxHtYeDcNeAyvUyIzNe1PGZwFRaRb71AKPnpZmhWjBaNELALT/QS+73EzpyFXMbDac6nRS+6ECVbUeZ5Gfl/JKwYCI5iKObaW1MBgPRUnqkVTP8AqtybMmf+Z8WV4PDaOb/lwbL6CAZ/Y8ydufU5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760032623; c=relaxed/simple;
-	bh=Oc75qG4cTNZNs+023xxXOdGNA0OEKXltKZJtkf6SwuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkqtTfS59iDmwKeemjC+m13wEgsIcoMxSClnFPxoDPd/ZD1redPFIlDthOz9m/1gssWNn3pTN2KJtlFR/PEuOCpMLRumFqsdl78t3IPowm0sWGswbqjctPwPYxnd7PG/lWyPnF3IADaGNs8IpNy3VjfVM2kLSeFSiseBdi25QZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RG/PKOX+; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760032609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mQtDstGb3CyrZpeSWryCX/If0ajj/tB0us6K4GO5uRQ=;
-	b=RG/PKOX+b9dsfndKPbfywbTI44gZn77HEm5El0GYZFRJnXaZ96AlO6nHjLatm2rS78+wwF
-	QXtEotKWbkSVW8f8eb6U1mr+CVTjybidcHrAro4XlxeF0d1q2x5FUfS4hf/V00ZmvJzTPH
-	15lOKLt9DFUAB2FtRSdtZGn7XTbUs6Q=
-Date: Thu, 9 Oct 2025 10:56:33 -0700
+	s=arc-20240116; t=1760035006; c=relaxed/simple;
+	bh=KEsW2OJV/dTH4tWI637HzgVNLZLEix63iukExIPCxWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MsjGg9F4NlsvWcjOn6aZCAhdXxLc9//QS+Ph7wZw4FKRsB8J76CQT9bTZc3fH6RL6ZA2QoHWBhPThuUJ0SzmYBi1CtiDYZ64TfWEYVFRP998q9b50t8QNFqsCE796p8odNBmeq613TXPrNu7O/FZpQo6LmloqN6bxHcODYSMESw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=no33XGEe; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e56cd8502aso15760811cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 11:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760035003; x=1760639803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=roR2v4xL1IPRVpYrhcGJDt6ekXM2vfs5Ijr/0y0mZ80=;
+        b=no33XGEe6PCVPHlqNHxRuni0byl2O1J0cRvE3+FM0SEYVY0w7DHGBybR6I6ruvv+m7
+         isMs02MzCby5wHY6/b08YSgZf5QzRU24AgcumCs7K0boHMkWRqv0yl4Hy+URW+sGucTf
+         cKVJaG+0KMIGft76Fnb7o8fYb9EPRbgvcuiq9H3Cc3z2BNOnPQcJbfg3mDTSYB+fW/5N
+         Yt5RKPOFKC9Wu4Qir/a2tbSWtXgYPpby3LXfp4b2ydsYoRupgVl7pVFay51YH7YEQ95+
+         J1lorFYHAiaKHGEjtVWIK/O15lbMjPoK2cCjVh2m/08qmtuJjvO0No879kPMEUjq/o0b
+         7UYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760035003; x=1760639803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=roR2v4xL1IPRVpYrhcGJDt6ekXM2vfs5Ijr/0y0mZ80=;
+        b=fX+2Bv4z92HwmXfKB8VRVUZSBUH3hzes6Nyv7/GxPF7+qhLxj5RnBXywEFbCr0t4Cz
+         6ZyZVZXSTzPhPRC2f1Er/CdFe2tjAJf5Kp2hVfDQPErvfLFSNjJMipewlFmbhvmAIZO5
+         xqEAgpL+OQZ7e3g2OSbrJP5PTL6okgr6XAINi8Ov5uuZvT3iHhZGl/XjTm9aOahI1itj
+         mJj+ms8hFM0EtbNeChk9Lo9Wzs3TZ3Hz+vPhgjgaCP+Hgp11F9qBSxj4ICn9putOvich
+         1QTPLoOGROejOV5dyU9HN7l0Hq1mKmxpn2iyWNo0TGtTpKrDmhvZVpN207oh1iPtvUCI
+         v8DA==
+X-Gm-Message-State: AOJu0Yz7HM++sySVxXrZPLuh6cAQDFgdH4EiP5uN9T1hPNDjrJUX0T2Q
+	Z2kIH5inEyZWqBjJQqyVGyTd6PbjdIpy/JsYKvUVduz4FPpQvlzbQYb8oPCRGw8a1Kwx1bM5aVa
+	7xqxx+LbbJWF/mlbp26qPxqtIbJVOTMg=
+X-Gm-Gg: ASbGncsogp+S7FigwBbOsW7MK6L3bNCFvnK7RC5BPS30413z0OTcliOxu/mUrlNwWt6
+	9XF8LyS5aLy3C1oFsZpapc1EXAxoW3R1OVuA6z5xGKDneShPm8XsH+DRpBaFKzF1Ero0IgdR0Yt
+	b4knFJrN43sGf+NcUhHhXKNJOc9FuhfXIkB7MV0HseOxUkA0aHBzKISoe9WbaON8DGtYExmLg5X
+	9MXoS7lkCAox8dk42Mw6hLfPNZMvaBVxn3Cm0EWVRW4wjRo8hueGB0Yl83ijbk=
+X-Google-Smtp-Source: AGHT+IE+PvtJ8PoZJKJ0PpvlrxsUGw17+YObZyG2vyj217qCZrqfIcse9r+dln8mijZwHMPPIfo31yKr/j4BJkfVd4c=
+X-Received: by 2002:a05:622a:995:b0:4b4:9489:8ca9 with SMTP id
+ d75a77b69052e-4e6ead5afc4mr106713561cf.54.1760035003252; Thu, 09 Oct 2025
+ 11:36:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state
- monitoring
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com,
- graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
- dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
- rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
- kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
- masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
- yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
- chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
- jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
- dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org,
- rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org,
- zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
- cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
- Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
- aleksander.lobakin@intel.com, ira.weiny@intel.com,
- andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
- bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
- stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org,
- linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
- ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
- leonro@nvidia.com, witu@nvidia.com
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-20-pasha.tatashin@soleen.com>
- <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
- <mafs0qzvcmje2.fsf@kernel.org>
- <CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
- <dc71808c-c6a4-434a-aee9-b97601814c92@linux.dev>
- <CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251008204133.2781356-1-joannelkoong@gmail.com> <CAJfpegsyHmSAYP04ot8neu_QtsCkTA2-qc2vvvLrsNLQt1aJCg@mail.gmail.com>
+In-Reply-To: <CAJfpegsyHmSAYP04ot8neu_QtsCkTA2-qc2vvvLrsNLQt1aJCg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 9 Oct 2025 11:36:30 -0700
+X-Gm-Features: AS18NWAB3jqaKsS-Kxs761G7f0r9uOSOVG59yXLq7zZOuOy5H2I9XL9lepSXnz8
+Message-ID: <CAJnrk1anOVeNyzEe37p5H-z5UoKeccVMGBCUL_4pqzc=e2J7Ug@mail.gmail.com>
+Subject: Re: [PATCH] fuse: disable default bdi strictlimiting
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 10/9/25 10:04 AM, Pasha Tatashin wrote:
-> On Thu, Oct 9, 2025 at 11:35 AM Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
->>
->> 在 2025/10/9 5:01, Pasha Tatashin 写道:
->>>>> Because the window of kernel live update is short, it is difficult to statistics
->>>>> how many times the kernel is live updated.
->>>>>
->>>>> Is it possible to add a variable to statistics the times that the kernel is live
->>>>> updated?
->>>> The kernel doesn't do the live update on its own. The process is driven
->>>> and sequenced by userspace. So if you want to keep statistics, you
->>>> should do it from your userspace (luod maybe?). I don't see any need for
->>>> this in the kernel.
->>>>
->>> One use case I can think of is including information in kdump or the
->>> backtrace warning/panic messages about how many times this machine has
->>> been live-updated. In the past, I've seen bugs (related to memory
->>> corruption) that occurred only after several kexecs, not on the first
->>> one. With live updates, especially while the code is being stabilized,
->>> I imagine we might have a similar situation. For that reason, it could
->>> be useful to have a count in the dmesg logs showing how many times
->>> this machine has been live-updated. While this information is also
->>> available in userspace, it would be simpler for kernel developers
->>> triaging these issues if everything were in one place.
->> I’m considering this issue from a system security perspective. After the
->> kernel is automatically updated, user-space applications are usually
->> unaware of the change. In one possible scenario, an attacker could
->> replace the kernel with a compromised version, while user-space
->> applications remain unaware of it — which poses a potential security risk.
->>
->> To mitigate this, it would be useful to expose the number of kernel
->> updates through a sysfs interface, so that we can detect whether the
->> kernel has been updated and then collect information about the new
->> kernel to check for possible security issues.
->>
->> Of course, there are other ways to detect kernel updates — for example,
->> by using ftrace to monitor functions involved in live kernel updates —
->> but such approaches tend to have a higher performance overhead. In
->> contrast, adding a simple update counter to track live kernel updates
->> would provide similar monitoring capability with minimal overhead.
-> Would a print during boot, i.e. when we print that this kernel is live
-> updating, we could include the number, work for you? Otherwise, we
-> could export this number in a debugfs.
-Since I received a notification that my previous message was not sent 
-successfully, I am resending it.
-
-IMO, it would be better to export this number via debugfs. This approach 
-reduces the overhead involved in detecting a kernel live update.
-If the number is printed in logs instead, the overhead would be higher 
-compared to using debugfs.
-
-Thanks a lot.
-
-Yanjun.Zhu
-
+On Thu, Oct 9, 2025 at 7:17=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
 >
-> Pasha
+> On Wed, 8 Oct 2025 at 22:42, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> > Since fuse now uses proper writeback accounting without temporary pages=
+,
+> > strictlimiting is no longer needed. Additionally, for fuse large folio
+> > buffered writes, strictlimiting is overly conservative and causes
+> > suboptimal performance due to excessive IO throttling.
+>
+> I don't quite get this part.  Is this a fuse specific limitation of
+> stritlimit vs. large folios?
+>
+> Or is it the case that other filesystems are also affected, but
+> strictlimit is never used outside of fuse?
+
+It's the combination of fuse doing strictlimiting and setting the bdi
+max ratio to 1%.
+
+I don't think this is fuse-specific. I ran the same fio job [1]
+locally on xfs and with setting the bdi max ratio to 1%, saw
+performance drops between strictlimiting off vs. on
+
+[1] fio --name=3Dwrite --ioengine=3Dsync --rw=3Dwrite --bs=3D256K --size=3D=
+1G
+--numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
+>
+> > Administrators can still enable strictlimiting for specific fuse server=
+s
+> > via /sys/class/bdi/*/strict_limit. If needed in the future,
+>
+> What's the issue with doing the opposite: leaving strictlimit the
+> default and disabling strictlimit for specific servers?
+
+If we do that, then we can't enable large folios for servers that use
+the writeback cache. I don't think we can just turn on large folios if
+an admin later on disables strictlimiting for the server, because I
+don't think mapping_set_folio_order_range() can be called after the
+inode has been initialized (not 100% sure about this), which means
+we'd also need to add some mount option for servers to disable
+strictlimiting.
+
+Thanks,
+Joanne
+>
+> Thanks,
+> Miklos
 
