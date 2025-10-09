@@ -1,219 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-63667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333BCBC9AE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 17:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB4FBC9B6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 17:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4B4F3537CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 15:04:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 247DC345649
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 15:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675592EC0A6;
-	Thu,  9 Oct 2025 15:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF411F12E9;
+	Thu,  9 Oct 2025 15:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FNZJ5ue0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMWKINTX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262B02ECD11
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 15:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D21B81D3;
+	Thu,  9 Oct 2025 15:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760022265; cv=none; b=nNVxziiEHjPb58O7OD9V7jvG2WpYco3RWMIOFWOSua81OkQJik4x4p7KMk5LH+krmLLmIeoBrSD6qohZhigwIq6TDmL6/9iI5PcHvWX8pV2xETaUoX2mUWKd4Kk7dBkcB4dodrGmJ+trAPjsdxNizepMM0vxiJW8baVpFEDIY9c=
+	t=1760022905; cv=none; b=Lq9FDf1wNAPaeqEj5sKXus9KOmFx6jr0pwScDV+z3l2Kzj+yvJq+LbegZ9WnajFWV892Udh0orAApNxfFQgMZMbJ4oF1DU46o9Hnjzol9HkPa52wZyaUYizkJSkpfK2cPR57XKl4+qvqTXsbOch++f2uQc3UTrxu4mi/LQEpcR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760022265; c=relaxed/simple;
-	bh=nMCMKtDDnWMJHsk342fi+88ua8K8gM4/fZkYqcY0hoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqT+gB9frMdIjg2jy6hFPKjn6MxmD07jn0oEY6/55n+PpnveksW8KfP5VLDt0QsVZNo/+rEWnAjWRSJSYYmDJQnl1l2jfKTIiT1IiFE4xepe9OULaGBQG4FKRoy4rxc/EW8UTMO3x6g+XCNU87H6ohhdfRe9Zz4F8nvsO5CVfnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=FNZJ5ue0; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4db385e046dso9816691cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 08:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760022263; x=1760627063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GiXnUieO2xScql0ch1/VZCkQk9SwXWpJ1Ui0K7fqWkw=;
-        b=FNZJ5ue0A+Ik7aARuS/f7dSCCDasQ3VBEz8IRjTpqfW5sLf0BqnbFgrxroFGGDqqet
-         aWl842KLjychOdCxzlUKZRmh/58cMrAPy7jT4uC/y0IA7BDTZeZUa86M4yTmkWwKescZ
-         qsHlLfvUcrFfKArISc9kHjAG8tXG5vroHYwx+34wVW7fuO0IxYUJhxd/mq1xdW6rRWrj
-         UcAx9N1xibBIuhLWROf0HKBIi4pAAnSCXtfQxe+yt3RRwPe9rs9r58oj9gqOVBmuXYtr
-         KZmEEUnIF7C0aP3ezNfar7Mi+dyrQwc1CdlJFVZJqDWyYZmw5L63/2DuModWVD9t3pmv
-         gGRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760022263; x=1760627063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GiXnUieO2xScql0ch1/VZCkQk9SwXWpJ1Ui0K7fqWkw=;
-        b=XoS0VEmuE3gtTXrTt4xkNswRgP8w2SqtZFSXP65eUd/E2qS4PP2vQYcZ9udTzJROIy
-         MiAVC31aEk9hbhMAiqYtsSaHle6YrX7AwpvqDQONrqzGcWK4ACywbmaWbJcu9NtRNaGa
-         EzN1JNXn96agBynDdJZFzpqRZ7+19PA9lTlVo0weBqBwtnw5XBHlfTAesDHhmeuHR4F7
-         EaLpO/UQpyu6iSiw4O7D8kMxHLUhm6lhPSAtedcNaofh/LnI4zYWqszZG5Ju44U192YW
-         i2Bvk36GdT7YdMik5Tlq3UgdtZzkqsV7vB6lvFBBcNj7ZnDj67ZipgBGkKtxiLhICSs+
-         +HGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKd8BtqxupOgDDxxlztknG33rOBSC11K7NAZfMsu6ez1zvJUDRMZ4XV2C3AxlR5ikuJmZ4Lo1PQg3MkPKm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylsgr/tSa+2jw1qc2F5yHUGkycU7lnsVYwA9JjGp8g8gXgEClJ
-	EuFZUg7eYh371ZU/5AIcHdtZb1+YeolWE9nVpcIG0sfikIugcu6fxWujfBuVcZLh+HoEW5cS+a/
-	dLtEA/1VE0f7NzAtFgbHzofpK50SL34OH4u5SLV4PID042wB0X43o
-X-Gm-Gg: ASbGncvnXDVHuK1JBR8no7F2yS4h8kaSAGFRaNvhzlltAZ5ag4uvArHV9QwnrNVvCzp
-	L11WquaAz97XoET/5XGGGIheUsPIiruShFvQHxPGd1xwNR6QumTbUuMBZQYOD8eNV7CJk6F/HpH
-	NrdG2T+2U8PH8VleSwzwpk/EqQu710Ma7Gv1RSijLHahyBruUjr0G/i1OzhNr2PMoaOaezYtB/D
-	h0avkB9f0JgBuTW5gfgLbJAtVTtv3kU6TOf7hk=
-X-Google-Smtp-Source: AGHT+IGHSYnwEnvnqmKsabQEceJc2q2+TNir49AdC6M2J+VmuPk/pcH5aGDEMoZErKTqhORDi+KuefUOCQVA2OYIhzI=
-X-Received: by 2002:a05:622a:5:b0:4de:73b2:afc7 with SMTP id
- d75a77b69052e-4e6eaced976mr96420711cf.31.1760022262645; Thu, 09 Oct 2025
- 08:04:22 -0700 (PDT)
+	s=arc-20240116; t=1760022905; c=relaxed/simple;
+	bh=8j8r/z6+mSAv9jRtQG+nhZw4Ea8UNAt0HcGb1nWfsS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pFIkgeu7G/4CgGWyHG8KVnunCRMnxm/+b3od+O/yCt5nt2+BYd0Y8t+/wsdBfKI1V7nrKSk2K4JMw+tBbe3lu4hDj+/7va/1cZk/slK3U/fv2KOMWV3YGJtChpKTJ34PMIvCWiYXbQGbz9XpDGCOtQq8dZkwE+y5ptls06T/n2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMWKINTX; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760022904; x=1791558904;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8j8r/z6+mSAv9jRtQG+nhZw4Ea8UNAt0HcGb1nWfsS8=;
+  b=VMWKINTXjbfGVSnQ7JapKqjx/sJQ5EInlL07dFAbh+iJsmj/3VdOphdn
+   dDAVAFGQ8qU1Tl9GMwMEjn6+TYCLNdSNT/sWwSRTYGmfVbGcZLmrOdtCe
+   Zt+mHRj9FGpt+EhlAQ//9qNIIvBh6irpi32s1oWVHOBoGKCP4AFxN65QF
+   wrsFb1j5LB02wjrBgQZMyUf/Cqq4XNb/I0RPJWMzSqa/xofJh42Jp2UoZ
+   7IRE1R1942y1thhEcP9RiVaLpJ0ahq0isdB47KQBirHF/peNNAk3eqXTT
+   6JoPb/crfbD9d7oyPuikxL6TRlsL58BSudJCF2hRdZW7VbznNisUI3THy
+   A==;
+X-CSE-ConnectionGUID: r+bpg4Q+R1+h/o6ygK1O7A==
+X-CSE-MsgGUID: Z2sjY5z4RFGcx61FcW1pmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="72915283"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="72915283"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 08:15:02 -0700
+X-CSE-ConnectionGUID: jzZtpRVYQyS7NJEG27gY3A==
+X-CSE-MsgGUID: vFc4sSeLRhWjzz5bwS2M3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="186004030"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.111.11]) ([10.125.111.11])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 08:15:01 -0700
+Message-ID: <486185f6-7da7-4fdc-9206-8f1eebd341cf@intel.com>
+Date: Thu, 9 Oct 2025 08:15:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
- <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
- <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
- <20251008193551.GA3839422@nvidia.com> <CA+CK2bDs1JsRCNFXkdUhdu5V-KMJXVTgETSHPvCtXKjkpD79Sw@mail.gmail.com>
- <20251009144822.GD3839422@nvidia.com> <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
-In-Reply-To: <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 9 Oct 2025 11:03:45 -0400
-X-Gm-Features: AS18NWCvIxwxMrUeEufsjS7vH40gfGK_CglDZxzAQyGFJbNRzJDPR8YX8_lwq6A
-Message-ID: <CA+CK2bBs9FA-nVag-9QJ8zgocxhY9JOgkgOhFix1xScGyF3tKA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>, pratyush@kernel.org, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iomap: move prefaulting out of hot write path
+To: "Darrick J. Wong" <djwong@kernel.org>, alexjlzheng@gmail.com,
+ dave.hansen@linux.intel.com
+Cc: brauner@kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jinliang Zheng <alexjlzheng@tencent.com>
+References: <20251009090851.2811395-1-alexjlzheng@tencent.com>
+ <20251009150125.GD6188@frogsfrogsfrogs>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251009150125.GD6188@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 9, 2025 at 11:01=E2=80=AFAM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> On Thu, Oct 9, 2025 at 10:48=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> =
-wrote:
-> >
-> > On Wed, Oct 08, 2025 at 04:26:39PM -0400, Pasha Tatashin wrote:
-> > > On Wed, Oct 8, 2025 at 3:36=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.co=
-m> wrote:
-> > > >
-> > > > On Wed, Oct 08, 2025 at 12:40:34PM -0400, Pasha Tatashin wrote:
-> > > > > 1. Ordered Un-preservation
-> > > > > The un-preservation of file descriptors must also be ordered and =
-must
-> > > > > occur in the reverse order of preservation. For example, if a use=
-r
-> > > > > preserves a memfd first and then an iommufd that depends on it, t=
-he
-> > > > > iommufd must be un-preserved before the memfd when the session is
-> > > > > closed or the FDs are explicitly un-preserved.
-> > > >
-> > > > Why?
-> > > >
-> > > > I imagined the first to unpreserve would restore the struct file * =
--
-> > > > that would satisfy the order.
-> > >
-> > > In my description, "un-preserve" refers to the action of canceling a
-> > > preservation request in the outgoing kernel, before kexec ever
-> > > happens. It's the pre-reboot counterpart to the PRESERVE_FD ioctl,
-> > > used when a user decides not to go through with the live update for a
-> > > specific FD.
-> > >
-> > > The terminology I am using:
-> > > preserve: Put FD into LUO in the outgoing kernel
-> > > unpreserve: Remove FD from LUO from the outgoing kernel
-> > > retrieve: Restore FD and return it to user in the next kernel
-> >
-> > Ok
-> >
-> > > For the retrieval part, we are going to be using FIFO order, the same
-> > > as preserve.
-> >
-> > This won't work. retrieval is driven by early boot discovery ordering
-> > and then by userspace. It will be in whatever order it wants. We need
-> > to be able to do things like make the struct file * at the moment
-> > something requests it..
->
-> I thought we wanted only the user to do "struct file" creation when
-> the user retrieves FD back. In this case we can enforce strict
-> ordering during retrieval. If "struct file" can be retrieved by
-> anything within the kernel, then that could be any kernel process
-> during boot, meaning that charging is not going to be properly applied
-> when kernel allocations are performed.
+On 10/9/25 08:01, Darrick J. Wong wrote:
+> On Thu, Oct 09, 2025 at 05:08:51PM +0800, alexjlzheng@gmail.com wrote:
+>> From: Jinliang Zheng <alexjlzheng@tencent.com>
+>>
+>> Prefaulting the write source buffer incurs an extra userspace access
+>> in the common fast path. Make iomap_write_iter() consistent with
+>> generic_perform_write(): only touch userspace an extra time when
+>> copy_folio_from_iter_atomic() has failed to make progress.
+>>
+>> This patch is inspired by commit 665575cff098 ("filemap: move
+>> prefaulting out of hot write path").
+> Seems fine to me, but I wonder if dhansen has any thoughts about this
+> patch ... which exactly mirrors one he sent eight months ago?
 
-There is a second reason: by the time we enter userspace, and are
-ready to retrieve FDs, we know that all file handlers that are to be
-registered have registered, if we do that during boot with-in kernel,
-then we can get into the problem, where we are trying to retrieve data
-of a file-handler that has not yet registered.
+I don't _really_ care all that much. But, yeah, I would have expected
+a little shout-out or something when someone copies the changelog and
+code verbatim from another patch:
 
->
-> We specifically decided that while "struct file"s are going to be
-> created only by the user, the other subsystems can have early access
-> to the preserved file data, if they know how to parse it.
->
-> > > > This doesn't seem right, the API should be more like 'luo get
-> > > > serialization handle for this file *'
-> > >
-> > > How about:
-> > >
-> > > int liveupdate_find_token(struct liveupdate_session *session,
-> > >                           struct file *file, u64 *token);
-> >
-> > This sort of thing should not be used on the preserve side..
-> >
-> > > And if needed:
-> > > int liveupdate_find_file(struct liveupdate_session *session,
-> > >                          u64 token, struct file **file);
-> > >
-> > > Return: 0 on success, or -ENOENT if the file is not preserved.
-> >
-> > I would argue it should always cause a preservation...
-> >
-> > But this is still backwards, what we need is something like
-> >
-> > liveupdate_preserve_file(session, file, &token);
-> > my_preserve_blob.file_token =3D token
->
-> We cannot do that, the user should have already preserved that file
-> and provided us with a token to use, if that file was not preserved by
-> the user it is a bug. With this proposal, we would have to generate a
-> token, and it was argued that the kernel should not do that.
->
-> > file =3D liveupdate_retrieve_file(session, my_preserve_blob.file_token)=
-;
-> >
-> > And these can run in any order, and be called multiple times.
-> >
-> > Jason
+	https://lore.kernel.org/lkml/20250129181753.3927F212@davehans-spike.ostc.intel.com/
+
+and then copies a comment from a second patch I did.
+
+But I guess I was cc'd at least. Also, if my name isn't on this one,
+then I don't have to fix any of the bugs it causes. Right? ;)
+
+Just one warning: be on the lookout for bugs in the area. The
+prefaulting definitely does a good job of hiding bugs in other bits
+of the code. The generic_perform_write() gunk seems to have uncovered
+a bug or two.
+
+Also, didn't Christoph ask you to make the comments wider the last
+time Alex posted this? I don't think that got changed.
+
+	https://lore.kernel.org/lkml/aIt8BYa6Ti6SRh8C@infradead.org/
+
+Overall, the change still seems as valid to me as it did when I wrote the
+patch in the first place. Although it feels funny to ack my own
+patch.
 
