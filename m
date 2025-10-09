@@ -1,358 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-63685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4055BCAFF8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 23:58:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D707BCB088
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A54634E7F6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 21:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F02148032E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4602E283CB0;
-	Thu,  9 Oct 2025 21:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F85283FCE;
+	Thu,  9 Oct 2025 22:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xl1MHt/0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIA3cguL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22FA1F09A5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 21:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804601A9FAE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760047108; cv=none; b=OEcapBh1jx7z6SFY/SM6X3qH1dsj0p9qesbLUwzDasFzGPGWktuSOEfqp4tFdUSHmnA7V+EIaojWQliplz5EVFJQjCQa7u2GOW22SodCZsgCBT+AFLtbaODOcAs9YEQnfRJuqdwenl4eHYpPaeKB5NmDEwRE0gFNMbT3BvWDhtA=
+	t=1760047888; cv=none; b=U5Cy/YgV+XPItlokvzgRA5kM1xv/n+NVZ8KiYsSi082Ob5ZszCaN8c4aafaS6Cqcv4vGcmbvc27HC1lnpp0YRZw5CN62FapTqTFPYLuYc0Jyo4pynhPZf17PJiT66c/8MQsxeAki7ZD6OsY7wfNGLaMjtZjLiuZ6ZtVYSx18TLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760047108; c=relaxed/simple;
-	bh=E6cHoG+aVXoaqqDmCd6yNSqXDvxubH/KxDh+Ob6V8Lg=;
+	s=arc-20240116; t=1760047888; c=relaxed/simple;
+	bh=MqqZUpeYZBMqSfPQ6qxQ5PVGV7REwBCnvVmc5BhqamI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fLqZJB+apk65kxqwbJaChzRWQ90YP2UyKfsvlyaT9wE8AWe0MYr97v7SwqWnuu+oMhZa8c55DJmsxow2ZQVpgm0tH2TsfI6TC7KvANGZeqFAm01vEKV0CfMDEfXrCZ/R+/Fc+Lv7F+ZtnU/KzDHNgvmNoOazSmYJ5lHWQnAadwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xl1MHt/0; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4dcc9cebfdfso37771cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 14:58:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=BNJjOCsUio19oiA7/g6ZtSiqM37ha+y8v78aW8yJsGU/2G9co/VsBs5KrYmtcgp/i4+2uMSV/+G9duSrFTo0e1o18KNyjGnBvAHmI9+ZN7JubYP+oUhS8FTRc2WWem1ffpDF9o77+qVqUuagQaPmqAzukyFsaFklE+9aLccE1hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIA3cguL; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4e70609e042so3290391cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:11:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760047106; x=1760651906; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760047885; x=1760652685; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Da9rq64jSCHe6oeiNyGExW4qkL69hMLkeHxNHZmMDYA=;
-        b=xl1MHt/0eqwt/VALI5bC/3zAFz/yz4i8v/lt8NhTlZQIC/Vm9vpkq0iq4NK/urbRD5
-         ZXf91Oi1oHGVGNmgLIH0x/qMLPvirCv41/ulhx6o0j7NVFVp/xPMK2fC+IBb58uFHRsO
-         BTkUMRQfrWyvhniKn2wnJ8jZ+5+UTMZCtInU/lf9PI2HAHHUotn7/O973lh1S3v/QA8V
-         f18jww+sD5PPG9Ija+4HXosOTNtuoGei5huNmkuNb6hxsXN6idK+jRN3PFwNcZ/Oacsd
-         +PjoHfaUxI3GWR7+wVKboLKcV1C8vyJ4jeStvTeUyz/yuNZL31qrZHKWGgcO0nAang/9
-         /nIQ==
+        bh=2LdKW+97zJau5CQgIDE2WBiem0spBT4DqjTGzbOcdBg=;
+        b=jIA3cguLNfGD6+tWsWm/58z4jN8Og8tUHjIWA/G+9rhuDMHCVV/cLQpPz90RTvz0X8
+         WgVn5BK/LfxdX3ZNiCgmyYignQWn5DdxjkKyG220GClFgDQaaqHNx2YsnKsa3NuSDsLn
+         dw8eviodvStmSKR/FvjLW0XDgCmRSa0MYlRoHV8nXr0PCDAxOMGvTQR1z02BNdx34ft/
+         kovA/ZJK1TJZVgRFTkunqz92XNfkRPNfbZ+1k/zJt40UEN19DUCK++QkmrvtV9w6mpo6
+         pjuc1vqwNX4K4P5Uc5rIF8mAbZQEgiwtWa1Bfwkrov3Ce7jF0tnhErapiMNZbicjSbuN
+         +0uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760047106; x=1760651906;
+        d=1e100.net; s=20230601; t=1760047885; x=1760652685;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Da9rq64jSCHe6oeiNyGExW4qkL69hMLkeHxNHZmMDYA=;
-        b=kTRPozMUSCMmyNmQV9fCeakSYJ++GqpruFCd/NQw75M5gJqtSRDG1mCozkcsYa6y+P
-         dOt5neclkzcjmGrJuACAlnNWWLPm9EX2IHIbS3NMtMWZovZSpGHMSaKFBp/ETSNylAQz
-         EfZ0B7JJV0lmovE+iBKLibQmnmHh0WZ6CFArkUR2tZcyeEYq4thpGdjo/zh4r8ImjGoT
-         1yakL4Fqn9VmS0pTQN1PtPdF2eFtC8BJbeXSub/+kZ9+cv4dAXrD3PEiPPslmpaL4x28
-         T0hjbEw3KyMFg4CJhOOKcUwoflT54V12pdnJ1kEBjZ7uiiuV4CC1Hsj0INgnoo6xLUYn
-         jVnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvRyg9TEzsy1/otBXCsJ1qtujbgYXVRt1xqJ/fYdKjQh8dvkEqrzTkwPWOogdJl5wupFywJ/TVlrTyuhVS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSAm4Qx52C74KqN/kbSMcyH6bEVT7UrzI9YbWW2VQOP4JeD391
-	gG6iE7wVma/P7GY+gDp3d6eS9h/M6gr2FqsUw47x/12fk0ivCDzqIZ4Sg6zlp6dqSa/gRorUnlT
-	FZiM0qdAzU+RVgDYZG+PdRvD/22X1eU/B3yAjy2KY
-X-Gm-Gg: ASbGncvBjoZjY3oE5q6/SUYvi+9V+I7ZiGBELf8QxjzX+wt9z+VA7E2h9NhPZJSSg9U
-	wu8rpAAdZY+mx3j6yJ8y4AC1Lii4hcbXdzHDGvSs/uQLrbhD0ig+gvHFWv2oC/Ccv1MHF1j14Up
-	0JXHq5fgfcxX1tBDZQOrFc/CLCMy3yOtiEmm+cCuOKMO+e5oomaSXs8MY93e6uBl9ny6ElTKovI
-	6SKn1grjoKPzakrAz8aUQGBhvIeXqQjszRmLT1hpnYeuTNA4leE6+/GmA0uWgo0PVyu+oE=
-X-Google-Smtp-Source: AGHT+IHtQMqTo8BIFpnJE01TPxuNwy3HFiU5S+TL2cS82bKmRJ04q7RTWP2H9LIooNmOn6Icee0DawB7J8B4tkpHZn4=
-X-Received: by 2002:ac8:5acb:0:b0:4b7:9e3a:3804 with SMTP id
- d75a77b69052e-4e6eac3e03dmr19019021cf.16.1760047104907; Thu, 09 Oct 2025
- 14:58:24 -0700 (PDT)
+        bh=2LdKW+97zJau5CQgIDE2WBiem0spBT4DqjTGzbOcdBg=;
+        b=pQyD1ShzbioRCHvCed9v0utWUKb2SkLXbzCTfEG9cykUb+fF6DorrHgthTz4noanx5
+         7bIOCvcXpCBSb849D/Cb4DYwf8e+QnxEyqyUSabp9TRMyOZRNsPuMhAoa+spJYu0uAlv
+         5F+/NwDqSjrn5SbUC82hX/TF6diZqvVM5CNu7TdVoWz9yJZgT0xATPOGfUNfM6BZfmOz
+         x3eVdYtJFj6ZN9beP2SM4ZnUmD6v7L1iJYqrKZrCA8d0+zBKjBFo8kKLRlL5EXSrwqBO
+         72h2qPy64Hvu+OMiipvsxydvlPoRdnToNsyXhfk8FsSa+RXrw46k5Uz0VtTRbFrxd+Ia
+         cVOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdzoG60aM1ehbJPgKdWrLdQtx/ngbG5anVj6v/7tuFNE5/thmDMIdrrRDo0EBtE1Gj4PvB3jBp8C+lJenZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHd9p9FGw8Bu3Ngq5XSHV3/lzEdcC9jHU3vQaSA5MlEjKaPm/T
+	epS+K3F6kRegYdz4HVi1v2QB11zq2q3++A1Zdz+Qj6UOvbEMi5f1IyNVhjgkHM8BtFxpQCoxQUZ
+	MGwVtZrOLf9Kh7DYhdznrAyMqyFrHG5s=
+X-Gm-Gg: ASbGncu2QGMRaDmkgVS+5Nen6YNNSbE3eR9fl7OjENhGGo7rq9nRGkyVmAmRarwdMJ+
+	q13wOMhKJWMw4GfMfo/pUv5GXr5uNklcf5U3pm85MEoIUHFgxYc2p3ArYKwsDi6l6psucxI+s6r
+	yS3xyBOe/Wt45zPiCgx/jCEa2cWUCyIL8LyFqNFUY9YVEGkBGXLt/P2tjFCpBcuVE3Em3l1oG03
+	YW7QX7yubsaUlILHyRtBW9dVhxi7KXHHhgAl5cCBHC7ihnlRnXqSK9uMMIaHsgWsC1Sa480ly/Y
+	dm+yQxvK
+X-Google-Smtp-Source: AGHT+IGcbY8Bh7krjq8EwlBLvFauQa8pByY3xiTpfvFw0r06RiRjXK13ug/KVQzQSyNfWzMu0BkEv9VuA04u8w5OKXM=
+X-Received: by 2002:ac8:7f49:0:b0:4d6:173a:8729 with SMTP id
+ d75a77b69052e-4e6eaccc88bmr123422781cf.10.1760047885327; Thu, 09 Oct 2025
+ 15:11:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com> <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-In-Reply-To: <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Thu, 9 Oct 2025 14:58:12 -0700
-X-Gm-Features: AS18NWAFRVYpxwTRWQpBNTJ0w8vW0qyc8VT4GzWQLZMUeNsIeMEBFK1d54E05pE
-Message-ID: <CAAywjhT_9vV-V+BBs1_=QqhCGQqHo89qWy7r5zW1ej51yHPGJA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+In-Reply-To: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 9 Oct 2025 15:11:13 -0700
+X-Gm-Features: AS18NWAYbFuwvCbuPMb0wo4vq0kp-E4e277WXBQ-3_-ui-3GP7chGs5RpZnm9Z8
+Message-ID: <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: "guangming.zhao" <giveme.gulu@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 7, 2025 at 10:11=E2=80=AFAM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
+On Thu, Oct 9, 2025 at 4:09=E2=80=AFAM guangming.zhao <giveme.gulu@gmail.co=
+m> wrote:
 >
-> On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
-> <pasha.tatashin@soleen.com> wrote:
-> >
-> > This series introduces the Live Update Orchestrator (LUO), a kernel
-> > subsystem designed to facilitate live kernel updates. LUO enables
-> > kexec-based reboots with minimal downtime, a critical capability for
-> > cloud environments where hypervisors must be updated without disrupting
-> > running virtual machines. By preserving the state of selected resources=
-,
-> > such as file descriptors and memory, LUO allows workloads to resume
-> > seamlessly in the new kernel.
-> >
-> > The git branch for this series can be found at:
-> > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v4
-> >
-> > The patch series applies against linux-next tag: next-20250926
-> >
-> > While this series is showed cased using memfd preservation. There are
-> > works to preserve devices:
-> > 1. IOMMU: https://lore.kernel.org/all/20250928190624.3735830-16-skhawaj=
-a@google.com
-> > 2. PCI: https://lore.kernel.org/all/20250916-luo-pci-v2-0-c494053c3c08@=
-kernel.org
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > Changelog since v3:
-> > (https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@so=
-leen.com):
-> >
-> > - The main architectural change in this version is introduction of
-> >   "sessions" to manage the lifecycle of preserved file descriptors.
-> >   In v3, session management was left to a single userspace agent. This
-> >   approach has been revised to improve robustness. Now, each session is
-> >   represented by a file descriptor (/dev/liveupdate). The lifecycle of
-> >   all preserved resources within a session is tied to this FD, ensuring
-> >   automatic cleanup by the kernel if the controlling userspace agent
-> >   crashes or exits unexpectedly.
-> >
-> > - The first three KHO fixes from the previous series have been merged
-> >   into Linus' tree.
-> >
-> > - Various bug fixes and refactorings, including correcting memory
-> >   unpreservation logic during a kho_abort() sequence.
-> >
-> > - Addressing all comments from reviewers.
-> >
-> > - Removing sysfs interface (/sys/kernel/liveupdate/state), the state
-> >   can now be queried  only via ioctl() API.
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Hi all,
->
-> Following up on yesterday's Hypervisor Live Update meeting, we
-> discussed the requirements for the LUO to track dependencies,
-> particularly for IOMMU preservation and other stateful file
-> descriptors. This email summarizes the main design decisions and
-> outcomes from that discussion.
->
-> For context, the notes from the previous meeting can be found here:
-> https://lore.kernel.org/all/365acb25-4b25-86a2-10b0-1df98703e287@google.c=
-om
-> The notes for yesterday's meeting are not yes available.
->
-> The key outcomes are as follows:
->
-> 1. User-Enforced Ordering
-> -------------------------
-> The responsibility for enforcing the correct order of operations will
-> lie with the userspace agent. If fd_A is a dependency for fd_B,
-> userspace must ensure that fd_A is preserved before fd_B. This same
-> ordering must be honored during the restoration phase after the reboot
-> (fd_A must be restored before fd_B). The kernel preserve the ordering.
->
-> 2. Serialization in PRESERVE_FD
-> -------------------------------
-> To keep the global prepare() phase lightweight and predictable, the
-> consensus was to shift the heavy serialization work into the
-> PRESERVE_FD ioctl handler. This means that when userspace requests to
-> preserve a file, the file handler should perform the bulk of the
-> state-saving work immediately.
->
-> The proposed sequence of operations reflects this shift:
->
-> Shutdown Flow:
-> fd_preserve() (heavy serialization) -> prepare() (lightweight final
-> checks) -> Suspend VM -> reboot(KEXEC) -> freeze() (lightweight)
->
-> Boot & Restore Flow:
-> fd_restore() (lightweight object creation) -> Resume VM -> Heavy
-> post-restore IOCTLs (e.g., hardware page table re-creation) ->
-> finish() (lightweight cleanup)
->
-> This decision primarily serves as a guideline for file handler
-> implementations. For the LUO core, this implies minor API changes,
-> such as renaming can_preserve() to a more active preserve() and adding
-> a corresponding unpreserve() callback to be called during
-> UNPRESERVE_FD.
->
-> 3. FD Data Query API
-> --------------------
-> We identified the need for a kernel API to allow subsystems to query
-> preserved FD data during the boot process, before userspace has
-> initiated the restore.
->
-> The proposed API would allow a file handler to retrieve a list of all
-> its preserved FDs, including their session names, tokens, and the
-> private data payload.
->
-> Proposed Data Structure:
->
-> struct liveupdate_fd {
->         char *session; /* session name */
->         u64 token; /* Preserved FD token */
->         u64 data; /* Private preserved data */
-> };
->
-> Proposed Function:
-> liveupdate_fd_data_query(struct liveupdate_file_handler *h,
->                          struct liveupdate_fd *fds, long *count);
 
-Now that you are adding the "File-Lifecycle-Bound Global State", I was
-wondering if this session data query mechanism is still necessary. It
-seems that any preserved state a file handler needs to restore during
-boot could be fetched using the Global data support instead. For
-example, I don't think session information will be needed to restore
-iommu domains during boot (iommu init), but even if some other file
-handler needs it then it can keep this info in global data. I
-discussed this briefly with Pasha today, but wanted to raise it here
-as well.
+Hi Guangming,
+
+> The race occurs as follows:
+> 1. A write operation locks a page, fills it with new data, marks it
+>    Uptodate, and then immediately unlocks it within fuse_fill_write_pages=
+().
+> 2. This opens a window before the new data is sent to the userspace daemo=
+n.
+> 3. A concurrent read operation for the same page may decide to re-validat=
+e
+>    its cache from the daemon. The fuse_wait_on_page_writeback()
+>    mechanism does not protect this synchronous writethrough path.
+> 4. The read request can be processed by the multi-threaded daemon *before=
+*
+>    the write request, causing it to reply with stale data from its backen=
+d.
+> 5. The read syscall returns this stale data to userspace, causing data
+>    verification to fail.
+
+I don't think the issue is that the read returns stale data (the
+client is responsible for synchronizing reads and writes, so if the
+read is issued before the write has completed then it should be fine
+that the read returned back stale data) but that the read will
+populate the page cache with stale data (overwriting the write data in
+the page cache), which makes later subsequent reads that are issued
+after the write has completed return back stale data.
+
 >
-> 4. New File-Lifecycle-Bound Global State
-> ----------------------------------------
-> A new mechanism for managing global state was proposed, designed to be
-> tied to the lifecycle of the preserved files themselves. This would
-> allow a file owner (e.g., the IOMMU subsystem) to save and retrieve
-> global state that is only relevant when one or more of its FDs are
-> being managed by LUO.
+> This can be reliably reproduced on a mainline kernel (e.g., 6.1.x)
+> using iogen and a standard multi-threaded libfuse passthrough filesystem.
 >
-> The key characteristics of this new mechanism are:
-> The global state is optionally created on the first preserve() call
-> for a given file handler.
-> The state can be updated on subsequent preserve() calls.
-> The state is destroyed when the last corresponding file is unpreserved
-> or finished.
-> The data can be accessed during boot.
+> Steps to Reproduce:
+> 1. Mount a libfuse passthrough filesystem (must be multi-threaded):
+>    $ ./passthrough /path/to/mount_point
 >
-> I am thinking of an API like this.
+> 2. Run the iogen/doio test from LTP (Linux Test Project) with mixed
+>    read/write operations (example):
+>    $ /path/to/ltp/iogen -N iogen01 -i 120s -s read,write 500k:/path/to/mo=
+unt_point/file1 | \
+>      /path/to/ltp/doio -N iogen01 -a -v -n 2 -k
 >
-> 1. Add three more callbacks to liveupdate_file_ops:
-> /*
->  * Optional. Called by LUO during first get global state call.
->  * The handler should allocate/KHO preserve its global state object and r=
-eturn a
->  * pointer to it via 'obj'. It must also provide a u64 handle (e.g., a ph=
-ysical
->  * address of preserved memory) via 'data_handle' that LUO will save.
->  * Return: 0 on success.
->  */
-> int (*global_state_create)(struct liveupdate_file_handler *h,
->                            void **obj, u64 *data_handle);
+> 3. A data comparison error similar to the following will be reported:
+>    *** DATA COMPARISON ERROR ***
+>    check_file(/path/to/mount_point/file1, ...) failed
+>    expected bytes:  X:3091346:gm-arco:doio*X:3091346
+>    actual bytes:    91346:gm-arco:doio*C:3091346:gm-
 >
-> /*
->  * Optional. Called by LUO in the new kernel
->  * before the first access to the global state. The handler receives
->  * the preserved u64 data_handle and should use it to reconstruct its
->  * global state object, returning a pointer to it via 'obj'.
->  * Return: 0 on success.
->  */
-> int (*global_state_restore)(struct liveupdate_file_handler *h,
->                             u64 data_handle, void **obj);
+> The fix is to delay unlocking the page until after the data has been
+> successfully sent to the daemon. This is achieved by moving the unlock
+> logic from fuse_fill_write_pages() to the completion path of
+> fuse_send_write_pages(), ensuring the page lock is held for the entire
+> critical section and serializing the operations correctly.
 >
-> /*
->  * Optional. Called by LUO after the last
->  * file for this handler is unpreserved or finished. The handler
->  * must free its global state object and any associated resources.
->  */
-> void (*global_state_destroy)(struct liveupdate_file_handler *h, void *obj=
-);
+> [Note for maintainers]
+> This patch is created and tested against the 5.15 kernel. I have observed
+> that recent kernels have migrated to using folios, and I am not confident
+> in porting this fix to the new folio-based code myself.
 >
-> The get/put global state data:
+> I am submitting this patch to clearly document the race condition and a
+> proven fix on an older kernel, in the hope that a developer more
+> familiar with the folio conversion can adapt it for the mainline tree.
 >
-> /* Get and lock the data with file_handler scoped lock */
-> int liveupdate_fh_global_state_get(struct liveupdate_file_handler *h,
->                                    void **obj);
+> Signed-off-by: guangming.zhao <giveme.gulu@gmail.com>
+> ---
+> [root@gm-arco example]# uname -a
+> Linux gm-arco 6.16.8-arch3-1 #1 SMP PREEMPT_DYNAMIC Mon, 22 Sep 2025 22:0=
+8:35 +0000 x86_64 GNU/Linux
+> [root@gm-arco example]# ./passthrough /tmp/test/
+> [root@gm-arco example]# mkdir /tmp/test/yy
+> [root@gm-arco example]# /home/gm/code/ltp/testcases/kernel/fs/doio/iogen =
+-N iogen01 -i 120s -s read,write 500b:/tmp/test/yy/kk1 1000b:/tmp/test/yy/k=
+k2 | /home/gm/code/ltp/testcases/kernel/fs/doio/doio -N iogen01 -a -v -n 2 =
+-k
 >
-> /* Unlock the data */
-> void liveupdate_fh_global_state_put(struct liveupdate_file_handler *h);
+> iogen(iogen01) starting up with the following:
 >
-> Execution Flow:
-> 1. Outgoing Kernel (First preserve() call):
-> 2. Handler's preserve() is called. It needs the global state, so it calls
->    liveupdate_fh_global_state_get(&h, &obj). LUO acquires h->global_state=
-_lock.
->    It sees h->global_state_obj is NULL.
->    LUO calls h->ops->global_state_create(h, &h->global_state_obj, &handle=
-).
->    The handler allocates its state, preserves it with KHO, and returns it=
-s live
->    pointer and a u64 handle.
-> 3. LUO stores the handle internally for later serialization.
-> 4. LUO sets *obj =3D h->global_state_obj and returns 0 with the lock stil=
-l held.
-> 5. The preserve() callback does its work using the obj.
-> 6. It calls liveupdate_fh_global_state_put(h), which releases the lock.
+> Out-pipe:              stdout
+> Iterations:            120 seconds
+> Seed:                  3091343
+> Offset-Mode:           sequential
+> Overlap Flag:          off
+> Mintrans:              1           (1 blocks)
+> Maxtrans:              131072      (256 blocks)
+> O_RAW/O_SSD Multiple:  (Determined by device)
+> Syscalls:              read write
+> Aio completion types:  none
+> Flags:                 buffered sync
 >
-> Global PREPARE:
-> 1. LUO iterates handlers. If h->count > 0, it writes the stored data_hand=
-le into
->    the LUO FDT.
+> Test Files:
 >
-> Incoming Kernel (First access):
-> 1. When liveupdate_fh_global_state_get(&h, &obj) is called the first time=
-. LUO
->    acquires h->global_state_lock.
-> 2. It sees h->global_state_obj is NULL, but it knows it has a preserved u=
-64
->    handle from the FDT. LUO calls h->ops->global_state_restore()
-> 3. Reconstructs its state object, and returns the live pointer.
-> 4. LUO sets *obj =3D h->global_state_obj and returns 0 with the lock held=
-.
-> 5. The caller does its work.
-> 6. It calls liveupdate_fh_global_state_put(h) to release the lock.
+> Path                                          Length    iou   raw iou fil=
+e
+>                                               (bytes) (bytes) (bytes) typ=
+e
+> -------------------------------------------------------------------------=
+----
+> /tmp/test/yy/kk1                               256000       1     512 reg=
+ular
+> /tmp/test/yy/kk2                               512000       1     512 reg=
+ular
 >
-> Last File Cleanup (in unpreserve or finish):
-> 1. LUO decrements h->count to 0.
-> 2. This triggers the cleanup logic.
-> 3. LUO calls h->ops->global_state_destroy(h, h->global_state_obj).
-> 4. The handler frees its memory and resources.
-> 5. LUO sets h->global_state_obj =3D NULL, resetting it for a future live =
-update
->    cycle.
+> doio(iogen01) (3091346) 17:43:50
+> ---------------------
+> *** DATA COMPARISON ERROR ***
+> check_file(/tmp/test/yy/kk2, 116844, 106653, X:3091346:gm-arco:doio*, 23,=
+ 0) failed
 >
-> Pasha
+> Comparison fd is 3, with open flags 0
+> Corrupt regions follow - unprintable chars are represented as '.'
+> -----------------------------------------------------------------
+> corrupt bytes starting at file offset 116844
+>     1st 32 expected bytes:  X:3091346:gm-arco:doio*X:3091346
+>     1st 32 actual bytes:    91346:gm-arco:doio*C:3091346:gm-
+> Request number 13873
+> syscall:  write(4, 02540107176414100, 106653)
+>           fd 4 is file /tmp/test/yy/kk2 - open flags are 04010001
+>           write done at file offset 116844 - pattern is X:3091346:gm-arco=
+:doio*
+>
+> doio(iogen01) (3091344) 17:43:50
+> ---------------------
+> (parent) pid 3091346 exited because of data compare errors
+>
+>  fs/fuse/file.c | 36 ++++++++++--------------------------
+>  1 file changed, 10 insertions(+), 26 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 5c5ed58d9..a832c3122 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1098,7 +1098,6 @@ static ssize_t fuse_send_write_pages(struct fuse_io=
+_args *ia,
+>         struct fuse_file *ff =3D file->private_data;
+>         struct fuse_mount *fm =3D ff->fm;
+>         unsigned int offset, i;
+> -       bool short_write;
+>         int err;
+>
+>         for (i =3D 0; i < ap->num_pages; i++)
+> @@ -1113,26 +1112,21 @@ static ssize_t fuse_send_write_pages(struct fuse_=
+io_args *ia,
+>         if (!err && ia->write.out.size > count)
+>                 err =3D -EIO;
+>
+> -       short_write =3D ia->write.out.size < count;
+>         offset =3D ap->descs[0].offset;
+>         count =3D ia->write.out.size;
+>         for (i =3D 0; i < ap->num_pages; i++) {
+>                 struct page *page =3D ap->pages[i];
+>
+> -               if (err) {
+> -                       ClearPageUptodate(page);
+> -               } else {
+> -                       if (count >=3D PAGE_SIZE - offset)
+> -                               count -=3D PAGE_SIZE - offset;
+> -                       else {
+> -                               if (short_write)
+> -                                       ClearPageUptodate(page);
+> -                               count =3D 0;
+> -                       }
+> -                       offset =3D 0;
+> -               }
+> -               if (ia->write.page_locked && (i =3D=3D ap->num_pages - 1)=
+)
+> -                       unlock_page(page);
+> +        if (!err && !offset && count >=3D PAGE_SIZE)
+> +            SetPageUptodate(page);
+> +
+> +        if (count > PAGE_SIZE - offset)
+> +            count -=3D PAGE_SIZE - offset;
+> +        else
+> +            count =3D 0;
+> +        offset =3D 0;
+> +
+> +        unlock_page(page);
+>                 put_page(page);
+>         }
+>
+> @@ -1195,16 +1189,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_i=
+o_args *ia,
+>                 if (offset =3D=3D PAGE_SIZE)
+>                         offset =3D 0;
+>
+> -               /* If we copied full page, mark it uptodate */
+> -               if (tmp =3D=3D PAGE_SIZE)
+> -                       SetPageUptodate(page);
+> -
+> -               if (PageUptodate(page)) {
+> -                       unlock_page(page);
+> -               } else {
+> -                       ia->write.page_locked =3D true;
+> -                       break;
+> -               }
+
+I think this will run into the deadlock described here
+https://lore.kernel.org/linux-fsdevel/CAHk-=3Dwh9Eu-gNHzqgfvUAAiO=3DvJ+pWnz=
+xkv+tX55xhGPFy+cOw@mail.gmail.com/,
+so I think we would need a different solution. Maybe one idea is doing
+something similar to what the fi->writectr bias does - that at least
+seems simpler to me than having to unlock all the pages in the array
+if we have to fault in the iov iter and then having to relock the
+pages while making sure everything is all consistent.
+
+Thanks,
+Joanne
+
+>                 if (!fc->big_writes)
+>                         break;
+>         } while (iov_iter_count(ii) && count < fc->max_write &&
+> --
+> 2.51.0
 >
 >
-> Pasha
 
