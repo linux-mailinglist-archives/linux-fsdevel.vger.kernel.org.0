@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF39DBCB27D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:58:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22C2BCB275
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B60D93B09B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:57:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E1519E7DCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A75286D76;
-	Thu,  9 Oct 2025 22:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33D1287247;
+	Thu,  9 Oct 2025 22:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g4fhS1Db"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTuqRZlH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B18285CBC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC02D72625
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760050664; cv=none; b=eAHzTQmvfOaX+Ee0CMW++IDzkCpvGw1SBTHOIIqaPF/TifRNNAU26Uqwi09D9S6tIyS2ynzJeBcpCeNSef547y1I+6mWl3JkEDYjHYMP1yEFMGqkpG0kbeRYOCGRF7rhE7OglwKBOp9jCCYbuV4HJoGaIOzKEtx8Qj3VL/Te7TU=
+	t=1760050666; cv=none; b=CjDQyYYNAfI6tPu0XmhmhKr19JtYTV+IuOfpcoEvAc4175S8zh8If0vwEtyDmo+G1RpRsu2ho73a6Uesx29VBMDM8oKHU84G6s7tU016+/jPu0e/YofLQMHdpEcRuAubqq/I6VYyiUGN+murxVLOaaFSja8w8X45GeKL7vUChMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760050664; c=relaxed/simple;
-	bh=n4IVqlq8t0hbY9YHtkCg7ZL0cOTHHmiJwQWCRWoe/Ik=;
+	s=arc-20240116; t=1760050666; c=relaxed/simple;
+	bh=Pp6eywmMbQRafpRNLONgu5bAGPmgsofJbHgPwF9A3is=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dn6dGv38aaVr4YhjNjtDuZUIfrJ1nRY1Srn9gm+BV0knCPBUYzq5k+iWPHN/oiBCGVL6uOHd+T8OUdn1LFfCW+jdpKBUrg/nDllSPDhOAg0jMUoCwIvPwCzfF5A/zZo9FLJtYSJCMqwZxvTcLdxXPi4553aPBLlcNGKStXaLOuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g4fhS1Db; arc=none smtp.client-ip=209.85.210.172
+	 MIME-Version; b=c9vXexyUYjVoWzzEXCKMzmDLzhsyxqaPsTkYB/7ItDPwN/Pjd4J6+Vv3X2f35hR5iu0IcbFb/L/3aoq/17oQAwF81GgLJRiKy+8ZltFt5EDlP/m9x6Q0wK68hVaaduaZO95LxnnId3DNDRlB1uT8lity9y5muORDeBw67KJ4umM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTuqRZlH; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-793021f348fso1412281b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:42 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3322e63602eso2107024a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760050662; x=1760655462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760050664; x=1760655464; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vlfXx9s1YmQrV7yzJSac9OXNl/1heluIwcREBzBFPMg=;
-        b=g4fhS1Db9VzRGCubTGViDXEv5GUpGOAAI3d8WlmtUPyaRtPvpZbuJ3/qurpEihLGAg
-         j8eAatdOg4jqGOIZf1ILHwp8g/CuiqLud2fW3Aey2V4htus4lassy2q1C53XfMgRc7H0
-         YYfxER0/x8blA6XgyHyHZ4sqqOBweoxmnY6KHi11jxs4vY9VuSvURLD3Y59JwDxQ7ZLI
-         u7MeTo9WRAV3Rm4P70C11CxSRal5PQ8p7NUvL+FC/puCLS10mtv1YQCtq2lCHDJIgTsS
-         GcxoIqt8ggTlWM13hJPpqel6Y0a4SHWJR7MhwdahQ2oSHsP3PgZIrvjOyTzjHORg6DiW
-         c2kw==
+        bh=KgnZJUT+/hycTvJxInJmFP2Qhki4iXOUj9ClFgGHdpo=;
+        b=ZTuqRZlHASuFsrfSmdONgxAHwsf03eB7zSThK533w8r9W2MbDc6s1hr5qn7EgVunVC
+         XUcklt9f9mSybL9hwfKAKS7xtVxqiGep9PiNLBLEGK7NerRuhfWpaNrN+5Z1iutW+XUn
+         4fbXcbe4ALJ6wTC+fbDGWXpf5iknd1h95OMSlLgyRzoDAWizpiQxnbcDrex/uqLUZwpJ
+         w78LzX/20NmU+p/tRInS/BlZ5p9p6vrt4wk7L9Z4DdH+qHNV+kFauA0fCbCKfv4w0+xM
+         g0JY6io5slrq2vEL39WghuMhKo2dLzcpontOregFNPLjNrBwM1QRLmy+mvuVSD+5TU8P
+         z8Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760050662; x=1760655462;
+        d=1e100.net; s=20230601; t=1760050664; x=1760655464;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vlfXx9s1YmQrV7yzJSac9OXNl/1heluIwcREBzBFPMg=;
-        b=GKOHJ9Juzt3YZPys98N6deTme1P5D3fWWSM43jDCyFsIlM8WSFsmAM3u/bpI/Nyex7
-         Rk7qbTZLKK96oVDqGWsBVecODPB/4RR7RdrGRGguVdILK+HOimlHtgTixUq5WqhrpLmi
-         qe90ptm7ChH1CBVU6mZk/g3aldaD99HwV3pUBP3TSkGHK8DKEbg4pZqMZuT8a1s8tzXR
-         GtYzG5JIp82Q/chDzKWn8v5W44MubQrN3nWHa3uUAv7boIv+eXdCYfr++PYriIhEz07x
-         bfwpKVMxXRVkSDKALkC+Gmo5c+NLYV4IL/UiBXkQ57r2GMKFGJF2UI6eAL5UNRo9nAsB
-         lVUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmMiClx116LtvUCJmWpv1CPfJ8ldSW5YGxyqrIegk9w36D0BDYrJkXq6Amb9GbRQWfvtGL39fIVjkbUsOP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx05OlGDAronUtzZgwNrN78wGVxV0eetHOUKPH7Uyv58wuktG8k
-	9he/UWmfH9a4FQ/hk+2jQ0vRUD3qEXhnB1tWELd/F5rjreNrUDcmQNhS
-X-Gm-Gg: ASbGncu8gGKRPz2l1ksedbhqDewq8NOPa8lPakBToFjEfR2Y4af4chtLCKN/5S19jri
-	DaIq0L4IaPb3pPMLP6rmfNJKxRHqIqu9q68MkpAY/y2mhwDmN2UzC+AjGExri9x+JTflDyenHSY
-	6RM7k+5RfWMCxQzPlPemi/GfAtqjZ5rc6o7GhU+PnswMcA5hiqLQuaGXBu2PN0hyD4tU9knNJut
-	D6S7O//coaa0lsOwb+XeRxZXWRjMfB6ZqvevxzEE0rphqtNwzXDOyfJQOe+5Mq/mNbYE0ssrJep
-	Yq9oDfOG/uyAKcvL8J9oBvNn+9kFVGP0Xigb2x2xeKpbe4GzIG1R6nQCn6OqURwYIHnGf0Oik9n
-	B3F698CCg5cSCJyDqB89HeSN6yNWaHyAlHX7Im9Ub8r2RMZ23n/1EBQQITr4w0EaQh1sD4bpsyh
-	OuUGMcecUc
-X-Google-Smtp-Source: AGHT+IF8ckrXFpKayMaNbgV+xVTkKoDtgJqPVgngbDI5d00najufY0q8XoRMc7G60K41jgK2Bof9Zw==
-X-Received: by 2002:a05:6a20:2585:b0:324:b245:bb8e with SMTP id adf61e73a8af0-32da81facc8mr12735891637.26.1760050661611;
-        Thu, 09 Oct 2025 15:57:41 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:43::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992dd85317sm807312b3a.79.2025.10.09.15.57.41
+        bh=KgnZJUT+/hycTvJxInJmFP2Qhki4iXOUj9ClFgGHdpo=;
+        b=Cxh02kLlq5Au3Fql1y4zdk3CeHBnEE3mYhDDkGuWDD8nGgeP0zPukrpSnW93KIi4Xy
+         ZPiuMAn6y7MT3KXS3wB+ezm6westJRWeOOyqxNA3lGHqopyXY/vlEjOVYT+Oby2/IkRg
+         yNk3/ZPsbB53dHYPStDMUx1sD6r3H6/WI+NJY6LlXvtxNWtrf/RxO+asR/sJqZwR7zTE
+         TWfsVNYOdoOt+4HRQVPpdvltxLXm6p1aJH2n4eBy0Vjo157tXw+SZ3fNqrlRp/Tee7Dz
+         EEw0omHQiMW0jKQHdkAfeTXpvc9sPXnCERy+xqeFj+kOEK60YoZ6o3JL6iFCQ2/djJej
+         Ejhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCs4UtkgpJ42Jfboozpkj4yiKmfY2SgDXGXOlO+C14fyDD9WPzhsg/PJA68k+oNNn1GnNRqB8oJHQwGKNM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUkw1hc/02QsO/zm17iFDUcYcpaEB2PMK9O61ik4+suvg0kzEy
+	uX8ONRhvo8A+7/+46WO55cdTlhH/C0WzMXhW2JQNRNKlvtuqFyjgE65y
+X-Gm-Gg: ASbGncsmfA02g99dEMb5zIEMzIqzPMijnbrTWNG4E9O76BZAEZ2eGomC+5M6NLIv7HG
+	aFNjl0Uoea3ld/+SFh5Sf+0XnLLS/fG6KZW/DM7oBCBaoVFozK14buBLHytr2Y74gSM/olk42e0
+	NEKX9hcwFrkt2ztVJd4f63XFlUI71vMbxcEcW3zVQuGc4r0WoOQkyBJbj2EJMs7BohISxGNNBjr
+	rOPvUG8z9JTerePj23c2oHyfcBkYUU3gkvDhmTDFVkEf+6WNDJDa9qivOusWmVS0nFMcq3B2x7a
+	RxcwD/sCiHPyNzODnG/8H9OL2ju5nrGDvXOL4stpjiDfJLqjLDWNiXLcWzrxEfJVXu4bmLvf8pL
+	FoZ+xXC9ccQi2fD2jWBjGl0+fahJofTWIq2hKxs+Bfl0jUPAfszCrVBRJXBUrvoKOO/BYk9TKvg
+	==
+X-Google-Smtp-Source: AGHT+IEdQ66ZANXbTJ447dkogYcHmGTxQjTEaNbq8dg/ri4Qy/NZC4UTagM/EiVc+BOj7axdwqZnpg==
+X-Received: by 2002:a17:90b:1e0c:b0:330:a228:d2c with SMTP id 98e67ed59e1d1-33b51161d53mr12683382a91.15.1760050663913;
+        Thu, 09 Oct 2025 15:57:43 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:73::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b529f6c84sm3687906a91.5.2025.10.09.15.57.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 15:57:41 -0700 (PDT)
+        Thu, 09 Oct 2025 15:57:43 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: brauner@kernel.org
 Cc: djwong@kernel.org,
@@ -81,9 +81,9 @@ Cc: djwong@kernel.org,
 	bfoster@redhat.com,
 	linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v1 3/9] iomap: optimize pending async writeback accounting
-Date: Thu,  9 Oct 2025 15:56:05 -0700
-Message-ID: <20251009225611.3744728-4-joannelkoong@gmail.com>
+Subject: [PATCH v1 4/9] iomap: simplify ->read_folio_range() error handling for reads
+Date: Thu,  9 Oct 2025 15:56:06 -0700
+Message-ID: <20251009225611.3744728-5-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251009225611.3744728-1-joannelkoong@gmail.com>
 References: <20251009225611.3744728-1-joannelkoong@gmail.com>
@@ -95,185 +95,143 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Pending writebacks must be accounted for to determine when all requests
-have completed and writeback on the folio should be ended. Currently
-this is done by atomically incrementing ifs->write_bytes_pending for
-every range to be written back.
-
-Instead, the number of atomic operations can be minimized by setting
-ifs->write_bytes_pending to the folio size, internally tracking how many
-bytes are written back asynchronously, and then after sending off all
-the requests, decrementing ifs->write_bytes_pending by the number of
-bytes not written back asynchronously. Now, for N ranges written back,
-only N + 2 atomic operations are required instead of 2N + 2.
+Instead of requiring that the caller calls iomap_finish_folio_read()
+even if the ->read_folio_range() callback returns an error, account for
+this internally in iomap instead, which makes the interface simpler and
+makes it match writeback's ->read_folio_range() error handling
+expectations.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/file.c         |  4 ++--
- fs/iomap/buffered-io.c | 45 +++++++++++++++++-------------------------
- fs/iomap/ioend.c       |  2 --
- include/linux/iomap.h  |  2 --
- 4 files changed, 20 insertions(+), 33 deletions(-)
+ .../filesystems/iomap/operations.rst          |  7 +++--
+ fs/fuse/file.c                                | 10 ++-----
+ fs/iomap/buffered-io.c                        | 26 +++++++++----------
+ include/linux/iomap.h                         |  5 ++--
+ 4 files changed, 19 insertions(+), 29 deletions(-)
 
+diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+index 018cfd13b9fa..dd05d95ebb3e 100644
+--- a/Documentation/filesystems/iomap/operations.rst
++++ b/Documentation/filesystems/iomap/operations.rst
+@@ -149,10 +149,9 @@ These ``struct kiocb`` flags are significant for buffered I/O with iomap:
+ iomap calls these functions:
+ 
+   - ``read_folio_range``: Called to read in the range. This must be provided
+-    by the caller. The caller is responsible for calling
+-    iomap_finish_folio_read() after reading in the folio range. This should be
+-    done even if an error is encountered during the read. This returns 0 on
+-    success or a negative error on failure.
++    by the caller. If this succeeds, iomap_finish_folio_read() must be called
++    after the range is read in, regardless of whether the read succeeded or
++    failed.
+ 
+   - ``submit_read``: Submit any pending read requests. This function is
+     optional.
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 7c9c00784e33..01d378f8de18 100644
+index 01d378f8de18..591789adb00b 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1883,7 +1883,8 @@ static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
- 		 * scope of the fi->lock alleviates xarray lock
- 		 * contention and noticeably improves performance.
- 		 */
--		iomap_finish_folio_write(inode, ap->folios[i], 1);
-+		iomap_finish_folio_write(inode, ap->folios[i],
-+					 ap->descs[i].length);
- 		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
- 		wb_writeout_inc(&bdi->wb);
- 	}
-@@ -2225,7 +2226,6 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
- 		ap = &wpa->ia.ap;
- 	}
+@@ -916,13 +916,6 @@ static int fuse_iomap_read_folio_range_async(const struct iomap_iter *iter,
  
--	iomap_start_folio_write(inode, folio, 1);
- 	fuse_writepage_args_page_fill(wpa, folio, ap->num_folios,
- 				      offset, len);
- 	data->nr_bytes += len;
+ 	if (ctx->rac) {
+ 		ret = fuse_handle_readahead(folio, ctx->rac, data, pos, len);
+-		/*
+-		 * If fuse_handle_readahead was successful, fuse_readpages_end
+-		 * will do the iomap_finish_folio_read, else we need to call it
+-		 * here
+-		 */
+-		if (ret)
+-			iomap_finish_folio_read(folio, off, len, ret);
+ 	} else {
+ 		/*
+ 		 *  for non-readahead read requests, do reads synchronously
+@@ -930,7 +923,8 @@ static int fuse_iomap_read_folio_range_async(const struct iomap_iter *iter,
+ 		 *  out-of-order reads
+ 		 */
+ 		ret = fuse_do_readfolio(file, folio, off, len);
+-		iomap_finish_folio_read(folio, off, len, ret);
++		if (!ret)
++			iomap_finish_folio_read(folio, off, len, ret);
+ 	}
+ 	return ret;
+ }
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1c6575b7e583..7f914d5ac25d 100644
+index 7f914d5ac25d..dc05ed647ba5 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1552,16 +1552,16 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops,
+@@ -377,26 +377,16 @@ static void iomap_read_init(struct folio *folio)
+ 		size_t len = folio_size(folio);
+ 
+ 		spin_lock_irq(&ifs->state_lock);
+-		ifs->read_bytes_pending += len;
++		WARN_ON_ONCE(ifs->read_bytes_pending != 0);
++		ifs->read_bytes_pending = len;
+ 		spin_unlock_irq(&ifs->state_lock);
+ 	}
  }
- EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
  
--void iomap_start_folio_write(struct inode *inode, struct folio *folio,
--		size_t len)
-+static void iomap_writeback_init(struct inode *inode, struct folio *folio)
+ static void iomap_read_end(struct folio *folio, size_t bytes_pending)
  {
- 	struct iomap_folio_state *ifs = folio->private;
+-	struct iomap_folio_state *ifs;
+-
+-	/*
+-	 * If there are no bytes pending, this means we are responsible for
+-	 * unlocking the folio here, since no IO helper has taken ownership of
+-	 * it.
+-	 */
+-	if (!bytes_pending) {
+-		folio_unlock(folio);
+-		return;
+-	}
++	struct iomap_folio_state *ifs = folio->private;
  
- 	WARN_ON_ONCE(i_blocks_per_folio(inode, folio) > 1 && !ifs);
--	if (ifs)
--		atomic_add(len, &ifs->write_bytes_pending);
-+	if (ifs) {
-+		WARN_ON_ONCE(atomic_read(&ifs->write_bytes_pending) != 0);
-+		atomic_set(&ifs->write_bytes_pending, folio_size(folio));
-+	}
+-	ifs = folio->private;
+ 	if (ifs) {
+ 		bool end_read, uptodate;
+ 		size_t bytes_accounted = folio_size(folio) - bytes_pending;
+@@ -415,6 +405,14 @@ static void iomap_read_end(struct folio *folio, size_t bytes_pending)
+ 		spin_unlock_irq(&ifs->state_lock);
+ 		if (end_read)
+ 			folio_end_read(folio, uptodate);
++	} else if (!bytes_pending) {
++		/*
++		 * If there are no bytes pending, this means we are responsible
++		 * for unlocking the folio here, since no IO helper has taken
++		 * ownership of it. If there are bytes pending, then the IO
++		 * helper will end the read via iomap_finish_folio_read().
++		 */
++		folio_unlock(folio);
+ 	}
  }
--EXPORT_SYMBOL_GPL(iomap_start_folio_write);
  
- void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
- 		size_t len)
-@@ -1578,7 +1578,7 @@ EXPORT_SYMBOL_GPL(iomap_finish_folio_write);
- 
- static int iomap_writeback_range(struct iomap_writepage_ctx *wpc,
- 		struct folio *folio, u64 pos, u32 rlen, u64 end_pos,
--		bool *wb_pending)
-+		unsigned *wb_bytes_pending)
- {
- 	do {
- 		ssize_t ret;
-@@ -1591,12 +1591,11 @@ static int iomap_writeback_range(struct iomap_writepage_ctx *wpc,
- 		rlen -= ret;
- 		pos += ret;
- 
--		/*
--		 * Holes are not be written back by ->writeback_range, so track
-+		/* Holes are not written back by ->writeback_range, so track
- 		 * if we did handle anything that is not a hole here.
- 		 */
- 		if (wpc->iomap.type != IOMAP_HOLE)
--			*wb_pending = true;
-+			*wb_bytes_pending += ret;
- 	} while (rlen);
- 
- 	return 0;
-@@ -1667,7 +1666,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 	u64 pos = folio_pos(folio);
- 	u64 end_pos = pos + folio_size(folio);
- 	u64 end_aligned = 0;
--	bool wb_pending = false;
-+	unsigned wb_bytes_pending = 0;
- 	int error = 0;
- 	u32 rlen;
- 
-@@ -1687,14 +1686,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 			iomap_set_range_dirty(folio, 0, end_pos - pos);
+@@ -462,10 +460,10 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+ 		} else {
+ 			if (!*bytes_pending)
+ 				iomap_read_init(folio);
+-			*bytes_pending += plen;
+ 			ret = ctx->ops->read_folio_range(iter, ctx, plen);
+ 			if (ret)
+ 				return ret;
++			*bytes_pending += plen;
  		}
  
--		/*
--		 * Keep the I/O completion handler from clearing the writeback
--		 * bit until we have submitted all blocks by adding a bias to
--		 * ifs->write_bytes_pending, which is dropped after submitting
--		 * all blocks.
--		 */
--		WARN_ON_ONCE(atomic_read(&ifs->write_bytes_pending) != 0);
--		iomap_start_folio_write(inode, folio, 1);
-+		iomap_writeback_init(inode, folio);
- 	}
- 
- 	/*
-@@ -1709,13 +1701,13 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 	end_aligned = round_up(end_pos, i_blocksize(inode));
- 	while ((rlen = iomap_find_dirty_range(folio, &pos, end_aligned))) {
- 		error = iomap_writeback_range(wpc, folio, pos, rlen, end_pos,
--				&wb_pending);
-+				&wb_bytes_pending);
- 		if (error)
- 			break;
- 		pos += rlen;
- 	}
- 
--	if (wb_pending)
-+	if (wb_bytes_pending)
- 		wpc->nr_folios++;
- 
- 	/*
-@@ -1732,13 +1724,12 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- 	 * already at this point.  In that case we need to clear the writeback
- 	 * bit ourselves right after unlocking the page.
- 	 */
--	if (ifs) {
--		if (atomic_dec_and_test(&ifs->write_bytes_pending))
--			folio_end_writeback(folio);
--	} else {
--		if (!wb_pending)
--			folio_end_writeback(folio);
--	}
-+	if (ifs)
-+		iomap_finish_folio_write(inode, folio,
-+			folio_size(folio) - wb_bytes_pending);
-+	else if (!wb_bytes_pending)
-+		folio_end_writeback(folio);
-+
- 	mapping_set_error(inode->i_mapping, error);
- 	return error;
- }
-diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
-index b49fa75eab26..86f44922ed3b 100644
---- a/fs/iomap/ioend.c
-+++ b/fs/iomap/ioend.c
-@@ -194,8 +194,6 @@ ssize_t iomap_add_to_ioend(struct iomap_writepage_ctx *wpc, struct folio *folio,
- 	if (!bio_add_folio(&ioend->io_bio, folio, map_len, poff))
- 		goto new_ioend;
- 
--	iomap_start_folio_write(wpc->inode, folio, map_len);
--
- 	/*
- 	 * Clamp io_offset and io_size to the incore EOF so that ondisk
- 	 * file size updates in the ioend completion are byte-accurate.
+ 		ret = iomap_iter_advance(iter, plen);
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index e6fa812229dc..a156a9964938 100644
+index a156a9964938..c417bb8718e3 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -474,8 +474,6 @@ int iomap_ioend_writeback_submit(struct iomap_writepage_ctx *wpc, int error);
- 
- void iomap_finish_folio_read(struct folio *folio, size_t off, size_t len,
- 		int error);
--void iomap_start_folio_write(struct inode *inode, struct folio *folio,
--		size_t len);
- void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
- 		size_t len);
- 
+@@ -491,9 +491,8 @@ struct iomap_read_ops {
+ 	/*
+ 	 * Read in a folio range.
+ 	 *
+-	 * The caller is responsible for calling iomap_finish_folio_read() after
+-	 * reading in the folio range. This should be done even if an error is
+-	 * encountered during the read.
++	 * If this succeeds, iomap_finish_folio_read() must be called after the
++	 * range is read in, regardless of whether the read succeeded or failed.
+ 	 *
+ 	 * Returns 0 on success or a negative error on failure.
+ 	 */
 -- 
 2.47.3
 
