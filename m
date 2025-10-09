@@ -1,147 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-63671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B670BCA2F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 18:28:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E4ABCA3B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 18:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9DF834FD0E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 16:28:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A84F34FCCBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 16:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ADF224AFA;
-	Thu,  9 Oct 2025 16:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35AF23817E;
+	Thu,  9 Oct 2025 16:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPUGXPax"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FGb46r6h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1F1205E25;
-	Thu,  9 Oct 2025 16:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ED322CBC0
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 16:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760027317; cv=none; b=anyo8Ub1qaGcXQX23fDWYVN3Hpa6YcLIYSUlfyFLnFvif85Ybc0FVGJ3IynxAL6DfO11cfnr6vRutpayFdsiGA5L8t5hVRDy33n2LaURVJqTXS8nLdUUcWJy1yNQJXXk4nIR3ZeBA7tRZOkNrzqmyZL55UONqt/elFZu6JIVtU8=
+	t=1760028392; cv=none; b=R/K1Gsx4sOm+CEJ87gfrGnEUq07uyUDmd3j7vKdhNPSJ7Jkw85ze7BXUURikbwyekhC9tNfr37JRRUdSLXncXghlxLfcGbmktArvtFqO058BGhjumWy9s44ldLxjw8n9X7M12Ef6LdAmzSekzuOcASDVNJSllghz93QmH++18z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760027317; c=relaxed/simple;
-	bh=2wArb6McKN8XDi7aNFLZi+tNZ6xI/BBBQekeTD7ykeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkT2EiweW1yDqPqDRuLiCPfKftI8MDYIYarz9MvRej4dqrLzIRf4VzcbP2h3tl1KzsQlQDrMYMY/PTSGW/jCEdk4BV9/6NNR/GBG5sOz/IE+3uQs8ByIwNpAlPWep1xwYLBY8YfzLK9SZCSdQaG+2F1UYTPK8gLsY8VpJVyaXaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPUGXPax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1479BC4CEE7;
-	Thu,  9 Oct 2025 16:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760027316;
-	bh=2wArb6McKN8XDi7aNFLZi+tNZ6xI/BBBQekeTD7ykeI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LPUGXPax0HqpgV/RqSODMWwUBKp8JeXUVKMeqW3DaYCo3X6O/7K0oe5igbMZeNAuQ
-	 9DOQ6JV9t4c1ESegbQp2A9t5UABdzoCuHTH4A9UXmRVoWY8tJBkmHNJ+rZgkXMxs0O
-	 h2rP6yYfrsz6cq/D2iJDZSXcOMdslwjWdslCdjN7hEF4YlZhtjWaLeC3cxGWJzmBPn
-	 C3CqXBOd9s95UylE92RPRNjo6OkZmFz7bcpItGI8lG3Zvj7B+pkDFWBvTDCubw4ERc
-	 +AC8Z93KRy9IKg0Zaecfs/sf3AVXYvfwWv9PucFN+jAkTydo9c0kI9fx9ueP3KuEuk
-	 IGgSCwgQbwAjQ==
-Received: by pali.im (Postfix)
-	id B7AA556D; Thu,  9 Oct 2025 18:28:31 +0200 (CEST)
-Date: Thu, 9 Oct 2025 18:28:31 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com,
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-Subject: Re: [PATCH] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-Message-ID: <20251009162831.ullg2fxcpkhcsnkh@pali>
-References: <20251006114507.371788-1-aha310510@gmail.com>
- <20251008173935.4skifawm57zqpsai@pali>
- <CAO9qdTFk94yDCMAuTkx5yW9VXYExWuhgpi0X15C5F7e5DQgibA@mail.gmail.com>
+	s=arc-20240116; t=1760028392; c=relaxed/simple;
+	bh=0YzEi/FKr4gAZLlOWGsCp0p08GtODGPitU0V9xWloho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t7xgP8yaGFozLRrN1nuL1X0ljlw8lNPrFqhzXOzW8gvBU1uGeNO/jElws8F4OQ4kN6YsvdlnGLiZ4c9iPuNxl0qXpirLgyYWQ7pYcLRwVMHUPp94eQ0tK+QniNLgRiHDKMVjN04eDzqBpM9Rnkgjg2HxIxwcqqt16qYKztOLS6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FGb46r6h; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e6ec0d1683so6671cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 09:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760028389; x=1760633189; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZzlluHwkUBhNfLLuHc1HKW2H+S+ipbeYuCHoUWYJ/AU=;
+        b=FGb46r6hSI4mLnolXEJ/yTaoR+b6l70oW2PLOJIjoLyS7rAQl7r7B7Se4F9saXsMFQ
+         Lqn/2eMDtw6Fpt13lXNjiuM7qPDcZ1DWmV3tFWHaZWmWxiQGucflA2Yczq5vPZJIJHPF
+         4GcBbbghvT56IRB0R6qn9ckTHcjJ7EDaqtl2LDonMZGVvoNdAI6+TuSsAApkEuEvyQfH
+         aBRIOEnwVAa6i4YUTEcUoM25KUNTe9pvZmvbck/f3mkSfschYpwvb3LI41+7oOEuJ2ww
+         VboX6unb3BkpfbTrpBT/LKQ2w2QSidadL869KKVyEDr3ic8ng7r6iQvx+VfDKSU2mjpB
+         YgjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760028389; x=1760633189;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZzlluHwkUBhNfLLuHc1HKW2H+S+ipbeYuCHoUWYJ/AU=;
+        b=ENoVJtkXAm1kFjj3N9qaGpipZz3NaOjrNlXv5VYtxD8ywaE9h+7lJWMiIwzkDF45MX
+         1cgpGi5p9Fmb/obRSVgStAUQilk1343Mx1m5+UbfKQF5giyW9NAx7XrbwNfIy3xVFfqI
+         GauPPtTbjYe4ITYZ+RErHvXja1uij5+qGhqGqHAEc6k7JCyqQqaITZSFd5Hg+3cGxFJR
+         R/d3Je38KD/MQCPvm4Rt8Vyw5CePy3Z82rCmHQ+9O5JD+nYJpJBj436sVr9y0ZcE+5MP
+         CRz5HT1yXqRmw8DpSobSxwTL4OjpGmIw9QC4+UDERxpx1cpRIz1j53/GmDwPH7F/kjZe
+         prUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUliIZLasLm3hPT96Fk8yTr92D216XVURXVql1iDqSoonxSpj8mHmBbVlI5hoG7/Xqs5QxsTCeAXL0UYLF0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbelTlPyhc0qMK8Et9/OBCLbkp0ODenJmKITBFefv48TEVHqql
+	CuOgG9SaP0kq2oy0FVNKXvMoRt9Sk5tICYIVkcWvFeeTbvQeGdqfYJrnAuU/K9doGkS7jHkplSu
+	kWgNXYhLq4YdCAZzQ4qoWpTFMwjt4tp/eFHeVN4v3
+X-Gm-Gg: ASbGncsfziM5hpVAfKTMUbHSQihteKDTl5iY/efz5Tm7wMlVf9FtMspmcFqsb+0fY2k
+	WdTrfWD2TXPMhptEmzmytIxyfhE/y3vdigHHeo86ZKWaTdYLixuuze06JI6KhD3Kc6IHACMYiwx
+	sofJnyjTnkR0uEnR1mdVv0c/WNpqO4XYOdzufNaimUyLfH2R7YH59BpbdSUjeduWPpyPU8cuE3g
+	DuFabZqsE+R2jdZOgXSmCABMjoP89G9z3NYSvTiBBS1gvjjz2HluUo7/RfJWJ13iadNWHE=
+X-Google-Smtp-Source: AGHT+IF70ucIJMpJA0vPDQgicdHZr5JjOzPiEUk9y5SQTUUUNRoZE52nw8qSw3T5aRdmC55lZrWVgbTQ4VOEIK5o6D4=
+X-Received: by 2002:a05:622a:344:b0:4b7:9b7a:1cfc with SMTP id
+ d75a77b69052e-4e6eabce6d2mr16470351cf.10.1760028388319; Thu, 09 Oct 2025
+ 09:46:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO9qdTFk94yDCMAuTkx5yW9VXYExWuhgpi0X15C5F7e5DQgibA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
+ <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
+ <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
+ <20251008193551.GA3839422@nvidia.com> <CA+CK2bDs1JsRCNFXkdUhdu5V-KMJXVTgETSHPvCtXKjkpD79Sw@mail.gmail.com>
+ <20251009144822.GD3839422@nvidia.com> <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
+In-Reply-To: <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
+From: Samiullah Khawaja <skhawaja@google.com>
+Date: Thu, 9 Oct 2025 09:46:16 -0700
+X-Gm-Features: AS18NWBgKgmWhR1-EKut7z0eede2LXIJaTXH-__gJayThOTTr-r8gXegH0ezPFY
+Message-ID: <CAAywjhSU7ibji=Z50U+OcX7eemhid2sB7OK_fsgzds3vGTZOjw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, pratyush@kernel.org, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday 09 October 2025 18:05:26 Jeongjun Park wrote:
-> Hi Pali
-> 
-> Pali Rohár <pali@kernel.org> wrote:
+On Thu, Oct 9, 2025 at 8:02=E2=80=AFAM Pasha Tatashin <pasha.tatashin@solee=
+n.com> wrote:
+>
+> On Thu, Oct 9, 2025 at 10:48=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> =
+wrote:
 > >
-> > Hello!
-> >
-> > On Monday 06 October 2025 20:45:07 Jeongjun Park wrote:
-> > > After the loop that converts characters to ucs2 ends, the variable i
-> > > may be greater than or equal to len.
-> >
-> > It is really possible to have "i" greater than len? Because I do not see
-> > from the code how such thing could happen.
-> >
-> > I see only a case when i is equal to len (which is also overflow).
-> >
-> > My understanding:
-> > while-loop condition ensures that i cannot be greater than len and i is
-> > increased by exfat_convert_char_to_ucs2() function which has upper bound
-> > of "len-i". So value of i can be increased maximally by (len-i) which
-> > could lead to maximal value of i to be just "len".
-> >
-> > > However, when checking whether the
-> > > last byte of p_cstring is NULL, the variable i is used as is, resulting
-> > > in an out-of-bounds read if i >= len.
+> > On Wed, Oct 08, 2025 at 04:26:39PM -0400, Pasha Tatashin wrote:
+> > > On Wed, Oct 8, 2025 at 3:36=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.co=
+m> wrote:
+> > > >
+> > > > On Wed, Oct 08, 2025 at 12:40:34PM -0400, Pasha Tatashin wrote:
+> > > > > 1. Ordered Un-preservation
+> > > > > The un-preservation of file descriptors must also be ordered and =
+must
+> > > > > occur in the reverse order of preservation. For example, if a use=
+r
+> > > > > preserves a memfd first and then an iommufd that depends on it, t=
+he
+> > > > > iommufd must be un-preserved before the memfd when the session is
+> > > > > closed or the FDs are explicitly un-preserved.
+> > > >
+> > > > Why?
+> > > >
+> > > > I imagined the first to unpreserve would restore the struct file * =
+-
+> > > > that would satisfy the order.
 > > >
-> > > Therefore, to prevent this, we need to modify the function to check
-> > > whether i is less than len, and if i is greater than or equal to len,
-> > > to check p_cstring[len - 1] byte.
+> > > In my description, "un-preserve" refers to the action of canceling a
+> > > preservation request in the outgoing kernel, before kexec ever
+> > > happens. It's the pre-reboot counterpart to the PRESERVE_FD ioctl,
+> > > used when a user decides not to go through with the live update for a
+> > > specific FD.
 > > >
-> > > Cc: <stable@vger.kernel.org>
-> > > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=98cc76a76de46b3714d4
-> > > Fixes: 370e812b3ec1 ("exfat: add nls operations")
-> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > ---
-> > >  fs/exfat/nls.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > The terminology I am using:
+> > > preserve: Put FD into LUO in the outgoing kernel
+> > > unpreserve: Remove FD from LUO from the outgoing kernel
+> > > retrieve: Restore FD and return it to user in the next kernel
+> >
+> > Ok
+> >
+> > > For the retrieval part, we are going to be using FIFO order, the same
+> > > as preserve.
+> >
+> > This won't work. retrieval is driven by early boot discovery ordering
+> > and then by userspace. It will be in whatever order it wants. We need
+> > to be able to do things like make the struct file * at the moment
+> > something requests it..
+>
+> I thought we wanted only the user to do "struct file" creation when
+> the user retrieves FD back. In this case we can enforce strict
+> ordering during retrieval. If "struct file" can be retrieved by
+> anything within the kernel, then that could be any kernel process
+> during boot, meaning that charging is not going to be properly applied
+> when kernel allocations are performed.
+>
+> We specifically decided that while "struct file"s are going to be
+> created only by the user, the other subsystems can have early access
+> to the preserved file data, if they know how to parse it.
+>
+> > > > This doesn't seem right, the API should be more like 'luo get
+> > > > serialization handle for this file *'
 > > >
-> > > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> > > index 8243d94ceaf4..a52f3494eb20 100644
-> > > --- a/fs/exfat/nls.c
-> > > +++ b/fs/exfat/nls.c
-> > > @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
-> > >               unilen++;
-> > >       }
+> > > How about:
 > > >
-> > > -     if (p_cstring[i] != '\0')
-> > > +     if (p_cstring[min(i, len - 1)] != '\0')
+> > > int liveupdate_find_token(struct liveupdate_session *session,
+> > >                           struct file *file, u64 *token);
 > >
-> > What about "if (i < len)" condition instead?
+> > This sort of thing should not be used on the preserve side..
 > >
-> > The p_cstring is the nul term string and my understanding is that the
-> > "p_cstring[i] != '\0'" is checking that i is at position of strlen()+1.
-> > So should not be "if (i < len)" the same check without need to
-> > dereference the p_cstring?
+> > > And if needed:
+> > > int liveupdate_find_file(struct liveupdate_session *session,
+> > >                          u64 token, struct file **file);
+> > >
+> > > Return: 0 on success, or -ENOENT if the file is not preserved.
 > >
-> 
-> Thank you for the detailed explanation! I misunderstood.
-> 
-> In summary, since the variable i can never be greater than len, we don't
-> need to consider this case. Therefore, if i is less than len, we can
-> determine that an nls loss has occurred.
-> 
-> I think that under normal nls conditions, i should be equal to len
-> immediately after the while loop terminates, so changing the condition
-> here to "if (i != len)" would be a better way to make this clear.
-> 
-> This way, we can check for an nls loss without dereferencing p_cstring,
-> and we can clearly indicate that i should be equal to len when the while
-> loop terminates. What do you think?
-> 
-> Regards,
-> Jeongjun Park
+> > I would argue it should always cause a preservation...
+> >
+> > But this is still backwards, what we need is something like
+> >
+> > liveupdate_preserve_file(session, file, &token);
+> > my_preserve_blob.file_token =3D token
 
-Hello, yes, this is how I understood what is the code doing and how to
-simple fix this reported problem.
+Please clarify if you still consider that the user does register the
+dependencies FDs explicitly, but this API just triggers the
+"prepare()" or "preserve()" callback so the preservation order is
+enforced/synchronized?
+>
+> We cannot do that, the user should have already preserved that file
+> and provided us with a token to use, if that file was not preserved by
+> the user it is a bug. With this proposal, we would have to generate a
+> token, and it was argued that the kernel should not do that.
+
+Agreed. Another thing that I was wondering about is how does the user
+space know that its FD was preserved as dependency?
+
+>
+> > file =3D liveupdate_retrieve_file(session, my_preserve_blob.file_token)=
+;
+> >
+> > And these can run in any order, and be called multiple times.
+> >
+> > Jason
 
