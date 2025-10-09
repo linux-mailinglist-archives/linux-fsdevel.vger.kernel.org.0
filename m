@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3611BCB281
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14B3BCB280
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797943B20C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674AE3AE8B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D328727C;
-	Thu,  9 Oct 2025 22:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664312874F9;
+	Thu,  9 Oct 2025 22:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKm9chsg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJxr1jIP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2314526A0BD
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAEC28726F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760050670; cv=none; b=Zn4fbGz1xR+ijgQe9Bo6EYeNrHtK8+xFpjjsCLxvMjHY659oLIC9VVW2whUY1n2gYtR40GVVAxtRc5PlZXQKeAFNUYp1kXysg57Hz2UdxdzMzJZ/Ytd9kwYBwY/gUaTfFZB2RaBk/Wkf0YagBTSVDA/tHf0HyUtW2iaOoJqOqII=
+	t=1760050671; cv=none; b=q9Zm+WahFv3sOjgDQUoEIqez68108elM7RErwXJ79ND6H+Z7reZOUV+xbx/JF5xYsMx+rzkpBkNt3/K4+YdTGcvRJTEWxHat6UxAaZKLse6Xe0/MAf8N76ty7CRRBRo/BNPIBBsMkLAutAPAgW+nSP9GUgAlo+muWAugm2wACAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760050670; c=relaxed/simple;
-	bh=y8Wha30cK2892xKhBquvq1nFxtsjO0kUWfaITLs+alY=;
+	s=arc-20240116; t=1760050671; c=relaxed/simple;
+	bh=zV9EcZWp7Z9DRJPSuBnxFs00p0L4puw2KZXd9cYWEuM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bt8/bEUgM1izVE6v+k5sseJ0Ce8w6Io15tBTBEXF+DI7DCN6WRuJgPrgdDfLOADpRGa7QUzvoD0NDu/fmafNbm8lJz1mf62Ti/l8Drbr8Ma5N5QBBIK+kG7nFd8VDOQdnnLYBj8IkTZlVZgISVNcVYHkJT18kQU/yTB1vms8Abo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKm9chsg; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=nvdfWAvtf9ZbhQZ0Z+0CcM9Nsva4bQxqmV7aSCoU08p1emBwISMfga7ErjDcRjF1N7oox5N0BxYYg8Q06ZOxO1pkTQN53HF4DGDBLeYLX+v+B9PmRfIrYuRTOoq88VwOmapjoedvITI8094a0oQSLCqgZ9Dfk5faRfTNZV0Um9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJxr1jIP; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so16569695ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:48 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-279e2554b5fso12044705ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760050668; x=1760655468; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760050669; x=1760655469; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J0epLCP3Fw0g8denJGI8pq0BqUANFV6lTlXymoNTg2c=;
-        b=aKm9chsgO+8TmV6qZlL2s5hl8vy1vcAPbpu+BuR6HX8xC8DBMlJ0rADO+961Q9uq4Q
-         Ba5K7VJZpDYXukySq0ieW8mIM8UnvjBqkWVzEGd5/0MOlkDcD4XEhFkw10o8egmyef+z
-         n9mqfYd/bDLlpSdEeJkVAllUdtXN2svnPpjA+qlzkArlUIXj+s/1qwwydJ7IMf0Q61Bf
-         PplEnLQm7nkhlUjQb/c+JlFXX/F3fHyG8alGgcnLpLp2iPA1Ohsk/nZMIqkoD3caeo6N
-         tU9NGyHillzUYhTFPdrOkv1LDzPYMdEWn033aFikjFIsBmWyxw4LUVvAN/B8QhuxeqbP
-         4AMg==
+        bh=B+Wk5GKqbgjiqltcw+/xk/q5DMdbIMz3dRfJBR1Loqw=;
+        b=LJxr1jIPqOMqC/0Y+iRQXrLVWi0P/9qjyx44VVQOh3hfH83/lR6lO5emjOFq1L1UFo
+         2RYkV7FLwHoLk4MOG5Pbd3qGesBRL4KjCcEBqNwbWP5T2bR7gTFeB2tpKk2TrdoKFljh
+         qFBiMKPip5TxuYT9pjTfrzmh7ogmAMjKlOVU4bib9NWcPkH063JOqImEpH2K/7oNGKXd
+         dI9PMbZ3NktSiX3jDBlZa6m6EfZqGFeY7rwFmNw+odt0A92Elnv7DiHUJ9YtA2tTCfsW
+         1fbLDCgDFd2IxkRVMu/fs/TRDyaYr1xg5U+MFFFMRZFzjUeo/8n0SjyLUkSxp5jJGqQX
+         VoLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760050668; x=1760655468;
+        d=1e100.net; s=20230601; t=1760050669; x=1760655469;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J0epLCP3Fw0g8denJGI8pq0BqUANFV6lTlXymoNTg2c=;
-        b=r4CSyykfnSvHDzp+ffeYsqLNa8YzOZqwJ68ZyNWpNpLHcpVO5I3QbkEn076DnIMrYT
-         Lp47Fq/3nigcykjN92pR42Y04vjl9vveXk9ax8hufTXp/STB17i9Vn9L2SfY5w+9uNX6
-         6qPlS33Y4Ico8nb4ME8vATpbj6T0ADJ70EcMMgCu6uBCfLr+4p/IQnXMGyn8kR5/wyHj
-         HCVsRQai0qWh2t6ZN0fuMLBFOFrxA9vnA7W/hXtx9U6fiIPUmR89ree/f4dXkLbKE2aX
-         xNFvwz/gJrt+RsjxakukhAtzTwx04B+ErIYoawcTsWE3efToOrkix3dHa6i4lXEOf0Ua
-         cTjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu2bBF68Lalip7K+fKR78O3X78OXCZaCmKoBm0zkSu8TPppovwad1ilx1AYSrT9x7ZUkaRXaX4J0mdv1PX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsCvCT0/LBMlmJYvG3X+NJGorqflJgRSV3RguFKhj9680W1LVx
-	6rJ86rVl4/vkI6VX563iPNjC7Oc0xg9dyq4hfuZOmbvsN+3fcx6FSLrj
-X-Gm-Gg: ASbGncvT9SOu0VMGL+iGPeHBJNzsZZ1l94Gw3xcUKJt8d1kiigG39RmS3WK4EE4f782
-	QCnl0SFpT/HEn2pBFObMUfqbzRHxejgqnM9+553AF2yOVsrFdVPHc+YMTk0HrpfmHy1D1GHXiZe
-	7dH0d1bCbOg9JstAKYijTMEgCOCKpJJD7iNHoZsmig/JejR2aJT8kGLnQegiJTg6/sDfNGek28n
-	2p1oJuTxRTygqpXc5JZg2qj3/QrrEpDwImXfXi7CgxaUx9O04pwnqp3tyxSmVLdLFSaIlBMb/VI
-	FjV3vyYHIX4DQ9ZFJOJ8l6b6f3WHc6SVo+FAl/FyGSOVtU6+vWsykd8IVeI0oKXTzc++BdB6WO/
-	QZWNg8apESQnRowebidmkgifa9LY4yoijXq2rZLAf8mF67nY2jlUdDfD8aqgSQgk1n4q0Zzfovk
-	l0JsYqpCi+
-X-Google-Smtp-Source: AGHT+IH3i2HdpC3jLIXWpUx+cqB2mjzJO1QbIdNFsCbPFWH986BxtOlOV5k6snxnETBldBCV0gJObw==
-X-Received: by 2002:a17:903:1b4d:b0:28e:9a74:7b58 with SMTP id d9443c01a7336-290273ecbb7mr105451285ad.31.1760050668194;
-        Thu, 09 Oct 2025 15:57:48 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:43::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f089a3sm39030635ad.76.2025.10.09.15.57.47
+        bh=B+Wk5GKqbgjiqltcw+/xk/q5DMdbIMz3dRfJBR1Loqw=;
+        b=LAM/truNTiOW9tyzE0GfMNBk7ShBRiW9bv7Rgf4Pxpm4oI0UM1Ye8lmtN8yIEUXbk9
+         nkiEcK8ODgBpC7Op/6mQQqjDySdV6nPDcTnLk/yBMdBzuoy5gto4z7GYqWyqIMlh/7el
+         uHb1gnvpr44sh3qYZ2FZxtAQwUfLJ/FVcDhcNW4KkIQw5Q9tzWSpVCRLmQy3wPBLPM6f
+         ADOI7a5cmYlscskzUpziWlm9xqDuB5lMnC2BBR1rUh46+0oNcduknYAZaAImXZDA/AqI
+         3TdtJqD96Hk7Rjw8SQ6EwIDasUTobIwHVnDGEu+msDwZQRP1O3w0EgNC2VxKqVwGuqmy
+         OCkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2GdbUMaeG77F8YJ5jwxbwDrEYAu8j9ro0W5yvMBCfc4JxZZyhbboo1JqdR1OECecGnE8IwEej4qKJZl6X@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlzDBqagOPNDqhIP27u5h9E+zDqB2SvDYaYdjf+NQoDGoqFCkg
+	ymq2o9tq/V3vFdCauVX4aUZkNwYiirUK2EPnkXrPR1xTTYBDUaLVrtax
+X-Gm-Gg: ASbGncsPHjY6Lt3L/D5KNshgSdBxM1yWfrrYKFwOwLfoywoaPy4eFw1DVZhJ+bSoX3G
+	x8k8w8pUqXyR2dDJMrTyhBKy1rXBwGjNV2Xhqnrfmlo9fY7Z8OAjE5NmESNEUSI6XcnUZDsW1B+
+	snjoSc4GKVMsnONHy8dIHuZL/twuD3zqlCQbi+nXxagJhVMVAUKfd+NUzsntLnOHYxVKGJkEmLW
+	xXDtxLcG0EcKfyjK4bSJLig5NKFUV+/E37vd25vj4pGrInLMsYv5dTklFItS903d54n9Vbsh7rR
+	Q8PdwKHQgimM/yIif2ffqm8vgInKzmjBjmhW3GYhse8qcaGVbW/5BPZeWC7DbOp+Wcqq6nnOCtb
+	4BN8hvwf+Xu7s86lQNOcB6wvo99kZZJladoATYQF/55a4HG48RiZ8oXvzpdeSGotU/OjWKJJT2X
+	tSpx6F47A=
+X-Google-Smtp-Source: AGHT+IGHiwftZbnOe4lfAI1QQLVzLoGm+QWZCzlhs/zfKWyj5R75R6UUGiqZASdBpalfe6F+b4MpRQ==
+X-Received: by 2002:a17:902:c947:b0:272:d27d:48de with SMTP id d9443c01a7336-29027f0ce63mr132981825ad.18.1760050669545;
+        Thu, 09 Oct 2025 15:57:49 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:1::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de7871sm39202115ad.16.2025.10.09.15.57.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 15:57:47 -0700 (PDT)
+        Thu, 09 Oct 2025 15:57:49 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: brauner@kernel.org
 Cc: djwong@kernel.org,
@@ -81,9 +81,9 @@ Cc: djwong@kernel.org,
 	bfoster@redhat.com,
 	linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v1 7/9] iomap: use loff_t for file positions and offsets in writeback code
-Date: Thu,  9 Oct 2025 15:56:09 -0700
-Message-ID: <20251009225611.3744728-8-joannelkoong@gmail.com>
+Subject: [PATCH v1 8/9] iomap: use find_next_bit() for dirty bitmap scanning
+Date: Thu,  9 Oct 2025 15:56:10 -0700
+Message-ID: <20251009225611.3744728-9-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251009225611.3744728-1-joannelkoong@gmail.com>
 References: <20251009225611.3744728-1-joannelkoong@gmail.com>
@@ -95,131 +95,128 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use loff_t instead of u64 for file positions and offsets, consistent
-with kernel VFS conventions.
+Use find_next_bit()/find_next_zero_bit() for iomap dirty bitmap
+scanning. This uses __ffs() internally and is more efficient for
+finding the next dirty or clean bit than manually iterating through the
+bitmap range testing every bit.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Suggested-by: Christoph Hellwig <hch@infradead.org>
 ---
- fs/fuse/file.c         |  4 ++--
- fs/iomap/buffered-io.c | 17 +++++++++--------
- fs/xfs/xfs_aops.c      |  8 ++++----
- include/linux/iomap.h  |  4 ++--
- 4 files changed, 17 insertions(+), 16 deletions(-)
+ fs/iomap/buffered-io.c | 73 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 52 insertions(+), 21 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 591789adb00b..c44c058feeb0 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2172,8 +2172,8 @@ static bool fuse_folios_need_send(struct fuse_conn *fc, loff_t pos,
- }
- 
- static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
--					  struct folio *folio, u64 pos,
--					  unsigned len, u64 end_pos)
-+					  struct folio *folio, loff_t pos,
-+					  unsigned len, loff_t end_pos)
- {
- 	struct fuse_fill_wb_data *data = wpc->wb_ctx;
- 	struct fuse_writepage_args *wpa = data->wpa;
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 372e14f7ab57..66c47404787f 100644
+index 66c47404787f..37d2b76ca230 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -86,7 +86,8 @@ static inline bool ifs_block_is_dirty(struct folio *folio,
+@@ -76,15 +76,49 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
+ 		folio_mark_uptodate(folio);
  }
  
- static unsigned ifs_find_dirty_range(struct folio *folio,
--		struct iomap_folio_state *ifs, u64 *range_start, u64 range_end)
-+		struct iomap_folio_state *ifs, loff_t *range_start,
-+		loff_t range_end)
+-static inline bool ifs_block_is_dirty(struct folio *folio,
+-		struct iomap_folio_state *ifs, int block)
++/**
++* ifs_next_dirty_block - find the next dirty block in the folio
++* @folio: The folio
++* @start_blk: Block number to begin searching at
++* @end_blk: Last block number (inclusive) to search
++*
++* If no dirty block is found, this will return end_blk + 1.
++*/
++static unsigned ifs_next_dirty_block(struct folio *folio,
++		unsigned start_blk, unsigned end_blk)
  {
++	struct iomap_folio_state *ifs = folio->private;
  	struct inode *inode = folio->mapping->host;
- 	unsigned start_blk =
-@@ -110,8 +111,8 @@ static unsigned ifs_find_dirty_range(struct folio *folio,
- 	return nblks << inode->i_blkbits;
+-	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
++	unsigned int blks = i_blocks_per_folio(inode, folio);
++
++	return find_next_bit(ifs->state, blks + end_blk + 1,
++			blks + start_blk) - blks;
++}
++
++/**
++* ifs_next_clean_block - find the next clean block in the folio
++* @folio: The folio
++* @start_blk: Block number to begin searching at
++* @end_blk: Last block number (inclusive) to search
++*
++* If no clean block is found, this will return end_blk + 1.
++*/
++static unsigned ifs_next_clean_block(struct folio *folio,
++		unsigned start_blk, unsigned end_blk)
++{
++	struct iomap_folio_state *ifs = folio->private;
++	struct inode *inode = folio->mapping->host;
++	unsigned int blks = i_blocks_per_folio(inode, folio);
+ 
+-	return test_bit(block + blks_per_folio, ifs->state);
++	return find_next_zero_bit(ifs->state, blks + end_blk + 1,
++			blks + start_blk) - blks;
  }
  
--static unsigned iomap_find_dirty_range(struct folio *folio, u64 *range_start,
--		u64 range_end)
-+static unsigned iomap_find_dirty_range(struct folio *folio, loff_t *range_start,
-+		loff_t range_end)
- {
- 	struct iomap_folio_state *ifs = folio->private;
++#define for_each_clean_block(folio, blk, last_blk) \
++	for ((blk) = ifs_next_clean_block((folio), (blk), (last_blk)); \
++	     (blk) <= (last_blk); \
++	     (blk) = ifs_next_clean_block((folio), (blk) + 1, (last_blk)))
++
+ static unsigned ifs_find_dirty_range(struct folio *folio,
+ 		struct iomap_folio_state *ifs, loff_t *range_start,
+ 		loff_t range_end)
+@@ -94,18 +128,17 @@ static unsigned ifs_find_dirty_range(struct folio *folio,
+ 		offset_in_folio(folio, *range_start) >> inode->i_blkbits;
+ 	unsigned end_blk = min_not_zero(
+ 		offset_in_folio(folio, range_end) >> inode->i_blkbits,
+-		i_blocks_per_folio(inode, folio));
+-	unsigned nblks = 1;
++		i_blocks_per_folio(inode, folio)) - 1;
++	unsigned nblks;
  
-@@ -1603,7 +1604,7 @@ void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
- EXPORT_SYMBOL_GPL(iomap_finish_folio_write);
+-	while (!ifs_block_is_dirty(folio, ifs, start_blk))
+-		if (++start_blk == end_blk)
+-			return 0;
+-
+-	while (start_blk + nblks < end_blk) {
+-		if (!ifs_block_is_dirty(folio, ifs, start_blk + nblks))
+-			break;
+-		nblks++;
+-	}
++	start_blk = ifs_next_dirty_block(folio, start_blk, end_blk);
++	if (start_blk > end_blk)
++		return 0;
++	else if (start_blk == end_blk)
++		nblks = 1;
++	else
++		nblks = ifs_next_clean_block(folio, start_blk + 1, end_blk)
++				- start_blk;
  
- static int iomap_writeback_range(struct iomap_writepage_ctx *wpc,
--		struct folio *folio, u64 pos, u32 rlen, u64 end_pos,
-+		struct folio *folio, loff_t pos, u32 rlen, loff_t end_pos,
- 		unsigned *wb_bytes_pending)
+ 	*range_start = folio_pos(folio) + (start_blk << inode->i_blkbits);
+ 	return nblks << inode->i_blkbits;
+@@ -1102,7 +1135,7 @@ static void iomap_write_delalloc_ifs_punch(struct inode *inode,
+ 		struct folio *folio, loff_t start_byte, loff_t end_byte,
+ 		struct iomap *iomap, iomap_punch_t punch)
  {
- 	do {
-@@ -1634,7 +1635,7 @@ static int iomap_writeback_range(struct iomap_writepage_ctx *wpc,
-  * i_size, adjust end_pos and zero all data beyond i_size.
-  */
- static bool iomap_writeback_handle_eof(struct folio *folio, struct inode *inode,
--		u64 *end_pos)
-+		loff_t *end_pos)
- {
- 	u64 isize = i_size_read(inode);
+-	unsigned int first_blk, last_blk, i;
++	unsigned int first_blk, last_blk;
+ 	loff_t last_byte;
+ 	u8 blkbits = inode->i_blkbits;
+ 	struct iomap_folio_state *ifs;
+@@ -1121,11 +1154,9 @@ static void iomap_write_delalloc_ifs_punch(struct inode *inode,
+ 			folio_pos(folio) + folio_size(folio) - 1);
+ 	first_blk = offset_in_folio(folio, start_byte) >> blkbits;
+ 	last_blk = offset_in_folio(folio, last_byte) >> blkbits;
+-	for (i = first_blk; i <= last_blk; i++) {
+-		if (!ifs_block_is_dirty(folio, ifs, i))
+-			punch(inode, folio_pos(folio) + (i << blkbits),
+-				    1 << blkbits, iomap);
+-	}
++	for_each_clean_block(folio, first_blk, last_blk)
++		punch(inode, folio_pos(folio) + (first_blk << blkbits),
++			    1 << blkbits, iomap);
+ }
  
-@@ -1689,9 +1690,9 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
- {
- 	struct iomap_folio_state *ifs = folio->private;
- 	struct inode *inode = wpc->inode;
--	u64 pos = folio_pos(folio);
--	u64 end_pos = pos + folio_size(folio);
--	u64 end_aligned = 0;
-+	loff_t pos = folio_pos(folio);
-+	loff_t end_pos = pos + folio_size(folio);
-+	loff_t end_aligned = 0;
- 	unsigned wb_bytes_pending = 0;
- 	int error = 0;
- 	u32 rlen;
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 0c2ed00733f2..593a34832116 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -480,9 +480,9 @@ static ssize_t
- xfs_writeback_range(
- 	struct iomap_writepage_ctx *wpc,
- 	struct folio		*folio,
--	u64			offset,
-+	loff_t			offset,
- 	unsigned int		len,
--	u64			end_pos)
-+	loff_t			end_pos)
- {
- 	ssize_t			ret;
- 
-@@ -630,9 +630,9 @@ static ssize_t
- xfs_zoned_writeback_range(
- 	struct iomap_writepage_ctx *wpc,
- 	struct folio		*folio,
--	u64			offset,
-+	loff_t			offset,
- 	unsigned int		len,
--	u64			end_pos)
-+	loff_t			end_pos)
- {
- 	ssize_t			ret;
- 
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index c417bb8718e3..8045d4c430ae 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -438,8 +438,8 @@ struct iomap_writeback_ops {
- 	 * Returns the number of bytes processed or a negative errno.
- 	 */
- 	ssize_t (*writeback_range)(struct iomap_writepage_ctx *wpc,
--			struct folio *folio, u64 pos, unsigned int len,
--			u64 end_pos);
-+			struct folio *folio, loff_t pos, unsigned int len,
-+			loff_t end_pos);
- 
- 	/*
- 	 * Submit a writeback context previously build up by ->writeback_range.
+ static void iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
 -- 
 2.47.3
 
