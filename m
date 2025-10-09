@@ -1,77 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-63688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F778BCB26E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F324FBCB271
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 00:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90D974E8607
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:57:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3F534E8F57
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 22:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CA3286D5D;
-	Thu,  9 Oct 2025 22:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1B0287247;
+	Thu,  9 Oct 2025 22:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXlOuE0Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0kVAWkz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6522E72625
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491C4285CBC
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 22:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760050658; cv=none; b=K9eVaVfCdR0Dtg8ZDpMvYoIJGKhkQJ2K5UhlvOPr0a0TiD/u/tpInMk3+UyB6/zSZZZAIVJXJPJQb91O074iKiSSKJnqvxA9OmG3h0T+pt0c0gX9+Pvq5t8B1hLH4KljIMwcDXnSJ5jWmLOldw5t5T5bH5N1Skwakt36C4+PUu4=
+	t=1760050660; cv=none; b=to7HgiqthNMArQLRVQaDeH8mfBICpjrvdd+lG/JeZNio+F+HpzkgvyFmYPA6SGpECwtjX6v5Y7Ei2o3arPkSRg26AOyl2wpNxW/zLidHGtDsY4DFdFF8FvyGKDHiq+2XDbUvSsWn9Xd0eP3FtrbBq5EICCa+ViMm0YsLWmwFsj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760050658; c=relaxed/simple;
-	bh=Rm6UKOyZD1B0hxs26TrDBYbCDDGwsYmL0HSe87oBa58=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GDGadgZuOXFWSdPbvVx1heab8cBAYE9GFZH7DlYHwU3yI1GbEi5tRYYJUADYSWvn7H/8xU87LdvZKx/3Oec29K6rBAj0+g6obowIFBndO77GQ0zanse/Zqid0/1IhXZV3W6VcpMH4Q037T4S/8hTzTRg5VXkVaPeI2vXzoW6Cqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXlOuE0Z; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1760050660; c=relaxed/simple;
+	bh=3POWIj8swlvqtIQHEa2SeYV4NIqcmCI08ScYpNGiB4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mp8VZUfDd6qNtK9I/Q6DphRnrvPvMGMS1Zd7ohjtMO142Fut7lpggKiyRWWDGDpo+S6qcHqF+xlvjonKcT4WLs8xaL60PTqy18day8MnXNLwUX4nTye/K8Gh/K2fyTNYIvyWmRfzq9Jd2p5qlb38sbjDMVcgHJNPXqFZtE6EO+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0kVAWkz; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77f1f29a551so2024115b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:37 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-781251eec51so1286586b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 15:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760050657; x=1760655457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=65o5Z1x/fVFiBDK8ikLe5TwPRmZaCWScJw2OpTZzS1c=;
-        b=AXlOuE0ZiZBl+eFUCjLr6+g8BH8J7/ez6XW/XGKmhzBjEUAMDpSsOXa09Jp1PxqxZr
-         lj3Rlm4euLkhbo77mTX0MMB0eEKSSJqodFTzmTSiiDPEAy3WPfUEu5dmvsztt5MKfaWF
-         /EXakmpouK4vERxLKJJJQAoMJSQIMQ4z6psBMr/lV1P1Zk7DZpvF2fiCiP/MPRSF1zC0
-         WAqmloqHC29UH9b9osnIiTrKPL7x1gW8fJ/hysEzhkQ48QFQkQITrulTVW4+px+w/8QB
-         /KFongVzRPMFkV1XkCkCkPFRdqbSwUZ+D6etgcEyU/hjaDrDpCq/Uy4uPjo/OQM8M3Q3
-         ylzw==
+        d=gmail.com; s=20230601; t=1760050658; x=1760655458; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5eTno08BNvJLBn5cokDLzFZULJBhZn+XK7Z8+MwEHrI=;
+        b=C0kVAWkzMsfx7Ea/RmyDLvk2sFO//gOnxOKPio63Lwb9Z55Rk1Tr8YDO1pXGkiIwRW
+         4tSS2IJEk3ITxx+9TsgMpWAnJwhC//Ts1FJxQ+7uHrBtrweFB+MrWudJ7/ggWg3G61Qt
+         V69of0qBlj1TMMTB+cyhAiAYJe3WGLNruAsT4uHa0fYjCXDjflqkpITVg1Lo6UuJbQRZ
+         +ut6iMPzlvMcV7/1YT+GygRVF+FF/jnUpfWeS/wfx4UsirRTloWSo9M3kFuyBxpjUVqA
+         VuaHgwkh6yk8c1TW7dXrfnuNRR8YbeYyiEVsSTXAWuEsoq3aPQ6kjgSQIJqYCDAC8Qu5
+         Be7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760050657; x=1760655457;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=65o5Z1x/fVFiBDK8ikLe5TwPRmZaCWScJw2OpTZzS1c=;
-        b=clhAre5HFziPoAZCkVq2UMdgU9qS50ZoTSMZ6L+0R/giGrH13N0ymaZ+yPR8ew8xr8
-         lbajhByNn2ZFNrinrVaug2F97XLEMVwLHBvMY5Y+fz3IxWmu4kODuAQ4V8MugZgQRGTf
-         QRPhXsEACFnj5cG6Eoy2GI2fCwHNu0AVYNXClECrHS/Q7i9IpnanG3svaGclLf7d35OB
-         1/tEgAKOacyVR+TFtMFdUzxmkRcPhww6bGRhOygCqM039KgkRkUx2Z30JqGRa16J4PR7
-         juJXH3tG9PQFg0rfAXlCPO4m8MbrR7BuAyrc059emSkBly7p3s2awlpiv92ORezM8jWm
-         IJ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCW7CgCVO8MpJPRFQ4BLhOn19vbZUrpbTjsKxnqfNkfSKO8XOXsSu4cOgS47loKmDmty2ueaFYyWY3Mgy9bN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdGM4f1W7+odcEki8FizIBsFfWCYr1MDfZamN1lHHnb8oY9iAt
-	YW10vmz/9+Pod7p9FgSBosWK0DrLvbJ8Xux4GG67cXAow+BjkNwZhw2ewoBwKw==
-X-Gm-Gg: ASbGncv1DnNtMvPM583ImE0qxzV/TbSStAbtSXsrU3z89YcuEHkxfkxECJCKgv7pof/
-	BJDYPvjWTixWQAuLPNVv2Ipj7zTnsUY5VGgiIkQ1X91O5UvpRcvCRLo5SPwFkMu7ORjujJVjC9J
-	6Y1TzCiulJpHXiqqX2fuOH54nQ9Fk3OgFCqifcih12DSvmXzL9ndfwLSeSspkU7mu9C2xRcQy5+
-	EakhboIO36y2iAHvlWqwj5XX78nG5jiLYt4sf96LTl3Y8t9hyH3urwBSTiM172dG3yXG5/IG04/
-	Qtn9S7G3Qa1KkywdCvE4FRW0FiDQt/plo3iQUfn5kK3kMZ3oooMgeGfY6Mg0PpNXGwjlMbIhGg/
-	SuZgm0FAWHJC86VtgbPqe/efHNftDuGniqXMk9nJaph1718OXiczVpZeRhi59gRDy2JDjZULeEv
-	p+N03RdE7I
-X-Google-Smtp-Source: AGHT+IFg26yiEl/GYM/lpIwuNcJES0dJnjnpg4NYTTU1hKW+ZDqBFuBQkuUIfo8IvTzeEWNQputlmw==
-X-Received: by 2002:a05:6a00:2302:b0:781:2177:1c9b with SMTP id d2e1a72fcca58-7938723c480mr13491121b3a.17.1760050656512;
-        Thu, 09 Oct 2025 15:57:36 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:70::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d5b820asm808888b3a.67.2025.10.09.15.57.36
+        d=1e100.net; s=20230601; t=1760050658; x=1760655458;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5eTno08BNvJLBn5cokDLzFZULJBhZn+XK7Z8+MwEHrI=;
+        b=sswV11ex3UES7eF8387ldJurJ757gHb2Iv8G9U36iRT1bt8CBoJkzutPn575x8QzeS
+         7TUjpQxGL0PwxIKVaG95PhUwRsWAuQx1c2V01njZIATVDrdS/fgetDLHZ82rA6VOldYZ
+         dhmRZO3OJlXKWTpkjRA0qPO/vtfUr3lB/vuxbn5vK5W31UW563MX8z5ExJm7en1nFtZv
+         Em5cqbwnmhneZyRnK3QhjlNfLhS8az0EB14mlojTdzx2CYUwd2lbiZt6CoDl/OVeAon0
+         yXBPju4tG5xk2uOC7cl2PzkfIIqRcikHUqhmMnVadT6EuBYg8vy0ZZ7DMnKA66vEvXJc
+         +rAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtc5RxW9QT1+nDubBg/LxWk/EtXSRTvHhgEm8LS/cyyKmqTuEMsk2bll433OvSW1I6RPnIFibOlSSontp6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHk+4qsmWPHzksPqkAmgZxN8pGW3PlTdCB+lvjRig13ycmjOkH
+	zFOiHnr/4xuyovB9q1T01TSCVPfNQBmWhx/6eVB0A3LXAselQsEWPOWU
+X-Gm-Gg: ASbGnct2iALn63mU5vgbpG3EgwysiqYwnQuV/fVbljroKhC/vf157oeMdXwTXMb3fbS
+	KOF6I4ftddnyG13whvvCb2nPTMlL6RnEg7ia3iLI1G/ECOvaYAxzeLE4YaRLilmhhIEF+FwhrIe
+	gGjw2g8ZiJXbCXCdBUH35cRxFVy926gfA5wi6HAc5T1NL23x1XkT11XtJNxa6ZbUC9k4OaX0j3D
+	Jeumu2iczsSvWr6dcazMA0fDmVPx6knH+w8wSzNbiwknc0/ZjwI+GkST/EdAZvMfHfZfDg/+gmz
+	r4ptTcNHNXbwY7O41JanuoiDw3R/Pg/vg7MFInKFpLXzS+mTjnm7Qy9LmIHx8MkV3pNJ7Hooz4/
+	CN3c4Mmfd8bIPmVYafwByYHhrssUrqY4o+d9xy3i5ywvlTYT2NE3CbHT607C18aAEqpNRD2beIo
+	lsrqyONgcsXoUXu06GIw==
+X-Google-Smtp-Source: AGHT+IGZukFoVbvpRjLrd2iJC6lB9VfQgocqvC4NFARo7CXqgianY1qtUVrvSIUzgHUmvbxGD81o8w==
+X-Received: by 2002:a05:6a00:847:b0:77f:4b9b:8c34 with SMTP id d2e1a72fcca58-79387ff6c26mr10716828b3a.31.1760050658328;
+        Thu, 09 Oct 2025 15:57:38 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:4::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0964c1sm815585b3a.54.2025.10.09.15.57.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 15:57:36 -0700 (PDT)
+        Thu, 09 Oct 2025 15:57:38 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: brauner@kernel.org
 Cc: djwong@kernel.org,
@@ -79,10 +81,12 @@ Cc: djwong@kernel.org,
 	bfoster@redhat.com,
 	linux-fsdevel@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v1 0/9] iomap: buffered io changes
-Date: Thu,  9 Oct 2025 15:56:02 -0700
-Message-ID: <20251009225611.3744728-1-joannelkoong@gmail.com>
+Subject: [PATCH v1 1/9] iomap: account for unaligned end offsets when truncating read range
+Date: Thu,  9 Oct 2025 15:56:03 -0700
+Message-ID: <20251009225611.3744728-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251009225611.3744728-1-joannelkoong@gmail.com>
+References: <20251009225611.3744728-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,46 +95,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series is on top of commit 267652e9d474 ("Merge branch 'vfs-6.18.async'
-into vfs.all") and patches [1][2][3] in Christian's vfs.all tree.
+The end position to start truncating from may be at an offset into a
+block, which under the current logic would result in overtruncation.
 
-Patches 8 and 9 (using find_next_bit() for bitmap scanning) were pulled from
-another patchset [4]. Patch 8 includes Darrick's nifty
-'for_each_clean_block()' macro suggestion and includes expliciting handling
-the "if (start_blk == end_blk)" case in ifs_find_dirty_range() to make it less
-confusing, per Brian's feedback.
+Adjust the calculation to account for unaligned end offsets.
 
-This series was run through fstests on fuse passthrough_hp as a sanity-check.
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ fs/iomap/buffered-io.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-Thanks,
-Joanne
-
-[1] https://lore.kernel.org/linux-fsdevel/20250919214250.4144807-1-joannelkoong@gmail.com/
-[2] https://lore.kernel.org/linux-fsdevel/20250922180042.1775241-1-joannelkoong@gmail.com/
-[3] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-1-joannelkoong@gmail.com/
-[4] https://lore.kernel.org/linux-fsdevel/20250829233942.3607248-1-joannelkoong@gmail.com/
-
-
-Joanne Koong (9):
-  iomap: account for unaligned end offsets when truncating read range
-  docs: document iomap writeback's iomap_finish_folio_write()
-    requirement
-  iomap: optimize pending async writeback accounting
-  iomap: simplify ->read_folio_range() error handling for reads
-  iomap: simplify when reads can be skipped for writes
-  iomap: optimize reads for non-block-aligned writes
-  iomap: use loff_t for file positions and offsets in writeback code
-  iomap: use find_next_bit() for dirty bitmap scanning
-  iomap: use find_next_bit() for uptodate bitmap scanning
-
- .../filesystems/iomap/operations.rst          |  10 +-
- fs/fuse/file.c                                |  18 +-
- fs/iomap/buffered-io.c                        | 281 ++++++++++++------
- fs/iomap/ioend.c                              |   2 -
- fs/xfs/xfs_aops.c                             |   8 +-
- include/linux/iomap.h                         |  15 +-
- 6 files changed, 208 insertions(+), 126 deletions(-)
-
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index f9ae72713f74..1c6575b7e583 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -218,6 +218,22 @@ static void ifs_free(struct folio *folio)
+ 	kfree(ifs);
+ }
+ 
++/*
++ * Calculate how many bytes to truncate based off the number of blocks to
++ * truncate and the end position to start truncating from.
++ */
++static size_t iomap_bytes_to_truncate(loff_t end_pos, unsigned block_bits,
++		unsigned blocks_truncated)
++{
++	unsigned block_size = 1 << block_bits;
++	unsigned block_offset = end_pos & (block_size - 1);
++
++	if (!block_offset)
++		return blocks_truncated << block_bits;
++
++	return ((blocks_truncated - 1) << block_bits) + block_offset;
++}
++
+ /*
+  * Calculate the range inside the folio that we actually need to read.
+  */
+@@ -263,7 +279,8 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 		/* truncate len if we find any trailing uptodate block(s) */
+ 		while (++i <= last) {
+ 			if (ifs_block_is_uptodate(ifs, i)) {
+-				plen -= (last - i + 1) * block_size;
++				plen -= iomap_bytes_to_truncate(*pos + plen,
++						block_bits, last - i + 1);
+ 				last = i - 1;
+ 				break;
+ 			}
+@@ -279,7 +296,8 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 		unsigned end = offset_in_folio(folio, isize - 1) >> block_bits;
+ 
+ 		if (first <= end && last > end)
+-			plen -= (last - end) * block_size;
++			plen -= iomap_bytes_to_truncate(*pos + plen, block_bits,
++					last - end);
+ 	}
+ 
+ 	*offp = poff;
 -- 
 2.47.3
 
