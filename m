@@ -1,139 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-63646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9A9BC8187
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 10:44:03 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6050BBC82B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 11:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613FF421F6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 08:43:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9AA45348750
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 09:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D132D29AC;
-	Thu,  9 Oct 2025 08:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE842D5C67;
+	Thu,  9 Oct 2025 09:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sd1CQWr6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2RB7pUD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDF72D238B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 08:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F44E2D29AC
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Oct 2025 09:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759999420; cv=none; b=LYgU3vzLQ7CTuvqUJFKB1Lbk+9W09XX0vR8pTn4hBCCfeizG+kjcaW8Dt1O9FtwSaAlHsHt2S39evyDJ9z9SHdxItL4rICekNI2mYxj3JAwR1CLTqkjV7qcrg/Goad+qapSZjMNgshMxkaTUFfWVf9t8bbs448I2YQTcXkK5e1E=
+	t=1760000739; cv=none; b=ZrhHQFqMl8ug10HuChxcQQfweTIAf/lVgDh97rxAP0p+6ZTdJk/ZxskcpW4VT6D7cF5G3+FGAWUsb7XQwaZJB7j3rUACALk1cMbulnxbgkdhXl5OzPKK2GCYQoSpqH8by+PmMANO78bOklBxAkOLntajGSfllyhPMX2P8U12ljg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759999420; c=relaxed/simple;
-	bh=oOmLRNO4yxmZr9GGl+AUsKcQlyU35gqHSeHKaWhtPwQ=;
+	s=arc-20240116; t=1760000739; c=relaxed/simple;
+	bh=VEKWxVUe/tnNvlLhoBnBBDaH0OhNaEJWHRAMuAoTH98=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DLTaoTkW4snS3CaUcizGXNuq5eLstR+bMUlvQgi39ue4uckhM1Nj6XuH1HUo/QMcbjWQmiQKVgXnI/nsnTpoaaERCsDLyaHoGE1JUlcm23x++v3edYzEyxg9tolwaVVSopebQkp2tQTM8IkFqbH89XMrX7JkUxOctaFKx9LhWoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sd1CQWr6; arc=none smtp.client-ip=209.85.128.175
+	 To:Cc:Content-Type; b=T8ypvu42n41VXfjBD41CGmrw78lzWS8+W/lWrA+06gfoXEs4lUQ8fqMOgOjD0iApUpJBp6mWOYo3nrJXnJfOBAvhcvtT0mWmDR1ZZXOjtJKJhkvEzdY8Us86Z3Fs3t5B6nFnQ66w+34kkxLXg+zLE8HiGxA4jNXrv6hAE1UPJxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2RB7pUD; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d6051aeafso7391937b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 01:43:36 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3381f041d7fso2061600a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 02:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759999416; x=1760604216; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760000737; x=1760605537; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oOmLRNO4yxmZr9GGl+AUsKcQlyU35gqHSeHKaWhtPwQ=;
-        b=Sd1CQWr65JLYzY9EVKrEmyokZCi5vMbs6EjxpG+7QH6YGT3tDWbcej0s4cZgoeqQuS
-         JarC6ZTWUL+kjcHPGBPAUN8Ppb1QBAPtlSxQfjpNRglhJxMMypRIPnB6rYYKLQvZjKiN
-         y72xO5wzZc7AAEZk+IBKqraBb7+6wC4+Imv7nbjEtku9PO6PAKcYEb1vRHgafdvgR9U2
-         dCS1DB4VwniCeBOnc8XLvNltoejI4ecSgvo1PpGG1tSl6PrUxnfallIONRoeLTNOEzbX
-         FvDKAaN4VsNHkaBPKCCqR4S+rBMFmJJlJYY4H+OBfaZXGyq7o1ppfnH/vgJ3jgRm0T4d
-         tz9Q==
+        bh=I1TU7MfYzP9/dysH1d26eBKhbqRPLF+RftNgfSNIzQw=;
+        b=L2RB7pUDn8k6GgbryTExOKml2C/KIRl2yJ1UGHoFawVLTI8BNT/x+EsSRQi3+s5JgN
+         rDq2RYBwwtrWegNxjSiPdGxD5E84pJRlYQhXHjkP6ptHQECEuHNr/dwzAnSaYkfEMxr4
+         iDYEhePxOjUA2C5B94Jg21Vos0/r6qphnl8t49MDM6XVF3a1Z27tG9+9UQ0pY2lFg4Fn
+         L6EM/5Nr+WZN2cxogeJRICRI/y3v0QB1CpBJkheVbNiWv455Tz9MZQorADIkHqgStwuS
+         0BZhV0k4KH7xoDxdUiSRIWY5FEMlqRPRvwSCDCx5DtSA5AheReiiw9UjrTMj3pidYwBN
+         BOnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759999416; x=1760604216;
+        d=1e100.net; s=20230601; t=1760000737; x=1760605537;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oOmLRNO4yxmZr9GGl+AUsKcQlyU35gqHSeHKaWhtPwQ=;
-        b=ElRdKmuZDY114yEjJcLOUpiKFN7chtuB9vyZ5/vv3x6IQYl9WoSHxDfChVNl1BItQs
-         2xQOOF3Iem5ZsPM+2XZ87RcuMpJj6yCxHiFUN6yP4ktqTE7aEsJ5YIkT9ZIXIHjoBHa2
-         xxREZHDDR3pAOY14dQXdTzKd4XPKbjLUNLSOhmLeRrsNDrE/0Wc/mYO7zVUfBV3LvaHv
-         bEHU5hBu+oTeftycn8yQPPfBluV43aCwoslRHyjUav9auW4Inxf9PWgpCtTBt8mGLUee
-         5UyGtVDesYC1nT3atrfngJnX+Rpj1hrBAiVlgLpcmHWeDGfW8lc9Pk28aCRARCIEgSI3
-         kMxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+G9wCCrBKi7eQBXYTDuXNLPNhxT/kl7t+nYxj+uttCYPsCFA+MqV9J2wTgWCl5JmMk+O9eLzAM3L/ZD3g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyar2f7qTC3D8kEDFxzurfEIY+ReZjpzEYfWe5RmQ5FrnztJkFJ
-	jpue41YxeeicFAXB2AZGn+KzGyLVsiiXjTjtSPQZKeF8aMAk+hDW9aaAIXCOcMikTMTPbmIkXyQ
-	HcTWcl7jkIfFMxklDxHzltHZtQDVgB4Q=
-X-Gm-Gg: ASbGncu5SoGyLLq+wd5U4AFm+0lEoz6fFJ+ljh90H+5fxBlUTVfdF4NUwS64aEqWvif
-	j3+X/EU4SBd93SkAs6InuDFRpxql/ck3sBTYAAnUs3R2FbqncDTXhLncTw2R5Dh3bLTwoWuKFDk
-	+3P4Hj+U4ynRS7OtBlNnSgenvAGKXFP2abq1D6inkLVaO932d0aftCI2mwdADVc15YZNQOqEmTt
-	/Gjw1Ffxv5fKrYEJRPMUf3ZlFlpiVjxSsCnjb5jbw==
-X-Google-Smtp-Source: AGHT+IHqqt7JHMFlL5DEMxX8/4fuWke6o7x715NV65SuEycRYAp5q8y3uA9SPr+Cccah/gPAgRpT2LfWBS7AmxUm0/4=
-X-Received: by 2002:a05:690e:146:b0:635:4ece:20a9 with SMTP id
- 956f58d0204a3-63ccb91d5e0mr4410660d50.46.1759999415603; Thu, 09 Oct 2025
- 01:43:35 -0700 (PDT)
+        bh=I1TU7MfYzP9/dysH1d26eBKhbqRPLF+RftNgfSNIzQw=;
+        b=AYWb5sQqVGr3Vn7HY5oOAJMwygYxhkMdL5zHOqzlNALvovDtC/gVbdR4GeIw+F5oba
+         ciiyBwvEFfUzB90UO3VdvYOBqNo4j9BYnQ3hgTh+8ox13Vss2SZV00YPnB67MSoH36Cv
+         GzFqAwC4sLNv/yPczQmRno/jcr53k0FYvq4KG6BWPCFFrBRqrcNPV5wpF/vi2CXHCRXf
+         2tuz30bOWlDUilIBScmhj8aauOYu2Opzvgms3rx9U3Twb72NcDgw+mk9MAv6jaKUZf2L
+         dWPuw41GW60CvinK0uEumoBTYLTFPP5TY1dtn1Fgq28MLexlpkgxbqiV9oLMGP1A25GS
+         8m1A==
+X-Forwarded-Encrypted: i=1; AJvYcCW73aC/L7RC8Qp3AB/L+zxL6WbXt+r4z1r9kO/PPw5eN9bC9suPxkRNHLCl46GJ3r/OA8aFMWIucXYB2rFE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwThQSMkUo74BQZNvqBsUirsc5+ZXnZgms/irVapunHsFiMQ8uD
+	EMvee1g+Ty41E3KErwlD8hBmpYtEEpA7RJUKFtGrAh1gt7D2/DZHxtwLip1+cBnQGJREa2KAe3F
+	R6JIIrWbzcAw2Qutjb7+wI528REyOS9E=
+X-Gm-Gg: ASbGnctnqlOqaQA+IA7KWJZDiSzGntatRvgY3IDiYVwEYbWtQGJn2IE8PFzPe8/5raw
+	hnLxzBHrvp7VistDOusgBDqc5meAzjkMHT9nnLwe+gBN6azr5JlwV0MXOMB5kSp9eOZIvXkuqLl
+	a1nG3Rdc4rhaO6Xt8p6JA1/+aUExk7/JfLTJmZUyGK9BAGYy1E8qO+OqB6Or49jkjySiB/gLSpf
+	5sxr6RrxD5Q/zzkK+GFn1IybHIsXzFI3BibGlEXvmQ1
+X-Google-Smtp-Source: AGHT+IH2GX8bEk4r+hR0p6Q8BVGAccvpb8Z43LxRJ+PRTrW6XFN+OBi7YUZTF1aXK8kHV5VFN+DBONnEIiVmO5qoAbs=
+X-Received: by 2002:a17:90b:3c09:b0:31f:ecf:36f with SMTP id
+ 98e67ed59e1d1-339eda48b06mr15014058a91.1.1760000737140; Thu, 09 Oct 2025
+ 02:05:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918152830.438554-1-nschichan@freebox.fr> <20250918195806.6337-1-safinaskar@gmail.com>
- <CAHNNwZAzecVcJXZmycX063-=p-M5jVkfStfgYVKJruOFo7y9zg@mail.gmail.com>
- <CAPnZJGDwETQVVURezSRxZB8ZAwBETQ5fwbXyeMpfDLuLW4rVdg@mail.gmail.com> <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
-In-Reply-To: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
-From: Askar Safin <safinaskar@gmail.com>
-Date: Thu, 9 Oct 2025 11:42:59 +0300
-X-Gm-Features: AS18NWA7xuLtf9pobQHoPGHI9uL9SjsnEaZg-EuuD52zBO81KbUszIYBPPZ5wRY
-Message-ID: <CAPnZJGAp-wG+9wDmmisfpxvFbRtXkG-RipAuZe=fi1BWy-3G-Q@mail.gmail.com>
-Subject: Re: [PATCH RESEND 00/62] initrd: remove classic initrd support
-To: Nicolas Schichan <nschichan@freebox.fr>
-Cc: akpm@linux-foundation.org, andy.shevchenko@gmail.com, axboe@kernel.dk, 
-	brauner@kernel.org, cyphar@cyphar.com, devicetree@vger.kernel.org, 
-	ecurtin@redhat.com, email2tema@gmail.com, graf@amazon.com, 
-	gregkh@linuxfoundation.org, hca@linux.ibm.com, hch@lst.de, 
-	hsiangkao@linux.alibaba.com, initramfs@vger.kernel.org, jack@suse.cz, 
-	julian.stecklina@cyberus-technology.de, kees@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-csky@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-hexagon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, mcgrof@kernel.org, 
-	mingo@redhat.com, monstr@monstr.eu, mzxreary@0pointer.de, 
-	patches@lists.linux.dev, rob@landley.net, sparclinux@vger.kernel.org, 
-	thomas.weissschuh@linutronix.de, thorsten.blum@linux.dev, 
-	torvalds@linux-foundation.org, tytso@mit.edu, viro@zeniv.linux.org.uk, 
-	x86@kernel.org
+References: <20251006114507.371788-1-aha310510@gmail.com> <20251008173935.4skifawm57zqpsai@pali>
+In-Reply-To: <20251008173935.4skifawm57zqpsai@pali>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Thu, 9 Oct 2025 18:05:26 +0900
+X-Gm-Features: AS18NWCMN2fHRdD8EN6xDD1OrTWxPjBo90ZkWO_xScRehILrRLDTEGSKJK0VrA4
+Message-ID: <CAO9qdTFk94yDCMAuTkx5yW9VXYExWuhgpi0X15C5F7e5DQgibA@mail.gmail.com>
+Subject: Re: [PATCH] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 5:29=E2=80=AFPM Nicolas Schichan <nschichan@freebox=
-.fr> wrote:
-> > Then in September 2026 I will fully remove initrd.
+Hi Pali
+
+Pali Roh=C3=A1r <pali@kernel.org> wrote:
 >
-> Is there a way to find some kind of middle ground here ?
+> Hello!
+>
+> On Monday 06 October 2025 20:45:07 Jeongjun Park wrote:
+> > After the loop that converts characters to ucs2 ends, the variable i
+> > may be greater than or equal to len.
+>
+> It is really possible to have "i" greater than len? Because I do not see
+> from the code how such thing could happen.
+>
+> I see only a case when i is equal to len (which is also overflow).
+>
+> My understanding:
+> while-loop condition ensures that i cannot be greater than len and i is
+> increased by exfat_convert_char_to_ucs2() function which has upper bound
+> of "len-i". So value of i can be increased maximally by (len-i) which
+> could lead to maximal value of i to be just "len".
+>
+> > However, when checking whether the
+> > last byte of p_cstring is NULL, the variable i is used as is, resulting
+> > in an out-of-bounds read if i >=3D len.
+> >
+> > Therefore, to prevent this, we need to modify the function to check
+> > whether i is less than len, and if i is greater than or equal to len,
+> > to check p_cstring[len - 1] byte.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
+> > Fixes: 370e812b3ec1 ("exfat: add nls operations")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> >  fs/exfat/nls.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> > index 8243d94ceaf4..a52f3494eb20 100644
+> > --- a/fs/exfat/nls.c
+> > +++ b/fs/exfat/nls.c
+> > @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb=
+,
+> >               unilen++;
+> >       }
+> >
+> > -     if (p_cstring[i] !=3D '\0')
+> > +     if (p_cstring[min(i, len - 1)] !=3D '\0')
+>
+> What about "if (i < len)" condition instead?
+>
+> The p_cstring is the nul term string and my understanding is that the
+> "p_cstring[i] !=3D '\0'" is checking that i is at position of strlen()+1.
+> So should not be "if (i < len)" the same check without need to
+> dereference the p_cstring?
+>
 
-I still plan to fully remove initrd in September 2026.
-Maintainers will decide whether they will merge my patchset.
-You may try to convince them.
+Thank you for the detailed explanation! I misunderstood.
 
-> I can send a patch for that but first I need to sort out my SMTP
-> issues from the other day.
+In summary, since the variable i can never be greater than len, we don't
+need to consider this case. Therefore, if i is less than len, we can
+determine that an nls loss has occurred.
 
-If you still have mail issues, consider applying for @linux.dev email,
-they are free for Linux devs ( https://linux.dev/ ).
+I think that under normal nls conditions, i should be equal to len
+immediately after the while loop terminates, so changing the condition
+here to "if (i !=3D len)" would be a better way to make this clear.
 
-Also, I just tried to test whether your use case is still supported in
-mainline (i. e. uncompressed initrd with root=3D/dev/ram0).
-It turned out that on modern kernels you need to enable
-recently introduced CONFIG_BLK_DEV_WRITE_MOUNTED to
-make this work.
-So, make sure to enable this when upgrading kernel.
+This way, we can check for an nls loss without dereferencing p_cstring,
+and we can clearly indicate that i should be equal to len when the while
+loop terminates. What do you think?
 
---=20
-Askar Safin
+Regards,
+Jeongjun Park
 
