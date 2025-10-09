@@ -1,265 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-63659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E38BC90D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 14:37:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7CBBC925B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 09 Oct 2025 14:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466303C1152
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 12:37:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52C0E4F3B18
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Oct 2025 12:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F8D2E1F06;
-	Thu,  9 Oct 2025 12:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nLEpgEKy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541342E62DC;
+	Thu,  9 Oct 2025 12:58:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834B934BA5C;
-	Thu,  9 Oct 2025 12:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644F833D8;
+	Thu,  9 Oct 2025 12:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013420; cv=none; b=UXhnkvWwE6mBvOUbblLL/oKy2udNtoWnTLdIDubDDL1GwMQ8kBPbC8Ob0LxoJnP1UE3PCpXfNkrpw1IhXWUkOXTn0o3ok49ge2586E5qAqkwcBdvzhNJBLGPmWnZ6Wxq2UW6ydRimTBuoH9zD0UEC8U3W8QGlJKpxGDVB91PC5Y=
+	t=1760014701; cv=none; b=ALeczyKujUoz+uNADWpko1aLg8OZIEeHpyiIcPW8hty5y0hYFG/Whz7Mdcffk7U386p3NwtzEReX/VtjBOGpwWh+qoOjNXbOK+cf1geEz1wu8ZWoccUllbS2GNRzNjRYzEIFjt+TT7T//Zl2XRTPy3uS47YuWlzzZVWXkT5rBOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013420; c=relaxed/simple;
-	bh=HtcxlAMHvl3AHs8Ukce8umJ81Z6QJilyJ7H5Iwrb8N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpVIQwfZHr9k/EFTN4OhyBQmGWlUNdzw+ZJjfsK42SpJAYBBWWdLhlicLherU7NQR5KDvqgFZrMwLvADtPCXBqFZboDcYSZUpxcvvVWlJln0t+37VTaWV7spm9Alq/nhOo5r9rrXEG8ywe+QawJnsSevgyeRve7SjgAC/Gce65U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nLEpgEKy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599BbHmN031607;
-	Thu, 9 Oct 2025 12:36:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=fuH+eToZ/pKB0li5jeNZ0pdZy6yWAo
-	Kblp8A9Sc90yQ=; b=nLEpgEKywpDznbLlwXMNi768uZ33XyefVjWuSZrLA7jUR/
-	Zt+dS0KrTgzL/E7RsAAWdOFArFJvHv+edz/7YwCVNFobSbO04vV0Jy+Wg+g2w8mE
-	sD2oYEDHNP9a4IOz1BQza2qx4Zkrr2gbbU19mEnZ+OedtQXdVT3ymaSmLV22MvQe
-	i+fw40YSyD3iOVyF6T59SdKYb6DMSgbGEq4haDP30Zl40ROvhXiv8hqn2c0gaXTn
-	CFWI6dtg2SvXhfHbTv6lKPzcAx9AGHIY1xJkWv/zrruXBABJ8XnXoY6MTWAs8cE1
-	qNOX7I6gJ5vNCZYSv6NrdBzE28JejqVudzcTitqA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv824rkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 12:36:46 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 599CJPZV008346;
-	Thu, 9 Oct 2025 12:36:45 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nvanvfjc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 12:36:45 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 599CahDM51839424
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 9 Oct 2025 12:36:43 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 53A37200BE;
-	Thu,  9 Oct 2025 12:36:43 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 62792200C7;
-	Thu,  9 Oct 2025 12:36:41 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  9 Oct 2025 12:36:41 +0000 (GMT)
-Date: Thu, 9 Oct 2025 18:06:27 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: ext4 writeback performance issue in 6.12
-Message-ID: <aOesS6Feov9mrbJh@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20251006115615.2289526-1-matt@readmodwrite.com>
+	s=arc-20240116; t=1760014701; c=relaxed/simple;
+	bh=LoaVQodVhFo56YznmyVF9NYQySEKHXOiB5FSKqVj0xQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FWUL4Y+3TfNSNvCkmz948WSMLtuBgK4nEShR51XO5wXKS3f4E9t499QYKHRkhW4WAbU7/CEmQsTMv6TLF698fffUC6M4+2m7Ak6R2JCMlbSSGsYBZ8vK6W6/8Hqdwn9ic9dRL1CFkcP9Z2IPm1OHtPbqrUaKwxHxc/9ld2j4cuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 599CvacV010883;
+	Thu, 9 Oct 2025 21:57:37 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 599CvaUs010879
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 9 Oct 2025 21:57:36 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <559c331f-4838-49fb-95aa-2d1498c8a41e@I-love.SAKURA.ne.jp>
+Date: Thu, 9 Oct 2025 21:57:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006115615.2289526-1-matt@readmodwrite.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=KrpAGGWN c=1 sm=1 tr=0 ts=68e7ac5e cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=NEAV23lmAAAA:8 a=_QroHv5PzVNJjBY0ZGcA:9
- a=CjuIK1q_8ugA:10 a=HhbK4dLum7pmb74im6QT:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
-X-Proofpoint-GUID: fFBirEcDl9DUQnH80RKPVisryv3nyPv7
-X-Proofpoint-ORIG-GUID: fFBirEcDl9DUQnH80RKPVisryv3nyPv7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8CvsS/B9rMhp
- MPN3EvemBrvC4V1isVD12cVj5mDMrPu2Gd2dgd8MFdAQyWIc5Z+YoOvE8B3IozHvSeYF80vrPH2
- biAKGmw8Jeedus4qd37skLQFkFMfC/8X3KBV0z7oGm76fEkdI/nJZGVJgfv6W2Nzh/g9JKs+6+W
- dxlFrrml51buLflOrGRggKAMmXPdqqGjZTQqobrNmojgHK396JqmOmvkKhxeROKecETG9QeBkiy
- TaayXOOZkNpqZlJpZS+TCtHO4+Zi7VpO/Gy4KwPITwcFY7K1rOlaUUF+70vfAfKHI5lRkQx5uKZ
- ux/9X4XgwPoQKvP0FmLWn1HIWQq2ZPKixn9OLgBJ8jJIAiaCVeu4d4p7lGAJ1mN3/rt0JJCHEGn
- sqOLoBCz+IOmTl6FbfK3gf9/orz/QQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
+To: Viacheslav Dubeyko <slava@dubeyko.com>,
+        George Anthony Vernon <contact@gvernon.com>,
+        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel-mentees@lists.linux.dev"
+ <linux-kernel-mentees@lists.linux.dev>,
+        "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
+ <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251003024544.477462-1-contact@gvernon.com>
+ <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
+ <aOB3fME3Q4GfXu0O@Bertha>
+ <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Mon, Oct 06, 2025 at 12:56:15PM +0100, Matt Fleming wrote:
-> Hi,
-> 
-> We're seeing writeback take a long time and triggering blocked task
-> warnings on some of our database nodes, e.g.
-> 
->   INFO: task kworker/34:2:243325 blocked for more than 225 seconds.
->         Tainted: G           O       6.12.41-cloudflare-2025.8.2 #1
->   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->   task:kworker/34:2    state:D stack:0     pid:243325 tgid:243325 ppid:2      task_flags:0x4208060 flags:0x00004000
->   Workqueue: cgroup_destroy css_free_rwork_fn
->   Call Trace:
->    <TASK>
->    __schedule+0x4fb/0xbf0
->    schedule+0x27/0xf0
->    wb_wait_for_completion+0x5d/0x90
->    ? __pfx_autoremove_wake_function+0x10/0x10
->    mem_cgroup_css_free+0x19/0xb0
->    css_free_rwork_fn+0x4e/0x430
->    process_one_work+0x17e/0x330
->    worker_thread+0x2ce/0x3f0
->    ? __pfx_worker_thread+0x10/0x10
->    kthread+0xd2/0x100
->    ? __pfx_kthread+0x10/0x10
->    ret_from_fork+0x34/0x50
->    ? __pfx_kthread+0x10/0x10
->    ret_from_fork_asm+0x1a/0x30
->    </TASK>
-> 
-> A large chunk of system time (4.43%) is being spent in the following
-> code path:
-> 
->    ext4_get_group_info+9
->    ext4_mb_good_group+41
->    ext4_mb_find_good_group_avg_frag_lists+136
->    ext4_mb_regular_allocator+2748
->    ext4_mb_new_blocks+2373
->    ext4_ext_map_blocks+2149
->    ext4_map_blocks+294
->    ext4_do_writepages+2031
->    ext4_writepages+173
->    do_writepages+229
->    __writeback_single_inode+65
->    writeback_sb_inodes+544
->    __writeback_inodes_wb+76
->    wb_writeback+413
->    wb_workfn+196
->    process_one_work+382
->    worker_thread+718
->    kthread+210
->    ret_from_fork+52
->    ret_from_fork_asm+26
-> 
-> That's the path through the CR_GOAL_LEN_FAST allocator.
-> 
-> The primary reason for all these cycles looks to be that we're spending
-> a lot of time in ext4_mb_find_good_group_avg_frag_lists(). The fragment
-> lists seem quite big and the function fails to find a suitable group
-> pretty much every time it's called either because the frag list is empty
-> (orders 10-13) or the average size is < 1280 (order 9). I'm assuming it
-> falls back to a linear scan at that point.
-> 
->   https://gist.github.com/mfleming/5b16ee4cf598e361faf54f795a98c0a8
-> 
-> $ sudo cat /proc/fs/ext4/md127/mb_structs_summary
-> optimize_scan: 1
-> max_free_order_lists:
-> 	list_order_0_groups: 0
-> 	list_order_1_groups: 1
-> 	list_order_2_groups: 6
-> 	list_order_3_groups: 42
-> 	list_order_4_groups: 513
-> 	list_order_5_groups: 62
-> 	list_order_6_groups: 434
-> 	list_order_7_groups: 2602
-> 	list_order_8_groups: 10951
-> 	list_order_9_groups: 44883
-> 	list_order_10_groups: 152357
-> 	list_order_11_groups: 24899
-> 	list_order_12_groups: 30461
-> 	list_order_13_groups: 18756
-> avg_fragment_size_lists:
-> 	list_order_0_groups: 108
-> 	list_order_1_groups: 411
-> 	list_order_2_groups: 1640
-> 	list_order_3_groups: 5809
-> 	list_order_4_groups: 14909
-> 	list_order_5_groups: 31345
-> 	list_order_6_groups: 54132
-> 	list_order_7_groups: 90294
-> 	list_order_8_groups: 77322
-> 	list_order_9_groups: 10096
-> 	list_order_10_groups: 0
-> 	list_order_11_groups: 0
-> 	list_order_12_groups: 0
-> 	list_order_13_groups: 0
-> 
-> These machines are striped and are using noatime:
+I found this patch. Please CC: me when posting V2.
 
-Hi Matt,
+On 2025/10/07 22:40, Viacheslav Dubeyko wrote:
+> On Sat, 2025-10-04 at 02:25 +0100, George Anthony Vernon wrote:
+>> On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
+>>> Let's pay respect to previous efforts. I am suggesting to add this
+>>> line:
+>>>
+>>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>>
+>>> Are you OK with it?
+>> I agree with paying respect to Tetsuo. The kernel docs indicate that
+>> the SoB tag
+>> isn't used like that. Would the Suggested-by: tag be more
+>> appropriate?
+>>
 
-Thanks for the details, we have had issues in past where the allocator
-gets stuck in a loop trying too hard to find blocks that are aligned to
-the stripe size [1] but this particular issue was patched in an pre 6.12
-kernel.
+I'm not suggesting this change. Therefore, Cc: might match.
 
-Coming to the above details, ext4_mb_find_good_group_avg_frag_list()
-exits early if there are no groups of the needed so if we do have many
-order 9+ allocations we shouldn't have been spending more time there.
-The issue I think are the order 9 allocations, which allocator thinks it
-can satisfy but it ends up not being able to find the space easily.
-If ext4_mb_find_group_avg_frag_list() is indeed a bottleneck, there
-are 2 places where it could be getting called from:
+But I don't like
 
-- ext4_mb_choose_next_group_goal_fast (criteria =
-	EXT4_MB_CR_GOAL_LEN_FAST)
-- ext4_mb_choose_next_group_best_avail (criteria =
-	EXT4_MB_CR_BEST_AVAIL_LEN)
+  Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
 
-Will it be possible for you to use bpf to try to figure out which one of
-the callers is actually the one bottlenecking (mihgt be tricky since
-they will mostly get inlined) and a sample of values for ac_g_ex->fe_len
-and ac_b_ex->fe_len if possible.
+line, for syzbot only tested one cnid which was embedded in the
+reproducer. My modified reproducer which tests all range still hits
+BUG() when the inode number of the record retrieved as a result of
+hfs_cat_find_brec(HFS_ROOT_CNID) is HFS_POR_CNID. That is why I push
+https://lkml.kernel.org/r/427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp
+as a fix for this problem (and you can propose this patch as a
+further sanity check). Unless
 
-Also, can you share the ext4 mb stats by enabling it via:
+>>>
+>>>> +{
+>>>> +	if (likely(cnid >= HFS_FIRSTUSER_CNID))
+>>>> +		return true;
+>>>> +
+>>>> +	switch (cnid) {
+>>>> +	case HFS_POR_CNID:
 
- echo 1 > /sys/fs/ext4/vda2/mb_stats
+we disable HFS_POR_CNID case (which I guess it is wrong to do so),
+we shall hit BUG() in hfs_write_inode().
 
-And then once you are able to replicate it for a few mins: 
+>>>> +	case HFS_ROOT_CNID:
+>>>> +		return type == HFS_CDR_DIR;
+>>>> +	case HFS_EXT_CNID:
+>>>> +	case HFS_CAT_CNID:
+>>>> +	case HFS_BAD_CNID:
+>>>> +	case HFS_EXCH_CNID:
+>>>> +		return type == HFS_CDR_FIL;
+>>>> +	default:
+>>>> +		return false;
+>>>
 
-  cat /proc/fs/ext4/vda2/mb_stats
 
-This will also give some idea on where the allocator is spending more
-time.
 
-Also, as Ted suggested, switching stripe off might also help here.
+>>> int hfs_write_inode(struct inode *inode, struct writeback_control
+>>> *wbc)
+>>> {
+>>> 	struct inode *main_inode = inode;
+>>> 	struct hfs_find_data fd;
+>>> 	hfs_cat_rec rec;
+>>> 	int res;
+>>>
+>>> 	hfs_dbg("ino %lu\n", inode->i_ino);
+>>> 	res = hfs_ext_write_extent(inode);
+>>> 	if (res)
+>>> 		return res;
+>>>
+>>> 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
+>>> 		switch (inode->i_ino) {
+>>> 		case HFS_ROOT_CNID:
+>>> 			break;
+>>> 		case HFS_EXT_CNID:
+>>> 			hfs_btree_write(HFS_SB(inode->i_sb)-
+>>>> ext_tree);
+>>> 			return 0;
+>>> 		case HFS_CAT_CNID:
+>>> 			hfs_btree_write(HFS_SB(inode->i_sb)-
+>>>> cat_tree);
+>>> 			return 0;
+>>> 		default:
+>>> 			BUG();
+>>> 			return -EIO;
+>>>
+>>> I think we need to select something one here. :) I believe we need
+>>> to remove
+>>> BUG() and return -EIO, finally. What do you think? 
 
-Regards,
-Ojaswin
-> 
-> $ grep ext4 /proc/mounts
-> /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
-> 
-> Is there some tunable or configuration option that I'm missing that
-> could help here to avoid wasting time in
-> ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
-> fail an order 9 allocation anyway?
-> 
-> I'm happy to provide any more details that might help.
-> 
-> Thanks,
-> Matt
+I think that removing this BUG() now is wrong.
+Without my patch, the inode number of the record retrieved as a
+result of hfs_cat_find_brec(HFS_ROOT_CNID) can be HFS_POR_CNID or
+greater than HFS_FIRSTUSER_CNID, which I think is a logical error
+in the filesystem image.
+
+>>
+>> I think that with validation of inodes in hfs_read_inode this code
+>> path should
+>> no longer be reachable by poking the kernel interface from userspace.
+>> If it is
+>> ever reached, it means kernel logic is broken, so it should be
+>> treated as a bug.
+
+Your patch is incomplete. Please also apply my patch.
+
 
