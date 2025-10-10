@@ -1,106 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-63713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF253BCB665
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 04:04:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E856BCB670
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 04:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37E994E54D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 02:04:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8B7B935088F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 02:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00C5237163;
-	Fri, 10 Oct 2025 02:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B13238C15;
+	Fri, 10 Oct 2025 02:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NTEEm1fF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbnS7UDX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEBA22ACE3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 02:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064DE22ACE3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 02:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760061894; cv=none; b=DaUwm3WsB/4rzvIAT37PTni4D1QkPU2pqPomRyYt2h10JFqw60yCqRN/5Oxsmh4B6gVHQuHzeuO0dIIjmzMA3ljdKcE3+sVNsjNf6UB3a8D1jGsib7eiC2uTms06GeWbPSAr2EC/OZL06anGcP85Hac1nBjEAG9aZ5FT2Vm6NCY=
+	t=1760061909; cv=none; b=aB7DfxG+wnXjX88BdXKFaWu6bF5EK+YRIh65VLZSEvr4j4J/1T2uN8KdNBF0M/edFwL0IxBaElm3rtIwqPwCjQlEfqb+3dOjUPe6guLn2PpNHrHi3/SYUvYmxJ97QyYuCMa3vOjYy0wta3Bl+Nvr769EQuiUoAZ3oAvJS70gjw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760061894; c=relaxed/simple;
-	bh=mSVicwHPNwBYbc5eIDs/6z7/izHRfWM3fLKw/ysKU6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LInTNNtaPSFvfgFEPTViPlA5PjIhyP0KuMgUr/zwR3+yEUQpXnIXu3cX3wZhA8ytnBeCbHg9F3PKowYAJuzc3HSQXNgyqH+ajQDUsgVjeUihoPi8fP/7KTIWiyfceLKQXxJ2pn6WCHst/XKtoJQCRmiQVUdIk0ZkUdK8aGU1gYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NTEEm1fF; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-118-62.bstnma.fios.verizon.net [173.48.118.62])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59A24Ala032648
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 Oct 2025 22:04:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1760061858; bh=+i9CZvHErpX1gMxpBo/MZPquUnlVUXMm2JZ6XHVAh6U=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=NTEEm1fF4+b4oTPLfR+Olw6dJMTie0wWcphlTqcCpqkDbhw7EWTo1YRG0kJi3tNUa
-	 rgibmZnB8b34ZCzBwgkEKRfWku1ekXeTnzobuHj/lBw27mXbc6KuLa4JWh7ZsIYTyt
-	 aS6lXn486jRIcgGBRUQXoM7BsDUWo+lQHEq3y4b5drmRYQhtCxzPP1qTBOseSub+bg
-	 wiNOHo8pYZvXUGOH5ODlBFjueImhSemtjSjw3YD12VpIvc66i1Dg/HKu1e8/Ph1Sfl
-	 Scw0Q4j2zZCDGbXI1tHWV8Ar81pASC9f92Q/9ZfNyMc/wxgc+6oWH416IdouJSxhvv
-	 vktZhk0HaeRqg==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 66A832E00D9; Thu, 09 Oct 2025 22:04:10 -0400 (EDT)
-Date: Thu, 9 Oct 2025 22:04:10 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: adilger.kernel@dilger.ca, jack@suse.cz, kernel-team@cloudflare.com,
-        libaokun1@huawei.com, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: Re: ext4 writeback performance issue in 6.12
-Message-ID: <20251010020410.GE354523@mit.edu>
-References: <20251006115615.2289526-1-matt@readmodwrite.com>
- <20251008150705.4090434-1-matt@readmodwrite.com>
- <20251008162655.GB502448@mit.edu>
- <20251009102259.529708-1-matt@readmodwrite.com>
- <20251009175254.d6djmzn3vk726pao@matt-Precision-5490>
+	s=arc-20240116; t=1760061909; c=relaxed/simple;
+	bh=4TBHId0bMm9CdTNvUN5XuLKY3sjRAw7vbQwPUrCIGvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ruU5j8IAr3FZe4PqShonQlHQ5JvDHrFc7jgv91lldj3SR8n/mio9jSH3IEsEAAFXlDsh8mP3UHx5r4A+LgAWdCarCM6fplnkn5P76kqslB9KuEWgzdEZ8idOnTc3ZK7smh7+qpOc21swCOfmS0+vw0m0O2fxo65bNuk5oHOfxpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbnS7UDX; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so22331515ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Oct 2025 19:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760061907; x=1760666707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h1rKJVS+vc6Xu/tqhvpZMEVhOAA3UUcIm1XqkGlHfjk=;
+        b=JbnS7UDXsIYTTo2e2s7gJVPY/kak4SQig1MyyhIdw90c5SAA+PmWnxuo+Ai5opKtUm
+         CKkW5stFwP8ln5958nyZy18yvzNgad3cOcsfzVOMH0kc51K7kUS2s39KHDYwmqZh2c1w
+         iIomCa1pa6PtG/qVlvXIrxqex9/0Fqxjr/rp5Ie88v+ruC+EAJdEbcDcfeXtwFmrNkil
+         8NUqVpj5mlBuDTzzY54cG2cIhIfPyHzfO+4rU+CsrhSNieJyUdZpPNYU2uUmrHXfyB/8
+         sZOIJD8qCrjIGVvpH2d9fCiuWlxzBKifG2E8gXB80/uDTuj7//9qXseOGb17k2KlyIAb
+         yfiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760061907; x=1760666707;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h1rKJVS+vc6Xu/tqhvpZMEVhOAA3UUcIm1XqkGlHfjk=;
+        b=HlpJAtTCSli8kYmAAs8kstTtih9GcCFFatY/EG/fFjWLP6yTINFEc26Zha40Rvluew
+         +NOh3ySV0PjQ/67/SDHLFqiVs5ktRji2PRaWjC1MiPhWJFNvIHdsZvMcHk+4foOih027
+         pYvIYWleEmzYGqdVoUFwxjgeXaCNAQ189Ur4tenPK6c9BSreT0GMRzREKAR7oUstLsb1
+         g561VRAMf5hFnTY+eLIL8JSRS4mokBYOTbEJneyA4tB+3t3WCLlHOB2WNLl3CR3p3TdP
+         aTym3uZsRpFahGxa5tMSHh6mb/w4F5qcory+9k1tiHXgLjAa7yuuLRUNsDsCLeCTiKxh
+         kNDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbYWtRpTzRp3ii2Qf5yf8jVPw9RWDy1o4VNN04A+fJgLNszmPk6mUSSUxleAXquN/UscnWzlbcy+aZw7C1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb5WFvl70G5wuqi6i7xKVXKGAv/MDR4pXqkyD8+WW9nmpjQQjM
+	mEUyv+tU5cNdacYcYeBWFuC/XkIrsiahYd+EnH5WDC03sowZJDVFiiB3
+X-Gm-Gg: ASbGncujgToek/FpC9lbrSz6lzwvhKfhWWelW2xmPDtLVavsWtprAWV/xeuniuv57uJ
+	Q+uMCEFl+C4xq2173s6mNnOktBxC4rHTjjMQFXy0RBHnwd+h3QTZOkYncLwW4fT1EW2sEbfUCsu
+	1NWcphbjCCKavdtEsRSCpuoT/P51fMBu/81EjqX/MbswPj5QK7no2gcxxdjGSGiPmoHaEz6ei8J
+	OX7hdIszHPx+Y7sdEKFhSGdDOEVGobSEq3D3btBU8DwkgsFc1eZo5WMeinaYuP4XdSu6qa3TI/+
+	dVkaYQCy5a5g2EtnXLooljwMAQ5w2pUW+GYCLnPjR+J2kZ/V+HJ4W5U9OJ90cAXA+yHWVVWol+f
+	y2H9Ntc2HWyItpFlYobIklbkbHZ0HdzLkd8HWj1A1ZkRGac29+GsjK2yLJlSjWCk=
+X-Google-Smtp-Source: AGHT+IFUKd5++PDzS5abSESfTQMJE2QGfoxe3f5Mp2ZuxGS2YUSKKiYyTeMogVzSyN+wUnOPRXUvpg==
+X-Received: by 2002:a17:903:1aef:b0:250:1c22:e7b with SMTP id d9443c01a7336-290272e3a78mr128609435ad.43.1760061907263;
+        Thu, 09 Oct 2025 19:05:07 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e179cesm41443735ad.34.2025.10.09.19.05.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 19:05:06 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: dave.hansen@intel.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	dave.hansen@linux.intel.com,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] iomap: move prefaulting out of hot write path
+Date: Fri, 10 Oct 2025 10:04:58 +0800
+Message-ID: <20251010020505.3230463-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <486185f6-7da7-4fdc-9206-8f1eebd341cf@intel.com>
+References: <486185f6-7da7-4fdc-9206-8f1eebd341cf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009175254.d6djmzn3vk726pao@matt-Precision-5490>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 09, 2025 at 06:52:54PM +0100, Matt Fleming wrote:
-> On Thu, Oct 09, 2025 at 11:22:59AM +0100, Matt Fleming wrote:
-> > 
-> > Thanks Ted. I'm going to try disabling the stripe parameter now. I'll report
-> > back shortly.
+> On 11/9/25 08:01, Darrick J. Wong wrote:
+> > On Thu, Oct 09, 2025 at 05:08:51PM +0800, alexjlzheng@gmail.com wrote:
+> >> From: Jinliang Zheng <alexjlzheng@tencent.com>
+> >>
+> >> Prefaulting the write source buffer incurs an extra userspace access
+> >> in the common fast path. Make iomap_write_iter() consistent with
+> >> generic_perform_write(): only touch userspace an extra time when
+> >> copy_folio_from_iter_atomic() has failed to make progress.
+> >>
+> >> This patch is inspired by commit 665575cff098 ("filemap: move
+> >> prefaulting out of hot write path").
+> > Seems fine to me, but I wonder if dhansen has any thoughts about this
+> > patch ... which exactly mirrors one he sent eight months ago?
 > 
-> Initial results look very good. No blocked tasks so far and the mb
-> allocator latency is much improved.
+> I don't _really_ care all that much. But, yeah, I would have expected
+> a little shout-out or something when someone copies the changelog and
+> code verbatim from another patch:
+> 
+> 	https://lore.kernel.org/lkml/20250129181753.3927F212@davehans-spike.ostc.intel.com/
+> 
+> and then copies a comment from a second patch I did.
 
-OK, so that definitely confirms the theory of what's going on.  There
-have been some changes in the latest kernel that *might* address what
-you're seeing.  The challenge is that we don't have a easy reproducer
-that doesn't involve using a large file system running a production
-workload.  If you can only run this on a production server, it's
-probably not fair to ask you to try running 6.17.1 and see if it shows
-up there.
+Sorry for forgetting to CC you in my previous email.
 
-I do think in the long term, we need to augment thy buddy bitmap in
-fs/ext4/mballoc.c with some data structure which tracks free space in
-units of stripe blocks, so we can do block allocation in a much more
-efficient way for RAID systems.  The simplest way would be to add a
-counter of the number of aligned free stripes in the group info
-structure, plus a bit array which indicates which aligned stripes are
-free.  This is not just to improve stripe allocation, but also when
-doing sub-stripe allocation, we preferentially try allocating out of
-stripes which are already partially in use.
+When I sent V1[1], I hadn't come across this email (which was an oversight on my part):
+- https://lore.kernel.org/lkml/20250129181753.3927F212@davehans-spike.ostc.intel.com/
 
-Out of curiosity, are you using the stride parameter because you're
-using a SSD-based RAID array, or a HDD-based RAID array?
+At that time, I was quite puzzled about why generic_perform_write() had moved prefaulting
+out of the hot write path, while iomap_write_iter() had not done the same.
 
-      		       	      	   	     	  - Ted
+It wasn't until I was preparing V2[2] that I found the email above. However, the code around
+had already undergone some changes by then, so I rebased the code in this email onto the
+upstream version. My apologies for forgetting to CC you earlier.
+
+[1] https://lore.kernel.org/linux-xfs/20250726090955.647131-2-alexjlzheng@tencent.com/
+[2] https://lore.kernel.org/linux-xfs/20250730164408.4187624-2-alexjlzheng@tencent.com/
+
+Hope you know I didn't mean any offense. Sorry about that.
+
+> 
+> But I guess I was cc'd at least. Also, if my name isn't on this one,
+> then I don't have to fix any of the bugs it causes. Right? ;)
+> 
+> Just one warning: be on the lookout for bugs in the area. The
+> prefaulting definitely does a good job of hiding bugs in other bits
+> of the code. The generic_perform_write() gunk seems to have uncovered
+> a bug or two.
+
+Indeed, the reason I sent this patch was precisely because I was unsure why the change
+for iomap_write_iter() hadn't been merged like the one for generic_perform_write() — I
+wondered if there might be some underlying issue. I hoped to seek everyone's thoughts
+through this patch. :)
+
+> 
+> Also, didn't Christoph ask you to make the comments wider the last
+> time Alex posted this? I don't think that got changed.
+> 
+> 	https://lore.kernel.org/lkml/aIt8BYa6Ti6SRh8C@infradead.org/
+> 
+> Overall, the change still seems as valid to me as it did when I wrote the
+> patch in the first place. Although it feels funny to ack my own
+> patch.
+
+If moving prefaulting out of the hot write path in iomap_write_iter() is indeed
+acceptable, would you mind taking the time to rebase the code from your patch onto
+the latest upstream version and submit a new patch? After all, you are the
+original author of the change. :)
+
+Thank you very much,
+Jinliang. :)
 
