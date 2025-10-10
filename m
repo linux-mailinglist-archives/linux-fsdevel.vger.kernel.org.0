@@ -1,60 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-63787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BC1BCDBCD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 17:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC69BCDCE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 17:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19B994FF807
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 15:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0211885398
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 15:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD622F8BC3;
-	Fri, 10 Oct 2025 15:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6312F99BD;
+	Fri, 10 Oct 2025 15:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoI9yJ5z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Za+WjAO5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91EA2F7ADB;
-	Fri, 10 Oct 2025 15:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEE02F9D91
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 15:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109057; cv=none; b=uZVzZRNQwHtkDIcjiLoXUHlb4IKOXLXUbGAM9tiXl+r9vW1p5Xk8NyofsudsB2yZ7JOVefODNa4Mo8uxoeS5boEAzeGESPaE+izKmwkKt7IB4JyntYpGFcC5nB1BI1IFgvydm+QVWufIejYrLecqq6qBidf11QefCiEOXyUATVI=
+	t=1760110260; cv=none; b=iYAz9KpqxQKHO4tZ5SrL4nr6WlUOpKyNSeP+Qk8RlWifhtHGd9Z//qKhxEJ4uBJUUBtZgaDW3iRRsPZkEw4GIyPGz4Yxnyf41XApFucHwpkqDgST34QKak8AIf8AbRok4Y/vS9MjIk6a9Q+v8pIOId5pOun2N1VgSy2XxWjnBJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109057; c=relaxed/simple;
-	bh=KEDbK+SNjMKMUuKWgcl44zDXGeQjspgRWfumF0EZ0sA=;
+	s=arc-20240116; t=1760110260; c=relaxed/simple;
+	bh=/03Pw5upvDM5utHp0VziZGnocQcEhzmDgUxgcESsugw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyPzdBENy8/0ucRrFGDmi+3bUfvMnhSkGDP9YiP/AAFD/t0oiuLghf9C0ac+P33NhLNdeW7aQrdHLl39o/dDLyvK/a06rLFvjyGf/dafVB7iO7iZ8uljwQz8YS+0QigHXC42zHNaQIH95PoOlQ6vUYKYGi/vXtIOfXO2ampV/VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoI9yJ5z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFDFC4AF09;
-	Fri, 10 Oct 2025 15:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760109057;
-	bh=KEDbK+SNjMKMUuKWgcl44zDXGeQjspgRWfumF0EZ0sA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BoI9yJ5zMg+a2aiaAbFYUF0F4MKNSOR71aG2VTrbq/uTs252lAWstPRldgFYBotjZ
-	 12mYLJLgRrVdvGHjaIHfgf/M63PVurTeeoxFLjZ03WDuH/cgjM+6pVXaj/IZ05HvSi
-	 x8NocK9GBMlVXgZQIyMBQsnL0BTQIe4tAtzndRrb4XvBPXmCT/otdNRNTFvp1GtmaH
-	 fzAoIRAj+aDkVGB1d2NhcVLJGCA03PbOi9IN6wrsTdpcYlaHL+Ml44bb8XHG3z/wtp
-	 94J9aju6FhBWvySltROLZG87ge+9PGeWQQg7KMYvTOhIT3vdZig00EuPOdAYRywgMv
-	 Rq/OjvBhwO5qQ==
-Date: Fri, 10 Oct 2025 08:10:56 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Jakub Acs <acsjakub@amazon.de>, jhubbard@nvidia.com,
-	akpm@linux-foundation.org, axelrasmussen@google.com,
-	chengming.zhou@linux.dev, david@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, peterx@redhat.com,
-	rust-for-linux@vger.kernel.org, xu.xin16@zte.com.cn
-Subject: Re: [PATCH] mm: use enum for vm_flags
-Message-ID: <20251010151056.GD6174@frogsfrogsfrogs>
-References: <20251007162136.1885546-1-aliceryhl@google.com>
- <20251008125427.68735-1-acsjakub@amazon.de>
- <aOZj4Jeif1uYXAxZ@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyP+vZqIG4rUqXXYL7JSK6txxz3FGoT3CaCnb5sfQeg5PeNxSpdXrrBILsJ+n8e1ieJgax+LPOhCLZo8a6hXpJjA6r7vOaDwbSu5PZbxGnm9dBJAp8RbwsnGcW43DAwle8UUDW+IztHpmI5Nb3z7UiGkjLXvxje5zT+DkN/3b5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Za+WjAO5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760110257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=toyaPl0BwPmMTea5F2bVNCmB2GMR7wLyTYNGYyEE7m0=;
+	b=Za+WjAO5/3I1jFKVzDGaYr0rAhrhsArTGse2ZH0CUT1LCdXQ5/dRUklpcG9WyTsC2FMO0B
+	P9mI4Lge075/+3MnJVxryzolYuVzqW/35kzs0St0FQor4UJvWUnXWeDSlktrn8OXox7SKW
+	GIAclg90Gi4728MdeE+1hqS789Ja8ZU=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-UF6QCyvgOxaW1DFCmmURzg-1; Fri, 10 Oct 2025 11:30:55 -0400
+X-MC-Unique: UF6QCyvgOxaW1DFCmmURzg-1
+X-Mimecast-MFC-AGG-ID: UF6QCyvgOxaW1DFCmmURzg_1760110255
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33428befc49so6123586a91.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 08:30:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760110254; x=1760715054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=toyaPl0BwPmMTea5F2bVNCmB2GMR7wLyTYNGYyEE7m0=;
+        b=nOHoik7euLcjs6pZLCRn1NoH7+QnXjRx/d88AO6g2358TmWndFZkoDUP+rsyz55iXh
+         Adfm01AjzqVNylDuq7C68HlMwvQDg/goEF9gg+cy9RQzvawx3igjH3gP2APPNx2q/X1J
+         o2WI/FnC8/pqfX110a14uuv062U3GDptSMfyKr5tTX7/k1b9nzbGiPWrXO079Ht9pDLT
+         096sOfSr8G5qxdWxRoFO6rBHshWdQyd5R30Sw1qGV8wxuKCjU3bwNi9gaZvJq2eLRkJZ
+         Mg+1IpQ3YV4YoIRDWa5yaOpM6wub691FFknJ8ReA6wL96/VnRtiC206TVRrisMpiUq4m
+         z1Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCX05q8PmsrIZ4cuv90+ivcmuOIcmrVYXfZOs30O1j/xHGZrI4B3go7Mi8tb5cVzhxCGPOYVKtSq+WfgHZbV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+zlh2F8oTt6x2CUpMp9Z8ag/PgtJ1BQcQQypzLNY3piuJQdWC
+	8hqag6HQlQ0SoWEGVIsfT1c1ZuOs+OSy9UJa/K00fTcdt1g85i18vZbXqHISnGmApwz1cgxUFRv
+	sIJ03grNQ/EGGcySQ0GNvtZx1ewzxHxya65pKHLATZ015kWtrTULKChm6iuRtfrJW3s7sHJENLQ
+	M=
+X-Gm-Gg: ASbGncvTrIfw9MAy2CMGNKE+DbzvgbZUmxbZnZf2LSOlpS8n0CM2D6s39uYkNSM85Gb
+	ve49/4MHhvX44iP5/7z7WUUtokLwbxi57igcm33gXL7hhTcXkUlB0b1nKxY72xfH1rVJB6F/1E6
+	RsY9zsWkgAUvspS1SoJV4WWbi6IPtM5POy7NWmbQfxAl5fJAzCURjm+43w7kZKRMaIxzqzemuga
+	PRgfckXxqnsY2QejJjecaB0IV1CTRWsYTm9S7/C1VLCXVdTGQiqXYX+awaMQqF2/6ezes9bP7Zz
+	jtZCExjUm+3yIkCYSVNg0jsVCBcjXbWNRmqUhUA3eZgvL6WKbU79VfXik4etY+0yNJVYahWOQJB
+	9H1rl
+X-Received: by 2002:a17:90b:1a8b:b0:32e:2fa7:fe6b with SMTP id 98e67ed59e1d1-33b5171dc4bmr17090585a91.14.1760110253879;
+        Fri, 10 Oct 2025 08:30:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1f0AGOsJEpmCcJ38D9CxFjhHy8Xot8TOmTMK+pphk9BVjIZONuSrczqBgiHp9KjaWoWWqJg==
+X-Received: by 2002:a17:90b:1a8b:b0:32e:2fa7:fe6b with SMTP id 98e67ed59e1d1-33b5171dc4bmr17090474a91.14.1760110253113;
+        Fri, 10 Oct 2025 08:30:53 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b52a5656dsm4025456a91.11.2025.10.10.08.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 08:30:52 -0700 (PDT)
+Date: Fri, 10 Oct 2025 23:30:47 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, fstests@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v4 1/3] file_attr: introduce program to set/get fsxattr
+Message-ID: <20251010153047.2abso45wwnkfeykz@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
+ <20251003-xattrat-syscall-v4-1-1cfe6411c05f@kernel.org>
+ <20251005103656.5qu3lmjvlcjkwjx4@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <7mytyiatnhgwplgda3cmiqq3hb7z6ulwgvwbkueb5dm2sdxwlg@ijti4d7vgrck>
+ <20251009185630.GA6178@frogsfrogsfrogs>
+ <g25qhhy73arfepcubtsvrhfc3e3e2dktoludzpfwqxvkcphkxf@4n5s4jpvxmpr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,151 +102,193 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOZj4Jeif1uYXAxZ@google.com>
+In-Reply-To: <g25qhhy73arfepcubtsvrhfc3e3e2dktoludzpfwqxvkcphkxf@4n5s4jpvxmpr>
 
-On Wed, Oct 08, 2025 at 01:15:12PM +0000, Alice Ryhl wrote:
-> On Wed, Oct 08, 2025 at 12:54:27PM +0000, Jakub Acs wrote:
-> > redefine VM_* flag constants with BIT()
+On Fri, Oct 10, 2025 at 11:30:30AM +0200, Andrey Albershteyn wrote:
+> On 2025-10-09 11:56:30, Darrick J. Wong wrote:
+> > On Mon, Oct 06, 2025 at 11:37:53AM +0200, Andrey Albershteyn wrote:
+> > > On 2025-10-05 18:36:56, Zorro Lang wrote:
+> > > > On Fri, Oct 03, 2025 at 11:32:44AM +0200, Andrey Albershteyn wrote:
+> > > > > This programs uses newly introduced file_getattr and file_setattr
+> > > > > syscalls. This program is partially a test of invalid options. This will
+> > > > > be used further in the test.
+> > > > > 
+> > > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > > > > ---
+> > > > 
+> > > > [snap]
+> > > > 
+> > > > > +	if (!path1 && optind < argc)
+> > > > > +		path1 = argv[optind++];
+> > > > > +	if (!path2 && optind < argc)
+> > > > > +		path2 = argv[optind++];
+> > > > > +
+> > > > > +	if (at_fdcwd) {
+> > > > > +		fd = AT_FDCWD;
+> > > > > +		path = path1;
+> > > > > +	} else if (!path2) {
+> > > > > +		error = stat(path1, &status);
+> > > > > +		if (error) {
+> > > > > +			fprintf(stderr,
+> > > > > +"Can not get file status of %s: %s\n", path1, strerror(errno));
+> > > > > +			return error;
+> > > > > +		}
+> > > > > +
+> > > > > +		if (SPECIAL_FILE(status.st_mode)) {
+> > > > > +			fprintf(stderr,
+> > > > > +"Can not open special file %s without parent dir: %s\n", path1, strerror(errno));
+> > > > > +			return errno;
+> > > > > +		}
+> > > > > +
+> > > > > +		fd = open(path1, O_RDONLY);
+> > > > > +		if (fd == -1) {
+> > > > > +			fprintf(stderr, "Can not open %s: %s\n", path1,
+> > > > > +					strerror(errno));
+> > > > > +			return errno;
+> > > > > +		}
+> > > > > +	} else {
+> > > > > +		fd = open(path1, O_RDONLY);
+> > > > > +		if (fd == -1) {
+> > > > > +			fprintf(stderr, "Can not open %s: %s\n", path1,
+> > > > > +					strerror(errno));
+> > > > > +			return errno;
+> > > > > +		}
+> > > > > +		path = path2;
+> > > > > +	}
+> > > > > +
+> > > > > +	if (!path)
+> > > > > +		at_flags |= AT_EMPTY_PATH;
+> > > > > +
+> > > > > +	error = file_getattr(fd, path, &fsx, fa_size,
+> > > > > +			at_flags);
+> > > > > +	if (error) {
+> > > > > +		fprintf(stderr, "Can not get fsxattr on %s: %s\n", path,
+> > > > > +				strerror(errno));
+> > > > > +		return error;
+> > > > > +	}
+> > > > 
+> > > > We should have a _require_* helper to _notrun your generic and xfs test cases,
+> > > > when system doesn't support the file_getattr/setattr feature. Or we always hit
+> > > > something test errors like below on old system:
+> > > > 
+> > > >   +Can not get fsxattr on ./fifo: Operation not supported
+> > > > 
+> > > > Maybe check if the errno is "Operation not supported", or any better idea?
+> > > 
+> > > There's build system check for file_getattr/setattr syscalls, so if
+> > > they aren't in the kernel file_attr will not compile.
+> > > 
+> > > Then there's _require_test_program "file_attr" in the tests, so
+> > > these will not run if kernel doesn't have these syscalls.
+> > > 
+> > > However, for XFS for example, there's [1] and [2] which are
+> > > necessary for these tests to pass. 
+> > > 
+> > > So, there a few v6.17 kernels which would still run these tests but
+> > > fail for XFS (and still fails as these commits are in for-next now).
+> > > 
+> > > For other filesystems generic/ will also fail on newer kernels as it
+> > > requires similar modifications as in XFS to support changing file
+> > > attributes on special files.
+> > > 
+> > > I suppose it make sense for this test to fail for other fs which
+> > > don't implement changing file attributes on special files.
+> > > Otherwise, this test could be split into generic/ (file_get/setattr
+> > > on regular files) and xfs/ (file_get/setattr on special files).
+> > > 
+> > > What do you think?
 > > 
-> > Make VM_* flag constant definitions consistent - unify all to use BIT()
-> > macro and define them within an enum.
+> > generic/772 (and xfs/648) probably each ought to be split into two
+> > pieces -- one for testing file_[gs]etattr on regular/directory files;
+> > and a second one for the special files.  All four of them ought to
+> > _notrun if the kernel doesn't support the intended target.
+> 
+> I see, yeah that's what I thought of, I will split them and send new
+> patchset soon
+
+This patchset has been merged, as the feature has been merged, so let's
+have the coverage at first. Please feel free to change the cases base on
+the newest for-next branch.
+
+> 
 > > 
-> > The bindgen tool is better able to handle BIT(_) declarations when used
-> > in an enum.
+> > Right now I have injected into both:
 > > 
-> > Also add enum definitions for tracepoints.
+> > mkfifo $projectdir/fifo
 > > 
-> > We have previously changed VM_MERGEABLE in a separate bugfix. This is a
-> > follow-up to make all the VM_* flag constant definitions consistent, as
-> > suggested by David in [1].
+> > $here/src/file_attr --get $projectdir ./fifo &>/dev/null || \
+> > 	_notrun "file_getattr not supported on $FSTYP"
+> 
+> Thanks! Looks like a good check to use
+
+Yes, use you src/file_attr program in the _require_ helper, refer to
+_require_idmapped_mounts or _require_seek_data_hole or others.
+
+Thanks,
+Zorro
+
+> 
 > > 
-> > [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
+> > to make the failures go away on 6.17.
 > > 
-> > Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Xu Xin <xu.xin16@zte.com.cn>
-> > Cc: Chengming Zhou <chengming.zhou@linux.dev>
-> > Cc: Peter Xu <peterx@redhat.com>
-> > Cc: Axel Rasmussen <axelrasmussen@google.com>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
+> > --D
 > > 
-> > Hi Alice,
+> > > [1]: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/commit/?h=for-next&id=8a221004fe5288b66503699a329a6b623be13f91
+> > > [2]: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/commit/?h=for-next&id=0239bd9fa445a21def88f7e76fe6e0414b2a4da0
+> > > 
+> > > > 
+> > > > 
+> > > > Thanks,
+> > > > Zorro
+> > > > 
+> > > > > +	if (action) {
+> > > > > +		fsx.fa_xflags |= (fa_xflags | unknwon_fa_flag);
+> > > > > +
+> > > > > +		error = file_setattr(fd, path, &fsx, fa_size,
+> > > > > +				at_flags);
+> > > > > +		if (error) {
+> > > > > +			fprintf(stderr, "Can not set fsxattr on %s: %s\n", path,
+> > > > > +					strerror(errno));
+> > > > > +			return error;
+> > > > > +		}
+> > > > > +	} else {
+> > > > > +		if (path2)
+> > > > > +			print_xflags(fsx.fa_xflags, 0, 1, path, 0, 1);
+> > > > > +		else
+> > > > > +			print_xflags(fsx.fa_xflags, 0, 1, path1, 0, 1);
+> > > > > +	}
+> > > > > +
+> > > > > +	return error;
+> > > > > +
+> > > > > +usage:
+> > > > > +	printf("Usage: %s [options]\n", argv[0]);
+> > > > > +	printf("Options:\n");
+> > > > > +	printf("\t--get, -g\t\tget filesystem inode attributes\n");
+> > > > > +	printf("\t--set, -s\t\tset filesystem inode attributes\n");
+> > > > > +	printf("\t--at-cwd, -a\t\topen file at current working directory\n");
+> > > > > +	printf("\t--no-follow, -n\t\tdon't follow symlinks\n");
+> > > > > +	printf("\t--set-nodump, -d\t\tset FS_XFLAG_NODUMP on an inode\n");
+> > > > > +	printf("\t--invalid-at, -i\t\tUse invalid AT_* flag\n");
+> > > > > +	printf("\t--too-big-arg, -b\t\tSet fsxattr size bigger than PAGE_SIZE\n");
+> > > > > +	printf("\t--too-small-arg, -m\t\tSet fsxattr size to 19 bytes\n");
+> > > > > +	printf("\t--new-fsx-flag, -x\t\tUse unknown fa_flags flag\n");
+> > > > > +
+> > > > > +	return 1;
+> > > > > +}
+> > > > > 
+> > > > > -- 
+> > > > > 2.50.1
+> > > > > 
+> > > > 
+> > > 
+> > > -- 
+> > > - Andrey
+> > > 
+> > > 
 > > 
-> > thanks for the patch, I squashed it in (should I add your signed-off-by
-> > too?) and added the TRACE_DEFINE_ENUM calls pointed out by Derrick.
 > 
-> You could add this if you go with the enum approach:
+> -- 
+> - Andrey
 > 
-> Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> 
-> > I have the following points to still address, though: 
-> > 
-> > - can the fact that we're not controlling the type of the values if
-> >   using enum be a problem? (likely the indirect control we have through
-> >   the highest value is good enough, but I'm not sure)
-> 
-> The compiler should pick the right integer type in this case.
-> 
-> > - where do TRACE_DEFINE_ENUM calls belong?
-> >   I see them placed e.g. in include/trace/misc/nfs.h for nfs or
-> >   arch/x86/kvm/mmu/mmutrace.h, but I don't see a corresponding file for
-> >   mm.h - does this warrant creating a separate file for these
-> >   definitions?
-> > 
-> > - with the need for TRACE_DEFINE_ENUM calls, do we still deem this
-> >   to be a good trade-off? - isn't fixing all of these in
-> >   rust/bindings/bindings_helper.h better?
-> > 
-> > @Derrick, can you point me to how to test for the issue you pointed out?
-> 
-> I'm not familiar with the TRACE_DEFINE_ENUM unfortunately.
 
-rostedt already filled in the technical details, so I can supply an
-example from code in XFS:
-
-$ git grep -E '(XFS_REFC_DOMAIN_COW|XFS_REFC_DOMAIN_STRINGS)' fs/xfs/
-fs/xfs/libxfs/xfs_refcount.c:118:               irec->rc_domain = XFS_REFC_DOMAIN_COW;
-<snip>
-fs/xfs/libxfs/xfs_types.h:164:  XFS_REFC_DOMAIN_COW,
-fs/xfs/libxfs/xfs_types.h:167:#define XFS_REFC_DOMAIN_STRINGS \
-fs/xfs/libxfs/xfs_types.h:169:  { XFS_REFC_DOMAIN_COW,          "cow" }
-<snip>
-fs/xfs/xfs_trace.h:1117:TRACE_DEFINE_ENUM(XFS_REFC_DOMAIN_COW);
-fs/xfs/xfs_trace.h:3635:                  __print_symbolic(__entry->domain, XFS_REFC_DOMAIN_STRINGS),
-
-XFS_REFC_DOMAIN_COW is part of an enumeration:
-
-enum xfs_refc_domain {
-	XFS_REFC_DOMAIN_SHARED = 0,
-	XFS_REFC_DOMAIN_COW,
-};
-
-Which then has a string decoder macro defined for use in
-__print_symbolic:
-
-#define XFS_REFC_DOMAIN_STRINGS \
-	{ XFS_REFC_DOMAIN_SHARED,	"shared" }, \
-	{ XFS_REFC_DOMAIN_COW,		"cow" }
-
-Note the TRACE_DEFINE_ENUM usage in the grep output.
-
-Let's look at one of the tracepoints that uses XFS_REFC_DOMAIN_STRINGS.
-The class is xfs_refcount_extent_class, so a relevant tracepoint is
-xfs_refcount_get:
-
-# cat /sys/kernel/tracing/events/xfs/xfs_refcount_get/format
-name: xfs_refcount_get
-ID: 1839
-format:
-        field:unsigned short common_type;       offset:0;       size:2; signed:0;
-        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-        field:int common_pid;   offset:4;       size:4; signed:1;
-
-        field:dev_t dev;        offset:8;       size:4; signed:0;
-        field:enum xfs_group_type type; offset:12;      size:1; signed:0;
-        field:xfs_agnumber_t agno;      offset:16;      size:4; signed:0;
-        field:enum xfs_refc_domain domain;      offset:20;      size:4; signed:0;
-        field:xfs_agblock_t startblock; offset:24;      size:4; signed:0;
-        field:xfs_extlen_t blockcount;  offset:28;      size:4; signed:0;
-        field:xfs_nlink_t refcount;     offset:32;      size:4; signed:0;
-
-print fmt: "dev %d:%d %sno 0x%x dom %s gbno 0x%x fsbcount 0x%x refcount %u", ((unsigned int) ((REC->dev) >> 20)), ((unsigned int) ((REC->dev) & ((1U << 20) - 1))), __print_symbolic(REC->type, { 0, "ag" }, { 1, "rtg" }), REC->agno, __print_symbolic(REC->domain, { 0, "shared" }, { 1, "cow" }), REC->startblock, REC->blockcount, REC->refcount
-
-Notice that the XFS_REFC_DOMAIN_* enumeration values have been
-converted into their raw numeric form inside the __print_symbolic
-construction so that they're ready for trace-cmd-report.
-
-It's really helpful to have ftrace render bitfield and enumeration
-"integers" into something human-readable, especially in filesystems
-where there are a lot of those.
-
---D
-
-> > +#ifndef CONFIG_MMU
-> > +TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
-> > +#endif /* CONFIG_MMU */
-> 
-> Here I think you want:
-> 
-> #ifdef CONFIG_MMU
-> TRACE_DEFINE_ENUM(VM_UFFD_MISSING);
-> #else
-> TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
-> #endif /* CONFIG_MMU */
-> 
-> > +TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
-> 
-> Here I think you want:
-> 
-> #ifdef CONFIG_MEM_SOFT_DIRTY
-> TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
-> #endif
-> 
-> Alice
-> 
 
