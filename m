@@ -1,173 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-63751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8734EBCCC61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 13:28:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95336BCCC73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 13:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 940854F7739
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 11:28:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C098B4FC516
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 11:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130AC286891;
-	Fri, 10 Oct 2025 11:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9E02EE5F5;
+	Fri, 10 Oct 2025 11:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DSKhhRY5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9WPTwy6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241DE1FA178
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 11:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422A81FA178;
+	Fri, 10 Oct 2025 11:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760095689; cv=none; b=ovJ8OvsJu2n5EGfrEPb9f8DcHl2TcHsAOrD81FiECGR2zREFfEUnlAvE2v5hRzvrKUoGKZLF1CTsW3329f9Q+zgaEp47mljTgKenshZWlnDn6GeZ27c0dqrn8yFBnIFmKAGZMyhsMQVZhyq7rNoo+c+jwlCP4EyLgsPKtiBr7lk=
+	t=1760095772; cv=none; b=tC1/3FIX3vE4UwTHg3nmxb0f0BdmX10yCurWcZXGULTODDIY7PkYhd31LraniDMsnlrDqi72cJ10XrwFmPKvaA48lkOVRGWtNVGNGP0ZEg0j/+2NE7xBMHjIfTTbPYM2cWUK40N+evNHxwqQqaEQACawTmvFp+MrWpc++aDlCGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760095689; c=relaxed/simple;
-	bh=ViTQiNmPUQBOueOGB/HBimEbEB4WPPhPlz7ms/N44JE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r08w18Q0ZLadOaZ5Jj/OMzbqwTmE63ESyKlS4EUVhrxbEKR9o442b6rrDO0Qk3rdRfUptyuVAR5/vcyXldnrGsVBfQRs3owaHwaOWbqcTr5atAt3SpMpr247ldK+RaGFHOfadOzrctcv9G9eXg1yIG03xErXwJaKljj3uzDWqkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DSKhhRY5; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2897522a1dfso19143135ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 04:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760095685; x=1760700485; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XoBMX2Aubvb8wO+lMjvIKgOPI34JtmNvU/ihlZvT4+A=;
-        b=DSKhhRY5jR2sbexe0tMl1bUkT5aAruLLPJV0lDFKSXyg43Veh2Tv2LkwMMx65fUfYx
-         leXZ+hzwzHH9ImYAq8b+kwqM3jTDimTuu09Y1qUTgDx5SXBqNidk27VuhqpfVwNhl5a6
-         mRgijWant8heIliAFHaBJIAbIESexItzQ8SjJOaeQuUR3Vx7s5RWtF+FliiJ2aQVIYo9
-         9PN1i6KLhq44lBHDucWvSE5I2qsky/3nJXHPwqeoUwsw0IZNQO5/nIeTm40mKbkXQW9H
-         KwD40n/dJLyPHBkr6LnAQvo5eLi71AARfGzVkzL/00GuVOlxvztzlwweE8NldfJG8h2n
-         c/kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760095685; x=1760700485;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XoBMX2Aubvb8wO+lMjvIKgOPI34JtmNvU/ihlZvT4+A=;
-        b=gcQjECS5mb1+274xk65hjEn+PvuAQy+cUqC/ODhrjr/pZ+hlQXCSze03P890mcpww9
-         uWKuDiO3GyzP/+iXDHLzqfoRUgG4+qe+BDGm9QAog9FkW92o2ZdLzGCr0C1VON1Tz/9M
-         qHmT1qT+4WflHZEpHxAStChCAjU08CyQaFw5c3WgVEUDKFQiPykdLSBHZdV5E6Bo19Pn
-         FnuWDIeHAB3/PQbeAJ97LJqaGRdtYoQ3jEKiYKLVZWxg5XqRytdK6f45MpVyzA/ZCCOV
-         LF6qdncXT+Q/WZ+V8ThrEeK0z/IGfCE+RMy+vLoxN9CRgyWyowJBvhvieyAK+mEqcFCS
-         o8fA==
-X-Gm-Message-State: AOJu0YxgvZ4Vj5mr76lqNwbizzcTUDmLxRQvGZ9MGbA6h0B4YX8pWwpU
-	AG3+cOqf7Xwovw7Mdi8OO2eK9xSWTtvwGmYBSIeA65/DyutmFloYEW3L3j16T0143pU=
-X-Gm-Gg: ASbGncusXH1hQaRn7SP5FEckcvxqA1UKcWD5CXgGnCfzQNOpXWcZIdG22rdQ+glLTuH
-	X5G3qnKrMxY/xZkJR5A50LMXN7Yfla2j3ZU0LjzmpQSS77AEMZgniYm9ejCoePcLS4mtl9U2T7J
-	uz/yrvMkJmwKLGYfOvaPiuu4P4BdqaEx0InRuoPuY6Es0SV6Dg6svuNHKabBmeA/e6BHhELygoa
-	rYFQCZRleU0Y/M+IWdkx1IubpUy6YlN9TYQa5IGXwj9cnus5DZIvErlvHoYCIG5hZTzMvouCKJf
-	Y2XTMTULWpVPiw4NXJfOQauvhz/NL6rFqaYE2VTy6igJ+4O7s0zrkQrBAxbaNpfI4yFD+KJZ62d
-	3V5kHDPR8ESCJhRaY4/QvA7N9VyUPU4AQeou37Zpws4mZipwjY9/KFb2z21OJmzRqju05xZA1SV
-	b0g+Qbd6PhxSb5gQcC
-X-Google-Smtp-Source: AGHT+IGN+YWFM7JBQHZzprqLqKzWiSalbcIV4d5jWwNOE+pO4SLQc5W9LSDGLUPVTbVD4Rs4vEN0YA==
-X-Received: by 2002:a17:903:1a86:b0:290:2a14:2eef with SMTP id d9443c01a7336-2902a143dbbmr124687075ad.0.1760095685211;
-        Fri, 10 Oct 2025 04:28:05 -0700 (PDT)
-Received: from [10.88.210.107] ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08eb7sm54147855ad.82.2025.10.10.04.28.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 04:28:04 -0700 (PDT)
-Message-ID: <66611854-79ec-4610-956d-01de752cf8e1@bytedance.com>
-Date: Fri, 10 Oct 2025 19:28:01 +0800
+	s=arc-20240116; t=1760095772; c=relaxed/simple;
+	bh=9iUazEeH838HwxGqjDtvMsozzJM3gRqcf39FT96xPtw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kyAn+tW/sWqYgD/ODCtJAcFlZV7H8Yf9OHzJDO33PxmTn1EFkrUooNUnepVfjcKPkR7ttBDMty6pQZjon0WwgjrY1EZwxfikyfJLjAVF3p7nLLVYqzxApOj2EExUAg8IrsDFGs2wfVG5UVpvQz7neK1U7mWVn6kIpTGVq61530M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9WPTwy6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5952C4CEF1;
+	Fri, 10 Oct 2025 11:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760095771;
+	bh=9iUazEeH838HwxGqjDtvMsozzJM3gRqcf39FT96xPtw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=B9WPTwy67jViEmKdEuSwSQCzfx+l8BsEyCm7MScArrgwoeeocq2SMofxYVHaijgoq
+	 2dVV9+FwJPTKXIJBMWchgq2D082vw010EwqMIT8pbWOHm1G62iHfNNrXr12Kn5yJsB
+	 oNHqYIi4sN3cGH8/qp+UBTKD37Jww6Vcj5Q94c8HmCNk93H+UanI6sPcmcfLJ0/5P9
+	 Yoq3yO2LUglqvbLVeAyhekz55hW1t3pKTf5obc2cCp7BHIPrCdQoiZ2RZpw60VtKcJ
+	 Pq8fqO6GYchCSUliwcOMKjfeV+8WRpzBTYobYK1VENq4oHk+MF8LqGhVxQXtbxl8JS
+	 vHxpQA98y9ByA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com,
+	kernel-team@fb.com,
+	amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 00/14] hide ->i_state behind accessors
+Date: Fri, 10 Oct 2025 13:29:24 +0200
+Message-ID: <20251010-kneifen-klarheit-0c92d1d8ab01@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251009075929.1203950-1-mjguzik@gmail.com>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v3 1/2] writeback: Wake up waiting tasks when
- finishing the writeback of a chunk.
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
- Jan Kara <jack@suse.cz>
-References: <20250930065637.1876707-1-sunjunchao@bytedance.com>
- <20251006-zenit-ozonwerte-32bf073c7a02@brauner>
- <CAHSKhte2naFFF+xDFQt=jQ+S-HaNQ_s7wBkxjaO+QwKmnmqVgg@mail.gmail.com>
- <CAHSKhtckJwprCQapkg-AKaz-X_gjX7n_5+LzE8G7iZ0VzHCU3Q@mail.gmail.com>
- <20251010-kreide-salzkartoffel-b2c718b7f708@brauner>
-From: Julian Sun <sunjunchao@bytedance.com>
-In-Reply-To: <20251010-kreide-salzkartoffel-b2c718b7f708@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2704; i=brauner@kernel.org; h=from:subject:message-id; bh=9iUazEeH838HwxGqjDtvMsozzJM3gRqcf39FT96xPtw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS8eCcadDug1EQ+6nI1x5PVTeI7ViasmFXF3cPVs+vf9 pdTJ6yv7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIwiyG/4FPor5zMhjKqtbZ ZUi9+3c/jmlt3NK9/Hvz30S/FzRW7mFkeHH6xhPG3+8v7ZPbdOD6kd+3v/2K0W6Nk/5h3flMMHY PCycA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On 10/10/25 7:10 PM, Christian Brauner wrote:
-> On Tue, Oct 07, 2025 at 10:37:39PM +0800, Julian Sun wrote:
->> Kindly ping..
+On Thu, 09 Oct 2025 09:59:14 +0200, Mateusz Guzik wrote:
+> Commit message from the patch adding helpers quoted verbatim with rationable + API:
 > 
-> Please check vfs-6.19.writeback again.
+> [quote]
+> Open-coded accesses prevent asserting they are done correctly. One
+> obvious aspect is locking, but significantly more can checked. For
+> example it can be detected when the code is clearing flags which are
+> already missing, or is setting flags when it is illegal (e.g., I_FREEING
+> when ->i_count > 0).
+> 
+> [...]
 
-Looks good to me now.>
-> Your patch numbering is broken btw. This should've been v4 with both
-> patches resent. This confuses the tooling and reviewers. ;)
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-Ah, yeah.. Sorry for the confusion, and thanks for your time.>
->>
->> On Mon, Oct 6, 2025 at 10:29 PM Julian Sun <sunjunchao@bytedance.com> wrote:
->>>
->>> Hi Christian,
->>>
->>> It looks like an earlier version of my patch was merged, which may
->>> cause a null pointer dereference issue. The latest and correct version
->>> can be found here:
->>> https://lore.kernel.org/linux-fsdevel/20250930085315.2039852-1-sunjunchao@bytedance.com/.
->>>
->>> Sorry for the confusion, and thank you for your time and help!
->>>
->>> Best,
->>>
->>>
->>> On Mon, Oct 6, 2025 at 6:44 PM Christian Brauner <brauner@kernel.org> wrote:
->>>>
->>>> On Tue, 30 Sep 2025 14:56:36 +0800, Julian Sun wrote:
->>>>> Writing back a large number of pages can take a lots of time.
->>>>> This issue is exacerbated when the underlying device is slow or
->>>>> subject to block layer rate limiting, which in turn triggers
->>>>> unexpected hung task warnings.
->>>>>
->>>>> We can trigger a wake-up once a chunk has been written back and the
->>>>> waiting time for writeback exceeds half of
->>>>> sysctl_hung_task_timeout_secs.
->>>>> This action allows the hung task detector to be aware of the writeback
->>>>> progress, thereby eliminating these unexpected hung task warnings.
->>>>>
->>>>> [...]
->>>>
->>>> Applied to the vfs-6.19.writeback branch of the vfs/vfs.git tree.
->>>> Patches in the vfs-6.19.writeback branch should appear in linux-next soon.
->>>>
->>>> Please report any outstanding bugs that were missed during review in a
->>>> new review to the original patch series allowing us to drop it.
->>>>
->>>> It's encouraged to provide Acked-bys and Reviewed-bys even though the
->>>> patch has now been applied. If possible patch trailers will be updated.
->>>>
->>>> Note that commit hashes shown below are subject to change due to rebase,
->>>> trailer updates or similar. If in doubt, please check the listed branch.
->>>>
->>>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
->>>> branch: vfs-6.19.writeback
->>>>
->>>> [1/2] writeback: Wake up waiting tasks when finishing the writeback of a chunk.
->>>>        https://git.kernel.org/vfs/vfs/c/334b83b3ed81
->>>
->>>
->>>
->>> --
->>> Julian Sun <sunjunchao@bytedance.com>
->>
->>
->>
->> -- 
->> Julian Sun <sunjunchao@bytedance.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Best,
--- 
-Julian Sun <sunjunchao@bytedance.com>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
+
+[01/14] fs: move wait_on_inode() from writeback.h to fs.h
+        https://git.kernel.org/vfs/vfs/c/6605bf7d9536
+[02/14] fs: spell out fenced ->i_state accesses with explicit smp_wmb/smp_rmb
+        https://git.kernel.org/vfs/vfs/c/1fdd36da49d5
+[03/14] fs: provide accessors for ->i_state
+        https://git.kernel.org/vfs/vfs/c/1f4e908f28da
+[04/14] Coccinelle-based conversion to use ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/91d75e00d68f
+[05/14] Manual conversion to use ->i_state accessors of all places not covered by coccinelle
+        https://git.kernel.org/vfs/vfs/c/5b953be62d20
+[06/14] btrfs: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/b77405952757
+[07/14] ceph: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/9e121446182b
+[08/14] smb: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/6f44aedc8692
+[09/14] f2fs: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/60d14a5b26e3
+[10/14] gfs2: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/8b5a2dbef579
+[11/14] overlayfs: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/46ee05af3842
+[12/14] nilfs2: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/ff6d2b3d3473
+[13/14] xfs: use the new ->i_state accessors
+        https://git.kernel.org/vfs/vfs/c/fdbb1cb57675
+[14/14] fs: make plain ->i_state access fail to compile
+        https://git.kernel.org/vfs/vfs/c/708bcf48adda
 
