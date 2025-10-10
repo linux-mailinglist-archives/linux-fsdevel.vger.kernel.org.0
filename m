@@ -1,205 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-63731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D23BCC692
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 11:43:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C137CBCC768
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 12:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46BD4407861
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 09:43:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A29874E050B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 10:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9842C327E;
-	Fri, 10 Oct 2025 09:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836F22ED871;
+	Fri, 10 Oct 2025 10:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2MNdXQh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UVwQB8Jm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2D22C325C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 09:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65728274B5D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 10:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760089400; cv=none; b=Ox9NTBCu3QsfZWB5Ejp9YmJUPOvs0+psaDtaMO8AL3I4NNbxl4yYJ6N9rwFuq9JpdVTiPxHpcwXzU/o30IMaAAUPCfOiaqvTG9+c3J80BSbdTTQgdQ69jbGVqIq7xr8F/1IqH9MleGk2OqMf4Hlp1OnegaxqjFx8wSr7/AG4PQ0=
+	t=1760090710; cv=none; b=q4FZnL0NMs19cP03YW78IWrNySDkqGfs/oXwAf+JkrhGjMoh6bxQwMsMlqjrfEh+5ndxDcS9pkM68yU8IK28zecCkNyhfgvpLcNZMXkuQixlqClJmIH4pvTbx2ZaRGLRiMqYFY3RMLYYeVv8FlcUZbmnxb84tz7vkFl7buPO9qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760089400; c=relaxed/simple;
-	bh=tfJwv3nqlpDtjcN28xzwLtu0Ad/Qk3DuNUw19bGFdw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o77E2FSISjTc6s136uQtGqZHDPKQpIa7/eblwSmGXhwmEp10JEZ0onnzo/qrlnTZRY3oOmFxW9OSvc5fgUE7cNQATum+RCxHrlFuL6yrwPADxwt+dXCFoVgT2P73NTOleNpnImbNtQCt2kUGTwBaBIDfEHJ1XIiAVxBpJxshweY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2MNdXQh; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so11836725e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 02:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760089394; x=1760694194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kmHzldTWpRVGaYiRV7mqVTmbw8wTd7DjVDHFKbOWCEM=;
-        b=H2MNdXQhBP6UZRIf427UJPOaBPKLw53ezfUFHqraxZPLItmNzxyiaxGWwwZw5KnSVm
-         +coy6QRPj4Ko0vYtaep45sJwuLKzSNfQ8Y7YCUJrEKs40bAzoMrJyBPxlngY0CUhZ2nz
-         MJzzl6pASGIC1HeeEoVEuSZIv11I9yr4Xh6mLzABxM9BoAd7pHlvuaBSm4nxtXKd65x2
-         6Jlmoylazu/vg7ORaRSBTN2JFXA4Gaq+37SnXVMXDrh+yhe/5G/CkVovRVDxmPHYaNOc
-         c2eGNEvTd6/zFDTK1NRsZDPCv590fYmLNC4Jm0tz+g2ZBLExX6OzvFoBW2NiPYvZCllE
-         RaUA==
+	s=arc-20240116; t=1760090710; c=relaxed/simple;
+	bh=yxjUvtTYbJzNPd6jcvWn4XkfkMtZPuAQxmu/eENPV1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMhVF48ZHBv8Z2vD6inCfuexJNKw0kuQYqyx/0d2hRiGDa/pBBEwliYZiV49lxhJhwP7UQmGwejj7tMzVWHDYMlrDG7+wpOk2M2elaDEPR4X7BhwwLa/f3Ju8o9w7qQsvQT6Ji97qTWTsovUBgaWCABqOQi0UqYVrN8aC07bAtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UVwQB8Jm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760090708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1tnuXFIEOnkdTLEedmD2VLZtLJP/FDB86U+RErd2EzU=;
+	b=UVwQB8JmsifIDwDTwbpf/vN59yRqHQrCXnyMqTkNpkJew7aytDyk1KkKjqIwsUO/ZFmx43
+	MWYZdytSW/zzmcJutHoVfYbkJaz65a0ZaCYAJ58g/kKrcSfRr4LNq87ekUdQMu3tIWI1B0
+	Mo/pQUi6zODDB+suHnf4s80PDab+Q8g=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-649-nZMZRSddPHyTMZk_HH_Myg-1; Fri, 10 Oct 2025 06:05:07 -0400
+X-MC-Unique: nZMZRSddPHyTMZk_HH_Myg-1
+X-Mimecast-MFC-AGG-ID: nZMZRSddPHyTMZk_HH_Myg_1760090706
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ee888281c3so2235698f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 03:05:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760089394; x=1760694194;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kmHzldTWpRVGaYiRV7mqVTmbw8wTd7DjVDHFKbOWCEM=;
-        b=h40f72momBISjHhyNEWE58mTeqML6ND2jsXTp8r/NkY6rUKqXdSzCzrv1UxXAbOBao
-         rEM8T47ky6oAa/p3hx+LBGL6VBwE+nZ7N7ojlcfHtV1cGzJfdKv3uOox2N6mjsvw6Jsf
-         0E059HlaJDHUDlubCTh37NotJM4KbmyZWFVXPu6N3XXKwtzxnWabMntqmH21u7dwAuJ4
-         NK5U99mAcgkLYe86O+wDuHjFqnqcy2l5wmmzPh965wZwvhguyuEjC5Dsd3P01V5HAZDo
-         e71maGQS9GgbsWAQtAsYqU/AO1BnKE6NkM/RWO+LE45brmKXPg8R5e4JkSF8Qu2XWJwE
-         NoBw==
-X-Gm-Message-State: AOJu0YySfXc58MrlOHsW2kXcsJIPlBQdA7/oh3/SaKZpMw4jtMR8RLDm
-	3SJKk6EdC885GM2SSkYz059QzA++NbuS5mq1s+mzDB7Em2Mx0GUI6qoYOEL9ILl+
-X-Gm-Gg: ASbGncteKPddvrNs3MiKZ+ypVNS8Nu7nDl1YYye1i0+h+HmlX/J/qYg5wtSl2XhfHdo
-	UhH4WpPUNBI6Y+WdmmhR3YOxHo+JyO24Y6aeHShX9BVSsciwEGXTABCVPWbtEwdVo3fVPlSBirU
-	sig+KuGbGMct5Mx4H6Gf/qTZ8oY2oc7Y5zXU5FDLpu8ybyEO74Eqyysjms3OQZ1KcqYepaum/Nt
-	yBllwOQuOtY2drjeo4qOrCC0vYAb8yrJUJJ13aekBraWy0gL1pcwDTUyzXNA7R9EtTTGaSQ/qRH
-	yV+k/oNix9LLdgJgUBehyzh77EJtNPicWSYTHX28YERdHkJCw4SOl+swV8PcfGtvtq5H4QSwGBW
-	9gm0qvnbU4zYtoQYcZ1B/qMcTX6oeTTESRNgfJucgxumn+VK+
-X-Google-Smtp-Source: AGHT+IF9s+/76+HLGw2mLZk76tGq6/V4j0p5f2hCMj0ootyyX2pqmy4ieClzRxxY9elYI46O7lbdMg==
-X-Received: by 2002:a05:6000:2dc8:b0:425:6866:6a9e with SMTP id ffacd0b85a97d-4265ef6e5c2mr4984366f8f.0.1760089393527;
-        Fri, 10 Oct 2025 02:43:13 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce5e8309sm3283123f8f.50.2025.10.10.02.43.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 02:43:13 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Art Nikpal <email2tema@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>,
-	Rob Landley <rob@landley.net>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	linux-arch@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	initramfs@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dave Young <dyoung@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Nicolas Schichan <nschichan@freebox.fr>,
-	David Disseldorp <ddiss@suse.de>,
-	patches@lists.linux.dev
-Subject: [PATCH v2 3/3] init: remove /proc/sys/kernel/real-root-dev
-Date: Fri, 10 Oct 2025 09:40:47 +0000
-Message-ID: <20251010094047.3111495-4-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251010094047.3111495-1-safinaskar@gmail.com>
-References: <20251010094047.3111495-1-safinaskar@gmail.com>
+        d=1e100.net; s=20230601; t=1760090706; x=1760695506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1tnuXFIEOnkdTLEedmD2VLZtLJP/FDB86U+RErd2EzU=;
+        b=Hz6G68L1LbGSfF7xqRqsNtC+B8A03IdosrAN+L/7er7W42K6m2C0/BVEPw8cjV0qQU
+         XEm0JJYm+8n28TTNwm9vaHvyETp7msvNfIOIz/GUZQbgd6Kaib+X5bc5KTJx782vygaM
+         mqzcUIuxp9Z73N4vCQqH0UP26m+FcRtATFRH6WP7id8fhdKR78zWkxtN7kwTSQ7fPdLx
+         KSJB8h7EwB7Xb+GpB/ZPo2BEXZV4jTPgCC8yaRVlovs83Ic9zMu/O9prFK9oqTCSiZhf
+         swEYFzsUhhcuIywJ+w+Jm/auq4t9NeSfOTQW3Irc4Bk1q110OdqccS4EacFTQJqndzMh
+         ZyOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWR3EiP+ffRznx6zpyUth9K8kBWFnbgXylbCGK8Gdzv3QSHIByEq3Aenjr/X+WjfSyZGGmwtBgEN2pM9lD+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSY1xJmxI/1P3w4xwsFwFu//BPmCvvfk+PG/2Yx+vSaDpjMgCD
+	FrpWqi6EInOH4AeT+AxW2fQ9sPZ4h3TcKEasVz0VfpDBMDFdRO6zOedSSFxFBNrZ0nP3m0rffPC
+	5ZMl534Eu1iKGdcQpGGMEOcgG/pYp4I5GXQczpZqLBFDwnw//v4C106f8gnglYqNJSA==
+X-Gm-Gg: ASbGncvBcoxkwDVPPqxo32A/rAocw8Xdc3k3za9+qlWa/iFgyQDfOJUq5dhkkXlipAu
+	OGTTySEtVQaMWzEOOY5A38F/r9ybU5JnnGwekxogDzWrTmPwV8fykjBrXqIhUzs0cbe2ogKUUlH
+	XoyMwORVsj+mbDoWkHUwty15404LBG3bQyYnJb2L0mDfKNXi0cqvDaY3p2JXJnw/m6AR8vKfnHG
+	GByYZTOGcBtEP/Rl+Mm9eeFzOklfz37s5VJu1PInl0BPIqQduenRMHC1ch1fyfqm/ldbk3ljDYo
+	ZIiGuV3m3spuz2mOd6LgtDKrWvgTyrnP5zFo7tOu1WfnP7bOPhhZNVMKajUe
+X-Received: by 2002:a5d:5f82:0:b0:405:9e2a:8535 with SMTP id ffacd0b85a97d-4266e7c0240mr7991702f8f.27.1760090705832;
+        Fri, 10 Oct 2025 03:05:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3MG+EMhV6WcoQA4r+co7LNvaX9gw5/qrhvPUQ1CI9icTl+BzkJJl0HQutbbiXtsdES2s0pA==
+X-Received: by 2002:a5d:5f82:0:b0:405:9e2a:8535 with SMTP id ffacd0b85a97d-4266e7c0240mr7991667f8f.27.1760090705321;
+        Fri, 10 Oct 2025 03:05:05 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm3470012f8f.22.2025.10.10.03.05.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 03:05:04 -0700 (PDT)
+Date: Fri, 10 Oct 2025 12:05:04 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Jiri Slaby <jirislaby@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr
+ syscalls
+Message-ID: <q6phvrrl2fumjwwd66d5glauch76uca4rr5pkvl2dwaxzx62bm@sjcixwa7r6r5>
+References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
+ <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
+ <20251009172041.GA6174@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009172041.GA6174@frogsfrogsfrogs>
 
-It is not used anymore
+On 2025-10-09 10:20:41, Darrick J. Wong wrote:
+> On Wed, Oct 08, 2025 at 02:44:18PM +0200, Andrey Albershteyn wrote:
+> > These syscalls call to vfs_fileattr_get/set functions which return
+> > ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
+> > inode. For syscalls EOPNOTSUPP would be more appropriate return error.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> > ---
+> >  fs/file_attr.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/fs/file_attr.c b/fs/file_attr.c
+> > index 460b2dd21a85..5e3e2aba97b5 100644
+> > --- a/fs/file_attr.c
+> > +++ b/fs/file_attr.c
+> > @@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+> >  	}
+> >  
+> >  	error = vfs_fileattr_get(filepath.dentry, &fa);
+> > +	if (error == -ENOIOCTLCMD)
+> 
+> Hrm.  Back in 6.17, XFS would return ENOTTY if you called ->fileattr_get
+> on a special file:
+> 
+> int
+> xfs_fileattr_get(
+> 	struct dentry		*dentry,
+> 	struct file_kattr	*fa)
+> {
+> 	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
+> 
+> 	if (d_is_special(dentry))
+> 		return -ENOTTY;
+> 	...
+> }
+> 
+> Given that there are other fileattr_[gs]et implementations out there
+> that might return ENOTTY (e.g. fuse servers and other externally
+> maintained filesystems), I think both syscall functions need to check
+> for that as well:
+> 
+> 	if (error == -ENOIOCTLCMD || error == -ENOTTY)
+> 		return -EOPNOTSUPP;
 
-Signed-off-by: Askar Safin <safinaskar@gmail.com>
----
- Documentation/admin-guide/sysctl/kernel.rst |  6 ------
- include/uapi/linux/sysctl.h                 |  1 -
- init/do_mounts_initrd.c                     | 20 --------------------
- 3 files changed, 27 deletions(-)
+Make sense (looks like ubifs, jfs and gfs2 also return ENOTTY for
+special files), I haven't found ENOTTY being used for anything else
+there
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 8b49eab937d0..cc958c228bc2 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1215,12 +1215,6 @@ that support this feature.
- ==  ===========================================================================
- 
- 
--real-root-dev
--=============
--
--See Documentation/admin-guide/initrd.rst.
--
--
- reboot-cmd (SPARC only)
- =======================
- 
-diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-index 63d1464cb71c..1c7fe0f4dca4 100644
---- a/include/uapi/linux/sysctl.h
-+++ b/include/uapi/linux/sysctl.h
-@@ -92,7 +92,6 @@ enum
- 	KERN_DOMAINNAME=8,	/* string: domainname */
- 
- 	KERN_PANIC=15,		/* int: panic timeout */
--	KERN_REALROOTDEV=16,	/* real root device to mount after initrd */
- 
- 	KERN_SPARC_REBOOT=21,	/* reboot command on Sparc */
- 	KERN_CTLALTDEL=22,	/* int: allow ctl-alt-del to reboot */
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index d4f5f4c60a22..fb0c9d3b722f 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -8,31 +8,11 @@
- 
- unsigned long initrd_start, initrd_end;
- int initrd_below_start_ok;
--static unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
- static int __initdata mount_initrd = 1;
- 
- phys_addr_t phys_initrd_start __initdata;
- unsigned long phys_initrd_size __initdata;
- 
--#ifdef CONFIG_SYSCTL
--static const struct ctl_table kern_do_mounts_initrd_table[] = {
--	{
--		.procname       = "real-root-dev",
--		.data           = &real_root_dev,
--		.maxlen         = sizeof(int),
--		.mode           = 0644,
--		.proc_handler   = proc_dointvec,
--	},
--};
--
--static __init int kernel_do_mounts_initrd_sysctls_init(void)
--{
--	register_sysctl_init("kernel", kern_do_mounts_initrd_table);
--	return 0;
--}
--late_initcall(kernel_do_mounts_initrd_sysctls_init);
--#endif /* CONFIG_SYSCTL */
--
- static int __init no_initrd(char *str)
- {
- 	pr_warn("noinitrd option is deprecated and will be removed soon\n");
 -- 
-2.47.3
+- Andrey
 
 
