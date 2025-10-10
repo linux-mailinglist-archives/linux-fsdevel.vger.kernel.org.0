@@ -1,186 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-63779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABF8BCD9F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:54:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAB8BCDA5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 66EC1355D72
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:54:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BB35534FEED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899CA2F7465;
-	Fri, 10 Oct 2025 14:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261652F746E;
+	Fri, 10 Oct 2025 14:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VTnmIb1T"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bFoqyy02"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302862F619B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103592F619D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108050; cv=none; b=h6hzG4GPnTKZYCIWC6PcrzCDaG3gnNmvKl6nSelkeIoi5IVWYMgcv2YZnSuUnoGfxRwCqqqjq9CfJK7cTvwEtQgZOqcHvpSL3ysAlY+rhupmzpTM6f76rpwAqEqIGeu8ioPn8/Z6ACZOzM9IWAEHQ9IWz7vGopBv+GKJbHZWkYY=
+	t=1760108320; cv=none; b=UOaKFJByFQKoIAzlvKJjIwmVSHfLO7XJodObVRhTBqaiP2aPIgKvbHM+JWijwcp81NWKnYjPwMZWuI3G78cW4RHb6+xmtHpNzuZZ0YdeHP/C+e1lwvCzLbOrHmtpTvVnEDGeTjkTpY5JZeoLaBDNDTUuEdYPpe/PheqEy0/yAbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108050; c=relaxed/simple;
-	bh=DC7x9YWROCenDmlSc1FcZsUca68HCfG/mUx/W7rmzrA=;
+	s=arc-20240116; t=1760108320; c=relaxed/simple;
+	bh=O/f5MiBij3IECEF2d6NbqhVZBoXbyknaX3YNy+v2jBg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YJzneht6QmM64NyUyiaqrnrD7rvp7HLZ/xlaTbx2+MxGzfjPK7aFxRdrY568F4kWfhoMlyTdI8JAA1IvfOTHtEcA7pdH6hIWv7orRcnseYg2xNRcQfYICi8blnBIoJRtcaKIHGAobqeTsR+YsTuBFsjIC424L4sLxnHUaO8tAcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VTnmIb1T; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4e6ec0d1683so314541cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 07:54:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=BElVDR8dtjr09qulPrkfPm8ZymlGDZhEZIVdG/3qoE8eawh79b9NlBREUEx0q43T4440DD6AeEZLLf4I8VqlIKsa2KRxRdVndEsueCLsUsltMVLS2l504kroqo79shnHtFybLFXeupi41NCpbhWO+CR4PAGbkdnLufDpBRozMo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=bFoqyy02; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4da894db6e9so21023161cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 07:58:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760108048; x=1760712848; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1760108318; x=1760713118; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0DpdiimUJLGEL9YZv8OhwGPgsBnQcaD8Xj4apakBfn0=;
-        b=VTnmIb1TlHElKTohVvdtRHx7HEmeqrB8hSvmF22DJB+mQqqZZk+wvsDuz4uln9V7FU
-         dpsQgLT/r6jgDPFmApUUPclup6rNvOlQo0ZBmnDUNevAy0Zisy9ZysmhlASpSd4Rc+w1
-         UlL5OoGSVmhMYUtrcg8PpuJ5/J5BCFolzz31lFG/HMjjS7/pk80KXDRttm9jhNG34XxI
-         y42d9fImcgtux4nhQ7EP8Q2jXzWGqDHaxpe/P/Sck42KrtcdBO5PGk1kL/VeEL5tIWyF
-         /sauTiZHoQFdaXa8Z681DWvHC8T3LFGFuTu+3Zdya2+6jVwPi1yIjMqIFriwTRqAu6Ku
-         DWSw==
+        bh=O/f5MiBij3IECEF2d6NbqhVZBoXbyknaX3YNy+v2jBg=;
+        b=bFoqyy02oYGr/LuWsFyi0W5Ej8pKXhjqyohD00Z5dbmSNvYpgSVewN3J+q15yRc6ii
+         69LaSyM2tnR+luiCcl5eZPTkuEaxMlBkiqscmQBocaCErkJ/8uoJ8JQzcs/JRWsBs492
+         ZgPrk5u9q1Nk7hg3EotW9qKnKWO2J2gL22sOWZM97MJcIR6WyTyUXzhBNsJN5wICsyuR
+         jr0+y7OHElysr7a1Coplm6vDUbPt5vsBjlh30Ozonuo3yKa9UDglFAxvSAn3SFNb9k0+
+         iE+F9gR9VJLEooADnWPNwfzCIFrP6cM7wD85seJ/G3+4aKMou9VK6t3t4TxBQuuxR0l7
+         xq6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108048; x=1760712848;
+        d=1e100.net; s=20230601; t=1760108318; x=1760713118;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0DpdiimUJLGEL9YZv8OhwGPgsBnQcaD8Xj4apakBfn0=;
-        b=LwWMZtiHnOgNKobs+QlSZsApOs2+78GZ5Gl8qPVP4IlVBOgfHvF+v3uEiODRiFr25f
-         jhjjw4yAyKoqHof6Dvnt7I6wbgJ2s4at0Tvq829+Ujv4yy+SUZ34IhYSiC+yY09+CWJu
-         PCjil7hsFadVTZWSFh8KhdJ/JUyjj8ZfvElQetXkaZebE5RdUtiwgTakBsyqFpiq1lft
-         wIs3M+LIgObJF0ORUBzPBEozKvQQhWto21O5mUbyzEKhuu+JV3x9+mdIh5Nao5yPtuEf
-         3Cc8YzXyj0qM3+uXyhBZkL4pMJfI5GSTBkWiuy/uU4sCoa5kUVtmV5JkSVo2WgWm4++c
-         4s0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVcP2q6iOiWXMrFtl70MX5b7RtUkwrhITblKUeexwCjIu35YQOH+DiDZAmZQXJYMIHpB3yBhUFOy4q1mabJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhao00fEac5eaW+U6tkeXphwPCIqZZxImrEQQxljqEwM/rrTAI
-	XELp0HMX0Mb1IstIEngKtxIrFJyk+u6l4U/uNdnesCir9NmH0LZYcAwPd9RxcXPncfkWFdshGgN
-	iGkYaAqXR0OB3SMEisHGcAWmp2rHcOnQZb5Ae20Aq
-X-Gm-Gg: ASbGncuS4WclGSOTq8aonQ42tFqLjhZD+ZibeMEa148tgFiCELu+3avaPSyDf2qnVyG
-	4lqzmlszhC+nPaUmhcdaDDGierj5ZD6jdvGrhrZrExVJcVRP8ASM43D5C26DNse0l36HF7AnFPC
-	utmyLQbQQ6KqwBFBUhYxdeXbrhWgyZn84mWa+t07eSEVK/ZNlHN5Hx+r6jGjpbxNUhVKaR10INm
-	F3eSFDVFfeETvjo7FjwoceAOZLJu7yhFfp7EX+4TaDdC5gk2rOv
-X-Google-Smtp-Source: AGHT+IELG1HO5re9l71qV16AXiLCV5TxV3n/x4fv7b1UlE7oKp+shLXPJ4Ui15bl56g81Rjif4tTmM3A2oXDy0V1pv8=
-X-Received: by 2002:a05:622a:50:b0:4d0:dff9:9518 with SMTP id
- d75a77b69052e-4e6eabcf616mr24839371cf.12.1760108047605; Fri, 10 Oct 2025
- 07:54:07 -0700 (PDT)
+        bh=O/f5MiBij3IECEF2d6NbqhVZBoXbyknaX3YNy+v2jBg=;
+        b=R0dVLC389LEgFXYY9tkccNMSGg90O+VlcwvaoPN6PD3PvTzn0/gLpq7yT/p8mib9cZ
+         2nNmDA0X1pcDSIy5PKVykaLRqsDG4D9gTL9sA4DQbDApNGHwf/sdJyJQr3sz8iKd95Gj
+         0F7daVJKv+tZr+5+7z89I3zcG4pwuiXTGNVcjUhKt7jRIXavT4ACaQE5JX1ifMhfnzhM
+         nj+vBAJ5/rTLG4lAntfDiS/jXfHxPNFLc1eyedKCCLJmiEkGa1eN0YgewSr7f3S/pA5i
+         KE4jQuNxY20xWAhvlYbHeY20hyf7hAW1yaDaBfE95OHv8wPKJwgrwqjo5d2cd0SWgBxn
+         nXCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZybEojwlZ9792VEGBvN1w7LEQJpgP8MP8HsCAAqFbcil3vPXTsiTC60znYmDPHB5Y2ODjVUiBpK9TTdc9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlnaVeFJXRfPNoRRrdf0npvWKkA2HnX7QMdXCgAL0lopsShkLR
+	ExiAWJmuZrQJOS4+mLdupUiassxXOrkohh4+LrVgUfzzhYyJc/sZMB9M3WCUFB/CswCF+yuUxFd
+	b2S1t36DCZ0gXQMeKDSutfeL13AT9f3pgPbPO1MiLGw==
+X-Gm-Gg: ASbGnctFCzzxCIKG0OLF7iK8m7RA7JjnT2aRwPWK7Jw/B8YZxJvHoqAo5DHFtXzXbc3
+	szGOSWfmwnuZpJO6SpMTZmpLu5fS140gitYea6tWg4RChYLqFKfln8bxQDOlwXDIBNSAetZEOi+
+	0G98juEZuopo2IVsoytpzn8TqXOcE8uuoXcmVM35vMX3tyRahLhjA7xNXIPyyXrUfdEfxgzszAD
+	2Vo/OPtIQ6INE1OZTGc9oo=
+X-Google-Smtp-Source: AGHT+IE0WXDhjauHLcC2POBv0t7LgQCplfzbTEHy7h2aL8mobxzYVpt1EHLlI6ZDdZuKo41ZojriIaW0+E5fBHESUrw=
+X-Received: by 2002:a05:622a:90f:b0:4b9:b915:a26f with SMTP id
+ d75a77b69052e-4e6ead514a2mr181154551cf.52.1760108317513; Fri, 10 Oct 2025
+ 07:58:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010011951.2136980-1-surenb@google.com> <20251010011951.2136980-2-surenb@google.com>
- <aOhx9Zj1a6feN8wC@casper.infradead.org>
-In-Reply-To: <aOhx9Zj1a6feN8wC@casper.infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 10 Oct 2025 07:53:56 -0700
-X-Gm-Features: AS18NWBSQfAZ95bfn8zHE7YuLwgx02HxJfLsEBTBLUde_yaDHMul1ATmajxkrCY
-Message-ID: <CAJuCfpH85Ns8_+JNG4HS6TnFMUN0si+mcLXxUxedhQh1c0CSEw@mail.gmail.com>
-Subject: Re: [PATCH 1/8] mm: implement cleancache
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
-	peterx@redhat.com, sj@kernel.org, rppt@kernel.org, mhocko@suse.com, 
-	corbet@lwn.net, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	hch@infradead.org, jack@suse.cz, m.szyprowski@samsung.com, 
-	robin.murphy@arm.com, hannes@cmpxchg.org, zhengqi.arch@bytedance.com, 
-	shakeel.butt@linux.dev, axelrasmussen@google.com, yuanchu@google.com, 
-	weixugc@google.com, minchan@kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
+ <CAAywjhT_9vV-V+BBs1_=QqhCGQqHo89qWy7r5zW1ej51yHPGJA@mail.gmail.com>
+ <CA+CK2bAe3yk4NocURmihcuTNPUcb2-K0JCaQQ5GJ4B58YLEwEw@mail.gmail.com> <20251010144248.GB3901471@nvidia.com>
+In-Reply-To: <20251010144248.GB3901471@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 10 Oct 2025 10:58:00 -0400
+X-Gm-Features: AS18NWBORXQFPGvPP__b4olxbKs0hTzftz4XLJRMqdjSudzyOrwIdA4I2ICtXVo
+Message-ID: <CA+CK2bBxMpb=jXy3-i19PdBHqxLoLrMMg1sOnditOYwNe1Fr+w@mail.gmail.com>
+Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Samiullah Khawaja <skhawaja@google.com>, pratyush@kernel.org, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 7:39=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
- wrote:
+On Fri, Oct 10, 2025 at 10:42=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> w=
+rote:
 >
-> On Thu, Oct 09, 2025 at 06:19:44PM -0700, Suren Baghdasaryan wrote:
-> > +     /*
-> > +      * 99% of the time, we don't need to flush the cleancache on the =
-bdev.
-> > +      * But, for the strange corners, lets be cautious
-> > +      */
-> > +     cleancache_invalidate_inode(mapping, mapping->host);
+> On Thu, Oct 09, 2025 at 06:42:09PM -0400, Pasha Tatashin wrote:
+> >
+> > It looks like the combination of an enforced ordering:
+> > Preservation: A->B->C->D
+> > Un-preservation: D->C->B->A
+> > Retrieval: A->B->C->D
+> >
+> > and the FLB Global State (where data is automatically created and
+> > destroyed when a particular file type participates in a live update)
+> > solves the need for this query mechanism. For example, the IOMMU
+> > driver/core can add its data only when an iommufd is preserved and add
+> > more data as more iommufds are added. The preserved data is also
+> > automatically removed once the live update is finished or canceled.
 >
-> Why do we need to pass in both address_space and inode?
+> IDK I think we should try to be flexible on the restoration order.
 
-Ah, you mean why I don't use inode->i_mapping to get to its address
-space? I think I can. I'll try, and unless something blows up, I'll
-apply the change in the next version.
+It is easier to be inflexible at first and then relax the requirement
+than the other way around. I think it is alright to enforce the order
+for now, as it is driven only by userspace.
 
+> Eg, if we project ahead to when we might need to preserve kvm and
+> iommufd FDs as well, the order would likely be:
 >
-> > +/*
-> > + * Backend API
-> > + *
-> > + * Cleancache does not touch page reference. Page refcount should be 1=
- when
-> > + * page is placed or returned into cleancache and pages obtained from
-> > + * cleancache will also have their refcount at 1.
->
-> I don't like these references to page refcount.  Surely you mean folio
-> refcount?
+> Preservation: memfd -> kvm -> iommufd -> vfio
+> Retrieval: iommud_domain (early boot) kvm -> iommufd -> vfio -> memfd
 
-Yes, mea culpa :) Will fix.
+At some point, we will implement orphaned VMs, where a VM can run
+without a VMM during the live-update period. This would allow us to
+reduce the blackout time and later enable vCPUs to keep running even
+during kexec.
 
->
-> > +     help
-> > +       Cleancache can be thought of as a page-granularity victim cache
-> > +       for clean pages that the kernel's pageframe replacement algorit=
-hm
-> > +       (PFRA) would like to keep around, but can't since there isn't e=
-nough
->
-> PFRA seems to be an acronym you've just made up.  Why?
+With that, I would assume KVM itself would drive the live update and
+would make LUO calls to preserve the resources in an orderly fashion
+and then restore them in the same order during boot.
 
-Inherited from the original cleancache documentation. Will remove.
-
->
-> > +struct cleancache_inode {
-> > +     struct inode *inode;
-> > +     struct hlist_node hash;
-> > +     refcount_t ref_count;
-> > +     struct xarray folios; /* protected by folios.xa_lock */
->
-> This is a pointless comment.  All xarrays are protected by their own
-> xa_lock.
-
-Ack.
-
->
-> > +static DEFINE_IDR(fs_idr);
->
-> No.  The IDR is deprecated.  Use an allocating XArray.
-
-Ah, good to know. I'll change to xarray.
-
->
-> > +/*
-> > + * Folio attributes:
-> > + *   folio->_mapcount - pool_id
-> > + *   folio->mapping - ccinode reference or NULL if folio is unused
-> > + *   folio->index - file offset
->
-> No.  Don't reuse fields for something entirely different.  Put a
-> properly named field in the union.
-
-Ack.
-
->
-> > +static void folio_attachment(struct folio *folio, struct cleancache_in=
-ode **ccinode,
->
-> Unnecessarily long line
-
-Ack.
-
-Thanks for the feedback, Matthew!
-
->
+Pasha
 
