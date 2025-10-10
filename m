@@ -1,170 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-63733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCA4BCC79E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 12:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B427ABCC8FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 12:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612F7423741
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 10:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EB613B5A3D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 10:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26902ED854;
-	Fri, 10 Oct 2025 10:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Y/gMdJQ7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sXhKftPZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E3E2F5477;
+	Fri, 10 Oct 2025 10:34:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EB826FA77
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 10:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92F2F0C63;
+	Fri, 10 Oct 2025 10:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760091053; cv=none; b=hnkx+Lv53hOIRJi199LuIbIZ+MBh5AdV8iyXfFik1m4nRZy145ccKRdhGIrao/yvISGkD5IuQHlss5IuWogwN4AjH/QwPJ/pReL305LIgAffrrXrra2Wj8NUMbjWN9+21nq/oWfSmR0lWxQwlfNfp7J/oVzUM7uXConC8N7FQGE=
+	t=1760092484; cv=none; b=r0ixp3/NwL3XULfn3qdXlRc/F7BxvTWUst8TQLYxbkjqXaj7l6Io31FsP11v4pfMM3U1TBnQ/xYTALA2AJrPYCVJGSCmO/s5KikcKuZqBsdtMiEYJ2BbQryXdD8bUpx10fSWa8Tt9Ub5N9KEi9ttzJYIxkix534qorPcCiVVhuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760091053; c=relaxed/simple;
-	bh=Mw1mWIT0BtR440CjDV2Aid/L0BJu3yx632sxF2/7qXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gt+jc8muBObLYshnVJ6iSjqVxRw1kJxfbpwxxaB74GOlwZJ453E+FdJ+gqkfb9W7ytn2j/3wHB2NkJDfeW3s0j8W2cz89K9AtbmGHqJxCA4vcQgZWtrQ5CUwldFhhfZ3OcPGgIwaFdwV0GpKlYTdMrpU8LN+XS1yB67cUNNgOE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Y/gMdJQ7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sXhKftPZ; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 072E77A0030;
-	Fri, 10 Oct 2025 06:10:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Fri, 10 Oct 2025 06:10:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1760091049; x=
-	1760177449; bh=XfIFhXkqL2PFnCgdILYUcOyv0W/EfJPQuh46n0RKDcg=; b=Y
-	/gMdJQ7dmpRjmxhGyjGVTvs+cMiTiVrBW3nVQ9p1Y2S++vPFL8oFpl51HWPnMZRN
-	jHc2hKABIujbKs5Equp0lGTYxsgKJ+3rNUCK4V49nEpNWRfQOaWjZlUTBFKRoyLc
-	xYTpc6uT/+/1yUk2K5biHstrf+zOYicuvAq251pcn1g8WtGjsjMmH4GZKZpB0AvI
-	tzYm9EJjO95PehQ9tLmRGqmeP2g7PdhXNV6OrTDSjwZOPvpbdZVAsKXX7rAkgJop
-	vA8dPytPMXZA1RUtuWgbVjOLFeiKvXXwirMUS0CW/mdLRLkrXuPQILPkWl5UfdZc
-	lwnS26/V+3zbwwQKXmx/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760091049; x=1760177449; bh=XfIFhXkqL2PFnCgdILYUcOyv0W/EfJPQuh4
-	6n0RKDcg=; b=sXhKftPZZQZuAqpgzn7uqlV9dsaBAyflc0xFVZwUDMUN3KP1KDE
-	pcLP8r05ZPWL6q9JoEw/I4ZG2sQzzMtyrVtG80NceRqYVZDoiBg6oOoeEBaTUKgT
-	crJnLSZThPN+LI7l5YgUnyvqwvcYFStAqvt98Q1Jge4iU7c+AGPsL3a7L4dbqgk6
-	Jtj8OYbALjj07qzIWK2ZQz41LtikEEBz98hSRQryQQ6hbLlWz/s4c/wz6e/Spil6
-	xL46C6zF4BfAXKBEpBBm0Ww1QhzbdJaWs0XGZJv0gPWPvb9br8D4nvUezP3eRRt4
-	ofZom/XoszK9wtWhnfOHJFUjp8gnj3QPm6g==
-X-ME-Sender: <xms:qdvoaLTA0DmiR3A3Jimuzh4CNm1ic2qaQP6iJQL25his8fzI1Agnng>
-    <xme:qdvoaP3FaBkHrNo4e_y5HdYfbmBKBH99pcwA0vPGN9nmSPP293zgLOTxpSKfE88rz
-    VJx-OQkwsYhHZiYcwLfWUyT33MBnPLYYp_eKce4zJx0lFDc8O6RBic>
-X-ME-Received: <xmr:qdvoaLdy1zoJHdAIGUOBYLCDmzZVNPeeiFiEzl2fr5CrGBKeb1sSHkNYcVLIdw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdekjeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedu
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghlughssehlihhnuh
-    igqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgr
-    uggvrggurdhorhhgpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:qdvoaHO5gur1DQ1oEMhP4W-DDHCjRSZEF0BneZVG0LWmjdiOg1u75g>
-    <xmx:qdvoaPWwCpB4MOxR9IlBV3-7164wSNVyyjNrQ-mTkM7QXyQNhc-Nqw>
-    <xmx:qdvoaPyG10ko6xwXsU6aZtRSlHpwkA0Dj3hjZyoCXerPdpDx9luIaQ>
-    <xmx:qdvoaG-j1ZUNz8qfhIA0LAVA1xy5okBB7R6Z22jOcWIEcn27Y23Vhg>
-    <xmx:qdvoaP2TgJhEvd9Z6dnWteQPHeb02xh6RqJCVwIcmM8eDZyxlparZvbP>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Oct 2025 06:10:48 -0400 (EDT)
-Date: Fri, 10 Oct 2025 11:10:46 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: Optimizing small reads
-Message-ID: <qasdw5uxymstppbxvqrfs5nquf2rqczmzu5yhbvn6brqm5w6sw@ax6o4q2xkh3t>
-References: <5zq4qlllkr7zlif3dohwuraa7rukykkuu6khifumnwoltcijfc@po27djfyqbka>
- <CAHk-=wjDvkQ9H9kEv-wWKTzdBsnCWpwgnvkaknv4rjSdLErG0g@mail.gmail.com>
- <CAHk-=wiTqdaadro3ACg6vJWtazNn6sKyLuHHMn=1va2+DVPafw@mail.gmail.com>
- <CAHk-=wgzXWxG=PCmi_NQ6Z50_EXAL9vGHQSGMNAVkK4ooqOLiA@mail.gmail.com>
- <CAHk-=wgbQ-aS3U7gCg=qc9mzoZXaS_o+pKVOLs75_aEn9H_scw@mail.gmail.com>
- <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
- <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
- <CAHk-=wi42ad9s1fUg7cC3XkVwjWFakPp53z9P0_xj87pr+AbqA@mail.gmail.com>
- <nhrb37zzltn5hi3h5phwprtmkj2z2wb4gchvp725bwcnsgvjyf@eohezc2gouwr>
- <CAHk-=wi1rrcijcD0i7V7JD6bLL-yKHUX-hcxtLx=BUd34phdug@mail.gmail.com>
+	s=arc-20240116; t=1760092484; c=relaxed/simple;
+	bh=GoOB+ZZKWQc/jzWg0Zyt7t6XIDgoA7zWTdLvBDqr01A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hUoAQkTZrjCjAztD0RLvRzY7UdLmlxsHl8Apj/6uvJpIppdG9ByWW+fDEDmIqE0v1fOObagtCPBaibPwLRuzT3t7q1BYzm7OGdIbeUMOH1QuOzTa/Wvgg8btBsdsFMA+mUewd53cOmQtT7eLec7nrRBbThImJY5cGEdQ4OBAUKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cjjlW68qSzYQvL2;
+	Fri, 10 Oct 2025 18:33:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 113C51A1439;
+	Fri, 10 Oct 2025 18:34:34 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgCHS2Ms4ehoxOK5CQ--.63632S4;
+	Fri, 10 Oct 2025 18:34:31 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v3 00/12] ext4: optimize online defragment
+Date: Fri, 10 Oct 2025 18:33:14 +0800
+Message-ID: <20251010103326.3353700-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi1rrcijcD0i7V7JD6bLL-yKHUX-hcxtLx=BUd34phdug@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHS2Ms4ehoxOK5CQ--.63632S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3Gw1kAr4ktFyDXryrWr4rKrg_yoW7AFykpa
+	yakw48trykJw1kG3yxAFs2qryYkw4rGr47CF1UGr15CF45XFy8WFWrKa98ZFy8ArW8Z34Y
+	va1Iyr1Uu3WUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Oct 09, 2025 at 10:29:12AM -0700, Linus Torvalds wrote:
-> On Thu, 9 Oct 2025 at 09:22, Kiryl Shutsemau <kirill@shutemov.name> wrote:
-> >
-> > Objtool is not happy about calling random stuff within UACCESS. I
-> > ignored it for now.
-> 
-> Yeah, that needs to be done inside the other stuff - including, very
-> much, the folio lookup.
-> 
-> > I am not sure if I use user_access_begin()/_end() correctly. Let me know
-> > if I misunderstood or misimplemented your idea.
-> 
-> Close. Except I'd have gotten rid of the iov stuff by making the inner
-> helper just get a 'void __user *' pointer and a length, and then
-> updating the iov state outside that helper.
-> 
-> > This patch brings 4k reads from 512k files to ~60GiB/s. Making the
-> > buffer 4k, brings it ~95GiB/s (baseline is 100GiB/s).
-> 
-> Note that right now, 'unsafe_copy_to_user()' is a horrible thing. It's
-> almost entirely unoptimized, see the hacky unsafe_copy_loop
-> implementation in <asm/uaccess.h>.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Right. The patch below brings numbers to to 64GiB/s with 256 bytes
-buffer and 109GiB/s with 4k buffer. 1k buffer breaks even with
-unpatched kernel at ~100GiB/s.
+Changes since v2:
+ - Rebase patches to the 6.18-5472d60c129f.
+ - Patch 02, add a TODO comment, we should optimize the increasement of
+   the extents sequence counter ext4_es_insert_extent() in the future as
+   Jan suggested.
+ - Patch 09, add a WARN_ON_ONCE if ext4_swap_extents() return
+   successfully but the swapped length is shorter than required. Also,
+   copy data if some extents have been swapped to prevent data loss.
+   Finally, fix the comment as Jan suggested.
+ - Patch 10, fix the increasement of moved_len in ext4_move_extents()
+   as Jan pointed out.
+ - Patch 11, fix potential overflow issues on the left shift as Jan
+   pointed out.
+ - Add review tag in patch 01-08,11-12 from Jan.
+Changes since v1:
+ - Fix the syzbot issues reported in v1 by adjusting the order of
+   parameter checks in mext_check_validity() in patches 07 and 08.
 
-> So honestly I'd be inclined to go back to "just deal with the
-> trivially small reads", and scratch this extra complexity.
+v2: https://lore.kernel.org/linux-ext4/20250925092610.1936929-1-yi.zhang@huaweicloud.com/
+v1: https://lore.kernel.org/linux-ext4/20250923012724.2378858-1-yi.zhang@huaweicloud.com/
 
-I will play with it a bit more, but, yes, this my feel too.
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 3a7755c1a441..ae09777d96d7 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -612,10 +612,12 @@ do {									\
- 	char __user *__ucu_dst = (_dst);				\
- 	const char *__ucu_src = (_src);					\
- 	size_t __ucu_len = (_len);					\
--	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u64, label);	\
--	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u32, label);	\
--	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u16, label);	\
--	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u8, label);	\
-+	asm goto(							\
-+		     "1:	rep movsb\n"				\
-+		     _ASM_EXTABLE_UA(1b, %l[label])			\
-+		     : "+D" (__ucu_dst), "+S" (__ucu_src),		\
-+		       "+c" (__ucu_len)					\
-+		     : : "memory" : label);				\
- } while (0)
- 
- #ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+Original Description:
+
+Currently, the online defragmentation of the ext4 is primarily
+implemented through the move extent operation in the kernel. This
+extent-moving operates at the granularity of PAGE_SIZE, iteratively
+performing extent swapping and data movement operations, which is quite
+inefficient. Especially since ext4 now supports large folios, iterations
+at the PAGE_SIZE granularity are no longer practical and fail to
+leverage the advantages of large folios. Additionally, the current
+implementation is tightly coupled with buffer_head, making it unable to
+support after the conversion of buffered I/O processes to the iomap
+infrastructure.
+
+This patch set (based on 6.17-rc7) optimizes the extent-moving process,
+deprecates the old move_extent_per_page() interface, and introduces a
+new mext_move_extent() interface. The new interface iterates over and
+copies data based on the extents of the original file instead of the
+PAGE_SIZE, and supporting large folios. The data processing logic in the
+iteration remains largely consistent with previous versions, with no
+additional optimizations or changes made. 
+
+Additionally, the primary objective of this set of patches is to prepare
+for converting the buffered I/O process for regular files to the iomap
+infrastructure. These patches decouple the buffer_head from the main
+extent-moving process, restricting its use to only the helpers
+mext_folio_mkwrite() and mext_folio_mkuptodate(), which handle updating
+and marking pages in the swapped page cache as dirty. The overall coding
+style of the extent-moving process aligns with the iomap infrastructure,
+laying the foundation for supporting online defragmentation once the
+iomap infrastructure is adopted.
+
+Patch overview:
+
+Patch 1:    Fix a minor issue related to validity checking.
+Patch 2-4:  Introduce a sequence counter for the mapping extent status
+            tree, this also prepares for the iomap infrastructure.
+Patch 5-7:  Refactor the mext_check_arguments() helper function and the
+            validity checking to improve code readability.
+Patch 8-12: Drop move_extent_per_page() and switch to using the new
+            mext_move_extent(). Additionally, add support for large
+            folios.
+
+With this patch set, the efficiency of online defragmentation for the
+ext4 file system can also be improved under general circumstances. Below
+is a set of typical test obtained using the fio e4defrag ioengine on the
+environment with Intel Xeon Gold 6240 CPU, 400G memory and a NVMe SSD
+device.
+
+  [defrag]
+  directory=/mnt
+  filesize=400G
+  buffered=1
+  fadvise_hint=0
+  ioengine=e4defrag
+  bs=4k         # 4k,32k,128k
+  donorname=test.def
+  filename=test
+  inplace=0
+  rw=write
+  overwrite=0   # 0 for unwritten extent and 1 for written extent
+  numjobs=1
+  iodepth=1
+  runtime=30s
+
+  [w/o]
+   U 4k:    IOPS=225k,  BW=877MiB/s      # U: unwritten extent-moving
+   U 32k:   IOPS=33.2k, BW=1037MiB/s
+   U 128k:  IOPS=8510,  BW=1064MiB/s
+   M 4k:    IOPS=19.8k, BW=77.2MiB/s     # M: written extent-moving
+   M 32k:   IOPS=2502,  BW=78.2MiB/s
+   M 128k:  IOPS=635,   BW=79.5MiB/s
+
+  [w]
+   U 4k:    IOPS=246k,  BW=963MiB/s
+   U 32k:   IOPS=209k,  BW=6529MiB/s
+   U 128k:  IOPS=146k,  BW=17.8GiB/s
+   M 4k:    IOPS=19.5k, BW=76.2MiB/s
+   M 32k:   IOPS=4091,  BW=128MiB/s
+   M 128k:  IOPS=2814,  BW=352MiB/s 
+
+Best Regards,
+Yi.
+
+
+Zhang Yi (12):
+  ext4: correct the checking of quota files before moving extents
+  ext4: introduce seq counter for the extent status entry
+  ext4: make ext4_es_lookup_extent() pass out the extent seq counter
+  ext4: pass out extent seq counter when mapping blocks
+  ext4: use EXT4_B_TO_LBLK() in mext_check_arguments()
+  ext4: add mext_check_validity() to do basic check
+  ext4: refactor mext_check_arguments()
+  ext4: rename mext_page_mkuptodate() to mext_folio_mkuptodate()
+  ext4: introduce mext_move_extent()
+  ext4: switch to using the new extent movement method
+  ext4: add large folios support for moving extents
+  ext4: add two trace points for moving extents
+
+ fs/ext4/ext4.h              |   3 +
+ fs/ext4/extents.c           |   2 +-
+ fs/ext4/extents_status.c    |  31 +-
+ fs/ext4/extents_status.h    |   2 +-
+ fs/ext4/inode.c             |  28 +-
+ fs/ext4/ioctl.c             |  10 -
+ fs/ext4/move_extent.c       | 780 +++++++++++++++++-------------------
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |  97 ++++-
+ 9 files changed, 499 insertions(+), 455 deletions(-)
+
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.46.1
+
 
