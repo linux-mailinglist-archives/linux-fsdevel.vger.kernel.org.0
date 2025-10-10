@@ -1,156 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-63780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAB8BCDA5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1ABABCDA99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 17:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BB35534FEED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890C33BA143
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 15:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261652F746E;
-	Fri, 10 Oct 2025 14:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB012F533E;
+	Fri, 10 Oct 2025 15:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bFoqyy02"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBOsJd/t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103592F619D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243A21A4F3C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 15:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108320; cv=none; b=UOaKFJByFQKoIAzlvKJjIwmVSHfLO7XJodObVRhTBqaiP2aPIgKvbHM+JWijwcp81NWKnYjPwMZWuI3G78cW4RHb6+xmtHpNzuZZ0YdeHP/C+e1lwvCzLbOrHmtpTvVnEDGeTjkTpY5JZeoLaBDNDTUuEdYPpe/PheqEy0/yAbo=
+	t=1760108474; cv=none; b=EVOO8aggJv6i6MmYrN434vQLHhwKTFq+wlgc/+fQpf7BLx/RT6DI94PKPZhR9U3ymBdGdENikICqq9RlzpDXeAQfQrysmseycxQAeGhYgGVWIUC2qWBzjNd4ucxvITY3Vz0ujE7KMBCqK7xEbIkSZe4mwdfVotJ0L3f5H4fSvzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108320; c=relaxed/simple;
-	bh=O/f5MiBij3IECEF2d6NbqhVZBoXbyknaX3YNy+v2jBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BElVDR8dtjr09qulPrkfPm8ZymlGDZhEZIVdG/3qoE8eawh79b9NlBREUEx0q43T4440DD6AeEZLLf4I8VqlIKsa2KRxRdVndEsueCLsUsltMVLS2l504kroqo79shnHtFybLFXeupi41NCpbhWO+CR4PAGbkdnLufDpBRozMo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=bFoqyy02; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4da894db6e9so21023161cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 07:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1760108318; x=1760713118; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/f5MiBij3IECEF2d6NbqhVZBoXbyknaX3YNy+v2jBg=;
-        b=bFoqyy02oYGr/LuWsFyi0W5Ej8pKXhjqyohD00Z5dbmSNvYpgSVewN3J+q15yRc6ii
-         69LaSyM2tnR+luiCcl5eZPTkuEaxMlBkiqscmQBocaCErkJ/8uoJ8JQzcs/JRWsBs492
-         ZgPrk5u9q1Nk7hg3EotW9qKnKWO2J2gL22sOWZM97MJcIR6WyTyUXzhBNsJN5wICsyuR
-         jr0+y7OHElysr7a1Coplm6vDUbPt5vsBjlh30Ozonuo3yKa9UDglFAxvSAn3SFNb9k0+
-         iE+F9gR9VJLEooADnWPNwfzCIFrP6cM7wD85seJ/G3+4aKMou9VK6t3t4TxBQuuxR0l7
-         xq6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108318; x=1760713118;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/f5MiBij3IECEF2d6NbqhVZBoXbyknaX3YNy+v2jBg=;
-        b=R0dVLC389LEgFXYY9tkccNMSGg90O+VlcwvaoPN6PD3PvTzn0/gLpq7yT/p8mib9cZ
-         2nNmDA0X1pcDSIy5PKVykaLRqsDG4D9gTL9sA4DQbDApNGHwf/sdJyJQr3sz8iKd95Gj
-         0F7daVJKv+tZr+5+7z89I3zcG4pwuiXTGNVcjUhKt7jRIXavT4ACaQE5JX1ifMhfnzhM
-         nj+vBAJ5/rTLG4lAntfDiS/jXfHxPNFLc1eyedKCCLJmiEkGa1eN0YgewSr7f3S/pA5i
-         KE4jQuNxY20xWAhvlYbHeY20hyf7hAW1yaDaBfE95OHv8wPKJwgrwqjo5d2cd0SWgBxn
-         nXCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZybEojwlZ9792VEGBvN1w7LEQJpgP8MP8HsCAAqFbcil3vPXTsiTC60znYmDPHB5Y2ODjVUiBpK9TTdc9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlnaVeFJXRfPNoRRrdf0npvWKkA2HnX7QMdXCgAL0lopsShkLR
-	ExiAWJmuZrQJOS4+mLdupUiassxXOrkohh4+LrVgUfzzhYyJc/sZMB9M3WCUFB/CswCF+yuUxFd
-	b2S1t36DCZ0gXQMeKDSutfeL13AT9f3pgPbPO1MiLGw==
-X-Gm-Gg: ASbGnctFCzzxCIKG0OLF7iK8m7RA7JjnT2aRwPWK7Jw/B8YZxJvHoqAo5DHFtXzXbc3
-	szGOSWfmwnuZpJO6SpMTZmpLu5fS140gitYea6tWg4RChYLqFKfln8bxQDOlwXDIBNSAetZEOi+
-	0G98juEZuopo2IVsoytpzn8TqXOcE8uuoXcmVM35vMX3tyRahLhjA7xNXIPyyXrUfdEfxgzszAD
-	2Vo/OPtIQ6INE1OZTGc9oo=
-X-Google-Smtp-Source: AGHT+IE0WXDhjauHLcC2POBv0t7LgQCplfzbTEHy7h2aL8mobxzYVpt1EHLlI6ZDdZuKo41ZojriIaW0+E5fBHESUrw=
-X-Received: by 2002:a05:622a:90f:b0:4b9:b915:a26f with SMTP id
- d75a77b69052e-4e6ead514a2mr181154551cf.52.1760108317513; Fri, 10 Oct 2025
- 07:58:37 -0700 (PDT)
+	s=arc-20240116; t=1760108474; c=relaxed/simple;
+	bh=lbH+lEeu5N25Pi3fQ5k8QqlIt8M7U3yz3hhIZ3ULEa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwN3APvHHEyNv/zQkDPo7FlprPHwJJuY8eOZyAA8ORHZr2joQ13y657nsA+emDXxyBhO2zy94ynVUX/DBaist2rkazQZgFu38Sr8ctWOKDtSoccZ8MSqVNkkwcIOTQaRWWmzlyzwtlhJeJpyOH6CtSxoB/xj1cAnd4KyJf9gpvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBOsJd/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA13C4CEF1;
+	Fri, 10 Oct 2025 15:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760108473;
+	bh=lbH+lEeu5N25Pi3fQ5k8QqlIt8M7U3yz3hhIZ3ULEa8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fBOsJd/tACsANWy5+03n3DtD8cZ2v+gBluBfgYpxF1xs+an/9CmEI3r0za5oTxQxT
+	 8M1Kw9ZYefe0KtuNgR00jx4IHROw87N7DHKlpOG4/wxno+b3OqoQL9AxeTotu/fy9D
+	 v2iEvZgh6YMUjlmpKHpjmhDDDD2MBoq86ASFuWKWRouOTzA8DS8lV5lqRALORXuNIp
+	 d2Zl1st0wZEyIh/eSjKK7/XKCIgFWfrrreUuY0zx0HZAc4/Rb/Ri8khK+QXcuve/iJ
+	 7/wFKFcB44fxQ4khqaiW7jDZ1z7kqvXntNlcUU/iaZzxZwydCeNDbXJOsknlu2LobD
+	 KDSEhLNQG1B2A==
+Date: Fri, 10 Oct 2025 08:01:13 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] fuse: disable default bdi strictlimiting
+Message-ID: <20251010150113.GC6174@frogsfrogsfrogs>
+References: <20251008204133.2781356-1-joannelkoong@gmail.com>
+ <CAJfpegsyHmSAYP04ot8neu_QtsCkTA2-qc2vvvLrsNLQt1aJCg@mail.gmail.com>
+ <CAJnrk1anOVeNyzEe37p5H-z5UoKeccVMGBCUL_4pqzc=e2J7Ug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
- <CAAywjhT_9vV-V+BBs1_=QqhCGQqHo89qWy7r5zW1ej51yHPGJA@mail.gmail.com>
- <CA+CK2bAe3yk4NocURmihcuTNPUcb2-K0JCaQQ5GJ4B58YLEwEw@mail.gmail.com> <20251010144248.GB3901471@nvidia.com>
-In-Reply-To: <20251010144248.GB3901471@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 10 Oct 2025 10:58:00 -0400
-X-Gm-Features: AS18NWBORXQFPGvPP__b4olxbKs0hTzftz4XLJRMqdjSudzyOrwIdA4I2ICtXVo
-Message-ID: <CA+CK2bBxMpb=jXy3-i19PdBHqxLoLrMMg1sOnditOYwNe1Fr+w@mail.gmail.com>
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>, pratyush@kernel.org, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1anOVeNyzEe37p5H-z5UoKeccVMGBCUL_4pqzc=e2J7Ug@mail.gmail.com>
 
-On Fri, Oct 10, 2025 at 10:42=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> w=
-rote:
->
-> On Thu, Oct 09, 2025 at 06:42:09PM -0400, Pasha Tatashin wrote:
+[cc willy in case he has opinions about dynamically changing the
+pagecache order range]
+
+On Thu, Oct 09, 2025 at 11:36:30AM -0700, Joanne Koong wrote:
+> On Thu, Oct 9, 2025 at 7:17 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 > >
-> > It looks like the combination of an enforced ordering:
-> > Preservation: A->B->C->D
-> > Un-preservation: D->C->B->A
-> > Retrieval: A->B->C->D
+> > On Wed, 8 Oct 2025 at 22:42, Joanne Koong <joannelkoong@gmail.com> wrote:
 > >
-> > and the FLB Global State (where data is automatically created and
-> > destroyed when a particular file type participates in a live update)
-> > solves the need for this query mechanism. For example, the IOMMU
-> > driver/core can add its data only when an iommufd is preserved and add
-> > more data as more iommufds are added. The preserved data is also
-> > automatically removed once the live update is finished or canceled.
->
-> IDK I think we should try to be flexible on the restoration order.
+> > > Since fuse now uses proper writeback accounting without temporary pages,
+> > > strictlimiting is no longer needed. Additionally, for fuse large folio
+> > > buffered writes, strictlimiting is overly conservative and causes
+> > > suboptimal performance due to excessive IO throttling.
+> >
+> > I don't quite get this part.  Is this a fuse specific limitation of
+> > stritlimit vs. large folios?
+> >
+> > Or is it the case that other filesystems are also affected, but
+> > strictlimit is never used outside of fuse?
+> 
+> It's the combination of fuse doing strictlimiting and setting the bdi
+> max ratio to 1%.
+> 
+> I don't think this is fuse-specific. I ran the same fio job [1]
+> locally on xfs and with setting the bdi max ratio to 1%, saw
+> performance drops between strictlimiting off vs. on
+> 
+> [1] fio --name=write --ioengine=sync --rw=write --bs=256K --size=1G
+> --numjobs=2 --ramp_time=30 --group_reporting=1
 
-It is easier to be inflexible at first and then relax the requirement
-than the other way around. I think it is alright to enforce the order
-for now, as it is driven only by userspace.
+Er... what kind of numbers? :)
 
-> Eg, if we project ahead to when we might need to preserve kvm and
-> iommufd FDs as well, the order would likely be:
->
-> Preservation: memfd -> kvm -> iommufd -> vfio
-> Retrieval: iommud_domain (early boot) kvm -> iommufd -> vfio -> memfd
+> >
+> > > Administrators can still enable strictlimiting for specific fuse servers
+> > > via /sys/class/bdi/*/strict_limit. If needed in the future,
+> >
+> > What's the issue with doing the opposite: leaving strictlimit the
+> > default and disabling strictlimit for specific servers?
+> 
+> If we do that, then we can't enable large folios for servers that use
+> the writeback cache. I don't think we can just turn on large folios if
 
-At some point, we will implement orphaned VMs, where a VM can run
-without a VMM during the live-update period. This would allow us to
-reduce the blackout time and later enable vCPUs to keep running even
-during kexec.
+What's the limitation on strictlimit && large_folios?  Is it just the
+throttling problem because dirtying a single byte in a 2M folio charges
+the process with all 2M?  Or something else?
 
-With that, I would assume KVM itself would drive the live update and
-would make LUO calls to preserve the resources in an orderly fashion
-and then restore them in the same order during boot.
+> an admin later on disables strictlimiting for the server, because I
+> don't think mapping_set_folio_order_range() can be called after the
+> inode has been initialized (not 100% sure about this), which means
+> we'd also need to add some mount option for servers to disable
+> strictlimiting.
 
-Pasha
+I think it's ok to increase the folio order range at runtime because
+you're merely expanding the range of valid folio sizes in the mapping.
+
+Decreasing the range probably won't work unless you take the inode and
+mapping locks exclusively and purge the pagecache.
+
+--D
+
+> Thanks,
+> Joanne
+> >
+> > Thanks,
+> > Miklos
+> 
 
