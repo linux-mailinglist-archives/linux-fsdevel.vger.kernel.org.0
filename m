@@ -1,277 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-63727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90274BCC58D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 11:30:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1504FBCC64A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 11:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07AD8354F76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 09:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074FE1883E56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 09:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9720B23AB9F;
-	Fri, 10 Oct 2025 09:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F532C326A;
+	Fri, 10 Oct 2025 09:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eHkhATlP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bc/QyZ0r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4BA13AD1C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 09:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A4B2C2376
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 09:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760088638; cv=none; b=Pe5rfzoCAwp0tctvSBG82OZNR7PVTQPdLSb8pmrdXnytw4dsFmaI5QD6lsM24RBIuajYeXDs3U990DE/CAaZGstTChKpGMkaPIkBWmCyrbO9CuLwshMvwJUiiCHhHDmYXEbk//0OBawIZHo/VLsXqtYavP42q4Mkam+n4jZMbMA=
+	t=1760089289; cv=none; b=U5Ow1jZ7ejx6lXM7tHKq9qrPt25vquNQSsAKqUq6lMg/bjLvdXDEbeORvSvPD0buOLzoEmXs9NYbbWVjNn5vx9KjGpSYUDJQD+0RzontrVbzcKod53V3Y6tJQQfkrTDMDFmGrWzgmsxwT5fELlvXltFlIpmeSFdW8+a+ayVvcbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760088638; c=relaxed/simple;
-	bh=Mj1VFJrp5c9ZO6C9l+r3P2v9gziELaHnsFG5WfCZSmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EX5vRpTruRUdxssijdPiFd+9U17llcnMsJGsOHaoYv8sJ8zHSn0cCVn3rWD2zfyPI1v2OY4h2mQJqPmpTyE/6aQkoqSQLLVPfAGK2P0uSfWLr3dKjZVaR6kJsGyAA3UYpDa7uIMxrrnh6WmMiAL8flKnOwTQuqyoCA07AAj2oTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eHkhATlP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760088635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m19Suyk+a/n7mC2eYJunRdPA51fybU8+8EZ/+1nO9VI=;
-	b=eHkhATlPwYPcw6efcNA4DM/a3kid8xBATl7Yvjvk14DEbcZU+JHJujXLTyLtWHhlVulS6g
-	lkHS+Ck3Hrz+6HAHpc5BxSihh147RZuQB4b+yKDZNz6B8OZkPynmIu+6ndBQwOOoFreykt
-	E7nI61ahO9jcd2KkdFO8+2yXZh/xF+k=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-cCb6EO4cNRCHyCRReyCDXw-1; Fri, 10 Oct 2025 05:30:33 -0400
-X-MC-Unique: cCb6EO4cNRCHyCRReyCDXw-1
-X-Mimecast-MFC-AGG-ID: cCb6EO4cNRCHyCRReyCDXw_1760088632
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e2d845ebeso10634245e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 02:30:33 -0700 (PDT)
+	s=arc-20240116; t=1760089289; c=relaxed/simple;
+	bh=MuTIfJDXeKuuHRy0YR/4p4wSgA5RdL8NKtUcZ5ZUNMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XYVLS+zJ3OD0VX1OzWd9vXqAEF3Smch8GMJONg3gMfFY94M45jNiL5yJ0bbM5JCng3wmCBKe98dx1ScCA72Buxfi0Nx5GhwTQ1D9Z1n/e7dwzhFKNKXNQ+iziOtHf0Sg/mq+a8/siWn6HZobYgVsjVV4qzpRO9/9V7MX7BFoFQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bc/QyZ0r; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso13215095e9.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 02:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760089279; x=1760694079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wq9sBzt27xhVE00MKRZHgRlmEb4HHQG1wzN2xa1Axvc=;
+        b=bc/QyZ0rRHG7Q1K/vSrqIr/YpYXynHJ/dwTYESMEMqgNGtN3lObS7c/K2Bx/WiE3LH
+         KYaIf6Zy8LCjvEmabKooSgLqRpGBLzEkTalJ2DiNdbLYNLoYj63Xc9eX3Xzxw2G59vns
+         HynK9okqQ9jqMS0e84RxzpBb6WHXCCZjEUXVVodrqFqiMm6krfZ42/Xo3K1i5hQxU9/u
+         tJ2h94r5/yYjD5IytOC+NGoXDOFbUVPOOpwqpaSZadqdkuZnV3/c9z4YSrdyqOSEPkBA
+         psvrXgefmXTgmWA9fQAL2946jSt6A+jDZ/Y4C0HbiWz/7+TZG5yfZtDZNzCdNCaJM/Fz
+         38nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760088632; x=1760693432;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m19Suyk+a/n7mC2eYJunRdPA51fybU8+8EZ/+1nO9VI=;
-        b=X3QTojvrBZAqA/5Qe0H2S3n1pkJyqrdYXn5nY5RcUaaFDoyopqjUHO6p7eJmig9f4w
-         DBB4rTQ5jYX/IVLLq6ZJp7bBp+ztDK+KJ2O1XyNQW8cQlkBbw1tsAQeZiMnEQlGEf2MK
-         kFSF6Yv5x/PVpyspbIhVBQWGJanYFSvEEw2P14vhVMA+lvxVdlYoP/T0zEnsX6TVLdsY
-         BM3lj+u7mlRTNeaUl3f1Pz5NktXhIw+q6Bhf11qSGN0/8WqWc71EVfuOQQfOWyiPbHBH
-         exkdRF9RtDiuKPURkmNQ1cj6NuvLGlMsC4zRWr2KPEuegxXS0mt70w/VOyreSzUqdQJ8
-         uidA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh8gXz3XTLiuBEsQ8xbEDca0Zmzztw5fVZLA5sYl6whwMNklbGdcilvdeUKRSccgWWMlyMTpN7H3Bwn2Y7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxuiJvZFPwu0d3ESBxzAGm68FS/PPrn6FQTLTFwMfJMl+vUyZ5
-	TH/+AYKvQNTzSRl8fC7OuECBlgIiPsnKxsu9ataY6dIR6pGyf2uBrTFmvTI7St52r5nvJj9+NuJ
-	2biFakZzCCEFC59pNVQFni6WtgVWpz7jSRdx2Wwgk24w2Nm/+n7kZs2lF2dBdYrSLzg==
-X-Gm-Gg: ASbGnctgMumPUOkabXQ2IZskBNRBbzrPbCn1NL7Hrmte0pYEs3923Cy9EkhGwi2hiFY
-	ApWx8gDXctXvrl+3M2EDx29cz2jjYRVKJPaMYWTEkSXIlc1n77ki28rmsvN9QrQHwXulnb7uNzV
-	EKnNt7zLuKLtNtSwfBgtOFvDJ9q3dFAbKVC/v2VceTvpeEbbt3czNLS+Xp2JqHG5sBZ58XtTvUz
-	dgaXtIpo/rUc8GjvRzDzUTwde3wqd7s2wYlZYclEZEuVEr3STEcxxHhOjoDzqzJ/Z2mi+AQMVlj
-	AOkj65gaYyJHpnbfZ9/R+T4xcvi7WEK9queF5AvkH2UWjqtJ3TQNp/k1Z4Iv
-X-Received: by 2002:a05:600c:8b22:b0:46e:4882:94c7 with SMTP id 5b1f17b1804b1-46fa9b02c6amr75031585e9.28.1760088632088;
-        Fri, 10 Oct 2025 02:30:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEValMKthgp8I9VN0cd5Fx0yrOVtvxfOWumQ9lQuIn4WkPIIugbGuRT1eABE90tSGUAw2wzQw==
-X-Received: by 2002:a05:600c:8b22:b0:46e:4882:94c7 with SMTP id 5b1f17b1804b1-46fa9b02c6amr75031225e9.28.1760088631453;
-        Fri, 10 Oct 2025 02:30:31 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482ba41sm39161405e9.4.2025.10.10.02.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 02:30:31 -0700 (PDT)
-Date: Fri, 10 Oct 2025 11:30:30 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v4 1/3] file_attr: introduce program to set/get fsxattr
-Message-ID: <g25qhhy73arfepcubtsvrhfc3e3e2dktoludzpfwqxvkcphkxf@4n5s4jpvxmpr>
-References: <20251003-xattrat-syscall-v4-0-1cfe6411c05f@kernel.org>
- <20251003-xattrat-syscall-v4-1-1cfe6411c05f@kernel.org>
- <20251005103656.5qu3lmjvlcjkwjx4@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <7mytyiatnhgwplgda3cmiqq3hb7z6ulwgvwbkueb5dm2sdxwlg@ijti4d7vgrck>
- <20251009185630.GA6178@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1760089279; x=1760694079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wq9sBzt27xhVE00MKRZHgRlmEb4HHQG1wzN2xa1Axvc=;
+        b=BUsmeAD8LN/Nr3tJ+h4kRnUjKj+oeO1BD1StFMxKeeqqiwzTdatc43pqI3yAku1Wpi
+         oG8Zh8xXVnZud4wq4iPrVAhv8Ip5Kq5D+MDAaHVEwtcwCqzdoEXPTog5oJ0DlaxsQPgF
+         57K20ZFMn5VyzMTJfhmYp0FCX6eZpByJt/sacaGXnrPc11EXpfpDxZz8EWGbkK7N0whJ
+         NC2xZae+hJO5zhLG59enMdwNzxRPifUhZGCggfJjqarHtE6HWvBbaDHz1aR2lHUq0Fxg
+         YoNMgR49jy584EZkO/QtUXLHbBBYSc1d33+iVrzabF/xthuFKyWspf28XCVDtTHnlghH
+         EAcg==
+X-Gm-Message-State: AOJu0YwsViGJ/QU8xaxkKWG3MZZrBdu2UEEO/cDVw2DgosMSAIbJ7lQt
+	gliGBI9wAWrjecyr4duK60iU40E//HnPNWbW6l5v3BPWhhvQJf30M9FNeEYyK9VZ
+X-Gm-Gg: ASbGnctSQ3c4Q5q44yMC2N1x9U/V7KyUVoWe8980gUbiLwhLkuQc3yl2XlyY5/uJ47I
+	tsWp8aDS031bf5FsjPiu8NJYUGIrdez2bE3moeGJJVn7Zq9dL4eCrQUMNVeF5VSi3/P+0P3jrTg
+	Eth8qSQSl1nZt1rOU0VAMlqXLCOYTVfdPbLd52AaASwa/aWiQ+wCDocFVM6g6Rwf1b/kuzfX4GO
+	P/MHDU5yeM6y6rq/GOtrpLAV9mL4XULgfIlHi34cLU4EWJKv6k0CUbc7OzYZ2fbGcMEMOE2Pl5K
+	HzXdTVr7vfBI/URa/y0l5V3/PZBFch8opk+ue4IdK6LJd2fFnG3PStp3tIYht7m4wbggAENScNF
+	LHKGzNX/bdb+gy7ECNh+0IESd2g0tzS+k+0K2Mw==
+X-Google-Smtp-Source: AGHT+IF3lD9WVSidKuzagqFJR/FrlQ6zmxKPnguDbIw0mAThtrjLUEb36T/KN6an53yanBEG5SPxvw==
+X-Received: by 2002:a05:6000:186f:b0:425:75b7:4b67 with SMTP id ffacd0b85a97d-4266e8da717mr6986662f8f.58.1760089278315;
+        Fri, 10 Oct 2025 02:41:18 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce582b44sm3304938f8f.16.2025.10.10.02.41.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Oct 2025 02:41:17 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Art Nikpal <email2tema@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>,
+	Rob Landley <rob@landley.net>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	linux-arch@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	initramfs@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Michal Simek <monstr@monstr.eu>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dave Young <dyoung@redhat.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Nicolas Schichan <nschichan@freebox.fr>,
+	David Disseldorp <ddiss@suse.de>,
+	patches@lists.linux.dev
+Subject: [PATCH v2 0/3] initrd: remove half of classic initrd support
+Date: Fri, 10 Oct 2025 09:40:44 +0000
+Message-ID: <20251010094047.3111495-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009185630.GA6178@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-09 11:56:30, Darrick J. Wong wrote:
-> On Mon, Oct 06, 2025 at 11:37:53AM +0200, Andrey Albershteyn wrote:
-> > On 2025-10-05 18:36:56, Zorro Lang wrote:
-> > > On Fri, Oct 03, 2025 at 11:32:44AM +0200, Andrey Albershteyn wrote:
-> > > > This programs uses newly introduced file_getattr and file_setattr
-> > > > syscalls. This program is partially a test of invalid options. This will
-> > > > be used further in the test.
-> > > > 
-> > > > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> > > > ---
-> > > 
-> > > [snap]
-> > > 
-> > > > +	if (!path1 && optind < argc)
-> > > > +		path1 = argv[optind++];
-> > > > +	if (!path2 && optind < argc)
-> > > > +		path2 = argv[optind++];
-> > > > +
-> > > > +	if (at_fdcwd) {
-> > > > +		fd = AT_FDCWD;
-> > > > +		path = path1;
-> > > > +	} else if (!path2) {
-> > > > +		error = stat(path1, &status);
-> > > > +		if (error) {
-> > > > +			fprintf(stderr,
-> > > > +"Can not get file status of %s: %s\n", path1, strerror(errno));
-> > > > +			return error;
-> > > > +		}
-> > > > +
-> > > > +		if (SPECIAL_FILE(status.st_mode)) {
-> > > > +			fprintf(stderr,
-> > > > +"Can not open special file %s without parent dir: %s\n", path1, strerror(errno));
-> > > > +			return errno;
-> > > > +		}
-> > > > +
-> > > > +		fd = open(path1, O_RDONLY);
-> > > > +		if (fd == -1) {
-> > > > +			fprintf(stderr, "Can not open %s: %s\n", path1,
-> > > > +					strerror(errno));
-> > > > +			return errno;
-> > > > +		}
-> > > > +	} else {
-> > > > +		fd = open(path1, O_RDONLY);
-> > > > +		if (fd == -1) {
-> > > > +			fprintf(stderr, "Can not open %s: %s\n", path1,
-> > > > +					strerror(errno));
-> > > > +			return errno;
-> > > > +		}
-> > > > +		path = path2;
-> > > > +	}
-> > > > +
-> > > > +	if (!path)
-> > > > +		at_flags |= AT_EMPTY_PATH;
-> > > > +
-> > > > +	error = file_getattr(fd, path, &fsx, fa_size,
-> > > > +			at_flags);
-> > > > +	if (error) {
-> > > > +		fprintf(stderr, "Can not get fsxattr on %s: %s\n", path,
-> > > > +				strerror(errno));
-> > > > +		return error;
-> > > > +	}
-> > > 
-> > > We should have a _require_* helper to _notrun your generic and xfs test cases,
-> > > when system doesn't support the file_getattr/setattr feature. Or we always hit
-> > > something test errors like below on old system:
-> > > 
-> > >   +Can not get fsxattr on ./fifo: Operation not supported
-> > > 
-> > > Maybe check if the errno is "Operation not supported", or any better idea?
-> > 
-> > There's build system check for file_getattr/setattr syscalls, so if
-> > they aren't in the kernel file_attr will not compile.
-> > 
-> > Then there's _require_test_program "file_attr" in the tests, so
-> > these will not run if kernel doesn't have these syscalls.
-> > 
-> > However, for XFS for example, there's [1] and [2] which are
-> > necessary for these tests to pass. 
-> > 
-> > So, there a few v6.17 kernels which would still run these tests but
-> > fail for XFS (and still fails as these commits are in for-next now).
-> > 
-> > For other filesystems generic/ will also fail on newer kernels as it
-> > requires similar modifications as in XFS to support changing file
-> > attributes on special files.
-> > 
-> > I suppose it make sense for this test to fail for other fs which
-> > don't implement changing file attributes on special files.
-> > Otherwise, this test could be split into generic/ (file_get/setattr
-> > on regular files) and xfs/ (file_get/setattr on special files).
-> > 
-> > What do you think?
-> 
-> generic/772 (and xfs/648) probably each ought to be split into two
-> pieces -- one for testing file_[gs]etattr on regular/directory files;
-> and a second one for the special files.  All four of them ought to
-> _notrun if the kernel doesn't support the intended target.
+Intro
+====
+This patchset removes half of classic initrd (initial RAM disk) support,
+i. e. linuxrc code path, which was deprecated in 2020.
+Initramfs still stays, RAM disk itself (brd) still stays.
+And other half of initrd stays, too.
+init/do_mounts* are listed in VFS entry in
+MAINTAINERS, so I think this patchset should go through VFS tree.
+I tested the patchset on 8 (!!!) archs in Qemu (see details below).
+If you still use initrd, see below for workaround.
 
-I see, yeah that's what I thought of, I will split them and send new
-patchset soon
+In 2020 deprecation notice was put to linuxrc initrd code path.
+In previous version of this patchset I tried to remove initrd
+fully, but Nicolas Schichan reported that he still uses
+other code path (root=/dev/ram0 one) on million devices [4].
+root=/dev/ram0 code path did not contain deprecation notice.
 
-> 
-> Right now I have injected into both:
-> 
-> mkfifo $projectdir/fifo
-> 
-> $here/src/file_attr --get $projectdir ./fifo &>/dev/null || \
-> 	_notrun "file_getattr not supported on $FSTYP"
+So, in this version of patchset I remove deprecated code path,
+i. e. linuxrc one, while keeping other, i. e. root=/dev/ram0 one.
 
-Thanks! Looks like a good check to use
+Also I put deprecation notice to remaining code path, i. e. to
+root=/dev/ram0 one. I plan to send patches for full removal
+of initrd after one year, i. e. in September 2026 (of course,
+initramfs will still work).
 
-> 
-> to make the failures go away on 6.17.
-> 
-> --D
-> 
-> > [1]: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/commit/?h=for-next&id=8a221004fe5288b66503699a329a6b623be13f91
-> > [2]: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/commit/?h=for-next&id=0239bd9fa445a21def88f7e76fe6e0414b2a4da0
-> > 
-> > > 
-> > > 
-> > > Thanks,
-> > > Zorro
-> > > 
-> > > > +	if (action) {
-> > > > +		fsx.fa_xflags |= (fa_xflags | unknwon_fa_flag);
-> > > > +
-> > > > +		error = file_setattr(fd, path, &fsx, fa_size,
-> > > > +				at_flags);
-> > > > +		if (error) {
-> > > > +			fprintf(stderr, "Can not set fsxattr on %s: %s\n", path,
-> > > > +					strerror(errno));
-> > > > +			return error;
-> > > > +		}
-> > > > +	} else {
-> > > > +		if (path2)
-> > > > +			print_xflags(fsx.fa_xflags, 0, 1, path, 0, 1);
-> > > > +		else
-> > > > +			print_xflags(fsx.fa_xflags, 0, 1, path1, 0, 1);
-> > > > +	}
-> > > > +
-> > > > +	return error;
-> > > > +
-> > > > +usage:
-> > > > +	printf("Usage: %s [options]\n", argv[0]);
-> > > > +	printf("Options:\n");
-> > > > +	printf("\t--get, -g\t\tget filesystem inode attributes\n");
-> > > > +	printf("\t--set, -s\t\tset filesystem inode attributes\n");
-> > > > +	printf("\t--at-cwd, -a\t\topen file at current working directory\n");
-> > > > +	printf("\t--no-follow, -n\t\tdon't follow symlinks\n");
-> > > > +	printf("\t--set-nodump, -d\t\tset FS_XFLAG_NODUMP on an inode\n");
-> > > > +	printf("\t--invalid-at, -i\t\tUse invalid AT_* flag\n");
-> > > > +	printf("\t--too-big-arg, -b\t\tSet fsxattr size bigger than PAGE_SIZE\n");
-> > > > +	printf("\t--too-small-arg, -m\t\tSet fsxattr size to 19 bytes\n");
-> > > > +	printf("\t--new-fsx-flag, -x\t\tUse unknown fa_flags flag\n");
-> > > > +
-> > > > +	return 1;
-> > > > +}
-> > > > 
-> > > > -- 
-> > > > 2.50.1
-> > > > 
-> > > 
-> > 
-> > -- 
-> > - Andrey
-> > 
-> > 
-> 
+Also, I tried to make this patchset small to make sure it
+can be reverted easily. I plan to send cleanups later.
 
+Details
+====
+Other user-visible changes:
+
+- Removed kernel command line parameters "load_ramdisk" and
+"prompt_ramdisk", which did nothing and were deprecated
+- Removed /proc/sys/kernel/real-root-dev . It was used
+for initrd only
+- Command line parameters "noinitrd" and "ramdisk_start=" are deprecated
+
+This patchset is based on current mainline (7f7072574127).
+
+Testing
+====
+I tested my patchset on many architectures in Qemu using my Rust
+program, heavily based on mkroot [1].
+
+I used the following cross-compilers:
+
+aarch64-linux-musleabi
+armv4l-linux-musleabihf
+armv5l-linux-musleabihf
+armv7l-linux-musleabihf
+i486-linux-musl
+i686-linux-musl
+mips-linux-musl
+mips64-linux-musl
+mipsel-linux-musl
+powerpc-linux-musl
+powerpc64-linux-musl
+powerpc64le-linux-musl
+riscv32-linux-musl
+riscv64-linux-musl
+s390x-linux-musl
+sh4-linux-musl
+sh4eb-linux-musl
+x86_64-linux-musl
+
+taken from this directory [2].
+
+So, as you can see, there are 18 triplets, which correspond to 8 subdirs in arch/.
+
+For every triplet I tested that:
+- Initramfs still works (both builtin and external)
+- Direct boot from disk still works
+- Remaining initrd code path (root=/dev/ram0) still works
+
+Workaround
+====
+If "retain_initrd" is passed to kernel, then initramfs/initrd,
+passed by bootloader, is retained and becomes available after boot
+as read-only magic file /sys/firmware/initrd [3].
+
+No copies are involved. I. e. /sys/firmware/initrd is simply
+a reference to original blob passed by bootloader.
+
+This works even if initrd/initramfs is not recognized by kernel
+in any way, i. e. even if it is not valid cpio archive, nor
+a fs image supported by classic initrd.
+
+This works both with my patchset and without it.
+
+This means that you can emulate classic initrd so:
+link builtin initramfs to kernel; in /init in this initramfs
+copy /sys/firmware/initrd to some file in / and loop-mount it.
+
+This is even better than classic initrd, because:
+- You can use fs not supported by classic initrd, for example erofs
+- One copy is involved (from /sys/firmware/initrd to some file in /)
+as opposed to two when using classic initrd
+
+Still, I don't recommend using this workaround, because
+I want everyone to migrate to proper modern initramfs.
+But still you can use this workaround if you want.
+
+Also: it is not possible to directly loop-mount
+/sys/firmware/initrd . Theoretically kernel can be changed
+to allow this (and/or to make it writable), but I think nobody needs this.
+And I don't want to implement this.
+
+On Qemu's -initrd and GRUB's initrd
+====
+Don't panic, this patchset doesn't remove initramfs
+(which is used by nearly all Linux distros). And I don't
+have plans to remove it.
+
+Qemu's -initrd option and GRUB's initrd command refer
+to initrd bootloader mechanism, which is used to
+load both initrd and (external) initramfs.
+
+So, if you use Qemu's -initrd or GRUB's initrd,
+then you likely use them to pass initramfs, and thus
+you are safe.
+
+v1: https://lore.kernel.org/lkml/20250913003842.41944-1-safinaskar@gmail.com/
+
+v1 -> v2 changes:
+- A lot. I removed most patches, see cover letter for details
+
+[1] https://github.com/landley/toybox/tree/master/mkroot
+[2] https://landley.net/toybox/downloads/binaries/toolchains/latest
+[3] https://lore.kernel.org/all/20231207235654.16622-1-graf@amazon.com/
+[4] https://lore.kernel.org/lkml/20250918152830.438554-1-nschichan@freebox.fr/
+
+Askar Safin (3):
+  init: remove deprecated "load_ramdisk" and "prompt_ramdisk" command
+    line parameters
+  initrd: remove deprecated code path (linuxrc)
+  init: remove /proc/sys/kernel/real-root-dev
+
+ .../admin-guide/kernel-parameters.txt         |   8 +-
+ Documentation/admin-guide/sysctl/kernel.rst   |   6 -
+ arch/arm/configs/neponset_defconfig           |   2 +-
+ fs/init.c                                     |  14 ---
+ include/linux/init_syscalls.h                 |   1 -
+ include/linux/initrd.h                        |   2 -
+ include/uapi/linux/sysctl.h                   |   1 -
+ init/do_mounts.c                              |  11 +-
+ init/do_mounts.h                              |  18 +--
+ init/do_mounts_initrd.c                       | 105 +-----------------
+ init/do_mounts_rd.c                           |  24 +---
+ 11 files changed, 18 insertions(+), 174 deletions(-)
+
+
+base-commit: 7f7072574127c9e971cad83a0274e86f6275c0d5
 -- 
-- Andrey
+2.47.3
 
 
