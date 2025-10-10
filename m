@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-63765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C442BCD6BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD7DBCD6F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E6F3B72CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:12:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2202519A3104
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E3A2F7462;
-	Fri, 10 Oct 2025 14:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3AE2F5A3F;
+	Fri, 10 Oct 2025 14:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E9mPsN2Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1/gLeijh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J2iI3jL7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNeY6Tjj"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lFdaMee7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y/6Vks8a";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lFdaMee7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y/6Vks8a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C72F3C12
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA5D2F532C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760105501; cv=none; b=onFo2PO8iBO/o/QR8Hgrbqrd7qrScF2KJ//FcQLv4Fa+rXqNyRdSaxVb3yFXJ48j5AEJHZoWAaKFcUtRzBJL4uhATE5sEymieqk98KhXQuARvgcc3AVa3Qm26HuCbmIIxqry6yi0K1TWpNetvYYIlb9XK1DqC6W0rtoOVsUzgUo=
+	t=1760105565; cv=none; b=CNhhWwfU7wRhxZSH6ZxCnjoPU2pmBQbLKPr23bLmv3yRPQ9BfN+H6eVePD1jqb6Xzm0peUVl+A93AloIpJkAY29QiybxMMBmoBHhOaU04W768olfqUQbmA6fpAE1jNKCRiUYRgZb1feqj/IWJgwjVqhizNxElOOhX6Z4CDNWEbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760105501; c=relaxed/simple;
-	bh=VdgRS9sXkpX+yIn9B6tsZ5IjxQcYxolhN07Ecu1i2FQ=;
+	s=arc-20240116; t=1760105565; c=relaxed/simple;
+	bh=f4z8bdtTHOsQ14NaVpmPyM3d7w3XBSahKI4xwW0lmeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PPxwyzoYGPTnqgJ9s7Kauh8kK0ik2Oao00PaNycVsGUAAl624/7VPwpPhcxSfiozmaTqRaWjG7741/p/hINUjkzQIPbgQ0nVGx21+D+Y121CxntPh/HpfiqlhHk1hNa3+ZwY54JY+Rh5iLZZ07RLeAsWzMZ/FZR5FfQmxlKzsmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E9mPsN2Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1/gLeijh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J2iI3jL7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNeY6Tjj; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKEb06+dhZc5dMHmtcd1eFrDlJMjNcO8FVTrGbXIJ0f1UkFvQI52kLDLu3uFbwgNV0LAzAptRf9gbK65ttBRM333azNr1qSVMXUkfv/JY/rEaKD29PtLdQW/BW2Q5/5i6tnl/756UXf/IF34wPOkdEvOe5ymCmHRod/VHkCHlDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lFdaMee7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y/6Vks8a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lFdaMee7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y/6Vks8a; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 059DC21C67;
-	Fri, 10 Oct 2025 14:11:36 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 70FB91F397;
+	Fri, 10 Oct 2025 14:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760105497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1760105561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
-	b=E9mPsN2QSf5QrkYU/Nj7Hyw/Yod8+NirXPjg0s8AR3pYs2HXL+WM9vmwGUkSBKqzawleRT
-	ua3tIi1VNMYb6Nj1J2ucGugb5Z9mXh9ogVh/OMroyfYzeZoK43oSaXJd2SwUusO95Gwnyp
-	R7Dfz6xVw6DBOtBAlYoxLjxQU2lcbsM=
+	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
+	b=lFdaMee78BtkQmpioPL7r4Oi2oK87Y2/h3KLh90mONS/2uZY40R0kekgsw2VTe0pXj9wDo
+	0utJhVzFZuG9sWkmnyMrAOD5oD29rhP9DBvmiZ8eylWD0N8j7QoLp8ROqFNK/Fk4cgQ+JW
+	xQ239QBVCElMtrnMEMmutISBWubpK/E=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760105497;
+	s=susede2_ed25519; t=1760105561;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
-	b=1/gLeijh3LCN4fuCRaH6FMJm8eukHA4TztUieATNdpV0NQ5fMcX3IkS3cR3EKObfbHFgKK
-	WjmyqcH5cSmkYQDw==
-Authentication-Results: smtp-out1.suse.de;
+	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
+	b=Y/6Vks8aCTBvOaogOBWzgEt3mL7roBAanFxsT7WRrjL95OZfWEJzJCuQR4OFf/QbdfyVHl
+	kBgwIAhWEBx7niAQ==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760105496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1760105561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
-	b=J2iI3jL7rtHDqjPUSYfT8z5BI0ztKjcbVhxKsU+YifOHtrHYonxJRmcfPTp6v7VCnedZCq
-	jKw+MfXn8DNbYQ76yJypQuHfEt47alSKQaUVJcpbhjiXL7R2AAPS1AAXtEiWjrz4X2jRdm
-	E6Sduw9lkMD8yzwATQVR51mKd08MNQU=
+	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
+	b=lFdaMee78BtkQmpioPL7r4Oi2oK87Y2/h3KLh90mONS/2uZY40R0kekgsw2VTe0pXj9wDo
+	0utJhVzFZuG9sWkmnyMrAOD5oD29rhP9DBvmiZ8eylWD0N8j7QoLp8ROqFNK/Fk4cgQ+JW
+	xQ239QBVCElMtrnMEMmutISBWubpK/E=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760105496;
+	s=susede2_ed25519; t=1760105561;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gluqjOXke3auOK5xmT0F+5ItRmuROnA6uF+vxRj7BGM=;
-	b=rNeY6Tjj1HJipj9ELI4Vs4pPmCiuHFITyb8dnzxMgDbiEyvPsqIEMlkpKdFSMxLsBejjVq
-	HpiZ5KFt4Hz5eSAA==
+	bh=A3ME5g+qhe2ekD20ygRIPqlRcmmYhtzmcpV3lc61ma0=;
+	b=Y/6Vks8aCTBvOaogOBWzgEt3mL7roBAanFxsT7WRrjL95OZfWEJzJCuQR4OFf/QbdfyVHl
+	kBgwIAhWEBx7niAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E00511375D;
-	Fri, 10 Oct 2025 14:11:35 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 529E11375D;
+	Fri, 10 Oct 2025 14:12:41 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FDejNhcU6WgZBwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:11:35 +0000
+	id 94goFFkU6WhgCAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Oct 2025 14:12:41 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6803FA0A58; Fri, 10 Oct 2025 16:11:35 +0200 (CEST)
-Date: Fri, 10 Oct 2025 16:11:35 +0200
+	id 3B197A0A58; Fri, 10 Oct 2025 16:12:40 +0200 (CEST)
+Date: Fri, 10 Oct 2025 16:12:40 +0200
 From: Jan Kara <jack@suse.cz>
 To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
@@ -94,10 +94,10 @@ Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
 	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
 	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 06/14] btrfs: use the new ->i_state accessors
-Message-ID: <vcpzljbky5iumhvwawj4aax5mpkmdhwy3qd36u5f3dm4way36c@woucily2haih>
+Subject: Re: [PATCH v7 07/14] ceph: use the new ->i_state accessors
+Message-ID: <pgntaqxmxnoe2zujqmwswz5tfgob7p24it4ckhxlshy4v6d6ir@jabz5zepbz2x>
 References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-7-mjguzik@gmail.com>
+ <20251009075929.1203950-8-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,7 +106,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009075929.1203950-7-mjguzik@gmail.com>
+In-Reply-To: <20251009075929.1203950-8-mjguzik@gmail.com>
+X-Spam-Level: 
 X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -129,12 +130,11 @@ X-Spamd-Result: default: False [-3.80 / 50.00];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
 X-Spam-Flag: NO
 X-Spam-Score: -3.80
-X-Spam-Level: 
 
-On Thu 09-10-25 09:59:20, Mateusz Guzik wrote:
+On Thu 09-10-25 09:59:21, Mateusz Guzik wrote:
 > Change generated with coccinelle and fixed up by hand as appropriate.
 > 
 > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
@@ -163,58 +163,193 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 > inode->i_state &= ~(I_A | I_B)  => inode_state_clear_raw(inode, I_A | I_B)
 > inode->i_state = I_A | I_B      => inode_state_assign_raw(inode, I_A | I_B)
 > 
->  fs/btrfs/inode.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  fs/ceph/cache.c  |  2 +-
+>  fs/ceph/crypto.c |  4 ++--
+>  fs/ceph/file.c   |  4 ++--
+>  fs/ceph/inode.c  | 28 ++++++++++++++--------------
+>  4 files changed, 19 insertions(+), 19 deletions(-)
 > 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 3b1b3a0553ee..433ffe231546 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -3884,7 +3884,7 @@ static int btrfs_add_inode_to_root(struct btrfs_inode *inode, bool prealloc)
->  		ASSERT(ret != -ENOMEM);
->  		return ret;
->  	} else if (existing) {
-> -		WARN_ON(!(existing->vfs_inode.i_state & (I_WILL_FREE | I_FREEING)));
-> +		WARN_ON(!(inode_state_read_once(&existing->vfs_inode) & (I_WILL_FREE | I_FREEING)));
+> diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+> index 930fbd54d2c8..f678bab189d8 100644
+> --- a/fs/ceph/cache.c
+> +++ b/fs/ceph/cache.c
+> @@ -26,7 +26,7 @@ void ceph_fscache_register_inode_cookie(struct inode *inode)
+>  		return;
+>  
+>  	/* Only new inodes! */
+> -	if (!(inode->i_state & I_NEW))
+> +	if (!(inode_state_read_once(inode) & I_NEW))
+>  		return;
+>  
+>  	WARN_ON_ONCE(ci->netfs.cache);
+> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> index 7026e794813c..928746b92512 100644
+> --- a/fs/ceph/crypto.c
+> +++ b/fs/ceph/crypto.c
+> @@ -329,7 +329,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
+>  out:
+>  	kfree(cryptbuf);
+>  	if (dir != parent) {
+> -		if ((dir->i_state & I_NEW))
+> +		if ((inode_state_read_once(dir) & I_NEW))
+>  			discard_new_inode(dir);
+>  		else
+>  			iput(dir);
+> @@ -438,7 +438,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+>  	fscrypt_fname_free_buffer(&_tname);
+>  out_inode:
+>  	if (dir != fname->dir) {
+> -		if ((dir->i_state & I_NEW))
+> +		if ((inode_state_read_once(dir) & I_NEW))
+>  			discard_new_inode(dir);
+>  		else
+>  			iput(dir);
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 978acd3d4b32..1c9d73523b88 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -741,7 +741,7 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
+>  		      vino.ino, ceph_ino(dir), dentry->d_name.name);
+>  		ceph_dir_clear_ordered(dir);
+>  		ceph_init_inode_acls(inode, as_ctx);
+> -		if (inode->i_state & I_NEW) {
+> +		if (inode_state_read_once(inode) & I_NEW) {
+>  			/*
+>  			 * If it's not I_NEW, then someone created this before
+>  			 * we got here. Assume the server is aware of it at
+> @@ -903,7 +903,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>  				new_inode = NULL;
+>  				goto out_req;
+>  			}
+> -			WARN_ON_ONCE(!(new_inode->i_state & I_NEW));
+> +			WARN_ON_ONCE(!(inode_state_read_once(new_inode) & I_NEW));
+>  
+>  			spin_lock(&dentry->d_lock);
+>  			di->flags |= CEPH_DENTRY_ASYNC_CREATE;
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 949f0badc944..4044a13969ad 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -132,7 +132,7 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+>  			goto out_err;
 >  	}
 >  
->  	return 0;
-> @@ -5361,7 +5361,7 @@ static void evict_inode_truncate_pages(struct inode *inode)
->  	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
->  	struct rb_node *node;
+> -	inode->i_state = 0;
+> +	inode_state_assign_raw(inode, 0);
+>  	inode->i_mode = *mode;
 >  
-> -	ASSERT(inode->i_state & I_FREEING);
-> +	ASSERT(inode_state_read_once(inode) & I_FREEING);
+>  	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+> @@ -201,7 +201,7 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino,
+>  
+>  	doutc(cl, "on %llx=%llx.%llx got %p new %d\n",
+>  	      ceph_present_inode(inode), ceph_vinop(inode), inode,
+> -	      !!(inode->i_state & I_NEW));
+> +	      !!(inode_state_read_once(inode) & I_NEW));
+>  	return inode;
+>  }
+>  
+> @@ -228,7 +228,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>  		goto err;
+>  	}
+>  
+> -	if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
+> +	if (!(inode_state_read_once(inode) & I_NEW) && !S_ISDIR(inode->i_mode)) {
+>  		pr_warn_once_client(cl, "bad snapdir inode type (mode=0%o)\n",
+>  				    inode->i_mode);
+>  		goto err;
+> @@ -261,7 +261,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>  		}
+>  	}
+>  #endif
+> -	if (inode->i_state & I_NEW) {
+> +	if (inode_state_read_once(inode) & I_NEW) {
+>  		inode->i_op = &ceph_snapdir_iops;
+>  		inode->i_fop = &ceph_snapdir_fops;
+>  		ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
+> @@ -270,7 +270,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>  
+>  	return inode;
+>  err:
+> -	if ((inode->i_state & I_NEW))
+> +	if ((inode_state_read_once(inode) & I_NEW))
+>  		discard_new_inode(inode);
+>  	else
+>  		iput(inode);
+> @@ -744,7 +744,7 @@ void ceph_evict_inode(struct inode *inode)
+>  
+>  	netfs_wait_for_outstanding_io(inode);
 >  	truncate_inode_pages_final(&inode->i_data);
+> -	if (inode->i_state & I_PINNING_NETFS_WB)
+> +	if (inode_state_read_once(inode) & I_PINNING_NETFS_WB)
+>  		ceph_fscache_unuse_cookie(inode, true);
+>  	clear_inode(inode);
 >  
->  	btrfs_drop_extent_map_range(BTRFS_I(inode), 0, (u64)-1, false);
-> @@ -5799,7 +5799,7 @@ struct btrfs_inode *btrfs_iget_path(u64 ino, struct btrfs_root *root,
->  	if (!inode)
->  		return ERR_PTR(-ENOMEM);
+> @@ -1013,7 +1013,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+>  	      le64_to_cpu(info->version), ci->i_version);
 >  
-> -	if (!(inode->vfs_inode.i_state & I_NEW))
-> +	if (!(inode_state_read_once(&inode->vfs_inode) & I_NEW))
->  		return inode;
+>  	/* Once I_NEW is cleared, we can't change type or dev numbers */
+> -	if (inode->i_state & I_NEW) {
+> +	if (inode_state_read_once(inode) & I_NEW) {
+>  		inode->i_mode = mode;
+>  	} else {
+>  		if (inode_wrong_type(inode, mode)) {
+> @@ -1090,7 +1090,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
 >  
->  	ret = btrfs_read_locked_inode(inode, path);
-> @@ -5823,7 +5823,7 @@ struct btrfs_inode *btrfs_iget(u64 ino, struct btrfs_root *root)
->  	if (!inode)
->  		return ERR_PTR(-ENOMEM);
+>  #ifdef CONFIG_FS_ENCRYPTION
+>  	if (iinfo->fscrypt_auth_len &&
+> -	    ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len == 0))) {
+> +	    ((inode_state_read_once(inode) & I_NEW) || (ci->fscrypt_auth_len == 0))) {
+>  		kfree(ci->fscrypt_auth);
+>  		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
+>  		ci->fscrypt_auth = iinfo->fscrypt_auth;
+> @@ -1692,13 +1692,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+>  			pr_err_client(cl, "badness %p %llx.%llx\n", in,
+>  				      ceph_vinop(in));
+>  			req->r_target_inode = NULL;
+> -			if (in->i_state & I_NEW)
+> +			if (inode_state_read_once(in) & I_NEW)
+>  				discard_new_inode(in);
+>  			else
+>  				iput(in);
+>  			goto done;
+>  		}
+> -		if (in->i_state & I_NEW)
+> +		if (inode_state_read_once(in) & I_NEW)
+>  			unlock_new_inode(in);
+>  	}
 >  
-> -	if (!(inode->vfs_inode.i_state & I_NEW))
-> +	if (!(inode_state_read_once(&inode->vfs_inode) & I_NEW))
->  		return inode;
+> @@ -1887,11 +1887,11 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
+>  			pr_err_client(cl, "inode badness on %p got %d\n", in,
+>  				      rc);
+>  			err = rc;
+> -			if (in->i_state & I_NEW) {
+> +			if (inode_state_read_once(in) & I_NEW) {
+>  				ihold(in);
+>  				discard_new_inode(in);
+>  			}
+> -		} else if (in->i_state & I_NEW) {
+> +		} else if (inode_state_read_once(in) & I_NEW) {
+>  			unlock_new_inode(in);
+>  		}
 >  
->  	path = btrfs_alloc_path();
-> @@ -7480,7 +7480,7 @@ static void btrfs_invalidate_folio(struct folio *folio, size_t offset,
->  	u64 page_start = folio_pos(folio);
->  	u64 page_end = page_start + folio_size(folio) - 1;
->  	u64 cur;
-> -	int inode_evicting = inode->vfs_inode.i_state & I_FREEING;
-> +	int inode_evicting = inode_state_read_once(&inode->vfs_inode) & I_FREEING;
+> @@ -2103,7 +2103,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+>  			pr_err_client(cl, "badness on %p %llx.%llx\n", in,
+>  				      ceph_vinop(in));
+>  			if (d_really_is_negative(dn)) {
+> -				if (in->i_state & I_NEW) {
+> +				if (inode_state_read_once(in) & I_NEW) {
+>  					ihold(in);
+>  					discard_new_inode(in);
+>  				}
+> @@ -2113,7 +2113,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+>  			err = ret;
+>  			goto next_item;
+>  		}
+> -		if (in->i_state & I_NEW)
+> +		if (inode_state_read_once(in) & I_NEW)
+>  			unlock_new_inode(in);
 >  
->  	/*
->  	 * We have folio locked so no new ordered extent can be created on this
+>  		if (d_really_is_negative(dn)) {
 > -- 
 > 2.34.1
 > 
