@@ -1,128 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-63778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBADBCD9B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:49:46 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABF8BCD9F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 16:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6806F4E3AB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:49:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 66EC1355D72
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 14:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E4A2F6569;
-	Fri, 10 Oct 2025 14:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899CA2F7465;
+	Fri, 10 Oct 2025 14:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5wHC506"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VTnmIb1T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CEF21A95D;
-	Fri, 10 Oct 2025 14:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302862F619B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760107778; cv=none; b=BxKhc4ZzRAC5X/aWZadOH6AD2h9Yu6ifPpnnJVzO/4puG9tG+7UjvAFs/Fvd61Glf3P30t0ddD5PeEXUOe5gMoVIKsYgxrIj6AYZ9Pfy5zu21SsLSy5XeVUYD+YyTwVIPeSxnSgxU0TagJhEG4lAkTOasq7amV1QQ4LrxhPqYcI=
+	t=1760108050; cv=none; b=h6hzG4GPnTKZYCIWC6PcrzCDaG3gnNmvKl6nSelkeIoi5IVWYMgcv2YZnSuUnoGfxRwCqqqjq9CfJK7cTvwEtQgZOqcHvpSL3ysAlY+rhupmzpTM6f76rpwAqEqIGeu8ioPn8/Z6ACZOzM9IWAEHQ9IWz7vGopBv+GKJbHZWkYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760107778; c=relaxed/simple;
-	bh=Oh/7AZMFcBYKVF3dP+7IxTc/vPIZINLj7Syl673aU48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=su1qrmimpHpAArDKPyRE9migsPuYXm6Pj/mMhf4dcrRjSUUEy5G+VtRqSwnmVVeOpPIQG8+ND6sSCEziexDpWZ3wBEoF51TiW8zlmzM65Njox8BaYls5LXCzaDoihC/q1+ntSYg5iP8RLF46TmC5Y5zsaSoYhEfmp0qZEuz8aAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5wHC506; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5603C4CEF1;
-	Fri, 10 Oct 2025 14:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760107778;
-	bh=Oh/7AZMFcBYKVF3dP+7IxTc/vPIZINLj7Syl673aU48=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l5wHC506WxIHpBXkvPDRrEyNyDH0a/Uk1dY4uCnSl2UfIjvkYxQRb7Lc2Te8S5jYs
-	 19w+vB0AS7+bVKJfitE3+1OzdfkJ3UlZ64Nry6AY4dhmBK/5XYSMh7jdhqsmxChNYz
-	 h5YueIYG6BtTW5o7rhuRgDEtgLlL7/2odkoHZ4enEQjXpdSuubRqQMaKXiYHpoIeGp
-	 ROQTqBDzz4ma147mTtiUcA+ORS/vTEdE6dMWmHafqtE1emxCr8t+aqOCyJ41kZhYLu
-	 hqNXYm/17umuQINFJx84+BlgnhvcbcIB6YWVACs27xypaZSjd+hvl1NashMQYKoiJS
-	 7Aku3jp12el8A==
-Date: Fri, 10 Oct 2025 07:49:38 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Chuck Lever <cel@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Volker Lendecke <Volker.Lendecke@sernet.de>,
-	CIFS <linux-cifs@vger.kernel.org>
-Subject: Re: [RFC PATCH] fs: Plumb case sensitivity bits into statx
-Message-ID: <20251010144938.GB6174@frogsfrogsfrogs>
-References: <20250925151140.57548-1-cel@kernel.org>
- <CAOQ4uxj-d87B+L+WgbFgmBQqdrYzrPStyfOKtVfcQ19bOEV6CQ@mail.gmail.com>
- <87tt0gqa8f.fsf@mailhost.krisman.be>
- <28ffeb31-beec-4c7a-ad41-696d0fd54afe@kernel.org>
- <87plb3ra1z.fsf@mailhost.krisman.be>
- <4a31ae5c-ddb2-40ae-ae8d-747479da69e3@kernel.org>
- <87ldlrr8k3.fsf@mailhost.krisman.be>
- <20251006-zypressen-paarmal-4167375db973@brauner>
- <87zfa2pr4n.fsf@mailhost.krisman.be>
- <20251010-rodeln-meilenstein-0ebf47663d35@brauner>
+	s=arc-20240116; t=1760108050; c=relaxed/simple;
+	bh=DC7x9YWROCenDmlSc1FcZsUca68HCfG/mUx/W7rmzrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YJzneht6QmM64NyUyiaqrnrD7rvp7HLZ/xlaTbx2+MxGzfjPK7aFxRdrY568F4kWfhoMlyTdI8JAA1IvfOTHtEcA7pdH6hIWv7orRcnseYg2xNRcQfYICi8blnBIoJRtcaKIHGAobqeTsR+YsTuBFsjIC424L4sLxnHUaO8tAcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VTnmIb1T; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4e6ec0d1683so314541cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 07:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760108048; x=1760712848; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0DpdiimUJLGEL9YZv8OhwGPgsBnQcaD8Xj4apakBfn0=;
+        b=VTnmIb1TlHElKTohVvdtRHx7HEmeqrB8hSvmF22DJB+mQqqZZk+wvsDuz4uln9V7FU
+         dpsQgLT/r6jgDPFmApUUPclup6rNvOlQo0ZBmnDUNevAy0Zisy9ZysmhlASpSd4Rc+w1
+         UlL5OoGSVmhMYUtrcg8PpuJ5/J5BCFolzz31lFG/HMjjS7/pk80KXDRttm9jhNG34XxI
+         y42d9fImcgtux4nhQ7EP8Q2jXzWGqDHaxpe/P/Sck42KrtcdBO5PGk1kL/VeEL5tIWyF
+         /sauTiZHoQFdaXa8Z681DWvHC8T3LFGFuTu+3Zdya2+6jVwPi1yIjMqIFriwTRqAu6Ku
+         DWSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760108048; x=1760712848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0DpdiimUJLGEL9YZv8OhwGPgsBnQcaD8Xj4apakBfn0=;
+        b=LwWMZtiHnOgNKobs+QlSZsApOs2+78GZ5Gl8qPVP4IlVBOgfHvF+v3uEiODRiFr25f
+         jhjjw4yAyKoqHof6Dvnt7I6wbgJ2s4at0Tvq829+Ujv4yy+SUZ34IhYSiC+yY09+CWJu
+         PCjil7hsFadVTZWSFh8KhdJ/JUyjj8ZfvElQetXkaZebE5RdUtiwgTakBsyqFpiq1lft
+         wIs3M+LIgObJF0ORUBzPBEozKvQQhWto21O5mUbyzEKhuu+JV3x9+mdIh5Nao5yPtuEf
+         3Cc8YzXyj0qM3+uXyhBZkL4pMJfI5GSTBkWiuy/uU4sCoa5kUVtmV5JkSVo2WgWm4++c
+         4s0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVcP2q6iOiWXMrFtl70MX5b7RtUkwrhITblKUeexwCjIu35YQOH+DiDZAmZQXJYMIHpB3yBhUFOy4q1mabJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhao00fEac5eaW+U6tkeXphwPCIqZZxImrEQQxljqEwM/rrTAI
+	XELp0HMX0Mb1IstIEngKtxIrFJyk+u6l4U/uNdnesCir9NmH0LZYcAwPd9RxcXPncfkWFdshGgN
+	iGkYaAqXR0OB3SMEisHGcAWmp2rHcOnQZb5Ae20Aq
+X-Gm-Gg: ASbGncuS4WclGSOTq8aonQ42tFqLjhZD+ZibeMEa148tgFiCELu+3avaPSyDf2qnVyG
+	4lqzmlszhC+nPaUmhcdaDDGierj5ZD6jdvGrhrZrExVJcVRP8ASM43D5C26DNse0l36HF7AnFPC
+	utmyLQbQQ6KqwBFBUhYxdeXbrhWgyZn84mWa+t07eSEVK/ZNlHN5Hx+r6jGjpbxNUhVKaR10INm
+	F3eSFDVFfeETvjo7FjwoceAOZLJu7yhFfp7EX+4TaDdC5gk2rOv
+X-Google-Smtp-Source: AGHT+IELG1HO5re9l71qV16AXiLCV5TxV3n/x4fv7b1UlE7oKp+shLXPJ4Ui15bl56g81Rjif4tTmM3A2oXDy0V1pv8=
+X-Received: by 2002:a05:622a:50:b0:4d0:dff9:9518 with SMTP id
+ d75a77b69052e-4e6eabcf616mr24839371cf.12.1760108047605; Fri, 10 Oct 2025
+ 07:54:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010-rodeln-meilenstein-0ebf47663d35@brauner>
+References: <20251010011951.2136980-1-surenb@google.com> <20251010011951.2136980-2-surenb@google.com>
+ <aOhx9Zj1a6feN8wC@casper.infradead.org>
+In-Reply-To: <aOhx9Zj1a6feN8wC@casper.infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 10 Oct 2025 07:53:56 -0700
+X-Gm-Features: AS18NWBSQfAZ95bfn8zHE7YuLwgx02HxJfLsEBTBLUde_yaDHMul1ATmajxkrCY
+Message-ID: <CAJuCfpH85Ns8_+JNG4HS6TnFMUN0si+mcLXxUxedhQh1c0CSEw@mail.gmail.com>
+Subject: Re: [PATCH 1/8] mm: implement cleancache
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, alexandru.elisei@arm.com, 
+	peterx@redhat.com, sj@kernel.org, rppt@kernel.org, mhocko@suse.com, 
+	corbet@lwn.net, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	hch@infradead.org, jack@suse.cz, m.szyprowski@samsung.com, 
+	robin.murphy@arm.com, hannes@cmpxchg.org, zhengqi.arch@bytedance.com, 
+	shakeel.butt@linux.dev, axelrasmussen@google.com, yuanchu@google.com, 
+	weixugc@google.com, minchan@kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 01:11:32PM +0200, Christian Brauner wrote:
-> On Tue, Oct 07, 2025 at 01:18:32PM -0400, Gabriel Krisman Bertazi wrote:
-> > Christian Brauner <brauner@kernel.org> writes:
-> > 
-> > > On Fri, Oct 03, 2025 at 05:15:24PM -0400, Gabriel Krisman Bertazi wrote:
-> > >> Chuck Lever <cel@kernel.org> writes:
-> > >> 
-> > >> > On 10/3/25 4:43 PM, Gabriel Krisman Bertazi wrote:
-> > >> >> Chuck Lever <cel@kernel.org> writes:
-> > >> >> 
-> > >> >>> On 10/3/25 11:24 AM, Gabriel Krisman Bertazi wrote:
-> > >> >
-> > >> >>>> Does the protocol care about unicode version?  For userspace, it would
-> > >> >>>> be very relevant to expose it, as well as other details such as
-> > >> >>>> decomposition type.
-> > >> >>>
-> > >> >>> For the purposes of indicating case sensitivity and preservation, the
-> > >> >>> NFS protocol does not currently care about unicode version.
-> > >> >>>
-> > >> >>> But this is a very flexible proposal right now. Please recommend what
-> > >> >>> you'd like to see here. I hope I've given enough leeway that a unicode
-> > >> >>> version could be provided for other API consumers.
-> > >> >> 
-> > >> >> But also, encoding version information is filesystem-wide, so it would
-> > >> >> fit statfs.
-> > >> >
-> > >> > ext4 appears to have the ability to set the case folding behavior
-> > >> > on each directory, that's why I started with statx.
-> > >> 
-> > >> Yes. casefold is set per directory, but the unicode version and
-> > >> casefolding semantics used by those casefolded directories are defined
-> > >> for the entire filesystem.
-> > >
-> > > I'm not too fond of wasting statx() space for this. Couldn't this be
-> > > exposed via the new file_getattr() system call?:
-> > 
-> > Do you mean exposing of unicode version and flags to userspace? If so,
-> > yes, for sure, it can be fit in file_get_attr. It was never exposed
-> > before, so there is no user expectation about it!
-> 
-> Imho it would fit better there than statx(). If this becomes really
-> super common than we can also later decide to additional expose it via
-> statx() but for now I think it'd be better to move this into the new
-> file_attr()* apis.
+On Thu, Oct 9, 2025 at 7:39=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Thu, Oct 09, 2025 at 06:19:44PM -0700, Suren Baghdasaryan wrote:
+> > +     /*
+> > +      * 99% of the time, we don't need to flush the cleancache on the =
+bdev.
+> > +      * But, for the strange corners, lets be cautious
+> > +      */
+> > +     cleancache_invalidate_inode(mapping, mapping->host);
+>
+> Why do we need to pass in both address_space and inode?
 
-n00b question here: Can you enable (or disable) casefolding and the
-folding scheme used?  My guess is that one ought to be able to do that
-either (a) on an empty directory or (b) by reindexing the entire
-directory if the filesystem supports that kind of thing?  But hey, it's
-not like xfs supports any of that. ;)
+Ah, you mean why I don't use inode->i_mapping to get to its address
+space? I think I can. I'll try, and unless something blows up, I'll
+apply the change in the next version.
 
---D
+>
+> > +/*
+> > + * Backend API
+> > + *
+> > + * Cleancache does not touch page reference. Page refcount should be 1=
+ when
+> > + * page is placed or returned into cleancache and pages obtained from
+> > + * cleancache will also have their refcount at 1.
+>
+> I don't like these references to page refcount.  Surely you mean folio
+> refcount?
+
+Yes, mea culpa :) Will fix.
+
+>
+> > +     help
+> > +       Cleancache can be thought of as a page-granularity victim cache
+> > +       for clean pages that the kernel's pageframe replacement algorit=
+hm
+> > +       (PFRA) would like to keep around, but can't since there isn't e=
+nough
+>
+> PFRA seems to be an acronym you've just made up.  Why?
+
+Inherited from the original cleancache documentation. Will remove.
+
+>
+> > +struct cleancache_inode {
+> > +     struct inode *inode;
+> > +     struct hlist_node hash;
+> > +     refcount_t ref_count;
+> > +     struct xarray folios; /* protected by folios.xa_lock */
+>
+> This is a pointless comment.  All xarrays are protected by their own
+> xa_lock.
+
+Ack.
+
+>
+> > +static DEFINE_IDR(fs_idr);
+>
+> No.  The IDR is deprecated.  Use an allocating XArray.
+
+Ah, good to know. I'll change to xarray.
+
+>
+> > +/*
+> > + * Folio attributes:
+> > + *   folio->_mapcount - pool_id
+> > + *   folio->mapping - ccinode reference or NULL if folio is unused
+> > + *   folio->index - file offset
+>
+> No.  Don't reuse fields for something entirely different.  Put a
+> properly named field in the union.
+
+Ack.
+
+>
+> > +static void folio_attachment(struct folio *folio, struct cleancache_in=
+ode **ccinode,
+>
+> Unnecessarily long line
+
+Ack.
+
+Thanks for the feedback, Matthew!
+
+>
 
