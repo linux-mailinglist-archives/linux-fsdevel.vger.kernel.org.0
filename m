@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-63812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B77BCEA17
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 23:42:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D8EBCEA20
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 23:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 757F84F68BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 21:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A924268DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 21:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D3C3043B5;
-	Fri, 10 Oct 2025 21:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D1D303A32;
+	Fri, 10 Oct 2025 21:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KkYypHNC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KLTQY8zG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA11303C87
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 21:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AED303C96
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 21:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760132552; cv=none; b=VjxqOlWud7YpJXMUbgzsbWmbURAI/O5/H+YkMwfMLvHPVMTg06Piy65OReYU9NKPQCVpNGWoNbwHLmfvbp4UMhiIALoz183R0WKSCgbunl8e/3cB4lOKNsnU/mj2qD42Q6+LyGvYhGhUChQIyF6VdJkZgSOHsyzlns/VcI3FJxc=
+	t=1760132553; cv=none; b=Ce5AzteW+Hhcip+NI9250CgWU43Z6ExlJKq+ruW2AZg9yiUc+m/OptByUKdkz9qNcZMeLLF4RoN6dGyF90MHEbzwW3m6h8Ur/OtY6ZYAZpKdMiwqdKhqgjSNJfhJxj5USDnJCQHSumegBNNxwg57rUDynXn4qyaUUU5R9ZHV0m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760132552; c=relaxed/simple;
-	bh=GJryDFOsOloQjP7siK0zC0G7J45WHi1AB6btkM6QkBw=;
+	s=arc-20240116; t=1760132553; c=relaxed/simple;
+	bh=50iMg4cjhPiTK7ZC9StdXLuoYu4mQzjFec4yy2wlFUk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rlG+4Hhl7oQ+0huMObSMUlwrq/ZZYiidYorZ5yPT7TmWKIDI0cqaVLjX2OArwuOsbx74k0OypGuU4YPt1vmoNINnt7YCiFZj3gnanyVZwQ9LMaOfimQ0i++epwrG4fN2Lcz1To5Bw+yP/2ZZslwfD+1dnZ1oHXt3QHIuAQJPNns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KkYypHNC; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=rKIUcNsuD64ELJph+KdCnHzAwwWOLL1/c9kaFpWnd+afh8Du4vETvVvtaTawt4Pr3KUfcf9ODbyLBk6PzJtVOKi+g8wz0+nQIi3hwi6u1ZfkoEhY4qBrrju5To7CxqQgPTC3qnKi5Y/vxkC3rijjDk4oHW7c6I4RqJsroivxO2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KLTQY8zG; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760132549;
+	s=mimecast20190719; t=1760132550;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HR7ws2UKD9+oIwfuUNn9Tl9ltcybskbjqnKMPXQbKgk=;
-	b=KkYypHNCQU+vtaNsDCwFRslg0rChnbYtikLHvGNNz0FMB077ZJ+e+pJxdueEemzZj5+/Pl
-	5oMxZviUJ0mSKO14KLpJEAF3Vc/zBs+2dA0PEWq4SUnbmyPeP5M387QwFX51tXngCEkuj6
-	AemIo+OxK77d7Zrgs6e50ejAEZ7FQhE=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ZPCYbFFACQ3Rv/ZhYJDcxm0pSUm0LvajwjZxksg70Jk=;
+	b=KLTQY8zGOT+e/iEGb0hmSD6U5BU9N/Dw6WWx99GPYcPT8DugznuAZAKRwUqs2xJPbhZlDN
+	9GPphEof1iYH9UGRv3HDM3eULBUX4BoXaTyE0mjfb7AMS0aU+9T2k8GcJaekyrxpQN/TmQ
+	ox8Uf/ytXB416zrnvRDsf6ih1kBprLo=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-PdXLrl5XNV67Yksxht3biw-1; Fri, 10 Oct 2025 17:42:28 -0400
-X-MC-Unique: PdXLrl5XNV67Yksxht3biw-1
-X-Mimecast-MFC-AGG-ID: PdXLrl5XNV67Yksxht3biw_1760132548
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42f8befcb06so72194765ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:42:28 -0700 (PDT)
+ us-mta-588-T2UBPlNLPlyowGdb7YGAYw-1; Fri, 10 Oct 2025 17:42:29 -0400
+X-MC-Unique: T2UBPlNLPlyowGdb7YGAYw-1
+X-Mimecast-MFC-AGG-ID: T2UBPlNLPlyowGdb7YGAYw_1760132548
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42e71d1a064so88171945ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 14:42:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1760132548; x=1760737348;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HR7ws2UKD9+oIwfuUNn9Tl9ltcybskbjqnKMPXQbKgk=;
-        b=bEohG/sYU7bStxy7D9Nu+083ZgvMzTMuj4YzFdqwHv4kO6rU2IIOn56ebuexV+tl87
-         ZEPtWALq5xGSigKATRQRhug40QL8MUPDzxmJ9PzPhpWdjWShQe2bS+L50MeqjFTxiDvb
-         vuf3pxy3E9OBvtsv5Br4Y9dAz3MJaqUep/9JoXqKoIigK0UVNuxH0SxKcTJ71Ght/eYR
-         wdI7dWh4xii4JQlN3BBn9k2/G9TRgSLWq7eMFywiYF0J/qVIXh1R1A1YPCXWygiZzM6f
-         GoT6XsNN/A9Jr/tUdHtFdsCyFTLYjzUpITPR4v/96HjZj8uQiI7tHPmcGQSyJ0haHsbJ
-         V1IA==
-X-Gm-Message-State: AOJu0Yz59P2mYQ3MOk169xofM0jvFtYHCOAiFju8sNrAQcxDlBQ5r0Hk
-	OItzd63TpSIIHwIIwsB1kceYsVmPlJjRQerqhh3/0uJS8829EIJeAlPJAhbsjgMDSzckkZ3vfo3
-	Qgo1ORwlu24aIGXrqIZ1KyVWV1rYhjZRj33Ycn2NGtNKhLnfyLFQQc0b/NQFz8dWqiqU=
-X-Gm-Gg: ASbGnctz9AKlxutzAtJ6HbvtlSD4AsyJB4hn1M43FLEgoXEJf+RbieHIFOHio07O0Rc
-	U/SZclNGYfySJ3LKwPvQRT3UQZV3Y0uafNiBz/rR5ZOSAg4bG7TAd/tbQUWShQWW2liApkzAXCs
-	D87ve04fwQgW8SNWONjDSBjYHjdZyJpln7ZuxKq3VxCKLRkAr0T/URcSS8WfUpD/BeaGIzWigzs
-	m8z6fww2FbCIEyycGWpQVCyxxYH2fVvjDLpEpRunPsOWs6W8Vaaij2+vQ7EFjM+xpwhFPb7Z0xe
-	xAxHv8w0Z2gwtR/x2Rlwx51O+HJAIVgjylf8J77ojZ2dYNuBe7dwQ94=
-X-Received: by 2002:a05:6e02:3c85:b0:42f:9ba7:e47e with SMTP id e9e14a558f8ab-42f9ba7e72dmr70052775ab.14.1760132547646;
+        bh=ZPCYbFFACQ3Rv/ZhYJDcxm0pSUm0LvajwjZxksg70Jk=;
+        b=tmfptLRuxJFtclP9WoVf4nLNWif3s7SZKNsJEk8mWx1twf9/FPGldXfEmmrgfNIlWX
+         gSkj4H/3FCnV8CjkvsJmI33MtWhCVeqTXUEyOL1PvfLfN0GF5i63wKHT0DbuQP450UZ3
+         ZM8XHslUoQeL33LqN8pr/DHxDP5jtgOOdFbXzA3257l10lVK3vDbnHZlptbZkxwtyIKr
+         P439UWdIUcoHaXL07t34uZoAxkjQep+GTQ4enAvpDyOXLXq1MgeLNBc7GWBANH8/ps4G
+         /NVCuyEzZvQ+0ocfWbcq/Ezo7tCvbX85Z3zKKRHDOQdopbRu2COdYEphKAS60y+Z2m/N
+         GC+Q==
+X-Gm-Message-State: AOJu0Yy+wPfC3hHqpQzhnlkqwXnKAO3ibr3x/2T3kv/rnmPSCiW1HsTA
+	g0G+Nj1ZwPSVYyXJXpk2ymZ+TIj9LtN+Q9VL57N5JJhd0IDVNc6UekgBCpAymoUJVG2y2jvI2ft
+	Ule3VJkCNIFIfGJpVmP6FITA6R0ORYVR5WQMDHGWlYedrGe12aujeAB4stDmq+pRRPqg=
+X-Gm-Gg: ASbGncuSy7oapdh61sK13CRS/oYjSo4PRlbyxd5VNnsquf5tKcVbGmt9RtkJGrQLwpG
+	DuLvq62GiiNrmflYddtVpiRbmjycnhmcimhcO4TVmTOmEoSd3+n/iQkYR2y8Bq6LOtbrJw/MLDo
+	NAGPljlV/b8myGzykOzZI+fn6tjuRPfzkD9JxWzL/0+qddCimROosvvP2kyHwTCYO+ZdqVMg5IH
+	iMJDVtkrx+UH0qPMZHuwwmbTK3jbnNOoOT1CPAknCZ7kF4xMsXOgcBZUrPVs8tOFYQG9fvWyk7N
+	SqYaPzUbDzafZVar72dahdsq1ShMvAFRH0dfrANKu2lB9NH7VBvTUFc=
+X-Received: by 2002:a05:6e02:178b:b0:425:744b:52d3 with SMTP id e9e14a558f8ab-42f87380d9dmr144056235ab.11.1760132547993;
         Fri, 10 Oct 2025 14:42:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH44cVXJKsWaECfwgaloao72H4DmNC0TIRKAyNGZ6LB3b/aUsmISlSFdph6ZLlnpFd+FZr3Mg==
-X-Received: by 2002:a05:6e02:3c85:b0:42f:9ba7:e47e with SMTP id e9e14a558f8ab-42f9ba7e72dmr70051355ab.14.1760132546767;
-        Fri, 10 Oct 2025 14:42:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGN9W2IC/SA0+yMXYj+bexcHnyhvZRXEQnWhjpte5lw9OnE4asaSu6KQ3Uaia/qiH+7I5ocnw==
+X-Received: by 2002:a05:6e02:178b:b0:425:744b:52d3 with SMTP id e9e14a558f8ab-42f87380d9dmr144055155ab.11.1760132547477;
+        Fri, 10 Oct 2025 14:42:27 -0700 (PDT)
 Received: from big24.xxmyappdomainxx.com ([79.127.136.56])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f9027855bsm24382895ab.11.2025.10.10.14.42.25
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f9027855bsm24382895ab.11.2025.10.10.14.42.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 14:42:26 -0700 (PDT)
+        Fri, 10 Oct 2025 14:42:27 -0700 (PDT)
 From: Eric Sandeen <sandeen@redhat.com>
 To: v9fs@lists.linux.dev
 Cc: linux-fsdevel@vger.kernel.org,
@@ -88,9 +88,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	linux_oss@crudebyte.com,
 	eadavis@qq.com,
 	Eric Sandeen <sandeen@redhat.com>
-Subject: [PATCH V3 2/4] net/9p: move structures and macros to header files
-Date: Fri, 10 Oct 2025 16:36:17 -0500
-Message-ID: <20251010214222.1347785-3-sandeen@redhat.com>
+Subject: [PATCH V3 3/4] 9p: create a v9fs_context structure to hold parsed options
+Date: Fri, 10 Oct 2025 16:36:18 -0500
+Message-ID: <20251010214222.1347785-4-sandeen@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251010214222.1347785-1-sandeen@redhat.com>
 References: <20251010214222.1347785-1-sandeen@redhat.com>
@@ -102,51 +102,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With the new mount API all option parsing will need to happen
-in fs/v9fs.c, so move some existing data structures and macros
-to header files to facilitate this. Rename some to reflect
-the transport they are used for (rdma, fd, etc), for clarity.
+This patch creates a new v9fs_context structure which includes
+new p9_session_opts and p9_client_opts structures, as well as
+re-using the existing p9_fd_opts and p9_rdma_opts to store options
+during parsing. The new structure will be used in the next
+commit to pass all parsed options to the appropriate transports.
 
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- include/net/9p/client.h    |  6 ++++++
- include/net/9p/transport.h | 39 ++++++++++++++++++++++++++++++++++++++
- net/9p/client.c            |  6 ------
- net/9p/trans_fd.c          | 20 ++-----------------
- net/9p/trans_rdma.c        | 25 ++----------------------
- 5 files changed, 49 insertions(+), 47 deletions(-)
+ include/net/9p/client.h    | 90 ++++++++++++++++++++++++++++++++++++++
+ include/net/9p/transport.h | 32 --------------
+ 2 files changed, 90 insertions(+), 32 deletions(-)
 
 diff --git a/include/net/9p/client.h b/include/net/9p/client.h
-index 4f785098c67a..2d46f8017bd5 100644
+index 2d46f8017bd5..cc18443f7d51 100644
 --- a/include/net/9p/client.h
 +++ b/include/net/9p/client.h
-@@ -16,6 +16,12 @@
- /* Number of requests per row */
- #define P9_ROW_MAXTAG 255
+@@ -132,6 +132,96 @@ struct p9_client {
+ 	char name[__NEW_UTS_LEN + 1];
+ };
  
-+/* DEFAULT MSIZE = 32 pages worth of payload + P9_HDRSZ +
-+ * room for write (16 extra) or read (11 extra) operands.
++/**
++ * struct p9_fd_opts - holds client options during parsing
++ * @msize: maximum data size negotiated by protocol
++ * @prot-Oversion: 9P protocol version to use
++ * @trans_mod: module API instantiated with this client
++ *
++ * These parsed options get transferred into client in
++ * apply_client_options()
 + */
-+
-+#define DEFAULT_MSIZE ((128 * 1024) + P9_IOHDRSZ)
-+
- /** enum p9_proto_versions - 9P protocol versions
-  * @p9_proto_legacy: 9P Legacy mode, pre-9P2000.u
-  * @p9_proto_2000u: 9P2000.u extension
-diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
-index 766ec07c9599..88702953b1ef 100644
---- a/include/net/9p/transport.h
-+++ b/include/net/9p/transport.h
-@@ -14,6 +14,45 @@
- #define P9_DEF_MIN_RESVPORT	(665U)
- #define P9_DEF_MAX_RESVPORT	(1023U)
- 
-+#define P9_FD_PORT 564
-+
-+#define P9_RDMA_PORT		5640
-+#define P9_RDMA_SQ_DEPTH	32
-+#define P9_RDMA_RQ_DEPTH	32
-+#define P9_RDMA_TIMEOUT		30000		/* 30 seconds */
++struct p9_client_opts {
++	unsigned int msize;
++	unsigned char proto_version;
++	struct p9_trans_module *trans_mod;
++};
 +
 +/**
 + * struct p9_fd_opts - per-transport options for fd transport
@@ -155,7 +144,6 @@ index 766ec07c9599..88702953b1ef 100644
 + * @port: port to connect to (trans=tcp)
 + * @privport: port is privileged
 + */
-+
 +struct p9_fd_opts {
 +	int rfd;
 +	int wfd;
@@ -180,43 +168,63 @@ index 766ec07c9599..88702953b1ef 100644
 +	long timeout;
 +};
 +
++/**
++ * struct p9_session_opts - holds parsed options for v9fs_session_info
++ * @flags: session options of type &p9_session_flags
++ * @nodev: set to 1 to disable device mapping
++ * @debug: debug level
++ * @afid: authentication handle
++ * @cache: cache mode of type &p9_cache_bits
++ * @cachetag: the tag of the cache associated with this session
++ * @uname: string user name to mount hierarchy as
++ * @aname: mount specifier for remote hierarchy
++ * @dfltuid: default numeric userid to mount hierarchy as
++ * @dfltgid: default numeric groupid to mount hierarchy as
++ * @uid: if %V9FS_ACCESS_SINGLE, the numeric uid which mounted the hierarchy
++ * @session_lock_timeout: retry interval for blocking locks
++ *
++ * This strucure holds options which are parsed and will be transferred
++ * to the v9fs_session_info structure when mounted, and therefore largely
++ * duplicates struct v9fs_session_info.
++ */
++struct p9_session_opts {
++	unsigned int flags;
++	unsigned char nodev;
++	unsigned short debug;
++	unsigned int afid;
++	unsigned int cache;
++#ifdef CONFIG_9P_FSCACHE
++	char *cachetag;
++#endif
++	char *uname;
++	char *aname;
++	kuid_t dfltuid;
++	kgid_t dfltgid;
++	kuid_t uid;
++	long session_lock_timeout;
++};
++
++/* Used by mount API to store parsed mount options */
++struct v9fs_context {
++	struct p9_client_opts	client_opts;
++	struct p9_fd_opts	fd_opts;
++	struct p9_rdma_opts	rdma_opts;
++	struct p9_session_opts	session_opts;
++};
++
  /**
-  * struct p9_trans_module - transport module interface
-  * @list: used to maintain a list of currently available transports
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 5c1ca57ccd28..5e3230b1bfab 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -29,12 +29,6 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/9p.h>
- 
--/* DEFAULT MSIZE = 32 pages worth of payload + P9_HDRSZ +
-- * room for write (16 extra) or read (11 extra) operands.
-- */
--
--#define DEFAULT_MSIZE ((128 * 1024) + P9_IOHDRSZ)
--
- /* Client Option Parsing (code inspired by NFS code)
-  *  - a little lazy - parse all client options
-  */
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 339ec4e54778..9ef4f2e0db3c 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -31,28 +31,12 @@
- 
- #include <linux/syscalls.h> /* killme */
- 
--#define P9_PORT 564
- #define MAX_SOCK_BUF (1024*1024)
- #define MAXPOLLWADDR	2
- 
- static struct p9_trans_module p9_tcp_trans;
- static struct p9_trans_module p9_fd_trans;
+  * struct p9_fid - file system entity handle
+  * @clnt: back pointer to instantiating &p9_client
+diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
+index 88702953b1ef..ebbb4b50ee20 100644
+--- a/include/net/9p/transport.h
++++ b/include/net/9p/transport.h
+@@ -21,38 +21,6 @@
+ #define P9_RDMA_RQ_DEPTH	32
+ #define P9_RDMA_TIMEOUT		30000		/* 30 seconds */
  
 -/**
-- * struct p9_fd_opts - per-transport options
+- * struct p9_fd_opts - per-transport options for fd transport
 - * @rfd: file descriptor for reading (trans=fd)
 - * @wfd: file descriptor for writing (trans=fd)
 - * @port: port to connect to (trans=tcp)
@@ -230,52 +238,8 @@ index 339ec4e54778..9ef4f2e0db3c 100644
 -	bool privport;
 -};
 -
- /*
-   * Option Parsing (code inspired by NFS code)
-   *  - a little lazy - parse all fd-transport options
-@@ -749,7 +733,7 @@ static int p9_fd_cancelled(struct p9_client *client, struct p9_req_t *req)
- static int p9_fd_show_options(struct seq_file *m, struct p9_client *clnt)
- {
- 	if (clnt->trans_mod == &p9_tcp_trans) {
--		if (clnt->trans_opts.tcp.port != P9_PORT)
-+		if (clnt->trans_opts.tcp.port != P9_FD_PORT)
- 			seq_printf(m, ",port=%u", clnt->trans_opts.tcp.port);
- 	} else if (clnt->trans_mod == &p9_fd_trans) {
- 		if (clnt->trans_opts.fd.rfd != ~0)
-@@ -775,7 +759,7 @@ static int parse_opts(char *params, struct p9_fd_opts *opts)
- 	int option;
- 	char *options, *tmp_options;
- 
--	opts->port = P9_PORT;
-+	opts->port = P9_FD_PORT;
- 	opts->rfd = ~0;
- 	opts->wfd = ~0;
- 	opts->privport = false;
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index b84748baf9cb..46ee37061faf 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -32,14 +32,10 @@
- #include <rdma/ib_verbs.h>
- #include <rdma/rdma_cm.h>
- 
--#define P9_PORT			5640
--#define P9_RDMA_SQ_DEPTH	32
--#define P9_RDMA_RQ_DEPTH	32
- #define P9_RDMA_SEND_SGE	4
- #define P9_RDMA_RECV_SGE	4
- #define P9_RDMA_IRD		0
- #define P9_RDMA_ORD		0
--#define P9_RDMA_TIMEOUT		30000		/* 30 seconds */
- #define P9_RDMA_MAXSIZE		(1024*1024)	/* 1MB */
- 
- /**
-@@ -110,23 +106,6 @@ struct p9_rdma_context {
- 	};
- };
- 
 -/**
-- * struct p9_rdma_opts - Collection of mount options
+- * struct p9_rdma_opts - Collection of mount options for rdma transport
 - * @port: port of connection
 - * @privport: Whether a privileged port may be used
 - * @sq_depth: The requested depth of the SQ. This really doesn't need
@@ -291,27 +255,9 @@ index b84748baf9cb..46ee37061faf 100644
 -	long timeout;
 -};
 -
- /*
-  * Option Parsing (code inspired by NFS code)
-  */
-@@ -151,7 +130,7 @@ static int p9_rdma_show_options(struct seq_file *m, struct p9_client *clnt)
- {
- 	struct p9_trans_rdma *rdma = clnt->trans;
- 
--	if (rdma->port != P9_PORT)
-+	if (rdma->port != P9_RDMA_PORT)
- 		seq_printf(m, ",port=%u", rdma->port);
- 	if (rdma->sq_depth != P9_RDMA_SQ_DEPTH)
- 		seq_printf(m, ",sq=%u", rdma->sq_depth);
-@@ -178,7 +157,7 @@ static int parse_opts(char *params, struct p9_rdma_opts *opts)
- 	int option;
- 	char *options, *tmp_options;
- 
--	opts->port = P9_PORT;
-+	opts->port = P9_RDMA_PORT;
- 	opts->sq_depth = P9_RDMA_SQ_DEPTH;
- 	opts->rq_depth = P9_RDMA_RQ_DEPTH;
- 	opts->timeout = P9_RDMA_TIMEOUT;
+ /**
+  * struct p9_trans_module - transport module interface
+  * @list: used to maintain a list of currently available transports
 -- 
 2.51.0
 
