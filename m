@@ -1,537 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-63819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F29BCEAF6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 00:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38B9BCEBEA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 01:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B81544758
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 22:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C31A19A56F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Oct 2025 23:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE32F276025;
-	Fri, 10 Oct 2025 22:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632AF27D780;
+	Fri, 10 Oct 2025 23:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRI7Uvp0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiYDjOjN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DD0258CD0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 22:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3328727CB0A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 23:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760134667; cv=none; b=FBHk+8nFkiYnsof22YGrnQhtAXIFDN3mLapXViviU9I+BTKtclMHEYtblhcNcOOx4qkVqFQ+Rb+7VwP7xB4KjApej4tNIdrwZATukJZKCTWpVKNzmIcOIP1fAxi7Qe2JzGE5UI/uzRp4gXhN8Lp1QNts2BwB/nYGtuCX/WUuhwc=
+	t=1760138090; cv=none; b=sE3QK3t9PR0T7yFuyMwWp5CT4/o54Emd7kTnr/8V28CIo67XA8t/MI+6D7Uq5sQQNcLO7O6yzeLmflEoZQ8pr3tsQfRi4YXqdnsKE0FEhe2aYADwsNPJwhhC+5gOxQzjM0aT/+NvDkZ23cjfgS6lRDBC8LfxXLNZLjhEwkVj3x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760134667; c=relaxed/simple;
-	bh=w1T9GeSwriOHz1us7VegZsxeoRhTe4hxz+3gec3k1fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UfCp2PKFqa6MdEyeMd2Foq+vTb0Sa7xSPWZ2xx5DkjxmfeH/upPhlVcKjAo3PPwUubLMllIPOodju5TB3aBSHJ7DUAh1gf9w5geJ+havo5HZr2QOl7sD2ozXn5PdQUod4uLNTyAeOCeNWXAExmbEWkrJnDjaNNXA+bO1CdO1x1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRI7Uvp0; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1760138090; c=relaxed/simple;
+	bh=KEKKk6F6HfJdCsFCzEsEQyZzDxLvPlGovl7/35gC91w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fWaPxIlLdIIVnwi7do4yv8qR1PsMzZyxnyWDm3HJY6X/caYnuoWi0hZUaODKWoM29N74ilEGaJA46OhRhHARdXnrsP5tYJKTURKqbwg5X6Hx8SVExh2nliMGhOWIpwe5H1E5V1kUq9R/kRxqSWrLrsQyiAcxf+ZmUn2x+WjmH74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiYDjOjN; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b50645ecfbbso516638566b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 15:17:42 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-85d02580a07so312016485a.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 16:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760134661; x=1760739461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LKQtbwvgtZO6Ou2ow3imMF0f8RAbSKVvOayIwxBwtQw=;
-        b=IRI7Uvp0W2q4VmWsiAtnxGupajmImF7D9vPVsJYBP034FtW4BoBy+jAFtItEhREMLJ
-         6ZEsY+ZOO1++OCN0S2rm6S2LML16cqdgqCe1h1lkumAIvaswm96E8sxOeV+LqgNUiuqY
-         5W3eqiGkDMIz1UlOaLWA8ldYwlYgrqpa23Wsj7sG7+gxYCS8vVoLyb7BqEds0wTLfFdx
-         LmsOD/dS+V7w2UogUp1nQxRyckBsR+7kAAVu1wUV1BlQvB7yNPyl4jCy2FoHaiQA/Jlg
-         Oe9EbPQdOMWAV4MI5qccef1kwKi6BNlgXq7HVDGyyDiu7OdFdusaTD5l+RFRZUHZGjmf
-         9vcg==
+        d=gmail.com; s=20230601; t=1760138086; x=1760742886; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6LvEpU+6fERfT/zdqMwqYod3TzOdm6We4ztTem1gKU0=;
+        b=OiYDjOjNkgOdfK+gdru4nuS6kRr5nh9sTTyRK+aklFK25xrdT/YHntO5/CpHpEDj9T
+         ywB2fneo/qwJkXJuy9L1RNj7XBkyyDkm1+wPXi17RMRPtOdlPpj6CzsGkFBJWU0dUhXh
+         zFjjBdarmy+tWwLvIctK2xra9RgDvyVeJl9X1gQZVhN2Hrqbp23CaQg5TqH1EekCAQV/
+         uzH6YEobt+8oxeMoTaL9ktQzV+O8hJVP5jHWqnRIR7d6/maIXtQdE84Ss01h/xu5gZvy
+         zZ7qtFpQz6y6yxojNLopRqobkGgd0m52rLrsDJ1UWzN2TbIrPhhWEoVWtCJSwFa/bjGN
+         FGtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760134661; x=1760739461;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LKQtbwvgtZO6Ou2ow3imMF0f8RAbSKVvOayIwxBwtQw=;
-        b=FVy8j4xXQiF0vVW0GqDeh8WBoXcjBQIPE1lCVQd6taM6gMiciaoUPIeTC7xuvCL0ST
-         BNPGti2gvDmG0GyfWvn7kMMC/I7tjUwTLFkFHhkPBS8+y+x6/ctq4+Q6/avbH1oRKQie
-         T/+ZqdFT/mgjjNWAIobu6QURpJ9PTB/Le8jserD8CiSzs3pdwbFnWiMAeY9s2gVCwm4k
-         /KRljeYe2AAIQIRz9GpGGr4RkOqVPItQbg96X0LEAhkyNun4oterB3sfi2csNMCpZmzm
-         R5ibydbTmg1bigrpcovJL09vaipUwKHNo20iZuGzmhe2AFUxr94RbopfyOitSLs+KAa9
-         D8Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCX46OQe5CeDpBINgyfrPeoxrCl+wfX4oYcXFNC9asyQpGdSi1ii2HGauV9bbnrQWejb/AFBi87me8yg7jHI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrvWhQ7/ySrkfXLXcZ2844KhwuW/2ubfacbWR1JB9LerUSfeR/
-	f34m0Sun8PHFdvncCRGRuwnKby0UolI+pTrYHkSEWGdIFh15YrMk7msa
-X-Gm-Gg: ASbGnct0XiY3/99L0HWsWm8jTAOKoYO4/ZxBov3YyWXXFk/sC8cDgNaIEJOWO5Fr44u
-	O97AK5Z47esxR8VB1kb9FFcCmxKSjMRQpyGFeDbCR2kGtPLUm3dk1iQS4FPZc8G68FnbthujEdM
-	bttrtzp3UZRe6ZrAWePcbdugZiw7cnMu4ZNerXdzHnR4F5jkDNm5UPUvug2zLvXnZZpJ7lUjB7r
-	jYYBwo+whM3hEZ9ZBhiCE+ci3rBhXuxbnWHRXP9PcJQwGwxooeLaMWiLu1nK6FM1IE+IgY3MOry
-	lAT/w8xkRwSVcvGa4cFpXqiMywiyEJF39xnWebLd/bWfS0fiA4aGWJQDYGiFAhAttWJyIqMKOqx
-	f1fLRTN/Kqu1u1QXKPHlXAgzmKel8/8mWATplmpRR/1Wb7Jf2VQhi/lMYwPfquAWZciC21orkcN
-	P+4549zNDpZUu7wviXdaaMc/alPEM=
-X-Google-Smtp-Source: AGHT+IHIkPtl6T0qfdYDVwta+NY5U8nDtnRpyI9VpPx6t7WYBKcSYOsWUTGZI1qD5t5eYXJnGFmU2g==
-X-Received: by 2002:a17:906:c105:b0:b3e:907c:9e26 with SMTP id a640c23a62f3a-b50ac5cfaf7mr1384462966b.59.1760134661125;
-        Fri, 10 Oct 2025 15:17:41 -0700 (PDT)
-Received: from f.. (cst-prg-66-155.cust.vodafone.cz. [46.135.66.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d67d2db4sm331467666b.36.2025.10.10.15.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 15:17:40 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: rework I_NEW handling to operate without fences
-Date: Sat, 11 Oct 2025 00:17:36 +0200
-Message-ID: <20251010221737.1403539-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1760138086; x=1760742886;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6LvEpU+6fERfT/zdqMwqYod3TzOdm6We4ztTem1gKU0=;
+        b=JP21OsXaje2UqhrzAdlKvQTIMgwv5DRNF/O2Pjda3VdRrCOQozD5kPN0geMtECYXdZ
+         8C3v0crncWZwuO3ONY8/3xArwOk1q4thlTuBTUPIkWoXbXGHiOCPWbMpERl0jRSzpqOM
+         7m8XYvig4LYA/91lLUGRMG8JUaoxIu6Skapycdzyx4OV3HmjhXUWtZkhRhPC+ANUIm93
+         MrgcpBUsoHIjpNXYFtPI3sTbIp3U/4uV9ouYieyrn3c/MogvCFpGfV88no49Ek0C2eXg
+         6Ekgn60wItAcKyic91d6QEL/j/LKqUlGz8a9eGo9kPJNhUnH1WsU7umn9EdJZWJ7rJ/P
+         C4aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbq+vi0iK8LEPrkkCMiMM6V4F+uvVysU5rw/adx0sPI82eUcCrT7jH27kzYsEp6tB3eyWHtOABW04kpdZk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpRvDMYKdUi4gl7Jx8XTwYXDCJLJsG2EeuGX0H+jUCVwSlKAp7
+	EkOl0GULsVrDBA1Y+yabsIBe+1OjrwH/eznWhboT9f7j/5BrhKLdW5mAa++PVFBg/N4DN1nHsh9
+	y3D/oycsbfWMCHrr+ED5qXAAu1+gG5EE=
+X-Gm-Gg: ASbGnct4U0SXrGxxdnxaF2HRcGGxu1byFjLZh+nA8byvsao74fJZyo4duHIA7yBPegE
+	l6gNWk3qbAVbtdO+dTt6GpHcB4zdDuZtjDBKAHOqSB63BJp9uj3mgaWZWdaqw6x24wxp5Jwp4cK
+	Ivp8Yvi8QkrWWJWwiIPrXOzmoLJa5Tt9CzwKyl67D5odijMvglPqpf2jl4stcZql5q+2c1YYGSw
+	Bca6SQHq+AK8fzLJxD/oxTT8vp4n7GSp1uLWupzzY42BfaYZHZytRiBcpoMToquNSby
+X-Google-Smtp-Source: AGHT+IEU/4C+F4HvGvxeypRAg5QWm2jwt7z1osXRzNqEuPpnBX939DQYJYagREul4kMLZRD+btxx8qCF4I0/5eT/KYs=
+X-Received: by 2002:ac8:5f0e:0:b0:4cf:1eba:f30d with SMTP id
+ d75a77b69052e-4e6de86ab3dmr234415191cf.23.1760138085787; Fri, 10 Oct 2025
+ 16:14:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251008204133.2781356-1-joannelkoong@gmail.com>
+ <CAJfpegsyHmSAYP04ot8neu_QtsCkTA2-qc2vvvLrsNLQt1aJCg@mail.gmail.com>
+ <CAJnrk1anOVeNyzEe37p5H-z5UoKeccVMGBCUL_4pqzc=e2J7Ug@mail.gmail.com> <20251010150113.GC6174@frogsfrogsfrogs>
+In-Reply-To: <20251010150113.GC6174@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 10 Oct 2025 16:14:34 -0700
+X-Gm-Features: AS18NWB0_PLEOWPGs1r8gAmO4IaVuQ_nq0Q7wucN7XhYVDKMuw7zk6MK5hWB3Yo
+Message-ID: <CAJnrk1bXvUF2=tfTxMuxFwqQ03uEMrDhDsdo33R0OaXFQk9ucw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: disable default bdi strictlimiting
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the inode hash code grab the state while ->i_lock is held. If found
-to be set, synchronize the sleep once more with the lock held.
+On Fri, Oct 10, 2025 at 8:01=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> [cc willy in case he has opinions about dynamically changing the
+> pagecache order range]
+>
+> On Thu, Oct 09, 2025 at 11:36:30AM -0700, Joanne Koong wrote:
+> > On Thu, Oct 9, 2025 at 7:17=E2=80=AFAM Miklos Szeredi <miklos@szeredi.h=
+u> wrote:
+> > >
+> > > On Wed, 8 Oct 2025 at 22:42, Joanne Koong <joannelkoong@gmail.com> wr=
+ote:
+> > >
+> > > > Since fuse now uses proper writeback accounting without temporary p=
+ages,
+> > > > strictlimiting is no longer needed. Additionally, for fuse large fo=
+lio
+> > > > buffered writes, strictlimiting is overly conservative and causes
+> > > > suboptimal performance due to excessive IO throttling.
+> > >
+> > > I don't quite get this part.  Is this a fuse specific limitation of
+> > > stritlimit vs. large folios?
+> > >
+> > > Or is it the case that other filesystems are also affected, but
+> > > strictlimit is never used outside of fuse?
+> >
+> > It's the combination of fuse doing strictlimiting and setting the bdi
+> > max ratio to 1%.
+> >
+> > I don't think this is fuse-specific. I ran the same fio job [1]
+> > locally on xfs and with setting the bdi max ratio to 1%, saw
+> > performance drops between strictlimiting off vs. on
+> >
+> > [1] fio --name=3Dwrite --ioengine=3Dsync --rw=3Dwrite --bs=3D256K --siz=
+e=3D1G
+> > --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
+>
+> Er... what kind of numbers? :)
+>
 
-In the real world the flag is not set most of the time.
+When I tested it earlier this week it was on a VM but testing it on an
+actual machine, this is what I'm seeing:
 
-Apart from being simpler to reason about, it comes with a minor speed up
-as now clearing the flag does not require the smp_mb() fence.
+ echo 4294967296 > /proc/sys/vm/dirty_bytes # 4GB
+ echo 2147483648 > /proc/sys/vm/dirty_background_bytes # 2GB
 
-While here rename wait_on_inode() to wait_on_new_inode() to line it up
-with __wait_on_freeing_inode().
+ fio --name=3Dwrite --ioengine=3Dsync --rw=3Dwrite --bs=3D512K --size=3D2G
+--numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-This temporarily duplicated sleep code from inode_wait_for_lru_isolating().
-This is going to get dedupped later.
-
-There is high repetition of:
-	if (unlikely(isnew)) {
-		wait_on_new_inode(old);
-		if (unlikely(inode_unhashed(old))) {
-			iput(old);
-			goto again;
-		}
-
-I expect this is going to go away after I post a patch to sanitize the
-current APIs for the hash.
+default (no strictlimiting and max_ratio set to 100):
+         around 1600 to 1800 MiB/s
+strictlimiting on and max_ratio set to 1:
+         around 1050 MiB/s
 
 
- fs/afs/dir.c       |   4 +-
- fs/dcache.c        |  10 ----
- fs/gfs2/glock.c    |   2 +-
- fs/inode.c         | 146 +++++++++++++++++++++++++++------------------
- include/linux/fs.h |  12 +---
- 5 files changed, 93 insertions(+), 81 deletions(-)
+On systems with a lot of RAM where /proc/sys/vm/dirty_bytes is high
+enough, we don't see the performance drop. But 4 GB seemed like a
+reasonable value for /proc/sys/vm/dirty_bytes as that implies 20 GB of
+RAM (as I understand it, the default /proc/sys/vm/dirty_ratio value is
+usually set to 20% of system ram).
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 89d36e3e5c79..f4e9e12373ac 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -779,7 +779,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry)
- 	struct afs_vnode *dvnode = AFS_FS_I(dir), *vnode;
- 	struct inode *inode = NULL, *ti;
- 	afs_dataversion_t data_version = READ_ONCE(dvnode->status.data_version);
--	bool supports_ibulk;
-+	bool supports_ibulk, isnew;
- 	long ret;
- 	int i;
- 
-@@ -850,7 +850,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry)
- 			 * callback counters.
- 			 */
- 			ti = ilookup5_nowait(dir->i_sb, vp->fid.vnode,
--					     afs_ilookup5_test_by_fid, &vp->fid);
-+					     afs_ilookup5_test_by_fid, &vp->fid, &isnew);
- 			if (!IS_ERR_OR_NULL(ti)) {
- 				vnode = AFS_FS_I(ti);
- 				vp->dv_before = vnode->status.data_version;
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 78ffa7b7e824..25131f105a60 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1981,17 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
- 	spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	WARN_ON(!(inode_state_read(inode) & I_NEW));
--	/*
--	 * Pairs with smp_rmb in wait_on_inode().
--	 */
--	smp_wmb();
- 	inode_state_clear(inode, I_NEW | I_CREATING);
--	/*
--	 * Pairs with the barrier in prepare_to_wait_event() to make sure
--	 * ___wait_var_event() either sees the bit cleared or
--	 * waitqueue_active() check in wake_up_var() sees the waiter.
--	 */
--	smp_mb();
- 	inode_wake_up_bit(inode, __I_NEW);
- 	spin_unlock(&inode->i_lock);
- }
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index b677c0e6b9ab..c9712235e7a0 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -957,7 +957,7 @@ static struct gfs2_inode *gfs2_grab_existing_inode(struct gfs2_glock *gl)
- 		ip = NULL;
- 	spin_unlock(&gl->gl_lockref.lock);
- 	if (ip) {
--		wait_on_inode(&ip->i_inode);
-+		wait_on_new_inode(&ip->i_inode);
- 		if (is_bad_inode(&ip->i_inode)) {
- 			iput(&ip->i_inode);
- 			ip = NULL;
-diff --git a/fs/inode.c b/fs/inode.c
-index 3153d725859c..1396f79b2551 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -558,6 +558,32 @@ struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
- }
- EXPORT_SYMBOL(inode_bit_waitqueue);
- 
-+void wait_on_new_inode(struct inode *inode)
-+{
-+	struct wait_bit_queue_entry wqe;
-+	struct wait_queue_head *wq_head;
-+
-+	spin_lock(&inode->i_lock);
-+	if (!(inode_state_read(inode) & I_NEW)) {
-+		spin_unlock(&inode->i_lock);
-+		return;
-+	}
-+
-+	wq_head = inode_bit_waitqueue(&wqe, inode, __I_NEW);
-+	for (;;) {
-+		prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBLE);
-+		if (!(inode_state_read(inode) & I_NEW))
-+			break;
-+		spin_unlock(&inode->i_lock);
-+		schedule();
-+		spin_lock(&inode->i_lock);
-+	}
-+	finish_wait(wq_head, &wqe.wq_entry);
-+	WARN_ON(inode_state_read(inode) & I_NEW);
-+	spin_unlock(&inode->i_lock);
-+}
-+EXPORT_SYMBOL(wait_on_new_inode);
-+
- /*
-  * Add inode to LRU if needed (inode is unused and clean).
-  *
-@@ -1008,7 +1034,8 @@ static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_lock
- static struct inode *find_inode(struct super_block *sb,
- 				struct hlist_head *head,
- 				int (*test)(struct inode *, void *),
--				void *data, bool is_inode_hash_locked)
-+				void *data, bool is_inode_hash_locked,
-+				bool *isnew)
- {
- 	struct inode *inode = NULL;
- 
-@@ -1035,6 +1062,7 @@ static struct inode *find_inode(struct super_block *sb,
- 			return ERR_PTR(-ESTALE);
- 		}
- 		__iget(inode);
-+		*isnew = !!(inode_state_read(inode) & I_NEW);
- 		spin_unlock(&inode->i_lock);
- 		rcu_read_unlock();
- 		return inode;
-@@ -1049,7 +1077,7 @@ static struct inode *find_inode(struct super_block *sb,
-  */
- static struct inode *find_inode_fast(struct super_block *sb,
- 				struct hlist_head *head, unsigned long ino,
--				bool is_inode_hash_locked)
-+				bool is_inode_hash_locked, bool *isnew)
- {
- 	struct inode *inode = NULL;
- 
-@@ -1076,6 +1104,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
- 			return ERR_PTR(-ESTALE);
- 		}
- 		__iget(inode);
-+		*isnew = !!(inode_state_read(inode) & I_NEW);
- 		spin_unlock(&inode->i_lock);
- 		rcu_read_unlock();
- 		return inode;
-@@ -1181,17 +1210,7 @@ void unlock_new_inode(struct inode *inode)
- 	lockdep_annotate_inode_mutex_key(inode);
- 	spin_lock(&inode->i_lock);
- 	WARN_ON(!(inode_state_read(inode) & I_NEW));
--	/*
--	 * Pairs with smp_rmb in wait_on_inode().
--	 */
--	smp_wmb();
- 	inode_state_clear(inode, I_NEW | I_CREATING);
--	/*
--	 * Pairs with the barrier in prepare_to_wait_event() to make sure
--	 * ___wait_var_event() either sees the bit cleared or
--	 * waitqueue_active() check in wake_up_var() sees the waiter.
--	 */
--	smp_mb();
- 	inode_wake_up_bit(inode, __I_NEW);
- 	spin_unlock(&inode->i_lock);
- }
-@@ -1202,17 +1221,7 @@ void discard_new_inode(struct inode *inode)
- 	lockdep_annotate_inode_mutex_key(inode);
- 	spin_lock(&inode->i_lock);
- 	WARN_ON(!(inode_state_read(inode) & I_NEW));
--	/*
--	 * Pairs with smp_rmb in wait_on_inode().
--	 */
--	smp_wmb();
- 	inode_state_clear(inode, I_NEW);
--	/*
--	 * Pairs with the barrier in prepare_to_wait_event() to make sure
--	 * ___wait_var_event() either sees the bit cleared or
--	 * waitqueue_active() check in wake_up_var() sees the waiter.
--	 */
--	smp_mb();
- 	inode_wake_up_bit(inode, __I_NEW);
- 	spin_unlock(&inode->i_lock);
- 	iput(inode);
-@@ -1286,12 +1295,13 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
- {
- 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
- 	struct inode *old;
-+	bool isnew;
- 
- 	might_sleep();
- 
- again:
- 	spin_lock(&inode_hash_lock);
--	old = find_inode(inode->i_sb, head, test, data, true);
-+	old = find_inode(inode->i_sb, head, test, data, true, &isnew);
- 	if (unlikely(old)) {
- 		/*
- 		 * Uhhuh, somebody else created the same inode under us.
-@@ -1300,10 +1310,12 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
- 		spin_unlock(&inode_hash_lock);
- 		if (IS_ERR(old))
- 			return NULL;
--		wait_on_inode(old);
--		if (unlikely(inode_unhashed(old))) {
--			iput(old);
--			goto again;
-+		if (unlikely(isnew)) {
-+			wait_on_new_inode(old);
-+			if (unlikely(inode_unhashed(old))) {
-+				iput(old);
-+				goto again;
-+			}
- 		}
- 		return old;
- 	}
-@@ -1391,18 +1403,21 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
- {
- 	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
- 	struct inode *inode, *new;
-+	bool isnew;
- 
- 	might_sleep();
- 
- again:
--	inode = find_inode(sb, head, test, data, false);
-+	inode = find_inode(sb, head, test, data, false, &isnew);
- 	if (inode) {
- 		if (IS_ERR(inode))
- 			return NULL;
--		wait_on_inode(inode);
--		if (unlikely(inode_unhashed(inode))) {
--			iput(inode);
--			goto again;
-+		if (unlikely(isnew)) {
-+			wait_on_new_inode(inode);
-+			if (unlikely(inode_unhashed(inode))) {
-+				iput(inode);
-+				goto again;
-+			}
- 		}
- 		return inode;
- 	}
-@@ -1434,18 +1449,21 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
- {
- 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
- 	struct inode *inode;
-+	bool isnew;
- 
- 	might_sleep();
- 
- again:
--	inode = find_inode_fast(sb, head, ino, false);
-+	inode = find_inode_fast(sb, head, ino, false, &isnew);
- 	if (inode) {
- 		if (IS_ERR(inode))
- 			return NULL;
--		wait_on_inode(inode);
--		if (unlikely(inode_unhashed(inode))) {
--			iput(inode);
--			goto again;
-+		if (unlikely(isnew)) {
-+			wait_on_new_inode(inode);
-+			if (unlikely(inode_unhashed(inode))) {
-+				iput(inode);
-+				goto again;
-+			}
- 		}
- 		return inode;
- 	}
-@@ -1456,7 +1474,7 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
- 
- 		spin_lock(&inode_hash_lock);
- 		/* We released the lock, so.. */
--		old = find_inode_fast(sb, head, ino, true);
-+		old = find_inode_fast(sb, head, ino, true, &isnew);
- 		if (!old) {
- 			inode->i_ino = ino;
- 			spin_lock(&inode->i_lock);
-@@ -1482,10 +1500,12 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
- 		if (IS_ERR(old))
- 			return NULL;
- 		inode = old;
--		wait_on_inode(inode);
--		if (unlikely(inode_unhashed(inode))) {
--			iput(inode);
--			goto again;
-+		if (unlikely(isnew)) {
-+			wait_on_new_inode(inode);
-+			if (unlikely(inode_unhashed(inode))) {
-+				iput(inode);
-+				goto again;
-+			}
- 		}
- 	}
- 	return inode;
-@@ -1586,13 +1606,13 @@ EXPORT_SYMBOL(igrab);
-  * Note2: @test is called with the inode_hash_lock held, so can't sleep.
-  */
- struct inode *ilookup5_nowait(struct super_block *sb, unsigned long hashval,
--		int (*test)(struct inode *, void *), void *data)
-+		int (*test)(struct inode *, void *), void *data, bool *isnew)
- {
- 	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
- 	struct inode *inode;
- 
- 	spin_lock(&inode_hash_lock);
--	inode = find_inode(sb, head, test, data, true);
-+	inode = find_inode(sb, head, test, data, true, isnew);
- 	spin_unlock(&inode_hash_lock);
- 
- 	return IS_ERR(inode) ? NULL : inode;
-@@ -1620,16 +1640,19 @@ struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
- 		int (*test)(struct inode *, void *), void *data)
- {
- 	struct inode *inode;
-+	bool isnew;
- 
- 	might_sleep();
- 
- again:
--	inode = ilookup5_nowait(sb, hashval, test, data);
-+	inode = ilookup5_nowait(sb, hashval, test, data, &isnew);
- 	if (inode) {
--		wait_on_inode(inode);
--		if (unlikely(inode_unhashed(inode))) {
--			iput(inode);
--			goto again;
-+		if (unlikely(isnew)) {
-+			wait_on_new_inode(inode);
-+			if (unlikely(inode_unhashed(inode))) {
-+				iput(inode);
-+				goto again;
-+			}
- 		}
- 	}
- 	return inode;
-@@ -1648,19 +1671,22 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
- {
- 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
- 	struct inode *inode;
-+	bool isnew;
- 
- 	might_sleep();
- 
- again:
--	inode = find_inode_fast(sb, head, ino, false);
-+	inode = find_inode_fast(sb, head, ino, false, &isnew);
- 
- 	if (inode) {
- 		if (IS_ERR(inode))
- 			return NULL;
--		wait_on_inode(inode);
--		if (unlikely(inode_unhashed(inode))) {
--			iput(inode);
--			goto again;
-+		if (unlikely(isnew)) {
-+			wait_on_new_inode(inode);
-+			if (unlikely(inode_unhashed(inode))) {
-+				iput(inode);
-+				goto again;
-+			}
- 		}
- 	}
- 	return inode;
-@@ -1800,6 +1826,7 @@ int insert_inode_locked(struct inode *inode)
- 	struct super_block *sb = inode->i_sb;
- 	ino_t ino = inode->i_ino;
- 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
-+	bool isnew;
- 
- 	might_sleep();
- 
-@@ -1832,12 +1859,15 @@ int insert_inode_locked(struct inode *inode)
- 			return -EBUSY;
- 		}
- 		__iget(old);
-+		isnew = !!(inode_state_read(old) & I_NEW);
- 		spin_unlock(&old->i_lock);
- 		spin_unlock(&inode_hash_lock);
--		wait_on_inode(old);
--		if (unlikely(!inode_unhashed(old))) {
--			iput(old);
--			return -EBUSY;
-+		if (isnew) {
-+			wait_on_new_inode(old);
-+			if (unlikely(!inode_unhashed(old))) {
-+				iput(old);
-+				return -EBUSY;
-+			}
- 		}
- 		iput(old);
- 	}
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 21c73df3ce75..a813abdcf218 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1030,15 +1030,7 @@ static inline void inode_fake_hash(struct inode *inode)
- 	hlist_add_fake(&inode->i_hash);
- }
- 
--static inline void wait_on_inode(struct inode *inode)
--{
--	wait_var_event(inode_state_wait_address(inode, __I_NEW),
--		       !(inode_state_read_once(inode) & I_NEW));
--	/*
--	 * Pairs with routines clearing I_NEW.
--	 */
--	smp_rmb();
--}
-+void wait_on_new_inode(struct inode *inode);
- 
- /*
-  * inode->i_rwsem nesting subclasses for the lock validator:
-@@ -3417,7 +3409,7 @@ extern void d_mark_dontcache(struct inode *inode);
- 
- extern struct inode *ilookup5_nowait(struct super_block *sb,
- 		unsigned long hashval, int (*test)(struct inode *, void *),
--		void *data);
-+		void *data, bool *isnew);
- extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
- 		int (*test)(struct inode *, void *), void *data);
- extern struct inode *ilookup(struct super_block *sb, unsigned long ino);
--- 
-2.34.1
+> > >
+> > > > Administrators can still enable strictlimiting for specific fuse se=
+rvers
+> > > > via /sys/class/bdi/*/strict_limit. If needed in the future,
+> > >
+> > > What's the issue with doing the opposite: leaving strictlimit the
+> > > default and disabling strictlimit for specific servers?
+> >
+> > If we do that, then we can't enable large folios for servers that use
+> > the writeback cache. I don't think we can just turn on large folios if
+>
+> What's the limitation on strictlimit && large_folios?  Is it just the
+> throttling problem because dirtying a single byte in a 2M folio charges
+> the process with all 2M?  Or something else?
 
+With strictlimiting on, the throttling threshold is a lot more
+conservative. When large folios are used, a larger number of pages are
+dirtied per write at once and not incrementally balanced, which causes
+the logic in balance_dirty_pages() to schedule io waits, whereas small
+folios don't have this issue because they incrementally balance pages
+as they write them back. This thread has a lot more context:
+https://lore.kernel.org/linux-fsdevel/Z1N505RCcH1dXlLZ@casper.infradead.org=
+/T/#m9e3dd273aa202f9f4e12eb9c96602b5fec2d383d
+
+The dirtying a single byte in a 2M folio should also imo be addressed,
+eg through the followup to [1], but when strictlimiting is off, this
+is much less of an issue since the threshold is higher.
+
+Thanks,
+Joanne
+
+[1] https://lore.kernel.org/linux-fsdevel/5qgjrq6l627byybxjs6vzouspeqj6hdrx=
+2ohqbxqkkjy65mtz5@zp6pimrpeu4e/T/#med8769e865e98960b1f504375cb1c0c2c3bdea51
 
