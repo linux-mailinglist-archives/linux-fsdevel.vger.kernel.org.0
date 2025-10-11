@@ -1,169 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-63847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A30BCF850
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 18:29:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2BDBCFB9C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 21:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACE13A6AAA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 16:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8AC1881F92
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 19:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F06327F177;
-	Sat, 11 Oct 2025 16:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC782857F2;
+	Sat, 11 Oct 2025 19:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q65szLDQ"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="HQe5kHc1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F6B259C9C
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 16:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF96284B4C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 19:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760200158; cv=none; b=coygOcRsz9BvPXa0HB84U/2O/J09UXiowC+5uqBd5lNR073IRE8ReRvuhI6YcrgkbCXBMyoo4YPC2vIZ8yBAZaUXU3TQ4E25+ywwfuvBXRIJYISmDsKEV2MSmQmDUFPYQfOprwuCx8FmuYw4VaSmsCK/Tf2LH84A1DX4FxldkDY=
+	t=1760211643; cv=none; b=XFgM1r1jyFwN6faMcc9uckw1zNFkvdYymX7ht/7loivKAX9jl/cEr/uSllyrlC0dpcMrMtlDp9tESrAqXqf8RB0D2Qw+xUmABjqlbEbgkDY2b2UpBLh4ZygED4XteAQf5vduQf5xjO3dcY2sv4//iAVeGyUD0D3j8f0f3HQ8vXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760200158; c=relaxed/simple;
-	bh=JQkZAF5fIUjq1WhmaqA0Vdp2xoDiRWzOFj+He3bCG+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H3e3/+Am9ByqT/cWQTO2Xq8fXjmQnyhAgSVM0n/uwJRBbehGgpE0TkOZB+OcblPU+UIU+7FZd4IotnN9+pFwawYAFrWNYR7hVymWgCEc/AMOfim9idmL0AYqGCP6iwLyoUqbk9LBEUM5/PXgTdAMT3QJowR4WOFhUX0zuzf0qu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q65szLDQ; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d71bcab6fso26489247b3.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 09:29:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760200156; x=1760804956; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QhgVdNH9OFffSS/en9blipGoQpflch+9wtbKeb3Qhvo=;
-        b=Q65szLDQpnqhyDenrZlxjo2Xife8HTjlRHhDqxUidV3bJg8rFaaopgSlHL5YOusWT8
-         dvj970ybGrr15x3EhFoOzy23bTezQ/Yxn3mO67cfOxLEHX0EUgmUnQ5UOyNfKAHBnXG9
-         C34POTYEEnGOPlBe0z4cB2xPHfx2WVNodjB6sC7A/3t9P5d7rQrj36AWKAOQtILqBsCw
-         H/uEy2U7nrqY6P8s3Y4dHGa/tl6wGGpv3WTgl5onTXPOljN788sOIp9BsTXkdIxwd0UJ
-         rSWih46JNBBEWGQi/915irCp1ags8rOq522E+T5aJGOkMtn6i6EidanKRZwFub5uKWVz
-         ttgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760200156; x=1760804956;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QhgVdNH9OFffSS/en9blipGoQpflch+9wtbKeb3Qhvo=;
-        b=fg7Yw36WUDML7dexRXPanwaqO96MWXVLEvqcWHnN7QJptJoaO9WeRPattp2eHZiB7J
-         sugb3YSgz1oSvVGrbsisKUyR+aInBkwDaD08oiOhrLawFcR1MdUcZmo3jZz/6fVADfxy
-         WT/nMdis9lKjv3Tjnh0YwKrnxIekf8fJctkNOwNS+apdnHR5dQmO4WbD2RUe8gCGHaC9
-         VSxRgb74zlfjvSqOo6HAwo2yL3Jyce65QgzHn25/iCSMS3sZeXv34Vp5txazFkxt4JoY
-         xr6iOSHRb22NwROgVWM9lveHUuLuGbveNllsHu2mCfKgfau06jucJ+ffAb5VRkdAICe8
-         4fBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrF4Gp9wym9lQMynCPWSJOMhZ6B5yWC6bes3eKmkhBnIqCrMsG4EmxjmYcQDVya6syGUbVD2sGepKSMQPI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Nt8ssRLQcYgrp2l7w/slMmLoTGYIcaqCDVN0xBI+G08aYzTR
-	h8ntnij9WWak+bAgfR9JABVNpdMXrASdVlZLjVkNtEssl0ud1o143djN3lLR9Filu1yx2SjsySE
-	TV02SajJS5NSZBypcNaY1nPQod1V0CN7pPVnUIfQ=
-X-Gm-Gg: ASbGncvSES92xB7ncu9dXWrJv3HQVrO4ZJiVtgmAx/bINkp8CTp+KFG38zmPBmo3Cdj
-	7gE+2pyz599bno7UJTdlfXR835WNionIjoJ5ZSpRBIv5laYjAU+MHBzNFHIG/bS8jAIHT8Ogdue
-	TPKOTPAvFgDPP0hoD59BzmQ+xKIe5WkGei0/Zmxzg851MdliEmk02FtJ7bMf9zkhL3sestPVs6B
-	RjHLCU6NNLQ0yLsKQ8RbM++
-X-Google-Smtp-Source: AGHT+IEl0kcnSOrr1nOWP3LqMH7IADn9dvqYxTvClMDl2hvjiRQQ/af7lXgC3y7fcHcZFKCac1xnqrbeAZUSZFA0jSQ=
-X-Received: by 2002:a05:690e:240f:b0:635:4ecc:fc20 with SMTP id
- 956f58d0204a3-63ccb93460cmr10188136d50.40.1760200155709; Sat, 11 Oct 2025
- 09:29:15 -0700 (PDT)
+	s=arc-20240116; t=1760211643; c=relaxed/simple;
+	bh=l6PfjANfUpBtaN0fS4GZaMfa9JZ+uJ9pMscD9Z98sNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+aE/F+d0uND+WrlLwEt1u4ZJV9qBqbHACQXex/XQZJYZwOJ+82eyyxO/SPwR1h16dp8fvT8MLMVQxBmaLxQrucwgxh8lNpuYrsTe22pdw81Tmsz9aqgu32I3T0LD/DoYIfwZ53JAqPkU6Qa2Ljypf00UMj91IGA3M1wunMK5Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=HQe5kHc1; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id F0BA314C2D3;
+	Sat, 11 Oct 2025 21:40:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1760211633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SLEV4E8ZPaERjqSqpcXc1T1WbVXZeBg8LghWOpCBdv8=;
+	b=HQe5kHc1ymePtuKmO36tA/3PYgqJ7bIeEonDAy0MLRVl2NaRDt+QA1vkx7axRnVkj78vJq
+	AJEi1x8zKyeOmZe2X6LtW7DAR/A7G+ChRa16CrEr6w/EMb08shh156CkyE4s8zJbOqb1Ye
+	DvVYZIV5hR6ffU2qmmG3BapQaMAA8wVYjNJA5UpaiyA/1b9QXwJK9P0SJW51bAXnAQlk9Y
+	2rUVOb0eT2sLeb1Lx7DqNv50qvQSGd4jsc950Hy1z4iOm1qcAtIgb8fVcjyiwgOa0ObekZ
+	Tw91s8UKGNv5fdE4Oqy1fxMWD0jw8OKWIN+qSip4Nk7aPKauBywxSyt1hyV5yg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 3e2783d9;
+	Sat, 11 Oct 2025 19:40:29 +0000 (UTC)
+Date: Sun, 12 Oct 2025 04:40:14 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Tingmao Wang <m@maowtm.org>
+Cc: v9fs@lists.linux.dev, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>
+Subject: Re: -ENODATA from read syscall on 9p
+Message-ID: <aOqynl8t6_KvUlM0@codewreck.org>
+References: <hexeb4tmfqsugdy442mkkomevnhjzpuwtsslypeo3lnbbtmpmk@ibrapupausp7>
+ <da9b0573-506a-4ce3-88f3-b1714b32db5f@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a5f67878-33ca-4433-9c05-f508f0ca5d0a@I-love.SAKURA.ne.jp>
- <CAK+_RL=ybNZz3z-Fqxhxg+0fnuA1iRd=MbTCZ=M3KbSjFzEnVg@mail.gmail.com>
- <CAK+_RLkaet_oCHAb1gCTStLyzA5oaiqKHHi=dCFLsM+vydN2FA@mail.gmail.com> <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
-In-Reply-To: <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
-From: Tigran Aivazian <aivazian.tigran@gmail.com>
-Date: Sat, 11 Oct 2025 17:29:04 +0100
-X-Gm-Features: AS18NWA6iAY7Z9E10iz6O4ME84zlpxWoNbpXyly8NvxwnZrgZafWKW0pmNUE7aw
-Message-ID: <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
-Subject: Re: [PATCH] bfs: Verify inode mode when loading from disk
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <da9b0573-506a-4ce3-88f3-b1714b32db5f@maowtm.org>
 
-Thank you for your detailed explanation.
+Tingmao Wang wrote on Sat, Oct 11, 2025 at 03:35:00PM +0100:
+> Not a 9pfs maintainer here, but I think I have encountered this in the
+> past but I didn't think too much of it.  Which kernel version are you
+> testing on?  A while ago I sent a patch to fix some stale metadata
+> issue on uncached 9pfs, and one of the symptom was -ENODATA from a read:
+> https://lore.kernel.org/all/cover.1743956147.git.m@maowtm.org/
+> 
+> Basically, if some other process has a 9pfs file open, and the file
+> shrinks on the server side, the inode's i_size is not updated when another
+> process tries to read it, and the result is -ENODATA (instead of reporting
+> a normal EOF).
+> 
+> Does this sound like it could be happening in your situation?  This patch
+> series should land in 6.18, so if this was not reproduced on -next it
+> might be worth a try?
 
-On Sat, 11 Oct 2025 at 00:19, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
+It got merged in yesterday
 
-> Which pattern (just adding a new "if", or adding "else" with "if" and "else if" updated,
-> or replace the 0x0000FFFF mask with 0x00000FFF) do you prefer?
 
-There is also the fourth way, see the patch below. It makes it as
-explicit as possible that vtype value is the authoritative one and
-sets the type bits from vtype by keeping (in i_mode) only the
-permission/suid/sgid/sticky bits upfront. What do you think?
+With that said I'm also curious if that's the reason 9p reads stopped
+progressing, but even with this patch I think there'd be a window for
+files to shrink while the read is happening so netfs needs to return a
+short read anyway -- if the file really is being modified under us it's
+possible to hit end of file early.
 
-diff -ur a/fs/bfs/inode.c b/fs/bfs/inode.c
---- a/fs/bfs/inode.c    2025-10-10 16:52:40.968468556 +0100
-+++ b/fs/bfs/inode.c    2025-10-11 15:33:20.431967395 +0100
-@@ -38,6 +38,8 @@
-        struct inode *inode;
-        struct buffer_head *bh;
-        int block, off;
-+       u32 dmode, dvtype;
-+       umode_t expect_type = 0;
+OTOH I don't think that's what's happening here though, as Kent is
+likely just running xfstest on its own in a directory...
+You says these errors just started happening recently?
+How recently are you talking?
+I doubt it's been months but the only recent changes I see in this area
+would be the netfs i_size updating patches early July.. If it's more
+recent than that there's something else I didn't see anything obvious,
+having a rough range to look at would be welcome for closer inspection.
 
-        inode = iget_locked(sb, ino);
-        if (!inode)
-@@ -61,23 +63,43 @@
-        off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
-        di = (struct bfs_inode *)bh->b_data + off;
-
--       inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
--       if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
-+       dmode = le32_to_cpu(di->i_mode);
-+       dvtype = le32_to_cpu(di->i_vtype);
-+
-+       /* Keep only permission/suid/sgid/sticky bits from on-disk mode. */
-+       inode->i_mode = dmode & (S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID
-| S_ISGID | S_ISVTX);
-+
-+       if (dvtype == BFS_VDIR) {
-+               expect_type = S_IFDIR;
-                inode->i_mode |= S_IFDIR;
-                inode->i_op = &bfs_dir_inops;
-                inode->i_fop = &bfs_dir_operations;
--       } else if (le32_to_cpu(di->i_vtype) == BFS_VREG) {
-+       } else if (dvtype == BFS_VREG) {
-+               expect_type = S_IFREG;
-                inode->i_mode |= S_IFREG;
-                inode->i_op = &bfs_file_inops;
-                inode->i_fop = &bfs_file_operations;
-                inode->i_mapping->a_ops = &bfs_aops;
-+       } else {
-+               brelse(bh);
-+               printf("Bad file type vtype=%u mode=0%07o %s:%08lx\n",
-+                       dvtype, dmode, inode->i_sb->s_id, ino);
-+               goto error;
-        }
-
--       BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
--       BFS_I(inode)->i_eblock =  le32_to_cpu(di->i_eblock);
-+       /* If the on-disk mode carried type bits, they must match vtype. */
-+       if ((dmode & S_IFMT) && ((dmode & S_IFMT) != expect_type)) {
-+               brelse(bh);
-+               printf("Inconsistent type vtype=%u mode=0%07o
-fmt=0%07o %s:%08lx\n",
-+                       dvtype, dmode, (dmode & S_IFMT),
-inode->i_sb->s_id, ino);
-+               goto error;
-+       }
-+
-+       BFS_I(inode)->i_sblock = le32_to_cpu(di->i_sblock);
-+       BFS_I(inode)->i_eblock = le32_to_cpu(di->i_eblock);
-        BFS_I(inode)->i_dsk_ino = le16_to_cpu(di->i_ino);
-        i_uid_write(inode, le32_to_cpu(di->i_uid));
--       i_gid_write(inode,  le32_to_cpu(di->i_gid));
-+       i_gid_write(inode, le32_to_cpu(di->i_gid));
-        set_nlink(inode, le32_to_cpu(di->i_nlink));
-        inode->i_size = BFS_FILESIZE(di);
-        inode->i_blocks = BFS_FILEBLOCKS(di);
+-- 
+Dominique Martinet | Asmadeus
 
