@@ -1,139 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-63831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C049DBCEED9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 05:30:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91467BCEFA3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 06:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC71D19A1D76
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 03:31:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3994C4E77A2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 04:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B33347B4;
-	Sat, 11 Oct 2025 03:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA198B663;
+	Sat, 11 Oct 2025 04:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEWhsjzB"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="VqF+MD+x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043CDE55A
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 03:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C68734BA49
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 04:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760153437; cv=none; b=HwA+cxDNJltfNZfIyzjKCN5Q10vUv3q8EOIG+tDymwXI/WPoDwhWdok+qaHfZSZluowfloYKPhe0boAym/ZMN/LGNLeyTSNNNPVzkiFvyFttultX+KcC+F8Ttoc4Y3tDfPQjTNjXvG2LiTsI2DJScdjMclgUxCb0tY6odGPJW48=
+	t=1760155469; cv=none; b=MDVA6Qr4UbkhMt5DOHSPnx2fKVsILJbUPB7o9Va68SQkEdiSOZ7SiQWW28F5DklIKZOXXZlOOaKQvP2NrsxKshCh87Oq0zMHOwfr1NrBAjAAtD1iCtTTQNL1GqMoEFy3mwuimM/3kLCswwTGdIg1fPIDtUdW1d+nOmMlapDCqug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760153437; c=relaxed/simple;
-	bh=Z80sDuh2r2K1uwZc7/gJ2dh8n1n4WacbpmU5bYMlaSY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HFZoZlD+joSlafTY+FCvXRt7PW6zolIUOoz5dIZy8MDovvCU79H519QnURzRrREwmH9+Is+SUj1ovFOUVrZnjCnK/RQk3q3E75lNPi0CqeOUnxiNaUPxBjXMN0CMoz5k9ghDSkJ/fg4HZMupGfixuFMheJremoiJ/Cxd4pSKh6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEWhsjzB; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-330469eb750so3391478a91.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 20:30:35 -0700 (PDT)
+	s=arc-20240116; t=1760155469; c=relaxed/simple;
+	bh=aWOHv5sIMa96Q5/sU0zDoEGYdX0W0fCCXNPW/LilCIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ivS023tLiPbwmESGFaF86SHy6EQlNY3CdAccIUuLp6waS35B/xRTdOAeXH5jB2F48PMCvVROgR9o+NOg/vnbWEchFVZol5z/J7w9zOi91XmIEUZdYuo9lFDusVKfd2OlTU1sFxhch+91iJEZfQcUbQdb8Ruxf9tZvSEVbjaShjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=VqF+MD+x; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57e36125e8aso2580906e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 21:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760153435; x=1760758235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sYbk5VmU4v1pNPH+Fa3K2iS1n3qdqJuuATj2vp0zUU=;
-        b=TEWhsjzB35uhN82H90B3cDx6rv6lVsu4P2BlgSHMYjIB8fXHdmvLYF0rrWom+naOiz
-         eJ2CrffxyF5WmjZMEG6IVV6P88fWDdtk1CHeu5ZUAUiXeduvcHMY83eK0otF+Ll5tl2n
-         QAlAURS9KY4OZncZ5buFe+rNSoGzBFeOZI+WaojG5noeV07WQ7daYUgNEKFEfniTD27f
-         krcUQgsLTsr8vhuMs2ut2sOWOOdodaqUoPYjCJl0OQ9abjb5JxzXsT443eD0JiKVjnna
-         21n2Id88BfTBiTrVMOrpCOp6/qU/ehgpj6UfI9MVNjGDuiSdn3AE1i5TZ1TF9P8co5M5
-         0LHg==
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1760155465; x=1760760265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxrYhYASPW7hNkv0I+/dkIwogDxR5uy/leBbcueqFmk=;
+        b=VqF+MD+xgMTgr7lXkfXMbbXY7wkhB30iVLMvIIxxCfW82nr18QYeo3OaxUBzW2Qlto
+         CVm6S0OrCWMCLingwuP6EdHIbUC0nWIg7kl5GzT7WNDytoA+WQptmaD7xk9LLAEXQhs2
+         jQzyMBUOtNl6r5PBU+G2aYwmvquNTCxhlSzL4oljzSpopuQZHPZ+9jM5hgcLcwYTfHng
+         HBU0Vwu63l2ockEh643GDSBPdsoPx9YTHA05cQllOSsMq5Ixev2LbQQgZUDHVWhqKKcl
+         GUxR3FDnYn9nowwKVrkUFPDFoV0wF7jaIIPW03kAPLk6Cf49m3xUVCMaV5T+SWISjs9L
+         lcJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760153435; x=1760758235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0sYbk5VmU4v1pNPH+Fa3K2iS1n3qdqJuuATj2vp0zUU=;
-        b=tzjafA9vo1iL0TwEIGx6obQBX+S483JqP02n1Np4+tCc6Dp7Q0HtYDdPEdYBG439jy
-         OaBUOx2PU0lMs8pNrYmFjwoTPYebjex/QvE9AFs7hjVsADK7k9k9N+zfNcLsbPpuzgOC
-         PnFcf/qHBIZbAXthie9FO4c9+AwdBUNPD4ETeyIFpuK3X4IokLJjNDAGbZYeBwxwuJOI
-         oGuDnfrDgyxlVoSdV/5z2LSl06soeG4b3ADL+UxSJ9Bj7gwmk2KujYJq/RCjXvzuQ/0F
-         Yf2esNIC5fwuHpg4W8pKqpgIq09XvvcsWl6wgqvZm7JeUGF0qmdZ98roe242sXXt+wo1
-         0f9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUzaMBc3d/GyYphFTRwJKKmQOkBsJvLxuX1kq7mZd+F4RQrH4m92zbmwzk/oWFmpu/UPO1CrWH3AoCbBHKu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO6gFAv6t2x7tFOcUJV2SwmY03hwLMurA1rSe1VBb2rcSvmuLk
-	a8IFPO6oP/FGptgfaAfikimaxVePZdHtSuJEmdLYV4loa4FKFVsBnTEeBv0MU1V5
-X-Gm-Gg: ASbGnct6A/JEaBQBszm6DwjmgrlxVHLty2IwVmESbSSi7Hp4GsoUJiY8GiCZUp2+rDT
-	XR9EVHZQ32btwNNfcgtbbav14XQuou+aHJldn/Se/s4Fq+69hXVNV99xBBIjqvdGuuTaVMAzJi9
-	bYseto/IUHNiKOwidcozuPrW9HM+il3HeHnPRdO+aBSenednxoIPjSojcBfmleI1egzw3CQZRZT
-	3dhqSnB3bZ7LHS3sY+oJBOYaP3btM9iU2PwBs7FNYi5hywBpMVlJSTJzwb1ls98mqgLsr5PKcq/
-	OiO1KVoL2YZcuTOpDnftvuxGw9P2q3W8bHnPUU5sku0DXM+leAsxzjgV8ZPUJ5bzsLIbIPJuzrQ
-	TDMbyTjeCrM6HJ/7/bvn5TcgnOjWH1qzaKVJO1Ez7Mmkln2Y5g59cE5oadpNXIqQZ
-X-Google-Smtp-Source: AGHT+IEVIfe6WZXTqBnz7nHlm3cwkJC0ZhBYUyRpN3slh0vrMoKKnT/vtaUEkQVAZyedNiVv/bJUOA==
-X-Received: by 2002:a17:90b:1e0c:b0:32e:749d:fcb6 with SMTP id 98e67ed59e1d1-33b51118ef7mr22146055a91.12.1760153435086;
-        Fri, 10 Oct 2025 20:30:35 -0700 (PDT)
-Received: from localhost.localdomain ([104.193.89.9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b529f51b5sm4215540a91.7.2025.10.10.20.30.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 Oct 2025 20:30:34 -0700 (PDT)
-From: Wei Gong <gongwei833x@gmail.com>
-To: vgoyal@redhat.com,
-	stefanha@redhat.com,
-	miklos@szeredi.hu
-Cc: virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	Wei Gong <gongwei09@baidu.com>
-Subject: [PATCH] virtiofs: remove max_pages_limit in indirect descriptor mode
-Date: Sat, 11 Oct 2025 11:30:18 +0800
-Message-Id: <20251011033018.75985-1-gongwei833x@gmail.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+        d=1e100.net; s=20230601; t=1760155465; x=1760760265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wxrYhYASPW7hNkv0I+/dkIwogDxR5uy/leBbcueqFmk=;
+        b=wc5+j5FsMUNxXE1hBM5RjMdXGrs1mPvMP7IimMeH/CZeR8M35ETod9p6BSlEhMKiHm
+         uN28/UJwCwSsVmVg/yRWWLLeAEAngxbB54o6+Lsxs0K0WQuRQFYvMyqN4oi2WLZ/USuH
+         dXwBRWoUvImW2WhkljVfBVZ1kZtVYcJUCNpGKM1bYmeK46Krofok50yk8Iyy/dXI/u+k
+         UKQc3S2ZxLLiwk1JQfBvM/xaHEUlzBQ+RtMGlzEk8CilGu+v7VJAnbCkjdjw9W1ikMCX
+         N5/WTo6cVg7SMJl/CLKcV6sXo9KM4Axsrv7cjHyalvJsbihBGef1c6h6dibMKry7Qopn
+         mqWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoa2Va3N7yEQNiFkXg7DcBIXf5hNAPrm/a9onTsBwYkJnSmVTM/iqvBBkFyj2OePcHq4gSnG1tNazAHOfn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWC+9uDoxHVddNXJM/SJ91LZkVCuqbNbF7+ST1LnqOMTGQocT5
+	YeauIOR5C8alMltNERXazl8j8E6L0XwPjzIXvLt0KnGjwxoDghUbjFQLmTj2jrp3ojjGDOsscCL
+	BzrLNVHReT2E/c3MNL68xRjYFEJ+paDVA5x4g9Q9Zwh7nR821BtT22A==
+X-Gm-Gg: ASbGncvmIkBx1ale4Hapvmye6+slPHUAdkdKSwtMyAcQxefg7Paev3G9bvtLrm99SXP
+	R+fSfZPQSgd6XINZR1fRWvZgAwnLiUKjZN+hCG3th8DHoRO681i+LsV++6GXrQx6gpwjbeL23NH
+	fRnOGV3YxUF8Znd3yMb+1DS0+b6chB9+LQNZH9ywVZN5BwERUB4ReYOEL2sEwJL+7O8hrw6h2dZ
+	dbB80w7nz5lPeg8DE1y59qf
+X-Google-Smtp-Source: AGHT+IERWkZjkwJeaANefd5QQVPUh0Tn17+zj0nbldzP+dMe/pRxkwxO+dBwZOKYhTBehxYzcRf98nJx4rDx7SgsRAM=
+X-Received: by 2002:a05:6512:3c9c:b0:577:494e:ca61 with SMTP id
+ 2adb3069b0e04-5906dd53f00mr4476671e87.31.1760155465047; Fri, 10 Oct 2025
+ 21:04:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251003093213.52624-1-xemul@scylladb.com> <aOCiCkFUOBWV_1yY@infradead.org>
+ <CALCETrVsD6Z42gO7S-oAbweN5OwV1OLqxztBkB58goSzccSZKw@mail.gmail.com>
+ <aOSgXXzvuq5YDj7q@infradead.org> <CALCETrW3iQWQTdMbB52R4=GztfuFYvN_8p52H1fopdS8uExQWg@mail.gmail.com>
+ <aObXUBCtp4p83QzS@dread.disaster.area> <CALCETrX-cs5MH3k369q2Fk5Q-pYQfEV6CW3va-4E9vD1CoCaGA@mail.gmail.com>
+ <aOm0WCB_woFgnv0v@dread.disaster.area>
+In-Reply-To: <aOm0WCB_woFgnv0v@dread.disaster.area>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Fri, 10 Oct 2025 21:04:13 -0700
+X-Gm-Features: AS18NWApra4q9AvFnZo6mqAkIEnBar0j0AX5L00uLKlUP_lGMQeMi0q_KHg1Mfg
+Message-ID: <CALCETrWoXb40d=CJLkPy+NaAGOmdULPw6xcrXgQVhcwv49hBiA@mail.gmail.com>
+Subject: Re: [PATCH] fs: Propagate FMODE_NOCMTIME flag to user-facing O_NOCMTIME
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Pavel Emelyanov <xemul@scylladb.com>, linux-fsdevel@vger.kernel.org, 
+	"Raphael S . Carvalho" <raphaelsc@scylladb.com>, linux-api@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Wei Gong <gongwei09@baidu.com>
+On Fri, Oct 10, 2025 at 6:35=E2=80=AFPM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Wed, Oct 08, 2025 at 02:51:14PM -0700, Andy Lutomirski wrote:
+> > On Wed, Oct 8, 2025 at 2:27=E2=80=AFPM Dave Chinner <david@fromorbit.co=
+m> wrote:
+> > >
+> > > On Wed, Oct 08, 2025 at 08:22:35AM -0700, Andy Lutomirski wrote:
+> > > > On Mon, Oct 6, 2025 at 10:08=E2=80=AFPM Christoph Hellwig <hch@infr=
+adead.org> wrote:
+> > > > >
+> > > > > On Sat, Oct 04, 2025 at 09:08:05AM -0700, Andy Lutomirski wrote:
+> >
+> > >
+> > > You are conflating "synchronous update" with "blocking".
+> > >
+> > > Avoiding the need for synchronous timestamp updates is exactly what
+> > > the lazytime mount option provides. i.e. lazytime degrades immediate
+> > > consistency requirements to eventual consistency similar to how the
+> > > default relatime behaviour defers atime updates for eventual
+> > > writeback.
+> > >
+> > > IOWs, we've already largely addressed the synchronous c/mtime update
+> > > problem but what we haven't done is made timestamp updates
+> > > fully support non-blocking caller semantics. That's a separate
+> > > problem...
+> >
+> > I'm probably missing something, but is this really different?
+>
+> Yes, and yes.
+>
+> > Either the mtime update can block or it can't block.
+>
+> Sure, but that's not the issue we have to deal with.
+>
+> In many filesystems and fs operations, we have to know if an
+> operation is going to block -before- we start the operation. e.g.
+> transactional changes cannot be rolled back once we've started the
+> modification if they need to block to make progress (e.g. read in
+> on-disk metadata).
+>
+> This foresight, in many cases, is -unknowable-. Even though the
+> operation /likely/ won't block, we cannot *guarantee* ahead of time
+> that any given instance of the operation will /not/ block.  Hence
+> the reliable non-blocking operation that users are asking for is not
+> possible with unknowable implementation characteristics like this.
+>
+> IOWs, a timestamp update implementation can be synchronous and
+> reliably non-blocking if it always knows when blocking will occur
+> and can return -EAGAIN instead of blocking to complete the
+> operation.
+>
+> If it can't know when/if blocking will occur, then lazytime allows
+> us to defer the (potentially) blocking update operation to another
+> context that can block. Queuing for async processing can easily be
+> made non-blocking, and __mark_inode_dirty(I_DIRTY_TIME) does this
+> for us.
+>
+> So, yeah, it should be pretty obvious at this point that non-blocking
+> implementation is completely independent of whether the operation is
+> performed synchronously or asynchronously. It's easier to make async
+> operations non-blocking, but that doesn't mean "non_blocking" and
+> "asynchronous execution" are interchangable terms or behaviours.
+>
+> > I haven't dug all the
+> > way into exactly what happens in __mark_inode_dirty(), but there is a
+> > lot going on in there even in the I_DIRTY_TIME path.
+>
+> It's pretty simple, really.  __mark_inode_dirty(I_DIRTY_TIME) is
+> non-blocking and queues the inode on the wb->i_dirty_time queue
+> for later processing.
+>
 
-Currently, indirect descriptor mode unnecessarily restricts the maximum
-IO size based on virtqueue vringsize. However, the indirect descriptor
-mechanism inherently supports larger IO operations by chaining descriptors.
+First, I apologize if I'm off base here.
 
-This patch removes the artificial constraint, allowing indirect descriptor
-mode to utilize its full potential without being limited by vringsize.
-The maximum supported descriptors per IO is now determined by the indirect
-descriptor capability rather than the virtqueue size.
+Second, I don't think I'm entirely nuts, and I'm moderately confident
+that, ten-ish years ago, I tested lazytime in the hopes that it would
+solve my old problem, and IIRC it didn't help.  I was running a
+production workload on ext4 on regrettably slow spinning rust backed
+by a truly atrocious HPE controller.  And I was running latencytop to
+generate little traces when my task got blocked, and there was no form
+of AIO involved.  (And I don't really understand how AIO is wired up
+internally...  And yes, in retrospect I should not have been using
+shared-writable mmaps or even file-backed things at all for what I was
+doing, but I had unrealistic expectations of how mmap worked when I
+wrote that code more like 20 years ago, and I wasn't even using Linux
+at the time I wrote it.)
 
-Signed-off-by: Wei Gong <gongwei09@baidu.com>
----
- fs/fuse/virtio_fs.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+I'm looking at the code now, and I see what you're talking about, and
+__mark_inode_dirty(inode, I_DIRTY_TIME) looks fairly polite and like
+it won't block.  But the relevant code seems to be:
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 76c8fd0bfc75..c0d5db7d7504 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -12,6 +12,7 @@
- #include <linux/memremap.h>
- #include <linux/module.h>
- #include <linux/virtio.h>
-+#include <linux/virtio_ring.h>
- #include <linux/virtio_fs.h>
- #include <linux/delay.h>
- #include <linux/fs_context.h>
-@@ -1701,9 +1702,11 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
- 	fc->sync_fs = true;
- 	fc->use_pages_for_kvec_io = true;
- 
--	/* Tell FUSE to split requests that exceed the virtqueue's size */
--	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
--				    virtqueue_size - FUSE_HEADER_OVERHEAD);
-+	if (!virtio_has_feature(fs->vqs[VQ_REQUEST].vq->vdev, VIRTIO_RING_F_INDIRECT_DESC)) {
-+		/* Tell FUSE to split requests that exceed the virtqueue's size */
-+		fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
-+						virtqueue_size - FUSE_HEADER_OVERHEAD);
-+	}
- 
- 	fsc->s_fs_info = fm;
- 	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
--- 
-2.32.0
+int generic_update_time(struct inode *inode, int flags)
+{
+        int updated =3D inode_update_timestamps(inode, flags);
+        int dirty_flags =3D 0;
 
+        if (updated & (S_ATIME|S_MTIME|S_CTIME))
+                dirty_flags =3D inode->i_sb->s_flags & SB_LAZYTIME ?
+I_DIRTY_TIME : I_DIRTY_SYNC;
+        if (updated & S_VERSION)
+                dirty_flags |=3D I_DIRTY_SYNC;
+        __mark_inode_dirty(inode, dirty_flags);
+        ...
+
+inode_update_timestamps does this, where updated !=3D 0 if the timestamp
+actually changed (which is subject to some complex coarse-graining
+logic so it may only happen some of the time):
+
+                if (IS_I_VERSION(inode) &&
+inode_maybe_inc_iversion(inode, updated))
+                        updated |=3D S_VERSION;
+
+IS_I_VERSION seems to be unconditionally true on ext4.
+inode_maybe_inc_iversion always returns true if updated is set, so
+generic_update_time has a decent chance of doing
+__mark_inode_dirty(inode, I_DIRTY_SYNC), which calls
+s_op->dirty_inode, which calls ext4_journal_start, which, from my
+recollection a decade ago, could easily block for a good second or so
+on my delightful, now retired, HP/HPE system.
+
+In my case, I think this is the path that was blocking for me in lots
+of do_wp_page calls that would otherwise not have blocked.  I also
+don't see any kiocb passed around or any mechanism by which this code
+could know that it's supposed to be nonblocking, although I have
+approximately no understanding of Linux AIO and I don't really know
+what I should be looking for.
+
+I could try to instrument the code a bit and test to see if I've
+analyzed it right in a few days.
+
+--Andy
+Andy Lutomirski
+AMA Capital Management, LLC
 
