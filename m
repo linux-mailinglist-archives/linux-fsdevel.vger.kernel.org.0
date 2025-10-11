@@ -1,136 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-63830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E02BCEE8A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 04:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C049DBCEED9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 05:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0378E4E664D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 02:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC71D19A1D76
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 03:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677101A5BBF;
-	Sat, 11 Oct 2025 02:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B33347B4;
+	Sat, 11 Oct 2025 03:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vB0mJX1W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEWhsjzB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE44199920
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 02:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043CDE55A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 03:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760149579; cv=none; b=EVHWCT/M77d4/w1/FEuueC39zOvK+u7p3t5Ng4r9iJ3aSuAJjpkMYqsrzE9nsDDGWfEwecRzSoZOSaT+HNnSO3bhIy1RocEETJaxc64jZ6rbxRMXIkJMNzaeGXMVR+UDyQ6sKCLm31ajYVUeL/sSftOopX7LbzB7KWvFjzjIKps=
+	t=1760153437; cv=none; b=HwA+cxDNJltfNZfIyzjKCN5Q10vUv3q8EOIG+tDymwXI/WPoDwhWdok+qaHfZSZluowfloYKPhe0boAym/ZMN/LGNLeyTSNNNPVzkiFvyFttultX+KcC+F8Ttoc4Y3tDfPQjTNjXvG2LiTsI2DJScdjMclgUxCb0tY6odGPJW48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760149579; c=relaxed/simple;
-	bh=Spz8mgNeIjLrnK+JA8dUU8ss8GpWIUU8Zz7CSq+cc3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uu2oYR3tQc5DZV/gf6KUtolwTe1lT59cu5VtUtullcjQOhr9rR4zk1tJutnIfT/pOHZGUI+KHijIzJBhEQ7Ys2xfoafC9uYOiPeQ7LQaFFIhqvC7HWfdbLPQQTUnPad3vtCRBy1I+tjBDtOqM0b1ndozmrooLSXsTz5nrmwMG34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vB0mJX1W; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <11b98453-560d-4c55-8ac9-43d1cf7b3543@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760149565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glw7LqX8YIF4goQyas3LH1XhAoGCNP4CDVbcxVzULlQ=;
-	b=vB0mJX1WVLm7p2+PYMb4d3Gf9q72xxjJYKQXYBSlGMDS4/eVHrskJn/asTnChLcoJ0RmpH
-	mJ7bDtyRWQqx4L7XV0wU9hikly6seWylvUH4KKCX0+/tnHQsTKs/tAQdCEoB5zA13MZOwN
-	EBdJA7KzGc6Yh8OqTjb42OHX926M5D0=
-Date: Sat, 11 Oct 2025 10:25:57 +0800
+	s=arc-20240116; t=1760153437; c=relaxed/simple;
+	bh=Z80sDuh2r2K1uwZc7/gJ2dh8n1n4WacbpmU5bYMlaSY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HFZoZlD+joSlafTY+FCvXRt7PW6zolIUOoz5dIZy8MDovvCU79H519QnURzRrREwmH9+Is+SUj1ovFOUVrZnjCnK/RQk3q3E75lNPi0CqeOUnxiNaUPxBjXMN0CMoz5k9ghDSkJ/fg4HZMupGfixuFMheJremoiJ/Cxd4pSKh6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEWhsjzB; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-330469eb750so3391478a91.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 20:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760153435; x=1760758235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0sYbk5VmU4v1pNPH+Fa3K2iS1n3qdqJuuATj2vp0zUU=;
+        b=TEWhsjzB35uhN82H90B3cDx6rv6lVsu4P2BlgSHMYjIB8fXHdmvLYF0rrWom+naOiz
+         eJ2CrffxyF5WmjZMEG6IVV6P88fWDdtk1CHeu5ZUAUiXeduvcHMY83eK0otF+Ll5tl2n
+         QAlAURS9KY4OZncZ5buFe+rNSoGzBFeOZI+WaojG5noeV07WQ7daYUgNEKFEfniTD27f
+         krcUQgsLTsr8vhuMs2ut2sOWOOdodaqUoPYjCJl0OQ9abjb5JxzXsT443eD0JiKVjnna
+         21n2Id88BfTBiTrVMOrpCOp6/qU/ehgpj6UfI9MVNjGDuiSdn3AE1i5TZ1TF9P8co5M5
+         0LHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760153435; x=1760758235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0sYbk5VmU4v1pNPH+Fa3K2iS1n3qdqJuuATj2vp0zUU=;
+        b=tzjafA9vo1iL0TwEIGx6obQBX+S483JqP02n1Np4+tCc6Dp7Q0HtYDdPEdYBG439jy
+         OaBUOx2PU0lMs8pNrYmFjwoTPYebjex/QvE9AFs7hjVsADK7k9k9N+zfNcLsbPpuzgOC
+         PnFcf/qHBIZbAXthie9FO4c9+AwdBUNPD4ETeyIFpuK3X4IokLJjNDAGbZYeBwxwuJOI
+         oGuDnfrDgyxlVoSdV/5z2LSl06soeG4b3ADL+UxSJ9Bj7gwmk2KujYJq/RCjXvzuQ/0F
+         Yf2esNIC5fwuHpg4W8pKqpgIq09XvvcsWl6wgqvZm7JeUGF0qmdZ98roe242sXXt+wo1
+         0f9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzaMBc3d/GyYphFTRwJKKmQOkBsJvLxuX1kq7mZd+F4RQrH4m92zbmwzk/oWFmpu/UPO1CrWH3AoCbBHKu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO6gFAv6t2x7tFOcUJV2SwmY03hwLMurA1rSe1VBb2rcSvmuLk
+	a8IFPO6oP/FGptgfaAfikimaxVePZdHtSuJEmdLYV4loa4FKFVsBnTEeBv0MU1V5
+X-Gm-Gg: ASbGnct6A/JEaBQBszm6DwjmgrlxVHLty2IwVmESbSSi7Hp4GsoUJiY8GiCZUp2+rDT
+	XR9EVHZQ32btwNNfcgtbbav14XQuou+aHJldn/Se/s4Fq+69hXVNV99xBBIjqvdGuuTaVMAzJi9
+	bYseto/IUHNiKOwidcozuPrW9HM+il3HeHnPRdO+aBSenednxoIPjSojcBfmleI1egzw3CQZRZT
+	3dhqSnB3bZ7LHS3sY+oJBOYaP3btM9iU2PwBs7FNYi5hywBpMVlJSTJzwb1ls98mqgLsr5PKcq/
+	OiO1KVoL2YZcuTOpDnftvuxGw9P2q3W8bHnPUU5sku0DXM+leAsxzjgV8ZPUJ5bzsLIbIPJuzrQ
+	TDMbyTjeCrM6HJ/7/bvn5TcgnOjWH1qzaKVJO1Ez7Mmkln2Y5g59cE5oadpNXIqQZ
+X-Google-Smtp-Source: AGHT+IEVIfe6WZXTqBnz7nHlm3cwkJC0ZhBYUyRpN3slh0vrMoKKnT/vtaUEkQVAZyedNiVv/bJUOA==
+X-Received: by 2002:a17:90b:1e0c:b0:32e:749d:fcb6 with SMTP id 98e67ed59e1d1-33b51118ef7mr22146055a91.12.1760153435086;
+        Fri, 10 Oct 2025 20:30:35 -0700 (PDT)
+Received: from localhost.localdomain ([104.193.89.9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b529f51b5sm4215540a91.7.2025.10.10.20.30.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 10 Oct 2025 20:30:34 -0700 (PDT)
+From: Wei Gong <gongwei833x@gmail.com>
+To: vgoyal@redhat.com,
+	stefanha@redhat.com,
+	miklos@szeredi.hu
+Cc: virtualization@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Wei Gong <gongwei09@baidu.com>
+Subject: [PATCH] virtiofs: remove max_pages_limit in indirect descriptor mode
+Date: Sat, 11 Oct 2025 11:30:18 +0800
+Message-Id: <20251011033018.75985-1-gongwei833x@gmail.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, syzkaller-bugs@googlegroups.com,
- mcgrof@kernel.org, nao.horiguchi@gmail.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, kernel@pankajraghav.com,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, jane.chu@oracle.com,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org, david@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, linmiaohe@huawei.com,
- syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
-References: <20251010173906.3128789-1-ziy@nvidia.com>
- <20251010173906.3128789-2-ziy@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+From: Wei Gong <gongwei09@baidu.com>
 
+Currently, indirect descriptor mode unnecessarily restricts the maximum
+IO size based on virtqueue vringsize. However, the indirect descriptor
+mechanism inherently supports larger IO operations by chaining descriptors.
 
-On 2025/10/11 01:39, Zi Yan wrote:
-> Page cache folios from a file system that support large block size (LBS)
-> can have minimal folio order greater than 0, thus a high order folio might
-> not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
-> folio in minimum folio order chunks") bumps the target order of
-> split_huge_page*() to the minimum allowed order when splitting a LBS folio.
-> This causes confusion for some split_huge_page*() callers like memory
-> failure handling code, since they expect after-split folios all have
-> order-0 when split succeeds but in really get min_order_for_split() order
-> folios.
-> 
-> Fix it by failing a split if the folio cannot be split to the target order.
-> 
-> Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
-> [The test poisons LBS folios, which cannot be split to order-0 folios, and
-> also tries to poison all memory. The non split LBS folios take more memory
-> than the test anticipated, leading to OOM. The patch fixed the kernel
-> warning and the test needs some change to avoid OOM.]
-> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->   include/linux/huge_mm.h | 28 +++++-----------------------
->   mm/huge_memory.c        |  9 +--------
->   mm/truncate.c           |  6 ++++--
->   3 files changed, 10 insertions(+), 33 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 8eec7a2a977b..9950cda1526a 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -394,34 +394,16 @@ static inline int split_huge_page_to_list_to_order(struct page *page, struct lis
->    * Return: 0: split is successful, otherwise split failed.
->    */
->   static inline int try_folio_split(struct folio *folio, struct page *page,
-> -		struct list_head *list)
-> +		struct list_head *list, unsigned int order)
+This patch removes the artificial constraint, allowing indirect descriptor
+mode to utilize its full potential without being limited by vringsize.
+The maximum supported descriptors per IO is now determined by the indirect
+descriptor capability rather than the virtqueue size.
 
-Seems like we need to add the order parameter to the stub for 
-try_folio_split() as well?
+Signed-off-by: Wei Gong <gongwei09@baidu.com>
+---
+ fs/fuse/virtio_fs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 76c8fd0bfc75..c0d5db7d7504 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -12,6 +12,7 @@
+ #include <linux/memremap.h>
+ #include <linux/module.h>
+ #include <linux/virtio.h>
++#include <linux/virtio_ring.h>
+ #include <linux/virtio_fs.h>
+ #include <linux/delay.h>
+ #include <linux/fs_context.h>
+@@ -1701,9 +1702,11 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+ 	fc->sync_fs = true;
+ 	fc->use_pages_for_kvec_io = true;
+ 
+-	/* Tell FUSE to split requests that exceed the virtqueue's size */
+-	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
+-				    virtqueue_size - FUSE_HEADER_OVERHEAD);
++	if (!virtio_has_feature(fs->vqs[VQ_REQUEST].vq->vdev, VIRTIO_RING_F_INDIRECT_DESC)) {
++		/* Tell FUSE to split requests that exceed the virtqueue's size */
++		fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
++						virtqueue_size - FUSE_HEADER_OVERHEAD);
++	}
+ 
+ 	fsc->s_fs_info = fm;
+ 	sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
+-- 
+2.32.0
 
-...
-
-#else /* CONFIG_TRANSPARENT_HUGEPAGE */
-
-static inline int try_folio_split(struct folio *folio, struct page *page,
-		struct list_head *list)
-{
-	VM_WARN_ON_ONCE_FOLIO(1, folio);
-	return -EINVAL;
-}
-
-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-
-Cheers,
-Lance
 
