@@ -1,156 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-63840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3140DBCF304
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 11:33:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071DDBCF2F2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 11:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE780420AB3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 09:33:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C867D4E652A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 09:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DFF22422E;
-	Sat, 11 Oct 2025 09:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0EC23E342;
+	Sat, 11 Oct 2025 09:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="s/FXj8qa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCsOBX5n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987FA33D8
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 09:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4BA29A2
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 09:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760175215; cv=none; b=Yq+AU19bElsumq6dS+66+E1sdOFCoVkdvAGjCKoD0h154q6UO/BgKryrxegQdKl7BEs1VXzKzh7ZFRU7uy4GXd4LzfecFzOPetHgO5OJDUJ2ei6eb082HarAIDcvmv9OoRoEjVfFLDNpp0WVpUY1OfqGEYK5cX/up8K6OO6IibQ=
+	t=1760174718; cv=none; b=GBzvOS5u5/hfPr4Tn1FVoM2QGvO/MZKtWUEr34d8ms36j7IvwDAaKHPL32iGDtRL55ziJZ+gIFMmrmt6LVoaQTdaxcxR2HNg8lvo8ngqr1urzfHtPreN7jNJD3RPUKFf93EjWP4XYpPEu/j6nA/TmDVgutmb/Puu5LzyyilHx+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760175215; c=relaxed/simple;
-	bh=G4zs8KEfGccYngAhH3LNcbxr54FoSijCs9C5XPzbOuE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gNyx0kIGYzX4qhF1wHaYnLOBRtTc/UkIM+tkhz44hmNrNytiq5xbEdPI+VGNtNqPCOttTFNG6XbozRhkJHH5/HOhBkOYDh6bVMdHQLv6nwDw8YAS6TnQvg6nQJfFinuGljNPXbi7/EApCCNDvglan2TydR9mSWJX/HaNaQe5hiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=s/FXj8qa; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=ggOs2eAUyo4VXT1Pr+8pBElLmd5laphuk6GJ+x94CPU=;
-	b=s/FXj8qapy0aucC0yRdED0WqNkV/UN3jfUkKNvl0TPiLMj0ukdb4x6JBR7WCjVkbzn42YlJ3q
-	rR/t/viNbnsmLxMScKfrptU8kbmtJ3lSNhVJq0B9Yl376ILQQGf78WkdzuNlPOpDGMEGKIoM8GK
-	lX/f9e3QOBj51OJpfB9loRQ=
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4ckJLr0ZXFzmV6w;
-	Sat, 11 Oct 2025 17:33:08 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id D8772140123;
-	Sat, 11 Oct 2025 17:33:25 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
- (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 11 Oct
- 2025 17:33:25 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <richard@nod.at>, <anton.ivanov@cambridgegreys.com>,
-	<johannes@sipsolutions.net>, <geoff@geoffthorpe.net>
-CC: <linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-	<brauner@kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH] hostfs: Fix only passing host root in boot stage with new mount
-Date: Sat, 11 Oct 2025 09:22:35 +0000
-Message-ID: <20251011092235.29880-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1760174718; c=relaxed/simple;
+	bh=9dy0aKoKhvYgFFwabOjADieVvERVExSxvcq1TvjbQsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bL/KU4aDULvvHSuxb2oC+63Ah7eKjikx2y4A6Lr6Nrd+oOzu7LmuESz0CfA/t33Rlx+2tK7g6nOylsrZUT4vxAxYmPFU2DxPG+WozHLtUIIz40PXn4flzK7r0p+S6yDCNaSdh55boGT0tSEoYagWNzkPujO1A3GOyo9Zfff/9A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCsOBX5n; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b2e0513433bso463721766b.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 02:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760174709; x=1760779509; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oXEinQfxlrEaW5mbNRPwohsHPfbi3M1Bsd5Di42aJ94=;
+        b=VCsOBX5nDjHoRnTFD0WyNfaQ6iZ5ZgAjal0gdkK+t6iuqFlyA7haQBZ63lt849XcfG
+         Zv9hKVeHWoi1pWBgNYC4/pmXcaPyUQQVM7otuqveymREnCv5KBNod4kjqltbIfRmew1l
+         Af00Ab+4hphyu8Tf8G/hCwCZfr2EWl2zkJ8RGssp7GUf3oSiqDVAUymNRIiV/8dDTZo0
+         Vi9nhcn+LOO7B9EPTQUIL3AFDbKIaco7I5d3wrztCztvdtYGYuZvZsv7iaEsVqfyPLH5
+         6IJYhCY8MtDyN9IZlKFUJl4EKI/4ghqJS8mD7OQouDIbSHeQQ3aElD/W4/0gaRyq5oDS
+         tulg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760174709; x=1760779509;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oXEinQfxlrEaW5mbNRPwohsHPfbi3M1Bsd5Di42aJ94=;
+        b=vJUgIru1G0Izdr3BFI1Yb2dwGf84DEhdTN6z28pIGYRNAwCsADHxO8qkr77+tkUU2Y
+         WZCUaQF6mYYLIb5+H/SsH4uVy/60s27J6Nv4gLWw02XppC/81n8/K1GRmd/7s/tNjMdc
+         vjwV5M9ZLJ98XqSN+Sn2OQHnZ0MrCxTLOTGrYg0Dx7d+NoCjWyEC3nqSi26tkXwdxgww
+         5HBiNsMhhouKI+DuGuqXZnIbzJvUFPDE5vKhttImoS+EcTWQ3TgAMzAhVlv8w21038IG
+         fZtYfRTZpQXrHtiKK1wiauBhsdeu52rx/PmHs+AZE4TalrgD70Nn8bwWhWRNu7ra0ujZ
+         62sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnNhqbRJ98/UW/HeKb08Z1MQFco0zseta5+RusOwgQmnjdiu6gnIVd2NfGk1DwJA0GoqCNNh+C+rqbXUR0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKra0R1JPbZE5kRcYHZsAvxrgy3XR5FqIWgTA3CZM6NF4vSCcX
+	kPqtDoi5Wuex+h/g3zFO9p2zzm8JbE6dg36+pBOQaPV33dunK2LSWWPB
+X-Gm-Gg: ASbGncv23ZRwqTT15Uu6MvVImQrtdCYBhzR8ghtYOfGqZfsAstn8nCHvjj6RQzQK6jI
+	HTOk6366s2r3wwzfIiTrRBS+Vzr6tqLUAs+7WAaHCqkTQNl1TKNZEOP9mrYMpdPRkXw5oYx0Daj
+	cZfcWiQsltjSNTVx/PAYH7pOWXSTz7BDSx+FLck/P0wPrUCg4IxqIewPN2aBaEGwETZ+5gLT9Pa
+	W5th9VnQUIVzjg2VOGrCz5dMbHF6DkXm4hzXEt23lCIA4CRNOO0pMIJ2V7MNY8J1lqs2FUVMxNc
+	1okwsM4OcjfhXeyBPNft60/Cd4SUud5pzRAModJdKTBZUGOATSpl/NzMjfNG0arif27qq91awhk
+	QqHOWEeK8fRK7pJOa1r8j3+odgqCHu8+vR21aDMgctncLubjIrou/OdMpuo3gN/AZqGa03DkLUs
+	lvPRRSKg7M+kfVKg3ZOOkNT6OT
+X-Google-Smtp-Source: AGHT+IHPAZam1m8sYvQuHxTUeN/bLBz2BLvjFi8GzcdgbNZYPTup6tJOTtIwpqZFsVSwm5nBOTuk5A==
+X-Received: by 2002:a17:907:3d91:b0:b3f:f43d:f81e with SMTP id a640c23a62f3a-b50ac0cc027mr1653121266b.40.1760174709221;
+        Sat, 11 Oct 2025 02:25:09 -0700 (PDT)
+Received: from f (cst-prg-66-155.cust.vodafone.cz. [46.135.66.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d9a4054fsm438937866b.89.2025.10.11.02.25.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Oct 2025 02:25:08 -0700 (PDT)
+Date: Sat, 11 Oct 2025 11:24:53 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Zhen Ni <zhen.ni@easystack.cn>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] pidfs: fix ERR_PTR dereference in pidfd_info()
+Message-ID: <5asnajyk3d4c66fnpmodybc7rrprhvw4jy2chrihnlcgylu5uf@hfcw24zm2w7k>
+References: <20251011072927.342302-1-zhen.ni@easystack.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251011072927.342302-1-zhen.ni@easystack.cn>
 
-In the old mount proceedure, hostfs could only pass root directory during
-boot. This is because it constructed the root directory using the @root_ino
-event without any mount options. However, when using it with the new mount
-API, this step is no longer triggered. As a result, if users mounts without
-specifying any mount options, the @host_root_path remains uninitialized. To
-prevent this issue, the @host_root_path should be initialized at the time
-of allocation.
+On Sat, Oct 11, 2025 at 03:29:27PM +0800, Zhen Ni wrote:
+> pidfd_pid() may return an ERR_PTR() when the file does not refer to a
+> valid pidfs file. Currently pidfd_info() calls pid_in_current_pidns()
+> directly on the returned value, which risks dereferencing an ERR_PTR.
+> 
+> Fix it by explicitly checking IS_ERR(pid) and returning PTR_ERR(pid)
+> before further use.
+> 
+> Fixes: 7477d7dce48a ("pidfs: allow to retrieve exit information")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
+> ---
+>  fs/pidfs.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 0ef5b47d796a..16670648bb09 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -314,6 +314,9 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>  	if (copy_from_user(&mask, &uinfo->mask, sizeof(mask)))
+>  		return -EFAULT;
+>  
+> +	if (IS_ERR(pid))
+> +		return PTR_ERR(pid);
+> +
 
-Reported-by: Geoffrey Thorpe <geoff@geoffthorpe.net>
-Closes: https://lore.kernel.org/all/643333a0-f434-42fb-82ac-d25a0b56f3b7@geoffthorpe.net/
-Fixes: cd140ce9f611 ("hostfs: convert hostfs to use the new mount API")
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- fs/hostfs/hostfs_kern.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+Is that something you ran into or perhaps you are going off of reading
+the code?
 
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 1e1acf5775ab..86455eebbf6c 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -979,7 +979,7 @@ static int hostfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct hostfs_fs_info *fsi = fc->s_fs_info;
- 	struct fs_parse_result result;
--	char *host_root;
-+	char *host_root, *tmp_root;
- 	int opt;
- 
- 	opt = fs_parse(fc, hostfs_param_specs, param, &result);
-@@ -990,11 +990,13 @@ static int hostfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_hostfs:
- 		host_root = param->string;
- 		if (!*host_root)
--			host_root = "";
--		fsi->host_root_path =
--			kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
--		if (fsi->host_root_path == NULL)
-+			break;
-+		tmp_root = kasprintf(GFP_KERNEL, "%s%s",
-+				     fsi->host_root_path, host_root);
-+		if (!tmp_root)
- 			return -ENOMEM;
-+		kfree(fsi->host_root_path);
-+		fsi->host_root_path = tmp_root;
- 		break;
- 	}
- 
-@@ -1004,17 +1006,17 @@ static int hostfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- static int hostfs_parse_monolithic(struct fs_context *fc, void *data)
- {
- 	struct hostfs_fs_info *fsi = fc->s_fs_info;
--	char *host_root = (char *)data;
-+	char *tmp_root, *host_root = (char *)data;
- 
- 	/* NULL is printed as '(null)' by printf(): avoid that. */
- 	if (host_root == NULL)
--		host_root = "";
-+		return 0;
- 
--	fsi->host_root_path =
--		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
--	if (fsi->host_root_path == NULL)
-+	tmp_root = kasprintf(GFP_KERNEL, "%s%s", fsi->host_root_path, host_root);
-+	if (!tmp_root)
- 		return -ENOMEM;
--
-+	kfree(fsi->host_root_path);
-+	fsi->host_root_path = tmp_root;
- 	return 0;
- }
- 
-@@ -1049,6 +1051,11 @@ static int hostfs_init_fs_context(struct fs_context *fc)
- 	if (!fsi)
- 		return -ENOMEM;
- 
-+	fsi->host_root_path = kasprintf(GFP_KERNEL, "%s/", root_ino);
-+	if (!fsi->host_root_path) {
-+		kfree(fsi);
-+		return -ENOMEM;
-+	}
- 	fc->s_fs_info = fsi;
- 	fc->ops = &hostfs_context_ops;
- 	return 0;
--- 
-2.22.0
+The only way that I see to get here requires a file with
+pidfs_file_operations, so AFAICS this shouuld never trigger.
 
+In the worst case perhaps this can WARN_ON?
 
