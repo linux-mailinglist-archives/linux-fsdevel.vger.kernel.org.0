@@ -1,240 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-63826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0BBCEDF3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 03:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A57BBCEDFE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 03:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512BE1A66A19
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 01:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009DD3E1583
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 01:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210D52B9A8;
-	Sat, 11 Oct 2025 01:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232153AC1C;
+	Sat, 11 Oct 2025 01:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QeATIuYO"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="NuwnfwSi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1A93EA8D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 01:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D459A175A5
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 01:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760146411; cv=none; b=aIxJlN/NM3ZWF52zxMguwAYriuI7AO7DbcTd+QRqV00cfYRD2pO+wdZ2iOl+srfWvO3lb1cuZ8cllSses9IdX98NaYlQiuH4BoC3rmKGeQPlT1TaQAH0J0ayKHei99RvPy3Xe+NP/pc8MX7ZCrhAWmJa1OfhQRsJ2+BSnaA7hJw=
+	t=1760146526; cv=none; b=OeYLwoBjg7UTzEwlwMzTvVT3r9aZjbT7sf0bZmCCL7A/EtWIC3l3/daCmTk+JpmmRyieP0HJ5tMbKfM6tDiAfr8D5qJ/GTjNGyE15+qPIhR2VmaUaShRvpyChkRhERLlRzhNx2XYy5RSyjMzVBy/BPv6zdHIWOLD9iFZKOXyqbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760146411; c=relaxed/simple;
-	bh=FMRXqxPu0WQ5Ax5nNw0lt7BC+iqQTQtavFODzaAsDT8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VskG9qediEqvpmPYGXLrNAI+tX11hdShA+orEThQyowI/19Ej4P9rS32T60igyLN13kepwWG12sxYHWlYIGadfxNB/CiltXaKw1ZTbg1aa1oNETSZkezEQ3eZkBkofCtkE9S/WmF6W6WXu1cm+0NM72vIqBGESr3g8uW08nIqqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QeATIuYO; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26c209802c0so26032585ad.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 18:33:28 -0700 (PDT)
+	s=arc-20240116; t=1760146526; c=relaxed/simple;
+	bh=xR0IE0cavrFuHS+sWvEAb/mnV0iT2JipQXIDw9PxCmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=beLJLiGSafp4Q/2p7ZlpTcPoTbEAiSCievcPJ9ta3r3m/8s+c5NmzqQ22/TzzLx1kIttGk6IkaOyPW1kGnLDVYR3H6KxE4VANeEGuvTjHRQnZG7OLJUGmkQwCYMEn69zAeHnSTGUrNZXPuZFNzbdnl/OFs5Uwi+V+esd0oOnQr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=NuwnfwSi; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78f3bfe3f69so2515864b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 18:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760146408; x=1760751208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/dbVKML6jyfDJLg2rXlA//5YED8oSUDfIzTUJyF0qc=;
-        b=QeATIuYOcV0Ubn5NJlFEQDCHZ0h28DOmhcI+7yCi3dTo2PHhSkNAMKrV4rHFhJVa3Q
-         hRGRX4Dg5/FIGNviJ5G8oEgQGL12pWHXmMg4qZygXcKEA6yHqCENVu+3atCXPrv/RnXr
-         w5/4sGoiCCQDhUzRDdY91lCQZ0hnDuY7v1e64/9vpk8XmCQz9/TgDeO2vk6dEyveCSJt
-         xVP2wf1XwEEXlxeZWVousAUDWJeNSKpf9/zuB7YcW/YAUBgk1/N7yCTIFZs0o7qPbak0
-         BPb0ujZjAqJJEYVCm8b8W1c4A7iF2OuBdSdwUNK2EWst1hQAggSA0MzrARvvLXvPneyd
-         zVqg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760146524; x=1760751324; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XvBfLEx++WE1Un1u5T1nsAJnVIwWMs7QzpD2aMmgPU8=;
+        b=NuwnfwSior1Z8jfrkAegV7FJKah7cY6lTZlyqFY057aw/K3HK+X+TK4NPPNYQAdGbS
+         xQBM+Sq+LK4hMS2GKxmKc4X07PPlRprITGaThcvUhsmiou7eqL52ip9ciBx3W2h3GHy5
+         5VC1Ug284Y3yHE7ehfHS+UfODeXb4wPjl4MjD+M6iEU8rlpYjJtm3dYmAGKEFtp+f+mP
+         +HJ6qS1rRaDSRArxm6Vo3Cog7DrWm+dUpPefXsYBuEskw+KKAw7esFh6DOHAdDbIeCcn
+         ebx8P9VwLU/SU1Qik5ZRjl7p3HYcSwYMpw82tFitsKjHgYG7PNYyy0OPKOh+zjxEoho0
+         GSoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760146408; x=1760751208;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d/dbVKML6jyfDJLg2rXlA//5YED8oSUDfIzTUJyF0qc=;
-        b=ClQ7M36eXpixjIKYrnfq7m3PEYZqdSFmYH7hf6eVNc1YOstRd1tV9dgUafIaztBthw
-         1KU/m4bC7dupq6A3cc7VdWoMHDNyOel3wZLXbjs7/eQYSzoOayFj4yGjIiYlQLz1AY3+
-         rAlLCEwgqlAiSGQIrwxc+SrIETloHUaQZonRhJLtxg9s45vEgR38DUwIWBwJ53mGkRr7
-         WxVYf5VhLXsqzRAdv1s0Ho68o2n24jezxKFgC74NBXi0KOhidvAee616PYbV2U6IgNeG
-         KyVWt0/h2emko9hOq5WvuZyRZSvAF5EzEZ5JbJJKxkWrhxKruOCP0PQeMYzDTS8WwzF6
-         af+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVCxiwCSY4VK0lgjWe4ooDBhU2b2c2ejOzKePa6fsztGw5RG62fgNWXkMAcC26KMXa/nSoB7vMoTIyl3SG6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhSHITJ06q2YchIuM0idT854hG/jzMj5mq8h95z7+cGWiXzGOv
-	BpsKG1xeZwRWprJwLvLecWaW+QEZW7f3GdxVlEZyRbrnedO+guG9iJ4zQlNUQAsc/yA=
-X-Gm-Gg: ASbGncsltfvh5AxH/ii39goHlpzStTGyBFfELJrFNHehnTHp85M8acblcYgrXMDsCq+
-	ZvJtRCMCamIcmN8e2nzEbAwjOwDlH4dJCZlDDpGi8D2PdYgMxnA8zhh6FIdXc/gH9PKM8x9K3cx
-	4J4EasAsHCOHiykmnK3tn7OVTPUr8PktnO9E3XUUseACXDp+08KPbgryffQ/kQrjGvyVw4oft0/
-	hcEI4z/xx4tCnKKkueMTbdgTKo3Mh0+WG8C4PPAFXH2Hvqbfc9m8SHzqKk6Me4EEF0Ijkdx1ew3
-	7cAH2uz+n3a69fFOB4CWz6xXWlIVnoF2LIyU0gL8mz5nRoDk0Y+ijev31acAwvHdfiqLWQrvBg+
-	//Hj6ZkrTwtb7T9j4BVfEu0fUuAl4hqx+gK947ARSHuoN0RnO/yiKsnqffRMAdFdEIRVyjge3wd
-	fr8B21LQ==
-X-Google-Smtp-Source: AGHT+IH2ZLFZnAX+DFQkY9v0s+2anWfLJ5/4tgkkHlg3OcqGLJ41YRx4qbgQD3SYi5SqmtyxL/sNpg==
-X-Received: by 2002:a17:902:da8e:b0:26a:589b:cf11 with SMTP id d9443c01a7336-29027402d24mr204107925ad.43.1760146407559;
-        Fri, 10 Oct 2025 18:33:27 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.239])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678ddc9f8esm3533310a12.10.2025.10.10.18.33.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 10 Oct 2025 18:33:27 -0700 (PDT)
-From: Fengnan Chang <changfengnan@bytedance.com>
-To: axboe@kernel.dk,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	asml.silence@gmail.com,
-	willy@infradead.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Cc: Fengnan Chang <changfengnan@bytedance.com>
-Subject: [PATCH] block: enable per-cpu bio cache by default
-Date: Sat, 11 Oct 2025 09:33:12 +0800
-Message-Id: <20251011013312.20698-1-changfengnan@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1760146524; x=1760751324;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvBfLEx++WE1Un1u5T1nsAJnVIwWMs7QzpD2aMmgPU8=;
+        b=GtHC/jALkkOtY2GLv17gEAYx/wxOaJJovHAbSA/H7xjUtzIztdyLC+u4KYCBxVrTbT
+         8jHcteWgEgmO1TixKoDP4Q7NMCUAvYe7fBeMJ8w8DEdV86qtIQR0tkAMDSaa4cpMdo3R
+         9obHJWoeLyAlxO2lUDzg665WQxfaps29caojVM2OrRDpTrbl+p3B3ZTIUfYSlF9bqh+Q
+         cdY0iz/whTgyCjSYSmUXwjbQ6La36xbiRlAnZN6+C8fDliBo9bPu1/VOUYShL4YUUuse
+         fMX1p6ClAzFHN0DHIAUOMSQ18fboFrVgFu7h6yC5Aa+eNBzn6Nx9cm2Ou+ICvps081+K
+         352g==
+X-Forwarded-Encrypted: i=1; AJvYcCW4MVtRk4MWDHB6dlGh63/a13g5cvnj2N4zle7RqjtjzKOUQc64sXhXsY9XvmZ4vFiB3T5ECc1irSM31Jij@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS8HKSfOt0XRl/uPh9YUYTipBtC+2cWxuDZ1B2m0hOic88hrnQ
+	1JTP6nQUph0uEfI801rMCTueYgxVNIklpoZlrX9FZipynwrV9uEsXwCoaeFWzk86r+I=
+X-Gm-Gg: ASbGncu/epvtoVdsMJ7ZNhP4WP+T0bs0eF90cEU4YNKSXceNQpeuMPNWdiB+u5pCCqM
+	25HKydmiOhoMwHcZGPk/VCtOB9lyPwUKuI1efQqOxnsCFDBYk9lrhFTa358eYNnIQ0lv087RxiL
+	PfEJbXeVRQGCU2gIM2JyamMQFyUlg1HacVPL2GxcTqDarHZ2gFV89XFCTjnoARJpn6AkrtWux4D
+	jyTEPmzbYyKYq+dUIEqYi+Bqnnv30MAwunqGsYAx5vgJMz64kF4iI4aF0m0Ngc7qGX/bPrR0Xwk
+	vhfXGzIUQrV8YQc4U8bSNIPA7CKGLxfA+PDvjw/UovCzM8oSG40/hlNAvi4IiW4O2y65daq66uY
+	0aBnLFKTR4wdJH8Dperkln4ULgoVfovTlSichAFq1EVb/P9I+S0iv0+hRNko/wqlVtVA4QBvdHn
+	CnlEAHrh4lGMQkS0UT
+X-Google-Smtp-Source: AGHT+IEniEi9MIGgRunuUrN+JFg+dx6vAM1Vi/J7MDf0PCiszN+aXqLXt9e6v1B48WCt7nSz67SjpA==
+X-Received: by 2002:a05:6a00:3c8e:b0:781:17fb:d3d0 with SMTP id d2e1a72fcca58-79385ce7d83mr17895097b3a.8.1760146523720;
+        Fri, 10 Oct 2025 18:35:23 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b733abdsm4353443b3a.25.2025.10.10.18.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 18:35:23 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1v7OW0-0000000DEDr-1EsT;
+	Sat, 11 Oct 2025 12:35:20 +1100
+Date: Sat, 11 Oct 2025 12:35:20 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Pavel Emelyanov <xemul@scylladb.com>, linux-fsdevel@vger.kernel.org,
+	"Raphael S . Carvalho" <raphaelsc@scylladb.com>,
+	linux-api@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] fs: Propagate FMODE_NOCMTIME flag to user-facing
+ O_NOCMTIME
+Message-ID: <aOm0WCB_woFgnv0v@dread.disaster.area>
+References: <20251003093213.52624-1-xemul@scylladb.com>
+ <aOCiCkFUOBWV_1yY@infradead.org>
+ <CALCETrVsD6Z42gO7S-oAbweN5OwV1OLqxztBkB58goSzccSZKw@mail.gmail.com>
+ <aOSgXXzvuq5YDj7q@infradead.org>
+ <CALCETrW3iQWQTdMbB52R4=GztfuFYvN_8p52H1fopdS8uExQWg@mail.gmail.com>
+ <aObXUBCtp4p83QzS@dread.disaster.area>
+ <CALCETrX-cs5MH3k369q2Fk5Q-pYQfEV6CW3va-4E9vD1CoCaGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrX-cs5MH3k369q2Fk5Q-pYQfEV6CW3va-4E9vD1CoCaGA@mail.gmail.com>
 
-Per cpu bio cache was only used in the io_uring + raw block device,
-after commit 12e4e8c7ab59 ("io_uring/rw: enable bio caches for IRQ
-rw"),  bio_put is safe for task and irq context, bio_alloc_bioset is
-safe for task context and no one calls in irq context, so we can enable
-per cpu bio cache by default.
+On Wed, Oct 08, 2025 at 02:51:14PM -0700, Andy Lutomirski wrote:
+> On Wed, Oct 8, 2025 at 2:27 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Wed, Oct 08, 2025 at 08:22:35AM -0700, Andy Lutomirski wrote:
+> > > On Mon, Oct 6, 2025 at 10:08 PM Christoph Hellwig <hch@infradead.org> wrote:
+> > > >
+> > > > On Sat, Oct 04, 2025 at 09:08:05AM -0700, Andy Lutomirski wrote:
+> 
+> >
+> > You are conflating "synchronous update" with "blocking".
+> >
+> > Avoiding the need for synchronous timestamp updates is exactly what
+> > the lazytime mount option provides. i.e. lazytime degrades immediate
+> > consistency requirements to eventual consistency similar to how the
+> > default relatime behaviour defers atime updates for eventual
+> > writeback.
+> >
+> > IOWs, we've already largely addressed the synchronous c/mtime update
+> > problem but what we haven't done is made timestamp updates
+> > fully support non-blocking caller semantics. That's a separate
+> > problem...
+> 
+> I'm probably missing something, but is this really different?
 
-Benchmarked with t/io_uring and ext4+nvme:
-taskset -c 6 /root/fio/t/io_uring  -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1
--X1 -n1 -P1  /mnt/testfile
-base IOPS is 562K, patch IOPS is 574K. The CPU usage of bio_alloc_bioset
-decrease from 1.42% to 1.22%.
+Yes, and yes.
 
-The worst case is allocate bio in CPU A but free in CPU B, still use
-t/io_uring and ext4+nvme:
-base IOPS is 648K, patch IOPS is 647K.
+> Either the mtime update can block or it can't block.
 
-Also use fio test ext4/xfs with libaio/sync/io_uring on null_blk and
-nvme, no obvious performance regression.
+Sure, but that's not the issue we have to deal with.
 
-Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
----
- block/bio.c        | 26 ++++++++++++--------------
- block/blk-map.c    |  4 ++++
- block/fops.c       |  4 ----
- include/linux/fs.h |  3 ---
- io_uring/rw.c      |  1 -
- 5 files changed, 16 insertions(+), 22 deletions(-)
+In many filesystems and fs operations, we have to know if an
+operation is going to block -before- we start the operation. e.g.
+transactional changes cannot be rolled back once we've started the
+modification if they need to block to make progress (e.g. read in
+on-disk metadata).
 
-diff --git a/block/bio.c b/block/bio.c
-index 3b371a5da159..16b20c10cab7 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -513,20 +513,18 @@ struct bio *bio_alloc_bioset(struct block_device *bdev, unsigned short nr_vecs,
- 	if (WARN_ON_ONCE(!mempool_initialized(&bs->bvec_pool) && nr_vecs > 0))
- 		return NULL;
- 
--	if (opf & REQ_ALLOC_CACHE) {
--		if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
--			bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
--						     gfp_mask, bs);
--			if (bio)
--				return bio;
--			/*
--			 * No cached bio available, bio returned below marked with
--			 * REQ_ALLOC_CACHE to particpate in per-cpu alloc cache.
--			 */
--		} else {
--			opf &= ~REQ_ALLOC_CACHE;
--		}
--	}
-+	opf |= REQ_ALLOC_CACHE;
-+	if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
-+		bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
-+					     gfp_mask, bs);
-+		if (bio)
-+			return bio;
-+		/*
-+		 * No cached bio available, bio returned below marked with
-+		 * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
-+		 */
-+	} else
-+		opf &= ~REQ_ALLOC_CACHE;
- 
- 	/*
- 	 * submit_bio_noacct() converts recursion to iteration; this means if
-diff --git a/block/blk-map.c b/block/blk-map.c
-index 23e5d5ebe59e..570a7ca6edd1 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -255,6 +255,10 @@ static struct bio *blk_rq_map_bio_alloc(struct request *rq,
- {
- 	struct bio *bio;
- 
-+	/*
-+	 * Even REQ_ALLOC_CACHE is enabled by default, we still need this to
-+	 * mark bio is allocated by bio_alloc_bioset.
-+	 */
- 	if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <= BIO_INLINE_VECS)) {
- 		bio = bio_alloc_bioset(NULL, nr_vecs, rq->cmd_flags, gfp_mask,
- 					&fs_bio_set);
-diff --git a/block/fops.c b/block/fops.c
-index ddbc69c0922b..090562a91b4c 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -177,8 +177,6 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	loff_t pos = iocb->ki_pos;
- 	int ret = 0;
- 
--	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
--		opf |= REQ_ALLOC_CACHE;
- 	bio = bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
- 			       &blkdev_dio_pool);
- 	dio = container_of(bio, struct blkdev_dio, bio);
-@@ -326,8 +324,6 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 	loff_t pos = iocb->ki_pos;
- 	int ret = 0;
- 
--	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
--		opf |= REQ_ALLOC_CACHE;
- 	bio = bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
- 			       &blkdev_dio_pool);
- 	dio = container_of(bio, struct blkdev_dio, bio);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 601d036a6c78..18ec41732186 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -365,8 +365,6 @@ struct readahead_control;
- /* iocb->ki_waitq is valid */
- #define IOCB_WAITQ		(1 << 19)
- #define IOCB_NOIO		(1 << 20)
--/* can use bio alloc cache */
--#define IOCB_ALLOC_CACHE	(1 << 21)
- /*
-  * IOCB_DIO_CALLER_COMP can be set by the iocb owner, to indicate that the
-  * iocb completion can be passed back to the owner for execution from a safe
-@@ -399,7 +397,6 @@ struct readahead_control;
- 	{ IOCB_WRITE,		"WRITE" }, \
- 	{ IOCB_WAITQ,		"WAITQ" }, \
- 	{ IOCB_NOIO,		"NOIO" }, \
--	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }, \
- 	{ IOCB_DIO_CALLER_COMP,	"CALLER_COMP" }, \
- 	{ IOCB_AIO_RW,		"AIO_RW" }, \
- 	{ IOCB_HAS_METADATA,	"AIO_HAS_METADATA" }
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index af5a54b5db12..fa7655ab9097 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -856,7 +856,6 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
- 	ret = kiocb_set_rw_flags(kiocb, rw->flags, rw_type);
- 	if (unlikely(ret))
- 		return ret;
--	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
- 
- 	/*
- 	 * If the file is marked O_NONBLOCK, still allow retry for it if it
+This foresight, in many cases, is -unknowable-. Even though the
+operation /likely/ won't block, we cannot *guarantee* ahead of time
+that any given instance of the operation will /not/ block.  Hence
+the reliable non-blocking operation that users are asking for is not
+possible with unknowable implementation characteristics like this.
+
+IOWs, a timestamp update implementation can be synchronous and
+reliably non-blocking if it always knows when blocking will occur
+and can return -EAGAIN instead of blocking to complete the
+operation.
+
+If it can't know when/if blocking will occur, then lazytime allows
+us to defer the (potentially) blocking update operation to another
+context that can block. Queuing for async processing can easily be
+made non-blocking, and __mark_inode_dirty(I_DIRTY_TIME) does this
+for us.
+
+So, yeah, it should be pretty obvious at this point that non-blocking
+implementation is completely independent of whether the operation is
+performed synchronously or asynchronously. It's easier to make async
+operations non-blocking, but that doesn't mean "non_blocking" and
+"asynchronous execution" are interchangable terms or behaviours.
+
+> I haven't dug all the
+> way into exactly what happens in __mark_inode_dirty(), but there is a
+> lot going on in there even in the I_DIRTY_TIME path.
+
+It's pretty simple, really.  __mark_inode_dirty(I_DIRTY_TIME) is
+non-blocking and queues the inode on the wb->i_dirty_time queue
+for later processing.
+
+> And Pavel is
+> saying that AIO and mtime updates don't play along well.
+
+Again: this is exactly why lazytime was added to XFS *ten years
+ago*. From 2015 (issue #3):
+
+https://lore.kernel.org/linux-xfs/CAD-J=zZh1dtJsfrW_Gwxjg+qvkZMu7ED-QOXrMMO6B-G0HY2-A@mail.gmail.com/
+
+(Oh, look, a discussion that starts from a user suggestion of
+exposing FMODE_NOCMTIME to userspace apps! Sound familiar?)
+
+> > IOWs, with lazytime, writeback already persists timestamp updates
+> > when appropriate for best performance.
+> 
+> I'm probably doing a bad job explaining myself.
+
+No, I think both Christoph and I both understand exactly what you
+are trying to describe.
+
+It seems to me that haven't yet understood that lazytime already
+does exactly what you are asking for. Hence you think we don't
+understand the "lazytime" concept you are proposing and keep trying
+to reinvent lazytime to convince us that we need "lazytime"
+functionalitying in the kernel...
+
+> > > Thinking out loud, to handle both write_iter and mmap, there might
+> > > need to be two bits: one saying "the timestamp needs to be updated"
+> > > and another saying "the timestamp has been updated in the in-memory
+> > > inode, but the inode hasn't been dirtied yet".
+> >
+> > The flag that implements the latter is called I_DIRTY_TIME. We have
+> > not implemented the former as that's a userspace visible change of
+> > behaviour.
+> 
+> Maybe that change should be done?  Or not -- it wouldn't be terribly
+> hard to have a pair of atomic timestamps in struct inode indicating
+> what timestamps we want to write the next time we get around to it.
+
+See, you just reinvented the lazytime mechanism. Again. :/
+
+-Dave.
 -- 
-2.39.5 (Apple Git-154)
-
+Dave Chinner
+david@fromorbit.com
 
