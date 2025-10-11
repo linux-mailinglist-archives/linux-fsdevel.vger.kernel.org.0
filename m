@@ -1,221 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-63825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF02BCEDBC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 03:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0BBCEDF3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 03:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17AF21A62052
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 01:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512BE1A66A19
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Oct 2025 01:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6D87D098;
-	Sat, 11 Oct 2025 01:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210D52B9A8;
+	Sat, 11 Oct 2025 01:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QeATIuYO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027034BA57;
-	Sat, 11 Oct 2025 01:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1A93EA8D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 01:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760145642; cv=none; b=btfo6rJdq6GG2Nvz9cktqtTE27+TZjo0PrE3weyo/lhqesnVjW92dvvP58evbGOuqbf79q+wOQF+BnBomux0h/b8+wWRfY9F9d1cJ3GX+EMp1Ye1uaO9lY/jI4sEkbLGjvxAeZfiv/fhXeChWBIAX2VgM8MBwXC6CA+TRkA+Xdg=
+	t=1760146411; cv=none; b=aIxJlN/NM3ZWF52zxMguwAYriuI7AO7DbcTd+QRqV00cfYRD2pO+wdZ2iOl+srfWvO3lb1cuZ8cllSses9IdX98NaYlQiuH4BoC3rmKGeQPlT1TaQAH0J0ayKHei99RvPy3Xe+NP/pc8MX7ZCrhAWmJa1OfhQRsJ2+BSnaA7hJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760145642; c=relaxed/simple;
-	bh=3fhpvZ3VfMyWFc+BjLgInTMsIfV04gcVoPmD/6ASl3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C8S8OoOLF0DccJ8Xv2GURjV/Uu/I7mm2OcS6xbLH3eng6FM05q2pRbVZHv5jFr9gBpV3E3gOOoStQYiTM8TTVI7EFsIcslPsBxMeCBwqJuaGwQox0rocmM7vHFm8y7ci3xFxEFUyW1ZRSq6kv4Z77+VLnJAEnH4WGRaMyg4wZho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ck5Ps3kbnzYQtrB;
-	Sat, 11 Oct 2025 09:20:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B69261A0843;
-	Sat, 11 Oct 2025 09:20:36 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP4 (Coremail) with SMTP id gCh0CgA3+mHisOlo+on_CQ--.8318S3;
-	Sat, 11 Oct 2025 09:20:36 +0800 (CST)
-Message-ID: <021b2564-4f1d-4dd7-b98c-569668c8359a@huaweicloud.com>
-Date: Sat, 11 Oct 2025 09:20:33 +0800
+	s=arc-20240116; t=1760146411; c=relaxed/simple;
+	bh=FMRXqxPu0WQ5Ax5nNw0lt7BC+iqQTQtavFODzaAsDT8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VskG9qediEqvpmPYGXLrNAI+tX11hdShA+orEThQyowI/19Ej4P9rS32T60igyLN13kepwWG12sxYHWlYIGadfxNB/CiltXaKw1ZTbg1aa1oNETSZkezEQ3eZkBkofCtkE9S/WmF6W6WXu1cm+0NM72vIqBGESr3g8uW08nIqqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QeATIuYO; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26c209802c0so26032585ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Oct 2025 18:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1760146408; x=1760751208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/dbVKML6jyfDJLg2rXlA//5YED8oSUDfIzTUJyF0qc=;
+        b=QeATIuYOcV0Ubn5NJlFEQDCHZ0h28DOmhcI+7yCi3dTo2PHhSkNAMKrV4rHFhJVa3Q
+         hRGRX4Dg5/FIGNviJ5G8oEgQGL12pWHXmMg4qZygXcKEA6yHqCENVu+3atCXPrv/RnXr
+         w5/4sGoiCCQDhUzRDdY91lCQZ0hnDuY7v1e64/9vpk8XmCQz9/TgDeO2vk6dEyveCSJt
+         xVP2wf1XwEEXlxeZWVousAUDWJeNSKpf9/zuB7YcW/YAUBgk1/N7yCTIFZs0o7qPbak0
+         BPb0ujZjAqJJEYVCm8b8W1c4A7iF2OuBdSdwUNK2EWst1hQAggSA0MzrARvvLXvPneyd
+         zVqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760146408; x=1760751208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d/dbVKML6jyfDJLg2rXlA//5YED8oSUDfIzTUJyF0qc=;
+        b=ClQ7M36eXpixjIKYrnfq7m3PEYZqdSFmYH7hf6eVNc1YOstRd1tV9dgUafIaztBthw
+         1KU/m4bC7dupq6A3cc7VdWoMHDNyOel3wZLXbjs7/eQYSzoOayFj4yGjIiYlQLz1AY3+
+         rAlLCEwgqlAiSGQIrwxc+SrIETloHUaQZonRhJLtxg9s45vEgR38DUwIWBwJ53mGkRr7
+         WxVYf5VhLXsqzRAdv1s0Ho68o2n24jezxKFgC74NBXi0KOhidvAee616PYbV2U6IgNeG
+         KyVWt0/h2emko9hOq5WvuZyRZSvAF5EzEZ5JbJJKxkWrhxKruOCP0PQeMYzDTS8WwzF6
+         af+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVCxiwCSY4VK0lgjWe4ooDBhU2b2c2ejOzKePa6fsztGw5RG62fgNWXkMAcC26KMXa/nSoB7vMoTIyl3SG6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhSHITJ06q2YchIuM0idT854hG/jzMj5mq8h95z7+cGWiXzGOv
+	BpsKG1xeZwRWprJwLvLecWaW+QEZW7f3GdxVlEZyRbrnedO+guG9iJ4zQlNUQAsc/yA=
+X-Gm-Gg: ASbGncsltfvh5AxH/ii39goHlpzStTGyBFfELJrFNHehnTHp85M8acblcYgrXMDsCq+
+	ZvJtRCMCamIcmN8e2nzEbAwjOwDlH4dJCZlDDpGi8D2PdYgMxnA8zhh6FIdXc/gH9PKM8x9K3cx
+	4J4EasAsHCOHiykmnK3tn7OVTPUr8PktnO9E3XUUseACXDp+08KPbgryffQ/kQrjGvyVw4oft0/
+	hcEI4z/xx4tCnKKkueMTbdgTKo3Mh0+WG8C4PPAFXH2Hvqbfc9m8SHzqKk6Me4EEF0Ijkdx1ew3
+	7cAH2uz+n3a69fFOB4CWz6xXWlIVnoF2LIyU0gL8mz5nRoDk0Y+ijev31acAwvHdfiqLWQrvBg+
+	//Hj6ZkrTwtb7T9j4BVfEu0fUuAl4hqx+gK947ARSHuoN0RnO/yiKsnqffRMAdFdEIRVyjge3wd
+	fr8B21LQ==
+X-Google-Smtp-Source: AGHT+IH2ZLFZnAX+DFQkY9v0s+2anWfLJ5/4tgkkHlg3OcqGLJ41YRx4qbgQD3SYi5SqmtyxL/sNpg==
+X-Received: by 2002:a17:902:da8e:b0:26a:589b:cf11 with SMTP id d9443c01a7336-29027402d24mr204107925ad.43.1760146407559;
+        Fri, 10 Oct 2025 18:33:27 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.239])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678ddc9f8esm3533310a12.10.2025.10.10.18.33.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 10 Oct 2025 18:33:27 -0700 (PDT)
+From: Fengnan Chang <changfengnan@bytedance.com>
+To: axboe@kernel.dk,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	asml.silence@gmail.com,
+	willy@infradead.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	ritesh.list@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Cc: Fengnan Chang <changfengnan@bytedance.com>
+Subject: [PATCH] block: enable per-cpu bio cache by default
+Date: Sat, 11 Oct 2025 09:33:12 +0800
+Message-Id: <20251011013312.20698-1-changfengnan@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/12] ext4: introduce mext_move_extent()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20251010103326.3353700-1-yi.zhang@huaweicloud.com>
- <20251010103326.3353700-10-yi.zhang@huaweicloud.com>
- <pkhkxgsoa3e3svcwudqo5jckurdqnhkdd6ckbkvgp424lxfcvn@h4nazw5rrd77>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <pkhkxgsoa3e3svcwudqo5jckurdqnhkdd6ckbkvgp424lxfcvn@h4nazw5rrd77>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgA3+mHisOlo+on_CQ--.8318S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFy7tryrJFy8tr13JFykuFg_yoW7ArW5pF
-	WxCF1DKrWkJa4I9r1Ivw4kXFyxK3y7Gr47Cr4fWFy7CFWqvFyrKFWUKa15uFy8CrW8G3Wj
-	vF40yr9rW3s8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 10/10/2025 9:38 PM, Jan Kara wrote:
-> On Fri 10-10-25 18:33:23, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When moving extents, the current move_extent_per_page() process can only
->> move extents of length PAGE_SIZE at a time, which is highly inefficient,
->> especially when the fragmentation of the file is not particularly
->> severe, this will result in a large number of unnecessary extent split
->> and merge operations. Moreover, since the ext4 file system now supports
->> large folios, using PAGE_SIZE as the processing unit is no longer
->> practical.
->>
->> Therefore, introduce a new move extents method, mext_move_extent(). It
->> moves one extent of the origin inode at a time, but not exceeding the
->> size of a folio. The parameters for the move are passed through the new
->> mext_data data structure, which includes the origin inode, donor inode,
->> the mapping extent of the origin inode to be moved, and the starting
->> offset of the donor inode.
->>
->> The move process is similar to move_extent_per_page() and can be
->> categorized into three types: MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, and
->> MEXT_COPY_DATA. MEXT_SKIP_EXTENT indicates that the corresponding area
->> of the donor file is a hole, meaning no actual space is allocated, so
->> the move is skipped. MEXT_MOVE_EXTENT indicates that the corresponding
->> areas of both the origin and donor files are unwritten, so no data needs
->> to be copied; only the extents are swapped. MEXT_COPY_DATA indicates
->> that the corresponding areas of both the origin and donor files contain
->> data, so data must be copied. The data copying is performed in three
->> steps: first, the data from the original location is read into the page
->> cache; then, the extents are swapped, and the page cache is rebuilt to
->> reflect the index of the physical blocks; finally, the dirty page cache
->> is marked and written back to ensure that the data is written to disk
->> before the metadata is persisted.
->>
->> One important point to note is that the folio lock and i_data_sem are
->> held only during the moving process. Therefore, before moving an extent,
->> it is necessary to check whether the sequence cookie of the area to be
->> moved has changed while holding the folio lock. If a change is detected,
->> it indicates that concurrent write-back operations may have occurred
->> during this period, and the type of the extent to be moved can no longer
->> be considered reliable. For example, it may have changed from unwritten
->> to written. In such cases, return -ESTALE, and the calling function
->> should reacquire the move extent of the original file and retry the
->> movement.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> ...
-> 
->> +static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
->> +{
->> +	struct inode *orig_inode = mext->orig_inode;
->> +	struct inode *donor_inode = mext->donor_inode;
->> +	struct ext4_map_blocks *orig_map = &mext->orig_map;
->> +	unsigned int blkbits = orig_inode->i_blkbits;
->> +	struct folio *folio[2] = {NULL, NULL};
->> +	loff_t from, length;
->> +	enum mext_move_type move_type = 0;
->> +	handle_t *handle;
->> +	u64 r_len = 0;
->> +	unsigned int credits;
->> +	int ret, ret2;
->> +
->> +	*m_len = 0;
->> +	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
->> +	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
->> +	if (IS_ERR(handle))
->> +		return PTR_ERR(handle);
->> +
->> +	ret = mext_move_begin(mext, folio, &move_type);
->> +	if (ret)
->> +		goto stop_handle;
->> +
->> +	if (move_type == MEXT_SKIP_EXTENT)
->> +		goto unlock;
->> +
->> +	/*
->> +	 * Copy the data. First, read the original inode data into the page
->> +	 * cache. Then, release the existing mapping relationships and swap
->> +	 * the extent. Finally, re-establish the new mapping relationships
->> +	 * and dirty the page cache.
->> +	 */
->> +	if (move_type == MEXT_COPY_DATA) {
->> +		from = offset_in_folio(folio[0],
->> +				((loff_t)orig_map->m_lblk) << blkbits);
->> +		length = ((loff_t)orig_map->m_len) << blkbits;
->> +
->> +		ret = mext_folio_mkuptodate(folio[0], from, from + length);
->> +		if (ret)
->> +			goto unlock;
->> +	}
->> +
->> +	if (!filemap_release_folio(folio[0], 0) ||
->> +	    !filemap_release_folio(folio[1], 0)) {
->> +		ret = -EBUSY;
->> +		goto unlock;
->> +	}
->> +
->> +	/* Move extent */
->> +	ext4_double_down_write_data_sem(orig_inode, donor_inode);
->> +	*m_len = ext4_swap_extents(handle, orig_inode, donor_inode,
->> +				   orig_map->m_lblk, mext->donor_lblk,
->> +				   orig_map->m_len, 1, &ret);
->> +	ext4_double_up_write_data_sem(orig_inode, donor_inode);
->> +
->> +	/* A short-length swap cannot occur after a successful swap extent. */
->> +	if (WARN_ON_ONCE(!ret && (*m_len != orig_map->m_len)))
->> +		ret = -EIO;
->> +
->> +	if (!(*m_len) || (move_type == MEXT_MOVE_EXTENT))
->> +		goto unlock;
->> +
->> +	/* Copy data */
->> +	length = (*m_len) << blkbits;
->> +	ret = mext_folio_mkwrite(orig_inode, folio[0], from, from + length);
->> +	if (ret)
->> +		goto repair_branches;
-> 
-> I think you need to be careful here and below to not overwrite 'ret' if it
-> is != 0. So something like:
-> 
-> 	ret2 = mext_folio_mkwrite(..)
-> 	if (ret2) {
-> 		if (!ret)
-> 			ret = ret2;
-> 		goto repair_branches;
-> 	}
-> 
-> and something similar below. Otherwise the patch looks good to me.
-> 
-> 								Honza
+Per cpu bio cache was only used in the io_uring + raw block device,
+after commit 12e4e8c7ab59 ("io_uring/rw: enable bio caches for IRQ
+rw"),  bio_put is safe for task and irq context, bio_alloc_bioset is
+safe for task context and no one calls in irq context, so we can enable
+per cpu bio cache by default.
 
-OK, although overwrite 'ret' seems fine, it's better to keep it.
+Benchmarked with t/io_uring and ext4+nvme:
+taskset -c 6 /root/fio/t/io_uring  -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1
+-X1 -n1 -P1  /mnt/testfile
+base IOPS is 562K, patch IOPS is 574K. The CPU usage of bio_alloc_bioset
+decrease from 1.42% to 1.22%.
 
-Thanks,
-Yi.
+The worst case is allocate bio in CPU A but free in CPU B, still use
+t/io_uring and ext4+nvme:
+base IOPS is 648K, patch IOPS is 647K.
 
+Also use fio test ext4/xfs with libaio/sync/io_uring on null_blk and
+nvme, no obvious performance regression.
+
+Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
+---
+ block/bio.c        | 26 ++++++++++++--------------
+ block/blk-map.c    |  4 ++++
+ block/fops.c       |  4 ----
+ include/linux/fs.h |  3 ---
+ io_uring/rw.c      |  1 -
+ 5 files changed, 16 insertions(+), 22 deletions(-)
+
+diff --git a/block/bio.c b/block/bio.c
+index 3b371a5da159..16b20c10cab7 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -513,20 +513,18 @@ struct bio *bio_alloc_bioset(struct block_device *bdev, unsigned short nr_vecs,
+ 	if (WARN_ON_ONCE(!mempool_initialized(&bs->bvec_pool) && nr_vecs > 0))
+ 		return NULL;
+ 
+-	if (opf & REQ_ALLOC_CACHE) {
+-		if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
+-			bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
+-						     gfp_mask, bs);
+-			if (bio)
+-				return bio;
+-			/*
+-			 * No cached bio available, bio returned below marked with
+-			 * REQ_ALLOC_CACHE to particpate in per-cpu alloc cache.
+-			 */
+-		} else {
+-			opf &= ~REQ_ALLOC_CACHE;
+-		}
+-	}
++	opf |= REQ_ALLOC_CACHE;
++	if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
++		bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
++					     gfp_mask, bs);
++		if (bio)
++			return bio;
++		/*
++		 * No cached bio available, bio returned below marked with
++		 * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
++		 */
++	} else
++		opf &= ~REQ_ALLOC_CACHE;
+ 
+ 	/*
+ 	 * submit_bio_noacct() converts recursion to iteration; this means if
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 23e5d5ebe59e..570a7ca6edd1 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -255,6 +255,10 @@ static struct bio *blk_rq_map_bio_alloc(struct request *rq,
+ {
+ 	struct bio *bio;
+ 
++	/*
++	 * Even REQ_ALLOC_CACHE is enabled by default, we still need this to
++	 * mark bio is allocated by bio_alloc_bioset.
++	 */
+ 	if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <= BIO_INLINE_VECS)) {
+ 		bio = bio_alloc_bioset(NULL, nr_vecs, rq->cmd_flags, gfp_mask,
+ 					&fs_bio_set);
+diff --git a/block/fops.c b/block/fops.c
+index ddbc69c0922b..090562a91b4c 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -177,8 +177,6 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+ 	loff_t pos = iocb->ki_pos;
+ 	int ret = 0;
+ 
+-	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
+-		opf |= REQ_ALLOC_CACHE;
+ 	bio = bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
+ 			       &blkdev_dio_pool);
+ 	dio = container_of(bio, struct blkdev_dio, bio);
+@@ -326,8 +324,6 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
+ 	loff_t pos = iocb->ki_pos;
+ 	int ret = 0;
+ 
+-	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
+-		opf |= REQ_ALLOC_CACHE;
+ 	bio = bio_alloc_bioset(bdev, nr_pages, opf, GFP_KERNEL,
+ 			       &blkdev_dio_pool);
+ 	dio = container_of(bio, struct blkdev_dio, bio);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 601d036a6c78..18ec41732186 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -365,8 +365,6 @@ struct readahead_control;
+ /* iocb->ki_waitq is valid */
+ #define IOCB_WAITQ		(1 << 19)
+ #define IOCB_NOIO		(1 << 20)
+-/* can use bio alloc cache */
+-#define IOCB_ALLOC_CACHE	(1 << 21)
+ /*
+  * IOCB_DIO_CALLER_COMP can be set by the iocb owner, to indicate that the
+  * iocb completion can be passed back to the owner for execution from a safe
+@@ -399,7 +397,6 @@ struct readahead_control;
+ 	{ IOCB_WRITE,		"WRITE" }, \
+ 	{ IOCB_WAITQ,		"WAITQ" }, \
+ 	{ IOCB_NOIO,		"NOIO" }, \
+-	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }, \
+ 	{ IOCB_DIO_CALLER_COMP,	"CALLER_COMP" }, \
+ 	{ IOCB_AIO_RW,		"AIO_RW" }, \
+ 	{ IOCB_HAS_METADATA,	"AIO_HAS_METADATA" }
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index af5a54b5db12..fa7655ab9097 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -856,7 +856,6 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ 	ret = kiocb_set_rw_flags(kiocb, rw->flags, rw_type);
+ 	if (unlikely(ret))
+ 		return ret;
+-	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
+ 
+ 	/*
+ 	 * If the file is marked O_NONBLOCK, still allow retry for it if it
+-- 
+2.39.5 (Apple Git-154)
 
 
