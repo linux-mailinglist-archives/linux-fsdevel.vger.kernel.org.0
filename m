@@ -1,106 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-63855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8AFBD007E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 10:24:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B114BD00C6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 11:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA2F94E2E7A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 08:24:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DCDF4E2ECD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 09:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC9E258ED2;
-	Sun, 12 Oct 2025 08:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2084225CC7A;
+	Sun, 12 Oct 2025 09:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="dy0RQGhT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1XFtdMy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE22A23B62C;
-	Sun, 12 Oct 2025 08:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AF525B662
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 09:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760257476; cv=none; b=kqTx61Zb1MNO+HdxawxLDxPTDgkTqItRXtiytTruHOriYiNtBwHe+b2Euvv0beJPJer74R0Z0kFjAq8KLfhoCtvYU2PqnxyC0BovkMjYhUVmr8NIt9cd9hzra0JmPDV4bgyHqQurO34oq4AdKBxmZfYCbvN1PnEd7Asnx+Kdu94=
+	t=1760262053; cv=none; b=OmVjPKon0BdEF1JxC8SmhD4g4FgwjJ3b6eObqZFCDcCkRFXpEBwC7TlcKYbN9ZnuCsO0dvXkQJTF3/zcRYQ8PUJfjIcqkxKElpZx5b+nfyW54mvKTBsDh2zwdXnQVrlssfdXvM4bk1rTqrC9rdjAy/zu10yUxocGj9P7HNfHh00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760257476; c=relaxed/simple;
-	bh=FBbIun+3fHA8LljlIqTp4GIrvNglfpYAuuvY4cbNA7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=It4LB9mLJe8l7+fttZSmYMB9mva0GzPzVVMHf/MxFBOAQPGuTLGNsSTzgT3/rpV0QHnpVn9tC2g4Mvu1OzoZ5VwhhG90ma/RniXE+QJu7DvkjWV0xGZDraQ7cbUDNC71/Eee6bVNMUqyVbcG9sDljI+AcwFKtxT6PVy0xJxQFJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=dy0RQGhT; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cktnB1zFXz9t3C;
-	Sun, 12 Oct 2025 10:24:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1760257470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lZhwgTQSJZh4wRAyKM1kTP6Jj9b7XQ1HM2VBmL39PJQ=;
-	b=dy0RQGhT6nKswPw1srr82MB1hCkNXTtUaCs4Mmjo1DKImT1Jf4xVR81H9dpu2YEYbYnJ+b
-	DS+hmMBDDJiGaiyaTax9ykxk4nVliFl8jyVkINFBrBn6Rw5aHUuHe8rwkzn8EA9yD+37eh
-	cBu5QoS4Bh1RXILDr5+ryJIomHRfmG+f6Qhnt/9uc+bk1tibuRdYt3XUhfhPq4tN+WoWWw
-	9R9KCLhy0ew+GRkUEoGn2Qvd3yngfiEOLWUpKplkiJV8P3DRs9whceFiY74yyCbYLOY3mK
-	Ruwln2Ag5PA1Xu8CHECQwqNfVVOLAnTYg+e3qZ7oQ3ASY1EcNrGjNj8J8XPoCg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Sun, 12 Oct 2025 10:24:19 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
-	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, 
-	mcgrof@kernel.org, nao.horiguchi@gmail.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-Message-ID: <e64diq7jjemybcwr2kgmfrp7xxj6osfdnjmpozilhyjjrt4g6m@brocsk7dnbgp>
-References: <20251010173906.3128789-1-ziy@nvidia.com>
- <20251010173906.3128789-2-ziy@nvidia.com>
+	s=arc-20240116; t=1760262053; c=relaxed/simple;
+	bh=z7VfEU1r/Dsm5nX9xRER4JSx0tzCPxyJY1p/Ak7It8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FRG+Uf9NvVPyW2wxYPaLpwJNYAPEyxnJA5PGBH4I4jpJPT2AO8cQxvgdntkxr+QZdJxzDre0R9b3kSX16bB1ddXPdi1IkIoEKCWh4CJhXzdefaD/5C0iMa72V1KsF27J+i1y2gI4PTHr6njl+xguLLa0lpPwJnPTZakEwu34vvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1XFtdMy; arc=none smtp.client-ip=74.125.224.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-6361a421b67so3388330d50.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 02:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760262051; x=1760866851; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7VfEU1r/Dsm5nX9xRER4JSx0tzCPxyJY1p/Ak7It8c=;
+        b=G1XFtdMyksR1fYnplenpnBJg5rBXUydVHsla0P6iJNa24abdMdwoDlXEFMl4DTXxuK
+         vOM42xlKw9o8u6TNMVufuifNrKtXHoRLrptjjBKV19CJxnSFaJ6fdDNa8uIELOLlT+qa
+         AMxajuq51KVU2BjmcldJ85GiyPhC8xO/Cm/wxN5jR2kC9xWPJ4o7nLZrfH280OcmLGTr
+         pHmt4+S0u2p2SkDh/aoFiVxRuTy2mmA2FLzaxtcZfc0R4x8ymELgZwZ8OixTxnPrnfaA
+         kTqVrdbWrlaB/zrl+kf+AK/mmv5TMdaaLLFQ+N42Waj8bO8Djb4j29Bjb/cF0565bPUK
+         Kj0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760262051; x=1760866851;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z7VfEU1r/Dsm5nX9xRER4JSx0tzCPxyJY1p/Ak7It8c=;
+        b=pE+7pYN22WTj0yoo1PeAmjIgkmeteHDpp7QbsdHDCmANii9+XgPYr3pUbyfhUs0KTv
+         2+goPE3yZ0eE6WPOoLedQKOS/NcVaO2rVgrTugYgglUcJzfr8IwRRQNWdVFU0eVYpeQ8
+         yKp2sbGLCCr9zuh4fIcmHGlRHe36SR2cGVUsqDTE40YobMIhv+P/PE+brVLLy6TmXl0i
+         erm4ACmfrosXaai8XB1iH4IjWf3Kphw4/mCeOjmN6fUfnqymC1sRag2wEXCXHp3AKA8q
+         o0FAuHKwLJnhz4hT2HKmv6iGEEIE4+aQkefRSIwfQ9jglcdtITXOgtAJYE+HgFQb22Iq
+         Nxng==
+X-Forwarded-Encrypted: i=1; AJvYcCU1KR0Ov69lZiFwx1I+0qacFbNwXJZHBkbjXQuHxI4ONKFGGyOpvs3t/685PeOPHJfXFETMZyeaBW/C2IFU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAqyR7bTXXYBk212fS+NiSQb1zmO6oe3VJlOrMNSRL9txO3Hmm
+	SvbeoJE7lkypjRk85z+wuo0ZED3DuhWbmhKbOzUa1eNAEvyIMYRIsMDlUlA7RwYyk1fguHqGpm2
+	YqSKxYsZAWiM9ELRkKMXdIomXKUXqPS0=
+X-Gm-Gg: ASbGncszDmXkF/fPoMi2TfJVDNAG6DPqeAAwrWn+Ej8uAxKmpCN2UcHGK/ItttTDiU1
+	yFzKElU42PucpIlpcJbhWlDWkJUq1oBj+q6gPtQ1L8yv/loUAs2kotcqutJPa5edxjqO5xSGe4m
+	GYZMrLSV8XzJCyrrptnfvqM1RQTQLvp1McITxkcWzDRFsGUHK3XqObx3VY4brd3aPBM8fdKqmtp
+	SuOBGmATALCXWVkw6zKlRJYLjtr3nM2aEZe+ULjhC6SKhsMNl6sm7tvPf/KlC64DA0fOJo=
+X-Google-Smtp-Source: AGHT+IGHFLSueRL03cNaK2/yCt+aziBSAitQz5o5MUcbkq+Q30p3V5Ti/erI1KZyKhu3zJtqr6MsmGi4UpMb9vOyMVI=
+X-Received: by 2002:a53:b082:0:b0:632:ed6b:754 with SMTP id
+ 956f58d0204a3-63ccb825bc0mr11483728d50.9.1760262050847; Sun, 12 Oct 2025
+ 02:40:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
-X-Rspamd-Queue-Id: 4cktnB1zFXz9t3C
+References: <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
+ <20251012061438.283584-1-safinaskar@gmail.com>
+In-Reply-To: <20251012061438.283584-1-safinaskar@gmail.com>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Sun, 12 Oct 2025 10:40:39 +0100
+X-Gm-Features: AS18NWBvP1QrZ3o2ndrItBzM4K3K3jc8q5I7qUu-9SsQvSSAU0AmLtP7SyKdnS0
+Message-ID: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
+To: Askar Safin <safinaskar@gmail.com>
+Cc: alx@kernel.org, brauner@kernel.org, cyphar@cyphar.com, 
+	linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 10, 2025 at 01:39:05PM -0400, Zi Yan wrote:
-> Page cache folios from a file system that support large block size (LBS)
-> can have minimal folio order greater than 0, thus a high order folio might
-> not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
-> folio in minimum folio order chunks") bumps the target order of
-> split_huge_page*() to the minimum allowed order when splitting a LBS folio.
-> This causes confusion for some split_huge_page*() callers like memory
-> failure handling code, since they expect after-split folios all have
-> order-0 when split succeeds but in really get min_order_for_split() order
-> folios.
-> 
-> Fix it by failing a split if the folio cannot be split to the target order.
-> 
-> Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
-> [The test poisons LBS folios, which cannot be split to order-0 folios, and
-> also tries to poison all memory. The non split LBS folios take more memory
-> than the test anticipated, leading to OOM. The patch fixed the kernel
-> warning and the test needs some change to avoid OOM.]
-> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
-LGTM with the suggested changes to the !CONFIG_THP try_folio_split().
+On Sun, 12 Oct 2025 at 07:14, Askar Safin <safinaskar@gmail.com> wrote:
+>
+> Luca Boccassi <luca.boccassi@gmail.com>:
+> > Almost - the use case is that I prep an image as a detached mount, and
+> > then I want to apply it multiple times, without having to reopen it
+> > again and again. If I just do 'move_mount()' multiple times, the
+> > second one returns EINVAL. From 6.15, I can do open_tree with
+> > OPEN_TREE_CLONE before applying with move_mount, and everything works.
+>
+> This sounds like a bug. Please, give all reproduction steps. Both for
+> EINVAL and for non-working open_tree before 6.15. I want to reproduce it.
 
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+IIRC Christian said this was working as intended? Just fsmount() to
+create a detached mount, and then try to apply it multiple times with
+multiple move_mount(), and the second and subsequent ones will fail
+with EINVAL
 
