@@ -1,135 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-63854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F61BD005E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 09:35:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8AFBD007E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 10:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389911895DEC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 07:35:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA2F94E2E7A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 08:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B81E221F26;
-	Sun, 12 Oct 2025 07:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC9E258ED2;
+	Sun, 12 Oct 2025 08:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="dy0RQGhT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE43221D596;
-	Sun, 12 Oct 2025 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE22A23B62C;
+	Sun, 12 Oct 2025 08:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760254510; cv=none; b=MVOHPl9dMUR8uNjxLhPA5lFQKj9XMeO8koNf2SdcCz2aq+7yc76TM5mQ93WRbZ2CekzO5RAFlFgvQccvLFCoCFHJ+Ur3L5ci4OlrzqFjwA8XzsVf0sk6ZWAKnyCbT9VJDibzwKEzZQMrAbCzwmBU4IUVIs4cZG6geF2ViAxiTG4=
+	t=1760257476; cv=none; b=kqTx61Zb1MNO+HdxawxLDxPTDgkTqItRXtiytTruHOriYiNtBwHe+b2Euvv0beJPJer74R0Z0kFjAq8KLfhoCtvYU2PqnxyC0BovkMjYhUVmr8NIt9cd9hzra0JmPDV4bgyHqQurO34oq4AdKBxmZfYCbvN1PnEd7Asnx+Kdu94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760254510; c=relaxed/simple;
-	bh=o6tyA3/YxVabiXapleK9xx0h/rI5xhFsgTrkc3SOF1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jADVdYog13/gYHLpk5d2rQi4Q/EiaiIaWsyQUWfzayX21nhzxxmU9IY4pmLrHpZBCr8BRULr5XcEW4Wmb4BN7Ildcn+jtj06MmpXS0LRyS5Y+Qtjh1ZQy33PpzbNGR2BQH66wfufDatjmcPXIlpq7lffprXzg/w+ety3Q/BTK/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59C7Ywho024093;
-	Sun, 12 Oct 2025 16:34:58 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59C7YwkB024090
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 12 Oct 2025 16:34:58 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ddd2cd94-683f-462b-a475-cc04462e9bdd@I-love.SAKURA.ne.jp>
-Date: Sun, 12 Oct 2025 16:34:56 +0900
+	s=arc-20240116; t=1760257476; c=relaxed/simple;
+	bh=FBbIun+3fHA8LljlIqTp4GIrvNglfpYAuuvY4cbNA7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=It4LB9mLJe8l7+fttZSmYMB9mva0GzPzVVMHf/MxFBOAQPGuTLGNsSTzgT3/rpV0QHnpVn9tC2g4Mvu1OzoZ5VwhhG90ma/RniXE+QJu7DvkjWV0xGZDraQ7cbUDNC71/Eee6bVNMUqyVbcG9sDljI+AcwFKtxT6PVy0xJxQFJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=dy0RQGhT; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cktnB1zFXz9t3C;
+	Sun, 12 Oct 2025 10:24:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1760257470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lZhwgTQSJZh4wRAyKM1kTP6Jj9b7XQ1HM2VBmL39PJQ=;
+	b=dy0RQGhT6nKswPw1srr82MB1hCkNXTtUaCs4Mmjo1DKImT1Jf4xVR81H9dpu2YEYbYnJ+b
+	DS+hmMBDDJiGaiyaTax9ykxk4nVliFl8jyVkINFBrBn6Rw5aHUuHe8rwkzn8EA9yD+37eh
+	cBu5QoS4Bh1RXILDr5+ryJIomHRfmG+f6Qhnt/9uc+bk1tibuRdYt3XUhfhPq4tN+WoWWw
+	9R9KCLhy0ew+GRkUEoGn2Qvd3yngfiEOLWUpKplkiJV8P3DRs9whceFiY74yyCbYLOY3mK
+	Ruwln2Ag5PA1Xu8CHECQwqNfVVOLAnTYg+e3qZ7oQ3ASY1EcNrGjNj8J8XPoCg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Date: Sun, 12 Oct 2025 10:24:19 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
+	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, 
+	mcgrof@kernel.org, nao.horiguchi@gmail.com, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
+ target order silently.
+Message-ID: <e64diq7jjemybcwr2kgmfrp7xxj6osfdnjmpozilhyjjrt4g6m@brocsk7dnbgp>
+References: <20251010173906.3128789-1-ziy@nvidia.com>
+ <20251010173906.3128789-2-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bfs: Verify inode mode when loading from disk
-To: Tigran Aivazian <aivazian.tigran@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <a5f67878-33ca-4433-9c05-f508f0ca5d0a@I-love.SAKURA.ne.jp>
- <CAK+_RL=ybNZz3z-Fqxhxg+0fnuA1iRd=MbTCZ=M3KbSjFzEnVg@mail.gmail.com>
- <CAK+_RLkaet_oCHAb1gCTStLyzA5oaiqKHHi=dCFLsM+vydN2FA@mail.gmail.com>
- <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
- <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
+X-Rspamd-Queue-Id: 4cktnB1zFXz9t3C
 
-On 2025/10/12 1:29, Tigran Aivazian wrote:
->> Which pattern (just adding a new "if", or adding "else" with "if" and "else if" updated,
->> or replace the 0x0000FFFF mask with 0x00000FFF) do you prefer?
+On Fri, Oct 10, 2025 at 01:39:05PM -0400, Zi Yan wrote:
+> Page cache folios from a file system that support large block size (LBS)
+> can have minimal folio order greater than 0, thus a high order folio might
+> not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
+> folio in minimum folio order chunks") bumps the target order of
+> split_huge_page*() to the minimum allowed order when splitting a LBS folio.
+> This causes confusion for some split_huge_page*() callers like memory
+> failure handling code, since they expect after-split folios all have
+> order-0 when split succeeds but in really get min_order_for_split() order
+> folios.
 > 
-> There is also the fourth way, see the patch below. It makes it as
-> explicit as possible that vtype value is the authoritative one and
-> sets the type bits from vtype by keeping (in i_mode) only the
-> permission/suid/sgid/sticky bits upfront. What do you think?
+> Fix it by failing a split if the folio cannot be split to the target order.
+> 
+> Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
+> [The test poisons LBS folios, which cannot be split to order-0 folios, and
+> also tries to poison all memory. The non split LBS folios take more memory
+> than the test anticipated, leading to OOM. The patch fixed the kernel
+> warning and the test needs some change to avoid OOM.]
+> Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+LGTM with the suggested changes to the !CONFIG_THP try_folio_split().
 
-Well, I feel that we should choose "replace the 0x0000FFFF mask with
-0x00000FFF" approach, for situation might be worse than HFS+ case.
-
-HFS+ explicitly explains that all bits are 0 when that field is not initialized.
-
-  If the S_IFMT field (upper 4 bits) of the fileMode field is zero, then
-  Mac OS X assumes that the permissions structure is uninitialized, and
-  internally uses default values for all of the fields. 
-
-But "BFS inodes" in https://martin.hinner.info/fs/bfs/bfs-structure.html did not
-say that SCO UnixWare sets 0 to the unused 23 bits when writing to disk.
-
-  32bit int 	mode 	File mode, rwxrwxrwx (only low 9 bits used) 
-
-This means that the unused 23 bits might be random, and therefore we can't
-trust S_IFMT bits. Please see the patch shown below.
-
- fs/bfs/inode.c |   19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index 1d41ce477df5..984b365df046 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -61,7 +61,19 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 	off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
- 	di = (struct bfs_inode *)bh->b_data + off;
- 
--	inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
-+	/*
-+	 * https://martin.hinner.info/fs/bfs/bfs-structure.html explains that
-+	 * BFS in SCO UnixWare environment used only lower 9 bits of di->i_mode
-+	 * value. This means that, although bfs_write_inode() saves whole
-+	 * inode->i_mode bits (which include S_IFMT bits and S_IS{UID,GID,VTX}
-+	 * bits), middle 7 bits of di->i_mode value can be garbage when these
-+	 * bits were not saved by bfs_write_inode().
-+	 * Since we can't tell whether middle 7 bits are garbage, use only
-+	 * lower 12 bits (i.e. tolerate S_IS{UID,GID,VTX} bits possibly being
-+	 * garbage) and reconstruct S_IFMT bits for Linux environment from
-+	 * di->i_vtype value.
-+	 */
-+	inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
- 	if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
- 		inode->i_mode |= S_IFDIR;
- 		inode->i_op = &bfs_dir_inops;
-@@ -71,6 +83,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &bfs_file_inops;
- 		inode->i_fop = &bfs_file_operations;
- 		inode->i_mapping->a_ops = &bfs_aops;
-+	} else {
-+		brelse(bh);
-+		printf("Unknown vtype=%u %s:%08lx\n",
-+		       le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
-+		goto error;
- 	}
- 
- 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
-
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
 
