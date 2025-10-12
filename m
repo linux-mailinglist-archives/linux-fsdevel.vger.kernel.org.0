@@ -1,157 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-63852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60BCBCFF82
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 07:45:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BDEBCFFBE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 08:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683573B491C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 05:45:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77C3C4E19E1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 06:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB28202F70;
-	Sun, 12 Oct 2025 05:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796CE214807;
+	Sun, 12 Oct 2025 06:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bN62wl3G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF143AD5A
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 05:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430A01DB375
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 06:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760247929; cv=none; b=MmqUpn0qfgif82gY4yUYVp8zqZliStcssgq0t1TOGVLMWOYMPxYMKl4EkFJXdEMANqScRVOT0xOza9VqtfPlrpE274XbF4R2P5Gv5HnvHa4+7Ku3PPz8cwa4zb+194NDGv+IdDQyKivCFPenxQnXUikHXjfGvV9fAWM31I/uztg=
+	t=1760249687; cv=none; b=STtMJVD6qkRx0UG16AkQgonKw+JtT0GXEg7TTJymlgKMKFeUNVc4Xb8VGJecIM9Pz7K8+Ksjx3UM5Cu0/Q3/kNTNln34UEamTp2IzF8mBYZFlUSTVBeYWn2DM/RQtY/bitm6eYYGxhJU1h/UZUGfLR+e+TWeyUWYmjMXbm5p7TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760247929; c=relaxed/simple;
-	bh=gp8LenUMte1A4A/tTEeRWcbl106OnJf3sIEYqLdI6J8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H+RRdSCy+gwQnWIiku04cK8dSWON7ruLe4YtsdXyY6w4HL3KoHBMedbz1rMF+7gf+cJ6v6qPFYoeOzaVezwQVBXOak+x2+w6xBc0chJRNMr6PA86mXMZgD/gk/0yqpAitH5RF5+/y5veXP/umRRNDdUnc7dVl6XAkR9UEqPY9Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-90f6e3cd204so1011713139f.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 22:45:27 -0700 (PDT)
+	s=arc-20240116; t=1760249687; c=relaxed/simple;
+	bh=m+lgtySiSGGIWnsA66jgFuFum5hqvBvd8+jR6T+AGQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gtHcnMYDgLnaXw5XIuY+v6y3nNpK//aK0sxRXc5qtZzJsZrYmkA2wNx4bGpxcWLRelPZ7w9d9gIxnYnY7bbb0hMi2fOVXqgo38NSuIOF56sC/iyh/QT/1I+DTOWU06IifOBpkXjgrU9OmHSk/BZbi9fXDXeqepCQJoF+5iNQrCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bN62wl3G; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e384dfde0so32544365e9.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 23:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760249684; x=1760854484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SAOrmio62U43guzG2eDGA1f1tCPBMTpqSZuJ65iOtN0=;
+        b=bN62wl3G9aJ4cFHvjdsCNuclz95UkSZ4tiJSzpbcPlQrY65LK+hJH408KNswZhby+L
+         ZVaPiVytDIY/hmS3y/GE2HoN+ECiF5+nnPfFTythRhAnYlCJrmP1+0QzVonYBxyvaXqx
+         rkh0rPBV6zkZZ5odUz1g8Wz/BQl/b9l+nUOe7SZd1Xk3eWj7xcmfcEYwQXyoVj4mY/1Y
+         MgcZoCa9XF3s3Wup0eBbz6gAEatekzQzzblZKI6jD9PE/Blrh2Cs+xvnpMBdoYJUPVVS
+         9IGEviITEmyzZD0Gbt6KlK7YIkE24TKm7DQSDE9DQ+C1FdlugFWaVLYP+TvEjnu4SmtF
+         sRfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760247927; x=1760852727;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kK2CnYH5zvuo9IgsxeF65PkGa9yTkiuirnHBLni/oBs=;
-        b=sJUQjKO+MPQze+ftLqLwqG8zIM/RTdLI15nRkqRfZLjUjUWLE6V0EIiKWSyU1zJs4x
-         /aYPwpnDVWHWudanFG1fG2CO3ILNHxatsDbymJkvskvFQ4oww5DXdC1tbDLM6Ch662DE
-         tDPbkHFDG4tVjAWG2AhSSMHZVA/XTXpJCUDOCm1snpS8Zfq2iNYCvJ1+bczxlTskJWTb
-         63Tqj6qc/8rF2BzfqNI38zEqB2tk7Hxtr60+Gp1/0OR8aMmWgisLbU5Rz5NyqWpF6Bo2
-         c1ynkAsxeFq/NomFnp75yaqf/JRy2C1UK6JFzCAHYxSYYGKo7MkO6k9FP2QYRlfbZeCA
-         UT2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWNPggwRWZGhpOK8QcdxvPZGG2uWWrpgBI5JXk7cp3ygn1EeuoysJ2rTV6LrkKCU65wR3fy15K9Kz1Zs0BJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCriCKNEgph/E+i+VSKA7YL+6enUcqUiPv73dr9LOHolLUcnLS
-	j03GxR+Fvlt8xI0yvSKSn5blroJ8aF8SgvQ9DAnmD5+TRoCIr66tV0ZwWxAxr9qRh62CrsmjwO8
-	VjzAS1cHpy96FXh5Y0bjFanjFI1nM/PkGo6fkb8Tv8Dc07O6QJUdjak1Zym8=
-X-Google-Smtp-Source: AGHT+IEKoTp+fIzhtzRDnRW+0jiB2FzyIi8xjphMzU40sggh8385cHq25Snsx5B7p8S9tdKrEiBHZICoMUvL3sY5tb8KG2gPQNV6
+        d=1e100.net; s=20230601; t=1760249684; x=1760854484;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SAOrmio62U43guzG2eDGA1f1tCPBMTpqSZuJ65iOtN0=;
+        b=ZfazwKc8I9hNOBxCWnbKfqb0GtkK4y6MgC62J4N9yCPuPP3EY0fkZbSYsJVRlg/2Y6
+         ecVe1qOnnZEFjg5oZHZp72ntYtHFv9XKn2z+WwucchTJntgmATfyFgfsYpTuIRjUXaxs
+         uqNRnqurjtbkqBe+8N4I6PA/+IPq+ue2abblZw7PER3uynoaVI1Fewdz4kmM/g1sK3dO
+         N0IlsqhpIRI/JzG2C18gS9BI3du5iBdUdkKNL6TByLNRESvG6H/kBtwQodGhdXZ3+iVS
+         gA7eVcK//6XiVAIl4dwB+oTCVhfY7BO+3lenSYk3BRYxtnJpz8VRBYCc6Y0FkbbtKgOJ
+         Y85Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVRy2LP+p0+qsMTcFbzaPvF96KOx2vzHPkV0nq+ivOBYJ9TnIt/m3A1xgi59hQR4ojS98Z+IlQWDv+YFTPh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM0PeKvVmwdfDj5i/AlMQgUbBQ0dDPA6SQYKFI+L7nrhjTOeOu
+	EJleITLwvmWXiVGC1Ff6PY5mEtHu6kpvkczvAb+b7Jgnacl9BLCbx7OM
+X-Gm-Gg: ASbGncvKN7xmEU1EQb2mFe+jjLYSt07eFJgupx4HPIc4m5CyUJtdLpr0LWCWbKqaiBE
+	xJ6TT8kA6OkuGU+6y4wkQLZHxV7H9pdizsykPsWHaqKlhzoiQTJ5OtBY4ODoBvkMMY7Bey6iVpj
+	vPNcE/PTm4wZSYs2Poso8ByGjz6SprBFmb9wIWikcEVpZm8mvyNiI5xEjc3YQ60uF7tWUsKX2gj
+	4ZucoJbJ1paLPIYHFa/3ocILusHTVWlgSlAKshet6EEdpIzIvcHkrTjwU81Lp+ODfpiY04HyvBw
+	1Oi/KFS6rXrvrBatrdClswMtx35+6fM/JxIIKPZwMd1uDJYbSQhdkNxtvLn1N1d+YfYfWNBJqOX
+	k3zCVp4eSvxYZZ6PR4LYcvYU9dOSfXUFvy7WTpQ==
+X-Google-Smtp-Source: AGHT+IE4rB4xnTmT6He562ThuiVG/pfm4Q/z2xiP28/GWf3Dt1Xuf0+3s0e0VYHIyISay5XLqOIEJg==
+X-Received: by 2002:a05:600c:8b5b:b0:46c:d6ed:2311 with SMTP id 5b1f17b1804b1-46fa9af2f4dmr116769955e9.19.1760249684140;
+        Sat, 11 Oct 2025 23:14:44 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce583424sm11699282f8f.21.2025.10.11.23.14.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Oct 2025 23:14:43 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: luca.boccassi@gmail.com
+Cc: alx@kernel.org,
+	brauner@kernel.org,
+	cyphar@cyphar.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
+Date: Sun, 12 Oct 2025 09:14:38 +0300
+Message-ID: <20251012061438.283584-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
+References: <CAMw=ZnQki4YR24CfYJMAEWEAQ63yYer-YzSAeH+xFA-fNth-XQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2b03:b0:93b:ba4a:3b67 with SMTP id
- ca18e2360f4ac-93bd199182emr2167690739f.18.1760247927182; Sat, 11 Oct 2025
- 22:45:27 -0700 (PDT)
-Date: Sat, 11 Oct 2025 22:45:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68eb4077.050a0220.ac43.0005.GAE@google.com>
-Subject: [syzbot] [gfs2?] WARNING in chown_common
-From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gfs2@lists.linux.dev, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Luca Boccassi <luca.boccassi@gmail.com>:
+> Almost - the use case is that I prep an image as a detached mount, and
+> then I want to apply it multiple times, without having to reopen it
+> again and again. If I just do 'move_mount()' multiple times, the
+> second one returns EINVAL. From 6.15, I can do open_tree with
+> OPEN_TREE_CLONE before applying with move_mount, and everything works.
 
-syzbot found the following issue on:
+This sounds like a bug. Please, give all reproduction steps. Both for
+EINVAL and for non-working open_tree before 6.15. I want to reproduce it.
 
-HEAD commit:    98906f9d850e Merge tag 'rtc-6.18' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e10c58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
-dashboard link: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ab9b34580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e10c58580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-98906f9d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d82186923244/vmlinux-98906f9d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a23e980d2d8e/bzImage-98906f9d.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/b2d6dc77aff3/mount_2.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=13e03892580000)
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/96cd0ec46a20/mount_8.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
-
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888036665058, owner = 0x0, curr 0xffff88803e332480, list empty
-WARNING: CPU: 0 PID: 5699 at kernel/locking/rwsem.c:1381 __up_write kernel/locking/rwsem.c:1380 [inline]
-WARNING: CPU: 0 PID: 5699 at kernel/locking/rwsem.c:1381 up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Modules linked in:
-CPU: 0 UID: 0 PID: 5699 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
-RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Code: d0 48 c7 c7 20 ff 6a 8b 48 c7 c6 40 01 6b 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 b3 36 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 94 61 9e 8f 80 e1 07 80 c1 03
-RSP: 0018:ffffc9000d4b7c30 EFLAGS: 00010296
-RAX: e0ff97a6af656400 RBX: ffff888036665058 RCX: ffff88803e332480
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 0000000000000000
-R13: ffff8880366650b0 R14: ffff888036665058 R15: 1ffff11006ccca0c
-FS:  00007f2b1bd9b6c0(0000) GS:ffff88808d301000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f63d120f000 CR3: 000000004fe06000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:990 [inline]
- chown_common+0x418/0x5c0 fs/open.c:793
- do_fchownat+0x161/0x270 fs/open.c:822
- __do_sys_lchown fs/open.c:847 [inline]
- __se_sys_lchown fs/open.c:845 [inline]
- __x64_sys_lchown+0x85/0xa0 fs/open.c:845
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2b1c78eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2b1bd9b038 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
-RAX: ffffffffffffffda RBX: 00007f2b1c9e6360 RCX: 00007f2b1c78eec9
-RDX: 000000000000ee01 RSI: 0000000000000000 RDI: 00002000000006c0
-RBP: 00007f2b1c811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f2b1c9e63f8 R14: 00007f2b1c9e6360 R15: 00007ffe60c7e2c8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Askar Safin
 
