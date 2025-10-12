@@ -1,130 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-63858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23388BD0283
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 14:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E493BD0293
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 15:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C20E04E246E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 12:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47EC03B7BAE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 13:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D39274B3A;
-	Sun, 12 Oct 2025 12:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8F3257834;
+	Sun, 12 Oct 2025 13:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQifUAt/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/FXu9wE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0325A341
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 12:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AB17A2E1;
+	Sun, 12 Oct 2025 13:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760273907; cv=none; b=DXk1MHulqUpPTbuISdvVRAG8gWx9CRbYA9zC9ONzuOYmXzi+BGt4sJ9h0ytRWFBO0XJ6YzrHQRLD3D2VjYaVoRyGlAe/zPsEfcI3zKT6DjGRs7CdGfFxjl8PjB2AlVmzG355aQrh5VE2yGoIqzP+c7s4J5TyCKpQwbV/TfIvh6g=
+	t=1760275023; cv=none; b=JYiOJ4JKj8MZjSQiYea3w1QTJGvtl6c7Bd+77y4EWB/M+r4o/Yg4t4WVgSmV7q/12p3hoVVKMPgIAWAj2mE8aXrT2abB2zmSCm+eeg/oTvJbAlxBIFLX+PXOzMhH2pGwqm6v7U/ZVJjsQKUe9qCrqlUxlmUSgjpvl/eCpeO4VvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760273907; c=relaxed/simple;
-	bh=HJUsRYd6byPJ5JCx+QOBQLqRAZXMxCnfFAD/5vxEaxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iF5BpGqSj7Y6C1yLD6HsGsIKHCAjGcr4mjZbZZvvDor6UKpwTR87TMSZoL0AOoUFpu8BVyMn8iTtTqA22wTs5kxtO1QkaJXrccRam4PO/kqoZnmmrsqOTNf8MhyAP9GiJ/ChkZDXD3HK4ZRyWp0rCNmIokujmnb7AD5SYhl7Rfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQifUAt/; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f7469so20592025e9.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 05:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760273904; x=1760878704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=saUJmKeUe9g6yjctUBmXLyb1rnIzl0yI2Ve//8GWNcQ=;
-        b=gQifUAt/GshznjdGRIs9dgF88IW02n0AJZDMD7Pxxsks60YJrYchHW2809bZcpkUOn
-         ojuvYwhgPF9LjA/q81iNtlkspsH/uhFBfhP4Y1oUFrHiKXlMndvPlqfjHvxAHgDz+tGt
-         2veikzItjE0wATGGbkU7FaD8MNXGt2gI1DCfBRNL1clXchYMCkHggu5OM1bRMNJxKuYf
-         VUNeaCgqL/eYEHCndDgN+oVcyrpZZN82mYzQvfbKZB3MrwW2pnMnmBjS6oFK9LMI7myR
-         46G57D5MuzzI8xiPkxpW65rfIzrpQx4K44uijA2en/DoYi8EC9BJJrK8aUEjit9IsZ24
-         XrbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760273904; x=1760878704;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=saUJmKeUe9g6yjctUBmXLyb1rnIzl0yI2Ve//8GWNcQ=;
-        b=G7JmF62JNBQoKQUpf+pPpoTrlWvDHIyzDFsHwmiQKFAWIBy6SSVeRtaYC78V1ELVsV
-         eE0lk5pu2kbDW76fpTK0lYT58tQQKamYRfOwm/xjiY44uhNUC8w5h5UrZ5b5LMSnN/YS
-         FvShmO/kONJUXxnx4f5jrpR++p9HR3cBl3nfN6Vu4qwWy5+bDPucJoxDD2yd4IPP775z
-         rFm3v4cZtC/qAb9d5jgrxad8JKlXl6FU3HWGlFgIs2kNOx1Z5im1/4lbrKWJT9M5YpT6
-         HT44MIHTx/biyK6LSJ1NlgtLKXd2FPk7QTat9vJ8W5IRKzbN8TWzOCxpJ/468GpS7NEM
-         zzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9gvi214890nUZiSt2cBKDKEPJ02LmkFbiFvf1Wjs2R9ja/0MPPUPLR3R2vH69oS64mnPPTdmMK3GkDx7I@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYzP1ArrKKHb2jMF7C/svIdPv1l6MuXdgetew1l7pv1LYDP/BQ
-	QSn4jOAlMr0FIkYXAmxsI8nazLoyw3Yf20SPxy6KdELSa9g2fJOUVeaq2De1kRtk
-X-Gm-Gg: ASbGncuYQ0yIMKMxvdsUY16VcbmM96He0pxIXmPJbjkZ5zf0mOQKvGsmUMMkFBSVAiu
-	ppRZnqntCxddL18CfVf6FzmBm2eZWYnLgSWczOqIBJcicNqzVHuLc4ylYREb3Q7pL3GYoVAu+Sa
-	VDqvVtKKr44bl2Wv2URZjPihQXs/VW8Q/ro9lrGboNpIsBD0gm6D2KbueUWBQ7KFWGtrf/t5MEU
-	HGuff75d0qiQ853hEed+Gzmgl5IjRgvUZpaHtfuGhCSd3GmphjqETRMtizkWEriixO3zdAnTmF1
-	FN8Hlpy6MjEOU3ZpXGlkFYroKCMMx4pL8Xeego2z+FF4rju5nr7NHsyRez3JR9JcIREJrLbpDs5
-	txAv4MF7G4+eJ3hzYngMJgPlHHj2wYMxnAj+ZxJ8aEc/kl9PZ
-X-Google-Smtp-Source: AGHT+IEORxGzKaedOUB6UF57omaElrmwrhui+CpRd/QxkKj/xLOetTmnd4XvsRcpSqiUz75i3Gz+4A==
-X-Received: by 2002:a05:600c:1384:b0:46e:45f7:34f3 with SMTP id 5b1f17b1804b1-46fa9a863cfmr115375715e9.8.1760273904144;
-        Sun, 12 Oct 2025 05:58:24 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb4982b30sm134815895e9.6.2025.10.12.05.58.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Oct 2025 05:58:23 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: luca.boccassi@gmail.com
-Cc: alx@kernel.org,
-	brauner@kernel.org,
-	cyphar@cyphar.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	safinaskar@gmail.com
-Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
-Date: Sun, 12 Oct 2025 15:58:02 +0300
-Message-ID: <20251012125819.136942-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+	s=arc-20240116; t=1760275023; c=relaxed/simple;
+	bh=BkYwbqr8hP5sgdtVFHqbNO7xt3qb4rWPMb4PslaLdMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MdcAte27xnZsbDge9gM+8RMn+1VRQtRgRK0dWClfJTWnQVyixG60Wbr+UiIJOqDueFA+zU+kxPC0BovWzyesszI/fWcDkdQoh0yIr9jF5EYDLqu7DG6A6Ns6mD27i87jHCus82jy0ivGEn0cXnRSL4fZ1byFm+8aIPCuHf8XLlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/FXu9wE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CB2C4CEE7;
+	Sun, 12 Oct 2025 13:17:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760275022;
+	bh=BkYwbqr8hP5sgdtVFHqbNO7xt3qb4rWPMb4PslaLdMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/FXu9wEMlzZ/fi2LZXJbOTqhlIPGzImvq6D8tAZuaAaYuG8nesNaAjfSueeNImla
+	 pA77uAPis9yk7uBGSO6Jnq9Y5H6DSZhxpCnbkcyOk6QugR89pAGSGMSR57H9zp5Sun
+	 I6KdkjiXFozcJhLC9Tn/4lNlAoVdn29gnGXXy3kdjNMqMYKITtrLHtJji0+0sJ5btH
+	 wjzA6mnmq5SMYF19upwd2UwZBFGreXNBjc9gVYlq2tBSdQSehPXBGuGNTDcYUa4H+0
+	 UYYVHjAhemsyC9m242nwJkNPfxdyDlA4am/ICgmeunTSGtT/HfeUYj6l0/8Z5oivKf
+	 J/fdA8lKVI+ng==
+Date: Sun, 12 Oct 2025 15:16:58 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: luca.boccassi@gmail.com, brauner@kernel.org, cyphar@cyphar.com, 
+	linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple
+ instances
+Message-ID: <wk3t24r7dr5kdgb5uy4hz2ahwsd5vkkuwjch3y7kwwybemlmg4@lb2ewcanzf3m>
 References: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+ <20251012125819.136942-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ro5fxcm446dfrknp"
+Content-Disposition: inline
+In-Reply-To: <20251012125819.136942-1-safinaskar@gmail.com>
 
-Okay, I spent some more time researching this.
 
-By default move_mount should work in your case.
+--ro5fxcm446dfrknp
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: luca.boccassi@gmail.com, brauner@kernel.org, cyphar@cyphar.com, 
+	linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple
+ instances
+Message-ID: <wk3t24r7dr5kdgb5uy4hz2ahwsd5vkkuwjch3y7kwwybemlmg4@lb2ewcanzf3m>
+References: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+ <20251012125819.136942-1-safinaskar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20251012125819.136942-1-safinaskar@gmail.com>
 
-But if we try to move mount, residing under shared mount, then move_mount
-will not work. This is documented here:
+Hi Askar,
 
-https://elixir.bootlin.com/linux/v6.17/source/Documentation/filesystems/sharedsubtree.rst#L497
+On Sun, Oct 12, 2025 at 03:58:02PM +0300, Askar Safin wrote:
+> Okay, I spent some more time researching this.
+>=20
+> By default move_mount should work in your case.
+>=20
+> But if we try to move mount, residing under shared mount, then move_mount
+> will not work. This is documented here:
+>=20
+> https://elixir.bootlin.com/linux/v6.17/source/Documentation/filesystems/s=
+haredsubtree.rst#L497
+>=20
+> "/" is shared by default if we booted using systemd. This is why
+> you observing EINVAL.
+>=20
+> I just found that this is already documented in move_mount(2):
+>=20
+>     EINVAL The  source  mount  object's  parent  mount  has  shared  moun=
+t propagation, and thus cannot be moved (as described in mount_name=E2=80=90
+>     spaces(7)).
+>=20
+> So everything is working as intended, and no changes to manual pages are
+> needed.
+>=20
+> On the other hand, this is a good idea to add a bigger warning to
+> move_mount(2) (and to mount(2), it is affected, too). I. e. to add someth=
+ing
+> like this to main text of move_mount (as opposed to "ERRORS"):
+> "Note that systemd makes "/" shared by default. Moving mounts residing
+> under shared mounts is prohibited, so attempting to move attached
+> mount using move_mount likely will not work".
 
-"/" is shared by default if we booted using systemd. This is why
-you observing EINVAL.
+Maybe under a CAVEATS section?
 
-I just found that this is already documented in move_mount(2):
 
-    EINVAL The  source  mount  object's  parent  mount  has  shared  mount propagation, and thus cannot be moved (as described in mount_name‐
-    spaces(7)).
+Have a lovely day!
+Alex
 
-So everything is working as intended, and no changes to manual pages are
-needed.
+> (I personally don't have plans to submit this as a patch.)
+>=20
+> --=20
+> Askar Safin
 
-On the other hand, this is a good idea to add a bigger warning to
-move_mount(2) (and to mount(2), it is affected, too). I. e. to add something
-like this to main text of move_mount (as opposed to "ERRORS"):
-"Note that systemd makes "/" shared by default. Moving mounts residing
-under shared mounts is prohibited, so attempting to move attached
-mount using move_mount likely will not work".
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
 
-(I personally don't have plans to submit this as a patch.)
+--ro5fxcm446dfrknp
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Askar Safin
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjrqkQACgkQ64mZXMKQ
+wqnBMA/+PazY/RMbkLN+Xb8TXm10BGceTr106LJXopiwsPQHrKUyJBLYjvHnk95x
+WCwiiRZSfTCWRAA4iQczrYFP1BjhRZHuOaiPP4dQxEbf12ZIKhYibt3YChqVjGvE
+4l63/7A6GMqiZa0N8mO9affOfzqkby5++9ya1AdUHhPYKlABKUt70D/mJZAc/HCf
+fNrXH2HaQVrlSDrD8N0n4xnKm4dnRxX0YXU58ot1+Nz0SdcRQ9vXW3fn4QcF115i
+AX1EsUZ15pM7SQeSv0YlJiUil4glsCWj1/TPFD5JJN5xFmcVrw2Lq7874JcxkFJ0
+Zub7p/RPsWcPIDvanCmbbtPRafKYWN3mH4E1xZUItQVV5GUhQWvKxXFz/POkq7T3
+8DemfPpih2GkFgOWTdCtK47FckjKkgFxHkOqxvxb0RlR0tb34d8Q8BukjzG18o8H
++JfQa2qd+gQFkKkIi9y3OHYQuT2+PuxA2qlhALgn/oxryjgDeEAkN+rS2+YgIzmW
+anN1QzB3oYH7KARmP/yM7ZRr3ELk3q0IkgkoRnQxtCHxO/HFDS4997nfAZijKpeb
+c6VyQs6+Z+nphOe423SuM5MJ4Kujg4lRV0nd0PS+E+sxUgU208N6ob2Vp2CDwXew
+7ZDFGy5g913jzbhiXAA9i490H6cNlA5zP3/w/Zq0yqI4ukg14MA=
+=UJqW
+-----END PGP SIGNATURE-----
+
+--ro5fxcm446dfrknp--
 
