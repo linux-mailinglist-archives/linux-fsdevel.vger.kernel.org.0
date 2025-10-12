@@ -1,168 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-63851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCB5BCFE0D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 02:42:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60BCBCFF82
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 07:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A542618967DB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 00:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683573B491C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 05:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF8616CD33;
-	Sun, 12 Oct 2025 00:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuGbCC7L"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB28202F70;
+	Sun, 12 Oct 2025 05:45:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154C51482F2
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 00:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF143AD5A
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 05:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760229714; cv=none; b=TFYrH6yj882y9zyzHGnQEVh5WitkkMj1JAZvHlmbsQJWeBdVRlkERqeACv1CrHL9QehxJiroQfRNucgBdKWIMqkKOoF3NJs3SQNBLxJAaywalZ5GAruY4KG5bRd81KmtzAAulj+qwrVvwxZFTrJXHjDGq0ppCkhmsPWDzoYM9KE=
+	t=1760247929; cv=none; b=MmqUpn0qfgif82gY4yUYVp8zqZliStcssgq0t1TOGVLMWOYMPxYMKl4EkFJXdEMANqScRVOT0xOza9VqtfPlrpE274XbF4R2P5Gv5HnvHa4+7Ku3PPz8cwa4zb+194NDGv+IdDQyKivCFPenxQnXUikHXjfGvV9fAWM31I/uztg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760229714; c=relaxed/simple;
-	bh=aZnv9BVlTL8LmT7lpNUNVSVlA/I7ZSaPKJXfly6ijs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk75VCQpomx7SN/pGA6W7ZfViOPj9xZlpdKnrGBSC+aEJqwkO95WRvA/9FWsuJ88WcuuK99F2fKxxjRhgXboG7oPyzJMOPDno/j6u/+M6OSCwawCVPyoCdE6cfy7ltoD4wy+G3r8VbIZrEFLP35ZSLGYJ/ccL0MFNP2dzvb1nTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuGbCC7L; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62fa062a1abso5695445a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 17:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760229711; x=1760834511; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TbPiPr4v+tNnfGsd/T5+fk/qepklVVg1akCeQzWqFsk=;
-        b=RuGbCC7LxLS0Zas78Q4xA/cMdV8/l0feiE1udtflQATL9cIyHbYBtIuJcrAByFW0zh
-         pE5jGVixcQHv2yTSyqJ+1pw/eT8/KosZFti9NMmrahukxAThm6d3EiPmos1sbGzT+OzJ
-         x4Aak4Kjc2xVEmZ9rpHwqzG+ZPxX+44RvLVTtd8/4NqDWU1v/uIiAdqjZPS3HSYPc/O9
-         rzZM34KG3XOF5IDK0CPqTeHquwgoGqtgM30M9EGaORRr58/ysxFDuNx1+2lE5pfAe+vz
-         aS+MI4hcDmmpVeeJV/YDiYntrQGr2o42ZgBFArAsUlxTg9hDTKwROv1qLSYR5o55X7mG
-         rMDA==
+	s=arc-20240116; t=1760247929; c=relaxed/simple;
+	bh=gp8LenUMte1A4A/tTEeRWcbl106OnJf3sIEYqLdI6J8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H+RRdSCy+gwQnWIiku04cK8dSWON7ruLe4YtsdXyY6w4HL3KoHBMedbz1rMF+7gf+cJ6v6qPFYoeOzaVezwQVBXOak+x2+w6xBc0chJRNMr6PA86mXMZgD/gk/0yqpAitH5RF5+/y5veXP/umRRNDdUnc7dVl6XAkR9UEqPY9Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-90f6e3cd204so1011713139f.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Oct 2025 22:45:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760229711; x=1760834511;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TbPiPr4v+tNnfGsd/T5+fk/qepklVVg1akCeQzWqFsk=;
-        b=Yq8zYETv3xS0P1PLUwq+2EYoSpOVnTnxUL5TicNJNkuXvlivqFQatAvCO20daDoELv
-         gDoDFhAM2Fkk9hUCCgAXS4nqDXkgjqFn/BMPjwnFfi6L9v2iYsD+AgOGvr9Mk/mSIAUo
-         xQU5M1n/gG0/88D4IqTjQGqjmrlGgD68LRsalX1DWQlmAk6lPLz/Dhs50k6wcBi+tn+a
-         xJrJkD86toDSewhKXpPZ2KMqJVjk0rMJCZWcJsdcvMd3m8ji4tWV2VHCcGDxZQd/aPzb
-         XwwZDNoZzg8/UU/WMoHRaqNGYsveXtPzFHIfnjuPKgF2lNRZjiRWwRt2038nP4A+gZ1w
-         HQlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN726QVHFJ7ctG874WPDDp3Xh9dmEYRBZSNbxdtppzDcYYCnT0pwstmNsDs4XiitF1Ln1A9+dykcxpU/kZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrHYJ/B1CrO2dZ1zoV1pxQwNcZy2KUJ+pEL4YhS4nE6NBJ0LO5
-	JW3l0V8hyyCyPz7juxq/QdnNkKPZv/HXXSKvTsnTWvXatvto9dkiDV9x
-X-Gm-Gg: ASbGncsv1sxG2pWZfKYI29m1R+cAmmIfISz00E6rhXwsDPnQVKz7gWmeKbjDfVK/+ag
-	oZzMR35/ANM416dmVXOQ2gSkCbFmCPTY+sC0MuUtYGAZcH6XNiBKeJfQp68GoGA3/t4NwL+ZPfj
-	Xag9ygV52WUDCZNOlRU3A+rVDGv1+Sf+oBE293R2EA7B2dzuk+gVJHbbZ3uBIsuARwH6ZNA32ha
-	kmqxbEQO3k1w/k0+BPttXMqNykYCjcHcuhJib0FZyA7Ff+KTxCGvy8yPIw3VrICbYwDR4j4NgyY
-	PGbAi8m74FgRO18PQ5a06YswZb7gINIcZEzFEdxsGpN5ZmK4D1WUfwNfNBWELMjPVDdK6HvpY4R
-	yHRrX6U8I5oSloiMLEEwqVZFCL9HDz9uMkuf7CvLw
-X-Google-Smtp-Source: AGHT+IF2dF7uUP71zJe0AxIJHcNbD6vVscz6n/gJk2c5+tQVcfEKjcPR39Xn8LvDwnX+VoFZq//T9A==
-X-Received: by 2002:a17:907:948d:b0:b3f:294c:2467 with SMTP id a640c23a62f3a-b50aa79397dmr1784338766b.10.1760229711049;
-        Sat, 11 Oct 2025 17:41:51 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d65d6994sm605672666b.28.2025.10.11.17.41.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 11 Oct 2025 17:41:50 -0700 (PDT)
-Date: Sun, 12 Oct 2025 00:41:50 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
-	kernel@pankajraghav.com,
-	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
-	mcgrof@kernel.org, nao.horiguchi@gmail.com,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] mm/huge_memory: do not change split_huge_page*()
- target order silently.
-Message-ID: <20251012004150.sujjmfkleibhvlxl@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251010173906.3128789-1-ziy@nvidia.com>
- <20251010173906.3128789-2-ziy@nvidia.com>
+        d=1e100.net; s=20230601; t=1760247927; x=1760852727;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kK2CnYH5zvuo9IgsxeF65PkGa9yTkiuirnHBLni/oBs=;
+        b=sJUQjKO+MPQze+ftLqLwqG8zIM/RTdLI15nRkqRfZLjUjUWLE6V0EIiKWSyU1zJs4x
+         /aYPwpnDVWHWudanFG1fG2CO3ILNHxatsDbymJkvskvFQ4oww5DXdC1tbDLM6Ch662DE
+         tDPbkHFDG4tVjAWG2AhSSMHZVA/XTXpJCUDOCm1snpS8Zfq2iNYCvJ1+bczxlTskJWTb
+         63Tqj6qc/8rF2BzfqNI38zEqB2tk7Hxtr60+Gp1/0OR8aMmWgisLbU5Rz5NyqWpF6Bo2
+         c1ynkAsxeFq/NomFnp75yaqf/JRy2C1UK6JFzCAHYxSYYGKo7MkO6k9FP2QYRlfbZeCA
+         UT2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNPggwRWZGhpOK8QcdxvPZGG2uWWrpgBI5JXk7cp3ygn1EeuoysJ2rTV6LrkKCU65wR3fy15K9Kz1Zs0BJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCriCKNEgph/E+i+VSKA7YL+6enUcqUiPv73dr9LOHolLUcnLS
+	j03GxR+Fvlt8xI0yvSKSn5blroJ8aF8SgvQ9DAnmD5+TRoCIr66tV0ZwWxAxr9qRh62CrsmjwO8
+	VjzAS1cHpy96FXh5Y0bjFanjFI1nM/PkGo6fkb8Tv8Dc07O6QJUdjak1Zym8=
+X-Google-Smtp-Source: AGHT+IEKoTp+fIzhtzRDnRW+0jiB2FzyIi8xjphMzU40sggh8385cHq25Snsx5B7p8S9tdKrEiBHZICoMUvL3sY5tb8KG2gPQNV6
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010173906.3128789-2-ziy@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a05:6602:2b03:b0:93b:ba4a:3b67 with SMTP id
+ ca18e2360f4ac-93bd199182emr2167690739f.18.1760247927182; Sat, 11 Oct 2025
+ 22:45:27 -0700 (PDT)
+Date: Sat, 11 Oct 2025 22:45:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68eb4077.050a0220.ac43.0005.GAE@google.com>
+Subject: [syzbot] [gfs2?] WARNING in chown_common
+From: syzbot <syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gfs2@lists.linux.dev, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 10, 2025 at 01:39:05PM -0400, Zi Yan wrote:
->Page cache folios from a file system that support large block size (LBS)
->can have minimal folio order greater than 0, thus a high order folio might
->not be able to be split down to order-0. Commit e220917fa507 ("mm: split a
->folio in minimum folio order chunks") bumps the target order of
->split_huge_page*() to the minimum allowed order when splitting a LBS folio.
->This causes confusion for some split_huge_page*() callers like memory
->failure handling code, since they expect after-split folios all have
->order-0 when split succeeds but in really get min_order_for_split() order
->folios.
->
->Fix it by failing a split if the folio cannot be split to the target order.
->
->Fixes: e220917fa507 ("mm: split a folio in minimum folio order chunks")
->[The test poisons LBS folios, which cannot be split to order-0 folios, and
->also tries to poison all memory. The non split LBS folios take more memory
->than the test anticipated, leading to OOM. The patch fixed the kernel
->warning and the test needs some change to avoid OOM.]
->Reported-by: syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com
->Closes: https://lore.kernel.org/all/68d2c943.a70a0220.1b52b.02b3.GAE@google.com/
->Signed-off-by: Zi Yan <ziy@nvidia.com>
->---
-> include/linux/huge_mm.h | 28 +++++-----------------------
-> mm/huge_memory.c        |  9 +--------
-> mm/truncate.c           |  6 ++++--
-> 3 files changed, 10 insertions(+), 33 deletions(-)
->
->diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->index 8eec7a2a977b..9950cda1526a 100644
->--- a/include/linux/huge_mm.h
->+++ b/include/linux/huge_mm.h
->@@ -394,34 +394,16 @@ static inline int split_huge_page_to_list_to_order(struct page *page, struct lis
->  * Return: 0: split is successful, otherwise split failed.
->  */
+Hello,
 
-It is better to update the document of try_folio_split()
+syzbot found the following issue on:
 
-> static inline int try_folio_split(struct folio *folio, struct page *page,
->-		struct list_head *list)
->+		struct list_head *list, unsigned int order)
-> {
->-	int ret = min_order_for_split(folio);
->-
->-	if (ret < 0)
->-		return ret;
->-
->-	if (!non_uniform_split_supported(folio, 0, false))
->+	if (!non_uniform_split_supported(folio, order, false))
-> 		return split_huge_page_to_list_to_order(&folio->page, list,
->-				ret);
->-	return folio_split(folio, ret, page, list);
->+				order);
->+	return folio_split(folio, order, page, list);
-> }
+HEAD commit:    98906f9d850e Merge tag 'rtc-6.18' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e10c58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2d7b4143707d3a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=04c2672c56fbb9401640
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ab9b34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e10c58580000
 
--- 
-Wei Yang
-Help you, Help me
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-98906f9d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d82186923244/vmlinux-98906f9d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a23e980d2d8e/bzImage-98906f9d.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/b2d6dc77aff3/mount_2.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=13e03892580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/96cd0ec46a20/mount_8.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+04c2672c56fbb9401640@syzkaller.appspotmail.com
+
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888036665058, owner = 0x0, curr 0xffff88803e332480, list empty
+WARNING: CPU: 0 PID: 5699 at kernel/locking/rwsem.c:1381 __up_write kernel/locking/rwsem.c:1380 [inline]
+WARNING: CPU: 0 PID: 5699 at kernel/locking/rwsem.c:1381 up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Modules linked in:
+CPU: 0 UID: 0 PID: 5699 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
+RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Code: d0 48 c7 c7 20 ff 6a 8b 48 c7 c6 40 01 6b 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 b3 36 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 94 61 9e 8f 80 e1 07 80 c1 03
+RSP: 0018:ffffc9000d4b7c30 EFLAGS: 00010296
+RAX: e0ff97a6af656400 RBX: ffff888036665058 RCX: ffff88803e332480
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 0000000000000000
+R13: ffff8880366650b0 R14: ffff888036665058 R15: 1ffff11006ccca0c
+FS:  00007f2b1bd9b6c0(0000) GS:ffff88808d301000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f63d120f000 CR3: 000000004fe06000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:990 [inline]
+ chown_common+0x418/0x5c0 fs/open.c:793
+ do_fchownat+0x161/0x270 fs/open.c:822
+ __do_sys_lchown fs/open.c:847 [inline]
+ __se_sys_lchown fs/open.c:845 [inline]
+ __x64_sys_lchown+0x85/0xa0 fs/open.c:845
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2b1c78eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2b1bd9b038 EFLAGS: 00000246 ORIG_RAX: 000000000000005e
+RAX: ffffffffffffffda RBX: 00007f2b1c9e6360 RCX: 00007f2b1c78eec9
+RDX: 000000000000ee01 RSI: 0000000000000000 RDI: 00002000000006c0
+RBP: 00007f2b1c811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f2b1c9e63f8 R14: 00007f2b1c9e6360 R15: 00007ffe60c7e2c8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
