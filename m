@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-63857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ABBBD0184
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 13:27:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23388BD0283
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 14:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1CC1893C98
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 11:28:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C20E04E246E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Oct 2025 12:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFF725C816;
-	Sun, 12 Oct 2025 11:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D39274B3A;
+	Sun, 12 Oct 2025 12:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAiUcBfK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQifUAt/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F9A233D88
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 11:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0325A341
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 12:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760268452; cv=none; b=lkEQqxNO8xaEGmnagEyZyIliaOpmSbFndg3pgy15vMOseXh8i4pHQlS7UdlQiIlWW5sI63rpqYpnG792xMgnWFH2m6q2JJ2EuFk+5Mh1Suq55ol7QJxvtmvatCE0xiZ98Bt2wetCy1H0NYSUnXsez4bzlsfJWj5oXEZ0zdNbj3A=
+	t=1760273907; cv=none; b=DXk1MHulqUpPTbuISdvVRAG8gWx9CRbYA9zC9ONzuOYmXzi+BGt4sJ9h0ytRWFBO0XJ6YzrHQRLD3D2VjYaVoRyGlAe/zPsEfcI3zKT6DjGRs7CdGfFxjl8PjB2AlVmzG355aQrh5VE2yGoIqzP+c7s4J5TyCKpQwbV/TfIvh6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760268452; c=relaxed/simple;
-	bh=mZuy+q7YShu9142s/CZ5ntCHum6xcITP08Ik5YtU3EY=;
+	s=arc-20240116; t=1760273907; c=relaxed/simple;
+	bh=HJUsRYd6byPJ5JCx+QOBQLqRAZXMxCnfFAD/5vxEaxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sa+butlYGx+BsC9j9YzCNoMQPbQXK/fr7zq0Oe3cPClGq0D3FkizLSPhCIOgIibxSeCgoogup/JbakKVDIDtpgbIXy2ukl6fSj3pur6fHmzl+QAUqhjaslsBuPPAJFBqzPltlhH8gb1vVvG+rLoCQquaeGTUw8Ap9JPjBKlgIEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAiUcBfK; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=iF5BpGqSj7Y6C1yLD6HsGsIKHCAjGcr4mjZbZZvvDor6UKpwTR87TMSZoL0AOoUFpu8BVyMn8iTtTqA22wTs5kxtO1QkaJXrccRam4PO/kqoZnmmrsqOTNf8MhyAP9GiJ/ChkZDXD3HK4ZRyWp0rCNmIokujmnb7AD5SYhl7Rfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQifUAt/; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e52279279so22910715e9.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 04:27:30 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f7469so20592025e9.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 05:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760268449; x=1760873249; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760273904; x=1760878704; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HbO1RUDsAWDIoIlyeqIMdpVMOfB3YykkSikMqjPALEY=;
-        b=JAiUcBfKHCjNHNHxPKuPRoze+SkzuzVTr0GrVRbTyJOgsAR+BKeeXlVHXkMj0Hhf7B
-         eTfBPavylCLthPy1IUihmO1HTF9uc/rxw9mfaZJtrmOWmjQPK2toqqqM74ujqnt60Jox
-         Cn/GltExyIDYcapZev9uEkvtV6YOEtzgRWcyNpdVyrUy3KcxUEYVuoL+C71TcpXSlWRu
-         +n4yoQF7gKTqmAa6ZjKnqS3dOYJc6cyFAwkhR/1vKgtzX23hQ+Nnqjpt6WaZi7w0HBxY
-         CF+nt7vgmJKHQaPhTHvhjaoUnQhGL72pky/FM+1HdQm8QKFSExNuknaAgSy14++BrAn6
-         /99A==
+        bh=saUJmKeUe9g6yjctUBmXLyb1rnIzl0yI2Ve//8GWNcQ=;
+        b=gQifUAt/GshznjdGRIs9dgF88IW02n0AJZDMD7Pxxsks60YJrYchHW2809bZcpkUOn
+         ojuvYwhgPF9LjA/q81iNtlkspsH/uhFBfhP4Y1oUFrHiKXlMndvPlqfjHvxAHgDz+tGt
+         2veikzItjE0wATGGbkU7FaD8MNXGt2gI1DCfBRNL1clXchYMCkHggu5OM1bRMNJxKuYf
+         VUNeaCgqL/eYEHCndDgN+oVcyrpZZN82mYzQvfbKZB3MrwW2pnMnmBjS6oFK9LMI7myR
+         46G57D5MuzzI8xiPkxpW65rfIzrpQx4K44uijA2en/DoYi8EC9BJJrK8aUEjit9IsZ24
+         XrbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760268449; x=1760873249;
+        d=1e100.net; s=20230601; t=1760273904; x=1760878704;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HbO1RUDsAWDIoIlyeqIMdpVMOfB3YykkSikMqjPALEY=;
-        b=I/IHNm3oQox5Jhpn6VIeLLPKydTzl7kQ6y4qrBDaSNR0ppJWilpz55P2zlSfd8Y2lr
-         W8t4axryA5dR/edYnw6Go8vxLT53SUjJ21Ye7nELrVB0VVdcvtZbsyvoeFyZVu4i/rnf
-         zGYiPMjBKdPq2vJbLob4o/gRHDH0f1XjI8lmGpiu9hL7M3B5XjVxKgaxHTjwua3iXMxV
-         R1+l27J/xgbAk4wdFvKswn3NU4Fyz+z6zwdMqGX9CwSR1iLZ8IEb+ScnlEX+epgirt6N
-         Zxt2WewMqtYkB3cJsjYaefSaBgYlOtXGCdtV2Urf4CY6sP8EGfFGrspBz2ls52UIDj2x
-         xK+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULMq5NzzhIimERv1hn5R2dVQI1gZcHr4xzY5Vs13TDRMOEYo7VdXIOv039tEXzmCqJlfwbNPPQ00NF+tyD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw40p9qJhUTVgdom8G8WKe4djjY9Ydpwy7vebybdOooivVmV5xF
-	YXYvkkcMpeCKGPtdc8VYzx9/OEaCOIBeNwaWKo4EqTXwz/Kwke07eXEG
-X-Gm-Gg: ASbGncsmq+e4V+4A/B8LXgRtpqHYsHRfs6sdmuhoCKv5Wgc/vRVle23pyxnSRR5vr2D
-	EIxnelONtNrvkhVtHloXIXzrF8NvURKovjVO4ybTwUvxbeUinjRjRWW/642EaF9WZ5P75HABqXC
-	PU0g/lR8SGPB68dE1BHFF4mMOP5DQM4ZQY6augiLoLWjosrz3BGDooUkExUhIV0qjWMENuJV3f8
-	lWdzNeWEdpX7IAfl74MPduwPrW5pF7dSHdlhVjYNZHXtNEV3s4/5iQpyMafWAVm+66hpLfW29+T
-	NJx42Y7wDFqI9s0m5I97rc1Zv1b1lXHcx/zIRjSOPrvv+4JX6RzOc5UGPpG4t0HInqRZ3uvfDAQ
-	Fw2uRm7QM0XOQXXIr2lZoVNFGYU/ZQHe/W2FHxw==
-X-Google-Smtp-Source: AGHT+IF3pdCvcLd+Zp4Lzx7x8u0sYsLUwD2VM6/35sHH+5UsbHJ5uw2Ut7l9mdO5uCF+kgctu6up4Q==
-X-Received: by 2002:a05:600c:3b2a:b0:46e:3e63:9a8e with SMTP id 5b1f17b1804b1-46fa9b07717mr98919125e9.26.1760268448916;
-        Sun, 12 Oct 2025 04:27:28 -0700 (PDT)
+        bh=saUJmKeUe9g6yjctUBmXLyb1rnIzl0yI2Ve//8GWNcQ=;
+        b=G7JmF62JNBQoKQUpf+pPpoTrlWvDHIyzDFsHwmiQKFAWIBy6SSVeRtaYC78V1ELVsV
+         eE0lk5pu2kbDW76fpTK0lYT58tQQKamYRfOwm/xjiY44uhNUC8w5h5UrZ5b5LMSnN/YS
+         FvShmO/kONJUXxnx4f5jrpR++p9HR3cBl3nfN6Vu4qwWy5+bDPucJoxDD2yd4IPP775z
+         rFm3v4cZtC/qAb9d5jgrxad8JKlXl6FU3HWGlFgIs2kNOx1Z5im1/4lbrKWJT9M5YpT6
+         HT44MIHTx/biyK6LSJ1NlgtLKXd2FPk7QTat9vJ8W5IRKzbN8TWzOCxpJ/468GpS7NEM
+         zzAg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9gvi214890nUZiSt2cBKDKEPJ02LmkFbiFvf1Wjs2R9ja/0MPPUPLR3R2vH69oS64mnPPTdmMK3GkDx7I@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYzP1ArrKKHb2jMF7C/svIdPv1l6MuXdgetew1l7pv1LYDP/BQ
+	QSn4jOAlMr0FIkYXAmxsI8nazLoyw3Yf20SPxy6KdELSa9g2fJOUVeaq2De1kRtk
+X-Gm-Gg: ASbGncuYQ0yIMKMxvdsUY16VcbmM96He0pxIXmPJbjkZ5zf0mOQKvGsmUMMkFBSVAiu
+	ppRZnqntCxddL18CfVf6FzmBm2eZWYnLgSWczOqIBJcicNqzVHuLc4ylYREb3Q7pL3GYoVAu+Sa
+	VDqvVtKKr44bl2Wv2URZjPihQXs/VW8Q/ro9lrGboNpIsBD0gm6D2KbueUWBQ7KFWGtrf/t5MEU
+	HGuff75d0qiQ853hEed+Gzmgl5IjRgvUZpaHtfuGhCSd3GmphjqETRMtizkWEriixO3zdAnTmF1
+	FN8Hlpy6MjEOU3ZpXGlkFYroKCMMx4pL8Xeego2z+FF4rju5nr7NHsyRez3JR9JcIREJrLbpDs5
+	txAv4MF7G4+eJ3hzYngMJgPlHHj2wYMxnAj+ZxJ8aEc/kl9PZ
+X-Google-Smtp-Source: AGHT+IEORxGzKaedOUB6UF57omaElrmwrhui+CpRd/QxkKj/xLOetTmnd4XvsRcpSqiUz75i3Gz+4A==
+X-Received: by 2002:a05:600c:1384:b0:46e:45f7:34f3 with SMTP id 5b1f17b1804b1-46fa9a863cfmr115375715e9.8.1760273904144;
+        Sun, 12 Oct 2025 05:58:24 -0700 (PDT)
 Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb49c4027sm130749605e9.17.2025.10.12.04.27.26
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb4982b30sm134815895e9.6.2025.10.12.05.58.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Oct 2025 04:27:27 -0700 (PDT)
+        Sun, 12 Oct 2025 05:58:23 -0700 (PDT)
 From: Askar Safin <safinaskar@gmail.com>
 To: luca.boccassi@gmail.com
 Cc: alx@kernel.org,
@@ -82,8 +82,8 @@ Cc: alx@kernel.org,
 	linux-man@vger.kernel.org,
 	safinaskar@gmail.com
 Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
-Date: Sun, 12 Oct 2025 14:27:21 +0300
-Message-ID: <20251012112721.44974-1-safinaskar@gmail.com>
+Date: Sun, 12 Oct 2025 15:58:02 +0300
+Message-ID: <20251012125819.136942-1-safinaskar@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
 References: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
@@ -93,66 +93,38 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Luca Boccassi <luca.boccassi@gmail.com>:
-> IIRC Christian said this was working as intended? Just fsmount() to
-> create a detached mount, and then try to apply it multiple times with
-> multiple move_mount(), and the second and subsequent ones will fail
-> with EINVAL
+Okay, I spent some more time researching this.
 
-I just tested current mainline kernel (67029a49db6c).
-And move_mount doesn't return EINVAL in this case (move_mount succeds).
-This means that either EINVAL is not intended, either current mainline kernel
-is buggy.
+By default move_mount should work in your case.
 
-I tested this in Qemu in very minimal environment (rdinit=/bin/busybox sh).
+But if we try to move mount, residing under shared mount, then move_mount
+will not work. This is documented here:
 
-See C source below.
+https://elixir.bootlin.com/linux/v6.17/source/Documentation/filesystems/sharedsubtree.rst#L497
+
+"/" is shared by default if we booted using systemd. This is why
+you observing EINVAL.
+
+I just found that this is already documented in move_mount(2):
+
+    EINVAL The  source  mount  object's  parent  mount  has  shared  mount propagation, and thus cannot be moved (as described in mount_name‐
+    spaces(7)).
+
+So everything is working as intended, and no changes to manual pages are
+needed.
+
+On the other hand, this is a good idea to add a bigger warning to
+move_mount(2) (and to mount(2), it is affected, too). I. e. to add something
+like this to main text of move_mount (as opposed to "ERRORS"):
+"Note that systemd makes "/" shared by default. Moving mounts residing
+under shared mounts is prohibited, so attempting to move attached
+mount using move_mount likely will not work".
+
+(I personally don't have plans to submit this as a patch.)
 
 -- 
 Askar Safin
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
-
-#define ASSERT(cond) if (!(cond)) { \
-    fprintf (stderr, "%s: assertion failed\n", #cond); \
-    exit (1); \
-}
-
-#define ASSERT_ERRNO(cond) if (!(cond)) { \
-    fprintf (stderr, "%d: ", __LINE__); \
-    perror (#cond); \
-    exit (1); \
-}
-
-int
-main (void)
-{
-    ASSERT_ERRNO (mkdir ("/a", 0777) == 0);
-    ASSERT_ERRNO (mkdir ("/b", 0777) == 0);
-    ASSERT_ERRNO (mkdir ("/c", 0777) == 0);
-    {
-        {
-            int fsfd = fsopen ("tmpfs", 0);
-            ASSERT_ERRNO (fsfd != -1);
-            ASSERT_ERRNO (fsconfig (fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0) == 0);
-            {
-                int mntfd = fsmount (fsfd, 0, 0);
-                ASSERT_ERRNO (mntfd != -1);
-                ASSERT_ERRNO (move_mount (mntfd, "", AT_FDCWD, "/a", MOVE_MOUNT_F_EMPTY_PATH) == 0);
-                ASSERT_ERRNO (move_mount (mntfd, "", AT_FDCWD, "/b", MOVE_MOUNT_F_EMPTY_PATH) == 0);
-                ASSERT_ERRNO (move_mount (mntfd, "", AT_FDCWD, "/c", MOVE_MOUNT_F_EMPTY_PATH) == 0);
-                ASSERT_ERRNO (close (mntfd) == 0);
-            }
-            ASSERT_ERRNO (close (fsfd) == 0);
-        }
-        ASSERT_ERRNO (umount ("/c") == 0);
-    }
-}
 
