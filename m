@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-64058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7951ABD6CDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 01:56:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC828BD6CE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 01:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC9419A278F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:56:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 606BC4F715B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D17D2FBE18;
-	Mon, 13 Oct 2025 23:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C391C2FD1DD;
+	Mon, 13 Oct 2025 23:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tQtvl4Xl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ar5+OXZN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100962EC0B7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D822DE1E4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760399762; cv=none; b=V/r9JdFQsogAcHBYXuvVWg7ftjYVfS97RUIrT3FbNpoFPPMQrrEPT8Ior6eJmpjoLpihilKVIclmUu8p2ZXrL+EQp3f+UfdlDvTcvZtqYF4+t1sVkdmXeEYUQI/AbXxgTJmAVrXMcGQ4hZXcaR+7mZDWe7IjIuIODB3YGa87LUU=
+	t=1760399772; cv=none; b=oXLmWLHHFZ2EEIivxpOEin4d9zpS+cIK+0Khk3FbSFcQ0ascikqFSy3PvgrmputZfsfQGVcPfnSbZQjG0MXIYCojF+1nuXnUHuPhz1jtRkjVi4CNVY/y06gGccMQpmIx0NtEhLZm//7LEuZfmFPIimjFuF2EpbzLPQ3a5/k4fcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760399762; c=relaxed/simple;
-	bh=FZIguKZiZcKpeMwOLFZQs0XueVfmkOK0/W8soUIla/U=;
+	s=arc-20240116; t=1760399772; c=relaxed/simple;
+	bh=SJTTx4LsORAjZOJfF+qmSCgifzb7lteHMuDlMwA0+70=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OEQHaSIxmWYkPsVQ1kFrGUqeD/5h6isS1RxoES5vGvHHfwhAj8ry5jbxaApATGFW8T2PCHnZ34m3WkRozY31kl3c7cFRdn1Jj8Gba/t4DUEqx3DO0FE7MyL02g/kLX1vfN+f2RA5OqAgz8xCHpM8qcki5KWG02CAayLn9gDromw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tQtvl4Xl; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=YHaQE+vdlR5a/rrIoQI3LCTRDD+0pn6TD8ZWMwyu3WzoMxbZIHdOOw5ALHmFRAiGQJPnEx997WUO6xGvFtu6YHdWTpYpB8Q0sl3AiyI0bHarr2VgEArEYjkA8AKT7hrxRnACbxFEq4jMJqpk18pWmSdnZ+3WttzmSApwZluQLp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ar5+OXZN; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee4998c50so8971779a91.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 16:55:58 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27eeb9730d9so93883905ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 16:56:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760399758; x=1761004558; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760399769; x=1761004569; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6p2Gmm9GtTiEQdmbv7JHe7F8yU5Dt+w0nJ/mtKbQefE=;
-        b=tQtvl4XlLGiSOOMcFwKATW3Y76p5yLN49pqhxeNdLYqZ6fcZWmiPORJEncSrq0EIXe
-         akJaOmW8yUMcZg4zW6JMjaJraVE+TgfHRnhxCBF/0nTiiuthMtVZTrzRSpDmPereLtFX
-         jF6xLoV47Vx6GMTxEnfUNp9WQC8jrDGfrtbU9eNwMudfTT3XclB+pa4Zr/A2QxrlbLRc
-         tlRw3rbFNlVFq2QOVv9Ekl4gigmw+6g53Z3ObJOeLteRKy2+8j+y0E2RwI6PYcR0VYyo
-         TnqMciEXhh5wRP0CrRUH/ZFFXGcSeTnBTTqnlyuhF/+xxy94DPiFgRU2bPJG3See7ZgA
-         SD+Q==
+        bh=dWS8JbZTybY/HgwtmvUUAsgUoQtqFfjRM6A15QtRFtc=;
+        b=ar5+OXZNLytYtHwRsKOh3DDdWqiHRW8NUrBofikDDJfbVeQjzCxPSOMsMPWbASgy0w
+         bnTmzLV0RoFt7lbpcOiPpppvL614908xpb+YFJSKourNKdKX/xOFqVwXHuv/YZc6npw/
+         I0n6ikBc/Pi6wjvFQ/d/Hc0IcG5lwuMT+y4HZxHyUJYxGb3g5qwEzpRYwJ5VwXiPPoJr
+         2cV4+9eLOumdnFm81zHYWEhgTqRpwkQ/rEDhaC5i2rcBs49jX45G9DZ1UUO8SD1JQoc7
+         IrNyjwaYfIovXT+/ADGuoPhf1UA4jFY0/SK9FZN7mFFn/AUpHTA98I/yj4DD/EjNpWbp
+         E7/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760399758; x=1761004558;
+        d=1e100.net; s=20230601; t=1760399769; x=1761004569;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6p2Gmm9GtTiEQdmbv7JHe7F8yU5Dt+w0nJ/mtKbQefE=;
-        b=tJI/bUOEwSx7VOT/pO1lYemQrhmsyylsMxrz3jfb7nsDwruEMKwp0Fc9jy+4lwaqS8
-         bhmJwrghGqN+lNGftedtB3wx8jPR1SteC5A2mhm9fMwdLFHWFC44pJ9J/iW5PwGaDZX1
-         eK1ko33C/MJwh+QNtGk3NTytyY7ea7lEYUTxISYgfKrmKa6Bxtywx6eUq1Qff9NzuPWR
-         1z9BZJZqi87NGDbI4RHWfzOlNozV4p6PC7KU5k/hunrcyGeJik4HoGafsI9nxeL7dm05
-         TwSdFAV+1+3kkuvBAQc8MqP0ky6VHccXXD1P0D7DOtOVy4lYqjRjzq6+kV1NbjASDYdp
-         3MPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCjhf+wUK80yBGpDgWKeK0W55GDWCgEzCBSoIF/hAoQ8jWvJTO/BG7El/XG5gO1eXSxh8WBJ+lGpFJzIWb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNvJzf84zfRWdACMH6bGKz9OzNOo9JE6QApP9U2nNbyDvzbJTU
-	5Km+Ix6ohb7aWn84TYoC5XtsXD0jFrrbBDmzuy/DQYShjPIJ+zsUKVN/z3eMakk2byEaWXKmOhj
-	0rF3ShdxwKka53C84KdtPAZ7BZw==
-X-Google-Smtp-Source: AGHT+IHhEwrS3IPzet5E/srq6uBByaIE766KKBgKWp333caW+apU3r/fUvgm9e93/+DRYdrbE6IkdsCUBvqSiVDuog==
-X-Received: from pjbrs12.prod.google.com ([2002:a17:90b:2b8c:b0:334:1935:56cc])
+        bh=dWS8JbZTybY/HgwtmvUUAsgUoQtqFfjRM6A15QtRFtc=;
+        b=qlXpVzRXYynCDJa6A/SWwmWvYREI6JQMMMAfVlRsfywKQSY/D4DapNzVQWeBOAhn/k
+         vj+WBtQcABMoIxE9/z5rYSTg1r1TKimOL4jofkA/8/QpSut0UDBJIbhrvaUIsfYzni2Z
+         msR9Qf0gJMDsYSe1CDiE9WyoxrAQ9FPPmbmB9btfaej4o4SAE4tQYTTgxQBf6yy4NL71
+         DMtRMT61S+zc8+w80B2rs/eugsrBphTeMRPGY/Fx7zHdsDP/nd3QP8ZDCyWdmw7Hia4A
+         BZl3qreImhF0aHdQ+HazFgelfeZHoP5O9o5HJ/Qfq+68ixYqbXYzPxjMNYtT/SRaKLT0
+         OFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOI3w+YTD42sEIZ+3GxyfA3SEdeOcCtCMOPo3vZFBzTxTRoNgCwju3hy0K92K47dY1k/IO6Slfu8Amh4b4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy90CqTkKF0Pcomh2j/9sABhA61XBjeIQA7rHsODqMybFQiOmQE
+	/s9LqEWp5caJ+8oWiS2If5xkN20TfcUeUzDym0EbVMO7epSTs8ehT23lu8Que8n15oGeARE+NB1
+	LugwAlPU45TEkxenmRoC+vlGNmw==
+X-Google-Smtp-Source: AGHT+IGz7Acs955+JHt6jWBnGAVlrb2i9ZFcEZvLhMTomk5H/KJdcpKZNG2gPSwMMx7169I77mG09nPrtox3WC7DAA==
+X-Received: from plsd3.prod.google.com ([2002:a17:902:b703:b0:27d:6f45:42ec])
  (user=kaleshsingh job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1d0a:b0:32e:87f6:f5a6 with SMTP id 98e67ed59e1d1-33b50f2300dmr31575363a91.0.1760399758339;
- Mon, 13 Oct 2025 16:55:58 -0700 (PDT)
-Date: Mon, 13 Oct 2025 16:51:53 -0700
+ 2002:a17:903:3c2c:b0:24e:81d2:cfda with SMTP id d9443c01a7336-290272500c7mr257234325ad.0.1760399769577;
+ Mon, 13 Oct 2025 16:56:09 -0700 (PDT)
+Date: Mon, 13 Oct 2025 16:51:54 -0700
 In-Reply-To: <20251013235259.589015-1-kaleshsingh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251013235259.589015-1-kaleshsingh@google.com>
 X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
-Message-ID: <20251013235259.589015-3-kaleshsingh@google.com>
-Subject: [PATCH v3 2/5] mm/selftests: add max_vma_count tests
+Message-ID: <20251013235259.589015-4-kaleshsingh@google.com>
+Subject: [PATCH v3 3/5] mm: introduce vma_count_remaining()
 From: Kalesh Singh <kaleshsingh@google.com>
 To: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
 	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de
@@ -94,22 +94,32 @@ Cc: kernel-team@android.com, android-mm@google.com,
 	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add a new selftest to verify that the max VMA count limit is correctly
-enforced.
+The checks against sysctl_max_map_count are open-coded in multiple
+places. While simple checks are manageable, the logic in places like
+mremap.c involves arithmetic with magic numbers that can be difficult
+to reason about. e.g. ... >= sysctl_max_map_count - 3
 
-This test suite checks that various VMA operations (mmap, mprotect,
-munmap, mremap) succeed or fail as expected when the number of VMAs is
-close to the sysctl_max_map_count limit.
+To improve readability and centralize the logic, introduce a new helper,
+vma_count_remaining(). This function returns the VMA count headroom
+available for a given mm.
 
-The test works by first creating a large number of VMAs to bring the
-process close to the limit, and then performing various operations that
-may or may not create new VMAs. The test then verifies that the
-operations that would exceed the limit fail, and that the operations
-that do not exceed the limit succeed.
+The most common case of checking for a single new VMA can be done with
+the convenience helper has_vma_count_remaining():
 
-NOTE: munmap is special as it's allowed to temporarily exceed the limit
-by one for splits as this will decrease back to the limit once the unmap
-succeeds.
+    if (!vma_count_remaining(mm))
+
+And the complex checks in mremap.c become clearer by expressing the
+required capacity directly:
+
+    if (vma_count_remaining(mm) < 4)
+
+While a capacity-based function could be misused (e.g., with an
+incorrect '<' vs '<=' comparison), the improved readability at the call
+sites makes such errors less likely than with the previous open-coded
+arithmetic.
+
+As part of this change, sysctl_max_map_count is made static to
+mm/mmap.c to improve encapsulation.
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Hildenbrand <david@redhat.com>
@@ -123,766 +133,201 @@ Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 ---
 
 Changes in v3:
- - Rewrite test using kselftest harness, per Lorenzo
- - Update test diagram to be vertical so as to not exceed 80 chars, per Lorenzo
- - Use vm_util.h helpers, per Lorenzo
- - Update .gitignore, per Lorenzo
- - Add max_vma_count_tests to MEMORY MAPPING section in MAINTAINERS, per
-   Lorenzo
- - Remove /proc/*/maps debugging prints and globals, per Lorenzo
- - rename guard regions to holes to avoid confusion with VMA guard
-   regions, per David
+ - Move vma_count_remaining() out of #if CONFIG_SYSCTL to fix build 
+   failure
+ - Use READ_ONCE() for sysclt_max_map_count, per David, Lorenzo
+ - Remove use of ternary op in vma_count_remaining, per Lorenzo
+ - Rebase on mm-new to fix conflicts in vma_internal.h and
+   mm/internal.h
 
-Changes in v2:
- - Add tests, per Liam (note that the do_brk_flags() path is not easily
-   tested from userspace, so it's not included here). Exceeding the limit there
-   should be uncommon.
+ include/linux/mm.h               |  2 --
+ mm/internal.h                    |  3 +++
+ mm/mmap.c                        | 24 +++++++++++++++++++++++-
+ mm/mremap.c                      |  7 ++++---
+ mm/nommu.c                       |  2 +-
+ mm/util.c                        |  1 -
+ mm/vma.c                         | 10 +++++-----
+ tools/testing/vma/vma_internal.h |  9 +++++++++
+ 8 files changed, 45 insertions(+), 13 deletions(-)
 
- MAINTAINERS                                   |   1 +
- tools/testing/selftests/mm/.gitignore         |   1 +
- tools/testing/selftests/mm/Makefile           |   1 +
- .../selftests/mm/max_vma_count_tests.c        | 672 ++++++++++++++++++
- tools/testing/selftests/mm/run_vmtests.sh     |   5 +
- 5 files changed, 680 insertions(+)
- create mode 100644 tools/testing/selftests/mm/max_vma_count_tests.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46126ce2f968..aa83e5893e16 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16580,6 +16580,7 @@ F:	mm/vma.h
- F:	mm/vma_exec.c
- F:	mm/vma_init.c
- F:	mm/vma_internal.h
-+F:	tools/testing/selftests/mm/max_vma_count_tests.c
- F:	tools/testing/selftests/mm/merge.c
- F:	tools/testing/vma/
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5c01c4b59ca6..72ff386ef772 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -203,8 +203,6 @@ static inline void __mm_zero_struct_page(struct page *page)
+ #define MAPCOUNT_ELF_CORE_MARGIN	(5)
+ #define DEFAULT_MAX_MAP_COUNT	(USHRT_MAX - MAPCOUNT_ELF_CORE_MARGIN)
  
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index c2a8586e51a1..010f1bced5b9 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -10,6 +10,7 @@ hugetlb-soft-offline
- khugepaged
- map_hugetlb
- map_populate
-+max_vma_count_tests
- thuge-gen
- compaction_test
- migration
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index eaf9312097f7..4f0b03cdece5 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -93,6 +93,7 @@ TEST_GEN_FILES += transhuge-stress
- TEST_GEN_FILES += uffd-stress
- TEST_GEN_FILES += uffd-unit-tests
- TEST_GEN_FILES += uffd-wp-mremap
-+TEST_GEN_FILES += max_vma_count_tests
- TEST_GEN_FILES += split_huge_page_test
- TEST_GEN_FILES += ksm_tests
- TEST_GEN_FILES += ksm_functional_tests
-diff --git a/tools/testing/selftests/mm/max_vma_count_tests.c b/tools/testing/selftests/mm/max_vma_count_tests.c
-new file mode 100644
-index 000000000000..2c69c6986633
---- /dev/null
-+++ b/tools/testing/selftests/mm/max_vma_count_tests.c
-@@ -0,0 +1,672 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2025 Google LLC
-+ */
-+#define _GNU_SOURCE
+-extern int sysctl_max_map_count;
+-
+ extern unsigned long sysctl_user_reserve_kbytes;
+ extern unsigned long sysctl_admin_reserve_kbytes;
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index a2555be247e5..289aca3bdb6c 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1682,4 +1682,7 @@ static inline int io_remap_pfn_range_complete(struct vm_area_struct *vma,
+ 	return remap_pfn_range_complete(vma, addr, pfn, size, prot);
+ }
+ 
++/* mmap.c */
++int vma_count_remaining(const struct mm_struct *mm);
 +
-+#include <errno.h>
-+#include <linux/prctl.h>  /* Definition of PR_* constants */
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/mman.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
-+
-+#define TH_LOG_ENABLED			0
-+#include "../kselftest_harness.h"
-+#include "vm_util.h"
-+
-+#define DEFAULT_MAX_MAP_COUNT		65530
-+#define TEST_AREA_NR_PAGES		3
-+#define TEST_AREA_PROT			(PROT_NONE)
-+#define EXTRA_MAP_PROT			(PROT_NONE)
-+
-+/* mremap accounts for the worst case to fail early */
-+#define MREMAP_REQUIRED_VMA_SLOTS	6
-+
-+FIXTURE(max_vma_count) {
-+	int max_vma_count;
-+	int original_max_vma_count;
-+	int test_area_size;
-+	int nr_extra_maps;
-+	char *test_area;
-+	char *extra_maps;
-+};
-+
-+/* To keep checkpatch happy */
-+#define max_vma_count_data_t FIXTURE_DATA(max_vma_count)
-+
-+static int get_max_vma_count(void);
-+static bool set_max_vma_count(int val);
-+static int get_current_vma_count(void);
-+static bool is_test_area_mapped(char *test_area, int test_area_size);
-+static bool lower_max_map_count_if_needed(max_vma_count_data_t *self,
-+					  struct __test_metadata *_metadata);
-+static void restore_max_map_count_if_needed(max_vma_count_data_t *self,
-+					    struct __test_metadata *_metadata);
-+static bool free_vma_slots(max_vma_count_data_t *self, int slots_to_free);
-+static void create_reservation(max_vma_count_data_t *self,
-+			       struct __test_metadata *_metadata);
-+static void create_extra_maps(max_vma_count_data_t *self,
-+			      struct __test_metadata *_metadata);
+ #endif	/* __MM_INTERNAL_H */
+diff --git a/mm/mmap.c b/mm/mmap.c
+index da2cbdc0f87b..d9ea029cd018 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 		return -EOVERFLOW;
+ 
+ 	/* Too many mappings? */
+-	if (mm->map_count >= sysctl_max_map_count)
++	if (!vma_count_remaining(mm))
+ 		return -ENOMEM;
+ 
+ 	/*
+@@ -1495,6 +1495,28 @@ struct vm_area_struct *_install_special_mapping(
+ 					&special_mapping_vmops);
+ }
+ 
++static int sysctl_max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
 +
 +/**
-+ * FIXTURE_SETUP - Sets up the VMA layout for max VMA count testing.
++ * vma_count_remaining - Determine available VMA slots
++ * @mm: The memory descriptor for the process.
 + *
-+ * Sets up a specific VMA layout to test behavior near the max_vma_count limit.
-+ * A large memory area is reserved and then unmapped to create a contiguous
-+ * address space. Mappings are then created within this space.
++ * Check how many more VMAs can be created for the given @mm
++ * before hitting the sysctl_max_map_count limit.
 + *
-+ * The layout is as follows (addresses increase downwards):
-+ *
-+ *  base_addr --> +----------------------+
-+ *                |      Hole (1 page)   |
-+ *                +----------------------+
-+ *  TEST_AREA --> |      TEST_AREA       |
-+ *                | (unmapped, 3 pages)  |
-+ *                +----------------------+
-+ *                |      Hole (1 page)   |
-+ *                +----------------------+
-+ * EXTRA_MAPS --> | Extra Map 1 (1 page) |
-+ *                +----------------------+
-+ *                |      Hole (1 page)   |
-+ *                +----------------------+
-+ *                | Extra Map 2 (1 page) |
-+ *                +----------------------+
-+ *                |         ...          |
-+ *                +----------------------+
-+ *                | Extra Map N (1 page) |
-+ *                +----------------------+
-+ *                |      Hole (1 page)   |
-+ *                +----------------------+
-+ *
-+ * "Holes" are unmapped, 1-page gaps used to isolate mappings.
-+ * The number of "Extra Maps" is calculated to bring the total VMA count
-+ * to MAX_VMA_COUNT - 1.
-+ *
-+ * Populates TEST_AREA and other globals required for the tests.
-+ *
-+ * Return: true on success, false on failure.
++ * Return: The number of new VMAs the process can accommodate.
 + */
-+FIXTURE_SETUP(max_vma_count)
++int vma_count_remaining(const struct mm_struct *mm)
 +{
-+	int initial_vma_count;
++	const int map_count = mm->map_count;
++	const int max_count = READ_ONCE(sysctl_max_map_count);
 +
-+	TH_LOG("Setting up vma_max_count test ...");
++	if (map_count >= max_count)
++		return 0;
 +
-+	self->test_area_size = TEST_AREA_NR_PAGES * psize();
-+
-+	if (!lower_max_map_count_if_needed(self, _metadata)) {
-+		SKIP(return,
-+		     "max_map_count too high and cannot be lowered. Please rerun as root.");
-+	}
-+
-+	initial_vma_count = get_current_vma_count();
-+	ASSERT_GT(initial_vma_count, 0);
-+
-+	self->nr_extra_maps = self->max_vma_count - 1 - initial_vma_count;
-+	if (self->nr_extra_maps < 1) {
-+		SKIP(return,
-+		    "Not enough available maps to run test (max: %d, current: %d)",
-+		     self->max_vma_count, initial_vma_count);
-+	}
-+
-+	create_reservation(self, _metadata);
-+	create_extra_maps(self, _metadata);
-+
-+	ASSERT_EQ(get_current_vma_count(), self->max_vma_count - 1);
-+	TH_LOG("vma_max_count test setup done.");
++	return max_count - map_count;
 +}
 +
-+FIXTURE_TEARDOWN(max_vma_count)
-+{
-+	/*
-+	 * NOTE: Each test is run in a separate process; we leave
-+	 * mapping cleanup to process teardown for simplicity.
-+	 */
-+
-+	restore_max_map_count_if_needed(self, _metadata);
-+}
-+
-+static bool mmap_anon(max_vma_count_data_t *self)
-+{
-+	void *addr =  mmap(NULL, psize(), PROT_READ,
-+			   MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	return addr != MAP_FAILED;
-+}
-+
-+static inline bool __mprotect(char *addr, int size)
-+{
-+	int new_prot = ~TEST_AREA_PROT & (PROT_READ | PROT_WRITE | PROT_EXEC);
-+
-+	return mprotect(addr, size, new_prot) == 0;
-+}
-+
-+static bool mprotect_nosplit(max_vma_count_data_t *self)
-+{
-+	return __mprotect(self->test_area, self->test_area_size);
-+}
-+
-+static bool mprotect_2way_split(max_vma_count_data_t *self)
-+{
-+	return __mprotect(self->test_area, self->test_area_size - psize());
-+}
-+
-+static bool mprotect_3way_split(max_vma_count_data_t *self)
-+{
-+	return __mprotect(self->test_area + psize(), psize());
-+}
-+
-+static inline bool __munmap(char *addr, int size)
-+{
-+	return munmap(addr, size) == 0;
-+}
-+
-+static bool munmap_nosplit(max_vma_count_data_t *self)
-+{
-+	return __munmap(self->test_area, self->test_area_size);
-+}
-+
-+static bool munmap_2way_split(max_vma_count_data_t *self)
-+{
-+	return __munmap(self->test_area, self->test_area_size - psize());
-+}
-+
-+static bool munmap_3way_split(max_vma_count_data_t *self)
-+{
-+	return __munmap(self->test_area + psize(), psize());
-+}
-+
-+static bool mremap_dontunmap(max_vma_count_data_t *self)
-+{
-+	/*
-+	 * Using MREMAP_DONTUNMAP will create a new mapping without
-+	 * removing the old one, consuming one VMA slot.
-+	 */
-+	return mremap(self->test_area, self->test_area_size,
-+		      self->test_area_size, MREMAP_MAYMOVE | MREMAP_DONTUNMAP,
-+		      NULL) != MAP_FAILED;
-+}
-+
-+TEST_F(max_vma_count, mmap_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(mmap_anon(self));
-+}
-+
-+TEST_F(max_vma_count, mmap_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_FALSE(mmap_anon(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_nosplit_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(mprotect_nosplit(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_nosplit_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(mprotect_nosplit(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_2way_split_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(mprotect_2way_split(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_2way_split_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_FALSE(mprotect_2way_split(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_3way_split_at_2_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 2;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(mprotect_3way_split(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_3way_split_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_FALSE(mprotect_3way_split(self));
-+}
-+
-+TEST_F(max_vma_count, mprotect_3way_split_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_FALSE(mprotect_3way_split(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_nosplit_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(munmap_nosplit(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_nosplit_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(munmap_nosplit(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_2way_split_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(munmap_2way_split(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_2way_split_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(munmap_2way_split(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_3way_split_at_2_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 2;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(munmap_3way_split(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_3way_split_at_1_below_vma_count_limit)
-+{
-+	int vma_slots_needed = 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(munmap_3way_split(self));
-+}
-+
-+TEST_F(max_vma_count, munmap_3way_split_at_vma_count_limit)
-+{
-+	int vma_slots_needed = 0;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_FALSE(munmap_3way_split(self));
-+}
-+
-+TEST_F(max_vma_count, mremap_dontunmap_at_required_vma_count_capcity)
-+{
-+	int vma_slots_needed = MREMAP_REQUIRED_VMA_SLOTS;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_TRUE(mremap_dontunmap(self));
-+}
-+
-+TEST_F(max_vma_count, mremap_dontunmap_at_1_below_required_vma_count_capacity)
-+{
-+	int vma_slots_needed = MREMAP_REQUIRED_VMA_SLOTS - 1;
-+
-+	ASSERT_NE(mmap(self->test_area, self->test_area_size, TEST_AREA_PROT,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0),
-+		  MAP_FAILED);
-+
-+	ASSERT_TRUE(free_vma_slots(self, vma_slots_needed));
-+
-+	ASSERT_EQ(get_current_vma_count(),
-+		  self->max_vma_count - vma_slots_needed);
-+	ASSERT_TRUE(is_test_area_mapped(self->test_area, self->test_area_size));
-+
-+	ASSERT_FALSE(mremap_dontunmap(self));
-+}
-+
-+TEST_HARNESS_MAIN
-+
-+/* --- Utilities --- */
-+
-+static bool lower_max_map_count_if_needed(max_vma_count_data_t *self,
-+			      struct __test_metadata *_metadata)
-+{
-+	self->max_vma_count = get_max_vma_count();
-+
-+	ASSERT_GT(self->max_vma_count, 0);
-+
-+	self->original_max_vma_count = 0;
-+	if (self->max_vma_count > DEFAULT_MAX_MAP_COUNT) {
-+		self->original_max_vma_count = self->max_vma_count;
-+		TH_LOG("Max VMA count: %d; lowering to default %d for test...",
-+		       self->max_vma_count, DEFAULT_MAX_MAP_COUNT);
-+
-+		if (!set_max_vma_count(DEFAULT_MAX_MAP_COUNT))
-+			return false;
-+		self->max_vma_count = DEFAULT_MAX_MAP_COUNT;
-+	}
-+	return true;
-+}
-+
-+static void restore_max_map_count_if_needed(max_vma_count_data_t *self,
-+					    struct __test_metadata *_metadata)
-+{
-+	if (!self->original_max_vma_count)
-+		return;
-+
-+	if (self->max_vma_count == self->original_max_vma_count)
-+		return;
-+
-+	if (!set_max_vma_count(self->original_max_vma_count))
-+		TH_LOG("Failed to restore max_map_count to %d",
-+			self->original_max_vma_count);
-+}
-+
-+static int get_max_vma_count(void)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = read_sysfs("/proc/sys/vm/max_map_count", &val);
-+	if (ret)
-+		return -1;
-+	return val;
-+}
-+
-+static bool set_max_vma_count(int val)
-+{
-+	return write_sysfs("/proc/sys/vm/max_map_count", val) == 0;
-+}
-+
-+static int get_current_vma_count(void)
-+{
-+	struct procmap_fd pmap;
-+	int count = 0;
-+	int ret;
-+	char vma_name[PATH_MAX];
-+
-+	ret = open_self_procmap(&pmap);
-+	if (ret)
-+		return -1;
-+
-+	pmap.query.query_addr = 0;
-+	pmap.query.query_flags = PROCMAP_QUERY_COVERING_OR_NEXT_VMA;
-+
-+	while (true) {
-+		pmap.query.vma_name_addr = (uint64_t)(uintptr_t)vma_name;
-+		pmap.query.vma_name_size = sizeof(vma_name);
-+		vma_name[0] = '\0';
-+
-+		ret = query_procmap(&pmap);
-+		if (ret != 0)
-+			break;
-+
-+		/*
-+		 * The [vsyscall] mapping is a special mapping that
-+		 * doesn't count against the max_map_count limit.
-+		 * Ignore it here to match the kernel's accounting.
-+		 */
-+		if (strcmp(vma_name, "[vsyscall]") != 0)
-+			count++;
-+
-+		pmap.query.query_addr = pmap.query.vma_end;
-+	}
-+
-+	close_procmap(&pmap);
-+	return count;
-+}
-+
-+static void create_reservation(max_vma_count_data_t *self,
-+			       struct __test_metadata *_metadata)
-+{
-+	size_t reservation_size;
-+	void *base_addr = NULL;
-+
-+	/*
-+	 * To break the dependency on knowing the exact number of extra maps
-+	 * before creating the reservation, we allocate a reservation size
-+	 * large enough for the maximum possible number of extra maps.
-+	 * The maximum number of extra maps is bounded by max_vma_count.
-+	 */
-+	reservation_size = ((self->max_vma_count * 2) +
-+				TEST_AREA_NR_PAGES +
-+				2 /* Holes around TEST_AREA */) * psize();
-+
-+	base_addr = mmap(NULL, reservation_size, PROT_NONE,
-+			MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-+	ASSERT_NE(base_addr, MAP_FAILED);
-+
-+	ASSERT_EQ(munmap(base_addr, reservation_size), 0);
-+
-+	/* The test area is offset by one hole page from the base address. */
-+	self->test_area = (char *)base_addr + psize();
-+
-+	/* The extra maps start after the test area and another hole page. */
-+	self->extra_maps = self->test_area + self->test_area_size + psize();
-+}
-+
-+static void create_extra_maps(max_vma_count_data_t *self,
-+			    struct __test_metadata *_metadata)
-+{
-+	char *ptr = self->extra_maps;
-+
-+	for (int i = 0; i < self->nr_extra_maps; ++i) {
-+		ASSERT_NE(mmap(ptr, psize(), EXTRA_MAP_PROT,
-+			MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED_NOREPLACE,
-+			-1, 0), MAP_FAILED) {
-+			TH_LOG("Failed on mapping #%d of %d", i + 1,
-+				self->nr_extra_maps);
-+		}
-+
-+		/*
-+		 * Advance pointer by two pages to leave a 1-page hole,
-+		 * after each 1-page map.
-+		 */
-+		ptr += (2 * psize());
-+	}
-+}
-+
-+static bool free_vma_slots(max_vma_count_data_t *self, int slots_to_free)
-+{
-+	for (int i = 0; i < slots_to_free; i++) {
-+		if (munmap(self->extra_maps + (i * 2 * psize()), psize()) != 0)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static bool is_test_area_mapped(char *test_area, int test_area_size)
-+{
-+	struct procmap_fd pmap;
-+	bool found = false;
-+	int ret;
-+
-+	ret = open_self_procmap(&pmap);
-+	if (ret)
-+		return false;
-+
-+	pmap.query.query_addr = (uint64_t)(uintptr_t)test_area;
-+	pmap.query.query_flags = 0; /* Find VMA covering address */
-+
-+	if (query_procmap(&pmap) == 0 &&
-+	    pmap.query.vma_start == (unsigned long)test_area &&
-+	    pmap.query.vma_end == (unsigned long)test_area + test_area_size)
-+		found = true;
-+
-+	close_procmap(&pmap);
-+	return found;
-+}
-+
-diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index d9173f2312b7..a85db61e6a92 100755
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -49,6 +49,8 @@ separated by spaces:
- 	test madvise(2) MADV_GUARD_INSTALL and MADV_GUARD_REMOVE options
- - madv_populate
- 	test memadvise(2) MADV_POPULATE_{READ,WRITE} options
-+- max_vma_count
-+	tests for max vma_count
- - memfd_secret
- 	test memfd_secret(2)
- - process_mrelease
-@@ -426,6 +428,9 @@ fi # VADDR64
- # vmalloc stability smoke test
- CATEGORY="vmalloc" run_test bash ./test_vmalloc.sh smoke
+ #ifdef CONFIG_SYSCTL
+ #if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+ 		defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 35de0a7b910e..14d35d87e89b 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -1040,7 +1040,7 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
+ 	 * We'd prefer to avoid failure later on in do_munmap:
+ 	 * which may split one vma into three before unmapping.
+ 	 */
+-	if (current->mm->map_count >= sysctl_max_map_count - 3)
++	if (vma_count_remaining(current->mm) < 4)
+ 		return -ENOMEM;
  
-+# test operations against max vma count limit
-+CATEGORY="max_vma_count" run_test ./max_vma_count_tests
-+
- CATEGORY="mremap" run_test ./mremap_dontunmap
+ 	if (vma->vm_ops && vma->vm_ops->may_split) {
+@@ -1814,9 +1814,10 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
+ 	 * split in 3 before unmapping it.
+ 	 * That means 2 more maps (1 for each) to the ones we already hold.
+ 	 * Check whether current map count plus 2 still leads us to 4 maps below
+-	 * the threshold, otherwise return -ENOMEM here to be more safe.
++	 * the threshold. In other words, is the current map count + 6 at or
++	 * below the threshold? Otherwise return -ENOMEM here to be more safe.
+ 	 */
+-	if ((current->mm->map_count + 2) >= sysctl_max_map_count - 3)
++	if (vma_count_remaining(current->mm) < 6)
+ 		return -ENOMEM;
  
- CATEGORY="hmm" run_test bash ./test_hmm.sh smoke
+ 	return 0;
+diff --git a/mm/nommu.c b/mm/nommu.c
+index c3a23b082adb..22e55e7c69c4 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -1317,7 +1317,7 @@ static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 		return -ENOMEM;
+ 
+ 	mm = vma->vm_mm;
+-	if (mm->map_count >= sysctl_max_map_count)
++	if (!vma_count_remaining(mm))
+ 		return -ENOMEM;
+ 
+ 	region = kmem_cache_alloc(vm_region_jar, GFP_KERNEL);
+diff --git a/mm/util.c b/mm/util.c
+index 088e1f8edcf5..3315e1136c69 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -752,7 +752,6 @@ EXPORT_SYMBOL(folio_mc_copy);
+ int sysctl_overcommit_memory __read_mostly = OVERCOMMIT_GUESS;
+ static int sysctl_overcommit_ratio __read_mostly = 50;
+ static unsigned long sysctl_overcommit_kbytes __read_mostly;
+-int sysctl_max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
+ unsigned long sysctl_user_reserve_kbytes __read_mostly = 1UL << 17; /* 128MB */
+ unsigned long sysctl_admin_reserve_kbytes __read_mostly = 1UL << 13; /* 8MB */
+ 
+diff --git a/mm/vma.c b/mm/vma.c
+index fba68f13e628..96ba37721002 100644
+--- a/mm/vma.c
++++ b/mm/vma.c
+@@ -491,8 +491,8 @@ void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
+ }
+ 
+ /*
+- * __split_vma() bypasses sysctl_max_map_count checking.  We use this where it
+- * has already been checked or doesn't make sense to fail.
++ * __split_vma() bypasses vma_count_remaining() checks. We use this where
++ * it has already been checked or doesn't make sense to fail.
+  * VMA Iterator will point to the original VMA.
+  */
+ static __must_check int
+@@ -592,7 +592,7 @@ __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 		     unsigned long addr, int new_below)
+ {
+-	if (vma->vm_mm->map_count >= sysctl_max_map_count)
++	if (!vma_count_remaining(vma->vm_mm))
+ 		return -ENOMEM;
+ 
+ 	return __split_vma(vmi, vma, addr, new_below);
+@@ -1345,7 +1345,7 @@ static int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
+ 		 * its limit temporarily, to help free resources as expected.
+ 		 */
+ 		if (vms->end < vms->vma->vm_end &&
+-		    vms->vma->vm_mm->map_count >= sysctl_max_map_count) {
++		    !vma_count_remaining(vms->vma->vm_mm)) {
+ 			error = -ENOMEM;
+ 			goto map_count_exceeded;
+ 		}
+@@ -2797,7 +2797,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
+ 		return -ENOMEM;
+ 
+-	if (mm->map_count >= sysctl_max_map_count)
++	if (!vma_count_remaining(mm))
+ 		return -ENOMEM;
+ 
+ 	if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
+diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
+index 3525f5c15e1b..70f11163ab72 100644
+--- a/tools/testing/vma/vma_internal.h
++++ b/tools/testing/vma/vma_internal.h
+@@ -1484,4 +1484,13 @@ static inline int do_munmap(struct mm_struct *, unsigned long, size_t,
+ 	return 0;
+ }
+ 
++/* Helper to get VMA count capacity */
++static int vma_count_remaining(const struct mm_struct *mm)
++{
++	const int map_count = mm->map_count;
++	const int max_count = sysctl_max_map_count;
++
++	return (max_count > map_count) ? (max_count - map_count) : 0;
++}
++
+ #endif	/* __MM_VMA_INTERNAL_H */
 -- 
 2.51.0.760.g7b8bcc2412-goog
 
