@@ -1,36 +1,36 @@
-Return-Path: <linux-fsdevel+bounces-63866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B966ABD1145
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 03:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48270BD118B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 03:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 793F74E9A43
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 01:19:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01433BBD65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 01:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F732163B2;
-	Mon, 13 Oct 2025 01:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1572327A3;
+	Mon, 13 Oct 2025 01:29:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE9712B94;
-	Mon, 13 Oct 2025 01:18:49 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206A629408;
+	Mon, 13 Oct 2025 01:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760318333; cv=none; b=bDM7T0hEccmgRdyWp8O0X0wVXZ+srvqFz/39G/Vc0y819R+SbGGjha40i8nSDSK5KNtXs7NDadPqVsmLa84w0LuRN8W2YdiWW//XtBLa2RKTfr1lw6JtAbkIaB8CkPFrr8PfZcM3mX055AJPEYcjbq1kmDDjgZ+xX9RXvD8MlYg=
+	t=1760318947; cv=none; b=jHLlFOOvvmbU3tl9Sgd8ZltdJ3279SNotS11xw21knQLp1OYTOF2DhLFWos6WQHVDrplLhP+1itt3dm6E8yek/4cpQAwLZM7v8xTPmCQHacp0k2N//vHBfNZ9NOc3usMLy/qL0WGFwO3OvV5FM63M0GvR5VVIbyEX4XUC9gRPv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760318333; c=relaxed/simple;
-	bh=NiasNDnL7bI+RWAs1WgZxXifIHYVm8cB4osG/bTqMcU=;
+	s=arc-20240116; t=1760318947; c=relaxed/simple;
+	bh=pF3SfRA5dJFIspkqg6jyyfpkzqFi8q+zCIaQtyNC6+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOIjkf/VpiYM60gfY8pp/Hjy6++5r5wMDYR3MEnfLMzR+aEBylmAG0LNN9Odhm29N3+onVQcHBSrLSumAy+hmIujg32cYJHz9KqdiPRSVs8Ur6dW1/ik9Tc4NmgH7nnhMv8tP1qANSz80oZYQLmF+xzdv5VEfgvl3N/hroRi5gs=
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rm/z4HuNUrH2f0B2kqBDUe6r+12cXwaaglrAyQiO6JqXbmVIEu9hpTit23sH9/+JVMk06B+AQAdiYEaKamLaZQoOsLI39pJcUumjQWnyvXSdSysvKjUER/G0OU5VfOVHQTUCIkt0i77CI97gMMPXHittGKqebTc8OF9apttupF4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-68-68ec4fde8eb0
-Date: Mon, 13 Oct 2025 10:03:21 +0900
+X-AuditID: a67dfc5b-c2dff70000001609-c2-68ec55dc252c
+Date: Mon, 13 Oct 2025 10:28:55 +0900
 From: Byungchul Park <byungchul@sk.com>
-To: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
 Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
 	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
 	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
@@ -54,7 +54,7 @@ Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
 	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
 	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
 	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
 	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
 	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
 	sumit.semwal@linaro.org, gustavo@padovan.org,
@@ -91,10 +91,10 @@ Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
 	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
 	linux-rt-devel@lists.linux.dev
 Subject: Re: [PATCH v17 28/47] dept: add documentation for dept
-Message-ID: <20251013010321.GA52546@system.software.com>
+Message-ID: <20251013012855.GB52546@system.software.com>
 References: <20251002081247.51255-1-byungchul@sk.com>
  <20251002081247.51255-29-byungchul@sk.com>
- <87ldlssg1b.fsf@trenco.lwn.net>
+ <aN84jKyrE1BumpLj@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,47 +103,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ldlssg1b.fsf@trenco.lwn.net>
+In-Reply-To: <aN84jKyrE1BumpLj@archie.me>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH87v3d29vG2uuFcNvkCVbnTE04mMx5vyxqJuJuYQsumG2ZGbZ
-	bqRZq7zWymvJljIKQzRbdQFCAWlRK0IR1iIoDoM0Y3alSmVox0ZR7AB5yKaUhzpYL2aZ/5x8
-	8j0n3/PI4WhVDRvH6TOOag0ZYpqaVWDF9Cp74vC+Kd3WZ9cTIDJbgqG62clCiauSgb6LjQiG
-	IyUIiq4sY5hd/F0Gy509CJ60LLEw6XmMoOJhAYYZxwkEy0NjFDjCSxSEu75B8E/5Eaitc7Pw
-	zH+LBvv9IRrGW6J6a08IQX94NfwamWHBW3achelANQU1VacQFJ5pZiEw+ZyCRte74LPUUdEG
-	LJT/EAtVFYVUNIxTUNZ0lYJFR4MMHKYNUOXvZ2Ck3hqdzJYJPY1jMhj6rgzDxelbDEyOnmKh
-	3XRPBq7ffkJQ0hHB4HpwhwF78VkMlaf/YOHHTi+G/o5qFk60XGIg5FxmwFQ1H12+y8dA81iQ
-	Al/PDQxe6wUM9+8FGXD7e2kIWv5E0PSoLnqGOQe9O1WYL/oWCw3uNkpwnnYiYfZcIS0UWaLk
-	mZqhBbM7Vzjnm2KFp5EBVuics2HhlzoinPQnClesQzLBfG1QJthc2YK7XrM/8SPFW6naNH2O
-	1rBl56cKnaczhLPOsHn14fdNqJgpRXKO8NuJwzeBShG3wkG7QZIxv4H0Pr3ESszyG0kwuEhL
-	JTH8G2Ti2AelSMHR/Pl48v1ozUrNWn4XuTngRBIreSA1Ac8Kq3gzIn/3ii/0NcRbGcYS07yG
-	BJceUpInzceT80ucJMv5TWTeMkJLvI5fT7rafqakXoQflZPqghB6MfIr5Hp9EFsQb33J1vqS
-	rfV/WxuiG5BKn5GTLurTtm/W5Wfo8zYfykx3oejTOr58fvAyetyX0o14DqlXKXVXJ3UqRswx
-	5qd3I8LR6hjlyeJxnUqZKuZ/oTVkfmLITtMau1E8h9WxyjfnclNV/GfiUe0RrTZLa/gvS3Hy
-	OBNKTkjI3ZEd9478wrUHE0/yyre0epKTim6KC5rBvUnp9h3v/cVS3YrXFYMHYu4Gbnw+0n7Q
-	vL+jaeOj2Nsfakwtx3et3rPPf/vjA1lfDx7L2Z3k7F//Vcrb87XimgLzApXcW7vXtGfAdji8
-	ra3JuNblzeoThgMpr7XufHVhbGvKppCuvUKNjTpxm4Y2GMV/AZ3vxSmwAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxbZRTHfe7Lc28bO68VtycjfrDuJRJBl+k8cUaXqNkNUXQz2Xxjrt2u
-	tuGlyy3D4WLCWxFxaqlp2dp1MtgKgbJ1BRaRdEEaWbaBDJFRdYV1qQxGkaiwhgLFdsa4Lye/
-	8z///8n5cHhaHWfX8obCIkku1OZrsJJR5mytyBx7Pap/ytWWBdfKehiYn6tm4PhZD4Zq3zEW
-	rp5pRTA+X40gtuikwdy1wsCytY+DuYXfOFjx9yGwD1lp8HSUUfC3N4FhOvAXAls4gqFuqoyB
-	WfcRBI4JJwdTP2yHmfFuFlZCtygYvRNF4I4kKIj0fIpg2Z4H3zS0Y1gcGKShznYVwclwiIZJ
-	b3LY0TeGwN9cjuF3SycNw5FV8PP8LIZLts8xzAwdp+APL4b6cj8LLqcVQUXjWQx2l4+Brhvf
-	cTA0vUTBdbuVglbfazDunmDgiqWBSt6XdJ1bA866CipZJimwtXVTsOBu4aC/8ToD7tL14BwY
-	ZuFms4ODpfAmWKk3Ql/rLQ5CX9kYODMzyG6zITFm/pIRW9rPU6L5p2Usek54kLgYtyJx7nQF
-	LZotyTYQnaXFyvaPxNNXoliMz49g0X+nnhEvNxCxdiBT7HKEOLHywq/cG8+9o3x+v5RvKJbk
-	J1/Yq9QH/GPMgUZ8qDmysxRVsTWI54nwNAmelGuQgmeE9aQ/3olTjIWNJBhcoFOWNGEduf3Z
-	rhqk5GmhKZ18PeG663lIeJH8OOJBKVYJQFxDgbusFioR+bNf+6/+ILl0LMKkmBYySDAxRaV2
-	0kI6aUrwKVkhPEFilpt0ih8WHiM95y9SFqRy3JN23JN2/J+uR3QLSjMUFhdoDfnPZJny9CWF
-	hkNZ+4wFPpT8SPcnS7Xfornh7b1I4JHmfpW+e1qvZrXFppKCXkR4WpOmqq2a1KtV+7UlH0uy
-	8X35YL5k6kXpPKNZo8reLe1VCx9qi6Q8STogyf9NKV6xthS5r+VIl2U245eD0cAjh+/b4jWe
-	em/j6Pe6dFfuznc/CDlWb6jLzlzep9PZSXlr7aPPvt0SfOXwjuwLqzdn9DpHXlLciK17tWkC
-	F9U8MCX4ir2d4qqcPbmzm31HwqNuz+Dtl+UtRp05trVKEX/z8Q7YlgiVNOTKF0+95Qwf5dp0
-	G77QMCa9dlMGLZu0/wCekX8tjQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH89z79OltR8m1Q/dMsizrZCpGNicJZ4lxI2bb/WLmdDOZL5lV
+	7tZmBVwLKMZtQIdj6BjUgFmLUiCtKEW0xSIvXRAipjgYyJjNtgLDgpJS2Rit7o2OYsz8cvLL
+	+Z3zz/lwOFZZS1Zy2qwcUZ+l1qmIHMtDcbXr/e/OaF4KXpNBeL4EQ3Wzg8DghUYE9/+2sFDc
+	FsUQ9fQiqBoyseBoKWTgj4sLBII9cwhm7ScQTF97E6L+OwzciswgsAcWGAh0fYGgps5FoPZX
+	PwstvaMIPA1FBCbLL7MwHIiHH8KzBLyVxwmEhqoZsBZ5JHDaYkJgrG8mUHXaiaFtvF0Kv1SZ
+	GGh0boUx+xSGG+V1DFhOGWPlLgOVTR0M2AuSYKLBLIWoNRv8X1di8I7+KIHglInA2PVjEmgt
+	GJdCSXsYg/P2ovD8tA46PV4MvVcmGBhuryZw4uJlCYw6ohK42TiIofmOjwGv+RyG79ubJGC7
+	NcSAq/87FiJlidB0r47AyXtTCIIROwv28Kz0tQzhfnEZFs673IzgOONAwrzNyArF5YvUMzPL
+	Cp+7Dgm2GzNE+Cs8QgRPxIqFvjoqVPSvF9rMfqlgdeYKroZkob5zmtmWsku+KUPUafNE/Yub
+	98k1ngcD+ODxhMMRixEVoPr4UiTjKJ9KLw0XsY+4ZqJbEmPMJ9FQ/7coxoRfTX2+P5dmEvg1
+	1Ot6IC1Fco7lWxPpUMvtJfEk/yodGHEsLSh4oPOtNSg2pOQLER34qgU/FMuo95vAErN8MvUt
+	TDOliFvkRHp2gYu1ZfxaOtYfIjFezj9Pu9zXmVgO5SdkdLTGRx5e+jS92uDD5Yg3PxZrfizW
+	/H+sFbHnkVKblZep1upSUzT5WdrDKQeyM51o8XHtn/yz+wqaG9zRjXgOqeIUmo6gRilR5xny
+	M7sR5VhVgqLi2F2NUpGhzj8i6rPf1+fqREM3SuSw6inFy5FDGUr+Q3WO+JEoHhT1jyzDyVYW
+	oO1d6YWr38uJz68dc7exKfsr4LdcqanvhfDJwNFtPfXPOUD25Z5/daua3OkV75R8utn6wdaj
+	e1rn3ni7L0224sKOLZ9VlenXXk3tcCx/xbbh401p44Nx0RXSI5bJZ2xpnvSQMrzKsLNsMvzz
+	W1uWPUue2Lmx092794Ax8vrI7/6NN1OTxlXYoFFvSGb1BvV/O4WOPLQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTHfe69vffSUHLtSngUh0mNuhGBmWh2si2bn+aNi8ZoFqNmmTfz
+	xjaUYlpXxYWEWtkYvqx0aZFWpULoDNSBpaiM1DR1q0Eo2oFKJtDhqoLQsYzyJhTWsizzy8nv
+	nN/5J+fDYUl5QrKaVWuPiTqtoFHSUkq6631T3sCn46p3JhtWwSOjn4KpeAUFF5vdNFR4aiTw
+	4McmBJGpCgQz8w4SytuXKEhYggzE554wYDUiWPIFEdjCFhLcXiMBky2LNIzd+RuBdThKQ/Wo
+	kYIJ11kE9ucOBkZ/2Q6xSIcElgZfEPB4ehyBK7pIQNT/DYKErRBq61ppmA/dJ6Ha+gDBleFB
+	EkZaktIbHELgu3qKhmfmNhJ6oxnQNzVBQ6f1DA2x8EUC/myhwXnKJ4FLDgsCU30zDbZLHgra
+	f/+JgfDYAgEDNgsBTZ6dEHE9p6DLXEck70tuXc8CR7WJSJYRAqzXOgiYczUy0F0/QIGrbD04
+	Qr0SeHrVzsDC8GZYchZDsOkFA4PfWaltNsTPlJ+n+MbWGwRf/muC5t2X3Yiff2VBfLzBRPLl
+	5mR7Z3yC5E+3HucbusZp/tXUQ5r3TTsp/l4d5qtCeXy7fZDhT9/+jdn93gHpB4dFjdog6go+
+	PCRV+WZ7qKNnFCemHSZUhuozKlEai7ktuPZpQJJiiluPY6HbKMU0txH398+RKVZwb+HO1lmm
+	EklZkruZjcPeP5bFG9xHuOehezkg4wDHb9ai1JKcMyLcc85L/StW4s6a6DKTXC7uXxwlKhGb
+	5Gz8wyKbGqdxb+NIKEanOJNbh/037hJmJLO/lra/lrb/n3YishEp1FpDkaDWbM3XF6pKtOoT
+	+V8UF3lQ8ildpQtVt1C8d3sAcSxSpstUHWMquUQw6EuKAgizpFIhq/p6RCWXHRZKToq64s91
+	X2pEfQBls5QyS7Zjn3hIzh0RjomFonhU1P1nCTZtdRny1e4xXT8y9MRW9RJrMrW33u14PNTd
+	pzj4cYH35Q5DW9Ce2RxOLzDTipx9e3M/c3hItrt4Y9aKPZIN/q41+7e9uTUnbl678EhIK32m
+	adty4ORfm2LpwmT27NkLBuf3gcim46Ur/TUVI4nRn2fOF+Wv+KTh2wtfhWN5fTmGtXczVlUO
+	KSm9SticS+r0wj/gdz/3kAMAAA==
 X-CFilter-Loop: Reflected
 
-On Thu, Oct 02, 2025 at 11:36:16PM -0600, Jonathan Corbet wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
+On Fri, Oct 03, 2025 at 09:44:28AM +0700, Bagas Sanjaya wrote:
+> On Thu, Oct 02, 2025 at 05:12:28PM +0900, Byungchul Park wrote:
 > > This document describes the concept and APIs of dept.
 > >
 > > Signed-off-by: Byungchul Park <byungchul@sk.com>
@@ -154,15 +153,79 @@ On Thu, Oct 02, 2025 at 11:36:16PM -0600, Jonathan Corbet wrote:
 > >  create mode 100644 Documentation/dependency/dept.txt
 > >  create mode 100644 Documentation/dependency/dept_api.txt
 > 
-> As already suggested, this should be in RST; you're already 95% of the
-> way there.  Also, please put it under Documentation/dev-tools; we don't
-> need another top-level directory for this.
+> What about writing dept docs in reST (like the rest of kernel documentation)?
 
-Sure.  I will.  Thanks!
+Sorry for late reply, but sure.  I should and will.  Thank you!
+
+> ---- >8 ----
+> diff --git a/Documentation/dependency/dept.txt b/Documentation/locking/dept.rst
+> similarity index 92%
+> rename from Documentation/dependency/dept.txt
+> rename to Documentation/locking/dept.rst
+> index 5dd358b96734e6..7b90a0d95f0876 100644
+> --- a/Documentation/dependency/dept.txt
+> +++ b/Documentation/locking/dept.rst
+
+However, I'm not sure if dept is about locking.  dept is about general
+waits e.g. wait_for_completion(), wait_event(), and so on, rather than
+just waits involved in typical locking mechanisms e.g. spin lock, mutex,
+and so on.
+
+[snip]
+
+> > +
+> > +   context X            context Y
+> > +
+			     /*
+			      * Acquired A.
+			      */
+> > +                        mutex_lock A
+
+			     /*
+			      * Request something that will be handled
+			      * through e.g. wq, deamon or any its own
+			      * way, and then do 'complete B'.
+			      */
+			     request_xxx_and_complete_B();
+        /*
+	 * The request from
+	 * context Y has been
+	 * done.  So running
+	 * toward 'complete B'.
+	 */
+
+	/*
+	 * Wait for A to be
+	 * released, but will
+	 * never happen.
+	 */
+> > +   mutex_lock A <- DEADLOCK
+			     /*
+			      * Wait for 'complete B' to happen, but
+			      * will never happen.
+			      */
+> > +                        wait_for_complete B <- DEADLOCK
+	/*
+	 * Never reachable.
+	 */
+> > +   complete B
+
+			     /*
+			      * Never reachable.
+			      */
+> > +                        mutex_unlock A
+> > +   mutex_unlock A
+> 
+> Can you explain how DEPT detects deadlock on the second example above (like
+> the first one being described in "How DEPT works" section)?
+
+Sure.  I added the explanation inline above.  Don't hesitate if you have
+any questions.  Thanks.
 
 	Byungchul
 > 
-> Thanks,
+> Confused...
 > 
-> jon
+> --
+> An old man doll... just what I always wanted! - Clara
 
