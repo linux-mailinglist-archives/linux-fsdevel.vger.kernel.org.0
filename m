@@ -1,133 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-63943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5590BBD28FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 12:27:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CEBBD2942
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 12:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16E644EE120
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 10:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E123C20E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 10:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B0E2FF16B;
-	Mon, 13 Oct 2025 10:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7142FF649;
+	Mon, 13 Oct 2025 10:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="xI/WgtXI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZIQhb/oU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AF15E5BB;
-	Mon, 13 Oct 2025 10:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE72FF16A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 10:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760351219; cv=none; b=uALxhB0yBdlV3dUcWR+4hHa1B/hvaAP4q8rPaDdYLIE5zptMv+j0XTwR4+f9NfTpVCVMjEZYU4zifH5JAr2Tt5QvOJCQ5Z7vXAEgOmox2FPFxtNcf3tmrw6ygy28XS3rwDnH3CObFEOjRYSKb3k4GwQkW7yt17XgRT04f3nt780=
+	t=1760351386; cv=none; b=r+Xne56VYuKNkgmse7fzBlPs+kW+NVHrmwJyGCo8rXuCb2/lbXUP9BqJ6r3Vw7h+AgYy534BnzbMMNfAEXNl+thcXTKWWGBmgxhPQuXFxnciga3cVfzv4lqRKQpi4B7gkgb3taOvwxx+dtPwY7u5bEx0KOdZgjmXOslTXlX9NZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760351219; c=relaxed/simple;
-	bh=ABmn+fLVsctJIcVsQ8EXkfemm3Yt7M2ThU/pU1MhG9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+vEpPyBc6X6bzYFfUdsxV56axzXB7CdObPtwLr1+NTv55rT/YFp/n8xJztvyDMc2Frx+0qeypuSYU+9FJP9MqvzG3CNYMG7BZZgjiTDm5zFWnnZelWsvw+6q5YZUoLa62BJn5UzZLp4co5H+Ja4RbbpH3YdZwuyvf0IEFkkfbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=xI/WgtXI; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id C50BA14C2D3;
-	Mon, 13 Oct 2025 12:26:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1760351214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=liVWWnazWktLk7qYgIAJtTqEdttWgrGsPA7uT5rJXvE=;
-	b=xI/WgtXIs8rnlF78rRIuhG85Om82BhXX1ipNuWomu80ZemdzezlD3qOo1vHKI0MmwCyjQ4
-	TVJ+EwQfiTrv6kzqAinIkJ91eRXixNKlrUE8LQhvszZRyeUB6m8G683VMv6jAm8Pl6iepX
-	wAviR/0MKstVpFbNayZXsaPaJIEUIU2s9Jr1kVFJuzxhHSYgwmd9a6OPue1tNePOzTfl+4
-	3INJRJvvVOynG+Z/KL+Uzuf5ulq0U6HCNQo5iXp1n2OJH9uODYAVazzZouzjDOaQJsWSG5
-	Xe9K6a9ye88FRrt4/R8egH/VZXB1z5ilb7AaxJTCVj8Q7uuBTAw3+oszHhlYog==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e164d6cc;
-	Mon, 13 Oct 2025 10:26:50 +0000 (UTC)
-Date: Mon, 13 Oct 2025 19:26:35 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
-	linux_oss@crudebyte.com, eadavis@qq.com
-Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
-Message-ID: <aOzT2-e8_p92WfP-@codewreck.org>
-References: <20251010214222.1347785-1-sandeen@redhat.com>
- <20251010214222.1347785-5-sandeen@redhat.com>
+	s=arc-20240116; t=1760351386; c=relaxed/simple;
+	bh=SVPUlK6sYHZahK5O3+GOTdw6Bx0G0qiDlm5PKLNZXQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oMPEr+Ybd5Sb6a3aZjQyD04bXhejibpwnY1WtChMDasoNtKaLJUSvo255r0ehdACMz16x5r04hoZYnYwLH5nh0IEbv/7/T2y8M5IME1FPxrrSOLpen0a2GRa7YGv7SHB/ySKympkBz6zcrN1rnYguF/+A/KraN+ArHn0zHBUNKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZIQhb/oU; arc=none smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63cf0df1abbso2270105d50.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 03:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760351384; x=1760956184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SVPUlK6sYHZahK5O3+GOTdw6Bx0G0qiDlm5PKLNZXQA=;
+        b=ZIQhb/oUlO3F9MEPUxurf/mgWI7Y1g8uHfT6SNbxuv/4xY5+m/YraZW/5KqmjRIwzX
+         rdTRUXUR5ZYcRqHAcjEXbyqp9QPzrQjcU/+tE2lLY7zsYf9eKvPgMh7Yb+eG+DeMYl1A
+         NNkv7u+ELQLfd91UVqU5n/EDVbx6VQywzqTdWGNVo8cwyfdUj0VZFPUXp9En5uePFJsJ
+         B8tJ7rKH5YlpW+Pq8nGhj+PB2fjPaXocpEbEosY0ETAXl+QzWKYisCRZclqHs3mpy0wb
+         S17h9fT1i/DEuznIcB2PXT67kVi/TGa5zjTd/jM4v9YckG+ajQAB0eFRwEULsu95liHd
+         eM0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760351384; x=1760956184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVPUlK6sYHZahK5O3+GOTdw6Bx0G0qiDlm5PKLNZXQA=;
+        b=dSVFn4p0L20SIJ+jRJ5KVXW+OwkW+ogqutoUo2bDxMMLNGQftiX7lCIeH5tjAqs+b6
+         xJN+fzuKZlLBs4E8SYwgnNMAawfVbWhEZni6X9/ta4uqp8Lfwuxm5kkBLG1oGrSE6EZk
+         gvDF3obPS5tAyNz2E6dSQHVRqIPrWyUgx2dUIgtdqQbNGcEr9Pk6zrLLeaXoguZ4sjEW
+         1UBViGlJwiZEwvIS7+jXMU4FFbLr3SabasBQ80gq/Egz1vvLPschWZXsTY+HlgbO8Itw
+         krtFz3/5IqkymyPbmWX2vPPYL7V7exlARxRofHAia8jS0jBLNcmbBNQgF0tNCfbQFMKu
+         VFEA==
+X-Gm-Message-State: AOJu0YxNJKZMUR5Qe0C5Yf2yzSjiTngC1HawqHlEG/NayOpm3Tt6YVKP
+	TC7rXbFN9WKZe8YjTa7eVpZLqAAGLQkH9xe22ADsuxY2Ms8UdcWoqDzmCvnIaaIM1GLp82m0skA
+	pS05GbxVMX3j0narxxmV2NTG9jyMBlLo=
+X-Gm-Gg: ASbGncsFwIEXz9pUPpFzYuAHr2zSH8+GokUkrttp7nuh+cUCMRIRAPTY57is13Pb6gE
+	xhL+vVZu9zWHU3xlY4jDiu8zYn12EATIO113V1UFRZJ5BVh+/mf3LZe+Fy+J3wvchrVadzyycha
+	OVBI2cILBL11wdevBuHnypjTw+0rcJEd2/IFfM7P2f3+Ztw8yOph36mRMzE23Cf0UyEo+NPFYou
+	63MlF+MeWiPcYDtnp6qQiFzJmhOWZuKlJkI
+X-Google-Smtp-Source: AGHT+IF7gB/uIYJ4y7t+OLiZ00mCO9lllMt+QoIyqpZ385m2NgZqSy+lqlMIQpqL29tGtjodZ9h+RUr8WRjGSui6l/0=
+X-Received: by 2002:a05:690e:4186:b0:63c:f5a6:f2f0 with SMTP id
+ 956f58d0204a3-63cf5a7080fmr6997775d50.66.1760351383745; Mon, 13 Oct 2025
+ 03:29:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251010214222.1347785-5-sandeen@redhat.com>
+References: <20251010094047.3111495-1-safinaskar@gmail.com>
+ <20251010094047.3111495-3-safinaskar@gmail.com> <07ae142e-4266-44a3-9aa1-4b2acbd72c1b@infradead.org>
+In-Reply-To: <07ae142e-4266-44a3-9aa1-4b2acbd72c1b@infradead.org>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Mon, 13 Oct 2025 13:29:07 +0300
+X-Gm-Features: AS18NWAYGkNu7BjeCT0jHGno_eA5ARoSWF2j7yYdLIuVOnrJP74yF3CsWnjM_B4
+Message-ID: <CAPnZJGDe+sDCsCngHyF6+=3=A9pYwQ1+N87jpq-ZdsSvVbQuNw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] initrd: remove deprecated code path (linuxrc)
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>, 
+	Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, 
+	linux-block@vger.kernel.org, initramfs@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Michal Simek <monstr@monstr.eu>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dave Young <dyoung@redhat.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Nicolas Schichan <nschichan@freebox.fr>, David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+On Fri, Oct 10, 2025 at 10:31=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
+> There are more places in Documentation/ that refer to "linuxrc".
+> Should those also be removed or fixed?
+>
+> accounting/delay-accounting.rst
+> admin-guide/initrd.rst
+> driver-api/early-userspace/early_userspace_support.rst
+> power/swsusp-dmcrypt.rst
+> translations/zh_CN/accounting/delay-accounting.rst
 
-Thanks for this V3!
+Yes, they should be removed.
+I made this patchset minimal to be sure it is easy to revert.
+I will remove these linuxrc mentions in cleanup patchset.
 
-I find it much cleaner, hopefully will be easier to debug :)
-... Which turned out to be needed right away, trying with qemu's 9p
-export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
-p9_virtio_create() with fc->source == NULL, instead of the expected
-"tmp" string
-(FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
-p9_fd_create_tcp(), might be easier to test with diod if that's what you
-used)
-
-Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
-the same) it looks like they all define a fsparam_string "source" option
-explicitly?...
-
-Something like this looks like it works to do (+ probably make the error
-more verbose? nothing in dmesg hints at why mount returns EINVAL...)
------
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 6c07635f5776..999d54a0c7d9 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -34,6 +34,8 @@ struct kmem_cache *v9fs_inode_cache;
-  */
- 
- enum {
-+	/* Mount-point source */
-+	Opt_source,
- 	/* Options that take integer arguments */
- 	Opt_debug, Opt_dfltuid, Opt_dfltgid, Opt_afid,
- 	/* String options */
-@@ -82,6 +84,7 @@ static const struct constant_table p9_cache_mode[] = {
-  * the client, and all the transports.
-  */
- const struct fs_parameter_spec v9fs_param_spec[] = {
-+	fsparam_string  ("source",      Opt_source),
- 	fsparam_u32hex	("debug",	Opt_debug),
- 	fsparam_uid	("dfltuid",	Opt_dfltuid),
- 	fsparam_gid	("dfltgid",	Opt_dfltgid),
-@@ -210,6 +213,14 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	}
- 
- 	switch (opt) {
-+	case Opt_source:
-+                if (fc->source) {
-+			pr_info("p9: multiple sources not supported\n");
-+			return -EINVAL;
-+		}
-+		fc->source = param->string;
-+		param->string = NULL;
-+		break;
- 	case Opt_debug:
- 		session_opts->debug = result.uint_32;
- #ifdef CONFIG_NET_9P_DEBUG
------
-
-I'll try to find some time to test a mix of actual mount options later
-this week
-
-Cheers,
--- 
-Dominique Martinet | Asmadeus
+--=20
+Askar Safin
 
