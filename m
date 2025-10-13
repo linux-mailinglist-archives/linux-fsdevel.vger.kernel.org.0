@@ -1,219 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-64052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2EEBD697B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 00:14:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2E8BD6BD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 01:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30FDE1896D85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 22:15:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBE6E4E1F1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D5A2F9DB1;
-	Mon, 13 Oct 2025 22:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AD52D97B8;
+	Mon, 13 Oct 2025 23:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RqFA6th1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AA2rzImz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224EB220F38
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 22:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE692D4B5A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760393687; cv=none; b=CD//ouf49JMyuVPxh0Er5oBiNDkjPOF1mEpnRbDN14a+PJLCEuJoSprwOR66eMG7hDWmc7cEPrwaRkgToUxRj8nSaK3PJeTrx7W9v4lLG4LfffSsrkPiEEuFVdVrk0/xYWN9JrGfuR1+4Bb5Rrs0H4v6IMP+03UQeULLa93OPDo=
+	t=1760398168; cv=none; b=DD0vly/dfwc6IdUUwLsNplmvJ1foVgU6sJv976Cpr5wvxKeBr9eISTgNs9yhIHwf91Who7JgxB+OzKpz3F2S6zqBKS7o8G1zaJ3Ij0CowJiZfk3IQTLVZp/LwsmqVgWH+kIwMy15uhy+aY9FplGSZuxhi4r4xA4Gxi2QYg5EqJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760393687; c=relaxed/simple;
-	bh=Md1A2uKl6kgU9IrfwYn2P5juXiKTWAuirZuzuxL1e5U=;
+	s=arc-20240116; t=1760398168; c=relaxed/simple;
+	bh=SQ0gWNpV8fChoEYMNhzwQKlfjtJr3sfa5X67jWtrJdY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uR97m6gSTnhOthqlXZKopW/BJFEONjur+oRzvvyl6ksk1fR2esN5Hz6apouJcyj/+jCgq2Uh+Y3LdodpV7FVGcfBhbDRoEYb1XcnBkjlnoSOZxPenF3eM+6PJqsW1i9A+sLynPMsHkINznfp1A4ihOeyFNeRtcveEuv/lfYoM8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RqFA6th1; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e3f213b59so138985e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 15:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760393684; x=1760998484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Md1A2uKl6kgU9IrfwYn2P5juXiKTWAuirZuzuxL1e5U=;
-        b=RqFA6th1ObDj2OqqCttFyDpsYoAkENIh9eWUSftSHiBOFIdf6V0d8+64kMH1ADCOQU
-         +TPgAB6DDRNZ7+u/FmDzdnnpxcJhkh0a/CsbBTKuxb4+KCjnmK8oMvAmlry9IZWoJGX0
-         Txp/0zK5oMwyQhYJcyY9KTDrnZY37cK1qg9FeEzyVzeaRP06DP+nlUTqKupiB8LukBuU
-         DzgjYAfUdnoWlX+shu+DPkOOQeanYtVAs9vm9iDuzGNqP7uaCaLvyAt3rgq/chNDMVVY
-         nWCQemI1W+ebAAhH5PY9IXPDMHmbLIp8DRutEkOvg0YTz5qdaysaGdX0TvAn2nw1EMHD
-         TwuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760393684; x=1760998484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Md1A2uKl6kgU9IrfwYn2P5juXiKTWAuirZuzuxL1e5U=;
-        b=eeS0TVXcI5wwDaxnvGMWGRQnrsfBHBOEI0SOrAPc0PAGlBsq4seetPi1ZD8J6thMXZ
-         TU3imyE7rEXbQ7fJM5dhfQxDo+SBXAY9flkotPNDfZm4V5NEM1Z8bw1P8y6BZR+Zk1+M
-         dkBCkmmOJSqyOTgHnfaP1dIIotYOaxu7+sm7j1sSx7A7l1N7Qid/ojTpoNJdNB6CPCUQ
-         2hDmItVl9b3goU5JuryKzetQ3HIAh5HmYJSWIjLD1p9wixRivjCGiOY6Uf3vSfAmbH0r
-         3ycoF7GeTYzxpJZiUnhtouuZ/uilfi5ouB/2K9qaw1yeL0D1a0tTpWk7cT+1jWXIarlK
-         2Z3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5KAZHTMoUyyOpQrMUDNpahvqDu+jx/sA/TizcwBuqTsEw9JoIX6ERe96QdVHaPjNcRCitkbDHqfIqHomE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+mjaRDiRn2tidfhWK/oCYAxJsVuuV+hzRsMAXGp459jJx9Vxu
-	M/J9+xAkQu411BDP2RpgmDp6U1eNsBPORwS2kuoad4B8ezO0ygmbtdTUDHaIEaTaWFoIXuXswBv
-	vn4l703Jls5+esa7OPCK77J9BtnpBz43mn/i9HJci
-X-Gm-Gg: ASbGnctr9OpJZFhyfN5A0hQml8B6W1M1I9l0p2FSUEkvjMmq9C2yFSOVN+uF0eyfaJK
-	T3S/6Mw4Xp6Q11K9zgeWROMX6A7UxCBEooB1/PcsLc2OatNBEWAH8cqCfw+M0oznLPpFRoCaCH5
-	VCoNCCHG4W2k7IFb033tgnKJbBoCQLxACHJe0kZ+TcdiumcHcgBjb0vCT3kBK8+hG6kjjJ2gvoo
-	NnBxYVK6oK1W95x/swSKZe/p9DLmPo/pSgeQgy8ugsJiFqSzKsI89hxHb3Ac1jm3IGAa3E/cw==
-X-Google-Smtp-Source: AGHT+IFcJCh/82hxCUADD7PjVwqcXj1BKwAfYVrS6U33JU7OMnCpfeAPkBJ4TpIW4QhiLTbUSVarRug2eFkrw+QDiaM=
-X-Received: by 2002:a05:600c:6008:b0:45a:2861:3625 with SMTP id
- 5b1f17b1804b1-46fa9b29309mr9719185e9.4.1760393684151; Mon, 13 Oct 2025
- 15:14:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=malTdwWtEfQsPgtsGQXLFiZTDv4aVz2FbKudgobdZVISpYwhamZhVXSYwAtLMhrJIQgf0AErQMalF07AGH4ZoDVAmlOdLlmYTlT+zKs0P5Al5fdJJi6nH2lVYrbYqwmHg3ebZWCsg9ox3K8ID8vEeduzapBJv/dPaNJJcEi9bDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AA2rzImz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D75CC4CEFE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760398168;
+	bh=SQ0gWNpV8fChoEYMNhzwQKlfjtJr3sfa5X67jWtrJdY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AA2rzImzN90s32cp8e0uwxg8bh+IjSrBFwpjEddVpnqKHWTywbZioOr0J4+B2+ryR
+	 6Vj65aj4/Jbxu5yjl8Tf3filr+PibU/tnHSjELxYuuqqhhgicq0E5yOHhTRhY9GhCa
+	 //C/BizcUv+ovNYskkqnpPRn7qXYGMtMin76zujrPEvJsYEE2CAu1GZUx1XkGtDm7D
+	 rLlyd9sW1z+Ura6VViHuNKRkQqEf/6aU6qYqQ9loMmIZmUZpad8P+7l13LaYhnHco4
+	 swGL1cA6UGnaJbyJhluocGtxILsD0r89J/6htBaI/ycF9tu1yGeolAqfbhk3WUbTxq
+	 O/kaCYjnm3V3Q==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b50645ecfbbso937714166b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 16:29:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqXhQ4HxTsrwn8Rmz4PVSvnMe8MsB6wIr9wa1nK5jBkR4LfSKVzR8/svu3Pv10LcdDduH4Ez1vnLNRPGY+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6lomhHtNS17e2VkDSXZ2vqUt8W2GLKF19OwMoBmQIg3KSPkN0
+	TYPHzhkvUtPxxczpSUUk+EK0675v4/cWIOo5m+iC6PGa4SLtG6X6iyfV2Opb3a1/+J8rVBYBmTK
+	gd8i/1wQ69qfwrTVB5Q5YNiW7PmR2650=
+X-Google-Smtp-Source: AGHT+IGKMgfNlTuVRjrvwrgGu5wAUKAOzjA5+Qj4nhVCZNyzu4FakDZO2A4HdYX7LTuYYFd1tWuBIeotI0oHcIElStI=
+X-Received: by 2002:a17:907:971e:b0:b4c:1ad1:d08c with SMTP id
+ a640c23a62f3a-b50aa393b8amr2537644866b.17.1760398166753; Mon, 13 Oct 2025
+ 16:29:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250118231549.1652825-1-jiaqiyan@google.com> <20250919155832.1084091-1-william.roche@oracle.com>
-In-Reply-To: <20250919155832.1084091-1-william.roche@oracle.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Mon, 13 Oct 2025 15:14:32 -0700
-X-Gm-Features: AS18NWAiJumx-M_L3wK9sogLN4v8v1yPjy0HWjrQ6WoH4VxJm6dQG73LRuSoLVE
-Message-ID: <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
-To: =?UTF-8?Q?=E2=80=9CWilliam_Roche?= <william.roche@oracle.com>, 
-	Ackerley Tng <ackerleytng@google.com>
-Cc: jgg@nvidia.com, akpm@linux-foundation.org, ankita@nvidia.com, 
-	dave.hansen@linux.intel.com, david@redhat.com, duenwen@google.com, 
-	jane.chu@oracle.com, jthoughton@google.com, linmiaohe@huawei.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, nao.horiguchi@gmail.com, 
-	osalvador@suse.de, peterx@redhat.com, rientjes@google.com, 
-	sidhartha.kumar@oracle.com, tony.luck@intel.com, wangkefeng.wang@huawei.com, 
-	willy@infradead.org, harry.yoo@oracle.com
+References: <20251013134708.1270704-1-aha310510@gmail.com> <20251013164625.nphymwx25fde5eyk@pali>
+In-Reply-To: <20251013164625.nphymwx25fde5eyk@pali>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 14 Oct 2025 08:29:14 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
+X-Gm-Features: AS18NWA2a1YxuJIOARSQtQYwyd5cLkP4zCGhLc1g0fsPOO2REg4pII5pSv2KDSU
+Message-ID: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
+Subject: Re: [PATCH v3] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Jeongjun Park <aha310510@gmail.com>, Ethan Ferguson <ethan.ferguson@zetier.com>, 
+	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 8:58=E2=80=AFAM =E2=80=9CWilliam Roche <william.roc=
-he@oracle.com> wrote:
+On Tue, Oct 14, 2025 at 1:46=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
 >
-> From: William Roche <william.roche@oracle.com>
+> On Monday 13 October 2025 22:47:08 Jeongjun Park wrote:
+> > Since the len argument value passed to exfat_ioctl_set_volume_label()
+> > from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds read
+> > occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
+> >
+> > And because of the NLS_NAME_OVERLEN macro, another error occurs when
+> > creating a file with a period at the end using utf8 and other iocharset=
+s,
+> > so the NLS_NAME_OVERLEN macro should be removed and the len argument va=
+lue
+> > should be passed as FSLABEL_MAX - 1.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
+> > Fixes: 370e812b3ec1 ("exfat: add nls operations")
 >
-> Hello,
+> Fixes: line is for sure wrong as the affected
+> exfat_ioctl_set_volume_label function is not available in the mentioned
+> commit.
 >
-> The possibility to keep a VM using large hugetlbfs pages running after a =
-memory
-> error is very important, and the possibility described here could be a go=
-od
-> candidate to address this issue.
-
-Thanks for expressing interest, William, and sorry for getting back to
-you so late.
-
+> I guess it should be commit d01579d590f72d2d91405b708e96f6169f24775a.
 >
-> So I would like to provide my feedback after testing this code with the
-> introduction of persistent errors in the address space: My tests used a V=
-M
-> running a kernel able to provide MFD_MF_KEEP_UE_MAPPED memfd segments to =
-the
-> test program provided with this project. But instead of injecting the err=
-ors
-> with madvise calls from this program, I get the guest physical address of=
- a
-> location and inject the error from the hypervisor into the VM, so that an=
-y
-> subsequent access to the location is prevented directly from the hypervis=
-or
-> level.
-
-This is exactly what VMM should do: when it owns or manages the VM
-memory with MFD_MF_KEEP_UE_MAPPED, it is then VMM's responsibility to
-isolate guest/VCPUs from poisoned memory pages, e.g. by intercepting
-such memory accesses.
-
+> Now I have looked at that commit and I think I finally understood what
+> was the issue. exfat_nls_to_utf16() function is written in a way that
+> it expects null-term string and its strlen as 3rd argument.
 >
-> Using this framework, I realized that the code provided here has a proble=
-m:
-> When the error impacts a large folio, the release of this folio doesn't i=
-solate
-> the sub-page(s) actually impacted by the poison. __rmqueue_pcplist() can =
-return
-> a known poisoned page to get_page_from_freelist().
-
-Just curious, how exactly you can repro this leaking of a known poison
-page? It may help me debug my patch.
-
+> This was achieved for all code paths except the new one introduced in
+> that commit. "label" is declared as char label[FSLABEL_MAX]; so the
+> FSLABEL_MAX argument in exfat_nls_to_utf16() is effectively
+> sizeof(label). And here comes the problem, it should have been
+> strlen(label) (or rather strnlen(label, sizeof(label)-1) in case
+> userspace pass non-nul term string).
 >
-> This revealed some mm limitations, as I would have expected that the
-> check_new_pages() mechanism used by the __rmqueue functions would filter =
-these
-> pages out, but I noticed that this has been disabled by default in 2023 w=
-ith:
-> [PATCH] mm, page_alloc: reduce page alloc/free sanity checks
-> https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
-
-Thanks for the reference. I did turned on CONFIG_DEBUG_VM=3Dy during dev
-and testing but didn't notice any WARNING on "bad page"; It is very
-likely I was just lucky.
-
+> So the change below to FSLABEL_MAX - 1 effectively fix the overflow
+> problem. But not the usage of exfat_nls_to_utf16.
+>
+> API of FS_IOC_SETFSLABEL is defined to always take nul-term string:
+> https://man7.org/linux/man-pages/man2/fs_ioc_setfslabel.2const.html
+>
+> And size of buffer is not the length of nul-term string. We should
+> discard anything after nul-term byte.
+>
+> So in my opinion exfat_ioctl_set_volume_label() should be fixed in a way
+> it would call exfat_nls_to_utf16() with 3rd argument passed as:
+>
+>   strnlen(label, sizeof(label) - 1)
+>
+> or
+>
+>   strnlen(label, FSLABEL_MAX - 1)
+>
+> Or personally I prefer to store this length into new variable (e.g.
+> label_len) and then passing it to exfat_nls_to_utf16() function.
+> For example:
+>
+>   ret =3D exfat_nls_to_utf16(sb, label, label_len, &uniname, &lossy);
+Right, I agree.
+>
+> Adding Ethan to CC as author of the mentioned commit.
 >
 >
-> This problem seems to be avoided if we call take_page_off_buddy(page) in =
-the
-> filemap_offline_hwpoison_folio_hugetlb() function without testing if
-> PageBuddy(page) is true first.
-
-Oh, I think you are right, filemap_offline_hwpoison_folio_hugetlb
-shouldn't call take_page_off_buddy(page) depend on PageBuddy(page) or
-not. take_page_off_buddy will check PageBuddy or not, on the page_head
-of different page orders. So maybe somehow a known poisoned page is
-not taken off from buddy allocator due to this?
-
-Let me try to fix it in v2, by the end of the week. If you could test
-with your way of repro as well, that will be very helpful!
-
-> But according to me it leaves a (small) race condition where a new page
-> allocation could get a poisoned sub-page between the dissolve phase and t=
-he
-> attempt to remove it from the buddy allocator.
+> And about NLS_NAME_OVERLEN, it is being used by the
+> __exfat_resolve_path() function. So removal of the "setting" of
+> NLS_NAME_OVERLEN bit but still checking if the NLS_NAME_OVERLEN bit is
+> set is quite wrong.
+Right, The use of NLS_NAME_OVERLEN in __exfat_resolve_path() and
+in the header should also be removed.
 >
-> I do have the impression that a correct behavior (isolating an impacted
-> sub-page and remapping the valid memory content) using large pages is
-> currently only achieved with Transparent Huge Pages.
-> If performance requires using Hugetlb pages, than maybe we could accept t=
-o
-> loose a huge page after a memory impacted MFD_MF_KEEP_UE_MAPPED memfd seg=
-ment
-> is released ? If it can easily avoid some other corruption.
 >
-> I'm very interested in finding an appropriate way to deal with memory err=
-ors on
-> hugetlbfs pages, and willing to help to build a valid solution. This proj=
-ect
-> showed a real possibility to do so, even in cases where pinned memory is =
-used -
-> with VFIO for example.
+> Namjae, could you re-check my analysis? Just to be sure that I have not
+> misunderstood something. It is better to do proper analysis than having
+> incomplete or incorrect fix.
+Yes, I agree with your analysis.
+Thanks!
 >
-> I would really be interested in knowing your feedback about this project,=
- and
-> if another solution is considered more adapted to deal with errors on hug=
-etlbfs
-> pages, please let us know.
-
-There is also another possible path if VMM can change to back VM
-memory with *1G guest_memfd*, which wraps 1G hugetlbfs. In Ackerley's
-work [1], guest_memfd can split the 1G page for conversions. If we
-re-use the splitting for memory failure recovery, we can probably
-achieve something generally similar to THP's memory failure recovery:
-split 1G to 2M and 4k chunks, then unmap only 4k of poisoned page. We
-still lose the 1G TLB size so VM may be subject to some performance
-sacrifice.
-
-[1] https://lore.kernel.org/linux-mm/2ae41e0d80339da2b57011622ac2288fed65cd=
-01.1747264138.git.ackerleytng@google.com
-
->
-> Thanks in advance for your answers.
-> William.
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> >  fs/exfat/file.c | 2 +-
+> >  fs/exfat/nls.c  | 3 ---
+> >  2 files changed, 1 insertion(+), 4 deletions(-)
+> >
+> > diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+> > index f246cf439588..7ce0fb6f2564 100644
+> > --- a/fs/exfat/file.c
+> > +++ b/fs/exfat/file.c
+> > @@ -521,7 +521,7 @@ static int exfat_ioctl_set_volume_label(struct supe=
+r_block *sb,
+> >
+> >       memset(&uniname, 0, sizeof(uniname));
+> >       if (label[0]) {
+> > -             ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
+> > +             ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX - 1,
+> >                                        &uniname, &lossy);
+> >               if (ret < 0)
+> >                       return ret;
+> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> > index 8243d94ceaf4..57db08a5271c 100644
+> > --- a/fs/exfat/nls.c
+> > +++ b/fs/exfat/nls.c
+> > @@ -616,9 +616,6 @@ static int exfat_nls_to_ucs2(struct super_block *sb=
+,
+> >               unilen++;
+> >       }
+> >
+> > -     if (p_cstring[i] !=3D '\0')
+> > -             lossy |=3D NLS_NAME_OVERLEN;
+> > -
+> >       *uniname =3D '\0';
+> >       p_uniname->name_len =3D unilen;
+> >       p_uniname->name_hash =3D exfat_calc_chksum16(upname, unilen << 1,=
+ 0,
+> > --
 
