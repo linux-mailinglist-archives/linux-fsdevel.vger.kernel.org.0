@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-63885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8555BD1481
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 04:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFEFBD1496
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 05:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0043F3BA9F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 02:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 257FD3BF342
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 02:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAFA2EDD7C;
-	Mon, 13 Oct 2025 02:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F3C2F1FDB;
+	Mon, 13 Oct 2025 02:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FDfBpYZN"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v1agg868"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED671F5423;
-	Mon, 13 Oct 2025 02:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EA71F5423;
+	Mon, 13 Oct 2025 02:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760324323; cv=none; b=R8fcFwSVoRXJbYTcmkWOrg1whz4i/jgf4q+sO4rAoOZEKHeefFEMeTlNbLuQGwfmEO8pk1EasPZPAQ6iVYOrzdA4FvvFN7UcUpsdQ4wouVN7aQNe2DMIPPm6N/9vAaZuMlgD3FSR3ZJ7zxql+Wf9jTXVZqX5zBfJxLABugptOS0=
+	t=1760324330; cv=none; b=Lc2Y4Bw3cNOvBody2/cuZ6hhQOqbDsc3WvpIIi8JCQ2PEkIqcI0NcMIC/rdDyXQRiok3yzP/f+Dz24ZdlxhcC6aHrYTiv86CXNm64pT/9SG33mFhVag4BYWoRaAaEnmvcbgWSsqmdZG2FTGfkcbzVgtfwTLpqNWiuGcuyia6rsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760324323; c=relaxed/simple;
-	bh=cWKrZUawsezlCPQEn6CVYft5tCLpw9dN+GZZ65iEIys=;
+	s=arc-20240116; t=1760324330; c=relaxed/simple;
+	bh=Fd0kP3qhMdRCqOB2SQPhpe/thzrj/XYSCSrQAB8E1q8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i1aOB7nJapJobfniaTPYUY10kA+pNDMv5GbinMOUpTec8lbtVLjWr/HGIifyHiJv8OvC1ClztWiDERlkzNQYU8CGRlhaw8ED6cM3U8r2D+BR3fRfbvq4h27CWV94a6K+TqxUBcge11Vq6u3z+8RKhpzz4QWQ7pDl6c0was1hGMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FDfBpYZN; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=NyOlmEKcTRcauQe4XuiGjGL7Bn8QbgrMw7EZ6XHZFzY2chxQUcnwfO32lVxmwVsV6BVOmpbS0BMz1yTHImGAArgOrDVBzAHEwd7mIo8mBeqkNAZCbCFL3lywhhAoZUcNzmGc8isX2D0GinUTnkPvbVgaZLpkzJ+wmAU6cgnk+Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v1agg868; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=dQZOPAAeeds/w0ZlIXWjsgocvBDsAHF4UQnFeVZIJl8=; b=FDfBpYZNHkGYl26RqtPTH1d2z0
-	0grd2UwV3PK7DTQrexZXFT2MSdKVpYRL+Gjc3eFSuxeb03ctH5iPyQKpzIO6edBYs5CLd9PefOSSM
-	i+j8w8lTD4MZx5T8BNzqhQjwiPzFGW4QohpQ8TOsPSGb5ECwtiYghElUUuDsSmqULiAgDmPuLdwDj
-	pE95DuAtsOpzDNx6YaGtSTFWpMCalmXOLEyUGHDbBZ2vFQKi0Hg9HE1rwYeigBs5zic7UhFJ9nSVl
-	VJUIaBI9dI/hwo2OaxbrpcOR0PsHLKqRYJcCmgouWBRYW+9tyuOye5gNQ/srvuYKJiOGWhaYnd0Oq
-	epabVJjQ==;
+	bh=U/DAAkWmq2Dxx5Ncu78XnJSF3nOk6rkN/CJQmqoQWpE=; b=v1agg868KstaamClRF27PcxAmE
+	NMKTaFWdSt0z5b2C9IP/DIDFPD7zXPVT89f4fnltVINDZ7ES6vsQPElxFC8Wahjh08WYsbT8Xx4U/
+	PvrlxExKr7jaW23AlDsdD/3j2gQcVjYHULOZMyDMyzZAqBWpkyeLiMq2U9gSiO/Bb+vmTVicLSNbZ
+	Qw50TbDFEfFk6Sf3Mmkw5eCgl+dyz4UEdgpPZcRfcYmq7GLBuF6TNzL/XPkSkZp7sBy4pqKdLpQdp
+	AvSJJr70eSzdh+IVUoaoKh1XmeJJRiWgDBOsuQnXsHq40oDaH/Fwf5GzqpUljOMhy5j7WEKmQ12Wd
+	6GjFwTpw==;
 Received: from [220.85.59.196] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v88lh-0000000C87W-3jg1;
-	Mon, 13 Oct 2025 02:58:38 +0000
+	id 1v88lo-0000000C8BU-2H5E;
+	Mon, 13 Oct 2025 02:58:45 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Eric Van Hensbergen <ericvh@kernel.org>,
@@ -69,9 +69,9 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	ocfs2-devel@lists.linux.dev,
 	linux-xfs@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 03/10] ocfs2: don't opencode filemap_fdatawrite_range in ocfs2_journal_submit_inode_data_buffers
-Date: Mon, 13 Oct 2025 11:57:58 +0900
-Message-ID: <20251013025808.4111128-4-hch@lst.de>
+Subject: [PATCH 04/10] btrfs: use the local tmp_inode variable in start_delalloc_inodes
+Date: Mon, 13 Oct 2025 11:57:59 +0900
+Message-ID: <20251013025808.4111128-5-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251013025808.4111128-1-hch@lst.de>
 References: <20251013025808.4111128-1-hch@lst.de>
@@ -84,39 +84,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Use filemap_fdatawrite_range instead of opencoding the logic using
-filemap_fdatawrite_wbc.  There is a slight change in the conversion
-as nr_to_write is now set to LONG_MAX instead of double the number
-of the pages in the range.  LONG_MAX is the usual nr_to_write for
-WB_SYNC_ALL writeback, and the value expected by lower layers here.
+start_delalloc_inodes has a struct inode * pointer available in the
+main loop, use it instead of re-calculating it from the btrfs inode.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ocfs2/journal.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ fs/btrfs/inode.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index e5f58ff2175f..85239807dec7 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -902,15 +902,8 @@ int ocfs2_journal_alloc(struct ocfs2_super *osb)
- 
- static int ocfs2_journal_submit_inode_data_buffers(struct jbd2_inode *jinode)
- {
--	struct address_space *mapping = jinode->i_vfs_inode->i_mapping;
--	struct writeback_control wbc = {
--		.sync_mode =  WB_SYNC_ALL,
--		.nr_to_write = mapping->nrpages * 2,
--		.range_start = jinode->i_dirty_start,
--		.range_end = jinode->i_dirty_end,
--	};
--
--	return filemap_fdatawrite_wbc(mapping, &wbc);
-+	return filemap_fdatawrite_range(jinode->i_vfs_inode->i_mapping,
-+			jinode->i_dirty_start, jinode->i_dirty_end);
- }
- 
- int ocfs2_journal_init(struct ocfs2_super *osb, int *dirty)
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 3b1b3a0553ee..9edb78fc57fc 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -8744,9 +8744,9 @@ static int start_delalloc_inodes(struct btrfs_root *root,
+ 		if (snapshot)
+ 			set_bit(BTRFS_INODE_SNAPSHOT_FLUSH, &inode->runtime_flags);
+ 		if (full_flush) {
+-			work = btrfs_alloc_delalloc_work(&inode->vfs_inode);
++			work = btrfs_alloc_delalloc_work(tmp_inode);
+ 			if (!work) {
+-				iput(&inode->vfs_inode);
++				iput(tmp_inode);
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
+@@ -8754,7 +8754,7 @@ static int start_delalloc_inodes(struct btrfs_root *root,
+ 			btrfs_queue_work(root->fs_info->flush_workers,
+ 					 &work->work);
+ 		} else {
+-			ret = filemap_fdatawrite_wbc(inode->vfs_inode.i_mapping, wbc);
++			ret = filemap_fdatawrite_wbc(tmp_inode->i_mapping, wbc);
+ 			btrfs_add_delayed_iput(inode);
+ 			if (ret || wbc->nr_to_write <= 0)
+ 				goto out;
 -- 
 2.47.3
 
