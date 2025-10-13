@@ -1,134 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-64015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD43BD5DF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 21:04:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396E8BD60B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 22:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D4218A5583
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 19:05:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0E494EB13B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 20:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2428A2D5928;
-	Mon, 13 Oct 2025 19:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1062DBF4B;
+	Mon, 13 Oct 2025 20:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qusZC5sh"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="W3nCDC/F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xZDBaQRQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E2C2C21FE;
-	Mon, 13 Oct 2025 19:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E667C23F40D;
+	Mon, 13 Oct 2025 20:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760382278; cv=none; b=WOkz6t6vQ3L+eNdBmqjed4uW2nPidWh+wS/ZOzwesCo+z4YKejTjJ3lNMsZSa4P31CHtl9DQWpiTwpysU8wfjDnCQxTWisvR+m2lW+Z8QRlIIBJi6PlaveorsBf8CPzI1rdqrd4sEh2E0icBOt43n7xyawxqv2mg2PKdKdlY804=
+	t=1760386572; cv=none; b=l0K9WA8jK32vZK40S1ndQHYd3FDCWvf9rb4Ua5tLgd5aPE8cTKMHShedWuHvDZFLXv1s6YItE4JJicLjy5qzWTarUgGFu7bvHcedrTqP3rMWVOuG58WSFZDf5o+oj1dVNXI3AMljBrFr5aVPJPIVg6brzPKgAWfDYlJz2KALWow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760382278; c=relaxed/simple;
-	bh=FIsgkB5h5ry6n2BuuRKc7KLJmszdPvD2e0mt/o5qinc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thOGX3GDFm7YbxoKTi//Y6eYPnSAbaMW8kVqngRGN9qxys3DqD6ZFvizE8juBEVqnxMRhqs9kmgPJ28BxlYDzGEYmmN2MCH367m7cXFMLcXbm5HR3rDUU7cf+qGHFyU9T3Z3YGAqOHQ8fkHynPeLaMJx4/OsXUCU6k7XnEK2HnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qusZC5sh; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 9E2F014C2D3;
-	Mon, 13 Oct 2025 21:04:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1760382272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/I6JIBH6i2s+KyYmg/95gkYCV7Mkagjj3LtjeEdQzAI=;
-	b=qusZC5shpCqfOWYUxaMv2wNmODrBfb7vHdOlMuWw4wNq8DAIZ5LyH1F16/pu/8FsIuuXN5
-	zt4hHgGQ0bnv/cbcI2YtIIiT0DsoHpM0BmurlY4UvfLb98FITF7D38xnRo0ZbWQD+nwzVl
-	BFJizOk7J/nrQcnjk4caJYCVDqiVhiekB3KHSJ5/5zwGXds6Og4ljZFXeYUdrX4rZErEaz
-	5rYl6573bWAmEdNXIuiG55JGXp9TOuemmVxx1IZKdnECCXJAbzl41Bq4Nbc7NWmZMUWO+i
-	sqZtaG2dhHtNCdQAYN4xcnjc1DajKnWoeMQI+uHtn7WbKlL0FB8BnRL38WRdYw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c5a5a286;
-	Mon, 13 Oct 2025 19:04:27 +0000 (UTC)
-Date: Tue, 14 Oct 2025 04:04:12 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
-	eadavis@qq.com
-Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
-Message-ID: <aO1NLCI3kIdgWcvh@codewreck.org>
-References: <20251010214222.1347785-1-sandeen@redhat.com>
- <20251010214222.1347785-5-sandeen@redhat.com>
- <aOzT2-e8_p92WfP-@codewreck.org>
- <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
+	s=arc-20240116; t=1760386572; c=relaxed/simple;
+	bh=O4Rm4wsUSGFW4OxvMCJHeNaHN1GvluA3ToulwTHb/tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a5QQOy3kykxYItT/Fxk7er5ikBhfLfEaz0FwRMAEcSfbDkq0Kt2yLR8r47rMR6aE8F4U4hzo+7xro6c2C9dJB/i0KEK+oXoASV4KRjdMG7qh++01Fr1odcbFmDhtd7KwpUnLIvD7U0fD8MGGp3O1bm8UZnG/FBqM1FcSo4YXlf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=W3nCDC/F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xZDBaQRQ; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id E9CFC7A042C;
+	Mon, 13 Oct 2025 16:16:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Mon, 13 Oct 2025 16:16:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760386566;
+	 x=1760472966; bh=/Chgvb5Vr9Np2OqJMeWaxCMBRL89Tjsn/P5EOfDuoeI=; b=
+	W3nCDC/FnOgFylJ8JCUCdYeLSY6UD/suLZEfg8qtLLxh9TMZ19GPy2b72MjPxhZq
+	8CdVNEVEl2DgdUK17ApCUcL7m37kmRs8Vh2tQGtERWC0C4QojaoLMjiGgaxQF5gE
+	KuqvPCxC7Jb2aKelFevwTRd6Sfq98fkcxXgGRnoRRvaH2mmktRotAW1sdk4ceKnC
+	KAzzQEd/XWu0nii+r0hb4lWQSyjHdnte0T0MSmGaCUKixJ+tRxCQ705wyeyI8UrR
+	VEmU7APEQJSngx5tefVwt5ZVH9NUW+2TZ+t4fnl+OcLVj7oMeFvYt5rmK62A82U1
+	HE2nffkht0odRyqstqCU8g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760386566; x=
+	1760472966; bh=/Chgvb5Vr9Np2OqJMeWaxCMBRL89Tjsn/P5EOfDuoeI=; b=x
+	ZDBaQRQDw3oGekGIOPiEJWjKQJXbfHPGrDy1skqky954IjFduPBez7FjeA4kXTbq
+	3fLmQ7FcBtbwmyFiUL/w0hIwMY4jIuZv1sLPkFzkFpJFHCJbiT7W76by8Tuj+HS0
+	V+dg99kQsA8AjfEMfCyijI2oo7T8syAQAPgrmiinxH5L3smvGsmea0l7WcmEpFor
+	smdeX2hvBESofDSQu8ZBb0/6g2WB8z/fIfpy7CyGCV8GDBg3m1Mbt59ENPKWQJu0
+	M8zL7Xtzvgi+FROdw9CRaIMRf/cmdCwtoA4vsOpdidXrlGrJyAKN//4UCaRhQu7E
+	2B7JZ8PP7Ilj3BXwPNC4A==
+X-ME-Sender: <xms:Bl7taIbtgnPLnXuFahUqjMWPQji76AKxk4oOIJWuAKQSXvRR7Ngb5A>
+    <xme:Bl7taMv1mt-nPr3MWrs5ryauAWwj5IJ7wkgQvbCe6nAF1kLLfxuWlZVbEHSTUfGMN
+    u7v4VeEWgnrG5ghICYNKpb2rs0Tfv67QgwPFDJSk5ItrjSSW-zU>
+X-ME-Received: <xmr:Bl7taKPYaHVifc6zqjKtAG088LfXclQYYqnTrE3QI2Jht82q-vKcqxPw4uzX8zDxvNoMmM1QjFbpH733fkrLmwLfT0n1nzI6vuOhRiv_DMGMWM1V4m3a>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudekheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeejgfeljeeuffehhfeukedvudfhteethedtheefjefhveduteehhfdttedv
+    keekveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
+    hikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehgihhvvghmvgdrghhulhhu
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrih
+    hlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegsfhhoshhtvghrsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:Bl7taD7Ous-nhhxQMmLRcLiqr9oURKNgc1JiaA-x_JRmx3AggR9xQQ>
+    <xmx:Bl7taAT7BTu_6O-JR2FxLeh9aXwtzSoz_dfAG39yyxNVVKFVmvA-aw>
+    <xmx:Bl7taAB9j19rg5yvcTQM4RpeeCHjdtA6CpuVSDe7w2VvzBJPfokxAg>
+    <xmx:Bl7taAEVqsFSdwJMDfrmbzzBYyHSDOpfhCGfudahXTXKZL_WcuAVYg>
+    <xmx:Bl7taHDzEocpQAqEB5Z54BP32xpRCeOFNScfY1dole57fjWMGknr5uzj>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 Oct 2025 16:16:05 -0400 (EDT)
+Message-ID: <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
+Date: Mon, 13 Oct 2025 22:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Brian Foster <bfoster@redhat.com>
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Eric Sandeen wrote on Mon, Oct 13, 2025 at 01:46:42PM -0500:
-> > ... Which turned out to be needed right away, trying with qemu's 9p
-> > export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
-> > p9_virtio_create() with fc->source == NULL, instead of the expected
-> > "tmp" string
-> > (FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
-> > p9_fd_create_tcp(), might be easier to test with diod if that's what you
-> > used)
+
+
+On 10/13/25 15:39, Miklos Szeredi wrote:
+> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
 > 
-> I swear I tested this, but you are right, and it fails for me too.
+>> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
+>> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
+>> that it hasn't been invalidated.  If old_mtime is invalid or if
+>> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
+>> cache is not invalidated.
 > 
-> Oh ... I know what this is :(
+> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
+> Link to complete thread:
+> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
 > 
-> Introducing the "ignore unknown mount options" change in V4 caused it to
-> also ignore the unknown "source" option and report success; this made the
-> vfs think "source" was already handled in vfs_parse_fs_param() and
-> therefore it does not call vfs_parse_fs_param_source(). This has bitten
-> me before and it's a bit confusing.
+> In summary: auto_inval_data invalidates data cache even if the
+> modification was done in a cache consistent manner (i.e. write
+> through). This is not generally a consistency problem, because the
+> backing file and the cache should be in sync.  The exception is when
+> the writeback to the backing file hasn't yet finished and a getattr()
+> call triggers invalidation (mtime change could be from a previous
+> write), and the not yet written data is invalidated and replaced with
+> stale data.
 > 
-> I'm not sure how I missed this in my V4 testing, I'm very sorry.
-
-No harm done :)
-
-And thanks for the explanation, the vfs parsing being done only if the
-fs-specific parsing failed was far from obvious for me!
-
-> > Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
-> > the same) it looks like they all define a fsparam_string "source" option
-> > explicitly?...
+> The proposed fix was to exclude concurrent reads and writes to the same region.
 > 
-> Not all of them; filesystems that reject unknown options have "source"
-> handled for them in the VFS, but for filesystems like debugfs that
-> ignore unknown parameters it had to handle it explicitly. (Other
-> filesystems may do so for other reasons I suppose).
+> But the real issue here is that mtime changes triggered by this client
+> should not cause data to be invalidated.  It's not only racy, but it's
+> fundamentally wrong.  Unfortunately this is hard to do this correctly.
+> Best I can come up with is that any request that expects mtime to be
+> modified returns the mtime after the request has completed.
 > 
-> See also a20971c18752 which fixed a20971c18752, though the bug had
-> slightly less of an impact.
+> This would be much easier to implement in the fuse server: perform the
+> "file changed remotely" check when serving a FUSE_GETATTR request and
+> return a flag indicating whether the data needs to be invalidated or
+> not.
 
-(I assume the former was 3a987b88a425)
+For an intelligent server maybe, but let's say one uses
+<libfuse>/example/passthrough*, in combination with some external writes
+to the underlying file system outside of fuse. How would passthrough*
+know about external changes?
 
-> Yep, this looks correct, I think. It essentially "steals" the string from
-> the param and sets it in fc->source since the VFS won't do it for us.
+The part I don't understand yet is why invalidate_inode_pages2() causes
+an issue - it has folio_wait_writeback()?
 
-Yes, I copied that from nfs and it looks like debugfs does the same.
 
-> I can't help but feel like there's maybe a better treewide fix for this
-> to make it all a bit less opaque, but for now this is what other
-> filesystems do, and so I think this is the right fix for my series at
-> this point.
+Thanks,
+Bernd
 
-Not much better given it does the work twice but we could return -EINVAL
-in the case Opt_source statement to optimize for code size...
-I'm not sure that's quite clearer though, I'll stick to "doing what
-everyone else" does for now and we/someone can revisit this later.
+> 
+> Thoughts?
+> 
+> Thanks,
+> Miklos
 
-> Would you like me to send an updated patch with this change, or will you
-> just fix it on your end?
-
-Happy to roll it in directly, I'll reply again when I find time to
-finish testing and push to next.
--- 
-Dominique Martinet | Asmadeus
 
