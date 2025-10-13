@@ -1,218 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-64012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1AFBD5C50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 20:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC52BD5C70
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 20:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91110351679
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 18:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F20118A611E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 18:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4ACF2D3EDD;
-	Mon, 13 Oct 2025 18:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450152D374A;
+	Mon, 13 Oct 2025 18:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="EQS5O1MD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Lp5n2uck"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZUTEXPxq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5084E27510B;
-	Mon, 13 Oct 2025 18:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EC22D73AD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 18:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381209; cv=none; b=TlLWDVpbhkN0W1axrlAgIjF4oJIYFkzYADUrMDcjOyVM16zHG1OZvKbQ/KL/XncifvyeIlUIVKBVh6qV+c8/8LdTJtchzuKbh+28f+Payi+hQLtg99tZr4m3dGR3Yvz84VBRWFZRo3CgeOLbYzzUmWCOpZnzl5+6JuCGMw1YFWI=
+	t=1760381353; cv=none; b=JGsGJ+Pp+OuVGozee/2E1W8WPdLyRwv4IqIco3qNWFagNRV4BbSah+mzlg+WoDKGgFJG5cCOO/vNJAG46UwnRmmDiwIevHv//DaBiydk81AX8wIT/7YIA0qtmF35Sn2ijvnmDSCYUx6/abKy16XMXch1GD8fVzbYkkoXKbAjxkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381209; c=relaxed/simple;
-	bh=nJMlcJVKA/S/p+TwTJAR4sneUnfxxNXEk2Hi0g6cdT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hAMrZ+PQfyQ1YV/4mnc8U822xWk+Jyl/w3yLSzLr4uyl52NRbTlV07i1lESKr6PzpnzoSFBpFhoGq61HjfT/DZQxnkdi435LhJmYedkPPdQ9shRymDJvQL/5qpEnfoqoJuN4ro1q++ms559KBcs0BySciP7Sw0en1Fu/mheQ41I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=EQS5O1MD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Lp5n2uck; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5FAA21D000F8;
-	Mon, 13 Oct 2025 14:46:45 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 13 Oct 2025 14:46:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1760381205;
-	 x=1760467605; bh=ODvfGNxLi1HK131gK3WX63G87k/sXMzMiLk+BIgjTl8=; b=
-	EQS5O1MD0u22RtNerj6yV/BoxriKOQIbJPg2lN9JQCw/Q1U87yCwWEdedRbMwBK8
-	1UbNbsRiYWTb9fdJAksmjb6Q/M9njSv7UwoDIrMBIUA2HIcwn39Ds3iDXSVveOAL
-	tM6/E6t/EgOhAGux078xBEXTVfczOK3LJl08ylBqmk4r6VorS6MqlbkdIINil5ug
-	PKNkNiW/dBJ/WFia4+Y3SRv/QsTsLfbn8T/idN3Q4mhml8aLoOe8pKttHHTBGndd
-	jDchbT7NQ0HVM92yYfoctb2EKSgyf1hED/u9r4/Zhn9E/BUmKzhvTGHjyGgSOQrf
-	UGMf2l2LSUlXpBIXtCuL6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760381205; x=
-	1760467605; bh=ODvfGNxLi1HK131gK3WX63G87k/sXMzMiLk+BIgjTl8=; b=L
-	p5n2uckLHSMG8sj+hsupnVQDXhLWoOJIGbRwBAaeqtxHwajKmaTQ3OWwNW3clTUt
-	5mzD/G2HuXui2hj23fRD5yvkNsyWmIOvVTaOY4yknQaEG2N+mVC0iCmwXYQ2LMjH
-	F7QMgARDAInJX+cdsfYuOm23GGgOPt+jJYfehbu5kxDFZzdPL72x/Z/I0NXpz2P6
-	1mJrMQbD7T09m4CdlaFrl2vFz6ewLaZQNLeY0ekBHp6oGtxY0N6DHZ8AUFSDUmY3
-	Z/3MfGMIP/OykT2SEUM1D+fhwEkEihi3ndwifSFn59XIZYz2hZT+vRQ4BMTIeTDS
-	XlBmQGca7qzSiSS/pKvZA==
-X-ME-Sender: <xms:FEntaMhfLY3YZMRI5mN8pvnBYJVfm_4dS8pxLJL5gh_ucCOaBaIiXQ>
-    <xme:FEntaFcuYa4ITfNHkv4nz5WXl3E6H5ZAcbWfDLOWp0JtqdwgjCZJlgyR2B02btNQ8
-    WaPdREiri_SnbqJoE09WOys9NseiHkUot8pTFRXBXyStWQZDg4sC7w>
-X-ME-Received: <xmr:FEntaEzhPYIBLdzMZTdjnvSuKVXNOS-YuEHHZUmW-9IS_48ux94ospxGwdAUFJYekaEviTMsbdeXku_ARJnZDOY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudekgeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejre
-    dttddvjeenucfhrhhomhepgfhrihgtucfurghnuggvvghnuceoshgrnhguvggvnhesshgr
-    nhguvggvnhdrnhgvtheqnecuggftrfgrthhtvghrnhepveeikeeuteefueejtdehfeefvd
-    egffeivdejjeelfffhgeegjeeutdejueelhfdvnecuvehluhhsthgvrhfuihiivgeptden
-    ucfrrghrrghmpehmrghilhhfrhhomhepshgrnhguvggvnhesshgrnhguvggvnhdrnhgvth
-    dpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghs
-    mhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtohepshgrnhguvggvnh
-    esrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhig
-    rdguvghvpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtoheplhhinhhugigp
-    ohhsshestghruhguvggshihtvgdrtghomhdprhgtphhtthhopegvrggurghvihhssehqqh
-    drtghomh
-X-ME-Proxy: <xmx:FEntaE0cnx7HP2HiNctGcyISzco3pACZEkz_gZ6CijkpRg-0mdhu9w>
-    <xmx:FEntaKxzzk2sEh9LAAuI4EzwWtzoaCr26Gz6hvRHWpyszyyMI5G4DQ>
-    <xmx:FEntaJXJ2JdGIuw31tlczbar6W_BxT7CUAykswYgqKyii21Wcj8qSw>
-    <xmx:FEntaG-K49NP11ml-ZDo78NDGknw9DqRED2v2U1Upb5ZpxZL6PznTA>
-    <xmx:FUntaHy9uBs-56vNBRCN_s5BmMhUbygjt52nQ5QcDwNYE2ltn1DAXBjJ>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 Oct 2025 14:46:43 -0400 (EDT)
-Message-ID: <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
-Date: Mon, 13 Oct 2025 13:46:42 -0500
+	s=arc-20240116; t=1760381353; c=relaxed/simple;
+	bh=vDKQLf2zX4fUf97LFE8Olo0Bnc7aaZR0LZz7MiKjsrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDpMczzALTC8+CcXvZgiG2FR+wOBqei/1zIlfpD9lOl6yY5egux5PJe0ug+shT/xqvz5HiM9cQvqF4iyJ9jKGCWZ4xWVRjDXY8DBm7DEVFdxmunCrYWlnRbDj1ZmzBHPMYSMCa2rkDg01HxI8z5UDUTIilhFJcR4vksGg24qcfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZUTEXPxq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760381350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IArTzD9Rd6pbKFw8bx7rmNikp77yVmo/ioJRL5FLrNg=;
+	b=ZUTEXPxqDf7ZzFfd3XPQQPoHH+EKc8MCdVMLxwgPq75UjuE7TcgJsqeGDEvUS8lNuxa3oK
+	XJ8dGAKnglP9xSe2d31HiIhGXJMDagdF4bRgwuBOMvRD4SlbjO8u66oDfTr+GpLdlj2xlC
+	CR31MAzOz62csIjbm/pyMdjpHq5xp34=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-KAgC93bzOM6DCojhdFrIdQ-1; Mon,
+ 13 Oct 2025 14:49:05 -0400
+X-MC-Unique: KAgC93bzOM6DCojhdFrIdQ-1
+X-Mimecast-MFC-AGG-ID: KAgC93bzOM6DCojhdFrIdQ_1760381344
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1F9519560AE;
+	Mon, 13 Oct 2025 18:49:03 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.119])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D8C319560A2;
+	Mon, 13 Oct 2025 18:49:02 +0000 (UTC)
+Date: Mon, 13 Oct 2025 14:53:11 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bernd Schubert <bernd@bsbernd.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+Message-ID: <aO1Klyk0OWx_UFpz@bfoster>
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster>
+ <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Eric Sandeen <sandeen@redhat.com>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
- linux_oss@crudebyte.com, eadavis@qq.com
-References: <20251010214222.1347785-1-sandeen@redhat.com>
- <20251010214222.1347785-5-sandeen@redhat.com>
- <aOzT2-e8_p92WfP-@codewreck.org>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <aOzT2-e8_p92WfP-@codewreck.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 10/13/25 5:26 AM, Dominique Martinet wrote:
-> Hi Eric,
+On Mon, Oct 13, 2025 at 08:23:39PM +0200, Miklos Szeredi wrote:
+> On Mon, 13 Oct 2025 at 19:40, Brian Foster <bfoster@redhat.com> wrote:
 > 
-> Thanks for this V3!
+> > If I follow the report correctly, we're basically producing an internal
+> > inconsistency between mtime and cache state that falsely presents as a
+> > remote change, so one of these attr change checks can race with a write
+> > in progress and invalidate cache. Do I have that right?
 > 
-> I find it much cleaner, hopefully will be easier to debug :)
-
-Good news and bad news, I see.
-
-> ... Which turned out to be needed right away, trying with qemu's 9p
-> export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
-> p9_virtio_create() with fc->source == NULL, instead of the expected
-> "tmp" string
-> (FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
-> p9_fd_create_tcp(), might be easier to test with diod if that's what you
-> used)
-
-I swear I tested this, but you are right, and it fails for me too.
-
-Oh ... I know what this is :(
-
-Introducing the "ignore unknown mount options" change in V4 caused it to
-also ignore the unknown "source" option and report success; this made the
-vfs think "source" was already handled in vfs_parse_fs_param() and
-therefore it does not call vfs_parse_fs_param_source(). This has bitten
-me before and it's a bit confusing.
-
-I'm not sure how I missed this in my V4 testing, I'm very sorry.
-
-> Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
-> the same) it looks like they all define a fsparam_string "source" option
-> explicitly?...
-
-Not all of them; filesystems that reject unknown options have "source"
-handled for them in the VFS, but for filesystems like debugfs that
-ignore unknown parameters it had to handle it explicitly. (Other
-filesystems may do so for other reasons I suppose).
-
-See also a20971c18752 which fixed a20971c18752, though the bug had
-slightly less of an impact.
-
-> Something like this looks like it works to do (+ probably make the error
-> more verbose? nothing in dmesg hints at why mount returns EINVAL...)
-> -----
-> diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-> index 6c07635f5776..999d54a0c7d9 100644
-> --- a/fs/9p/v9fs.c
-> +++ b/fs/9p/v9fs.c
-> @@ -34,6 +34,8 @@ struct kmem_cache *v9fs_inode_cache;
->   */
->  
->  enum {
-> +	/* Mount-point source */
-> +	Opt_source,
->  	/* Options that take integer arguments */
->  	Opt_debug, Opt_dfltuid, Opt_dfltgid, Opt_afid,
->  	/* String options */
-> @@ -82,6 +84,7 @@ static const struct constant_table p9_cache_mode[] = {
->   * the client, and all the transports.
->   */
->  const struct fs_parameter_spec v9fs_param_spec[] = {
-> +	fsparam_string  ("source",      Opt_source),
->  	fsparam_u32hex	("debug",	Opt_debug),
->  	fsparam_uid	("dfltuid",	Opt_dfltuid),
->  	fsparam_gid	("dfltgid",	Opt_dfltgid),
-> @@ -210,6 +213,14 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  	}
->  
->  	switch (opt) {
-> +	case Opt_source:
-> +                if (fc->source) {
-> +			pr_info("p9: multiple sources not supported\n");
-> +			return -EINVAL;
-> +		}
-> +		fc->source = param->string;
-> +		param->string = NULL;
-
-Yep, this looks correct, I think. It essentially "steals" the string from
-the param and sets it in fc->source since the VFS won't do it for us.
-
-I can't help but feel like there's maybe a better treewide fix for this
-to make it all a bit less opaque, but for now this is what other
-filesystems do, and so I think this is the right fix for my series at
-this point.
-
-Would you like me to send an updated patch with this change, or will you
-just fix it on your end?
-
-Thanks,
--Eric
-
-> +		break;
->  	case Opt_debug:
->  		session_opts->debug = result.uint_32;
->  #ifdef CONFIG_NET_9P_DEBUG
-> -----
+> Yes.
 > 
-> I'll try to find some time to test a mix of actual mount options later
-> this week
+> >
+> > But still a few questions..
+> >
+> > 1. Do we know where exactly the mtime update comes from? Is it the write
+> > in progress that updates the file mtime on the backend and creates the
+> > inconsistency?
 > 
-> Cheers,
+> It can be a previous write.  A write will set STATX_MTIME in
+> fi->inval_mask, indicating that the value cached in i_mtime is
+> invalid.  But the auto_inval code will ignore that and use  cached
+> mtime to compare against the new value.
+> 
+> We could skip data invalidation if the cached value of mtime is not
+> valid, but this could easily result in remote changes being missed.
+> 
+
+Hrm Ok. But even if we did miss remote changes, whose to say we can even
+resolve that correctly from the kernel anyways..? Like if there happens
+to be dirty data in cache and a remote change at the same time, that
+kind of sounds like a policy decision for userspace. Maybe the fuse
+position should be something like "expose mechanisms to manage this,
+otherwise we'll just pick a side." Or "we'll never toss dirty data
+unless explicitly asked by userspace."
+
+> >
+> > 2. Is it confirmed that auto_inval is the culprit here? It seems logical
+> > to me, but it can also be disabled dynamically so couldn't hurt to
+> > confirm that if there's a reproducer.
+> 
+> Yes, reproducer has auto_inval_data turned on (libfuse turns it on by default).
+> 
+
+I was more wondering if the problem goes away if it were disabled..
+
+> >
+> > 3. I don't think we should be able to invalidate "dirty" folios like
+> > this. On a quick look though, it seems we don't mark folios dirty in
+> > this write path. Is that right?
+> 
+> Correct.
+> 
+> >
+> > If so, I'm a little curious if that's more of a "no apparent need" thing
+> > since the writeback occurs right in that path vs. that is an actual
+> > wrong thing to do for some reason. Hm?
+> 
+> Good question.  I think it's wrong, since dirtying the pages would
+> allow the witeback code to pick them up, which would be messy.
+> 
+
+Ah, yeah that makes sense. Though invalidate waits on writeback. Any
+reason this path couldn't skip the dirty state but mark the pages as
+under writeback across the op?
+
+> > Agreed in general. IIUC, this is ultimately a heuristic that isn't
+> > guaranteed to necessarily get things right for the backing fs. ISTM that
+> > maybe fuse is trying too hard to handle the distributed case correctly
+> > where the backing fs should be the one to implement this sort of thing
+> > through exposed mechanisms. OTOH so long as the heuristic exists we
+> > should probably at least work to make it internally consistent.
+> 
+> Yes, that's my problem.  How can we fix this without adding too much
+> complexity and without breaking existing uses?
+> 
+
+I probably need to stare at the code some more. Sorry, it's been quite a
+while since I've looked at this. Curious.. was there something wrong
+with your unstable mtime idea, or just that it might not be fully
+generic enough?
+
+This might be a good question for any fuse based distributed fs
+projects. I'm not sure if/how active glusterfs is these days..
+
+Brian
+
+> Thanks,
+> Miklos
+> 
 
 
