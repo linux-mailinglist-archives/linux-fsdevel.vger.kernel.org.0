@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-63978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE44BD3B79
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 16:54:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54A0BD3D17
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 17:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386D31883C5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 14:54:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74E5C4F3F4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 14:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A1830C612;
-	Mon, 13 Oct 2025 14:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A5430CDAC;
+	Mon, 13 Oct 2025 14:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfL9FY07"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JT4W7NAT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206021E9B0D;
-	Mon, 13 Oct 2025 14:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806EE30CD93;
+	Mon, 13 Oct 2025 14:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366917; cv=none; b=IhWeF1L20a7sIYEp4XIyFlbY9LVv0bGFJmi/O9FYHAzLWG3tVK6TX8bUA1U2PDZlpExXbN0v56xfZaYcf7JZKECU/a3vVTrz6YsRnYk4bGs1Rv/K895WBOMUML4aBrJD2Uhn+KyMcwO8TgLpESoF/FhGzbSXb0II46zRPsBERL8=
+	t=1760366920; cv=none; b=NKSnNkIi6u6XhKaIO7Gk6T0ql+/GlncQ/y+mDY+lqjlLtL3Ma3iTgPGEMZf9FUNmkdk0IC2adgh3awCqecANw+iJZCgO8QMxzixbYfcxfEV92wLx0+M02+UfF310owfz+KEYcTdUe0S5p0k05dfYYTAHp12jY3DfYYCTL5SCbOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366917; c=relaxed/simple;
-	bh=D4Q1z5eeaVUO9Z+ECTf/6Zqc/vYd4ncdAUbJ5tZDhnY=;
+	s=arc-20240116; t=1760366920; c=relaxed/simple;
+	bh=7C2fHBBRtUSq2lBVdEoW6vR3dOF799abQITSiYChU7c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C7Qj7IUcCmKnQ13uwaRo0CSY88fGuMkp2S8wK6yBEIO412GdZpZ1PIBpQIZ1s/Si3yc7Sg3pvqDGZuSj+JJ6W+wFB/xiV9e9R/+hXek4r00+fdyjikTtmQN36N7qdP6ldggzfYqtCe7/+Mzd7us+BU0Wz33Th7+DE4ItAzvzeQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfL9FY07; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79124C113D0;
-	Mon, 13 Oct 2025 14:48:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=TC+Y8g+5MQadRCq30sn3N8GX8NgJr4QF/ynSoFyUJ+W0f3HQb/5NlvDyRn5ileNVodzYLwOVXbSGCSsdWpj8/ACdHxOhbBmUJ8Or62ujsGFrsFEDEAWVuNonyVMybOwfNePJGBl6uvQ9u8zFl0PlSwTify5htlsiqIMRE72VOH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JT4W7NAT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD07BC4CEFE;
+	Mon, 13 Oct 2025 14:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760366916;
-	bh=D4Q1z5eeaVUO9Z+ECTf/6Zqc/vYd4ncdAUbJ5tZDhnY=;
+	s=k20201202; t=1760366920;
+	bh=7C2fHBBRtUSq2lBVdEoW6vR3dOF799abQITSiYChU7c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JfL9FY07R2Mh4tOb+lcOkKBeKVADGuZNXDO7OXsCYqmmjkCgCjmHloBV7bgJsDPpf
-	 CEvNTdN6THsqg7azapM+eqp+l2kUnQbOcTS7T1EH7MqHtRyZA/z+/U8p0ekcnDg+2v
-	 iE8n5/TthVtHWVR8TrgmDd3vXpMxnKiDXRXnF/+vYCJQ7HdIR4BldUaEQSiol85gah
-	 2S8AdC0KYn6XLnvpOlxfRo6powC733dFLmj/Kbc03Y4to7RjqbuQ+gNySExv2bW5/I
-	 z4PnjfNRNMFheMh7FBBbynukLwz0bhhWivHr1l8nTzGUkTkmhu2cJgL93MtTybX8/4
-	 kNBuelTrEtx7A==
+	b=JT4W7NATEE2gKo1hwpPS23uYqVqSG2EejlKCjHJJDjxi/TzS0JnvVbeEuEhKYPPQ9
+	 Lsg4z+YN3ahcrQ9E/Jq/4C1cg2tolHKAjmmLYP0UBVMKboJb4RQJAU6E8mAXVYriVA
+	 teMKsJYqexz+bFfpk7Vij/ETbsyUZwbs6LdTyBNA2Smgra6omUSROs5Rq5ZHQN/CMn
+	 b38P55mNi98xBUr5ILPBTESPBMPorn/VrcoqK+cNy6hfOUHMKSTlqVUza7XNc1JoAE
+	 nCaB72XyVgcN+pINhHlGnb9fth949QTvmlOoB/YoShwIqrSI6fWZ2ycgz7GzkVsXwd
+	 CNV0fRx0JbBQA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 13 Oct 2025 10:48:04 -0400
-Subject: [PATCH 06/13] vfs: break parent dir delegations in open(...,
- O_CREAT) codepath
+Date: Mon, 13 Oct 2025 10:48:05 -0400
+Subject: [PATCH 07/13] vfs: make vfs_create break delegations on parent
+ directory
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-dir-deleg-ro-v1-6-406780a70e5e@kernel.org>
+Message-Id: <20251013-dir-deleg-ro-v1-7-406780a70e5e@kernel.org>
 References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
 In-Reply-To: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, 
@@ -84,20 +84,20 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2938; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=D4Q1z5eeaVUO9Z+ECTf/6Zqc/vYd4ncdAUbJ5tZDhnY=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo7RErwqx3LlOE+U0VGrXGQHDV3voPg/0wc/+aj
- Jux5LApcN6JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaO0RKwAKCRAADmhBGVaC
- FfidD/48/7/CVhQirrZb/jlRR0g9ThXDJbv6PoXlePNXWN/sCyolLMVStN+yxhBVwIkIgLhgvCw
- OYl2EmAe2KiauHQIkj86+IJvfsBa16kmnzK8gddwBmhh4+To62UaLL8fuJh/Hn9DdFG3uQD0JfO
- uOETKsvK9pz3P+FiZTsftXNOSsH5xezYTWLHzs2ll+Fg0AyfEfVfXBcZSLtzWzT5P4hVUw74n/6
- GuP+N396MaOD1LIrh6WttjNJkdPfVh1WRAQSjk4S5R5trpfmz6Rmq/JsRxIBDczp2CMw2dvUK7t
- Y2rPjy23LkE7fIlK5AVmKrqNcgtbI2W1KiVUS31Ru8F4e24LHJf2MbcMLTuL25iU1xXj6q94O2C
- 5Yl+kmpbN16voAZFuPsaH+B1klOVVcXa/cnSdCV84FAlI+1dIo2T0o2Je05Qjy3dmOMLLPziEwG
- KqtYF1IGJ6kJmcKDnSrUeRAFR6CwdYJOQn/I5wrR0KNKWSC1iWkERpSg518rGo6ovNqNt6w85Cz
- aMHtwj6omHeGx7iN63vRU5ig3gFBJAerC6rtO1ZYmaFvJesbutE2VqqCqz7QWwDUopm6wcilznr
- 56bO+rYVEzcEepKersOhqa/i15BGcbpT/2Cg3LdzzP4elhN5BOSSzAN1gR8E7ZfDyONY5SVGKDs
- xwrmPl0WYjmx1eQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3533; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=7C2fHBBRtUSq2lBVdEoW6vR3dOF799abQITSiYChU7c=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo7RErZ0OXvA0nLRHai3beQ6E7JYIExl/CLVw50
+ BW6y7OkK6OJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaO0RKwAKCRAADmhBGVaC
+ FTAnD/9l7NjZwG5Pedn+L3ocjTEP7z6atjtbFEPJVZemMgyoL0tVIAPC1/kf2lnod7ALItFgwrT
+ 7mncOsFLgcjLCo8cWDzwDzB4JNnPzOwAXai2uTg+PuPTIJ9AKDL4eFBvSFYXz1gOZGmbOcgsBuU
+ aeQ/kiFBThtg/ZQZ5sl3z+SnU4Nne8AY/j9iIUehVue57alCVwvql9x1TwAFWVA65VsuE4r3GFJ
+ 3BHHHcFscJAzE+YI15IZlu7RlhmokCzd/xxFXmBFMUcBg8NqJGkOLcJgkcbs/Vy+OTPMyM3OTPa
+ 3quEYiSMRkTA39xa3vNShbkOUVSUUYiIVaec2XacWTq9FtCXopp81f5sslXm79iEqkzQUnZZyZv
+ D4oWIxiiJNOKhdZTBkGfydzeEDCm7yly1Egz/WUT3rq7WX3VW6Z4s25xSPSe4bvn+G3XODxkt8K
+ 0FSJ/bqY/rEgBq7FWKjk7PgyjgzWJfY4b44okNcUSUZIKBbJd3lrx1ee2dsspB+KGJ5cXmGRbLE
+ AL/G3aphtBepDN6qaEwC7GB5iQhvkE7jBM96TNbDVviNbsQUZx6tKqkkXlI14dr1/OrCBoHTW9f
+ KxMVFRYrWosAPT/Cmr1y5SbAsUwarhpxvvqYBo8WhAZGFZJL0/M/q92IEZOWwsbt1MvMQs0ql3f
+ 8tiRUytDv0pvibQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -105,84 +105,110 @@ In order to add directory delegation support, we need to break
 delegations on the parent whenever there is going to be a change in the
 directory.
 
-Add a delegated_inode parameter to lookup_open and have it break the
-delegation. Then, open_last_lookups can wait for the delegation break
-and retry the call to lookup_open once it's done.
+Rename vfs_create as __vfs_create, make it static, and add a new
+delegated_inode parameter. Fix do_mknodat to call __vfs_create and wait
+for a delegation break if there is one. Add a new exported vfs_create
+wrapper that passes in NULL for delegated_inode.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/namei.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ fs/namei.c | 55 ++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 36 insertions(+), 19 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 4b5a99653c558397e592715d9d4663cd4a63ef86..786f42bd184b5dbf6d754fa1fb6c94c0f75429f2 100644
+index 786f42bd184b5dbf6d754fa1fb6c94c0f75429f2..1427c53e13978e70adefdc572b71247536985430 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3697,7 +3697,7 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
-  */
- static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 				  const struct open_flags *op,
--				  bool got_write)
-+				  bool got_write, struct inode **delegated_inode)
- {
- 	struct mnt_idmap *idmap;
- 	struct dentry *dir = nd->path.dentry;
-@@ -3786,6 +3786,11 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+@@ -3458,6 +3458,32 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+ 	return mode;
+ }
  
- 	/* Negative dentry, just create the file */
- 	if (!dentry->d_inode && (open_flag & O_CREAT)) {
-+		/* but break the directory lease first! */
-+		error = try_break_deleg(dir_inode, delegated_inode);
-+		if (error)
-+			goto out_dput;
++static int __vfs_create(struct mnt_idmap *idmap, struct inode *dir,
++			struct dentry *dentry, umode_t mode, bool want_excl,
++			struct inode **delegated_inode)
++{
++	int error;
 +
- 		file->f_mode |= FMODE_CREATED;
- 		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
- 		if (!dir_inode->i_op->create) {
-@@ -3849,6 +3854,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
++	error = may_create(idmap, dir, dentry);
++	if (error)
++		return error;
++
++	if (!dir->i_op->create)
++		return -EACCES;	/* shouldn't it be ENOSYS? */
++
++	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
++	error = security_inode_create(dir, dentry, mode);
++	if (error)
++		return error;
++	error = try_break_deleg(dir, delegated_inode);
++	if (error)
++		return error;
++	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
++	if (!error)
++		fsnotify_create(dir, dentry);
++	return error;
++}
++
+ /**
+  * vfs_create - create new file
+  * @idmap:	idmap of the mount the inode was found from
+@@ -3477,23 +3503,7 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+ int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+ 	       struct dentry *dentry, umode_t mode, bool want_excl)
  {
- 	struct dentry *dir = nd->path.dentry;
-+	struct inode *delegated_inode = NULL;
- 	int open_flag = op->open_flag;
- 	bool got_write = false;
- 	struct dentry *dentry;
-@@ -3879,7 +3885,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- 				return ERR_PTR(-ECHILD);
- 		}
- 	}
+-	int error;
 -
-+retry:
- 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
- 		got_write = !mnt_want_write(nd->path.mnt);
- 		/*
-@@ -3892,7 +3898,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		inode_lock(dir->d_inode);
- 	else
- 		inode_lock_shared(dir->d_inode);
--	dentry = lookup_open(nd, file, op, got_write);
-+	dentry = lookup_open(nd, file, op, got_write, &delegated_inode);
- 	if (!IS_ERR(dentry)) {
- 		if (file->f_mode & FMODE_CREATED)
- 			fsnotify_create(dir->d_inode, dentry);
-@@ -3907,8 +3913,16 @@ static const char *open_last_lookups(struct nameidata *nd,
- 	if (got_write)
- 		mnt_drop_write(nd->path.mnt);
+-	error = may_create(idmap, dir, dentry);
+-	if (error)
+-		return error;
+-
+-	if (!dir->i_op->create)
+-		return -EACCES;	/* shouldn't it be ENOSYS? */
+-
+-	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+-	error = security_inode_create(dir, dentry, mode);
+-	if (error)
+-		return error;
+-	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
+-	if (!error)
+-		fsnotify_create(dir, dentry);
+-	return error;
++	return __vfs_create(idmap, dir, dentry, mode, want_excl, NULL);
+ }
+ EXPORT_SYMBOL(vfs_create);
  
--	if (IS_ERR(dentry))
-+	if (IS_ERR(dentry)) {
-+		if (delegated_inode) {
-+			int error = break_deleg_wait(&delegated_inode);
-+
-+			if (!error)
-+				goto retry;
-+			return ERR_PTR(error);
-+		}
- 		return ERR_CAST(dentry);
+@@ -4365,6 +4375,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = 0;
++	struct inode *delegated_inode = NULL;
+ 
+ 	error = may_mknod(mode);
+ 	if (error)
+@@ -4383,8 +4394,9 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	idmap = mnt_idmap(path.mnt);
+ 	switch (mode & S_IFMT) {
+ 		case 0: case S_IFREG:
+-			error = vfs_create(idmap, path.dentry->d_inode,
+-					   dentry, mode, true);
++			error = __vfs_create(idmap, path.dentry->d_inode,
++					     dentry, mode, true,
++					     &delegated_inode);
+ 			if (!error)
+ 				security_path_post_mknod(idmap, dentry);
+ 			break;
+@@ -4399,6 +4411,11 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	}
+ out2:
+ 	end_creating_path(&path, dentry);
++	if (delegated_inode) {
++		error = break_deleg_wait(&delegated_inode);
++		if (!error)
++			goto retry;
 +	}
- 
- 	if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
- 		dput(nd->path.dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
 
 -- 
 2.51.0
