@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-63880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14B0BD1275
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 03:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0512BD1233
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 03:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76C63BF502
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 01:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F1E3BED69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 01:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8277E2F60B6;
-	Mon, 13 Oct 2025 01:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546FF2D5C9E;
+	Mon, 13 Oct 2025 01:52:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3992F547C;
-	Mon, 13 Oct 2025 01:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0F3271446;
+	Mon, 13 Oct 2025 01:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760320374; cv=none; b=qy0o6MaTucjztsCXCzMlKmEJJdfDaIxmtH8SzOG0rfDgpDkhO+92M2NB0+5OQAlUqLSv8I37hcL5rWH5hLWfpaQtKVG8DWgK+sTMFCcso7mkJFLtsoNdUbuwFVl1LE3SHUb9JFRwChn/qSmqYPAJzPPf7CLdg5C3wAbpRp9TZGw=
+	t=1760320364; cv=none; b=gHAhZ7opaWcDnCf7S/ue9TrXvnvJQNqjqm1XMBLyxac1AjS1SaI0tqto3gxSvFlsfrTlZ2xenG0ewObqNM1xabckzLykTkjGHCaJF/uj4y07meEta9oGieTNl9wIb7JthEqHjanIP+VccWFq+gOtbVVMOIp+6Rp28VtrsIOY8Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760320374; c=relaxed/simple;
-	bh=6gqCwprDnzKylPfT+PySJfgXKnZks5bNSc2PuXv0mEE=;
+	s=arc-20240116; t=1760320364; c=relaxed/simple;
+	bh=CJkdOIkeM/1vzG3VyqnKLvaTIBy9aJpVScDorIkDe3g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k48t7RGZ3/7mIcmPj3lTYxCZ87a4cJG8oOaMiohRF8I1rlMjnpUPnR0aC8V3KdbfLv3b+SC6UIE5p8jBBaOsGR1GJvrQbpLSzjLIV6doMd6D6lHS4q4tI7qXBs9kM2DmcyIYE9ACOG6nKh+xpJ3uICPzYLbGKLO6pu5Odp1WBCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Zd/nZOjLQj6IdZ35VX7GWyBVhxS6EeM62MeL34+xo/wkB/sbElqtRklPMg9spShk2/rv5rxUGBp0FuRabzRD+AeH1v3lvMNfFvPYeOlQucVY0TGP4CA+P5G0lINhF/DtPxv5oDPw790mIIXYzHTE4u2P/d2eI6KeR8NSEspI18g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4clL1s3JNKzYQtnf;
-	Mon, 13 Oct 2025 09:52:01 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4clL1y0N5SzKHMM3;
+	Mon, 13 Oct 2025 09:52:06 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 12C961A0F70;
+	by mail.maildlp.com (Postfix) with ESMTP id 25E151A1344;
 	Mon, 13 Oct 2025 09:52:40 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgCn_UVfW+xoNhu7AA--.53067S13;
-	Mon, 13 Oct 2025 09:52:39 +0800 (CST)
+	by APP2 (Coremail) with SMTP id Syh0CgCn_UVfW+xoNhu7AA--.53067S14;
+	Mon, 13 Oct 2025 09:52:40 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH v4 09/12] ext4: introduce mext_move_extent()
-Date: Mon, 13 Oct 2025 09:51:25 +0800
-Message-ID: <20251013015128.499308-10-yi.zhang@huaweicloud.com>
+Subject: [PATCH v4 10/12] ext4: switch to using the new extent movement method
+Date: Mon, 13 Oct 2025 09:51:26 +0800
+Message-ID: <20251013015128.499308-11-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20251013015128.499308-1-yi.zhang@huaweicloud.com>
 References: <20251013015128.499308-1-yi.zhang@huaweicloud.com>
@@ -63,323 +63,519 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCn_UVfW+xoNhu7AA--.53067S13
-X-Coremail-Antispam: 1UD129KBjvJXoW3tFyDCF1fJrW3Wr18uw1rJFb_yoWDCryfpF
-	W2krn8JrWDG3yI9r4Iyw48Zr1fKayxGr47AayfW343ZFyUtry0gas5t3WjvFyrKrWxJFyF
-	qF4Fyry7Way7AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUljgxUUUUU=
+X-CM-TRANSID:Syh0CgCn_UVfW+xoNhu7AA--.53067S14
+X-Coremail-Antispam: 1UD129KBjvAXoWfGw1UJry7Wr4UtFW5XF4DCFg_yoW8WrW5Wo
+	WfCF4jqwn5Wr9Ig3ykKw10yFyUXan7Jw4rJrWfursrWFy3X3W5C39xG3Z7Ja43Xa1rKr15
+	Xa4xJ3WYyrZ7trn5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUOV7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
+	Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+	84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJV
+	WxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE
+	3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2I
+	x0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8
+	JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2
+	ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+	AF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1l
+	IxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
+	1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIY
+	CTnIWIevJa73UjIFyTuYvjfUo73vUUUUU
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-When moving extents, the current move_extent_per_page() process can only
-move extents of length PAGE_SIZE at a time, which is highly inefficient,
-especially when the fragmentation of the file is not particularly
-severe, this will result in a large number of unnecessary extent split
-and merge operations. Moreover, since the ext4 file system now supports
-large folios, using PAGE_SIZE as the processing unit is no longer
-practical.
-
-Therefore, introduce a new move extents method, mext_move_extent(). It
-moves one extent of the origin inode at a time, but not exceeding the
-size of a folio. The parameters for the move are passed through the new
-mext_data data structure, which includes the origin inode, donor inode,
-the mapping extent of the origin inode to be moved, and the starting
-offset of the donor inode.
-
-The move process is similar to move_extent_per_page() and can be
-categorized into three types: MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, and
-MEXT_COPY_DATA. MEXT_SKIP_EXTENT indicates that the corresponding area
-of the donor file is a hole, meaning no actual space is allocated, so
-the move is skipped. MEXT_MOVE_EXTENT indicates that the corresponding
-areas of both the origin and donor files are unwritten, so no data needs
-to be copied; only the extents are swapped. MEXT_COPY_DATA indicates
-that the corresponding areas of both the origin and donor files contain
-data, so data must be copied. The data copying is performed in three
-steps: first, the data from the original location is read into the page
-cache; then, the extents are swapped, and the page cache is rebuilt to
-reflect the index of the physical blocks; finally, the dirty page cache
-is marked and written back to ensure that the data is written to disk
-before the metadata is persisted.
-
-One important point to note is that the folio lock and i_data_sem are
-held only during the moving process. Therefore, before moving an extent,
-it is necessary to check whether the sequence cookie of the area to be
-moved has changed while holding the folio lock. If a change is detected,
-it indicates that concurrent write-back operations may have occurred
-during this period, and the type of the extent to be moved can no longer
-be considered reliable. For example, it may have changed from unwritten
-to written. In such cases, return -ESTALE, and the calling function
-should reacquire the move extent of the original file and retry the
-movement.
+Now that we have mext_move_extent(), we can switch to this new interface
+and deprecate move_extent_per_page(). First, after acquiring the
+i_rwsem, we can directly use ext4_map_blocks() to obtain a contiguous
+extent from the original inode as the extent to be moved. It can and
+it's safe to get mapping information from the extent status tree without
+needing to access the ondisk extent tree, because ext4_move_extent()
+will check the sequence cookie under the folio lock. Then, after
+populating the mext_data structure, we call ext4_move_extent() to move
+the extent. Finally, the length of the extent will be adjusted in
+mext.orig_map.m_len and the actual length moved is returned through
+m_len.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext4/move_extent.c | 224 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 224 insertions(+)
+ fs/ext4/move_extent.c | 395 ++++++------------------------------------
+ 1 file changed, 51 insertions(+), 344 deletions(-)
 
 diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 2df6072b26c0..92a716c56740 100644
+index 92a716c56740..933c2afed550 100644
 --- a/fs/ext4/move_extent.c
 +++ b/fs/ext4/move_extent.c
-@@ -13,6 +13,13 @@
- #include "ext4.h"
- #include "ext4_extents.h"
+@@ -20,29 +20,6 @@ struct mext_data {
+ 	ext4_lblk_t donor_lblk;		/* Start block of the donor file */
+ };
  
-+struct mext_data {
-+	struct inode *orig_inode;	/* Origin file inode */
-+	struct inode *donor_inode;	/* Donor file inode */
-+	struct ext4_map_blocks orig_map;/* Origin file's move mapping */
-+	ext4_lblk_t donor_lblk;		/* Start block of the donor file */
-+};
-+
+-/**
+- * get_ext_path() - Find an extent path for designated logical block number.
+- * @inode:	inode to be searched
+- * @lblock:	logical block number to find an extent path
+- * @path:	pointer to an extent path
+- *
+- * ext4_find_extent wrapper. Return an extent path pointer on success,
+- * or an error pointer on failure.
+- */
+-static inline struct ext4_ext_path *
+-get_ext_path(struct inode *inode, ext4_lblk_t lblock,
+-	     struct ext4_ext_path *path)
+-{
+-	path = ext4_find_extent(inode, lblock, path, EXT4_EX_NOCACHE);
+-	if (IS_ERR(path))
+-		return path;
+-	if (path[ext_depth(inode)].p_ext == NULL) {
+-		ext4_free_ext_path(path);
+-		return ERR_PTR(-ENODATA);
+-	}
+-	return path;
+-}
+-
  /**
-  * get_ext_path() - Find an extent path for designated logical block number.
-  * @inode:	inode to be searched
-@@ -164,6 +171,14 @@ mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
- 	return 0;
+  * ext4_double_down_write_data_sem() - write lock two inodes's i_data_sem
+  * @first: inode to be locked
+@@ -59,7 +36,6 @@ ext4_double_down_write_data_sem(struct inode *first, struct inode *second)
+ 	} else {
+ 		down_write(&EXT4_I(second)->i_data_sem);
+ 		down_write_nested(&EXT4_I(first)->i_data_sem, I_DATA_SEM_OTHER);
+-
+ 	}
  }
  
-+static void mext_folio_double_unlock(struct folio *folio[2])
-+{
-+	folio_unlock(folio[0]);
-+	folio_put(folio[0]);
-+	folio_unlock(folio[1]);
-+	folio_put(folio[1]);
-+}
-+
- /* Force folio buffers uptodate w/o dropping folio's lock */
- static int mext_folio_mkuptodate(struct folio *folio, size_t from, size_t to)
- {
-@@ -238,6 +253,215 @@ static int mext_folio_mkuptodate(struct folio *folio, size_t from, size_t to)
- 	return 0;
+@@ -78,42 +54,6 @@ ext4_double_up_write_data_sem(struct inode *orig_inode,
+ 	up_write(&EXT4_I(donor_inode)->i_data_sem);
  }
  
-+enum mext_move_type {MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, MEXT_COPY_DATA};
-+
-+/*
-+ * Start to move extent between the origin inode and the donor inode,
-+ * hold one folio for each inode and check the candidate moving extent
-+ * mapping status again.
-+ */
-+static int mext_move_begin(struct mext_data *mext, struct folio *folio[2],
-+			   enum mext_move_type *move_type)
-+{
-+	struct inode *orig_inode = mext->orig_inode;
-+	struct inode *donor_inode = mext->donor_inode;
-+	unsigned int blkbits = orig_inode->i_blkbits;
-+	struct ext4_map_blocks donor_map = {0};
-+	loff_t orig_pos, donor_pos;
-+	size_t move_len;
-+	int ret;
-+
-+	orig_pos = ((loff_t)mext->orig_map.m_lblk) << blkbits;
-+	donor_pos = ((loff_t)mext->donor_lblk) << blkbits;
-+	ret = mext_folio_double_lock(orig_inode, donor_inode,
-+			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT, folio);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Check the origin inode's mapping information again under the
-+	 * folio lock, as we do not hold the i_data_sem at all times, and
-+	 * it may change during the concurrent write-back operation.
-+	 */
-+	if (mext->orig_map.m_seq != READ_ONCE(EXT4_I(orig_inode)->i_es_seq)) {
-+		ret = -ESTALE;
-+		goto error;
-+	}
-+
-+	/* Adjust the moving length according to the length of shorter folio. */
-+	move_len = umin(folio_pos(folio[0]) + folio_size(folio[0]) - orig_pos,
-+			folio_pos(folio[1]) + folio_size(folio[1]) - donor_pos);
-+	move_len >>= blkbits;
-+	if (move_len < mext->orig_map.m_len)
-+		mext->orig_map.m_len = move_len;
-+
-+	donor_map.m_lblk = mext->donor_lblk;
-+	donor_map.m_len = mext->orig_map.m_len;
-+	donor_map.m_flags = 0;
-+	ret = ext4_map_blocks(NULL, donor_inode, &donor_map, 0);
-+	if (ret < 0)
-+		goto error;
-+
-+	/* Adjust the moving length according to the donor mapping length. */
-+	mext->orig_map.m_len = donor_map.m_len;
-+
-+	/* Skip moving if the donor range is a hole or a delalloc extent. */
-+	if (!(donor_map.m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)))
-+		*move_type = MEXT_SKIP_EXTENT;
-+	/* If both mapping ranges are unwritten, no need to copy data. */
-+	else if ((mext->orig_map.m_flags & EXT4_MAP_UNWRITTEN) &&
-+		 (donor_map.m_flags & EXT4_MAP_UNWRITTEN))
-+		*move_type = MEXT_MOVE_EXTENT;
-+	else
-+		*move_type = MEXT_COPY_DATA;
-+
-+	return 0;
-+error:
-+	mext_folio_double_unlock(folio);
-+	return ret;
-+}
-+
-+/*
-+ * Re-create the new moved mapping buffers of the original inode and commit
-+ * the entire written range.
-+ */
-+static int mext_folio_mkwrite(struct inode *inode, struct folio *folio,
-+			      size_t from, size_t to)
-+{
-+	unsigned int blocksize = i_blocksize(inode);
-+	struct buffer_head *bh, *head;
-+	size_t block_start, block_end;
-+	sector_t block;
-+	int ret;
-+
-+	head = folio_buffers(folio);
-+	if (!head)
-+		head = create_empty_buffers(folio, blocksize, 0);
-+
-+	block = folio_pos(folio) >> inode->i_blkbits;
-+	block_end = 0;
-+	bh = head;
-+	do {
-+		block_start = block_end;
-+		block_end = block_start + blocksize;
-+		if (block_end <= from || block_start >= to)
-+			continue;
-+
-+		ret = ext4_get_block(inode, block, bh, 0);
-+		if (ret)
-+			return ret;
-+	} while (block++, (bh = bh->b_this_page) != head);
-+
-+	block_commit_write(folio, from, to);
-+	return 0;
-+}
-+
-+/*
-+ * Save the data in original inode extent blocks and replace one folio size
-+ * aligned original inode extent with one or one partial donor inode extent,
-+ * and then write out the saved data in new original inode blocks. Pass out
-+ * the replaced block count through m_len. Return 0 on success, and an error
-+ * code otherwise.
-+ */
-+static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
-+{
-+	struct inode *orig_inode = mext->orig_inode;
-+	struct inode *donor_inode = mext->donor_inode;
-+	struct ext4_map_blocks *orig_map = &mext->orig_map;
-+	unsigned int blkbits = orig_inode->i_blkbits;
-+	struct folio *folio[2] = {NULL, NULL};
-+	loff_t from, length;
-+	enum mext_move_type move_type = 0;
-+	handle_t *handle;
-+	u64 r_len = 0;
-+	unsigned int credits;
-+	int ret, ret2;
-+
-+	*m_len = 0;
-+	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
-+	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
-+
-+	ret = mext_move_begin(mext, folio, &move_type);
-+	if (ret)
-+		goto stop_handle;
-+
-+	if (move_type == MEXT_SKIP_EXTENT)
-+		goto unlock;
-+
-+	/*
-+	 * Copy the data. First, read the original inode data into the page
-+	 * cache. Then, release the existing mapping relationships and swap
-+	 * the extent. Finally, re-establish the new mapping relationships
-+	 * and dirty the page cache.
-+	 */
-+	if (move_type == MEXT_COPY_DATA) {
-+		from = offset_in_folio(folio[0],
-+				((loff_t)orig_map->m_lblk) << blkbits);
-+		length = ((loff_t)orig_map->m_len) << blkbits;
-+
-+		ret = mext_folio_mkuptodate(folio[0], from, from + length);
-+		if (ret)
-+			goto unlock;
-+	}
-+
-+	if (!filemap_release_folio(folio[0], 0) ||
-+	    !filemap_release_folio(folio[1], 0)) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	}
-+
-+	/* Move extent */
-+	ext4_double_down_write_data_sem(orig_inode, donor_inode);
-+	*m_len = ext4_swap_extents(handle, orig_inode, donor_inode,
-+				   orig_map->m_lblk, mext->donor_lblk,
-+				   orig_map->m_len, 1, &ret);
-+	ext4_double_up_write_data_sem(orig_inode, donor_inode);
-+
-+	/* A short-length swap cannot occur after a successful swap extent. */
-+	if (WARN_ON_ONCE(!ret && (*m_len != orig_map->m_len)))
-+		ret = -EIO;
-+
-+	if (!(*m_len) || (move_type == MEXT_MOVE_EXTENT))
-+		goto unlock;
-+
-+	/* Copy data */
-+	length = (*m_len) << blkbits;
-+	ret2 = mext_folio_mkwrite(orig_inode, folio[0], from, from + length);
-+	if (ret2) {
-+		if (!ret)
-+			ret = ret2;
-+		goto repair_branches;
-+	}
-+	/*
-+	 * Even in case of data=writeback it is reasonable to pin
-+	 * inode to transaction, to prevent unexpected data loss.
-+	 */
-+	ret2 = ext4_jbd2_inode_add_write(handle, orig_inode,
-+			((loff_t)orig_map->m_lblk) << blkbits, length);
-+	if (!ret)
-+		ret = ret2;
-+unlock:
-+	mext_folio_double_unlock(folio);
-+stop_handle:
-+	ext4_journal_stop(handle);
-+	return ret;
-+
-+repair_branches:
-+	ret2 = 0;
-+	r_len = ext4_swap_extents(handle, donor_inode, orig_inode,
-+				  mext->donor_lblk, orig_map->m_lblk,
-+				  *m_len, 0, &ret2);
-+	if (ret2 || r_len != *m_len) {
-+		ext4_error_inode_block(orig_inode, (sector_t)(orig_map->m_lblk),
-+				       EIO, "Unable to copy data block, data will be lost!");
-+		ret = -EIO;
-+	}
-+	*m_len = 0;
-+	goto unlock;
-+}
-+
+-/**
+- * mext_check_coverage - Check that all extents in range has the same type
+- *
+- * @inode:		inode in question
+- * @from:		block offset of inode
+- * @count:		block count to be checked
+- * @unwritten:		extents expected to be unwritten
+- * @err:		pointer to save error value
+- *
+- * Return 1 if all extents in range has expected type, and zero otherwise.
+- */
+-static int
+-mext_check_coverage(struct inode *inode, ext4_lblk_t from, ext4_lblk_t count,
+-		    int unwritten, int *err)
+-{
+-	struct ext4_ext_path *path = NULL;
+-	struct ext4_extent *ext;
+-	int ret = 0;
+-	ext4_lblk_t last = from + count;
+-	while (from < last) {
+-		path = get_ext_path(inode, from, path);
+-		if (IS_ERR(path)) {
+-			*err = PTR_ERR(path);
+-			return ret;
+-		}
+-		ext = path[ext_depth(inode)].p_ext;
+-		if (unwritten != ext4_ext_is_unwritten(ext))
+-			goto out;
+-		from += ext4_ext_get_actual_len(ext);
+-	}
+-	ret = 1;
+-out:
+-	ext4_free_ext_path(path);
+-	return ret;
+-}
+-
  /**
-  * move_extent_per_page - Move extent data per page
+  * mext_folio_double_lock - Grab and lock folio on both @inode1 and @inode2
   *
+@@ -363,7 +303,7 @@ static int mext_folio_mkwrite(struct inode *inode, struct folio *folio,
+  * the replaced block count through m_len. Return 0 on success, and an error
+  * code otherwise.
+  */
+-static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
++static int mext_move_extent(struct mext_data *mext, u64 *m_len)
+ {
+ 	struct inode *orig_inode = mext->orig_inode;
+ 	struct inode *donor_inode = mext->donor_inode;
+@@ -462,210 +402,6 @@ static __used int mext_move_extent(struct mext_data *mext, u64 *m_len)
+ 	goto unlock;
+ }
+ 
+-/**
+- * move_extent_per_page - Move extent data per page
+- *
+- * @o_filp:			file structure of original file
+- * @donor_inode:		donor inode
+- * @orig_page_offset:		page index on original file
+- * @donor_page_offset:		page index on donor file
+- * @data_offset_in_page:	block index where data swapping starts
+- * @block_len_in_page:		the number of blocks to be swapped
+- * @unwritten:			orig extent is unwritten or not
+- * @err:			pointer to save return value
+- *
+- * Save the data in original inode blocks and replace original inode extents
+- * with donor inode extents by calling ext4_swap_extents().
+- * Finally, write out the saved data in new original inode blocks. Return
+- * replaced block count.
+- */
+-static int
+-move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+-		     pgoff_t orig_page_offset, pgoff_t donor_page_offset,
+-		     int data_offset_in_page,
+-		     int block_len_in_page, int unwritten, int *err)
+-{
+-	struct inode *orig_inode = file_inode(o_filp);
+-	struct folio *folio[2] = {NULL, NULL};
+-	handle_t *handle;
+-	ext4_lblk_t orig_blk_offset, donor_blk_offset;
+-	unsigned long blocksize = orig_inode->i_sb->s_blocksize;
+-	unsigned int tmp_data_size, data_size, replaced_size;
+-	int i, err2, jblocks, retries = 0;
+-	int replaced_count = 0;
+-	int from;
+-	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+-	struct super_block *sb = orig_inode->i_sb;
+-	struct buffer_head *bh = NULL;
+-
+-	/*
+-	 * It needs twice the amount of ordinary journal buffers because
+-	 * inode and donor_inode may change each different metadata blocks.
+-	 */
+-again:
+-	*err = 0;
+-	jblocks = ext4_meta_trans_blocks(orig_inode, block_len_in_page,
+-					 block_len_in_page) * 2;
+-	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, jblocks);
+-	if (IS_ERR(handle)) {
+-		*err = PTR_ERR(handle);
+-		return 0;
+-	}
+-
+-	orig_blk_offset = orig_page_offset * blocks_per_page +
+-		data_offset_in_page;
+-
+-	donor_blk_offset = donor_page_offset * blocks_per_page +
+-		data_offset_in_page;
+-
+-	/* Calculate data_size */
+-	if ((orig_blk_offset + block_len_in_page - 1) ==
+-	    ((orig_inode->i_size - 1) >> orig_inode->i_blkbits)) {
+-		/* Replace the last block */
+-		tmp_data_size = orig_inode->i_size & (blocksize - 1);
+-		/*
+-		 * If data_size equal zero, it shows data_size is multiples of
+-		 * blocksize. So we set appropriate value.
+-		 */
+-		if (tmp_data_size == 0)
+-			tmp_data_size = blocksize;
+-
+-		data_size = tmp_data_size +
+-			((block_len_in_page - 1) << orig_inode->i_blkbits);
+-	} else
+-		data_size = block_len_in_page << orig_inode->i_blkbits;
+-
+-	replaced_size = data_size;
+-
+-	*err = mext_folio_double_lock(orig_inode, donor_inode, orig_page_offset,
+-				     donor_page_offset, folio);
+-	if (unlikely(*err < 0))
+-		goto stop_journal;
+-	/*
+-	 * If orig extent was unwritten it can become initialized
+-	 * at any time after i_data_sem was dropped, in order to
+-	 * serialize with delalloc we have recheck extent while we
+-	 * hold page's lock, if it is still the case data copy is not
+-	 * necessary, just swap data blocks between orig and donor.
+-	 */
+-	if (unwritten) {
+-		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+-		/* If any of extents in range became initialized we have to
+-		 * fallback to data copying */
+-		unwritten = mext_check_coverage(orig_inode, orig_blk_offset,
+-						block_len_in_page, 1, err);
+-		if (*err)
+-			goto drop_data_sem;
+-
+-		unwritten &= mext_check_coverage(donor_inode, donor_blk_offset,
+-						 block_len_in_page, 1, err);
+-		if (*err)
+-			goto drop_data_sem;
+-
+-		if (!unwritten) {
+-			ext4_double_up_write_data_sem(orig_inode, donor_inode);
+-			goto data_copy;
+-		}
+-		if (!filemap_release_folio(folio[0], 0) ||
+-		    !filemap_release_folio(folio[1], 0)) {
+-			*err = -EBUSY;
+-			goto drop_data_sem;
+-		}
+-		replaced_count = ext4_swap_extents(handle, orig_inode,
+-						   donor_inode, orig_blk_offset,
+-						   donor_blk_offset,
+-						   block_len_in_page, 1, err);
+-	drop_data_sem:
+-		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+-		goto unlock_folios;
+-	}
+-data_copy:
+-	from = offset_in_folio(folio[0],
+-			       orig_blk_offset << orig_inode->i_blkbits);
+-	*err = mext_folio_mkuptodate(folio[0], from, from + replaced_size);
+-	if (*err)
+-		goto unlock_folios;
+-
+-	/* At this point all buffers in range are uptodate, old mapping layout
+-	 * is no longer required, try to drop it now. */
+-	if (!filemap_release_folio(folio[0], 0) ||
+-	    !filemap_release_folio(folio[1], 0)) {
+-		*err = -EBUSY;
+-		goto unlock_folios;
+-	}
+-	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+-	replaced_count = ext4_swap_extents(handle, orig_inode, donor_inode,
+-					       orig_blk_offset, donor_blk_offset,
+-					   block_len_in_page, 1, err);
+-	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+-	if (*err) {
+-		if (replaced_count) {
+-			block_len_in_page = replaced_count;
+-			replaced_size =
+-				block_len_in_page << orig_inode->i_blkbits;
+-		} else
+-			goto unlock_folios;
+-	}
+-	/* Perform all necessary steps similar write_begin()/write_end()
+-	 * but keeping in mind that i_size will not change */
+-	bh = folio_buffers(folio[0]);
+-	if (!bh)
+-		bh = create_empty_buffers(folio[0],
+-				1 << orig_inode->i_blkbits, 0);
+-	for (i = 0; i < from >> orig_inode->i_blkbits; i++)
+-		bh = bh->b_this_page;
+-	for (i = 0; i < block_len_in_page; i++) {
+-		*err = ext4_get_block(orig_inode, orig_blk_offset + i, bh, 0);
+-		if (*err < 0)
+-			goto repair_branches;
+-		bh = bh->b_this_page;
+-	}
+-
+-	block_commit_write(folio[0], from, from + replaced_size);
+-
+-	/* Even in case of data=writeback it is reasonable to pin
+-	 * inode to transaction, to prevent unexpected data loss */
+-	*err = ext4_jbd2_inode_add_write(handle, orig_inode,
+-			(loff_t)orig_page_offset << PAGE_SHIFT, replaced_size);
+-
+-unlock_folios:
+-	folio_unlock(folio[0]);
+-	folio_put(folio[0]);
+-	folio_unlock(folio[1]);
+-	folio_put(folio[1]);
+-stop_journal:
+-	ext4_journal_stop(handle);
+-	if (*err == -ENOSPC &&
+-	    ext4_should_retry_alloc(sb, &retries))
+-		goto again;
+-	/* Buffer was busy because probably is pinned to journal transaction,
+-	 * force transaction commit may help to free it. */
+-	if (*err == -EBUSY && retries++ < 4 && EXT4_SB(sb)->s_journal &&
+-	    jbd2_journal_force_commit_nested(EXT4_SB(sb)->s_journal))
+-		goto again;
+-	return replaced_count;
+-
+-repair_branches:
+-	/*
+-	 * This should never ever happen!
+-	 * Extents are swapped already, but we are not able to copy data.
+-	 * Try to swap extents to it's original places
+-	 */
+-	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+-	replaced_count = ext4_swap_extents(handle, donor_inode, orig_inode,
+-					       orig_blk_offset, donor_blk_offset,
+-					   block_len_in_page, 0, &err2);
+-	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+-	if (replaced_count != block_len_in_page) {
+-		ext4_error_inode_block(orig_inode, (sector_t)(orig_blk_offset),
+-				       EIO, "Unable to copy data block,"
+-				       " data will be lost.");
+-		*err = -EIO;
+-	}
+-	replaced_count = 0;
+-	goto unlock_folios;
+-}
+-
+ /*
+  * Check the validity of the basic filesystem environment and the
+  * inodes' support status.
+@@ -827,106 +563,81 @@ static int mext_check_adjust_range(struct inode *orig_inode,
+  *
+  * This function returns 0 and moved block length is set in moved_len
+  * if succeed, otherwise returns error value.
+- *
+  */
+-int
+-ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+-		  __u64 donor_blk, __u64 len, __u64 *moved_len)
++int ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
++		      __u64 donor_blk, __u64 len, __u64 *moved_len)
+ {
+ 	struct inode *orig_inode = file_inode(o_filp);
+ 	struct inode *donor_inode = file_inode(d_filp);
+-	struct ext4_ext_path *path = NULL;
+-	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+-	ext4_lblk_t o_end, o_start = orig_blk;
+-	ext4_lblk_t d_start = donor_blk;
++	struct mext_data mext;
++	struct super_block *sb = orig_inode->i_sb;
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
++	int retries = 0;
++	u64 m_len;
+ 	int ret;
+ 
++	*moved_len = 0;
++
+ 	/* Protect orig and donor inodes against a truncate */
+ 	lock_two_nondirectories(orig_inode, donor_inode);
+ 
+ 	ret = mext_check_validity(orig_inode, donor_inode);
+ 	if (ret)
+-		goto unlock;
++		goto out;
+ 
+ 	/* Wait for all existing dio workers */
+ 	inode_dio_wait(orig_inode);
+ 	inode_dio_wait(donor_inode);
+ 
+-	/* Protect extent tree against block allocations via delalloc */
+-	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+ 	/* Check and adjust the specified move_extent range. */
+ 	ret = mext_check_adjust_range(orig_inode, donor_inode, orig_blk,
+ 				      donor_blk, &len);
+ 	if (ret)
+ 		goto out;
+-	o_end = o_start + len;
+ 
+-	*moved_len = 0;
+-	while (o_start < o_end) {
+-		struct ext4_extent *ex;
+-		ext4_lblk_t cur_blk, next_blk;
+-		pgoff_t orig_page_index, donor_page_index;
+-		int offset_in_page;
+-		int unwritten, cur_len;
+-
+-		path = get_ext_path(orig_inode, o_start, path);
+-		if (IS_ERR(path)) {
+-			ret = PTR_ERR(path);
++	mext.orig_inode = orig_inode;
++	mext.donor_inode = donor_inode;
++	while (len) {
++		mext.orig_map.m_lblk = orig_blk;
++		mext.orig_map.m_len = len;
++		mext.orig_map.m_flags = 0;
++		mext.donor_lblk = donor_blk;
++
++		ret = ext4_map_blocks(NULL, orig_inode, &mext.orig_map, 0);
++		if (ret < 0)
+ 			goto out;
+-		}
+-		ex = path[path->p_depth].p_ext;
+-		cur_blk = le32_to_cpu(ex->ee_block);
+-		cur_len = ext4_ext_get_actual_len(ex);
+-		/* Check hole before the start pos */
+-		if (cur_blk + cur_len - 1 < o_start) {
+-			next_blk = ext4_ext_next_allocated_block(path);
+-			if (next_blk == EXT_MAX_BLOCKS) {
+-				ret = -ENODATA;
+-				goto out;
++
++		/* Skip moving if it is a hole or a delalloc extent. */
++		if (mext.orig_map.m_flags &
++		    (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
++			ret = mext_move_extent(&mext, &m_len);
++			*moved_len += m_len;
++			if (!ret)
++				goto next;
++
++			/* Move failed or partially failed. */
++			if (m_len) {
++				orig_blk += m_len;
++				donor_blk += m_len;
++				len -= m_len;
+ 			}
+-			d_start += next_blk - o_start;
+-			o_start = next_blk;
+-			continue;
+-		/* Check hole after the start pos */
+-		} else if (cur_blk > o_start) {
+-			/* Skip hole */
+-			d_start += cur_blk - o_start;
+-			o_start = cur_blk;
+-			/* Extent inside requested range ?*/
+-			if (cur_blk >= o_end)
+-				goto out;
+-		} else { /* in_range(o_start, o_blk, o_len) */
+-			cur_len += cur_blk - o_start;
++			if (ret == -ESTALE)
++				continue;
++			if (ret == -ENOSPC &&
++			    ext4_should_retry_alloc(sb, &retries))
++				continue;
++			if (ret == -EBUSY &&
++			    sbi->s_journal && retries++ < 4 &&
++			    jbd2_journal_force_commit_nested(sbi->s_journal))
++				continue;
++
++			goto out;
+ 		}
+-		unwritten = ext4_ext_is_unwritten(ex);
+-		if (o_end - o_start < cur_len)
+-			cur_len = o_end - o_start;
+-
+-		orig_page_index = o_start >> (PAGE_SHIFT -
+-					       orig_inode->i_blkbits);
+-		donor_page_index = d_start >> (PAGE_SHIFT -
+-					       donor_inode->i_blkbits);
+-		offset_in_page = o_start % blocks_per_page;
+-		if (cur_len > blocks_per_page - offset_in_page)
+-			cur_len = blocks_per_page - offset_in_page;
+-		/*
+-		 * Up semaphore to avoid following problems:
+-		 * a. transaction deadlock among ext4_journal_start,
+-		 *    ->write_begin via pagefault, and jbd2_journal_commit
+-		 * b. racing with ->read_folio, ->write_begin, and
+-		 *    ext4_get_block in move_extent_per_page
+-		 */
+-		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+-		/* Swap original branches with new branches */
+-		*moved_len += move_extent_per_page(o_filp, donor_inode,
+-				     orig_page_index, donor_page_index,
+-				     offset_in_page, cur_len,
+-				     unwritten, &ret);
+-		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+-		if (ret < 0)
+-			break;
+-		o_start += cur_len;
+-		d_start += cur_len;
++next:
++		orig_blk += mext.orig_map.m_len;
++		donor_blk += mext.orig_map.m_len;
++		len -= mext.orig_map.m_len;
++		retries = 0;
+ 	}
+ 
+ out:
+@@ -935,10 +646,6 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+ 		ext4_discard_preallocations(donor_inode);
+ 	}
+ 
+-	ext4_free_ext_path(path);
+-	ext4_double_up_write_data_sem(orig_inode, donor_inode);
+-unlock:
+ 	unlock_two_nondirectories(orig_inode, donor_inode);
+-
+ 	return ret;
+ }
 -- 
 2.46.1
 
