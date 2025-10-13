@@ -1,223 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-63939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B654BD233F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 11:05:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A796BD246A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 11:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7FDE43492E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 09:05:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EACE64EA9FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 09:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CA22FBE09;
-	Mon, 13 Oct 2025 09:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFCC2FD7CA;
+	Mon, 13 Oct 2025 09:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="aQFZH/LG";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="aQFZH/LG"
+	dkim=pass (2048-bit key) header.d=kaod.org header.i=@kaod.org header.b="CFaoHXW6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 1.mo548.mail-out.ovh.net (1.mo548.mail-out.ovh.net [178.32.121.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BCA2FB608
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 09:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C192FD1DD;
+	Mon, 13 Oct 2025 09:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.32.121.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760346341; cv=none; b=eVrYYBDPbC2j61I4nwED56U7xLIbZF5Qdq3xBRVnmdC0Mh9lgiZvMphWIYv0lb5wcZxx1IQZIrj2DbW8jJ0q7Xp1OJrNQ79xBmzGFHgcgNTu+c4d2PZNH002MlfmiOKGws/hCdGTbjR0hs2NrDcl7FfJq7SgLm9Lif4WtDL44hc=
+	t=1760347473; cv=none; b=s+6LARaLBNq90M+9eQg+y8DXkBJHtGawdj2PkrGGXSYWCupR1VtT8KwOQk3E9HN8VsOZz+9IbkQ+j7khPz3LwmHYouSWdF3CEfEbSyQpaRe8nmbEZcjcRcYXYmuoMn367zFL2m31M+sR5keeuxQ4glKZuIl0+c1/U+HzCJ6DGks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760346341; c=relaxed/simple;
-	bh=htzUzsuPW5wUfngWhFU8Aq5SfZv/1CIaR47VE2cQhUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gp5ZQeEaFzcwQOkYS5k1KJlfXyHWoG4TT96XevruX8knEzSaxW8IB+Q0jIwkuCJBe8aLheV8CpoocIzjHGP4f6ikAcPAJ831IadJpY53d+plRJYn6dMx3Sgjs+D9fEqeQ0+mB2dw7wQWv4p725eHcyCTA4BC6UFU9YB8IeaXz1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=aQFZH/LG; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=aQFZH/LG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0BBF61F7C3;
-	Mon, 13 Oct 2025 09:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1760346336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=2XVvXa6nuYdbk16HCTTXolPd2lu2jNhkyqs8wn63ILc=;
-	b=aQFZH/LGUVeJwznLgeGB7KSr8ScmnJIhYLS2eQ7uK0PQrgJGIfDtK1JPfmRs0RdC+ZFD3h
-	hT4ZTDf+4BDyltmbIIActASnT5y1udG8x1KM+i6N2bNmMpNYCr6UP8vBoYKCfyc0u8wYYT
-	bP1tdPQfkj9VsXQKsOhFisJqw9Xjbu8=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="aQFZH/LG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1760346336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=2XVvXa6nuYdbk16HCTTXolPd2lu2jNhkyqs8wn63ILc=;
-	b=aQFZH/LGUVeJwznLgeGB7KSr8ScmnJIhYLS2eQ7uK0PQrgJGIfDtK1JPfmRs0RdC+ZFD3h
-	hT4ZTDf+4BDyltmbIIActASnT5y1udG8x1KM+i6N2bNmMpNYCr6UP8vBoYKCfyc0u8wYYT
-	bP1tdPQfkj9VsXQKsOhFisJqw9Xjbu8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3EB4D1374A;
-	Mon, 13 Oct 2025 09:05:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wEYtAN7A7GgGVAAAD6G6ig
-	(envelope-from <wqu@suse.com>); Mon, 13 Oct 2025 09:05:34 +0000
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org
-Cc: brauner@kernel.org,
-	djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] iomap: add IOMAP_DIO_FSBLOCK_ALIGNED flag
-Date: Mon, 13 Oct 2025 19:35:16 +1030
-Message-ID: <c78d08f4e709158f30e1e88e62ab98db45dd7883.1760345826.git.wqu@suse.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1760347473; c=relaxed/simple;
+	bh=EcvIYqpxXVs74deUpvzxwCX4JFDID7emVlC9DjXPN+o=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aILCdUiBpFoFqxPTvxZPrb7kkSzd9ArjiGQXiFOUWHPAjySeFKUkibZcOnfJpxMI232oSNSOgh3UvcfgKzZmFxm6ntjoyAoTrfOoc2LrsneFXqtBgSFyj/Oo2zj+eKucrKHM6aJJn524SSk5ENrT814nrFwi+s1ZZuY/WmNUdGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=kaod.org; dkim=pass (2048-bit key) header.d=kaod.org header.i=@kaod.org header.b=CFaoHXW6; arc=none smtp.client-ip=178.32.121.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaod.org
+Received: from mxplan5.mail.ovh.net (unknown [10.110.58.167])
+	by mo548.mail-out.ovh.net (Postfix) with ESMTPS id 4clX3t70bmz6T2W;
+	Mon, 13 Oct 2025 09:24:26 +0000 (UTC)
+Received: from kaod.org (37.59.142.100) by DAG6EX1.mxp5.local (172.16.2.51)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.59; Mon, 13 Oct
+ 2025 11:24:26 +0200
+Authentication-Results: garm.ovh; auth=pass (GARM-100R00301b14842-4837-44df-a1a2-391d696616a0,
+                    2350DB3D6D8EEE81184BB942758C035E74337293) smtp.auth=groug@kaod.org
+X-OVh-ClientIp: 88.179.9.154
+Date: Mon, 13 Oct 2025 11:24:24 +0200
+From: Greg Kurz <groug@kaod.org>
+To: Christian Schoenebeck <linux_oss@crudebyte.com>
+CC: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, "Dominique
+ Martinet" <asmadeus@codewreck.org>, <qemu-devel@nongnu.org>, "Eric Van
+ Hensbergen" <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+	<v9fs@lists.linux.dev>, =?UTF-8?B?R8O8bnRoZXI=?= Noack <gnoack@google.com>,
+	<linux-security-module@vger.kernel.org>, Jan Kara <jack@suse.cz>, "Amir
+ Goldstein" <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, "Al
+ Viro" <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+Message-ID: <20251013112424.6b93659c@bahia>
+In-Reply-To: <3061192.c3ltI2prpg@silver>
+References: <aMih5XYYrpP559de@codewreck.org>
+	<20250917.Eip1ahj6neij@digikod.net>
+	<f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
+	<3061192.c3ltI2prpg@silver>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 0BBF61F7C3
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:mid,suse.com:dkim];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: DAG4EX1.mxp5.local (172.16.2.31) To DAG6EX1.mxp5.local
+ (172.16.2.51)
+X-Ovh-Tracer-GUID: 8df15119-2886-4617-99ba-e1d56fd5bb4d
+X-Ovh-Tracer-Id: 14216175175088118148
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: dmFkZTFx9wyKcRj7cqz7kuCitc0YOsdQGyZ7gTu+k8QCdN2UJaD/m4wfwf1TeZmtMFCwCQ696qaFLNhv1ArnJmBfVFKJ+i7oA431WUslbGABZCqTVFAKGVxscwZrJ8RQC6y31uoYWkhoYG8j1m9X8oNs+EckM0OSwLjUfHiMXTFS24TxAo2EfmhJtZlyJ4Dtm/dWqFb1K56tG84CerG+rp+ZmA4oDfQA+AouTmvQapBdTeMH6fkCu4MmX6/A66nRgN+AOh1Lstzx1CwH4GuXZ+lEHbAsdebqtlV16xLxgVdCQBGU9+uJb+xgKUtx8vfyIesl93n2b7HgHFtDuS/UwhW7/K5LRRXv53T8tqoT/0fu1eb/nUa+d+zoCcMCTJwu83LMXsyNHXMxmaKHxMg9OUURZ7U4NhvLcN+5d71bj/MGmNnhz4+9VaoAdRhD3UUNxWR4Z5ke1SoSSRgUrPZLnigMzA/CthSqTqBBW3JOMMKRtDv8cKfx4rRbw0pH7f3An4dXm3W/ZjaPaqzJd0Fe0DBZ8Sny3wUdgJVaEvJnqPulObp7BG/pVdis2Asa051JFC1MEUkPHaFRqtxyBga+CKW6bn6ZIauf1lSsFcOV2GXjhrwONjMW6zCdEwdAUL5ZTrd5qdgr1n6PLJeeSHOARekpx4jgFkloNsXfl5ws9X3xNwQ41g
+DKIM-Signature: a=rsa-sha256; bh=3jYn4YNdYeG7LGg6VH5k0ps8cSfN4dyFLHQu/RiM+CA=;
+ c=relaxed/relaxed; d=kaod.org; h=From; s=ovhmo393970-selector1;
+ t=1760347468; v=1;
+ b=CFaoHXW6Z73qEnS7Th3BC/jjekF9fuMpiinSF6+z/QkpY7i3AjzwirMEkgzFjSc59jHECDZa
+ hwJ5VjY5xLbpSpNTyMkiuhX7u5bAx2yqmo37Q5z0INncZt4wsA1g5/q4VRgvP1DDgjRuPgIR46h
+ folX5IoxVTxfWuQPtJ06cYQ2wjGbmAPnb0g5Y9U0n4WN8qgngb+sMCgCDdLbP2AOewtXrO6FTL8
+ rJdptJBWetpuXMJPf2JcKpe7CIZkGlIlYXItLR4m7ySh/5a253WPCKAzIHVffwlHKuqj8Iqx4la
+ 1KBREK2vWIxZEOD3zLlkPG2lUkHQcTym5Guwn5unVGXdg==
 
-Btrfs requires all of its bios to be fs block aligned, normally it's
-totally fine but with the incoming block size larger than page size
-(bs > ps) support, the requirement is no longer met for direct IOs.
+On Mon, 29 Sep 2025 15:06:59 +0200
+Christian Schoenebeck <linux_oss@crudebyte.com> wrote:
 
-Because iomap_dio_bio_iter() calls bio_iov_iter_get_pages(), only
-requiring alignment to be bdev_logical_block_size().
+> On Sunday, September 21, 2025 6:24:49 PM CEST Tingmao Wang wrote:
+> > On 9/17/25 16:00, Micka=C3=ABl Sala=C3=BCn wrote:
+> [...]
+>=20
+> Hi Greg,
+>=20
 
-In the real world that value is either 512 or 4K, on 4K page sized
-systems it means bio_iov_iter_get_pages() can break the bio at any page
-boundary, breaking btrfs' requirement for bs > ps cases.
+Hi Christian,
 
-To address this problem, introduce a new public iomap dio flag,
-IOMAP_DIO_FSBLOCK_ALIGNED.
+> I'd appreciate comments from your side as well, as you are much on longer=
+ on
+> the QEMU 9p front than me.
+>=20
+> I know you won't have the time to read up on the entire thread so I try to
+> summarize: basically this is yet another user-after-unlink issue, this ti=
+me on
+> directories instead of files.
+>=20
 
-When calling __iomap_dio_rw() with that new flag, iomap_dio::flags will
-inherit that new flag, and iomap_dio_bio_iter() will take fs block size
-into the calculation of the alignment, and pass the alignment to
-bio_iov_iter_get_pages(), respecting the fs block size requirement.
+Thread that never landed in my mailbox actually and it is quite
+hard to understand the root problem with the content of this
+e-mail actually ;-)
 
-The initial user of this flag will be btrfs, which needs to calculate the
-checksum for direct read and thus requires the biovec to be fs block
-aligned for the incoming bs > ps support.
+> > So I did some quick debugging and realized that I had a wrong
+> > understanding of how fids relates to opened files on the host, under QE=
+MU.
+> > It turns out that in QEMU's 9p server implementation, a fid does not
+> > actually correspond to any opened file descriptors - it merely represen=
+ts
+> > a (string-based) path that QEMU stores internally.  It only opens the
+> > actual file if the client actually does an T(l)open, which is in fact
+> > separate from acquiring the fid with T(l)walk.  The reason why renaming
+> > file/dirs from the client doesn't break those fids is because QEMU will
+> > actually fix those paths when a rename request is processed - c.f.
+> > v9fs_fix_fid_paths [1].
+>=20
+> Correct, that's based on what the 9p protocols define: a FID does not exa=
+ctly
+> translate to what a file handle is on a local system. Even after acquirin=
+g a
+> new FID by sending a Twalk request, subsequently client would still need =
+to
+> send a Topen for server to actually open that file/directory.
+>=20
+> And yes, QEMU's 9p server "fixes" the path string of a FID if it was moved
+> upon client request. If the move happened on host side, outside of server=
+'s
+> knowledge, then this won't happen ATM and hence it would break your use
+> case.
+>=20
+> > It turns out that even if a guest process opens the file with O_PATH, t=
+hat
+> > file descriptor does not cause an actual Topen, and therefore QEMU does
+> > not open the file on the host, and later on reopening that fd with anot=
+her
+> > mode (via e.g. open("/proc/self/fd/...", O_RDONLY)) will fail if the fi=
+le
+> > has moved on the host without QEMU's knowledge.  Also, openat will fail=
+ if
+> > provided with a dir fd that "points" to a moved directory, regardless of
+> > whether the fd is opened with O_PATH or not, since path walk in QEMU is
+> > completely string-based and does not actually issue openat on the host =
+fs
+> > [2].
+>=20
+> I don't think the problem here is the string based walk per se, but rather
+> that the string based walk always starts from the export root:
+>=20
+> https://github.com/qemu/qemu/blob/4975b64efb5aa4248cbc3760312bbe08d6e7163=
+8/hw/9pfs/9p-local.c#L64
+>=20
+> I guess that's something that could be changed in QEMU such that the walk
+> starts from FID's fs point, as the code already uses openat() to walk rel=
+ative
+> to a file descriptor (for security reasons actually), Greg?
+>=20
 
-Signed-off-by: Qu Wenruo <wqu@suse.com>
----
-Changelog:
-v2:
-- Fix too long lines
-  To follow the old 80 chars limits.
+Yes this was introduced for security reasons. In a nutshell, the idea is
+to *not* follow symlinks in any element of the path being opened. It thus
+naturally starts at the export root for which we have an fd.
 
-- Reword the commit messages a little
+> That alone would still not fix your use case though: things being moved on
+> host side. For this to work, it would require to already have a fd open on
+> host for the FID. This could be done by server for each FID as you sugges=
+ted,
+> or it could be done by client by opening the FID.
+>=20
 
-- Rename the public IOMAP flag to IOMAP_DIO_FSBLOCK_ALIGNED
+Can you elaborate on the "things being move on host side" ? With
+an example of code that breaks on the client side ?
 
-- Make the calculation of alignment eaiser to read
-  With a short comment explaing why we need to use the larger value of
-  bdev and fs block size.
+> Also keep in mind: once the open file descriptor limit on host is exhaust=
+ed,
+> QEMU is forced to close older open file desciptors to keep the QEMU proce=
+ss
+> alive. So this might still break what you are trying to achieve there.
+>=20
 
-- Remove the btrfs part that utilize the new flag
-  Now it's in the enablement patch of btrfs' bs > ps direct IO support.
+Correct.
 
- fs/iomap/direct-io.c  | 13 ++++++++++++-
- include/linux/iomap.h |  8 ++++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+> Having said that, I wonder whether it'd be simpler for server to track for
+> file tree changes (inotify API) and fix the pathes accordingly for host
+> side changes as well?
+>=20
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 5d5d63efbd57..ce9cbd2bace0 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -336,10 +336,18 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
- 	int nr_pages, ret = 0;
- 	u64 copied = 0;
- 	size_t orig_count;
-+	unsigned int alignment = bdev_logical_block_size(iomap->bdev);
- 
- 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1))
- 		return -EINVAL;
- 
-+	/*
-+	 * Align to the larger one of bdev and fs block size, to meet the
-+	 * alignment requirement of both layers.
-+	 */
-+	if (dio->flags & IOMAP_DIO_FSBLOCK_ALIGNED)
-+		alignment = max(alignment, fs_block_size);
-+
- 	if (dio->flags & IOMAP_DIO_WRITE) {
- 		bio_opf |= REQ_OP_WRITE;
- 
-@@ -434,7 +442,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
- 		bio->bi_end_io = iomap_dio_bio_end_io;
- 
- 		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
--				bdev_logical_block_size(iomap->bdev) - 1);
-+					     alignment - 1);
- 		if (unlikely(ret)) {
- 			/*
- 			 * We have to stop part way through an IO. We must fall
-@@ -639,6 +647,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		iomi.flags |= IOMAP_NOWAIT;
- 
-+	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
-+		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
-+
- 	if (iov_iter_rw(iter) == READ) {
- 		/* reads can always complete inline */
- 		dio->flags |= IOMAP_DIO_INLINE_COMP;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 73dceabc21c8..4da13fe24ce8 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -518,6 +518,14 @@ struct iomap_dio_ops {
-  */
- #define IOMAP_DIO_PARTIAL		(1 << 2)
- 
-+/*
-+ * Ensure each bio is aligned to fs block size.
-+ *
-+ * For filesystems which need to calculate/verify the checksum of each fs
-+ * block. Otherwise they may not be able to handle unaligned bios.
-+ */
-+#define IOMAP_DIO_FSBLOCK_ALIGNED	(1 << 3)
-+
- ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
- 		unsigned int dio_flags, void *private, size_t done_before);
--- 
-2.50.1
+The problem is how to have the guest know about such changes, e.g. in
+order to invalidate a stale cache entry. 9P doesn't provide any way for
+host->client notification.
 
+> /Christian
+>=20
+>=20
+
+Cheers,
+
+--=20
+Greg
 
