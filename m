@@ -1,193 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-64053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2E8BD6BD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 01:29:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A31BD6BEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 01:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBE6E4E1F1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C11B19A2486
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AD52D97B8;
-	Mon, 13 Oct 2025 23:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301272C08C8;
+	Mon, 13 Oct 2025 23:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AA2rzImz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSeOVDRW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE692D4B5A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76DE296BD4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760398168; cv=none; b=DD0vly/dfwc6IdUUwLsNplmvJ1foVgU6sJv976Cpr5wvxKeBr9eISTgNs9yhIHwf91Who7JgxB+OzKpz3F2S6zqBKS7o8G1zaJ3Ij0CowJiZfk3IQTLVZp/LwsmqVgWH+kIwMy15uhy+aY9FplGSZuxhi4r4xA4Gxi2QYg5EqJw=
+	t=1760398366; cv=none; b=h1n3JlmpLNgpeUA+TTY3X8Um5UDB+LaCUc30A17vPqHwLTTJNiaJKUfZzjELlqbgEgy0eti2XojzNxoADBoefpth82WeSQ5Om5Lc/uagIYEWpopUq7vAw8OF6Fk7yS20HYe+bOwCWmKZztahH1evEEEUmlcG6vsSu44Of7K+lpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760398168; c=relaxed/simple;
-	bh=SQ0gWNpV8fChoEYMNhzwQKlfjtJr3sfa5X67jWtrJdY=;
+	s=arc-20240116; t=1760398366; c=relaxed/simple;
+	bh=YKRAbY4NLAInzdfiayu3jIYMgD73poWMR3eCyQVpvwQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=malTdwWtEfQsPgtsGQXLFiZTDv4aVz2FbKudgobdZVISpYwhamZhVXSYwAtLMhrJIQgf0AErQMalF07AGH4ZoDVAmlOdLlmYTlT+zKs0P5Al5fdJJi6nH2lVYrbYqwmHg3ebZWCsg9ox3K8ID8vEeduzapBJv/dPaNJJcEi9bDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AA2rzImz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D75CC4CEFE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760398168;
-	bh=SQ0gWNpV8fChoEYMNhzwQKlfjtJr3sfa5X67jWtrJdY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AA2rzImzN90s32cp8e0uwxg8bh+IjSrBFwpjEddVpnqKHWTywbZioOr0J4+B2+ryR
-	 6Vj65aj4/Jbxu5yjl8Tf3filr+PibU/tnHSjELxYuuqqhhgicq0E5yOHhTRhY9GhCa
-	 //C/BizcUv+ovNYskkqnpPRn7qXYGMtMin76zujrPEvJsYEE2CAu1GZUx1XkGtDm7D
-	 rLlyd9sW1z+Ura6VViHuNKRkQqEf/6aU6qYqQ9loMmIZmUZpad8P+7l13LaYhnHco4
-	 swGL1cA6UGnaJbyJhluocGtxILsD0r89J/6htBaI/ycF9tu1yGeolAqfbhk3WUbTxq
-	 O/kaCYjnm3V3Q==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b50645ecfbbso937714166b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 16:29:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqXhQ4HxTsrwn8Rmz4PVSvnMe8MsB6wIr9wa1nK5jBkR4LfSKVzR8/svu3Pv10LcdDduH4Ez1vnLNRPGY+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6lomhHtNS17e2VkDSXZ2vqUt8W2GLKF19OwMoBmQIg3KSPkN0
-	TYPHzhkvUtPxxczpSUUk+EK0675v4/cWIOo5m+iC6PGa4SLtG6X6iyfV2Opb3a1/+J8rVBYBmTK
-	gd8i/1wQ69qfwrTVB5Q5YNiW7PmR2650=
-X-Google-Smtp-Source: AGHT+IGKMgfNlTuVRjrvwrgGu5wAUKAOzjA5+Qj4nhVCZNyzu4FakDZO2A4HdYX7LTuYYFd1tWuBIeotI0oHcIElStI=
-X-Received: by 2002:a17:907:971e:b0:b4c:1ad1:d08c with SMTP id
- a640c23a62f3a-b50aa393b8amr2537644866b.17.1760398166753; Mon, 13 Oct 2025
- 16:29:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZwihPZKN7pp3Xd6pvFc37/DQpBt1/yjpo/ijUdhwGjOQrNUb79y73983KZKrEeUF7Wwp21yVdSplpIkPX/0SYGd0KtuQe+rWXqTMBLmw2uAs26DCPyuTUylFxYTS/fjQ0fbTpep+2Yh//9+4SGAfv53cO561JKS3rtsPQmd6S7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSeOVDRW; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-87bb66dd224so57616066d6.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 16:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760398364; x=1761003164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kpYqb2ZCluNziOmcII9ceMyb1EVm6bnboOL+/xp8D78=;
+        b=LSeOVDRW+hGnlJpN+tH1JpbCDMSoyvOdKnAC39CQS/n2YMrCglFXmHFJZAPRtIbXxJ
+         2HjRqYCspQrx1NWBeI+DPn+bxsnkVhGly4zN8l7T53w7ys4mSSAX5wgRJfh2BP8z1h/1
+         wzwlW2CmvuLlh3qSdOD3GB7wHxv99L1Cdcob4UqLWO83wwXrnqGjEDOkZyHRI8cOhTG8
+         nQZMCPrA8UNqFtD3G7ctKHbCoYufQD7eI/Pg43tYWnbOTJD4ybG767fDbQSQzXatCbSr
+         vgyzLYUjqf1rghz5zxLh6owsgxrn9uC9XgxKLXLLpL0pLcfpt6ey1zIey8t2JjpeHUGI
+         WFiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760398364; x=1761003164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kpYqb2ZCluNziOmcII9ceMyb1EVm6bnboOL+/xp8D78=;
+        b=QXqWwcz0Z52EhLwxS+ZrjWdGeo+4hrH/TRWByIoG6dCPaMAVD9/QuJO4ZkyEm0iGBx
+         ghVKYnJ7zEkrbgLOTmvbBp/oQ5jwzur7S7E9VcPD3ZgAqekKQdKq9XVuKFttQNiWG7cv
+         iS5A87GO6NGKHuhYd2qNTT1TZEg2tffFP+Zxp/VPXfkx7XCnQaa+OL5xjo+Q0Gift6wI
+         jmMphl/jCZgtzvOa52HnQX7a06ELWKByC/c4gdH1sXSBBxWJ3GwWX8uAZ8bkn2dW1kq8
+         KN0GCAKSZzRotIept41MoiUsQj3XAWK9TExHy8ESU+dqi93/e1Wg04y2VkXoZ6c69wlj
+         sedQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcIXz7RX866DwNCLCNBtc1exTkW+x0LqGz61uFfYs7gyXzRfsegunrveki+ZgU8eqyaxviEiDK4ymGg7vn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhrU3GmlsBO8rl8UKt/p/+xi6vcWB2qNw0nMQiufDDh56t5CVj
+	Q6FawTaygU8Nhkxxo3+EXf6w3I0qc0wZM5p3i8bg2BmYiFNgTR9ATTyrgdm+ESWktqfRNibhkiX
+	JzW31yQtuFxP6cG5G//XHMM2TjNxzl54=
+X-Gm-Gg: ASbGncu4zVQnLegcZjG4QQ3WrEFsLTSWrtmKFwBqIT5+ELh3Z0Dhoza4Y+41ROe3SV+
+	5CCEhwAEx32gg8Iu/MmcxB9TfJZN+IA2fVMjnUUByxHnZsJteRFKOAhc4DN5HZBwtaQcW6dsr3t
+	2EXR9Ml0Yn82ZFwVolDTP4vjFIXK/LAvbAo7yp60cVw+hxc/p9js3d/WrdppToo+RXJVvZkg8aR
+	NxN/QF7SvfoequkFhujukIGYgH6VusJGLf2m0RHg1VENLRwV79QKeF+VLDkw1JiTUPR
+X-Google-Smtp-Source: AGHT+IFW4AEkmHVKOwavDx5w9Ku/TO7hW0iD5YD27kh4136T2XmCfjRj4tPp4LXvC5tkFm71KBC+9sbz4BFNHPrU5iQ=
+X-Received: by 2002:ac8:7f09:0:b0:4cb:979:646b with SMTP id
+ d75a77b69052e-4e6ead622e0mr273951501cf.55.1760398363773; Mon, 13 Oct 2025
+ 16:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013134708.1270704-1-aha310510@gmail.com> <20251013164625.nphymwx25fde5eyk@pali>
-In-Reply-To: <20251013164625.nphymwx25fde5eyk@pali>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 14 Oct 2025 08:29:14 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
-X-Gm-Features: AS18NWA2a1YxuJIOARSQtQYwyd5cLkP4zCGhLc1g0fsPOO2REg4pII5pSv2KDSU
-Message-ID: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
-Subject: Re: [PATCH v3] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Jeongjun Park <aha310510@gmail.com>, Ethan Ferguson <ethan.ferguson@zetier.com>, 
-	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com> <CAJnrk1ZCXcM4iDq5bN6YVK75Q4udJNytVe2OpF3DmZ_FpuR7nA@mail.gmail.com>
+ <54e30e4a-36c3-4775-a788-dc15e3558b9b@bsbernd.com>
+In-Reply-To: <54e30e4a-36c3-4775-a788-dc15e3558b9b@bsbernd.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 13 Oct 2025 16:32:32 -0700
+X-Gm-Features: AS18NWA-25MSA2awLHIL6lQs0487lVP4jCWcezWHosoNNeei8KqR-UEwnvxgsnQ
+Message-ID: <CAJnrk1Zu4WSr_YnZNa7Zf8s8-wAWTqL_xQyZhFSU6jCZMeryFg@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Brian Foster <bfoster@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 1:46=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
+On Mon, Oct 13, 2025 at 1:40=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
 >
-> On Monday 13 October 2025 22:47:08 Jeongjun Park wrote:
-> > Since the len argument value passed to exfat_ioctl_set_volume_label()
-> > from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds read
-> > occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
+> On 10/13/25 22:27, Joanne Koong wrote:
+> > On Mon, Oct 13, 2025 at 1:16=E2=80=AFPM Bernd Schubert <bernd@bsbernd.c=
+om> wrote:
+> >>
+> >> On 10/13/25 15:39, Miklos Szeredi wrote:
+> >>> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrot=
+e:
+> >>>
+> >>>> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
+> >>>> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, veri=
+fy
+> >>>> that it hasn't been invalidated.  If old_mtime is invalid or if
+> >>>> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
+> >>>> cache is not invalidated.
+> >>>
+> >>> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
+> >>> Link to complete thread:
+> >>> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmai=
+l.com/#r]
+> >>>
+> >>> In summary: auto_inval_data invalidates data cache even if the
+> >>> modification was done in a cache consistent manner (i.e. write
+> >>> through). This is not generally a consistency problem, because the
+> >>> backing file and the cache should be in sync.  The exception is when
+> >>> the writeback to the backing file hasn't yet finished and a getattr()
+> >>> call triggers invalidation (mtime change could be from a previous
+> >>> write), and the not yet written data is invalidated and replaced with
+> >>> stale data.
+> >>>
+> >>> The proposed fix was to exclude concurrent reads and writes to the sa=
+me region.
+> >>>
+> >>> But the real issue here is that mtime changes triggered by this clien=
+t
+> >>> should not cause data to be invalidated.  It's not only racy, but it'=
+s
+> >>> fundamentally wrong.  Unfortunately this is hard to do this correctly=
+.
+> >>> Best I can come up with is that any request that expects mtime to be
+> >>> modified returns the mtime after the request has completed.
+> >>>
+> >>> This would be much easier to implement in the fuse server: perform th=
+e
+> >>> "file changed remotely" check when serving a FUSE_GETATTR request and
+> >>> return a flag indicating whether the data needs to be invalidated or
+> >>> not.
+> >>
+> >> For an intelligent server maybe, but let's say one uses
+> >> <libfuse>/example/passthrough*, in combination with some external writ=
+es
+> >> to the underlying file system outside of fuse. How would passthrough*
+> >> know about external changes?
+> >>
+> >> The part I don't understand yet is why invalidate_inode_pages2() cause=
+s
+> >> an issue - it has folio_wait_writeback()?
+> >>
 > >
-> > And because of the NLS_NAME_OVERLEN macro, another error occurs when
-> > creating a file with a period at the end using utf8 and other iocharset=
-s,
-> > so the NLS_NAME_OVERLEN macro should be removed and the len argument va=
-lue
-> > should be passed as FSLABEL_MAX - 1.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
-> > Fixes: 370e812b3ec1 ("exfat: add nls operations")
->
-> Fixes: line is for sure wrong as the affected
-> exfat_ioctl_set_volume_label function is not available in the mentioned
-> commit.
->
-> I guess it should be commit d01579d590f72d2d91405b708e96f6169f24775a.
->
-> Now I have looked at that commit and I think I finally understood what
-> was the issue. exfat_nls_to_utf16() function is written in a way that
-> it expects null-term string and its strlen as 3rd argument.
->
-> This was achieved for all code paths except the new one introduced in
-> that commit. "label" is declared as char label[FSLABEL_MAX]; so the
-> FSLABEL_MAX argument in exfat_nls_to_utf16() is effectively
-> sizeof(label). And here comes the problem, it should have been
-> strlen(label) (or rather strnlen(label, sizeof(label)-1) in case
-> userspace pass non-nul term string).
->
-> So the change below to FSLABEL_MAX - 1 effectively fix the overflow
-> problem. But not the usage of exfat_nls_to_utf16.
->
-> API of FS_IOC_SETFSLABEL is defined to always take nul-term string:
-> https://man7.org/linux/man-pages/man2/fs_ioc_setfslabel.2const.html
->
-> And size of buffer is not the length of nul-term string. We should
-> discard anything after nul-term byte.
->
-> So in my opinion exfat_ioctl_set_volume_label() should be fixed in a way
-> it would call exfat_nls_to_utf16() with 3rd argument passed as:
->
->   strnlen(label, sizeof(label) - 1)
->
-> or
->
->   strnlen(label, FSLABEL_MAX - 1)
->
-> Or personally I prefer to store this length into new variable (e.g.
-> label_len) and then passing it to exfat_nls_to_utf16() function.
-> For example:
->
->   ret =3D exfat_nls_to_utf16(sb, label, label_len, &uniname, &lossy);
-Right, I agree.
->
-> Adding Ethan to CC as author of the mentioned commit.
+> > This issue is for the writethrough path which doesn't use writeback.
 >
 >
-> And about NLS_NAME_OVERLEN, it is being used by the
-> __exfat_resolve_path() function. So removal of the "setting" of
-> NLS_NAME_OVERLEN bit but still checking if the NLS_NAME_OVERLEN bit is
-> set is quite wrong.
-Right, The use of NLS_NAME_OVERLEN in __exfat_resolve_path() and
-in the header should also be removed.
+> Oh right. So we need some kind of fuse_invalidate_pages(), that would
+> wait for for all current fuse_send_write_pages() to complete? Is that
+> what you meant with 'fi->writectr bias'?
+
+Yes but unfortunately this would block reads on any part of the file,
+not just the part that's being written.
+
+Looking at this more, I think we actually could just grab the folio
+locks and if we need to fault anything in, unlock all the folios,
+fault in the bytes, and then relock all the folios. I don't think we would
+need to check anything between dropping the locks and relocking, since
+if we're comparing this against the existing code where we drop the
+locks on fully-copied folios, this doesn't introduce any new race
+conditions as far as I can see.
+
+Thanks,
+Joanne
+
 >
->
-> Namjae, could you re-check my analysis? Just to be sure that I have not
-> misunderstood something. It is better to do proper analysis than having
-> incomplete or incorrect fix.
-Yes, I agree with your analysis.
-Thanks!
->
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  fs/exfat/file.c | 2 +-
-> >  fs/exfat/nls.c  | 3 ---
-> >  2 files changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> > index f246cf439588..7ce0fb6f2564 100644
-> > --- a/fs/exfat/file.c
-> > +++ b/fs/exfat/file.c
-> > @@ -521,7 +521,7 @@ static int exfat_ioctl_set_volume_label(struct supe=
-r_block *sb,
-> >
-> >       memset(&uniname, 0, sizeof(uniname));
-> >       if (label[0]) {
-> > -             ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
-> > +             ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX - 1,
-> >                                        &uniname, &lossy);
-> >               if (ret < 0)
-> >                       return ret;
-> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> > index 8243d94ceaf4..57db08a5271c 100644
-> > --- a/fs/exfat/nls.c
-> > +++ b/fs/exfat/nls.c
-> > @@ -616,9 +616,6 @@ static int exfat_nls_to_ucs2(struct super_block *sb=
-,
-> >               unilen++;
-> >       }
-> >
-> > -     if (p_cstring[i] !=3D '\0')
-> > -             lossy |=3D NLS_NAME_OVERLEN;
-> > -
-> >       *uniname =3D '\0';
-> >       p_uniname->name_len =3D unilen;
-> >       p_uniname->name_hash =3D exfat_calc_chksum16(upname, unilen << 1,=
- 0,
-> > --
+> Thanks,
+> Bernd
 
