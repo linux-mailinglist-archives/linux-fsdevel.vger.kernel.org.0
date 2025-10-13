@@ -1,136 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-63908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A369BD17B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 07:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3E6BD17CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 07:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8209E34670C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 05:43:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4B53BDEAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 05:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB5E2C11ED;
-	Mon, 13 Oct 2025 05:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFC92DCBE6;
+	Mon, 13 Oct 2025 05:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWCG7q2p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+I7ZrtE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EEC215F4A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 05:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F25B2DC770
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 05:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760334181; cv=none; b=mBjpLrKM5DmV28wNwBk3UkAxS30xH1Vj5ovGk44/ZlDgW9/w5a/xVedAAkE5n8ZgeHn6QcMfUdxBuBjQDFoEfK34p7WRROMyV2a6+aCBMc/iIuzpBI/KBmlUx5KGT9g9KeQfQ5pMVFkGjVo+NcMiaitFHRSJc3828m1+ZRuqYWo=
+	t=1760334272; cv=none; b=ebJQgNYHaNcFc/vHOjFsyS8Tj64jJGF/rsBuLlT+TfgIieYU91K1QJllOaHMgOlgfb1kqHsZtFk+RXyDpADi0L3ZQ8xFLkS5G8ITB95RY5SLA59rcJy/cNVyUYwt4+muH964IPBgfKH1AqusPoY+RMA0wfSeE/OxPZ4giRm9rv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760334181; c=relaxed/simple;
-	bh=LkiHDxUpll20Mzzyjyp6GAradkAWV81/VhYmzsLwOLs=;
+	s=arc-20240116; t=1760334272; c=relaxed/simple;
+	bh=Vluz9ytPQeMtlO7P9ORKtagTdZgZUvCkj7WhJdLaLOw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZevzshsMu8vLuWNNNmXwIYtUhjQkCXA52GLByIQnYDLHyDABQ3Y8X9ShjxwykkwWfyhl6bdF+sFsO/B90yfAUIby8WIRgTAOaLPIEWvEKalF+FKoiT8QMwHl3zcCysPuu1eUPxmzGSBzRmXo5gg1rP/4JKkLSie218S+0ZqeiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWCG7q2p; arc=none smtp.client-ip=209.85.221.169
+	 To:Cc:Content-Type; b=GdTEhYHU7TQVQUDjgK34Dlksr47bzwh379MUAX3EK+7uF6KLyJlXOASgpnAWOydpfCKAArUCQbX3bb9Yhik73lQS0mxMqVIhbSU8lxOz+iE3qowecv7tQ0484MYjkmYjlRDZ2wfAjEEWuH2DxECOqXZYP3oiAjCzznZUU7XVgDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+I7ZrtE; arc=none smtp.client-ip=209.85.217.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-54bc04b9d07so1272763e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 22:42:59 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5d40e0106b6so1932431137.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 22:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760334179; x=1760938979; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760334270; x=1760939070; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rFw8GX7he7wIYguaN9JzvQNXMrk3Z90u5aRFTT7c2yU=;
-        b=IWCG7q2p7ncp3CeE2O5Slzpe2mNztlvZhmi9ntpDYMpxLGBvuzLRHSH+ncBuJYaKD+
-         jzc6ucI6ohY6D/Iica3jWOpZd+lh0UGTNdAzv30lo68Fos9U3jAC+xcC2jHVIp/qaQH4
-         EKmTWoWaxx1XGMIAKWpSuyQBq+FQggTp+T2YRLmhhPAC1WDFsCEaklEKKoc3gnGZXfyM
-         VxHlzrORf8boipLV1lThncDGuIYq55L9vVWVlvLFid8Y81xCaMzjT7xFu169zTPqSlYy
-         ot8bM/NL0/yxTgbiqrefFX17lVANYxojBoKcYczeWjOU2o26WB8fcrBiEP6ApN2kkmmZ
-         L4Bw==
+        bh=PfZ0cjDYVK5lhFzxXW1zOC477aQ4q/mTU1VD2TvA1nQ=;
+        b=Y+I7ZrtEUyrbBVyxb/pwVHSPm/NUjdcUN7p2QIOR2Gc76JioaCNAHT0DpUo4aQJBuh
+         6U3XRCAD4pT22cE0CZIrWjFoF94AIvPb3sECA4AIwObH5az4F4oBgbgRjAHJ04DUSgIN
+         cgJWnI10SIM9wQD8DIf6C2A8ZivTesUbfjQGHDwE2Xta85NwyTJaH02gd6HZZnUc2Iqh
+         /b9tlDquyWgeVVEOknwdr29PWPcBZODGzVtZOZKagmwsoSyx+ITO/MQ4LKrvzqej7/Nv
+         t+me5XWphNc1k+F81d5qH4Z8A1bOgpxWdzw1oKqHAm1sQO0Uy4SnSje7hng2iB1YlAnS
+         JpCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760334179; x=1760938979;
+        d=1e100.net; s=20230601; t=1760334270; x=1760939070;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rFw8GX7he7wIYguaN9JzvQNXMrk3Z90u5aRFTT7c2yU=;
-        b=pyswBZQDG1Vgn6om1WRjaB3ZS/TYWqbTnYk/wlp+iH89T1rfWZ3A3AjKs5LSY4Eca+
-         5ZdJH3NPljv5QBV/qmZvnyl5wngpAv54ZQ69HffByocXB1IbpUZ75ZeQLeevmwshi1hw
-         vJGU1F8rkB4XrjOL6Z6sEm4ZLkI76WGHpRv8auz9S8DKAzSQRmzslnvRse6ADCmW/RTE
-         FmUdskb8IUKMRv61bS8ZIYVr0QzheeCiN3vOqgcpZYIBZSZc3n/bUid3iRxZyhkdy0lL
-         SZ0iKQUG/l/uys2uAexDoqmPp1subg2NEwJdcF5RxWyCr94jUwvnGysdD6n7CU7d1GrC
-         /Emg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFeiHY4iyucqISksPujmEHKuUgLqx/48QhrW8u9+CJGXlO5A36GQjb0VJd0oCrG0p9coI9q6dhcw+/fkcZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznt27bVecy65pj8WEN/pXp4FJ3bW7rW4/8wPXL28bFvnOmZtsz
-	cG4bhimoFzbMdwQT6U53fipBVOzIaKjx0GHQ+YObCLoEJ28Li939ntB3PN6qyIBbB2YcbTW7VfS
-	P/ovT0UdqoQx6LD0OTiaG8JHmHF2dR34=
-X-Gm-Gg: ASbGncuhlA2kafjQp3LzkOKJTTCKFj5/KHoHhmta+KnDMfVGEQa3SFg91h8/lwMmJa4
-	tV801dDA6ucW5vWFNLfTnRmDHeVEAIztB5zNHxR5KQocSdsl+bqEJwS/COexkvCmP3415MKxeuX
-	Yu5oM9/nA+Jlt7gXrHqO4QgXHILh6oi4hxiORUXNTj3NN3zgt9klZH+fSJVCdCqJ3Tnjr0Tx1fv
-	+1h28jWhuth0O2+maQZCnbzy4SroIGCd0Lg6w==
-X-Google-Smtp-Source: AGHT+IE2pzpIXFUlQnxpSAUJmDsWbuHYPNEdEfC1GOsG6qkn6Ggw30mR6TSMqPTmSaIF0L9e6DD5b5ldfGpQurArkk4=
-X-Received: by 2002:a05:6122:91b:b0:545:ef3e:2f94 with SMTP id
- 71dfb90a1353d-554b8aa8d4fmr6241006e0c.1.1760334178612; Sun, 12 Oct 2025
- 22:42:58 -0700 (PDT)
+        bh=PfZ0cjDYVK5lhFzxXW1zOC477aQ4q/mTU1VD2TvA1nQ=;
+        b=G6Ck3yMMuxgbG5qIQz3tLVXH9fLWAjaEX4DdXTNC9KYYdz5rBIecTke72+SEyCh9g8
+         KSmH5YixKBga5owtl8r846Cha72HakJGa51ex+Zduoxa+2zhOm3fRsnTsRaS3fxj5VYM
+         W1l4osZCbRVQaYM1u42guZDAtuI8KC4U4g4kcUFrnglVSKAphX5/fsu/TY20F97xKgsH
+         wIJng8fVUmfVXBhMELD4rgvAMvVBtOooC6WoYU2ChJ0zPPiOpAxr8kJo9lKUXd9cmvCo
+         cGd3RPNQBF9VXp9UBogqUJVWtJUalU3PDRDh91TqV/9DWo3bjteJBYD27kvpQ62lf7f3
+         ZwRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO3UofIXfRnTHXFGBd3OUmlrpAL7DpCfTkbvuFcqM/7UBe4r0QiIlJOCXRuR2kxdJPDe+nO0bweyz0JTqh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJpnXalTavp9nfbJZyPH3HFW5R5Mi1424bOnahr/LAhMIsUd2l
+	3kML1Ve+uboafKXnkxRkdjfZIL1T2ID3gjz/W89Y+epwLwYhvPqTDjz7zUGunupeH7QVYlv/pfu
+	PQ+G+hpjwy0BsYc1svIPLEytI/ICsrWI=
+X-Gm-Gg: ASbGncvSObTX4L45DxbPkt+RllWoGnJWqQlgbOGhclKGji0OGybi98sZjTTf7VsxNVM
+	c+1NeGkCmX1fXqHHnurhUuESd3FLMlWLyWhugr9dvUckMK+fkPfIIvJAAgUDeX+GtybJ4BEZ+a3
+	U64G8lmQRlLfBrcnEm4aEbFS/wVJZYYMtnGJ/sZYor9GdIDdDQKWBXnbCAYswGOjgKy3+0709bF
+	nPVQAPop6GxRk7p16URvnXvD/s=
+X-Google-Smtp-Source: AGHT+IHpSmXJAORlFvfBjiO5EpZknUsClCESfr6miv9ORXUHlNjIb1jckJtzwj7e3Gce86ucBxKeE0hLKTbq4g4SBL8=
+X-Received: by 2002:a67:e009:0:10b0:5d5:f437:92d5 with SMTP id
+ ada2fe7eead31-5d5f43792efmr3865770137.3.1760334270191; Sun, 12 Oct 2025
+ 22:44:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011013312.20698-1-changfengnan@bytedance.com> <aOxxBS8075_gMXgy@infradead.org>
-In-Reply-To: <aOxxBS8075_gMXgy@infradead.org>
+References: <20251011013312.20698-1-changfengnan@bytedance.com> <aOyLlFUNEKi2_vXT@fedora>
+In-Reply-To: <aOyLlFUNEKi2_vXT@fedora>
 From: fengnan chang <fengnanchang@gmail.com>
-Date: Mon, 13 Oct 2025 13:42:47 +0800
-X-Gm-Features: AS18NWBq65kKS67xgSwyGWf422mFA-TjXvUExYQYDBZ5JznD-_4en1JwPHXcFWo
-Message-ID: <CALWNXx8pDOvDdNvw+v0rEyi33W8TL+OZW1YiFbF6Gns3PeWOLA@mail.gmail.com>
+Date: Mon, 13 Oct 2025 13:44:19 +0800
+X-Gm-Features: AS18NWD8kq6UQsDDGG0qKmrz3bfZhv6wKElSNkMZ019t6wf6DXrrEBmZE82HmfY
+Message-ID: <CALWNXx_J5L1fjTrVA5ChXsPdGk5E5HSuNHUO183mVat6GZdo=g@mail.gmail.com>
 Subject: Re: [PATCH] block: enable per-cpu bio cache by default
-To: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
 Cc: Fengnan Chang <changfengnan@bytedance.com>, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
 	brauner@kernel.org, jack@suse.cz, asml.silence@gmail.com, willy@infradead.org, 
-	djwong@kernel.org, ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org
+	djwong@kernel.org, hch@infradead.org, ritesh.list@gmail.com, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 11:25=E2=80=AFAM Christoph Hellwig <hch@infradead.o=
-rg> wrote:
+On Mon, Oct 13, 2025 at 1:19=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
+e:
 >
 > On Sat, Oct 11, 2025 at 09:33:12AM +0800, Fengnan Chang wrote:
-> > +     opf |=3D REQ_ALLOC_CACHE;
-> > +     if (bs->cache && nr_vecs <=3D BIO_INLINE_VECS) {
-> > +             bio =3D bio_alloc_percpu_cache(bdev, nr_vecs, opf,
-> > +                                          gfp_mask, bs);
-> > +             if (bio)
-> > +                     return bio;
-> > +             /*
-> > +              * No cached bio available, bio returned below marked wit=
-h
-> > +              * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
-> > +              */
-> > +     } else
+> > Per cpu bio cache was only used in the io_uring + raw block device,
+> > after commit 12e4e8c7ab59 ("io_uring/rw: enable bio caches for IRQ
+> > rw"),  bio_put is safe for task and irq context, bio_alloc_bioset is
+> > safe for task context and no one calls in irq context, so we can enable
+> > per cpu bio cache by default.
+> >
+> > Benchmarked with t/io_uring and ext4+nvme:
+> > taskset -c 6 /root/fio/t/io_uring  -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1
+> > -X1 -n1 -P1  /mnt/testfile
+> > base IOPS is 562K, patch IOPS is 574K. The CPU usage of bio_alloc_biose=
+t
+> > decrease from 1.42% to 1.22%.
+> >
+> > The worst case is allocate bio in CPU A but free in CPU B, still use
+> > t/io_uring and ext4+nvme:
+> > base IOPS is 648K, patch IOPS is 647K.
 >
-> > +             opf &=3D ~REQ_ALLOC_CACHE;
->
-> Just set the req flag in the branch instead of unconditionally setting
-> it and then clearing it.
+> Just be curious, how do you run the remote bio free test? If the nvme is =
+1:1
+> mapping, you may not trigger it.
 
-clearing this flag is necessary, because bio_alloc_clone will call this in
-boot stage, maybe the bs->cache of the new bio is not initialized yet.
+I modified the nvme driver, reduce the number of queues.
 
 >
-> > +     /*
-> > +      * Even REQ_ALLOC_CACHE is enabled by default, we still need this=
- to
-> > +      * mark bio is allocated by bio_alloc_bioset.
-> > +      */
-> >       if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <=3D BIO_INLINE_V=
-ECS)) {
+> BTW, ublk has this kind of remote bio free trouble, but not see IOPS drop
+> with this patch.
 >
-> I can't really parse the comment, can you explain what you mean?
-
-This is to tell others that REQ_ALLOC_CACHE can't be deleted here, and
-that this flag
-serves other purposes here.
-
+> The patch itself looks fine for me.
+>
+>
+> Thanks,
+> Ming
 >
 >
 
