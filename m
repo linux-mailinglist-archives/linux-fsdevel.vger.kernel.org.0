@@ -1,131 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-63917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E338BD1B57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 08:49:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBCBBD1955
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 08:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A4DB4EB99C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 06:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F056F3B320D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 06:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497B72E2DE6;
-	Mon, 13 Oct 2025 06:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C672DCC1B;
+	Mon, 13 Oct 2025 06:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E08XGpzm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B9B2848AA;
-	Mon, 13 Oct 2025 06:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8033A2DEA8E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 06:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760338149; cv=none; b=AK+oS/VOIWxO5zRe/Uqc9HIdFcSF2iM26319bhUzW4zbkyOXFdyw6P84TaRrqb07+qCH5YvSU3F4zoZRPUIEJf5/RRUaX2TioGzcLIc3lCHQVLGvw1QdqIAgDzbwRhT9LgzZaSMt0BXFMDsdABLjc8PIze7+cwNU1hhMIHb4sfU=
+	t=1760335595; cv=none; b=RUghkNDdZD3NNcHZSwZ+tvWa5Rvb9Z1loUukV2bTPT6UOyqYEQIu/KOm6kzLT6+Es3/mWG3pBnRTWLSJ24roChCSwi4O3+6oLCe+C8bRPa6jwcuylPoc6grJbVv7EnQNK8d/dHKxdXT1Kjq1HUdXallBJsglGv8o6WoVf9Id5w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760338149; c=relaxed/simple;
-	bh=Oj5AyQeF1q/G4g4eHS4beZKCTAHzZin6dWoYk0X06YA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FLHzwlDd3xe4oJYp6Pw+rfb5XX7pSz+++JJ5sNaszXKnaA21lrrKf+aHf/Y3+tr/fYTtB5tamrwMUIAMzskWfZotVOI37V/o0RKs1UuBg+ApQMuqVYvOAgjdrage+PgajpSCW7Cg67OTJKTCqZV0+ribi3h5pijlhCVD3CVgoFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59D5ixPE088993;
-	Mon, 13 Oct 2025 14:44:59 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59D5ip8b088958
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 13 Oct 2025 14:44:59 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <1007e06d-c2d1-4905-ab93-9d66ed7da505@I-love.SAKURA.ne.jp>
-Date: Mon, 13 Oct 2025 14:44:49 +0900
+	s=arc-20240116; t=1760335595; c=relaxed/simple;
+	bh=RSL7ODefchx0oaqAeJ6n26+cCreCbBCiVlRzlUCjIjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r9hrwhPvDVmJs6Chj1wllKILnFbkoCcufuRI3Oda35QPamNYGD231JWQTGzN3onAx0fb6FiJqPQG0zN2gpvtiTucC2AdM3COoo7ERcOuD9dKCOsY3AL7MzfSwJcVSzytOJmXf7f3TF9oxWQt/omnvv3Jv3Yfpr3XsxgsSsBUnZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E08XGpzm; arc=none smtp.client-ip=74.125.224.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-638d01a8719so3927164d50.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 23:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760335592; x=1760940392; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RSL7ODefchx0oaqAeJ6n26+cCreCbBCiVlRzlUCjIjc=;
+        b=E08XGpzmHVw0+qDzU5sCl5j2nWjFq/4gmZrI+HSMqUtrUQdW75O40jzorsqViIJ5Op
+         YueCYgQvB7QPc4pUrMdPo6WnC+J7hR1UlRYyfnedh94HC57pUVWE3OllsoN75neJ05zd
+         7IcSugJKTLhjY0wSwmbSfQ1BF+GIHKMdxFsZBTI139vylrWwsfot4THqwBnc5WWO1ADS
+         owqxNkoEXxySlcupDmKJPMhXmeet3aWT00Ul8qKcfRlZ1+XFeBRnw6Pd6ASpf6fNaQKa
+         kriZgtpxAU1TcDZRtFRbT0eY4rS6fV6XOKhazNP5uPTqs37bNueBArVUKMrsryxA49Ua
+         /esQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760335592; x=1760940392;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RSL7ODefchx0oaqAeJ6n26+cCreCbBCiVlRzlUCjIjc=;
+        b=U80GERKB906pLOyrmF+WKLBUIvQNn645sRyWgQcW1KyVMWVBmkXsiPEv8kowDSvBIo
+         HIbaCd2d1CYyGKJhy4jEpLwGN8/8kfU1r88iWfB76Ke6Lz68o9RQtb5Uf5ZRAEfNwjGT
+         JeVv0HamNedTT85cugb/lS8In9EK2mwRMtc6OvQopp7fuOU4XYMLk9z7CZ+3YQnVigJl
+         NUGa71W13RdTdpZv65Q9nbA/AIOtT6JUmQgF3fabIUaUqPSEXwc0u3D6ORI/fSyGNJf0
+         MV9p/8cFZuPJvZWs5Whfbrls51nT1boF7sBJWzn3NeTtSj6v6pGxHq/lN2Rym3o5fmAx
+         pFBQ==
+X-Gm-Message-State: AOJu0Yyi7OW9dr1osbTZu0u8b5hv3M74PjNzDGs8rZL/52xZNR7Mc21U
+	2PzD+JsqBJ7UuvNxekGdhrTU7luzhe9/sEORld2AaWFX5F+Pk7oHd5d+OdIkDdlSTKUzu6JQKfh
+	Ts7PLlItwbU8J/nGRGgfmdl0N4AMD+Tg=
+X-Gm-Gg: ASbGncvNplHEK5EfoTesH30Np7cvRRLtbAd5YVQVrx8GdLdqX+7aJKmjYNqZLsUB5d2
+	Px4zVZMVJjlWDT0+EMFbxkXSDZ6FQlpk9/NVS1EN97o0XM04aZB52NLDK9Aut4dFtosPvGGyI0Z
+	q+K1HB2i5sdK3SIb/nvz17W6VjtTYxdVMpgBQSLSg06146e+CaMkhH04KJ3/3QFilg5+xrnTYLF
+	VegKNoNto3csd+YXnFyEf6EM8sipyOES99A
+X-Google-Smtp-Source: AGHT+IGNAOIcFLi0/Sm93Y3jSHSuxr+30gS3y7Fr34MKhVqQQnt1MJ/lLmHR6+qpb+bVmq5VVWr9ycljJFZ2Qxe2L4U=
+X-Received: by 2002:a05:690e:4142:b0:63c:f4eb:1b0d with SMTP id
+ 956f58d0204a3-63cf4eb1b25mr7582533d50.22.1760335592286; Sun, 12 Oct 2025
+ 23:06:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] bfs: Reconstruct file type when loading from disk
-To: Tigran Aivazian <aivazian.tigran@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <a5f67878-33ca-4433-9c05-f508f0ca5d0a@I-love.SAKURA.ne.jp>
- <CAK+_RL=ybNZz3z-Fqxhxg+0fnuA1iRd=MbTCZ=M3KbSjFzEnVg@mail.gmail.com>
- <CAK+_RLkaet_oCHAb1gCTStLyzA5oaiqKHHi=dCFLsM+vydN2FA@mail.gmail.com>
- <340c759f-d102-4d46-b1f2-a797958a89e4@I-love.SAKURA.ne.jp>
- <CAK+_RLmbaxE9Q-ORiOUV8emrB+M6e7YgUNZEb48VwD28EuqwhQ@mail.gmail.com>
- <ddd2cd94-683f-462b-a475-cc04462e9bdd@I-love.SAKURA.ne.jp>
- <CAK+_RLmwT5EHC6aajJxG0_ccPe7YhnWkd_wOPhhCz3mGo8Ub_g@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAK+_RLmwT5EHC6aajJxG0_ccPe7YhnWkd_wOPhhCz3mGo8Ub_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
+References: <20251010094047.3111495-1-safinaskar@gmail.com>
+ <20251010094047.3111495-2-safinaskar@gmail.com> <CAHp75VeJM_OoCWDX20FhphRi6e7rG9Z4X6zkjx9vFF12n7Ef7A@mail.gmail.com>
+In-Reply-To: <CAHp75VeJM_OoCWDX20FhphRi6e7rG9Z4X6zkjx9vFF12n7Ef7A@mail.gmail.com>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Mon, 13 Oct 2025 09:05:56 +0300
+X-Gm-Features: AS18NWAQKixJeSnu1jMDTs2ReasUmQ44oKevMSLcLyEUnjeI8Werl5Jwf9tycOM
+Message-ID: <CAPnZJGDvHbDt_JvDNLN+LaU+5yFyB_qkdBtVhSEV60_yktAVzw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] init: remove deprecated "load_ramdisk" and
+ "prompt_ramdisk" command line parameters
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, Aleksa Sarai <cyphar@cyphar.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>, 
+	Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, 
+	linux-block@vger.kernel.org, initramfs@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Michal Simek <monstr@monstr.eu>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dave Young <dyoung@redhat.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Nicolas Schichan <nschichan@freebox.fr>, David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot is reporting that S_IFMT bits of inode->i_mode can become bogus when
-the S_IFMT bits of the 32bits "mode" field loaded from disk are corrupted
-or when the 32bits "attributes" field loaded from disk are corrupted.
+On Fri, Oct 10, 2025 at 6:02=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> 1) often the last period is missing in the commit messages;
+I will fix in v3.
 
-A documentation says that BFS uses only lower 9 bits of the "mode" field.
-But I can't find an explicit explanation that the unused upper 23 bits
-(especially, the S_IFMT bits) are initialized with 0.
+> 2) in this change it's unclear for how long (years) the feature was
+> deprecated, i.e. the other patch states that 2020 for something else.
+> I wonder if this one has the similar order of oldness.
 
-Therefore, ignore the S_IFMT bits of the "mode" field loaded from disk.
-Also, verify that the value of the "attributes" field loaded from disk is
-either BFS_VREG or BFS_VDIR (because BFS supports only regular files and
-the root directory).
+These two commits were done in 2020, too. I will fix in v3.
 
-Reported-by: syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Tigran Aivazian <aivazian.tigran@gmail.com>
----
- fs/bfs/inode.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index 1d41ce477df5..984b365df046 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -61,7 +61,19 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 	off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
- 	di = (struct bfs_inode *)bh->b_data + off;
- 
--	inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
-+	/*
-+	 * https://martin.hinner.info/fs/bfs/bfs-structure.html explains that
-+	 * BFS in SCO UnixWare environment used only lower 9 bits of di->i_mode
-+	 * value. This means that, although bfs_write_inode() saves whole
-+	 * inode->i_mode bits (which include S_IFMT bits and S_IS{UID,GID,VTX}
-+	 * bits), middle 7 bits of di->i_mode value can be garbage when these
-+	 * bits were not saved by bfs_write_inode().
-+	 * Since we can't tell whether middle 7 bits are garbage, use only
-+	 * lower 12 bits (i.e. tolerate S_IS{UID,GID,VTX} bits possibly being
-+	 * garbage) and reconstruct S_IFMT bits for Linux environment from
-+	 * di->i_vtype value.
-+	 */
-+	inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
- 	if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
- 		inode->i_mode |= S_IFDIR;
- 		inode->i_op = &bfs_dir_inops;
-@@ -71,6 +83,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &bfs_file_inops;
- 		inode->i_fop = &bfs_file_operations;
- 		inode->i_mapping->a_ops = &bfs_aops;
-+	} else {
-+		brelse(bh);
-+		printf("Unknown vtype=%u %s:%08lx\n",
-+		       le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
-+		goto error;
- 	}
- 
- 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
--- 
-2.47.3
-
+--
+Askar Safin
 
