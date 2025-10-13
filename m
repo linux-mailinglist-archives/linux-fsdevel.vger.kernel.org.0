@@ -1,144 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-63970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1230BD3471
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 15:47:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424DDBD384D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 16:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAE524EC3BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 13:47:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014793BD4DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 14:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9142228CB0;
-	Mon, 13 Oct 2025 13:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0508269D06;
+	Mon, 13 Oct 2025 14:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="io1hlNIi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/PRxUES"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A75227B95
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 13:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF323E47B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 14:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760363249; cv=none; b=owZOn1Z1yToo/KQrUc0FHOTscwjmngTv/gWNx17DiR6GuDniozaicAvffFK25L1uqm+hfTi0rgKLf10MkCup0YsNGD77s6dGdY5uC3xYnm/tFXNwC4tcaA2ZmWNp+V//lzC+PBSO4qjKRTS9co6YZRFDsOI0RvGK384oL97Zuy8=
+	t=1760365837; cv=none; b=IjVTI3SdY4SkudMmBxEjEDG1tRzz+ipWxQfHyeustqmXFsxPbGMTKetxh/c39mshw26sAuTvIyRxE6wsLda4Xd+zNSqUeGtpAZIhIW74hByKvRFow19MTcX1g6i2l2jbRvMtzmXBHxJl1PFk6qOQkXUK9myfrcKjUO3xRj9i6YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760363249; c=relaxed/simple;
-	bh=Swp4+xHTqvgYr+z64DMuU57MVlL3j0v8jDSlSv8/1Rs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=amHPzRm1S+EyFIqB2v7+deHGLiC4sBKLXE4BuxYaMTh36+TyWyhjqP0UFzhxFnzGKVtNc6yqK7xtF1diNlWGoupMWAfegDU7iJ4fupQCXj1lsnfOtBOENkz0DpQkGBc0PQxJ3mNCmbkBGv8J4ksQWVbVc5nx9AVZleDXPx9fd4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=io1hlNIi; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3306eb96da1so3321782a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 06:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760363247; x=1760968047; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=teOPnCrlstkFyH9+vuIz1dE4A6eVshfJueJ5oAZ3QHs=;
-        b=io1hlNIiVqXlc1wjOO1Rak6dG0PCmd87m6yKf7aSc0mEZV0nxR+OmHBUv4xbgPmchU
-         UT+ohTXQGkOWgu7RQUvjFsuw3jx95XXtFJj20VylppMWy9L9VAsDDkBiNpYVMusvyQ3o
-         5wjdI0ZxwK366brx/sQD+9O8TEEWQm7k3m7aFlh6Nc3UJ0aqRWHBeoXzgROm4kJ/VXaI
-         3pp5GEfkHcyzG+rdmiiYdmYN4N9F+SvKTQaUK/x/f4/7Fajd7S3IkP6Zi9AcdDIoz+tV
-         1+5p1fKcdPVgXYtm6+w3qn6va/Hm+qiv9MFZnQXvkRaD0TGc+zOt81ZvR423VgKgR1Xu
-         jzOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760363247; x=1760968047;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=teOPnCrlstkFyH9+vuIz1dE4A6eVshfJueJ5oAZ3QHs=;
-        b=HQHT+2OJ6Brnn8ZQxYBttmHBvuMFj7u6O3d9g3z8cx89QR1jeVSFTUgMwNBI/MhqST
-         aC9KR29f3BTKeSiUP9MvDcrWxKkbf16Mv1ZD03VOT4RnTKt/do6vkE3FMn0KXcgnNxuH
-         cneDdP0x9ZD5A99zIEcAPHZyhY4RNkNzZC1hNPsqTGISR63HctWqvLGAw0ws0n4wM8Y8
-         qn8JcgkV4COfOoYqNX9kXDvRISp/4uXlcf05tZ7etQALuRNy6FbwDu+4BIvu6DrfjoU+
-         j49rALUaTDAyweqkXfNvrJC6sSATUdbcxQkiFSK3axhqDb8c4twxllgKrI8kYhzeI/Io
-         69Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHzOwM3Vtib61ryzl7No4VVreDhso7rdlZlm2i6zkD1mTx7oWvyxI2HHFk5xWlMWjV6998+cWtpNCaRsEg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGcDcRFu615TBStkwogc3hlozDbFUVOc4kmzz9qWjfTmU6jtNV
-	Fs+BudXz0hHs6uqIsqSLdSjhaZZlvrREZ3NJUIBCydl0qtlFbp5+hLY1
-X-Gm-Gg: ASbGnctp7rAyfjHzmFhrt09pzSsC08fYdMpiVgivAGGl3PgW5cKT/klIoL2vYIAj9mO
-	b5LilXxMdivEbYdTBz5eF5trNa6Y9mqgQSj+GDY1urYWv3O7MVv4NxrIHIAYO7RB60fMCHHUodR
-	7qqbkAsBFIeKKLCie5pIxuhIwO6jEGLbGXDmYS3xim+0ExxU0VrdzQ/V13RYgmUeXiOxIs93dko
-	tZxv8lIPQHxQpWu9n2Fi5RF2aPAEtjLXZUeaRjJKCIdKSEK2gCC8a0ezohx8B4tqtN5TmG2nHAZ
-	+7UTyy07hDil3RQaxF35Ufm8lZIrot7omk4ByAiWwhrfBz2YpfCTbbT16iuOd02G7OVcRq1B1HT
-	tYPB2wFwnafLY+aV74X387RuqE6YW4hMvczWpbIwuflAsCEiScjBWQGxgj33Dyx8EQ/qJ
-X-Google-Smtp-Source: AGHT+IFD9xM53HQ+bQQDPEQgAUdL3IwH91zz8prxo1co6ZEPN18n39S7OZmUBWp8Eqf4/zWeSLysJQ==
-X-Received: by 2002:a17:90b:1d06:b0:32e:2c90:99a with SMTP id 98e67ed59e1d1-33b513b4b51mr31706554a91.35.1760363246720;
-        Mon, 13 Oct 2025 06:47:26 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626d61aasm12295067a91.17.2025.10.13.06.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 06:47:26 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>
-Cc: Yuezhang Mo <yuezhang.mo@sony.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	pali@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v3] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
-Date: Mon, 13 Oct 2025 22:47:08 +0900
-Message-Id: <20251013134708.1270704-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760365837; c=relaxed/simple;
+	bh=p7OPEdJE5ToR35hajbcxBsZGseYV7ErRLMU40tXYi4w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MmLwEcWtI4RnofgvKiNZEzVIVA6QXJa/ItDTXWiYAQuMLLSN4nKow1IPMRebMwQyTUiJ0JkuJrMocZlUht97lzuHFgwgVT0ac/72SCv3rvMUAdO+H3WyBmd3c8bS+jfb39+RY3Zd/O/DwM07Rhh8IIDXSedj2Lpw22uJ46sJZAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S/PRxUES; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760365834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BTlu2d/OCa7smgTdfnf6rps6xmzbDobGt8v/NuBgfVM=;
+	b=S/PRxUESMDeqfnjLeI9+xKE2kjdBkNYo+bZv4yNHsm7mr75O3uhqXWReWTSJEewzDI95ig
+	jqiEqTY7MLucH7abyLMHLDbtUtnoDLBS/sx0fwPbN7jX89N76A0jte4WsOgEoPESCTOT5u
+	GdD06NM9b1k6dvUI3gbp3BCotPknYb0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-UK0ZfmzoNZq1a4f8nqpaHA-1; Mon,
+ 13 Oct 2025 10:30:31 -0400
+X-MC-Unique: UK0ZfmzoNZq1a4f8nqpaHA-1
+X-Mimecast-MFC-AGG-ID: UK0ZfmzoNZq1a4f8nqpaHA_1760365830
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA96519560AE;
+	Mon, 13 Oct 2025 14:30:29 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.50])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 414E01954107;
+	Mon, 13 Oct 2025 14:30:12 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Charles Mirabile <cmirabil@redhat.com>,  pjw@kernel.org,
+  Liam.Howlett@oracle.com,  a.hindborg@kernel.org,
+  akpm@linux-foundation.org,  alex.gaynor@gmail.com,
+  alexghiti@rivosinc.com,  aliceryhl@google.com,  alistair.francis@wdc.com,
+  andybnac@gmail.com,  aou@eecs.berkeley.edu,  arnd@arndb.de,
+  atishp@rivosinc.com,  bjorn3_gh@protonmail.com,  boqun.feng@gmail.com,
+  bp@alien8.de,  brauner@kernel.org,  broonie@kernel.org,
+  charlie@rivosinc.com,  cleger@rivosinc.com,  conor+dt@kernel.org,
+  conor@kernel.org,  corbet@lwn.net,  dave.hansen@linux.intel.com,
+  david@redhat.com,  devicetree@vger.kernel.org,  ebiederm@xmission.com,
+  evan@rivosinc.com,  gary@garyguo.net,  hpa@zytor.com,  jannh@google.com,
+  jim.shu@sifive.com,  kees@kernel.org,  kito.cheng@sifive.com,
+  krzk+dt@kernel.org,  linux-arch@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  linux-mm@kvack.org,  linux-riscv@lists.infradead.org,
+  lorenzo.stoakes@oracle.com,  lossin@kernel.org,  mingo@redhat.com,
+  ojeda@kernel.org,  oleg@redhat.com,  palmer@dabbelt.com,
+  paul.walmsley@sifive.com,  peterz@infradead.org,
+  richard.henderson@linaro.org,  rick.p.edgecombe@intel.com,
+  robh@kernel.org,  rust-for-linux@vger.kernel.org,
+  samitolvanen@google.com,  shuah@kernel.org,  tglx@linutronix.de,
+  tmgross@umich.edu,  vbabka@suse.cz,  x86@kernel.org,  zong.li@sifive.com
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+In-Reply-To: <aN6sNFBzx8NPU3Th@debug.ba.rivosinc.com> (Deepak Gupta's message
+	of "Thu, 2 Oct 2025 09:45:40 -0700")
+References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
+	<20250926192919.349578-1-cmirabil@redhat.com>
+	<aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
+	<CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
+	<aNcAela5tln5KTUI@debug.ba.rivosinc.com>
+	<lhu3484i9en.fsf@oldenburg.str.redhat.com>
+	<aNxsWYYnj22G5xuX@debug.ba.rivosinc.com>
+	<lhuwm5dh6hf.fsf@oldenburg.str.redhat.com>
+	<aN6sNFBzx8NPU3Th@debug.ba.rivosinc.com>
+Date: Mon, 13 Oct 2025 16:30:09 +0200
+Message-ID: <lhujz0yoowe.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Since the len argument value passed to exfat_ioctl_set_volume_label()
-from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds read
-occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
+* Deepak Gupta:
 
-And because of the NLS_NAME_OVERLEN macro, another error occurs when
-creating a file with a period at the end using utf8 and other iocharsets,
-so the NLS_NAME_OVERLEN macro should be removed and the len argument value
-should be passed as FSLABEL_MAX - 1.
+> How will they contribute to CFI bringup without having a CFI compiled
+> usersapce?
 
-Cc: <stable@vger.kernel.org>
-Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=98cc76a76de46b3714d4
-Fixes: 370e812b3ec1 ("exfat: add nls operations")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/exfat/file.c | 2 +-
- fs/exfat/nls.c  | 3 ---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+Build glibc themselves and then proceed one library at the time.
 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index f246cf439588..7ce0fb6f2564 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -521,7 +521,7 @@ static int exfat_ioctl_set_volume_label(struct super_block *sb,
- 
- 	memset(&uniname, 0, sizeof(uniname));
- 	if (label[0]) {
--		ret = exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
-+		ret = exfat_nls_to_utf16(sb, label, FSLABEL_MAX - 1,
- 					 &uniname, &lossy);
- 		if (ret < 0)
- 			return ret;
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 8243d94ceaf4..57db08a5271c 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -616,9 +616,6 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
- 		unilen++;
- 	}
- 
--	if (p_cstring[i] != '\0')
--		lossy |= NLS_NAME_OVERLEN;
--
- 	*uniname = '\0';
- 	p_uniname->name_len = unilen;
- 	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
---
+>>Another use case would be running container images with CFI on a
+>>distribution kernel which supports pre-RVA23 hardware.
+>
+> Container image with CFI will have glibc and ld (and all other
+> userspace) also compiled with shadow stack instructions in it. As soon
+> as you take this container image to a pre-RVA23 hardware, you won't
+> even reach vDSO. It'll break much before that, unless kernel is taking
+> a trap on all sspush/sspopchk instructions in prologue/epilogue of
+> functions in userspace (glibc, ld, etc)
+
+The idea is that you can use a stock distribution kernel to run CFI
+images (potentially form a different distribution or version of the
+distribution).
+
+But maybe none of this really matters.  How far out is CFI-checking
+hardware?  Is it going to arrive much later than the RVA23 flag day
+that people are suggesting?
+
+Thanks,
+Florian
+
 
