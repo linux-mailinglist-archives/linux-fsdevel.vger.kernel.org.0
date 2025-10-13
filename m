@@ -1,81 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-64025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A9ABD66E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:57:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DEB9BD6704
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 23:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0581887D3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 21:57:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AA764F6716
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 21:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D233081A7;
-	Mon, 13 Oct 2025 21:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A894F309F13;
+	Mon, 13 Oct 2025 21:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="e1ZLNPQz"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="M7S3UxZe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EF72FCBF5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 21:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5552FDC4C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 21:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760392567; cv=none; b=FTg1M9iu6vb4WwR9OfL4/HcmR5anJjRSK1WmzHnCm2rqTMiZdBnFRHPSd2go81Psld+E1H+bGcgbIbeUlCtoDG7H4EVGUOa6RcXzzaPG+3TgCMVVVJWB1vKKat6m/Dw6uanhigxkEY1BKVIdz0HA9bTe/pENUCKTTdmJScLXAxo=
+	t=1760392569; cv=none; b=ggOd8HTeVBPdcYNIPIzrczQQ6bF3aa0Q4EVFlZmZ9CpmrTuupPKFhid6UQ0uzKA0Ktc5SabNxl1+wZcMU1bLSiyBvJGiwRBiE0Dn8xm+w0yJxVMdpYxcYui7FQveOOy6O94KSMdf+zJnN+M2c/i1pP2QzBBNxNLMScx62V3c4cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760392567; c=relaxed/simple;
-	bh=deI8AoZPctoPZRL1uqTvQmr6gi6xgPskQ2JbS5WJlvk=;
+	s=arc-20240116; t=1760392569; c=relaxed/simple;
+	bh=kcKAh3qiYa6u+vavoC8VVP4XbgP0FdaLB3/LKiPnoo8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WqYocKzWBzxT2gFk3VpziTiqXsqnlb8JXmYYNYE6kfuPFBoK+pJJhHvaidzgQGo7o2fzExeQmAePi3bIHjwq5TYSPXxuC0oNxo74vCwIoq/p802fW/4soaS+SmRhzNoJsHTmOj1P8hIYljp6RmMdJAls6MLmL3yjqGmgsILC5K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=e1ZLNPQz; arc=none smtp.client-ip=209.85.216.43
+	 In-Reply-To:To:Cc; b=ds9Di0o5f/VWGbxxAnqMrSMFAyKgWHvD784dgxWaA8ZOUuxGeVMxe3CGwymAOZ30kUgwCvV9fvaZ6FaRC6D8j2GUl8bT0oESkGf8JMaShKkv5gYOxeHaK3hcTJDE+/jlic+sfWWMKwqBdhivxBUf+M2yyKYzvWpk2wKhmHVZXto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=M7S3UxZe; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33b8a8aa73bso493656a91.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 14:56:05 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so5992223a91.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 14:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1760392564; x=1760997364; darn=vger.kernel.org;
+        d=rivosinc.com; s=google; t=1760392567; x=1760997367; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=njWxpRWfJB7aZ6YZP/EJ8dyU7DPEUOfUxx+ytpaopVc=;
-        b=e1ZLNPQzEZ/9968QGM4wOI1HCcUK3+X8uLJcQXznaOXEE1pBIxAWsBEby3HzVuBlxV
-         5uXclTqq5ND5ISy6kIYD5ZtN8UMMZ6J1Ui3gNRI4IcY9MI46TXwbePUbx9iGj0ZNSDY0
-         YWOhlrKzURbtuHmlkajfFunbncW6PqeatkwO044p0c4qoC7cLP4ctEDTpKtrlB4wS1kr
-         A3hE85LhepTpUD14xEwAePPO9bClawxCjbiXHxMfuZC+KzumVvM4dbRJjXyrVjuPcs3t
-         mHqp8XP3+J4iyfg75FeToBap/PI2uESPEeqQcmYvuGnwr4w6ntGX+7dGzAWICEKdBmie
-         Tn0Q==
+        bh=VM5DlrQCbRYqN6WQC0IO67CheqmNFMHVu1qXR64a+aw=;
+        b=M7S3UxZe7hFGWfgNneqeQQbb09etUMsP1GAKYhIvdzV//Rof733krKGwOVdZsmTtd2
+         g47wnUVzp4sPaERd4Gy6Y/ysVsWK0fJnVPlNoJn+c7zZ01LaM+EzF//1x7ZwS+cvwu6q
+         OSKOg0oNEtqeVzrpTtb9n+v55GNxnadvdD6SJbJmrez2jfIGDuIrx44KliexoFulHIcP
+         ycVfDnoARZqtY2lCpxmx/HB5+1SXtPsfXX5DCghuZXTTtT+ZvIhTtXhl0VpSp5Sbd7Ct
+         38TTPTalT614s08JMJC6AVYdYfBPHrBJe+tKG93X3BwLkbHXZJG+2QOQE5QP/hvme/Y2
+         dmPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760392564; x=1760997364;
+        d=1e100.net; s=20230601; t=1760392567; x=1760997367;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=njWxpRWfJB7aZ6YZP/EJ8dyU7DPEUOfUxx+ytpaopVc=;
-        b=KOnnxw31upBUxZV0n7jy+S9uGivLAnHZyPqYAcg7aV2JMi+H1GFvO9O2O7VMJHIpBc
-         oQBsyWMNdOQOMGmGn7NLaJskU8sRJ/kTlxvOCnnQF2P5h+Fr1MJIA4CJ9tmTUMer6QbN
-         6wRTsjQAYWNDXnSES4wp8K4IJ2QvlBYrGtqmPtjkaOcFLW+PfdU9JmbWwRsVeC4cMRD9
-         nb7ijc4DfAlNRs0hRBm3jhPBSRHOxxgJjFcIsLH19auBdYeixBf8hNHDH6blF4EwKO50
-         l1qLz4ZHbLpZI9eqFwJf9ltDnPCQRAXs001Vu6mFtZbwyxCsujBkhEydlOG51H14CCLp
-         Uynw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw1TNDLtkYFsOjtAliI+OgmpzCoda37SSfdwGq+79Z+ND5YGyhi44ohTGcEVKCwsJdYV7LEBHUx5h21c4e@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+N7+ib/ZhYHbaBfVoWeB/dsSb3/O7GXRuLJpZQuU8GMcQemUj
-	1rW4V1Xb8qKpoxPtELqlf6FEPNI2szZIFbPn5K5hTu+815Xsc+UPPjA/F39thHHCCKY=
-X-Gm-Gg: ASbGncvBnIjvBiHYORhie/OhHDmuhz+pD76GdHLcNx8kxfXeOwEP9Pk6lBuilXnOpin
-	jPsodpdvjiXtnhYUgglRqMDJiNZbzRe6GSt8StE0mMpM+mUKIB9V6+cUTeG1+7uTEuNFLP/qqQR
-	llJDKbHDZDRLUw7R78ZyPhXPu9uPYVE2KFNlXhfF1cfz2ggjSoXOhY/++UocAGoTrjsMuY7ca1i
-	DtIxuazm8P9kMIlbGmGaZ6jHwLpArlFIGKWgNQnNgg4+DIdE8SNbwv+dSJoVWf2wMqDGm7Un7vC
-	hqhoIpA65AcQftU7YMomxeOAMPhdw8QzVKBxmIHFi2VpzxrNvD4/7HCuyDmm9hJNbdBlBM4Runc
-	S88AjnbZugWACFtgMRI+Onl8h6zemUsEXCyF6db1nx+RCZU2J2FvN086CCeqwyQ==
-X-Google-Smtp-Source: AGHT+IGaJ0hlMQvTUlGZru7b5N/J1S6cO4YB5MuFyO13Me7Mix+oEAnTW5bDNvBtx+FojGYD24gORw==
-X-Received: by 2002:a17:90b:38cb:b0:32e:f1c:e796 with SMTP id 98e67ed59e1d1-33b5138404dmr29971759a91.25.1760392564584;
-        Mon, 13 Oct 2025 14:56:04 -0700 (PDT)
+        bh=VM5DlrQCbRYqN6WQC0IO67CheqmNFMHVu1qXR64a+aw=;
+        b=RcILn+e0X21zgpmiCiDJVgME6rVBCXwIq/snBX1oyLMFQMosYEYCEOLmpsadhRIb8m
+         UoIwvTpKiecV0iBvRYV0bBsVAEd6/z/llrlX4hcOXOjbITo9HbrIWaOL4cHQcVH+/4Ih
+         CXmXy4+S6r5d0CHy6SXV6BzUrOPtbqxN0HyM1weObobSroiwwrA/cAuxTxwvfc4HQ/pl
+         9JQlpBAbntKDzLUBuuw8YbLIGI22IS3RtJfEr7A3aI/Ojaz30sltJtBbrvQ8UaftmuHp
+         9nD5iowRpuWrtnhJ7+ZdaFhjazgp739jR4A/Xh2edPFfraaWiKWCI7X6lqaIk7NfhxBO
+         OG2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+mPyrIiUUctMwCtLn/qW4XTDcdubCb5hkh5Fu6RfdYnVdvDGKQX4DLToAINhWxUgEu8VugZeMgoW4lq1C@vger.kernel.org
+X-Gm-Message-State: AOJu0YweufSK8UsOKao+8tBPQg7Vjqd5KnqRG1EW+N4RdKsV32HDH7Hi
+	cZsaX3D7VAigJ5GnAsIW6rI7inusM0Rviux1KqdQaShixSVC5jTJiBov/YPSMlm8dJo=
+X-Gm-Gg: ASbGncthbyAFTwbuCsRc63GD0HVnrNe/ZkQmcOajo2s8AauurgQg+3i3pbpO1oNTKBO
+	yA3U7judLpb8I3YQ+gY9uDIB7nPOEmUK+wYQPZ2KjjtRqntrt4Q8oFQbJ/MApBYmUUYYE4jmJ+C
+	hOzss9CdGOwbkgcC55QTiuYzHQuuHGNv5qIc6alHFIa8vqCj57G0L4fCzeGQF8T4gC4z40+2PvX
+	O7P0YJ2AzW/aLEagyN46UZmcPRYP3mkzZ0681hRn3dJKUtHlaR5ENiILZX1E59GzMHpHB9OLI+J
+	bFndI0gRlbervee4uWeajiCULePsaGHk/ekj7S4LqqMEavSnyJx+VJ4ZKekUrVbyT0/fzLLVMj7
+	l8NN47aWEzD5UKanYShdPgT2ybPLC5UyGOpLv9lOwsXjRBEEgk7E=
+X-Google-Smtp-Source: AGHT+IEk8C0wXtpiaSerIOmMVJ34V19j3qCgt/dP0k/QOvSZF8SGdHByWOIwcunMLrrPAiMMdWB6bA==
+X-Received: by 2002:a17:90b:1d85:b0:32b:623d:ee91 with SMTP id 98e67ed59e1d1-33b5138623dmr30507133a91.27.1760392566692;
+        Mon, 13 Oct 2025 14:56:06 -0700 (PDT)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626bb49esm13143212a91.12.2025.10.13.14.56.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626bb49esm13143212a91.12.2025.10.13.14.56.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 14:56:04 -0700 (PDT)
+        Mon, 13 Oct 2025 14:56:06 -0700 (PDT)
 From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 13 Oct 2025 14:55:55 -0700
-Subject: [PATCH v20 03/28] riscv: zicfiss / zicfilp enumeration
+Date: Mon, 13 Oct 2025 14:55:56 -0700
+Subject: [PATCH v20 04/28] riscv: zicfiss / zicfilp extension csr and bit
+ definitions
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,7 +85,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-v5_user_cfi_series-v20-3-b9de4be9912e@rivosinc.com>
+Message-Id: <20251013-v5_user_cfi_series-v20-4-b9de4be9912e@rivosinc.com>
 References: <20251013-v5_user_cfi_series-v20-0-b9de4be9912e@rivosinc.com>
 In-Reply-To: <20251013-v5_user_cfi_series-v20-0-b9de4be9912e@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -117,101 +118,69 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
  rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Zong Li <zong.li@sifive.com>, Deepak Gupta <debug@rivosinc.com>
+ Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.13.0
 
-This patch adds support for detecting zicfiss and zicfilp. zicfiss and
-zicfilp stands for unprivleged integer spec extension for shadow stack
-and branch tracking on indirect branches, respectively.
+zicfiss and zicfilp extension gets enabled via b3 and b2 in *envcfg CSR.
+menvcfg controls enabling for S/HS mode. henvcfg control enabling for VS
+while senvcfg controls enabling for U/VU mode.
 
-This patch looks for zicfiss and zicfilp in device tree and accordinlgy
-lights up bit in cpu feature bitmap. Furthermore this patch adds detection
-utility functions to return whether shadow stack or landing pads are
-supported by cpu.
+zicfilp extension extends *status CSR to hold `expected landing pad` bit.
+A trap or interrupt can occur between an indirect jmp/call and target
+instr. `expected landing pad` bit from CPU is recorded into xstatus CSR so
+that when supervisor performs xret, `expected landing pad` state of CPU can
+be restored.
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+zicfiss adds one new CSR
+- CSR_SSP: CSR_SSP contains current shadow stack pointer.
+
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- arch/riscv/include/asm/cpufeature.h | 12 ++++++++++++
- arch/riscv/include/asm/hwcap.h      |  2 ++
- arch/riscv/kernel/cpufeature.c      | 22 ++++++++++++++++++++++
- 3 files changed, 36 insertions(+)
+ arch/riscv/include/asm/csr.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
-index fbd0e4306c93..481f483ebf15 100644
---- a/arch/riscv/include/asm/cpufeature.h
-+++ b/arch/riscv/include/asm/cpufeature.h
-@@ -150,4 +150,16 @@ static __always_inline bool riscv_cpu_has_extension_unlikely(int cpu, const unsi
- 	return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
- }
+diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+index 4a37a98398ad..78f573ab4c53 100644
+--- a/arch/riscv/include/asm/csr.h
++++ b/arch/riscv/include/asm/csr.h
+@@ -18,6 +18,15 @@
+ #define SR_MPP		_AC(0x00001800, UL) /* Previously Machine */
+ #define SR_SUM		_AC(0x00040000, UL) /* Supervisor User Memory Access */
  
-+static inline bool cpu_supports_shadow_stack(void)
-+{
-+	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
-+		riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICFISS));
-+}
++/* zicfilp landing pad status bit */
++#define SR_SPELP	_AC(0x00800000, UL)
++#define SR_MPELP	_AC(0x020000000000, UL)
++#ifdef CONFIG_RISCV_M_MODE
++#define SR_ELP		SR_MPELP
++#else
++#define SR_ELP		SR_SPELP
++#endif
 +
-+static inline bool cpu_supports_indirect_br_lp_instr(void)
-+{
-+	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
-+		riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICFILP));
-+}
-+
- #endif
-diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-index affd63e11b0a..7c4619a6d70d 100644
---- a/arch/riscv/include/asm/hwcap.h
-+++ b/arch/riscv/include/asm/hwcap.h
-@@ -106,6 +106,8 @@
- #define RISCV_ISA_EXT_ZAAMO		97
- #define RISCV_ISA_EXT_ZALRSC		98
- #define RISCV_ISA_EXT_ZICBOP		99
-+#define RISCV_ISA_EXT_ZICFILP		100
-+#define RISCV_ISA_EXT_ZICFISS		101
+ #define SR_FS		_AC(0x00006000, UL) /* Floating-point Status */
+ #define SR_FS_OFF	_AC(0x00000000, UL)
+ #define SR_FS_INITIAL	_AC(0x00002000, UL)
+@@ -212,6 +221,8 @@
+ #define ENVCFG_PMM_PMLEN_16		(_AC(0x3, ULL) << 32)
+ #define ENVCFG_CBZE			(_AC(1, UL) << 7)
+ #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
++#define ENVCFG_LPE			(_AC(1, UL) << 2)
++#define ENVCFG_SSE			(_AC(1, UL) << 3)
+ #define ENVCFG_CBIE_SHIFT		4
+ #define ENVCFG_CBIE			(_AC(0x3, UL) << ENVCFG_CBIE_SHIFT)
+ #define ENVCFG_CBIE_ILL			_AC(0x0, UL)
+@@ -230,6 +241,11 @@
+ #define SMSTATEEN0_HSENVCFG		(_ULL(1) << SMSTATEEN0_HSENVCFG_SHIFT)
+ #define SMSTATEEN0_SSTATEEN0_SHIFT	63
+ #define SMSTATEEN0_SSTATEEN0		(_ULL(1) << SMSTATEEN0_SSTATEEN0_SHIFT)
++/*
++ * zicfiss user mode csr
++ * CSR_SSP holds current shadow stack pointer.
++ */
++#define CSR_SSP                 0x011
  
- #define RISCV_ISA_EXT_XLINUXENVCFG	127
- 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 67b59699357d..5a1a194e1180 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -274,6 +274,24 @@ static int riscv_ext_svadu_validate(const struct riscv_isa_ext_data *data,
- 	return 0;
- }
- 
-+static int riscv_cfilp_validate(const struct riscv_isa_ext_data *data,
-+			      const unsigned long *isa_bitmap)
-+{
-+	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int riscv_cfiss_validate(const struct riscv_isa_ext_data *data,
-+			      const unsigned long *isa_bitmap)
-+{
-+	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static const unsigned int riscv_a_exts[] = {
- 	RISCV_ISA_EXT_ZAAMO,
- 	RISCV_ISA_EXT_ZALRSC,
-@@ -461,6 +479,10 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
- 	__RISCV_ISA_EXT_DATA_VALIDATE(zicbop, RISCV_ISA_EXT_ZICBOP, riscv_ext_zicbop_validate),
- 	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts, riscv_ext_zicboz_validate),
- 	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
-+	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfilp, RISCV_ISA_EXT_ZICFILP, riscv_xlinuxenvcfg_exts,
-+					  riscv_cfilp_validate),
-+	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfiss, RISCV_ISA_EXT_ZICFISS, riscv_xlinuxenvcfg_exts,
-+					  riscv_cfiss_validate),
- 	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
- 	__RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
- 	__RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
+ /* mseccfg bits */
+ #define MSECCFG_PMM			ENVCFG_PMM
 
 -- 
 2.43.0
