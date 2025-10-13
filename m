@@ -1,259 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-63964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FAABD3321
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 15:26:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2E5BD3363
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 15:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44B4189D5E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 13:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180733A6F1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 13:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AA6307492;
-	Mon, 13 Oct 2025 13:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C963307ACD;
+	Mon, 13 Oct 2025 13:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZNHLTiq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKRLzPXZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6DD3064B5;
-	Mon, 13 Oct 2025 13:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450E8307ACE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 13:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361946; cv=none; b=XipFsE8r+9AwWiQ/CZ6EuTxo4U8b2C1nbUhRMVMjo1OGdz6H45qdxo1MdUA2ZDokiJdsj4A+CWQpK1b2Em8NkwmCGadFOiu7v5WDQX0uarZ9G1atVYIWUFETRp2A4KM/Hj4GDLFU41m3T0fXyMYrtlLdkjtQLhXKR3Od7gcRmmE=
+	t=1760362227; cv=none; b=A0P8EUibF+ap8r/nypFm46bxmpY1lctsADF3xSVNj5qHE86aTDHLVsXLkv7+kfC8bkNlsTyHoR2tpI2ze8wZJQKG/L1YnpQxovy2mj/CqsipIpfUvPbvHg1QXsi8zGBDg+H6i3iNUmGK99M1bbGnPvKotVWdKWQ7Fok7qELK/oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361946; c=relaxed/simple;
-	bh=WFmYwNqRtEEV71HErtXjnELu0hh+bKYykNpfWVGpcO8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=II5nzJo5TebGNhu5FYKi8wfe3al+gjK9CIgWlbzXGRF3LsFkYhfjELhsScse27mueGWmy92t4t9tVUECbPPNvpDplOUnRs2mnT/jf+HlJN64YE0R8l+74KkYYnUAgA//l9nOkfHqTUKfvesc8CumSiSbS8MhGbS/Tn/OWSaMtiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZNHLTiq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 55C98C19424;
-	Mon, 13 Oct 2025 13:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760361946;
-	bh=WFmYwNqRtEEV71HErtXjnELu0hh+bKYykNpfWVGpcO8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YZNHLTiqwdKK3nithG9TiIiULn/p8sdDGbmWMp1YV2/hgLPwSQStiyW1vl5TWpJNF
-	 mtJpo5bbq6pZwKkSx9FnWNZAmQZWqMm3bbve3Y/bQazXWSPsQnIcXQGPDVJDUqidpG
-	 +q2C/PIRnYuOizFdGDd0xNyoXzJ2GWXEjG9UZEjuOMdUud2rGchSSMUm/E8xchaP3j
-	 mX571tNiaWVJg2Og/u4JQRqxobXVLlxOi9P0o81o0Rryo0xNGGojNKr+BkqrBTrE58
-	 YfAZMFa6BEUW40G03sXHfsISEL6DwoMxt3sjFnfqSVBUQzzLbwhlUnoWfK4DE/3buV
-	 qOn1dnOVfc2vg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC6FCCD190;
-	Mon, 13 Oct 2025 13:25:46 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Mon, 13 Oct 2025 15:24:58 +0200
-Subject: [PATCH 8/8] sysctl: Add optional range checking to
- SYSCTL_INT_CONV_CUSTOM
+	s=arc-20240116; t=1760362227; c=relaxed/simple;
+	bh=pYKv/ZHAQal8b6v/icrawjp0xeugJB+Yhx7Gqtpqskc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DXL3ADuaQgBKrsplrDOI5YcObF/si5doXNAstQNPqImUqV/VT2tb0Qk1g6y5604A3w/5joRxmcWsYa/DuUSwEhXTcmemzjhzcljjj4TwwcpjYIzo5Q1Uv82t5nTo7BNqXxvGeeZFje2OlO8wEOBLVfJ0p/0KxRd7M2HcmJ98eSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKRLzPXZ; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so50936165e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 06:30:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760362224; x=1760967024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DZlmO7Er2VNfUt2lW8HD8G8xjeR52/0o/FyblKyrXi0=;
+        b=nKRLzPXZnQf9ilLT2raNaKwPMG6B8Vee1uWqwMVCnAKqSukvQpx/qcvB400LvbTRYx
+         fDZe5SHGtw9N/OmQD1fp+c20mNiIoCa7S0RTxayO7va4bk0AYZIOyHwbOj4vNB4tb9lN
+         bDY5zZQosZZ3k6ApeKSFrEUwzob5gRGlEPeWCe+hfRjO2Q4+2xbXi8K5lIkkNpIQxvYy
+         V8OGvKAJ6FdFO0bcqmacw5NecjeQUrtEPOZoUl8g/Buiy3JLKQg1IuddCiXv65nA1IlB
+         jsEr6eXzXiqQ7TnC3MZw/sBS5/L3XBvLIZRHM2jk0DCOxNJHcyWKzuTSIlA8saTZEdtO
+         vVeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760362224; x=1760967024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DZlmO7Er2VNfUt2lW8HD8G8xjeR52/0o/FyblKyrXi0=;
+        b=FgXIeIVgG55b1ir/qKGDbeWnHiZkgHCqaNxmM0wZMX+HqLWkp6HTzjXOIAodqu3lAC
+         g5sXihOdcHRSHjR1XRAfniRTfG+QHpWAsc2eQ3fi2enNwOusmakkzTcvn80Dq1gdIJik
+         bgytxmsnyw2+RMAQU319NA/G9C8ZqJhCwqWdyd7hYXl2eozF6rOQtCJW1D9UtDnSA17P
+         kaFuR7dIomJNXByNbhwc2jO3vYqourSzA/iwSEKu1STxMGzrEMuVyjIdqFPHbis1EtNs
+         j+m6pRvKLzKDtYARxdCcoe9wJvJFvToE0XDN29owIVaXYRqp8QrV34qa7G5So+JsJS0i
+         R9EA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1zu1p+tRP6IElCEAhjwH+kAQldPHc/mq+masBLmWn/tpMCdfe1qEvFUpUXPBFYBO3u0YgZd9N+mhTMgAw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXzoSRzhN+eqQt8aFfvQlBI/MRT4xecGEj3c33+u0W+8jo9GUv
+	Oeh/DAJkPtWDZuzuHdOpT+HhndN+xP7ax3FYl4EIxaX2qP3UVFs/CuPI1YStEA==
+X-Gm-Gg: ASbGncs4+a6sRDBwzfY8bd/aMQ+wWic7TcgZEEFiJGl1KZoTtgcRzU3CD+wJfIfTCDk
+	zrkBfJEobbyzAX4DGDzcuJGmwwXkcT3j7uAygHyUOmR62BGJHH+1VZ8GAvyMPfPd+/2bCqMrqTU
+	+zVGV4EiuFzkTreg6G4J6mZIjQT99yFnET+4r8cT3LvG8g+GuZpR00hPcb3Fb/X4bN99uDudUiw
+	GjAa5gNFNVAGDBjEgCXG9vV7vCKUX87fs1Bkv8grGkafwO78hPxAaE+fJBoPPllPHXAJlMSmMoh
+	LvR7ueWXkcYxhnTBcy4z67ovpzOh9iJ+K8MTaIMiqQWFx3HvWKUAdr+HK5Dl401D6Yj3oBgOuFf
+	2aBY/uCT15k8VUh1HPqVYX/WIOnUazq6/xTRuuvbG8geLWdpjJcHv/dh34V2c4UteXneRcwSAKq
+	QlX/I65NS5
+X-Google-Smtp-Source: AGHT+IFb8vtBJitNnjBlDbVIUCm2gATTzzIuI7S2acOd2FoeBSuIxAzk1vmdrirRWyHwbC1aiC5zwg==
+X-Received: by 2002:a05:600c:6092:b0:45d:e28c:8741 with SMTP id 5b1f17b1804b1-46fa9b02e5amr148223315e9.29.1760362223296;
+        Mon, 13 Oct 2025 06:30:23 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eb09])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49c3e49sm185108555e9.16.2025.10.13.06.30.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 06:30:22 -0700 (PDT)
+Message-ID: <d785cc8e-d8fd-4bee-950c-7f3f7d452efc@gmail.com>
+Date: Mon, 13 Oct 2025 14:31:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-jag-sysctl_conv-v1-8-4dc35ceae733@kernel.org>
-References: <20251013-jag-sysctl_conv-v1-0-4dc35ceae733@kernel.org>
-In-Reply-To: <20251013-jag-sysctl_conv-v1-0-4dc35ceae733@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Kees Cook <kees@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6108;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=WFmYwNqRtEEV71HErtXjnELu0hh+bKYykNpfWVGpcO8=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjs/df2qPSmaNQsmWp35kE3R6r63EL/tLd3D
- jxjLSoMwd++h4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo7P3XAAoJELqXzVK3
- lkFPJi8MAIsUkiq0T8pTVzJVdJ/BJTkqWnf5Um2Na/zccXAaszr1sCjtpLDsIvXs+lUxaBiARZE
- P4eq/fFNTFmaT4sq4jYdC3EPtORgZ61iyjZzGI3553loRzVKs46qzAs3U9XToNARkYbLxaEpNg8
- WLzOrqMC0opJtspwPgs2utluKOs9GALRizcUaGF32CatM8H02sG4G3wF3Fz3eY1bYTe6TvtvYKc
- 96LMMkjvkG6mPQ3DGXyq5JYJ8ZHyDfv+JgIIHIuGzEKnhB/Zpu0DR2AJGLQOUnmMXJvwA/LNqyt
- 74asicQIoxXhTItx6XsxZOoQyegEakioEs033CKM80g4mcMuOpwwU5cp+hT3OtNIGMcOFjg6SAL
- vC+LrNATNM6heKtwR6O9Ps4v+kKafUcVoPvsqYwSPhiG+BFcGp+sxdx55R9x7WXXbKljQryrr1r
- DQSqbHwsg+grMOmu+zyAfPiNyBTJILnJM+CsNIgzRfUe3ed6Yx6Qnik6BNyUkxpL5FrNrOgWz57
- Ro=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH] block: enable per-cpu bio cache by default
+To: Fengnan Chang <changfengnan@bytedance.com>,
+ Christoph Hellwig <hch@infradead.org>
+Cc: fengnan chang <fengnanchang@gmail.com>, axboe@kernel.dk,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ willy@infradead.org, djwong@kernel.org, ritesh.list@gmail.com,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
+References: <20251011013312.20698-1-changfengnan@bytedance.com>
+ <aOxxBS8075_gMXgy@infradead.org>
+ <CALWNXx8pDOvDdNvw+v0rEyi33W8TL+OZW1YiFbF6Gns3PeWOLA@mail.gmail.com>
+ <aOyb-NyCopUKridK@infradead.org>
+ <CAPFOzZumoCERUj+VuegQNoAwFCoGxiaASD6R_4bE+p1TVbspUA@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAPFOzZumoCERUj+VuegQNoAwFCoGxiaASD6R_4bE+p1TVbspUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Extend the SYSCTL_INT_CONV_CUSTOM macro with a k_ptr_range_check
-parameter to conditionally generate range validation code. When enabled,
-validation is done against table->extra1 (min) and table->extra2 (max)
-bounds before assignment. Add base minmax and ms_jiffies_minmax
-converter instances that utilize the range checking functionality.
+On 10/13/25 13:58, Fengnan Chang wrote:
+> Christoph Hellwig <hch@infradead.org> 于2025年10月13日周一 14:28写道：
+>>
+>> On Mon, Oct 13, 2025 at 01:42:47PM +0800, fengnan chang wrote:
+>>>> Just set the req flag in the branch instead of unconditionally setting
+>>>> it and then clearing it.
+>>>
+>>> clearing this flag is necessary, because bio_alloc_clone will call this in
+>>> boot stage, maybe the bs->cache of the new bio is not initialized yet.
+>>
+>> Given that we're using the flag by default and setting it here,
+>> bio_alloc_clone should not inherit it.  In fact we should probably
+>> figure out a way to remove it entirely, but if that is not possible
+>> it should only be set when the cache was actually used.
+> 
+> For now bio_alloc_clone will inherit all flag of source bio, IMO if only not
+> inherit REQ_ALLOC_CACHE, it's a little strange.
+> The REQ_ALLOC_CACHE flag can not remove entirely.  maybe we can
+> modify like this:
+> 
+> if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
+>      opf |= REQ_ALLOC_CACHE;
+>      bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
+>      gfp_mask, bs);
+>      if (bio)
+>          return bio;
+>      /*
+>       * No cached bio available, bio returned below marked with
+>       * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
+>      */
+> } else
+>          opf &= ~REQ_ALLOC_CACHE;
+> 
+>>
+>>>>> +     /*
+>>>>> +      * Even REQ_ALLOC_CACHE is enabled by default, we still need this to
+>>>>> +      * mark bio is allocated by bio_alloc_bioset.
+>>>>> +      */
+>>>>>        if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <= BIO_INLINE_VECS)) {
+>>>>
+>>>> I can't really parse the comment, can you explain what you mean?
+>>>
+>>> This is to tell others that REQ_ALLOC_CACHE can't be deleted here, and
+>>> that this flag
+>>> serves other purposes here.
+>>
+>> So what can't it be deleted?
+> 
+> blk_rq_map_bio_alloc use REQ_ALLOC_CACHE to tell whether to use
+> bio_alloc_bioset or bio_kmalloc, I considered removing the flag in
+> blk_rq_map_bio_alloc, but then there would have to be the introduction
+> of a new flag like  REQ_xx. So I keep this and comment.
 
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
----
- kernel/sysctl.c | 106 +++++++++++++++++++++-----------------------------------
- 1 file changed, 40 insertions(+), 66 deletions(-)
+That can likely be made unconditional as well. Regardless of that,
+it can't be removed without additional changes because it's used to
+avoid de-allocating into the pcpu cache requests that wasn't
+allocated for it. i.e.
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index e7dc4b79e93ea9ab929ce0465143aed74be444e5..60f7618083516a24530f46f6eabccd108e90c74f 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -402,6 +402,34 @@ int sysctl_kern_to_user_int_conv##name(bool *negp,		\
- 	return 0;						\
- }
- 
-+/**
-+ * To range check on a converted value, use a temp k_ptr
-+ * When checking range, value should be within (tbl->extra1, tbl->extra2)
-+ */
-+#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user,	\
-+			       k_ptr_range_check)			\
-+int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
-+			   int dir, const struct ctl_table *tbl)	\
-+{									\
-+	if (SYSCTL_KERN_TO_USER(dir))					\
-+		return kern_to_user(negp, u_ptr, k_ptr);		\
-+									\
-+	if (k_ptr_range_check) {					\
-+		int tmp_k, ret;						\
-+		if (!tbl)						\
-+			return -EINVAL;					\
-+		ret = user_to_kern(negp, u_ptr, &tmp_k);		\
-+		if (ret)						\
-+			return ret;					\
-+		if ((tbl->extra1 && *(int *)tbl->extra1 > tmp_k) ||	\
-+		    (tbl->extra2 && *(int *)tbl->extra2 < tmp_k))	\
-+			return -EINVAL;					\
-+		WRITE_ONCE(*k_ptr, tmp_k);				\
-+	} else								\
-+		return user_to_kern(negp, u_ptr, k_ptr);		\
-+	return 0;							\
-+}
-+
- #define SYSCTL_CONV_IDENTITY(val) val
- #define SYSCTL_CONV_MULT_HZ(val) ((val) * HZ)
- #define SYSCTL_CONV_DIV_HZ(val) ((val) / HZ)
-@@ -418,24 +446,21 @@ static SYSCTL_KERN_TO_USER_INT_CONV(_userhz, jiffies_to_clock_t)
- static SYSCTL_USER_TO_KERN_INT_CONV(_ms, msecs_to_jiffies)
- static SYSCTL_KERN_TO_USER_INT_CONV(_ms, jiffies_to_msecs)
- 
--#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user)	\
--int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
--			   int dir, const struct ctl_table *table)	\
--{									\
--	if (SYSCTL_USER_TO_KERN(dir))					\
--		return user_to_kern(negp, u_ptr, k_ptr);		\
--	return kern_to_user(negp, u_ptr, k_ptr);			\
--}
--
- static SYSCTL_INT_CONV_CUSTOM(, sysctl_user_to_kern_int_conv,
--			      sysctl_kern_to_user_int_conv)
-+			      sysctl_kern_to_user_int_conv, false)
- static SYSCTL_INT_CONV_CUSTOM(_jiffies, sysctl_user_to_kern_int_conv_hz,
--			      sysctl_kern_to_user_int_conv_hz)
-+			      sysctl_kern_to_user_int_conv_hz, false)
- static SYSCTL_INT_CONV_CUSTOM(_userhz_jiffies,
- 			      sysctl_user_to_kern_int_conv_userhz,
--			      sysctl_kern_to_user_int_conv_userhz)
-+			      sysctl_kern_to_user_int_conv_userhz, false)
- static SYSCTL_INT_CONV_CUSTOM(_ms_jiffies, sysctl_user_to_kern_int_conv_ms,
--			      sysctl_kern_to_user_int_conv_ms)
-+			      sysctl_kern_to_user_int_conv_ms, false)
-+
-+static SYSCTL_INT_CONV_CUSTOM(_minmax, sysctl_user_to_kern_int_conv,
-+			      sysctl_kern_to_user_int_conv, true)
-+static SYSCTL_INT_CONV_CUSTOM(_ms_jiffies_minmax,
-+			      sysctl_user_to_kern_int_conv_ms,
-+			      sysctl_kern_to_user_int_conv_ms, true)
- 
- static int do_proc_douintvec_conv(unsigned long *u_ptr,
- 				  unsigned int *k_ptr, int dir,
-@@ -721,32 +746,6 @@ int proc_douintvec(const struct ctl_table *table, int dir, void *buffer,
- 				 do_proc_douintvec_conv);
- }
- 
--static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *u_ptr,
--					int *k_ptr, int dir,
--					const struct ctl_table *table)
--{
--	int tmp, ret, *min, *max;
--	/*
--	 * If writing to a kernel variable, first do so via a temporary
--	 * local int so we can bounds-check it before touching *k_ptr.
--	 */
--	int *ip = SYSCTL_USER_TO_KERN(dir) ? &tmp : k_ptr;
--
--	ret = do_proc_int_conv(negp, u_ptr, ip, dir, table);
--	if (ret)
--		return ret;
--
--	if (SYSCTL_USER_TO_KERN(dir)) {
--		min = (int *) table->extra1;
--		max = (int *) table->extra2;
--		if ((min && *min > tmp) || (max && *max < tmp))
--			return -EINVAL;
--		WRITE_ONCE(*k_ptr, tmp);
--	}
--
--	return 0;
--}
--
- /**
-  * proc_dointvec_minmax - read a vector of integers with min/max values
-  * @table: the sysctl table
-@@ -768,7 +767,7 @@ int proc_dointvec_minmax(const struct ctl_table *table, int dir,
- 		  void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	return do_proc_dointvec(table, dir, buffer, lenp, ppos,
--				do_proc_dointvec_minmax_conv);
-+				do_proc_int_conv_minmax);
- }
- 
- static int do_proc_douintvec_minmax_conv(unsigned long *u_ptr,
-@@ -994,31 +993,6 @@ int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
- 					 lenp, ppos, HZ, 1000l);
- }
- 
--static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *u_ptr,
--						int *k_ptr, int dir,
--						const struct ctl_table *table)
--{
--	int tmp, ret, *min, *max;
--	/*
--	 * If writing to a kernel var, first do so via a temporary local
--	 * int so we can bounds-check it before touching *k_ptr.
--	 */
--	int *ip = SYSCTL_USER_TO_KERN(dir) ? &tmp : k_ptr;
--
--	ret = do_proc_int_conv_ms_jiffies(negp, u_ptr, ip, dir, table);
--	if (ret)
--		return ret;
--
--	if (SYSCTL_USER_TO_KERN(dir)) {
--		min = (int *) table->extra1;
--		max = (int *) table->extra2;
--		if ((min && *min > tmp) || (max && *max < tmp))
--			return -EINVAL;
--		*k_ptr = tmp;
--	}
--	return 0;
--}
--
- /**
-  * proc_dointvec_jiffies - read a vector of integers as seconds
-  * @table: the sysctl table
-@@ -1045,7 +1019,7 @@ int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
- 			  void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	return do_proc_dointvec(table, dir, buffer, lenp, ppos,
--			do_proc_dointvec_ms_jiffies_minmax_conv);
-+			do_proc_int_conv_ms_jiffies_minmax);
- }
- 
- /**
+if (bio->bi_opf & REQ_ALLOC_CACHE)
+	bio_put_percpu_cache(bio);
+else
+	bio_free(bio);
+
+Without it under memory pressure you can end up in a situation
+where bios are put into pcpu caches of other CPUs and can't be
+reallocated by the current CPU, effectively loosing the mempool
+forward progress guarantees. See:
+
+commit 759aa12f19155fe4e4fb4740450b4aa4233b7d9f
+Author: Pavel Begunkov <asml.silence@gmail.com>
+Date:   Wed Nov 2 15:18:20 2022 +0000
+
+     bio: don't rob starving biosets of bios
 
 -- 
-2.50.1
-
+Pavel Begunkov
 
 
