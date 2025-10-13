@@ -1,132 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-63909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3E6BD17CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 07:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5FBBD1879
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 07:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4B53BDEAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 05:44:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A745E3BFD41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 05:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFC92DCBE6;
-	Mon, 13 Oct 2025 05:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBB02DEA72;
+	Mon, 13 Oct 2025 05:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+I7ZrtE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jukFvp8l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F25B2DC770
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 05:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4353D2DA768
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 05:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760334272; cv=none; b=ebJQgNYHaNcFc/vHOjFsyS8Tj64jJGF/rsBuLlT+TfgIieYU91K1QJllOaHMgOlgfb1kqHsZtFk+RXyDpADi0L3ZQ8xFLkS5G8ITB95RY5SLA59rcJy/cNVyUYwt4+muH964IPBgfKH1AqusPoY+RMA0wfSeE/OxPZ4giRm9rv4=
+	t=1760334740; cv=none; b=qbLcYumZFf5ZsiNIy4TZ7UFMdqf5h7idcKQCZLjmeI/9ufIrbUK7UXuglE7/UZZ90vafWSJ8DrBv7DIv2w1nnuoBhaWE2F825TIoiDl1bJyLwLYpmS8JU9p4hpVnAfpKRjZmlx9ObeNeqBxtTseUSOlqATxsT9df8DPqUI2inok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760334272; c=relaxed/simple;
-	bh=Vluz9ytPQeMtlO7P9ORKtagTdZgZUvCkj7WhJdLaLOw=;
+	s=arc-20240116; t=1760334740; c=relaxed/simple;
+	bh=yhgJl9Du+YoMRbJlrYs4AzxXSfm5xVjGt7nVRt8hQrw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GdTEhYHU7TQVQUDjgK34Dlksr47bzwh379MUAX3EK+7uF6KLyJlXOASgpnAWOydpfCKAArUCQbX3bb9Yhik73lQS0mxMqVIhbSU8lxOz+iE3qowecv7tQ0484MYjkmYjlRDZ2wfAjEEWuH2DxECOqXZYP3oiAjCzznZUU7XVgDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+I7ZrtE; arc=none smtp.client-ip=209.85.217.53
+	 To:Cc:Content-Type; b=umzXoD8jFKRSSAoGfKxm/BIfsakP1qS+Y2OT7JhpAxEw6cmI/Oz6nMpvUaF3oXFU3gZP6unt9cNglm0nWiJF+Hs31Ue5Gl41hfFuXM0GL2JmtbW7VwEyFAZPu/NbkzEI5bpeGt9CedGi74whN5HvqNK6bwHc5nzC+pkCmflL4lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jukFvp8l; arc=none smtp.client-ip=74.125.224.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5d40e0106b6so1932431137.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 22:44:31 -0700 (PDT)
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63497c2a27dso3868047d50.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Oct 2025 22:52:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760334270; x=1760939070; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760334738; x=1760939538; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PfZ0cjDYVK5lhFzxXW1zOC477aQ4q/mTU1VD2TvA1nQ=;
-        b=Y+I7ZrtEUyrbBVyxb/pwVHSPm/NUjdcUN7p2QIOR2Gc76JioaCNAHT0DpUo4aQJBuh
-         6U3XRCAD4pT22cE0CZIrWjFoF94AIvPb3sECA4AIwObH5az4F4oBgbgRjAHJ04DUSgIN
-         cgJWnI10SIM9wQD8DIf6C2A8ZivTesUbfjQGHDwE2Xta85NwyTJaH02gd6HZZnUc2Iqh
-         /b9tlDquyWgeVVEOknwdr29PWPcBZODGzVtZOZKagmwsoSyx+ITO/MQ4LKrvzqej7/Nv
-         t+me5XWphNc1k+F81d5qH4Z8A1bOgpxWdzw1oKqHAm1sQO0Uy4SnSje7hng2iB1YlAnS
-         JpCg==
+        bh=yhgJl9Du+YoMRbJlrYs4AzxXSfm5xVjGt7nVRt8hQrw=;
+        b=jukFvp8l78iFsihn3aBG/5rMFnFoAPFJoJvRtWvU7I1x3T8fO3hpiSmuyZ5r8zQIGr
+         9ocUvIQZg0h+xgawHv3ltOurCesKqO60ULAEbT83FWUj2csJR/egFmQDLSHGPAjyoJO1
+         w581uLhu5l20aJn6rHddaXuK1k+Ko3gjxhylGuH/7+YKyqMrv8EpViAIfpUC7WmmFCJ0
+         xFyWeN9YKAEgNlX7M4KWPDCrgrfrD2agex03XdrOLspWVRw99K1VesztB0NVZaLWDbKk
+         Xow7CBG4tTB1A/WQctju/h2XWlsVAM2GFeroObAK0yUiX2VAaBvbXmpblHNiKYpIiqFC
+         s0Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760334270; x=1760939070;
+        d=1e100.net; s=20230601; t=1760334738; x=1760939538;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PfZ0cjDYVK5lhFzxXW1zOC477aQ4q/mTU1VD2TvA1nQ=;
-        b=G6Ck3yMMuxgbG5qIQz3tLVXH9fLWAjaEX4DdXTNC9KYYdz5rBIecTke72+SEyCh9g8
-         KSmH5YixKBga5owtl8r846Cha72HakJGa51ex+Zduoxa+2zhOm3fRsnTsRaS3fxj5VYM
-         W1l4osZCbRVQaYM1u42guZDAtuI8KC4U4g4kcUFrnglVSKAphX5/fsu/TY20F97xKgsH
-         wIJng8fVUmfVXBhMELD4rgvAMvVBtOooC6WoYU2ChJ0zPPiOpAxr8kJo9lKUXd9cmvCo
-         cGd3RPNQBF9VXp9UBogqUJVWtJUalU3PDRDh91TqV/9DWo3bjteJBYD27kvpQ62lf7f3
-         ZwRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO3UofIXfRnTHXFGBd3OUmlrpAL7DpCfTkbvuFcqM/7UBe4r0QiIlJOCXRuR2kxdJPDe+nO0bweyz0JTqh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJpnXalTavp9nfbJZyPH3HFW5R5Mi1424bOnahr/LAhMIsUd2l
-	3kML1Ve+uboafKXnkxRkdjfZIL1T2ID3gjz/W89Y+epwLwYhvPqTDjz7zUGunupeH7QVYlv/pfu
-	PQ+G+hpjwy0BsYc1svIPLEytI/ICsrWI=
-X-Gm-Gg: ASbGncvSObTX4L45DxbPkt+RllWoGnJWqQlgbOGhclKGji0OGybi98sZjTTf7VsxNVM
-	c+1NeGkCmX1fXqHHnurhUuESd3FLMlWLyWhugr9dvUckMK+fkPfIIvJAAgUDeX+GtybJ4BEZ+a3
-	U64G8lmQRlLfBrcnEm4aEbFS/wVJZYYMtnGJ/sZYor9GdIDdDQKWBXnbCAYswGOjgKy3+0709bF
-	nPVQAPop6GxRk7p16URvnXvD/s=
-X-Google-Smtp-Source: AGHT+IHpSmXJAORlFvfBjiO5EpZknUsClCESfr6miv9ORXUHlNjIb1jckJtzwj7e3Gce86ucBxKeE0hLKTbq4g4SBL8=
-X-Received: by 2002:a67:e009:0:10b0:5d5:f437:92d5 with SMTP id
- ada2fe7eead31-5d5f43792efmr3865770137.3.1760334270191; Sun, 12 Oct 2025
- 22:44:30 -0700 (PDT)
+        bh=yhgJl9Du+YoMRbJlrYs4AzxXSfm5xVjGt7nVRt8hQrw=;
+        b=KGzZxsbH4MO6VVPUhCUkcDyS2ddWbGC0YOrXYZegjm/NTVbVy2eqaekodjtwIQydHc
+         R64jmArub3fxuVLgIeyt0Hn9od5GedKb2G+vq9EWi6rXC2tJ9Ofa2PHvBxULckGHuC8b
+         5xkeYXKPrNa+L5d5Gah4aVeYIW+d/0ubmBGunUpjXul6bbDpljP/0U4QDR+Hw3CfivpR
+         sIaHbl5d/Z/9Fc1fbYldFVaCLlHxBtWKPeBg4jbRTTRYDLHUvgE0vpHvwS1V/BpB31K6
+         pBcPKBhcg4jyM+sWi7MMq1GrFAmMTKDFURdVrfLzE5XtH62BH1zT4X7r2I+toayC/H1u
+         /txA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWp6+rdGO7pzww7kmxioyxcrFYM7pWv2x6IJe+bRhIR25EWcPcqIjM4m9WnRODV+saqbUpotAXimiageh+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHOFTGTf9Cnf0FXBUkkO4gnwlXC3jyI0hrBHS+e+r/wzEP9frK
+	rB+C2aVANc+zgNzzOUkvkUXDybMvncN7qaMZODz/RG5RxazbKNoCdSW5O+h/55HuTUvBXz6M/0/
+	h/xPhUoinw4heKVibizDmv/Vscc1aoug=
+X-Gm-Gg: ASbGnctQkX3oIX9KrrgkaupsEsH1H1muqO52Y4KuZXoSIL0cs7Xeze7CaP06bQ9asQq
+	pYl8BMfnSkm+PMxBf1Jcqp3S7ozRJxIrsb161C5tADYGK1BkBFBiIQIhuyPcrUuSYBin0xfI1cL
+	bZZk1+pVYE1Oq50Xgtm6hfO+yaha/HBpu0D1OkD1gIyeyfRu4SpyBy8rqDM/OjweQ0XzhhuIk6p
+	aFqM5VPSPtEctJHFAelVHvr8g==
+X-Google-Smtp-Source: AGHT+IEGY6fK0SI2o5MxFnMjtVFnwQxdBDRR1/yH8JkiHdWKzjgaFPVAcGr30+j3qCOCxUWnYLmbnjaWEMYOjfl2QTQ=
+X-Received: by 2002:a05:690c:6002:b0:781:64f:2b15 with SMTP id
+ 00721157ae682-781064f38e1mr197514497b3.55.1760334738154; Sun, 12 Oct 2025
+ 22:52:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011013312.20698-1-changfengnan@bytedance.com> <aOyLlFUNEKi2_vXT@fedora>
-In-Reply-To: <aOyLlFUNEKi2_vXT@fedora>
-From: fengnan chang <fengnanchang@gmail.com>
-Date: Mon, 13 Oct 2025 13:44:19 +0800
-X-Gm-Features: AS18NWD8kq6UQsDDGG0qKmrz3bfZhv6wKElSNkMZ019t6wf6DXrrEBmZE82HmfY
-Message-ID: <CALWNXx_J5L1fjTrVA5ChXsPdGk5E5HSuNHUO183mVat6GZdo=g@mail.gmail.com>
-Subject: Re: [PATCH] block: enable per-cpu bio cache by default
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Fengnan Chang <changfengnan@bytedance.com>, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, asml.silence@gmail.com, willy@infradead.org, 
-	djwong@kernel.org, hch@infradead.org, ritesh.list@gmail.com, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
+References: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+ <20251012125819.136942-1-safinaskar@gmail.com> <wk3t24r7dr5kdgb5uy4hz2ahwsd5vkkuwjch3y7kwwybemlmg4@lb2ewcanzf3m>
+In-Reply-To: <wk3t24r7dr5kdgb5uy4hz2ahwsd5vkkuwjch3y7kwwybemlmg4@lb2ewcanzf3m>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Mon, 13 Oct 2025 08:51:42 +0300
+X-Gm-Features: AS18NWCHN-JNvD8JDjaa-lSYG8dCJPc3191CDDTIzSiTAJVlu6Of31P8KY1ZDRU
+Message-ID: <CAPnZJGBZiY4bqcqgKQzH9ZVuRrnahe89YdSy0ShJTiNf2ot5jA@mail.gmail.com>
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple instances
+To: Alejandro Colomar <alx@kernel.org>
+Cc: luca.boccassi@gmail.com, brauner@kernel.org, cyphar@cyphar.com, 
+	linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 1:19=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> On Sat, Oct 11, 2025 at 09:33:12AM +0800, Fengnan Chang wrote:
-> > Per cpu bio cache was only used in the io_uring + raw block device,
-> > after commit 12e4e8c7ab59 ("io_uring/rw: enable bio caches for IRQ
-> > rw"),  bio_put is safe for task and irq context, bio_alloc_bioset is
-> > safe for task context and no one calls in irq context, so we can enable
-> > per cpu bio cache by default.
-> >
-> > Benchmarked with t/io_uring and ext4+nvme:
-> > taskset -c 6 /root/fio/t/io_uring  -p0 -d128 -b4096 -s1 -c1 -F1 -B1 -R1
-> > -X1 -n1 -P1  /mnt/testfile
-> > base IOPS is 562K, patch IOPS is 574K. The CPU usage of bio_alloc_biose=
-t
-> > decrease from 1.42% to 1.22%.
-> >
-> > The worst case is allocate bio in CPU A but free in CPU B, still use
-> > t/io_uring and ext4+nvme:
-> > base IOPS is 648K, patch IOPS is 647K.
->
-> Just be curious, how do you run the remote bio free test? If the nvme is =
-1:1
-> mapping, you may not trigger it.
+On Sun, Oct 12, 2025 at 4:17=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
+wrote:
+> Maybe under a CAVEATS section?
 
-I modified the nvme driver, reduce the number of queues.
-
->
-> BTW, ublk has this kind of remote bio free trouble, but not see IOPS drop
-> with this patch.
->
-> The patch itself looks fine for me.
->
->
-> Thanks,
-> Ming
->
->
+Yes, good idea.
+--=20
+Askar Safin
 
