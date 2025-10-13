@@ -1,173 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-64003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB4EBD58D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 19:40:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7BEBD5C3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 20:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 590094E85C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 17:40:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CAD9135150E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 18:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A287D308F03;
-	Mon, 13 Oct 2025 17:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4B32D781F;
+	Mon, 13 Oct 2025 18:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XHAa9Ufx"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="tkO5iX66"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from outbound-ip191b.ess.barracuda.com (outbound-ip191b.ess.barracuda.com [209.222.82.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB7B2BEC2D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 17:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760377238; cv=none; b=sEIAsCDcieWOhZRKxLhB5ShzYgQbz/L/mk9LiuMWbZ8v0u44kGIwutMP194QHP4zjLWOt+BqHdLCa/Z40JknOCpvpsEnPGfC+u3ErwJKn/AAKtBYpOSv9uBr0XRfsTlu7sYC0mPHSc2y3tWM/4AmnV/bubQJGNgjdRxWmdSOGEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760377238; c=relaxed/simple;
-	bh=U02xRO8TH94viZsdOoVmRmGMF1FSkVidF3pPj625Dnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlURM0NBMH7xJGZ1gWzzO+0vHx7dgtNijC7p0Dfi2h+BdWTwpQQVkh+g38y8Xm5hDf6X7qi4jEBoqeEp6CKoMH/wLYzvVi7gwXN04DkFnqlJ0jPDDwJVCiafYUKGiVziaemliOO3oyWv3afl6hVTVZ4vuEzfRb4iOnTaVn9XmA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XHAa9Ufx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760377235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g4snZWujk+jRKVRcGEMqjAzW+5/JH8Xs+LhjE/dMhEU=;
-	b=XHAa9UfxSZ/Uu6Ltga8UT7jrCuJsunigQ6cpwbkGUBgapysDDBbvvHo687Dyfd+zTbZkEA
-	eFX9i5dQlHY4j54RJ9ia5o48e7nW8SABDIjU3ovE3yKHdIicluhpbPmoeUzd/CyrJ7zFuN
-	HOR3Vr02NXoayG5PH0rDuXYeyu/QfSo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-2zdt_QmbNziLDO-MsmJqEg-1; Mon,
- 13 Oct 2025 13:40:31 -0400
-X-MC-Unique: 2zdt_QmbNziLDO-MsmJqEg-1
-X-Mimecast-MFC-AGG-ID: 2zdt_QmbNziLDO-MsmJqEg_1760377230
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E80A1800343;
-	Mon, 13 Oct 2025 17:40:30 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.119])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0543D19560A2;
-	Mon, 13 Oct 2025 17:40:28 +0000 (UTC)
-Date: Mon, 13 Oct 2025 13:44:38 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bernd Schubert <bernd@bsbernd.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-Message-ID: <aO06hoYuvDGiCBc7@bfoster>
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1859213957E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 18:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760381108; cv=fail; b=ReuMvcPGBh9yHIsMR0bc7Zz7o4iXHmGkE1iSSwerK61Crl0F7ZFCFzIJtIIMIgg+vnsUqEi+vLtTJVW1bjEvumojG94Gb0lQOpiWndnrOOK1lEBK+IW6teDI5/r2WITy7klq138hSnB7ZnjVG06b1VpOjFLfLdz78j9sb40sZKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760381108; c=relaxed/simple;
+	bh=+Y0nzIDQVBcneV12z6JMqlJ+X/H1+CXEMjLzYheQVnc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FIe40SRCblcQBeicVsSosfadtAY8U5V1+NdqFt5Pd4W1e6bstIzNSANcXaLb+e4oWHM4lNHqIkT5p5S2lDNiwX+qkvftv+WR7mD9QP25dxz7eOKUVUaxeAdqWELlYku+zJGG9jptxS6oIqCRuPzX/tzOAOxqf+ahSz2fT1eT6T8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=tkO5iX66; arc=fail smtp.client-ip=209.222.82.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11020077.outbound.protection.outlook.com [52.101.46.77]) by mx-outbound16-186.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 13 Oct 2025 18:45:05 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AXVWSw1GA8FNlOVBf8MowaYZSYGKx4GAArmSJY/nZAqifgxQBOw9ugwoekXJ6/sW3XXpR/A6MVV3mlYfif0sjqvjgdceOkBmcCmelcJjYvmkqClhzdlyMicKTKBe1YFhyUjeWu0jxrs3uv+7eJ+iEV1Ju/NEwhqjrwf08I077nRn5Uj5qSw5erRlHbnTeIUxIXvuwEbC3EzgNfxffSc1mqi8HJ+yu0sa/d8OTm9vvv8N984CoDCR43v7BbvN9ZzE4vNqzzlKNBm7Jglr31A3Qw1S72i25bh3aTmuV0yJUJuS8T9aJfxczfIowVm/GghMIXUFcgkwsvNTLPzeDHNasg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BThhJU0a+ZXITgjt9zRtpGV4NsMBKdhE7zys5nvNY80=;
+ b=NC1Tyjm0FOlcwD/Si+4z44qzHa+qinF5j2W2FulrFxFlqbLSfLx11yyqX/9D7fvakF8ZPQzh7TfFA6NGyuJA/DyTYYp0c1p9xmrjlqQWMIpRoEOhDVjHkYDRZ78XPe+UuRyYCOMZPGui0xeobWaDg7XnSgqDluOCwpoyZfktYOyZnwGgL+H76AGveFch+8OYd1vmrLuYhTDD9+kaFxxYBtigYTkSk6qDmcGv9j7a1/qldsVrYP1y7qzuZqjZz24kHnR1CH25+U5dz0cw0Q2/IONgC23J1AuK3YWxsZBukIBmw/iKCevDam8CpsbbNjTY/9JYo0BhwImYVpnVUduWLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BThhJU0a+ZXITgjt9zRtpGV4NsMBKdhE7zys5nvNY80=;
+ b=tkO5iX66kcxT2cHFpI6PVuad1GpEcrEtS7sZU09FR/fgrOG89lexyIWsUVVWi8bh/qDSCKsw3DzbP2R4ur/8NZML3GdHoniECHaKXRZ6rzYgOnwT90v9ZoA9RU+fo2wkImjCQOPA9cGnV+raSklrugjOaKZ427fQntu8YPN0vHU=
+Received: from SJ0PR03CA0055.namprd03.prod.outlook.com (2603:10b6:a03:33e::30)
+ by BL1PPF728805D7A.namprd19.prod.outlook.com (2603:10b6:20f:fc04::eb4) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 17:10:04 +0000
+Received: from CO1PEPF000044F4.namprd05.prod.outlook.com
+ (2603:10b6:a03:33e:cafe::ad) by SJ0PR03CA0055.outlook.office365.com
+ (2603:10b6:a03:33e::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
+ 13 Oct 2025 17:10:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ CO1PEPF000044F4.mail.protection.outlook.com (10.167.241.74) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.7
+ via Frontend Transport; Mon, 13 Oct 2025 17:10:03 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 20BEE81;
+	Mon, 13 Oct 2025 17:10:03 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Date: Mon, 13 Oct 2025 19:09:57 +0200
+Subject: [PATCH v3 1/6] fuse: {io-uring} Add queue length counters
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251013-reduced-nr-ring-queues_3-v3-1-6d87c8aa31ae@ddn.com>
+References: <20251013-reduced-nr-ring-queues_3-v3-0-6d87c8aa31ae@ddn.com>
+In-Reply-To: <20251013-reduced-nr-ring-queues_3-v3-0-6d87c8aa31ae@ddn.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ Luis Henriques <luis@igalia.com>, Gang He <dchg2000@gmail.com>, 
+ Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760375401; l=3159;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=+Y0nzIDQVBcneV12z6JMqlJ+X/H1+CXEMjLzYheQVnc=;
+ b=4q+zay7Slpw7/uNK36egr1AEA7piAdct8IzRGM/QauJ6vnd1iObDQSC9I5CkdRAEtSjTwENig
+ CCV/94rOEgABsCJfXQZ78rJuFTXoa3Z6XfRQuVnip5aWoTNm4fzKy2L
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F4:EE_|BL1PPF728805D7A:EE_
+X-MS-Office365-Filtering-Correlation-Id: c99f0b60-d969-4dcf-7ce3-08de0a7b59fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|19092799006|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Rm9HY3A2U0pjSmdyZmcvZnd2MGlITDBOVWxGWnVubDU5S2N5ZUI4SzV3Mi9X?=
+ =?utf-8?B?alFBdW5neGxMT1BPYzhTclZPWVE0SDMzbjVhQ1g1bldJMmZsVDhwS1JmYWNV?=
+ =?utf-8?B?Ti8rY3AyaWhQOEx0U1NoTFJ5NldVVzlBZUI5OEhZbERzdmlzSDhEM3JZOFRG?=
+ =?utf-8?B?eWpsL0xIbW95TFhyMVhxVFBEeEdIVW5TS1RSa3QrbjA4aFhhWHVjN1liako4?=
+ =?utf-8?B?SkJ3eHJnNkRRdFd5alduVFZjQ0ZPVTZlM3VvWlFZNGgrQXcxUnhEVktJZGxM?=
+ =?utf-8?B?UHJqSW8wNldpV1BXKzRkKzZDOS8yYnNJNXZaSVlqa0NlRHA4Vk5pQTJ4S1Iz?=
+ =?utf-8?B?am5QcEM0VEgwUUpsRFVZenpTeUVqS2pBWHpwMzZXTkNOWktxcitxakM5d2F5?=
+ =?utf-8?B?OXBoay9vUWhUMzVodUk2NzR3aWtxNFhod1RBOXkxaFk1TFRwclJzaVpUaUl1?=
+ =?utf-8?B?ZUJidzI0Z1FITytRS0Z5TkFtcCtXSTVKd3krVkhRRk1FMThuSllNTkowYUpi?=
+ =?utf-8?B?NmlrNkp4Y3JVU1NBL00ydkRxVW51OFhxRk9haE1TNnZZQ2o3b3Nqejk2Q2h5?=
+ =?utf-8?B?Y1R1R3pnNllPTkYydGJDc1hldGptZExkdHpiN09kSldvVHhkVUJNRDhwZTFu?=
+ =?utf-8?B?dU9wYXpXWnlkeDM2OUxROG1Qc05hTkJWeTVYOElESFlUME11NzRJVWZvZkh1?=
+ =?utf-8?B?aThFbzlObUpBc00zTmdVdzFsL0hPWVpxWHJkeFFsWW4vV1pjQVExaTZLMmQv?=
+ =?utf-8?B?MTlBOVhJN0s4dFJKak1Ia1UrOXF0WFRkSG9TSTVVak0rVlJhTUEzYS8xdmV1?=
+ =?utf-8?B?YzNLT0sydmtYZHE2Y0ZOWXZxRmpHTk1DOWRhazU0OWxvdWVtZlhsV3FVWW1z?=
+ =?utf-8?B?eHkvalJoWTkxT0R1LzJuL1VWUWtDUWM3cFlkMldNeFVEYVZZTVhWclBnUjhj?=
+ =?utf-8?B?NURUSVNwOGdiblBMeDAwelRsU012M1NpTTNWS2pQY0h6M0lZVmNnUmlqeTBL?=
+ =?utf-8?B?ZzdIRkNqVENta2F2OTRFZW11ZStDYWN5K3pCSWp2RFlra3FqS3JkR0pZZnUw?=
+ =?utf-8?B?dURDY1UxMjZlTzdhcGZjdjByNW1vZCtIQmlsb1BQWnc4OEhiaTlJQWlFN3Z5?=
+ =?utf-8?B?WDlYZW96WnV1MVZqUzF0WGJsZ0pEVktNY0hKT04ybG1JeGRIblFIV2VzU3Z0?=
+ =?utf-8?B?dE11d1VCQUtEQU1JT1d1ck9waEl5azg1SGtoeHA5U2F0NWppcytocjMwOEdQ?=
+ =?utf-8?B?WUNvUndYTXZKOVJPdlk3TzNkSXhZZHJxS2VaQVhhRjkyRUE3OStOOXhwaGxs?=
+ =?utf-8?B?azNreDVFekY0eGVJbGtBN1IrcDZ2bDNtMHY5TkpkRU1sTTR2SERCYXczREt6?=
+ =?utf-8?B?MzRsdnV6bVhHNHNKNHc1TDIrYmdCd01GS2NyZlVNTTlHZHU2Z3ptdU4raU9J?=
+ =?utf-8?B?eHBLUzIwQ2NvcEQ0cGlZbWJYTmhEaktYTHl2Qk9DT1BmcnUzT1hkcnVqTFZZ?=
+ =?utf-8?B?T010TGZZSm81WVZINnQwQmhQZmljODFScGxtdmdkNW8wUXZpMFRaVGRZcTdD?=
+ =?utf-8?B?LzhEeU45eVJ2anREdjFaUDlMQUVJNnZURENyWWxucjdIcFQyRmJEUFMxL1Js?=
+ =?utf-8?B?TmJPcmdUM1lLL1dWY3JxMU5rZHRpVytWUHoyY3drUE1QeUF2SktBc1NVelRs?=
+ =?utf-8?B?UHZPTytnbU9VOW0yWlFoSHhqV0t4ZVg0TjhLYm5xT2psZ2ltQjc3ZDIvUGYw?=
+ =?utf-8?B?eFN5S2toMXBJbXBlNTdDVmJnM0R2TGRNUjlPTW82SWIzOUo2S0x0WHdGQ1M0?=
+ =?utf-8?B?ZitrVmRYWUVqd3JCZ1hJYTQwTFh3VzJpNlFTeTZ1d09OdWxOdERXYnBhTVAx?=
+ =?utf-8?B?UDRmUDFPa0JrVGpycm5CdTVGektublBxRVMyYUcyVkNVa0p6Tzhpd1ozM3VS?=
+ =?utf-8?B?S3FQanJkS08yUWd2T0p0Q0RkMU52SndSdzI1YkEwbjA1RHF3WUJkTnJwdE5y?=
+ =?utf-8?B?ciszOHgzL3VIcFBETDdlMXVUZ2dVRm5BNzBBVWtMOHdZSDVxendib3lYRHZX?=
+ =?utf-8?B?TkhXMndQbXViRFc1TGhGcnVEM0J3Qnkybk0vVVJWM1JrcnlSYllGTWM2bkh3?=
+ =?utf-8?Q?cyoo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(19092799006)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ha03W2rxlY7UpCIx3rW/L17Ytvj+vSO3R3kcjmgkfu2DU1Q5LdGKkOc+bEc9eel/J+RhQ8XgPLKGH5uzTHyhsGr/7ISMHSlMAGd1U5IMnucqjwjWA8IJ5fiwDeQRvprQ3kqc6B8EQoWiBKSPGNc0B/oz9Q6CqS4LJbiu0bgpuyIV095yz0opjSSVFTaMXQGd0PFuve7JNP8JLpvb4urn+GmriiKGo2MZ6lj9l7buP58EKST7wKRQzwr0mSYa+dLBWOWX4l/Nzkh851VNKGUPtTwxTaZOprM6yny5hRZodq1nipv6ZYh7YHJEeZ2SJy2Ia6lSYvIrvbaLSxpWxkUKL+xT7qf0XOPKDT4HwHLihHB1Md+NlSJTH3TfzaGoDrlTALDePQXUHfJuL3XlZy7An/ZNLRG4yeqGBVyw1U3lm43EtUc1YfyKCvFU2WTrdWyLWCfmHS++WZYJo0XNjJQj1NiphShOWS52m412Kisq78IsPmWoVwM5ZihrrT8LUTS9umgTiZwtKFYU7oxJTDhChTGNoIx5X81wE5UDORmOjonElsRGGmwcHyYXRwjg4EVeOxDqrGFFoBkMfA9sXz1lI3dPDfYqZL+FZsLd4WldQ/PciTuPU4U7TLrH94Er1FmbFJbUz/0BC9fWO6qzhJHc8Q==
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 17:10:03.9296
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c99f0b60-d969-4dcf-7ce3-08de0a7b59fd
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PPF728805D7A
+X-OriginatorOrg: ddn.com
+X-BESS-ID: 1760381105-104282-8512-7022-1
+X-BESS-VER: 2019.1_20251001.1803
+X-BESS-Apparent-Source-IP: 52.101.46.77
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsYGZmZAVgZQMNXcPNEgOdHC1N
+	DUwszQ2DApydQi1czMwjQxzcI4zSBRqTYWACSjjN9BAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.268183 [from 
+	cloudscan15-199.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+	0.00 BSF_SC0_MISMATCH_TO    META: Envelope rcpt doesn't match header 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, BSF_SC0_MISMATCH_TO
+X-BESS-BRTS-Status:1
 
-On Mon, Oct 13, 2025 at 03:39:48PM +0200, Miklos Szeredi wrote:
-> On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> 
-> > My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
-> > similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
-> > that it hasn't been invalidated.  If old_mtime is invalid or if
-> > FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
-> > cache is not invalidated.
-> 
-> [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
-> Link to complete thread:
-> https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
-> 
-> In summary: auto_inval_data invalidates data cache even if the
-> modification was done in a cache consistent manner (i.e. write
-> through). This is not generally a consistency problem, because the
-> backing file and the cache should be in sync.  The exception is when
-> the writeback to the backing file hasn't yet finished and a getattr()
-> call triggers invalidation (mtime change could be from a previous
-> write), and the not yet written data is invalidated and replaced with
-> stale data.
-> 
+This is another preparation and will be used for decision
+which queue to add a request to.
 
-Heh, well that's an old one. ;) I'm probably not going to recall all the
-details, but from a quick look at the commits this was to facilitate
-support for glusterfs. The original fuse code did an inval across i_size
-changes and this patch updated that to try and accommodate overwrites by
-doing a similar thing for mtime differences.
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ fs/fuse/dev_uring.c   | 17 +++++++++++++++--
+ fs/fuse/dev_uring_i.h |  3 +++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-If I follow the report correctly, we're basically producing an internal
-inconsistency between mtime and cache state that falsely presents as a
-remote change, so one of these attr change checks can race with a write
-in progress and invalidate cache. Do I have that right?
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index f6b12aebb8bbe7d255980593b75b5fb5af9c669e..872ae17ffaf49a30c46ef89c1668684a61a0cce4 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -86,13 +86,13 @@ static void fuse_uring_req_end(struct fuse_ring_ent *ent, struct fuse_req *req,
+ 	lockdep_assert_not_held(&queue->lock);
+ 	spin_lock(&queue->lock);
+ 	ent->fuse_req = NULL;
++	queue->nr_reqs--;
+ 	if (test_bit(FR_BACKGROUND, &req->flags)) {
+ 		queue->active_background--;
+ 		spin_lock(&fc->bg_lock);
+ 		fuse_uring_flush_bg(queue);
+ 		spin_unlock(&fc->bg_lock);
+ 	}
+-
+ 	spin_unlock(&queue->lock);
+ 
+ 	if (error)
+@@ -112,6 +112,7 @@ static void fuse_uring_abort_end_queue_requests(struct fuse_ring_queue *queue)
+ 	list_for_each_entry(req, &queue->fuse_req_queue, list)
+ 		clear_bit(FR_PENDING, &req->flags);
+ 	list_splice_init(&queue->fuse_req_queue, &req_list);
++	queue->nr_reqs = 0;
+ 	spin_unlock(&queue->lock);
+ 
+ 	/* must not hold queue lock to avoid order issues with fi->lock */
+@@ -1280,10 +1281,13 @@ void fuse_uring_queue_fuse_req(struct fuse_iqueue *fiq, struct fuse_req *req)
+ 	req->ring_queue = queue;
+ 	ent = list_first_entry_or_null(&queue->ent_avail_queue,
+ 				       struct fuse_ring_ent, list);
++	queue->nr_reqs++;
++
+ 	if (ent)
+ 		fuse_uring_add_req_to_ring_ent(ent, req);
+ 	else
+ 		list_add_tail(&req->list, &queue->fuse_req_queue);
++
+ 	spin_unlock(&queue->lock);
+ 
+ 	if (ent)
+@@ -1319,6 +1323,7 @@ bool fuse_uring_queue_bq_req(struct fuse_req *req)
+ 	set_bit(FR_URING, &req->flags);
+ 	req->ring_queue = queue;
+ 	list_add_tail(&req->list, &queue->fuse_req_bg_queue);
++	queue->nr_reqs++;
+ 
+ 	ent = list_first_entry_or_null(&queue->ent_avail_queue,
+ 				       struct fuse_ring_ent, list);
+@@ -1351,8 +1356,16 @@ bool fuse_uring_queue_bq_req(struct fuse_req *req)
+ bool fuse_uring_remove_pending_req(struct fuse_req *req)
+ {
+ 	struct fuse_ring_queue *queue = req->ring_queue;
++	bool removed = fuse_remove_pending_req(req, &queue->lock);
+ 
+-	return fuse_remove_pending_req(req, &queue->lock);
++	if (removed) {
++		/* Update counters after successful removal */
++		spin_lock(&queue->lock);
++		queue->nr_reqs--;
++		spin_unlock(&queue->lock);
++	}
++
++	return removed;
+ }
+ 
+ static const struct fuse_iqueue_ops fuse_io_uring_ops = {
+diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+index 51a563922ce14158904a86c248c77767be4fe5ae..c63bed9f863d53d4ac2bed7bfbda61941cd99083 100644
+--- a/fs/fuse/dev_uring_i.h
++++ b/fs/fuse/dev_uring_i.h
+@@ -94,6 +94,9 @@ struct fuse_ring_queue {
+ 	/* background fuse requests */
+ 	struct list_head fuse_req_bg_queue;
+ 
++	/* number of requests queued or in userspace */
++	unsigned int nr_reqs;
++
+ 	struct fuse_pqueue fpq;
+ 
+ 	unsigned int active_background;
 
-But still a few questions..
-
-1. Do we know where exactly the mtime update comes from? Is it the write
-in progress that updates the file mtime on the backend and creates the
-inconsistency?
-
-2. Is it confirmed that auto_inval is the culprit here? It seems logical
-to me, but it can also be disabled dynamically so couldn't hurt to
-confirm that if there's a reproducer.
-
-3. I don't think we should be able to invalidate "dirty" folios like
-this. On a quick look though, it seems we don't mark folios dirty in
-this write path. Is that right?
-
-If so, I'm a little curious if that's more of a "no apparent need" thing
-since the writeback occurs right in that path vs. that is an actual
-wrong thing to do for some reason. Hm?
-
-If the former (and if there is simple confirmation of the auto inval
-thing), I'm at least a little curious if marking folios
-dirty/writeback/clean here would provide enough serialization against
-the inval to prevent this problem.
-
-> The proposed fix was to exclude concurrent reads and writes to the same region.
-> 
-> But the real issue here is that mtime changes triggered by this client
-> should not cause data to be invalidated.  It's not only racy, but it's
-> fundamentally wrong.  Unfortunately this is hard to do this correctly.
-> Best I can come up with is that any request that expects mtime to be
-> modified returns the mtime after the request has completed.
-> 
-
-Agreed in general. IIUC, this is ultimately a heuristic that isn't
-guaranteed to necessarily get things right for the backing fs. ISTM that
-maybe fuse is trying too hard to handle the distributed case correctly
-where the backing fs should be the one to implement this sort of thing
-through exposed mechanisms. OTOH so long as the heuristic exists we
-should probably at least work to make it internally consistent.
-
-> This would be much easier to implement in the fuse server: perform the
-> "file changed remotely" check when serving a FUSE_GETATTR request and
-> return a flag indicating whether the data needs to be invalidated or
-> not.
-> 
-
-Indeed something along those lines sounds more elegant long term, IMO.
-
-Brian
-
-> Thoughts?
-> 
-> Thanks,
-> Miklos
-> 
+-- 
+2.43.0
 
 
