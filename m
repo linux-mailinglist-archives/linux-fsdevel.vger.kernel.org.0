@@ -1,175 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-64013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC52BD5C70
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 20:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD43BD5DF3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 21:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F20118A611E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 18:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D4218A5583
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 19:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450152D374A;
-	Mon, 13 Oct 2025 18:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2428A2D5928;
+	Mon, 13 Oct 2025 19:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZUTEXPxq"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qusZC5sh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EC22D73AD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 18:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E2C2C21FE;
+	Mon, 13 Oct 2025 19:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381353; cv=none; b=JGsGJ+Pp+OuVGozee/2E1W8WPdLyRwv4IqIco3qNWFagNRV4BbSah+mzlg+WoDKGgFJG5cCOO/vNJAG46UwnRmmDiwIevHv//DaBiydk81AX8wIT/7YIA0qtmF35Sn2ijvnmDSCYUx6/abKy16XMXch1GD8fVzbYkkoXKbAjxkM=
+	t=1760382278; cv=none; b=WOkz6t6vQ3L+eNdBmqjed4uW2nPidWh+wS/ZOzwesCo+z4YKejTjJ3lNMsZSa4P31CHtl9DQWpiTwpysU8wfjDnCQxTWisvR+m2lW+Z8QRlIIBJi6PlaveorsBf8CPzI1rdqrd4sEh2E0icBOt43n7xyawxqv2mg2PKdKdlY804=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381353; c=relaxed/simple;
-	bh=vDKQLf2zX4fUf97LFE8Olo0Bnc7aaZR0LZz7MiKjsrk=;
+	s=arc-20240116; t=1760382278; c=relaxed/simple;
+	bh=FIsgkB5h5ry6n2BuuRKc7KLJmszdPvD2e0mt/o5qinc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oDpMczzALTC8+CcXvZgiG2FR+wOBqei/1zIlfpD9lOl6yY5egux5PJe0ug+shT/xqvz5HiM9cQvqF4iyJ9jKGCWZ4xWVRjDXY8DBm7DEVFdxmunCrYWlnRbDj1ZmzBHPMYSMCa2rkDg01HxI8z5UDUTIilhFJcR4vksGg24qcfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZUTEXPxq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760381350;
+	 Content-Type:Content-Disposition:In-Reply-To; b=thOGX3GDFm7YbxoKTi//Y6eYPnSAbaMW8kVqngRGN9qxys3DqD6ZFvizE8juBEVqnxMRhqs9kmgPJ28BxlYDzGEYmmN2MCH367m7cXFMLcXbm5HR3rDUU7cf+qGHFyU9T3Z3YGAqOHQ8fkHynPeLaMJx4/OsXUCU6k7XnEK2HnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qusZC5sh; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 9E2F014C2D3;
+	Mon, 13 Oct 2025 21:04:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1760382272;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IArTzD9Rd6pbKFw8bx7rmNikp77yVmo/ioJRL5FLrNg=;
-	b=ZUTEXPxqDf7ZzFfd3XPQQPoHH+EKc8MCdVMLxwgPq75UjuE7TcgJsqeGDEvUS8lNuxa3oK
-	XJ8dGAKnglP9xSe2d31HiIhGXJMDagdF4bRgwuBOMvRD4SlbjO8u66oDfTr+GpLdlj2xlC
-	CR31MAzOz62csIjbm/pyMdjpHq5xp34=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-KAgC93bzOM6DCojhdFrIdQ-1; Mon,
- 13 Oct 2025 14:49:05 -0400
-X-MC-Unique: KAgC93bzOM6DCojhdFrIdQ-1
-X-Mimecast-MFC-AGG-ID: KAgC93bzOM6DCojhdFrIdQ_1760381344
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1F9519560AE;
-	Mon, 13 Oct 2025 18:49:03 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.119])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D8C319560A2;
-	Mon, 13 Oct 2025 18:49:02 +0000 (UTC)
-Date: Mon, 13 Oct 2025 14:53:11 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
+	bh=/I6JIBH6i2s+KyYmg/95gkYCV7Mkagjj3LtjeEdQzAI=;
+	b=qusZC5shpCqfOWYUxaMv2wNmODrBfb7vHdOlMuWw4wNq8DAIZ5LyH1F16/pu/8FsIuuXN5
+	zt4hHgGQ0bnv/cbcI2YtIIiT0DsoHpM0BmurlY4UvfLb98FITF7D38xnRo0ZbWQD+nwzVl
+	BFJizOk7J/nrQcnjk4caJYCVDqiVhiekB3KHSJ5/5zwGXds6Og4ljZFXeYUdrX4rZErEaz
+	5rYl6573bWAmEdNXIuiG55JGXp9TOuemmVxx1IZKdnECCXJAbzl41Bq4Nbc7NWmZMUWO+i
+	sqZtaG2dhHtNCdQAYN4xcnjc1DajKnWoeMQI+uHtn7WbKlL0FB8BnRL38WRdYw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c5a5a286;
+	Mon, 13 Oct 2025 19:04:27 +0000 (UTC)
+Date: Tue, 14 Oct 2025 04:04:12 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bernd Schubert <bernd@bsbernd.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-Message-ID: <aO1Klyk0OWx_UFpz@bfoster>
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster>
- <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+	ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+	eadavis@qq.com
+Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
+Message-ID: <aO1NLCI3kIdgWcvh@codewreck.org>
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
+ <aOzT2-e8_p92WfP-@codewreck.org>
+ <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <bc86b13e-1252-4bf0-86f9-77da37f5e37a@sandeen.net>
 
-On Mon, Oct 13, 2025 at 08:23:39PM +0200, Miklos Szeredi wrote:
-> On Mon, 13 Oct 2025 at 19:40, Brian Foster <bfoster@redhat.com> wrote:
+Eric Sandeen wrote on Mon, Oct 13, 2025 at 01:46:42PM -0500:
+> > ... Which turned out to be needed right away, trying with qemu's 9p
+> > export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
+> > p9_virtio_create() with fc->source == NULL, instead of the expected
+> > "tmp" string
+> > (FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
+> > p9_fd_create_tcp(), might be easier to test with diod if that's what you
+> > used)
 > 
-> > If I follow the report correctly, we're basically producing an internal
-> > inconsistency between mtime and cache state that falsely presents as a
-> > remote change, so one of these attr change checks can race with a write
-> > in progress and invalidate cache. Do I have that right?
+> I swear I tested this, but you are right, and it fails for me too.
 > 
-> Yes.
+> Oh ... I know what this is :(
 > 
-> >
-> > But still a few questions..
-> >
-> > 1. Do we know where exactly the mtime update comes from? Is it the write
-> > in progress that updates the file mtime on the backend and creates the
-> > inconsistency?
+> Introducing the "ignore unknown mount options" change in V4 caused it to
+> also ignore the unknown "source" option and report success; this made the
+> vfs think "source" was already handled in vfs_parse_fs_param() and
+> therefore it does not call vfs_parse_fs_param_source(). This has bitten
+> me before and it's a bit confusing.
 > 
-> It can be a previous write.  A write will set STATX_MTIME in
-> fi->inval_mask, indicating that the value cached in i_mtime is
-> invalid.  But the auto_inval code will ignore that and use  cached
-> mtime to compare against the new value.
-> 
-> We could skip data invalidation if the cached value of mtime is not
-> valid, but this could easily result in remote changes being missed.
-> 
+> I'm not sure how I missed this in my V4 testing, I'm very sorry.
 
-Hrm Ok. But even if we did miss remote changes, whose to say we can even
-resolve that correctly from the kernel anyways..? Like if there happens
-to be dirty data in cache and a remote change at the same time, that
-kind of sounds like a policy decision for userspace. Maybe the fuse
-position should be something like "expose mechanisms to manage this,
-otherwise we'll just pick a side." Or "we'll never toss dirty data
-unless explicitly asked by userspace."
+No harm done :)
 
-> >
-> > 2. Is it confirmed that auto_inval is the culprit here? It seems logical
-> > to me, but it can also be disabled dynamically so couldn't hurt to
-> > confirm that if there's a reproducer.
+And thanks for the explanation, the vfs parsing being done only if the
+fs-specific parsing failed was far from obvious for me!
+
+> > Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
+> > the same) it looks like they all define a fsparam_string "source" option
+> > explicitly?...
 > 
-> Yes, reproducer has auto_inval_data turned on (libfuse turns it on by default).
+> Not all of them; filesystems that reject unknown options have "source"
+> handled for them in the VFS, but for filesystems like debugfs that
+> ignore unknown parameters it had to handle it explicitly. (Other
+> filesystems may do so for other reasons I suppose).
 > 
+> See also a20971c18752 which fixed a20971c18752, though the bug had
+> slightly less of an impact.
 
-I was more wondering if the problem goes away if it were disabled..
+(I assume the former was 3a987b88a425)
 
-> >
-> > 3. I don't think we should be able to invalidate "dirty" folios like
-> > this. On a quick look though, it seems we don't mark folios dirty in
-> > this write path. Is that right?
-> 
-> Correct.
-> 
-> >
-> > If so, I'm a little curious if that's more of a "no apparent need" thing
-> > since the writeback occurs right in that path vs. that is an actual
-> > wrong thing to do for some reason. Hm?
-> 
-> Good question.  I think it's wrong, since dirtying the pages would
-> allow the witeback code to pick them up, which would be messy.
-> 
+> Yep, this looks correct, I think. It essentially "steals" the string from
+> the param and sets it in fc->source since the VFS won't do it for us.
 
-Ah, yeah that makes sense. Though invalidate waits on writeback. Any
-reason this path couldn't skip the dirty state but mark the pages as
-under writeback across the op?
+Yes, I copied that from nfs and it looks like debugfs does the same.
 
-> > Agreed in general. IIUC, this is ultimately a heuristic that isn't
-> > guaranteed to necessarily get things right for the backing fs. ISTM that
-> > maybe fuse is trying too hard to handle the distributed case correctly
-> > where the backing fs should be the one to implement this sort of thing
-> > through exposed mechanisms. OTOH so long as the heuristic exists we
-> > should probably at least work to make it internally consistent.
-> 
-> Yes, that's my problem.  How can we fix this without adding too much
-> complexity and without breaking existing uses?
-> 
+> I can't help but feel like there's maybe a better treewide fix for this
+> to make it all a bit less opaque, but for now this is what other
+> filesystems do, and so I think this is the right fix for my series at
+> this point.
 
-I probably need to stare at the code some more. Sorry, it's been quite a
-while since I've looked at this. Curious.. was there something wrong
-with your unstable mtime idea, or just that it might not be fully
-generic enough?
+Not much better given it does the work twice but we could return -EINVAL
+in the case Opt_source statement to optimize for code size...
+I'm not sure that's quite clearer though, I'll stick to "doing what
+everyone else" does for now and we/someone can revisit this later.
 
-This might be a good question for any fuse based distributed fs
-projects. I'm not sure if/how active glusterfs is these days..
+> Would you like me to send an updated patch with this change, or will you
+> just fix it on your end?
 
-Brian
-
-> Thanks,
-> Miklos
-> 
-
+Happy to roll it in directly, I'll reply again when I find time to
+finish testing and push to next.
+-- 
+Dominique Martinet | Asmadeus
 
