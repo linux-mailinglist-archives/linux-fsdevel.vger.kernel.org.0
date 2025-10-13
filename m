@@ -1,182 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-63968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-63969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2E5BD3363
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 15:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48511BD33D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 15:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180733A6F1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 13:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081B43C4B06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Oct 2025 13:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C963307ACD;
-	Mon, 13 Oct 2025 13:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC200307AF3;
+	Mon, 13 Oct 2025 13:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKRLzPXZ"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gVxihb3W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450E8307ACE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 13:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B853E2BCFB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 13:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760362227; cv=none; b=A0P8EUibF+ap8r/nypFm46bxmpY1lctsADF3xSVNj5qHE86aTDHLVsXLkv7+kfC8bkNlsTyHoR2tpI2ze8wZJQKG/L1YnpQxovy2mj/CqsipIpfUvPbvHg1QXsi8zGBDg+H6i3iNUmGK99M1bbGnPvKotVWdKWQ7Fok7qELK/oA=
+	t=1760362804; cv=none; b=ew9M4y+i3iOM+nhHHxd2ryq4TFJWZDkMtCr20sR+CVOHLBtHzEgvxe6CfgQtDXkRE39C4SLR3himLX8t0Jc3YL+v9xAlbEGYyjuA5F8Ga0LFRaS8MWsqNlPsLYCOhB+JGMWQeldI8fWHKZpahuBrg6HfmGHnKCRacWu14gu0qNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760362227; c=relaxed/simple;
-	bh=pYKv/ZHAQal8b6v/icrawjp0xeugJB+Yhx7Gqtpqskc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXL3ADuaQgBKrsplrDOI5YcObF/si5doXNAstQNPqImUqV/VT2tb0Qk1g6y5604A3w/5joRxmcWsYa/DuUSwEhXTcmemzjhzcljjj4TwwcpjYIzo5Q1Uv82t5nTo7BNqXxvGeeZFje2OlO8wEOBLVfJ0p/0KxRd7M2HcmJ98eSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKRLzPXZ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so50936165e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 06:30:25 -0700 (PDT)
+	s=arc-20240116; t=1760362804; c=relaxed/simple;
+	bh=/SZddqTDHvFmJ8WnuB3yvf2qsI4FrpmT2/XBh1/tvBU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBn7bPhBJu/2NahY701oCDKUT/0VSjmpXEuzYYEzUu7V72V53HPbirWLCwybAmD9/cA8/0629VEFQbrnUyxYqevy7tWV+qELXUP+P9llnIgrVtqOtD41qX76jYaDvvKqDxiuP0cxffJs7ZDfS9/YzkgzqM1/dCrMZQwY/lZKsx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gVxihb3W; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-85d5cd6fe9fso427302985a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 06:40:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760362224; x=1760967024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DZlmO7Er2VNfUt2lW8HD8G8xjeR52/0o/FyblKyrXi0=;
-        b=nKRLzPXZnQf9ilLT2raNaKwPMG6B8Vee1uWqwMVCnAKqSukvQpx/qcvB400LvbTRYx
-         fDZe5SHGtw9N/OmQD1fp+c20mNiIoCa7S0RTxayO7va4bk0AYZIOyHwbOj4vNB4tb9lN
-         bDY5zZQosZZ3k6ApeKSFrEUwzob5gRGlEPeWCe+hfRjO2Q4+2xbXi8K5lIkkNpIQxvYy
-         V8OGvKAJ6FdFO0bcqmacw5NecjeQUrtEPOZoUl8g/Buiy3JLKQg1IuddCiXv65nA1IlB
-         jsEr6eXzXiqQ7TnC3MZw/sBS5/L3XBvLIZRHM2jk0DCOxNJHcyWKzuTSIlA8saTZEdtO
-         vVeg==
+        d=szeredi.hu; s=google; t=1760362800; x=1760967600; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ael769XdQAurw6SzkNsrk7kOhVP8THhk7j0vfz4ptc=;
+        b=gVxihb3WuQc/kJpkYOGl0AOsfXSpVLzUUHE2GWcVZvBin3Ve2C6Gn/nP9j1TBD233J
+         v/jHXBfxDXuCO639N7NKOBDbYZ7c7TeSdfbnC8ityUrzdQTrfRdvTQh0g4eUYrESJ1To
+         FFU7gH6eiO3dPCMk96cWm+59atSaqd4ukIMBw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760362224; x=1760967024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZlmO7Er2VNfUt2lW8HD8G8xjeR52/0o/FyblKyrXi0=;
-        b=FgXIeIVgG55b1ir/qKGDbeWnHiZkgHCqaNxmM0wZMX+HqLWkp6HTzjXOIAodqu3lAC
-         g5sXihOdcHRSHjR1XRAfniRTfG+QHpWAsc2eQ3fi2enNwOusmakkzTcvn80Dq1gdIJik
-         bgytxmsnyw2+RMAQU319NA/G9C8ZqJhCwqWdyd7hYXl2eozF6rOQtCJW1D9UtDnSA17P
-         kaFuR7dIomJNXByNbhwc2jO3vYqourSzA/iwSEKu1STxMGzrEMuVyjIdqFPHbis1EtNs
-         j+m6pRvKLzKDtYARxdCcoe9wJvJFvToE0XDN29owIVaXYRqp8QrV34qa7G5So+JsJS0i
-         R9EA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1zu1p+tRP6IElCEAhjwH+kAQldPHc/mq+masBLmWn/tpMCdfe1qEvFUpUXPBFYBO3u0YgZd9N+mhTMgAw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXzoSRzhN+eqQt8aFfvQlBI/MRT4xecGEj3c33+u0W+8jo9GUv
-	Oeh/DAJkPtWDZuzuHdOpT+HhndN+xP7ax3FYl4EIxaX2qP3UVFs/CuPI1YStEA==
-X-Gm-Gg: ASbGncs4+a6sRDBwzfY8bd/aMQ+wWic7TcgZEEFiJGl1KZoTtgcRzU3CD+wJfIfTCDk
-	zrkBfJEobbyzAX4DGDzcuJGmwwXkcT3j7uAygHyUOmR62BGJHH+1VZ8GAvyMPfPd+/2bCqMrqTU
-	+zVGV4EiuFzkTreg6G4J6mZIjQT99yFnET+4r8cT3LvG8g+GuZpR00hPcb3Fb/X4bN99uDudUiw
-	GjAa5gNFNVAGDBjEgCXG9vV7vCKUX87fs1Bkv8grGkafwO78hPxAaE+fJBoPPllPHXAJlMSmMoh
-	LvR7ueWXkcYxhnTBcy4z67ovpzOh9iJ+K8MTaIMiqQWFx3HvWKUAdr+HK5Dl401D6Yj3oBgOuFf
-	2aBY/uCT15k8VUh1HPqVYX/WIOnUazq6/xTRuuvbG8geLWdpjJcHv/dh34V2c4UteXneRcwSAKq
-	QlX/I65NS5
-X-Google-Smtp-Source: AGHT+IFb8vtBJitNnjBlDbVIUCm2gATTzzIuI7S2acOd2FoeBSuIxAzk1vmdrirRWyHwbC1aiC5zwg==
-X-Received: by 2002:a05:600c:6092:b0:45d:e28c:8741 with SMTP id 5b1f17b1804b1-46fa9b02e5amr148223315e9.29.1760362223296;
-        Mon, 13 Oct 2025 06:30:23 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eb09])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49c3e49sm185108555e9.16.2025.10.13.06.30.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 06:30:22 -0700 (PDT)
-Message-ID: <d785cc8e-d8fd-4bee-950c-7f3f7d452efc@gmail.com>
-Date: Mon, 13 Oct 2025 14:31:32 +0100
+        d=1e100.net; s=20230601; t=1760362800; x=1760967600;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ael769XdQAurw6SzkNsrk7kOhVP8THhk7j0vfz4ptc=;
+        b=OjvJoZpec0IgaB2jawsRVNpQANtjkq3uHkwfB3859PbfNQ2kg+qSWTqyP41Ggjeofs
+         Yj5ch5W76eiLBHagEQK0ktrQ5SS+99JuyacV6gBDjpQKNzT7xldmrTQsi1e7LbXPikHZ
+         S4UoFugwe573LJjSAGxVi2OwyRsisFky3pQnUxVk1K5Lay7l/NhFZllcklr5VBQgTz/d
+         pWhWTMOI7ZF3lFqMQVJj+RtqtZpNi+a1oYbtaYfZMBbuWA6vPy0+L/+Lno5puEP8npPx
+         ykAzVkL+ZfLaHHG5O656hIeeJk0tgQ6ysPcluoc7De13kHeGQEbMJbtxAWx5Fd8HTCaB
+         hWuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKtL5KgWmOgmfcrzpS3NA+BUbCudDNQIsNTiVw5LiKEBd/APIIBDUe3pRlxKnlIkSbjyIa0Pm0+WT+z6qD@vger.kernel.org
+X-Gm-Message-State: AOJu0YznagWihPRjpWwZ38JcCBisWxRAyhF6mNfTLtg/WuuzTbpNNLeU
+	3SJ3/gwrUlZJWmMgecpLGGodeo5XTT+pqWC4J37BgeqN7U85QL1EE/6LkOJCC2kj6v10WVP2L8r
+	hRD8iKf8jK0Ce60Ic7JtmE3npe8gazoDJ0qaEjOphlQ==
+X-Gm-Gg: ASbGncseyQ3KAF+1A6dAPGiS3pB8E08qIGq5Imzdk1VGL+QyS9V5Qacusit6W8eATfn
+	oIk/+Rd6jpI2lbPKjfahSrlgqkyUB4WcpARxX4tIR2Go7yDS9pgyQosmVk0FlwX+LLVuiZgX+y2
+	in8JcunzsReSnyvtXcQAbX3G1B2ps5gdwldGRR1HUsOs6a7Z8ZmMiPjky3nOdftRQ0kdKUuxmIG
+	Bof+7lkiDb+aj84+nie9Eduz2hn2s1Bx6LdNCssBhd6zu3BiY/THe0nSiiZgR0qptxSQQ==
+X-Google-Smtp-Source: AGHT+IFheY30RzrU3sDF6n44M2PKpielzVq2MlVSYa0x+WyNPbrLyKfpfV8feWHI7+C35UIHXBFmUc53mtCYWL8EtGs=
+X-Received: by 2002:a05:622a:1f89:b0:4b3:119b:ce78 with SMTP id
+ d75a77b69052e-4e6eacdfa4fmr316471191cf.6.1760362800525; Mon, 13 Oct 2025
+ 06:40:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH] block: enable per-cpu bio cache by default
-To: Fengnan Chang <changfengnan@bytedance.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: fengnan chang <fengnanchang@gmail.com>, axboe@kernel.dk,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- willy@infradead.org, djwong@kernel.org, ritesh.list@gmail.com,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-References: <20251011013312.20698-1-changfengnan@bytedance.com>
- <aOxxBS8075_gMXgy@infradead.org>
- <CALWNXx8pDOvDdNvw+v0rEyi33W8TL+OZW1YiFbF6Gns3PeWOLA@mail.gmail.com>
- <aOyb-NyCopUKridK@infradead.org>
- <CAPFOzZumoCERUj+VuegQNoAwFCoGxiaASD6R_4bE+p1TVbspUA@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAPFOzZumoCERUj+VuegQNoAwFCoGxiaASD6R_4bE+p1TVbspUA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com> <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+In-Reply-To: <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 13 Oct 2025 15:39:48 +0200
+X-Gm-Features: AS18NWCT88AfXUeX9IOJh8Hxp7Iccu8BeGHe0mSVwvBE_3NDd8GXl21wXgwKvcY
+Message-ID: <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: lu gu <giveme.gulu@gmail.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Brian Foster <bfoster@redhat.com>, 
+	Bernd Schubert <bernd@bsbernd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/13/25 13:58, Fengnan Chang wrote:
-> Christoph Hellwig <hch@infradead.org> 于2025年10月13日周一 14:28写道：
->>
->> On Mon, Oct 13, 2025 at 01:42:47PM +0800, fengnan chang wrote:
->>>> Just set the req flag in the branch instead of unconditionally setting
->>>> it and then clearing it.
->>>
->>> clearing this flag is necessary, because bio_alloc_clone will call this in
->>> boot stage, maybe the bs->cache of the new bio is not initialized yet.
->>
->> Given that we're using the flag by default and setting it here,
->> bio_alloc_clone should not inherit it.  In fact we should probably
->> figure out a way to remove it entirely, but if that is not possible
->> it should only be set when the cache was actually used.
-> 
-> For now bio_alloc_clone will inherit all flag of source bio, IMO if only not
-> inherit REQ_ALLOC_CACHE, it's a little strange.
-> The REQ_ALLOC_CACHE flag can not remove entirely.  maybe we can
-> modify like this:
-> 
-> if (bs->cache && nr_vecs <= BIO_INLINE_VECS) {
->      opf |= REQ_ALLOC_CACHE;
->      bio = bio_alloc_percpu_cache(bdev, nr_vecs, opf,
->      gfp_mask, bs);
->      if (bio)
->          return bio;
->      /*
->       * No cached bio available, bio returned below marked with
->       * REQ_ALLOC_CACHE to participate in per-cpu alloc cache.
->      */
-> } else
->          opf &= ~REQ_ALLOC_CACHE;
-> 
->>
->>>>> +     /*
->>>>> +      * Even REQ_ALLOC_CACHE is enabled by default, we still need this to
->>>>> +      * mark bio is allocated by bio_alloc_bioset.
->>>>> +      */
->>>>>        if (rq->cmd_flags & REQ_ALLOC_CACHE && (nr_vecs <= BIO_INLINE_VECS)) {
->>>>
->>>> I can't really parse the comment, can you explain what you mean?
->>>
->>> This is to tell others that REQ_ALLOC_CACHE can't be deleted here, and
->>> that this flag
->>> serves other purposes here.
->>
->> So what can't it be deleted?
-> 
-> blk_rq_map_bio_alloc use REQ_ALLOC_CACHE to tell whether to use
-> bio_alloc_bioset or bio_kmalloc, I considered removing the flag in
-> blk_rq_map_bio_alloc, but then there would have to be the introduction
-> of a new flag like  REQ_xx. So I keep this and comment.
+On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-That can likely be made unconditional as well. Regardless of that,
-it can't be removed without additional changes because it's used to
-avoid de-allocating into the pcpu cache requests that wasn't
-allocated for it. i.e.
+> My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
+> similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verify
+> that it hasn't been invalidated.  If old_mtime is invalid or if
+> FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
+> cache is not invalidated.
 
-if (bio->bi_opf & REQ_ALLOC_CACHE)
-	bio_put_percpu_cache(bio);
-else
-	bio_free(bio);
+[Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
+Link to complete thread:
+https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.com/#r]
 
-Without it under memory pressure you can end up in a situation
-where bios are put into pcpu caches of other CPUs and can't be
-reallocated by the current CPU, effectively loosing the mempool
-forward progress guarantees. See:
+In summary: auto_inval_data invalidates data cache even if the
+modification was done in a cache consistent manner (i.e. write
+through). This is not generally a consistency problem, because the
+backing file and the cache should be in sync.  The exception is when
+the writeback to the backing file hasn't yet finished and a getattr()
+call triggers invalidation (mtime change could be from a previous
+write), and the not yet written data is invalidated and replaced with
+stale data.
 
-commit 759aa12f19155fe4e4fb4740450b4aa4233b7d9f
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Wed Nov 2 15:18:20 2022 +0000
+The proposed fix was to exclude concurrent reads and writes to the same region.
 
-     bio: don't rob starving biosets of bios
+But the real issue here is that mtime changes triggered by this client
+should not cause data to be invalidated.  It's not only racy, but it's
+fundamentally wrong.  Unfortunately this is hard to do this correctly.
+Best I can come up with is that any request that expects mtime to be
+modified returns the mtime after the request has completed.
 
--- 
-Pavel Begunkov
+This would be much easier to implement in the fuse server: perform the
+"file changed remotely" check when serving a FUSE_GETATTR request and
+return a flag indicating whether the data needs to be invalidated or
+not.
 
+Thoughts?
+
+Thanks,
+Miklos
 
