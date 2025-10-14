@@ -1,114 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-64144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E92BDA97F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 18:17:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6136BDAABC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 18:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A66D3B18F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 16:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC973AC399
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 16:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AC83009C4;
-	Tue, 14 Oct 2025 16:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60883019CF;
+	Tue, 14 Oct 2025 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JXuZJAub"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FTF5z4wF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C42FA0C6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 16:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD80A2676DE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 16:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760458668; cv=none; b=OLgWgvQP/zLXNlRf8LJ0DsnfgkPM/bYkqN6E7ihV7R3f61sJ1bSJj7/NWL2mXb9f9SWu2qvdCrkb5C+9klCKo2l2ClMUNdDaWSDqhVy3k9vgeq5Q53LbF69q6wPMto8ZzHpKNDPv3SSZBjBXfyQbOfDWyecrpJC0df2w6KmSgAw=
+	t=1760460101; cv=none; b=eYKXOaIx/fM4qW5wIX/Gxe6xjMRPUnKqAWEAgw0cQnOTaPzisG5ZX/At6TbQliNB/yVSiKkSetEmPGJ2ZuZE2jpX6nQgJ2dyYlSbilV0YETiEG22wuedVmEcYgvo9ae845twY57rGbEmDi1NBD3/j2ZNV55tBN0hSVdOalbC2FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760458668; c=relaxed/simple;
-	bh=sXYeV6SJvnYFewQXtnz8bcuu33UPWzv6xA4EwlwAh/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rIbLZSpU2nfT/w4vIT+xcGM7jCTtoR8O5goQTnEtrIpAPHRyCjoHP4Udcamu1srA/+ashWdiMl+cfHyugcHChktpkEada1dKGYytcO0nytj9+3zsZSLqvIt14M9QAT3Z32C5PGmMbGESBm2t5+cAohxlB+2QJSLUipavpsorFrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JXuZJAub; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760458666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o9khWbtiHfpLUnJNco9dO+izGUV0ZZpx22djFvdPesc=;
-	b=JXuZJAub8GdFurfhm9tYlUrEi6MXoKbYiRSbDxzTEmzAkbEgPhhZmVw0UpFPF2Y+EReCUZ
-	CoDEwiQ9TMHFG8rXqUmupmdvDVGaHGzHUNcFWGFRs/9uunMp10gBwh4St/46SIqbSmUaIc
-	lUChNK0VybNuRMhpTdlPlGcDe5Z9FiE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-363-td5a2psvMYeZyIlTF0Xn0A-1; Tue,
- 14 Oct 2025 12:17:42 -0400
-X-MC-Unique: td5a2psvMYeZyIlTF0Xn0A-1
-X-Mimecast-MFC-AGG-ID: td5a2psvMYeZyIlTF0Xn0A_1760458660
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 666CA1800447;
-	Tue, 14 Oct 2025 16:17:40 +0000 (UTC)
-Received: from bfoster (unknown [10.22.80.119])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 010B21954107;
-	Tue, 14 Oct 2025 16:17:38 +0000 (UTC)
-Date: Tue, 14 Oct 2025 12:21:48 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bernd Schubert <bernd@bsbernd.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-Message-ID: <aO54nHhk_R1rs6X8@bfoster>
-References: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster>
- <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster>
- <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <aO5XvcuhEpw6BmiV@bfoster>
- <CAJfpegvkJQ2eW4dpkKApyGSwuXDw8s3+Z1iPH+uBO-AuGpfReQ@mail.gmail.com>
+	s=arc-20240116; t=1760460101; c=relaxed/simple;
+	bh=BmFOD/P5ahpKb/OrWMG1pZr49BaGZDtavZjItlAu5oY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VXaKgmpnnHEnKXQ0EuFUp6gLAWHUlChSDFl7uWH763cy9e7VbToSM8g4R89F3pFLaQPof4QFGAbk57JHCZEZOWqgiaScU7qkyWlphNO6jVlvvqotZmVeeAxAl/zn24UZpTtRrOsjMW15mdksGP9kFS6hhAwc75hb19M6TA+PErk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FTF5z4wF; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso892311566b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 09:41:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1760460097; x=1761064897; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfIjTfdF2e53St+2VVBPM1O6zAI6tUF3QFF7DgeTNmM=;
+        b=FTF5z4wFvbiBHGB3AV8Ag2GReoqxoN0eEFAwNDy0aiibk9zXwV6Hw+Nx9da2UQB6yH
+         weeYSdPk3lZ8+wpGNX7O9kC5MQByNQIg11yv/EKShQPXWGJtPUKwWV9e/D7aYyuGLILr
+         uHsEjVZjL1D+i7Ujq0WT9doNNKlYuCnMAOPkI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760460097; x=1761064897;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TfIjTfdF2e53St+2VVBPM1O6zAI6tUF3QFF7DgeTNmM=;
+        b=iXGTmeN1XOV8f1I5USxDAbPDinRrBteuuUeT8z3IPAzRusaa+M9y/KAgZbKZT8V6V0
+         ALfWoSRZYeqZgIuVZZ+735xhuqmFb+gKg1uxkGj+pzqz5cWCdeKkNdiksQ5WzQdIV+P8
+         Fhh1BdQW/Ob1PRXCKicFXD+czUF3AYFs5IwwlaSjE0hPZZauHVAwKFZtoVEUTEBle1um
+         NOJhr0wxMYKddfc56Feu6mpz9y6GLQ1V9BNcjeLs4b3TgrwuF1ckyGD+S7AaXnzCJ1FU
+         HbjwLYeyXfbk6+fAyIcQrvow6y5kRYROVhiLUCvdk0Cr3B3TagL6FXriIxyEB4Y1hx2d
+         yCkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgMJDFtfLAMBe0XRWgYM0oZzcs48sjh7tcG9AOPlnQ7q/vYd36xCKtihIQQTRplFYJukfQh9gefz5QDix@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqLWQ+E7Ef9Yd9E1NECRCy4Poa6kzLX2AkTtRCVC34eiSTOLQT
+	mf3L+4SIcBJuES6AqZSCXIhuQ+HHNq5/2FG6lxvTl73PcZ44KlAQXXPo5y+xmsT+phU1r8sNFaO
+	5HTaCyBs=
+X-Gm-Gg: ASbGncvQwXGoSHNU7DrnxuV9sannKm4aTkiz6cPmk5Wwqy/Xa8gwNGGFCXG4ft3f/3h
+	gg+/IoI7x+DmV5tuAxgzGQwX4WlHvoTZ5EDwrsCDfv2ucx7cDmzZwpHSm/surVVZ0rJvMKhLAxi
+	8fvzLmZ4HwURxq2PG3rzF/dcB/TrJEfJq3xhRyqi7Hk4aXqd2EISUOQuppJNBOMYDmHVzO1nd91
+	qv+5HVnpQ6JELjwSVDS3VVKZmtnBAot4eD/SZ90+RWdEPFogbvFw61iu0pS2K5L8P1tgCm/CK5A
+	MIokYR1GK0XgjhA6Wh9gpIIpws0D2FIaN7w/D+NjQrUyyC1kxeZe4NuXwhCXhXQbKCbilKn1ZF9
+	Nu83Tr/+aT/lhlYWTkQhUBFyepvKrEmVCNqUR8DftBqMHahNF750a/aU0tYquoNDZ1jJDuEy5Dr
+	mOCalBI2+wPE1i6WjrkgL0dE5k9Famo0XV4nh5
+X-Google-Smtp-Source: AGHT+IGQORl9B6NmmFwdjFwrO0WitZvjOZ5J2Hc4+6EYadGp1VRjKpDhFyx/XgDsp30vpQnXCvQK1A==
+X-Received: by 2002:a17:907:608c:b0:b3c:364d:b884 with SMTP id a640c23a62f3a-b50ac4d284amr2777175066b.63.1760460096975;
+        Tue, 14 Oct 2025 09:41:36 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccb49cfsm16895866b.49.2025.10.14.09.41.35
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 09:41:36 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e44f22f15so798985466b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 09:41:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXBKtl/Ja84xK/yNLKLtMze49sy97m39zaR4If6Z/YSaMtaWxSEWRmBXZX6wNFV0WvZ4gx6rwOiDGohAr92@vger.kernel.org
+X-Received: by 2002:a17:907:3daa:b0:b45:60ad:daf9 with SMTP id
+ a640c23a62f3a-b50a9a6cb4fmr2924764166b.3.1760460095576; Tue, 14 Oct 2025
+ 09:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvkJQ2eW4dpkKApyGSwuXDw8s3+Z1iPH+uBO-AuGpfReQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
+ <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
+ <CAHk-=wi42ad9s1fUg7cC3XkVwjWFakPp53z9P0_xj87pr+AbqA@mail.gmail.com>
+ <nhrb37zzltn5hi3h5phwprtmkj2z2wb4gchvp725bwcnsgvjyf@eohezc2gouwr>
+ <CAHk-=wi1rrcijcD0i7V7JD6bLL-yKHUX-hcxtLx=BUd34phdug@mail.gmail.com>
+ <qasdw5uxymstppbxvqrfs5nquf2rqczmzu5yhbvn6brqm5w6sw@ax6o4q2xkh3t>
+ <CAHk-=wg0r_xsB0RQ+35WPHwPb9b9drJEfGL-hByBZRmPbSy0rQ@mail.gmail.com>
+ <jzpbwmoygmjsltnqfdgnq4p75tg74bdamq3hne7t32mof4m5xo@lcw3afbr4daf>
+ <dz7pcqi5ytmb35r6kojuetdipjp7xdjlnyzcu5qb6d4cdo6vq5@3b62gfzcxszo>
+ <CAHk-=wgrZL7pLPW9GjUagoGOoOeDAVnyGJCn+6J5x-9+Dtbx-A@mail.gmail.com> <wfneq47jscotsqb2hhwpjfp2hqz4d7yyw643yagqnqvh74opvx@5fnmgowterq5>
+In-Reply-To: <wfneq47jscotsqb2hhwpjfp2hqz4d7yyw643yagqnqvh74opvx@5fnmgowterq5>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 14 Oct 2025 09:41:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj8KLDrL7ApM76cJTSXbZ0uxktexBaN9pMYO+hsiW-KxA@mail.gmail.com>
+X-Gm-Features: AS18NWDqj066zW2Fdpipv6VXjg2cDmYzFXBwfjyGrNNP2eC0z2mKKWvE1qATHFI
+Message-ID: <CAHk-=wj8KLDrL7ApM76cJTSXbZ0uxktexBaN9pMYO+hsiW-KxA@mail.gmail.com>
+Subject: Re: Optimizing small reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 06:10:45PM +0200, Miklos Szeredi wrote:
-> On Tue, 14 Oct 2025 at 15:57, Brian Foster <bfoster@redhat.com> wrote:
-> 
-> > But TBH, if the writeback thing or something similarly simple works for
-> > resolving the immediate bug, I wouldnt worry too much about it
-> > until/unless there are userspace fs' explicitly looking for that sort of
-> > behavior. Just my .02.
-> 
-> Agreed.
-> 
-> I just feel it unfortunate that this is default in libfuse and so many
-> filesystems will have auto_inval_data enabled which don't even need
-> it, and some mixed read-write workloads suffering badly as a
-> consequence.
-> 
+On Tue, 14 Oct 2025 at 05:58, Kiryl Shutsemau <kirill@shutemov.name> wrote:
+>
+> clang-19 actually does pretty good job re-using stack space without
+> additional function call.
 
-Maybe it didnt really need to be on by default? I don't recall caring
-much about that (but again, long time ago) as long as the fs that wants
-it can enable it.
+Hmm. That certainly didn't always use to be the case. We've had lots
+of issues with things like ioctl's that have multiple entirely
+independent structures for different cases - so obviously no lifetime
+overlap - and it has caused lots of extra stack use.
 
-Brian
+We do use -fconserve-stack these days and maybe that fixed the
+problems we used to have with duplicate stack slots.
 
-> Thanks,
-> Miklos
-> 
+Or maybe it's just "different compiler versions".
 
+But the case I was worried about wasn't so much the "re-use stack
+space" as simply "lots of stack space for one case that wants it, deep
+call chain for the other case".
+
+But it appears we're ok:
+
+> And if we increase buffer size to 1k Clang uninlines it:
+>
+> ../mm/filemap.c:2870:9:filemap_read     32      static
+> ../mm/filemap.c:2714:13:filemap_read_fast       1168    static
+> ../mm/filemap.c:2750:16:filemap_read_slow       384     static
+>
+> gcc-14, on other hand, doesn't want to inline these functions, even with
+> 'inline' specified. And '__always_inline' doesn't look good.
+
+That looks good. I'm still 100% sure we absolutely have had issues in
+this area, but again, it might be -fconserve-stack that ends up making
+the compilers do the right thing. Because that sets some stack frame
+growth boundaries.
+
+           Linus
 
