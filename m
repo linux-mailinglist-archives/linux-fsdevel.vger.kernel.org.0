@@ -1,130 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-64094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B67BD7FF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 09:48:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA6EBD80A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 09:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43EBA4EA63D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28171890806
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115A330E827;
-	Tue, 14 Oct 2025 07:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB5029C35A;
+	Tue, 14 Oct 2025 07:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F079Hd0Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ST2brMWm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA3530DEBE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 07:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A692BDC0B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 07:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760428130; cv=none; b=su4QPcn/A1tKlRSV82hzYfEXAPUmGVdOGCv/uwApsZq5kTXqpLSircayS3jHODJuckdZye5PzWZHjEF/cTfMeRdriHEE9LfE4AeCfhkjyCByom/VUCyl+abT35UpLWU5waKtzOoc+Z+b6aDSeXsxDBJrkDQuC14w7LOWjSasi8I=
+	t=1760428635; cv=none; b=IuNKJOtHfgTPsQFR9NBVvBo5w2I+5t1tWCpN0IihET15UfTTYqEU+ROitANiItGVpC0DcEnXstN7mB3ykb0k0vyd6HxHrHQXf5BQxhxrSOfx2Q8KDWVJXJtJEw74DXQfLyzGQTp1OEr4NM16A5l5QEBSJOnAd2kWbhRTyhILbJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760428130; c=relaxed/simple;
-	bh=zPfak/uLuE6QIa2Kix1FYCn474UeI220vFuuIJA6bBw=;
+	s=arc-20240116; t=1760428635; c=relaxed/simple;
+	bh=fEuw9BmVbevlm5d7M1J5zA/kuTWthYgdzEwCg9slGHM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZYq4jSLLPJxGMrVQw4FpUNjXWYHdW8HhcmP5rqB5iuuD9AAn6jnQ4BIRclJw8zVXad/mQwhGPZxBFgiQQ3jFLL3MaWihb8kUe0Fqof2tcfGAahwBnaLGR9id2sbA/NSopkO5dwj23ITnNEpvSYD8DYPw1jcrX+l2uqTNdJpOB8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F079Hd0Z; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-855733c47baso977393185a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 00:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760428126; x=1761032926; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BSbg7IxQb2NmRhKX1MyQBOKjUnzdftnCDBYAUuaxwcA=;
-        b=F079Hd0ZdgTO0VKMN1pYXagD3ZLMyvWJ1g2Dvv9VHOnGlXexk1t6VjizP5CDo1xpBl
-         S0UF8XGNDWkgrj/rTiiEPIFUYwk14+1p0nSstbPk+HLuEdv3ALJ6x92KCNNGAHOBt8ns
-         etsg+4RvRgZ28oF3Y/jIayMXwG+Nh0ffBjd+k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760428126; x=1761032926;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BSbg7IxQb2NmRhKX1MyQBOKjUnzdftnCDBYAUuaxwcA=;
-        b=eaO0LEwRaIVdM5cFS7ETDLmk7xz32Dr8CZqYlWKjz+lS+7cXIOdpmxCNXtqi4eGBDK
-         bqDisAYThRWQIPwIjTiJuzqgeHIrH8dkYwy+Pj1sk3rSPhCS9pz818WcNSr9s6X9GoAg
-         ru3vExKcZzpb4pP2jW6DL5UqVJoxc4fapWsyc8/c0TzbGacmFh2NqXTUpOQ3HGv7s3o7
-         6vAbqTDybuTNdId53QotAGS3HgAkiZxcp5/FyxO3TOiT0HIblpUUq5P48NodP35dSswT
-         T5FreofPZcLZbyM1hgzNfvIDXwDut9or5edoc+89UfSaUoQEKNP3If5dOUnYeEvlBQJi
-         HlvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWO6W1QCmLj+KFuWOj9f1ILP7HpzH3Nzn0tlTcHkrN+he1DfqPTfRRJ6U6h12f2dyZQsFqTriRtv9q9N42X@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9QkbKb//d0ZpQuaqAPF0YLxYcDA1F46m0knvnpFPtxx34R4Q1
-	1BYbK+PO+E1xiiYxDcremrJbMKNHaDr3AqMgxkvQYhU0A3MAXQAynPP5hMIxo164s1sOFj229cL
-	ilDEpugCoNNeEIXxRr0KKDhsXm9pmHrswb5q6ZF8pKw==
-X-Gm-Gg: ASbGncu1c6kiXY78Ekyn6MBp/GUzU3nGMbC8rPkWsiab2IdwmsZGjEqVpnvWk6fZSPF
-	/7yDma1pqYAipRH+RrE1wtmtpoYIvNppsqk5QawP/ZUmrjInWYb3KLA8i4JIm2cX8jvEvPmM+KZ
-	S2b9KCpLirWO3XDnlU4fDVenqYp2EeFV7L8IBqCb3/e0C69A95YObARlayDTHiyl3lL9YFwdzK9
-	Df8UJQeacii1XkPk1O+GoVuyvG9eytKXVQGVs3Vlsdk4KnfOmSnewfZg56q9oYH5lUn5A==
-X-Google-Smtp-Source: AGHT+IGvncMdJBcaFFlcJKGNDdS3S6WpUqvcLztZPqtXvHeu0D5NWwCna3KyK4CVJzrme0al0MWNsayaUn1S8sAsCrY=
-X-Received: by 2002:a05:620a:394d:b0:85b:8a42:eff9 with SMTP id
- af79cd13be357-883525c0d7amr3079631585a.53.1760428125643; Tue, 14 Oct 2025
- 00:48:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=e2e9EXqzC9c9xo2qKV8qZWqUDFxNnh1Z2R1Zl/RQFRaf65oqKmi/E9aIkRqe5aB09igz1qJd9DA58vC2/LUqsSLcaINeZSTYmuvPS/CxlAD47m6N5fSkFVLt+9ud8vvylBpOOcj0iXeJ7f0AMO+OvPL3Cx/ibjhQKJYehIZWLmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ST2brMWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9285C4AF09
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 07:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760428634;
+	bh=fEuw9BmVbevlm5d7M1J5zA/kuTWthYgdzEwCg9slGHM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ST2brMWmt4nNGUfxbzAXdS70ncFlNeNLKvmk/cjfRH4atA81txSOr54hAqpsVuigh
+	 LvOa1Nx39YcBoy13XevvFNNuKT5HnLqc2MJz6+G9FSqFOY302eYpoELpQm7TcexyHi
+	 rCXUCUwxlta320AK+jGH/vQ9IzdmunaRRSbhPx5lX69YITjWHg2JuFm1x8IW2nmj7c
+	 XKBHi/OupFdBk4otzPSH5XlFz48eeZnkoPGYSXkbtLzrCPWEvwpdDCvj3mmr0h6vf3
+	 39s9lwAsmD0v/W172ahM/KAWpceWvZebuLd9z/+w2F5EH8s5x432pBvVHVwTwDmmRv
+	 sFgJRRiPsyrRw==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6502b1c3d72so853074eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 00:57:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULILmpBdp5ljz37vJGBOGUSSJMzdIAf6AwPJvnjL9Ibz1SHaG7uUuIHSyvEeMdcuyCtVtCoFFcjg4pcDBz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWE55sCnDFU5VuItKUVUDhVpBaX2+SVCorZZrCI8Kytq4npGZM
+	Gu4vfILZn68sRFXs7lwKCSkwUr0IstyihJ+wnLUogKdWD9xcnwSlBj3Bbq1oLCzOnA3mp3uxeCn
+	09Q2H6qgNEdFkQSg2yoUdLwpcokdIxTw=
+X-Google-Smtp-Source: AGHT+IFPfDnTf9zbEN9jReILv+Rc7NXW+rIBj5xxOTW4Icy7cI++nKtqurabUVrLb0jyQUr+3cyoo/uPc7hkMYCziko=
+X-Received: by 2002:a05:6870:5247:b0:314:b6a6:688a with SMTP id
+ 586e51a60fabf-3c0fac56c8cmr9786164fac.42.1760428634196; Tue, 14 Oct 2025
+ 00:57:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster>
-In-Reply-To: <aO1Klyk0OWx_UFpz@bfoster>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Oct 2025 09:48:34 +0200
-X-Gm-Features: AS18NWBf3ks7a6dxyjB1ace7scEWFB77UTP0wHqY44cLPDV1w5ckKEDyJMj02IQ
-Message-ID: <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Brian Foster <bfoster@redhat.com>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd@bsbernd.com>
+References: <20251011200010.193140-1-ebiggers@kernel.org>
+In-Reply-To: <20251011200010.193140-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 14 Oct 2025 09:57:00 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFESWp8KjVoGhyXFwTXcZQ81f9P74ds7GnwVhkAR6SnmA@mail.gmail.com>
+X-Gm-Features: AS18NWABRew3uh8RVpYgf0vAKaZkNB388gqZj2t9wvNfhwSofVyRAfdQ3BIpZNg
+Message-ID: <CAMj1kXFESWp8KjVoGhyXFwTXcZQ81f9P74ds7GnwVhkAR6SnmA@mail.gmail.com>
+Subject: Re: [PATCH] ecryptfs: Use MD5 library instead of crypto_shash
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: ecryptfs@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	Tyler Hicks <code@tyhicks.com>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 13 Oct 2025 at 20:49, Brian Foster <bfoster@redhat.com> wrote:
-
-> Hrm Ok. But even if we did miss remote changes, whose to say we can even
-> resolve that correctly from the kernel anyways..?
-
-No, I'm worrying about the case of
-
-- range1 cached locally,
-- range1 changed remotely (mtime changed)
-- range2 changed locally (mtime changed, cached mtime invalidated)
-- range1 read locally
-
-That last one will update mtime in cache, see that old cached mtime is
-stale and happily read the stale data.
-
-What we currently have is more correct in the sense that it will
-invalidate data on any mtime change, be it of local or remote origin.
-
-> > Yes, reproducer has auto_inval_data turned on (libfuse turns it on by default).
-> >
+On Sat, 11 Oct 2025 at 22:02, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> I was more wondering if the problem goes away if it were disabled..
+> eCryptfs uses MD5 for a couple unusual purposes: to "mix" the key into
+> the IVs for file contents encryption (similar to ESSIV), and to prepend
+> some key-dependent bytes to the plaintext when encrypting filenames
+> (which is useless since eCryptfs encrypts the filenames with ECB).
+>
+> Currently, eCryptfs computes these MD5 hashes using the crypto_shash
+> API.  Update it to instead use the MD5 library API.  This is simpler and
+> faster: the library doesn't require memory allocations, can't fail, and
+> provides direct access to MD5 without overhead such as indirect calls.
+>
+> To preserve the existing behavior of eCryptfs support being disabled
+> when the kernel is booted with "fips=1", make ecryptfs_get_tree() check
+> fips_enabled itself.  Previously it relied on crypto_alloc_shash("md5")
+> failing.  I don't know for sure that this is actually needed; e.g., it
+> could be argued that eCryptfs's use of MD5 isn't for a security purpose
+> as far as FIPS is concerned.  But this preserves the existing behavior.
+>
+> Tested by verifying that an existing eCryptfs can still be mounted with
+> a kernel that has this commit, with all the files matching.  Also tested
+> creating a filesystem with this commit and mounting+reading it without.
+>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>
+> I can take this through the libcrypto tree if no one else volunteers.
+> (It looks like eCryptfs doesn't have an active git tree anymore.)
+>
+>  fs/ecryptfs/Kconfig           |  2 +-
+>  fs/ecryptfs/crypto.c          | 90 ++++-------------------------------
+>  fs/ecryptfs/ecryptfs_kernel.h | 13 ++---
+>  fs/ecryptfs/inode.c           |  7 +--
+>  fs/ecryptfs/keystore.c        | 65 +++++--------------------
+>  fs/ecryptfs/main.c            |  7 +++
+>  fs/ecryptfs/super.c           |  5 +-
+>  7 files changed, 35 insertions(+), 154 deletions(-)
+>
 
-I haven't tried, @guangming?
-
-> Ah, yeah that makes sense. Though invalidate waits on writeback. Any
-> reason this path couldn't skip the dirty state but mark the pages as
-> under writeback across the op?
-
-Maybe that'd work.  It *is* under writeback after all.
-
-Maybe the solution is to change the write-through to regular cached
-write + fsync range?  That could even be a complexity reduction.
-
-Thanks,
-Miklos
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
