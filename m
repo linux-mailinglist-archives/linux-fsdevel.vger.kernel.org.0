@@ -1,182 +1,688 @@
-Return-Path: <linux-fsdevel+bounces-64139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8C5BDA1B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 16:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB8ABDA3E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 17:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C4718825E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 14:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B041920B58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 15:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6E42FFDED;
-	Tue, 14 Oct 2025 14:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0512C159C;
+	Tue, 14 Oct 2025 15:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cxx1j6Yc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AR2uvomO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5C12FF66C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 14:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1411E520E;
+	Tue, 14 Oct 2025 15:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452728; cv=none; b=bRyo2XyRRCSKhsw2iQLc2Js3PLgxKgIVRGzYteCe9ex6hc5eHXgrTTOSm+6BZNfKHV5wYKB9G5MRKV3zBrTfMJLXeC2vURjjExkvqbTc7QG4zpVDVjtKNSkuRHcXOXPqRxZojmtH3xUvYEUZFdUk3APo2aXBzfYeFuo8quW1xlw=
+	t=1760454601; cv=none; b=SFV96ykIe5GbOE9IfiDP+q7GHUkCHD3pr6Y5yN4NeGGOcYzl4wKT+jHYEinu5xKUmXgcSyKIO6vS7c4xKoDBGgAKSYobsyvEvkzU6EeSEY6+lvvLrcAjZUDZS1giai3I9Qza8UZb/dG+tjERipTAEDtik2G8QJa85PFvz3lhquQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452728; c=relaxed/simple;
-	bh=pJWe7byBOlQqnKqLrOYhqKpwXNplJ3Z0iiawGMhWBjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DpjDlgXrx7eA24UgSF4I43qPwk0/1dwgtWaakwT37VNhxE/+h7K5Rk9irjRx2mImLdQfo+mgpUTUvfXUJq05BmO/ruHeUv5K4iuYEt/RH+7JzZPW3k17lGQv3LVA5V5aGx8stuJ1W5Z4bJopjunJSf4t0MNPAZ9PROcJOT7fYmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cxx1j6Yc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760452726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cYeRS6sFSfUzQPJ/HzyrxnFwO5qGv+xZs7JP4gmO3GU=;
-	b=cxx1j6YcAjfu+d0gSOM68qhdkocPXotT1GB3eM4/GG+SGM5XtwUj9jhcTJE0pIbNd2k3s5
-	SFByDTZm4AkBbRCQXsZn+05TjU394Nmbg7C36yoKeM2n1JBJYIdj7YEokljipRk1WUfC8M
-	Ct1LbnP2aPbRK8qxfbxNwZpkP5Xti8E=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-UC1kiHOhNHSE4mLKCKK5tQ-1; Tue, 14 Oct 2025 10:38:44 -0400
-X-MC-Unique: UC1kiHOhNHSE4mLKCKK5tQ-1
-X-Mimecast-MFC-AGG-ID: UC1kiHOhNHSE4mLKCKK5tQ_1760452721
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e502a37cdso34863525e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 07:38:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760452720; x=1761057520;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cYeRS6sFSfUzQPJ/HzyrxnFwO5qGv+xZs7JP4gmO3GU=;
-        b=Cy9jBIsl8eetidDdrnb8avcoIAQnA+EC2HPtBYMO+2wy8o0f/PIh8EaK40GzOPHcfo
-         ywf63EvCYwG/jX6DGSxz+CkKmdSdO6Eo1/lrRJrYm1uhBAqcFDntKUYan/c/8kExfiKb
-         u1/Tuf0XZzuGTjOkTLEysjW0K2J1GHysLL8wbdR0lvEF+qU+FOaxHVcfuEOfL/pjuppd
-         rdZ8KUnMECHoIxPl0gQlAf8+3WMGGSJo/3lXnz/eVhYA/viFmqUmJhXTj9ICGanYzY0I
-         j4eB8huH2WWhfL4SsJ0Lpc8rGlG7ci2ouKpaAhgXaSleF3OfiRU+G7gqPHr1y5NF1Ykv
-         jsoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUI1nFfNX3Gpdj+IbsxHyfY+svdeSyip1yAnQaWOHMhAHzkxr8C8eL8eAmx0xgNL4vRzrSaIXin8op8Y9CP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLHbbnQL9N6PpvMRBHm2zmKPxWDAfkQwPdcNC36uFyj3nbCzoX
-	+DNxoAqn+NU7InSvJUN8zagU1nJuEfVOFJXpoKmr1sYQqLivoTLpGwDBMtwH5cIdnl0BWszLewZ
-	k3JSxFOlqDsnOZpU3Hs1SGfdvqYkolUT50VF9HSEvcNxu7pv0GgdJrT8soHg6TbZo5VI=
-X-Gm-Gg: ASbGnctjMjh2szbsZ1tZdlLbKPDnONBUgXZ+ffWenP78IoxLbi9Oxd319CeGWCVOQwu
-	N9HqhiN0bRuWW1X4qTggHKZ+vhkpwwaAJ/7JrAnnD6oE2MApdR3XwkDOm85q2v2ziDG74RdioTN
-	LqihcsmHumoxT55rw9ellNI7oMuSrS0qgKOwuWmh5oEAh0KSx37AAWC0W6SJ1vIH05b6gUuJE4W
-	3DAEa3yvOeUKpGrZSUdW+bZagdUdudvJ1t8PRKjNV++QKX86GAU7s/azObtOOH/oE3AIxwbZmgx
-	Ayo/EVVJngfVPGh4LoPhpgW55yXX6+l0ey+BCjoM9Zj8FGss8GdIyM6UZxSCctIpJ62dX7ze9A=
-	=
-X-Received: by 2002:a05:600c:3b07:b0:46e:1fb9:5497 with SMTP id 5b1f17b1804b1-46fa9af84fdmr176220715e9.18.1760452720551;
-        Tue, 14 Oct 2025 07:38:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqAi05EmmQ/BhcD7IJ1mPJ/c7tINcxGNCVLG0i5FW47498X+2N7oVmLZuv/vdT2Tn/vHNVhg==
-X-Received: by 2002:a05:600c:3b07:b0:46e:1fb9:5497 with SMTP id 5b1f17b1804b1-46fa9af84fdmr176220455e9.18.1760452720163;
-        Tue, 14 Oct 2025 07:38:40 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc1c5227fsm183080505e9.9.2025.10.14.07.38.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 07:38:39 -0700 (PDT)
-Message-ID: <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
-Date: Tue, 14 Oct 2025 16:38:38 +0200
+	s=arc-20240116; t=1760454601; c=relaxed/simple;
+	bh=Vx3DEeRAqLsuXSY8eIaf2TfSg6T+ynK5K11hPuvB2cI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0wCiIsV2fpsqS+cSQ7QuJN9jvxdiU1GCA1FGn+iExN+4YjVPXAn9tal4n4A62s/N7Mt550fXGfhVL6Y/KjbuEw27UTaOvmC5jOI+sc4a8g/dcO0s4xica1scL92HNA9ffCsfdy0J4aGEO3rwwXozaa2Ijsgb6TaOA/5b3u4Y4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AR2uvomO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5FDC4CEE7;
+	Tue, 14 Oct 2025 15:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760454601;
+	bh=Vx3DEeRAqLsuXSY8eIaf2TfSg6T+ynK5K11hPuvB2cI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AR2uvomOBfj1PKsDijchNDfFnrODQ6OjysWoEeNa7CBfT5uX3vGrn3EjSfvtqseug
+	 u/+tbCRqc5uOqrOv3pEPzRaB0i8FczmXj+2B6Ni+CNvq18f7+aDFBRxAXhyr/PFlUe
+	 hCAsSz+aXNj6slZvCKhzlBQFkZNm4PmKVsNlPUW+npwkU7BBGzRKuVt+uKJvFrjbzy
+	 IQDmS3WHMtnfuyKxabrgsR9eApuhUI8dmypCA/OCVhJ4dZPnhhTafO/iUv1BdiSE9F
+	 Hqk5XA5HFwUYexhF5UelF+RKSzDYbzTf+h4nUqGlXWy4hI7UdgRI4AI27CcEKGd+7l
+	 qYRx3K3IspC2w==
+From: Chuck Lever <cel@kernel.org>
+To: NeilBrown <neil@brown.name>,
+	Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <dai.ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: <linux-nfs@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH v5] NFSD: Add a subsystem policy document
+Date: Tue, 14 Oct 2025 11:09:58 -0400
+Message-ID: <20251014150958.5372-1-cel@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
- large folios (CONFIG_NO_PAGE_MAPCOUNT)
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Muchun Song <muchun.song@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
-References: <20250303163014.1128035-1-david@redhat.com>
- <20250303163014.1128035-21-david@redhat.com>
- <20251014122335.dpyk5advbkioojnm@master>
- <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
- <aO5fCT62gZZw9-wQ@casper.infradead.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aO5fCT62gZZw9-wQ@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14.10.25 16:32, Matthew Wilcox wrote:
-> On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
->>> As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
->>> folio yet.
->>
->> We do support partially mapped PUD-sized folios I think, but not anonymous
->> PUD-sized folios.
-> 
-> I don't think so?  The only mechanism I know of to allocate PUD-sized
-> chunks of memory is hugetlb, and that doesn't permit partial mappings.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Greetings from the latest DAX rework :)
+Steer contributors to NFSD's patchworks instance, list our patch
+submission preferences, and more. The new document is based on the
+existing netdev and xfs subsystem policy documents.
 
+This is an attempt to add transparency to the process of accepting
+contributions to NFSD and getting them merged upstream.
+
+Suggested-by: Darrick J. Wong <djwong@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ .../nfs/nfsd-maintainer-entry-profile.rst     | 545 ++++++++++++++++++
+ .../maintainer/maintainer-entry-profile.rst   |   1 +
+ MAINTAINERS                                   |   1 +
+ 3 files changed, 547 insertions(+)
+ create mode 100644 Documentation/filesystems/nfs/nfsd-maintainer-entry-profile.rst
+
+I'd like to apply this for v6.19. Can I get some R-b love? I promise
+not to change the document again until it is merged and we have
+actual version control.
+
+Changes since v4:
+* Corrected the patchworks URL
+* Add Security Lead to list of maintainer roles
+
+Changes since v3:
+* Add the "external reviewer" role
+* Mention the priority of interoperation with the Linux NFS client
+
+Changes since v2:
+* Add a section related to NFSD administrative interfaces
+* Add a section on our observability preferences
+* Expand the "Feature requests" section
+
+Changes since RFC:
+* Re-structured the "Patch Preparation" section
+* Added a mention of the term uber "maintainer" role
+* "Key Cycle Dates" renamed "Patch Acceptance"
+* Added description of the nfsd-fixes branch
+* Section on sensitive patches expanded
+
+diff --git a/Documentation/filesystems/nfs/nfsd-maintainer-entry-profile.rst b/Documentation/filesystems/nfs/nfsd-maintainer-entry-profile.rst
+new file mode 100644
+index 000000000000..804dd365d3ca
+--- /dev/null
++++ b/Documentation/filesystems/nfs/nfsd-maintainer-entry-profile.rst
+@@ -0,0 +1,545 @@
++NFSD Maintainer Entry Profile
++=============================
++
++A Maintainer Entry Profile supplements the top-level process
++documents (found in Documentation/process/) with customs that are
++specific to a subsystem and its maintainers. A contributor may use
++this document to set their expectations and avoid common mistakes.
++A maintainer may use these profiles to look across subsystems for
++opportunities to converge on best common practices.
++
++Overview
++--------
++The Network File System (NFS) is a standardized family of network
++protocols that enable access to files across a set of network-
++connected peer hosts. Applications on NFS clients access files that
++reside on file systems that are shared by NFS servers. A single
++network peer can act as both an NFS client and an NFS server.
++
++NFSD refers to the NFS server implementation included in the Linux
++kernel. An in-kernel NFS server has fast access to files stored
++in file systems local to that server. NFSD can share files stored
++on most of the file system types native to Linux, including xfs,
++ext4, btrfs, and tmpfs.
++
++Mailing list
++------------
++The linux-nfs@vger.kernel.org mailing list is a public list. Its
++purpose is to enable collaboration among developers working on the
++Linux NFS stack, both client and server. It is not a place for
++conversations that are not related directly to the Linux NFS stack.
++
++The linux-nfs mailing list is archived on lore.kernel.org.
++
++The Linux NFS community does not have a Slack or IRC chat room.
++
++Reporting bugs
++--------------
++If you experience an NFSD-related bug on a distribution-built
++kernel, please start by working with your Linux distributor.
++
++Bug reports against upstream Linux code bases are welcome on the
++linux-nfs@vger.kernel.org mailing list, where some active triage
++can be done. NFSD bugs may also be reported in the Linux kernel
++community's bugzilla at:
++
++  https://bugzilla.kernel.org
++
++Please file NFSD-related bugs under the "Filesystems/NFSD"
++component. In general, including as much detail as possible is a
++good start, including pertinent system log messages from both
++the client and server.
++
++For user space software related to NFSD, such as mountd or the
++exportfs command, report problems on linux-nfs@vger.kernel.org.
++You might be asked to move the report to a specific bug tracker.
++
++Contributor's Guide
++-------------------
++
++Standards compliance
++~~~~~~~~~~~~~~~~~~~~
++The priority is for NFSD to interoperate fully with the Linux NFS
++client. We also test against other popular NFS client implementa-
++tions regularly at NFS bake-a-thon events (also known as plug-
++fests). Non-Linux NFS clients are not part of upstream NFSD CI/CD.
++
++The NFSD community strives to provide an NFS server implementation
++that interoperates with all standards-compliant NFS client
++implementations. This is done by staying as close as is sensible to
++the normative mandates in the IETF's published NFS, RPC, and GSS-API
++standards.
++
++It is always useful to reference an RFC and section number in a code
++comment where behavior deviates from the standard (and even when the
++behavior is compliant but the implementation is obfuscatory).
++
++On the rare occasion when a deviation from standard-mandated
++behavior is needed, brief documentation of the use case or
++deficiencies in the standard is a required part of in-code
++documentation.
++
++Care must always be taken to avoid leaking local error codes (ie,
++errnos) to clients of NFSD. A proper NFS status code is always
++required in NFS protocol replies.
++
++NFSD administrative interfaces
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++NFSD administrative interfaces include:
++
++- an NFSD or SUNRPC module parameter
++
++- export options in /etc/exports
++
++- files under /proc/fs/nfsd/ or /proc/sys/sunrpc/
++
++- the NFSD netlink protocol
++
++Frequently, a request is made to introduce or modify one of NFSD's
++traditional administrative interfaces. Certainly it is technically
++easy to introduce a new administrative setting. However, there are
++good reasons why the NFSD maintainers prefer to leave that as a last
++resort:
++
++- As with any API, administrative interfaces are difficult to get
++  right.
++
++- Once they are documented and have a legacy of use, administrative
++  interfaces become difficult to modify or remove.
++
++- Every new administrative setting multiplies the NFSD test matrix.
++
++- The cost of one administrative interface is incremental, but costs
++  add up across all of the existing interfaces.
++
++It is often better for everyone if effort is made up front to
++understanding the underlying requirement of the new setting, and
++then trying to make it tune itself (or to become otherwise
++unnecessary).
++
++If a new setting is indeed necessary, first consider adding it to
++the NFSD netlink protocol. Or if it doesn't need to be a reliable
++long term user space feature, it can be added to NFSD's menagerie of
++experimental settings which reside under /sys/kernel/debug/nfsd/ .
++
++Field observability
++~~~~~~~~~~~~~~~~~~~
++NFSD employs several different mechanisms for observing operation,
++including counters, printks, WARNings, and static trace points. Each
++have their strengths and weaknesses. Contributors should select the
++most appropriate tool for their task.
++
++- BUG must be avoided if at all possible, as it will frequently
++  result in a full system crash.
++
++- WARN is appropriate only when a full stack trace is useful.
++
++- printk can show detailed information. These must not be used
++  in code paths where they can be triggered repeatedly by remote
++  users.
++
++- dprintk can show detailed information, but can be enabled only
++  in pre-set groups. The overhead of emitting output makes dprintk
++  inappropriate for frequent operations like I/O.
++
++- Counters are always on, but provide little information about
++  individual events other than how frequently they occur.
++
++- static trace points can be enabled individually or in groups
++  (via a glob). These are generally low overhead, and thus are
++  favored for use in hot paths.
++
++- dynamic tracing, such as kprobes or eBPF, are quite flexible but
++  cannot be used in certain environments (eg, full kernel lock-
++  down).
++
++Testing
++~~~~~~~
++The kdevops project
++
++  https://github.com/linux-kdevops/kdevops
++
++contains several NFS-specific workflows, as well as the community
++standard fstests suite. These workflows are based on open source
++testing tools such as ltp and fio. Contributors are encouraged to
++use these tools without kdevops, or contributors should install and
++use kdevops themselves to verify their patches before submission.
++
++Coding style
++~~~~~~~~~~~~
++Follow the coding style preferences described in
++
++  Documentation/process/coding-style.rst
++
++with the following exceptions:
++
++- Add new local variables to a function in reverse Christmas tree
++  order
++
++- Use the kdoc comment style for
++  + non-static functions
++  + static inline functions
++  + static functions that are callbacks/virtual functions
++
++- All new function names start with "nfsd_" for non-NFS-version-
++  specific functions.
++
++- New function names that are specific to NFSv2 or NFSv3, or are
++  used by all minor versions of NFSv4, use "nfsdN_" where N is
++  the version.
++
++- New function names specific to an NFSv4 minor version can be
++  named with "nfsd4M_" where M is the minor version.
++
++Patch preparation
++~~~~~~~~~~~~~~~~~
++Read and follow all guidelines in
++
++  Documentation/process/submitting-patches.rst
++
++Use tagging to identify all patch authors. However, reviewers and
++testers should be added by replying to the email patch submission.
++Email is extensively used in order to publicly archive review and
++testing attributions. These tags are automatically inserted into
++your patches when they are applied.
++
++The code in the body of the diff already shows /what/ is being
++changed. Thus it is not necessary to repeat that in the patch
++description. Instead, the description should contain one or more
++of:
++
++- A brief problem statement ("what is this patch trying to fix?")
++  with a root-cause analysis.
++
++- End-user visible symptoms or items that a support engineer might
++  use to search for the patch, like stack traces.
++
++- A brief explanation of why the patch is the best way to address
++  the problem.
++
++- Any context that reviewers might need to understand the changes
++  made by the patch.
++
++- Any relevant benchmarking results, and/or functional test results.
++
++As detailed in Documentation/process/submitting-patches.rst,
++identify the point in history that the issue being addressed was
++introduced by using a Fixes: tag.
++
++Mention in the patch description if that point in history cannot be
++determined -- that is, no Fixes: tag can be provided. In this case,
++please make it clear to maintainers whether an LTS backport is
++needed even though there is no Fixes: tag.
++
++The NFSD maintainers prefer to add stable tagging themselves, after
++public discussion in response to the patch submission. Contributors
++may suggest stable tagging, but be aware that many version
++management tools add such stable Cc's when you post your patches.
++Don't add "Cc: stable" unless you are absolutely sure the patch
++needs to go to stable during the initial submission process.
++
++Patch submission
++~~~~~~~~~~~~~~~~
++Patches to NFSD are submitted via the kernel's email-based review
++process that is common to most other kernel subsystems.
++
++Just before each submission, rebase your patch or series on the
++nfsd-testing branch at
++
++  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
++
++The NFSD subsystem is maintained separately from the Linux in-kernel
++NFS client. The NFSD maintainers do not normally take submissions
++for client changes, nor can they respond authoritatively to bug
++reports or feature requests for NFS client code.
++
++This means that contributors might be asked to resubmit patches if
++they were emailed to the incorrect set of maintainers and reviewers.
++This is not a rejection, but simply a correction of the submission
++process.
++
++When in doubt, consult the NFSD entry in the MAINTAINERS file to
++see which files and directories fall under the NFSD subsystem.
++
++The proper set of email addresses for NFSD patches are:
++
++To: the NFSD maintainers and reviewers listed in MAINTAINERS
++Cc: linux-nfs@vger.kernel.org and optionally linux-kernel@
++
++If there are other subsystems involved in the patches (for example
++MM or RDMA) their primary mailing list address can be included in
++the Cc: field. Other contributors and interested parties may be
++included there as well.
++
++In general we prefer that contributors use common patch email tools
++such as "git send-email" or "stg email format/send", which tend to
++get the details right without a lot of fuss.
++
++A series consisting of a single patch is not required to have a
++cover letter. However, a cover letter can be included if there is
++substantial context that is not appropriate to include in the
++patch description.
++
++Please note that cover letters are not part of the work that is
++committed to the kernel source code base or its commit history.
++Therefore always try to keep pertinent information in the patch
++descriptions.
++
++Design documentation is welcome, but as cover letters are not
++preserved, a perhaps better option is to include a patch that adds
++such documentation under Documentation/filesystems/nfs/.
++
++Reviewers will ask about test coverage and what use cases the
++patches are expected to address. Please be prepared to answer these
++questions.
++
++Review comments from maintainers might be politely stated, but in
++general, these are not optional to address when they are actionable.
++If necessary, the maintainers retain the right to not apply patches
++when contributors refuse to address reasonable requests.
++
++Post changes to kernel source code and user space source code as
++separate series. You can connect the two series with comments in
++your cover letters.
++
++Generally the NFSD maintainers ask for a reposts even for simple
++modifications in order to publicly archive the request and the
++resulting repost before it is pulled into the NFSD trees. This
++also enables us to rebuild a patch series quickly without missing
++changes that might have been discussed via email.
++
++Avoid frequently reposting large series with only small changes. As
++a rule of thumb, posting substantial changes more than once a week
++will result in reviewer overload.
++
++Remember, there are only a handful of subsystem maintainers and
++reviewers, but potentially many sources of contributions. The
++maintainers and reviewers, therefore, are always the less scalable
++resource. Be kind to your friendly neighborhood maintainer.
++
++Patch Acceptance
++~~~~~~~~~~~~~~~~
++There isn't a formal review process for NFSD, but we like to see
++at least two Reviewed-by: notices for patches that are more than
++simple clean-ups. Reviews are done in public on
++linux-nfs@vger.kernel.org and are archived on lore.kernel.org.
++
++Currently the NFSD patch queues are maintained in branches here:
++
++  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
++
++The NFSD maintainers apply patches initially to the nfsd-testing
++branch, which is always open to new submissions. Patches can be
++applied while review is ongoing. nfsd-testing is a topic branch,
++so it can change frequently, it will be rebased, and your patch
++might get dropped if there is a problem with it.
++
++Generally a script-generated "thank you" email will indicate when
++your patch has been added to the nfsd-testing branch. You can track
++the progress of your patch using the linux-nfs patchworks instance:
++
++  https://patchwork.kernel.org/project/linux-nfs/list/
++
++While your patch is in nfsd-testing, it is exposed to a variety of
++test environments, including community zero-day bots, static
++analysis tools, and NFSD continuous integration testing. The soak
++period is three to four weeks.
++
++Each patch that survives in nfsd-testing for the soak period without
++changes is moved to the nfsd-next branch.
++
++The nfsd-next branch is automatically merged into linux-next and
++fs-next on a nightly basis.
++
++Patches that survive in nfsd-next are included in the next NFSD
++merge window pull request. These windows occur once every eight
++weeks.
++
++When the upstream merge window closes, the nfsd-next branch is
++renamed nfsd-fixes, and a new nfsd-next branch is created, based on
++the upstream -rc1 tag.
++
++Fixes that are destined for an upstream -rc release also run the
++nfsd-testing gauntlet, but are then applied to the nfsd-fixes
++branch. That branch is made available for Linus to pull after a
++short time. In order to limit the risk of introducing regressions,
++we limit such fixes to emergency situations or fixes to breakage
++that occurred during the most recent upstream merge.
++
++Please make it clear when submitting an emergency patch that
++immediate action (either application to -rc or LTS backport) is
++needed.
++
++Sensitive patch submissions and bug reports
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++CVEs are generated by specific members of the Linux kernel community
++and several external entities. The Linux NFS community does not emit
++or assign CVEs. CVEs are assigned after an issue and its fix are
++known.
++
++However, the NFSD maintainers sometimes receive sensitive security
++reports, and at times these are significant enough to need to be
++embargoed. In such rare cases, fixes can be developed and reviewed
++out of the public eye.
++
++Please be aware that many version management tools add the stable
++Cc's when you post your patches. This is generally a nuisance, but
++it can result in outing an embargoed security issue accidentally.
++Don't add "Cc: stable" unless you are absolutely sure the patch
++needs to go to stable@ during the initial submission process.
++
++Patches that are merged without ever appearing on any list, and
++which carry a Reported-by: or Fixes: tag are detected as suspicious
++by security-focused people. We encourage that, after any private
++review, security-sensitive patches should be posted to linux-nfs@
++for the usual public review, archiving, and test period.
++
++LLM-generated submissions
++~~~~~~~~~~~~~~~~~~~~~~~~~
++The Linux kernel community as a whole is still exploring the new
++world of LLM-generated code. The NFSD maintainers will entertain
++submission of patches that are partially or wholly generated by
++LLM-based development tools. Such submissions are held to the
++same standards as submissions created entirely by human authors:
++
++- The human contributor identifies themselves via a Signed-off-by:
++  tag. This tag counts as a DoC.
++
++- The human contributor is solely responsible for code provenance
++  and any contamination by inadvertently-included code with a
++  conflicting license, as usual.
++
++- The human contributor must be able to answer and address review
++  questions. A patch description such as "This fixed my problem
++  but I don't know why" is not acceptable.
++
++- The contribution is subjected to the same test regimen as all
++  other submissions.
++
++- An indication (via a Generated-by: tag or otherwise) that the
++  contribution is LLM-generated is not required.
++
++It is easy to address review comments and fix requests in LLM
++generated code. So easy, in fact, that it becomes tempting to repost
++refreshed code immediately. Please resist that temptation.
++
++As always, please do not repost patches frequently.
++
++Clean-up patches
++~~~~~~~~~~~~~~~~
++The NFSD maintainers discourage patches which perform simple clean-
++ups, which are not in the context of other work. For example:
++
++* Addressing ``checkpatch.pl`` warnings after merge
++* Addressing :ref:`Local variable ordering<rcs>` issues
++* Addressing long-standing whitespace damage
++
++This is because it is felt that the churn that such changes produce
++comes at a greater cost than the value of such clean-ups.
++
++Conversely, spelling and grammar fixes are encouraged.
++
++Stable and LTS support
++----------------------
++Upstream NFSD continuous integration testing runs against LTS trees
++whenever they are updated.
++
++Please indicate when a patch containing a fix needs to be considered
++for LTS kernels, either via a Fixes: tag or explicit mention.
++
++Feature requests
++----------------
++There is no one way to make an official feature request, but
++discussion about the request should eventually make its way to
++the linux-nfs@vger.kernel.org mailing list for public review by
++the community.
++
++Subsystem boundaries
++~~~~~~~~~~~~~~~~~~~~
++NFSD itself is not much more than a protocol engine. This means its
++primary responsibility is to translate the NFS protocol into API
++calls in the Linux kernel. For example, NFSD is not responsible for
++knowing exactly how bytes or file attributes are managed on a block
++device. It relies on other kernel subsystems for that.
++
++If the subsystems on which NFSD relies do not implement a particular
++feature, even if the standard NFS protocols do support that feature,
++that usually means NFSD cannot provide that feature without
++substantial development work in other areas of the kernel.
++
++Specificity
++~~~~~~~~~~~
++Feature requests can come from anywhere, and thus can often be
++nebulous. A requester might not understand what a "use case" or
++"user story" is. These descriptive paradigms are often used by
++developers and architects to understand what is required of a
++design, but are terms of art in the software trade, not used in
++the everyday world.
++
++In order to prevent contributors and maintainers from becoming
++overwhelmed, we won't be afraid of saying "no" politely to
++underspecified requests.
++
++Community roles and their authority
++-----------------------------------
++The purpose of Linux subsystem communities is to provide expertise
++and active stewardship of a narrow set of source files in the Linux
++kernel. This can include managing user space tooling as well.
++
++To contextualize the structure of the Linux NFS community that
++is responsible for stewardship of the NFS server code base, we
++define the community roles here.
++
++- **Contributor** : Anyone who submits a code change, bug fix,
++  recommendation, documentation fix, and so on. A contributor can
++  submit regularly or infrequently.
++
++- **Outside Contributor** : A contributor who is not a regular actor
++  in the Linux NFS community. This can mean someone who contributes
++  to other parts of the kernel, or someone who just noticed a
++  misspelling in a comment and sent a patch.
++
++- **Reviewer** : Someone who is named in the MAINTAINERS file as a
++  reviewer is an area expert who can request changes to contributed
++  code, and expects that contributors will address the request.
++
++- **External Reviewer** : Someone who is not named in the
++  MAINTAINERS file as a reviewer, but who is an area expert.
++  Examples include Linux kernel contributors with networking,
++  security, or persistent storage expertise, or developers who
++  contribute primarily to other NFS implementations.
++
++One or more people will take on the following roles. These people
++are often generically referred to as "maintainers", and are
++identified in the MAINTAINERS file with the "M:" tag under the NFSD
++subsystem.
++
++- **Upstream Release Manager** : This role is responsible for
++  curating contributions into a branch, reviewing test results, and
++  then sending a pull request during merge windows. There is a
++  trust relationship between the release manager and Linus.
++
++- **Bug Triager** : Someone who is a first responder to bug reports
++  submitted to the linux-nfs mailing list or bug trackers, and helps
++  troubleshoot and identify next steps.
++
++- **Security Lead** : The security lead handles contacts from the
++  security community to resolve immediate issues, as well as dealing
++  with long-term security issues such as supply chain concerns. For
++  upstream, that's usually whether contributions violate licensing
++  or other intellectual property agreements.
++
++- **Testing Lead** : The testing lead builds and runs the test
++  infrastructure for the subsystem. The testing lead may ask for
++  patches to be dropped because of ongoing high defect rates.
++
++- **LTS Maintainer** : The LTS maintainer is responsible for managing
++  the Fixes: and Cc: stable annotations on patches, and seeing that
++  patches that cannot be automatically applied to LTS kernels get
++  proper manual backports as necessary.
++
++- **Community Manager** : This umpire role can be asked to call balls
++  and strikes during conflicts, but is also responsible for ensuring
++  the health of the relationships within the community and for
++  facilitating discussions on long-term topics such as how to manage
++  growing technical debt.
+diff --git a/Documentation/maintainer/maintainer-entry-profile.rst b/Documentation/maintainer/maintainer-entry-profile.rst
+index d36dd892a78a..6020d188e13d 100644
+--- a/Documentation/maintainer/maintainer-entry-profile.rst
++++ b/Documentation/maintainer/maintainer-entry-profile.rst
+@@ -110,5 +110,6 @@ to do something different in the near future.
+    ../process/maintainer-netdev
+    ../driver-api/vfio-pci-device-specific-driver-acceptance
+    ../nvme/feature-and-quirk-policy
++   ../filesystems/nfs/nfsd-maintainer-entry-profile
+    ../filesystems/xfs/xfs-maintainer-entry-profile
+    ../mm/damon/maintainer-profile
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 46126ce2f968..981bb4eb5a8f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13541,6 +13541,7 @@ R:	Dai Ngo <Dai.Ngo@oracle.com>
+ R:	Tom Talpey <tom@talpey.com>
+ L:	linux-nfs@vger.kernel.org
+ S:	Supported
++P:	Documentation/filesystems/nfs/nfsd-maintainer-entry-profile.rst
+ B:	https://bugzilla.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
+ F:	Documentation/filesystems/nfs/
 -- 
-Cheers
-
-David / dhildenb
+2.51.0
 
 
