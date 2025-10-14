@@ -1,145 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-64097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA583BD81C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 10:11:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016EBBD8404
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 10:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F283E1E18
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 08:11:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71B5F4FAF50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 08:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC0E30F55C;
-	Tue, 14 Oct 2025 08:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7781530FF36;
+	Tue, 14 Oct 2025 08:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bL+9QbFB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yc1pSKep"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87EE1F5827
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 08:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1474C30F95D
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 08:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429480; cv=none; b=pIMv5IPBkXIIo4BpUyJEx6yWn5SsSqu0dDuZoMZN9vXjddvIZP/N71nEDiZgwf0T93nQopDnk95BkcylMq7AAzYODNJ1WGZ81Z1nkwrM9p8NQxYTRAHQciUcfbg77PXoLcdvUcYNsb68nxCJvEikmdrvgBceA9VKHrCcUn2YxuQ=
+	t=1760431411; cv=none; b=uzVrXcN7MZJziU01cc6k1ymMKd9oyeUXdbyA3XREnKPvTP7EKS9gASs2jwlft6ZI0oCby6KcADM6UPMQSv4W1yYD0yOnbklhWlefKN4rnJIUL6bUDGzqHRcaHVqvwxzyjnkfQsQYkLSIiqb0RoFHiDa5bqDC9j8FthyEkkOszsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429480; c=relaxed/simple;
-	bh=5Dm0ATb1dpCKkWGi2z9sqddFhoiE0Y1gELlytzHuHb4=;
+	s=arc-20240116; t=1760431411; c=relaxed/simple;
+	bh=bTMHxBb+5YCedN6r5fvrLH6mNlb+3hO9ULFtaU//N+Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qk/Mrew76RVvPvHjo2pV22CP5jKjMGCptVCRs25f0LlLVNSNtacDeC1FPsbMVZ8evXNbfkJuANFgLPMsjwgr3PfVS8TJ+A275qpc5h16nNZTB32etaqqHpudLe9EpAk2Y1bJqOpJyZN4xefY+VNyxU2rLmS+PlED7tUlRIlQeK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bL+9QbFB; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-854585036e8so705763885a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 01:11:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=JBzHm7AJNGuNmbwEeXlrRWxS6gWB209QmGxNhGzqe2retbEbSp/ft+etY1w00tSD24wLNFCiFesAkVQZ9E1Wk1KWY1OjPGxY773e8r6In4BlAdXxm02UoLeSXx5GhAW3riQPXaT5zTF5Yrm8o3g5/jtMGfUhFdDqOMxAj57iH7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yc1pSKep; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3ee18913c0so819902666b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 01:43:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760429478; x=1761034278; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760431408; x=1761036208; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZMGJPaAzV1kru6wKkSy6MVvIko6e1M+iRPzYq9fV7VU=;
-        b=bL+9QbFBm+/U7D/rPAOjhjbOLvOVBE4e3cgoxBScdo/xA/jz6UTljatze3psv/OyRE
-         84NVaH/8GwGJgyLHgiNGxGzQxUlqpHRb7NME8ZIaTdE8aPSGXDU1o+3qV6dUeoQfDt9G
-         jAmcj0bK/ZezEbYK1VWd3iejiQkIMyCH8zfPw=
+        bh=aSK3NkeD2NEuNOL5TTqE0ObiS0+vzDyCtYzALrqfk6E=;
+        b=Yc1pSKep++8Q+EI5kByBZJ/DVSyMT1HBPk36u9CY/1oStoLVU3WTnZqOX4cy5GdUHN
+         R93TLpk3xd6/eaIvt3ELq1cyCxrmqD5jTtIsZwlUxvwxu2glXF8O5kGDVPLk1TRxnt58
+         l0c7UxXrmjvwq5CtKyrdqeC5Iky+8U1MKhP3No4nkDY/b19XWYVnnKvO19g/4aAL93zr
+         oyzzY5u7qzZMbHZD6EYltRwDQ4y93Q2OJL2uuDNFGmTkCy+lz+fkSH3Wx6re24/VIKLr
+         GP//HgxVM5IXnX8BPpNG+lx6cygqyu5/M71MSMdMnAjt5tNUqMPtEavn2MwF/rS9QtqY
+         3Grg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760429478; x=1761034278;
+        d=1e100.net; s=20230601; t=1760431408; x=1761036208;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZMGJPaAzV1kru6wKkSy6MVvIko6e1M+iRPzYq9fV7VU=;
-        b=FW96Ldm/ZTRs+zwy3ovTTpZATGNh2AjisipUiIBYK/1XPU4+tJ+Fj4O72SJVg6b9jc
-         fpMdP5B0RQpk74p2C6zR5GDP6BCh3jQ/zmJD47wkbaYRvBJHiVLlsO9BVI2THUfQ8ojm
-         1YS4GtUp4jKeb1ZEgMDNAOKVyx+5S2s9zjWssDZx5cAwonyr44Uw/cQNGn8U8HHhhx7P
-         Diqa4KyGZnKoKSRgmzpU+gKpyDHLbYDeXSI7a8kdcfvW5K0ftXEj3tomdSfZuiD6pqeU
-         +PSlC7G7aUdaM+aId/qGcnJCrsUTSPCdLymluk4LrfAhVSkzsPskcEXx4XDj6ENwJ5I1
-         mvcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJqwrU49L4vda4Hf+MGpce2ICSF2rrWkFsbD2UDO0rTd2cV5trQSb1bnfcevCHxMzCg3XpPV0QMIhsSEBQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl8+NTRJomwfcOGfMx9sw7kbsoMzoxcWMVdnoSA4foI287cE6Z
-	JSw+f7bkzxrB0WZ+fi4ySVjnIdUv8XREuOKn0j9amB0TZy3c+CeuaYD+1NAiFgpzyE2RsUXNVOA
-	CRATjSy/8doXdM4R0EljWCdQ7SUFt++5N4e5mpzPnow==
-X-Gm-Gg: ASbGnct/qBLVIJdwn2DkyRpfjBzwh8ODfA5ELPz2Zu1UdOQrdEKl09kjbsjzwXejUIM
-	nX1kH8xg3sHXW028tsEx7rFgbjLFZkkFU3gY455jjx8HBPt7QDJkGBDlcVJeZIQ5ampinFQtiA4
-	/+I8N/YmufqCM5YdSvhOmUuJNyVS3po5Y7DPvm3pwjlhTGVPLLx00Y6npZtGfekxhv10q+/RXg1
-	5MnVKZ7Hx1xgfSdJZqTUiBZ1dYccOcIUlvq7voNJwTXy0lyjnucyQS8jVBmzKeimAPINw==
-X-Google-Smtp-Source: AGHT+IEe58Iab2hR+xoB1mSPnSaPs35dSPKEd8XuvJsaUY54Ngzy2aU0wZaHOb7oRhbv7gRDzjv3kBVeuCAwgqnL/gc=
-X-Received: by 2002:a05:622a:54c:b0:4db:7bc2:93a with SMTP id
- d75a77b69052e-4e6ead513f0mr326143401cf.51.1760429477785; Tue, 14 Oct 2025
- 01:11:17 -0700 (PDT)
+        bh=aSK3NkeD2NEuNOL5TTqE0ObiS0+vzDyCtYzALrqfk6E=;
+        b=bTFjsEFMMjuN/pNpqxO8OyhDrh2pLNLXUQPC4UpYyj4+9he/zNNoov5QzcX8edTz1v
+         LkdVQ5tLT25oiHhd6M9CRSbGCWW9I1rTOrBxXtZ8tzbnJiCiqcXin0pwkWNHeKlecxkU
+         U6okzmxEKf/B919CSMIRp46EXypRrpkgytH/CsPF9i/mLHx8HNdDQYRKY/kQzMFj2yMC
+         bT0dPCyQD32ruiKaJu/9Y4YJhPBIyzYRThb1kNBSGTSU8XDF1OIT1q51p8vPNoP0GGZX
+         aBd65qtZdmi19VQLGq3IUwiRx8I3qtSLtfYZJEWBLal/t0PbQmGDejytsIFRuZtU0pyE
+         5xlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX97NA1e0Jh1qjbmGoqhtgKHSs45EYaYQcHw0dIvYrMyrk7CthaFPtx6rnLDY9dSqla9nEsgYW7vsHOvgSU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3vRb6qdyosI5fxw7AurXssMJjPFX6VfWfznrIevZ4MGtvRaom
+	ZGooOgKh8p6oxy+nWWmHpAq0TF8prUZdJJTTz02RSaIWEP3Am6hm8zl3xg7B//MqHDp5xAXrzlm
+	Rvg+GKz5wMvrzyou+xPgUcfILmCLf7gc=
+X-Gm-Gg: ASbGncsgFDHF94qX8YMYHKsJzQxlvBzQuGTrKbxn0yoKqfPZzH6/abZQJzx9TtTHbwj
+	YZP9oXtvqX1rw4vdorQvJd+8QeS82wSx+qafdJnRn9XCYkvoFtZBPuvCfJb4W+Fwh/iZTVlBB/C
+	dbrlTsr/Aq5/2OJST1vykmpfpCzLsDdX7OjnVlObp5bnnnH538DDyoU5B9RVq5zynyG0MJERutt
+	EV33CqtbvAVyCYMLpB2ECCqhCQsOqlqVFY=
+X-Google-Smtp-Source: AGHT+IEU99F/tET5BQpjTRxdIwcoWzkKLcdyY4xKK2M3J/d5m268qvD7qO1OR2jZ03tq1RVPPypmq77CV31jlipMVS8=
+X-Received: by 2002:a17:907:da1:b0:b3a:e4b3:eeb9 with SMTP id
+ a640c23a62f3a-b50abfcd075mr2581054866b.55.1760431408020; Tue, 14 Oct 2025
+ 01:43:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com> <CAJnrk1YRNw5M2f1Nxt619SG+wUkF+y2JrMZZCyLqWVd59+-gjA@mail.gmail.com>
-In-Reply-To: <CAJnrk1YRNw5M2f1Nxt619SG+wUkF+y2JrMZZCyLqWVd59+-gjA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Oct 2025 10:11:06 +0200
-X-Gm-Features: AS18NWBcWGZkbj8Hpx9Tbn8t3-4yZDs4Zr9hvCDpwsLr7w1WwSOX2qBWki0bKgA
-Message-ID: <CAJfpegvt8Z4ftmQ37ptD8gQu4CHCUB1smxxTgngNpRaDm5=1dA@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: lu gu <giveme.gulu@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Brian Foster <bfoster@redhat.com>, 
-	Bernd Schubert <bernd@bsbernd.com>
+References: <20251013-reduced-nr-ring-queues_3-v3-0-6d87c8aa31ae@ddn.com>
+In-Reply-To: <20251013-reduced-nr-ring-queues_3-v3-0-6d87c8aa31ae@ddn.com>
+From: Gang He <dchg2000@gmail.com>
+Date: Tue, 14 Oct 2025 16:43:16 +0800
+X-Gm-Features: AS18NWCTcVCV8Q4JYtCe3jYyhCWK1DHTXuDg0Jwlievxv16Xs9XecQmiF5C7vtg
+Message-ID: <CAGmFzSdgfjfdAGNrzb224+t5+UPvUWz3t7iCuW7CvSxd199KdA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] fuse: {io-uring} Allow to reduce the number of
+ queues and request distribution
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Luis Henriques <luis@igalia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Oct 2025 at 01:44, Joanne Koong <joannelkoong@gmail.com> wrote:
->
-> On Mon, Oct 13, 2025 at 6:40=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
-> >
-> > On Fri, 10 Oct 2025 at 10:46, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > > My idea is to introduce FUSE_I_MTIME_UNSTABLE (which would work
-> > > similarly to FUSE_I_SIZE_UNSTABLE) and when fetching old_mtime, verif=
-y
-> > > that it hasn't been invalidated.  If old_mtime is invalid or if
-> > > FUSE_I_MTIME_UNSTABLE signals that a write is in progress, the page
-> > > cache is not invalidated.
-> >
-> > [Adding Brian Foster, the author of FUSE_AUTO_INVAL_DATA patches.
-> > Link to complete thread:
-> > https://lore.kernel.org/all/20251009110623.3115511-1-giveme.gulu@gmail.=
-com/#r]
-> >
-> > In summary: auto_inval_data invalidates data cache even if the
-> > modification was done in a cache consistent manner (i.e. write
-> > through). This is not generally a consistency problem, because the
-> > backing file and the cache should be in sync.  The exception is when
-> > the writeback to the backing file hasn't yet finished and a getattr()
-> > call triggers invalidation (mtime change could be from a previous
-> > write), and the not yet written data is invalidated and replaced with
-> > stale data.
-> >
-> > The proposed fix was to exclude concurrent reads and writes to the same=
- region.
-> >
-> > But the real issue here is that mtime changes triggered by this client
-> > should not cause data to be invalidated.  It's not only racy, but it's
-> > fundamentally wrong.  Unfortunately this is hard to do this correctly.
-> > Best I can come up with is that any request that expects mtime to be
-> > modified returns the mtime after the request has completed.
-> >
-> > This would be much easier to implement in the fuse server: perform the
-> > "file changed remotely" check when serving a FUSE_GETATTR request and
-> > return a flag indicating whether the data needs to be invalidated or
-> > not.
->
-> Doesn't this still lead to a problem if the data does need to be
-> invalidated? If the data changed remotely, then afaict the page cache
-> would have the new updated data but the newest write data would still
-> be missing in the page cache.
+Hi Bernd,
 
-Right, this would need to be done in combination with read/write exclusion.
+Thank for your optimization patches.
+I applied these patches, for asynchronous IO(iodepth > 1), it looks
+the patches can improve the performance as expected.
+But, for synchronous IO(iodepth =3D1), it looks there is  a regression
+problem here(performance drop).
+Did you check the above regression issue?
 
-Thanks,
-Miklos
+Thanks
+Gang
+
+Bernd Schubert <bschubert@ddn.com> =E4=BA=8E2025=E5=B9=B410=E6=9C=8814=E6=
+=97=A5=E5=91=A8=E4=BA=8C 01:10=E5=86=99=E9=81=93=EF=BC=9A
+>
+> This adds bitmaps that track which queues are registered and which queues
+> do not have queued requests.
+> These bitmaps are then used to map from request core to queue
+> and also allow load distribution. NUMA affinity is handled and
+> fuse client/server protocol does not need changes, all is handled
+> in fuse client internally.
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+> Changes in v3:
+> - removed FUSE_URING_QUEUE_THRESHOLD (Luis)
+> - Fixed accidentaly early return of queue1 in fuse_uring_best_queue()
+> - Fixed similar early return 'best_global'
+> - Added sanity checks for cpu_to_node()
+> - Removed retry loops in fuse_uring_best_queue() for code simplicity
+> - Reduced local numa retries in fuse_uring_get_queue
+> - Added 'FUSE_URING_REDUCED_Q' FUSE_INIT flag to inform userspace
+>   about the possibility to reduced queues
+> - Link to v2: https://lore.kernel.org/r/20251003-reduced-nr-ring-queues_3=
+-v2-0-742ff1a8fc58@ddn.com
+> - Removed wake-on-same cpu patch from this series,
+>   it will be send out independently
+> - Used READ_ONCE(queue->nr_reqs) as the value is updated (with a lock bei=
+ng
+>   hold) by other threads and possibly cpus.
+>
+> ---
+> Bernd Schubert (6):
+>       fuse: {io-uring} Add queue length counters
+>       fuse: {io-uring} Rename ring->nr_queues to max_nr_queues
+>       fuse: {io-uring} Use bitmaps to track registered queues
+>       fuse: {io-uring} Distribute load among queues
+>       fuse: {io-uring} Allow reduced number of ring queues
+>       fuse: {io-uring} Queue background requests on a different core
+>
+>  fs/fuse/dev_uring.c       | 260 ++++++++++++++++++++++++++++++++++++----=
+------
+>  fs/fuse/dev_uring_i.h     |  14 ++-
+>  fs/fuse/inode.c           |   2 +-
+>  include/uapi/linux/fuse.h |   3 +
+>  4 files changed, 224 insertions(+), 55 deletions(-)
+> ---
+> base-commit: ec714e371f22f716a04e6ecb2a24988c92b26911
+> change-id: 20250722-reduced-nr-ring-queues_3-6acb79dad978
+>
+> Best regards,
+> --
+> Bernd Schubert <bschubert@ddn.com>
+>
 
