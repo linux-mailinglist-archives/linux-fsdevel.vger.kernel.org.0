@@ -1,155 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-64167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271A5BDBA42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 00:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4ABBDBBA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 01:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C656355BF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 22:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39E0C189EE53
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 23:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A4D30DEAB;
-	Tue, 14 Oct 2025 22:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B571C2DC794;
+	Tue, 14 Oct 2025 23:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AfMX25/0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOexQPYn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CF330CD8C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 22:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB832D9EDF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 23:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760480688; cv=none; b=RtT4odVwXpEYNNHDFgviFy/ppkHnRsscamlPOp6py0IweNXbk7P2gJUlLqprUu8v3BZgAcpt1TtE5qArkqhzlqtnR3UUYPlCkYn365+Rfe1hDgCKxxelhxYluCMUodBMUbV+UHHJ6fdr4uTvk+w+w0yRF45Xdd8wj6oCbbgPnAw=
+	t=1760483491; cv=none; b=JcxU/+Xrn50YvUm4/9HdZb0rkAh0nL88vZ0uMKFsFEwpkXET5kI6ZsZ33N2R+S9lWxmJqCk9Qx6WBiNMprkua+wC538VGCA20vw1Tc6hdXlfygoGVGOfOo0Pw72VPCQR73VOtrSKGEu1brJOLjRvvrXju905zSijEVKRqXn/L5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760480688; c=relaxed/simple;
-	bh=pKj7nF9FZa4CVDaaC2vI4eiSd7iIaOqkYyjB/cLYWWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzowQMAR7KNgT4SHhiL3Mv9XKPGUxH8kFuG6lPo06olmEJSEcuxak29eeUqu+jf563qk4lxGzLYKxaHjbQikKPaTOb8e2bj4ktC8otHkRuZBdVe8gr9M2T1bardxVVAtYkYmz3Ql3YqctJf7wiFkoP3IRkpjrZ2YbALHED8On8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AfMX25/0; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b57bffc0248so274679a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 15:24:46 -0700 (PDT)
+	s=arc-20240116; t=1760483491; c=relaxed/simple;
+	bh=V3hSkohjQH9IcJeQkk9/8c/RiAD6ZLlDj5JzTIlHNSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iXR5icn1FsNpKim4RG1kZylOUwjlk7GeAayc9eqr5AqtNx5IVFRDmvczVDiALmtUWADGy9OUVj9MG6d/Prgw/8JCBptNf0SyLYfjOhf16O9XiGOjTwiShOZURalOJ/fK9UmTZz89Mmjwlux5Apt23QT03ynw3R7+N4uEH1/vbgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOexQPYn; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-863fa984ef5so993425185a.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 16:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760480686; x=1761085486; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VU+E0coYgVNDVEMZPHxDysYf7EYOnkoJs7l4tPFgGSs=;
-        b=AfMX25/0TQzmfcK/hscJ/q3U1LCZyIWKBrZlsvKyPAR8npiNzUhA7zKLKIpddTmQSv
-         cppG1JWC8OFzVe3Io5LtQmNqohuwswlqTo7m/Zea0F39qHlI+yiFHn3tY3RCEHJoi73x
-         jeFSNIJsxuGX5bo+T5a+5Ek00nt3obBxS9MPQZlzvNJkDrMtKwtqnIaWuSyRImJn+48+
-         2KBopwAIZnehbvBHu8dDgovTpqKFMDAn5cRl8y+5yboBfI7cOPLF5oJYtxM4iIGdf1Zx
-         afn47a2S3QStZ+wPAeWvTNTKWMZQVIaT9zy2jH185heb7Fsiiz0dNu/yrA/UKPwnAInh
-         sfkA==
+        d=gmail.com; s=20230601; t=1760483488; x=1761088288; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Np7Xh+l7dC2yjt0QIuWV42FRJlARbOqj/A5UDPqNQAw=;
+        b=QOexQPYnufYUfPbeNydvdnDPn++cBuYarToXcBe5Dlu8uts4r/B0XurHnZcmuhZzX8
+         vy9fGMFrb1wlrua7zZjmbz1L8K2pZgAGMfZwroOxexR19iTvVcllXcgZG9xQIx3XWJpO
+         FaqKYJ9hwUqg/5Ypq9WS3qZxJJxOf09sKDHq4yYhmZWEGTKtvvEqHPeMHYqJlQm1mUSG
+         LnyxMvGEloGteNPz9mlLc6YM0MyAC9mBqdOgw8/GMDTgOdwmmJj5KA6mZ75SvOPoLnda
+         6PmmXDTbBtf2Bqzsk77OLfRXzY4LEJX9k3qmWC2uAsQHffor4HinYeazqv5N9lBiQBJG
+         03EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760480686; x=1761085486;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VU+E0coYgVNDVEMZPHxDysYf7EYOnkoJs7l4tPFgGSs=;
-        b=Qbc1yzVItO4d5hNNNHR79exqfDU+HI+oLl/LvHzTCSugl7dGvS3aQQDwEFIXzfnHRT
-         4b/V1ZU83BuqvX4TPoE0v2NRDzmEN/F3W9MxoPSbZJ0Vg5c3Hg7KSyG0MK7Qr1cEAzGU
-         b3ndHkUJlMDvxIzpvmHUEFYoeONWnsP8bGNpZfQETeFL30Dh/ETcfWJTykrqKMCIfbCq
-         XuUrqkyJeqgBq2UiBIj6VDW1vCqSVeuxGObMYKQyveIk0drTcildwtqDZoJbI5y0oKIH
-         +r26sF50N4yAZWtSh5vAnm8sVMe98ugzAkZv6MBQMqQIjuXoqTcWokggwXjZ4ZVR0DSi
-         BsCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjEWGtVj8oG1xUbCfFtfplLSOoc08tuJDBBzzCo0LBQD8d+SSAf9xrc3tFiO5R1gaHZ47ZDcgg9OuApEMP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzosaGxmOjQMPCRYjIiGtCJfDugA8gLULNHMTdyi49hkFpYCEre
-	gG1DkWkIzp8FDblH3XaGYcKX3riMkrlF/50BfyppAyeND865QzKz8pI6vRyvt5TI46E=
-X-Gm-Gg: ASbGnctmolo769KT2sgP6ZMs9cLgKwOhJ+NFDpW6+d2L1UVgpabaL+6s5uLtThxf5yz
-	gDEtYG/bcMuRZ8POHKvE7WaCZiKtEqNOQFagBsM7L6t1AlvEpp9AedFMGyvhqVdh/uNaH8QcKjd
-	1jC6Zs+wyyhO5nDHYHZ1sjfTnUbM1Y0jknNl5yHguR97hpnwCGDIp5nR9oGUQPyF7CSrlPLfGXD
-	NR+QwYEQ1kSxtejjSf5iFptEwNRBAbfW1uKrHV+hSuDDyCQqQhSkBqimqcBUjvf45Ci3WgOtq1v
-	gkS/A312nVZ8mCVxOGgRMnDyMUw/Nzreru2E8vkQf6mDlTwrOAvhZZrKjJnXbNJNFRmWtNR8SFT
-	LLT4xoRUVKUKnlRFoWZn8El75I8rV5tDXZ2uO1Pp7TLWjjxObkVaOJRuggvFyx8wjOvzQFLXHFL
-	KQ0jbmAD6JvJmmBP6242z74mkL5qQ=
-X-Google-Smtp-Source: AGHT+IEuiPLT+J2EGWyWH8Vlz1fhWHzXLhUTSRvMJ8Bb23RFgsXxsIuVuGY50FOYvF4QcobNAuFtTQ==
-X-Received: by 2002:a17:903:2acb:b0:265:e815:fcdf with SMTP id d9443c01a7336-28ec9c9741bmr395484345ad.17.1760480685978;
-        Tue, 14 Oct 2025 15:24:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b69c24043desm955564a12.3.2025.10.14.15.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 15:24:45 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1v8nRi-0000000Etua-2BV8;
-	Wed, 15 Oct 2025 09:24:42 +1100
-Date: Wed, 15 Oct 2025 09:24:42 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 03/14] fs: provide accessors for ->i_state
-Message-ID: <aO7NqqB41VYCw4Bh@dread.disaster.area>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-4-mjguzik@gmail.com>
- <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
- <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1760483488; x=1761088288;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Np7Xh+l7dC2yjt0QIuWV42FRJlARbOqj/A5UDPqNQAw=;
+        b=mQgIRcEG8yqgMxJJ4DZSQ0UwpNhE3iGI55y9qirqhU2KiOtQVyFyIbWf2ZoldwlLqY
+         ro2amSxYLi7hzHwjA3tmQTHX8FxTDaRK2ScGbKjoZ9JI+FUOYjhMMIf3Jsx7a79nci+8
+         H166ZI+4BgcWSRAQrtxe9aUF4g1CNpy479FPdHl0Or3CrUifL8A0OwY1rhcMdWGbtqGq
+         8LCeYsimC03Jq+w8lBHcH6cKi412FXoSue6C5BcjvXShHd8E0ToER2EEDYct+GV7oSRh
+         AdOTixgbot7RwY3Tvs6Q9K+HtQSGIVi6alsub4fTCEuTr/qw7weN/nMR1KmGnjV9+25b
+         mDJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3JjWoiHcLr+jMCpk/PFaCr6Spqn9FdXVcWoWzHrTbnzenL47QKxTFGN9mXKvFHWsy2wuQF0q4DdH3Gtf9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0nZF9pgSyCB1ajzG71/MIb+wh/kLA89sXzsETUnA2eQaqzr4R
+	/R90ww4HF9phfwHJ3B2uh9FCx0+wzq9XFglyafLB8t6ljJorCd2IOKV5C4pAgi40c96bX4m1PbK
+	u/8LH8fr+Vso9JPOS6HEcWSSWQINhdiU=
+X-Gm-Gg: ASbGncud/GA/M3k1x5yl7CGTD7Ngn1GxqXp3MrljcHRFwccNNJfpHNCQWzeHt3QaO+c
+	cYM0BZwBVniKJjgE6su/yvQafba7BAQUBs6DpnI1cMJqE3mu0CRreLt/kooD+5g/4JSk5f0d8f/
+	d8+rVkxBXgj4NyXgyDbWzycngX4w62gZHA7y8Tlc75pPEibSPUSCnAP2/nNUmWbgIyLAN+rvDCl
+	Tcz/pMgEyKbqOy7stH56JEUbLNy6OQ8/i0qg5YupSji754zRkq8bP4FTt3ihqAMalvw
+X-Google-Smtp-Source: AGHT+IEvDIuKbHchPuF8vjsBbZ5GQssNO4wq6o6fSqVEA8H179zsxCttkBIeKjH161jtO9H7+PojOgfjJKFI0oLRZYs=
+X-Received: by 2002:a05:622a:40f:b0:4c7:9b85:f6d4 with SMTP id
+ d75a77b69052e-4e6eace808cmr390954881cf.22.1760483488217; Tue, 14 Oct 2025
+ 16:11:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com>
+References: <20251014-wake-same-cpu-v2-1-68f5078845c6@ddn.com>
+In-Reply-To: <20251014-wake-same-cpu-v2-1-68f5078845c6@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 14 Oct 2025 16:11:17 -0700
+X-Gm-Features: AS18NWBZ1KKN5_XyXrIRa-aBFgFx0OJ8EHzzz3uLWru2c81eEh_H_lC_kmudKiA
+Message-ID: <CAJnrk1brjsPoXc_dbMj-Ty4dr5ZCxtVjBn6WGOY8DkGxh87R5Q@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Wake requests on the same cpu
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, 
+	Luis Henriques <luis@igalia.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 05:51:06PM +0200, Mateusz Guzik wrote:
-> On Fri, Oct 10, 2025 at 4:44 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 09-10-25 09:59:17, Mateusz Guzik wrote:
-> > > +static inline void inode_state_set_raw(struct inode *inode,
-> > > +                                    enum inode_state_flags_enum flags)
-> > > +{
-> > > +     WRITE_ONCE(inode->i_state, inode->i_state | flags);
-> > > +}
-> >
-> > I think this shouldn't really exist as it is dangerous to use and if we
-> > deal with XFS, nobody will actually need this function.
-> >
-> 
-> That's not strictly true, unless you mean code outside of fs/inode.c
-> 
-> First, something is still needed to clear out the state in
-> inode_init_always_gfp().
-> 
-> Afterwards there are few spots which further modify it without the
-> spinlock held (for example see insert_inode_locked4()).
-> 
-> My take on the situation is that the current I_NEW et al handling is
-> crap and the inode hash api is also crap.
+On Tue, Oct 14, 2025 at 2:50=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> =
+wrote:
+>
+> For io-uring it makes sense to wake the waiting application (synchronous
+> IO) on the same core.
+>
+> With queue-per-pore
 
-The inode hash implementation is crap, too. The historically poor
-scalability characteristics of the VFS inode cache is the primary
-reason we've never considered ever trying to port XFS to use it,
-even if we ignore all the inode lifecycle issues that would have to
-be solved first...
+nit typo: core, not pore
 
-> For starters freshly allocated inodes should not be starting with 0,
-> but with I_NEW.
+>
+> fio --directory=3D/tmp/dest --name=3Diops.\$jobnum --rw=3Drandread --bs=
+=3D4k \
+>     --size=3D1G --numjobs=3D1 --iodepth=3D1 --time_based --runtime=3D30s
+>     \ --group_reporting --ioengine=3Dpsync --direct=3D1
+>
 
-Not all inodes are cached filesystem inodes. e.g. anonymous inodes
-are initialised to inode->i_state = I_DIRTY.  pipe inodes also start
-at I_DIRTY. socket inodes don't touch i_state at init, so they
-essentially init i_state = 0....
+Which server are you using for these benchmarks? passthrough_hp?
 
-IOWs, the initial inode state depends on what the inode is being
-used for, and I_NEW is only relevant to inodes that are cached and
-can be found before the filesystem has fully initialised the VFS
-inode.
+> no-io-uring
+>    READ: bw=3D116MiB/s (122MB/s), 116MiB/s-116MiB/s
+> no-io-uring wake on the same core (not part of this patch)
+>    READ: bw=3D115MiB/s (120MB/s), 115MiB/s-115MiB/s
+> unpatched
+>    READ: bw=3D260MiB/s (273MB/s), 260MiB/s-260MiB/s
+> patched
+>    READ: bw=3D345MiB/s (362MB/s), 345MiB/s-345MiB/s
+>
+> Without io-uring and core bound fuse-server queues there is almost
+> not difference. In fact, fio results are very fluctuating, in
+> between 85MB/s and 205MB/s during the run.
+>
+> With --numjobs=3D8
+>
+> unpatched
+>    READ: bw=3D2378MiB/s (2493MB/s), 2378MiB/s-2378MiB/s
+> patched
+>    READ: bw=3D2402MiB/s (2518MB/s), 2402MiB/s-2402MiB/s
+> (differences within the confidence interval)
+>
+> '-o io_uring_q_mask=3D0-3:8-11' (16 core / 32 SMT core system) and
+>
+> unpatched
+>    READ: bw=3D1286MiB/s (1348MB/s), 1286MiB/s-1286MiB/s
+> patched
+>    READ: bw=3D1561MiB/s (1637MB/s), 1561MiB/s-1561MiB/s
+>
+> I.e. no differences with many application threads and queue-per-core,
+> but perf gain with overloaded queues - a bit surprising.
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+> This was already part of the RFC series and was then removed on
+> request to keep out optimizations from the main fuse-io-uring
+> series.
+> Later I was hesitating to add it back, as I was working on reducing the
+> required number of queues/rings and initially thought
+> wake-on-current-cpu needs to be a conditional if queue-per-core or
+> a reduced number of queues is used.
+> After testing with reduced number of queues, there is still a measurable
+> benefit with reduced number of queues - no condition on that needed
+> and the patch can be handled independently of queue size reduction.
+> ---
+> Changes in v2:
+> - Fix the doxygen comment for __wake_up_on_current_cpu
+> - Move up the ' Wake up waiter sleeping in
+>   request_wait_answer()' comment in fuse_request_end()
+> - Link to v1: https://lore.kernel.org/r/20251013-wake-same-cpu-v1-1-45d80=
+59adde7@ddn.com
+> ---
+>  fs/fuse/dev.c        |  5 ++++-
+>  include/linux/wait.h |  6 +++---
+>  kernel/sched/wait.c  | 16 +++++++++++++++-
+>  3 files changed, 22 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 132f38619d70720ce74eedc002a7b8f31e760a61..3a3d88e60e48df3ac57cff3be=
+8df12c4f20ace9a 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -500,7 +500,10 @@ void fuse_request_end(struct fuse_req *req)
+>                 spin_unlock(&fc->bg_lock);
+>         } else {
+>                 /* Wake up waiter sleeping in request_wait_answer() */
+> -               wake_up(&req->waitq);
+> +               if (test_bit(FR_URING, &req->flags))
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+might be worth having a separate helper for this since this is also
+called in request_wait_answer()
+
+> +                       wake_up_on_current_cpu(&req->waitq);
+
+Won't this lose cache locality for all the other data that is in the
+client thread's cache on the previous CPU? It seems to me like on
+average this would be a costlier miss overall? What are your thoughts
+on this?
+
+> +               else
+> +                       wake_up(&req->waitq);
+>         }
+>
+>         if (test_bit(FR_ASYNC, &req->flags))
+> diff --git a/include/linux/wait.h b/include/linux/wait.h
+> index f648044466d5f55f2d65a3aa153b4dfe39f0b6dc..831a187b3f68f0707c75ceee9=
+19fec338db410b3 100644
+> --- a/include/linux/wait.h
+> +++ b/include/linux/wait.h
+> @@ -219,6 +219,7 @@ void __wake_up_sync(struct wait_queue_head *wq_head, =
+unsigned int mode);
+>  void __wake_up_pollfree(struct wait_queue_head *wq_head);
+>
+>  #define wake_up(x)                     __wake_up(x, TASK_NORMAL, 1, NULL=
+)
+> +#define wake_up_on_current_cpu(x)      __wake_up_on_current_cpu(x, TASK_=
+NORMAL, NULL)
+>  #define wake_up_nr(x, nr)              __wake_up(x, TASK_NORMAL, nr, NUL=
+L)
+>  #define wake_up_all(x)                 __wake_up(x, TASK_NORMAL, 0, NULL=
+)
+>  #define wake_up_locked(x)              __wake_up_locked((x), TASK_NORMAL=
+, 1)
+> @@ -479,9 +480,8 @@ do {                                                 =
+                               \
+>         __wait_event_cmd(wq_head, condition, cmd1, cmd2);                =
+       \
+>  } while (0)
+>
+> -#define __wait_event_interruptible(wq_head, condition)                  =
+       \
+> -       ___wait_event(wq_head, condition, TASK_INTERRUPTIBLE, 0, 0,      =
+       \
+> -                     schedule())
+> +#define __wait_event_interruptible(wq_head, condition) \
+> +       ___wait_event(wq_head, condition, TASK_INTERRUPTIBLE, 0, 0, sched=
+ule())
+>
+>  /**
+>   * wait_event_interruptible - sleep until a condition gets true
+> diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
+> index 20f27e2cf7aec691af040fcf2236a20374ec66bf..94120076bc1ae465735843cc5=
+821ca532d9c398a 100644
+> --- a/kernel/sched/wait.c
+> +++ b/kernel/sched/wait.c
+> @@ -147,10 +147,24 @@ int __wake_up(struct wait_queue_head *wq_head, unsi=
+gned int mode,
+>  }
+>  EXPORT_SYMBOL(__wake_up);
+>
+> -void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned =
+int mode, void *key)
+> +/**
+> + * __wake_up_on_current_cpu - wake up threads blocked on a waitqueue, on=
+ the
+> + * current cpu
+> + * @wq_head: the waitqueue
+> + * @mode: which threads
+> + * @nr_exclusive: how many wake-one or wake-many threads to wake up
+
+I don't think you meant to include this line?
+
+> + * @key: is directly passed to the wakeup function
+> + *
+> + * If this function wakes up a task, it executes a full memory barrier
+> + * before accessing the task state.  Returns the number of exclusive
+> + * tasks that were awaken.
+
+Doesn't this return a void?
+
+Thanks,
+Joanne
+
+> + */
+> +void __wake_up_on_current_cpu(struct wait_queue_head *wq_head,
+> +                             unsigned int mode, void *key)
+>  {
+>         __wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, key);
+>  }
+> +EXPORT_SYMBOL_GPL(__wake_up_on_current_cpu);
+>
+>  /*
+>   * Same as __wake_up but called with the spinlock in wait_queue_head_t h=
+eld.
+>
+> ---
+> base-commit: ec714e371f22f716a04e6ecb2a24988c92b26911
+> change-id: 20251013-wake-same-cpu-b7ddb0b0688e
+>
+> Best regards,
+> --
+> Bernd Schubert <bschubert@ddn.com>
+>
 
