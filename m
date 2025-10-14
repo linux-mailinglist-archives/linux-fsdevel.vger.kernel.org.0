@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-64141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CCCBDA933
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 18:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F74BDA963
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 18:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0760A3B0F87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 16:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E951891639
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 16:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C96302750;
-	Tue, 14 Oct 2025 16:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90573002DD;
+	Tue, 14 Oct 2025 16:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gN3+XUfN"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gf51G+rn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114C830217F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 16:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C511D54C2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 16:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760458261; cv=none; b=SXr7DcIOqYdPHYum1LCCE+Wd+HWkpz0/vKKchKjtZ/NseXPA7jpgPF7HU7ncD7jcQM8H/O2kcLJ2zzN5o65gxDwsflrqhDwnN9IFdIEE9F8gRBfS6TFt5AeibPFK41O+63ODOMe+P1c1+OKOlCDOzkaaNQ+1qYV41KJD3gRB2/Y=
+	t=1760458541; cv=none; b=hEp5GDjz4DGSGGO3RY9H/VrIh1il55zjPemMvLgWIBAB+sdJs2FN+ROpzsuOZaqTJ1WQIvHlWbK12Hh4qwsSuZ9/9chqtUm+wLWtqPSfcn9K8r90AP3/+jrzEdey+99Jhe1jyBo//CQlqsFpxEfqJJtSulROVWJAOYPGUnnl710=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760458261; c=relaxed/simple;
-	bh=V/DlGFRm8c+yTAONErW1Wi9DHbAGb76Wu6pjxTlj1+Q=;
+	s=arc-20240116; t=1760458541; c=relaxed/simple;
+	bh=cKgxk6jiTeHyylnHogBfYDP2fUmT+YdxuibvKyiaGXA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IZjl8MOGF7HJD7TI00QaPCQCWQXTQbZ3nYbysSEvq1MEwpsAp7C8uYx9obtSbe7zsB0GpBZr3sO/HyyFbhHVKz1zJmRqdaQnt0/DhQYcISXjOgSd3s3/fPEXCGmCBtUPtBonCQ11XQLPcLFPtm+mV1SYzQzgnGMBDWCwMRA9cYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gN3+XUfN; arc=none smtp.client-ip=209.85.222.179
+	 To:Cc:Content-Type; b=pj6fkIWB+fuW4aqTw+D1pZLBqYZW0jmSHXwT4pBVJO+wW2kh1rE7ElaZgaJeEkV7S6Zv7vG5t2K5sdx4mgXeMFpuUzwaNZjTuTbgeRH/vFGJUWSxLd9tXnDF3xhwWWeDKaFbE51NDaxMtIR0ay9xXj18wKM2lACcRL2fhV787+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gf51G+rn; arc=none smtp.client-ip=209.85.222.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-863fa984ef5so920435885a.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 09:10:58 -0700 (PDT)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-86302b5a933so16458785a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 09:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760458258; x=1761063058; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1760458538; x=1761063338; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V/DlGFRm8c+yTAONErW1Wi9DHbAGb76Wu6pjxTlj1+Q=;
-        b=gN3+XUfNl5I+bNisuheUReVqm65hJFnW6xxQP+JdUGFN+EF7bWcJUVmZZ3KQep3rPs
-         Y6GupbvMVOwuTq4TkAQ0a4SYLAtNs6GYP4HJxi3h7SsckIRqpY9iEWuU/QIhmIxoOqQZ
-         As6yVfZQU6YbehwvQbAq904tCpzeHsYsrfzIk=
+        bh=ewrwrknKHXB/uAbS3LbH0U+4arscjhN9e2UHVe6cDww=;
+        b=gf51G+rnc9IGAw5NyFtZkvpY3109qyAD3BqWt83Crd7p49RXe9dSmhnAzki74AEEEF
+         JboGnzkHho4Gekt3u2XlT/QIU0kGWodn5ER2hWMI1SrC1T7YjO0h/6bB0rpOUIAPcTfY
+         rbOZRD/sXT2XUl74M41o2xVTPZmVlqfLiv8Og=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760458258; x=1761063058;
+        d=1e100.net; s=20230601; t=1760458538; x=1761063338;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V/DlGFRm8c+yTAONErW1Wi9DHbAGb76Wu6pjxTlj1+Q=;
-        b=COKQAG+q+vsfs9kjtQcgv9N8F4HBtPxj8FT3Q27Zzc01TCkKdkcXfqLS48njdeSIFT
-         8fksei9/QOlUNvLqyhkGEL7D5XE7PfeCbzhiOQ5t/qeRuzg23e100GZ00O6T+SjTKPVX
-         2t3nEQHi1QQI2IeadC/BRx+a0skzUAhlTmixYIILXn7HWAFglauPg7/bdFR4O+EOiAEL
-         qXKsV+0xR4/B2qVZt33fuZCIhs/Hyzf6innwrNBto1iD/2/O6DphOLsdl+X+m1rPX7sS
-         9KyEfbil3Rcv9vuIWjAHaLzGGVOANIXSEjxsBzHqL3mqB9K+VDNhRxzv8JqRH2ivVVoq
-         Tg9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWI0Xbgn2UOR/+2SYULmiQd5pShxFo/WWzMNRV4WmxijrCHJ92MuRLSJuTTd/fEUdlZn7vqKheJuLbLtjs0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+ps9JiU9IBTFqf8qbswfdNg+AEkU4StiuBFif/8hQVmQSFa1n
-	vNUZy/lUmhRzctvzDkYW/utL+dEOFvXxDZ0+OYScLTP1eUcbg1IkM05KBwtt4BC9/UtabIS7v8S
-	ylGaAQ3opxNJrZfExeR5V551mDH8fDO/IDdEe1bwbLw==
-X-Gm-Gg: ASbGncvjHXbW8FkVpzZgUmklcLLGbhKH1tBPFjGAc8ESvwAdXZlNajQMB4C3ZPn88yd
-	kgp8fxLkar4RN/mn0ekYj3+iS9f/QrnM6DQPxEqjGTo/v0i9vBMbXZmuBlxfQmbQgt3pCw4lIAM
-	BAFzwn3Bbk7pwCI0XNWadTq/QoqJww1M9OCpBR6mA6q2Sg5tCQeHvHmdfJbyunt6pYdK1zrpUUl
-	JCrvGU4dbSBC+6A6KqG1yQLWU+QnLcwBzPegViu1n81wIjmBy+OGJH5jEQ1/ejsiOtrtA==
-X-Google-Smtp-Source: AGHT+IFQRjAKAJYbp6V1WiZeFCyECjXuO5jrrPa49DgUlI1WAPf13+vaPEkcaT2yeshZtbmjCqkb6pcUiXEcfb2su+M=
-X-Received: by 2002:a05:622a:11d5:b0:4e2:f1b3:3462 with SMTP id
- d75a77b69052e-4e6ead4c89cmr348585611cf.52.1760458257727; Tue, 14 Oct 2025
- 09:10:57 -0700 (PDT)
+        bh=ewrwrknKHXB/uAbS3LbH0U+4arscjhN9e2UHVe6cDww=;
+        b=Bs7Yi26Udpp4oJGjMaZVYz7cGRtED2gwRfhCtw5Yjhx9yiNWQpBpo8N59B7oJCK+9K
+         zKJ8d/IVk4SfsFotZbObOSZxEIuPlfh7cs/T/J/MzUyRfUuJr2pP2CJL+Lpd7gdm56OF
+         Uc34PLu69uHkNV4VVt46BZ5DxRoshy2vKQRbonb1f1DFuCoLq+oZsFVcUfSzg7wahys5
+         9N+FC2ot89Izuwspdr6ByL7tdS525Fd4mpwjX6pkvx5CVrLcv0LZ3UWtukihe4viVEdk
+         PFDlibipRFsNO/Krupbh8xHOT4MHG+/+28IXejYqwEqtzO4kEQeud70yT5sHv/f5rybv
+         YGww==
+X-Forwarded-Encrypted: i=1; AJvYcCVDvs261rFmXTYx0FsCUJoGSPrJDNHHjxylhpypcDcGoeiNHz4fJOsWmlzw4lKpnSYf6MnZfwJyMe1plirq@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYtkxB0aGuU5WRoVUblRpHzDoIf7LJMdP0YJujv6IZe58a4PKp
+	pzJGE+Yo7v1lWOa64vOlzYZw9/2/Vjo5MbJlT37MtzCMGhJ1ltedcQbAkDmb3NB1OhMK8SbXhmj
+	BuMKABmJQS0wVoPt+LwZ3o/VVVOLkctd0YHjM7S9SYw==
+X-Gm-Gg: ASbGnctJTprY9TK3QEWi7rBlDEoSweAVmyAfpGtgOSks7saA4F6xuefaFnyV+vAyXVT
+	1XyWcXlhT0GwgrQq+dOu6O9nU1Hk6dUjkvKu5VznYH8tIS6vd8cEqvlJzLyBoGPJgv8kBorZxMQ
+	tUfYJC4WDNnL9FIyKDBFe0BtXiNl6k4wYJy0ScHEWvq3YsOsCmZwQu6I782ol8GkJwmdfZ9xWf9
+	ne3C44DXc/TdTZJ6kBHZaGV3lAfXHNCzU7I6+Cvr5/k14LoJa+MrMuv39W6Y7fuTyEQGA==
+X-Google-Smtp-Source: AGHT+IEojfPMQQk3wmAM9Q1dVYdLKmiUUYjXxV3T3mSLdv84y61D1MV9lsjnph7DcvmRn+shS0c8cY2yVTET3hV8Bg4=
+X-Received: by 2002:ac8:7d4e:0:b0:4c3:a0ef:9060 with SMTP id
+ d75a77b69052e-4e6eacf3e4cmr310503061cf.26.1760458538020; Tue, 14 Oct 2025
+ 09:15:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,33 +79,58 @@ References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
  <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
  <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
  <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <aO5XvcuhEpw6BmiV@bfoster>
-In-Reply-To: <aO5XvcuhEpw6BmiV@bfoster>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+In-Reply-To: <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Oct 2025 18:10:45 +0200
-X-Gm-Features: AS18NWAdgN8KhodM1ygh5h7LAeZnHjtur6SOKA5u8RJBQMjsBZqEVkdui4mizyA
-Message-ID: <CAJfpegvkJQ2eW4dpkKApyGSwuXDw8s3+Z1iPH+uBO-AuGpfReQ@mail.gmail.com>
+Date: Tue, 14 Oct 2025 18:15:26 +0200
+X-Gm-Features: AS18NWD3DKKeraOhbOarAGzkUEqZ7zC_nG_AO-Oe_1HPhN0h50C60DqtXglynJA
+Message-ID: <CAJfpeguCe9-hbK8-XDGhaVHT1TD8oGH6E+vXRyY3cRs1rYYJ=A@mail.gmail.com>
 Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Brian Foster <bfoster@redhat.com>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>, 
+To: lu gu <giveme.gulu@gmail.com>
+Cc: Brian Foster <bfoster@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Bernd Schubert <bernd@bsbernd.com>
+Content-Type: multipart/mixed; boundary="000000000000cdb243064120b1b7"
+
+--000000000000cdb243064120b1b7
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 14 Oct 2025 at 15:57, Brian Foster <bfoster@redhat.com> wrote:
+On Tue, 14 Oct 2025 at 14:43, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> But TBH, if the writeback thing or something similarly simple works for
-> resolving the immediate bug, I wouldnt worry too much about it
-> until/unless there are userspace fs' explicitly looking for that sort of
-> behavior. Just my .02.
+> Will try the idea of marking folios writeback for the duration of the write.
 
-Agreed.
+Attaching a test patch, minimally tested.
 
-I just feel it unfortunate that this is default in libfuse and so many
-filesystems will have auto_inval_data enabled which don't even need
-it, and some mixed read-write workloads suffering badly as a
-consequence.
+Guangming, can you please test if this fixes the cache corruption?
 
 Thanks,
 Miklos
+
+--000000000000cdb243064120b1b7
+Content-Type: text/x-patch; charset="US-ASCII"; name="fuse-write-through-set-writeback.patch"
+Content-Disposition: attachment; 
+	filename="fuse-write-through-set-writeback.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mgqrj1m00>
+X-Attachment-Id: f_mgqrj1m00
+
+ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZmlsZS5jIGIvZnMvZnVzZS9maWxlLmMKaW5kZXggOTA1NzI2
+YWMzYTdhLi4yZjEyYTUwMWRmOWQgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZmlsZS5jCisrKyBiL2Zz
+L2Z1c2UvZmlsZS5jCkBAIC0xMTIxLDkgKzExMjEsNiBAQCBzdGF0aWMgc3NpemVfdCBmdXNlX3Nl
+bmRfd3JpdGVfcGFnZXMoc3RydWN0IGZ1c2VfaW9fYXJncyAqaWEsCiAJYm9vbCBzaG9ydF93cml0
+ZTsKIAlpbnQgZXJyOwogCi0JZm9yIChpID0gMDsgaSA8IGFwLT5udW1fZm9saW9zOyBpKyspCi0J
+CWZvbGlvX3dhaXRfd3JpdGViYWNrKGFwLT5mb2xpb3NbaV0pOwotCiAJZnVzZV93cml0ZV9hcmdz
+X2ZpbGwoaWEsIGZmLCBwb3MsIGNvdW50KTsKIAlpYS0+d3JpdGUuaW4uZmxhZ3MgPSBmdXNlX3dy
+aXRlX2ZsYWdzKGlvY2IpOwogCWlmIChmbS0+ZmMtPmhhbmRsZV9raWxscHJpdl92MiAmJiAhY2Fw
+YWJsZShDQVBfRlNFVElEKSkKQEAgLTExNTMsNiArMTE1MCw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1
+c2Vfc2VuZF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVzZV9pb19hcmdzICppYSwKIAkJfQogCQlpZiAo
+aWEtPndyaXRlLmZvbGlvX2xvY2tlZCAmJiAoaSA9PSBhcC0+bnVtX2ZvbGlvcyAtIDEpKQogCQkJ
+Zm9saW9fdW5sb2NrKGZvbGlvKTsKKwkJZWxzZQorCQkJZm9saW9fZW5kX3dyaXRlYmFja19ub19k
+cm9wYmVoaW5kKGZvbGlvKTsKIAkJZm9saW9fcHV0KGZvbGlvKTsKIAl9CiAKQEAgLTEyMzIsNiAr
+MTIzMSw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1c2VfZmlsbF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVz
+ZV9pb19hcmdzICppYSwKIAkJCWZvbGlvX21hcmtfdXB0b2RhdGUoZm9saW8pOwogCiAJCWlmIChm
+b2xpb190ZXN0X3VwdG9kYXRlKGZvbGlvKSkgeworCQkJZm9saW9fd2FpdF93cml0ZWJhY2soZm9s
+aW8pOworCQkJZm9saW9fc3RhcnRfd3JpdGViYWNrKGZvbGlvKTsKIAkJCWZvbGlvX3VubG9jayhm
+b2xpbyk7CiAJCX0gZWxzZSB7CiAJCQlpYS0+d3JpdGUuZm9saW9fbG9ja2VkID0gdHJ1ZTsK
+--000000000000cdb243064120b1b7--
 
