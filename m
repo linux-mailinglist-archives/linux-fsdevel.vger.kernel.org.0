@@ -1,108 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-64154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A9CBDADCC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 19:55:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ACABDADAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 19:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 990214E43C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 17:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FB25479E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 17:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE1E305064;
-	Tue, 14 Oct 2025 17:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A322D30BBB5;
+	Tue, 14 Oct 2025 17:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="R+m9gWEi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B37svGEk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DFD35948;
-	Tue, 14 Oct 2025 17:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184D4307AD4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 17:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464543; cv=none; b=et3TB2BOSzO3sx12714/cSp+rsq2tBhqPIlseH8sCak1q8DL6p2gPTWQpDjbivZ4wezLOMqf5qA3Wahu/Pi2T6soucAwqvHU7Gfat9jhznxCrf60O3EFIkY8Pl/aXKGgpoY0/1C72SvTimVZjVTXQtBUByDGDwxK6v5Hh+GammI=
+	t=1760464378; cv=none; b=tRnLTf6zLKc/BhvMxzW7UYUfXT1ttkiL51wwzZSrnW0Lo3pYkMOuhp6B02r/iD3CcuGMUn6B+8CUQcE39cAx3+uOtMiYenAK3ObRweImLXdGv8Mq9Yy6SoPm63M5lpGCoDMGjNrwem4QtAM1qTA4wVA7abKbdj8WqB4+CLMyjM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464543; c=relaxed/simple;
-	bh=w9lq0KnLFNIDgiTvkM+Pij2QV2uCURRntZPgdwRl5m8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DmTPtsB49Io42D5C5FXMpqkMhEVzz+W3mHgK1SQt5ee9dCoOq+jWk/+0Y7emuFPSjhgckWeNrTTT63d7xSMQM3Xb7bYycTyUerKaa2j2yOOB5uEaA6BLtfzET0NSSyB9UFgmURNBsh/qbz+3RpztEd2SclwaQQmYmd5FMPc6mIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=R+m9gWEi; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kcF99RvVevWpvf4WCT72mVaNQKgwyrkDXLpeNGpD5kg=; b=R+m9gWEi0Nn8rAb7yWe0PaRTtB
-	f85QE2WLXthtqq3Uc3G5W/qapMCt2p7vcUchJErTP+6vl4n8H6HTDGZbJ7dnfKa8WKaPO+VdOW/l8
-	X5e5KeMZApYehjQ0prU4DGiQAMn9nx1wB8OtxgopSt7FCSKUdQjYCkuSK3hIwRGCBLeQASlqwZrVU
-	OyGXU+x/EeB99BYOlM8Oc3x8r9RdZF5kEJzJ/eOnMzf/HKt5W8XeWhK+yCBcsIuRCq9qm77Mpk3qv
-	uW9ZvkhRRjSw1r+lGSmcYa2GIPada5x8yCJtlu+dYMNvq9gH+b4NwUBeIhPVT14xZw2JoRaxhF+cR
-	Yer7sIHg==;
-Received: from [168.121.99.42] (helo=[192.168.1.10])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1v8jF7-009XUi-QB; Tue, 14 Oct 2025 19:55:26 +0200
-Message-ID: <2c0ebf78-d98a-4013-a54a-c528e06f7e9f@igalia.com>
-Date: Tue, 14 Oct 2025 14:55:20 -0300
+	s=arc-20240116; t=1760464378; c=relaxed/simple;
+	bh=PVzOy9zEvZPI0zXoZBvsf5L2XJJdgoZLMGh8eLtciMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTjZSOrfENJTMHbbZS+euscDULC39DVRtAb9kTPO9Mgr7fhzkvT7u9nstmEu+wd1Fdp9vi+CBFT3YuAh7i5Q4Ndv9o4Rp/g4uSmTw9RI2BGJqiNh8qne7aLXGu4QmigjdF3j0d3Ox8J3t6GNTPSa4yKP0r9rwHV96QsQD+MMhxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B37svGEk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760464375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7h7pthixCPmSqhiPy4iPeK+J6lCEADyF3OJpbLw6ehQ=;
+	b=B37svGEkrjjtD0us/S72CAL8g6X/B3irWu1GP9Rb98su3uew2LSWB9tH75avRAxcfU9oCs
+	vpQs7fF30/37WlpuCZyiUk4X8+234fTDYKRqcA/wZeTPTdvipc0aMsKzKPwVK4iF/Jb6AB
+	hfFgD2HK9TkMyDwgr8ZnA73W2vKpvpw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-609-xfYb1dlbMUSPUilDsbM1eQ-1; Tue,
+ 14 Oct 2025 13:52:49 -0400
+X-MC-Unique: xfYb1dlbMUSPUilDsbM1eQ-1
+X-Mimecast-MFC-AGG-ID: xfYb1dlbMUSPUilDsbM1eQ_1760464368
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 877291955E85;
+	Tue, 14 Oct 2025 17:52:48 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.119])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 344981955F21;
+	Tue, 14 Oct 2025 17:52:47 +0000 (UTC)
+Date: Tue, 14 Oct 2025 13:56:56 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bernd Schubert <bernd@bsbernd.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+Message-ID: <aO6N-g-y6VbSItzZ@bfoster>
+References: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster>
+ <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster>
+ <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+ <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
- origin
-To: dsterba@suse.cz, Qu Wenruo <wqu@suse.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- Anand Jain <anand.jain@oracle.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014015707.129013-2-andrealmeid@igalia.com>
- <aO3T8BGM6djYFyrz@infradead.org>
- <fe7201ac-e066-4ac5-8fa1-8c470195248b@suse.com>
- <20251014174032.GC13776@suse.cz>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20251014174032.GC13776@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 10/14/25 14:40, David Sterba wrote:
-> On Tue, Oct 14, 2025 at 03:43:54PM +1030, Qu Wenruo wrote:
->> 在 2025/10/14 15:09, Christoph Hellwig 写道:
->>> On Mon, Oct 13, 2025 at 10:57:07PM -0300, André Almeida wrote:
->>>> Some filesystem have non-persistent UUIDs, that can change between
->>>> mounting, even if the filesystem is not modified. To prevent
->>>> false-positives when mounting overlayfs with index enabled, use the fsid
->>>> reported from statfs that is persistent across mounts.
->>> Please fix btrfs to not change uuids, as that completely defeats the
->>> point of uuids.
->>>
->> That is the temp-fsid feature from Anand, introduced by commit
->> a5b8a5f9f835 ("btrfs: support cloned-device mount capability").
->>
->> I'm not 100% sure if it's really that important to support mounting
->> cloned devices in the first place, as LVM will reject activating any LVs
->> if there is even conflicting VGs names, not to mention conflicting UUIDs.
->>
->> If temp-fsid is causing problems with overlayfs, I'm happy to remove it,
->> as this really looks like a niche that no one is asking.
-> What do you mean no one asking?  This was specifically asked for by
-> Steam to do A/B root partition mounts for recovery. It is a niche use
-> case but it has its users.
-That's right, I've come across the issue reported here while working 
-with SteamOS partitions, so it's being used. The original thread for 
-this feature has more information about the use case: 
-https://lore.kernel.org/linux-btrfs/20230504170708.787361-1-gpiccoli@igalia.com/ 
+On Tue, Oct 14, 2025 at 10:01:53AM -0700, Joanne Koong wrote:
+> On Tue, Oct 14, 2025 at 5:43 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Tue, 14 Oct 2025 at 09:48, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > > Maybe the solution is to change the write-through to regular cached
+> > > write + fsync range?  That could even be a complexity reduction.
+> >
+> > While this would be nice, it's impossible to guarantee requests being
+> > initiated in the context of the original write(2), which means that
+> > the information about which open file it originated from might be
+> > lost.   This could result in regressions, so I don't think we should
+> > risk it.
+> >
+> > Will try the idea of marking folios writeback for the duration of the write.
+> >
+> 
+> Is it safe to mark a folio as being under writeback if it doesn't
+> actually go through mm writeback? for example, my understanding is
+> that the inode wb mechanisms get initiated when an inode is marked
+> dirty (__mark_inode_dirty()) but writethrough skips any dirtying.
+> Afaict, folio_start_writeback()/folio_end_write() needs i_wb.
+> Additionally, if the server page faults on the folio that is now
+> marked as under writeback, does that lead to a deadlock since
+> page_mkwrite() waits on folio writeback?
+> 
+
+WRT dirtying I think Miklos was primarily concerned with some other
+thread being able to pick up the folio for writeback. I'm not certain if
+writeback is dependent on being dirty, but if it is, ISTM you could
+technically still mark the folio dirty and transition it to writeback
+before it's unlocked in the write path. To Miklos earlier point that
+would put the folio through the same sequence as proper writeback,
+except I think would claim the writeback work for the current task.
+
+That might start to look wonky I suppose, but maybe that can be
+addressed after if it can at least be shown to fix the problem. For
+example, if it's really just the wb that is an issue, perhaps an
+inode_attach_wb() is all that's needed?
+
+I'm not sure about the fault case. I'm assuming fuse still supports
+traditional writeback and that this would all work similarly to that
+case.
+
+Brian
+
+> 
+> Thanks,
+> Joanne
+> 
+> > Thanks,
+> > Miklos
+> 
 
 
