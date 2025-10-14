@@ -1,293 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-64091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481E2BD7970
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 08:39:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552E4BD7CBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 09:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 058B94063A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 06:39:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEF4C4F90A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5CD2D12E7;
-	Tue, 14 Oct 2025 06:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80C530CD8C;
+	Tue, 14 Oct 2025 07:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ERe/IzN5";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="wH9oOAVJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E101C2010EE;
-	Tue, 14 Oct 2025 06:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760423932; cv=none; b=WNAlLULDCKWPSEza5dePnMCsNPcTxKwGcctrWh8yDaQtShjRNmEc512BFSJ6MCCiekxXDbISm6xBarMKUvI9S4Wd7JD6wzMqip8GISxoQBzpLk/vTzPJqXRHctld2woMVoNF/vFlD1RtsXm6b4j5P0k1leUPVO7mojT+YUwwkIM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760423932; c=relaxed/simple;
-	bh=WTdEIPVnTjVYFmBVT010VFa83HYwQgS+DTRMlHzMHzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6IU/dR+myfq1GsCZb73Jb2DO9UMNCaZnDFrTgZjF+aBdB0Qy8XsG3LPq9RY5Bd/tdO6IA0i5kTrnewLtndR0ZG2RdC2ZCq49XOKvya32vSM0gtKr8ewKJKRS1P1FMLshof5/KZ5oANr+IOdSk74hwhskM5bi7TXN4WQlYzT8j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-23-68edefefb741
-Date: Tue, 14 Oct 2025 15:38:33 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: NeilBrown <neil@brown.name>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, okorniev@redhat.com, Dai.Ngo@oracle.com,
-	tom@talpey.com, trondmy@kernel.org, anna@kernel.org,
-	kees@kernel.org, bigeasy@linutronix.de, clrkwllms@kernel.org,
-	mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 28/47] dept: add documentation for dept
-Message-ID: <20251014063833.GA58074@system.software.com>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-29-byungchul@sk.com>
- <175947451487.247319.6809470356431942803@noble.neil.brown.name>
- <20251013052354.GA75512@system.software.com>
- <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302182D131A;
+	Tue, 14 Oct 2025 07:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760425348; cv=fail; b=st9B1bSIaZb60uQXVGpppURreabLtJ256eWUKrRwwrVUDws+mFxnouhVRLjLpwcaHWJcZaEacoLXCcNnToaTGhePVMDvQNn7IDs3nTtTwidJnjkLmFXKpxFJFOs98QY4coNuOrWUaN/Mc5nTNfvLYa4nV2H/X8rcFvkB3MERaPw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760425348; c=relaxed/simple;
+	bh=OL2jzfFbm9aLpz9/a1Gy45qPV4o8zoNtQfEqa+1rOmQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=V8KNZ520iUHCzmJknycPdABbhdyWQWAQdhpLahJY5ZLQISf+9Gt09YZOJf4q4QIDQCGjd6hrL68Dd90HIWXXMdL1/4m4ai8j2WipLJT+0LHZf8EH+UE4eTjy9wBVe2fqcU0d9uK29CZweSWb51Omw+vKtReUwK0+zPW5rQvljzM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=ERe/IzN5; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=wH9oOAVJ; arc=fail smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1760425345; x=1791961345;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=OL2jzfFbm9aLpz9/a1Gy45qPV4o8zoNtQfEqa+1rOmQ=;
+  b=ERe/IzN5geVQ4g+XUCY49Tts82B/Mu862RRVX2Dvd/zyF10p2ds6Wf6y
+   rVk+3P/W+refKPkN/tuPikM2wReTSKdwEtxy39lTzHPqd2tQtYwxVBsU/
+   Ndw4XU7b17OiCI/SN0t0zLqJGbmW8ZXZfP2Hv3bYAXAIBIqqQy+njRJte
+   Y82Qhgq/og612ZYnOWx9NGRPEYn+7vBNLETaydZ+/mwFcsqUTYGQPDIKZ
+   CseHjd7hGPSouaIt1HRzN1X88K/sRAybeV2QrleIFa7BJR5on8uNJ63Ge
+   ZNPoh4Z5Do8aXSJRHtK9upnaWHXgznB/QS5J3X0uoUfKA6K5l3sNZ/LfI
+   Q==;
+X-CSE-ConnectionGUID: B3yKB4h+T8OfuASEhwGVdg==
+X-CSE-MsgGUID: vp/iWCYQQ3CbbUctwmJg2g==
+X-IronPort-AV: E=Sophos;i="6.19,227,1754928000"; 
+   d="scan'208";a="133063769"
+Received: from mail-eastus2azon11010013.outbound.protection.outlook.com (HELO BN1PR04CU002.outbound.protection.outlook.com) ([52.101.56.13])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Oct 2025 15:02:15 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AS8SF2q2Nv4xPYa9+No9T9cySSePdPPeLJL96qtH/QHdLqFxkbkV0J4rV7xeUfMxRMd74uOQ9Tayy0IUjVm89VT6edySPa5uAxxFkXErMUswfkZiP9BB7gz6yZtTcYgqLLgZFGUSZOsCquRNxNEpG8TvdKym0kTokBYQquWFCrfp37uFNF0hshN86/5YVkHv30UBjI6wvkoekiYTq2wm4PSKtjZUk6fRyymlYTRaeMV64f5eqr1ANXvdpm6kh2S0TyV7qM5u+WgmKexEHjSFoA+c6VHd5RiueazcDX7pyxv8D3eEEdZEr6uSb4hPO6p2hRWp4+JOKwAi0wiH0EFxiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OL2jzfFbm9aLpz9/a1Gy45qPV4o8zoNtQfEqa+1rOmQ=;
+ b=eRu5ZHzpL9UAzJnZGHziE+UOAJ4J2hIPsTE3Gv2u+cv2MAyDfe6VWHd95w0qc6KAxl4uZgPYmExJ8X1AooR15bII5fs8dIAXeqQPI7UtYL6CVN9Xre8K5/UpwyUPJMCokorOo0icLQpR6dndO/1Dtz6SasZzMltPcsDltevot8+ypbB0z8rIZAOD+EkMWZqMWT6JOFg+s2HloAaZujUozEtDs+/zuQa5hv7HXa9h/OX4qSm7qhVk0anAm09BEWTXZZUrPfDhchlGPgAJ7ivyc7M5DJR1kEwYy+FPTxQehEgdyZd1Zw8qBVUe9r6Np32iw+e95XGEthbILYsxZJcU8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OL2jzfFbm9aLpz9/a1Gy45qPV4o8zoNtQfEqa+1rOmQ=;
+ b=wH9oOAVJszS3YqJ34TEz9mbiEzE2QjFIEdoDcvOSHHEQPuKmAByDRen+aj0Xdh9WR0bYE3uWOGPx5EZdoOwbUv1zQC5AeqV+VcWuKZH2p026uOdv1hhOEmRSL473rl1eUuJ4gtUBZyxQXUVHBXjhk9tnYU4VAtaY6D782lQkaAA=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by PH8PR04MB8687.namprd04.prod.outlook.com (2603:10b6:510:250::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 07:02:12 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::ee22:5d81:bfcf:7969]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::ee22:5d81:bfcf:7969%5]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 07:02:11 +0000
+From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To: hch <hch@lst.de>, David Sterba <dsterba@suse.com>
+CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Eric Van Hensbergen
+	<ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet
+	<asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Chris Mason <clm@fb.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker
+	<jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Josef
+ Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"v9fs@lists.linux.dev" <v9fs@lists.linux.dev>, "linux-btrfs@vger.kernel.org"
+	<linux-btrfs@vger.kernel.org>, "linux-ext4@vger.kernel.org"
+	<linux-ext4@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "jfs-discussion@lists.sourceforge.net"
+	<jfs-discussion@lists.sourceforge.net>, "ocfs2-devel@lists.linux.dev"
+	<ocfs2-devel@lists.linux.dev>, "linux-xfs@vger.kernel.org"
+	<linux-xfs@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 04/10] btrfs: use the local tmp_inode variable in
+ start_delalloc_inodes
+Thread-Topic: [PATCH 04/10] btrfs: use the local tmp_inode variable in
+ start_delalloc_inodes
+Thread-Index: AQHcO+1dZVuRfbvE/kmu3xObSWGqYLS/uh8AgAFYcICAACaCgA==
+Date: Tue, 14 Oct 2025 07:02:11 +0000
+Message-ID: <57d7136c-b209-4f8f-bb6f-8ced354d205a@wdc.com>
+References: <20251013025808.4111128-1-hch@lst.de>
+ <20251013025808.4111128-5-hch@lst.de>
+ <aae79ea0-f056-4da7-8a87-4d4fd6aea85f@wdc.com>
+ <20251014044421.GA30920@lst.de>
+In-Reply-To: <20251014044421.GA30920@lst.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|PH8PR04MB8687:EE_
+x-ms-office365-filtering-correlation-id: 6e206cdf-12dc-4fba-57d1-08de0aef9950
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|10070799003|376014|7416014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MitJeHdSWTFDUG5ucHZoUlFEQ0VwS0gxRnN0L1BxRnpXaE9lNm0rVktoaFFN?=
+ =?utf-8?B?RklrZW45UXI2UitUNDg5RGtCQk1CaDk3MjVJV0N1OGk1TWxiVVVVeUZzWUZ2?=
+ =?utf-8?B?Sk1WVW1HKys3cURSUDJyRTAzNEl0YW1CZHVPZXlTSjl1T1lXeUdaa0tETDUw?=
+ =?utf-8?B?aFRDRWlQdDRpb2hVNmgyQ3dUSzBBWjBWajZqTVBHNW5Ga0MxUTN5TWhIZzgv?=
+ =?utf-8?B?cVNwTllQR05MMmVKOWErT2Fjd0ZyOE53SlpCQUJiR0k5M0d1bC9vOVFFS2li?=
+ =?utf-8?B?ek8rcTl3eEhaaEtQT1Viak4rVGg2UXFteXlVQUdXSWwvVDE4QkpmWFN5SzJT?=
+ =?utf-8?B?R29uUjV0dEpLWFd3R3dGZDhabCs1YTMvOVpiSm91TUVRMVg2d1FOSGs5bkUy?=
+ =?utf-8?B?bHBEV3VMWGNRL3o5VUJFSTdSVncyemV6RXJNYjY4a2huT0RvTGFNM1hmdWtG?=
+ =?utf-8?B?SWtXMUJHVTNDWEZ4K2U1cnNSZGhXS2JRMk5qVnJib2w2V25zUnBXV2xDbkFX?=
+ =?utf-8?B?RHlyQnNDZDRGc29iSGV6cFVhbFNTeTRnODN6dUF0TjBmdy9wV0dka0lRL2Fw?=
+ =?utf-8?B?NFZsbVRsOXVoL0xpcEJ5d05SWWRWNXpFZis5S1k1SkNBV3lHcXg0azNaeWF0?=
+ =?utf-8?B?STN0TWY0Q3ZybmsyaFM5QU8ydjlSN1EvK2xiWDRObXJydzdqWmRkR0QyMmVY?=
+ =?utf-8?B?SmJrYUpXQXNjTm0rTmdpZ0t0U0dZTzhkdG10bGVYT1NIL0hGajVtQ0FOMlFL?=
+ =?utf-8?B?WjRVdjRtRFhpZzBNN2lHaEFzK2hTWVYvM2lhalpkY09kU3hlL3dpY3FqRUho?=
+ =?utf-8?B?aTR4QXFKU2ttQ0JOTFpKbDlYOFhTbXhyekg2b1hvUS9Bak1GOENsRWFXbHpG?=
+ =?utf-8?B?RHRydWRmQWUzcVNUeTdUOGc0U2poU2pmT3MwQ1FRNmdGRWlIQUE2Wnl0OVBI?=
+ =?utf-8?B?cll3MkxBQ2x2ZTVQL0N2Z2FkeFhnL1Rya3BveklEaGk1Y0puQjZHSmFVMDND?=
+ =?utf-8?B?NkJYRnpxWmJoOGdiV3RYRHFwSVpjejhnVDdGR3BLblZ0cG43SnNTL1pic0dw?=
+ =?utf-8?B?REk4dHZZWWE4d29tQU53MWhNVHk3Yk1HM2FpWkpqZW1iQ0hlUW42S2tEa1cy?=
+ =?utf-8?B?NG9kRnYzdGdXaURDUi8xc01yS0ovbzJvdHlRYjlFOVB5NE9naElxWkNKaEpO?=
+ =?utf-8?B?T3lKNG5lYXZmTjlrZG5jZHRhS1kzZGRCUnEvVDd5S0lyK08zd3lvS0N5WlBh?=
+ =?utf-8?B?dXE1Y2JOUzZLR3hYSEJqQmtDUmJBK3J2KzdMK21WZi9MYlE2eGc2WStXdEYr?=
+ =?utf-8?B?UWxhVjYzVTFKSklPaGJ6V3VYa0xsdW9EQnZlY01rT1gxMUtZanlmYjgwRW1w?=
+ =?utf-8?B?cldUQThoRDhVUzJGVE05M0ZBWklOOEorTExRcGUxYW1mSktZUko5OXhKTHFM?=
+ =?utf-8?B?REQ5VUxKLzVvUUdKdGRmTzUzQ05EZ0tyVHZ2UGREYTU3ZVozUzJTOEc1K042?=
+ =?utf-8?B?c0pqNVlveVVQMGk5T0J6V1NMZjVWOWtvUVViQ0g5b0FMVnliZWk0RmQrU2c0?=
+ =?utf-8?B?dFlERkxNNUgxQkhRUHVrMmdMQ0VtZ0Y3LzY4RGRrNlYzUlY4V2ZhUGFoY1c4?=
+ =?utf-8?B?STFWVG93U2lIWGY5TVRQanNhQzNDZllKRHhXdkg2aG9vc3B5dFlJVU92NEtx?=
+ =?utf-8?B?OTBsTklWU1VRTVN6UWE3RUtxcWhiczZpU1JYVXJxSDRzWXlZV05MWjE3S0Ri?=
+ =?utf-8?B?KytrcldSN2N4Vlp3VGJKemE3eE5kLy9uZ0VBcFRVQzJXOTdQVm5pcitpVExO?=
+ =?utf-8?B?S2JIQnFydldyRFUzeVNkdTAza3h5Z1grNkd0Vm1KOGxFQTNQRS8rNy9UZEZV?=
+ =?utf-8?B?L1h0UWFHazh0eXFCdW9JMnY0d1kxQktrdU50UEdtQUNaQXRYYUJ5UzV2VDh5?=
+ =?utf-8?B?eVFRei8xTC9LenZxQlVqY2phU0gyMHh1SWtNZE1yb1lQM2tjekJrSzRwQnk3?=
+ =?utf-8?B?RUNHQ21aUUdTTGZqTEhPL1E0YjhkNCtQeHVNaFZhUHZ5d2poajAxaXBJUC81?=
+ =?utf-8?Q?d8ULBV?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(10070799003)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?T0tjUFh3bFpWNENxaEVyelk5VUpFR1FMQTYzcmc4Z0hGdmNMSm9WL1BlLzc1?=
+ =?utf-8?B?dmF1eHdENFBSVnlxZmxIMHRsLzExRWd1UVRlZ2xCZXhURnlhU1VWSmtYcEw2?=
+ =?utf-8?B?OGU1YmFqaVBEclQrU1hoREVhV3ZsL0JBWVh4OEJQYjVISW9WMWlLOE5lenVq?=
+ =?utf-8?B?U3hVQ3RrTnRNQWJqbVU5NDd5d29CTU5jYXc2eVdLcHoyemhWeWwzWUd6NEs3?=
+ =?utf-8?B?OVVwU3phWVBiU2lPcUlvVmhUdCtmOWkrcGFXK1JOV0ZOdEhnKzBZMEhiNldK?=
+ =?utf-8?B?NFp4SlZMRmdyV09PWUN1M25DUVhzcTVVbE00MUkxZ1ZEV3ZuMGJ6QU9yMTNt?=
+ =?utf-8?B?cEZpK1FDb1FyUHc3MGovK2dvSUJSdmVYc2ZkNG92MHM3OVRyT29oOTFSVHlK?=
+ =?utf-8?B?N25ERHc5TFhRdmJza0IxQlZ1cVg4UlNDaGF6YXlOamJYWW54eUlBaDVVTVIz?=
+ =?utf-8?B?cGNOUTg2YXQwbjJSWE16aGtOeFE3eGc2dzFCd1F6SVZleis2MTlpZ0pCcEJJ?=
+ =?utf-8?B?T1ZoZUZmTklBWHhlMHUzK2wxempETkplNVB6QmQ1NmRzNEt5VDFTUzBsbkdI?=
+ =?utf-8?B?b0phcnYva1pFTHdrajZFV1VMVzM5Mi9PcUo1SENrVTZyWlpyMmQ3M3pCbmlt?=
+ =?utf-8?B?dmVqS1BobVNQY3NqNmRocHl5bVJvMlRXdjUyZHhpVk1nWk1SMk1GRGtHMnVB?=
+ =?utf-8?B?NzczUEJQQlhCWElGK3hqRGFaOEtSNVNZRjl4MG1QMVVFZVFoRWVaQ0Q2UWJE?=
+ =?utf-8?B?QmFkWnJBVSsrdFJQanBVS3BJR2llLzl1cTFCTnVDTnZhMkFvZVVUL1BhUVVB?=
+ =?utf-8?B?NHoxYnUvTjdXdHZHdE5MQlZlb1lXaHVxU0E3Qng3OERGb2x5YlpEYksvOFo3?=
+ =?utf-8?B?OVE0cVo2MFJYd083N2NibUlBbjB3bm8wWDZSR3VQUlVqdk8yenRXSW13WWxN?=
+ =?utf-8?B?S3gvdVBhcm1HYyszc05jSW10RExsM0hEL2FXemxnRzBrMzN5ZHczek1xOVV1?=
+ =?utf-8?B?cHprMHlMOG4rTWM1VVhHREt1QUwzUEt6T0Mwc0l3eXdYUlBRbkhEL255aVUw?=
+ =?utf-8?B?RjBVbWV1WkVzbjYyZVJ3bUVxc2ZWeXA1TXROOUI0VnFvcXRIZXBOZ0FNL2JD?=
+ =?utf-8?B?SmQvMTZmM0ZjUTJJM2duTElEbHFlakdMWWZMZVRwQ1hTeS9maGxtMUpuZURL?=
+ =?utf-8?B?THF5VVJQcm9EVHgyQldOM2VGQWFPRStFVG1nbHFPRWhSM0xyL2dsc1UxbzJw?=
+ =?utf-8?B?OUEwMjFXZ2NndkJNUW1tbUxvTHdiQlN0bTRhWEx6MUttNlAwS1loTWozakds?=
+ =?utf-8?B?S0hLekNOVHIrd1k2WnV2L2M5bUJ5TGJNampQU255R0E4UXZtOU5iRk91dkM0?=
+ =?utf-8?B?RUJXQ1hnYVFwYTlYL1htNkEvL1dXbnhxVUh0RHRhbVgwejZ5Nk1obHRxSWNT?=
+ =?utf-8?B?WVFCbkxNLzdiVFlJa3d0QVIyaHdVU3BPeWxoQW4vQllzMWZ5UnE0SGtDeUtO?=
+ =?utf-8?B?alF0bzdLcHREcUQ1cFE0WngwckQ1UUNSUWJLU1FTVjFlVW5Rc1hGY0k0S01P?=
+ =?utf-8?B?dE1lVU03aTZISjRKeVJ3SWxvRG9DVExNQUk3T09rN1R6T0ZBUjFKTjRNaDUz?=
+ =?utf-8?B?UnBIWTBYMzlJUEhqYkNNcGJvZ0NCMlo2Z1I4RFltVW9VMFZYQmFtK1Rvc1RQ?=
+ =?utf-8?B?M1FBWEdza0xnaVV6ZXRqWm9JeXdBMld2OE56NEZkVEVhRWQrUm5yWEx3aEhj?=
+ =?utf-8?B?VTRRMmNHSDlXUjZkdVZyZ2MwVXZwZUxTbjIySmp2S1B2VlU2c0J1MXJHdDBt?=
+ =?utf-8?B?c1RTMCtVNEVYZGMzWXJTUFZNTWJRU1NpSUlUTXZwb3lGM05UVytrQzVOQ3lh?=
+ =?utf-8?B?Q2p1Zkh6dXRGS0V3dHFMYm5Kc1RlNlc2d2NzeHBGUlAxdFlpWS9uQ0N1R3U2?=
+ =?utf-8?B?R3hKbnhBYnlCdm1LN1p4Vk91UUJ6ckE4U2FMOW1uZkxzOE5qWWNSRmJ6dzN5?=
+ =?utf-8?B?QlRacTZWZHZDWEpMT2VIRGJ3Rmt5cm1Ha3pSTVZlQWZlT1Q0T001dmFiUVpF?=
+ =?utf-8?B?QmM2cENjeDNlZGZ6aDNZU0hUZmlycWlpN2JDRkp6TnZOTG5BK2VSMG5aRjJ3?=
+ =?utf-8?B?bXhHZm1NZVpWSzhHMVhuR2lFRkttazg0RGdlWHNBY2E4bmRMN0xKRWZEaVZE?=
+ =?utf-8?B?bGRJZHU2NmNTSVNMNFhJK242eHNUcStaSUo4KzNkcGkyZS9xaHhxQ3lLdVBa?=
+ =?utf-8?B?bFNTOExtTE1lV3AzTUdlTUtUWWF3PT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C024664BD4F81B4080AC6150FD6F2CFF@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbVRjGPfee+9Fm1WvF7DiMJjVzygJuhmTvovuKRm9MbDDGLZkxs8rN
-	2qwULIwNF5NuYxuyEbCmVMogZQzW0SKlsLlOapCPIim4goMVxnAQZCJ0TRDQAQVblsX993uf
-	J+/zvCc5PK2sZDfwOkOOZDRo9CpWjuXhdVXJkUhYu2VoaTsMHm/FcL7BxUKBp4yBf5bKaTjl
-	XcUQNfs5mHtwm4NVnx9BaZ+Zhun2WQSWsQkWrFPHMdgmyzmY6nwXbi3MIKidWKFgovUMgmjp
-	IbBaggj+dMcmn+MEC3+UXKHh5nyEhW7LWRbCfecpuO9mwX7Cx0BFuRnByeoGFkorPBj6ppcp
-	GCk1U+D0vA+BkgtUrC7mNa4HS/2PFPRUj2AYd9g4WB7bCqv2TPA773Fwp9iC4fvwDQa6RwcZ
-	+L3rNAM/mO7GHnFzjALXuUkaCq7PY/ANb4aq0xcxlFWOsNDi68ZQEJ1D4L82TsE59xUGRl2r
-	DARbAwz0O4MYGu6FKAj4f8Fw43o9A029PfTudLGu6SoluipdSFxaNCPxVEmM2mcitFgTmGHF
-	xfkBVvymN1n02u5wYv5Pw5xo9xwW8zvCjNjkSBKrW6YocXh6h+ip+5pNS9ovfzNd0utyJeNr
-	Oz+Vay8W27ksb/LR5vYOZEIVLxQiGU+EVNLRe5t7xN/5/qILEc9jYSPp9O6Oy6ywiYRCD+g4
-	JwgvksbmIaoQyXlaqE0kIevCmvGMsIv8OuBCcVYIQPqdDWuZSsFKkTOBDx7qT5PusgkcZ1pI
-	IqGVKSreRQuJ5NIKH5dlgprcGrWurT4rvERar3atdRFhXEYu50fRwzufIz87QrgECbbHYm2P
-	xdr+j7Ujug4pdYbcDI1On5qizTPojqZ8npnhQbFfW/vV8sfX0GzwwzYk8Ei1ThFamdEqGU1u
-	dl5GGyI8rUpQbDsWkxTpmrwvJWPmAeNhvZTdhhJ5rFqveH3hSLpSOKjJkQ5JUpZkfORSvGyD
-	CRVtbNlv6mF2vH32iTTZy2amf7a303z35LcH/o1gx2JKkfrVQJBseWcPU+PO21vwpDg+d+HI
-	TrXKmyDLMjz1yWb1exkfFadtP1b01vwrg5fIZM3BnC8GVPdrm02pVbs+G6kPLvu3DSwN/aZw
-	vxFU12xy/v28vmOPpXGfPaeoa2+0T8pV4WytZmsSbczW/Adn3NiEsQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTHfe7z9N5LQ8214riRRLMaozFBZZnbyTCIH6ZXjUSJk8TEaKN3
-	tuHNtYKiMSkCgzCHpVlbaUUrjmpKFaQV7bCGgWVzDBWY2k2RQQqKgE2Ul/BWbF0W/XLyP7//
-	+eecD4fF8hnJYladdUTUZCkzFLSUSFMSC+KDwRHVWl+DBB7nNxEYGy0hcK7WSUNJfYUEHl6r
-	QdAzVoJgYtqKocgzR2DW0MrA6ORTBua8rQhMHQYMTnc+BW/rQjQMtbxBYOwN0GAezCcQtJ9G
-	YBmwMjDo2wwjPY0SmOt+QcGT8WEE9kCIgkBTMYJZUzpcqHLRMN3+AIPZ+BDBxd5uDC/rwqa7
-	9TkC75VTNPTrb2DoCsyHv8aCNNwz/kDDSMc5Cl7X0WA75ZVApdWAoOBSLQ2mynoCnn9/YaBj
-	aIaCZyYDBTX126HHPkCgTV9Fhe8LT12PBau5gAqXlxQYrzZSMGl3MPDnpWcE7LrlYG3vkkDf
-	FQsDM70JMGfLhtaaFwx0nzESuDbyQJJsRMJEURkRHK4GSijqnKUF53knEqanDEgYrS7AQpE+
-	3LYMB7FQ6DoqVLcN08LU2CNa8I7biPBHFS+Ut8cLHks3IxTe+YfZ8dUe6fqDYoY6V9SsSdov
-	Vf18xsYc9sQfc7fcRTpUuaQURbE89zl/1vsKlyKWJdxy3udJjmCaW8H7/ZM4omO4pfx1999U
-	KZKymLPH8X7z+HtjIbeBv//IiSJaxgHfWVPLRLScM1N8cdvO//gC/l5FgEQ05lbx/tAgFdmF
-	uTj+coiN4CguhX/y3Pw+uohbxjc1/EbpkczyUdryUdryIW1D2IFi1Fm5mUp1xrrV2nRVXpb6
-	2OoD2Zn1KPyT9pMz5bfQaNfmZsSxSBEt84eGVXKJMlebl9mMeBYrYmRfnggj2UFl3nFRk71P
-	k5MhaptRHEsUsbKtaeJ+OXdIeURMF8XDouZ/l2KjFutQ2cUV61y/uivcKYGeNbFJ3wf2vDLn
-	7N7Y79uk/2kfKf4s9VP/tOO2+2uTvR2/1e9NNva5BjatNMlzEnVeotmSoPnE7LtZ2VDtOKna
-	GN3YyS76duj+0vjTE0l76Xmvb32TFv208HHfiV3zE1MHf79bNlWecuDHAd0Xk9/1b9uWtrb/
-	0FEF0aqUCauwRqt8B4xzrPqPAwAA
-X-CFilter-Loop: Reflected
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	/LiUgvXqGDN6bF/SFKncCg13nW8nNDh1rzO/ceQUKK9xoLzuczWVsjI9WsS6GFpV8FEo/ldVT/lSPq9zoXMBYWZHzZRjC530Xxm6Waz4P4EqRjYrMVD/K03PkFqm1HTxV9QEzDNoHogCW+Rs2vGhQxjEspZA36xPCWOMlWaaTlzXlRKTJHsd9J1vQCToixOyMdCXtdFjKWT27pGK6L/8CRFI0NKD40p4fDOX2Bq07hcY2tR2NxemqBJIwcCWdHsekkWV0BFfN14c0UF1dudv7upI7g/Zo7Mr1czr6nY4R3uznF60QZFEOYb94UvHju8Ehg8PE2Fi/bazvtL7m9pUlkHrAwA5leixj8aE9c+xLue1S3k7NaFAjcSti9XtKhrW50TBNrF47W2hwUhtxv2yV3ze/g/lQ4frmLgce6sCXZRvfQ7PfEqpgxMvw7CSMYqhxfT/0N6RSlVL6VVxauTKL2aZsD+z0O/MCTkGb2i5YbcNzb5rBuFgF9FEwuWfoNaq9slHo3mNwmMFIZePgxkMj6cf0WJG7XBQwzXzgtysAZ2Z/UWpcPf3URiEshUWAaFQ0QZD2GC7ad/zFLubVoTFaFdx6PS5GixQV7Ft4PEgMSbWpK15Vix9GWC6YcmVOL/u
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e206cdf-12dc-4fba-57d1-08de0aef9950
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2025 07:02:11.8593
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TYpZBdOX+8pxlfG615kEMT1ZPMsBgvEo5DSrQXyz0DpuVxde4oaaxCY0LssIleyBctiWj5MPlnQ9JRPGbzIr7s30XKf6YKrf28vzm4MgCwU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR04MB8687
 
-On Tue, Oct 14, 2025 at 05:03:58PM +1100, NeilBrown wrote:
-> On Mon, 13 Oct 2025, Byungchul Park wrote:
-> > On Fri, Oct 03, 2025 at 04:55:14PM +1000, NeilBrown wrote:
-> > > On Thu, 02 Oct 2025, Byungchul Park wrote:
-> > > > This document describes the concept and APIs of dept.
-> > > >
-> > >
-> > > Thanks for the documentation.  I've been trying to understand it.
-> >
-> > You're welcome.  Feel free to ask me if you have any questions.
-> >
-> > > > +How DEPT works
-> > > > +--------------
-> > > > +
-> > > > +Let's take a look how DEPT works with the 1st example in the section
-> > > > +'Limitation of lockdep'.
-> > > > +
-> > > > +   context X    context Y       context Z
-> > > > +
-> > > > +                mutex_lock A
-> > > > +   folio_lock B
-> > > > +                folio_lock B <- DEADLOCK
-> > > > +                                mutex_lock A <- DEADLOCK
-> > > > +                                folio_unlock B
-> > > > +                folio_unlock B
-> > > > +                mutex_unlock A
-> > > > +                                mutex_unlock A
-> > > > +
-> > > > +Adding comments to describe DEPT's view in terms of wait and event:
-> > > > +
-> > > > +   context X    context Y       context Z
-> > > > +
-> > > > +                mutex_lock A
-> > > > +                /* wait for A */
-> > > > +   folio_lock B
-> > > > +   /* wait for A */
-> > > > +   /* start event A context */
-> > > > +
-> > > > +                folio_lock B
-> > > > +                /* wait for B */ <- DEADLOCK
-> > > > +                /* start event B context */
-> > > > +
-> > > > +                                mutex_lock A
-> > > > +                                /* wait for A */ <- DEADLOCK
-> > > > +                                /* start event A context */
-> > > > +
-> > > > +                                folio_unlock B
-> > > > +                                /* event B */
-> > > > +                folio_unlock B
-> > > > +                /* event B */
-> > > > +
-> > > > +                mutex_unlock A
-> > > > +                /* event A */
-> > > > +                                mutex_unlock A
-> > > > +                                /* event A */
-> > > > +
-> > >
-> > > I can't see the value of the above section.
-> > > The first section with no comments is useful as it is easy to see the
-> > > deadlock being investigate.  The section below is useful as it add
-> > > comments to explain how DEPT sees the situation.  But the above section,
-> > > with some but not all of the comments, does seem (to me) to add anything
-> > > useful.
-> >
-> > I just wanted to convert 'locking terms' to 'wait and event terms' by
-> > one step.  However, I can remove the section you pointed out that you
-> > thought was useless.
-> 
-> But it seems you did it in two steps???
-> 
-> If you think the middle section with some but not all of the comments
-> adds value (And maybe it does - maybe I just haven't seen it yet), the
-> please explain what value is being added at each step.
-> 
-> It is currently documented as:
-> 
->  +Adding comments to describe DEPT's view in terms of wait and event:
-> 
-> then
-> 
->  +Adding more supplementary comments to describe DEPT's view in detail:
-> 
-> Maybe if you said more DEPT's view so at this point so that when we see
-> the supplementary comments, we can understand how they relate to DEPT's
-> view.
-
-As you pointed out, I'd better remove the middle part so as to simplify
-it.  It doesn't give much information I also think.
-
-> > > > +
-> > > > +   context X    context Y       context Z
-> > > > +
-> > > > +                mutex_lock A
-> > > > +                /* might wait for A */
-> > > > +                /* start to take into account event A's context */
-> > >
-> > > What do you mean precisely by "context".
-> >
-> > That means one of task context, irq context, wq worker context (even
-> > though it can also be considered as task context), or something.
-> 
-> OK, that makes sense.  If you provide this definition for "context"
-> before you use the term, I think that will help the reader.
-
-Thank you.  I will add it.
-
-> > > If the examples that follow It seems that the "context" for event A
-> > > starts at "mutex lock A" when it (possibly) waits for a mutex and ends
-> > > at "mutex unlock A" - which are both in the same process.  Clearly
-> > > various other events that happen between these two points in the same
-> > > process could be seen as the "context" for event A.
-> > >
-> > > However event B starts in "context X" with "folio_lock B" and ends in
-> > > "context Z" or "context Y" with "folio_unlock B".  Is that right?
-> >
-> > Right.
-> >
-> > > My question then is: how do you decide which, of all the event in all
-> > > the processes in all the system, between the start[S] and the end[E] are
-> > > considered to be part of the "context" of event A.
-> >
-> > DEPT can identify the "context" of event A only *once* the event A is
-> > actually executed, and builds dependencies between the event and the
-> > recorded waits in the "context" of event A since [S].
-> 
-> So a dependency is an ordered set of pairs of "context" and "wait" or
-
-I don't get what you were trying to tell here.  FWIW, DEPT focuses on
-*event* contexts and, within each event context, it tracks pairs of
-waits that appears since [S] and the interesting event that identifies
-the event context.
-
-> "context" and "event".  "wait"s and "event"s are linked by some abstract
-> identifier for the event (like lockdep's lock classes).
-
-Yeah, kind of.
-
-> How are the contexts abstracted. Is it just "same" or "different"
-
-I don't get this.  Can you explain in more detail?
-
-	Byungchul
-
-> I'll try reading the document again and see how much further I get.
-> 
-> Thanks,
-> NeilBrown
+T24gMTAvMTQvMjUgNjo0NCBBTSwgaGNoIHdyb3RlOg0KPiBPbiBNb24sIE9jdCAxMywgMjAyNSBh
+dCAwODoxMTozNUFNICswMDAwLCBKb2hhbm5lcyBUaHVtc2hpcm4gd3JvdGU6DQo+PiBJZiB5b3Ug
+aGF2ZSB0byByZXBvc3QgdGhpcyBmb3Igc29tZSByZWFzb24sIGNhbiB5b3UgcmVuYW1lIHRtcF9p
+bm9kZSB0bw0KPj4gdmZzX2lub2RlIG9yIHN0aCBsaWtlIHRoYXQ/DQo+Pg0KPj4gVGhlIG5hbWUg
+aXMgcmVhbGx5IGNvbmZ1c2luZyBhbmQgdGhlIGNvbW1pdCBpbnRyb2R1Y2luZyBpdCBkb2Vzbid0
+DQo+PiBkZXNjcmliZSBpdCByZWFsbHkgZWl0aGVyLg0KPiBJdCBpcy4gIHZmc19pbm9kZSBpcyBr
+aW5kYSB3ZWlyZCwgdG9vLiAgVGhlIHByb2JsZW0gaXMgdGhhdCBpbm9kZQ0KPiBpcyB1c2VkIGZv
+ciB0aGUgYnRyZnNfaW5vZGUuICBCdXQgaWYgdGhlcmUncyBjb25zZW5zdXMgb24gYSBuYW1lDQo+
+IEknbGwgaGFwcGlseSBjaGFuZ2UgaXQuDQo+DQpJIHVuZm9ydHVuYXRlbHkgZG9uJ3QgaGF2ZSBv
+bmUgOiggRGF2aWQ/DQoNCg==
 
