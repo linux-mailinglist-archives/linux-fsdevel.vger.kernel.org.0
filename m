@@ -1,145 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-64145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6136BDAABC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 18:43:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBC4BDABAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 19:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC973AC399
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 16:41:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30E064F1813
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 17:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60883019CF;
-	Tue, 14 Oct 2025 16:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952683054DD;
+	Tue, 14 Oct 2025 17:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FTF5z4wF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCKb16It"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD80A2676DE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 16:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72723304972
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 17:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760460101; cv=none; b=eYKXOaIx/fM4qW5wIX/Gxe6xjMRPUnKqAWEAgw0cQnOTaPzisG5ZX/At6TbQliNB/yVSiKkSetEmPGJ2ZuZE2jpX6nQgJ2dyYlSbilV0YETiEG22wuedVmEcYgvo9ae845twY57rGbEmDi1NBD3/j2ZNV55tBN0hSVdOalbC2FM=
+	t=1760461328; cv=none; b=HtZLudAOU4MgOEFvwOyeg1AJvka8x6VbCiIl49F+vW1tqR/K1kQgth0dGJPuSbNBSWVc4IGKtnZF416ifF6DjwODxqJhBLZk/RnB5uTyArzeOE7JGrTfTTcZBL8dsRB9V69Xnl4CbmZbP0tFxzLTH8FC1MJEJ5Wdnke1WUO0v+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760460101; c=relaxed/simple;
-	bh=BmFOD/P5ahpKb/OrWMG1pZr49BaGZDtavZjItlAu5oY=;
+	s=arc-20240116; t=1760461328; c=relaxed/simple;
+	bh=L4ugcq6cShFH07clIC29+wavr51l+pFw40whAk/VOpo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VXaKgmpnnHEnKXQ0EuFUp6gLAWHUlChSDFl7uWH763cy9e7VbToSM8g4R89F3pFLaQPof4QFGAbk57JHCZEZOWqgiaScU7qkyWlphNO6jVlvvqotZmVeeAxAl/zn24UZpTtRrOsjMW15mdksGP9kFS6hhAwc75hb19M6TA+PErk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FTF5z4wF; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso892311566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 09:41:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=rUU11DiJuTTuT0sMlFKxoiLwondzlehWmOHdTQrteNbJnppNh0hSR/J081CSrDn5MPdiiR54ezMbZk8v73JQ7VbfwDBmWSmdTIKjwDcjfpLrUesU5y7szg28hWfGIBv+lWWpunPF5HJJG3Dmo5+GLRASJYNtvaUAZ0Z5zLpl/pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCKb16It; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7815092cd05so10247447b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 10:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1760460097; x=1761064897; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TfIjTfdF2e53St+2VVBPM1O6zAI6tUF3QFF7DgeTNmM=;
-        b=FTF5z4wFvbiBHGB3AV8Ag2GReoqxoN0eEFAwNDy0aiibk9zXwV6Hw+Nx9da2UQB6yH
-         weeYSdPk3lZ8+wpGNX7O9kC5MQByNQIg11yv/EKShQPXWGJtPUKwWV9e/D7aYyuGLILr
-         uHsEjVZjL1D+i7Ujq0WT9doNNKlYuCnMAOPkI=
+        d=gmail.com; s=20230601; t=1760461325; x=1761066125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yiCVY5I1JOpPd1mbXTfrhMnqAsmeTTtG3NfQtMnTa2A=;
+        b=HCKb16ItdVmdIrq/mO6LLg4FjyPsWcaGIkrKQkoa+t7jxzOz6H+4FpzplczDiPuMgL
+         oZhc03ml831jOu3nMUkihblC3UukIxThZ8nV9e3w45kQg8zb4l4TA7+w3asku7nKtY+6
+         OKsupcsFi2CpJCT3Txg9qlzoz2QkgJggw0G/fntS41LV7VCgR95lboJGhFIEoj2aQKPb
+         ldhX7BTsMW2s3wCRanq3V5sB3Nyr7Bs1ZUNQCSFCyzBVanDq6JkiRW/NLCMCRbSRHzsI
+         8iRG39vQLsvWWX74Fdkqu6lyDmcPBIZhuIDfPFACCZO7I32o4HjIo1B9j1tCcdK/4zc/
+         VAvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760460097; x=1761064897;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TfIjTfdF2e53St+2VVBPM1O6zAI6tUF3QFF7DgeTNmM=;
-        b=iXGTmeN1XOV8f1I5USxDAbPDinRrBteuuUeT8z3IPAzRusaa+M9y/KAgZbKZT8V6V0
-         ALfWoSRZYeqZgIuVZZ+735xhuqmFb+gKg1uxkGj+pzqz5cWCdeKkNdiksQ5WzQdIV+P8
-         Fhh1BdQW/Ob1PRXCKicFXD+czUF3AYFs5IwwlaSjE0hPZZauHVAwKFZtoVEUTEBle1um
-         NOJhr0wxMYKddfc56Feu6mpz9y6GLQ1V9BNcjeLs4b3TgrwuF1ckyGD+S7AaXnzCJ1FU
-         HbjwLYeyXfbk6+fAyIcQrvow6y5kRYROVhiLUCvdk0Cr3B3TagL6FXriIxyEB4Y1hx2d
-         yCkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwgMJDFtfLAMBe0XRWgYM0oZzcs48sjh7tcG9AOPlnQ7q/vYd36xCKtihIQQTRplFYJukfQh9gefz5QDix@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqLWQ+E7Ef9Yd9E1NECRCy4Poa6kzLX2AkTtRCVC34eiSTOLQT
-	mf3L+4SIcBJuES6AqZSCXIhuQ+HHNq5/2FG6lxvTl73PcZ44KlAQXXPo5y+xmsT+phU1r8sNFaO
-	5HTaCyBs=
-X-Gm-Gg: ASbGncvQwXGoSHNU7DrnxuV9sannKm4aTkiz6cPmk5Wwqy/Xa8gwNGGFCXG4ft3f/3h
-	gg+/IoI7x+DmV5tuAxgzGQwX4WlHvoTZ5EDwrsCDfv2ucx7cDmzZwpHSm/surVVZ0rJvMKhLAxi
-	8fvzLmZ4HwURxq2PG3rzF/dcB/TrJEfJq3xhRyqi7Hk4aXqd2EISUOQuppJNBOMYDmHVzO1nd91
-	qv+5HVnpQ6JELjwSVDS3VVKZmtnBAot4eD/SZ90+RWdEPFogbvFw61iu0pS2K5L8P1tgCm/CK5A
-	MIokYR1GK0XgjhA6Wh9gpIIpws0D2FIaN7w/D+NjQrUyyC1kxeZe4NuXwhCXhXQbKCbilKn1ZF9
-	Nu83Tr/+aT/lhlYWTkQhUBFyepvKrEmVCNqUR8DftBqMHahNF750a/aU0tYquoNDZ1jJDuEy5Dr
-	mOCalBI2+wPE1i6WjrkgL0dE5k9Famo0XV4nh5
-X-Google-Smtp-Source: AGHT+IGQORl9B6NmmFwdjFwrO0WitZvjOZ5J2Hc4+6EYadGp1VRjKpDhFyx/XgDsp30vpQnXCvQK1A==
-X-Received: by 2002:a17:907:608c:b0:b3c:364d:b884 with SMTP id a640c23a62f3a-b50ac4d284amr2777175066b.63.1760460096975;
-        Tue, 14 Oct 2025 09:41:36 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccb49cfsm16895866b.49.2025.10.14.09.41.35
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 09:41:36 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e44f22f15so798985466b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 09:41:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXBKtl/Ja84xK/yNLKLtMze49sy97m39zaR4If6Z/YSaMtaWxSEWRmBXZX6wNFV0WvZ4gx6rwOiDGohAr92@vger.kernel.org
-X-Received: by 2002:a17:907:3daa:b0:b45:60ad:daf9 with SMTP id
- a640c23a62f3a-b50a9a6cb4fmr2924764166b.3.1760460095576; Tue, 14 Oct 2025
- 09:41:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760461325; x=1761066125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yiCVY5I1JOpPd1mbXTfrhMnqAsmeTTtG3NfQtMnTa2A=;
+        b=OeuUE8DESxa4BoZRyo3BhsdFLhyqzZXWhkz9F57f3lXbVaef4CNWU4+V1/0YyccDsZ
+         1xwykn3pgtOdNjvL/TeU4sWkx48dOQ7+MjvD4lDKUmiPXX1cvpI42smtjNSoSp6EH2wQ
+         Ie3Hqv+XO5WdJLZwX48y/BAMS17HKjXjgY7lCDZiNLV6TOMVjd0VqSi/CFYQWf99o4/K
+         dyQEAEuXSVE0V97kqUrkfLUCKanoDnMs92DNXxNAnfU68YcLdHsRLJe6ucgq11s88tiy
+         71dz5gG/B3NWepn1Iln22fKMKHyQhbUOFZQtv8Sc52IAILhSAyamYXZNzAsbHF2vFYpV
+         aOMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvmL7AuBxeENdU2Vz+mpbKSwklWeXK2Ql+PHXgbS+9ul46lsrOcyX7HqMWu0g0rGtNZLny3MykmSkKkfnP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCrJeWLaVM/YxisMJ9m89+9azyas2WhtRSMUtnd7hltVKt5eC8
+	xsVW7Q6k5dRp4QyMlBDC5VgL1XuB2s/NKRdjk2XEPSCXjZ4yN81T4+xP+Kr5n8UcP8kfF4i/Iun
+	NuOq97xy2P3tOhdv9z+a4T8z5ZkHt7do=
+X-Gm-Gg: ASbGncs0XQRNtJXMkjarULX2hwSwBDvAdqobJ3dh+qtRafseHKRVF43aaK5HLDKYx1g
+	1nDJKbMXpdQAd0sADP67tROWW1s9DIaL+LW1ZWO/SrD6DJ6vg1k54MVbInokbaoO7go8g7OwZur
+	irTMCDKPldNy366RPuOUDEhm9uB8mNpQ6wOg3zlVcrrRp7N17zh+EbXIDm5XAuqRZZGmBEBAoBB
+	IzsDe7FeetbEWLR72sh+v7qMlCR87ot0CO3FIENq2A5dDHL6nQ1yxVB/g==
+X-Google-Smtp-Source: AGHT+IEujHm7zyW9C9csmplcIl28YSFbDC+RXAgRXtI1BLXHl0TPBl4b/XV5+0w/3Sz4hb4eZjnDYii/ibYLEg5tNaU=
+X-Received: by 2002:a05:690c:fc2:b0:780:fcbb:c35f with SMTP id
+ 00721157ae682-780fcbc0e13mr190348647b3.30.1760461324794; Tue, 14 Oct 2025
+ 10:02:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
- <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
- <CAHk-=wi42ad9s1fUg7cC3XkVwjWFakPp53z9P0_xj87pr+AbqA@mail.gmail.com>
- <nhrb37zzltn5hi3h5phwprtmkj2z2wb4gchvp725bwcnsgvjyf@eohezc2gouwr>
- <CAHk-=wi1rrcijcD0i7V7JD6bLL-yKHUX-hcxtLx=BUd34phdug@mail.gmail.com>
- <qasdw5uxymstppbxvqrfs5nquf2rqczmzu5yhbvn6brqm5w6sw@ax6o4q2xkh3t>
- <CAHk-=wg0r_xsB0RQ+35WPHwPb9b9drJEfGL-hByBZRmPbSy0rQ@mail.gmail.com>
- <jzpbwmoygmjsltnqfdgnq4p75tg74bdamq3hne7t32mof4m5xo@lcw3afbr4daf>
- <dz7pcqi5ytmb35r6kojuetdipjp7xdjlnyzcu5qb6d4cdo6vq5@3b62gfzcxszo>
- <CAHk-=wgrZL7pLPW9GjUagoGOoOeDAVnyGJCn+6J5x-9+Dtbx-A@mail.gmail.com> <wfneq47jscotsqb2hhwpjfp2hqz4d7yyw643yagqnqvh74opvx@5fnmgowterq5>
-In-Reply-To: <wfneq47jscotsqb2hhwpjfp2hqz4d7yyw643yagqnqvh74opvx@5fnmgowterq5>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 14 Oct 2025 09:41:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj8KLDrL7ApM76cJTSXbZ0uxktexBaN9pMYO+hsiW-KxA@mail.gmail.com>
-X-Gm-Features: AS18NWDqj066zW2Fdpipv6VXjg2cDmYzFXBwfjyGrNNP2eC0z2mKKWvE1qATHFI
-Message-ID: <CAHk-=wj8KLDrL7ApM76cJTSXbZ0uxktexBaN9pMYO+hsiW-KxA@mail.gmail.com>
-Subject: Re: Optimizing small reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+In-Reply-To: <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 14 Oct 2025 10:01:53 -0700
+X-Gm-Features: AS18NWDA-EBGXeaV443-s_8eQCzvx4G2-GBvxjQgb9Qan8gEi2zGKFJFUTwlXxQ
+Message-ID: <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Brian Foster <bfoster@redhat.com>, lu gu <giveme.gulu@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bernd Schubert <bernd@bsbernd.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Oct 2025 at 05:58, Kiryl Shutsemau <kirill@shutemov.name> wrote:
+On Tue, Oct 14, 2025 at 5:43=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
 >
-> clang-19 actually does pretty good job re-using stack space without
-> additional function call.
-
-Hmm. That certainly didn't always use to be the case. We've had lots
-of issues with things like ioctl's that have multiple entirely
-independent structures for different cases - so obviously no lifetime
-overlap - and it has caused lots of extra stack use.
-
-We do use -fconserve-stack these days and maybe that fixed the
-problems we used to have with duplicate stack slots.
-
-Or maybe it's just "different compiler versions".
-
-But the case I was worried about wasn't so much the "re-use stack
-space" as simply "lots of stack space for one case that wants it, deep
-call chain for the other case".
-
-But it appears we're ok:
-
-> And if we increase buffer size to 1k Clang uninlines it:
+> On Tue, 14 Oct 2025 at 09:48, Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> ../mm/filemap.c:2870:9:filemap_read     32      static
-> ../mm/filemap.c:2714:13:filemap_read_fast       1168    static
-> ../mm/filemap.c:2750:16:filemap_read_slow       384     static
+> > Maybe the solution is to change the write-through to regular cached
+> > write + fsync range?  That could even be a complexity reduction.
 >
-> gcc-14, on other hand, doesn't want to inline these functions, even with
-> 'inline' specified. And '__always_inline' doesn't look good.
+> While this would be nice, it's impossible to guarantee requests being
+> initiated in the context of the original write(2), which means that
+> the information about which open file it originated from might be
+> lost.   This could result in regressions, so I don't think we should
+> risk it.
+>
+> Will try the idea of marking folios writeback for the duration of the wri=
+te.
+>
 
-That looks good. I'm still 100% sure we absolutely have had issues in
-this area, but again, it might be -fconserve-stack that ends up making
-the compilers do the right thing. Because that sets some stack frame
-growth boundaries.
+Is it safe to mark a folio as being under writeback if it doesn't
+actually go through mm writeback? for example, my understanding is
+that the inode wb mechanisms get initiated when an inode is marked
+dirty (__mark_inode_dirty()) but writethrough skips any dirtying.
+Afaict, folio_start_writeback()/folio_end_write() needs i_wb.
+Additionally, if the server page faults on the folio that is now
+marked as under writeback, does that lead to a deadlock since
+page_mkwrite() waits on folio writeback?
 
-           Linus
+
+Thanks,
+Joanne
+
+> Thanks,
+> Miklos
 
