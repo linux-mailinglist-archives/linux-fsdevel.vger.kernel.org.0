@@ -1,213 +1,293 @@
-Return-Path: <linux-fsdevel+bounces-64090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467B4BD7916
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 08:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481E2BD7970
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 08:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B3B1920E52
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 06:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 058B94063A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 06:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3A82C15A0;
-	Tue, 14 Oct 2025 06:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l6v6uzQV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5CD2D12E7;
+	Tue, 14 Oct 2025 06:38:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFFB158535
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 06:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E101C2010EE;
+	Tue, 14 Oct 2025 06:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760423315; cv=none; b=KzbXF+YnFzL6KND+030W3RHQzBFkHhlYOMLtofGDLT1C/JXKrVyie/gF5vBNHOtZkwWA+5SxzFqs5PJqZop0RiLJJ9FME+1zlmbCmFoHguontAvlr7Uxv0JtYlVDWB7i+d7KPLYkm/9hajuczAoKItxoFuGXetMksM0YJsv/JcM=
+	t=1760423932; cv=none; b=WNAlLULDCKWPSEza5dePnMCsNPcTxKwGcctrWh8yDaQtShjRNmEc512BFSJ6MCCiekxXDbISm6xBarMKUvI9S4Wd7JD6wzMqip8GISxoQBzpLk/vTzPJqXRHctld2woMVoNF/vFlD1RtsXm6b4j5P0k1leUPVO7mojT+YUwwkIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760423315; c=relaxed/simple;
-	bh=OpDb8zcmf7OOOUcsljWtaBvRup8+IOw7WICjSqXWuEE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lM6yOuTZCdfTxQpDc/keY9YLD+9lglyVPikLRATO5Dbt9Yi5+frMrI2QwbBlO6H9F35lNaERm3wEpnez1Cqx8jK236gvifcgf43m6T8JmhWCZ9JlwHoWBJg8A5SCkt4o+EB1oaxWfKNRIUvsfLmppsWOJlfED121WmAgby6MaRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l6v6uzQV; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7ab0012e05aso3590709a34.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 23:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760423312; x=1761028112; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=brM2AXzbshOug5S8YTD/rMQwcF1ZQ1CEjKwrbSaUSno=;
-        b=l6v6uzQV7BveO2h89PmRTKoHW8euu9I+keWirj34S0msvsJW2fBEG+HQhQXHtVZRyZ
-         bAmYTGJHxisFUgCov0+FcZe5K3abP4f2iZQ1Mn8bqT1S5RdQ5PBur1UZht0L9S11fGL9
-         qvghedPpPUz2aOXxXqme5WX3y1mfUmjSYsaQfIKUId1PlcXO3i6iGhpRgl9QMDKyZQIm
-         p/ozVMclJLwaU7GrB/cH5E3zGZTbcBdanWzalRPrUD7jI774MtRkJCGCAMYwWOcp9/nR
-         uJ2MuQ+FFOGkY5hm9dqA9Nb7ZFoYr/vo+y60HABh2tfrPuBcSM3/LfuL472B1WxPBJ25
-         5sBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760423312; x=1761028112;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=brM2AXzbshOug5S8YTD/rMQwcF1ZQ1CEjKwrbSaUSno=;
-        b=HjYwSibGACOe+f88aVr9lAJZPy1wvsOVORIAAYeqEYOF/scnC7JwOr7wJONNTR31wI
-         X0K6pV0TzIdpUym/3IuZ71+J5iEH0aCHjQHGc8cgebUb+va+W1SJA7GzfJ/UD94oT2NX
-         2ZwSt4+bc12vXH97HubDpEIXYjfQlhfS8Kacv7u2PESypyXEHTO7xRb7MZAieCPPijgV
-         5DBID2p4MUOkXSBy6JLia+IaTXslA+x3IVcmWkIlv4NXyayama6MllcLbHhppRLoaYTv
-         UwOpiaTgssVRXIN0P9pXaHkhiiqqRw6/q3jR7tB0oUgeF2EW4D5MipSHchbpiwXyYms9
-         jQZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAI+SNOhaMOckYDJZVYKaj1IAc7ECFuBNiXOHCITLNE88ne14wXRbkGd0Kx2+O530mngMNcKKT3WralSpn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjx1DF8q0IdZ6HuyQrotXUBRYLygSWO7Ic5ILklvKrCrq8BYsl
-	LZBvKxfEbIps72pBPosfQV09fEKXgxjgicYMh7lvO/KARuAtsT1jb8AIOaXP1MIOvA==
-X-Gm-Gg: ASbGncvAaY2uWrxP00mmSbA1wEGTkEcBzxhLkzpdjpv7E+9K3/1TdvtRMuhHLdNVfqc
-	27+L2q/uVI3nan1aSHl0xKrZsviD4Me5IeqwTmuLjXdiwuaV9//MRxZWfFUa3l9R0DMXeBADMbK
-	2RFjp8yvfPZW10AQS4ppX2pz3SKPkD+hFzBWk0ME/ICGP9xj871REWbF1W4no/PSKdaN3QxNMP9
-	X16BgbIcN+VTHszl6Zc6MlHLptE2s8r+c4qegLnBhmO6dTWiJ4AmUntxsw3sd8i9tGnn3NK2yzV
-	0g4jBbiW9q5kjQP4PHvcRCZMTpJePHQE39EXvFjM4a2uL029AIEvarRV8Ug+gxfKi5hf02Oyi9G
-	6Gk2mQDWBmwLhkEDM821R86jBTyBKX9zQ87hPUG2wDoVoHeptvF8QOG5m98HNnuFUfk6ozonNwQ
-	2yeXcDKYrEqvIw006FvPxAKJ0ijQnAd9K3
-X-Google-Smtp-Source: AGHT+IHpAC62Y/PpF9N39pOEV4oQ+R34+qD97A9mi5Ss82ojK2v3fSuKrUmSuLa+MCNnAOAp+Ihp0w==
-X-Received: by 2002:a05:6830:710c:b0:744:f113:fef8 with SMTP id 46e09a7af769-7c0df7becc1mr11002097a34.35.1760423311621;
-        Mon, 13 Oct 2025 23:28:31 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f915eed4sm4209133a34.36.2025.10.13.23.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 23:28:30 -0700 (PDT)
-Date: Mon, 13 Oct 2025 23:28:16 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Kalesh Singh <kaleshsingh@google.com>
-cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-    david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-    pfalcato@suse.de, kernel-team@android.com, android-mm@google.com, 
-    stable@vger.kernel.org, SeongJae Park <sj@kernel.org>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-    Jann Horn <jannh@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, 
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-    Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-    Juri Lelli <juri.lelli@redhat.com>, 
-    Vincent Guittot <vincent.guittot@linaro.org>, 
-    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-    Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-    Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-    linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-    linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] mm: fix off-by-one error in VMA count limit
- checks
-In-Reply-To: <20251013235259.589015-2-kaleshsingh@google.com>
-Message-ID: <144f3ee6-1a5f-57fc-d5f8-5ce54a3ac139@google.com>
-References: <20251013235259.589015-1-kaleshsingh@google.com> <20251013235259.589015-2-kaleshsingh@google.com>
+	s=arc-20240116; t=1760423932; c=relaxed/simple;
+	bh=WTdEIPVnTjVYFmBVT010VFa83HYwQgS+DTRMlHzMHzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6IU/dR+myfq1GsCZb73Jb2DO9UMNCaZnDFrTgZjF+aBdB0Qy8XsG3LPq9RY5Bd/tdO6IA0i5kTrnewLtndR0ZG2RdC2ZCq49XOKvya32vSM0gtKr8ewKJKRS1P1FMLshof5/KZ5oANr+IOdSk74hwhskM5bi7TXN4WQlYzT8j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-23-68edefefb741
+Date: Tue, 14 Oct 2025 15:38:33 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: NeilBrown <neil@brown.name>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, okorniev@redhat.com, Dai.Ngo@oracle.com,
+	tom@talpey.com, trondmy@kernel.org, anna@kernel.org,
+	kees@kernel.org, bigeasy@linutronix.de, clrkwllms@kernel.org,
+	mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 28/47] dept: add documentation for dept
+Message-ID: <20251014063833.GA58074@system.software.com>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-29-byungchul@sk.com>
+ <175947451487.247319.6809470356431942803@noble.neil.brown.name>
+ <20251013052354.GA75512@system.software.com>
+ <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbVRjGPfee+9Fm1WvF7DiMJjVzygJuhmTvovuKRm9MbDDGLZkxs8rN
+	2qwULIwNF5NuYxuyEbCmVMogZQzW0SKlsLlOapCPIim4goMVxnAQZCJ0TRDQAQVblsX993uf
+	J+/zvCc5PK2sZDfwOkOOZDRo9CpWjuXhdVXJkUhYu2VoaTsMHm/FcL7BxUKBp4yBf5bKaTjl
+	XcUQNfs5mHtwm4NVnx9BaZ+Zhun2WQSWsQkWrFPHMdgmyzmY6nwXbi3MIKidWKFgovUMgmjp
+	IbBaggj+dMcmn+MEC3+UXKHh5nyEhW7LWRbCfecpuO9mwX7Cx0BFuRnByeoGFkorPBj6ppcp
+	GCk1U+D0vA+BkgtUrC7mNa4HS/2PFPRUj2AYd9g4WB7bCqv2TPA773Fwp9iC4fvwDQa6RwcZ
+	+L3rNAM/mO7GHnFzjALXuUkaCq7PY/ANb4aq0xcxlFWOsNDi68ZQEJ1D4L82TsE59xUGRl2r
+	DARbAwz0O4MYGu6FKAj4f8Fw43o9A029PfTudLGu6SoluipdSFxaNCPxVEmM2mcitFgTmGHF
+	xfkBVvymN1n02u5wYv5Pw5xo9xwW8zvCjNjkSBKrW6YocXh6h+ip+5pNS9ovfzNd0utyJeNr
+	Oz+Vay8W27ksb/LR5vYOZEIVLxQiGU+EVNLRe5t7xN/5/qILEc9jYSPp9O6Oy6ywiYRCD+g4
+	JwgvksbmIaoQyXlaqE0kIevCmvGMsIv8OuBCcVYIQPqdDWuZSsFKkTOBDx7qT5PusgkcZ1pI
+	IqGVKSreRQuJ5NIKH5dlgprcGrWurT4rvERar3atdRFhXEYu50fRwzufIz87QrgECbbHYm2P
+	xdr+j7Ujug4pdYbcDI1On5qizTPojqZ8npnhQbFfW/vV8sfX0GzwwzYk8Ei1ThFamdEqGU1u
+	dl5GGyI8rUpQbDsWkxTpmrwvJWPmAeNhvZTdhhJ5rFqveH3hSLpSOKjJkQ5JUpZkfORSvGyD
+	CRVtbNlv6mF2vH32iTTZy2amf7a303z35LcH/o1gx2JKkfrVQJBseWcPU+PO21vwpDg+d+HI
+	TrXKmyDLMjz1yWb1exkfFadtP1b01vwrg5fIZM3BnC8GVPdrm02pVbs+G6kPLvu3DSwN/aZw
+	vxFU12xy/v28vmOPpXGfPaeoa2+0T8pV4WytZmsSbczW/Adn3NiEsQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTHfe7z9N5LQ8214riRRLMaozFBZZnbyTCIH6ZXjUSJk8TEaKN3
+	tuHNtYKiMSkCgzCHpVlbaUUrjmpKFaQV7bCGgWVzDBWY2k2RQQqKgE2Ul/BWbF0W/XLyP7//
+	+eecD4fF8hnJYladdUTUZCkzFLSUSFMSC+KDwRHVWl+DBB7nNxEYGy0hcK7WSUNJfYUEHl6r
+	QdAzVoJgYtqKocgzR2DW0MrA6ORTBua8rQhMHQYMTnc+BW/rQjQMtbxBYOwN0GAezCcQtJ9G
+	YBmwMjDo2wwjPY0SmOt+QcGT8WEE9kCIgkBTMYJZUzpcqHLRMN3+AIPZ+BDBxd5uDC/rwqa7
+	9TkC75VTNPTrb2DoCsyHv8aCNNwz/kDDSMc5Cl7X0WA75ZVApdWAoOBSLQ2mynoCnn9/YaBj
+	aIaCZyYDBTX126HHPkCgTV9Fhe8LT12PBau5gAqXlxQYrzZSMGl3MPDnpWcE7LrlYG3vkkDf
+	FQsDM70JMGfLhtaaFwx0nzESuDbyQJJsRMJEURkRHK4GSijqnKUF53knEqanDEgYrS7AQpE+
+	3LYMB7FQ6DoqVLcN08LU2CNa8I7biPBHFS+Ut8cLHks3IxTe+YfZ8dUe6fqDYoY6V9SsSdov
+	Vf18xsYc9sQfc7fcRTpUuaQURbE89zl/1vsKlyKWJdxy3udJjmCaW8H7/ZM4omO4pfx1999U
+	KZKymLPH8X7z+HtjIbeBv//IiSJaxgHfWVPLRLScM1N8cdvO//gC/l5FgEQ05lbx/tAgFdmF
+	uTj+coiN4CguhX/y3Pw+uohbxjc1/EbpkczyUdryUdryIW1D2IFi1Fm5mUp1xrrV2nRVXpb6
+	2OoD2Zn1KPyT9pMz5bfQaNfmZsSxSBEt84eGVXKJMlebl9mMeBYrYmRfnggj2UFl3nFRk71P
+	k5MhaptRHEsUsbKtaeJ+OXdIeURMF8XDouZ/l2KjFutQ2cUV61y/uivcKYGeNbFJ3wf2vDLn
+	7N7Y79uk/2kfKf4s9VP/tOO2+2uTvR2/1e9NNva5BjatNMlzEnVeotmSoPnE7LtZ2VDtOKna
+	GN3YyS76duj+0vjTE0l76Xmvb32TFv208HHfiV3zE1MHf79bNlWecuDHAd0Xk9/1b9uWtrb/
+	0FEF0aqUCauwRqt8B4xzrPqPAwAA
+X-CFilter-Loop: Reflected
 
-On Mon, 13 Oct 2025, Kalesh Singh wrote:
-
-> The VMA count limit check in do_mmap() and do_brk_flags() uses a
-> strict inequality (>), which allows a process's VMA count to exceed
-> the configured sysctl_max_map_count limit by one.
+On Tue, Oct 14, 2025 at 05:03:58PM +1100, NeilBrown wrote:
+> On Mon, 13 Oct 2025, Byungchul Park wrote:
+> > On Fri, Oct 03, 2025 at 04:55:14PM +1000, NeilBrown wrote:
+> > > On Thu, 02 Oct 2025, Byungchul Park wrote:
+> > > > This document describes the concept and APIs of dept.
+> > > >
+> > >
+> > > Thanks for the documentation.  I've been trying to understand it.
+> >
+> > You're welcome.  Feel free to ask me if you have any questions.
+> >
+> > > > +How DEPT works
+> > > > +--------------
+> > > > +
+> > > > +Let's take a look how DEPT works with the 1st example in the section
+> > > > +'Limitation of lockdep'.
+> > > > +
+> > > > +   context X    context Y       context Z
+> > > > +
+> > > > +                mutex_lock A
+> > > > +   folio_lock B
+> > > > +                folio_lock B <- DEADLOCK
+> > > > +                                mutex_lock A <- DEADLOCK
+> > > > +                                folio_unlock B
+> > > > +                folio_unlock B
+> > > > +                mutex_unlock A
+> > > > +                                mutex_unlock A
+> > > > +
+> > > > +Adding comments to describe DEPT's view in terms of wait and event:
+> > > > +
+> > > > +   context X    context Y       context Z
+> > > > +
+> > > > +                mutex_lock A
+> > > > +                /* wait for A */
+> > > > +   folio_lock B
+> > > > +   /* wait for A */
+> > > > +   /* start event A context */
+> > > > +
+> > > > +                folio_lock B
+> > > > +                /* wait for B */ <- DEADLOCK
+> > > > +                /* start event B context */
+> > > > +
+> > > > +                                mutex_lock A
+> > > > +                                /* wait for A */ <- DEADLOCK
+> > > > +                                /* start event A context */
+> > > > +
+> > > > +                                folio_unlock B
+> > > > +                                /* event B */
+> > > > +                folio_unlock B
+> > > > +                /* event B */
+> > > > +
+> > > > +                mutex_unlock A
+> > > > +                /* event A */
+> > > > +                                mutex_unlock A
+> > > > +                                /* event A */
+> > > > +
+> > >
+> > > I can't see the value of the above section.
+> > > The first section with no comments is useful as it is easy to see the
+> > > deadlock being investigate.  The section below is useful as it add
+> > > comments to explain how DEPT sees the situation.  But the above section,
+> > > with some but not all of the comments, does seem (to me) to add anything
+> > > useful.
+> >
+> > I just wanted to convert 'locking terms' to 'wait and event terms' by
+> > one step.  However, I can remove the section you pointed out that you
+> > thought was useless.
 > 
-> A process with mm->map_count == sysctl_max_map_count will incorrectly
-> pass this check and then exceed the limit upon allocation of a new VMA
-> when its map_count is incremented.
+> But it seems you did it in two steps???
 > 
-> Other VMA allocation paths, such as split_vma(), already use the
-> correct, inclusive (>=) comparison.
+> If you think the middle section with some but not all of the comments
+> adds value (And maybe it does - maybe I just haven't seen it yet), the
+> please explain what value is being added at each step.
 > 
-> Fix this bug by changing the comparison to be inclusive in do_mmap()
-> and do_brk_flags(), bringing them in line with the correct behavior
-> of other allocation paths.
+> It is currently documented as:
 > 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: <stable@vger.kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Pedro Falcato <pfalcato@suse.de>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
-> Acked-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> ---
+>  +Adding comments to describe DEPT's view in terms of wait and event:
 > 
-> Changes in v3:
->  - Collect Reviewed-by and Acked-by tags.
+> then
 > 
-> Changes in v2:
->  - Fix mmap check, per Pedro
+>  +Adding more supplementary comments to describe DEPT's view in detail:
 > 
->  mm/mmap.c | 2 +-
->  mm/vma.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Maybe if you said more DEPT's view so at this point so that when we see
+> the supplementary comments, we can understand how they relate to DEPT's
+> view.
+
+As you pointed out, I'd better remove the middle part so as to simplify
+it.  It doesn't give much information I also think.
+
+> > > > +
+> > > > +   context X    context Y       context Z
+> > > > +
+> > > > +                mutex_lock A
+> > > > +                /* might wait for A */
+> > > > +                /* start to take into account event A's context */
+> > >
+> > > What do you mean precisely by "context".
+> >
+> > That means one of task context, irq context, wq worker context (even
+> > though it can also be considered as task context), or something.
 > 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 644f02071a41..da2cbdc0f87b 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
->  		return -EOVERFLOW;
->  
->  	/* Too many mappings? */
-> -	if (mm->map_count > sysctl_max_map_count)
-> +	if (mm->map_count >= sysctl_max_map_count)
->  		return -ENOMEM;
->  
->  	/*
-> diff --git a/mm/vma.c b/mm/vma.c
-> index a2e1ae954662..fba68f13e628 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -2797,7 +2797,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
->  		return -ENOMEM;
->  
-> -	if (mm->map_count > sysctl_max_map_count)
-> +	if (mm->map_count >= sysctl_max_map_count)
->  		return -ENOMEM;
->  
->  	if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
-> -- 
-> 2.51.0.760.g7b8bcc2412-goog
+> OK, that makes sense.  If you provide this definition for "context"
+> before you use the term, I think that will help the reader.
 
-Sorry for letting you go so far before speaking up (I had to test what
-I believed to be true, and had hoped that meanwhile one of your many
-illustrious reviewers would say so first, but no): it's a NAK from me.
+Thank you.  I will add it.
 
-These are not off-by-ones: at the point of these checks, it is not
-known whether an additional map/vma will have to be added, or the
-addition will be merged into an existing map/vma.  So the checks
-err on the lenient side, letting you get perhaps one more than the
-sysctl said, but not allowing any more than that.
+> > > If the examples that follow It seems that the "context" for event A
+> > > starts at "mutex lock A" when it (possibly) waits for a mutex and ends
+> > > at "mutex unlock A" - which are both in the same process.  Clearly
+> > > various other events that happen between these two points in the same
+> > > process could be seen as the "context" for event A.
+> > >
+> > > However event B starts in "context X" with "folio_lock B" and ends in
+> > > "context Z" or "context Y" with "folio_unlock B".  Is that right?
+> >
+> > Right.
+> >
+> > > My question then is: how do you decide which, of all the event in all
+> > > the processes in all the system, between the start[S] and the end[E] are
+> > > considered to be part of the "context" of event A.
+> >
+> > DEPT can identify the "context" of event A only *once* the event A is
+> > actually executed, and builds dependencies between the event and the
+> > recorded waits in the "context" of event A since [S].
+> 
+> So a dependency is an ordered set of pairs of "context" and "wait" or
 
-Which is all that matters, isn't it? Limiting unrestrained growth.
+I don't get what you were trying to tell here.  FWIW, DEPT focuses on
+*event* contexts and, within each event context, it tracks pairs of
+waits that appears since [S] and the interesting event that identifies
+the event context.
 
-In this patch you're proposing to change it from erring on the
-lenient side to erring on the strict side - prohibiting merges
-at the limit which have been allowed for many years.
+> "context" and "event".  "wait"s and "event"s are linked by some abstract
+> identifier for the event (like lockdep's lock classes).
 
-Whatever one thinks about the merits of erring on the lenient versus
-erring on the strict side, I see no reason to make this change now,
-and most certainly not with a Fixes Cc: stable. There is no danger
-in the current behaviour; there is danger in prohibiting what was
-allowed before.
+Yeah, kind of.
 
-As to the remainder of your series: I have to commend you for doing
-a thorough and well-presented job, but I cannot myself see the point in
-changing 21 files for what almost amounts to a max_map_count subsystem.
-I call it misdirected effort, not at all to my taste, which prefers the
-straightforward checks already there; but accept that my taste may be
-out of fashion, so won't stand in the way if others think it worthwhile.
+> How are the contexts abstracted. Is it just "same" or "different"
 
-Hugh
+I don't get this.  Can you explain in more detail?
+
+	Byungchul
+
+> I'll try reading the document again and see how much further I get.
+> 
+> Thanks,
+> NeilBrown
 
