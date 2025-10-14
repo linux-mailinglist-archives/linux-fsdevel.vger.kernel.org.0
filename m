@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-64107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129A8BD8EF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 13:09:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54826BD8F12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 13:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11071924D48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 11:09:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B48D4E4260
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 11:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADAB30B50E;
-	Tue, 14 Oct 2025 11:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551FF302750;
+	Tue, 14 Oct 2025 11:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhLYJIPM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jl0ztH3W"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2102FF171;
-	Tue, 14 Oct 2025 11:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B64514D283;
+	Tue, 14 Oct 2025 11:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760440039; cv=none; b=P8Fo28q4oaAT+aaYgX2WXzB+UHfid06yJ+9n8yPkVZsogDP/lDq3sdGPeyEcnulwvyiWT/7IuOC4lSNSoMhO9RBPJ8cFstRNL0hG2BSzJfsR67FuhUeOPv+Wa2cHfksccNxioB+cJibtByvU9TDA4vqEG3pvGKdyXkkRwEeyZVM=
+	t=1760440223; cv=none; b=h5a3yEHj/Bh8peTe4WUmXLBPQxM+47fsj34AXqoMxBXeN9YtlZXwB0NdBzEN3iAsHXacXjVyroBMvILu872xB5/vXISDmo2l/5ygyhIjjCJRQ0m7d6KgTzNQCBKNmhEVUVLYVnBh7ax8nHHlafGGRetDi+Lhled4Tw6S6XBBpAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760440039; c=relaxed/simple;
-	bh=vm1dKhrADJ6xB8i1PHqbfOm9fjnjW3EW0kBfuZbOrbA=;
+	s=arc-20240116; t=1760440223; c=relaxed/simple;
+	bh=FxsWH1qQqr9tMu/ZDDvTLyHxH+dQhP5inA3jQqoIGE0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Uf5U8KjeoG8LbMG5Hcy5ZdScqijRGxFOh+SyAjGD6WB+w30ZkD8CCu5SUGaSw1xICLCS7ODPbE3D00O/w5xswpO3owaP4A3TnqcbU4MlhKLc9QzY0DqpgmixTyiXUY0LnOMRnnWI7pFWSVaPdOCg5oeyLFjS/VLmbMkFiScWnWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhLYJIPM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A28AC4CEE7;
-	Tue, 14 Oct 2025 11:07:15 +0000 (UTC)
+	 Content-Type:MIME-Version; b=kNu4xnpFHti3IGiM5T7WLbCnDcxuJM6yusK1HeMyudfZMR/sJYOEUu8nmndaDsd/esmkCvZ5EBev3LzMg/6I7eQMyWGNx/IujXMxFnrI2woDLgpCuvEEiglv7UVoirEBjm7eK8nvVKpb1anpqcKjBibE4/kwlAnAA/cbURuMXYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jl0ztH3W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD067C4CEE7;
+	Tue, 14 Oct 2025 11:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760440038;
-	bh=vm1dKhrADJ6xB8i1PHqbfOm9fjnjW3EW0kBfuZbOrbA=;
+	s=k20201202; t=1760440223;
+	bh=FxsWH1qQqr9tMu/ZDDvTLyHxH+dQhP5inA3jQqoIGE0=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=nhLYJIPMQHHZdKW2t/DP0opIk1BHSYOIjik0sN4Kaj3ZHZTMlRySZPIaPNgKZakdM
-	 /N3PYhSIRChruW+qdkpJU/hmUpDeQbynic4rk6i0DFZPRS5uvfVOxnaWvzQqaiOn/e
-	 kNVvurl9lz1pns+QLuPeKqlcoLi9IMf+E8nHrtA4b4wVFbKevGnNc/gOM+TP6dpO7p
-	 zKLEeNeARNJ9G/kr0+emF2Ua/nHxnFnmdqhSEXK+T5brieuZVRqazqfZCqFVrEVlSK
-	 n0tNu8DzW3Mi2XyGrghiRzI2M9VfDZf8/oWwGvJ//wNOnFIhPy9LrPoaZ9BA0whWV/
-	 WVVI6j27h4mng==
-Message-ID: <9a8d3d9e1ac6c5cb12d880410003fd0601e0abc2.camel@kernel.org>
-Subject: Re: [PATCH 01/13] filelock: push the S_ISREG check down to
- ->setlease handlers
+	b=jl0ztH3W7FfhuFAWXE/8q/fcCaWnwWixrSL7iC68ifyZesAUBr9pbvOOGxbwUpvGJ
+	 Ed1W3E5XttQjINgtt1N7I/1vCRYWeqQXwQJL4AhCg01V0DnipIBqCywG8J7sZRhVem
+	 jm0GdUwvxpEEvGZ7U+j0wTnszxbVc9V80DFasZLEYGqra6n/JAJLqRkQH66OTkdeB6
+	 HjgIGemuz2CIweqhSe5BZjsti8e8DVpqsLJyQQ2Xe3PpUp412EReK+VNcGG8ctfNbG
+	 ZoTx5Ciz0t7FBs0tmt8107KND16Hk8I0xz6wWU9Q3G5ArE1+kw1koRKQi/Z8T0qXPz
+	 JyrNoTn5h6NEA==
+Message-ID: <87a320441f2b568c71649a7e6e99381b1dba6a8e.camel@kernel.org>
+Subject: Re: [PATCH 02/13] filelock: add a lm_may_setlease lease_manager
+ callback
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neil@brown.name>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
@@ -69,11 +69,11 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
  netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
 	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
  netdev@vger.kernel.org
-Date: Tue, 14 Oct 2025 07:07:14 -0400
-In-Reply-To: <176042024558.1793333.16859845484527356211@noble.neil.brown.name>
+Date: Tue, 14 Oct 2025 07:10:18 -0400
+In-Reply-To: <176042008301.1793333.506325387242251221@noble.neil.brown.name>
 References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
-	, <20251013-dir-deleg-ro-v1-1-406780a70e5e@kernel.org>
-	 <176042024558.1793333.16859845484527356211@noble.neil.brown.name>
+	, <20251013-dir-deleg-ro-v1-2-406780a70e5e@kernel.org>
+	 <176042008301.1793333.506325387242251221@noble.neil.brown.name>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -158,123 +158,80 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2025-10-14 at 16:37 +1100, NeilBrown wrote:
+On Tue, 2025-10-14 at 16:34 +1100, NeilBrown wrote:
 > On Tue, 14 Oct 2025, Jeff Layton wrote:
-> > When nfsd starts requesting directory delegations, setlease handlers ma=
-y
-> > see requests for leases on directories. Push the !S_ISREG check down
-> > into the non-trivial setlease handlers, so we can selectively enable
-> > them where they're supported.
+> > The NFSv4.1 protocol adds support for directory delegations, but it
+> > specifies that if you already have a delegation and try to request a ne=
+w
+> > one on the same filehandle, the server must reply that the delegation i=
+s
+> > unavailable.
 > >=20
-> > FUSE is special: It's the only filesystem that supports atomic_open and
-> > allows kernel-internal leases. Ensure that we don't allow directory
-> > leases by default going forward by explicitly disabling them there.
->=20
-> What is special about atomic_open w.r.t leases?
->=20
-
-Good question:
-
-We want to break the parent's lease when creating new files, but
-opening an existing file should not. Using atomic_open implies that the
-VFS doesn't know the state of the dentry yet. If it doesn't exist and
-the file is created during the atomic_open, it'll be too late for the
-VFS to break the lease. So, if your filesystem supports atomic_open,
-but uses the standard kernel-internal lease implementation (like FUSE
-does), then it can't properly handle directory leases.
-
-This could probably be fixed by FUSE implementing its own ->setlease
-method that handles them properly, but that's beyond the scope of this
-work (and would probably require plumbing in libfuse and the underlying
-filesystems). Since directory leases are brand-new, the simplest way
-around this is to just blanket deny them on FUSE for now.
-
-I'll plan to write something along these lines for the changelog.
-
->=20
+> > Add a new lease manager callback to allow the lease manager (nfsd in
+> > this case) to impose this extra check when performing a setlease.
 > >=20
 > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > ---
-> >  fs/fuse/dir.c          | 1 +
-> >  fs/locks.c             | 5 +++--
-> >  fs/nfs/nfs4file.c      | 2 ++
-> >  fs/smb/client/cifsfs.c | 3 +++
-> >  4 files changed, 9 insertions(+), 2 deletions(-)
+> >  fs/locks.c               |  5 +++++
+> >  include/linux/filelock.h | 14 ++++++++++++++
+> >  2 files changed, 19 insertions(+)
 > >=20
-> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> > index ecaec0fea3a132e7cbb88121e7db7fb504d57d3c..667774cc72a1d49796f531f=
-cb342d2e4878beb85 100644
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -2230,6 +2230,7 @@ static const struct file_operations fuse_dir_oper=
-ations =3D {
-> >  	.fsync		=3D fuse_dir_fsync,
-> >  	.unlocked_ioctl	=3D fuse_dir_ioctl,
-> >  	.compat_ioctl	=3D fuse_dir_compat_ioctl,
-> > +	.setlease	=3D simple_nosetlease,
-> >  };
-> > =20
-> >  static const struct inode_operations fuse_common_inode_operations =3D =
-{
 > > diff --git a/fs/locks.c b/fs/locks.c
-> > index 04a3f0e2072461b6e2d3d1cd12f2b089d69a7db3..0b16921fb52e602ea2e0c3d=
-e39d9d772af98ba7d 100644
+> > index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..9e366b13674538dbf482ffd=
+eee92fc717733ee20 100644
 > > --- a/fs/locks.c
 > > +++ b/fs/locks.c
-> > @@ -1929,6 +1929,9 @@ static int generic_delete_lease(struct file *filp=
-, void *owner)
-> >  int generic_setlease(struct file *filp, int arg, struct file_lease **f=
-lp,
-> >  			void **priv)
-> >  {
-> > +	if (!S_ISREG(file_inode(filp)->i_mode))
-> > +		return -EINVAL;
+> > @@ -1826,6 +1826,11 @@ generic_add_lease(struct file *filp, int arg, st=
+ruct file_lease **flp, void **pr
+> >  			continue;
+> >  		}
+> > =20
+> > +		/* Allow the lease manager to veto the setlease */
+> > +		if (lease->fl_lmops->lm_may_setlease &&
+> > +		    !lease->fl_lmops->lm_may_setlease(lease, fl))
+> > +			goto out;
 > > +
-> >  	switch (arg) {
-> >  	case F_UNLCK:
-> >  		return generic_delete_lease(filp, *priv);
-> > @@ -2018,8 +2021,6 @@ vfs_setlease(struct file *filp, int arg, struct f=
-ile_lease **lease, void **priv)
-> > =20
-> >  	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE)=
-)
-> >  		return -EACCES;
-> > -	if (!S_ISREG(inode->i_mode))
-> > -		return -EINVAL;
-> >  	error =3D security_file_lock(filp, arg);
-> >  	if (error)
-> >  		return error;
-> > diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> > index 7f43e890d3564a000dab9365048a3e17dc96395c..7317f26892c5782a39660ca=
-e87ec1afea24e36c0 100644
-> > --- a/fs/nfs/nfs4file.c
-> > +++ b/fs/nfs/nfs4file.c
-> > @@ -431,6 +431,8 @@ void nfs42_ssc_unregister_ops(void)
-> >  static int nfs4_setlease(struct file *file, int arg, struct file_lease=
- **lease,
-> >  			 void **priv)
-> >  {
-> > +	if (!S_ISREG(file_inode(file)->i_mode))
-> > +		return -EINVAL;
-> >  	return nfs4_proc_setlease(file, arg, lease, priv);
-> >  }
-> > =20
-> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> > index 05b1fa76e8ccf1e86f0c174593cd6e1acb84608d..03c44c1d9bb631b87a8b67a=
-a16e481d6bb3c7d14 100644
-> > --- a/fs/smb/client/cifsfs.c
-> > +++ b/fs/smb/client/cifsfs.c
-> > @@ -1149,6 +1149,9 @@ cifs_setlease(struct file *file, int arg, struct =
-file_lease **lease, void **priv
-> >  	struct inode *inode =3D file_inode(file);
-> >  	struct cifsFileInfo *cfile =3D file->private_data;
-> > =20
-> > +	if (!S_ISREG(inode->i_mode))
-> > +		return -EINVAL;
+>=20
+> I don't see any locking around this.  What if the condition which
+> triggers a veto happens after this check, and before the lm_change
+> below?
+> Should lm_change implement the veto?  Return -EAGAIN?
+>=20
+>=20
+
+The flc_lock is held over this check and any subsequent lease addition.
+Is that not sufficient?
+
+> >  		/*
+> >  		 * No exclusive leases if someone else has a lease on
+> >  		 * this file:
+> > diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> > index c2ce8ba05d068b451ecf8f513b7e532819a29944..70079beddf61aa32ef01f11=
+14cf0cb3ffaf2131a 100644
+> > --- a/include/linux/filelock.h
+> > +++ b/include/linux/filelock.h
+> > @@ -49,6 +49,20 @@ struct lease_manager_operations {
+> >  	int (*lm_change)(struct file_lease *, int, struct list_head *);
+> >  	void (*lm_setup)(struct file_lease *, void **);
+> >  	bool (*lm_breaker_owns_lease)(struct file_lease *);
 > > +
-> >  	/* Check if file is oplocked if this is request for new lease */
-> >  	if (arg =3D=3D F_UNLCK ||
-> >  	    ((arg =3D=3D F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
+> > +	/**
+> > +	 * lm_may_setlease - extra conditions for setlease
+> > +	 * @new: new file_lease being set
+> > +	 * @old: old (extant) file_lease
+> > +	 *
+> > +	 * This allows the lease manager to add extra conditions when
+> > +	 * setting a lease, based on the presence of an existing lease.
+> > +	 *
+> > +	 * Return values:
+> > +	 *   %false: @new and @old conflict
+> > +	 *   %true: No conflict detected
+> > +	 */
+> > +	bool (*lm_may_setlease)(struct file_lease *new, struct file_lease *ol=
+d);
+> >  };
+> > =20
+> >  struct lock_manager {
 > >=20
 > > --=20
 > > 2.51.0
