@@ -1,186 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-64106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20017BD8E16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 13:05:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129A8BD8EF1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 13:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBFA1924D98
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 11:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11071924D48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 11:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12662FF161;
-	Tue, 14 Oct 2025 11:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADAB30B50E;
+	Tue, 14 Oct 2025 11:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ICFBk2in"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhLYJIPM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E502FC00A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 11:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2102FF171;
+	Tue, 14 Oct 2025 11:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760439895; cv=none; b=tZs5lDQM2b3Uts45JjcrkOBII8ZKfuI3K6thM7zcD/lIqXmaKj9QiCP3CFJF4az7PGEVCw9GyjtI95cklB79Gpw1sM27UMYebGx3m4mDGjTE5f+s4OWgrxWMlmFO8ZOhzgN1+e1uzOX9LqAUIKqJhNPbO+WoYF1hMmfcrysnhWA=
+	t=1760440039; cv=none; b=P8Fo28q4oaAT+aaYgX2WXzB+UHfid06yJ+9n8yPkVZsogDP/lDq3sdGPeyEcnulwvyiWT/7IuOC4lSNSoMhO9RBPJ8cFstRNL0hG2BSzJfsR67FuhUeOPv+Wa2cHfksccNxioB+cJibtByvU9TDA4vqEG3pvGKdyXkkRwEeyZVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760439895; c=relaxed/simple;
-	bh=h5AS+Zjy6zDJe2tBjWwkhuIXONAErINCK4EC2Qd/Awk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/4cBHaO09jA0zjeJBT6dXwqW1c50eKZ9VXr3vm6q2/hL+W1qIFfNGZLUo60kWPX8aKSbeI9aDmoolvipD3kDLO2XcxIIxWF6LBEgUnGMoPsZnuK8CFO8rNzigFHpRRFbhW/eDgIO2se5Lfxb0gKVEfbrhDikBn0XcT9ofd+Z2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ICFBk2in; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760439892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9Mvh4ql8Y8BBLDK18emWlEI/npE8s1LEzxvuBeQPUok=;
-	b=ICFBk2inemDdyTwCJguCPxlNcWAvlsFG5w+4YhfSqyq2yl9lPGx+JqRDhkWTO6cqZGAob4
-	3dUBTrW9iokEJg4Og5iBrwty1rVe0wsgfOWs41AHdTUexrtNktDZWwezQekWE+5fJrCtZj
-	j5zPrgmfDatJG5nYIjR/uHx75IUWZrI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-8-x9nDQ4XPN3qEgHqQMBqp6w-1; Tue, 14 Oct 2025 07:04:51 -0400
-X-MC-Unique: x9nDQ4XPN3qEgHqQMBqp6w-1
-X-Mimecast-MFC-AGG-ID: x9nDQ4XPN3qEgHqQMBqp6w_1760439890
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e36686ca1so48303385e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 04:04:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760439890; x=1761044690;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Mvh4ql8Y8BBLDK18emWlEI/npE8s1LEzxvuBeQPUok=;
-        b=OHz/Xqluaj9nQwddTEjq5YAtYp2Woi20/lHxPhv2wZyNJZ93VulgVnRck6CpaGhtg9
-         iAe/nYDgv3fQ3kTnQgy27AKlpE6urPS2QAPTRqr1FxJ9bnmiIcMM/2eHTpOxf11dIqOr
-         r8u7Mxo5bpYv+JKDrEKVgUrw0Rs+yIun4OGEYknMXXkeMW29gbCOZtfY+t0l85cOMQaL
-         6j0WFwjkmP5pWwW1CvdTDYnDXwjlRxKIFdZl736BRTv2GnwWLjV5iZtyveIsW+bV2zwV
-         mEqKyE7D/kVHvDumTc3ouHk/+1tiqgvUiLQltxYY6JfvCpZ2t3X612hUfrOL/T7rBn1X
-         AKLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSetBw0py8nuKGjmMHfUJGv0+AJxdlzwW1ZKGs0w+JlPisdV3h4bytc2ZebG7Fl12lp0AzagimCjpL7+Rq@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWQJLQjQAUgwV+MW3YlLchYTkb60ZJRdNLxiXKFu+3V0LyIqH1
-	VIjZF1UakCA/2HcYBm5GU0xGhj7twaM2V8DLUY76nLm5l6yjWb/VBgxJ6++p8tBBUEPRwXb+ICW
-	fZCbCA//mFGz9Qvizi8NkV3O2OonQx6Qc41eJwBLMH4uhwXER8D80Zwmbn2gLu5FjzBk=
-X-Gm-Gg: ASbGncvf7MOEsHlMGxxYvdM9/Ynwlowvj0o7q6vbsdEni+jtjThDhVZFDyhRDAhC1sv
-	6JeCeYPtP3zq/SB+2u06qtvB9rYRygl42SP330YDSlwOWwZmup8VI+S/az2t3HsikSIpE6+Fy8B
-	ybFeXjUXQ4SZbnz3GDE7X759M0RL7HF2oSR5nvRuPDO1x62WtWSgIAi4xAMK//mb8GwXBYCTie2
-	pkfVBtSKHvcwS9aRXN/t/ZNwoPOSIQC67GkTk9sUplInjyY3dvgoQSMReo3++UfqzMIjGTPS4Ho
-	44sf/X5cxTb0oOyZIW4vv5pHWpkd3D1DUcdWEdY9dZe1w5bWANvl0ojz5Hkv/lVnmDLz5qu/Ag=
-	=
-X-Received: by 2002:a05:600c:3b07:b0:46e:1fb9:5497 with SMTP id 5b1f17b1804b1-46fa9af84fdmr170865535e9.18.1760439890088;
-        Tue, 14 Oct 2025 04:04:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzx/Z7wqxSbdzibLnTtJ/UYmUM/D1LJV37loBqc1rTNfI1+V20N8hWD4xaH9pYVYV0jbb3AQ==
-X-Received: by 2002:a05:600c:3b07:b0:46e:1fb9:5497 with SMTP id 5b1f17b1804b1-46fa9af84fdmr170865285e9.18.1760439889704;
-        Tue, 14 Oct 2025 04:04:49 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb48a5bf9sm235616575e9.18.2025.10.14.04.04.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 04:04:49 -0700 (PDT)
-Message-ID: <34b482e6-2360-4d65-9996-1513bcf12ffb@redhat.com>
-Date: Tue, 14 Oct 2025 13:04:47 +0200
+	s=arc-20240116; t=1760440039; c=relaxed/simple;
+	bh=vm1dKhrADJ6xB8i1PHqbfOm9fjnjW3EW0kBfuZbOrbA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Uf5U8KjeoG8LbMG5Hcy5ZdScqijRGxFOh+SyAjGD6WB+w30ZkD8CCu5SUGaSw1xICLCS7ODPbE3D00O/w5xswpO3owaP4A3TnqcbU4MlhKLc9QzY0DqpgmixTyiXUY0LnOMRnnWI7pFWSVaPdOCg5oeyLFjS/VLmbMkFiScWnWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhLYJIPM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A28AC4CEE7;
+	Tue, 14 Oct 2025 11:07:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760440038;
+	bh=vm1dKhrADJ6xB8i1PHqbfOm9fjnjW3EW0kBfuZbOrbA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=nhLYJIPMQHHZdKW2t/DP0opIk1BHSYOIjik0sN4Kaj3ZHZTMlRySZPIaPNgKZakdM
+	 /N3PYhSIRChruW+qdkpJU/hmUpDeQbynic4rk6i0DFZPRS5uvfVOxnaWvzQqaiOn/e
+	 kNVvurl9lz1pns+QLuPeKqlcoLi9IMf+E8nHrtA4b4wVFbKevGnNc/gOM+TP6dpO7p
+	 zKLEeNeARNJ9G/kr0+emF2Ua/nHxnFnmdqhSEXK+T5brieuZVRqazqfZCqFVrEVlSK
+	 n0tNu8DzW3Mi2XyGrghiRzI2M9VfDZf8/oWwGvJ//wNOnFIhPy9LrPoaZ9BA0whWV/
+	 WVVI6j27h4mng==
+Message-ID: <9a8d3d9e1ac6c5cb12d880410003fd0601e0abc2.camel@kernel.org>
+Subject: Re: [PATCH 01/13] filelock: push the S_ISREG check down to
+ ->setlease handlers
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Chuck Lever	 <chuck.lever@oracle.com>, Alexander Aring
+ <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,  Paulo
+ Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM	 <bharathsm@microsoft.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>,
+ Tyler Hicks <code@tyhicks.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, Namjae
+ Jeon <linkinjeon@kernel.org>, Steve French	 <smfrench@gmail.com>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
+ <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, 	samba-technical@lists.samba.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Tue, 14 Oct 2025 07:07:14 -0400
+In-Reply-To: <176042024558.1793333.16859845484527356211@noble.neil.brown.name>
+References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
+	, <20251013-dir-deleg-ro-v1-1-406780a70e5e@kernel.org>
+	 <176042024558.1793333.16859845484527356211@noble.neil.brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/10] mm,btrfs: add a filemap_fdatawrite_kick_nr helper
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
- Jan Kara <jack@suse.cz>, linux-block@vger.kernel.org, v9fs@lists.linux.dev,
- linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
- ocfs2-devel@lists.linux.dev, linux-xfs@vger.kernel.org, linux-mm@kvack.org
-References: <20251013025808.4111128-1-hch@lst.de>
- <20251013025808.4111128-7-hch@lst.de>
- <41f5cd92-6bd8-46d4-afce-3c14a1cd48dc@redhat.com>
- <20251014044906.GB30978@lst.de>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <20251014044906.GB30978@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 14.10.25 06:49, Christoph Hellwig wrote:
-> On Mon, Oct 13, 2025 at 02:48:48PM +0200, David Hildenbrand wrote:
->>>    +/*
->>> + * Start writeback on @nr_to_write pages from @mapping.  No one but the existing
->>> + * btrfs caller should be using this.  Talk to linux-mm if you think adding a
->>> + * new caller is a good idea.
->>> + */
->>
->> Nit: We seem to prefer proper kerneldoc for filemap_fdatawrite* functions.
-> 
-> Because this is mentioned as only export for btrfs and using
-> EXPORT_SYMBOL_FOR_MODULES I explicitly do not want it to show up in
-> the generated documentation, so this was intentional.  Unless we want
-> to make this a fully supported part of the API, in which case the export
-> type should change, and it should grow a kerneldoc comment.
+On Tue, 2025-10-14 at 16:37 +1100, NeilBrown wrote:
+> On Tue, 14 Oct 2025, Jeff Layton wrote:
+> > When nfsd starts requesting directory delegations, setlease handlers ma=
+y
+> > see requests for leases on directories. Push the !S_ISREG check down
+> > into the non-trivial setlease handlers, so we can selectively enable
+> > them where they're supported.
+> >=20
+> > FUSE is special: It's the only filesystem that supports atomic_open and
+> > allows kernel-internal leases. Ensure that we don't allow directory
+> > leases by default going forward by explicitly disabling them there.
+>=20
+> What is special about atomic_open w.r.t leases?
+>=20
 
+Good question:
 
-Ah okay, mentioning the intention with not adding kernel doc in the 
-patch description would have been nice :)
+We want to break the parent's lease when creating new files, but
+opening an existing file should not. Using atomic_open implies that the
+VFS doesn't know the state of the dentry yet. If it doesn't exist and
+the file is created during the atomic_open, it'll be too late for the
+VFS to break the lease. So, if your filesystem supports atomic_open,
+but uses the standard kernel-internal lease implementation (like FUSE
+does), then it can't properly handle directory leases.
 
--- 
-Cheers
+This could probably be fixed by FUSE implementing its own ->setlease
+method that handles them properly, but that's beyond the scope of this
+work (and would probably require plumbing in libfuse and the underlying
+filesystems). Since directory leases are brand-new, the simplest way
+around this is to just blanket deny them on FUSE for now.
 
-David / dhildenb
+I'll plan to write something along these lines for the changelog.
 
+>=20
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/fuse/dir.c          | 1 +
+> >  fs/locks.c             | 5 +++--
+> >  fs/nfs/nfs4file.c      | 2 ++
+> >  fs/smb/client/cifsfs.c | 3 +++
+> >  4 files changed, 9 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index ecaec0fea3a132e7cbb88121e7db7fb504d57d3c..667774cc72a1d49796f531f=
+cb342d2e4878beb85 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -2230,6 +2230,7 @@ static const struct file_operations fuse_dir_oper=
+ations =3D {
+> >  	.fsync		=3D fuse_dir_fsync,
+> >  	.unlocked_ioctl	=3D fuse_dir_ioctl,
+> >  	.compat_ioctl	=3D fuse_dir_compat_ioctl,
+> > +	.setlease	=3D simple_nosetlease,
+> >  };
+> > =20
+> >  static const struct inode_operations fuse_common_inode_operations =3D =
+{
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index 04a3f0e2072461b6e2d3d1cd12f2b089d69a7db3..0b16921fb52e602ea2e0c3d=
+e39d9d772af98ba7d 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -1929,6 +1929,9 @@ static int generic_delete_lease(struct file *filp=
+, void *owner)
+> >  int generic_setlease(struct file *filp, int arg, struct file_lease **f=
+lp,
+> >  			void **priv)
+> >  {
+> > +	if (!S_ISREG(file_inode(filp)->i_mode))
+> > +		return -EINVAL;
+> > +
+> >  	switch (arg) {
+> >  	case F_UNLCK:
+> >  		return generic_delete_lease(filp, *priv);
+> > @@ -2018,8 +2021,6 @@ vfs_setlease(struct file *filp, int arg, struct f=
+ile_lease **lease, void **priv)
+> > =20
+> >  	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE)=
+)
+> >  		return -EACCES;
+> > -	if (!S_ISREG(inode->i_mode))
+> > -		return -EINVAL;
+> >  	error =3D security_file_lock(filp, arg);
+> >  	if (error)
+> >  		return error;
+> > diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+> > index 7f43e890d3564a000dab9365048a3e17dc96395c..7317f26892c5782a39660ca=
+e87ec1afea24e36c0 100644
+> > --- a/fs/nfs/nfs4file.c
+> > +++ b/fs/nfs/nfs4file.c
+> > @@ -431,6 +431,8 @@ void nfs42_ssc_unregister_ops(void)
+> >  static int nfs4_setlease(struct file *file, int arg, struct file_lease=
+ **lease,
+> >  			 void **priv)
+> >  {
+> > +	if (!S_ISREG(file_inode(file)->i_mode))
+> > +		return -EINVAL;
+> >  	return nfs4_proc_setlease(file, arg, lease, priv);
+> >  }
+> > =20
+> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> > index 05b1fa76e8ccf1e86f0c174593cd6e1acb84608d..03c44c1d9bb631b87a8b67a=
+a16e481d6bb3c7d14 100644
+> > --- a/fs/smb/client/cifsfs.c
+> > +++ b/fs/smb/client/cifsfs.c
+> > @@ -1149,6 +1149,9 @@ cifs_setlease(struct file *file, int arg, struct =
+file_lease **lease, void **priv
+> >  	struct inode *inode =3D file_inode(file);
+> >  	struct cifsFileInfo *cfile =3D file->private_data;
+> > =20
+> > +	if (!S_ISREG(inode->i_mode))
+> > +		return -EINVAL;
+> > +
+> >  	/* Check if file is oplocked if this is request for new lease */
+> >  	if (arg =3D=3D F_UNLCK ||
+> >  	    ((arg =3D=3D F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
+> >=20
+> > --=20
+> > 2.51.0
+> >=20
+> >=20
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
