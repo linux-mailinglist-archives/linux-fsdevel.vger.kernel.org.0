@@ -1,72 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-64068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07167BD72DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 05:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DA1BD739E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 06:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DD81897C89
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 03:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F065404F9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 04:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BC4269CE8;
-	Tue, 14 Oct 2025 03:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C110305E3E;
+	Tue, 14 Oct 2025 04:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NP42bns8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y0fN6Ahf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F9A2AD2C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 03:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A972BAF9
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 04:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760412077; cv=none; b=pPUvJ8wqoi4GDSdWMpzvLbhYy0biJTSUIAF0QU1f+Ro8nKtnbQFwV4cMHHzBvxXomkljn1BsUmQehgDTn5GHvBV8nOq70zGDZ+YIG6042bC+m52Pv9MJCqG7Y840D2pJ1lLuFxvEcBdyUJKDd2GmMxuONy03pAa0393BDLdti1o=
+	t=1760415270; cv=none; b=JrLVpGWeGBFGdWunBsBF261/x7qtdjEWaChBdT+iRuwQgi+Q91JZ2GQZKZ2MLYRDadoE40kJer9LdAjMc7i0PK8Xi13KbPiWrRwpr5Kb57THSEIJchuNhE/nDt7suQKu7Y2buHSTJjaoo2ZNHywgpBo8tV5RcH53JS8jVSkK568=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760412077; c=relaxed/simple;
-	bh=nar2PWi0AZr5nNb6qn1v8+eAngFzZpHCB1uMRhBtrIo=;
+	s=arc-20240116; t=1760415270; c=relaxed/simple;
+	bh=J/LUY+BOeXbEY+owlyL6s+wJWXhzUrYfg4hwKrqFtZc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfsmvjLy5hriYLb3/zvLfsYeQGYievfeu7yZC9yndZBfFkGW0SP9i1CFEaXPGjEHZXJjKGYZ1Ltlob6NrCShlo+XQxsFLTa8OKrZox4BLs4vx/byZg2n5nKJsQ1ZN5hV92tzSDS5nf44QYzKD0VwkhNyYOhq3K54Vs9SNw05sB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NP42bns8; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-170.bstnma.fios.verizon.net [173.48.82.170])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59E3KsU7014549
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 23:20:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1760412057; bh=41OSkq8dhVlpXFlmK5VxSYY/DHIKRiJto96FUVix4L0=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=NP42bns88QjT/FW6rfonREwhQSPUJN/eEvD0QNw7h90hB0l6EU3SqotxLxWIh39gx
-	 4WN08/IPuTGAdNzZ8lW/YtHoMKHfCjyhBp2uRqu1RzFJ3JtWbBak1IFjHfn9KsY3jT
-	 UUGKFJAHfY/uffvWEBHySfOF+iZxkpLDZu+VpHlYVP6onFReFKJ9rat2CYVTAezQvl
-	 IBrJaTZZQh3ytQqP7FHxUa69mh9lDXdrxhYKgG2GpMugZa7jBPfcQcG7yvFYT2EbxZ
-	 XLFK2BT6XotlVagaec9EKrn7Ty8eTdPwO+tjezP4hRBf3rwtqTTRAHge8BUCVPh9Ly
-	 ndpVqQup1Ahgg==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id BE7E32E00D9; Mon, 13 Oct 2025 23:20:54 -0400 (EDT)
-Date: Mon, 13 Oct 2025 23:20:54 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: Optimizing small reads
-Message-ID: <20251014032054.GP354523@mit.edu>
-References: <CAHk-=wgbQ-aS3U7gCg=qc9mzoZXaS_o+pKVOLs75_aEn9H_scw@mail.gmail.com>
- <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
- <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
- <CAHk-=wi42ad9s1fUg7cC3XkVwjWFakPp53z9P0_xj87pr+AbqA@mail.gmail.com>
- <nhrb37zzltn5hi3h5phwprtmkj2z2wb4gchvp725bwcnsgvjyf@eohezc2gouwr>
- <CAHk-=wi1rrcijcD0i7V7JD6bLL-yKHUX-hcxtLx=BUd34phdug@mail.gmail.com>
- <qasdw5uxymstppbxvqrfs5nquf2rqczmzu5yhbvn6brqm5w6sw@ax6o4q2xkh3t>
- <CAHk-=wg0r_xsB0RQ+35WPHwPb9b9drJEfGL-hByBZRmPbSy0rQ@mail.gmail.com>
- <jzpbwmoygmjsltnqfdgnq4p75tg74bdamq3hne7t32mof4m5xo@lcw3afbr4daf>
- <20251013172654.GI354523@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ii4iUTAn/YeVW6j5F4BrR9pMswRr4sTFKef4YxrCFWMcqVzNcIjo2GI6U74kikuCAxzI4nNUUD76O+aLeRGHL0Al7pxXWv6m62rGtekuxh7ncIuyqKDNuKVE7C0FueDztVY7nTe4U+hj2OD58L0oyxgIyo3YEMTx8Lit0vqvKOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y0fN6Ahf; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J/LUY+BOeXbEY+owlyL6s+wJWXhzUrYfg4hwKrqFtZc=; b=Y0fN6Ahf3da6WtdWPPebxHUCQ3
+	uYZukGOQ7lcTqmE/SgBOCGY2fHTPq+P1N143Xvrea150blzMSoFq4pL/qQnLy1cBGmt2JQXMYFXfC
+	ztcbqV3Y7slxzU3H5jyDOt09KZJ4M3N4J//neF2mjbjOj6XXtzy2/BLe7nrAgu12817H1zjFHr7EE
+	uSpBCsC4vUqSYO9VdxJjzyzZYD+sv/6OWpViBZqQBbxBnj5opRh8sMt1TmeQG4EhzSjegVdpIncqS
+	l/yrjKQ5f+4kmYNMgNIfujeYT35wfGof397m4Kq4toLTtP2Mg3jXjKm8uPKi957liZcxlzcB4j90S
+	FnJNZ7jA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8WQe-0000000F5ki-0stC;
+	Tue, 14 Oct 2025 04:14:28 +0000
+Date: Mon, 13 Oct 2025 21:14:28 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, bfoster@redhat.com,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v1 6/9] iomap: optimize reads for non-block-aligned writes
+Message-ID: <aO3OJBJL1Y64KJTL@infradead.org>
+References: <20251009225611.3744728-1-joannelkoong@gmail.com>
+ <20251009225611.3744728-7-joannelkoong@gmail.com>
+ <aOxtJY57keADPfR1@infradead.org>
+ <CAJnrk1aS9ko2ZxKM0zKm6Uy1zP6RFm6JWJ9Ku2zLSK9LmC4pOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,19 +64,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013172654.GI354523@mit.edu>
+In-Reply-To: <CAJnrk1aS9ko2ZxKM0zKm6Uy1zP6RFm6JWJ9Ku2zLSK9LmC4pOg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Oct 13, 2025 at 01:26:54PM -0400, Theodore Ts'o wrote:
-> On Mon, Oct 13, 2025 at 04:35:17PM +0100, Kiryl Shutsemau wrote:
-> > I also need to run xfstests. Unless someone can help me with this?
-> > I don't have ready-to-go setup.
-> 
-> Sure, I've kicked off xfstests with your patch for ext4 and xfs.
-> Results should be available in 2-3 hours.
+On Mon, Oct 13, 2025 at 05:04:30PM -0700, Joanne Koong wrote:
+> Ahh okay, that makes sense. I'll drop this patch then.
 
-No xfstests regressions were noted for ext4; the xfs test run didn't
-get started due to hiccup.  I've restarted it, and can let you know
-tomorrow morning.
+If this is a big enough win for fuse / network file systems we can
+find a way to opt into this behavior.
 
-						- Ted
 
