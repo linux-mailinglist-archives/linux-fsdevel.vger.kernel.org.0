@@ -1,109 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-64127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A7EBD96CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 14:44:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88284BD97BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 14:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14071927DB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 12:44:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0EBAB352BC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 12:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC45313E24;
-	Tue, 14 Oct 2025 12:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8828731355F;
+	Tue, 14 Oct 2025 12:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="GyyEVF0D"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="fXEDl3t4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Nb22c+Sx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C17211491
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 12:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513FA313530
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 12:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445827; cv=none; b=e3F9sRAGeoQi+PKSFtnXDWH7+3eg7DrThfHxoucTKDE5RlMHLwa3sHaXAcCvrSb15Dd4a7AGyYIK/Mv6RGmCJx4+mct8oxI7sjxAWGGNE7HRr5JEnQa26E6dNuYuRXsYNH5zqBBE5/0q9/yCbWjsxNhzOlztvZFSPBpvYHVENuw=
+	t=1760446711; cv=none; b=b3jx2xD5s26u+7yaE2+jlqalcKyoPmO9NnwjOowsMdyP/l1Pu7VUpdPWUAWUoyHT3M6VQeNalCgopbauh4PLjqW2JschjToVCMei8ux/IE4wDS+3ncGJsfMQJ+eiVb21eadb8HgzcwvloqL02rDdC/9glba1qV1/4OfmBkN5uso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445827; c=relaxed/simple;
-	bh=NCSyvzFqsRWIwdb2ZFV3sGd2UxItcJXGY/fYHe854rU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GkO6bhI1WYq6LSOM99mkMBAJZkNvaixnTOgYNZHoGuIUpMZVhZ5eunmpeQavRCxGsuvy/TV9/XMumix/zdRWD5jYMFIZKAzJlw1IOw09bb0Hnqv2kqQChiSSJVZExOhrwN5Ynb+hIhNenfafAnysacLF3+GpTM9/i/qovcR9hOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=GyyEVF0D; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-858183680b4so879125285a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 05:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760445824; x=1761050624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zg5nDf1lU2Lu0yIBtEqem77SfqDoSZE4X/mwOikYVIk=;
-        b=GyyEVF0DDTTdvwCVv2ibU3JOhpQM/aJZbAPC3UiWsSZxWYmRDXy51XwioW0slwzJhm
-         nLRpOx1V8gDtZV7aBIZA57VWemRU4u0m7WRQlQNHQd3BZZAG+rk8EDrW47t/sdhyANQZ
-         yviC40kJVb0oIusyexg+OlEYJ+M7FDOlfGYe0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760445824; x=1761050624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zg5nDf1lU2Lu0yIBtEqem77SfqDoSZE4X/mwOikYVIk=;
-        b=ogwLNV8wz7V4o0WT9qR50/4H2jQpXmVlb1RoPIm0m3dZ2pGciUEh+gOptm1TXTn+2h
-         9qBbXow89fCGREviRWJ9iabIm6py3mjaAewnUovNK8xOSJZIkW9W13FmR9hqv8fKjZ4h
-         TI5CEKIGSdCdqiFvNHZK1aMl+OeYKzaodjY92/VDM5a/d+spKeagBq3mFv33sRX5cboW
-         ajiTBt1BxtAd7onT6nqLVC7WH+MMBztAqPWwboITeHuAeO/E8yGFF+QmDR0MTKnHjsiG
-         ODxhohqXSyLXWnBL0l4+x3MUwDoAulTu+r0dsjMaLLg65qcR6FhaNmyXLkDWX2qQrCJ4
-         IBWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUMMFTuepIvDXkP1nhH7Ua75aMFHG+1QrQl3pXQLlCgDMLzofvR6bHx5l5y59sbTk3XGMGJt/8rYqI3BhS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa+NrWOMJ4Bwuub6+n84D6mDG1YGc0P5W5+HTFW/shftoV5J6x
-	BwZshpZw1jqpCFnQ9Ity1TId7MTxt8UUwKPuvPKcJ3P7FEcv3gx9sn6HtlAS6GxIP7hGReWvqkh
-	OaV4Uctr9FV6ABnMgf9JjWS/UH+lFabSLVqtHYwdr0Q==
-X-Gm-Gg: ASbGncuRxUZNQQrH9MzNltykNhdTv1nQO4Skm156VpSfM8KT/GKoXhG+Ad2Efa7KLnD
-	6VFbKHIZ8z2a9P9Pzr9knxDAFvhfZx/azLzCG711oV1Q0h5SduJJIT3BSXYwDh+/J5HoKS4qCx2
-	I1PBWwfO8LXuo9iYwFQvlsY26CLVG1nqFtkKqLjJugIyV9/DmOuJL5tSEhi5staZoDO/N4kgUtS
-	S8tXNoMJDl7+d4JZjvX8VwgO8G2JZYwusw0dw35YSapAetqZ31gdakm4hPArboffImFnQ==
-X-Google-Smtp-Source: AGHT+IFotZagUXmwunsrc6F0qIh8XxOAKfcZN39gGs0upydesG0aZnr0ML2n9PTQ8qPprd/tdeaQBA7Ie3ng4BHYjF8=
-X-Received: by 2002:a05:622a:1e87:b0:4b5:e8c2:78d2 with SMTP id
- d75a77b69052e-4e6ead56981mr319904511cf.62.1760445824246; Tue, 14 Oct 2025
- 05:43:44 -0700 (PDT)
+	s=arc-20240116; t=1760446711; c=relaxed/simple;
+	bh=uet+BtZTlAxor6IkrL9lXe4NV7w/DBbY2z4UVZWzpo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hztXP6KmNcR6b163APwQ2vvNJh7adAKM/uutMhv4ehPNhfLkqHuwgT96hkSNxIEDZNI6PSyFItCijUvPAiQaNgx7O3BtpRfm8OgWCODWnZUEuK5Ca3Pwi4QHUB3itxb7895ZuxVYHcMkCAR3F1it60SSSLdrIOmQ8eLYLXUN1Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=fXEDl3t4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Nb22c+Sx; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3D75F14000EE;
+	Tue, 14 Oct 2025 08:58:28 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 14 Oct 2025 08:58:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1760446708; x=
+	1760533108; bh=u6LKml2pyPSTZcevZ804GiM8rOEYpqXLcQSqWC6v/9E=; b=f
+	XEDl3t4bZjYkKGTfqhLQZhK8NQDLKPVQHpJ2wy6BbqnfG/SCz99JC5BwzLOhd5At
+	w7kHsQQgFDgos7dxM88z0/WQvUzDp7BdePP6QVKuiKbOQIFNZmG8bJCLZJn98eRF
+	W3356NbDYS7HKSKQIzqMmyqKrHnKfwPmdpmnCe24YU/a/bRfrBZnTHiO5lkMeGZD
+	uXndhDOI0iABQTafifiS6/nl7a2PemA1ILx/hnvzion3rglkGxaQI0DJP/+HCeV4
+	fhScVKh2ildfRXK8NgoAWnwiWqiMVwT6Sjc0cCtakR0DnuE1MF0AcoKcVz+xPg9b
+	b1v26fNFPF1n3H7HAXVYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760446708; x=1760533108; bh=u6LKml2pyPSTZcevZ804GiM8rOEYpqXLcQS
+	qWC6v/9E=; b=Nb22c+SxdaKSYH9ixEJgpwaugop+xr5ctxUOY7zGhPaZYiyBwQR
+	/JQ39TggLma1Mfwq+E8vC/k/rIjfxtD7aPn+i1sgAODL2PZHcHk42Se8FejN4TtZ
+	2iJkozyuNnb2789M/7N8Ej9PF6WOLuDG7ONatzvzbgSpHs8hvaM4Z3vMeMYN0Lrh
+	ij8jVSADPz8EeIYJxq5HDH5ikqJ+t9vebo1AROnTHl7EC3h9QfLEsRdcE6LYt2kl
+	qVSDUmlWiGrmk5RO3aO8+isCxII+fJfArTc03j5cnrnzbQvYyU2fDKaiHNIo/Vv8
+	5DLHeA7SJ8Qr3TfJj6B/rV24Wf3S23NJeRQ==
+X-ME-Sender: <xms:80juaMBemFHcTGYWEWBRdrhfCX4KkzrI-YYoNV4nJL1RFeok4cviFQ>
+    <xme:80juaBnZdaw1Fs-JrXtfkEOhn2Ixv40eRUPhbg8MhL0MiZD7DHcYcNnYPdeAmD94R
+    Sr9u_xfex0rWRKj_dQQoeCe_KZPNEiBkPYzc4QplRDM2jIMNjKO3LU>
+X-ME-Received: <xmr:80juaKO9Y3zHinhRZ-bgVEG74xdNTlXRBBzlEHQ1yXev4YOfXM1aB9sfKIJVqg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedu
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghlughssehlihhnuh
+    igqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgr
+    uggvrggurdhorhhgpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:80juaO-nHpgJkVNsquld8r3lxO1G96Efhi65ggThZHK4JvNjl765gA>
+    <xmx:80juaMGjAva8TAsdeuDNsS6mpwHmATExQ098GQkJwerdOeh5_6TtTg>
+    <xmx:80juaNgvnTSbk64WWN3N4I2QNTu99f__3agVO7FQKYTGvFRryZmXOQ>
+    <xmx:80juaBsxhJQzcXenGXzp5na5rL0cG0F0jhA0BT_Cgr5TvKmg6H8wLQ>
+    <xmx:9EjuaEkBtEB7lnMzcQjuAsmUsXX0qQCy8VBBEcWUPXjklRP9h6dmEtVt>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Oct 2025 08:58:27 -0400 (EDT)
+Date: Tue, 14 Oct 2025 13:58:25 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: Optimizing small reads
+Message-ID: <wfneq47jscotsqb2hhwpjfp2hqz4d7yyw643yagqnqvh74opvx@5fnmgowterq5>
+References: <ik7rut5k6vqpaxatj5q2kowmwd6gchl3iik6xjdokkj5ppy2em@ymsji226hrwp>
+ <CAHk-=wghPWAJkt+4ZfDzGB03hT1DNz5_oHnGL3K1D-KaAC3gpw@mail.gmail.com>
+ <CAHk-=wi42ad9s1fUg7cC3XkVwjWFakPp53z9P0_xj87pr+AbqA@mail.gmail.com>
+ <nhrb37zzltn5hi3h5phwprtmkj2z2wb4gchvp725bwcnsgvjyf@eohezc2gouwr>
+ <CAHk-=wi1rrcijcD0i7V7JD6bLL-yKHUX-hcxtLx=BUd34phdug@mail.gmail.com>
+ <qasdw5uxymstppbxvqrfs5nquf2rqczmzu5yhbvn6brqm5w6sw@ax6o4q2xkh3t>
+ <CAHk-=wg0r_xsB0RQ+35WPHwPb9b9drJEfGL-hByBZRmPbSy0rQ@mail.gmail.com>
+ <jzpbwmoygmjsltnqfdgnq4p75tg74bdamq3hne7t32mof4m5xo@lcw3afbr4daf>
+ <dz7pcqi5ytmb35r6kojuetdipjp7xdjlnyzcu5qb6d4cdo6vq5@3b62gfzcxszo>
+ <CAHk-=wgrZL7pLPW9GjUagoGOoOeDAVnyGJCn+6J5x-9+Dtbx-A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
-In-Reply-To: <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Oct 2025 14:43:33 +0200
-X-Gm-Features: AS18NWBEZq5lIkJh6Ip5P4ktSAZRhNTSUeKj8YqirfcTTiqThkysrWbf-5HPY1w
-Message-ID: <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Brian Foster <bfoster@redhat.com>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd@bsbernd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgrZL7pLPW9GjUagoGOoOeDAVnyGJCn+6J5x-9+Dtbx-A@mail.gmail.com>
 
-On Tue, 14 Oct 2025 at 09:48, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Mon, Oct 13, 2025 at 09:19:47AM -0700, Linus Torvalds wrote:
+>  - both filemap_read_slow and filemap_read_fast would be 'noinline' so
+> that they don't share a stack frame
 
-> Maybe the solution is to change the write-through to regular cached
-> write + fsync range?  That could even be a complexity reduction.
+clang-19 actually does pretty good job re-using stack space without
+additional function call.
 
-While this would be nice, it's impossible to guarantee requests being
-initiated in the context of the original write(2), which means that
-the information about which open file it originated from might be
-lost.   This could result in regressions, so I don't think we should
-risk it.
+noinline:
 
-Will try the idea of marking folios writeback for the duration of the write.
+../mm/filemap.c:2883:filemap_read	32	static
+../mm/filemap.c:2714:filemap_read_fast	392	static
+../mm/filemap.c:2763:filemap_read_slow	408	static
 
-Thanks,
-Miklos
+no modifiers:
+
+../mm/filemap.c:2883:filemap_read	456	static
+
+And if we increase buffer size to 1k Clang uninlines it:
+
+../mm/filemap.c:2870:9:filemap_read	32	static
+../mm/filemap.c:2714:13:filemap_read_fast	1168	static
+../mm/filemap.c:2750:16:filemap_read_slow	384	static
+
+gcc-14, on other hand, doesn't want to inline these functions, even with
+'inline' specified. And '__always_inline' doesn't look good.
+
+no modifiers / inline:
+
+../mm/filemap.c:2883:9:filemap_read	32	static
+../mm/filemap.c:2714:13:filemap_read_fast	400	static
+../mm/filemap.c:2763:16:filemap_read_slow	384	static
+
+__always_inline:
+
+../mm/filemap.c:2883:9:filemap_read	696	static
+
+There's room for improvement for GCC.
+
+I am inclined leave it without modifiers. It gives reasonable result for
+both compilers.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
