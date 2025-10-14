@@ -1,82 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-64080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53F6BD75E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:11:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC110BD7610
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1FE40616F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 05:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CC718A83C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 05:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA82426F291;
-	Tue, 14 Oct 2025 05:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB834296BAF;
+	Tue, 14 Oct 2025 05:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Af4EhvM2"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EKqco9wA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C96F75809
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 05:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21575272805
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 05:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760418654; cv=none; b=c2R0Qxtk1oFReX81bx2vBsqIjQZWmD76VoV1MRmiVqfuKptPjGg4Vr+ifw6gigECm0O1STO7OuDzkmvjRFA0QfTorXl8+XFtNp7+J8JIH0vBiQW9K6M/w18HI6SVeh7uZ9EC5tL1S7lgLXuDbGuy58FqcIze5B8k6egw0mR8Vuk=
+	t=1760418845; cv=none; b=VpwTugt7J36Aiw86+MnBfNTW6dPCTchu7eNmnkjdwotde+Becl6LHvCLe5BiApWIGakdSfN/Qjz9MdLwLpWsSCltnRcX5Gn8PDn1BPLzq2MQQEyYBazUIakHhzT7kJHXjP1pDltP7WJjRhNA3Wd+pto4scE0vmsm2rAlPqTRin0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760418654; c=relaxed/simple;
-	bh=056xWVMlQB6yM5hEPTfg/Iz6mp86SxqH9G9Bx8zA0b0=;
+	s=arc-20240116; t=1760418845; c=relaxed/simple;
+	bh=iqtaVI5XEyh5592SG25WZntlMN944UQCQ1GcQfweCU8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qtcEoLLMblARuIaqQom+uFzRHPU0ijC6Nx0LqpD9vDP89lqHFcyUHDvnPsm13J2XUzquaDAmEueKSJ9MKxpKkOoyorroJFKFfOFK2KteCs0xKw0QPKQRcAC9rRojrSRIeThfgiYW4We6J3+kQXeoGkeTYBnrgvz5b7racOSDLO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Af4EhvM2; arc=none smtp.client-ip=209.85.221.45
+	 In-Reply-To:Content-Type; b=oKDG1F36soEMc08bfk8g/ENgDMhfrpI0stHHQAZX9HvTmvoS1yEY9GHHKJqqrAY4++ADFLMrALw0pXefO4UwiFol1taPnrf1iJu3+4JXlPBQa3iZrOqVuZ8mJI8st8MGHa8f7LasmUVeLj0+eGIVfpd1oj8v+8ljFHbap0jRGVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EKqco9wA; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso4613878f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 22:10:51 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so52357895e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 22:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760418650; x=1761023450; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1760418841; x=1761023641; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=w0MZBFptNWdkfouEcVHOtRQWTPFO4rz9x5djAVC9lXs=;
-        b=Af4EhvM2JZbmPSW2wt/rtorq6g0gqb6WvGJJKiG4moYI14mgUeQvfdXoDxfiqhjnUc
-         ackYd13Z5UfdCRTOZ4PZ8fSrC4fkfnkpmcoPZXhkSs55TtuaNw/I23SU55ZqbaIb8/ow
-         KyLiT2FGlIucaAJKO7JV3yqiqqcOK6hEMVZYHiACrfxBGzVZ0TB7fRuqMb4K0hqqN6Gy
-         qmXGifzXy+bRz02dYsOBd0ns/n6ZT5BLsuqW29/YuzAS57fIRMXDaMf7r/XcuEXN8ZU0
-         M9XX04euH/+7dTGxxl/609f7d3rgvDgI3vU99IEpP+wT70YRe15sUPYcF+byA7KPsyXS
-         q4Fg==
+        bh=rln7mORLnWvgfvd24w2tXe1xINLMmx+fNiAqEE0B1Js=;
+        b=EKqco9wABGqo0RlxeJVrsFY/7iLMCRYPxlTAnspbHmlwh0gELIoIimyoYKfEKM7M4k
+         rLpf57Xs76R63Vr48ay8M0gGmbr5eafbwccC0rMJXQytJkXmAf9NHQqw2439RfuaNHT/
+         +QNNX1W9D3LPKDuEJqM8zDMabxZnH2ufB3vUTjQhwwMg+0gGUXvLfId9yDd3ieF4uvJm
+         1bUSuePb9vlywKvDS2kjbJ84neArvDnBrVtetcjbFJKhSOMsFMzYeuM/CsOgjbnXtczf
+         j+BBZTb4smU40s5ZCJZpdBioTyj1OgK2tmL54JOGfoEc/EZvKFbmJL/uIXNyoAnEmSwv
+         NWww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760418650; x=1761023450;
+        d=1e100.net; s=20230601; t=1760418841; x=1761023641;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w0MZBFptNWdkfouEcVHOtRQWTPFO4rz9x5djAVC9lXs=;
-        b=Z7Ln3z/oxwvolKf/oTIqVOK+Pxhzb6t43LscITvgKHzMoZOMugAaWuK7SVCBib2nIw
-         Gv8+KqXfNcw8892j5roV/YD/tDXHGL9pyT1vpZYB4ba7mqISLnTt9Ge2BkgnqEfRNBeK
-         D07b7DcrabnAdjePnAH9lCBapScD6jUAVt10JSopQYh0VLcZihvqiAC/EGDISJ1mvnyb
-         CA9YTY4Qa3Y4gu6Ea4mpvTnaZqIt1i+PmHksWakxYd6ZIJEWjzsU6lYwHzVDN0pzkcQE
-         ML4oxzUev/I/+c2K/hDYY98MkIyYn/MysSATp3cawWuSfpD7d2auDH9uETY2Lfz7BCbD
-         Mq0A==
-X-Forwarded-Encrypted: i=1; AJvYcCX87rbqwURichxdlygsJvm40D+H37KY5YHLJCwifQejie6C5THl13y9/2GJxjEnDcu9Njm0+SfTDjKbxWq2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvX1gDx4z0S75egPdR5ES7+A11t3tgmZsgI5yyWjdWPla26koU
-	GHVxtMrj0Plgq9/5Gy6N7YwezPDPMDfKUoCfehNzFwDr1VCzZf+XdS0GXjpSYz/LivQ=
-X-Gm-Gg: ASbGncsqLWVsqtdAl8jkxfi5EjVq73zeznKhfg41QaAqxhCvw4N+IlvkmVhhUEgEpDZ
-	Cs3r+5H6MxKfENRDpu3tc3yCVuZXkuRgVFMtFSp7bI13xR/nCf68uBKqeu1IgmazmU4OUUKXg/y
-	dbJFaOP1sVoQupTa8KRSr8munox6TxjDesKxY+mHPHcZcervQ7CTh3GyvzhmeTQjSZI8LWX8hRr
-	dCrzIZfvf6naPpoZrjK5Kbj8ja+NLs4b+XSsyK5pl/WYW9ZqGibYsJlZS9jjswTba6X2mL1IOoh
-	1kpeHf86u7cMSpvRhr7dz0k7lkNqoFa0BTuTqJtKEjIrDj8vE+/mTTyQd96slmRKWlMY8i9d/Lt
-	JX+USFcpfEhJ35zzqt9gYlou4sip82yEvPTdsTLQdHUdaV/YFtV0yKuxC2xII6L/CQCyy2OKrNc
-	HV+4nP
-X-Google-Smtp-Source: AGHT+IFDfukt8ElU2uUIMPKSUQbK6e6P/Qpt3+OqqL2RpgrQD9ez41vaEOfsSOzU9xtbmExE5sgPWw==
-X-Received: by 2002:a05:6000:3106:b0:3ee:12a8:6f1c with SMTP id ffacd0b85a97d-4266e8de388mr15701619f8f.46.1760418650412;
-        Mon, 13 Oct 2025 22:10:50 -0700 (PDT)
+        bh=rln7mORLnWvgfvd24w2tXe1xINLMmx+fNiAqEE0B1Js=;
+        b=wDXc0ouwZlGTiIUhIsKknXgQv/i2OMPBlpoEdwM7+u4V6InGPNojl1qtkSLcoe6esW
+         mX95qtkCRC0q9BusUMrrSouxAbsVDBWugcIhbIOZ6ZNAS+kUoNSKMAX+wHg2sKpbIwq5
+         vd7q1+eyKOPCKBZaNpgZoYad0iM1CMwOGfTfDl8dILA5YbZe9rDJE8v4O2hMAPl/susL
+         Ge3riUvgcxBfbxbsLxkaZdWMQ9PhK+rMalF8sr299EU+V19nirVJ1IisOY73sCDJy+D0
+         Ud3NjLig5Cp8OXxGSW4lXrLQr0i80vjl7E1OmX9pgCDE+bakmrRhLWuYHOUZK9hVft3Z
+         H5UA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8DgbWZ99bNAql0xAa0z7UEE22PIXhFft/Eb1B/CCW5S5RNc3f0M07qJ+168eEMgIcNH2XFGLOIhkuJSb7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTtuc15nSpHRvZq2BV4Fl95ASk80SgTumZjXbZEMYEKF+XRaep
+	O85LGnHI2PtwJnB5zqBmoTHBdzepGluWGaYIKaGUKBL8DNpEFUqXHRb6hfRVpcM+CGk=
+X-Gm-Gg: ASbGncslwUmECOlFDal2y5szVjj5NtY0YWP9IyRlnREC7B57Q85mCBvgKWaveFIje2V
+	herTSYYuNYDhe5OxLNI5RuMhiYYPPnxUyzdgKsX7fMA98+nMkdt+uW77mYkjlqE61cigRW2APG6
+	KIaI1SOIpw8QQqLSLxMkRurxS9lIn1n4dvMtlbeGEOEwxa5RBAd5q1bPjpys7vmQsjhl/gP9luB
+	ItpTxW/zH33qZG8CnudF7C3wPVeK/iouiCRm6dwjtRNI+GM/leq7b9PevWAokycBUthSbhEIfzM
+	YtHtukDpNSYIoDDsNAFObFKEZFpWeLQaK4Upfp71XwkV2vxYW5+rEM5/zEaImkRWFd7OYgkudpr
+	J5D1Mx+38xB53gsINztT2t4CGJ4nbQ6aCJc7w0sUogscnu3o208g2hluaBoiXRhkV1kR+vw==
+X-Google-Smtp-Source: AGHT+IHHWcRnVM188ZrFg3N9NneaIaGiyPkpGn6/Jt1Ad+BWLO/MpTuXxwiZERz6PVjYfRm4N18LZg==
+X-Received: by 2002:a05:6000:22c5:b0:3fb:bb69:d91b with SMTP id ffacd0b85a97d-42666ac4a07mr14269691f8f.2.1760418841327;
+        Mon, 13 Oct 2025 22:14:01 -0700 (PDT)
 Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b63a03dsm13500800b3a.19.2025.10.13.22.10.47
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d9932edsm13435303b3a.73.2025.10.13.22.13.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 22:10:49 -0700 (PDT)
-Message-ID: <8267e2ae-de17-40e2-9100-6eeb2b3680e6@suse.com>
-Date: Tue, 14 Oct 2025 15:40:45 +1030
+        Mon, 13 Oct 2025 22:14:00 -0700 (PDT)
+Message-ID: <fe7201ac-e066-4ac5-8fa1-8c470195248b@suse.com>
+Date: Tue, 14 Oct 2025 15:43:54 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,14 +83,19 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iomap: add IOMAP_DIO_FSBLOCK_ALIGNED flag
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-btrfs@vger.kernel.org, brauner@kernel.org, djwong@kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <c78d08f4e709158f30e1e88e62ab98db45dd7883.1760345826.git.wqu@suse.com>
- <aO3TYhXo1LDxsd5_@infradead.org>
- <5a9e8670-c892-4b94-84a3-099096810678@suse.com>
- <aO3YcT9s8ezmIkzv@infradead.org>
+Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
+ origin
+To: Christoph Hellwig <hch@infradead.org>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+ <20251014015707.129013-2-andrealmeid@igalia.com>
+ <aO3T8BGM6djYFyrz@infradead.org>
 Content-Language: en-US
 From: Qu Wenruo <wqu@suse.com>
 Autocrypt: addr=wqu@suse.com; keydata=
@@ -118,36 +122,38 @@ Autocrypt: addr=wqu@suse.com; keydata=
  /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
  o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
  JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <aO3YcT9s8ezmIkzv@infradead.org>
+In-Reply-To: <aO3T8BGM6djYFyrz@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-在 2025/10/14 15:28, Christoph Hellwig 写道:
-> On Tue, Oct 14, 2025 at 03:25:31PM +1030, Qu Wenruo wrote:
->> Unfortunately that may not be that easy. Either we merge it early, meaning
->> just this change + using the new flag in btrfs.
->> But that means it makes no real change at all, as bs > ps direct IO is still
->> disabled.
->>
->> Or we wait for the btrfs sub-block checksum handling patchset merged, then
->> with the full bs > ps direct IO enablement.
->> But that also means we're waiting for some other btrfs patches.
->> There are already too many btrfs bs > ps patches pending now.
+在 2025/10/14 15:09, Christoph Hellwig 写道:
+> On Mon, Oct 13, 2025 at 10:57:07PM -0300, André Almeida wrote:
+>> Some filesystem have non-persistent UUIDs, that can change between
+>> mounting, even if the filesystem is not modified. To prevent
+>> false-positives when mounting overlayfs with index enabled, use the fsid
+>> reported from statfs that is persistent across mounts.
 > 
-> What's your plan for merging this?  I was going to look into doing a
-> patch like this to improve the zoned XFS direct I/O handling soon,
-> so if you aim for 6.19 we need to figure out a way to get it into
-> the iomap tree and merge that into the xfs and btrfs trees.  If you're
-> not aiming for 6.19 we could merge the iomap and xfs work through
-> either the iomap or xfs trees.
+> Please fix btrfs to not change uuids, as that completely defeats the
+> point of uuids.
 > 
 
-I'm not sure if I can get this patch through btrfs tree in v6.19.
-There are too many pending btrfs patches.
+That is the temp-fsid feature from Anand, introduced by commit 
+a5b8a5f9f835 ("btrfs: support cloned-device mount capability").
 
-So please go ahead through iomap/xfs tree instead.
+I'm not 100% sure if it's really that important to support mounting 
+cloned devices in the first place, as LVM will reject activating any LVs 
+if there is even conflicting VGs names, not to mention conflicting UUIDs.
+
+If temp-fsid is causing problems with overlayfs, I'm happy to remove it, 
+as this really looks like a niche that no one is asking.
+
+Yes, mounting cloned devices can be useful for certain cases, but with 
+metadata_uuid changing the uuid should not even take a second, or one 
+can just unregister the previously scanned device.
+
+I'd say we paid too much cost for a niche that is not worthy.
 
 Thanks,
 Qu
