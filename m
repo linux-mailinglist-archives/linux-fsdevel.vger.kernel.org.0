@@ -1,221 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-64082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF86BD769E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:26:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4C4BD7701
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6282E188FABE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 05:26:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCEA54E50A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 05:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282C3296BDA;
-	Tue, 14 Oct 2025 05:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589C229B205;
+	Tue, 14 Oct 2025 05:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TMa9tT67"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="EMHXmtH6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ih+RDekg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1032874E1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 05:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861CE13DBA0;
+	Tue, 14 Oct 2025 05:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760419572; cv=none; b=lgw/hID6KvJ7T4LAmMFTtGI5GJlkfgDfwzY5S9RTqM6V1YSdlY8SSEj/Ze3IeVRMsYOy6f9K3vyF+Ob3GqeQquZOZp0iWXu5bWS/m4CpNMNg5oFrDBCTieCmEAMKjUKNyQQjhyh5DdBdnicjrUr0z9JnGRwjE6saBlDl1LAVMKI=
+	t=1760420101; cv=none; b=uql13z7X+xXzIiYlu646JIWcKnkDlDOPyAwu7tkm/ZejwmE9ud1esGWpdc4WQn2no8qD+KVV0l8uzWcEz54CwjplhpNwv48qO6Qz+rcJc3MIQzNp24InsM0RNhoXdXruwDuTPPnDhRCmnpDGSmtbMqIl0zKvlzRcnqymn8dMqG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760419572; c=relaxed/simple;
-	bh=RzZ2rpgYX4TU7MT3Xglqz4bP41cT5Oh6ggAKNbiU4Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f9IP0K6IysKF+H0G3FL+jHO98irGfvce4Y+NnLF2VaoHCLYKCrjaSyFJ4zZ+wQqkrRXpFPsb9ROVYmg4WveJwb1SWLXsUj69QbSPLg9WWe/Ayl+zN9RzEPdIVETMuhJiIZgwTXm0BR8JQjj/GNdjo0DXySKRbtve7DEiqeI+x/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TMa9tT67; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee1381b835so3043931f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Oct 2025 22:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760419568; x=1761024368; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PJeA08PmXO0Rt+J6zqTRksSe9Q2LhvStVnJgFH8knlE=;
-        b=TMa9tT67BZUz1dqoyEp7c7boJbzouJq/CFRT9LOK/U9xCWA5vMvOBkUMWgn1smAdp2
-         Brts+rKceBUpEtfxGyevkKllE57ptajVK/Eu+A8iHkucCdATPSb7WIDXOtz6HOW+wi8c
-         b1G1G1SGA/0IJoBMYoH4XBtKaYKWhWcsl9aYGRNKlerxCDvmJYHTMEreFgZEsBR8Pczy
-         DqEx2WUacQh4R5Seu9dNoTTBFl7ELoBSytZUQrIisqCRVSA365p2yHsi0zsaQBMQuVbb
-         E3kJOKe+LmCfVnqJnKd7m34sLRZxcDWH0bJ10MP4uqwq0ZluEixXFBM1cuY/BJQNMCc+
-         o85g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760419568; x=1761024368;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJeA08PmXO0Rt+J6zqTRksSe9Q2LhvStVnJgFH8knlE=;
-        b=bOrM1Q/TwjC0U8645ljNK2/JTVSuGnlkof39uyTZmJ5143QFJtIhPgCGRwoBBO2RPM
-         8SYrr+7CDqYVKN1qyeHspbMY8DtcONET2/D6T07Q/k2fwlgmGeJSQANo/Vix954b0mVt
-         AjWpVjbO9a3hwoaJaNAt1oLdtez0nyFny9klvlpqNCr9796wQ4/EQLQjFTgmjy99rZ+Y
-         +z6rrFfrge2jmydbiraZ1ojaiCkXfmFvq6i15pE9QFuyLNUd5KlWormDNwQr8HK0lLty
-         jnFpTjQJ7OyodI1gJeDLXGWt5fIBkouFo1gT+ODNGb5eNmFu6K9fqVsAGGjOgOc5nBkF
-         wxYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrdZh0Uw/pHJutD17hcv2NZvZiW5oJ3mF0WEPrZzPTXmiQq43mtND/tRvfwXRvEDfGpt80ar2FMDaAgdMJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIEIx2k7aNWhq4vmLNWLUncwSPvx/tu0PryVOkP8rXbR7fCNd7
-	dnJ8vuFDQNnLYZZ8I3rxoVxMY/+n7Thi0339UaMDNhtq1EttWfzWfBbKkwDSu8CPJxk=
-X-Gm-Gg: ASbGncvIJVU3SMQm2Gciss8JDabZvyPy+0ceYkMwyscV/f2iX9kghRtpRPX7ojwbBOE
-	pJsRFfkV/Rv0UbmJ4EjmAXQv4OkIUFPc1AV1gpsLkXjOukeWef5OTg/cx/rnTW0kShkKYE9TwBs
-	ae+atVWm+xuOmXH52ipz2jxAQGryH9qcaJFGn/mm0Yy1EsSUfV4LDW4xbp/TnbltORJpmV1fTld
-	kC++RVVKLPSreRn0hpnNMftM0Fr/z4gjCLot+AQyy+JFFgcghUp3QCzsdNaWfxfSWtPJBdGL9fs
-	FkmET45TXuvImTc5OfA61aD9xHCsvEjPdnE2P2L5RBrd87cUUT5LWYsIzHJD3kRATzeYrAhUfAr
-	DfKp1S7ltW1wZGZQQ5ZhDFCXCcvU+J0BrK/Cv7XEsDbTa/JB+AyRVhOHjwAxGfN/C/lYy2CS3Ua
-	0IScPR
-X-Google-Smtp-Source: AGHT+IGrGpGhcI95c5DMP672QlHISusRMmNdSZjfnjcUd//Uku5n9Mpyuwa8gnooQRqjnAoP2rIKaA==
-X-Received: by 2002:a05:6000:2505:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-42672425b82mr14532469f8f.47.1760419567943;
-        Mon, 13 Oct 2025 22:26:07 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de6c14sm151516595ad.6.2025.10.13.22.26.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 22:26:07 -0700 (PDT)
-Message-ID: <f6d30bb5-8e0e-4351-a11f-4a78f7a541e7@suse.com>
-Date: Tue, 14 Oct 2025 15:56:00 +1030
+	s=arc-20240116; t=1760420101; c=relaxed/simple;
+	bh=X5WPVB8Em/gBcebUeg/HDVgnFFFK8ttMHgLzywHakA4=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=qFzThTzxYIDivtZcTbW1KntBvvXOrmNP++4/WVC5ujNMN+If8IJX2toWZGghvVHLKDCUdLe8eomN8kVm5wIgftB+BRKN8vhpTVLYxKatvcqdXmOwBQq1dsBEngmYIFAj65iwarrhHA6gm44yyy1p5lhtkBVvTOQpL/cA6RcFnAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=EMHXmtH6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ih+RDekg; arc=none smtp.client-ip=202.12.124.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.stl.internal (Postfix) with ESMTP id 9C94F1300216;
+	Tue, 14 Oct 2025 01:34:57 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 14 Oct 2025 01:34:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1760420097; x=1760427297; bh=sKvX0cwi5L2mQqOKfWbZAQQCGUflq024x5h
+	ZczDrYtI=; b=EMHXmtH6b1fssNuWNAbg39nPBc2L6iLo9Ov6TFV9qllyxag3kQl
+	VvtR8X+4Za9g2Vw/Na+uS9UetgsfpRkZL1jz1/auc6Oy9Fq/N3API8bZzlIeqS+8
+	OjId+x1I54l5gE4nOruTpTX/eIn+DMjXL5K+xkpQQMMBYqKYZbAoJbxHVEnJCxyO
+	GuwVNtYCGxxVYsar+VUXpQgttiAqGWRjkt15aK64LQqfqxqxFr0g6wXKB/Ibf2XG
+	/cxaxnXKKVd6RVbRRMfLB3f2m4fsB0FeJxFOUSfB6WZiuqXvwmbis9V2yhheF05K
+	VmxNfUjA1k1l+mLURd+ZuZFqVsb6BMYN94A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760420097; x=
+	1760427297; bh=sKvX0cwi5L2mQqOKfWbZAQQCGUflq024x5hZczDrYtI=; b=i
+	h+RDekgtuViqOuIRe5nRpsoy76Bx+bzGVh5cBTj8/X62C0XR7TEIA2xbt2Ubxpid
+	ZHq1+y+7InziK5qe1r9LHucLnuKtgHqiO+FJDRNHoj+tR9Q3PyID4LVM/3M3ybRX
+	tIH70Tx5Za71PjvLbkA/yeToEismdKYiPPzND/ygwI7geT796CZq/6emzH7eNm4V
+	Kce1Eyi/Y3RiDRX6XMGOfP6tmK6MicTRdw6J7gWuQcQoU6VJmgQ73wKrjDyZY++8
+	u8xiIYup5XPh8TtZB2Jq/GVp2aBKUBf6LKfVQd6UoWatyJpdJXN19DN+foHp9Ekz
+	zoZtogTA7a4Db2it5V2NQ==
+X-ME-Sender: <xms:_-DtaGDSStk9-hdw2H6ZL83waWfdVJ9YX5PyZE66IpkrirSbEhiR2w>
+    <xme:_-DtaPgz524KR1bIMerhs2C7YXAmbZW4Lsj3EsWSvpJwVeGY-BzhhonTtr5xmV6Ss
+    GpABGkyA-RB0RJhi2Lq8cCoQS1KXsJC00AQOjfMWlRhV5yMIA>
+X-ME-Received: <xmr:_-DtaB2IaBnzbz1hHV5senq7g_aSWzgh3eK-gJYcQFcoiXy_Aqk709eaLtyG4VXyvm7TKsTwnzEKdhghfx2bsou0ue1yREccsDhltZNVqC4X>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudeljeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:_-DtaBIY-oFTdHKRTw3D8L3q4PTHVD4zpV8goGnqHXyVH0nbHG8b-g>
+    <xmx:_-DtaE2CVchSpis3kE9Qdx37fJ6LzhXT6BNt0IM3jeZVpKMoYnyecg>
+    <xmx:_-DtaL64I2eH2ZO8gGbqN6_6BowsHFpdQspB-a4TT9QeVF7PfU6YCw>
+    <xmx:_-DtaBHiAd6eRDoVhivjdRfsp-KtS_QT_guqr2aFH_bbkXfblrXRRA>
+    <xmx:AeHtaDciWRkXrzOWRd6sH4KgBlnrwJkD0ZAWHMp6JhGiQZ8mFgAE876O>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Oct 2025 01:34:44 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
- index=on
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20251014015707.129013-1-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Alexander Aring" <alex.aring@gmail.com>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
+ "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
+ "Bharath SM" <bharathsm@microsoft.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>,
+ "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Amir Goldstein" <amir73il@gmail.com>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "Kuniyuki Iwashima" <kuniyu@google.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, netfs@lists.linux.dev,
+ ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, netdev@vger.kernel.org,
+ "Jeff Layton" <jlayton@kernel.org>
+Subject:
+ Re: [PATCH 02/13] filelock: add a lm_may_setlease lease_manager callback
+In-reply-to: <20251013-dir-deleg-ro-v1-2-406780a70e5e@kernel.org>
+References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>,
+ <20251013-dir-deleg-ro-v1-2-406780a70e5e@kernel.org>
+Date: Tue, 14 Oct 2025 16:34:43 +1100
+Message-id: <176042008301.1793333.506325387242251221@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-
-
-在 2025/10/14 12:27, André Almeida 写道:
-> Hi everyone,
-> 
-> When using overlayfs with the mount option index=on, the first time a directory is
-> used as upper dir, overlayfs stores in a xattr "overlay.origin" the UUID of the
-> filesystem being used in the layers. If the upper dir is reused, overlayfs
-> refuses to mount for a different filesystem, by comparing the UUID with what's
-> stored at overlay.origin, and it fails with "failed to verify upper root origin"
-> on dmesg. Remounting with the very same fs is supported and works fine.
-> 
-> However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
-> disk image with btrfs, a random UUID is assigned for the following disks each
-> time they are mounted, stored at temp_fsid and used across the kernel as the
-> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however shows
-> the original (and duplicated) UUID for all disks.
-
-Yep, that's the btrfs' hack to allowing mounting cloned devices (as long 
-as they are all single-device only btrfs)
-
-Although I'm not a huge fan for that, without that you can not even 
-mount any cloned btrfs in the first place.
-
-> 
-> This feature doesn't work well with overlayfs with index=on, as when the image
-> is mounted a second time, will get a different UUID and ovl will refuse to
-> mount, breaking the user expectation that using the same image should work. A
-> small script can be find in the end of this cover letter that illustrates this.
-> 
->  From this, I can think of some options:
-> 
-> - Use statfs() internally to always get the fsid, that is persistent. The patch
-> here illustrates that approach, but doesn't fully implement it.
-> - Create a new sb op, called get_uuid() so the filesystem returns what's
-> appropriated.
-> - Have a workaround in ovl for btrfs.
-> - Document this as unsupported, and userland needs to erase overlay.origin each
-> time it wants to remount.
-> - If ovl detects that temp_fsid and index are being used at the same time,
-> refuses to mount.
-
-Or, let btrfs to reject the cloned device in the first place.
-
-> 
-> I'm not sure which one would be better here, so I would like to hear some ideas
-> on this.
-> 
-> Thanks!
-> 	André
-> 
+On Tue, 14 Oct 2025, Jeff Layton wrote:
+> The NFSv4.1 protocol adds support for directory delegations, but it
+> specifies that if you already have a delegation and try to request a new
+> one on the same filehandle, the server must reply that the delegation is
+> unavailable.
+>=20
+> Add a new lease manager callback to allow the lease manager (nfsd in
+> this case) to impose this extra check when performing a setlease.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
-> 
-> To reproduce:
-> 
-> mkdir -p dir1 dir2
-> 
-> fallocate -l 300m ./disk1.img
-> mkfs.btrfs -q -f ./disk1.img
-> 
-> # cloning the disks
-> cp disk1.img disk2.img
+>  fs/locks.c               |  5 +++++
+>  include/linux/filelock.h | 14 ++++++++++++++
+>  2 files changed, 19 insertions(+)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..9e366b13674538dbf482ffdeee9=
+2fc717733ee20 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1826,6 +1826,11 @@ generic_add_lease(struct file *filp, int arg, struct=
+ file_lease **flp, void **pr
+>  			continue;
+>  		}
+> =20
+> +		/* Allow the lease manager to veto the setlease */
+> +		if (lease->fl_lmops->lm_may_setlease &&
+> +		    !lease->fl_lmops->lm_may_setlease(lease, fl))
+> +			goto out;
+> +
 
-If you really want to use the same copied fs, at least you can use
-`btrfstune -m disk2.img` to change it to a new metadata uuid (without 
-re-writing all metadata).
+I don't see any locking around this.  What if the condition which
+triggers a veto happens after this check, and before the lm_change
+below?
+Should lm_change implement the veto?  Return -EAGAIN?
 
-Then everything should work.
+NeilBrown
 
-Thanks,
-Qu
-> sudo mount -o loop ./disk1.img dir1
-> sudo mount -o loop ./disk2.img dir2
-> 
-> mkdir -p dir2/lower aux/upper aux/work
-> 
-> # this works
-> sudo mount -t overlay -o lowerdir=dir2/lower,upperdir=aux/upper,workdir=aux/work,userxattr none dir2/lower
-> 
-> sudo umount dir2/lower
-> sudo umount dir2
-> 
-> sudo mount -o loop ./disk2.img dir2
-> 
-> # this doesn't works
-> sudo mount -t overlay -o lowerdir=dir2/lower,upperdir=aux/upper,workdir=aux/work,userxattr none dir2/lower
-> 
-> André Almeida (1):
->    ovl: Use fsid as unique identifier for trusted origin
-> 
->   fs/overlayfs/copy_up.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
+
+>  		/*
+>  		 * No exclusive leases if someone else has a lease on
+>  		 * this file:
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index c2ce8ba05d068b451ecf8f513b7e532819a29944..70079beddf61aa32ef01f1114cf=
+0cb3ffaf2131a 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -49,6 +49,20 @@ struct lease_manager_operations {
+>  	int (*lm_change)(struct file_lease *, int, struct list_head *);
+>  	void (*lm_setup)(struct file_lease *, void **);
+>  	bool (*lm_breaker_owns_lease)(struct file_lease *);
+> +
+> +	/**
+> +	 * lm_may_setlease - extra conditions for setlease
+> +	 * @new: new file_lease being set
+> +	 * @old: old (extant) file_lease
+> +	 *
+> +	 * This allows the lease manager to add extra conditions when
+> +	 * setting a lease, based on the presence of an existing lease.
+> +	 *
+> +	 * Return values:
+> +	 *   %false: @new and @old conflict
+> +	 *   %true: No conflict detected
+> +	 */
+> +	bool (*lm_may_setlease)(struct file_lease *new, struct file_lease *old);
+>  };
+> =20
+>  struct lock_manager {
+>=20
+> --=20
+> 2.51.0
+>=20
+>=20
 
 
