@@ -1,113 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-64095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA6EBD80A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 09:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CA3BD81AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 10:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28171890806
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 07:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BBAD19225F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Oct 2025 08:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB5029C35A;
-	Tue, 14 Oct 2025 07:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EA430F7E0;
+	Tue, 14 Oct 2025 08:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ST2brMWm"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="rc1kw4HY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A692BDC0B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 07:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACF730DEB0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 08:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760428635; cv=none; b=IuNKJOtHfgTPsQFR9NBVvBo5w2I+5t1tWCpN0IihET15UfTTYqEU+ROitANiItGVpC0DcEnXstN7mB3ykb0k0vyd6HxHrHQXf5BQxhxrSOfx2Q8KDWVJXJtJEw74DXQfLyzGQTp1OEr4NM16A5l5QEBSJOnAd2kWbhRTyhILbJA=
+	t=1760429226; cv=none; b=XJOgVJ5fdp1nNRCuu3saW1Mi5dF5W0UTa9zC8plEkTLUSEV5NG1eFaOqvpsEjbUGpQohCFOK7AEVgYJmnF6hAai0fd0ZAWr6swSz1PqE5/kqpohQSstoBsTgN2ttbM9fUQ7znR1mty6MywS8+0ELhAQvhSHgeQBlKG7ZpO4CHPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760428635; c=relaxed/simple;
-	bh=fEuw9BmVbevlm5d7M1J5zA/kuTWthYgdzEwCg9slGHM=;
+	s=arc-20240116; t=1760429226; c=relaxed/simple;
+	bh=gaSrNFnxGmoWet5IGMWfVxdar8Dax24kjJ0xtMz88wY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e2e9EXqzC9c9xo2qKV8qZWqUDFxNnh1Z2R1Zl/RQFRaf65oqKmi/E9aIkRqe5aB09igz1qJd9DA58vC2/LUqsSLcaINeZSTYmuvPS/CxlAD47m6N5fSkFVLt+9ud8vvylBpOOcj0iXeJ7f0AMO+OvPL3Cx/ibjhQKJYehIZWLmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ST2brMWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9285C4AF09
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 07:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760428634;
-	bh=fEuw9BmVbevlm5d7M1J5zA/kuTWthYgdzEwCg9slGHM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ST2brMWmt4nNGUfxbzAXdS70ncFlNeNLKvmk/cjfRH4atA81txSOr54hAqpsVuigh
-	 LvOa1Nx39YcBoy13XevvFNNuKT5HnLqc2MJz6+G9FSqFOY302eYpoELpQm7TcexyHi
-	 rCXUCUwxlta320AK+jGH/vQ9IzdmunaRRSbhPx5lX69YITjWHg2JuFm1x8IW2nmj7c
-	 XKBHi/OupFdBk4otzPSH5XlFz48eeZnkoPGYSXkbtLzrCPWEvwpdDCvj3mmr0h6vf3
-	 39s9lwAsmD0v/W172ahM/KAWpceWvZebuLd9z/+w2F5EH8s5x432pBvVHVwTwDmmRv
-	 sFgJRRiPsyrRw==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6502b1c3d72so853074eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 00:57:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULILmpBdp5ljz37vJGBOGUSSJMzdIAf6AwPJvnjL9Ibz1SHaG7uUuIHSyvEeMdcuyCtVtCoFFcjg4pcDBz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWE55sCnDFU5VuItKUVUDhVpBaX2+SVCorZZrCI8Kytq4npGZM
-	Gu4vfILZn68sRFXs7lwKCSkwUr0IstyihJ+wnLUogKdWD9xcnwSlBj3Bbq1oLCzOnA3mp3uxeCn
-	09Q2H6qgNEdFkQSg2yoUdLwpcokdIxTw=
-X-Google-Smtp-Source: AGHT+IFPfDnTf9zbEN9jReILv+Rc7NXW+rIBj5xxOTW4Icy7cI++nKtqurabUVrLb0jyQUr+3cyoo/uPc7hkMYCziko=
-X-Received: by 2002:a05:6870:5247:b0:314:b6a6:688a with SMTP id
- 586e51a60fabf-3c0fac56c8cmr9786164fac.42.1760428634196; Tue, 14 Oct 2025
- 00:57:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=jIjZDDJgfwVGkRthArYWLinafEbTGJlP5yMUFWvm6+eNK1qe56+41VnWPFk7NW1wV6pVnJtbveslMK+Oorb7EJ44fNo1gtCk3gzX3Ge6XXrGygmB+YNqc3ReDyL9NsGwNqkHUkc3nbowFyJ9Eum/aeKFdU5KhTzHLWrI0wFbQz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=rc1kw4HY; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-78f15d5846dso83276556d6.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 01:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1760429221; x=1761034021; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaSrNFnxGmoWet5IGMWfVxdar8Dax24kjJ0xtMz88wY=;
+        b=rc1kw4HYUwr0J+7VjLspfU3d24nD+7iHjbbFHa4aJJMEPazlubRP3eBm1wfICIWAtE
+         zB19VarqawbMtY4QCSQa2TX8nxHGoGnBWvWswkA3X2ZuQ8ItOY527qDJ1m2kE4GGhh8L
+         Fhmoqs55xEDQnMA3i2UcCoiDeTF9QT3qYo4Pc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760429221; x=1761034021;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gaSrNFnxGmoWet5IGMWfVxdar8Dax24kjJ0xtMz88wY=;
+        b=sCMviOJ1LbCU4bA9rW2wZ4TrrjjAA+lNmVKQeaEgIPkbQ537fsR8h/JxF6dOQheKky
+         XNo/wfVZZdsxjxJzeHyqKLEQOxHES8x8NYpNizODOjuYEGuSQIcbrkie6UbmDN2w1z/a
+         7daHiKDsg5kPa4BRl5ZmQYPyFskAooJPPxTf0ba6RbsqcyBFAH8um1QXSzM8I3xLcaZW
+         V2/pFQpcU2NlV5/t9ja6tC3E2qObuFMx6J4QChTZCNe9SQuIST0hIUVTW3Qn7IjbiErr
+         iVU/4JzBru29h/r/4fFZarKFhfYUFWatEaBGOhb2vcOTWNuliac1XDAGHBgdHzgeivt6
+         RoSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3kL/jdrcmBRabKCuShW9SInvl/e1YVUkByQpUw14oxGcR7LZNlx70LLTt7AeCDhVbpsQdPbhn+LiLL8sP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwerZzAt1rFQKKig7lFPl/Qg/Sp8zBbbGuGd1kDpWviQnwjgTla
+	cZUmTb0PNMAW5Io/kO73/LkR2QM5MlROd9uThP3SYoTJtFItJQD1CMOaIoa27seQa1C/xfbOqfo
+	ZBUUBUPt5a1dQ+QAcVGkLlTB/F+5tpyxT/VOQdztifw==
+X-Gm-Gg: ASbGnctLC2z/JS05LsgAooqGKqoLbj6JhZzYPV9JorM+WUXtViB0JlIasstZsD0JuEL
+	lPhELIeclJQhMGTMD6+9zBLQROXVGcRLnMMIimm7J6xq0ojYyCd2lKbiTN71QafWYikCRP7O75e
+	QLzTswsm0JYFtJulzh/lz61A40yxW1Qbgbfj7FfXgCJniSKTfoQG7mh7J8NaufKPhKje2HmSb1z
+	algtw1Xp6yezBG5qRpRgJVd/mmRBCOQ2kBpzdIQfHptkwA2mq881ey8rNA85lMFOFceiA==
+X-Google-Smtp-Source: AGHT+IGZ+aeN0K7J2mOJHMpdF50iEHtXyXs8Vs6iTcWHhQxhE8sH0fNPoY2WKEuKSaxfOotYWPF0p7oQCdN5qZUhbrM=
+X-Received: by 2002:ac8:5d05:0:b0:4b7:8d26:5068 with SMTP id
+ d75a77b69052e-4e6eaccbd0dmr317846191cf.17.1760429221421; Tue, 14 Oct 2025
+ 01:07:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011200010.193140-1-ebiggers@kernel.org>
-In-Reply-To: <20251011200010.193140-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 14 Oct 2025 09:57:00 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFESWp8KjVoGhyXFwTXcZQ81f9P74ds7GnwVhkAR6SnmA@mail.gmail.com>
-X-Gm-Features: AS18NWABRew3uh8RVpYgf0vAKaZkNB388gqZj2t9wvNfhwSofVyRAfdQ3BIpZNg
-Message-ID: <CAMj1kXFESWp8KjVoGhyXFwTXcZQ81f9P74ds7GnwVhkAR6SnmA@mail.gmail.com>
-Subject: Re: [PATCH] ecryptfs: Use MD5 library instead of crypto_shash
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: ecryptfs@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	Tyler Hicks <code@tyhicks.com>, linux-fsdevel@vger.kernel.org
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com> <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
+In-Reply-To: <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 14 Oct 2025 10:06:49 +0200
+X-Gm-Features: AS18NWCR1GKck-Wej2NUo535YcBBaKeSQhVsfQwZGBEEsJgxvdNEg-fGJr-c27I
+Message-ID: <CAJfpegt7WvXZr4D4kqGujD=MXEQa7oRH3gvk90+D7Pha0MJJBg@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Brian Foster <bfoster@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 11 Oct 2025 at 22:02, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> eCryptfs uses MD5 for a couple unusual purposes: to "mix" the key into
-> the IVs for file contents encryption (similar to ESSIV), and to prepend
-> some key-dependent bytes to the plaintext when encrypting filenames
-> (which is useless since eCryptfs encrypts the filenames with ECB).
->
-> Currently, eCryptfs computes these MD5 hashes using the crypto_shash
-> API.  Update it to instead use the MD5 library API.  This is simpler and
-> faster: the library doesn't require memory allocations, can't fail, and
-> provides direct access to MD5 without overhead such as indirect calls.
->
-> To preserve the existing behavior of eCryptfs support being disabled
-> when the kernel is booted with "fips=1", make ecryptfs_get_tree() check
-> fips_enabled itself.  Previously it relied on crypto_alloc_shash("md5")
-> failing.  I don't know for sure that this is actually needed; e.g., it
-> could be argued that eCryptfs's use of MD5 isn't for a security purpose
-> as far as FIPS is concerned.  But this preserves the existing behavior.
->
-> Tested by verifying that an existing eCryptfs can still be mounted with
-> a kernel that has this commit, with all the files matching.  Also tested
-> creating a filesystem with this commit and mounting+reading it without.
->
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->
-> I can take this through the libcrypto tree if no one else volunteers.
-> (It looks like eCryptfs doesn't have an active git tree anymore.)
->
->  fs/ecryptfs/Kconfig           |  2 +-
->  fs/ecryptfs/crypto.c          | 90 ++++-------------------------------
->  fs/ecryptfs/ecryptfs_kernel.h | 13 ++---
->  fs/ecryptfs/inode.c           |  7 +--
->  fs/ecryptfs/keystore.c        | 65 +++++--------------------
->  fs/ecryptfs/main.c            |  7 +++
->  fs/ecryptfs/super.c           |  5 +-
->  7 files changed, 35 insertions(+), 154 deletions(-)
->
+On Mon, 13 Oct 2025 at 22:16, Bernd Schubert <bernd@bsbernd.com> wrote:
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> For an intelligent server maybe, but let's say one uses
+> <libfuse>/example/passthrough*, in combination with some external writes
+> to the underlying file system outside of fuse. How would passthrough*
+> know about external changes?
+
+It could use fanotify or leases for example to check for external modification
+
+Thanks,
+Miklos
 
