@@ -1,236 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-64197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA37BDC668
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 06:04:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4AC2BDC71D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 06:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCA4406757
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 04:04:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C43C4E4AA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 04:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A842F1FD1;
-	Wed, 15 Oct 2025 04:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4CC2F6588;
+	Wed, 15 Oct 2025 04:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NHNYE0kL"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VEaU2K83"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D0B2FF176
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011F52E8E04
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760501018; cv=none; b=HgTfUIDkZ4XDEywv/4FmGUd6f+dkfC3jpF0n5+hN2EUBQFrkozWUQpyTjbhU3qbnoUPTfwk0Nb09q5i4OnwWMgzqm6NSNrFfALOi7PVMxdipStwV5nbnG9xJ1PCjBn+0oAEPXxtzNyxlE+wFvOPufL1aooeWl4QIlCEcJ+ADkEQ=
+	t=1760501915; cv=none; b=Kic0exr5kV1cKdWgfRxxdHDUX6Y+cW/BfITFTZtNbflB0HQ96V+DpkMTlq5JAlxV0YJc8vOhU7ORv948Lv17vhwsKxsk61XT8nFKkO5X8AvAC1Bdk/sEnlz1dnIbh066+CWVFAvf2y0DV6L3xUBAxYgj6WtD4bois7WJdrmKfT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760501018; c=relaxed/simple;
-	bh=MUM+uW6qnDu0apC4KR7QWlmonTleTGezmIe8a4nc1Bk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jlvlPK7CPX54gJ/TCGdkdk4t0qX/ZaVF37dbfTeV/LUlO621tiGt+08OJUn16YYZ8zee4pjfz+TG3jEYTx8+iQ8xt5SrFOGr5bCf0jmin+CamxXGNgcs9jclgGTvIGrRdaK8DwvLk4xmBtMYp8I5CQAXjgq8jAY6lYt1uo7kAj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NHNYE0kL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760501015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U5ohKs6qKbp9M57nvQdcRMhKqmCNN3hHdO4AybKNaC4=;
-	b=NHNYE0kLseEuBSWKqB0W5+v5Bx+0CBp3ntb7/IgRkq9YjvSWBbVDA8iNMcp5Zxnr/3J6M1
-	3qAh3sJ5P/KyKvxjKd1ebuEx/nslEid07zJIs/oP4Ed0OhegqJcIlBuhoJM1vcDb2SzlPK
-	abvZlPbrBHapQtVxS784fFTL1caH2Ak=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-201-IKAbGKi2NNi6ZQE2V-hPuQ-1; Wed, 15 Oct 2025 00:03:31 -0400
-X-MC-Unique: IKAbGKi2NNi6ZQE2V-hPuQ-1
-X-Mimecast-MFC-AGG-ID: IKAbGKi2NNi6ZQE2V-hPuQ_1760501011
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so11522010a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 21:03:31 -0700 (PDT)
+	s=arc-20240116; t=1760501915; c=relaxed/simple;
+	bh=nS2Ut62x4b4Mqe67yKdtcu+ie4wvdW5JLXg3jbEHFRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mighybXbvFM6lSynVVIEjjxVKkQm5BCbsvDuC3A15CSTAOfwgyXVz8t4HV7Ps+B2yAJOG3P3iAOi8QBak23wEtBlluAbUxCaouIlEUJQorHMxZReVsTUs9Bwa9CJARCqeGC/q0jG4G1tatQ0x2Nuiw7bkfhm0xX7Zv/Sd9gKwTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VEaU2K83; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso433655f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 21:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760501911; x=1761106711; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=cm3TzlS0OZaACmDeRCIm+f6uq6+u46txD6gTkH0cYOE=;
+        b=VEaU2K83wuEIXmGt/3dfN1aCkI6J+KRzZIwTRQSId0KjJbZ9yEhCbQAlGiX2cnnLy6
+         j+XU3Ct+JkNBK1ETSGuaHvRKzFrU2pEFLOz9neKbRSHa96AJy9LQeVQWQTrRhLffNUV7
+         YtYWv0JbQd+YMJe4fVV9Befw/KM9vVoYBIzKIjOwq1FOTZ31f4xdtWa+OrlABs1vurBO
+         MfZ6LUXMuF391rEXwO8zHwlZiL6feTRmJc8DD31cF28VdddJSnt14e7DGO1BciwkGrsC
+         Lbv0rOyER8BOAwRAjIyhqzXkE17ighe6hBtYtykbMolJE1jbOnZ99L/Wg768kLPgqC+z
+         5Dyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760501010; x=1761105810;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U5ohKs6qKbp9M57nvQdcRMhKqmCNN3hHdO4AybKNaC4=;
-        b=Lp9WIHRi0B971c/s2MBguEdXXT6Ea1TsQG3eqsNiZD/+Hj0ayRbTCu8ZWX+q2iLOMs
-         wkz1QhGNoHsh+yJwC6s9E/lhf3DHm68HGuYVuOesuXHHOYyBNmxeDKWCT6jFm5pDW1yt
-         pJqC4wcAopPdH/V8wWyjkl68DfymYrWjtIHeahv3LtYdGBuUa+hFEhRK2o/E95vcGt+a
-         grtcwAu+fM7EIRfonsAeIeyTB3O1Tc96fTczv63UQIAdAq/esLlSpO1KOTv1DytiJPNx
-         8OSKyHY5aaZVFEZzKqGj54mdkdR732LAJLvWM63F9+7mTcGiX1ktt/tPIhnZyuQej8c+
-         APmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrLhIeoKtYcDp5GSCX5ylz199ZVPD07T7IxMO2pG3QNggnuUhpXI91bG3bICMLgITM/o81sCPWIWyOARaf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWCSWzWuWYuuHhffXzEHyG3e+t6It9vxhLsnQ+s+KSyaQBKhy+
-	QXkPcOuvqpKazelnltqXZuRsdLJzxFFbIhB88C9LArNLdRZV88dg1Z8iWAFJmnStcOIJELkYMSc
-	OPlvtRxu9jllqe/8/EEboVvItjnRXlz1K9f8NR3uo1VsnTbFPxjO5V7ltI5sawJNdTss=
-X-Gm-Gg: ASbGncvoGf9K9PbzdQSX/d8tGj7p+z8cnUOZLKkbVINduSfVl9QnEDjs+0OQn8PkHmO
-	3skmKb4pZD+oTFeL9OxCbM+NoGzDi3zNS3tn5EVjy/PMjfKr5Wfj3X+y0HMWdwPaCLW21T+K7GS
-	BtXUO2RaCOGPxhgGj3mBVfYenteQVZPwagtuVYgetEgB6KAZpZmDpdNVGPymCwaYBKQIT+TCKVK
-	GyrM1wE9rosDk5GJlq8U02+vr96tRbJJ/h6TWKwMPcknICZU2g2higE8KUhRBhjKuee770NxA6g
-	HBsL/i1xmQx08PU5xFpPbXVSRYxfUTrlR9U=
-X-Received: by 2002:a17:90b:4a45:b0:329:cb75:fef2 with SMTP id 98e67ed59e1d1-33b5111731amr37028096a91.3.1760501009928;
-        Tue, 14 Oct 2025 21:03:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuLhwfwk717yOcd8hPJjqG2qML+HfCGwgfNoBL1CNQBuD1WSe9rogLQkLlfQFnzLiekkeHRA==
-X-Received: by 2002:a17:90b:4a45:b0:329:cb75:fef2 with SMTP id 98e67ed59e1d1-33b5111731amr37028057a91.3.1760501009473;
-        Tue, 14 Oct 2025 21:03:29 -0700 (PDT)
-Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b978607cfsm608006a91.9.2025.10.14.21.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 21:03:28 -0700 (PDT)
-From: Ryosuke Yasuoka <ryasuoka@redhat.com>
-To: arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH rust-next v2 3/3] rust: samples: miscdevice: add lseek samples
-Date: Wed, 15 Oct 2025 13:02:43 +0900
-Message-ID: <20251015040246.151141-4-ryasuoka@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251015040246.151141-1-ryasuoka@redhat.com>
-References: <20251015040246.151141-1-ryasuoka@redhat.com>
+        d=1e100.net; s=20230601; t=1760501911; x=1761106711;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cm3TzlS0OZaACmDeRCIm+f6uq6+u46txD6gTkH0cYOE=;
+        b=QPU/X8C2kg0jrgrDlIwVLwLgcVHb84hG2k5SnONRiuIK+gkdvS5YUrM7G9xgijgX+y
+         crJBq89pAB8H1kzYt3kCmoTzpCoyqUM0gwCCqGtJQSm7RC8Hxa9a0lQfcxCZP03wNNec
+         fEANVhrbcKeGMzdcVtyRzgO7F9XBSvi6OKd5RaQTPNv7eoc6MjyHii5lsQ8zWxkcRlBw
+         UoxD8JnWrIMjnyvGKc44FhknWy71ECKit6LmnxKAgR5ogSO8+OcQpfxWN7lBNG/461f+
+         oNBQqvHgE3CpX3RneWFlMrKIyGaNdzKLfJhDAVaosQWxnAgvhY45qxqb/GIY+jXiX2Ba
+         X7LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmh0xZJjJdwXyM+JM1gNR51J4YaTv2bMEOlcYA2qudipUWN9klFKHD/qdgeAlMB7R52QMSBGR3nEbKy6Ue@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF95IRYGtjAVdCTUVeJXNvWA1vsr04R/CfMErapZLiVywhfcOM
+	BNksKAIjAyegWeOi2YAJ52ZzvxPcL7rbNsgKVgTbOyiGb9U+0e4tuU8DU0u2F1iGTDM=
+X-Gm-Gg: ASbGncvcf1wCP+SMS02piga+STLS+guNuKP99PpF7DXRn0sQc74eL7gLxsl40JIQ9oO
+	Pl5tLgqFkO8QR3Sp3Jm9xBjSkS2kQoBYouB8o1YOB2XI4y5f3y4cS0m/6q3fp94ZXEnNeD+DTRx
+	diqH48r64obkE8gvlJ/ndSxq5TIGxl18OzG4KJqDjXoluVgezanpk9zxWY+W6bM9VdAR8nRhUU1
+	XZCdtiJswQHYcabzmGeuu0rf+vr3JLifW3IH+swXHSItZTNs3CD0QsnCEoum5kjM6PgX/fST6af
+	Ulf1kURUNbZ3YspDnt2FCZpfjFJPL4q0WfKumMOUvKVqls8hihagbEkGpMgFOjf2vGaxIOG21Iy
+	g1xizQ21lqjoXxTd9zEOftkHcL15cvIJdj5X+kRwFGQEssluch6tJAD2Nx2pIqwFj3BCfFnQZws
+	VdV2ji
+X-Google-Smtp-Source: AGHT+IEiuX7kenvFJN3yTgBkBSq3R1S5piuReZRy93wNagabNuWUYEEsmKyQiTUMz1qALWjnA0s6gg==
+X-Received: by 2002:a05:6000:4009:b0:425:86d1:bcc7 with SMTP id ffacd0b85a97d-42586d1c0cdmr17259284f8f.23.1760501911127;
+        Tue, 14 Oct 2025 21:18:31 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0c349csm16959651b3a.50.2025.10.14.21.18.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 21:18:30 -0700 (PDT)
+Message-ID: <1de12f07-c7ab-4a8f-8fb4-00cb29145178@suse.com>
+Date: Wed, 15 Oct 2025 14:48:23 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
+ index=on
+To: Anand Jain <anajain.sg@gmail.com>, dsterba@suse.cz,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+ <20251014182414.GD13776@twin.jikos.cz>
+ <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
+ <0791edfb-6985-45d7-bb3e-08ab7a341dab@gmail.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <0791edfb-6985-45d7-bb3e-08ab7a341dab@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add lseek samples in Rust MiscDevice samples
 
-Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
----
- samples/rust/rust_misc_device.rs | 68 ++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
 
-diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-index d69bc33dbd99..7f227deef69d 100644
---- a/samples/rust/rust_misc_device.rs
-+++ b/samples/rust/rust_misc_device.rs
-@@ -12,6 +12,7 @@
- //! #include <errno.h>
- //! #include <fcntl.h>
- //! #include <unistd.h>
-+//! #include <string.h>
- //! #include <sys/ioctl.h>
- //!
- //! #define RUST_MISC_DEV_FAIL _IO('|', 0)
-@@ -19,9 +20,11 @@
- //! #define RUST_MISC_DEV_GET_VALUE _IOR('|', 0x81, int)
- //! #define RUST_MISC_DEV_SET_VALUE _IOW('|', 0x82, int)
- //!
-+//! #define BUF_SIZE 16
- //! int main() {
- //!   int value, new_value;
- //!   int fd, ret;
-+//!   char *buf[BUF_SIZE];
- //!
- //!   // Open the device file
- //!   printf("Opening /dev/rust-misc-device for reading and writing\n");
-@@ -86,6 +89,40 @@
- //!     return -1;
- //!   }
- //!
-+//!   // Write values to the buffer
-+//!   char *w_buf = "ABCDEFG";
-+//!   ret = write(fd, w_buf, strlen(w_buf));
-+//!   if (ret < 0) {
-+//!     perror("write");
-+//!     close(fd);
-+//!     return errno;
-+//!   }
-+//!   printf("Write values to the buffer: %.*s\n", ret, w_buf);
-+//!
-+//!   // Read values from the buffer
-+//!   lseek(fd, 0, SEEK_SET);
-+//!   ret = read(fd, buf, BUF_SIZE - 1);
-+//!   if (ret < 0) {
-+//!   	perror("read");
-+//! 	close(fd);
-+//! 	return errno;
-+//!   }
-+//!   buf[ret] = '\0';
-+//!   printf("Read values from the buffer: %s\n", buf);
-+//!
-+//!   // Read value from the middle of the buffer
-+//!   memset(buf, 0, sizeof(buf));
-+//!   lseek(fd, 1, SEEK_SET);
-+//!   lseek(fd, 2, SEEK_CUR);
-+//!   ret = read(fd, buf, BUF_SIZE - 1);
-+//!   if (ret < 0) {
-+//!   	perror("read");
-+//! 	close(fd);
-+//! 	return errno;
-+//!   }
-+//!   buf[ret] = '\0';
-+//!   printf("Read values from the middle of the buffer: %s\n", buf);
-+//!
- //!   // Close the device file
- //!   printf("Closing /dev/rust-misc-device\n");
- //!   close(fd);
-@@ -114,6 +151,9 @@
- const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('|' as u32, 0x81);
- const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('|' as u32, 0x82);
- 
-+const SEEK_SET: i32 = 0;
-+const SEEK_CUR: i32 = 1;
-+
- module! {
-     type: RustMiscDeviceModule,
-     name: "rust_misc_device",
-@@ -204,6 +244,34 @@ fn write_iter(mut kiocb: Kiocb<'_, Self::Ptr>, iov: &mut IovIterSource<'_>) -> R
-         Ok(len)
-     }
- 
-+    fn llseek(
-+        me: Pin<&RustMiscDevice>,
-+        file: &mut File,
-+        offset: i64,
-+        whence: i32,
-+    ) -> Result<isize> {
-+        dev_info!(me.dev, "LLSEEK Rust Misc Device Sample\n");
-+        let pos: i64 = file.pos();
-+
-+        let new_pos = match whence {
-+            SEEK_SET => offset,
-+            SEEK_CUR => pos + offset,
-+            _ => {
-+                dev_err!(me.dev, "LLSEEK does not recognised: {}.\n", whence);
-+                return Err(EINVAL);
-+            }
-+        };
-+
-+        if new_pos < 0 {
-+            dev_err!(me.dev, "The file offset becomes negative: {}.\n", new_pos);
-+            return Err(EINVAL);
-+        }
-+
-+        *file.pos_mut() = new_pos;
-+
-+        Ok(new_pos as isize)
-+    }
-+
-     fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usize) -> Result<isize> {
-         dev_info!(me.dev, "IOCTLing Rust Misc Device Sample\n");
- 
--- 
-2.51.0
+在 2025/10/15 10:35, Anand Jain 写道:
+> On 15-Oct-25 5:08 AM, Qu Wenruo wrote:
+>>
+>>
+>> 在 2025/10/15 04:54, David Sterba 写道:
+>>> On Mon, Oct 13, 2025 at 10:57:06PM -0300, André Almeida wrote:
+>>>> Hi everyone,
+>>>>
+>>>> When using overlayfs with the mount option index=on, the first time 
+>>>> a directory is
+>>>> used as upper dir, overlayfs stores in a xattr "overlay.origin" the 
+>>>> UUID of the
+>>>> filesystem being used in the layers. If the upper dir is reused, 
+>>>> overlayfs
+>>>> refuses to mount for a different filesystem, by comparing the UUID 
+>>>> with what's
+>>>> stored at overlay.origin, and it fails with "failed to verify upper 
+>>>> root origin"
+>>>> on dmesg. Remounting with the very same fs is supported and works fine.
+>>>>
+>>>> However, btrfs mounts may have volatiles UUIDs. When mounting the 
+>>>> exact same
+>>>> disk image with btrfs, a random UUID is assigned for the following 
+>>>> disks each
+>>>> time they are mounted, stored at temp_fsid and used across the 
+>>>> kernel as the
+>>>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() 
+>>>> however shows
+>>>> the original (and duplicated) UUID for all disks.
+>>>>
+>>>> This feature doesn't work well with overlayfs with index=on, as when 
+>>>> the image
+>>>> is mounted a second time, will get a different UUID and ovl will 
+>>>> refuse to
+>>>> mount, breaking the user expectation that using the same image 
+>>>> should work. A
+>>>> small script can be find in the end of this cover letter that 
+>>>> illustrates this.
+>>>>
+>>>> >From this, I can think of some options:
+>>>>
+>>>> - Use statfs() internally to always get the fsid, that is 
+>>>> persistent. The patch
+>>>> here illustrates that approach, but doesn't fully implement it.
+>>>> - Create a new sb op, called get_uuid() so the filesystem returns 
+>>>> what's
+>>>> appropriated.
+>>>> - Have a workaround in ovl for btrfs.
+>>>> - Document this as unsupported, and userland needs to erase 
+>>>> overlay.origin each
+>>>> time it wants to remount.
+>>>> - If ovl detects that temp_fsid and index are being used at the same 
+>>>> time,
+>>>> refuses to mount.
+>>>>
+>>>> I'm not sure which one would be better here, so I would like to hear 
+>>>> some ideas
+>>>> on this.
+>>>
+>>> I haven't looked deeper if there's a workable solution, but the feature
+>>> combination should be refused. I don't think this will affect many
+>>> users.
+>>>
+>>
+>> I believe the root problem is that we're not fully implementing the 
+>> proper handling just like other single-device fses.
+>>
+>> We do not use on-disk flags which means at least one fsid is 
+>> registered into btrfs, thus we have to use different temp-fsid.
+>>
+>> If fully single-device feature flag is properly implemented, we should 
+>> be able to return the same uuid without extra hacks thus solve the 
+>> problem.
+> 
+> I had looked into this some time ago. Some libs, like libblkid,
+> don't handle multi-device filesystems or cloned devices with
+> temp FSIDs very well. I'm aware of it.
+> 
+> I've been making some progress on fixing those cases, but it's
+> a bit extensive since we first need enough test coverage,
+> and recent reappear-device inline with that.
+> 
+> Let's see how we can support use cases with identical devices
+> (where changing the UUID isn't an option) and keep things
+> compatible with systemd and library tools.
+> 
 
+My current idea is to introduce a new ro compat flag, so that mounting 
+that device will not go through the fsid lookup procedure completely.
+
+But go through the common get_tree_bdev() routine, which will check if 
+the fs is already mounted using bdev holder.
+(And of course, no fsid recorded inside btrfs module)
+
+This will make single device btrfs with that special flag to behave 
+exactly like all the other filesystems.
 
