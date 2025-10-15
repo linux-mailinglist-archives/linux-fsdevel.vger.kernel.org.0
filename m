@@ -1,144 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-64259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7733BDFFCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 20:06:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2578BE0001
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 20:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA96F4F85C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 18:06:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6266F4FD68E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 18:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E05301473;
-	Wed, 15 Oct 2025 18:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B954C301468;
+	Wed, 15 Oct 2025 18:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hiY5QYtE"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EUn+rQJy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1423009E7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 18:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F4B303A09
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551558; cv=none; b=F93O0veC4eku6aUjztgLQ3RJhdQMd+ClO1aO2JusdFMGX27vT1C+xxlqC4yvuEStIDmEQYDL8m3pTBBZUucTvXcqGRp8cyFZGS246/9McppwGGGVIDcLTEJRpIH64KDbmytcVST5Y9gc3AxpJ60Or+/E3tUg/FHBU/omdmFqY88=
+	t=1760551612; cv=none; b=qEikq8oodKpUT0ckxWyP9DRynOsJ7mhGZAZf1BDQrU4VP3ue3Lj9u3V5MRZ8cZEb4J6lz9l7R+1Sc7vgXBtfBR0NGmCnqkYwxaHtRvnSqVQ8cCvrrs2n9+LTFdm5lDySXT7SHc9oNv9rAG/TvanX+T6Y8ifsLqLAhHPGFV6cAs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551558; c=relaxed/simple;
-	bh=ozdKul5OP276A3h3Wjm2x2XarpQcUWp1UVCAyeuTdSY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eAdP8NCaDL/gvddMbwPV2mjlfHLWk53wk573E7MbWAopX1gON1P5OfpVd/KUZG31MbOlW+lyJqTlzUctdZacA8xE986bTSsNc3PYLOuatsBiiz1CbZEFpjr02xSfdwpmLa24WROUq8SE4OMZJLuCjacILK/VJRAL3VgUxvqCklU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hiY5QYtE; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-277f0ea6fc6so233368085ad.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760551557; x=1761156357; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wj/ujD0eXtGvKYdVuuqLrx+hKA4SG0aPTcTudPvMU20=;
-        b=hiY5QYtEpveuJQ3GbSnBDDXz5b7tFq/FMKy0gFT20cj6giwmL8q4Mh0LFH56veNEYF
-         JGywApRFaF3M3jB/LxzaK5TYG3wiIPdyLA019g7yKN4nOQ5/e10ISsVrWEz7iperQzdV
-         oZX2RznS+iz83f0ymdb26UtOTr0XrQMcNh+WRgQMPZoGpNln5z+dSnS/rPq7YJkZCL7e
-         ClrlWThmjmQQxohicODRYSlyv33ENTwTqHqIBf1A1TBzcuisSBRbNV43V5lJudqs4xYC
-         S0dS5lG8OAygmR+OVmej7Qqp9sS98SLfTWn7dlNyPLpqViCGxu06AKz0VeOR5mKQtyCs
-         eS3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551557; x=1761156357;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wj/ujD0eXtGvKYdVuuqLrx+hKA4SG0aPTcTudPvMU20=;
-        b=e9txPcGHlG/sB086yCIJn3k8BOmWAcX1Xa4qr/tgnvyEMDBLj0wDSvteAlvJ1g0Haq
-         /4fllj14cawDmmOijXt6BwSMIJ0plY/t9CYPC+ObUy64XjOT64JB8QtbaqfHfR87tnd7
-         C8M+N8YiCBtSmtDAN7pnJdHd/2/+6k0DrLR41/zOGSdk+Y/pl41tttirLdlH7q68hWiA
-         t66HTYhKY/toAgDtHaOcnEzSapMd97oFN0eGy8y6WOWEsQKRLQKnYYS7iPaSE2K+bzfN
-         k5h/rHupB2VIu4tGpXZ9PMRffptSlT1K2CwW2RIpUqurClPScHf1jIM3WrQS7dJyuukw
-         JtNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDxhiYRN9xtftAKhvmzgmW84xhAJj+fwxFpAWCkBC507oUqfOkCemd0hejUz6eoCf5LKw8nnCPkd6eohqM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhFSE8Wd1J/NHWRs4Ofs7xFIumDPIrbCXU5pPI5URf6VNQqXi1
-	mcgqAilUhQl5Eghk77br3i0/2KlS/Ts8jlPNiJ7odjGSCkTG1dEH/e8ZhRCR3aTcXHbLoWoygAY
-	EFnxeSA==
-X-Google-Smtp-Source: AGHT+IH/Mc5bux0nHPu+CkauZuwZIYiV046udmQ4p4yB6kgoXdVfplmR64sQJckJg1s2r9B+yaVqVDHEGb8=
-X-Received: from pjrv8.prod.google.com ([2002:a17:90a:bb88:b0:32e:b34b:92eb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3d05:b0:26e:49e3:55f1
- with SMTP id d9443c01a7336-29027373d9amr366930845ad.18.1760551555936; Wed, 15
- Oct 2025 11:05:55 -0700 (PDT)
-Date: Wed, 15 Oct 2025 11:02:44 -0700
-In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
+	s=arc-20240116; t=1760551612; c=relaxed/simple;
+	bh=tDVe3iFhTAVy1iZGzP2GeW8y71iLQ/oV5JBMOMbA+/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WgGwJUHCiY4lJwOl0wjU6wbpeyozHnKCa6ZJ5efWEjZcOMKYfpOVayJeE7s69Jb5+j0vc0EWLfoVYJjcGk2ucp86+BC4k2YFC4nGQ6flS0lhC2Rj1r2AlqSIoUl4ntOy9X4VfpzRN5FKRaXWEkxUO1miLzN9sMMghMlSRxAih2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EUn+rQJy; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760551605; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=3WOBBeJ5CNwrbT4c+afSWSFhVu+ImcZobVwd+jhY2eA=;
+	b=EUn+rQJydcF9hMO9UjulKcJpbRqrtCOmOltyJvxPzUl0k4CfOspjC3eJO6NNxRIXxhx/UbiAL1QIf5cfjsV0FQWJJjD6Agc5ZaVmYuG37eeIv4YwmfoNQEZ7eKF2LFzB3xP+du7NmDhp++GX9Zc0pkz16M6kw+IyZ5fV6vpBkHA=
+Received: from 30.134.15.121(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WqHNtUF_1760551604 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 16 Oct 2025 02:06:45 +0800
+Message-ID: <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com>
+Date: Thu, 16 Oct 2025 02:06:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com>
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <176055105546.1527431.3611256810380818215.b4-ty@google.com>
-Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
-	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
-	Shivank Garg <shivankg@amd.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
-	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
-	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
+ truncating read range
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+ djwong@kernel.org, bfoster@redhat.com, linux-fsdevel@vger.kernel.org,
+ kernel-team@meta.com
+References: <20251009225611.3744728-1-joannelkoong@gmail.com>
+ <20251009225611.3744728-2-joannelkoong@gmail.com>
+ <aOxrXWkq8iwU5ns_@infradead.org>
+ <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
+ <a8c02942-69ca-45b1-ad51-ed3038f5d729@linux.alibaba.com>
+ <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 27 Aug 2025 17:52:41 +0000, Shivank Garg wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1] and can be applied
-> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
-> Merge branch 'guest-memfd-mmap' into HEAD)
+
+
+On 2025/10/16 01:49, Joanne Koong wrote:
+> On Wed, Oct 15, 2025 at 10:40 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>>
+>> On 2025/10/16 01:34, Joanne Koong wrote:
+>>> On Sun, Oct 12, 2025 at 8:00 PM Christoph Hellwig <hch@infradead.org> wrote:
+>>>>
+>>>> On Thu, Oct 09, 2025 at 03:56:03PM -0700, Joanne Koong wrote:
+>>>>> The end position to start truncating from may be at an offset into a
+>>>>> block, which under the current logic would result in overtruncation.
+>>>>>
+>>>>> Adjust the calculation to account for unaligned end offsets.
+>>>>
+>>>> Should this get a fixes tag?
+>>>
+>>> I don't think this needs a fixes tag because when it was originally
+>>> written (in commit 9dc55f1389f9 ("iomap: add support for sub-pagesize
+>>> buffered I/O without buffer heads") in 2018), it was only used by xfs.
+>>> think it was when erofs started using iomap that iomap mappings could
+>>> represent non-block-aligned data.
+>>
+>> What non-block-aligned data exactly? erofs is a strictly block-aligned
+>> filesystem except for tail inline data.
+>>
+>> Is it inline data? gfs2 also uses the similar inline data logic.
 > 
-> == Background ==
-> KVM's guest-memfd memory backend currently lacks support for NUMA policy
-> enforcement, causing guest memory allocations to be distributed across host
-> nodes  according to kernel's default behavior, irrespective of any policy
-> specified by the VMM. This limitation arises because conventional userspace
-> NUMA control mechanisms like mbind(2) don't work since the memory isn't
-> directly mapped to userspace when allocations occur.
-> Fuad's work [1] provides the necessary mmap capability, and this series
-> leverages it to enable mbind(2).
+> This is where I encountered it in erofs: [1] for the "WARNING in
+> iomap_iter_advance" syz repro. (this syzbot report was generated in
+> response to this patchset version [2]).
 > 
-> [...]
+> When I ran that syz program locally, I remember seeing pos=116 and length=3980.
 
-Applied the non-KVM change to kvm-x86 gmem.  We're still tweaking and iterating
-on the KVM changes, but I fully expect them to land in 6.19.
+I just ran the C repro locally with the upstream codebase (but I
+didn't use the related Kconfig), and it doesn't show anything.
 
-Holler if you object to taking these through the kvm tree.
+I feel strange why pos is unaligned, does this warning show
+without your patchset on your side?
 
-[1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
-      https://github.com/kvm-x86/linux/commit/601aa29f762f
-[2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
-      https://github.com/kvm-x86/linux/commit/2bb25703e5bd
-[3/7] mm/mempolicy: Export memory policy symbols
-      https://github.com/kvm-x86/linux/commit/e1b4cf7d6be3
+Thanks,
+Gao Xiang
 
---
-https://github.com/kvm-x86/linux/tree/next
+> 
+> Thanks,
+> Joanne
+> 
+> [1] https://ci.syzbot.org/series/6845596a-1ec9-4396-b9c4-48bddc606bef
+> [2] https://lore.kernel.org/linux-fsdevel/68ca71bd.050a0220.2ff435.04fc.GAE@google.com/
+> 
+>>
+>> Thanks,
+>> Gao Xiang
+>>
+>>>
+>>>
+>>> Thanks,
+>>> Joanne
+>>>
+>>>>
+>>>> Otherwise looks good:
+>>>>
+>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>
+
 
