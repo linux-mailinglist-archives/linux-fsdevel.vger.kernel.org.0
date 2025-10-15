@@ -1,188 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-64172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6AEBDBDC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 02:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED52BDBEDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 02:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03D204F4B6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 00:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083773B808D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 00:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A92AE78;
-	Wed, 15 Oct 2025 00:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AFA1E376C;
+	Wed, 15 Oct 2025 00:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVdbzEPf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvNpFVhW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0858645
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 00:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938356FBF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 00:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760486732; cv=none; b=E0ylnGoBzWVzc1skLZO3FNe3OLznkoKB1Nzx/H0yQ9Bs+0LGOJ/MJi0lfAtvLrcYSlccpfhibsimu8bkM/zGFfvdgjlZF3vjwvkIq0FUsFnxEgGfp6BQPkzE498loP7qG6+hrKoGg9Yz3XQNiY7X7wv2HcOtIYHjNC3YuZ8CUXw=
+	t=1760489148; cv=none; b=rmQ1wJWJiojLA+r9WrzyrmLP/OS8uhVAGcn1uAUctmVa45uu7+vVeY1sALRA6htUkLc/eHlJocNb5hejnOeW3kfGTA0A5fZXbaiK0fV6eLimutIZqvKKiJsVabd+zzPbrn2M2zKgJN6HTLqgPvHEt0gdGKrglu6V/kTXkvy3i1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760486732; c=relaxed/simple;
-	bh=bhnzTueuY9Gq7RbeymuowpcCUw7aDx4IVKdkM/S0EJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jz9+e6i+cqeSVs7ftfQdsfWmn/gy6Ul3InT1DCIKJ+o3tZWxmBrvClP7lAajs6dGMnH4VZoQJXNJQWHPVDJqk+SyojbyQTkS5Rrqxcrhd5e5QroYSJmW5LARBhTWgiEf67ER/n7hFuNiD6BOD9DjyoqQYp9L3rMLQ+5IT08kBjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVdbzEPf; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1760489148; c=relaxed/simple;
+	bh=QWZy/15xnGTRgPkf5Pka44YljXIi4GDc0D994BUVp4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsVDkFT1fDGuLBUnu8uGOdzwdBJ5knhSb73wA3hy1AjOBrhf7VM023JJNnWb/1ZNJQ7fx/HVVpM/3GmIAyI1H6Qjrny0uUkyvcno/BObAtIZCUIkpHHDLof4k+wgWl8+qWKDtxm1LvsVidZKn+wtif+TT7jtit8n/c8/M2efw8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KvNpFVhW; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7841da939deso5332736b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 17:05:30 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so37641395e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 17:45:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760486730; x=1761091530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sLMiaX+vGO2HaVidLde0Mqzeld2XbAlMOu6TCSUhVYg=;
-        b=DVdbzEPfR8oPa8wp19Vt55fFpqpHac2QakEIjwKe+Q8Lh9lPo+k9e6du8vrsB5Btx+
-         Zai7dz4U+wGfjMkzXHM+HFPDv0rd4D2S4a1vX/VDfay+eXiV0mVi0sj78vRtO4PQLqdB
-         skiVzI7wwBqJ5f4CVVrI9NT2XhZM66X/cOYPXWp6R8+kzR89/eUABhZjklr3XFjvbiA9
-         521F2LdCkhdmpmuRskSbSMTlveIeVf94kiMncJOnq3lhpkkmK3twiTIj5r1sMM+4ZwZS
-         7/noZVrXEo5x6CcI69mrDqOxEOU/pxWmqIjhBF0Uf/R8XUVBObN2c2MTuYwgroFQZl53
-         yN0g==
+        d=gmail.com; s=20230601; t=1760489145; x=1761093945; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JjS2vWmWFupijvTyxg2fppwPWWk6ldlFSBLrc+f8lsk=;
+        b=KvNpFVhWTFELaiAqhGS7x0NZitH5f/OLep4v15djPHyrq2Aw0JK/6IzoelOW6F0GPJ
+         +yRBedJHiUictgIiytF/0wNS0as6BP6LzvOLlexN4eBhOWFCtQLScIXuzOg1SuIAj96M
+         mpnU6tfZXlhDxptdn3GuNYMV+o2z3XF8AFjHHhKh7TK1DEW2Z98vdeOzn4AE9vx+aNmS
+         inVWfnvAl9FbiBnmAxIKq04ZcxhajQAUlE4v+al1Ix9nKCiBujpEtcZ9PQAJQ/tim5Xa
+         A0tAH8udGup9ls+eP4G7sKZ6UTOLuEFmNPu72c+1W/T0AgzqaUvbow9D/b4EbOsfEo/J
+         U/0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760486730; x=1761091530;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLMiaX+vGO2HaVidLde0Mqzeld2XbAlMOu6TCSUhVYg=;
-        b=v/mGW8FU3rL7dM/B8HWHibRc/bsqbUG2vTBXFO7C5FMHajstqTUHNqMs4YbicQAOlO
-         tQJ+kQ/SlUxd1MHi+dyLrpamNWGeyCeNSKlKdPZRBLMF+TRFlF7YXXYVwR6aHWTtmhsX
-         IY+gTYtZlNvIiMjNCUTt34dzcxB8/2/QaGIm4+4xyNM4TNYItHH1sUDWn8a8dG5Ppqfp
-         dfebDjRYuLCpyt+z+UY17rt5tgwiNWsTsiJwuXr02i+US4xACRfw8Z53eB9MnFqsUYgF
-         Qs2nnSUdwOzUVygoaC4pDX2+pnlITEly/cPgupMzowTVc2z09V2wjEq2QesvtaCRdlJa
-         8LFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtfTsL05EndYDrsA4nJ9bD8LRJTAZoNYPFRDQJPPR15sVDg7bBODujZOgWmU8S0Rqd6+95tFkF5Lptjcpl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu9EdfL/tfjx28JZeYVSShBhA2oJZ+ResEsnUdGX3bmRGOrygC
-	zvCgDqA0XmAerwFNn0CmN2LsB1XR9v7sB6pdJ4P09w9m7OHW7sN9ysP7
-X-Gm-Gg: ASbGncvhitxjyofuR6UqPrSan7+bPADkvKlnOfoKE4bRc6Zku+ub6vs8MQ6ylWIa7kW
-	NUmxQWDSiVY6aWavphid5zbPbn11uXdgecuD0jPDrdb0CZo3eePAj5mcatE92glxEu3bWi0Ff3u
-	caTsD2QVO4cydND/xccAw2vC3+YfJaOUdPh3jKgdgkcvzsplBmtWc9EM96yjU/spqBdY1j5PWSM
-	9GQaA0SQhGUNXDt2QGFcgLDT0PzYXJlw9wDvWKzn4hrSwfhmpdG+ATUvUZYLD/k21lWjkyiwz+k
-	yfFDVsywIs5CZoNjZD/ZiwpguPiwDVNcLhKR8fMdqW/aN6OeJuZ6s3zwLIyHtpvLpobu4XFOrEE
-	WrCG96jxoBc2jENANZ0fJX5fVd7V7kpjUQvdc06vOn5RQPqhAylaR/M1fK6OUiwugZNyPqhI2Ys
-	c6YqH6sR1daUGwVeTXwhJBSg==
-X-Google-Smtp-Source: AGHT+IEmH0JRxtSGkPWZTbk0rg2sw6ciOa1Kwmx4Jh+5sWSakKPuSbl1aN4xzbqjjVDaexMRPuJucg==
-X-Received: by 2002:a17:903:fa7:b0:275:f156:965c with SMTP id d9443c01a7336-2902741e441mr320016835ad.52.1760486730094;
-        Tue, 14 Oct 2025 17:05:30 -0700 (PDT)
-Received: from [10.130.1.37] ([118.200.221.61])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290766cc2a1sm42161035ad.95.2025.10.14.17.05.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 17:05:29 -0700 (PDT)
-Message-ID: <0791edfb-6985-45d7-bb3e-08ab7a341dab@gmail.com>
-Date: Wed, 15 Oct 2025 08:05:24 +0800
+        d=1e100.net; s=20230601; t=1760489145; x=1761093945;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JjS2vWmWFupijvTyxg2fppwPWWk6ldlFSBLrc+f8lsk=;
+        b=b4MX2kyyPUyurI+zXeBjp2M5XewDiAQpzDf8AnfFZQI8LTiI613IeSRy7nfXYFDauA
+         pip4B+izufEt72GCYZLAU/ojFy+RzkS76Lm63BIWjnBRk6/lwywFY/RzktUaF4lFWhMD
+         B1mjCFfWWe/GhZuXL5tnRkHageGoG/AkFDRBLH5XUeIksSOSvRpatjiHtjoAzmwU4iD3
+         pUNtBKNtSkNJ3AcWxFqYAEEwLGxToLkjt7VPSPTbJ4oW+5QuZON4qHKgEw6SeQyhqFPs
+         p+jM3PDMJ67E0Cm8VzntlVOedoBnml1qIlk5P2fA2N3sah2j+9MSIsHF1S1cFiZXgG+u
+         ip4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXIof/LGaMxGEHGAkIldRCsG+K1tibIHuWvaaqfulHRezw1TxsYZISROFIXaZ5GU9eUo/1Gl9mCBgdIql2y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdXsTU0E6pxiLhZ0z+e7yFQjFTVa3YZOoF6ZhDSLJ5Uu4St5JM
+	J48hYuGkEfFy+BKObCzdbIgWjx2LEayLCbB2RdJ75epW9c6Q2eK/b7Gh
+X-Gm-Gg: ASbGncuThJkvIPbYlHjCY2e3q/86BTg11dRfBpknaVCoTMRcAtX8hx8SaFwm9Sjt1+E
+	tIjvGpyqfsXOPg/gXIykhsBrKTWU96c0kfFC0zdMQH3q/ajdATTtc2Us81x5OESV1xw8B3QisWB
+	8rBMnkZ8VALtycP0eMeipSbnNHgy7mZeZFh/2wfOZFQpYY1Y+DRtIHBOxbta4v2QCskI+4D8kLS
+	jsQ2+auGIlVT7tlsg7Rd13Qm6vk/vEcu8ye9wfMkK/rV6netk+Q/Y+7Urw1cpu2R1k1zLo3url6
+	mlSIxIvDd+nZ8YJphYNfIc1Yd46viHvsxHMAt9/mpTIl6S3zrbZNvKGyHzinEoXPNOyFrZ2gewG
+	4IgmLggwapanaFEFT75IvJcE6yLrEDxZz2VnlkvSZlk0ggaoTUvo=
+X-Google-Smtp-Source: AGHT+IEUsuN0HzcjvOiasKjxoAVXbiNobka2YXSRTY/9Up4v1JrTdSmA4WVnfLZUCScJw93cZ5lkow==
+X-Received: by 2002:a05:600d:42f2:b0:46e:4341:7302 with SMTP id 5b1f17b1804b1-46fb15396d6mr133011165e9.34.1760489144718;
+        Tue, 14 Oct 2025 17:45:44 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc155143fsm220567755e9.11.2025.10.14.17.45.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Oct 2025 17:45:44 -0700 (PDT)
+Date: Wed, 15 Oct 2025 00:45:43 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
+ large folios (CONFIG_NO_PAGE_MAPCOUNT)
+Message-ID: <20251015004543.md5x4cjtkyjzpf4b@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250303163014.1128035-1-david@redhat.com>
+ <20250303163014.1128035-21-david@redhat.com>
+ <20251014122335.dpyk5advbkioojnm@master>
+ <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+ <aO5fCT62gZZw9-wQ@casper.infradead.org>
+ <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
- index=on
-Content-Language: en-GB
-To: Qu Wenruo <wqu@suse.com>, dsterba@suse.cz,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014182414.GD13776@twin.jikos.cz>
- <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
-From: Anand Jain <anajain.sg@gmail.com>
-In-Reply-To: <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 15-Oct-25 5:08 AM, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/10/15 04:54, David Sterba 写道:
->> On Mon, Oct 13, 2025 at 10:57:06PM -0300, André Almeida wrote:
->>> Hi everyone,
->>>
->>> When using overlayfs with the mount option index=on, the first time a 
->>> directory is
->>> used as upper dir, overlayfs stores in a xattr "overlay.origin" the 
->>> UUID of the
->>> filesystem being used in the layers. If the upper dir is reused, 
->>> overlayfs
->>> refuses to mount for a different filesystem, by comparing the UUID 
->>> with what's
->>> stored at overlay.origin, and it fails with "failed to verify upper 
->>> root origin"
->>> on dmesg. Remounting with the very same fs is supported and works fine.
->>>
->>> However, btrfs mounts may have volatiles UUIDs. When mounting the 
->>> exact same
->>> disk image with btrfs, a random UUID is assigned for the following 
->>> disks each
->>> time they are mounted, stored at temp_fsid and used across the kernel 
->>> as the
->>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() 
->>> however shows
->>> the original (and duplicated) UUID for all disks.
->>>
->>> This feature doesn't work well with overlayfs with index=on, as when 
->>> the image
->>> is mounted a second time, will get a different UUID and ovl will 
->>> refuse to
->>> mount, breaking the user expectation that using the same image should 
->>> work. A
->>> small script can be find in the end of this cover letter that 
->>> illustrates this.
->>>
->>> >From this, I can think of some options:
->>>
->>> - Use statfs() internally to always get the fsid, that is persistent. 
->>> The patch
->>> here illustrates that approach, but doesn't fully implement it.
->>> - Create a new sb op, called get_uuid() so the filesystem returns what's
->>> appropriated.
->>> - Have a workaround in ovl for btrfs.
->>> - Document this as unsupported, and userland needs to erase 
->>> overlay.origin each
->>> time it wants to remount.
->>> - If ovl detects that temp_fsid and index are being used at the same 
->>> time,
->>> refuses to mount.
->>>
->>> I'm not sure which one would be better here, so I would like to hear 
->>> some ideas
->>> on this.
->>
->> I haven't looked deeper if there's a workable solution, but the feature
->> combination should be refused. I don't think this will affect many
->> users.
->>
-> 
-> I believe the root problem is that we're not fully implementing the 
-> proper handling just like other single-device fses.
-> 
-> We do not use on-disk flags which means at least one fsid is registered 
-> into btrfs, thus we have to use different temp-fsid.
-> 
-> If fully single-device feature flag is properly implemented, we should 
-> be able to return the same uuid without extra hacks thus solve the problem.
+On Tue, Oct 14, 2025 at 04:38:38PM +0200, David Hildenbrand wrote:
+>On 14.10.25 16:32, Matthew Wilcox wrote:
+>> On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
+>> > > As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
+>> > > folio yet.
+>> > 
+>> > We do support partially mapped PUD-sized folios I think, but not anonymous
+>> > PUD-sized folios.
+>> 
+>> I don't think so?  The only mechanism I know of to allocate PUD-sized
+>> chunks of memory is hugetlb, and that doesn't permit partial mappings.
+>
+>Greetings from the latest DAX rework :)
 
-I had looked into this some time ago. Some libs, like libblkid,
-don't handle multi-device filesystems or cloned devices with
-temp FSIDs very well. I'm aware of it.
+After a re-think, do you think it's better to align the behavior between
+CONFIG_NO_PAGE_MAPCOUNT and CONFIG_PAGE_MAPCOUNT?
 
-I've been making some progress on fixing those cases, but it's
-a bit extensive since we first need enough test coverage,
-and recent reappear-device inline with that.
+It looks we treat a PUD-sized folio partially_mapped if CONFIG_NO_PAGE_MAPCOUNT,
+but !partially_mapped if CONFIG_PAGE_MAPCOUNT, if my understanding is correct.
 
-Let's see how we can support use cases with identical devices
-(where changing the UUID isn't an option) and keep things
-compatible with systemd and library tools.
+>
+>-- 
+>Cheers
+>
+>David / dhildenb
 
+-- 
+Wei Yang
+Help you, Help me
 
