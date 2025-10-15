@@ -1,180 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-64242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE94BDF24B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 16:44:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DEEBDEEF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 16:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346CB188469F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 14:45:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0AA44E12A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 14:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFC12882A9;
-	Wed, 15 Oct 2025 14:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E567725784A;
+	Wed, 15 Oct 2025 14:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W2YFXYCO"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FR//ueYY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE2624A06D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 14:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947A1248F78
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 14:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760539475; cv=none; b=T38VQryRqaOQrHhHIIERmKjSoncn2DZAZ843aiiCHkctePd1pWhmAdmApMJM9pVqKl0GpK5ii+KzIVtTdrw8/mvqmANUvkLe80TyyuCBqVhA3oTtSskSUA4yUE2ZqiEGpWmo93KkR+GBtAeyvl0NtFFMXh3xJFlN91xcsqO32Fw=
+	t=1760537396; cv=none; b=jJUSsT7xNVoT+mMIzOe1Bvr+JVEh22VqD5TjsxaDYF3SuTIvgOWlHXDUDEC2FQgfRNEb313WSqlt5Le6kZW0fF03RZ4Vg6N468th2htlOYTlokr+i/VAhuD31e9no/ZSv27Gak3S5zPiXUqPQ1sts2nHCSZCKuYCEsxGZzy0SJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760539475; c=relaxed/simple;
-	bh=vc0kxp4/cNB2+oGfFzBH/L9N46crZ9/uEdD4mitLxKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XUSGpIrepD/7Zd+vm3TkWTTxvrljW4P2XiJ+NEporukNN+we9aInIwyxlU3rAr+YLmWnVHJhuLAKsv+Dgm4Fk4kl5Ou2J6rshu9w2huBfQe3M2MIW2t4X570p0FxQb8hU8pAzEhov8mmdQTT2sqH0ziE+L9GSiem49+PeMMbEMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W2YFXYCO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760539471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lY06pAnHCQQGigMV6SOpreP4ZC54DrBtH2Fqo3eA8fs=;
-	b=W2YFXYCOILYyJuM40Cib++Oe5szvpLC0T7080FhmZF14fPBq/FGSqe48mz5sOYodlUZ6uW
-	8wDULZ3dWbXNMFSt1SzVYRNz8ZbmIp8heXLJlmHlvNqE3OVH9h8VluS/ttgwM5ycm0k7pC
-	fBTpCnLSt7s7pnHQW80qUViWVOasY+o=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-wOZbOjvnMJWrdpUuQQnq7A-1; Wed,
- 15 Oct 2025 10:44:28 -0400
-X-MC-Unique: wOZbOjvnMJWrdpUuQQnq7A-1
-X-Mimecast-MFC-AGG-ID: wOZbOjvnMJWrdpUuQQnq7A_1760539467
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CED1B1802D02;
-	Wed, 15 Oct 2025 14:44:22 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.91])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E6AB19560AD;
-	Wed, 15 Oct 2025 14:44:21 +0000 (UTC)
-Date: Tue, 14 Oct 2025 14:53:56 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Wei Gong <gongwei833x@gmail.com>
-Cc: vgoyal@redhat.com, miklos@szeredi.hu, virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, Wei Gong <gongwei09@baidu.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH] virtiofs: remove max_pages_limit in indirect descriptor
- mode
-Message-ID: <20251014185356.GB18850@fedora>
-References: <20251011033018.75985-1-gongwei833x@gmail.com>
+	s=arc-20240116; t=1760537396; c=relaxed/simple;
+	bh=ueAPcAKd95DlUlHNrl+EoTK5BIT733y+JKr2Y7z5db0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dVa9mWpPe7k/02hwhdMPl2WfM097KE3K9hJXm7HJY3ry9yJ3VcFaLh4zaTUU1TyHZ5LuMiNUama15YDoFDtYqfH89Q7ITAw0fdD5vrm/nsz+J6eUWAI3CHPCFiTKa9kmxoLAFiqOrjw8YuDfCsEs4WZ6qNVP5u9KuGohTy8HCYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FR//ueYY; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-79ad9aa2d95so113854366d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 07:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1760537392; x=1761142192; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJw9d2/S1sIkDambLTqUWzTpf4g0ZgdJfHoZlc+Zm/c=;
+        b=FR//ueYY5nZT88CAaSjgz6oyHu1XyLT1Gdfm5oH35rnha/fdNI4x3Dplz3Ouo4DmC3
+         CRvqVsEuSEj+RtWdaV4BGuO2XnPiY0qvdeMisXTRkhcvkiQxUMKkpV9iCudSYEIaetj3
+         Hl4xExG9clgVTMt41+NzV3Yql4rfhdzcbty24=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760537392; x=1761142192;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SJw9d2/S1sIkDambLTqUWzTpf4g0ZgdJfHoZlc+Zm/c=;
+        b=VKWcvOFQEZM0XtxNT6BYkWiFTRq0ZEW5fJpmLF3TXDvh4zSjv0/D3UrRyVW1KHjr/d
+         rU8gF6aS2+arKi7VA0XcR3G0xNdUVa6pUn1+99EgtfyZIRcbBjaSVP8Jw3ciXuFI2UCX
+         CIjOuk9Yy8uRXj3BKbHRi8IIgD1hIMiXkBJvFcqS0w7QFoEyekW3OFpCwt5TJM23gDE5
+         hdMjgJmXEp8mBvccypckRIdw2VLbVvBlkp9zjAmsz8i1CTy/uvWgAWxiqbt0msqidCBe
+         VquGrQD+Mr1heg9Mv+I/VkUWanYKHzGJGcpTJD5vyCUuwhwtpxWFSosr/leeigjhDtqB
+         NZnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJdQzVl5An8BblP88VzlFNQsAaUCzTfeUKKPRSrjhQImtwcks43BMkjJAeEXr2EDFoFr0mv2Y13s5q/PYQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YymmnrtqSfYN4CEiu4LGalOFQfNDFe7g9RDxrY9XnvPiILGIrTc
+	OeDr2Z1UQej0jn9cnPYbwk9i1RuOrJNDHJIxmLq3T8BE/zQ4Kdhz+SOZ3fwk8Q4xadARnMbK3YP
+	n8AbY7/t0ywUV9z7gxv0FI0ondV9fKKx6qCiVxIknRg==
+X-Gm-Gg: ASbGncsjWSfZ39aqzkSVp0apG4CLMGGt/7Rm4aVWECPT+tmyPkd66tVY1RlQPJhHGym
+	gH35jwr2QO3pyLJXiF+bU3m/omiti6uOnVYFJyiVNF1C1c7n0HhwBHCZctV88EjFH4yieZ7hKn6
+	YO9qzXNR0iYWYy0gvFDjo8UvRdMY09jWN5hCO/5lDa/8Xt5RdyjPOzMtvvkYDgcV/VDVjzo2UZL
+	/BFn4x46Ti90j6EYYypC/ljwdr2BESGDrQ/00Jz7IZ/M1NV02Z0nhpnWo31GFmEnHsDPQ==
+X-Google-Smtp-Source: AGHT+IEaWdyaHQI8r4t0qrf/XPV9EZti7+8f4BRQk8rubHGqJicp5k1Sm/lfOZlVeGah/3cuF/BlfoHYF57zroEGCks=
+X-Received: by 2002:a05:6214:1247:b0:781:a369:ef8c with SMTP id
+ 6a1803df08f44-87b2101d557mr382199256d6.16.1760537392117; Wed, 15 Oct 2025
+ 07:09:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KLkkf4S3uuImuLNm"
-Content-Disposition: inline
-In-Reply-To: <20251011033018.75985-1-gongwei833x@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+ <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
+ <aO6N-g-y6VbSItzZ@bfoster> <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
+In-Reply-To: <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 15 Oct 2025 16:09:40 +0200
+X-Gm-Features: AS18NWAembAnYxHtTcjEqMRHJYUSfMII9X6KtNuPbhvjafrsuc1QQcqP0zqeIus
+Message-ID: <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: lu gu <giveme.gulu@gmail.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bernd Schubert <bernd@bsbernd.com>, 
+	Brian Foster <bfoster@redhat.com>
+Content-Type: multipart/mixed; boundary="000000000000df80eb0641330d35"
 
+--000000000000df80eb0641330d35
+Content-Type: text/plain; charset="UTF-8"
 
---KLkkf4S3uuImuLNm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 15 Oct 2025 at 06:00, lu gu <giveme.gulu@gmail.com> wrote:
+>
+> >  Attaching a test patch, minimally tested.
+> Since I only have a test environment for kernel 5.15, I ported this
+> patch to the FUSE module in 5.15. I ran the previous LTP test cases
+> more than ten times, and the data inconsistency issue did not reoccur.
+> However, a deadlock occur. Below is the specific stack trace.
 
-On Sat, Oct 11, 2025 at 11:30:18AM +0800, Wei Gong wrote:
-> From: Wei Gong <gongwei09@baidu.com>
->=20
-> Currently, indirect descriptor mode unnecessarily restricts the maximum
-> IO size based on virtqueue vringsize. However, the indirect descriptor
-> mechanism inherently supports larger IO operations by chaining descriptor=
-s.
->=20
-> This patch removes the artificial constraint, allowing indirect descriptor
-> mode to utilize its full potential without being limited by vringsize.
-> The maximum supported descriptors per IO is now determined by the indirect
-> descriptor capability rather than the virtqueue size.
->=20
-> Signed-off-by: Wei Gong <gongwei09@baidu.com>
-> ---
->  fs/fuse/virtio_fs.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 76c8fd0bfc75..c0d5db7d7504 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -12,6 +12,7 @@
->  #include <linux/memremap.h>
->  #include <linux/module.h>
->  #include <linux/virtio.h>
-> +#include <linux/virtio_ring.h>
->  #include <linux/virtio_fs.h>
->  #include <linux/delay.h>
->  #include <linux/fs_context.h>
-> @@ -1701,9 +1702,11 @@ static int virtio_fs_get_tree(struct fs_context *f=
-sc)
->  	fc->sync_fs =3D true;
->  	fc->use_pages_for_kvec_io =3D true;
-> =20
-> -	/* Tell FUSE to split requests that exceed the virtqueue's size */
-> -	fc->max_pages_limit =3D min_t(unsigned int, fc->max_pages_limit,
-> -				    virtqueue_size - FUSE_HEADER_OVERHEAD);
-> +	if (!virtio_has_feature(fs->vqs[VQ_REQUEST].vq->vdev, VIRTIO_RING_F_IND=
-IRECT_DESC)) {
-> +		/* Tell FUSE to split requests that exceed the virtqueue's size */
-> +		fc->max_pages_limit =3D min_t(unsigned int, fc->max_pages_limit,
-> +						virtqueue_size - FUSE_HEADER_OVERHEAD);
-> +	}
+This is does not reproduce for me on 6.17 even after running the test
+for hours.  Without seeing your backport it is difficult to say
+anything about the reason for the deadlock.
 
-The VIRTIO 1.3 specification defines the maximum descriptor chain length
-as follows
-(https://docs.oasis-open.org/virtio/virtio/v1.3/csd01/virtio-v1.3-csd01.htm=
-l#x1-9200019):
-
-  The number of descriptors in the table is defined by the queue size for t=
-his virtqueue: this is the maximum possible descriptor chain length.
-
-The driver requirements for indirect descriptors say
-(https://docs.oasis-open.org/virtio/virtio/v1.3/csd01/virtio-v1.3-csd01.htm=
-l#x1-9200019):
-
-  A driver MUST NOT create a descriptor chain longer than allowed by the de=
-vice.
-
-My interpretation is that this patch violates the specification because
-it allows descriptor chains that exceed the maximum possible descriptor
-chain length.
-
-Device implementations are not required to enforce this limit, so you
-may not see issues when testing. Nevertheless, this patch has the
-potential to break other device implementations though that work fine
-today, so it doesn't seem safe to merge this patch in its current form.
-
-I have CCed Michael Tsirkin in case he has thoughts. It would be nice to
-boost performance by allowing longer I/O requests, but the driver must
-comply with the VIRTIO specification.
+Attaching an updated patch that takes care of i_wb initialization on
+CONFIG_CGROUP_WRITEBACK=y.
 
 Thanks,
-Stefan
+Miklos
 
---KLkkf4S3uuImuLNm
-Content-Type: application/pgp-signature; name=signature.asc
+--000000000000df80eb0641330d35
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="fuse-write-through-set-writeback-v2.patch"
+Content-Disposition: attachment; 
+	filename="fuse-write-through-set-writeback-v2.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mgs2hwbx0>
+X-Attachment-Id: f_mgs2hwbx0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmjunEQACgkQnKSrs4Gr
-c8gY4AgAwYxD8aWhcoZfM+pzPo0gCmNWuRts/Zo+DIFcpLzmcxAshn0nfg//UbVy
-tvoYZpLl1lZHClyTJnIjP4S/IC7BVbKmsSz8i6GqqwV5LEPi8YvWhymRCrJystCd
-g3PqCjbLWMNCraPqbCQd6rJVYUcMN2EFGVRuCzxjiCxb1oTZ9XlS8Py/zFBFIotB
-MfH5twFvkiytRn7spAhSaimouS5vHtVXfFAIR9TNP6YHJBLKros2TiT/h1jFBu1i
-tGr7yVwSuVpj/bcGD6aBCODRRD0CZXeBZrOxFWJVHGxLeWuzr5xffyNfHWTJMWRa
-brUn11uX+2DzCyhtu1nDf5wISCZWyw==
-=wtH5
------END PGP SIGNATURE-----
-
---KLkkf4S3uuImuLNm--
-
+ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZmlsZS5jIGIvZnMvZnVzZS9maWxlLmMKaW5kZXggZjFlZjc3
+YTBiZTA1Li4wNDJjMzVmMDQ2NmUgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZmlsZS5jCisrKyBiL2Zz
+L2Z1c2UvZmlsZS5jCkBAIC0xMTI2LDkgKzExMjYsNiBAQCBzdGF0aWMgc3NpemVfdCBmdXNlX3Nl
+bmRfd3JpdGVfcGFnZXMoc3RydWN0IGZ1c2VfaW9fYXJncyAqaWEsCiAJYm9vbCBzaG9ydF93cml0
+ZTsKIAlpbnQgZXJyOwogCi0JZm9yIChpID0gMDsgaSA8IGFwLT5udW1fZm9saW9zOyBpKyspCi0J
+CWZvbGlvX3dhaXRfd3JpdGViYWNrKGFwLT5mb2xpb3NbaV0pOwotCiAJZnVzZV93cml0ZV9hcmdz
+X2ZpbGwoaWEsIGZmLCBwb3MsIGNvdW50KTsKIAlpYS0+d3JpdGUuaW4uZmxhZ3MgPSBmdXNlX3dy
+aXRlX2ZsYWdzKGlvY2IpOwogCWlmIChmbS0+ZmMtPmhhbmRsZV9raWxscHJpdl92MiAmJiAhY2Fw
+YWJsZShDQVBfRlNFVElEKSkKQEAgLTExNTgsNiArMTE1NSw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1
+c2Vfc2VuZF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVzZV9pb19hcmdzICppYSwKIAkJfQogCQlpZiAo
+aWEtPndyaXRlLmZvbGlvX2xvY2tlZCAmJiAoaSA9PSBhcC0+bnVtX2ZvbGlvcyAtIDEpKQogCQkJ
+Zm9saW9fdW5sb2NrKGZvbGlvKTsKKwkJZWxzZQorCQkJZm9saW9fZW5kX3dyaXRlYmFja19ub19k
+cm9wYmVoaW5kKGZvbGlvKTsKIAkJZm9saW9fcHV0KGZvbGlvKTsKIAl9CiAKQEAgLTEyMzYsNyAr
+MTIzNSw5IEBAIHN0YXRpYyBzc2l6ZV90IGZ1c2VfZmlsbF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVz
+ZV9pb19hcmdzICppYSwKIAkJaWYgKHRtcCA9PSBmb2xpb19zaXplKGZvbGlvKSkKIAkJCWZvbGlv
+X21hcmtfdXB0b2RhdGUoZm9saW8pOwogCisJCWZvbGlvX3dhaXRfd3JpdGViYWNrKGZvbGlvKTsK
+IAkJaWYgKGZvbGlvX3Rlc3RfdXB0b2RhdGUoZm9saW8pKSB7CisJCQlmb2xpb19zdGFydF93cml0
+ZWJhY2soZm9saW8pOwogCQkJZm9saW9fdW5sb2NrKGZvbGlvKTsKIAkJfSBlbHNlIHsKIAkJCWlh
+LT53cml0ZS5mb2xpb19sb2NrZWQgPSB0cnVlOwpAQCAtMTI2OCw2ICsxMjY5LDggQEAgc3RhdGlj
+IHNzaXplX3QgZnVzZV9wZXJmb3JtX3dyaXRlKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlv
+dl9pdGVyICppaSkKIAlpbnQgZXJyID0gMDsKIAlzc2l6ZV90IHJlcyA9IDA7CiAKKwlpbm9kZV9h
+dHRhY2hfd2IoaW5vZGUsIE5VTEwpOworCiAJaWYgKGlub2RlLT5pX3NpemUgPCBwb3MgKyBpb3Zf
+aXRlcl9jb3VudChpaSkpCiAJCXNldF9iaXQoRlVTRV9JX1NJWkVfVU5TVEFCTEUsICZmaS0+c3Rh
+dGUpOwogCg==
+--000000000000df80eb0641330d35--
 
