@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-64293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179C9BE05B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 21:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510C5BE05C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 21:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F4C34F6042
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 19:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34BA3B3192
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 19:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419473090FD;
-	Wed, 15 Oct 2025 19:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FB930CD93;
+	Wed, 15 Oct 2025 19:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWTebpWF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlhWDi91"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7FE303A29
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 19:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EB330BB8D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 19:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760556302; cv=none; b=GJqq+nF+n557kS44vtg3JpXdXRneDekv44tpMO2KyMMMgmEPRiRfqIR7uBzQBygdbP/dfSU89MzGglb+BpC4tu56TFyZoD2u6S4L8sooOhgLIJdZG6YUQXNLMPcADvq3uBHFliBfytmqidWUDlWxWTHA7JMiXbwUSJPRpAk+vdU=
+	t=1760556305; cv=none; b=RKxStbH56ojvJadwiZmvAnnoFDeA2nDBUEKhcjPprPLwrpDuB7GMqnhCzFyFz32ZkKLpBqpFLsU7acqptiXmgSeHafK/W5jhdhv0P+JWitEL7X0ffV4nH7jSV8nvmWCMhlz3gs0B0kYq/ncVM7YUPohuHmRw/jDb06OHIr4WSek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760556302; c=relaxed/simple;
-	bh=dsIF3t/nnF2C1bkVy27zCbkLX0XWi/NLecWE562yUuI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ATBcHSMW+1/0QFiK/mAI4L/lo+ZOxXPhEFjwEapYd0LyGIWxRQ9p8kiGYKxDKJ3aCXd+DSZsQnNiW5zxZR3WuNiwYz+fV4/8e+z7bhF8+vom8Oiu1pYrqVFXkAC9fvIeoRlm6pkQALsKPxNeeW5kV63AfwBF1YnoGYxXOkrW1bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWTebpWF; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1760556305; c=relaxed/simple;
+	bh=2Vk6qFD+khvBWosYiPgnWwsc9w2ItSZw9y9K7Wf3lO0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=o9FlVzaW23G/KC2KUAkApkjwlTweu3gcF0/jpElSdZNChyy2KhE1+s1zeTPoxdcWOajzYeU2XVr9kHgAImvcC9hRFQuT2s1j2gRsj9GPhxuorCIoh9jk0Eu310mFFqebyt0OHv7/UKxB8XHsxOxxl6mn1pzmbsy/Mn7gJ0+xSTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlhWDi91; arc=none smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88e4704a626so150943685a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 12:25:00 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7ea50f94045so19387346d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 12:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760556299; x=1761161099; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsqkSof1+GgJ3rfKHvxdreoyI9Vm3blU+Mome4LxMgc=;
-        b=gWTebpWFrp3rcVquThrrs1etrVJ8rwd+PKW3qTVHuGh6MxMoyUDvhuKJUgWmr2g2hC
-         NX8cexpo8LwSJO3AvutXBBxD8KXtG3wOaEBGac0T/m+SWRRqmtsCcD5mms8Fkl2NBElc
-         hNUYIppNNqesrN9eqc6ViLmx9/8T28l3NIOkFuL0IuBhGY+zVTN0uITjGzUPOTJDwpQf
-         h3DbbVzvZLLRdS3HCTH4QjkNrSOTCmGwo+F9RVJ4iB247AJ+SI++siZlDaDqSPpnTuH2
-         wh0it7TeXskuyCoPApea4ZXochIOJDO9OEfGqOtixVdN1B2Z2ulP+fXIFpIEarU4dfEp
-         hI5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760556299; x=1761161099;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1760556302; x=1761161102; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qsqkSof1+GgJ3rfKHvxdreoyI9Vm3blU+Mome4LxMgc=;
-        b=j+CF0Z6OmbD2FYGkN7VdbLpGAp57+9J+6NxT4j2DrFDGJI65+PcDu/jllpZ7FVHKF6
-         SJnDIPi2IqWeKmKLV/ma2mZirC9Fqs/CJdOGngtEpIoT3ENdVAXHrHK1RNs5Cdk5nEwf
-         WszC15dmqc2uT8tJ7VMUONWIEO7Y122MhqwYKGZon5BJgc3NwPIfzs9JhTpwEIo0Dk5l
-         ImQ2XzbV2HqYxl7WgplnwsoVsLFAzjVGww3d+lxnfAZCHmTfm6WQMRYnFeaIJBlnz1gP
-         FmSI29KS2LsB5PzTbnkMPzo1ynTSH42xSDS3G10PcePYftzNbZ94YD8OuvMAG0l4mvsk
-         A2Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyMj7yGzmEppZMIFiuutuJ0J6RaoUi4NjG+mFiNZ1XFUhoqVrH6eYzS6WKTnAMwXlPAkNAoXk5y93THnna@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjpr8x5YvT+LgeMzAeodMtzq3xwy7ZJq4qVEo+JPx424HotjCy
-	s/DDnE8SWUnvDBE69VReFz53nndJs9G9bP1KhX6f2EYAr75fY6a1KXR4
-X-Gm-Gg: ASbGncsRrvMKjklbc83YArfTVqvbIZeI9PP+u9vE5aRJHpuPxEgHDFhMqAoyCxWT4xh
-	1pxo7qOu98F33oPtUsazE4ptzGg32s31LXbxI2nWZcxvPxB76fZ4xkVZTtDZgUcDug/sIuQJUK+
-	g8jcvaUpHsFXcm0w9tmV8Y6J8Vts/XEx3mCnbgXafDGlANPREsW5mIX1o6Wa5GR1y9LFROnn0af
-	j/Ht8JCggpZgduABEpwoOjIb2WZ4ZY4nOZRwxUfNDQKKjay/Eapq1S3B23qf+oN4IFf7IqoBHeY
-	Jt47GNSYvB3o3xOCsDjsWGMEBW3qEv3J5DglTOkeH9J4bqkN98WnGJ/8r0Bx0kiGaJ+mNkNpS8u
-	LjjcZTFHu4HQS92drnajeodRD2Rs3uwD+Z9+WAf6Vz/0Bzr6IUnElH/lj6D3UqtvLpnbwd0wymP
-	j0bijbnkhXDShZUyj0L1mweVL+iFZCc1zlZNVwQUwSr4PIrjcnVzjxslxvrtUgB2Fz90jVkFPw/
-	168LyTNm8uslOZ7ld5+iQNzb9At
-X-Google-Smtp-Source: AGHT+IFENDCESZIeyXPxXyt4zOHnX3/g8IbwHOjGHEmNqkJneLQxgjyuuUuUXXHHdjz1c1DMClMpIQ==
-X-Received: by 2002:a05:622a:1b91:b0:4e8:8d97:ccad with SMTP id d75a77b69052e-4e88d97e80bmr30946781cf.78.1760556298953;
-        Wed, 15 Oct 2025 12:24:58 -0700 (PDT)
+        bh=yjPhqOIsQnP5icf3xI8+fTWI6demrBvMGeJug28QAmc=;
+        b=nlhWDi91qOdTS06ilTTWQqtxrya8sKOBO4uYooo3tAkXgmoaZAAQpqclmG+Qemtj5n
+         XMrGgYVkjdysr0wizWs3RX7uQ0cAhIJBRxoGnSF7I1F4HnmBMxUqzckCOU12ahfm0BNb
+         IDJINVcC+rXwHuD7BRtZQhSnP9MBxaeGzZkDoketIXMWAGvXnOSulJvfcB2/5quP6vlq
+         wEDRUny+HsPm3CogvL48V6a2JzeQ+6Is/FxZpweOdc4YWyVu71H1V0FegJmi7/j9hkG/
+         O/R+eq/fgpI6w1hE4q/iXU6MxKUDViYudjtsn1hw0IaC03q7OTS0jwrTrmKzmqbreEQo
+         lulg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760556302; x=1761161102;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yjPhqOIsQnP5icf3xI8+fTWI6demrBvMGeJug28QAmc=;
+        b=seicfRmMUFJi7DrO3HtrZV61AyRac3r5c5nyQTrWv1UD+xizyFqCdEiqLWxc8J7LfA
+         9bv4E76I10aqVKjEpRzCxhdQVdyWbVwMkxaMzoqgIPj8mNznWF32B8qL+2pUS9bGfrPf
+         L5Zipl94mBi/tL+ztaK/3zatD1uF4d0hpwYIcLYfUhLXPpKzF9W2wjs5Se1YiQza0uBn
+         JXI/c41RlYnSxcpxS3czP+mbdhMzYeFYicEwUHNVbZZ1/LCCZS0FBM4704xPrW6DiQcB
+         rau27VJZY/jyA5EPe2BRkv8ESWC9QKGtC1F/giPmI0IV1lq7TNiHNzbmdK9c5iZJ35tg
+         7CHw==
+X-Forwarded-Encrypted: i=1; AJvYcCW13XaUTwpscK9K8Qh+eRJ50JJ8F3kZgNld3xkApM+sbPuAyP35X/+C/UdVXDbEdKVCUN2SiNL3yOEqu8uW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZIMnebAkVic/k0x5j4lNF/Xs7+v0mfliWus77m2nf8ywvnR2U
+	aorLNMpmzhUlBhxspCjAt1dpYJLQHtOMHi25pAE2V46XxQnMRSeFP4fY
+X-Gm-Gg: ASbGncsghg684GRiPLFplQPWUDBQvl9GTraBUyMOB3xJGBYiM5kP9W/wY2uBDqoVEpb
+	egPPaLxLJepho0LnJrcK/7JVspUJ5PipSNnOIl/Z6gNpu0SQ5EHDf/RBj/k8wvbo+1JpF6XsfKL
+	+Mb7CMvNZV/tW2UanM/mgpaZx0Q1lh06SSJgV+VnFARAR3B35cjW06Kd2+xYsw/FU0zpOGusY1w
+	0yFHzNq3uPo8JWt32u9d6BIiVkJiklCwAE+lJ6dQnH0T91+p/VHbKiGusx+7GWijKqz9T23u+b1
+	sDaoJXiFWJcCcIFMGR+u+Hds871F03GA5sbnKe7nr0OP3rjwu6vj9Qv19bGWZzV1pRqt1F1p3hK
+	xD1iKMSd8yjcH1KPqv3AEOUanGMiodnKBY+Rj35B4QGhTVVcqlgIQc1t1GQCU1yNNgl2Neoyoq1
+	/79oHk8iwM5ejx7vvCsb0gpI1Mq7gzoCuWhHMnZSfhR9ddo7vTXX5P4fTKFw9qBPzKq1YU3V4/x
+	nYxUAiK4wL7xArmpn9Opj36khPs7dFEpmfdZlqPHIEZCWch6c08Gv/g1jyK/CU=
+X-Google-Smtp-Source: AGHT+IE/6/93cmzALh4Jmouh/MLI95PCde1EljHLkZKlJY4iPwz/j8r/4JCLGlbGVcRLXtlHwQc0sw==
+X-Received: by 2002:ad4:596f:0:b0:783:f54f:418a with SMTP id 6a1803df08f44-87c0c8131a5mr22292536d6.15.1760556301319;
+        Wed, 15 Oct 2025 12:25:01 -0700 (PDT)
 Received: from 136.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:8573:f4c5:e7a9:9cd9])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c012b165asm24076996d6.59.2025.10.15.12.24.56
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c012b165asm24076996d6.59.2025.10.15.12.24.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 12:24:58 -0700 (PDT)
+        Wed, 15 Oct 2025 12:25:00 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Subject: [PATCH v17 00/11] rust: replace kernel::str::CStr w/
- core::ffi::CStr
-Date: Wed, 15 Oct 2025 15:24:30 -0400
-Message-Id: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
+Date: Wed, 15 Oct 2025 15:24:31 -0400
+Subject: [PATCH v17 01/11] samples: rust: platform: remove trailing commas
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,15 +86,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAO7072gC/3XTzU7kMAwH8FdBPW+Q7XxzmvdAHFInZardmUBaK
- kZo3p0Ulm071R7T5Of8FbsfzZBKn4bm4e6jKWnqhz6f6wLtr7uGj+H8nEQf64eGgDQQoOBhLIJ
- zSSKq1rfGIwF3TT3/UlLXv38Ve3yq667kkxiPJYWfCgocetTSaHNPzoEVJKYQc8nT8PtyeCl5z
- OdT6P/ccz7NJY/9MOZy+Yo3mbnwTxBaBZmMAOGU8RxNJN/Fw/O/InOQyf5X2ipjQFe3CJR0t9K
- tpVxLVyW3siOTrDPO3Eq/SIl2LX2VGqNh1kSdoVuJsFBNak0RqjUKKXgVfbR6Z3FlJWwszomjZ
- +CWWw/7e2mxBv3G0vzCwJ5tq7QH2Fm5WLuZkrpVbe2KjTK13obdS6FaWdxmVnPmYBNwcMRun1k
- v1uGmQahnayVFTyQ7lXZ2NVCe9MbOE6U51gYrC4k3916/Z72k17f6v4x/B/56/QRuXJsJTQMAA
- A==
-X-Change-ID: 20250201-cstr-core-d4b9b69120cf
+Message-Id: <20251015-cstr-core-v17-1-dc5e7aec870d@gmail.com>
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
+In-Reply-To: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
  Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
  =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
@@ -125,199 +119,51 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-block@vger.kernel.org, linux-pci@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1760556294; l=8195;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760556295; l=1642;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=dsIF3t/nnF2C1bkVy27zCbkLX0XWi/NLecWE562yUuI=;
+ bh=2Vk6qFD+khvBWosYiPgnWwsc9w2ItSZw9y9K7Wf3lO0=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QLbq7swEl/niXuoW+wz3Le/PnExng+T5Ufr5D9O8K6KvriHyGINmOEmh8dDVyOUfqjk4uommS1e
- rfnmleVHocgM=
+ QKJ1BUAmPVQjuKlRlHXyE7o0qpMUW2qdVnOqngFN6VFfXZIKKvKAJg9piKZPdbhI25H2DhoqGoP
+ iQgwB+DS24Aw=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
-have omitted Co-authored tags, as the end result is quite different.
+This prepares for a later commit in which we introduce a custom
+formatting macro; that macro doesn't handle trailing commas so just
+remove them.
 
-This series is intended to be taken through rust-next. The final patch
-in the series requires some other subsystems' `Acked-by`s:
-- drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
-  look?
-- rust/kernel/device.rs: driver-core. Already acked by gregkh.
-- rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
-- rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
-- rust/kernel/sync/*: locking-core. Boqun, could you take a look?
-
-Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
-Closes: https://github.com/Rust-for-Linux/linux/issues/1075
-
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
-Changes in v17:
-- Rebase on rust-next and fix backsliding relative to series 2a and 2b.
-- Link to v16: https://lore.kernel.org/r/20250925-cstr-core-v16-0-5cdcb3470ec2@gmail.com
+ samples/rust/rust_driver_platform.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v16:
-- Rebase on rust-next.
-- Link to v15: https://lore.kernel.org/r/20250813-cstr-core-v15-0-c732d9223f4e@gmail.com
+diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+index 6473baf4f120..8a82e251820f 100644
+--- a/samples/rust/rust_driver_platform.rs
++++ b/samples/rust/rust_driver_platform.rs
+@@ -146,7 +146,7 @@ fn properties_parse(dev: &device::Device) -> Result {
+ 
+         let name = c_str!("test,u32-optional-prop");
+         let prop = fwnode.property_read::<u32>(name).or(0x12);
+-        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n",);
++        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n");
+ 
+         // A missing required property will print an error. Discard the error to
+         // prevent properties_parse from failing in that case.
+@@ -161,7 +161,7 @@ fn properties_parse(dev: &device::Device) -> Result {
+         let prop: [i16; 4] = fwnode.property_read(name).required_by(dev)?;
+         dev_info!(dev, "'{name}'='{prop:?}'\n");
+         let len = fwnode.property_count_elem::<u16>(name)?;
+-        dev_info!(dev, "'{name}' length is {len}\n",);
++        dev_info!(dev, "'{name}' length is {len}\n");
+ 
+         let name = c_str!("test,i16-array");
+         let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
 
-Changes in v15:
-- Seal `CStrExt`. (Benno Lossin)
-- Add patch to remove trailing commas from
-  samples/rust/rust_driver_platform.rs.
-- Link to v14: https://lore.kernel.org/r/20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com
-
-Changes in v14:
-- Break the change into multiple series.
-- Move `CStr` reexport to `kernel::ffi`. (Alice Ryhl)
-- `pub use core::fmt::{....}` in `kernel/fmt.rs`. (Benno Lossin)
-- Avoid unnecessary binding to `first_lit` in `fmt!`. (Benno Lossin)
-- Add comment to `identifier`-extracting loop. (Benno Lossin)
-- Change `quote_spanned!` formatting. (Benno Lossin)
-- Link to v13: https://lore.kernel.org/r/20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com
-
-Changes in v13:
-- Rebase on v6.16-rc4.
-- Link to v12: https://lore.kernel.org/r/20250619-cstr-core-v12-0-80c9c7b45900@gmail.com
-
-Changes in v12:
-- Introduce `kernel::fmt::Display` to allow implementations on foreign
-  types.
-- Tidy up doc comment on `str_to_cstr`. (Alice Ryhl).
-- Link to v11: https://lore.kernel.org/r/20250530-cstr-core-v11-0-cd9c0cbcb902@gmail.com
-
-Changes in v11:
-- Use `quote_spanned!` to avoid `use<'a, T>` and generally reduce manual
-  token construction.
-- Add a commit to simplify `quote_spanned!`.
-- Drop first commit in favor of
-  https://lore.kernel.org/rust-for-linux/20240906164448.2268368-1-paddymills@proton.me/.
-  (Miguel Ojeda)
-- Correctly handle expressions such as `pr_info!("{a}", a = a = a)`.
-  (Benno Lossin)
-- Avoid dealing with `}}` escapes, which is not needed. (Benno Lossin)
-- Revert some unnecessary changes. (Benno Lossin)
-- Rename `c_str_avoid_literals!` to `str_to_cstr!`. (Benno Lossin &
-  Alice Ryhl).
-- Link to v10: https://lore.kernel.org/r/20250524-cstr-core-v10-0-6412a94d9d75@gmail.com
-
-Changes in v10:
-- Rebase on cbeaa41dfe26b72639141e87183cb23e00d4b0dd.
-- Implement Alice's suggestion to use a proc macro to work around orphan
-  rules otherwise preventing `core::ffi::CStr` to be directly printed
-  with `{}`.
-- Link to v9: https://lore.kernel.org/r/20250317-cstr-core-v9-0-51d6cc522f62@gmail.com
-
-Changes in v9:
-- Rebase on rust-next.
-- Restore `impl Display for BStr` which exists upstream[1].
-- Link: https://doc.rust-lang.org/nightly/std/bstr/struct.ByteStr.html#impl-Display-for-ByteStr [1]
-- Link to v8: https://lore.kernel.org/r/20250203-cstr-core-v8-0-cb3f26e78686@gmail.com
-
-Changes in v8:
-- Move `{from,as}_char_ptr` back to `CStrExt`. This reduces the diff
-  some.
-- Restore `from_bytes_with_nul_unchecked_mut`, `to_cstring`.
-- Link to v7: https://lore.kernel.org/r/20250202-cstr-core-v7-0-da1802520438@gmail.com
-
-Changes in v7:
-- Rebased on mainline.
-- Restore functionality added in commit a321f3ad0a5d ("rust: str: add
-  {make,to}_{upper,lower}case() to CString").
-- Used `diff.algorithm patience` to improve diff readability.
-- Link to v6: https://lore.kernel.org/r/20250202-cstr-core-v6-0-8469cd6d29fd@gmail.com
-
-Changes in v6:
-- Split the work into several commits for ease of review.
-- Restore `{from,as}_char_ptr` to allow building on ARM (see commit
-  message).
-- Add `CStrExt` to `kernel::prelude`. (Alice Ryhl)
-- Remove `CStrExt::from_bytes_with_nul_unchecked_mut` and restore
-  `DerefMut for CString`. (Alice Ryhl)
-- Rename and hide `kernel::c_str!` to encourage use of C-String
-  literals.
-- Drop implementation and invocation changes in kunit.rs. (Trevor Gross)
-- Drop docs on `Display` impl. (Trevor Gross)
-- Rewrite docs in the style of the standard library.
-- Restore the `test_cstr_debug` unit tests to demonstrate that the
-  implementation has changed.
-
-Changes in v5:
-- Keep the `test_cstr_display*` unit tests.
-
-Changes in v4:
-- Provide the `CStrExt` trait with `display()` method, which returns a
-   `CStrDisplay` wrapper with `Display` implementation. This addresses
-   the lack of `Display` implementation for `core::ffi::CStr`.
-- Provide `from_bytes_with_nul_unchecked_mut()` method in `CStrExt`,
-   which might be useful and is going to prevent manual, unsafe casts.
-- Fix a typo (s/preffered/prefered/).
-
-Changes in v3:
-- Fix the commit message.
-- Remove redundant braces in `use`, when only one item is imported.
-
-Changes in v2:
-- Do not remove `c_str` macro. While it's preferred to use C-string
-   literals, there are two cases where `c_str` is helpful:
-   - When working with macros, which already return a Rust string literal
-     (e.g. `stringify!`).
-   - When building macros, where we want to take a Rust string literal as an
-     argument (for caller's convenience), but still use it as a C-string
-     internally.
-- Use Rust literals as arguments in macros (`new_mutex`, `new_condvar`,
-   `new_mutex`). Use the `c_str` macro to convert these literals to C-string
-   literals.
-- Use `c_str` in kunit.rs for converting the output of `stringify!` to a
-   `CStr`.
-- Remove `DerefMut` implementation for `CString`.
-
----
-Tamir Duberstein (11):
-      samples: rust: platform: remove trailing commas
-      rust_binder: remove trailing comma
-      rust_binder: use `kernel::fmt`
-      rust_binder: use `core::ffi::CStr` method names
-      rnull: use `kernel::fmt`
-      rust: alloc: use `kernel::fmt`
-      rust: debugfs: use `kernel::fmt`
-      rust: pci: use `kernel::fmt`
-      rust: remove spurious `use core::fmt::Debug`
-      rust: support formatting of foreign types
-      rust: replace `CStr` with `core::ffi::CStr`
-
- drivers/android/binder/error.rs          |   5 +-
- drivers/android/binder/process.rs        |   2 +-
- drivers/android/binder/stats.rs          |   6 +-
- drivers/block/rnull/configfs.rs          |   9 +-
- rust/ffi.rs                              |   2 +
- rust/kernel/alloc/kvec/errors.rs         |  14 +-
- rust/kernel/debugfs.rs                   |   2 +-
- rust/kernel/debugfs/callback_adapters.rs |   7 +-
- rust/kernel/debugfs/file_ops.rs          |   6 +-
- rust/kernel/debugfs/traits.rs            |  10 +-
- rust/kernel/device.rs                    |   1 +
- rust/kernel/error.rs                     |   2 +
- rust/kernel/firmware.rs                  |   9 +-
- rust/kernel/fmt.rs                       |  87 ++++++-
- rust/kernel/pci/id.rs                    |   3 +-
- rust/kernel/prelude.rs                   |   7 +-
- rust/kernel/ptr.rs                       |   1 -
- rust/kernel/seq_file.rs                  |   2 +-
- rust/kernel/str.rs                       | 395 +++++++------------------------
- rust/kernel/sync/condvar.rs              |   2 +-
- rust/kernel/sync/lock.rs                 |   2 +-
- rust/kernel/sync/lock/global.rs          |   2 +-
- rust/macros/fmt.rs                       |  94 ++++++++
- rust/macros/lib.rs                       |  19 ++
- rust/macros/quote.rs                     |   7 +
- samples/rust/rust_driver_platform.rs     |   4 +-
- 26 files changed, 350 insertions(+), 350 deletions(-)
----
-base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
-change-id: 20250201-cstr-core-d4b9b69120cf
-
-Best regards,
---  
-Tamir Duberstein <tamird@gmail.com>
+-- 
+2.51.0
 
 
