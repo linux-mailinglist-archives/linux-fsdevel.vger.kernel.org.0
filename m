@@ -1,238 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-64236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D46BDE371
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 13:10:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACE4BDE377
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 13:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E44D504A83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:08:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1252F501CAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6345731CA59;
-	Wed, 15 Oct 2025 11:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4847231D375;
+	Wed, 15 Oct 2025 11:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaAjM5MC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epo8xP7+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4FF31CA4A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E8772613
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760526499; cv=none; b=VThK105PmGx3Hg1O/5Uo8n05kkQ0S5o9DFtAC69+wVBrcXYhtox/aPjExeNAwpSKgUpvKj8ioyT1dVMb3nsclBwwYph4WYjAVRro+2Z6VpY1lXxpBGNBlxCL3hKYIDTtLc2H+HQRXd3IfDCfTSBy0V1KWIyOUmcgw/Ofr+F7KP8=
+	t=1760526582; cv=none; b=RI6Nc9+uvwxr34MlJ+rznJ17fVjeSCf117b3dBG5VB+BV+p89hSxF3RYdBdsFe9WcL+zOpbn0MvLw4qkkPqEHPP6rp++FusiHi4aQSCS/DTjCVMU2H0nNPagC3goARn/N59QtzW56fAmWtiRO/q8NOEWe3zUSYLaTJItPbMID/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760526499; c=relaxed/simple;
-	bh=fJ+lgpyul5LCFPrbO3rr5dR4/r00JPb/lSi1+jAZLvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=frjGavU13VgKHR6nuiTBGFSnivJgdiMHBqvnt1man+6St0zAzv/pFaZg17R+FRJ/t2DNowUxyKcHNVBx3zT7MKcX+dXPf5uZ/jtqOBL2W4xXK7VpaUqMFU7JcGHbwNpMPkMtp7JgMuaVncaAGORGJU7dI+cDqZPeQ0LT8FkUiWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FaAjM5MC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760526497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DxEbBrxuUTR/dTladV/C8Wh8SZt/ora9zcsJYo3QO8U=;
-	b=FaAjM5MCivURvt/YbMunXdOueRp+XkwD4BwSFPk+NHbgY53FegVbEfX5tpHngHWz7XN1DM
-	3+cnVLihuCU9Sfh+zTN4Y8HGyA1Denl6tYXip/g/ml5SU5pcW3f9Pvd2OwxSJcoDE7f2jt
-	nW2ozP8xfolVexP/RQpc+Ncc+yLF3SQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-0NMCo_oKMBKNvDwcXi6i0A-1; Wed,
- 15 Oct 2025 07:08:14 -0400
-X-MC-Unique: 0NMCo_oKMBKNvDwcXi6i0A-1
-X-Mimecast-MFC-AGG-ID: 0NMCo_oKMBKNvDwcXi6i0A_1760526493
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8E041800345;
-	Wed, 15 Oct 2025 11:08:12 +0000 (UTC)
-Received: from localhost (unknown [10.72.120.29])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA27519560AD;
-	Wed, 15 Oct 2025 11:08:11 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Cc: Mikulas Patocka <mpatocka@redhat.com>,
-	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V5 6/6] loop: add hint for handling aio via IOCB_NOWAIT
-Date: Wed, 15 Oct 2025 19:07:31 +0800
-Message-ID: <20251015110735.1361261-7-ming.lei@redhat.com>
-In-Reply-To: <20251015110735.1361261-1-ming.lei@redhat.com>
-References: <20251015110735.1361261-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1760526582; c=relaxed/simple;
+	bh=88TkFDgRlIfQHgl5zZUJJfAxExgz6tw1uTTkiNBGftA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ptX64Jlg8NI6AItfc40cO1MvqB7bLgv3ULgaXAJQH/rIH/jfLKGErmzIrqWfbzUMdyVJw3GaamDLyTAXmnkEaAWd6pI9TvyWMy+T6lzedkxN7bxeOIp92y2g9IG0VDDZkiJqWNumvQFr4jOZxmITjp5R4gSct0WuDQJvgtdoayE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epo8xP7+; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso852196066b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760526578; x=1761131378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=88TkFDgRlIfQHgl5zZUJJfAxExgz6tw1uTTkiNBGftA=;
+        b=epo8xP7+PpLAo2TvR6GGCT3BgTQ0F/9gYN+cbz/m5/0aiMoNHQ2vfuJHdnEEg23LJF
+         ga+iJMPws3j6dAU0D1JDRG5kEOnP6Kl/Np9Z7MBnsTVdzWjmoEPQBZrt2v3NQH/dnL2V
+         6wyVSHLCKS+sNBnDMa3DrrSplTVp1T43XuJKJHoofz5qncS6fVlBBhJby9l0O2dzsn22
+         BDCCut63+tIaIi1Nk5hOkPRc0aaFrR4FgAuzxtuOZ6nECGHJ7ivjj0A77HxXLNV9KHrR
+         bE48VMKYKCw4llZ0ETy6yRx9NWlhvN8w/CSYgqkpxsj+xOrRQorWkVFncuSpBZuMOfbw
+         Bd0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760526578; x=1761131378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=88TkFDgRlIfQHgl5zZUJJfAxExgz6tw1uTTkiNBGftA=;
+        b=eu0+JWPTJtpOGCzT76iGHHN0wYWZ4JsiCoHowcZdyvRKO+maE5kPcErv4xJ5jys7in
+         KKYM7LNhE5RUpioUzV1ujqoosmgDKqLHCUF2Bt7u0wOwzO5A377PTmvS4nCFFUiB9to3
+         RZblvpXvanao2V4UYGLcS6K9u02UZfCFBpuROMnvgqik/smyAa/J6DmzdUkplcmlB5zz
+         gRuICXoEk29qMGFdaZccmZpwxEqEcNCOIKf2xJFzEAWB8IV189ZXXAI0wGMXgoIKOiKZ
+         giRJXvqS30LrYhrzi9r1zPSIF2LjuBMS2ShHzhQEJvSCoT5YNAcFG2s5AhrRo8PKa67X
+         aw3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX1ZevpfDgHBlrPtNPA4mzDcBoXHUHD1wBl7/p/OkZdQ7cmaCx6KqHdPR4ueMjmzPqzA2n8WEw62GFLu6QV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHtNyTaAVkWZwjNiXJZkBkq3xPV2EhSz8h17ZnNksL0IvMpT3Y
+	X0eFW6HeNGBHV5gBAImslaitWGVq3HGJ/cmNIVD0vV8eRlYrl7G+6SP8pM2Cw5i+AN0c8pEvPEq
+	58dOKcrNpa3O1FNtioQ/04PuEhTX6J6I=
+X-Gm-Gg: ASbGncsgBS9oBZRkGOHbayxWaVx/OUslj4Okccd+zhEKtg4OMFN9ukHE7Yxw6cVm3/f
+	iTw2taG5OKFe+LsVqMrVe/ThBrcqQ9yiWCHGkS6nqaYIk/oTREZWsuJ5ljgI44lvIPRKcWHYk2t
+	oqWlgNTNKNE8fVNEo8/AalH9ByaZShJL983f0rrdL9NmvVWXJNvzHtmF5sXMxDt42zoWynpU7My
+	LoPCEDgn/mUfZenMUiIk9jHhNlD05SPiqD3bdf7j74YA4PAlIzJNn3ZzAl7GJn4e7QS9g==
+X-Google-Smtp-Source: AGHT+IENjDPxTkztbzr5F/4b/vkt/9YGbwIRgds1ThqVuYJojpUBDdNcgRHeSnatUXLVLK+HdDDWjzqOKNDZToZ4Kf4=
+X-Received: by 2002:a17:907:2d0d:b0:b4e:f7cc:72f1 with SMTP id
+ a640c23a62f3a-b50aaba1161mr2875382066b.22.1760526577879; Wed, 15 Oct 2025
+ 04:09:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+In-Reply-To: <20251014015707.129013-1-andrealmeid@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 15 Oct 2025 13:09:26 +0200
+X-Gm-Features: AS18NWCfEzFg8NKV02k0sHR2LvSmLeMLWcVIZrTlRnWiT-LzhBHhe8mgd_BcgMg
+Message-ID: <CAOQ4uxhrQQmK+tc+eOjm7Pz2u=S6_2cnneyo4mNjVgyA7RNooA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl index=on
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>, 
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add hint for using IOCB_NOWAIT to handle loop aio command for avoiding
-to cause write(especially randwrite) perf regression on sparse backed file.
+On Tue, Oct 14, 2025 at 3:57=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> Hi everyone,
+>
+> When using overlayfs with the mount option index=3Don, the first time a d=
+irectory is
+> used as upper dir, overlayfs stores in a xattr "overlay.origin" the UUID =
+of the
+> filesystem being used in the layers. If the upper dir is reused, overlayf=
+s
+> refuses to mount for a different filesystem, by comparing the UUID with w=
+hat's
+> stored at overlay.origin, and it fails with "failed to verify upper root =
+origin"
+> on dmesg. Remounting with the very same fs is supported and works fine.
+>
+> However, btrfs mounts may have volatiles UUIDs. When mounting the exact s=
+ame
+> disk image with btrfs, a random UUID is assigned for the following disks =
+each
+> time they are mounted, stored at temp_fsid and used across the kernel as =
+the
+> disk UUID. `btrfs filesystem show` presents that. Calling statfs() howeve=
+r shows
+> the original (and duplicated) UUID for all disks.
+>
+> This feature doesn't work well with overlayfs with index=3Don, as when th=
+e image
+> is mounted a second time, will get a different UUID and ovl will refuse t=
+o
+> mount, breaking the user expectation that using the same image should wor=
+k. A
+> small script can be find in the end of this cover letter that illustrates=
+ this.
+>
+> From this, I can think of some options:
+>
+> - Use statfs() internally to always get the fsid, that is persistent. The=
+ patch
+> here illustrates that approach, but doesn't fully implement it.
+> - Create a new sb op, called get_uuid() so the filesystem returns what's
+> appropriated.
 
-Try IOCB_NOWAIT in the following situations:
+FWIW this operation already exists in export_operations.
+It is currently only used by pnfs and only implemented by xfs.
+I would nor object for overlayfs to use this method if implemented
+and fall back to copying uuid directly from s_uuid
+(better yet make it a vfs helper)
+Note that commit
+8f720d9f892e0 xfs: publish UUID in struct super_block
+was done for a similar reason.
+The xfs mount option nouuid is the poor man's solution for
+mounting cloned disk images.
 
-- backing file is block device
-
-OR
-
-- READ aio command
-
-OR
-
-- there isn't any queued blocking async WRITEs, because NOWAIT won't cause
-contention with blocking WRITE, which often implies exclusive lock
-
-With this simple policy, perf regression of randwrite/write on sparse
-backing file is fixed.
-
-Link: https://lore.kernel.org/dm-devel/7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com/
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/block/loop.c | 61 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index f752942d0889..e42bdfc73c20 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -68,6 +68,7 @@ struct loop_device {
- 	struct rb_root          worker_tree;
- 	struct timer_list       timer;
- 	bool			sysfs_inited;
-+	unsigned 		lo_nr_blocking_writes;
- 
- 	struct request_queue	*lo_queue;
- 	struct blk_mq_tag_set	tag_set;
-@@ -467,6 +468,33 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	return -EIOCBQUEUED;
- }
- 
-+static inline bool lo_aio_try_nowait(struct loop_device *lo,
-+		struct loop_cmd *cmd)
-+{
-+	struct file *file = lo->lo_backing_file;
-+	struct inode *inode = file->f_mapping->host;
-+	struct request *rq = blk_mq_rq_from_pdu(cmd);
-+
-+	/* NOWAIT works fine for backing block device */
-+	if (S_ISBLK(inode->i_mode))
-+		return true;
-+
-+	/*
-+	 * NOWAIT is supposed to be fine for READ without contending with
-+	 * blocking WRITE
-+	 */
-+	if (req_op(rq) == REQ_OP_READ)
-+		return true;
-+
-+	/*
-+	 * If there is any queued non-NOWAIT async WRITE , don't try new
-+	 * NOWAIT WRITE for avoiding contention
-+	 *
-+	 * Here we focus on handling stable FS block mapping via NOWAIT
-+	 */
-+	return READ_ONCE(lo->lo_nr_blocking_writes) == 0;
-+}
-+
- static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
- 			    int rw)
- {
-@@ -478,6 +506,9 @@ static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
- 	if (unlikely(ret))
- 		goto fail;
- 
-+	if (!lo_aio_try_nowait(lo, cmd))
-+		return -EAGAIN;
-+
- 	cmd->iocb.ki_flags |= IOCB_NOWAIT;
- 	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
- fail:
-@@ -778,12 +809,19 @@ static ssize_t loop_attr_dio_show(struct loop_device *lo, char *buf)
- 	return sysfs_emit(buf, "%s\n", dio ? "1" : "0");
- }
- 
-+static ssize_t loop_attr_nr_blocking_writes_show(struct loop_device *lo,
-+						 char *buf)
-+{
-+	return sysfs_emit(buf, "%u\n", lo->lo_nr_blocking_writes);
-+}
-+
- LOOP_ATTR_RO(backing_file);
- LOOP_ATTR_RO(offset);
- LOOP_ATTR_RO(sizelimit);
- LOOP_ATTR_RO(autoclear);
- LOOP_ATTR_RO(partscan);
- LOOP_ATTR_RO(dio);
-+LOOP_ATTR_RO(nr_blocking_writes);
- 
- static struct attribute *loop_attrs[] = {
- 	&loop_attr_backing_file.attr,
-@@ -792,6 +830,7 @@ static struct attribute *loop_attrs[] = {
- 	&loop_attr_autoclear.attr,
- 	&loop_attr_partscan.attr,
- 	&loop_attr_dio.attr,
-+	&loop_attr_nr_blocking_writes.attr,
- 	NULL,
- };
- 
-@@ -867,6 +906,24 @@ static inline int queue_on_root_worker(struct cgroup_subsys_state *css)
- }
- #endif
- 
-+static inline void loop_inc_blocking_writes(struct loop_device *lo,
-+		struct loop_cmd *cmd)
-+{
-+	lockdep_assert_held(&lo->lo_work_lock);
-+
-+	if (req_op(blk_mq_rq_from_pdu(cmd)) == REQ_OP_WRITE)
-+		lo->lo_nr_blocking_writes += 1;
-+}
-+
-+static inline void loop_dec_blocking_writes(struct loop_device *lo,
-+		struct loop_cmd *cmd)
-+{
-+	lockdep_assert_held(&lo->lo_work_lock);
-+
-+	if (req_op(blk_mq_rq_from_pdu(cmd)) == REQ_OP_WRITE)
-+		lo->lo_nr_blocking_writes -= 1;
-+}
-+
- static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd)
- {
- 	struct request __maybe_unused *rq = blk_mq_rq_from_pdu(cmd);
-@@ -949,6 +1006,8 @@ static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd)
- 		work = &lo->rootcg_work;
- 		cmd_list = &lo->rootcg_cmd_list;
- 	}
-+	if (cmd->use_aio)
-+		loop_inc_blocking_writes(lo, cmd);
- 	list_add_tail(&cmd->list_entry, cmd_list);
- 	queue_work(lo->workqueue, work);
- 	spin_unlock_irq(&lo->lo_work_lock);
-@@ -2048,6 +2107,8 @@ static void loop_process_work(struct loop_worker *worker,
- 		cond_resched();
- 
- 		spin_lock_irq(&lo->lo_work_lock);
-+		if (cmd->use_aio)
-+			loop_dec_blocking_writes(lo, cmd);
- 	}
- 
- 	/*
--- 
-2.47.0
-
+Thanks,
+Amir.
 
