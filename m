@@ -1,103 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-64255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F11EBDFE84
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 19:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9DEBDFECF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 19:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C7B2834F604
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 17:40:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77376357237
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 17:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A182EB5D2;
-	Wed, 15 Oct 2025 17:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136CB2561B9;
+	Wed, 15 Oct 2025 17:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FN9Wxdv7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/RcjmU6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C73A2D8767
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 17:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAA31E500C;
+	Wed, 15 Oct 2025 17:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760550029; cv=none; b=p9usrniGy+K1nn2b0mwasiDg9JINWmZdB7mmSfqBdcl0kdJdBRIQiVD/CGlsrJTJRAEIB9/YYGHQU1HEWhsY0jvZWRtOQcxkFMn8zKWoIvQkCPUQY4L1BOgLxt5GG2jtXgq1Dgy/YJoDARW06UMw2WCvb9kubdFO8vp7Eq5p7XY=
+	t=1760550333; cv=none; b=KOnMX+bN2MraJRkKv8ydmpQVKaS/oJn6kHnm4VavEzp4PErSg9JtZMahJQrXYt2U3Zar+e8wlpcBeehPWEYYnNTmzpk+Ti6CkJt0ve9Cr1eBQU5I+9MW4g0aI+jQpF7Gk/zbMeZjJFP5EgJF1T720aaGosJRJU5Syd9s/liELU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760550029; c=relaxed/simple;
-	bh=cDP5VWZW9m+cg1OZFipaBsjCX1JqlocRKCDxc+LBSbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bQuu/VgIIDlnqR//vx+kqJ5/Z5MusFQ2Vw444xoqIuc+mso2mpQ/UesUyX2zzqj0L6Pk/s+01UytRDH0oVs4JaRu1ilgcuUlqO+Yrp27eiNlb3g+cMqhepTAQvqZt1Xu4rxLvv74JDQaeVVYT2HAAZUsWenIPYD9VdJybIwzKoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FN9Wxdv7; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760550023; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MuHtoNp5Himmgrf46rYsZc4HM+9tCzYzJJHOnVnHtaI=;
-	b=FN9Wxdv7pzYEjrK6ibTd74bTeDe8gTRhJrhWWpOpCLofnLut801Cw95kxEHJUcFQKm1pFCnofynwNkWBSo19RQfSbce74sP9IUVz3exKhz9Qm4BhB9vKuovZ4o73XNc5WsbyrC5HKz3UCnrUWXJQsbIk23f9ALxohaAsQlSFxFo=
-Received: from 30.134.15.121(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WqHGeBV_1760550022 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 16 Oct 2025 01:40:23 +0800
-Message-ID: <a8c02942-69ca-45b1-ad51-ed3038f5d729@linux.alibaba.com>
-Date: Thu, 16 Oct 2025 01:40:22 +0800
+	s=arc-20240116; t=1760550333; c=relaxed/simple;
+	bh=5VHnaFTpOmXDgy5oJBc19Z3MpdZcEDhISNLaPukOCR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5WYckXPehSHCvxcobmHB8v5R6vB5pyoCKGNKxL9unfCxitBROCPBrWr9aAdHEU+8JP6ffYIYsx4KVdfeAtYaUl+8JclZUokeVl43JOw4G1fikwbixLnlIX8puHiiSzhwYY/3vjx7l3thC7OvPZihVwUkF0kztNg4V8jaUYS6zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/RcjmU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED4E7C4CEF9;
+	Wed, 15 Oct 2025 17:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760550333;
+	bh=5VHnaFTpOmXDgy5oJBc19Z3MpdZcEDhISNLaPukOCR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N/RcjmU6U3xHv5IG9fAqgE5OPWOpFIbVfHky25FpJ8LpZf0sj/n8MBAWJjmY2IA7B
+	 H8qTdkyrCxoB5YIWqYSRJVYZ/yNMkLKjYX3B3sjDkmJQJSTxe/j6aYMZWImzVV5yPF
+	 A1OjnK88AxE20+Ydhq8DRdmxsSqfVQZ8aSGyhtH3btSKu7vdjbrucVQzn6smzG5NG0
+	 0PsUVhvDy/qIyUZj/ECYPzKHJ4Rg4OGT8I7ocb+WaebWlkw5GEK0c6eVJD1ZvJdkVo
+	 5Op+W7Udwe4joTth8Hm8AjfUk37XsOMON87ZCHNDCL7dkzBfbzrLXsVoXoif9+XJUA
+	 Rj8QJij0Ugn0A==
+Date: Wed, 15 Oct 2025 10:45:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: akpm@linux-foundation.org, linux-mm <linux-mm@kvack.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: Regression in generic/749 with 8k fsblock size on 6.18-rc1
+Message-ID: <20251015174532.GB6188@frogsfrogsfrogs>
+References: <20251014175214.GW6188@frogsfrogsfrogs>
+ <d2b367ae-b339-429b-a5e7-1d179cfa0695@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
- truncating read range
-To: Joanne Koong <joannelkoong@gmail.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: brauner@kernel.org, djwong@kernel.org, bfoster@redhat.com,
- linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-References: <20251009225611.3744728-1-joannelkoong@gmail.com>
- <20251009225611.3744728-2-joannelkoong@gmail.com>
- <aOxrXWkq8iwU5ns_@infradead.org>
- <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2b367ae-b339-429b-a5e7-1d179cfa0695@app.fastmail.com>
 
-
-
-On 2025/10/16 01:34, Joanne Koong wrote:
-> On Sun, Oct 12, 2025 at 8:00 PM Christoph Hellwig <hch@infradead.org> wrote:
->>
->> On Thu, Oct 09, 2025 at 03:56:03PM -0700, Joanne Koong wrote:
->>> The end position to start truncating from may be at an offset into a
->>> block, which under the current logic would result in overtruncation.
->>>
->>> Adjust the calculation to account for unaligned end offsets.
->>
->> Should this get a fixes tag?
+On Wed, Oct 15, 2025 at 08:39:53AM +0100, Kirill A. Shutemov wrote:
+> On Tue, Oct 14, 2025, at 18:52, Darrick J. Wong wrote:
+> > Did your testing also demonstrate this regression?
 > 
-> I don't think this needs a fixes tag because when it was originally
-> written (in commit 9dc55f1389f9 ("iomap: add support for sub-pagesize
-> buffered I/O without buffer heads") in 2018), it was only used by xfs.
-> think it was when erofs started using iomap that iomap mappings could
-> represent non-block-aligned data.
-
-What non-block-aligned data exactly? erofs is a strictly block-aligned
-filesystem except for tail inline data.
-
-Is it inline data? gfs2 also uses the similar inline data logic.
-
-Thanks,
-Gao Xiang
-
+> I have not reproduced the issue yet.
 > 
+> Could you check if this patch makes a difference:
 > 
-> Thanks,
-> Joanne
-> 
->>
->> Otherwise looks good:
->>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> https://gist.github.com/kiryl/a2c71057bec332240216cc425aca791a
 
+Yes, it does make the test failure go away:
+
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 alder-mtr00 6.18.0-rc1-xfsx #rc1 SMP PREEMPT_DYNAMIC Wed Oct 15 10:34:11 PDT 2025
+MKFS_OPTIONS  -- -f -b size=8192, /dev/sdf
+MOUNT_OPTIONS -- -o uquota,gquota,pquota, /dev/sdf /opt
+
+generic/749        9s
+Ran: generic/749
+Passed all 1 tests
+
+Is it valid to i_size_read() in the two places you add them?  I /think/
+the folio is locked in the filemap.c hunk.  I'm not as sure about the
+finish_fault changes.  If the EOF folio's locked then I think it's the
+case that anything trying to change the file size will block until the
+folio lock drops.
+
+<shrug> Thanks for your help, in any case :)
+
+--D
+
+> -- 
+> Kiryl Shutsemau / Kirill A. Shutemov
+> 
 
