@@ -1,240 +1,569 @@
-Return-Path: <linux-fsdevel+bounces-64238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AFDABDE483
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 13:36:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEED5BDE552
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 13:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44BCB4FDEE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C5319C4B3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1617321453;
-	Wed, 15 Oct 2025 11:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20796322DD8;
+	Wed, 15 Oct 2025 11:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnZ1gVzb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlyMo40G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0433054E7;
-	Wed, 15 Oct 2025 11:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690B1322A3B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760528136; cv=none; b=jXezziQfX15kNTjwsl1c7PXBKPr3R7bj8DdX2YFU32qpHd7yZhY4JM9sOmTXDikgcPpQUzzgyYpk1TQnYHVRtFNH6yLDR9+93uooEyQizaloEVzmw1EnLrqDnO1x5epeImazJnL8a2x4Z4bc+KM2hLkb+SeINt6LOSn6qgigqYA=
+	t=1760529041; cv=none; b=Hj8lRO8VxXfW/xbsoDbU59lGwLzcib1GPj7eB485jEmFESbA18xzEF1EEbeGVeNzKv45w1H0hVpPzyAjY5IxTPNyKu2jhZ0zuHu1VEE1XroRXIr2o9ZM8dhg7E1vTQKRqg2IPVTPLYSK7RWnmPIPQ+Mw4VueOK/JBxl2PnpauL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760528136; c=relaxed/simple;
-	bh=eRgq4ndfbWcx2HIsPQfks1ozUED37xZlFNRNKXX0ySE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J+silkJRFdozUuZ57GMJH9tdKn2fWTHqb6UDJfOgemeEBfVRjNQCxyjWtr2ZTdrqqdiCbQ1xn4OQ5XJlLbb7qzQjRAXhA2tR24oPawo9Kpnhi04INAj4zWMNcWp6N4CHkFWQnDvUKCSYmaekui1PpD2BIRCYWX/M/u/v5SX965M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnZ1gVzb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B55EC4CEFE;
-	Wed, 15 Oct 2025 11:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760528135;
-	bh=eRgq4ndfbWcx2HIsPQfks1ozUED37xZlFNRNKXX0ySE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JnZ1gVzbkbJgiTjDDEug8dLKk5rzmJkF6Twf1NMC1S+fe0tAiUsqmf5wYuLQtvAcI
-	 j0pgnmNTmMpEoywRHZ2axMea6AlwXDhllJoqHg+GImvNQsreRb6b25KxuG2Ai+F8uq
-	 XUFV6EjBS+XxOHaPT8JGHG92N2dHcaQ5ebrvoQh8q+/i6L46MDnJhzhxIzBmysa4RU
-	 MtrOXsj4v0+YMTC8OVJLY2wr+Li3NUP/FG7GSHExYGjpHgm88MvcXFriIZiuA0wkyu
-	 mK1RJMOiXj3DYcCx21inzHmni0sHiXLbYrOBQ7VK/Bn2eLt6J1F1z097YyWwBK274d
-	 CXqVIZQKc8kVQ==
-Message-ID: <c502e66e8e5262c880279a71932c349cc23b76c2.camel@kernel.org>
-Subject: Re: [PATCH 02/13] filelock: add a lm_may_setlease lease_manager
- callback
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Chuck Lever	 <chuck.lever@oracle.com>, Alexander Aring
- <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,  Paulo
- Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
- Bharath SM	 <bharathsm@microsoft.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>,
- Tyler Hicks <code@tyhicks.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, Namjae
- Jeon <linkinjeon@kernel.org>, Steve French	 <smfrench@gmail.com>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
- Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"	
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
- <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, 	samba-technical@lists.samba.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
- netdev@vger.kernel.org
-Date: Wed, 15 Oct 2025 07:35:31 -0400
-In-Reply-To: <176047982343.1793333.618816248171085890@noble.neil.brown.name>
-References: <>, <87a320441f2b568c71649a7e6e99381b1dba6a8e.camel@kernel.org>
-	 <176047982343.1793333.618816248171085890@noble.neil.brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760529041; c=relaxed/simple;
+	bh=RXKHwxzKXiJ0UlK2tdmScjt63gxBCd7X0J2PMbqAA6s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ihbCvwUW8ScBdRo1gqYC3mCZwK0E0JiMgK14FXRmZSTS91Vq/w43dXmz994pHquTYBnwiiCOjMks8Cz6RQ1CBUlrR+XRTzVreInswBaY1rS4NKOB0klDegyrOw4oxYJoWlP92azKEaecblTzFS2bUIK4GW8V5KktwXkXXnwSPfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlyMo40G; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3e9d633b78so212243766b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760529038; x=1761133838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpo8kDK8JO1CJCSgMe87q+YOatwPymBjSdrr7goSAYc=;
+        b=XlyMo40GkRCTK/yfH7OC8XoqzK+lxRdmLcq7nwROFp4dD9maQT0YvCgzXJGB1fqVdR
+         Kp4kZLFdv5+QFKiH1BOt74sTCx2sMhCuC81+LCOcUfQyil12j833hYvE2LSdebSX2dyM
+         ec172VsBQM44efOyqt3yUHTL9IEF9eJajl5P3Hdf9O1OidV0ULml2whUZ2hyRZQ3Q6fu
+         Px7RWpFruLy7Pynp5Y5pLcRSGkrIqrwEEULnVr1+sFbaoyabtAzp6o1J+8KsCxZoVxzu
+         amr4dBPpK60b08qjY2bHgMqohlE5DJ6JoUDTtYackrAJ+I6uCO0v/17162gn9EhPtxu+
+         2TYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760529038; x=1761133838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xpo8kDK8JO1CJCSgMe87q+YOatwPymBjSdrr7goSAYc=;
+        b=v/UN3C2WYEt7Omdo6rL0QYEhEW31rP0FcAqMNip1+L5Aey6sWie3+0rgPMD0y0GlGM
+         mHyhmmrxbX7JxlmzERfFWHs7vd9RmYsMC+N00i3npBPgrp3SUR1cFKPxCf1Ez/S3jYxp
+         vWCu9lO/6W8WRNjW4Fll7L9t9Nz03QmCuvWLJFQ4Err7cD0eDX017Ml2ZrnnygySMS7a
+         vkwS/KexfsOPF1s2G+5Oi4rXIz4OoZwXoWFxJkjL4PjXB9wDW4UuisHCktBjG3QUqg65
+         Q+KmpIPmEa6nI9dIswLxFcpX5Zyu6r0rl4Dr+UAiaK6wEIyFGxXKmnuI2vbiv6b9DBYv
+         uAAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhgLs9IG6Hj7EDoGJSF+GgbXv3bxFFeFLx5qGRDIz9FiwjbyDQYQvUkQ9YI9PGQ1O4WSm0KRnqHT4GNDbF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgLsEJ7SMeGdcerceY/EesqY7c+fFal5LwbDu9RNOVUWpqNLIF
+	BTI0uRWA5SjhiTDaF+tqqZk+idgi1FYz8cTHMazYHClvacJwG8U0ufdbS4cFicmDy3rDDOvbAb5
+	EzDqLinC1VVeKHJy8O/JZCSAgBksBAZ4=
+X-Gm-Gg: ASbGnct6PZaMmJ0uuywXbFTw7aY17Ade9yQ87NuwoDo3RDU7UDgRIqs5hxLQR7Itsn4
+	dfi86ALDr9qpOG8r9TRIj3LIIMDIFdhUIGVEwcn+zGQ1v85ejC7KDhEVaulrcVWx3FoFOK7m55Z
+	jdacQIdwpngUDzAWAss2dtHe+ifnntZhJsQdWQDgaAk+TidKWsOzmRjSxFtkB0YTS1GBZQpo51v
+	POAq4TY0BjwHW05LECCvwwy0Ql9Webf0ZD6w6T3gh305MahfRZn33frCg==
+X-Google-Smtp-Source: AGHT+IEOVWsqm0eHg2SxAXjMoiQU4YW5YHee6f0wIuwZp59XpuSBvVd6RUrccUkRgMNkIxl7OKzSprdoJPXtqK9OVLg=
+X-Received: by 2002:a17:907:a788:b0:b2d:4e57:58d8 with SMTP id
+ a640c23a62f3a-b4f4116509cmr3174810866b.10.1760529037421; Wed, 15 Oct 2025
+ 04:50:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251010221737.1403539-1-mjguzik@gmail.com>
+In-Reply-To: <20251010221737.1403539-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 15 Oct 2025 13:50:25 +0200
+X-Gm-Features: AS18NWDIdlm6uHmrtkVjmZ4eWJLc7In7Fq9FlwNZ0F4qOF4XIPfAbA1zuY-uQ_g
+Message-ID: <CAGudoHETiJ8G8WeyFYJ6EZ4oxcmqxV3yztZDOxL8PUBGobW_xQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-10-15 at 09:10 +1100, NeilBrown wrote:
-> On Tue, 14 Oct 2025, Jeff Layton wrote:
-> > On Tue, 2025-10-14 at 16:34 +1100, NeilBrown wrote:
-> > > On Tue, 14 Oct 2025, Jeff Layton wrote:
-> > > > The NFSv4.1 protocol adds support for directory delegations, but it
-> > > > specifies that if you already have a delegation and try to request =
-a new
-> > > > one on the same filehandle, the server must reply that the delegati=
-on is
-> > > > unavailable.
-> > > >=20
-> > > > Add a new lease manager callback to allow the lease manager (nfsd i=
-n
-> > > > this case) to impose this extra check when performing a setlease.
-> > > >=20
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  fs/locks.c               |  5 +++++
-> > > >  include/linux/filelock.h | 14 ++++++++++++++
-> > > >  2 files changed, 19 insertions(+)
-> > > >=20
-> > > > diff --git a/fs/locks.c b/fs/locks.c
-> > > > index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..9e366b13674538dbf48=
-2ffdeee92fc717733ee20 100644
-> > > > --- a/fs/locks.c
-> > > > +++ b/fs/locks.c
-> > > > @@ -1826,6 +1826,11 @@ generic_add_lease(struct file *filp, int arg=
-, struct file_lease **flp, void **pr
-> > > >  			continue;
-> > > >  		}
-> > > > =20
-> > > > +		/* Allow the lease manager to veto the setlease */
-> > > > +		if (lease->fl_lmops->lm_may_setlease &&
-> > > > +		    !lease->fl_lmops->lm_may_setlease(lease, fl))
-> > > > +			goto out;
-> > > > +
-> > >=20
-> > > I don't see any locking around this.  What if the condition which
-> > > triggers a veto happens after this check, and before the lm_change
-> > > below?
-> > > Should lm_change implement the veto?  Return -EAGAIN?
-> > >=20
-> > >=20
-> >=20
-> > The flc_lock is held over this check and any subsequent lease addition.
-> > Is that not sufficient?
->=20
-> Ah - I didn't see that - sorry.
->=20
-> But I still wonder why ->lm_change cannot do the veto.
->=20
-> I also wonder if the current code can work.  If that loop finds an
-> existing lease with the same file and the same owner the it invokes
-> "continue" before the code that you added.
-> So unless I'm misunderstanding (again) in the case that you are
-> interested in, the new code doesn't run.
->=20
+can i get some flames on this?
 
-I wrote this a couple of years ago and had to go back and refresh my
-memory as to why I did it this way...
-
-The "same owner" check doesn't quite work here. The fl_owner points to
-the struct nfs4_delegation, not the nfs4_client, so that test will
-never return true. That means that lm_change never happens in this
-scenario.
-
-One approach to fix this might be to turn that check into a new
-"lm_compare" operation that would return true if the delegations were
-both owned by the same client. That could have other effects on the
-lease handling code that I haven't considered yet however so I'm
-hesitant to go that route.
-
-I'm actually leaning now toward dropping this patch and doing this all
-inside of nfsd. I think that's possible and that means less complexity
-at the VFS layer. I'll take a stab at respinning this part of the
-patchset and see if I can make that work instead.
-
-Thanks for the review!
---=20
-Jeff Layton <jlayton@kernel.org>
+On Sat, Oct 11, 2025 at 12:17=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
+>
+> In the inode hash code grab the state while ->i_lock is held. If found
+> to be set, synchronize the sleep once more with the lock held.
+>
+> In the real world the flag is not set most of the time.
+>
+> Apart from being simpler to reason about, it comes with a minor speed up
+> as now clearing the flag does not require the smp_mb() fence.
+>
+> While here rename wait_on_inode() to wait_on_new_inode() to line it up
+> with __wait_on_freeing_inode().
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>
+> This temporarily duplicated sleep code from inode_wait_for_lru_isolating(=
+).
+> This is going to get dedupped later.
+>
+> There is high repetition of:
+>         if (unlikely(isnew)) {
+>                 wait_on_new_inode(old);
+>                 if (unlikely(inode_unhashed(old))) {
+>                         iput(old);
+>                         goto again;
+>                 }
+>
+> I expect this is going to go away after I post a patch to sanitize the
+> current APIs for the hash.
+>
+>
+>  fs/afs/dir.c       |   4 +-
+>  fs/dcache.c        |  10 ----
+>  fs/gfs2/glock.c    |   2 +-
+>  fs/inode.c         | 146 +++++++++++++++++++++++++++------------------
+>  include/linux/fs.h |  12 +---
+>  5 files changed, 93 insertions(+), 81 deletions(-)
+>
+> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+> index 89d36e3e5c79..f4e9e12373ac 100644
+> --- a/fs/afs/dir.c
+> +++ b/fs/afs/dir.c
+> @@ -779,7 +779,7 @@ static struct inode *afs_do_lookup(struct inode *dir,=
+ struct dentry *dentry)
+>         struct afs_vnode *dvnode =3D AFS_FS_I(dir), *vnode;
+>         struct inode *inode =3D NULL, *ti;
+>         afs_dataversion_t data_version =3D READ_ONCE(dvnode->status.data_=
+version);
+> -       bool supports_ibulk;
+> +       bool supports_ibulk, isnew;
+>         long ret;
+>         int i;
+>
+> @@ -850,7 +850,7 @@ static struct inode *afs_do_lookup(struct inode *dir,=
+ struct dentry *dentry)
+>                          * callback counters.
+>                          */
+>                         ti =3D ilookup5_nowait(dir->i_sb, vp->fid.vnode,
+> -                                            afs_ilookup5_test_by_fid, &v=
+p->fid);
+> +                                            afs_ilookup5_test_by_fid, &v=
+p->fid, &isnew);
+>                         if (!IS_ERR_OR_NULL(ti)) {
+>                                 vnode =3D AFS_FS_I(ti);
+>                                 vp->dv_before =3D vnode->status.data_vers=
+ion;
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 78ffa7b7e824..25131f105a60 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1981,17 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struc=
+t inode *inode)
+>         spin_lock(&inode->i_lock);
+>         __d_instantiate(entry, inode);
+>         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> -       /*
+> -        * Pairs with smp_rmb in wait_on_inode().
+> -        */
+> -       smp_wmb();
+>         inode_state_clear(inode, I_NEW | I_CREATING);
+> -       /*
+> -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> -        * ___wait_var_event() either sees the bit cleared or
+> -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> -        */
+> -       smp_mb();
+>         inode_wake_up_bit(inode, __I_NEW);
+>         spin_unlock(&inode->i_lock);
+>  }
+> diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+> index b677c0e6b9ab..c9712235e7a0 100644
+> --- a/fs/gfs2/glock.c
+> +++ b/fs/gfs2/glock.c
+> @@ -957,7 +957,7 @@ static struct gfs2_inode *gfs2_grab_existing_inode(st=
+ruct gfs2_glock *gl)
+>                 ip =3D NULL;
+>         spin_unlock(&gl->gl_lockref.lock);
+>         if (ip) {
+> -               wait_on_inode(&ip->i_inode);
+> +               wait_on_new_inode(&ip->i_inode);
+>                 if (is_bad_inode(&ip->i_inode)) {
+>                         iput(&ip->i_inode);
+>                         ip =3D NULL;
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 3153d725859c..1396f79b2551 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -558,6 +558,32 @@ struct wait_queue_head *inode_bit_waitqueue(struct w=
+ait_bit_queue_entry *wqe,
+>  }
+>  EXPORT_SYMBOL(inode_bit_waitqueue);
+>
+> +void wait_on_new_inode(struct inode *inode)
+> +{
+> +       struct wait_bit_queue_entry wqe;
+> +       struct wait_queue_head *wq_head;
+> +
+> +       spin_lock(&inode->i_lock);
+> +       if (!(inode_state_read(inode) & I_NEW)) {
+> +               spin_unlock(&inode->i_lock);
+> +               return;
+> +       }
+> +
+> +       wq_head =3D inode_bit_waitqueue(&wqe, inode, __I_NEW);
+> +       for (;;) {
+> +               prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTE=
+RRUPTIBLE);
+> +               if (!(inode_state_read(inode) & I_NEW))
+> +                       break;
+> +               spin_unlock(&inode->i_lock);
+> +               schedule();
+> +               spin_lock(&inode->i_lock);
+> +       }
+> +       finish_wait(wq_head, &wqe.wq_entry);
+> +       WARN_ON(inode_state_read(inode) & I_NEW);
+> +       spin_unlock(&inode->i_lock);
+> +}
+> +EXPORT_SYMBOL(wait_on_new_inode);
+> +
+>  /*
+>   * Add inode to LRU if needed (inode is unused and clean).
+>   *
+> @@ -1008,7 +1034,8 @@ static void __wait_on_freeing_inode(struct inode *i=
+node, bool is_inode_hash_lock
+>  static struct inode *find_inode(struct super_block *sb,
+>                                 struct hlist_head *head,
+>                                 int (*test)(struct inode *, void *),
+> -                               void *data, bool is_inode_hash_locked)
+> +                               void *data, bool is_inode_hash_locked,
+> +                               bool *isnew)
+>  {
+>         struct inode *inode =3D NULL;
+>
+> @@ -1035,6 +1062,7 @@ static struct inode *find_inode(struct super_block =
+*sb,
+>                         return ERR_PTR(-ESTALE);
+>                 }
+>                 __iget(inode);
+> +               *isnew =3D !!(inode_state_read(inode) & I_NEW);
+>                 spin_unlock(&inode->i_lock);
+>                 rcu_read_unlock();
+>                 return inode;
+> @@ -1049,7 +1077,7 @@ static struct inode *find_inode(struct super_block =
+*sb,
+>   */
+>  static struct inode *find_inode_fast(struct super_block *sb,
+>                                 struct hlist_head *head, unsigned long in=
+o,
+> -                               bool is_inode_hash_locked)
+> +                               bool is_inode_hash_locked, bool *isnew)
+>  {
+>         struct inode *inode =3D NULL;
+>
+> @@ -1076,6 +1104,7 @@ static struct inode *find_inode_fast(struct super_b=
+lock *sb,
+>                         return ERR_PTR(-ESTALE);
+>                 }
+>                 __iget(inode);
+> +               *isnew =3D !!(inode_state_read(inode) & I_NEW);
+>                 spin_unlock(&inode->i_lock);
+>                 rcu_read_unlock();
+>                 return inode;
+> @@ -1181,17 +1210,7 @@ void unlock_new_inode(struct inode *inode)
+>         lockdep_annotate_inode_mutex_key(inode);
+>         spin_lock(&inode->i_lock);
+>         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> -       /*
+> -        * Pairs with smp_rmb in wait_on_inode().
+> -        */
+> -       smp_wmb();
+>         inode_state_clear(inode, I_NEW | I_CREATING);
+> -       /*
+> -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> -        * ___wait_var_event() either sees the bit cleared or
+> -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> -        */
+> -       smp_mb();
+>         inode_wake_up_bit(inode, __I_NEW);
+>         spin_unlock(&inode->i_lock);
+>  }
+> @@ -1202,17 +1221,7 @@ void discard_new_inode(struct inode *inode)
+>         lockdep_annotate_inode_mutex_key(inode);
+>         spin_lock(&inode->i_lock);
+>         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> -       /*
+> -        * Pairs with smp_rmb in wait_on_inode().
+> -        */
+> -       smp_wmb();
+>         inode_state_clear(inode, I_NEW);
+> -       /*
+> -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> -        * ___wait_var_event() either sees the bit cleared or
+> -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> -        */
+> -       smp_mb();
+>         inode_wake_up_bit(inode, __I_NEW);
+>         spin_unlock(&inode->i_lock);
+>         iput(inode);
+> @@ -1286,12 +1295,13 @@ struct inode *inode_insert5(struct inode *inode, =
+unsigned long hashval,
+>  {
+>         struct hlist_head *head =3D inode_hashtable + hash(inode->i_sb, h=
+ashval);
+>         struct inode *old;
+> +       bool isnew;
+>
+>         might_sleep();
+>
+>  again:
+>         spin_lock(&inode_hash_lock);
+> -       old =3D find_inode(inode->i_sb, head, test, data, true);
+> +       old =3D find_inode(inode->i_sb, head, test, data, true, &isnew);
+>         if (unlikely(old)) {
+>                 /*
+>                  * Uhhuh, somebody else created the same inode under us.
+> @@ -1300,10 +1310,12 @@ struct inode *inode_insert5(struct inode *inode, =
+unsigned long hashval,
+>                 spin_unlock(&inode_hash_lock);
+>                 if (IS_ERR(old))
+>                         return NULL;
+> -               wait_on_inode(old);
+> -               if (unlikely(inode_unhashed(old))) {
+> -                       iput(old);
+> -                       goto again;
+> +               if (unlikely(isnew)) {
+> +                       wait_on_new_inode(old);
+> +                       if (unlikely(inode_unhashed(old))) {
+> +                               iput(old);
+> +                               goto again;
+> +                       }
+>                 }
+>                 return old;
+>         }
+> @@ -1391,18 +1403,21 @@ struct inode *iget5_locked_rcu(struct super_block=
+ *sb, unsigned long hashval,
+>  {
+>         struct hlist_head *head =3D inode_hashtable + hash(sb, hashval);
+>         struct inode *inode, *new;
+> +       bool isnew;
+>
+>         might_sleep();
+>
+>  again:
+> -       inode =3D find_inode(sb, head, test, data, false);
+> +       inode =3D find_inode(sb, head, test, data, false, &isnew);
+>         if (inode) {
+>                 if (IS_ERR(inode))
+>                         return NULL;
+> -               wait_on_inode(inode);
+> -               if (unlikely(inode_unhashed(inode))) {
+> -                       iput(inode);
+> -                       goto again;
+> +               if (unlikely(isnew)) {
+> +                       wait_on_new_inode(inode);
+> +                       if (unlikely(inode_unhashed(inode))) {
+> +                               iput(inode);
+> +                               goto again;
+> +                       }
+>                 }
+>                 return inode;
+>         }
+> @@ -1434,18 +1449,21 @@ struct inode *iget_locked(struct super_block *sb,=
+ unsigned long ino)
+>  {
+>         struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
+>         struct inode *inode;
+> +       bool isnew;
+>
+>         might_sleep();
+>
+>  again:
+> -       inode =3D find_inode_fast(sb, head, ino, false);
+> +       inode =3D find_inode_fast(sb, head, ino, false, &isnew);
+>         if (inode) {
+>                 if (IS_ERR(inode))
+>                         return NULL;
+> -               wait_on_inode(inode);
+> -               if (unlikely(inode_unhashed(inode))) {
+> -                       iput(inode);
+> -                       goto again;
+> +               if (unlikely(isnew)) {
+> +                       wait_on_new_inode(inode);
+> +                       if (unlikely(inode_unhashed(inode))) {
+> +                               iput(inode);
+> +                               goto again;
+> +                       }
+>                 }
+>                 return inode;
+>         }
+> @@ -1456,7 +1474,7 @@ struct inode *iget_locked(struct super_block *sb, u=
+nsigned long ino)
+>
+>                 spin_lock(&inode_hash_lock);
+>                 /* We released the lock, so.. */
+> -               old =3D find_inode_fast(sb, head, ino, true);
+> +               old =3D find_inode_fast(sb, head, ino, true, &isnew);
+>                 if (!old) {
+>                         inode->i_ino =3D ino;
+>                         spin_lock(&inode->i_lock);
+> @@ -1482,10 +1500,12 @@ struct inode *iget_locked(struct super_block *sb,=
+ unsigned long ino)
+>                 if (IS_ERR(old))
+>                         return NULL;
+>                 inode =3D old;
+> -               wait_on_inode(inode);
+> -               if (unlikely(inode_unhashed(inode))) {
+> -                       iput(inode);
+> -                       goto again;
+> +               if (unlikely(isnew)) {
+> +                       wait_on_new_inode(inode);
+> +                       if (unlikely(inode_unhashed(inode))) {
+> +                               iput(inode);
+> +                               goto again;
+> +                       }
+>                 }
+>         }
+>         return inode;
+> @@ -1586,13 +1606,13 @@ EXPORT_SYMBOL(igrab);
+>   * Note2: @test is called with the inode_hash_lock held, so can't sleep.
+>   */
+>  struct inode *ilookup5_nowait(struct super_block *sb, unsigned long hash=
+val,
+> -               int (*test)(struct inode *, void *), void *data)
+> +               int (*test)(struct inode *, void *), void *data, bool *is=
+new)
+>  {
+>         struct hlist_head *head =3D inode_hashtable + hash(sb, hashval);
+>         struct inode *inode;
+>
+>         spin_lock(&inode_hash_lock);
+> -       inode =3D find_inode(sb, head, test, data, true);
+> +       inode =3D find_inode(sb, head, test, data, true, isnew);
+>         spin_unlock(&inode_hash_lock);
+>
+>         return IS_ERR(inode) ? NULL : inode;
+> @@ -1620,16 +1640,19 @@ struct inode *ilookup5(struct super_block *sb, un=
+signed long hashval,
+>                 int (*test)(struct inode *, void *), void *data)
+>  {
+>         struct inode *inode;
+> +       bool isnew;
+>
+>         might_sleep();
+>
+>  again:
+> -       inode =3D ilookup5_nowait(sb, hashval, test, data);
+> +       inode =3D ilookup5_nowait(sb, hashval, test, data, &isnew);
+>         if (inode) {
+> -               wait_on_inode(inode);
+> -               if (unlikely(inode_unhashed(inode))) {
+> -                       iput(inode);
+> -                       goto again;
+> +               if (unlikely(isnew)) {
+> +                       wait_on_new_inode(inode);
+> +                       if (unlikely(inode_unhashed(inode))) {
+> +                               iput(inode);
+> +                               goto again;
+> +                       }
+>                 }
+>         }
+>         return inode;
+> @@ -1648,19 +1671,22 @@ struct inode *ilookup(struct super_block *sb, uns=
+igned long ino)
+>  {
+>         struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
+>         struct inode *inode;
+> +       bool isnew;
+>
+>         might_sleep();
+>
+>  again:
+> -       inode =3D find_inode_fast(sb, head, ino, false);
+> +       inode =3D find_inode_fast(sb, head, ino, false, &isnew);
+>
+>         if (inode) {
+>                 if (IS_ERR(inode))
+>                         return NULL;
+> -               wait_on_inode(inode);
+> -               if (unlikely(inode_unhashed(inode))) {
+> -                       iput(inode);
+> -                       goto again;
+> +               if (unlikely(isnew)) {
+> +                       wait_on_new_inode(inode);
+> +                       if (unlikely(inode_unhashed(inode))) {
+> +                               iput(inode);
+> +                               goto again;
+> +                       }
+>                 }
+>         }
+>         return inode;
+> @@ -1800,6 +1826,7 @@ int insert_inode_locked(struct inode *inode)
+>         struct super_block *sb =3D inode->i_sb;
+>         ino_t ino =3D inode->i_ino;
+>         struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
+> +       bool isnew;
+>
+>         might_sleep();
+>
+> @@ -1832,12 +1859,15 @@ int insert_inode_locked(struct inode *inode)
+>                         return -EBUSY;
+>                 }
+>                 __iget(old);
+> +               isnew =3D !!(inode_state_read(old) & I_NEW);
+>                 spin_unlock(&old->i_lock);
+>                 spin_unlock(&inode_hash_lock);
+> -               wait_on_inode(old);
+> -               if (unlikely(!inode_unhashed(old))) {
+> -                       iput(old);
+> -                       return -EBUSY;
+> +               if (isnew) {
+> +                       wait_on_new_inode(old);
+> +                       if (unlikely(!inode_unhashed(old))) {
+> +                               iput(old);
+> +                               return -EBUSY;
+> +                       }
+>                 }
+>                 iput(old);
+>         }
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 21c73df3ce75..a813abdcf218 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1030,15 +1030,7 @@ static inline void inode_fake_hash(struct inode *i=
+node)
+>         hlist_add_fake(&inode->i_hash);
+>  }
+>
+> -static inline void wait_on_inode(struct inode *inode)
+> -{
+> -       wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> -                      !(inode_state_read_once(inode) & I_NEW));
+> -       /*
+> -        * Pairs with routines clearing I_NEW.
+> -        */
+> -       smp_rmb();
+> -}
+> +void wait_on_new_inode(struct inode *inode);
+>
+>  /*
+>   * inode->i_rwsem nesting subclasses for the lock validator:
+> @@ -3417,7 +3409,7 @@ extern void d_mark_dontcache(struct inode *inode);
+>
+>  extern struct inode *ilookup5_nowait(struct super_block *sb,
+>                 unsigned long hashval, int (*test)(struct inode *, void *=
+),
+> -               void *data);
+> +               void *data, bool *isnew);
+>  extern struct inode *ilookup5(struct super_block *sb, unsigned long hash=
+val,
+>                 int (*test)(struct inode *, void *), void *data);
+>  extern struct inode *ilookup(struct super_block *sb, unsigned long ino);
+> --
+> 2.34.1
+>
 
