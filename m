@@ -1,229 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-64171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6029BDBDAA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 02:02:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6AEBDBDC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 02:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597923C18C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 00:02:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03D204F4B6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 00:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00AB1BC5C;
-	Wed, 15 Oct 2025 00:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A92AE78;
+	Wed, 15 Oct 2025 00:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="eNvsGT62"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVdbzEPf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805DB17BA6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 00:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0858645
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 00:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760486541; cv=none; b=FP4D4op4TEalAcFARJBSCas4R8EssYRPOxVQHwA8LACUsFP7zl6vsqS1iNop/nGp8OZqaU1shm/EdlsOKzrwYB27QEbEgpQ/+uN7l457u2GbZ6AbWQZK7lfpI/OFRgFhwMggFrGwKR3K9gaYSW79Szz/mmv/FhmNRIiAXAQFZkw=
+	t=1760486732; cv=none; b=E0ylnGoBzWVzc1skLZO3FNe3OLznkoKB1Nzx/H0yQ9Bs+0LGOJ/MJi0lfAtvLrcYSlccpfhibsimu8bkM/zGFfvdgjlZF3vjwvkIq0FUsFnxEgGfp6BQPkzE498loP7qG6+hrKoGg9Yz3XQNiY7X7wv2HcOtIYHjNC3YuZ8CUXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760486541; c=relaxed/simple;
-	bh=GJVi7Uls4ieWZ3bCIzyejkrCVwWN+vWqRyC0z9mQwkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+Zg5sMdHeRKtYZjJ0GuR67/Qjf/JcbXqbAQXyhXGlTdrluntOs7F9f3mzAcGbCnwlEOSq+muYgFdJq+mnU7mSAUC7ToURZk8XxYKikjQklnDC0qiR+y+YHrin8hYzUbA8978pBE9ynCjY0jJzJ5lHAQSGaAmalDUJF7vQjJpG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=eNvsGT62; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3383ac4d130so5091928a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 17:02:18 -0700 (PDT)
+	s=arc-20240116; t=1760486732; c=relaxed/simple;
+	bh=bhnzTueuY9Gq7RbeymuowpcCUw7aDx4IVKdkM/S0EJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jz9+e6i+cqeSVs7ftfQdsfWmn/gy6Ul3InT1DCIKJ+o3tZWxmBrvClP7lAajs6dGMnH4VZoQJXNJQWHPVDJqk+SyojbyQTkS5Rrqxcrhd5e5QroYSJmW5LARBhTWgiEf67ER/n7hFuNiD6BOD9DjyoqQYp9L3rMLQ+5IT08kBjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVdbzEPf; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7841da939deso5332736b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 17:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760486538; x=1761091338; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5lWnsuwkzpeApWk2ViOA5FQ8lFTBV0LeMgWGpahdtj0=;
-        b=eNvsGT620FsuqNk3mQttW1M9Tz0dvDGYG3obDZzkYv76UULuvqq6pmbJt41Exq1ftT
-         OFaJ2uVM7FVyVg/XqTniQzbXxRyiSGtWfLzLvnpgJ0+srLasKhRVGALb/ADwS9h1kgQC
-         Y+wk4C3rPvUA+Fhgzj72jmz8koRmj8xyWnsLYx0bJFJo34+TM5vLziRE7748uIW6KHZh
-         pCyiGYaLAgeICDO1ta5v/ivQz5jQbhjmJlSitGwuqfzqpY2ZtXuf8SJlPv8pzehu4pSq
-         R9MU4LtWzZGPAajjEYeGZjgYLN9a1yKiExVYHPTj3FJ8ph06LZ6s7DOQEnuFLZv2ThzF
-         p3sg==
+        d=gmail.com; s=20230601; t=1760486730; x=1761091530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sLMiaX+vGO2HaVidLde0Mqzeld2XbAlMOu6TCSUhVYg=;
+        b=DVdbzEPfR8oPa8wp19Vt55fFpqpHac2QakEIjwKe+Q8Lh9lPo+k9e6du8vrsB5Btx+
+         Zai7dz4U+wGfjMkzXHM+HFPDv0rd4D2S4a1vX/VDfay+eXiV0mVi0sj78vRtO4PQLqdB
+         skiVzI7wwBqJ5f4CVVrI9NT2XhZM66X/cOYPXWp6R8+kzR89/eUABhZjklr3XFjvbiA9
+         521F2LdCkhdmpmuRskSbSMTlveIeVf94kiMncJOnq3lhpkkmK3twiTIj5r1sMM+4ZwZS
+         7/noZVrXEo5x6CcI69mrDqOxEOU/pxWmqIjhBF0Uf/R8XUVBObN2c2MTuYwgroFQZl53
+         yN0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760486538; x=1761091338;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1760486730; x=1761091530;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5lWnsuwkzpeApWk2ViOA5FQ8lFTBV0LeMgWGpahdtj0=;
-        b=X62H2tYGjnh6So85HmPkFK9Cg87vvtZkDrZFxiN/Kv407ymTPckXq6mqYGNbSHVz7O
-         H5a3eaAJH9VYIiYh1ZE6elRjoQJjcUCrA06izCnWX15wu2dDrnj0CqThniplmzrFdxYu
-         DOVQzFvY8AdBdKDjLV0jXKOP4GXC/adRoOBQuhxVV7WJxPCDchQluQiAEAqhPD9tMcje
-         lkFh48YzqqY7azQu4aPwQU2h4Zp8VCJeEpno/GSnMcLtqeX6Fi76cqkN3RE6OfViWVn6
-         o733UP0mGeHkAy6RQ8yjXHTQd6WFzu0WBvNGEFlcG8euMfNnNxEB5rFeridz1aLQhhqJ
-         WYGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmTpaW+1U2aKwfu2NexDoa3XLnWSRGr38/JFmCZoVIGzB9ybYmuwO7yjqIBFAKKK6a/EMmyP9jn7HWnV8v@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYhZrT2u9lFAdDo/MhhRxuXP9qrMrInkjpBw9Hl9I+MYAo1yWR
-	bG1wKXB7D6qWaKEbeHExAxQvQcAEVJRPWRmtgiwyJtcKqTzJBLj+cYu2WfJixJWl9/o=
-X-Gm-Gg: ASbGncvHomZ65fgsEB+CSrfs8MozJ8U2AVvphE8+BIeg3/bEzNxl+nj8k3ERdGg0X0p
-	/E9MP/IUF9mhLHOJSZy1gZSdu4zybVWDtLmDpKFuM7X/mfUSCi3o1+pNdJmMtfR1abGpuM+UyPJ
-	9jIB+R73rlkSfQLDLV8L2rGJOMAWzOSfeXsO/fFoVzWQYT1XFdpRLLLjYT5pwXfDkrSftNJb2UE
-	TMAl8lREPefS/Zz44tF/MDiD86QPq22P/jyUqq4AAYzWWHgPJdpICfh4DLCEEETE+I2AZ42sKzj
-	W8aHx2Vq1kDZgkIu1drjwf6KZHEZno0XPQGVtn8CHJkz0Fh89c4mP6F2l6gzHtV4KOvudR2HzvO
-	G7d2EA3Y/PPQBdHocrWYO/gWWFBWW/W7nLdnZj4TmZXBT7VfrKVxb1LcKEFuhatj4Ks0dMYInDM
-	OhuZ23BI4CwduBZhJe
-X-Google-Smtp-Source: AGHT+IGoMUjacqS/V8o1WNbZPsHJJvFetdCeeZRacPCwQ/XYo2nNnoscuKOLgAnWu1qaNz9uyKQLiQ==
-X-Received: by 2002:a17:90b:4a84:b0:32e:a10b:ce48 with SMTP id 98e67ed59e1d1-33b51114f9emr38707009a91.12.1760486538088;
-        Tue, 14 Oct 2025 17:02:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61b11ca9sm17310305a91.24.2025.10.14.17.02.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 17:02:17 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1v8oy6-0000000EvuK-45Dp;
-	Wed, 15 Oct 2025 11:02:14 +1100
-Date: Wed, 15 Oct 2025 11:02:14 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
-Message-ID: <aO7khoBHdfPlEBAE@dread.disaster.area>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-14-mjguzik@gmail.com>
- <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
- <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com>
+        bh=sLMiaX+vGO2HaVidLde0Mqzeld2XbAlMOu6TCSUhVYg=;
+        b=v/mGW8FU3rL7dM/B8HWHibRc/bsqbUG2vTBXFO7C5FMHajstqTUHNqMs4YbicQAOlO
+         tQJ+kQ/SlUxd1MHi+dyLrpamNWGeyCeNSKlKdPZRBLMF+TRFlF7YXXYVwR6aHWTtmhsX
+         IY+gTYtZlNvIiMjNCUTt34dzcxB8/2/QaGIm4+4xyNM4TNYItHH1sUDWn8a8dG5Ppqfp
+         dfebDjRYuLCpyt+z+UY17rt5tgwiNWsTsiJwuXr02i+US4xACRfw8Z53eB9MnFqsUYgF
+         Qs2nnSUdwOzUVygoaC4pDX2+pnlITEly/cPgupMzowTVc2z09V2wjEq2QesvtaCRdlJa
+         8LFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtfTsL05EndYDrsA4nJ9bD8LRJTAZoNYPFRDQJPPR15sVDg7bBODujZOgWmU8S0Rqd6+95tFkF5Lptjcpl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu9EdfL/tfjx28JZeYVSShBhA2oJZ+ResEsnUdGX3bmRGOrygC
+	zvCgDqA0XmAerwFNn0CmN2LsB1XR9v7sB6pdJ4P09w9m7OHW7sN9ysP7
+X-Gm-Gg: ASbGncvhitxjyofuR6UqPrSan7+bPADkvKlnOfoKE4bRc6Zku+ub6vs8MQ6ylWIa7kW
+	NUmxQWDSiVY6aWavphid5zbPbn11uXdgecuD0jPDrdb0CZo3eePAj5mcatE92glxEu3bWi0Ff3u
+	caTsD2QVO4cydND/xccAw2vC3+YfJaOUdPh3jKgdgkcvzsplBmtWc9EM96yjU/spqBdY1j5PWSM
+	9GQaA0SQhGUNXDt2QGFcgLDT0PzYXJlw9wDvWKzn4hrSwfhmpdG+ATUvUZYLD/k21lWjkyiwz+k
+	yfFDVsywIs5CZoNjZD/ZiwpguPiwDVNcLhKR8fMdqW/aN6OeJuZ6s3zwLIyHtpvLpobu4XFOrEE
+	WrCG96jxoBc2jENANZ0fJX5fVd7V7kpjUQvdc06vOn5RQPqhAylaR/M1fK6OUiwugZNyPqhI2Ys
+	c6YqH6sR1daUGwVeTXwhJBSg==
+X-Google-Smtp-Source: AGHT+IEmH0JRxtSGkPWZTbk0rg2sw6ciOa1Kwmx4Jh+5sWSakKPuSbl1aN4xzbqjjVDaexMRPuJucg==
+X-Received: by 2002:a17:903:fa7:b0:275:f156:965c with SMTP id d9443c01a7336-2902741e441mr320016835ad.52.1760486730094;
+        Tue, 14 Oct 2025 17:05:30 -0700 (PDT)
+Received: from [10.130.1.37] ([118.200.221.61])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290766cc2a1sm42161035ad.95.2025.10.14.17.05.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 17:05:29 -0700 (PDT)
+Message-ID: <0791edfb-6985-45d7-bb3e-08ab7a341dab@gmail.com>
+Date: Wed, 15 Oct 2025 08:05:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
+ index=on
+Content-Language: en-GB
+To: Qu Wenruo <wqu@suse.com>, dsterba@suse.cz,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+ <20251014182414.GD13776@twin.jikos.cz>
+ <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
+From: Anand Jain <anajain.sg@gmail.com>
+In-Reply-To: <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com>
 
-On Fri, Oct 10, 2025 at 05:40:49PM +0200, Mateusz Guzik wrote:
-> On Fri, Oct 10, 2025 at 4:41 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
-> > > Change generated with coccinelle and fixed up by hand as appropriate.
-> > >
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> >
-> > ...
-> >
-> > > @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
-> > >        */
-> > >       xfs_setup_iops(tmpfile);
-> > >       xfs_finish_inode_setup(tmpfile);
-> > > -     VFS_I(tmpfile)->i_state |= I_LINKABLE;
-> > > +     inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
-> > >
-> > >       *wip = tmpfile;
-> > >       return 0;
-> > > @@ -2330,7 +2330,7 @@ xfs_rename(
-> > >                * flag from the inode so it doesn't accidentally get misused in
-> > >                * future.
-> > >                */
-> > > -             VFS_I(du_wip.ip)->i_state &= ~I_LINKABLE;
-> > > +             inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
-> > >       }
-> > >
-> > >  out_commit:
-> >
-> > These two accesses look fishy (not your fault but when we are doing this
-> > i_state exercise better make sure all the places are correct before
-> > papering over bugs with _raw function variant). How come they cannot race
-> > with other i_state modifications and thus corrupt i_state?
-> >
+On 15-Oct-25 5:08 AM, Qu Wenruo wrote:
 > 
-> I asked about this here:
-> https://lore.kernel.org/linux-xfs/CAGudoHEi05JGkTQ9PbM20D98S9fv0hTqpWRd5fWjEwkExSiVSw@mail.gmail.com/
+> 
+> 在 2025/10/15 04:54, David Sterba 写道:
+>> On Mon, Oct 13, 2025 at 10:57:06PM -0300, André Almeida wrote:
+>>> Hi everyone,
+>>>
+>>> When using overlayfs with the mount option index=on, the first time a 
+>>> directory is
+>>> used as upper dir, overlayfs stores in a xattr "overlay.origin" the 
+>>> UUID of the
+>>> filesystem being used in the layers. If the upper dir is reused, 
+>>> overlayfs
+>>> refuses to mount for a different filesystem, by comparing the UUID 
+>>> with what's
+>>> stored at overlay.origin, and it fails with "failed to verify upper 
+>>> root origin"
+>>> on dmesg. Remounting with the very same fs is supported and works fine.
+>>>
+>>> However, btrfs mounts may have volatiles UUIDs. When mounting the 
+>>> exact same
+>>> disk image with btrfs, a random UUID is assigned for the following 
+>>> disks each
+>>> time they are mounted, stored at temp_fsid and used across the kernel 
+>>> as the
+>>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() 
+>>> however shows
+>>> the original (and duplicated) UUID for all disks.
+>>>
+>>> This feature doesn't work well with overlayfs with index=on, as when 
+>>> the image
+>>> is mounted a second time, will get a different UUID and ovl will 
+>>> refuse to
+>>> mount, breaking the user expectation that using the same image should 
+>>> work. A
+>>> small script can be find in the end of this cover letter that 
+>>> illustrates this.
+>>>
+>>> >From this, I can think of some options:
+>>>
+>>> - Use statfs() internally to always get the fsid, that is persistent. 
+>>> The patch
+>>> here illustrates that approach, but doesn't fully implement it.
+>>> - Create a new sb op, called get_uuid() so the filesystem returns what's
+>>> appropriated.
+>>> - Have a workaround in ovl for btrfs.
+>>> - Document this as unsupported, and userland needs to erase 
+>>> overlay.origin each
+>>> time it wants to remount.
+>>> - If ovl detects that temp_fsid and index are being used at the same 
+>>> time,
+>>> refuses to mount.
+>>>
+>>> I'm not sure which one would be better here, so I would like to hear 
+>>> some ideas
+>>> on this.
+>>
+>> I haven't looked deeper if there's a workable solution, but the feature
+>> combination should be refused. I don't think this will affect many
+>> users.
+>>
+> 
+> I believe the root problem is that we're not fully implementing the 
+> proper handling just like other single-device fses.
+> 
+> We do not use on-disk flags which means at least one fsid is registered 
+> into btrfs, thus we have to use different temp-fsid.
+> 
+> If fully single-device feature flag is properly implemented, we should 
+> be able to return the same uuid without extra hacks thus solve the problem.
 
-Yes, as I said, we can add locking here if necessary, but locking
-isn't necessary at this point in time because nothing else can
-change the state of the newly allocated whiteout inode until we
-unlock it.
+I had looked into this some time ago. Some libs, like libblkid,
+don't handle multi-device filesystems or cloned devices with
+temp FSIDs very well. I'm aware of it.
 
-Keep in mind the reason why we need I_LINKABLE here - it's not
-needed for correctness - it's needed to avoid a warning embedded
-in inc_nlink() because filesystems aren't trusted to implement
-link counts correctly anymore.
+I've been making some progress on fixing those cases, but it's
+a bit extensive since we first need enough test coverage,
+and recent reappear-device inline with that.
 
-Now we're being told that "it is too dangerous to let filesystems
-manage inode state themselves" and so we have to add extra overhead
-to code that we were forced to add to avoid VFS warnings added
-because the VFS doesn't trust filesystems to maintain some other
-important inode state....
+Let's see how we can support use cases with identical devices
+(where changing the UUID isn't an option) and keep things
+compatible with systemd and library tools.
 
-So, if you want to get rid of XFS using I_LINKABLE here, please fix
-the nlink VFS api to allow us to call inc_nlink_<something>() on a
-zero link inode without I_LINKABLE needing to be set. We do actually
-know what we are doing here, and as such needing I_LINKABLE here is
-nothing but a hacky workaround for inflexible, trustless VFS APIs...
-
-> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > > index caff0125faea..ad94fbf55014 100644
-> > > --- a/fs/xfs/xfs_iops.c
-> > > +++ b/fs/xfs/xfs_iops.c
-> > > @@ -1420,7 +1420,7 @@ xfs_setup_inode(
-> > >       bool                    is_meta = xfs_is_internal_inode(ip);
-> > >
-> > >       inode->i_ino = ip->i_ino;
-> > > -     inode->i_state |= I_NEW;
-> > > +     inode_state_set_raw(inode, I_NEW);
-
-"set" is wrong and will introduce a regression. This must be an
-"add" operation as inode->i_state may have already been modified
-by the time we get here. From 2021:
-
-commit f38a032b165d812b0ba8378a5cd237c0888ff65f
-Author: Dave Chinner <dchinner@redhat.com>
-Date:   Tue Aug 24 19:13:04 2021 -0700
-
-    xfs: fix I_DONTCACHE
-
-    Yup, the VFS hoist broke it, and nobody noticed. Bulkstat workloads
-    make it clear that it doesn't work as it should.
-
-    Fixes: dae2f8ed7992 ("fs: Lift XFS_IDONTCACHE to the VFS layer")
-    Signed-off-by: Dave Chinner <dchinner@redhat.com>
-    Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-    Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index a3fe4c5307d3..f2210d927481 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -84,8 +84,9 @@ xfs_inode_alloc(
-                return NULL;
-        }
-
--       /* VFS doesn't initialise i_mode! */
-+       /* VFS doesn't initialise i_mode or i_state! */
-        VFS_I(ip)->i_mode = 0;
-+       VFS_I(ip)->i_state = 0;
-
-        XFS_STATS_INC(mp, vn_active);
-        ASSERT(atomic_read(&ip->i_pincount) == 0);
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 0ff0cca94092..a607d6aca5c4 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1344,7 +1344,7 @@ xfs_setup_inode(
-        gfp_t                   gfp_mask;
-
-        inode->i_ino = ip->i_ino;
--       inode->i_state = I_NEW;
-+       inode->i_state |= I_NEW;
-
-        inode_sb_list_add(inode);
-        /* make the inode look hashed for the writeback code */
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
