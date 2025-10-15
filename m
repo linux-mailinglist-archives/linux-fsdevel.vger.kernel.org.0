@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-64195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF7ABDC656
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 06:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30E7BDC65C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 06:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840DA18A7930
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 04:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7992118A8222
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 04:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5992F616D;
-	Wed, 15 Oct 2025 04:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AF42FDC40;
+	Wed, 15 Oct 2025 04:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BR5lS+44"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PmgtgL69"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1012F3622
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDAC2F60CB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760501007; cv=none; b=pmkVHHlg7pNcksd/jIUSX1cSaKCOnhR5PfSu/uNgN4MM4XmZ+QEQFBGZi47Zx9JnUZqwI39gBYurl13yOGUhw2vgmGHYSPj8mdHbwXd0yVswHGwqz/T/PDlJV4BInzRtOCQZJxHsFALXb6/nGtiSh7W8QllhNM2WVpMczDmoJ0Q=
+	t=1760501011; cv=none; b=rbPsq9MVyaQL2JTHjrMX1ckQZx+V6te9ImtrpzyAwNJSoO4Ym27c0Qhzh4AJp78lgNcDIEqtmw02jXyl5wZHQ4E7kYbqdpFfFp3QBwG57Z768aUcJennm8x+KRCKtfpN0fbSPuzVo2VJJaXxrCetEswqH9zTmul6eM15fNlCDQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760501007; c=relaxed/simple;
-	bh=+ZY9ISu0W16A5V+R31X/nl/Eyjev56GCHTyxRrxZotc=;
+	s=arc-20240116; t=1760501011; c=relaxed/simple;
+	bh=N/Hg0cUpSuxjkf/64ySl79HzvAfeUdFUvUkHgBa06ZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HKCccZ8u/CEf3Rvn1A+K5y5dnOThvqpfAMjzJu0FX/0YvNmRpm4zHThmMGBE6jiJ1W40PBEVL8zl2+PPVp6qtMqwqlVZQCffeItokVZjcAGNfr5WvrQsd3q+xwon0CJOAgzIQMruYu0xHcMh5TlZL8noV5pjMu1EY72hqsPP2wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BR5lS+44; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=QeO1VajGsGlyZr9AG0zMy4pnaXoGLTRpW4bJXdoZcbU2nAaA+SpWjI3NMLWRN2vz79mB3kQn5VEJiu//h1qsO5RY57JITyJnaleBKlzwEL8nzlBEJYB5RelMwNh0SBHyySxxumwzjOujRQHjEMFw7w2yxcLbSUJh+x2tIzJ8gNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PmgtgL69; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760501004;
+	s=mimecast20190719; t=1760501008;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8uZpbkKbGsAFX9mFxTHGyfhWtkHglsy/t96i+4mTbI4=;
-	b=BR5lS+44Ev0K/nAHqVFKeiocFragzwM0IdN22P/kBoU0MMG8gXr8t7RJMCuz+FNuU2zWz3
-	4LRad+p7e3MgRI99L+HOiYFHlpYZ2GKr8fUcMYf/vVqVC8r9ICX76d/pWDtKP+gXpcz/Ol
-	MnANhi4JKLTLta3UUm4FWBYuhnKepJ4=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=/cTJtwMXIeLnmZnv2DTXzRty+qoslZ2OR6cifyBicWw=;
+	b=PmgtgL69gmyp6LxvqgrZ2u3Un3oYOUNrvD+JndCL7RCGXhlGzr2l5obyYZM1yRVLDiXwlv
+	4VkY0Czg9T0TAE0vVtj/NK+I73QkFWG0tITD3pp+wRJK5bQKywtoZyHfSqCPfATlevRips
+	C5fmGeu+x/i+ki2ms8JSxBXAuhNdPR8=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-558-IJ03PnN8Nuixun6HANgAFQ-1; Wed, 15 Oct 2025 00:03:22 -0400
-X-MC-Unique: IJ03PnN8Nuixun6HANgAFQ-1
-X-Mimecast-MFC-AGG-ID: IJ03PnN8Nuixun6HANgAFQ_1760501002
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3324538ceb0so16370513a91.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 21:03:22 -0700 (PDT)
+ us-mta-231-zEWmemEmNAWKIRjGPkb0kQ-1; Wed, 15 Oct 2025 00:03:26 -0400
+X-MC-Unique: zEWmemEmNAWKIRjGPkb0kQ-1
+X-Mimecast-MFC-AGG-ID: zEWmemEmNAWKIRjGPkb0kQ_1760501006
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-339ee7532b9so27072997a91.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 21:03:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760501001; x=1761105801;
+        d=1e100.net; s=20230601; t=1760501006; x=1761105806;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8uZpbkKbGsAFX9mFxTHGyfhWtkHglsy/t96i+4mTbI4=;
-        b=u20X8iO3+223YWrBtYBT9YQucPsmW1rTPJF5ZuIgBxUTHx5wcPTXsttGUHfs2wct3u
-         pJEbd+akygXBaHNtyQEJ2O8j2AlfdkMaB43bbkxfzg6LPm9Wu1dpjmneqlMAkWknJ6Ri
-         guX0mt5UrjgoTfFZ4H1DPg7XPSrNC3gdhEhKKqu84UqzjUXVrIZVX0TyX/J6RJHDBFLN
-         qAxfimm1Agu/JqKvzmR6cSh02B5yQ04IZ5ilxI+KGst7Ee7/JNM0KML+7zy5WATfRj3M
-         qWpib3BV9IoYvOwuv4gVDQE4VuS7X4CfRnCe6vAa/lH0DAA8dVvX7eJ2vPHRM650LOAs
-         P2Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWJD/y+EsEGP2/TmTcRq0JL48flb1vhz1msmnbFyuMyVfs00fItJOLQf4V9Uyqu8LSyNG1r0P5yLXo5rhg0@vger.kernel.org
-X-Gm-Message-State: AOJu0YynF5oTHCFrdCk5BDBUfBvTq+sjimIZOLnKYIbkiVhWzD7jjK7U
-	KFIPkVPNd+jy7S+Skjc315h/3/FLd/UgobQR/PZI18O9Rn80+8miV0E9tyiXEpgHlWMRDt9ycCu
-	auaemnM3OMQp1bTDq7q9koZoDmJt2rmadCpMYVP+ObRCOch4jDrQh6STHZc3GYYLq0VI=
-X-Gm-Gg: ASbGnct1JDjcLyAqpCgX3xzkuDoiVLK0rc4MFovvYLFU6oEAeBTNX5n9VvCbD1/KQAc
-	MkM/FpVGmFEJ5u88t2bgIeRP+waFswXX5GYj4sSwmqLS91/kJrz6fZcrmGjk0p++NAElsvTYd8j
-	pLv+fTyCSqO8wWGTwoMd1KGxxCahanXDb0FIT1eolIrfp7HsAjkkdGLlWfaDgDjkC0AG0OXBQiZ
-	/zP8wGP4zBbqL5kT5Z6ueqqRIG6eZMoSdKiEgFhvEBqpz4t5dkMLm7ovylCtR6fGXRWHiyNUvaG
-	XXY+O5Ws4TrxTPsT+XSWnrCv9Fjm2GlW/vA=
-X-Received: by 2002:a17:90b:3a91:b0:329:f535:6e48 with SMTP id 98e67ed59e1d1-33b513a1f54mr36206175a91.36.1760501001447;
-        Tue, 14 Oct 2025 21:03:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGeB00/IAiV2A5VWR2GpIwimPRs4bIDRky9OnqOTaOwRvemdHPVbmX+QZZKvd8185HR/P1l4A==
-X-Received: by 2002:a17:90b:3a91:b0:329:f535:6e48 with SMTP id 98e67ed59e1d1-33b513a1f54mr36206138a91.36.1760501001077;
-        Tue, 14 Oct 2025 21:03:21 -0700 (PDT)
+        bh=/cTJtwMXIeLnmZnv2DTXzRty+qoslZ2OR6cifyBicWw=;
+        b=hsQqQQwY0+EC5WlJyrTHobL+S/U8XsQE4bJTt+Ly2PNeLHaTh9mdjqBvnBw8TikeVI
+         PvAgihMiudeqz0CZr74vjoxrlYUT+LfTtQHOQcq4IGq6nypcib4SdRTmWYzxkTd/gnqb
+         9K0MYXY/dbZ1CdFISCeAvoXwllp5Vd+VJsaUHpYbfrWCVbI/kSyhukoKzmBhZN+7WKqE
+         NN2TlqHJvTnPUraHv3XEGzoW8yVJP/2zBqRYva6ezJOgEBhYiaY2h2+AB6EkQEIiP3rl
+         KrQhYQjvuY6EXwOqlr6KXlKirfgVEPikBJ7VsHtocaqzejgWWr+oqbZhIVPaghmmHm47
+         ep0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWF8VWo1YCAdYJFSxeTrRo5D7Nm1aPYqMJr47JhfyUflinP1X3ud/NeLVhWEIbQQVM6U0Sg74xc0vOwF4kA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhnNo4IfLGqCo8Xcncsrwo9nFrXBUYypqZnEI9KZvpW60r6IwJ
+	eL8vqxKRUvfopgvmwhXp5yoXgRAbWFfW6xT7v6uTBV6xc5AoMoevFVsikrwEiXI7FvUnsPcpglo
+	CVQj4oN1Yi5JmwLlPKWMAD3xtfoeP7y/e0dXhZc9ZumCqlFL7oO2UhEb6tHwb+y16Ibs=
+X-Gm-Gg: ASbGncvjI8V9crEou8oWY0B/iX5AcXQwUS4mL1iHvRgel/aqrytiX85bD48MnnBeG7Q
+	ruZdrGbAx5uOnDkc1izeaWaOF+5XE8KwlPROjojXoxukOTiKJxyUWGx47zI/fEimkL/FDPJurnh
+	t6RIldQXawVwrP3FaAkjCIZwX1oM+7wI67YZRjO9DVVtgLc5wpCjfkuyTzBOolzK+Io2hPr+OkK
+	sDkyMu+WlDPzzm9zXDJ9esa7w8svGKXQOH+bwHukHXIoaXht6TsRxSGEy2b8WaLzqM+IZ5aQcbJ
+	zDOO73atkA3CX4H1yA1mH2Pd1sMzFB83n/0=
+X-Received: by 2002:a17:90b:33cc:b0:338:3789:2e7b with SMTP id 98e67ed59e1d1-33b51118ee0mr34810901a91.13.1760501005676;
+        Tue, 14 Oct 2025 21:03:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRzf7FvM8OpEXrg7e1JvlWOpwl6hxFANdBMkZkYCR63zSreZUiUYv4PdbI0oENdYzK01tTDw==
+X-Received: by 2002:a17:90b:33cc:b0:338:3789:2e7b with SMTP id 98e67ed59e1d1-33b51118ee0mr34810857a91.13.1760501005275;
+        Tue, 14 Oct 2025 21:03:25 -0700 (PDT)
 Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b978607cfsm608006a91.9.2025.10.14.21.03.17
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b978607cfsm608006a91.9.2025.10.14.21.03.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 21:03:20 -0700 (PDT)
+        Tue, 14 Oct 2025 21:03:24 -0700 (PDT)
 From: Ryosuke Yasuoka <ryasuoka@redhat.com>
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org,
@@ -99,9 +99,9 @@ Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH rust-next v2 1/3] rust: fs: add pos/pos_mut methods for LocalFile struct
-Date: Wed, 15 Oct 2025 13:02:41 +0900
-Message-ID: <20251015040246.151141-2-ryasuoka@redhat.com>
+Subject: [PATCH rust-next v2 2/3] rust: miscdevice: add llseek support
+Date: Wed, 15 Oct 2025 13:02:42 +0900
+Message-ID: <20251015040246.151141-3-ryasuoka@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251015040246.151141-1-ryasuoka@redhat.com>
 References: <20251015040246.151141-1-ryasuoka@redhat.com>
@@ -113,106 +113,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add pos() and pos_mut() methods to get and set a file position.
+Add the ability to write a file_operations->llseek hook in Rust when
+using the miscdevice abstraction.
 
 Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
 ---
- rust/kernel/fs/file.rs | 61 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ rust/kernel/miscdevice.rs | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-index cf06e73a6da0..bda6cc540dfe 100644
---- a/rust/kernel/fs/file.rs
-+++ b/rust/kernel/fs/file.rs
-@@ -283,6 +283,23 @@ pub unsafe fn from_raw_file<'a>(ptr: *const bindings::file) -> &'a LocalFile {
-         unsafe { &*ptr.cast() }
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index d698cddcb4a5..2efd0847cde1 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -126,6 +126,16 @@ fn release(device: Self::Ptr, _file: &File) {
+         drop(device);
      }
  
-+    /// Create a mutable reference to a [`LocalFile`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// * The caller must ensure that `ptr` points at a valid file and that the file's refcount is
-+    ///   positive for the duration of `'a`.
-+    /// * The caller must ensure that if there is an active call to `fdget_pos` that did not take
-+    ///   the `f_pos_lock` mutex, then that call is on the current thread.
-+    #[inline]
-+    pub unsafe fn from_raw_file_mut<'a>(ptr: *mut bindings::file) -> &'a mut LocalFile {
-+        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-+        // duration of `'a`. The cast is okay because `LocalFile` is `repr(transparent)`.
-+        //
-+        // INVARIANT: The caller guarantees that there are no problematic `fdget_pos` calls.
-+        unsafe { &mut *ptr.cast() }
++    /// Handler for llseek.
++    fn llseek(
++        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
++        _file: &mut File,
++        _offset: i64,
++        _whence: i32,
++    ) -> Result<isize> {
++        build_error!(VTABLE_DEFAULT_ERROR)
 +    }
 +
-     /// Assume that there are no active `fdget_pos` calls that prevent us from sharing this file.
+     /// Handle for mmap.
      ///
-     /// This makes it safe to transfer this file to other threads. No checks are performed, and
-@@ -337,6 +354,20 @@ pub fn flags(&self) -> u32 {
-         // FIXME(read_once): Replace with `read_once` when available on the Rust side.
-         unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_volatile() }
+     /// This function is invoked when a user space process invokes the `mmap` system call on
+@@ -296,6 +306,27 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         }
      }
-+
-+    /// Get the current `f_pos` with the file.
-+    #[inline]
-+    pub fn pos(&self) -> i64 {
-+        // SAFETY: The `f_pos` is valid while `LocalFile` is valid
-+        unsafe { (*self.as_ptr()).f_pos }
-+    }
-+
-+    /// Get a mutable reference to the `f_pos`.
-+    #[inline]
-+    pub fn pos_mut(&mut self) -> &mut i64 {
-+        // SAFETY: The `f_pos` is valid while `LocalFile` is valid
-+        unsafe { &mut (*self.as_ptr()).f_pos }
-+    }
- }
  
- impl File {
-@@ -356,6 +387,23 @@ pub unsafe fn from_raw_file<'a>(ptr: *const bindings::file) -> &'a File {
-         // INVARIANT: The caller guarantees that there are no problematic `fdget_pos` calls.
-         unsafe { &*ptr.cast() }
-     }
-+
-+    /// Creates a mutable reference to a [`File`] from a valid pointer.
-+    ///
 +    /// # Safety
 +    ///
-+    /// * The caller must ensure that `ptr` points at a valid file and that the file's refcount is
-+    ///   positive for the duration of `'a`.
-+    /// * The caller must ensure that if there are active `fdget_pos` calls on this file, then they
-+    ///   took the `f_pos_lock` mutex.
-+    #[inline]
-+    pub unsafe fn from_raw_file_mut<'a>(ptr: *mut bindings::file) -> &'a mut File {
-+        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-+        // duration of `'a`. The cast is okay because `File` is `repr(transparent)`.
-+        //
-+        // INVARIANT: The caller guarantees that there are no problematic `fdget_pos` calls.
-+        unsafe { &mut *ptr.cast() }
-+    }
- }
- 
- // Make LocalFile methods available on File.
-@@ -372,6 +420,19 @@ fn deref(&self) -> &LocalFile {
-     }
- }
- 
-+// Make LocalFile methods available on File.
-+impl core::ops::DerefMut for File {
-+    #[inline]
-+    fn deref_mut(&mut self) -> &mut Self::Target {
-+        // SAFETY: The caller provides a `&File`, and since it is a reference, it must point at a
-+        // valid file for the desired duration.
-+        //
-+        // By the type invariants, there are no `fdget_pos` calls that did not take the
-+        // `f_pos_lock` mutex.
-+        unsafe { LocalFile::from_raw_file_mut(core::ptr::from_mut(self).cast()) }
-+    }
-+}
++    /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
++    unsafe extern "C" fn llseek(file: *mut bindings::file, offset: i64, whence: c_int) -> i64 {
++        // SAFETY: The llseek call of a file can access the private data.
++        let private = unsafe { (*file).private_data };
++        // SAFETY: This is a Rust Miscdevice, so we call `into_foreign` in `open` and
++        // `from_foreign` in `release`, and `fops_llseek` is guaranteed to be called between those
++        // two operations.
++        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
++        // SAFETY:
++        // * The file is valid for the duration of this call.
++        // * There is no active fdget_pos region on the file on this thread.
++        let file = unsafe { File::from_raw_file_mut(file) };
 +
- /// A file descriptor reservation.
- ///
- /// This allows the creation of a file descriptor in two steps: first, we reserve a slot for it,
++        match T::llseek(device, file, offset, whence) {
++            Ok(res) => res as i64,
++            Err(err) => i64::from(err.to_errno()),
++        }
++    }
++
+     /// # Safety
+     ///
+     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
+@@ -391,6 +422,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+     const VTABLE: bindings::file_operations = bindings::file_operations {
+         open: Some(Self::open),
+         release: Some(Self::release),
++        llseek: if T::HAS_LLSEEK {
++            Some(Self::llseek)
++        } else {
++            None
++        },
+         mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
+         read_iter: if T::HAS_READ_ITER {
+             Some(Self::read_iter)
 -- 
 2.51.0
 
