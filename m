@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-64235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D9FBDE332
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 13:08:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D46BDE371
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 13:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9135D34D95D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:08:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E44D504A83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE07630CD8C;
-	Wed, 15 Oct 2025 11:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6345731CA59;
+	Wed, 15 Oct 2025 11:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HUYwCgVC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaAjM5MC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCF531BC99
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4FF31CA4A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760526497; cv=none; b=RBJYqA6Yk9X1fNFzMtE0yL05wNtYjZWEAZP3xjTTRYZHbKweYyzeVuoFM4M2Nl1NQvz7uxCQU0+H1othPA0U2/jpXN/cyHijcw4Blxtxr5KQ+OVf8TbJujnpynuDoBAAYt/uUR6KGfzf65sFBfbIHCtnikCxY8S5dRyef4EJXnM=
+	t=1760526499; cv=none; b=VThK105PmGx3Hg1O/5Uo8n05kkQ0S5o9DFtAC69+wVBrcXYhtox/aPjExeNAwpSKgUpvKj8ioyT1dVMb3nsclBwwYph4WYjAVRro+2Z6VpY1lXxpBGNBlxCL3hKYIDTtLc2H+HQRXd3IfDCfTSBy0V1KWIyOUmcgw/Ofr+F7KP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760526497; c=relaxed/simple;
-	bh=wYMMU6RKSBpQUIAIFPhZYSeABFNjZ5+I6A9XJuGQrMA=;
+	s=arc-20240116; t=1760526499; c=relaxed/simple;
+	bh=fJ+lgpyul5LCFPrbO3rr5dR4/r00JPb/lSi1+jAZLvg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vGUuBoWkjUSwElUhv3vAI7QnZuN5QUNqIlbRuKSebkh3P4L1NyM6flduoOm+FG0odKTapn0Mso7Bs0w9ya2HYrWr+XEleLm0yRUX9vDaOf/lSZChixKHK2nleiTTPzN3rc9LZ1D258yX6TQPZQDsYsSBHoDonlkosxdwXMsOFgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HUYwCgVC; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=frjGavU13VgKHR6nuiTBGFSnivJgdiMHBqvnt1man+6St0zAzv/pFaZg17R+FRJ/t2DNowUxyKcHNVBx3zT7MKcX+dXPf5uZ/jtqOBL2W4xXK7VpaUqMFU7JcGHbwNpMPkMtp7JgMuaVncaAGORGJU7dI+cDqZPeQ0LT8FkUiWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FaAjM5MC; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760526494;
+	s=mimecast20190719; t=1760526497;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BVHsnHE4hjkZl+Gr5YHQ4AlHTRJOOj9GU8/HyaEb32U=;
-	b=HUYwCgVCVTgyy7zlFsCJ9Tg8L2RX/b2fguxQMet8Zrb2CoKzExp5wePkXPgDbhbYev5tRc
-	dbtslEui0wl5ab6MnI6Q1EETLiGcT92Wu4ozFo1Ctcg6Y1Cy/vjSwxLlliuqoTXy0QtCU2
-	6B7ybw3ARg/CqApgXmZ/kpC/qHikM6c=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=DxEbBrxuUTR/dTladV/C8Wh8SZt/ora9zcsJYo3QO8U=;
+	b=FaAjM5MCivURvt/YbMunXdOueRp+XkwD4BwSFPk+NHbgY53FegVbEfX5tpHngHWz7XN1DM
+	3+cnVLihuCU9Sfh+zTN4Y8HGyA1Denl6tYXip/g/ml5SU5pcW3f9Pvd2OwxSJcoDE7f2jt
+	nW2ozP8xfolVexP/RQpc+Ncc+yLF3SQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-N1rJ_745PoaFAM3n0ERnoQ-1; Wed,
- 15 Oct 2025 07:08:10 -0400
-X-MC-Unique: N1rJ_745PoaFAM3n0ERnoQ-1
-X-Mimecast-MFC-AGG-ID: N1rJ_745PoaFAM3n0ERnoQ_1760526489
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-0NMCo_oKMBKNvDwcXi6i0A-1; Wed,
+ 15 Oct 2025 07:08:14 -0400
+X-MC-Unique: 0NMCo_oKMBKNvDwcXi6i0A-1
+X-Mimecast-MFC-AGG-ID: 0NMCo_oKMBKNvDwcXi6i0A_1760526493
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA3CE195609F;
-	Wed, 15 Oct 2025 11:08:08 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8E041800345;
+	Wed, 15 Oct 2025 11:08:12 +0000 (UTC)
 Received: from localhost (unknown [10.72.120.29])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A947830001A1;
-	Wed, 15 Oct 2025 11:08:06 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA27519560AD;
+	Wed, 15 Oct 2025 11:08:11 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	linux-block@vger.kernel.org
@@ -66,9 +66,9 @@ Cc: Mikulas Patocka <mpatocka@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	Christoph Hellwig <hch@lst.de>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V5 5/6] loop: try to handle loop aio command via NOWAIT IO first
-Date: Wed, 15 Oct 2025 19:07:30 +0800
-Message-ID: <20251015110735.1361261-6-ming.lei@redhat.com>
+Subject: [PATCH V5 6/6] loop: add hint for handling aio via IOCB_NOWAIT
+Date: Wed, 15 Oct 2025 19:07:31 +0800
+Message-ID: <20251015110735.1361261-7-ming.lei@redhat.com>
 In-Reply-To: <20251015110735.1361261-1-ming.lei@redhat.com>
 References: <20251015110735.1361261-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -78,170 +78,160 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Try to handle loop aio command via NOWAIT IO first, then we can avoid to
-queue the aio command into workqueue. This is usually one big win in
-case that FS block mapping is stable, Mikulas verified [1] that this way
-improves IO perf by close to 5X in 12jobs sequential read/write test,
-in which FS block mapping is just stable.
+Add hint for using IOCB_NOWAIT to handle loop aio command for avoiding
+to cause write(especially randwrite) perf regression on sparse backed file.
 
-Fallback to workqueue in case of -EAGAIN. This way may bring a little
-cost from the 1st retry, but when running the following write test over
-loop/sparse_file, the actual effect on randwrite is obvious:
+Try IOCB_NOWAIT in the following situations:
 
-```
-truncate -s 4G 1.img    #1.img is created on XFS/virtio-scsi
-losetup -f 1.img --direct-io=on
-fio --direct=1 --bs=4k --runtime=40 --time_based --numjobs=1 --ioengine=libaio \
-	--iodepth=16 --group_reporting=1 --filename=/dev/loop0 -name=job --rw=$RW
-```
+- backing file is block device
 
-- RW=randwrite: obvious IOPS drop observed
-- RW=write: a little drop(%5 - 10%)
+OR
 
-This perf drop on randwrite over sparse file will be addressed in the
-following patch.
+- READ aio command
 
-BLK_MQ_F_BLOCKING has to be set for calling into .read_iter() or .write_iter()
-which might sleep even though it is NOWAIT, and the only effect is that rcu read
-lock is replaced with srcu read lock.
+OR
 
-Link: https://lore.kernel.org/linux-block/a8e5c76a-231f-07d1-a394-847de930f638@redhat.com/ [1]
+- there isn't any queued blocking async WRITEs, because NOWAIT won't cause
+contention with blocking WRITE, which often implies exclusive lock
+
+With this simple policy, perf regression of randwrite/write on sparse
+backing file is fixed.
+
+Link: https://lore.kernel.org/dm-devel/7d6ae2c9-df8e-50d0-7ad6-b787cb3cfab4@redhat.com/
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/block/loop.c | 68 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 63 insertions(+), 5 deletions(-)
+ drivers/block/loop.c | 61 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
 diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 99eec0a25dbc..f752942d0889 100644
+index f752942d0889..e42bdfc73c20 100644
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -90,6 +90,8 @@ struct loop_cmd {
- #define LOOP_IDLE_WORKER_TIMEOUT (60 * HZ)
- #define LOOP_DEFAULT_HW_Q_DEPTH 128
+@@ -68,6 +68,7 @@ struct loop_device {
+ 	struct rb_root          worker_tree;
+ 	struct timer_list       timer;
+ 	bool			sysfs_inited;
++	unsigned 		lo_nr_blocking_writes;
  
-+static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd);
-+
- static DEFINE_IDR(loop_index_idr);
- static DEFINE_MUTEX(loop_ctl_mutex);
- static DEFINE_MUTEX(loop_validate_mutex);
-@@ -321,6 +323,15 @@ static void lo_rw_aio_do_completion(struct loop_cmd *cmd)
- 
- 	if (!atomic_dec_and_test(&cmd->ref))
- 		return;
-+
-+	/* -EAGAIN could be returned from bdev's ->ki_complete */
-+	if (cmd->ret == -EAGAIN) {
-+		struct loop_device *lo = rq->q->queuedata;
-+
-+		loop_queue_work(lo, cmd);
-+		return;
-+	}
-+
- 	kfree(cmd->bvec);
- 	cmd->bvec = NULL;
- 	if (req_op(rq) == REQ_OP_WRITE)
-@@ -430,22 +441,51 @@ static int lo_submit_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	return ret;
- }
- 
-+static bool lo_backfile_support_nowait(const struct loop_device *lo)
-+{
-+	return lo->lo_backing_file->f_mode & FMODE_NOWAIT;
-+}
-+
- static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 		     loff_t pos, int rw)
- {
- 	int nr_bvec = lo_cmd_nr_bvec(cmd);
- 	int ret;
- 
--	ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
--	if (unlikely(ret))
--		return ret;
-+	/* prepared already if we have tried nowait */
-+	if (!cmd->use_aio || !lo_backfile_support_nowait(lo)) {
-+		ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
-+		if (unlikely(ret))
-+			goto fail;
-+	}
- 
-+	cmd->iocb.ki_flags &= ~IOCB_NOWAIT;
- 	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
-+fail:
- 	if (ret != -EIOCBQUEUED)
- 		lo_rw_aio_complete(&cmd->iocb, ret);
+ 	struct request_queue	*lo_queue;
+ 	struct blk_mq_tag_set	tag_set;
+@@ -467,6 +468,33 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
  	return -EIOCBQUEUED;
  }
  
-+static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
-+			    int rw)
++static inline bool lo_aio_try_nowait(struct loop_device *lo,
++		struct loop_cmd *cmd)
 +{
++	struct file *file = lo->lo_backing_file;
++	struct inode *inode = file->f_mapping->host;
 +	struct request *rq = blk_mq_rq_from_pdu(cmd);
-+	loff_t pos = ((loff_t) blk_rq_pos(rq) << 9) + lo->lo_offset;
-+	int nr_bvec = lo_cmd_nr_bvec(cmd);
-+	int ret = lo_rw_aio_prep(lo, cmd, nr_bvec, pos);
 +
-+	if (unlikely(ret))
-+		goto fail;
++	/* NOWAIT works fine for backing block device */
++	if (S_ISBLK(inode->i_mode))
++		return true;
 +
-+	cmd->iocb.ki_flags |= IOCB_NOWAIT;
-+	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
-+fail:
-+	if (ret != -EIOCBQUEUED && ret != -EAGAIN)
-+		lo_rw_aio_complete(&cmd->iocb, ret);
-+	return ret;
++	/*
++	 * NOWAIT is supposed to be fine for READ without contending with
++	 * blocking WRITE
++	 */
++	if (req_op(rq) == REQ_OP_READ)
++		return true;
++
++	/*
++	 * If there is any queued non-NOWAIT async WRITE , don't try new
++	 * NOWAIT WRITE for avoiding contention
++	 *
++	 * Here we focus on handling stable FS block mapping via NOWAIT
++	 */
++	return READ_ONCE(lo->lo_nr_blocking_writes) == 0;
 +}
 +
- static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+ static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
+ 			    int rw)
  {
- 	struct loop_cmd *cmd = blk_mq_rq_to_pdu(rq);
-@@ -1903,6 +1943,7 @@ static blk_status_t loop_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	struct request *rq = bd->rq;
- 	struct loop_cmd *cmd = blk_mq_rq_to_pdu(rq);
- 	struct loop_device *lo = rq->q->queuedata;
-+	int rw = 0;
+@@ -478,6 +506,9 @@ static int lo_rw_aio_nowait(struct loop_device *lo, struct loop_cmd *cmd,
+ 	if (unlikely(ret))
+ 		goto fail;
  
- 	blk_mq_start_request(rq);
++	if (!lo_aio_try_nowait(lo, cmd))
++		return -EAGAIN;
++
+ 	cmd->iocb.ki_flags |= IOCB_NOWAIT;
+ 	ret = lo_submit_rw_aio(lo, cmd, nr_bvec, rw);
+ fail:
+@@ -778,12 +809,19 @@ static ssize_t loop_attr_dio_show(struct loop_device *lo, char *buf)
+ 	return sysfs_emit(buf, "%s\n", dio ? "1" : "0");
+ }
  
-@@ -1915,9 +1956,25 @@ static blk_status_t loop_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	case REQ_OP_WRITE_ZEROES:
- 		cmd->use_aio = false;
- 		break;
--	default:
-+	case REQ_OP_READ:
-+		rw = ITER_DEST;
- 		cmd->use_aio = lo->lo_flags & LO_FLAGS_DIRECT_IO;
- 		break;
-+	case REQ_OP_WRITE:
-+		rw = ITER_SOURCE;
-+		cmd->use_aio = lo->lo_flags & LO_FLAGS_DIRECT_IO;
-+		break;
-+	default:
-+		return BLK_STS_IOERR;
-+	}
++static ssize_t loop_attr_nr_blocking_writes_show(struct loop_device *lo,
++						 char *buf)
++{
++	return sysfs_emit(buf, "%u\n", lo->lo_nr_blocking_writes);
++}
 +
-+	/* try NOWAIT if the backing file supports the mode */
-+	if (cmd->use_aio && lo_backfile_support_nowait(lo)) {
-+		int res = lo_rw_aio_nowait(lo, cmd, rw);
+ LOOP_ATTR_RO(backing_file);
+ LOOP_ATTR_RO(offset);
+ LOOP_ATTR_RO(sizelimit);
+ LOOP_ATTR_RO(autoclear);
+ LOOP_ATTR_RO(partscan);
+ LOOP_ATTR_RO(dio);
++LOOP_ATTR_RO(nr_blocking_writes);
+ 
+ static struct attribute *loop_attrs[] = {
+ 	&loop_attr_backing_file.attr,
+@@ -792,6 +830,7 @@ static struct attribute *loop_attrs[] = {
+ 	&loop_attr_autoclear.attr,
+ 	&loop_attr_partscan.attr,
+ 	&loop_attr_dio.attr,
++	&loop_attr_nr_blocking_writes.attr,
+ 	NULL,
+ };
+ 
+@@ -867,6 +906,24 @@ static inline int queue_on_root_worker(struct cgroup_subsys_state *css)
+ }
+ #endif
+ 
++static inline void loop_inc_blocking_writes(struct loop_device *lo,
++		struct loop_cmd *cmd)
++{
++	lockdep_assert_held(&lo->lo_work_lock);
 +
-+		if (res != -EAGAIN && res != -EOPNOTSUPP)
-+			return BLK_STS_OK;
-+		/* fallback to workqueue for handling aio */
++	if (req_op(blk_mq_rq_from_pdu(cmd)) == REQ_OP_WRITE)
++		lo->lo_nr_blocking_writes += 1;
++}
++
++static inline void loop_dec_blocking_writes(struct loop_device *lo,
++		struct loop_cmd *cmd)
++{
++	lockdep_assert_held(&lo->lo_work_lock);
++
++	if (req_op(blk_mq_rq_from_pdu(cmd)) == REQ_OP_WRITE)
++		lo->lo_nr_blocking_writes -= 1;
++}
++
+ static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd)
+ {
+ 	struct request __maybe_unused *rq = blk_mq_rq_from_pdu(cmd);
+@@ -949,6 +1006,8 @@ static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd)
+ 		work = &lo->rootcg_work;
+ 		cmd_list = &lo->rootcg_cmd_list;
+ 	}
++	if (cmd->use_aio)
++		loop_inc_blocking_writes(lo, cmd);
+ 	list_add_tail(&cmd->list_entry, cmd_list);
+ 	queue_work(lo->workqueue, work);
+ 	spin_unlock_irq(&lo->lo_work_lock);
+@@ -2048,6 +2107,8 @@ static void loop_process_work(struct loop_worker *worker,
+ 		cond_resched();
+ 
+ 		spin_lock_irq(&lo->lo_work_lock);
++		if (cmd->use_aio)
++			loop_dec_blocking_writes(lo, cmd);
  	}
  
- 	loop_queue_work(lo, cmd);
-@@ -2069,7 +2126,8 @@ static int loop_add(int i)
- 	lo->tag_set.queue_depth = hw_queue_depth;
- 	lo->tag_set.numa_node = NUMA_NO_NODE;
- 	lo->tag_set.cmd_size = sizeof(struct loop_cmd);
--	lo->tag_set.flags = BLK_MQ_F_STACKING | BLK_MQ_F_NO_SCHED_BY_DEFAULT;
-+	lo->tag_set.flags = BLK_MQ_F_STACKING | BLK_MQ_F_NO_SCHED_BY_DEFAULT |
-+		BLK_MQ_F_BLOCKING;
- 	lo->tag_set.driver_data = lo;
- 
- 	err = blk_mq_alloc_tag_set(&lo->tag_set);
+ 	/*
 -- 
 2.47.0
 
