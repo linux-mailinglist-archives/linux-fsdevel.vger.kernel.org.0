@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-64277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B81ABE01B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 20:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB156BE01CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 20:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B5A584FF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 18:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AF1F585A9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 18:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F58346A1F;
-	Wed, 15 Oct 2025 18:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D1434AB07;
+	Wed, 15 Oct 2025 18:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="FrN4qXDT"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="Li/sFTeO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EDC345752
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 18:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740DE337695
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 18:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760552064; cv=none; b=erGkCdMIGEFaiwq5VxysgZTTuK4AxW/nvtdoJE+hxtFEDZG14vx6vPcUy6oV2PwYrVQr9n8I+iVX4L5HOYxZbi1L2O+X/mHFCcxGsOXSG9d8uraO3/L8U5NM3KABNnTjnLHplij62/ajFGngqGF0afgBcS4DSH1LQ/eX48bc1Zg=
+	t=1760552066; cv=none; b=c6XQYYgJKUkRBdo157zLnur8hd+J2+CQEACQ6K+CII8SmSAcBJaPmP0D/25ubYS1ljFYKALg07k0j76+z/weXVm2isprKgKCfCSzH0rdoBHJhQvsqQi3NWtUptxHIIVJ3ms/Zlm1ijSKJBB0GG3TqdOslxmYLam47YWmuvMgkzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760552064; c=relaxed/simple;
-	bh=qtzfTIDLQudHuwJbPQKZOmfk4VQHfbiISADd/7PYHv4=;
+	s=arc-20240116; t=1760552066; c=relaxed/simple;
+	bh=3t0NE1k+pebqdVa636O1oAJ+CKIPx7xe0CIi2eA/n+I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mTug709vx65mYO1E63sCH2Y9HQhhk+vx09i3xyUGl/dRKqACUoA1sxGSmF5B8xZr2eH3hcbZXBSaeqAoCm72glH6olQhkZ3mtnV7gjkxtQGHCy4mKdIkfa9JpZuUNsJuZoDVDgPRT82+oKEjIaqBn0+o1OBoEtZ+7ERRlRaY6PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=FrN4qXDT; arc=none smtp.client-ip=209.85.214.176
+	 In-Reply-To:To:Cc; b=rGeBaWnux5AI29SN1wjFG9hbczbl8dxVfakNuNulJAbYiLJTFfXF7jRGVzQxh3EXjDARE8MOdcG4LOyCwAoTzQEq/tYXvKwpx/NtN8+l+kZI015D3xHG0BXnwVWSf9EssCUvmCI82vnoASI0InJfSnsPe/M6R7enh8yqgml7bgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=Li/sFTeO; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-26c209802c0so69187465ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:14:20 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b633b54d05dso4483323a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 11:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1760552060; x=1761156860; darn=vger.kernel.org;
+        d=rivosinc.com; s=google; t=1760552063; x=1761156863; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z7mqmvp4qHGKQdbAY5xXRef4U1rroaCrQF5ZBjvUPr8=;
-        b=FrN4qXDTdWG2LfSVcEcKfMhDF7daazzl3/g8wL40M+NEWNzx4bJ0B5k8tuJzvnviIp
-         8WCyYu7N7oNIvDrPb73jvVZ9e1Yj6UQiMtrnwjVxKRf1tSiHg7qg1a/t5plr1E8DfBPC
-         rKPhew2xEaBBNxXLN7ja7QrwSY0lAqHJHUz+5DvbzoDrYMiIe5bdMfjYBx5H1h5ypB/4
-         QgkYiK/DbOEM7InCVEMX6cD3pm9CSjl5YUsa3cBK7Y2dkoMTD1EbVsnII7k0LZiZqX26
-         B6dMFgdYAdn4UI6dFEyDhzkjGKWyI9JyAyx7aWlo/qgcbG2hpiOJU8vE3i4kGTfsXTkp
-         680w==
+        bh=l+hioWfUWF0s+MiuUM+GlCDJCZ5YXjJVkBV4mURgf5Q=;
+        b=Li/sFTeOj//jeyIvCzLjQfVBt31ul0MKq8wjzQi8MChqgMmoIEzBySfO9/KHseKQrD
+         lAD31Qb2BfSfNwUqu6CF71G1oB9EPkr2AYRP3x5pv2JjSm9avGT8AgY7cSB3JxUBrb+A
+         MWxB5umVJF1qSSJIMnDz0Tuufedo7KkPpuvKxM7N4Aiz8kHw2UuITrFaXNjAjOZx3m1T
+         YCNYSpDdMgB/pITiC+tXOQywZuEOj+Va7k1M6zwFbDILcviCCUH9EsR/EvP3JPLF74Ry
+         WnEbHmCy5QUyjSua0QVnv08FK4pKLhlH3pgyL0VsR5salD41tTp/zLGw6GluwSKXjjcV
+         zL5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760552060; x=1761156860;
+        d=1e100.net; s=20230601; t=1760552063; x=1761156863;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z7mqmvp4qHGKQdbAY5xXRef4U1rroaCrQF5ZBjvUPr8=;
-        b=lyJhP/hI0XBHZ0LcMJ4Pkpnpt/Y3cnZHXrBF8CvdZl6X6j8g37eAlIhUbJxwVqavo1
-         2Lg3VhyCvTxu9jFjXRLXttYGwkknQBReFCqOhGGsuDIFLfaCD0PoqMgQR5xVMfGTrLtY
-         CCOjupKcRKACcZBUz0HPJYS3J8yTwAKHTgnKPyJU+JW3M5t2MIKPSZPBwX4W2fzlUHhK
-         F7yAk0Riiartvf3S1DiARBsByW4p5Fp9r7Y/XUgD5f8UBAgfGW4lptY8VU1ueWWpp3bA
-         8zeNKvew7kz3qVM5LoETuCaeselUoStDS5liT+QL/qnUTusDI+yz/sPJ9WN5aum/j9qE
-         BAdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVg3mx7P4DBAjc3Dn3Rev0QBmWj0D+Cq587wBy7gozgyNuMqKX/uHhhtw9yfGde4zkRyb8cuvP52REXYt63@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEg0NEyXRBRYpNlGIXcdMaRCNEuOiY8wQOUFn6b+VkG5bL4pXX
-	F7RKPZiAn11A6gq47A1NcdVkuMuEpN4mYJJlm5IGLOnDlY9Z8mDn8AHE5KOUWlXOkuQ=
-X-Gm-Gg: ASbGncvc6JisuY7oxh3zNd5U+62xqV69dJzUZRpAWzZ8L1W7jrkVS34va2EZhJ6+Jw+
-	a4sTztCg6/2YOMjn0LvvV8I6TduCXNg37PMEBpXePJ0KTym+qT3uy7/PhKX2EiIDd2upoqJC1rs
-	sl7yeUCEQqgjBJhQ3EXR+tUykHN/07I6WIs4qtcpz7vWbnbIcBpfuJCncWiMPPBc6Y1EjOgoTJs
-	mLCGb1qU2aJnW9GmtNBg6MK/5x2GbimnEI6PciYi3DuQjbIlXktiLnE/ISG9QBa9ZnohuYq2nJL
-	KYHerO0ydpjXpGpHMlQW2UlD6mUKXSrwL+RHbcmvJzgUJybqvun4ZhWVPGkxd/DvK4dop00MR5K
-	5vCn9BilFEkTJzjkA3Xa3Busdlx5M67gT+ycZTJn92M7Ak8Ya347Y6Q9ApqfhQA==
-X-Google-Smtp-Source: AGHT+IGYHawen/DIH/6zDXsEucLMJ4nT2ZH73QD1ilWz2b4sp/DIn4gSAkeANmmS7z8UPAcMNV4bZg==
-X-Received: by 2002:a17:902:da8e:b0:26a:589b:cf11 with SMTP id d9443c01a7336-29027402d24mr426479065ad.43.1760552060287;
-        Wed, 15 Oct 2025 11:14:20 -0700 (PDT)
+        bh=l+hioWfUWF0s+MiuUM+GlCDJCZ5YXjJVkBV4mURgf5Q=;
+        b=CxC8ZeOqjBpRry8UG+unS8Ynrq0yx+ZfAMJ1636X9/4MYX9WOhSHFIRLS/byUYFWdr
+         ZgZ2Drw7JXIaZ5qVrbQLHcZttW1sHbRXXfC6xIOo2jyV6yveskJ+qBY2fPQ1ddhSRYGk
+         LuVLKZMIl+RLM3So9n9DMQPpaDFsdx1skYbh6COclkJmEoFuuCEa2DJ0S+hL4AM4XqCw
+         0xQa4HNl1Sg87p68HWTsQKWeZUf8OPgr7ZvrYyixluJQO/uZYhKLSDv7pmpv+7ZVC46s
+         JEPK1Zh6Gwg/zkOov42wf0XVoQtcRbPR7kptOQss8mhpLsmpBiOfstblF4FkUfmXvAsB
+         2CPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH6+T5+wrebUkQSIbmfK2ZvIK4Qxs+3PYHpBpMDZ/e+yPPqdfqDqqwW2fBxKjJuxtPh01gr0jCYA7v80OW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxB3yruG83k4bRwCsjnlwyWmIESwlu4mt5WcKO34/saTH/MkMq
+	kkX51cYTdNL9jmbRDQnlCHHmqIKStCoSgviWTSre8cIQBBp+/BCMVQSYJklYoIBIf7U=
+X-Gm-Gg: ASbGncve9mF8DtWZZIzrYy+rzcK7qzLaW5W5g6vkk8izwzGhQPVV87RCPWCli2ytyNe
+	EmuMClAoyrGn335/U7dOKKtw4pV8ZI4AL7n1vpBDcaSz88a57pCJbpL+scr8fMnM+ERpy3Ik1S5
+	2fw2cTygiY19+KpwiLG7qDc64SvdRrIwIx1JuO791E3TmTSJGLjLZyjdwqqsrp9cKCS0hX4U2Dg
+	OvYvhESqaZCzcTeBhZdjyLQnLipwZGH2MG3GxoEOKnUP5t2j3fx53r4OawXAFX0F5izGa1bo49x
+	uYDOBwWTOZUFSWb7utvdC7pvJmC4qxO4dqsfTPoqkgsN2mAIoSJ6nOCL2+3CcKKpt/xI/q4AtoJ
+	YWXe2uLY5lwljv051LJi/5C8tzJWeIjIN2M5gG6X1OFVtirIqT6fko6w3kirJcA==
+X-Google-Smtp-Source: AGHT+IEmusB23JqoF7lYxeYcbCpkPOw54RW4RQUYTK3oSp77Zw+WE67eAab6Pp6xpvID0rEAYTPJgg==
+X-Received: by 2002:a17:903:ac7:b0:269:9a8f:a4ab with SMTP id d9443c01a7336-29027321d6fmr313904545ad.60.1760552062542;
+        Wed, 15 Oct 2025 11:14:22 -0700 (PDT)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a72esm3126625ad.21.2025.10.15.11.14.18
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2909930a72esm3126625ad.21.2025.10.15.11.14.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 11:14:19 -0700 (PDT)
+        Wed, 15 Oct 2025 11:14:22 -0700 (PDT)
 From: Deepak Gupta <debug@rivosinc.com>
-Date: Wed, 15 Oct 2025 11:13:48 -0700
-Subject: [PATCH v21 16/28] riscv: signal: abstract header saving for
- setup_sigcontext
+Date: Wed, 15 Oct 2025 11:13:49 -0700
+Subject: [PATCH v21 17/28] riscv/signal: save and restore of shadow stack
+ for signal
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251015-v5_user_cfi_series-v21-16-6a07856e90e7@rivosinc.com>
+Message-Id: <20251015-v5_user_cfi_series-v21-17-6a07856e90e7@rivosinc.com>
 References: <20251015-v5_user_cfi_series-v21-0-6a07856e90e7@rivosinc.com>
 In-Reply-To: <20251015-v5_user_cfi_series-v21-0-6a07856e90e7@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -117,153 +117,318 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org
+ rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
+ Deepak Gupta <debug@rivosinc.com>, Andy Chiu <andybnac@gmail.com>
 X-Mailer: b4 0.13.0
 
-From: Andy Chiu <andybnac@gmail.com>
+Save shadow stack pointer in sigcontext structure while delivering signal.
+Restore shadow stack pointer from sigcontext on sigreturn.
 
-The function save_v_state() served two purposes. First, it saved
-extension context into the signal stack. Then, it constructed the
-extension header if there was no fault. The second part is independent
-of the extension itself. As a result, we can pull that part out, so
-future extensions may reuse it. This patch adds arch_ext_list and makes
-setup_sigcontext() go through all possible extensions' save() callback.
-The callback returns a positive value indicating the size of the
-successfully saved extension. Then the kernel proceeds to construct the
-header for that extension. The kernel skips an extension if it does
-not exist, or if the saving fails for some reasons. The error code is
-propagated out on the later case.
+As part of save operation, kernel uses `ssamoswap` to save snapshot of
+current shadow stack on shadow stack itself (can be called as a save
+token). During restore on sigreturn, kernel retrieves token from top of
+shadow stack and validates it. This allows that user mode can't arbitrary
+pivot to any shadow stack address without having a token and thus provide
+strong security assurance between signaly delivery and sigreturn window.
 
-This patch does not introduce any functional changes.
+Use ABI compatible way of saving/restoring shadow stack pointer into
+signal stack. This follows what Vector extension, where extra registers
+are placed in a form of extension header + extension body in the stack.
+The extension header indicates the size of the extra architectural
+states plus the size of header itself, and a magic identifier of the
+extension. Then, the extensions body contains the new architectural
+states in the form defined by uapi.
 
-Signed-off-by: Andy Chiu <andybnac@gmail.com>
+Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- arch/riscv/include/asm/vector.h |  3 ++
- arch/riscv/kernel/signal.c      | 62 +++++++++++++++++++++++++++--------------
- 2 files changed, 44 insertions(+), 21 deletions(-)
+ arch/riscv/include/asm/usercfi.h         | 10 ++++
+ arch/riscv/include/uapi/asm/ptrace.h     |  4 ++
+ arch/riscv/include/uapi/asm/sigcontext.h |  1 +
+ arch/riscv/kernel/signal.c               | 86 ++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/usercfi.c              | 56 +++++++++++++++++++++
+ 5 files changed, 157 insertions(+)
 
-diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
-index b61786d43c20..75d8bd417797 100644
---- a/arch/riscv/include/asm/vector.h
-+++ b/arch/riscv/include/asm/vector.h
-@@ -423,6 +423,9 @@ static inline bool riscv_v_vstate_ctrl_user_allowed(void) { return false; }
- #define riscv_v_thread_free(tsk)		do {} while (0)
- #define  riscv_v_setup_ctx_cache()		do {} while (0)
- #define riscv_v_thread_alloc(tsk)		do {} while (0)
-+#define get_cpu_vector_context()		do {} while (0)
-+#define put_cpu_vector_context()		do {} while (0)
-+#define riscv_v_vstate_set_restore(task, regs)	do {} while (0)
+diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/usercfi.h
+index 4501d741a609..ec4b8a53eb74 100644
+--- a/arch/riscv/include/asm/usercfi.h
++++ b/arch/riscv/include/asm/usercfi.h
+@@ -8,6 +8,7 @@
+ #ifndef __ASSEMBLER__
+ #include <linux/types.h>
+ #include <linux/prctl.h>
++#include <linux/errno.h>
  
- #endif /* CONFIG_RISCV_ISA_V */
+ struct task_struct;
+ struct kernel_clone_args;
+@@ -34,6 +35,9 @@ bool is_shstk_locked(struct task_struct *task);
+ bool is_shstk_allocated(struct task_struct *task);
+ void set_shstk_lock(struct task_struct *task);
+ void set_shstk_status(struct task_struct *task, bool enable);
++unsigned long get_active_shstk(struct task_struct *task);
++int restore_user_shstk(struct task_struct *tsk, unsigned long shstk_ptr);
++int save_user_shstk(struct task_struct *tsk, unsigned long *saved_shstk_ptr);
+ bool is_indir_lp_enabled(struct task_struct *task);
+ bool is_indir_lp_locked(struct task_struct *task);
+ void set_indir_lp_status(struct task_struct *task, bool enable);
+@@ -71,6 +75,12 @@ void set_indir_lp_lock(struct task_struct *task);
  
+ #define set_indir_lp_lock(task) do {} while (0)
+ 
++#define restore_user_shstk(tsk, shstk_ptr) -EINVAL
++
++#define save_user_shstk(tsk, saved_shstk_ptr) -EINVAL
++
++#define get_active_shstk(task) 0UL
++
+ #endif /* CONFIG_RISCV_USER_CFI */
+ 
+ #endif /* __ASSEMBLER__ */
+diff --git a/arch/riscv/include/uapi/asm/ptrace.h b/arch/riscv/include/uapi/asm/ptrace.h
+index beff8df80ac9..261bfe70f60a 100644
+--- a/arch/riscv/include/uapi/asm/ptrace.h
++++ b/arch/riscv/include/uapi/asm/ptrace.h
+@@ -127,6 +127,10 @@ struct __riscv_v_regset_state {
+  */
+ #define RISCV_MAX_VLENB (8192)
+ 
++struct __sc_riscv_cfi_state {
++	unsigned long ss_ptr;   /* shadow stack pointer */
++};
++
+ #endif /* __ASSEMBLER__ */
+ 
+ #endif /* _UAPI_ASM_RISCV_PTRACE_H */
+diff --git a/arch/riscv/include/uapi/asm/sigcontext.h b/arch/riscv/include/uapi/asm/sigcontext.h
+index 748dffc9ae19..d22d0815d605 100644
+--- a/arch/riscv/include/uapi/asm/sigcontext.h
++++ b/arch/riscv/include/uapi/asm/sigcontext.h
+@@ -10,6 +10,7 @@
+ 
+ /* The Magic number for signal context frame header. */
+ #define RISCV_V_MAGIC	0x53465457
++#define RISCV_ZICFISS_MAGIC		0x9487
+ #define END_MAGIC	0x0
+ 
+ /* The size of END signal context header. */
 diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 08378fea3a11..a5e3d54fe54b 100644
+index a5e3d54fe54b..1bcda11e0680 100644
 --- a/arch/riscv/kernel/signal.c
 +++ b/arch/riscv/kernel/signal.c
-@@ -68,18 +68,19 @@ static long save_fp_state(struct pt_regs *regs,
- #define restore_fp_state(task, regs) (0)
- #endif
+@@ -22,11 +22,13 @@
+ #include <asm/vector.h>
+ #include <asm/csr.h>
+ #include <asm/cacheflush.h>
++#include <asm/usercfi.h>
  
--#ifdef CONFIG_RISCV_ISA_V
--
--static long save_v_state(struct pt_regs *regs, void __user **sc_vec)
-+static long save_v_state(struct pt_regs *regs, void __user *sc_vec)
- {
--	struct __riscv_ctx_hdr __user *hdr;
- 	struct __sc_riscv_v_state __user *state;
- 	void __user *datap;
- 	long err;
+ unsigned long signal_minsigstksz __ro_after_init;
  
--	hdr = *sc_vec;
--	/* Place state to the user's signal context space after the hdr */
--	state = (struct __sc_riscv_v_state __user *)(hdr + 1);
-+	if (!IS_ENABLED(CONFIG_RISCV_ISA_V) ||
-+	    !((has_vector() || has_xtheadvector()) &&
-+	    riscv_v_vstate_query(regs)))
-+		return 0;
-+
-+	/* Place state to the user's signal context spac */
-+	state = (struct __sc_riscv_v_state __user *)sc_vec;
- 	/* Point datap right after the end of __sc_riscv_v_state */
- 	datap = state + 1;
+ extern u32 __user_rt_sigreturn[2];
+ static size_t riscv_v_sc_size __ro_after_init;
++static size_t riscv_zicfiss_sc_size __ro_after_init;
  
-@@ -97,15 +98,11 @@ static long save_v_state(struct pt_regs *regs, void __user **sc_vec)
- 	err |= __put_user((__force void *)datap, &state->v_state.datap);
- 	/* Copy the whole vector content to user space datap. */
- 	err |= __copy_to_user(datap, current->thread.vstate.datap, riscv_v_vsize);
--	/* Copy magic to the user space after saving  all vector conetext */
--	err |= __put_user(RISCV_V_MAGIC, &hdr->magic);
--	err |= __put_user(riscv_v_sc_size, &hdr->size);
- 	if (unlikely(err))
--		return err;
-+		return -EFAULT;
+ #define DEBUG_SIG 0
  
--	/* Only progress the sv_vec if everything has done successfully  */
--	*sc_vec += riscv_v_sc_size;
--	return 0;
-+	/* Only return the size if everything has done successfully  */
-+	return riscv_v_sc_size;
- }
- 
- /*
-@@ -142,10 +139,20 @@ static long __restore_v_state(struct pt_regs *regs, void __user *sc_vec)
- 	 */
+@@ -140,6 +142,62 @@ static long __restore_v_state(struct pt_regs *regs, void __user *sc_vec)
  	return copy_from_user(current->thread.vstate.datap, datap, riscv_v_vsize);
  }
--#else
--#define save_v_state(task, regs) (0)
--#define __restore_v_state(task, regs) (0)
--#endif
+ 
++static long save_cfiss_state(struct pt_regs *regs, void __user *sc_cfi)
++{
++	struct __sc_riscv_cfi_state __user *state = sc_cfi;
++	unsigned long ss_ptr = 0;
++	long err = 0;
 +
-+struct arch_ext_priv {
-+	__u32 magic;
-+	long (*save)(struct pt_regs *regs, void __user *sc_vec);
-+};
++	if (!is_shstk_enabled(current))
++		return 0;
 +
-+struct arch_ext_priv arch_ext_list[] = {
++	/*
++	 * Save a pointer to shadow stack itself on shadow stack as a form of token.
++	 * A token on shadow gives following properties
++	 * - Safe save and restore for shadow stack switching. Any save of shadow stack
++	 *   must have had saved a token on shadow stack. Similarly any restore of shadow
++	 *   stack must check the token before restore. Since writing to shadow stack with
++	 *   address of shadow stack itself is not easily allowed. A restore without a save
++	 *   is quite difficult for an attacker to perform.
++	 * - A natural break. A token in shadow stack provides a natural break in shadow stack
++	 *   So a single linear range can be bucketed into different shadow stack segments. Any
++	 *   sspopchk will detect the condition and fault to kernel as sw check exception.
++	 */
++	err |= save_user_shstk(current, &ss_ptr);
++	err |= __put_user(ss_ptr, &state->ss_ptr);
++	if (unlikely(err))
++		return -EFAULT;
++
++	return riscv_zicfiss_sc_size;
++}
++
++static long __restore_cfiss_state(struct pt_regs *regs, void __user *sc_cfi)
++{
++	struct __sc_riscv_cfi_state __user *state = sc_cfi;
++	unsigned long ss_ptr = 0;
++	long err;
++
++	/*
++	 * Restore shadow stack as a form of token stored on shadow stack itself as a safe
++	 * way to restore.
++	 * A token on shadow gives following properties
++	 * - Safe save and restore for shadow stack switching. Any save of shadow stack
++	 *   must have had saved a token on shadow stack. Similarly any restore of shadow
++	 *   stack must check the token before restore. Since writing to shadow stack with
++	 *   address of shadow stack itself is not easily allowed. A restore without a save
++	 *   is quite difficult for an attacker to perform.
++	 * - A natural break. A token in shadow stack provides a natural break in shadow stack
++	 *   So a single linear range can be bucketed into different shadow stack segments.
++	 *   sspopchk will detect the condition and fault to kernel as sw check exception.
++	 */
++	err = __copy_from_user(&ss_ptr, &state->ss_ptr, sizeof(unsigned long));
++
++	if (unlikely(err))
++		return err;
++
++	return restore_user_shstk(current, ss_ptr);
++}
++
+ struct arch_ext_priv {
+ 	__u32 magic;
+ 	long (*save)(struct pt_regs *regs, void __user *sc_vec);
+@@ -150,6 +208,10 @@ struct arch_ext_priv arch_ext_list[] = {
+ 		.magic = RISCV_V_MAGIC,
+ 		.save = &save_v_state,
+ 	},
 +	{
-+		.magic = RISCV_V_MAGIC,
-+		.save = &save_v_state,
++		.magic = RISCV_ZICFISS_MAGIC,
++		.save = &save_cfiss_state,
 +	},
-+};
-+
-+const size_t nr_arch_exts = ARRAY_SIZE(arch_ext_list);
+ };
  
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
-@@ -270,7 +277,8 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
+ const size_t nr_arch_exts = ARRAY_SIZE(arch_ext_list);
+@@ -202,6 +264,12 @@ static long restore_sigcontext(struct pt_regs *regs,
+ 
+ 			err = __restore_v_state(regs, sc_ext_ptr);
+ 			break;
++		case RISCV_ZICFISS_MAGIC:
++			if (!is_shstk_enabled(current) || size != riscv_zicfiss_sc_size)
++				return -EINVAL;
++
++			err = __restore_cfiss_state(regs, sc_ext_ptr);
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -223,6 +291,16 @@ static size_t get_rt_frame_size(bool cal_all)
+ 			total_context_size += riscv_v_sc_size;
+ 	}
+ 
++	if (is_shstk_enabled(current))
++		total_context_size += riscv_zicfiss_sc_size;
++
++	/*
++	 * Preserved a __riscv_ctx_hdr for END signal context header if an
++	 * extension uses __riscv_extra_ext_header
++	 */
++	if (total_context_size)
++		total_context_size += sizeof(struct __riscv_ctx_hdr);
++
+ 	frame_size += total_context_size;
+ 
+ 	frame_size = round_up(frame_size, 16);
+@@ -359,6 +437,11 @@ static int setup_rt_frame(struct ksignal *ksig, sigset_t *set,
+ #ifdef CONFIG_MMU
+ 	regs->ra = (unsigned long)VDSO_SYMBOL(
+ 		current->mm->context.vdso, rt_sigreturn);
++
++	/* if bcfi is enabled x1 (ra) and x5 (t0) must match. not sure if we need this? */
++	if (is_shstk_enabled(current))
++		regs->t0 = regs->ra;
++
+ #else
+ 	/*
+ 	 * For the nommu case we don't have a VDSO.  Instead we push two
+@@ -487,6 +570,9 @@ void __init init_rt_signal_env(void)
  {
- 	struct sigcontext __user *sc = &frame->uc.uc_mcontext;
- 	struct __riscv_ctx_hdr __user *sc_ext_ptr = &sc->sc_extdesc.hdr;
--	long err;
-+	struct arch_ext_priv *arch_ext;
-+	long err, i, ext_size;
- 
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
-@@ -278,8 +286,20 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- 	if (has_fpu())
- 		err |= save_fp_state(regs, &sc->sc_fpregs);
- 	/* Save the vector state. */
--	if ((has_vector() || has_xtheadvector()) && riscv_v_vstate_query(regs))
--		err |= save_v_state(regs, (void __user **)&sc_ext_ptr);
-+	for (i = 0; i < nr_arch_exts; i++) {
-+		arch_ext = &arch_ext_list[i];
-+		if (!arch_ext->save)
-+			continue;
+ 	riscv_v_sc_size = sizeof(struct __riscv_ctx_hdr) +
+ 			  sizeof(struct __sc_riscv_v_state) + riscv_v_vsize;
 +
-+		ext_size = arch_ext->save(regs, sc_ext_ptr + 1);
-+		if (ext_size <= 0) {
-+			err |= ext_size;
-+		} else {
-+			err |= __put_user(arch_ext->magic, &sc_ext_ptr->magic);
-+			err |= __put_user(ext_size, &sc_ext_ptr->size);
-+			sc_ext_ptr = (void *)sc_ext_ptr + ext_size;
-+		}
++	riscv_zicfiss_sc_size = sizeof(struct __riscv_ctx_hdr) +
++			  sizeof(struct __sc_riscv_cfi_state);
+ 	/*
+ 	 * Determine the stack space required for guaranteed signal delivery.
+ 	 * The signal_minsigstksz will be populated into the AT_MINSIGSTKSZ entry
+diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+index 2ebe789caa6b..8bc3e1e3f712 100644
+--- a/arch/riscv/kernel/usercfi.c
++++ b/arch/riscv/kernel/usercfi.c
+@@ -52,6 +52,11 @@ void set_active_shstk(struct task_struct *task, unsigned long shstk_addr)
+ 	task->thread_info.user_cfi_state.user_shdw_stk = shstk_addr;
+ }
+ 
++unsigned long get_active_shstk(struct task_struct *task)
++{
++	return task->thread_info.user_cfi_state.user_shdw_stk;
++}
++
+ void set_shstk_status(struct task_struct *task, bool enable)
+ {
+ 	if (!cpu_supports_shadow_stack())
+@@ -169,6 +174,57 @@ static int create_rstor_token(unsigned long ssp, unsigned long *token_addr)
+ 	return 0;
+ }
+ 
++/*
++ * Save user shadow stack pointer on shadow stack itself and return pointer to saved location
++ * returns -EFAULT if operation was unsuccessful
++ */
++int save_user_shstk(struct task_struct *tsk, unsigned long *saved_shstk_ptr)
++{
++	unsigned long ss_ptr = 0;
++	unsigned long token_loc = 0;
++	int ret = 0;
++
++	if (saved_shstk_ptr == NULL)
++		return -EINVAL;
++
++	ss_ptr = get_active_shstk(tsk);
++	ret = create_rstor_token(ss_ptr, &token_loc);
++
++	if (!ret) {
++		*saved_shstk_ptr = token_loc;
++		set_active_shstk(tsk, token_loc);
 +	}
- 	/* Write zero to fp-reserved space and check it on restore_sigcontext */
- 	err |= __put_user(0, &sc->sc_extdesc.reserved);
- 	/* And put END __riscv_ctx_hdr at the end. */
++
++	return ret;
++}
++
++/*
++ * Restores user shadow stack pointer from token on shadow stack for task `tsk`
++ * returns -EFAULT if operation was unsuccessful
++ */
++int restore_user_shstk(struct task_struct *tsk, unsigned long shstk_ptr)
++{
++	unsigned long token = 0;
++
++	token = amo_user_shstk((unsigned long __user *)shstk_ptr, 0);
++
++	if (token == -1)
++		return -EFAULT;
++
++	/* invalid token, return EINVAL */
++	if ((token - shstk_ptr) != SHSTK_ENTRY_SIZE) {
++		pr_info_ratelimited(
++			"%s[%d]: bad restore token in %s: pc=%p sp=%p, token=%p, shstk_ptr=%p\n",
++			tsk->comm, task_pid_nr(tsk), __func__, (void *)(task_pt_regs(tsk)->epc),
++			(void *)(task_pt_regs(tsk)->sp), (void *)token, (void *)shstk_ptr);
++		return -EINVAL;
++	}
++
++	/* all checks passed, set active shstk and return success */
++	set_active_shstk(tsk, token);
++	return 0;
++}
++
+ static unsigned long allocate_shadow_stack(unsigned long addr, unsigned long size,
+ 					   unsigned long token_offset, bool set_tok)
+ {
 
 -- 
 2.43.0
