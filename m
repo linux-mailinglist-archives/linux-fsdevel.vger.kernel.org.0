@@ -1,112 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-64224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD3CBDDD25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:40:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27FEBDDDA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 11:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15DC73A5D78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 09:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B6B43BC971
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 09:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5CC31B107;
-	Wed, 15 Oct 2025 09:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="ay/6kJRV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36D431B809;
+	Wed, 15 Oct 2025 09:48:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FECD31A812;
-	Wed, 15 Oct 2025 09:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B37F2836B5;
+	Wed, 15 Oct 2025 09:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521224; cv=none; b=ekpBgleCK0SQJRTEFSq0L2FrayqYlBvWXlGIvSp5PiXShRtpdJvbCf0UMDkKwojrJaquEU++mgbcl5FdK3/Uqokd7z4JqJ143zoiMSWrPr2RsRYTMjqG4xmTjaDVxVCV4z3O/3wTqgAY6KZuTuFL/xRf0jjAwvsKwi3KLbuxLOU=
+	t=1760521716; cv=none; b=N3kcOPGsgGQgcrGkCwEuzNZxE7HXXs7A2EPhVdORPWI+bJjtdh4wL3/uS+g1pMqYgSPFjy2hkTKGUmXidzNUmdcGxcw5y3wle5UbAOweZI/7GiVTaDlh6VA16rlQqQ10TUs1stx5UqcMryaENsTkqfIdG63ABFqUn4QwHT2U7XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521224; c=relaxed/simple;
-	bh=nhTg113RJazH5EQZAAMIMSjHEMha8gXoEsgVXX8RmN0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bjs0aoGT6rt0YoMa0uRrEL4VPe+7L38scCEn3CU3mXQ8E9V3wit2niWA9LeR5lHnyiQKwdGPjRhY0I9S4xEhhH/FmxqgR9VGukj/mw9njfHYPC2pQhrTpnWwugdzvYGYauMyy4ktkimMf5G9zbRF9le09nq5AsuvPOqYJ9A0/Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=ay/6kJRV; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cmmK45JdWzB0Gg;
-	Wed, 15 Oct 2025 11:40:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1760521208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lrhw6J3BmlfJs8eKJNlNHXHbstYWFJvdWpyxma0Iulg=;
-	b=ay/6kJRVRkHZRSDyh1CzJxAIChS4ZDBOGDXHrNNgJ0E4Ku30Uyew2adH8oyFw0a1oKu2zt
-	D/Lw8yorw812MD2Xyq+91Vet+4oq3TnABKE4b6a7bfyOIlyoFORmlmp4ds7OMvJQl8rgT8
-	oBdnqJzeabOYpb/NJYo1gOir6ft2KetKuc52UQJO4A9Rou9RybP6NEek8OiTBpdrqLUi/5
-	XZjdDIDqKYNUQhCXAKYxMeSCPKzIfWJ0lfNPn/RKfAZIM6Mwnna4k5lyJKGjmP2pUI01Pf
-	XvNWYnl04gWKZdYTI7SVdy19HRFHJ8a/IoJ0lBw3YEx5Wm9rBA0kiU5iR4oY7w==
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: miklos@szeredi.hu,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] fs: fuse: use strscpy instead of strcpy
-In-Reply-To: <20250929130246.107478-1-mssola@mssola.com> ("Miquel
- =?utf-8?Q?Sabat=C3=A9=09Sol=C3=A0=22's?= message of "Mon, 29 Sep 2025
- 15:02:44 +0200")
-References: <20250929130246.107478-1-mssola@mssola.com>
-Date: Wed, 15 Oct 2025 11:40:03 +0200
-Message-ID: <87wm4wbj0s.fsf@>
+	s=arc-20240116; t=1760521716; c=relaxed/simple;
+	bh=ci2GAK96GpSlDOtokEvI17IcFg1bYDVpieRXum3v43o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUcXMcXgvPMpoelyg7UOsruivrPpKxJT7VK+je1Y2xCxoAlPhJ2LOW1ehAYmDa7fjVH0h2Ea25pEOF5alIcCTgXWFSe2RaWjw/bhbr+QQ8Ip8HodJ1uzgvDJD0ZLyPUuFXsVvsiqz2gLV4l6EiVjCSVxH7uJJqBz56l71FxeHtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B69C4CEF8;
+	Wed, 15 Oct 2025 09:48:24 +0000 (UTC)
+Date: Wed, 15 Oct 2025 10:48:21 +0100
+From: Mark Brown <broonie@debian.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	netdev@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 19/19] rust: regulator: replace `kernel::c_str!` with
+ C-Strings
+Message-ID: <a6d606c0-716f-49b5-81cf-362b325b7872@sirena.org.uk>
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+ <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qu2IBVFvaIEaH/yu"
+Content-Disposition: inline
+In-Reply-To: <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
+X-Cookie: Sentient plasmoids are a gas.
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+--qu2IBVFvaIEaH/yu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Miquel Sabat=C3=A9 Sol=C3=A0 @ 2025-09-29 15:02 +02:
+On Thu, Sep 25, 2025 at 09:54:07AM -0400, Tamir Duberstein wrote:
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
 
-> Changes in v2:
->   - Add a commit to rename 'namelen' to 'namesize', as suggested by Miklos
->     Szeredi.
->
-> Miquel Sabat=C3=A9 Sol=C3=A0 (2):
->   fs: fuse: Use strscpy instead of strcpy
->   fs: fuse: rename 'namelen' to 'namesize'
->
->  fs/fuse/dir.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+This doesn't apply against current code, please check and resend.
 
-Gently ping :)
-
---=-=-=
+--qu2IBVFvaIEaH/yu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjva/MbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZdpGD/4uNhw1K/qoS0aMWWW3AYouNZZf0gb3hh4U0WZGr4359TIxaG7omzgp24h5
-USEvR5TWUWcBLD8rSi+aefj3W4hHv6BtkhcwDJ11HxEThtjbJ5Zn/6423poADJFq
-EZKTJ+Qha446B+z8wEjGFpVg+yMi4PLZbkl/s7/IbLMGZptN+W3ARvc79xNPfAeR
-+0IslCogGdS55tLjby4tEdeEko3ZDcAb+NZchWhuW5DRxgOOZQ4dCDlISVZFMjOj
-NySL5SzzWzW2w3Pme+VaA3t5sNnA994jWrataRCNy7IVj4W8sRAkuqVTgUy285h6
-8PfOFmapYr7OQ/FVsnq0TIuYV8Le4KXinSw7cZ/A3Rq+cE2pTYcUu95FXKA/82og
-JoMK6xvgEpAvdf74ui9K6KliZFFNQ23EVPfuf4rcQC2AeMh6NRTgyQlBLCgJT1yN
-X21JS00CmLNZPTTGaLWyvhlbMvkRHTImRfoOYzkPAPmapk7k71SB+JApvmCODv6h
-3YDvhn3t28rD+ycLHbe+j3kB6oINzovUDA1ehKt4NrdySpj47QVtKjnjmPj926fP
-7to8L0WhUO9kjHLinGp/BZfyLH6X4ryQYr2tOiRE5m7V/RE3XjCYIQguv/3np/a9
-DVog9WkkycwBqJup70TA7W357odk6zMDKCtnZdpFNqcujPa/4g==
-=/L/q
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjvbeQACgkQJNaLcl1U
+h9Dt8Af/TLwPaPEPyJKhHTg8cZeHf70d+vVL0moyk8tdCcvNggPRPd8mXg0NT9mO
+qmJvoWmet4bQC3McxDEI2hDArwrV6orbVM8LsRyd78hdChnLNP1058/WMu4IMsm9
+2BDs6OT5Nma+7YMa+KS6S7fkuUmt9AG/CkBR9NAGDX0K6kGd/GQ1E9I11cf8Cdqs
+YFLT67SrYyxGv3ZGtK5IkUOmqn8vSKPTtrQiuzfeSkwR6iBWmy5jq1VR/Qh2Kycq
+c/7pMyRZK1HaRL+RnAGvZaPuru3c9bRia03t2TS0BaJJYl8QMaNG2TqmOxxHBHNP
+0Dagzm72apYtzPFYbdE9flnTkc2o/Q==
+=ofuh
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--qu2IBVFvaIEaH/yu--
 
