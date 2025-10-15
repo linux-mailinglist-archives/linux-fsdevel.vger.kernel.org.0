@@ -1,48 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-64245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19786BDF567
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 17:27:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630F0BDF5B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 17:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 816B44EC00F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 15:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A118B19C7C83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 15:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A82F2FE079;
-	Wed, 15 Oct 2025 15:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F584299923;
+	Wed, 15 Oct 2025 15:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaRV0UHu"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="dW6skM6s";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="q51/O0zd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497A526CE06;
-	Wed, 15 Oct 2025 15:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5658E2522BE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 15:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542012; cv=none; b=qEILPb92sqxt8djLLENnsIBfUSlwXB2vxO0ccKgIYf0GC1naUmsXPITioRX4L8j1kVFoO1d8aTy0I58ixzH3it801KOlVMhrk5jPXCunhj2E/MLgPK3mGbY6C4OB0d1mTFlzSeTvThYaxYRJ2dXRO69H+UGQXQvXaRDCieIklXM=
+	t=1760542212; cv=none; b=XErZS18beQND57Z5DJjf01jBem6Ks7g6x/xE6C+lIihSAs13BAi6LgsdAeEFBOJ3UdlPQ5IzZKoBIr0kMjtdaD0l/FPtCrj2e4OQ+oaWpG7WKezmVR4FbyGTucZ5bNrWKD6uw0GMepztJBLtaZ5USNTSs4xnP4EMeCveThi3G08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542012; c=relaxed/simple;
-	bh=VpJ11xGa+BDz4uhi6bmHjmcicPo7D85MQp8q2vvOikk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YWMbf7Gj4JCrPOilXOh3bgDa4r81bfWVddGqtNrn5gw3qyRlb1HjFCai/kOHDt8FjABu7WD2jK5hDN/rMXwY1GOM8ce6+qwcKUMby5IAC4uBbcUcEukJyy28O2idDJknafQ1h7ZV6JB54ovCYwBNjBKQDCO8iUGCuWdaY28DUAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaRV0UHu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10CE9C4CEF8;
-	Wed, 15 Oct 2025 15:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760542011;
-	bh=VpJ11xGa+BDz4uhi6bmHjmcicPo7D85MQp8q2vvOikk=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=eaRV0UHuNmiyqyQaSHmpM3Av7AfV06g40dGfsZzhcTIUqMDXB0LmH8GxDCv9SESXo
-	 TFSve6l9Dyu4S9Zoq2yjlbLkhtOARzi9zind3tFCIlOJ6RoTlFiVwdSrkcIPz6SD6Q
-	 SssbkXJjwzztIVxF4CqW0HNUPCQav0PHh5qxJf/k5lH2kzuCuhQmNwNJKIfuz/o9qc
-	 UySTwrGVXib/3txrj0/Bj3ajpUJaWdkmz/khvoOd2wJCy/nHP1MG8FOmuJLWnJ/gje
-	 3rC7Jtnfw8spmjh1SEYa51KwDaA9Ncxr5W15neqLVtBIl3GLO8Bki+B5Dk2eqcR36a
-	 pDd++gI92txzA==
-Message-ID: <b3c5037b-07c9-4419-b3a4-7cbc16cf43ed@kernel.org>
-Date: Wed, 15 Oct 2025 11:25:35 -0400
+	s=arc-20240116; t=1760542212; c=relaxed/simple;
+	bh=hR9rZXOS28XrWRaww1nNuXB3NTUIo8KAbja29JpsS1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t5ppOAFi3B4xSHJ7SUcaUIMoLfiR/bPTTbME07D0kNEL+TuGBEP7UqG8AYBadn3Qf2t4GEruKaQIKkOTS7w8oZiX+t9t+Slq+NsbOH4S/M+B/mSkp4+UuL4YKyNCGL6TZTluiYgAgo8GVbz4Y53OTM7At6u5KJdt8KlbefXVaAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=dW6skM6s; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=q51/O0zd; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 3F6ECEC0178;
+	Wed, 15 Oct 2025 11:30:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 15 Oct 2025 11:30:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760542207;
+	 x=1760628607; bh=fkAH8YWGxIwBLRfFRs+1ooPPdhNwWytvG+AeJExMgTs=; b=
+	dW6skM6sipgqm1zHXK6fEerdFG8yrC37XmN/OgJ75VAQQCT+H6SZpXOoyl80MXFr
+	3jX/fcvkPNVKl0m/JMsHw81bzifAYxp3uQB2PXz8kSEVfHVXTBiThI4XZQZgus6a
+	Lov9mwaAti2W5E97vKiD8lcAmidvmV/aAIMtc2VQ8OWAt8CjnQmB5LtuaItVEAcP
+	D1fRp1V0J4ocRv7hQuVY32M0N09RHGBs1q5V8nP/vprc1fBzyBvkmOt5htn+rCsj
+	dhrACAcYeIXFa40tdw4SymP1nCSqv5Jb7Y9bgrBXVI4LjXYuTq3dGnpg/N2OwzU5
+	VsntsWq7GiKxzKcxFT4lIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760542207; x=
+	1760628607; bh=fkAH8YWGxIwBLRfFRs+1ooPPdhNwWytvG+AeJExMgTs=; b=q
+	51/O0zdf2HpAa+jFKnl6FXEDs550D9wObrvf4FVmbMsROGVU11v87U5M00nOk5cP
+	K/PH44ZQtAeSO9W0Pxm5cz9mMxlG96GzwBKO4y6n4jO4egCRTocwjT1Vm1wW++42
+	5OlWolu59/nL+TKH/i1DaLiT7Uv6vriDY7k37vNnH9a7QJKihKnmU/9I0jpeQTp/
+	I3aBiEMlNyjcUykVo1iybnNP2wJUOGFXpCxFCntOXhWlGLcl7P7JeAxQS1+RHadI
+	xbwDbfii9wJzDz6L4ppLPIcRjx1t/PVhdIyPm87VwUQGglvsQBeFr/DTi8APTvyY
+	dW5vaF28DmkcSzyoMd/3g==
+X-ME-Sender: <xms:_r3vaK6GpMEv9nwuNrKLcY_GRVb8X3ngNxsr8hfCIa-_N-kemXFDtg>
+    <xme:_r3vaAQsVpGDabvJg-KC-SqF6-R5Y8U9IPkB2a7y-WEEslPGfQ2CPwFC7nSZ-M_AP
+    zSWef5Dkiia-qIkx90MV_p84AiFb98_3Zky_aV_A20Jf3Aucdvb>
+X-ME-Received: <xmr:_r3vaN7mp5uvJ_SHjRvjy1Pivc2uPnlvPrpvZrhxygc7hpsraSRY-KkRwvnr_yPorw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefjeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpedtuedvueduledtudekhfeuleduudeijedvveevveetuddvfeeuvdekffej
+    leeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopegsshgthhhu
+    sggvrhhtseguughnrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughird
+    hhuhdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopehp
+    vghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehjuhhrihdrlhgvlh
+    hlihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhhinhgtvghnthdrghhuihhtthho
+    theslhhinhgrrhhordhorhhgpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnh
+    hnsegrrhhmrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhr
+    gh
+X-ME-Proxy: <xmx:_r3vaFTVxf_yJB0Prm3QX1wTjcTDI1WY4JWkWxNpQcli3gclGZvFKA>
+    <xmx:_r3vaKnsG9OnsDKVMoWk71KwZtOcnroCUhJmexUIOGlunIsl2qe7Mg>
+    <xmx:_r3vaBS-ts5hxf5yGHsWwJdUWS-_1J8TW29-gZgZtbvKBNL9xpU5iw>
+    <xmx:_r3vaJvrL1l5-Ll88FEphekFyZz_y6YeXwNo1l3amZmDMbQohesX-A>
+    <xmx:_73vaG9-ktnudB36KH8cK7pI0JlajFM5M1wdzf5kbIVUn-fuJAAfhlQE>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 15 Oct 2025 11:30:04 -0400 (EDT)
+Message-ID: <6d16a94b-3277-4922-a628-f17f622369bc@bsbernd.com>
+Date: Wed, 15 Oct 2025 17:30:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,315 +99,218 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Chuck Lever <cel@kernel.org>
-Subject: Re: [PATCH v5] NFSD: Add a subsystem policy document
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Jeff Layton <jlayton@kernel.org>,
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <dai.ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20251014150958.5372-1-cel@kernel.org>
- <20251014235803.GH6215@frogsfrogsfrogs>
+Subject: Re: [PATCH v2] fuse: Wake requests on the same cpu
+To: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Luis Henriques <luis@igalia.com>, linux-fsdevel@vger.kernel.org
+References: <20251014-wake-same-cpu-v2-1-68f5078845c6@ddn.com>
+ <CAJnrk1brjsPoXc_dbMj-Ty4dr5ZCxtVjBn6WGOY8DkGxh87R5Q@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
 Content-Language: en-US
-Organization: kernel.org
-In-Reply-To: <20251014235803.GH6215@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAJnrk1brjsPoXc_dbMj-Ty4dr5ZCxtVjBn6WGOY8DkGxh87R5Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/14/25 7:58 PM, Darrick J. Wong wrote:
-> On Tue, Oct 14, 2025 at 11:09:58AM -0400, Chuck Lever wrote:
->> From: Chuck Lever <chuck.lever@oracle.com>
+
+
+On 10/15/25 01:11, Joanne Koong wrote:
+> On Tue, Oct 14, 2025 at 2:50 AM Bernd Schubert <bschubert@ddn.com> wrote:
 >>
->> Steer contributors to NFSD's patchworks instance, list our patch
->> submission preferences, and more. The new document is based on the
->> existing netdev and xfs subsystem policy documents.
+>> For io-uring it makes sense to wake the waiting application (synchronous
+>> IO) on the same core.
 >>
->> This is an attempt to add transparency to the process of accepting
->> contributions to NFSD and getting them merged upstream.
+>> With queue-per-pore
+> 
+> nit typo: core, not pore
+
+:) Thanks, dunno how I managed to get that.
+
+> 
 >>
->> Suggested-by: Darrick J. Wong <djwong@kernel.org>
+>> fio --directory=/tmp/dest --name=iops.\$jobnum --rw=randread --bs=4k \
+>>      --size=1G --numjobs=1 --iodepth=1 --time_based --runtime=30s
+>>      \ --group_reporting --ioengine=psync --direct=1
+>>
 > 
-> Dumb nit:  The period after the J means you have to enclose the whole
-> mess in quotations to be rfc822 compliant:
+> Which server are you using for these benchmarks? passthrough_hp?
+
+passthrough_hp on tmpfs, system has 256GB RAM - enough for these benchmarks, with 16 (32 HT) cores.
+
 > 
-> Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
-> 
-> (and no, nobody gets this right, not even me for a large number of
-> years)
-> 
->> Cc: Luis Chamberlain <mcgrof@kernel.org>
->> Cc: Martin K. Petersen <martin.petersen@oracle.com>
->> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>> no-io-uring
+>>     READ: bw=116MiB/s (122MB/s), 116MiB/s-116MiB/s
+>> no-io-uring wake on the same core (not part of this patch)
+>>     READ: bw=115MiB/s (120MB/s), 115MiB/s-115MiB/s
+>> unpatched
+>>     READ: bw=260MiB/s (273MB/s), 260MiB/s-260MiB/s
+>> patched
+>>     READ: bw=345MiB/s (362MB/s), 345MiB/s-345MiB/s
+>>
+>> Without io-uring and core bound fuse-server queues there is almost
+>> not difference. In fact, fio results are very fluctuating, in
+>> between 85MB/s and 205MB/s during the run.
+>>
+>> With --numjobs=8
+>>
+>> unpatched
+>>     READ: bw=2378MiB/s (2493MB/s), 2378MiB/s-2378MiB/s
+>> patched
+>>     READ: bw=2402MiB/s (2518MB/s), 2402MiB/s-2402MiB/s
+>> (differences within the confidence interval)
+>>
+>> '-o io_uring_q_mask=0-3:8-11' (16 core / 32 SMT core system) and
+>>
+>> unpatched
+>>     READ: bw=1286MiB/s (1348MB/s), 1286MiB/s-1286MiB/s
+>> patched
+>>     READ: bw=1561MiB/s (1637MB/s), 1561MiB/s-1561MiB/s
+>>
+>> I.e. no differences with many application threads and queue-per-core,
+>> but perf gain with overloaded queues - a bit surprising.
+>>
+>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 >> ---
->>  .../nfs/nfsd-maintainer-entry-profile.rst     | 545 ++++++++++++++++++
->>  .../maintainer/maintainer-entry-profile.rst   |   1 +
->>  MAINTAINERS                                   |   1 +
->>  3 files changed, 547 insertions(+)
->>  create mode 100644 Documentation/filesystems/nfs/nfsd-maintainer-entry-profile.rst
+>> This was already part of the RFC series and was then removed on
+>> request to keep out optimizations from the main fuse-io-uring
+>> series.
+>> Later I was hesitating to add it back, as I was working on reducing the
+>> required number of queues/rings and initially thought
+>> wake-on-current-cpu needs to be a conditional if queue-per-core or
+>> a reduced number of queues is used.
+>> After testing with reduced number of queues, there is still a measurable
+>> benefit with reduced number of queues - no condition on that needed
+>> and the patch can be handled independently of queue size reduction.
+>> ---
+>> Changes in v2:
+>> - Fix the doxygen comment for __wake_up_on_current_cpu
+>> - Move up the ' Wake up waiter sleeping in
+>>    request_wait_answer()' comment in fuse_request_end()
+>> - Link to v1: https://lore.kernel.org/r/20251013-wake-same-cpu-v1-1-45d8059adde7@ddn.com
+>> ---
+>>   fs/fuse/dev.c        |  5 ++++-
+>>   include/linux/wait.h |  6 +++---
+>>   kernel/sched/wait.c  | 16 +++++++++++++++-
+>>   3 files changed, 22 insertions(+), 5 deletions(-)
 >>
->> I'd like to apply this for v6.19. Can I get some R-b love? I promise
->> not to change the document again until it is merged and we have
->> actual version control.
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index 132f38619d70720ce74eedc002a7b8f31e760a61..3a3d88e60e48df3ac57cff3be8df12c4f20ace9a 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -500,7 +500,10 @@ void fuse_request_end(struct fuse_req *req)
+>>                  spin_unlock(&fc->bg_lock);
+>>          } else {
+>>                  /* Wake up waiter sleeping in request_wait_answer() */
+>> -               wake_up(&req->waitq);
+>> +               if (test_bit(FR_URING, &req->flags))
 > 
-> Assuming you meant from the nfsd community, not really so much from me?
+> might be worth having a separate helper for this since this is also
+> called in request_wait_answer()
 
-Anyone is welcome to give an R-b. Thanks for your review! I have one
-or two responses below.
+Ok, I can do that in v3
 
-
->> +Reporting bugs
->> +--------------
->> +If you experience an NFSD-related bug on a distribution-built
->> +kernel, please start by working with your Linux distributor.
->> +
->> +Bug reports against upstream Linux code bases are welcome on the
->> +linux-nfs@vger.kernel.org mailing list, where some active triage
->> +can be done. NFSD bugs may also be reported in the Linux kernel
->> +community's bugzilla at:
->> +
->> +  https://bugzilla.kernel.org
->> +
->> +Please file NFSD-related bugs under the "Filesystems/NFSD"
->> +component. In general, including as much detail as possible is a
->> +good start, including pertinent system log messages from both
->> +the client and server.
->> +
->> +For user space software related to NFSD, such as mountd or the
->> +exportfs command, report problems on linux-nfs@vger.kernel.org.
->> +You might be asked to move the report to a specific bug tracker.
 > 
-> I'm assuming that doesn't include ganesha?
-
-NFS/Ganesha is a completely separate NFS server implementation.
-What I'm referring to here is the user space components that NFSD
-relies on, as packaged in nfs-utils. I'll update this paragraph
-to be more specific.
-
-
->> +Testing
->> +~~~~~~~
->> +The kdevops project
->> +
->> +  https://github.com/linux-kdevops/kdevops
->> +
->> +contains several NFS-specific workflows, as well as the community
->> +standard fstests suite. These workflows are based on open source
->> +testing tools such as ltp and fio. Contributors are encouraged to
->> +use these tools without kdevops, or contributors should install and
->> +use kdevops themselves to verify their patches before submission.
+>> +                       wake_up_on_current_cpu(&req->waitq);
 > 
-> I'm curious, does that include recipes for running fstests over nfs?
+> Won't this lose cache locality for all the other data that is in the
+> client thread's cache on the previous CPU? It seems to me like on
+> average this would be a costlier miss overall? What are your thoughts
+> on this?
 
-Absolutely.
+So as in the introduction, which b4 made a '---' comment below,
+initially I thought this should be a conditional on queue-per-core.
+With queue-per-core it should be easy to explain, I think.
 
-There are five kdevops workflows I currently run for NFSD on upstream
-and LTS kernels:
+App submits request on core-X, waits/sleeps, request gets handle on
+core-X by queue-X.
+If there are more applications running on this core, they
+get likely re-scheduled to another core, as the libfuse queue thread is
+core bound. If other applications don't get re-scheduled either the
+entire system is overloaded or someone sets manual application core
+affinity - we can't do much about that in either case. With
+queue-per-core there is also no debate about "previous CPU".
+Worse is actually scheduler behavior here, although the ring thread
+itself goes to sleep soon enough. Application gets still quite often
+re-scheduled to another core. Without wake-on-same core behavior is
+even worse and it jumps across all the time. Not good for CPU cache...
 
-- fstests with scratch device
-- the git regression suite
-- ltp (ti-rpc and notify, at least)
-- Jorge Mora's nfstest suite
-- pynfs
-
-These can all be run with xfs, ext4, btrfs, or tmpfs underlying the
-NFS exports. But right now I pick a single local filesystem type for
-each kernel release to keep the test matrix manageable.
+With reduced queues we can assume that it to jump between cores, I
+have no problem to make it a conditional on that, just results are
+encouraging to apply it unconditionally - see the results above for
+"-o io_uring_q_mask=0-3:8-11' (16 core / 32 SMT core system)"
 
 
->> +The code in the body of the diff already shows /what/ is being
->> +changed. Thus it is not necessary to repeat that in the patch
->> +description. Instead, the description should contain one or more
->> +of:
->> +
->> +- A brief problem statement ("what is this patch trying to fix?")
->> +  with a root-cause analysis.
->> +
->> +- End-user visible symptoms or items that a support engineer might
->> +  use to search for the patch, like stack traces.
->> +
->> +- A brief explanation of why the patch is the best way to address
->> +  the problem.
->> +
->> +- Any context that reviewers might need to understand the changes
->> +  made by the patch.
->> +
->> +- Any relevant benchmarking results, and/or functional test results.
->> +
->> +As detailed in Documentation/process/submitting-patches.rst,
->> +identify the point in history that the issue being addressed was
->> +introduced by using a Fixes: tag.
+
+
+
 > 
-> That doesn't apply to new features, right?  Or are those "fixes" for
-> missing functionality?
-
-Sometimes a new feature is needed to address a bug. So, I think a
-Fixes: tag is sometimes appropriate even for patches that introduce
-features.
-
-
-> Are Anna or Trond working on a similar profile for fs/nfs/?
-
-Not that I'm aware of.
-
-
-> Does this profile document cover fs/nfs_common/ ?
-
-It could, if that's listed under the NFSD paragraph in MAINTAINERS.
-
-
->> +This means that contributors might be asked to resubmit patches if
->> +they were emailed to the incorrect set of maintainers and reviewers.
->> +This is not a rejection, but simply a correction of the submission
->> +process.
->> +
->> +When in doubt, consult the NFSD entry in the MAINTAINERS file to
->> +see which files and directories fall under the NFSD subsystem.
->> +
->> +The proper set of email addresses for NFSD patches are:
->> +
->> +To: the NFSD maintainers and reviewers listed in MAINTAINERS
->> +Cc: linux-nfs@vger.kernel.org and optionally linux-kernel@
->> +
->> +If there are other subsystems involved in the patches (for example
->> +MM or RDMA) their primary mailing list address can be included in
->> +the Cc: field. Other contributors and interested parties may be
->> +included there as well.
->> +
->> +In general we prefer that contributors use common patch email tools
->> +such as "git send-email" or "stg email format/send", which tend to
->> +get the details right without a lot of fuss.
->> +
->> +A series consisting of a single patch is not required to have a
->> +cover letter. However, a cover letter can be included if there is
->> +substantial context that is not appropriate to include in the
->> +patch description.
->> +
->> +Please note that cover letters are not part of the work that is
->> +committed to the kernel source code base or its commit history.
->> +Therefore always try to keep pertinent information in the patch
->> +descriptions.
+>> +               else
+>> +                       wake_up(&req->waitq);
+>>          }
+>>
+>>          if (test_bit(FR_ASYNC, &req->flags))
+>> diff --git a/include/linux/wait.h b/include/linux/wait.h
+>> index f648044466d5f55f2d65a3aa153b4dfe39f0b6dc..831a187b3f68f0707c75ceee919fec338db410b3 100644
+>> --- a/include/linux/wait.h
+>> +++ b/include/linux/wait.h
+>> @@ -219,6 +219,7 @@ void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode);
+>>   void __wake_up_pollfree(struct wait_queue_head *wq_head);
+>>
+>>   #define wake_up(x)                     __wake_up(x, TASK_NORMAL, 1, NULL)
+>> +#define wake_up_on_current_cpu(x)      __wake_up_on_current_cpu(x, TASK_NORMAL, NULL)
+>>   #define wake_up_nr(x, nr)              __wake_up(x, TASK_NORMAL, nr, NULL)
+>>   #define wake_up_all(x)                 __wake_up(x, TASK_NORMAL, 0, NULL)
+>>   #define wake_up_locked(x)              __wake_up_locked((x), TASK_NORMAL, 1)
+>> @@ -479,9 +480,8 @@ do {                                                                                \
+>>          __wait_event_cmd(wq_head, condition, cmd1, cmd2);                       \
+>>   } while (0)
+>>
+>> -#define __wait_event_interruptible(wq_head, condition)                         \
+>> -       ___wait_event(wq_head, condition, TASK_INTERRUPTIBLE, 0, 0,             \
+>> -                     schedule())
+>> +#define __wait_event_interruptible(wq_head, condition) \
+>> +       ___wait_event(wq_head, condition, TASK_INTERRUPTIBLE, 0, 0, schedule())
+>>
+>>   /**
+>>    * wait_event_interruptible - sleep until a condition gets true
+>> diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
+>> index 20f27e2cf7aec691af040fcf2236a20374ec66bf..94120076bc1ae465735843cc5821ca532d9c398a 100644
+>> --- a/kernel/sched/wait.c
+>> +++ b/kernel/sched/wait.c
+>> @@ -147,10 +147,24 @@ int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
+>>   }
+>>   EXPORT_SYMBOL(__wake_up);
+>>
+>> -void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+>> +/**
+>> + * __wake_up_on_current_cpu - wake up threads blocked on a waitqueue, on the
+>> + * current cpu
+>> + * @wq_head: the waitqueue
+>> + * @mode: which threads
+>> + * @nr_exclusive: how many wake-one or wake-many threads to wake up
 > 
-> Are you willing to take pull requests from people with large patchsets?
+> I don't think you meant to include this line?
 
-Generally we prefer patches to go through the mailing list, as Linus
-(and others) will look for author/commit dates and such to match
-against email post dates, and because R-b and other tags are pulled in
-automatically.
+Yeah, the entire comment is broken :( Sorry about that.
 
-Also, if there's a bug to be reported, posters like to Reply-To the
-email patch submission, which would be missing for a pull request
-style ingestion.
-
-I'm sure that at some point in the future I will lunch on all of these
-words.
-
-
-> If people sending PRs paste their cover letter into the tag, then you
-> effectively preserve that cover letter when you pull the branch.
-> Example:
 > 
-> First I started with:
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/tag/?h=kconfig-2025-changes_2025-09-15
+>> + * @key: is directly passed to the wakeup function
+>> + *
+>> + * If this function wakes up a task, it executes a full memory barrier
+>> + * before accessing the task state.  Returns the number of exclusive
+>> + * tasks that were awaken.
 > 
-> Then sent a PR to Carlos:
-> https://lore.kernel.org/linux-xfs/175708766783.3403120.8622863816662379875.stg-ugh@frogsfrogsfrogs/
+> Doesn't this return a void?
 > 
-> He merged it into his xfs for-next branch, which in turn is what Linus
-> pulled:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/xfs?id=e90dcba0a350836a5e1a1ac0f65f9e74644d7d3b
-> 
-> [and no, it's not going splendidly :(]
 
-I noticed Linus' recent suggestion about ingesting cover letters as
-merge commit messages. I might use this mechanism to construct nfsd-next
-in the future.
-
-But generally I'm not crazy about adding even more complexity to the
-kernel's merge graph this way.
+Yeah, I promise I triple check next time when I copy and paste comments.
 
 
->> +Patches that survive in nfsd-next are included in the next NFSD
->> +merge window pull request. These windows occur once every eight
->> +weeks.
-> 
-> I thought we were at every 63 days (i.e. 9 weeks)?
-
-Ja. Oops. I will fix this.
-
-
->> +Community roles and their authority
->> +-----------------------------------
->> +The purpose of Linux subsystem communities is to provide expertise
->> +and active stewardship of a narrow set of source files in the Linux
->> +kernel. This can include managing user space tooling as well.
->> +
->> +To contextualize the structure of the Linux NFS community that
->> +is responsible for stewardship of the NFS server code base, we
->> +define the community roles here.
->> +
->> +- **Contributor** : Anyone who submits a code change, bug fix,
->> +  recommendation, documentation fix, and so on. A contributor can
->> +  submit regularly or infrequently.
->> +
->> +- **Outside Contributor** : A contributor who is not a regular actor
->> +  in the Linux NFS community. This can mean someone who contributes
->> +  to other parts of the kernel, or someone who just noticed a
->> +  misspelling in a comment and sent a patch.
->> +
->> +- **Reviewer** : Someone who is named in the MAINTAINERS file as a
->> +  reviewer is an area expert who can request changes to contributed
->> +  code, and expects that contributors will address the request.
->> +
->> +- **External Reviewer** : Someone who is not named in the
->> +  MAINTAINERS file as a reviewer, but who is an area expert.
->> +  Examples include Linux kernel contributors with networking,
->> +  security, or persistent storage expertise, or developers who
->> +  contribute primarily to other NFS implementations.
->> +
->> +One or more people will take on the following roles. These people
->> +are often generically referred to as "maintainers", and are
->> +identified in the MAINTAINERS file with the "M:" tag under the NFSD
->> +subsystem.
->> +
->> +- **Upstream Release Manager** : This role is responsible for
->> +  curating contributions into a branch, reviewing test results, and
->> +  then sending a pull request during merge windows. There is a
->> +  trust relationship between the release manager and Linus.
->> +
->> +- **Bug Triager** : Someone who is a first responder to bug reports
->> +  submitted to the linux-nfs mailing list or bug trackers, and helps
->> +  troubleshoot and identify next steps.
->> +
->> +- **Security Lead** : The security lead handles contacts from the
->> +  security community to resolve immediate issues, as well as dealing
->> +  with long-term security issues such as supply chain concerns. For
->> +  upstream, that's usually whether contributions violate licensing
->> +  or other intellectual property agreements.
->> +
->> +- **Testing Lead** : The testing lead builds and runs the test
->> +  infrastructure for the subsystem. The testing lead may ask for
->> +  patches to be dropped because of ongoing high defect rates.
->> +
->> +- **LTS Maintainer** : The LTS maintainer is responsible for managing
->> +  the Fixes: and Cc: stable annotations on patches, and seeing that
->> +  patches that cannot be automatically applied to LTS kernels get
->> +  proper manual backports as necessary.
->> +
->> +- **Community Manager** : This umpire role can be asked to call balls
->> +  and strikes during conflicts, but is also responsible for ensuring
->> +  the health of the relationships within the community and for
->> +  facilitating discussions on long-term topics such as how to manage
->> +  growing technical debt.
-> 
-> Seems reasonable to me; I hope there's enough people in your community
-> to fill out these roles.
-
-Not likely ;-) But it's great to have the housekeeping documented
-somewhere. Thanks for getting this started.
-
-
--- 
-Chuck Lever
+Thanks,
+Bernd
 
