@@ -1,109 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-64199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A2EBDC97D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 07:23:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FBDBDC9C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 07:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B7E1927FFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 05:24:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7DE54EBB38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 05:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EC130275F;
-	Wed, 15 Oct 2025 05:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496DD303C96;
+	Wed, 15 Oct 2025 05:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQMy/0jU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scO9Kl4R"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDD91DFE22
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A459F3009D5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 05:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505832; cv=none; b=Xs858NyUJiqhe/r19yM0V+BzhXk4Z7vjUFbO7ckO6IiCkXKWElFABNuLJy2YP7manQHylSvjhcbCN/hQBoRFZhO/j69UiSItAHYBgqcgHLlocl5NBL19QGJeibE+w0uCTk02rwB7Ueu5Xq+h7Gr2SUg6L6t5SRF35V9AygPrmCs=
+	t=1760506797; cv=none; b=ZcS8srwqLD+hFyE5xyRdTv0dnDto8NxGrGWNWfGBz3kzxhKqRM+EBe1MQE5B9uNpie0+oAkJU6FtUDlDLrE6tLEONLx/lt8HZC5OAfHglmOZbW7V58ddKEdCMpZp+Pm2rmjOYFDw8iTTUuV8C8og/TxpxPuNAYaTylBBUpMH4Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505832; c=relaxed/simple;
-	bh=Y8W6GMzQJCTy0WdazAXCGfrxQoa7TUygfSxQG7gH54Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=AlBk5vdNRobdZ0896ZA965HRpNB8BONZEKZ35+i8GoMhf/my6j/9cONzUbVEN5wv92WOQQvll/aKBd3984ou+JAGFjuiaPsxDhhQNeMQcKG90okCXJ/IAiXUKiG47nRWjBF5r8WJectU9Z2anlZzybmqNpuX0YHvCWloZYur6yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQMy/0jU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CFBC19422
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:51 +0000 (UTC)
+	s=arc-20240116; t=1760506797; c=relaxed/simple;
+	bh=N2YMTAv5/Erss4vrbn7vowBRWnEvN4sv8YMq6BF6G5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g0/Fayw9a1owPS0+MLAuuC3y/RTJUSCxTp4BOQYhFclKCxUGClrurqGQhMnHfUPiW6F3rw0dv/FEQOCHbBlkPCbqlwcaauVmQ9BitoiJtAP+9y8FXmCh3llogXcYSG45do4mkZKVA0tKl397wNfnFDL9EjbM06YjQpa8O6ZDBwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scO9Kl4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A110C113D0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 05:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760505831;
-	bh=Y8W6GMzQJCTy0WdazAXCGfrxQoa7TUygfSxQG7gH54Q=;
-	h=From:Date:Subject:To:From;
-	b=pQMy/0jUq03RPNP6Ap4Hr7HszrgXpTj9Pq6kDYmHU/T17j9GygoY/ti4WLmLreNbP
-	 h1tpMJRASCkRPoT6F24sWhCkFnhoY+pOPKi36ES5mJc7adIMXuW1Sl+mb8K9i86UaG
-	 PDCgqtElqyzCANYEQMEK6oGUG0WMN7GwAJIdQLmgYpj4d+qhqffjB33h4W6JjHcPYZ
-	 flY9wGCHE6yX/KqH33lKxZ3n20TMPc6Oe4rhqEpYu0QWv/rkvqJQv4vuwKJ/IrubF7
-	 SZ46nmJymV+gT5vOPuBdZMv46wNYVuys/uqPqBVg8NRM3rm5N2obaiEy0hQSoE+dlG
-	 EQ98L+/SI1IxQ==
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso241240066b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 22:23:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWL6jbwAGyygACSI0/dCdDMnteaxpOPIGk1ksG5IIcr4gQSZMWSAdHdUiDhfj5oqGeDQTAo8xcpHN0ZRtUE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsiGaUKBqg+XxWxNiVxzJCuwrS4hlubu+S1ESUhfEnWMOX1OYk
-	yDISQ8A32ZvKZTBhWjrYUTXNuuLiQ48BvlB+1Agxk7/QSC0m4AbSE7BfqWDWD5qa/jL9mGQ2+MT
-	A12lbZsmriVDiMn3tCMPHpRNLmDZ7+8c=
-X-Google-Smtp-Source: AGHT+IEUPHiSWgq5faqpmwL8xJofNXM/lE4J2CeNTMOWn1cghhM0lpXSpaWufPEH6LZhD2zU5fD2fAcuJbGez70kiuw=
-X-Received: by 2002:a17:907:7f93:b0:b04:b446:355 with SMTP id
- a640c23a62f3a-b50aca01315mr2812821166b.59.1760505829916; Tue, 14 Oct 2025
- 22:23:49 -0700 (PDT)
+	s=k20201202; t=1760506797;
+	bh=N2YMTAv5/Erss4vrbn7vowBRWnEvN4sv8YMq6BF6G5Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=scO9Kl4RafaeNniBn95u3yg7MhdlvRM+SMiQv+fVPNGqXLManr4VTeidZ2y5QsLVi
+	 KLNSVquKkWAqEpQ0QYSQel8RhFlMjTkugXrCEiCwD1nDVR+lpaE/Q6aL4QkS/RZ/Oj
+	 LtB/pzGr9EVHc1r1/lruQO+1j4GL2Ixvx1qNuu2K2olKp+NNnZtSR0sWP/t0GFkSth
+	 wmoJkR0GRqMi7mbulOLWlTF3i56eFqcHiWJU9vJpuLFICTZFmhszFFVF+uXcMrLTHy
+	 m5EHNs+ZrlzwOdt8DTR5+5XIPitx/hJ82W6+jiYSuofAmlsc05fI+ljXaDBTWDFs6b
+	 LXBHWOWFmRF8w==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b4aed12cea3so970519066b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 22:39:57 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yy6kbKdvMt6UhLmxyou1Sm1zRF2CNug8viVCbWplSpF8pEVBN5W
+	oEk9cXYCjSxjprXaPPlwoWVY1d6ERMG91E7zj6JHBBjOoCF/fMk8Cvm4G8M5spB8l/hYybdLy1K
+	nhHG4FtJxWpiaOoL19nifgvNm0xg/8u4=
+X-Google-Smtp-Source: AGHT+IH1vMU/orRGy0ZX6vYibEmnp37EGo9VhkFW5FLl7jTp9OahtUDri88B+d77LmUdc6jIEPU+Xohtq+ywr95c8Os=
+X-Received: by 2002:a17:906:ee87:b0:b3c:3c8e:189d with SMTP id
+ a640c23a62f3a-b50abfd3442mr2965512266b.32.1760506795889; Tue, 14 Oct 2025
+ 22:39:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251014130146.3948175-1-p22gone@gmail.com>
+In-Reply-To: <20251014130146.3948175-1-p22gone@gmail.com>
 From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 15 Oct 2025 14:23:38 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8OsoXbJTybYwFTvUe+utUyi9Lw3SMdObgCA82S-b-mQA@mail.gmail.com>
-X-Gm-Features: AS18NWDtNB4XBKJsk9bsIWtu3RKLDyGHNNp0REg0bc-1G4yzVEhvLrBLs_i9XO4
-Message-ID: <CAKYAXd8OsoXbJTybYwFTvUe+utUyi9Lw3SMdObgCA82S-b-mQA@mail.gmail.com>
-Subject: [ANNOUNCE] exfatprogs-1.3.0 version released
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Goldwyn Rodrigues <rgoldwyn@suse.com>, 
-	Nicolas Boos <nicolas.boos@wanadoo.fr>, sedat.dilek@gmail.com, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Luca Stefani <luca.stefani.ge1@gmail.com>, 
-	Matthieu CASTET <castet.matthieu@free.fr>, Sven Hoexter <sven@stormbind.net>, 
-	Ethan Sommer <e5ten.arch@gmail.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>, 
-	Eric Sandeen <sandeen@sandeen.net>, 3394797836@qq.com
+Date: Wed, 15 Oct 2025 14:39:42 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-OSYg3fVoxDKVQm6r2kQDJuR-UfL26_ijoCPMsxX=L8Q@mail.gmail.com>
+X-Gm-Features: AS18NWAp2ZUhgfa2PaM3K8dAQn-mvshE5Ir3V9wZGwh6SOrfZ_xhxjVxhKxZhKE
+Message-ID: <CAKYAXd-OSYg3fVoxDKVQm6r2kQDJuR-UfL26_ijoCPMsxX=L8Q@mail.gmail.com>
+Subject: Re: [PATCH] fs: exfat: fix improper check of dentry.stream.valid_size
+To: Jaehun Gou <p22gone@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Seunghun Han <kkamagui@gmail.com>, Jihoon Kwon <jimmyxyz010315@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi folks,
-
-In this release, a new tool, defrag.exfat, has been added to perform
-defragmentation on exFAT volumes, featuring the following command-line options:
-
-  - defrag.exfat    /dev/sdX: Perform defragmentation with "fsck warning"
-  - defrag.exfat -f /dev/sdX: Force defragmentation (skip fsck warning)
-  - defrag.exfat -a /dev/sdX: Assess current fragmentation status
-
-Additionally, the quick format time of mkfs has been significantly improved:
-in the worst-case scenario of a 2TB partition with a 512B cluster size,
-the time was reduced from 3 minutes to just 9 seconds.
-
-Any feedback is welcome!:)
-
-NEW FEATURES :
- * defrag.exfat: add a tool to defragment an exFAT
-   filesystem or assess its fragmentation status.
-   See a man page.
-
-CHANGES :
- * mkfs.exfat: minimize zero-out initialization work
-   in quick format mode to reduce I/O time.
- * fsck.exfat: set the entry after an unused entry as unused.
-
-BUG FIXES :
- * mkfs.exfat: fix incorrect FAT byte length calculation.
- * mkfs.exfat: avoid setting physical sector size into sector_size field.
- * fsck.exfat: fix a memory leaks in an error path.
-
-The git tree is at:
-      https://github.com/exfatprogs/exfatprogs
-
-The tarballs can be found at:
-      https://github.com/exfatprogs/exfatprogs/releases/download/1.3.0/exfatprogs-1.3.0.tar.gz
+On Tue, Oct 14, 2025 at 10:02=E2=80=AFPM Jaehun Gou <p22gone@gmail.com> wro=
+te:
+>
+> We found an infinite loop bug in the exFAT file system that can lead to a
+> Denial-of-Service (DoS) condition. When a dentry in an exFAT filesystem i=
+s
+> malformed, the following system calls =E2=80=94 SYS_openat, SYS_ftruncate=
+, and
+> SYS_pwrite64 =E2=80=94 can cause the kernel to hang.
+>
+> Root cause analysis shows that the size validation code in exfat_find()
+> does not check whether dentry.stream.valid_size is negative. As a result,
+> the system calls mentioned above can succeed and eventually trigger the D=
+oS
+> issue.
+>
+> This patch adds a check for negative dentry.stream.valid_size to prevent
+> this vulnerability.
+>
+> Co-developed-by: Seunghun Han <kkamagui@gmail.com>
+> Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+> Co-developed-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
+> Signed-off-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
+> Signed-off-by: Jaehun Gou <p22gone@gmail.com>
+Applied it to #dev.
+Thanks!
 
