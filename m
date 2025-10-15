@@ -1,88 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-64176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A270BDC056
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 03:48:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E55BBDC057
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 03:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 868C6353C1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 01:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398321926A6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 01:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25092FABFE;
-	Wed, 15 Oct 2025 01:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C099B2FB610;
+	Wed, 15 Oct 2025 01:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="kTspozWO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v3mx+uA1"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="OWSY8kHr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QLgQyjp+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5D42F7478
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 01:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD622F7478
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 01:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760492893; cv=none; b=KyIETyOQXP1OzGjT0ubAWyq8CMtxmwqPhFp3BeYLJ9mmGNuUI80zLEnJLcWHVrjMC9U7Qe2Fe7tT66E+6F9gFmSoodXV6etr76hS6gfMucusSk5i58sqw/oYk37xqKH0mPfdojPSuODWsHtyrl/KIyoo3d62JxhpLWJRLNPxhwU=
+	t=1760492897; cv=none; b=lQAPIwzOeGUufCRD378QUQ72Bxb1KR14kmExykuStJ8WC/Vh2OoI7Tu7/3NVJvRf8aWHMjw8oC8niTfo6Bo/WYRrP1wfEtnulfdq74cgk7WVs8YdhLnKX8DiEBA8Lgzt2WXdUCYHZyQ4c4eSQtgf8Uf6pn6vE59hOsEGV2XV+E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760492893; c=relaxed/simple;
-	bh=K3hLD0sSUiPdZTAuBvTnRAuf/dhsNvD9+8VG2yjikww=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bt1htH2kPO70Zt65sTS5aiFOoRX8tWSv6AwZos5N3fOOStR8wAR3ro3Xv8iGengbAWLYUPtIV0cFczfLx15gNGxkLNVVxIsZy3cPKjvkPgpd6+oRgDznn20JA7cT+Xdnl9Z0EWbHFe4CA8fXgVSLf/peJCmynkmpR7GBi0KZQpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=kTspozWO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=v3mx+uA1; arc=none smtp.client-ip=103.168.172.153
+	s=arc-20240116; t=1760492897; c=relaxed/simple;
+	bh=jP0VItjW9TmC0N0ZbtcfmmKXjB/xRix3f/Yq+pI0+9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gqqoAIlDvWTtTj7d8CNpcT+4L8NsCyajb26IDU9z5UHxNZncx0A7XAtNsEW55gLDdcFnSui6VaB7pCPQmlxUC5LzD6mfSLNByR4YeVgwVCbecsKQIAN5Lohu5yfeazhzS2LuJPEZ1gg+XV5zITwhKxV9YXvmfLA3k7Fv5nO6L4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=OWSY8kHr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QLgQyjp+; arc=none smtp.client-ip=103.168.172.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 6B81614000D7;
-	Tue, 14 Oct 2025 21:48:09 -0400 (EDT)
+	by mailfout.phl.internal (Postfix) with ESMTP id 0482DEC0241;
+	Tue, 14 Oct 2025 21:48:14 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 14 Oct 2025 21:48:09 -0400
+  by phl-compute-09.internal (MEProxy); Tue, 14 Oct 2025 21:48:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to; s=fm2; t=1760492889; x=1760579289; bh=e0tSsJjDvN
-	4YWXUkunkiD5YBN1AIh2ndfBlZRXH0j6Q=; b=kTspozWOSLA4x+b5ulcIBmeb1w
-	r/3UYjPF8vpv/NgTfbrnfybVW6peqwmp+TiZyOFXXNMT5mHDdLyj5uwRhjqnUwTi
-	HTb9N8pbv29mwq1n92sO2Kaz8xb4jIti/tRZ5tcwm8Lu02G3tJY/xlOmL30sTsqY
-	/ERExnqYSKyDfT64MyWtMgeU2qNiEMIe+5kqitlwVGndFSYiGQGD/SK5ekX06BbX
-	uf5D9lu7/MrAy2YJhohVDrQ28cvrvJoQnK31lhSZN7dsIvHOMZJgNvhP4vee5S4K
-	bXAwVy4d8aF1FWHxp9zQT2C0BB/HDlA7DEt7QQNVqjItzRGMpdrxocT1ajaA==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:reply-to:subject:subject:to:to; s=fm2; t=1760492894;
+	 x=1760579294; bh=OmYIKVAm3NJgSpHW8ca60oUoTW8yQaaXXVdC2pwpq+I=; b=
+	OWSY8kHrsjNcBYJBRemMKtY4N6Bc+JBngqB/UEJz8Y86m9NAMU8SsaHSvX/tF11a
+	S9+E5FLSbNhC4tE8bA4b9GYivmhCJ8SXUV/jz3pU1GeeZEHhhmpUTqR2Ia7t5NOZ
+	TZTKU43rahsE7Y91JNb0vZpKM+j4jOqjNqYBzB6tXq4Z4gOKgZavYyyN/Qbio9Km
+	2+63yFZPQqvv6TFqrNRATRTdH6R8lJ8EZ/vuKDaY6vvtJVSBUgmusLlrsB1zS1M5
+	wz4uLCuHi7BCO/1DbRy6SjsDztWGwZFLYaxQRMYO4iUjqLo4Rnh0vwaeCS7sATxj
+	NsIU6rMp1tTGR3FzvqlPXg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1760492889; x=1760579289; bh=e0tSsJjDvN4YWXUkunkiD5YBN1AI
-	h2ndfBlZRXH0j6Q=; b=v3mx+uA1ynYFibSLZSK6piQZPm5Zn79e5RASWU464MpH
-	fw+Y0DT6F0u5sw7/U9UhGJ7YVcq2Ws4tUhuPLUgjpXSUHeB6WUXxxUYTkIcSyoEw
-	EsOzqPyiuYyGLzcldGF8/ruOvEgkiDx5rgZv45K036IU54ctE3yKeauA9z8fTK9C
-	IiOHWqmviYW8R1+7zHnPm0zndBkA6y6M3JWNS6259tHm23X4OgoB18qXoF13orMV
-	lzDN5CtF+0+lEDYyOqd2AbDiGUz8PdOa0w6wKwf88ulTvsd7tC3IUR1coDU1GD38
-	N9rfgkPSO1rpfUO5S/gGwL1xb8kFITwngU0/aT7SDA==
-X-ME-Sender: <xms:WP3uaKgPaO8q-V9cGh07vB5W0XxID1sbD4QqORu1kolf04Fc2TGSfg>
-    <xme:WP3uaF-5bxtlgyKAKJQPoM2oOs-0qjOUiZoguWUEYX952N9UIO6SxpHF5kR2EaffC
-    fV8eJa6clmFxcCE_zZKY481qAsyt4c3KiJGlbs9GDy5Y3Llmg>
-X-ME-Received: <xmr:WP3uaBG-uWJieTgPheSXapPkwMKFUGwOpdwtJwGY7XwySi7oBZoHq_Nc_3-TRACWWaSieSE1SGyPA0SMRNfuIfJc8QU7pBOiyk7rVbbmMjL9>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1760492894; x=1760579294; bh=O
+	mYIKVAm3NJgSpHW8ca60oUoTW8yQaaXXVdC2pwpq+I=; b=QLgQyjp+rOwEFFsxw
+	qoD20d5jnnDKapihP1eyanSibqQ9uK2bHo7ID3LXJUhqkg4MqgVCiA+XN/jMxdqv
+	jmNVWOm93t3opSfRUG2xEykk+2qHlNNi2jnUbOtfJZtOb2kXPav+fm5Ct9x9lTdg
+	ZG7ia1dI/tWF2y3h1+9xUp45wkqh9/5Sbs8Fb6XZix8+pU+C0S3rV3Y2tO+DHDh2
+	I7vCzDuoVtel2/MSZrJwHBMf2ffpNOGZYKcLUNjU2L58xj/fMP6s20GxblE9tuZA
+	yiZRshfo8cHjJ2htGWjzmBEkGYwB9C0r1/Uzco6Ey1MS77pmMYTYZohCoN8T17aW
+	KtDzQ==
+X-ME-Sender: <xms:Xf3uaBKAWbhvRX1XvjmiYZCXzyO5WrfWDxOioA4LBvSyBmS77fOf5A>
+    <xme:Xf3uaIHS8yKPq1Q3dx0t5FvJtXDswebuCqT8TMWUWUtPMoWVce7t975EJ8oCViOFq
+    yc28_0l91flavDgvgGXOVCjmBnXIdhe8KJoKHGK_p5XUz2k>
+X-ME-Received: <xmr:Xf3uaIv95OtH09qK7k3vP5bQqAOZUyCTdUEBElM_gMkpGzaeDI2U1a_5lVOePgHolf9OBppN0AIvbbpDGCd1332lxb47VvJ50zQIQsBPndKa>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddvudefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhho
-    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepge
-    etfeegtddtvdeigfegueevfeelleelgfejueefueektdelieeikeevtdelveelnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
-    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtph
-    htthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepjhhlrgihthhonheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:Wf3uaIk3U97BS4y5RikvOLqLrbzBF-lyfbZw5HbA2dmNgX52Wt9MRQ>
-    <xmx:Wf3uaFaX41hvddQDQGj2EQpNfLK6Wy0wzdKZXz8lYkez0VWATCoaPw>
-    <xmx:Wf3uaNEh1vg5_dkgb-mDb-BdpF0I26xAWzsNyzmJMPydakIxEg1WeQ>
-    <xmx:Wf3uaGIA7wcPGyD5PioO4y3H5YHsPFS-XHon-5cQ3swECZsEpltBPg>
-    <xmx:Wf3uaC77xI7w2NghlaW01ueVASBjsyKfM6O4kYBj-YSMZ9stbKwL6yw0>
+    gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepjhhlrgihthhonh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:Xf3uaHvaPHHmlZz9oLEeudoAD6Y9Sc03PDnr7XFUV_dYh0_tJX4yqw>
+    <xmx:Xf3uaGBk2-GbfZiD47lxAUSrvm4BV7HsyA_csmOnc6AyUHMZ7UDXFA>
+    <xmx:Xf3uaBNrx50VWo_neXVBTHI-dKnIvEkTskwcdTO9BAGD3UFYrUiIGQ>
+    <xmx:Xf3uaHx9VM_r5ljSh-LTby65eU_MwiVxWL_3Z0HO55ZBQBIo4TJ61w>
+    <xmx:Xf3uaIhgJw3S9F6s8-krYGIB9O69aq4jSsVOY58CrhDmGJqdvqRO0TZT>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 21:48:06 -0400 (EDT)
+ 14 Oct 2025 21:48:11 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
@@ -90,10 +93,12 @@ To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	Jeff Layton <jlayton@kernel.org>
 Cc: "Jan Kara" <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 00/14] Create and use APIs to centralise locking for directory ops.
-Date: Wed, 15 Oct 2025 12:46:52 +1100
-Message-ID: <20251015014756.2073439-1-neilb@ownmail.net>
+Subject: [PATCH v2 01/14] debugfs: rename end_creating() to debugfs_end_creating()
+Date: Wed, 15 Oct 2025 12:46:53 +1100
+Message-ID: <20251015014756.2073439-2-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+In-Reply-To: <20251015014756.2073439-1-neilb@ownmail.net>
+References: <20251015014756.2073439-1-neilb@ownmail.net>
 Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -103,39 +108,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Here is a new series in response to review (thanks!).
+From: NeilBrown <neil@brown.name>
 
-The series creates a number of interfaces that combine locking and lookup, or
-sometimes do the locking without lookup.
-After this series there are still a few places where non-VFS code knows
-about the locking rules.  Places that call simple_start_creating()
-still have explicit unlock on the parent (I think).  Al is doing work
-on those places so I'll wait until he is finished.
-Also there explicit locking one place in nfsd which is changed by an
-in-flight patch.  That lands it can be updated to use these interfaces.
+By not using the generic end_creating() name here we are free to use it
+more globally for a more generic function.
+This should have been done when start_creating() was renamed.
 
-The first patch here should have been part of the last patch of the
-previous series - sorry for leaving it out.
+For consistency, also rename failed_creating().
 
-I've combined the new interface with changes is various places to use
-the new interfaces.  I think it is easier to reveiew the design that way.
-If necessary I can split these out to have separate patches for each place
-that new APIs are used if the general design is accepted.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/debugfs/inode.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-NeilBrown
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 661a99a7dfbe..f241b9df642a 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -403,7 +403,7 @@ static struct dentry *debugfs_start_creating(const char *name,
+ 	return dentry;
+ }
+ 
+-static struct dentry *failed_creating(struct dentry *dentry)
++static struct dentry *debugfs_failed_creating(struct dentry *dentry)
+ {
+ 	inode_unlock(d_inode(dentry->d_parent));
+ 	dput(dentry);
+@@ -411,7 +411,7 @@ static struct dentry *failed_creating(struct dentry *dentry)
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
+-static struct dentry *end_creating(struct dentry *dentry)
++static struct dentry *debugfs_end_creating(struct dentry *dentry)
+ {
+ 	inode_unlock(d_inode(dentry->d_parent));
+ 	return dentry;
+@@ -435,7 +435,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 		return dentry;
+ 
+ 	if (!(debugfs_allow & DEBUGFS_ALLOW_API)) {
+-		failed_creating(dentry);
++		debugfs_failed_creating(dentry);
+ 		return ERR_PTR(-EPERM);
+ 	}
+ 
+@@ -443,7 +443,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 	if (unlikely(!inode)) {
+ 		pr_err("out of free dentries, can not create file '%s'\n",
+ 		       name);
+-		return failed_creating(dentry);
++		return debugfs_failed_creating(dentry);
+ 	}
+ 
+ 	inode->i_mode = mode;
+@@ -458,7 +458,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 
+ 	d_instantiate(dentry, inode);
+ 	fsnotify_create(d_inode(dentry->d_parent), dentry);
+-	return end_creating(dentry);
++	return debugfs_end_creating(dentry);
+ }
+ 
+ struct dentry *debugfs_create_file_full(const char *name, umode_t mode,
+@@ -585,7 +585,7 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+ 		return dentry;
+ 
+ 	if (!(debugfs_allow & DEBUGFS_ALLOW_API)) {
+-		failed_creating(dentry);
++		debugfs_failed_creating(dentry);
+ 		return ERR_PTR(-EPERM);
+ 	}
+ 
+@@ -593,7 +593,7 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+ 	if (unlikely(!inode)) {
+ 		pr_err("out of free dentries, can not create directory '%s'\n",
+ 		       name);
+-		return failed_creating(dentry);
++		return debugfs_failed_creating(dentry);
+ 	}
+ 
+ 	inode->i_mode = S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
+@@ -605,7 +605,7 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+ 	d_instantiate(dentry, inode);
+ 	inc_nlink(d_inode(dentry->d_parent));
+ 	fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
+-	return end_creating(dentry);
++	return debugfs_end_creating(dentry);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_dir);
+ 
+@@ -632,7 +632,7 @@ struct dentry *debugfs_create_automount(const char *name,
+ 		return dentry;
+ 
+ 	if (!(debugfs_allow & DEBUGFS_ALLOW_API)) {
+-		failed_creating(dentry);
++		debugfs_failed_creating(dentry);
+ 		return ERR_PTR(-EPERM);
+ 	}
+ 
+@@ -640,7 +640,7 @@ struct dentry *debugfs_create_automount(const char *name,
+ 	if (unlikely(!inode)) {
+ 		pr_err("out of free dentries, can not create automount '%s'\n",
+ 		       name);
+-		return failed_creating(dentry);
++		return debugfs_failed_creating(dentry);
+ 	}
+ 
+ 	make_empty_dir_inode(inode);
+@@ -652,7 +652,7 @@ struct dentry *debugfs_create_automount(const char *name,
+ 	d_instantiate(dentry, inode);
+ 	inc_nlink(d_inode(dentry->d_parent));
+ 	fsnotify_mkdir(d_inode(dentry->d_parent), dentry);
+-	return end_creating(dentry);
++	return debugfs_end_creating(dentry);
+ }
+ EXPORT_SYMBOL(debugfs_create_automount);
+ 
+@@ -699,13 +699,13 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+ 		pr_err("out of free dentries, can not create symlink '%s'\n",
+ 		       name);
+ 		kfree(link);
+-		return failed_creating(dentry);
++		return debugfs_failed_creating(dentry);
+ 	}
+ 	inode->i_mode = S_IFLNK | S_IRWXUGO;
+ 	inode->i_op = &debugfs_symlink_inode_operations;
+ 	inode->i_link = link;
+ 	d_instantiate(dentry, inode);
+-	return end_creating(dentry);
++	return debugfs_end_creating(dentry);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_symlink);
+ 
+-- 
+2.50.0.107.gf914562f5916.dirty
 
- [PATCH v2 01/14] debugfs: rename end_creating() to
- [PATCH v2 02/14] VFS: introduce start_dirop() and end_dirop()
- [PATCH v2 03/14] VFS: tidy up do_unlinkat()
- [PATCH v2 04/14] VFS/nfsd/cachefiles/ovl: add start_creating() and
- [PATCH v2 05/14] VFS/nfsd/cachefiles/ovl: introduce start_removing()
- [PATCH v2 06/14] VFS: introduce start_creating_noperm() and
- [PATCH v2 07/14] VFS: introduce start_removing_dentry()
- [PATCH v2 08/14] VFS: add start_creating_killable() and
- [PATCH v2 09/14] VFS/nfsd/ovl: introduce start_renaming() and
- [PATCH v2 10/14] VFS/ovl/smb: introduce start_renaming_dentry()
- [PATCH v2 11/14] Add start_renaming_two_dentries()
- [PATCH v2 12/14] ecryptfs: use new start_creating/start_removing APIs
- [PATCH v2 13/14] VFS: change vfs_mkdir() to unlock on failure.
- [PATCH v2 14/14] VFS: introduce end_creating_keep()
 
