@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-64308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BD8BE0720
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 21:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C90BE072C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 21:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717B3585382
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 19:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123D358282E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 19:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6305E310654;
-	Wed, 15 Oct 2025 19:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2335030FC16;
+	Wed, 15 Oct 2025 19:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XmI27w5x"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BGZH6309"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AA330F936
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 19:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A0B30F540
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 19:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760556691; cv=none; b=AN4aEiLyz0yZsdSh+cM+axakg++v54otjF5lEVA/pVEKHyr35FawOFz+eGu9s3bSqtponDiMmF4A9ayDYShm4fJTnrdFyT++/+6oEz3kqSYvxTKShFcayyYe0VwNzFOlKlurnLrcwSD9Ymn2/R4kRDaemd1ssf7xwI5RElZSOys=
+	t=1760556722; cv=none; b=mRqZTUYUagcuuo2WUaX2IuJt9vy2HyFkEb5brdeZUfX6TOk9S0Sy0lY6A5KIpMallchSFPkAUFZpo62vbs22fDU2AEnRD9HNiFIdm1BUIpjSSLe78FQteCKk2zjJp2ELl1NwmnGX4Ww8vlxl7b6m8HuzGv6VrZi7eC+QdF5Wn7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760556691; c=relaxed/simple;
-	bh=kNflbdkxnSak8W84DQ9chfjwf1iwPVGgDeWnudi49IY=;
+	s=arc-20240116; t=1760556722; c=relaxed/simple;
+	bh=vFQ57qEPFFK4a1P47Xt/5YF6jxl+QY81g9//5V0r9E0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GvxxliKb3U3Zw3dXaUuVrKk0obYsX+98i7EnRll6fqL2rKU99PGyN+V5FDsnV+Fv6Ko9j9ryp7mGwzwTOaCDG6czmhndCDXFfjDCB+J2huh9xbe1zPdCbKSO2Lz+7eDMSZIwJqZPAYu+wZUjwmuxi6BzlSD17mSCtbexVF06lms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XmI27w5x; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=jpIUO6pkLLxD5FdeWU5TSHwYtdrFCg3KmMOauh4SdG5pezoJMUgtg1q8lm9li8t5WdztAHPy6xWoBz7KBroVgtx8FVfP6ss3YMD3resIqPfjSvqyDOeX4w9mABhbYSlEkziDL6qE6c/s6iW8wBmwBkJQPTTVxaWvmGiCjJvc9AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BGZH6309; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e35baddc1so71479735e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 12:31:29 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e509374dcso30896685e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 12:32:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760556688; x=1761161488; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760556718; x=1761161518; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YYTBGsDd4ZJL1eAQVxl6XdilN8lmC3un8gI57oa+wc=;
-        b=XmI27w5xlSKnfxgSInyYaWeOIFLoYxyVbK1nfeR85kygPzMmThaIuBowCqgYOJ0Rad
-         g5HBqy+tccEtFAfG+OoopcoNG0RvjCJUreF9jam6sNl2+gp3dpMdZZCMtfw9PEG9u+Tu
-         PDO9errvqX4ws2qc1YlT2rPDVFYmevwWeN3JyMa5DL0GQhXFGay1cpppj5E+gOUUFFl4
-         E8RhiEnCcRduX9qlUPvrWGVpUQUCyNeBRaUp62YcKnlZWWh4t2Wgp8npYisR3YkBue6r
-         jGDZdhm7qb/SSPRac/oZrEsHqyr8TuwY5FDUPWPBprUXJWYowMCU4cY+8HepX5th914A
-         YA5w==
+        bh=/gjm1LijoOvaR4UmxrMCJ1ivWAHmFdej62IpC3mzcB4=;
+        b=BGZH6309bU6Mbs+3J4LnwjlKP1TsCRa6yES/tI0VhKD0BHpaB3l9FbZn/UiCGA6H0t
+         yMSuoidfrDnDN03lgz3vU6xT41uflImWK255l4gKelA07Z81mnhd4wQ+ZyiyXwtJ7gvm
+         K3CDcCMmL9Tb415htIo0hUQAfWC1u+bFWq5gvcAjMylvCPyIYKJoMuYJTq+gIWc1oEqM
+         sjg1Z0NuJEH7E88Dagc06vJhQJ7QpPtiNJjX1UCfwV774xHHQBCFOJIARrw4s/RYMrTc
+         aYh8x0Oh4eZuINjdmnyD+/PRkjVu004xGouOsPRGvh3VI68Rt6uo/QIK9y8emDK8CUky
+         mB9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760556688; x=1761161488;
+        d=1e100.net; s=20230601; t=1760556718; x=1761161518;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YYTBGsDd4ZJL1eAQVxl6XdilN8lmC3un8gI57oa+wc=;
-        b=AnRRvcOez1h9KB/gHZ1h75unYlqVG1VFMgBEV44y/rtczmfmXIunik1w2u5aWZwFRR
-         T/ULRTMzfndbq712Fg9q1JJteLskCT32/YZ9Hch+bNPl2PTYj9qrg8m7/o0/xqZWShpR
-         yYNZDALK1W+rrZHAIoYIL8XA5ilLEk/ESccJIlVDLypotKedcUQnEFFz6b0W8kx4JT7n
-         LKlUXt+VOvhk+CB4gdAeawm3ZjaT4Iu978YHKtdMO276XLGNDjkHxHwZLvYDtiMmbjUN
-         czVsF5HS2jCK5A4KA21r70+mlx/Jufgl7RK/6kd0NqVX2Axs7g9nvVtZuMgn5gBnD0Tl
-         mj0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSJfkKVW8gOX/aGMrT5Yy320vdMybbAHPPfKvC17t5mw7qCem7+it2ICeyEI7RwL03WtyAhWOkDjiqJOvC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6gLllbQjSqLmrHn9LZBJIJEF2XH+8Wh1XdbGPwJuQP8aeUZfL
-	m8A4N0ryB8mfYjoIBmHKHxT04Kp4BrULZGyeYwjGXYOv02XDT/VEGzyyKJXZoQm9TYJXsiuUMmo
-	t3xXuHNrJaera/YwPYA==
-X-Google-Smtp-Source: AGHT+IHkXgCUD/Xg8mwfvq5rsw1NsD7V33g7iy9bartydYztNdh4V9vcMXz0z1HOSr9X/M95RapHcDYXFrnCOyo=
-X-Received: from wmoo1.prod.google.com ([2002:a05:600d:101:b0:45d:e2f3:c626])
+        bh=/gjm1LijoOvaR4UmxrMCJ1ivWAHmFdej62IpC3mzcB4=;
+        b=A2q6QPQ4zx3pabDrLQqiPcvRKnCFuWoCbKaOoVVXnX84f62eHKG4zjiPDlQKyWXDUw
+         LtwazYxRGaKYwYFRh6Six2Orw1pK8Y2ooht7KS1HVdHm4A0qQiyQwPbUkOjB5mdJsMz1
+         209hgYHS/TvJpNvlB88w1I4AA1VMtraKKLYdUel9joqPnHzB9cL4rxETPVMxiuZRmjyW
+         p+YyijkSPPBp5hpHq1l2d+AlD0uxTennFwO44eMa7CP+NobvnGUhysOhxsWad92dJuKJ
+         wajImcbPLBOhhKhwwasm68J+zMgWiBIbgwXdL+uPMRchb2oiLS+9BqabkCsR7iE0Y2Se
+         XbNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVc5WFkCiYfkSAz2eQuJ+8d5HpavQZPWbl7p0jXDD22L1yWT8rHhL/OmS2iFz/ts/8XBs2qq9yBqUwD/6j1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh+V1ghP4w9Xxojab+tTvLJJIGE6TB0H4eB+Eh6w5fw36/ItSK
+	gdFi/kWi/VwzY/ns0ym6K8I7ZzT8yajoa7K72tbqUoCoqxWZxDEhQZvnhUj/+VtXlWzQbQGcR1S
+	BuVGmbuaer9CpwAQ80Q==
+X-Google-Smtp-Source: AGHT+IEL/VHOLFHuIoVUiV/D6Bqe6tW62TJ5aBz6rcqOw3p0/Xw8HWgUhNCxtEkFwsrO9XapAOq1uGfyLXGMMfk=
+X-Received: from wmbd3.prod.google.com ([2002:a05:600c:58c3:b0:46f:aa50:d6ff])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:529a:b0:46e:59bb:63cf with SMTP id 5b1f17b1804b1-46fa9af31d9mr184569055e9.24.1760556688057;
- Wed, 15 Oct 2025 12:31:28 -0700 (PDT)
-Date: Wed, 15 Oct 2025 19:31:27 +0000
-In-Reply-To: <20251015-cstr-core-v17-4-dc5e7aec870d@gmail.com>
+ 2002:a05:600c:138a:b0:46d:7fa2:7579 with SMTP id 5b1f17b1804b1-46fa9a96521mr194128565e9.9.1760556718448;
+ Wed, 15 Oct 2025 12:31:58 -0700 (PDT)
+Date: Wed, 15 Oct 2025 19:31:57 +0000
+In-Reply-To: <20251015-cstr-core-v17-6-dc5e7aec870d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com> <20251015-cstr-core-v17-4-dc5e7aec870d@gmail.com>
-Message-ID: <aO_2j7uQGLbXmZVS@google.com>
-Subject: Re: [PATCH v17 04/11] rust_binder: use `core::ffi::CStr` method names
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com> <20251015-cstr-core-v17-6-dc5e7aec870d@gmail.com>
+Message-ID: <aO_2rb29XrSn0qo3@google.com>
+Subject: Re: [PATCH v17 06/11] rust: alloc: use `kernel::fmt`
 From: Alice Ryhl <aliceryhl@google.com>
 To: Tamir Duberstein <tamird@gmail.com>
 Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -100,14 +100,15 @@ Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
 	linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 15, 2025 at 03:24:34PM -0400, Tamir Duberstein wrote:
-> Prepare for `core::ffi::CStr` taking the place of `kernel::str::CStr` by
-> avoiding methods that only exist on the latter.
+On Wed, Oct 15, 2025 at 03:24:36PM -0400, Tamir Duberstein wrote:
+> Reduce coupling to implementation details of the formatting machinery by
+> avoiding direct use for `core`'s formatting traits and macros.
 > 
-> This backslid in commit eafedbc7c050 ("rust_binder: add Rust Binder
-> driver").
+> This backslid in commit 9def0d0a2a1c ("rust: alloc: add
+> Vec::push_within_capacity").
 > 
 > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
 
