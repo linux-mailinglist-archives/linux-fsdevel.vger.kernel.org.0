@@ -1,129 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-64193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC8EBDC63E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 06:00:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73483BDC651
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 06:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02AEE4E1B24
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 04:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D091918A7750
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Oct 2025 04:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E83B2E7160;
-	Wed, 15 Oct 2025 04:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F28E2EAB64;
+	Wed, 15 Oct 2025 04:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvaO4OEw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HXbSZlaX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AF41B3937
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4691C2DC359
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 04:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760500814; cv=none; b=F0XVtiqzxPHEDHL9Lkf2SiSHd1JZU+btuRneDOSV//BpkysaoA4zMbLDb4k+RkSpM3NaCaxf6h9AEQ0XE1tm9l2rMUGCiQRF3bxV1Qfv9349gGl328PZCm126Qyia4Mi8vhP5kC4DCBm4XcBhMS0TMlAmwFxLyBHO3XvBP4PbA8=
+	t=1760501003; cv=none; b=JxvloBumRXkhS17/dxCyxlrC7TvxTCKxIMbW8CuLMurAluqRcIFZ5Ztf2kPUAsTkHTmcawnhMpzKF0D5Bq+Et1p6WgkUzz2kVJbyb4Q+UruGh9g56nrVbc1sZOF+QIeEjAfMVvwTsS4Q0wF0B7GSzU58nC/SBNpoeZYXPTy7g44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760500814; c=relaxed/simple;
-	bh=90nu5ejHTH2w8klUmkUE2g2YVvl4bXSM55SkccFfof4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P73SuuryUGFh94FnzPjHB71zfF9gsMDz/ZVvlBHY8wPOAX7q4aT7REBk9BGit8lRBnM+CFlyUd9KbRifgDaOBK3Bg1ub+zR8DDQ4yVdzuI9ezBE5LYxeVSAHNYxyh2uMQdKOmYWLYPIBt1TEin7b7DpYCjy3Lo4dU6ZOsYKrvWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvaO4OEw; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-6360f28c566so986016d50.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 21:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760500812; x=1761105612; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=25O4kccBtnC+yQP8jxbGfZ4sEqGyW1QY7yhZGOqsgSw=;
-        b=TvaO4OEwSFY+CtvLrdrToEhycnBkMVJbL6hvx/UDQS6rsc0JIAOSnRDRgdXAkCgIgP
-         YtFbmI36LwTJGgtdezf3+dWXT9k41LPQCP+DJob/Kbu/EQUlRfH6kq07GTR+ambBjytk
-         tITM2zihHbbacupouRfL4NXfA+p4ERKdv1dhSV5Eq5tjEixLp4fgeOpFe9+7OFN1A0gv
-         FOE7PTVSCmAKB1ynn4zhn0asHHhcL0BVTF7n6GKpkNH+efwtx8sXi4bMEYYEMqEltwZc
-         AQ04UCB/6AW+aCPIWUFgzAkDaDmjx3pYDNYYF0uiLKB96wkMqKmT4AfWYSEHUQMPTN/z
-         Fduw==
+	s=arc-20240116; t=1760501003; c=relaxed/simple;
+	bh=p04wSVedq5RYaX5Nmz9HRn5PNrsa31BCRLo0sVIHALg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EEnMQsR3tDIZKGWPk5Ulx8kayyrwuLm9MiL8q6hEPwyodTnNfjHooA3v7qGFBnmQgH1la4b26h1Fjoi//mDmu8BXWrR2gOXokSHxHhor4040S/0Jc9fPUUB5AaTD830yZCmHCr5mQllQAASLQAZzunJhpP1a+tLawTNYrOk6OaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HXbSZlaX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760501000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F0oQPy6sJALcjkJ1xdOgR0v6F24g1cMKqTRKvMpDOSk=;
+	b=HXbSZlaXoZWg3E+aqUweX1MXrHLK7Zf9igE7myOKqWGFzu0Te2nf9WtGKPeUjXnYfmNK4D
+	nqKJ0OQVTfYmsEaKk5fDIPrpXrkV0YRQGPixQySz4RfDGMJLeQ3ZF1mq5ffhcLSt2vScWj
+	BKva7qMbTp3EtMLZeSFMI8ji1L63Ks0=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-287-NCk8ql79M0OHntH9WBtmww-1; Wed, 15 Oct 2025 00:03:18 -0400
+X-MC-Unique: NCk8ql79M0OHntH9WBtmww-1
+X-Mimecast-MFC-AGG-ID: NCk8ql79M0OHntH9WBtmww_1760500997
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32eb2b284e4so16379365a91.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Oct 2025 21:03:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760500812; x=1761105612;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760500997; x=1761105797;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=25O4kccBtnC+yQP8jxbGfZ4sEqGyW1QY7yhZGOqsgSw=;
-        b=jrxJ44DzXJstvyYlKGBlFj1oyIvCsDWOM90e9ZCtjGqOzFtXd3lu6AeNOarePmzlgB
-         urZ/WrWZ3R4ihapy6VOCUcmq6HXIRNXejNQfZ/WNnHrNV7kOC0wRBkrCMpMgHe+BrQBq
-         njaNSexnkQSuSsT+fNXEX1K3rbw4+REIO8z+Gcm/5soaBwPJHtoQYcsesML5qIoEM3IJ
-         KQ4Py0a1g8ICFc6TCVAHFkOuwhbrbhz14UCGT5WcAqdYsm1EOvmKg0AlChMOdK2vdaJR
-         rdJh3z6nPQk7IyB0FPewWP7pCf4KmINRPbjbWjA0TRtSJkhRz2l4SgrE4m8BLaMIXfBD
-         O/Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnks7Ww0sxL3qq8ywrDYwdtBF+NADT9ElSdYiO5idI8pnPKWRc2kBFVWhaxdS6KnLN0VEaxbLMx8GRvmch@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+976/Ljsj+gH28DWU3SWTH+3vU5AFHzbYnpyibC1QZwvFKmtk
-	GjtheCDrqozpSBPPM4zPhuonBcGrmVxvZERdGAdZLIj68VG1sHkPQ25SXTLinjOilyKp7EGyrF4
-	6Yz1+KFtmF6ADE16t4iXh+LYrBYj0QFg=
-X-Gm-Gg: ASbGnctgSBc9zue55o5pu6UCEy9zHKSZUVkiDIcm1fU+V985vPQXWlHAenWbnM99uu2
-	sCKXqLoL6IvncMh0uxru44NTDLcOtChbqWwIbaUOdrySXatvoTi4DGCaVzOgOm3N79tfITAKNKM
-	/aL/jux0JRDs/HyCTNJYERSvLDxCj79D7JEQZ7OdXvD5RVn6yfHJeaRw==
-X-Google-Smtp-Source: AGHT+IED0UlnmL4L83CwbEMWuT9hnx95y7m8K9g4G+HJg0uh5+EYc8jM5ktVZ+SDbGi9vIq6uZXpbcsCWtPQllqm9tU=
-X-Received: by 2002:a05:690e:14c2:b0:63b:8310:512f with SMTP id
- 956f58d0204a3-63d2bbfc1b3mr895279d50.2.1760500811682; Tue, 14 Oct 2025
- 21:00:11 -0700 (PDT)
+        bh=F0oQPy6sJALcjkJ1xdOgR0v6F24g1cMKqTRKvMpDOSk=;
+        b=nnVtFfVFTPgoX/n/riHATal8ayIrNITVyZSM90r89i3/zrTLMbAOTxqbk+gsAe3Jw4
+         nj3axpVWIvMIZ8vyU8aL+JUQGuotaZVWIBdCBK/uhV05QPFQvTvBVlyo0h+ahnL0xT2z
+         aXHNzQtiZkRw4in633As+/hpLiCpM0cJQTdNvWDoLQFDy4/AwB0PsLQTbstfnMWxcE1V
+         nBy9M4zc8w/5jZdtR7+q8BApTjobeN2DW8zdv6VSnGVli8bI7nRgQVcK1RxJAlOwgiCE
+         Z6pKQEbOMAYIVr2CIdChzVlg+tCceDYcSyavuljW7D1fojMwy++nEuKNOOFDkRuei3O/
+         jxUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCnYh9HmDp/nTrCgsWUZMVPUvNtJjxAKPwgvY2xqGrb95falNmaK1SrbU/L77rIF0q7Q7JcHVWILojheb9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/jD+RZ8C4C6vmyz81HaqyJBxCubeWmUw+0F69nAVIiVSZlDx8
+	PNaMkqq5WMeeGTx6mJG8rj1gXdWLPdVT2UgXq3p7z9iOu7QGAAhXVgypnOM/+MntWHwieLpSVxt
+	/R5y9hpBXkyTCsBj54WS/o1+RkQ3IBwwX5zuMvMs0Nm8fL59/4pXoVa0cOCJv2IzjXNw=
+X-Gm-Gg: ASbGncuFgCMwA31GAbjtFOfP3SjIXr6SY/5JEkFXisxeclLJ87KWD/0H/fzq7gf/F4F
+	W2jpggTSa+cPECv1xfNFd+/YLw2JQ/Z6Oik51zc3x6poZpV/wkFtB5wc4PIKTAHqEoLyD4qoYoM
+	NbCm6GtZ1tVM3+7qSgOUkjMgLbI9zNyCqxxgo0oOtIIJ7faiG0MJYpXYtsL3Pj3FZ3xY46/FirM
+	GDBf3uB/z5EGsGQMxzuHbzf9MsAa7oUAaUWZr/jDt74VmY+Nwtl9qb8uA+Em9xwQFpSpwkWP4NF
+	MCYRruWZ374GdJ79XXGDrlW/OKa+mVbi6o4=
+X-Received: by 2002:a17:90b:1806:b0:32d:db5b:7636 with SMTP id 98e67ed59e1d1-33b513cdaf5mr36389069a91.27.1760500997139;
+        Tue, 14 Oct 2025 21:03:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRFuxW1Voy1mECvxyxh5CgehQPp4dDoRICc/mU73XzzKeQ5F8jWZeJJVvKmOuyelAlOt4irw==
+X-Received: by 2002:a17:90b:1806:b0:32d:db5b:7636 with SMTP id 98e67ed59e1d1-33b513cdaf5mr36389041a91.27.1760500996718;
+        Tue, 14 Oct 2025 21:03:16 -0700 (PDT)
+Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b978607cfsm608006a91.9.2025.10.14.21.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 21:03:16 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH rust-next v2 0/3] rust: miscdevice: add llseek support
+Date: Wed, 15 Oct 2025 13:02:40 +0900
+Message-ID: <20251015040246.151141-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
- <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com> <aO6N-g-y6VbSItzZ@bfoster>
-In-Reply-To: <aO6N-g-y6VbSItzZ@bfoster>
-From: lu gu <giveme.gulu@gmail.com>
-Date: Wed, 15 Oct 2025 11:59:59 +0800
-X-Gm-Features: AS18NWCI-ReyqwcFNhsZ-B_sbfBvh0sSMR8SdI7jeAAmqbyu7RffVJhCQVnxB48
-Message-ID: <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bernd Schubert <bernd@bsbernd.com>, 
-	Brian Foster <bfoster@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
->  Attaching a test patch, minimally tested.
-Since I only have a test environment for kernel 5.15, I ported this
-patch to the FUSE module in 5.15. I ran the previous LTP test cases
-more than ten times, and the data inconsistency issue did not reoccur.
-However, a deadlock occur. Below is the specific stack trace.
-root@ubuntu:~# ps aux | grep ltp
-root       15040  0.0  0.0   2972  1124 pts/2    S+   11:26   0:00
-/root/ltp-install/testcases/bin/doio -N iogen01 -a -v -n 2 -k
-root       15042  0.2  0.0   3036  1320 pts/2    D+   11:26   0:01
-/root/ltp-install/testcases/bin/doio -N iogen01 -a -v -n 2 -k
-root@ubuntu:~# cat /proc/15042/stack
-[<0>] __inode_wait_for_writeback+0xae/0xf0
-[<0>] writeback_single_inode+0x72/0x190
-[<0>] sync_inode_metadata+0x41/0x60
-[<0>] fuse_fsync+0xbf/0x110 [fuse]
-[<0>] vfs_fsync_range+0x49/0x90
-[<0>] fuse_file_write_iter+0x34b/0x470 [fuse]
-[<0>] new_sync_write+0x114/0x1a0
-[<0>] vfs_write+0x1d5/0x270
-[<0>] ksys_write+0x67/0xf0
-[<0>] __x64_sys_write+0x19/0x20
-[<0>] do_syscall_64+0x5c/0xc0
-[<0>] entry_SYSCALL_64_after_hwframe+0x61/0xcb
-root@ubuntu:~# cat /proc/15040/stack
-[<0>] do_wait+0x171/0x310
-[<0>] kernel_wait4+0xaf/0x150
-[<0>] __do_sys_wait4+0x89/0xa0
-[<0>] __x64_sys_wait4+0x1c/0x30
-[<0>] do_syscall_64+0x5c/0xc0
-[<0>] entry_SYSCALL_64_after_hwframe+0x61/0xcb
+Hi all,
 
-Thanks,
-Guangming
+This patch series add support for the llseek file operation to misc
+devices written in Rust.
+
+The first patch introduces pos()/pos_mut() methods to LocalFile and
+File. These helpers allow to refer to the file's position, which is
+required for implementing lseek in misc_device.
+
+The second patch adds the llseek hook to the MiscDevice trait, enabling
+Rust drivers to implement the seeking logic.
+
+The last one updates the rust_misc_device sample to demonstrate the
+usage of the new llseek hook, including a C test program that verifies
+the functionality.
+
+history of this patch:
+
+v2:
+- Introduce pos() and pos_mut() methods to get file positions,
+and use them in sample programs.
+- Add read, write and lseek in the userspace sample program. 
+- Remove unsafe block from the sample program. 
+- In this v2 patch, remove SEEK_END related codes from
+a sample program because it needs inode->i_size which has not
+implemented yet. The purpose of this patch is to introduce
+lseek(). Since implementing an 'inode wrap' requires more
+extensive discussion than adding llseek hook(), I just
+exclude it from this patch series. I believe that whether
+SEEK_END is supported or not has no impact on adding lseek()
+to MiscDevice.
+
+v1:
+https://lore.kernel.org/rust-for-linux/20250818135846.133722-1-ryasuoka@redhat.com/
+
+
+Ryosuke Yasuoka (3):
+  rust: fs: add pos/pos_mut methods for LocalFile struct
+  rust: miscdevice: add llseek support
+  rust: samples: miscdevice: add lseek samples
+
+ rust/kernel/fs/file.rs           | 61 ++++++++++++++++++++++++++++
+ rust/kernel/miscdevice.rs        | 36 +++++++++++++++++
+ samples/rust/rust_misc_device.rs | 68 ++++++++++++++++++++++++++++++++
+ 3 files changed, 165 insertions(+)
+
+
+base-commit: 98906f9d850e4882004749eccb8920649dc98456
+-- 
+2.51.0
+
 
