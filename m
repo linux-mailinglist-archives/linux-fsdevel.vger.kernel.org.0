@@ -1,52 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-64373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12034BE38DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 14:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0536CBE38C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 14:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CE1E585290
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7162F1885F1F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504203376B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652183376B4;
 	Thu, 16 Oct 2025 12:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9+frvlV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzPG9Zfs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D115D335BB1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C4B335BB9;
 	Thu, 16 Oct 2025 12:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760619499; cv=none; b=IlS3MljXiLx7onF1IEKUZ9WpavZSrANkXPyHudN2s5fdis4AeJWq5mpxaX1/rj/EcsjEF7ZmFulZ6g4cVkNOQRCmdLmSCcLYVUemfLtdLy/d5C7omzT8ckZxVHWFnL98gGwhbtVnjNW8RUwHKXvS4RltboNN0d03wDDoW9XlAYc=
+	t=1760619500; cv=none; b=gm0xqDm+CyfsLQgKRHqEm5RlvbdizxFf2ewjH3pdfz2VKbk+trI8iX3m/Mx2c/iuvIL0GI3ZwkMI47rLzqyh2WQBVkhCwhS2kK34dkRdIPD/G+RME7rkwUak+3Tr4+PF42xAYAPhuJrX/vUOEmvVwO4X20zUCKO3dprcwweOGQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760619499; c=relaxed/simple;
-	bh=KD+2NkFaHlPghXWKYGaZ79Eguljp8JHhe47tIb8ZfcQ=;
+	s=arc-20240116; t=1760619500; c=relaxed/simple;
+	bh=WFmYwNqRtEEV71HErtXjnELu0hh+bKYykNpfWVGpcO8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EDDoizY8x6ghlEOWTqz/rsZFV9WzT3Bl4gjE634mUMj8Bf0dhR2NrDPNwttne5kdcnjc6Jz3Lms6P4q6cGTzCE3LCU67QZesVrfRm8Q69HPQmW/okhaSzUvXbHC9jWFIxXd2q8FEvvvWxsiNQYFd63hQkZ8ZfbRLe4h7fqjAwBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9+frvlV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9412CC4AF0B;
+	 In-Reply-To:To:Cc; b=Q0Z2qw8sRc8hXzfLNML8X0HnBawbtxefZHx5TnVi63lJLeuKVqM4SKVElSts2Nf/idHyp1SBsk/IbIkreQrMzFZgke9u/ddN4tmnGCBI02o2loLwv/qNlfDbXqS0oBBkDkhkQuvwKM/VIc11P+P0mDopFf7fOVz/TCaE6a5PLiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzPG9Zfs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A35DAC19423;
 	Thu, 16 Oct 2025 12:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760619499;
-	bh=KD+2NkFaHlPghXWKYGaZ79Eguljp8JHhe47tIb8ZfcQ=;
+	bh=WFmYwNqRtEEV71HErtXjnELu0hh+bKYykNpfWVGpcO8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=k9+frvlVlbq4z6I1Ddd9LIci0XhOAY/RsohBH+JrHhOmcJImgkW3Vr9CuXaz4e1nj
-	 +Ixf3U9cZqW2lVHmW8r76LrmC3uMqosGxuZmhlHQu6GHyqqTfMEfE7vJlbsP608Enr
-	 3cTa6MnZwmm8mvIyOj8qUcXfl+7nAK5A8YWE04Wa8x7vYSoLVA7xyH2c77wqwJbmfA
-	 K+CgoLY1n12TpF6iewlaVYNqAXUa+tDNRh5KkWVtAzowYCR7/VshOkkPDbWmjCklT6
-	 zOxUpx2jf3attQ2TYCLFrkOE8j3nTqSt0pRYeyZIDljo9SHgV2t7iclb6ko40z3te3
-	 YsLt7dTVA7Teg==
+	b=bzPG9ZfsqA4o8+aMTZA4l07OvczF1DHxkajqbDA1uhRxTFFtqCIsACYCjDp61R7le
+	 1z/yMmd34Ty+hX38asvVTCnXsihc0JePXVMTF2Xk0WMW6NF0wuqkvnFeJtr8qCKBZb
+	 fpg2uOfFz9Xr8Cw9QcgjqI9/a+tsLK3VGK+8xrsnncwcEYW7YLEj7spdm/udVMy2zM
+	 L6L3jR+D6jkmRAFC9httB7qQSwtG0Xs2v3G2CNVXQRdtz//qE5bxMe+WHzA9IujY//
+	 49jtR8o52S2LXnfT5tENEm6YrC5JEjZISl4MUH9fchR79e/AN3kvwcffcdBV83PAZ2
+	 uzcrAqNjehJzA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879FACCD183;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CBBCCD19F;
 	Thu, 16 Oct 2025 12:58:19 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Date: Thu, 16 Oct 2025 14:57:53 +0200
-Subject: [PATCH v2 07/11] sysctl: Create integer converters with one macro
+Date: Thu, 16 Oct 2025 14:57:54 +0200
+Subject: [PATCH v2 08/11] sysctl: Add optional range checking to
+ SYSCTL_INT_CONV_CUSTOM
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251016-jag-sysctl_conv-v2-7-a2f16529acc4@kernel.org>
+Message-Id: <20251016-jag-sysctl_conv-v2-8-a2f16529acc4@kernel.org>
 References: <20251016-jag-sysctl_conv-v2-0-a2f16529acc4@kernel.org>
 In-Reply-To: <20251016-jag-sysctl_conv-v2-0-a2f16529acc4@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -63,169 +64,189 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5636;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6108;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=KD+2NkFaHlPghXWKYGaZ79Eguljp8JHhe47tIb8ZfcQ=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjw6+Y2Ed26Q6lscjWsOC3opmYd4U/URhoyW
- HWQZlvWQLJPqYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8OvmAAoJELqXzVK3
- lkFPsqUL/3sTrTN7+xIsoOWEvA+Xzy1vgBK2MTqx7rd98HL2U26kXul6QCrKv6Fq6wmZhvio4ZQ
- jJ/3Iyg5ZrkS5HdvApzPiu5JmNlkeREfNVLe2gvxxFNUVwKmuDq/uepEABEgpYZJ0EHPpUKXhiL
- BsE6xSqbZAn2RUbHmwF525d+IfeWo1BRfGY88O41glcqRGOhE3KGw2jTTVP+oeBRDmte07Rx0GS
- xQBTHSrIdMvzQkhe7/UwWqiotCw2sFppeU2wQCv4/1dAZtDUK0WDrk3RAp60wYaCsCMND93y2KB
- hkhUpfW3STj5NZrlIfghQHMdbSqSOBrOfC2J/CtBecXcGePRkynVXU/ggGXZaZUbNanqvw1iFBN
- MVQv/l7NmvLsJWVfXUVyCVzubrQfDB6tDVmMlWysjujD5v7R2L1EzfSBpTcNrZpV/8UX14m1tcZ
- +WPV/c/egiQQH0bIKvqZylg1fhpms1foZZ1s0uqw/4bWUmgelac+Ddb19PpfC9v9QGtjZZmU5o5
- FI=
+ bh=WFmYwNqRtEEV71HErtXjnELu0hh+bKYykNpfWVGpcO8=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjw6+apDIedVblwlaTEI8ojelRgkHAc7asxX
+ 2RAFfsLi3oEVIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8OvmAAoJELqXzVK3
+ lkFP3hIL/1YA6bZ6sWEABAzd0w8iR1j0DI8ChPn3AQydkeJUsBi9Y7ET9pfipymKMNZ4ny59/bm
+ 0uwEAnjWsqNq6y1zz0cMMpBTCcB8+0QHHd+pqjKPe4gl1X4LZfF+dlFi9bcBKzUv2FiNplHdiGt
+ LpqdJNI/Ty/IC9IpaRX0nAV/qRM86NjeOlmMxcgRwl/De3MSdMGbVO/ixveeAq8zkaJ5ClRsGg5
+ AEfBQFF3H4R3MSTe5oOPE42kbNKjZHDkeaTfnpK+8v4RjMCuh1RFFGPA//9lCrVh4cpvac5KrVt
+ QTd35zuMPpPUBX8h9UzBGBZo/SeANr1Yp9RtX5zhtYlW8oSAlOUjb2epxlHTVALHjbzbbCBVixa
+ Y5VvQRQo1Hi9j6jCqAif/1F5PDgf1cn0AgZRoWhMS/F41oxZ6Pq97/WT4cBrBZ7eLC9BkY599rE
+ 8hMjO8IlToBaCj0I0MUmtGdc1hn8mKMzTVKgZ1xngX8D422cMIjD2rf7Mp74hBHMomko6Hiz5F5
+ PU=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-New SYSCTL_INT_CONV_CUSTOM macro creates "bi-directional" converters
-from a user-to-kernel and a kernel-to-user functions. Replace integer
-versions of do_proc_*_conv functions with the ones from the new macro.
-Rename "_dointvec_" to just "_int_" as these converters are not applied
-to vectors and the "do" is already in the name.
-
-Move the USER_HZ validation directly into proc_dointvec_userhz_jiffies()
+Extend the SYSCTL_INT_CONV_CUSTOM macro with a k_ptr_range_check
+parameter to conditionally generate range validation code. When enabled,
+validation is done against table->extra1 (min) and table->extra2 (max)
+bounds before assignment. Add base minmax and ms_jiffies_minmax
+converter instances that utilize the range checking functionality.
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
- kernel/sysctl.c | 72 ++++++++++++++++++++-------------------------------------
- 1 file changed, 25 insertions(+), 47 deletions(-)
+ kernel/sysctl.c | 106 +++++++++++++++++++++-----------------------------------
+ 1 file changed, 40 insertions(+), 66 deletions(-)
 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index f47bb8af33fb1d2d1a2a7c13d7ca093af82c6400..e7dc4b79e93ea9ab929ce0465143aed74be444e5 100644
+index e7dc4b79e93ea9ab929ce0465143aed74be444e5..60f7618083516a24530f46f6eabccd108e90c74f 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -418,17 +418,25 @@ static SYSCTL_KERN_TO_USER_INT_CONV(_userhz, jiffies_to_clock_t)
+@@ -402,6 +402,34 @@ int sysctl_kern_to_user_int_conv##name(bool *negp,		\
+ 	return 0;						\
+ }
+ 
++/**
++ * To range check on a converted value, use a temp k_ptr
++ * When checking range, value should be within (tbl->extra1, tbl->extra2)
++ */
++#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user,	\
++			       k_ptr_range_check)			\
++int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
++			   int dir, const struct ctl_table *tbl)	\
++{									\
++	if (SYSCTL_KERN_TO_USER(dir))					\
++		return kern_to_user(negp, u_ptr, k_ptr);		\
++									\
++	if (k_ptr_range_check) {					\
++		int tmp_k, ret;						\
++		if (!tbl)						\
++			return -EINVAL;					\
++		ret = user_to_kern(negp, u_ptr, &tmp_k);		\
++		if (ret)						\
++			return ret;					\
++		if ((tbl->extra1 && *(int *)tbl->extra1 > tmp_k) ||	\
++		    (tbl->extra2 && *(int *)tbl->extra2 < tmp_k))	\
++			return -EINVAL;					\
++		WRITE_ONCE(*k_ptr, tmp_k);				\
++	} else								\
++		return user_to_kern(negp, u_ptr, k_ptr);		\
++	return 0;							\
++}
++
+ #define SYSCTL_CONV_IDENTITY(val) val
+ #define SYSCTL_CONV_MULT_HZ(val) ((val) * HZ)
+ #define SYSCTL_CONV_DIV_HZ(val) ((val) / HZ)
+@@ -418,24 +446,21 @@ static SYSCTL_KERN_TO_USER_INT_CONV(_userhz, jiffies_to_clock_t)
  static SYSCTL_USER_TO_KERN_INT_CONV(_ms, msecs_to_jiffies)
  static SYSCTL_KERN_TO_USER_INT_CONV(_ms, jiffies_to_msecs)
  
--static int do_proc_dointvec_conv(bool *negp, unsigned long *u_ptr,
--				 int *k_ptr, int dir,
--				 const struct ctl_table *table)
--{
--	if (SYSCTL_USER_TO_KERN(dir)) {
--		return sysctl_user_to_kern_int_conv(negp, u_ptr, k_ptr);
--	}
+-#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user)	\
+-int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
+-			   int dir, const struct ctl_table *table)	\
+-{									\
+-	if (SYSCTL_USER_TO_KERN(dir))					\
+-		return user_to_kern(negp, u_ptr, k_ptr);		\
+-	return kern_to_user(negp, u_ptr, k_ptr);			\
+-}
 -
--	return sysctl_kern_to_user_int_conv(negp, u_ptr, k_ptr);
-+#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user)	\
-+int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
-+			   int dir, const struct ctl_table *table)	\
-+{									\
-+	if (SYSCTL_USER_TO_KERN(dir))					\
-+		return user_to_kern(negp, u_ptr, k_ptr);		\
-+	return kern_to_user(negp, u_ptr, k_ptr);			\
- }
- 
-+static SYSCTL_INT_CONV_CUSTOM(, sysctl_user_to_kern_int_conv,
-+			      sysctl_kern_to_user_int_conv)
-+static SYSCTL_INT_CONV_CUSTOM(_jiffies, sysctl_user_to_kern_int_conv_hz,
-+			      sysctl_kern_to_user_int_conv_hz)
-+static SYSCTL_INT_CONV_CUSTOM(_userhz_jiffies,
-+			      sysctl_user_to_kern_int_conv_userhz,
-+			      sysctl_kern_to_user_int_conv_userhz)
-+static SYSCTL_INT_CONV_CUSTOM(_ms_jiffies, sysctl_user_to_kern_int_conv_ms,
-+			      sysctl_kern_to_user_int_conv_ms)
+ static SYSCTL_INT_CONV_CUSTOM(, sysctl_user_to_kern_int_conv,
+-			      sysctl_kern_to_user_int_conv)
++			      sysctl_kern_to_user_int_conv, false)
+ static SYSCTL_INT_CONV_CUSTOM(_jiffies, sysctl_user_to_kern_int_conv_hz,
+-			      sysctl_kern_to_user_int_conv_hz)
++			      sysctl_kern_to_user_int_conv_hz, false)
+ static SYSCTL_INT_CONV_CUSTOM(_userhz_jiffies,
+ 			      sysctl_user_to_kern_int_conv_userhz,
+-			      sysctl_kern_to_user_int_conv_userhz)
++			      sysctl_kern_to_user_int_conv_userhz, false)
+ static SYSCTL_INT_CONV_CUSTOM(_ms_jiffies, sysctl_user_to_kern_int_conv_ms,
+-			      sysctl_kern_to_user_int_conv_ms)
++			      sysctl_kern_to_user_int_conv_ms, false)
 +
++static SYSCTL_INT_CONV_CUSTOM(_minmax, sysctl_user_to_kern_int_conv,
++			      sysctl_kern_to_user_int_conv, true)
++static SYSCTL_INT_CONV_CUSTOM(_ms_jiffies_minmax,
++			      sysctl_user_to_kern_int_conv_ms,
++			      sysctl_kern_to_user_int_conv_ms, true)
+ 
  static int do_proc_douintvec_conv(unsigned long *u_ptr,
  				  unsigned int *k_ptr, int dir,
- 				  const struct ctl_table *table)
-@@ -467,7 +475,7 @@ static int do_proc_dointvec(const struct ctl_table *table, int dir,
- 	left = *lenp;
+@@ -721,32 +746,6 @@ int proc_douintvec(const struct ctl_table *table, int dir, void *buffer,
+ 				 do_proc_douintvec_conv);
+ }
  
- 	if (!conv)
--		conv = do_proc_dointvec_conv;
-+		conv = do_proc_int_conv;
+-static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *u_ptr,
+-					int *k_ptr, int dir,
+-					const struct ctl_table *table)
+-{
+-	int tmp, ret, *min, *max;
+-	/*
+-	 * If writing to a kernel variable, first do so via a temporary
+-	 * local int so we can bounds-check it before touching *k_ptr.
+-	 */
+-	int *ip = SYSCTL_USER_TO_KERN(dir) ? &tmp : k_ptr;
+-
+-	ret = do_proc_int_conv(negp, u_ptr, ip, dir, table);
+-	if (ret)
+-		return ret;
+-
+-	if (SYSCTL_USER_TO_KERN(dir)) {
+-		min = (int *) table->extra1;
+-		max = (int *) table->extra2;
+-		if ((min && *min > tmp) || (max && *max < tmp))
+-			return -EINVAL;
+-		WRITE_ONCE(*k_ptr, tmp);
+-	}
+-
+-	return 0;
+-}
+-
+ /**
+  * proc_dointvec_minmax - read a vector of integers with min/max values
+  * @table: the sysctl table
+@@ -768,7 +767,7 @@ int proc_dointvec_minmax(const struct ctl_table *table, int dir,
+ 		  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	return do_proc_dointvec(table, dir, buffer, lenp, ppos,
+-				do_proc_dointvec_minmax_conv);
++				do_proc_int_conv_minmax);
+ }
  
- 	if (SYSCTL_USER_TO_KERN(dir)) {
- 		if (proc_first_pos_non_zero_ignore(ppos, table))
-@@ -724,7 +732,7 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *u_ptr,
- 	 */
- 	int *ip = SYSCTL_USER_TO_KERN(dir) ? &tmp : k_ptr;
- 
--	ret = do_proc_dointvec_conv(negp, u_ptr, ip, dir, table);
-+	ret = do_proc_int_conv(negp, u_ptr, ip, dir, table);
- 	if (ret)
- 		return ret;
- 
-@@ -986,38 +994,6 @@ int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
+ static int do_proc_douintvec_minmax_conv(unsigned long *u_ptr,
+@@ -994,31 +993,6 @@ int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
  					 lenp, ppos, HZ, 1000l);
  }
  
--static int do_proc_dointvec_jiffies_conv(bool *negp, unsigned long *u_ptr,
--					 int *k_ptr, int dir,
--					 const struct ctl_table *table)
--{
--	if (SYSCTL_USER_TO_KERN(dir)) {
--		return sysctl_user_to_kern_int_conv_hz(negp, u_ptr, k_ptr);
--	}
--	return sysctl_kern_to_user_int_conv_hz(negp, u_ptr, k_ptr);
--}
--
--static int do_proc_dointvec_userhz_jiffies_conv(bool *negp, unsigned long *u_ptr,
+-static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *u_ptr,
 -						int *k_ptr, int dir,
 -						const struct ctl_table *table)
 -{
+-	int tmp, ret, *min, *max;
+-	/*
+-	 * If writing to a kernel var, first do so via a temporary local
+-	 * int so we can bounds-check it before touching *k_ptr.
+-	 */
+-	int *ip = SYSCTL_USER_TO_KERN(dir) ? &tmp : k_ptr;
+-
+-	ret = do_proc_int_conv_ms_jiffies(negp, u_ptr, ip, dir, table);
+-	if (ret)
+-		return ret;
+-
 -	if (SYSCTL_USER_TO_KERN(dir)) {
--		if (USER_HZ < HZ)
+-		min = (int *) table->extra1;
+-		max = (int *) table->extra2;
+-		if ((min && *min > tmp) || (max && *max < tmp))
 -			return -EINVAL;
--		return sysctl_user_to_kern_int_conv_userhz(negp, u_ptr, k_ptr);
+-		*k_ptr = tmp;
 -	}
--	return sysctl_kern_to_user_int_conv_userhz(negp, u_ptr, k_ptr);
+-	return 0;
 -}
 -
--static int do_proc_dointvec_ms_jiffies_conv(bool *negp, unsigned long *u_ptr,
--					    int *k_ptr, int dir,
--					    const struct ctl_table *table)
--{
--	if (SYSCTL_USER_TO_KERN(dir)) {
--		return sysctl_user_to_kern_int_conv_ms(negp, u_ptr, k_ptr);
--	}
--	return sysctl_kern_to_user_int_conv_ms(negp, u_ptr, k_ptr);
--}
--
- static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *u_ptr,
- 						int *k_ptr, int dir,
- 						const struct ctl_table *table)
-@@ -1029,7 +1005,7 @@ static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *u_
- 	 */
- 	int *ip = SYSCTL_USER_TO_KERN(dir) ? &tmp : k_ptr;
- 
--	ret = do_proc_dointvec_ms_jiffies_conv(negp, u_ptr, ip, dir, table);
-+	ret = do_proc_int_conv_ms_jiffies(negp, u_ptr, ip, dir, table);
- 	if (ret)
- 		return ret;
- 
-@@ -1062,7 +1038,7 @@ int proc_dointvec_jiffies(const struct ctl_table *table, int dir,
+ /**
+  * proc_dointvec_jiffies - read a vector of integers as seconds
+  * @table: the sysctl table
+@@ -1045,7 +1019,7 @@ int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
  			  void *buffer, size_t *lenp, loff_t *ppos)
  {
  	return do_proc_dointvec(table, dir, buffer, lenp, ppos,
--				do_proc_dointvec_jiffies_conv);
-+				do_proc_int_conv_jiffies);
- }
- 
- int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
-@@ -1090,8 +1066,10 @@ int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int dir,
- int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int dir,
- 				 void *buffer, size_t *lenp, loff_t *ppos)
- {
-+	if (USER_HZ < HZ)
-+		return -EINVAL;
- 	return do_proc_dointvec(table, dir, buffer, lenp, ppos,
--				do_proc_dointvec_userhz_jiffies_conv);
-+				do_proc_int_conv_userhz_jiffies);
- }
- 
- /**
-@@ -1113,7 +1091,7 @@ int proc_dointvec_ms_jiffies(const struct ctl_table *table, int dir, void *buffe
- 		size_t *lenp, loff_t *ppos)
- {
- 	return do_proc_dointvec(table, dir, buffer, lenp, ppos,
--				do_proc_dointvec_ms_jiffies_conv);
-+				do_proc_int_conv_ms_jiffies);
+-			do_proc_dointvec_ms_jiffies_minmax_conv);
++			do_proc_int_conv_ms_jiffies_minmax);
  }
  
  /**
