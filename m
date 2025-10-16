@@ -1,97 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-64356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10869BE2C93
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:29:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08412BE2BAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6CC5818DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 10:20:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 79EAC35229A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 10:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B5817A2EC;
-	Thu, 16 Oct 2025 10:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0162032861A;
+	Thu, 16 Oct 2025 10:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YEuxNlDF"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="V0H7RB8k";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P2jcDerb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5204732860D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 10:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA49328601;
+	Thu, 16 Oct 2025 10:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760610003; cv=none; b=Jbst47OffMwevX07EiO8aoWXlcngNeZSGxmJdu9y4AiS45GxoZRloyjrFf7SCAxcTEv1OA7LoehK12BcPRUJ/fQ7itTmz7RFfifIZryEpRXMHjtigoD5CMN5npgVmze9EHjsudmBXMSOzGD0/kifWTjAphBWbKpzJUBk+LKwvZI=
+	t=1760610129; cv=none; b=XCq4QE1n5TZ8zyL/mrcv+rTx9T8x1ull02YUcO1vDmRwXZjiZI5aVbpc14NzKitJhcipxwG6GR2scS9dWH1TzeYdsDlKzg8KEOcZJszGwEnALsvJlwp8BT6uGhlfW97umgFwgftVN6ZEBrfcuzyzKs1ikIrgGBuaKSX7v6GJpis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760610003; c=relaxed/simple;
-	bh=Ja9OCsmngnUSE9D933GXE20U1SEDuEIJ/kJB/Ud5X8w=;
+	s=arc-20240116; t=1760610129; c=relaxed/simple;
+	bh=YFPu08gB2L2TzGPrnOyTzbHjOw+slzM9D6WRn0+0kUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tweuUbQnm6gqUO1RCsYoszLt8WDCCkQ3vtp9KoxeiizN6sDdITZ2yzxE3A5bThbcyAmvWUVfgvEyz/LIV379Y1fF1nmTJxcX+rNijFjFwycSRNyx4IMzkD+Oua7isIjs+BdsDp8jjZJMN4YBOkEd+xA6S45/O8T6EN7mWvcaqo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YEuxNlDF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760610001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/lG9IkRu6rTULVmHXXnaYdq5MUjY3K7YFZ2k7C6bWjI=;
-	b=YEuxNlDFjFq33W/NLqWKHXt5ghGe6gHbqABCS4PsDQeDicvbdPZyUSghuU0XFSKMOqnu4t
-	j8ZbKjEsno8LH4HNpCoxTv0NY/83lxanHP4ezHloTJqqkqPZmOoOR1ZEQ3G0jM9RaRzFt5
-	fZkW37njANvk9LcZb7H7iwsjis4Cayo=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-539-Kk_L1j9KPt-PdtQJ_v1yig-1; Thu, 16 Oct 2025 06:19:59 -0400
-X-MC-Unique: Kk_L1j9KPt-PdtQJ_v1yig-1
-X-Mimecast-MFC-AGG-ID: Kk_L1j9KPt-PdtQJ_v1yig_1760609999
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-28e538b5f23so8471505ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 03:19:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760609998; x=1761214798;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/lG9IkRu6rTULVmHXXnaYdq5MUjY3K7YFZ2k7C6bWjI=;
-        b=c/umwAio1cHNCG3ZRnZb1JCiobIACPEWnYMjujInRSp5eYB69xRirZH/qXo27CZkTT
-         fIIYKma7uIEEeh6lXEgNxrBBG5CfdhjtB/4bUIw9+B61y2Kq2KdfNMyeZXS6jwia4P90
-         kOBSjGp/UkeAeOEz/mTWTccWvZE7WYD0coFuLCOQD8+CAsf1c50M5YZ3WRF2S5lcsLm/
-         yth1LhtXJCvWQyx+DlIM0nKAZYKy4uCHPUkE9KRaDvMincMfNiw4VUpEaJwu1WCzX3pm
-         vKph0Q231zHUDXy5Y3qnA8mm7Rk2N7PGg3UVNvBHa58Lj/DsI4OeN2DCWeSrUVU4O1Ut
-         3YPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpbNKbICzFn/sY82jz0ZtwhpE46QxLqfE32VFDCMKIp1ziZ8I6gJw4gKIoAbEKeDKewNYrT4Kw3LCzAxhz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPbxtX0ln2bnCcTfMckjXOV+jabALSuym6kAat+5mbr5oBsvUR
-	RRku+B0KSx66u4fnxWpIlwfqo+joOdsUe9KddmuNXkg8iKjNRT8h7gAEA8LmmC1IqlxrL/V2VRn
-	j4f09OFZu7k7YSvz+9XtKfp1L08ykiVYcbKU0ut5iRxMH6Cze9zMsCHhTXMWbhYCT4zXH5SDimV
-	/5yQ==
-X-Gm-Gg: ASbGncs5onQboBAm04vlbH+CT0IZ3IYvGsC9PRd9J+47kFfHMCZELM0J8rTPzJt+rl0
-	gvtbBXCIau5S2vkjrZHeBeP0JUMji6N6dMo0Hhqh2O4cB5SFw3zDw5uVVhvTg8pPT67NQsHMoJa
-	SA/IxKthH9VHNiTnLEUjAzu9W9BW88qgCrc3DAQbYsAzqUispZ2JifVsRipxKwF0Kr++LP9z5S6
-	ern9ZJqyRvf0nqvPwGmJ8PmjtscLi0TOFwN0+aTOoMb9bH/vKXBFDqXqeB/vifHpGf07Mlhl/+m
-	LaL87ZUOp8mPWVCOEqpzUvRp2eNAb4uA1KhyljZzjlCZnWBr3rmUhSseazLARFHAjRwl5w==
-X-Received: by 2002:a17:903:f85:b0:264:befb:829c with SMTP id d9443c01a7336-2902721634bmr337193895ad.9.1760609997635;
-        Thu, 16 Oct 2025 03:19:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTlevuCwFZug23HK7ieK2PBYjuqcD3nAVQRBsGzWAIrpjkSn/kauHrjBi4EzPYnipAaY0fKQ==
-X-Received: by 2002:a17:903:f85:b0:264:befb:829c with SMTP id d9443c01a7336-2902721634bmr337193655ad.9.1760609997255;
-        Thu, 16 Oct 2025 03:19:57 -0700 (PDT)
-Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290ad977cacsm15444725ad.105.2025.10.16.03.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 03:19:56 -0700 (PDT)
-Date: Thu, 16 Oct 2025 19:19:51 +0900
-From: Ryosuke Yasuoka <ryasuoka@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: arnd@arndb.de, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, dakr@kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH rust-next v2 0/3] rust: miscdevice: add llseek support
-Message-ID: <aPDGxz04OQgzRQqL@zeus>
-References: <20251015040246.151141-1-ryasuoka@redhat.com>
- <2025101544-stopper-rifling-00e0@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpjZ2AeQuC0/kBvEopFCTVa87LR+gVPb9lOvlcQShfIrV5f3l+spIogqnc+OBh3gqOM0aH+3ghzLAxCXcmnbgBbnQpgJCPImnpxXUlYHz0ouRAtNFW/D5MNJ0d/dYLN2iYBo5vzcYYg9QcPkHu7+fiuZbKGftxM22f3AXrk3qU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=V0H7RB8k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P2jcDerb; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 608701400208;
+	Thu, 16 Oct 2025 06:22:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Thu, 16 Oct 2025 06:22:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1760610124; x=
+	1760696524; bh=4cgizSnh8FyjftsIcMN/5doeb/L5sYJZzPBngz1cPTs=; b=V
+	0H7RB8kX6dTe4pJfkGYa84CFGKQi7NQQwlIG5JtdXa17rPgjGU7VP1Im0x2JCx0C
+	erNolu6GR6GrwirzS9l8PkU+m7UIbkA7XvpPXC7ZFyxsPYDEIbw1RrFzpxGqkE0I
+	XSX2c5KYOu4R22qernV1tzWejdNPVpiF6l4acfHqHponV+OQwKMyBJBac6s3srED
+	hFX3UEvTtKGF2/OHDDBf5m2oNLPo9+mcCfSWNi51R4gTtStNacgN9I+rh/zOeCdI
+	bzeQI6SB+IMUgCVz7V3V15HPW5Ew/NXITdHFdAV6G//4gfIEajOAOqA9Yzk/TrTw
+	tQ6ZnYipFhCaAm0qTeNoQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760610124; x=1760696524; bh=4cgizSnh8FyjftsIcMN/5doeb/L5sYJZzPB
+	ngz1cPTs=; b=P2jcDerbD5gusICBdwO0U719/hGR3gBgsrnEyk/uej3H9tIAQJG
+	v7VgnltT3EvGvGG8+qrHW8D01JayYRv3okQbhAmUsijIbYrDIUKZ6S3S5/B9uLUr
+	sSSx+QliS0zx1jH0Gxkvh7EyhpBHhERXy7acCWQLVRCPtOoRUXrp0MEcdkW7nZjF
+	p/YgXjCydO23+cAAi/nmtPR0J1TjbTgQCUbErZT3E3/AZQlhYg8dzAaolvdkjNEN
+	dC7i/NUPFe6YIqVV+eM8q9ZRv9QGFDBjT52AcCsxFfamN6djOIogNSb9V9SX4oeH
+	phBvOoSe7RTOsP15zKrE1xGb5EaNosPQYkw==
+X-ME-Sender: <xms:S8fwaP4ttjK6p3ef3wmSGFlFfKLtlDlXeqs087EFm0bPMRMUebjRmQ>
+    <xme:S8fwaKboqjlnMreOaFW1YHCqKvbBO6P2TuqFlfh8IEkjbZQgdM9xKqtWmQfsXMwBa
+    eyyGchYRW-Yp0dAfXK-Z_Zi10RRSNQLw7RbhXPhlaNigx4QAxQo1g>
+X-ME-Received: <xmr:S8fwaOzJ7OkTL37tgtZuF7fDFCGl3u50u-MZSNoL7SAdZxEofOAvPqJ-qotFZw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdeitdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedu
+    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghp
+    thhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprdhrrghghh
+    grvhesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopeiilhgrnhhgsehrvgguhhgrthdr
+    tghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:S8fwaOPAgsDds0-ECl8Xyiqk0Z-xHO-Y5a8K0wNF6vpeVGcbwlcHDg>
+    <xmx:S8fwaE7JMiDYacnKnQrAKBYRmKVV46Zunrxozt_3-856GxaGppyfZw>
+    <xmx:S8fwaMfTCaQfJZvxTeKiGbOA4RU1D_fhU49T0yoOfv8RAIr7fuoCpQ>
+    <xmx:S8fwaFJTy47n8Wuhx5FhwgBa-ro_YtmFJybzJQGxDhY7vB3dhQVNMw>
+    <xmx:TMfwaHOsd3ep1ugD0EAPyXlN6Es_j3EWvKWJGeCH2CtZJr8affGgsJqb>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 Oct 2025 06:22:02 -0400 (EDT)
+Date: Thu, 16 Oct 2025 11:22:00 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: "Darrick J. Wong" <djwong@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Zorro Lang <zlang@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm <linux-mm@kvack.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, xfs <linux-xfs@vger.kernel.org>
+Subject: Re: Regression in generic/749 with 8k fsblock size on 6.18-rc1
+Message-ID: <bknltdsmeiapy37jknsdr2gat277a4ytm5dzj3xrcbjdf3quxm@ej2anj5kqspo>
+References: <20251014175214.GW6188@frogsfrogsfrogs>
+ <rymlydtl4fo4k4okciiifsl52vnd7pqs65me6grweotgsxagln@zebgjfr3tuep>
+ <20251015175726.GC6188@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,30 +108,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025101544-stopper-rifling-00e0@gregkh>
+In-Reply-To: <20251015175726.GC6188@frogsfrogsfrogs>
 
-On Wed, Oct 15, 2025 at 07:40:12AM +0200, Greg KH wrote:
-> On Wed, Oct 15, 2025 at 01:02:40PM +0900, Ryosuke Yasuoka wrote:
-> > Hi all,
+On Wed, Oct 15, 2025 at 10:57:26AM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 15, 2025 at 04:59:03PM +0100, Kiryl Shutsemau wrote:
+> > On Tue, Oct 14, 2025 at 10:52:14AM -0700, Darrick J. Wong wrote:
+> > > Hi there,
+> > > 
+> > > On 6.18-rc1, generic/749[1] running on XFS with an 8k fsblock size fails
+> > > with the following:
+> > > 
+> > > --- /run/fstests/bin/tests/generic/749.out	2025-07-15 14:45:15.170416031 -0700
+> > > +++ /var/tmp/fstests/generic/749.out.bad	2025-10-13 17:48:53.079872054 -0700
+> > > @@ -1,2 +1,10 @@
+> > >  QA output created by 749
+> > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > >  Silence is golden
+> > > 
+> > > This test creates small files of various sizes, maps the EOF block, and
+> > > checks that you can read and write to the mmap'd page up to (but not
+> > > beyond) the next page boundary.
+> > > 
+> > > For 8k fsblock filesystems on x86, the pagecache creates a single 8k
+> > > folio to cache the entire fsblock containing EOF.  If EOF is in the
+> > > first 4096 bytes of that 8k fsblock, then it should be possible to do a
+> > > mmap read/write of the first 4k, but not the second 4k.  Memory accesses
+> > > to the second 4096 bytes should produce a SIGBUS.
 > > 
-> > This patch series add support for the llseek file operation to misc
-> > devices written in Rust.
+> > Does anybody actually relies on this behaviour (beyond xfstests)?
 > 
-> Cool, but what miscdevice driver needs llseek support?  Do you have a
-> real user for this that we can see as well?
+> Beats me, but the mmap manpage says:
+...
+> POSIX 2024 says:
+...
+> From both I would surmise that it's a reasonable expectation that you
+> can't map basepages beyond EOF and have page faults on those pages
+> succeed.
 
-Currently no. Because lseek is one of fundamental functions for device
-driver, I think it's valuable to add support. I believe we'll have real
-users based on read, write, and this lseek support.
+<Added folks form the commit that introduced generic/749>
 
-What do you think? Thank you for your comment.
+Modern kernel with large folios blurs the line of what is the page.
 
-Best regards,
-Ryosuke
+I don't want play spec lawyer. Let's look at real workloads.
 
-> thanks,
-> 
-> greg k-h
-> 
+If there's anything that actually relies on this SIGBUS corner case,
+let's see how we can fix the kernel. But it will cost some CPU cycles.
 
+If it only broke syntactic test case, I'm inclined to say WONTFIX.
+
+Any opinions?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
