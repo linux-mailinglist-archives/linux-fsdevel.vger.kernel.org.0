@@ -1,170 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-64357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08412BE2BAC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:22:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02046BE2CBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 79EAC35229A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 10:22:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD7FA4F8EFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 10:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0162032861A;
-	Thu, 16 Oct 2025 10:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3472D3A7B;
+	Thu, 16 Oct 2025 10:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="V0H7RB8k";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P2jcDerb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPZ8xYYT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA49328601;
-	Thu, 16 Oct 2025 10:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A542C11D4;
+	Thu, 16 Oct 2025 10:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760610129; cv=none; b=XCq4QE1n5TZ8zyL/mrcv+rTx9T8x1ull02YUcO1vDmRwXZjiZI5aVbpc14NzKitJhcipxwG6GR2scS9dWH1TzeYdsDlKzg8KEOcZJszGwEnALsvJlwp8BT6uGhlfW97umgFwgftVN6ZEBrfcuzyzKs1ikIrgGBuaKSX7v6GJpis=
+	t=1760610565; cv=none; b=raNESWGfdgFKFjyVVRUKpS2SaZ7Jh7DNV+mU6qB2Luavww3nT+2GkO+PIPmsYUyOFx514HtOvrsMcOaMRgkuH8Tw5cXQth95G9/B6W5/vyZwzxxYLiEbSw4pEGlbqd5lTuAEUrWytB39XLatN+JHhZ+ngfXt0rdPXYisg28/5WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760610129; c=relaxed/simple;
-	bh=YFPu08gB2L2TzGPrnOyTzbHjOw+slzM9D6WRn0+0kUw=;
+	s=arc-20240116; t=1760610565; c=relaxed/simple;
+	bh=vGn4LQ6PjgY7cksHSlJCYhC4n/ojq1fCtHom8ypt/EU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MpjZ2AeQuC0/kBvEopFCTVa87LR+gVPb9lOvlcQShfIrV5f3l+spIogqnc+OBh3gqOM0aH+3ghzLAxCXcmnbgBbnQpgJCPImnpxXUlYHz0ouRAtNFW/D5MNJ0d/dYLN2iYBo5vzcYYg9QcPkHu7+fiuZbKGftxM22f3AXrk3qU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=V0H7RB8k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P2jcDerb; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 608701400208;
-	Thu, 16 Oct 2025 06:22:04 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 16 Oct 2025 06:22:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1760610124; x=
-	1760696524; bh=4cgizSnh8FyjftsIcMN/5doeb/L5sYJZzPBngz1cPTs=; b=V
-	0H7RB8kX6dTe4pJfkGYa84CFGKQi7NQQwlIG5JtdXa17rPgjGU7VP1Im0x2JCx0C
-	erNolu6GR6GrwirzS9l8PkU+m7UIbkA7XvpPXC7ZFyxsPYDEIbw1RrFzpxGqkE0I
-	XSX2c5KYOu4R22qernV1tzWejdNPVpiF6l4acfHqHponV+OQwKMyBJBac6s3srED
-	hFX3UEvTtKGF2/OHDDBf5m2oNLPo9+mcCfSWNi51R4gTtStNacgN9I+rh/zOeCdI
-	bzeQI6SB+IMUgCVz7V3V15HPW5Ew/NXITdHFdAV6G//4gfIEajOAOqA9Yzk/TrTw
-	tQ6ZnYipFhCaAm0qTeNoQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760610124; x=1760696524; bh=4cgizSnh8FyjftsIcMN/5doeb/L5sYJZzPB
-	ngz1cPTs=; b=P2jcDerbD5gusICBdwO0U719/hGR3gBgsrnEyk/uej3H9tIAQJG
-	v7VgnltT3EvGvGG8+qrHW8D01JayYRv3okQbhAmUsijIbYrDIUKZ6S3S5/B9uLUr
-	sSSx+QliS0zx1jH0Gxkvh7EyhpBHhERXy7acCWQLVRCPtOoRUXrp0MEcdkW7nZjF
-	p/YgXjCydO23+cAAi/nmtPR0J1TjbTgQCUbErZT3E3/AZQlhYg8dzAaolvdkjNEN
-	dC7i/NUPFe6YIqVV+eM8q9ZRv9QGFDBjT52AcCsxFfamN6djOIogNSb9V9SX4oeH
-	phBvOoSe7RTOsP15zKrE1xGb5EaNosPQYkw==
-X-ME-Sender: <xms:S8fwaP4ttjK6p3ef3wmSGFlFfKLtlDlXeqs087EFm0bPMRMUebjRmQ>
-    <xme:S8fwaKboqjlnMreOaFW1YHCqKvbBO6P2TuqFlfh8IEkjbZQgdM9xKqtWmQfsXMwBa
-    eyyGchYRW-Yp0dAfXK-Z_Zi10RRSNQLw7RbhXPhlaNigx4QAxQo1g>
-X-ME-Received: <xmr:S8fwaOzJ7OkTL37tgtZuF7fDFCGl3u50u-MZSNoL7SAdZxEofOAvPqJ-qotFZw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdeitdegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedu
-    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghp
-    thhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprdhrrghghh
-    grvhesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopeiilhgrnhhgsehrvgguhhgrthdr
-    tghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:S8fwaOPAgsDds0-ECl8Xyiqk0Z-xHO-Y5a8K0wNF6vpeVGcbwlcHDg>
-    <xmx:S8fwaE7JMiDYacnKnQrAKBYRmKVV46Zunrxozt_3-856GxaGppyfZw>
-    <xmx:S8fwaMfTCaQfJZvxTeKiGbOA4RU1D_fhU49T0yoOfv8RAIr7fuoCpQ>
-    <xmx:S8fwaFJTy47n8Wuhx5FhwgBa-ro_YtmFJybzJQGxDhY7vB3dhQVNMw>
-    <xmx:TMfwaHOsd3ep1ugD0EAPyXlN6Es_j3EWvKWJGeCH2CtZJr8affGgsJqb>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Oct 2025 06:22:02 -0400 (EDT)
-Date: Thu, 16 Oct 2025 11:22:00 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: "Darrick J. Wong" <djwong@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Pankaj Raghav <p.raghav@samsung.com>, Zorro Lang <zlang@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm <linux-mm@kvack.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, xfs <linux-xfs@vger.kernel.org>
-Subject: Re: Regression in generic/749 with 8k fsblock size on 6.18-rc1
-Message-ID: <bknltdsmeiapy37jknsdr2gat277a4ytm5dzj3xrcbjdf3quxm@ej2anj5kqspo>
-References: <20251014175214.GW6188@frogsfrogsfrogs>
- <rymlydtl4fo4k4okciiifsl52vnd7pqs65me6grweotgsxagln@zebgjfr3tuep>
- <20251015175726.GC6188@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKnuBsgAmGFRvJPrbXn3nWdxr72hPcifP2+O8jlU5R5asCnWmsv5wc7P0pjVjSD6BiFwNVFtKMWF6fPrOadaCjtzfLzpDgFhl7Yizg5eotUGHleIMdx5YgsaFFzwCxk8W/0u1zjGUaBHsQxpotvYybQTMo0HGPlzWo3YIvq1WV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPZ8xYYT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F7CC4CEF1;
+	Thu, 16 Oct 2025 10:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760610564;
+	bh=vGn4LQ6PjgY7cksHSlJCYhC4n/ojq1fCtHom8ypt/EU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JPZ8xYYTdOxFH05lnqQg5lEMbELYS9myaW29dHJwnXrsIam9zHTVTFUKCYrv1ENuA
+	 opBwv5htRr6F3a0MpVdhLcUmPXWx5gyCILN19GG4RWXcdMJuXOCT0PNnZoDZ84tDKV
+	 sjKX+HZbmWx9ObnWhE7hBxQKmeDSqhlHpHvnMRsMbm41+AM14mhmira27WFxvWcOqd
+	 JLzodzwtS48FcJPRMG0IWscauM/RB2nzSRYvZeQQEVJi/Tno+K2EbqlcP/XYrrSClt
+	 uFrR8KmoM5zMllpcHfQu/J4CIV7eHdoICRRzXRbVVqoW9gZIFNSznCxX6E67P3TM5H
+	 zjZiiggHI2Xmg==
+Date: Thu, 16 Oct 2025 12:29:21 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: "G. Branden Robinson" <g.branden.robinson@gmail.com>
+Cc: Luca Boccassi <luca.boccassi@gmail.com>, 
+	Askar Safin <safinaskar@gmail.com>, brauner@kernel.org, cyphar@cyphar.com, 
+	linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple
+ instances
+Message-ID: <caphk5vjat3dbm5hb5nhvpyc3p26nkc6bfr3p25lndqbqllj47@i45f4savslj4>
+References: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+ <20251012125819.136942-1-safinaskar@gmail.com>
+ <CAMw=ZnTuK=ZijDbhrMOXmiGjs=8i2qyQUwwtM9tcvTSP0k6H4g@mail.gmail.com>
+ <bc7w4t422bvpcylsagpsagl3orryepdbz4qimkuttd3ehtdsfu@thng5d5wn567>
+ <20251012185703.oksyg4loz5fcassb@illithid>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4y27m3sj7qvjy3rw"
 Content-Disposition: inline
-In-Reply-To: <20251015175726.GC6188@frogsfrogsfrogs>
+In-Reply-To: <20251012185703.oksyg4loz5fcassb@illithid>
 
-On Wed, Oct 15, 2025 at 10:57:26AM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 15, 2025 at 04:59:03PM +0100, Kiryl Shutsemau wrote:
-> > On Tue, Oct 14, 2025 at 10:52:14AM -0700, Darrick J. Wong wrote:
-> > > Hi there,
-> > > 
-> > > On 6.18-rc1, generic/749[1] running on XFS with an 8k fsblock size fails
-> > > with the following:
-> > > 
-> > > --- /run/fstests/bin/tests/generic/749.out	2025-07-15 14:45:15.170416031 -0700
-> > > +++ /var/tmp/fstests/generic/749.out.bad	2025-10-13 17:48:53.079872054 -0700
-> > > @@ -1,2 +1,10 @@
-> > >  QA output created by 749
-> > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > >  Silence is golden
-> > > 
-> > > This test creates small files of various sizes, maps the EOF block, and
-> > > checks that you can read and write to the mmap'd page up to (but not
-> > > beyond) the next page boundary.
-> > > 
-> > > For 8k fsblock filesystems on x86, the pagecache creates a single 8k
-> > > folio to cache the entire fsblock containing EOF.  If EOF is in the
-> > > first 4096 bytes of that 8k fsblock, then it should be possible to do a
-> > > mmap read/write of the first 4k, but not the second 4k.  Memory accesses
-> > > to the second 4096 bytes should produce a SIGBUS.
-> > 
-> > Does anybody actually relies on this behaviour (beyond xfstests)?
-> 
-> Beats me, but the mmap manpage says:
-...
-> POSIX 2024 says:
-...
-> From both I would surmise that it's a reasonable expectation that you
-> can't map basepages beyond EOF and have page faults on those pages
-> succeed.
 
-<Added folks form the commit that introduced generic/749>
+--4y27m3sj7qvjy3rw
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: "G. Branden Robinson" <g.branden.robinson@gmail.com>
+Cc: Luca Boccassi <luca.boccassi@gmail.com>, 
+	Askar Safin <safinaskar@gmail.com>, brauner@kernel.org, cyphar@cyphar.com, 
+	linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man2/move_mount.2: document EINVAL on multiple
+ instances
+Message-ID: <caphk5vjat3dbm5hb5nhvpyc3p26nkc6bfr3p25lndqbqllj47@i45f4savslj4>
+References: <CAMw=ZnSBMpQsuTu9Gv7T3JhrBQMgJQxhR7OP9H_cuF=St=SeMg@mail.gmail.com>
+ <20251012125819.136942-1-safinaskar@gmail.com>
+ <CAMw=ZnTuK=ZijDbhrMOXmiGjs=8i2qyQUwwtM9tcvTSP0k6H4g@mail.gmail.com>
+ <bc7w4t422bvpcylsagpsagl3orryepdbz4qimkuttd3ehtdsfu@thng5d5wn567>
+ <20251012185703.oksyg4loz5fcassb@illithid>
+MIME-Version: 1.0
+In-Reply-To: <20251012185703.oksyg4loz5fcassb@illithid>
 
-Modern kernel with large folios blurs the line of what is the page.
+Hi Branden, Luca,
 
-I don't want play spec lawyer. Let's look at real workloads.
+On Sun, Oct 12, 2025 at 01:57:03PM -0500, G. Branden Robinson wrote:
+> At 2025-10-12T16:57:22+0200, Alejandro Colomar wrote:
+> > On Sun, Oct 12, 2025 at 03:25:37PM +0100, Luca Boccassi wrote:
+> > > On Sun, 12 Oct 2025 at 13:58, Askar Safin <safinaskar@gmail.com> wrot=
+e:
+> > > > So everything is working as intended, and no changes to manual
+> > > > pages are needed.
+> > >=20
+> > > I don't think so. This was in a mount namespace, so it was not
+> > > shared, it was a new image, so not shared either, and '/' was not
+> > > involved at all. It's probably because you tried with a tmpfs
+> > > instead of an actual image.
+> > >=20
+> > > But it really doesn't matter, I just wanted to save some time for
+> > > other people by documenting this, but it's really not worth having a
+> > > discussion over it, feel free to just disregard it. Thanks.
+> >=20
+> > I appreciate you wanting to save time for other people by documenting
+> > it.  But we should also make sure we understand it fully before
+> > documenting it.  I'd like us to continue this discussion, to be able
+> > to understand it and thus document it.  I appreciate Aleksa and
+> > Askar's efforts in understanding this, and the discussion too, which
+> > helps me understand it too.  I can't blindly take patches without
+> > review, and this discussion helps a lot.
+>=20
+> I have some unsolicited project management advice to offer.
+>=20
+> I think you should say "won't" rather than "can't" in your final
+> sentence.  You are defending a point of policy--rightly so, in my view.
+> If someone wants to argue your preference on the subject, policy is the
+> correct ground upon which to engage.
 
-If there's anything that actually relies on this SIGBUS corner case,
-let's see how we can fix the kernel. But it will cost some CPU cycles.
+Actually, I think I should have said "shouldn't" instead of "can't".
 
-If it only broke syntactic test case, I'm inclined to say WONTFIX.
+I technically can (in the sense that nothing stops me from doing
+'git am && git push' if I wanted to), so "can't" is not appropriate.
 
-Any opinions?
+And I don't know what I'll do tomorrow, so "won't" is not appropriate
+either; I always reserve the right to change my mind later.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+However, as a guideline, I "shouldn't" merge stuff without understanding
+it.  Sometimes there are reasons for doing so, such as not having
+knowledgeable reviewers at hand, and not being knowledgeable myself.
+In this specific case, we have Aleksa and Askar willing to help, which
+is why I want to follow the policy.
+
+> The practice of distinguishing mechanism from policy is a valuable skill
+> in domains outside of software design where we most often speak of them.
+
+Thanks for correcting me on this.
+
+> It's even more important in the instant context to articulate matters of
+> policy when a contributor indulges a passive-aggressive outburst like
+> Luca's, above.  Confusion of mechanism with policy is the lever by which
+> that sort of emotionalism operates; obviously we _could_ just do
+> whatever a contributor wants without discussion and without
+> interrogating the wisdom of doing so.
+
+I was trying to be nice with Luca.  I think confronting his message,
+which I agree was a bit passive-aggressive, can be counter-productive in
+this case, where I'm interested in having him continue discussing this
+matter with Aleksa and Askar.
+
+And in the case of Luca, I have a story, which I should disclose for
+context.
+
+A year ago or so, I contributed (or tried to) to systemd, for my first
+time, and I experienced what looked to me terrible project management.
+<https://github.com/systemd/systemd/pull/35275>
+<https://github.com/systemd/systemd/pull/35226>
+We had a heated fight, and they banned me from systemd.  I didn't know
+Luca before, nor any of the systemd maintainers.
+
+After some time, and seeing Luca engage (aggressively) with other people
+elsewhere (mostly, LWN), I have a theory, that Luca's aggressive
+behavior might be related to receiving a lot of hate by his work in
+systemd.  I still don't know if it's a cause or a consequence, though.
+
+So, I wanted to show Luca the management style we're used to here, and
+that a maintainer can be nice with contributors, even if they disagree.=20
+
+Even if Luca has behaved in a way that I don't like elsewhere, I'd like
+to give him the opportunity to be nice here.  And for that, I was ready
+to indulge his previous message.
+
+Luca, I still would like you to engage in discussion with Aleksa and
+Askar to better understand this matter.  Please do so.  Taking some
+extra time to fully understand it now, can help document this better,
+and save many times that amount of time to other programmers.
+
+Peace and love.  :)
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--4y27m3sj7qvjy3rw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjwyPsACgkQ64mZXMKQ
+wqk+Mw//c02phs9bkKnnt1aR7YDepCQsc1NPOnUiaG3CHrcARz1/c1Qnl6bEYppO
+Z7fDkFLnm/yKBjSTKCU75JdSj31KklKyMR3rzw3Lqj7YxELRwhiNx21YR6pERjSL
+nn/UI1hGucCRJ7V12UJ8eC6/0T+HW/KNsxINriL+mTAVFkxoO/SI3gU890jmvhiZ
+/xv2ofUrMJkRYLMr/g/kp2UcarolOLVeXLTsb3AatFg4M6lOKNGSbhPFv3gsmdk7
+cjJtvRFP0LbD46IjCSbM8+aCfURkoD6G/Q/on8rhK3iaYHTyMzEiwjC3jtHFz679
+Q8PTwxOFJ2k7bXYH6bwLGwmd7J679+4xW4o/I9xLlMMGNXEhyP68V8gxSQ7njY4y
+2b8fIdcH3Nc6iYDInidlN2YAON8VGmkfBtw813BKRN2R8jQOgh5r4NwMErZb+oNH
+FqBUoDPw311A/BJkwHZtUnqN8Y9kAUcYlk5ZGYk6AVjDSP9sBiV2a+58xNCAfiKh
+t4kTaiuxngmpQawceAqDCYu4DnEXcfz1oy7jf4gVq0Zhly3Zbj8fjCzDaYjGVyFN
+bsXxP3dhHUmokU1Y+XPybLmoyxBcQUj0C0FA2jpZkWwgiv9K+buGNOnm2CcRKjtk
+uB1L9/4ench9jn7aUndP+Z8B8lOu4nlwaIQ06tfmgPCOC7VdR8I=
+=bn4h
+-----END PGP SIGNATURE-----
+
+--4y27m3sj7qvjy3rw--
 
