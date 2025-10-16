@@ -1,203 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-64328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EDABE11D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 02:36:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD325BE11F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 02:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6925B34B22B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 00:36:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 32000351498
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 00:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D317187332;
-	Thu, 16 Oct 2025 00:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUEydbtw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E6319CD1B;
+	Thu, 16 Oct 2025 00:39:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443A3146D45
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 00:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6284C433C4;
+	Thu, 16 Oct 2025 00:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760574994; cv=none; b=HywsvYVEtNbEqGhRKRlN3ku8W1jRvGdDvsXW37Jc3OZSPoNAq1qvaMYl28TDeS1jBzoc96INVmTPiF6SMGIwbimdmWfDcI8skH665mfmrM4Dty1PUAMk7NWB2MkbsaBIcfKWIADwCEa8w9t7iZcmv/TZj51GZO8X1xpENoFBgKU=
+	t=1760575157; cv=none; b=icj4fO09EBWu+xWdZxEQY4+kmaH1iaic9sxTgRbw6oSDUIsHMJD9vmTLv12LtLTdNWGr9ddcyekGiT7uYWUUqSFJXvAARurjTGFpxf6SGoldGy9qmsl6SY+rdF8yP8/fVfhPHIXQwJRsZT9Hjg4kqbf4qRaJFbgJKEZM9KgblRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760574994; c=relaxed/simple;
-	bh=YeeymcSn9GE5euQEeuGH39wYjtEBSZ/Nvea0SybK0P4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HIxMKoWC4lSl+l1F0GQCpjPP6k6GOn9x1EEfhk+3RMQFXf6ybc5jgGsw5W/B7r+lY9B2hwyzW5javnFlEIxUa698opz5y7RW0cAwJoJLSLSVRFL9kb9vb8P7OYy6t02L6dHjnoLdBVC4I00yT0xz7MzMCsTW3G30onC4O+uvq3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUEydbtw; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-87499a3cd37so1879716d6.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Oct 2025 17:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760574992; x=1761179792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YeeymcSn9GE5euQEeuGH39wYjtEBSZ/Nvea0SybK0P4=;
-        b=dUEydbtwbOrSgk8KvWGW2tBTXMtOKhGfgZpwwrHz+yQUra+B49fRpe5Q7Z/ZNwvoas
-         kJFpFLdCFw8t8ewnghlDIxnMp+SzEIRVzTP3DuXuBIBDny1EQe0MUvai36XzAja7RxUA
-         Hr/Z5bp9PH8HTNf9NW6N5OgulGdNI5ajkzWWgZXW2DSaz3LmEeH8ANU2b6dGS85y1e5h
-         ZrjZTdr800N+jwh9YXXWTSPsLXhFE2jih0avgA06iux3X7iWAWU+gavyDGMsLdYAVaY6
-         GRYxwCK0MtHLZHnej9tA4baLo40l937345OKbRSWramrNqZ2hK5tkiQ85b2XYbA7jX6y
-         DJWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760574992; x=1761179792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YeeymcSn9GE5euQEeuGH39wYjtEBSZ/Nvea0SybK0P4=;
-        b=skL58JO3dkIomP0KE5NP9OtD6wF4m+Fw3MZLvd60uVeZ9GB8o6FiHIJ11xCeqivVx+
-         Cl9DO5w1NRYg96Y6VgFp1QO4FIzYWJ+/8ViCMrh6mHkO+npzLTWzS+rMeyb5oZT4ogrR
-         bDSTq5tTsfv6eGM8VhhezQjGv9sRPvhI+WiSw5tdtOMFNT8XEDRYkA8EOFG9L06xxk53
-         /NwkmfqAh6dZaRSdHDcGHjan01ZwS+dox47UkcFJ7Xs2KPL/JJZb/0UrK3PshvZTFrJ4
-         mftQ4ZY69rX5hKxImPJUCQ0NxdxyUXgiXr/oLbds7YaOyQ0mAzhV/iFpGfnIIO50YyIs
-         VR4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAFbFE2uFzTR8FCgD7UriBr3JleBYZgzRrWEcyuNO6GrQzxXfBkb9raM746Juq+ERvBgMAoPwWRVMaKq5t@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbdXftcWXFHDTmc0bY7flwbNPiPCOEJ5BrJLpFxd5pVEcET5UX
-	oVXOf2C6+zdR2BC1S0+O2NlFny4+wg80+P3Ey3VFnVxWe3jvjxib+aSBhtihNjjHLtT4IiGuj35
-	r5jdy7lx65FztdyaVXpT6m53b/ruvF1M=
-X-Gm-Gg: ASbGncvTMcbvV+oQvF5P9FfyM70m/kBtVNie6qyJ4/FMfjuqyqlQ10eUaYgLdRxqF3A
-	cTehjKouyEYLxqgmyB+JKQN5XAw/vJs/yV+6Ricq5gu1/1WdJuNfujVO4F6v91GPbvJc6VAHyFN
-	MjKa3MRBv2OeNQ4/EeAKVBbM3UxksHHNyRq3F1EALrMyuEXmF9Soyw+jGNZF/kjr64HyBXWsdtv
-	b3qbzckgX2H00J6GmN+O4nAZmfIwV0mWhxBxj7Q3cYNBtCL1COEwl0EgQap9VW2JOPTmeVY8/E9
-	CEtahQM2COwMrEXAgK0Lay/KGA4=
-X-Google-Smtp-Source: AGHT+IGiwlgUceNMxDADJcjeRBufYOHtwfvRNUZQho8WVMFfuj6dQI+6+Z0167teQc2d4L7//FVME96waP8WBL2n7oc=
-X-Received: by 2002:a05:622a:2514:b0:4c3:b7b0:3317 with SMTP id
- d75a77b69052e-4e6ead57fd0mr463192891cf.42.1760574991849; Wed, 15 Oct 2025
- 17:36:31 -0700 (PDT)
+	s=arc-20240116; t=1760575157; c=relaxed/simple;
+	bh=dia0WiQqSMsA7QalQ+w75C/rhHhdK+gNykgAm5x1cK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QljXfd+aqh5IBXcL8MKWKJLaTUYSJRqTFhNCKO/GapcHmA2TJU+nqd3tYfeZpmw5M1cfKFbJ5U5KnCJ92naCisVkM5rmxeXVhp0NxUwG0Y/qgFsj6/R7OkfXY6v8aHmDbd7Z/mukzZr/3WCCnxqFKfWxKTT09xNoMXRWfe8aREo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-f4-68f03ea9c3af
+Date: Thu, 16 Oct 2025 09:38:59 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, kernel-team@lge.com, linux-mm@kvack.org,
+	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
+	hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
+	jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 01/47] llist: move llist_{head,node} definition to
+ types.h
+Message-ID: <20251016003859.GA2948@system.software.com>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-2-byungchul@sk.com>
+ <2025100230-grafted-alias-22a2@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009225611.3744728-1-joannelkoong@gmail.com>
- <20251009225611.3744728-2-joannelkoong@gmail.com> <aOxrXWkq8iwU5ns_@infradead.org>
- <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
- <a8c02942-69ca-45b1-ad51-ed3038f5d729@linux.alibaba.com> <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
- <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com> <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
- <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com>
-In-Reply-To: <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 15 Oct 2025 17:36:21 -0700
-X-Gm-Features: AS18NWD20G-C0e4P_mTeWD4nAxxhd2JOD8DexSVzEOAozH2zP7jFT2HYIxT-EQE
-Message-ID: <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
- truncating read range
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, djwong@kernel.org, 
-	bfoster@redhat.com, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025100230-grafted-alias-22a2@gregkh>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa2yLYRiGvd95pXxqeG0RSc1pgjnFI2SzxI8vRBCHBBEa+2jpio4xIio7
+	YGatis3ajG6zrdY6rA6xg6kxsi1O21Qta03STUZnNsx50VaEf1fu+36vvD8ejpQ10RGcSrNH
+	1GoUajkjoSTdQwqnXYz9oIzxNYyDLz/MJNivHyGgpyQLganTzMKLfj8Cn/MogoLXHhKuP/Ai
+	aPYNhdSiKwxUtFey0JZjJMDmWAavSjopaDQUEpDbxUBO+WgwP2qmwaM/Q8Hl7ic01HtdNDhe
+	1iGovl1PwVNnIw1X3rgJeFJ5iQa3oQPB6fedCKy9uTQ8sIwCY2cfCzfupCNoy35LQcvLKgQ1
+	x9oJKLZ2B0x2FwP3PvsJaPB8ZMFlPM9AX/4ADelZ31iwPaPgRHoOBVd7SxlIa5sLl365EJjr
+	vOyiGMF+zo6ET8WppHDP30MK3z8/Z4Tb/RZKaCjEQoXJwwppNa2sYHHsFa5ZowVH2XFGyOxu
+	IYQ2VzUj+FpyCeFc/UrhTr6dXRG5XrIwQVSrkkXtjNjNEqWlVcfu8tL79UYzrUMVVCYK4zA/
+	B3dkn2b+clHqRTLIFD8Bp2boQhuGn4Td7m+hPJyfjLvqWgO5hCN5cyS2PcoLFSP41dhlKws9
+	kPLz8OPSAjo4kvGZCDtNVcSfYjiuz/OFRiQfjd0DXYGcC3AkLh3ggnEYPxufyslGQR7Jj8fO
+	mw+JoAfz3jDsz80g/vx0DL5rdVMGxJv+05r+05r+aS2ILEMylSY5UaFSz5muTNGo9k/fsjPR
+	gQKXVnLo54ZbqO/pqlrEc0g+RNpu7VHKaEVyUkpiLcIcKQ+XzjvoV8qkCYqUA6J25ybtXrWY
+	VIsiOUo+Wjqrf1+CjN+m2CPuEMVdovZvS3BhETq0fGONfuvZMrckrXZahYczlBPv1iY3Zsw8
+	+i5q/ti43cPyhp+J6j2p+bomfE1Bx1JD/LhtRT+b3xxu2q72ZiSaIx5OirLpR8UNaikuaR0c
+	3ySZOPGac/HjIiNTPjU6PivWa1hSs/vXgYNALUALLujXjai8cXxujN5x3/uxw+SbootbLaeS
+	lIqZ0aQ2SfEbtLR/WGUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTdxTG83/vNOv22mH4h/rFGrNNI5u76HFuxsRs/OfE7MO8hJhIM9/Y
+	BiikVYSZJYXaSdwi0KQltDILxNJRLAjqZKRLU0cdMgTEMUQuYjqxyGVBkCBQ9tJlmV9OnvN7
+	nic5H45Aq2JssqA3nJCMBm2WhlMwiv07LVu8u/7WvdMd2gF9hUEG5maLGbjQUM9BcVMFC91+
+	H4KRuWIE84suGqwtKwws28I8zC484GElEEbg6LHRUH+1kIJnjTEOnt6cQWAfjXBQHi1kYNrz
+	PQLnYxcP0bZUmBxpZWFlaIyCP59PIPBEYhREgmcRLDsy4WJ1MweLnV00lNu7EVSNDtHwpFE2
+	r4aHEQS8RRz8VXqNht7Iq3BvbpqDdvt3HEz2XKBgqpEDd1GAhUqXDYGlpoEDR2UTAy0Pf+ah
+	5+kSBYMOGwW+pjQY8TxmoKO0mpLvk1NXksBVbqHk8YQC++VWChY8dTz8XjPIgMe8EVydvSw8
+	8jp5WBrdCivuHAj7xngYKrEz4J/sYnfbEZm3nmdIXfN1iljvLnOk/od6RBZf2BCZvWShibVU
+	Xm9OTNPkTPMpcqljgiMv5v7gSOC5myG3qzEp69xCWpxDPDnzywD/xYfpio+OSVn6PMn49q4M
+	hc49YOZzh9n8EpuLNaMW5hxKELD4Pq6x/EivakbciC3fmuOcE9/A/f0LcZ4ovomjbQMyVwi0
+	6FJjX2dF3Hhd/BL3+eriBaW4Hd+prWJXQyrxHMJBZyv1r7EGt1dE4iFa3IT7Y1GZC7JW49qY
+	sIoTxPdwmeM8WtVrxQ04eP0WVYqUzpfazpfazv/bbkTXoUS9IS9bq8/6IMWUqSsw6PNTvsrJ
+	bkLyV3q+WSq7gWZ7U0NIFJDmFeVD77ROxWrzTAXZIYQFWpOo3H56QqdSHtMWfC0Zc44aT2ZJ
+	phBSC4wmSbn3kJShEo9rT0iZkpQrGf9zKSEh2Yz06o/Hwj/51207mHnfMv+o274vLRb9laf2
+	7ymaPCvORAwzpGHzYTKcf6Rkj/ezULqQdHzntoB1fPzaukLz6Q2nbiWH1+B7qbql4N72T9M7
+	mIuN+wY/ea3iLf/l6s/X51ahyh333x2/O9U19ez2oQN9bWWalLTh3Rm1M+vV/qTfYodvaBiT
+	Trt1E200af8BW/SRTpEDAAA=
+X-CFilter-Loop: Reflected
 
-On Wed, Oct 15, 2025 at 11:39=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba=
-.com> wrote:
->
-> Hi Joanne,
->
-> On 2025/10/16 02:21, Joanne Koong wrote:
-> > On Wed, Oct 15, 2025 at 11:06=E2=80=AFAM Gao Xiang <hsiangkao@linux.ali=
-baba.com> wrote:
->
-> ...
->
-> >>>
-> >>> This is where I encountered it in erofs: [1] for the "WARNING in
-> >>> iomap_iter_advance" syz repro. (this syzbot report was generated in
-> >>> response to this patchset version [2]).
-> >>>
-> >>> When I ran that syz program locally, I remember seeing pos=3D116 and =
-length=3D3980.
-> >>
-> >> I just ran the C repro locally with the upstream codebase (but I
-> >> didn't use the related Kconfig), and it doesn't show anything.
-> >
-> > Which upstream commit are you running it on? It needs to be run on top
-> > of this patchset [1] but without this fix [2]. These changes are in
-> > Christian's vfs-6.19.iomap branch in his vfs tree but I don't think
-> > that branch has been published publicly yet so maybe just patching it
-> > in locally will work best.
-> >
-> > When I reproed it last month, I used the syz executor (not the C
-> > repro, though that should probably work too?) directly with the
-> > kconfig they had.
->
-> I believe it's a regression somewhere since it's a valid
-> IOMAP_INLINE extent (since it's inlined, the length is not
-> block-aligned of course), you could add a print just before
-> erofs_iomap_begin() returns.
+On Thu, Oct 02, 2025 at 10:24:41AM +0200, Greg KH wrote:
+> On Thu, Oct 02, 2025 at 05:12:01PM +0900, Byungchul Park wrote:
+> > llist_head and llist_node can be used by some other header files.  For
+> > example, dept for tracking dependencies uses llist in its header.  To
+> > avoid header dependency, move them to types.h.
+> 
+> If you need llist in your code, then include llist.h.  Don't force all
 
-Ok, so if erofs is strictly block-aligned except for tail inline data
-(eg the IOMAP_INLINE extent), then I agree, there is a regression
-somewhere as we shouldn't be running into the situation where erofs is
-calling iomap_adjust_read_range() with a non-block-aligned position
-and length. I'll track the offending commit down tomorrow.
+Eventually, I found out another way to avoid the dependency issue.
+Thanks anyway for the feedback.
 
+	Byungchul
 
-Thanks,
-Joanne
-
->
-> Also see my reply:
-> https://lore.kernel.org/r/cff53c73-f050-44e2-9c61-96552c0e85ab@linux.alib=
-aba.com
->
-> I'm not sure if it caused user-visible regressions since
-> erofs images work properly with upstream code (unlike a
-> previous regression fixed by commit b26816b4e320 ("iomap:
-> fix inline data on buffered read")).
->
-> But a fixes tag is needed since it causes an unexpected
-> WARNING at least.
->
-> Thanks,
-> Gao Xiang
->
-> >
-> > Thanks,
-> > Joanne
-> >
-> > [1] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-1-joan=
-nelkoong@gmail.com/T/#t
-> > [2] https://lore.kernel.org/linux-fsdevel/20250922180042.1775241-1-joan=
-nelkoong@gmail.com/
-> > [3] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-1-joan=
-nelkoong@gmail.com/T/#m4ce4707bf98077cde4d1d4845425de30cf2b00f6
-> >
-> >>
-> >> I feel strange why pos is unaligned, does this warning show
-> >> without your patchset on your side?
-> >>
-> >> Thanks,
-> >> Gao Xiang
-> >>
-> >>>
-> >>> Thanks,
-> >>> Joanne
-> >>>
-> >>> [1] https://ci.syzbot.org/series/6845596a-1ec9-4396-b9c4-48bddc606bef
-> >>> [2] https://lore.kernel.org/linux-fsdevel/68ca71bd.050a0220.2ff435.04=
-fc.GAE@google.com/
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>> Gao Xiang
-> >>>>
-> >>>>>
-> >>>>>
-> >>>>> Thanks,
-> >>>>> Joanne
-> >>>>>
-> >>>>>>
-> >>>>>> Otherwise looks good:
-> >>>>>>
-> >>>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> >>>>
-> >>
->
+> types.h users to do so as there is not a dependency in types.h for
+> llist.h.
+> 
+> This patch shouldn't be needed as you are hiding "header dependency" for
+> other files.
+> 
+> thanks,
+> 
+> greg k-h
 
