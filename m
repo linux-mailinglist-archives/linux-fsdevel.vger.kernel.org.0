@@ -1,193 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-64393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29558BE534E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 21:15:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CB5BE5572
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 22:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2E3E3556E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 19:15:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B85F64F8FFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 20:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1D29B8C2;
-	Thu, 16 Oct 2025 19:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA872DECB2;
+	Thu, 16 Oct 2025 20:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NZe5ucb0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ve1f5a3X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F7433469A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 19:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514DC2DCF51
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 20:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760642115; cv=none; b=nxYcrqlCvHAo3NH+XBanxSfcW5eDuFFJizMO3pQ3DslVQrNl/AyvWipH5R9s3ZdyWdxTGnanHMy722vvtllrZzuABoMBxNLFavQvKp95QgcbaXIgCK6zb/aOnIflbn5Y4ieyra8sh/an5cobZ/st3zW9vDgEt/s7S5Eix50DMKA=
+	t=1760645609; cv=none; b=VfgRcymPWuA7r0gTB69fsuNlQk5J+chb4MKGBMj+/kfQhYVO/tsh5QefWEsePfI2AbD0ULOM9x5bwFNqHHkRKrBth1rqJu1iiNuNjDugvg8ALMPP4k0ZRN9/O+yMUT8ykwguDUryOoT+V7d3YBrGHEDujk1tx/CxHOP6RdAcvAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760642115; c=relaxed/simple;
-	bh=2wIoqQOKViyJzI5mST31nnZOq2eejB4i2v9JaxIh2po=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RLfjOZR8aFgFrgyIgHH72VqsqaHlBn9dCZJ0uWU6eml4TOhyOttyThI9wQsK9CTPiFanfgZexSn6962LXo5pUlguoRm8WHj4BnH2B0RwdoHIpRiwrO2wHlv1k7HiHvAXHFCRiRTxCywHRdWFzNMH3OS42ww0fJkthGeWbxyVv/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NZe5ucb0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760642112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hVHh5PR4TvqqguUhfaerHBEOYknHgUGYrVSqECH8sUI=;
-	b=NZe5ucb0anFxd6ULMBrIhFY/3xPGK7D7XTRNwyKTntLXi4p7nNbcV1RwCAl8IPjWz44/f3
-	oygYgB77GXcYDGMZGkWlthrmh1TYv1mCuKAxd7ZVZRdCp86pTQBJsbBahZr6nVGI5tdQa9
-	6/0BiU8rMNFQmwnBXi/ADa6pDfDTLrU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-328-W61nmjTjMfSQiwQlFiStVQ-1; Thu, 16 Oct 2025 15:15:10 -0400
-X-MC-Unique: W61nmjTjMfSQiwQlFiStVQ-1
-X-Mimecast-MFC-AGG-ID: W61nmjTjMfSQiwQlFiStVQ_1760642109
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-426feed0016so549918f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 12:15:10 -0700 (PDT)
+	s=arc-20240116; t=1760645609; c=relaxed/simple;
+	bh=AMePQKedklNG+frYE0fNjDWR6wq016bqkOx+pjn4iGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O+o41FPbYdytDGEtcmJDo/USlhB7GxtPGN06X8/AVEbmWOUjegduWC24sewdha+Qmg4qjzi1M5pQPxlojF9HuG/yRjmMdMtEPbHr5HAacw+MKW1DLxY5pOjbTmFv2Yp3BsXQvqcDhldMzL97IhLqO3xZn4ik5Ayqghk+gWvym8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ve1f5a3X; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-87808473c3bso241512885a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 13:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760645606; x=1761250406; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hr5v/Wvt5KZjZp/Gp7A4CekLz50aQivP/rnzTiyeINU=;
+        b=Ve1f5a3XLRo0oaz3mvXs7d4pxMWJ0ylctYfN+dj2tccRhpxx4vJnhv0VOAq79NO0lb
+         GGDFYvpXwfK+HgHcsHMV1Uixsx/ntRSWpDk/B+IPUWS5D4Nh/L4fZyj/kUaqvkNoujcw
+         YE2FD31hsgHUuVRq6QH6/gNquTiwX4G3hft7EqhSzMOBLOYbq1AwuCY/z+pE2Et+rpvG
+         0cS6r0ZG9/onq15j7UtOvHSTAQ5+T3UjRMEg5MBZ+vYK/FOZ48bZ6uNbesLgnY03v0LZ
+         rimilNAVD91PuRk609QVmD4FLv2TqBbax7NV9cBGNNnZQMHtq9DeKmPfYb+snlQf9EIY
+         3JEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760642109; x=1761246909;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hVHh5PR4TvqqguUhfaerHBEOYknHgUGYrVSqECH8sUI=;
-        b=KEOZ3nahLI6gMYAS7ECGTD+PpXqOkHBAY0ntAUboNhZK+ERzGD9KVettZmUI1TfxeG
-         1WGTPgsjq8nJ2vv+C3sffX2uChwSQPBaYGk75/goubZh0hyjYJXDsTgiLHDaQxpGKq8T
-         FsPJnt8EL489JSTEqycf8ZsoNJj/EkPwB0m2u+zZI6vKRaZ8IX5/I1ZvHF16QILZSfS6
-         zBTUH9dFb4uisq1Yw+j1y6RsJyF4H/FHyYLgw5O+RHqwOMEHYmqkRTVcKjx8qntPwLtS
-         iAoWH3NKkOi0f/yO5iuwyG9tJjJFNPl3fh5+U+rgxoXtZoU5ALBPPorxbzzyM8cMbLf6
-         E7VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz3R4NvvpP7SdZY7K5BEjTq12bxMaFoid5C/cChYZJrn4WmHhqhydjdr7ydgHJ2QuBnDiWbPYB3fy4sC6G@vger.kernel.org
-X-Gm-Message-State: AOJu0YycPRDwz8L10o0p1J/khUnJru7kTdWOy9IIYAl2i4DnZETT22dV
-	8p7ihF1N8vLSkHi4HWii9m17XxLI7JdOysYIaVrCAwAOA0EcXHxRa923fFVOF6h59yZZYuoMiW9
-	9yYLrbdmkcrQ6TPl6uny5AM0wE/46f/GKfDxD1eCmNy2+NEjaVYtV6RKQowEawTUtx3g=
-X-Gm-Gg: ASbGnctuhK3F4TUv1+0cqHW+v0wsfEr9arDdkrPGCDo6A7JgXQTIIAySIVMaLcyZ7XH
-	khaa7cuwqwt0BO+DCiuAEcnpySedKiVtVm4sgDIMt0HzHesU//ql0NzCnxaryd0cCWr7lWA5cXd
-	cMjXpZsJgqdV6Hx208FfBJYDqjSjS10HSb5BVbaoLf/SmOtJIP05sOWCWFKUvFeyX/eqoN+BinV
-	zv8vv0J5x7XXqnPZI5wf74jk4jcj/krhBm6HOp9/FbyqMBcH6wKLNucL4boDx4mOgr+0HYIn1gd
-	RC40Zhwy6KlizpBrNE3mD3xjRpV+gsSCr7mDZqR+wRJGLCb94jbPCxvU+PM7ukzm2a/Mcx8RIF1
-	FLUqTYBdW2w9YBO2blzxt1APTARxlfk0lB9oCYPd+345rlj8wwEvcrwMBtNp7jSTEpC/bmsKeVE
-	/ATs2DaPRomnPy6JHIdxdhI/CgxSo=
-X-Received: by 2002:a05:6000:1446:b0:40b:c42e:fe39 with SMTP id ffacd0b85a97d-42704d963b3mr855965f8f.40.1760642109092;
-        Thu, 16 Oct 2025 12:15:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTwjlQtEo8QmL86bVhgI5H+nKBsihjFtBhqqdNCCeLESucnFPVLdDF1Syd2/2TIS9wcEA8jg==
-X-Received: by 2002:a05:6000:1446:b0:40b:c42e:fe39 with SMTP id ffacd0b85a97d-42704d963b3mr855922f8f.40.1760642108544;
-        Thu, 16 Oct 2025 12:15:08 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144239bdsm64839695e9.3.2025.10.16.12.15.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Oct 2025 12:15:08 -0700 (PDT)
-Message-ID: <dc14c183-d93e-405a-831a-dca69ede3cd2@redhat.com>
-Date: Thu, 16 Oct 2025 21:15:05 +0200
+        d=1e100.net; s=20230601; t=1760645606; x=1761250406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hr5v/Wvt5KZjZp/Gp7A4CekLz50aQivP/rnzTiyeINU=;
+        b=oFjral3LZBFOzE5+w6X4WvWXj0l8vEDpf3uczciaRL9vdCNSt57fcfjX0AmhaEyNnb
+         10oayVp5+rzvmt8PCC/Zp1JHJEfjQb+9nEaHincTbqdINw7lyrnef9NEibW+5Y1z68Ig
+         4gqt+au2W9ePxL74UxfJ3DgWnPZNWAy1yYLPrY084jpl0I80aXgB+55JjtPBduwWoV5T
+         WZTH0XEXhIVHWBsWmbJRBKF4JPBl/t/p0qe4buBdd+lSXDRoxushElIBeAkHhGII+aXJ
+         FCxzJhKf15GyjUJNXBNM5JfFR5YDQ89HKrM52V49kY563PIyBhPSk6P7StY3NfccYP6Y
+         srpw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6SO5je1YJxhnziXfLb/8DUzarlYpBky6cHcHhl5W6z/x3wnzgnXRasqMmVW2PfVYpLq0JjtSxj0UxZ7Qc@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfh3RTEYhgIaH7OHgFIR5Rsak334b8OQCSClQof6Ex73YS/y9A
+	LDm0JlmrmMDstbYZES4ZLx+RGaZfq86iuUGIbkMgThYEitaPa8/fxge9UyIZbsu4P5U5gYEg2Z7
+	yGTTI5aXRZ/ShxHoQG4Zq6cA7/YAu5rs=
+X-Gm-Gg: ASbGnctOOl03XqHsTUaS4Z1ifzWnbOfJQ5MS5p74L6QHbuaeGa5bTxxPjMkvmguG224
+	VzJEjOOKCSE/kzA9m3toB2lGtbfjKwV6rYvAD6cRNDD1YUKpo/UFbcFcJ8LsLmhazSLOP/x+yNV
+	Hmq/bKdU1NYaff114knvlQGlkRHH1pfhAK/FBWKQ3J+3q1pvrg88SaodtjDWq6vNgJIAETGNh1p
+	Lsngr8bU6QLkB+Y1e3AqCVybMFWcO4/lfj6q0osy66zcccqL6ZuZcIkkiBdZglyjMvptHfKDCn8
+	SbkSaR4c4lUvT34EPvhENu7vTfmxRi6sbzZwlw==
+X-Google-Smtp-Source: AGHT+IHhSYaSrFZLwBqDSHhMcDZS1nLGMdO86vV71tRIZaUmzXMjFMvAuflmknH0sEiWF7RnyE9L9CRik0n6q3uKZpc=
+X-Received: by 2002:a05:622a:106:b0:4e7:2b6a:643a with SMTP id
+ d75a77b69052e-4e89d1d945bmr23395481cf.12.1760645605776; Thu, 16 Oct 2025
+ 13:13:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] mm: fix off-by-one error in VMA count limit checks
-To: Kalesh Singh <kaleshsingh@google.com>, Hugh Dickins <hughd@google.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- pfalcato@suse.de, kernel-team@android.com, android-mm@google.com,
- stable@vger.kernel.org, SeongJae Park <sj@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jann Horn <jannh@google.com>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20251013235259.589015-1-kaleshsingh@google.com>
- <20251013235259.589015-2-kaleshsingh@google.com>
- <144f3ee6-1a5f-57fc-d5f8-5ce54a3ac139@google.com>
- <CAC_TJvdLxPRC5r+Ae+h2Zmc68B5+s40+413Xo4SjvXH2x2F6hg@mail.gmail.com>
- <af0618c0-03c5-9133-bb14-db8ddb72b8de@google.com>
- <CAC_TJvdy4qCaLAW09ViC5vPbj4XC7_P+9Jjj_kYSU6d+=r70yw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAC_TJvdy4qCaLAW09ViC5vPbj4XC7_P+9Jjj_kYSU6d+=r70yw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251014-wake-same-cpu-v2-1-68f5078845c6@ddn.com>
+ <CAJnrk1brjsPoXc_dbMj-Ty4dr5ZCxtVjBn6WGOY8DkGxh87R5Q@mail.gmail.com>
+ <6d16a94b-3277-4922-a628-f17f622369bc@bsbernd.com> <CAJnrk1b9xVqmDY9kgDjPpjs7zuXNbiNaQnMyvY0iJirJbHi1yw@mail.gmail.com>
+ <20251016085813.GB3245006@noisy.programming.kicks-ass.net> <20251016090019.GH4068168@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251016090019.GH4068168@noisy.programming.kicks-ass.net>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 16 Oct 2025 13:13:13 -0700
+X-Gm-Features: AS18NWARr7vPYi_W10o-VeQoBPiyxlqAxcC3uLN_OazkOQKaBnOT7O75bAHrSoM
+Message-ID: <CAJnrk1aoPZj6KWKhBhPSASs-kgWDxipfY3MjPDBtG4v-zay3rg@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Wake requests on the same cpu
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, 
+	Luis Henriques <luis@igalia.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>> Would this be an acceptable path forward?
->>
->> Possibly, if others like it: my concern was to end a misunderstanding
->> (I'm generally much too slow to get involved in cleanups).
->>
->> Though given that the sysctl is named "max_map_count", I'm not very
->> keen on renaming everything else from map_count to vma_count
->> (and of course I'm not suggesting to rename the sysctl).
-> 
-> I still believe vma_count is a clearer name for the field, given some
-> existing comments already refer to it as vma count. The inconsistency
-> between vma_count and sysctl_max_map_count can be abstracted away; and
-> the sysctl made non-global.
+On Thu, Oct 16, 2025 at 2:00=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Thu, Oct 16, 2025 at 10:58:14AM +0200, Peter Zijlstra wrote:
+> > On Wed, Oct 15, 2025 at 03:19:31PM -0700, Joanne Koong wrote:
+> >
+> > > > > Won't this lose cache locality for all the other data that is in =
+the
+> > > > > client thread's cache on the previous CPU? It seems to me like on
+> > > > > average this would be a costlier miss overall? What are your thou=
+ghts
+> > > > > on this?
+> > > >
+> > > > So as in the introduction, which b4 made a '---' comment below,
+> > > > initially I thought this should be a conditional on queue-per-core.
+> > > > With queue-per-core it should be easy to explain, I think.
+> > > >
+> > > > App submits request on core-X, waits/sleeps, request gets handle on
+> > > > core-X by queue-X.
+> > > > If there are more applications running on this core, they
+> > > > get likely re-scheduled to another core, as the libfuse queue threa=
+d is
+> > > > core bound. If other applications don't get re-scheduled either the
+> > > > entire system is overloaded or someone sets manual application core
+> > > > affinity - we can't do much about that in either case. With
+> > > > queue-per-core there is also no debate about "previous CPU".
+> > > > Worse is actually scheduler behavior here, although the ring thread
+> > > > itself goes to sleep soon enough. Application gets still quite ofte=
+n
+> > > > re-scheduled to another core. Without wake-on-same core behavior is
+> > > > even worse and it jumps across all the time. Not good for CPU cache=
+...
+> > >
+> > > Maybe this is a lack of my understanding of scheduler internals,  but
+> > > I'm having a hard time seeing what the benefit of
+> > > wake_up_on_current_cpu() is over wake_up() for the queue-per-core
+> > > case.
+> > >
+> > > As I understand it, with wake_up() the scheduler already will try to
+> > > wake up the thread and put it back on the same core to maintain cache
+> > > locality, which in this case is the same core
+> > > "wake_up_on_current_cpu()" is trying to put it on. If there's too muc=
+h
+> > > load imbalance then regardless of whether you call wake_up() or
+> > > wake_up_on_current_cpu(), the scheduler will migrate the task to
+> > > whatever other core is better for it.
+> > >
+> > > So I guess the main benefit of calling wake_up_on_current_cpu() over
+> > > wake_up() is that for situations where there is only some but not too
+> > > much load imbalance we force the application to run on the current
+> > > core even despite the scheduler thinking it's better for overall
+> > > system health to distribute the load? I don't see an issue if the
+> > > application thread runs very briefly but it seems more likely that th=
+e
+> > > application thread could be work intensive in which case it seems lik=
+e
+> > > the thread would get migrated anyways or lead to more latency in the
+> > > long term with trying to compete on an overloaded core?
+> >
+> > So the scheduler will try and wake on the previous CPU, but if that CPU
+> > is not idle it will look for any non-idle CPU in the same L3 and very
+>
+> Typing hard: s/non-//
+>
+> > aggressively move tasks around.
+> >
+> > Notably if Task-A is waking Task-B, and Task-A is running on CPU-1 and
+> > Task-B was previously running on CPU-1, then the wakeup will see CPU-1
+> > is not idle (it is running Task-A) and it will try and find another CPU
+> > in the same L3.
+> >
+> > This is fine if Task-A continues running; however in the case where
+> > Task-A is going to sleep right after doing the wakeup, this is perhaps
+> > sub-optimal, CPU-1 will end up idle.
+> >
+> > We have the WF_SYNC (wake-flag) that tries to indicate this latter case=
+;
+> > trouble is, it often gets used where it should not be, it is unreliable=
+.
+> > Therefore it not a strong hint.
+> >
+> > Then we 'recently' grew WF_CURRENT_CPU, that forces the wakeup to the
+> > same CPU. If you abuse, you keep pieces :-)
+> >
+> > So it all depends a bit on the workload, machine and situation.
+> >
+> > Some machines L3 is fine, some machines L3 has exclusive L2 and it hurt=
+s
+> > more to move tasks. Some workloads don't fit L2 so it doesn't matter
+> > anyway. TL;DR is we need this damn crystal ball instruction :-)
 
-Yes, to me that part makes perfect sense (taste differs as we know).
+Thanks for the explanation! I found it very helpful.
 
--- 
-Cheers
+In light of that information, it seems to me that the original
+wake_up() would be more optimal here than wake_up_on_current_cpu()
+then. After fuse_request_end(), the thread still has work to do with
+fetching and servicing the next requests. If it wakes up the
+application on its cpu, then with queue-per-core the thread would be
+forced to sleep since on the libfuse side during setup the thread is
+pinned to the core, which would prevent any migration while the
+application task runs. Or am I misassuming something in this analysis,
+Bernd?
 
-David / dhildenb
-
+Thanks,
+Joanne
 
