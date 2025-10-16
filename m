@@ -1,182 +1,317 @@
-Return-Path: <linux-fsdevel+bounces-64400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE4ABE5B09
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 00:33:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4F8BE5B45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 00:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1446D3B5102
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 22:33:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 196B04EB6AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 22:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ECE3BB5A;
-	Thu, 16 Oct 2025 22:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3ED2DF6F8;
+	Thu, 16 Oct 2025 22:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ho4QRk8x"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3ci1Wcx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C3413AD26
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 22:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01B619F48D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 22:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760654001; cv=none; b=W+Uev97I44y6xapR39pVtFW1cTpauhqF+AOsHqV8iNzJwytTUyS9XG9Xm3Uhhwn0OivjZ9L8OquNjtwOVvxv/8GegbicUihXSpinmywulICUSu86LTw2mX333DxOik0ICXN11O6UZWxtr43o63IMHUmWUy3nqwIPoRErq1XMA1s=
+	t=1760654381; cv=none; b=mwSpj9sTfFoeqn0oloHvL9/SEDrt9+7Pg/3Foru1jJkupKsfsM5d5Zr06MBrD2MgOU9gDDE3pbtfj81v/erfrmSVLhMCFPiqYye9qFENo+WkMLhOJJwUw6Nrp57KJeDeiJJUNYC0PNsjWRWaa9KO0HzsZI64QhgUYOe1Z6B8w1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760654001; c=relaxed/simple;
-	bh=5HeHjJKQT+heuRAfANSmHQCiXgQ0Glwl31BAOVaoUn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTVwt0EKm4WnT+ybJAGZvY6QT88rimttTcp/9bx5IoJ4ZWaflR2bUiZDPajY6gGWVJUpeT7SBMndX7PBYmLUYeF5A64srbaiFFKYVJJchIiC/0yxvMAcAqOG5RIJM8g7zzqnJOMvVkUl+PUo0plbiBm/TzLDQPFY8nttgwIiGUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ho4QRk8x; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b62fcddfa21so814842a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 15:33:19 -0700 (PDT)
+	s=arc-20240116; t=1760654381; c=relaxed/simple;
+	bh=cB+IJenTCekhHSmjv1XF3MrFSsptXBFBVDPxc2B+TL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J9UTqca0wy+0kL3CyEbFGhP0c2TvqXAlUlfqiGjkH70Pww95ovWEJ8Q8Pm6/WfZII9TxgggHbD8XxGAiXkNZq/HOYSbT0bOxEDw8nEeL1tS+YKtAF1cicgn/5cddqx7JfYcpui3TNUoa5TYVoa6Inry8hnnGWHRV5zMsPv5/0YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3ci1Wcx; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-796fe71deecso16383036d6.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Oct 2025 15:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760653999; x=1761258799; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cyHszjXwr011mdavyBxcCiQ2SmN5DwUbyqKyrEqEbK8=;
-        b=ho4QRk8xqBKzQHLQCzMUjHycKPCCF0aiKDh61soOT3K487PRs0FwWllHtj8lLurwgb
-         3Pbou3uJWIB+kqqjrONe/ABPtHzC4u9oyAlZXTY5Pwe+YVkEEP4UmAZVkVn3GETxv63/
-         8VX5v6qkNUCFOKagtD0YgoCva7zTOB431RFi/9RQhBDDILaBTabwvPPbr/rguhS27uKJ
-         oZ+X8Vnxa7iLAxcAgD1ed/xMnLvMjc99Q/9w56k4gg7TgAf2uMxSmXbse6ZT3aHe9DLS
-         9PsoSDsPHA0QoWZOdsnzC8tkPTUQC4U1D112yZR7O75R0nyVRr5rABY9U8iAZfzDDlBE
-         cY/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760653999; x=1761258799;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760654378; x=1761259178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cyHszjXwr011mdavyBxcCiQ2SmN5DwUbyqKyrEqEbK8=;
-        b=t/vOp5HcujVPhitIYL76+P9B9Ak5z97J6Zoc136qRrZ6g5XG3ueHwo4BVqL866HDGd
-         T3Q6LcT8fCh3BKCR7PnNsyXizlzHpnpunZ/e1lCN+6ALuOUedVRStlDkphmnNXs/QLqW
-         d1DM2jtX99epFjELfqdpLgYb/nUzflvmFqTjSq/mgdQTeVhCK0z91iswMn7Sjbx4bYf9
-         GaVQu6bYNfjz06jt4dpP8r+QZYhBMF+eCg1fpsvnqQ4YeHEw/Z/7d2AF3EvXXT68qvyH
-         /NNP+dNtEBYUdry7sPOFWyHKFzMd/BvFRa0Pgfoa+sNJaDQtSDVYZ6MPrBjnsFQxiyJi
-         HUyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdkX+Wqhwa5NGHE8/gh38hyas4lOLs4zr1I+SUtOoxNQvjP5U+UM7HUOZD+HOK3jcfUK+iXUpy6pB4K1ZH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5yBHxr90k5Ox1604vG+ZrJPp6fZ9T+7FS5gbkiiiBilvqUZ5Z
-	7OSbMrQ4jdyd+wdhkYXMOIMhz8qHWzfT8+7u75pvWGMxMlPMqJ4wApqNrlgOr2pb/+o=
-X-Gm-Gg: ASbGncs/E8TaN+yr7AHRGeIbMOgcUTYJoFn8LP9fDFwaXNwUj+GQLdjUrHVaBSq3pbo
-	7+cSD9sezOxURgv4XKIWNjijEU2x9mNsy6Vzp7Lc81jlFKeb1fD6xaeGye7r0GAh+3oztn/rPbi
-	M33fCAg9XQT2dBtxQAcYOLLKAhtvSIKeLhPHvtN/x/W9OuzNqh19OUw/NgK8NG9hUjH88mr2iOf
-	wOv9h8hLlkcJSsc7JSSXQW9ylYbjRw6N/9pnM52jqeOA4rtMmiBrPLYsdn9ZGsGPE6Nu6Y9ia/0
-	jgK66BmW/j6THv2YMu3q7mzHC19O54+OdeTwYNNJCtCdrTeJrsYNduCJeHACz6pw6trKvQemlBl
-	ww+9Bf3DQcKYOET9DswExdroFQfmrKs7F67uDvYF8JF3FZKj5j+sfUCuafucD2mh+B4gvti/hRL
-	8iutUBCDB/xxLOsJUIQ7W3FHr9tyUn1j0VPxtaoswqPVvoK6w0s5YCcli/QiOJ1w==
-X-Google-Smtp-Source: AGHT+IHA0ri7OHJpZ/4Fd97oTXQUCyc/5am6RLXoYkFT5WMoFCFwAYWAWovMfIuEjWrsvgSaZLmzvA==
-X-Received: by 2002:a17:902:f70b:b0:267:af07:6528 with SMTP id d9443c01a7336-290caf83079mr16312385ad.35.1760653999244;
-        Thu, 16 Oct 2025 15:33:19 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060c4esm23661111b3a.14.2025.10.16.15.33.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 15:33:18 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1v9WX5-0000000FmFe-2Hry;
-	Fri, 17 Oct 2025 09:33:15 +1100
-Date: Fri, 17 Oct 2025 09:33:15 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>, Zorro Lang <zlang@redhat.com>,
-	akpm@linux-foundation.org, linux-mm <linux-mm@kvack.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	xfs <linux-xfs@vger.kernel.org>
-Subject: Re: Regression in generic/749 with 8k fsblock size on 6.18-rc1
-Message-ID: <aPFyqwdv1prLXw5I@dread.disaster.area>
-References: <20251014175214.GW6188@frogsfrogsfrogs>
- <rymlydtl4fo4k4okciiifsl52vnd7pqs65me6grweotgsxagln@zebgjfr3tuep>
- <20251015175726.GC6188@frogsfrogsfrogs>
- <bknltdsmeiapy37jknsdr2gat277a4ytm5dzj3xrcbjdf3quxm@ej2anj5kqspo>
+        bh=rUkBetk7F2E2MqpJQ+ErD5kCGmewTP3QqtZRTc2LRMQ=;
+        b=G3ci1WcxBfoisdYHs6/lk89PqVfNX263MqMaxYmYPoM4XaJjzvioWmPtiArraBUBA2
+         BTEvgidrO1HfQPVt6CM6gSvmZfRxKc3gwyZkQyReTR6pVGbvXEIIhC95YVJ5GTfcHBO9
+         +95KN2LnmR50nJ5EfeAG0D35vBvlSHbY8MP93OTVopv6+d32k865RRt83A2PZOyyc4FO
+         9EsUKW8rdtycp4K65W30agqw22hEKYa7nvKlYmoitdD3Ty9PWcwfRYc3LTHeTkuoY4Fq
+         z23OfhIox6K4oWg4t/Ebpcwz6nvqSTvb9LziyofG0oWaI5mTJt+d/MLFuav4yqHmIv5c
+         wYWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760654378; x=1761259178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rUkBetk7F2E2MqpJQ+ErD5kCGmewTP3QqtZRTc2LRMQ=;
+        b=sxUfHkAb03wp3489yGFMyr9075StHdSZz5r+yYms6qIOWX0ua0T5z9Ik4oKKyCiuTP
+         PJLl5sD44pQyHZxJ7bGI2mBdNJHSYOBZXwp/V2lw7rNQmSCJGh4mFNN+oKxzMps7hzd9
+         igKD+5+VLB2mWaC3UNXCJAek42wGHxIhJD6NkyChiN+5PCDDHVI5zC1TYmCu9hh3+Qkz
+         HQdpZvm+hV2+snfhdeeChsHCleGMfvXui/MaYZAN+4AlzLXhNmRMALziJxgQCYaBZeWx
+         PKJ/NtPgsJqxAIGIyhtQVqPajieRWgq/Vmw+znfTeHun1LnldO6Wb/uIOB0TIK330URe
+         +GcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAl47AXNwH9Go2Fe/lj3O9ffDqQZFpE+fSEAo9ytWH7eJ84Fjvqatelsne4h4Tt07sjgksKyR1u0NLgp9X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4KuD9kdC++A+0grYJZvgJsVCZtDeOuIeagbBP+RwYOPPM3Z0G
+	aIoDwas/oQCmLESGBPVIdyZcJcm76zAOHUPPwhCQYf1w4ebXFHUOQ6Jydzc6UdHzuDCGbrIAc7X
+	btNKQgwCJcM9QxKocaXRBRXA6lf2iwTw=
+X-Gm-Gg: ASbGncv6mOWe+TVYLcCPZVJ2TEOiHimh+ZbiP+ekLY1jCtOMGpU1bqhj8MV4kAgMCPD
+	rhWMOnMI516Wo/ic/4s3WWziC69SoMTC943BNYyfB38vBzvfFdVqZuYpZZJzXnOR+Ug6yC/jqkG
+	qf0E1YiF8o0+JIClGPjDtXHmpeTRiKxwmL+sHPDpnMZBWV2lRA5iLIlJCzUaY+KO3RxOUS9zXpW
+	vTY2YK2YyXN3EYFD+qJw8hPel4Z2+N0+dVFdJh1wCflZfOZ93cIvxQCREM6CTSW60W5FmBf6Vf6
+	oxDr+Ai9HK9klc7tM82S51VAPL0=
+X-Google-Smtp-Source: AGHT+IG0lwwUNBJIaax1MHxp8Re/YpLfs0R4n8rIWoGpZSGQNnhQNXFPDt2o06NKysgW611LoSGX9jQ/BnK/Omfrx7A=
+X-Received: by 2002:a05:622a:1103:b0:4df:45b1:1547 with SMTP id
+ d75a77b69052e-4e89d3a7dcdmr25272901cf.69.1760654378392; Thu, 16 Oct 2025
+ 15:39:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bknltdsmeiapy37jknsdr2gat277a4ytm5dzj3xrcbjdf3quxm@ej2anj5kqspo>
+References: <20251009225611.3744728-2-joannelkoong@gmail.com>
+ <aOxrXWkq8iwU5ns_@infradead.org> <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
+ <a8c02942-69ca-45b1-ad51-ed3038f5d729@linux.alibaba.com> <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
+ <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com> <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
+ <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com> <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
+ <CAJnrk1b+nBmHc14-fx__NgaJzMLX7C2xm0m+hcgW_h9jbSjhFQ@mail.gmail.com> <aPDXIWeTKceHuqkj@bfoster>
+In-Reply-To: <aPDXIWeTKceHuqkj@bfoster>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 16 Oct 2025 15:39:27 -0700
+X-Gm-Features: AS18NWDv1_aSL6zBQyp59YEeO31LWd-MvaUfnrS_FKdXG8H82PI6HpwItt-muGc
+Message-ID: <CAJnrk1YeT8uBLf0e2-+wd6vKMH4Rp9dhHbC0d9eCu1hEwhiANA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
+ truncating read range
+To: Brian Foster <bfoster@redhat.com>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, 
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 11:22:00AM +0100, Kiryl Shutsemau wrote:
-> On Wed, Oct 15, 2025 at 10:57:26AM -0700, Darrick J. Wong wrote:
-> > On Wed, Oct 15, 2025 at 04:59:03PM +0100, Kiryl Shutsemau wrote:
-> > > On Tue, Oct 14, 2025 at 10:52:14AM -0700, Darrick J. Wong wrote:
-> > > > Hi there,
-> > > > 
-> > > > On 6.18-rc1, generic/749[1] running on XFS with an 8k fsblock size fails
-> > > > with the following:
-> > > > 
-> > > > --- /run/fstests/bin/tests/generic/749.out	2025-07-15 14:45:15.170416031 -0700
-> > > > +++ /var/tmp/fstests/generic/749.out.bad	2025-10-13 17:48:53.079872054 -0700
-> > > > @@ -1,2 +1,10 @@
-> > > >  QA output created by 749
-> > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > >  Silence is golden
-> > > > 
-> > > > This test creates small files of various sizes, maps the EOF block, and
-> > > > checks that you can read and write to the mmap'd page up to (but not
-> > > > beyond) the next page boundary.
-> > > > 
-> > > > For 8k fsblock filesystems on x86, the pagecache creates a single 8k
-> > > > folio to cache the entire fsblock containing EOF.  If EOF is in the
-> > > > first 4096 bytes of that 8k fsblock, then it should be possible to do a
-> > > > mmap read/write of the first 4k, but not the second 4k.  Memory accesses
-> > > > to the second 4096 bytes should produce a SIGBUS.
-> > > 
-> > > Does anybody actually relies on this behaviour (beyond xfstests)?
-> > 
-> > Beats me, but the mmap manpage says:
-> ...
-> > POSIX 2024 says:
-> ...
-> > From both I would surmise that it's a reasonable expectation that you
-> > can't map basepages beyond EOF and have page faults on those pages
-> > succeed.
-> 
-> <Added folks form the commit that introduced generic/749>
-> 
-> Modern kernel with large folios blurs the line of what is the page.
-> 
-> I don't want play spec lawyer. Let's look at real workloads.
+On Thu, Oct 16, 2025 at 4:25=E2=80=AFAM Brian Foster <bfoster@redhat.com> w=
+rote:
+>
+> On Wed, Oct 15, 2025 at 06:27:10PM -0700, Joanne Koong wrote:
+> > On Wed, Oct 15, 2025 at 5:36=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > On Wed, Oct 15, 2025 at 11:39=E2=80=AFAM Gao Xiang <hsiangkao@linux.a=
+libaba.com> wrote:
+> > > >
+> > > > Hi Joanne,
+> > > >
+> > > > On 2025/10/16 02:21, Joanne Koong wrote:
+> > > > > On Wed, Oct 15, 2025 at 11:06=E2=80=AFAM Gao Xiang <hsiangkao@lin=
+ux.alibaba.com> wrote:
+> > > >
+> > > > ...
+> > > >
+> > > > >>>
+> > > > >>> This is where I encountered it in erofs: [1] for the "WARNING i=
+n
+> > > > >>> iomap_iter_advance" syz repro. (this syzbot report was generate=
+d in
+> > > > >>> response to this patchset version [2]).
+> > > > >>>
+> > > > >>> When I ran that syz program locally, I remember seeing pos=3D11=
+6 and length=3D3980.
+> > > > >>
+> > > > >> I just ran the C repro locally with the upstream codebase (but I
+> > > > >> didn't use the related Kconfig), and it doesn't show anything.
+> > > > >
+> > > > > Which upstream commit are you running it on? It needs to be run o=
+n top
+> > > > > of this patchset [1] but without this fix [2]. These changes are =
+in
+> > > > > Christian's vfs-6.19.iomap branch in his vfs tree but I don't thi=
+nk
+> > > > > that branch has been published publicly yet so maybe just patchin=
+g it
+> > > > > in locally will work best.
+> > > > >
+> > > > > When I reproed it last month, I used the syz executor (not the C
+> > > > > repro, though that should probably work too?) directly with the
+> > > > > kconfig they had.
+> > > >
+> > > > I believe it's a regression somewhere since it's a valid
+> > > > IOMAP_INLINE extent (since it's inlined, the length is not
+> > > > block-aligned of course), you could add a print just before
+> > > > erofs_iomap_begin() returns.
+> > >
+> > > Ok, so if erofs is strictly block-aligned except for tail inline data
+> > > (eg the IOMAP_INLINE extent), then I agree, there is a regression
+> > > somewhere as we shouldn't be running into the situation where erofs i=
+s
+> > > calling iomap_adjust_read_range() with a non-block-aligned position
+> > > and length. I'll track the offending commit down tomorrow.
+> > >
+> >
+> > Ok, I think it's commit bc264fea0f6f ("iomap: support incremental
+> > iomap_iter advances") that changed this behavior for erofs such that
+> > the read iteration continues even after encountering an IOMAP_INLINE
+> > extent, whereas before, the iteration stopped after reading in the
+> > iomap inline extent. This leads erofs to end up in the situation where
+> > it calls into iomap_adjust_read_range() with a non-block-aligned
+> > position/length (on that subsequent iteration).
+> >
+> > In particular, this change in commit bc264fea0f6f to iomap_iter():
+> >
+> > -       if (ret > 0 && !iter->processed && !stale)
+> > +       if (ret > 0 && !advanced && !stale)
+> >
+> > For iomap inline extents, iter->processed is 0, which stopped the
+> > iteration before. But now, advanced (which is iter->pos -
+> > iter->iter_start_pos) is used which will continue the iteration (since
+> > the iter is advanced after reading in the iomap inline extents).
+> >
+> > Erofs is able to handle subsequent iterations after iomap_inline
+> > extents because erofs_iomap_begin() checks the block map and returns
+> > IOMAP_HOLE if it's not mapped
+> >         if (!(map.m_flags & EROFS_MAP_MAPPED)) {
+> >                 iomap->type =3D IOMAP_HOLE;
+> >                 return 0;
+> >         }
+> >
+> > but I think what probably would be better is a separate patch that
+> > reverts this back to the original behavior of stopping the iteration
+> > after IOMAP_INLINE extents are read in.
+> >
+>
+> Hmm.. so as of commit bc264fea0f6f, it looks like the read_inline() path
+> still didn't advance the iter at all by that point. It just returned 0
+> and this caused iomap_iter() to break out of the iteration loop.
+>
+> The logic noted above in iomap_iter() is basically saying to break out
+> if the iteration did nothing, which is a bit of a hacky way to terminate
+> an IOMAP_INLINE read. The proper thing to do in that path IMO is to
+> report the bytes processed and then terminate some other way more
+> naturally. I see Gao actually fixed this sometime later in commit
+> b26816b4e320 ("iomap: fix inline data on buffered read"), which is when
+> the inline read path started to advance the iter.
 
-Or, more importantly, consider the security-related implications of
-the change....
+That's a good point, the fix in commit b26816b4e320 is what led to the
+new erofs behavior, not commit bc264fea0f6f.
 
-> If there's anything that actually relies on this SIGBUS corner case,
-> let's see how we can fix the kernel. But it will cost some CPU cycles.
-> 
-> If it only broke syntactic test case, I'm inclined to say WONTFIX.
-> 
-> Any opinions?
+>
+> TBH, the behavior described above where we advance over the inline
+> mapping and then report any remaining iter length as a hole also sounds
+> like reasonably appropriate behavior to me. I suppose you could argue
+> that the inline case should just terminate the iter, which perhaps means
+> it should call iomap_iter_advance_full() instead. That technically
+> hardcodes that we will never process mappings beyond an inline mapping
+> into iomap. That bugs me a little bit, but is also probably always going
+> to be true so doesn't seem like that big of a deal.
 
-Mapping beyond EOF ranges into userspace address spaces is a
-potential security risk. If there is ever a zeroing-beyond-EOF bug
-related to large folios (history tells us we are *guaranteed* to
-screw this up somewhere in future), then allowing mapping all the
-way to the end of the large folio could expose a -lot more- stale
-kernel data to userspace than just what the tail of a PAGE_SIZE
-faulted region would expose.
+Reporting any remaining iter length as a hole also sounds reasonable
+to me but it seems that this may add additional work that may not be
+trivial. For example, I'm looking at erofs's erofs_map_blocks() call
+which they would need to do to figure out it should be an iomap hole.
+It seems a bit nonideal to me that any filesystem using iomap inline
+data would also have to make sure they cover this case, which maybe
+they already need to do that, I'm not sure, but it seems like an extra
+thing they would now need to account for.
 
-Hence allowing applications to successfully fault a (unpredictable)
-distance far beyond EOF because the page cache used a large folio
-spanning EOF seems, to me, to be a very undesirable behaviour to
-expose to userspace.
+One scenario I'm imagining maybe being useful in the future is
+supporting chained inline mappings, in which case we would still want
+to continue processing after the first inline mapping, but we could
+also address that if it does come up.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>
+> If we wanted to consider it an optimization so we didn't always do this
+> extra iter on inline files, perhaps another variant of that could be an
+> EOF flag or some such that the fs could set to trigger a full advance
+> after the current mapping. OTOH you could argue that's what inline
+> already is so maybe that's overthinking it. Just a thought. Hm?
+>
+
+Would non-inline iomap types also find that flag helpful or is the
+intention for it to be inline specific? I guess the flag could also be
+used by non-inline types to stop the iteration short, if there's a use
+case for that?
+
+Thanks,
+Joanne
+
+> Brian
+>
+> > So I don't think this patch should have a fixes: tag for that commit.
+> > It seems to me like no one was hitting this path before with a
+> > non-block-aligned position and offset. Though now there will be a use
+> > case for it, which is fuse.
+> >
+> > Thanks,
+> > Joanne
+> >
+> > >
+> > > Thanks,
+> > > Joanne
+> > >
+> > > >
+> > > > Also see my reply:
+> > > > https://lore.kernel.org/r/cff53c73-f050-44e2-9c61-96552c0e85ab@linu=
+x.alibaba.com
+> > > >
+> > > > I'm not sure if it caused user-visible regressions since
+> > > > erofs images work properly with upstream code (unlike a
+> > > > previous regression fixed by commit b26816b4e320 ("iomap:
+> > > > fix inline data on buffered read")).
+> > > >
+> > > > But a fixes tag is needed since it causes an unexpected
+> > > > WARNING at least.
+> > > >
+> > > > Thanks,
+> > > > Gao Xiang
+> > > >
+> > > > >
+> > > > > Thanks,
+> > > > > Joanne
+> > > > >
+> > > > > [1] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-=
+1-joannelkoong@gmail.com/T/#t
+> > > > > [2] https://lore.kernel.org/linux-fsdevel/20250922180042.1775241-=
+1-joannelkoong@gmail.com/
+> > > > > [3] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-=
+1-joannelkoong@gmail.com/T/#m4ce4707bf98077cde4d1d4845425de30cf2b00f6
+> > > > >
+> > > > >>
+> > > > >> I feel strange why pos is unaligned, does this warning show
+> > > > >> without your patchset on your side?
+> > > > >>
+> > > > >> Thanks,
+> > > > >> Gao Xiang
+> > > > >>
+> > > > >>>
+> > > > >>> Thanks,
+> > > > >>> Joanne
+> > > > >>>
+> > > > >>> [1] https://ci.syzbot.org/series/6845596a-1ec9-4396-b9c4-48bddc=
+606bef
+> > > > >>> [2] https://lore.kernel.org/linux-fsdevel/68ca71bd.050a0220.2ff=
+435.04fc.GAE@google.com/
+> > > > >>>
+> > > > >>>>
+> > > > >>>> Thanks,
+> > > > >>>> Gao Xiang
+> > > > >>>>
+> > > > >>>>>
+> > > > >>>>>
+> > > > >>>>> Thanks,
+> > > > >>>>> Joanne
+> > > > >>>>>
+> > > > >>>>>>
+> > > > >>>>>> Otherwise looks good:
+> > > > >>>>>>
+> > > > >>>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > > >>>>
+> > > > >>
+> > > >
+> >
+>
 
