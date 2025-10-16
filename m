@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-64365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3DDBE38A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 14:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DB7BE38B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 14:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CF354F00BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:58:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EEFC4F5B03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Oct 2025 12:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD3335BC3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E0B3375A5;
 	Thu, 16 Oct 2025 12:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgTMbMLS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftZkmP5i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC633437E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA30334393;
 	Thu, 16 Oct 2025 12:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760619499; cv=none; b=PLAZu1KXcB6oKaYyrU8wzTM6YF1GEBh9tk36HiTKBX+VT9YNILQRE1Yi+zHNswct2AUCz2hEqTbRYbuJIRY7cCboIlNP2i9X1DgcvcKUifnjqk6Y3HfcQNg8fya1h+Ef/8xYocoh3jYB57o+Fxb1qPnwwh0g1d4qqFyQMWI1piY=
+	t=1760619499; cv=none; b=ujPaQM7NTEzDHXBCwnRJw4WzeRBJwddl0pMKlRbMGdCwsTYWDK3piDYtmFYXQXIPCzREXw9jM2XOXTx7ONxcC9kSdQYCDtiNmLbmhpkgsdFEcCBDtTLI7Xu2+YbjItPbBiBOo7tVe9pCaT3VjxwcU9DWUO+7boDnmxRfI9GLq0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760619499; c=relaxed/simple;
-	bh=4+HSqZIQ5bS9EKW17QMDP9M3ASEnduvLXw6N2k0mFYQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AdAGpfd8oz+yhlOITjdXf63UoC6jL2jeG3wvxGqz/ES107kMZnyhtaJorQvS091TY5S70PDLYeD2dKcWmL+oqSVp1VRJXISrtGhtKTSsodL890y6Cb6fJpwn+QDPJCPdEU6ZAAlHaTZzaE8dZ4pNcyMDrPx5efnzLWjHvJwX+IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgTMbMLS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 38A91C4CEFE;
+	bh=xhYBn//i7aNfh3cHC6GieFmJFdKrx9dZXxNHLeNVBSo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iJ83eqbScHcJZZVygRkDf0nPVu9rxNKKPzn8IRwGepT8BM69ykgZXFeT1fHF3DaTvVa1fL9QuCxiSkR9BGnwd2cRoA7yF3O8Mt7pxuippfJ2Ph4A6JCZitkmS2hVSsfEgjbeQTpZc6tQxqg0yYXzrq5L7zTK37B76jwVD3Kd4PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftZkmP5i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A9A7C113D0;
 	Thu, 16 Oct 2025 12:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760619499;
-	bh=4+HSqZIQ5bS9EKW17QMDP9M3ASEnduvLXw6N2k0mFYQ=;
-	h=From:Subject:Date:To:Cc:From;
-	b=LgTMbMLSY2uzWFnjQ17Q+OymjJUM2fWUlGuoDkkQMU0BWwHtorSU5kOFC030m3yZl
-	 +AdFCGBzK3Kp8Ig34Ok6Jy2aPyECnx8OuY+PgA61fSQE0Jjv9iUAbk+gVfLULzuPve
-	 NHPWpDu+g6XllBguGwFiSPspCS3ZsH0q3Ga0yqbPcK376nA1Os078LXpUD/EDoF0fd
-	 5JXwHQAv9n4RfgWroRi16VmlEAbPhDYJyuSOZ/SDi44VK6oi6ohnpFPvKITDG8MqFz
-	 H3kiS2U5MhZpOWL3B7BRyaCYgZJc96GW9y0a+FcQ3paNkQf3bWT7O0x+u8srT1BKZn
-	 tw7qK4prdJwpA==
+	bh=xhYBn//i7aNfh3cHC6GieFmJFdKrx9dZXxNHLeNVBSo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ftZkmP5ity1FNH0WB0Jr1IQ/Py5VujM3BF/8VEhqCzCrwO7CAiel9u8ry97s7xaRG
+	 g4C+ywli5aK5lux5LvLGMURl0tqcjBB4ny9OhlTgxwsIjaksT6cbY4pl/3Fua/IEOE
+	 97bFfptrhS69frm62Z9OTsGUGuDLp8SeEsKXkishP/z4Rg2vrwZ70H8tWPEznFlBA2
+	 bUg2WATsfX7yy5QgY3I49uX1/Pw2IYFkwTrx++OPov2tQfnmSDfod4WFqlIQ9dhK4F
+	 4tuEWgmEbIbmqt1R/i4y9k30lu6v+Ov9vW2cN0JvWAUWpNmhUdi9/twMfJmC5p3FEG
+	 7/kPSPCBE4LHw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D12CCD199;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27907CCD183;
 	Thu, 16 Oct 2025 12:58:19 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Subject: [PATCH v2 00/11] sysctl: Generalize proc handler converter
- creation
-Date: Thu, 16 Oct 2025 14:57:46 +0200
-Message-Id: <20251016-jag-sysctl_conv-v2-0-a2f16529acc4@kernel.org>
+Date: Thu, 16 Oct 2025 14:57:47 +0200
+Subject: [PATCH v2 01/11] sysctl: Replace void pointer with const pointer
+ to ctl_table
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,127 +56,509 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMrr8GgC/2WNywrDIBQFfyXcdS0+Semq/1FCEb0a26BBgzSE/
- HttoKsuZ+DM2aBgDljg2m2QsYYSUmzATx2YUUePJNjGwClXjDJOntqTshazTA+TYiWqpxcpnXJ
- WO2irOaML76N4HxqPoSwpr8dBZV/7a4m/VmWEEmmNUAY19kLcXpgjTueUPQz7vn8ASGbnx68AA
- AA=
-X-Change-ID: 20251012-jag-sysctl_conv-570844f5fdaf
+Message-Id: <20251016-jag-sysctl_conv-v2-1-a2f16529acc4@kernel.org>
+References: <20251016-jag-sysctl_conv-v2-0-a2f16529acc4@kernel.org>
+In-Reply-To: <20251016-jag-sysctl_conv-v2-0-a2f16529acc4@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
  Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4137;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=16261;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=4+HSqZIQ5bS9EKW17QMDP9M3ASEnduvLXw6N2k0mFYQ=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjw69TK4Q/XJn/jNUe2s4Idect6fUZtE12V5
- urDrI+vxczpUYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8OvUAAoJELqXzVK3
- lkFPWUIL/AppNzwct+2sP6xYBFj8qjy1lU+wa6BJ35raoOLGlVN7PD5ZdINjwlXhtwMIq70O0H9
- B9KdxN5LVk1cVlNZd9xh6/irFwPgbUhSL1ZQj4DVSnrlWvzRp+qvep6G4GI+hUaccBbHJ8zoe5D
- IQOJueiLr9iA/vOrVwywyyoVnZuoVW1LUUKhXkWqsKWmRrtU5MNcueILGVB/3wDNvo0eSFCkw08
- 0KJtYzhJPnbzctb6HYRlQJe/usmoOAfX9VdOFvzAUm3M9BDlqkapC3daZscAQkvfUSPqzTpbMky
- l6aWV5Zz34xn4/ZLhIi7I1SBpoLorDu/6YYLbgfijyYhaAK0SIcSh7vkQzwNtHTd8R6ssXFFJD6
- cSQpWKemFEUb0qWN9gvvmQMK+Q1NU7c9P/TaE4x84XWPhQbJoihNlHlxO5dUP9xKFhB0qnvv73K
- B78E+iFMxAnBcs0ukeHaGKynlRrgcH5+DbYpFrAme+g37O7Q4YukQxRVgcQ2k0wyNLVIZwjCzu7
- Hk=
+ bh=xhYBn//i7aNfh3cHC6GieFmJFdKrx9dZXxNHLeNVBSo=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjw6+LWrVllGc+KDl2poCDQhw1suA4i1uuur
+ 5zTsITSaPVXPYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8OviAAoJELqXzVK3
+ lkFPdgML/2U0UVjjAbJYRA2fNRLNQJpx4Y3e9QgonmeSu1beWFC4ZgpGZzEQWH3ao8bZUUlmjJ4
+ k6Sa7LITF8GiL8PbXqix3Vgmsx3XFVQZwneJPJCCZ9YUyNeJm1eQnyn0HKoUgYsLPZlEbXfEHq2
+ pErPVCvOriafPdHPpQvuafOT1jhYRQoKKaCtK4oNEgKxHf69sgtijIDFbF7eW2b1XmHkCBZwEX2
+ 00jS7lA04jw1NYARSQAka7FHgdNGPFUCdVb5WB8S6tBlc0XfS/Xr1f3DFsdlWO+aCs2BZPNovqS
+ miQlv77Ycwl6Qqjp4/dCrbRp1moHg5SuqgIU+u7BmZ1igmdrGp9sKXYrCx0wiTTu59hD51WKp1p
+ 2Fwv3UdjmbwC6qiDRKJFsUxjj/3uvIGscVYPObr7CfjNgXP8wcfoztl/lT1daDAy9MlQaiBoV+t
+ L3Exk+kq3bi6o40GCLR3El0GvZq8vEbCJbhgfSHw0Ox8sv3Wrh1tpoTCeylz4I1VBfIGHVKCW/6
+ CA=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-Implement new converter generation macros that remove repeated logic and
-prep the proc handler converter infrastructure for exposure to the
-greater kernel. Macros will be exposed in a later series so they can be
-used in jiffies.c and pipe.c (like in this branch [1]).
+* Replace void* data in the converter functions with a const struct
+  ctl_table* table as it was only getting forwarding values from
+  ctl_table->extra{1,2}.
+* Remove the void* data in the do_proc_* functions as they already had a
+  pointer to the ctl_table.
+* Remove min/max structures do_proc_do{uint,int}vec_minmax_conv_param;
+  the min/max values get passed directly in ctl_table.
+* Keep min/max initialization in extra{1,2} in proc_dou8vec_minmax.
+* The do_proc_douintvec was adjusted outside sysctl.c as it is exported
+  to fs/pipe.c.
 
-What is done?
-=============
-
-Three integer macros (SYSCTL_{KERN_TO_USER,USER_TO_KERN}_INT_CONV and
-SYSCTL_INT_CONV_CUSTOM) are created.
-  * SYSCTL_INT_CONV_CUSTOM: creates a bi-directional (handles both user
-    to kernel and kernel to user writes) converter that optionally
-    implements a range checker for when kernel memory is written.
-  * SYSCTL_KERN_TO_USER_INT_CONV: is a uni-directional converter that
-    writes to a user buffer avoiding tears with READ_ONCE and setting
-    the negp variable appropriately; it generates functions that do not
-    fail.
-  * SYSCTL_USER_TO_KERN_INT_CONV: is a uni-directional converter that
-    writes to a kernel buffer, checks for integer overflow and avoids
-    tears by using with WRITE_ONCE; returns -EINVAL when an overflow is
-    detected.
-
-Two unsigned integer macros (SYSCTL_USER_TO_KERN_UINT_CONV and
-SYSCTL_UINT_CONV_CUSTOM) are created.
-  * SYSCTL_UINT_CONV_CUSTOM: Same as SYSCTL_INT_CONV_CUSTOM except that
-    there are no special cases for negative values.
-  * SYSCTL_USER_TO_KERN_UINT_CONV: Same as SYSCTL_USER_TO_KERN_INT_CONV
-    except that there is no need to indicate when the value is negative.
-    The check for overflow is done against UINT_MAX instead of INT_MAX.
-
-For now these macros produce static functions that are used from within
-kernel/sysctl.c. The idea is to move them to include/kernel/sysctl.h in
-another series so they can be used to create custom converters.
-
-Why it is done?
-===============
-
-Motivation is to move non-sysctl logic out of kernel/sysctl.c which had
-become a dumping ground for ctl_tables until this trend was changed by
-the commits leading to (and including) 73184c8e4ff4 ("sysctl: rename
-kern_table -> sysctl_subsys_table"). This series does not move the
-jiffie logic out, but it sets things up so it can eventually be evicted
-from kernel/sysctl.c.
-
-Testing
-=======
-
-* I ran this through the sysctl selftests and sysctl kunit tests on an
-  x86_64 arch
-* This also goes through the sysctl-testing 0-day CI infra.
-
-Versions
-========
-
-Changes in v2:
-- Corrected cover letter wording
-- Added macros for unsigned int converters. Three new commits:
-    - sysctl: Create macro for user-to-kernel uint converter
-    - sysctl: Add optional range checking to SYSCTL_UINT_CONV_CUSTOM
-    - sysctl: Create unsigned int converter using new macro
-  Added to prepare for when the macros will be used from outside of
-  sysctl.c (to be added in another series)
-- Link to v1: https://lore.kernel.org/r/20251013-jag-sysctl_conv-v1-0-4dc35ceae733@kernel.org
-
-Any comments are greatly appreciated
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/log/?h=jag/sysctl_jiffies
-
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
-Joel Granados (11):
-      sysctl: Replace void pointer with const pointer to ctl_table
-      sysctl: Remove superfluous tbl_data param from "dovec" functions
-      sysctl: Remove superfluous __do_proc_* indirection
-      sysctl: Indicate the direction of operation with macro names
-      sysctl: Discriminate between kernel and user converter params
-      sysctl: Create converter functions with two new macros
-      sysctl: Create integer converters with one macro
-      sysctl: Add optional range checking to SYSCTL_INT_CONV_CUSTOM
-      sysctl: Create unsigned int converter using new macro
-      sysctl: Add optional range checking to SYSCTL_UINT_CONV_CUSTOM
-      sysctl: Create macro for user-to-kernel uint converter
-
  fs/pipe.c              |   6 +-
  include/linux/sysctl.h |   5 +-
- kernel/sysctl.c        | 694 +++++++++++++++++++++----------------------------
- 3 files changed, 298 insertions(+), 407 deletions(-)
----
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
-change-id: 20251012-jag-sysctl_conv-570844f5fdaf
+ kernel/sysctl.c        | 180 ++++++++++++++++++-------------------------------
+ 3 files changed, 71 insertions(+), 120 deletions(-)
 
-Best regards,
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 731622d0738d41a9d918dc5048e95e38b3b0e049..2431f05cb788f5bd89660f0fc6f4c4696e17d5dd 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -1480,8 +1480,8 @@ static struct file_system_type pipe_fs_type = {
+ 
+ #ifdef CONFIG_SYSCTL
+ static int do_proc_dopipe_max_size_conv(unsigned long *lvalp,
+-					unsigned int *valp,
+-					int write, void *data)
++					unsigned int *valp, int write,
++					const struct ctl_table *table)
+ {
+ 	if (write) {
+ 		unsigned int val;
+@@ -1503,7 +1503,7 @@ static int proc_dopipe_max_size(const struct ctl_table *table, int write,
+ 				void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	return do_proc_douintvec(table, write, buffer, lenp, ppos,
+-				 do_proc_dopipe_max_size_conv, NULL);
++				 do_proc_dopipe_max_size_conv);
+ }
+ 
+ static const struct ctl_table fs_pipe_sysctls[] = {
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 92e9146b1104123d3dc0ff004bd681861e297581..2d3d6c141b0b0aee21f2708450b7b41d8041a8cb 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -238,9 +238,8 @@ bool sysctl_is_alias(char *param);
+ int do_proc_douintvec(const struct ctl_table *table, int write,
+ 		      void *buffer, size_t *lenp, loff_t *ppos,
+ 		      int (*conv)(unsigned long *lvalp,
+-				  unsigned int *valp,
+-				  int write, void *data),
+-		      void *data);
++				  unsigned int *valp, int write,
++				  const struct ctl_table *table));
+ 
+ extern int unaligned_enabled;
+ extern int no_unaligned_warning;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index cb6196e3fa993daa21704d190baf366084e014f7..f0a691ffb29067a019a857a62fa56185aab06c61 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -355,8 +355,8 @@ static void proc_put_char(void **buf, size_t *size, char c)
+ }
+ 
+ static int do_proc_dointvec_conv(bool *negp, unsigned long *lvalp,
+-				 int *valp,
+-				 int write, void *data)
++				 int *valp, int write,
++				 const struct ctl_table *table)
+ {
+ 	if (write) {
+ 		if (*negp) {
+@@ -382,8 +382,8 @@ static int do_proc_dointvec_conv(bool *negp, unsigned long *lvalp,
+ }
+ 
+ static int do_proc_douintvec_conv(unsigned long *lvalp,
+-				  unsigned int *valp,
+-				  int write, void *data)
++				  unsigned int *valp, int write,
++				  const struct ctl_table *table)
+ {
+ 	if (write) {
+ 		if (*lvalp > UINT_MAX)
+@@ -402,8 +402,7 @@ static int __do_proc_dointvec(void *tbl_data, const struct ctl_table *table,
+ 		  int write, void *buffer,
+ 		  size_t *lenp, loff_t *ppos,
+ 		  int (*conv)(bool *negp, unsigned long *lvalp, int *valp,
+-			      int write, void *data),
+-		  void *data)
++			      int write, const struct ctl_table *table))
+ {
+ 	int *i, vleft, first = 1, err = 0;
+ 	size_t left;
+@@ -444,12 +443,12 @@ static int __do_proc_dointvec(void *tbl_data, const struct ctl_table *table,
+ 					     sizeof(proc_wspace_sep), NULL);
+ 			if (err)
+ 				break;
+-			if (conv(&neg, &lval, i, 1, data)) {
++			if (conv(&neg, &lval, i, 1, table)) {
+ 				err = -EINVAL;
+ 				break;
+ 			}
+ 		} else {
+-			if (conv(&neg, &lval, i, 0, data)) {
++			if (conv(&neg, &lval, i, 0, table)) {
+ 				err = -EINVAL;
+ 				break;
+ 			}
+@@ -474,11 +473,10 @@ static int __do_proc_dointvec(void *tbl_data, const struct ctl_table *table,
+ static int do_proc_dointvec(const struct ctl_table *table, int write,
+ 		  void *buffer, size_t *lenp, loff_t *ppos,
+ 		  int (*conv)(bool *negp, unsigned long *lvalp, int *valp,
+-			      int write, void *data),
+-		  void *data)
++			      int write, const struct ctl_table *table))
+ {
+ 	return __do_proc_dointvec(table->data, table, write,
+-			buffer, lenp, ppos, conv, data);
++			buffer, lenp, ppos, conv);
+ }
+ 
+ static int do_proc_douintvec_w(unsigned int *tbl_data,
+@@ -486,9 +484,8 @@ static int do_proc_douintvec_w(unsigned int *tbl_data,
+ 			       void *buffer,
+ 			       size_t *lenp, loff_t *ppos,
+ 			       int (*conv)(unsigned long *lvalp,
+-					   unsigned int *valp,
+-					   int write, void *data),
+-			       void *data)
++					   unsigned int *valp, int write,
++					   const struct ctl_table *table))
+ {
+ 	unsigned long lval;
+ 	int err = 0;
+@@ -518,7 +515,7 @@ static int do_proc_douintvec_w(unsigned int *tbl_data,
+ 		goto out_free;
+ 	}
+ 
+-	if (conv(&lval, tbl_data, 1, data)) {
++	if (conv(&lval, tbl_data, 1, table)) {
+ 		err = -EINVAL;
+ 		goto out_free;
+ 	}
+@@ -538,12 +535,12 @@ static int do_proc_douintvec_w(unsigned int *tbl_data,
+ 	return err;
+ }
+ 
+-static int do_proc_douintvec_r(unsigned int *tbl_data, void *buffer,
++static int do_proc_douintvec_r(unsigned int *tbl_data,
++			       const struct ctl_table *table, void *buffer,
+ 			       size_t *lenp, loff_t *ppos,
+ 			       int (*conv)(unsigned long *lvalp,
+-					   unsigned int *valp,
+-					   int write, void *data),
+-			       void *data)
++					   unsigned int *valp, int write,
++					   const struct ctl_table *table))
+ {
+ 	unsigned long lval;
+ 	int err = 0;
+@@ -551,7 +548,7 @@ static int do_proc_douintvec_r(unsigned int *tbl_data, void *buffer,
+ 
+ 	left = *lenp;
+ 
+-	if (conv(&lval, tbl_data, 0, data)) {
++	if (conv(&lval, tbl_data, 0, table)) {
+ 		err = -EINVAL;
+ 		goto out;
+ 	}
+@@ -573,9 +570,8 @@ static int __do_proc_douintvec(void *tbl_data, const struct ctl_table *table,
+ 			       int write, void *buffer,
+ 			       size_t *lenp, loff_t *ppos,
+ 			       int (*conv)(unsigned long *lvalp,
+-					   unsigned int *valp,
+-					   int write, void *data),
+-			       void *data)
++					   unsigned int *valp, int write,
++					   const struct ctl_table *table))
+ {
+ 	unsigned int *i, vleft;
+ 
+@@ -601,19 +597,18 @@ static int __do_proc_douintvec(void *tbl_data, const struct ctl_table *table,
+ 
+ 	if (write)
+ 		return do_proc_douintvec_w(i, table, buffer, lenp, ppos,
+-					   conv, data);
+-	return do_proc_douintvec_r(i, buffer, lenp, ppos, conv, data);
++					   conv);
++	return do_proc_douintvec_r(i, table, buffer, lenp, ppos, conv);
+ }
+ 
+ int do_proc_douintvec(const struct ctl_table *table, int write,
+ 		      void *buffer, size_t *lenp, loff_t *ppos,
+ 		      int (*conv)(unsigned long *lvalp,
+-				  unsigned int *valp,
+-				  int write, void *data),
+-		      void *data)
++				  unsigned int *valp, int write,
++				  const struct ctl_table *table))
+ {
+-	return __do_proc_douintvec(table->data, table, write,
+-				   buffer, lenp, ppos, conv, data);
++	return __do_proc_douintvec(table->data, table, write, buffer, lenp,
++				   ppos, conv);
+ }
+ 
+ /**
+@@ -672,7 +667,7 @@ int proc_dobool(const struct ctl_table *table, int write, void *buffer,
+ int proc_dointvec(const struct ctl_table *table, int write, void *buffer,
+ 		  size_t *lenp, loff_t *ppos)
+ {
+-	return do_proc_dointvec(table, write, buffer, lenp, ppos, NULL, NULL);
++	return do_proc_dointvec(table, write, buffer, lenp, ppos, NULL);
+ }
+ 
+ /**
+@@ -692,42 +687,28 @@ int proc_douintvec(const struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos)
+ {
+ 	return do_proc_douintvec(table, write, buffer, lenp, ppos,
+-				 do_proc_douintvec_conv, NULL);
++				 do_proc_douintvec_conv);
+ }
+ 
+-/**
+- * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+- * @min: pointer to minimum allowable value
+- * @max: pointer to maximum allowable value
+- *
+- * The do_proc_dointvec_minmax_conv_param structure provides the
+- * minimum and maximum values for doing range checking for those sysctl
+- * parameters that use the proc_dointvec_minmax() handler.
+- */
+-struct do_proc_dointvec_minmax_conv_param {
+-	int *min;
+-	int *max;
+-};
+-
+ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
+-					int *valp,
+-					int write, void *data)
++					int *valp, int write,
++					const struct ctl_table *table)
+ {
+-	int tmp, ret;
+-	struct do_proc_dointvec_minmax_conv_param *param = data;
++	int tmp, ret, *min, *max;
+ 	/*
+ 	 * If writing, first do so via a temporary local int so we can
+ 	 * bounds-check it before touching *valp.
+ 	 */
+ 	int *ip = write ? &tmp : valp;
+ 
+-	ret = do_proc_dointvec_conv(negp, lvalp, ip, write, data);
++	ret = do_proc_dointvec_conv(negp, lvalp, ip, write, table);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (write) {
+-		if ((param->min && *param->min > tmp) ||
+-		    (param->max && *param->max < tmp))
++		min = (int *) table->extra1;
++		max = (int *) table->extra2;
++		if ((min && *min > tmp) || (max && *max < tmp))
+ 			return -EINVAL;
+ 		WRITE_ONCE(*valp, tmp);
+ 	}
+@@ -754,45 +735,27 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
+ int proc_dointvec_minmax(const struct ctl_table *table, int write,
+ 		  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_dointvec_minmax_conv_param param = {
+-		.min = (int *) table->extra1,
+-		.max = (int *) table->extra2,
+-	};
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+-				do_proc_dointvec_minmax_conv, &param);
++				do_proc_dointvec_minmax_conv);
+ }
+ 
+-/**
+- * struct do_proc_douintvec_minmax_conv_param - proc_douintvec_minmax() range checking structure
+- * @min: pointer to minimum allowable value
+- * @max: pointer to maximum allowable value
+- *
+- * The do_proc_douintvec_minmax_conv_param structure provides the
+- * minimum and maximum values for doing range checking for those sysctl
+- * parameters that use the proc_douintvec_minmax() handler.
+- */
+-struct do_proc_douintvec_minmax_conv_param {
+-	unsigned int *min;
+-	unsigned int *max;
+-};
+-
+ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+-					 unsigned int *valp,
+-					 int write, void *data)
++					 unsigned int *valp, int write,
++					 const struct ctl_table *table)
+ {
+ 	int ret;
+-	unsigned int tmp;
+-	struct do_proc_douintvec_minmax_conv_param *param = data;
++	unsigned int tmp, *min, *max;
+ 	/* write via temporary local uint for bounds-checking */
+ 	unsigned int *up = write ? &tmp : valp;
+ 
+-	ret = do_proc_douintvec_conv(lvalp, up, write, data);
++	ret = do_proc_douintvec_conv(lvalp, up, write, table);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (write) {
+-		if ((param->min && *param->min > tmp) ||
+-		    (param->max && *param->max < tmp))
++		min = (unsigned int *) table->extra1;
++		max = (unsigned int *) table->extra2;
++		if ((min && *min > tmp) || (max && *max < tmp))
+ 			return -ERANGE;
+ 
+ 		WRITE_ONCE(*valp, tmp);
+@@ -823,12 +786,8 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+ int proc_douintvec_minmax(const struct ctl_table *table, int write,
+ 			  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_douintvec_minmax_conv_param param = {
+-		.min = (unsigned int *) table->extra1,
+-		.max = (unsigned int *) table->extra2,
+-	};
+ 	return do_proc_douintvec(table, write, buffer, lenp, ppos,
+-				 do_proc_douintvec_minmax_conv, &param);
++				 do_proc_douintvec_minmax_conv);
+ }
+ 
+ /**
+@@ -854,28 +813,24 @@ int proc_dou8vec_minmax(const struct ctl_table *table, int write,
+ 	struct ctl_table tmp;
+ 	unsigned int min = 0, max = 255U, val;
+ 	u8 *data = table->data;
+-	struct do_proc_douintvec_minmax_conv_param param = {
+-		.min = &min,
+-		.max = &max,
+-	};
+ 	int res;
+ 
+ 	/* Do not support arrays yet. */
+ 	if (table->maxlen != sizeof(u8))
+ 		return -EINVAL;
+ 
+-	if (table->extra1)
+-		min = *(unsigned int *) table->extra1;
+-	if (table->extra2)
+-		max = *(unsigned int *) table->extra2;
+-
+ 	tmp = *table;
+ 
+ 	tmp.maxlen = sizeof(val);
+ 	tmp.data = &val;
++	if (!tmp.extra1)
++		tmp.extra1 = (unsigned int *) &min;
++	if (!tmp.extra2)
++		tmp.extra2 = (unsigned int *) &max;
++
+ 	val = READ_ONCE(*data);
+ 	res = do_proc_douintvec(&tmp, write, buffer, lenp, ppos,
+-				do_proc_douintvec_minmax_conv, &param);
++				do_proc_douintvec_minmax_conv);
+ 	if (res)
+ 		return res;
+ 	if (write)
+@@ -1014,8 +969,8 @@ int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table, int write,
+ 
+ 
+ static int do_proc_dointvec_jiffies_conv(bool *negp, unsigned long *lvalp,
+-					 int *valp,
+-					 int write, void *data)
++					 int *valp, int write,
++					 const struct ctl_table *table)
+ {
+ 	if (write) {
+ 		if (*lvalp > INT_MAX / HZ)
+@@ -1040,8 +995,8 @@ static int do_proc_dointvec_jiffies_conv(bool *negp, unsigned long *lvalp,
+ }
+ 
+ static int do_proc_dointvec_userhz_jiffies_conv(bool *negp, unsigned long *lvalp,
+-						int *valp,
+-						int write, void *data)
++						int *valp, int write,
++						const struct ctl_table *table)
+ {
+ 	if (write) {
+ 		if (USER_HZ < HZ && *lvalp > (LONG_MAX / HZ) * USER_HZ)
+@@ -1063,8 +1018,8 @@ static int do_proc_dointvec_userhz_jiffies_conv(bool *negp, unsigned long *lvalp
+ }
+ 
+ static int do_proc_dointvec_ms_jiffies_conv(bool *negp, unsigned long *lvalp,
+-					    int *valp,
+-					    int write, void *data)
++					    int *valp, int write,
++					    const struct ctl_table *table)
+ {
+ 	if (write) {
+ 		unsigned long jif = msecs_to_jiffies(*negp ? -*lvalp : *lvalp);
+@@ -1088,23 +1043,24 @@ static int do_proc_dointvec_ms_jiffies_conv(bool *negp, unsigned long *lvalp,
+ }
+ 
+ static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *lvalp,
+-						int *valp, int write, void *data)
++						int *valp, int write,
++						const struct ctl_table *table)
+ {
+-	int tmp, ret;
+-	struct do_proc_dointvec_minmax_conv_param *param = data;
++	int tmp, ret, *min, *max;
+ 	/*
+ 	 * If writing, first do so via a temporary local int so we can
+ 	 * bounds-check it before touching *valp.
+ 	 */
+ 	int *ip = write ? &tmp : valp;
+ 
+-	ret = do_proc_dointvec_ms_jiffies_conv(negp, lvalp, ip, write, data);
++	ret = do_proc_dointvec_ms_jiffies_conv(negp, lvalp, ip, write, table);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (write) {
+-		if ((param->min && *param->min > tmp) ||
+-				(param->max && *param->max < tmp))
++		min = (int *) table->extra1;
++		max = (int *) table->extra2;
++		if ((min && *min > tmp) || (max && *max < tmp))
+ 			return -EINVAL;
+ 		*valp = tmp;
+ 	}
+@@ -1130,18 +1086,14 @@ int proc_dointvec_jiffies(const struct ctl_table *table, int write,
+ 			  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+     return do_proc_dointvec(table,write,buffer,lenp,ppos,
+-		    	    do_proc_dointvec_jiffies_conv,NULL);
++			    do_proc_dointvec_jiffies_conv);
+ }
+ 
+ int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int write,
+ 			  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_dointvec_minmax_conv_param param = {
+-		.min = (int *) table->extra1,
+-		.max = (int *) table->extra2,
+-	};
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+-			do_proc_dointvec_ms_jiffies_minmax_conv, &param);
++			do_proc_dointvec_ms_jiffies_minmax_conv);
+ }
+ 
+ /**
+@@ -1163,7 +1115,7 @@ int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int write,
+ 				 void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+-				do_proc_dointvec_userhz_jiffies_conv, NULL);
++				do_proc_dointvec_userhz_jiffies_conv);
+ }
+ 
+ /**
+@@ -1185,7 +1137,7 @@ int proc_dointvec_ms_jiffies(const struct ctl_table *table, int write, void *buf
+ 		size_t *lenp, loff_t *ppos)
+ {
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+-				do_proc_dointvec_ms_jiffies_conv, NULL);
++				do_proc_dointvec_ms_jiffies_conv);
+ }
+ 
+ /**
+
 -- 
-Joel Granados <joel.granados@kernel.org>
+2.50.1
 
 
 
