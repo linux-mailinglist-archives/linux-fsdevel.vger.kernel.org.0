@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-64477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5A7BE8562
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 13:32:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31AABE856F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 13:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D649A427FD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 11:32:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3844C34FDC7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 11:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E4A2C234A;
-	Fri, 17 Oct 2025 11:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C96B3469EC;
+	Fri, 17 Oct 2025 11:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9DGnOuC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMpZHhGi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45BA17B50F;
-	Fri, 17 Oct 2025 11:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0FC3451BE;
+	Fri, 17 Oct 2025 11:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700743; cv=none; b=CAD9QKgCfkCjJ9049TjdF9D+IdWRujzQ0GiVqwfJk1/6zVQ9lf8W0QpUXuYzjktFJzyiS4O6rj2wNRJpcM0juBqXU1IuOiT9BvmQxXRj6HvuY2rwt9FasASog6/PdfdCnObPw0njR9aNcqqw6pMzh+ePcWKk7suDKTxezisKHf4=
+	t=1760700746; cv=none; b=Glv6tMcBX2G4KnJ3sK3PmAslQJybMGrIXEmAc0g966zjZqOBABAVOCiAe5C4TXCZDQJgMLj9jbBVrfmOYDsseYuzXSSJesqRjcsAXAMWe+RGUABhYOezISJeXdam795ufAG17MOZT2bh5K1A3WGTJg5yGQ9uKO0WO4d4+O+Gf9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700743; c=relaxed/simple;
-	bh=gdRsiICWh3EgJw0ZvUIQMngA14LooVC9WxK4QW7lzRI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e0f7O3Y/sgExy3GNqmD7YnA9jlGGb3eMFz3MYF3JoWhKcO8lX6V96y06DEaArqMuNbsOoH6dEkykkgVmXXWbtYUlMeuTCk/O1Hf3ChfWFMJct+jpMMrRAxgzDMs9oefIWhrbOlGMvRBBbX2YDJes0tv0UmxZYuXTHV3uJtpAvGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9DGnOuC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D363C4CEE7;
-	Fri, 17 Oct 2025 11:32:19 +0000 (UTC)
+	s=arc-20240116; t=1760700746; c=relaxed/simple;
+	bh=s4rvzuIbyXzK6y+wPnL+4uRpK7mDo/eer/xGdjtob/k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nx4fCeXoGCqoxKa21n1HPDtsos3r3oyGrSPOkSYYhQaxRS2aPw1pk8b2MRa2Udds6pH+kNDFdSwQyI7TBbe1ziDiey3rzRtBTMjVw6aCWLFHFbjUUsa7IW1lx+r7SMJ+bpw/2NCxjhLPJ8wq2jCAFMiQ2Y2sF81i9GsyOLuKioQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMpZHhGi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97545C4CEFE;
+	Fri, 17 Oct 2025 11:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760700742;
-	bh=gdRsiICWh3EgJw0ZvUIQMngA14LooVC9WxK4QW7lzRI=;
-	h=From:Subject:Date:To:Cc:From;
-	b=P9DGnOuCmOdNG5W6RgjuTjeyk3P/whn02BodWjCQc47gPiDqG8sWr/M9A/aDQjTT9
-	 bcJJtqJjay7hjMWRAkrXWXd0+5+pVcivdbmAXI2qU7++jU58sGX0b6iqSPb7TIPrMr
-	 vU+aYQIAZB+zTtzWD9co1r/MqyHMlNUUZ8/vw0PB511S2ilyi3hXyHvFHlSNQ1m3TB
-	 rAk1LugA3nJ2NSiifLNWMZGnAdtbwZiwWi8PpNz8HWNk/zSBPzVX25kaFOf+thDBMc
-	 xL5HISBtOKclTMuABiFs963NrU8vFX/u9WImuZmo6P/BrlN2fT8FMT/T01w2SZTt28
-	 86zAz6/aVpYxw==
+	s=k20201202; t=1760700745;
+	bh=s4rvzuIbyXzK6y+wPnL+4uRpK7mDo/eer/xGdjtob/k=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=MMpZHhGimGzVe0IiwpWahv0abICWYOv8gTvTxx/P+V0qoGnQ2DTeBIzxGftH+9921
+	 x1rCSAaVDozwbBxHIvk/2okbt3ZvWmRDAinDxIWFlk1Z4Exav3F4IGi1dVUH09aWlK
+	 TEt6jx9FyTdA+Kfi85mGl5h2VLX/CQpckB085s+BW6EJAAVuvwadHDslIKIa0ttTIh
+	 poeFeOELmG/QIPcGplKwRQTbkkJnixNjdSEBy2oHAcIkaUKbkfvhrwyxeGU4KmFk3r
+	 xBLufYrXEpj05rqZyFLI1LTcGQGs82ekcVRra1mVihxMVUSqmlC3gdY0gAM49wWuVJ
+	 zn2lQr4EmG/lQ==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v2 00/11] vfs: recall-only directory delegations for knfsd
-Date: Fri, 17 Oct 2025 07:31:52 -0400
-Message-Id: <20251017-dir-deleg-ro-v2-0-8c8f6dd23c8b@kernel.org>
+Date: Fri, 17 Oct 2025 07:31:53 -0400
+Subject: [PATCH v2 01/11] filelock: push the S_ISREG check down to
+ ->setlease handlers
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,10 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACgp8mgC/3XMQQ6CMBCF4auQWTtmWkTQlfcwLNAOZSKhZmoaD
- endrexd/i953wqRVTjCuVpBOUmUsJSwuwru07B4RnGlwZJtDJkanSg6ntmjBnQ0sjl1tr5ZA+X
- yVB7lvXHXvvQk8RX0s+nJ/NY/UDJIeKBj29HQEjd8ebAuPO+Deuhzzl8uvWOZqQAAAA==
-X-Change-ID: 20251013-dir-deleg-ro-d0fe19823b21
+Message-Id: <20251017-dir-deleg-ro-v2-1-8c8f6dd23c8b@kernel.org>
+References: <20251017-dir-deleg-ro-v2-0-8c8f6dd23c8b@kernel.org>
+In-Reply-To: <20251017-dir-deleg-ro-v2-0-8c8f6dd23c8b@kernel.org>
 To: Miklos Szeredi <miklos@szeredi.hu>, 
  Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
@@ -84,97 +84,109 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3197; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=gdRsiICWh3EgJw0ZvUIQMngA14LooVC9WxK4QW7lzRI=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo8ik3EpoIalOYOkMRgI596gVJT9uKOT6J/UA2z
- hjZrLzfxTOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaPIpNwAKCRAADmhBGVaC
- FQa9D/9cjUk8OnoE/zt0+4W35Y3S6cEy77nQNmdLzjYUeqVP0cspJl/cBn2UJ4IKH/zEMzEFQYv
- vyIyJb5J9vBUPP8rNDmdBfoKAein/H5Y6cq9/PNpHdFEGawIYEvaF9wG08m4AklUXB/cdtPeGd2
- TkpZDQew0lwk6eJO4BO+siahaYMTAfOl4L0OOnoDWtjv0kMvsBn/BHK2YAu36P4INTolyBLKFoI
- SCoHOI55m4xOsumm9zmseIMehrYBium5Los+5/30X7LePQ52AxB55v6jLD6XMHnmSNKlj4zyl41
- LHv0g0YJpigkk+3T8K8jvV5OGBosQhVYDoHqmF+p8VrpOhsWQbnNiRKCP/OPqCGoARzVeAV7u4y
- FHGSBl8txliR/AJzCj06BIrV7cMkBVdx6A9ND+znGn4gLBDul7ZdgIqczPAuzhLglLPbd7Rc+hW
- xPcFJlzkaV903BHtX+O5LKwKYBRl5hQdK74LhHXlIE3S8RfqffqmsBibpiq3+MVZpaAYStdNg6d
- qx2NGTDdOIpmUL1vMLIMEGKjvNqM1OqtYOKldlOMdsmwp/4GbGeGPE6eL/xmhQR5N5eFyjwrn9+
- b3DcDp+yxRXK8rpStLktF1rQETH4lYaJ1k+xgvYMID7KbS6v2GrDoaxxXpj+DLiFNwWS/jdR8hP
- xBcaiql1VYWFQGg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3409; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=s4rvzuIbyXzK6y+wPnL+4uRpK7mDo/eer/xGdjtob/k=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo8ilA8aL4CnPyfaV9t/SWXvPqdJZ3P0s+8wOA+
+ KvLINJfAbCJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaPIpQAAKCRAADmhBGVaC
+ Fd6bEACh6JeUKAw/8CkWtgnXscgMQ+cLyVSGl0oJdySpoPVb1vlmvjA5P2WxQZD2zO+0FTjlB4h
+ Yui9nx0a2pn+U/knDhQs0BLYG3Z1FeCw6h6u6HnE7JSo8BJmUgjgtctBiYDDZ7EPs1aHTtTQMxZ
+ /ILDU6DBF2lstn0YMUejGJwR70La4VTrS3GOcEBFz2VA+gCr7atugFJ/+JsfSQK0nRbvDtoWRBP
+ Lt9UTLpG53FiY+KWI3UhBf861liynfDeqZ7qSS6M7iKgLrdWRJb7sjFRGeP09qpFCnrGwOuyaiQ
+ uzhmKOk1C/JdTzFBeC0yBaCYLgn46LhDzKLZ+0xZyCIb/5zmhHVcPB/ET/emOhPrWuC5lmTGCSa
+ Y5Iqgw7eZa/bgBMOynaDz/+6oFKceSQm46wCYeiK8TxD/hL3in2GYO+Ak9qttuCnATvOC6LExFB
+ 6C7kRbmPvpzv2J+37pHafRJva0bPoxuqvUbGCv8zfwMeZ/CHE15Di2M4Kv6on7GcFyIG018j9dV
+ QcOcDI7ZEE06fqk9/AfcwBvUqRaRp0JHDgdS22zRZwZ1M/veDjaqHeFSpc36WC26dqReYoPOB1u
+ vrRnjKHQImDTRu1hcYSWEs9Pe8bVUlAz3JbC/dxt6lyqwshEKp1zKpL+DLB+flbWKsEc46hy2mi
+ MzwrIrAQI5FGPBA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-A smaller variation of the v1 patchset that I posted earlier this week.
-Neil's review inspired me to get rid of the lm_may_setlease operation
-and to do the conflict resolution internally inside of nfsd. That means
-a smaller VFS-layer change, and an overall reduction in code.
+When nfsd starts requesting directory delegations, setlease handlers may
+see requests for leases on directories. Push the !S_ISREG check down
+into the non-trivial setlease handlers, so we can selectively enable
+them where they're supported.
 
-This patchset adds support for directory delegations to nfsd. This
-version only supports recallable delegations. There is no CB_NOTIFY
-support yet. I have patches for those, but we've decided to add that
-support in a later kernel once we get some experience with this part.
-Anna is working on the client-side pieces.
+FUSE is special: It's the only filesystem that supports atomic_open and
+allows kernel-internal leases. atomic_open is issued when the VFS
+doesn't know the state of the dentry being opened. If the file doesn't
+exist, it may be created, in which case the dir lease should be broken.
 
-It would be great if we could get into linux-next soon so that it can be
-merged for v6.19. Christian, could you pick up the vfs/filelock patches,
-and Chuck pick up the nfsd patches?
-
-Thanks!
-Jeff
-
-[1]: https://lore.kernel.org/all/20240315-dir-deleg-v1-0-a1d6209a3654@kernel.org/
+The existing kernel-internal lease implementation has no provision for
+this. Ensure that we don't allow directory leases by default going
+forward by explicitly disabling them there.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v2:
-- handle lease conflict resolution inside of nfsd
-- drop the lm_may_setlease lock_manager operation
-- just add extra argument to vfs_create() instead of creating wrapper
-- don't allocate fsnotify_mark for open directories
-- Link to v1: https://lore.kernel.org/r/20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org
+ fs/fuse/dir.c          | 1 +
+ fs/locks.c             | 5 +++--
+ fs/nfs/nfs4file.c      | 2 ++
+ fs/smb/client/cifsfs.c | 3 +++
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
----
-Jeff Layton (11):
-      filelock: push the S_ISREG check down to ->setlease handlers
-      vfs: add try_break_deleg calls for parents to vfs_{link,rename,unlink}
-      vfs: allow mkdir to wait for delegation break on parent
-      vfs: allow rmdir to wait for delegation break on parent
-      vfs: break parent dir delegations in open(..., O_CREAT) codepath
-      vfs: make vfs_create break delegations on parent directory
-      vfs: make vfs_mknod break delegations on parent directory
-      filelock: lift the ban on directory leases in generic_setlease
-      nfsd: allow filecache to hold S_IFDIR files
-      nfsd: allow DELEGRETURN on directories
-      nfsd: wire up GET_DIR_DELEGATION handling
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index ecaec0fea3a132e7cbb88121e7db7fb504d57d3c..667774cc72a1d49796f531fcb342d2e4878beb85 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -2230,6 +2230,7 @@ static const struct file_operations fuse_dir_operations = {
+ 	.fsync		= fuse_dir_fsync,
+ 	.unlocked_ioctl	= fuse_dir_ioctl,
+ 	.compat_ioctl	= fuse_dir_compat_ioctl,
++	.setlease	= simple_nosetlease,
+ };
+ 
+ static const struct inode_operations fuse_common_inode_operations = {
+diff --git a/fs/locks.c b/fs/locks.c
+index 04a3f0e2072461b6e2d3d1cd12f2b089d69a7db3..0b16921fb52e602ea2e0c3de39d9d772af98ba7d 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1929,6 +1929,9 @@ static int generic_delete_lease(struct file *filp, void *owner)
+ int generic_setlease(struct file *filp, int arg, struct file_lease **flp,
+ 			void **priv)
+ {
++	if (!S_ISREG(file_inode(filp)->i_mode))
++		return -EINVAL;
++
+ 	switch (arg) {
+ 	case F_UNLCK:
+ 		return generic_delete_lease(filp, *priv);
+@@ -2018,8 +2021,6 @@ vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
+ 
+ 	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
+ 		return -EACCES;
+-	if (!S_ISREG(inode->i_mode))
+-		return -EINVAL;
+ 	error = security_file_lock(filp, arg);
+ 	if (error)
+ 		return error;
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 7f43e890d3564a000dab9365048a3e17dc96395c..7317f26892c5782a39660cae87ec1afea24e36c0 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -431,6 +431,8 @@ void nfs42_ssc_unregister_ops(void)
+ static int nfs4_setlease(struct file *file, int arg, struct file_lease **lease,
+ 			 void **priv)
+ {
++	if (!S_ISREG(file_inode(file)->i_mode))
++		return -EINVAL;
+ 	return nfs4_proc_setlease(file, arg, lease, priv);
+ }
+ 
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 05b1fa76e8ccf1e86f0c174593cd6e1acb84608d..03c44c1d9bb631b87a8b67aa16e481d6bb3c7d14 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1149,6 +1149,9 @@ cifs_setlease(struct file *file, int arg, struct file_lease **lease, void **priv
+ 	struct inode *inode = file_inode(file);
+ 	struct cifsFileInfo *cfile = file->private_data;
+ 
++	if (!S_ISREG(inode->i_mode))
++		return -EINVAL;
++
+ 	/* Check if file is oplocked if this is request for new lease */
+ 	if (arg == F_UNLCK ||
+ 	    ((arg == F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
 
- drivers/base/devtmpfs.c  |   6 +--
- fs/cachefiles/namei.c    |   2 +-
- fs/ecryptfs/inode.c      |   8 +--
- fs/fuse/dir.c            |   1 +
- fs/init.c                |   4 +-
- fs/locks.c               |  12 +++--
- fs/namei.c               | 134 ++++++++++++++++++++++++++++++++++++-----------
- fs/nfs/nfs4file.c        |   2 +
- fs/nfsd/filecache.c      |  57 +++++++++++++++-----
- fs/nfsd/filecache.h      |   2 +
- fs/nfsd/nfs3proc.c       |   2 +-
- fs/nfsd/nfs4proc.c       |  21 +++++++-
- fs/nfsd/nfs4recover.c    |   6 +--
- fs/nfsd/nfs4state.c      | 103 +++++++++++++++++++++++++++++++++++-
- fs/nfsd/state.h          |   5 ++
- fs/nfsd/vfs.c            |  14 ++---
- fs/nfsd/vfs.h            |   2 +-
- fs/open.c                |   2 +-
- fs/overlayfs/overlayfs.h |   8 +--
- fs/smb/client/cifsfs.c   |   3 ++
- fs/smb/server/vfs.c      |   8 +--
- fs/xfs/scrub/orphanage.c |   2 +-
- include/linux/fs.h       |  11 ++--
- net/unix/af_unix.c       |   2 +-
- 24 files changed, 329 insertions(+), 88 deletions(-)
----
-base-commit: 2c40814eb5ae104d3f898fd8b705ecad114105b5
-change-id: 20251013-dir-deleg-ro-d0fe19823b21
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.51.0
 
 
