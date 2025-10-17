@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-64438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF07BE7FAD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 12:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 781C1BE7FC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 12:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07806501409
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 10:09:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1393C502BB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 10:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFAA3128DC;
-	Fri, 17 Oct 2025 10:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB77313E27;
+	Fri, 17 Oct 2025 10:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ytPCOBNE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8f0yU993"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mnnP4EcH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lT33mtBx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472773126D9;
-	Fri, 17 Oct 2025 10:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7293128C5;
+	Fri, 17 Oct 2025 10:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760695741; cv=none; b=lS6dypZ5ASQWWiOPISpfoEU3nTblBRjNN/cJBy2qSExbrgytkZUUm69fainruRI8suXKgUlUYsjK+1gb3C+EZd48ygTtNMnj6cMo01pdWEZ2h3zUb7oD0lccGgysD6g2Pc94jQyXvM2/7VwIPu+c3YiZ6+oLt59AsBH3+kwtFMU=
+	t=1760695743; cv=none; b=bMyW5KwR+3srcPeo+fW+sN2kReD981SYQfNsv2UGDstdowBY7yb5V+dZCurBiUCvfQoMWl9HTOHcWlq3Qn9haqs8MYPYsVBxEj9SMV86FsaHg9VnTNVwtrL9Ispbfib74cFPkZShi+hu0sTGtpkvGpi48ft07fKQKGlqodQzzZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760695741; c=relaxed/simple;
-	bh=B6FY70g1YU4tpzw5guto+VK5McncnWIMenNCFYwqfSs=;
+	s=arc-20240116; t=1760695743; c=relaxed/simple;
+	bh=87O4I+Gs+q+53VRSgJDF74yqnaDGggOQykXNLW0MPKg=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=ljGVnO+SQaW4LRnljDed/dujlwEsrgdj04pEjWB5pGffYu2g8vZiiJSe3VS9qVD2TP9CjyfhjjsoFx2QfLqEobt2IHp+XhQ3uRp3sNxp4ejaYTailaYioWj2ipU3fhlt2jXmT2h8TYQp1cWAXY2qaxD4ngcsJlV4kT5G2j4elmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ytPCOBNE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8f0yU993; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=RPL3AtM1hPPDf+qbPYD3aDLkq8+mYUFam30m7Lq6STRNRp5J4p8p3mKcpPgxIpv3AN7BJD5D2tZ5soLER18FuuVnAXBIMxqOr5+XcHIZ3BBL/XoxVn1j4HWjaY9orc7D22z/0xTWW97sRBvHdpPGKQh3mhcOWPYBjFP15gizy6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mnnP4EcH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lT33mtBx; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251017093029.874834505@linutronix.de>
+Message-ID: <20251017093029.938477880@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760695737;
+	s=2020; t=1760695739;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=fZFzuFe1kZwWOtUDwXLfQwu5MJAw6qMRRDC36ZwVfYw=;
-	b=ytPCOBNE1TkvJTWpLy78QusdxvVV4Ds58RKvhJHsf/croUeiGvx9UnV4mNMdoBRVg07oHB
-	4+32mu7/3RJxShsIPe6JWBz5/FrJfOZGgzsUfIDkj+3q1xMnmtZgpTWyromcSbAF8Xv274
-	FkV/c0yAHYbltKBm+ghXeCxDak+NWmvJPnXPfMhkj/1G0WGZ/rLPBaFrj917XRVqjV/Kqd
-	dvKhMtlzqqxyQdha8CX/xxPGIDZ4upmI/c5f9i+386qXdlQKjcAWLAvTaQeifJ8F/2voYJ
-	mhvw6eRvaSu0a/m6bo4SZbAHuXSegaKyNol/l9f+YG/bs3UKrtYmohJd5Aay1Q==
+	 references:references; bh=riOmJf9FiDkmu6m5dlKP9M/8U5xAklSgvZrcN3Urpuk=;
+	b=mnnP4EcHPsGiBWQ80ZqxKt13uzAIBB3k2yS1/Hm+sPYsJe6113u4U0umZSA2nn4kRaNJpJ
+	Rkenq6/jim491Xuz2SO5kQafyylcG/mRIKVDiZycdMNLud5mhnSzrCccn3X38Wn96+T79G
+	hktsrO07q6YSP3slcwP5falY25Pb1CIBaksqoE7E+68t7LYG14+qC/FrU8haf5HTnTplbs
+	MaMSXBhMZ0H9m83V9tz5MYbIVxs8gMl4CTnClDsiglM3QfGTLclgpuM2XbhANq8nfDV8t5
+	j+3gKnN8VqFnD7yW0QYwYHf0UUMTWmEWnVOjwgvBsCHbUXj8W+NB41bt6EE6Fw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760695737;
+	s=2020e; t=1760695739;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=fZFzuFe1kZwWOtUDwXLfQwu5MJAw6qMRRDC36ZwVfYw=;
-	b=8f0yU993CYFDRwGspwr1ZKCjnjUpxYp+aRgJMGfWayi/6XrP0VvvNNmJISqFj4Wkr7Otd+
-	Te+PwI9NuQKM1+Cw==
+	 references:references; bh=riOmJf9FiDkmu6m5dlKP9M/8U5xAklSgvZrcN3Urpuk=;
+	b=lT33mtBxSqSSNnCxx2OdHF+2ZASAeNgjqpk4i+2mH9cETV5n/xlEFPQtRRy1EHJTr8iogE
+	XUXXib744TyAY9DA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: kernel test robot <lkp@intel.com>,
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ kernel test robot <lkp@intel.com>,
  Russell King <linux@armlinux.org.uk>,
  linux-arm-kernel@lists.infradead.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
  x86@kernel.org,
  Madhavan Srinivasan <maddy@linux.ibm.com>,
  Michael Ellerman <mpe@ellerman.id.au>,
@@ -81,8 +81,8 @@ Cc: kernel test robot <lkp@intel.com>,
  Christian Brauner <brauner@kernel.org>,
  Jan Kara <jack@suse.cz>,
  linux-fsdevel@vger.kernel.org
-Subject: [patch V3 01/12] ARM: uaccess: Implement missing
- __get_user_asm_dword()
+Subject: [patch V3 02/12] uaccess: Provide ASM GOTO safe wrappers for
+ unsafe_*_user()
 References: <20251017085938.150569636@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -91,81 +91,189 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 17 Oct 2025 12:08:56 +0200 (CEST)
+Date: Fri, 17 Oct 2025 12:08:58 +0200 (CEST)
 
-When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM variant
-for no real good reason. This prevents using get_user(u64) in generic code.
+ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
 
-Implement it as a sequence of two 4-byte reads with LE/BE awareness and
-make the unsigned long (or long long) type for the intermediate variable to
-read into dependend on the the target type.
+bool foo(u32 __user *p, u32 val)
+{
+	scoped_guard(pagefault)
+		unsafe_put_user(val, p, efault);
+	return true;
+efault:
+	return false;
+}
 
-The __long_type() macro and idea was lifted from PowerPC. Thanks to
-Christophe for pointing it out.
+ e80:	e8 00 00 00 00       	call   e85 <foo+0x5>
+ e85:	65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
+ e8d:	83 80 04 14 00 00 01 	addl   $0x1,0x1404(%rax)   // pf_disable++
+ e94:	89 37                	mov    %esi,(%rdi)
+ e96:	83 a8 04 14 00 00 01 	subl   $0x1,0x1404(%rax)   // pf_disable--
+ e9d:	b8 01 00 00 00       	mov    $0x1,%eax           // success
+ ea2:	e9 00 00 00 00       	jmp    ea7 <foo+0x27>      // ret
+ ea7:	31 c0                	xor    %eax,%eax           // fail
+ ea9:	e9 00 00 00 00       	jmp    eae <foo+0x2e>      // ret
 
-Reported-by: kernel test robot <lkp@intel.com>
+which is broken as it leaks the pagefault disable counter on failure.
+
+Clang at least fails the build.
+
+Linus suggested to add a local label into the macro scope and let that
+jump to the actual caller supplied error label.
+
+       	__label__ local_label;                                  \
+        arch_unsafe_get_user(x, ptr, local_label);              \
+	if (0) {                                                \
+	local_label:                                            \
+		goto label;                                     \
+
+That works for both GCC and clang.
+
+clang:
+
+ c80:	0f 1f 44 00 00       	   nopl   0x0(%rax,%rax,1)	
+ c85:	65 48 8b 0c 25 00 00 00 00 mov    %gs:0x0,%rcx
+ c8e:	ff 81 04 14 00 00    	   incl   0x1404(%rcx)	   // pf_disable++
+ c94:	31 c0                	   xor    %eax,%eax        // set retval to false
+ c96:	89 37                      mov    %esi,(%rdi)      // write
+ c98:	b0 01                	   mov    $0x1,%al         // set retval to true
+ c9a:	ff 89 04 14 00 00    	   decl   0x1404(%rcx)     // pf_disable--
+ ca0:	2e e9 00 00 00 00    	   cs jmp ca6 <foo+0x26>   // ret
+
+The exception table entry points correctly to c9a
+
+GCC:
+
+ f70:   e8 00 00 00 00          call   f75 <baz+0x5>
+ f75:   65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
+ f7d:   83 80 04 14 00 00 01    addl   $0x1,0x1404(%rax)  // pf_disable++
+ f84:   8b 17                   mov    (%rdi),%edx
+ f86:   89 16                   mov    %edx,(%rsi)
+ f88:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
+ f8f:   b8 01 00 00 00          mov    $0x1,%eax         // success
+ f94:   e9 00 00 00 00          jmp    f99 <baz+0x29>    // ret
+ f99:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
+ fa0:   31 c0                   xor    %eax,%eax         // fail
+ fa2:   e9 00 00 00 00          jmp    fa7 <baz+0x37>    // ret
+
+The exception table entry points correctly to f99
+
+So both compilers optimize out the extra goto and emit correct and
+efficient code.
+
+Provide a generic wrapper to do that to avoid modifying all the affected
+architecture specific implementation with that workaround.
+
+The only change required for architectures is to rename unsafe_*_user() to
+arch_unsafe_*_user(). That's done in subsequent changes.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel.com/
 ---
-V2a: Solve the *ptr issue vs. unsigned long long - Russell/Christophe
-V2: New patch to fix the 0-day fallout
----
- arch/arm/include/asm/uaccess.h |   26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ include/linux/uaccess.h |   72 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 68 insertions(+), 4 deletions(-)
 
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -283,10 +283,17 @@ extern int __put_user_8(void *, unsigned
- 	__gu_err;							\
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -518,7 +518,34 @@ long strncpy_from_user_nofault(char *dst
+ 		long count);
+ long strnlen_user_nofault(const void __user *unsafe_addr, long count);
+ 
+-#ifndef __get_kernel_nofault
++#ifdef arch_get_kernel_nofault
++/*
++ * Wrap the architecture implementation so that @label can be outside of a
++ * cleanup() scope. A regular C goto works correctly, but ASM goto does
++ * not. Clang rejects such an attempt, but GCC silently emits buggy code.
++ */
++#define __get_kernel_nofault(dst, src, type, label)		\
++do {								\
++	__label__ local_label;					\
++	arch_get_kernel_nofault(dst, src, type, local_label);	\
++	if (0) {						\
++	local_label:						\
++		goto label;					\
++	}							\
++} while (0)
++
++#define __put_kernel_nofault(dst, src, type, label)		\
++do {								\
++	__label__ local_label;					\
++	arch_get_kernel_nofault(dst, src, type, local_label);	\
++	if (0) {						\
++	local_label:						\
++		goto label;					\
++	}							\
++} while (0)
++
++#elif !defined(__get_kernel_nofault) /* arch_get_kernel_nofault */
++
+ #define __get_kernel_nofault(dst, src, type, label)	\
+ do {							\
+ 	type __user *p = (type __force __user *)(src);	\
+@@ -535,7 +562,8 @@ do {							\
+ 	if (__put_user(data, p))			\
+ 		goto label;				\
+ } while (0)
+-#endif
++
++#endif  /* !__get_kernel_nofault */
+ 
+ /**
+  * get_kernel_nofault(): safely attempt to read from a location
+@@ -549,7 +577,42 @@ do {							\
+ 	copy_from_kernel_nofault(&(val), __gk_ptr, sizeof(val));\
  })
  
+-#ifndef user_access_begin
++#ifdef user_access_begin
++
++#ifdef arch_unsafe_get_user
 +/*
-+ * This is a type: either unsigned long, if the argument fits into
-+ * that type, or otherwise unsigned long long.
++ * Wrap the architecture implementation so that @label can be outside of a
++ * cleanup() scope. A regular C goto works correctly, but ASM goto does
++ * not. Clang rejects such an attempt, but GCC silently emits buggy code.
++ *
++ * Some architectures use internal local labels already, but this extra
++ * indirection here is harmless because the compiler optimizes it out
++ * completely in any case. This construct just ensures that the ASM GOTO
++ * target is always in the local scope. The C goto 'label' works correct
++ * when leaving a cleanup() scope.
 + */
-+#define __long_type(x) \
-+	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
++#define unsafe_get_user(x, ptr, label)			\
++do {							\
++	__label__ local_label;				\
++	arch_unsafe_get_user(x, ptr, local_label);	\
++	if (0) {					\
++	local_label:					\
++		goto label;				\
++	}						\
++} while (0)
 +
- #define __get_user_err(x, ptr, err, __t)				\
- do {									\
- 	unsigned long __gu_addr = (unsigned long)(ptr);			\
--	unsigned long __gu_val;						\
-+	__long_type(x) __gu_val;					\
- 	unsigned int __ua_flags;					\
- 	__chk_user_ptr(ptr);						\
- 	might_fault();							\
-@@ -295,6 +302,7 @@ do {									\
- 	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
- 	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
- 	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
-+	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
- 	default: (__gu_val) = __get_user_bad();				\
- 	}								\
- 	uaccess_restore(__ua_flags);					\
-@@ -353,6 +361,22 @@ do {									\
- #define __get_user_asm_word(x, addr, err, __t)			\
- 	__get_user_asm(x, addr, err, "ldr" __t)
- 
-+#ifdef __ARMEB__
-+#define __WORD0_OFFS	4
-+#define __WORD1_OFFS	0
-+#else
-+#define __WORD0_OFFS	0
-+#define __WORD1_OFFS	4
-+#endif
++#define unsafe_put_user(x, ptr, label)			\
++do {							\
++	__label__ local_label;				\
++	arch_unsafe_put_user(x, ptr, local_label);	\
++	if (0) {					\
++	local_label:					\
++		goto label;				\
++	}						\
++} while (0)
++#endif /* arch_unsafe_get_user */
 +
-+#define __get_user_asm_dword(x, addr, err, __t)				\
-+	({								\
-+	unsigned long __w0, __w1;					\
-+	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
-+	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
-+	(x) = ((u64)__w1 << 32) | (u64) __w0;				\
-+})
++#else /* user_access_begin */
+ #define user_access_begin(ptr,len) access_ok(ptr, len)
+ #define user_access_end() do { } while (0)
+ #define unsafe_op_wrap(op, err) do { if (unlikely(op)) goto err; } while (0)
+@@ -559,7 +622,8 @@ do {							\
+ #define unsafe_copy_from_user(d,s,l,e) unsafe_op_wrap(__copy_from_user(d,s,l),e)
+ static inline unsigned long user_access_save(void) { return 0UL; }
+ static inline void user_access_restore(unsigned long flags) { }
+-#endif
++#endif /* !user_access_begin */
 +
- #define __put_user_switch(x, ptr, __err, __fn)				\
- 	do {								\
- 		const __typeof__(*(ptr)) __user *__pu_ptr = (ptr);	\
+ #ifndef user_write_access_begin
+ #define user_write_access_begin user_access_begin
+ #define user_write_access_end user_access_end
 
 
