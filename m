@@ -1,211 +1,414 @@
-Return-Path: <linux-fsdevel+bounces-64500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DE3BE8FAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 15:45:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4940BE9229
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 16:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18D7D4E6BB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 13:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C18626530
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 14:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA32F320CB9;
-	Fri, 17 Oct 2025 13:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC72B2F6916;
+	Fri, 17 Oct 2025 14:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="RwJqor67"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="blFZLEF+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CDdAk1cr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022132.outbound.protection.outlook.com [40.107.193.132])
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7417C120;
-	Fri, 17 Oct 2025 13:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760708739; cv=fail; b=aUzwRBA5wTwwefFPJB1g8uS6TgCCH5Co/rK18uQCZVdm7SOyiwhsxO64/0DFgXBvpHIX5x3X/TfmlxhJ47I8QJNbatymiCHCnIV3zhUx6nsd76Q1YOlWyW2HjQm4smtXEUHCBpVeLLRXx24FDoZauyKzAaUXdvYS0LJJlP8ra2Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760708739; c=relaxed/simple;
-	bh=5nz7t8E+mstMANmiVeoPRek1/bAD8hY2LGeQEpZ+WXo=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=N2dxGO3/fhS4xP4NyHwW7sIn/wlCZhzkt4/u/IsH2dSneu0sgr/pdvhOJeA+WSHr3I+dlCcWlyszSd046iLDkRqpNhSDbtQ1I06KiOs+bgeTWxoUTOf0woshh5V8IaexBk0m1CFIfRhUxhIALeuosDjuNEemSfhqdlnx1igDSPk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=RwJqor67; arc=fail smtp.client-ip=40.107.193.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cogWU+cG4gxd3YaleO77wkbylOMcw0ZogvcfFVtLqGQagfL7niqI9nzVMwGx5PQxLd2cmznq1SHL0HOTd0GM1rrX2W3g1xpPZRiBFXsfzRG60T1Wb+BKfVvGckLCppOx8cH8kweHTeTESwXjjgWmaOenOvkK5miVpWQ4dhcW+7xqd3Pynj4ynMMmqzg5Ec2XxkqmZcGOAiWP0FFGTF0mgGy7kAjudA9mbd9yZ/oNu+AZIC/oXKVbDtFwPuTua12v/B3obR7sa6HW2FdH4s1ybqTEgAwR8u1V73//ncPyxjUixxMHwDgusi7SYBXdvI6mbVj+RJaoR0kM01HoR8RO4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HyLYKdM7qdudvU9dzfHPJoxwN3QuIFTAlCroH6KGdf4=;
- b=x8N3htqUpNOPFHAzhyza4RVGAL5gsSINwU8KvaSSZW9Bsxf5VsjPqg0NBU/4ledLcCbY0G4zC2lNBy65XBHR2ZLIfqNtjb9Di+GDqv4/JDVI6iwjZ8gllm3GChnkqbrIkN3jgy3WsJwMQ2z01eW5KdGIte87MipqEXwOtlXkyVT4RjnFKnFJyKwmYCzIXJQEyTguCrqx0nmMb4rrJZK1D1Gel8FSW81wgh2ybSfaaEEdKczRguBKFmU1oKyAucZVodwG100k0wZmZmVl2aSFJsenQWdg1VdTiZldURxyfY2rwmn/h22gZT1U9UWqrpgvIgmhANmUAVFznxEWuhfP5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HyLYKdM7qdudvU9dzfHPJoxwN3QuIFTAlCroH6KGdf4=;
- b=RwJqor67F57SnR9CAaxjannbg1PGuoF+9qPT1Nh8ZSNC3YJ37AasQSpcKFwen3RXWWKE4j1BTlRLn7CjjmD/4QUUlhZGm8182i6wbh1BAXZuwfoEgb5RfQla9CCUD036ohY3kG6ajgkxgxGf19nc5+Ep6VGETuZ2c8u5eM41bJblGs+ZDFTAxT15lIaN6M5PMY7BD5ZnUgwoU1KBsRsJiwLeLm/NDFHagUKqcnAiG5n/znT2w1Zymet1XXpoWIlh1GQ2r6hxDEhdMDevy4DROKjd1c4EyW2AHyeYaXVk+nLC5tADzXNF5O9ANnzs+mElRS5lluGxYlDXLwxtFH/elQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PR01MB9467.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:aa::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 13:45:34 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
- 13:45:34 +0000
-Message-ID: <d58b798a-3994-438c-9c02-678f3178b21e@efficios.com>
-Date: Fri, 17 Oct 2025 09:45:32 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V3 08/12] uaccess: Provide put/get_user_masked()
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-References: <20251017085938.150569636@linutronix.de>
- <20251017093030.315578108@linutronix.de>
- <eb6c111c-4854-4166-94d0-f45d4f6e7018@efficios.com>
-Content-Language: en-US
-In-Reply-To: <eb6c111c-4854-4166-94d0-f45d4f6e7018@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0118.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:1::18) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937FA32C946;
+	Fri, 17 Oct 2025 14:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760710546; cv=none; b=bmcmNlOSFb1gaDKT7gWJTv+i6bv8eRVk1NZ+xVKe6mx0H38LtcCcvzh04UERzAm+ZU9WxAvSjb+VogZ/Tmyd1oBwg7j+RZOIf9H3DIFElsnCTg5b5mc02/kDFTBDa5aNGiX06pBkXdOwR9VdEWsAY3wuGUQRmdTRn86z+g29f6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760710546; c=relaxed/simple;
+	bh=yG7u0s80QC39V2Fa+KMXVbam3kMyWwBwc4SFehLuxzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O+cPGnOFvfPw2iCcqqtpzs54yBqqrvHKtpcj+e+s6SueV4FVEePM2sgRIGDvfqILGSkg3rSgLoufnx/PDnv/LAq6nyKtFSUj7Gble4GsPtmS8AlrL7fxIvZmAqXOpi6JGwFOd/6+TII/WMUnrEpvKgKgUAtyZ889qmHBHXEwi3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=blFZLEF+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CDdAk1cr; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 753CC1D000CC;
+	Fri, 17 Oct 2025 10:15:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Fri, 17 Oct 2025 10:15:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1760710543; x=1760796943; bh=XznzYYQp85
+	lnz56N/CEQHyV0F4DjobXqczPLHaaXFUs=; b=blFZLEF+mpvwVf56IuvrB7AVZX
+	YdbDzZ6d+ArFIIaW4fVC6P8+nMxEKU0AWupeGvHnh+BOdzGdeVNXEWq0r8A29X4X
+	GrNwPhYdO5eYXmCNUDpXUmRrVRfkFcvGvPs40PDjyhyLtqRO1h+CyJ+NeOvLd9lu
+	ent+Xml4zsWg0qeZaq8sV8HFyI12/6FSTwGOuxLhkRVcqTidAst5j/fx7iTrxDiO
+	5J5c7/LPn56tzKKjnRVsV6N8Y3Ajfr+CvSTW6VV57Uh3XD0oM2rxiJWg4Z7bjVEm
+	Pl3DAHocwiolq9ghNvVHBAEPC1m0GTD9mDpGeudpVJ5lKPsLP21J2Z9LedTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1760710543; x=1760796943; bh=XznzYYQp85lnz56N/CEQHyV0F4DjobXqczP
+	LHaaXFUs=; b=CDdAk1crhrSRyZG3x+5D9TDJ9rvUKnN6m4OdTZS1jQK7+aFB77B
+	0h7OSWFP+Q6RXaTcdkFFgv94VjhWrghxckNcEzs90ESNJHbQPREhPBJUxLAf+qzJ
+	9tmr/jw+jCk+rd9sc5AG+VbybpdcsqdYg18gFML5/S2vevvzEYceYz5MMpSnRjs4
+	uiFp10FGv0P0QwPEm367L6FzIS0Gx0Y4b2fA5WUCpGLcaIklejGkr+Fz5rWnoHOm
+	f2CE6E79BZq36Eo+yw6vScv8axDTuryaI9LZ7t4l0B//ubuJ0ituOG6oRxBWdV2H
+	HrSKaf2ub/LAJAlgf/IBQ9oRiMHfUrsgc8w==
+X-ME-Sender: <xms:jk_yaF2m6WVIDny7XIol6hEXLEkVdePN_7_LHGLLizDv5Do-AUoR_w>
+    <xme:jk_yaH7O4BDI_8FkSHE0-VCvJP6SttIC6cweHu_IGai2hTS5Dm3miLeYgNCJK2pb4
+    nS39fNi0gi8NicJ1Cd5pEmxodACMwU5ZPunavzb-2yx9GMyQcmXTdM>
+X-ME-Received: <xmr:jk_yaBRZtpFam7tIpulsSusyFkjVL5WBLTTr4n71uDGoDKitdSVJ1Rt7rO5sHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdelfeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepmfhirhihlhcuufhh
+    uhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrf
+    grthhtvghrnhepteffudduheevjeefudegkedttdevtdfhheefheetffelteeiveehvdef
+    gedtheefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeduuddp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunh
+    gurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepth
+    horhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
+    pehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsghrrg
+    hunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgii
+    pdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:jk_yaMUiyofeomhY943Ti4ZnJHljHkikIa7UKk8iX7uIO097WX4qMA>
+    <xmx:jk_yaGFidJZ3rvuFS8PqLtZd99iXxZmg2RtVEo7RVx15ResnOqKOGw>
+    <xmx:jk_yaPfaW5pE7STkkp3FGK_bVohL1Zf-y-sv3wJ_K1M0LeQevxDlgA>
+    <xmx:jk_yaPoyIxdduKb_WzCQWkNwKoY9MnhsGAtrzbtC5TpJbo46_0FKXg>
+    <xmx:j0_yaMr17OULJE6LWUBJZxhKURYY8TtFzUEugu4jXiTwGlAZhyR7L3PC>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 Oct 2025 10:15:41 -0400 (EDT)
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: [PATCH] mm/filemap: Implement fast short reads
+Date: Fri, 17 Oct 2025 15:15:36 +0100
+Message-ID: <20251017141536.577466-1-kirill@shutemov.name>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PR01MB9467:EE_
-X-MS-Office365-Filtering-Correlation-Id: fcd7d902-5a10-4abf-6434-08de0d83724b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cEFza25nSEYwdW1PVnNlSHpKdzJrZjVXSDlnWk5MRE1OLzlwNzFwSHlSUGww?=
- =?utf-8?B?b2lBUVFCYzFTdzRaa0ZhQlNUSW5XRzdyT2xYZkVMZXZrVVh4RUpOalVUZk03?=
- =?utf-8?B?MkVzbWdGUXhIYTAwODY0UVRtYU5kSTdVTjdDTzVsN2REY01FQmhJZjRab0tl?=
- =?utf-8?B?eVp1NTZJS1RRWXMrREVuVFBsTWRjbXZQdTRiZ1NWOHNybXV1L3V2S2JBQXJx?=
- =?utf-8?B?djFJTHByWUdac2M3TWNuQ3laRW8yREVVbzQyQTk5TlA1QmpqMVF3Z0NaQ2ox?=
- =?utf-8?B?dENUa3J1UGNjSHEwZ3VYZzJ1THJKUHN5dGtYblowNHVIT1RieVUvODdDdytM?=
- =?utf-8?B?UWJtOTh1TGNrbmNaUEZBQWdsVzZpMzY5R2RFcHBJdGRVMGxrOHBpa1o1ZWRY?=
- =?utf-8?B?eEJxN3NSSXU3NVRWMUhpRDZqRWdIYzI4S0lNaks1ckJLV0NMZlNhaVB2VGtu?=
- =?utf-8?B?S3JIcVlpMTEycjQzaXNGSjkvejEycm5nS293MWpKa2RQNjBlUmhOWUVCYVl1?=
- =?utf-8?B?MG9sQWRDVXpGSUF1MkZNcUMwOUJqU2hWck1oU2ZEdHptL0pSWnEvNTNrbWUw?=
- =?utf-8?B?NFloVk9IK0RkZExTdVRmVjZVMy93ajVIUysyb24wendrbnFjUEdoMUtraEVT?=
- =?utf-8?B?YnFWWlpLZnN3ZHpoT0t2TUJKNzJPNTRkaU52R3BwcGdGVXNCZEVNSXpWMC9s?=
- =?utf-8?B?NDF2Mk56dEhVYlVtZ2NoQW9sejlXTzN0R1Z1SVAzaTRKemVhTmhFbEtpeGNT?=
- =?utf-8?B?T3lMNzdzSmJpNTZBVVFrL2pzY3J5VksvZlR2OXQ2aG4wa0ozY015S0JScEVk?=
- =?utf-8?B?Sk1iMEVta2wzckxidm1XNUtpVGQ3eUZYOWp6Y0dTRkYxbXA1dGh6OTZsSnlp?=
- =?utf-8?B?aEgzVTArdDBGTDJLZWNwbnh2VEpyWEZ0bFVmRlpjOEtQUzQyMVcveFNHa3NE?=
- =?utf-8?B?eWFLQmpjNy9aN3R1d29wSndYZ3ZnOW90aXY1dEhOd1d3TGphQjVIVVMvVU54?=
- =?utf-8?B?VnJCSUxhdVB1V1V5YU9EM3B5dzZQSExUNk5xVzhkS3FGTDBJN0RTSVFoSFdm?=
- =?utf-8?B?SUZPaXJGbzNsNkJJVVZKNmhPTG5KaEMwSC9OUW9PaXNNeGQ4azlsdzd5TUdH?=
- =?utf-8?B?SFJaZFBtYzByUkZNd3ZPMlhyYXNOTk5WNkdRTkpHM1Zob0JmUHJYMDZPWlNO?=
- =?utf-8?B?SDRaKzFoaVNoUkZaSGVlV0tqVUR5MVRLNWFLTTh6OTBHQVJGQ0ZRWmphTmkw?=
- =?utf-8?B?VVliN2YrbXlMcWgxdEpoRG9sVytwd2IydndnM0dYOUJXSjR2RXZnYm5Pc3F5?=
- =?utf-8?B?WGw4QkJOTGNzUFFpWVdES1BWdlZTMzF3c20zVzUyRjNYNFA1QlpFb2oxRzVO?=
- =?utf-8?B?UjFMZTdzL2RVNytEZEp4MzNQT2tXNEZOMlRsZzJQTGFqLzcwNzhnZkRHUU16?=
- =?utf-8?B?N0E4dzh0YmI5K3lnWjA4Yi9ra01UdWNvK2NUTTJyaEhmK0tWL3QyVWwxY2RX?=
- =?utf-8?B?MjUvY0ZES2NNN09EWXFMZ0Fpaks3WHZzRmI1VkladHJ2Rm01Y3FrMWd2dDVu?=
- =?utf-8?B?RnREQ0J0OWExN2hmNHZKS0VWSWlxbmVUY1NiUWxjeU5xT25WV3hvNGZJMHA3?=
- =?utf-8?B?ZHlxN0tqZ0tWY3o0SklBV2NKemN3bWhEYkljb3l1K2tyakFPc21tanpKdWU1?=
- =?utf-8?B?RDRoV1VBdkNyTEJqc01GTG5lSStQaVREdnJ4ZnhvNWpwaXFrWWZGWDZ4ZnlZ?=
- =?utf-8?B?WWRJL0lGRXZPbkUwdEtNLzRIZ21jaDRkN1hTVzFvS3VsWWRkVUJMUU0ra21H?=
- =?utf-8?B?U2FrVFM2WFNVS0ZSOWJiclNqY2VPS0x2UzBzcEpkZlJjczZPZ3JoOTIxZk5u?=
- =?utf-8?B?bmxSS2RXcm1WOHZCampiOEJqZlUwQmFjWmxxbFBPbkc1NkE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b25KRWdqTkQ5Wkd0aldYRElCbndTck5xQzlmREpHSmZnTzYxcEhJZ3U0VUZ3?=
- =?utf-8?B?RE1XeGY4QmR3WG4vQWxSaEZrZ3p5KzJidDEyNjMrNnhNeFdUNCtveExPVmZB?=
- =?utf-8?B?eHFhcFVkcWVtQXRhM1hYZk1jN0hiQVQ3bTBBTldnRG83V2pzR3k0U3lwZUx5?=
- =?utf-8?B?T015V1QrZ05yRmpIWXRUYllJYnQ5clVQNk1DbDhzOWkySXZ3Zi9mYW5tbGdD?=
- =?utf-8?B?Vis2VEJzb0pTakZjVjlIdXlMU2dkazM0WHNkTFFGbWdJb3VTbHNrVFpaa3I0?=
- =?utf-8?B?aXk0VnVXS3JLcjVRUHdqQ1EwSVYyajlweHJmSjMvMzhjMkpaUXJIbllkbzEz?=
- =?utf-8?B?WDdiNnJsWmJJNGkwZmxXOGRaWDMrbXZ5R2Z5a09xQ2p0YjM0SlNBd2hTQWxW?=
- =?utf-8?B?RlE5Ny9jSksrQVRhWm9vQndBSnAzYmRvTEF1anJPUEhqRUdzZEV0MGk3VE9y?=
- =?utf-8?B?SGJNTHM5T3N1S2luSGRGT0pvbjNwRmZudWdxMy9hNHc1NStrRytnMUNNWXgy?=
- =?utf-8?B?cFN1L3YrOEhGS0NtaVR3andoWnAxUXNDekFCT3l3SDQ0bzQvT1UxMjdOZ09U?=
- =?utf-8?B?S2J1ckpPMk9ZTW1SaC9sS3FPRVh5ZGJWTGxHTFJYdjcrT05YbUpqWEFtc01s?=
- =?utf-8?B?bTBQV1VQdmk1ZzVEQTk5bXZ3aDJJQjE3dEdxcWU5MkhicGsraSt1cXdKeHJr?=
- =?utf-8?B?WU1OT1NjeU5YcDJLRS93YXVlYVJvTEJYL3VlWUZUb2lWVHpUYWE4SlN5em8v?=
- =?utf-8?B?T3ZnMm5BTmRJZWtnem9YSElRM3NVKzRBZFU5RGg3L0ZRVkdiRVdaa3N2bitt?=
- =?utf-8?B?NVpiRHAzaldnUlpXaTIrdGxGSFBTNThkNitFT0tZY2ZlaUFsdFJta0lUeFc2?=
- =?utf-8?B?N3BvbnQrTkhQaFNDRkJ1WFhUSXdhS1RPUnZOdTZCQnhXbm5pSHdoSWp1eStE?=
- =?utf-8?B?VGo1N29Ob1FybmtsYklBelp0S09kL1N1Q3BJZXdYSFNXYzBoMG5CeWNpWGZy?=
- =?utf-8?B?T1VoRzV6bjMxYXlLbm9pWUxKQ2twSTk1MWs1RVM2bVkrSDdxR0xzNEM1eDRl?=
- =?utf-8?B?WjBZaUZ3VVVGbURCQllxckdKOXB1d3d0b2U0b3dxTWtROVF4WHpVY1hTZDN2?=
- =?utf-8?B?UHpoV0N0UTJHbHJtOFRIQm5TbjdNSFQ0TER2NjEyK0R3VE9qNEpPN0xRdEhq?=
- =?utf-8?B?NjdLTVUxZ3kxbVRZVUo0R1NDTHpWMFRZS1k2ZWxWTkMwMXh2SUw2aFFDYTI3?=
- =?utf-8?B?YUU2REpnSHJvS2NWeC9ZTXc5TEtYZDc2SmtxbWgvZ0k1S2tkQWl0d2d4NllM?=
- =?utf-8?B?VUZJbit5aFQ2MmdUd2UrcmVFQXI5emlZQnB4OWVtNnRtMmtCeUJnQllFM3Ni?=
- =?utf-8?B?dGhqeFNJakUwS0ZwYmE3T3FxNCt4bk4wRjZrNXZ3Wlp5RXcxT2l5NlQ4QUNX?=
- =?utf-8?B?dlhBb3FVTUhWcEVBU3kvbjFVZTQ5dC8vT0hFK2UxcEFVaDVaTTNCZWhZWGZ5?=
- =?utf-8?B?eHlYblNaRjVPbWR3K2JTdFoyNU1QVXhRUkFuQ3daN2oxMjVIL29JSWwvWDZ5?=
- =?utf-8?B?anhhMWZvUlZmMjF5K2VyQm9uM2JOSXhMeHBscE9SOFFyUjlYNnIzTGViaTdn?=
- =?utf-8?B?M2MyVVdHMkxKVHRBYWZ1alViTU1TUnlmQzljQjFMeGpHeXpTeHEzajdtZXQ0?=
- =?utf-8?B?aVJXWTFLMkV1SVpJNnpSSXZaWkRMaE5yQjF2NXJnSmN1c2k5MWlNcW82UTV5?=
- =?utf-8?B?Q2V3VHRWWVllQ0ROcXB6dW5YV1ZNVlBYZHhxem9WaVZoSGxwdXlxdTltTXJv?=
- =?utf-8?B?Mk12dWNlY2pyUXhNbXRrRTBJZkNMY1d3WTJpQk1nWmgvT0VuWUtMZnFRWm1G?=
- =?utf-8?B?WlBtUHcrODNiK1J5MDFQWXQxUjBwTFordTNHVVQ0SXlSbVJHYjNDemVtRStZ?=
- =?utf-8?B?Y2FwY1hSZTBKNVYrZi85OXNBZWhpcndsVTl5MjJCbzdlYmh3VHo5NHBEOVRU?=
- =?utf-8?B?ZmJkVjhFUjQvTkdkR0puTDEyb3JjUDNKVE5KbDg4RmxkMzJXeXZWalRSUm1V?=
- =?utf-8?B?SDd3dW1Wc3U3UHorREhtYnlkNTl5YTlLSGYwcjhySFExZjA4YXFOdml6MU9K?=
- =?utf-8?B?elhUUUVDRjNnRnZ2eCttdmEwaGM2amkxcXNXdkk1QUF1QUpHamM4R05KZW1Z?=
- =?utf-8?Q?BL9sKAg3S6Cy4+TX6YzFCZ0=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcd7d902-5a10-4abf-6434-08de0d83724b
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 13:45:34.3950
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: osdfEw9yIPE7i6w91mvdnQDBZ6ZYtq80nRPr3U/eRTd6Z2C+glA5j60LRU4thf0OJ4yq3QWwcskRr4wCDEPO+PYL8iwjwW05pMhfWs+gVSA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PR01MB9467
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-17 09:41, Mathieu Desnoyers wrote:
-[...]
->> +/**
->> + * get_user_masked - Read user data with masked access
-[...]
->> + * Return: true if successful, false when faulted
+From: Kiryl Shutsemau <kas@kernel.org>
 
-I notice that __get_user() and get_user() return -EFAULT
-on error, 0 on success. I suspect the reversed logic
-will be rather confusing.
+The protocol for page cache lookup is as follows:
 
-Thanks,
+  1. Locate a folio in XArray.
+  2. Obtain a reference on the folio using folio_try_get().
+  3. If successful, verify that the folio still belongs to
+     the mapping and has not been truncated or reclaimed.
+  4. Perform operations on the folio, such as copying data
+     to userspace.
+  5. Release the reference.
 
-Mathieu
+For short reads, the overhead of atomic operations on reference
+manipulation can be significant, particularly when multiple tasks access
+the same folio, leading to cache line bouncing.
 
+To address this issue, introduce i_pages_delete_seqcnt, which increments
+each time a folio is deleted from the page cache and implement a modified
+page cache lookup protocol for short reads:
+
+  1. Locate a folio in XArray.
+  2. Take note of the i_pages_delete_seqcnt.
+  3. Copy the data to a local buffer on the stack.
+  4. Verify that the i_pages_delete_seqcnt has not changed.
+  5. Copy the data from the local buffer to the iterator.
+
+If any issues arise in the fast path, fallback to the slow path that
+relies on the refcount to stabilize the folio.
+
+The new approach requires a local buffer in the stack. The size of the
+buffer determines which read requests are served by the fast path. Set
+the buffer to 1k. This seems to be a reasonable amount of stack usage
+for the function at the bottom of the call stack.
+
+The fast read approach demonstrates significant performance
+improvements, particularly in contended cases.
+
+16 threads, reads from 4k file(s), mean MiB/s (StdDev)
+
+ -------------------------------------------------------------
+| Block |  Baseline  |  Baseline   |  Patched   |  Patched    |
+| size  |  same file |  diff files |  same file | diff files  |
+ -------------------------------------------------------------
+|     1 |    10.96   |     27.56   |    30.42   |     30.4    |
+|       |    (0.497) |     (0.114) |    (0.130) |     (0.158) |
+|    32 |   350.8    |    886.2    |   980.6    |    981.8    |
+|       |   (13.64)  |     (2.863) |    (3.361) |     (1.303) |
+|   256 |  2798      |   7009.6    |  7641.4    |   7653.6    |
+|       |  (103.9)   |    (28.00)  |   (33.26)  |    (25.50)  |
+|  1024 | 10780      |  27040      | 29280      |  29320      |
+|       |  (389.8)   |    (89.44)  |  (130.3)   |    (83.66)  |
+|  4096 | 43700      | 103800      | 48420      | 102000      |
+|       | (1953)     |    (447.2)  | (2012)     |     (0)     |
+ -------------------------------------------------------------
+
+16 threads, reads from 1M file(s), mean MiB/s (StdDev)
+
+ --------------------------------------------------------------
+| Block |  Baseline   |  Baseline   |  Patched    |  Patched   |
+| size  |  same file  |  diff files |  same file  | diff files |
+ ---------------------------------------------------------
+|     1 |     26.38   |     27.34   |     30.38   |    30.36   |
+|       |     (0.998) |     (0.114) |     (0.083) |    (0.089) |
+|    32 |    824.4    |    877.2    |    977.8    |   975.8    |
+|       |    (15.78)  |     (3.271) |     (2.683) |    (1.095) |
+|   256 |   6494      |   6992.8    |   7619.8    |   7625     |
+|       |   (116.0)   |    (32.39)  |    (10.66)  |    (28.19) |
+|  1024 |  24960      |  26840      |  29100      |  29180     |
+|       |   (606.6)   |   (151.6)   |   (122.4)   |    (83.66) |
+|  4096 |  94420      | 100520      |  95260      |  99760     |
+|       |  (3144)     |   (672.3)   |  (2874)     |   (134.1)  |
+| 32768 | 386000      | 402400      | 368600      | 397400     |
+|       | (36599)     | (10526)     | (47188)     |  (6107)    |
+ --------------------------------------------------------------
+
+There's also improvement on kernel build:
+
+Base line: 61.3462 +- 0.0597 seconds time elapsed  ( +-  0.10% )
+Patched:   60.6106 +- 0.0759 seconds time elapsed  ( +-  0.13% )
+
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+---
+ fs/inode.c         |   2 +
+ include/linux/fs.h |   1 +
+ mm/filemap.c       | 150 ++++++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 130 insertions(+), 23 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index ec9339024ac3..52163d28d630 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -482,6 +482,8 @@ EXPORT_SYMBOL(inc_nlink);
+ static void __address_space_init_once(struct address_space *mapping)
+ {
+ 	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
++	seqcount_spinlock_init(&mapping->i_pages_delete_seqcnt,
++			       &mapping->i_pages->xa_lock);
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->i_private_list);
+ 	spin_lock_init(&mapping->i_private_lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..c9588d555f73 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -523,6 +523,7 @@ struct address_space {
+ 	struct list_head	i_private_list;
+ 	struct rw_semaphore	i_mmap_rwsem;
+ 	void *			i_private_data;
++	seqcount_spinlock_t	i_pages_delete_seqcnt;
+ } __attribute__((aligned(sizeof(long)))) __randomize_layout;
+ 	/*
+ 	 * On most architectures that alignment is already the case; but
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 13f0259d993c..51689c4f3773 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -138,8 +138,10 @@ static void page_cache_delete(struct address_space *mapping,
+ 
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+ 
++	write_seqcount_begin(&mapping->i_pages_delete_seqcnt);
+ 	xas_store(&xas, shadow);
+ 	xas_init_marks(&xas);
++	write_seqcount_end(&mapping->i_pages_delete_seqcnt);
+ 
+ 	folio->mapping = NULL;
+ 	/* Leave folio->index set: truncation lookup relies upon it */
+@@ -2695,21 +2697,98 @@ static void filemap_end_dropbehind_read(struct folio *folio)
+ 	}
+ }
+ 
+-/**
+- * filemap_read - Read data from the page cache.
+- * @iocb: The iocb to read.
+- * @iter: Destination for the data.
+- * @already_read: Number of bytes already read by the caller.
+- *
+- * Copies data from the page cache.  If the data is not currently present,
+- * uses the readahead and read_folio address_space operations to fetch it.
+- *
+- * Return: Total number of bytes copied, including those already read by
+- * the caller.  If an error happens before any bytes are copied, returns
+- * a negative error number.
+- */
+-ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+-		ssize_t already_read)
++static inline unsigned long filemap_read_fast_rcu(struct address_space *mapping,
++						  loff_t pos, char *buffer,
++						  size_t size)
++{
++	XA_STATE(xas, &mapping->i_pages, pos >> PAGE_SHIFT);
++	struct folio *folio;
++	loff_t file_size;
++	unsigned int seq;
++
++	lockdep_assert_in_rcu_read_lock();
++
++	/* Give up and go to slow path if raced with page_cache_delete() */
++	if (!raw_seqcount_try_begin(&mapping->i_pages_delete_seqcnt, seq))
++		return false;
++
++	folio = xas_load(&xas);
++	if (xas_retry(&xas, folio))
++		return 0;
++
++	if (!folio || xa_is_value(folio))
++		return 0;
++
++	if (!folio_test_uptodate(folio))
++		return 0;
++
++	/* No fast-case if readahead is supposed to started */
++	if (folio_test_readahead(folio))
++		return 0;
++	/* .. or mark it accessed */
++	if (!folio_test_referenced(folio))
++		return 0;
++
++	/* i_size check must be after folio_test_uptodate() */
++	file_size = i_size_read(mapping->host);
++	if (unlikely(pos >= file_size))
++		return 0;
++	if (size > file_size - pos)
++		size = file_size - pos;
++
++	/* Do the data copy */
++	size = memcpy_from_file_folio(buffer, folio, pos, size);
++	if (!size)
++		return 0;
++
++	/* Give up and go to slow path if raced with page_cache_delete() */
++	if (read_seqcount_retry(&mapping->i_pages_delete_seqcnt, seq))
++		return 0;
++
++	return size;
++}
++
++#define FAST_READ_BUF_SIZE 1024
++
++static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
++				       ssize_t *already_read)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++	struct file_ra_state *ra = &iocb->ki_filp->f_ra;
++	char buffer[FAST_READ_BUF_SIZE];
++	size_t count;
++
++	if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE)
++		return false;
++
++	if (iov_iter_count(iter) > sizeof(buffer))
++		return false;
++
++	count = iov_iter_count(iter);
++
++	/* Let's see if we can just do the read under RCU */
++	rcu_read_lock();
++	count = filemap_read_fast_rcu(mapping, iocb->ki_pos, buffer, count);
++	rcu_read_unlock();
++
++	if (!count)
++		return false;
++
++	count = copy_to_iter(buffer, count, iter);
++	if (unlikely(!count))
++		return false;
++
++	iocb->ki_pos += count;
++	ra->prev_pos = iocb->ki_pos;
++	file_accessed(iocb->ki_filp);
++	*already_read += count;
++
++	return !iov_iter_count(iter);
++}
++
++static noinline ssize_t filemap_read_slow(struct kiocb *iocb,
++					  struct iov_iter *iter,
++					  ssize_t already_read)
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct file_ra_state *ra = &filp->f_ra;
+@@ -2721,14 +2800,6 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 	loff_t isize, end_offset;
+ 	loff_t last_pos = ra->prev_pos;
+ 
+-	if (unlikely(iocb->ki_pos < 0))
+-		return -EINVAL;
+-	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
+-		return 0;
+-	if (unlikely(!iov_iter_count(iter)))
+-		return 0;
+-
+-	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
+ 	folio_batch_init(&fbatch);
+ 
+ 	do {
+@@ -2821,6 +2892,39 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 	ra->prev_pos = last_pos;
+ 	return already_read ? already_read : error;
+ }
++
++/**
++ * filemap_read - Read data from the page cache.
++ * @iocb: The iocb to read.
++ * @iter: Destination for the data.
++ * @already_read: Number of bytes already read by the caller.
++ *
++ * Copies data from the page cache.  If the data is not currently present,
++ * uses the readahead and read_folio address_space operations to fetch it.
++ *
++ * Return: Total number of bytes copied, including those already read by
++ * the caller.  If an error happens before any bytes are copied, returns
++ * a negative error number.
++ */
++ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
++		     ssize_t already_read)
++{
++	struct inode *inode = iocb->ki_filp->f_mapping->host;
++
++	if (unlikely(iocb->ki_pos < 0))
++		return -EINVAL;
++	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
++		return 0;
++	if (unlikely(!iov_iter_count(iter)))
++		return 0;
++
++	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
++
++	if (filemap_read_fast(iocb, iter, &already_read))
++		return already_read;
++
++	return filemap_read_slow(iocb, iter, already_read);
++}
+ EXPORT_SYMBOL_GPL(filemap_read);
+ 
+ int kiocb_write_and_wait(struct kiocb *iocb, size_t count)
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.50.1
+
 
