@@ -1,51 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-64469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470E1BE829C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 12:55:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74F4BE822A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 12:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 949FE58038A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 10:53:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56085567354
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 10:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8B032B983;
-	Fri, 17 Oct 2025 10:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840FF32038D;
+	Fri, 17 Oct 2025 10:50:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EC5320A3B;
-	Fri, 17 Oct 2025 10:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD62031D73F;
+	Fri, 17 Oct 2025 10:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760698253; cv=none; b=QF0pjfCMfsMJMQtwFjKhklzhB4/Kcad8a9PjY5FjuDD9waARCheqedRSdTQsVa08KcX1X2TdpkxBpinrCtR1AXVD0qI+CR4q6+4Kyv0i43Ude0qPcj3ef+wlEatczqoWFkyE+o98aARnfC2qQ0G47I4gJaOzFxssALM2qeA4a+s=
+	t=1760698211; cv=none; b=E14bBN5Mx/S2xqnCACcaVFRyQpGkFfzufHEUPlRqywfeopvscfFqato146MsRXzjumuA3lNi04ONFzazvSCof2NTf/JxW9EHkcjMO3SodIQGZWEJDNgPWfojAFWMxewqIWLWfrnujb2U7UX3L24m7sAV40UWWsFPwtAoFSnzt2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760698253; c=relaxed/simple;
-	bh=NGpRihvRGLmZxaUb7q6Kyg1zoqkKk067tACLVGmS4Z0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZm2LbVRh57nyjRXmeQd7cFy10GtVgB3IOwuvirXxexTxOp8uwQHuThu6niuM+WJDFAOZkiKgBW51EAm9Zg8puBbXMaKKNWahvjD7xA+hACF3XsBukPVgzEbgSkhjmHJVFJe+LgpKMygRlaiM56FiNOFgdtc31td37AXW8KCckk=
+	s=arc-20240116; t=1760698211; c=relaxed/simple;
+	bh=CInTZPEi9ILbXu4UpfN2lm4dHyQfqcOZ4rC45zzBAr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u/E7cOXIlvBavSDMfA2KDZDgjhSQJFdSDPmo69pdzBWIdtmUYay+bJCq8xUk90DUCAUMgGNp6vzm7kzZePRb3TXXA7942+KfHxC32TmVC0pr5RTQP63ZDwBs40689nXFOUgw3P+JlS6Vm3Jg/e5d2FC7O7VAYABL/0Uil2r9u3Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cp17m0sBZz9sSC;
-	Fri, 17 Oct 2025 12:21:24 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4cp17n17Mlz9sSK;
+	Fri, 17 Oct 2025 12:21:25 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Ma1A-_kW4Zjq; Fri, 17 Oct 2025 12:21:24 +0200 (CEST)
+	with ESMTP id kRVCKsionrA6; Fri, 17 Oct 2025 12:21:25 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cp17l6vfqz9sS7;
-	Fri, 17 Oct 2025 12:21:23 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cp17n0Pcsz9sSH;
+	Fri, 17 Oct 2025 12:21:25 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D03878B786;
-	Fri, 17 Oct 2025 12:21:23 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E3A848B776;
+	Fri, 17 Oct 2025 12:21:24 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id UGiDsfLHLJ0I; Fri, 17 Oct 2025 12:21:23 +0200 (CEST)
+	with ESMTP id Jnja7wOONEjS; Fri, 17 Oct 2025 12:21:24 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A28178B776;
-	Fri, 17 Oct 2025 12:21:22 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C5C1F8B780;
+	Fri, 17 Oct 2025 12:21:23 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -75,103 +76,64 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v3 00/10] powerpc: Implement masked user access
-Date: Fri, 17 Oct 2025 12:20:56 +0200
-Message-ID: <cover.1760529207.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v3 01/10] iter: Avoid barrier_nospec() in copy_from_user_iter()
+Date: Fri, 17 Oct 2025 12:20:57 +0200
+Message-ID: <09c7c1c9515a2c0b2e1a059a4a5e32a9afe31704.1760529207.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1760529207.git.christophe.leroy@csgroup.eu>
+References: <cover.1760529207.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4010; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=NGpRihvRGLmZxaUb7q6Kyg1zoqkKk067tACLVGmS4Z0=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWR8kuhat/+o4e3tgp5tNjx394ivT+xa9eDbmm+PUyqZn IUta/dYdpSyMIhxMciKKbIc/8+9a0bXl9T8qbv0YeawMoEMYeDiFICJaM5lZJjpeWpinm69h/uD SOaEmFJVg/NP3//+LLx0a+I3V8WXt18xMsxzqhEpyjOV21GwfsPh5xfF7zzLP22mMnXRZv2nxeu azDkB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1326; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=CInTZPEi9ILbXu4UpfN2lm4dHyQfqcOZ4rC45zzBAr0=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWR8kpjkJLj5Jud2ppKEBQcSri1LDDpe3F0ocnlh7mMLJ pMQjqk7OkpZGMS4GGTFFFmO/+feNaPrS2r+1F36MHNYmUCGMHBxCsBEulYz/OHjur5ulURd7NlJ Zhtvq0ZmLne5e+yarr2/0I3kMzKOzh8Y/ucIVFowKD2e8P3YR+XNpks2pjIfUDy1dN/PWbYNG1W 3P+UGAA==
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
 Content-Transfer-Encoding: 8bit
 
-Masked user access avoids the address/size verification by access_ok().
-Allthough its main purpose is to skip the speculation in the
-verification of user address and size hence avoid the need of spec
-mitigation, it also has the advantage to reduce the amount of
-instructions needed so it also benefits to platforms that don't
-need speculation mitigation, especially when the size of the copy is
-not know at build time.
+Following patch will add missing barrier_nospec() to
+copy_from_user_iter().
 
-Patches 1,2,4 are cleaning up some redundant barrier_nospec()
-introduced by commit 74e19ef0ff80 ("uaccess: Add speculation barrier
-to copy_from_user()"). To do that, a speculation barrier is added to
-copy_from_user_iter() so that the barrier in powerpc raw_copy_from_user()
-which is redundant with the one in copy_from_user() can be removed. To
-avoid impacting x86, copy_from_user_iter() is first converted to using
-masked user access.
+Avoid it for architectures supporting masked user
+accesses, the same way as done for copy_from_user() by
+commit 0fc810ae3ae1 ("x86/uaccess: Avoid barrier_nospec()
+in 64-bit copy_from_user()")
 
-Patch 3 adds masked_user_read_access_begin() and
-masked_user_write_access_begin() to match with user_read_access_end()
-and user_write_access_end().
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v2: New in v2
+---
+ lib/iov_iter.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Patches 5,6,7 are cleaning up powerpc uaccess functions.
-
-Patches 8 and 9 prepare powerpc/32 for the necessary gap at the top
-of userspace.
-
-Last patch implements masked user access.
-
-Changes in v3:
-- Rebased on top of v6.18-rc1
-- Patch 3: Impact on recently modified net/core/scm.c
-- Patch 10: Rewrite mask_user_address_simple() for a smaller result on powerpc64, suggested by Gabriel
-
-Changes in v2:
-- Converted copy_from_user_iter() to using masked user access.
-- Cleaned up powerpc uaccess function to minimise code duplication
-when adding masked user access
-- Automated TASK_SIZE calculation to minimise use of BUILD_BUG_ON()
-- Tried to make some commit messages more clean based on feedback from
-version 1 of the series.
-
-Christophe Leroy (10):
-  iter: Avoid barrier_nospec() in copy_from_user_iter()
-  uaccess: Add speculation barrier to copy_from_user_iter()
-  uaccess: Add masked_user_{read/write}_access_begin
-  powerpc/uaccess: Move barrier_nospec() out of
-    allow_read_{from/write}_user()
-  powerpc/uaccess: Remove unused size and from parameters from
-    allow_access_user()
-  powerpc/uaccess: Remove
-    {allow/prevent}_{read/write/read_write}_{from/to/}_user()
-  powerpc/uaccess: Refactor user_{read/write/}_access_begin()
-  powerpc/32s: Fix segments setup when TASK_SIZE is not a multiple of
-    256M
-  powerpc/32: Automatically adapt TASK_SIZE based on constraints
-  powerpc/uaccess: Implement masked user access
-
- arch/powerpc/Kconfig                          |   3 +-
- arch/powerpc/include/asm/barrier.h            |   2 +-
- arch/powerpc/include/asm/book3s/32/kup.h      |   3 +-
- arch/powerpc/include/asm/book3s/32/mmu-hash.h |   5 +-
- arch/powerpc/include/asm/book3s/32/pgtable.h  |   4 -
- arch/powerpc/include/asm/book3s/64/kup.h      |   6 +-
- arch/powerpc/include/asm/kup.h                |  52 +------
- arch/powerpc/include/asm/nohash/32/kup-8xx.h  |   3 +-
- arch/powerpc/include/asm/nohash/32/mmu-8xx.h  |   4 -
- arch/powerpc/include/asm/nohash/kup-booke.h   |   3 +-
- arch/powerpc/include/asm/task_size_32.h       |  28 +++-
- arch/powerpc/include/asm/uaccess.h            | 135 +++++++++++++-----
- arch/powerpc/kernel/asm-offsets.c             |   2 +-
- arch/powerpc/kernel/head_book3s_32.S          |   6 +-
- arch/powerpc/mm/book3s32/mmu.c                |   4 +-
- arch/powerpc/mm/mem.c                         |   2 -
- arch/powerpc/mm/nohash/8xx.c                  |   2 -
- arch/powerpc/mm/ptdump/segment_regs.c         |   2 +-
- fs/select.c                                   |   2 +-
- include/linux/uaccess.h                       |   7 +
- kernel/futex/futex.h                          |   4 +-
- lib/iov_iter.c                                |  22 ++-
- lib/strncpy_from_user.c                       |   2 +-
- lib/strnlen_user.c                            |   2 +-
- net/core/scm.c                                |   2 +-
- 25 files changed, 174 insertions(+), 133 deletions(-)
-
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 2fe66a6b8789e..a589935bf3025 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -49,12 +49,16 @@ size_t copy_from_user_iter(void __user *iter_from, size_t progress,
+ 
+ 	if (should_fail_usercopy())
+ 		return len;
+-	if (access_ok(iter_from, len)) {
+-		to += progress;
+-		instrument_copy_from_user_before(to, iter_from, len);
+-		res = raw_copy_from_user(to, iter_from, len);
+-		instrument_copy_from_user_after(to, iter_from, len, res);
+-	}
++	if (can_do_masked_user_access())
++		iter_from = mask_user_address(iter_from);
++	else if (!access_ok(iter_from, len))
++		return res;
++
++	to += progress;
++	instrument_copy_from_user_before(to, iter_from, len);
++	res = raw_copy_from_user(to, iter_from, len);
++	instrument_copy_from_user_after(to, iter_from, len, res);
++
+ 	return res;
+ }
+ 
 -- 
 2.49.0
 
