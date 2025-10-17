@@ -1,59 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-64506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F19BEA2FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 17:49:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118BABEA989
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 18:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1004219A59DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 15:46:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DF3E587C31
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 16:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287B22E11DD;
-	Fri, 17 Oct 2025 15:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B037426C3B0;
+	Fri, 17 Oct 2025 16:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kym3Qj/1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyrJXv5A"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F8432E144;
-	Fri, 17 Oct 2025 15:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FFF26AA91;
+	Fri, 17 Oct 2025 16:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760715906; cv=none; b=pCqQ25QkZWJ9r7iMVxedS9fNK79u4ivKUJ560vdHj7X/L9i9A0Ik1/kmN9fHznmjd0l4/kGA6Zcuf7XfaDtNLP07+BUg7mVTPJvx4PHlZ/+38zYKSZrrztnhde3KRTlB6W1qSdSSqehpUezSmmJ4meaSobEqDfHArwP5PJ0qbH8=
+	t=1760716962; cv=none; b=gYX5GYdw8ZFiN4/yI4BIc+nXHM5EynQAPp+naJEWO8+3AL7WFoll3ivAx7RyNr5ngZ9pgYj2xAf9FLsrOjsWG1jzle3Aq+ZNmhb82bL52pt3XY6ip8vfip7UZxw2ZpMwO1zmuyvHgt8TExwRVRx5NxsNGale9oqz/ySWFAMeo8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760715906; c=relaxed/simple;
-	bh=hsyaCroZlOpyDIPtwc0w/ZFBWjk/QkbVl30D1Hma/F8=;
+	s=arc-20240116; t=1760716962; c=relaxed/simple;
+	bh=3mM1lWUTizz6VVL4elvU1BRGI2YzNN2VMRwTvXHMgBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoN2+GwSYfLf6MaDvHZPH9jko4c3xOB8rTt91PZjMrpt5QxBki+oRhQdvID2MAC/UF3cksvtFREzGmEqNggDj8ICppEZ7RbMvaj06MgPqTKGbgvFe8AE7O9LDeDy8l/SrwzXhCozLLkKXM0rtfNwMILeUgNdpc9lNTDZ03uBWFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kym3Qj/1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17664C4CEE7;
-	Fri, 17 Oct 2025 15:45:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LX5abz7erciACySjDeK8TXsGlndCyqkNBEJXnNkVhtMegpD83sLgWqpKmi6Yv150oDJQMjeQIcKzKmsdRBDbg0eoSvxEmYNus8JSWBtUzs8+os2o35XbSBlqF7r8kiPJGq8f8fERIFTus6pprVWAxshLBTae2PE6URdM3KuJHi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyrJXv5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8862C4CEFE;
+	Fri, 17 Oct 2025 16:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760715906;
-	bh=hsyaCroZlOpyDIPtwc0w/ZFBWjk/QkbVl30D1Hma/F8=;
+	s=k20201202; t=1760716961;
+	bh=3mM1lWUTizz6VVL4elvU1BRGI2YzNN2VMRwTvXHMgBg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kym3Qj/1oqjNnBDMDOACUt16lqnELIDADwAxk+3t/U1kOC8GbtA+5DL8fdqFb8mCV
-	 3OTmnKNuU/eMWWUmPt5dJXe/TpD7eBOyMFKFxMJGqSP4+ztRVP7EPp9ptY9vYagCmY
-	 qco02GBiZXkDgYVL/iMcgrlh3o+vsM6T+RcnUAi+gzkPZxidI/a3/5fDhWVcJje5YL
-	 m+XEa9bLIjdI1tNIwcFarMeMtqY6b0wUnu0UuSCnY3UY4me6QKUvLFZ+xu77BJtHBw
-	 4eGZTLs/5p+ErJLOaf0q+x/3hoa1TyhfGPFKbsRy0MIMLBGTXW2LcLPJzru4NmuZY8
-	 Q7g532pVrbEmQ==
-Date: Fri, 17 Oct 2025 08:45:05 -0700
+	b=FyrJXv5ACeinmvzHl5wHECEdtIt9rBJrFJ8bp6CJbsqurAL0J4hn2Bcdw9CoKoChJ
+	 ZKhv45UwKPRDAAvkpA2sA3k0CZiyyl17HSISQODpwPBsowr8SlXYv81OwnTwNbWb39
+	 Ild3/43ULgbZf4M4dH8yq128Zg0srGNIFqcECBRnz2l2tBP/GH7FMa9PDd40dCtgHt
+	 AGswEEmu67omIZ2IjK0ppEM6s2efJAjWI2/XU6+R1COfUi3OCmLytLzj4UZSXGC2y8
+	 MLk5zuXafk0BRFgdIOIMg+FPBevs50BmAhTwdGW/wLJxao2ty0oQDdcuQG1NzqNa45
+	 JowDMc74vEM+A==
+Date: Fri, 17 Oct 2025 09:02:41 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Carlos Maiolino <cem@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
-	dlemoal@kernel.org, hans.holmberg@wdc.com, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/3] writeback: allow the file system to override
- MIN_WRITEBACK_PAGES
-Message-ID: <20251017154505.GE6174@frogsfrogsfrogs>
-References: <20251017034611.651385-1-hch@lst.de>
- <20251017034611.651385-3-hch@lst.de>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>, Zorro Lang <zlang@redhat.com>,
+	akpm@linux-foundation.org, linux-mm <linux-mm@kvack.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	xfs <linux-xfs@vger.kernel.org>
+Subject: Re: Regression in generic/749 with 8k fsblock size on 6.18-rc1
+Message-ID: <20251017160241.GF6174@frogsfrogsfrogs>
+References: <20251014175214.GW6188@frogsfrogsfrogs>
+ <rymlydtl4fo4k4okciiifsl52vnd7pqs65me6grweotgsxagln@zebgjfr3tuep>
+ <20251015175726.GC6188@frogsfrogsfrogs>
+ <bknltdsmeiapy37jknsdr2gat277a4ytm5dzj3xrcbjdf3quxm@ej2anj5kqspo>
+ <aPFyqwdv1prLXw5I@dread.disaster.area>
+ <764hf2tqj56revschjgubi2vbqaewjjs5b6ht7v4et4if5irio@arwintd3pfaf>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,118 +67,125 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017034611.651385-3-hch@lst.de>
+In-Reply-To: <764hf2tqj56revschjgubi2vbqaewjjs5b6ht7v4et4if5irio@arwintd3pfaf>
 
-On Fri, Oct 17, 2025 at 05:45:48AM +0200, Christoph Hellwig wrote:
-> The relatively low minimal writeback size of 4MiB means that written back
-> inodes on rotational media are switched a lot.  Besides introducing
-> additional seeks, this also can lead to extreme file fragmentation on
-> zoned devices when a lot of files are cached relative to the available
-> writeback bandwidth.
+On Fri, Oct 17, 2025 at 03:28:32PM +0100, Kiryl Shutsemau wrote:
+> On Fri, Oct 17, 2025 at 09:33:15AM +1100, Dave Chinner wrote:
+> > On Thu, Oct 16, 2025 at 11:22:00AM +0100, Kiryl Shutsemau wrote:
+> > > On Wed, Oct 15, 2025 at 10:57:26AM -0700, Darrick J. Wong wrote:
+> > > > On Wed, Oct 15, 2025 at 04:59:03PM +0100, Kiryl Shutsemau wrote:
+> > > > > On Tue, Oct 14, 2025 at 10:52:14AM -0700, Darrick J. Wong wrote:
+> > > > > > Hi there,
+> > > > > > 
+> > > > > > On 6.18-rc1, generic/749[1] running on XFS with an 8k fsblock size fails
+> > > > > > with the following:
+> > > > > > 
+> > > > > > --- /run/fstests/bin/tests/generic/749.out	2025-07-15 14:45:15.170416031 -0700
+> > > > > > +++ /var/tmp/fstests/generic/749.out.bad	2025-10-13 17:48:53.079872054 -0700
+> > > > > > @@ -1,2 +1,10 @@
+> > > > > >  QA output created by 749
+> > > > > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() reading beyond page boundary
+> > > > > > +Expected SIGBUS when mmap() writing beyond page boundary
+> > > > > >  Silence is golden
+> > > > > > 
+> > > > > > This test creates small files of various sizes, maps the EOF block, and
+> > > > > > checks that you can read and write to the mmap'd page up to (but not
+> > > > > > beyond) the next page boundary.
+> > > > > > 
+> > > > > > For 8k fsblock filesystems on x86, the pagecache creates a single 8k
+> > > > > > folio to cache the entire fsblock containing EOF.  If EOF is in the
+> > > > > > first 4096 bytes of that 8k fsblock, then it should be possible to do a
+> > > > > > mmap read/write of the first 4k, but not the second 4k.  Memory accesses
+> > > > > > to the second 4096 bytes should produce a SIGBUS.
+> > > > > 
+> > > > > Does anybody actually relies on this behaviour (beyond xfstests)?
+> > > > 
+> > > > Beats me, but the mmap manpage says:
+> > > ...
+> > > > POSIX 2024 says:
+> > > ...
+> > > > From both I would surmise that it's a reasonable expectation that you
+> > > > can't map basepages beyond EOF and have page faults on those pages
+> > > > succeed.
+> > > 
+> > > <Added folks form the commit that introduced generic/749>
+> > > 
+> > > Modern kernel with large folios blurs the line of what is the page.
+> > > 
+> > > I don't want play spec lawyer. Let's look at real workloads.
+> > 
+> > Or, more importantly, consider the security-related implications of
+> > the change....
+> > 
+> > > If there's anything that actually relies on this SIGBUS corner case,
+> > > let's see how we can fix the kernel. But it will cost some CPU cycles.
+> > > 
+> > > If it only broke syntactic test case, I'm inclined to say WONTFIX.
+> > > 
+> > > Any opinions?
+> > 
+> > Mapping beyond EOF ranges into userspace address spaces is a
+> > potential security risk. If there is ever a zeroing-beyond-EOF bug
+> > related to large folios (history tells us we are *guaranteed* to
+> > screw this up somewhere in future), then allowing mapping all the
+> > way to the end of the large folio could expose a -lot more- stale
+> > kernel data to userspace than just what the tail of a PAGE_SIZE
+> > faulted region would expose.
 > 
-> Add a superblock field that allows the file system to override the
-> default size.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Could you point me to the details on a zeroing-beyond-EOF bug?
+> I don't have context here.
 
-The comment in the next patch satisfies me sufficiently, so
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Create a file whose size is neither aligned to PAGE_SIZE nor the fs
+block size.  The pagecache only maps full folios, so the last folio in
+the pagecache will have EOF in the middle of it.
+
+So what do you put in the folio beyond EOF?  Most Linux filesystems
+write zeroes to the post-EOF bytes at some point before writing the
+block out to disk so that we don't persist random stale kernel memory.
+
+Now you want to mmap that EOF folio into a userspace process.  It was
+stupid to allow that because the contents of the folio beyond EOF are
+undefined.  But we're stuck with this stupid API.
+
+So now we need to zero the post-EOF folio contents before taking the
+first fault on the mmap region, because we don't want the userspace
+program to be able to load random stale kernel memory.
+
+We also don't want programs to be able to store information in the mmap
+region beyond EOF to prevent abuse, so writeback has to zero the post
+EOF contents before writing the pagecache to disk.
+
+> But if it is, as you saying, *guaranteed* to happen again, maybe we
+> should slap __GFP_ZERO on page cache allocations? It will address the
+> problem at the root.
+
+Weren't you complaining upthread about spending CPU cycles?  GFP_ZERO
+on every page loaded into the pagecache isn't free either.
+
+> Although, I think you are being dramatic about "*guaranteed*"...
+
+He's not, post-EOF folio zeroing has broken in weird subtle ways every
+1-2 years for the nearly 20 years I've worked in filesystems.
+
+> If we solved problem of zeroing upto PAGE_SIZE border, I don't see
+> why zeroing upto folio_size() border any conceptually different.
+> Might require some bug squeezing, sure.
+
+We already do that, but that's not the issue here.
+
+The issue here is that you are *breaking* XFS behavior that is
+documented in the mmap manpage.  This worked as documented in 6.17, and
+now it doesn't work.
 
 --D
 
-> ---
->  fs/fs-writeback.c         | 14 +++++---------
->  fs/super.c                |  1 +
->  include/linux/fs.h        |  1 +
->  include/linux/writeback.h |  5 +++++
->  4 files changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 11fd08a0efb8..6d50b02cdab6 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -31,11 +31,6 @@
->  #include <linux/memcontrol.h>
->  #include "internal.h"
->  
-> -/*
-> - * 4MB minimal write chunk size
-> - */
-> -#define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
-> -
->  /*
->   * Passed into wb_writeback(), essentially a subset of writeback_control
->   */
-> @@ -1874,8 +1869,8 @@ static int writeback_single_inode(struct inode *inode,
->  	return ret;
->  }
->  
-> -static long writeback_chunk_size(struct bdi_writeback *wb,
-> -				 struct wb_writeback_work *work)
-> +static long writeback_chunk_size(struct super_block *sb,
-> +		struct bdi_writeback *wb, struct wb_writeback_work *work)
->  {
->  	long pages;
->  
-> @@ -1898,7 +1893,8 @@ static long writeback_chunk_size(struct bdi_writeback *wb,
->  	pages = min(wb->avg_write_bandwidth / 2,
->  		    global_wb_domain.dirty_limit / DIRTY_SCOPE);
->  	pages = min(pages, work->nr_pages);
-> -	return round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_PAGES);
-> +	return round_down(pages + sb->s_min_writeback_pages,
-> +			sb->s_min_writeback_pages);
->  }
->  
->  /*
-> @@ -2000,7 +1996,7 @@ static long writeback_sb_inodes(struct super_block *sb,
->  		inode->i_state |= I_SYNC;
->  		wbc_attach_and_unlock_inode(&wbc, inode);
->  
-> -		write_chunk = writeback_chunk_size(wb, work);
-> +		write_chunk = writeback_chunk_size(inode->i_sb, wb, work);
->  		wbc.nr_to_write = write_chunk;
->  		wbc.pages_skipped = 0;
->  
-> diff --git a/fs/super.c b/fs/super.c
-> index 5bab94fb7e03..599c1d2641fe 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -389,6 +389,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->  		goto fail;
->  	if (list_lru_init_memcg(&s->s_inode_lru, s->s_shrink))
->  		goto fail;
-> +	s->s_min_writeback_pages = MIN_WRITEBACK_PAGES;
->  	return s;
->  
->  fail:
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c895146c1444..ae6f37c6eaa4 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1583,6 +1583,7 @@ struct super_block {
->  
->  	spinlock_t		s_inode_wblist_lock;
->  	struct list_head	s_inodes_wb;	/* writeback inodes */
-> +	long			s_min_writeback_pages;
->  } __randomize_layout;
->  
->  static inline struct user_namespace *i_user_ns(const struct inode *inode)
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index 22dd4adc5667..49e1dd96f43e 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -374,4 +374,9 @@ bool redirty_page_for_writepage(struct writeback_control *, struct page *);
->  void sb_mark_inode_writeback(struct inode *inode);
->  void sb_clear_inode_writeback(struct inode *inode);
->  
-> +/*
-> + * 4MB minimal write chunk size
-> + */
-> +#define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
-> +
->  #endif		/* WRITEBACK_H */
 > -- 
-> 2.47.3
-> 
+>   Kiryl Shutsemau / Kirill A. Shutemov
 > 
 
