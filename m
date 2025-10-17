@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-64418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009EFBE7331
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 10:36:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755C6BE733A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 10:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186075E2CE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 08:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD326E07E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 08:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BE52BE058;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F291B2BE7AD;
 	Fri, 17 Oct 2025 08:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYnEbO00"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbQXgI29"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4093E296BB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A9129ACC2;
 	Fri, 17 Oct 2025 08:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689990; cv=none; b=SrNFhgqFxkSEmYS2mWibMwMlc62NLM68G9hDyvYaXebDYPIvoupvu+Xt214UX91CzDrgMgtL2iHd8RGfweA+a/Uj1Kx7U/guR4kA81DV+M/va4IoqB26rjHMdasLAiE+Bwr0E6UVPUD+sBrTOXhDAktCUKVM/3sPWCT00+YQ/Ck=
+	t=1760689990; cv=none; b=cdCKIsG9+tCs/DG/Qtxc8t8kQRt9qYHpQ9UskdzGeiT+LnyuOpKT6wYmKQo6vBnygtHwGgKD6qoGhRAd/r+pG0X5q0bC0gHaRIuJuNnq/VRpBTfh5D5orbdN49yIybHJ1W3B52Fkty+u9seNqh8O+liJKMJUAzfac+xgJ+YOwqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760689990; c=relaxed/simple;
-	bh=q9gCEt3TobxYIVG/KkXiEJcB2H0/1WMYfGIpn+5weUg=;
+	bh=0OjnJiYGVGjDynjvHn5XLycsIiIb+BowncnpR4xepGI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vd7sIx/MzCGcGAZkWgILMvC1R8iXWfDzGcRby8w/1E9pMJnMBblHYh3XX8Yh7g0lWy+acBITGuHonYOiPtXJwXqIt2jngCpsbfbm0hNYaUK9wsGx31x8jact1wC3R86oycCtdArfGfv4T0PlH3VvJyDPRo7HdtE8q3apJCtQ8gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYnEbO00; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B2E0BC4AF0B;
+	 In-Reply-To:To:Cc; b=NZ88d6816xs4pVQfE3Q8a0cxtZWBCv9diP3/tOyeoP1AsvOhnFmA5DEV8C93JDKeCiGXibWrYDLDYIcwlQ7uif8nmOsk9sHYLdBvBQwkv2OUcBXTRqABeQpLLb29cyf63BqWMmrExoccbTUMxkLfNM9S3zUtHGUx1aWicVR6cW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbQXgI29; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B64DEC116D0;
 	Fri, 17 Oct 2025 08:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760689989;
-	bh=q9gCEt3TobxYIVG/KkXiEJcB2H0/1WMYfGIpn+5weUg=;
+	bh=0OjnJiYGVGjDynjvHn5XLycsIiIb+BowncnpR4xepGI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZYnEbO005LHWApfem2/aQ2uxZb2K8u/Lq7gEyVG/z3eu47EMZJdsb2XuCzbSZ6yhB
-	 WSZ93P/VH+C6c0KTO2KMz1+YNPsNNcX2LhUfLx/Z851GxOtnroZ/C/B26uv/BqsaYs
-	 7Rgj8iWSR2B1S4JhS3JGDTIyeXwhvKPQnDuPdt1l8tLZe3EA4pzP0VMEfy2WYzemFF
-	 xJaNL8ZG24KW9a5mG3MiGHhgGqY55S1PqPdsO1XnvV9FzuXMYksMElRrbqx8/39uF/
-	 EnN8jsEzBbywPBcFz2VeYaUiH3ZvKXWfMrWuF/xTyDHoTsyo4vUDTDn7IAWzOD3Ifb
-	 atp8DaDasIukQ==
+	b=nbQXgI29aKdZ0gLT+eeqI5vO8WPTdbmrZjJc8HTPN0qg8L777twrVXxcSnAEzpge9
+	 b8iEHtWEVkaEDzNkjy9PGYDx76Twff3cbFgkHl4RA3dv/vgZNNeBEYkiNN66TznsyS
+	 u/tnaaLIlnvBOnLyS+MnbB5ZCePIHrqUwl8LnbWeBdQQFt8ocPy3O9gYUunDnUgDZC
+	 hvLW9tQiptn2WZ5H54sHa9wbEhDXs7ecUIc6roNWtDuRuqghAQc/xfQ4ihBDV8rZjv
+	 39RSUyJDcg+4BxXal0IXUfS37BjFyNPR/c3tnyS57AcRdamVWB7IBJycYE6yTup5wJ
+	 4GWBZ7c+6BRNw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DD0CCD1A2;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F67CCD184;
 	Fri, 17 Oct 2025 08:33:09 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Date: Fri, 17 Oct 2025 10:32:12 +0200
-Subject: [PATCH 2/7] sysctl: Move INT converter macros to sysctl header
+Date: Fri, 17 Oct 2025 10:32:13 +0200
+Subject: [PATCH 3/7] sysctl: Move UINT converter macros to sysctl header
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-jag-sysctl_jiffies-v1-2-175d81dfdf82@kernel.org>
+Message-Id: <20251017-jag-sysctl_jiffies-v1-3-175d81dfdf82@kernel.org>
 References: <20251017-jag-sysctl_jiffies-v1-0-175d81dfdf82@kernel.org>
 In-Reply-To: <20251017-jag-sysctl_jiffies-v1-0-175d81dfdf82@kernel.org>
 To: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -63,215 +63,155 @@ To: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6756;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4816;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=q9gCEt3TobxYIVG/KkXiEJcB2H0/1WMYfGIpn+5weUg=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjx/z/0VfSrjs8ZqAKxT/Y+E4PCmvOw6GQNu
- ejTJLH8jMKR/4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8f8/AAoJELqXzVK3
- lkFPWN0L/ApKAqufgi2A8tK0k/fE1WyNBqIg6r3rpZiwzAr+CWfMLXdsWpBPmghF1W8X5jRjL9F
- IrzSWsPN/VIvu3Vak73VDgzyc7JsjAkaT3s+bD1sjjz2zaIs2ZVG4R+y9muSLIvkfTGXqqEyO3T
- trdthVFKLhrpLjmSzBnGCz5+wuHk5cVJfYbsa9BRh1bOxO2WZtw/bNT8KTjxUMIUVkbnQuCtcW2
- LrzsUqd6hidWEPn3BQ91FIq6DjWaMJxV/H4OPauJpUo5sX00ubuzIOt+DqKf2pSvYkaXPC3hWN6
- sA5hxz6zjy+Bp0iBgwNR5Y/7xi/4AO66q6rzAYRscPAJXtvsBG0mJ5e/7R6YyRc66Pgf4z9kMqJ
- opB5PzBdo0IBbZtWJmyScipVRbKxIzx2pDMkMqwzZ2hLposPrLEpCtPYfwHeFOfiwno6rRCm/+J
- ShLTGkiR66ddGtxfIA2ioWXv0u/mIh4pJ8MSX4aDDQwziho1z3+M7n4C2AoviWR/ugX05sFuW3+
- PM=
+ bh=0OjnJiYGVGjDynjvHn5XLycsIiIb+BowncnpR4xepGI=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjx/0CUvvVn2u5K8hSOidQ/tDLn/ZoBkO+Mf
+ 0DOFi4952J0DokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo8f9AAAoJELqXzVK3
+ lkFPlDcL/iVvo3C3ne1X/TP/Nwgr9Idr+QgPEHWWfWOc7zUnd9gFUw/tl1gLDygH1DOSl1ohxUF
+ JFT4T5+Nvdze/bHjcHa7vrqLE4Sr09Gx/wCPGfEyagT5FLDhbeYwp3MigtDewKIS/nDkdGe9Zle
+ y5LxmjxXIEYeTbog9nQjHktf2hDCXHy77VKEK+5Kys7lSneyVOizQErYE/iZMEOuLywD9Hzj4GM
+ +OdWfigmzBmwcBFrYcNiU3BLhaNGuFRxKBPPgXiQjHdKovUgSwItAXLPPCvfhdtyqPzWSm7+BYa
+ X9WPucQ2LtJfhj742AnnQZ4ZH71obLXEGpesNbgyV9djwBLTbzRPr3fw/OlEMyZX+Yc5SJ+kO8t
+ TU1j226NZkPvpx0ILKWvaBT+rgppdaZ5ymapxE73tIDIQetdWn4SlmDMQYg9y4kCKNp/RmgUp76
+ GtJnIs+fN57v/UO6M1m5cnBzRnfyJ90LzXEgWPMzuxaL/gq6oNQmYbx8eCGW8/dq1Wzc0LaPBb5
+ 0o=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-Move direction macros (SYSCTL_{USER_TO_KERN,KERN_TO_USER}) and the
-integer converter macros (SYSCTL_{USER_TO_KERN,KERN_TO_USER}_INT_CONV,
-SYSCTL_INT_CONV_CUSTOM) into include/linux/sysctl.h. This is a
-preparation commit to enable jiffies converter creation outside
+Move SYSCTL_USER_TO_KERN_UINT_CONV and SYSCTL_UINT_CONV_CUSTOM macros to
+include/linux/sysctl.h. No need to embed sysctl_kern_to_user_uint_conv
+in a macro as it will not need a custom kernel pointer operation. This
+is a preparation commit to enable jiffies converter creation outside
 kernel/sysctl.c.
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
- include/linux/sysctl.h | 75 ++++++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sysctl.c        | 75 --------------------------------------------------
- 2 files changed, 75 insertions(+), 75 deletions(-)
+ include/linux/sysctl.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ kernel/sysctl.c        | 42 ++----------------------------------------
+ 2 files changed, 42 insertions(+), 40 deletions(-)
 
 diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index ecc8d2345006ab12520f2f6ec37379419e9295d4..967a9ad6b4200266e2d9c6cfa9ee58fb8bf51090 100644
+index 967a9ad6b4200266e2d9c6cfa9ee58fb8bf51090..faeeb2feefb83d5b57e67f5cbf2eadf79dd03fb2 100644
 --- a/include/linux/sysctl.h
 +++ b/include/linux/sysctl.h
-@@ -59,6 +59,81 @@ extern const int sysctl_vals[];
- #define SYSCTL_LONG_ONE		((void *)&sysctl_long_vals[1])
- #define SYSCTL_LONG_MAX		((void *)&sysctl_long_vals[2])
+@@ -134,6 +134,45 @@ int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
+ 	return 0;							\
+ }
  
-+/**
-+ *
-+ * "dir" originates from read_iter (dir = 0) or write_iter (dir = 1)
-+ * in the file_operations struct at proc/proc_sysctl.c. Its value means
-+ * one of two things for sysctl:
-+ * 1. SYSCTL_USER_TO_KERN(dir) Writing to an internal kernel variable from user
-+ *                             space (dir > 0)
-+ * 2. SYSCTL_KERN_TO_USER(dir) Writing to a user space buffer from a kernel
-+ *                             variable (dir == 0).
-+ */
-+#define SYSCTL_USER_TO_KERN(dir) (!!(dir))
-+#define SYSCTL_KERN_TO_USER(dir) (!dir)
-+
-+#define SYSCTL_USER_TO_KERN_INT_CONV(name, u_ptr_op)		\
-+int sysctl_user_to_kern_int_conv##name(const bool *negp,	\
-+				       const unsigned long *u_ptr,\
-+				       int *k_ptr)		\
++#define SYSCTL_USER_TO_KERN_UINT_CONV(name, u_ptr_op)		\
++int sysctl_user_to_kern_uint_conv##name(const unsigned long *u_ptr,\
++					unsigned int *k_ptr)	\
 +{								\
 +	unsigned long u = u_ptr_op(*u_ptr);			\
-+	if (*negp) {						\
-+		if (u > (unsigned long) INT_MAX + 1)		\
-+			return -EINVAL;				\
-+		WRITE_ONCE(*k_ptr, -u);				\
-+	} else {						\
-+		if (u > (unsigned long) INT_MAX)		\
-+			return -EINVAL;				\
-+		WRITE_ONCE(*k_ptr, u);				\
-+	}							\
++	if (u > UINT_MAX)					\
++		return -EINVAL;					\
++	WRITE_ONCE(*k_ptr, u);					\
 +	return 0;						\
 +}
 +
-+#define SYSCTL_KERN_TO_USER_INT_CONV(name, k_ptr_op)		\
-+int sysctl_kern_to_user_int_conv##name(bool *negp,		\
-+				       unsigned long *u_ptr,	\
-+				       const int *k_ptr)	\
-+{								\
-+	int val = READ_ONCE(*k_ptr);				\
-+	if (val < 0) {						\
-+		*negp = true;					\
-+		*u_ptr = -k_ptr_op((unsigned long)val);		\
-+	} else {						\
-+		*negp = false;					\
-+		*u_ptr = k_ptr_op((unsigned long)val);		\
-+	}							\
-+	return 0;						\
-+}
-+
-+/**
-+ * To range check on a converted value, use a temp k_ptr
-+ * When checking range, value should be within (tbl->extra1, tbl->extra2)
-+ */
-+#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user,	\
-+			       k_ptr_range_check)			\
-+int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
++#define SYSCTL_UINT_CONV_CUSTOM(name, user_to_kern, kern_to_user,	\
++				k_ptr_range_check)			\
++int do_proc_uint_conv##name(unsigned long *u_ptr, unsigned int *k_ptr,	\
 +			   int dir, const struct ctl_table *tbl)	\
 +{									\
 +	if (SYSCTL_KERN_TO_USER(dir))					\
-+		return kern_to_user(negp, u_ptr, k_ptr);		\
++		return kern_to_user(u_ptr, k_ptr);			\
 +									\
 +	if (k_ptr_range_check) {					\
-+		int tmp_k, ret;						\
++		unsigned int tmp_k;					\
++		int ret;						\
 +		if (!tbl)						\
 +			return -EINVAL;					\
-+		ret = user_to_kern(negp, u_ptr, &tmp_k);		\
++		ret = user_to_kern(u_ptr, &tmp_k);			\
 +		if (ret)						\
 +			return ret;					\
-+		if ((tbl->extra1 && *(int *)tbl->extra1 > tmp_k) ||	\
-+		    (tbl->extra2 && *(int *)tbl->extra2 < tmp_k))	\
-+			return -EINVAL;					\
++		if ((tbl->extra1 &&					\
++		     *(unsigned int *)tbl->extra1 > tmp_k) ||		\
++		    (tbl->extra2 &&					\
++		     *(unsigned int *)tbl->extra2 < tmp_k))		\
++			return -ERANGE;					\
 +		WRITE_ONCE(*k_ptr, tmp_k);				\
 +	} else								\
-+		return user_to_kern(negp, u_ptr, k_ptr);		\
++		return user_to_kern(u_ptr, k_ptr);			\
 +	return 0;							\
 +}
++
 +
  extern const unsigned long sysctl_long_vals[];
  
  typedef int proc_handler(const struct ctl_table *ctl, int write, void *buffer,
+@@ -166,6 +205,7 @@ int proc_doulongvec_ms_jiffies_minmax(const struct ctl_table *table, int, void *
+ int proc_do_large_bitmap(const struct ctl_table *, int, void *, size_t *, loff_t *);
+ int proc_do_static_key(const struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos);
++int sysctl_kern_to_user_uint_conv(unsigned long *u_ptr, const unsigned int *k_ptr);
+ 
+ /*
+  * Register a set of sysctl names by calling register_sysctl
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 6a6a2a6421f8debf75089548c82374619af32d61..70cf23d9834ef4e6b95ab80a3dc7a06237742793 100644
+index 70cf23d9834ef4e6b95ab80a3dc7a06237742793..f3d2385f88494da1e5ba7ee1fbb575d2545d7d84 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -30,19 +30,6 @@ EXPORT_SYMBOL(sysctl_vals);
- const unsigned long sysctl_long_vals[] = { 0, 1, LONG_MAX };
- EXPORT_SYMBOL_GPL(sysctl_long_vals);
+@@ -387,54 +387,16 @@ static SYSCTL_INT_CONV_CUSTOM(_ms_jiffies_minmax,
+ 			      sysctl_user_to_kern_int_conv_ms,
+ 			      sysctl_kern_to_user_int_conv_ms, true)
  
--/**
-- *
-- * "dir" originates from read_iter (dir = 0) or write_iter (dir = 1)
-- * in the file_operations struct at proc/proc_sysctl.c. Its value means
-- * one of two things for sysctl:
-- * 1. SYSCTL_USER_TO_KERN(dir) Writing to an internal kernel variable from user
-- *                             space (dir > 0)
-- * 2. SYSCTL_KERN_TO_USER(dir) Writing to a user space buffer from a kernel
-- *                             variable (dir == 0).
-- */
--#define SYSCTL_USER_TO_KERN(dir) (!!(dir))
--#define SYSCTL_KERN_TO_USER(dir) (!dir)
--
- #if defined(CONFIG_SYSCTL)
- 
- /* Constants used for minimum and maximum */
-@@ -368,68 +355,6 @@ static void proc_put_char(void **buf, size_t *size, char c)
- 	}
- }
- 
--#define SYSCTL_USER_TO_KERN_INT_CONV(name, u_ptr_op)		\
--int sysctl_user_to_kern_int_conv##name(const bool *negp,	\
--				       const unsigned long *u_ptr,\
--				       int *k_ptr)		\
+-#define SYSCTL_USER_TO_KERN_UINT_CONV(name, u_ptr_op)		\
+-int sysctl_user_to_kern_uint_conv##name(const unsigned long *u_ptr,\
+-					unsigned int *k_ptr)	\
 -{								\
 -	unsigned long u = u_ptr_op(*u_ptr);			\
--	if (*negp) {						\
--		if (u > (unsigned long) INT_MAX + 1)		\
--			return -EINVAL;				\
--		WRITE_ONCE(*k_ptr, -u);				\
--	} else {						\
--		if (u > (unsigned long) INT_MAX)		\
--			return -EINVAL;				\
--		WRITE_ONCE(*k_ptr, u);				\
--	}							\
+-	if (u > UINT_MAX)					\
+-		return -EINVAL;					\
+-	WRITE_ONCE(*k_ptr, u);					\
 -	return 0;						\
 -}
 -
--#define SYSCTL_KERN_TO_USER_INT_CONV(name, k_ptr_op)		\
--int sysctl_kern_to_user_int_conv##name(bool *negp,		\
--				       unsigned long *u_ptr,	\
--				       const int *k_ptr)	\
--{								\
--	int val = READ_ONCE(*k_ptr);				\
--	if (val < 0) {						\
--		*negp = true;					\
--		*u_ptr = -k_ptr_op((unsigned long)val);		\
--	} else {						\
--		*negp = false;					\
--		*u_ptr = k_ptr_op((unsigned long)val);		\
--	}							\
--	return 0;						\
--}
--
--/**
-- * To range check on a converted value, use a temp k_ptr
-- * When checking range, value should be within (tbl->extra1, tbl->extra2)
-- */
--#define SYSCTL_INT_CONV_CUSTOM(name, user_to_kern, kern_to_user,	\
--			       k_ptr_range_check)			\
--int do_proc_int_conv##name(bool *negp, unsigned long *u_ptr, int *k_ptr,\
+ static SYSCTL_USER_TO_KERN_UINT_CONV(,SYSCTL_CONV_IDENTITY)
+ 
+-static int sysctl_kern_to_user_uint_conv(unsigned long *u_ptr,
+-					 const unsigned int *k_ptr)
++int sysctl_kern_to_user_uint_conv(unsigned long *u_ptr,
++				  const unsigned int *k_ptr)
+ {
+ 	unsigned int val = READ_ONCE(*k_ptr);
+ 	*u_ptr = (unsigned long)val;
+ 	return 0;
+ }
+ 
+-#define SYSCTL_UINT_CONV_CUSTOM(name, user_to_kern, kern_to_user,	\
+-				k_ptr_range_check)			\
+-int do_proc_uint_conv##name(unsigned long *u_ptr, unsigned int *k_ptr,	\
 -			   int dir, const struct ctl_table *tbl)	\
 -{									\
 -	if (SYSCTL_KERN_TO_USER(dir))					\
--		return kern_to_user(negp, u_ptr, k_ptr);		\
+-		return kern_to_user(u_ptr, k_ptr);			\
 -									\
 -	if (k_ptr_range_check) {					\
--		int tmp_k, ret;						\
+-		unsigned int tmp_k;					\
+-		int ret;						\
 -		if (!tbl)						\
 -			return -EINVAL;					\
--		ret = user_to_kern(negp, u_ptr, &tmp_k);		\
+-		ret = user_to_kern(u_ptr, &tmp_k);			\
 -		if (ret)						\
 -			return ret;					\
--		if ((tbl->extra1 && *(int *)tbl->extra1 > tmp_k) ||	\
--		    (tbl->extra2 && *(int *)tbl->extra2 < tmp_k))	\
--			return -EINVAL;					\
+-		if ((tbl->extra1 &&					\
+-		     *(unsigned int *)tbl->extra1 > tmp_k) ||		\
+-		    (tbl->extra2 &&					\
+-		     *(unsigned int *)tbl->extra2 < tmp_k))		\
+-			return -ERANGE;					\
 -		WRITE_ONCE(*k_ptr, tmp_k);				\
 -	} else								\
--		return user_to_kern(negp, u_ptr, k_ptr);		\
+-		return user_to_kern(u_ptr, k_ptr);			\
 -	return 0;							\
 -}
 -
- #define SYSCTL_CONV_IDENTITY(val) val
- #define SYSCTL_CONV_MULT_HZ(val) ((val) * HZ)
- #define SYSCTL_CONV_DIV_HZ(val) ((val) / HZ)
+ static SYSCTL_UINT_CONV_CUSTOM(, sysctl_user_to_kern_uint_conv,
+ 			       sysctl_kern_to_user_uint_conv, false)
+ static SYSCTL_UINT_CONV_CUSTOM(_minmax, sysctl_user_to_kern_uint_conv,
 
 -- 
 2.50.1
