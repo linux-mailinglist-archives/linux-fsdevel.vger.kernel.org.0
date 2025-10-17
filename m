@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-64548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE3BBEB9E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 22:24:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB1EBEB9E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 22:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0715F4FD85B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 20:24:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3F2F4FBDAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 20:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA0734FF64;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A7C34FF75;
 	Fri, 17 Oct 2025 20:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1cRjYUtf"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WA1qRovC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D2336EE2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 20:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B534338582
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 20:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760732019; cv=none; b=oAaTBPv0Zexrm+VUR4b39IgYiQ85Ottq8LioKOL690wMuaz1IR67AbZB9xjE3tqqjyvQNSJs8X8fUXW8slEf8ZhriG7UZO1eo6pYfz2LhfurJ3n9YqNefbzMlL3v7yJbzS6hDT116ZlBSToo9+Uo5Vh4w5lbVNT5a20JuY/1Uck=
+	t=1760732020; cv=none; b=XOsUNvApE+gRBlt5CojYuwMOhJtmMjzkYhIA3htrO4qxhDU43mT359JHBnyb3vKHsuf2vZt3fK/wmwQ2izcrODkIue2o6+7tSgfpTfAz9zft0TOjp260gMUlhOmBtOl6xDI5bVLOxk3chbYg06wQbDMefy4vKlUVrMuQTL9EmhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760732019; c=relaxed/simple;
-	bh=0iOSFx0ynK1roVDIm+WpuX2yPOT/D5n3AIvP6cQdk3I=;
+	s=arc-20240116; t=1760732020; c=relaxed/simple;
+	bh=2DMaKOK2VXBsbJz3JTwxWGUFGZP6PnidI4mpyVFTIRU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PZHj0BMNgqXe0a61jcciPQhMFT0kVkQKj4HIA9GTymiVqByILbpgjRwsW2z+Tg0Ryp2c7X1WD9dFIzuGJCQ0yryMjwILQbUiUg89qA8tKe1onCPriRf8/g+6dy+BXWX/D3LvThLxB8BLviMbJ7etjAW9u9ZtPhRQCCHMbIs+81E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1cRjYUtf; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=p5PsWo2aiFLsaWO+ytBfHDePZM08T971JfxyboSYvPfhktiu7w8JS1yv8tc0HfKPBQPEmKooj3pjsHGBXGc4NSArtbkmcCjTVGEO813pScnKmoB5gOHZ1hcKL0hqUgISLDUQa7/Nv9R8V+JF1HKnUhH+OjGl5k8f5TI8frDs4jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WA1qRovC; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5edecdf94eso2981675a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 13:13:30 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so1902818a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 13:13:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760732007; x=1761336807; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760732009; x=1761336809; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YzgK6COwXxwuR6mHkO/eruasOK9Vha2WZDtBxyLasHc=;
-        b=1cRjYUtf6dWeKiECbyLtNAx58/FbuRM6NcDTD0Pm0LymEGXuKNjbf/aPRtHlsR4do3
-         BDifqSnnZdQ8gtZItK7TEOSZXg2tpGeHNvXTmEnC+qQvnMZOuN7N4PChuzryY9zNhS2d
-         MK7RonFjSR9s9GN8qafyXG/NKwLusMVQm54hArKKRqMhVDLMUrQppgtjyD1AnkS+4Ad4
-         SQ7/6/R7pYcMC9Y4rp+5eV7nkYZfWXYZ7BRvhRIkGNfzL1p0pIGM3rCu9LskH6RpRDh7
-         NOSIO7cL5FxOq9BoAZD8gk/WIFf/8dtnxPRJyuCbmywKn1D4cyxqntILwAQhP2rxpdRf
-         dB8A==
+        bh=dmdP6R9nC9lX1jXEEElpeV73O9FQiFshjkk2aEtJ9fU=;
+        b=WA1qRovCNHN2ZAT/8sz67z19z/LJuOECnGMWDiVMA/B331sLklnw5e6ERhoA/gbAtR
+         QEG4dm2N5hooHB4GPOUI4GVHoirFlh5pDTIdEKlOwVbHCZaK0NfeE0nVcg2e4MhEJ3Yk
+         P++bjQS3wAmLrjhhkrRGEkvYMjkpsdtGoDbrzEpEORpXZHluqOfBZnBBsqmooepxS1sE
+         MGkqwVjiPjKM5V0kqygfCi+zsJFR+FBd08sTslPUcTG/Tl0VD45h8KcMG4VwiLRip/X5
+         5HSgDtcMqNf0jYzW9WAGJOFdPpYeLQY9z9GWpe5rwLk2Zfha+KwskAk4sNwi9xYosCDI
+         sH/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760732007; x=1761336807;
+        d=1e100.net; s=20230601; t=1760732009; x=1761336809;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YzgK6COwXxwuR6mHkO/eruasOK9Vha2WZDtBxyLasHc=;
-        b=X9zNrFNBGx/GT2rvIn+P9wQnGjdyHjNf1FuuvEiOkgaZndUa3Hb0Iq3VngrDfyYOWi
-         Xd61XZP6eR1h5Vv4mFZx0mC2qhlOw0jkRo63yiQtsJU3VCe5vIN1oIrJiJG0zPuFLZK8
-         qDDL38HkusvzT9fqk2PUXlq9K1YCsf+zCCYUChudrhblBHzxrmX1PYVagG//ZIImpyWE
-         f+h8cMY+tT9I3Mkj49BYm3RfYFsVbe7sxvoHKrAiiedY6HkxwPzqmmLNZkcSV3lz/GUw
-         3fg+BfKWOr8q9ioRTYh08xGoO47z+QsDLzozT+k5pBbhGh1kA+rM/LBl5KTpiEwmi0Dz
-         B2qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLGfzihB3+IYnfodfvUKD6LoIrLUPRRHGmgXGL7/t+vt2SStz2DfweEw3h/imHgI+3R/8wZIae3+mvOqE9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw51xuumm4iIyB781SvWAeuGKScYajIM80qLkg3DKJ2yVKe+0to
-	Ow2qKF+UxAoZr03LWK8oXwFbsv8byaqkHziy29/d58iV7bSY/1jHbNdTu7ogEyFNxQDAvZNAe54
-	sp4mKWw+mDofP1J4zbtbRCycKwQ==
-X-Google-Smtp-Source: AGHT+IFNzBy4Dam1f3BpOkFlbzCEecrwBUddmzLCsmOoaaTEsa8+5gND5yEQLFxm84fuelz2mmjzrymU0o0/N3s+mA==
-X-Received: from pjbsv12.prod.google.com ([2002:a17:90b:538c:b0:33b:9921:8e9a])
+        bh=dmdP6R9nC9lX1jXEEElpeV73O9FQiFshjkk2aEtJ9fU=;
+        b=IYdR2cHIK2Yx/Un3SsIimJlLXUdqknOB4m+LA58/DezoZ1kD36CrjGNco7UAw5Q+7Q
+         dNIr2MRo2yieUdeOWIZ76wVuXT5RLN0qnJZzhWg9hxdjSqAaMqBg8jxaooKqtQhs9Iob
+         IO3P/wIISTAhhcaHoYg7MK1qeFtrQuycfGwWcr/VW3UfVLOhIlHjT28nhWt0sr3InZ/1
+         TreWor0jOct1ATevp0ffZ3QIuPZajyNfMGlY5uTpVauMiUvJw509ARpZuzJzSTz+EOEc
+         qbc6FDqqlO8wVB8AmPvNycAsv0wYd2A3TlIxGZIGkP7px7jUNjiOebcBR4HYlFT+9Ads
+         8UzA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Lm64woTIjW0wz4q2RfoZhe972MhyXHakswN/RK0EYp0y6rs0ZGY3g0DS0urrQzo13kY0h74n5pnE353q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ZxgWdonvvv21IJb6SEGdDMogz228rGGRzDz3kUIRhEmHUUJ+
+	xWpPOU9tCYRMVHTFaQKQHBHpQVT/HFS1xE+I1KHa43fXa8xisuS71VbU6HjZ0o909LNBmdlI4dn
+	JuuD/SDI7DscH8hT+3Kl+hF7umA==
+X-Google-Smtp-Source: AGHT+IGzgAEN2nLVpJn47Rpink95697ahn9+YSd6/QfacQuWgps1G1sah8dROQQkq3FQWO7kCJad1FtwMfse5d5QhQ==
+X-Received: from pjbsr14.prod.google.com ([2002:a17:90b:4e8e:b0:33b:8b81:9086])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:e291:b0:307:a015:37ef with SMTP id adf61e73a8af0-334a84da469mr6804101637.20.1760732007289;
- Fri, 17 Oct 2025 13:13:27 -0700 (PDT)
-Date: Fri, 17 Oct 2025 13:12:16 -0700
+ 2002:a17:90b:52d0:b0:33b:bed8:891e with SMTP id 98e67ed59e1d1-33bcf8fa427mr6248763a91.19.1760732009057;
+ Fri, 17 Oct 2025 13:13:29 -0700 (PDT)
+Date: Fri, 17 Oct 2025 13:12:17 -0700
 In-Reply-To: <cover.1760731772.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,8 +74,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1760731772.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <e51298f79233cc44a14ff2d3659b20cc3767e6bb.1760731772.git.ackerleytng@google.com>
-Subject: [RFC PATCH v1 35/37] KVM: selftests: Add script to exercise private_mem_conversions_test
+Message-ID: <ab7645218a87a45b0f3214a07138d3c8eadd3164.1760731772.git.ackerleytng@google.com>
+Subject: [RFC PATCH v1 36/37] KVM: selftests: Update pre-fault test to work
+ with per-guest_memfd attributes
 From: Ackerley Tng <ackerleytng@google.com>
 To: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -111,206 +112,32 @@ Cc: ackerleytng@google.com, akpm@linux-foundation.org,
 	yuzenghui@huawei.com, zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-Add a wrapper script to simplify running the private_mem_conversions_test
-with a variety of configurations. Manually invoking the test for all
-supported memory backing source types is tedious.
+From: Sean Christopherson <seanjc@google.com>
 
-The script automatically detects the availability of 2MB and 1GB hugepages
-and builds a list of source types to test. It then iterates through the
-list, running the test for each type with both a single memslot and
-multiple memslots.
+Skip setting memory to private in the pre-fault memory test when using
+per-gmem memory attributes, as memory is initialized to private by default
+for guest_memfd, and using vm_mem_set_private() on a guest_memfd instance
+requires creating guest_memfd with GUEST_MEMFD_FLAG_MMAP (which is totally
+doable, but would need to be conditional and is ultimately unnecessary).
 
-This makes it easier to get comprehensive test coverage across different
-memory configurations.
-
-Use python to be able to issue an ioctl to /dev/kvm.
-
-Update .gitignore to allowlist python scripts.
-
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/.gitignore        |   1 +
- .../kvm/x86/private_mem_conversions_test.py   | 159 ++++++++++++++++++
- 2 files changed, 160 insertions(+)
- create mode 100755 tools/testing/selftests/kvm/x86/private_mem_conversions_test.py
+ tools/testing/selftests/kvm/pre_fault_memory_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
-index 1d41a046a7bfd..d7e9c1d97e376 100644
---- a/tools/testing/selftests/kvm/.gitignore
-+++ b/tools/testing/selftests/kvm/.gitignore
-@@ -4,6 +4,7 @@
- !*.c
- !*.h
- !*.S
-+!*.py
- !*.sh
- !.gitignore
- !config
-diff --git a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.py b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.py
-new file mode 100755
-index 0000000000000..32421ae824d64
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.py
-@@ -0,0 +1,159 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Wrapper script which runs different test setups of
-+# private_mem_conversions_test.
-+#
-+# Copyright (C) 2025, Google LLC.
-+
-+import os
-+import fcntl
-+import sys
-+import subprocess
-+
-+
-+NUM_VCPUS_TO_TEST = 4
-+NUM_MEMSLOTS_TO_TEST = NUM_VCPUS_TO_TEST
-+
-+# Required pages are based on the test setup in the C code.
-+# These static requirements are set to the maximum required for
-+# NUM_VCPUS_TO_TEST, over all the hugetlb-related tests
-+REQUIRED_NUM_2M_HUGEPAGES = 1024 * NUM_VCPUS_TO_TEST
-+REQUIRED_NUM_1G_HUGEPAGES = 2 * NUM_VCPUS_TO_TEST
-+
-+
-+def get_hugepage_count(page_size_kb: int) -> int:
-+    """Reads the current number of hugepages available for a given size."""
-+    try:
-+        path = f"/sys/kernel/mm/hugepages/hugepages-{page_size_kb}kB/nr_hugepages"
-+        with open(path, 'r') as f:
-+            return int(f.read().strip())
-+    except (FileNotFoundError, ValueError):
-+        return 0
-+
-+
-+def get_default_hugepage_size_in_kb():
-+    """Reads the default hugepage size from /proc/meminfo."""
-+    try:
-+        with open("/proc/meminfo", 'r') as f:
-+            for line in f:
-+                if line.startswith("Hugepagesize:"):
-+                    parts = line.split()
-+                    if len(parts) >= 2 and parts[1].isdigit():
-+                        return int(parts[1])
-+    except FileNotFoundError:
-+        return None
-+
-+
-+def run_tests(executable_path: str, src_type: str, num_memslots: int, num_vcpus: int) -> None:
-+    """Runs the test executable with different arguments."""
-+    print(f"Running tests for backing source type: {src_type}")
-+
-+    command1 = [executable_path, "-s", src_type, "-m", str(num_memslots)]
-+    print(" ".join(command1))
-+    _ = subprocess.run(command1, check=True)
-+
-+    command2 = [executable_path, "-s", src_type, "-m", str(num_memslots), "-n", str(num_vcpus)]
-+    print(" ".join(command2))
-+    _ = subprocess.run(command2, check=True)
-+
-+
-+def kvm_check_cap(capability: int) -> int:
-+    KVM_CHECK_EXTENSION = 0xAE03
-+    KVM_DEVICE = '/dev/kvm'
-+
-+    if not os.path.exists(KVM_DEVICE):
-+        print(f"Error: KVM device not found at {KVM_DEVICE}. Is the 'kvm' module loaded?")
-+        return -1
-+
-+    try:
-+        fd = os.open(KVM_DEVICE, os.O_RDWR)
-+
-+        # Issue the ioctl: fcntl.ioctl(fd, request, arg)
-+        # request is KVM_CHECK_EXTENSION (0xAE03)
-+        # arg is the capability constant (e.g., KVM_CAP_COALESCED_MMIO)
-+        result = fcntl.ioctl(fd, KVM_CHECK_EXTENSION, capability)
-+
-+        os.close(fd)
-+        return result
-+    except OSError as e:
-+        print(f"Error issuing KVM ioctl on {KVM_DEVICE}: {e}", file=sys.stderr)
-+        if fd > 0:
-+            os.close(fd)
-+        return -1
-+
-+
-+def kvm_has_gmem_attributes() -> bool:
-+    KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES = 245
-+
-+    return kvm_check_cap(KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES) > 0
-+
-+
-+def get_backing_source_types() -> list[str]:
-+    hugepage_2mb_count = get_hugepage_count(2048)
-+    hugepage_2mb_enabled = hugepage_2mb_count >= REQUIRED_NUM_2M_HUGEPAGES
-+    hugepage_1gb_count = get_hugepage_count(1048576)
-+    hugepage_1gb_enabled = hugepage_1gb_count >= REQUIRED_NUM_1G_HUGEPAGES
-+
-+    default_hugepage_size_kb = get_default_hugepage_size_in_kb()
-+    hugepage_default_enabled = False
-+    if default_hugepage_size_kb == 2048:
-+        hugepage_default_enabled = hugepage_2mb_enabled
-+    elif default_hugepage_size_kb == 1048576:
-+        hugepage_default_enabled = hugepage_1gb_enabled
-+
-+    backing_src_types: list[str] = ["anonymous", "anonymous_thp"]
-+
-+    if hugepage_default_enabled:
-+        backing_src_types.append("anonymous_hugetlb")
-+    else:
-+        print("skipping anonymous_hugetlb backing source type")
-+
-+    if hugepage_2mb_enabled:
-+        backing_src_types.append("anonymous_hugetlb_2mb")
-+    else:
-+        print("skipping anonymous_hugetlb_2mb backing source type")
-+
-+    if hugepage_1gb_enabled:
-+        backing_src_types.append("anonymous_hugetlb_1gb")
-+    else:
-+        print("skipping anonymous_hugetlb_1gb backing source type")
-+
-+    backing_src_types.append("shmem")
-+
-+    if hugepage_default_enabled:
-+        backing_src_types.append("shared_hugetlb")
-+    else:
-+        print("skipping shared_hugetlb backing source type")
-+
-+    return backing_src_types
-+
-+
-+def main():
-+    script_dir = os.path.dirname(os.path.abspath(__file__))
-+    test_executable = os.path.join(script_dir, "private_mem_conversions_test")
-+
-+    if not os.path.exists(test_executable):
-+        print(f"Error: Test executable not found at '{test_executable}'", file=sys.stderr)
-+        sys.exit(1)
-+
-+    return_code = 0
-+
-+    backing_src_types = ["shmem"] if kvm_has_gmem_attributes() else get_backing_source_types()
-+    try:
-+        for i, src_type in enumerate(backing_src_types):
-+            if i > 0:
-+                print()
-+            run_tests(test_executable, src_type, NUM_MEMSLOTS_TO_TEST, NUM_VCPUS_TO_TEST)
-+    except subprocess.CalledProcessError as e:
-+        print(f"Test failed for source type '{src_type}'. Command: {' '.join(e.cmd)}", file=sys.stderr)
-+        return_code = e.returncode
-+    except Exception as e:
-+        print(f"An unexpected error occurred: {e}", file=sys.stderr)
-+        return_code = 1
-+
-+    sys.exit(return_code)
-+
-+
-+if __name__ == "__main__":
-+    main()
+diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+index 6db75946a4f89..6bb5e52f6d948 100644
+--- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
++++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
+@@ -188,7 +188,7 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
+ 				    private ? KVM_MEM_GUEST_MEMFD : 0);
+ 	virt_map(vm, gva, gpa, TEST_NPAGES);
+ 
+-	if (private)
++	if (!kvm_has_gmem_attributes && private)
+ 		vm_mem_set_private(vm, gpa, TEST_SIZE);
+ 
+ 	pre_fault_memory(vcpu, gpa, 0, SZ_2M, 0, private);
 -- 
 2.51.0.858.gf9c4a03a3a-goog
 
