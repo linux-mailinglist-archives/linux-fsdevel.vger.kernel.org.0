@@ -1,176 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-64511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC5BBEB418
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 20:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BE3BEB5DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 21:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B2984E81CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 18:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1323E6E092B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Oct 2025 19:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B359330317;
-	Fri, 17 Oct 2025 18:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCBE2FC86B;
+	Fri, 17 Oct 2025 19:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khif+f/d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPsNtg+u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339A4231842
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 18:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0392F9DA4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 19:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760726507; cv=none; b=dJI2xtD9NpaGUIJGLAzGUJ48d1sQuDs+Pttfjf268/U6zHy36AAAW1iDw3b8Ia/ZK4QLRJ5z/qPyMi99Zn6y1/iLE+OJkvciuDoOLeFqJJKgSlMZFmJeSHCUEm9omXCZlhG5IU3MlCYXl6I+OP4cJbKjleHkFobciq5NrUftBcI=
+	t=1760728295; cv=none; b=DW0dmP3hH+hHGun8oGvlPwEm+fZbG35+Up3MET5WZl0KS0sTjRiggclhQgTkWsrI/6UmHjVQU9SOU6uiJHfuEAneMHgzOBVDMjhRUEw3C1c07K41jU569rfkivCUVI6PdZtqg7MxF9A381n0889qWqWRLfriS8KG8MUHQkK3Hms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760726507; c=relaxed/simple;
-	bh=/sTEqwywlySWgAh0PknyIaNRMYPZ9Y+xqM3mNOHDPB0=;
+	s=arc-20240116; t=1760728295; c=relaxed/simple;
+	bh=rZlVo0hqETHHWosbDDO1yCZXsWvpf7FQP7auewrGHgg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8ohz+WjNQ9FBPrmKSkQ4dpUqvbIvAiIBujVLOUug/sKAR60vwyKhPifdW7VdRmOGwLEWFVY99OQqgeg8iSWS383rXUJxhT90zqGoYJa+VVbnGw43Gm+Xy/dzKm3uXqzI2QbL4UBc3cMe7ocSIAk6rbWrIekprqZtPv9ahxDQUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khif+f/d; arc=none smtp.client-ip=209.85.219.49
+	 To:Cc:Content-Type; b=rgcOAxueSkYhyDhbCCAUBVcZxXo1+chp2J2GMXxEQbzjLFjxUlHoROhifTCsHZcAZqh+Hjz7fLHY2mOPSmUnVq+5J5wROrvKIi+lilIkJ6P6cey77Vz7yLHcnF9Upk/6lPBlb0Nmnr3dmRgB7K8NieQ1WLKHqMt7fTo/76TCPFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPsNtg+u; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-78f75b0a058so29621056d6.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 11:41:45 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3dbf11fa9eso439994966b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 12:11:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760726505; x=1761331305; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760728291; x=1761333091; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S4kHklE6y4XWM6CWnSt2rWAh3h9xOUqwhtdoHEPnaUs=;
-        b=khif+f/dgFOvaX56tErPXvju/Qy1XuOvexjUSyn5oVObYzTz8qEe8X4VCoeq77XGs+
-         DrCQXHiu3Egpiug4QIaUpVS+2a/GocjrTqfSMLR6L0uETm1tCvubFhTTADRqnK34r8rj
-         uIuzjlvkSpwxEqFbnmGXsXz0gKENEClAEa7V9kON4zhaerigky7pmBJg0BBe1TDLHT0d
-         vFmQZt3BZQ4aWw396OW8k236ZT7u5O9wBTDmj/qWCRHjzUstTdE0dV3HARag4oNo672W
-         Bwl+IteQwIoG7MJSaEj085D74w/uON3lz2aMMnvsEYuj/TJnjeiaiPf4SJhu+XIHKzdT
-         217g==
+        bh=hhR7N/1fveVtt6wxaFP4nn/bZMr+K94/sut3rmsfdTg=;
+        b=ZPsNtg+uEziD3Lq0OoqRsQwYiROSHbXhXNbmwPYq6A+WQ3BTG2glApmFPScJQg28fK
+         x4P4bRtnVsnmQC+jcVEIY4FfONyUoAnSQHWKqOw4s8MMftkySjdRsaoCYNtoX3aNKutZ
+         MkqCvr/ShEXbxWd5pE9GcdDxhCs4g+EWOOCuVvxZj0Kp1a17WacGXDFgUfUesqjIyuXm
+         UkysWd7Mn669Wq9kwKKKFR/JW+rrzm+T3Za7qPqJAwmd8JSEtzKoI1jil9v5rt96GkAV
+         OKOlcemI798oPT9QBkMFFUlMSOhUtyEsz0V6JYLjP3+ReU+vTGP9VmqFKhShdbvJe6L1
+         aiFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760726505; x=1761331305;
+        d=1e100.net; s=20230601; t=1760728291; x=1761333091;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S4kHklE6y4XWM6CWnSt2rWAh3h9xOUqwhtdoHEPnaUs=;
-        b=nglVx2dZabEeeQ8/8mEkhPEcXS7KSSyF4FM4cmltQmWtUx+tVBIJ6qR+Mr4pq/4jxb
-         cK/cAJHPo1wfLcRwl0Pt5r68IhmrO/Peb89fJbwCuNPvDdOpFth8oFXZby0Ap3iS8fgf
-         J72fUsSIwWtqDnc+H1kQMZDXNY8Tl/fIK9rUW+vytVQJPwWop/EYzx8H9zIEpilurn2s
-         sOvOO5AYi4esn4AC2ZSIugoHOG3qCOwAJqktBdB+dK3NY+KIBC79cGeHaIffpWhtLjk6
-         HcMjh5jh76qG7rhEVcl7Xb+Q7cAkv3zjvnbwsMTJSXe4AVvMNTqqyuyJ6MgF+Y0hEfmv
-         5vJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhl0hqd0mxW9/+iBe3nJIPNNsiEuCqwvNTo4SWO5Yt7C2GoW5mM5vswXPBhb18wzYGK2Eo+QBpxkbxELch@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj7eO8QTEjh1my0Jh3OB2G/3v75s+XBT919nmwzs5sQxoNzL2N
-	HGnSUwjKnUBmQoET3hkqJ8RTxeqCcWXTWqt3bFZ8K34wPl560thPGWCtU1iXteqfLH26UXafpIX
-	la42lnasEVj/Ba8CmRnujOqgLmW5pmmk=
-X-Gm-Gg: ASbGncuVHlVrvU+OJ4q01RLqhMbiSPAMvG3Gl5SA2wD7dI2LSeohY7Wf/BQRgFLX9Lm
-	aDQ+hC5AuzYkRCTFRrszFDVl561gaK6tSGE3/wY/LoRAgq2kexS5PX74UBQrMK0CHvGXngrhxc0
-	0hYPU/kNu6oMEC/RpZ/NeHeLzBsUe+QNPV0X5JOW5/amF2ek77ZycoQX4Yy9JO67p4Pa2IgXZcC
-	/GwlIY1YqbuJhdlbtNuHLmFqvHvV0i8beLL7zWlG7tnQj7TynU9Hc1kf2k5QNlO916pUQ/4NN4X
-	VITWDID6ktEri08vn7Sy098dS38=
-X-Google-Smtp-Source: AGHT+IGs60xgoG57xjbyEcEegkk01j6Og6IwcHBjm2aCxYBec3UADnNPLMAlUsFYEuf8mKiSznViTMvS9gbDBgUkr2U=
-X-Received: by 2002:a05:6214:2423:b0:87c:29c4:4bec with SMTP id
- 6a1803df08f44-87c29c46f93mr37988476d6.54.1760726504684; Fri, 17 Oct 2025
- 11:41:44 -0700 (PDT)
+        bh=hhR7N/1fveVtt6wxaFP4nn/bZMr+K94/sut3rmsfdTg=;
+        b=TQcAH3NhXIiVeWWBHAWxIflJz3r0ZUj3lI8PQczY6qaeZlCcCz2MTzt8dMgW0H4P8g
+         CUJz+32gxzbdCsF6A2npylfsEmXppkWMNIBv3fCGO39NBsSE3fPh3yADDySALz8Ge6xl
+         uJ+puMOVEgfNVUtJoUJKmYjAbHmkUHvVKyFAnswE0fLFI9/3m4ZocrYos0Id8A7sa0sK
+         6JsqF6RBnbZRO0dE7eSV+Z70isp13jTnLuUoqiwGNqcAk6PxLhIMd8eGwYsfSbzPjppH
+         GDQGhlZ4SB7vg+bkjprkK/35/LsSYbckn1gGegddNGzEH5yx5e9O3Y4hIhZHY50WstVT
+         lCzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWObYGfqCz9KbugsCjgs+CbzSWS6Xg0vLtZzg9hx+VqYw2vmGW/megcTtIjQYC9XH4nPxjrGnt0cmw2cn1m@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIwYd6ScloZoHSuT1Uh3UD/IUcHoUmblmiLvn15+y7nekcRiks
+	pkfMdGsf1M2vaBEgG7bi8Eci+R7oSXFhY0V6baj4mRMHZaaG7/5VI005MGSGC8UoCeHGEWRfvxj
+	in4RMNkp+uHUTdTnFw/+fgd5I0yGjN5g=
+X-Gm-Gg: ASbGncu0LaRDfhclmHwZiLwc10F7C1UpBTupodfa8igEnxo3JFnhKOXscg6Qf8Et1QY
+	/bGeGn42nKdlVidVYf+XC7UyvjlNRcRcQ1m1QtKrtnWV/JuC4hJE53JCf5shO3Qr5TOqW1jId1u
+	K3TjIAJwh0XpegVJhj1Jpn8y2eAcfkVGnsBDMasgtZ9RVzt8EwRqXsOTI1p/N1pkk86lYdKSA0l
+	lHsqw0Dr6OU5YE0bFHaaUP6vEnewU6CNpIxrqPRNvLA8fSPW99+ossf2BG/A10PlkHpFGpdgiTj
+	jFGDsQ==
+X-Google-Smtp-Source: AGHT+IFDOlJ6XYwDeGzUOeuUv7tu/n9jNAnoTgbcA/YtbUqQ9ooDi0ZvO1Y7Lz1HWF/EaVHKgjB6T0ljyIDFi13wLII=
+X-Received: by 2002:a17:907:940f:b0:b40:e687:c2c with SMTP id
+ a640c23a62f3a-b647394ce7fmr469325666b.37.1760728290384; Fri, 17 Oct 2025
+ 12:11:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009225611.3744728-1-joannelkoong@gmail.com>
- <20251009225611.3744728-2-joannelkoong@gmail.com> <aOxrXWkq8iwU5ns_@infradead.org>
- <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
- <a8c02942-69ca-45b1-ad51-ed3038f5d729@linux.alibaba.com> <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
- <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com> <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
- <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com> <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
- <CAJnrk1b+nBmHc14-fx__NgaJzMLX7C2xm0m+hcgW_h9jbSjhFQ@mail.gmail.com>
- <01f687f6-9e6d-4fb0-9245-577a842b8290@linux.alibaba.com> <CAJnrk1aB4BwDNwex1NimiQ_9duUQ93HMp+ATsqo4QcGStMbzWQ@mail.gmail.com>
- <b494b498-e32d-4e2c-aba5-11dee196bd6f@linux.alibaba.com>
-In-Reply-To: <b494b498-e32d-4e2c-aba5-11dee196bd6f@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 17 Oct 2025 11:41:33 -0700
-X-Gm-Features: AS18NWDbvnD01zWG4zQjfyq9_PnkgwYxYlR7yGBqAu7FpnEgrB6ZiUMsm9KXy-o
-Message-ID: <CAJnrk1Z-0YY35wR97uvTRaOuAzsq8NgUXRxa7h00OwYVpuVS8w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
- truncating read range
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, djwong@kernel.org, 
-	bfoster@redhat.com, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+References: <20251016033452.125479-1-ziy@nvidia.com> <20251016033452.125479-3-ziy@nvidia.com>
+In-Reply-To: <20251016033452.125479-3-ziy@nvidia.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 17 Oct 2025 12:11:17 -0700
+X-Gm-Features: AS18NWBFTKLOBvlIpa6FLOiYX2FyPcTBMCd4lweftBhZd_zGhKkHrG1wKzTNxSo
+Message-ID: <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio handling.
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
+	kernel@pankajraghav.com, 
+	syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, mcgrof@kernel.org, 
+	nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 5:03=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
+On Wed, Oct 15, 2025 at 8:38=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
 >
-> On 2025/10/17 06:03, Joanne Koong wrote:
-> > On Wed, Oct 15, 2025 at 6:58=E2=80=AFPM Gao Xiang <hsiangkao@linux.alib=
-aba.com> wrote:
+> Large block size (LBS) folios cannot be split to order-0 folios but
+> min_order_for_folio(). Current split fails directly, but that is not
+> optimal. Split the folio to min_order_for_folio(), so that, after split,
+> only the folio containing the poisoned page becomes unusable instead.
 >
-> ...
+> For soft offline, do not split the large folio if it cannot be split to
+> order-0. Since the folio is still accessible from userspace and premature
+> split might lead to potential performance loss.
 >
-> >>
-> >>>
-> >>> So I don't think this patch should have a fixes: tag for that commit.
-> >>> It seems to me like no one was hitting this path before with a
-> >>> non-block-aligned position and offset. Though now there will be a use
-> >>> case for it, which is fuse.
-> >>
-> >> To make it simplified, the issue is that:
-> >>    - Previously, before your fuse iomap read patchset (assuming Christ=
-ian
-> >>      is already applied), there was no WARNING out of there;
-> >>
-> >>    - A new WARNING should be considered as a kernel regression.
-> >
-> > No, the warning was always there. As shown in the syzbot report [1],
-> > the warning that triggers is this one in iomap_iter_advance()
-> >
-> > int iomap_iter_advance(struct iomap_iter *iter, u64 *count)
-> > {
-> >          if (WARN_ON_ONCE(*count > iomap_length(iter)))
-> >                  return -EIO;
-> >          ...
-> > }
-> >
-> > which was there even prior to the fuse iomap read patchset.
-> >
-> > Erofs could still trigger this warning even without the fuse iomap
-> > read patchset changes. So I don't think this qualifies as a new
-> > warning that's caused by the fuse iomap read changes.
+> Suggested-by: Jane Chu <jane.chu@oracle.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  mm/memory-failure.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
 >
-> No, I'm pretty sure the current Linus upstream doesn't have this
-> issue, because:
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index f698df156bf8..443df9581c24 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn,=
+ struct page *p,
+>   * there is still more to do, hence the page refcount we took earlier
+>   * is still needed.
+>   */
+> -static int try_to_split_thp_page(struct page *page, bool release)
+> +static int try_to_split_thp_page(struct page *page, unsigned int new_ord=
+er,
+> +               bool release)
+>  {
+>         int ret;
 >
->   - I've checked it against v6.17 with the C repro and related
->     Kconfig (with make olddefconfig revised);
+>         lock_page(page);
+> -       ret =3D split_huge_page(page);
+> +       ret =3D split_huge_page_to_list_to_order(page, NULL, new_order);
+>         unlock_page(page);
 >
->   - IOMAP_INLINE is pretty common for directories and regular
->     inodes, if it has such warning syzbot should be reported
->     much earlier (d9dc477ff6a2 was commited at Feb 26, 2025;
->     and b26816b4e320 was commited at Mar 19, 2025) in the dashboard
->     (https://syzkaller.appspot.com/upstream/s/erofs) rather
->     than triggered directly by your fuse read patchset.
+>         if (ret && release)
+> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
+>         folio_unlock(folio);
 >
-> Could you also check with v6.17 codebase?
+>         if (folio_test_large(folio)) {
+> +               int new_order =3D min_order_for_split(folio);
+>                 /*
+>                  * The flag must be set after the refcount is bumped
+>                  * otherwise it may race with THP split.
+> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
+>                  * page is a valid handlable page.
+>                  */
+>                 folio_set_has_hwpoisoned(folio);
+> -               if (try_to_split_thp_page(p, false) < 0) {
+> +               /*
+> +                * If the folio cannot be split to order-0, kill the proc=
+ess,
+> +                * but split the folio anyway to minimize the amount of u=
+nusable
+> +                * pages.
+> +                */
+> +               if (try_to_split_thp_page(p, new_order, false) || new_ord=
+er) {
 
-I think we are talking about two different things. By "this issue"
-what you're talking about is the syzbot read example program that
-triggers the warning on erofs, but by "this issue", what I was talking
-about is the iomap_iter_advance() warning being triggerable
-generically without the fuse read patchset, not just by erofs.
+folio split will clear PG_has_hwpoisoned flag. It is ok for splitting
+to order-0 folios because the PG_hwpoisoned flag is set on the
+poisoned page. But if you split the folio to some smaller order large
+folios, it seems you need to keep PG_has_hwpoisoned flag on the
+poisoned folio.
 
-If we're talking about the syzbot erofs warning being triggered, then
-this patch is irrelevant to be talking about, because it is this other
-patch [1] that fixes that issue. That patch got merged in before any
-of the fuse iomap read changes. There is no regression to erofs.
+Yang
 
-Thanks,
-Joanne
 
-[1] https://lore.kernel.org/linux-fsdevel/20250922180042.1775241-1-joannelk=
-oong@gmail.com/
-
+> +                       /* get folio again in case the original one is sp=
+lit */
+> +                       folio =3D page_folio(p);
+>                         res =3D -EHWPOISON;
+>                         kill_procs_now(p, pfn, flags, folio);
+>                         put_page(p);
+> @@ -2621,7 +2630,15 @@ static int soft_offline_in_use_page(struct page *p=
+age)
+>         };
 >
-> Thanks,
-> Gao Xiang
+>         if (!huge && folio_test_large(folio)) {
+> -               if (try_to_split_thp_page(page, true)) {
+> +               int new_order =3D min_order_for_split(folio);
+> +
+> +               /*
+> +                * If the folio cannot be split to order-0, do not split =
+it at
+> +                * all to retain the still accessible large folio.
+> +                * NOTE: if getting free memory is perferred, split it li=
+ke it
+> +                * is done in memory_failure().
+> +                */
+> +               if (new_order || try_to_split_thp_page(page, new_order, t=
+rue)) {
+>                         pr_info("%#lx: thp split failed\n", pfn);
+>                         return -EBUSY;
+>                 }
+> --
+> 2.51.0
+>
 >
 
