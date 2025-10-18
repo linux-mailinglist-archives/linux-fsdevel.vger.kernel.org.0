@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-64571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB189BED627
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:46:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F75BBED64C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEE1400607
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 17:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0366C404A29
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 17:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41721265CDD;
-	Sat, 18 Oct 2025 17:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC7E273D9F;
+	Sat, 18 Oct 2025 17:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q27Nv88l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Te+AWMYG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32B925DB1D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 17:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D9426B755
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 17:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760809538; cv=none; b=tQdBosj+HKY6TBUnCIr9ybP3/rkI2TtohKBzelW2Z9cE2HN3nE8t+AALsMWBuChFWvhFfdN/jqDPvKVs5Pw5jTSFVD8nDU6aLzw9OTwm/X0bRiQ/kkL13fJK7YapWNJB3zbtHEOI9ujHNi+YZDh7NfobGQHnJHkyGSZLqNin3b8=
+	t=1760809542; cv=none; b=UgRx8gFKQznHukyIDgRfnsBvoCcFFD4GtbrgECPpu/sRIbKElFPuCgHOwgMuFKEo1RkJ6pSmPLAek7jjSYR33uHj9/qxrVZvtCGcurOkP0MiJwrm6UJ4QdOOt1w1mO78JwCLFCe6/ZR/vQJm/yLjQ4Nr+nWaXL4Uk76oKy/lDeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760809538; c=relaxed/simple;
-	bh=5IzviSKzcg5QXxBA9uZe2s664KTsV8Tne2rtRwo/bww=;
+	s=arc-20240116; t=1760809542; c=relaxed/simple;
+	bh=6FtTg88GY2fWPari0/xVYIFZl0LtyM/QigeE2PMN1js=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d3+nQ9GNww008qgT1nF1AxU9KlWIl40aIwccvee3kQVmt4QtGwMzWsZ2pyI2qdOawlHjq9mUlJ6svF1sBNeShrhmxRy1uLKCflmksUAer5PpyRGy5okOgO8aVcW8/JMFdFwqc+5BzKBarPDUnqOgLeyez7CDKaefBeJp7AP69c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q27Nv88l; arc=none smtp.client-ip=209.85.222.176
+	 In-Reply-To:To:Cc; b=Ne6YIarfj7O4KZbYs5el+loBsd8F709eKZU21SS7Ne5uGV4SD36jlJTtrXOXjPSP4jY61eWkH3hCBtPkHBTpEKxp/e0I8E6s6qNWeQZk+dRKvY+53cH4ce1XJbJNbgKypmKEstDzCaf0toUswWsanuj9MNEz8Q6Ztsl9G5qCAss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Te+AWMYG; arc=none smtp.client-ip=209.85.222.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-88e4704a626so450603085a.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:45:36 -0700 (PDT)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-88f79ae58d9so412161985a.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760809536; x=1761414336; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760809540; x=1761414340; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fmofoJkHkMxsaLhdlprPrmfRRb4k8Y1fAGmfllLm4kw=;
-        b=Q27Nv88lwG8WtOScTJF+LqJvOyeRmP4ZDqM5t9H1xBqWmyaNT4kgG010V7qDD0BJe+
-         lE7JSXpZCE68Lg5S+jYdIOOHuGUA9ed/NgdLWQ/K5T02Cy6CBqVKyR63a9E8+meG4g45
-         POXmwzvXEoppx/+rp62KceldkqkrRkdGlCiEltex5huljAkLFiHsJw4zBpdUV1Yievo9
-         iEJFa6qTyfMlFkerGMUrn3eKhBLdJnB5WbBM7Z39jMVfYrjSAARmFbiuZUpBc62pDorR
-         NU3VlntTD64673vpMRmsCnyoDtl6i1xhqAJqCuk7RDNnnYwHRSiPLVpneL5MnAgadS5q
-         8qZw==
+        bh=Y+vXAMQTTWEmkUojbXBO1de8JWN1eVf43j81u3Bw1Rg=;
+        b=Te+AWMYGSj4tmHOYBRMWH/F8IboP3Q+fCgELD0AZlUws+krH6RV8Uny5ukxQz3qZ1G
+         zDbf1wBO+WHp8uZTMxsS1tloD6Z/UZKm08XpSXPUBaGSTWS7u0A/wKUyjqmTY6QeXlES
+         gzGcPUk7ptrtj9pZGf6snFqyXY+xKP+nXh1Hqoo+v9OsfjizFEz+LOTrsuj5r1IN73hm
+         J2BbU41AcaAyLeo/vKhZ9bKj6HSUWrfbqY6szDlYK8JlSZCimx7J2ATI3auenrdl9xgg
+         7BSCJckw7gML719L6q9z9T7wBnIylAoeWwm7oeLl6AYbo5xBeP0fkGGG8o/yYj7GVhHu
+         1Wlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760809536; x=1761414336;
+        d=1e100.net; s=20230601; t=1760809540; x=1761414340;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fmofoJkHkMxsaLhdlprPrmfRRb4k8Y1fAGmfllLm4kw=;
-        b=wJeg+bMR8P2pgaPglYBt522SoWM/e10BEzZd0QDH1ykVdNw0lOtseFHw2ENUaPjM7U
-         ZewQ5XXVB/EXaf8u9J2ykHi3O66MQMvMUptzqm9p7UAfiFTrL5dKqjToSKJi0uBkIimE
-         JMYIgdoMDsbtXE/mp9KmwPR8EMjNRsV6t5aArd6pq9pQ6dfAVDkVy33YAUBuy+8pKgLK
-         hC1rSVVKU5oTIDP2AJFXLHZJs215bn9HZlZDIjSQOZ10NK9GAXgCGgTBhE4NKUg6if+f
-         SCu7QhIduMdtJes6vtj/5eCfBc97TnCT/LdOixoZM/8fmIlgEKMyEeCf0cKfPEqQfFbm
-         0q9A==
-X-Forwarded-Encrypted: i=1; AJvYcCW4gs1CR3Ule0X9kJ9HPnxMQvIM/E9ST0FUZcuBlAkVFAKlv5oLqMJ+UwmzH55wsULJCS/INugxGkcAEdft@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuv5uPls/hM5xjBxWms+mD6el1EljCEI/oNbGc+aL9McpDOSO1
-	kMMxx/SxwfTV0Gwt3hnuw71sE9+18u6R/P6CIwqNJq8VQ4aCRVA0xitf
-X-Gm-Gg: ASbGncvSrxuEMXHCqezF6CAb9SD3pQyKYz7+oLkQSidxA/FX/4gO1OyLOB6cBCxA3te
-	Qxt9TalP6zVMGGnhVca4/dNUowfPdeVXFZfi8L5RjdxBfZirUyH75qrERseSxhC43OegOxgM5XH
-	CBpK+QGlWRNPQ7M3xMiNSS737e0m9/AK4FXVFH2f7dJQB5VfebmNxlVgzBAB1bGbtmTBwAE8zx4
-	Gh1DCvi67aEJzwoaSnybnukxfBq65lWoNgVX7GFdO0iO2wjsqkgZkOhMd1FpQYZM/cU5ie2dTKF
-	juZUEjKni2y0z16ydij2NDyf/uJiCnR71wvK7ECid+RGYZZH9hkBv4Z4WQs+nJl2qVGs/u6v1cA
-	KxcTXQocywFvnjg9amyTGxFKXBXQCVG4fw4b+FGzb8RoOGBibWc2GGPf1AIdzZKb6dwwHhZaV3M
-	zsXJ+qQojTGbl2o+ttVRgzUdSvvbRgE4crOYbbMQ/lHcBvBci+SNkECi08poVG2/7oljgi/Fk4g
-	C3JxgSBnpgdqslUQ98wWAYd7D8Y1ajS6FPLcVjUr1FXtra7ayAU
-X-Google-Smtp-Source: AGHT+IHGPyNylAC+NcjKR3LVCwruQ+XagK91t9ZK/AgOi9yexcJC3Bdqjt9T2UkkZHJl14b1ky8RWg==
-X-Received: by 2002:a05:622a:10:b0:4e8:a664:2cfa with SMTP id d75a77b69052e-4e8a66467efmr59406621cf.34.1760809535454;
-        Sat, 18 Oct 2025 10:45:35 -0700 (PDT)
+        bh=Y+vXAMQTTWEmkUojbXBO1de8JWN1eVf43j81u3Bw1Rg=;
+        b=C85WYHLnDp4irTFIi8Lxnq+J6ybT/jJFnmNQlwJuqJzDJKRHvn6s/KH1kaGF2t4+0E
+         eX0Aho210aS/rw9GjRovj+R0xODdRblgr8iRHnc646PqDjc7hEkHExSnko8zmYddtP1X
+         0/Vd25zNn8jnAyPvTqZAyL4mfl0vBcfTOVa2g0ffJbb6yM0p1pQrzwaUB3gE1/QhD0bI
+         UkqMut331B6vAi2D/+8pY4ox9nAWD0lIJcazIo8FRTKpIuFsdWULJy+T0lGLP/H/uUOf
+         vLPThYjnfaCl2Oy2XGvXawrwo/S1l1xrnQcwc52V9N5MRty/YlxRmNJy46J5nUeU2gz8
+         /24Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYca3aNJ+1wOJdr1aUI+pMXhMzENVny/zNrehToOwOp5NWf6lu7swRyMKtBpxrwWrTO+EAQBBP82Q5NyjA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA/DPvKJH3gkOby3FszW82qU98YrttH5KxtFk9gyGFgeSAo98a
+	FWZTvZHqiPtMyFyPNRKQ1tBDB8b9ysu9ZSgGgbJybpNdMUqI9l9sCmYZ
+X-Gm-Gg: ASbGnctZJ2pdCQuSjLf+Gpimg/PuWvXxDAmI0KHv2nCnFO+cVsCEuI5zNMo5G7lESzV
+	JpSol4Eks/UnRJyJO7/ITDfqwiXAbt4YiywT5XWz9I3BiBUUNIukw1iUY9EDwR9s+HdCvWpVJCS
+	PnVWJCUxjJ0PXPmuGJ2m0pOu+Eth7rukTvek4wh8T4s1Z6PB4PrjeRnN9F4wyn8MjYu72omwdYf
+	WmYknG3K2U6Z8gl3hRtGgRup2sAdxeUaFVhnZ0PYPPCuLUZtQ/kZku8vVbnfO6PHksF86kSyYP3
+	K1/eM9jrlZ44Kg68Kv7Kp3Jc2MaB1hk41vHcJCu1Kjzp7LTuIMyUac+LMRt1oLG6effJPPtYcuR
+	SZJ8HHAD4gA5zOFWvT/8rYbkn0IgSf2W4UOjwMzdLgbzRhEs3cnm4O3Kr5WlIhON48S1/G9NJFc
+	S+vo4GRwWgKM9V6TbWxAz1CxaQCxwhusr4UC8j5OBDO1s/H1f62MZUOGS6nmQ+xZmMyV4stdkmi
+	V0Ny8lMO2BXPk35fWsen6dWk/J+yyWIlvhe6vQxLFPdis9fOGBm
+X-Google-Smtp-Source: AGHT+IF2b+xiML9xjqA23uk9sgK2DYeECM9Ckm8gu0/pdYUA9bmcAEH6Tg4P0+oRe/HNA9P52OxDww==
+X-Received: by 2002:a05:620a:f04:b0:88e:991e:cf2a with SMTP id af79cd13be357-890709e6bbfmr1147502985a.44.1760809539813;
+        Sat, 18 Oct 2025 10:45:39 -0700 (PDT)
 Received: from 117.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:1948:1052:f1e9:e23a])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8ab114132sm20445161cf.40.2025.10.18.10.45.32
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8ab114132sm20445161cf.40.2025.10.18.10.45.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 10:45:34 -0700 (PDT)
+        Sat, 18 Oct 2025 10:45:38 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 18 Oct 2025 13:45:12 -0400
-Subject: [PATCH v18 01/16] samples: rust: platform: remove trailing commas
+Date: Sat, 18 Oct 2025 13:45:13 -0400
+Subject: [PATCH v18 02/16] rust_binder: remove trailing comma
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,7 +86,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251018-cstr-core-v18-1-ef3d02760804@gmail.com>
+Message-Id: <20251018-cstr-core-v18-2-ef3d02760804@gmail.com>
 References: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 In-Reply-To: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -125,49 +125,39 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1760809526; l=1642;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760809526; l=981;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=5IzviSKzcg5QXxBA9uZe2s664KTsV8Tne2rtRwo/bww=;
+ bh=6FtTg88GY2fWPari0/xVYIFZl0LtyM/QigeE2PMN1js=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QDwRhntvVCGUiRlEkiv1zZeGhdA6rD6SNhGZH3QI1C43PlBagNvzfDvivxfFTU380ObMT25PMu4
- pe9SrdQ8j/g4=
+ QDmUAuND6Y30l5/wiMpkJH4TDC04JmcQb3JxiK1A28k2upCho1xt+vnLZy55U4tUVIHHZi0W9Xs
+ LsFR1ERakPA4=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
 This prepares for a later commit in which we introduce a custom
 formatting macro; that macro doesn't handle trailing commas so just
-remove them.
+remove this one.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- samples/rust/rust_driver_platform.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/android/binder/process.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 6473baf4f120..8a82e251820f 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -146,7 +146,7 @@ fn properties_parse(dev: &device::Device) -> Result {
- 
-         let name = c_str!("test,u32-optional-prop");
-         let prop = fwnode.property_read::<u32>(name).or(0x12);
--        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n",);
-+        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n");
- 
-         // A missing required property will print an error. Discard the error to
-         // prevent properties_parse from failing in that case.
-@@ -161,7 +161,7 @@ fn properties_parse(dev: &device::Device) -> Result {
-         let prop: [i16; 4] = fwnode.property_read(name).required_by(dev)?;
-         dev_info!(dev, "'{name}'='{prop:?}'\n");
-         let len = fwnode.property_count_elem::<u16>(name)?;
--        dev_info!(dev, "'{name}' length is {len}\n",);
-+        dev_info!(dev, "'{name}' length is {len}\n");
- 
-         let name = c_str!("test,i16-array");
-         let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
+diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
+index f13a747e784c..d8111c990f21 100644
+--- a/drivers/android/binder/process.rs
++++ b/drivers/android/binder/process.rs
+@@ -596,7 +596,7 @@ pub(crate) fn debug_print(&self, m: &SeqFile, ctx: &Context, print_all: bool) ->
+                     "  ref {}: desc {} {}node {debug_id} s {strong} w {weak}",
+                     r.debug_id,
+                     r.handle,
+-                    if dead { "dead " } else { "" },
++                    if dead { "dead " } else { "" }
+                 );
+             }
+         }
 
 -- 
 2.51.1
