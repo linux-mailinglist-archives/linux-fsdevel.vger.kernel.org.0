@@ -1,296 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-64565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A3BBEC875
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 08:06:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C5FBECD7B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 12:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42EC7351029
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 06:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3A9E621F44
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 10:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0AF1632DD;
-	Sat, 18 Oct 2025 06:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23742EB873;
+	Sat, 18 Oct 2025 10:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LRoyhHlo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LzkCl7e2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3252153D8
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 06:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFAF2F361E
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760767595; cv=none; b=EGGcHUnYgWNp2NNUmAIkwh9wFyGSX1+1runqUQEBDAvWcOSubnXfieEReIIuf0s61pTT2hGqc6vTZHCyN9JhX7eoao+IErlcDFS9cbS/wYiX1aH59memCxb1Eoh24R6J7bdMVxlDBEhdPMOozV+PN/CpZ0eqNvWgU5SU15H1pvE=
+	t=1760783156; cv=none; b=LVrkpd22N9MQsQvmas/SzO7wWuZIo3Pbljk8Xg8/0yjuVYeBG8LeSe17FjLDyWC5traygVqYmIEjoy15j+wQdf8qx/s0PCP0XvJx/c+S/Xbd8SjJtn1bcjrmEckBNJNcgPu1/Q0rkhSNwbDvhU/Cacq22M/ugn9hwuOYphzB2ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760767595; c=relaxed/simple;
-	bh=Y7VjzJ7gtb5qwhTcI0eZoGslmJDABeIw4LK16Zz63y8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=asDtzJmj7//PpqYIzF8LVypDvaP2LN66sJ78Bi09umdLMfUB7EnGkjy4VZ2iRcPGqbtyoLUC2jxN59IQTd2fVny892KUOH5l2pR8p4IzLiRKWdkmyya2o9N2BUQsTspFlMseWtFs85ZcNBNXvvx6CgMhJp2W+B/9cvN6+v6vm4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LRoyhHlo; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-26e68904f0eso26910905ad.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Oct 2025 23:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760767592; x=1761372392; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aazlfJMFqoIIqAXzADQv4tBj3QeLA4CZuF+zY7Y2u30=;
-        b=LRoyhHlo7SvF5tvIDDiQyj+Qid98y2j4IQGveI8McidAneJzriQKcJ6UXb29Wdqe52
-         frxc7C/p/2wUUvR990lAkfORBNkLTHklngiZvOEdM/YyVbo8DWGzR0Qx5YIaQ6oQRN/L
-         H85drrjOwkjSg/de2v7h9ecygkC17CBDwZ8k57UyH2eJQaX1QNwVGXxkvVys7nMIHywF
-         Yk3w/GF46CdK5ujRTl4CmQA7O4SxXGUHiN8ymX0kEq4WAGcvI53oOWi7zsr0neVXKeu5
-         uVcVrjK/kXPNoDzOGvRjyFb8a5i0aWqUZoZLYDi3M7zgGdrs9fNG4X4quonXf5hnDNpQ
-         zOxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760767592; x=1761372392;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aazlfJMFqoIIqAXzADQv4tBj3QeLA4CZuF+zY7Y2u30=;
-        b=HkXZv62O381PnLR4Gje0zrARUfBtBRkbeabLd3x7eG9cpblsBGOAKjdvZ4PhWhUIzw
-         +VE/LtK8lCDvVtnh2bMu9ven5lzC1P540mCLIhNqJYYv0HYTg0AWN0cv1w4ZHTO/SJ47
-         AnS/ZAnFUwYOCveRGB41rGOd5MbFI9OIyu8UjEazXGmF73WBFVOgrS/lfLfEXClGPwbk
-         0ikMhGRTT+I3gc1fDsIn3eKPoSS2nI9ma75XRecuxLr9TSjcEoQK7tvSUVF5alH6ngcE
-         +vHsouH97c8O6y9nuba5WKnWiYTSfbChRjk39nKkSGNf+YEgq2Z1y6IOJUerDjoqzv/C
-         m0qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXONgYXF2omFs8WUjgx7QsABpFzYbOefLZo+99Q50gNxDeNS8zIVYNzUFp2RlriKt2sU7dtnnxP4zVdkn9U@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeGFLdvyoSAzVPszfKYAfI4JoTfY+xCAAZqrYDjyqEIH6Ti5db
-	S/MbyyJbyOdQTtwA4zNx1lKHhDL7YObmPPMKE7oznILTNH62AVGbtsnwT7H2rjscWRzFLEDxDAd
-	K5c4K3ZFIQaPbUyrod7GFKKbjRnHsCKJRW5x1kOR+Qw==
-X-Gm-Gg: ASbGncvlWChzXn8j4/d+i5+UIyVJ2O9SNJSlyNSpxw9UPYmn/RyZSvLRDtKtvDDZQEC
-	XxamyQvdd2UPFXm0g6EN4Y01SvD/qvzD/z4fUeSKp7159LdbUyPt7JJ+AImZuwLybXbxWqztj2w
-	ipcn9MZg1/lKvjZCVfwMxB18nma83FxoIHt8lwD6jRoCuIPV8/KC2LUDBKPCl3hQbo+xstde8AE
-	vXuocQurHrbTmFtGhCh0/xtpkNVmiNK4SkhGn+r5VC95eH1z/whodW4X0irLt8Psj+0t01D/ftS
-	SyRdf9lFA6G2udCmU4H49oQnWaYXMxxcQo3MQ6DnByiajFPzRipebj0wfVw=
-X-Google-Smtp-Source: AGHT+IHw7R+YKzHxbRvPtqVHveDcGsf+JR70AmHfztdh/65g7vwQzHb9v03kO0aR/In7bOt2WwurKH7t1XzdIq0sxKg=
-X-Received: by 2002:a17:902:e5cc:b0:269:8d16:42d1 with SMTP id
- d9443c01a7336-290cb278af5mr83894225ad.50.1760767592005; Fri, 17 Oct 2025
- 23:06:32 -0700 (PDT)
+	s=arc-20240116; t=1760783156; c=relaxed/simple;
+	bh=QQbG6kV15rymPj05CkGxtyMj6tadP93rjMUP7A7ZXT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrT0Ftu75fszh6G1EtAl3YoXZumizctQ+D1J+HaB6pNibIYNK7TkAH5ul0g2q5u3AakizBgeWWkVI/FBL6MzT0xgCQfXhA9MFyyxv/xO0veCqYJgF/pU+2MTPEnC7QE/fDBuInqZVDwNoHV7cbakdJ8Tf3+Q4yy6nRkQKZOtSvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LzkCl7e2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760783151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yFQYBfi+U3DUIEhKYR9y8oylrruZNrmdqwfmTPsUI64=;
+	b=LzkCl7e2NvJELfZxENzDlU67nirV2YILamCaMp4hQQjXdVKqr6DS+J+2gGniX99nodaAe3
+	YSu0ocXAXxBH40SSq0ebf7W1iZy70VBEP8xEgCF6HC3+Rmf5DShvZyBwPx7LbyLaj+Kf/o
+	SM74o944sngC8abi1bfQE5CDtHZiwnM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-543-BTDEzx3JOYSQNFv0ygr7YQ-1; Sat,
+ 18 Oct 2025 06:25:48 -0400
+X-MC-Unique: BTDEzx3JOYSQNFv0ygr7YQ-1
+X-Mimecast-MFC-AGG-ID: BTDEzx3JOYSQNFv0ygr7YQ_1760783147
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B82F71800637;
+	Sat, 18 Oct 2025 10:25:46 +0000 (UTC)
+Received: from bfoster (unknown [10.22.65.116])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53EC81800586;
+	Sat, 18 Oct 2025 10:25:44 +0000 (UTC)
+Date: Sat, 18 Oct 2025 06:30:03 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
+ truncating read range
+Message-ID: <aPNsK9D3RtAjccOA@bfoster>
+References: <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com>
+ <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
+ <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com>
+ <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
+ <CAJnrk1b+nBmHc14-fx__NgaJzMLX7C2xm0m+hcgW_h9jbSjhFQ@mail.gmail.com>
+ <aPDXIWeTKceHuqkj@bfoster>
+ <CAJnrk1YeT8uBLf0e2-+wd6vKMH4Rp9dhHbC0d9eCu1hEwhiANA@mail.gmail.com>
+ <aPJhy4kEw0M7vtz-@bfoster>
+ <aPKKgctbV4TQ9vid@bfoster>
+ <CAJnrk1YLuiRyVwEW6nR1fUnvWf1Ozu1hK4LKn3mRWKeECVyMAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017145147.138822285@linuxfoundation.org>
-In-Reply-To: <20251017145147.138822285@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 18 Oct 2025 11:36:20 +0530
-X-Gm-Features: AS18NWDT1IrNVAEdIh-3uwC43DMp1BdTel7L0k_1kbuM11sAOiFrjCGmbmGqSJA
-Message-ID: <CA+G9fYs1jVE3OGhp5QMr=XZ0NzmCXV-izshW2scAtSy+v4T17g@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/277] 6.12.54-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Al Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1YLuiRyVwEW6nR1fUnvWf1Ozu1hK4LKn3mRWKeECVyMAA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, 17 Oct 2025 at 20:45, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.54 release.
-> There are 277 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 19 Oct 2025 14:50:59 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.54-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Fri, Oct 17, 2025 at 01:19:39PM -0700, Joanne Koong wrote:
+> On Fri, Oct 17, 2025 at 11:23 AM Brian Foster <bfoster@redhat.com> wrote:
+> >
+> > On Fri, Oct 17, 2025 at 11:33:31AM -0400, Brian Foster wrote:
+> > > On Thu, Oct 16, 2025 at 03:39:27PM -0700, Joanne Koong wrote:
+> > > > On Thu, Oct 16, 2025 at 4:25 AM Brian Foster <bfoster@redhat.com> wrote:
+> > > > >
+> > > > > On Wed, Oct 15, 2025 at 06:27:10PM -0700, Joanne Koong wrote:
+> > > > > > On Wed, Oct 15, 2025 at 5:36 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+> > > > > > >
+> > > > > > > On Wed, Oct 15, 2025 at 11:39 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> > > > > > > >
+> > > > > > > > Hi Joanne,
+> > > > > > > >
+> > > > > > > > On 2025/10/16 02:21, Joanne Koong wrote:
+> > > > > > > > > On Wed, Oct 15, 2025 at 11:06 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> > > > > > > >
+> > > > > > > > ...
+> > > > > > > >
+> > > > > > > > >>>
+> > > > > > > > >>> This is where I encountered it in erofs: [1] for the "WARNING in
+> > > > > > > > >>> iomap_iter_advance" syz repro. (this syzbot report was generated in
+> > > > > > > > >>> response to this patchset version [2]).
+> > > > > > > > >>>
+> > > > > > > > >>> When I ran that syz program locally, I remember seeing pos=116 and length=3980.
+> > > > > > > > >>
+> > > > > > > > >> I just ran the C repro locally with the upstream codebase (but I
+> > > > > > > > >> didn't use the related Kconfig), and it doesn't show anything.
+> > > > > > > > >
+> > > > > > > > > Which upstream commit are you running it on? It needs to be run on top
+> > > > > > > > > of this patchset [1] but without this fix [2]. These changes are in
+> > > > > > > > > Christian's vfs-6.19.iomap branch in his vfs tree but I don't think
+> > > > > > > > > that branch has been published publicly yet so maybe just patching it
+> > > > > > > > > in locally will work best.
+> > > > > > > > >
+> > > > > > > > > When I reproed it last month, I used the syz executor (not the C
+> > > > > > > > > repro, though that should probably work too?) directly with the
+> > > > > > > > > kconfig they had.
+> > > > > > > >
+> > > > > > > > I believe it's a regression somewhere since it's a valid
+> > > > > > > > IOMAP_INLINE extent (since it's inlined, the length is not
+> > > > > > > > block-aligned of course), you could add a print just before
+> > > > > > > > erofs_iomap_begin() returns.
+> > > > > > >
+> > > > > > > Ok, so if erofs is strictly block-aligned except for tail inline data
+> > > > > > > (eg the IOMAP_INLINE extent), then I agree, there is a regression
+> > > > > > > somewhere as we shouldn't be running into the situation where erofs is
+> > > > > > > calling iomap_adjust_read_range() with a non-block-aligned position
+> > > > > > > and length. I'll track the offending commit down tomorrow.
+> > > > > > >
+> > > > > >
+> > > > > > Ok, I think it's commit bc264fea0f6f ("iomap: support incremental
+> > > > > > iomap_iter advances") that changed this behavior for erofs such that
+> > > > > > the read iteration continues even after encountering an IOMAP_INLINE
+> > > > > > extent, whereas before, the iteration stopped after reading in the
+> > > > > > iomap inline extent. This leads erofs to end up in the situation where
+> > > > > > it calls into iomap_adjust_read_range() with a non-block-aligned
+> > > > > > position/length (on that subsequent iteration).
+> > > > > >
+> > > > > > In particular, this change in commit bc264fea0f6f to iomap_iter():
+> > > > > >
+> > > > > > -       if (ret > 0 && !iter->processed && !stale)
+> > > > > > +       if (ret > 0 && !advanced && !stale)
+> > > > > >
+> > > > > > For iomap inline extents, iter->processed is 0, which stopped the
+> > > > > > iteration before. But now, advanced (which is iter->pos -
+> > > > > > iter->iter_start_pos) is used which will continue the iteration (since
+> > > > > > the iter is advanced after reading in the iomap inline extents).
+> > > > > >
+> > > > > > Erofs is able to handle subsequent iterations after iomap_inline
+> > > > > > extents because erofs_iomap_begin() checks the block map and returns
+> > > > > > IOMAP_HOLE if it's not mapped
+> > > > > >         if (!(map.m_flags & EROFS_MAP_MAPPED)) {
+> > > > > >                 iomap->type = IOMAP_HOLE;
+> > > > > >                 return 0;
+> > > > > >         }
+> > > > > >
+> > > > > > but I think what probably would be better is a separate patch that
+> > > > > > reverts this back to the original behavior of stopping the iteration
+> > > > > > after IOMAP_INLINE extents are read in.
+> > > > > >
+> > > > >
+> > > > > Hmm.. so as of commit bc264fea0f6f, it looks like the read_inline() path
+> > > > > still didn't advance the iter at all by that point. It just returned 0
+> > > > > and this caused iomap_iter() to break out of the iteration loop.
+> > > > >
+> > > > > The logic noted above in iomap_iter() is basically saying to break out
+> > > > > if the iteration did nothing, which is a bit of a hacky way to terminate
+> > > > > an IOMAP_INLINE read. The proper thing to do in that path IMO is to
+> > > > > report the bytes processed and then terminate some other way more
+> > > > > naturally. I see Gao actually fixed this sometime later in commit
+> > > > > b26816b4e320 ("iomap: fix inline data on buffered read"), which is when
+> > > > > the inline read path started to advance the iter.
+> > > >
+> > > > That's a good point, the fix in commit b26816b4e320 is what led to the
+> > > > new erofs behavior, not commit bc264fea0f6f.
+> > > >
+> > > > >
+> > > > > TBH, the behavior described above where we advance over the inline
+> > > > > mapping and then report any remaining iter length as a hole also sounds
+> > > > > like reasonably appropriate behavior to me. I suppose you could argue
+> > > > > that the inline case should just terminate the iter, which perhaps means
+> > > > > it should call iomap_iter_advance_full() instead. That technically
+> > > > > hardcodes that we will never process mappings beyond an inline mapping
+> > > > > into iomap. That bugs me a little bit, but is also probably always going
+> > > > > to be true so doesn't seem like that big of a deal.
+> > > >
+> > > > Reporting any remaining iter length as a hole also sounds reasonable
+> > > > to me but it seems that this may add additional work that may not be
+> > > > trivial. For example, I'm looking at erofs's erofs_map_blocks() call
+> > > > which they would need to do to figure out it should be an iomap hole.
+> > > > It seems a bit nonideal to me that any filesystem using iomap inline
+> > > > data would also have to make sure they cover this case, which maybe
+> > > > they already need to do that, I'm not sure, but it seems like an extra
+> > > > thing they would now need to account for.
+> > > >
+> > >
+> > > To make sure I follow, you're talking about any potential non-erofs
+> > > cases, right? I thought it was mentioned that erofs already handled this
+> > > correctly by returning a hole. So I take this to mean other users would
+> > > need to handle this similarly.
+> 
+> Yes, sorry if my previous wording was confusing. Erofs already handles
+> this correctly but there's some overhead with having to determine it's
+> a hole.
+> 
+> > >
+> > > Poking around, I see that ext4 uses iomap and IOMAP_INLINE in a couple
+> > > isolated cases. One looks like swapfile activation and the other appears
+> > > to be related to fiemap. Any idea if those are working correctly? At
+> > > first look it kind of looks like they check and return error for offset
+> > > beyond the specified length..
+> > >
+> >
+> > JFYI from digging further.. ext4 returns -ENOENT for this "offset beyond
+> > inline size" case. I didn't see any error returns from fiemap/filefrag
+> > on a quick test against an inline data file. It looks like
+> > iomap_fiemap() actually ignores errors either if the previous mapping is
+> > non-hole, or catches -ENOENT explicitly to handle an attribute mapping
+> > case. So afaict this all seems to work Ok..
+> >
+> > I'm not sure this is all that relevant for the swap case. mkswap
+> > apparently requires a file at least 40k in size, which iiuc is beyond
+> > the scope of files with inline data..
+> 
+> I think gfs2 also uses IOMAP_INLINE. In __gfs2_iomap_get(), it looks
+> like they report a hole if the offset is beyond the inode size, so
+> that looks okay.
+> 
+> >
+> > Brian
+> >
+> > > > One scenario I'm imagining maybe being useful in the future is
+> > > > supporting chained inline mappings, in which case we would still want
+> > > > to continue processing after the first inline mapping, but we could
+> > > > also address that if it does come up.
+> > > >
+> > >
+> > > Yeah..
+> > >
+> > > > >
+> > > > > If we wanted to consider it an optimization so we didn't always do this
+> > > > > extra iter on inline files, perhaps another variant of that could be an
+> > > > > EOF flag or some such that the fs could set to trigger a full advance
+> > > > > after the current mapping. OTOH you could argue that's what inline
+> > > > > already is so maybe that's overthinking it. Just a thought. Hm?
+> > > > >
+> > > >
+> > > > Would non-inline iomap types also find that flag helpful or is the
+> > > > intention for it to be inline specific? I guess the flag could also be
+> > > > used by non-inline types to stop the iteration short, if there's a use
+> > > > case for that?
+> > > >
+> > >
+> > > ... I hadn't really considered that. This was just me thinking out loud
+> > > about trying to handle things more generically.
+> > >
+> > > Having thought more about it, I think either way it might just make
+> > > sense to fix the inline read case to do the full advance (assuming it is
+> > > verified this fixes the problem) to restore historical iomap behavior.
+> 
+> Hmm, the iter is already fully advanced after the inline data is read.
+> I think the issue is that when the iomap mapping length is less than
+> the iter len (the iter len will always be the size of the folio but
+> the length for the inline data could be less), then advancing it fully
+> through iomap_iter_advance_full() will only advance it up to the iomap
+> length. iter->len will then still have a positive value which makes
+> iomap_iter() continue iterating.
+> 
 
-The following kernel crash noticed on the stable-rc 6.12.54-rc1 while running
-LTP syscalls listmount04 test case.
+Derp.. yeah, I had my wires crossed thinking the full advance completed
+the full request, when really it's just the current iteration. Thanks
+for pointing that out.
 
-This is a known regression on the Linux next and reported [1] and fixed [2].
+> I don't see a cleaner way of restoring historical iomap behavior than
+> adding that eof/stop flag.
+> 
 
-This was caused by,
-listmount: don't call path_put() under namespace semaphore
-commit c1f86d0ac322c7e77f6f8dbd216c65d39358ffc0 upstream.
+Hmm.. so then aside from the oddly aligned iter case warning that you've
+already fixed, ISTM that everything otherwise works correctly, right? If
+so, I wouldn't be in a huge rush to do the flag thing.
 
-And there is a follow up patch to fix this.
+In theory, there may still be similar options to do what I was thinking,
+like perhaps just zero out remaining iter->len in that particular inline
+path (maybe via an iomap_iter_advance_inline() helper for example). It's
+not totally clear to me it's worth it though if everything is pretty
+much working as is.
 
-mount: handle NULL values in mnt_ns_release()
-[ Upstream commit 6c7ca6a02f8f9549a438a08a23c6327580ecf3d6 ]
+Brian
 
-When calling in listmount() mnt_ns_release() may be passed a NULL
-pointer. Handle that case gracefully.
+> Thanks,
+> Joanne
+> 
+> 
+> > > Then if there is ever value to support multiple inline mappings somehow
+> > > or another, we could revisit the flag idea.
+> 
+> > >
+> > > Brian
+> > >
+> > > > Thanks,
+> > > > Joanne
+> 
 
-Christian Brauner <brauner@kernel.org>
-
-First seen on 6.12.54-rc1
-Good: v6.12.53
-Bad: 6.12.54-rc1
-
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
-
-Test regression: 6.12.54-rc1 Internal error: Oops: mnt_ns_release
-__arm64_sys_listmount (fs/namespace.c:5526)
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-### LTP syscalls failures:
-    ltp-syscalls/listmount04
-    ltp-syscalls/madvise06
-    ltp-syscalls/sendmsg03
-    ltp-syscalls/sendto03
-    ltp-syscalls/setsockopt05
-    ltp-syscalls/setsockopt09
-    ltp-syscalls/timerfd_settime02
-    ltp-syscalls/wait403
-    ltp-containers/userns08
-
-
-### LTP test log listmount04
-[ 3587.449309] <LAVA_SIGNAL_STARTTC listmount04>
-Received signal: <STARTTC> listmount04
-tst_buffers.c:57: TINFO: Test is using guarded buffers
-tst_test.c:2021: TINFO: LTP version: 20250930
-tst_test.c:2024: TINFO: Tested kernel: 6.12.54-rc1 #1 SMP PREEMPT
-@1760715935 aarch64
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-which might slow the execution
-tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-[ 3587.464366] <LAVA_SIGNAL_ENDTC listmount04>
-Received signal: <ENDTC> listmount04
-tst_test.c:1920: TBROK: Test killed by SIGSEGV!
-Summary:
-passed   0
-failed   0
-broken   1
-skipped  0
-warnings 0
-[ 3587.523917] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=listmount04 RESULT=fail>
-
-
-### Test cash log
-listmount04: [ 1440.660118] /usr/local/bin/kirk[418]: listmount04:
-start (command: listmount04)
-[ 1440.761870] Unable to handle kernel NULL pointer dereference at
-virtual address 0000000000000080
-[ 1440.762768] Mem abort info:
-[ 1440.763156]   ESR = 0x0000000096000004
-[ 1440.763722]   EC = 0x25: DABT (current EL), IL = 32 bits
-[ 1440.764204]   SET = 0, FnV = 0
-[ 1440.764486]   EA = 0, S1PTW = 0
-[ 1440.764883]   FSC = 0x04: level 0 translation fault
-[ 1440.765393] Data abort info:
-[ 1440.765795]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[ 1440.766288]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[ 1440.766738]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[ 1440.767213] user pgtable: 4k pages, 48-bit VAs, pgdp=000000000d4c1000
-[ 1440.767819] [0000000000000080] pgd=0000000000000000, p4d=0000000000000000
-[ 1440.768448] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[ 1440.769002] Modules linked in: tun overlay btrfs xor xor_neon
-raid6_pq zstd_compress libcrc32c snd_soc_hdmi_codec hantro_vpu
-dw_hdmi_cec dw_hdmi_i2s_audio brcmfmac rockchipdrm v4l2_h264
-dw_mipi_dsi v4l2_vp9 hci_uart brcmutil analogix_dp crct10dif_ce btqca
-v4l2_jpeg panfrost dw_hdmi v4l2_mem2mem btbcm snd_soc_simple_card
-snd_soc_audio_graph_card snd_soc_spdif_tx cec gpu_sched
-snd_soc_simple_card_utils bluetooth cfg80211 drm_display_helper
-videobuf2_v4l2 drm_shmem_helper snd_soc_rockchip_i2s
-videobuf2_dma_contig pwrseq_core phy_rockchip_pcie drm_dma_helper
-rtc_rk808 videobuf2_memops drm_kms_helper videobuf2_common rfkill
-snd_soc_es8316 rockchip_saradc industrialio_triggered_buffer
-rockchip_thermal kfifo_buf pcie_rockchip_host coresight_cpu_debug drm
-fuse backlight ip_tables x_tables
-[ 1440.775190] CPU: 3 UID: 0 PID: 131415 Comm: listmount04 Not tainted
-6.12.54-rc1 #1
-[ 1440.775866] Hardware name: Radxa ROCK Pi 4B (DT)
-[ 1440.776277] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ 1440.776893] pc : mnt_ns_release
-(arch/arm64/include/asm/atomic_ll_sc.h:96
-arch/arm64/include/asm/atomic.h:51
-include/linux/atomic/atomic-arch-fallback.h:944
-include/linux/atomic/atomic-instrumented.h:401
-include/linux/refcount.h:264 include/linux/refcount.h:307
-include/linux/refcount.h:325 fs/namespace.c:156)
-[ 1440.777267] lr : __arm64_sys_listmount (fs/namespace.c:?
-fs/namespace.c:5569 fs/namespace.c:5526 fs/namespace.c:5526)
-[ 1440.777694] sp : ffff80008d663d30
-[ 1440.777987] x29: ffff80008d663d30 x28: ffff0000bba30000 x27: 0000000000000000
-[ 1440.778622] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-[ 1440.779256] x23: 0000000000000000 x22: 0000000000000020 x21: fffffffffffffff2
-[ 1440.779890] x20: 0000000000000100 x19: 0000aaaab5ee1110 x18: 0000000000000000
-[ 1440.780524] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-[ 1440.781158] x14: 0000000000000000 x13: ffff80008d660000 x12: ffff80008d664000
-[ 1440.781791] x11: 0000000000000000 x10: 0000000000000001 x9 : ffff80008044cdf0
-[ 1440.782425] x8 : 0000000000000080 x7 : 0000000000000000 x6 : 0000000000000000
-[ 1440.783059] x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff80008d663e00
-[ 1440.783692] x2 : ffff800081700c70 x1 : ffff80008d663d50 x0 : 0000000000000000
-[ 1440.784326] Call trace:
-[ 1440.784545]  mnt_ns_release
-(arch/arm64/include/asm/atomic_ll_sc.h:96
-arch/arm64/include/asm/atomic.h:51
-include/linux/atomic/atomic-arch-fallback.h:944
-include/linux/atomic/atomic-instrumented.h:401
-include/linux/refcount.h:264 include/linux/refcount.h:307
-include/linux/refcount.h:325 fs/namespace.c:156)
-[ 1440.784882]  __arm64_sys_listmount (fs/namespace.c:?
-fs/namespace.c:5569 fs/namespace.c:5526 fs/namespace.c:5526)
-[ 1440.785278]  invoke_syscall (arch/arm64/kernel/syscall.c:50)
-[ 1440.785618]  el0_svc_common (include/linux/thread_info.h:127
-arch/arm64/kernel/syscall.c:140)
-[ 1440.785948]  do_el0_svc (arch/arm64/kernel/syscall.c:152)
-[ 1440.786247]  el0_svc (arch/arm64/kernel/entry-common.c:165)
-[ 1440.786524]  el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:789)
-[ 1440.786904]  el0t_64_sync (arch/arm64/kernel/entry.S:598)
-[ 1440.787238] Code: aa1303e0 14000019 5280002a f9800111 (885f7d09)
-All code
-========
-   0: aa1303e0 mov x0, x19
-   4: 14000019 b 0x68
-   8: 5280002a mov w10, #0x1                    // #1
-   c: f9800111 prfm pstl1strm, [x8]
-  10:* 885f7d09 ldxr w9, [x8] <-- trapping instruction
-
-Code starting with the faulting instruction
-===========================================
-   0: 885f7d09 ldxr w9, [x8]
-[ 1440.787776] ---[ end trace 0000000000000000 ]---
-
-
-## Lore link,
-[1] https://lore.kernel.org/all/CA+G9fYueO8kP8mXVNmbHkyrFPKpt-onPfeyNXLuLGGjiO1WFfQ@mail.gmail.com/
-[2] https://lore.kernel.org/all/20251017145215.505418259@linuxfoundation.org/
-
-## Build
-* kernel: 6.12.54-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 6122296b30b695962026ca4d1b434cae639373e0
-* git describe: v6.12.53-278-g6122296b30b6
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12.53-278-g6122296b30b6
-
-## Build
-* Test log: https://lkft.validation.linaro.org/scheduler/job/8496757#L6787
-* Test details:
-https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.53-278-g6122296b30b6/log-parser-test/internal-error-oops-Oops_PREEMPT_SMP__mnt_ns_release-064d7f50/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/34CRZ9uzNjZKMeKVqBaBBIUC2Z9
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34CRXmuzdt1HaZluq4cBw4zG4lh/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/34CRXmuzdt1HaZluq4cBw4zG4lh/config
-
---
-Linaro LKFT
 
