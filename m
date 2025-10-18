@@ -1,316 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-64566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C5FBECD7B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 12:26:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1634BED456
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3A9E621F44
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 10:26:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41AAD4E822F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 17:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23742EB873;
-	Sat, 18 Oct 2025 10:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239EF257858;
+	Sat, 18 Oct 2025 17:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LzkCl7e2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rGtkPBlN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFAF2F361E
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1BA244EA1
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 17:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760783156; cv=none; b=LVrkpd22N9MQsQvmas/SzO7wWuZIo3Pbljk8Xg8/0yjuVYeBG8LeSe17FjLDyWC5traygVqYmIEjoy15j+wQdf8qx/s0PCP0XvJx/c+S/Xbd8SjJtn1bcjrmEckBNJNcgPu1/Q0rkhSNwbDvhU/Cacq22M/ugn9hwuOYphzB2ok=
+	t=1760806964; cv=none; b=lBIpeR1wadYA7M/oLiLJXa+PgrmJcKQd1B3ymnxyx3ZY7f3LWekHpV5aO9UyH4ahxozEV+2ZTHmU/GBU8vjT2Ea6+BUhITmD4Ru7XVujjXdF5gLN0OKRSuA9ULLi3CcMPpz1PwcY+jip+nnCNpi9OZcljn6aiygPuKqQyLOFxNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760783156; c=relaxed/simple;
-	bh=QQbG6kV15rymPj05CkGxtyMj6tadP93rjMUP7A7ZXT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrT0Ftu75fszh6G1EtAl3YoXZumizctQ+D1J+HaB6pNibIYNK7TkAH5ul0g2q5u3AakizBgeWWkVI/FBL6MzT0xgCQfXhA9MFyyxv/xO0veCqYJgF/pU+2MTPEnC7QE/fDBuInqZVDwNoHV7cbakdJ8Tf3+Q4yy6nRkQKZOtSvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LzkCl7e2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760783151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yFQYBfi+U3DUIEhKYR9y8oylrruZNrmdqwfmTPsUI64=;
-	b=LzkCl7e2NvJELfZxENzDlU67nirV2YILamCaMp4hQQjXdVKqr6DS+J+2gGniX99nodaAe3
-	YSu0ocXAXxBH40SSq0ebf7W1iZy70VBEP8xEgCF6HC3+Rmf5DShvZyBwPx7LbyLaj+Kf/o
-	SM74o944sngC8abi1bfQE5CDtHZiwnM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-543-BTDEzx3JOYSQNFv0ygr7YQ-1; Sat,
- 18 Oct 2025 06:25:48 -0400
-X-MC-Unique: BTDEzx3JOYSQNFv0ygr7YQ-1
-X-Mimecast-MFC-AGG-ID: BTDEzx3JOYSQNFv0ygr7YQ_1760783147
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B82F71800637;
-	Sat, 18 Oct 2025 10:25:46 +0000 (UTC)
-Received: from bfoster (unknown [10.22.65.116])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53EC81800586;
-	Sat, 18 Oct 2025 10:25:44 +0000 (UTC)
-Date: Sat, 18 Oct 2025 06:30:03 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
-	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
- truncating read range
-Message-ID: <aPNsK9D3RtAjccOA@bfoster>
-References: <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com>
- <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
- <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com>
- <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
- <CAJnrk1b+nBmHc14-fx__NgaJzMLX7C2xm0m+hcgW_h9jbSjhFQ@mail.gmail.com>
- <aPDXIWeTKceHuqkj@bfoster>
- <CAJnrk1YeT8uBLf0e2-+wd6vKMH4Rp9dhHbC0d9eCu1hEwhiANA@mail.gmail.com>
- <aPJhy4kEw0M7vtz-@bfoster>
- <aPKKgctbV4TQ9vid@bfoster>
- <CAJnrk1YLuiRyVwEW6nR1fUnvWf1Ozu1hK4LKn3mRWKeECVyMAA@mail.gmail.com>
+	s=arc-20240116; t=1760806964; c=relaxed/simple;
+	bh=K56Is2wx7UmVl17dRBrxY8Gx8J2Mj6XdngEuoaXN7is=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D3UWJ9MOq5KtfZl/OlUShuVUW9I779RZOSY3+PvRMZ5YpblWxQFXDK8HZ8M85HPynkczuLqPK8FC5ehjhiD67hy+7mY0me7//egJpFV4BzuyVTmhiOluUBTxpz2w+ZIsU0E1N25HSujFagMpNteO2gyPOKtTsNEmxCqBfae4sKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rGtkPBlN; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-471125c8bc1so33881815e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760806960; x=1761411760; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QcEJMCPQNzNn4Sg/+enW3pY+1OtQDQh0FQ7gWamWR/8=;
+        b=rGtkPBlN65O/kO3nzZtauLZkBypZOGJZIqDcUrEkhvS8CQRrxy/5q3tnCqekG19lHT
+         WqTNFbv0ABQXBB6nylY850gDZN6gpr39hgg1dSb2xaEzWABV7fk4WOr6uKcS9LZMHtEF
+         R9+nbcXyrG24VEY02vb4opXaHorFhxu0+pOYKO8aT5nXjEWzeDmN8S+8PiZDazX4CK6Z
+         +eroFQ2h/4AHTYMJoAWfIrTpL3Uo/wc/DngP8G9iBSU1uRaCB+nQC9n3bXho0W8wOSqs
+         dU/JIJY/7e6qDGroeSwe8MwYRcv2FXCQX7fQkb/MfAlE/bpSjGa0lKOeNrTmYoG/A7k9
+         4aoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760806960; x=1761411760;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QcEJMCPQNzNn4Sg/+enW3pY+1OtQDQh0FQ7gWamWR/8=;
+        b=s+uMm+1ahxJG5ZMGdqTBKN8uDIbNf3b4X3Oq9K1c63mChDvYarue9UGVpLUf+5R4ca
+         SyZ/Euaef8Kpx9QMLYT6LaQX/vDZQtE5SdcWEnLktm0b2m/uq2zaAp1dJw8/bcotOTJI
+         XH1At1UhBGGxJFoLImqkdSRSw7X76nzLoMDkDDXk5DQIOpAClKJcsj3jS8WL4yTRrrdS
+         aeFU0zpN4gZxg9zwRbbMVQeLhGpbM+vIFO0fmJHoayRz7EjyLQ+/NUXbJpLlgVA3jcqM
+         Mn7rh4RJjAod1Eu2kv4g8GNW+gm+GsO6RmIdxIvGKMYgJB0dIfoIjZPhHnpUF5gIXAUG
+         NlXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7i1f5AZ7wHa4j2qhh6Kzm4bCHmoWsiERQj5+hHAoaP9cJj7tx61FT6mc3xnzVLr5S2PAN6YRzJzN6L/T6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdmarbCJK8LniqbOL0TsNYGdMsDiZLBXUOyISA4eDxVgjMDOEd
+	GcXDcR+fz/UazlZmWf9ihNhdhSVL+xGHijYETLB+SODdIRv2BqXGXjiwCpr+XsnfMAJW1C86Ctq
+	jwpJP226RJfmE5X5m3Q==
+X-Google-Smtp-Source: AGHT+IG+XONBGTsyrZA2w5nXoym2WOeMmXEjzuALKqECWR/nae42PSy1vCNDSBfzkw7eA04iBiPKoZnTCFnDy3g=
+X-Received: from wmwo28.prod.google.com ([2002:a05:600d:439c:b0:46e:6605:3ac2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600d:6357:b0:46e:1a07:7bd5 with SMTP id 5b1f17b1804b1-47160987501mr15825585e9.29.1760806960228;
+ Sat, 18 Oct 2025 10:02:40 -0700 (PDT)
+Date: Sat, 18 Oct 2025 17:02:39 +0000
+In-Reply-To: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YLuiRyVwEW6nR1fUnvWf1Ozu1hK4LKn3mRWKeECVyMAA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Mime-Version: 1.0
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
+Message-ID: <aPPIL6dl8aYHZr8B@google.com>
+Subject: Re: [PATCH v17 00/11] rust: replace kernel::str::CStr w/ core::ffi::CStr
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Oct 17, 2025 at 01:19:39PM -0700, Joanne Koong wrote:
-> On Fri, Oct 17, 2025 at 11:23 AM Brian Foster <bfoster@redhat.com> wrote:
-> >
-> > On Fri, Oct 17, 2025 at 11:33:31AM -0400, Brian Foster wrote:
-> > > On Thu, Oct 16, 2025 at 03:39:27PM -0700, Joanne Koong wrote:
-> > > > On Thu, Oct 16, 2025 at 4:25 AM Brian Foster <bfoster@redhat.com> wrote:
-> > > > >
-> > > > > On Wed, Oct 15, 2025 at 06:27:10PM -0700, Joanne Koong wrote:
-> > > > > > On Wed, Oct 15, 2025 at 5:36 PM Joanne Koong <joannelkoong@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, Oct 15, 2025 at 11:39 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
-> > > > > > > >
-> > > > > > > > Hi Joanne,
-> > > > > > > >
-> > > > > > > > On 2025/10/16 02:21, Joanne Koong wrote:
-> > > > > > > > > On Wed, Oct 15, 2025 at 11:06 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
-> > > > > > > >
-> > > > > > > > ...
-> > > > > > > >
-> > > > > > > > >>>
-> > > > > > > > >>> This is where I encountered it in erofs: [1] for the "WARNING in
-> > > > > > > > >>> iomap_iter_advance" syz repro. (this syzbot report was generated in
-> > > > > > > > >>> response to this patchset version [2]).
-> > > > > > > > >>>
-> > > > > > > > >>> When I ran that syz program locally, I remember seeing pos=116 and length=3980.
-> > > > > > > > >>
-> > > > > > > > >> I just ran the C repro locally with the upstream codebase (but I
-> > > > > > > > >> didn't use the related Kconfig), and it doesn't show anything.
-> > > > > > > > >
-> > > > > > > > > Which upstream commit are you running it on? It needs to be run on top
-> > > > > > > > > of this patchset [1] but without this fix [2]. These changes are in
-> > > > > > > > > Christian's vfs-6.19.iomap branch in his vfs tree but I don't think
-> > > > > > > > > that branch has been published publicly yet so maybe just patching it
-> > > > > > > > > in locally will work best.
-> > > > > > > > >
-> > > > > > > > > When I reproed it last month, I used the syz executor (not the C
-> > > > > > > > > repro, though that should probably work too?) directly with the
-> > > > > > > > > kconfig they had.
-> > > > > > > >
-> > > > > > > > I believe it's a regression somewhere since it's a valid
-> > > > > > > > IOMAP_INLINE extent (since it's inlined, the length is not
-> > > > > > > > block-aligned of course), you could add a print just before
-> > > > > > > > erofs_iomap_begin() returns.
-> > > > > > >
-> > > > > > > Ok, so if erofs is strictly block-aligned except for tail inline data
-> > > > > > > (eg the IOMAP_INLINE extent), then I agree, there is a regression
-> > > > > > > somewhere as we shouldn't be running into the situation where erofs is
-> > > > > > > calling iomap_adjust_read_range() with a non-block-aligned position
-> > > > > > > and length. I'll track the offending commit down tomorrow.
-> > > > > > >
-> > > > > >
-> > > > > > Ok, I think it's commit bc264fea0f6f ("iomap: support incremental
-> > > > > > iomap_iter advances") that changed this behavior for erofs such that
-> > > > > > the read iteration continues even after encountering an IOMAP_INLINE
-> > > > > > extent, whereas before, the iteration stopped after reading in the
-> > > > > > iomap inline extent. This leads erofs to end up in the situation where
-> > > > > > it calls into iomap_adjust_read_range() with a non-block-aligned
-> > > > > > position/length (on that subsequent iteration).
-> > > > > >
-> > > > > > In particular, this change in commit bc264fea0f6f to iomap_iter():
-> > > > > >
-> > > > > > -       if (ret > 0 && !iter->processed && !stale)
-> > > > > > +       if (ret > 0 && !advanced && !stale)
-> > > > > >
-> > > > > > For iomap inline extents, iter->processed is 0, which stopped the
-> > > > > > iteration before. But now, advanced (which is iter->pos -
-> > > > > > iter->iter_start_pos) is used which will continue the iteration (since
-> > > > > > the iter is advanced after reading in the iomap inline extents).
-> > > > > >
-> > > > > > Erofs is able to handle subsequent iterations after iomap_inline
-> > > > > > extents because erofs_iomap_begin() checks the block map and returns
-> > > > > > IOMAP_HOLE if it's not mapped
-> > > > > >         if (!(map.m_flags & EROFS_MAP_MAPPED)) {
-> > > > > >                 iomap->type = IOMAP_HOLE;
-> > > > > >                 return 0;
-> > > > > >         }
-> > > > > >
-> > > > > > but I think what probably would be better is a separate patch that
-> > > > > > reverts this back to the original behavior of stopping the iteration
-> > > > > > after IOMAP_INLINE extents are read in.
-> > > > > >
-> > > > >
-> > > > > Hmm.. so as of commit bc264fea0f6f, it looks like the read_inline() path
-> > > > > still didn't advance the iter at all by that point. It just returned 0
-> > > > > and this caused iomap_iter() to break out of the iteration loop.
-> > > > >
-> > > > > The logic noted above in iomap_iter() is basically saying to break out
-> > > > > if the iteration did nothing, which is a bit of a hacky way to terminate
-> > > > > an IOMAP_INLINE read. The proper thing to do in that path IMO is to
-> > > > > report the bytes processed and then terminate some other way more
-> > > > > naturally. I see Gao actually fixed this sometime later in commit
-> > > > > b26816b4e320 ("iomap: fix inline data on buffered read"), which is when
-> > > > > the inline read path started to advance the iter.
-> > > >
-> > > > That's a good point, the fix in commit b26816b4e320 is what led to the
-> > > > new erofs behavior, not commit bc264fea0f6f.
-> > > >
-> > > > >
-> > > > > TBH, the behavior described above where we advance over the inline
-> > > > > mapping and then report any remaining iter length as a hole also sounds
-> > > > > like reasonably appropriate behavior to me. I suppose you could argue
-> > > > > that the inline case should just terminate the iter, which perhaps means
-> > > > > it should call iomap_iter_advance_full() instead. That technically
-> > > > > hardcodes that we will never process mappings beyond an inline mapping
-> > > > > into iomap. That bugs me a little bit, but is also probably always going
-> > > > > to be true so doesn't seem like that big of a deal.
-> > > >
-> > > > Reporting any remaining iter length as a hole also sounds reasonable
-> > > > to me but it seems that this may add additional work that may not be
-> > > > trivial. For example, I'm looking at erofs's erofs_map_blocks() call
-> > > > which they would need to do to figure out it should be an iomap hole.
-> > > > It seems a bit nonideal to me that any filesystem using iomap inline
-> > > > data would also have to make sure they cover this case, which maybe
-> > > > they already need to do that, I'm not sure, but it seems like an extra
-> > > > thing they would now need to account for.
-> > > >
-> > >
-> > > To make sure I follow, you're talking about any potential non-erofs
-> > > cases, right? I thought it was mentioned that erofs already handled this
-> > > correctly by returning a hole. So I take this to mean other users would
-> > > need to handle this similarly.
+On Wed, Oct 15, 2025 at 03:24:30PM -0400, Tamir Duberstein wrote:
+> This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+> have omitted Co-authored tags, as the end result is quite different.
 > 
-> Yes, sorry if my previous wording was confusing. Erofs already handles
-> this correctly but there's some overhead with having to determine it's
-> a hole.
+> This series is intended to be taken through rust-next. The final patch
+> in the series requires some other subsystems' `Acked-by`s:
+> - drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
+>   look?
+> - rust/kernel/device.rs: driver-core. Already acked by gregkh.
+> - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
+> - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
+> - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
 > 
-> > >
-> > > Poking around, I see that ext4 uses iomap and IOMAP_INLINE in a couple
-> > > isolated cases. One looks like swapfile activation and the other appears
-> > > to be related to fiemap. Any idea if those are working correctly? At
-> > > first look it kind of looks like they check and return error for offset
-> > > beyond the specified length..
-> > >
-> >
-> > JFYI from digging further.. ext4 returns -ENOENT for this "offset beyond
-> > inline size" case. I didn't see any error returns from fiemap/filefrag
-> > on a quick test against an inline data file. It looks like
-> > iomap_fiemap() actually ignores errors either if the previous mapping is
-> > non-hole, or catches -ENOENT explicitly to handle an attribute mapping
-> > case. So afaict this all seems to work Ok..
-> >
-> > I'm not sure this is all that relevant for the swap case. mkswap
-> > apparently requires a file at least 40k in size, which iiuc is beyond
-> > the scope of files with inline data..
+> Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
 > 
-> I think gfs2 also uses IOMAP_INLINE. In __gfs2_iomap_get(), it looks
-> like they report a hole if the offset is beyond the inode size, so
-> that looks okay.
-> 
-> >
-> > Brian
-> >
-> > > > One scenario I'm imagining maybe being useful in the future is
-> > > > supporting chained inline mappings, in which case we would still want
-> > > > to continue processing after the first inline mapping, but we could
-> > > > also address that if it does come up.
-> > > >
-> > >
-> > > Yeah..
-> > >
-> > > > >
-> > > > > If we wanted to consider it an optimization so we didn't always do this
-> > > > > extra iter on inline files, perhaps another variant of that could be an
-> > > > > EOF flag or some such that the fs could set to trigger a full advance
-> > > > > after the current mapping. OTOH you could argue that's what inline
-> > > > > already is so maybe that's overthinking it. Just a thought. Hm?
-> > > > >
-> > > >
-> > > > Would non-inline iomap types also find that flag helpful or is the
-> > > > intention for it to be inline specific? I guess the flag could also be
-> > > > used by non-inline types to stop the iteration short, if there's a use
-> > > > case for that?
-> > > >
-> > >
-> > > ... I hadn't really considered that. This was just me thinking out loud
-> > > about trying to handle things more generically.
-> > >
-> > > Having thought more about it, I think either way it might just make
-> > > sense to fix the inline read case to do the full advance (assuming it is
-> > > verified this fixes the problem) to restore historical iomap behavior.
-> 
-> Hmm, the iter is already fully advanced after the inline data is read.
-> I think the issue is that when the iomap mapping length is less than
-> the iter len (the iter len will always be the size of the folio but
-> the length for the inline data could be less), then advancing it fully
-> through iomap_iter_advance_full() will only advance it up to the iomap
-> length. iter->len will then still have a positive value which makes
-> iomap_iter() continue iterating.
-> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Derp.. yeah, I had my wires crossed thinking the full advance completed
-the full request, when really it's just the current iteration. Thanks
-for pointing that out.
+You need a few more changes:
 
-> I don't see a cleaner way of restoring historical iomap behavior than
-> adding that eof/stop flag.
-> 
-
-Hmm.. so then aside from the oddly aligned iter case warning that you've
-already fixed, ISTM that everything otherwise works correctly, right? If
-so, I wouldn't be in a huge rush to do the flag thing.
-
-In theory, there may still be similar options to do what I was thinking,
-like perhaps just zero out remaining iter->len in that particular inline
-path (maybe via an iomap_iter_advance_inline() helper for example). It's
-not totally clear to me it's worth it though if everything is pretty
-much working as is.
-
-Brian
-
-> Thanks,
-> Joanne
-> 
-> 
-> > > Then if there is ever value to support multiple inline mappings somehow
-> > > or another, we could revisit the flag idea.
-> 
-> > >
-> > > Brian
-> > >
-> > > > Thanks,
-> > > > Joanne
-> 
-
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+index 1e6c8c42fb3a..c1cfaeaa36a2 100644
+--- a/rust/kernel/clk.rs
++++ b/rust/kernel/clk.rs
+@@ -136,7 +136,7 @@ impl Clk {
+         ///
+         /// [`clk_get`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_get
+         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+-            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
++            let con_id = name.map_or(ptr::null(), |n| n.as_char_ptr());
+ 
+             // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
+             //
+@@ -304,7 +304,7 @@ impl OptionalClk {
+         /// [`clk_get_optional`]:
+         /// https://docs.kernel.org/core-api/kernel-api.html#c.clk_get_optional
+         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+-            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
++            let con_id = name.map_or(ptr::null(), |n| n.as_char_ptr());
+ 
+             // SAFETY: It is safe to call [`clk_get_optional`] for a valid device pointer.
+             //
+diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
+index 10f1547ca9f1..466fb7f40762 100644
+--- a/rust/kernel/configfs.rs
++++ b/rust/kernel/configfs.rs
+@@ -157,7 +157,7 @@ pub fn new(
+                     unsafe {
+                         bindings::config_group_init_type_name(
+                             &mut (*place.get()).su_group,
+-                            name.as_ptr(),
++                            name.as_char_ptr(),
+                             item_type.as_ptr(),
+                         )
+                     };
+diff --git a/rust/kernel/debugfs/entry.rs b/rust/kernel/debugfs/entry.rs
+index f99402cd3ba0..5de0ebc27198 100644
+--- a/rust/kernel/debugfs/entry.rs
++++ b/rust/kernel/debugfs/entry.rs
+@@ -2,8 +2,7 @@
+ // Copyright (C) 2025 Google LLC.
+ 
+ use crate::debugfs::file_ops::FileOps;
+-use crate::ffi::c_void;
+-use crate::str::CStr;
++use crate::prelude::*;
+ use crate::sync::Arc;
+ use core::marker::PhantomData;
+ 
+diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+index b55a201e5029..65a4eb096cae 100644
+--- a/rust/kernel/regulator.rs
++++ b/rust/kernel/regulator.rs
+@@ -84,7 +84,7 @@ pub struct Error<State: RegulatorState> {
+ pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
+     // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
+     // string.
+-    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
++    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_char_ptr()) })
+ }
+ 
+ /// Same as [`devm_enable`], but calls `devm_regulator_get_enable_optional`
+@@ -102,7 +102,9 @@ pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
+ pub fn devm_enable_optional(dev: &Device<Bound>, name: &CStr) -> Result {
+     // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
+     // string.
+-    to_result(unsafe { bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_ptr()) })
++    to_result(unsafe {
++        bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_char_ptr())
++    })
+ }
+ 
+ /// A `struct regulator` abstraction.
+@@ -268,7 +270,8 @@ pub fn get_voltage(&self) -> Result<Voltage> {
+     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> {
+         // SAFETY: It is safe to call `regulator_get()`, on a device pointer
+         // received from the C code.
+-        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
++        let inner =
++            from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_char_ptr()) })?;
+ 
+         // SAFETY: We can safely trust `inner` to be a pointer to a valid
+         // regulator if `ERR_PTR` was not returned.
+-- 
 
