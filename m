@@ -1,139 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-64569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EA7BED46B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:10:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611B2BED3A4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 18:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DE474EAC18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 17:09:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEA1A4E69C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 16:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA1F257AEC;
-	Sat, 18 Oct 2025 17:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F502459D7;
+	Sat, 18 Oct 2025 16:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s2W1IKbe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msvctw3b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3B22522B6
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 17:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2B923D7E0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 16:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760807390; cv=none; b=LN5vaN7gbNT6Y0ZY8ABoiMytLPJ4TaL8XfIsZCOA6NslXF8cl2cGVSUQGXlG15Fuat3qHExcTq0ctMgiMgkEOe++o6rWTa9e+VLcsjhjJBnHE3yePRtV9l8PK+taI8GVWMmngGpi3klLmTB6d826GCa+i54+tFLBbKCQFJvuGXo=
+	t=1760804026; cv=none; b=TvNwbYwRS2JZs/UUtA/WqpE3X6M1UUEYoaBZg2qtHyqa3I7B158H0HSPKr/o7pn0iZ4QGHtCQ21nPlUoxgK60kQtOXaVkjOBC6mKhqhyHOl3zBczzhAnyA4XOfxz7LKNK4PoLahHblYLnrmcCQqbZB0uFMBBF++kzGC8caC45W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760807390; c=relaxed/simple;
-	bh=odtCe9zBLcd2KigvnEagfj6Hjlz+S098qgy/zAjyk5g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mEH6C6Cg6+744IAMvZB8JLhjMJISua9H15v9KXTnX/qnWddgfYpGn3xJrYJX3GS34Gu5gDxQchXgmwkyAmS9Ol0OZnDbG4nv2kI7mXFYUYJp5rN3g4KchYMJG4xZ01Jlpt4QPd9sUldiQixak/CoS5piqxpeCkCZHOPfi4AaYwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s2W1IKbe; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-47113dcc15dso23348475e9.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:09:48 -0700 (PDT)
+	s=arc-20240116; t=1760804026; c=relaxed/simple;
+	bh=pLKk0UA5x9txz2pzbD022hS7+sQLw1lvQiEUDBqTXvA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XWGJ/sTt83tWW1CiaNs3BH1eJse7uQJJqQRcz2/WPGrp9sL/NTIJfX9VqrtWgLPqOJBB1FCcn5SD0oay0MtwZqLvcgjW3v1vYh/Plw457UOHAXGsSO/v93WT4BAgXW9JxOwcIiF/7Mvnn4x0UPKY/hS7XBGmJfXaGxQGSoViK1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msvctw3b; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47105eb92d8so4796005e9.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 09:13:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760807387; x=1761412187; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gbgmXbo5t+1RIxOlN8V1tPuxrDnGp84UG4kpKP+4AI=;
-        b=s2W1IKbeLEuX2kkxo9AybDWEDEm5rqNnkDaV/DCZDcr0M6r+aOVdhus7bB83epvYuf
-         CfQos9YRn9xfGKMVJ3dtLfPW/AyRT3U/NAkz+FEHIwuEgELPVWAAqLoHTxd6i0Ay+Frg
-         64BU/nqpOZAiTu4YijG6Wt3rsAnk5/+v55pEJ+icNmkTX6g2MHda3cZmgfXYt+0wQt5s
-         JMMWH7elqV35qJZZmILPEgos39P2n/nEHhzD+SDeEwR7m0dE/0522ChttpOlSoXdgslt
-         45Uj42+Eto2H85xG5oSev9Es3P4neIyc/0LilICNFNdkpU3y+ZFQ0moED2mm8mqZn4v2
-         Tnxw==
+        d=gmail.com; s=20230601; t=1760804022; x=1761408822; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=f0pOHV9nv1hxJzjc+rhs/0yX1sV8PPggM1YFk5/tT9Q=;
+        b=msvctw3bfEUxwkWMzay3rarQMRNov/LmVY7Yn7vJIfyMnMa4LdkusMRmkI8nWIQlAd
+         hWh8a1jI4f1KXLzfOOC66E4kVhvUl0tu9PMSeJPf+Mm5QNBcHYjpL39RK6XGHBfIYngT
+         YWzUW7sp/LTtKUc6AEqeRaN7zl8gkb6RuqYbVNay8stW8NjBbOt/Za06cjYVBG52XhJR
+         toKp5E0P2yi5gYNhw7madupKthUAxGGs+eRucPYOSBNuU/JeA5vntm3H70PyxEY8IP0X
+         tvaNLzz9jeRRTjOTvNGQgVdoAUBQVKqEvayeH59uNY2NWi8iaqAOLfXzkR7Q606mOsXg
+         nc1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760807387; x=1761412187;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gbgmXbo5t+1RIxOlN8V1tPuxrDnGp84UG4kpKP+4AI=;
-        b=VsRrEE9U+2y3bc3VSWy5Cxm0F7V1Yje698IqY7gBZ6SQ5FVfSG8xN3YTdYt70p35AS
-         v/gPaAa6pL9nux6qaPF6k2aY4sl5bP6eO7RibhEAaiZtDpkLHDPtJA4zApnM4oK7PAxj
-         i/JNwA9nxZUAE6lMTwWOMxyluHJlsBt5OQiq2r0mOMOvjszJh80V/vapmoqxHcJ6IVra
-         vaph+BocjM7+HjC+wzl8uGt32t0c/8JnKhBw1cKKWV99moXZ/492h7bULsJDPTFlFU+q
-         ewVKHU+yOpAF8iXmb17GiFhhzBdesZ2QQJ3i+GpzF9dPwH2BMjS03D/8TqHTyehYvZfk
-         pxmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXR8dhmKdrhWZYCgsatAXapmQfiuPIYvXkJzH98PKhZYPOSWl07VATIcnDwqA6k97EIeLWbZVqxGaTGgD6M@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKE/81m92EUY5B0A8NZWTpr6koojEB9Msh1Aot56KxAMpTZ0vc
-	3JJpslKQQ2aD4i2p5MAU0CrWPjvw7xzuXLycthGrzCY8eT0Gcthw4dmzs2m90V92jqsN+6QD5R0
-	L0xajfEGZ4HgoxMEhnQ==
-X-Google-Smtp-Source: AGHT+IE2qIYxI4Vw1+ECgA1gn5ogbwuagPgH2cctNTftSEDiGSn1/+RvZtZON2v3lqv5N/Nfcs1I9R9CXWA7rAA=
-X-Received: from wmwg2.prod.google.com ([2002:a05:600d:8242:b0:45d:e2f3:c626])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3512:b0:471:12c2:201f with SMTP id 5b1f17b1804b1-471179134f0mr67710035e9.32.1760807387121;
- Sat, 18 Oct 2025 10:09:47 -0700 (PDT)
-Date: Sat, 18 Oct 2025 17:09:46 +0000
-In-Reply-To: <aPPIL6dl8aYHZr8B@google.com>
+        d=1e100.net; s=20230601; t=1760804022; x=1761408822;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f0pOHV9nv1hxJzjc+rhs/0yX1sV8PPggM1YFk5/tT9Q=;
+        b=ti7DMm9y7IX8ItxcYqpq7ondKJNkPPwCCRmQZz6ftXmlVmt7VRaOL/yjqD0R89tsa5
+         AQdqcO0iFGflFNkFiJzsLWZF6uS1EaqOfPUbxvr4/5Y0kyHDSRUrl+G0305BYJfe5lr7
+         vaBISpMfaLhzDICCVT9FM4m/fy4pfZAbAcAoERVXF45p5QuyAQZ8nxQQxWr2UXHNx6MP
+         1L4TfRWG3eqH9PwMoO6ssDGVqoOn9htSRm3EiCrdGPAzL2D0oOPpb3E2AV1Cy6RPc3fY
+         YWqU8WgTmtRUJSz6dR/VPrsteOveU9CzvKLvCIyhjeLD6k1RXM1a6Jk0SNP3pb1L3Xvd
+         3rFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjhlso0YDqCA833vqsrnxAb28JZm3DA96JSdlV8yel2g12PjKPwKl71ktXjQnEduKYBWftqI0aP8YHYqXj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlEcm3/5QQUUrGTj95HTg6JK6xHJDKh2rQVVpgb9MAJQFSN6qS
+	PDQgw0Bk95wLmaF+tfw/txMpXpuIPzgRthXGqYo9QAGyhlrMeCPJzPpV
+X-Gm-Gg: ASbGnct8ndcrXSjqJv76HgHtnrCK3Taenq/0B9dPNwNcP7zjSROq0IgeMFXrtlYQVSg
+	lD0WjSVzlNBSh+Qzgloc+IVkymNz9L7u3Tm9dV8lgXocwo6ercH8uCkhl5KawFDNlVA2AIIuueC
+	v/zry0m8Oqyn83y+JW3OiOcsdhE+9v1azhMPLCuTNuGyAEyoQx/X4Aq5OvFKp/Oc0/+7WV0hb6a
+	aVJBT8TwzH6FNbrmNH3RV+3d8KrzXOObFmhDVVgofeFCTmyxUt0bSrEsHairD/9oyVPbGvtv5Pt
+	F9evljufTf4YnDRUS247o3yiI/EO8cBT7TcCCstPcaHWX/NkdTLS858XJBLnKl8dPdG7dJvy2rO
+	cpbRhFuro/jt8U2lLlCAdsrhI8vxyLkSitvhNchOW62CzgWYw67J7oKq4/8KKKJ8eObhMTKpVmO
+	sghd6UhEvG9PisqhmePmKqjzJ9Wy31AIM=
+X-Google-Smtp-Source: AGHT+IGOxLwcjmXvE3Lb0mSlFrm9lnVnNEmJmV5uOeoSLYYaZp87Dibu/aojvz+uM+vnxkS8QeEjKQ==
+X-Received: by 2002:a05:600c:3b8d:b0:471:703:c206 with SMTP id 5b1f17b1804b1-47117917718mr31981905e9.5.1760804022334;
+        Sat, 18 Oct 2025 09:13:42 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.121.102])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a6c5sm5665372f8f.28.2025.10.18.09.13.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Oct 2025 09:13:42 -0700 (PDT)
+Message-ID: <ccaa911b-f405-477e-a542-fe4f6bcb618d@gmail.com>
+Date: Sat, 18 Oct 2025 18:13:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com> <aPPIL6dl8aYHZr8B@google.com>
-Message-ID: <aPPJ2qDhxXNh8360@google.com>
-Subject: Re: [PATCH v17 00/11] rust: replace kernel::str::CStr w/ core::ffi::CStr
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] init: Use kcalloc() instead of kzalloc()
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20250930083542.18915-1-mehdi.benhadjkhelifa@gmail.com>
+ <20251002023657.GF39973@ZenIV>
+ <b0388977-413c-46d0-b0e1-fc8d26ef9323@gmail.com>
+Content-Language: en-US
+In-Reply-To: <b0388977-413c-46d0-b0e1-fc8d26ef9323@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 18, 2025 at 05:02:39PM +0000, Alice Ryhl wrote:
-> On Wed, Oct 15, 2025 at 03:24:30PM -0400, Tamir Duberstein wrote:
-> > This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
-> > have omitted Co-authored tags, as the end result is quite different.
-> > 
-> > This series is intended to be taken through rust-next. The final patch
-> > in the series requires some other subsystems' `Acked-by`s:
-> > - drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
-> >   look?
-> > - rust/kernel/device.rs: driver-core. Already acked by gregkh.
-> > - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
-> > - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
-> > - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
-> > 
-> > Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
-> > Closes: https://github.com/Rust-for-Linux/linux/issues/1075
-> > 
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On 10/3/25 11:40 AM, Mehdi Ben Hadj Khelifa wrote:
+> On 10/2/25 3:36 AM, Al Viro wrote:
+>> On Tue, Sep 30, 2025 at 09:35:37AM +0100, Mehdi Ben Hadj Khelifa wrote:
+>>> Replace kzalloc() with kcalloc() in init/initramfs_test.c since the
+>>> calculation inside kzalloc is dynamic and could overflow.
+>>
+>> Really?  Could you explain how
+>>     a) ARRAY_SIZE(local variable) * (CPIO_HDRLEN + PATH_MAX + 3)
+>> could possibly be dynamic and
+> I missed that c is in local scope.It's already of size 3 and since 
+> CPIO_HDRLEN is 110 and PATH_MAX is 4096 + 3, it's far from the limit and 
+> it is calculated at compile time since all values are deducible.>     b) 
+> just how large would that array have to be for it to "overflow"?
+> If c could be of any size, it would have to be of size 1,020,310 for 32- 
+> bit kernels and a lot for 64-bit kernels around 4.4 quadrillion 
+> elements. Which is unrealistic.
 > 
-> You need a few more changes:
+>> Incidentally, here the use of kcalloc would be unidiomatic - it's _not_
+>> allocating an array of that many fixed-sized elements.  CPIO_HDRLEN +
+>> PATH_MAX + 3 is not an element size - it's an upper bound on the amount
+>> of space we might need for a single element.  Chunks of data generated
+>> from array elements are placed into that buffer without any gaps -
+>> it's really an array of bytes, large enough to fit all of them.
+> Yes I get it now. But Even if the CPIO_HDRLEN + PATH_MAX + 3 is the 
+> upper bound on the amount of space and in use it doesn't have any gaps 
+> in memory, Shouldn't we change kzalloc() to kcalloc() since kzalloc() is 
+> deprecated[1]?
+> Regards,
+> Mehdi Ben Hadj Khelifa
+> 
+> [1]:https://docs.kernel.org/process/deprecated.html
 
-One more:
+Hello viro,
+I'm just resending reply in case if you missed it.
 
-diff --git a/rust/kernel/drm/ioctl.rs b/rust/kernel/drm/ioctl.rs
-index 69efbdb4c85a..5489961a62ca 100644
---- a/rust/kernel/drm/ioctl.rs
-+++ b/rust/kernel/drm/ioctl.rs
-@@ -156,7 +156,7 @@ macro_rules! declare_drm_ioctls {
-                         Some($cmd)
-                     },
-                     flags: $flags,
--                    name: $crate::c_str!(::core::stringify!($cmd)).as_char_ptr(),
-+                    name: $crate::str::as_char_ptr_in_const_context($crate::c_str!(::core::stringify!($cmd))),
-                 }
-             ),*];
-             ioctls
+Best regards,
+Mehdi Ben Hadj Khelifa
 
