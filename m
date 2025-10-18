@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-64573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5353EBED65E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:47:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CCCBED661
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4C74057EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 17:46:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15B894EF6DB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 17:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A0D27A12D;
-	Sat, 18 Oct 2025 17:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77AF285CA9;
+	Sat, 18 Oct 2025 17:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiUSbTna"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQn2XBtZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691E726CE39
-	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 17:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E138328469E
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 17:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760809546; cv=none; b=rQ9pMsZu46+p2uhi+Mh1imoo746zFm++oemJpGTZJVz+6IJAv2CjZvv6Gg5qlLBn83PsnObq8gC3evswKks/YkkFxjSbbp00ICKtN10jFDWKAXQGqKkcqIoHDHt8+zJeIskdcBQXMjIUCViycNW7JXhEwvKDMsMkJkGA+eUny98=
+	t=1760809551; cv=none; b=Q+Qa1J0mlz7PyPfuztJ08dahqOjv2NmVzOu7heQFHN78I6LbAkfM1mLtW39zIzrx+dkbG7ayyd1/0YcND0buNCn4S0mXEZ4mWCJFAWadwdSy4sCmSHGGpnD+f/9lV2yu3xMA5xhwqA4/1cojCjzj1TmAxBqOz+pR+YQdK3yawFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760809546; c=relaxed/simple;
-	bh=872/2/9eITdb9tB+ajd4McXNzNIKi7XLnXFm8ifjokI=;
+	s=arc-20240116; t=1760809551; c=relaxed/simple;
+	bh=CzY30Cbw7NH9BCqW+7Dm4yyfJiEmTcSRj3QBxiZsJWU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P7VmC39PSHzBvJC/a9D7KNrEAwbN/+AuRAxkKn9yp9xMq6rDgEPe8ATVjvh/W35H2dr+ariCwR3tM8cMDA+HC5MsAczG/nlGSTFZKeSIkn4X8WWVUP3F0mXu0JNnmdXCNi7KXI0sHP38m+F79Eg+y/gtVOV9th0MdlJJw2vC7eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiUSbTna; arc=none smtp.client-ip=209.85.222.175
+	 In-Reply-To:To:Cc; b=o7UpGv1bsHCoKZqK2UvMMayvXRF9PSTPPI4SpZhPxUUomQ/S4/hEwEmWUlAFlkyflyPdv5je6Zs7vgFXsP6nxrH29AKEXFTqaOvDAxVDWaCUvX14mW6Ru9KAmNnAADWTwU2xA2cDrubNWe7zGBXtXhUpkl3Jtq1uo2wke0iwfUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQn2XBtZ; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8901a7d171bso370095385a.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:45:44 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-87c1cc5a75bso34439506d6.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Oct 2025 10:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760809543; x=1761414343; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760809547; x=1761414347; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WxxD2K5FdBz/EnZVjAulq7wLhETf3uBIbeo+/VSTI5o=;
-        b=PiUSbTnawi0Y2gAOle6WmnfWCMP15/NZEFmhoWZ/P8IE/4TCxmGjSoi53OpB/Yl7Lo
-         /Zswgw8ol5/9UeFvKlNkHdyWX81ZKlWnsSmTb9/L9ttW3D+7oojqWaXLXBm5IuaTAWAZ
-         zzx7mr2BpUeRb+HK/FjLv/xzNThgx2XnCClmTyRlPo6/twf/ocjqFQWg1IUcESd8hnVP
-         m1S44t3z4VO+iQ9fuLTi03/HdihgxNiTi9JqOcYIdKACT2i21syOexoVSijXEAZWEM/w
-         TBLUaURZjJI2t4IhEj9sagARG3zDp0VCz56QWREA0Z1RqrYl7Pz/sZAalkncJcCLNSGL
-         xVsA==
+        bh=lawTNFgWMdwiPfh6WDKLTV6aPOfN+Nzqh2uzIhroikw=;
+        b=JQn2XBtZHFcfyd0otLfHMIY2rjaug1QAyR3P4HT6Nhx+HGjJ8IDNRoAsH7r+NltaEK
+         jT+mD32eTIWFecS4qBPgSgaKG949+MgyP6TcOKiRvoN/IOOiKulaIcatHQ138pUn1MmS
+         at2q3Vqo0bJHD72ziz/6guu1rn06JyzC3zTd0A4DORkrXD2BX2/PWgiTj+gS69usb0+C
+         Z4pd0Ia28fm2fZjMqThmk6HfJbJrQ60ypyxPqHEfGtRG3bh6AOKUxb92yuOBpQc6iIUN
+         7t4DkBAxlVWEp6A5RxIP/7szbwbuYq1IfuLwxMo8cyEoqleYqeToYMkoanI8KR9vMfVC
+         zBzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760809543; x=1761414343;
+        d=1e100.net; s=20230601; t=1760809547; x=1761414347;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WxxD2K5FdBz/EnZVjAulq7wLhETf3uBIbeo+/VSTI5o=;
-        b=kU2nJAgL+bAegapvUNJrIpGu4dN6DPaj8m3hjejzTv0NUlUtijTf/vRJWffaxB++G+
-         4n9e/+FzFQgxfbEMg0158wM5fRpV8oOUESA9JMWszyeDCsnyF/eQT0ci4lGc9ERNvg8J
-         JTioxJYg+iUbypgdlOiGnu7NJrtB27ypNmFSIWSDSKMzS4++fQ5UpMDOgE2Cf3ufEIUM
-         qUHM11oGoeufzRUZQxbg5krmXp2VpWIT/0+o4B7nqjkszvPHEiKlZhk/N2CNdKf22oqx
-         bQD8FxNIhAk55FrfyYuRJEVHBvdR71keAeFTYCj8+bwnRvyaukdlumn85hdwLSn9f/aK
-         HpPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDOXU1hYkw4Tycybil2Mkzlq7nwHKZeaiWV/xgyEIGv4G93nWdYrTwOUYVy2VE+t5Xx+F5WhOrWTQs6KqO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCg09zokOm9DM7hTgnYRZ+POM2bk/wB7ae4/ZMDHIjsf3iQz3w
-	I5MA3Uxxw0fnDLxC3+UvMOOZYlDvWuT8q1BEWqormpyB6fP/GXWpbe1Y
-X-Gm-Gg: ASbGnctLxRUWroCZoFQ1YfkVHQv8Q1pzx+K6yE6oi7wlgDlrNvrTx9aCI3pHFJweY41
-	UJgoQJHTUiH18quS90svdjHQ8yYNpnYB4pOksIq2t0Xdaia+VmlHnMMxREXjttrB/a0GwW6+O0F
-	WLamld1oWnBiUs6OQ0Q4tla+zS1U9laf2blFLHJJg1bJ6z3cMRspCtk8AuQUiVF2pPH8fSmt/Dk
-	dQ9gQp93IrRDRBQcZWMhf86hljIjwNpj8TOJ3p7sx+yUtiHY9qsaIsx7bIp5Yxw1HAIDw84KLwA
-	05MS76sF3U9ATDXhvUPznWrDSHo9a/0JtqWkKs45gTZkzm/hkLaJBk8504DBe3BKon04f3fsOlz
-	mPwPBVmbUoznpDtU6HRH65aNXva1cQ2THyxo6UtQ733EVi9I+fzJ7hjHrdUoVkEyUExN4Bqt1l/
-	5xS8Zq2nAAVe+pEdf3Q7Tg4tIp5Hz8yS8BHCtOBmNjej4PhCdkfm2VYgoCQWuSEhqUr7iyJoYv4
-	X0gbMC9Rx8s3xDl0xv/YXtHMDwi562yOFseVNW4Iqcf+D4C8moP/C3lQwW1PbE=
-X-Google-Smtp-Source: AGHT+IFKKdVLl3mAPx5GW1O57JDFIbYY3aQNyGp5ohShtikkzbyW7xTlAHv9ByPokofKb8ncQ992Dw==
-X-Received: by 2002:a05:620a:28d0:b0:891:7def:94a5 with SMTP id af79cd13be357-8917def9615mr601979985a.89.1760809543355;
-        Sat, 18 Oct 2025 10:45:43 -0700 (PDT)
+        bh=lawTNFgWMdwiPfh6WDKLTV6aPOfN+Nzqh2uzIhroikw=;
+        b=uM6umHlnj54FPLI16tMHWmAvt5mpNppJPkCY9oDbsxCuWJ+TomHyPYwsGB4Eq45zJi
+         xIkyupgEbMxbv2LMY9eaGcWaQU61tgzZwBg2O4ImxOrh+Q9HklEJ66c86IDF/g5yTTE2
+         IJaThXGvNX/she1RXFt/EIi62rIhxVy/wGYlD9V7JSutfZHt04pPKi16MYE1K/n2Db3v
+         LJyQwmmt+x65SWfxPzTv91rINE1Q8cO8eczfefIwegK8iBWaQ6yf4f/50ziEFX+RIImW
+         Y8HhpQ2ucktZqQggo3PyGT+CuYUMTV14YdwwCwjToRdUBoe3qspmKaWokVB5HyXEYRIJ
+         bjPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVObvaVCILSMDX/CDLqKssKdLNu+HyxqFWY0M/VDm7dFPlEt49fal5RhVHvniStxj4mT2iGtdny0wjkXY+V@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoqDrEkl/3tzlWHBQZsVhLKjGNIt4AuEVFqDJom+ahxZop/mW0
+	RkX0hYDoq40sXAQFO7WrnvuIrQjj6MpLzKj4NpT8HxzHV0XeNhcd3au6
+X-Gm-Gg: ASbGncs0twtTjNdYLa9PtYe0xQHL34SlRg6u8ncbHaH0xZ5UvB00mS2NwQDwdsPRDCt
+	HVipHcGbG1ZNRIK6v/k+xZfck5Cxblapijbr7sVkbs7AVR8IrS3nW0Lzk10PoR+11W2t4aUcyrY
+	xpql8GSNZQlTFv9vRa2UYWyrYmcnYm1K/ynUsTtk904OJlNO7/ZPzC6xQv7M9qA4+q2n+ldNx0c
+	qp/mPp9t2Q1HDcgEp93jE16WtwJZ+teaDC9YO1LonNBC2G2tVFga2iITun9gZ37DhuqDcHz/wBW
+	6Ol3KrwdvZyCsi+VGJSDYTcnZc7xS8Ngr72lF7VF5riQEuIyagyGQFbVwCIG1KWj3jBwoUUyVKF
+	X+tXI0HxpKtLYSHVVrQYwZGwilJ70FNGWRSoogOAQQfOGakQ9EEkidYo/t6isRPGLQi1EkVSUpC
+	zCg9ZHZPqVvhGfiIaYMYPRPHwuDTumMlI9s4H4q9UmVMIAgZwcb2ZPZVNXkMNYf7SNqLHPoIm7e
+	UfM2k1+Mb72rMWWk1r6f6ndLixmXeJVQuFttYvQbRdS+DlRnOAf
+X-Google-Smtp-Source: AGHT+IGtoC16cs2IUHy92V+PgbYqI7ItzE0B6P6UQD9FJc874xh/zcTQPxmAHJdRXWEe38KwPk6DJw==
+X-Received: by 2002:a05:622a:1350:b0:4e6:ebe3:9403 with SMTP id d75a77b69052e-4e89d3578camr111769721cf.41.1760809546751;
+        Sat, 18 Oct 2025 10:45:46 -0700 (PDT)
 Received: from 117.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:1948:1052:f1e9:e23a])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8ab114132sm20445161cf.40.2025.10.18.10.45.40
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e8ab114132sm20445161cf.40.2025.10.18.10.45.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Oct 2025 10:45:42 -0700 (PDT)
+        Sat, 18 Oct 2025 10:45:46 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 18 Oct 2025 13:45:14 -0400
-Subject: [PATCH v18 03/16] rust_binder: use `kernel::fmt`
+Date: Sat, 18 Oct 2025 13:45:15 -0400
+Subject: [PATCH v18 04/16] rust_binder: use `core::ffi::CStr` method names
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,7 +86,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251018-cstr-core-v18-3-ef3d02760804@gmail.com>
+Message-Id: <20251018-cstr-core-v18-4-ef3d02760804@gmail.com>
 References: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 In-Reply-To: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -125,18 +125,18 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1760809526; l=1195;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760809526; l=1838;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=872/2/9eITdb9tB+ajd4McXNzNIKi7XLnXFm8ifjokI=;
+ bh=CzY30Cbw7NH9BCqW+7Dm4yyfJiEmTcSRj3QBxiZsJWU=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QNpeE2O2veZx/WAQcXn2BPsuVFmwejvaIZ814PGVaIzTcLISv+9UjXgL3SnRuXBWt3P0YjfBZ5X
- ySAtgUYGZcgw=
+ QCdjYy/3zPtDG6mLhbi/m87N/OQUz3F9LUrbbVL/SdtvY9mUE4M1GxOy/SM9SDWwBVOLExEXvgS
+ qD3AZBhe7nAg=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-Reduce coupling to implementation details of the formatting machinery by
-avoiding direct use for `core`'s formatting traits and macros.
+Prepare for `core::ffi::CStr` taking the place of `kernel::str::CStr` by
+avoiding methods that only exist on the latter.
 
 This backslid in commit eafedbc7c050 ("rust_binder: add Rust Binder
 driver").
@@ -144,32 +144,31 @@ driver").
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- drivers/android/binder/error.rs | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/android/binder/stats.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/android/binder/error.rs b/drivers/android/binder/error.rs
-index 9921827267d0..b24497cfa292 100644
---- a/drivers/android/binder/error.rs
-+++ b/drivers/android/binder/error.rs
-@@ -2,6 +2,7 @@
- 
- // Copyright (C) 2025 Google LLC.
- 
-+use kernel::fmt;
- use kernel::prelude::*;
- 
- use crate::defs::*;
-@@ -76,8 +77,8 @@ fn from(_: kernel::alloc::AllocError) -> Self {
+diff --git a/drivers/android/binder/stats.rs b/drivers/android/binder/stats.rs
+index a83ec111d2cb..10c43679d5c3 100644
+--- a/drivers/android/binder/stats.rs
++++ b/drivers/android/binder/stats.rs
+@@ -72,7 +72,7 @@ pub(super) fn command_string(i: usize) -> &'static str {
+         // SAFETY: Accessing `binder_command_strings` is always safe.
+         let c_str_ptr = unsafe { binder_command_strings[i] };
+         // SAFETY: The `binder_command_strings` array only contains nul-terminated strings.
+-        let bytes = unsafe { CStr::from_char_ptr(c_str_ptr) }.as_bytes();
++        let bytes = unsafe { CStr::from_char_ptr(c_str_ptr) }.to_bytes();
+         // SAFETY: The `binder_command_strings` array only contains strings with ascii-chars.
+         unsafe { from_utf8_unchecked(bytes) }
      }
- }
- 
--impl core::fmt::Debug for BinderError {
--    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+impl fmt::Debug for BinderError {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         match self.reply {
-             BR_FAILED_REPLY => match self.source.as_ref() {
-                 Some(source) => f
+@@ -81,7 +81,7 @@ pub(super) fn return_string(i: usize) -> &'static str {
+         // SAFETY: Accessing `binder_return_strings` is always safe.
+         let c_str_ptr = unsafe { binder_return_strings[i] };
+         // SAFETY: The `binder_command_strings` array only contains nul-terminated strings.
+-        let bytes = unsafe { CStr::from_char_ptr(c_str_ptr) }.as_bytes();
++        let bytes = unsafe { CStr::from_char_ptr(c_str_ptr) }.to_bytes();
+         // SAFETY: The `binder_command_strings` array only contains strings with ascii-chars.
+         unsafe { from_utf8_unchecked(bytes) }
+     }
 
 -- 
 2.51.1
