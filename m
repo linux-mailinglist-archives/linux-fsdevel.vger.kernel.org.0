@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-64597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9A7BED96F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 21:19:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A497BED981
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 21:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47BF334D2C5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:19:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62E314EC614
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Oct 2025 19:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A95F3043D8;
-	Sat, 18 Oct 2025 19:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FBD3054F2;
+	Sat, 18 Oct 2025 19:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhexiqCf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxrPftDo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CED28B415;
-	Sat, 18 Oct 2025 19:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3643D28B415;
+	Sat, 18 Oct 2025 19:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760815036; cv=none; b=CI0o+JF6WiLCUNOHx07/St9J2qw4c4GwyRRUAFoxpTXR68InwaYa1hL4nfDQ4CgJM2BZZbV6hnGBkII5YN/mq36pxZ7uyK04eyglB9yt33w+2sTYPtzGYfkJ7hLFcY18mk6fJbCqZfyYfmAIKSxjyFuV2MFHJtMQb57DR58cx7M=
+	t=1760815042; cv=none; b=Le/7GLQyCywbFpTSwTISAlePkZK5BpDahkwrQZBKOy2Q3F/sj6XJOJwyoKVzXjeJUJFNgpocpfsZaH26lC9PjgLRTtEKRl2s8cnq7jIVEsoxUXCNYz5+ep70tORRHoch09BqgKUmyFxfaPXnddwNjQEMEdg6eHQ57TKlM1ZxOaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760815036; c=relaxed/simple;
-	bh=Kbs9eVBrMyk0Vg+PzDAsDBPnMNBZDT6p+rpvbPHMIs4=;
+	s=arc-20240116; t=1760815042; c=relaxed/simple;
+	bh=xsFNIUUmzla0WMlusejuVXTppBOrwZiYvcam3knzJco=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S/XbFYj3cMtXSBEhK50PXffUKcHCaiEahgnEWwyerFXF5gMh+qq1Xmb8rT177AAv7JmP9rZkbRhjFy6/N9OXVspQeELoQzrswCH8fxKcsdmY3ZXvhYmJDh3eEEypeYMji7LhgNKN74+Di2h8eVTMBxwBVH4PQrQXH4Qgk/fVwz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhexiqCf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F08C116C6;
-	Sat, 18 Oct 2025 19:17:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Vzw0NYmJYS10LFyvuq3M1T/YfZVd/0EN+vM2K+ju2994coNEJZHjzcrGfa1/QKKlfvHqOHV0XlXsR+92EwJyJBVsKGL1gFlyZSPny/d4MdGI6KWaRIr2pex+7mfzfSvCc0Q5MmG1sMQWEwnhIkNbG3kuhDuOeLfcTYBgM9Cs2Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxrPftDo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C454CC4CEF8;
+	Sat, 18 Oct 2025 19:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760815036;
-	bh=Kbs9eVBrMyk0Vg+PzDAsDBPnMNBZDT6p+rpvbPHMIs4=;
+	s=k20201202; t=1760815041;
+	bh=xsFNIUUmzla0WMlusejuVXTppBOrwZiYvcam3knzJco=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jhexiqCfiNnu0bSYOGU7/zn4vX3VUFAPhkP8lVI+NYbKuzEyNSsT7pX88vzQwpGU2
-	 Ij7gAVl38ptskWcskLUyLnGaVYlBNmwv0aYJhXu8damL7l4Mmg0ZTQ6+pMtmx9EeG4
-	 2sOvltTJ6yqRgypqF6Q6R22+0WB1LW1RHpmtdSRuDdPrXpbbQlqRJCHZexKbprUzlp
-	 WfX/Am9qRIDqPyJlOdTIOt0waqlViRHLU6lNCgrZ2S2yeeC+fr1+HOjcDgiypQtwQ4
-	 Ufa5XTbIi4XBtxJR2/ZJ32uOR76gH9KIsxbEdFKe9LcgHD9opECrcFADZc6eeCwZHx
-	 9aSQwipOJSnEQ==
+	b=IxrPftDoU4+MMu/+OID4PuXX3LHeEmg9QAIFM1wrlI/YQ0cW7RtpRppmvo7U999mb
+	 uYHqSPNQ1HvlfKtgm6zrcwyfprLt4n2+B2ABJvQ9iea47gvbS9FvUc0yE3r1tlpzja
+	 ZJJkwE5DQ6n89PLFa9V3zIM1z9EbnZVyC3e0RH7Qoe/PiftupHl6rtz/g/KwN3g49M
+	 7VL5oyHs8cTot8EwWykIeiwW+IizJybqKDeM/WQl9AallDW2T0Qi1ODHZbQCdUrGeg
+	 JlcmPBdil3JE5gTaQNkvh9GIC3ptIi51M4GMHV6RAudEN4o899xVf9YX13ocm14x7C
+	 i1Ds/Rtwxvnlw==
 From: Tamir Duberstein <tamird@kernel.org>
-Date: Sat, 18 Oct 2025 15:16:29 -0400
-Subject: [RESEND PATCH v18 08/16] rust: pci: use `kernel::fmt`
+Date: Sat, 18 Oct 2025 15:16:30 -0400
+Subject: [RESEND PATCH v18 09/16] rust: remove spurious `use
+ core::fmt::Debug`
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251018-cstr-core-v18-8-9378a54385f8@gmail.com>
+Message-Id: <20251018-cstr-core-v18-9-9378a54385f8@gmail.com>
 References: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
 In-Reply-To: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -90,44 +91,41 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
  llvm@lists.linux.dev, Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1760814988; l=918;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760814988; l=668;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=03bsWp5q/RvNg/sXSrzNos1bBBR49+qyJdq4+m4Ha6w=;
+ bh=uLnXUd5iHMMEJTAMJKY0bsxZkX3e5rGAkuIO16n9SP8=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QBiN/R7V4YGEuv6x8EGMhr6U9PzSWvK3OImoFdOB1S7IKj5qopcU21E5tvt1EAgDjnh2qLe3CYO
- Z+PEfRnE/7gE=
+ QJ420FEA1xU82RY5LJF3sSFoGPpWwDG/CyQn+H+eASJYtK6ZdeBenXT7zDwgEhA3R2uuEjBZtbx
+ qsFbiKdSl3wc=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
 From: Tamir Duberstein <tamird@gmail.com>
 
-Reduce coupling to implementation details of the formatting machinery by
-avoiding direct use for `core`'s formatting traits and macros.
+We want folks to use `kernel::fmt` but this is only used for `derive` so
+can be removed entirely.
 
-This backslid in commit ed78a01887e2 ("rust: pci: provide access to PCI
-Class and Class-related items").
+This backslid in commit ea60cea07d8c ("rust: add `Alignment` type").
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- rust/kernel/pci/id.rs | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ rust/kernel/ptr.rs | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/rust/kernel/pci/id.rs b/rust/kernel/pci/id.rs
-index 7f2a7f57507f..5f5d59ff49fc 100644
---- a/rust/kernel/pci/id.rs
-+++ b/rust/kernel/pci/id.rs
-@@ -4,8 +4,7 @@
- //!
- //! This module contains PCI class codes, Vendor IDs, and supporting types.
+diff --git a/rust/kernel/ptr.rs b/rust/kernel/ptr.rs
+index 2e5e2a090480..e3893ed04049 100644
+--- a/rust/kernel/ptr.rs
++++ b/rust/kernel/ptr.rs
+@@ -2,7 +2,6 @@
  
--use crate::{bindings, error::code::EINVAL, error::Error, prelude::*};
--use core::fmt;
-+use crate::{bindings, error::code::EINVAL, error::Error, fmt, prelude::*};
+ //! Types and functions to work with pointers and addresses.
  
- /// PCI device class codes.
- ///
+-use core::fmt::Debug;
+ use core::mem::align_of;
+ use core::num::NonZero;
+ 
 
 -- 
 2.51.1
