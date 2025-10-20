@@ -1,168 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-64718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48FBBF2399
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 17:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33364BF243B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 17:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B2844EC02E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26EE189FBFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6420026738D;
-	Mon, 20 Oct 2025 15:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E248227BF7C;
+	Mon, 20 Oct 2025 15:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERHW9lew"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bnhi+g3V";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jmb7mHUP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eDSbH0dq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P5WSTFPT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD223A58B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 15:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52CD27A103
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 15:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975569; cv=none; b=M5HdK0dePAG9q76oqOjAIF5cZvf0HoyL/jX7whms9MmmeOJyC0TZd8Lq8wsAB8mB0HS/cBscFiMjLZZfXDaylKU79zlKn3GR8zCLo6SpTPc/MF1P32YAWSw54C0a/j1lYeEVMHK1euh0EaaExgfjhSSW+UFgkr3k8KG93CzFTaE=
+	t=1760975946; cv=none; b=AYRbwf0UOX9yMBGPDMtCeUGUGpMBLxNNykov2KiTiNLxSKNN5ViZZYHSPlhKRWhmYqAz81dSSiZYGt4+578y+yHB9xz6i7NWGJbkgRb5lksZbE9Av6LeYh+/TZ+8UI5bM5ouDAieDimneoCsbTiC5XCNuiMqClD5YZVXXeXGW6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975569; c=relaxed/simple;
-	bh=cBbmKe+uMRaejJbZw811aciwMt8tWwG5REOIrWKzsQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V78YsZS6atmVg33WEh98qHMxcRLX3kRdFIX0PgpMF5ZygpIudUCL5CCipgoRspzZeQgYybGvcaCI3lgdtQizd8aAMd5yr2hogN4YIS8O4wqaWxGnRel/RixbJZxzK3wcSIVGAFgBecpdnOSrfqZT6Q+tsq4aUdFeAbh3gHNsiRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERHW9lew; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b67ae7e76abso3297674a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 08:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760975567; x=1761580367; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/TAOnKpEv75WMe0jsAfaKx3rckeoydUaySkiUqKbnM=;
-        b=ERHW9lewHJygB57PRGNVSCJenPsh5yiSBWCbFzeQyoLWVhcuIWK+CsPOS6NlgoDqmZ
-         DlbacfErRj8kpcSvIhF+KZsTD3mhTjDGBX3n4IMlRZzEtOcOHqidoiLXLfxbO9cCyy/d
-         w3n09yvlY7+u7/8rzOO0ziavpMshCvYEymMPaxQnZF6GYBaix7YW0eq0XbPgMRpaWa6n
-         vhA740ivGuaq0HSuqNWyaLMymCMhOFu7+FFXp6qosjCVUn7ILqw+AU0TI5BNTA0SG/GD
-         8bpYJJGQzb8ZDjAHnZBMoyfg4jcEkdbVJ3vjJIydSuI+J3HH7ET4rwRq16bKSn64v7su
-         rjYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760975567; x=1761580367;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8/TAOnKpEv75WMe0jsAfaKx3rckeoydUaySkiUqKbnM=;
-        b=gitkZYwUXcLzwFGlaF9ANRBHiQFu/CQf1lYd6u5aZZbnXA3WGylGkxd/ARWvUa2GOZ
-         7EQOq/YijQoIrf+3bMwmR74YyDat6aU0p4veQ6R0fw4TkKfDYihIXYNEMhlmpe6O3yqs
-         PRZjGNjy/zB8N5z8ncWfnGoTyzK+KLFUCHNMR3ufScxHai4zP+6XuBGw0a0YYDm+Q32X
-         4He8VQJPYP/95gHWViillFANw473c71iuHXtIH9R9q+4H0ZbH9DarFknFAJZ5u4iG3Rv
-         jzeZqLLCsD5w/zM4bxcC+NnzewpVnxHvbJCrZn21qa2QB3a7Nf3vSeQ8pbdTv+ulkpyX
-         KtRA==
-X-Gm-Message-State: AOJu0YyGcbcsgf/fShBfI5n55JEkqPg4dAL6wAxhTv7tzP103iVXZEqR
-	Jj2IbjkryTEnhYbpqfpVWpPMhPVrptDMGBoVCVGCiU3DQUSJD71dW2qn+Eg4a4H8Qb0=
-X-Gm-Gg: ASbGncsnWJm2rOIL4il/nmccQN0xUGbMBeN+w2PFowYYrjAaEVmx1ri/v67tahig73I
-	fEdqfjKWBncTZY69lbxHzH2kyVzLAUe574uww/Ev+VSq9IJs+15WBpb2ClZrpHHBs0TNzG+Llkb
-	DffMdtfMbWkISW/kXCFZa0mtUD4zox+dsr3OhktWlX/FZZ+T17TFrTLpyn/DxUoblQNDfXM0kdd
-	rxSTDQl3ckC7cK873MnUHRiuq1jmDdHK/0HImdCkRlfyoEJC6Y/34+UTyxqynWz2UD/seex7cgx
-	jGQQxutDPbRH081tp/XL408FPl5uGfwqU34sg11Mz3o4l0Q/tvd6XqKPObo5a/KQ5N4H9x95pqk
-	KEtBhTrwg1fmNzt6kDciJv7T2AvXqQMGX3nHS6SHVV9QqKU1vVjAm8drX/41vJ5JK6YRc3vHna7
-	JK+LJLbWSaAUY=
-X-Google-Smtp-Source: AGHT+IFQ8hZ5tUwpC165bOqaQ92SrE4Fc3ZtbwB/RtHjroe+D4iXpymYDAlQAHdeMjvKVW+0ojPfdA==
-X-Received: by 2002:a17:902:ce12:b0:27e:ec72:f62 with SMTP id d9443c01a7336-290c9c89b06mr160035085ad.6.1760975567434;
-        Mon, 20 Oct 2025 08:52:47 -0700 (PDT)
-Received: from sysxso25 ([154.236.162.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292471fdcccsm83505165ad.78.2025.10.20.08.52.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 08:52:47 -0700 (PDT)
-From: abdulrahmannader.123@gmail.com
-To: linux-fsdevel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Subject: RFC: Request for guidance on VFS statistics consolidation
-Date: Mon, 20 Oct 2025 18:52:28 +0300
-Message-ID: <20251020155228.54769-1-abdulrahmannader.123@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760975946; c=relaxed/simple;
+	bh=oPxzTs6WsuKHqebg42NTifrc63HsEvL1hy6GgDh6TXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWjZmKf988dMyId26vQtrWJlWnGh8VeiVylOEIrTxX2T/zkZGm6TTWLMSz2oiv4aqeKbdemPn0A4bH/7Xexdt0AfwFNpcBj5tKaNHPvFMWyHg2eS19lPwOxg2b0arqJENQpyDW4wBQyR9Am1yzLWKivtkX0opLNSOnECLj9ANFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bnhi+g3V; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jmb7mHUP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eDSbH0dq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P5WSTFPT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B09F8211AD;
+	Mon, 20 Oct 2025 15:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760975938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+T13MT5+DVqI4FOljyY2wyHe35kwNpItnKtnAfrs7U=;
+	b=bnhi+g3V4guyjrFM7W2wvNQYgft8AKwfnrmdAJfYt+OshztZCGnA1OLjpJEGZIFD2RyIeB
+	0xCUTtvLxJmDGaz2Hjk5AUzrIJZ2m42QncakyNgpWMG5GRQloTyBkPAyCYSdl47ukrkEAh
+	Pxm1sV4k/jmAPJwphJBbggz9CK0Lt8g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760975938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+T13MT5+DVqI4FOljyY2wyHe35kwNpItnKtnAfrs7U=;
+	b=jmb7mHUPVa8eqJyOkhrTMAJqcVl0YdILYwlGdaxHrB9Bg+CkElEHgd7V5CWs/1fw2LgFxM
+	7MiFG2FTf5cyVNAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760975934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+T13MT5+DVqI4FOljyY2wyHe35kwNpItnKtnAfrs7U=;
+	b=eDSbH0dqSfRA6WHKd9eLOdNQcxqexCI4JCFeyuSRhL4zpE3t9/I286H+RaDKonEHzKtgkm
+	s5JBwkXqBlXOmjwrbCT9ixRSjikaAiX5mfxrkXJwfZY38sixPiNF2z25ST6srKiIHUFz4Y
+	vqVvzvIQ0MkIc6GcPvVoNyvIm7A+OLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760975934;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+T13MT5+DVqI4FOljyY2wyHe35kwNpItnKtnAfrs7U=;
+	b=P5WSTFPTevE66kkbFzbp2BlR5n8P+P85VjF6E9ukLw6GquJTeMbJVLmhe4KZGa+kJD0dNh
+	hn8X7c3dF213TYCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A1EB413AAC;
+	Mon, 20 Oct 2025 15:58:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V4+DJz5c9mhJeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 Oct 2025 15:58:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 536C2A088E; Mon, 20 Oct 2025 17:58:54 +0200 (CEST)
+Date: Mon, 20 Oct 2025 17:58:54 +0200
+From: Jan Kara <jack@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
+	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, djwong@kernel.org, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-mm@kvack.org, martin.petersen@oracle.com, jack@suse.com
+Subject: Re: O_DIRECT vs BLK_FEAT_STABLE_WRITES, was Re: [PATCH] btrfs: never
+ trust the bio from direct IO
+Message-ID: <xc2orfhavfqaxrmxtsbf4kepglfujjodvhfzhzfawwaxlyrhlb@gammchkzoh2m>
+References: <1ee861df6fbd8bf45ab42154f429a31819294352.1760951886.git.wqu@suse.com>
+ <aPYIS5rDfXhNNDHP@infradead.org>
+ <56o3re2wspflt32t6mrfg66dec4hneuixheroax2lmo2ilcgay@zehhm5yaupav>
+ <aPYgm3ey4eiFB4_o@infradead.org>
+ <mciqzktudhier5d2wvjmh4odwqdszvbtcixbthiuuwrufrw3cj@5s2ffnffu4gc>
+ <aPZOO3dFv61blHBz@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPZOO3dFv61blHBz@casper.infradead.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-Hi linux-fsdevel,
+On Mon 20-10-25 15:59:07, Matthew Wilcox wrote:
+> On Mon, Oct 20, 2025 at 03:59:33PM +0200, Jan Kara wrote:
+> > The idea was to bounce buffer the page we are writing back in case we spot
+> > a long-term pin we cannot just wait for - hence bouncing should be rare.
+> > But in this more general setting it is challenging to not bounce buffer for
+> > every IO (in which case you'd be basically at performance of RWF_DONTCACHE
+> > IO or perhaps worse so why bother?). Essentially if you hand out the real
+> > page underlying the buffer for the IO, all other attemps to do IO to that
+> > page have to block - bouncing is no longer an option because even with
+> > bouncing the second IO we could still corrupt data of the first IO once we
+> > copy to the final buffer. And if we'd block waiting for the first IO to
+> > complete, userspace could construct deadlock cycles - like racing IO to
+> > pages A, B with IO to pages B, A. So far I'm not sure about a sane way out
+> > of this...
+> 
+> There isn't one.  We might have DMA-mapped this page earlier, and so a
+> device could write to it at any time.  Even if we remove PTE write
+> permissions ...
 
-I'm a new contributor learning kernel development, and I would like
-some guidance before proceeding further.
+True but writes through DMA to the page are guarded by holding a page pin
+these days so we could in theory block getting another page pin or mapping
+the page writeably until the pin is released... if we can figure out a
+convincing story for dealing with long-term pins from RDMA and dealing with
+possible deadlocks created by this.
 
-Background
-==========
-
-I've been exploring VFS statistics collection. While doing so, I noticed
-that VFS statistics are currently exposed via several separate interfaces:
-
-  - /proc/sys/fs/dentry-state
-  - /proc/sys/fs/inode-state
-  - /proc/sys/fs/inode-nr
-  - /proc/sys/fs/file-nr
-  - /proc/sys/fs/file-max
-
-My Questions
-============
-
-Before investing more time in implementation, I wanted to understand
-the rationale behind the current design and get some feedback:
-
-1. Is the current multi-file approach intentional?
-   Are there specific benefits to keeping these statistics separate
-   that I might not be aware of?
-
-2. Would a consolidated interface be useful?
-   Would there be interest in a single file that aggregates common VFS
-   metrics, or is the current approach preferred?
-
-3. What's the recommended way to extend VFS observability?
-   If there are gaps in the current monitoring capabilities, which of
-   the following approaches is preferred:
-     - Extend existing interfaces?
-     - Add new specialized interfaces?
-     - Enhance debugfs entries?
-     - Something else?
-
-4. Are there any existing efforts to improve this area?
-   I want to avoid duplicating work that might already be in progress.
-
-Context
-=======
-
-I have written a small prototype that collects these stats into a
-single sysctl entry (/proc/sys/fs/vfsstats), mainly as a learning
-exercise. I understand this might duplicate existing functionality or
-not align with established design principles.
-
-Before polishing the code or writing documentation, I wanted to
-understand:
-
-  - Whether this direction makes sense at all
-  - The right approach if there is room for improvement
-  - Common mistakes to avoid as a new contributor
-
-Learning Goals
-==============
-
-I'm genuinely interested in:
-
-  - Understanding the design decisions behind the VFS
-  - Learning what constitutes a good kernel patch
-  - Contributing meaningfully, even if this specific idea is not viable
-
-Any guidance, pointers to documentation, or suggestions for better
-approaches would be greatly appreciated. I'm also happy to work on
-smaller bug fixes or improvements if that would be more useful.
-
-Thanks for your time and patience with a newcomer,
-
-Abdulrahman Nader
-abdulrahmanxso25@outlook.com
-
-P.S. If this is not the right venue for these questions, please
-advise where I should ask instead.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
