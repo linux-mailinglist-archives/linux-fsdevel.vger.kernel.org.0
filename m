@@ -1,49 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-64776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E89BF3CE6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:01:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95E3BF3CEC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DBB18A55B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 22:02:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 232354F6BBC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 22:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68BB2F12C1;
-	Mon, 20 Oct 2025 22:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236ED2F12D9;
+	Mon, 20 Oct 2025 22:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVxw38Ss"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE0pAF6g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362CA20966B;
-	Mon, 20 Oct 2025 22:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5509E2D0C62;
+	Mon, 20 Oct 2025 22:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760997679; cv=none; b=mu/SWYuimaMzUh/1keCRJ9edZ0c0SWNqVauSfkf+ohQ1mNav2kHudYedcscpHN72GNLa4NeRSNnJKFqQX7FgIoKADQfEmF28UFjmEccg6yRD+ddI2sBA+eTepeZ861ksa6yeypXPjSnINJWrCNX9VcSarAnOZCv65wsIQJAtbHM=
+	t=1760997679; cv=none; b=fJfQ856Q8Am7NpJt8otykHEU5mhziRQHq7UmDqcD5CatawAaisltP8+wMS2rAKsjlslNgcwTSa0CdgMP9xUOIVa/j3ko1U93D75Mmu0Won+MzSE24M05V43r8ZSbm/6MH7bN1W8EY8ZtGZU4E65UNoKYeYHhsuJd1lbdo+R5TPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760997679; c=relaxed/simple;
-	bh=/jk04nuQCuJInz/KNpaoxJIfVcgkemJOGj6M7ncv4Qs=;
+	bh=7+0qu+Gu0CqwtZbcxHs4OLhPuV8Fj8KuBq9/KFtLGnY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZQfJ+dUIjxZzDJQ0jV5M/4oOSqZRVOnTUet7hWQGk9JUKKGxab883UNVo/xw29KF0LEpowrt0LS3SWHtLbLyxtlvOwrQWILvrHcWKcxwNGb9m2G7tXDjAUcWkug3MI4UQZLGSDm0sFDxBT5r7siajb6OFKkytvdc79QSdiUSKKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVxw38Ss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5B51C113D0;
+	 MIME-Version; b=un0aObGtPLr8f0Gr40N3bJhoZoZgajBoq/MCf8Y1ckNcKw3N0wo3ZoGS23TE+huOd9ccwQq2OvGI27R6W9FKdJyy1uQoKWLx8SX40QIugjT0Y+/qiiVDKlg+ckH0PcXUkcDQugZ76h62ofsrJpoA2NyfNElrSJPljHUJIxLs/OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE0pAF6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7890C116D0;
 	Mon, 20 Oct 2025 22:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760997678;
-	bh=/jk04nuQCuJInz/KNpaoxJIfVcgkemJOGj6M7ncv4Qs=;
+	bh=7+0qu+Gu0CqwtZbcxHs4OLhPuV8Fj8KuBq9/KFtLGnY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dVxw38SsaEBpGnRxtU9fHqd60UIUWUzTHw2ty+G4BbTMWORiV4MyiTJpF4KvhA6HZ
-	 rK9O1qOcWPaMXfeuHLiq0Bg8hKfdQXw9y8RkDHhh1iGeRwrutb187DsBvlrr90Q0Yq
-	 UBCTl/Nhx7ZnlWdgXKJei3iaZ4IrEpPJnszNExWSnU6rT64deH90moN6HekTC4upNz
-	 ZE93XY/NHce1wV/p7KSNacI805banw6BNKIzg6mRncZBrnhhXoeEl7uIHg5hp7y7ZY
-	 ddd3VWurUVb14fYcAjR71HOJH+00gBMsy5hJa9Zq6tBdO0P9XtEZQLSKlyuP9lrhdq
-	 GrNIDqrpXG13g==
+	b=IE0pAF6gtzyz+Wp8tXsF0dcWrkIeTEu5HXMsKrLz1Z9AR8nJ4i4ZMkUDzDgF0m8pH
+	 Fjt3tygypFFzHVgFYMT2f+r1oNO5zwEOIBGwUcjiGqYE/xr3XggqMnGsDo3wWBv9TR
+	 wbeGozBQhFYF5UGcf84xMxcqIZVtsQsvySEucBErs96Cz8c9qYhJpS1oDRGTMOVGrx
+	 a/23yabAl6nMWrW5Y8caWSxwlQHom8Ik9mBsjxGDFEzbHhwZs8sw52J3DpGqwhyw5b
+	 WPMRpd/NuB6s0Xa24OAPH2EUn0/sJmpyybDyZtzsB6roGJK/V5tqj/XcbIQqFBRmR3
+	 3sFq4LqpwHz4w==
 From: Kees Cook <kees@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>
 Cc: Kees Cook <kees@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
 	Nathan Chancellor <nathan@kernel.org>,
 	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Bill Wendling <morbo@google.com>,
@@ -55,10 +58,6 @@ Cc: Kees Cook <kees@kernel.org>,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Johannes Weiner <hannes@cmpxchg.org>,
-	llvm@lists.linux.dev,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>,
 	Nicolas Schier <nicolas.schier@linux.dev>,
@@ -84,13 +83,14 @@ Cc: Kees Cook <kees@kernel.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	Brian Gerst <brgerst@gmail.com>,
 	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-kbuild@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-Date: Mon, 20 Oct 2025 15:01:15 -0700
-Message-Id: <20251020220118.1226740-1-kees@kernel.org>
+Subject: [PATCH 2/3] lkdtm/bugs: Add __counted_by_ptr() test PTR_BOUNDS
+Date: Mon, 20 Oct 2025 15:01:16 -0700
+Message-Id: <20251020220118.1226740-2-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251020220005.work.095-kees@kernel.org>
 References: <20251020220005.work.095-kees@kernel.org>
@@ -100,150 +100,168 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5213; i=kees@kernel.org; h=from:subject; bh=/jk04nuQCuJInz/KNpaoxJIfVcgkemJOGj6M7ncv4Qs=; b=owGbwMvMwCVmps19z/KJym7G02pJDBnfNuq8mHjJ6c3aRUtcjppaq+Zv9Uh+dn63Am9N/aT/H Bkcr3e/6ShlYRDjYpAVU2QJsnOPc/F42x7uPlcRZg4rE8gQBi5OAZiI+1lGhruzI19PnOUiJKb2 9kFKjBXH8+zPFi2rGKLSSzfFTHrxPpKR4ckJ1sSFxw6u68oRYcwszNzRt6CJ5b1t9ZuKQ3PZu+c eZQMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4744; i=kees@kernel.org; h=from:subject; bh=7+0qu+Gu0CqwtZbcxHs4OLhPuV8Fj8KuBq9/KFtLGnY=; b=owGbwMvMwCVmps19z/KJym7G02pJDBnfNur8unplg3+cLl+j6ZMb02M/feXZ4V00bcPbk1vlZ +jW/als7ihlYRDjYpAVU2QJsnOPc/F42x7uPlcRZg4rE8gQBi5OAZjIvWxGhkPTVYrmBLvdX/wt U/qSt9K/luwf/Nk3j4kVfTOWj/9UcoOR4VjH9uQz1wTE5fNa7zXVOzzu7dT9G6dts8N6e9Orshm MDAA=
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Introduce __counted_by_ptr(), which works like __counted_by(), but for
-pointer struct members:
+Provide run-time validation of the __counted_by_ptr() annotation via
+newly added PTR_BOUNDS LKDTM test.
 
-struct foo {
-	int a, b, c;
-	char *buffer __counted_by_ptr(bytes);
-	short nr_bars;
-	struct bar *bars __counted_by_ptr(nr_bars);
-	size_t bytes;
-};
-
-Since "counted_by" can only be applied to pointer members in very recent
-compiler versions, its application ends up needing to be distinct from
-flexible array "counted_by" annotations, hence a separate macro.
-
-Unfortunately, this annotation cannot be used for "void *" members
-(since such a member is considered a pointer to an incomplete type,
-and neither Clang nor GCC developers could be convinced otherwise[1],
-even in the face of the GNU extension that "void *" has size "1 byte"
-for pointer arithmetic). For "void *" members, we must use the coming
-"sized_by" attribute.
-
-Link: https://gcc.gnu.org/pipermail/gcc-patches/2025-May/683136.html [1]
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
-Cc: Miguel Ojeda <ojeda@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-Cc: Bill Wendling <morbo@google.com>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Marco Elver <elver@google.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: <llvm@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- init/Kconfig                   | 11 +++++++++++
- Makefile                       |  4 ++++
- include/linux/compiler_types.h | 21 ++++++++++++++++++++-
- include/uapi/linux/stddef.h    |  4 ++++
- 4 files changed, 39 insertions(+), 1 deletion(-)
+ drivers/misc/lkdtm/bugs.c               | 90 ++++++++++++++++++++++---
+ tools/testing/selftests/lkdtm/tests.txt |  2 +
+ 2 files changed, 84 insertions(+), 8 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index cab3ad28ca49..54691b086bc6 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -139,6 +139,17 @@ config CC_HAS_COUNTED_BY
- 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
- 	default y if CC_IS_GCC && GCC_VERSION >= 150100
+diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+index 376047beea3d..a069a7d686fc 100644
+--- a/drivers/misc/lkdtm/bugs.c
++++ b/drivers/misc/lkdtm/bugs.c
+@@ -414,32 +414,32 @@ static void lkdtm_ARRAY_BOUNDS(void)
+ 		pr_expected_config(CONFIG_UBSAN_BOUNDS);
+ }
  
-+config CC_HAS_COUNTED_BY_PTR_BARE
-+	def_bool $(success,echo 'struct foo { int *ptr __attribute__((__counted_by__(count))); int count; };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
+-struct lkdtm_annotated {
++struct lkdtm_cb_fam {
+ 	unsigned long flags;
+ 	int count;
+ 	int array[] __counted_by(count);
+ };
+ 
+-static volatile int fam_count = 4;
++static volatile int element_count = 4;
+ 
+ static void lkdtm_FAM_BOUNDS(void)
+ {
+-	struct lkdtm_annotated *inst;
++	struct lkdtm_cb_fam *inst;
+ 
+-	inst = kzalloc(struct_size(inst, array, fam_count + 1), GFP_KERNEL);
++	inst = kzalloc(struct_size(inst, array, element_count + 1), GFP_KERNEL);
+ 	if (!inst) {
+ 		pr_err("FAIL: could not allocate test struct!\n");
+ 		return;
+ 	}
+ 
+-	inst->count = fam_count;
++	inst->count = element_count;
+ 	pr_info("Array access within bounds ...\n");
+-	inst->array[1] = fam_count;
++	inst->array[1] = element_count;
+ 	ignored = inst->array[1];
+ 
+ 	pr_info("Array access beyond bounds ...\n");
+-	inst->array[fam_count] = fam_count;
+-	ignored = inst->array[fam_count];
++	inst->array[element_count] = element_count;
++	ignored = inst->array[element_count];
+ 
+ 	kfree(inst);
+ 
+@@ -454,6 +454,79 @@ static void lkdtm_FAM_BOUNDS(void)
+ 		pr_expected_config(CONFIG_UBSAN_BOUNDS);
+ }
+ 
++struct lkdtm_extra {
++	short a, b;
++	u16 sixteen;
++	u32 bigger;
++	u64 biggest;
++};
 +
-+config CC_HAS_COUNTED_BY_PTR_EXP
-+	def_bool $(success,echo 'struct foo { int *ptr __attribute__((__counted_by__(count))); int count; };' | $(CC) $(CLANG_FLAGS) -fexperimental-late-parse-attributes -x c - -c -o /dev/null -Werror)
-+	depends on !CC_HAS_COUNTED_BY_PTR_BARE
++struct lkdtm_cb_ptr {
++	int a, b, c;
++	int nr_extra;
++	char *buf __counted_by_ptr(len);
++	size_t len;
++	struct lkdtm_extra *extra __counted_by_ptr(nr_extra);
++};
 +
-+config CC_HAS_COUNTED_BY_PTR
-+	def_bool y
-+	depends on CC_HAS_COUNTED_BY_PTR_BARE || CC_HAS_COUNTED_BY_PTR_EXP
++static noinline void check_ptr_len(struct lkdtm_cb_ptr *p, size_t len)
++{
++	if (__member_size(p->buf) != len)
++		pr_err("FAIL: could not determine size of inst->buf: %zu\n",
++			__member_size(p->buf));
++	else
++		pr_info("good: inst->buf length is %zu\n", len);
++}
 +
- config CC_HAS_MULTIDIMENSIONAL_NONSTRING
- 	def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring__)) = { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
- 
-diff --git a/Makefile b/Makefile
-index d14824792227..1b297dcbb0df 100644
---- a/Makefile
-+++ b/Makefile
-@@ -933,6 +933,10 @@ KBUILD_CFLAGS	+= $(CC_AUTO_VAR_INIT_ZERO_ENABLER)
- endif
- endif
- 
-+ifdef CONFIG_CC_HAS_COUNTED_BY_PTR_EXP
-+KBUILD_CFLAGS	+= -fexperimental-late-parse-attributes
-+endif
++static void lkdtm_PTR_BOUNDS(void)
++{
++	struct lkdtm_cb_ptr *inst;
 +
- # Explicitly clear padding bits during variable initialization
- KBUILD_CFLAGS += $(call cc-option,-fzero-init-padding-bits=all)
- 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 59288a2c1ad2..f197ea03b593 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -353,11 +353,14 @@ struct ftrace_likely_data {
- #endif
- 
- /*
-+ * Runtime track number of flexible array member elements for use by
-+ * CONFIG_FORTIFY_SOURCE and CONFIG_UBSAN_BOUNDS.
-+ *
-  * Optional: only supported since gcc >= 15
-  * Optional: only supported since clang >= 18
-  *
-  *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
-- * clang: https://github.com/llvm/llvm-project/pull/76348
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#counted-by-counted-by-or-null-sized-by-sized-by-or-null
-  *
-  * __bdos on clang < 19.1.2 can erroneously return 0:
-  * https://github.com/llvm/llvm-project/pull/110497
-@@ -371,6 +374,22 @@ struct ftrace_likely_data {
- # define __counted_by(member)
- #endif
- 
-+/*
-+ * Runtime track number of objects pointed to by a pointer member for
-+ * use by CONFIG_FORTIFY_SOURCE and CONFIG_UBSAN_BOUNDS.
-+ *
-+ * Optional: only supported since gcc >= 16
-+ * Optional: only supported since clang >= 20
-+ *
-+ *   gcc: https://gcc.gnu.org/pipermail/gcc-patches/2025-April/681727.html
-+ * clang: ...
-+ */
-+#ifdef CONFIG_CC_HAS_COUNTED_BY_PTR
-+# define __counted_by_ptr(member)	__attribute__((__counted_by__(member)))
-+#else
-+# define __counted_by_ptr(member)
-+#endif
++	inst = kzalloc(sizeof(*inst), GFP_KERNEL);
++	if (!inst) {
++		pr_err("FAIL: could not allocate struct lkdtm_cb_ptr!\n");
++		return;
++	}
 +
- /*
-  * Optional: only supported since gcc >= 15
-  * Optional: not supported by Clang
-diff --git a/include/uapi/linux/stddef.h b/include/uapi/linux/stddef.h
-index 9a28f7d9a334..111b097ec00b 100644
---- a/include/uapi/linux/stddef.h
-+++ b/include/uapi/linux/stddef.h
-@@ -72,6 +72,10 @@
- #define __counted_by_be(m)
- #endif
- 
-+#ifndef __counted_by_ptr
-+#define __counted_by_ptr(m)
-+#endif
++	inst->buf = kzalloc(element_count, GFP_KERNEL);
++	if (!inst->buf) {
++		pr_err("FAIL: could not allocate inst->buf!\n");
++		return;
++	}
++	inst->len = element_count;
 +
- #ifdef __KERNEL__
- #define __kernel_nonstring	__nonstring
- #else
++	/* Double element_count */
++	inst->extra = kcalloc(element_count * 2, sizeof(*inst->extra), GFP_KERNEL);
++	inst->nr_extra = element_count * 2;
++
++	pr_info("Pointer access within bounds ...\n");
++	check_ptr_len(inst, 4);
++	/* All 4 bytes */
++	inst->buf[0] = 'A';
++	inst->buf[1] = 'B';
++	inst->buf[2] = 'C';
++	inst->buf[3] = 'D';
++	/* Halfway into the array */
++	inst->extra[element_count].biggest = 0x1000;
++
++	pr_info("Pointer access beyond bounds ...\n");
++	ignored = inst->extra[inst->nr_extra].b;
++
++	kfree(inst->extra);
++	kfree(inst->buf);
++	kfree(inst);
++
++	pr_err("FAIL: survived access of invalid pointer member offset!\n");
++
++	if (!IS_ENABLED(CONFIG_CC_HAS_COUNTED_BY_PTR))
++		pr_warn("This is expected since this %s was built with a compiler that does not support __counted_by_ptr\n",
++			lkdtm_kernel_info);
++	else if (IS_ENABLED(CONFIG_UBSAN_BOUNDS))
++		pr_expected_config(CONFIG_UBSAN_TRAP);
++	else
++		pr_expected_config(CONFIG_UBSAN_BOUNDS);
++}
++
+ static void lkdtm_CORRUPT_LIST_ADD(void)
+ {
+ 	/*
+@@ -716,6 +789,7 @@ static struct crashtype crashtypes[] = {
+ 	CRASHTYPE(OVERFLOW_UNSIGNED),
+ 	CRASHTYPE(ARRAY_BOUNDS),
+ 	CRASHTYPE(FAM_BOUNDS),
++	CRASHTYPE(PTR_BOUNDS),
+ 	CRASHTYPE(CORRUPT_LIST_ADD),
+ 	CRASHTYPE(CORRUPT_LIST_DEL),
+ 	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
+diff --git a/tools/testing/selftests/lkdtm/tests.txt b/tools/testing/selftests/lkdtm/tests.txt
+index cff124c1eddd..204d4a669632 100644
+--- a/tools/testing/selftests/lkdtm/tests.txt
++++ b/tools/testing/selftests/lkdtm/tests.txt
+@@ -9,6 +9,8 @@ EXCEPTION
+ #CORRUPT_STACK Crashes entire system on success
+ #CORRUPT_STACK_STRONG Crashes entire system on success
+ ARRAY_BOUNDS call trace:|UBSAN: array-index-out-of-bounds
++FAM_BOUNDS call trace:|UBSAN: array-index-out-of-bounds
++PTR_BOUNDS call trace:|UBSAN: array-index-out-of-bounds
+ CORRUPT_LIST_ADD list_add corruption
+ CORRUPT_LIST_DEL list_del corruption
+ STACK_GUARD_PAGE_LEADING
 -- 
 2.34.1
 
