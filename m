@@ -1,45 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-64780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94144BF3E4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:27:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26EBBF3E54
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3DFF3505BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 22:27:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 266FF4EEE9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 22:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893802F260A;
-	Mon, 20 Oct 2025 22:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7BA2F360A;
+	Mon, 20 Oct 2025 22:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/dMo5kl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kj2R57ZL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67E713A3F7;
-	Mon, 20 Oct 2025 22:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3102E0417;
+	Mon, 20 Oct 2025 22:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760999265; cv=none; b=JpIq6CVYRcH3FyLO4aUeB7fIjJVE0XVZAiWDcP1yF3dcjVhywNTMR7nGxHRXCBWTpf4NMEENyVno1VXCEW85sNLa5qrODCIbegDE4Z2mq+X+LjdPCG+OWPDEJfyDHJIUi7nvgKlqSs6rZBrmYBqQrAkajR5c6gFz4f6Gu/gDjnc=
+	t=1760999271; cv=none; b=EKK3JdsYHzExQD9QTlwkZeFMdtUtS5t4UaE3HpXomzRataip/NTigukV5zasD/0DKv7ZvrJq6Ze1w/59AHnI+HtY6jVBcXT8bNN5JF41KXVyCPmjmjRZtWnnjCzy3TykKfrJM5xucHRfCCo8HrQuf+DPzRtvE89RVU+gfG3etxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760999265; c=relaxed/simple;
-	bh=1bFiqy/nwHmTPKhXtsHzab5hLO5D0v2lwrDJ+91V/JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rSyCbBiw6i/JUOBMpToCMD86CuvhdqMf++5ZnVkgXDO8NSoUTD7B88EnTpswO1jkgKGgaGWdg3nz9WbnfBhOCzrUWh57fO/JL3J5ajjfm3pHqYYtV4qf7lubbvV/FXftPxxfNtOyf02fdkBw41r54GaEa7SzrASONsLN2UTqU4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/dMo5kl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3656EC113D0;
-	Mon, 20 Oct 2025 22:27:41 +0000 (UTC)
+	s=arc-20240116; t=1760999271; c=relaxed/simple;
+	bh=/uHVdlzul1bTFFzVETy8ha9fQzrUajmzag8UgtqAoeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ft415UpaR/a5GFS8EAM3G6X8vM6VdcsW0dRvNfIKgqeW3qjIHHHbs+sLJDxY5O4aexjrJaWBoPu60ZoFp7lVse0wXpeQbqT/HBpZgyuJnQBDXrMZaOgY9N2SacakIP580wssR6ay2s3uZC0Xd4mLDAa9O8I4kP7u+fqTZWh9yAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kj2R57ZL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB1EC4CEFB;
+	Mon, 20 Oct 2025 22:27:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760999264;
-	bh=1bFiqy/nwHmTPKhXtsHzab5hLO5D0v2lwrDJ+91V/JM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=U/dMo5klXVVjOKQP9iqrPpy4K6ciNJ2l8Z7C0VQjgA40dfkAYZZs1RqY3iZ9UT3Wt
-	 KKbIJetFlNhVUzKOCrFwNW6PyaCqheaHVuFAQvZqWUDOz61HqgZIwjBg4TzbzQ3uNt
-	 VNI3LiSW2qg564rAGFiWIjeuDchnoQo9IZ7upBOdO2J81cEj9yp9Rp3GOSfa/+mSjk
-	 JaHudqYHusX9AoX7GMvn5/N5dSnXEUkB4HPmwRH/vEOXwywMI5fTjSib2mt1t43Pj2
-	 l9npjje80J0PpsW8wOMHx5+lbhiOZblP4ws+xkGy6XenNSeHGa5InfCfGGOqtJAjkq
-	 7qFdGw2rlBzgA==
+	s=k20201202; t=1760999268;
+	bh=/uHVdlzul1bTFFzVETy8ha9fQzrUajmzag8UgtqAoeI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Kj2R57ZLCpoX9fV5YnC3iNYoNKWjF2EFCisRF5szXkvdysfreznp9I4l6YaoJTt/B
+	 sVWSLgwE746n9+P/n4pTECbPobqZJl6N6I27g/THyGqk8Ga/xTZ+c70hLUIJaBMfQ2
+	 u1OlpWWECZQxBEd8uZKZklgEZ5cU8e3eM34wvI91GfJgBxji7/Gxs1RpIZ/tgyysWx
+	 5HwVG4p/5PDEI4ImSt8rzn3pv6tdBe/NOmt+LgEyILFzhKDae/Gqp++R0wK10EUiUK
+	 GBrE4mWbIxX75jyReTLFrZidpNph0B9mKeptuoopWvB+CUuMg0HveCY+KQnsaAMVZc
+	 Y32V5sAIVh4BA==
 From: Danilo Krummrich <dakr@kernel.org>
 To: gregkh@linuxfoundation.org,
 	rafael@kernel.org,
@@ -56,11 +57,16 @@ To: gregkh@linuxfoundation.org,
 Cc: rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 0/8] Binary Large Objects for Rust DebugFS
-Date: Tue, 21 Oct 2025 00:26:12 +0200
-Message-ID: <20251020222722.240473-1-dakr@kernel.org>
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+Date: Tue, 21 Oct 2025 00:26:13 +0200
+Message-ID: <20251020222722.240473-2-dakr@kernel.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251020222722.240473-1-dakr@kernel.org>
+References: <20251020222722.240473-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,60 +75,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds support for exposing binary large objects via Rust debugfs.
+Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
+avoid using raw bindings types, this seems to be the better alternative
+compared to just using i64.
 
-The first two patches extend UserSliceReader and UserSliceWriter with partial
-read/write helpers.
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+Al, Christian: If you are okay with the patch, kindly provide an ACK, so I can
+take it through the driver-core tree.
+---
+ rust/kernel/fs/file.rs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The series further introduces read_binary_file(), write_binary_file() and
-read_write_binary_file() methods for the Dir and ScopedDir types.
-
-It also introduces the BinaryWriter and BinaryReader traits, which are used to
-read/write the implementing type's binary representation with the help of the
-backing file operations from/to debugfs.
-
-Additional to some more generic blanked implementations for the BinaryWriter and
-BinaryReader traits it also provides implementations for common smart pointer
-types.
-
-Both samples (file-based and scoped) are updated with corresponding examples.
-
-A branch containing the patches can be found in [1].
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=debugfs_blobs
-
-Changes in v2:
-  - Add file::Offset type alias.
-  - uaccess:
-    - Saturate at buffer length on offset overflow.
-    - Use file::Offset instead of usize.
-  - debugfs:
-    - Use file::Offset instead of usize.
-    - Handle potential overflow when updating ppos.
-    - Use &T::FILE_OPS directly if possible.
-    - Fix safety comment in BinaryReaderMut::read_from_slice_mut().
-
-Danilo Krummrich (8):
-  rust: fs: add file::Offset type alias
-  rust: uaccess: add UserSliceReader::read_slice_partial()
-  rust: uaccess: add UserSliceWriter::write_slice_partial()
-  rust: debugfs: support for binary large objects
-  rust: debugfs: support blobs from smart pointers
-  samples: rust: debugfs: add example for blobs
-  rust: debugfs: support binary large objects for ScopedDir
-  samples: rust: debugfs_scoped: add example for blobs
-
- rust/kernel/debugfs.rs              | 110 +++++++++++++++-
- rust/kernel/debugfs/file_ops.rs     | 145 ++++++++++++++++++++-
- rust/kernel/debugfs/traits.rs       | 190 +++++++++++++++++++++++++++-
- rust/kernel/fs/file.rs              |   5 +
- rust/kernel/uaccess.rs              |  49 +++++++
- samples/rust/rust_debugfs.rs        |  13 ++
- samples/rust/rust_debugfs_scoped.rs |  14 +-
- 7 files changed, 515 insertions(+), 11 deletions(-)
-
-
-base-commit: 340ccc973544a6e7e331729bc4944603085cafab
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index cf06e73a6da0..021a6800b46c 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -17,6 +17,11 @@
+ };
+ use core::ptr;
+ 
++/// Primitive type representing the offset within a [`File`].
++///
++/// Type alias for `bindings::loff_t`.
++pub type Offset = bindings::loff_t;
++
+ /// Flags associated with a [`File`].
+ pub mod flags {
+     /// File is opened in append mode.
 -- 
 2.51.0
 
