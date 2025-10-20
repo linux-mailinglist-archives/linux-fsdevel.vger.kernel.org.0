@@ -1,204 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-64716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61325BF22A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 17:42:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A359BF2393
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 17:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CD0C34DC63
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:42:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CAD1A34DFEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC35626F292;
-	Mon, 20 Oct 2025 15:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAE626C384;
+	Mon, 20 Oct 2025 15:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KBL/eZfM"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VGgHkTUd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF4B242D9E;
-	Mon, 20 Oct 2025 15:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974966; cv=pass; b=O1kqHPaPYKwdygiFDCPLluwGOuiQ+qnBZG4al1xPzozaI9zEt0+4cMixpTmiQpHknvkJx+xGi/58YkX2TPFrJvdKGF0hjAKl/++7e2jA/ZpMS3LRZ+T6wP4jrjAfxxHlMOx4TCt8yhdyivseI3QyJhNGNNRjzqiKtaDE20qbclA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974966; c=relaxed/simple;
-	bh=+zCfMEaimnIQeBDYATDZG9tN7TJnlorbW9UQo+gSdbo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NvJnK6RdXg+HNhygS102ayPBmEX+Rtse85p0lVCarz86UxAn0Fm0OqftSLbIuzw34nH/xcpSwVU1xHV430aP1qFwsd2EeAbAeIt8YKvc1ni4a7a9DEjYn2sPDFu8fneqU8vNYCA5MNNi2ApE/wcmyEM1uj6OKqJmc/ipYQ5B8mc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KBL/eZfM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760974820; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ai6yEfvevnlicRnC6hUZILro9Xj58jvdixOTEejaTJAezMeYe2ReXvP5lgDe/WINSHWappBOFgEKq2//QLzV3b+ybSJd1N53dm9QBOeZUyqBWjfDkjkemswx40u7RhWcRhpjoxq72o2qvG8MdqeHNz7E7o1wMCgC4ipN2l4sh+s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760974820; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=md/pBzoYcFzUHz80KevulIkZ5BiZWUg/YH97ioL+0fI=; 
-	b=HdM+49AnxQEKmoKUYQiZRIpVoAcA/DC0xlvRuxm8uf3W/fbDEia6nOs7GWoOtzoYE/UGda73iO9UBeIe/TCmPXDp0tkYKHbb1X3UKJZ0s7dPQMKxEWoXpALSm1wZ6mM2D4paCoug77yh/yogs5AUlLFDy+Dezq7mT6gkz4+RGiQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760974820;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=md/pBzoYcFzUHz80KevulIkZ5BiZWUg/YH97ioL+0fI=;
-	b=KBL/eZfMEc9QO++XN/8UsD5kyy7gAS7vSEROcPEP17Q3eWx1vZVA4+k0asFa5R0J
-	sTiiTblJtBEBMOtWvm98i8Kz/P/1W/M+5ncofRvrtjwyn46hZcH0B0AclLDJgq63STK
-	5Y/3Su2IZ1it6kk4ifqtXzfZAmYnm6mnjyTd48zQ=
-Received: by mx.zohomail.com with SMTPS id 1760974819040413.8982192024972;
-	Mon, 20 Oct 2025 08:40:19 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B49275B1A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 15:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760975530; cv=none; b=nnr0+jy4brtn/adUHsrcUNdFgdRewfWXesfSfZQheisw16nkA4+Gu+Ra07thSK7ZDERCVUsOQAtcAY3cebfw31Yd1pID0ywrJRoAjWc3q/GYiSlU7ro6jBVhi7U9bQqBjTMPuu2UHohbYGSqMjlF5ECT3Xmt42Kefyx09IDGgCU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760975530; c=relaxed/simple;
+	bh=nh7KmG91llH0eTJy2kGD6whEVv3qZowTvAaONNXWCzA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mC4+SvxI8YfoQMb2t4a/8nFX4JiV8AmwrJv967ARkVkqCcSVRV0k2MYiGaeV6IiN+ZquSO/Fe8BgpE6kt70lWPTT0Uik6WlxSyDHy/7UsTx3qWp2btB3jkTSiFu1l9BJFoz8WFR+8FjRJhWPO1lhhyzsPFsuN8QDVzRDDpNjZ2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VGgHkTUd; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3304def7909so3770937a91.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 08:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760975527; x=1761580327; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUxEjev6w4f1umuBxGfAcuaZR32QUUEbuSMBs3oceNE=;
+        b=VGgHkTUdhZTj02Irb7NYvhGZfItj+GtjPAlSpLrvrHnKkNp5OVt+BQ95EwoJZAfzHk
+         WB2D1/bKrttYimuybRv/06WxtsUw7I1J7SDDK+LDf8ME+notiictwNYi9EyFUk+M/cM9
+         KJ1LyTj3K5idElljaGq7GKrWUjQuiZVjTb6Yn/P7w94Vsqxct7svktYODSJSAkbau8I9
+         JuFHMUbNnOtBoyf+jtuDTo5/N7x3xD3znQUow0tEs+HY79iFFlj4Z8KdZIY2qL4EcrPE
+         SltyuRfv/PylxxFOT8lNfNnBT0GwzfTV0ll1VsMV4tZ69ZoEDZizWL9obNkRzJjRXpqw
+         2/0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760975527; x=1761580327;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUxEjev6w4f1umuBxGfAcuaZR32QUUEbuSMBs3oceNE=;
+        b=fTIwEtprjfJa/sRUsJZe73Kj7giRpU7JQRbGGh8jXNZGMgnbFs1h8weH8mOgK6Z8hT
+         vQG+O5tj4YMjp9iOfBRXNzxWhTCf0l7CbMpGh5rSB3wVO0TDVWHheVhoZsCozrpb/1Sc
+         nxUxmw2sEBNuMJ1cdLSwXv+9GHbrVY/Ze8cDq0LYohuLvlt8+Ral8F5e2T0VhhOTjsYN
+         ZXaiX0TOnOLJDYaVei4e9C5SpvYqhv5y+S0y/ViDZ+Lfe9mxO7e3tg02ZxFIs4SVG79N
+         4MCZ1YD0I7zS0Y6640N/kfiWaIufwJTo/RwY9dVGy1gNeYYWTLgZqqrlk8NkDAvyFTLD
+         lOQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcENQd0uXwp7Mgi0RU4BullQTPb0o4wRC1fQkYaf2abtNTVHhzC8WvjHPYMVp3arcDY9KSTfy3JmI6uOmW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYhAmtvR3mXeg/UJRxv1Ogytd19dmAktMHkAqiqZyJ0/BxbPEY
+	9y4Z6/BMaIr5mvOlsJJMlO0XnK7med/POUXbbh84+8HktjmrcEAhrzACSmZcS32IYJB7lZpxyk1
+	HnhB1oQ==
+X-Google-Smtp-Source: AGHT+IHcZobfkAMYLqgP+952/xufHk4lZqraqyIEs0BsZFGgLzowAsqRVArAQbVQNZgQWXn7bmNPNT9qaaI=
+X-Received: from pjbds19.prod.google.com ([2002:a17:90b:8d3:b0:33b:51fe:1a84])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d85:b0:330:4a1d:223c
+ with SMTP id 98e67ed59e1d1-33bcf87f421mr15625676a91.15.1760975526813; Mon, 20
+ Oct 2025 08:52:06 -0700 (PDT)
+Date: Mon, 20 Oct 2025 08:52:05 -0700
+In-Reply-To: <176055105546.1527431.3611256810380818215.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [RESEND PATCH v18 13/16] rust: regulator: use `CStr::as_char_ptr`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20251018-cstr-core-v18-13-9378a54385f8@gmail.com>
-Date: Mon, 20 Oct 2025 12:39:52 -0300
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Todd Kjos <tkjos@android.com>,
- Martijn Coenen <maco@android.com>,
- Joel Fernandes <joelagnelf@nvidia.com>,
- Christian Brauner <brauner@kernel.org>,
- Carlos Llamas <cmllamas@google.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Jens Axboe <axboe@kernel.dk>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Breno Leitao <leitao@debian.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Russ Weight <russ.weight@linux.dev>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org,
- linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org,
- llvm@lists.linux.dev,
- Tamir Duberstein <tamird@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C487CA8E-E8B6-4294-8081-D629DDD80253@collabora.com>
-References: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
- <20251018-cstr-core-v18-13-9378a54385f8@gmail.com>
-To: Tamir Duberstein <tamird@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <176055105546.1527431.3611256810380818215.b4-ty@google.com>
+Message-ID: <aPZapWWFGyqjA2e3@google.com>
+Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
+From: Sean Christopherson <seanjc@google.com>
+To: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
+	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
+	Shivank Garg <shivankg@amd.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
+	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
+	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
+	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Oct 15, 2025, Sean Christopherson wrote:
+> On Wed, 27 Aug 2025 17:52:41 +0000, Shivank Garg wrote:
+> > This series introduces NUMA-aware memory placement support for KVM guests
+> > with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+> > that enabled host-mapping for guest_memfd memory [1] and can be applied
+> > directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
+> > Merge branch 'guest-memfd-mmap' into HEAD)
+> > 
+> > == Background ==
+> > KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> > enforcement, causing guest memory allocations to be distributed across host
+> > nodes  according to kernel's default behavior, irrespective of any policy
+> > specified by the VMM. This limitation arises because conventional userspace
+> > NUMA control mechanisms like mbind(2) don't work since the memory isn't
+> > directly mapped to userspace when allocations occur.
+> > Fuad's work [1] provides the necessary mmap capability, and this series
+> > leverages it to enable mbind(2).
+> > 
+> > [...]
+> 
+> Applied the non-KVM change to kvm-x86 gmem.  We're still tweaking and iterating
+> on the KVM changes, but I fully expect them to land in 6.19.
+> 
+> Holler if you object to taking these through the kvm tree.
+> 
+> [1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+>       https://github.com/kvm-x86/linux/commit/601aa29f762f
+> [2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
+>       https://github.com/kvm-x86/linux/commit/2bb25703e5bd
+> [3/7] mm/mempolicy: Export memory policy symbols
+>       https://github.com/kvm-x86/linux/commit/e1b4cf7d6be3
 
+FYI, I rebased these onto 6.18-rc2 to avoid a silly merge.  New hashes:
 
-> On 18 Oct 2025, at 16:16, Tamir Duberstein <tamird@kernel.org> wrote:
->=20
-> From: Tamir Duberstein <tamird@gmail.com>
->=20
-> Replace the use of `as_ptr` which works through `<CStr as
-> Deref<Target=3D&[u8]>::deref()` in preparation for replacing
-> `kernel::str::CStr` with `core::ffi::CStr` as the latter does not
-> implement `Deref<Target=3D&[u8]>`.
->=20
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> rust/kernel/regulator.rs | 9 ++++++---
-> 1 file changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-> index b55a201e5029..65a4eb096cae 100644
-> --- a/rust/kernel/regulator.rs
-> +++ b/rust/kernel/regulator.rs
-> @@ -84,7 +84,7 @@ pub struct Error<State: RegulatorState> {
-> pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
->     // SAFETY: `dev` is a valid and bound device, while `name` is a =
-valid C
->     // string.
-> -    to_result(unsafe { =
-bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
-> +    to_result(unsafe { =
-bindings::devm_regulator_get_enable(dev.as_raw(), name.as_char_ptr()) })
-> }
->=20
-> /// Same as [`devm_enable`], but calls =
-`devm_regulator_get_enable_optional`
-> @@ -102,7 +102,9 @@ pub fn devm_enable(dev: &Device<Bound>, name: =
-&CStr) -> Result {
-> pub fn devm_enable_optional(dev: &Device<Bound>, name: &CStr) -> =
-Result {
->     // SAFETY: `dev` is a valid and bound device, while `name` is a =
-valid C
->     // string.
-> -    to_result(unsafe { =
-bindings::devm_regulator_get_enable_optional(dev.as_raw(), =
-name.as_ptr()) })
-> +    to_result(unsafe {
-> +        bindings::devm_regulator_get_enable_optional(dev.as_raw(), =
-name.as_char_ptr())
-> +    })
-> }
->=20
-> /// A `struct regulator` abstraction.
-> @@ -268,7 +270,8 @@ pub fn get_voltage(&self) -> Result<Voltage> {
->     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> =
-{
->         // SAFETY: It is safe to call `regulator_get()`, on a device =
-pointer
->         // received from the C code.
-> -        let inner =3D from_err_ptr(unsafe { =
-bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
-> +        let inner =3D
-> +            from_err_ptr(unsafe { =
-bindings::regulator_get(dev.as_raw(), name.as_char_ptr()) })?;
->=20
->         // SAFETY: We can safely trust `inner` to be a pointer to a =
-valid
->         // regulator if `ERR_PTR` was not returned.
->=20
-> --=20
-> 2.51.1
->=20
->=20
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
+[1/3] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+      https://github.com/kvm-x86/linux/commit/7f3779a3ac3e
+[2/3] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
+      https://github.com/kvm-x86/linux/commit/16a542e22339
+[3/3] mm/mempolicy: Export memory policy symbols
+      https://github.com/kvm-x86/linux/commit/f634f10809ec
 
