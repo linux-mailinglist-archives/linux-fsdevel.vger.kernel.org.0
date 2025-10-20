@@ -1,104 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-64676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EB5BF0B7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611BDBF0C81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D9174F31F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 11:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B66918A0C98
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 11:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69582F6191;
-	Mon, 20 Oct 2025 11:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E09259CA0;
+	Mon, 20 Oct 2025 11:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="KQ6/Lan2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B2B4UIf+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S+sF83a2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PXB/R9hX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SoUIqli+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nWPipZFK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D5224E4C3;
-	Mon, 20 Oct 2025 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4141C22E3F0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 11:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760958207; cv=none; b=tOfnxqMW1ub2kPuRhDnK14n+ZfGvJHgWziZqHKmXeaMeuA8zKIsj8Z/+GdEu2PH+t+Nab+EM2WNd+M/23wG0EQt3S9SB/Q1tv0kDubHL8uZHmpYf46n4Sfk4kerH1rxLiEpMLj/I9bFSuCVUNF1TFj+lHpQOW2UNHJ2qoESNmtM=
+	t=1760959019; cv=none; b=QUONb11C9Rk898fwLQyDy0a1k0OLpPQyPmEsAiSDcqJF4iyHe74jwpfKGKT9XFoXyYQBpHzkjK6knb6kwqqR9biEL8aTVCJdPwBAOATib9bcHKESTZEvVoWqZaDrYE7MDc+icluyw2g1Kuri57MlW/afP0zutf+Wk6fzfEladp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760958207; c=relaxed/simple;
-	bh=ayF1i2iD1GhrzNTKKehinAMWa6Vi9YZzyjGXIhUg73U=;
+	s=arc-20240116; t=1760959019; c=relaxed/simple;
+	bh=32hWkDM4BuTmpBlBts6aTp3l+b52tZGM1LwPnn4zk18=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRJbZpDNSkgpwi0GgwkDDdKErf+ca1w6aD7V04yPAl1B06HcY7OzvaFPb+jFldbOzeQ58lmgei40qRBBrN7nW0X2h9nMxhf8xJjhsmHjsMOhy85tg5mCdwOvkX7izJACz3N/Mj24Ddcg8irM/o9Y1GmfT7FEuUxewcyy3kLNfag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=KQ6/Lan2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B2B4UIf+; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B47BC7A0084;
-	Mon, 20 Oct 2025 07:03:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 20 Oct 2025 07:03:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1760958203; x=
-	1761044603; bh=DHnlJgCY+BcwVzCJL3u2NoFmsd7fzUk54TShq+8Hw/Q=; b=K
-	Q6/Lan23VJ6Ce3zU/AHzPubMJ9AftWfrxL38CjvzWS4fyD9wk3Myxw4KOl6W7CtW
-	2qInLiXoUzdnMOMwE6BhcKnTeuoQG7xjB6jbXhelhz9U6IjFpfZK5T7KdDmQ3tKS
-	vLgv2G2wxJ1qrWgkHY9LKCNWhm5/Sly16j5ABinZdqJ3ZEeMgNajIUkC2NADHH3u
-	pTMFE03RxjoKoxw4UJRk7ep3SWu3cPBtYLfI/xBjAOom8JcS4sd9GeN4OgfAdOhg
-	SNEVPWz+656SD1Yd3wBEPC5KTJXDVuqxRO/dDAq9Fc+NmIQ4daTKLpG5tWWqS+HW
-	CMk0RUUD+VueRMMup7wgA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760958203; x=1761044603; bh=DHnlJgCY+BcwVzCJL3u2NoFmsd7fzUk54TS
-	hq+8Hw/Q=; b=B2B4UIf+K0dMdDDJJzLUHrIjBZvism2roI2+kQZb6KrkfX1KMf9
-	nIBnhx3SKYbgLYOKnI1TAvv2C9o3OH8NFAkqcD56X8ugW38o/zdSZBabvu99CC2M
-	2IEA0Fmvv0ncl/F7bse1BRKsevasZgMrAsHtzxNwlnwvwbW5AQMo5mTEXoy4v8vx
-	KIY7Poxye4MAm4wKcMj+eyvOXkTMHjxXi+SeInX4c3FckvEJ/JT9W4/DtwDcLqe5
-	RP1HRz4NT/UKN+UrWXQ4vvWjZOZN3zd8VlNFxs0SvtIMSf1HSRXYw5vdrrezuTer
-	QsSfEOT4HQ6VqpPZEuyXjdOgPLDhN4TTKCg==
-X-ME-Sender: <xms:-Rb2aE95kqo0YoMNdxI6MXyxVljMheqWCPsHhOQnlMlSUBuTBLSwjQ>
-    <xme:-Rb2aOBRAC71rF7e828MnY_AckmLK9eolwPJz0SD0yVOpTgaTm0V7n3BoWPbLm1pc
-    id_y_08nCzMcI_yXVptokqAcYa-mdQb92O1hq2gy7QoS24McSRzqT8>
-X-ME-Received: <xmr:-Rb2aOogYTX0NabHDV6FusGbYblXHo_ApMbYyghSlMJgSFSC91POb6S-Qk-cuA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeejieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghlughssehlihhnuh
-    igqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidq
-    fhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphht
-    thhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsg
-    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
-    tgiipdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:-Rb2aHLnYOxc_97YeUZzbMpdb8bwVde-55zUlnGsRXbqN5E2XUxVYw>
-    <xmx:-Rb2aAKVcDSSFCwkvuB930eGLtrHF0JDDhfnxO-MAzMQtn9jPi7Rdg>
-    <xmx:-Rb2aAkFFK-41lOORdZfp0iHV9ps55ecgDAugO8Dp_vCmrQGbALxJA>
-    <xmx:-Rb2aGJ-Fs_ZauAUoHQe2YZCcvi5Ps4C43vZPHeCcOfYukj0HxDeuA>
-    <xmx:-xb2aPjFOg5xJRQW4h8_rPIlfbfCMvfKzNXKtqLV0GNdXLAh3kZ-9_DH>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 Oct 2025 07:03:21 -0400 (EDT)
-Date: Mon, 20 Oct 2025 12:03:18 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <xsrbm3qilii5cpfbnya2u5dleigbxej4ewctp2yj7i7avkkkkq@yknrffjv2bju>
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <CAHk-=wgijo0ThKoYZeypuZb2YHCL_3vdyzjALnONdQoubRmN3A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4fhoqLLlD37BFhK8rfVAqsnFXbDuUtNn3s2HO7Co2a2j9jttplOsc5Ggm4rijcB+u9a9y3QniDTQIZtJVJipIp+2YIQcICBmoWYNr1dzR/SNNQ8ZVSZiELY4TQ+LtdOG3V6tX4QQacJ3a0VrI2dIWf61p5mA+89viLJjuTONJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S+sF83a2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PXB/R9hX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SoUIqli+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nWPipZFK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 52AB821186;
+	Mon, 20 Oct 2025 11:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760959012; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xM1PbaYDZEV6JMqVRTGxnqw+sNH7uxtqulhhY+yBP4Y=;
+	b=S+sF83a20Ne66kDF5CGiT6xsZ9SITj2hEv65D9O2iwEKXinPrXQp2vhthmDy/CPwb9UMf3
+	kL+jeVh6D32pE1QasGxJRhlIWljFFY6EM6fn4pAhtAFfzfmbLd02b8BbDw6jmeXwFbwpDy
+	HIkCgrpVW1DSl4wzqy3VHcrLqEA57I4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760959012;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xM1PbaYDZEV6JMqVRTGxnqw+sNH7uxtqulhhY+yBP4Y=;
+	b=PXB/R9hXqpxh7QhcHr5MuqvTLIYBlfcLAijFu+QLNCm1MFwNQLvqZ5PLK9zFQ2CNH3FNhS
+	ycZm218ZBtcOZwAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SoUIqli+;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nWPipZFK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760959008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xM1PbaYDZEV6JMqVRTGxnqw+sNH7uxtqulhhY+yBP4Y=;
+	b=SoUIqli+giSYZWF902ETGINdXPBqGYCpcLge4Cg9t11vNHRXbdWedh1Tg/idW/QkzjxfaH
+	fYjcgbwL4ojJdpx0BN5fm7d8PK3hLG6EWrrSwiTN95wi/jBDQQ0lqsj5jrjZx8sxPW/s9k
+	Bpt2jf72qOlF5/eDU6U3vkomhtDtdng=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760959008;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xM1PbaYDZEV6JMqVRTGxnqw+sNH7uxtqulhhY+yBP4Y=;
+	b=nWPipZFK3OAgu7JM7tjXRmd21rccbIxPJZvoRGYTM4mJ09OvOYqtEnsJF34gg176RMan5c
+	WtNJcuflHcWXnqAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48A3313AAC;
+	Mon, 20 Oct 2025 11:16:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6sC2ESAa9mjFawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 Oct 2025 11:16:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EA6B5A088E; Mon, 20 Oct 2025 13:16:39 +0200 (CEST)
+Date: Mon, 20 Oct 2025 13:16:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
+	djwong@kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-mm@kvack.org, martin.petersen@oracle.com, jack@suse.com
+Subject: Re: O_DIRECT vs BLK_FEAT_STABLE_WRITES, was Re: [PATCH] btrfs: never
+ trust the bio from direct IO
+Message-ID: <56o3re2wspflt32t6mrfg66dec4hneuixheroax2lmo2ilcgay@zehhm5yaupav>
+References: <1ee861df6fbd8bf45ab42154f429a31819294352.1760951886.git.wqu@suse.com>
+ <aPYIS5rDfXhNNDHP@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,61 +106,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgijo0ThKoYZeypuZb2YHCL_3vdyzjALnONdQoubRmN3A@mail.gmail.com>
+In-Reply-To: <aPYIS5rDfXhNNDHP@infradead.org>
+X-Rspamd-Queue-Id: 52AB821186
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-On Sat, Oct 18, 2025 at 07:56:48AM -1000, Linus Torvalds wrote:
-> On Fri, 17 Oct 2025 at 04:15, Kiryl Shutsemau <kirill@shutemov.name> wrote:
-> >
-> > To address this issue, introduce i_pages_delete_seqcnt, which increments
-> > each time a folio is deleted from the page cache and implement a modified
-> > page cache lookup protocol for short reads:
+On Mon 20-10-25 03:00:43, Christoph Hellwig wrote:
+> On Mon, Oct 20, 2025 at 07:49:50PM +1030, Qu Wenruo wrote:
+> > But still, such performance drop can be very obvious, and performance
+> > oriented users (who are very happy running various benchmark tools) are
+> > going to notice or even complain.
 > 
-> So this patch looks good to me, but to avoid the stack size warnings,
-> let's just make FAST_READ_BUF_SIZE be 768 bytes or something like
-> that, not the full 1k.
+> I've unfortunately seen much bigger performance drops with direct I/O and
+> PI on fast SSDs, but we still should be safe by default.
 > 
-> It really shouldn't make much of a difference, and we do have that
-> stack size limit check for a reason.
-
-My reasoning is that we are at the leaf of the call chain. Slow path
-goes much deeper to I/O.
-
-Reducing the buffer size would invalidate my benchmarking :/
-It took time.
-
-What about disabling the warning for the function?
-
-@@ -2750,6 +2750,8 @@ static inline unsigned long filemap_read_fast_rcu(struct address_space *mapping,
-
- #define FAST_READ_BUF_SIZE 1024
-
-+__diag_push();
-+__diag_ignore_all("-Wframe-larger-than=", "Allow on-stack buffer for fast read");
- static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter,
-                                       ssize_t *already_read)
- {
-@@ -2785,6 +2787,7 @@ static noinline bool filemap_read_fast(struct kiocb *iocb, struct iov_iter *iter
-
-        return !iov_iter_count(iter);
- }
-+__diag_pop();
-
- static noinline ssize_t filemap_read_slow(struct kiocb *iocb,
-                                          struct iov_iter *iter,
-
+> > Another question is, should we push this behavior to iomap layer so that other
+> > fses can also benefit from it?
 > 
-> And obviously
+> The right place is above iomap to pick the buffered I/O path instead.
 > 
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > +       seqcount_spinlock_init(&mapping->i_pages_delete_seqcnt,
-> > +                              &mapping->i_pages->xa_lock);
-> 
-> will need to use '&mapping->i_pages.xa_lock', since mapping->i_pages
-> is the embedded xarray, not a pointer to it.
+> The real question is if we can finally get a version of pin_user_pages
+> that prevents user modifications entirely.
 
-Doh!
+Hmm, this is an interesting twist in the problems with pinned pages - so
+far I was thinking about problems where pinned page cache page gets
+modified (e.g. through DIO or RDMA) and this causes checksum failures if
+it races with writeback. If I understand you right, now you are concerned
+about a situation where some page is used as a buffer for direct IO write
+/ RDMA and it gets modified while the DMA is running which causes checksum
+mismatch? Writeprotecting the buffer before the DIO starts isn't that hard
+to do (although it has a non-trivial cost) but we don't have a mechanism to
+make sure the page cannot be writeably mapped while it is pinned (and
+avoiding that without introducing deadlocks would be *fun*).
 
+								Honza
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
