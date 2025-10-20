@@ -1,388 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-64660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74F6BF0236
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 11:20:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670ADBF0319
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 11:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69577189F2E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 09:21:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52C6189C871
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 09:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158CD2F28ED;
-	Mon, 20 Oct 2025 09:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203452EACE9;
+	Mon, 20 Oct 2025 09:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="RTdj0U+K";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nFJE4D5T"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mFkp3atQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9VZHlyVs";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tEH4hGHS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="heeIs2Rt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757402F3619
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 09:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB2EDDC5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 09:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952032; cv=none; b=fOsdsEFSiboVtnJIpelQfNpBz4wc0ddbqIiTqcj7Pu/yR//NeKYwZik+CS5oZhLtXqLWBwzs2ksw7ar+vn/qCk66siRuGZabIrjuAyrZaeLIPyvSvwvRnyQPSGCcTYkQ1MJrKgvoxjHMZkvLMoaoHGqTfhZfi4Xpcp990uPIrmU=
+	t=1760952885; cv=none; b=p+VzyrBJBGsjz/Jgmb+VBuj/OoZaG45LN2/OL5uNsiP5jIZ6Ub5ssdG+2aRqBX5BPc5Myv6VoRnUY06r7tNBVliuCqQPhqo+LXaGjWJo2svh4LbK1pQrj58PyrM5RFjUdmqAxYkBFUpA4CXMJ0VhGloKRg2eIdPsHezqwrCzG7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952032; c=relaxed/simple;
-	bh=CQKXi3EhtaVCwqP+h/NC4UNTrcj3xACX/1LZnn8QaNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WoNfx1bZ6gOdCIWkjSjiFY/fjGV9zjVSvbeAe3qc5JJ+mipsc2PLhAimorb7O3wXihyd8n2dCWmHoVMPUbLaW6NxEPXq3UxeKeHvAutmA6AFQRuyJRZXjV8FqrSeJCNpPiA+VNFp9xWUa2I1eAuXXK8MKGfiWSP9ADvSIPIHzt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=RTdj0U+K; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nFJE4D5T; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1760952885; c=relaxed/simple;
+	bh=Dw4XUOnaPL3PsnTOu8GYa5vaBXZyyttri4LJsZQSMoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkEUNTeEN0q5vXDi9ueHoai7+6jOblmfR3jQFHjLqiX/U8ZCz5KpuCuC09Amzc0YZCiOfnhWGO7UWsnXCQUy4za5/pOv+bzhoxi1s5YliqD88WHho6EELC0mfhoYYPD1k2nmZzaqImIX4iJV55/sNRjcKZHl5ZSMy7ZiXaQulh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mFkp3atQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9VZHlyVs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tEH4hGHS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=heeIs2Rt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 860ED21134;
-	Mon, 20 Oct 2025 09:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1760952024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=sp/4hSlw2N7zPOoCsAQ+w6tQazwLzeqyKFV5HdVznN4=;
-	b=RTdj0U+KPGxoHrHEkuZ5wrGqdiJazff6AIWGMPXnQZsp4lHvhPnkZokuWJMGfyZUiOygOD
-	AKokvdTK8fpOSpXd9/4CbZFWF8QW7WsIhyf9VAGMNZUOzOWAGNDKn2PWcPsro4ibMPWHfF
-	rf2Dxoy4SZgxVQ0n+sUctFct9D6tDjA=
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CF9C921168;
+	Mon, 20 Oct 2025 09:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760952878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=586HgrKwXL/CuLgCJVGk9xjDAYqg9yJZZ9H3nn0c7dk=;
+	b=mFkp3atQlAVT+0yl8lRdhIhnlwdVbNqAGmtxzkM7/Q/yXyS3nRuRIJws6JzfAJmCRdLRC/
+	XG3C53MecpZKoBdKe3gQPIYkxKsnsGUGLs2ceE1dsB2eqfALQpCuuuclT+VjyfXqg3VOl7
+	dGhFchb7hZktk2AvdI+aQZoAeIdzd6A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760952878;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=586HgrKwXL/CuLgCJVGk9xjDAYqg9yJZZ9H3nn0c7dk=;
+	b=9VZHlyVsYS7V2qb1ILpSLp8b9tlQHQqeQGiKZ5PNj7EwAMMoh0QTAj3WbTtqLKchi0oIb9
+	OCBllEs9wmHZr2AQ==
 Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1760952020; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=sp/4hSlw2N7zPOoCsAQ+w6tQazwLzeqyKFV5HdVznN4=;
-	b=nFJE4D5Tno3dIXp4CGUXwYxdHf66Dmf4Z30MGlxjX4lVvk+IdPMEN4IIlpEoWKBkqyjT1/
-	QE+llOvhor1eL2XgC549jj+KjB281iBe6uSkbrAA+EtCGi01JiFROERH9E513bcD+TD4v1
-	mPY6RUcDLCUzReizAI33YZxj3Ed09WI=
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tEH4hGHS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=heeIs2Rt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760952873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=586HgrKwXL/CuLgCJVGk9xjDAYqg9yJZZ9H3nn0c7dk=;
+	b=tEH4hGHS9stepa4KIDU7TrDNXS1BCyLwGWk/TIAdHTnWKDzEKYAJnXujfW2rfmyRdSAijW
+	xWSb9rITL8ayNiCHE4pBbWhz/jicx04JiWIXpDb9K61HUu5TiT80fVc5mpISwfUg513zLo
+	T0Lx5wn1z2TQY1C5hjWlzqixKk3ZdSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760952873;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=586HgrKwXL/CuLgCJVGk9xjDAYqg9yJZZ9H3nn0c7dk=;
+	b=heeIs2Rtcc/YWvixmcShz8E2YYYU0DBy6NikUfqTg+P//k+mtkSPJvUZfCNsIk3pzbPk5c
+	LHNpprNHDL8XBRAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFCE213AAC;
-	Mon, 20 Oct 2025 09:20:14 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C13E813AAD;
+	Mon, 20 Oct 2025 09:34:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hadtF87+9WjPfAAAD6G6ig
-	(envelope-from <wqu@suse.com>); Mon, 20 Oct 2025 09:20:14 +0000
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org
-Cc: djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] btrfs: never trust the bio from direct IO
-Date: Mon, 20 Oct 2025 19:49:50 +1030
-Message-ID: <1ee861df6fbd8bf45ab42154f429a31819294352.1760951886.git.wqu@suse.com>
-X-Mailer: git-send-email 2.51.0
+	id puInLykC9mi2CwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 20 Oct 2025 09:34:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 79670A0856; Mon, 20 Oct 2025 11:34:33 +0200 (CEST)
+Date: Mon, 20 Oct 2025 11:34:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Carlos Maiolino <cem@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org, 
+	dlemoal@kernel.org, hans.holmberg@wdc.com, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/3] writeback: cleanup writeback_chunk_size
+Message-ID: <ledzremc2x4ehhs6kfovuwexxyic6cwlqbb55dbtm4hnvovynr@tbm5cp6qt73u>
+References: <20251015062728.60104-1-hch@lst.de>
+ <20251015062728.60104-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015062728.60104-2-hch@lst.de>
+X-Rspamd-Queue-Id: CF9C921168
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
 	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
 	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: -2.80
+X-Spam-Score: -4.01
 X-Spam-Level: 
 
-There is a bug report about that direct IO (and even concurrent buffered
-IO) can lead to different contents of md-raid.
+On Wed 15-10-25 15:27:14, Christoph Hellwig wrote:
+> Return the pages directly when calculated instead of first assigning
+> them back to a variable, and directly return for the data integrity /
+> tagged case instead of going through an else clause.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-It's exactly the situation we fixed for direct IO in commit 968f19c5b1b7
-("btrfs: always fallback to buffered write if the inode requires
-checksum"), however we still leave a hole for nodatasum cases.
+Looks good. Feel free to add:
 
-For nodatasum cases we still reuse the bio from direct IO, making it to
-cause the same problem for RAID1*/5/6 profiles, and results
-unreliable data contents read from disk, depending on the load balance.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Just do not trust any bio from direct IO, and never reuse those bios even
-for nodatasum cases. Instead alloc our own bio with newly allocated
-pages.
+								Honza
 
-For direct read, submit that new bio, and at end io time copy the
-contents to the dio bio.
-For direct write, copy the contents from the dio bio, then submit the
-new one.
-
-This of course will lead to extra performance drop, but
-it should still be much better than falling back to buffered IO.
-
-There is a quick test done in my VM, with cache mode 'none' (aka, qemu
-will use direct IO submitting the IO, to avoid double caching).
-
-The VM has 10G ram, the target storage is backed by one PCIE gen3 NVME
-SSD, the kernel has some minor/lightweight debug options:
-
-The test command is pretty simple:
-  dd if=/dev/zero bs=1M of=/mnt/btrfs/foobar count=4096 oflag=direct
-
-- Raw disk IO
-  dd if=/dev/zero bs=1M of=/dev/test/scratch1 count=4096 oflag=direct
-
-  1.80748 s, 2.4 GB/s
-
-- Fallback to buffered IO (unpatched)
-  Mount option: default (with data checksum)
-
-  20.7763 s, 207 MB/s
-
-  Miserable, most SATA SSD is more than double the speed, and less than
-  10% of the raw disk performance.
-  Thankfully with this bouncing behavior, we can easily re-claim the
-  performance soon.
-  (Will be one small follow-up patch for it, after dropping the RFC
-  tag)
-
-- True zero-copy (unpatch)
-  Mount option: nodatasum
-
-  1.95422 s, 2.2 GB/s
-
-  Very close to the raw disk speed.
-
-- Bounce then zero-copy (patched)
-  Mount option: nodatasum
-
-  2.5453 s, 1.7 GB/s
-
-  Around 23% slower than true zero-copy, but still acceptable if you ask
-  me.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=99171
-Signed-off-by: Qu Wenruo <wqu@suse.com>
----
-REASON FOR RFC:
-
-Considering the zero-copy direct IO (and the fact XFS/EXT4 even allows
-modifying the page cache when it's still under writeback) can lead to
-raid mirror contents mismatch, the 23% performance drop should still be
-acceptable, and bcachefs is already doing this bouncing behavior.
-
-But still, such performance drop can be very obvious, and performance
-oriented users (who are very happy running various benchmark tools) are
-going to notice or even complain.
-
-Another question is, should we push this behavior to iomap layer so that other
-fses can also benefit from it?
----
- fs/btrfs/direct-io.c | 150 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 105 insertions(+), 45 deletions(-)
-
-diff --git a/fs/btrfs/direct-io.c b/fs/btrfs/direct-io.c
-index 802d4dbe5b38..1a8bed65c417 100644
---- a/fs/btrfs/direct-io.c
-+++ b/fs/btrfs/direct-io.c
-@@ -640,33 +640,6 @@ static int btrfs_dio_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- 	return ret;
- }
- 
--static void btrfs_dio_end_io(struct btrfs_bio *bbio)
--{
--	struct btrfs_dio_private *dip =
--		container_of(bbio, struct btrfs_dio_private, bbio);
--	struct btrfs_inode *inode = bbio->inode;
--	struct bio *bio = &bbio->bio;
--
--	if (bio->bi_status) {
--		btrfs_warn(inode->root->fs_info,
--		"direct IO failed ino %llu op 0x%0x offset %#llx len %u err no %d",
--			   btrfs_ino(inode), bio->bi_opf,
--			   dip->file_offset, dip->bytes, bio->bi_status);
--	}
--
--	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
--		btrfs_finish_ordered_extent(bbio->ordered, NULL,
--					    dip->file_offset, dip->bytes,
--					    !bio->bi_status);
--	} else {
--		btrfs_unlock_dio_extent(&inode->io_tree, dip->file_offset,
--					dip->file_offset + dip->bytes - 1, NULL);
--	}
--
--	bbio->bio.bi_private = bbio->private;
--	iomap_dio_bio_end_io(bio);
--}
--
- static int btrfs_extract_ordered_extent(struct btrfs_bio *bbio,
- 					struct btrfs_ordered_extent *ordered)
- {
-@@ -705,23 +678,109 @@ static int btrfs_extract_ordered_extent(struct btrfs_bio *bbio,
- 	return 0;
- }
- 
--static void btrfs_dio_submit_io(const struct iomap_iter *iter, struct bio *bio,
--				loff_t file_offset)
-+static void dio_end_write_copied_bio(struct btrfs_bio *bbio)
- {
--	struct btrfs_bio *bbio = btrfs_bio(bio);
-+	struct bio *orig = bbio->private;
- 	struct btrfs_dio_private *dip =
- 		container_of(bbio, struct btrfs_dio_private, bbio);
--	struct btrfs_dio_data *dio_data = iter->private;
-+	struct btrfs_inode *inode = bbio->inode;
-+	struct bio *bio = &bbio->bio;
- 
--	btrfs_bio_init(bbio, BTRFS_I(iter->inode)->root->fs_info,
--		       btrfs_dio_end_io, bio->bi_private);
--	bbio->inode = BTRFS_I(iter->inode);
--	bbio->file_offset = file_offset;
-+	if (bio->bi_status) {
-+		btrfs_warn(inode->root->fs_info,
-+		"direct IO failed ino %llu op 0x%0x offset %#llx len %u err no %d",
-+			   btrfs_ino(inode), bio->bi_opf,
-+			   dip->file_offset, dip->bytes, bio->bi_status);
-+	}
-+
-+	orig->bi_status = bbio->bio.bi_status;
-+	btrfs_finish_ordered_extent(bbio->ordered, NULL,
-+				    dip->file_offset, dip->bytes,
-+				    !bio->bi_status);
-+	bio_free_pages(bio);
-+	bio_put(bio);
-+	iomap_dio_bio_end_io(orig);
-+}
-+
-+static void dio_end_read_copied_bio(struct btrfs_bio *bbio)
-+{
-+	struct bio *orig = bbio->private;
-+	struct btrfs_dio_private *dip =
-+		container_of(bbio, struct btrfs_dio_private, bbio);
-+	struct btrfs_inode *inode = bbio->inode;
-+	struct bio *bio = &bbio->bio;
-+
-+	if (bio->bi_status) {
-+		btrfs_warn(inode->root->fs_info,
-+		"direct IO failed ino %llu op 0x%0x offset %#llx len %u err no %d",
-+			   btrfs_ino(inode), bio->bi_opf,
-+			   dip->file_offset, dip->bytes, bio->bi_status);
-+	}
-+
-+	orig->bi_status = bbio->bio.bi_status;
-+	bio_copy_data(orig, &bbio->bio);
-+	btrfs_unlock_dio_extent(&inode->io_tree, dip->file_offset,
-+				dip->file_offset + dip->bytes - 1, NULL);
-+	bio_free_pages(bio);
-+	bio_put(bio);
-+	iomap_dio_bio_end_io(orig);
-+}
-+
-+static void btrfs_dio_submit_io(const struct iomap_iter *iter, struct bio *src,
-+				loff_t file_offset)
-+{
-+	struct btrfs_dio_private *dip;
-+	struct btrfs_dio_data *dio_data = iter->private;
-+	struct btrfs_bio *new_bbio;
-+	struct bio *new_bio;
-+	const bool is_write = (btrfs_op(src) == BTRFS_MAP_WRITE);
-+	btrfs_bio_end_io_t end_io;
-+	const unsigned int src_size = src->bi_iter.bi_size;
-+	const int nr_pages = round_up(src_size, PAGE_SIZE) >> PAGE_SHIFT;
-+	unsigned int cur = 0;
-+	int ret;
-+
-+	if (is_write)
-+		end_io = dio_end_write_copied_bio;
-+	else
-+		end_io = dio_end_read_copied_bio;
-+
-+	/*
-+	 * We can not trust the direct IO bio, the content can be modified at any time
-+	 * during the submission/writeback.
-+	 * Thus we have to allocate a new bio with pages allocated by us, so that noone
-+	 * can change the content.
-+	 */
-+	new_bio = bio_alloc_bioset(NULL, nr_pages, src->bi_opf, GFP_NOFS, &btrfs_dio_bioset);
-+	new_bbio = btrfs_bio(new_bio);
-+	btrfs_bio_init(new_bbio, inode_to_fs_info(iter->inode), end_io, src);
-+	dip = container_of(new_bbio, struct btrfs_dio_private, bbio);
-+	new_bbio->inode = BTRFS_I(iter->inode);
-+	new_bbio->file_offset = file_offset;
-+	dip->file_offset = file_offset;
-+	dip->bytes = src_size;
-+	while (cur < src_size) {
-+		struct page *page = alloc_page(GFP_NOFS);
-+		unsigned int size = min(src_size - cur, PAGE_SIZE);
-+
-+		if (!page) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+		ret = bio_add_page(&new_bbio->bio, page, size, 0);
-+		ASSERT(ret == size);
-+		cur += size;
-+	}
-+	ASSERT(new_bbio->bio.bi_iter.bi_size == src_size);
-+	new_bbio->bio.bi_iter.bi_sector = src->bi_iter.bi_sector;
- 
- 	dip->file_offset = file_offset;
--	dip->bytes = bio->bi_iter.bi_size;
-+	dip->bytes = src_size;
- 
--	dio_data->submitted += bio->bi_iter.bi_size;
-+	dio_data->submitted += src_size;
-+
-+	if (is_write)
-+		bio_copy_data(&new_bbio->bio, src);
- 
- 	/*
- 	 * Check if we are doing a partial write.  If we are, we need to split
-@@ -731,20 +790,22 @@ static void btrfs_dio_submit_io(const struct iomap_iter *iter, struct bio *bio,
- 	 * remaining pages is blocked on the outstanding ordered extent.
- 	 */
- 	if (iter->flags & IOMAP_WRITE) {
--		int ret;
--
--		ret = btrfs_extract_ordered_extent(bbio, dio_data->ordered);
-+		ret = btrfs_extract_ordered_extent(new_bbio, dio_data->ordered);
- 		if (ret) {
- 			btrfs_finish_ordered_extent(dio_data->ordered, NULL,
- 						    file_offset, dip->bytes,
- 						    !ret);
--			bio->bi_status = errno_to_blk_status(ret);
--			iomap_dio_bio_end_io(bio);
--			return;
-+			goto error;
- 		}
- 	}
- 
--	btrfs_submit_bbio(bbio, 0);
-+	btrfs_submit_bbio(new_bbio, 0);
-+	return;
-+error:
-+	src->bi_status = errno_to_blk_status(ret);
-+	bio_free_pages(&new_bbio->bio);
-+	bio_put(&new_bbio->bio);
-+	iomap_dio_bio_end_io(src);
- }
- 
- static const struct iomap_ops btrfs_dio_iomap_ops = {
-@@ -754,7 +815,6 @@ static const struct iomap_ops btrfs_dio_iomap_ops = {
- 
- static const struct iomap_dio_ops btrfs_dio_ops = {
- 	.submit_io		= btrfs_dio_submit_io,
--	.bio_set		= &btrfs_dio_bioset,
- };
- 
- static ssize_t btrfs_dio_read(struct kiocb *iocb, struct iov_iter *iter,
+> ---
+>  fs/fs-writeback.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 2b35e80037fe..11fd08a0efb8 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1893,16 +1893,12 @@ static long writeback_chunk_size(struct bdi_writeback *wb,
+>  	 *                   (maybe slowly) sync all tagged pages
+>  	 */
+>  	if (work->sync_mode == WB_SYNC_ALL || work->tagged_writepages)
+> -		pages = LONG_MAX;
+> -	else {
+> -		pages = min(wb->avg_write_bandwidth / 2,
+> -			    global_wb_domain.dirty_limit / DIRTY_SCOPE);
+> -		pages = min(pages, work->nr_pages);
+> -		pages = round_down(pages + MIN_WRITEBACK_PAGES,
+> -				   MIN_WRITEBACK_PAGES);
+> -	}
+> +		return LONG_MAX;
+>  
+> -	return pages;
+> +	pages = min(wb->avg_write_bandwidth / 2,
+> +		    global_wb_domain.dirty_limit / DIRTY_SCOPE);
+> +	pages = min(pages, work->nr_pages);
+> +	return round_down(pages + MIN_WRITEBACK_PAGES, MIN_WRITEBACK_PAGES);
+>  }
+>  
+>  /*
+> -- 
+> 2.47.3
+> 
 -- 
-2.51.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
