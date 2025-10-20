@@ -1,353 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-64792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39929BF3F96
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 01:00:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0C3BF4048
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 01:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 044A74E8B6D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 23:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023D618C476F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 23:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA73A238D52;
-	Mon, 20 Oct 2025 23:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E802FB0B2;
+	Mon, 20 Oct 2025 23:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imgX5bsw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxUpoPKQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0A328136F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 23:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B492356A4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 23:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761001212; cv=none; b=kLJq5e2qBHSSrBHAA7X4dG8wduFlLGWkimZhiA8QxUTU9VXcVRHglYJ5IeSleKil1SJpzIMcxlYmkI+uiccVmmAvId2xREXHR2vbVl5gumFbtwjM4kSjLV6rsWoLodTk9GvAiZBUWJBYd8oVUeNJP4wp9jrUdBOkro1yjJRSU94=
+	t=1761002743; cv=none; b=e4E2iIw36WP0MEJ0dZvPJeuoIjw/YGM18jHLPjc5cYnMjB5Q9vF7kH/V2SLpb3HcKMlcNR2hKHHpZemmza7Yk5N+AzNcuyybk3ITOP651M7MDh5pReNa+/QY6jH+0JqYPr01z7cCkDGIrsvU8sfPOo/XYzS8Jc4fM3qZqWugmNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761001212; c=relaxed/simple;
-	bh=pSI2VeN9VGXVzCyoHOrDz9byH3dFRumaCOthPZ5kYmE=;
+	s=arc-20240116; t=1761002743; c=relaxed/simple;
+	bh=+gLipy4yex2p4PWvmxYub5JHQmLCnp/6eSFk0A+6ocY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eULU/5z3WrTl9CwJDxKXKzb2ACo6NHPG0/P8wAQCtYYoS03x5n4jfMBx81wwmpdfiKGg/f5nWMUbqnkDAa6Shbcg/29YHKv/BjdLpLWVMCbLty0tHcoa0w2EGf6gxXovT9UM2JwEljmIY2oq2yS4KDW+gzDqms7JrHEEy/kGvL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imgX5bsw; arc=none smtp.client-ip=209.85.222.178
+	 To:Cc:Content-Type; b=UA51tlDX/60aMp3Cv5uXn95zY3695XPTsTAWtz9eLdmYaE3gx5fEF7v9nxb/cxwWjEpqpvTN7Hb99eNomX4R7kVICoVEAir0wTTtK2f6kAxFaRiq8ZnJzLVINsxg7VOT2mj7bY5lRDuV0dFwC0nz/xZjlLFAH0obsIeeCyZbbZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SxUpoPKQ; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88f2aebce7fso745856285a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 16:00:06 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-87c167c0389so79836956d6.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 16:25:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761001205; x=1761606005; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761002740; x=1761607540; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2nbgqWVpSo9Zd3gNi8vrt7AlPcSgtpfCDH8TIAOiN2M=;
-        b=imgX5bswxFY/j5/C6s/JylPRXHep/zH5PfqzTR1wuQbovbokFvqy8X5H71EGvJpDrR
-         pzuifO9Vq+iRmsismewvBYi7MBQ5kcjICO9GdJJWQY6b7RUBlA0FKvnYxrlECrW5uROr
-         ljBIRmp5zOXUa2STgbb6Kgnoq46R8ICe1j9AC1CJxZbb0jlpZd68GX/wCQdhpDVjBUyO
-         AHX+EAiLd2yq+Lv12pcTSQ7d58wOqpEzJMHL3X+DM1ac8ZmB/qwP2d5k8ksO49UEN4zG
-         rhf2tOxVvt26zV+Xl7U92yMbgvHo7V6X9iWAMuCeCz//6DZYYS8YxC1wZE27M9Qai4u3
-         os9A==
+        bh=JN+ffqWEJPzPT6negWyE8KVdrVBZV5jjr7/2WSxvqAc=;
+        b=SxUpoPKQuE2d5Mp/wMwYtPDiLVkFOumxMwyhigIx3JWpl1wLC9fE3BWHgLjK6BZ+7F
+         Mn9MnDubxlhrud7J5FaLq7TJvQx8/JXw+WsG8W7hM9CzeTx21vvPGRVcnUqiGQhtYyXI
+         kT0ZndcHqMCYNi5HpYohQzqebvUIDC0s3CvN5XmNbnpmmEBuoeNqDmwC4Fm2Veem2ujR
+         JlessdQ7IWp9m8Fj9qhEz89DmOfYjDN3CVJOJS5zkvpYEKV4mqODbDa3CWwlHFkcchnO
+         Nea4vg0WJgQv+NZc6W6NIKGmGYeWwl1LCiTH7oaxnTKnoW1xOqq6vJLa0B0V4Z306koS
+         FMrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761001205; x=1761606005;
+        d=1e100.net; s=20230601; t=1761002740; x=1761607540;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2nbgqWVpSo9Zd3gNi8vrt7AlPcSgtpfCDH8TIAOiN2M=;
-        b=YECP5hR74/1jH4ZKyd43kOQGKQFxh5707QSQNicNCmaweAPAX5eCKSukJzjP/Ofsqv
-         VaZRriV+Kk+WoyAG/LjWrNnxoz9+gBBGkmktPLobiBXLVkfaCdiL1V24pi/J3z1H21+z
-         W0F34AWu8p7CxnnBBMCGXNPwUN3kGRWuYIUHYE1mrSreyViSuekpWdPYGsqIy4BaVFhO
-         K2soj8O1SeQEIrb5RIwY+FxG/XCEksPdQMoph6fYWfvoXUyOubLjuLhsxvXu9yILPvBS
-         QyfkqxlJFrA8qBZgOdKu3CpRi/uhfO2PPY3+YiYdmBa5MLNEi3cOCE0+RAAXqPQNVzv9
-         UK1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLqvGo0w3Fzv6wT06xm+iC48EE/sEcw7Mkgrf6aMi2S7RRx7R9KLpNvZRNkhVKNk5yToQGKkTe2SdQ/SMb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJeqdiIn3s74yANHFUgnaDwHa28BkSVPoqzaZNbV9Fof8ScRPU
-	8nhNiihBSvOQCnLcHdSRTxDAKl2cjle2mF6EVNG8XWr2ZZO65owcaNtDdhJ2hF5LVg5ixHFg/K9
-	nQVbFMh2ksfd9/aaIBkAtiuo/bTkHPIc=
-X-Gm-Gg: ASbGncuwvQKhL8ZBaJg29cCamVfgF6hnR6qWvjiW8ChlGGTlPY/xcLosKIsVyTXa4Qr
-	xDfYp3WaNFM+AHMsJml3veqhAe454E3SvCkpIi50CgMbAShnaxt24kJsPifjwzkQxSZe85339WI
-	xdZZBkUZUNdpzekj0smhk6NKk6hFO2GR0SeMRwVbWDeTYFPGYHR8vWjP0HFez/s3eqnwm0t3hcZ
-	YGsGU7ZvI6hCRHY7fZMyDL7aFSRNTedkF1voY6myA5+lDs/Pccgax42pYWvoDFhbCluk2eEquss
-	lbbJa53tCgM0yMdKEeWFBpxgSC8=
-X-Google-Smtp-Source: AGHT+IEZPddfQrZMfI+Lli7cjqt1FTyCpJkjTRfohAujAlhaozZ5EVjQ6kDG/mdIsgyDSStA/9O82MCk4payzXp2eQQ=
-X-Received: by 2002:a05:620a:2952:b0:851:cb50:c5d0 with SMTP id
- af79cd13be357-8906e2ce114mr1966770485a.12.1761001205076; Mon, 20 Oct 2025
- 16:00:05 -0700 (PDT)
+        bh=JN+ffqWEJPzPT6negWyE8KVdrVBZV5jjr7/2WSxvqAc=;
+        b=JuHIRQbiwKQz6EWH5XcRIi5JwqHwHlPeq5T8btFw/0uKjC3iLof3WSsOMSkLEp5boK
+         Cb8x27VJtrvKQm40iUhmroZmViR5XZYf50kdq8SGwXqtPmQRga1YSWV2WEuoGlLMyRka
+         FmkSf6VkF+APBzohrGxKKE/NKftMsmWVijEYkAnVeqXHkbWrcB9Eo4MdNW4mPzfrzlmL
+         0WKiBkb/pNYsBe4ApcaGPEc4sJm1yyd2KfzFec8TwknLrkhznwbKRIEwTwKplzWLBEYK
+         d5/H8f++JoGzlD9gPFzIlNKwmbsB/Awg9bWfKJJRKfY93cPJtTeoX+fRMmdvuEN0KJiY
+         QNng==
+X-Forwarded-Encrypted: i=1; AJvYcCWogRWeBTQSOkgCUhVP6RQrMq/27yRyPIK5Ma7aOqydMiwleQApppeWp0MmHwVLI3E1x8lgG/DBfuoeR9iT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5lADlP3LdcUT7KlgVT58ZXt+qIDVSoDxtUR3RkaIS23mX4OKy
+	CpYek/V4GJ6W8EqUf5hOKgBQPdVsT/6AJQdUdF8Hwzn9yPm1kxEsXmYsee0G15ynPpOi41BNk+6
+	S/36ZoSbsQlPXQLO+NPOqg961rgQd/yI=
+X-Gm-Gg: ASbGnctOPLLtKGYaTagciWH13kZuKytHb38fUMttN71gz7CTPsS+kKZ5R3BobK8GBI/
+	+FYZDAr5rzH3aILQ3XQnAMcTPcZDKIJvYt1/1FyLSnGHtzg3u6PQPKH8uPtVwAniXlvOUmU735B
+	kJBgDXsRKtze4bXh+dY6fzomsVUbOADVgxAxpN+02NFn0FoBeshnY1P1hqGJwWrEYcDPP+LcTdN
+	D545O2VL4UfSLfAZUjmvnCAED0ZKSnE+KRmW1fB7Xp087F/MEda1Ptculer0dVVLII8OfjG4doF
+	0FPBXzRyQl/F/mYPb5fCyy4bop3ZW9ESyEbk7g==
+X-Google-Smtp-Source: AGHT+IGTpD9hPc664sQSKEb1VpZEkbSsBGuHXvax9cafuQpP0iDrj//MfPO1FUmzGL4N+cYGkmOfo92GyBSx0C9OWaE=
+X-Received: by 2002:ac8:5d0d:0:b0:4e8:aee7:c55a with SMTP id
+ d75a77b69052e-4e8aee7c7f4mr117321331cf.26.1761002740360; Mon, 20 Oct 2025
+ 16:25:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-reduced-nr-ring-queues_3-v3-0-6d87c8aa31ae@ddn.com>
- <20251013-reduced-nr-ring-queues_3-v3-4-6d87c8aa31ae@ddn.com>
- <CAJnrk1YEvQ6yR_1HCQ4Aoxg1h+nXKYfPanuL8emiV1T3MonVfg@mail.gmail.com> <fb571198-c947-4435-aaf4-76932c219889@ddn.com>
-In-Reply-To: <fb571198-c947-4435-aaf4-76932c219889@ddn.com>
+References: <20251009225611.3744728-1-joannelkoong@gmail.com>
+ <aOxrXWkq8iwU5ns_@infradead.org> <CAJnrk1YpsBjfkY0_Y+roc3LzPJw1mZKyH-=N6LO9T8qismVPyQ@mail.gmail.com>
+ <a8c02942-69ca-45b1-ad51-ed3038f5d729@linux.alibaba.com> <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
+ <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com> <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
+ <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com> <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
+ <CAJnrk1b+nBmHc14-fx__NgaJzMLX7C2xm0m+hcgW_h9jbSjhFQ@mail.gmail.com>
+ <01f687f6-9e6d-4fb0-9245-577a842b8290@linux.alibaba.com> <CAJnrk1aB4BwDNwex1NimiQ_9duUQ93HMp+ATsqo4QcGStMbzWQ@mail.gmail.com>
+ <b494b498-e32d-4e2c-aba5-11dee196bd6f@linux.alibaba.com> <CAJnrk1Z-0YY35wR97uvTRaOuAzsq8NgUXRxa7h00OwYVpuVS8w@mail.gmail.com>
+ <9f800c6d-1dc5-42eb-9764-ea7b6830f701@linux.alibaba.com> <CAJnrk1Ydr2uHvjLy6dMGwZj40vYet6h+f=d0WAotoj9ZMSMB=A@mail.gmail.com>
+ <b508ecfe-9bf3-440e-9b50-9624a60b36dd@linux.alibaba.com>
+In-Reply-To: <b508ecfe-9bf3-440e-9b50-9624a60b36dd@linux.alibaba.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 20 Oct 2025 15:59:54 -0700
-X-Gm-Features: AS18NWAXdQc9I6AenVdRk3P3t0xu4tCv_K6r_oPYwvPInqc9Dts3fbt8J4SECgs
-Message-ID: <CAJnrk1b=OJXq7Typ4xaterNPLpEa0q-0OGBMcQ5p14YPkVofyQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] fuse: {io-uring} Distribute load among queues
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Luis Henriques <luis@igalia.com>, 
-	Gang He <dchg2000@gmail.com>
+Date: Mon, 20 Oct 2025 16:25:29 -0700
+X-Gm-Features: AS18NWCkHY8KZoDE_PjiSY4vqlAt-cR2PeHot4qUhEx1YIo6lkH6gadhsxtMSHI
+Message-ID: <CAJnrk1aj30PebLo7q4BMDoTU5Pyn25U7dZRK6=MvJcFSfb-4XA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
+ truncating read range
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org, djwong@kernel.org, 
+	bfoster@redhat.com, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 12:00=E2=80=AFPM Bernd Schubert <bschubert@ddn.com>=
- wrote:
->
-> On 10/18/25 02:12, Joanne Koong wrote:
-> > On Mon, Oct 13, 2025 at 10:10=E2=80=AFAM Bernd Schubert <bschubert@ddn.=
+On Fri, Oct 17, 2025 at 5:13=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.=
 com> wrote:
+>
+> On 2025/10/18 07:22, Joanne Koong wrote:
+> > On Fri, Oct 17, 2025 at 3:07=E2=80=AFPM Gao Xiang <hsiangkao@linux.alib=
+aba.com> wrote:
 > >>
-> >> So far queue selection was only for the queue corresponding
-> >> to the current core.
-> >> With bitmaps about registered queues and counting of queued
-> >> requests per queue, distributing the load is possible now.
 > >>
-> >> This is on purpose lockless and accurate, under the assumption that a =
-lock
-> >> between queues might become the limiting factor. Approximate selection
-> >> based on queue->nr_reqs should be good enough. If queues get slightly
-> >> more requests than given by that counter it should not be too bad,
-> >> as number of kernel/userspace transitions gets reduced with higher
-> >> queue sizes.
+> >> On 2025/10/18 02:41, Joanne Koong wrote:
+> >>> On Thu, Oct 16, 2025 at 5:03=E2=80=AFPM Gao Xiang <hsiangkao@linux.al=
+ibaba.com> wrote:
+> >>>>
+> >>>> On 2025/10/17 06:03, Joanne Koong wrote:
+> >>>>> On Wed, Oct 15, 2025 at 6:58=E2=80=AFPM Gao Xiang <hsiangkao@linux.=
+alibaba.com> wrote:
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>>>
+> >>>>>>>
+> >>>>>>> So I don't think this patch should have a fixes: tag for that com=
+mit.
+> >>>>>>> It seems to me like no one was hitting this path before with a
+> >>>>>>> non-block-aligned position and offset. Though now there will be a=
+ use
+> >>>>>>> case for it, which is fuse.
+> >>>>>>
+> >>>>>> To make it simplified, the issue is that:
+> >>>>>>      - Previously, before your fuse iomap read patchset (assuming =
+Christian
+> >>>>>>        is already applied), there was no WARNING out of there;
+> >>>>>>
+> >>>>>>      - A new WARNING should be considered as a kernel regression.
+> >>>>>
+> >>>>> No, the warning was always there. As shown in the syzbot report [1]=
+,
+> >>>>> the warning that triggers is this one in iomap_iter_advance()
+> >>>>>
+> >>>>> int iomap_iter_advance(struct iomap_iter *iter, u64 *count)
+> >>>>> {
+> >>>>>            if (WARN_ON_ONCE(*count > iomap_length(iter)))
+> >>>>>                    return -EIO;
+> >>>>>            ...
+> >>>>> }
+> >>>>>
+> >>>>> which was there even prior to the fuse iomap read patchset.
+> >>>>>
+> >>>>> Erofs could still trigger this warning even without the fuse iomap
+> >>>>> read patchset changes. So I don't think this qualifies as a new
+> >>>>> warning that's caused by the fuse iomap read changes.
+> >>>>
+> >>>> No, I'm pretty sure the current Linus upstream doesn't have this
+> >>>> issue, because:
+> >>>>
+> >>>>     - I've checked it against v6.17 with the C repro and related
+> >>>>       Kconfig (with make olddefconfig revised);
+> >>>>
+> >>>>     - IOMAP_INLINE is pretty common for directories and regular
+> >>>>       inodes, if it has such warning syzbot should be reported
+> >>>>       much earlier (d9dc477ff6a2 was commited at Feb 26, 2025;
+> >>>>       and b26816b4e320 was commited at Mar 19, 2025) in the dashboar=
+d
+> >>>>       (https://syzkaller.appspot.com/upstream/s/erofs) rather
+> >>>>       than triggered directly by your fuse read patchset.
+> >>>>
+> >>>> Could you also check with v6.17 codebase?
+> >>>
+> >>> I think we are talking about two different things. By "this issue"
+> >>> what you're talking about is the syzbot read example program that
+> >>> triggers the warning on erofs, but by "this issue", what I was talkin=
+g
+> >>> about is the iomap_iter_advance() warning being triggerable
+> >>> generically without the fuse read patchset, not just by erofs.
 > >>
-> >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> >> ---
-> >>  fs/fuse/dev_uring.c | 92 ++++++++++++++++++++++++++++++++++++++++++++=
-++++-----
-> >>  1 file changed, 84 insertions(+), 8 deletions(-)
+> >> Ah, yes.  Sorry the subjects of those two patches are similar,
+> >> I got them mixed up.  I thought you resent the previous patch
+> >> in this patchset.
 > >>
-> >> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> >> index 02c4b40e739c7aa43dc1c581d4ff1f721617cc79..92401adecf813b1c4570d9=
-25718be772c8f02975 100644
-> >> --- a/fs/fuse/dev_uring.c
-> >> +++ b/fs/fuse/dev_uring.c
-> >> @@ -19,6 +19,10 @@ MODULE_PARM_DESC(enable_uring,
+> >>>
+> >>> If we're talking about the syzbot erofs warning being triggered, then
+> >>> this patch is irrelevant to be talking about, because it is this othe=
+r
+> >>> patch [1] that fixes that issue. That patch got merged in before any
+> >>> of the fuse iomap read changes. There is no regression to erofs.
 > >>
-> >>  #define FUSE_URING_IOV_SEGS 2 /* header and payload */
+> >> Can you confirm this since I can't open the link below:
 > >>
-> >> +/* Number of queued fuse requests until a queue is considered full */
-> >> +#define FURING_Q_LOCAL_THRESHOLD 2
-> >> +#define FURING_Q_NUMA_THRESHOLD (FURING_Q_LOCAL_THRESHOLD + 1)
-> >> +#define FURING_Q_GLOBAL_THRESHOLD (FURING_Q_LOCAL_THRESHOLD * 2)
+> >> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> >> branch: vfs-6.19.iomap
 > >>
-> >>  bool fuse_uring_enabled(void)
-> >>  {
-> >> @@ -1285,22 +1289,94 @@ static void fuse_uring_send_in_task(struct io_=
-uring_cmd *cmd,
-> >>         fuse_uring_send(ent, cmd, err, issue_flags);
-> >>  }
+> >> [1/1] iomap: adjust read range correctly for non-block-aligned positio=
+ns
+> >>         https://git.kernel.org/vfs/vfs/c/94b11133d6f6
 > >>
-> >> -static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_r=
-ing *ring)
-> >> +/*
-> >> + * Pick best queue from mask. Follows the algorithm described in
-> >> + * "The Power of Two Choices in Randomized Load Balancing"
-> >> + *  (Michael David Mitzenmacher, 1991)
-> >> + */
-> >> +static struct fuse_ring_queue *fuse_uring_best_queue(const struct cpu=
-mask *mask,
-> >> +                                                    struct fuse_ring =
-*ring)
-> >> +{
-> >> +       unsigned int qid1, qid2;
-> >> +       struct fuse_ring_queue *queue1, *queue2;
-> >> +       int weight =3D cpumask_weight(mask);
-> >> +
-> >> +       if (weight =3D=3D 0)
-> >> +               return NULL;
-> >> +
-> >> +       if (weight =3D=3D 1) {
-> >> +               qid1 =3D cpumask_first(mask);
-> >> +               return READ_ONCE(ring->queues[qid1]);
-> >> +       }
-> >> +
-> >> +       /* Get two different queues using optimized bounded random */
-> >> +       qid1 =3D cpumask_nth(get_random_u32_below(weight), mask);
-> >> +       queue1 =3D READ_ONCE(ring->queues[qid1]);
-> >> +
-> >> +       qid2 =3D cpumask_nth(get_random_u32_below(weight), mask);
-> >> +
-> >> +       /* Avoid retries and take this queue for code simplicity */
-> >> +       if (qid1 =3D=3D qid2)
-> >> +               return queue1;
-> >> +
-> >> +       queue2 =3D READ_ONCE(ring->queues[qid2]);
-> >> +
-> >> +       if (WARN_ON_ONCE(!queue1 || !queue2))
-> >> +               return NULL;
-> >> +
-> >> +       return (READ_ONCE(queue1->nr_reqs) < READ_ONCE(queue2->nr_reqs=
-)) ?
-> >> +               queue1 : queue2;
-> >> +}
-> >> +
-> >> +/*
-> >> + * Get the best queue for the current CPU
-> >> + */
-> >> +static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring =
-*ring)
-> >>  {
-> >>         unsigned int qid;
-> >> -       struct fuse_ring_queue *queue;
-> >> +       struct fuse_ring_queue *local_queue, *best_numa, *best_global;
-> >> +       int local_node;
-> >> +       const struct cpumask *numa_mask, *global_mask;
-> >>
-> >>         qid =3D task_cpu(current);
-> >> -
-> >>         if (WARN_ONCE(qid >=3D ring->max_nr_queues,
-> >>                       "Core number (%u) exceeds nr queues (%zu)\n", qi=
-d,
-> >>                       ring->max_nr_queues))
-> >>                 qid =3D 0;
-> >>
-> >> -       queue =3D ring->queues[qid];
-> >> -       WARN_ONCE(!queue, "Missing queue for qid %d\n", qid);
-> >> +       local_queue =3D READ_ONCE(ring->queues[qid]);
-> >> +       local_node =3D cpu_to_node(qid);
-> >> +       if (WARN_ON_ONCE(local_node > ring->nr_numa_nodes))
-> >> +               local_node =3D 0;
-> >>
-> >> -       return queue;
-> >> +       /* Fast path: if local queue exists and is not overloaded, use=
- it */
-> >> +       if (local_queue &&
-> >> +           READ_ONCE(local_queue->nr_reqs) <=3D FURING_Q_LOCAL_THRESH=
-OLD)
-> >> +               return local_queue;
-> >> +
-> >> +       /* Find best NUMA-local queue */
-> >> +       numa_mask =3D ring->numa_registered_q_mask[local_node];
-> >> +       best_numa =3D fuse_uring_best_queue(numa_mask, ring);
-> >> +
-> >> +       /* If NUMA queue is under threshold, use it */
-> >> +       if (best_numa &&
-> >> +           READ_ONCE(best_numa->nr_reqs) <=3D FURING_Q_NUMA_THRESHOLD=
-)
-> >> +               return best_numa;
-> >> +
-> >> +       /* NUMA queues above threshold, try global queues */
-> >> +       global_mask =3D ring->registered_q_mask;
-> >> +       best_global =3D fuse_uring_best_queue(global_mask, ring);
-> >> +
-> >> +       /* Might happen during tear down */
-> >> +       if (!best_global)
-> >> +               return NULL;
-> >> +
-> >> +       /* If global queue is under double threshold, use it */
-> >> +       if (READ_ONCE(best_global->nr_reqs) <=3D FURING_Q_GLOBAL_THRES=
-HOLD)
-> >> +               return best_global;
-> >> +
-> >> +       /* There is no ideal queue, stay numa_local if possible */
-> >> +       return best_numa ? best_numa : best_global;
-> >>  }
 > >
-> > Hi Bernd,
+> > I don't think the vfs-6.19.iomap branch is publicly available yet,
+> > which is why the link doesn't work.
 > >
-> > I started looking a bit at the block layer blk-mq.c code because, as I
-> > understand it, they have to address this same problem of allocating
-> > requests to queues while taking into account NUMA locality.
-> >
-> > I haven't looked at the code deeply yet but I think what it does is
-> > maintain a static mapping (that considers numa topology) of cpus to
-> > queues which then makes queue selection very simple with minimal
-> > overhead. For distributing load, I think it relies on the CPU
-> > scheduler to distribute application tasks fairly across CPUs rather
-> > than doing load balancing itself (which would also then have to break
-> > numa locality if the request gets moved to a different queue).
-> > Regarding load balancing, my read of this patch is that it uses the
-> > number of current requests on queues as the metric of load but I'm not
-> > sure that's accurate - for example, some requests may be more
-> > intensive (eg fetching a read over a network) where even if there's
-> > only a few requests on that queue, that queue could still be more
-> > loaded with higher latency than other queues.
-> >
-> > I'm curious to hear your thoughts on whether you think a simple
-> > mapping solution like what the block layer does would suffice or not
-> > for fuse uring queue selection.
+> >  From the merge timestamps in [1] and [2], the fix was applied to the
+> > branch 3 minutes before the fuse iomap changes were applied.
+> > Additionally, in the cover letter of the fuse iomap read patchset [3],
+> > it calls out that the patchset is rebased on top of that fix.
 >
-Hi Bernd,
+> Ok, make sense, thanks.
 
-Thanks for your reply and for sharing your thoughts on this.
-
->
-> Hi Joanne,
->
-> thanks for looking at the patch. I think we have primarily a static
-> mapping? For completeness, please also look at the patch 6/6, which
-> updates queue selection. Basically with patch 6/6 we have static
-> mapping to the local queue, with neighbor queues as retries. I
-> had already answered Luis question - I can show that retries
-> to the neighbor QIDs improves performance, at least for fio's
-> '--ioengine=3Dio_uring --numjobs=3D{1..8} --iodepth=3D{8..128} --direct=
-=3D1'.
->
-> So that leaves the fallback to random QIDs - I don't have strong
-> opinion about that, but I don't think the CPU scheduler can handle it.
-> Let's say you are doing write-back to a single file and let's say
-> fuse is tuned to allow lot's of dirty pages. How should the scheduler
-> be able to distribute single threaded dirty page flush? Especially
-
-For writeback, I believe the writeback workqueue is unbound (I'm
-seeing bdi_wq allocated with WQ_UNBOUND in default_bid_init()) to any
-cpu. As I understand it, the worker thread can be migrated by the
-scheduler which will distribute writing back dirty data across
-multiple cpus as it sees fit.
-
-> also see in patch 6/6 that we really want to have a different CPU
-> to handle async data - the cpu scheduler will not even try to move the
-> the application or migration thread to a different cpu, because
-> there is no conflict. And for cpu cache, C-states and frequency,
-> we actually also want to the scheduler to limit migration to
-> absolutely minimum.
->
-> Another choice instead of random fallback would be to distribute
-> requests to neighbor queues within FURING_NEXT_QUEUE_RETRIES.
-> Maybe that would even give better peformance, as random queues so
-> far didn't have a positive effect in my testing.
->
-> The kind of ideal queue selection for async requests seems to be
-> to fill a queue and then to move to the next qid, within a numa
-> domain. I just hadn't found a way to do that lockless yet.
->
-> Regarding usage of number of requests - I guess there always
-> will be workloads where the algorithm isn't perfect - see the
-> scheduler wake discussion. Maybe we can find a way in the future
-> to map queued requests in fuse-daemon and then use that + number
-> of unhandled io-uring CQEs to know if a queue is busy. Any chance
-> we can do it step by step?
->
-> I don't have a big problem to remove
-> the random queue selection fallback, but also would be good
-> to have Miklos' opinion - Miklos had some concerns in September
-
-I agree, it'd be good to have Miklos's opinion on this and go with that.
-
-My opinion looking at this is that the fuse uring problem of
-distributing requests to queues is very similar to what the block
-layer has to do with assigning bio submissions to hardware queues. The
-block layer's solution to me seems more elegantly simple and flows
-organically with the cpu scheduler's internal load balancing. I think
-we should try to keep things as simple as possible, as I don't see how
-the optimizations with the custom load balancing we're doing here can
-be accurate enough to warrant the extra complexity and overhead.
-
-But I defer to whatever approach you and Miklos think is best and
-would rather go with.
+The vfs-6.19.iomap branch is now available. I just triple-checked and
+can confirm that commit 7aa6bc3e8766 ("iomap: adjust read range
+correctly for non-block-aligned positions") was merged into the tree
+prior to commit e0c95d2290c1 ("iomap: set accurate iter->pos when
+reading folio ranges").
 
 Thanks,
 Joanne
 
-> last year that queues/ring-threads might end up being unused,
-> although they could take requests...
->
 >
 > Thanks,
-> Bernd
+> Gao Xiang
 >
->
+> >
+> > Thanks,
+> > Joanne
+> >
+> > [1] https://lore.kernel.org/linux-fsdevel/20250929-gefochten-bergwacht-=
+b43b132a78d9@brauner/
+> > [2] https://lore.kernel.org/linux-fsdevel/20250929-salzbergwerk-ungnade=
+-8a16d724415e@brauner/
+> > [3] https://lore.kernel.org/linux-fsdevel/20250926002609.1302233-1-joan=
+nelkoong@gmail.com/
+> >
+> >> As you said, if this commit is prior to the iomap read patchset, that
+> >> would be fine.  Otherwise it would be better to add a fixes tag to
+> >> that commit to point out this patch should be ported together to avoid
+> >> the new warning.
+> >>
+> >> Thanks,
+> >> Gao Xiang
+> >>
+> >>
+> >>>
+> >>> Thanks,
+> >>> Joanne
+> >>>
+> >>> [1] https://lore.kernel.org/linux-fsdevel/20250922180042.1775241-1-jo=
+annelkoong@gmail.com/
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>> Gao Xiang
+> >>>>
+> >>
 >
 
