@@ -1,300 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-64705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017CDBF1919
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3E2BF1949
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DD3C4F5710
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164A83A51AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E9D3191D3;
-	Mon, 20 Oct 2025 13:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8645631986F;
+	Mon, 20 Oct 2025 13:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S3mOaGB0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rsFaY7CX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dWa3K2mp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B++jNjrE"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ptjzv4kB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4177E2571A0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 13:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6642D248F7F;
+	Mon, 20 Oct 2025 13:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760967538; cv=none; b=gG84j0/ESgTudg5E5IZ9wbA+SBntMKMDaH7Ouh6kiUEfIFY7N1bpTch0DEyyYM9s0KrfL3pfVmnHVc00S2y9kTuPHZKJqS08QyKkbzQD3lmVwXsTU6UCCEic/DzthALjhA72C0Nkrwj0yhkTW0m4SkZrqmmAR/AzNhA0snuJTb0=
+	t=1760967613; cv=none; b=eYCgZUZ8z86k58vGa1A3E/bhQqevCzdc9z2te8lB9lhEJ0K+TSkPF/YPgmNkjJ90WC1z2buQjLP7dHywh8zkODppW3bt2VuuNn6GHdm1TjwwCwy9zpd7ADFxl2qFiv69lG1GA9CTqKWlUJitMeexcAmkPj84l8+uCo8D+yLGNwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760967538; c=relaxed/simple;
-	bh=9wQ2bND1mPIM6ed87fe7TH8lrL7VZNaGcj1Do/D1NgI=;
+	s=arc-20240116; t=1760967613; c=relaxed/simple;
+	bh=jiKHpZ56cLeBkoRbxx48ENzMRCI9UX9Smhb7SclWucM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgtIp2AoMvlynwg0kZAPwWg24yjksRTg9HuEBxCl2Kr8L1lwBY7OyMuPmjumG7JrptXG30Nc35+Lul7FMTrh4LMcDXaG7Ko7U811YGH7yWMf/vbudAL42tVkCZH5dreN6zCdIkfq8Bmx7jU4hof0BwncabxAs/Yh+etUTMLySQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S3mOaGB0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rsFaY7CX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dWa3K2mp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B++jNjrE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 51AC62117C;
-	Mon, 20 Oct 2025 13:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760967529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
-	b=S3mOaGB0jNO4C0J0XRF5qVzVHjCFjIiI/nmm1BCQ8d1G6cIi6MbrKAQ/VIyFC/4OzD3Wb9
-	poIpHkReq6Um2MFhHM1H8B6cZgv42u3l2GMME3XeZFbOw8/XyAOTxwCKdbW7pU/zcWZAnj
-	CehRbGGlnbg8Jwi5It3ZWvH6WAIi2HQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760967529;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
-	b=rsFaY7CXoyArNv+KymKvCp4BHUDuzfre1A0Rp8tQFoJj7bCcgyzZgEGITwzTsXYmfCIXdK
-	BT2r8zkZb5LuLBAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dWa3K2mp;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=B++jNjrE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760967525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
-	b=dWa3K2mpxO3qeBG/SxmVBHg79iHpPabFnHMOR7wY+R7pACNeu/3qtTcFzRDlcK9WH3XvBN
-	UCKBGvxV4JKmThVwu09IWaAtONgMgov5izDR3LuiEjjGqQCa4Kh/Z8BKfQoWG5mKDqMvmM
-	JQs+ougGIcbc3v/mm34YTRQ7s4JMg0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760967525;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/UVD2xs0kDh9chtUCmfxdpnmbvjWHUT1V9m6yQzLO4=;
-	b=B++jNjrEq2csaT1voFzTlIL4Ch5NzKgfvgbXR1w+x1DKsVwBnsAr6KD2T42r+hcUPSGhzf
-	COQ+LOhmrQNYm6CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D377D13AAC;
-	Mon, 20 Oct 2025 13:38:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9j5RJmQ79mhFcgAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Mon, 20 Oct 2025 13:38:44 +0000
-Date: Mon, 20 Oct 2025 10:38:42 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Call the calc_signature functions directly
-Message-ID: <jf5k4w47cw3jhc3nfmhwtaqtqxrqd5ufg4agpagacbxejyuhb7@udi3ed54kf3m>
-References: <1090391.1760961375@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bw2u181mn8PL4IQrwSGGsrBwq4rg/C8W/1iZYC5A7eHDCe1a2Kr7mENquavYTfGAY54ONF+wc7HytOZv8j/I8UIJmUE6AuveK8UCzDEOsWXE1UIZRSoXTKERJ0tD3RBW6+6njTevNGR9hnp8fk9U+oEqYjEUEQM8N0BK0NEq/GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ptjzv4kB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KCRbo4023459;
+	Mon, 20 Oct 2025 13:39:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=ViQ89gOu19UDAiRynbx1fqy0JdIKiO
+	kaAlpGFEg0jmo=; b=Ptjzv4kBROTmkVPoTlFfTfmB/4UXjPZvHkVkOlxHn6JGaF
+	n942llznxWdYPp3MjsYwnIwwcmkfvftLcKeiYvIOAGDY9eX/lZk7P1NAyXX3k+p2
+	vQXts7umot2B8zY367jh/chah1eUCv7e6VHYajk8l2skYinBvfuOiESk/S8QyEd7
+	9HI5stj26Psb5zmVPKAJr/zM5BMClWM9lRnxbtQVQVxRAQKv0qec4Ap64fk56vCU
+	JBrAPOCWLf+9fhpyiyr79baK5Sfts8ijh4b/sAJDz9XwDScfwVr2zFu2Gd1Ci8PO
+	8dpWqQUM2ldPeQw/7da2l3r7Wkl829htX/Zf7J5w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rsqg6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 13:39:15 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59KDSrHp023351;
+	Mon, 20 Oct 2025 13:39:14 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rsqg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 13:39:14 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KC35wv002281;
+	Mon, 20 Oct 2025 13:39:13 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqej5p7v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 Oct 2025 13:39:12 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KDd98t29557158
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 Oct 2025 13:39:09 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1465F20040;
+	Mon, 20 Oct 2025 13:39:09 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AE432004B;
+	Mon, 20 Oct 2025 13:39:07 +0000 (GMT)
+Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.85.12])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 20 Oct 2025 13:39:06 +0000 (GMT)
+Date: Mon, 20 Oct 2025 15:39:05 +0200
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+        Guo Ren <guoren@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@redhat.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
+        kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>,
+        iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v5 12/15] mm/hugetlbfs: update hugetlbfs to use
+ mmap_prepare
+Message-ID: <aPY7eQec0bB9847x@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <cover.1760959441.git.lorenzo.stoakes@oracle.com>
+ <b1afa16d3cfa585a03df9ae215ae9f905b3f0ed7.1760959442.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1090391.1760961375@warthog.procyon.org.uk>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 51AC62117C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samba.org:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.01
+In-Reply-To: <b1afa16d3cfa585a03df9ae215ae9f905b3f0ed7.1760959442.git.lorenzo.stoakes@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZSoy0DnAVX45duhi1_mDLkuJQ3da5vFy
+X-Proofpoint-GUID: 2FFr9MxsKTbmfu7DnP8tGWY4DhBVRDkg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXy3CVS9OyeYuF
+ 3+tWa5wjvP+gkbv9wIuR2qBo2tCYgmgyTdm2zAqfL8UFStMulHvbtnTG5sqtSbNbGC7YvcprEqv
+ 0d6/694Ay5/WaywfyIa71bzqVpJ+YelsfaR6Fgo2F6IMpwfoqzJiZIDNnA7xw0K40cEjnFnUiYM
+ oDKF5qlhz607Hjx7bxgydKT4VgnEhOta0jia3+WHEGk61414+0Z9tjdEL7VpIj44M5+o7Y1fW82
+ OVInIKfzXUDHTrkjx3GSeH/Sqxwna+Wi9hKxe9JcxyPadb1pe+SyjdPgcUFpynbyWFiFEpi45GP
+ 4FvlBMRbqmC01KgzuyyJ/fw2hjq8Pgqs/7uGjoyGcoquemDY7UnpDzBM6gZj/b+AHFmqBo6ZfMD
+ TihvVeJSVrOZw0tNC7yiCSCnr0sABw==
+X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f63b83 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yPCof4ZbAAAA:8 a=Ikd4Dj_1AAAA:8 a=VnNF1IyMAAAA:8 a=7mAFR29It3qcuHcA-EIA:9
+ a=CjuIK1q_8ugA:10 a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
+ a=QOGEsqRv6VhmHaoFNykA:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Hi David,
+On Mon, Oct 20, 2025 at 01:11:29PM +0100, Lorenzo Stoakes wrote:
+> Since we can now perform actions after the VMA is established via
+> mmap_prepare, use desc->action_success_hook to set up the hugetlb lock
+> once the VMA is setup.
+> 
+> We also make changes throughout hugetlbfs to make this possible.
+> 
+> Note that we must hide newly established hugetlb VMAs from the rmap until
+> the operation is entirely complete as we establish a hugetlb lock during
+> VMA setup that can be raced by rmap users.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-On 10/20, David Howells wrote:
->As the SMB1 and SMB2/3 calc_signature functions are called from separate
->sign and verify paths, just call them directly rather than using a function
->pointer.  The SMB3 calc_signature then jumps to the SMB2 variant if
->necessary.
->
->Signed-off-by: David Howells <dhowells@redhat.com>
->cc: Steve French <sfrench@samba.org>
->cc: Paulo Alcantara <pc@manguebit.org>
->cc: linux-cifs@vger.kernel.org
->cc: linux-fsdevel@vger.kernel.org
->---
-> fs/smb/client/cifsglob.h      |    2 --
-> fs/smb/client/smb2ops.c       |    4 ----
-> fs/smb/client/smb2proto.h     |    6 ------
-> fs/smb/client/smb2transport.c |   18 +++++++++---------
-> 4 files changed, 9 insertions(+), 21 deletions(-)
->
->diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
->index b91397dbb6aa..7297f0f01cb3 100644
->--- a/fs/smb/client/cifsglob.h
->+++ b/fs/smb/client/cifsglob.h
->@@ -536,8 +536,6 @@ struct smb_version_operations {
-> 	void (*new_lease_key)(struct cifs_fid *);
-> 	int (*generate_signingkey)(struct cifs_ses *ses,
-> 				   struct TCP_Server_Info *server);
->-	int (*calc_signature)(struct smb_rqst *, struct TCP_Server_Info *,
->-				bool allocate_crypto);
-> 	int (*set_integrity)(const unsigned int, struct cifs_tcon *tcon,
-> 			     struct cifsFileInfo *src_file);
-> 	int (*enum_snapshots)(const unsigned int xid, struct cifs_tcon *tcon,
->diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
->index 7c392cf5940b..66eee3440df6 100644
->--- a/fs/smb/client/smb2ops.c
->+++ b/fs/smb/client/smb2ops.c
->@@ -5446,7 +5446,6 @@ struct smb_version_operations smb20_operations = {
-> 	.get_lease_key = smb2_get_lease_key,
-> 	.set_lease_key = smb2_set_lease_key,
-> 	.new_lease_key = smb2_new_lease_key,
->-	.calc_signature = smb2_calc_signature,
-> 	.is_read_op = smb2_is_read_op,
-> 	.set_oplock_level = smb2_set_oplock_level,
-> 	.create_lease_buf = smb2_create_lease_buf,
->@@ -5550,7 +5549,6 @@ struct smb_version_operations smb21_operations = {
-> 	.get_lease_key = smb2_get_lease_key,
-> 	.set_lease_key = smb2_set_lease_key,
-> 	.new_lease_key = smb2_new_lease_key,
->-	.calc_signature = smb2_calc_signature,
-> 	.is_read_op = smb21_is_read_op,
-> 	.set_oplock_level = smb21_set_oplock_level,
-> 	.create_lease_buf = smb2_create_lease_buf,
->@@ -5660,7 +5658,6 @@ struct smb_version_operations smb30_operations = {
-> 	.set_lease_key = smb2_set_lease_key,
-> 	.new_lease_key = smb2_new_lease_key,
-> 	.generate_signingkey = generate_smb30signingkey,
->-	.calc_signature = smb3_calc_signature,
-> 	.set_integrity  = smb3_set_integrity,
-> 	.is_read_op = smb21_is_read_op,
-> 	.set_oplock_level = smb3_set_oplock_level,
->@@ -5777,7 +5774,6 @@ struct smb_version_operations smb311_operations = {
-> 	.set_lease_key = smb2_set_lease_key,
-> 	.new_lease_key = smb2_new_lease_key,
-> 	.generate_signingkey = generate_smb311signingkey,
->-	.calc_signature = smb3_calc_signature,
-> 	.set_integrity  = smb3_set_integrity,
-> 	.is_read_op = smb21_is_read_op,
-> 	.set_oplock_level = smb3_set_oplock_level,
->diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
->index b3f1398c9f79..7e98fbe7bf33 100644
->--- a/fs/smb/client/smb2proto.h
->+++ b/fs/smb/client/smb2proto.h
->@@ -39,12 +39,6 @@ extern struct mid_q_entry *smb2_setup_async_request(
-> 			struct TCP_Server_Info *server, struct smb_rqst *rqst);
-> extern struct cifs_tcon *smb2_find_smb_tcon(struct TCP_Server_Info *server,
-> 						__u64 ses_id, __u32  tid);
->-extern int smb2_calc_signature(struct smb_rqst *rqst,
->-				struct TCP_Server_Info *server,
->-				bool allocate_crypto);
->-extern int smb3_calc_signature(struct smb_rqst *rqst,
->-				struct TCP_Server_Info *server,
->-				bool allocate_crypto);
-> extern void smb2_echo_request(struct work_struct *work);
-> extern __le32 smb2_get_lease_state(struct cifsInodeInfo *cinode);
-> extern bool smb2_is_valid_oplock_break(char *buffer,
->diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
->index 33f33013b392..916c131d763d 100644
->--- a/fs/smb/client/smb2transport.c
->+++ b/fs/smb/client/smb2transport.c
->@@ -247,9 +247,9 @@ smb2_find_smb_tcon(struct TCP_Server_Info *server, __u64 ses_id, __u32  tid)
-> 	return tcon;
-> }
->
->-int
->+static int
-> smb2_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
->-			bool allocate_crypto)
->+		    bool allocate_crypto)
-> {
-> 	int rc;
-> 	unsigned char smb2_signature[SMB2_HMACSHA256_SIZE];
->@@ -576,9 +576,9 @@ generate_smb311signingkey(struct cifs_ses *ses,
-> 	return generate_smb3signingkey(ses, server, &triplet);
-> }
->
->-int
->+static int
-> smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
->-			bool allocate_crypto)
->+		    bool allocate_crypto)
-> {
-> 	int rc;
-> 	unsigned char smb3_signature[SMB2_CMACAES_SIZE];
->@@ -589,6 +589,9 @@ smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
-> 	struct smb_rqst drqst;
-> 	u8 key[SMB3_SIGN_KEY_SIZE];
->
->+	if ((server->vals->protocol_id & 0xf00) == 0x200)
+Hi Lorenzo,
 
-Please use:
+Tested this patch with libhugetlbfs tests. No locking issues anymore.
 
-   if (server->vals->protocol_id <= SMB21_PROT_ID)
+Tested-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
 
-Other than that
-
-Acked-by: Enzo Matsumiya <ematsumiya@suse.de>
-
->+		return smb2_calc_signature(rqst, server, allocate_crypto);
->+
-> 	rc = smb3_get_sign_key(le64_to_cpu(shdr->SessionId), server, key);
-> 	if (unlikely(rc)) {
-> 		cifs_server_dbg(FYI, "%s: Could not get signing key\n", __func__);
->@@ -657,7 +660,6 @@ smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server,
-> static int
-> smb2_sign_rqst(struct smb_rqst *rqst, struct TCP_Server_Info *server)
-> {
->-	int rc = 0;
-> 	struct smb2_hdr *shdr;
-> 	struct smb2_sess_setup_req *ssr;
-> 	bool is_binding;
->@@ -684,9 +686,7 @@ smb2_sign_rqst(struct smb_rqst *rqst, struct TCP_Server_Info *server)
-> 		return 0;
-> 	}
->
->-	rc = server->ops->calc_signature(rqst, server, false);
->-
->-	return rc;
->+	return smb3_calc_signature(rqst, server, false);
-> }
->
-> int
->@@ -722,7 +722,7 @@ smb2_verify_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server)
->
-> 	memset(shdr->Signature, 0, SMB2_SIGNATURE_SIZE);
->
->-	rc = server->ops->calc_signature(rqst, server, true);
->+	rc = smb3_calc_signature(rqst, server, true);
->
-> 	if (rc)
-> 		return rc;
->
->
+Thank you
 
