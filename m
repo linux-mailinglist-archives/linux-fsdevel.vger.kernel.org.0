@@ -1,217 +1,269 @@
-Return-Path: <linux-fsdevel+bounces-64673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775D6BF072E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 12:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5723ABF085B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 12:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87B818A2478
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 10:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94DF3188F03B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 10:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F5C2F618F;
-	Mon, 20 Oct 2025 10:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF992F6566;
+	Mon, 20 Oct 2025 10:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kt+Epdie"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="H9tW+QCq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767562F617C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E051E9919;
+	Mon, 20 Oct 2025 10:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760955032; cv=none; b=NUQjVQ5QkP8BursoY47yFOpBpHEoB8A9qMZ6mZKNV+SUDjx+HYe3n8Arw0DxirgW9f/Sg6UYZiBxHJf1ZQwjgc9F/iFb5LlRC4RZyjtcXyyXnF8Kpvg3G9KPxKEG0PurQIW1abTS/eh3w6yPbkCJoVxZJFvOG00j6nZTGqFPHbM=
+	t=1760955913; cv=none; b=pWxx9Xopzixbtg9gZxsUv7KUyJplgPXyhKoIts1krwEzi5O7B5h1iNFZPtoRoKT6ZRTrg3E2v77TMn6N4BFanTlXgjYclTz7CGCldH6GQSZJd7HedxsB9zHVC4dYMVDj61YlR5q5ZEgj8Xr8YnNORIWB2cTh4w9n8UxYqcgwsi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760955032; c=relaxed/simple;
-	bh=+b8WuG/HC3vyA5SwA+soD2Mxxc3drE8Jv/BH+lyAEzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tqSqaH/+yCz85lmwzlKxC7pza/8dmYQWX5lT8L0dC6nGLpLX6N6/UjaCnpZqIHaQVJcK9VCz/dO0nwhe0AF/pqoHfOUbkX3JBYn5+nXbeSDyGAe3GvnZtg2s9aN+936aB0iOI2pkxUdgJv+qzRSguQlnK/5UUrhE45zhdM6g+Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kt+Epdie; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-71d603c0a23so5214347b3.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 03:10:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760955028; x=1761559828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6X5tz6bHazMvHuAjnXT+5fgYz//dOf8mv7OtJycB+c0=;
-        b=kt+EpdiebSSB6A4/jAZqkw3+DZWPzKoXbKc4/UOXoUuO8hVSorOXfvQ5AwsnLNUmhJ
-         JgOFPh96FwaifkLtuMdCLgoil8Xpj+13Ohp3cEtup9Ndpnd9y2G4uNUR0TcXzifpLkr/
-         T3vzLijs/8t4VHVNMicEkBQV3N0MUfZuFdNsWa9SiH026ef4d2wsjBmeyF2qGjx+SWZl
-         8OJ0RknoCcc66NmOVliRmVQ//5k0D0WUQ3Lgvbcqn4qZxTP//YtbKiEsXy56xHVK5/Vj
-         bM7+KIvPfCOnPDO993IvhPd6a4CcZCHT7phqEnoAkUub5iDIK4xkC0Dnc8VXBG6GVubr
-         rnQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760955028; x=1761559828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6X5tz6bHazMvHuAjnXT+5fgYz//dOf8mv7OtJycB+c0=;
-        b=xG1AolbeoA1LWnMW8xY8cjDTD3p5rSVRcV1dpRzDGyLpxAGx7VUJObCIeoE1tDp6Ac
-         nLI5mH54waN3CiZCpTy+QgGu3skGU9gOVr9jGRagiN+Vxy9xCmqUAWnj0RnLW5mH0xTb
-         9Ag9LpaXok3f+xUYJHSU2FVcdtK9nI5fdbFfXWOpFkN8gY+JeVW2HMqLbHEh6wkhwSHz
-         nUCE0ZHEQgCSSwpLrWek+HOoPP6uJlAbbut1wJqECh47pjE/mqqvtOPCO4t7bXOxbjmt
-         TshBwGQCm/eh4iZP6BF5le9eDoiHvKABnKbMHJG8ZkWw/Q797BZjNERc5IG2qLPtMizI
-         Vjiw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0v4gmngtTofTZD5bPOV5HBrxDqKGc67Q8pikcgCuZ3VvywKqR9aPgqY3TPFNilarcLJjqxCJFGQ+x6W3v@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW1x1wD27X+0aV2LlQ6K0Y2Kx3Yc3PJ8QWiyIG3mRDD0b8nLzp
-	AKRt6zej97l9eis55r22Hlr9cv9ODPIdUgnIFSGJO67VJHcGA9ttOIYfEEdy0jh2IM+kamGLWA5
-	7YzIAa571V8ye+Bw1o7EIT4CMZTih0wsldK5544TL2g==
-X-Gm-Gg: ASbGncsLqMU0maAjXq4TgOBJq2lzu+NL2T7/tDiHwAnUgYJzg793uUUd3zpmPnBrduJ
-	OkB85nxhtDkHF65V8Vagfk2iYttVxcoRzGJsRtWYmrvPNo4Qg28YSL5j0mknug/6OKvyN+1cBHx
-	SGA4nySsapIi/zDawNczjavVlpAWehLJT1H5a5F5PGNTiOGRgwJK74l74ttatz9e2tZJykdrPIP
-	30gPxed+XWKgceHrAFSpERd/20CP/INv+J7TeKC4s82wcVtaHYQ3xlGhgmzrIzrQiqLEqKfKTk2
-	3blHKfeigWQG1r5i
-X-Google-Smtp-Source: AGHT+IHsg5zxzRtvzI5xQzJ13Ye5Pwtxx5IQdlFZPiQMjohCYlmUwIhFbOThhR1qGTxghbUbimtD3GTYPARPrPtXRkc=
-X-Received: by 2002:a05:690e:134d:b0:63e:3994:4ae5 with SMTP id
- 956f58d0204a3-63e39945602mr1287408d50.4.1760955028249; Mon, 20 Oct 2025
- 03:10:28 -0700 (PDT)
+	s=arc-20240116; t=1760955913; c=relaxed/simple;
+	bh=/Zve6bkcgBEqvJoXtK/GZ/kkL0fvV8wBZmHN5u59lD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AWQeDFnhUxgi1Xo8vEHdQ5N6PBpdLoIgEQ2Fo1jPiGkw/0DCugSSv/7MIn/Jqc5d2epLwRQ/3BI+YB1HttZ1JrRS0gBREwF/OmlXorBKQqMaw6w0kvHiWIyyaYsd8C//O8MonrXAT7uMCon5GvWjMSedzYUpDfWyHaUU55payAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=H9tW+QCq; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1760955897; x=1761560697; i=quwenruo.btrfs@gmx.com;
+	bh=kJm1dXRnyQhqp0w4Yx24tOrcduQ3lzKTJEVLYdoc2Ow=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=H9tW+QCqE+J6cbYAHZfeH+JGrQyFi398JrcK5SbMIO7DqSUbNe4ZZWrha/TC4UqR
+	 EGpLgbRCGhEFrAP+/PMxt98IeOYLgxU+mHGmwPb19MfComE5sSKve4DQMi1feL/5G
+	 f7IBZJBveD7jjgFdBID7mtPBLp5U8KJrkSw8JERktZcNR3wutaTU0sP81xfoo1yHP
+	 WpE5XpIjQug6wchReuIV9KL7WUD1mwArHcwnxN//2WkMEkpG6nLByWyWz3tfaf6sr
+	 iANyGGgA2Ex/1EMDgZJkRKgsvz3zbf6F+cURCoHkic3dd1LgA1jSkmq1DjMuBl34n
+	 t2BILWqMovfhCt9MPw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MJmGP-1uvj1d1MSn-00KvNn; Mon, 20
+ Oct 2025 12:24:56 +0200
+Message-ID: <acbb5680-ef7d-4908-94f4-b4edb8b3c48e@gmx.com>
+Date: Mon, 20 Oct 2025 20:54:49 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
- <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
- <aO6N-g-y6VbSItzZ@bfoster> <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
- <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
- <CAJnrk1b=UMb9GrU0oiah986of_dgwLiRsZKvodwBoO1PSUaP7w@mail.gmail.com>
- <aO_6g9cG1IVvp--D@bfoster> <CAJnrk1Y+rdH11k_n947Z2rofu39=9=C5CRK5USi7Z1CnEG7fcg@mail.gmail.com>
-In-Reply-To: <CAJnrk1Y+rdH11k_n947Z2rofu39=9=C5CRK5USi7Z1CnEG7fcg@mail.gmail.com>
-From: lu gu <giveme.gulu@gmail.com>
-Date: Mon, 20 Oct 2025 18:10:16 +0800
-X-Gm-Features: AS18NWDlW0DYdp3OTfg9Y2f4VMNvSX7chNPPxPEerbgDkr7mZxeYtiABJdqM0Tc
-Message-ID: <CAFS-8+V6j-yunnt5yQSa=+P0mXVSg5jrfsBGWrEAbYGm21y8wg@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bernd Schubert <bernd@bsbernd.com>, 
-	Joanne Koong <joannelkoong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: O_DIRECT vs BLK_FEAT_STABLE_WRITES, was Re: [PATCH] btrfs: never
+ trust the bio from direct IO
+To: Christoph Hellwig <hch@infradead.org>, Qu Wenruo <wqu@suse.com>
+Cc: linux-btrfs@vger.kernel.org, djwong@kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-mm@kvack.org, martin.petersen@oracle.com,
+ jack@suse.com
+References: <aPYIS5rDfXhNNDHP@infradead.org>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <aPYIS5rDfXhNNDHP@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vzcvH5TqdOAbk9lMJmiAfDz6mitYV+Q5c+q2VDll8LGohgAF72L
+ sXd2mrlUvwWZN6iv4yeSIp1SFaA+dfSL7lJ8dNREv7Nsh5AB+VdGVCKaZlqVaY2RDp6BD8K
+ WIw7RSiv2sBQQvOg4TG1Hl46JITrbbvxvvl9zR8G0nCFZX+JKFsIRXsSfIHzj3V2i7k2bwD
+ oCB6PboRM0/mD3xdRLsRg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wqy/PC2uS/w=;pw7UyQpHT6LC+Se6tY1dg/2HwjW
+ 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
 
-I tried to backport the fix  to my 5.15 environment.
-After further investigation and comparing the code across kernel
-versions, I now believe I understand why the straightforward backport
-failed.
 
-My understanding is that in kernel 5.15, FUSE's writeback detection
-(e.g., in fuse_wait_on_page_writeback) relies on its own tracking
-mechanism=E2=80=94the fi->writepages red-black tree, which is checked via
-fuse_find_writeback(). In contrast, the fix in the mainline kernel
-appears to rely on the generic VFS/MM mechanism, where
-folio_wait_writeback() directly checks the PG_writeback flag on the
-folio itself.
 
-By simply backporting the logic that sets the PG_writeback flag
-without also adding a corresponding entry to the fi->writepages
-red-black tree, I created an inconsistent state: the page was marked
-as under writeback, but FUSE's own checking functions were completely
-unaware of it. I believe this inconsistency is what caused the
-deadlock.
+=E5=9C=A8 2025/10/20 20:30, Christoph Hellwig =E5=86=99=E9=81=93:
+> On Mon, Oct 20, 2025 at 07:49:50PM +1030, Qu Wenruo wrote:
+>> There is a bug report about that direct IO (and even concurrent buffere=
+d
+>> IO) can lead to different contents of md-raid.
+>=20
+> What concurrent buffered I/O?
 
-Therefore, a proper fix for 5.15 will require a more sophisticated approach=
-.
+filemap_get_folio(), for address spaces with STABEL_WRITES, there will=20
+be a folio_wait_stable() call to wait for writeback.
 
-On Thu, Oct 16, 2025 at 4:28=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Wed, Oct 15, 2025 at 12:44=E2=80=AFPM Brian Foster <bfoster@redhat.com=
-> wrote:
-> >
-> > On Wed, Oct 15, 2025 at 10:19:15AM -0700, Joanne Koong wrote:
-> > > On Wed, Oct 15, 2025 at 7:09=E2=80=AFAM Miklos Szeredi <miklos@szered=
-i.hu> wrote:
-> > > >
-> > > > On Wed, 15 Oct 2025 at 06:00, lu gu <giveme.gulu@gmail.com> wrote:
-> > > > >
-> > > > > >  Attaching a test patch, minimally tested.
-> > > > > Since I only have a test environment for kernel 5.15, I ported th=
-is
-> > > > > patch to the FUSE module in 5.15. I ran the previous LTP test cas=
-es
-> > > > > more than ten times, and the data inconsistency issue did not reo=
-ccur.
-> > > > > However, a deadlock occur. Below is the specific stack trace.
-> > > >
-> > > > This is does not reproduce for me on 6.17 even after running the te=
-st
-> > > > for hours.  Without seeing your backport it is difficult to say
-> > > > anything about the reason for the deadlock.
-> > > >
-> > > > Attaching an updated patch that takes care of i_wb initialization o=
-n
-> > > > CONFIG_CGROUP_WRITEBACK=3Dy.
-> > >
-> > > I think now we'll also need to always set
-> > > mapping_set_writeback_may_deadlock_on_reclaim(), eg
-> > >
-> > > @@ -3125,8 +3128,7 @@ void fuse_init_file_inode(struct inode *inode,
-> > > unsigned int flags)
-> > >
-> > >         inode->i_fop =3D &fuse_file_operations;
-> > >         inode->i_data.a_ops =3D &fuse_file_aops;
-> > > -       if (fc->writeback_cache)
-> > > -               mapping_set_writeback_may_deadlock_on_reclaim(&inode-=
->i_data);
-> > > +       mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data)=
-;
-> > >
-> > >
-> > > Does this completely get rid of the race? There's a fair chance I'm
-> > > wrong here but doesn't the race still happen if the read invalidation
-> > > happens before the write grabs the folio lock? This is the scenario
-> > > I'm thinking of:
-> > >
-> > > Thread A (read):
-> > > read, w/ auto inval and a outdated mtime triggers invalidate_inode_pa=
-ges2()
-> > > generic_file_read_iter() is called, which calls filemap_read() ->
-> > > filemap_get_pages() -> triggers read_folio/readahead
-> > > read_folio/readahead fetches data (stale) from the server, unlocks fo=
-lios
-> > >
-> > > Thread B (writethrough write):
-> > > fuse_perform_write() -> fuse_fill_write_pages():
-> > > grabs the folio lock and copies new write data to page cache, sets
-> > > writeback flag and unlocks folio, sends request to server
-> > >
-> > > Thread A (read):
-> > > the read data that was fetched from the server gets copied to the pag=
-e
-> > > cache in filemap_read()
-> > > overwrites the write data in the page cache with the stale data
-> > >
-> > > Am i misanalyzing something in this sequence?
-> > >
-> >
-> > Maybe I misread the description, but I think folios are locked across
-> > read I/O, so I don't follow how we could race with readahead in this
-> > way. Hm?
->
-> Ah I see where my analysis went wrong - the "copy_folio_to_iter()"
-> call in filemap_read() copies the data into the client's user buffer,
-> not the data into the page cache. The data gets copied to the page
-> cache in the fuse code in fuse_copy_out_args() (through
-> fuse_dev_do_write()), which has to be under the folio lock. Yeah
-> you're right, there's no race condition here then. Thanks for clearing
-> this up.
->
-> >
-> > Brian
-> >
-> > > Thanks,
-> > > Joanne
-> > > >
-> > > > Thanks,
-> > > > Miklos
-> > >
-> >
+But since almost no device (except md-raid56) set that flag, if a folio=20
+is still under writeback, XFS/EXT4 can still modify that folio (since=20
+it's not locked, just under writeback) for new incoming buffered writes.
+
+>=20
+>> It's exactly the situation we fixed for direct IO in commit 968f19c5b1b=
+7
+>> ("btrfs: always fallback to buffered write if the inode requires
+>> checksum"), however we still leave a hole for nodatasum cases.
+>>
+>> For nodatasum cases we still reuse the bio from direct IO, making it to
+>> cause the same problem for RAID1*/5/6 profiles, and results
+>> unreliable data contents read from disk, depending on the load balance.
+>>
+>> Just do not trust any bio from direct IO, and never reuse those bios ev=
+en
+>> for nodatasum cases. Instead alloc our own bio with newly allocated
+>> pages.
+>>
+>> For direct read, submit that new bio, and at end io time copy the
+>> contents to the dio bio.
+>> For direct write, copy the contents from the dio bio, then submit the
+>> new one.
+>=20
+> This basically reinvents IOCB_DONTCACHE I/O with duplicate code?
+
+This reminds me the problem that btrfs can not handle DONTCACHE due to=20
+its async extents...
+
+I definitely need to address it one day.
+
+>=20
+>> Considering the zero-copy direct IO (and the fact XFS/EXT4 even allows
+>> modifying the page cache when it's still under writeback) can lead to
+>> raid mirror contents mismatch, the 23% performance drop should still be
+>> acceptable, and bcachefs is already doing this bouncing behavior.
+>=20
+> XFS (and EXT4 as well, but I've not tested it) wait for I/O to
+> finish before allowing modifications when mapping_stable_writes returns
+> true, i.e., when the block device sets BLK_FEAT_STABLE_WRITES, so that
+> is fine.
+
+But md-raid1 doesn't set STABLE_WRITES, thus XFS/EXT4 won't wait for=20
+write to finish.
+
+Wouldn't that cause two mirrors to differ from each other due to timing=20
+difference?
+
+>  Direct I/O is broken, and at least for XFS I have patches
+> to force DONTCACHE instead of DIRECT I/O by default in that case, but
+> allowing for an opt-out for known applications (e.g. file or storage
+> servers).
+>=20
+> I'll need to rebase them, but I plan to send them out soon together
+> with other T10 PI enabling patches.  Sorry, juggling a few too many
+> things at the moment.
+>=20
+>> But still, such performance drop can be very obvious, and performance
+>> oriented users (who are very happy running various benchmark tools) are
+>> going to notice or even complain.
+>=20
+> I've unfortunately seen much bigger performance drops with direct I/O an=
+d
+> PI on fast SSDs, but we still should be safe by default.
+>=20
+>> Another question is, should we push this behavior to iomap layer so tha=
+t other
+>> fses can also benefit from it?
+>=20
+> The right place is above iomap to pick the buffered I/O path instead.
+
+But falling back to buffered IO performance is so miserable that wiped=20
+out almost one or more decades of storage performance improvement.
+
+Thanks,
+Qu
+
+>=20
+> The real question is if we can finally get a version of pin_user_pages
+> that prevents user modifications entirely.
 
