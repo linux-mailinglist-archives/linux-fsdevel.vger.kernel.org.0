@@ -1,271 +1,353 @@
-Return-Path: <linux-fsdevel+bounces-64791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF90BF3F81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:54:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39929BF3F96
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 01:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 573763AC13D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 22:54:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 044A74E8B6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 23:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8523D334C12;
-	Mon, 20 Oct 2025 22:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA73A238D52;
+	Mon, 20 Oct 2025 23:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fZQlq7YN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imgX5bsw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB9E2EBB8F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 22:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0A328136F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 23:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761000857; cv=none; b=Py9vpBFVTJio5PoAjXmnNssV4A+sl1UIETnuvTfjcTNXm30+YzS8WERatPdB3p6qswQu3GJwdIreXWCLm1RAHXK7ChyN+vwHk2Xfi1ZWfj2UXb7IwqorkJ1oUY+OLbKGWeU81fM1LfW5rL52poGugo7wzQO24aNBwcZs085PM4s=
+	t=1761001212; cv=none; b=kLJq5e2qBHSSrBHAA7X4dG8wduFlLGWkimZhiA8QxUTU9VXcVRHglYJ5IeSleKil1SJpzIMcxlYmkI+uiccVmmAvId2xREXHR2vbVl5gumFbtwjM4kSjLV6rsWoLodTk9GvAiZBUWJBYd8oVUeNJP4wp9jrUdBOkro1yjJRSU94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761000857; c=relaxed/simple;
-	bh=8RWPc/J+gIMcQEFxOG6dFR+ohNHjmy+3waEaDz3hd8k=;
+	s=arc-20240116; t=1761001212; c=relaxed/simple;
+	bh=pSI2VeN9VGXVzCyoHOrDz9byH3dFRumaCOthPZ5kYmE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gjzPrRiM5U5XA66jiT8FD5rtGUtgu83gzghvT97NXNb4UwCQBwj1nV7I57Adv6R1rYGtFymnHSY5LlFfsjajX7JuZbGmsPU6MRuhX11phUgmfdn6K8RFJfMF7vqV/B6NcZahXUIGjgcTLW3heJUOHTXfOf+3AdvIjWFT/ClzuEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fZQlq7YN; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b457d93c155so745188966b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 15:54:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=eULU/5z3WrTl9CwJDxKXKzb2ACo6NHPG0/P8wAQCtYYoS03x5n4jfMBx81wwmpdfiKGg/f5nWMUbqnkDAa6Shbcg/29YHKv/BjdLpLWVMCbLty0tHcoa0w2EGf6gxXovT9UM2JwEljmIY2oq2yS4KDW+gzDqms7JrHEEy/kGvL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imgX5bsw; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88f2aebce7fso745856285a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 16:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761000853; x=1761605653; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761001205; x=1761606005; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gXVpf+jOLhkP3YQQfTg59JZdjchGBwXlDGaLekMrenI=;
-        b=fZQlq7YNoYMHppESHlwQG5I3l7GO5ieUNhqKmfW11p9p8OvzR4xXelVLV4W83Alf6M
-         zUuZ+ii+K3diVyNTEv+0VX71jxoltsKcu5BQvCJI/mN6mymfYP+pjkrh5hznGTKzrJGA
-         l8aPhL0CVp/xzdmll1JX/2oiyWnagDm1a8e5hvc/Fvve+GPxPCedN3VAKlvdRohp/ueC
-         eJkg/wzZUGmIPbtYHwgY5nzOxFg6RdRfKDAYtOCQRHT3RvtlaDcnEHqyvWRfkKXx50q1
-         SyPUWy9/E2ZU1dW2QN1qvxts0gc6mUDonnWwoTXfL8FqW447jsBbd9Y5mltqxDOt3h8l
-         4Kyg==
+        bh=2nbgqWVpSo9Zd3gNi8vrt7AlPcSgtpfCDH8TIAOiN2M=;
+        b=imgX5bswxFY/j5/C6s/JylPRXHep/zH5PfqzTR1wuQbovbokFvqy8X5H71EGvJpDrR
+         pzuifO9Vq+iRmsismewvBYi7MBQ5kcjICO9GdJJWQY6b7RUBlA0FKvnYxrlECrW5uROr
+         ljBIRmp5zOXUa2STgbb6Kgnoq46R8ICe1j9AC1CJxZbb0jlpZd68GX/wCQdhpDVjBUyO
+         AHX+EAiLd2yq+Lv12pcTSQ7d58wOqpEzJMHL3X+DM1ac8ZmB/qwP2d5k8ksO49UEN4zG
+         rhf2tOxVvt26zV+Xl7U92yMbgvHo7V6X9iWAMuCeCz//6DZYYS8YxC1wZE27M9Qai4u3
+         os9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761000853; x=1761605653;
+        d=1e100.net; s=20230601; t=1761001205; x=1761606005;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gXVpf+jOLhkP3YQQfTg59JZdjchGBwXlDGaLekMrenI=;
-        b=K2UlLFRZBno1hH5dniikqWkH65X+UXyO9tVWjEvWfBJty3YuvnvWhDHDN5fGjwDs8N
-         AQLgcg7Ul/3oOGY/uQvuauUJhKTyOiFlo3V5B296zpRS0VCbW93kRPERFRnMTW7pxPxP
-         SKP31kcJgvizua/F/U29cCCH7EDYSpMEXxtlsfcqNaQ6duufWTOxgY6zX0VFFU5RgfBj
-         5gMkY4+3GSarYph+ubKHUxkjhyTeGVpu/eC+3Umo0pSWPBZyAYdReDO4VRryNDlvDZqt
-         UqFcqP27tDKvaBfJ/r+cBhQfPB8mgWQ0Y12RsQvlPSM7h/x0KSWCBY+A7R0r47t/Pv8T
-         wSFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkRtEgE4yLJ+k06wXTRdKaX4NcSifHyc6e/yZNN53lESGQAXZp+gk5ts407LDVMDMvhZZ3DCFvZdaqwHRh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0fB65gS/dmd/PzM0+3XUPb8UOoyBXQw+Altomq/z2dAJ7L+B1
-	JspYNr/0WFxeNLBKsrvQxwJE8yR9pZ2LVCGTocE0/zybzsKtxdzqdsUe8+2ln1tnPFIflLSuQLs
-	YFjkAqy7RZf7o7TjzuHfGPc81stHk1eDNpdgwiPs=
-X-Gm-Gg: ASbGncveJ5tOhrLPKblXBf7XIHUDyGZJ7PTgcDDQjNUKTnYc5Bf+mI5lrsrpZCsT1Ki
-	0dBRJcM9nUzOoI1/3ZdgWfT/FZxJ10I5LnaH1OLJjD9BRMK0VnBdRr/W0/Nr7jk5af82MitF6of
-	Av/y1O+DJSyd4PhzxcacQo/U0m53YdYNWCZPWygQAsbz5ukp2y2iQZKNqZpthgrNnGf5U1PJLeE
-	wJLHDLiETaJkPxvU3DYK9gz72TRLcnFI/Up+YxO/UaAEtR1CkMWmwjctUUznefjKHOT
-X-Google-Smtp-Source: AGHT+IGxESvOLWCY5N66S/ojP/nYOYl3Tj24HBpCyNwp/S7zxilqgZUafQa2wCmwT4NmlDi/C89pR/VoaK4wOYRrO28=
-X-Received: by 2002:a17:907:1c82:b0:b4e:a47f:715d with SMTP id
- a640c23a62f3a-b6472a6a145mr1759951766b.17.1761000852713; Mon, 20 Oct 2025
- 15:54:12 -0700 (PDT)
+        bh=2nbgqWVpSo9Zd3gNi8vrt7AlPcSgtpfCDH8TIAOiN2M=;
+        b=YECP5hR74/1jH4ZKyd43kOQGKQFxh5707QSQNicNCmaweAPAX5eCKSukJzjP/Ofsqv
+         VaZRriV+Kk+WoyAG/LjWrNnxoz9+gBBGkmktPLobiBXLVkfaCdiL1V24pi/J3z1H21+z
+         W0F34AWu8p7CxnnBBMCGXNPwUN3kGRWuYIUHYE1mrSreyViSuekpWdPYGsqIy4BaVFhO
+         K2soj8O1SeQEIrb5RIwY+FxG/XCEksPdQMoph6fYWfvoXUyOubLjuLhsxvXu9yILPvBS
+         QyfkqxlJFrA8qBZgOdKu3CpRi/uhfO2PPY3+YiYdmBa5MLNEi3cOCE0+RAAXqPQNVzv9
+         UK1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLqvGo0w3Fzv6wT06xm+iC48EE/sEcw7Mkgrf6aMi2S7RRx7R9KLpNvZRNkhVKNk5yToQGKkTe2SdQ/SMb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJeqdiIn3s74yANHFUgnaDwHa28BkSVPoqzaZNbV9Fof8ScRPU
+	8nhNiihBSvOQCnLcHdSRTxDAKl2cjle2mF6EVNG8XWr2ZZO65owcaNtDdhJ2hF5LVg5ixHFg/K9
+	nQVbFMh2ksfd9/aaIBkAtiuo/bTkHPIc=
+X-Gm-Gg: ASbGncuwvQKhL8ZBaJg29cCamVfgF6hnR6qWvjiW8ChlGGTlPY/xcLosKIsVyTXa4Qr
+	xDfYp3WaNFM+AHMsJml3veqhAe454E3SvCkpIi50CgMbAShnaxt24kJsPifjwzkQxSZe85339WI
+	xdZZBkUZUNdpzekj0smhk6NKk6hFO2GR0SeMRwVbWDeTYFPGYHR8vWjP0HFez/s3eqnwm0t3hcZ
+	YGsGU7ZvI6hCRHY7fZMyDL7aFSRNTedkF1voY6myA5+lDs/Pccgax42pYWvoDFhbCluk2eEquss
+	lbbJa53tCgM0yMdKEeWFBpxgSC8=
+X-Google-Smtp-Source: AGHT+IEZPddfQrZMfI+Lli7cjqt1FTyCpJkjTRfohAujAlhaozZ5EVjQ6kDG/mdIsgyDSStA/9O82MCk4payzXp2eQQ=
+X-Received: by 2002:a05:620a:2952:b0:851:cb50:c5d0 with SMTP id
+ af79cd13be357-8906e2ce114mr1966770485a.12.1761001205076; Mon, 20 Oct 2025
+ 16:00:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020220005.work.095-kees@kernel.org> <20251020220118.1226740-1-kees@kernel.org>
-In-Reply-To: <20251020220118.1226740-1-kees@kernel.org>
-From: Bill Wendling <morbo@google.com>
-Date: Mon, 20 Oct 2025 15:53:55 -0700
-X-Gm-Features: AS18NWAFS0u2q23JU9GZh3nxGXIAaxKW62Opi8L5p1adGFlg6Vwpq6L8QQr0HRw
-Message-ID: <CAGG=3QV7-W5vEPNtABghg=ktn6kKs45_e-PWBT9oCUzURod1bg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-To: Kees Cook <kees@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Justin Stitt <justinstitt@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Marco Elver <elver@google.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev, 
-	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Shuah Khan <shuah@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Tamir Duberstein <tamird@gmail.com>, Michael Kelley <mhklinux@outlook.com>, 
-	kernel test robot <lkp@intel.com>, Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Jan Hendrik Farr <kernel@jfarr.cc>, Yafang Shao <laoar.shao@gmail.com>, 
-	Marc Herbert <Marc.Herbert@linux.intel.com>, Christopher Ferris <cferris@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>, Jeff Xu <jeffxu@chromium.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Randy Dunlap <rdunlap@infradead.org>, 
-	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20251013-reduced-nr-ring-queues_3-v3-0-6d87c8aa31ae@ddn.com>
+ <20251013-reduced-nr-ring-queues_3-v3-4-6d87c8aa31ae@ddn.com>
+ <CAJnrk1YEvQ6yR_1HCQ4Aoxg1h+nXKYfPanuL8emiV1T3MonVfg@mail.gmail.com> <fb571198-c947-4435-aaf4-76932c219889@ddn.com>
+In-Reply-To: <fb571198-c947-4435-aaf4-76932c219889@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 20 Oct 2025 15:59:54 -0700
+X-Gm-Features: AS18NWAXdQc9I6AenVdRk3P3t0xu4tCv_K6r_oPYwvPInqc9Dts3fbt8J4SECgs
+Message-ID: <CAJnrk1b=OJXq7Typ4xaterNPLpEa0q-0OGBMcQ5p14YPkVofyQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] fuse: {io-uring} Distribute load among queues
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Luis Henriques <luis@igalia.com>, 
+	Gang He <dchg2000@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 3:01=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+On Mon, Oct 20, 2025 at 12:00=E2=80=AFPM Bernd Schubert <bschubert@ddn.com>=
+ wrote:
 >
-> Introduce __counted_by_ptr(), which works like __counted_by(), but for
-> pointer struct members:
+> On 10/18/25 02:12, Joanne Koong wrote:
+> > On Mon, Oct 13, 2025 at 10:10=E2=80=AFAM Bernd Schubert <bschubert@ddn.=
+com> wrote:
+> >>
+> >> So far queue selection was only for the queue corresponding
+> >> to the current core.
+> >> With bitmaps about registered queues and counting of queued
+> >> requests per queue, distributing the load is possible now.
+> >>
+> >> This is on purpose lockless and accurate, under the assumption that a =
+lock
+> >> between queues might become the limiting factor. Approximate selection
+> >> based on queue->nr_reqs should be good enough. If queues get slightly
+> >> more requests than given by that counter it should not be too bad,
+> >> as number of kernel/userspace transitions gets reduced with higher
+> >> queue sizes.
+> >>
+> >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> >> ---
+> >>  fs/fuse/dev_uring.c | 92 ++++++++++++++++++++++++++++++++++++++++++++=
+++++-----
+> >>  1 file changed, 84 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> >> index 02c4b40e739c7aa43dc1c581d4ff1f721617cc79..92401adecf813b1c4570d9=
+25718be772c8f02975 100644
+> >> --- a/fs/fuse/dev_uring.c
+> >> +++ b/fs/fuse/dev_uring.c
+> >> @@ -19,6 +19,10 @@ MODULE_PARM_DESC(enable_uring,
+> >>
+> >>  #define FUSE_URING_IOV_SEGS 2 /* header and payload */
+> >>
+> >> +/* Number of queued fuse requests until a queue is considered full */
+> >> +#define FURING_Q_LOCAL_THRESHOLD 2
+> >> +#define FURING_Q_NUMA_THRESHOLD (FURING_Q_LOCAL_THRESHOLD + 1)
+> >> +#define FURING_Q_GLOBAL_THRESHOLD (FURING_Q_LOCAL_THRESHOLD * 2)
+> >>
+> >>  bool fuse_uring_enabled(void)
+> >>  {
+> >> @@ -1285,22 +1289,94 @@ static void fuse_uring_send_in_task(struct io_=
+uring_cmd *cmd,
+> >>         fuse_uring_send(ent, cmd, err, issue_flags);
+> >>  }
+> >>
+> >> -static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_r=
+ing *ring)
+> >> +/*
+> >> + * Pick best queue from mask. Follows the algorithm described in
+> >> + * "The Power of Two Choices in Randomized Load Balancing"
+> >> + *  (Michael David Mitzenmacher, 1991)
+> >> + */
+> >> +static struct fuse_ring_queue *fuse_uring_best_queue(const struct cpu=
+mask *mask,
+> >> +                                                    struct fuse_ring =
+*ring)
+> >> +{
+> >> +       unsigned int qid1, qid2;
+> >> +       struct fuse_ring_queue *queue1, *queue2;
+> >> +       int weight =3D cpumask_weight(mask);
+> >> +
+> >> +       if (weight =3D=3D 0)
+> >> +               return NULL;
+> >> +
+> >> +       if (weight =3D=3D 1) {
+> >> +               qid1 =3D cpumask_first(mask);
+> >> +               return READ_ONCE(ring->queues[qid1]);
+> >> +       }
+> >> +
+> >> +       /* Get two different queues using optimized bounded random */
+> >> +       qid1 =3D cpumask_nth(get_random_u32_below(weight), mask);
+> >> +       queue1 =3D READ_ONCE(ring->queues[qid1]);
+> >> +
+> >> +       qid2 =3D cpumask_nth(get_random_u32_below(weight), mask);
+> >> +
+> >> +       /* Avoid retries and take this queue for code simplicity */
+> >> +       if (qid1 =3D=3D qid2)
+> >> +               return queue1;
+> >> +
+> >> +       queue2 =3D READ_ONCE(ring->queues[qid2]);
+> >> +
+> >> +       if (WARN_ON_ONCE(!queue1 || !queue2))
+> >> +               return NULL;
+> >> +
+> >> +       return (READ_ONCE(queue1->nr_reqs) < READ_ONCE(queue2->nr_reqs=
+)) ?
+> >> +               queue1 : queue2;
+> >> +}
+> >> +
+> >> +/*
+> >> + * Get the best queue for the current CPU
+> >> + */
+> >> +static struct fuse_ring_queue *fuse_uring_get_queue(struct fuse_ring =
+*ring)
+> >>  {
+> >>         unsigned int qid;
+> >> -       struct fuse_ring_queue *queue;
+> >> +       struct fuse_ring_queue *local_queue, *best_numa, *best_global;
+> >> +       int local_node;
+> >> +       const struct cpumask *numa_mask, *global_mask;
+> >>
+> >>         qid =3D task_cpu(current);
+> >> -
+> >>         if (WARN_ONCE(qid >=3D ring->max_nr_queues,
+> >>                       "Core number (%u) exceeds nr queues (%zu)\n", qi=
+d,
+> >>                       ring->max_nr_queues))
+> >>                 qid =3D 0;
+> >>
+> >> -       queue =3D ring->queues[qid];
+> >> -       WARN_ONCE(!queue, "Missing queue for qid %d\n", qid);
+> >> +       local_queue =3D READ_ONCE(ring->queues[qid]);
+> >> +       local_node =3D cpu_to_node(qid);
+> >> +       if (WARN_ON_ONCE(local_node > ring->nr_numa_nodes))
+> >> +               local_node =3D 0;
+> >>
+> >> -       return queue;
+> >> +       /* Fast path: if local queue exists and is not overloaded, use=
+ it */
+> >> +       if (local_queue &&
+> >> +           READ_ONCE(local_queue->nr_reqs) <=3D FURING_Q_LOCAL_THRESH=
+OLD)
+> >> +               return local_queue;
+> >> +
+> >> +       /* Find best NUMA-local queue */
+> >> +       numa_mask =3D ring->numa_registered_q_mask[local_node];
+> >> +       best_numa =3D fuse_uring_best_queue(numa_mask, ring);
+> >> +
+> >> +       /* If NUMA queue is under threshold, use it */
+> >> +       if (best_numa &&
+> >> +           READ_ONCE(best_numa->nr_reqs) <=3D FURING_Q_NUMA_THRESHOLD=
+)
+> >> +               return best_numa;
+> >> +
+> >> +       /* NUMA queues above threshold, try global queues */
+> >> +       global_mask =3D ring->registered_q_mask;
+> >> +       best_global =3D fuse_uring_best_queue(global_mask, ring);
+> >> +
+> >> +       /* Might happen during tear down */
+> >> +       if (!best_global)
+> >> +               return NULL;
+> >> +
+> >> +       /* If global queue is under double threshold, use it */
+> >> +       if (READ_ONCE(best_global->nr_reqs) <=3D FURING_Q_GLOBAL_THRES=
+HOLD)
+> >> +               return best_global;
+> >> +
+> >> +       /* There is no ideal queue, stay numa_local if possible */
+> >> +       return best_numa ? best_numa : best_global;
+> >>  }
+> >
+> > Hi Bernd,
+> >
+> > I started looking a bit at the block layer blk-mq.c code because, as I
+> > understand it, they have to address this same problem of allocating
+> > requests to queues while taking into account NUMA locality.
+> >
+> > I haven't looked at the code deeply yet but I think what it does is
+> > maintain a static mapping (that considers numa topology) of cpus to
+> > queues which then makes queue selection very simple with minimal
+> > overhead. For distributing load, I think it relies on the CPU
+> > scheduler to distribute application tasks fairly across CPUs rather
+> > than doing load balancing itself (which would also then have to break
+> > numa locality if the request gets moved to a different queue).
+> > Regarding load balancing, my read of this patch is that it uses the
+> > number of current requests on queues as the metric of load but I'm not
+> > sure that's accurate - for example, some requests may be more
+> > intensive (eg fetching a read over a network) where even if there's
+> > only a few requests on that queue, that queue could still be more
+> > loaded with higher latency than other queues.
+> >
+> > I'm curious to hear your thoughts on whether you think a simple
+> > mapping solution like what the block layer does would suffice or not
+> > for fuse uring queue selection.
 >
-> struct foo {
->         int a, b, c;
->         char *buffer __counted_by_ptr(bytes);
->         short nr_bars;
->         struct bar *bars __counted_by_ptr(nr_bars);
->         size_t bytes;
-> };
->
-> Since "counted_by" can only be applied to pointer members in very recent
-> compiler versions, its application ends up needing to be distinct from
-> flexible array "counted_by" annotations, hence a separate macro.
->
-> Unfortunately, this annotation cannot be used for "void *" members
-> (since such a member is considered a pointer to an incomplete type,
-> and neither Clang nor GCC developers could be convinced otherwise[1],
-> even in the face of the GNU extension that "void *" has size "1 byte"
-> for pointer arithmetic). For "void *" members, we must use the coming
-> "sized_by" attribute.
->
-I'm pretty sure that "sized_by" is available in Clang right now.
+Hi Bernd,
 
--bw
+Thanks for your reply and for sharing your thoughts on this.
 
-> Link: https://gcc.gnu.org/pipermail/gcc-patches/2025-May/683136.html [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Miguel Ojeda <ojeda@kernel.org>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-> Cc: Bill Wendling <morbo@google.com>
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: <llvm@lists.linux.dev>
-> ---
->  init/Kconfig                   | 11 +++++++++++
->  Makefile                       |  4 ++++
->  include/linux/compiler_types.h | 21 ++++++++++++++++++++-
->  include/uapi/linux/stddef.h    |  4 ++++
->  4 files changed, 39 insertions(+), 1 deletion(-)
 >
-> diff --git a/init/Kconfig b/init/Kconfig
-> index cab3ad28ca49..54691b086bc6 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -139,6 +139,17 @@ config CC_HAS_COUNTED_BY
->         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D108896
->         default y if CC_IS_GCC && GCC_VERSION >=3D 150100
+> Hi Joanne,
 >
-> +config CC_HAS_COUNTED_BY_PTR_BARE
-> +       def_bool $(success,echo 'struct foo { int *ptr __attribute__((__c=
-ounted_by__(count))); int count; };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /d=
-ev/null -Werror)
-> +
-> +config CC_HAS_COUNTED_BY_PTR_EXP
-> +       def_bool $(success,echo 'struct foo { int *ptr __attribute__((__c=
-ounted_by__(count))); int count; };' | $(CC) $(CLANG_FLAGS) -fexperimental-=
-late-parse-attributes -x c - -c -o /dev/null -Werror)
-> +       depends on !CC_HAS_COUNTED_BY_PTR_BARE
-> +
-> +config CC_HAS_COUNTED_BY_PTR
-> +       def_bool y
-> +       depends on CC_HAS_COUNTED_BY_PTR_BARE || CC_HAS_COUNTED_BY_PTR_EX=
-P
-> +
->  config CC_HAS_MULTIDIMENSIONAL_NONSTRING
->         def_bool $(success,echo 'char tag[][4] __attribute__((__nonstring=
-__)) =3D { };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
+> thanks for looking at the patch. I think we have primarily a static
+> mapping? For completeness, please also look at the patch 6/6, which
+> updates queue selection. Basically with patch 6/6 we have static
+> mapping to the local queue, with neighbor queues as retries. I
+> had already answered Luis question - I can show that retries
+> to the neighbor QIDs improves performance, at least for fio's
+> '--ioengine=3Dio_uring --numjobs=3D{1..8} --iodepth=3D{8..128} --direct=
+=3D1'.
 >
-> diff --git a/Makefile b/Makefile
-> index d14824792227..1b297dcbb0df 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -933,6 +933,10 @@ KBUILD_CFLAGS      +=3D $(CC_AUTO_VAR_INIT_ZERO_ENAB=
-LER)
->  endif
->  endif
+> So that leaves the fallback to random QIDs - I don't have strong
+> opinion about that, but I don't think the CPU scheduler can handle it.
+> Let's say you are doing write-back to a single file and let's say
+> fuse is tuned to allow lot's of dirty pages. How should the scheduler
+> be able to distribute single threaded dirty page flush? Especially
+
+For writeback, I believe the writeback workqueue is unbound (I'm
+seeing bdi_wq allocated with WQ_UNBOUND in default_bid_init()) to any
+cpu. As I understand it, the worker thread can be migrated by the
+scheduler which will distribute writing back dirty data across
+multiple cpus as it sees fit.
+
+> also see in patch 6/6 that we really want to have a different CPU
+> to handle async data - the cpu scheduler will not even try to move the
+> the application or migration thread to a different cpu, because
+> there is no conflict. And for cpu cache, C-states and frequency,
+> we actually also want to the scheduler to limit migration to
+> absolutely minimum.
 >
-> +ifdef CONFIG_CC_HAS_COUNTED_BY_PTR_EXP
-> +KBUILD_CFLAGS  +=3D -fexperimental-late-parse-attributes
-> +endif
-> +
->  # Explicitly clear padding bits during variable initialization
->  KBUILD_CFLAGS +=3D $(call cc-option,-fzero-init-padding-bits=3Dall)
+> Another choice instead of random fallback would be to distribute
+> requests to neighbor queues within FURING_NEXT_QUEUE_RETRIES.
+> Maybe that would even give better peformance, as random queues so
+> far didn't have a positive effect in my testing.
 >
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_type=
-s.h
-> index 59288a2c1ad2..f197ea03b593 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -353,11 +353,14 @@ struct ftrace_likely_data {
->  #endif
+> The kind of ideal queue selection for async requests seems to be
+> to fill a queue and then to move to the next qid, within a numa
+> domain. I just hadn't found a way to do that lockless yet.
 >
->  /*
-> + * Runtime track number of flexible array member elements for use by
-> + * CONFIG_FORTIFY_SOURCE and CONFIG_UBSAN_BOUNDS.
-> + *
->   * Optional: only supported since gcc >=3D 15
->   * Optional: only supported since clang >=3D 18
->   *
->   *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D108896
-> - * clang: https://github.com/llvm/llvm-project/pull/76348
-> + * clang: https://clang.llvm.org/docs/AttributeReference.html#counted-by=
--counted-by-or-null-sized-by-sized-by-or-null
->   *
->   * __bdos on clang < 19.1.2 can erroneously return 0:
->   * https://github.com/llvm/llvm-project/pull/110497
-> @@ -371,6 +374,22 @@ struct ftrace_likely_data {
->  # define __counted_by(member)
->  #endif
+> Regarding usage of number of requests - I guess there always
+> will be workloads where the algorithm isn't perfect - see the
+> scheduler wake discussion. Maybe we can find a way in the future
+> to map queued requests in fuse-daemon and then use that + number
+> of unhandled io-uring CQEs to know if a queue is busy. Any chance
+> we can do it step by step?
 >
-> +/*
-> + * Runtime track number of objects pointed to by a pointer member for
-> + * use by CONFIG_FORTIFY_SOURCE and CONFIG_UBSAN_BOUNDS.
-> + *
-> + * Optional: only supported since gcc >=3D 16
-> + * Optional: only supported since clang >=3D 20
-> + *
-> + *   gcc: https://gcc.gnu.org/pipermail/gcc-patches/2025-April/681727.ht=
-ml
-> + * clang: ...
-> + */
-> +#ifdef CONFIG_CC_HAS_COUNTED_BY_PTR
-> +# define __counted_by_ptr(member)      __attribute__((__counted_by__(mem=
-ber)))
-> +#else
-> +# define __counted_by_ptr(member)
-> +#endif
-> +
->  /*
->   * Optional: only supported since gcc >=3D 15
->   * Optional: not supported by Clang
-> diff --git a/include/uapi/linux/stddef.h b/include/uapi/linux/stddef.h
-> index 9a28f7d9a334..111b097ec00b 100644
-> --- a/include/uapi/linux/stddef.h
-> +++ b/include/uapi/linux/stddef.h
-> @@ -72,6 +72,10 @@
->  #define __counted_by_be(m)
->  #endif
+> I don't have a big problem to remove
+> the random queue selection fallback, but also would be good
+> to have Miklos' opinion - Miklos had some concerns in September
+
+I agree, it'd be good to have Miklos's opinion on this and go with that.
+
+My opinion looking at this is that the fuse uring problem of
+distributing requests to queues is very similar to what the block
+layer has to do with assigning bio submissions to hardware queues. The
+block layer's solution to me seems more elegantly simple and flows
+organically with the cpu scheduler's internal load balancing. I think
+we should try to keep things as simple as possible, as I don't see how
+the optimizations with the custom load balancing we're doing here can
+be accurate enough to warrant the extra complexity and overhead.
+
+But I defer to whatever approach you and Miklos think is best and
+would rather go with.
+
+Thanks,
+Joanne
+
+> last year that queues/ring-threads might end up being unused,
+> although they could take requests...
 >
-> +#ifndef __counted_by_ptr
-> +#define __counted_by_ptr(m)
-> +#endif
-> +
->  #ifdef __KERNEL__
->  #define __kernel_nonstring     __nonstring
->  #else
-> --
-> 2.34.1
+>
+> Thanks,
+> Bernd
+>
+>
 >
 
