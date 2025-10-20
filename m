@@ -1,181 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-64706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3E2BF1949
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:40:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4764EBF1AED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 15:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164A83A51AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:40:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AF124F76B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8645631986F;
-	Mon, 20 Oct 2025 13:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DAF31DD9B;
+	Mon, 20 Oct 2025 13:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ptjzv4kB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BkUD5/SA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6642D248F7F;
-	Mon, 20 Oct 2025 13:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7885B221FD0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 13:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760967613; cv=none; b=eYCgZUZ8z86k58vGa1A3E/bhQqevCzdc9z2te8lB9lhEJ0K+TSkPF/YPgmNkjJ90WC1z2buQjLP7dHywh8zkODppW3bt2VuuNn6GHdm1TjwwCwy9zpd7ADFxl2qFiv69lG1GA9CTqKWlUJitMeexcAmkPj84l8+uCo8D+yLGNwQ=
+	t=1760968394; cv=none; b=I0a+W5B2xTSzaKzABqFATe8FlHI2+VNiDVTyZP6LIizzuCXpRV0pMJLZMIW9LhWqw+DqFSh5kJwyBweaqS7QoTRQ48oCc0l8hm5xWWmPjzKFvKxZoO/UnGDdT9/z656CFj1HJjaL4lAAxn1jhKr3hYwOmc12hUOGPflWUGPJxFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760967613; c=relaxed/simple;
-	bh=jiKHpZ56cLeBkoRbxx48ENzMRCI9UX9Smhb7SclWucM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bw2u181mn8PL4IQrwSGGsrBwq4rg/C8W/1iZYC5A7eHDCe1a2Kr7mENquavYTfGAY54ONF+wc7HytOZv8j/I8UIJmUE6AuveK8UCzDEOsWXE1UIZRSoXTKERJ0tD3RBW6+6njTevNGR9hnp8fk9U+oEqYjEUEQM8N0BK0NEq/GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ptjzv4kB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59KCRbo4023459;
-	Mon, 20 Oct 2025 13:39:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ViQ89gOu19UDAiRynbx1fqy0JdIKiO
-	kaAlpGFEg0jmo=; b=Ptjzv4kBROTmkVPoTlFfTfmB/4UXjPZvHkVkOlxHn6JGaF
-	n942llznxWdYPp3MjsYwnIwwcmkfvftLcKeiYvIOAGDY9eX/lZk7P1NAyXX3k+p2
-	vQXts7umot2B8zY367jh/chah1eUCv7e6VHYajk8l2skYinBvfuOiESk/S8QyEd7
-	9HI5stj26Psb5zmVPKAJr/zM5BMClWM9lRnxbtQVQVxRAQKv0qec4Ap64fk56vCU
-	JBrAPOCWLf+9fhpyiyr79baK5Sfts8ijh4b/sAJDz9XwDScfwVr2zFu2Gd1Ci8PO
-	8dpWqQUM2ldPeQw/7da2l3r7Wkl829htX/Zf7J5w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rsqg6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 13:39:15 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59KDSrHp023351;
-	Mon, 20 Oct 2025 13:39:14 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31rsqg3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 13:39:14 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KC35wv002281;
-	Mon, 20 Oct 2025 13:39:13 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqej5p7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 13:39:12 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KDd98t29557158
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 13:39:09 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1465F20040;
-	Mon, 20 Oct 2025 13:39:09 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0AE432004B;
-	Mon, 20 Oct 2025 13:39:07 +0000 (GMT)
-Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.85.12])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 20 Oct 2025 13:39:06 +0000 (GMT)
-Date: Mon, 20 Oct 2025 15:39:05 +0200
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
-        Guo Ren <guoren@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-        kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>,
-        iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v5 12/15] mm/hugetlbfs: update hugetlbfs to use
- mmap_prepare
-Message-ID: <aPY7eQec0bB9847x@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <cover.1760959441.git.lorenzo.stoakes@oracle.com>
- <b1afa16d3cfa585a03df9ae215ae9f905b3f0ed7.1760959442.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1760968394; c=relaxed/simple;
+	bh=VwKauILfhcSWg3j9lqrsCRW9wbHQzV3XTs+CzgQu1NI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SkfUNpqIUEuAfKJHaDOXyjvwfqA8Oj6KuShtMFBVCMsm3L0R/0fueUaXTq54lUPxH4FSLKpg9H6iuAJSTR6qCsGTDKIOoby14Mvc/hdzZqZHR7aXOodK2mQlpagFJ8nZ/ZsLtZzugjPRwvnVKu+YveC9E4oeM0tWpYAIbp3gfJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BkUD5/SA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760968391;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bIUQcQqGzVepp2tFG39wK71eceYTNe6sFkAh3btcuUk=;
+	b=BkUD5/SAUDpbjZM5ZyO1d5poSDTaE1bx+8JN600nMEJHYCMCApY6D4Bo6HEL41dMuW/SLY
+	siPPZ4IzpXJJ9pElPwaVtBYWiQb937rtYtOFi/eUXbaOdoruGyt+ZHGtjzZwkgDSWT8RMW
+	P+rHL/vZ65GTZ06PVotcrWJsz6YBzq4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-54-iC5kJQl7NTG3jhRl64g7cA-1; Mon, 20 Oct 2025 09:53:09 -0400
+X-MC-Unique: iC5kJQl7NTG3jhRl64g7cA-1
+X-Mimecast-MFC-AGG-ID: iC5kJQl7NTG3jhRl64g7cA_1760968388
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-426feed0016so1798878f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 06:53:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760968388; x=1761573188;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bIUQcQqGzVepp2tFG39wK71eceYTNe6sFkAh3btcuUk=;
+        b=HHB8+07CRnxN2CN0XfSfUQqjQZlPblJGRSC6jpoVTTs61FhqLxFBStzQYTE52J8UcN
+         CLiBsa451ZKeuv3UG1auyNXLvF/5cdu0AP/4cGfbLvcPbFbPhNCwJAPt335VTZ2KXrs4
+         7DWxLvq/9mTdndIwJybVmr8nmWmsdPdWyRKwtG1Z4QRe3hcNyf0/MODaLZGz/BVL94Ev
+         wXXJWqpZO/wyuDX1Y4Smkjp47KHP//BHADY8pJ98S+f79UJbKo87j/Qy8djf0hOVuGNF
+         rEqSz/He85w815jKO34C++66OOjwTjIx5qVMd1Pa3rMgGaIWtAC5kQMzoQb/UsWmlmch
+         QBmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwPNvQuZhZXtuzTle9ViqePeUeq8K7W3nfaxODvGM25zPRkqTC3HcADioEZ3vOeBSNLykHwddsbbkaNgxx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq5MAhvoJ3YFqC5hPW+da5TRjSACwmgxSBFbb1R6QTs2GpcyXS
+	40RGpCNkt/UM1fP0Q92QKfTvmMWrwYBtOOcLV1Q59Fq4QhILSXiiOx+KXIeNiEtrAX91cdeFE95
+	EvyxXw8PNVpTOBErBijcIha4OvVuPo1hZBme4xEAArWHM9NWud8MxKLwoK6M5yuYNBn0=
+X-Gm-Gg: ASbGncuOHN1YXhdFtkyfLz/2ptz81z3SQP+htNqfWpJ++POItOfHZl13cyUMM9LTRYB
+	aWuz2FE5NysWvCFkfSvA1K3wEbhKXjBgcvaxCIqdmrqoHTIGhvliwXmqL2JMEMdWnVxXKfqoZyR
+	uQGwYlwHqeNMyxMLt44iD2BKK3qinhoQ915QYbbWZhRR+xlomJ76WbpNwy/ZE8TlQp1el6Yh3jM
+	PntgQi4svWMDDoGKsdFWfyfQg7m4d9oOVAUXIfNaCuJMFu/nFOvrSrwxj9RbIgPFy80dxfc/dFl
+	4mxOlmGGUumCA2y+fFLATwxQfJvfY3xs5MJF3TOdVXpumlnR6GEVpfoOlNBn5dQchnbYurHpCko
+	1yGeXuMHnp6oJXMkkEaDl0CUMJEkP31xXZJJvRRy/lrt41aGw0afDHOfux0+8aMZGo5H+esAmpS
+	aSqCcojei49iHMKda0/lEyLzI2O8k=
+X-Received: by 2002:a5d:64c2:0:b0:427:80a:6bdb with SMTP id ffacd0b85a97d-427080a6be4mr7319005f8f.46.1760968388339;
+        Mon, 20 Oct 2025 06:53:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNJVqO4jkClQAHIXRWj8GsF6qeiRz7gfVAznbjdQ8V6m0yz78pmC4EKThEBfYV6xT0dDAiDw==
+X-Received: by 2002:a5d:64c2:0:b0:427:80a:6bdb with SMTP id ffacd0b85a97d-427080a6be4mr7318978f8f.46.1760968387961;
+        Mon, 20 Oct 2025 06:53:07 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce? (p200300d82f0cc200fa4ac4ff1b3221ce.dip0.t-ipconnect.de. [2003:d8:2f0c:c200:fa4a:c4ff:1b32:21ce])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3affsm15329118f8f.12.2025.10.20.06.53.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 06:53:07 -0700 (PDT)
+Message-ID: <d16132cd-81c5-4655-a788-0797553238bf@redhat.com>
+Date: Mon, 20 Oct 2025 15:53:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1afa16d3cfa585a03df9ae215ae9f905b3f0ed7.1760959442.git.lorenzo.stoakes@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZSoy0DnAVX45duhi1_mDLkuJQ3da5vFy
-X-Proofpoint-GUID: 2FFr9MxsKTbmfu7DnP8tGWY4DhBVRDkg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXy3CVS9OyeYuF
- 3+tWa5wjvP+gkbv9wIuR2qBo2tCYgmgyTdm2zAqfL8UFStMulHvbtnTG5sqtSbNbGC7YvcprEqv
- 0d6/694Ay5/WaywfyIa71bzqVpJ+YelsfaR6Fgo2F6IMpwfoqzJiZIDNnA7xw0K40cEjnFnUiYM
- oDKF5qlhz607Hjx7bxgydKT4VgnEhOta0jia3+WHEGk61414+0Z9tjdEL7VpIj44M5+o7Y1fW82
- OVInIKfzXUDHTrkjx3GSeH/Sqxwna+Wi9hKxe9JcxyPadb1pe+SyjdPgcUFpynbyWFiFEpi45GP
- 4FvlBMRbqmC01KgzuyyJ/fw2hjq8Pgqs/7uGjoyGcoquemDY7UnpDzBM6gZj/b+AHFmqBo6ZfMD
- TihvVeJSVrOZw0tNC7yiCSCnr0sABw==
-X-Authority-Analysis: v=2.4 cv=IJYPywvG c=1 sm=1 tr=0 ts=68f63b83 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=Ikd4Dj_1AAAA:8 a=VnNF1IyMAAAA:8 a=7mAFR29It3qcuHcA-EIA:9
- a=CjuIK1q_8ugA:10 a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
- a=QOGEsqRv6VhmHaoFNykA:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
+ large folios (CONFIG_NO_PAGE_MAPCOUNT)
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Muchun Song <muchun.song@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+References: <20250303163014.1128035-1-david@redhat.com>
+ <20250303163014.1128035-21-david@redhat.com>
+ <20251014122335.dpyk5advbkioojnm@master>
+ <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+ <aO5fCT62gZZw9-wQ@casper.infradead.org>
+ <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
+ <20251015004543.md5x4cjtkyjzpf4b@master>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251015004543.md5x4cjtkyjzpf4b@master>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 20, 2025 at 01:11:29PM +0100, Lorenzo Stoakes wrote:
-> Since we can now perform actions after the VMA is established via
-> mmap_prepare, use desc->action_success_hook to set up the hugetlb lock
-> once the VMA is setup.
+On 15.10.25 02:45, Wei Yang wrote:
+> On Tue, Oct 14, 2025 at 04:38:38PM +0200, David Hildenbrand wrote:
+>> On 14.10.25 16:32, Matthew Wilcox wrote:
+>>> On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
+>>>>> As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
+>>>>> folio yet.
+>>>>
+>>>> We do support partially mapped PUD-sized folios I think, but not anonymous
+>>>> PUD-sized folios.
+>>>
+>>> I don't think so?  The only mechanism I know of to allocate PUD-sized
+>>> chunks of memory is hugetlb, and that doesn't permit partial mappings.
+>>
+>> Greetings from the latest DAX rework :)
 > 
-> We also make changes throughout hugetlbfs to make this possible.
+> After a re-think, do you think it's better to align the behavior between
+> CONFIG_NO_PAGE_MAPCOUNT and CONFIG_PAGE_MAPCOUNT?
 > 
-> Note that we must hide newly established hugetlb VMAs from the rmap until
-> the operation is entirely complete as we establish a hugetlb lock during
-> VMA setup that can be raced by rmap users.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> It looks we treat a PUD-sized folio partially_mapped if CONFIG_NO_PAGE_MAPCOUNT,
+> but !partially_mapped if CONFIG_PAGE_MAPCOUNT, if my understanding is correct.
 
-Hi Lorenzo,
+I'd just leave it alone unless there is a problem right now.
 
-Tested this patch with libhugetlbfs tests. No locking issues anymore.
+-- 
+Cheers
 
-Tested-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+David / dhildenb
 
-Thank you
 
