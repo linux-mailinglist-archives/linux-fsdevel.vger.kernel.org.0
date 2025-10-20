@@ -1,249 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-64682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92902BF0F2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 13:56:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F86BF0FAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 14:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AEC54E7C39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 11:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3005E1891315
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 12:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DA53043C4;
-	Mon, 20 Oct 2025 11:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3A311C3A;
+	Mon, 20 Oct 2025 12:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dWweumay"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8fTq294"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074B12F7AD7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 11:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A047B2FB094
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 12:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961384; cv=none; b=ioosub5GBBd6ms5GQJLpW7+F/rNIvXlwyqS241W6m0w4mvfuxix0BALIsMgQP40eu2k540FAKmOeNr8tjTxGxRRK7dJO5T55nHiXoat3toaUpB7bBCnneAym0B73pASASl4aesFRuFPyVozsJnhiVVlG9mZPQOpavdX42BlYfKA=
+	t=1760961693; cv=none; b=kE0fiRThymjZHogm6KYD4LHc5YudM3q2clMX+ZdaIjHTzL4RCjS5lOaPiWSK0jT9erUBTM4vGTZxIVZLavG3wsmQezbMsCWtF/+WQq4XETzq9XQz0/nHv8UC/ubII8vnllDtmNqMI18VH6JZKNWcoL06hnTqnqQ92chT9ThRgxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961384; c=relaxed/simple;
-	bh=/thsdxnpKRmIAOfuIpSH5cvifzDKhf8lk4A3cZdWsAI=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=RVe6/VrB+AvSzCrEDcqpvD9+fNIPS01XKmdRp075zN7uG6TNz9Gi4f7i8+MosdsEny2NZwPOjS0knpqttCMQykFeyyH8jmhUDQUqniT1OxHRIng9r7/2AO+k3QinEkkAubXvLz0CCx9+SQ2jC1CgDxDjJRGvzSz54v2+vjjMVsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dWweumay; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760961380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HIK1mI79hxAHpXyxTMFMhPb+0wM8sYw+VEGXupPQppw=;
-	b=dWweumayF+6fzKKSMefCnbcAW9V3UXy6+3qEZZWyVUa/8StPi1ek9sz8JMReCTDm2iCsoq
-	60s0I+c6R3fmkrjJ77N4+PkbxphmnBpKkThRCaHZ69ZO93dokgsMf/PnTZmrpFkbLuWMMS
-	b79iRJ2bHJw/bNSoWrX9uFZgloYOgNw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-680-O0-B5uklMuaAyjurTxcAqw-1; Mon,
- 20 Oct 2025 07:56:19 -0400
-X-MC-Unique: O0-B5uklMuaAyjurTxcAqw-1
-X-Mimecast-MFC-AGG-ID: O0-B5uklMuaAyjurTxcAqw_1760961378
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43D7918001D1;
-	Mon, 20 Oct 2025 11:56:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.57])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B4665180044F;
-	Mon, 20 Oct 2025 11:56:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Call the calc_signature functions directly
+	s=arc-20240116; t=1760961693; c=relaxed/simple;
+	bh=nswVLSlbYyIVmMcPMj0v3iW0yfGwDL9+Y9cKMGs77Q4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bVJL/mE524g7Yn8+Ku6SYRJDevvqL+4i8h/JIMcQ0Sn+0NSzc2ZvXXAt6KvU3jXvWxmh1ayG6DvECkZw7FCc3W37bsWRbN/ic5wjZD0o6mmKA++HKHkprqK0mAW3iwA8yi6Cy5hGesY9W+yx9ie76CfrWXpIhD0MzGcSEVVDVyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8fTq294; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-371e4858f74so52027321fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 05:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760961688; x=1761566488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vDBqBQPK3W845ufeKNd3TWXFM3Y5p/GSoX4pSkk8Wtg=;
+        b=D8fTq294Dh24k4ynoJkyXE2IwNSfRPp5jH050rOR4/Lo9tgzRzr6MB9skBn3bowW2u
+         +OCVJlVlqGJRVMvnSjDXeFRaLi5elmN+itRIdvdBP3VuIYQ+bcOwukMRd5OiM969Lvmk
+         q31RYPpQL72wGMlGHn/kdBH8dKjQ8CrF4clNwVLlVXR7wLbTsOPIIJk1vJH16q+xMdhB
+         btYIB8UHTYYCYTtkJ8MP92rzBT6jbXNIf+HtHFhqNt9Xy33ES7nGzmmVliUJYTAB/i2b
+         QeiJl++hSCDft3MQ4/C6i4DATH2xp8IMhSyyKaGWHj6NTMvUyCnus4mAdPgEYuO3ZfJv
+         HyRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760961688; x=1761566488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vDBqBQPK3W845ufeKNd3TWXFM3Y5p/GSoX4pSkk8Wtg=;
+        b=a49wVZ3090DnoI149FBh9dMqW93PkF+04kfzSY6AemZWP1IEd2/s+ypO8QdRFKMJHE
+         3fdXuQvflrn2HSM+MWXQYoiewqUXhzql6GbkpDr01uAWE17hZGO5LTGwp+tXneuZuAxC
+         hIffbvKm4hXzDIkLgMkEr8OBLTZi1p+SFq9uitpCpnM/xz8KbEVkd2WPyBVwLVoFqTTw
+         6sgjbQpStj6xlkndFuesuO/xwpWBBhL6fDnSAv/OHnejat6BHIwKu5FjRuKJARY8SG2r
+         93Oj5y04K97f9fgfh33HlD/qOkiCTYa5Nd4Rds4Z8yVetlEiIbCtNCAmku02KMaHgf6/
+         n0NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpYvpN6fLhaRsTidDZ8ptGZVGUeywLv6URUfmy8FJalZUg4vChR9RwjQNPvD3pmNRU3UsII8waPMYG9WFb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4YAC/YAqv9tNZN1u+tE7aFqcdQH/s3THHqSH7qm/slZNGq9iv
+	weNH50SqL96YWmF0c234eA/TUC0Zwz0kh3HjGmRT2JHcsdXn4Bklj4J1anYA7qXd5mj2zpu0UvK
+	01TSibs5KYN77Gk2v0ijIt4yby9jCrv4=
+X-Gm-Gg: ASbGncuZexsUqoc/Bv1AKnpkBVJAPDfG6tpbVZTRUWLn2U5egbI34p8xRYigzBk98fc
+	fnBtZPs5iGnr7yYfd33Auta5sGI6HJwou+DPwYRINKmgIffDcVkIvBvhfhpsMgM31IgaZXIWqM8
+	rrAcxCrRp14dtd5I+dyl2qwl+TOb3A6QqeAYhVbsve3msAtHsDBnOhY/xuc4V9dZqazEr8SM2Vr
+	bHNs/R0Dy66eLRR1LmFcUNNl1ch26qWJCuD4sjSOjgipYt4TdjdweMh1BrYKgTgpMQVxCOGgUZi
+	0udv7OUdwSKw4/rIRhznnRsKe2/RvwEPUO+Xo59UFiPnSlryx/gN5hQZNSIhDijyBqs6swR4uoT
+	zcU/FF/X3x4qvzIKAPsuKOz11q7koifE=
+X-Google-Smtp-Source: AGHT+IEhCuohkwKfudrL4ecEpqT4Pm0eEKlOvtKN3vUBgHr7QNfd5MrUBwC1sgCPBzz/Uy3S9ZB2EUGsXRcV/xV/m8c=
+X-Received: by 2002:a2e:9a14:0:b0:36c:b120:37b6 with SMTP id
+ 38308e7fff4ca-377979418femr48975661fa.19.1760961688121; Mon, 20 Oct 2025
+ 05:01:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1090389.1760961374.1@warthog.procyon.org.uk>
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
+ <aPPIL6dl8aYHZr8B@google.com> <aPPJ2qDhxXNh8360@google.com>
+In-Reply-To: <aPPJ2qDhxXNh8360@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 20 Oct 2025 08:00:00 -0400
+X-Gm-Features: AS18NWAW7Di7K5boBLr0jIlvVCdIJykxaOqzRMhRONzgEFu_niaDAXaU_M-718U
+Message-ID: <CAJ-ks9=VJCwKxZRyDHOb7Lun-BJ3tPrvbscpo0XkykmnF_zfCg@mail.gmail.com>
+Subject: Re: [PATCH v17 00/11] rust: replace kernel::str::CStr w/ core::ffi::CStr
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 20 Oct 2025 12:56:15 +0100
-Message-ID: <1090391.1760961375@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-As the SMB1 and SMB2/3 calc_signature functions are called from separate
-sign and verify paths, just call them directly rather than using a functio=
-n
-pointer.  The SMB3 calc_signature then jumps to the SMB2 variant if
-necessary.
+On Sat, Oct 18, 2025 at 1:09=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Sat, Oct 18, 2025 at 05:02:39PM +0000, Alice Ryhl wrote:
+> > On Wed, Oct 15, 2025 at 03:24:30PM -0400, Tamir Duberstein wrote:
+> > > This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+> > > have omitted Co-authored tags, as the end result is quite different.
+> > >
+> > > This series is intended to be taken through rust-next. The final patc=
+h
+> > > in the series requires some other subsystems' `Acked-by`s:
+> > > - drivers/android/binder/stats.rs: rust_binder. Alice, could you take=
+ a
+> > >   look?
+> > > - rust/kernel/device.rs: driver-core. Already acked by gregkh.
+> > > - rust/kernel/firmware.rs: driver-core. Danilo, could you take a look=
+?
+> > > - rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
+> > > - rust/kernel/sync/*: locking-core. Boqun, could you take a look?
+> > >
+> > > Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-v=
+adorovsky@protonmail.com/t/#u [0]
+> > > Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+> > >
+> > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> >
+> > You need a few more changes:
+>
+> One more:
+>
+> diff --git a/rust/kernel/drm/ioctl.rs b/rust/kernel/drm/ioctl.rs
+> index 69efbdb4c85a..5489961a62ca 100644
+> --- a/rust/kernel/drm/ioctl.rs
+> +++ b/rust/kernel/drm/ioctl.rs
+> @@ -156,7 +156,7 @@ macro_rules! declare_drm_ioctls {
+>                          Some($cmd)
+>                      },
+>                      flags: $flags,
+> -                    name: $crate::c_str!(::core::stringify!($cmd)).as_ch=
+ar_ptr(),
+> +                    name: $crate::str::as_char_ptr_in_const_context($cra=
+te::c_str!(::core::stringify!($cmd))),
+>                  }
+>              ),*];
+>              ioctls
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/cifsglob.h      |    2 --
- fs/smb/client/smb2ops.c       |    4 ----
- fs/smb/client/smb2proto.h     |    6 ------
- fs/smb/client/smb2transport.c |   18 +++++++++---------
- 4 files changed, 9 insertions(+), 21 deletions(-)
-
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index b91397dbb6aa..7297f0f01cb3 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -536,8 +536,6 @@ struct smb_version_operations {
- 	void (*new_lease_key)(struct cifs_fid *);
- 	int (*generate_signingkey)(struct cifs_ses *ses,
- 				   struct TCP_Server_Info *server);
--	int (*calc_signature)(struct smb_rqst *, struct TCP_Server_Info *,
--				bool allocate_crypto);
- 	int (*set_integrity)(const unsigned int, struct cifs_tcon *tcon,
- 			     struct cifsFileInfo *src_file);
- 	int (*enum_snapshots)(const unsigned int xid, struct cifs_tcon *tcon,
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 7c392cf5940b..66eee3440df6 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -5446,7 +5446,6 @@ struct smb_version_operations smb20_operations =3D {
- 	.get_lease_key =3D smb2_get_lease_key,
- 	.set_lease_key =3D smb2_set_lease_key,
- 	.new_lease_key =3D smb2_new_lease_key,
--	.calc_signature =3D smb2_calc_signature,
- 	.is_read_op =3D smb2_is_read_op,
- 	.set_oplock_level =3D smb2_set_oplock_level,
- 	.create_lease_buf =3D smb2_create_lease_buf,
-@@ -5550,7 +5549,6 @@ struct smb_version_operations smb21_operations =3D {
- 	.get_lease_key =3D smb2_get_lease_key,
- 	.set_lease_key =3D smb2_set_lease_key,
- 	.new_lease_key =3D smb2_new_lease_key,
--	.calc_signature =3D smb2_calc_signature,
- 	.is_read_op =3D smb21_is_read_op,
- 	.set_oplock_level =3D smb21_set_oplock_level,
- 	.create_lease_buf =3D smb2_create_lease_buf,
-@@ -5660,7 +5658,6 @@ struct smb_version_operations smb30_operations =3D {
- 	.set_lease_key =3D smb2_set_lease_key,
- 	.new_lease_key =3D smb2_new_lease_key,
- 	.generate_signingkey =3D generate_smb30signingkey,
--	.calc_signature =3D smb3_calc_signature,
- 	.set_integrity  =3D smb3_set_integrity,
- 	.is_read_op =3D smb21_is_read_op,
- 	.set_oplock_level =3D smb3_set_oplock_level,
-@@ -5777,7 +5774,6 @@ struct smb_version_operations smb311_operations =3D =
-{
- 	.set_lease_key =3D smb2_set_lease_key,
- 	.new_lease_key =3D smb2_new_lease_key,
- 	.generate_signingkey =3D generate_smb311signingkey,
--	.calc_signature =3D smb3_calc_signature,
- 	.set_integrity  =3D smb3_set_integrity,
- 	.is_read_op =3D smb21_is_read_op,
- 	.set_oplock_level =3D smb3_set_oplock_level,
-diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-index b3f1398c9f79..7e98fbe7bf33 100644
---- a/fs/smb/client/smb2proto.h
-+++ b/fs/smb/client/smb2proto.h
-@@ -39,12 +39,6 @@ extern struct mid_q_entry *smb2_setup_async_request(
- 			struct TCP_Server_Info *server, struct smb_rqst *rqst);
- extern struct cifs_tcon *smb2_find_smb_tcon(struct TCP_Server_Info *serve=
-r,
- 						__u64 ses_id, __u32  tid);
--extern int smb2_calc_signature(struct smb_rqst *rqst,
--				struct TCP_Server_Info *server,
--				bool allocate_crypto);
--extern int smb3_calc_signature(struct smb_rqst *rqst,
--				struct TCP_Server_Info *server,
--				bool allocate_crypto);
- extern void smb2_echo_request(struct work_struct *work);
- extern __le32 smb2_get_lease_state(struct cifsInodeInfo *cinode);
- extern bool smb2_is_valid_oplock_break(char *buffer,
-diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
-index 33f33013b392..916c131d763d 100644
---- a/fs/smb/client/smb2transport.c
-+++ b/fs/smb/client/smb2transport.c
-@@ -247,9 +247,9 @@ smb2_find_smb_tcon(struct TCP_Server_Info *server, __u=
-64 ses_id, __u32  tid)
- 	return tcon;
- }
- =
-
--int
-+static int
- smb2_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server=
-,
--			bool allocate_crypto)
-+		    bool allocate_crypto)
- {
- 	int rc;
- 	unsigned char smb2_signature[SMB2_HMACSHA256_SIZE];
-@@ -576,9 +576,9 @@ generate_smb311signingkey(struct cifs_ses *ses,
- 	return generate_smb3signingkey(ses, server, &triplet);
- }
- =
-
--int
-+static int
- smb3_calc_signature(struct smb_rqst *rqst, struct TCP_Server_Info *server=
-,
--			bool allocate_crypto)
-+		    bool allocate_crypto)
- {
- 	int rc;
- 	unsigned char smb3_signature[SMB2_CMACAES_SIZE];
-@@ -589,6 +589,9 @@ smb3_calc_signature(struct smb_rqst *rqst, struct TCP_=
-Server_Info *server,
- 	struct smb_rqst drqst;
- 	u8 key[SMB3_SIGN_KEY_SIZE];
- =
-
-+	if ((server->vals->protocol_id & 0xf00) =3D=3D 0x200)
-+		return smb2_calc_signature(rqst, server, allocate_crypto);
-+
- 	rc =3D smb3_get_sign_key(le64_to_cpu(shdr->SessionId), server, key);
- 	if (unlikely(rc)) {
- 		cifs_server_dbg(FYI, "%s: Could not get signing key\n", __func__);
-@@ -657,7 +660,6 @@ smb3_calc_signature(struct smb_rqst *rqst, struct TCP_=
-Server_Info *server,
- static int
- smb2_sign_rqst(struct smb_rqst *rqst, struct TCP_Server_Info *server)
- {
--	int rc =3D 0;
- 	struct smb2_hdr *shdr;
- 	struct smb2_sess_setup_req *ssr;
- 	bool is_binding;
-@@ -684,9 +686,7 @@ smb2_sign_rqst(struct smb_rqst *rqst, struct TCP_Serve=
-r_Info *server)
- 		return 0;
- 	}
- =
-
--	rc =3D server->ops->calc_signature(rqst, server, false);
--
--	return rc;
-+	return smb3_calc_signature(rqst, server, false);
- }
- =
-
- int
-@@ -722,7 +722,7 @@ smb2_verify_signature(struct smb_rqst *rqst, struct TC=
-P_Server_Info *server)
- =
-
- 	memset(shdr->Signature, 0, SMB2_SIGNATURE_SIZE);
- =
-
--	rc =3D server->ops->calc_signature(rqst, server, true);
-+	rc =3D smb3_calc_signature(rqst, server, true);
- =
-
- 	if (rc)
- 		return rc;
-
+Thanks! Sent v18 on Saturday. Those `as_ptr()` -> `as_char_ptr()` were tric=
+ky
+because they relied on deref to `&[u8]`.
 
