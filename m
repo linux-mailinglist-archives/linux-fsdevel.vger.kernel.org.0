@@ -1,157 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-64775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C98BF3C6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 23:43:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954CEBF3CE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53C4408285
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 21:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8CE18C0849
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Oct 2025 22:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3352F2EDD57;
-	Mon, 20 Oct 2025 21:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F3C2F12C3;
+	Mon, 20 Oct 2025 22:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bCqF63Fc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1JZPQGZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DAB2ED86E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 21:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363412C0F7D;
+	Mon, 20 Oct 2025 22:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760996593; cv=none; b=SNe3MyGyhXfK3mfFUXBLekqN5T6DIsHxJjkClq5WkmgRuCy/c6p+qdYuDUXj5gCYTFbxnF2E61+6KpwAJ7QeZ49MHIYeqLw5rE/1A9dOTUM/JXYdZJSkUphJIv+I1Q6MBJmgBjFb/Z78AjnXucgZV+Gn/SqPdBMcd8EAb/7b8jU=
+	t=1760997679; cv=none; b=XDFRRz5I10q5dmlLNhqOV5pQ1HhFTJlzz9HW1S81XKqTQ2zNN1WtgFmjIwLg44lYM7yTztXEFFZwbr/OQdfA5fHs1s2gIVlskPMLPnTbgBS6Vxv+GklMGCQdvNTUEjMkye+iyeGMlcfrbNCxpx3MRnFi9EEz9imKN6RAqWaOeiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760996593; c=relaxed/simple;
-	bh=y2m25W7zkJm4lmZAqrSB8Op5PkRsIhwCbtsRZflqNDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEYyQMc9I/IoXz8zUutCJxWoUzrPPb0xt6OLduf/ebJ/HvqxuBt1FoBvLm95NRPOCtx9cJQykjA2IlQ4xXmkgrJxppEW8qqNMx9cOmBk2pkbypxgUChFclQX4PZIxBxbLhL55754+5hmDArCR6MEgO8LAHldG+9MAbwoFaDL6mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bCqF63Fc; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781010ff051so3627569b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 14:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760996591; x=1761601391; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LQOa5MIIi+7CgnSuXmOmCMZIcE9hFQ3mA2YcxpQezgc=;
-        b=bCqF63FcLxJQ/OV38f81uNkBz/+g2HrlN3yo0wwWS9kJuir8mmOD4kIagjZ9kC3449
-         lEgtmftxq15FfqD7HBdxO2dJzWigu4f5x7QSw+xuPgWiTLJVpyx20FwK4AUQt2x0ulXU
-         R79bA3G8B6ISlCjzBgu1bneuaC92KgNjHNU1bKFuvXuTTvQqmfOoM1JVW/2Qp6UdyBjH
-         r6avvWdgNIzFtBf6lADLi2oMXwNuPGkDzdK/ySlVTekXFyiPBqcvUj3AMsiZfhs7AWaR
-         QMQbVlSHOqRaaR1XuZ99ZkIuSPvoK//NTXi2C0t2MhPLBszHgkHSls2L1VH1PCZrvY7p
-         XlPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760996591; x=1761601391;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LQOa5MIIi+7CgnSuXmOmCMZIcE9hFQ3mA2YcxpQezgc=;
-        b=cuXe9oScbl0nb9BIBh9Opv8l7omJUmo1vjPilRHEbZ1nblHgK9g/NAQz2eYHqBly75
-         NQSc821xtsLqUzPMnpuFtw9eZdubwwbm9JndRphsj+akZD0yL4ugZyokMe5eafuF1cVI
-         K7tCHXZF23sJpezZG6Qnc7NF6JBFnV2hXUNz5Os6fEPXEe6PjwnmqC/O7r5t/e55oRms
-         jj6GicgL/ojq3HRtILGbSqh4EaPJcyzEyshOxbfiMjHQoAAA8FYkLZwtE8jCTwrXjeqV
-         f0BtoUgP8kd3L9vUwMMqeiosS6AxQmSkTRxAJhOaSuriUv++V+WE6H5/WfMK/36U3Eq3
-         m2cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyPpkZsUVQLyUUdM7S5uVtrkes+U6KcRXmP+WVbuWeqtAjKE5LkT3FpXAE6gkalbYzOldghm5bpEOuTVPV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJJqA8+YYES+jyFydpuZ7IoyfZRp80rmnYrQveQwBy2NoCz4bm
-	kluftv+VFL3bW4MGKrv70dzhEym//mPDOOHFFy8oEz+VmEeyMJivd/uDH7xsMDLvBGg=
-X-Gm-Gg: ASbGncuPLtKYIZLeJOW9feCUGfVgCyju0n0b9nHJc4ftYNtELRwmXL3aHvkTQ6yZllV
-	Tk3H2Epd4Z1EhTTBQ2z2LFNKLOJEPXe4Gf1M+zQYTqHHf7VFKkEKhVbmcAko7FyPN0iD4lWMVUM
-	H2ZF1Fie8IuoKVM0hG6YP8xVDBhyiaCr74PDm7HTJlYX/gFq4He+MgIDSi7th/cOYMVb+LiR6pE
-	ORXW4oWspF9bOyAWKRagbZhnjlgGBfQNwl7+YB+2q+ZtsOG9KdOyopeGjS+A/nJo5b/cghfqKeo
-	Uvy/w59DAT+gcGJix3OxvgcfbVmYMDoFawyYpEq//7Kh1EW+Jt/Yn+C9ZZbeO8gAEk+D9tCs+pO
-	WVTB1R3NFL8Wjs9YonkQZoWvDlW/tNFtV/GMfPHcKcbcB+ZSH3LxfpEVGixjYmkOHFxZRbJgafw
-	UTSlcJCjCBfXafA1RWCtI3xqmTQRcxy494ibnqgEQbnmw0MeZtTdc=
-X-Google-Smtp-Source: AGHT+IE1HUX+wcNiDJeJ7OTlztv/NSJpMhRfSbA7KZpViYePBOTXDJQlldupatbqjRCb7qVsG4PmXw==
-X-Received: by 2002:a05:6a00:230a:b0:781:16de:cc1a with SMTP id d2e1a72fcca58-7a220d37785mr19816985b3a.32.1760996591191;
-        Mon, 20 Oct 2025 14:43:11 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff184basm9336482b3a.15.2025.10.20.14.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 14:43:10 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1vAxel-0000000HUpj-3jCY;
-	Tue, 21 Oct 2025 08:43:07 +1100
-Date: Tue, 21 Oct 2025 08:43:07 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Anand Jain <anajain.sg@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>
-Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
- origin
-Message-ID: <aPas60j7AoyLLQK0@dread.disaster.area>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014015707.129013-2-andrealmeid@igalia.com>
- <aO3T8BGM6djYFyrz@infradead.org>
- <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
+	s=arc-20240116; t=1760997679; c=relaxed/simple;
+	bh=FqAKHZqMuzDEW10o2dQqCkhBLpLFxrSKB3g8MqH8eaY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OEyx4rfd1VZM0Sv0Sg1dQ/98XBes9JaTfN+2Ppbz7u7jlr0boHGKCwj1R66IjBZOsL+YB1xvIBP+WT5wqWT4TNPM9q72ycOkdNhpcjFm/sQwribmVW3pO7iiPaplmIHro0MJPIHH6A+eLh4cv0Uhps0C6h9kJQd/ZTemwvmTRUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1JZPQGZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9180C116C6;
+	Mon, 20 Oct 2025 22:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760997678;
+	bh=FqAKHZqMuzDEW10o2dQqCkhBLpLFxrSKB3g8MqH8eaY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=X1JZPQGZH7GkB5HYIL0MyTpX3qJtK/+0UJrqW8trTtSmpDcnuWo/WEUoSi0oe2582
+	 Gwjr2vkm61sKZa1eYnfPRIjyomx6lkSr05zdTMLbwbgaq9AUi248/xueLj/3lDm3vK
+	 0FIGLChmdoLVhSoU+mImoKPvjcwjTzEbgUSf9zAhA+dFWi5KxE3yUWDWoz5SNp/HpW
+	 V1BrvGJ4jNXa+CZJ9pc02JKGTIVxjHKNl94TKnSvsR6TKdYvDACgQa7i1HS6XJw/Rv
+	 BzuOOrznFdKXWHW/5bB8oMXYR69mttKKkc3rRVjnO5zE6+fa61WMKpumneE5egctIk
+	 auaaQzlbVXseQ==
+From: Kees Cook <kees@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Shuah Khan <shuah@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	kernel test robot <lkp@intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Christopher Ferris <cferris@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 0/3] compiler_types: Introduce __counted_by_ptr()
+Date: Mon, 20 Oct 2025 15:01:14 -0700
+Message-Id: <20251020220005.work.095-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=790; i=kees@kernel.org; h=from:subject:message-id; bh=FqAKHZqMuzDEW10o2dQqCkhBLpLFxrSKB3g8MqH8eaY=; b=owGbwMvMwCVmps19z/KJym7G02pJDBnfNmpPvjlDMiVQ40QYGzu7Z5sma+pZe0fZ5ISikEJXt o9btT06SlkYxLgYZMUUWYLs3ONcPN62h7vPVYSZw8oEMoSBi1MAJrIkjeGv6Lo0tg07mVJ7tgUF bOaL4RFl//7mluGm9t7MlzxZ8/b3Mvzh+mZ7Qv/wzb469UrVlbffLNZlPz3/lf/B+4G35jQo+/v yAAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5137ce36-c3b4-4a0a-83af-e00892feaf43@gmail.com>
 
-On Wed, Oct 15, 2025 at 07:46:34AM +0800, Anand Jain wrote:
-> On 14-Oct-25 12:39 PM, Christoph Hellwig wrote:
-> > On Mon, Oct 13, 2025 at 10:57:07PM -0300, André Almeida wrote:
-> > > Some filesystem have non-persistent UUIDs, that can change
-> > > between mounting, even if the filesystem is not modified. To
-> > > prevent false-positives when mounting overlayfs with index
-> > > enabled, use the fsid reported from statfs that is persistent
-> > > across mounts.
-> > 
-> > Please fix btrfs to not change uuids, as that completely defeats
-> > the point of uuids.
-> 
-> We needed cloned device mount support for an A/B testing use case,
-> but changing the on-disk UUID defeats the purpose.
-> 
-> Right now, ext4 and Btrfs can mount identical devices, but XFS
-> can't.
+Hi,
 
-Absolutely not true.
+Add the __counted_by_ptr() macro for annotating pointer struct members
+with the "counted_by" attribute. Add LKDTM test, and a first user.
 
-XFS has been able to mount filesystems with duplicate UUIDs on Linux
-for almost 25 years. The "-o nouuid" mount option (introduced in
-2001) to bypass the duplicate uuid checks done at mount time.
+-Kees
 
-XFS tracks all mounted filesystem UUIDs largely to prevent multiple
-mounts of the same filesystem due to multipath storage presenting it
-via multiple different block devices.
+Kees Cook (3):
+  compiler_types: Introduce __counted_by_ptr()
+  lkdtm/bugs: Add __counted_by_ptr() test PTR_BOUNDS
+  coredump: Use __counted_by_ptr for struct core_name::corename
 
-The nouuid mount option was added back when enterprise storage
-arrays started supporting hardware level thinp and LUN
-clone/snapshot functionality. Adding "-o nouuid" allowed cloned LUNs
-to be mounted for for backup/recovery purposes whilst the main
-filesystem was still mounted and in active use.
+ init/Kconfig                            | 11 +++
+ Makefile                                |  4 ++
+ include/linux/compiler_types.h          | 21 +++++-
+ include/uapi/linux/stddef.h             |  4 ++
+ drivers/misc/lkdtm/bugs.c               | 90 ++++++++++++++++++++++---
+ fs/coredump.c                           |  8 +--
+ tools/testing/selftests/lkdtm/tests.txt |  2 +
+ 7 files changed, 127 insertions(+), 13 deletions(-)
 
-> How about extending this to the common
-> VFS layer and adding a parameter to tell apart a cloned
-> device from the same device accessed through multiple
-> paths?
-
-Perhaps we should lift the XFS UUID tracking code to the VFS
-and intercept "-o nouuid" at the VFS to allow duplicates only when
-that mount option is set?
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
