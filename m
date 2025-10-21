@@ -1,147 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-64825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53970BF4E84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD1ABF4AFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459AF3A9108
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 07:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8943C423655
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 06:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A0E25C822;
-	Tue, 21 Oct 2025 07:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C040825C6EE;
+	Tue, 21 Oct 2025 06:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vCPAdT6i"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ShKdqzOl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9745D259C84
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 07:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0D2F872;
+	Tue, 21 Oct 2025 06:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761031153; cv=none; b=OeTDhTn0DgQ0ik6O7ZKOMmv/UDWzZIyqEteoBOuvUeemOQBvK4BL5OtD9O9xa9ZdW3WrspjfNkbBqK0EgEV4phZbVrlpbjfBAc9V0//aQDNoB3SL8B/+snjjbJzpiRoSLODR8gIyiSYWY/vrNBCg3m7fJvCq7Rtpu5A4sBQgqNY=
+	t=1761027175; cv=none; b=qpCq+oqFpOjvCe2ctebngCdh5QiePsmuTciD29xy1CK2gDeu5YLZ9ORbzDVluG/Hv4F7VyJ7yD8GViv2DPbKtkDf2N+hSDQDURt4MTM8q1TBZqIBeCrcMVhwbn2fu+S6hK1eLkKVdR3sDkc52gvnKNrA9MIZrIx45I4awn6HQ0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761031153; c=relaxed/simple;
-	bh=1BJD1LIFzFYxsQCDQgH3rOU8TKZl+FUQ7wY/gwtXRU8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=YFZ+SQ4/yx91oxrURfHKwykNfWUslWlKPe3zzGatitt+sPuogpX2Vr9s38SHOYCwCDeq0qLgy7jFjbjTnXtlXjn8GvrgqnMk3JtcUjaDLnNRjqxMIXKpdPa3a4uKZIUdGEsyFvFIHt7h1ep4NWG+jEzKNQQ3gsmrgmSqEXv4AoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vCPAdT6i; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251021071902epoutp037a313c2082b6b61ec894104ae7b1fd88~wcH6CaB-w1281812818epoutp039
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 07:19:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251021071902epoutp037a313c2082b6b61ec894104ae7b1fd88~wcH6CaB-w1281812818epoutp039
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761031142;
-	bh=8wASAtboqV3GtUcbOgLV9UfZhmV4Pe0fo2rSqAE3M44=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vCPAdT6iMiUdBsK9MvZt7++ngOZbgQO1dS9161YRpGhA23XLRnLiCC8PEoWU/LTL5
-	 8QPgOGQfwSeYXrXLLVSn6q00iOP/n4gEMLvw4pvdYdUDeg08hc6iSLGOWEoaFnf8sy
-	 G78ZL0GqLPwqmRhmUcbI/Y6kG7CXvj+HxR3ZEJEM=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251021071902epcas5p22aca6ccb22ada9efd17cb78a96a7c70c~wcH5gFtAJ0239402394epcas5p2W;
-	Tue, 21 Oct 2025 07:19:02 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4crNvT4cQFz3hhTD; Tue, 21 Oct
-	2025 07:19:01 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251021052840epcas5p36d502a54805a8ba37c2929bb314088d4~waniyqJyM2751027510epcas5p3q;
-	Tue, 21 Oct 2025 05:28:40 +0000 (GMT)
-Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251021052839epsmtip264cfd4682038d2505237fb233e4abd22~wanhb7LKN2619626196epsmtip2p;
-	Tue, 21 Oct 2025 05:28:39 +0000 (GMT)
-From: Xiaobing Li <xiaobing.li@samsung.com>
-To: axboe@kernel.dk
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, bschubert@ddn.com, kbusch@kernel.org,
-	amir73il@gmail.com, asml.silence@gmail.com, dw@davidwei.uk,
-	josef@toxicpanda.com, joannelkoong@gmail.com, tom.leiming@gmail.com,
-	joshi.k@samsung.com, kun.dou@samsung.com, peiwei.li@samsung.com,
-	xue01.he@samsung.com
-Subject: Re:Re:[RFC] fuse: fuse support zero copy.
-Date: Tue, 21 Oct 2025 05:24:11 +0000
-Message-Id: <20251021052411.5293-1-xiaobing.li@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <1207928c-ad37-4ba0-b473-d38b9b2ce13c@kernel.dk>
+	s=arc-20240116; t=1761027175; c=relaxed/simple;
+	bh=+QmnY748EjRGKjWLnl5sIMZrRRpbF0hAi5qW5DwTCqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzDyKaNCWha+ZUJV+skjbCr/7BBCg7PhWrHxIVSz7NmBuorEY+DbzaM3r2cKqdYYwY7hDWuNJq67VI+OpvPHKM4gTSGzJ52Wj1Leb1xDrbyiqnHlJpNa6nZQzHhSbZBfDCjeB6n2m4GNbTbLl2Xz4yiXD1J1OQ+Qv0PWmoIBz/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ShKdqzOl; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=32WXsKzxggeOILJADAf0lJ/XcojNDUkG87T7LB0uMmU=; b=ShKdqzOlsJZJ5PGyNK+WPgm08w
+	YG05J6HLCcDbwjPvnI2QKbkgv/jKp9ozm4cWjoblrSDJhZ0TR5nkyWesExrjXvzpM5nGgaQuqd7V1
+	rvdQqa2snXe2hDLHng9fXY1sngvgapiVGUyprKX0IWXegzyi4+aXuZzyermYeCXnmCFdpp6bV3QWw
+	jmh71KufOM6iT9U0CiMBHCGz2dLUYPXWZXk/5EZwARAimiB+s6wR5K0TATS6/PXzPHCVaGsqYJ1xL
+	pgs4ZgTZum8hJdzxZYaGmGzcbeZaXKkXgzvEnVgYuB/0TWX9ayxP052nFyV78namlJzodSv305bya
+	CnN0oLeg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vB5bs-0000000FuQQ-39F3;
+	Tue, 21 Oct 2025 06:12:40 +0000
+Date: Mon, 20 Oct 2025 23:12:40 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kiryl Shutsemau <kirill@shutemov.name>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [RFC, PATCH 0/2] Large folios vs. SIGBUS semantics
+Message-ID: <aPckWHAGfH2i3ssV@infradead.org>
+References: <20251020163054.1063646-1-kirill@shutemov.name>
+ <aPbFgnW1ewPzpBGz@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251021052840epcas5p36d502a54805a8ba37c2929bb314088d4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251021052840epcas5p36d502a54805a8ba37c2929bb314088d4
-References: <1207928c-ad37-4ba0-b473-d38b9b2ce13c@kernel.dk>
-	<CGME20251021052840epcas5p36d502a54805a8ba37c2929bb314088d4@epcas5p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPbFgnW1ewPzpBGz@dread.disaster.area>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 10/20/25 10:15:00 AM, Jens Axboe wrote:
->On 10/20/25 2:00 AM, Xiaobing Li wrote:
->> DDN has enabled Fuse to support the io-uring solution, allowing us 
->> to implement zero copy on this basis to further improve performance.
->> 
->> We have currently implemented zero copy using io-uring's fixed-buf 
->> feature, further improving Fuse read performance. The general idea is 
->> to first register a shared memory space through io_uring. 
->> Then, libfuse in user space directly stores the read data into 
->> the registered memory. The kernel then uses the io_uring_cmd_import_fixed 
->> interface to directly retrieve the read results from the 
->> shared memory, eliminating the need to copy data from user space to 
->> kernel space.
->> 
->> The test data is as follows:
->> 
->> 4K IO size                                                           gain
->> -------------------------------------------------------------------------
->>                                |   no zero copy   |    zero copy  |  
->> rw         iodepth     numjobs |      IOPS        |      IOPS     |    
->> read          1           1    |      93K         |      97K      |  1.04
->> read          16          16   |      169K        |      172K     |  1.02
->> read          16          32   |      172K        |      173K     |  1.01
->> read          32          16   |      169K        |      171K     |  1.01
->> read          32          32   |      172K        |      173K     |  1.01
->> randread      1           1    |      116K        |      136K     |  1.17
->> randread      1           32   |      985K        |      994K     |  1.01
->> randread      64          1    |      234K        |      261K     |  1.12
->> randread      64          16   |      166K        |      168K     |  1.01
->> randread      64          32   |      168K        |      170K     |  1.01
->> 
->> 128K IO size                                                         gain
->> -------------------------------------------------------------------------
->>                                |   no zero copy   |    zero copy  |
->> rw         iodepth     numjobs |      IOPS        |      IOPS     |  
->> read           1          1    |      24K         |      28K      |  1.17
->> read           16         1    |      17K         |      19K      |  1.12
->> read           64         1    |      17K         |      19K      |  1.12
->> read           64         16   |      51K         |      55K      |  1.08
->> read           64         32   |      54K         |      56K      |  1.04
->> randread       1          1    |      24K         |      25K      |  1.04
->> randread       16         1    |      17K         |      19K      |  1.12
->> randread       64         1    |      16K         |      19K      |  1.19
->> randread       64         16   |      50K         |      54K      |  1.08
->> randread       64         32   |      49K         |      55K      |  1.12
->> -------------------------------------------------------------------------
->> 
->> I will list the code after this solution is confirmed to be feasible.
->
->Can you post the patches? A bit hard to tell if something is feasible or
->the right direction without them :-)
+On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
+> Fundamentally, we really don't care about the mapping/tlb
+> performance of the PTE fragments at EOF. Anyone using files large
+> enough to notice the TLB overhead improvements from mapping large
+> folios is not going to notice that the EOF mapping has a slightly
+> higher TLB miss overhead than everywhere else in the file.
+> 
+> Please jsut fix the regression.
 
-Ok, I'll send the patch when I'm ready.
+Yeah.  I'm not even sure why we're having this discussion.  The
+behavior is mandated, we have test cases for it and there is
+literally no practical upside in changing the behavior from what
+we've done forever and what is mandated in Posix.
 
---
-Xiaobing Li
 
