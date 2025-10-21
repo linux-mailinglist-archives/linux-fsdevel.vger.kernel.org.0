@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-64841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF03BF5922
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:43:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D210BF5943
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB4F18C5513
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:43:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8DBA4FFB5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95773126B8;
-	Tue, 21 Oct 2025 09:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BB8329C77;
+	Tue, 21 Oct 2025 09:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BaQg4yXf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gU1Jd6o+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E40303A0F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 09:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D4328B68
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 09:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761039795; cv=none; b=bHyMnvGqTmsPqBXYP+nRxHTQv028vx+ICINJ6R0YosaP2YYpG+5dJXUrhokn9lNR+cLVGnobxVf14UStbYiWl0UwiyT0+WtWjQOD/vRUyqJ5UpvyRG0y8O7Q9iyaUMb9Rq7/HZjyEcCZCTXBwzkfQ7PkBPgnKWUVduzPIqiiAmE=
+	t=1761039876; cv=none; b=pnhi3kj9jXFH73t8L9w5dWsMhubnWIBcR20q7lds2EMijEpyyMnSWfmkPO4nacbu6yp6fbNpXajhzYKbNyBZjteDEZLmuBWMrWtLedsllHQU8VQ+AX06CD8b0hOrtdUQACF00/t4SUBWz8nagcgTDgTi3xIEaor8rcXWdt0C4kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761039795; c=relaxed/simple;
-	bh=nOwp8cKz8Deql2IcFUsEhRS68D3CEK4S8UMwL5e4MMs=;
+	s=arc-20240116; t=1761039876; c=relaxed/simple;
+	bh=U+eL5vMWuJx0rjIIppv98/UUTb9GjsW1G23VXXcO8So=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lBOVKbLFDeIBHNnZINTIv3S9kXsYYdEKOwEFP2uWw/tOMOqYgM/0I/tmDuEH3PehMb5Kt1p+T3bzoXYScoojnYM4Ub+tRBYn8SD8kTz/eCWYuHC1GD1vI7UYy+10IznEA7NZIwiWyM2ABF6wjJ+qHHmvtj2KzcicBGe1majn8EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BaQg4yXf; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=svuBWxTBsqP9VAI0Wi568wzfMVzZKPNAFLrB9sE5hIUxnDCOiYQDyL4C1kxzqJSpTJAHCnLzI8Wj9OdXDTy/+pR5ER3nmwMZYlHSCZovwRMxVatyGcK7EVmNxmRUW0XG62Cl3alhhadfdm0vXjgyf9GsGCkp13L+m1Qoq5kipD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gU1Jd6o+; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761039792;
+	s=mimecast20190719; t=1761039873;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7N+UUsWkh/PxB+UVb+bOzD97AQ3e4XfF6EAoBhVIUg4=;
-	b=BaQg4yXf2Q6+4DPdmOSk3Tf8mnG2n0FqW6WmFT7s7IrX4/8AewbW97gRM2lPDEQKxzT357
-	GbqjYW7bfOPlCXoS7zWw2YAaiqefv6tzkq/l9z8NKmU6yrLVhmvHxSLu9MNijXlR0Obfdc
-	+kEzZucQ0B91YgT8Fscu68ZNDirP91E=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=A7HVROVgx0bb5nBCxg5N7qerxadWj+WPkTkgih4XRWM=;
+	b=gU1Jd6o+EY2rkh6l6eeN43pyBq4wAztQQ/a/J0m5lmxfUFI+25zSAH9Ra6+Y5t5InH8Pko
+	EfqvaGkjUEZ/pLxINXsKHdNBZEagA959uJkLQ4DBGdtZ0AnvhRbTp+UKajqaqMmXVzv0QM
+	uez+A6nFh6CDuRb1YC8OMjG3Du8Ke9Q=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-qr2aJa7iMNeR2_qKb9F6zQ-1; Tue, 21 Oct 2025 05:43:09 -0400
-X-MC-Unique: qr2aJa7iMNeR2_qKb9F6zQ-1
-X-Mimecast-MFC-AGG-ID: qr2aJa7iMNeR2_qKb9F6zQ_1761039788
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-4270a273b6eso2825082f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 02:43:09 -0700 (PDT)
+ us-mta-604-NoCTr9KmO06-nu3SMLnY3w-1; Tue, 21 Oct 2025 05:44:31 -0400
+X-MC-Unique: NoCTr9KmO06-nu3SMLnY3w-1
+X-Mimecast-MFC-AGG-ID: NoCTr9KmO06-nu3SMLnY3w_1761039870
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471168953bdso38734605e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 02:44:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761039788; x=1761644588;
+        d=1e100.net; s=20230601; t=1761039870; x=1761644670;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7N+UUsWkh/PxB+UVb+bOzD97AQ3e4XfF6EAoBhVIUg4=;
-        b=ssQINdCBz9mdhJa8mIOTW9p2iYbYlVVCNNqMG9Xsd1u1PSObikBqR/zSsbm5MGi8ue
-         dFBAWJ2d+dLVOF+lUUYguFF5BSoKQYde+b+ZF2C6wk8FmSj8uM7XTWfVRBa0m3kBQ6+f
-         rgTiVCOue1I2H1NfnjzFU6Y180XPWeDOxh1NReZ1RuwNVEXAiP9YG3F3iz2yojYRKk8j
-         IkIYRdw/p3/VJ8fD6M85R/0xglLAUysT/evsKnlkBTNyhrhtbNHhhfXbEQpY5FG9hGLk
-         isZNul3hrx0C+3Qat65U/tM8VYFoH/Ysz2gIAoaCIsRTqL4X0n3Pi17x5t7k0p0U1v9O
-         SMhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1JoenZUN4ylhd3sGrQya/JCnCfHIcV9cLeo6dNsy1N7nZhMOxyC8dXKQY8T+S4LQ6mNefyRa2sFSBeCW1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNCRSfdlg1A/ZWG+uia8ZehYYp+ngyTRPUbfYkhYt4JxW7ZNU9
-	1FL/R2nv1mw6VWncxB5x1KMmuIFhi1oGiSljdsb/MLu7ehE4WnzsC8J87SDgRUDFcdk0egXtckq
-	nlGL2ka0BuE3DrFYc8bCyIh1NxPGNaVGJ+JBHghk5M0ziZKsi0MKLlZEDNXyQIxMl8Vc=
-X-Gm-Gg: ASbGncs9+MtbILdYqvyOlKeUFVDINHCgw1mv1uRHc8cHcTgIZ9Dhq3flirMiPCa/Aob
-	bU9aXfwUtWYYU6AR5MhT11eXiircOrNyUwV2yLKMxiK6wcWA/aeAkRACpGt9hMFEzASWBDM4G3C
-	PN8W22bXbzH2T6vTiI0fBb79Rg/CMdyOtKgKGVCAzUNKk+pxJTTZFciQyDb+O3cDHN2r3BuvTr8
-	7P0IcHaC5/azj6RMT+lL5E1Kfi7csLvEayJ+JjvtsvXwAc3bTR4+URKQqUGt+PzK8cLsna7o/w+
-	locumHSD8gyWSN/4VLedxmpFloMLU3OLQh569oR+tYaFPwYwNjTLwIqbDcn+HSdUWovPij8LlMp
-	ZXgMlzymP5iiEAlTMBe8XzU0ho1FJSqi6B9r2jRgdsihU1hAm/rg6m+Njl3CPY/T3fZC6ICIFLd
-	hTofhAxcBbOwtMAlRwJ8LGnWeLh2Y=
-X-Received: by 2002:a05:6000:4024:b0:405:3028:1bf2 with SMTP id ffacd0b85a97d-42704e0eeb3mr10685012f8f.62.1761039787932;
-        Tue, 21 Oct 2025 02:43:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKdZ707i2yTNafAh3yeT5ocRi/+Z46tBstB8jxkIB6KoBbNLz4cy9huv2TFyZ6jk4HqWigdQ==
-X-Received: by 2002:a05:6000:4024:b0:405:3028:1bf2 with SMTP id ffacd0b85a97d-42704e0eeb3mr10684990f8f.62.1761039787436;
-        Tue, 21 Oct 2025 02:43:07 -0700 (PDT)
+        bh=A7HVROVgx0bb5nBCxg5N7qerxadWj+WPkTkgih4XRWM=;
+        b=fFKKAdbqjZkm3sNHRzv+QOZJQ4LXVQY29VSP+5ymhG1iNxigiBGBhtgUpRPqPDMoSM
+         IkXMcNBldGYnbyEnBnXOfBB6+Efd3r+ySySUg4666rqLSUrGpevvz4cgDtGPCL5YsNH4
+         tPUUeC90WdbtZNdY/fO4DyYn2PiWrq/uWpPnlO9zjlKlAwXMxvEeiKns9ODLh26X60eq
+         kTw5UjZfYO9D33Pw2kdDZN0yvSkt6kXLsnBSHLP9QTsmssu/2ykLEkiQ2iDtjr1XunKK
+         HA0nci4kSKZ8bJzPYsIe5XMN2CFQl+BcaYOmN2Cvc0/PtjRpiEWcQ5iAe7BTpIWNMWwB
+         qgmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2eCbm0H9N8ldAlWFvrPqj2G6aiTFusbRkdIUU4CbgR6zKh0sUelJC/1ZyMpJVFK3seoqYQ3F6vldc4uF8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdUznhHwCyVPOfwwRhH5/Y2S+56SWhmsaymXp2lGSlecHgv9HB
+	+1oRr/ekXKaI6asKWneyi64WSzQaNpi7nnXRDoPZ4+8CckktczIBmleclertHtLSTnHww8U5tMQ
+	FN4g+9nk/B+fme0syR2L5nT1RcVEOs1myPY+NfvbEGaFoDVnbV3HGi//djtD6UFsoC6o=
+X-Gm-Gg: ASbGncs4VeMdA0GrB2WDpZBSQamDEbe7ASmu6mMTUnZxWVVD59L6vr6SgwksykerPQb
+	NHscybZDx7KcBsxfszTaG5qi/6loy0D/4GZ3/O5PV0VswxS4nJoOTI5CMBhCkRvss8s4SZKQpRp
+	oAnXz4fk5Ym9gyVnslaSX6tzxEEa0ezsOS4znMZ1WASlvGr50pCChy7VnJVic/T2/6Gw878kQ7T
+	DKXoPAciBbrw8h/TtzWzsjRWlDKy2B00eEZIKEUzlxlN2CZ5EOvQdmtgodjuSkqrXSeRbUnYzcQ
+	zWCJ5sUcsUpbyF0mkE0/GpvReJdtz4JG9WKh6nOxuKGTgvdf3AnJuzdOQ7Yi7nAxa00zMBTrdma
+	y6MsXNtTrPvTw014apxTte0EWZ4M6gvpnzXyjifL23IgnNpX3bp+pLoExY/ECWpbn2mRZZjeKv+
+	fx9/lC7k3ZI0DFp7elEq82JYDJwwk=
+X-Received: by 2002:a05:600c:45c9:b0:46e:37d5:dbed with SMTP id 5b1f17b1804b1-471172d7ee5mr122639935e9.12.1761039870380;
+        Tue, 21 Oct 2025 02:44:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETXIw4CRBEm7c+CrRa7e7TiaCGIZ5364ZZEDG9h9Uqo1MIuOZe6REk/G99LmxJ95M7gJl8yA==
+X-Received: by 2002:a05:600c:45c9:b0:46e:37d5:dbed with SMTP id 5b1f17b1804b1-471172d7ee5mr122639705e9.12.1761039869981;
+        Tue, 21 Oct 2025 02:44:29 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce3aesm19874869f8f.48.2025.10.21.02.43.06
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4731c95efb9sm153935405e9.8.2025.10.21.02.44.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 02:43:06 -0700 (PDT)
-Message-ID: <b31b7abc-69a2-44cc-9e30-0baf03f45a29@redhat.com>
-Date: Tue, 21 Oct 2025 11:43:05 +0200
+        Tue, 21 Oct 2025 02:44:29 -0700 (PDT)
+Message-ID: <a013f044-1dc6-4c2c-9d9a-99f223157c69@redhat.com>
+Date: Tue, 21 Oct 2025 11:44:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,25 +91,24 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: O_DIRECT vs BLK_FEAT_STABLE_WRITES, was Re: [PATCH] btrfs: never
- trust the bio from direct IO
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>,
- Matthew Wilcox <willy@infradead.org>, Qu Wenruo <wqu@suse.com>,
- linux-btrfs@vger.kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-mm@kvack.org, martin.petersen@oracle.com, jack@suse.com
-References: <1ee861df6fbd8bf45ab42154f429a31819294352.1760951886.git.wqu@suse.com>
- <aPYIS5rDfXhNNDHP@infradead.org>
- <56o3re2wspflt32t6mrfg66dec4hneuixheroax2lmo2ilcgay@zehhm5yaupav>
- <aPYgm3ey4eiFB4_o@infradead.org>
- <mciqzktudhier5d2wvjmh4odwqdszvbtcixbthiuuwrufrw3cj@5s2ffnffu4gc>
- <aPZOO3dFv61blHBz@casper.infradead.org>
- <xc2orfhavfqaxrmxtsbf4kepglfujjodvhfzhzfawwaxlyrhlb@gammchkzoh2m>
- <5bd1d360-bee0-4fa2-80c8-476519e98b00@redhat.com>
- <aPc7HVRJYXA1hT8h@infradead.org>
- <32a9b501-742d-4954-9207-bb7d0c08fccb@redhat.com>
- <rizci7wwm7ncrc6uf7ibtiap52rqghe7rt6ecrcoyp22otqwu4@bqksgiaxlc5v>
+Subject: Re: [PATCH 2/2] mm/truncate: Unmap large folio on split failure
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kiryl Shutsemau <kas@kernel.org>
+References: <20251021063509.1101728-1-kirill@shutemov.name>
+ <20251021063509.1101728-2-kirill@shutemov.name>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -156,52 +155,32 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <rizci7wwm7ncrc6uf7ibtiap52rqghe7rt6ecrcoyp22otqwu4@bqksgiaxlc5v>
+In-Reply-To: <20251021063509.1101728-2-kirill@shutemov.name>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 21.10.25 11:33, Jan Kara wrote:
-> On Tue 21-10-25 09:57:08, David Hildenbrand wrote:
->> On 21.10.25 09:49, Christoph Hellwig wrote:
->>> On Mon, Oct 20, 2025 at 09:00:50PM +0200, David Hildenbrand wrote:
->>>> Just FYI, because it might be interesting in this context.
->>>>
->>>> For anonymous memory we have this working by only writing the folio out if
->>>> it is completely unmapped and there are no unexpected folio references/pins
->>>> (see pageout()), and only allowing to write to such a folio ("reuse") if
->>>> SWP_STABLE_WRITES is not set (see do_swap_page()).
->>>>
->>>> So once we start writeback the folio has no writable page table mappings
->>>> (unmapped) and no GUP pins. Consequently, when trying to write to it we can
->>>> just fallback to creating a page copy without causing trouble with GUP pins.
->>>
->>> Yeah.  But anonymous is the easy case, the pain is direct I/O to file
->>> mappings.  Mapping the right answer is to just fail pinning them and fall
->>> back to (dontcache) buffered I/O.
->>
->> Right, I think the rules could likely be
->>
->> a) Don't start writeback to such devices if there may be GUP pins (o
->> writeble PTEs)
->>
->> b) Don't allow FOLL_WRITE GUP pins if there is writeback to such a device
->>
->> Regarding b), I would have thought that GUP would find the PTE to not be
->> writable and consequently trigger a page fault first to make it writable?
->> And I'd have thought that we cannot make such a PTE writable while there is
->> writeback to such a device going on (otherwise the CPU could just cause
->> trouble).
+On 21.10.25 08:35, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
 > 
-> See some of the cases in my reply to Christoph. It is also stuff like:
+> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> supposed to generate SIGBUS.
 > 
-> c) Don't allow FOLL_WRITE GUP pins or writeable mapping if there are *any*
-> pins to the page.
+> This behavior might not be respected on truncation.
 > 
-> And we'd have to write-protect the page in the page tables at the moment we
-> obtain the FOLL_WRITE GUP pin to make sure the pin owner is the only thread
-> able to modify that page contents while the DIO is running.
+> During truncation, the kernel splits a large folio in order to reclaim
+> memory. As a side effect, it unmaps the folio and destroys PMD mappings
+> of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
+> are preserved.
+> 
+> However, if the split fails, PMD mappings are preserved and the user
+> will not receive SIGBUS on any accesses within the PMD.
+> 
+> Unmap the folio on split failure. It will lead to refault as PTEs and
+> preserve SIGBUS semantics.
 
-Oh that's nasty, but yeah I understood the problem now, thanks.
+Was the discussion on the old patch set already done? I can spot that 
+you send this series 20min after asking Christoph a question in reply to 
+pushback.
 
 -- 
 Cheers
