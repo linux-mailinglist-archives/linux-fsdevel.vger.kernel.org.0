@@ -1,61 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-64910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6663BF664F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5D7BF6730
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 468845034BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138CD407260
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B002135503C;
-	Tue, 21 Oct 2025 12:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A77431A050;
+	Tue, 21 Oct 2025 12:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGLJZYWR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvKI648d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1712E1E7C23
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 12:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4CB2F28E9;
+	Tue, 21 Oct 2025 12:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761049013; cv=none; b=u9GbIi6N7EvcLAOH1oeT7tcFoJZqrFth6yo2biZGl2BgYsYlKqpxl7KV9UY3QMYsV6gyJ6N1tOZ09xynzajDkKdCGcWKpPaw431HqwY17wjbQVdQqyxwpw/qTcI/xStNqi4Pii5OXMs06s/wPpyvTJZBJVbthBNInlorzEWyKTY=
+	t=1761049403; cv=none; b=pV9sLjDcLNY9AH1Zk96+EN3FRo/6qfB/ocfjXVXTEMcJBv0RTlsiJZlzQ8w4SUqeDGskR8Ls22Age4+khR1DrZXuhZF0C2NK0HcCa1UL/iRtakl2tZGpjEkQRVJvtnoHTEwWO4fVdQTxPkKgVDr4U2DHBqlzpR10UtyC0jsc6kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761049013; c=relaxed/simple;
-	bh=8JIExmKFL1e/CmjoJnRReujq8mU/REJBTwDG9/fjmkU=;
+	s=arc-20240116; t=1761049403; c=relaxed/simple;
+	bh=+sqiUHkSfP5A8rVdrQN/t30eii5gADxC9If4cWd7tlU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SMKOvvcIkkkOrqfhsjKynnd4V0gUq1LAD6FZC0F/DxnGnbqfwhSvJHaIEVI3IppVbXsjliJ3GNKOMcPnzbAMlD1WXNT8RYRCHWsil2Otg7uBGkGLbr7LgIUrzZ8rABXJbMTE5diRbXyt+ZP8Gw+qgCl47p4pXg1bxabsSAkJp1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGLJZYWR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B80DBC4CEF1;
-	Tue, 21 Oct 2025 12:16:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=arN+sfmvc6UtzKrOoH63qjraUT+FwD6iG+aZYBUor7F2piYzFL186XpixgeoMaq6aDzNUd1vXxaMPN2schrsY+EtKM86V+kg3qiTYkv3k6XTuu3/Cm8yLr+sr7UuBpwBPi/NvUhX3O+gyAieuK7iu4lBD/Ax49A1PwrHAZTN3Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvKI648d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE38C4CEF1;
+	Tue, 21 Oct 2025 12:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761049012;
-	bh=8JIExmKFL1e/CmjoJnRReujq8mU/REJBTwDG9/fjmkU=;
+	s=k20201202; t=1761049403;
+	bh=+sqiUHkSfP5A8rVdrQN/t30eii5gADxC9If4cWd7tlU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pGLJZYWROnGvExmYkpXY4E+CrprIx+KCNr+WptCpQtmc/zHCY71hGPeLTZqIHT87x
-	 v/YV85rpXuABPTl4JXzhFjH5acPF23vIYol4MGVUrky+415tynJPWA0PwyehSgsHIA
-	 k/sU5EL38wzaIOMkn1Wl7ZNbsmcFuuHmk47VQ0DW3OhK9I8btaigTx6YRZBprK9hKT
-	 8KXmHoCiFKSPTR6ut/kLClCRl1P+8shhu7kcD4BRNc8so6fNcST0gnUwBRNKGwnOhY
-	 2JNUBbO4bSgsGm4JwmOQAmD+Tc652+AOL4595AsZnpzIb4nzwF9YIWEQ+68nBgqOfA
-	 glAz4lV71Wv/A==
+	b=BvKI648dgvJFDJR+yz7wj8UibEotw1CDx0ep4muQnjaEpn0XUG7WpUrNk9rtfmQRQ
+	 HeSGB0jM6U0/K/N3duIDCJ+Dx3/EHA2RdjnYusZMHthhB/GE7wXcmFa83zW9Llz6VL
+	 7xItfrlQm8+aH2FG7n5CjplJQdaeis1BAKK5s6x0DgDyZJKcG7MnMx+Dh8X9RTEWuk
+	 lhZih2awoIgHgF/EIylZNu7bQW4+icxnHndrBL8lbfXesl1T+cCnQsTyQjNVm3x+gq
+	 ycUnJBIph96pUmJm2CGGv6Oh+xcVo2nVipW9fICAUk/Ph/uGYbrcTm42Q1UM6Wzzb7
+	 wK/U0SaRbd1NA==
 From: Christian Brauner <brauner@kernel.org>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net,
-	geoff@geoffthorpe.net,
-	Hongbo Li <lihongbo22@huawei.com>
+To: Zhen Ni <zhen.ni@easystack.cn>
 Cc: Christian Brauner <brauner@kernel.org>,
-	linux-um@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] hostfs: Fix only passing host root in boot stage with new mount
-Date: Tue, 21 Oct 2025 14:16:46 +0200
-Message-ID: <20251021-genau-erwachen-eb2436082486@brauner>
+	linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: Re: [PATCH v2] fs: Fix uninitialized 'offp' in statmount_string()
+Date: Tue, 21 Oct 2025 14:23:13 +0200
+Message-ID: <20251021-zahnmedizin-statik-640ccc16a11e@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251011092235.29880-1-lihongbo22@huawei.com>
-References: <20251011092235.29880-1-lihongbo22@huawei.com>
+In-Reply-To: <20251013114151.664341-1-zhen.ni@easystack.cn>
+References: <20251013114151.664341-1-zhen.ni@easystack.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,18 +61,19 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1332; i=brauner@kernel.org; h=from:subject:message-id; bh=8JIExmKFL1e/CmjoJnRReujq8mU/REJBTwDG9/fjmkU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8r1y/Rf/WKsu3lzLW/rxiuPuNmvWdmRkNf8/PyvoQx fH8V0V0QEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBENvkzMuxy8/t58cvkqFd/ jC/e/ZDk/ForQLvVsipfr83u1eZjq18wMhz2jlG7Esc2wVpER2xJCVOzlE588cq35fvMYwXnBX9 tZAMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1287; i=brauner@kernel.org; h=from:subject:message-id; bh=+sqiUHkSfP5A8rVdrQN/t30eii5gADxC9If4cWd7tlU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8rzZTP399z/IvryeL+6m92ZX4/11QynnOrSIsNtKJL Z5GUTbsHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5XM7IcMpWdvFFOZY9HZem 2B40E1/daJvV6bGg9I2Qab6hVc2FTkaGdffLBA2znc8tvqN68ETvqsz19VKxOak/HA6Wls69P0u PDwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Sat, 11 Oct 2025 09:22:35 +0000, Hongbo Li wrote:
-> In the old mount proceedure, hostfs could only pass root directory during
-> boot. This is because it constructed the root directory using the @root_ino
-> event without any mount options. However, when using it with the new mount
-> API, this step is no longer triggered. As a result, if users mounts without
-> specifying any mount options, the @host_root_path remains uninitialized. To
-> prevent this issue, the @host_root_path should be initialized at the time
-> of allocation.
+On Mon, 13 Oct 2025 19:41:51 +0800, Zhen Ni wrote:
+> In statmount_string(), most flags assign an output offset pointer (offp)
+> which is later updated with the string offset. However, the
+> STATMOUNT_MNT_UIDMAP and STATMOUNT_MNT_GIDMAP cases directly set the
+> struct fields instead of using offp. This leaves offp uninitialized,
+> leading to a possible uninitialized dereference when *offp is updated.
+> 
+> Fix it by assigning offp for UIDMAP and GIDMAP as well, keeping the code
+> path consistent.
 > 
 > [...]
 
@@ -93,6 +92,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] hostfs: Fix only passing host root in boot stage with new mount
-      https://git.kernel.org/vfs/vfs/c/590a4c70008c
+[1/1] fs: Fix uninitialized 'offp' in statmount_string()
+      https://git.kernel.org/vfs/vfs/c/0778ac7df513
 
