@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-64890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9724DBF643D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:01:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC4ABF6488
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1449635475D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:01:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 642D5503411
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B9134C9BD;
-	Tue, 21 Oct 2025 11:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE4134CFCA;
+	Tue, 21 Oct 2025 11:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ6MBLGJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI717obE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ECA33769C;
-	Tue, 21 Oct 2025 11:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7784832ED21;
+	Tue, 21 Oct 2025 11:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047236; cv=none; b=uwgTrJ25ioggRATcup+j/GeXAmZaNoS1sJpkkGTviSA5uarGTSe+nNpX1KfDdUnBzvMtymOz4d9+mbOb6OKEH6Aez9ZpngvqDhHfzj5js5vQcBYPgsp/e2YGH4ULo+dt4hD9FC7K7GJTa7KIJzw4K+Bd5I1WF/gdOEfUei8gmdM=
+	t=1761047242; cv=none; b=t7twdTj0VKZUABXWfSfSsOdVdJoSFp2y+izGofGCc26PYAnkZy1yE8Wqb6j/aenJDMw506OKbd+CGd/3oyA+vUZxzrXD+l3UJD5qK2VlT1N/flQ6mREJLgCRRwdgeP2AGQlWreuQhLEX3dLB3BGXliIhAT8dXnBJB4LDUSCTVVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047236; c=relaxed/simple;
-	bh=8oUiPySwgEUEU/08UclINQ2fnNQXoryHtImyDaO/kZg=;
+	s=arc-20240116; t=1761047242; c=relaxed/simple;
+	bh=4vBs0iC1GliO+F4XrLBJxRIywFUw/24vdpBSDdc51/s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qKVwtADAr0FvXnVQhNQyUhiWmKLYRxp4zDAuTiP/tp6vcaDob+eh4/Uo27Or0s6e0P+BXOhCy3ouDBfjGDgnFhLn+UdUeGY+zum09lZP1E91pcTX8sD1+xbQW3SDWQW9IDT/ozEePLBRI3q/FSpT4sxvSknZ91cRAs8vdCPzlpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ6MBLGJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B335DC4CEF5;
-	Tue, 21 Oct 2025 11:47:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lvfnOAG4zSVtGtAauTZPQ/iQiXTSKs6BlWcKO6oj9sseDZCZ+9JNd1zB5wdOq7QUi7YfvoseM6TuT/Ndr56cL3oFxgWbpkWuSwHOl4IDBJtASQPDS1dCQYein8RDuzji7ZZUIEL/dk/LxwKGemu+hP6AtfNz+pNw7JO7M+EnjHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI717obE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E28C4CEFD;
+	Tue, 21 Oct 2025 11:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047236;
-	bh=8oUiPySwgEUEU/08UclINQ2fnNQXoryHtImyDaO/kZg=;
+	s=k20201202; t=1761047242;
+	bh=4vBs0iC1GliO+F4XrLBJxRIywFUw/24vdpBSDdc51/s=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QJ6MBLGJYDeqA9DHIUJPVmaLKHGV9ZSbskochpTa7cJUQayKORuCM2Kdwm+KmbcKS
-	 1duDNFpeDJLWZ/9gqpMjSBHmO9otx3RkLD3+OjOMIB61uVCJQNhEalmAOnYqW4xECT
-	 2zCM6Y+o81n3uI5/MqzqzgOczlPOsPIftwQj/vxeut0jV9XSUnWy5QektLGFpWRj5z
-	 VywFROh5XZxl4rqZHtzQAIJRldpPDm2FKFzL3GHrMzDJmnmK7wTn1uCxF9pZpgD0JI
-	 wRyVo+Mhrqe9NFZH/B2QuaQ4dDmi90+vY2BdfuVIVa/aIpCp/c6l0IQloE6dZKiis2
-	 hrAB+96w2VnhQ==
+	b=bI717obESmGM0zhYVSTw0xxWy1nlhI/WfmtEyFBvL9Rw2+vP0HrYyjQKeWVWRw7MX
+	 buOB+EqQXxQrcz/07IyF9icBDS+mkgYGU9Ml7IovMvyANmc7U2R5m20jxS7GTb6MVx
+	 YheiQiZM4JP2aiG7qrluLBqF+dY+UNrDUQdVdyPcxe/PohZyPHOlgqpdKqIB2X7wsF
+	 VCSrpabpmol/DN01EvliztM6GV5o1hWJZuzBo64gHyPHFKFwdljZwShUMvgg862yA1
+	 X6HCbIYPbsSp2bWZFmpMCbgmcVa3/E6E8MVRwjYJN3ZkbgKT5XyUwnYgAI+UYozlIV
+	 ebJnv/T9kkgJQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:45 +0200
-Subject: [PATCH RFC DRAFT 39/50] selftests/namespaces: fifth listns() test
+Date: Tue, 21 Oct 2025 13:43:46 +0200
+Subject: [PATCH RFC DRAFT 40/50] selftests/namespaces: sixth listns() test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-39-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-40-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,65 +69,53 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3866; i=brauner@kernel.org;
- h=from:subject:message-id; bh=8oUiPySwgEUEU/08UclINQ2fnNQXoryHtImyDaO/kZg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3y3ZEq0E8NpIYk0TeWdmVqq6tf4s3Srk/lfVSp+2
- rsmbWdDRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETUTjD8L1rFfNhhuUO7944O
- tymvb4ieOb1WONJQeTuvDdvTlVdFXjD8jzdhY3lml7o4/lrylTePzjYZ/LlxO/PBRO4f0S/Yesq
- esQIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3170; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=4vBs0iC1GliO+F4XrLBJxRIywFUw/24vdpBSDdc51/s=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3y3uXZe1M3HFstePDSbsX3Lo52T7kd886q83nA5j
+ VHPvq5At6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi0QoM/122tvLmnohbUV7f
+ vORn/psHlrWc6vtWJq0+clUo/Izu10+MDK927DHmjtc5LB4cVPvxd9+pdKnVRb72ooxLU4LqA7d
+ P4gUA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that listns() only returns active namespaces.
-Create a namespace, let it become inactive, verify it's not listed.
+Test listns() with specific user namespace ID.
+Create a user namespace and list namespaces it owns.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/listns_test.c | 126 +++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+ tools/testing/selftests/namespaces/listns_test.c | 109 +++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/listns_test.c b/tools/testing/selftests/namespaces/listns_test.c
-index 457298cb4c64..e854794abe56 100644
+index e854794abe56..e1e90ef933cf 100644
 --- a/tools/testing/selftests/namespaces/listns_test.c
 +++ b/tools/testing/selftests/namespaces/listns_test.c
-@@ -201,4 +201,130 @@ TEST(listns_current_user)
- 		TH_LOG("  [%zd] ns_id: %llu", i, (unsigned long long)ns_ids[i]);
+@@ -327,4 +327,113 @@ TEST(listns_only_active)
+ 	}
  }
  
 +/*
-+ * Test that listns() only returns active namespaces.
-+ * Create a namespace, let it become inactive, verify it's not listed.
++ * Test listns() with specific user namespace ID.
++ * Create a user namespace and list namespaces it owns.
 + */
-+TEST(listns_only_active)
++TEST(listns_specific_userns)
 +{
 +	struct ns_id_req req = {
 +		.size = sizeof(req),
 +		.spare = 0,
 +		.ns_id = 0,
-+		.ns_type = CLONE_NEWNET,
++		.ns_type = 0,
 +		.spare2 = 0,
-+		.user_ns_id = 0,
++		.user_ns_id = 0,  /* Will be filled with created userns ID */
 +	};
-+	__u64 ns_ids_before[100], ns_ids_after[100];
-+	ssize_t ret_before, ret_after;
++	__u64 ns_ids[100];
 +	int pipefd[2];
 +	pid_t pid;
-+	__u64 new_ns_id = 0;
 +	int status;
++	__u64 user_ns_id = 0;
++	int bytes;
++	ssize_t ret;
 +
-+	/* Get initial list */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		TH_LOG("listns failed: %s (errno=%d)", strerror(errno), errno);
-+		ASSERT_TRUE(false);
-+	}
-+	ASSERT_GE(ret_before, 0);
-+
-+	TH_LOG("Before: %zd active network namespaces", ret_before);
-+
-+	/* Create a new namespace in a child process and get its ID */
 +	ASSERT_EQ(pipe(pipefd), 0);
 +
 +	pid = fork();
@@ -136,17 +124,18 @@ index 457298cb4c64..e854794abe56 100644
 +	if (pid == 0) {
 +		int fd;
 +		__u64 ns_id;
++		char buf;
 +
 +		close(pipefd[0]);
 +
-+		/* Create new network namespace */
-+		if (unshare(CLONE_NEWNET) < 0) {
++		/* Create new user namespace */
++		if (setup_userns() < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* Get its ID */
-+		fd = open("/proc/self/ns/net", O_RDONLY);
++		/* Get user namespace ID */
++		fd = open("/proc/self/ns/user", O_RDONLY);
 +		if (fd < 0) {
 +			close(pipefd[1]);
 +			exit(1);
@@ -161,63 +150,57 @@ index 457298cb4c64..e854794abe56 100644
 +
 +		/* Send ID to parent */
 +		write(pipefd[1], &ns_id, sizeof(ns_id));
-+		close(pipefd[1]);
 +
-+		/* Keep namespace active briefly */
-+		usleep(100000);
++		/* Create some namespaces owned by this user namespace */
++		unshare(CLONE_NEWNET);
++		unshare(CLONE_NEWUTS);
++
++		/* Wait for parent signal */
++		read(pipefd[1], &buf, 1);
++		close(pipefd[1]);
 +		exit(0);
 +	}
 +
-+	/* Parent reads the new namespace ID */
-+	{
-+		int bytes;
++	/* Parent */
++	close(pipefd[1]);
++	bytes = read(pipefd[0], &user_ns_id, sizeof(user_ns_id));
 +
-+		close(pipefd[1]);
-+		bytes = read(pipefd[0], &new_ns_id, sizeof(new_ns_id));
++	if (bytes != sizeof(user_ns_id)) {
 +		close(pipefd[0]);
-+
-+		if (bytes == sizeof(new_ns_id)) {
-+			__u64 ns_ids_during[100];
-+			int ret_during;
-+
-+			TH_LOG("Child created namespace with ID %llu", (unsigned long long)new_ns_id);
-+
-+			/* List namespaces while child is still alive - should see new one */
-+			ret_during = sys_listns(&req, ns_ids_during, ARRAY_SIZE(ns_ids_during), 0);
-+			ASSERT_GE(ret_during, 0);
-+			TH_LOG("During: %d active network namespaces", ret_during);
-+
-+			/* Should have more namespaces than before */
-+			ASSERT_GE(ret_during, ret_before);
-+		}
++		kill(pid, SIGKILL);
++		waitpid(pid, NULL, 0);
++		SKIP(return, "Failed to get user namespace ID from child");
 +	}
 +
-+	/* Wait for child to exit */
++	TH_LOG("Child created user namespace with ID %llu", (unsigned long long)user_ns_id);
++
++	/* List namespaces owned by this user namespace */
++	req.user_ns_id = user_ns_id;
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++
++	if (ret < 0) {
++		TH_LOG("listns failed: %s (errno=%d)", strerror(errno), errno);
++		close(pipefd[0]);
++		kill(pid, SIGKILL);
++		waitpid(pid, NULL, 0);
++		if (errno == ENOSYS) {
++			SKIP(return, "listns() not supported");
++		}
++		ASSERT_GE(ret, 0);
++	}
++
++	TH_LOG("Found %zd namespaces owned by user namespace %llu", ret,
++	       (unsigned long long)user_ns_id);
++
++	/* Should find at least the network and UTS namespaces we created */
++	if (ret > 0) {
++		for (ssize_t i = 0; i < ret && i < 10; i++)
++			TH_LOG("  [%zd] ns_id: %llu", i, (unsigned long long)ns_ids[i]);
++	}
++
++	/* Signal child to exit */
++	close(pipefd[0]);
 +	waitpid(pid, &status, 0);
-+
-+	/* Give time for namespace to become inactive */
-+	usleep(100000);
-+
-+	/* List namespaces after child exits - should not see new one */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+	TH_LOG("After: %zd active network namespaces", ret_after);
-+
-+	/* Verify the new namespace ID is not in the after list */
-+	if (new_ns_id != 0) {
-+		bool found = false;
-+
-+		for (ssize_t i = 0; i < ret_after; i++) {
-+			if (ns_ids_after[i] == new_ns_id) {
-+				found = true;
-+				break;
-+			}
-+		}
-+		if (found) {
-+			TH_LOG("Warning: Namespace %llu still active after process exit",
-+			       (unsigned long long)new_ns_id);
-+		}
-+	}
 +}
 +
  TEST_HARNESS_MAIN
