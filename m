@@ -1,129 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-64940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927DEBF743C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:12:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BAF2BF7439
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F5E188CCBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:07:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2B98503705
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E77340A7D;
-	Tue, 21 Oct 2025 15:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D428A3431ED;
+	Tue, 21 Oct 2025 15:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NUKtoHt1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDmQNpyl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6877260B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 15:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB3B242D7C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 15:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059224; cv=none; b=VpNzx/+mlLfgvcwJ0bZGJC/2NkxWyUdQzXmdsRuObxkjXojb5M0xHtyvnnK1x0oisVFes3U4+uTynbjb/p/B9uXkvV5N+Q+hQF2dGEHQ6lS2GakxaqIqDpwYTlz533E+t3Ort71YLX3Ydr50wsgSLVA/0/7zM2CyFgNqtDakHCU=
+	t=1761059310; cv=none; b=qBjT2p65HicjVa0tsCbPAl+Lc+giMskXwm8ecW45/38xOpGFIrWWxI63YDmkoyLaaTGeMgGjwcoB22c8CzVuGXBFSDlY84kwgO2hDlujlWiEWzRN3gDW+pPiD5MTNSZKkKgk0nDfs3EelRqWmmM9ESCY2eSdsLCJc5wALKbreWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059224; c=relaxed/simple;
-	bh=OBPNoahtqLQlrv9m+tCXzf5F3/neltQCeKhi/sO8Jc4=;
+	s=arc-20240116; t=1761059310; c=relaxed/simple;
+	bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RGP1AbY58x59nELt5y3J5MuQBqaFHKf9QzqNT5QTtXkmPn8rYuw+CavUaBcUY2vvSLQAtoDQllqD7PyMgt+AS+jYbTnHqXjTyokglnzgU2Ev00KiVRq4COxvY0SC5zKSxsIH7UNcolI3W0wQ2IYIpm3zh/QB1ZF4GxPef8GMCyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NUKtoHt1; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b64cdbb949cso938956266b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 08:07:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=SOCiOg8NtETW+rFXKf91wIol/zdJ7nv5IapAaHbgrjn3DtSbk2OrnhEjRh0Skd1zqsrjRm5rgO4U5F+V8oARRb/Wt0tfyvxlwS3hnhHufJ0fu00KK1GF2ZBqQHeJiCJ+4yJCfbJA2UU1ASnTngE9d2ymvSSbb1IurA62icwjtdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDmQNpyl; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-28d18e933a9so9131015ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 08:08:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761059219; x=1761664019; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5p3iIWVRp3NUhUS8ltDIPiH8ErmpKdyMg8XkHtjDt5U=;
-        b=NUKtoHt1GtEbaQBjrtLAkfgDsFKgVV+j0qyP7k5kNjFR47b9E7ouWBt2Oc8hNrU8cr
-         EJndBmLv/Hh6i/gYMgM7jUARiCaE/5Raraq0bxl2kbtGrnFLj0kPylPjETXs3/QJZAAL
-         eQT68HbQo1BvnjZ4U0MXU7cOC90jco+zV7lc8=
+        d=gmail.com; s=20230601; t=1761059308; x=1761664108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
+        b=GDmQNpylqDx1ao5zQVD847VGaErTwC9mikxRVUvxuQkmWPTmtaWf00RSlc40/i+kQo
+         XKfjdgsq9RUAcjdjyrXvf+g7lvZwAmLrzH21U2JZsI8Xe4hG5BUajmvHwJ5B37tiri+e
+         VRviq/6rBOC0/4MIRCOD64U7lRo6Bndb/9TMH3MYtcRcp0Zr+B3gRkD6VV/pVOPwPrgr
+         X3Prcmrwnx3CHQz48nQJ/PlpbEwBdRWpL7hOFaNLxEyaXi0qJtkMkg86nlHDtJM7uIKG
+         iXtTUI3s3UWtP6mL5uqDpvIz1wlIaIfYgF5MYOon2T5l3wxvrI9N3G+9DPze33/14P75
+         MTEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761059219; x=1761664019;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5p3iIWVRp3NUhUS8ltDIPiH8ErmpKdyMg8XkHtjDt5U=;
-        b=vabtwRYZAgnbTFUpryahZQ6kwMKvMKL0aIK0vYdYldOaEp17QtL/9TSccb+2C0sY8j
-         uOJ69vz1wupDHdZBgA40tIFuSVFs6p7F5Eg2RyNVlryZmRBIr4OqFsiXBm595rWykyQS
-         19ZBdAzPgRNLQJYRbp2qbYvvQPKll/B8kWuNICyL5BD1W1keF7NCqYqs7+p35d03fkAd
-         vdnBz2aWTjIWG/laKsCc24UE8OMtzlZCBSXioqqZAEeF4GjWiJQGERPir67E7lI5Wx3h
-         pQPgH11020tFXIZ8qs7sehxM5EXasn6Ey9XDFiG14jKXpqDHB+zwisbvSFfcH1LaYT4E
-         g2+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXVT5VlLE/s/lsKT/2fI42tzwSAfoxo0xUejOv6Eh0zA1C8GKBam1dSI8Hcs51ReUQswiR9Ptr5zd+Eahfb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjIF+4qrzc2q7H2yQBRuGVMCEup0kImIRE0nC25rJURkcOcxhY
-	pnVh16RvBsFb8g7AA38cKASA3ypcrnz1NjjUNScggBsAJYl6CXcmTeq5lQo6kMXXOQmkm1TP/As
-	RAn9GIDA=
-X-Gm-Gg: ASbGncub4ImxICXMYEwcYadXypjMZ/QD6oIfeIY/tdm9JMMlBXwT1tL/kvOQwpjheCS
-	jtatAsfkSUr1EO0IgQf4aujm7oqnqeeIhJxR9MTw1ZQhq/7r8N+8/vjPpNUGjohRtd1s42FF9W2
-	7vPdly5s6AmQqsyosdiOpiMNdEGl774v10G8YgUPqJSG+xX8I6Vdlzm7ckV1GM2TJwgZNHm3ptD
-	ALyQE0WCSabP9YJzA2JxcZcJ2YHVkfR6o8vdcnZ7bupsuvVHM8Yhnm24Ddfy0n6CSs2e6Qt+yZV
-	pfhi7ru67qA18gBNz/Vmwm6+l4IIDGFC/zA7gDD1ffZ3GdcAWHO7+jIN9Lu8uq4aQGAiPZ5/IJ9
-	Ef7nAm2a+7tZlRDUc9d2BYWS4kg4rlqjmgKetjyY2HAiBqJzPx6vRyqzKT9DVJXf1AhpYogOgSL
-	JL4XLpZhjZTyNHsBTulc+AwC6Vwpj7c/N7IaloO3soOky3/D0mjkox/8kBYjxMzu4Pzna+8Zw=
-X-Google-Smtp-Source: AGHT+IFn/A7G5UPrV/lJnpY94Pfp49f9Kf6E8gSyAZHeMPls6IwR7LkD+a36SxW3Fm9D2BeFlw5YSg==
-X-Received: by 2002:a17:907:948f:b0:b3b:d657:482b with SMTP id a640c23a62f3a-b6472c5c5cbmr2005588566b.2.1761059219464;
-        Tue, 21 Oct 2025 08:06:59 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83960e6sm1089536166b.33.2025.10.21.08.06.56
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 08:06:57 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c3d7e2217so7667428a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 08:06:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPy/zzaN0lC0NAmm7HhCqheaDxDosUHl8Clx4tJTxQk1hkMtRFmgM7ajTvlXluF8/MWX+eM0IBw6G4Ky3X@vger.kernel.org
-X-Received: by 2002:a05:6402:1ed2:b0:631:cc4f:2ff5 with SMTP id
- 4fb4d7f45d1cf-63c1f6c39a0mr15531402a12.25.1761059216055; Tue, 21 Oct 2025
- 08:06:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761059308; x=1761664108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
+        b=IZf7IeyipL5n0JSWUpoxN4TkkLomjhHyRAPK62dc3le7BgWSTKa0MiwgZYVacaLmrI
+         cUTsXAIl1/6S/wsusZ8icfkS99ss+wdtQRS0GO/zhnznmtifYV1xXuhpPbcdr2J8iyYn
+         kvYaZMapmnupCnxw5In3/rlleOEN4gdFuY7ttPdsqgkz8vNH1W8GBoWZy+zrKOK180ns
+         NuUpxu6li9noAypCrfL4rQTu8WX0USEggUPeoTgWKZKSRWZPisiad7i7mwL7rebxdWYE
+         /ltStv/XLn46rqtNGYCdL108FpPoHFDauHGFYBUvWR360LOpAQFW7l1Lra5FeyVFUIg+
+         uG+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUN8qs67BR+7DYrjVtNryRkvKX7tliw8ICqcqSbGeLwLUEzbls5K8tpD97xz9uvasNAL2zy+tPsUp6G3kgd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbrH/6ylSvDouHMznZk5z31xNb80T9eBhxLCLrOTGs3gSXpTc0
+	Y6kTCeKUUs0jXwxE+zuhutUzk7BrzEvDurpjnorOGfLxTXRjjlVt18h0DcW4h3OUPs2c8ts2VfS
+	roIjfFIU+YnVMKf1w0rvk/7F/lyqjVak=
+X-Gm-Gg: ASbGncvjOJQrKm4n2n+N7Gympfv/QwewzEGqk4jSR/HpL3swz3FylQzc6wvRNxWFTuO
+	FEmzdCIvfrm8uI0SgD58fcwgL74Bxq/3J+OgjCsAlltqoT5ODR7yUcmcqlBWp/ma3tLvFICK7Be
+	GaQoDMgxJ2NUtrH/9Vd5y9zd9FuFiZKXDqTxjvy7bfW0448wEa5/UXz6VHr35vXI7WuZS316Rtc
+	ZICejYT+qZRp55dFux964KfsxKO0IKINUdxJiM/koEjwMxai6F28GpmHbBTv9WbAHupFxqDltMu
+	YMm/poH1Q89pIxKK+ZWBw7QHeccRVCyjFnczw8QRalJSatsFAKxa0I/30c4TCujyBO/1f0JH/HI
+	KJYU=
+X-Google-Smtp-Source: AGHT+IFreHdov+uVhNjI+vb4zuqGdoRtHfpLdbPpRiyIyY5EB+5Z0lQXG7LeNg1R8D52vs+phURtS3CNMV6Qy7+3LW0=
+X-Received: by 2002:a17:903:22cc:b0:26b:1871:1f70 with SMTP id
+ d9443c01a7336-292d3f7212amr26756455ad.5.1761059307987; Tue, 21 Oct 2025
+ 08:08:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017085938.150569636@linutronix.de> <20251017093030.253004391@linutronix.de>
- <20251020192859.640d7f0a@pumpkin> <877bwoz5sp.ffs@tglx>
-In-Reply-To: <877bwoz5sp.ffs@tglx>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 21 Oct 2025 05:06:38 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgE-dAHPzrZ7RxwZNdqw8u-5w1HGQUWAWQ0rMDCJORfCw@mail.gmail.com>
-X-Gm-Features: AS18NWA4hFVtubdvPHiqdyKph2ZRKrwMfjnw6C6eEZqbhQOMaKTPF5q4gpdDvSA
-Message-ID: <CAHk-=wgE-dAHPzrZ7RxwZNdqw8u-5w1HGQUWAWQ0rMDCJORfCw@mail.gmail.com>
-Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access regions
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Laight <david.laight.linux@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
-	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
+References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
+In-Reply-To: <20251020222722.240473-2-dakr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 21 Oct 2025 17:08:14 +0200
+X-Gm-Features: AS18NWCCy2kjmOIA6ceL9V6OXhZcSR6v5l_FF-ORfDMjRgq5VddXOb7GOLYgjmY
+Message-ID: <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Oct 2025 at 04:30, Thomas Gleixner <tglx@linutronix.de> wrote:
+On Tue, Oct 21, 2025 at 12:27=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
-> On Mon, Oct 20 2025 at 19:28, David Laight wrote:
-> >
-> > (I don't like the word 'masked' at all, not sure where it came from.
->
-> It's what Linus named it and I did not think about the name much so far.
+> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
+> avoid using raw bindings types, this seems to be the better alternative
+> compared to just using i64.
 
-The original implementation was a mask application, so it made sense
-at the time.
+Would a newtype be too painful?
 
-We could still change it since there aren't that many users, but I'm
-not sure what would be a better name...
+Note: I didn't actually check if it is a sensible idea, but when I see
+an alias I tend to ask myself that so it would be nice to know the
+pros/cons (we could ideally mention why in the commit message in cases
+like this).
 
-                   Linus
+Thanks!
+
+Cheers,
+Miguel
 
