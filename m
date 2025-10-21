@@ -1,126 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-64802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D85BF4481
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 03:39:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F93BF4505
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 03:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567801891368
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 01:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F583ABC20
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 01:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEB62153D4;
-	Tue, 21 Oct 2025 01:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3F0220F5D;
+	Tue, 21 Oct 2025 01:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fhItrZJ7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBNXdF2I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC6315D1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 01:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670E922FDEC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 01:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761010760; cv=none; b=rnym9/dpcfOo131oykXRSI6VkeL16qK6sOkJqMa2mZzcnRviQQLu21mgjkA74D2hWxmzuUbHLmWVWiQ9uLNfxe0uPCmmMb/NTkwry9ObMdXDHHmmwh73MkX4mKldqa6KbojckrtI5R/zNlLDl2zgVQSYU7K/wYo7TXQUF4YF7Fo=
+	t=1761011402; cv=none; b=R/O12JlZOA4Jt/x9fqXmlrcIHb9WP247piq6IHH/x/V+zveAus9w0txAay2ZKBixI2o+vl2+1m6D9d4pvDCHeHt2kZlhRCgQw7WUfFukLnizR5sfZwogDYRQPId9JFemFybCY6tJHihnjisVHySGhUGA3wQ/W5gDi3zULfhBlfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761010760; c=relaxed/simple;
-	bh=4u7gdtoG2IrVUfi8pfiZFE8Gk8Q/8b96qQaBKTzJ/+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EJDWNxpaj8pTGMtWo6+tl8DUi5v01EZLocC+1AhIsJFcdI2KQ5ztU+2UABxRq4wCVTtHeDCgml9SYe83Y5ahd8ZK5lWbLZxuB9tDwhLIo65Sa99YivoP2L5Q9F1nFCxVql4VDM0L4hYNEp/Dj2HJ/XIrIkjQwjDt2nBFJIzpWto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fhItrZJ7; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761010755; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=q7UzR1BBYhoxLPyx/RabOsuWkqb8jHYGfFP7UQaos9Y=;
-	b=fhItrZJ7U9GUSUzi/Hdcb7TQopEetGp5wu3LmdxLSDE2Q4AlPU4IjF4zePT67ny6B+NMbXV5lXFHQSnlh0VlK14hf/rQgcMpHISB/qDKERZWkTO6SJaBzu0rNES7DrH9+M2qoSUAxxScUEoKHFJQwQD2LRvyXs14O2ruXCpQo9Q=
-Received: from 30.221.129.100(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wqh.rc1_1761010754 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 21 Oct 2025 09:39:14 +0800
-Message-ID: <7ccdda81-8a31-4a4e-9ec1-7797cc701936@linux.alibaba.com>
-Date: Tue, 21 Oct 2025 09:39:12 +0800
+	s=arc-20240116; t=1761011402; c=relaxed/simple;
+	bh=htcS7Ohbflq3HUTJuNNJeirXMdxoa+XlP8nG/tkLPa4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mf0VBx0Ex3xyT++IrGrO8WOYOh4sVcFwY/gkhJEUM8ZIQW1EZEA2tJb8cW6FVz6qcqMuE/Mn+JllwrDkVoRrDjmAX3anifCZ3JXba7KgO57FmK7hXAoQpWAVNlpWGRUDTa/Br3msH3U195XDykpLyuSI9G6NdYjP81KL0sRH/mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBNXdF2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1789C19424
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 01:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761011401;
+	bh=htcS7Ohbflq3HUTJuNNJeirXMdxoa+XlP8nG/tkLPa4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XBNXdF2Ilcc9YulgsFPiGbG7wjz17utEaFxsMV71iiMOH/tIjhRSipEg5FwDIH+SP
+	 i6idyg19BXwo/vdLQaCOuwQ724BpbVF5906dEu9Bm7wYdhNROduWZlyfes0Ndw/oRy
+	 qTfBuxJMT/Oq2zRUVnA67x+aWu2S1X6hfNAOaxhHC/iUEpoP1fKX3W3xvh3cSqsyGD
+	 zDXUXpvhz6sf8KZaQoRxqiSCzXj2p/d5LGcbQccHLwFxADFl8QYc3UC2Yk40FKHsdW
+	 t++BeEUZYS7TBIQgJ2A2+qX80wgAcZqWhe/y/TGs0OD6Az7hIoG2A6pfZwB603mcA1
+	 t0hGNrfvsNUOQ==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b463f986f80so972948766b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 18:50:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXPna2m9XpdTArH3Xs8t7dH4HYbKKM+6oYaPF5kVwzMPIddmYppdCltwdg5CQGHq5NAgJ/yYWlB0T+YlUsL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh14SwGs4b5jSauY7Nqtqn2fpFUlEaOJkrmOPQyHkPptXt9sMu
+	N7k9sJw8/vkozVaFbL7wRrjGwJINqvuS8nq6d5ShaGUQh2aAa19yU0FZg9lUjpQe1KNlXsNgPMP
+	qgM+5YOSizkNcAa2xt07slLyeljESk3Q=
+X-Google-Smtp-Source: AGHT+IEzzb+tmcQzG2Fm+h+6do+wmWZd/xd0gS43UlshdlRbK/t6x0HY5waSa9V02ECCBr00hHlFk8aDTkjzJEqTYw8=
+X-Received: by 2002:a17:906:7f93:b0:b5b:3ab0:a5b4 with SMTP id
+ a640c23a62f3a-b6474f18313mr1312614166b.49.1761011400289; Mon, 20 Oct 2025
+ 18:50:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/9] iomap: account for unaligned end offsets when
- truncating read range
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
- djwong@kernel.org, bfoster@redhat.com, linux-fsdevel@vger.kernel.org,
- kernel-team@meta.com
-References: <20251009225611.3744728-1-joannelkoong@gmail.com>
- <CAJnrk1aEy-HUJiDVC4juacBAhtL3RxriL2KFE+q=JirOyiDgRw@mail.gmail.com>
- <c3fe48f4-9b2e-4e57-aed5-0ca2adc8572a@linux.alibaba.com>
- <CAJnrk1b82bJjzD1-eysaCY_rM0DBnMorYfiOaV2gFtD=d+L8zw@mail.gmail.com>
- <49a63e47-450e-4cda-b372-751946d743b8@linux.alibaba.com>
- <CAJnrk1bnJm9hCMFksn3xyEaekbxzxSfFXp3hiQxxBRWN5GQKUg@mail.gmail.com>
- <CAJnrk1b+nBmHc14-fx__NgaJzMLX7C2xm0m+hcgW_h9jbSjhFQ@mail.gmail.com>
- <01f687f6-9e6d-4fb0-9245-577a842b8290@linux.alibaba.com>
- <CAJnrk1aB4BwDNwex1NimiQ_9duUQ93HMp+ATsqo4QcGStMbzWQ@mail.gmail.com>
- <b494b498-e32d-4e2c-aba5-11dee196bd6f@linux.alibaba.com>
- <CAJnrk1Z-0YY35wR97uvTRaOuAzsq8NgUXRxa7h00OwYVpuVS8w@mail.gmail.com>
- <9f800c6d-1dc5-42eb-9764-ea7b6830f701@linux.alibaba.com>
- <CAJnrk1Ydr2uHvjLy6dMGwZj40vYet6h+f=d0WAotoj9ZMSMB=A@mail.gmail.com>
- <b508ecfe-9bf3-440e-9b50-9624a60b36dd@linux.alibaba.com>
- <CAJnrk1aj30PebLo7q4BMDoTU5Pyn25U7dZRK6=MvJcFSfb-4XA@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAJnrk1aj30PebLo7q4BMDoTU5Pyn25U7dZRK6=MvJcFSfb-4XA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020183304.umtx46whqu4awijj@pali>
+In-Reply-To: <20251020183304.umtx46whqu4awijj@pali>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 21 Oct 2025 10:49:48 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com>
+X-Gm-Features: AS18NWAiuswYJeAln1hUra1uPeRZcQXi-vK-HcyFwpUVUqXqdEfbnYt4Niiowak
+Message-ID: <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org, neil@brown.name, 
+	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
+	jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 21, 2025 at 3:33=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> Hello,
+Hi Pali,
+>
+> Do you have a plan, what should be the future of the NTFS support in
+> Linux? Because basically this is a third NTFS driver in recent years
+> and I think it is not a good idea to replace NTFS driver every decade by
+> a new different implementation.
+Our product is currently using ntfsplus without any issues, but we plan to
+provide support for the various issues that are reported from users or
+developers once it is merged into the mainline kernel.
+This is very basic, but the current ntfs3 has not provided this support
+for the last four years.
+After ntfsplus was merged, our next step will be to implement full journal
+support. Our ultimate goal is to provide stable NTFS support in Linux,
+utilities support included fsck(ntfsprogs-plus) and journaling.
+>
+> Is this new driver going to replace existing ntfs3 driver? Or should it
+> live side-by-side together with ntfs3?
+Currently, it is the latter. I think the two drivers should compete.
+A ntfs driver that users can reliably use for ntfs in their
+products is what should be the one that remains.
+Four years ago, ntfs3 promised to soon release the full journal and
+public utilities support that were in their commercial version.
+That promise hasn't been kept yet, Probably, It would not be easy for
+a company that sells a ntfs driver commercially to open some or all sources=
+.
+That's why I think we need at least competition.
+>
+> If this new driver is going to replace ntfs3 then it should provide same
+> API/ABI to userspace. For this case at least same/compatible mount
+> options, ioctl interface and/or attribute features (not sure what is
+> already supported).
+Sure, If ntfsplus replace ntfs3, it will support them.
+>
+> You wrote that ntfsplus is based on the old ntfs driver. How big is the
+> diff between old ntfs and new ntfsplus driver? If the code is still
+> same, maybe it would be better to call it ntfs as before and construct
+> commits in a way which will first "revert the old ntfs driver" and then
+> apply your changes on top of it (like write feature, etc..)?
+I thought this patch-set was better because a lot of code clean-up
+was done, resulting in a large diff, and the old ntfs was removed.
+I would like to proceed with the current set of patches rather than
+restructuring the patchset again.
 
-
-On 2025/10/21 07:25, Joanne Koong wrote:
-> On Fri, Oct 17, 2025 at 5:13 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>
->> On 2025/10/18 07:22, Joanne Koong wrote:
->>> On Fri, Oct 17, 2025 at 3:07 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>>>
->>>>
->>>> On 2025/10/18 02:41, Joanne Koong wrote:
-
-...
-
->>>>
->>>> Can you confirm this since I can't open the link below:
->>>>
->>>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
->>>> branch: vfs-6.19.iomap
->>>>
->>>> [1/1] iomap: adjust read range correctly for non-block-aligned positions
->>>>          https://git.kernel.org/vfs/vfs/c/94b11133d6f6
->>>>
->>>
->>> I don't think the vfs-6.19.iomap branch is publicly available yet,
->>> which is why the link doesn't work.
->>>
->>>   From the merge timestamps in [1] and [2], the fix was applied to the
->>> branch 3 minutes before the fuse iomap changes were applied.
->>> Additionally, in the cover letter of the fuse iomap read patchset [3],
->>> it calls out that the patchset is rebased on top of that fix.
->>
->> Ok, make sense, thanks.
-> 
-> The vfs-6.19.iomap branch is now available. I just triple-checked and
-> can confirm that commit 7aa6bc3e8766 ("iomap: adjust read range
-> correctly for non-block-aligned positions") was merged into the tree
-> prior to commit e0c95d2290c1 ("iomap: set accurate iter->pos when
-> reading folio ranges").
-
-Hi Joanne, thanks for the confirmation again,
-sounds fine with me.
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Joanne
-> 
+>
+> For mount options, for example I see that new driver does not use
+> de-facto standard iocharset=3D mount option like all other fs driver but
+> instead has nls=3D mount option. This should be fixed.
+Okay, I will fix it on the next version.
+>
+> Pali
+Thank you for your review:)
 
