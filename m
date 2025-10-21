@@ -1,82 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-64929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484FCBF6C32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:28:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C065BF6D97
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10823504ADC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:26:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 880654F3705
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446713370F6;
-	Tue, 21 Oct 2025 13:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F51A338925;
+	Tue, 21 Oct 2025 13:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3Elnn/5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xv7zzyab"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00D8334C38
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 13:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B623385B6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 13:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053176; cv=none; b=imi6hLVhhIqL7r59ZaxvlExvt2V04dZfVJ/JxRTA3DIgUUlDQwRD0JM+21NGkhOpiXfLgkSspSYYu/09uAaPSUiiMkiWHnu2H4Nqt5W5dvKt5xL+4ehjJFgTxCzcyEBh13Hs4Oj+rT9FCM0ACB/14SBXmpSy7WEJy+gS38kFGHg=
+	t=1761054021; cv=none; b=HC4FHNtnJERbL6WoStVGnBZuiaKgM0qpRwUpizDKUF3+X6yN74I6mcKxRi4Xkq6gqZ1r3KK/UQ1Olqrrl8bLmOdwRZuDB3COYnLXyYdVXr1u48iJDknq9tAp46xrNv+q0u3oBRC2vcBra7koAt402KiSxvs1xYerkix1aktLHTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053176; c=relaxed/simple;
-	bh=FmxFedcQLaCu9wc1pUpck2LtzTvRDec5m+R5LJo/qOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jq2e9prmbTIkyNAwYLA5OcU63OplJ/MrhlOYwJD+8OQZB0HhiiD78zWF6aMvJt2I3UEl95r3dWyoPmO4XOAC3+1/iVpAY4qW77QIm214mJYPEwcUE6eaTHCoFAeYVJq7ktfPu2D4OeBXg1NrCswpMeR8KDZdYtW2u3Dyv8kKvJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3Elnn/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E8F4C4CEF1;
-	Tue, 21 Oct 2025 13:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761053176;
-	bh=FmxFedcQLaCu9wc1pUpck2LtzTvRDec5m+R5LJo/qOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W3Elnn/51XYwZCEn8WhmxL4T/shuRqaw/ExVpKC+Y/ozWYHhPuLGk8EdBTLNTbT7o
-	 XW/pbv9OiBhETK7s8DcnFgzsgm9uFDWvNiO8HVxjKR9OSGFebLzR595Cpvi9/LMlhC
-	 3ZsI7kFCuuVRSbHssNgpsvI9zgBRq+N9frWVRNG14omp+5niecWH0eZnkKFOVWykWG
-	 kh7dkOPqlgrp9rP6b05ERV0slHhBAtYE9PYiLIM0utrsSsW+LgLz3D32cweCv2HR3G
-	 wSjUKOzjHBCjol9HYKAmurZC/B4b3gDDLKUf1zUQF6jeg3E0XQ1apKcWCXjrbgA/DJ
-	 7G4DVr46iLidg==
-Date: Tue, 21 Oct 2025 15:26:12 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 01/14] debugfs: rename end_creating() to
- debugfs_end_creating()
-Message-ID: <20251021-weltgegenden-falschaussagen-d8b2f8545d65@brauner>
-References: <20251015014756.2073439-1-neilb@ownmail.net>
- <20251015014756.2073439-2-neilb@ownmail.net>
+	s=arc-20240116; t=1761054021; c=relaxed/simple;
+	bh=yCknDotFZEruiBosDMAm3ohbAowsDur9hp3qhsJ7LEc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jOQUnYAQfaQ9pmcgc80TmS/6KkodMaB918E/zXA6R0wrO53Z4EVQs6PsJprqqwLTxjWYDEVYLsLxt4foUJJXc+DqCL+AxUtD+wKBagAkl0ftNtePCEAgtC+qpnJSkrZ8QYEI0qdEj7jlaPSV3cC4Bz4JpcpEcTMUmZCWdmwK+f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xv7zzyab; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso35139405e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 06:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761054018; x=1761658818; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrLUW4qM+cn8czdjP/Pa/kJCbfN7pvqfFBtXogaAokg=;
+        b=Xv7zzyabgXefPJyzLd/TMox8FWzDGyOcyZdERxUWzaAm/Y/3Qmadpq8xT6lmx2lAfK
+         zWesBtPwUDm66q6m271xCNdFTOAu2n9SToPvn4ZqgTP/jD85TMdFxE2XunFZjYSAB0UL
+         zbd+RnpAo0spmPLZqE26ZoV7CihN/iQf6lueSmOHyXp2OWDO86T6h9GRp5tZFIJ6EtLh
+         cEp/8LRYF20nbfoD56phD2wT893dJ9IirtFbPdGgd0kXHMWrp5x/g6MsmCAgFgfTyUql
+         VvO+ru4+CnxXXR31Ng0X5kIZzBdtRZcHIVMkdqqcUAFxSl5BTT+uXLVyrZN8cHabxRco
+         NY0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761054018; x=1761658818;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrLUW4qM+cn8czdjP/Pa/kJCbfN7pvqfFBtXogaAokg=;
+        b=LX5SyKw6UvyVNcOB8ArWylBYKjxhV+sb+scxlNuv4hyyCGOXCgBQZ9Kt7vZCRXKq4j
+         PKdivEjpg4Ksu2Dvhb5zqdhlq7b/ynG8FfR8nviWp9EAgBdQr+s8eQHKiiLLIWYKzJje
+         2PeydzRUrWXs9K+phqKLFkxQkipc1KOIC2rSBrFq8tYgn71VkXX05mdgpsxuXjyobVY/
+         tsc3Bn5yRFbBJVGwncCqLfvM+4rORfnTO5uy7gdXd7wv5I/SvnIvJfn7QYecCCjOLZuz
+         v5GbQ95YK3SgLjtnVu6Zv/Wr+t5Njwhh66N/Xhtjrq+DKjJA1fCgkdKijne8HG1WBWZF
+         UKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuj4af8YaOJTqDluzb/cnUk/JnHMOZMJRkk5ePSpzQztwmMiHVAZIgsm9x64dRVX4AIKrsmdjUVQOmAxOy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw3Xq3ljjSniEvHYjCiEg4te1/bJhpaoYl74TIFKD168DOPgKr
+	oqVd06MztRelF+HVv7/7gZF1rJMLd+0MkyaFcE0dKLhIU4vcFK7YvEHIZRwJ+OLPazE23JfS7X7
+	FVt0PSrxsxcekCRrMhg==
+X-Google-Smtp-Source: AGHT+IGyXHuIJb9pEC+yUkjKZFKKvH4sB7PMpDG624E6gHyNbBCvNk3e8BAAYh/eBkRuMgY4SrmZkhQaFvx3kuw=
+X-Received: from wmcn15.prod.google.com ([2002:a05:600c:c0cf:b0:46e:25c3:8f69])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5287:b0:471:1337:7220 with SMTP id 5b1f17b1804b1-47117874810mr123853485e9.3.1761054018123;
+ Tue, 21 Oct 2025 06:40:18 -0700 (PDT)
+Date: Tue, 21 Oct 2025 13:40:17 +0000
+In-Reply-To: <20251020222722.240473-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251015014756.2073439-2-neilb@ownmail.net>
+Mime-Version: 1.0
+References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
+Message-ID: <aPeNQQ725-Vdxh-9@google.com>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 15, 2025 at 12:46:53PM +1100, NeilBrown wrote:
-> From: NeilBrown <neil@brown.name>
+On Tue, Oct 21, 2025 at 12:26:13AM +0200, Danilo Krummrich wrote:
+> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
+> avoid using raw bindings types, this seems to be the better alternative
+> compared to just using i64.
 > 
-> By not using the generic end_creating() name here we are free to use it
-> more globally for a more generic function.
-> This should have been done when start_creating() was renamed.
-> 
-> For consistency, also rename failed_creating().
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Makes a lot of sense, thanks.
-I'll spare slapping my RvBs onto everything because it'll carry my SoB
-anyway.
+Please consider also changing the instances of i64 in iov.rs.
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
