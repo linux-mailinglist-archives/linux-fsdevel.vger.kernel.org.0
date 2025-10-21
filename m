@@ -1,245 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-64907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A04BF65F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DDABF6612
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBBCF5016ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:11:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F9EA503D56
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8433321CA;
-	Tue, 21 Oct 2025 12:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8AE2E62AC;
+	Tue, 21 Oct 2025 12:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OXnZMBZJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/ofNM8d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8355244693
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 12:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F7821578D;
+	Tue, 21 Oct 2025 12:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048533; cv=none; b=fYGi/ryjdO0dse0giLyeTSLUbd2k9LsbhjqpXKnTsFvZzMG+tuLtT2scJX0upvQY/+Ix8FObzL1o4tp/UR0oyn+G17dgzsyeDqbS50yskwL/sxal0Jg9+qY8Ay/xh6sxWsFkqLTJYPMPJvnmS20LF6BuBJPlg0ne6zbg0LRATWg=
+	t=1761048684; cv=none; b=m4/GSAq3AFrkjU6di7m9yuoRFKj/nSfsyx2hgzvwnuvfBnyL+wygBiKnZygCqkEBtEH52YkK6V++ljY+Xl2wLpd0n4ipPd4cI/EOcJW2UCCeZy5+SiU/aqWocPyxVYyUWRwJFkmq5FcbAvfz1khFUDZCi0q7F4arkw0hevIjvn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048533; c=relaxed/simple;
-	bh=Se4jxx6lLa/LixzWounwQe2HQfxls1H1T66SY4jhs0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N8ExBxiLRSSTEZ5OqjL3BDhcgaUamssVcXmgpqKCjd8E5PckjLJrRqmY/tvV6KuEYTwrbeLpG6+EU3OKiQOVGqsACTLU5yPJl/2MQP9h5lJSIzWVXBkzcS5mRFyglLqscXH+E0fWRniJAlgZzwE25VPeIugdt14+31EEplGyqJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OXnZMBZJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761048530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jBk/hMZm1AU2HUgl06IU47txGUglYm8peBHpiuPlFXY=;
-	b=OXnZMBZJt9g4EWkJzcAvBt7UH6GdmXl5l/g5fsI32aMhpYqDdQcUY4818J5PgCjvu3Fann
-	O2vO1PlPjZ3IoUMgvFTblNb5psRO22bQ0KoTlA5G5jk8huwofpbN9XgConeGH0r7LPAdSk
-	vZX3axvYNy9/7PcvLBKNIoCbg1PMelA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-cgo9HcWIP5S-1-IozEY3mQ-1; Tue, 21 Oct 2025 08:08:48 -0400
-X-MC-Unique: cgo9HcWIP5S-1-IozEY3mQ-1
-X-Mimecast-MFC-AGG-ID: cgo9HcWIP5S-1-IozEY3mQ_1761048527
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4283bf5b764so1751789f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 05:08:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761048527; x=1761653327;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jBk/hMZm1AU2HUgl06IU47txGUglYm8peBHpiuPlFXY=;
-        b=EpnluPgMo7/euKBx6sbThIYQsUd9f22O1ooKEiqHJW0eHdryplAN1a1DV6KqpfpIp/
-         M06SEeL9hdPVuqAYjeo+mzyTR1+dgbwGC7yl2MDs964NNQNCdG2e3z7bm44LObCOiun9
-         +IfLBLj1AAqvemz8gHaVlZeBOCK5cYfOvOzxXKk6XLYpO08hIpMtFMPbnzmVcxtO1S4U
-         fKSNOas13FGDIeayJh3/uNCRJgGYp3F4YNKIh6OchzxHUcS8AYn2Rpn81nAtWvb4Dy9l
-         Jch9hcV4tgAzn7q+ne87DrKLzGty2jCZ0qOKKv4xpjCwLulWv1wWgUMvtMzLR3yFxHGC
-         AKgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVp52LrfqrBxgtfPShYk6Ij8ChtKBPJOw3Rn1SOnnJfRfjZ47Vs+uBrlf0bd/SUgRFq+YgivXlUwNc7lOj1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzl04kllCTgI9oCqqflmlAfrM2+QbbP8FN9h+uKMcIHp+bVMrB
-	6NpMjAUl7GApZPGRjYNZY4zRvcZ4RFLlgle3YCrEgsejB+bVR1XcZY7TzM8v9N2gwb5FpCEcflZ
-	qHR0pIPu6mM+IhsXtMNwVDYyqeilDGp7ZkK19TF8+8KsMm2TjTVzMTZ5fAe8OOujRIC0=
-X-Gm-Gg: ASbGnctmyTzazd4mApWavp3eQc8sBlblFC0MTcAqHKNTgIPgLjBy9qUF1d+deLqGIrc
-	GdJMW8noeqg+qmGxgD2Gne0B3FD3yymu3I2xnOxQYfrEJUtnrDlkzCsLs/k5LXX6T9P2RDBHfMR
-	SOLgAEaivOCuA/4EMOnTI/4nixV7vCuay9N+LB0HKJg2er12mBxNnnxg6prE5qT7L+cxcNHxgWc
-	fBweYWVJPfiKJDYViRrfvcQzsHVg5REppHaNjhGLkR9XVzT2OFmUipCNjW4D12bRmT4RQEToX1G
-	WUpWb1XMierWXdW/SEuYeQIyAog7J+IFcJW+ztPBqT7dTxg+CgRyUBbHFgU9ZQQyGMfO0pXOQfI
-	XSiPhKOOKfcSSIGKTCTLu6OoBbwZjXVOJzXwaSR/DFCrGuqQdgh+xv+eep7GbXH82YfSaLruUYD
-	wfX0YnFVXTUbSRXcPK3vBQW2dhOF4=
-X-Received: by 2002:a05:6000:612:b0:425:6866:ede8 with SMTP id ffacd0b85a97d-42704d49a78mr9955321f8f.8.1761048527232;
-        Tue, 21 Oct 2025 05:08:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZ5mwIbXc0FupYjOjOI7qYovL003CpULMJ3bbgFzgJ3ZkyizTtVqUvrxQ5Ewt99StNhrhgpg==
-X-Received: by 2002:a05:6000:612:b0:425:6866:ede8 with SMTP id ffacd0b85a97d-42704d49a78mr9955285f8f.8.1761048526794;
-        Tue, 21 Oct 2025 05:08:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5a1056sm19970736f8f.2.2025.10.21.05.08.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 05:08:46 -0700 (PDT)
-Message-ID: <8379d8cb-aec5-44f7-a5f0-2356b8aaaf00@redhat.com>
-Date: Tue, 21 Oct 2025 14:08:44 +0200
+	s=arc-20240116; t=1761048684; c=relaxed/simple;
+	bh=/eyJC7fFL048bFoOv3Vd5zRpz+YmvbCWpbBDrYeqJ4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4JNkKnpbZB0xS+G+cqD+rc8prjE0NURVHMO6aqgJX17gMkxJkz5PRFkZYc36vqsatKR+3N01C5/W/WdyXQQ5KpjzAw0onNP7rktpwj1CGGDAAliY1Oa+bnqAOzZGZgWcvWzdRWO21eXGLwfKHBVqGIK4a+5mdjj61TuVzKz39I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/ofNM8d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61AE3C4CEF1;
+	Tue, 21 Oct 2025 12:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761048683;
+	bh=/eyJC7fFL048bFoOv3Vd5zRpz+YmvbCWpbBDrYeqJ4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/ofNM8dLE4QN47TBergBYTAz+pzCCiMxRGUsPpvr8R66SjiUBIsGKzbm8aZ1dvtN
+	 tAQR5OY7NKxHAEWP5pPaoyEwehxgjBI1YtbZz102AOT9/S5LLOshs6PzH0mbBFmkfv
+	 1Za3X8ToV9J6GlEOUG3Z/B4EXeCzB4KSVBIyFEyVjE4xPSDFHwbrnP39qIYKa9ulBp
+	 EKq6DQChiDEL5RN7bYZUMOLnTFdh2TNV1BwY4UpEeSUnTmujffW6ebNRgzWzGtja1X
+	 k7caRPnGg/yVV5XWkqQU2e+xXeHynMWhGAN4xf2HlsqtV9lg0nFYJ3mzGtHmDdN8NG
+	 TeHcLFUeU23PA==
+Date: Tue, 21 Oct 2025 14:11:17 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Bhavik Sachdev <b.sachdev1904@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>, 
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, Andrei Vagin <avagin@gmail.com>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH v2 1/1] statmount: accept fd as a parameter
+Message-ID: <20251021-blaumeise-verfassen-b8361569b6aa@brauner>
+References: <20251011124753.1820802-1-b.sachdev1904@gmail.com>
+ <20251011124753.1820802-2-b.sachdev1904@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/memory: Do not populate page table entries beyond
- i_size.
-To: Kiryl Shutsemau <kirill@shutemov.name>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kiryl Shutsemau <kas@kernel.org>
-References: <20251021063509.1101728-1-kirill@shutemov.name>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251021063509.1101728-1-kirill@shutemov.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251011124753.1820802-2-b.sachdev1904@gmail.com>
 
-On 21.10.25 08:35, Kiryl Shutsemau wrote:
-> From: Kiryl Shutsemau <kas@kernel.org>
-
-Subject: I'd drop the trailing "."
-
+On Sat, Oct 11, 2025 at 06:16:11PM +0530, Bhavik Sachdev wrote:
+> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_FD
+> flag. When a valid fd is provided and STATMOUNT_FD is set, statmount
+> will return mountinfo about the mount the fd is on.
 > 
-> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-> supposed to generate SIGBUS.
+> This even works for "unmounted" mounts (mounts that have been umounted
+> using umount2(mnt, MNT_DETACH)), if you have access to a file descriptor
+> on that mount. These "umounted" mounts will have no mountpoint hence we
+> return "[detached]" and the mnt_ns_id to be 0.
 > 
-> Recent changes attempted to fault in full folio where possible. They did
-> not respect i_size, which led to populating PTEs beyond i_size and
-> breaking SIGBUS semantics.
+> Co-developed-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
+> ---
+>  fs/namespace.c             | 80 ++++++++++++++++++++++++++++----------
+>  include/uapi/linux/mount.h |  8 ++++
+>  2 files changed, 67 insertions(+), 21 deletions(-)
 > 
-> Darrick reported generic/749 breakage because of this.
-> 
-> However, the problem existed before the recent changes. With huge=always
-> tmpfs, any write to a file leads to PMD-size allocation. Following the
-> fault-in of the folio will install PMD mapping regardless of i_size.
-
-Right, there are some legacy oddities with shmem in that area (e.g., 
-"within_size" vs. "always" THP allocation control).
-
-Let me CC Hugh: the behavior for shmem seems to date back to 2016.
-
-> 
-> Fix filemap_map_pages() and finish_fault() to not install:
->    - PTEs beyond i_size;
->    - PMD mappings across i_size;
-
-Makes sense to me.
-
-
-[...]
-
-> +++ b/mm/memory.c
-> @@ -5480,6 +5480,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->   	int type, nr_pages;
->   	unsigned long addr;
->   	bool needs_fallback = false;
-> +	pgoff_t file_end = -1UL;
->   
->   fallback:
->   	addr = vmf->address;
-> @@ -5501,8 +5502,14 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->   			return ret;
->   	}
->   
-> +	if (vma->vm_file) {
-> +		struct inode *inode = vma->vm_file->f_mapping->host;
-
-empty line pleae
-
-> +		file_end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-> +	}
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..eb82a22cffd5 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5207,6 +5207,12 @@ static int statmount_mnt_root(struct kstatmount *s, struct seq_file *seq)
+>  	return 0;
+>  }
+>  
+> +static int statmount_mnt_point_detached(struct kstatmount *s, struct seq_file *seq)
+> +{
+> +	seq_puts(seq, "[detached]");
+> +	return 0;
+> +}
 > +
->   	if (pmd_none(*vmf->pmd)) {
-> -		if (folio_test_pmd_mappable(folio)) {
-> +		if (folio_test_pmd_mappable(folio) &&
-> +		    file_end >= folio_next_index(folio)) {
->   			ret = do_set_pmd(vmf, folio, page);
->   			if (ret != VM_FAULT_FALLBACK)
->   				return ret;
-> @@ -5533,7 +5540,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->   		if (unlikely(vma_off < idx ||
->   			    vma_off + (nr_pages - idx) > vma_pages(vma) ||
->   			    pte_off < idx ||
-> -			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE)) {
-> +			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE ||
+>  static int statmount_mnt_point(struct kstatmount *s, struct seq_file *seq)
+>  {
+>  	struct vfsmount *mnt = s->mnt;
+> @@ -5262,7 +5268,10 @@ static int statmount_sb_source(struct kstatmount *s, struct seq_file *seq)
+>  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+>  {
+>  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+> -	s->sm.mnt_ns_id = ns->ns.ns_id;
+> +	if (ns)
+> +		s->sm.mnt_ns_id = ns->ns.ns_id;
+> +	else
+> +		s->sm.mnt_ns_id = 0;
+>  }
+>  
+>  static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
+> @@ -5431,7 +5440,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		break;
+>  	case STATMOUNT_MNT_POINT:
+>  		offp = &sm->mnt_point;
+> -		ret = statmount_mnt_point(s, seq);
+> +		if (!s->root.mnt && !s->root.dentry)
+> +			ret = statmount_mnt_point_detached(s, seq);
+> +		else
+> +			ret = statmount_mnt_point(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_OPTS:
+>  		offp = &sm->mnt_opts;
+> @@ -5572,29 +5584,33 @@ static int grab_requested_root(struct mnt_namespace *ns, struct path *root)
+>  
+>  /* locks: namespace_shared */
+>  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+> -			struct mnt_namespace *ns)
+> +			struct mnt_namespace *ns, unsigned int flags)
+>  {
+>  	struct mount *m;
+>  	int err;
+>  
+>  	/* Has the namespace already been emptied? */
+> -	if (mnt_ns_id && mnt_ns_empty(ns))
+> +	if (!(flags & STATMOUNT_FD) && mnt_ns_id && mnt_ns_empty(ns))
+>  		return -ENOENT;
+>  
+> -	s->mnt = lookup_mnt_in_ns(mnt_id, ns);
+> -	if (!s->mnt)
+> -		return -ENOENT;
+> +	if (!(flags & STATMOUNT_FD)) {
+> +		s->mnt = lookup_mnt_in_ns(mnt_id, ns);
+> +		if (!s->mnt)
+> +			return -ENOENT;
+> +	}
+>  
+> -	err = grab_requested_root(ns, &s->root);
+> -	if (err)
+> -		return err;
+> +	if (ns) {
+> +		err = grab_requested_root(ns, &s->root);
+> +		if (err)
+> +			return err;
+> +	}
+>  
+>  	/*
+>  	 * Don't trigger audit denials. We just want to determine what
+>  	 * mounts to show users.
+>  	 */
+>  	m = real_mount(s->mnt);
+> -	if (!is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
+> +	if (ns && !is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
+>  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+> @@ -5718,12 +5734,12 @@ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+>  }
+>  
+>  static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+> -			   struct mnt_id_req *kreq)
+> +			   struct mnt_id_req *kreq, unsigned int flags)
+>  {
+>  	int ret;
+>  	size_t usize;
+>  
+> -	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER1);
+> +	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER2);
+>  
+>  	ret = get_user(usize, &req->size);
+>  	if (ret)
+> @@ -5738,6 +5754,11 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+>  		return ret;
+>  	if (kreq->spare != 0)
+>  		return -EINVAL;
+> +	if (flags & STATMOUNT_FD) {
+> +		if (kreq->fd < 0)
+> +			return -EINVAL;
+> +		return 0;
+> +	}
+>  	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
+>  	if (kreq->mnt_id <= MNT_UNIQUE_ID_OFFSET)
+>  		return -EINVAL;
+> @@ -5788,23 +5809,37 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>  {
+>  	struct mnt_namespace *ns __free(mnt_ns_release) = NULL;
+>  	struct kstatmount *ks __free(kfree) = NULL;
+> +	struct vfsmount *fd_mnt;
+>  	struct mnt_id_req kreq;
+>  	/* We currently support retrieval of 3 strings. */
+>  	size_t seq_size = 3 * PATH_MAX;
+>  	int ret;
+>  
+> -	if (flags)
+> +	if (flags & ~STATMOUNT_FD)
+>  		return -EINVAL;
+>  
+> -	ret = copy_mnt_id_req(req, &kreq);
+> +	ret = copy_mnt_id_req(req, &kreq, flags);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ns = grab_requested_mnt_ns(&kreq);
+> -	if (!ns)
+> -		return -ENOENT;
+> +	if (flags & STATMOUNT_FD) {
+> +		CLASS(fd_raw, f)(kreq.fd);
+> +		if (fd_empty(f))
+> +			return -EBADF;
+> +		fd_mnt = fd_file(f)->f_path.mnt;
+> +		ns = real_mount(fd_mnt)->mnt_ns;
+> +		if (ns)
+> +			refcount_inc(&ns->passive);
+> +		else
+> +			if (!ns_capable_noaudit(fd_file(f)->f_cred->user_ns, CAP_SYS_ADMIN))
+> +				return -ENOENT;
+> +	} else {
+> +		ns = grab_requested_mnt_ns(&kreq);
+> +		if (!ns)
+> +			return -ENOENT;
+> +	}
+>  
+> -	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
+> +	if (ns && (ns != current->nsproxy->mnt_ns) &&
+>  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>  		return -ENOENT;
+>  
+> @@ -5817,8 +5852,11 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (flags & STATMOUNT_FD)
+> +		ks->mnt = fd_mnt;
 
-While at it you could fix the double space before the ">".
+The reference to fd_mount is bound to the scope of CLASS(fd_raw, f)(kreq.fd) above.
+That means you don't hold a reference to fd_mnt here and so this is a UAF waiting to happen.
 
-> +			    file_end < folio_next_index(folio))) {
->   			nr_pages = 1;
->   		} else {
->   			/* Now we can set mappings for the whole large folio. */
+> +
+>  	scoped_guard(namespace_shared)
+> -		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns);
+> +		ret = do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns, flags);
+>  
+>  	if (!ret)
+>  		ret = copy_statmount_to_user(ks);
+> @@ -5957,7 +5995,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+>  	if (!access_ok(mnt_ids, nr_mnt_ids * sizeof(*mnt_ids)))
+>  		return -EFAULT;
+>  
+> -	ret = copy_mnt_id_req(req, &kreq);
+> +	ret = copy_mnt_id_req(req, &kreq, 0);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 7fa67c2031a5..dfe8b8e7fa8d 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -201,11 +201,14 @@ struct mnt_id_req {
+>  	__u64 mnt_id;
+>  	__u64 param;
+>  	__u64 mnt_ns_id;
+> +	__s32 fd;
+> +	__u32 spare2;
+>  };
 
-Nothing else jumped at me.
+Hm, do you really need a new field? You could just use the @spare
+parameter in struct mnt_id_req. It's currently validated of not being
+allowed to be non-zero in copy_mnt_id_req() which is used by both
+statmount() and listmount().
 
--- 
-Cheers
+I think you could just reuse it for this purpose in statmount(). And
+then maybe the flag should be STATMOUNT_BY_FD?
 
-David / dhildenb
+Otherwise I think this could work.
 
+>  
+>  /* List of all mnt_id_req versions. */
+>  #define MNT_ID_REQ_SIZE_VER0	24 /* sizeof first published struct */
+>  #define MNT_ID_REQ_SIZE_VER1	32 /* sizeof second published struct */
+> +#define MNT_ID_REQ_SIZE_VER2	40 /* sizeof third published struct */
+>  
+>  /*
+>   * @mask bits for statmount(2)
+> @@ -232,4 +235,9 @@ struct mnt_id_req {
+>  #define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+>  #define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
+>  
+> +/*
+> + * @flag bits for statmount(2)
+> + */
+> +#define STATMOUNT_FD		0x0000001U /* want mountinfo for given fd */
+> +
+>  #endif /* _UAPI_LINUX_MOUNT_H */
+> -- 
+> 2.51.0
+> 
 
