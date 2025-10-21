@@ -1,204 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-64813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A859FBF4C53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121C1BF4B57
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A356518C54FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 06:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837823B8A42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 06:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1320226D4EF;
-	Tue, 21 Oct 2025 06:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312B7265CD0;
+	Tue, 21 Oct 2025 06:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b="YpYVuGBx"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Kc7ML6Oz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rzctUJE4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx07-006a4e02.pphosted.com (mx07-006a4e02.pphosted.com [143.55.146.78])
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB942224245;
-	Tue, 21 Oct 2025 06:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.55.146.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E2821CC60;
+	Tue, 21 Oct 2025 06:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761029728; cv=none; b=LoaORVwXEiIWmDRcwdCLQvBTfkV5M5Z9g24NmgjPEK2Zty+gjH8uhpDDwxDdmJu30rsB02cLwuqV9Yv8wyf8zNSTRQJIB3WlIJKLHpJB8DxrZDEJVIKulnL1Dl8rTGh0M84VLTQhEI2WajVPra76MvzrB2rYRrhmDvpgb5EmcZo=
+	t=1761028518; cv=none; b=kamja5Y27i8+5O4Gku2rlLHlIjoIIyPGxAa8KmnWFDb0ko7g9pPb2Wo18pQSnR78/g6wz1uVP0mj8ip8/r04F2tWBmMV8+iSOZRsU4QrteDk1i0vw+zBo8IV5L41CQLskwVCjHsJ8mdZ27hOholQLTjmoCVS9BLVIoj8rnbTQLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761029728; c=relaxed/simple;
-	bh=HMGdk3I075bK5E/gp9SATIQq1qBXSq91Oir+DGivIiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4fJ1vz/dMDfZ6fSERaYY86VUJyd1zbs/JlufaBjMqwZtOCBcMuvtWZXNH/wU8npIikjJYARc+G0CaXmV8B4BtBYYWPV0+SpcepLT4PU/9Tosrw2JyTPv4fTAJAcr7PVwylij9e1uUFKDwQT7wKou/qhGJCkHtTv96Olwi13Jkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es; spf=pass smtp.mailfrom=iram.es; dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b=YpYVuGBx; arc=none smtp.client-ip=143.55.146.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iram.es
-Received: from pps.filterd (m0316690.ppops.net [127.0.0.1])
-	by mx07-006a4e02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59L63AQs1248592;
-	Tue, 21 Oct 2025 08:34:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iram.es; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dkim3; bh=F164kmUr5EMZ6e+BTntGiD39zV8R
-	xXZwoRaGnCHEUKE=; b=YpYVuGBxuCwNJOQ3pBoy4A9ND5k7mRQOc+KGKrd42ih8
-	OAXsKtgh51RKxIBPRqYFZZhxoqsJDsHSjdT+uBjxoUEETInGL/mkVbpDNQSh0jTi
-	AINogUjyNJYUKHNOvirHoJmCRTw0E0AGyG1mEh2hfTH9ypTfEajsFBmTzWEW6AcI
-	3cDOIJXKeNn4+YDr1ZUiqzADvthene2bFu72cXBErZFkYhcAwTd24ZD9nwGwRTu/
-	6/0YkK7nru8rVpz30c/b25h17gRRIVulAV1foZlV1gIXNsVELI9YAVooBm+XaTJL
-	kaMRQ+ZSe2o1We13qnamNjH/qaU+Hcfl/guzkqy5Wg==
-Received: from mta-out02.sim.rediris.es (mta-out02.sim.rediris.es [130.206.24.44])
-	by mx07-006a4e02.pphosted.com (PPS) with ESMTPS id 49wrkpfknq-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 21 Oct 2025 08:34:47 +0200 (MEST)
-Received: from mta-out02.sim.rediris.es (localhost.localdomain [127.0.0.1])
-	by mta-out02.sim.rediris.es (Postfix) with ESMTPS id 15B3914009E;
-	Tue, 21 Oct 2025 08:34:47 +0200 (CEST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mta-out02.sim.rediris.es (Postfix) with ESMTP id DF9E7140FAD;
-	Tue, 21 Oct 2025 08:34:46 +0200 (CEST)
-X-Amavis-Modified: Mail body modified (using disclaimer) -
- mta-out02.sim.rediris.es
-Received: from mta-out02.sim.rediris.es ([127.0.0.1])
- by localhost (mta-out02.sim.rediris.es [127.0.0.1]) (amavis, port 10026)
- with ESMTP id 9cGW7RgyfRah; Tue, 21 Oct 2025 08:34:46 +0200 (CEST)
-Received: from lt-gp.iram.es (haproxy01.sim.rediris.es [130.206.24.69])
-	by mta-out02.sim.rediris.es (Postfix) with ESMTPA id 2DFB114009E;
-	Tue, 21 Oct 2025 08:34:45 +0200 (CEST)
-Date: Tue, 21 Oct 2025 08:34:43 +0200
-From: Gabriel Paubert <paubert@iram.es>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andre Almeida <andrealmeid@igalia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 10/10] powerpc/uaccess: Implement masked user access
-Message-ID: <aPcpg0lQUk0IhHvL@lt-gp.iram.es>
-References: <cover.1760529207.git.christophe.leroy@csgroup.eu>
- <179dbcda9eb3bdc5d314c949047db6ef8fd8a2ee.1760529207.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1761028518; c=relaxed/simple;
+	bh=2oGS3kMZGdbFSYLMxPIszrRws/KsGS9JnRJGoggtmu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AG6Gdq6EJhcaJde/Sh6SO5Bx+W7TyQu1XngAzaA71hcnhSY8KZJAXVPi7fLA0jNvz9vlyTA/kTRpl53BHVbNzZeTwRzkhISIqzp85RIwIGVg3yq101sZhfXKrxOShOgsY1dlBciKHx+nepATEJpgfEseEixcXg/zaDnf7wPmjtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Kc7ML6Oz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rzctUJE4; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailflow.stl.internal (Postfix) with ESMTP id 4227D1300B91;
+	Tue, 21 Oct 2025 02:35:15 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Tue, 21 Oct 2025 02:35:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1761028515; x=1761035715; bh=68FepKZWRO
+	EYwLH0Rl0RnJf4ml5dmtT6xp2LmJZMNHA=; b=Kc7ML6OzkYTFIRg1OCSIY0jKna
+	XReQ300hPs/UAqCHio63qvQTQJfl0fjRPVu4hDgOdHOOhU54puaJO7fHFwWKgUH4
+	qdYdmK34Gk1D4j7nAy7wqPYmF2JT+QWG0tqo0W3UVTqPkc+nQ6vdPClIl+AF0Lwl
+	v1+YArgs7q2/SAOJ1gY8rb8qZToAwczpICuypr5Rq1Or81fXoaad8tD0uvYXsp7s
+	bgoGDkcgrY8ad6aCH/dzFlnenI4LA/4Sa8bPYNJ1zhqOoz7/8WIWP6C8frILuH+F
+	ceScIQQwvnp5exoaImoKyc2l2HywvyUNAFa8TkOnPc+d8FSYoqfK1bCHblmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761028515; x=1761035715; bh=68FepKZWROEYwLH0Rl0RnJf4ml5dmtT6xp2
+	LmJZMNHA=; b=rzctUJE4uQWWwnL5mJTmYXf5d+g5wWEbwXBz6eR2OT7aoVCIGWB
+	PMVf4UHM2ud/OUcV2p9mUDYxJFbBk0SEwN9XOhyeR91aPFlynDjlK+D6pyS5b7UL
+	Imu30J/PCz/I6MdRne/aO2Er+4L/RovoB/iw/cyHlSwNBZGF/yAN7kdazYE5nAGD
+	A+nKTm/E/GEXmD4F2rE8UXwBK0XXR3rfkTGSPgi0edwHRCD0wn2gS/55aSzL8cZj
+	z8VE9bS49876wooOTqYuA0vwnOBunPdYcqW+WDTw963M9mfCQOhhblK1UOwyrccS
+	2PWMYAU/m59Tj5OJ+jbWVUHPIRzKA8SAhMA==
+X-ME-Sender: <xms:oCn3aKnXvikA90oRHwL242u0vgNNyRSC1ABH3jw9gSeGfZNl9NQjmg>
+    <xme:oCn3aPD_B7CNf-SD-i4LqdDoaNQ4RKdWpDnxy9vMGI7H9xeTYgwkv621-nuQRJIx1
+    olIYXnkQ9DwGcMNUaj6sZ7UaP2Jwl2oX7_l2yozS7GXIZPSaj_Ljg>
+X-ME-Received: <xmr:oCn3aNIRUSy_CcdwKKPdBwGmYWzPdmIGzuMdO-ASPxXf-HnxAbBXPV6NDWde1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeelleelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepmfhirhihlhcuufhh
+    uhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrf
+    grthhtvghrnhepteffudduheevjeefudegkedttdevtdfhheefheetffelteeiveehvdef
+    gedtheefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedvvddp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunh
+    gurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllh
+    ihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhl
+    ihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdrtgho
+    mhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtg
+    hpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:oCn3aKxJ6FO9TUu-3ba83zv9MpLJmi3OstrRZ92bp_e5DGvOEbkUmg>
+    <xmx:oCn3aJzLaeWc5eEuX-mIRuKmujFnRw44ep-SrkBX2oUAt_1iBmW3kw>
+    <xmx:oCn3aE2A23wqec4rQDP8lBf--vH8HNO8DsNHv3dyhVX6ca1y1NN0tQ>
+    <xmx:oCn3aDVrsTk59h40S695CVWupObQd6JgLw9MCvUgEIWUqr4ZBZehEg>
+    <xmx:oyn3aOZwqVn97uMIi7gPu4Kvu4eSwwWdn9XQc3om2x1Galq8MiPgXTJl>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 Oct 2025 02:35:12 -0400 (EDT)
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: [PATCH 1/2] mm/memory: Do not populate page table entries beyond i_size.
+Date: Tue, 21 Oct 2025 07:35:08 +0100
+Message-ID: <20251021063509.1101728-1-kirill@shutemov.name>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179dbcda9eb3bdc5d314c949047db6ef8fd8a2ee.1760529207.git.christophe.leroy@csgroup.eu>
-X-Authority-Analysis: v=2.4 cv=QvxTHFyd c=1 sm=1 tr=0 ts=68f72988 cx=c_pps
- a=N+btqqeLiyZkBSWNmht35Q==:117 a=N+btqqeLiyZkBSWNmht35Q==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=pbnP-CYKNpT2arfVchsA:9 a=CjuIK1q_8ugA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
- a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-ORIG-GUID: fPY5OWlvYhbiva90HCVVCXenrvtnOCXX
-X-Proofpoint-GUID: fPY5OWlvYhbiva90HCVVCXenrvtnOCXX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDA1MCBTYWx0ZWRfX2lPxlPelhpYO
- fKzNMXsOb4ELb/Gi1Q5qBO8bWlp8UOoMX00pFGk6ILvZghWaahLfwNY1BC8iutNisGPxbYKcfK5
- 4MhDp3/ncePuRlR/rquIly1v6w2VvpjCqmMBBRwbC86Ke4g/JPasy6W84eYdQkoWsP1JdD0GNE4
- 4w8bDukcBTT9KRN2Hwq+ouDLYqLo+b4eLMTzAvpwKaoTlBLi8+9N4ZR0+oAC0aiImf/KfuErwi2
- llnHe09xbNiWeHl8ok/ZcciYVmj2p82Vu/bg1rMmjKvAs9nmCQ94pQWKiv/nqhnpm5gTjuu9ch9
- 08WPk+WA9Fx7B6JEMFzL2tsZJrphM8OT8ykb1U3ruJrsbXfnXvrJZqyBKRtX/wBu7SkUYv7uUd1
- T8qu9FfLEfoIX5vM8kLOIPLSRBhb7Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=salida_notspam policy=salida score=0
- spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- bulkscore=0 clxscore=1011 priorityscore=1501 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510210050
+Content-Transfer-Encoding: 8bit
 
+From: Kiryl Shutsemau <kas@kernel.org>
 
-Hi Christophe,
+Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+supposed to generate SIGBUS.
 
-On Fri, Oct 17, 2025 at 12:21:06PM +0200, Christophe Leroy wrote:
-> Masked user access avoids the address/size verification by access_ok().
-> Allthough its main purpose is to skip the speculation in the
-> verification of user address and size hence avoid the need of spec
-> mitigation, it also has the advantage of reducing the amount of
-> instructions required so it even benefits to platforms that don't
-> need speculation mitigation, especially when the size of the copy is
-> not know at build time.
-> 
-> So implement masked user access on powerpc. The only requirement is
-> to have memory gap that faults between the top user space and the
-> real start of kernel area.
-> 
-> On 64 bits platforms the address space is divided that way:
-> 
-> 	0xffffffffffffffff	+------------------+
-> 				|                  |
-> 				|   kernel space   |
->  		 		|                  |
-> 	0xc000000000000000	+------------------+  <== PAGE_OFFSET
-> 				|//////////////////|
-> 				|//////////////////|
-> 	0x8000000000000000	|//////////////////|
-> 				|//////////////////|
-> 				|//////////////////|
-> 	0x0010000000000000	+------------------+  <== TASK_SIZE_MAX
-> 				|                  |
-> 				|    user space    |
-> 				|                  |
-> 	0x0000000000000000	+------------------+
-> 
-> Kernel is always above 0x8000000000000000 and user always
-> below, with a gap in-between. It leads to a 3 instructions sequence:
-> 
->   20:	7c 69 fe 76 	sradi   r9,r3,63
->   24:	7c 69 48 78 	andc    r9,r3,r9
->   28:	79 23 00 4c 	rldimi  r3,r9,0,1
-> 
+Recent changes attempted to fault in full folio where possible. They did
+not respect i_size, which led to populating PTEs beyond i_size and
+breaking SIGBUS semantics.
 
-Actually there is an even simpler (more obvious) sequence:
+Darrick reported generic/749 breakage because of this.
 
-sradi r9,r3,63
-srdi r9,r9,1  
-andc r3,r3,r9
+However, the problem existed before the recent changes. With huge=always
+tmpfs, any write to a file leads to PMD-size allocation. Following the
+fault-in of the folio will install PMD mapping regardless of i_size.
 
-(the second instruction could also be clrldi r9,r9,1)
+Fix filemap_map_pages() and finish_fault() to not install:
+  - PTEs beyond i_size;
+  - PMD mappings across i_size;
 
-which translates back to C as:
+Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+Reported-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ mm/filemap.c | 18 ++++++++++--------
+ mm/memory.c  | 12 ++++++++++--
+ 2 files changed, 20 insertions(+), 10 deletions(-)
 
-[snipped]
-> +static inline void __user *mask_user_address_simple(const void __user *ptr)
-> +{
-> +	unsigned long addr = (unsigned long)ptr;
-> +	unsigned long sh = BITS_PER_LONG - 1;
-> +	unsigned long mask = (unsigned long)((long)addr >> sh);
-> +
-> +	addr = ((addr & ~mask) & ((1UL << sh) - 1)) | ((mask & 1UL) << sh);
-> +
-> +	return (void __user *)addr;
-> +}
-> +
-
-either (srdi):
-	unsigned long mask = ((unsigned long)((long)addr >> sh)) >> 1;
-or (clrldi):
-	unsigned long mask = (unsigned long)(((long)addr >> sh) & LONG_MAX);
-
-followed by:
-	return (void __user *)(addr & ~ mask);
-
-the result is the same but I find it easier to read, and it may be
-easier for the compiler than to recognize an rl?imi insruction.
-
-Cheers,
-Gabriel
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 13f0259d993c..0d251f6ab480 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3681,7 +3681,8 @@ static struct folio *next_uptodate_folio(struct xa_state *xas,
+ static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
+ 			struct folio *folio, unsigned long start,
+ 			unsigned long addr, unsigned int nr_pages,
+-			unsigned long *rss, unsigned short *mmap_miss)
++			unsigned long *rss, unsigned short *mmap_miss,
++			pgoff_t file_end)
+ {
+ 	unsigned int ref_from_caller = 1;
+ 	vm_fault_t ret = 0;
+@@ -3697,7 +3698,8 @@ static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
+ 	 */
+ 	addr0 = addr - start * PAGE_SIZE;
+ 	if (folio_within_vma(folio, vmf->vma) &&
+-	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
++	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
++	    file_end >= folio_next_index(folio)) {
+ 		vmf->pte -= start;
+ 		page -= start;
+ 		addr = addr0;
+@@ -3817,7 +3819,11 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	if (!folio)
+ 		goto out;
  
+-	if (filemap_map_pmd(vmf, folio, start_pgoff)) {
++	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
++	end_pgoff = min(end_pgoff, file_end);
++
++	if (file_end >= folio_next_index(folio) &&
++	    filemap_map_pmd(vmf, folio, start_pgoff)) {
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto out;
+ 	}
+@@ -3830,10 +3836,6 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		goto out;
+ 	}
+ 
+-	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
+-	if (end_pgoff > file_end)
+-		end_pgoff = file_end;
+-
+ 	folio_type = mm_counter_file(folio);
+ 	do {
+ 		unsigned long end;
+@@ -3850,7 +3852,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		else
+ 			ret |= filemap_map_folio_range(vmf, folio,
+ 					xas.xa_index - folio->index, addr,
+-					nr_pages, &rss, &mmap_miss);
++					nr_pages, &rss, &mmap_miss, file_end);
+ 
+ 		folio_unlock(folio);
+ 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+diff --git a/mm/memory.c b/mm/memory.c
+index 74b45e258323..dfa5b437c9d9 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5480,6 +5480,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 	int type, nr_pages;
+ 	unsigned long addr;
+ 	bool needs_fallback = false;
++	pgoff_t file_end = -1UL;
+ 
+ fallback:
+ 	addr = vmf->address;
+@@ -5501,8 +5502,14 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 			return ret;
+ 	}
+ 
++	if (vma->vm_file) {
++		struct inode *inode = vma->vm_file->f_mapping->host;
++		file_end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
++	}
++
+ 	if (pmd_none(*vmf->pmd)) {
+-		if (folio_test_pmd_mappable(folio)) {
++		if (folio_test_pmd_mappable(folio) &&
++		    file_end >= folio_next_index(folio)) {
+ 			ret = do_set_pmd(vmf, folio, page);
+ 			if (ret != VM_FAULT_FALLBACK)
+ 				return ret;
+@@ -5533,7 +5540,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 		if (unlikely(vma_off < idx ||
+ 			    vma_off + (nr_pages - idx) > vma_pages(vma) ||
+ 			    pte_off < idx ||
+-			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE)) {
++			    pte_off + (nr_pages - idx)  > PTRS_PER_PTE ||
++			    file_end < folio_next_index(folio))) {
+ 			nr_pages = 1;
+ 		} else {
+ 			/* Now we can set mappings for the whole large folio. */
+-- 
+2.50.1
 
 
