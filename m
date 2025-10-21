@@ -1,152 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-64982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8F6BF7CEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 19:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB38BF7EB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 19:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E99F488A69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF2E189091A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC6D346D9F;
-	Tue, 21 Oct 2025 17:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2B734C123;
+	Tue, 21 Oct 2025 17:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFZpdOFz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHv9pwKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E8815D1;
-	Tue, 21 Oct 2025 17:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090E41F584C;
+	Tue, 21 Oct 2025 17:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761066139; cv=none; b=fbpLR9PNi2+o+GloSk2VijUL50OJTiHZyyV6wWFkIXQr3tdoOZ4EtLIXS8HAH/d8rMnACMeSH8t8xQsBK3HLcVb7Hr5srmnIrmKXFLdMmGDzX98fP5TyfjLG2Hif6UhOxL6dZmIXKpDG2kKVgg6ekmUgL6fjxwmY3v3fQ5gtWh8=
+	t=1761068059; cv=none; b=OuBse//UxUi3BOJEQSUkUGEPemt2iEePxYbVS6DcWcbgMu5xJH1y71ifeCWgdN6elPTVgpYavCUVO4T5q1LZNK2oZiRMoWtzzPHpbLaEN1tdhB+H/EozyFND8eEGPFvN0fhlbE8PsL1pTMJPC4Hb4jGl6dhb88TX8S35J0/f4Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761066139; c=relaxed/simple;
-	bh=iu0ee6tQWz7F3623BPsbyD2yb1AVcl3Gt5U8+FrbmwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8loIjhG1ITZdVSaI/swnjUJfJXogoC9RxYgsc8qco55pOq8Yr9rcaBVhAfgipFYvy0bWJ2hqiXqReyeoB004r7bFYVripP6iAgMhhigsEFeBUzKwhjbqkJ+2mUHogPa5hjDMblLj36WhhNKQr8uXJ1ym7mjG2yMJ+qrwSiSNG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFZpdOFz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AD6C4CEF1;
-	Tue, 21 Oct 2025 17:02:18 +0000 (UTC)
+	s=arc-20240116; t=1761068059; c=relaxed/simple;
+	bh=yZ5iFEeaaYVaI3L+acwknFPYoOVNKOCIcgEuvzYBv50=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=d4+2b3hsZvUcRV9ygcQvrn3pcvlRPhYZROLRVCPRS2yGbFJHGL9yd1fu+jgaUZ/9FozHsuxPr5ee+nIbIFKTa6IU4jcFZKnfAAU2rrTdLpgVAcJKdIUbLJRz0h+5BC1gi/KXAbBP7NdATdI0aX/RaeeirzMtWsYjgEGwoO7aTpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHv9pwKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1090C4CEF1;
+	Tue, 21 Oct 2025 17:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761066139;
-	bh=iu0ee6tQWz7F3623BPsbyD2yb1AVcl3Gt5U8+FrbmwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rFZpdOFz9jzsZRE9vLqWl3Ln5iKvQfR4QtYtEMg+dsnTgczxpe+AsZcjAyd0Y8Zyq
-	 se9VHHbyFK6YRc1tL5rQ+Co5e6RTsPRn8ylk+QfQrIoAYng3ZhtkHHJJFSWwcaIEtz
-	 MZvy3lmwFs2DhlzjDObAlMkmQf2ansKd+DM6NQZJ5EC3Xya85lTQvpDrjL3hJ/fTiV
-	 sD5vImOS83+nS/stwwPEUJra3WDFt2eUjMHaEY7xyMzrQuEwW9yYDuLtuMMzceVSRc
-	 wVfkLIfX3HKaMbROR4bDGtUehwV9OrUz/cccLlvk1oD6XxEBe2hFs0wfBEFPN3tubX
-	 r7vlMnqjtBj/A==
-Date: Tue, 21 Oct 2025 10:02:17 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Pankaj Raghav <p.raghav@samsung.com>, Zorro Lang <zlang@redhat.com>,
-	akpm@linux-foundation.org, linux-mm <linux-mm@kvack.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	xfs <linux-xfs@vger.kernel.org>
-Subject: Re: Regression in generic/749 with 8k fsblock size on 6.18-rc1
-Message-ID: <aPe8merkg654_sVp@bombadil.infradead.org>
-References: <20251014175214.GW6188@frogsfrogsfrogs>
- <rymlydtl4fo4k4okciiifsl52vnd7pqs65me6grweotgsxagln@zebgjfr3tuep>
- <20251015175726.GC6188@frogsfrogsfrogs>
- <bknltdsmeiapy37jknsdr2gat277a4ytm5dzj3xrcbjdf3quxm@ej2anj5kqspo>
- <aPFyqwdv1prLXw5I@dread.disaster.area>
+	s=k20201202; t=1761068058;
+	bh=yZ5iFEeaaYVaI3L+acwknFPYoOVNKOCIcgEuvzYBv50=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=tHv9pwKMTLil8clUAW1faEeTmf5FikkTPHvroA4B4dqaiszSwgHhmP5jf4kbO/VvO
+	 wg+uvzXpGRE4rEZ1wq7dP4csBeMUbmqtiGPAN+nyI5r9ykjDr3dblQdM+s0UkL03ZZ
+	 wter9xjJgbYMOoBq7meeqskEIdcipkWBMn6YMrA6HJT0KDn7rkiRigY5c+W/4e1B4a
+	 VFj1WEReLuNg3bOOd6W+RfcaYqgcASAMUeSS69zMJJ9TY5xGmp/e1bBfYWVR8fM0i9
+	 Dce7wuzl2pCvOeN3QfSbUL/yHlHJ6UX4IEj2Io5WJKNqBgA9fwBL0wTZ1qvF7l/qlQ
+	 fO0ku3AANA6KA==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPFyqwdv1prLXw5I@dread.disaster.area>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 Oct 2025 19:34:12 +0200
+Message-Id: <DDO6IUEAVBR0.14AZ0UXFYQF48@kernel.org>
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+References: <20251020222722.240473-1-dakr@kernel.org>
+ <20251020222722.240473-2-dakr@kernel.org>
+ <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
+ <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org>
+ <CANiq72k-_=nhJAfzSV3rX7Tgz5KcmTdqwU9+j4M9V3rPYRmg+A@mail.gmail.com>
+ <DDO521751WXE.11AAYWCL2CMP0@kernel.org>
+ <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
+In-Reply-To: <CANiq72=N+--1bhg+nSTDhvx3mFDcvppXo9Jxa__OPQRiSgEo2w@mail.gmail.com>
 
-On Fri, Oct 17, 2025 at 09:33:15AM +1100, Dave Chinner wrote:
-> On Thu, Oct 16, 2025 at 11:22:00AM +0100, Kiryl Shutsemau wrote:
-> > On Wed, Oct 15, 2025 at 10:57:26AM -0700, Darrick J. Wong wrote:
-> > > On Wed, Oct 15, 2025 at 04:59:03PM +0100, Kiryl Shutsemau wrote:
-> > > > On Tue, Oct 14, 2025 at 10:52:14AM -0700, Darrick J. Wong wrote:
-> > > > > Hi there,
-> > > > > 
-> > > > > On 6.18-rc1, generic/749[1] running on XFS with an 8k fsblock size fails
-> > > > > with the following:
-> > > > > 
-> > > > > --- /run/fstests/bin/tests/generic/749.out	2025-07-15 14:45:15.170416031 -0700
-> > > > > +++ /var/tmp/fstests/generic/749.out.bad	2025-10-13 17:48:53.079872054 -0700
-> > > > > @@ -1,2 +1,10 @@
-> > > > >  QA output created by 749
-> > > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > > +Expected SIGBUS when mmap() reading beyond page boundary
-> > > > > +Expected SIGBUS when mmap() writing beyond page boundary
-> > > > >  Silence is golden
-> > > > > 
-> > > > > This test creates small files of various sizes, maps the EOF block, and
-> > > > > checks that you can read and write to the mmap'd page up to (but not
-> > > > > beyond) the next page boundary.
-> > > > > 
-> > > > > For 8k fsblock filesystems on x86, the pagecache creates a single 8k
-> > > > > folio to cache the entire fsblock containing EOF.  If EOF is in the
-> > > > > first 4096 bytes of that 8k fsblock, then it should be possible to do a
-> > > > > mmap read/write of the first 4k, but not the second 4k.  Memory accesses
-> > > > > to the second 4096 bytes should produce a SIGBUS.
-> > > > 
-> > > > Does anybody actually relies on this behaviour (beyond xfstests)?
-> > > 
-> > > Beats me, but the mmap manpage says:
-> > ...
-> > > POSIX 2024 says:
-> > ...
-> > > From both I would surmise that it's a reasonable expectation that you
-> > > can't map basepages beyond EOF and have page faults on those pages
-> > > succeed.
-> > 
-> > <Added folks form the commit that introduced generic/749>
-> > 
-> > Modern kernel with large folios blurs the line of what is the page.
-> > 
-> > I don't want play spec lawyer. Let's look at real workloads.
-> 
-> Or, more importantly, consider the security-related implications of
-> the change....
-> 
-> > If there's anything that actually relies on this SIGBUS corner case,
-> > let's see how we can fix the kernel. But it will cost some CPU cycles.
-> > 
-> > If it only broke syntactic test case, I'm inclined to say WONTFIX.
-> > 
-> > Any opinions?
-> 
-> Mapping beyond EOF ranges into userspace address spaces is a
-> potential security risk. If there is ever a zeroing-beyond-EOF bug
-> related to large folios (history tells us we are *guaranteed* to
-> screw this up somewhere in future), then allowing mapping all the
-> way to the end of the large folio could expose a -lot more- stale
-> kernel data to userspace than just what the tail of a PAGE_SIZE
-> faulted region would expose.
-> 
-> Hence allowing applications to successfully fault a (unpredictable)
-> distance far beyond EOF because the page cache used a large folio
-> spanning EOF seems, to me, to be a very undesirable behaviour to
-> expose to userspace.
+On Tue Oct 21, 2025 at 6:47 PM CEST, Miguel Ojeda wrote:
+> If it is just e.g. add/sub and a few from/into, then it sounds ideal
+> (i.e. I am worried if it wants to be used as essentially a primitive,
+> in which case I agree it would need to be automated to some degree).
 
-I think in retrospect, having been involved in carefully crafting
-this test, this was certainly an overlooked and clearly valuable use
-case for the test which should be documented as otherwise others may
-stumble upon it and easily fight it.
+That's what I need for this patch series, I think the operations applicable=
+ for
+this type are quite some more; not that far from a primitive.
 
-So extending the test docs to cover this concern is valuable.
+> To me, part of that is restricting what can be done with the type to
+> prevent mistakes.
+>
+> i.e. a type alias is essentially the wild west, and this kind of
+> type/concept is common enough that it sounds a good idea to pay the
+> price to provide a proper type for it.
 
-  Luis
+The reason why I said for this case I think it would be good to have derive
+macros first is that there's a lot of things that are valid to do with an o=
+ffset
+value.
+
+Of course, there's also a lot of things that don't make a lot of sense that=
+ we
+could prevent (e.g. reverse_bits(), ilogX(), etc.).
+
+I think in this case there not a lot to gain from preventing this, consider=
+ing
+that we don't have derive macros yet.
+
+However, I understand where you're coming from. Even though there's not a h=
+uge
+gain here, it would be good to set an example -- especially if it's somethi=
+ng as
+cental as a file offset type.
+
+If this is what you have in mind, let me go ahead and do it right away (at =
+least
+for the things needed by this patch series), because that's a very good rea=
+son I
+think.
+
+> So I don't want to delay real work, and as long as we do it early
+> enough that we don't have many users, that sounds like a good idea to
+> me -- done:
+>
+>     https://github.com/Rust-for-Linux/linux/issues/1198
+>
+> Also took the chance to ask for a couple examples/tests.
+
+Thanks a lot for creating the issue!
+
+(I mainly also thought of adding one for a derive macro.)
 
