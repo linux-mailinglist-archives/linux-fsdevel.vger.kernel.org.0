@@ -1,120 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-64967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2A8BF78EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 18:01:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259A2BF7DDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 19:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE95F19A0E5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 16:01:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60C764FC5DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE511DFF7;
-	Tue, 21 Oct 2025 16:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F05351741;
+	Tue, 21 Oct 2025 17:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lp100qYW"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SW6rf5Xg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077272EE60F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 16:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8871534E757;
+	Tue, 21 Oct 2025 17:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761062462; cv=none; b=GWOmAiR657+OBydvUH3nZzIXmEmwr/YTuUFonHyEK0vEwCGYV+pou5QOZUq2/ipfOOSJBJkMweGHtjdM3LST0ObL8f6IpfIfJ4RBUQTXPnoYOnYqIu/r9n19hXjHbF4pOvbedKt/MAfMkNXCwYR0tCAxgmDwevEnKsZnpgI27G4=
+	t=1761067149; cv=none; b=X7pcX/fiscoJ3sTzkHlqkie/oLxbXv10TONURg7hdPTjYHxIU911clxPN6nRz9IcYVjh1fDAXz9uOF8Atu9guI0ZR3tFjKrlsAYvelZB9w3+psrsejaiQBaacqeHYz7xwwqw3Q7LKZHHU3x87DH6BVjhtgst9pCYmPMofc7MnXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761062462; c=relaxed/simple;
-	bh=l9McPck7+fRtP8oHsbqDK3T9B1jxgL5s0koTgcHDrMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NmVGZo/9QN8SZrNiUucoIoK3jT4r/HAaC07nbrWYeHtri0vZz4RYTmsDXo5OVkNWm1LkimdTUUFdfp1s/UDBWVhAuoEHhpjfQfxX0/XN8yFDah7sDkz9OOlAYHVCU7qtTK/ApyM8v8oWtSu15ZcO08VjXQjuCpYtYHK4PbDZjgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lp100qYW; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b5ca0345de8so96635a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 09:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761062460; x=1761667260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l9McPck7+fRtP8oHsbqDK3T9B1jxgL5s0koTgcHDrMI=;
-        b=lp100qYW8ZZePqlGpiIXCJNN9rKA6JH5MVggkns8qPNM2eGTlGDvmyfQhkd1AXvtxF
-         N0LFYwGt2cDq/pz0sRyyWR4pQ6+JEdKTeviIKhTLuFEOmrzF5PHfHug+wdK3oRTv0Q5G
-         i5dWey9LP8GwpRKM+j4lpL8CXjkurZ8mztK78evFPgZ9P/D2PHvoEKOCu3wVQYJ5LwdO
-         JpfaFSC5fknkXAqlAfDixvnTC6ZWrYPh+jZelgQdkRJTvAZTa2JjZkczEUkM50xuPicQ
-         LU1OpqvQxpqElFirhboA9p0WLwcRpcKoDHCCB8Ys2e2lYs5rFud+1SAUHCDflZlabjE5
-         d+9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761062460; x=1761667260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l9McPck7+fRtP8oHsbqDK3T9B1jxgL5s0koTgcHDrMI=;
-        b=kl8SLNYiL1DM0bDqnMVYPk39rJbtT2QllEhNtjJOT+bJfs7IhhBMIx2ohB88qh3XBx
-         bG8bruq+vrHi0wgtJYL3duGszQ1yRT+dA3s9tkHG+IYZsH1of/3+8tS5WnUs72G9IAye
-         ugoNeycfzf3Vrck2t8+e6F+Rft5jBX1xrdMAfvYCdAqowOJ21l1U7FOD7AE9OKK9qLUH
-         zQfkrVI0KThly++VYTiN5a9sP6t4X08HHFOlQtaO6tBruuMHrSy/ZVzmoaobNZQq8H8G
-         VP7gQvLVCHYl/toINq2MoMzn5i9XAI04FdJSjum44wDclib41eBzv5uK0yC2ZbZ/gXnU
-         20/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCkQZYKpyawiJwVDeV52Q/TWV4BgX+mFg7GZ9GvCtugRgQVwrCwtl84Q+RcLscymNynkAqIlbptYyLuXIt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxujg9haGNKCDpioI613DtsK2XRk2jpwCNt8b610hJy89zpqUm/
-	mpNwyOox2FxmbfogVggA4Lsrhdz0VRJ8pkwYbBAFVkMaqHBQQ0a1aR73nMakReLw4Sz2BKg2HsM
-	mGABQhs8xXX80L0Xk4ieD6ADMPDTrFF0=
-X-Gm-Gg: ASbGncuJxhik+Ym8lw+a7NUeIvS5jk4yo14qqQCXVWRij/YyYdqTrmx2E2QXo5+E6ZU
-	xFtJfEByNQS5bRBjeoYsDebcbEDkpjJleAiZQI6FKWNQ4EuztQt6/N6LHqV8/ArF4MgfyWcAs6I
-	jLLB4RpSX706cuAGCXbHLFLKSTvyHfiK/i3vvR/PHbGkohYZrsdbURdJIu/h1xgQUdnrQqTMKcP
-	xYsFmMIvWLkO07r59bEZ1lZJZnO1Vcu1CTyZUEKVYAH10/2zKt+q1DrNb3f33DvYpsUecGGw+K3
-	KYcXpfk7cdI1QFbiCK4Q80qgpgNcj3nJ28DAfpXjH4Rau8KA4B1uWWjeTf+CtD9MZ2x6Pj4PQWv
-	4CGoxcaub9a3jGA==
-X-Google-Smtp-Source: AGHT+IFQfi/s7O+AS7+ugi0AvG3Obf7x6s4gJSfq/z9A99N2GSsEFGD6AtODHA+FDvs4i/OimtZEcD5AA1Pf1qMAScw=
-X-Received: by 2002:a17:902:ef08:b0:266:914a:2e7a with SMTP id
- d9443c01a7336-292d3fad068mr25694605ad.6.1761062460097; Tue, 21 Oct 2025
- 09:01:00 -0700 (PDT)
+	s=arc-20240116; t=1761067149; c=relaxed/simple;
+	bh=hxf1/du0Cm/fGRIxX6xgrYuL9mLBf2Hbe+qcVpZ5Km8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jp4eIfbxXVw9wc1wunu7weiTKZWwvZg5P/qm57As9GofsO6WSP4tLTEvJbMP8zbIBHXYOR+u6bUO/eJ+PwvVBobu3YBxJheIQz9Q4FhhGn8ftR2Sdl7UAzaxjtP/EnQZOSdW/RxZESzojJMLKwoMHgCFyaRJ4B1hS+PgZMoV+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SW6rf5Xg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QI9r59C1k+bEW/3dTiniqc9OPZciLkuhEEc0yCekJCc=; b=SW6rf5XgBSv9OSWDER9GUhoD3I
+	fEPjCqXGWGOaGckd1Avw4ryZVi4jwunbuA0Qu+PSpetTY7+YnD2ENR1E6U6ChWCPdNP0KRU/7vyJ0
+	pGbelOWGliDe3jZQlnQCpVqVBljpvwRyKEEjVpVjIVhT9QEvLwQILZfz4UCwGc0a7ObWS9WT+eGU0
+	r9ioF2sBwwbAhYC7InSuzYlSJpgPP2um2EFDyTk96IY7gi07MeOEY0k3C5hsj2OwHi1A/6/qzqwGc
+	7m8umfBiaMl4KqfAUpJOfHdOCBd7oAfgwqqho89qegrfqJNefNNb7qe2bumWvzsNsmueTarSVXRBZ
+	OCMc+k0w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBG0d-0000000DsXW-17GC;
+	Tue, 21 Oct 2025 17:18:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D139D3030FA; Tue, 21 Oct 2025 11:54:47 +0200 (CEST)
+Date: Tue, 21 Oct 2025 11:54:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
+	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Shuah Khan <shuah@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	kernel test robot <lkp@intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Christopher Ferris <cferris@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
+Message-ID: <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
+References: <20251020220005.work.095-kees@kernel.org>
+ <20251020220118.1226740-1-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
- <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com> <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org>
-In-Reply-To: <DDO3T1NMVRJR.3OPF5GW5UQAGH@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 Oct 2025 18:00:47 +0200
-X-Gm-Features: AS18NWBiq5dOJe6Pnbt51CNfFzfArDoMX7kF8GitQ2ivyHNjHdvLaE-OZwfPRas
-Message-ID: <CANiq72k-_=nhJAfzSV3rX7Tgz5KcmTdqwU9+j4M9V3rPYRmg+A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020220118.1226740-1-kees@kernel.org>
 
-On Tue, Oct 21, 2025 at 5:26=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> Yeah, I don't think there's any value making this a new type in this case=
-. There
-> are no type invariants, useful methods, etc.
->
-> In fact, not even the type alias is strictly needed, as i64 would be suff=
-icient
-> as well.
+On Mon, Oct 20, 2025 at 03:01:15PM -0700, Kees Cook wrote:
+> Introduce __counted_by_ptr(), which works like __counted_by(), but for
+> pointer struct members:
+> 
+> struct foo {
+> 	int a, b, c;
+> 	char *buffer __counted_by_ptr(bytes);
+> 	short nr_bars;
+> 	struct bar *bars __counted_by_ptr(nr_bars);
+> 	size_t bytes;
+> };
+> 
+> Since "counted_by" can only be applied to pointer members in very recent
+> compiler versions, its application ends up needing to be distinct from
+> flexible array "counted_by" annotations, hence a separate macro.
+> 
+> Unfortunately, this annotation cannot be used for "void *" members
+> (since such a member is considered a pointer to an incomplete type,
+> and neither Clang nor GCC developers could be convinced otherwise[1],
+> even in the face of the GNU extension that "void *" has size "1 byte"
+> for pointer arithmetic). For "void *" members, we must use the coming
+> "sized_by" attribute.
 
-Even if there are no type invariants nor methods, newtypes are still
-useful to prevent bad operations/assignments/...
+So why do we need both __counted_by_ptr() and this __sized_by(), won't
+one be good enough?
 
-In general, it would be ideal to have more newtypes (and of course
-avoid primitives for everything), but they come with source code
-overhead, so I was wondering here, because it is usually one chance we
-have to try to go with something stronger vs. the usual C way.
+Also, given the existing __counted_by() is really only usable with
+>=19.1.3 and we're now at 22-ish, do we really need two of these?
 
-Cheers,
-Miguel
+That is, I'm really hating the idea we need 3 different annotations for
+what is effectively the same thing and feel we should try *really* hard
+to make it 1.
 
