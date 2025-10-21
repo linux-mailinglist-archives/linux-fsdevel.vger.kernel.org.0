@@ -1,64 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-64927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E379BF6BC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96607BF6C2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF3B4876DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D6D486575
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9001337113;
-	Tue, 21 Oct 2025 13:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A1D3370F9;
+	Tue, 21 Oct 2025 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRZ9V5QZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cShytyIs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF38143C61;
-	Tue, 21 Oct 2025 13:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3C7334C38
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 13:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761052875; cv=none; b=MIJ87pg2SBqMg5inMXEi7Ohh99Re3PLLF/iLkx/NFuoyB1E5y5Yd2RJU3LUNrvRI2+NZBcihmI9mNNuVDaA7A0QBeG3XaR2xdWeHV9YQrBGnXBrtYLpAanQ9Txe8lb5b+WeXfE66H56Mq7mJWqRm80iIcHzl5lf4jleKUsLhvKg=
+	t=1761053129; cv=none; b=VzEX2baQGRMLcHiPPIseG6sekJ+nEUOc1eA49TUsgshKJ9CIlW3m3+I22423aAcg8JxpJ/TVpveKnQSOEb3oWJvEUxbxUH1Zr4VlvZL6+1/28XlHXdrTOnpAbXtA856OjN1EmcLkVtoKoLRgfZR4kmGSRSD9qBUbcjf3z4CpAp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761052875; c=relaxed/simple;
-	bh=lvcRb/61yamx9Ux8qcx+0p2Z2oz7rIaAXsUA3+G6uXU=;
+	s=arc-20240116; t=1761053129; c=relaxed/simple;
+	bh=JzgDv/RfOhMuQvoaod65TzGOljuExVlcA6WBMBonTlo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGyZmSRzukedmvUwd8gdYjG3PJBvcmouNE12WwxtZSG/Sd+7iTjQswTt1jG9AsTMrxpCI7qqN0c8S+clRAnBslXJaw9YMhuaKTh+iL5xZqH+ZTxP0ujrmdMmBUpT4lIfcDa9uy+T88OdvkAfxvi3/+34MGR3DCankINYbJwk20s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRZ9V5QZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2FD8C4CEF1;
-	Tue, 21 Oct 2025 13:21:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArRWhyiq5dmjlxfyiPt9IJ5NKksMxgzsSqLv7u1zQohxDXk0CFWFN2wZpk+RwuSrjTmY7dJd4CkPxDAgLvlQcgXMoigzjMj8jFJtDJWD1qM86WDf/ALfiTozerkt11P7BRVcy5e7Cu28f6Ycx+tavGFSeX1fC6czPk7KOQOkrgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cShytyIs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D365C4CEF1;
+	Tue, 21 Oct 2025 13:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761052874;
-	bh=lvcRb/61yamx9Ux8qcx+0p2Z2oz7rIaAXsUA3+G6uXU=;
+	s=k20201202; t=1761053128;
+	bh=JzgDv/RfOhMuQvoaod65TzGOljuExVlcA6WBMBonTlo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qRZ9V5QZIibDOsO9wccPJdCMBqXt9+lUebH4uqUNlwIGaqGNPHXtxgk83a1Rg6KX0
-	 On7CO7L3CH3u8UM6MvMznOHukWIxAJmmtkHpKXyhyZyJqLiWZ1FKnz29oi4S51rxfY
-	 U8OpG0vUpUy3PCNi3RE7Ig91WHeNU40tA6FKiN2OLmobeH0i8fNPxGHWx6HrBm5H3C
-	 NP7kIxANp5Xch80kwvtZUuiP512KcySpiGdz00wgSDZfP/6zuEXUITgFZxPWFwM0YC
-	 d505f4KOmvU7NF1GiN3FKzl3LXlMZqpVyiF5mt7NvobjAQYvJVbvuOW4JgdbR4MhIt
-	 i3QIg217Yj6ZA==
-Date: Tue, 21 Oct 2025 15:21:08 +0200
+	b=cShytyIsmiJO1UhosNbO0CHuwe0rLfhQkJagl/5h9T2SphJBEzVMr1R3etrEbMrXX
+	 r5jd9DHepgknXVGzRogEVsKiuhU1iD/Hi4wfxRJAuTsuFktiwz677EctOAGFvd2mTI
+	 mo1DBwbGqrwZiyS8d71/Ui3ICsSkV94jQpB9EqzZEmEPegiw7oEwulrwY6iza782p5
+	 GNEPPe7iThAa/qZc53kAlzbwn3rKXw625CwC3KFByY5JoR1hBg0k5ACs87p5C/tcyB
+	 J0guRi6oIjxudW/01sTdmyh0BZXL5LxsHW+0DI7nwJLTe5UNU94Xnc+Cbr1wb0iCuV
+	 Jz+UFi6qhvfnw==
+Date: Tue, 21 Oct 2025 15:25:24 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Cyril Hrubis <chrubis@suse.cz>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, LTP List <ltp@lists.linux.it>, 
-	Andrey Albershteyn <aalbersh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Petr Vorel <pvorel@suse.cz>, Andrea Cervesato <andrea.cervesato@suse.com>
-Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
- PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
-Message-ID: <20251021-wollust-biografie-c4d97486c587@brauner>
-References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
- <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
- <aPIPGeWo8gtxVxQX@yuki.lan>
- <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 09/14] VFS/nfsd/ovl: introduce start_renaming() and
+ end_renaming()
+Message-ID: <20251021-kakteen-infekt-183f22b3e4a4@brauner>
+References: <20251015014756.2073439-1-neilb@ownmail.net>
+ <20251015014756.2073439-10-neilb@ownmail.net>
+ <CAOQ4uxg27fWDEqQYJ9yw25PTZ37qjNUJu36SfQNwdCComP0UOA@mail.gmail.com>
+ <CAOQ4uxjVTpK1OYU9vHROmeXwcs5B+nc67=G7s1YBvp+PW9vU9A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,84 +61,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjVTpK1OYU9vHROmeXwcs5B+nc67=G7s1YBvp+PW9vU9A@mail.gmail.com>
 
-On Fri, Oct 17, 2025 at 02:43:14PM +0200, Jan Kara wrote:
-> On Fri 17-10-25 11:40:41, Cyril Hrubis wrote:
-> > Hi!
-> > > > ## Test error log
-> > > > tst_buffers.c:57: TINFO: Test is using guarded buffers
-> > > > tst_test.c:2021: TINFO: LTP version: 20250930
-> > > > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
-> > > > @1760657272 aarch64
-> > > > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-> > > > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-> > > > which might slow the execution
-> > > > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-> > > > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
-> > > > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
-> > > > info_invalid) expected EINVAL: ENOTTY (25)
-> > 
-> > Looking closely this is a different problem.
-> > 
-> > What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
-> > size with:
-> > 
-> > struct pidfd_info_invalid {
-> >         uint32_t dummy;
-> > };
-> > 
-> > #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
-> > 
-> > 
-> > And we expect to hit:
-> > 
-> >         if (usize < PIDFD_INFO_SIZE_VER0)
-> >                 return -EINVAL; /* First version, no smaller struct possible */
-> > 
-> > in fs/pidfs.c
-> > 
-> > 
-> > And apparently the return value was changed in:
-> > 
-> > commit 3c17001b21b9f168c957ced9384abe969019b609
-> > Author: Christian Brauner <brauner@kernel.org>
-> > Date:   Fri Sep 12 13:52:24 2025 +0200
-> > 
-> >     pidfs: validate extensible ioctls
-> >     
-> >     Validate extensible ioctls stricter than we do now.
-> >     
-> >     Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-> >     Reviewed-by: Jan Kara <jack@suse.cz>
-> >     Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > 
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index edc35522d75c..0a5083b9cce5 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-> >                  * erronously mistook the file descriptor for a pidfd.
-> >                  * This is not perfect but will catch most cases.
-> >                  */
-> > -               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-> > +               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
-> >         }
-> >  
-> >         return false;
-> > 
-> > 
-> > So kernel has changed error it returns, if this is a regression or not
-> > is for kernel developers to decide.
+On Sun, Oct 19, 2025 at 12:33:05PM +0200, Amir Goldstein wrote:
+> On Sun, Oct 19, 2025 at 12:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Wed, Oct 15, 2025 at 3:48 AM NeilBrown <neilb@ownmail.net> wrote:
+> > >
+> > > From: NeilBrown <neil@brown.name>
+> > >
+> > > start_renaming() combines name lookup and locking to prepare for rename.
+> > > It is used when two names need to be looked up as in nfsd and overlayfs -
+> > > cases where one or both dentrys are already available will be handled
+> > > separately.
+> > >
+> > > __start_renaming() avoids the inode_permission check and hash
+> > > calculation and is suitable after filename_parentat() in do_renameat2().
+> > > It subsumes quite a bit of code from that function.
+> > >
+> > > start_renaming() does calculate the hash and check X permission and is
+> > > suitable elsewhere:
+> > > - nfsd_rename()
+> > > - ovl_rename()
+> > >
+> > > Signed-off-by: NeilBrown <neil@brown.name>
+> >
+> > Review comments from v1 not addressed:
+> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxh+NcAv9v6NtVRrLCMYbpd0ajtvsd6c9-W2a7+vur0UJQ@mail.gmail.com/
+> >
 > 
-> Yes, it's mostly a question to Christian whether if passed size for
-> extensible ioctl is smaller than minimal, we should be returning
-> ENOIOCTLCMD or EINVAL. I think EINVAL would make more sense but Christian
-> is our "extensible ioctl expert" :).
+> Obviously, I am more attached to my comments on the overlayfs
+> changes. since you have not replied to those, you might have missed them...
 
-You're asking difficult questions actually. :D
-I think it would be completely fine to return EINVAL in this case.
-But traditionally ENOTTY has been taken to mean that this is not a
-supported ioctl. This translation is done by the VFS layer itself iirc.
-
+I'll wait for a resend of this version then.
 
