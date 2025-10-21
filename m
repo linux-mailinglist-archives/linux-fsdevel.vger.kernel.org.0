@@ -1,62 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-64917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1398ABF67B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0239EBF687B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 509A74613B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF833B0D32
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B9D32E758;
-	Tue, 21 Oct 2025 12:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E8F3321CC;
+	Tue, 21 Oct 2025 12:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSoEyG3g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgB+dSRp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EC335502D;
-	Tue, 21 Oct 2025 12:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E55541C63;
+	Tue, 21 Oct 2025 12:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050325; cv=none; b=vEEMAZWPv+ldUP2qlb4euIjqlH9kj7ZC5qG+3TnH4JAS3g6T6W/vOMtRUtGwkoQ13RQXB+4vHdlkSPIfCN6vjOjKwNfGCf5K8OLCLfx/NtBspYU4T+V96TrpdANIbKSNVigcUpmMjoro7/AMh9Jy+x02YEEwB+5+JTzIFd/IQTM=
+	t=1761050903; cv=none; b=shrv1lfTSBD2fIoIbXm7ov0EqJXpZgm+XP25fhvKZlJs9EQyJQyDh4az29ixHEVCZ9V508pgOo/War93WXDwNKGue9ZE3CvRefR4G2iJxVhft9EuRnf7qGQFmzHA+5Rc6P5S7UJVBCSLMhSvfIVwRR4wuFOWXJhhVrnTzrMumCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050325; c=relaxed/simple;
-	bh=y6YYy7q/y4BTHzil9RMlZJdPPv2cOHjahbUPQ36FXdY=;
+	s=arc-20240116; t=1761050903; c=relaxed/simple;
+	bh=AZgESGJJ+HnCdsMFs+HjpT8kUMF2xqIjx68qM2/k8II=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EkIE5OSVjRoqUwAK3sBNhlaWxoOYY9hTTiY6kcff2wKeGHUYfczq8+CurmIrbvLo2DnmQ+oMQiBCMggCOSxvc5ChL6XJj5c9Ou8u1yzUe5gvxY+Uxgg+nYkGcWy1Rfwzv4QRvP1YrQPKt4scPpCfEeaXjy5Zv08ef/1h3x5TE7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSoEyG3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC76C4CEF1;
-	Tue, 21 Oct 2025 12:38:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=smotAz5z7FoDrABJUt3fwpzMNgLda3ExG58t2CcLo6xGl9LBnhQL1yPnMWSYXFD8nmCANA8Yb024ss85Jsz6FTfvW2jLeu/ydVFXsOuEKCBSPAngAu7w3c6q1T4za5pAIB3YkygT9AexRsLjUcycUfidWvh4x35ws/PCAwIZdnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgB+dSRp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442B0C4CEFD;
+	Tue, 21 Oct 2025 12:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761050324;
-	bh=y6YYy7q/y4BTHzil9RMlZJdPPv2cOHjahbUPQ36FXdY=;
+	s=k20201202; t=1761050902;
+	bh=AZgESGJJ+HnCdsMFs+HjpT8kUMF2xqIjx68qM2/k8II=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DSoEyG3gOmtglahIVhhdxwn237T1qxuOR8T3dlqF16KPV+I2I8jNEeEH3rPLrMUBQ
-	 Dvd7rjRhqZP8gtYdc0FShk/MRdtodUXMyXFDFzA7rZnBxAh8hUyGOoU0IkmonB0kt5
-	 Yp12V77NQqH7jCAq4NCsKwHF8GuQw/oaIK4N56BHbFmTwlkxrzEP7GbgZS3BCU09VN
-	 W9KdFlvVamgJDMf2kNMsoV2fn5puWnzaQnncOJAMwLZ6UwOkAZO728XRv94kYmfUTM
-	 sGmXOryWuJSc2lduIczitQJMBunn4f8dEhFudcFtAIzmE1NE1xHY8FJXxpyZ9J7y3I
-	 SO1xB2s+G5L5g==
-Date: Tue, 21 Oct 2025 14:38:38 +0200
+	b=MgB+dSRp/e1iU3n3CDdEx71519C+hbnP+ILPKHV9GmV2OqXocVatdPWw5xZluW1Hq
+	 yXxVuluiRMKXeynfNsBZ7p4EX/8YJzzi6MtlBk5YQP0BM95iBuNjWFH/XpYAql7WYW
+	 EMDuyJ4aCxFfZUoMLvAOdf004LAh6Enk79U5Nix77IBnV97H1LVxFnlwWqczsx334Y
+	 osdgy8XUDv33pY8QFVBY0FBc7VQmZn9ZfXIbqDrLQkCJFTnugpZF6m8P0cpUkak0MR
+	 Z3qxxdI2jZCVWDPA00mk47hcI0vLHrdT2BDwhYtsyH53zx+xLaiCYtq8GJsxdHb5ax
+	 7+JU0Eju8cu8g==
+Date: Tue, 21 Oct 2025 14:48:18 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <christian@brauner.io>, Marc Dionne <marc.dionne@auristor.com>, 
-	Jeffrey Altman <jaltman@auristor.com>, Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org, 
-	openafs-devel@openafs.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Etienne Champetier <champetier.etienne@gmail.com>, Chet Ramey <chet.ramey@case.edu>, 
-	Cheyenne Wills <cwills@sinenomine.net>, Mimi Zohar <zohar@linux.ibm.com>, 
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 1/2] vfs: Allow filesystems with foreign owner IDs to
- override UID checks
-Message-ID: <20251021-agieren-spruch-65c107748c09@brauner>
-References: <20251014133551.82642-1-dhowells@redhat.com>
- <20251014133551.82642-2-dhowells@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: rework I_NEW handling to operate without fences
+Message-ID: <20251021-beinhalten-passierbar-62c358c24613@brauner>
+References: <20251010221737.1403539-1-mjguzik@gmail.com>
+ <CAGudoHETiJ8G8WeyFYJ6EZ4oxcmqxV3yztZDOxL8PUBGobW_xQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,723 +58,463 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251014133551.82642-2-dhowells@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHETiJ8G8WeyFYJ6EZ4oxcmqxV3yztZDOxL8PUBGobW_xQ@mail.gmail.com>
 
-On Tue, Oct 14, 2025 at 02:35:44PM +0100, David Howells wrote:
-> A number of ownership checks made by the VFS make a number of assumptions:
-> 
->  (1) that it is meaningful to compare inode->i_uid to a second ->i_uid or
->      to current_fsuid(),
-> 
->  (2) that current_fsuid() represents the subject of the action,
-> 
->  (3) that the number in ->i_uid belong to the system's ID space and
-> 
->  (4) that the IDs can be represented by 32-bit integers.
-> 
-> Network filesystems, however, may violate all four of these assumptions.
-> Indeed, a network filesystem may not even have an actual concept of a UNIX
-> integer UID (cifs without POSIX extensions, for example).  Plug-in block
-> filesystems (e.g. USB drives) may also violate this assumption.
-> 
-> In particular, AFS implements its own ACL security model with its own
-> per-cell user ID space with 64-bit IDs for some server variants.  The
-> subject is represented by a token in a key, not current_fsuid().  The AFS
-> user IDs and the system user IDs for a cell may be numerically equivalent,
-> but that's matter of administrative policy and should perhaps be noted in
-> the cell definition or by mount option.  A subsequent patch will address
-> AFS.
-> 
-> To help fix this, three functions are defined to perform UID comparison
-> within the VFS:
-> 
->  (1) vfs_inode_is_owned_by_me().  This defaults to comparing i_uid to
->      current_fsuid(), with appropriate namespace mapping, assuming that the
->      fsuid identifies the subject of the action.  The filesystem may
->      override it by implementing an inode op:
-> 
-> 	int (*is_owned_by_me)(struct mnt_idmap *idmap, struct inode *inode);
-> 
->      This should return 0 if owned, 1 if not or an error if there's some
->      sort of lookup failure.  It may use a means of identifying the subject
->      of the action other than fsuid, for example by using an authentication
->      token stored in a key.
-> 
->  (2) vfs_inodes_have_same_owner().  This defaults to comparing the i_uids
->      of two different inodes with appropriate namespace mapping.  The
->      filesystem may override it by implementing another inode op:
-> 
-> 	int (*have_same_owner)(struct mnt_idmap *idmap, struct inode *inode1,
-> 			       struct inode *inode2);
-> 
->      Again, this should return 0 if matching, 1 if not or an error if
->      there's some sort of lookup failure.
-> 
->  (3) vfs_inode_and_dir_have_same_owner().  This is similar to (2), but
->      assumes that the second inode is the parent directory to the first and
->      takes a nameidata struct instead of a second inode pointer.
-> 
-> Fix a number of places within the VFS where such UID checks are made that
-> should be deferring interpretation to the filesystem.
-> 
->  (*) chown_ok()
->  (*) chgrp_ok()
-> 
->      Call vfs_inode_is_owned_by_me().  Possibly these need to defer all
->      their checks to the network filesystem as the interpretation of the
->      new UID/GID depends on the netfs too, but the ->setattr() method gets
->      a chance to deal with that.
-> 
->  (*) coredump_file()
-> 
->      Call vfs_is_owned_by_me() to check that the file created is owned by
->      the caller - but the check that's there might be sufficient.
-> 
->  (*) inode_owner_or_capable()
-> 
->      Call vfs_is_owned_by_me().  I'm not sure whether the namespace mapping
->      makes sense in such a case, but it probably could be used.
-> 
->  (*) vfs_setlease()
-> 
->      Call vfs_is_owned_by_me().  Actually, it should query if leasing is
->      permitted.
-> 
->      Also, setting locks could perhaps do with a permission call to the
->      filesystem driver as AFS, for example, has a lock permission bit in
->      the ACL, but since the AFS server checks that when the RPC call is
->      made, it's probably unnecessary.
-> 
->  (*) acl_permission_check()
->  (*) posix_acl_permission()
-> 
->      Unchanged.  These functions are only used by generic_permission()
->      which is overridden if ->permission() is supplied, and when evaluating
->      a POSIX ACL, it should arguably be checking the UID anyway.
-> 
->      AFS, for example, implements its own ACLs and evaluates them in
->      ->permission() and on the server.
-> 
->  (*) may_follow_link()
-> 
->      Call vfs_inode_and_dir_have_same_owner() and vfs_is_owned_by_me() on
->      the the link and its parent dir.
-> 
->  (*) may_create_in_sticky()
-> 
->      Call vfs_is_owned_by_me() and also vfs_inode_and_dir_have_same_owner()
->      both.
-> 
->      [?] Should this return ok immediately if the open call we're in
->      created the file being checked.
-> 
->  (*) __check_sticky()
-> 
->      Call vfs_is_owned_by_me() on both the dir and the inode, but for AFS
->      vfs_is_owned_by_me() on a directory doesn't work, so call
->      vfs_inodes_have_same_owner() instead to check the directory (as is
->      done in may_create_in_sticky()).
-> 
->  (*) may_dedupe_file()
-> 
->      Call vfs_is_owned_by_me().
-> 
->  (*) IMA policy ops.
-> 
->      Unchanged for now.  I'm not sure what the best way to deal with this
->      is - if, indeed, it needs any changes.
-> 
-> Note that wrapping stuff up into vfs_inode_is_owned_by_me() isn't
-> necessarily the most efficient as it means we may end up doing the uid
-> idmapping an extra time - though this is only done in three places, all to
-> do with world-writable sticky dir checks.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Etienne Champetier <champetier.etienne@gmail.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: Jeffrey Altman <jaltman@auristor.com>
-> cc: Chet Ramey <chet.ramey@case.edu>
-> cc: Cheyenne Wills <cwills@sinenomine.net>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Christian Brauner <brauner@kernel.org>
-> cc: Steve French <sfrench@samba.org>
-> cc: Mimi Zohar <zohar@linux.ibm.com>
-> cc: linux-afs@lists.infradead.org
-> cc: openafs-devel@openafs.org
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-integrity@vger.kernel.org
-> Link: https://groups.google.com/g/gnu.bash.bug/c/6PPTfOgFdL4/m/2AQU-S1N76UJ
-> Link: https://git.savannah.gnu.org/cgit/bash.git/tree/redir.c?h=bash-5.3-rc1#n733
-> ---
->  Documentation/filesystems/vfs.rst |  21 ++++
->  fs/attr.c                         |  58 ++++++-----
->  fs/coredump.c                     |   2 +-
->  fs/inode.c                        |  11 +-
->  fs/internal.h                     |   1 +
->  fs/locks.c                        |   7 +-
->  fs/namei.c                        | 161 ++++++++++++++++++++++++------
->  fs/remap_range.c                  |  20 ++--
->  include/linux/fs.h                |   6 +-
->  9 files changed, 216 insertions(+), 71 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 4f13b01e42eb..5acbad3be4fd 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -495,6 +495,9 @@ As of kernel 2.6.22, the following members are defined:
->  				    struct dentry *dentry, struct file_kattr *fa);
->  		int (*fileattr_get)(struct dentry *dentry, struct file_kattr *fa);
->  	        struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
-> +		int (*is_owned_by_me)(struct mnt_idmap *idmap, struct inode *inode);
-> +		int (*have_same_owner)(struct mnt_idmap *idmap, struct inode *inode,
-> +				       struct dentry *dentry);
->  	};
->  
->  Again, all methods are called without any locks being held, unless
-> @@ -679,6 +682,24 @@ otherwise noted.
->          filesystem must define this operation to use
->          simple_offset_dir_operations.
->  
-> +``is_owned_by_me``
-> +	called to determine if the file can be considered to be 'owned' by
-> +	the owner of the process or if the process has a token that grants
-> +	it ownership privileges.  If unset, the default is to compare i_uid
-> +	to current_fsuid() - but this may give incorrect results for some
-> +	network or plug-in block filesystems.  For example, AFS determines
-> +	ownership entirely according to an obtained token and i_uid may not
-> +	even be from the same ID space as current_uid().
-> +
-> +``have_same_owner``
-> +	called to determine if an inode has the same owner as its immediate
-> +	parent on the path walked.  If unset, the default is to simply
-> +	compare the i_uid of both.  For example, AFS compares the owner IDs
-> +	of both - but these are a 64-bit values on some variants that might
-> +	not fit into a kuid_t and cifs has GUIDs that cannot be compared to
-> +	kuid_t.
-> +
-> +
->  The Address Space Object
->  ========================
->  
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 795f231d00e8..096401a4815d 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -16,6 +16,7 @@
->  #include <linux/fcntl.h>
->  #include <linux/filelock.h>
->  #include <linux/security.h>
-> +#include "internal.h"
->  
->  /**
->   * setattr_should_drop_sgid - determine whether the setgid bit needs to be
-> @@ -91,19 +92,21 @@ EXPORT_SYMBOL(setattr_should_drop_suidgid);
->   * permissions. On non-idmapped mounts or if permission checking is to be
->   * performed on the raw inode simply pass @nop_mnt_idmap.
->   */
-> -static bool chown_ok(struct mnt_idmap *idmap,
-> -		     const struct inode *inode, vfsuid_t ia_vfsuid)
-> +static int chown_ok(struct mnt_idmap *idmap,
-> +		    struct inode *inode, vfsuid_t ia_vfsuid)
->  {
->  	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
-> -	if (vfsuid_eq_kuid(vfsuid, current_fsuid()) &&
-> -	    vfsuid_eq(ia_vfsuid, vfsuid))
-> -		return true;
-> +	int ret;
-> +
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret <= 0)
-> +		return ret;
->  	if (capable_wrt_inode_uidgid(idmap, inode, CAP_CHOWN))
-> -		return true;
-> +		return 0;
->  	if (!vfsuid_valid(vfsuid) &&
->  	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
-> -		return true;
-> -	return false;
-> +		return 0;
-> +	return -EPERM;
->  }
->  
->  /**
-> @@ -118,23 +121,27 @@ static bool chown_ok(struct mnt_idmap *idmap,
->   * permissions. On non-idmapped mounts or if permission checking is to be
->   * performed on the raw inode simply pass @nop_mnt_idmap.
->   */
-> -static bool chgrp_ok(struct mnt_idmap *idmap,
-> -		     const struct inode *inode, vfsgid_t ia_vfsgid)
-> +static int chgrp_ok(struct mnt_idmap *idmap,
-> +		    struct inode *inode, vfsgid_t ia_vfsgid)
->  {
->  	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
-> -	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
-> -	if (vfsuid_eq_kuid(vfsuid, current_fsuid())) {
-> +	int ret;
-> +
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret == 0) {
->  		if (vfsgid_eq(ia_vfsgid, vfsgid))
-> -			return true;
-> +			return 0;
->  		if (vfsgid_in_group_p(ia_vfsgid))
-> -			return true;
-> +			return 0;
->  	}
->  	if (capable_wrt_inode_uidgid(idmap, inode, CAP_CHOWN))
-> -		return true;
-> +		return 0;
->  	if (!vfsgid_valid(vfsgid) &&
->  	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
-> -		return true;
-> -	return false;
-> +		return 0;
-> +	return -EPERM;
->  }
->  
->  /**
-> @@ -163,6 +170,7 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
->  {
->  	struct inode *inode = d_inode(dentry);
->  	unsigned int ia_valid = attr->ia_valid;
-> +	int ret;
->  
->  	/*
->  	 * First check size constraints.  These can't be overriden using
-> @@ -179,14 +187,18 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
->  		goto kill_priv;
->  
->  	/* Make sure a caller can chown. */
-> -	if ((ia_valid & ATTR_UID) &&
-> -	    !chown_ok(idmap, inode, attr->ia_vfsuid))
-> -		return -EPERM;
-> +	if (ia_valid & ATTR_UID) {
-> +		ret = chown_ok(idmap, inode, attr->ia_vfsuid);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
->  
->  	/* Make sure caller can chgrp. */
-> -	if ((ia_valid & ATTR_GID) &&
-> -	    !chgrp_ok(idmap, inode, attr->ia_vfsgid))
-> -		return -EPERM;
-> +	if (ia_valid & ATTR_GID) {
-> +		ret = chgrp_ok(idmap, inode, attr->ia_vfsgid);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
->  
->  	/* Make sure a caller can chmod. */
->  	if (ia_valid & ATTR_MODE) {
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index b5fc06a092a4..ac113e41d090 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -951,7 +951,7 @@ static bool coredump_file(struct core_name *cn, struct coredump_params *cprm,
->  	 * filesystem.
->  	 */
->  	idmap = file_mnt_idmap(file);
-> -	if (!vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid())) {
-> +	if (vfs_inode_is_owned_by_me(idmap, inode) != 0) {
->  		coredump_report_failure("Core dump to %s aborted: cannot preserve file owner", cn->corename);
->  		return false;
->  	}
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ec9339024ac3..61e6b1d71e86 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2628,16 +2628,19 @@ EXPORT_SYMBOL(inode_init_owner);
->   * On non-idmapped mounts or if permission checking is to be performed on the
->   * raw inode simply pass @nop_mnt_idmap.
->   */
-> -bool inode_owner_or_capable(struct mnt_idmap *idmap,
-> -			    const struct inode *inode)
-> +bool inode_owner_or_capable(struct mnt_idmap *idmap, struct inode *inode)
->  {
->  	vfsuid_t vfsuid;
->  	struct user_namespace *ns;
-> +	int ret;
->  
-> -	vfsuid = i_uid_into_vfsuid(idmap, inode);
-> -	if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret == 0)
->  		return true;
-> +	if (ret < 0)
-> +		return false;
->  
-> +	vfsuid = i_uid_into_vfsuid(idmap, inode);
->  	ns = current_user_ns();
->  	if (vfsuid_has_mapping(ns, vfsuid) && ns_capable(ns, CAP_FOWNER))
->  		return true;
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 9b2b4d116880..29682c6edecd 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -52,6 +52,7 @@ extern int finish_clean_context(struct fs_context *fc);
->  /*
->   * namei.c
->   */
-> +int vfs_inode_is_owned_by_me(struct mnt_idmap *idmap, struct inode *inode);
->  extern int filename_lookup(int dfd, struct filename *name, unsigned flags,
->  			   struct path *path, const struct path *root);
->  int do_rmdir(int dfd, struct filename *name);
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 04a3f0e20724..b710bf0733b0 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -68,6 +68,7 @@
->  #include <trace/events/filelock.h>
->  
->  #include <linux/uaccess.h>
-> +#include "internal.h"
->  
->  static struct file_lock *file_lock(struct file_lock_core *flc)
->  {
-> @@ -2013,10 +2014,12 @@ int
->  vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
->  {
->  	struct inode *inode = file_inode(filp);
-> -	vfsuid_t vfsuid = i_uid_into_vfsuid(file_mnt_idmap(filp), inode);
->  	int error;
->  
-> -	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
-> +	error = vfs_inode_is_owned_by_me(file_mnt_idmap(filp), inode);
-> +	if (error < 0)
-> +		return error;
-> +	if (error != 0 && !capable(CAP_LEASE))
->  		return -EACCES;
->  	if (!S_ISREG(inode->i_mode))
->  		return -EINVAL;
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 7377020a2cba..7dbcb5d50339 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -53,8 +53,8 @@
->   * The new code replaces the old recursive symlink resolution with
->   * an iterative one (in case of non-nested symlink chains).  It does
->   * this with calls to <fs>_follow_link().
-> - * As a side effect, dir_namei(), _namei() and follow_link() are now 
-> - * replaced with a single function lookup_dentry() that can handle all 
-> + * As a side effect, dir_namei(), _namei() and follow_link() are now
-> + * replaced with a single function lookup_dentry() that can handle all
->   * the special cases of the former code.
->   *
->   * With the new dcache, the pathname is stored at each inode, at least as
-> @@ -1149,6 +1149,72 @@ fs_initcall(init_fs_namei_sysctls);
->  
->  #endif /* CONFIG_SYSCTL */
->  
-> +/*
-> + * Determine if an inode is owned by the process (allowing for fsuid override),
-> + * returning 0 if so, 1 if not and a negative error code if there was a problem
-> + * making the determination.
-> + */
-> +int vfs_inode_is_owned_by_me(struct mnt_idmap *idmap, struct inode *inode)
-> +{
-> +	if (unlikely(inode->i_op->is_owned_by_me))
-> +		return inode->i_op->is_owned_by_me(idmap, inode);
+On Wed, Oct 15, 2025 at 01:50:25PM +0200, Mateusz Guzik wrote:
+> can i get some flames on this?
 
-Similar to IOP_FASTPERM this should use a flag to avoid pointer derefs.
+Ok, that looks fine to me. I don't particularly enjoy that boolean but I
+think it simplifies d_instantiate_new() enough to make up for it.
 
-> +	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
-> +		return 0;
-> +	return 1; /* Not same. */
-> +}
-> +
-> +/*
-> + * Determine if an inode has the same owner as its parent, returning 0 if so, 1
-> + * if not and a negative error code if there was a problem making the
-> + * determination.
-> + */
-> +static int vfs_inode_and_dir_have_same_owner(struct mnt_idmap *idmap, struct inode *inode,
-> +					     const struct nameidata *nd)
-> +{
-> +	if (unlikely(inode->i_op->have_same_owner)) {
-
-Same, as above: similar to IOP_FASTPERM this should use a flag to avoid pointer derefs.
-
-Really, we should very properly bias this towards the common case where
-the filesystem will not have a custom ownership comparison callback at all.
-
-> +		struct dentry *parent;
-> +		struct inode *dir;
-> +		int ret;
-> +
-> +		if (inode != nd->inode) {
-> +			dir = nd->inode;
-> +			ret = inode->i_op->have_same_owner(idmap, inode, dir);
-> +		} else if (nd->flags & LOOKUP_RCU) {
-> +			parent = READ_ONCE(nd->path.dentry);
-> +			dir = READ_ONCE(parent->d_inode);
-> +			if (!dir)
-> +				return -ECHILD;
-> +			ret = inode->i_op->have_same_owner(idmap, inode, dir);
-> +		} else {
-> +			parent = dget_parent(nd->path.dentry);
-> +			dir = parent->d_inode;
-> +			ret = inode->i_op->have_same_owner(idmap, inode, dir);
-> +			dput(parent);
-> +		}
-> +		return ret;
-> +	}
-
-This about as ugly as it can get and costly...
-
-> +
-> +	if (vfsuid_valid(nd->dir_vfsuid) &&
-> +	    vfsuid_eq(i_uid_into_vfsuid(idmap, inode), nd->dir_vfsuid))
-> +		return 0;
-> +	return 1; /* Not same. */
-
-Why is this returning 1? This will cause may_follow_link() to return 1
-and that will bubble up as an error code? So shouldn't this return a
-negative error code instead?
-
-> +}
-> +
-> +/*
-> + * Determine if two inodes have the same owner, returning 0 if so, 1 if not and
-> + * a negative error code if there was a problem making the determination.
-> + */
-> +static int vfs_inodes_have_same_owner(struct mnt_idmap *idmap, struct inode *inode,
-> +				      struct inode *dir)
-> +{
-> +	if (unlikely(inode->i_op->have_same_owner))
-> +		return inode->i_op->have_same_owner(idmap, inode, dir);
-> +	if (vfsuid_eq(i_uid_into_vfsuid(idmap, inode),
-> +		      i_uid_into_vfsuid(idmap, dir)))
-> +		return 0;
-> +	return 1; /* Not same. */
-> +}
-> +
->  /**
->   * may_follow_link - Check symlink following for unsafe situations
->   * @nd: nameidata pathwalk data
-> @@ -1165,27 +1231,28 @@ fs_initcall(init_fs_namei_sysctls);
->   *
->   * Returns 0 if following the symlink is allowed, -ve on error.
->   */
-> -static inline int may_follow_link(struct nameidata *nd, const struct inode *inode)
-> +static inline int may_follow_link(struct nameidata *nd, struct inode *inode)
->  {
->  	struct mnt_idmap *idmap;
-> -	vfsuid_t vfsuid;
-> +	int ret;
->  
->  	if (!sysctl_protected_symlinks)
->  		return 0;
->  
-> -	idmap = mnt_idmap(nd->path.mnt);
-> -	vfsuid = i_uid_into_vfsuid(idmap, inode);
-> -	/* Allowed if owner and follower match. */
-> -	if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
-> -		return 0;
-> -
->  	/* Allowed if parent directory not sticky and world-writable. */
->  	if ((nd->dir_mode & (S_ISVTX|S_IWOTH)) != (S_ISVTX|S_IWOTH))
->  		return 0;
->  
-> +	idmap = mnt_idmap(nd->path.mnt);
-> +	/* Allowed if owner and follower match. */
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret <= 0)
-> +		return ret;
-> +
->  	/* Allowed if parent directory and link owner match. */
-> -	if (vfsuid_valid(nd->dir_vfsuid) && vfsuid_eq(nd->dir_vfsuid, vfsuid))
-> -		return 0;
-> +	ret = vfs_inode_and_dir_have_same_owner(idmap, inode, nd);
-> +	if (ret <= 0)
-> +		return ret;
-
-Ok, so while that doesn't exactly surface the error it's still weird.
-Please make that consistent. Either have those two new helper functions
-return negative error codes and zero on success or have it be a proper
-boolean instead so there's no possible confusion. This is just begging
-for someone to do if (ret) return ret and bubble up that positive return
-value.
-
->  
->  	if (nd->flags & LOOKUP_RCU)
->  		return -ECHILD;
-> @@ -1283,12 +1350,12 @@ int may_linkat(struct mnt_idmap *idmap, const struct path *link)
->   * @inode: the inode of the file to open
->   *
->   * Block an O_CREAT open of a FIFO (or a regular file) when:
-> - *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled
-> - *   - the file already exists
-> - *   - we are in a sticky directory
-> - *   - we don't own the file
-> + *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled,
-> + *   - the file already exists,
-> + *   - we are in a sticky directory,
-> + *   - the directory is world writable,
-> + *   - we don't own the file and
->   *   - the owner of the directory doesn't own the file
-> - *   - the directory is world writable
->   * If the sysctl_protected_fifos (or sysctl_protected_regular) is set to 2
->   * the directory doesn't have to be world writable: being group writable will
->   * be enough.
-> @@ -1299,13 +1366,45 @@ int may_linkat(struct mnt_idmap *idmap, const struct path *link)
->   * On non-idmapped mounts or if permission checking is to be performed on the
->   * raw inode simply pass @nop_mnt_idmap.
->   *
-> + * For a filesystem (e.g. a network filesystem) that has a separate ID space
-> + * and has foreign IDs (maybe even non-integer IDs), i_uid cannot be compared
-> + * to current_fsuid() and may not be directly comparable to another i_uid.
-> + * Instead, the filesystem is asked to perform the comparisons.  With network
-> + * filesystems, there also exists the possibility of doing anonymous
-> + * operations and having anonymously-owned objects.
-> + *
-> + * We have the following scenarios:
-> + *
-> + *	USER	DIR	FILE	FILE	ALLOWED
-> + *		OWNER	OWNER	STATE
-> + *	=======	=======	=======	=======	=======
-> + *	A	A	-	New	Yes
-> + *	A	A	A	Exists	Yes
-> + *	A	A	C	Exists	No
-> + *	A	B	-	New	Yes
-> + *	A	B	A	Exists	Yes, FO==U
-> + *	A	B	B	Exists	Yes, FO==DO
-> + *	A	B	C	Exists	No
-> + *	A	anon[1]	-	New	Yes
-> + *	A	anon[1]	A	Exists	Yes
-> + *	A	anon[1]	C	Exists	No
-> + *	anon	A	-	New	Yes
-> + *	anon	A	A	Exists	Yes, FO==DO
-> + *	anon	anon[1]	-	New	Yes
-> + *	anon	anon[1]	-	Exists	No
-> + *	anon	A	A	Exists	Yes, FO==DO
-> + *	anon	A	C	Exists	No
-> + *	anon	A	anon	Exists	No
-> + *
-> + * [1] Can anonymously-owned dirs be sticky?
-> + *
->   * Returns 0 if the open is allowed, -ve on error.
->   */
->  static int may_create_in_sticky(struct mnt_idmap *idmap, struct nameidata *nd,
-> -				struct inode *const inode)
-> +				struct inode *inode)
->  {
->  	umode_t dir_mode = nd->dir_mode;
-> -	vfsuid_t dir_vfsuid = nd->dir_vfsuid, i_vfsuid;
-> +	int ret;
->  
->  	if (likely(!(dir_mode & S_ISVTX)))
->  		return 0;
-> @@ -1316,13 +1415,13 @@ static int may_create_in_sticky(struct mnt_idmap *idmap, struct nameidata *nd,
->  	if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
->  		return 0;
->  
-> -	i_vfsuid = i_uid_into_vfsuid(idmap, inode);
-> -
-> -	if (vfsuid_eq(i_vfsuid, dir_vfsuid))
-> -		return 0;
-> +	ret = vfs_inode_and_dir_have_same_owner(idmap, inode, nd);
-> +	if (ret <= 0)
-> +		return ret;
->  
-> -	if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
-> -		return 0;
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret <= 0)
-> +		return ret;
->  
->  	if (likely(dir_mode & 0002)) {
->  		audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
-> @@ -3222,12 +3321,14 @@ EXPORT_SYMBOL(user_path_at);
->  int __check_sticky(struct mnt_idmap *idmap, struct inode *dir,
->  		   struct inode *inode)
->  {
-> -	kuid_t fsuid = current_fsuid();
-> +	int ret;
->  
-> -	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), fsuid))
-> -		return 0;
-> -	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, dir), fsuid))
-> -		return 0;
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret <= 0)
-> +		return ret;
-> +	ret = vfs_inodes_have_same_owner(idmap, inode, dir);
-> +	if (ret <= 0)
-> +		return ret;
->  	return !capable_wrt_inode_uidgid(idmap, inode, CAP_FOWNER);
->  }
->  EXPORT_SYMBOL(__check_sticky);
-> diff --git a/fs/remap_range.c b/fs/remap_range.c
-> index 26afbbbfb10c..9eee93c27001 100644
-> --- a/fs/remap_range.c
-> +++ b/fs/remap_range.c
-> @@ -413,20 +413,22 @@ loff_t vfs_clone_file_range(struct file *file_in, loff_t pos_in,
->  EXPORT_SYMBOL(vfs_clone_file_range);
->  
->  /* Check whether we are allowed to dedupe the destination file */
-> -static bool may_dedupe_file(struct file *file)
-> +static int may_dedupe_file(struct file *file)
->  {
->  	struct mnt_idmap *idmap = file_mnt_idmap(file);
->  	struct inode *inode = file_inode(file);
-> +	int ret;
->  
->  	if (capable(CAP_SYS_ADMIN))
-> -		return true;
-> +		return 0;
->  	if (file->f_mode & FMODE_WRITE)
-> -		return true;
-> -	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
-> -		return true;
-> +		return 0;
-> +	ret = vfs_inode_is_owned_by_me(idmap, inode);
-> +	if (ret <= 0)
-> +		return ret;
->  	if (!inode_permission(idmap, inode, MAY_WRITE))
-> -		return true;
-> -	return false;
-> +		return 0;
-> +	return -EPERM;
->  }
->  
->  loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
-> @@ -459,8 +461,8 @@ loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
->  	if (ret)
->  		return ret;
->  
-> -	ret = -EPERM;
-> -	if (!may_dedupe_file(dst_file))
-> +	ret = may_dedupe_file(dst_file);
-> +	if (ret < 0)
->  		goto out_drop_write;
->  
->  	ret = -EXDEV;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c895146c1444..f59a7456852f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2104,8 +2104,7 @@ static inline bool sb_start_intwrite_trylock(struct super_block *sb)
->  	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
->  }
->  
-> -bool inode_owner_or_capable(struct mnt_idmap *idmap,
-> -			    const struct inode *inode);
-> +bool inode_owner_or_capable(struct mnt_idmap *idmap, struct inode *inode);
->  
->  /*
->   * VFS helper functions..
-> @@ -2376,6 +2375,9 @@ struct inode_operations {
->  			    struct dentry *dentry, struct file_kattr *fa);
->  	int (*fileattr_get)(struct dentry *dentry, struct file_kattr *fa);
->  	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
-> +	int (*is_owned_by_me)(struct mnt_idmap *idmap, struct inode *inode);
-> +	int (*have_same_owner)(struct mnt_idmap *idmap, struct inode *inode1,
-> +			       struct inode *inode2);
->  } ____cacheline_aligned;
->  
->  /* Did the driver provide valid mmap hook configuration? */
 > 
+> On Sat, Oct 11, 2025 at 12:17 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > In the inode hash code grab the state while ->i_lock is held. If found
+> > to be set, synchronize the sleep once more with the lock held.
+> >
+> > In the real world the flag is not set most of the time.
+> >
+> > Apart from being simpler to reason about, it comes with a minor speed up
+> > as now clearing the flag does not require the smp_mb() fence.
+> >
+> > While here rename wait_on_inode() to wait_on_new_inode() to line it up
+> > with __wait_on_freeing_inode().
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > This temporarily duplicated sleep code from inode_wait_for_lru_isolating().
+> > This is going to get dedupped later.
+> >
+> > There is high repetition of:
+> >         if (unlikely(isnew)) {
+> >                 wait_on_new_inode(old);
+> >                 if (unlikely(inode_unhashed(old))) {
+> >                         iput(old);
+> >                         goto again;
+> >                 }
+> >
+> > I expect this is going to go away after I post a patch to sanitize the
+> > current APIs for the hash.
+> >
+> >
+> >  fs/afs/dir.c       |   4 +-
+> >  fs/dcache.c        |  10 ----
+> >  fs/gfs2/glock.c    |   2 +-
+> >  fs/inode.c         | 146 +++++++++++++++++++++++++++------------------
+> >  include/linux/fs.h |  12 +---
+> >  5 files changed, 93 insertions(+), 81 deletions(-)
+> >
+> > diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+> > index 89d36e3e5c79..f4e9e12373ac 100644
+> > --- a/fs/afs/dir.c
+> > +++ b/fs/afs/dir.c
+> > @@ -779,7 +779,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry)
+> >         struct afs_vnode *dvnode = AFS_FS_I(dir), *vnode;
+> >         struct inode *inode = NULL, *ti;
+> >         afs_dataversion_t data_version = READ_ONCE(dvnode->status.data_version);
+> > -       bool supports_ibulk;
+> > +       bool supports_ibulk, isnew;
+> >         long ret;
+> >         int i;
+> >
+> > @@ -850,7 +850,7 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry)
+> >                          * callback counters.
+> >                          */
+> >                         ti = ilookup5_nowait(dir->i_sb, vp->fid.vnode,
+> > -                                            afs_ilookup5_test_by_fid, &vp->fid);
+> > +                                            afs_ilookup5_test_by_fid, &vp->fid, &isnew);
+> >                         if (!IS_ERR_OR_NULL(ti)) {
+> >                                 vnode = AFS_FS_I(ti);
+> >                                 vp->dv_before = vnode->status.data_version;
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index 78ffa7b7e824..25131f105a60 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -1981,17 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+> >         spin_lock(&inode->i_lock);
+> >         __d_instantiate(entry, inode);
+> >         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with smp_rmb in wait_on_inode().
+> > -        */
+> > -       smp_wmb();
+> >         inode_state_clear(inode, I_NEW | I_CREATING);
+> > -       /*
+> > -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > -        * ___wait_var_event() either sees the bit cleared or
+> > -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> > -        */
+> > -       smp_mb();
+> >         inode_wake_up_bit(inode, __I_NEW);
+> >         spin_unlock(&inode->i_lock);
+> >  }
+> > diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+> > index b677c0e6b9ab..c9712235e7a0 100644
+> > --- a/fs/gfs2/glock.c
+> > +++ b/fs/gfs2/glock.c
+> > @@ -957,7 +957,7 @@ static struct gfs2_inode *gfs2_grab_existing_inode(struct gfs2_glock *gl)
+> >                 ip = NULL;
+> >         spin_unlock(&gl->gl_lockref.lock);
+> >         if (ip) {
+> > -               wait_on_inode(&ip->i_inode);
+> > +               wait_on_new_inode(&ip->i_inode);
+> >                 if (is_bad_inode(&ip->i_inode)) {
+> >                         iput(&ip->i_inode);
+> >                         ip = NULL;
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 3153d725859c..1396f79b2551 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -558,6 +558,32 @@ struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
+> >  }
+> >  EXPORT_SYMBOL(inode_bit_waitqueue);
+> >
+> > +void wait_on_new_inode(struct inode *inode)
+> > +{
+> > +       struct wait_bit_queue_entry wqe;
+> > +       struct wait_queue_head *wq_head;
+> > +
+> > +       spin_lock(&inode->i_lock);
+> > +       if (!(inode_state_read(inode) & I_NEW)) {
+> > +               spin_unlock(&inode->i_lock);
+> > +               return;
+> > +       }
+> > +
+> > +       wq_head = inode_bit_waitqueue(&wqe, inode, __I_NEW);
+> > +       for (;;) {
+> > +               prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBLE);
+> > +               if (!(inode_state_read(inode) & I_NEW))
+> > +                       break;
+> > +               spin_unlock(&inode->i_lock);
+> > +               schedule();
+> > +               spin_lock(&inode->i_lock);
+> > +       }
+> > +       finish_wait(wq_head, &wqe.wq_entry);
+> > +       WARN_ON(inode_state_read(inode) & I_NEW);
+> > +       spin_unlock(&inode->i_lock);
+> > +}
+> > +EXPORT_SYMBOL(wait_on_new_inode);
+> > +
+> >  /*
+> >   * Add inode to LRU if needed (inode is unused and clean).
+> >   *
+> > @@ -1008,7 +1034,8 @@ static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_lock
+> >  static struct inode *find_inode(struct super_block *sb,
+> >                                 struct hlist_head *head,
+> >                                 int (*test)(struct inode *, void *),
+> > -                               void *data, bool is_inode_hash_locked)
+> > +                               void *data, bool is_inode_hash_locked,
+> > +                               bool *isnew)
+> >  {
+> >         struct inode *inode = NULL;
+> >
+> > @@ -1035,6 +1062,7 @@ static struct inode *find_inode(struct super_block *sb,
+> >                         return ERR_PTR(-ESTALE);
+> >                 }
+> >                 __iget(inode);
+> > +               *isnew = !!(inode_state_read(inode) & I_NEW);
+> >                 spin_unlock(&inode->i_lock);
+> >                 rcu_read_unlock();
+> >                 return inode;
+> > @@ -1049,7 +1077,7 @@ static struct inode *find_inode(struct super_block *sb,
+> >   */
+> >  static struct inode *find_inode_fast(struct super_block *sb,
+> >                                 struct hlist_head *head, unsigned long ino,
+> > -                               bool is_inode_hash_locked)
+> > +                               bool is_inode_hash_locked, bool *isnew)
+> >  {
+> >         struct inode *inode = NULL;
+> >
+> > @@ -1076,6 +1104,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
+> >                         return ERR_PTR(-ESTALE);
+> >                 }
+> >                 __iget(inode);
+> > +               *isnew = !!(inode_state_read(inode) & I_NEW);
+> >                 spin_unlock(&inode->i_lock);
+> >                 rcu_read_unlock();
+> >                 return inode;
+> > @@ -1181,17 +1210,7 @@ void unlock_new_inode(struct inode *inode)
+> >         lockdep_annotate_inode_mutex_key(inode);
+> >         spin_lock(&inode->i_lock);
+> >         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with smp_rmb in wait_on_inode().
+> > -        */
+> > -       smp_wmb();
+> >         inode_state_clear(inode, I_NEW | I_CREATING);
+> > -       /*
+> > -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > -        * ___wait_var_event() either sees the bit cleared or
+> > -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> > -        */
+> > -       smp_mb();
+
+You're getting rid of smp_mb() because you're rechecking the flag under
+i_lock after you called prepare_to_wait_event() in wait_on_new_inode()?
+
+> >         inode_wake_up_bit(inode, __I_NEW);
+> >         spin_unlock(&inode->i_lock);
+> >  }
+> > @@ -1202,17 +1221,7 @@ void discard_new_inode(struct inode *inode)
+> >         lockdep_annotate_inode_mutex_key(inode);
+> >         spin_lock(&inode->i_lock);
+> >         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with smp_rmb in wait_on_inode().
+> > -        */
+> > -       smp_wmb();
+> >         inode_state_clear(inode, I_NEW);
+> > -       /*
+> > -        * Pairs with the barrier in prepare_to_wait_event() to make sure
+> > -        * ___wait_var_event() either sees the bit cleared or
+> > -        * waitqueue_active() check in wake_up_var() sees the waiter.
+> > -        */
+> > -       smp_mb();
+> >         inode_wake_up_bit(inode, __I_NEW);
+> >         spin_unlock(&inode->i_lock);
+> >         iput(inode);
+> > @@ -1286,12 +1295,13 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+> >         struct inode *old;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> >         spin_lock(&inode_hash_lock);
+> > -       old = find_inode(inode->i_sb, head, test, data, true);
+> > +       old = find_inode(inode->i_sb, head, test, data, true, &isnew);
+> >         if (unlikely(old)) {
+> >                 /*
+> >                  * Uhhuh, somebody else created the same inode under us.
+> > @@ -1300,10 +1310,12 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+> >                 spin_unlock(&inode_hash_lock);
+> >                 if (IS_ERR(old))
+> >                         return NULL;
+> > -               wait_on_inode(old);
+> > -               if (unlikely(inode_unhashed(old))) {
+> > -                       iput(old);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(old);
+> > +                       if (unlikely(inode_unhashed(old))) {
+> > +                               iput(old);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >                 return old;
+> >         }
+> > @@ -1391,18 +1403,21 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+> >         struct inode *inode, *new;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = find_inode(sb, head, test, data, false);
+> > +       inode = find_inode(sb, head, test, data, false, &isnew);
+> >         if (inode) {
+> >                 if (IS_ERR(inode))
+> >                         return NULL;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >                 return inode;
+> >         }
+> > @@ -1434,18 +1449,21 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> >         struct inode *inode;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = find_inode_fast(sb, head, ino, false);
+> > +       inode = find_inode_fast(sb, head, ino, false, &isnew);
+> >         if (inode) {
+> >                 if (IS_ERR(inode))
+> >                         return NULL;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >                 return inode;
+> >         }
+> > @@ -1456,7 +1474,7 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+> >
+> >                 spin_lock(&inode_hash_lock);
+> >                 /* We released the lock, so.. */
+> > -               old = find_inode_fast(sb, head, ino, true);
+> > +               old = find_inode_fast(sb, head, ino, true, &isnew);
+> >                 if (!old) {
+> >                         inode->i_ino = ino;
+> >                         spin_lock(&inode->i_lock);
+> > @@ -1482,10 +1500,12 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+> >                 if (IS_ERR(old))
+> >                         return NULL;
+> >                 inode = old;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >         }
+> >         return inode;
+> > @@ -1586,13 +1606,13 @@ EXPORT_SYMBOL(igrab);
+> >   * Note2: @test is called with the inode_hash_lock held, so can't sleep.
+> >   */
+> >  struct inode *ilookup5_nowait(struct super_block *sb, unsigned long hashval,
+> > -               int (*test)(struct inode *, void *), void *data)
+> > +               int (*test)(struct inode *, void *), void *data, bool *isnew)
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+> >         struct inode *inode;
+> >
+> >         spin_lock(&inode_hash_lock);
+> > -       inode = find_inode(sb, head, test, data, true);
+> > +       inode = find_inode(sb, head, test, data, true, isnew);
+> >         spin_unlock(&inode_hash_lock);
+> >
+> >         return IS_ERR(inode) ? NULL : inode;
+> > @@ -1620,16 +1640,19 @@ struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+> >                 int (*test)(struct inode *, void *), void *data)
+> >  {
+> >         struct inode *inode;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = ilookup5_nowait(sb, hashval, test, data);
+> > +       inode = ilookup5_nowait(sb, hashval, test, data, &isnew);
+> >         if (inode) {
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >         }
+> >         return inode;
+> > @@ -1648,19 +1671,22 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
+> >  {
+> >         struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> >         struct inode *inode;
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> >  again:
+> > -       inode = find_inode_fast(sb, head, ino, false);
+> > +       inode = find_inode_fast(sb, head, ino, false, &isnew);
+> >
+> >         if (inode) {
+> >                 if (IS_ERR(inode))
+> >                         return NULL;
+> > -               wait_on_inode(inode);
+> > -               if (unlikely(inode_unhashed(inode))) {
+> > -                       iput(inode);
+> > -                       goto again;
+> > +               if (unlikely(isnew)) {
+> > +                       wait_on_new_inode(inode);
+> > +                       if (unlikely(inode_unhashed(inode))) {
+> > +                               iput(inode);
+> > +                               goto again;
+> > +                       }
+> >                 }
+> >         }
+> >         return inode;
+> > @@ -1800,6 +1826,7 @@ int insert_inode_locked(struct inode *inode)
+> >         struct super_block *sb = inode->i_sb;
+> >         ino_t ino = inode->i_ino;
+> >         struct hlist_head *head = inode_hashtable + hash(sb, ino);
+> > +       bool isnew;
+> >
+> >         might_sleep();
+> >
+> > @@ -1832,12 +1859,15 @@ int insert_inode_locked(struct inode *inode)
+> >                         return -EBUSY;
+> >                 }
+> >                 __iget(old);
+> > +               isnew = !!(inode_state_read(old) & I_NEW);
+> >                 spin_unlock(&old->i_lock);
+> >                 spin_unlock(&inode_hash_lock);
+> > -               wait_on_inode(old);
+> > -               if (unlikely(!inode_unhashed(old))) {
+> > -                       iput(old);
+> > -                       return -EBUSY;
+> > +               if (isnew) {
+> > +                       wait_on_new_inode(old);
+> > +                       if (unlikely(!inode_unhashed(old))) {
+> > +                               iput(old);
+> > +                               return -EBUSY;
+> > +                       }
+> >                 }
+> >                 iput(old);
+> >         }
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 21c73df3ce75..a813abdcf218 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -1030,15 +1030,7 @@ static inline void inode_fake_hash(struct inode *inode)
+> >         hlist_add_fake(&inode->i_hash);
+> >  }
+> >
+> > -static inline void wait_on_inode(struct inode *inode)
+> > -{
+> > -       wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> > -                      !(inode_state_read_once(inode) & I_NEW));
+> > -       /*
+> > -        * Pairs with routines clearing I_NEW.
+> > -        */
+> > -       smp_rmb();
+> > -}
+> > +void wait_on_new_inode(struct inode *inode);
+> >
+> >  /*
+> >   * inode->i_rwsem nesting subclasses for the lock validator:
+> > @@ -3417,7 +3409,7 @@ extern void d_mark_dontcache(struct inode *inode);
+> >
+> >  extern struct inode *ilookup5_nowait(struct super_block *sb,
+> >                 unsigned long hashval, int (*test)(struct inode *, void *),
+> > -               void *data);
+> > +               void *data, bool *isnew);
+> >  extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+> >                 int (*test)(struct inode *, void *), void *data);
+> >  extern struct inode *ilookup(struct super_block *sb, unsigned long ino);
+> > --
+> > 2.34.1
+> >
 
