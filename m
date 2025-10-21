@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-64818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8404DBF4E74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:18:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF07BF4E59
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479884FFBEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 07:11:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E39B350246E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 07:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A628C27FB28;
-	Tue, 21 Oct 2025 07:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2547279798;
+	Tue, 21 Oct 2025 07:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="lCH5OWQK"
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="rQJv4+T5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
+Received: from fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.156.205.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E80D27F005;
-	Tue, 21 Oct 2025 07:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49F7227E83;
+	Tue, 21 Oct 2025 07:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.156.205.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030644; cv=none; b=rhjr8SfJQ4LIMS6sB36jGrRtloqZhrH4tbTnsPuioZZ5Qu/vFRXKaoZTyMEpnqw0JHrskpJR/n8nnEVAYeuRTAQyUQXU4rkcZMnzM3/jAoCXAPcjYnfw9i9hrjl1TuCz7IK5q2ZUk6PlhkT3rRI7UJ3y4umE5t3d0IByij6TD6g=
+	t=1761030675; cv=none; b=HZrfidmMLCRUmV/EYjfcS8Nsx6ueg3XOT/UIm0eWnXyA2SA91gPxuNJhzaTEtyUentPgWqgcLBJtTi1ifEBcd2UHhEH6j6XeBKTIpNPO1d422lzj8m6sgyCp2MJjdSLOBU1V+wr7fbWVrirbxz5qjkvgzQczWXUE00ezoPZP7Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030644; c=relaxed/simple;
-	bh=+tk/FutCRm8YcGzprGsostpgdVHh9u+7caB92/41LIQ=;
+	s=arc-20240116; t=1761030675; c=relaxed/simple;
+	bh=NedYjdt3harctfQHy2LxknH3Up6TsR4kfMruhCy+Qhw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BbKXTHO0gifUFUOzOG9+PPXOpYKn4PKaGWl2y1g2j9cmgea/1XSmrH1wUF9UJu7YG2o4vPsVU73wfqvDBrlsrZunHiIAL0+urmEBo4u6IUnwbaJryrdw8a72EyIzOSLqkFv067JSdG9UwmbKSBxduHC5nvYAu9KmFRR4xw00lPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=lCH5OWQK; arc=none smtp.client-ip=52.28.197.132
+	 MIME-Version:Content-Type; b=DWFvMEsuOYxk+wrJPIIuZSvsuRrQ3377iu7MJFqu6BG2sVw1ZkgjFL8PEaVG2OVqVtHvROtKSp8Zfdjq2XuPUz3yWw3f4Dh8UZjB1DHlLF7YqT4eMlFSmgb7YbsocLVN2A/O4yx9OustFix84A6IPAJD7CgkH/ja9tU504ydDnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=rQJv4+T5; arc=none smtp.client-ip=18.156.205.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1761030642; x=1792566642;
+  t=1761030673; x=1792566673;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=HA9qae2hxkl8hOt3UHdMdc2bodJDRIauUiWzAAKxlsQ=;
-  b=lCH5OWQK7H6goS/t75kWaW21hXndHOlULq3510V9bnnh9FiPqafo//Kv
-   01ZrrhtfuOpI/0hV0vPP2432tGMw021YU1ULklT/T2yVjXprPEAWnmyum
-   J9ns06hvJRkCQBQ0vK+A+Z5dLov90fJxZNkl43gD0yMHV8WOaVgDeKFpp
-   Fi4v3Rh3QfMuW8CxqxQvDTq+pMFrv5HWV4aW+7Qzg/0YvAhMNP38sjix6
-   4aW2jEvzPZtd6J5KedxTCig8fXf/zZZadJ8pVM3+LeXAhlf+EU+H1DLgU
-   1d1nJ4EokJUZ04Gnx3vVk7FQy/L4v3COH0+jUX9n4ctZcCRciDW8tu+8t
-   Q==;
-X-CSE-ConnectionGUID: jh51iiDKQJqIacjSQTTaqQ==
-X-CSE-MsgGUID: fUMgNCHbQ2Gy7BekZqIj0g==
+  bh=EWT2gm3mr1yTWppm7hvARyuErTtEe+bWsoFO42B5tnI=;
+  b=rQJv4+T5EupMGoyFYEesF8+/V+dC8ClJggBStXH2vNXzu3URTi577vG3
+   SiuGAIMFAozfFfyM7ifbIVKlCxV+ie2eJJjhxN/f4IVwjea6nSDe0YPy1
+   +0pSr7hr9YKN9U0DAblQ7Oi8xgiColtPvs3ZCNV1ntQikpfCIpnGhsY/j
+   WhZkAhf5tKGqRR96O7Igz3DPh54S1+gz0x71JSNjT1M4Oa1YVCnWNjDel
+   wyv8nS4gny9qU7eSn0Br9GYXxLrxw8qvpPu7GS62UPF4k6RdfdLuP0QFu
+   NNC6zh5eg1sTRYNtAg+NBmI5pR7EL9EVBG+Bkl7s94zK6Yub93OkShClY
+   w==;
+X-CSE-ConnectionGUID: DKfSEOkqQQKB8ERoq7WY2A==
+X-CSE-MsgGUID: DEt+B/AnQgG5Vzyn9KIMpA==
 X-IronPort-AV: E=Sophos;i="6.19,244,1754956800"; 
-   d="scan'208";a="3831851"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:10:31 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:19308]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.38.159:2525] with esmtp (Farcaster)
- id 76ee5b86-eab3-4d96-a848-ee94f9729fd2; Tue, 21 Oct 2025 07:10:30 +0000 (UTC)
-X-Farcaster-Flow-ID: 76ee5b86-eab3-4d96-a848-ee94f9729fd2
+   d="scan'208";a="3933276"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:10:59 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:11521]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.29.7:2525] with esmtp (Farcaster)
+ id 72943488-d8d8-46a1-a014-aaf1f5c61ddd; Tue, 21 Oct 2025 07:10:59 +0000 (UTC)
+X-Farcaster-Flow-ID: 72943488-d8d8-46a1-a014-aaf1f5c61ddd
 Received: from EX19D013EUB004.ant.amazon.com (10.252.51.92) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 21 Oct 2025 07:10:29 +0000
+ Tue, 21 Oct 2025 07:10:59 +0000
 Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com
  (10.253.107.175) by EX19D013EUB004.ant.amazon.com (10.252.51.92) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 21 Oct 2025
- 07:10:18 +0000
+ 07:10:48 +0000
 From: Mahmoud Adam <mngyadam@amazon.de>
 To: <stable@vger.kernel.org>
 CC: <gregkh@linuxfoundation.org>, <nagy@khwaternagy.com>, Christoph Hellwig
-	<hch@lst.de>, Xiubo Li <xiubli@redhat.com>, Damien Le Moal
-	<dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, Theodore Ts'o
-	<tytso@mit.edu>, "Darrick J. Wong" <djwong@kernel.org>, Al Viro
+	<hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>, Miklos Szeredi
+	<mszeredi@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, Al Viro
 	<viro@zeniv.linux.org.uk>, Andreas Gruenbacher <agruenba@redhat.com>, "Anna
  Schumaker" <anna@kernel.org>, Chao Yu <chao@kernel.org>, Christian Brauner
-	<brauner@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Jaegeuk Kim
-	<jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn
-	<johannes.thumshirn@wdc.com>, Matthew Wilcox <willy@infradead.org>, "Miklos
- Szeredi" <miklos@szeredi.hu>, Miklos Szeredi <mszeredi@redhat.com>, "Trond
- Myklebust" <trond.myklebust@hammerspace.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, Andreas Dilger
-	<adilger.kernel@dilger.ca>, Christoph Hellwig <hch@infradead.org>, "Ryusuke
- Konishi" <konishi.ryusuke@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>,
+	<brauner@kernel.org>, Hannes Reinecke <hare@suse.de>, Ilya Dryomov
+	<idryomov@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, "Matthew
+ Wilcox" <willy@infradead.org>, Miklos Szeredi <miklos@szeredi.hu>, "Theodore
+ Ts'o" <tytso@mit.edu>, Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Xiubo Li <xiubli@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	"Jeff Layton" <jlayton@kernel.org>, Andreas Dilger
+	<adilger.kernel@dilger.ca>, Christoph Hellwig <hch@infradead.org>, Ryusuke
+ Konishi <konishi.ryusuke@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>,
 	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<ceph-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
 	<linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
 	<linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: [PATCH 6.1 3/8] filemap: update ki_pos in generic_perform_write
-Date: Tue, 21 Oct 2025 09:03:38 +0200
-Message-ID: <20251021070353.96705-5-mngyadam@amazon.de>
+Subject: [PATCH 6.1 4/8] fs: factor out a direct_write_fallback helper
+Date: Tue, 21 Oct 2025 09:03:39 +0200
+Message-ID: <20251021070353.96705-6-mngyadam@amazon.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251021070353.96705-2-mngyadam@amazon.de>
 References: <20251021070353.96705-2-mngyadam@amazon.de>
@@ -96,138 +96,201 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
+X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
  EX19D013EUB004.ant.amazon.com (10.252.51.92)
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 
 From: Christoph Hellwig <hch@lst.de>
 
-commit 182c25e9c157f37bd0ab5a82fe2417e2223df459 upstream.
+commit 44fff0fa08ec5a6d9d5fb05443a36d854d0ece4d upstream.
 
-All callers of generic_perform_write need to updated ki_pos, move it into
-common code.
+Add a helper dealing with handling the syncing of a buffered write
+fallback for direct I/O.
 
-Link: https://lkml.kernel.org/r/20230601145904.1385409-4-hch@lst.de
+Link: https://lkml.kernel.org/r/20230601145904.1385409-10-hch@lst.de
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
-Acked-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Andreas Gruenbacher <agruenba@redhat.com>
 Cc: Anna Schumaker <anna@kernel.org>
 Cc: Chao Yu <chao@kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>
+Cc: Hannes Reinecke <hare@suse.de>
 Cc: Ilya Dryomov <idryomov@gmail.com>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
 Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+[backing_dev_info still being used here. do small changes to the patch
+to keep the out label. Which means replacing all returns to goto out.]
 Signed-off-by: Mahmoud Adam <mngyadam@amazon.de>
 ---
- fs/ceph/file.c | 2 --
- fs/ext4/file.c | 9 +++------
- fs/f2fs/file.c | 1 -
- fs/nfs/file.c  | 1 -
- mm/filemap.c   | 8 ++++----
- 5 files changed, 7 insertions(+), 14 deletions(-)
+ fs/libfs.c         | 41 +++++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ mm/filemap.c       | 61 +++++++++++-----------------------------------
+ 3 files changed, 57 insertions(+), 47 deletions(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 3336647e64df3a..5921bf278fff72 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1891,8 +1891,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		 * can not run at the same time
- 		 */
- 		written = generic_perform_write(iocb, from);
--		if (likely(written >= 0))
--			iocb->ki_pos = pos + written;
- 		ceph_end_io_write(inode);
- 	}
- 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 289b088f4ae58f..e84a144f3f8ed5 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -287,12 +287,9 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
- 
- out:
- 	inode_unlock(inode);
--	if (likely(ret > 0)) {
--		iocb->ki_pos += ret;
--		ret = generic_write_sync(iocb, ret);
--	}
--
--	return ret;
-+	if (unlikely(ret <= 0))
-+		return ret;
-+	return generic_write_sync(iocb, ret);
+diff --git a/fs/libfs.c b/fs/libfs.c
+index cbd42d76fbd018..a5bbe8e31d6616 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1582,3 +1582,44 @@ bool inode_maybe_inc_iversion(struct inode *inode, bool force)
+ 	return true;
  }
+ EXPORT_SYMBOL(inode_maybe_inc_iversion);
++
++ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
++		ssize_t direct_written, ssize_t buffered_written)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++	loff_t pos = iocb->ki_pos - buffered_written;
++	loff_t end = iocb->ki_pos - 1;
++	int err;
++
++	/*
++	 * If the buffered write fallback returned an error, we want to return
++	 * the number of bytes which were written by direct I/O, or the error
++	 * code if that was zero.
++	 *
++	 * Note that this differs from normal direct-io semantics, which will
++	 * return -EFOO even if some bytes were written.
++	 */
++	if (unlikely(buffered_written < 0)) {
++		if (direct_written)
++			return direct_written;
++		return buffered_written;
++	}
++
++	/*
++	 * We need to ensure that the page cache pages are written to disk and
++	 * invalidated to preserve the expected O_DIRECT semantics.
++	 */
++	err = filemap_write_and_wait_range(mapping, pos, end);
++	if (err < 0) {
++		/*
++		 * We don't know how much we wrote, so just return the number of
++		 * bytes which were direct-written
++		 */
++		if (direct_written)
++			return direct_written;
++		return err;
++	}
++	invalidate_mapping_pages(mapping, pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
++	return direct_written + buffered_written;
++}
++EXPORT_SYMBOL_GPL(direct_write_fallback);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4e8a3e4f894c0f..02c83cd07d4f20 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3278,6 +3278,8 @@ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
+ ssize_t generic_perform_write(struct kiocb *, struct iov_iter *);
++ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
++		ssize_t direct_written, ssize_t buffered_written);
  
- static ssize_t ext4_handle_inode_extension(struct inode *inode, loff_t offset,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5e2a0cb8d24d92..09b85d086d16a6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4661,7 +4661,6 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
- 	current->backing_dev_info = NULL;
- 
- 	if (ret > 0) {
--		iocb->ki_pos += ret;
- 		f2fs_update_iostat(F2FS_I_SB(inode), inode,
- 						APP_BUFFERED_IO, ret);
- 	}
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index d8ec889a4b3f76..c1be636ef25729 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -645,7 +645,6 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
- 
- 	written = result;
--	iocb->ki_pos += written;
- 	nfs_add_stats(inode, NFSIOS_NORMALWRITTENBYTES, written);
- 
- 	if (mntflags & NFS_MOUNT_WRITE_EAGER) {
+ ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
+ 		rwf_t flags);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 39484af4300e3c..e2045266d2f2c9 100644
+index e2045266d2f2c9..b77f534dfad35a 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -3891,7 +3891,10 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
- 		balance_dirty_pages_ratelimited(mapping);
- 	} while (iov_iter_count(i));
+@@ -3923,25 +3923,21 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct address_space *mapping = file->f_mapping;
+-	struct inode 	*inode = mapping->host;
+-	ssize_t		written = 0;
+-	ssize_t		err;
+-	ssize_t		status;
++	struct inode *inode = mapping->host;
++	ssize_t ret;
  
--	return written ? written : status;
-+	if (!written)
-+		return status;
-+	iocb->ki_pos += written;
-+	return written;
- }
- EXPORT_SYMBOL(generic_perform_write);
+ 	/* We can write back this queue in page reclaim */
+ 	current->backing_dev_info = inode_to_bdi(inode);
+-	err = file_remove_privs(file);
+-	if (err)
++	ret = file_remove_privs(file);
++	if (ret)
+ 		goto out;
  
-@@ -3970,7 +3973,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		endbyte = pos + status - 1;
- 		err = filemap_write_and_wait_range(mapping, pos, endbyte);
- 		if (err == 0) {
--			iocb->ki_pos = endbyte + 1;
- 			written += status;
- 			invalidate_mapping_pages(mapping,
- 						 pos >> PAGE_SHIFT,
-@@ -3983,8 +3985,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		}
- 	} else {
- 		written = generic_perform_write(iocb, from);
--		if (likely(written > 0))
--			iocb->ki_pos += written;
+-	err = file_update_time(file);
+-	if (err)
++	ret = file_update_time(file);
++	if (ret)
+ 		goto out;
+ 
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+-		loff_t pos, endbyte;
+-
+-		written = generic_file_direct_write(iocb, from);
++		ret = generic_file_direct_write(iocb, from);
+ 		/*
+ 		 * If the write stopped short of completing, fall back to
+ 		 * buffered writes.  Some filesystems do this for writes to
+@@ -3949,46 +3945,17 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		 * not succeed (even if it did, DAX does not handle dirty
+ 		 * page-cache pages correctly).
+ 		 */
+-		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
++		if (ret < 0 || !iov_iter_count(from) || IS_DAX(inode))
+ 			goto out;
+-
+-		pos = iocb->ki_pos;
+-		status = generic_perform_write(iocb, from);
+-		/*
+-		 * If generic_perform_write() returned a synchronous error
+-		 * then we want to return the number of bytes which were
+-		 * direct-written, or the error code if that was zero.  Note
+-		 * that this differs from normal direct-io semantics, which
+-		 * will return -EFOO even if some bytes were written.
+-		 */
+-		if (unlikely(status < 0)) {
+-			err = status;
+-			goto out;
+-		}
+-		/*
+-		 * We need to ensure that the page cache pages are written to
+-		 * disk and invalidated to preserve the expected O_DIRECT
+-		 * semantics.
+-		 */
+-		endbyte = pos + status - 1;
+-		err = filemap_write_and_wait_range(mapping, pos, endbyte);
+-		if (err == 0) {
+-			written += status;
+-			invalidate_mapping_pages(mapping,
+-						 pos >> PAGE_SHIFT,
+-						 endbyte >> PAGE_SHIFT);
+-		} else {
+-			/*
+-			 * We don't know how much we wrote, so just return
+-			 * the number of bytes which were direct-written
+-			 */
+-		}
+-	} else {
+-		written = generic_perform_write(iocb, from);
++		ret = direct_write_fallback(iocb, from, ret,
++				generic_perform_write(iocb, from));
++		goto out;
  	}
++
++	ret = generic_perform_write(iocb, from);
  out:
  	current->backing_dev_info = NULL;
+-	return written ? written : err;
++	return ret;
+ }
+ EXPORT_SYMBOL(__generic_file_write_iter);
+ 
 -- 
 2.47.3
 
