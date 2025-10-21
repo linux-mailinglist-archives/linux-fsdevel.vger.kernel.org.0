@@ -1,292 +1,357 @@
-Return-Path: <linux-fsdevel+bounces-64994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65208BF8ADC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 22:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F16BCBF8B85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 22:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 961A4583458
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CBD487DE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0311C27B347;
-	Tue, 21 Oct 2025 20:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F4654918;
+	Tue, 21 Oct 2025 20:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nCpaBjsh"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="XivLEcEK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545361A3029;
-	Tue, 21 Oct 2025 20:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077617; cv=none; b=vCBVx7TZF2QVdkUuA9yHc76xnSXupW3BwkAxGo8pSYQTdYDWL9b/nQOX04jnn6Wkgk6ZPMzBdRv1p4+z8z9Pg3qegLVFJZbJscz0m1a1OzHx3FsIxy+Jvzllq2ZIEaGT3E/lYFHD5QX2sczQ/ufQWHfyEcASGwLZXXuq96Ub3RI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077617; c=relaxed/simple;
-	bh=A58QovM1OEJFv9YdBORSBRgi8utrH0HWFF/Yp5SQ0gk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uSD+I23UoRtpq/nSrVA0co4UN+cHk1j/KHwheKtV7xSCsaCGrz6r19Nthar3YazqAdBQrF5kOSbr9Vex8Blzrq25Sdni2wVLt7WXDzCvvlQ7Th1TROM391T3d/MVLJT7Ay6OQ4mKFj+o9nWh8uhbuYvcRrVkySILJJ2SMC3oSZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nCpaBjsh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFABAC4CEF1;
-	Tue, 21 Oct 2025 20:13:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761077617;
-	bh=A58QovM1OEJFv9YdBORSBRgi8utrH0HWFF/Yp5SQ0gk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nCpaBjshuvOJE5AG7Nt3YEGtBBdAtD5gUIZMPysyQFFtc23cljD7SnBUUwbro96nv
-	 dSE5JQVJeuISGyVC+1TBHGt3NA7PG4hQwmIQXhCx4c+QhihseBQwQ4FS5qhNYEHAug
-	 DdH5sM9tQ5+aT6fk95NRh2lFixhucg6VgTY2wYbg=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Jiaming Zhang <r772577952@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	linux-fsdevel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: [PATCH 6.17 137/159] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
-Date: Tue, 21 Oct 2025 21:51:54 +0200
-Message-ID: <20251021195046.438136483@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251021195043.182511864@linuxfoundation.org>
-References: <20251021195043.182511864@linuxfoundation.org>
-User-Agent: quilt/0.69
-X-stable: review
-X-Patchwork-Hint: ignore
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2031D61B7;
+	Tue, 21 Oct 2025 20:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761078705; cv=fail; b=ARDZNuAOXBMprJuVyfyJwpbGhmq61afWA5sieDhis99gNxr+hu0wA50y4AsCu9ZCLqog+TBE54Tv8eRcxTG6i+Z+DCYPfDBnptYnWiKDBJWykeSlZ5LNP7Qx9AUQD0fgB83NcP4BIhUlpaJUUvGjj8emaB3AVZ+yzc5tCBTfwIM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761078705; c=relaxed/simple;
+	bh=snu0btEFYl1YGL3kcqLILGCBCXnsNCwtMMopkX8KWu0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Pz9pxvbPd7ja9Xk5EGRykcZ9Zzs9bPVnBzZGQpIofRuqpwLoHn8YRVr9hTg+HWZzm873Y5cJI1JRe3AOhjxfjW0IvYTOylQ9YD/eeqMRTx0+mX6FObd2qqwLcv9PmGv3prQ+EE0sQoEyvbXGyWjo95VaOnlDGPxCtXDm3CuGbtc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=XivLEcEK; arc=fail smtp.client-ip=209.222.82.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020110.outbound.protection.outlook.com [52.101.85.110]) by mx-outbound40-133.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 21 Oct 2025 20:31:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uXAr0NPI9NuUQldC6GuhzqFQqLDcVD5olBWigxbuavzxVfyd319bqfQm+iINyrGTg1t41mIBFGKvHh70sKzMkslEIJufTdAGLgbEf1Fz8JqfS3yXCs0VfcYS5vHVoT/m6NYTCWT1Wir1dc9kGR7EFfNrY2jhDR7r4rvUEx3Fqy6vyNIcczSkxpJM/fM9pIK0jKICUfijz+dLArWuerwjnG/M9N/6PBfAQLy7Z4hbaJtH43eE1Ci98KYBX+z1+7h1qNxaqm2VY8e+85RcCEwum8mX6QMMTkjO3T1XL4nh97ywmAAsF9Pts44rjWENO6upklhhwPcJieftGs8LVQ5nGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FFQ9d3CCt3WkoQf8aibTcLPKC6G3eAgcENZBzRV1uhQ=;
+ b=gBbNvrX9kHdG1OYki+vAnlv3l9O52rmuvv5bHDwb5GJ2EuLtY839gvm+V+c2JDmDGr3JzNIy+AKf0Xim+ma28JWXbuiVrQyolBgg/1GYpgMLBf4V+I9IwSrsGPfscZ8D/3+Z1RyxeuXlezFlqK4DYiqD1baZQ6Dw8hUkhkRbanMpwe5lt2Yit04vDa42AAGMiLloxFRoUkOmgQ6YZpnNKiKPpxRiFJB2zh+Z2ldE70jZh/75gxr9KrC2M+m68Utdj/ad0Zwk5qBDRnIsLkEqIF1G4xCyHuG0Zhm48QiCNq8frIlAUG3qLK1B0Ic4d66o664X6dUvJNOEezOlAcC79w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FFQ9d3CCt3WkoQf8aibTcLPKC6G3eAgcENZBzRV1uhQ=;
+ b=XivLEcEKsAzmQ5ha30dfO2V7KGV82Gv80X/N4gsPGIHIyQLBPIpo3DHiOcrQxpdIofuouOlUk8SUVF5K8YEzXfmCLRheEkNdvqbZHt5vJ8MfPceseFTrfj9G7UBtjXFER0ysp6jlUKeVHUCkbqvaMzQalCo67KMleR/brHAxo40=
+Received: from SA1P222CA0052.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2d0::28)
+ by DS3PR19MB9295.namprd19.prod.outlook.com (2603:10b6:8:2dc::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Tue, 21 Oct
+ 2025 20:31:27 +0000
+Received: from SA2PEPF00003AEA.namprd02.prod.outlook.com
+ (2603:10b6:806:2d0:cafe::20) by SA1P222CA0052.outlook.office365.com
+ (2603:10b6:806:2d0::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Tue,
+ 21 Oct 2025 20:31:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
+ smtp.mailfrom=ddn.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ddn.com;
+Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
+ 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
+Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
+ SA2PEPF00003AEA.mail.protection.outlook.com (10.167.248.10) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
+ via Frontend Transport; Tue, 21 Oct 2025 20:31:27 +0000
+Received: from localhost (unknown [10.68.0.8])
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id ECF024C;
+	Tue, 21 Oct 2025 20:31:26 +0000 (UTC)
+From: Bernd Schubert <bschubert@ddn.com>
+Date: Tue, 21 Oct 2025 22:31:25 +0200
+Subject: [PATCH RFC] fuse: check if system-wide io_uring is enabled
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251021-io-uring-fix-check-systemwide-io-uring-enable-v1-1-01d4b4a8ef4f@ddn.com>
+X-B4-Tracking: v=1; b=H4sIAJzt92gC/0WNSwqDQBAFryK9TsNMg4jZBnKAbIMLHZ/aJBnDd
+ L6Id3fIJsviUa8WMiSF0b5YKOGlpnPM4HcFhamNI1j7zCROSu/Es878TBpHHvTDYUK4sH3tgdt
+ be/xXxLa7ggepHaqyg0hN+fOekL1f70yn44Gadd0AZHUHR4QAAAA=
+X-Change-ID: 20251021-io-uring-fix-check-systemwide-io-uring-enable-f290e75be229
+To: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+ Pavel Begunkov <asml.silence@gmail.com>, 
+ Joanne Koong <joannelkoong@gmail.com>, Luis Henriques <luis@igalia.com>, 
+ Bernd Schubert <bschubert@ddn.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761078686; l=6127;
+ i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
+ bh=snu0btEFYl1YGL3kcqLILGCBCXnsNCwtMMopkX8KWu0=;
+ b=YLMSjkaKlbaP7lkqiCCnl5sQzA7k7k7Jw9GDjzfgTpr9mxQnXeL++TP8fV2Afp4GoNqRE6Y/+
+ IRfBAoIOprcDXljvAbyObskXa1Y4Lh/RmdjHlk3zTVVtI6+MxGJoKZR
+X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
+ pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AEA:EE_|DS3PR19MB9295:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb489727-abe3-4081-de0e-08de10e0cfaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|19092799006|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MzR2M3VyTjRnZFdXdXdvKzZHcVRNbTlSdlpIZC92N1IzeUtpZm45UUYvTlp1?=
+ =?utf-8?B?UG91eUpXc3JleHowcUhIdFphV1FlSU5icFdoVDdiYXBoSm1TZFFkeGQ3aVls?=
+ =?utf-8?B?SnY3UWJ5N3RTUWM1ZUxmVXhXcXdiZ01rVDQ1bldmdld3QVBIRXR0QUQydjFB?=
+ =?utf-8?B?bmQrdEJUdko3c2cxNU9zT2k4dDlkSlBRcUdCSmxjV1NzVmNlVDRtbE9iZ0R4?=
+ =?utf-8?B?eEdYajNJSjRxdEIrcFJ4MnQwRFc0MnMxcksvWFJwcnhvN2JBWS9Pb1Q3TWJj?=
+ =?utf-8?B?MVVPYmRYTW43eWFYb296VWlLRkllcXd6L2xIaFZZM0xyTEgzZFRrTXBSOG1r?=
+ =?utf-8?B?NCtXa0dJR2R4c2VvbjRBTGZRYjF4Ny9RdklOZjNWSFdKalg2b3FFbHlHWFpl?=
+ =?utf-8?B?bjJ6ZnA3cGFqOEsvczRoMTl2QS91cVVrMDRyaUlqUnRLUms4SWJ1U3JPYXlX?=
+ =?utf-8?B?ZlMxbGoyT1N2Q0VFaUw2NXp1QXcvTXRlaDJIMXJEbkljMDN5ZWYzUGtaSFhG?=
+ =?utf-8?B?MDdlbW1YbkExMFJwOEwwSEhMekRzc3BuQ3dlZnl1TlVnTlp2aW9HdGI4SGY2?=
+ =?utf-8?B?TmtRdmJYUGZSZFBUNm9FcExWL09YVTlqU2RYY3duUDVMTy9wSEpBbStKVmZZ?=
+ =?utf-8?B?YUYvOVc2dVBuQUdPV3JLK053ajhvZWorc05oVlphUDB1MTdpSVRUWmxDbDBV?=
+ =?utf-8?B?NFVLZWprRExWQlY3RWVKcUp5azV3NFZIWE5OanVVRjlzSFFpZE83SUY4VmV1?=
+ =?utf-8?B?VTIwb2VvaElObHZ3TEZpU1FqS1hoMUdRRUVrSFNTTTNHeFQzTkZ5clFSTE56?=
+ =?utf-8?B?TlZMMHR5ZWZjRHdFN0d3bnhTQjdBRGJSWlBYVVNpRFI0WnRQKzVMN0NORjY0?=
+ =?utf-8?B?eFQ0NzluWGYwWGpTcjNWUFdHOGhkbk5ZaTVZemdSV2R6ZTRVcFNlLzEvRmhP?=
+ =?utf-8?B?Nkhzb2d2Y3dianN5NDlKcG1VZDlMLzIyNVUzODFHS3ZTSFRjdmNWOUpFRFlG?=
+ =?utf-8?B?dm03R2MwdFFLZDZkbjYrc3lXVHlYRk5FczI0c3NsVzNyc3hNSzNUUmZvTllZ?=
+ =?utf-8?B?QS9kVjVvcnRObFNKbU5QWjBiS3NPZS9KYkoxUktjbmJNSmcwOFk0Q0poT0Zz?=
+ =?utf-8?B?UTR1MHNWZTlTTXFDZ2ZQc2QvM0I3a2VGSHoyNHNJMFJqTTViSTdQeGw5OVRZ?=
+ =?utf-8?B?Q21LdHZ0SmNSQVF5Y3ZDQ1pwZW5pVFVwMk1iREhIMnIzOVJ3QU5CdW4zWjYw?=
+ =?utf-8?B?Qk1IRkVtZlVJK2t6b29hSDhWcU1aam5HV0FvUGpLdXhaT1ZtdU9uZDh0M1pa?=
+ =?utf-8?B?MS9aRGVMYmhmeDZRMUlabVlxTEJ1M1lFWUtkbXhrRTFYV0xWU1lnRk8zeExB?=
+ =?utf-8?B?eldidDN2M1VWQk5RenVhWlRTYjh6MVpmZC94M1ppUkZJYmFldEkyM0UvRXZN?=
+ =?utf-8?B?bUczcitVaDgyNjJUUE84SWRyNWpVVUMvY0FKVVNGYjRKMGx1S1d4M2xHYWF6?=
+ =?utf-8?B?YzlkWWVYU3VHSDBGSUFrci9URGllckl1enJ0YVFrd3FzcGtuTkN1MEsyS1U4?=
+ =?utf-8?B?MklYd012ZCt4OXA3THRJeUExSkIvbnRqMXRLSVR5M3p2R1paVmFLd1Z5UWZW?=
+ =?utf-8?B?bTB2ZDNQTkdCT21GMlczL25iREV1VDFNUkxZb0JuZFJXMkdseGQyZE5VV2NP?=
+ =?utf-8?B?SUs0Rmw5RERYTXYxdjFGUFlrUnM2Zk5pK3N0U293eTJ6VFNtMm1uQ2xTSXlD?=
+ =?utf-8?B?M3ZIVkZwdVJONnhkWkpINCtEMGtZeFNZdFFyeXNKK3FpM3hDdVVIckFoVWM2?=
+ =?utf-8?B?eVlJUU5kZWo1TGRyb0VaUmFmOW50ejV2ajdWM2o2UVJucHNkcTdiM3EyK0hF?=
+ =?utf-8?B?dUhVZEdwdS9WRzFrS3dvdXQ4UXdzNzFYRWRwUkNZRkRJVVVGRGd1eGNVN2tI?=
+ =?utf-8?B?V1IwL3kvZ2tCNS93eWc2blJFWThFb1BnN0E4Uk1TUmNRZWV2VjQ2Y2JJMXN2?=
+ =?utf-8?B?NmtGRjNORTFEVnNtbzhyeUUyWFY2ckZLNnhVSmpHcGNnZHdqWk9OTGlqZFd1?=
+ =?utf-8?B?T0F6SVJjL2tIZWtpdHg5eTFTMnV4RkNJRTZnWWhTb0NrbmFZQWR2T2FtSCto?=
+ =?utf-8?Q?Z6Z4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(19092799006)(1800799024)(36860700013);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	v065Bg24rmf09iLOGXDGsD2waRov2/urIWR7XIm6k3TkrmmXLXlUTAyHBmcH/S7evCU7sTQzwUW5xLTk9C+G/O5oa63ZLjRC9cvs4vxdZGsLpIYyvtmXuCYohWPh7FLxeVcbufmgSXBgdRFRDWwclyGcIVh5Cu1uwMgFClLXqrfjaHGmb8V05tFA2SzgpJh7aRtYnvoNHSVRgn9j37KnmTmCoJTor292FbitxvyY64sjYGZZ3y3FPFNRjkY5oEB7a6iWOXK4mxD9r1McO1xGQGPoo2mfx+XIbcHVAv4gO4mKLVem+rOyajP6DYHBRII/v4yPtZqoDEP/sSh/gIQm0SXDAWCuv2CP8gAJXzsFGaheBYYwWeJmONmyWNrF/KD30Xk+lQ+ImbCfOOV14/pwO4kmMEc872Jr4ZL746/b9eOM/4BfII57fsIdt2nHIBwiviv5+pMCm5X9Hx27DwEtl7ABpWQxYyxmk9V52xxRc7vJuj5mEg8/amuG+bZ8V5/0r8stID4SplaQ4wAJMHDx54YQJ68d1Jy9G1snh3sWNVvabBtpc9E0+1ByVNrhDj7RuNG7wOfjlA4ZMr8J08s2nq0LVDDSTOx7KTWL9buzT9mKKuwsH5xU3H6HbylzTyo/4TxN+wdlM8fYff5fLQpadw==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 20:31:27.5239
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb489727-abe3-4081-de0e-08de10e0cfaf
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AEA.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS3PR19MB9295
+X-BESS-ID: 1761078689-110373-7605-24104-1
+X-BESS-VER: 2019.1_20251001.1803
+X-BESS-Apparent-Source-IP: 52.101.85.110
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVqaWpgZAVgZQ0NQkLdHSwjTRMs
+	UsJdHQMtXUwiDVMsnIOC3NIi0xLclEqTYWAFlaRitBAAAA
+X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.268376 [from 
+	cloudscan11-90.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.50 BSF_RULE7568M          META: Custom Rule 7568M 
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-6.17-stable review patch.  If anyone has any objections, please let me know.
+Add check_system_io_uring() to determine if system-wide io_uring is
+available for a FUSE mount. This is useful because FUSE io_uring
+can only be enabled if the system allows it. Main issue with
+fuse-io-uring is that the mount point hangs until queues are
+initialized. If system wide io-uring is disabled queues cannot
+be initialized and the mount will hang till forcefully umounted.
+Libfuse solves that by setting up the ring before replying
+to FUSE_INIT, but we also have to consider other implementations
+and might get easily missed in development.
 
-------------------
+When mount specifies user_id and group_id (e.g., via unprivileged
+fusermount with s-bit) not equal 0, the permission check must use
+the daemon's credentials, not the mount task's (root) credentials.
+Otherwise io_uring_allowed() incorrectly allows io_uring due to
+root's CAP_SYS_ADMIN capability.
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-
-commit 42520df65bf67189541a425f7d36b0b3e7bd7844 upstream.
-
-The hfsplus_strcasecmp() logic can trigger the issue:
-
-[  117.317703][ T9855] ==================================================================
-[  117.318353][ T9855] BUG: KASAN: slab-out-of-bounds in hfsplus_strcasecmp+0x1bc/0x490
-[  117.318991][ T9855] Read of size 2 at addr ffff88802160f40c by task repro/9855
-[  117.319577][ T9855]
-[  117.319773][ T9855] CPU: 0 UID: 0 PID: 9855 Comm: repro Not tainted 6.17.0-rc6 #33 PREEMPT(full)
-[  117.319780][ T9855] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  117.319783][ T9855] Call Trace:
-[  117.319785][ T9855]  <TASK>
-[  117.319788][ T9855]  dump_stack_lvl+0x1c1/0x2a0
-[  117.319795][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
-[  117.319803][ T9855]  ? __pfx_dump_stack_lvl+0x10/0x10
-[  117.319808][ T9855]  ? rcu_is_watching+0x15/0xb0
-[  117.319816][ T9855]  ? lock_release+0x4b/0x3e0
-[  117.319821][ T9855]  ? __kasan_check_byte+0x12/0x40
-[  117.319828][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
-[  117.319835][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
-[  117.319842][ T9855]  print_report+0x17e/0x7e0
-[  117.319848][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
-[  117.319855][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
-[  117.319862][ T9855]  ? __phys_addr+0xd3/0x180
-[  117.319869][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
-[  117.319876][ T9855]  kasan_report+0x147/0x180
-[  117.319882][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
-[  117.319891][ T9855]  hfsplus_strcasecmp+0x1bc/0x490
-[  117.319900][ T9855]  ? __pfx_hfsplus_cat_case_cmp_key+0x10/0x10
-[  117.319906][ T9855]  hfs_find_rec_by_key+0xa9/0x1e0
-[  117.319913][ T9855]  __hfsplus_brec_find+0x18e/0x470
-[  117.319920][ T9855]  ? __pfx_hfsplus_bnode_find+0x10/0x10
-[  117.319926][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
-[  117.319933][ T9855]  ? __pfx___hfsplus_brec_find+0x10/0x10
-[  117.319942][ T9855]  hfsplus_brec_find+0x28f/0x510
-[  117.319949][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
-[  117.319956][ T9855]  ? __pfx_hfsplus_brec_find+0x10/0x10
-[  117.319963][ T9855]  ? __kmalloc_noprof+0x2a9/0x510
-[  117.319969][ T9855]  ? hfsplus_find_init+0x8c/0x1d0
-[  117.319976][ T9855]  hfsplus_brec_read+0x2b/0x120
-[  117.319983][ T9855]  hfsplus_lookup+0x2aa/0x890
-[  117.319990][ T9855]  ? __pfx_hfsplus_lookup+0x10/0x10
-[  117.320003][ T9855]  ? d_alloc_parallel+0x2f0/0x15e0
-[  117.320008][ T9855]  ? __lock_acquire+0xaec/0xd80
-[  117.320013][ T9855]  ? __pfx_d_alloc_parallel+0x10/0x10
-[  117.320019][ T9855]  ? __raw_spin_lock_init+0x45/0x100
-[  117.320026][ T9855]  ? __init_waitqueue_head+0xa9/0x150
-[  117.320034][ T9855]  __lookup_slow+0x297/0x3d0
-[  117.320039][ T9855]  ? __pfx___lookup_slow+0x10/0x10
-[  117.320045][ T9855]  ? down_read+0x1ad/0x2e0
-[  117.320055][ T9855]  lookup_slow+0x53/0x70
-[  117.320065][ T9855]  walk_component+0x2f0/0x430
-[  117.320073][ T9855]  path_lookupat+0x169/0x440
-[  117.320081][ T9855]  filename_lookup+0x212/0x590
-[  117.320089][ T9855]  ? __pfx_filename_lookup+0x10/0x10
-[  117.320098][ T9855]  ? strncpy_from_user+0x150/0x290
-[  117.320105][ T9855]  ? getname_flags+0x1e5/0x540
-[  117.320112][ T9855]  user_path_at+0x3a/0x60
-[  117.320117][ T9855]  __x64_sys_umount+0xee/0x160
-[  117.320123][ T9855]  ? __pfx___x64_sys_umount+0x10/0x10
-[  117.320129][ T9855]  ? do_syscall_64+0xb7/0x3a0
-[  117.320135][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.320141][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.320145][ T9855]  do_syscall_64+0xf3/0x3a0
-[  117.320150][ T9855]  ? exc_page_fault+0x9f/0xf0
-[  117.320154][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.320158][ T9855] RIP: 0033:0x7f7dd7908b07
-[  117.320163][ T9855] Code: 23 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 08
-[  117.320167][ T9855] RSP: 002b:00007ffd5ebd9698 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-[  117.320172][ T9855] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7dd7908b07
-[  117.320176][ T9855] RDX: 0000000000000009 RSI: 0000000000000009 RDI: 00007ffd5ebd9740
-[  117.320179][ T9855] RBP: 00007ffd5ebda780 R08: 0000000000000005 R09: 00007ffd5ebd9530
-[  117.320181][ T9855] R10: 00007f7dd799bfc0 R11: 0000000000000202 R12: 000055e2008b32d0
-[  117.320184][ T9855] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[  117.320189][ T9855]  </TASK>
-[  117.320190][ T9855]
-[  117.351311][ T9855] Allocated by task 9855:
-[  117.351683][ T9855]  kasan_save_track+0x3e/0x80
-[  117.352093][ T9855]  __kasan_kmalloc+0x8d/0xa0
-[  117.352490][ T9855]  __kmalloc_noprof+0x288/0x510
-[  117.352914][ T9855]  hfsplus_find_init+0x8c/0x1d0
-[  117.353342][ T9855]  hfsplus_lookup+0x19c/0x890
-[  117.353747][ T9855]  __lookup_slow+0x297/0x3d0
-[  117.354148][ T9855]  lookup_slow+0x53/0x70
-[  117.354514][ T9855]  walk_component+0x2f0/0x430
-[  117.354921][ T9855]  path_lookupat+0x169/0x440
-[  117.355325][ T9855]  filename_lookup+0x212/0x590
-[  117.355740][ T9855]  user_path_at+0x3a/0x60
-[  117.356115][ T9855]  __x64_sys_umount+0xee/0x160
-[  117.356529][ T9855]  do_syscall_64+0xf3/0x3a0
-[  117.356920][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  117.357429][ T9855]
-[  117.357636][ T9855] The buggy address belongs to the object at ffff88802160f000
-[  117.357636][ T9855]  which belongs to the cache kmalloc-2k of size 2048
-[  117.358827][ T9855] The buggy address is located 0 bytes to the right of
-[  117.358827][ T9855]  allocated 1036-byte region [ffff88802160f000, ffff88802160f40c)
-[  117.360061][ T9855]
-[  117.360266][ T9855] The buggy address belongs to the physical page:
-[  117.360813][ T9855] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21608
-[  117.361562][ T9855] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[  117.362285][ T9855] flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-[  117.362929][ T9855] page_type: f5(slab)
-[  117.363282][ T9855] raw: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
-[  117.364015][ T9855] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  117.364750][ T9855] head: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
-[  117.365491][ T9855] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-[  117.366232][ T9855] head: 00fff00000000003 ffffea0000858201 00000000ffffffff 00000000ffffffff
-[  117.366968][ T9855] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-[  117.367711][ T9855] page dumped because: kasan: bad access detected
-[  117.368259][ T9855] page_owner tracks the page as allocated
-[  117.368745][ T9855] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN1
-[  117.370541][ T9855]  post_alloc_hook+0x240/0x2a0
-[  117.370954][ T9855]  get_page_from_freelist+0x2101/0x21e0
-[  117.371435][ T9855]  __alloc_frozen_pages_noprof+0x274/0x380
-[  117.371935][ T9855]  alloc_pages_mpol+0x241/0x4b0
-[  117.372360][ T9855]  allocate_slab+0x8d/0x380
-[  117.372752][ T9855]  ___slab_alloc+0xbe3/0x1400
-[  117.373159][ T9855]  __kmalloc_cache_noprof+0x296/0x3d0
-[  117.373621][ T9855]  nexthop_net_init+0x75/0x100
-[  117.374038][ T9855]  ops_init+0x35c/0x5c0
-[  117.374400][ T9855]  setup_net+0x10c/0x320
-[  117.374768][ T9855]  copy_net_ns+0x31b/0x4d0
-[  117.375156][ T9855]  create_new_namespaces+0x3f3/0x720
-[  117.375613][ T9855]  unshare_nsproxy_namespaces+0x11c/0x170
-[  117.376094][ T9855]  ksys_unshare+0x4ca/0x8d0
-[  117.376477][ T9855]  __x64_sys_unshare+0x38/0x50
-[  117.376879][ T9855]  do_syscall_64+0xf3/0x3a0
-[  117.377265][ T9855] page last free pid 9110 tgid 9110 stack trace:
-[  117.377795][ T9855]  __free_frozen_pages+0xbeb/0xd50
-[  117.378229][ T9855]  __put_partials+0x152/0x1a0
-[  117.378625][ T9855]  put_cpu_partial+0x17c/0x250
-[  117.379026][ T9855]  __slab_free+0x2d4/0x3c0
-[  117.379404][ T9855]  qlist_free_all+0x97/0x140
-[  117.379790][ T9855]  kasan_quarantine_reduce+0x148/0x160
-[  117.380250][ T9855]  __kasan_slab_alloc+0x22/0x80
-[  117.380662][ T9855]  __kmalloc_noprof+0x232/0x510
-[  117.381074][ T9855]  tomoyo_supervisor+0xc0a/0x1360
-[  117.381498][ T9855]  tomoyo_env_perm+0x149/0x1e0
-[  117.381903][ T9855]  tomoyo_find_next_domain+0x15ad/0x1b90
-[  117.382378][ T9855]  tomoyo_bprm_check_security+0x11c/0x180
-[  117.382859][ T9855]  security_bprm_check+0x89/0x280
-[  117.383289][ T9855]  bprm_execve+0x8f1/0x14a0
-[  117.383673][ T9855]  do_execveat_common+0x528/0x6b0
-[  117.384103][ T9855]  __x64_sys_execve+0x94/0xb0
-[  117.384500][ T9855]
-[  117.384706][ T9855] Memory state around the buggy address:
-[  117.385179][ T9855]  ffff88802160f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  117.385854][ T9855]  ffff88802160f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  117.386534][ T9855] >ffff88802160f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  117.387204][ T9855]                       ^
-[  117.387566][ T9855]  ffff88802160f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  117.388243][ T9855]  ffff88802160f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  117.388918][ T9855] ==================================================================
-
-The issue takes place if the length field of struct hfsplus_unistr
-is bigger than HFSPLUS_MAX_STRLEN. The patch simply checks
-the length of comparing strings. And if the strings' length
-is bigger than HFSPLUS_MAX_STRLEN, then it is corrected
-to this value.
-
-v2
-The string length correction has been added for hfsplus_strcmp().
-
-Reported-by: Jiaming Zhang <r772577952@gmail.com>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-cc: syzkaller@googlegroups.com
-Link: https://lore.kernel.org/r/20250919191243.1370388-1-slava@dubeyko.com
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/hfsplus/unicode.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ fs/fuse/fuse_i.h                  |  3 +++
+ fs/fuse/inode.c                   | 45 ++++++++++++++++++++++++++++++++++++++-
+ include/linux/io_uring.h          |  1 +
+ include/linux/io_uring/io_uring.h |  7 ++++++
+ io_uring/io_uring.c               |  4 +++-
+ 5 files changed, 58 insertions(+), 2 deletions(-)
 
---- a/fs/hfsplus/unicode.c
-+++ b/fs/hfsplus/unicode.c
-@@ -40,6 +40,18 @@ int hfsplus_strcasecmp(const struct hfsp
- 	p1 = s1->unicode;
- 	p2 = s2->unicode;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index c2f2a48156d6c52c8db87a5c092f51d1627deae9..d566e6d3fd19c0eb0d2ee384b734f3950e2e105a 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -907,6 +907,9 @@ struct fuse_conn {
+ 	/* Is synchronous FUSE_INIT allowed? */
+ 	unsigned int sync_init:1;
  
-+	if (len1 > HFSPLUS_MAX_STRLEN) {
-+		len1 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s1->length), len1);
-+	}
++	/* If system IO-uring possible */
++	unsigned int system_io_uring:1;
 +
-+	if (len2 > HFSPLUS_MAX_STRLEN) {
-+		len2 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s2->length), len2);
-+	}
-+
- 	while (1) {
- 		c1 = c2 = 0;
+ 	/* Use io_uring for communication */
+ 	unsigned int io_uring;
  
-@@ -74,6 +86,18 @@ int hfsplus_strcmp(const struct hfsplus_
- 	p1 = s1->unicode;
- 	p2 = s2->unicode;
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index d1babf56f25470fcc08fe400467b3450e8b7464a..6dcbaec9b369c689bc423da64b95f16e38ac0311 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -25,6 +25,7 @@
+ #include <linux/sched.h>
+ #include <linux/exportfs.h>
+ #include <linux/posix_acl.h>
++#include <linux/io_uring/io_uring.h>
+ #include <linux/pid_namespace.h>
+ #include <uapi/linux/magic.h>
  
-+	if (len1 > HFSPLUS_MAX_STRLEN) {
-+		len1 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s1->length), len1);
+@@ -1519,7 +1520,7 @@ static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
+ 	 * This is just an information flag for fuse server. No need to check
+ 	 * the reply - server is either sending IORING_OP_URING_CMD or not.
+ 	 */
+-	if (fuse_uring_enabled())
++	if (fm->fc->system_io_uring && fuse_uring_enabled())
+ 		flags |= FUSE_OVER_IO_URING;
+ 
+ 	ia->in.flags = flags;
+@@ -1935,6 +1936,46 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ }
+ EXPORT_SYMBOL_GPL(fuse_fill_super_common);
+ 
++/* Check if system wide io-uring is enabled */
++static void check_system_io_uring(struct fuse_conn *fc, struct fuse_fs_context *ctx)
++{
++	struct cred *new_cred = NULL;
++	const struct cred *old_cred = NULL;
++	int allowed;
++
++	/*
++	 * Mount might be from an unprivileged user using s-bit
++	 * fusermount, the check if system wide io-uring is enabled
++	 * needs to drop privileges
++	 * then.
++	 */
++	if (ctx->user_id.val != 0 && ctx->group_id.val != 0) {
++		new_cred = prepare_creds();
++		if (!new_cred)
++			return;
++
++		cap_clear(new_cred->cap_effective);
++		cap_clear(new_cred->cap_permitted);
++		cap_clear(new_cred->cap_inheritable);
++
++		if (ctx->user_id_present)
++			new_cred->uid = new_cred->euid = ctx->user_id;
++
++		if (ctx->group_id_present)
++			new_cred->gid = new_cred->egid = new_cred->fsgid = ctx->group_id;
++
++		old_cred = override_creds(new_cred);
 +	}
 +
-+	if (len2 > HFSPLUS_MAX_STRLEN) {
-+		len2 = HFSPLUS_MAX_STRLEN;
-+		pr_err("invalid length %u has been corrected to %d\n",
-+			be16_to_cpu(s2->length), len2);
-+	}
++	allowed = io_uring_allowed();
++	fc->system_io_uring = io_uring_allowed() == 0;
 +
- 	for (len = min(len1, len2); len > 0; len--) {
- 		c1 = be16_to_cpu(*p1);
- 		c2 = be16_to_cpu(*p2);
++	if (old_cred)
++		revert_creds(old_cred);
++	if (new_cred)
++		put_cred(new_cred);
++}
++
+ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
+ {
+ 	struct fuse_fs_context *ctx = fsc->fs_private;
+@@ -1962,6 +2003,8 @@ static int fuse_fill_super(struct super_block *sb, struct fs_context *fsc)
+ 
+ 	fm = get_fuse_mount_super(sb);
+ 
++	check_system_io_uring(fm->fc, ctx);
++
+ 	return fuse_send_init(fm);
+ }
+ 
+diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
+index 85fe4e6b275c7de260ea9a8552b8e1c3e7f7e5ec..eaee221b1ed566fcba5a01885e6a4b9073026f93 100644
+--- a/include/linux/io_uring.h
++++ b/include/linux/io_uring.h
+@@ -12,6 +12,7 @@ void __io_uring_free(struct task_struct *tsk);
+ void io_uring_unreg_ringfd(void);
+ const char *io_uring_get_opcode(u8 opcode);
+ bool io_is_uring_fops(struct file *file);
++int io_uring_allowed(void);
+ 
+ static inline void io_uring_files_cancel(void)
+ {
+diff --git a/include/linux/io_uring/io_uring.h b/include/linux/io_uring/io_uring.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..a28d58ea218ff7cc7518a66bd37ece1eacee30fb
+--- /dev/null
++++ b/include/linux/io_uring/io_uring.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _LINUX_IO_URING_H
++#define _LINUX_IO_URING_H
++
++int io_uring_allowed(void);
++
++#endif
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 820ef05276667e74c259723bf9f3c605cf9d0505..52cb209d4c7499620ae5d8b7ad1362810e84821f 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -76,6 +76,7 @@
+ #include <trace/events/io_uring.h>
+ 
+ #include <uapi/linux/io_uring.h>
++#include <linux/io_uring/io_uring.h>
+ 
+ #include "io-wq.h"
+ 
+@@ -3936,7 +3937,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 	return io_uring_create(entries, &p, params);
+ }
+ 
+-static inline int io_uring_allowed(void)
++int io_uring_allowed(void)
+ {
+ 	int disabled = READ_ONCE(sysctl_io_uring_disabled);
+ 	kgid_t io_uring_group;
+@@ -3957,6 +3958,7 @@ static inline int io_uring_allowed(void)
+ allowed_lsm:
+ 	return security_uring_allowed();
+ }
++EXPORT_SYMBOL_GPL(io_uring_allowed);
+ 
+ SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+ 		struct io_uring_params __user *, params)
 
+---
+base-commit: 6548d364a3e850326831799d7e3ea2d7bb97ba08
+change-id: 20251021-io-uring-fix-check-systemwide-io-uring-enable-f290e75be229
+
+Best regards,
+-- 
+Bernd Schubert <bschubert@ddn.com>
 
 
