@@ -1,297 +1,259 @@
-Return-Path: <linux-fsdevel+bounces-64987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454E0BF80E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:28:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F903BF82A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 252284F03D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 18:28:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4DF24F7B5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 18:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F6934A3D8;
-	Tue, 21 Oct 2025 18:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C2034E747;
+	Tue, 21 Oct 2025 18:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fg3wHafk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKWVjebL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE03734A3C6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 18:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9557634E74E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 18:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761071315; cv=none; b=YKh0puTIicR0MYGJxWbRlUtb7jI81ZcU+PpK1pP9ckBvMkqnKBWCHHKKP8DW3SPwXP/Q1ZegRjGcRHz4TFfoZPoJQwXfHtNmuZAjpOGfjABTL2VMkWwwb6UfvBZsbni5rNChWqGxLCQbApDYcZjiQNM2uFhPziHWJoVT8yqeSyI=
+	t=1761072965; cv=none; b=aIDVYAHYDygmalLPWyHOpC1Kxq3wE3xPXNLpEG2x86ud65eWYBhtEZ/5aFFjwlFSNxXpbqzY9ad5hhn/BAkzUSdiXFvu1wGPrxe1cPWODf6F6IaRnY+oKXtI5dM5YdFQi/zcQxQrnOsBFasO16HbPAIJGCT5TdRfw3ftM1FqKOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761071315; c=relaxed/simple;
-	bh=zax8f3CTswP0OWqYQAc4Do7Qa/kWXv9vp2ys5rDaI10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=un/eQzjDG5akwjIaEu1n+dRA/62F2aUnNLt+D7/jNVQiKu2mD2q/RpNohOOfeHl/3PkB1BeQRZwzJg8cHuh1aT776tCeLcrtEPAy+sHNX2YM4Q/HbUISXFgo1NkByYoiXHbXRVm6b6IqFItEltup+n0+TADRgiv+rojnwAuzYnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fg3wHafk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761071312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=p1rUujygHyp+nQsh5XAYAD7qtwFrdj1/nniIVtSG5Cg=;
-	b=fg3wHafkZYdLDJ7ttFAREMWBvt37Pe2Z51GDUCfkP63cB/e3zSWXFf17ji2sBnXn7EnxG0
-	S8PY+zU2e44uCi1BzFhp92TL8JZlr/5F96otk4DL5GrGA1V71MJv8mlGTePapmdnbzJgCw
-	qwVcatJAtrxyil0+Opub0cN5HzvMi44=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-KVOSj2qKPOuqgDix8Cmx7Q-1; Tue, 21 Oct 2025 14:28:30 -0400
-X-MC-Unique: KVOSj2qKPOuqgDix8Cmx7Q-1
-X-Mimecast-MFC-AGG-ID: KVOSj2qKPOuqgDix8Cmx7Q_1761071310
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f384f10762so3969320f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 11:28:30 -0700 (PDT)
+	s=arc-20240116; t=1761072965; c=relaxed/simple;
+	bh=52iR6LmGwh1Tv4WZrZVBPLVN9n+QfjxmRktHCwjQfmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WNpbwd5LhTFLVI0yb9R86YWva8kRr+7VYLwXf762LsUOsvIfNbHhAqgg91CmTN840xZa2A9FVfnv7GPb9ynwQjzoekshckey2l4yESkuuaDEt19tuTgZhiVbfhfoXqvNGRzLVgv4DCee+tGckbZDhuzsJTkdzR9E5bYOZtcB744=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKWVjebL; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-426fc536b5dso3330534f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 11:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761072962; x=1761677762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5qgPMRJSF9sIfpOYtKRyUUBt+NJHpNn43neFwkUQbv0=;
+        b=dKWVjebLqls33Z8OfQQ3H3nal7dPyv7wN0UBgKwHtTc5+/wvffD6xKCye7Mkwo7Ze7
+         RdqTSxNnOBFMLNB9tn+DoUr/qLiQEB8kJMcMX28Cd2g4rX5OM8puFSCvgFO7GDFZw54a
+         C5qZ3/iyVqHN8mT0zjZI2+5moLkQDCLxguJRR39iS3LOZ5yJTD18+W/wRSr7nEWZLNyW
+         FwJIETX7e68jj+EU0duVJvmpczfx2qQa4wz0AiBQQF+YSsNNZ9TCPKvkbS7klQbXW4n2
+         2oQk2Ar4GAnoTVqPCbvDSjOoNtVF6OahvNWD3HuFGl63bxf4XFLSgk2h3mKupR5HWh2N
+         2tJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761071310; x=1761676110;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p1rUujygHyp+nQsh5XAYAD7qtwFrdj1/nniIVtSG5Cg=;
-        b=T51RBSUg5vwQryTf0aVAR+L+eKfIeTiBf8iH7wHKCEn0PanRWE8txnhijOaZ2qEQ4K
-         AzwfGFqe+3BmlVtAKDAQgsWy0GAMhzJB0ispKcA1NMn7Ap4u7L+DcwDWt1fzKquRQaJD
-         4BKrWJRpCsq5Gxm+70fn5MbOTnR2Dnu/mlOZi5Oq+JpH6PHWWG6V9+weoJcdLIKb5W35
-         hREOVKZKOvW62DS3k5W8uxHGVQpEZUAdz4Hfcw8pb87tGQghP5Ai2UY6PjSYeIMTvtxL
-         YYKbjy/xx09gZaU05uA+6bup6z9zTvzj4dBNc25vXUAooaDvwbT72hGPaH0vKVyrIi0j
-         g03w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/SjLu60Ifn/54zk2vAl9HZzUGqp93mFXPBfyP7BQhA2xVgFeijMzaItgCv6UdcKobX8XFsjdzpmpCXFeu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwM0jCLTGajSETsBHRA6ByLFJKBuvtXatO2Ar6Ycm5/MshbNm6
-	OhyhvWaymLB0l/ZG/746CpVBuzLCsLr2POIKPQMUSKz/VHYYaXM/wf+PUohx2JIA5gjarqI9izc
-	HlVdv6g/L0FxcpFBfJNJi5Zjk0DwjOInZFVK9/d/SlrlLpqzyyxfQY/C2ZTFyL7+ckFs=
-X-Gm-Gg: ASbGncunyT+zyL5rDeKkLe6mnsE8cQtPtELwme0HyizUJDzfWRuvJyoraEfjGB3QIAY
-	nC96/4poDf29Nkg0r5XrkTCibwP5nLHy/56hC3L/9DcViyUUGZHXhY4yJHQeATEkV6EKKTvmeMs
-	mQw2XqciKBOjWkvDdzdOzuarUYN0lGlodcYziR5mnI7gUhQzQ6Row0+aZnPSXK+uT6FAJY3ImKH
-	Vet0iuUFq0dfSB9UQekfUSq79LAsV62URI3HiWqwONVLXZNn1y9YQBD0QrPuYqX7Hyi5Pr7BIiA
-	JiSrBEZGD/PLGduBzPArDPs1KCsP56ZN70QFhdeZVPBFVphSWPm4OYiMpUlT4sS0o7wz0GGlEuN
-	oLX1af8zo7WwKqxzi/IFdrdCYe2LdgAI=
-X-Received: by 2002:a05:6000:184f:b0:427:a05:2ff with SMTP id ffacd0b85a97d-4270a050510mr10269749f8f.33.1761071309656;
-        Tue, 21 Oct 2025 11:28:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH81g8i/LCi1AuXlZHNIML/iiLnpPkqZNzar/dX2uHH9lLINKzpzMqLwuLZJ7387cttvNJOcA==
-X-Received: by 2002:a05:6000:184f:b0:427:a05:2ff with SMTP id ffacd0b85a97d-4270a050510mr10269722f8f.33.1761071309148;
-        Tue, 21 Oct 2025 11:28:29 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1af76.dip0.t-ipconnect.de. [87.161.175.118])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47494aad668sm23481915e9.2.2025.10.21.11.28.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 11:28:28 -0700 (PDT)
-Message-ID: <595b41b0-428a-4184-9abc-6875309d8cbd@redhat.com>
-Date: Tue, 21 Oct 2025 20:28:26 +0200
+        d=1e100.net; s=20230601; t=1761072962; x=1761677762;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5qgPMRJSF9sIfpOYtKRyUUBt+NJHpNn43neFwkUQbv0=;
+        b=kdeo/x50F9wSHt8sfiUI/XYyBSBwO16H39tp4atEm0h80YveFiajPtRunHKO9yBBXB
+         W/f2b8s1bmeTWjeLvq6pJ2e8mN4wiMRUVtYUhSayVulJMd9Zi0+130886E2X+CrzAq55
+         StewfjL6QG9A9qREdLqdea1HzbkGK5C/zMCvop/z2S6aEtFIIZAjCUs8/ziQ1CQhagVn
+         8rkyro3LrrAoYVcThQIPac7czS17Ko2oi+nkCPuex/nbOFlCZLKl0Eaofmviouf/H7Me
+         wbyquZ3hs4gbimugzDXupcixhWY4axZnkwUc7SD0lnjDIlDGXiDDw6f2wADqGRjc3ZzK
+         9fag==
+X-Forwarded-Encrypted: i=1; AJvYcCXrmms9c8ujtukD7qfpMLDG/7OoPRpiltEmniY1xY0jhjZGYAe3M9KdmZJvjCQydq6RqPgBfCOi4nO+wjqv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKUQpo4vPoxHp3jLepaTRrGRB47AZD7CfIrfOp6EYoQBX7r24q
+	amSJCwaWss3XTGjTs5NpY+qOm+Sr1IR/2zBToRCFxqYWYNhylPD31ItV
+X-Gm-Gg: ASbGnctinZhlh+EZ1UETeXjXc4Tiumi0mBPgeJgH3zWqcANw9q8Kye4XK2TB5/C7B58
+	42+2dPbcfOH9rkxiriVHYElVlGBaNl8CZReK92HOMG9dahxxv7Pjhkp7s51LF481T4WUPWA/TF9
+	Q50FI2fQ/y3OjnP/pW07x3I494MTd/FbKdicp1zBjdtTbFsp+moDYI83WzCHSwESJ6exELzg/lD
+	4vi2anyOngeo+hP9R7KAJt7q6s8VH+QR7q280jUQjwRJCNgH0kNBd0blgT2QgG3roDO5vcMW3eA
+	mo/DRyuTEMS1tpPpTyBxz+G/6nXDnfMJB4XNm88E2ew5/cXigYTaJz4otXcDGC/dvDjFfVN5k1n
+	XTQXSN4UEofNM6ZCT3y61SUvVPJjJdZFdS9uNypy5shZ7ldchAr5J3+A271nMalFJO58nydYyTt
+	WRuhPWJbxm1aA7+gQhOPZvkufmVbEnrMI2zyctaMPCIw==
+X-Google-Smtp-Source: AGHT+IFjOxufFJONTpxys1bngEKe+lRcQqq+LVDgs/0okuT/Rc8W/l4ZwbhF8BXNqZX3cWqKXviWlw==
+X-Received: by 2002:a05:6000:491d:b0:427:55b:cf6 with SMTP id ffacd0b85a97d-427055b0cf8mr13206929f8f.7.1761072961864;
+        Tue, 21 Oct 2025 11:56:01 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4283e7804f4sm19566507f8f.10.2025.10.21.11.56.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 11:56:01 -0700 (PDT)
+Date: Tue, 21 Oct 2025 19:55:59 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
+ King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, Heiko
+ Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
+ Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
+ regions
+Message-ID: <20251021195559.4809c75a@pumpkin>
+In-Reply-To: <877bwoz5sp.ffs@tglx>
+References: <20251017085938.150569636@linutronix.de>
+	<20251017093030.253004391@linutronix.de>
+	<20251020192859.640d7f0a@pumpkin>
+	<877bwoz5sp.ffs@tglx>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mm/memory-failure: improve large block size folio
- handling.
-To: Zi Yan <ziy@nvidia.com>
-Cc: Yang Shi <shy828301@gmail.com>, linmiaohe@huawei.com,
- jane.chu@oracle.com, kernel@pankajraghav.com,
- syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
- mcgrof@kernel.org, nao.horiguchi@gmail.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20251016033452.125479-1-ziy@nvidia.com>
- <20251016033452.125479-3-ziy@nvidia.com>
- <CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com>
- <5EE26793-2CD4-4776-B13C-AA5984D53C04@nvidia.com>
- <CAHbLzkp8ob1_pxczeQnwinSL=DS=kByyL+yuTRFuQ0O=Eio0oA@mail.gmail.com>
- <A4D35134-A031-4B15-B7A0-1592B3AE6D78@nvidia.com>
- <b353587b-ef50-41ab-8dd2-93330098053e@redhat.com>
- <893332F4-7FE8-4027-8FCC-0972C208E928@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <893332F4-7FE8-4027-8FCC-0972C208E928@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 21.10.25 17:55, Zi Yan wrote:
-> On 21 Oct 2025, at 11:44, David Hildenbrand wrote:
-> 
->> On 21.10.25 03:23, Zi Yan wrote:
->>> On 20 Oct 2025, at 19:41, Yang Shi wrote:
->>>
->>>> On Mon, Oct 20, 2025 at 12:46 PM Zi Yan <ziy@nvidia.com> wrote:
->>>>>
->>>>> On 17 Oct 2025, at 15:11, Yang Shi wrote:
->>>>>
->>>>>> On Wed, Oct 15, 2025 at 8:38 PM Zi Yan <ziy@nvidia.com> wrote:
->>>>>>>
->>>>>>> Large block size (LBS) folios cannot be split to order-0 folios but
->>>>>>> min_order_for_folio(). Current split fails directly, but that is not
->>>>>>> optimal. Split the folio to min_order_for_folio(), so that, after split,
->>>>>>> only the folio containing the poisoned page becomes unusable instead.
->>>>>>>
->>>>>>> For soft offline, do not split the large folio if it cannot be split to
->>>>>>> order-0. Since the folio is still accessible from userspace and premature
->>>>>>> split might lead to potential performance loss.
->>>>>>>
->>>>>>> Suggested-by: Jane Chu <jane.chu@oracle.com>
->>>>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>>>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->>>>>>> ---
->>>>>>>    mm/memory-failure.c | 25 +++++++++++++++++++++----
->>>>>>>    1 file changed, 21 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>>>>> index f698df156bf8..443df9581c24 100644
->>>>>>> --- a/mm/memory-failure.c
->>>>>>> +++ b/mm/memory-failure.c
->>>>>>> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->>>>>>>     * there is still more to do, hence the page refcount we took earlier
->>>>>>>     * is still needed.
->>>>>>>     */
->>>>>>> -static int try_to_split_thp_page(struct page *page, bool release)
->>>>>>> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
->>>>>>> +               bool release)
->>>>>>>    {
->>>>>>>           int ret;
->>>>>>>
->>>>>>>           lock_page(page);
->>>>>>> -       ret = split_huge_page(page);
->>>>>>> +       ret = split_huge_page_to_list_to_order(page, NULL, new_order);
->>>>>>>           unlock_page(page);
->>>>>>>
->>>>>>>           if (ret && release)
->>>>>>> @@ -2280,6 +2281,7 @@ int memory_failure(unsigned long pfn, int flags)
->>>>>>>           folio_unlock(folio);
->>>>>>>
->>>>>>>           if (folio_test_large(folio)) {
->>>>>>> +               int new_order = min_order_for_split(folio);
->>>>>>>                   /*
->>>>>>>                    * The flag must be set after the refcount is bumped
->>>>>>>                    * otherwise it may race with THP split.
->>>>>>> @@ -2294,7 +2296,14 @@ int memory_failure(unsigned long pfn, int flags)
->>>>>>>                    * page is a valid handlable page.
->>>>>>>                    */
->>>>>>>                   folio_set_has_hwpoisoned(folio);
->>>>>>> -               if (try_to_split_thp_page(p, false) < 0) {
->>>>>>> +               /*
->>>>>>> +                * If the folio cannot be split to order-0, kill the process,
->>>>>>> +                * but split the folio anyway to minimize the amount of unusable
->>>>>>> +                * pages.
->>>>>>> +                */
->>>>>>> +               if (try_to_split_thp_page(p, new_order, false) || new_order) {
->>>>>>
->>>>>> folio split will clear PG_has_hwpoisoned flag. It is ok for splitting
->>>>>> to order-0 folios because the PG_hwpoisoned flag is set on the
->>>>>> poisoned page. But if you split the folio to some smaller order large
->>>>>> folios, it seems you need to keep PG_has_hwpoisoned flag on the
->>>>>> poisoned folio.
->>>>>
->>>>> OK, this means all pages in a folio with folio_test_has_hwpoisoned() should be
->>>>> checked to be able to set after-split folio's flag properly. Current folio
->>>>> split code does not do that. I am thinking about whether that causes any
->>>>> issue. Probably not, because:
->>>>>
->>>>> 1. before Patch 1 is applied, large after-split folios are already causing
->>>>> a warning in memory_failure(). That kinda masks this issue.
->>>>> 2. after Patch 1 is applied, no large after-split folios will appear,
->>>>> since the split will fail.
->>>>
->>>> I'm a little bit confused. Didn't this patch split large folio to
->>>> new-order-large-folio (new order is min order)? So this patch had
->>>> code:
->>>> if (try_to_split_thp_page(p, new_order, false) || new_order) {
->>>
->>> Yes, but this is Patch 2 in this series. Patch 1 is
->>> "mm/huge_memory: do not change split_huge_page*() target order silently."
->>> and sent separately as a hotfix[1].
->>
->> I'm confused now as well. I'd like to review, will there be a v3 that only contains patch #2+#3?
-> 
-> Yes. The new V3 will have 3 patches:
-> 1. a new patch addresses Yang’s concern on setting has_hwpoisoned on after-split
-> large folios.
-> 2. patch#2,
-> 3. patch#3.
+On Tue, 21 Oct 2025 16:29:58 +0200
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Okay, I'll wait with the review until you resend :)
+> On Mon, Oct 20 2025 at 19:28, David Laight wrote:
+> > On Fri, 17 Oct 2025 12:09:08 +0200 (CEST)
+> > Thomas Gleixner <tglx@linutronix.de> wrote:
+> > That definitely looks better than the earlier versions.
+> > Even if the implementation looks like an entry in the obfuscated C
+> > competition.  
+> 
+> It has too many characters for that. The contest variant would be:
+> 
+> for(u8 s=0;!s;s=1)for(typeof(u) t= S(m,u,s,e);!s;s=1)for(C(u##m##a,c)(t);!s;s=1)for(const typeof(u) u=t;!s;s=1)
+> 
+> > I don't think you need the 'masked' in that name.
+> > Since it works in all cases.
+> >
+> > (I don't like the word 'masked' at all, not sure where it came from.  
+> 
+> It's what Linus named it and I did not think about the name much so far.
+> 
+> > Probably because the first version used logical operators.
+> > 'Masking' a user address ought to be the operation of removing high-order
+> > address bits that the hardware is treating as 'don't care'.
+> > The canonical operation here is uaddr = min(uaddr, guard_page) - likely to be
+> > a conditional move.  
+> 
+> That's how it's implemented for x86:
+
+I know - I suggested using cmov.
 
 > 
-> The plan is to send them out once patch 1 is upstreamed. Let me know if you think
-> it is OK to send them out earlier as Andrew already picked up patch 1.
+> >>  b84:	48 b8 ef cd ab 89 67 45 23 01  movabs $0x123456789abcdef,%rax
+> >>  b8e:	48 39 c7    	               cmp    %rax,%rdi
+> >>  b91:	48 0f 47 f8          	       cmova  %rax,%rdi  
+> 
+> 0x123456789abcdef is a compile time placeholder for $USR_PTR_MAX which is
+> replaced during early boot by the real user space topmost address. See below.
+> 
+> > I think that s/masked/sanitised/ would make more sense (the patch to do
+> > that isn't very big at the moment). I might post it.)  
+> 
+> The real point is that it is optimized. It does not have to use the
+> speculation fence if the architecture supports "masking" because the CPU
+> can't speculate on the input address as the actual read/write address
+> depends on the cmova. That's similar to the array_nospec() magic which
+> masks the input index unconditionally so it's in the valid range before
+> it can be used for speculatively accessing the array.
+> 
+> So yes, the naming is a bit awkward.
+> 
+> In principle most places which use user_$MODE_access_begin() could
+> benefit from that. Also under the hood the scope magic actually falls
+> back to that when the architecture does not support the "masked"
+> variant.
+> 
+> So simply naming it scoped_user_$MODE_access() is probably the least
+> confusing of all.
+> 
+> >> If masked user access is enabled on an architecture, then the pointer
+> >> handed in to scoped_masked_user_$MODE_access() can be modified to point to
+> >> a guaranteed faulting user address. This modification is only scope local
+> >> as the pointer is aliased inside the scope. When the scope is left the
+> >> alias is not longer in effect. IOW the original pointer value is preserved
+> >> so it can be used e.g. for fixup or diagnostic purposes in the fault path.  
+> >
+> > I think you need to add (in the kerndoc somewhere):
+> >
+> > There is no requirement to do the accesses in strict memory order
+> > (or to access the lowest address first).
+> > The only constraint is that gaps must be significantly less than 4k.  
+> 
+> The requirement is that the access is not spilling over into the kernel
+> address space, which means:
+> 
+>        USR_PTR_MAX <= address < (1U << 63)
+> 
+> USR_PTR_MAX on x86 is either
+>             (1U << 47) - PAGE_SIZE (4-level page tables)
+>          or (1U << 57) - PAGE_SIZE (5-level page tables)
+> 
+> Which means at least ~8 EiB of unmapped space in both cases.
+> 
+> The access order does not matter at all.
 
-It's in mm/mm-new + mm/mm-unstable, AFAIKT. So sure, send it against one 
-of the tress (I prefer mm-unstable but usually we should target mm-new).
+But consider the original x86-64 version.
+While it relied on the guard page for accesses that started with a user
+address, kernel addresses were converted to ~0.
+While a byte access at ~0 fails because it isn't mapped, an access
+at 'addr + 4' wraps to the bottom of userspace which can be mapped.
+So the first access had to be at the requested address, although
+subsequent ones only have to be 'reasonably sequential'.
+
+Not all code that is an obvious candidate for this code accesses
+the base address first.
+So it is best to require that the implementations allow for this,
+and then explicitly document that it is allowed behaviour.
+
+The ppc patches do convert kernel addresses to the base on an
+invalid page - so they are fine.
+I've not seen patches for other architectures.
+
+32bit x86 has a suitable guard page, but the code really needs 'cmov'
+and the recent removal of old cpu (including the 486) didn't quite
+go that far.
+
 
 > 
-> I also would like to get some feedback on my approach to setting has_hwpoisoned:
+> >> +#define __scoped_masked_user_access(_mode, _uptr, _size, _elbl)					\
+
+Thinking about it there is no need for leading _ on #define parameter names.
+It is only variables defined inside #define that have 'issues' if the caller
+passes in the same name.
+
+> >> +for (bool ____stop = false; !____stop; ____stop = true)						\
+> >> +	for (typeof((_uptr)) _tmpptr = __scoped_user_access_begin(_mode, _uptr, _size, _elbl);	\  
+> >
+> > Can you use 'auto' instead of typeof() ?  
 > 
-> folio's has_hwpoisoned flag needs to be preserved
-> like what Yang described above. My current plan is to move
-> folio_clear_has_hwpoisoned(folio) into __split_folio_to_order() and
-> scan every page in the folio if the folio's has_hwpoisoned is set.
+> Compilers are mightily unhappy about that unless I do typecasting on the
+> assignment, which is not really buying anything.
 
-Oh, that's nasty indeed ... will have to think about that a bit.
+ok - I did a very quick check and thought it might work.
 
-Maybe we can keep it simple and always set folio_set_has_hwpoisoned() on 
-all split folios? Essentially turning it into a "maybe_has" semantics.
+If you can't use auto for the third definition, then I think tmpptr can be 'void _user *'.
 
-IIUC, the existing folio_stest_has_hwpoisoned users can deal with that?
+	David
 
--- 
-Cheers
-
-David / dhildenb
+> 
+> >> +	     !____stop; ____stop = true)							\
+> >> +		for (CLASS(masked_user_##_mode##_access, scope) (_tmpptr); !____stop;		\
+> >> +		     ____stop = true)					\
+> >> +			/* Force modified pointer usage within the scope */			\
+> >> +			for (const typeof((_uptr)) _uptr = _tmpptr; !____stop; ____stop = true)	\  
+> >
+> > gcc 15.1 also seems to support 'const auto _uptr = _tmpptr;'  
+> 
+> Older compilers not so much.
+> 
+> Thanks,
+> 
+>         tglx
 
 
