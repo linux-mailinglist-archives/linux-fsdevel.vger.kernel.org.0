@@ -1,171 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-64798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8258EBF420E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 02:14:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAA3BF421B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 02:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218DA18C5428
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:14:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3F0C4ECB37
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 00:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5072670824;
-	Tue, 21 Oct 2025 00:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ED01C862F;
+	Tue, 21 Oct 2025 00:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJHocsw2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQZ35ovK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA99AD5A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 00:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA04A1684B4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 00:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761005661; cv=none; b=c/a/5abRUw9dsX95q76GmwaHZjlO5jaDtHsEG8pEzzGHmNvKI26ZwnzYxTABAphmxaidXsGSw/AiB7wdfj4krCBzYgnXpReIDt4G+EkDAzwdX1pphkotQrUtIKMLWIxe+RXkdJWv/siNlacWaKyZxXo4B9G5zIsxtzL9ixSe+68=
+	t=1761005871; cv=none; b=aqtpBRiaV5Q1I1lFER0Gpus20FE9esh2R/60W+GIvQhLbGZ2O4oko0RZgWmFveM+Z7s0Nr+vRwpOpsARCHrmI1P7HP00MXVPpdInyN32pZT3NvOOOpxVFmaB30Xxii0iTx/PcI0ODlF+wCugcfuLgLLnCEvLIbfayWaKlVCOd+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761005661; c=relaxed/simple;
-	bh=0KpPKIXCRO/KJfg/sFIh9mEBAeWgFBH1Rwh6MpvEXXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kTUHLsH+CRu43ndpwDswlXPxruQpWWZle1RZPGWpWia6hRGb6Qhk0AHaz7rFV5b5wWBgmTr6ay2CJqjYYaCIA0ASR59UUxpkxZQLa4Pkrbn014RGAhebni/qykEjSe08ROG++QbdVUCZr0T9Q0vL62cYm3ClQuZdrUrGsftM7SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJHocsw2; arc=none smtp.client-ip=209.85.222.171
+	s=arc-20240116; t=1761005871; c=relaxed/simple;
+	bh=vFA5jWjJwG3KGfKV3NylgtBNOpUzMJeaJAuNwrifEf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtRt8KbNgObYTfLqtDazT32g66JPMRKvuO0QXzD+r8+rFQkGzzgD22usVEpgmKPdH8p6gEw0mt3NfzxemhashcR2ln2HqxbeaV6lVDBF2tHcaUiNeEfZqTfk5ew+fA2zX3f4e2tHMVw80eNgE/EiIYis7Bgt69dpLsENNGvxrLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQZ35ovK; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-88e1a22125bso675346385a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 17:14:19 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7841da939deso4616884b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Oct 2025 17:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761005659; x=1761610459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ui8DMzsFY6zqaDaV5/75lTx0Gmwu4XTBa5L7MWqUMxQ=;
-        b=fJHocsw21mCB2ZY2Vnb3RJYzgOWWxy3Tu9yLtBxKS9GNfb9Q9AByVq+N5gXrvZ4aUs
-         1ENFHpzHkEpdC8GWPNqwhrofpWplJ5Docm2y3hf0+WEIX8YOak2qfWEW4sdiHWzU3SJ3
-         Yr6nAkxcAeVgJ4GZrU/wjjA80fbVaz4MfLwsww38+zy4+zL1lkMUx7nt3qG925kfnXn0
-         eoVR29cT+AA4wHR9FR9qQ0GBZJuzQUGXzPsfUvp1MfD4+KkvPGapTci1ZYiNNDYz0NsT
-         QHov3P8zuDXRodLKod9rnCjvTLfHzX/KHDof114DMvAOxzHrQUT9aZBJfLoIYFLkdfkH
-         mvfw==
+        d=gmail.com; s=20230601; t=1761005869; x=1761610669; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0k2HQYaXzdk1lCw7ANhIJpf6VwtFRwHqSy2iFVshPF4=;
+        b=XQZ35ovKbtFv10dM1xiwElksah3Sa8SWTq2nXAnYRFWLxCm0Z45KDHZ+apOYxNky6G
+         t4O78JWNzv+3eFsPxUbF6E0wcGWWqobJFxRVHkwvKUIuEurYCqvr6SopmgEsRhcW9Sf0
+         iMOzNzJ8KruYe7SL0ic/3p92epng4ei6ZrRvjHfsGZYGwcEIFM3WOLP/Hjw8kcSnO9+m
+         rFAzVfdfFRCuOK2MnX2k9p3bwdKwrMGKjRRkek01iUrOkSjuHFnsqqkPUtahcQUsz05Q
+         Usq0LYFAjzJ7OnxmZ/0GVEl1R9Sju5wapOt/Zo/cjRtBp7e8I2uXT34hjZGFta201v+A
+         ZGGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761005659; x=1761610459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ui8DMzsFY6zqaDaV5/75lTx0Gmwu4XTBa5L7MWqUMxQ=;
-        b=Cw9tub8wEpBHuiqGi1wnZnDP8cYjSQIFsIPncCYrBuQiu51gUinO+UxdL487ev5OIz
-         2wWA+45kyS0B6sV7qbBn/v/H/RP+FSSfXt7Y9aD7W+iCj10TTn0zzESmqVDa++WbdNIT
-         jFkzYStbwlF/q3x0bllgSR3Dp+rljTmqu11CmJg6ugZv1INvtMkqQSthjiBqH/QKNF4z
-         vh/1r2Q6gUt9TtfzeHLcburtDmLwW3omrJ9C9z5ltjT+b65ht4hWmcnpQNA0uy44G1al
-         4AAYLcqY41bdpz2GPG7XSSlnlkLTMoMChCha2zGjUbiyrX35FxwuQSzExBz+j+uOzBFh
-         7OyA==
-X-Gm-Message-State: AOJu0YwIxFTIixRwFE1qomU6IFpB+Cn/rrfcAQ8M1fNEsJOlhN2RIP+v
-	pMrkeAN3BmBlLch0HWbiRXML9OjLoIxp1H+lH4j3ETcZLq+Ar/0yI0kGThP3x/yObUt3pEVDQnT
-	VOF7+Ifw6fxDqMO9k+pvjb1xwxxpNUwo=
-X-Gm-Gg: ASbGncs4ra+MdVPw9xp1jQLkXEXN06sExrCQm0v9pe+aGJspx7+B/t2mAFpIVrd7owL
-	PFqLlAT73G3VXiD9bQkw5c6BI/f3dkjrGR/0cr4cNa5V1BTuLENPYGU5nlcuGIuZu1sE1pNyJFb
-	if8rK1JDnigq1mra2LxSLXwhHW4zTBCL9OhpS+bAxf3HJ9VGHhgJf03PuT8X1WLoaAMquMAee6q
-	7a/Aq1zN/jBRDz7+OlWq22hPzfMtbAwg60LzJbkjcfJcLLYplVrcKb7LGv9ukGt1mef6Rg4tO6X
-	NgzVhtxdi/YklHlVGE6eQYCgerw=
-X-Google-Smtp-Source: AGHT+IFbi7roFVVLG3VRbRv2vUoOUhhzYMKWJpmCLVGWc6aaAHXM4zeW9tJOWQsYfgHBUQ85Ghk6YK2OfSr/WKJb5FA=
-X-Received: by 2002:ac8:4249:0:b0:4e8:a464:1083 with SMTP id
- d75a77b69052e-4e8a46411a5mr114717011cf.54.1761005658930; Mon, 20 Oct 2025
- 17:14:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761005869; x=1761610669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0k2HQYaXzdk1lCw7ANhIJpf6VwtFRwHqSy2iFVshPF4=;
+        b=gXvFPGLaTiTaSxasKZjgXIcSY1R9iYJGA/OfSarBpiI1EhgNbJNmlZ0+278EiwOj6b
+         77hktajyY2PlPutU5MIh9RwLz42jvepgAdBIwtZowBoCPw5u1NNGFv8CIf6355L8WA4c
+         mxLgTf1+iLxU3EUBik944+RKbv/tRE+ZCAo6sr6Q3KH56iRM8yKnTs/4zNwAHmsOG3i+
+         yQrosbiXd0uvPx+AFcYB5jA47eQhjB6lplepfE5eTqkHl1Xbnv0fxx9kcpwW+6rwIeSu
+         /o5UVl9fRUpvVeXdAmYZ8yrtomD99Wa13b+u2WJtD1qwnVYrZtQEeFdb3soViPMLLYEO
+         3/Kg==
+X-Gm-Message-State: AOJu0YyuI6KQ2mWTsFK0mqqXv9olilq5BilgBTKj7vpwI4nO4z/keSLI
+	OUKYCvCGV6KOb/wZqD28JAWF+uyTjoGccXjtZU8uD0Oa/pxiP0YxWLrU
+X-Gm-Gg: ASbGncuNObL6EDVqWGt88RIRmg7rWXR8Xz/ZPXM+t8/d60an4qvejCe7vqBmK9a3Crs
+	ETurlXjF1ZvYh/OZZCoqyZzTKwaThgK1b5kr7v1AW7cGY0bnS11PBFfw8EY2P08uZc2EhlkOfRm
+	U8eyYMBiYS8FsK/mK52D8pK8uHz4cW7SEQ7h+9LTr4xmd6NE0JsrykfxLBIcqbgCrJjT0KDfg91
+	krU6vBWkzBxrSTbOAb44GMB8a0zg3lGW2H+bsvUBhs3BfeGTXyi7sLQor1DDmzbT3nfsqeFGDso
+	AhZYlh/tI2FZZNkqnVSquTxvYhbjXH7UlYQStE75Jz7i56HaDUoTQPvoE4YLwxVMgdVaQziWSv8
+	dox68CAGR6+gxF0iytRJHo98ZFZcwaX7dttbv/YWQqFpkwaKUIUEbi46ghbkJf21zW6rypVa0q5
+	AGWJGOFJZya6idYg==
+X-Google-Smtp-Source: AGHT+IFq++y4W80Ih2jHmrfYp10BD40l7TzjNSqxSnI9I0d7jWklXwTwil0r3CdzGN6TUJib1z/iKA==
+X-Received: by 2002:a05:6a00:9508:b0:781:2272:b704 with SMTP id d2e1a72fcca58-7a2208fcf14mr19313733b3a.5.1761005868811;
+        Mon, 20 Oct 2025 17:17:48 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff34b8bsm9532381b3a.22.2025.10.20.17.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 17:17:47 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id EE0BF412B0A6; Tue, 21 Oct 2025 07:17:45 +0700 (WIB)
+Date: Tue, 21 Oct 2025 07:17:45 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hch@infradead.org, hch@lst.de, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
+	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+	gunho.lee@lge.com
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+Message-ID: <aPbRKScRgkxUDYew@archie.me>
+References: <20251020020749.5522-1-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003134642.604736-1-bfoster@redhat.com> <20251007-kittel-tiefbau-c3cc06b09439@brauner>
-In-Reply-To: <20251007-kittel-tiefbau-c3cc06b09439@brauner>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 20 Oct 2025 17:14:07 -0700
-X-Gm-Features: AS18NWBZPYaiU7LDy5QEDqgaPTc4fOwEctpwqOwtUrXF3pD2hGNbq7TTOushC1w
-Message-ID: <CAJnrk1Yp-z8U7WjH81Eh3wrvuc5erZ2fUjZZa2urb-OhAe_nig@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] iomap: zero range folio batch support
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Brian Foster <bfoster@redhat.com>, 
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org, hch@infradead.org, 
-	djwong@kernel.org, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ur+dtA2G+9wRct2L"
+Content-Disposition: inline
+In-Reply-To: <20251020020749.5522-1-linkinjeon@kernel.org>
+
+
+--ur+dtA2G+9wRct2L
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 7, 2025 at 4:12=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Fri, 03 Oct 2025 09:46:34 -0400, Brian Foster wrote:
-> > Only minor changes in v5 to the XFS errortag patch. I've kept the R-b
-> > tags because the fundamental logic is the same, but the errortag
-> > mechanism has been reworked and so that one needed a rebase (which turn=
-s
-> > out much simpler). A second look certainly couldn't hurt, but otherwise
-> > the associated fstest still works as expected.
-> >
-> > Note that the force zeroing fstests test has since been merged as
-> > xfs/131. Otherwise I still have some followup patches to this work re:
-> > the ext4 on iomap work, but it would be nice to move this along before
-> > getting too far ahead with that.
-> >
-> > [...]
->
-> Applied to the vfs-6.19.iomap branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.19.iomap branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.19.iomap
->
-> [1/7] filemap: add helper to look up dirty folios in a range
->       https://git.kernel.org/vfs/vfs/c/757f5ca76903
-> [2/7] iomap: remove pos+len BUG_ON() to after folio lookup
->       https://git.kernel.org/vfs/vfs/c/e027b6ecb710
-> [3/7] iomap: optional zero range dirty folio processing
->       https://git.kernel.org/vfs/vfs/c/5a9a21cb7706
+On Mon, Oct 20, 2025 at 11:07:38AM +0900, Namjae Jeon wrote:
+> Introduction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Hi Christian,
+Can you write the documentation at least in
+Documentation/filesystems/ntfsplus.rst?
 
-Thanks for all your work with managing the vfs iomap branch. I noticed
-for vfs-6.19.iomap, this series was merged after a prior patch in the
-branch that had changed the iomap_iter_advance() interface [1]. As
-such for the merging ordering, I think this 3rd patch needs this minor
-patch-up to be compatible with the change made in [1], if you're able
-to fold this in:
+=20
+> - Journaling support:
+>    ntfs3 does not provide full journaling support. It only implement jour=
+nal
+>    replay[4], which in our testing did not function correctly. My next ta=
+sk
+>    after upstreaming will be to add full journal support to ntfsplus.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 72196e5021b1..36ee3290669a 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -867,7 +867,8 @@ static int iomap_write_begin(struct iomap_iter *iter,
-        if (folio_pos(folio) > iter->pos) {
-                len =3D min_t(u64, folio_pos(folio) - iter->pos,
-                                 iomap_length(iter));
--               status =3D iomap_iter_advance(iter, &len);
-+               status =3D iomap_iter_advance(iter, len);
-+               len =3D iomap_length(iter);
-                if (status || !len)
-                        goto out_unlock;
-        }
+What's the plan for journaling? Mirroring the Windows implementation AFAIK?
 
-Thanks,
-Joanne
+For the timeline: I guess you plan to submit journaling patches right after
+ntfsplus is merged (at least applied to the filesystem tree or direct PR to
+Linus), or would it be done for the subsequent release cycle (6.n+1)?
 
-[1] https://lore.kernel.org/linux-fsdevel/CAJnrk1aJf1cgpzmDz0d+8K5gOFBpk5wh=
-qPRFsWtQ0M3dpOOJ2Q@mail.gmail.com/T/#u
+Regarding stability: As it is a new filesystem, shouldn't it be marked
+experimental (and be stabilized for a few cycles) first?
 
-> [4/7] xfs: always trim mapping to requested range for zero range
->       https://git.kernel.org/vfs/vfs/c/50dc360fa097
-> [5/7] xfs: fill dirty folios on zero range of unwritten mappings
->       https://git.kernel.org/vfs/vfs/c/492258e4508a
-> [6/7] iomap: remove old partial eof zeroing optimization
->       https://git.kernel.org/vfs/vfs/c/47520b756355
-> [7/7] xfs: error tag to force zeroing on debug kernels
->       https://git.kernel.org/vfs/vfs/c/87a5ca9f6c56
->
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--ur+dtA2G+9wRct2L
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPbRJAAKCRD2uYlJVVFO
+o4fLAQC9ziCngS89WuEfqTocrRXlfW6dZ4CSfXOgRPLqmBXt8wD9ESIhxlphKnHL
+WSd7sZPRU/pLFxr2Jyn+0gNvGzkDCQk=
+=zCxj
+-----END PGP SIGNATURE-----
+
+--ur+dtA2G+9wRct2L--
 
