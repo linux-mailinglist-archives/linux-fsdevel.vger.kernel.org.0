@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-64809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE000BF4B05
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:16:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D2EBF4B12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF4D18C24D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 06:17:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A60554EB528
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 06:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09172586C8;
-	Tue, 21 Oct 2025 06:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CC925B2E7;
+	Tue, 21 Oct 2025 06:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="aHj0ePuH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sisca4HK"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="jBkDXb9F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SwGlFmQy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DF6354AD4;
-	Tue, 21 Oct 2025 06:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45650282EB;
+	Tue, 21 Oct 2025 06:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761027396; cv=none; b=fySA+EIp53U10phLTf0Cv0tnLn1jDV9FQGR4crwAJRA1iQpUakam6cPBh+3ZRoutWHN499A238OhjgF4z6hauuwRinSU70fR4vNEPjGwtdp/QtaE2jfU+WXfR7kyfg7DczBHmDxraQD9B1JQKWKxwK2vPBixGEu+yWeBhYgAIMg=
+	t=1761027439; cv=none; b=BZZNTSklASCsS4iLwPhtmdvc3JstSVWds9yx3Incsl/2NhsFqsEQss/JGn4rlFMHeVV9cIbKBw/B/AHqKAyyPkNyfvLdh2Xgvl0wibWvrEeej1FPivQK7BIL8EGB8DNVYZZtGpZV82mS9r5/QEK15te8+/Z/WfvkSgZs/DTi4MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761027396; c=relaxed/simple;
-	bh=HK/nHqr3Qz1QxvaIiI+NbqtuAEIHxyvIk2VqZ1B2g9I=;
+	s=arc-20240116; t=1761027439; c=relaxed/simple;
+	bh=F7uqWGDgVNfGLCmA9wNOF3IKuzda97s6QrCWLFxW7pc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0/Va2SawkOnUefaKSNIBw+ey+JCgmvquAg9Z8rddswD9t5CB6LddQRkcWUfVvtnT+IvArF0nAB2NBi2qcgZEufft3B+hpfvIhnGHaeg1hj9c6pjpZoUMJ5XUIR/tTx4gDM3mCIWD86mindnxdu7gnECL68HnjypdHgElqnGEQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=aHj0ePuH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sisca4HK; arc=none smtp.client-ip=202.12.124.139
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODViFudKiYBD4wCn/TOhzGLvemxkwazoacq/fEY5NMCESwmVSQsTjrjHPHrOudo5SVYS/6vGP+tfwJbdmgkVyUNwQmbBv6JdmZXnxWh5XjpBHW3PA07HF/XFrNkV1bQJ8el0rS4bwj8PxQwe+nV6RSemqRagrbWkxc8nTMn2nOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=jBkDXb9F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SwGlFmQy; arc=none smtp.client-ip=202.12.124.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailflow.stl.internal (Postfix) with ESMTP id CDD5E1300AC5;
-	Tue, 21 Oct 2025 02:16:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 21 Oct 2025 02:16:32 -0400
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailflow.stl.internal (Postfix) with ESMTP id 0887A1300ACC;
+	Tue, 21 Oct 2025 02:17:15 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Tue, 21 Oct 2025 02:17:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
 	 h=cc:cc:content-type:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761027391; x=
-	1761034591; bh=h0I0/rRQeZwp/IbShSTCGxIxrgyAXggNeKL32rwMMgs=; b=a
-	Hj0ePuHpTCXW24pov1BOQb4xSCLoG0iRwPOV7Ut2MeVAAcgI6yW+cdKf6rMS02Ut
-	V7VCjjbN6MQOFaHdn06Y9QhCHLxh+IqGHMUd+tldZGN8f2NHF9GS+TZcQ2+yDnny
-	Jj8E/wC1Nq3NuDcG/9CzkQ+RD8iDkx++Yrqn9pOybE0aZfEqtLbzZI04nKvUSWQx
-	Mq4pGrd1wz2j+xCj10WxZs9R16PYYtbw6iV3AqG+bu0iWpSKIvdDLz6F1VinXn4M
-	4H2dhjKpW9HqcaBUwt/hMJbAtDv+6IlP56V59xKvXvVAVco7UFaxZKgjA4GpS9LB
-	VwPhZ/pYmYwm95ODw86NQ==
+	:reply-to:subject:subject:to:to; s=fm1; t=1761027434; x=
+	1761034634; bh=ThkdY/C21GPPtmJaBNezXHfzXuqV664YAK8ByLyyrfs=; b=j
+	BkDXb9FTfW5u1Pbb6r2Zr3VIG72LKLw9nP9YQOlOupyXBz0s755d9Um35dkpZN63
+	I0Uef+OM6YOOlLsIcEoJtikl3xyLapw96UV1ssVhuz5QXCPo2hIR3HHuq7tMDGY2
+	58mQjV9AmE9WkO5v87YTKv3WvXTH0Mzuv6GrHXpLrn5wVp+uHl9G/UtGuSCPnuZw
+	vwEQaWyTRz1KV5apsZKdY+Fq3glU/Km7NFtk1WlTD7H88AOGfKkXC/iENwUf2PPx
+	jtjeK0o5qqx8Kh9PGTS744xDLujWknV2MNIOIHRFXPn3GPDa9C4CFI1NHQ1lvMBt
+	CSb12LPEGkaw74oFKuCyg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761027391; x=1761034591; bh=h0I0/rRQeZwp/IbShSTCGxIxrgyAXggNeKL
-	32rwMMgs=; b=sisca4HKx4Ig/i4chEgD7FFZ6gZj0d+Oddv14Y0Jg+W7/faxeZc
-	YyDPMM/p/wETgIULXgGprAgVI+qsiUhFMQBYAQTNAJKENUkuxhFEqUqlgl2nd6x8
-	1zG8ZsqsO6tJYFPBcLPOthKT+5WmADvFsoD7HFdOtIMjSAaJWFJhham3MraynTOp
-	dlJTR54YwpnrSemwhagqeySSF02mk5OsM0X1NwmJSev/UYJb1CEGP6HePHb7uT3N
-	h0EH6vd2FnIPcF/LoNy6xPBGHqiZZdMIIhP8GWlirNkc8h3eDjtEd8jbDzhYdCUh
-	5YSK7iE46tfGDwIccGRvr28uyM8FSxWvgFw==
-X-ME-Sender: <xms:PSX3aJOlA07VrFa5oEBuI9UxfVU4_PGpt34aDSYfALNP9_oYjtKDmw>
-    <xme:PSX3aFCnRcHza80FEeERLCpaR0NN0DGk6nVKpCX2eHvdO8rgJuPYF9im2itYBLViA
-    -iXCt_Zr0O7rKaMBaV9erhPrTsXx1zPsgCWz4S1iI-BzlS6y81vHw>
-X-ME-Received: <xmr:PSX3aLMzW29zICnlZwYz5nazmRwajp2x-6bkr5STG1vUPvyIp-vi9BOEXqBPGg>
+	1761027434; x=1761034634; bh=ThkdY/C21GPPtmJaBNezXHfzXuqV664YAK8
+	ByLyyrfs=; b=SwGlFmQyJV/PUgWB9SDj8yguYqU6M02H/iwHNvXmSHlFlJWSi3H
+	kIShHsNjDTPJvlQR1G0NkOXLVQQnarKseCczRENjeW4f2/jTVqqrDnx99y1xAXwD
+	7aH71MEqkok1ZR86ML/9a7+bnbqZxsxDD4Xbuf7+uJ3iNt30RCnrRiFrixypWMZJ
+	7hn4PFxDdp3x9LU/kfyTjNnUxVFPdp5+uxLLuMNV+oqpqgVqdelQ8yCOFQoMS+Bx
+	tQVgcSObMnUNEKS/RRs639uYCuVsXuAy8goq318P6gQSvQsVxv6C6Ev8BEbF13qc
+	QtR7z9k+yFXihMGqPAq3DbMQTPF9AoL+qhg==
+X-ME-Sender: <xms:aiX3aKJUQ4w9jII6ojRPfsoLw8bmWwE-vMOPiDCVSmdCc_Ma17RgmQ>
+    <xme:aiX3aDqx03n7NVDXm4A-71ZXHDANSiXBKGt83n_YX-1pOKqaX2_bd89uKQH9X5lqa
+    8rTARffDzmTe9-t-m3BrYAlGNlLG-N5AIfFDyslM2xEczBFctud>
+X-ME-Received: <xmr:aiX3aDUg7XIAOg7-dyN3dlAFXSuQfRptLP4PiBaTif9kcg3A516IjBkhKedgew>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeelleeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -72,40 +72,41 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeelleeiucetufdote
     ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
     udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
     homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesfhhrohhmohhrsg
-    hithdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhn
-    rdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
-    ephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidroh
-    hrghdruhhkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpth
-    htoheplhhirghmrdhhohiflhgvthhtsehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:PSX3aCzl-Z8WNRz8-pZ7B-afK4HGqC8PE_PfiKUfN0gDP1dD6Q31dg>
-    <xmx:PSX3aOeghdZuHuWQOPvnu4UWGATq0RBgqYgx_42Tk8aK7Gum1iVSJQ>
-    <xmx:PSX3aN11CDm0IrZXGVhulx1jKHgyFjD-UkGi7dPt5jwF9txV13KuYA>
-    <xmx:PSX3aHlyEmbgJLV8Q29c82OHwQWV6DoGPztGyi0jeMt45AnQRezF3g>
-    <xmx:PyX3aEa-9s5zkJim5FjAIcfsQNkRkQnzVrxtL4ZvpaLwstPrytXxr19q>
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrug
+    drohhrghdprhgtphhtthhopegurghvihgusehfrhhomhhorhgsihhtrdgtohhmpdhrtghp
+    thhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtth
+    hopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehhuhhghhgusehgohho
+    ghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpd
+    hrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphht
+    thhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhrvghnii
+    hordhsthhorghkvghssehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:aiX3aBZnG-ZV_4luYvFZpInhDnYtfDRG7P0tDbPX9MWlT8uXaFOc-w>
+    <xmx:aiX3aEviEPwclsfWJ_0iXO_8_Aa55qLyoEWI7vz1M23KTlSqCEu7zw>
+    <xmx:aiX3aIoBf-j0YZ_FDUN6TmK2qmANbmPNVQmdG3dyGIdOKBUNaBAt2w>
+    <xmx:aiX3aEKaDNlUXOJmV5ONHKDtWHioydnBD5JTyYQJOwskcyh9ar4HbA>
+    <xmx:aiX3aOz0zFfSTrsVWO04AryR85bzqMmoIOXlNHl2tcwU4ZwddTs2TMLq>
 Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 02:16:29 -0400 (EDT)
-Date: Tue, 21 Oct 2025 07:16:26 +0100
+ 21 Oct 2025 02:17:13 -0400 (EDT)
+Date: Tue, 21 Oct 2025 07:17:11 +0100
 From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
 	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
 	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
 	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Subject: Re: [RFC, PATCH 0/2] Large folios vs. SIGBUS semantics
-Message-ID: <d7s4dpxtfwf2kdp4zd7szy22lxrhdjilxrsrtpm7ckzsnosdmo@bq43jwx7omq3>
+Message-ID: <cas6g5sw6bffqo5e634tmyivdamcagoynztic7s53634mv2kwk@6a552oryikew>
 References: <20251020163054.1063646-1-kirill@shutemov.name>
  <aPbFgnW1ewPzpBGz@dread.disaster.area>
+ <aPckWHAGfH2i3ssV@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -114,40 +115,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPbFgnW1ewPzpBGz@dread.disaster.area>
+In-Reply-To: <aPckWHAGfH2i3ssV@infradead.org>
 
-On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
-> In critical paths like truncate, correctness and safety come first.
-> Performance is only a secondary consideration.  The overlap of
-> mmap() and truncate() is an area where we have had many, many bugs
-> and, at minimum, the current POSIX behaviour largely shields us from
-> serious stale data exposure events when those bugs (inevitably)
-> occur.
+On Mon, Oct 20, 2025 at 11:12:40PM -0700, Christoph Hellwig wrote:
+> On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
+> > Fundamentally, we really don't care about the mapping/tlb
+> > performance of the PTE fragments at EOF. Anyone using files large
+> > enough to notice the TLB overhead improvements from mapping large
+> > folios is not going to notice that the EOF mapping has a slightly
+> > higher TLB miss overhead than everywhere else in the file.
+> > 
+> > Please jsut fix the regression.
+> 
+> Yeah.  I'm not even sure why we're having this discussion.  The
+> behavior is mandated, we have test cases for it and there is
+> literally no practical upside in changing the behavior from what
+> we've done forever and what is mandated in Posix.
 
-How do you prevent writes via GUP racing with truncate()?
-
-Something like this:
-
-	CPU0				CPU1
-fd = open("file")
-p = mmap(fd)
-whatever_syscall(p)
-  get_user_pages(p, &page)
-  				truncate("file");
-  <write to page>
-  put_page(page);
-
-The GUP can pin a page in the middle of a large folio well beyond the
-truncation point. The folio will not be split on truncation due to the
-elevated pin.
-
-I don't think this issue can be fundamentally fixed as long as we allow
-GUP for file-backed memory.
-
-If the filesystem side cannot handle a non-zeroed tail of a large folio,
-this SIGBUS semantics only hides the issue instead of addressing it.
-
-And the race above does not seem to be far-fetched to me.
+Okay, will fix.
 
 -- 
   Kiryl Shutsemau / Kirill A. Shutemov
