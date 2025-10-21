@@ -1,167 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-64909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC98BF661B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:16:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6663BF664F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D01D8505BBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:13:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 468845034BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 12:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2183314D9;
-	Tue, 21 Oct 2025 12:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B002135503C;
+	Tue, 21 Oct 2025 12:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1At4+x7R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5zWlszzI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BxLuJ7ps";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sLWuz3DI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGLJZYWR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94C32E754
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 12:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1712E1E7C23
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 12:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761048724; cv=none; b=R+58TzACe6NvIhWmrXLRJASl+6Qot5QX3q6hCPcrAbZm8h3mHa3DqApPK2Ea8a0EpV6+lue+i7kTMDbr0P8Vj+S//AM7hqgysMiyJfDNlhYKaAv8c4YeH50D/XJoeoio03neNjt6CaKh839GjmXny6iUxAScBU8TFB+iQqWTIPc=
+	t=1761049013; cv=none; b=u9GbIi6N7EvcLAOH1oeT7tcFoJZqrFth6yo2biZGl2BgYsYlKqpxl7KV9UY3QMYsV6gyJ6N1tOZ09xynzajDkKdCGcWKpPaw431HqwY17wjbQVdQqyxwpw/qTcI/xStNqi4Pii5OXMs06s/wPpyvTJZBJVbthBNInlorzEWyKTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761048724; c=relaxed/simple;
-	bh=j2cX40cn6Yv2K2+uDsZW4eAcfe1Y23bjcEDu5ltrUIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dY8lBjL1r6N80BjiZ91pD4i30cG4rVUlgufs63nvcMa5PjXygylcXbw+zKpxqXv+aACStl5uNMDlHsqD9K5p4bnsNj7f2sWbXhY8GAszuEQE/p+k+gPlgVKmJrgmxeMo9on4G6q1P310iioiC4V/jroD+kr+vVKe9cR7mwIAW9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1At4+x7R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5zWlszzI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BxLuJ7ps; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sLWuz3DI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DFCB61F449;
-	Tue, 21 Oct 2025 12:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761048716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwFREZndxsLQgEOojxw0ePiYGHl5h5o9l6t4QJAq490=;
-	b=1At4+x7RUQX3DhyB+qyxSOIRvgZOdQDNb7FGLNTIAPVEHvE16pzIodPz9SZb5n++keS4hC
-	ETbw7DLdFE9/ZWUCZufVR68+CMYqESgc7VnA+PfTni1W6+P+y2MFUOR8eGpWy8XmXKbRRg
-	sGgLNDoe+JWyCItjD1f5DC9ldUdkq0c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761048716;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwFREZndxsLQgEOojxw0ePiYGHl5h5o9l6t4QJAq490=;
-	b=5zWlszzICLEmgZyDBbbLJfNDAG3GGDOTSvp3RGR9rZ3qNfZ+iwMKswINJWZ73qbk6aamz+
-	kG5TvvaQGZGJBVDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761048711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwFREZndxsLQgEOojxw0ePiYGHl5h5o9l6t4QJAq490=;
-	b=BxLuJ7psEhbrdLUyRYzObCBehqf5I73VS69CwdWanYIV+F4T1CcQv2fTKB+m/0ryGctw8/
-	G7rAwn50A+PF6Ci56o+PmZEWVDwANKAU2dJ/XnnmPQb91tQjKvUaLlcReW+dJY/st4uHY4
-	QVWgtOqzbwkq0rqZRUwFpFIF2MChLXM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761048711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwFREZndxsLQgEOojxw0ePiYGHl5h5o9l6t4QJAq490=;
-	b=sLWuz3DITIDFEo2otIwSc54F2tb8TtJXbMNwWElucdMWEjlkuTF9VhSRmGK3Wr7g/OaS2J
-	bJx2o3ShC4GOYPDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D1658139D8;
-	Tue, 21 Oct 2025 12:11:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ccUdM4d492iSaAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 21 Oct 2025 12:11:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6211BA0990; Tue, 21 Oct 2025 14:11:47 +0200 (CEST)
-Date: Tue, 21 Oct 2025 14:11:47 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kundan Kumar <kundan.kumar@samsung.com>
-Cc: Dave Chinner <david@fromorbit.com>, jaegeuk@kernel.org, 
-	chao@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	miklos@szeredi.hu, agruenba@redhat.com, trondmy@kernel.org, anna@kernel.org, 
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org, clm@meta.com, 
-	amir73il@gmail.com, axboe@kernel.dk, hch@lst.de, ritesh.list@gmail.com, 
-	djwong@kernel.org, dave@stgolabs.net, wangyufei@vivo.com, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com, anuj20.g@samsung.com, 
-	vishak.g@samsung.com, joshi.k@samsung.com
-Subject: Re: [PATCH v2 00/16] Parallelizing filesystem writeback
-Message-ID: <bfpv6jrjo4avzk76ex77dwpzaejglu5gsf2pqpmmgwrmqdkkk3@imsbtnrcelee>
-References: <CGME20251014120958epcas5p267c3c9f9dbe6ffc53c25755327de89f9@epcas5p2.samsung.com>
- <20251014120845.2361-1-kundan.kumar@samsung.com>
- <aPa7xozr7YbZX0W4@dread.disaster.area>
- <6fe26b74-beb9-4a6a-93af-86edcbde7b68@samsung.com>
+	s=arc-20240116; t=1761049013; c=relaxed/simple;
+	bh=8JIExmKFL1e/CmjoJnRReujq8mU/REJBTwDG9/fjmkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SMKOvvcIkkkOrqfhsjKynnd4V0gUq1LAD6FZC0F/DxnGnbqfwhSvJHaIEVI3IppVbXsjliJ3GNKOMcPnzbAMlD1WXNT8RYRCHWsil2Otg7uBGkGLbr7LgIUrzZ8rABXJbMTE5diRbXyt+ZP8Gw+qgCl47p4pXg1bxabsSAkJp1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGLJZYWR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B80DBC4CEF1;
+	Tue, 21 Oct 2025 12:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761049012;
+	bh=8JIExmKFL1e/CmjoJnRReujq8mU/REJBTwDG9/fjmkU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pGLJZYWROnGvExmYkpXY4E+CrprIx+KCNr+WptCpQtmc/zHCY71hGPeLTZqIHT87x
+	 v/YV85rpXuABPTl4JXzhFjH5acPF23vIYol4MGVUrky+415tynJPWA0PwyehSgsHIA
+	 k/sU5EL38wzaIOMkn1Wl7ZNbsmcFuuHmk47VQ0DW3OhK9I8btaigTx6YRZBprK9hKT
+	 8KXmHoCiFKSPTR6ut/kLClCRl1P+8shhu7kcD4BRNc8so6fNcST0gnUwBRNKGwnOhY
+	 2JNUBbO4bSgsGm4JwmOQAmD+Tc652+AOL4595AsZnpzIb4nzwF9YIWEQ+68nBgqOfA
+	 glAz4lV71Wv/A==
+From: Christian Brauner <brauner@kernel.org>
+To: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
+	geoff@geoffthorpe.net,
+	Hongbo Li <lihongbo22@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-um@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] hostfs: Fix only passing host root in boot stage with new mount
+Date: Tue, 21 Oct 2025 14:16:46 +0200
+Message-ID: <20251021-genau-erwachen-eb2436082486@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251011092235.29880-1-lihongbo22@huawei.com>
+References: <20251011092235.29880-1-lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6fe26b74-beb9-4a6a-93af-86edcbde7b68@samsung.com>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[31];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLkd9wktknm683nrx6wbi4qz63)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[fromorbit.com,kernel.org,zeniv.linux.org.uk,suse.cz,szeredi.hu,redhat.com,linux-foundation.org,infradead.org,meta.com,gmail.com,kernel.dk,lst.de,stgolabs.net,vivo.com,lists.sourceforge.net,vger.kernel.org,lists.linux.dev,kvack.org,samsung.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1332; i=brauner@kernel.org; h=from:subject:message-id; bh=8JIExmKFL1e/CmjoJnRReujq8mU/REJBTwDG9/fjmkU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8r1y/Rf/WKsu3lzLW/rxiuPuNmvWdmRkNf8/PyvoQx fH8V0V0QEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBENvkzMuxy8/t58cvkqFd/ jC/e/ZDk/ForQLvVsipfr83u1eZjq18wMhz2jlG7Esc2wVpER2xJCVOzlE588cq35fvMYwXnBX9 tZAMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue 21-10-25 16:06:22, Kundan Kumar wrote:
-> Previous results of fragmentation were taken with randwrite. I took
-> fresh data for sequential IO and here are the results.
-> number of extents reduces a lot for seq IO:
->    A) Workload 6 files each 1G in single directory(AG)   - numjobs = 1
->          Base XFS                : 1
->          Parallel Writeback XFS  : 1
+On Sat, 11 Oct 2025 09:22:35 +0000, Hongbo Li wrote:
+> In the old mount proceedure, hostfs could only pass root directory during
+> boot. This is because it constructed the root directory using the @root_ino
+> event without any mount options. However, when using it with the new mount
+> API, this step is no longer triggered. As a result, if users mounts without
+> specifying any mount options, the @host_root_path remains uninitialized. To
+> prevent this issue, the @host_root_path should be initialized at the time
+> of allocation.
 > 
->    B) Workload 12 files each of 1G to 12 directories(AGs)- numjobs = 12
->          Base XFS                : 4
->          Parallel Writeback XFS  : 3
-> 
->    C) Workload 6 files each of 20G to 6 directories(AGs) - numjobs = 6
->          Base XFS                : 4
->          Parallel Writeback XFS  : 4
+> [...]
 
-Thanks for sharing details! I'm curious: how big differences in throughput
-did you see between normal and parallel writeback with sequential writes?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] hostfs: Fix only passing host root in boot stage with new mount
+      https://git.kernel.org/vfs/vfs/c/590a4c70008c
 
