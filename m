@@ -1,199 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-64937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D00BF71B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 16:37:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160E7BF7210
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 16:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65AC54057D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25475188D502
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 14:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606EA33B962;
-	Tue, 21 Oct 2025 14:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="dbM54z7X"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B4E33C503;
+	Tue, 21 Oct 2025 14:41:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DDE33C52B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 14:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75C033C516
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 14:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761057298; cv=none; b=emY6bZfM2qlvtvXwx4uIAN3t77lKu6Oq20chpBy9pk0y/rii05Z7TIfJzjNEhlm2ER48ina12KfsvEAUC5XYSlPsZEo6dzh0WYT+bJ2ax0Bx7dyFafgAIWJ3cvTUesjpcEg4XOSr+gTZgobbsXAJnBa0XioaeYO54j7dIz1Czj4=
+	t=1761057707; cv=none; b=W4M8BREL0fWudZMyEoU37WsKatdovLG6dHI3GBaR6LleFy8ddrbZJie1VC6EtbavSaqZLHhBHJJkGB2rJPtWeDjovcg1PjblGnSaypjb2fDSy3OUvb/kaUZ6VCj6KDMyLgZFumGArw+XtwLUne00gcOlKGJDRQH574TNWgpyFCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761057298; c=relaxed/simple;
-	bh=HtEYm3WbJmCN1KO4SaCrajhVynmFoIbWwbCW53lJb9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQJ6wfhcbtiG8vMAzGaKbONZOLpi0mBWF5ye0strS6RVxnwq3j3EK4g4LP549TgaakYVGCnFAraxpMcDfI3WiYfohVwkFG2CPSBgC8IHaTt3YKYlZ5b3877KPboBIYPI5fiUquJIDkkX33EHg0IX0jOOZCDe/2Hu7ZWyTcbK8WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=dbM54z7X; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781010ff051so4223281b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 07:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1761057296; x=1761662096; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sV3KIhc1PNPd/uW7bqfRoDcwumTG1e/maPgTaMLXuW0=;
-        b=dbM54z7X73YK0xvaCLxSrxd7B9cDEkxGaKXjhj2zmoGu16KWr+T0FJK0jdTCmpGsH3
-         o4ZFBsyVFrLggPOL/Tb6YvsfQTfHNlVgGYcqpMvgqE3j8e7S6SI6xyRSgNdyKRk9vffD
-         sG4J8Ir0DyDNcILEwSnSyWufpvhezNY11r2M0ghYMIFt6G5EvBatBtUx8e2wYZJ0ygHZ
-         C9N17nDus6p3E1Up4CMOr7as/cWtYPTBpPBD5RhcB+Cl5nIfnA0qqH4EZ1dT09I29LSO
-         ZEh8Ip1rrYdkvUAX71vHOoUZMNBDX8rajGm7vagcak1T0w/X1gfLdGtEmchGigMrqEWX
-         /mlQ==
+	s=arc-20240116; t=1761057707; c=relaxed/simple;
+	bh=Xk82p3QMQ218l3t+5+rV+5DkhvLFvg+GAWSI/dQi70o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Xl2MuiNKwfIvG5SWFzjq+g7oQnoLrS55zH8BI3Z5k92w1LGD9wDnUgluQ8+z8pGCOkjAS6wGad9Zc90xtCaHCIzWVATC0sCfzGqpgShacEGw8S8eBLkC7RM8iLCRnbZGvefKgWMQ6aFvSnFYg9mbXqExedrkiz8eClUF9FvKWcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-429278a11f7so61232185ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 07:41:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761057296; x=1761662096;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sV3KIhc1PNPd/uW7bqfRoDcwumTG1e/maPgTaMLXuW0=;
-        b=PW3yZj9UAXWfGAtVyxI2BSRKgBWXrnMCN/ZrpZrvIYbo64TzM9WREkgrYX9v9Yh2Ct
-         7pzcqApRP8i+8EGgvYvQUOnhZ4IaOR8TxBt+Nzl0DDAnhisYPkUYFb6hEghFzzz8x+h8
-         zYsuJo/ikEfipSQYXxgZpQklOqXX7bHZwnJBBJ/HmyivMACmZujwFRDEvqyoMGnEeekf
-         IsUn+lg2NF1reP51V/MtHCoFfpAbUUx+F6H9OaNfzY0l5KLDSuiqaRKu/gUDvbdn7Pad
-         fpAXRfacUYvKOd/WnkYAb8IiCWIaBe6oCt4GxMJxDyPyEj8aDOrvmHPnF+Jx2G44Lygp
-         mhaw==
-X-Gm-Message-State: AOJu0YyEmr5JE+ppWTkp/77EsHJb6q51faV6QI1DIbmIVOiWqJ6aaWTN
-	niDNVTGSeaa87GgaFBQESNsf7+3HQ5i8Z5XtYKI0ovjavGSBnS9a2rTY/QEPnwIGM48=
-X-Gm-Gg: ASbGnctH/rYzpnGLIQQsQOPWTkhygmxlJAz0c+FHLf9xkf/rLLVJ7kkbZQv78QHSTTB
-	6Kn3Y9o0v1m6d7DxdAlEA+H0pfWdoP54eUy+sJOSFJuYk4B/5i/nD42omRjebLx80eJ0IIhKkLi
-	hgNRGLYb6EaCO2in3xfnKsqByJ8th/AqLaQ1mqwUMQRZLogc8e0GTWWNOeANYPMv4Owl4ktD+QW
-	x9hQY3k01NdhHA3TeOaAWYhDd6AwbVLDwhocssmMgVaa4pKVaq/BBZ6Pu0ScHfeOlOkE1QMpX+n
-	pTFRhu1hDh686zi+j+M2gJ8bO0ya0h8tJ2fuvzBGvPW73MCcRI8vI9byljsYa98VzfMfQ/ZG41g
-	kML0QBeUGYWlcCUEFDzSrIy5R79QGYXZ1OUysEiGwxodfSGk41+aKityZk1U9ozs1W0HJDVcV7R
-	cIafxaWGGr
-X-Google-Smtp-Source: AGHT+IHBX9TIE3IQtEBoV7LOteBO6V2Q79FbArZ4HOehhBp5RxecJgOwYxXXdgG5tSXjdbgoVNEnFA==
-X-Received: by 2002:a05:6a00:4b0f:b0:781:275a:29d9 with SMTP id d2e1a72fcca58-7a220b10725mr23389331b3a.18.1761057296233;
-        Tue, 21 Oct 2025 07:34:56 -0700 (PDT)
-Received: from localhost ([12.197.85.234])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff15829sm11500038b3a.11.2025.10.21.07.34.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 07:34:54 -0700 (PDT)
-Date: Tue, 21 Oct 2025 10:34:54 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
-Message-ID: <20251021143454.GA8072@fedora>
-References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+        d=1e100.net; s=20230601; t=1761057704; x=1761662504;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4nyXkjWC/ci1YXwgRcz9ZasDLILOvM2KJyStZKlc64A=;
+        b=iF+C8OZYgmMcmNx01n539SoVnoxTv1vfFyeOV922844zCa22kMy9XITHEuzqS/J5dS
+         UqjnB8a6GBrCICarK9/04sE2sKeKXk/kNDEd5w0QdbS6T9ftzQBJ8uy6K1Eg7kpeQYYo
+         YTPe+c9eBpQcDOA3lf2f2O4ggqVUrAltjAQ4edbQz1foMOjlEhZYcURPvnNyx+A7Q/n+
+         1RaG809dhDoM+GIJTgCheSykTG+BAPhqoE63comP0VexOlAclbnBmxMdv/hI5TIyMcav
+         R9olqaKc/HRCWUE38CIqLIQBAjQE53F3IFxu+YnJtly5LdT2hyJ8tLN6CKo8tRL94+4L
+         nDAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcDJ7kKNJOV/b9K8opEO1Po0psk3UD/zCK+3yOv1DeJb4XKU/J2PkGyt/NJDEtpJo07NfMpAjQO9L7GyW4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjHF/xGLr9+OkbU/eaKWfLGwdYpV+xMlP2yMRZk4Dy1jslElqc
+	MSpvp2bffBRZTtO5VmdiyAaMnY2dMClH7cd1HvV6bRIqjyQ4eBcK/H3+XjySmy5DHbDCBPZFfkb
+	z7ei8tplpasuckTafx9oV91awnL1vejo5tNNMnFPkZDZuQlpbclUrJGSWRv0=
+X-Google-Smtp-Source: AGHT+IFB7JSh1jrcc84lwp+scGP8tt2pMbdrY49scmV75mR9oHYCvfnRmGuGOLsMGCf2cDZgm31FWVk2KIt/UjEYUCv1sp6O0Atc
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a92:cd82:0:b0:426:39a:90f1 with SMTP id
+ e9e14a558f8ab-430c527dc54mr238746205ab.18.1761057704018; Tue, 21 Oct 2025
+ 07:41:44 -0700 (PDT)
+Date: Tue, 21 Oct 2025 07:41:44 -0700
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f79ba8.050a0220.346f24.001f.GAE@google.com>
+Subject: [syzbot ci] Re: nstree: listns()
+From: syzbot ci <syzbot+ci929e562404b4811b@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, arnd@arndb.de, bpf@vger.kernel.org, brauner@kernel.org, 
+	cgroups@vger.kernel.org, cyphar@cyphar.com, daan.j.demeyer@gmail.com, 
+	edumazet@google.com, hannes@cmpxchg.org, jack@suse.cz, jannh@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, kuba@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	mzxreary@0pointer.de, netdev@vger.kernel.org, tglx@linutronix.de, 
+	tj@kernel.org, viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 21, 2025 at 01:43:06PM +0200, Christian Brauner wrote:
-> Hey,
-> 
-> As announced a while ago this is the next step building on the nstree
-> work from prior cycles. There's a bunch of fixes and semantic cleanups
-> in here and a ton of tests.
-> 
-> I need helper here!: Consider the following current design:
-> 
-> Currently listns() is relying on active namespace reference counts which
-> are introduced alongside this series.
-> 
-> The active reference count of a namespace consists of the live tasks
-> that make use of this namespace and any namespace file descriptors that
-> explicitly pin the namespace.
-> 
-> Once all tasks making use of this namespace have exited or reaped, all
-> namespace file descriptors for that namespace have been closed and all
-> bind-mounts for that namespace unmounted it ceases to appear in the
-> listns() output.
-> 
-> My reason for introducing the active reference count was that namespaces
-> might obviously still be pinned internally for various reasons. For
-> example the user namespace might still be pinned because there are still
-> open files that have stashed the openers credentials in file->f_cred, or
-> the last reference might be put with an rcu delay keeping that namespace
-> active on the namespace lists.
-> 
-> But one particularly strange example is CONFIG_MMU_LAZY_TLB_REFCOUNT=y.
-> Various architectures support the CONFIG_MMU_LAZY_TLB_REFCOUNT option
-> which uses lazy TLB destruction.
-> 
-> When this option is set a userspace task's struct mm_struct may be used
-> for kernel threads such as the idle task and will only be destroyed once
-> the cpu's runqueue switches back to another task. So the kernel thread
-> will take a reference on the struct mm_struct pinning it.
-> 
-> And for ptrace() based access checks struct mm_struct stashes the user
-> namespace of the task that struct mm_struct belonged to originally and
-> thus takes a reference to the users namespace and pins it.
-> 
-> So on an idle system such user namespaces can be persisted for pretty
-> arbitrary amounts of time via struct mm_struct.
-> 
-> Now, without the active reference count regulating visibility all
-> namespace that still are pinned in some way on the system will appear in
-> the listns() output and can be reopened using namespace file handles.
-> 
-> Of course that requires suitable privileges and it's not really a
-> concern per se because a task could've also persist the namespace
-> recorded in struct mm_struct explicitly and then the idle task would
-> still reuse that struct mm_struct and another task could still happily
-> setns() to it afaict and reuse it for something else.
-> 
-> The active reference count though has drawbacks itself. Namely that
-> socket files break the assumption that namespaces can only be opened if
-> there's either live processes pinning the namespace or there are file
-> descriptors open that pin the namespace itself as the socket SIOCGSKNS
-> ioctl() can be used to open a network namespace based on a socket which
-> only indirectly pins a network namespace.
-> 
-> So that punches a whole in the active reference count tracking. So this
-> will have to be handled as right now socket file descriptors that pin a
-> network namespace that don't have an active reference anymore (no live
-> processes, not explicit persistence via namespace fds) can't be used to
-> issue a SIOCGSKNS ioctl() to open the associated network namespace.
-> 
-> So two options I see if the api is based on ids:
-> 
-> (1) We use the active reference count and somehow also make it work with
->     sockets.
-> (2) The active reference count is not needed and we say that listns() is
->     an introspection system call anyway so we just always list
->     namespaces regardless of why they are still pinned: files,
->     mm_struct, network devices, everything is fair game.
-> (3) Throw hands up in the air and just not do it.
->
+syzbot ci has tested the following series
 
-I think the active reference counts are just nice to have, if I'm not missing
-something we still have to figure out which pid is using the namespace we may
-want to enter, so there's already a "time of check, time of use" issue. I think
-if we want to have the active count we can do it just as an advisory thing, have
-a flag that says "this ns is dying and you can't do anything with it", and then
-for network namespaces we can just never set the flag and let the existing
-SIOCKGSNS ioctl work as is.
+[v1] nstree: listns()
+https://lore.kernel.org/all/20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org
+* [PATCH RFC DRAFT 01/50] libfs: allow to specify s_d_flags
+* [PATCH RFC DRAFT 02/50] nsfs: use inode_just_drop()
+* [PATCH RFC DRAFT 03/50] nsfs: raise DCACHE_DONTCACHE explicitly
+* [PATCH RFC DRAFT 04/50] pidfs: raise DCACHE_DONTCACHE explicitly
+* [PATCH RFC DRAFT 05/50] nsfs: raise SB_I_NODEV and SB_I_NOEXEC
+* [PATCH RFC DRAFT 06/50] nstree: simplify return
+* [PATCH RFC DRAFT 07/50] ns: initialize ns_list_node for initial namespaces
+* [PATCH RFC DRAFT 08/50] ns: add __ns_ref_read()
+* [PATCH RFC DRAFT 09/50] ns: add active reference count
+* [PATCH RFC DRAFT 10/50] ns: use anonymous struct to group list member
+* [PATCH RFC DRAFT 11/50] nstree: introduce a unified tree
+* [PATCH RFC DRAFT 12/50] nstree: allow lookup solely based on inode
+* [PATCH RFC DRAFT 13/50] nstree: assign fixed ids to the initial namespaces
+* [PATCH RFC DRAFT 14/50] ns: maintain list of owned namespaces
+* [PATCH RFC DRAFT 15/50] nstree: add listns()
+* [PATCH RFC DRAFT 16/50] arch: hookup listns() system call
+* [PATCH RFC DRAFT 17/50] nsfs: update tools header
+* [PATCH RFC DRAFT 18/50] selftests/filesystems: remove CLONE_NEWPIDNS from setup_userns() helper
+* [PATCH RFC DRAFT 19/50] selftests/namespaces: first active reference count tests
+* [PATCH RFC DRAFT 20/50] selftests/namespaces: second active reference count tests
+* [PATCH RFC DRAFT 21/50] selftests/namespaces: third active reference count tests
+* [PATCH RFC DRAFT 22/50] selftests/namespaces: fourth active reference count tests
+* [PATCH RFC DRAFT 23/50] selftests/namespaces: fifth active reference count tests
+* [PATCH RFC DRAFT 24/50] selftests/namespaces: sixth active reference count tests
+* [PATCH RFC DRAFT 25/50] selftests/namespaces: seventh active reference count tests
+* [PATCH RFC DRAFT 26/50] selftests/namespaces: eigth active reference count tests
+* [PATCH RFC DRAFT 27/50] selftests/namespaces: ninth active reference count tests
+* [PATCH RFC DRAFT 28/50] selftests/namespaces: tenth active reference count tests
+* [PATCH RFC DRAFT 29/50] selftests/namespaces: eleventh active reference count tests
+* [PATCH RFC DRAFT 30/50] selftests/namespaces: twelth active reference count tests
+* [PATCH RFC DRAFT 31/50] selftests/namespaces: thirteenth active reference count tests
+* [PATCH RFC DRAFT 32/50] selftests/namespaces: fourteenth active reference count tests
+* [PATCH RFC DRAFT 33/50] selftests/namespaces: fifteenth active reference count tests
+* [PATCH RFC DRAFT 34/50] selftests/namespaces: add listns() wrapper
+* [PATCH RFC DRAFT 35/50] selftests/namespaces: first listns() test
+* [PATCH RFC DRAFT 36/50] selftests/namespaces: second listns() test
+* [PATCH RFC DRAFT 37/50] selftests/namespaces: third listns() test
+* [PATCH RFC DRAFT 38/50] selftests/namespaces: fourth listns() test
+* [PATCH RFC DRAFT 39/50] selftests/namespaces: fifth listns() test
+* [PATCH RFC DRAFT 40/50] selftests/namespaces: sixth listns() test
+* [PATCH RFC DRAFT 41/50] selftests/namespaces: seventh listns() test
+* [PATCH RFC DRAFT 42/50] selftests/namespaces: ninth listns() test
+* [PATCH RFC DRAFT 43/50] selftests/namespaces: ninth listns() test
+* [PATCH RFC DRAFT 44/50] selftests/namespaces: first listns() permission test
+* [PATCH RFC DRAFT 45/50] selftests/namespaces: second listns() permission test
+* [PATCH RFC DRAFT 46/50] selftests/namespaces: third listns() permission test
+* [PATCH RFC DRAFT 47/50] selftests/namespaces: fourth listns() permission test
+* [PATCH RFC DRAFT 48/50] selftests/namespaces: fifth listns() permission test
+* [PATCH RFC DRAFT 49/50] selftests/namespaces: sixth listns() permission test
+* [PATCH RFC DRAFT 50/50] selftests/namespaces: seventh listns() permission test
 
-The bigger question (and sorry I didn't think about this before now), is how are
-we going to integrate this into the rest of the NS related syscalls? Having
-progromatic introspection is excellent from a usabiility point of view, but we
-also want to be able to have an easy way to get a PID from these namespaces, and
-even eventually do things like setns() based on these IDs. Those are followup
-series of course, but we should at least have a plan for them. Thanks,
+and found the following issue:
+WARNING in __ns_tree_add_raw
 
-Josef
+Full report is available here:
+https://ci.syzbot.org/series/03ca38c3-876c-4231-aa06-ddb0bc8a30ad
+
+***
+
+WARNING in __ns_tree_add_raw
+
+tree:      bpf
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf.git
+base:      5fb750e8a9ae123b2034771b864b8a21dbef65cd
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/156cf21b-68f9-423c-807a-3dd094e6aed8/config
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5816 at kernel/nstree.c:189 __ns_tree_add_raw+0xa92/0xb30
+Modules linked in:
+CPU: 1 UID: 0 PID: 5816 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__ns_tree_add_raw+0xa92/0xb30
+Code: 32 00 90 0f 0b 90 42 80 3c 23 00 0f 85 1e fc ff ff e9 21 fc ff ff e8 ed 78 32 00 90 0f 0b 90 e9 66 fc ff ff e8 df 78 32 00 90 <0f> 0b 90 e9 53 ff ff ff 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c ef
+RSP: 0018:ffffc90003f27c30 EFLAGS: 00010293
+RAX: ffffffff818e0051 RBX: 1ffffffff16db871 RCX: ffff88810ffe0000
+RDX: 0000000000000000 RSI: ffff8881bbf5e9a8 RDI: ffff88816d0e6e00
+RBP: ffff88816d0e6e00 R08: ffff88816d0e6e3f R09: 0000000000000000
+R10: ffff88816d0e6e30 R11: ffffffff81b988c0 R12: dffffc0000000000
+R13: ffff88816d0e6e40 R14: ffffffff8b6dc388 R15: ffff8881bbf5e9a8
+FS:  000055558630f500(0000) GS:ffff8882a9d04000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5c3f03529c CR3: 000000010b5bc000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ copy_cgroup_ns+0x373/0x5f0
+ create_new_namespaces+0x358/0x720
+ unshare_nsproxy_namespaces+0x11c/0x170
+ ksys_unshare+0x4c8/0x8c0
+ __x64_sys_unshare+0x38/0x50
+ do_syscall_64+0xfa/0xfa0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5c3ef907c7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc62c39c88 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007ffc62c39c90 RCX: 00007f5c3ef907c7
+RDX: 0000000000000000 RSI: 00007f5c3f03529c RDI: 0000000002000000
+RBP: 00007ffc62c39d20 R08: 0000000000000000 R09: 00007f5c3fd1d6c0
+R10: 0000000000044000 R11: 0000000000000246 R12: 00007ffc62c39d20
+R13: 00007ffc62c39d28 R14: 0000000000000009 R15: 0000000000000000
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
