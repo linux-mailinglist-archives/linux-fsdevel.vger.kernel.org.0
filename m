@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-64881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97EB6BF63C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:57:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16118BF63CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6861886677
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:58:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 76C013487DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A2C345CB5;
-	Tue, 21 Oct 2025 11:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6822C345CDB;
+	Tue, 21 Oct 2025 11:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvuQdzP3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDH+S8FP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7912F3612;
-	Tue, 21 Oct 2025 11:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61AE336EC3;
+	Tue, 21 Oct 2025 11:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047190; cv=none; b=YtJ0RM93EVdZdZcP7XrQmVPJI66zxISHzOL8sJwA3VU/u/T1+15Wb0gvPqbmbkLuAyrIsNsk3H1jjEfmnaZoC5UCql7n5VXehtk9dl40STZPXWnXRG3DWpnEAcp21qPoMuxFvVL74p7U/i+LUJIG0co6JlUXXgl6XXpxqHb3z0Q=
+	t=1761047195; cv=none; b=OX+K6clmC+hHG5Qn4GURu29daGhHs1O+bVAZVVsM32OFWg1dIJbss/W9Zty93Bs7yP1BiB+IIlLfbIHRXivZuGyvbWfc8OwJc02MszUPea8I3KqNGO9E9Ef8VbYKcRjDXVqRXw6pHKnzHOQUiH/eQTX+iZIF7yll6aVL+MzqSIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047190; c=relaxed/simple;
-	bh=YF6LlFsedC0FcPBAnpIIRxVh8Wv/PCUOI1UuPciGHmg=;
+	s=arc-20240116; t=1761047195; c=relaxed/simple;
+	bh=vsrRT4zqgD+nKit9MH7tv6SchshKJx7ljsx1OLBVRIQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W+20MMGii17wD9GX26ok5iW18jVt28RWm0lpexLJmytAftS91vEOBQ6mEYaq9X0JN8Po43n9lJhwrWAoSEQK+XayYvm+4CCxezSr6wT4SaiM3/ZX6qHH34+h5R03tAYhapar9+ktdGbBVhzzFQu1DaFHLLQt5GUEytwsgxmoDJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gvuQdzP3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0A9C4CEF1;
-	Tue, 21 Oct 2025 11:46:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=C1lc0BAro4JE4aPK5URuKM85qqq+xBNauw0X5z6/U4YQNdcLJt6AnUVmY+fb5YcGVPwCppTBYN43nwXOdXDuclAAjoRmaK8M4Xo/pp4rXx8AJKe3hnWLwluqVRkbWBNEpwfjA+x3za62f1JTodMLX3P+zYHtPvQmjGMWLFL8i8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDH+S8FP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC478C4CEF5;
+	Tue, 21 Oct 2025 11:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047190;
-	bh=YF6LlFsedC0FcPBAnpIIRxVh8Wv/PCUOI1UuPciGHmg=;
+	s=k20201202; t=1761047195;
+	bh=vsrRT4zqgD+nKit9MH7tv6SchshKJx7ljsx1OLBVRIQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gvuQdzP3O6onZGZ2uks/a7670YhGCYn2Ww3qADjVidHUTfcmhRRJnRoTQkPLOhfZP
-	 L1XplKSubRAWwR5ACHadA5YFslWHzet99LxfXNJFYi7mlawfGSJVSWKPf9fNp3EX8E
-	 0ZigP8mynC73RDuU51Y0cAoCasxuQEzfwjkCq/q5RIN7HtiPGw5fSryz85d7iyneel
-	 TEY64C3AOCzra6No2XqIZBDLbeX1ncAYK1hsVpEYKsfLv0LquGhuUPJRVdq+lim6wQ
-	 2cxGY0RL/WLoIBfUod9sQTJDlVXbMUmTDM+OnT//wq47ianRfl07TyFYyBKYn8KH38
-	 mpoblDgWLVEHg==
+	b=PDH+S8FPzgBF9Rwe2WwCrGlUq9wjqX0XhR+nLD8+SLeZJcCJ6R9UZ4LJVXGWPtel7
+	 U9QqLl+JAN5qEyVfjOiQNu6ACmGoso3DQg/QBBVoJl+A4ib0lAepjfzkbcrDMUmNZb
+	 bbrwHGYNSEFj4uIz+3RryHBV8lp8abHjAGG7fFP0XKLPKV5MMngltjSOWEX9piO+IX
+	 aT6UZRnyDkuqPeL2Lsjt6N+jfKvwHI6YqBDYUncLuP+DBz1FV3XWLPnpuls0b3ajKn
+	 KGq91WYhh2xxCm3HpOl6A2E13HU+j+RbDUiQJaDzXVqNGVDWmRiNlPw38/x9v+tgBg
+	 Xyqeb2CHejNiQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:36 +0200
-Subject: [PATCH RFC DRAFT 30/50] selftests/namespaces: twelth active
+Date: Tue, 21 Oct 2025 13:43:37 +0200
+Subject: [PATCH RFC DRAFT 31/50] selftests/namespaces: thirteenth active
  reference count tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-30-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-31-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,212 +70,230 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6173; i=brauner@kernel.org;
- h=from:subject:message-id; bh=YF6LlFsedC0FcPBAnpIIRxVh8Wv/PCUOI1UuPciGHmg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3x38YJ3rXvRxSU3L9XL6GW6zvxb8MTLP9GQc228S
- UxBm6BNRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESsPjEyfOB4o+/+ev7fNUFe
- v+4yeWxfnxHvfGLp5s4U2fDnl8rj8hkZrpQEXWuaqGr3YKHCGY7vjIf/ikmI3LigrX8jvOB69aY
- FfAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6611; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=vsrRT4zqgD+nKit9MH7tv6SchshKJx7ljsx1OLBVRIQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3xX0/OjcbfbootK/Z86rb9tytUJ1r7X++Zo+40e7
+ g9ePX7eHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5G87IcPPwidVnK+dmhHWm
+ BMzjMQ+z2PL8d5WoplXwCg6nu/0sxxn+2QlcE2QUXLzDRLc/8fMbIf/3q/Yf6pS0O9E9cQl36R8
+ 5JgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test hierarchical propagation with deep namespace hierarchy.
-Create: init_user_ns -> user_A -> user_B -> net_ns
-When net_ns is active, both user_A and user_B should be active.
-This verifies the conditional recursion in __ns_ref_active_put() works.
+Test that parent stays active as long as ANY child is active.
+Create parent user namespace with two child net namespaces.
+Parent should remain active until BOTH children are inactive.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 182 +++++++++++++++++++++
- 1 file changed, 182 insertions(+)
+ .../selftests/namespaces/ns_active_ref_test.c      | 201 +++++++++++++++++++++
+ 1 file changed, 201 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index 3c2f99b25067..63cc88fe5cc1 100644
+index 63cc88fe5cc1..4c077223b05c 100644
 --- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
 +++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -1531,4 +1531,186 @@ TEST(ns_different_types_same_owner)
+@@ -1713,4 +1713,205 @@ TEST(ns_deep_hierarchy_propagation)
  	}
  }
  
 +/*
-+ * Test hierarchical propagation with deep namespace hierarchy.
-+ * Create: init_user_ns -> user_A -> user_B -> net_ns
-+ * When net_ns is active, both user_A and user_B should be active.
-+ * This verifies the conditional recursion in __ns_ref_active_put() works.
++ * Test that parent stays active as long as ANY child is active.
++ * Create parent user namespace with two child net namespaces.
++ * Parent should remain active until BOTH children are inactive.
 + */
-+TEST(ns_deep_hierarchy_propagation)
++TEST(ns_parent_multiple_children_refcount)
 +{
-+	struct file_handle *ua_handle, *ub_handle, *net_handle;
-+	int ret, pipefd[2];
++	struct file_handle *parent_handle, *net1_handle, *net2_handle;
++	int ret, pipefd[2], syncpipe[2];
 +	pid_t pid;
 +	int status;
-+	__u64 ua_id, ub_id, net_id;
-+	char ua_buf[sizeof(*ua_handle) + MAX_HANDLE_SZ];
-+	char ub_buf[sizeof(*ub_handle) + MAX_HANDLE_SZ];
-+	char net_buf[sizeof(*net_handle) + MAX_HANDLE_SZ];
++	__u64 p_id, n1_id, n2_id;
++	char p_buf[sizeof(*parent_handle) + MAX_HANDLE_SZ];
++	char n1_buf[sizeof(*net1_handle) + MAX_HANDLE_SZ];
++	char n2_buf[sizeof(*net2_handle) + MAX_HANDLE_SZ];
++	char sync_byte;
 +
 +	ASSERT_EQ(pipe(pipefd), 0);
++	ASSERT_EQ(pipe(syncpipe), 0);
 +	pid = fork();
 +	ASSERT_GE(pid, 0);
 +
 +	if (pid == 0) {
 +		close(pipefd[0]);
++		close(syncpipe[1]);
 +
-+		/* Create user_A -> user_B -> net hierarchy */
++		/* Create parent user namespace */
 +		if (setup_userns() < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		int ua_fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (ua_fd < 0) {
++		int p_fd = open("/proc/self/ns/user", O_RDONLY);
++		if (p_fd < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
-+		if (ioctl(ua_fd, NS_GET_ID, &ua_id) < 0) {
-+			close(ua_fd);
++		if (ioctl(p_fd, NS_GET_ID, &p_id) < 0) {
++			close(p_fd);
 +			close(pipefd[1]);
 +			exit(1);
 +		}
-+		close(ua_fd);
++		close(p_fd);
 +
-+		if (setup_userns() < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+
-+		int ub_fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (ub_fd < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+		if (ioctl(ub_fd, NS_GET_ID, &ub_id) < 0) {
-+			close(ub_fd);
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+		close(ub_fd);
-+
++		/* Create first network namespace */
 +		if (unshare(CLONE_NEWNET) < 0) {
 +			close(pipefd[1]);
++			close(syncpipe[0]);
 +			exit(1);
 +		}
 +
-+		int net_fd = open("/proc/self/ns/net", O_RDONLY);
-+		if (net_fd < 0) {
++		int n1_fd = open("/proc/self/ns/net", O_RDONLY);
++		if (n1_fd < 0) {
 +			close(pipefd[1]);
++			close(syncpipe[0]);
 +			exit(1);
 +		}
-+		if (ioctl(net_fd, NS_GET_ID, &net_id) < 0) {
-+			close(net_fd);
++		if (ioctl(n1_fd, NS_GET_ID, &n1_id) < 0) {
++			close(n1_fd);
 +			close(pipefd[1]);
++			close(syncpipe[0]);
 +			exit(1);
 +		}
-+		close(net_fd);
++		/* Keep n1_fd open so first namespace stays active */
 +
-+		/* Send all three namespace IDs */
-+		write(pipefd[1], &ua_id, sizeof(ua_id));
-+		write(pipefd[1], &ub_id, sizeof(ub_id));
-+		write(pipefd[1], &net_id, sizeof(net_id));
++		/* Create second network namespace */
++		if (unshare(CLONE_NEWNET) < 0) {
++			close(n1_fd);
++			close(pipefd[1]);
++			close(syncpipe[0]);
++			exit(1);
++		}
++
++		int n2_fd = open("/proc/self/ns/net", O_RDONLY);
++		if (n2_fd < 0) {
++			close(n1_fd);
++			close(pipefd[1]);
++			close(syncpipe[0]);
++			exit(1);
++		}
++		if (ioctl(n2_fd, NS_GET_ID, &n2_id) < 0) {
++			close(n1_fd);
++			close(n2_fd);
++			close(pipefd[1]);
++			close(syncpipe[0]);
++			exit(1);
++		}
++		/* Keep both n1_fd and n2_fd open */
++
++		/* Send all namespace IDs */
++		write(pipefd[1], &p_id, sizeof(p_id));
++		write(pipefd[1], &n1_id, sizeof(n1_id));
++		write(pipefd[1], &n2_id, sizeof(n2_id));
 +		close(pipefd[1]);
++
++		/* Wait for parent to signal before exiting */
++		read(syncpipe[0], &sync_byte, 1);
++		close(syncpipe[0]);
 +		exit(0);
 +	}
 +
 +	close(pipefd[1]);
++	close(syncpipe[0]);
 +
 +	/* Read all three namespace IDs - fixed size, no parsing needed */
-+	ret = read(pipefd[0], &ua_id, sizeof(ua_id));
-+	if (ret != sizeof(ua_id)) {
++	ret = read(pipefd[0], &p_id, sizeof(p_id));
++	if (ret != sizeof(p_id)) {
 +		close(pipefd[0]);
 +		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to read user_A namespace ID");
++		SKIP(return, "Failed to read parent namespace ID");
 +	}
 +
-+	ret = read(pipefd[0], &ub_id, sizeof(ub_id));
-+	if (ret != sizeof(ub_id)) {
++	ret = read(pipefd[0], &n1_id, sizeof(n1_id));
++	if (ret != sizeof(n1_id)) {
 +		close(pipefd[0]);
 +		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to read user_B namespace ID");
++		SKIP(return, "Failed to read first network namespace ID");
 +	}
 +
-+	ret = read(pipefd[0], &net_id, sizeof(net_id));
++	ret = read(pipefd[0], &n2_id, sizeof(n2_id));
 +	close(pipefd[0]);
-+	if (ret != sizeof(net_id)) {
++	if (ret != sizeof(n2_id)) {
 +		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to read network namespace ID");
++		SKIP(return, "Failed to read second network namespace ID");
 +	}
 +
 +	/* Construct file handles from namespace IDs */
-+	ua_handle = (struct file_handle *)ua_buf;
-+	ua_handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	ua_handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *ua_fh = (struct nsfs_file_handle *)ua_handle->f_handle;
-+	ua_fh->ns_id = ua_id;
-+	ua_fh->ns_type = 0;
-+	ua_fh->ns_inum = 0;
++	parent_handle = (struct file_handle *)p_buf;
++	parent_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	parent_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *p_fh = (struct nsfs_file_handle *)parent_handle->f_handle;
++	p_fh->ns_id = p_id;
++	p_fh->ns_type = 0;
++	p_fh->ns_inum = 0;
 +
-+	ub_handle = (struct file_handle *)ub_buf;
-+	ub_handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	ub_handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *ub_fh = (struct nsfs_file_handle *)ub_handle->f_handle;
-+	ub_fh->ns_id = ub_id;
-+	ub_fh->ns_type = 0;
-+	ub_fh->ns_inum = 0;
++	net1_handle = (struct file_handle *)n1_buf;
++	net1_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	net1_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *n1_fh = (struct nsfs_file_handle *)net1_handle->f_handle;
++	n1_fh->ns_id = n1_id;
++	n1_fh->ns_type = 0;
++	n1_fh->ns_inum = 0;
 +
-+	net_handle = (struct file_handle *)net_buf;
-+	net_handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	net_handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *net_fh = (struct nsfs_file_handle *)net_handle->f_handle;
-+	net_fh->ns_id = net_id;
-+	net_fh->ns_type = 0;
-+	net_fh->ns_inum = 0;
++	net2_handle = (struct file_handle *)n2_buf;
++	net2_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	net2_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *n2_fh = (struct nsfs_file_handle *)net2_handle->f_handle;
++	n2_fh->ns_id = n2_id;
++	n2_fh->ns_type = 0;
++	n2_fh->ns_inum = 0;
 +
-+	/* Open net_ns before child exits to keep it active */
-+	int net_fd = open_by_handle_at(FD_NSFS_ROOT, net_handle, O_RDONLY);
-+	if (net_fd < 0) {
++	/* Open both net namespaces while child is still alive */
++	int n1_fd = open_by_handle_at(FD_NSFS_ROOT, net1_handle, O_RDONLY);
++	int n2_fd = open_by_handle_at(FD_NSFS_ROOT, net2_handle, O_RDONLY);
++	if (n1_fd < 0 || n2_fd < 0) {
++		if (n1_fd >= 0) close(n1_fd);
++		if (n2_fd >= 0) close(n2_fd);
++		sync_byte = 'G';
++		write(syncpipe[1], &sync_byte, 1);
++		close(syncpipe[1]);
 +		waitpid(pid, NULL, 0);
-+		SKIP(return, "Failed to open network namespace");
++		SKIP(return, "Failed to open net namespaces");
 +	}
 +
++	/* Signal child that we have opened the namespaces */
++	sync_byte = 'G';
++	write(syncpipe[1], &sync_byte, 1);
++	close(syncpipe[1]);
++
++	/* Wait for child to exit */
 +	waitpid(pid, &status, 0);
 +	ASSERT_TRUE(WIFEXITED(status));
 +	if (WEXITSTATUS(status) != 0) {
-+		close(net_fd);
++		close(n1_fd);
++		close(n2_fd);
 +		SKIP(return, "Child failed");
 +	}
 +
-+	/* With net_ns active, both user_A and user_B should be active */
-+	TH_LOG("Testing user_B active (net_ns active causes propagation)");
-+	int ub_fd = open_by_handle_at(FD_NSFS_ROOT, ub_handle, O_RDONLY);
-+	ASSERT_GE(ub_fd, 0);
++	/* Parent should be active (has 2 active children) */
++	TH_LOG("Both net namespaces active - parent should be active");
++	int p_fd = open_by_handle_at(FD_NSFS_ROOT, parent_handle, O_RDONLY);
++	ASSERT_GE(p_fd, 0);
++	close(p_fd);
 +
-+	TH_LOG("Testing user_A active (propagated through user_B)");
-+	int ua_fd = open_by_handle_at(FD_NSFS_ROOT, ua_handle, O_RDONLY);
-+	ASSERT_GE(ua_fd, 0);
++	/* Close first net namespace - parent should STILL be active */
++	TH_LOG("Closing first net ns - parent should still be active");
++	close(n1_fd);
++	p_fd = open_by_handle_at(FD_NSFS_ROOT, parent_handle, O_RDONLY);
++	ASSERT_GE(p_fd, 0);
++	close(p_fd);
 +
-+	/* Close net_ns - user_B should stay active (we hold direct ref) */
-+	TH_LOG("Closing net_ns, user_B should remain active (direct ref held)");
-+	close(net_fd);
-+	int ub_fd2 = open_by_handle_at(FD_NSFS_ROOT, ub_handle, O_RDONLY);
-+	ASSERT_GE(ub_fd2, 0);
-+	close(ub_fd2);
-+
-+	/* Close user_B - user_A should stay active (we hold direct ref) */
-+	TH_LOG("Closing user_B, user_A should remain active (direct ref held)");
-+	close(ub_fd);
-+	int ua_fd2 = open_by_handle_at(FD_NSFS_ROOT, ua_handle, O_RDONLY);
-+	ASSERT_GE(ua_fd2, 0);
-+	close(ua_fd2);
-+
-+	/* Close user_A - everything should become inactive */
-+	TH_LOG("Closing user_A, all should become inactive");
-+	close(ua_fd);
-+
-+	/* All should now be inactive */
-+	ua_fd = open_by_handle_at(FD_NSFS_ROOT, ua_handle, O_RDONLY);
-+	if (ua_fd >= 0) {
-+		close(ua_fd);
-+		TH_LOG("Warning: user_A still active");
++	/* Close second net namespace - parent should become inactive */
++	TH_LOG("Closing second net ns - parent should become inactive");
++	close(n2_fd);
++	p_fd = open_by_handle_at(FD_NSFS_ROOT, parent_handle, O_RDONLY);
++	if (p_fd >= 0) {
++		close(p_fd);
++		TH_LOG("Warning: Parent still active after all children inactive");
 +	}
 +}
 +
