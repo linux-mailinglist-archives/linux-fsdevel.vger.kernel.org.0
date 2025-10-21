@@ -1,186 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-64999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A98BF8C68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 22:49:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCBEBF8D0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 22:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD953BF26E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691003B60B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABED27FB25;
-	Tue, 21 Oct 2025 20:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50C9280025;
+	Tue, 21 Oct 2025 20:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBEICNCx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDE1274666
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 20:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8394927FD76
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 20:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761079737; cv=none; b=GUPJ+8lFwJEN9iR4K5JHcD4VZrsNVWR65vz12bhujj/0L794x0v1DMQpz6vabbenIKtYvqQMfU5QeLoDp5mWl/dfneyRiYL6NzaIFxszQkZ9CnfXv7QJ/UUhZneCCZLbQ5KCwSeDSz3khLRgAROYqEy5C+ButKDKDwysDkq871c=
+	t=1761079982; cv=none; b=CezAlMbA1sUbVfC06y7DZLni07/D9L9e+7OlJoMep1tZGW7exF9CxxJqozR6BuuRcSjKPFbDmsuFECLO0NFQsC51OUNDbJGXSLv2+s7ojUUQaofqXAC+cb4EPyYyIBsEoSLNOc9UsDc5QTvwtzF2+4hq+Mv+kXhRCHPbI/ucwng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761079737; c=relaxed/simple;
-	bh=RflHPTLEr0DiuzTrG2cL6lTyezLKTb7u5dOyQveQkAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zes1mwkFM2xzqGSH7/5ElxZkkpMbAq11TwnBAyfLRCVrNyGyFY+PLTW8PCpeG38a6avO488THNfEqYTyxcwu9VotugPPc/x6wescV7YGGVt8bSCbGEn4OQkn9RlR7ddnIi0Ck0uIQRI9BG6qk7y6uu2JoSAKLbbjXRSIY1dZXwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DBCB211A8;
-	Tue, 21 Oct 2025 20:48:54 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D5E4139D2;
-	Tue, 21 Oct 2025 20:48:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WUCqGrbx92h3VQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 21 Oct 2025 20:48:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CC0EBA0990; Tue, 21 Oct 2025 22:48:49 +0200 (CEST)
-Date: Tue, 21 Oct 2025 22:48:49 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Cyril Hrubis <chrubis@suse.cz>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, LTP List <ltp@lists.linux.it>, 
-	Andrey Albershteyn <aalbersh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Petr Vorel <pvorel@suse.cz>, Andrea Cervesato <andrea.cervesato@suse.com>
-Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
- PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
-Message-ID: <lguqncbotw2cu2nfaf6hwgip6wtrmeg2azvyeht7l56itlomy5@uccupuql3let>
-References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
- <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
- <aPIPGeWo8gtxVxQX@yuki.lan>
- <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
- <20251021-wollust-biografie-c4d97486c587@brauner>
+	s=arc-20240116; t=1761079982; c=relaxed/simple;
+	bh=35GUA1OLm2UY2rLd5ftsCwqE0YKKZwDoylm8PTqhnKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IiVYtSN5abzyMJRaylKdVvvWCASeepHHCLvWu9cyhp0XrxKQofNICY6tSA6ZIkbDqrwl5rnQrGzMgbTu4gzFFYXoSUQGEDX/xh18NEl6YvdfZMpKvKeNeRxb2O/XhDgVxoGQo6IxzbR46qg/rRwvZ5B5UyBUxaKyQWzSQvNLjhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gBEICNCx; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47106fc51faso71605255e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 13:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761079979; x=1761684779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KX1U3LQDhrzk0zMYgAFvq4hyuRv8alrTza4fIy2YOi0=;
+        b=gBEICNCxlgrIEJpwu/ynalYfewOExF+lYyHzRWulwZhqLxdSYByGomo2qd4jW7rZVu
+         l3Ls1K2AqdnyURI7j7p8WUAtdsRrrMMw1bgenT2FgfsCuYC+i9W+zFXL0D2iESsfQiK9
+         HZdd9YHOD/oszTO8edRWtO6vdbD10fCaVWCRBw8gnESnkNIcHgs0DCLIxrcBn1FWEqfx
+         ClPKjDDaXq+19GC+xCXqMRyJgHu7IGNdnv5s0sp/Hh6XSZq/8SHy98E6IQzVeURxzkld
+         AXA3VJniz6r2BlEbffdLzAgBREuJgpJH0GEUIlN9z66qDNf5jrU/rI4RKoYGOvHBGAiO
+         TFQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761079979; x=1761684779;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KX1U3LQDhrzk0zMYgAFvq4hyuRv8alrTza4fIy2YOi0=;
+        b=H8SmQ3bMSp+wszhHyO855L2X0oCoPiwq1fi/VzKPWZH9qdcDMqOeDhCNqaWNb5+rLG
+         e4K2VxLSXCW2wq76h4BHqqAS7Jj1UkOG04+u9iVhwID1ZExzqeH5RW3jTJDFfKX9lY2J
+         PLfJMwsZlzfOaE4O4W4CIE8zJupVAsZ535p+dXiCVT+b0yrFEsqnVVRHfDz4yVp2AjEy
+         XJPd0asg6w5jHGQKKSLHi3NAGY2xQjjohfYO+U7K0m7mgWGN8c4xBrTptFFzSjZEgKn/
+         qYwpD2ARxRoWn0ScRTyvcLQYeAZTd3EVhkpAwJr8RDBBThq44y7XnweCJcouBopjC1x+
+         N71g==
+X-Forwarded-Encrypted: i=1; AJvYcCUN9yhjZ8YygBTk2QnOMolg/5iJTtOl1G+ZzTarOFZDn6tYY82GPF8S+XdmL06WDhGiuYdnkVkTT2jy57uy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNNcUYCc75TF6tFE97tnuLK0dTXW93Et6APO4kATBYZu3z8IRB
+	BGGqZmURMr7LpY3WznL2rNway3nHtr0g8M2D24cL4v0xC7ARKgUmk8Om
+X-Gm-Gg: ASbGncvt5W2ieaSJK0E9dsbeY/JKmf1zHEvUim0lfl198tsAj/Gfo2mBmGAdPB2JL/o
+	i7nb5MuU7VfSwbgfZBh7UGWiGrmLvL1kLw/AEUAh35TwIxgPn4dG+PxnSQyapvlxqtahDwTatF6
+	EIwewr/TY75VEhOOxHB0cyp4xTCi53Fey1zOCvXahZ+ot5YYYrTgOHPsnaaQLHCrwARkhn1VLjO
+	rXltwGlMT1soB6v77iYKTMqxtgA7SU9Y5pJaCbzXnhvjJD8LHQUHbR+8VZZh1+NKqYk8GsGi+u7
+	U2sCnpHXaJuApAtMZ6/qvg6YaSRZbo+cw0SgHOb8CJ/xaTGnLs7FCjElCPqs6MHdz4BIG7hMmNN
+	yhRcPAfH9dG+S9uUb5dcjkaGGjAvmh4W4FG9giX+ETQZKvD8DMCJkRaNNHcBcuiv8UDFBMtVp9s
+	Gax+N9jVpTmB0THGx+eTr2J6Acd23mkOiGeFgyvss7OR5ZePWEZdfz
+X-Google-Smtp-Source: AGHT+IG48cx6eMc3yWVGBT0daBkOovb/80ZhUVtFTOZrtyO8Rw6UMLlSBk12jg9YEQoOEfu4lRZoog==
+X-Received: by 2002:a05:6000:240c:b0:3fc:c90d:9957 with SMTP id ffacd0b85a97d-42704d6c585mr13473049f8f.16.1761079978558;
+        Tue, 21 Oct 2025 13:52:58 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f009a797sm21895076f8f.27.2025.10.21.13.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 13:52:58 -0700 (PDT)
+Date: Tue, 21 Oct 2025 21:52:54 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, Russell
+ King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, Heiko
+ Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>, Nicolas
+ Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V3 07/12] uaccess: Provide scoped masked user access
+ regions
+Message-ID: <20251021215254.673dbd35@pumpkin>
+In-Reply-To: <874irsz581.ffs@tglx>
+References: <20251017085938.150569636@linutronix.de>
+	<20251017093030.253004391@linutronix.de>
+	<20251020192859.640d7f0a@pumpkin>
+	<877bwoz5sp.ffs@tglx>
+	<874irsz581.ffs@tglx>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021-wollust-biografie-c4d97486c587@brauner>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Queue-Id: 7DBCB211A8
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue 21-10-25 15:21:08, Christian Brauner wrote:
-> On Fri, Oct 17, 2025 at 02:43:14PM +0200, Jan Kara wrote:
-> > On Fri 17-10-25 11:40:41, Cyril Hrubis wrote:
-> > > Hi!
-> > > > > ## Test error log
-> > > > > tst_buffers.c:57: TINFO: Test is using guarded buffers
-> > > > > tst_test.c:2021: TINFO: LTP version: 20250930
-> > > > > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
-> > > > > @1760657272 aarch64
-> > > > > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-> > > > > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-> > > > > which might slow the execution
-> > > > > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-> > > > > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
-> > > > > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
-> > > > > info_invalid) expected EINVAL: ENOTTY (25)
-> > > 
-> > > Looking closely this is a different problem.
-> > > 
-> > > What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
-> > > size with:
-> > > 
-> > > struct pidfd_info_invalid {
-> > >         uint32_t dummy;
-> > > };
-> > > 
-> > > #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
-> > > 
-> > > 
-> > > And we expect to hit:
-> > > 
-> > >         if (usize < PIDFD_INFO_SIZE_VER0)
-> > >                 return -EINVAL; /* First version, no smaller struct possible */
-> > > 
-> > > in fs/pidfs.c
-> > > 
-> > > 
-> > > And apparently the return value was changed in:
-> > > 
-> > > commit 3c17001b21b9f168c957ced9384abe969019b609
-> > > Author: Christian Brauner <brauner@kernel.org>
-> > > Date:   Fri Sep 12 13:52:24 2025 +0200
-> > > 
-> > >     pidfs: validate extensible ioctls
-> > >     
-> > >     Validate extensible ioctls stricter than we do now.
-> > >     
-> > >     Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-> > >     Reviewed-by: Jan Kara <jack@suse.cz>
-> > >     Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > 
-> > > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > > index edc35522d75c..0a5083b9cce5 100644
-> > > --- a/fs/pidfs.c
-> > > +++ b/fs/pidfs.c
-> > > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-> > >                  * erronously mistook the file descriptor for a pidfd.
-> > >                  * This is not perfect but will catch most cases.
-> > >                  */
-> > > -               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-> > > +               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
-> > >         }
-> > >  
-> > >         return false;
-> > > 
-> > > 
-> > > So kernel has changed error it returns, if this is a regression or not
-> > > is for kernel developers to decide.
-> > 
-> > Yes, it's mostly a question to Christian whether if passed size for
-> > extensible ioctl is smaller than minimal, we should be returning
-> > ENOIOCTLCMD or EINVAL. I think EINVAL would make more sense but Christian
-> > is our "extensible ioctl expert" :).
+On Tue, 21 Oct 2025 16:42:22 +0200
+Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> On Tue, Oct 21 2025 at 16:29, Thomas Gleixner wrote:
+> > On Mon, Oct 20 2025 at 19:28, David Laight wrote:  
+> >> There is no requirement to do the accesses in strict memory order
+> >> (or to access the lowest address first).
+> >> The only constraint is that gaps must be significantly less than 4k.  
+> >
+> > The requirement is that the access is not spilling over into the kernel
+> > address space, which means:
+> >
+> >        USR_PTR_MAX <= address < (1U << 63)
+> >
+> > USR_PTR_MAX on x86 is either
+> >             (1U << 47) - PAGE_SIZE (4-level page tables)
+> >          or (1U << 57) - PAGE_SIZE (5-level page tables)
+> >
+> > Which means at least ~8 EiB of unmapped space in both cases.
+> >
+> > The access order does not matter at all.  
 > 
-> You're asking difficult questions actually. :D
-> I think it would be completely fine to return EINVAL in this case.
-> But traditionally ENOTTY has been taken to mean that this is not a
-> supported ioctl. This translation is done by the VFS layer itself iirc.
+> I just noticed that LAM reduces that gap to one page, but then the
+> kernel has a 8EiB gap right at the kernel/user boundary, which means
+> even in the LAM case an access with less than 8EiB offset from
+> USR_PTR_MAX is guaranteed to fault and not to be able to speculatively
+> access actual kernel memory.
 
-Now the translation is done by VFS, I agree. But in the past (when the LTP
-test was written) extensible ioctl with too small structure passed the
-initial checks, only later we found out the data is too short and returned
-EINVAL for that case. I *think* we are fine with just adjusting the test to
-accept the new world order but wanted your opinion what are the chances of
-some real userspace finding the old behavior useful or otherwise depending
-on it.
+It wouldn't be a speculative access, it would be a real access.
+But 4k (eg a single page) is plenty for 'reasonably sequential'.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pretty much the only thing that has to be disallowed is a reverse
+order memcpy() (or one that accesses the last bytes first) for
+copy_to/from_user() if the length parameter is ignored completely.
+Linus wasn't brave enough to remove it from the current version
+of access_ok().
+
+I do wonder if any other cpu have the same architectural issues
+that required the guard page between user and kernel on 32bit x86.
+(One is a system call at the end of the last page.)
+
+LAM is one reason why 'masked_user_access' is such a bad name.
+
+	David 
+
+> 
+> Thanks,
+> 
+>         tglx
+
 
