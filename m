@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-64863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0A6BF6256
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4DBBF6262
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C06419A180F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0F941883E12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC997339B32;
-	Tue, 21 Oct 2025 11:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03E03321DB;
+	Tue, 21 Oct 2025 11:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYJboOxS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWW3VcX0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102183321B3;
-	Tue, 21 Oct 2025 11:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD1F3321CC;
+	Tue, 21 Oct 2025 11:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047093; cv=none; b=GmUtrHMSPg8Ee88v1GV8I/aZWByeylj0+b+SAh49Oe9eXvUfA/8/oNQ7ePWSFcBnDqZj2wRDiYJlKRbGfV9hbBUp5L+6UJyqIece7mQnT50RVdnw/em07wK84LZRgrIkwIN1uk4QNaWISNyJoh1py2dw1pDn4VYmObLchC045Ds=
+	t=1761047098; cv=none; b=mjCFhziS1Hh6I2/b0IUlmsUh2GJoWUNl8qBbJNOwFAtwrEWMXa3IpceTKJ55e08UNwI8k5EMM6yRJUmABvWLUWlX7a9SqKj7UyMVqWJVPfNinonOVsK97LzsxH2bmMhnNnCtxoiLgbjvBOm+YqjZ+0CKJUGnJoRJ6oU2LEung1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047093; c=relaxed/simple;
-	bh=eWr4sp3ZFxiKmdi2bQvM/V/b89IuZ5Yj6h5wRkppsEI=;
+	s=arc-20240116; t=1761047098; c=relaxed/simple;
+	bh=0Z06FS7PHlmbbOXNaiYAotrcXY1wE2OxBYSA5XT3a6Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H5VpitGPhsAbYoY8/LFvyIT2bf+smOxlq4GtCsCbCFyGB2MTvegVWQIBz5XkJv54tZdlLASM16rN3WwUMTvCeL2Xu2Ywxd3yzYxSbWgDPmLDP3Pc2EjykUjjGj9ELGfUgpX6ip2bkDkglhz2+tKKVlBWJVYv+mlmxnlHLLx4IYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYJboOxS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0121BC4CEF1;
-	Tue, 21 Oct 2025 11:44:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Sp8RRxWW2FYxzx2nxw29k0TbSkl7qzK8O8PHt0WmbUc9OzhaVYmoLh0pDPqZmar3HIEmgD4nLAUUqAQUg54A0556VUts7RIePuNzQq5n+65hfpLdyBVDBCYzLJYoF6MJkNAYiVs0eYQhhHlWCB0cDXx9AeSgWZY28lCjdXROlFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWW3VcX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88277C4CEF1;
+	Tue, 21 Oct 2025 11:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047092;
-	bh=eWr4sp3ZFxiKmdi2bQvM/V/b89IuZ5Yj6h5wRkppsEI=;
+	s=k20201202; t=1761047098;
+	bh=0Z06FS7PHlmbbOXNaiYAotrcXY1wE2OxBYSA5XT3a6Q=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JYJboOxSdjvgZ72iFp79ep7mtAlNBvWehcuffbFyhLCGqjmqEdiB1uXDSS4Xp8+Z9
-	 2w91e6Vjl2WDorjBQI5+IjlpJwYIwsIlIspjbS0Sve398GNcLurAY/UqxJs73mlLZK
-	 6izkD33g4iuZ8Tnncrrw0kkboPpI9XhTwnOxNyaC0XYFZstVba/uWLwEVgIm7fFJyn
-	 uAqbYyfsWGCY/5ZxIGDrGMUdVEjJ24/PP7mNqA2Q7r4UVOfnaH/Iu2Wbdce7NAcE3S
-	 EiMv950HoBaMRtimjoX+w+5GoB834LKRi3eF2U6rBGegU4CDqmUpDqIDmLPUZr6ZGc
-	 8QCBA5S25IyAg==
+	b=kWW3VcX0M3TMk7YVqkSZ5+lzz5RaH52E946bVAWpoMZ+bojRkGGiUHfTN+k54qy57
+	 Xa5U4BLkIRt/3uHrP5aLHxriLfM1hVdd8H7pQ7XbUFSagZz0fWWwOcMgYI6HFL8ISt
+	 +JMN+R4Jh0zWJnnb+76N8X3SG80SIYZyU4HE2Omtiz5s6SVM5mBdt69NQK57m06ToI
+	 e/8UlJq1/5QPq9qe+80aoBil2nQM+zQ9KV/1R9knS1UR6SvF6cC2+uFhvdpFav7ALG
+	 BCbdCteAiXlRQGTEnJVxzdiI2A/prMsAVm1kNBvBcNsuKrSEfYuwOPDIDRojD7vuBd
+	 2R9/YW32RMMzQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:18 +0200
-Subject: [PATCH RFC DRAFT 12/50] nstree: allow lookup solely based on inode
+Date: Tue, 21 Oct 2025 13:43:19 +0200
+Subject: [PATCH RFC DRAFT 13/50] nstree: assign fixed ids to the initial
+ namespaces
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-12-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-13-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,48 +70,179 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1215; i=brauner@kernel.org;
- h=from:subject:message-id; bh=eWr4sp3ZFxiKmdi2bQvM/V/b89IuZ5Yj6h5wRkppsEI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3z7wVL2f3n670Bxkc6KRlWndfMjz51+nyhYKy+w7
- q++3o3EjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8PcXwh/O43b0f68z6I2v+
- 3ZpuzXPTJkywqWtlm/AlBTXzr462jxgZ1lXJzlW5yXD5iKNEzQSlq0fkvhu36LuoddfpHnz/xUi
- RGwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6182; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=0Z06FS7PHlmbbOXNaiYAotrcXY1wE2OxBYSA5XT3a6Q=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3xbILydectXo2lu822310eb6Z3pzlfRXX8isEGB3
+ Vbm0jLujlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlIWjEyPPZw0+WNZ/vffs7b
+ Ol96TbTH5q3Kx3kWvlz1cfa9Sp02B0aGWQe7O5l++z6Vf9MyIzN5tkICS37kze/3KqdWNXyLW/u
+ RFwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-The namespace file handle struct nsfs_file_handle is uapi and userspace
-is expressly allowed to generate file handles without going through
-name_to_handle_at().
+The initial set of namespace comes with fixed inode numbers making it
+easy for userspace to identify them solely based on that information.
+This has long preceeded anything here.
 
-Allow userspace to generate a file handle where both the inode number
-and the namespace type are zero and just pass in the unique namespace
-id. The kernel uses the unified namespace tree to find the namespace and
-open the file handle.
+Similarly, let's assign fixed namespace ids for the initial namespaces.
 
-When the kernel creates a file handle via name_to_handle_at() it will
-always fill in the type and the inode number allowing userspace to
-retrieve core information.
+Kill the cookie and use a sequentially increasing number. This has the
+nice side-effect that the owning user namespace will always have a
+namespace id that is smaller than any of it's descendant namespaces.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/nsfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/namespace.c            |  2 +-
+ include/linux/nstree.h    | 26 ++++++++++++++++++++++----
+ include/uapi/linux/nsfs.h | 14 ++++++++++++++
+ kernel/nstree.c           | 13 ++++++++-----
+ net/core/net_namespace.c  |  2 +-
+ 5 files changed, 46 insertions(+), 11 deletions(-)
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index a190e1e38442..ba5863ee4150 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -496,8 +496,8 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
- 			return NULL;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 87116def5ee3..5d8a80e1e944 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4094,7 +4094,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
+ 		return ERR_PTR(ret);
+ 	}
+ 	if (!anon)
+-		ns_tree_gen_id(&new_ns->ns);
++		ns_tree_gen_id(new_ns);
+ 	refcount_set(&new_ns->passive, 1);
+ 	new_ns->mounts = RB_ROOT;
+ 	init_waitqueue_head(&new_ns->poll);
+diff --git a/include/linux/nstree.h b/include/linux/nstree.h
+index 8b8636690473..96ee71622517 100644
+--- a/include/linux/nstree.h
++++ b/include/linux/nstree.h
+@@ -8,6 +8,7 @@
+ #include <linux/seqlock.h>
+ #include <linux/rculist.h>
+ #include <linux/cookie.h>
++#include <uapi/linux/nsfs.h>
  
- 		VFS_WARN_ON_ONCE(ns->ns_id != fid->ns_id);
--		VFS_WARN_ON_ONCE(ns->ns_type != fid->ns_type);
--		VFS_WARN_ON_ONCE(ns->inum != fid->ns_inum);
-+		if (fid->ns_inum && (fid->ns_inum != ns->inum))
-+			return NULL;
+ extern struct ns_tree cgroup_ns_tree;
+ extern struct ns_tree ipc_ns_tree;
+@@ -29,7 +30,22 @@ extern struct ns_tree uts_ns_tree;
+ 		struct user_namespace *:   &(user_ns_tree),	\
+ 		struct uts_namespace *:    &(uts_ns_tree))
  
- 		if (!ns_get(ns))
- 			return NULL;
+-u64 ns_tree_gen_id(struct ns_common *ns);
++#define ns_init_id(__ns)				      \
++	_Generic((__ns),                                      \
++		struct cgroup_namespace *: CGROUP_NS_INIT_ID, \
++		struct ipc_namespace *:    IPC_NS_INIT_ID,    \
++		struct mnt_namespace *:    MNT_NS_INIT_ID,    \
++		struct net *:              NET_NS_INIT_ID,    \
++		struct pid_namespace *:    PID_NS_INIT_ID,    \
++		struct time_namespace *:   TIME_NS_INIT_ID,   \
++		struct user_namespace *:   USER_NS_INIT_ID,   \
++		struct uts_namespace *:    UTS_NS_INIT_ID)
++
++#define ns_tree_gen_id(__ns)                 \
++	__ns_tree_gen_id(to_ns_common(__ns), \
++			 (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
++
++u64 __ns_tree_gen_id(struct ns_common *ns, u64 id);
+ void __ns_tree_add_raw(struct ns_common *ns, struct ns_tree *ns_tree);
+ void __ns_tree_remove(struct ns_common *ns, struct ns_tree *ns_tree);
+ struct ns_common *ns_tree_lookup_rcu(u64 ns_id, int ns_type);
+@@ -37,9 +53,9 @@ struct ns_common *__ns_tree_adjoined_rcu(struct ns_common *ns,
+ 					 struct ns_tree *ns_tree,
+ 					 bool previous);
+ 
+-static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree *ns_tree)
++static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree *ns_tree, u64 id)
+ {
+-	ns_tree_gen_id(ns);
++	__ns_tree_gen_id(ns, id);
+ 	__ns_tree_add_raw(ns, ns_tree);
+ }
+ 
+@@ -59,7 +75,9 @@ static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree *ns_tree)
+  * This function assigns a new id to the namespace and adds it to the
+  * appropriate namespace tree and list.
+  */
+-#define ns_tree_add(__ns) __ns_tree_add(to_ns_common(__ns), to_ns_tree(__ns))
++#define ns_tree_add(__ns)                                   \
++	__ns_tree_add(to_ns_common(__ns), to_ns_tree(__ns), \
++		      (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
+ 
+ /**
+  * ns_tree_remove - Remove a namespace from a namespace tree
+diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+index e098759ec917..f8bc2aad74d6 100644
+--- a/include/uapi/linux/nsfs.h
++++ b/include/uapi/linux/nsfs.h
+@@ -67,4 +67,18 @@ struct nsfs_file_handle {
+ #define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
+ #define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* sizeof latest published struct */
+ 
++enum init_ns_id {
++	IPC_NS_INIT_ID		= 1ULL,
++	UTS_NS_INIT_ID		= 2ULL,
++	USER_NS_INIT_ID		= 3ULL,
++	PID_NS_INIT_ID		= 4ULL,
++	CGROUP_NS_INIT_ID	= 5ULL,
++	TIME_NS_INIT_ID		= 6ULL,
++	NET_NS_INIT_ID		= 7ULL,
++	MNT_NS_INIT_ID		= 8ULL,
++#ifdef __KERNEL__
++	NS_LAST_INIT_ID		= MNT_NS_INIT_ID,
++#endif
++};
++
+ #endif /* __LINUX_NSFS_H */
+diff --git a/kernel/nstree.c b/kernel/nstree.c
+index d21df06b6747..de5ceda44637 100644
+--- a/kernel/nstree.c
++++ b/kernel/nstree.c
+@@ -68,8 +68,6 @@ struct ns_tree time_ns_tree = {
+ 	.type = CLONE_NEWTIME,
+ };
+ 
+-DEFINE_COOKIE(namespace_cookie);
+-
+ static inline struct ns_common *node_to_ns(const struct rb_node *node)
+ {
+ 	if (!node)
+@@ -278,15 +276,20 @@ struct ns_common *__ns_tree_adjoined_rcu(struct ns_common *ns,
+ /**
+  * ns_tree_gen_id - generate a new namespace id
+  * @ns: namespace to generate id for
++ * @id: if non-zero, this is the initial namespace and this is a fixed id
+  *
+  * Generates a new namespace id and assigns it to the namespace. All
+  * namespaces types share the same id space and thus can be compared
+  * directly. IOW, when two ids of two namespace are equal, they are
+  * identical.
+  */
+-u64 ns_tree_gen_id(struct ns_common *ns)
++u64 __ns_tree_gen_id(struct ns_common *ns, u64 id)
+ {
+-	guard(preempt)();
+-	ns->ns_id = gen_cookie_next(&namespace_cookie);
++	static atomic64_t namespace_cookie = ATOMIC64_INIT(NS_LAST_INIT_ID + 1);
++
++	if (id)
++		ns->ns_id = id;
++	else
++		ns->ns_id = atomic64_inc_return(&namespace_cookie);
+ 	return ns->ns_id;
+ }
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index f30fb78f020c..a76b9b9709d6 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -439,7 +439,7 @@ static __net_init int setup_net(struct net *net)
+ 	LIST_HEAD(net_exit_list);
+ 	int error = 0;
+ 
+-	net->net_cookie = ns_tree_gen_id(&net->ns);
++	net->net_cookie = ns_tree_gen_id(net);
+ 
+ 	list_for_each_entry(ops, &pernet_list, list) {
+ 		error = ops_init(ops, net);
 
 -- 
 2.47.3
