@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-64993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63C4BF885A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 22:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65208BF8ADC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 22:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F586581A26
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 961A4583458
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 20:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D945E25A355;
-	Tue, 21 Oct 2025 20:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0311C27B347;
+	Tue, 21 Oct 2025 20:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yR6BQ+te"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nCpaBjsh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AC31A3029;
-	Tue, 21 Oct 2025 20:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545361A3029;
+	Tue, 21 Oct 2025 20:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761077021; cv=none; b=sQkNLdn/WCa6ogBf/n/86AcmjxIjnGw6dV5laMRGo9ITNuoLvULfW6KK9kkr6pV5t5JZ2JCpqizoGliphkVZQMGMUI78PBXeOa0icOJoId2dg8bnEyl1LwYXwXvlSxq38BnhtFdEEpaq58tTt3GYKvi1ii7+xEK67E3uitH5vbM=
+	t=1761077617; cv=none; b=vCBVx7TZF2QVdkUuA9yHc76xnSXupW3BwkAxGo8pSYQTdYDWL9b/nQOX04jnn6Wkgk6ZPMzBdRv1p4+z8z9Pg3qegLVFJZbJscz0m1a1OzHx3FsIxy+Jvzllq2ZIEaGT3E/lYFHD5QX2sczQ/ufQWHfyEcASGwLZXXuq96Ub3RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761077021; c=relaxed/simple;
-	bh=bfz8Zt2IP4AwHzgGGX4S5b06T83FrkvhlSmdIpiShg0=;
+	s=arc-20240116; t=1761077617; c=relaxed/simple;
+	bh=A58QovM1OEJFv9YdBORSBRgi8utrH0HWFF/Yp5SQ0gk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N8AUDJxPd1jpvxiKQQKV1ch5STFNZyMQgglcyGc/dlCE6XED42BswmqOThL6epJInNAAgwBkQnJID2JokDM0ywCczTwlz0TTPoGw2bWyD4Nnajq6d9BFHNgME4VjxIiueqP4TpYu4LTqxKvIZunaGqvogMcNPHvDFwrhTjR4B/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yR6BQ+te; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D77C4CEF1;
-	Tue, 21 Oct 2025 20:03:40 +0000 (UTC)
+	 MIME-Version; b=uSD+I23UoRtpq/nSrVA0co4UN+cHk1j/KHwheKtV7xSCsaCGrz6r19Nthar3YazqAdBQrF5kOSbr9Vex8Blzrq25Sdni2wVLt7WXDzCvvlQ7Th1TROM391T3d/MVLJT7Ay6OQ4mKFj+o9nWh8uhbuYvcRrVkySILJJ2SMC3oSZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nCpaBjsh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFABAC4CEF1;
+	Tue, 21 Oct 2025 20:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761077021;
-	bh=bfz8Zt2IP4AwHzgGGX4S5b06T83FrkvhlSmdIpiShg0=;
+	s=korg; t=1761077617;
+	bh=A58QovM1OEJFv9YdBORSBRgi8utrH0HWFF/Yp5SQ0gk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yR6BQ+teAfJDfSdRePZRwZtDUZosaz6OU8nPtBYiE0x67s8juQnhTUWyOArpuNDQi
-	 hkbp4Yju2ZQD40rcCM3uNZatJ0/xUZkC8605Uit0Vn23rBXzmt58NSf7DVzf3T6PeQ
-	 12zysBATXAObj3t+oh4PbipWCBNqhiwvZS4Iy5bU=
+	b=nCpaBjshuvOJE5AG7Nt3YEGtBBdAtD5gUIZMPysyQFFtc23cljD7SnBUUwbro96nv
+	 dSE5JQVJeuISGyVC+1TBHGt3NA7PG4hQwmIQXhCx4c+QhihseBQwQ4FS5qhNYEHAug
+	 DdH5sM9tQ5+aT6fk95NRh2lFixhucg6VgTY2wYbg=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,12 +48,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
 	syzkaller@googlegroups.com
-Subject: [PATCH 6.12 094/136] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
-Date: Tue, 21 Oct 2025 21:51:22 +0200
-Message-ID: <20251021195038.217138534@linuxfoundation.org>
+Subject: [PATCH 6.17 137/159] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
+Date: Tue, 21 Oct 2025 21:51:54 +0200
+Message-ID: <20251021195046.438136483@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251021195035.953989698@linuxfoundation.org>
-References: <20251021195035.953989698@linuxfoundation.org>
+In-Reply-To: <20251021195043.182511864@linuxfoundation.org>
+References: <20251021195043.182511864@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
