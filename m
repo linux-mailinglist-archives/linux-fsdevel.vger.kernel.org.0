@@ -1,110 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-64833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E28BF537C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 10:27:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBC8BF5501
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 10:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9EA3A58BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:27:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4BC84EDC88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 08:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB5D303A15;
-	Tue, 21 Oct 2025 08:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74C431DDB9;
+	Tue, 21 Oct 2025 08:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vIz7QdwR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="A8eT9kKK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qAc/bZaK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mZ/rHkbv"
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="H/mY+hIM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C742EDD62
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 08:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035233; cv=none; b=bedGR0vzhBuKnH0p5DiX8CX8OH+58OtEm1VitpmlSoGGJ8YVclqpvggYOnPuxodGaLJ6loJvx8g0+RbDc9W5DEM47Ad6CFgfy5pCCzG2F7oPHwJO+N/7ZJd9ChqUslEAnUM8jPMm+M46ECckw4hcy8S0FOtMXO3v0cj9KiyAoE0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035233; c=relaxed/simple;
-	bh=6lLQuo2cBk1EtH+T2vY5IhwMEEZxodrp6Mjsn2OSJEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMz1MNZiW2Qr+pmheY6l07/UZz15CbmclNEpxufFZHWPgFg7KC7ZBvCN5K5faoR16wWEh0s12L82HOJ+K4QFu/aTWMisP8fhseLK5v2ZA0Y5vF+ZEDVRl1XGZvI3c5ByRip6DD/t9ePaKQOphanfc4g/82kiQOse8/GBTBb1wxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vIz7QdwR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=A8eT9kKK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qAc/bZaK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mZ/rHkbv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 681D21F385;
-	Tue, 21 Oct 2025 08:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761035225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eM5uKYPimXpUkghvLJUuBzWoqYrQThF+Lr3Lf5X1p8k=;
-	b=vIz7QdwR2CK91QXv7Z1+jCI25tUZbdFr6z5NvW5nXkoM9HO5rUzhr9ZgaTAqkysB8bXQjj
-	XHlNAtm2P3wLDAdc4BV6h1OApsO++COo+o4vfSmjgBniNrYblZZNy1RU6EIhdB1OEqCRTw
-	Y7fX5Gp96b9ZFuLShDNim0Xp9n5XvOM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761035225;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eM5uKYPimXpUkghvLJUuBzWoqYrQThF+Lr3Lf5X1p8k=;
-	b=A8eT9kKKnUSxIRKGY3rHEZh7CeTywonbwaIsHvaKMXV9kBDL2pRNM3wXin2DwKEfEma7QM
-	UqHZmiuoc3zLHZCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="qAc/bZaK";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="mZ/rHkbv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761035221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eM5uKYPimXpUkghvLJUuBzWoqYrQThF+Lr3Lf5X1p8k=;
-	b=qAc/bZaKzNTb2nkIpj7xU1vZRYyHMoUdIqZgAtOK8zm6z1cE1t4NPCs8Z3KPIkZoHSvWvU
-	X5W+34sxNWWUouNwAd6h8Moxjym+kkJIxHcqicgd22VEcwKN0b/suJ2AJs1LDNfuZjjDUc
-	h5vj3J3/Np9RJo4CL7ODWqVLSpd1DO0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761035221;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eM5uKYPimXpUkghvLJUuBzWoqYrQThF+Lr3Lf5X1p8k=;
-	b=mZ/rHkbvmvLqRgVFbdD1Zw0Wd0XaI6+DAJ/IDtl4G/ECbTVa26bHdr+t/uvcOf9CRYAvie
-	k1/xY+sUURIfzAAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59FA2139B1;
-	Tue, 21 Oct 2025 08:27:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZZbxFdVD92giDQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 21 Oct 2025 08:27:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F386BA0990; Tue, 21 Oct 2025 10:27:00 +0200 (CEST)
-Date: Tue, 21 Oct 2025 10:27:00 +0200
-From: Jan Kara <jack@suse.cz>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	Christoph Hellwig <hch@infradead.org>, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, 
-	djwong@kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-mm@kvack.org, martin.petersen@oracle.com, jack@suse.com
-Subject: Re: O_DIRECT vs BLK_FEAT_STABLE_WRITES, was Re: [PATCH] btrfs: never
- trust the bio from direct IO
-Message-ID: <6hedspdzoxjtdim7nruoeh5m4mx3xecubf7einzl67jzjmi3er@o54b7v5njwk5>
-References: <1ee861df6fbd8bf45ab42154f429a31819294352.1760951886.git.wqu@suse.com>
- <aPYIS5rDfXhNNDHP@infradead.org>
- <56o3re2wspflt32t6mrfg66dec4hneuixheroax2lmo2ilcgay@zehhm5yaupav>
- <aPYgm3ey4eiFB4_o@infradead.org>
- <mciqzktudhier5d2wvjmh4odwqdszvbtcixbthiuuwrufrw3cj@5s2ffnffu4gc>
- <aPZOO3dFv61blHBz@casper.infradead.org>
- <xc2orfhavfqaxrmxtsbf4kepglfujjodvhfzhzfawwaxlyrhlb@gammchkzoh2m>
- <a1cffdbd-ba98-4e24-bbb6-298eba40a11e@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32443164AF;
+	Tue, 21 Oct 2025 08:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761036172; cv=pass; b=eJYwUSuyULtwVYUTe8t/Gpowd88vUyHkgCQrmhZBYQSwwq8qbNwPggbjAspmSCWRdW4rT2oxTBLc1xiTLLAR229fb2DvKVtNtx0JjsTsC3VJpyt8FQENd6QxMdw19pmynwPgo8lWGcPYn97wM7ygBHZeYkel7r9GEW7FTKNU84g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761036172; c=relaxed/simple;
+	bh=f4/slYl+iwPHP2mr3qpO+dNTUUS42GlntrdKBm3V37s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F81AT6r0eYDyN92LOV1oNUkpCmOkUzfNdYBmeu+Ai8dD/cvNNflINWbSSeEKnPuG2X5uooZmTQ4V7eurTDcYhiIvN3K5lq0MIaNIOpTYDvNY05apVqEc95aHe/+yxrDSn6Mbp8cPYMJbD+u7L6DA2VRuoVFuBHCg7MK8KsGSMt8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=H/mY+hIM; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from osx.local (ecs-119-8-240-30.compute.hwclouds-dns.com [119.8.240.30] (may be forged))
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59L8gXwn703536
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 21 Oct 2025 16:42:38 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1761036159; cv=none;
+	b=bE3ErNzk+Uq9SeNC25K7SRzQFcNn/QLXYDQLchi4SzFGNjh4RRD7vElCLohH/7kTE4SaT70chKg/q+qqeSZmJOKSMC48PFjwc5cQub6VvuUVvpZre4BDXPS/cWQVvhqV14TE/gt+F/O+5WxsbOL2NOHoXZX9+GRTYr7780XH6kM=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1761036159; c=relaxed/relaxed;
+	bh=UpSO+x+gL+yq4q/lzAAL/INRINWUbd3sIquDFP2xMXQ=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=tO2j95LRSWvWXkf7XXERuOjlzJwDsoOYMihZpPcKlJac+5Wi2kS30Y1jgl95KBROoZTZzlAFHIbnNvTzNUE8H9sxi5PVHI/gBJkyOnqurxD08LtY2mzHYLfaKIu6OBJql+HA/S2j/j+vMm08KdS1t7tsyBaQ++m0xlljeVQ6KKQ=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1761036159;
+	bh=UpSO+x+gL+yq4q/lzAAL/INRINWUbd3sIquDFP2xMXQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=H/mY+hIMplznVzAZvdtvgiyK7TanaVBeb6wvZO4fjis8oGEdfR7k/YiYKtulYdoEC
+	 XEgnJEApnk8siezdEiw9fEA7XaSkYoNI2IXaOWxilYIZ6F4FVroD1bYEbbnIIu4hwM
+	 mLmGGvi7DhWlc0cbRoWsomF/sLxqU2I0Q7UVY2tU=
+Date: Tue, 21 Oct 2025 16:42:28 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>
+Cc: Yuezhang Mo <yuezhang.mo@sony.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] exfat: fix refcount leak in exfat_find
+Message-ID: <aPdHWFiCupwDRiFM@osx.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -113,71 +65,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a1cffdbd-ba98-4e24-bbb6-298eba40a11e@nvidia.com>
-X-Rspamd-Queue-Id: 681D21F385
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+X-Env-From: sfual
 
-On Mon 20-10-25 10:55:06, John Hubbard wrote:
-> On 10/20/25 8:58 AM, Jan Kara wrote:
-> > On Mon 20-10-25 15:59:07, Matthew Wilcox wrote:
-> > > On Mon, Oct 20, 2025 at 03:59:33PM +0200, Jan Kara wrote:
-> > > > The idea was to bounce buffer the page we are writing back in case we spot
-> > > > a long-term pin we cannot just wait for - hence bouncing should be rare.
-> > > > But in this more general setting it is challenging to not bounce buffer for
-> > > > every IO (in which case you'd be basically at performance of RWF_DONTCACHE
-> > > > IO or perhaps worse so why bother?). Essentially if you hand out the real
-> > > > page underlying the buffer for the IO, all other attemps to do IO to that
-> > > > page have to block - bouncing is no longer an option because even with
-> > > > bouncing the second IO we could still corrupt data of the first IO once we
-> > > > copy to the final buffer. And if we'd block waiting for the first IO to
-> > > > complete, userspace could construct deadlock cycles - like racing IO to
-> > > > pages A, B with IO to pages B, A. So far I'm not sure about a sane way out
-> > > > of this...
-> > > 
-> > > There isn't one.  We might have DMA-mapped this page earlier, and so a
-> > > device could write to it at any time.  Even if we remove PTE write
-> > > permissions ...
-> > 
-> > True but writes through DMA to the page are guarded by holding a page pin
-> > these days so we could in theory block getting another page pin or mapping
-> 
-> Do you mean, "setting up to do DMA is guarded by holding a FOLL_LONGTERM
-> page pin"? Or something else (that's new to me)?
+Fix refcount leaks in `exfat_find` related to `exfat_get_dentry_set`.
 
-I meant to say that users that end up setting up DMA to a page also hold a
-page pin (either longterm for RDMA and similar users or shortterm for
-direct IO). Do you disagree?
+Function `exfat_get_dentry_set` would increase the reference counter of 
+`es->bh` on success. Therefore, `exfat_put_dentry_set` must be called
+after `exfat_get_dentry_set` to ensure refcount consistency. This patch
+relocate two checks to avoid possible leaks.
 
-								Honza
+Fixes: 82ebecdc74ff ("exfat: fix improper check of dentry.stream.valid_size")
+Fixes: 13940cef9549 ("exfat: add a check for invalid data size")
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+---
+Change to v1: [1]
+- relocate two checks
+
+[1] https://lore.kernel.org/linux-fsdevel/aPZOpRfVPZCP8vPw@chcpu18/
+---
+ fs/exfat/namei.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 745dce29d..dfe957493 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -645,16 +645,6 @@ static int exfat_find(struct inode *dir, const struct qstr *qname,
+ 	info->valid_size = le64_to_cpu(ep2->dentry.stream.valid_size);
+ 	info->size = le64_to_cpu(ep2->dentry.stream.size);
+ 
+-	if (info->valid_size < 0) {
+-		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
+-		return -EIO;
+-	}
+-
+-	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
+-		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
+-		return -EIO;
+-	}
+-
+ 	info->start_clu = le32_to_cpu(ep2->dentry.stream.start_clu);
+ 	if (!is_valid_cluster(sbi, info->start_clu) && info->size) {
+ 		exfat_warn(sb, "start_clu is invalid cluster(0x%x)",
+@@ -692,6 +682,16 @@ static int exfat_find(struct inode *dir, const struct qstr *qname,
+ 			     0);
+ 	exfat_put_dentry_set(&es, false);
+ 
++	if (info->valid_size < 0) {
++		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
++		return -EIO;
++	}
++
++	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
++		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
++		return -EIO;
++	}
++
+ 	if (ei->start_clu == EXFAT_FREE_CLUSTER) {
+ 		exfat_fs_error(sb,
+ 			       "non-zero size file starts with zero cluster (size : %llu, p_dir : %u, entry : 0x%08x)",
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.5 (Apple Git-154)
+
 
