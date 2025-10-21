@@ -1,157 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-64814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6900EBF4D4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:09:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91815BF4D67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 09:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2232460321
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 07:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7791A18C5FB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 07:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EAE274B5A;
-	Tue, 21 Oct 2025 07:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0DE274B5C;
+	Tue, 21 Oct 2025 07:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="HVC87p1a"
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="EossVXMv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.74.81.189])
+Received: from fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.72.182.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18CC25A623;
-	Tue, 21 Oct 2025 07:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.74.81.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB0C1369B4;
+	Tue, 21 Oct 2025 07:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.72.182.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761030554; cv=none; b=StjrkF2+zizVPYASEiz7WaDfXVYhDVhYOe5v38c1HIub5nemvq8iW+Xc9H0D8tSM5swpPxlV304AEn7jOgvYe4sD8FKFHmlCZvw2sUghB7pZ8B0mhxlA5ndmBNeL5hFCSO8H7cX8ZDzKEwFySKPzuWva56QNNh4aUSll7XnGZbM=
+	t=1761030587; cv=none; b=sO8qeh8TJAjiA7FIpCkWRmBQAbW84gdlNJgITDz6qv958q63RyFjSyVIXzuM6rEZ40kY7RpZyAKuwPUTFxp9c1y+AtEm31Y/pnXe084X6nRzJJzzpVkv6Ez5VCXPU5bgdHcov87YJxnJ3RnPkdeqPfk9TWOqoYo88hBXddaypFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761030554; c=relaxed/simple;
-	bh=hV+SdjKKzEi70TyGpPZCe2pK7qZK2WxjRRL1B1KcNTM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GieyvBiGRqXfJyvizVr3dcB54JKhpnnuNkk8OiGfPa1Z1cQh0If02pE4kAkRP8YF7M95PuJ8KJOWS9wSczzoQ6rEu0gyruQ9pHQtHMGm2ju6vCT/PMtwYJZSUHdupmZTdGFLYZGEQ5/ko80HPGBgruO4G9tq5XunfR43lKSw4j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=HVC87p1a; arc=none smtp.client-ip=3.74.81.189
+	s=arc-20240116; t=1761030587; c=relaxed/simple;
+	bh=xUSk8LiAjBR7wIY9a1W1AM/GYvH5kT/DZkSS34KxDMM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mhirVlnNAIHubuc6Z9t9XT2nVshAIbtP4uCycTZTRl6g9rF5Xg30yU9SjB0YpqWEpZBMflCxZguV23WSkdVBJj8z4nhdE7weZonLaEAwplNYMWBpASKxjhqk0yqE/iIDC3Z8HVOYUOSvqaqB9B6tifXHQAcHcXBh940W7feC4D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=EossVXMv; arc=none smtp.client-ip=3.72.182.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1761030552; x=1792566552;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4aKg8jaea9UUgjVGAZ9pvPl/2rw7Jg81FmzroUsdh8U=;
-  b=HVC87p1aBmQ4gE7O4jCj6ingqjU5/wx1ks+x6YUQxcnxcz7KPdkYbbS6
-   y0y6AgAOA1l0fSqRJzp6YLtPL3bBk+w2Lauh57SSZGBd4rfmq3XL9a9l2
-   mFPvdsmpoAARb7rBeD2K7SGt0N8t7twqpPQMCFdWr2zC86pHJ5FQtHbhT
-   cEvYGqIkY4hpeWaNIdDHpZmEx5kjzNOz4v69Hl6YtS2Gr8IoznIFZLB8J
-   Y5OZZ85SUSbuOufHNLsB7dlJ/vL+9c+mdNMYY1Ck5vPn3hCxfE3r3vAAT
-   84Dtrj753DUrD6Gc307KTN0K1q49/fN/PeWCTu3gGxIqN8yJCoNUNDtaE
-   A==;
-X-CSE-ConnectionGUID: xhZ9wZyxSpmrCzcqqePl8A==
-X-CSE-MsgGUID: 8WykqeV0SPuRFwAH0TlCVw==
+  t=1761030583; x=1792566583;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=IRrO90fketCOWk9bfh6aaz0EBHE6DKiahtipOxhwoDQ=;
+  b=EossVXMvvN620OzMFydwN38Q+dSohdkJ0u2MAistdkiXFELcteFT5149
+   R3LhEbwrHJTEeW6ubz16FW5/KEPOxIJhebz9L/N6jC3Qv9GPaYvosWPIA
+   IPsAjhI+wO3+bUC49sMv18tOuhxEIP/rgWOXwO7H4PhyG3aq93gPxmmP3
+   7CjZEcrrYYM1CnPaOhvXy2AnjbkSE56rKHSQZH08wg1Gjau12NcpNjGqr
+   T7FK7MQIa3qQB+rnwuky09rNfbP0sxk2yEZl2XsY+FffDGDX0E/ZE0j8w
+   lh2HTU7E4ftTATorEg4AHg9EzzNU6+wVrFs+K7sTTzG+xkGRDGY0CjkHH
+   g==;
+X-CSE-ConnectionGUID: TslvYmjVRZ67KeFhlmCKUA==
+X-CSE-MsgGUID: BZ4tqt3BSO+r/jg1BcNIPQ==
 X-IronPort-AV: E=Sophos;i="6.19,244,1754956800"; 
-   d="scan'208";a="3934174"
+   d="scan'208";a="3938994"
 Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:08:59 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:10631]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.15.22:2525] with esmtp (Farcaster)
- id 3750a0e3-50a3-4ee5-985b-1ddb7d86a82d; Tue, 21 Oct 2025 07:08:59 +0000 (UTC)
-X-Farcaster-Flow-ID: 3750a0e3-50a3-4ee5-985b-1ddb7d86a82d
+  by internal-fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:09:31 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.226:2712]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.15.203:2525] with esmtp (Farcaster)
+ id 3b019c0e-37f5-4041-9549-5b8fdb60007b; Tue, 21 Oct 2025 07:09:31 +0000 (UTC)
+X-Farcaster-Flow-ID: 3b019c0e-37f5-4041-9549-5b8fdb60007b
 Received: from EX19D013EUB004.ant.amazon.com (10.252.51.92) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 21 Oct 2025 07:08:58 +0000
+ Tue, 21 Oct 2025 07:09:28 +0000
 Received: from dev-dsk-mngyadam-1c-cb3f7548.eu-west-1.amazon.com
  (10.253.107.175) by EX19D013EUB004.ant.amazon.com (10.252.51.92) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 21 Oct 2025
- 07:08:50 +0000
+ 07:09:18 +0000
 From: Mahmoud Adam <mngyadam@amazon.de>
 To: <stable@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <nagy@khwaternagy.com>, Jens Axboe
-	<axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov
-	<idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
-	<adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu
-	<chao@kernel.org>, Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
-	<djwong@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, "Anna
- Schumaker" <anna@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, Damien Le Moal
-	<dlemoal@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+CC: <gregkh@linuxfoundation.org>, <nagy@khwaternagy.com>, Christoph Hellwig
+	<hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke
+	<hare@suse.de>, "Darrick J. Wong" <djwong@kernel.org>, Al Viro
+	<viro@zeniv.linux.org.uk>, Andreas Gruenbacher <agruenba@redhat.com>, "Anna
+ Schumaker" <anna@kernel.org>, Chao Yu <chao@kernel.org>, Christian Brauner
+	<brauner@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Jaegeuk Kim
+	<jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>, Johannes Thumshirn
+	<johannes.thumshirn@wdc.com>, Matthew Wilcox <willy@infradead.org>, "Miklos
+ Szeredi" <miklos@szeredi.hu>, Miklos Szeredi <mszeredi@redhat.com>, "Theodore
+ Ts'o" <tytso@mit.edu>, Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Xiubo Li <xiubli@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	"Jeff Layton" <jlayton@kernel.org>, Andreas Dilger
+	<adilger.kernel@dilger.ca>, Christoph Hellwig <hch@infradead.org>, Ryusuke
+ Konishi <konishi.ryusuke@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>,
 	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<ceph-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
 	<linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
 	<linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: [PATCH 6.1 0/8] Backporting CVE-2025-38073 fix patch
-Date: Tue, 21 Oct 2025 09:03:35 +0200
-Message-ID: <20251021070353.96705-2-mngyadam@amazon.de>
+Subject: [PATCH 6.1 1/8] filemap: add a kiocb_invalidate_pages helper
+Date: Tue, 21 Oct 2025 09:03:36 +0200
+Message-ID: <20251021070353.96705-3-mngyadam@amazon.de>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251021070353.96705-2-mngyadam@amazon.de>
+References: <20251021070353.96705-2-mngyadam@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D037UWC004.ant.amazon.com (10.13.139.254) To
+X-ClientProxiedBy: EX19D045UWA003.ant.amazon.com (10.13.139.46) To
  EX19D013EUB004.ant.amazon.com (10.252.51.92)
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 
-This series aims to fix the CVE-2025-38073 for 6.1 LTS. Which is fixed
-by c0e473a0d226 ("block: fix race between set_blocksize and read
-paths"). This patch is built on top multiple refactors that where
-merged on 6.6. The needed dependecies are:
+From: Christoph Hellwig <hch@lst.de>
 
-  - e003f74afbd2 ("filemap: add a kiocb_invalidate_pages helper")
-  - c402a9a9430b ("filemap: add a kiocb_invalidate_post_direct_write
-    helper")
-  - 182c25e9c157 ("filemap: update ki_pos in generic_perform_write")
-  - 44fff0fa08ec ("fs: factor out a direct_write_fallback helper")
-  - 727cfe976758 ("block: open code __generic_file_write_iter for
-    blkdev writes")
+commit e003f74afbd2feadbb9ffbf9135e2d2fb5d320a5 upstream.
 
-Also backport follow up fixes:
-- fb881cd76045 ("nilfs2: fix deadlock warnings caused by lock
-  dependency in init_nilfs()").
-- 8287474aa5ff ("direct_write_fallback(): on error revert the ->ki_pos
-  update from buffered write")
+Factor out a helper that calls filemap_write_and_wait_range and
+invalidate_inode_pages2_range for the range covered by a write kiocb or
+returns -EAGAIN if the kiocb is marked as nowait and there would be pages
+to write or invalidate.
 
-Thanks,
-MNAdam
+Link: https://lkml.kernel.org/r/20230601145904.1385409-6-hch@lst.de
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Acked-by: Darrick J. Wong <djwong@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: Chao Yu <chao@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Xiubo Li <xiubli@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Mahmoud Adam <mngyadam@amazon.de>
+---
+ include/linux/pagemap.h |  1 +
+ mm/filemap.c            | 48 ++++++++++++++++++++++++-----------------
+ 2 files changed, 29 insertions(+), 20 deletions(-)
 
-Al Viro (1):
-  direct_write_fallback(): on error revert the ->ki_pos update from
-    buffered write
-
-Christoph Hellwig (5):
-  filemap: add a kiocb_invalidate_pages helper
-  filemap: add a kiocb_invalidate_post_direct_write helper
-  filemap: update ki_pos in generic_perform_write
-  fs: factor out a direct_write_fallback helper
-  block: open code __generic_file_write_iter for blkdev writes
-
-Darrick J. Wong (1):
-  block: fix race between set_blocksize and read paths
-
-Ryusuke Konishi (1):
-  nilfs2: fix deadlock warnings caused by lock dependency in
-    init_nilfs()
-
- block/bdev.c            |  17 +++++
- block/blk-zoned.c       |   5 +-
- block/fops.c            |  61 +++++++++++++++-
- block/ioctl.c           |   6 ++
- fs/ceph/file.c          |   2 -
- fs/direct-io.c          |  10 +--
- fs/ext4/file.c          |   9 +--
- fs/f2fs/file.c          |   1 -
- fs/iomap/direct-io.c    |  12 +---
- fs/libfs.c              |  42 +++++++++++
- fs/nfs/file.c           |   1 -
- fs/nilfs2/the_nilfs.c   |   3 -
- include/linux/fs.h      |   7 +-
- include/linux/pagemap.h |   2 +
- mm/filemap.c            | 154 +++++++++++++++++-----------------------
- 15 files changed, 205 insertions(+), 127 deletions(-)
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 1be5a1fa6a3a84..bb462e5a91e28d 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -30,6 +30,7 @@ static inline void invalidate_remote_inode(struct inode *inode)
+ int invalidate_inode_pages2(struct address_space *mapping);
+ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 		pgoff_t start, pgoff_t end);
++int kiocb_invalidate_pages(struct kiocb *iocb, size_t count);
+ int write_inode_now(struct inode *, int sync);
+ int filemap_fdatawrite(struct address_space *);
+ int filemap_flush(struct address_space *);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 2ae6c6146d848a..0923b8df285886 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2839,6 +2839,33 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ }
+ EXPORT_SYMBOL_GPL(filemap_read);
+ 
++int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++	loff_t pos = iocb->ki_pos;
++	loff_t end = pos + count - 1;
++	int ret;
++
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		/* we could block if there are any pages in the range */
++		if (filemap_range_has_page(mapping, pos, end))
++			return -EAGAIN;
++	} else {
++		ret = filemap_write_and_wait_range(mapping, pos, end);
++		if (ret)
++			return ret;
++	}
++
++	/*
++	 * After a write we want buffered reads to be sure to go to disk to get
++	 * the new data.  We invalidate clean cached page from the region we're
++	 * about to write.  We do this *before* the write so that we can return
++	 * without clobbering -EIOCBQUEUED from ->direct_IO().
++	 */
++	return invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
++					     end >> PAGE_SHIFT);
++}
++
+ /**
+  * generic_file_read_iter - generic filesystem read routine
+  * @iocb:	kernel I/O control block
+@@ -3737,30 +3764,11 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
+ 	write_len = iov_iter_count(from);
+ 	end = (pos + write_len - 1) >> PAGE_SHIFT;
+ 
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
+-		/* If there are pages to writeback, return */
+-		if (filemap_range_has_page(file->f_mapping, pos,
+-					   pos + write_len - 1))
+-			return -EAGAIN;
+-	} else {
+-		written = filemap_write_and_wait_range(mapping, pos,
+-							pos + write_len - 1);
+-		if (written)
+-			goto out;
+-	}
+-
+-	/*
+-	 * After a write we want buffered reads to be sure to go to disk to get
+-	 * the new data.  We invalidate clean cached page from the region we're
+-	 * about to write.  We do this *before* the write so that we can return
+-	 * without clobbering -EIOCBQUEUED from ->direct_IO().
+-	 */
+-	written = invalidate_inode_pages2_range(mapping,
+-					pos >> PAGE_SHIFT, end);
+ 	/*
+ 	 * If a page can not be invalidated, return 0 to fall back
+ 	 * to buffered write.
+ 	 */
++	written = kiocb_invalidate_pages(iocb, write_len);
+ 	if (written) {
+ 		if (written == -EBUSY)
+ 			return 0;
 -- 
 2.47.3
 
