@@ -1,116 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-64941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAF2BF7439
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:11:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEEEBF7456
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 17:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2B98503705
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52FA1895F81
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 15:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D428A3431ED;
-	Tue, 21 Oct 2025 15:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC523342CB2;
+	Tue, 21 Oct 2025 15:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDmQNpyl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXOdL9YH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB3B242D7C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 15:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADC7242D7C;
+	Tue, 21 Oct 2025 15:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761059310; cv=none; b=qBjT2p65HicjVa0tsCbPAl+Lc+giMskXwm8ecW45/38xOpGFIrWWxI63YDmkoyLaaTGeMgGjwcoB22c8CzVuGXBFSDlY84kwgO2hDlujlWiEWzRN3gDW+pPiD5MTNSZKkKgk0nDfs3EelRqWmmM9ESCY2eSdsLCJc5wALKbreWY=
+	t=1761059349; cv=none; b=P52A8ZXz+t1HrXIS8PKqLlXQqEkV+f3r/Op7CiTY9ISG7dgyzvu8yFDjUbBgmWP2Cg9VK8WRQbmbZ9moT2uinPcCKuyMieZrEcbWaFGwuMZYCJXxvJwS7pC/A/5wqz99KLWxl6jAw1GLfaq7C5Ek9wvZiFw2je8c40YSti9b5U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761059310; c=relaxed/simple;
-	bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SOCiOg8NtETW+rFXKf91wIol/zdJ7nv5IapAaHbgrjn3DtSbk2OrnhEjRh0Skd1zqsrjRm5rgO4U5F+V8oARRb/Wt0tfyvxlwS3hnhHufJ0fu00KK1GF2ZBqQHeJiCJ+4yJCfbJA2UU1ASnTngE9d2ymvSSbb1IurA62icwjtdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDmQNpyl; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-28d18e933a9so9131015ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 08:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761059308; x=1761664108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
-        b=GDmQNpylqDx1ao5zQVD847VGaErTwC9mikxRVUvxuQkmWPTmtaWf00RSlc40/i+kQo
-         XKfjdgsq9RUAcjdjyrXvf+g7lvZwAmLrzH21U2JZsI8Xe4hG5BUajmvHwJ5B37tiri+e
-         VRviq/6rBOC0/4MIRCOD64U7lRo6Bndb/9TMH3MYtcRcp0Zr+B3gRkD6VV/pVOPwPrgr
-         X3Prcmrwnx3CHQz48nQJ/PlpbEwBdRWpL7hOFaNLxEyaXi0qJtkMkg86nlHDtJM7uIKG
-         iXtTUI3s3UWtP6mL5uqDpvIz1wlIaIfYgF5MYOon2T5l3wxvrI9N3G+9DPze33/14P75
-         MTEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761059308; x=1761664108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qFg4+yNAZ27UrKFa/0jY50pQQ/TyaCnL0WzY/AbT3Uk=;
-        b=IZf7IeyipL5n0JSWUpoxN4TkkLomjhHyRAPK62dc3le7BgWSTKa0MiwgZYVacaLmrI
-         cUTsXAIl1/6S/wsusZ8icfkS99ss+wdtQRS0GO/zhnznmtifYV1xXuhpPbcdr2J8iyYn
-         kvYaZMapmnupCnxw5In3/rlleOEN4gdFuY7ttPdsqgkz8vNH1W8GBoWZy+zrKOK180ns
-         NuUpxu6li9noAypCrfL4rQTu8WX0USEggUPeoTgWKZKSRWZPisiad7i7mwL7rebxdWYE
-         /ltStv/XLn46rqtNGYCdL108FpPoHFDauHGFYBUvWR360LOpAQFW7l1Lra5FeyVFUIg+
-         uG+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUN8qs67BR+7DYrjVtNryRkvKX7tliw8ICqcqSbGeLwLUEzbls5K8tpD97xz9uvasNAL2zy+tPsUp6G3kgd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbrH/6ylSvDouHMznZk5z31xNb80T9eBhxLCLrOTGs3gSXpTc0
-	Y6kTCeKUUs0jXwxE+zuhutUzk7BrzEvDurpjnorOGfLxTXRjjlVt18h0DcW4h3OUPs2c8ts2VfS
-	roIjfFIU+YnVMKf1w0rvk/7F/lyqjVak=
-X-Gm-Gg: ASbGncvjOJQrKm4n2n+N7Gympfv/QwewzEGqk4jSR/HpL3swz3FylQzc6wvRNxWFTuO
-	FEmzdCIvfrm8uI0SgD58fcwgL74Bxq/3J+OgjCsAlltqoT5ODR7yUcmcqlBWp/ma3tLvFICK7Be
-	GaQoDMgxJ2NUtrH/9Vd5y9zd9FuFiZKXDqTxjvy7bfW0448wEa5/UXz6VHr35vXI7WuZS316Rtc
-	ZICejYT+qZRp55dFux964KfsxKO0IKINUdxJiM/koEjwMxai6F28GpmHbBTv9WbAHupFxqDltMu
-	YMm/poH1Q89pIxKK+ZWBw7QHeccRVCyjFnczw8QRalJSatsFAKxa0I/30c4TCujyBO/1f0JH/HI
-	KJYU=
-X-Google-Smtp-Source: AGHT+IFreHdov+uVhNjI+vb4zuqGdoRtHfpLdbPpRiyIyY5EB+5Z0lQXG7LeNg1R8D52vs+phURtS3CNMV6Qy7+3LW0=
-X-Received: by 2002:a17:903:22cc:b0:26b:1871:1f70 with SMTP id
- d9443c01a7336-292d3f7212amr26756455ad.5.1761059307987; Tue, 21 Oct 2025
- 08:08:27 -0700 (PDT)
+	s=arc-20240116; t=1761059349; c=relaxed/simple;
+	bh=Xk4Lp8qVguRdNJEnylB5z9zbgHn7Y64gu99Lcgdv1Lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7KhtnH+pzMfQrQ2V8SRXYt+iatyHhk/JnBjYldQak9TJ4YJYl74nQmw4Bq+9qX4uNovP9FqGEGkmhoQIsVPJQ1DDjvBZF/J/rXIVEqKxglSSNU63KbJ0qwlblH+xdKrhxyRWE7a9aYt4pRBneDh44G5lTIp7x1w3TNZ4+qSg3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXOdL9YH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D819DC4CEF1;
+	Tue, 21 Oct 2025 15:09:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761059349;
+	bh=Xk4Lp8qVguRdNJEnylB5z9zbgHn7Y64gu99Lcgdv1Lk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BXOdL9YHBxATL4p08Cc7K6ZZIhXKrxUt6CVqlILZs5vnyJ4IpKBQBIc1Nk8GFh/T+
+	 fCiN4TsRYpMRuBi1ULaw4ztF8i3VlxwxUHD+S42OOE1yHL7jtDjLs31KW/0P7RcSKD
+	 67UzyvEilxAWPBDJZekVRIYYuq1FzG9SrzV3Xk+oZbKHNRoVH0zbhbTRYdgzHiapM1
+	 R/oNv1qAWHEMW9+WvEUGJoZtFnN0gJru1Xxe6jaNqHK+QGvGyLb1MtAqM1VK/Wh9jV
+	 SFGV05bviyVxsZLr++4n4lM8snh8oAZOjBpe/+2YF1Vr0cUW/lAvDnjd6Kzd1SKbeD
+	 ZqBqEmWMy/PQg==
+Date: Tue, 21 Oct 2025 08:09:01 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: ecryptfs@vger.kernel.org, linux-crypto@vger.kernel.org,
+	Tyler Hicks <code@tyhicks.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ecryptfs: Use MD5 library instead of crypto_shash
+Message-ID: <20251021150901.GA1644@quark>
+References: <20251011200010.193140-1-ebiggers@kernel.org>
+ <20251021-uferpromenade-fachpersonal-70469a562891@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-2-dakr@kernel.org>
-In-Reply-To: <20251020222722.240473-2-dakr@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 Oct 2025 17:08:14 +0200
-X-Gm-Features: AS18NWCCy2kjmOIA6ceL9V6OXhZcSR6v5l_FF-ORfDMjRgq5VddXOb7GOLYgjmY
-Message-ID: <CANiq72m_LSbyTOg2b0mvDz4+uN+77gpL8T_yiOqi1vKm+G4FzA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, mmaurer@google.com, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021-uferpromenade-fachpersonal-70469a562891@brauner>
 
-On Tue, Oct 21, 2025 at 12:27=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
-> avoid using raw bindings types, this seems to be the better alternative
-> compared to just using i64.
+On Tue, Oct 21, 2025 at 02:27:47PM +0200, Christian Brauner wrote:
+> On Sat, Oct 11, 2025 at 01:00:10PM -0700, Eric Biggers wrote:
+> > eCryptfs uses MD5 for a couple unusual purposes: to "mix" the key into
+> > the IVs for file contents encryption (similar to ESSIV), and to prepend
+> > some key-dependent bytes to the plaintext when encrypting filenames
+> > (which is useless since eCryptfs encrypts the filenames with ECB).
+> > 
+> > Currently, eCryptfs computes these MD5 hashes using the crypto_shash
+> > API.  Update it to instead use the MD5 library API.  This is simpler and
+> > faster: the library doesn't require memory allocations, can't fail, and
+> > provides direct access to MD5 without overhead such as indirect calls.
+> > 
+> > To preserve the existing behavior of eCryptfs support being disabled
+> > when the kernel is booted with "fips=1", make ecryptfs_get_tree() check
+> > fips_enabled itself.  Previously it relied on crypto_alloc_shash("md5")
+> > failing.  I don't know for sure that this is actually needed; e.g., it
+> > could be argued that eCryptfs's use of MD5 isn't for a security purpose
+> > as far as FIPS is concerned.  But this preserves the existing behavior.
+> > 
+> > Tested by verifying that an existing eCryptfs can still be mounted with
+> > a kernel that has this commit, with all the files matching.  Also tested
+> > creating a filesystem with this commit and mounting+reading it without.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> > ---
+> > 
+> > I can take this through the libcrypto tree if no one else volunteers.
+> > (It looks like eCryptfs doesn't have an active git tree anymore.)
+> 
+> Thanks, but not need, fixes for orphaned fses (that have valid acks) are
+> taken through a VFS tree.
 
-Would a newtype be too painful?
+Sounds good, thanks!
 
-Note: I didn't actually check if it is a sensible idea, but when I see
-an alias I tend to ask myself that so it would be nice to know the
-pros/cons (we could ideally mention why in the commit message in cases
-like this).
-
-Thanks!
-
-Cheers,
-Miguel
+- Eric
 
