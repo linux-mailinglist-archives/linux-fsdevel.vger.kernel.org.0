@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-64852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-64853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC96CBF61D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:44:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22397BF6205
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 13:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6561834E868
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:44:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC85A464EE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 11:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E496F3314C3;
-	Tue, 21 Oct 2025 11:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B183328F5;
+	Tue, 21 Oct 2025 11:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjS4sk0Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnhNCayn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7D0330B0E;
-	Tue, 21 Oct 2025 11:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BBA32ED40;
+	Tue, 21 Oct 2025 11:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761047034; cv=none; b=JtKKBLtTI2/JFgZaMzwZtSVaHjesLmw0s/oggZqAfsDJsnjefeFbBSuWSKWmKoFsgryzRmmVttEfeHpr3Yy+GHaewVu2mNenFhxyyi8T+uDz02uaL+bEhIr6ekYR7LVGbQRoT1yhKg5EhVoIFv0P756bDJB6CpivmoF24hivgG0=
+	t=1761047039; cv=none; b=I2FPnOXXDjsFLLdy5uD1Cjwans1UnnoCthaHvv2OzFNnPc1uitqactF6gxmwzmB45n53KkHp5Ct5f7ZB65FAmla6lKZO9zde8Q5mHzoqfsPtTRYzOOs1J212gIAa72LGGTwJ9CpZLwnCjuMBXwmmjVLWtkzK/G2UuHMQXlDYVL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761047034; c=relaxed/simple;
-	bh=wpu8fA7qXxdZSYnV2Wt9hfd/qe1FdRoJcNk3AI3VvA4=;
+	s=arc-20240116; t=1761047039; c=relaxed/simple;
+	bh=jSqJBpD/6utq5kB6r0uVAxUcKbpMKsXXqLyZPGG0ICk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=neybPHJP6he+hV0y5xrBB0naoHYcZcShXNCeBwCas9vSSLVPMkCS6dsiQEaed6pWEjeVFyFJzVQfHEXVtG4M/R3k33V6+ki00hI7n0GDOsyRnDphJnAveEP3XilCgcHZckVo04QTaPGIRTVRw0cHcK3LYZ1jWVvB5YAjvUGDmOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mjS4sk0Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12EBCC4CEF5;
-	Tue, 21 Oct 2025 11:43:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=BCHksQ4OalDKUfpTyiS1eBJc9U4eMEb7J5uvY7CAA3xF/mx+WzFqMgg2gcn9K2MbviDTtdErNSc2d/LD5PWItDjlGf2kWlX/gfibOvglPD2t+qmcVQ5CCtr4akP0EUCpcTmXoqimAIn68NPYlEWoFHNcil2yPOz2H0r+YAkjla4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnhNCayn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 377D4C4CEF1;
+	Tue, 21 Oct 2025 11:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761047033;
-	bh=wpu8fA7qXxdZSYnV2Wt9hfd/qe1FdRoJcNk3AI3VvA4=;
+	s=k20201202; t=1761047039;
+	bh=jSqJBpD/6utq5kB6r0uVAxUcKbpMKsXXqLyZPGG0ICk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mjS4sk0QTmIkELXAcJU8lcFnUD+afDGY0ZHvhxgZ5z0vJfgrh428582+xA82JXmtK
-	 wkoiRI8/il4b94YRi69gbHfUo2eH/8BYM5NOXlDhDg/mxFahhQPFg9PHnZReGGoJeo
-	 vZFAVJs6NADVKiiAy2LKhOs9GxpEXqnZqw6wQnViQhBjJyj8hM86obqe17lhclzI2d
-	 irG33clADT5LlM6MuY4WgVdvUq2U5A/I/mv3/5DdBIJdWNbDpOp9ZqXrP2ddMuNSXM
-	 JbjEPaZ3FkWMvC3nJgZ+YmLdAl5dRC2pR52e76uS3QwXtby5MtWJlKlkBbqGVNs2Zu
-	 uNroZlETLDuqw==
+	b=gnhNCaynkM0wMfth/IMqriE+JgndxI+bTqUyj+wXWaqobttsBP32n1bOTm7T6UR7O
+	 PN9BUSUaCZZ60BWOQv/+qMuoUU6rILKgOZx8SRTf5o7mTZ4LhQr/4mbk3/BmR7aRth
+	 LCYOTa8bt9TOP2gTYSh7KHYkUkYOF5mAa2k8xRHJUdqKizvyfmeZj5c88hZ7d+Rk/X
+	 MldoAI/4/FIkLlrnzYs19iouUA5nf95oslSHHEhTGsKBtlqr6M9//LgmyyH+UaamP6
+	 0SS1+O/rMehuZk2WUDmQT2W+jJQWf3+lMaNzlpFtoT7tfHi4I+8Q96Ti2DaJLCLIhP
+	 gMcp/sDMFxMuA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 21 Oct 2025 13:43:07 +0200
-Subject: [PATCH RFC DRAFT 01/50] libfs: allow to specify s_d_flags
+Date: Tue, 21 Oct 2025 13:43:08 +0200
+Subject: [PATCH RFC DRAFT 02/50] nsfs: use inode_just_drop()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-work-namespace-nstree-listns-v1-1-ad44261a8a5b@kernel.org>
+Message-Id: <20251021-work-namespace-nstree-listns-v1-2-ad44261a8a5b@kernel.org>
 References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 In-Reply-To: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,47 +69,41 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1073; i=brauner@kernel.org;
- h=from:subject:message-id; bh=wpu8fA7qXxdZSYnV2Wt9hfd/qe1FdRoJcNk3AI3VvA4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3wjXZEbEZ/TtM6uIGFxsl5R0anZ+wWStty2/6/2/
- P+jiyZFHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOp7GFk2FPN/NznYaB1vobg
- fJPLK6dK6XKcjr8xfZXkkn1zGpS4fjMyHLxiKLp3+4GZp6/u52SW27chIdileu+Jnwc7TsrV3NH
- czAsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=930; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=jSqJBpD/6utq5kB6r0uVAxUcKbpMKsXXqLyZPGG0ICk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR8L3zzlsf+uqnpzEsJ7MEcDGpT1u65H7z1S6yw+yz+O
+ Sblb1P5OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTAG6yDSPD+ws3DSyXFBqvnLwk
+ zOmO5UWlgnc3tB4etQlSkX/y6G++O8N/x3XG5+fNUw7pfqGk5rznMDvnuuV3Gww/15mX8TkfT73
+ LAwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Make it possible for pseudo filesystems to specify default dentry flags.
+Currently nsfs uses the default inode_generic_drop() fallback which
+drops the inode when it's unlinked or when it's unhashed. Since nsfs
+never hashes inodes that always amounts to dropping the inode.
+
+But that's just annoying to have to reason through every time we look at
+this code. Switch to inode_just_drop() which always drops the inode
+explicitly. This also aligns the behavior with pidfs which does the
+same.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/libfs.c                | 1 +
- include/linux/pseudo_fs.h | 1 +
- 2 files changed, 2 insertions(+)
+ fs/nsfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index ce8c496a6940..4bb4d8a313e7 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -680,6 +680,7 @@ static int pseudo_fs_fill_super(struct super_block *s, struct fs_context *fc)
- 	s->s_export_op = ctx->eops;
- 	s->s_xattr = ctx->xattr;
- 	s->s_time_gran = 1;
-+	s->s_d_flags |= ctx->s_d_flags;
- 	root = new_inode(s);
- 	if (!root)
- 		return -ENOMEM;
-diff --git a/include/linux/pseudo_fs.h b/include/linux/pseudo_fs.h
-index 2503f7625d65..a651e60d9410 100644
---- a/include/linux/pseudo_fs.h
-+++ b/include/linux/pseudo_fs.h
-@@ -9,6 +9,7 @@ struct pseudo_fs_context {
- 	const struct xattr_handler * const *xattr;
- 	const struct dentry_operations *dops;
- 	unsigned long magic;
-+	unsigned int s_d_flags;
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 648dc59bef7f..4e77eba0c8fc 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -408,6 +408,7 @@ static const struct super_operations nsfs_ops = {
+ 	.statfs = simple_statfs,
+ 	.evict_inode = nsfs_evict,
+ 	.show_path = nsfs_show_path,
++	.drop_inode = inode_just_drop,
  };
  
- struct pseudo_fs_context *init_pseudo(struct fs_context *fc,
+ static int nsfs_init_inode(struct inode *inode, void *data)
 
 -- 
 2.47.3
