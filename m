@@ -1,59 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-65106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE247BFC861
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D337BFC86A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 874E03514FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:28:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 39F89353F3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B115934C15C;
-	Wed, 22 Oct 2025 14:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707E34CFC8;
+	Wed, 22 Oct 2025 14:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jODtkpJk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W+uMC0i8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FDD34C155
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 14:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463D434CFB0;
+	Wed, 22 Oct 2025 14:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761143013; cv=none; b=XTmGJf14kBYWl3cjptvS0qTPFSlCGUS8/QZTkpg5VEx7riMqkpTamXJYX3XT1A++nkghhRHBPR6BeHY4c01YPzAf9eiUT6kfaUQPNtEeLudTnKp3Vi5MKDgDHR9C/OT1IKZTRFyNLp2mGyMwTyhIXcW7Obs1GBo2VgqDwVVuuEg=
+	t=1761143062; cv=none; b=nsUNSdGhgUWoJBSU/ZGiW3xt96brO95/H/BOyzaTto79kSmr8JyzjATjyGyDzFWCcXpNrInnmnB2+Mbu/n7u2VULrlbauog4+mSzm6kQYO2PLAWbkMSSo/cpje8WCaEaC88jgKN7knTzw37zwYB8IDDaGM8vA0XtHfmk3pD5738=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761143013; c=relaxed/simple;
-	bh=BXbtN2v+8Pnm026y/5JZIdZbNLt1pmFAnwtqv3iUwp8=;
+	s=arc-20240116; t=1761143062; c=relaxed/simple;
+	bh=H228bBJrkQxEoiNZc6XQYVYrYA5oeSdH6yGkyWFKcP8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3Fy7YxnvQku8SUXM5shzo4lhTL0DGD7WiCIJW1jcFW1h1lH8bi8NtSATeNXqoW9+31NX4mI4QKiV6GDDFfaxij2brEbt+GnbtW8QUlClfeQilFjtDfEUeSzRdRc8PuKU5Z2xL82MEABsPP1qgT5YN40nfCAe1M6pJ9oA33P6oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jODtkpJk; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=S20dy/6v2VSzUBbGA3VYahIsUmucSyHhgCKVvQxa0Cx7FamiazQNJH9Rw7KdbT+tgHeEcC8Q+SwtRLy3n3B3Q7CKp8KBSlOKhEZQqjduC/MfgGuEihv7NkiXniSCXmvB62BpfziOsf4WMPpRoEPEckT18R/ZgFR57yyLIoaYO+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W+uMC0i8; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8hEdEufKYDlpmRclgwdd1f0mWWuBZqislf9kgj2GKYM=; b=jODtkpJkkWgioRSQsFrDCrEmXF
-	ag0RXtocfkrzgRIZizkNDfQ9dco/iRIcm0ZIfTmNAtQBKbLKwSgOHqFK0Rrj70flsQmfLawIVEKMi
-	GKF/ZKwhyVIf7dRV4SEol0V8X80L9hQ79yjUyKMvTzf1dXJBDZrT5v70IuBLjVWzoJunT1lOHCp1i
-	gqMibQMl46mvkWg7WZ4aQc73I9p/OdC3DbaX6JkjjHJPzD5Kfpj0UFuX74XclOB9r9HVUuudkegUq
-	5f7hJliVsGVV3abCVspk0+UbdxxLiXcn+yToJdnS5GiC+9cbw8UZCZDPE/0XDsIpURBOyQxLQfuJc
-	s6ox3pUA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBZkI-00000007lOE-1nE5;
-	Wed, 22 Oct 2025 14:23:23 +0000
-Date: Wed, 22 Oct 2025 15:23:22 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org,
-	bfoster@redhat.com, linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 3/8] iomap: optimize pending async writeback accounting
-Message-ID: <aPjo2om1maIKdCEE@casper.infradead.org>
-References: <20251021164353.3854086-1-joannelkoong@gmail.com>
- <20251021164353.3854086-4-joannelkoong@gmail.com>
+	bh=dctXkstECTenaZhiUiTAEPs/+u3lBJ+4oLit/DWtNCs=; b=W+uMC0i8lkaiKuhkl8eUM+csMP
+	zH9Alfil/ggkWS+mff98nPo9bDIMkuW8K5C5+KY2e8934/ExnLSA4XSDvs16qF9TmynNu52oe7tVO
+	alhtY8gr8526Ul/GMwiNjT57GxRn6C1/yPzHIibpvNmoPRJeplLP1368i919MkX3vMD0TfWO58XqB
+	EaUXdGG6nfjfQNZR1hVFszBgQD2CFgdZfn+DgZnjBkiVlcKh5kkIe9C65p09XP2z5JubaB3DW+xwx
+	QnSnO4coWaBJMspnjlZNpjlij/u6mnQPePfu4Nb2uYSAp9cc5ZSqjPHhLdI24izWy1wkOQRbI8Bdl
+	/7A8lvtg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBZkt-00000007mfm-1HRN;
+	Wed, 22 Oct 2025 14:24:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 542B830039F; Wed, 22 Oct 2025 16:23:59 +0200 (CEST)
+Date: Wed, 22 Oct 2025 16:23:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	kernel test robot <lkp@intel.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V4 07/12] uaccess: Provide scoped user access regions
+Message-ID: <20251022142359.GQ4067720@noisy.programming.kicks-ass.net>
+References: <20251022102427.400699796@linutronix.de>
+ <20251022103112.294959046@linutronix.de>
+ <20251022152006.4d461c8b@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,20 +87,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021164353.3854086-4-joannelkoong@gmail.com>
+In-Reply-To: <20251022152006.4d461c8b@pumpkin>
 
-On Tue, Oct 21, 2025 at 09:43:47AM -0700, Joanne Koong wrote:
->  static int iomap_writeback_range(struct iomap_writepage_ctx *wpc,
->  		struct folio *folio, u64 pos, u32 rlen, u64 end_pos,
-> -		bool *wb_pending)
-> +		unsigned *bytes_pending)
+On Wed, Oct 22, 2025 at 03:20:06PM +0100, David Laight wrote:
 
-This makes me nervous.  You're essentially saying "we'll never support
-a folio larger than 2GiB" and I disagree.  I think for it to become a
-practical reality to cache files in 4GiB or larger chunks, we'll need
-to see about five more doublings in I/O bandwidth.  Looking at the
-progression of PCIe recently that's only about 15 years out.
+> I think that 'feature' should be marked as a 'bug', consider code like:
+> 	for (; len >= sizeof (*uaddr); uaddr++; len -= sizeof (*uaddr)) {
+> 		scoped_user_read_access(uaddr, Efault) {
+> 			int frag_len;
+> 			unsafe_get_user(frag_len, &uaddr->len, Efault);
+> 			if (!frag_len)
+> 				break;
+> 			...
+> 		}
+> 		...
+> 	}
+> 
 
-I'd recommend using size_t here to match folio_size().
-
+All the scoped_* () things are for loops. break is a valid way to
+terminate them. 
 
