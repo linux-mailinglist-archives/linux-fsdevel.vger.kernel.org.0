@@ -1,88 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-65050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4E7BFA110
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 07:35:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD54BFA175
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 07:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E7818C5190
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 05:35:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA5944EFC64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 05:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044F12ECD19;
-	Wed, 22 Oct 2025 05:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637652F0C6C;
+	Wed, 22 Oct 2025 05:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXAABJkv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0660241665;
-	Wed, 22 Oct 2025 05:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A93B2ECD13
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 05:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761111283; cv=none; b=XCaiRLXtAG9dr11EAhkJcNaa20i7hoi0CDccwZpNeIvkrhYmEDxaCHxEWFfa5HgFA6wq47J9kqgdrkQ4wR4Zh1+JM8wlMkoCclXLOMnjf9EBqkBVMKjkap2steguxKZm9zkZA89VcrjZNy4dwnKaJmHznQSKwDw0jj900sdNjY8=
+	t=1761111676; cv=none; b=iGOHhOcABCzz83Iob0gS3SQvZHerJuXreegA5aQkXd3WvkLX95HyJNmHroCtc+//hdeaa5VdFMPzFPiCwNkWfCTJQ50phsRtAQLhlagqqjg1M460Ry6Z16xIYeiXDKQp5jkT/1HWjkRunrwIkLrVxuU98kwz5x6e1gSf7ZWcxJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761111283; c=relaxed/simple;
-	bh=gsDXUURKh7jMSr5chgzvZQTNTnV3Qsf+wVti7kG94X8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxW8znAZjJgGdxVkAxfcY43wHUXxCstdJ4/1kiVCJzEr09CObD6lFgLFEaexHcTsminEpElY2bCMWlNYorQirO48YPSbBU1UcHlvaMeapzKb5KtfvHxYWyoA4NZAHqSLBQQQqTv0XUU9/Et6VHUsn2s5F9rw+IzvQk5GsMT+R10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0582A227A88; Wed, 22 Oct 2025 07:34:35 +0200 (CEST)
-Date: Wed, 22 Oct 2025 07:34:34 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Carlos Maiolino <cem@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
-	dlemoal@kernel.org, hans.holmberg@wdc.com, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: allow file systems to increase the minimum writeback chunk
- size v2
-Message-ID: <20251022053434.GA3729@lst.de>
-References: <20251017034611.651385-1-hch@lst.de>
+	s=arc-20240116; t=1761111676; c=relaxed/simple;
+	bh=sXvlzhJohVL+aMdIieAR4+sB6JssJbuYaPKD+0CjzyI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uk+QcG2wwBl1oPwhnSnqBBEIOdpEGR0erFmwrMN4P/odmKFqBgJF4wWbdqTnCz8S4JC4ZjwhlqLtb80BVolVlLCc//EX0EGijjCdPvoVs8PQc+AkP0CyL+5l04Hhb9ALkdp1Cg9XqdpvTjogBwziG/SVCocJQs/QyVFlZwIQZIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXAABJkv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31028C4CEF7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 05:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761111676;
+	bh=sXvlzhJohVL+aMdIieAR4+sB6JssJbuYaPKD+0CjzyI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nXAABJkvQonUIXUeC5wvDi/yCwgkHTVyYv8dXALQF9SAnk8rXO9iY5FF5H7ktvC3Y
+	 nZGMum4LcQ4qDCr0h3wZ0V7ohmjSws28ucNKbzdHcCVl9KBuk3vy5+bgwVr1Ea/04y
+	 n1fhy59ESL7GTFbrGkSdhg+kDhSMUdbXNsDuWng8FtTLpdKalljIv0TtP+/AKNH01i
+	 6nFK2ERStVPXRVuT4AbptbtRzal2YOidRYTdkSehiB1SFVOfnWaDsMhYToddoe8QXn
+	 6+d+lZVFrk4FeDNfHm47z/h2aA89IzovyxvIQhX5mbX3HAlGhXdE+HNlveAnGTVedE
+	 XkhHGtHd3R0Rg==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-634cef434beso1101743a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 22:41:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX9TpST5MxVp3wW0ABZhG4OFdC43SlXZU1zq0x1oMm/lwz8lS8OxGVdbmGoJcj55QFJRPgRSb/sCDfDlctn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9v0xR4B2ZXwkWCF8k1Por3WWJj6UpmofYIdQSSdZWb9MlvJIz
+	zEBgkue9NTjGvgjkLGDsZAuKWduc6hHEFA+P+EuOHtl8IxHIbWubjw+HslOxy6p5hgK2D0M0bv/
+	4L/k40NWRSoe7BxuXKSlDR8bWCuDZvp0=
+X-Google-Smtp-Source: AGHT+IFW+lxkh5Rk4qv+MITmDMf7675+2Fu0Dt4bVJ6rVnqT8i/HFMco0lj+LUz6XugYFQJdflpEYnGosAzChBh2UM8=
+X-Received: by 2002:a05:6402:449:b0:63c:274a:4f16 with SMTP id
+ 4fb4d7f45d1cf-63e2712469bmr198740a12.16.1761111674797; Tue, 21 Oct 2025
+ 22:41:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017034611.651385-1-hch@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <aPdHWFiCupwDRiFM@osx.local>
+In-Reply-To: <aPdHWFiCupwDRiFM@osx.local>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 22 Oct 2025 14:41:02 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd88+gEvGe+aJUEVJetYyk-vpejfHuLNujP6NPeXDMcJnQ@mail.gmail.com>
+X-Gm-Features: AS18NWB5SqBBqrhODAO-yE_ehaFHcbxRjxGzU2eOHCKmbZyqttYJT27dWD1e_qU
+Message-ID: <CAKYAXd88+gEvGe+aJUEVJetYyk-vpejfHuLNujP6NPeXDMcJnQ@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: fix refcount leak in exfat_find
+To: Shuhao Fu <sfual@cse.ust.hk>
+Cc: Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Looks like everything is reviewed now, can we get this queued up
-as it fixes nasty fragmentation for zoned XFS?
-
-It seems like the most recent writeback updates went through the VFS
-tree, although -mm has been quite common as well.
-
-On Fri, Oct 17, 2025 at 05:45:46AM +0200, Christoph Hellwig wrote:
-> Hi all,
-> 
-> The relatively low minimal writeback size of 4MiB leads means that
-> written back inodes on rotational media are switched a lot.  Besides
-> introducing additional seeks, this also can lead to extreme file
-> fragmentation on zoned devices when a lot of files are cached relative
-> to the available writeback bandwidth.
-> 							         
-> Add a superblock field that allows the file system to override the
-> default size, and set it to the zone size for zoned XFS.
-> 
-> Changes since v1:
->  - covert the field to a long to match other related writeback code
->  - cap the zone XFS writeback size to the maximum extent size
->  - write an extensive comment about the tradeoffs of setting the value
->  - fix a commit message typo
-> 
-> Diffstat:
->  fs/fs-writeback.c         |   26 +++++++++-----------------
->  fs/super.c                |    1 +
->  fs/xfs/xfs_zone_alloc.c   |   28 ++++++++++++++++++++++++++--
->  include/linux/fs.h        |    1 +
->  include/linux/writeback.h |    5 +++++
->  5 files changed, 42 insertions(+), 19 deletions(-)
----end quoted text---
+On Tue, Oct 21, 2025 at 5:42=E2=80=AFPM Shuhao Fu <sfual@cse.ust.hk> wrote:
+>
+> Fix refcount leaks in `exfat_find` related to `exfat_get_dentry_set`.
+>
+> Function `exfat_get_dentry_set` would increase the reference counter of
+> `es->bh` on success. Therefore, `exfat_put_dentry_set` must be called
+> after `exfat_get_dentry_set` to ensure refcount consistency. This patch
+> relocate two checks to avoid possible leaks.
+>
+> Fixes: 82ebecdc74ff ("exfat: fix improper check of dentry.stream.valid_si=
+ze")
+> Fixes: 13940cef9549 ("exfat: add a check for invalid data size")
+> Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+Applied it with a reviewed-by tag to #dev.
+Thanks!
 
