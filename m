@@ -1,422 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-65020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E14CBF9D21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 05:22:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84595BF9D72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 05:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F56B503684
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 03:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EB143BE530
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 03:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9E623D288;
-	Wed, 22 Oct 2025 03:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE97E2D0601;
+	Wed, 22 Oct 2025 03:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="FIpPBigd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yqdFIpEg"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I2g3Lxz+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012016.outbound.protection.outlook.com [40.93.195.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D1D21B195
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 03:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761103272; cv=none; b=ZqFakCcVx3tM//WJ4WA9p5GthB2vd1s0Dm3b5TTnQrak7DLx2BLfk6pNJ0E4mvJTBG11U38tRxmMmYZntfjCStXOytUackltFXWccTviTqro0KcXVXgnCXZrrgOoOTHNLHHiM3Sw1Q1UvP2LDlmazGqKts/wOGpPDGAwb5iHhc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761103272; c=relaxed/simple;
-	bh=5WTwVCJzxsKIkRA9pKseP3C408Kh5F/ymXEmzRxZ29g=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=dFX/tI+U2Tu6rWA4KQx+LRL1FWiQFpueOplNLv+0C5Hk/xlVw8DlxAhQOj39nZ0UBY/dJYsBVYUOPsx+UXyShsfx8GYuVnIPfpmQYad1CuS+btx6I8iwKyjT/aIaLif2lKRO8cp0ZVQGreTuztrO+PbepxMdDry2MURDEWdGAyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=FIpPBigd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yqdFIpEg; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CA757140003A;
-	Tue, 21 Oct 2025 23:21:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 21 Oct 2025 23:21:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1761103265; x=1761189665; bh=OfbAffNay3BF53rdOt60MWyLl3rKDNk3rBB
-	yPNTvz38=; b=FIpPBigdiFs1ITZ0D6wKlxNnPTnXj8z4ciDc8oovyHLo93aW7wQ
-	AGTO5XBIbct/77B+Dk7dq3Hndm7DhF2iOAwS3P/SbBPe6ODjHRldIeohcOYvLwQw
-	rpWwzuByXZE1DkEF1LtcrtP4Wxy+GHKdieUuuFPeFynBRx9z5Bb1MBvSMURyBZLs
-	odWq9JK8FJ7Wc6QHgav/3qdCQ39tohKVPzT/37Ji1IabIVsz+AhMHfuUgB6lEyiz
-	wt+fsxHJN/QeeQoEsmc5TXbIAkOBhgXtheJ0cJDsk9DT0uEBq1CpjBsNjR+1rOy5
-	vZ1/lBth/eyG4YbGXQP4VerzgwAIm81Mp2Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761103265; x=
-	1761189665; bh=OfbAffNay3BF53rdOt60MWyLl3rKDNk3rBByPNTvz38=; b=y
-	qdFIpEg+FOQBmnnbuzrjmnk/n83I6emY/IAJT6RZfA3ycY/EWIXPwNCm4Ou8qtHG
-	Ny9CB56QRwA18KVquZbqM++nnbM4JIsadIgQjZDX9wBC40jGlgzfL5KiPoVFp1Ik
-	1tedF/73R7Q793+z9hZKmiluMn8aKJa8krsCmVhOnN1yLIooZeRHnMFH0TDFDj1c
-	DQH9YyPQy6/i2rJ4Jj4IWm5OmTOJximrpLZNzSbWDv8VomG+yCeQZJ8LNbX9qR3T
-	m8ojPyVFMdcggiBmUilZXrXKK5nBtcAUQtTWXVzl4+TFWXlh7YMSUl+BtJidR/H6
-	7lTvqHPpx6r2xfgMKYRkw==
-X-ME-Sender: <xms:oU34aFI4BUMcj5adl6RcQgHaCFLPo-IGo6czS_NGu78z3xCooHiL6A>
-    <xme:oU34aMHFmtD6mnLWKj8A5WxonF-5QiV6_xDRUavz7BwYl8_s-PlSJR145TbKZQv3B
-    XB7Nnl_WZIgBD5fqFqd2giy2EBv0gGzfD2LQHOQr4GAtAvELqQ>
-X-ME-Received: <xmr:oU34aMsPhpkCES6zvcUEm29Z-wQP4F1GNujfIN_DAHyN0x6uQF5ZO4tU3Wyk6tk9BcQdE2YUkZ-YyO_PH9fJHb2RIWpSjJJj1vg1yR-ZXL2Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvgeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphho
-    uhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprh
-    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepjhhlrgihthhonh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:oU34aLsfN2g6gczWMSKMGwXIX8tYB6ar_blBb_bEzc5b3LuZzdSIwg>
-    <xmx:oU34aKBgojvmjm-PlDviO4ugBUFs2H_0K91nW5q2xB3dpGh0H7XimA>
-    <xmx:oU34aFNSIqk6oVe1Asd3bPI7P9OYjYDasoaElNCy6jB8caPqWB8zBQ>
-    <xmx:oU34aLxzzP8cCoJS7QOHZ9Y2dsBm9fz1RX1EF_BbmyEYyXRiiRbIDA>
-    <xmx:oU34aMg-lM3UbT5OuxXCcMqRDYcw7kwnxhh0tgX5vhPPd6pl549fk-yk>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 23:21:03 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A56224893;
+	Wed, 22 Oct 2025 03:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761104212; cv=fail; b=DKs1j6rUIP3FaxyfdDXh16qOXOYR3OGthaKX7UtqAwn4fA/0syVe9D/yTtnGI7nEYxzZ/URXlF2QRKnTHnk6FeiGf64InHKWr9p/0WLDt0U4qYhj57xvx37svzEyjEypEVqxB3joI+2qFIARMww1fVHIue+JeU4Z3rbeu/cHleo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761104212; c=relaxed/simple;
+	bh=03hk7IioiEHBNN5j2joolpBVM+ofuCpgrlxPmxvErhk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kuNQ4JQQh66llu/kBOfubje3bfZAxz0YOGr6mEwtHKjl8EMIw0I3rPYY9T74r3+dPfp7PnHTfhv2/xTHCSM6iw/RRQtSAxwmoQQ4Uay/fZJTheZ8zuhsaQwX3yFu/+9Tnws9WQpyPrtr1dBDnbWwhd98Ej46bB4muBgdYupMaBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I2g3Lxz+; arc=fail smtp.client-ip=40.93.195.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kBBGCC3qv5jexES+keEBrNpivkPZ6WgXCAv/9k5W/Nb4lf4tD5oAsYOR0vtutGDfr4VUX+JCJM+k5SIilpll1+tWBq3e8XbAmezy4DqAlQPehtfdmkL+EJ3doHTvWuRD3cq0rQW9NJUfr5FA6KnKSqG6xKN2EaUZ78o0mwmGSi1w3hRmbynWSTwIuHqAGIjXZhUiVYVb8acEM037geThsZ/cZywtSKqLVcQXIm20tPpi5avtNy4KLT+1u3j1ER4pVloeWGpSwjslGuxn13OMmxlY5jpqo2TvhiO1Mw8xpjCkGrN1w7SRjUuFAYR73JTXG5oOnrYWV7NLofmpyh0uiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oTwND8+++uvBGRBgelmkoTvpzSSHL/8VaGjK2FOVtL0=;
+ b=a7yDrEVTZtx0hNREa1Rnd63X0g04AUVFTTr3UItB0jQl3Vk2d2iO8OdvNrRdlXFhqknqNTVPsi+E7BnttTs4j+DwmnMYDNRCtcdSVYXIlM1C/18C4xzRvvNGyFxRd/oJ5u5xDW4HNrGq0iDUMg1ktI5OSVf5ciittWTbeU/xE0NapBp45ISDbFVWGA3aZzHvu3wiqMRrm5sBSO9fGr51a9H1o9KVTLMMHTmdm0Oozx62JixxE8X0ehh8jL2sB834853HdTi+HsBI5ff4zYvmtuUemZQckKgNHdEqSHBUYXdM5SW0DOSw8BKZxkkvStAHx4KTvKDRyBUDBOoqrMCzyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oTwND8+++uvBGRBgelmkoTvpzSSHL/8VaGjK2FOVtL0=;
+ b=I2g3Lxz+7FS5PObO1qCOcngDF+65lObMKVXhO+CU6olf+B5yRZIXEJXPCtdlE+yW3oSMroYOD1UQX3xLDvPyU+oAMl4WaVIuTmeulF741BHEyiezZXgMxMSHtcVNytq+3gihv8eiCex40Niig1N5T8URGZIuf3GpwTkgH+MAvfwRx2a6We8gCITWwBEEpzMJjOsV1Jxk9RfH30ViYZSJwIW48EoOwW3irN9h5zfW5EfeDCOunxwFVd1CSl5TxHHY4+Dd3QFWD2tJNVm52bjPYPHQfv/cjljw0t1wuUf+mToxKRysJnIvn/gEGRMTjw05VOuE455UNv6jzXCBV4/Xrw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ SJ1PR12MB6268.namprd12.prod.outlook.com (2603:10b6:a03:455::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Wed, 22 Oct
+ 2025 03:36:46 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 03:36:46 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: linmiaohe@huawei.com,
+	david@redhat.com,
+	jane.chu@oracle.com
+Cc: kernel@pankajraghav.com,
+	ziy@nvidia.com,
+	akpm@linux-foundation.org,
+	mcgrof@kernel.org,
+	nao.horiguchi@gmail.com,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Yang Shi <shy828301@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v3 0/4] Optimize folio split in memory failure
+Date: Tue, 21 Oct 2025 23:35:26 -0400
+Message-ID: <20251022033531.389351-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR05CA0028.namprd05.prod.outlook.com
+ (2603:10b6:208:c0::41) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
- "Jan Kara" <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 06/14] VFS: introduce start_creating_noperm() and
- start_removing_noperm()
-In-reply-to:
- <CAOQ4uxgRx_QLJ9PbRqNHJn_=s59bD1RHjcvU1GCCyGbe6uJ_cA@mail.gmail.com>
-References: <20251015014756.2073439-1-neilb@ownmail.net>,
- <20251015014756.2073439-7-neilb@ownmail.net>,
- <CAOQ4uxgRx_QLJ9PbRqNHJn_=s59bD1RHjcvU1GCCyGbe6uJ_cA@mail.gmail.com>
-Date: Wed, 22 Oct 2025 14:20:58 +1100
-Message-id: <176110325819.1793333.7313372661279156904@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ1PR12MB6268:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbcf07ba-333a-4a5c-cfc9-08de111c39bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QqJiWEdXPymiODWtzF0hmRuITrt/pv7M8p2jPGJ18Bc6zVSkC4iBBUashLG0?=
+ =?us-ascii?Q?asqTgtFyobCEToQ2+ICXRmbT43Iw5VuMPs+BH4vbhu7y8Qizj5zc4vGjcZEv?=
+ =?us-ascii?Q?ez75s2t5hE6kGQdC4bjC0yK7aIWuDIxR32ilHCEPepjE4h25LyG0gxyJnkOE?=
+ =?us-ascii?Q?zQBdnb59nhn9kexjqCn7nkKg2sO7E19w/StW92mXjQ3eqLGAeoVB3Epp+6Cg?=
+ =?us-ascii?Q?P0jzjqgIn2G3UwgP05CSL+vjBc188KwcFixRPbJWQtnf9DTJzx0TjMuTbVaj?=
+ =?us-ascii?Q?es9onvBuXygvhLU7Hj7DwgwykH3b08FXbuOl2cohMsMJNh5CjyHwqpKFT4fu?=
+ =?us-ascii?Q?4caQNdcgzi+SDV1TOqrQGYr1nrfpdLVBljtHyt5RIKo6Qy0mLBOpjMEnsip0?=
+ =?us-ascii?Q?8L7077vWeKSKO2F43dpLIcbdHEBm45EUY0e3sdMTn4LBopCYseyq3nPYrlg6?=
+ =?us-ascii?Q?3og0zU6xCRTMv9hmIhy4smbssdeX9djXTrg2foQQiDHs1iDYnNtFqfRsxdh2?=
+ =?us-ascii?Q?HXFOsFFDoWSDdl6wTb6LhHMVJjpG0TipGqHna1WHYm5p44NhoFFjluimc2A6?=
+ =?us-ascii?Q?XHTgAAE0k+AtKWqh1Utmo0u8IkJGdHNEoGeYm1LFNlERxtPilbk9luzTQ5x2?=
+ =?us-ascii?Q?uumkFVWneWHuClDW0gcUiolsySSaHrVEGf8dLDD2wk5qGPk6Wi4YkxrZhnoo?=
+ =?us-ascii?Q?3PLP3cWcqvB6Xo8P2I4RsMgGHdJ3PejPYeKK1EYC/IkLEvr9J0fif6188OGD?=
+ =?us-ascii?Q?WaxmnBAO1/bJXCxHNzh4HuK8GJOO1WWwnMLLQNYfN/n9m4RRtVV11egIUaGK?=
+ =?us-ascii?Q?fRFR0mrR2zsaCBARRTI3GK8dzaYdR5gINFGG1uCmW+UAoFg16zkAE+DQzlOu?=
+ =?us-ascii?Q?HmSI1OSmKkmXuYWlQXiAY5YiusssfZgwu5oKIG1S0ZvgyxubggnQv7SXzZuq?=
+ =?us-ascii?Q?xl903WQB7hcu5PAui8LAvKyJZmG8Pn78J35kjca04mgqUP8RDPjT9ZSCUG1Y?=
+ =?us-ascii?Q?Jzr1wdrTBOVdqh/JswIuJZcqVBzb00E8M40ZAbMFUMdtOWuaPol816BMRF+C?=
+ =?us-ascii?Q?veaQJ3orWaPYqzc6j1fXcP26F+1yNtm8qGZnIJv3M54EVY6UXe0Z3fCXgm97?=
+ =?us-ascii?Q?ig/Fbe3OQ9CTldzF+BUQVoCdbxUbX9D8C8+DKPd7/OjW8v1NaWu4TFZCKvdh?=
+ =?us-ascii?Q?5uTD1qkNNLCr6yVIdW3Pgz1Spo4ujiE4kFsfAJn38YO6UFAFhwYvZqYsrrlR?=
+ =?us-ascii?Q?Y8qD13iNi3jD01XnPaARonfHbMCqxZUOXoLc5R917maCj6wDeATp6LJ6hTqP?=
+ =?us-ascii?Q?R3nYGdJ4O/bi1pOMtBP4hHWWNc4d9v1nf3ddnli/55fFxygqOG/ZCpERDJ3i?=
+ =?us-ascii?Q?ah72WkNsO2g8pZhhi6XxFTAfNBkS1Q6NlDbEMEtf/Py8U0NtbtR/7LF4+g/A?=
+ =?us-ascii?Q?ZDsx87M40AVtUmN5pIBDqhirOpAugkLUyzXQCj9lInupqPzAIvmknw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?P3ZmFOEEewU5rqHzbqId8LtQxb/fVE77tsaZMn0osnh2YnhspUeq2xA/5YWE?=
+ =?us-ascii?Q?IH+exUvBme0dzBzLcaipsbHcaXoXjtln4KVZssNHDkreW0LIuufG+Zqx78yP?=
+ =?us-ascii?Q?rdUYWZB3/jMk/XZfdsTmLZD6S1nla6AahLyX/yVTZJ8g+UbbpTYf+qidt0P3?=
+ =?us-ascii?Q?1y11dolE4ErDAreQLxUhYK4mlxqbhK3LfQahUJr0R1Lj2TBThwQsa9szvPu6?=
+ =?us-ascii?Q?YW7zrqRUUNa4LAZCe70i9xukzqt72HGetaQCtouBh3NPDS7w5oTG2OSjLj5z?=
+ =?us-ascii?Q?zvz1x7DWHlWMUSg/jEzHecJGELvQOOBQvq6qkQMp2REeQD88qjzDfKVLPOvV?=
+ =?us-ascii?Q?vUeAg0QOaK/i101ETRBDv5grNxbmG+NRhOv6XQtRBnT7M9664xMDtBKlFKu5?=
+ =?us-ascii?Q?cEjlG9KnnkweWiVGmydlWRDOsY7J3LQuL6IWjlwnZDOD5zDuHGeVGDZa0+Ke?=
+ =?us-ascii?Q?XfNXY/p5vw8+TgUIByTR5AIHdSFJBCR3x+bvp8qDhgLe8q6RPgMmE7AvEPjZ?=
+ =?us-ascii?Q?1pTrIDIw+gq3NdmhzUhR0pzC/ZoClpzZP8C+nuF9P0fo0al6z/BuaPyR6VQa?=
+ =?us-ascii?Q?PwruPbsQ9G7cjI0sI2mGTisktB3RMbxi/639hqU5QD7rPxhr48RkuvQItkPY?=
+ =?us-ascii?Q?Hyvc/CdwEL9aHpUEoKVJwv4uHdNMVf/jWYkliUhJNDQ24FDx9Em5hwCNFwg0?=
+ =?us-ascii?Q?wCrxkmVI5kJwg7b0t40d3VBEkFKKCnbOczufVBbZ3u3iS2XVbJcX3C1s61/l?=
+ =?us-ascii?Q?+NK4tXFoHh2EEb03ZrsLHkHnf0Fi0hmtZ76w2SyEZ8XJKlC0y48ezAk43JyO?=
+ =?us-ascii?Q?1j41bTOsSMxVohJ8+Z1piDy9dqWHbygogD3mtlsAtC3yB2L1Lf9EH9MjsEa+?=
+ =?us-ascii?Q?z7ZhV8CtQ7BcpU+lBfM+Yp9m2Y9A3s56HYv29gScIeQCRGKnluRgSt19+Bkw?=
+ =?us-ascii?Q?c8s7092KFzRJffysXgWbKZz4NadiamjQYrlof7Oc1BM34Ilwy8RyL0nL/JXv?=
+ =?us-ascii?Q?xF0x+OzWVpvtS3jkg/MUsQNFX9ChKo9l+TXQ9yLtunR0P2vh4/yh+o0H96fu?=
+ =?us-ascii?Q?qnNbH8WItmikGd7MziDOiuMBDHJ2tygeTmdgz+jyMKeaU8N+daE1CguOYyRk?=
+ =?us-ascii?Q?ByQmMBYx4yFL56pLTBeecyJ/YP7UrhD1VzodSA9H1nER+LwuvMEpGojqi37O?=
+ =?us-ascii?Q?I90NVPlo8LKlSlLoBZnqxhqfi+In5AiZCBpsHAsHMCUBbJZiHEThnSfnfU0Z?=
+ =?us-ascii?Q?8qHWWhyxW2H3qWTwCaOSzgyz4kqIqQbrLJUP2oyHZE2/6V1QC/FyFy91okJd?=
+ =?us-ascii?Q?DtxGzoR6odOSAOwvh9m+vAqyLDkBgiBmgyPZJ8ove14OR1daMEoHWLAPamVh?=
+ =?us-ascii?Q?6bSL33lLdXX0lg1Xz/bPeAagxQDRsiDgd472xPvx5w9E99RjUXepdF970FwH?=
+ =?us-ascii?Q?RqNN6xDtgYOcNrNrAgoVN9T50N8B/vJiESaJXCDcXno/3ZdkUKfYzEt5/szB?=
+ =?us-ascii?Q?RfJcHSUmmsYMwu4vQdxnXoTTmf0a2lUEkL5J+MZXzA962gsyIAvdyzsz/Z/E?=
+ =?us-ascii?Q?t34Q+UXnitgYsXWeC5/2eOuJ/CHs/15iCzZh+u4l?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbcf07ba-333a-4a5c-cfc9-08de111c39bd
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 03:36:45.9940
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LyS/8XkxEw7DrG7sjndAyJ5glrae+JPOkIMyRwKRdpfvi70ilEdd3IJf981M/MM2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6268
 
-On Sun, 19 Oct 2025, Amir Goldstein wrote:
-> On Wed, Oct 15, 2025 at 3:48=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
-> >
-> > From: NeilBrown <neil@brown.name>
-> >
-> > xfs, fuse, ipc/mqueue need variants of start_creating or start_removing
-> > which do not check permissions.
-> > This patch adds _noperm versions of these functions.
-> >
-> > Note that do_mq_open() was only calling mntget() so it could call
-> > path_put() - it didn't really need an extra reference on the mnt.
-> > Now it doesn't call mntget() and uses end_creating() which does
-> > the dput() half of path_put().
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
->=20
-> I noticed that both Jeff and I had already given our RVB on v1
-> and it's not here, so has this patch changed in some fundamental way since =
-v1?
-> I could really use a "changed since v1" section when that happens.
->=20
-> Otherwise, feel free to add:
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Hi all,
 
-I hadn't changed anything.  I think I started looking at your
-suggestions about documentation changes and the fact that mq_unlink()
-passes d_inode(dentry->d_parent) to vfs_unlink() ....  and got
-distracted.=20
+This patchset is a follow-up of "[PATCH v3] mm/huge_memory: do not change
+split_huge_page*() target order silently."[1]. It improves how memory
+failure code handles large block size(LBS) folios with
+min_order_for_split() > 0. By splitting a large folio containing HW
+poisoned pages to min_order_for_split(), the after-split folios without
+HW poisoned pages could be freed for reuse. To achieve this, folio split
+code needs to set has_hwpoisoned on after-split folios containing HW
+poisoned pages.
 
-I've added both reviewed-bys (thanks) and changes mq_unlink() to pass
-d_inode(mnt->mnt_root) (using the same dentry as was given to
-lookup_noperm).
+This patchset includes:
+1. A patch sets has_hwpoisoned on the right after-split folios after
+   scanning all pages in the folios,
+2. A patch adds split_huge_page_to_order(),
+3. Patch 2 and Patch 3 of "[PATCH v2 0/3] Do not change split folio target
+   order"[2],
 
-I've also fixed the bug kernel-test-robot reported.
+This patchset is based on mm-new.
 
-Thanks,
-NeilBrown
+Changelog
+===
+From V2[2]:
+1. Patch 1 is sent separately as a hotfix[1].
+2. set has_hwpoisoned on after-split folios if any contains HW poisoned
+   pages.
+3. added split_huge_page_to_order().
+4. added a missing newline after variable decalaration.
+5. added /* release= */ to try_to_split_thp_page().
+6. restructured try_to_split_thp_page() in memory_failure().
+7. fixed a typo.
+8. clarified the comment in soft_offline_in_use_page().
 
 
->=20
-> > ---
-> >  fs/fuse/dir.c            | 19 +++++++---------
-> >  fs/namei.c               | 48 ++++++++++++++++++++++++++++++++++++++++
-> >  fs/xfs/scrub/orphanage.c | 11 ++++-----
-> >  include/linux/namei.h    |  2 ++
-> >  ipc/mqueue.c             | 31 +++++++++-----------------
-> >  5 files changed, 73 insertions(+), 38 deletions(-)
-> >
-> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> > index ecaec0fea3a1..40ca94922349 100644
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -1397,27 +1397,25 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc=
-, u64 parent_nodeid,
-> >         if (!parent)
-> >                 return -ENOENT;
-> >
-> > -       inode_lock_nested(parent, I_MUTEX_PARENT);
-> >         if (!S_ISDIR(parent->i_mode))
-> > -               goto unlock;
-> > +               goto put_parent;
-> >
-> >         err =3D -ENOENT;
-> >         dir =3D d_find_alias(parent);
-> >         if (!dir)
-> > -               goto unlock;
-> > +               goto put_parent;
-> >
-> > -       name->hash =3D full_name_hash(dir, name->name, name->len);
-> > -       entry =3D d_lookup(dir, name);
-> > +       entry =3D start_removing_noperm(dir, name);
-> >         dput(dir);
-> > -       if (!entry)
-> > -               goto unlock;
-> > +       if (IS_ERR(entry))
-> > +               goto put_parent;
-> >
-> >         fuse_dir_changed(parent);
-> >         if (!(flags & FUSE_EXPIRE_ONLY))
-> >                 d_invalidate(entry);
-> >         fuse_invalidate_entry_cache(entry);
-> >
-> > -       if (child_nodeid !=3D 0 && d_really_is_positive(entry)) {
-> > +       if (child_nodeid !=3D 0) {
-> >                 inode_lock(d_inode(entry));
-> >                 if (get_node_id(d_inode(entry)) !=3D child_nodeid) {
-> >                         err =3D -ENOENT;
-> > @@ -1445,10 +1443,9 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc,=
- u64 parent_nodeid,
-> >         } else {
-> >                 err =3D 0;
-> >         }
-> > -       dput(entry);
-> >
-> > - unlock:
-> > -       inode_unlock(parent);
-> > +       end_removing(entry);
-> > + put_parent:
-> >         iput(parent);
-> >         return err;
-> >  }
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index ae833dfa277c..696e4b794416 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -3275,6 +3275,54 @@ struct dentry *start_removing(struct mnt_idmap *id=
-map, struct dentry *parent,
-> >  }
-> >  EXPORT_SYMBOL(start_removing);
-> >
-> > +/**
-> > + * start_creating_noperm - prepare to create a given name without permis=
-sion checking
-> > + * @parent: directory in which to prepare to create the name
-> > + * @name:   the name to be created
-> > + *
-> > + * Locks are taken and a lookup in performed prior to creating
-> > + * an object in a directory.
-> > + *
-> > + * If the name already exists, a positive dentry is returned.
-> > + *
-> > + * Returns: a negative or positive dentry, or an error.
-> > + */
-> > +struct dentry *start_creating_noperm(struct dentry *parent,
-> > +                                    struct qstr *name)
-> > +{
-> > +       int err =3D lookup_noperm_common(name, parent);
-> > +
-> > +       if (err)
-> > +               return ERR_PTR(err);
-> > +       return start_dirop(parent, name, LOOKUP_CREATE);
-> > +}
-> > +EXPORT_SYMBOL(start_creating_noperm);
-> > +
-> > +/**
-> > + * start_removing_noperm - prepare to remove a given name without permis=
-sion checking
-> > + * @parent: directory in which to find the name
-> > + * @name:   the name to be removed
-> > + *
-> > + * Locks are taken and a lookup in performed prior to removing
-> > + * an object from a directory.
-> > + *
-> > + * If the name doesn't exist, an error is returned.
-> > + *
-> > + * end_removing() should be called when removal is complete, or aborted.
-> > + *
-> > + * Returns: a positive dentry, or an error.
-> > + */
-> > +struct dentry *start_removing_noperm(struct dentry *parent,
-> > +                                    struct qstr *name)
-> > +{
-> > +       int err =3D lookup_noperm_common(name, parent);
-> > +
-> > +       if (err)
-> > +               return ERR_PTR(err);
-> > +       return start_dirop(parent, name, 0);
-> > +}
-> > +EXPORT_SYMBOL(start_removing_noperm);
-> > +
-> >  #ifdef CONFIG_UNIX98_PTYS
-> >  int path_pts(struct path *path)
-> >  {
-> > diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
-> > index 9c12cb844231..e732605924a1 100644
-> > --- a/fs/xfs/scrub/orphanage.c
-> > +++ b/fs/xfs/scrub/orphanage.c
-> > @@ -152,11 +152,10 @@ xrep_orphanage_create(
-> >         }
-> >
-> >         /* Try to find the orphanage directory. */
-> > -       inode_lock_nested(root_inode, I_MUTEX_PARENT);
-> > -       orphanage_dentry =3D lookup_noperm(&QSTR(ORPHANAGE), root_dentry);
-> > +       orphanage_dentry =3D start_creating_noperm(root_dentry, &QSTR(ORP=
-HANAGE));
-> >         if (IS_ERR(orphanage_dentry)) {
-> >                 error =3D PTR_ERR(orphanage_dentry);
-> > -               goto out_unlock_root;
-> > +               goto out_dput_root;
-> >         }
-> >
-> >         /*
-> > @@ -170,7 +169,7 @@ xrep_orphanage_create(
-> >                                              orphanage_dentry, 0750);
-> >                 error =3D PTR_ERR(orphanage_dentry);
-> >                 if (IS_ERR(orphanage_dentry))
-> > -                       goto out_unlock_root;
-> > +                       goto out_dput_orphanage;
-> >         }
-> >
-> >         /* Not a directory? Bail out. */
-> > @@ -200,9 +199,7 @@ xrep_orphanage_create(
-> >         sc->orphanage_ilock_flags =3D 0;
-> >
-> >  out_dput_orphanage:
-> > -       dput(orphanage_dentry);
-> > -out_unlock_root:
-> > -       inode_unlock(VFS_I(sc->mp->m_rootip));
-> > +       end_creating(orphanage_dentry, root_dentry);
-> >  out_dput_root:
-> >         dput(root_dentry);
-> >  out:
-> > diff --git a/include/linux/namei.h b/include/linux/namei.h
-> > index 9ee76e88f3dd..688e157d6afc 100644
-> > --- a/include/linux/namei.h
-> > +++ b/include/linux/namei.h
-> > @@ -92,6 +92,8 @@ struct dentry *start_creating(struct mnt_idmap *idmap, =
-struct dentry *parent,
-> >                               struct qstr *name);
-> >  struct dentry *start_removing(struct mnt_idmap *idmap, struct dentry *pa=
-rent,
-> >                               struct qstr *name);
-> > +struct dentry *start_creating_noperm(struct dentry *parent, struct qstr =
-*name);
-> > +struct dentry *start_removing_noperm(struct dentry *parent, struct qstr =
-*name);
-> >
-> >  /**
-> >   * end_creating - finish action started with start_creating
-> > diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-> > index 093551fe66a7..060e8e9c4f59 100644
-> > --- a/ipc/mqueue.c
-> > +++ b/ipc/mqueue.c
-> > @@ -913,13 +913,11 @@ static int do_mq_open(const char __user *u_name, in=
-t oflag, umode_t mode,
-> >                 goto out_putname;
-> >
-> >         ro =3D mnt_want_write(mnt);       /* we'll drop it in any case */
-> > -       inode_lock(d_inode(root));
-> > -       path.dentry =3D lookup_noperm(&QSTR(name->name), root);
-> > +       path.dentry =3D start_creating_noperm(root, &QSTR(name->name));
-> >         if (IS_ERR(path.dentry)) {
-> >                 error =3D PTR_ERR(path.dentry);
-> >                 goto out_putfd;
-> >         }
-> > -       path.mnt =3D mntget(mnt);
-> >         error =3D prepare_open(path.dentry, oflag, ro, mode, name, attr);
-> >         if (!error) {
-> >                 struct file *file =3D dentry_open(&path, oflag, current_c=
-red());
-> > @@ -928,13 +926,12 @@ static int do_mq_open(const char __user *u_name, in=
-t oflag, umode_t mode,
-> >                 else
-> >                         error =3D PTR_ERR(file);
-> >         }
-> > -       path_put(&path);
-> >  out_putfd:
-> >         if (error) {
-> >                 put_unused_fd(fd);
-> >                 fd =3D error;
-> >         }
-> > -       inode_unlock(d_inode(root));
-> > +       end_creating(path.dentry, root);
-> >         if (!ro)
-> >                 mnt_drop_write(mnt);
-> >  out_putname:
-> > @@ -957,7 +954,7 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_nam=
-e)
-> >         int err;
-> >         struct filename *name;
-> >         struct dentry *dentry;
-> > -       struct inode *inode =3D NULL;
-> > +       struct inode *inode;
-> >         struct ipc_namespace *ipc_ns =3D current->nsproxy->ipc_ns;
-> >         struct vfsmount *mnt =3D ipc_ns->mq_mnt;
-> >
-> > @@ -969,26 +966,20 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_n=
-ame)
-> >         err =3D mnt_want_write(mnt);
-> >         if (err)
-> >                 goto out_name;
-> > -       inode_lock_nested(d_inode(mnt->mnt_root), I_MUTEX_PARENT);
-> > -       dentry =3D lookup_noperm(&QSTR(name->name), mnt->mnt_root);
-> > +       dentry =3D start_removing_noperm(mnt->mnt_root, &QSTR(name->name)=
-);
-> >         if (IS_ERR(dentry)) {
-> >                 err =3D PTR_ERR(dentry);
-> > -               goto out_unlock;
-> > +               goto out_drop_write;
-> >         }
-> >
-> >         inode =3D d_inode(dentry);
-> > -       if (!inode) {
-> > -               err =3D -ENOENT;
-> > -       } else {
-> > -               ihold(inode);
-> > -               err =3D vfs_unlink(&nop_mnt_idmap, d_inode(dentry->d_pare=
-nt),
-> > -                                dentry, NULL);
-> > -       }
-> > -       dput(dentry);
-> > -
-> > -out_unlock:
-> > -       inode_unlock(d_inode(mnt->mnt_root));
-> > +       ihold(inode);
-> > +       err =3D vfs_unlink(&nop_mnt_idmap, d_inode(dentry->d_parent),
-> > +                        dentry, NULL);
-> > +       end_removing(dentry);
-> >         iput(inode);
-> > +
-> > +out_drop_write:
-> >         mnt_drop_write(mnt);
-> >  out_name:
-> >         putname(name);
-> > --
-> > 2.50.0.107.gf914562f5916.dirty
-> >
->=20
+Link: https://lore.kernel.org/all/20251017013630.139907-1-ziy@nvidia.com/ [1]
+Link: https://lore.kernel.org/all/20251016033452.125479-1-ziy@nvidia.com/ [2]
+
+Zi Yan (4):
+  mm/huge_memory: preserve PG_has_hwpoisoned if a folio is split to >0
+    order
+  mm/huge_memory: add split_huge_page_to_order()
+  mm/memory-failure: improve large block size folio handling.
+  mm/huge_memory: fix kernel-doc comments for folio_split() and related.
+
+ include/linux/huge_mm.h | 22 ++++++++++++-----
+ mm/huge_memory.c        | 55 ++++++++++++++++++++++++++++++-----------
+ mm/memory-failure.c     | 30 +++++++++++++++++++---
+ 3 files changed, 82 insertions(+), 25 deletions(-)
+
+-- 
+2.51.0
 
 
