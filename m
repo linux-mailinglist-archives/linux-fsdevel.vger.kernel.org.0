@@ -1,159 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-65244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8068ABFE963
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 01:35:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB16BFE9ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 01:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06CA9357506
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 23:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813F11A02B39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 23:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F011F301715;
-	Wed, 22 Oct 2025 23:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2048A2EC097;
+	Wed, 22 Oct 2025 23:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="StTRIB3i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c05rHSNN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A05C309DDC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 23:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FB62727F8;
+	Wed, 22 Oct 2025 23:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761175855; cv=none; b=doMLEfCiIKWe9aZUWZaTfzJpteM5Ma/zFtVw6kwji9EeOFtAZapR+7SpCGb7gKmENigQsj+JVVTk4v5JTtS0lmOckLC8CiuAdBmPVFDe77EFp74RM9BnxQXuyMjQNPEGOGDq1kTRar2j1aCR1DC2mbIW3nYFQFdtW0z77jpDgSw=
+	t=1761177407; cv=none; b=bDEVz/KXWFPXDCM4Az1t+8HsHzNEvHufLgrC8yQx1ZhNXrtm8gQBL0UumP9NCvaf35GpOuvTWc2Jzxg4KkzNSHaudCYgMpRvtCSQlbED3OXrpUwbsXKTrB2y3+tkTMjr0dkUHT2mmj5e25SBhVpILhdRNdeAZNVExhGOf6C5ehk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761175855; c=relaxed/simple;
-	bh=FJ5dPWeuTDRG2VX7FLyUJF0mD0hnFePTCkWS6C5Q3EA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=g1AxSoUEkM2SUajO/bC4tyMr/YmTr7FNjlpdqpH7uyJxI1dZ2vHji/GCFj2BIVcq7HBGl9ebzqd8aSiN3aEfp80F0ERzcYvI5yg9pbNkyZsbVUxVnFwP+ADE3weAu82/amgtPXoXFv7M/XqDDzDZ7Z6KdfPqMbB8IMKXIVvBIuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=StTRIB3i; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b6097ca315bso292846a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 16:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761175851; x=1761780651; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jEiO6iBxzy6fxnsgwrsRYGtWZsrwu6A5X9ZJxUc05s=;
-        b=StTRIB3ia4VotH0oNfRldoeYZy7DFSoBOunCAH3g3FV7Z3yvRspTKvfuj7IksqTWM0
-         R0IGmqesgalhEVemC6wY0/JcqcHSCrVBcdV27rgotEr/LL5jPQmnubqvILp06jqVzMkP
-         P+aBREszcp1bnHDr7+/rtkyO1qHtbSDdJ9O4+d5lvjOF/AoISE8PaTDxYhB+A1t2XLqa
-         hsUhjohqIeoIO4W2CenPOOkeusZFMnDYxB/RCpKwCXevQ1om0P+6YrwQBuJFqIwZZ6Ze
-         RavicgAg0YBneomDyrLWdIZZFVDGKwPcbwbJ1IzZBqTsOOPFnRTm6e3kui9aNwTZ6Sct
-         Sqqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761175851; x=1761780651;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jEiO6iBxzy6fxnsgwrsRYGtWZsrwu6A5X9ZJxUc05s=;
-        b=G3VqVxCpjaxCIwbjEajlrS9QPIKxAbuyt0VkGPOXi2V4B5+rJohhOCXSZeDjbIDeIU
-         jrp6xcea6KrGPZRdgJCc044kej+nEdsBIUP2RXgFstq2cRmtAU2Tkuo+7Q1MBT9mwC0v
-         kqi6Tb5blrs048xmu9xT45fsDA7VrXfEgD5xdOJa1z58Z3bazdBDnwPDpY4A6bLIF/TA
-         K8dFI+UMe8peOA8lQFhQPd2KSDX8fCuy2I2IHG+of+r5UudT6O8pnf9vxXVZa9YEuhSB
-         YIb2/SUlY1n9u7AjArMzbkkLwMmgcNsi97a4/A/Uva05rh3Rz+KP1gf/qx6omo7d23QZ
-         hayg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFfZKi5lhlqUPoPkMQwAMdqa/13cWaLAEjTOmQKXdVpujKFdWkMkkubtVUiLDLcDZS3A/WgVKf0GhyuR1B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi4rd9QmqpfiOmx32ppaqyfTHiEHTHlsvlherrdKm9PsrXHAih
-	W7YPOPRP5/s7cxVuQP5s8/bgClqePuzHtkS6skgDHWv5Ui3KSsjSIIvJBz3KQCcx3hTXUS/nsnN
-	Jd5rA9g==
-X-Google-Smtp-Source: AGHT+IFg265zLGl2bQmWCvkKPU4u2q3qfh913c9juw3tQPbolW7ChzJ4nSIfXk8wuAQ4jQwhmqRekZFnQlI=
-X-Received: from pjnj13.prod.google.com ([2002:a17:90a:840d:b0:329:7261:93b6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d84:b0:2f9:39b0:fd88
- with SMTP id adf61e73a8af0-334a84da4b1mr29081038637.21.1761175851395; Wed, 22
- Oct 2025 16:30:51 -0700 (PDT)
-Date: Wed, 22 Oct 2025 16:30:49 -0700
-In-Reply-To: <diqzy0p2eet3.fsf@google.com>
+	s=arc-20240116; t=1761177407; c=relaxed/simple;
+	bh=kaMFavPkuMtPJ7H7Wp6yDrA2mowKJ/hLpN2iLQ47Rcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rUOGyXywjcCLDVhJ3PSpDbjCWvzHazD5toK1UkW4BX2A9+6K9h9rF55bSz61WjWjFyTAgeDXHZO5+Kk3aQ1+TgzTFZhVSH/HPAEh+I0N73LPNQ92bhmCSMmEb3HEJDLPumhHuhDm8T5ExXu5HM2BT1QrFS5y6AYfYL6xhgl9H0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c05rHSNN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA2BCC4CEE7;
+	Wed, 22 Oct 2025 23:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761177407;
+	bh=kaMFavPkuMtPJ7H7Wp6yDrA2mowKJ/hLpN2iLQ47Rcs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=c05rHSNNyZur4S5vFiazP5cV2LElY3oO448ge4rPTNccawZNFi9lJ6UgHca1uWZpw
+	 YJh0iXaZlMiRRnEWNeRE6hgtGmkMJTNMOHHsjdSMwvlwTlmGQHVbnlD3j92kejRFf8
+	 RQE/3OfPia7fCpE/AZy/gYQzpeCz5CMOc39MV4Q5j1UlwCPGrAG2u4WPavNqsWKviK
+	 jz8Y4NaYpXa/X1UmGlssoy2fiB5HeSMyZYUNzjGmOTBtxJndvAHdAS4PcBWIHOJ7Xf
+	 f+m8O06SH6/TfQAhNlg4YTo9W839rW1G0L4uPd3RUQBEMa7UfSU4BEsrlH44lhxBbl
+	 Yxa6xWoF06tSw==
+Date: Wed, 22 Oct 2025 16:56:46 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Carlos Maiolino <cem@kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: xfs <linux-xfs@vger.kernel.org>,
+	Chandan Babu R <chandanbabu@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	fstests <fstests@vger.kernel.org>
+Subject: [PATCHBOMB 6.19] xfs: autonomous self healing
+Message-ID: <20251022235646.GO3356773@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
- <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com> <diqzy0p2eet3.fsf@google.com>
-Message-ID: <aPlpKbHGea90IebS@google.com>
-Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
-	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
-	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
-	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Oct 22, 2025, Ackerley Tng wrote:
-> Ackerley Tng <ackerleytng@google.com> writes:
-> 
-> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
-> 
-> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
-> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
-> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
-> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
+Hi everyone,
 
-No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
-exists is largely irrelevant.  We can even provide the same -ENOTTY errno by
-checking that _any_ attributes are supported, i.e. so that doing
-KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
-same way that KVM with code support but no attributes fails.
+You might recall that 18 months ago I showed off an early draft of a
+patchset implementing autonomous self healing capabilities for XFS.
+The premise is quite simple -- add a few hooks to the kernel to capture
+significant filesystem metadata and file health events (pretty much all
+failures), queue these events to a special anonfd, and let userspace
+read the events at its leisure.  That's patchset 1.
 
-In other words, I don't see why it can't do both.  Even if we can't massage the
-right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
-supported attributes than simply '1'.  E.g. we have no plans to support
-KVM_SET_MEMORY_ATTRIBUTES on guest_memfd, and so returning simply '1' creates an
-unwanted and unnecessary dependency.
+The userspace part is more interesting, because there's a new daemon
+that opens the anonfd given the root dir of a filesystem, captures a
+file handle for the root dir, detaches from the root dir, and waits for
+metadata events.  Upon receipt of an adverse health event, it will
+reopen the root directory and initiate repairs.  I've left the prototype
+Python script in place (patchset 2) but my ultimate goal is for everyone
+to use the Rust version (patchset 3) because it's much quicker to
+respond to problems.
 
-> @@ -1617,4 +1618,15 @@ struct kvm_pre_fault_memory {
->  	__u64 padding[5];
->  };
->  
-> +/* Available with KVM_CAP_MEMORY_ATTRIBUTES2 */
-> +#define KVM_SET_MEMORY_ATTRIBUTES2              _IOWR(KVMIO,  0xd6, struct kvm_memory_attributes2)
+New QA tests are patchset 4.  Zorro: No need to merge this right away.
 
-Please use the same literal number, 0xd2, as
+This work was mostly complete by the end of 2024, and I've been letting
+it run on my XFS QA testing fleets ever since then.  I am submitting
+this patchset for upstream for 6.19.  Once this is merged, the online
+fsck project will be complete.
 
-  #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
-
-The "final" ioctl number that userspace sees incorporates the directionality and
-the size of the struct, i.e. KVM_SET_MEMORY_ATTRIBUTES and KVM_SET_MEMORY_ATTRIBUTES2
-are guaranteed to be distinct even if they both use 0xd2 as the "minor" number.
-
-> +
-> +struct kvm_memory_attributes2 {
-> +	__u64 address;
-> +	__u64 size;
-> +	__u64 attributes;
-> +	__u64 flags;
-> +	__u64 reserved[4];
-
-Maybe be paranoid and reserve 12 u64s?
+--D
 
