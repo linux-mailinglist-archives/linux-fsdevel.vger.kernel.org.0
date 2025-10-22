@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E18BFD245
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E17BFD10D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663323B4951
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA1318C01BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7632234EEE5;
-	Wed, 22 Oct 2025 16:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D828534FF4D;
+	Wed, 22 Oct 2025 16:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+aNE0Dl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASBbj6ME"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B663A285CB4;
-	Wed, 22 Oct 2025 16:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB5734F251;
+	Wed, 22 Oct 2025 16:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149256; cv=none; b=qkHC8GJLYuaUQ228wNUDZY9xstf/D6EgcVT/iNoW4K3ALfb2HszI01/Cq5AoW2pbG4VeJhaHvdyUhmujOP3SPJiBoNappxSG2yKuYXhNZeU6UHEzlPKcOWMUSaxBDOkgCONem86u/RUdN5MFaJA5DRK+XF54IKVrS/eXUNkhudU=
+	t=1761149262; cv=none; b=tTdA6eyxO6YSEar5Ar7/82G0RxjsYFL78eJmhoyAJQD53jEGU3ed52GsyvjScACZfIsUCvilCvQLrabR5meAcmOMELwiqAiYV0eWrPoOw21BzS6scxTREQRX7/mN0G4AGT3RmBuTQIyh0TEd+f9ZEIq4Wh2zdEKhwMI89yn/Vmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149256; c=relaxed/simple;
-	bh=tRwqy5SwFVniPr5V+qBsta76Evy4Uws4vCbVqOZukQo=;
+	s=arc-20240116; t=1761149262; c=relaxed/simple;
+	bh=1Vbdfejrzu8I2m1UigJuDF0ynX7SsD3EwMJY3zP1DiU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KBORMwSKc1Pb8vguDg8FdYx3UF20jJDtGC4wN/SLEG3SDj0Q8EXVAIA43gAYwRi/luJKlYqRa8U1VaI1Xs+UzwJS40/9uwore11mMgJ82jR8rTbtB3vmlfcTzbhseQWubI1DMD3UhHuAmk4D4cX+PWl56eF/ihQ8Tk5wesg9I0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+aNE0Dl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634FDC4CEFD;
-	Wed, 22 Oct 2025 16:07:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=SZEPJZLv0hjqAusXYX8YD7SmtYYKm3fMYyhrsZrjSwgir51ziAlxDCQ9hHF6MBwkt8PiL2MHt9LuKEwAJVt/7h79f+jEzlnevhdejOhH+sb55/HPjSQAs9oLU2z9ZpxKRd9R40B9rvhUCZLLrCKXQvKFmhAIkLF8x0Y+yEruAEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASBbj6ME; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8CCC4CEE7;
+	Wed, 22 Oct 2025 16:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761149256;
-	bh=tRwqy5SwFVniPr5V+qBsta76Evy4Uws4vCbVqOZukQo=;
+	s=k20201202; t=1761149261;
+	bh=1Vbdfejrzu8I2m1UigJuDF0ynX7SsD3EwMJY3zP1DiU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=b+aNE0DlatGvJ8lmCQu0Om50TyVurq2vO5/rYdq6ZezPwFXQk2QqgjlDIEVVUpnnN
-	 p22X2nrUlrVFWmAQqhgbr081KHeu6JwQuuhkphJR3E4HkE9cI/+l8xNqJwtTF2kFk3
-	 /BRqOqmq84wlPqRoc0uvEn5CaxB9Qfph11ucfCr2OVaZzTsA3AALD7NC1uToKQTZv1
-	 BwEh89kir8EyMyec+DuZX+7ffNJzVZOo1wrQUEihoHeMdIsPSSowQBRqZXAKIG0dFf
-	 SmIrzYnl7lTzURkUBggmUppQC4K7js/c7nb81/JJRJwHGdgRPrKlV23YdR+Dcph9Ki
-	 e9Eftjd1FVFOA==
+	b=ASBbj6MEprXMqyvfD5do/DikYaPNn5tNyzkWEbSE8UhBJzzC1sE6yugIZ+3lEjtMO
+	 MR+m6Eh05EGTHKygxm3aNg+8xE2hWy7DYowB2M0tqHUYSV3ao8YyB23p2ZdS25aPI8
+	 jTtETgucd9w+qUdShE2woMEFv3pPS3SQKEuyzbDMr6HwReh4zayNCh7k3MtYbx3Lr3
+	 Wsu0wxh70v1ktKKfdQSpJwSUUx0FRkXpRlkoxX7vF5Fxk1McorOrj50KY3izUn0x6p
+	 CRJ09rd2a54vC0d+gXLdZB1kpZamSbSQph4QTfbmtwHldB09nHKSLHyggxUEJF5dom
+	 EfRRLbDuSB0MQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Oct 2025 18:05:55 +0200
-Subject: [PATCH v2 17/63] arch: hookup listns() system call
+Date: Wed, 22 Oct 2025 18:05:56 +0200
+Subject: [PATCH v2 18/63] nsfs: update tools header
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-work-namespace-nstree-listns-v2-17-71a588572371@kernel.org>
+Message-Id: <20251022-work-namespace-nstree-listns-v2-18-71a588572371@kernel.org>
 References: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 In-Reply-To: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,212 +69,103 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8895; i=brauner@kernel.org;
- h=from:subject:message-id; bh=tRwqy5SwFVniPr5V+qBsta76Evy4Uws4vCbVqOZukQo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHi67L3LLa68C7u22zk+nyN08J99sL2A3jv3BO1df
- NfkZ/6R7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIrwbD/5rNCszfzB9IZDOp
- h177HX78m+jCo3Y17D9ON+1mM0tsVGL4K1YXuWTOqmPlDlGlvQoN23f+XVH2SSu3bcs5/ZVLA8M
- buQE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2616; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=1Vbdfejrzu8I2m1UigJuDF0ynX7SsD3EwMJY3zP1DiU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHhqHNZ3mCP+X/OZTSyxx6W4dKaJbjuzIn72+y98w
+ a+3PQ7R6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIjXCG/0WR/HWRq4tFPEOc
+ q1d1q/ypvLbxt/nUlr7AosapJ3tllRj+2VhJ129abtu4/sOj39x6q+JrdbWeLQrn6HH+xyVy68g
+ aLgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Add the listns() system call to all architectures.
+Ensure all the new uapi bits are visible for the selftests.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/tools/syscall_32.tbl             | 1 +
- arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
- arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
- arch/s390/kernel/syscalls/syscall.tbl       | 1 +
- arch/sh/kernel/syscalls/syscall.tbl         | 1 +
- arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- include/uapi/asm-generic/unistd.h           | 4 +++-
- scripts/syscall.tbl                         | 1 +
- 18 files changed, 20 insertions(+), 1 deletion(-)
+ tools/include/uapi/linux/nsfs.h | 70 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 16dca28ebf17..3fed97478058 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -509,3 +509,4 @@
- 577	common	open_tree_attr			sys_open_tree_attr
- 578	common	file_getattr			sys_file_getattr
- 579	common	file_setattr			sys_file_setattr
-+580	common	listns				sys_listns
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index b07e699aaa3c..fd09afae72a2 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -484,3 +484,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/arm64/tools/syscall_32.tbl b/arch/arm64/tools/syscall_32.tbl
-index 8d9088bc577d..8cdfe5d4dac9 100644
---- a/arch/arm64/tools/syscall_32.tbl
-+++ b/arch/arm64/tools/syscall_32.tbl
-@@ -481,3 +481,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index f41d38dfbf13..871a5d67bf41 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -469,3 +469,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 580af574fe73..022fc85d94b3 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -475,3 +475,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index d824ffe9a014..8cedc83c3266 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -408,3 +408,4 @@
- 467	n32	open_tree_attr			sys_open_tree_attr
- 468	n32	file_getattr			sys_file_getattr
- 469	n32	file_setattr			sys_file_setattr
-+470	n32	listns				sys_listns
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 7a7049c2c307..9b92bddf06b5 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -384,3 +384,4 @@
- 467	n64	open_tree_attr			sys_open_tree_attr
- 468	n64	file_getattr			sys_file_getattr
- 469	n64	file_setattr			sys_file_setattr
-+470	n64	listns				sys_listns
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index d330274f0601..f810b8a55716 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -457,3 +457,4 @@
- 467	o32	open_tree_attr			sys_open_tree_attr
- 468	o32	file_getattr			sys_file_getattr
- 469	o32	file_setattr			sys_file_setattr
-+470	o32	listns				sys_listns
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 88a788a7b18d..39bdacaa530b 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -468,3 +468,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index b453e80dfc00..ec4458cdb97b 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -560,3 +560,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 8a6744d658db..5863787ab036 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -472,3 +472,4 @@
- 467  common	open_tree_attr		sys_open_tree_attr		sys_open_tree_attr
- 468  common	file_getattr		sys_file_getattr		sys_file_getattr
- 469  common	file_setattr		sys_file_setattr		sys_file_setattr
-+470  common	listns			sys_listns			sys_listns
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 5e9c9eff5539..969c11325ade 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -473,3 +473,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index ebb7d06d1044..39aa26b6a50b 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -515,3 +515,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 4877e16da69a..e979a3eac7a3 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -475,3 +475,4 @@
- 467	i386	open_tree_attr		sys_open_tree_attr
- 468	i386	file_getattr		sys_file_getattr
- 469	i386	file_setattr		sys_file_setattr
-+470	i386	listns			sys_listns
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index ced2a1deecd7..8a4ac4841be6 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -394,6 +394,7 @@
- 467	common	open_tree_attr		sys_open_tree_attr
- 468	common	file_getattr		sys_file_getattr
- 469	common	file_setattr		sys_file_setattr
-+470	common	listns			sys_listns
+diff --git a/tools/include/uapi/linux/nsfs.h b/tools/include/uapi/linux/nsfs.h
+index 33c9b578b3b2..a25e38d1c874 100644
+--- a/tools/include/uapi/linux/nsfs.h
++++ b/tools/include/uapi/linux/nsfs.h
+@@ -53,6 +53,76 @@ enum init_ns_ino {
+ 	TIME_NS_INIT_INO	= 0xEFFFFFFAU,
+ 	NET_NS_INIT_INO		= 0xEFFFFFF9U,
+ 	MNT_NS_INIT_INO		= 0xEFFFFFF8U,
++#ifdef __KERNEL__
++	MNT_NS_ANON_INO		= 0xEFFFFFF7U,
++#endif
+ };
  
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 374e4cb788d8..438a3b170402 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -440,3 +440,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 04e0077fb4c9..942370b3f5d2 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -857,9 +857,11 @@ __SYSCALL(__NR_open_tree_attr, sys_open_tree_attr)
- __SYSCALL(__NR_file_getattr, sys_file_getattr)
- #define __NR_file_setattr 469
- __SYSCALL(__NR_file_setattr, sys_file_setattr)
-+#define __NR_listns 470
-+__SYSCALL(__NR_listns, sys_listns)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 470
-+#define __NR_syscalls 471
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-index d1ae5e92c615..e74868be513c 100644
---- a/scripts/syscall.tbl
-+++ b/scripts/syscall.tbl
-@@ -410,3 +410,4 @@
- 467	common	open_tree_attr			sys_open_tree_attr
- 468	common	file_getattr			sys_file_getattr
- 469	common	file_setattr			sys_file_setattr
-+470	common	listns				sys_listns
++struct nsfs_file_handle {
++	__u64 ns_id;
++	__u32 ns_type;
++	__u32 ns_inum;
++};
++
++#define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
++#define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* sizeof latest published struct */
++
++enum init_ns_id {
++	IPC_NS_INIT_ID		= 1ULL,
++	UTS_NS_INIT_ID		= 2ULL,
++	USER_NS_INIT_ID		= 3ULL,
++	PID_NS_INIT_ID		= 4ULL,
++	CGROUP_NS_INIT_ID	= 5ULL,
++	TIME_NS_INIT_ID		= 6ULL,
++	NET_NS_INIT_ID		= 7ULL,
++	MNT_NS_INIT_ID		= 8ULL,
++#ifdef __KERNEL__
++	NS_LAST_INIT_ID		= MNT_NS_INIT_ID,
++#endif
++};
++
++enum ns_type {
++	TIME_NS    = (1ULL << 7),  /* CLONE_NEWTIME */
++	MNT_NS     = (1ULL << 17), /* CLONE_NEWNS */
++	CGROUP_NS  = (1ULL << 25), /* CLONE_NEWCGROUP */
++	UTS_NS     = (1ULL << 26), /* CLONE_NEWUTS */
++	IPC_NS     = (1ULL << 27), /* CLONE_NEWIPC */
++	USER_NS    = (1ULL << 28), /* CLONE_NEWUSER */
++	PID_NS     = (1ULL << 29), /* CLONE_NEWPID */
++	NET_NS     = (1ULL << 30), /* CLONE_NEWNET */
++};
++
++/**
++ * struct ns_id_req - namespace ID request structure
++ * @size: size of this structure
++ * @spare: reserved for future use
++ * @filter: filter mask
++ * @ns_id: last namespace id
++ * @user_ns_id: owning user namespace ID
++ *
++ * Structure for passing namespace ID and miscellaneous parameters to
++ * statns(2) and listns(2).
++ *
++ * For statns(2) @param represents the request mask.
++ * For listns(2) @param represents the last listed mount id (or zero).
++ */
++struct ns_id_req {
++	__u32 size;
++	__u32 spare;
++	__u64 ns_id;
++	struct /* listns */ {
++		__u32 ns_type;
++		__u32 spare2;
++		__u64 user_ns_id;
++	};
++};
++
++/*
++ * Special @user_ns_id value that can be passed to listns()
++ */
++#define LISTNS_CURRENT_USER 0xffffffffffffffff /* Caller's userns */
++
++/* List of all ns_id_req versions. */
++#define NS_ID_REQ_SIZE_VER0 32 /* sizeof first published struct */
++
+ #endif /* __LINUX_NSFS_H */
 
 -- 
 2.47.3
