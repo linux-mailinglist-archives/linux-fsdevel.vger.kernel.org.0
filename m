@@ -1,214 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-65088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84674BFBCAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:12:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0191BFBEE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08A0C3568D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 12:12:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3854334C724
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 12:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E38534165E;
-	Wed, 22 Oct 2025 12:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A86347BD1;
+	Wed, 22 Oct 2025 12:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nMFPJTmK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="96GHO7kE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0itR3CsJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="07dwfYMr"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EtfaCoDm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ss9zZT1n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3317F3126BA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 12:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE93346E40;
+	Wed, 22 Oct 2025 12:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761135136; cv=none; b=szjvWpJjfrKWNYVzNFBplT+guslZcohp6EHbLglmpFFzlSkcP3JT3wAA+kkQzZaR6fgea2wg7mkGgoqFuyuU4SmwsV5x58SBUJLZfV3+lNegvrhjtZRLweBPk7QyG4UdKyQI0BuFjXc/OD10vGdpA8/kixi6XXtRwHn3FBGXJ2I=
+	t=1761137353; cv=none; b=Paf/foHKbyx/KXxMFxV7+Hv9CSbn7dji7Kq4iOeaEtg4NkZEDNmffMuqP3UA5uBJNNE30dB+8SK/9ilJLHN51UaocDO4+BaPHGliPT6d7kvNOK8skkTkumif1wN2Mqh8t9QJwhQNJ1riWlpChbcShVj9FI79BFtrR4hUQJ/58TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761135136; c=relaxed/simple;
-	bh=KPYQHJydC+41DZNG/UQhU3NOtQQd3fs3N8308YZjraQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mycgJfu0kzdJcasu9eRWplxIY1cSe+EZXkz/Q6E2dJMcwRQie77G6ZJRaqOmPPEzGwnABsXWtSiUaNsz+Mz8q0ZAVwtBq0ZsEBH1ToRCFAVAPHFiTb0OAYgogTjH6LnaCDo98s6vpKant9OMkYeTNuszc1a0zl44eDLIFL8qhkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nMFPJTmK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=96GHO7kE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0itR3CsJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=07dwfYMr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1F30221168;
-	Wed, 22 Oct 2025 12:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761135129;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
-	b=nMFPJTmKqSCxr11/LtGHNRjCGNpQ+MLZOE+3j4M9FHGpbwDHJF0kADldkBgTCKvJmkIhzz
-	BQl+5svEUU2l1TCEhTYjTVZJTtFvzqrKNxiCkpm+8gkNtwzmi1yJkaCZncu5mi1QNuHEKR
-	C8NtJ98JlOZaT4mKdJDHDRy3CryDcs0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761135129;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
-	b=96GHO7kE//mCSmmANRBvMOvx8HaS41atmVmupWfpqbD7dZ2SgkrfgNa345n2svaY1McU7X
-	jhC14mw1l3K+vRBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0itR3CsJ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=07dwfYMr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761135125;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
-	b=0itR3CsJ5T5nlGrp1T/WtXxreTrPSocGRF4zQ4f3XhI9YY3XPh0vWuBt8QoLXHivGvm04Y
-	PSY3NXtfF1+3fvANCWLhIVrwRw3ZnB4SYobonn3gczgNpSQFAYLoBuguoDF1jnoykizsPt
-	Co0apKLApNKYdVL75VtBLV3KZV63L9A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761135125;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
-	b=07dwfYMrkhqVWXy+i2oBY4odwxdKrwib4Px9QAmfzvsuMFsfn+fxotX1tVMR4ecTVLlKRU
-	U267ichU8LdJ9PDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 91A9413AAC;
-	Wed, 22 Oct 2025 12:12:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ikGNIhTK+GjVHgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Wed, 22 Oct 2025 12:12:04 +0000
-Date: Wed, 22 Oct 2025 14:12:03 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: ltp@lists.linux.it, lkft@linaro.org, lkft-triage@linaro.org,
-	arnd@kernel.org, dan.carpenter@linaro.org, jack@suse.cz,
-	brauner@kernel.org, chrubis@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org,
-	regressions@lists.linux.dev, aalbersh@kernel.org, arnd@arndb.de,
-	viro@zeniv.linux.org.uk, anders.roxell@linaro.org,
-	benjamin.copeland@linaro.org, andrea.cervesato@suse.com
-Subject: Re: [PATCH] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid
- errors
-Message-ID: <20251022121203.GA481852@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20251022115704.46936-1-naresh.kamboju@linaro.org>
+	s=arc-20240116; t=1761137353; c=relaxed/simple;
+	bh=AvjdMw2sCffsuBsINoV/J68QB1LlzUsen6SY/K/sTgs=;
+	h=Message-ID:From:To:Subject:cc:Date; b=GSjBMjBmYGz4URh2rWpJLHGoLOqjJXnCmHjX9BXj33vDroDq3u9oNgQ22+OiGIXPEUkqGPH7OXDaFm4SMJ3EfyTG3+CyvoE7RXxsefABOFDk+yS+LAhV9xt5t682GjX3hel+wpttaQdLrOyq8nqZt86/tMrNcpxDWyogdfl9jVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EtfaCoDm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ss9zZT1n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20251022102427.400699796@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761137342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=GLXMwWXFIbD7cZKiqLR8SWn7Xt+iSqcrcxps9Q+G9kY=;
+	b=EtfaCoDmFor8sSyXEn7oHgxdwynsxqOq3FyCVUuhPIgRs9x5vdmO92747Cz8TOKGl4pO+h
+	ZKBXS45G2J7mtFB7bIbQVW+HUcOV3Y864eGZCPy97TDME/wSAWlPnheYnWGw8sDNUcEaqJ
+	18ozfWu+ohRqajooCKIUx6N5b6VdCCo0mx4CHbj65zTzjsxNaXDmXnMkdMlfRmJWxg+7TX
+	2HmOV/4/UrxLFOcsdgGb0UUsX1EeRuVxhh5jfU948EwHm7mOOaa17GMdraDdgMT+nOu2Dm
+	Nh9yba2+vXILBG3SJv5GUZIWaa5XNotuqPRL+KLJqsLbbK0pDKlJWBfK0candw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761137342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=GLXMwWXFIbD7cZKiqLR8SWn7Xt+iSqcrcxps9Q+G9kY=;
+	b=ss9zZT1nrdUlW60YnW7MoEIuOhi/H1ZFLAptXi6Q2OQGKph9Q1UEzducE2vpLJL3u2pCgV
+	douIrhd397x/hWDg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Subject: [patch V4 00/12] uaccess: Provide and use scopes for user access
+cc: kernel test robot <lkp@intel.com>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ x86@kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org,
+ Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Date: Wed, 22 Oct 2025 14:49:02 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022115704.46936-1-naresh.kamboju@linaro.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1F30221168
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-test-project.readthedocs.io:url,suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Score: -3.71
 
-Hi Naresh,
+This is a follow up on the V3 feedback:
 
-> Latest kernels return ENOTTY instead of EINVAL when invoking
-> ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid).  Update the test to
-> accept both EINVAL and ENOTTY as valid errors to ensure compatibility
-> across different kernel versions.
+   https://lore.kernel.org/20251017085938.150569636@linutronix.de
 
-Thanks a lot for contributing to LTP, we really appreciate it.
+Changes vs. V3:
 
-> Link: https://lore.kernel.org/all/CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com
-very nit: +1 for this. I prefer to reference it differently (e.g. [1]) as I add
-Link: for referencing your actual patch the same way how it's used in kernel.
-(e.g. Link: https://lore.kernel.org/ltp/20251022115704.46936-1-naresh.kamboju@linaro.org/)
+  - Remove the superflouous if (1) in the scope macro - Andrew
 
-> +++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-> @@ -4,7 +4,7 @@
->   */
+  - Use asm_inline in the x86 conversion - Andrew
 
->  /*\
-> - * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
-> + * Verify that ioctl() raises an EINVAL or ENOTTY error when PIDFD_GET_INFO is used. This
-nit: maybe note for ENOTTY: (from v6.18)?
->   * happens when:
->   *
->   * - info parameter is NULL
-> @@ -14,6 +14,7 @@
->  #include "tst_test.h"
->  #include "lapi/pidfd.h"
->  #include "lapi/sched.h"
-> +#include <errno.h>
->  #include "ioctl_pidfd.h"
+  - Rename to scoped_user_*_access(), remove underscores, use a void
+    intermediate pointer and add a comment vs. access range - David
 
->  struct pidfd_info_invalid {
-> @@ -43,7 +44,22 @@ static void run(void)
->  		exit(0);
+  - Use read scope in select - PeterZ
 
->  	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
-> -	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
-> +	/* Expect ioctl to fail; accept either EINVAL or ENOTTY */
-> +	TEST(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid));
+  - Fix comments, shorten local variables and remove pointless brackets -
+    Mathieu
 
-I'm sorry, we prefer these macros in include/tst_test_macros.h which shorten the
-code. Could you please use TST_EXP_FAIL_ARR() [1]?
+  - Simplify the coccinelle script, which needs still more polishing -
+    Julia
 
-Kind regards,
-Petr
+The series is based on v6.18-rc1 and also available from git:
 
-[1] https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.html#macro-tst-exp-fail-arr
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/masked
 
-> +	if (TEST_RETURN == -1) {
-> +		if (TEST_ERRNO == EINVAL || TEST_ERRNO == ENOTTY) {
-> +			tst_res(TPASS,
-> +				"ioctl(PIDFD_GET_INFO_SHORT) failed as expected with %s",
-> +				tst_strerrno(TEST_ERRNO));
-> +		} else {
-> +			tst_res(TFAIL,
-> +				"Unexpected errno: %s (expected EINVAL or ENOTTY)",
-> +				tst_strerrno(TEST_ERRNO));
-> +		}
-> +	} else {
-> +		tst_res(TFAIL, "ioctl(PIDFD_GET_INFO_SHORT) unexpectedly succeeded");
-> +	}
-> +
+Thanks,
 
->  	SAFE_CLOSE(pidfd);
->  }
+	tglx
+---
+Thomas Gleixner (12):
+      ARM: uaccess: Implement missing __get_user_asm_dword()
+      uaccess: Provide ASM GOTO safe wrappers for unsafe_*_user()
+      x86/uaccess: Use unsafe wrappers for ASM GOTO
+      powerpc/uaccess: Use unsafe wrappers for ASM GOTO
+      riscv/uaccess: Use unsafe wrappers for ASM GOTO
+      s390/uaccess: Use unsafe wrappers for ASM GOTO
+      uaccess: Provide scoped user access regions
+      uaccess: Provide put/get_user_scoped()
+      coccinelle: misc: Add scoped_$MODE_access() checker script
+      futex: Convert to scoped user access
+      x86/futex: Convert to scoped user access
+      select: Convert to scoped user access
+---
+ arch/arm/include/asm/uaccess.h               |   26 ++
+ arch/powerpc/include/asm/uaccess.h           |    8 
+ arch/riscv/include/asm/uaccess.h             |    8 
+ arch/s390/include/asm/uaccess.h              |    4 
+ arch/x86/include/asm/futex.h                 |   75 ++----
+ arch/x86/include/asm/uaccess.h               |   12 -
+ fs/select.c                                  |   12 -
+ include/linux/uaccess.h                      |  308 ++++++++++++++++++++++++++-
+ kernel/futex/futex.h                         |   37 ---
+ scripts/coccinelle/misc/scoped_uaccess.cocci |  108 +++++++++
+ 10 files changed, 492 insertions(+), 106 deletions(-)
+
+
 
