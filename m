@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DD8BFD178
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:16:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748C9BFD172
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6DB03AD268
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:11:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D51AF5636D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B328347BBB;
-	Wed, 22 Oct 2025 16:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB96334C9BE;
+	Wed, 22 Oct 2025 16:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sq7Sd5kG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puhw+qgT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726827FD51;
-	Wed, 22 Oct 2025 16:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40702820A9;
+	Wed, 22 Oct 2025 16:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149240; cv=none; b=nvi0KyQQaWDN8ey6ywW2c7TtdUfO2GYLMCthuPYnaLviujNIkdpM+8cz+IJeephixKoBR9PzNikIw5nHGXzr4WqyYVkQzr495qQuVd9nT13FmRm7N3dEN/FV/G2+fJtRC3VJK4jUbqqUzAMSTv4sXrHFgZhbm8yzKxj6MRWRAfU=
+	t=1761149246; cv=none; b=TmwZ6gJUEl0z1vKHqj7joq3Sc96HJUusrKZ/lmItdDGwBObXwcqZDQ+sUwxCOysFCbKwrcZJi268W55m1er7Q7fMeAftu04gFgH4aUlrYAKOhhW8hnCjmd3+TpaemjhXFtTw7wJoZ7wOL3/fMPHVLYd2Kr6uRAlByMREGRBsp/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149240; c=relaxed/simple;
-	bh=0Z06FS7PHlmbbOXNaiYAotrcXY1wE2OxBYSA5XT3a6Q=;
+	s=arc-20240116; t=1761149246; c=relaxed/simple;
+	bh=D29D+H2EPiZJISFL40IfX5Y3tdXtohnOiqq233NStmo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oeDMwCv4vy5pUKGNYXt0324Jhc8cWUJEypci+fXcyge5lZQExyadPRoTpmbRwLJDPafUuBNFYXZwYM/1fYu0B8N6ZqaMJ7HkQkRTOxV63uaNSyEc5LOS5tun7RRTh3lQGu+EWFwRzayVDtYBwVtoFMGW8CKoAW3JME8zai1Cw4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sq7Sd5kG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A884C4CEE7;
-	Wed, 22 Oct 2025 16:07:15 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rlV8eyIZc+7Gl06iWW7dzu5pdMZKgMxolF3qqY7aPWXU7hVP8bdMKUs2OW2QdhHHtLJ9zL0qAltYl09N6tGuRi7vZmsC1XcUUclMt1mpnoF7Hm6VqLtCVFA9dDx1B+bm9OMSPnTjL9q07z4pYOc92qzZDj3bhmF8xOu4uVnb2Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puhw+qgT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 989C7C4CEFD;
+	Wed, 22 Oct 2025 16:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761149240;
-	bh=0Z06FS7PHlmbbOXNaiYAotrcXY1wE2OxBYSA5XT3a6Q=;
+	s=k20201202; t=1761149245;
+	bh=D29D+H2EPiZJISFL40IfX5Y3tdXtohnOiqq233NStmo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Sq7Sd5kGvpZkYLe2SXy8OvT8VeOjVjRNRCTFtlQcdOIVAoGl59N7urVaBkUwbGj4u
-	 mceSsHeB9p3kXR8+gcI13VGd4ueOO0XYe1sKH8+zYFb6SsNIkzFDEp35QKY0qIBLpJ
-	 pWXdNSvsPKYoRvsVoP9EQ3HRJCgItItfxLS4fg+oUEQ0BEh8szS6fJ2RHI7SzqR4Vo
-	 PU+36ubSVd5UAHOEQS+9gWp0ME7ZVTqztZjYGY1Tcao4CZe/FPQ7GSfmVAqyWGIia9
-	 x9mzJy2v2JKTmmbz0coXxZMnfU3yFW3tMDix7xa1v3jQYxMxV8W+k25CIl7ib4wC7i
-	 JuWScSnAjKeLA==
+	b=puhw+qgTxhUgbr04MzQIOmfESoiRsibRT4ZgaE2kbxcjMa/bs0e2h8xur9nEDdUQc
+	 gPMkeX8P9k1jlReaCiZYDOzX1WDouDn/H/NQ6JRaN4o9G35X4gR4c/mp0GTzqG/g/0
+	 nrgxOxMRfAIUM46r8/2Ne9Gl6hlkqA+5H1IMI37bnb1jyQRdFLhkqWdivPsUGbY5dG
+	 43yDXpS6Tgwv6oSZul4gqmDI2teT48DNZLNl2lI6/0HjRYBEaTulyY/iGotP/wWXRT
+	 F8KeR2MB4zDRV1tCWYjDohXaTijg6hMeG/mfm/UUgoGqZeKoBmQK5hvm9ZKB9l12jm
+	 pUvm2+IelnxXw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Oct 2025 18:05:52 +0200
-Subject: [PATCH v2 14/63] nstree: assign fixed ids to the initial
- namespaces
+Date: Wed, 22 Oct 2025 18:05:53 +0200
+Subject: [PATCH v2 15/63] ns: maintain list of owned namespaces
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-work-namespace-nstree-listns-v2-14-71a588572371@kernel.org>
+Message-Id: <20251022-work-namespace-nstree-listns-v2-15-71a588572371@kernel.org>
 References: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 In-Reply-To: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,179 +69,207 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6182; i=brauner@kernel.org;
- h=from:subject:message-id; bh=0Z06FS7PHlmbbOXNaiYAotrcXY1wE2OxBYSA5XT3a6Q=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHiSdUl67XdNIy09ieK+C+bT0z+lXJYsS/Hp3u/7a
- 88v6SMsHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPZ957hD0egz1TdGoYF82+a
- GNo3MvbPsPv8bemJrb7F+18/L1opcJ/hf61rgnTon2zl24sXvjvTEtnR8EIwL8w3N8DTzO/P04k
- RbAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7611; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=D29D+H2EPiZJISFL40IfX5Y3tdXtohnOiqq233NStmo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHgafeXirgn6m54IF5jMX/ZKZL5Hc/pt86TXjUdW5
+ 22z2h8o11HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARbllGhvmZdxUPTe7NfKy0
+ K8t24ZxXWa8ZOPb7LVXWvtAiYH+6dCbD/4g9v9/d6Fh0XXTTMcc377mjL/1c5/DQ/a1LYqXm0pc
+ KdvwA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-The initial set of namespace comes with fixed inode numbers making it
-easy for userspace to identify them solely based on that information.
-This has long preceeded anything here.
-
-Similarly, let's assign fixed namespace ids for the initial namespaces.
-
-Kill the cookie and use a sequentially increasing number. This has the
-nice side-effect that the owning user namespace will always have a
-namespace id that is smaller than any of it's descendant namespaces.
+The namespace tree doesn't express the ownership concept of namespace
+appropriately. Maintain a list of directly owned namespaces per user
+namespace. This will allow userspace and the kernel to use the listns()
+system call to walk the namespace tree by owning user namespace.
+Read-only list operations are completely lockless.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/namespace.c            |  2 +-
- include/linux/nstree.h    | 26 ++++++++++++++++++++++----
- include/uapi/linux/nsfs.h | 14 ++++++++++++++
- kernel/nstree.c           | 13 ++++++++-----
- net/core/net_namespace.c  |  2 +-
- 5 files changed, 46 insertions(+), 11 deletions(-)
+ fs/namespace.c            |  2 ++
+ include/linux/ns_common.h |  4 ++++
+ init/version-timestamp.c  |  2 ++
+ ipc/msgutil.c             |  2 ++
+ kernel/cgroup/cgroup.c    |  2 ++
+ kernel/nscommon.c         |  2 ++
+ kernel/nstree.c           | 19 +++++++++++++++++++
+ kernel/pid.c              |  2 ++
+ kernel/time/namespace.c   |  2 ++
+ kernel/user.c             |  2 ++
+ 10 files changed, 39 insertions(+)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 87116def5ee3..5d8a80e1e944 100644
+index 5d8a80e1e944..d460ca79f0e7 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -4094,7 +4094,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
- 		return ERR_PTR(ret);
- 	}
- 	if (!anon)
--		ns_tree_gen_id(&new_ns->ns);
-+		ns_tree_gen_id(new_ns);
- 	refcount_set(&new_ns->passive, 1);
- 	new_ns->mounts = RB_ROOT;
- 	init_waitqueue_head(&new_ns->poll);
-diff --git a/include/linux/nstree.h b/include/linux/nstree.h
-index 8b8636690473..96ee71622517 100644
---- a/include/linux/nstree.h
-+++ b/include/linux/nstree.h
-@@ -8,6 +8,7 @@
- #include <linux/seqlock.h>
- #include <linux/rculist.h>
- #include <linux/cookie.h>
-+#include <uapi/linux/nsfs.h>
- 
- extern struct ns_tree cgroup_ns_tree;
- extern struct ns_tree ipc_ns_tree;
-@@ -29,7 +30,22 @@ extern struct ns_tree uts_ns_tree;
- 		struct user_namespace *:   &(user_ns_tree),	\
- 		struct uts_namespace *:    &(uts_ns_tree))
- 
--u64 ns_tree_gen_id(struct ns_common *ns);
-+#define ns_init_id(__ns)				      \
-+	_Generic((__ns),                                      \
-+		struct cgroup_namespace *: CGROUP_NS_INIT_ID, \
-+		struct ipc_namespace *:    IPC_NS_INIT_ID,    \
-+		struct mnt_namespace *:    MNT_NS_INIT_ID,    \
-+		struct net *:              NET_NS_INIT_ID,    \
-+		struct pid_namespace *:    PID_NS_INIT_ID,    \
-+		struct time_namespace *:   TIME_NS_INIT_ID,   \
-+		struct user_namespace *:   USER_NS_INIT_ID,   \
-+		struct uts_namespace *:    UTS_NS_INIT_ID)
-+
-+#define ns_tree_gen_id(__ns)                 \
-+	__ns_tree_gen_id(to_ns_common(__ns), \
-+			 (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
-+
-+u64 __ns_tree_gen_id(struct ns_common *ns, u64 id);
- void __ns_tree_add_raw(struct ns_common *ns, struct ns_tree *ns_tree);
- void __ns_tree_remove(struct ns_common *ns, struct ns_tree *ns_tree);
- struct ns_common *ns_tree_lookup_rcu(u64 ns_id, int ns_type);
-@@ -37,9 +53,9 @@ struct ns_common *__ns_tree_adjoined_rcu(struct ns_common *ns,
- 					 struct ns_tree *ns_tree,
- 					 bool previous);
- 
--static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree *ns_tree)
-+static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree *ns_tree, u64 id)
- {
--	ns_tree_gen_id(ns);
-+	__ns_tree_gen_id(ns, id);
- 	__ns_tree_add_raw(ns, ns_tree);
- }
- 
-@@ -59,7 +75,9 @@ static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree *ns_tree)
-  * This function assigns a new id to the namespace and adds it to the
-  * appropriate namespace tree and list.
-  */
--#define ns_tree_add(__ns) __ns_tree_add(to_ns_common(__ns), to_ns_tree(__ns))
-+#define ns_tree_add(__ns)                                   \
-+	__ns_tree_add(to_ns_common(__ns), to_ns_tree(__ns), \
-+		      (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
- 
- /**
-  * ns_tree_remove - Remove a namespace from a namespace tree
-diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-index e098759ec917..f8bc2aad74d6 100644
---- a/include/uapi/linux/nsfs.h
-+++ b/include/uapi/linux/nsfs.h
-@@ -67,4 +67,18 @@ struct nsfs_file_handle {
- #define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
- #define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* sizeof latest published struct */
- 
-+enum init_ns_id {
-+	IPC_NS_INIT_ID		= 1ULL,
-+	UTS_NS_INIT_ID		= 2ULL,
-+	USER_NS_INIT_ID		= 3ULL,
-+	PID_NS_INIT_ID		= 4ULL,
-+	CGROUP_NS_INIT_ID	= 5ULL,
-+	TIME_NS_INIT_ID		= 6ULL,
-+	NET_NS_INIT_ID		= 7ULL,
-+	MNT_NS_INIT_ID		= 8ULL,
-+#ifdef __KERNEL__
-+	NS_LAST_INIT_ID		= MNT_NS_INIT_ID,
-+#endif
-+};
-+
- #endif /* __LINUX_NSFS_H */
-diff --git a/kernel/nstree.c b/kernel/nstree.c
-index d21df06b6747..de5ceda44637 100644
---- a/kernel/nstree.c
-+++ b/kernel/nstree.c
-@@ -68,8 +68,6 @@ struct ns_tree time_ns_tree = {
- 	.type = CLONE_NEWTIME,
+@@ -5996,6 +5996,8 @@ struct mnt_namespace init_mnt_ns = {
+ 	.mounts		= RB_ROOT,
+ 	.poll		= __WAIT_QUEUE_HEAD_INITIALIZER(init_mnt_ns.poll),
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_mnt_ns.ns.ns_list_node),
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner),
  };
  
--DEFINE_COOKIE(namespace_cookie);
--
- static inline struct ns_common *node_to_ns(const struct rb_node *node)
+ static void __init init_mount_tree(void)
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index b7d2123a9d19..88dce67e06e4 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -123,6 +123,10 @@ struct ns_common {
+ 				struct rb_node ns_tree_node;
+ 				struct list_head ns_list_node;
+ 			};
++			struct /* namespace ownership list */ {
++				struct list_head ns_owner; /* list of namespaces owned by this namespace */
++				struct list_head ns_owner_entry; /* node in the owner namespace's ns_owned list */
++			};
+ 			atomic_t __ns_ref_active; /* do not use directly */
+ 		};
+ 		struct rcu_head ns_rcu;
+diff --git a/init/version-timestamp.c b/init/version-timestamp.c
+index c38498f94646..e5c278dabecf 100644
+--- a/init/version-timestamp.c
++++ b/init/version-timestamp.c
+@@ -22,6 +22,8 @@ struct uts_namespace init_uts_ns = {
+ 	.user_ns = &init_user_ns,
+ 	.ns.inum = ns_init_inum(&init_uts_ns),
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_uts_ns.ns.ns_list_node),
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_uts_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_uts_ns.ns.ns_owner),
+ #ifdef CONFIG_UTS_NS
+ 	.ns.ops = &utsns_operations,
+ #endif
+diff --git a/ipc/msgutil.c b/ipc/msgutil.c
+index d7c66b430470..ce1de73725c0 100644
+--- a/ipc/msgutil.c
++++ b/ipc/msgutil.c
+@@ -32,6 +32,8 @@ struct ipc_namespace init_ipc_ns = {
+ 	.user_ns = &init_user_ns,
+ 	.ns.inum = ns_init_inum(&init_ipc_ns),
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_ipc_ns.ns.ns_list_node),
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner),
+ #ifdef CONFIG_IPC_NS
+ 	.ns.ops = &ipcns_operations,
+ #endif
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index a18ec090ad7e..41a1fc562ed0 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -258,6 +258,8 @@ struct cgroup_namespace init_cgroup_ns = {
+ 	.root_cset	= &init_css_set,
+ 	.ns.ns_type	= ns_common_type(&init_cgroup_ns),
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_cgroup_ns.ns.ns_list_node),
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_cgroup_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_cgroup_ns.ns.ns_owner),
+ };
+ 
+ static struct file_system_type cgroup2_fs_type;
+diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+index bdd32e14a587..ba46de0637c3 100644
+--- a/kernel/nscommon.c
++++ b/kernel/nscommon.c
+@@ -63,6 +63,8 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+ 	RB_CLEAR_NODE(&ns->ns_tree_node);
+ 	RB_CLEAR_NODE(&ns->ns_unified_tree_node);
+ 	INIT_LIST_HEAD(&ns->ns_list_node);
++	INIT_LIST_HEAD(&ns->ns_owner);
++	INIT_LIST_HEAD(&ns->ns_owner_entry);
+ 
+ #ifdef CONFIG_DEBUG_VFS
+ 	ns_debug(ns, ops);
+diff --git a/kernel/nstree.c b/kernel/nstree.c
+index de5ceda44637..829682bb04a1 100644
+--- a/kernel/nstree.c
++++ b/kernel/nstree.c
+@@ -3,6 +3,7 @@
+ #include <linux/nstree.h>
+ #include <linux/proc_ns.h>
+ #include <linux/vfsdebug.h>
++#include <linux/user_namespace.h>
+ 
+ __cacheline_aligned_in_smp DEFINE_SEQLOCK(ns_tree_lock);
+ static struct rb_root ns_unified_tree = RB_ROOT; /* protected by ns_tree_lock */
+@@ -113,8 +114,10 @@ static inline int ns_cmp_unified(struct rb_node *a, const struct rb_node *b)
+ void __ns_tree_add_raw(struct ns_common *ns, struct ns_tree *ns_tree)
  {
- 	if (!node)
-@@ -278,15 +276,20 @@ struct ns_common *__ns_tree_adjoined_rcu(struct ns_common *ns,
- /**
-  * ns_tree_gen_id - generate a new namespace id
-  * @ns: namespace to generate id for
-+ * @id: if non-zero, this is the initial namespace and this is a fixed id
-  *
-  * Generates a new namespace id and assigns it to the namespace. All
-  * namespaces types share the same id space and thus can be compared
-  * directly. IOW, when two ids of two namespace are equal, they are
-  * identical.
-  */
--u64 ns_tree_gen_id(struct ns_common *ns)
-+u64 __ns_tree_gen_id(struct ns_common *ns, u64 id)
- {
--	guard(preempt)();
--	ns->ns_id = gen_cookie_next(&namespace_cookie);
-+	static atomic64_t namespace_cookie = ATOMIC64_INIT(NS_LAST_INIT_ID + 1);
+ 	struct rb_node *node, *prev;
++	const struct proc_ns_operations *ops = ns->ops;
+ 
+ 	VFS_WARN_ON_ONCE(!ns->ns_id);
++	VFS_WARN_ON_ONCE(ns->ns_type != ns_tree->type);
+ 
+ 	write_seqlock(&ns_tree_lock);
+ 
+@@ -132,6 +135,21 @@ void __ns_tree_add_raw(struct ns_common *ns, struct ns_tree *ns_tree)
+ 		list_add_rcu(&ns->ns_list_node, &node_to_ns(prev)->ns_list_node);
+ 
+ 	rb_find_add_rcu(&ns->ns_unified_tree_node, &ns_unified_tree, ns_cmp_unified);
 +
-+	if (id)
-+		ns->ns_id = id;
-+	else
-+		ns->ns_id = atomic64_inc_return(&namespace_cookie);
- 	return ns->ns_id;
++	if (ops) {
++		struct user_namespace *user_ns;
++
++		VFS_WARN_ON_ONCE(!ops->owner);
++		user_ns = ops->owner(ns);
++		if (user_ns) {
++			struct ns_common *owner = &user_ns->ns;
++			VFS_WARN_ON_ONCE(owner->ns_type != CLONE_NEWUSER);
++			list_add_tail_rcu(&ns->ns_owner_entry, &owner->ns_owner);
++		} else {
++			/* Only the initial user namespace doesn't have an owner. */
++			VFS_WARN_ON_ONCE(ns != to_ns_common(&init_user_ns));
++		}
++	}
+ 	write_sequnlock(&ns_tree_lock);
+ 
+ 	VFS_WARN_ON_ONCE(node);
+@@ -148,6 +166,7 @@ void __ns_tree_remove(struct ns_common *ns, struct ns_tree *ns_tree)
+ 	rb_erase(&ns->ns_unified_tree_node, &ns_unified_tree);
+ 	list_bidir_del_rcu(&ns->ns_list_node);
+ 	RB_CLEAR_NODE(&ns->ns_tree_node);
++	list_bidir_del_rcu(&ns->ns_owner_entry);
+ 	write_sequnlock(&ns_tree_lock);
  }
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index f30fb78f020c..a76b9b9709d6 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -439,7 +439,7 @@ static __net_init int setup_net(struct net *net)
- 	LIST_HEAD(net_exit_list);
- 	int error = 0;
- 
--	net->net_cookie = ns_tree_gen_id(&net->ns);
-+	net->net_cookie = ns_tree_gen_id(net);
- 
- 	list_for_each_entry(ops, &pernet_list, list) {
- 		error = ops_init(ops, net);
+ EXPORT_SYMBOL_GPL(__ns_tree_remove);
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 4f7b5054e23d..f82dab348540 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -80,6 +80,8 @@ struct pid_namespace init_pid_ns = {
+ 	.user_ns = &init_user_ns,
+ 	.ns.inum = ns_init_inum(&init_pid_ns),
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_pid_ns.ns.ns_list_node),
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_pid_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_pid_ns.ns.ns_owner),
+ #ifdef CONFIG_PID_NS
+ 	.ns.ops = &pidns_operations,
+ #endif
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index 2e7c110bd13f..15cb74267c75 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -485,6 +485,8 @@ struct time_namespace init_time_ns = {
+ 	.user_ns	= &init_user_ns,
+ 	.ns.inum	= ns_init_inum(&init_time_ns),
+ 	.ns.ops		= &timens_operations,
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_time_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_time_ns.ns.ns_owner),
+ 	.frozen_offsets	= true,
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_list_node),
+ };
+diff --git a/kernel/user.c b/kernel/user.c
+index bf60532856db..e392768ccd44 100644
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@ -72,6 +72,8 @@ struct user_namespace init_user_ns = {
+ 	.group = GLOBAL_ROOT_GID,
+ 	.ns.inum = ns_init_inum(&init_user_ns),
+ 	.ns.ns_list_node = LIST_HEAD_INIT(init_user_ns.ns.ns_list_node),
++	.ns.ns_owner_entry = LIST_HEAD_INIT(init_user_ns.ns.ns_owner_entry),
++	.ns.ns_owner = LIST_HEAD_INIT(init_user_ns.ns.ns_owner),
+ #ifdef CONFIG_USER_NS
+ 	.ns.ops = &userns_operations,
+ #endif
 
 -- 
 2.47.3
