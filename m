@@ -1,110 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-65016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10D4BF9B87
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:27:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03671BF9BAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E55604FB686
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 02:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEBD6565925
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 02:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692AE221F26;
-	Wed, 22 Oct 2025 02:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC88C225A34;
+	Wed, 22 Oct 2025 02:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aKlNqAj8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ns7datzf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0912C219E8C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8DE21ABD7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761100053; cv=none; b=D/k2qw89ODN0X+DW9lywP0iJ0AgeJvf3Gm1dESp5jdEL44ekBz7Tt9aFdQez+aGPCJXTEZExKBp3g4uTTgTtlKzgm7ARJuwOOHNfi7B5fJrTpLgtae1QxgKkk/7pmr/QgR4OAkvkx0sShuWiF5F7+mfQjoA092x4Lh6vWeQCjPk=
+	t=1761100072; cv=none; b=PrHBJtxIOSEMpvFYxjIZrrclcgErVpMc4feXqGDpLcQKLdd1S43iSlSfn81KPTi5+r0Sk5VicqrpZFJdW6XMyMRquqPkfJxpBSDMwZJz1E2YhfnVrqJ9MRqJTVY90UXLLW5j0RcD1/6jTllUteWk6K6II/UO4FmpFE04S16efHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761100053; c=relaxed/simple;
-	bh=A+P0s8xM+ovp2iCRdR2wm/nwAd8dNmdnn9/2R/2q9mk=;
+	s=arc-20240116; t=1761100072; c=relaxed/simple;
+	bh=gtxXSsibCJLZR4eJo0X6XeizsPLCRJKnPsqSUiDcNsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1tlMLYouApvWy6jUi3PHusNML4lqritlO+EnbSjlDtNc4W2HMQYlB4QbVixvhH2eNzSvgyfRhtq6jpmmvkZsXQpuXlHN/X9FHMt/uC4iCKRtZhEvZZTM15OKulY0mG5ouNyxhC0sM5HmJ+kvlQ4O9zvPlrTaYDZGH/A6w39Bg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aKlNqAj8; arc=none smtp.client-ip=209.85.216.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=UASISn+h7hEGY9Wy0pvbiIGvBW1jPnT/UB02iLuGhqzqBrNz771WOqk2h0D7NDfAZODMU0z5HRiwK62S9M/IG1uJ3FSp73qHQH4RsuvBJFbtipu/ZwJMAlYIdu6ZV+185f+meyZtVoBk0ShXodtCZacgq3nKVe82oCXe1xWXjas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ns7datzf; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33d896debe5so4316210a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 19:27:31 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-793021f348fso5643192b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 19:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761100051; x=1761704851; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761100069; x=1761704869; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Kynz5f6kQn3G9h5f1VDmHPl6BLtsPQWnOh0t3sfi0M=;
-        b=aKlNqAj8jXvvWoICbfNwKUqLGP/aPJt/n2SESZe6VHiyTTE8J40WagoO4bVRrT+qiX
-         OgTdYRYckYQlquqlWtROXxhAwy+utRm1jmHF5SAROzafg4jUZ3LaXBg12KXTsMoK2QTy
-         MhoEL5kohuLJmswz8GF+RPKgG6gVOPrXt2mWXRituP26sm0KzzdVtDXj1zcQB0fCMvoV
-         EWFQ4s/bvRvRkPtHqWB0VAwv5CQ5QwEyQAtaIx/wbAK6O0V+wsI23tum/tKi+cZZ8nm/
-         MU3CXKwTo1bA2ndzRTVmIVKL7gBE9yBOelXsJxfxoEncwWtTZfW4pUjNlmChldVCbrmQ
-         vEaA==
+        bh=xqmP8PXFVjPtIGVNVJySqdODosEn/uc3qt8eNXsbPts=;
+        b=ns7datzf8icGOKTONAAVfZEYX2gMWHAvcdFwbStWebO0Rl/Du5QVFmBnXqRSoiZU6F
+         ptf5P7YAZ3aoE7s/Q6aHquXgljNMj4Z+TxXz/HRHggRHwGLOK6rVwuXlMjLRhzddmEyc
+         /a6aU+en3DTez+1SXNrDFb3/tQ6sHTGk02umTReHZF43Y/BdECOHhJXF60IYCuXL+cJN
+         NTZLYpFA7z5SJO5wFP7WkGsflKczPbG4jpAELRMI5vtL3D6j75XXzKArcmcPSy5dvNNL
+         kPHckmZcRpjqHq1jtHBqc67JbXw2PwDBNFk0/Ma9yM29KWvHwFt4UmMzb3KAngK/Rsi7
+         4FSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761100051; x=1761704851;
+        d=1e100.net; s=20230601; t=1761100069; x=1761704869;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Kynz5f6kQn3G9h5f1VDmHPl6BLtsPQWnOh0t3sfi0M=;
-        b=M2jByM+Ts6tQtf+J5KjD5T4FdVLkSE8XDfiG9CfumDcCTPnW5aiImgwighzPx9uaPA
-         jTFgs/ln/4zlqjgwPyLisW1xPfthHUh1WOntE9L1S4bqeMGMghwMDTV3aldjJ7Bv7iS/
-         w837yxblvexp13ddLJpq5WADTfahRTF+82r2PIdIWWl4UbwR1cGnw7Vip1ICD2FS6o8O
-         +XPtJprABv/HTgMjKOL0/FexA1rS1Jdh+RQaqeRQZd8sNV/ooY1NcRSVB2UB9aofGhcr
-         gEN3Armbheh+g7O+93R2QMQp31Mc4JzyH4hXJEH3Lencz13jLFDskPQUSbPYezuAU+xu
-         gr4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDsUvOFmwUysN8sbvg+EXyhvQ27CAGLrcMzdRyKSoW+BAZ5kKQhZtNqOdN2Ph/wWGH39rPw+imcl3Vr3vS@vger.kernel.org
-X-Gm-Message-State: AOJu0YybLJKqIJrZ8ZqKsNhOYreacWN3AU1Yf1T3EhTqTwA6UbIuv+Cf
-	2XnVdIueIv7GUP1C7OMDdSh5mvz8aDPpGW4cxUIKLHJuTco1Ep/cWtHTvW+rDL0pJEc=
-X-Gm-Gg: ASbGncuyQnRi4tkRRVTQ7ldSgw7UMGTMYxdrVjmaWa0/U1tsDsg4uJ1YKH3/HhDABdg
-	wi8rgBTkZhJYAM/zYB7Aw0t03CXjnqk66AlhE7AYficWuXmu5iqVt9jRpOkT4uMc4CTV7OGA+Vh
-	R1X+5mU83FJ5chfySK9DFAnzjVSTYlt4CqUCbOAPgxoIRRjpGYpkYCcFhQX35KSTN+4zkjrckh/
-	aswXblFgix+pZtRerOMQwJ3z7Yr0MbefQc2XkLTraVzA3YocMQPirKd5uzbSUV+62qRXVwZWM0+
-	rR8k+P6UH9ElrvLne2v1mMjxgn5Agw0pDVKNpvlspke82oN549XOOFa58qbW8CF/vigCI+vGXcQ
-	7JP9IMVnEgnNX3rcCAZAgmpcRsT5bNqIdltREklOOAyt2RABzL5WBxco+d8ezCdxIjF9rUZfPsU
-	ptoinneu6g1MR4DZBMlcZX6eA=
-X-Google-Smtp-Source: AGHT+IFJLVFpIR1aWCyZCFOIKnAA6a58lXYXHZeAFELxfkfneTEN5uN4Dh2U6O2etE9y+Y+gRJvc9A==
-X-Received: by 2002:a17:90b:1dc6:b0:32e:64ca:e84a with SMTP id 98e67ed59e1d1-33bcf888575mr30106334a91.12.1761100051119;
-        Tue, 21 Oct 2025 19:27:31 -0700 (PDT)
+        bh=xqmP8PXFVjPtIGVNVJySqdODosEn/uc3qt8eNXsbPts=;
+        b=aR84yaxoMwXexvpRKgQqDbMFsIxqKe1e3g5wSEBB0559r/34A5EpQ0z5bSSpiysEbb
+         TQiDjqJj/kJGS1tftAde/dRtbkqldiZlFksyVb4rGQlm7zkCwXmjGWRJUDNsEqx4rqmm
+         6wy/l6HCdfdF7758imjOR7he9hqiNukTEH8lpMPZ2Dtkb9K8xtvhujEbCqq/itn8rBWq
+         S00NN3Y8rw7oQASgBNs2+b4uyi1R1WxLbyp5ZCS6IJKxPHffUGwoVArVSjd6CydmKzPU
+         zffdQm4ApZsTtY6vzgUkpuj7LajjXr/gqgHUSQpbAnsAByDOMfLZNJyLzJYH4ua2BVrH
+         bVqA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+xyRawsZcDDcNW2N6tQhewPFtpKPQF74UBsE6271GoVusDQzoYfnkpQEjmyyJPHS3Q9iY1J1sLdv63xM8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz00Lcxfta6U0WNniE7Xa7YMCPlVxRh7Okwmq3V208/wn8zfy3t
+	F1IbIMK15fmjkdmhMhogUTz8/zo8WdPxhkTfmXKJ4hlqT3rLWp/0La+fqP1OhsplvaE=
+X-Gm-Gg: ASbGncsCtzUF94pPv2bG5Bj6cNvgIi4f9aN8lxJCZ0usVK5yXzMmxO0+xZwP5enfjHd
+	nL7dx7awgg/GaURuSLjTawPBBtoKK49iTVANY4+Se/vOCQhbbiH0xK7UZIVuB7d2mQQYzUK2T1j
+	xXW++ZYTlYULw4lFrs3bUEeAeS6n5FTl/MX3AvxxQ0tW4GrWiLIBoIAkkFuVhzK87xscUid59SO
+	YsCLjJu8G8X0px5k2f5BlKtlQaWW3WJlsnrjbsZ9xrqAqQsX3ajlIMe2F8nENJGt4QFSIymKPUS
+	pyZi+8Mg7tPqwQMOuO66E7vadR0y0FIv7AoD51V34+2VlhlrNOCQHZx5ZIsZJRUSU4JVP/9u1bC
+	9YZTAqvvqxS2BohfHD3OyqJka/4GeNQrrLQvvTT6sPdytXg6LGz+7YPJox6xo7/HUuGUI6em6jq
+	l9qg==
+X-Google-Smtp-Source: AGHT+IEkOxWVQSWldQc/gAwbJEjuX6oOPBwr0g1WUs0jQjHOfnCn6OF8lZVM21AQiTMGEA1gGzxfjQ==
+X-Received: by 2002:a05:6a20:9144:b0:334:3a1d:536 with SMTP id adf61e73a8af0-334a8536f36mr26023352637.17.1761100069036;
+        Tue, 21 Oct 2025 19:27:49 -0700 (PDT)
 Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223f11e1sm981092a91.12.2025.10.21.19.27.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2247a7cfsm940817a91.11.2025.10.21.19.27.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 19:27:30 -0700 (PDT)
-Date: Wed, 22 Oct 2025 07:57:28 +0530
+        Tue, 21 Oct 2025 19:27:48 -0700 (PDT)
+Date: Wed, 22 Oct 2025 07:57:46 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v18 11/16] rust: opp: fix broken rustdoc link
-Message-ID: <gcdcwpotzidrksmsnyvesnojcylbb2fqpiue4fijhj2cmayli5@7lpyessslxka>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: tamird@gmail.com, Liam.Howlett@oracle.com, a.hindborg@kernel.org, 
+	airlied@gmail.com, alex.gaynor@gmail.com, arve@android.com, axboe@kernel.dk, 
+	bhelgaas@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	brauner@kernel.org, broonie@kernel.org, cmllamas@google.com, dakr@kernel.org, 
+	dri-devel@lists.freedesktop.org, gary@garyguo.net, gregkh@linuxfoundation.org, jack@suse.cz, 
+	joelagnelf@nvidia.com, justinstitt@google.com, kwilczynski@kernel.org, 
+	leitao@debian.org, lgirdwood@gmail.com, linux-block@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, llvm@lists.linux.dev, 
+	longman@redhat.com, lorenzo.stoakes@oracle.com, lossin@kernel.org, maco@android.com, 
+	mcgrof@kernel.org, mingo@redhat.com, mmaurer@google.com, morbo@google.com, 
+	mturquette@baylibre.com, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, nm@ti.com, 
+	ojeda@kernel.org, peterz@infradead.org, rafael@kernel.org, russ.weight@linux.dev, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, simona@ffwll.ch, surenb@google.com, 
+	tkjos@android.com, tmgross@umich.edu, urezki@gmail.com, vbabka@suse.cz, 
+	vireshk@kernel.org, viro@zeniv.linux.org.uk, will@kernel.org
+Subject: Re: [PATCH v18 14/16] rust: clk: use `CStr::as_char_ptr`
+Message-ID: <rd2jyc57e5p6zjhypnxkfnjwsnihs5tsr7r55qnuwbho5jmkxh@53grgiitw725>
 References: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
- <20251018-cstr-core-v18-11-ef3d02760804@gmail.com>
+ <20251018180319.3615829-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -113,15 +104,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251018-cstr-core-v18-11-ef3d02760804@gmail.com>
+In-Reply-To: <20251018180319.3615829-1-aliceryhl@google.com>
 
-On 18-10-25, 13:45, Tamir Duberstein wrote:
-> Correct the spelling of "CString" to make the link work.
+On 18-10-25, 18:03, Alice Ryhl wrote:
+> From: Tamir Duberstein <tamird@gmail.com>
+> 
+> Replace the use of `as_ptr` which works through `<CStr as
+> Deref<Target=&[u8]>::deref()` in preparation for replacing
+> `kernel::str::CStr` with `core::ffi::CStr` as the latter does not
+> implement `Deref<Target=&[u8]>`.
 > 
 > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
->  rust/kernel/opp.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  rust/kernel/clk.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
