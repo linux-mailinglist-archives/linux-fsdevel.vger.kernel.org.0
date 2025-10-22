@@ -1,469 +1,336 @@
-Return-Path: <linux-fsdevel+bounces-65211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97139BFE265
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 22:23:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FF6BFE2AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 22:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79AC34EE9A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 20:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C9DF3A3351
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 20:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC79A2FB973;
-	Wed, 22 Oct 2025 20:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CC82FAC16;
+	Wed, 22 Oct 2025 20:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm1zGVhm"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y1tELKD7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010065.outbound.protection.outlook.com [52.101.193.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DE52FB633
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 20:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761164601; cv=none; b=hM8ah8n1pXwil5dccpdku3Qigjb3EFbC62vhvOHykvpTZHNdGY7PgdW1IQE19gtnfbaYF/p0bXrr9cTdSSiIMWcd9jlyomhGiHCGtWHZ+Mbw9pp81O97fk1Lbbjn7cH4yKJgQFdoa1/g/vxSR+G1suvNXrhpyHVy+XQ0EK+ObJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761164601; c=relaxed/simple;
-	bh=ZypwVfsD9JB5v9qFIvX2gVSg0h+5ZBQJi/2UGbalt04=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BC2741DA;
+	Wed, 22 Oct 2025 20:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761164876; cv=fail; b=axxZabDKPYIwaSoBX0+Sqmakmun89eLhe8/cQ5aCq1dCdmkXZMKXr4GIuitwiIgvJy2TU4jAE7dPmTrpCOZWHqMK9Vji1bGnxDsGLaTUDvEPzeNJP8q95+illYDrgrkD5u9672yVw4FVSNikC4QxmLNA/SWeFBjmIH5FjTHke0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761164876; c=relaxed/simple;
+	bh=IKEbq5EntRTcam6yhp/dfIDp0DzXCOvWFkTfGzvV3q8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QXhnNoQb/2Q/wu/YlolaxlRf6t7QcUtcuEzg8P1Vqe0ejY1/tPbOF5f2zc17gXRwzISrM8NlFemsaOtxbsMBGPoUx5CztnE3iFmeaqjwJr7mkqrHf3izcO1W5XCE+orM7SuKWmnD37yLoxO5aAc5fsGFcGXbJ3PFmBhS5FprUGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jm1zGVhm; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27ee41e0798so114546885ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 13:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761164591; x=1761769391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAwPv1ZCGWgqJek2QFv9M4nH8K2JjDsKQB2QpCc4m50=;
-        b=jm1zGVhmqBhiMNNZDUfFbXQpqEqrOgG7n1sk7qQzlEpGx5s709OwFPGU/Cu+b8g93c
-         cAhEvDSARZW/EVSMlCGZbFu0LjETJL8qQ3p06ikWtDsR4UiFlUs1kmAaiHBIAo1VS84m
-         TGosvOgeBhQs8jwQnk4aKRgNl1Dot0wCfD6z5UFJlnsYt7DKWA6XjkuUTj3akF9NoOGk
-         8Up2gzNgq3rkBLkkLKnZRuM6lDEMG88jpMvfF4U0N736IUqaAYEQX+S4xRp9ab3ru0mG
-         bmL0L/eJiIMe/bTLE7r9CyiYv14Mf7Np04K6TMIFjklugXDrC1EWXDoggVQgiHvCaeTF
-         Z/8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761164591; x=1761769391;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VAwPv1ZCGWgqJek2QFv9M4nH8K2JjDsKQB2QpCc4m50=;
-        b=jGGeGkcVzXAX/hG4XDXQfCS5qGDNvABLqcKJt9KHhQwwzk6GqMKcHRJn9inVuvvnuL
-         05dioeq8+7U3O6FNlD6Rj2jVOKPsdx9xFepFF2oITH5HQKIu1w7EE9hIY/l5+k70eUP7
-         Vmz1IJCSCVF2fmhiTpwgNlJXio56RCqKZyv90pYpfF7eVHVEt/ST/zp5PyYgksjYNWtF
-         Z6evqh9G5dicTk4Cp/Baw3SvnCeihC9xRKEwN8s/kFU469PbPVGrw7D30kwajO4RYFN/
-         wR7bNlziVRwiuJL8SQ48wCmA/pXYUkJ9sNPL30uS9kYamsTuDKQCfJsE+ADWhv2x9bgo
-         QDMw==
-X-Gm-Message-State: AOJu0YwBlp7kSxpsZ3RfRZbnJirjVj1ttpzO6N7y4aJAmiOY0o9WnsQl
-	USnBtYCxszj95K+6CohT0rYxnstVIcMLrX4FSMj5kyJqWPgU4lXuH5Dq
-X-Gm-Gg: ASbGncs2PX5m2n4s0jV71LnV9+K1g9pMatvd5ELZQLZwxYA/p2q3ko2eFwOLuykMpD0
-	LOoZg5/0t5ZSkMHRXaqVCoXXIgng4z0leq3OEm2z8G/hUKUCypC7zhvqXDp+QYcVGtZqtqJyFWH
-	q+JqpW1vCyEDlBqfTEJV+NGRVYQWHzmf6fNnm5V86uyo1tXfAbqa5apv8UIDniOqT/lTh35+W37
-	h4eWTrEVD7xR9rX8kNY8Mh97bFQX5KoNggko6of9dBRZzzV8sSEf2x80fb1qboCNPdCqqCg3PWY
-	knTXNlyb5K+oF4Ljt33p6TKA4xu26Fx8tN24/hyDTA/bCZQyJuP3AvQ50oXBovW7BIlQ1oJHLPY
-	DAV+q4IVAZYg6A2PiQfpHDW+Of3waLCY5xvrY5asVhCUesecpuiXabkNUIkcI6TorUuCQ7R7/It
-	k6vksPnkurtzEf/rag/ApdEItXZQ==
-X-Google-Smtp-Source: AGHT+IElT9ynWn45kEF/QTBldN9gne+wXn8PQg4P0IoT5oqSWQd7KwM6rgYjqjp5h3pkYmlZjcPPQg==
-X-Received: by 2002:a17:902:c943:b0:290:ac36:2ed6 with SMTP id d9443c01a7336-290c9d1b907mr313186105ad.14.1761164590822;
-        Wed, 22 Oct 2025 13:23:10 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:a::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda5771sm66205ad.18.2025.10.22.13.23.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 13:23:10 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	axboe@kernel.dk
-Cc: linux-fsdevel@vger.kernel.org,
-	bschubert@ddn.com,
-	asml.silence@gmail.com,
-	io-uring@vger.kernel.org,
-	xiaobing.li@samsung.com
-Subject: [PATCH v1 2/2] fuse: support io-uring registered buffers
-Date: Wed, 22 Oct 2025 13:20:21 -0700
-Message-ID: <20251022202021.3649586-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251022202021.3649586-1-joannelkoong@gmail.com>
-References: <20251022202021.3649586-1-joannelkoong@gmail.com>
+	 Content-Type:MIME-Version; b=WmGCAfJmJD9U1AqLtrarjMeParvkh3atYLexVcWJO2UezJil6LokilCbrdipwfJLoZt76IfcG5hsrEy3DrlWPvyY62Z/84h9F7qLwai77SgyugHFv+Du+aXc3Mq7+oXPUcUqlhoB82auW9WqSeSpGMIQyvefzgMYrJ78xhu/jd4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y1tELKD7; arc=fail smtp.client-ip=52.101.193.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XUoy6q/hwKClIJlZcLKz0VV6E5p0U7fOILop+uFldJCTXyLAAG4/+cQYjuOOWUNgxfWwHCoe0qACvVPmzzR/D6EbKfxJ2y32gwqtrsRgGyqWIf6n7HPewIfouHGax1xhkwQquz/CimxtzRckTsttki6rAsnfrjHKJOaylVBtErwOJv3oDNworMAO+LXTv+rR7YOqfSQC13fWQsUrCMcp/tx012D3/AC498qgOcwvmD2ZVxXPKHfsIz2aw2DBmr3tzAxVVEwqa9cvTMt/hWcgNm7lL7kIGa8NYDyAA4dqWSPBJBfz/0LQ/0HsnOTrtDJuSln8OIWXg/+2fRJHoztO4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7KWIwEvOf2SWrnA7B/10QM4ogb+LFi5POJ0B5Bvm/0c=;
+ b=rdK1KNWcrWAqXCXlHW6JFoNO+gLHPb5mh3/nSic3B/QtHbjx9nBjabWLjov9efUmeLwZq78gCDdBZG3pz5Z5vlc2xB2mIL+WfYsTFLpO/z9l50hrhsrb8NfPfAB+yFfCGgoPawCosZ9LVbKHsP5ymOF5cE2QIhQsv4Uu7YRLLYm5AJ0qNwdWlwbFLahftpGJwC3JvSgagiLC4ttw/Q4a+1bjEN/CiGVHFA9r1cxFCH8yIky3oPxYVq3Yhg5KpGY9XcG/u09vinnCQQYCKIUJzdOcJsR9u7/8ZYMFk0V7/ZAU6KbVARbymqqVfqEMEoYUdhyQ3ej4NMoviz0BV2MR/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7KWIwEvOf2SWrnA7B/10QM4ogb+LFi5POJ0B5Bvm/0c=;
+ b=Y1tELKD7E2pC258KVU247o2xaZKEpV3PrKGFT9dSNeN6fqgG2oLmOHjvYQVG+iliHLf9/HFyXC2fL1e6HRvzi5XW68ZHp02nEMIipu0ApjszbJ7RfSdxwzQXWPx7lmGLD0QjcbWxiHc3kzOyd0OQmN0fo57cg6swMjGPOYcM/z5sq5Si25wSloWnLq7bDU04Ubp506B2PE5zrleKgkFgyMUpYtJ1OTa/c++/Jpjw6VL9wguD4FCyWNjUSUXLcuPGGCHkxExdbW5L0eJLezTlo+8NcwvX/PIOXS1IW55f8gnswazSmIWc7SDtoEI3h9Q8Z09MjhDEiTBq2L6w/QGyIA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ SJ1PR12MB6194.namprd12.prod.outlook.com (2603:10b6:a03:458::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 20:27:51 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 20:27:51 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linmiaohe@huawei.com, jane.chu@oracle.com, kernel@pankajraghav.com,
+ akpm@linux-foundation.org, mcgrof@kernel.org, nao.horiguchi@gmail.com,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/4] mm/huge_memory: preserve PG_has_hwpoisoned if a
+ folio is split to >0 order
+Date: Wed, 22 Oct 2025 16:27:48 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <5BB612B6-3A9C-4CC4-AAAC-107E4DC6670E@nvidia.com>
+In-Reply-To: <d3d05898-5530-4990-9d61-8268bd483765@redhat.com>
+References: <20251022033531.389351-1-ziy@nvidia.com>
+ <20251022033531.389351-2-ziy@nvidia.com>
+ <d3d05898-5530-4990-9d61-8268bd483765@redhat.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BL1PR13CA0141.namprd13.prod.outlook.com
+ (2603:10b6:208:2bb::26) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ1PR12MB6194:EE_
+X-MS-Office365-Filtering-Correlation-Id: 465512e0-d157-46b5-9226-08de11a978dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MXDCpKcF758zXOMaAN9jGWt7YsTTen7Kaz1VEO7ZAYF9xRzkzS0+5Rf/uSMG?=
+ =?us-ascii?Q?Z1DSoYYxtOWBKH1E/eOV78F4pwn1PhHmpT+NssvZQclelEGPhWjuE36BdqbB?=
+ =?us-ascii?Q?JpK40vsp5L7UYrtB3u0DLDbOGlpXu1yBNo8rVURkXE1YHSsfoPjrxxR7XyrG?=
+ =?us-ascii?Q?BaDNGQ6uk/dETaoYcy3S/teP9K4AkX5qZe97/xqG+6pOJouU3gd+Mm9MEzMw?=
+ =?us-ascii?Q?xoAvUfX5YEdqaH7uXkHK04SscHGHqTjBY1EngJNTUYVhGqr7b/MIe8j6gir9?=
+ =?us-ascii?Q?Sj1QAt4c788RjAi5WoMik/U7Nn5yKV3rMptWlNOZTLuWuIpHBBCf7zwDWFPP?=
+ =?us-ascii?Q?xLtKbCdSGudoiVQa8MjhRmqyvVFpJZUgltUTaZVbci+EW0vxXv3gbRqtFBM6?=
+ =?us-ascii?Q?PwZsnBy6cnQ91I/X0YCir95bvZZdnR1LdhHkpmP+69XaeC/E7CFZxPWNobvA?=
+ =?us-ascii?Q?RtVumnM5eNbfwS/eHsl6gE9L2kT3hEoZzAnM6585QxicSY5ya/7+hod6nXP8?=
+ =?us-ascii?Q?NPGkJ8EG+C87LmBMzGbYWNAurhY74iQHnWcof+lwp0+0dDk0Kl5K2whMwqzj?=
+ =?us-ascii?Q?UvpipDYMbyjcgWTavi0TIZI4nXgUzzjQPriLuw2OtN6aVLTAlqJfIGAWcZfK?=
+ =?us-ascii?Q?AU5zMhww3jxXuGquOxFKOg1rwP+kSPM7zVFSWiclcy0Io52mD0s+TMw4BIJ6?=
+ =?us-ascii?Q?YNo+67bFpJN4xun++INvYDJ00Pc/k5rTI+OijZJQGzpSKPuRdGMEV30bHwd7?=
+ =?us-ascii?Q?QQv6s7a5B9wTQpWeJElGiNCav3sz5adHHB9QnN3TJeP2QMmHUzcRW599DX/t?=
+ =?us-ascii?Q?n3K68hlM0naSK8+paSzFZ46QP5HL76OUYnBQS88OwwqUY+fosPLPB/2mT8qc?=
+ =?us-ascii?Q?bDfvEaKhoYn4ZL/aZwSYxYoSbztpVC9e2i6vltXRjnjasQXiaFRKQZ838Aj9?=
+ =?us-ascii?Q?YuP5Hk5Uv62yCUY/vE2vh4nL6UoE+2YZFiBQSn6bsW8Wdx9s1J8vGq7zz2yH?=
+ =?us-ascii?Q?VhS69iXv3IJUgp+jyTKW/OFYiJ9JHx1VXhPOPwkzf2ewf4FDsNB4fbjsqxkx?=
+ =?us-ascii?Q?7IOZxdnOXRVUqEX1HqOjb8zAfcqMR6YgZGkRG2Pj5rb2ISIPQOERzcRhh8tq?=
+ =?us-ascii?Q?fIHBgfQLeCY2GjJ/iSso7hAB6CDXVTW/7cLnUZHi41iW8BwnSU1XwpmXOpDl?=
+ =?us-ascii?Q?TMMcDIgXKEdIdsj0TWy091tD1ioOEHLWIxm/WmkTFwCnCNS+Qy7bdoiXctQO?=
+ =?us-ascii?Q?Y4KC9lT4KY6sPyTsmLyIxmv1Qna1vsbbkCmiQtMpmfhNSsVTZqDEIWa9hFVj?=
+ =?us-ascii?Q?ESTLi8YTEnXR9K2BPHAbwnKXIft7ztkPlahwHa6pGSh4/2eWgMha54tkwoRi?=
+ =?us-ascii?Q?HRPQ0ilzct1YQ/lToGzeqtY/yLbcULg5pWtVIaE4gf3Whz0cIOc7sFmQX2SS?=
+ =?us-ascii?Q?h0Yso38+A3JowVJYe6L95r0TBp1eZkRKLrEolfmEFEJGPrQ5F3+Nww=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PasDMWgt+Tu+atCC99iUhz72DBBNbfnPzsmpaEFUlx23aRhT1QGtVlTMIJWT?=
+ =?us-ascii?Q?fxFZNHHUQu2TV+VonDQmgHkLZr0TrJ7sZaRfQyOt9TcTs8w/G60vyQ2zCXLD?=
+ =?us-ascii?Q?0lneaZZpQLaMcpRiER8u5JfPhwLKEVqXCzvDFtbo2OUrghuX2axedZB599MW?=
+ =?us-ascii?Q?qZXpecMezmULVxJ8u/H8kTA69lP/g851sSLb2oTkqWUJTLY8fqPbWHoIr/u4?=
+ =?us-ascii?Q?fnM6Oq/Iagkm7BzmdX8avtqwSKnniwv3tA4sJ8aWp9F/NXT0kZDm9fhs9pMn?=
+ =?us-ascii?Q?xWuKmh5OsG8eP4Mf1lsI31QkQti/43v7Sjd57BPn/nP7HTI14xRQOq+b6sN8?=
+ =?us-ascii?Q?M8+jpZWMLNEEChuhZTNAXa3Z55Hn+3mdEzXqbR3xrkF+zQl613lrP8CfFFW3?=
+ =?us-ascii?Q?KhTBeUyXvX6U/bnDC7gL++nPS+MpvwVs5hCZpozK32cKBN2FuAZap/gccEez?=
+ =?us-ascii?Q?/rQ9rhEAqL5Z7rGAyKLq1xhDJMtrw7fNyo2iVHOzi4esbfZY+Z5EVytHaL2j?=
+ =?us-ascii?Q?I+3YrD7y85gk60KFdUzDBF7eUhwcu9wxISVXvU+duczA5MpUBl3iAZwN4p/X?=
+ =?us-ascii?Q?YzXp3EmhPjtvCenYtmH8ypPME9tn+f6vsGrtJeLAiA3h+5cE/W+V8I/r+I5D?=
+ =?us-ascii?Q?XmRQIOBlFrB2zQjzsoiKWQx1PdF7z33LbCl1m0WokV0CsR1SRqON6B2R7ub3?=
+ =?us-ascii?Q?+kTco5YSUHcHeZXXwBou9PjlG2iftkjrAQkimsavtCpVfaDxC7iASifiGazn?=
+ =?us-ascii?Q?TwFkNqLXrBAqjW1YU9xDnsii4J9RE3t0UgWIWEum2Np3OQtZsUX5DQ+SS4Uz?=
+ =?us-ascii?Q?WEz2ob8/N2gxTp4lLk7i7sxXD7MlZkYQgWz4JbElFMTtDimEjPnw9MEWZoRY?=
+ =?us-ascii?Q?UHl9ohGSM9qBin3LpwZ+/J0xpsV2bQ1TUi/qGhwRABwhKfIR8xFR3+bZ1v5/?=
+ =?us-ascii?Q?sAdEO8jJuepBpWpNQVQ/GfiV5/n17PkS5nXn57bvYIPz/qyKyxfHqe+IKntZ?=
+ =?us-ascii?Q?60rciqhacTRWvAw7XNyV60zeCLwS24PkAs7Bn1GrGT1AyTEo968LyYFcCYdv?=
+ =?us-ascii?Q?ng1rspkHCIR+2qcqQSQCAqjnHHSALS6wwbnBhrpIUBSjl/yWGq2sPc0XfZLb?=
+ =?us-ascii?Q?y+EKGcr7kWmnY7pDnl6S1346uqmGYZlblRe6Nkz1yPB3bkOI+n3s9sFNcuaO?=
+ =?us-ascii?Q?OHckB5O7fybTljxJjv1hNQTYBYR5BdInri5chKNneeZ2nWBTPGaWUuHTHoRn?=
+ =?us-ascii?Q?ijjPHK98gb/2vMMMZO3SHQAG14NWxDp1cbvxZiaDkl7gfdusfJueMmRbLsH5?=
+ =?us-ascii?Q?fympmjarhfjRVsWYwh3+GEKFyt2WN24fhI4fjKRGkB2QSel3R2KosH5dw0tQ?=
+ =?us-ascii?Q?r6MIh3c6ZETRxbrGhwfAQXl3rWcV3vNDCo4MvPH7WPGDxEodjMhHrF4a91dA?=
+ =?us-ascii?Q?2VGpFuot6ym84dgHgDJ75dacfZxUUhSaR1RYiGc4qgjUcIFXACgi672/M+N0?=
+ =?us-ascii?Q?tKGoUpZblsaOJhQYmxff5DV6CfhT/GTRL3ivd6UbK9b4g3S34x0Xa6xwHvWX?=
+ =?us-ascii?Q?ML/D+e85FwRFBc2BAsMKuijTwhNojy/OapfVLRDY?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 465512e0-d157-46b5-9226-08de11a978dc
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 20:27:50.9660
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T0LIZLERqzunwtZFDH+/lxA6od2wKstW6U9Xe9cKS1n+sR6iPonhFXDfqcYS47bw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6194
 
-Add support for io-uring registered buffers for fuse daemons
-communicating through the io-uring interface. Daemons may register
-buffers ahead of time, which will eliminate the overhead of
-pinning/unpinning user pages and translating virtual addresses for every
-server-kernel interaction.
+On 22 Oct 2025, at 16:09, David Hildenbrand wrote:
 
-To support page-aligned payloads, the buffer is structured such that the
-payload is at the front of the buffer and the fuse_uring_req_header is
-offset from the end of the buffer.
+> On 22.10.25 05:35, Zi Yan wrote:
+>> folio split clears PG_has_hwpoisoned, but the flag should be preserved=
+ in
+>> after-split folios containing pages with PG_hwpoisoned flag if the fol=
+io is
+>> split to >0 order folios. Scan all pages in a to-be-split folio to
+>> determine which after-split folios need the flag.
+>>
+>> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned =
+to
+>> avoid the scan and set it on all after-split folios, but resulting fal=
+se
+>> positive has undesirable negative impact. To remove false positive, ca=
+ller
+>> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() nee=
+ds to
+>> do the scan. That might be causing a hassle for current and future cal=
+lers
+>> and more costly than doing the scan in the split code. More details ar=
+e
+>> discussed in [1].
+>>
+>> It is OK that current implementation does not do this, because memory
+>> failure code always tries to split to order-0 folios and if a folio ca=
+nnot
+>> be split to order-0, memory failure code either gives warnings or the =
+split
+>> is not performed.
+>>
+>
+> We're losing PG_has_hwpoisoned for large folios, so likely this should =
+be
+> a stable fix for splitting anything to an order > 0 ?
 
-To be backwards compatible, fuse uring still needs to support non-registered
-buffers as well.
+I was the borderline on this, because:
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- fs/fuse/dev_uring.c   | 216 ++++++++++++++++++++++++++++++++++++++----
- fs/fuse/dev_uring_i.h |  17 +++-
- 2 files changed, 213 insertions(+), 20 deletions(-)
+1. before the hotfix, which prevents silently bumping target split order,=
 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index f6b12aebb8bb..c4dd4d168b61 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -574,6 +574,37 @@ static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
- 	return err;
- }
- 
-+static int fuse_uring_copy_from_ring_fixed_buf(struct fuse_ring *ring,
-+					       struct fuse_req *req,
-+					       struct fuse_ring_ent *ent)
-+{
-+	struct fuse_copy_state cs;
-+	struct fuse_args *args = req->args;
-+	struct iov_iter payload_iter;
-+	struct iov_iter headers_iter;
-+	struct fuse_uring_ent_in_out ring_in_out;
-+	size_t copied;
-+
-+	payload_iter = ent->fixed_buffer.payload_iter;
-+	payload_iter.data_source = ITER_SOURCE;
-+	headers_iter = ent->fixed_buffer.headers_iter;
-+	headers_iter.data_source = ITER_SOURCE;
-+
-+	iov_iter_advance(&headers_iter, offsetof(struct fuse_uring_req_header,
-+						 ring_ent_in_out));
-+
-+	copied = copy_from_iter(&ring_in_out, sizeof(ring_in_out),
-+				&headers_iter);
-+	if (copied != sizeof(ring_in_out))
-+		return -EFAULT;
-+
-+	fuse_copy_init(&cs, false, &payload_iter);
-+	cs.is_uring = true;
-+	cs.req = req;
-+
-+	return fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
-+}
-+
- static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 				     struct fuse_req *req,
- 				     struct fuse_ring_ent *ent)
-@@ -584,12 +615,12 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 	int err;
- 	struct fuse_uring_ent_in_out ring_in_out;
- 
--	err = copy_from_user(&ring_in_out, &ent->headers->ring_ent_in_out,
-+	err = copy_from_user(&ring_in_out, &ent->user.headers->ring_ent_in_out,
- 			     sizeof(ring_in_out));
- 	if (err)
- 		return -EFAULT;
- 
--	err = import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_sz,
-+	err = import_ubuf(ITER_SOURCE, ent->user.payload, ring->max_payload_sz,
- 			  &iter);
- 	if (err)
- 		return err;
-@@ -601,6 +632,79 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 	return fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
- }
- 
-+static int fuse_uring_args_to_ring_fixed_buf(struct fuse_ring *ring,
-+					     struct fuse_req *req,
-+					     struct fuse_ring_ent *ent)
-+{
-+	struct fuse_copy_state cs;
-+	struct fuse_args *args = req->args;
-+	struct fuse_in_arg *in_args = args->in_args;
-+	int num_args = args->in_numargs;
-+	struct iov_iter payload_iter;
-+	struct iov_iter headers_iter;
-+	struct fuse_uring_ent_in_out ent_in_out = {
-+		.flags = 0,
-+		.commit_id = req->in.h.unique,
-+	};
-+	size_t copied;
-+	bool advanced_headers = false;
-+	int err;
-+
-+	payload_iter = ent->fixed_buffer.payload_iter;
-+	payload_iter.data_source = ITER_DEST;
-+
-+	headers_iter = ent->fixed_buffer.headers_iter;
-+	headers_iter.data_source = ITER_DEST;
-+
-+	fuse_copy_init(&cs, true, &payload_iter);
-+	cs.is_uring = true;
-+	cs.req = req;
-+
-+	if (num_args > 0) {
-+		/*
-+		 * Expectation is that the first argument is the per op header.
-+		 * Some op code have that as zero size.
-+		 */
-+		if (args->in_args[0].size > 0) {
-+			iov_iter_advance(&headers_iter,
-+					 offsetof(struct fuse_uring_req_header,
-+						  op_in));
-+			copied = copy_to_iter(in_args->value, in_args->size,
-+					      &headers_iter);
-+			if (copied != in_args->size) {
-+				pr_info_ratelimited(
-+					"Copying the header failed.\n");
-+				return -EFAULT;
-+			}
-+
-+			iov_iter_advance(&headers_iter,
-+					 FUSE_URING_OP_IN_OUT_SZ - in_args->size);
-+			advanced_headers = true;
-+		}
-+		in_args++;
-+		num_args--;
-+	}
-+	if (!advanced_headers)
-+		iov_iter_advance(&headers_iter,
-+				 offsetof(struct fuse_uring_req_header,
-+					  ring_ent_in_out));
-+
-+	/* copy the payload */
-+	err = fuse_copy_args(&cs, num_args, args->in_pages,
-+			     (struct fuse_arg *)in_args, 0);
-+	if (err) {
-+		pr_info_ratelimited("%s fuse_copy_args failed\n", __func__);
-+		return err;
-+	}
-+
-+	ent_in_out.payload_sz = cs.ring.copied_sz;
-+	copied = copy_to_iter(&ent_in_out, sizeof(ent_in_out), &headers_iter);
-+	if (copied != sizeof(ent_in_out))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-  /*
-   * Copy data from the req to the ring buffer
-   */
-@@ -618,7 +722,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
- 		.commit_id = req->in.h.unique,
- 	};
- 
--	err = import_ubuf(ITER_DEST, ent->payload, ring->max_payload_sz, &iter);
-+	err = import_ubuf(ITER_DEST, ent->user.payload, ring->max_payload_sz, &iter);
- 	if (err) {
- 		pr_info_ratelimited("fuse: Import of user buffer failed\n");
- 		return err;
-@@ -634,7 +738,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
- 		 * Some op code have that as zero size.
- 		 */
- 		if (args->in_args[0].size > 0) {
--			err = copy_to_user(&ent->headers->op_in, in_args->value,
-+			err = copy_to_user(&ent->user.headers->op_in, in_args->value,
- 					   in_args->size);
- 			if (err) {
- 				pr_info_ratelimited(
-@@ -655,7 +759,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
- 	}
- 
- 	ent_in_out.payload_sz = cs.ring.copied_sz;
--	err = copy_to_user(&ent->headers->ring_ent_in_out, &ent_in_out,
-+	err = copy_to_user(&ent->user.headers->ring_ent_in_out, &ent_in_out,
- 			   sizeof(ent_in_out));
- 	return err ? -EFAULT : 0;
- }
-@@ -679,18 +783,31 @@ static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
- 		return err;
- 
- 	/* copy the request */
--	err = fuse_uring_args_to_ring(ring, req, ent);
-+	if (ent->is_fixed_buffer)
-+		err = fuse_uring_args_to_ring_fixed_buf(ring, req, ent);
-+	else
-+		err = fuse_uring_args_to_ring(ring, req, ent);
- 	if (unlikely(err)) {
- 		pr_info_ratelimited("Copy to ring failed: %d\n", err);
- 		return err;
- 	}
- 
- 	/* copy fuse_in_header */
--	err = copy_to_user(&ent->headers->in_out, &req->in.h,
--			   sizeof(req->in.h));
--	if (err) {
--		err = -EFAULT;
--		return err;
-+	if (ent->is_fixed_buffer) {
-+		struct iov_iter headers_iter = ent->fixed_buffer.headers_iter;
-+		size_t copied;
-+
-+		headers_iter.data_source = ITER_DEST;
-+		copied = copy_to_iter(&req->in.h, sizeof(req->in.h),
-+				      &headers_iter);
-+
-+		if (copied != sizeof(req->in.h))
-+			return -EFAULT;
-+	} else {
-+		err = copy_to_user(&ent->user.headers->in_out, &req->in.h,
-+				   sizeof(req->in.h));
-+		if (err)
-+			return -EFAULT;
- 	}
- 
- 	return 0;
-@@ -815,8 +932,18 @@ static void fuse_uring_commit(struct fuse_ring_ent *ent, struct fuse_req *req,
- 	struct fuse_conn *fc = ring->fc;
- 	ssize_t err = 0;
- 
--	err = copy_from_user(&req->out.h, &ent->headers->in_out,
--			     sizeof(req->out.h));
-+	if (ent->is_fixed_buffer) {
-+		struct iov_iter headers_iter = ent->fixed_buffer.headers_iter;
-+		size_t copied;
-+
-+		headers_iter.data_source = ITER_SOURCE;
-+		copied = copy_from_iter(&req->out.h, sizeof(req->out.h), &headers_iter);
-+		if (copied != sizeof(req->out.h))
-+			err = -EFAULT;
-+	} else {
-+		err = copy_from_user(&req->out.h, &ent->user.headers->in_out,
-+				     sizeof(req->out.h));
-+	}
- 	if (err) {
- 		req->out.h.error = -EFAULT;
- 		goto out;
-@@ -828,7 +955,11 @@ static void fuse_uring_commit(struct fuse_ring_ent *ent, struct fuse_req *req,
- 		goto out;
- 	}
- 
--	err = fuse_uring_copy_from_ring(ring, req, ent);
-+	if (ent->is_fixed_buffer)
-+		err = fuse_uring_copy_from_ring_fixed_buf(ring, req, ent);
-+	else
-+		err = fuse_uring_copy_from_ring(ring, req, ent);
-+
- out:
- 	fuse_uring_req_end(ent, req, err);
- }
-@@ -1027,6 +1158,52 @@ static int fuse_uring_get_iovec_from_sqe(const struct io_uring_sqe *sqe,
- 	return 0;
- }
- 
-+static struct fuse_ring_ent *
-+fuse_uring_create_ring_ent_fixed_buf(struct io_uring_cmd *cmd,
-+				     struct fuse_ring_queue *queue)
-+{
-+	struct fuse_ring *ring = queue->ring;
-+	struct fuse_ring_ent *ent;
-+	unsigned payload_size, len;
-+	u64 ubuf;
-+	int err;
-+
-+	err = -ENOMEM;
-+	ent = kzalloc(sizeof(*ent), GFP_KERNEL_ACCOUNT);
-+	if (!ent)
-+		return ERR_PTR(err);
-+
-+	INIT_LIST_HEAD(&ent->list);
-+
-+	ent->queue = queue;
-+	ent->is_fixed_buffer = true;
-+
-+	err = io_uring_cmd_get_buffer_info(cmd, &ubuf, &len);
-+	if (err)
-+		goto error;
-+
-+	payload_size = len - sizeof(struct fuse_uring_req_header);
-+	err = io_uring_cmd_import_fixed(ubuf, payload_size, ITER_DEST,
-+					&ent->fixed_buffer.payload_iter, cmd, 0);
-+	if (err)
-+		goto error;
-+
-+	err = io_uring_cmd_import_fixed(ubuf + payload_size,
-+					sizeof(struct fuse_uring_req_header),
-+					ITER_DEST,
-+					&ent->fixed_buffer.headers_iter, cmd, 0);
-+	if (err)
-+		goto error;
-+
-+	atomic_inc(&ring->queue_refs);
-+
-+	return ent;
-+
-+error:
-+	kfree(ent);
-+	return ERR_PTR(err);
-+}
-+
- static struct fuse_ring_ent *
- fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
- 			   struct fuse_ring_queue *queue)
-@@ -1065,8 +1242,8 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
- 	INIT_LIST_HEAD(&ent->list);
- 
- 	ent->queue = queue;
--	ent->headers = iov[0].iov_base;
--	ent->payload = iov[1].iov_base;
-+	ent->user.headers = iov[0].iov_base;
-+	ent->user.payload = iov[1].iov_base;
- 
- 	atomic_inc(&ring->queue_refs);
- 	return ent;
-@@ -1085,6 +1262,8 @@ static int fuse_uring_register(struct io_uring_cmd *cmd,
- 	struct fuse_ring_ent *ent;
- 	int err;
- 	unsigned int qid = READ_ONCE(cmd_req->qid);
-+	bool is_fixed_buffer =
-+		cmd->sqe->uring_cmd_flags & IORING_URING_CMD_FIXED;
- 
- 	err = -ENOMEM;
- 	if (!ring) {
-@@ -1110,7 +1289,10 @@ static int fuse_uring_register(struct io_uring_cmd *cmd,
- 	 * case of entry errors below, will be done at ring destruction time.
- 	 */
- 
--	ent = fuse_uring_create_ring_ent(cmd, queue);
-+	if (is_fixed_buffer)
-+		ent = fuse_uring_create_ring_ent_fixed_buf(cmd, queue);
-+	else
-+		ent = fuse_uring_create_ring_ent(cmd, queue);
- 	if (IS_ERR(ent))
- 		return PTR_ERR(ent);
- 
-diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-index 51a563922ce1..748c87e325f5 100644
---- a/fs/fuse/dev_uring_i.h
-+++ b/fs/fuse/dev_uring_i.h
-@@ -38,9 +38,20 @@ enum fuse_ring_req_state {
- 
- /** A fuse ring entry, part of the ring queue */
- struct fuse_ring_ent {
--	/* userspace buffer */
--	struct fuse_uring_req_header __user *headers;
--	void __user *payload;
-+	/* True if daemon has registered its buffers ahead of time */
-+	bool is_fixed_buffer;
-+	union {
-+		/* userspace buffer */
-+		struct {
-+			struct fuse_uring_req_header __user *headers;
-+			void __user *payload;
-+		} user;
-+
-+		struct {
-+			struct iov_iter payload_iter;
-+			struct iov_iter headers_iter;
-+		} fixed_buffer;
-+	};
- 
- 	/* the ring queue that owns the request */
- 	struct fuse_ring_queue *queue;
--- 
-2.47.3
+   memory failure would give a warning when a folio is split to >0 order
+   folios. The warning is masking this issue.
+2. after the hotfix, folios with PG_has_hwpoisoned will not be split
+   to >0 order folios since memory failure always wants to split a folio
+   to order 0 and a folio containing LBS folios will not be split, thus
+   without losing PG_has_hwpoisoned.
 
+But one can use debugfs interface to split a has_hwpoisoned folio to >0 o=
+rder
+folios.
+
+I will add
+Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")=
+
+and cc stable in the next version.
+
+>
+>> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=3DcpRXrSrJ=
+9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>> ---
+>>   mm/huge_memory.c | 28 +++++++++++++++++++++++++---
+>>   1 file changed, 25 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index fc65ec3393d2..f3896c1f130f 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -3455,6 +3455,17 @@ bool can_split_folio(struct folio *folio, int c=
+aller_pins, int *pextra_pins)
+>>   					caller_pins;
+>>   }
+>>  +static bool page_range_has_hwpoisoned(struct page *first_page, long =
+nr_pages)
+>> +{
+>> +	long i;
+>> +
+>> +	for (i =3D 0; i < nr_pages; i++)
+>> +		if (PageHWPoison(first_page + i))
+>> +			return true;
+>> +
+>> +	return false;
+>
+> Nit: I'd just do
+>
+> static bool page_range_has_hwpoisoned(struct page *page, unsigned long =
+nr_pages)
+> {
+> 	for (; nr_pages; page++, nr_pages--)
+> 		if (PageHWPoison(page))
+> 			return true;
+> 	}
+> 	return false;
+> }
+>
+
+OK, will use this one.
+
+>> +}
+>> +
+>>   /*
+>>    * It splits @folio into @new_order folios and copies the @folio met=
+adata to
+>>    * all the resulting folios.
+>> @@ -3462,22 +3473,32 @@ bool can_split_folio(struct folio *folio, int =
+caller_pins, int *pextra_pins)
+>>   static void __split_folio_to_order(struct folio *folio, int old_orde=
+r,
+>>   		int new_order)
+>>   {
+>> +	/* Scan poisoned pages when split a poisoned folio to large folios *=
+/
+>> +	bool check_poisoned_pages =3D folio_test_has_hwpoisoned(folio) &&
+>> +				    new_order !=3D 0;
+>
+> I'd shorten this to "handle_hwpoison" or sth like that.
+>
+> Maybe we can make it const and fit it into a single line.
+>
+> Comparison with 0 is not required.
+>
+> 	const bool handle_hwpoison =3D folio_test_has_hwpoisoned(folio) && new=
+_order;
+
+Sure, will use this.
+
+>
+>>   	long new_nr_pages =3D 1 << new_order;
+>>   	long nr_pages =3D 1 << old_order;
+>>   	long i;
+>>  +	folio_clear_has_hwpoisoned(folio);
+>> +
+>> +	/* Check first new_nr_pages since the loop below skips them */
+>> +	if (check_poisoned_pages &&
+>> +	    page_range_has_hwpoisoned(folio_page(folio, 0), new_nr_pages))
+>> +		folio_set_has_hwpoisoned(folio);
+>>   	/*
+>>   	 * Skip the first new_nr_pages, since the new folio from them have =
+all
+>>   	 * the flags from the original folio.
+>>   	 */
+>>   	for (i =3D new_nr_pages; i < nr_pages; i +=3D new_nr_pages) {
+>>   		struct page *new_head =3D &folio->page + i;
+>> -
+>>   		/*
+>>   		 * Careful: new_folio is not a "real" folio before we cleared Page=
+Tail.
+>>   		 * Don't pass it around before clear_compound_head().
+>>   		 */
+>>   		struct folio *new_folio =3D (struct folio *)new_head;
+>> +		bool poisoned_new_folio =3D check_poisoned_pages &&
+>> +			page_range_has_hwpoisoned(new_head, new_nr_pages);
+>
+> Is the temp variable really required? I'm afraid it is a bit ugly eithe=
+r way :)
+>
+> I'd just move it into the if() below.
+>
+> 	if (handle_hwpoison &&
+> 	    page_range_has_hwpoisoned(new_head, new_nr_pages)
+> 		folio_set_has_hwpoisoned(new_folio);
+>
+
+Sure. :)
+
+--
+Best Regards,
+Yan, Zi
 
