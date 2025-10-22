@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-65076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0104BFB045
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:58:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D0CBFB096
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 11:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70744584030
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604AC3AB22E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 09:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B46730F53E;
-	Wed, 22 Oct 2025 08:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93892311979;
+	Wed, 22 Oct 2025 09:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="INyd/zK+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JHYByJ7o";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0CuB5OkP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="58uCDXvn"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dSiQXI/l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MWisSngV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qdPETKvZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3uDlxHFr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42A130CD98
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 08:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBBC3101BA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 09:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761123509; cv=none; b=G1gACqK6olM6IhHEYMGS6DuQD8ckOFLFHgwB+Xm8RJtG14tqz3oYBq90gl6YqQM2KnnH9fQ3tNszfolIXfX/T+bQAK4FsCSEbN1WYzcwkSCIk4yccGwSCnXpSwoghSQrw3ABp3bqxB3TnJPJREzLBUxSWWIsfYXTOhsM4T3UKnM=
+	t=1761123711; cv=none; b=aah82/BPkuy1rp18Q82PhQ1iwXlzPx98JdB4I2BCeOauP6W4vEoAn4Ve/ojHCZPHBbSlx5slYM0b49TzkTpTc4zQvi+Oy+PRFdYyyxDx8KcCCcfzpCiy0jmb1Ldaoi5Xp+7a1+XITp10HFSNRCQpG3EH1NlH/L2NPRq8jlsvRC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761123509; c=relaxed/simple;
-	bh=miX3y3AeKahdUqLrwrfw2wjjomDQvkrf/LXUFqyccP8=;
+	s=arc-20240116; t=1761123711; c=relaxed/simple;
+	bh=VHN/UQff7A3+DxFgq1sSc7iiJV2KTM6NJo0DtGeq3rs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgPDcNjT51zAxmILUvNf+VlFmChaMBhhwbNHc7qkbUqfMxSxQ3ldo6eaUFOz4wVMRAOfwDChRhhGCIzTFUNUKk4hXGwInZ8jTKf9D9AKE9H5rfpLyMUjtGdqRi2sRT5XBpsgao99gXS1NTBW6hmt/S3zWsXJdofWwC4iaMBYVcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=INyd/zK+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JHYByJ7o; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0CuB5OkP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=58uCDXvn; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=iYKxmJSkTrOT6zGx1Mx8vKPsUNWXFwnRZ0s8x4fJmqfFoHCJkppgsABWh8sI4z3AnUdy25Igk3aMKjhfPtjgPET9VQy2GvMaaxxq3/LOmSJZZWmPEifvn+MGmDjV1I/poOHcQhgNWbXQbtW9VdpwpHsGe/8fJTIrCdqgUg2W5dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dSiQXI/l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MWisSngV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qdPETKvZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3uDlxHFr; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 49AC71F769;
-	Wed, 22 Oct 2025 08:58:17 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 49D7C1F749;
+	Wed, 22 Oct 2025 09:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761123501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1761123702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3ILnujSjCtzliBVQlHu/pU5YVaYGg09jhAWEZowBEYI=;
-	b=INyd/zK+xbJrcBrQVb1B+Yzk4eqchns/Tixsdy/uw1Nvg4bMxgyr6lWwMItdZ99o+4Tuvf
-	OC0hU2cAhalh409HahdTDkVdMCCD7XyZKnP1jl1fjkN+k90WXWdqlzfuilU1SIDvaWhJnV
-	tOIwDSF4wAGfHlVHgE9+9WLnAlgRKZk=
+	bh=rDdPlNAcuhAAy0Fe+9/oq8PqcomW2cgrMGt2giiFlOU=;
+	b=dSiQXI/lo5BVa8LX9AmhKCTXDAmIn6mF+frLmQXmp7bUVGu8yUxl7sDryqyFQsClydfajG
+	dWqthMIRl7vL3YXLr8LYwo8I44U5PuYsEyHr9wRTHCkWDRQNdqzQLVUNWG2DU7e3EwKERe
+	gp7b8bCMJWOxDErHASAP+6Q2BYHWVCU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761123501;
+	s=susede2_ed25519; t=1761123702;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3ILnujSjCtzliBVQlHu/pU5YVaYGg09jhAWEZowBEYI=;
-	b=JHYByJ7ohXRRBYIT4/WvR7ocJK2/PS/xHMwzuH+PQEE5hE750Jc2Hy5mNhhsC0NAtZLpix
-	5Y7fVY+g/1HMtgCw==
+	bh=rDdPlNAcuhAAy0Fe+9/oq8PqcomW2cgrMGt2giiFlOU=;
+	b=MWisSngV32oGPqXWOijJsTcE2TbQIq8cuT77IYQAwy6y3yy8YH+GenekNfhR8wARPsWWO2
+	ccIzjqUYOqF8SFCQ==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761123497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1761123698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3ILnujSjCtzliBVQlHu/pU5YVaYGg09jhAWEZowBEYI=;
-	b=0CuB5OkPCWFD9UEYoTzMlzHLl+3oq9dfRcDjqZIMD9aromE7ewtK1hvwwfD4lKCvAcpuea
-	xo837RjPid/V6z3s7X46oFCDtfuX6lUjn5Pi/1Soy69AMixNZiC++5N1rG0SoFnY2kWQaJ
-	2OgVFzyOWaRz3Jz7sbVXc6JNkbRexXE=
+	bh=rDdPlNAcuhAAy0Fe+9/oq8PqcomW2cgrMGt2giiFlOU=;
+	b=qdPETKvZPIPot8Ex3gj2HTC55yOlxp9zrZ0yMjmUTgO9QsKXnFtYZdYQrfFioOKr9Y346j
+	CGm8LEOPnwWEIrTVhuVH4s+7qlaOhJ0EzTZTTM9MkfxP9blCETMGHLIIyauVo/MYF66/8a
+	1E8Y+N/bkUxtNzEygqA5H9BwpCyMnrs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761123497;
+	s=susede2_ed25519; t=1761123698;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3ILnujSjCtzliBVQlHu/pU5YVaYGg09jhAWEZowBEYI=;
-	b=58uCDXvn81FxryP0z2T8/eVDp8/QLdcE2k7txaL8huaOyvLzEn4iOUu913pIG1VGP1Sz0u
-	JhbWSOIRff+dmkAA==
+	bh=rDdPlNAcuhAAy0Fe+9/oq8PqcomW2cgrMGt2giiFlOU=;
+	b=3uDlxHFrVzqE2LzeWr7B9NE7IM77VJZ1LN5sResymS2pMKDGNh6cCav/Jxi9s4zHuqYfiu
+	aExjNa6qZBBa6/AQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3197813A29;
-	Wed, 22 Oct 2025 08:58:17 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B5EC13A29;
+	Wed, 22 Oct 2025 09:01:38 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 31wSDKmc+Gg1aAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 22 Oct 2025 08:58:17 +0000
+	id Ff15DnKd+GhDawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 22 Oct 2025 09:01:38 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D0A3DA0990; Wed, 22 Oct 2025 10:58:16 +0200 (CEST)
-Date: Wed, 22 Oct 2025 10:58:16 +0200
+	id AC4BCA0990; Wed, 22 Oct 2025 11:01:22 +0200 (CEST)
+Date: Wed, 22 Oct 2025 11:01:22 +0200
 From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, 
@@ -109,11 +109,11 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>,
 	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
 	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
 	netdev@vger.kernel.org
-Subject: Re: [PATCH v3 01/13] filelock: push the S_ISREG check down to
- ->setlease handlers
-Message-ID: <vimhf2fgjnwcavlxevt5cnsfkgjdps6z545nb7cmknwodnewds@rtxxompo53xx>
+Subject: Re: [PATCH v3 08/13] vfs: make vfs_symlink break delegations on
+ parent dir
+Message-ID: <od3ovbtjf3hc3htk6wxhb4t7wpq3he53dm3l23d456o4yjbe4t@tooasyi3jer4>
 References: <20251021-dir-deleg-ro-v3-0-a08b1cde9f4c@kernel.org>
- <20251021-dir-deleg-ro-v3-1-a08b1cde9f4c@kernel.org>
+ <20251021-dir-deleg-ro-v3-8-a08b1cde9f4c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -122,7 +122,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021-dir-deleg-ro-v3-1-a08b1cde9f4c@kernel.org>
+In-Reply-To: <20251021-dir-deleg-ro-v3-8-a08b1cde9f4c@kernel.org>
 X-Spam-Level: 
 X-Spamd-Result: default: False [-2.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
@@ -147,26 +147,18 @@ X-Spamd-Result: default: False [-2.30 / 50.00];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
 X-Spam-Flag: NO
 X-Spam-Score: -2.30
 
-On Tue 21-10-25 11:25:36, Jeff Layton wrote:
-> When nfsd starts requesting directory delegations, setlease handlers may
-> see requests for leases on directories. Push the !S_ISREG check down
-> into the non-trivial setlease handlers, so we can selectively enable
-> them where they're supported.
+On Tue 21-10-25 11:25:43, Jeff Layton wrote:
+> In order to add directory delegation support, we must break delegations
+> on the parent on any change to the directory.
 > 
-> FUSE is special: It's the only filesystem that supports atomic_open and
-> allows kernel-internal leases. atomic_open is issued when the VFS
-> doesn't know the state of the dentry being opened. If the file doesn't
-> exist, it may be created, in which case the dir lease should be broken.
+> Add a delegated_inode parameter to vfs_symlink() and have it break the
+> delegation. do_symlinkat() can then wait on the delegation break before
+> proceeding.
 > 
-> The existing kernel-internal lease implementation has no provision for
-> this. Ensure that we don't allow directory leases by default going
-> forward by explicitly disabling them there.
-> 
-> Reviewed-by: NeilBrown <neil@brown.name>
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
 Looks good. Feel free to add:
@@ -176,74 +168,135 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/fuse/dir.c          | 1 +
->  fs/locks.c             | 5 +++--
->  fs/nfs/nfs4file.c      | 2 ++
->  fs/smb/client/cifsfs.c | 3 +++
->  4 files changed, 9 insertions(+), 2 deletions(-)
+>  fs/ecryptfs/inode.c      |  2 +-
+>  fs/init.c                |  2 +-
+>  fs/namei.c               | 16 ++++++++++++++--
+>  fs/nfsd/vfs.c            |  2 +-
+>  fs/overlayfs/overlayfs.h |  2 +-
+>  include/linux/fs.h       |  2 +-
+>  6 files changed, 19 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index ecaec0fea3a132e7cbb88121e7db7fb504d57d3c..667774cc72a1d49796f531fcb342d2e4878beb85 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -2230,6 +2230,7 @@ static const struct file_operations fuse_dir_operations = {
->  	.fsync		= fuse_dir_fsync,
->  	.unlocked_ioctl	= fuse_dir_ioctl,
->  	.compat_ioctl	= fuse_dir_compat_ioctl,
-> +	.setlease	= simple_nosetlease,
->  };
->  
->  static const struct inode_operations fuse_common_inode_operations = {
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 04a3f0e2072461b6e2d3d1cd12f2b089d69a7db3..0b16921fb52e602ea2e0c3de39d9d772af98ba7d 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1929,6 +1929,9 @@ static int generic_delete_lease(struct file *filp, void *owner)
->  int generic_setlease(struct file *filp, int arg, struct file_lease **flp,
->  			void **priv)
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index 639ae42bcd56890d04592f7269e4ffc099b44f09..d430ec5a63094ea4cd42828e7d44f0f8d918fcec 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -480,7 +480,7 @@ static int ecryptfs_symlink(struct mnt_idmap *idmap,
+>  	if (rc)
+>  		goto out_lock;
+>  	rc = vfs_symlink(&nop_mnt_idmap, lower_dir, lower_dentry,
+> -			 encoded_symname);
+> +			 encoded_symname, NULL);
+>  	kfree(encoded_symname);
+>  	if (rc || d_really_is_negative(lower_dentry))
+>  		goto out_lock;
+> diff --git a/fs/init.c b/fs/init.c
+> index 4f02260dd65b0dfcbfbf5812d2ec6a33444a3b1f..e0f5429c0a49d046bd3f231a260954ed0f90ef44 100644
+> --- a/fs/init.c
+> +++ b/fs/init.c
+> @@ -209,7 +209,7 @@ int __init init_symlink(const char *oldname, const char *newname)
+>  	error = security_path_symlink(&path, dentry, oldname);
+>  	if (!error)
+>  		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+> -				    dentry, oldname);
+> +				    dentry, oldname, NULL);
+>  	end_creating_path(&path, dentry);
+>  	return error;
+>  }
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 7e400cbdbc6af1c72eb684f051d0571e944a27d7..71af256cdd941e200389570538f64a3f795e6c83 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4851,6 +4851,7 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
+>   * @dir:	inode of the parent directory
+>   * @dentry:	dentry of the child symlink file
+>   * @oldname:	name of the file to link to
+> + * @delegated_inode: returns victim inode, if the inode is delegated.
+>   *
+>   * Create a symlink.
+>   *
+> @@ -4861,7 +4862,8 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
+>   * raw inode simply pass @nop_mnt_idmap.
+>   */
+>  int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+> -		struct dentry *dentry, const char *oldname)
+> +		struct dentry *dentry, const char *oldname,
+> +		struct inode **delegated_inode)
 >  {
-> +	if (!S_ISREG(file_inode(filp)->i_mode))
-> +		return -EINVAL;
-> +
->  	switch (arg) {
->  	case F_UNLCK:
->  		return generic_delete_lease(filp, *priv);
-> @@ -2018,8 +2021,6 @@ vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
+>  	int error;
 >  
->  	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
->  		return -EACCES;
-> -	if (!S_ISREG(inode->i_mode))
-> -		return -EINVAL;
->  	error = security_file_lock(filp, arg);
+> @@ -4876,6 +4878,10 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
 >  	if (error)
 >  		return error;
-> diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> index 7f43e890d3564a000dab9365048a3e17dc96395c..7317f26892c5782a39660cae87ec1afea24e36c0 100644
-> --- a/fs/nfs/nfs4file.c
-> +++ b/fs/nfs/nfs4file.c
-> @@ -431,6 +431,8 @@ void nfs42_ssc_unregister_ops(void)
->  static int nfs4_setlease(struct file *file, int arg, struct file_lease **lease,
->  			 void **priv)
->  {
-> +	if (!S_ISREG(file_inode(file)->i_mode))
-> +		return -EINVAL;
->  	return nfs4_proc_setlease(file, arg, lease, priv);
->  }
 >  
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index 4f959f1e08d235071a151c1438c753fcd05099e5..1522c6b61b48c05c93f2bedeab0d35b6d85378e2 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -1149,6 +1149,9 @@ cifs_setlease(struct file *file, int arg, struct file_lease **lease, void **priv
->  	struct inode *inode = file_inode(file);
->  	struct cifsFileInfo *cfile = file->private_data;
->  
-> +	if (!S_ISREG(inode->i_mode))
-> +		return -EINVAL;
+> +	error = try_break_deleg(dir, delegated_inode);
+> +	if (error)
+> +		return error;
 > +
->  	/* Check if file is oplocked if this is request for new lease */
->  	if (arg == F_UNLCK ||
->  	    ((arg == F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
+>  	error = dir->i_op->symlink(idmap, dir, dentry, oldname);
+>  	if (!error)
+>  		fsnotify_create(dir, dentry);
+> @@ -4889,6 +4895,7 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
+>  	struct dentry *dentry;
+>  	struct path path;
+>  	unsigned int lookup_flags = 0;
+> +	struct inode *delegated_inode = NULL;
+>  
+>  	if (IS_ERR(from)) {
+>  		error = PTR_ERR(from);
+> @@ -4903,8 +4910,13 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
+>  	error = security_path_symlink(&path, dentry, from->name);
+>  	if (!error)
+>  		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+> -				    dentry, from->name);
+> +				    dentry, from->name, &delegated_inode);
+>  	end_creating_path(&path, dentry);
+> +	if (delegated_inode) {
+> +		error = break_deleg_wait(&delegated_inode);
+> +		if (!error)
+> +			goto retry;
+> +	}
+>  	if (retry_estale(error, lookup_flags)) {
+>  		lookup_flags |= LOOKUP_REVAL;
+>  		goto retry;
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 44debf3d0be450ddc245e2fa4f57fe076e1454a2..386f454badce7ed448399ef93e9c8edafbcc4d79 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1829,7 +1829,7 @@ nfsd_symlink(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  	err = fh_fill_pre_attrs(fhp);
+>  	if (err != nfs_ok)
+>  		goto out_unlock;
+> -	host_err = vfs_symlink(&nop_mnt_idmap, d_inode(dentry), dnew, path);
+> +	host_err = vfs_symlink(&nop_mnt_idmap, d_inode(dentry), dnew, path, NULL);
+>  	err = nfserrno(host_err);
+>  	cerr = fh_compose(resfhp, fhp->fh_export, dnew, fhp);
+>  	if (!err)
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 87b82dada7ec1b8429299c68078cda24176c5607..94bb4540f7ae2e0571b3b88393c180bd73c3c09c 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -267,7 +267,7 @@ static inline int ovl_do_symlink(struct ovl_fs *ofs,
+>  				 struct inode *dir, struct dentry *dentry,
+>  				 const char *oldname)
+>  {
+> -	int err = vfs_symlink(ovl_upper_mnt_idmap(ofs), dir, dentry, oldname);
+> +	int err = vfs_symlink(ovl_upper_mnt_idmap(ofs), dir, dentry, oldname, NULL);
+>  
+>  	pr_debug("symlink(\"%s\", %pd2) = %i\n", oldname, dentry, err);
+>  	return err;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index a1e1afe39e01a46bf0a81e241b92690947402851..d8c7245da3bf3200b435c7ea6cafcf7903ebf293 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2117,7 +2117,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
+>  int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
+>  	      umode_t, dev_t, struct inode **);
+>  int vfs_symlink(struct mnt_idmap *, struct inode *,
+> -		struct dentry *, const char *);
+> +		struct dentry *, const char *, struct inode **);
+>  int vfs_link(struct dentry *, struct mnt_idmap *, struct inode *,
+>  	     struct dentry *, struct inode **);
+>  int vfs_rmdir(struct mnt_idmap *, struct inode *, struct dentry *,
 > 
 > -- 
 > 2.51.0
