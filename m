@@ -1,134 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-65071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E1FBFADB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:21:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537DDBFADD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4B33A9DC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:20:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34ECC4F9A43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CB72FD1D3;
-	Wed, 22 Oct 2025 08:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A440B309F1A;
+	Wed, 22 Oct 2025 08:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJvJ5L6k"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yJ9I1qmu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936AF3054C8;
-	Wed, 22 Oct 2025 08:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8601307ACE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 08:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121245; cv=none; b=bSenC+eabTh2vmAxgaPCTazznFrNemZE2l5W2MtvOTYeKeEI/x/55uhZUGtgFk0eG2fdlKilNABoufisAIenwD+hGTSifzdMxHnrRGTCHunD9OHirk9nAaX2syQyIt/2brCs7NuoTUi1kyS2ARlfkSvAe3tWc9DsVr5j9PuaBPE=
+	t=1761121340; cv=none; b=BRg1kmTiEN3KATDwF1RPDXmkX2V6Tux6Xk/b3IhphfJ4edMTgt7EZAY+bdhRLyXnTuFWLbUqdAbUanjUEvIcBO32queBSjIvA6Zpv2asrL7jjaX1iA8BPTlyMUfhWszYCP8o/Br1fBMKXlSFji89kmk5vcf+M/K0NXThRop67Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121245; c=relaxed/simple;
-	bh=NaBVnYfiCGBUleVgENfqy+6MTH7byS2p6Wtyv6/P8ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rn9b/U80OjPVXYvloS+DNUPsw7gJQaXnmSIZ1yzk0BchPfQQEp6v5MoYAWd6BB0H7WxnvN+Idy1odDCH2RGKc06l2HoJ7Zi+m2nTqgxflrrAgvhojLJiBu0rwZ+TnnIK/Uhls6QgWo+rHzeJ9WXqvPMfEKqGSTEg+OCNOfazk9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dJvJ5L6k; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GBiS77jacBsAV5FtDUoak5VLXkPdQf0nis8KTJqTfW4=; b=dJvJ5L6kzK0cWDQUXS+9Sv/+VK
-	d0CkMXZ8LBVpyOFapysJs3nZUl8zg9jTWIWcs7hMsJWUEWdw593rfTsyMVuBrGOxp7kergFX2kDAu
-	kRHlMRJjX66XPkxAzIXHxKzcAfWzVZxuKDsExmSD0CeQS3y2h8LVClTy6lALGeurbtbN08tcGCYsL
-	/vQ0qw1qBCzpwe3TRNnSukrnJKItuh8uQv7oB/ibvZYDRFJnxGZgGj3hljyUiY5aaxa8T1u6tEUgt
-	R30bNScOmi92rDSwQ+MJbXLrbKxu56TMtKAKqiNxmdw3XTNl50zs1smUC/tD8rqphtpHS7p2v2heZ
-	Evo5QUhw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBTDO-00000000P2b-0jqI;
-	Wed, 22 Oct 2025 07:24:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7E1C730039F; Wed, 22 Oct 2025 10:20:25 +0200 (CEST)
-Date: Wed, 22 Oct 2025 10:20:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
-	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Shuah Khan <shuah@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	kernel test robot <lkp@intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Marc Herbert <Marc.Herbert@linux.intel.com>,
-	Christopher Ferris <cferris@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Jeff Xu <jeffxu@chromium.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-Message-ID: <20251022082025.GK4067720@noisy.programming.kicks-ass.net>
-References: <20251020220005.work.095-kees@kernel.org>
- <20251020220118.1226740-1-kees@kernel.org>
- <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
- <202510211210.84D670D1C@keescook>
+	s=arc-20240116; t=1761121340; c=relaxed/simple;
+	bh=UqT6M+d3rQbKlZc3qmh6lN+YMLpp1h22m9HmL4uGIGQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jZ8fbw/lVJA124ehFpxBdjtNOix39c2XP/FPBP8w4QRwImJ8vd2B4VeLdNIk+cPcxwgc6sG45bP2oSJsRPyM7k+uH/FByOPHt3JXhh9GQIRNgmvKiMP8cW1NLwj5X++6A2KPQRxyzsT2iUBDoRLyd3boQce8sjID+bXT3WamgXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yJ9I1qmu; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-471001b980eso39622555e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 01:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761121335; x=1761726135; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=72guOijUHSJJlKe6a2UltCzLUYrTwKqyoEB2MPidRfA=;
+        b=yJ9I1qmu1AcpfVV7yyEk2ZO6gMB5emf62HDoxB9lxLjGdPEax5XntH7yqUCOfjMdyD
+         7M0hXdIQregrVYb2qxEYo+k6MVleXSG5UT0eenUzbxLhbiIP3JyM8zxRetWokUfY0Nfm
+         8Qn1/waKBIJvyuTl000y+W/FjH8AYrTIq0aol8+wxPYfGCOBxhy1LeQOi7q7p7cC1dKe
+         Dx5zPmICKxwihfPFmoE1+YEqm/B98bEJ6yLKqN6yvUlQRvGOXAGzOJOWQ10jFeWCjLTE
+         QAnJwzVqDh9ou2kmA5Hh94NPGagczFehgc75ZdQSuMUVcaJ4neNNKkTBr8YEcw00WCF5
+         zSUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761121335; x=1761726135;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=72guOijUHSJJlKe6a2UltCzLUYrTwKqyoEB2MPidRfA=;
+        b=wXEMPz2m8fIZdjh/EOTbX3cI69UPy7NjslJAw8CfgWaZn1tEs9tKORnP+pjkPUkeuv
+         1D5LLwKx35seAdN6atm3T5536KLvPooSP8BsVXPYzu1Xx9k856euY+Dcyu+wde6VuJpO
+         THM9zwosPOgECgulsEE0rKgA5dK2prY29dSsYyMjR7/DqYVzRyADJ3jgGki+JI7dShXL
+         yIu/o+3/ew5ad7dX93zAP3omyl/PbFjSkaQ4eQMpBECm3fl/NQVG+TI+axHLS+KYdmsr
+         1UjQHs+/CkCqCF9+RtDnkUYt4I/DKnowq9i01+CmdtUrz+ksMT/Md6zfYrrDw2xF57G2
+         ezjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbcxUDj9CsYq3J7esIFDHjSvLdKqEFVTe0pg9OjpOZmiJw7Hi38uBnogl9/oi+y3fLPovVHOykgv59xIsd@vger.kernel.org
+X-Gm-Message-State: AOJu0YznrEijX1AfkpW8IPhUZ4JiV49MeTvOl8tmiFLLpwqapyym0n8K
+	hMcJUqyhi2O+R6tnqfIv9YOT4mAK7AN1z4FFp4AlskCAzr6CK324h7vjipYnQFPNAX2mBtN+re2
+	1MmN7tYsT3oKLQ2eQPw==
+X-Google-Smtp-Source: AGHT+IGpiOr8LIFL4RAOFaNgyYQ2Xzrv23KxyRhw3LPR4VoyEhq5aZl74QO5PW3dvKcSclSKhT+9iErVdITwsUk=
+X-Received: from wmwp28.prod.google.com ([2002:a05:600d:831c:b0:46e:5603:f679])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:870b:b0:46e:3709:d88a with SMTP id 5b1f17b1804b1-4711791cb7amr162298465e9.33.1761121334940;
+ Wed, 22 Oct 2025 01:22:14 -0700 (PDT)
+Date: Wed, 22 Oct 2025 08:22:14 +0000
+In-Reply-To: <DDO2PI0D2L6Q.3OPXNQOV7Y0H6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202510211210.84D670D1C@keescook>
+Mime-Version: 1.0
+References: <20251020222722.240473-1-dakr@kernel.org> <20251020222722.240473-4-dakr@kernel.org>
+ <aPeSCuFNrV-_qvBf@google.com> <DDO29UN4UBVV.E90DEBURH63A@kernel.org>
+ <aPeWOhycOIl_rlI-@google.com> <DDO2PI0D2L6Q.3OPXNQOV7Y0H6@kernel.org>
+Message-ID: <aPiUNmAfbefKW__4@google.com>
+Subject: Re: [PATCH v2 3/8] rust: uaccess: add UserSliceWriter::write_slice_partial()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Oct 21, 2025 at 12:24:05PM -0700, Kees Cook wrote:
-> On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
-
-> > So why do we need both __counted_by_ptr() and this __sized_by(), won't
-> > one be good enough?
+On Tue, Oct 21, 2025 at 04:34:49PM +0200, Danilo Krummrich wrote:
+> On Tue Oct 21, 2025 at 4:18 PM CEST, Alice Ryhl wrote:
+> > On Tue, Oct 21, 2025 at 04:14:22PM +0200, Danilo Krummrich wrote:
+> >> On Tue Oct 21, 2025 at 4:00 PM CEST, Alice Ryhl wrote:
+> >> > On Tue, Oct 21, 2025 at 12:26:15AM +0200, Danilo Krummrich wrote:
+> >> >> The existing write_slice() method is a wrapper around copy_to_user() and
+> >> >> expects the user buffer to be larger than the source buffer.
+> >> >> 
+> >> >> However, userspace may split up reads in multiple partial operations
+> >> >> providing an offset into the source buffer and a smaller user buffer.
+> >> >> 
+> >> >> In order to support this common case, provide a helper for partial
+> >> >> writes.
+> >> >> 
+> >> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> >> >>  rust/kernel/uaccess.rs | 24 ++++++++++++++++++++++++
+> >> >>  1 file changed, 24 insertions(+)
+> >> >> 
+> >> >> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+> >> >> index 2061a7e10c65..40d47e94b54f 100644
+> >> >> --- a/rust/kernel/uaccess.rs
+> >> >> +++ b/rust/kernel/uaccess.rs
+> >> >> @@ -463,6 +463,30 @@ pub fn write_slice(&mut self, data: &[u8]) -> Result {
+> >> >>          Ok(())
+> >> >>      }
+> >> >>  
+> >> >> +    /// Writes raw data to this user pointer from a kernel buffer partially.
+> >> >> +    ///
+> >> >> +    /// This is the same as [`Self::write_slice`] but considers the given `offset` into `data` and
+> >> >> +    /// truncates the write to the boundaries of `self` and `data`.
+> >> >> +    ///
+> >> >> +    /// On success, returns the number of bytes written.
+> >> >> +    pub fn write_slice_partial(&mut self, data: &[u8], offset: file::Offset) -> Result<usize> {
+> >> >
+> >> > I think for the current function signature, it's kind of weird to take a
+> >> > file::Offset parameter
+> >> >
+> >> > On one hand, it is described like a generic function for writing a
+> >> > partial slice, and if that's what it is, then I would argue it should
+> >> > take usize because it's an offset into the slice.
+> >> >
+> >> > On another hand, I think what you're actually trying to do is implement
+> >> > the simple_[read_from|write_to]_buffer utilities for user slices, but
+> >> > it's only a "partial" version of those utilities. The full utility takes
+> >> > a `&mut loff_t` so that it can also perform the required modification to
+> >> > the offset.
+> >> 
+> >> Originally, it was intended to be the latter. And, in fact, earlier code (that
+> >> did not git the mailing list) had a &mut file::Offset argument (was &mut i64
+> >> back then).
+> >> 
+> >> However, for the version I sent to the list I chose the former because I
+> >> considered it to be more flexible.
+> >> 
+> >> Now, in v2, it's indeed a bit mixed up. I think what we should do is to have
+> >> both
+> >> 
+> >> 	fn write_slice_partial(&mut self, data: &[u8], offset: usize) -> Result<usize>
+> >> 
+> >> and
+> >> 
+> >> 	fn write_slice_???(&mut self, data: &[u8], offset: &mut file::Offset) -> Result<usize>
+> >> 
+> >> which can forward to write_slice_partial() and update the buffer.
+> >
+> > SGTM.
+> >
+> >> Any name suggestions?
+> >
+> > I would suggest keeping the name of the equivalent C method:
+> > simple_read_from_buffer/simple_write_to_buffer
 > 
-> I remain extraordinarily frustrated that counted_by can't be used with
-> "void *". I hit a brick wall on this, though, and don't know how to
-> convince either GCC or Clang devs to fix it. It's so obviously correct
-> to me: "void *" uses a 1 byte iterator for arithmetic... so asking how
-> big a given allocation is should be byte sized!
-
-Right, at least for gnu11 language variants this really should work. I
-mean, disallow the usage for c11 if you're pedantic but for crying out
-loud, have the GNU extensions be consistent and all that.
-
-Feel free to use my feedback if it would help.
-
-> Let me take another stab at it...
-
-Thanks!
-
-> As for avoiding __counted_by_ptr(), we could just raise the minimum
-> Clang and GCC versions to require this, but that means dropping existing
-> coverage (e.g GCC 15 supports only flexible array counted_by).
+> Hm..that's an option, but UserSliceWriter corresponds to
+> simple_read_from_buffer() and UserSliceReader corresponds to
+> simple_write_to_buffer().
 > 
-> Maybe we could do a global __counted_by_ptr -> __counted_by replacement
-> once GCC 16 is released?
+> I think having UserSliceWriter::simple_read_from_buffer() while we have
+> UserSliceWriter::write_slice() is confusing. But swapping the semantics of
+> simple_read_from_buffer() and simple_write_to_buffer() is even more confusing.
+> 
+> So, I think using the existing names is not a great fit.
+> 
+> Maybe something like write_file_slice() or write_slice_file()? The former could
+> be read as "slice of files" which would be misleading though.
 
-That sounds like a plan! :-)
+It's tricky. Perhaps if you make them standalone functions, then using
+the simple_read_from_buffer naming is less confusing? Then it's just
+kernel::uaccess::simple_read_from_buffer() and it takes a
+UserSliceWriter.
+
+Alice
 
