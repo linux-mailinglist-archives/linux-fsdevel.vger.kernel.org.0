@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-65207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45584BFE235
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 22:17:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F63BFE23B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 22:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BC6B4E96AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 20:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991011A04F70
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 20:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C636D2FAC07;
-	Wed, 22 Oct 2025 20:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAF82F9D83;
+	Wed, 22 Oct 2025 20:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iWBBobSa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="emYQfEev"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A192741DA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 20:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304DF1E51EF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 20:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761164250; cv=none; b=P0YadZe0d7WggiH+y6DDiCVx4wN6zQV/ZBvGlKMVsyZ1mCu3EyVbzpiVcwV7432DW7p6aQ3E46ExRhgfxsAKk+YjvGQQ1kt3mp9vwKPzlTkKjbJOSEa/HAxYhb861wCL5MU9XCcd4hk0fGDvbj/KIMQ8qheIPQ90xDBHoiPiULY=
+	t=1761164325; cv=none; b=B9wR8vGsO+Or8oNu/7v9TBj5E7bdDs6y+yKN1OLFrmVfS9OrtngCgzTPRb5EMV3jPPP14yAuAMgyaYTW4paEropwkwHArVOVCD0JG9hppHrAHvQStz7G7vPg1JlnAurXdwyTLEEULIjZEp3cS8dAJxPTHvS9OS7x/KPdbBq/Gj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761164250; c=relaxed/simple;
-	bh=YRaaYG5cLrkW+pKoke0z7upiEKw/k1aav1Pnb7juP7U=;
+	s=arc-20240116; t=1761164325; c=relaxed/simple;
+	bh=Z459dht6gE8XeDgV1qENj3inkdPtfrSAdn9EtsTw0Ac=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FsNHbP0ohZ9Q/m1GzzFLfy/98GOV14AISj3nDwE7QCTTIk9b2ne17KSxvWpZ4c8R/KiyhH2T/92p+gX+zc+gF0cumjTyPd/3n1zk4tMfJfpGBXLtcPeSk5ulbxfpPjriRQbRRrrBbz+vy6KuEasPS+JM4UmFCtyh/UgKE/cffJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iWBBobSa; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=BJq5FEk5f1xw9KDOYiztF5Bk41uZtUVJZw5zrZcBR1Fb9Gjt79EVsbft0AtwWc+eKvbkHHLcbzjM32G+rAlj/HSGiMhW5FmkcQAISlSZrWUpMqNu1fxi6WnvoDfGsP7w/GapdLIVf0MFjQh7oNPvraCJEbRXySxX8uzCL4YrzLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=emYQfEev; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761164247;
+	s=mimecast20190719; t=1761164323;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vC+s+xeMprR+Ip6ri6xLPS37We7Gp0CsGRiTv6yqlJw=;
-	b=iWBBobSaJmGEN9kCTApW9OObrZkx4F6QAfKy6ydPPApFYCX1TWCA53lM72sRllQyZWpMLp
-	yryWS31K4tyb/N/pcKPFitzEwUnyYjW/YQsRMufJqoL7ETM80NwBn9yrTXwcAQi14cbW5t
-	ZuhwBYA8HBsE3Ie8IOwyRYfLTamEK98=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=qQBmXsw5V4eGrvR9Tz7wn2FNoM8/TbO0Z6U8kNgiKEk=;
+	b=emYQfEevZtmx7vV6O5KDcA+Yf6XNM44lLZOzzGcPj5s+M1w1l6eklUhrvPBXTUOKQZ/T/0
+	aNGlduCzqBUQcKYTVbXwKEPrNUXb7CBnO7oRLAl6Tt4uhtO2BZ7777IdI5/zsDLQAvnWv+
+	k2IY5tFpLb44TRfWooUm3gqmfndxdBg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-7x0xyyHlOKyp8YXukpOffw-1; Wed, 22 Oct 2025 16:17:25 -0400
-X-MC-Unique: 7x0xyyHlOKyp8YXukpOffw-1
-X-Mimecast-MFC-AGG-ID: 7x0xyyHlOKyp8YXukpOffw_1761164244
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-471144baa7eso119985e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 13:17:25 -0700 (PDT)
+ us-mta-363-crjVDfc8M2adHuQSBv68nw-1; Wed, 22 Oct 2025 16:18:42 -0400
+X-MC-Unique: crjVDfc8M2adHuQSBv68nw-1
+X-Mimecast-MFC-AGG-ID: crjVDfc8M2adHuQSBv68nw_1761164321
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471201dc0e9so79565e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 13:18:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761164244; x=1761769044;
+        d=1e100.net; s=20230601; t=1761164321; x=1761769121;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vC+s+xeMprR+Ip6ri6xLPS37We7Gp0CsGRiTv6yqlJw=;
-        b=qDP+eTJd/sy7oAsP2g+uSPVic9dajE1u1cKjtr2KVrUi6jI/enDzWD79uzhqCwS1mT
-         6EfjQQL8L1gGZ1ouzf/revOFTFPmwCg3a/inGvegFtWcRJnBpQNG8aJ4op+E/Adr8b5J
-         huP38IU7JkU5/1fX7XbsIBrA6fDd5cBHLkNSpugl0mhm4s9/bOXWBwj22vX6wle3v59M
-         JlzJvGueqEAosjj/Q+N0lsBgoMmPGuiJs5zhz5Ep2WRte7sYYyZL+S1Xn7piq7aftBUr
-         wDqRoLY1QUkRm8dMRUbhEx8CX9iKHwJ4tCNU2xXSvsyZ9hKkx52bgOURn29zBk3gqGbx
-         oZYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKDSld+LpiccAfXwMd1vNRtEEQgiNkLsGI8Q4sltB38IglfaxZdKqP2jCFHEVZjvyhoWGDbD6goWSHMKKG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaRzofJ3pPxdSWQ/6HhS+afKcN/SScBYClZJiRZY7qpD8j6vIh
-	PGwVoX2ceGFW21h7MiH3DCcW0sz/C52WqhYFQ21Zh00VqGzRGfGrDRohy8g1jgC6dpjREeOllB/
-	yAKyD8dejutzWGNJ+t/1oc6qVMDm8J6dAgyTI6DtfplRL3khvmdentN8RaBW+7QHOmnQ=
-X-Gm-Gg: ASbGnctjTivVznHvzIJnC6tL/KLQNwcnBjnHedDO07bQXXPMCyudo11hShOYMQ0smjS
-	W9PydN8Xn9oWSHvqKOJuH2oC5vnX6AZfi7Du9zYcNlgQyYFmuNvfH1r1IlCO8DUCRYD9VNor+PA
-	qlN+jU/LVjUcVxo59j6QbERHy++OdO0GnDApQAOy7lAjuEKPUK1n1nT9bCmLa9XaneyDOxh+zft
-	bwio935Xo7kjc85pElL0wSEPuOODdf6Wdv1Xq1eprmpskwNY+Jwx/KUxzTWExbvNXxdRcrPGCWO
-	SPCnH/XQhgaZKOYhZZ8EJtM2K+s3Qp+TA+XpJ9U/X0iv1vns4keQ4M+JNAeX7MZZu34aNSyQw0c
-	TpPm44syZb1UVJTM6c/Mn0YSLDdLGyqmMoJtv5ZTHhdD/Rc38hz8rFmOPGMoDbAadBAGHD7Wc8M
-	KoMs0IP6BGZjxeNTgnWT9rZz80f2I=
-X-Received: by 2002:a05:600c:3e07:b0:46f:b32e:5292 with SMTP id 5b1f17b1804b1-47117872663mr178764695e9.8.1761164243935;
-        Wed, 22 Oct 2025 13:17:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJhFihxtaIrVrrQyehfH2+8Qrs+EvwAFrqmTS6AiWmlrhAWqEm6qvu5GsS/mZ0b6O2CjvX2Q==
-X-Received: by 2002:a05:600c:3e07:b0:46f:b32e:5292 with SMTP id 5b1f17b1804b1-47117872663mr178764385e9.8.1761164243518;
-        Wed, 22 Oct 2025 13:17:23 -0700 (PDT)
+        bh=qQBmXsw5V4eGrvR9Tz7wn2FNoM8/TbO0Z6U8kNgiKEk=;
+        b=FhS9V7GI42IhlHxXvbI+YlggX36RAuzFCEvewnlM0PuGsM9n2dd4kIFWuc606slFRn
+         a30dnKhq6P/N6D8fE39g3D3+dIQS65xKmUFXTQ+4VoFj/L3JP0mD5hKzceQ6gCrsOmh4
+         8H2WFsDqOMJYaIQKQmRWCCOuWJOyr8nCsCOgcX0tdQFXS1F3ei1UGxs0TeJljLce6UWg
+         Lh6BcO0H0uesKv4YjtX9bHYhANpJ6yCMT4TtkFXnDc7oVLRIfYMBSGJkKDYat9qZ0tRM
+         YJOQDxhqYmhvP2TjFGPdcYbjgexz4mkIsdVbD+y515ul70ndmO0vAkhFZ6PVYIA1frEs
+         9YLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6kTIbO9dWFbkR1S/xiLJWBZN7EByqJABLOSFYe43QMpa+AONsdNfSgVeV8g14UaaU31AUc3BqapLikvwW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhpjVwI1g3n1drW8K2xDYGmdATZy0/lNdf/Kal+Ner8iV1SQHj
+	Y425F9vIWmA3kZGl48htXqX3hEgZOOIHKV7aFazuO+7lXnm3MgArBWZqjl9AbFkMLqMh6RupYhO
+	LMZj8b5v13DIn64iuiGsQVlwW+OJyA/Lv0wQjQTMmeCPIjPi3J6ho9R5qVF6/tBO3Xdk=
+X-Gm-Gg: ASbGnctAfcIF+QmA7PKpl47n23Yba7B7cE8mmoQ36O0VWkcBXSfc7yjYK5JkzL7T0Iz
+	14YulwfDv/9vCANCam/yiIT/bCkmmUku41DbMnSIk2rOBjHd855vlRnyRcICo3n7KDhXkUH47To
+	xcQsLfdeZaV7CNcBmcOratDAgbwuw5zmrUUzPaQbeD3fcCsGUFE8Sp2G+5KsR/oxbenAn1tSMJ+
+	cxiWmPg0VZ2KQbvUnCv6Ht35yNFaLyBbKptKdWFp8vV1myWO0/7n8U5sikcKugYZbtvQwdcGYJB
+	kqANnJqcZeIob5XLoSHriOo28cw0jsWvQh+ASNVh6AV4bbwf3QYtgwySvAqCDUYO59BgW/ZdNAb
+	+zJcFS+cQ7JuGEPMS0+71cWvTucSeIash5aP0kzUrjrLTTHeE53kAShwldtE2fji/CncjdlL652
+	vn5hy/Vkzf7g53cQvx23/tuVxtxTc=
+X-Received: by 2002:a05:600c:354a:b0:46e:59bd:f7d3 with SMTP id 5b1f17b1804b1-47117903f24mr147151215e9.20.1761164320900;
+        Wed, 22 Oct 2025 13:18:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHv1MI1KgUeIM4e592xdEkhILAGzFJn2fdCT+0ozCWrbyg+uo/HqoutZfyrh7Unzhv5piUSA==
+X-Received: by 2002:a05:600c:354a:b0:46e:59bd:f7d3 with SMTP id 5b1f17b1804b1-47117903f24mr147151025e9.20.1761164320417;
+        Wed, 22 Oct 2025 13:18:40 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c43900e1sm68385365e9.17.2025.10.22.13.17.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496be2eb6sm44115165e9.2.2025.10.22.13.18.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 13:17:22 -0700 (PDT)
-Message-ID: <6279a5b3-cb00-49d0-8521-b7b9dfdee2a8@redhat.com>
-Date: Wed, 22 Oct 2025 22:17:21 +0200
+        Wed, 22 Oct 2025 13:18:39 -0700 (PDT)
+Message-ID: <b2aa1edd-42f1-485d-b569-791a1e885487@redhat.com>
+Date: Wed, 22 Oct 2025 22:18:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,8 +91,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] mm/memory-failure: improve large block size folio
- handling.
+Subject: Re: [PATCH v3 4/4] mm/huge_memory: fix kernel-doc comments for
+ folio_split() and related.
 To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, jane.chu@oracle.com
 Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
  nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
@@ -105,7 +105,7 @@ Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org
 References: <20251022033531.389351-1-ziy@nvidia.com>
- <20251022033531.389351-4-ziy@nvidia.com>
+ <20251022033531.389351-5-ziy@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -152,81 +152,20 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20251022033531.389351-4-ziy@nvidia.com>
+In-Reply-To: <20251022033531.389351-5-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 22.10.25 05:35, Zi Yan wrote:
-
-Subject: I'd drop the trailing "."
-
-> Large block size (LBS) folios cannot be split to order-0 folios but
-> min_order_for_folio(). Current split fails directly, but that is not
-> optimal. Split the folio to min_order_for_folio(), so that, after split,
-> only the folio containing the poisoned page becomes unusable instead.
+> try_folio_split_to_order(), folio_split, __folio_split(), and
+> __split_unmapped_folio() do not have correct kernel-doc comment format.
+> Fix them.
 > 
-> For soft offline, do not split the large folio if its min_order_for_folio()
-> is not 0. Since the folio is still accessible from userspace and premature
-> split might lead to potential performance loss.
-> 
-> Suggested-by: Jane Chu <jane.chu@oracle.com>
 > Signed-off-by: Zi Yan <ziy@nvidia.com>
-
-This is not a fix, correct? Because the fix for the issue we saw was 
-sent out separately.
-
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->   mm/memory-failure.c | 30 ++++++++++++++++++++++++++----
->   1 file changed, 26 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index f698df156bf8..40687b7aa8be 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1656,12 +1656,13 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->    * there is still more to do, hence the page refcount we took earlier
->    * is still needed.
->    */
-> -static int try_to_split_thp_page(struct page *page, bool release)
-> +static int try_to_split_thp_page(struct page *page, unsigned int new_order,
-> +		bool release)
->   {
->   	int ret;
->   
->   	lock_page(page);
-> -	ret = split_huge_page(page);
-> +	ret = split_huge_page_to_order(page, new_order);
->   	unlock_page(page);
->   
->   	if (ret && release)
-> @@ -2280,6 +2281,9 @@ int memory_failure(unsigned long pfn, int flags)
->   	folio_unlock(folio);
->   
->   	if (folio_test_large(folio)) {
-> +		int new_order = min_order_for_split(folio);
 
-could be const
-
-> +		int err;
-> +
->   		/*
->   		 * The flag must be set after the refcount is bumped
->   		 * otherwise it may race with THP split.
-> @@ -2294,7 +2298,15 @@ int memory_failure(unsigned long pfn, int flags)
->   		 * page is a valid handlable page.
->   		 */
->   		folio_set_has_hwpoisoned(folio);
-> -		if (try_to_split_thp_page(p, false) < 0) {
-> +		err = try_to_split_thp_page(p, new_order, /* release= */ false);
-> +		/*
-> +		 * If the folio cannot be split to order-0, kill the process,
-> +		 * but split the folio anyway to minimize the amount of unusable
-> +		 * pages.
-
-You could briefly explain here that the remainder of memory failure 
-handling code cannot deal with large folios, which is why we treat it 
-just like failed split.
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers
