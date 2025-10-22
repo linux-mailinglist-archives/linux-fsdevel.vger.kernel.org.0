@@ -1,169 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-65073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03B3BFAE26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EABFABFAE98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F0BB5059C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:26:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B00B4E28B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26614309F1F;
-	Wed, 22 Oct 2025 08:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB57A30AAB3;
+	Wed, 22 Oct 2025 08:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9lSf9jl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pO5pF0Wm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E98B309DCD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 08:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4F1DDDD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 08:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121578; cv=none; b=RCRA/gRA0hxoR9Kf5pIMF6+ql/nXyoKXc3hnJf5io7Uu9TKak6tyr6YUOneNmDPYDGMKjcbljmqSehdwThjUqNMTSBx6kr7ZEWDVDfdVlhTxjjiqM8QvyjfFut54T1uLdlGWIc1dhJTMznChMPOQBIOqZ3vHyA65c7ufcIEjM1E=
+	t=1761122035; cv=none; b=klEOe94bk2QR7rQ0wtdkeXw1uI11Z9bO0SlTaIXHyh7IVOS1eel1WPcCSKlkwXPqd4lAjEiToKoKbq8pFsglWX5ypcvvXb94S7IWI5M6UbaMhbozMPhM3CgtV3mIOdFB3IjglS12yctP6q6sHEHkNhHcnL6xHjo1bcXh1AJceUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121578; c=relaxed/simple;
-	bh=Q6H986X15qYys1qfZkB9W2dW8AtLZxTL9G3Hoa0FETk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nVutKIZnzhOM7p04F2rYXfy9tmwRWKRmPN409nQtzuy1ZYS1R9mSh4zSWx9wy8VfwVyo8l/ALcUhb7yU2W+tMMC4bJilfBrOzflMSlaKlmEY5nKdEQ3MNQ/jC+iJfv64uGStFwBHgsG+rb63zbPecBScSeGWXTyTXpDUV/xUIVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9lSf9jl; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b456d2dc440so1069644166b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 01:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761121574; x=1761726374; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NDyEa99uEXhpux+y1jdsG/DCyMfzL2pd992wei+/e1g=;
-        b=g9lSf9jlzTL74ZxyfEMsa16zdauZydvqbq6C8BlT0oq+R+RCOZKV7QlN+n7Puwk6X9
-         TK11E1pXhHLdAuoU9qJ8OVl+4QcN5CIDLdvrtHDuaQdch6/it+z8DAx58sBJnRfAmgVz
-         vG4xalYkaDCAiv6gJpIiu08tQML8GZKeBJuCErAqp862qz7oIFTxEML3NDQfa42+q1m5
-         JyZrQGPFKnbdBW9dDJ4+v/Qb2AY9ddKozGeODolVFc91lLhGagiEvJAxutp+Fa0TKdf+
-         VbXPxrycqhr9LTv3VpU2DzC8PZWvGeSgNpfGHO24xPNLpypRN3tDJdofqxE6Q/w05re7
-         zT7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121574; x=1761726374;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NDyEa99uEXhpux+y1jdsG/DCyMfzL2pd992wei+/e1g=;
-        b=Xme8tp4oZX6l9UPsYOml2hcwHHb/9AyUJRwFGDwkhE6zlyqKxFybO2UYFwaCDxRCPm
-         aQzKRBPG2EwGN+S7NiPtw4wmaV5Ecbcn+iTzeBVf6vr4DXtYELc7Iaz8H9MxnjS7lM0X
-         VZ+SIGQ6iozBqNMhyrw0PzypIkuTZWWYvtYOsVlwUlK+W0E7ubMtZkiuHrCluCmZGaY9
-         RVXJOVAjw2JYBJi/jPeDWaKahCWLeRWQYhTLiwAYCMYp8XasEMsY9FB/wiTflr1P2rvw
-         1/zBQZ3J+bgG2dwMkwKZ49e8hbTBjQ1Ko1lNvOA8ZUvauqQfI3HrTF9BxHn8faydWrjS
-         KhuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX03e4Yve+C0CSFBfBCPLKcOm9az1Z/r6FebQnZzK/o00sXOozo0ORSPEjP/1XG++OThpDgl0L6bRWR6D3F@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuJfv6zXj2RDsReAdgJh2DJp+U1KzQeAQ0awMV4pXUbBx205YB
-	3LDxHZM/+cXgGHT+uEjYTNEVCRI4+mt4HBYeYyPukf+hWjlctzAOFerm
-X-Gm-Gg: ASbGncuSO1+XgEhLOVlOn7oa4y2wmCGT1G1ETOlGXFQ0jO0sjRGLpb7a/1ubwP2EzZo
-	Ekph1QH8vZGTBaXjyYaAloLvMpIaKy9a94nh04crHXMpI/thcUrc1pRL6xT70/iWPsb4gDngqqq
-	/DIlliGg5dNNG8MeM++azoGCfT1qcD8y9+B/dkTlduTl52itI1e3W8t4SwLdy/RcaLDfMcsc377
-	++Q6S68N5xvLHMbL+JMJF1ATU3L+Bc+6RW8NCNmcUV4vEYS+cduy98H443uv0d2T+zwb5ZvH6T6
-	XGDMofkRFXIkje/vjxl6qGKQkbGnuzUnmX3gy+3IYlDd9rr+HH4ud3OZaqgP077ApwgDl9XJcWK
-	8m7Zw9vDyLzuRsrQfhacCGEzZ+1f2F10hf+HBgufhqrFduy1vBxQqktzduaqFY+tbG8ESDE+y1U
-	H7
-X-Google-Smtp-Source: AGHT+IFMC1ZTRJ80d2+tQCzLJZEUcRjgNolpnafRAvb1tXsgv9lX8RVp0jdHUx6GvU3poKNRSafE7g==
-X-Received: by 2002:a17:907:7ea6:b0:b3e:3c1c:d2f2 with SMTP id a640c23a62f3a-b6474940fc1mr2581204566b.36.1761121573582;
-        Wed, 22 Oct 2025 01:26:13 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6cfa6cb6e6sm365510866b.49.2025.10.22.01.26.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 01:26:13 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: hch@infradead.org
-Cc: akpm@linux-foundation.org,
-	andy.shevchenko@gmail.com,
-	arnd@arndb.de,
-	axboe@kernel.dk,
-	bp@alien8.de,
-	brauner@kernel.org,
-	christophe.leroy@csgroup.eu,
-	cyphar@cyphar.com,
-	ddiss@suse.de,
-	dyoung@redhat.com,
-	email2tema@gmail.com,
-	graf@amazon.com,
-	gregkh@linuxfoundation.org,
-	hca@linux.ibm.com,
-	hsiangkao@linux.alibaba.com,
-	initramfs@vger.kernel.org,
-	jack@suse.cz,
-	jrtc27@jrtc27.com,
-	julian.stecklina@cyberus-technology.de,
-	kees@kernel.org,
-	krzk@kernel.org,
-	linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org,
-	monstr@monstr.eu,
-	mzxreary@0pointer.de,
-	nschichan@freebox.fr,
-	patches@lists.linux.dev,
-	rob@landley.net,
-	safinaskar@gmail.com,
-	thomas.weissschuh@linutronix.de,
-	thorsten.blum@linux.dev,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v3 0/3] initrd: remove half of classic initrd support
-Date: Wed, 22 Oct 2025 11:26:04 +0300
-Message-ID: <20251022082604.25437-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <aPh9Tx95Yhm_EkLN@infradead.org>
-References: <aPh9Tx95Yhm_EkLN@infradead.org>
+	s=arc-20240116; t=1761122035; c=relaxed/simple;
+	bh=N9x84jixJiN0AO+xsJ6pTpBphMTYT0uIpmPJoLhxDSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A9LKcPJBQUAsYBiIZIoS6SLIdTbwQNl4bCjGnGXKNswc8dirERwbclTR1FhUOG6XKw7r0/+wx+MKXFzoxmIJUibXOyIopZJKtcWJQumVXV+jwVxeqypDKEWEmu+/IFCzzcZQhh3R/HkTKiukUXc+6rrnrmIrf7U5KK+IVPp+0Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pO5pF0Wm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D290BC113D0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 08:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761122034;
+	bh=N9x84jixJiN0AO+xsJ6pTpBphMTYT0uIpmPJoLhxDSA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pO5pF0WmtQaCE0WwjUdBLjqLYdh73R8FFasRhk4jR7eZSB6bSwp60/Lyqn9QuiR0r
+	 KLVmUdhoqbRp5Yr+0poWdbkyZxqaDGwzRPjLjcLnY75px18fYJm0H9R8MitR0BxQ3/
+	 B5vtdbZ83d/zi1Hdzul0ErnWJhtBxRt7j1CrxzNpmz1QQC41b0RQhfj/ub1oh2GeFW
+	 t5FrJDp/YGea499OumnIgSPC7Pe9vY/tekg43XWxqHJr6fKoq0i6bAQ2FWQQxa7o+u
+	 +0DHhEWj+1ONVxvGjQBGGUZdAj5duMdw8aexcYHrFVuumHUkmiycBaEEeYZKOs1zVJ
+	 /VwuWoQL5QeZw==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b5a8184144dso1078687266b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 01:33:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/8ChYRZFeMD+2uPrw/ZyvZg4McAT8BcZ8E7L+rXCd8g9/SikoIDPNID7BNS8Xs1hpsU72zHcqE2Yqo8uJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNH93EXuZDeKdlgacCu+Wk7wOLuzL2LRlPK+mmgf9mAtAYLjeJ
+	WqW6PwzJm8rmKv9yDleaxw7Ss7x72wm/UlSyYhlx0qsNGoN8UkVFi2pEbDbYTKxNgJSQXdAlx3d
+	NXIurngzaIU5g9HOoiqu1JypGQNRdslI=
+X-Google-Smtp-Source: AGHT+IFN/73b2Yv3ZelKdkLNRTSTloKVEzyFCT+aqYbmXKMileH6B4CRb3anBM9pR9lKV3i9bZOcQvKU7TV7WXabXXg=
+X-Received: by 2002:a17:906:ef04:b0:b40:6e13:1a82 with SMTP id
+ a640c23a62f3a-b64747339f8mr2198118566b.26.1761122033403; Wed, 22 Oct 2025
+ 01:33:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251022063056.GR13776@twin.jikos.cz>
+In-Reply-To: <20251022063056.GR13776@twin.jikos.cz>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 22 Oct 2025 17:33:41 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_LofQsx7p-k8xH23E1gVd2-BUKS3jwKkAWStE2AHJUWQ@mail.gmail.com>
+X-Gm-Features: AS18NWAnD3epknggQb4IvzWVRKTSbBuBDwjrEEd0LIHk_qDoG9OjkFG66JcsW9I
+Message-ID: <CAKYAXd_LofQsx7p-k8xH23E1gVd2-BUKS3jwKkAWStE2AHJUWQ@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+To: dsterba@suse.cz
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
+	jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christoph Hellwig <hch@infradead.org>:
-> On Tue, Oct 21, 2025 at 03:05:35PM +0200, Christian Brauner wrote:
-> > Without Acks or buy-in from other maintainers this is not a change we
-> > can just do given that a few people already piped up and expressed
-> > reservations that this would be doable for them.
-> > 
-> > @Christoph, you marked this as deprecated years ago.
-> > What's your take on this?
-> 
-> I'd love to see it go obviously.  But IIRC we had various users show
-> up, which speaks against removing it.  Maybe the first step would be
-> a separate config option just for block-based initrd?
+On Wed, Oct 22, 2025 at 3:31=E2=80=AFPM David Sterba <dsterba@suse.cz> wrot=
+e:
+>
+> On Mon, Oct 20, 2025 at 11:07:38AM +0900, Namjae Jeon wrote:
+> > The feature comparison summary
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Feature                               ntfsplus   ntfs3
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> > Write support                         Yes        Yes
+> > iomap support                         Yes        No
+> > No buffer head                        Yes        No
+> > Public utilities(mkfs, fsck, etc.)    Yes        No
+> > xfstests passed                       287        218
+> > Idmapped mount                        Yes        No
+> > Delayed allocation                    Yes        No
+> > Bonnie++                              Pass       Fail
+> > Journaling                            Planned    Inoperative
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Having two implementations of the same is problematic but I think what
+> votes for ntfs+ is that it's using the current internal interfaces like
+> iomap and no buffer heads. I'm not familiar with recent ntfs3
+> development but it would be good to know if the API conversions are
+> planned at all.
+>
+> There are many filesystems using the old interfaces and I think most of
+> them will stay like that. The config options BUFFER_HEAD and FS_IOMAP
+> make the distinction what people care about most. In case of ntfs it's
+> clearly for interoperability.
+>
+> As a user I'd be interested in feature parity with ntfs3, eg. I don't
+> see the label ioctls supported but it's a minor thing.
+I can confirm that achieving full feature parity with ntfs3, including
+the label ioctl support, in the next version.
+Thanks for your feedback!
 
-So far in recent months 3 people spoke against initrd removal. All they are in Cc. They are:
 
-- Julian Stecklina. He planned to use initrd with erofs, which is currently
-not supported anyway. Also, he replied to v1:
-"You have all my support for nuking so much legacy code!"
-"Acked-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>"
-( https://lore.kernel.org/lkml/1f9aee6090716db537e9911685904786b030111f.camel@cyberus-technology.de/ )
-
-- Gao Xiang, maintainer of erofs. He also planned to use initrd with erofs,
-which is currently not supported anyway. Also, he said to me:
-> Again, I don't have any strong opinion to kill initrd entirely because
-> I think initdax may be more efficient and I don't have any time to work
-> on this part -- it's unrelated to my job.
-( https://lore.kernel.org/all/79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com/ )
-
-- Nicolas Schichan. He has million devices, which use initrd. But they use
-root=/dev/ram code path, not linuxrc code path, which I'm removing. He
-explained this here:
-https://lore.kernel.org/lkml/20250918152830.438554-1-nschichan@freebox.fr/
-
-So, this patchset will not impact these people. So, I think it is okay
-to remove linuxrc now. We can revert this patchset if needed.
-
--- 
-Askar Safin
+> Ideally there's
+> one full featured implementation but I take it that it may not be
+> feasible to update ntfs3 so it's equivalent to ntfs+. As this is not a
+> native linux filesystem swapping the implementation can be fairly
+> transparent, depending only on the config options. The drawback is
+> losing the history of fixed bugs that may show up again.
+>
+> We could do the same as when ntfs3 appeared, but back then it had
+> arguably better position as it brought full write support. Right now I
+> understand it more of as maintenance problem.
 
