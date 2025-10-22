@@ -1,56 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-65090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0191BFBEE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:49:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9297ABFBED9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3854334C724
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 12:49:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1513A34CDC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 12:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A86347BD1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E183112DD;
 	Wed, 22 Oct 2025 12:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EtfaCoDm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ss9zZT1n"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U1KJk30u";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9duIHEc7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE93346E40;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADA5346A10;
 	Wed, 22 Oct 2025 12:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761137353; cv=none; b=Paf/foHKbyx/KXxMFxV7+Hv9CSbn7dji7Kq4iOeaEtg4NkZEDNmffMuqP3UA5uBJNNE30dB+8SK/9ilJLHN51UaocDO4+BaPHGliPT6d7kvNOK8skkTkumif1wN2Mqh8t9QJwhQNJ1riWlpChbcShVj9FI79BFtrR4hUQJ/58TA=
+	t=1761137353; cv=none; b=tPsEfu+oGUxkLqXI+3u0edGeO2SRtgHS9/jZfLbbgQhkFn0EgkierRRKrXncT9szQpqDI/av07WtITjwsYbM8Yah04adDO/RXln8uutwLgQHgj1zVqvnU4M0AloRitSxUuMegiHkSNsgx/NnpEJwKTYpGYP/MXHT6Q715RNgvQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761137353; c=relaxed/simple;
-	bh=AvjdMw2sCffsuBsINoV/J68QB1LlzUsen6SY/K/sTgs=;
-	h=Message-ID:From:To:Subject:cc:Date; b=GSjBMjBmYGz4URh2rWpJLHGoLOqjJXnCmHjX9BXj33vDroDq3u9oNgQ22+OiGIXPEUkqGPH7OXDaFm4SMJ3EfyTG3+CyvoE7RXxsefABOFDk+yS+LAhV9xt5t682GjX3hel+wpttaQdLrOyq8nqZt86/tMrNcpxDWyogdfl9jVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EtfaCoDm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ss9zZT1n; arc=none smtp.client-ip=193.142.43.55
+	bh=B6FY70g1YU4tpzw5guto+VK5McncnWIMenNCFYwqfSs=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=Hb2NiYv2XjmUL/nfVbEU2fRUDCcWBmecl12PRgR1fBAxLxUGZcqaz1R2olxDNZR9eKFqLPvGkUOpOw6L06ZkN1OkDVlpMBslpIXw/ZU06CUVZUKiB62L5LnPA6fu+fr4h03mg2VUIQLHr4DqPDiPdNQjxrcyvMzFjpw7WAyogYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U1KJk30u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9duIHEc7; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251022102427.400699796@linutronix.de>
+Message-ID: <20251022103111.917094276@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761137342;
+	s=2020; t=1761137343;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=GLXMwWXFIbD7cZKiqLR8SWn7Xt+iSqcrcxps9Q+G9kY=;
-	b=EtfaCoDmFor8sSyXEn7oHgxdwynsxqOq3FyCVUuhPIgRs9x5vdmO92747Cz8TOKGl4pO+h
-	ZKBXS45G2J7mtFB7bIbQVW+HUcOV3Y864eGZCPy97TDME/wSAWlPnheYnWGw8sDNUcEaqJ
-	18ozfWu+ohRqajooCKIUx6N5b6VdCCo0mx4CHbj65zTzjsxNaXDmXnMkdMlfRmJWxg+7TX
-	2HmOV/4/UrxLFOcsdgGb0UUsX1EeRuVxhh5jfU948EwHm7mOOaa17GMdraDdgMT+nOu2Dm
-	Nh9yba2+vXILBG3SJv5GUZIWaa5XNotuqPRL+KLJqsLbbK0pDKlJWBfK0candw==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=fZFzuFe1kZwWOtUDwXLfQwu5MJAw6qMRRDC36ZwVfYw=;
+	b=U1KJk30ufn2daIIfpJLCyMNcDD+IEHyiM35RXdJyNFqli00qUJLPFpmDIOujbK1fxDdH2L
+	tjiUEaiE7IgsNIT5KsXJt1G9zm/AJp4Lsh1G3ywv7kDU9dk0C4AE0gfNPZl4PR3dfJ6NmE
+	58SsfnZoc59jDBYsUIakGUJ2m+BspUW3Slu7AHVDiiYVJ9cadbiruMSAouVuJOl2uyL6Eo
+	v9MFcoSjMPvFojzkQ1BmeeFxP3+3k1h5BlhwTqljGQY1SShNXeAEzN8iFLWW2VqNOuoMAc
+	D0S5mgGpOsd8ckS2gxrI5IGG5xyaNCdATH1d7uIyR+mjuOcs6oOu9DUSSdinnA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761137342;
+	s=2020e; t=1761137343;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=GLXMwWXFIbD7cZKiqLR8SWn7Xt+iSqcrcxps9Q+G9kY=;
-	b=ss9zZT1nrdUlW60YnW7MoEIuOhi/H1ZFLAptXi6Q2OQGKph9Q1UEzducE2vpLJL3u2pCgV
-	douIrhd397x/hWDg==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=fZFzuFe1kZwWOtUDwXLfQwu5MJAw6qMRRDC36ZwVfYw=;
+	b=9duIHEc7jKDi/buS4tMXry00HW91mCoD9cY348w5IsDS561BCWYuWi4kka8K69tlaLPq+w
+	6je/OLsxmDQeH4DQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
-Subject: [patch V4 00/12] uaccess: Provide and use scopes for user access
-cc: kernel test robot <lkp@intel.com>,
+Cc: kernel test robot <lkp@intel.com>,
  Russell King <linux@armlinux.org.uk>,
  linux-arm-kernel@lists.infradead.org,
  Linus Torvalds <torvalds@linux-foundation.org>,
@@ -80,67 +82,91 @@ cc: kernel test robot <lkp@intel.com>,
  Christian Brauner <brauner@kernel.org>,
  Jan Kara <jack@suse.cz>,
  linux-fsdevel@vger.kernel.org
-Date: Wed, 22 Oct 2025 14:49:02 +0200 (CEST)
+Subject: [patch V4 01/12] ARM: uaccess: Implement missing
+ __get_user_asm_dword()
+References: <20251022102427.400699796@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 22 Oct 2025 14:49:03 +0200 (CEST)
 
-This is a follow up on the V3 feedback:
+When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM variant
+for no real good reason. This prevents using get_user(u64) in generic code.
 
-   https://lore.kernel.org/20251017085938.150569636@linutronix.de
+Implement it as a sequence of two 4-byte reads with LE/BE awareness and
+make the unsigned long (or long long) type for the intermediate variable to
+read into dependend on the the target type.
 
-Changes vs. V3:
+The __long_type() macro and idea was lifted from PowerPC. Thanks to
+Christophe for pointing it out.
 
-  - Remove the superflouous if (1) in the scope macro - Andrew
-
-  - Use asm_inline in the x86 conversion - Andrew
-
-  - Rename to scoped_user_*_access(), remove underscores, use a void
-    intermediate pointer and add a comment vs. access range - David
-
-  - Use read scope in select - PeterZ
-
-  - Fix comments, shorten local variables and remove pointless brackets -
-    Mathieu
-
-  - Simplify the coccinelle script, which needs still more polishing -
-    Julia
-
-The series is based on v6.18-rc1 and also available from git:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/masked
-
-Thanks,
-
-	tglx
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org
+Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel.com/
 ---
-Thomas Gleixner (12):
-      ARM: uaccess: Implement missing __get_user_asm_dword()
-      uaccess: Provide ASM GOTO safe wrappers for unsafe_*_user()
-      x86/uaccess: Use unsafe wrappers for ASM GOTO
-      powerpc/uaccess: Use unsafe wrappers for ASM GOTO
-      riscv/uaccess: Use unsafe wrappers for ASM GOTO
-      s390/uaccess: Use unsafe wrappers for ASM GOTO
-      uaccess: Provide scoped user access regions
-      uaccess: Provide put/get_user_scoped()
-      coccinelle: misc: Add scoped_$MODE_access() checker script
-      futex: Convert to scoped user access
-      x86/futex: Convert to scoped user access
-      select: Convert to scoped user access
+V2a: Solve the *ptr issue vs. unsigned long long - Russell/Christophe
+V2: New patch to fix the 0-day fallout
 ---
- arch/arm/include/asm/uaccess.h               |   26 ++
- arch/powerpc/include/asm/uaccess.h           |    8 
- arch/riscv/include/asm/uaccess.h             |    8 
- arch/s390/include/asm/uaccess.h              |    4 
- arch/x86/include/asm/futex.h                 |   75 ++----
- arch/x86/include/asm/uaccess.h               |   12 -
- fs/select.c                                  |   12 -
- include/linux/uaccess.h                      |  308 ++++++++++++++++++++++++++-
- kernel/futex/futex.h                         |   37 ---
- scripts/coccinelle/misc/scoped_uaccess.cocci |  108 +++++++++
- 10 files changed, 492 insertions(+), 106 deletions(-)
+ arch/arm/include/asm/uaccess.h |   26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -283,10 +283,17 @@ extern int __put_user_8(void *, unsigned
+ 	__gu_err;							\
+ })
+ 
++/*
++ * This is a type: either unsigned long, if the argument fits into
++ * that type, or otherwise unsigned long long.
++ */
++#define __long_type(x) \
++	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
++
+ #define __get_user_err(x, ptr, err, __t)				\
+ do {									\
+ 	unsigned long __gu_addr = (unsigned long)(ptr);			\
+-	unsigned long __gu_val;						\
++	__long_type(x) __gu_val;					\
+ 	unsigned int __ua_flags;					\
+ 	__chk_user_ptr(ptr);						\
+ 	might_fault();							\
+@@ -295,6 +302,7 @@ do {									\
+ 	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
+ 	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
+ 	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
++	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
+ 	default: (__gu_val) = __get_user_bad();				\
+ 	}								\
+ 	uaccess_restore(__ua_flags);					\
+@@ -353,6 +361,22 @@ do {									\
+ #define __get_user_asm_word(x, addr, err, __t)			\
+ 	__get_user_asm(x, addr, err, "ldr" __t)
+ 
++#ifdef __ARMEB__
++#define __WORD0_OFFS	4
++#define __WORD1_OFFS	0
++#else
++#define __WORD0_OFFS	0
++#define __WORD1_OFFS	4
++#endif
++
++#define __get_user_asm_dword(x, addr, err, __t)				\
++	({								\
++	unsigned long __w0, __w1;					\
++	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
++	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
++	(x) = ((u64)__w1 << 32) | (u64) __w0;				\
++})
++
+ #define __put_user_switch(x, ptr, __err, __fn)				\
+ 	do {								\
+ 		const __typeof__(*(ptr)) __user *__pu_ptr = (ptr);	\
 
 
