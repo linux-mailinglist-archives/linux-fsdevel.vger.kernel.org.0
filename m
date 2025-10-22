@@ -1,193 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-65012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F46BF942F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 01:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1566BF9B14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E983B3BC457
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Oct 2025 23:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD574002A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 02:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1338C2C11FE;
-	Tue, 21 Oct 2025 23:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08748212564;
+	Wed, 22 Oct 2025 02:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="OXiEj+wP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lx5ZNXbj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E752BE7AB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 23:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECD4350A15
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761089980; cv=none; b=FqVmFiHT+SJAPtWATqBYJDzn4gj49BHNB4MxqpAgb4s/FQ5MlFPFvSjynFIRMP2/BAtfLZZmyiK3oMetwvZtoq0iA36RYoNRiiVnCi++bolsLZr2Y9HAeX36d/HuPRzbYRW46UKNtG+JShtEVMZh6idiXCq7ieWSDm8AJ9699kM=
+	t=1761099244; cv=none; b=VdoCz32rNwUkx6XxeHemZ45ofYh3Q6Z46/fQ0zi4ZX1/eHQJ9Ris1qunsaIUNn+VTxTXRaSJoJ/1nJhX/G/PlKy8auV4r2XUYCQJo2qc4X1lSA1kpdjWOcxMar2wAreHIkc21oUFdQk/SpFcJbEudR2P0HBr3ZmznNhd+SV0GQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761089980; c=relaxed/simple;
-	bh=uE6R0xgGK28/CHgA533bB00Mwj2oIm/4Ink+mD+7h90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzl6FhQPxYaS7+bIGWZis+Xm147ZWaFI28e3GGL92gFB0wOMcfRSwp0xw6xbeZm3z7ENrvblzxWlxR3SGPlLBhyeWd8BdK7Cr687crnYbDFZJyJ42tSjLi5ErqlT/5Y5rylBzuZ3eWzZKNY4/4UZzhvWpFea12mRcLKN7ifjpHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=OXiEj+wP; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so5092876b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 16:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1761089978; x=1761694778; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ekz2VvXis0CGgykoGefhdHPuzvi4qz8tP9mZjwte4JE=;
-        b=OXiEj+wP6lJ/KRjZH95Z1ThhYlDJOdfT9XeoG7CFq5ozwwwW4qpoCtTuZmK6Dp57J+
-         SM5nym47cWult5crmWn0VN/IKQsvP05uVqMMvwcCkUduFsiD8/emPSsbQeq8l76rIGCl
-         pblXh9+5xjLWZNxEJLGUz2fXbsvSXIvRD8cj8t7ZZc7Uq/tGTT4OnKZh2Ei12j9PXB7b
-         n0JcGBGeDFFGpEI8CnPv3atnxLGXUdHVbGG5Wxnm9RGcEIge3BKU1/Wzul1QbgxN2A+4
-         XyYc+xVCHDOQxPjuR7VCwJDCgdbSwk5Yindvh9fBF00LeqeU7MUleKupWFmXZiEQMVnE
-         GWLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761089978; x=1761694778;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ekz2VvXis0CGgykoGefhdHPuzvi4qz8tP9mZjwte4JE=;
-        b=vW6k0q8HVBt/hNwPImjivA9abhR4jiWvvSYZxTY+7ndfPDyapk1GVJjS3CHl5Fe8Kt
-         Brr8wJFYUQ6RuQyoOAuXYbEyx0l+Nszt5G1ghJHV0IXl0NzUFgjL7RHMumzUIzOZ3NV6
-         akZC4vSFcfOZOB9L31M/LbrlmPr8PtBULvdpO8hHZUWk9tvR3RvVbaa58bNPvLVp58bF
-         6LiFD+Pz+OHsjb5bQAs5MgEXvmwcbHqJvBYzV+HwEljmvsfZU0eUrVkU6gZAn9vj0e9k
-         AJD4ZckF8VN/26t5o/w5rYIwsOFSrI206AbRJzC3c25nGzZNwig/LBrofqE6B2w4fvQ8
-         il+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfiPjAkl2rmTaHLcfGQfXwSja/mUAUhg3Jp/G4IF5Z0tZfaaV/L+9e9XKMmpNUNuaCWD1zjXAhkPanzgFT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhw5AKHACx5sDHbjfQR1Ai36MQpw5Ti3cAS/RRYvacQ3zwjtLS
-	0FObpMgCOeRs21culEE09LyaCYoudTjaWmb/Af5k8eblRnc5U2Qs+IZ+3OOmalKtrg4=
-X-Gm-Gg: ASbGnctN51WZpdrkxrTewXNxqtL5dQR1J1PRDU0Gq+6BfDVtQOBImjGcKIXVsBQLWuA
-	LkblkWRDEhYcJul3Ro4iFzBRVtReHw2hDH1jzxxSE5p9RiA4BwZXndJrqAufRZels2YvTty+iS+
-	3W9JdvDV2v6AzLT2jJ389jCkYNwIEK1kQzXl+6ZYRSNufEoGRH1nqVvaHZfyk8+mKbXdTxCoGIS
-	TB75bG4TyKj3D/+7piL7BHqvH07uwfIPLox4BB6OYoj3NaDzNIM+e46Un4yeZqHRVc7eqKrIoG5
-	omlg1AcxMcyDizpDora0WAPwH7taYDluAZFAcrG5MU9vGTGgVUBuL9ckdRw5LgvKsK6TYVYIHQO
-	HwgS/t6llsoFKpxx/YDms2drAezY5F2cavkPPD8XbrTVq/5xRipBCIIWhg+J0E2bb1FPYvBh3z8
-	LcD4ZNX1PeUI7BFUd1QRuNPxVn5iTVC9Fz2SnOCSC2XD3EgblJjBhgMJit/hdUQA==
-X-Google-Smtp-Source: AGHT+IEeKxOQzdS4L5wZVGG2YsfGQ4VfOG5WxuGIyPNKK1Wog0FyGOuQbFK7NwXfAtyNg8VMiQjC4w==
-X-Received: by 2002:a05:6300:8002:b0:33b:1dce:9941 with SMTP id adf61e73a8af0-33b1dce9c71mr125201637.45.1761089977976;
-        Tue, 21 Oct 2025 16:39:37 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a22ff15c89sm12888451b3a.1.2025.10.21.16.39.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 16:39:37 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1vBLx0-00000000NAO-1MVp;
-	Wed, 22 Oct 2025 10:39:34 +1100
-Date: Wed, 22 Oct 2025 10:39:34 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <aPgZthYaP7Flda0z@dread.disaster.area>
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
- <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
+	s=arc-20240116; t=1761099244; c=relaxed/simple;
+	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FIpT8aD36dID1I8/obJa4RiATLcFvv9zTvsuxFDLb6o2ak844IOLugfZGBG6rE/tdomzqyMrcKl+NAO9P9wAzCF8jOoFpu60iULkBLNDKfTEfkP2deynofXRQhQhyIARI/oVTILEs2bk5++aDQXcIkGdN/gkV94UxkPzLyzpAf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lx5ZNXbj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F000BC2BCAF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761099244;
+	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Lx5ZNXbjFRLltyuRgvoNRyCzTXSu0FK4LgExZTa8UjQFP1m3TuIXXSrzbjiiQWpmk
+	 VzITnBZIScuWIvHZ4lq3jbw619G0nZipjrOv4LKXKXQd9uUKeStM18DY3CJRxL7itU
+	 gn6v9PN5iSV85/umWkJSYlTZShKtAvXfVe0nsyc17s+ZsmxzJS13mCMnQpsxaUpEsn
+	 rxdEPJlsah8tek/SiehXfgSzXvLPfUTtQHtHue6HNFZoaZXnYBFsvvdiOOUS4Ll4MZ
+	 0eLxcKuyjFQFJooCzHP088V4x7Zy7GHUZCq3odyvjOUn4UmO6H1/qgKd12zU1/6GJy
+	 H718tJYLg/Z8g==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b48d8deaef9so1219983566b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 19:14:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbAbrNbhSQtgSbAtwu41KF5pnpf1r1puiyIkLNlYUpcj4OdSzUwRUG0cBtvxPbLV8hHDKBWGuGyGbbYUaP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtpOvfR7DLvVstSS0hRpJY/B5nzUi1QjOBOXnIPc0VVGlK47Hy
+	ICvKQt1GnY77yG/CdxZCHsg81RS8fa99IVzZIY0gfioBZCGrDP/zgsKNnDB0gjQ0Kl/IKO3h+Hb
+	Uj+6saVxTUrXkp94TvidXAVrwgwRooyg=
+X-Google-Smtp-Source: AGHT+IFt7FAknz2XTlPPH7Tjv30M3nEp+LdrCx3vX81xk7xwmr8jzVAH1KIIedv4le/Wpjp3OZCAVUvGcwL0/Jdx8j4=
+X-Received: by 2002:a17:906:6a1d:b0:b0d:d831:6fba with SMTP id
+ a640c23a62f3a-b647453ff67mr2193646466b.59.1761099242372; Tue, 21 Oct 2025
+ 19:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
+References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020183304.umtx46whqu4awijj@pali>
+ <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com> <20251021221919.leqrmil77r2iavyo@pali>
+In-Reply-To: <20251021221919.leqrmil77r2iavyo@pali>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 22 Oct 2025 11:13:50 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+X-Gm-Features: AS18NWC6mAMxQP9NZ3c7BvWoYtCMOJQRY4IgXvJlRe3WjgtE6NSrE_XJ0LMcBGg
+Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org, neil@brown.name, 
+	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
+	jay.sim@lge.com, gunho.lee@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 12:33:08PM +0100, Kiryl Shutsemau wrote:
-> On Sun, Oct 19, 2025 at 09:53:28PM -0700, Andrew Morton wrote:
-> > On Fri, 17 Oct 2025 15:15:36 +0100 Kiryl Shutsemau <kirill@shutemov.name> wrote:
-> > 
-> > > From: Kiryl Shutsemau <kas@kernel.org>
-> > > 
-> > > The protocol for page cache lookup is as follows:
-> > > 
-> > >   1. Locate a folio in XArray.
-> > >   2. Obtain a reference on the folio using folio_try_get().
-> > >   3. If successful, verify that the folio still belongs to
-> > >      the mapping and has not been truncated or reclaimed.
-
-What about if it has been hole-punched?
-
-The i_size checks after testing the folio is up to date catch races
-with truncate down.  This "works" because truncate_setsize() changes
-i_size before we invalidate the mapping and so we don't try to
-access folios that have pending invalidation.
-
-It also catches the case where the invalidation is only a partial
-EOF folio zero (e.g. truncate down within the same EOF folio). In
-this case, the deletion sequence number won't catch the invalidation
-because no pages are freed from the page cache. Hence reads need to
-check i_size to detect this case.
-
-However, fallocate() operations such as hole punching and extent
-shifting have exactly the same partial folio invalidation problems
-as truncate but they don't change i_size like truncate does (both at
-the front and rear edges of the ranges being operated on)
-
-Hence invalidation races with fallocate() operations cannot be
-detected via i_size checks and we have to serialise them differently.
-fallocate() also requires barriers prevent new page cache operations
-whilst the filesystem operation is in progress, so we actually need
-the invalidation serialisation to also act as a page cache instantiation
-barrier. This is what the mapping->invalidate_lock provides, and I
-suspect that this new read fast path doesn't actually work correctly
-w.r.t. fallocate() based invalidation because it can't detect races
-with partial folio invalidations that are pending nor does it take
-the mapping->invalidate_lock....
-
-I also wonder if there might be other subtle races with
-->remap_file_range based operations, because they also run
-invalidations and need page cache instatiation barriers whilst the
-operations run.  At least with XFS, remap operations hold both the
-inode->i_rwsem and the mapping->invalidate_lock so nobody can access
-the page cache across the destination range being operated on whilst
-the extent mapping underlying the file is in flux.
-
-Given these potential issues, I really wonder if this niche fast
-path is really worth the potential pain racing against these sorts
-of operations could bring us. It also increases the cognitive
-load for anyone trying to understand how buffered reads interact
-with everything else (i.e. yet another set of race conditions we
-have to worry about when thinking about truncate!), and it is not
-clear to me that it is (or can be made) safe w.r.t. more complex
-invalidation interactions that filesystem have to handle these days.
-
-So: is the benefit for this niche workload really worth the
-additional complexity it adds to what is already a very complex set
-of behaviours and interactions?
-
-> > > +	if (!folio_test_referenced(folio))
-> > > +		return 0;
-> > > +
-> > > +	/* i_size check must be after folio_test_uptodate() */
-> > 
-> > why?
-> 
-> There is comment for i_size_read() in slow path that inidicates that it
-> is required, but, to be honest, I don't fully understand interaction
-> uptodate vs i_size here.
-
-As per above, it's detecting a race with a concurrent truncate that
-is about to invalidate the folio but hasn't yet got to that folio in
-the mapping.
-
-This is where we'd also need to detect pending fallocate() or other
-invalidations that are in progress, but there's no way to do that
-easily....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+On Wed, Oct 22, 2025 at 7:19=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
+> > On Tue, Oct 21, 2025 at 3:33=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.or=
+g> wrote:
+> > >
+> > > Hello,
+> > Hi Pali,
+> > >
+> > > Do you have a plan, what should be the future of the NTFS support in
+> > > Linux? Because basically this is a third NTFS driver in recent years
+> > > and I think it is not a good idea to replace NTFS driver every decade=
+ by
+> > > a new different implementation.
+> > Our product is currently using ntfsplus without any issues, but we plan=
+ to
+> > provide support for the various issues that are reported from users or
+> > developers once it is merged into the mainline kernel.
+> > This is very basic, but the current ntfs3 has not provided this support
+> > for the last four years.
+> > After ntfsplus was merged, our next step will be to implement full jour=
+nal
+> > support. Our ultimate goal is to provide stable NTFS support in Linux,
+> > utilities support included fsck(ntfsprogs-plus) and journaling.
+>
+> One important thing here is that all those drivers are implementing
+> support for same filesystem. So theoretically they should be equivalent
+> (modulo bugs and missing features).
+>
+> So basically the userspace ntfs fs utils should work with any of those
+> drivers and also should be compatible with Windows ntfs.sys driver.
+> And therefore independent of the used kernel driver.
+>
+> It would be really nice to have working fsck utility for ntfs. I hope
+> that we would not have 3 ntfs mkfs/fsck tools from 3 different project
+> and every one would have different set of bugs or limitations.
+>
+> > >
+> > > Is this new driver going to replace existing ntfs3 driver? Or should =
+it
+> > > live side-by-side together with ntfs3?
+> > Currently, it is the latter. I think the two drivers should compete.
+> > A ntfs driver that users can reliably use for ntfs in their
+> > products is what should be the one that remains.
+> > Four years ago, ntfs3 promised to soon release the full journal and
+> > public utilities support that were in their commercial version.
+> > That promise hasn't been kept yet, Probably, It would not be easy for
+> > a company that sells a ntfs driver commercially to open some or all sou=
+rces.
+> > That's why I think we need at least competition.
+>
+> I understand it. It is not really easy.
+>
+> Also same thing can happen with your new ntfsplus. Nobody knows what
+> would happen in next one or two years.
+Since I publicly mentioned adding write support to ntfs driver, I have devo=
+ted
+a great deal of time and effort to fulfilling that while working on other t=
+asks
+in parallel. Your comment seems to undermine all the effort I have done
+over the years.
+>
+> > >
+> > > If this new driver is going to replace ntfs3 then it should provide s=
+ame
+> > > API/ABI to userspace. For this case at least same/compatible mount
+> > > options, ioctl interface and/or attribute features (not sure what is
+> > > already supported).
+> > Sure, If ntfsplus replace ntfs3, it will support them.
+> > >
+> > > You wrote that ntfsplus is based on the old ntfs driver. How big is t=
+he
+> > > diff between old ntfs and new ntfsplus driver? If the code is still
+> > > same, maybe it would be better to call it ntfs as before and construc=
+t
+> > > commits in a way which will first "revert the old ntfs driver" and th=
+en
+> > > apply your changes on top of it (like write feature, etc..)?
+> > I thought this patch-set was better because a lot of code clean-up
+> > was done, resulting in a large diff, and the old ntfs was removed.
+> > I would like to proceed with the current set of patches rather than
+> > restructuring the patchset again.
+>
+> Sure. In the current form it looks to be more readable and easier for
+> review.
+>
+> But I think that more developers could be curious how similar is the new
+> ntfsplus to the old removed ntfs. And in the form of revert + changes it
+> is easier to see what was changed, what was fixed and what new developed.
+>
+> I'm just thinking, if the code has really lot of common parts, maybe it
+> would make sense to have it in git in that "big revert + new changes"
+> form?
+>
+> > >
+> > > For mount options, for example I see that new driver does not use
+> > > de-facto standard iocharset=3D mount option like all other fs driver =
+but
+> > > instead has nls=3D mount option. This should be fixed.
+> > Okay, I will fix it on the next version.
+> > >
+> > > Pali
+> > Thank you for your review:)
 
