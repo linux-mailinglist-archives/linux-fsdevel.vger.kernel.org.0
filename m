@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-65228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA20DBFE7F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 01:14:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7E9BFE819
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 01:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DDC53A81E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 23:14:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7E2C4F778F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 23:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3153309EF7;
-	Wed, 22 Oct 2025 23:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E749A30B53F;
+	Wed, 22 Oct 2025 23:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Xam4zb5r"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="FKG+sKvH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f98.google.com (mail-lf1-f98.google.com [209.85.167.98])
+Received: from mail-lf1-f99.google.com (mail-lf1-f99.google.com [209.85.167.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEBF3074A7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 23:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7296D308F2B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 23:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761174825; cv=none; b=B51fdMo1z2rPM1wW1drEaYMkPtGqfKi2TWQO6EwMM9QkjhzM6NrtfY2345QAkBiefFHC5AQQ8Z12VQvW6+egf0OzUVrSDr5J4BBg8AxjpipaOCuA7N4t+yo9bYd4Fj0mQ8XfHOkw2TDa7SPwwbAl8kZ08w6DyIwL1Q5GKrVOMFw=
+	t=1761174828; cv=none; b=OC+2vXq35cL1nLdwGRq6lTiTUvx+Ou6i1s54eVHxXVL3zbub7NWCt/uj7AElsvCANJhfKsqYOPqnuQAdVQ4KUNMykVMH9M9io7RtGDPS7QCB7nQtcvBhPoFiO9GRf6tRMvUZ8etHMj4LXGFDHY8Revfa44X3TWqMTDnRMNjutII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761174825; c=relaxed/simple;
-	bh=1OFERuWCzicdiztTF/q7QW5F9IVu0Slo/TPxet3gSrc=;
+	s=arc-20240116; t=1761174828; c=relaxed/simple;
+	bh=Npt8CIamNyEuH3sVd1A1KqiVJoYsn6LwQFxIQ9NJE+E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FsOTuvk4Nyc2kCBLNYvNMWWJeisJBbWFdzdrbuv35HotE2vf47qe92aAoZkedeEkk9qprxmXcedDNRjvyz4BCfq44Ne3jJbsYVhzlNcB4hxOW0xzfmdRiFDnXpvbO/dXOHW+89J9FODeWamydNB95MPFsvMZNVE4NgnIXMk2y7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Xam4zb5r; arc=none smtp.client-ip=209.85.167.98
+	 MIME-Version; b=Oa9zo3KUZCeysk6oFc6Fsjw4O5oZ73tkSth+Vcv6q9oklVx7A5Gb30jgCmKCyj54Kw1sUMJUMPVOOxM3YxJbPPAlR+UFeXwgAdAKBXor9GidFyvZRp3XrIxEmuwtJxSHiQnZW6pNckx1mPuc7wprPoCQBNQDG8U53BSb6Uti44E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=FKG+sKvH; arc=none smtp.client-ip=209.85.167.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-lf1-f98.google.com with SMTP id 2adb3069b0e04-592f1f75c46so18308e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 16:13:42 -0700 (PDT)
+Received: by mail-lf1-f99.google.com with SMTP id 2adb3069b0e04-592f07e03f8so21030e87.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 16:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761174820; x=1761779620; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1761174823; x=1761779623; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QYyTEOzXOC/G6qb7jIG39TqesYubyS/P5gHR3qDN/K4=;
-        b=Xam4zb5r16Y/IKCWvP6QITJYoF7heFJEsed8B8UaZanQH8/Vewr+LukGzqTyZt/+oz
-         7+V26lZY/FyKcX4U4BcWRvwLwazfXkLMm48UCoJwW6ztXSgfCNKFE+CaIINgpfyuJVK+
-         xzzxMQYBaAgQXF3rBZ2b6vQYemDhCe39JDVvycZR5FQNriI+FanqPZzQxF07BUEntRBy
-         5EQ2yj1jif4Qo7ynIVspsunPeJr/FaLSt23CSyRt1CXTaQJrNnWCV28gZUc9WT+9oUfa
-         kJIEOa2OWtw4AlR32nnWWx8T1+SUFiU3M0x685wNVBcosmCIYd71NVC4CNKmK28om9hQ
-         RaFA==
+        bh=NE/3amh4M7tNgNnZVfHQb2pFOExzJd/f5eLPCJymwKM=;
+        b=FKG+sKvHTvGcglwczO8wfj2/qFsvKpmkan7Z2dvNuGaNMH4b6mohpLKvaBPjCLdnVj
+         m5d2P3GEmi82guV2rsVe5LJn6XJLAEWJwS3tj4mBbwI+8u0emVR6vXHVpjkKp2WHmFmi
+         HeFKKgIWd+aYDGxqxRp+ciZZFg63dHTIUFxlmIYZe/fAJbVEUX0F6/spr8ZBztFsqN7R
+         iLYjL7LzOd9bJ//8mJZAtTMEcuM5ir/jOAFbON4z5eTfVfFJDO8qqisIFxJmIH7KXY4x
+         145zSd3Bjk+qmQj9S7CMJHIdPMjqqynkemZkaGRIw6kuBCws2IulbKUN7X+GN3TVbdi/
+         sncw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761174820; x=1761779620;
+        d=1e100.net; s=20230601; t=1761174823; x=1761779623;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QYyTEOzXOC/G6qb7jIG39TqesYubyS/P5gHR3qDN/K4=;
-        b=kUypWiM7qQyLVeWYEDxSF1u9hKapWXVbPUqTgSSbVHcPkBJrTO2MHqo+lnpJQqJvOt
-         WT4S94fUWAsllcMDqNj1ceScgxG6wLTgLPkdqtna5TxwL+8O2Ae27jrOLicBlVl/IQGJ
-         7x98t/ozJ5NDhoHz15MyQFwCkXGJ5edVtLm3y5FoYr5w/BO+8sK0QSo9UXRqsIPnlJux
-         5FkyFG2a3N7Z7ModUZ3PL5qBUuhAOYQIiQVKQQSbr7s9aP8/43sPvBc13+n4W0gLOve5
-         ZHGJq4P2if0gdXg+vpEb6cWN/7fc1tyTM0lPp6CB6F56XXdYplEQeGYrSiU2pdHlQ6Lo
-         UFhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmgbQ97s5wFvymPTupSj9txwPSUZBYt9UJtyYn7y6iOvhkYv8Ilq6VMCFq6JRxKfbbfTlmGO7VSPrP0wsP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb/DktbUXbxF6gTMbKvctAlrG2k2VQcy8yzAzulMWzvSwkw4BN
-	+lmTQxmLlYKzGhXtgSw2n2WFlFq5XhinX1RdTIHXDlqDVAPP87vSfsDQ+ZkILmiMpznSuIeGbsZ
-	PIx5LVp8RJpSRcZgu/+WCEAmhye+J7lqEGbK4B7OAWJ9jXBbcH9qJ
-X-Gm-Gg: ASbGncsvot9nxN48nnzcfw9I2maufTz7qjO0ulwXkzXpWxQQTiks7KE0nyhYI2/4Dfn
-	qRMrArKppX4x7Y4eWenlRFrGfYHIRhTFSqq1By9hxy5CkcwDoUbFNy4b437gInO79Nmpj91/MZd
-	KxmAsLV5g+2EomVRCzUCPGIWtiWVjgbplPZOL0S8R0fJdU/TawfswQOyvOmhQzpvZd+C8rMgn91
-	7FQpwSzS/506ZcdEFpKwwQjoaWcPIECXzkxsJtwbPrVHPZHK1Aw/A3FfIAjNRzz0Oe8NbZJ0tqn
-	qNC1xje/DYPCAqxKN9WyJ6c7axDr4a+OnfhWiqTZ4HDWRkRv/2vvnDHay4ipY2EhXYgEqriPswI
-	JLbPp91DStqr4xkRM
-X-Google-Smtp-Source: AGHT+IGpBSpTcUsGiFW1y6xN6RAigIl6sP5f7WQURKVhSLye12F+OPVHcs9jbRx67/PqsX7m7H0LAVn7y4om
-X-Received: by 2002:a05:6512:2209:b0:57a:2be1:d766 with SMTP id 2adb3069b0e04-591d854a5a5mr3690398e87.4.1761174820364;
-        Wed, 22 Oct 2025 16:13:40 -0700 (PDT)
+        bh=NE/3amh4M7tNgNnZVfHQb2pFOExzJd/f5eLPCJymwKM=;
+        b=NJXkBDdbUpT8RB0dxRRafSsKgHIOIX+6MUS/l3BGXMhwWLsaxBzFnFqp+IlL0bQasy
+         6+ffkFSpwc3WpTBWFj4r0764/htG+bbmxNJ2Yd/hOcoJc60JUBRvKfmXZ2BfNh12uLxr
+         TUBi9zZcWNU8j5/njngeh8G9vsjT8OWQhqArs3k8kg0ib0/0kuK3Cl4RaNg/jz86sTzN
+         i5CQnStdGjw+BRVlIq0cZtyNrNT1s6YZmlqT++HBwdVb3rD3KwpWgzvtzs5hMS4oNnQP
+         D0xiuCQ/wBusLTRUvEIny3mgnjYlAIU81Ke25C91oRhNi0hhBnKDWmVKzHZ2+D2yLont
+         62Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYw4DMcoHbQhfebwOjoeXFHb+Bo7+zb7LohcODojB3bUleWofgyF9oL/OQK7TT1nO2NrdgY+YjR2IAGYBZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMEbDaLUxQs4jqPTG6frc7cjSh4ZSkBjNnQggyTe03L/vAGwCC
+	Z2loKxqDKzEhD/xwtzeM/jyPgvZeEnNKyBi4UI+gsVhnEOkzAMQGbzfPmsjl7X4HOK01V18iK7A
+	W3+3wNVaS4dYCxbBYqs5YwFzUz+2OjXq7vExvg1zTmV5Dw/PEGzmu
+X-Gm-Gg: ASbGncsbownMNH07ZiHh4EY2OZS89FknN6Q2En6cb79FKDVzMCQ53JMAHL4SBDlrSRd
+	wBlHvu2RfZP6xVnlifftE3yu95zmgcSG9qVTBgNVNsW7rhveWeAOrzB6rvnr6xT2oyQ8qgyMLhf
+	veI3uVhrdIDpVfhlSWUtrh8oDAbvtj0BzNBbTMsflRc4IpskEG1ChwHHxU5UHZYcb/JO+3ACCCH
+	KaJNjW8KWMksril0/VjfvviIWHZAAvGQICKCVFAMXdNhX8MKyAa4oGCLd8RjATWqZoEZDtH3Ymx
+	6DVlkElVKrVWJhosdeYoa8sS93FsrC7jTtwdsC0stycJcbriM8pSIof5oK+2F7dapkASQM8HsZ7
+	mORk+K2EBgojUNYvH
+X-Google-Smtp-Source: AGHT+IEu6qVydvgz5FX5gNAmjAkNmVg8S3aqqXExnZUf61/Sip3v+pDczaTy7pMfPzfVmQFRBGfoB1U3Opib
+X-Received: by 2002:a05:6512:401b:b0:58b:212:b0b5 with SMTP id 2adb3069b0e04-591ea30a314mr1687437e87.7.1761174823283;
+        Wed, 22 Oct 2025 16:13:43 -0700 (PDT)
 Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 2adb3069b0e04-592f4ce7a08sm35160e87.29.2025.10.22.16.13.39
+        by smtp-relay.gmail.com with ESMTPS id 2adb3069b0e04-592f4e502d3sm34119e87.55.2025.10.22.16.13.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 16:13:40 -0700 (PDT)
+        Wed, 22 Oct 2025 16:13:43 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id B07D23406A7;
-	Wed, 22 Oct 2025 17:13:38 -0600 (MDT)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 2290F3407D1;
+	Wed, 22 Oct 2025 17:13:39 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id AD471E4181C; Wed, 22 Oct 2025 17:13:38 -0600 (MDT)
+	id 20207E4181C; Wed, 22 Oct 2025 17:13:39 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	Miklos Szeredi <miklos@szeredi.hu>,
@@ -96,9 +96,9 @@ Cc: io-uring@vger.kernel.org,
 	linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 2/3] io_uring/uring_cmd: call io_should_terminate_tw() when needed
-Date: Wed, 22 Oct 2025 17:13:25 -0600
-Message-ID: <20251022231326.2527838-3-csander@purestorage.com>
+Subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
+Date: Wed, 22 Oct 2025 17:13:26 -0600
+Message-ID: <20251022231326.2527838-4-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20251022231326.2527838-1-csander@purestorage.com>
 References: <20251022231326.2527838-1-csander@purestorage.com>
@@ -110,109 +110,270 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Most uring_cmd task work callbacks don't check IO_URING_F_TASK_DEAD. But
-it's computed unconditionally in io_uring_cmd_work(). Add a helper
-io_uring_cmd_should_terminate_tw() and call it instead of checking
-IO_URING_F_TASK_DEAD in the one callback, fuse_uring_send_in_task().
-Remove the now unused IO_URING_F_TASK_DEAD.
+io_uring task work dispatch makes an indirect call to struct io_kiocb's
+io_task_work.func field to allow running arbitrary task work functions.
+In the uring_cmd case, this calls io_uring_cmd_work(), which immediately
+makes another indirect call to struct io_uring_cmd's task_work_cb field.
+Introduce a macro DEFINE_IO_URING_CMD_TASK_WORK() to define a
+io_req_tw_func_t function wrapping an io_uring_cmd_tw_t. Convert the
+io_uring_cmd_tw_t function to the io_req_tw_func_t function in
+io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy().
+Use DEFINE_IO_URING_CMD_TASK_WORK() to define a io_req_tw_func_t
+function for each existing io_uring_cmd_tw_t function. Now uring_cmd
+task work dispatch makes a single indirect call to the io_req_tw_func_t
+wrapper function, which can inline the io_uring_cmd_tw_t function. This
+also allows removing the task_work_cb field from struct io_uring_cmd,
+freeing up some additional storage space.
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- fs/fuse/dev_uring.c            | 2 +-
- include/linux/io_uring/cmd.h   | 7 ++++++-
- include/linux/io_uring_types.h | 1 -
- io_uring/uring_cmd.c           | 6 +-----
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ block/ioctl.c                |  1 +
+ drivers/block/ublk_drv.c     |  3 +++
+ drivers/nvme/host/ioctl.c    |  1 +
+ fs/btrfs/ioctl.c             |  1 +
+ fs/fuse/dev_uring.c          |  1 +
+ include/linux/io_uring/cmd.h | 45 +++++++++++++++++++++---------------
+ io_uring/uring_cmd.c         | 13 ++---------
+ 7 files changed, 36 insertions(+), 29 deletions(-)
 
+diff --git a/block/ioctl.c b/block/ioctl.c
+index d7489a56b33c..7a3756863c9b 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -776,10 +776,11 @@ static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 	if (bic->res == -EAGAIN && bic->nowait)
+ 		io_uring_cmd_issue_blocking(cmd);
+ 	else
+ 		io_uring_cmd_done(cmd, bic->res, issue_flags);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+ 
+ static void bio_cmd_bio_end_io(struct bio *bio)
+ {
+ 	struct io_uring_cmd *cmd = bio->bi_private;
+ 	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 0c74a41a6753..829b049c7c75 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -1354,10 +1354,11 @@ static void ublk_cmd_tw_cb(struct io_uring_cmd *cmd,
+ 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
+ 	struct ublk_queue *ubq = pdu->ubq;
+ 
+ 	ublk_dispatch_req(ubq, pdu->req, issue_flags);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(ublk_cmd_tw_cb)
+ 
+ static void ublk_queue_cmd(struct ublk_queue *ubq, struct request *rq)
+ {
+ 	struct io_uring_cmd *cmd = ubq->ios[rq->tag].cmd;
+ 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
+@@ -1378,10 +1379,11 @@ static void ublk_cmd_list_tw_cb(struct io_uring_cmd *cmd,
+ 		rq->rq_next = NULL;
+ 		ublk_dispatch_req(rq->mq_hctx->driver_data, rq, issue_flags);
+ 		rq = next;
+ 	} while (rq);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(ublk_cmd_list_tw_cb)
+ 
+ static void ublk_queue_cmd_list(struct ublk_io *io, struct rq_list *l)
+ {
+ 	struct io_uring_cmd *cmd = io->cmd;
+ 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
+@@ -2529,10 +2531,11 @@ static void ublk_ch_uring_cmd_cb(struct io_uring_cmd *cmd,
+ 	int ret = ublk_ch_uring_cmd_local(cmd, issue_flags);
+ 
+ 	if (ret != -EIOCBQUEUED)
+ 		io_uring_cmd_done(cmd, ret, issue_flags);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(ublk_ch_uring_cmd_cb)
+ 
+ static int ublk_ch_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ {
+ 	if (unlikely(issue_flags & IO_URING_F_CANCEL)) {
+ 		ublk_uring_cmd_cancel_fn(cmd, issue_flags);
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index c212fa952c0f..d4ca46b3abc7 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -405,10 +405,11 @@ static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
+ 
+ 	if (pdu->bio)
+ 		blk_rq_unmap_user(pdu->bio);
+ 	io_uring_cmd_done32(ioucmd, pdu->status, pdu->result, issue_flags);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+ 
+ static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
+ 						blk_status_t err)
+ {
+ 	struct io_uring_cmd *ioucmd = req->end_io_data;
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 185bef0df1c2..9d395f034403 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -4704,10 +4704,11 @@ static void btrfs_uring_read_finished(struct io_uring_cmd *cmd, unsigned int iss
+ 	kfree(priv->pages);
+ 	kfree(priv->iov);
+ 	kfree(priv);
+ 	kfree(bc->data);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(btrfs_uring_read_finished)
+ 
+ void btrfs_uring_read_extent_endio(void *ctx, int err)
+ {
+ 	struct btrfs_uring_priv *priv = ctx;
+ 	struct io_btrfs_cmd *bc = io_uring_cmd_to_pdu(priv->cmd, struct io_btrfs_cmd);
 diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index f6b12aebb8bb..71b0c9662716 100644
+index 71b0c9662716..e2c87c01e021 100644
 --- a/fs/fuse/dev_uring.c
 +++ b/fs/fuse/dev_uring.c
-@@ -1214,11 +1214,11 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
- {
- 	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
- 	struct fuse_ring_queue *queue = ent->queue;
- 	int err;
+@@ -1226,10 +1226,11 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
+ 		err = -ECANCELED;
+ 	}
  
--	if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
-+	if (!io_uring_cmd_should_terminate_tw(cmd)) {
- 		err = fuse_uring_prepare_send(ent, ent->fuse_req);
- 		if (err) {
- 			fuse_uring_next_fuse_req(ent, queue, issue_flags);
- 			return;
- 		}
+ 	fuse_uring_send(ent, cmd, err, issue_flags);
+ }
++static DEFINE_IO_URING_CMD_TASK_WORK(fuse_uring_send_in_task)
+ 
+ static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring)
+ {
+ 	unsigned int qid;
+ 	struct fuse_ring_queue *queue;
 diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 7509025b4071..b84b97c21b43 100644
+index b84b97c21b43..5d6e30cc9b0b 100644
 --- a/include/linux/io_uring/cmd.h
 +++ b/include/linux/io_uring/cmd.h
-@@ -1,11 +1,11 @@
- /* SPDX-License-Identifier: GPL-2.0-or-later */
- #ifndef _LINUX_IO_URING_CMD_H
- #define _LINUX_IO_URING_CMD_H
- 
- #include <uapi/linux/io_uring.h>
--#include <linux/io_uring_types.h>
-+#include <linux/io_uring.h>
- #include <linux/blk-mq.h>
- 
+@@ -9,18 +9,13 @@
  /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
  #define IORING_URING_CMD_CANCELABLE	(1U << 30)
  /* io_uring_cmd is being issued again */
-@@ -143,10 +143,15 @@ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
- 			io_uring_cmd_tw_t task_work_cb)
- {
- 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
- }
+ #define IORING_URING_CMD_REISSUE	(1U << 31)
  
-+static inline bool io_uring_cmd_should_terminate_tw(struct io_uring_cmd *cmd)
-+{
-+	return io_should_terminate_tw(cmd_to_io_kiocb(cmd)->ctx);
-+}
-+
- static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
- {
- 	return cmd_to_io_kiocb(cmd)->tctx->task;
- }
- 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index c2ea6280901d..278c4a25c9e8 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -37,11 +37,10 @@ enum io_uring_cmd_flags {
- 	IO_URING_F_IOPOLL		= (1 << 10),
- 
- 	/* set when uring wants to cancel a previously issued command */
- 	IO_URING_F_CANCEL		= (1 << 11),
- 	IO_URING_F_COMPAT		= (1 << 12),
--	IO_URING_F_TASK_DEAD		= (1 << 13),
- };
- 
- struct io_wq_work_node {
- 	struct io_wq_work_node *next;
- };
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index d1e3ba62ee8e..35bdac35cf4d 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -114,17 +114,13 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
- 
- static void io_uring_cmd_work(struct io_kiocb *req, io_tw_token_t tw)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
--	unsigned int flags = IO_URING_F_COMPLETE_DEFER;
+-typedef void (*io_uring_cmd_tw_t)(struct io_uring_cmd *cmd,
+-				  unsigned issue_flags);
 -
--	if (io_should_terminate_tw(req->ctx))
--		flags |= IO_URING_F_TASK_DEAD;
+ struct io_uring_cmd {
+ 	struct file	*file;
+ 	const struct io_uring_sqe *sqe;
+-	/* callback to defer completions to task context */
+-	io_uring_cmd_tw_t task_work_cb;
+ 	u32		cmd_op;
+ 	u32		flags;
+ 	u8		pdu[32]; /* available inline for free use */
+ };
  
- 	/* task_work executor checks the deffered list completion */
--	ioucmd->task_work_cb(ioucmd, flags);
-+	ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
- }
+@@ -58,13 +53,29 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+  */
+ void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret, u64 res2,
+ 			 unsigned issue_flags, bool is_cqe32);
  
  void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
- 			io_uring_cmd_tw_t task_work_cb,
+-			    io_uring_cmd_tw_t task_work_cb,
++			    io_req_tw_func_t task_work_cb,
+ 			    unsigned flags);
+ 
++/*
++ * uring_cmd_cb should be a function with the signature
++ * void (struct io_uring_cmd *cmd, unsigned issue_flags)
++ */
++#define IO_URING_CMD_TASK_WORK(uring_cmd_cb) uring_cmd_cb##_tw
++
++#define DEFINE_IO_URING_CMD_TASK_WORK(uring_cmd_cb)				\
++void										\
++IO_URING_CMD_TASK_WORK(uring_cmd_cb)(struct io_kiocb *req, io_tw_token_t tw)	\
++{										\
++	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);\
++										\
++	/* task_work executor checks the deferred list completion */		\
++	uring_cmd_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);			\
++}
++
+ /*
+  * Note: the caller should never hard code @issue_flags and only use the
+  * mask provided by the core io_uring code.
+  */
+ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+@@ -107,11 +118,11 @@ static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret,
+ 		u64 ret2, unsigned issue_flags, bool is_cqe32)
+ {
+ }
+ static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			    io_uring_cmd_tw_t task_work_cb, unsigned flags)
++			    io_req_tw_func_t task_work_cb, unsigned flags)
+ {
+ }
+ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+ 		unsigned int issue_flags)
+ {
+@@ -131,21 +142,19 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
+ 	return true;
+ }
+ #endif
+ 
+ /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
+-static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+-			io_uring_cmd_tw_t task_work_cb)
+-{
+-	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
+-}
+-
+-static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+-			io_uring_cmd_tw_t task_work_cb)
+-{
+-	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
+-}
++#define io_uring_cmd_do_in_task_lazy(ioucmd, uring_cmd_cb)			\
++	__io_uring_cmd_do_in_task((ioucmd),					\
++				  IO_URING_CMD_TASK_WORK(uring_cmd_cb),		\
++				  IOU_F_TWQ_LAZY_WAKE)
++
++#define io_uring_cmd_complete_in_task(ioucmd, uring_cmd_cb)			\
++	__io_uring_cmd_do_in_task((ioucmd),					\
++				  IO_URING_CMD_TASK_WORK(uring_cmd_cb),		\
++				  0)
+ 
+ static inline bool io_uring_cmd_should_terminate_tw(struct io_uring_cmd *cmd)
+ {
+ 	return io_should_terminate_tw(cmd_to_io_kiocb(cmd)->ctx);
+ }
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 35bdac35cf4d..5a80d35658dc 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -111,29 +111,20 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+ 		io_ring_submit_unlock(ctx, issue_flags);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
+ 
+-static void io_uring_cmd_work(struct io_kiocb *req, io_tw_token_t tw)
+-{
+-	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+-
+-	/* task_work executor checks the deffered list completion */
+-	ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
+-}
+-
+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			io_uring_cmd_tw_t task_work_cb,
++			io_req_tw_func_t task_work_cb,
  			unsigned flags)
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+ 
+ 	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
+ 		return;
+ 
+-	ioucmd->task_work_cb = task_work_cb;
+-	req->io_task_work.func = io_uring_cmd_work;
++	req->io_task_work.func = task_work_cb;
+ 	__io_req_task_work_add(req, flags);
+ }
+ EXPORT_SYMBOL_GPL(__io_uring_cmd_do_in_task);
+ 
+ static inline void io_req_set_cqe32_extra(struct io_kiocb *req,
 -- 
 2.45.2
 
