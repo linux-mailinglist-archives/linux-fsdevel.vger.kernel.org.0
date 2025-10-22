@@ -1,201 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-65070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AD4BFAD20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E1FBFADB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 10:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6005F3A2610
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4B33A9DC4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 08:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFAC301489;
-	Wed, 22 Oct 2025 08:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CB72FD1D3;
+	Wed, 22 Oct 2025 08:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bK0vQGOi"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJvJ5L6k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5F52FE560
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 08:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936AF3054C8;
+	Wed, 22 Oct 2025 08:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120619; cv=none; b=FbLlUj7XI9O8oPj7gb20kWl0zHHCQAcEVM2ARmQBDnvQTSXBR2ov+U09iyRNi8uX66KSyiy4jOAGqFS2rbDXimtwZzdkrLv64RckOhMqYCdswo747xRRgfLx3SnRr5Jn4hD8BLcUDIcZ9rtXLqKpbWsZ880MbHFvxsWaE4B8SzM=
+	t=1761121245; cv=none; b=bSenC+eabTh2vmAxgaPCTazznFrNemZE2l5W2MtvOTYeKeEI/x/55uhZUGtgFk0eG2fdlKilNABoufisAIenwD+hGTSifzdMxHnrRGTCHunD9OHirk9nAaX2syQyIt/2brCs7NuoTUi1kyS2ARlfkSvAe3tWc9DsVr5j9PuaBPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120619; c=relaxed/simple;
-	bh=6yDqTislwGgHhuTSoCOgEAsmhSSDRdKbbzHAvrht4jA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6jPPOwBgCPHjqtS7ZC/7l7+WvRHqd2BA8/woe60OBPn045jEATp+pgtCUfo2fLbdcxDBK0sKJpodoeEentbgKRMTuqBUnfKt/3E4+jf1a+sSkXsKg4xbXbgURSNWNVkQwD23b1nWubyDL5LrYH87tIIEcCGZFdA+rdnwjLYMIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bK0vQGOi; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b550a522a49so5379519a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 01:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761120616; x=1761725416; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePywcST/UbYHzI66VBMJAjk1GlQaMlqfpX7Q31qmueU=;
-        b=bK0vQGOiQgdls3rcrgDVlrVCXfspGHXp6Vk4+JEzCFgCn1pAVc5aRTUHqQAkh5M1oG
-         xjZ4YXrWS5RWesqsD1bZEI4L9tX9VqOZ0V+J36Fww/oIyOeMBoluWroq6kEq3jBrz6wy
-         h2nPnHppFFK/D/anQyF4Xs6pxsAgdDaX0NlNcJLPVd2+X8VH40SxYU6OCrThCDyvQeCh
-         s5P2DGkoJERQyGcQ+p+/9Z7yJQln11B/47i6ZJDhDSJnUEP1H8FHK9vmILCawzL38tXE
-         PjCna1MhgvYYWZhzqX/EK+d2oXERcKI35H+9gkZe3p7oaukm5SDXDT0rgJCjieaG1dQu
-         ysyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761120616; x=1761725416;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePywcST/UbYHzI66VBMJAjk1GlQaMlqfpX7Q31qmueU=;
-        b=k3S+/1wRfO3KWbYrcMpxXLQWP82vUa8PFxVRw/A4RGK2iUYMx2yCTtdOKB5vrxViuy
-         U+SZ8z0Z1jH9uD7En0ZRmYq1e/LRs1ARGpkYpPbPbh6bL0jWkCysIvGom/lZtIyKEb23
-         EUShZ46CLA88lloRIpCqmrrjo9c+3ig37CHoIsRZtPDsQd4Li6mKUjBT49HqhCQdUXLj
-         fw2k7wXBgAkdpNXGpyQRf55NVru1KsvG3CcA5vxNapxc3MYvG+9pLuPjCoKlJs3cOgpo
-         zUaiMsh87mUfzFWAh9D7tB7SXgtDj1gVK1CSYQoT9NYLIwcH8O9OI2H/Sx0dOr1xvuu1
-         UgfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUn2Pr5Ys2rmP70nilOmGa+a88m+LQyH+dLv9t19zxRqT9Wk8gS8QEpiiRisPMn2ZpTC81yZRyegcWicQyp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw36qNsVox3eoF3zaZwLM0Ss2zUtsx8JDnl3v6XZHk2Ja5NlOME
-	iLwpWcFP31V/6J9eAwEcpoILZd3nxyftU2Jkcdu7i62cxJDD7xsXlzrENSyOnxPkXb7TvxFY17a
-	v2+OT5ZbsMUB4rsVzeoaB1b5sAK6yuEePEPbuecQLKQ==
-X-Gm-Gg: ASbGncswGU1IWIG3zeTZwM/g/d5agwk+E7iVlm9Mkd/pDUtXOlgk4T/5UkPU7PdNrw+
-	0HnjVBXpkryb/c5pev8mcJer0g4HjTvVmaVqlrRs25vXKgsvgoX7voTvyPXm4hmzK1IFe51Z4lz
-	KDCoePcMGg7ZJA+O8gIZcP6VRGJ2RWLvehtkEqfGANK+A1hws61Z8xQ4jvmq00qc5EXNskeQ9GI
-	wq/szaXHbR4suOKxu8NvUC1RIm8V1rifmGxvj7XFX73U8WceCDFecPtL+IXsG7Exo298yYubGUk
-	wstri8cP/rqeMds0FQI4GG7qKuwdVZ1Ymbt70rfSrD75MLSjpx4KABGkY10l
-X-Google-Smtp-Source: AGHT+IGj17zEPCJE5k/7tAvGPZbSPIFM4H4/9dExqXywN2nx7iL9LUcnSdV7P7vvnmjFDZ5Y7okCulPyPhag9YqyYNA=
-X-Received: by 2002:a17:903:46c8:b0:27e:e77f:57f3 with SMTP id
- d9443c01a7336-290c9cb613bmr254571115ad.14.1761120616580; Wed, 22 Oct 2025
- 01:10:16 -0700 (PDT)
+	s=arc-20240116; t=1761121245; c=relaxed/simple;
+	bh=NaBVnYfiCGBUleVgENfqy+6MTH7byS2p6Wtyv6/P8ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rn9b/U80OjPVXYvloS+DNUPsw7gJQaXnmSIZ1yzk0BchPfQQEp6v5MoYAWd6BB0H7WxnvN+Idy1odDCH2RGKc06l2HoJ7Zi+m2nTqgxflrrAgvhojLJiBu0rwZ+TnnIK/Uhls6QgWo+rHzeJ9WXqvPMfEKqGSTEg+OCNOfazk9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dJvJ5L6k; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GBiS77jacBsAV5FtDUoak5VLXkPdQf0nis8KTJqTfW4=; b=dJvJ5L6kzK0cWDQUXS+9Sv/+VK
+	d0CkMXZ8LBVpyOFapysJs3nZUl8zg9jTWIWcs7hMsJWUEWdw593rfTsyMVuBrGOxp7kergFX2kDAu
+	kRHlMRJjX66XPkxAzIXHxKzcAfWzVZxuKDsExmSD0CeQS3y2h8LVClTy6lALGeurbtbN08tcGCYsL
+	/vQ0qw1qBCzpwe3TRNnSukrnJKItuh8uQv7oB/ibvZYDRFJnxGZgGj3hljyUiY5aaxa8T1u6tEUgt
+	R30bNScOmi92rDSwQ+MJbXLrbKxu56TMtKAKqiNxmdw3XTNl50zs1smUC/tD8rqphtpHS7p2v2heZ
+	Evo5QUhw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBTDO-00000000P2b-0jqI;
+	Wed, 22 Oct 2025 07:24:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E1C730039F; Wed, 22 Oct 2025 10:20:25 +0200 (CEST)
+Date: Wed, 22 Oct 2025 10:20:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
+	Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Shuah Khan <shuah@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	kernel test robot <lkp@intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>, Uros Bizjak <ubizjak@gmail.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Christopher Ferris <cferris@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
+Message-ID: <20251022082025.GK4067720@noisy.programming.kicks-ass.net>
+References: <20251020220005.work.095-kees@kernel.org>
+ <20251020220118.1226740-1-kees@kernel.org>
+ <20251021095447.GL3245006@noisy.programming.kicks-ass.net>
+ <202510211210.84D670D1C@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuF44WkxhDj9ZQ1+PwdsU_rHGcYoVqMDr3AL=AvweiCxg@mail.gmail.com>
- <CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com>
- <aPIPGeWo8gtxVxQX@yuki.lan> <qveta77u5ruaq4byjn32y3vj2s2nz6qvsgixg5w5ensxqsyjkj@nx4mgl7x7o6o>
- <20251021-wollust-biografie-c4d97486c587@brauner> <lguqncbotw2cu2nfaf6hwgip6wtrmeg2azvyeht7l56itlomy5@uccupuql3let>
- <20251022075134.GA463176@pevik>
-In-Reply-To: <20251022075134.GA463176@pevik>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 22 Oct 2025 13:40:04 +0530
-X-Gm-Features: AS18NWBdzsxWz_QgzGvsSbF_tbzntKvd82uq9r2HYtjdHCUwx0XlbeuUCqIBmDg
-Message-ID: <CA+G9fYssAU52bWwMiQ4GiRjroWJYgA+CvEFekq6mnkd+9Z-Vng@mail.gmail.com>
-Subject: Re: 6.18.0-rc1: LTP syscalls ioctl_pidfd05: TFAIL: ioctl(pidfd,
- PIDFD_GET_INFO_SHORT, info_invalid) expected EINVAL: ENOTTY (25)
-To: Petr Vorel <pvorel@suse.cz>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Cyril Hrubis <chrubis@suse.cz>, 
-	open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	LTP List <ltp@lists.linux.it>, Andrey Albershteyn <aalbersh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Andrea Cervesato <andrea.cervesato@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202510211210.84D670D1C@keescook>
 
-On Wed, 22 Oct 2025 at 13:21, Petr Vorel <pvorel@suse.cz> wrote:
->
-> > On Tue 21-10-25 15:21:08, Christian Brauner wrote:
-> > > On Fri, Oct 17, 2025 at 02:43:14PM +0200, Jan Kara wrote:
-> > > > On Fri 17-10-25 11:40:41, Cyril Hrubis wrote:
-> > > > > Hi!
-> > > > > > > ## Test error log
-> > > > > > > tst_buffers.c:57: TINFO: Test is using guarded buffers
-> > > > > > > tst_test.c:2021: TINFO: LTP version: 20250930
-> > > > > > > tst_test.c:2024: TINFO: Tested kernel: 6.18.0-rc1 #1 SMP PREEMPT
-> > > > > > > @1760657272 aarch64
-> > > > > > > tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-> > > > > > > tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-> > > > > > > which might slow the execution
-> > > > > > > tst_test.c:1842: TINFO: Overall timeout per run is 0h 21m 36s
-> > > > > > > ioctl_pidfd05.c:45: TPASS: ioctl(pidfd, PIDFD_GET_INFO, NULL) : EINVAL (22)
-> > > > > > > ioctl_pidfd05.c:46: TFAIL: ioctl(pidfd, PIDFD_GET_INFO_SHORT,
-> > > > > > > info_invalid) expected EINVAL: ENOTTY (25)
->
-> > > > > Looking closely this is a different problem.
->
-> > > > > What we do in the test is that we pass PIDFD_IOCTL_INFO whith invalid
-> > > > > size with:
->
-> > > > > struct pidfd_info_invalid {
-> > > > >         uint32_t dummy;
-> > > > > };
->
-> > > > > #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct pidfd_info_invalid)
->
->
-> > > > > And we expect to hit:
->
-> > > > >         if (usize < PIDFD_INFO_SIZE_VER0)
-> > > > >                 return -EINVAL; /* First version, no smaller struct possible */
->
-> > > > > in fs/pidfs.c
->
->
-> > > > > And apparently the return value was changed in:
->
-> > > > > commit 3c17001b21b9f168c957ced9384abe969019b609
-> > > > > Author: Christian Brauner <brauner@kernel.org>
-> > > > > Date:   Fri Sep 12 13:52:24 2025 +0200
->
-> > > > >     pidfs: validate extensible ioctls
->
-> > > > >     Validate extensible ioctls stricter than we do now.
->
-> > > > >     Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > > >     Reviewed-by: Jan Kara <jack@suse.cz>
-> > > > >     Signed-off-by: Christian Brauner <brauner@kernel.org>
->
-> > > > > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > > > > index edc35522d75c..0a5083b9cce5 100644
-> > > > > --- a/fs/pidfs.c
-> > > > > +++ b/fs/pidfs.c
-> > > > > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-> > > > >                  * erronously mistook the file descriptor for a pidfd.
-> > > > >                  * This is not perfect but will catch most cases.
-> > > > >                  */
-> > > > > -               return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-> > > > > +               return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
-> > > > >         }
->
-> > > > >         return false;
->
->
-> > > > > So kernel has changed error it returns, if this is a regression or not
-> > > > > is for kernel developers to decide.
->
-> > > > Yes, it's mostly a question to Christian whether if passed size for
-> > > > extensible ioctl is smaller than minimal, we should be returning
-> > > > ENOIOCTLCMD or EINVAL. I think EINVAL would make more sense but Christian
-> > > > is our "extensible ioctl expert" :).
->
-> > > You're asking difficult questions actually. :D
-> > > I think it would be completely fine to return EINVAL in this case.
-> > > But traditionally ENOTTY has been taken to mean that this is not a
-> > > supported ioctl. This translation is done by the VFS layer itself iirc.
->
-> > Now the translation is done by VFS, I agree. But in the past (when the LTP
-> > test was written) extensible ioctl with too small structure passed the
-> > initial checks, only later we found out the data is too short and returned
-> > EINVAL for that case. I *think* we are fine with just adjusting the test to
-> > accept the new world order but wanted your opinion what are the chances of
-> > some real userspace finding the old behavior useful or otherwise depending
-> > on it.
->
-> +1, thanks! Is it ok just expect any of these two regardless kernel version?
->
-> @Naresh Kamboju will you send a patch to LTP ML?
+On Tue, Oct 21, 2025 at 12:24:05PM -0700, Kees Cook wrote:
+> On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
 
-Sure.
-I love to send patches to LTP mailing list.
+> > So why do we need both __counted_by_ptr() and this __sized_by(), won't
+> > one be good enough?
+> 
+> I remain extraordinarily frustrated that counted_by can't be used with
+> "void *". I hit a brick wall on this, though, and don't know how to
+> convince either GCC or Clang devs to fix it. It's so obviously correct
+> to me: "void *" uses a 1 byte iterator for arithmetic... so asking how
+> big a given allocation is should be byte sized!
 
->
-> Kind regards,
-> Petr
->
-> >                                                               Honza
+Right, at least for gnu11 language variants this really should work. I
+mean, disallow the usage for c11 if you're pedantic but for crying out
+loud, have the GNU extensions be consistent and all that.
+
+Feel free to use my feedback if it would help.
+
+> Let me take another stab at it...
+
+Thanks!
+
+> As for avoiding __counted_by_ptr(), we could just raise the minimum
+> Clang and GCC versions to require this, but that means dropping existing
+> coverage (e.g GCC 15 supports only flexible array counted_by).
+> 
+> Maybe we could do a global __counted_by_ptr -> __counted_by replacement
+> once GCC 16 is released?
+
+That sounds like a plan! :-)
 
