@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B97BBFD2C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:26:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D088FBFD515
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3D11889319
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:24:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9554C3BDC7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CBA3590A6;
-	Wed, 22 Oct 2025 16:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14812C11FD;
+	Wed, 22 Oct 2025 16:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkQBdlrq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aynBCV14"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCD437EE2F;
-	Wed, 22 Oct 2025 16:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C6B3590C7;
+	Wed, 22 Oct 2025 16:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149405; cv=none; b=ueMdRK/fDFKJMTLWxc3VJXvUGu5zg7y2vKTyMwo2z/bQiJG0jaSI+7GfxAamfLcJJE+FlLAYIzl9RAkbAltLv2SOK4ZyxbIZ0GKGITPHZst8mHrxbmtcD/OELx0dEs09+S2pZy77gB3MpB9Slx7B9JoVdeFaUAOYY8FgfOpd8JU=
+	t=1761149411; cv=none; b=kVooqoK9drDwiWylapN/9C5AI0Zi8ARtm8N+Y9Dxh0YkbOpVSU4+D7K6jc7jhNEGZC/vSoWJ22jHRs61UIpS3OwWNsN8BciVaUrAkrvq6bV+JsTx7TwCT4udugab0nv3thuo7EqWJr+s1ewJHWpE4etqxSKi+X8rgtBo8clKSlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149405; c=relaxed/simple;
-	bh=5YqEIrDVXqnPIx61aY2UFkn7520IFi2bPLuDDoqZd4M=;
+	s=arc-20240116; t=1761149411; c=relaxed/simple;
+	bh=rZyevUn6hfyhcE1DB3cv3yJAhND3Rlxt9xlbt7Q4T1s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=spVX0JLy0Lj7N3NOQc7hz+Dr47I9Trhpyi+RwO/CQPvtoPksW+K2CvVDR+ofqh6uaTj501xze4jiK8yv5egv6Zpp56T1n5I6S3HeTkKQIdcSh2u1onmyq0gtcjidCn1PmXUvgzgOk7RTNW38na+OswL0GsFPHkfI/uJeFt4I8ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkQBdlrq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5700C4CEE7;
-	Wed, 22 Oct 2025 16:10:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=URu6oZxaOQMLqVi21L6l9BpV89MpdD94BZq4tAZ++o6cY4xbGHm0A86wCh2ySw2+lPWT/I2eWkFHfKYzKioCwUMV1wf5tsP/Cc+wC1p8jCneiL5iTFuz+9SA5SbROOWiieOJGSDY4nsD+R6+KOWoTOkpcXq6b6AeyM9nMU0X2rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aynBCV14; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011EDC4CEE7;
+	Wed, 22 Oct 2025 16:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761149405;
-	bh=5YqEIrDVXqnPIx61aY2UFkn7520IFi2bPLuDDoqZd4M=;
+	s=k20201202; t=1761149410;
+	bh=rZyevUn6hfyhcE1DB3cv3yJAhND3Rlxt9xlbt7Q4T1s=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IkQBdlrq/Foh5U4Si0HKsuRF2nrTlbOKWCMtKyopgFeyUoIR8G1BnEEGtvXYRbbie
-	 ZB/x5/qgnqMem9FgkHzGbd9vgUMHfK/syK/lLjkEayhVPJFRMQrBBiCrvUg422cLQg
-	 w/9nhJJi+eu2MS98+n+IRuZOG5B8bYohKkZawdmnkq+3qgVQugOD78knMu2R4ACm5/
-	 NrFh9cydNE0GX1bxw8KvBhx5pktqvrAGUQCWvJuddCknBQ+GQhzr89dCJak/4QHcox
-	 H/FK9Z265JTjKNZ6o/Uv8VDBvNi6Ka+Ffit+UrsfCaWmPNy023UZX+so8uPgYtQntD
-	 /LQqtalc6lUFQ==
+	b=aynBCV14drdvlkI5OVh+cSdoZLeVi/bTdUqgyN7c3RkCKDaZ+vwnfSIPPIZ5v+k2+
+	 U0m9fnt0pUN1+J5sDp/hHwVJtveTwMlvZbmdxNNlf4AbkdomL1ZOj8yclNK6y3ZCpr
+	 sjAopqmouzgRc3hBKc+iC/rvt3lxB+2Q5H5OR0mqnr8k6cF+lat94pi8zILk/u5Xt4
+	 myVVzsbBpPA+oiirsVywgKB0SjPdKabavkb49tjjMvpl9nj5PYsPm53UJ6mxLyXt1q
+	 rwvAqf9qLggKfAwlvSDgPu4Vr8r78mq5eeJlznXCYoSSCynlj1n0137RtxiAuW/c1t
+	 B3Cf3+iXR/5Bg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Oct 2025 18:06:23 +0200
-Subject: [PATCH v2 45/63] selftests/namespaces: first listns() permission
+Date: Wed, 22 Oct 2025 18:06:24 +0200
+Subject: [PATCH v2 46/63] selftests/namespaces: second listns() permission
  test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-work-namespace-nstree-listns-v2-45-71a588572371@kernel.org>
+Message-Id: <20251022-work-namespace-nstree-listns-v2-46-71a588572371@kernel.org>
 References: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 In-Reply-To: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,101 +70,51 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5030; i=brauner@kernel.org;
- h=from:subject:message-id; bh=5YqEIrDVXqnPIx61aY2UFkn7520IFi2bPLuDDoqZd4M=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHgmFXGmnTHkXO/U4vmOQZ2y5drTjCQuVPnlrtpnt
- ngf3+mejlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk0OTAyXEj9o6jj+VBCoat9
- dlpU/lX7d9FOLmvfqbtIGqs0t8cpMzI09v6sONfOLL5y2tNvs0tOKHRxusWUfn+ffVHYoUxo21R
- mAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3077; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=rZyevUn6hfyhcE1DB3cv3yJAhND3Rlxt9xlbt7Q4T1s=;
+ b=kA0DAAoWkcYbwGV43KIByyZiAGj5AOfIqo/5x+ugoJC4nLGfrMBsvIibNo7EcJDWtGAtVxRHQ
+ Yh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmj5AOcACgkQkcYbwGV43KI0nAD/WFlN
+ wFDkt6TQIIXbHcevpPbxDm3Lp9gD8OWj6b+YDRwBAN2RrRhb1dUXuKKmdEo0QxmJOc734pdoX8p
+ 4YABB5ncB
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that unprivileged users can only see namespaces they're currently
-in. Create a namespace, drop privileges, verify we can only see our own
-namespaces.
+Test that users with CAP_SYS_ADMIN in a user namespace can see
+all namespaces owned by that user namespace.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/.gitignore      |   1 +
- tools/testing/selftests/namespaces/Makefile        |   3 +-
- .../selftests/namespaces/listns_permissions_test.c | 134 +++++++++++++++++++++
- 3 files changed, 137 insertions(+), 1 deletion(-)
+ .../selftests/namespaces/listns_permissions_test.c | 103 +++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
 
-diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
-index 5065f07e92c9..17f9c675a60b 100644
---- a/tools/testing/selftests/namespaces/.gitignore
-+++ b/tools/testing/selftests/namespaces/.gitignore
-@@ -3,3 +3,4 @@ file_handle_test
- init_ino_test
- ns_active_ref_test
- listns_test
-+listns_permissions_test
-diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
-index de708f4df159..2dd22bc68b89 100644
---- a/tools/testing/selftests/namespaces/Makefile
-+++ b/tools/testing/selftests/namespaces/Makefile
-@@ -2,10 +2,11 @@
- CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
- LDLIBS += -lcap
- 
--TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test ns_active_ref_test listns_test
-+TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test ns_active_ref_test listns_test listns_permissions_test
- 
- include ../lib.mk
- 
- $(OUTPUT)/ns_active_ref_test: ../filesystems/utils.c
- $(OUTPUT)/listns_test: ../filesystems/utils.c
-+$(OUTPUT)/listns_permissions_test: ../filesystems/utils.c
- 
 diff --git a/tools/testing/selftests/namespaces/listns_permissions_test.c b/tools/testing/selftests/namespaces/listns_permissions_test.c
-new file mode 100644
-index 000000000000..87ec71560d99
---- /dev/null
+index 87ec71560d99..803c42fc76ec 100644
+--- a/tools/testing/selftests/namespaces/listns_permissions_test.c
 +++ b/tools/testing/selftests/namespaces/listns_permissions_test.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <linux/nsfs.h>
-+#include <sys/capability.h>
-+#include <sys/ioctl.h>
-+#include <sys/prctl.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include "../kselftest_harness.h"
-+#include "../filesystems/utils.h"
-+#include "wrappers.h"
-+
+@@ -131,4 +131,107 @@ TEST(listns_unprivileged_current_only)
+ 			unexpected_count);
+ }
+ 
 +/*
-+ * Test that unprivileged users can only see namespaces they're currently in.
-+ * Create a namespace, drop privileges, verify we can only see our own namespaces.
++ * Test that users with CAP_SYS_ADMIN in a user namespace can see
++ * all namespaces owned by that user namespace.
 + */
-+TEST(listns_unprivileged_current_only)
++TEST(listns_cap_sys_admin_in_userns)
 +{
 +	struct ns_id_req req = {
 +		.size = sizeof(req),
 +		.spare = 0,
 +		.ns_id = 0,
-+		.ns_type = CLONE_NEWNET,
++		.ns_type = 0,  /* All types */
 +		.spare2 = 0,
-+		.user_ns_id = 0,
++		.user_ns_id = 0,  /* Will be set to our created user namespace */
 +	};
 +	__u64 ns_ids[100];
-+	ssize_t ret;
 +	int pipefd[2];
 +	pid_t pid;
 +	int status;
-+	bool found_ours;
-+	int unexpected_count;
++	bool success;
++	ssize_t count;
 +
 +	ASSERT_EQ(pipe(pipefd), 0);
 +
@@ -173,61 +123,56 @@ index 000000000000..87ec71560d99
 +
 +	if (pid == 0) {
 +		int fd;
-+		__u64 our_netns_id;
-+		bool found_ours;
-+		int unexpected_count;
++		__u64 userns_id;
++		ssize_t ret;
++		int min_expected;
++		bool success;
 +
 +		close(pipefd[0]);
 +
-+		/* Create user namespace to be unprivileged */
++		/* Create user namespace - we'll have CAP_SYS_ADMIN in it */
 +		if (setup_userns() < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* Create a network namespace */
-+		if (unshare(CLONE_NEWNET) < 0) {
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+
-+		/* Get our network namespace ID */
-+		fd = open("/proc/self/ns/net", O_RDONLY);
++		/* Get the user namespace ID */
++		fd = open("/proc/self/ns/user", O_RDONLY);
 +		if (fd < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		if (ioctl(fd, NS_GET_ID, &our_netns_id) < 0) {
++		if (ioctl(fd, NS_GET_ID, &userns_id) < 0) {
 +			close(fd);
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +		close(fd);
 +
-+		/* Now we're unprivileged - list all network namespaces */
++		/* Create several namespaces owned by this user namespace */
++		unshare(CLONE_NEWNET);
++		unshare(CLONE_NEWUTS);
++		unshare(CLONE_NEWIPC);
++
++		/* List namespaces owned by our user namespace */
++		req.user_ns_id = userns_id;
 +		ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
 +		if (ret < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* We should only see our own network namespace */
-+		found_ours = false;
-+		unexpected_count = 0;
++		/*
++		 * We have CAP_SYS_ADMIN in this user namespace,
++		 * so we should see all namespaces owned by it.
++		 * That includes: net, uts, ipc, and the user namespace itself.
++		 */
++		min_expected = 4;
++		success = (ret >= min_expected);
 +
-+		for (ssize_t i = 0; i < ret; i++) {
-+			if (ns_ids[i] == our_netns_id) {
-+				found_ours = true;
-+			} else {
-+				/* This is either init_net (which we can see) or unexpected */
-+				unexpected_count++;
-+			}
-+		}
-+
-+		/* Send results to parent */
-+		write(pipefd[1], &found_ours, sizeof(found_ours));
-+		write(pipefd[1], &unexpected_count, sizeof(unexpected_count));
++		write(pipefd[1], &success, sizeof(success));
++		write(pipefd[1], &ret, sizeof(ret));
 +		close(pipefd[1]);
 +		exit(0);
 +	}
@@ -235,27 +180,25 @@ index 000000000000..87ec71560d99
 +	/* Parent */
 +	close(pipefd[1]);
 +
-+	found_ours = false;
-+	unexpected_count = 0;
-+	read(pipefd[0], &found_ours, sizeof(found_ours));
-+	read(pipefd[0], &unexpected_count, sizeof(unexpected_count));
++	success = false;
++	count = 0;
++	read(pipefd[0], &success, sizeof(success));
++	read(pipefd[0], &count, sizeof(count));
 +	close(pipefd[0]);
 +
 +	waitpid(pid, &status, 0);
 +	ASSERT_TRUE(WIFEXITED(status));
 +
 +	if (WEXITSTATUS(status) != 0) {
-+		SKIP(return, "Child failed to setup namespaces or run listns");
++		SKIP(return, "Child failed to setup namespaces");
 +	}
 +
-+	/* Child should have seen its own namespace */
-+	ASSERT_TRUE(found_ours);
-+
-+	TH_LOG("Unprivileged child saw its own namespace, plus %d others (likely init_net)",
-+			unexpected_count);
++	ASSERT_TRUE(success);
++	TH_LOG("User with CAP_SYS_ADMIN saw %zd namespaces owned by their user namespace",
++			count);
 +}
 +
-+TEST_HARNESS_MAIN
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.3
