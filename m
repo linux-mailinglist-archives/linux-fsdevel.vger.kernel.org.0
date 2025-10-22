@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-65146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E17BFD10D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:12:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917C8BFD1B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA1318C01BA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:13:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45B23564796
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D828534FF4D;
-	Wed, 22 Oct 2025 16:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30F1350298;
+	Wed, 22 Oct 2025 16:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASBbj6ME"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4c6vvD3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB5734F251;
-	Wed, 22 Oct 2025 16:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F5E337100;
+	Wed, 22 Oct 2025 16:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149262; cv=none; b=tTdA6eyxO6YSEar5Ar7/82G0RxjsYFL78eJmhoyAJQD53jEGU3ed52GsyvjScACZfIsUCvilCvQLrabR5meAcmOMELwiqAiYV0eWrPoOw21BzS6scxTREQRX7/mN0G4AGT3RmBuTQIyh0TEd+f9ZEIq4Wh2zdEKhwMI89yn/Vmc=
+	t=1761149267; cv=none; b=N7pPgpRG/MHeFDBN6vC54h6Lzn7iFo00Zb1AABGOWrgwtKLcyia9xLRFUEmadzNcxDMjU5TVpstPRExt6C9affhibpnQB7EUuRsBl8FQ1as6HIv5ZnPM7JYM7XuXPdTFfoAr32sUYX5KsORpn9yAsqiRXHufpwq7cu9/kZIJkyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149262; c=relaxed/simple;
-	bh=1Vbdfejrzu8I2m1UigJuDF0ynX7SsD3EwMJY3zP1DiU=;
+	s=arc-20240116; t=1761149267; c=relaxed/simple;
+	bh=5c8S8VpHc/7sZMeT1/SbhEW34RvFd3Tre08SPwP5pEQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SZEPJZLv0hjqAusXYX8YD7SmtYYKm3fMYyhrsZrjSwgir51ziAlxDCQ9hHF6MBwkt8PiL2MHt9LuKEwAJVt/7h79f+jEzlnevhdejOhH+sb55/HPjSQAs9oLU2z9ZpxKRd9R40B9rvhUCZLLrCKXQvKFmhAIkLF8x0Y+yEruAEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASBbj6ME; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8CCC4CEE7;
-	Wed, 22 Oct 2025 16:07:36 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=R/AWvdmcye7K6GDxRllFPwS4KLroeF5MEhbJyLHUnJZlboscGdNCDJFCXiWPA5dPZ+bFuH2wAcv7oYB+uNKSaiovIMPorBAfJErpyAdULpQUWyk5L+2BmPqAfxTsE7XIHav7SGVKfw9dHs9WFvSX/920WT/C4pv1+7N1LblrcjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4c6vvD3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6B4C116B1;
+	Wed, 22 Oct 2025 16:07:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761149261;
-	bh=1Vbdfejrzu8I2m1UigJuDF0ynX7SsD3EwMJY3zP1DiU=;
+	s=k20201202; t=1761149267;
+	bh=5c8S8VpHc/7sZMeT1/SbhEW34RvFd3Tre08SPwP5pEQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ASBbj6MEprXMqyvfD5do/DikYaPNn5tNyzkWEbSE8UhBJzzC1sE6yugIZ+3lEjtMO
-	 MR+m6Eh05EGTHKygxm3aNg+8xE2hWy7DYowB2M0tqHUYSV3ao8YyB23p2ZdS25aPI8
-	 jTtETgucd9w+qUdShE2woMEFv3pPS3SQKEuyzbDMr6HwReh4zayNCh7k3MtYbx3Lr3
-	 Wsu0wxh70v1ktKKfdQSpJwSUUx0FRkXpRlkoxX7vF5Fxk1McorOrj50KY3izUn0x6p
-	 CRJ09rd2a54vC0d+gXLdZB1kpZamSbSQph4QTfbmtwHldB09nHKSLHyggxUEJF5dom
-	 EfRRLbDuSB0MQ==
+	b=K4c6vvD3rnSEEu+Jw1oM0YWh9q2imSru6TNaOD++k0VR4cEqbfqFdhNdsKSD/z5uv
+	 sIo/aA9cSpR+hHC5zByS/f6h333JchazdC1dcsTCh/L/U+PCVvvFKpKSzME2UWFqbr
+	 b/MGv2RES2TBICoiaO/Z9UjSPpWUDNpO7lmeFe1PkQSpreeennSF298tBWh7YHfJZc
+	 o6qKBk4vN/6UocTJ+3aRjMf/Zp0FOyMOQezSyWKszW/N3B4csOsS3cu3NunOa/Z1lo
+	 1ddHMHjSqDy+ykRe0yYGksdlzmRlgUWJHgaqd0qybKNUrupn5PaY6OtxA6G2HR+F4E
+	 Fxvkk8Fsx6gzg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Oct 2025 18:05:56 +0200
-Subject: [PATCH v2 18/63] nsfs: update tools header
+Date: Wed, 22 Oct 2025 18:05:57 +0200
+Subject: [PATCH v2 19/63] selftests/filesystems: remove CLONE_NEWPIDNS from
+ setup_userns() helper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-work-namespace-nstree-listns-v2-18-71a588572371@kernel.org>
+Message-Id: <20251022-work-namespace-nstree-listns-v2-19-71a588572371@kernel.org>
 References: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 In-Reply-To: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,103 +70,36 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2616; i=brauner@kernel.org;
- h=from:subject:message-id; bh=1Vbdfejrzu8I2m1UigJuDF0ynX7SsD3EwMJY3zP1DiU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHhqHNZ3mCP+X/OZTSyxx6W4dKaJbjuzIn72+y98w
- a+3PQ7R6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIjXCG/0WR/HWRq4tFPEOc
- q1d1q/ypvLbxt/nUlr7AosapJ3tllRj+2VhJ129abtu4/sOj39x6q+JrdbWeLQrn6HH+xyVy68g
- aLgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=852; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=5c8S8VpHc/7sZMeT1/SbhEW34RvFd3Tre08SPwP5pEQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHj6ek9eNou5+ozcXuWy5a+eP93QuyU7N+60cQdL4
+ NQnJ147d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEQZuRYeNnjyTNkMLk5Qd1
+ Y1aubDc9PMHlUdvPW6q7bYo8VqqE1TAynGoP9WTUm7db5YfcdZVvG3e9ZVXnKyoO0+1+dWSdwPm
+ DPAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Ensure all the new uapi bits are visible for the selftests.
+This is effectively unused and doesn't really server any purpose after
+having reviewed all of the tests that rely on it.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/include/uapi/linux/nsfs.h | 70 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ tools/testing/selftests/filesystems/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/nsfs.h b/tools/include/uapi/linux/nsfs.h
-index 33c9b578b3b2..a25e38d1c874 100644
---- a/tools/include/uapi/linux/nsfs.h
-+++ b/tools/include/uapi/linux/nsfs.h
-@@ -53,6 +53,76 @@ enum init_ns_ino {
- 	TIME_NS_INIT_INO	= 0xEFFFFFFAU,
- 	NET_NS_INIT_INO		= 0xEFFFFFF9U,
- 	MNT_NS_INIT_INO		= 0xEFFFFFF8U,
-+#ifdef __KERNEL__
-+	MNT_NS_ANON_INO		= 0xEFFFFFF7U,
-+#endif
- };
+diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testing/selftests/filesystems/utils.c
+index c43a69dffd83..a0c64f415a7f 100644
+--- a/tools/testing/selftests/filesystems/utils.c
++++ b/tools/testing/selftests/filesystems/utils.c
+@@ -487,7 +487,7 @@ int setup_userns(void)
+ 	uid_t uid = getuid();
+ 	gid_t gid = getgid();
  
-+struct nsfs_file_handle {
-+	__u64 ns_id;
-+	__u32 ns_type;
-+	__u32 ns_inum;
-+};
-+
-+#define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
-+#define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* sizeof latest published struct */
-+
-+enum init_ns_id {
-+	IPC_NS_INIT_ID		= 1ULL,
-+	UTS_NS_INIT_ID		= 2ULL,
-+	USER_NS_INIT_ID		= 3ULL,
-+	PID_NS_INIT_ID		= 4ULL,
-+	CGROUP_NS_INIT_ID	= 5ULL,
-+	TIME_NS_INIT_ID		= 6ULL,
-+	NET_NS_INIT_ID		= 7ULL,
-+	MNT_NS_INIT_ID		= 8ULL,
-+#ifdef __KERNEL__
-+	NS_LAST_INIT_ID		= MNT_NS_INIT_ID,
-+#endif
-+};
-+
-+enum ns_type {
-+	TIME_NS    = (1ULL << 7),  /* CLONE_NEWTIME */
-+	MNT_NS     = (1ULL << 17), /* CLONE_NEWNS */
-+	CGROUP_NS  = (1ULL << 25), /* CLONE_NEWCGROUP */
-+	UTS_NS     = (1ULL << 26), /* CLONE_NEWUTS */
-+	IPC_NS     = (1ULL << 27), /* CLONE_NEWIPC */
-+	USER_NS    = (1ULL << 28), /* CLONE_NEWUSER */
-+	PID_NS     = (1ULL << 29), /* CLONE_NEWPID */
-+	NET_NS     = (1ULL << 30), /* CLONE_NEWNET */
-+};
-+
-+/**
-+ * struct ns_id_req - namespace ID request structure
-+ * @size: size of this structure
-+ * @spare: reserved for future use
-+ * @filter: filter mask
-+ * @ns_id: last namespace id
-+ * @user_ns_id: owning user namespace ID
-+ *
-+ * Structure for passing namespace ID and miscellaneous parameters to
-+ * statns(2) and listns(2).
-+ *
-+ * For statns(2) @param represents the request mask.
-+ * For listns(2) @param represents the last listed mount id (or zero).
-+ */
-+struct ns_id_req {
-+	__u32 size;
-+	__u32 spare;
-+	__u64 ns_id;
-+	struct /* listns */ {
-+		__u32 ns_type;
-+		__u32 spare2;
-+		__u64 user_ns_id;
-+	};
-+};
-+
-+/*
-+ * Special @user_ns_id value that can be passed to listns()
-+ */
-+#define LISTNS_CURRENT_USER 0xffffffffffffffff /* Caller's userns */
-+
-+/* List of all ns_id_req versions. */
-+#define NS_ID_REQ_SIZE_VER0 32 /* sizeof first published struct */
-+
- #endif /* __LINUX_NSFS_H */
+-	ret = unshare(CLONE_NEWNS|CLONE_NEWUSER|CLONE_NEWPID);
++	ret = unshare(CLONE_NEWNS|CLONE_NEWUSER);
+ 	if (ret) {
+ 		ksft_exit_fail_msg("unsharing mountns and userns: %s\n",
+ 				   strerror(errno));
 
 -- 
 2.47.3
