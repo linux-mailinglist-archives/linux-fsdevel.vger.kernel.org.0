@@ -1,184 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-65013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1566BF9B14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:14:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C283BF9B2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD574002A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 02:14:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53A5D4FBCC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 02:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08748212564;
-	Wed, 22 Oct 2025 02:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB69A1FDA89;
+	Wed, 22 Oct 2025 02:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lx5ZNXbj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGvnAwwZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECD4350A15
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E13219E8C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761099244; cv=none; b=VdoCz32rNwUkx6XxeHemZ45ofYh3Q6Z46/fQ0zi4ZX1/eHQJ9Ris1qunsaIUNn+VTxTXRaSJoJ/1nJhX/G/PlKy8auV4r2XUYCQJo2qc4X1lSA1kpdjWOcxMar2wAreHIkc21oUFdQk/SpFcJbEudR2P0HBr3ZmznNhd+SV0GQo=
+	t=1761099366; cv=none; b=SxgJpfcjqOhHTgqaeUh7wWjDMMT6Pb0tA84pqwGb9FKtjRrNm3qjvXSUb6le30DrBaG95YIYaWr8+CP+w0V3au7kfAVnlqgRovn7QZKmKtv+7TOmh32hyvDP8Cd3F0t7CgS09BG8sCfJr1xOXJ2ecS43vLNy+BrQp5tWrqz8ALk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761099244; c=relaxed/simple;
-	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FIpT8aD36dID1I8/obJa4RiATLcFvv9zTvsuxFDLb6o2ak844IOLugfZGBG6rE/tdomzqyMrcKl+NAO9P9wAzCF8jOoFpu60iULkBLNDKfTEfkP2deynofXRQhQhyIARI/oVTILEs2bk5++aDQXcIkGdN/gkV94UxkPzLyzpAf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lx5ZNXbj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F000BC2BCAF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 02:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761099244;
-	bh=2jxMom/Po6Aa8CTFWJblvBfMsqQJxxzKz2cmUgP9Xso=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Lx5ZNXbjFRLltyuRgvoNRyCzTXSu0FK4LgExZTa8UjQFP1m3TuIXXSrzbjiiQWpmk
-	 VzITnBZIScuWIvHZ4lq3jbw619G0nZipjrOv4LKXKXQd9uUKeStM18DY3CJRxL7itU
-	 gn6v9PN5iSV85/umWkJSYlTZShKtAvXfVe0nsyc17s+ZsmxzJS13mCMnQpsxaUpEsn
-	 rxdEPJlsah8tek/SiehXfgSzXvLPfUTtQHtHue6HNFZoaZXnYBFsvvdiOOUS4Ll4MZ
-	 0eLxcKuyjFQFJooCzHP088V4x7Zy7GHUZCq3odyvjOUn4UmO6H1/qgKd12zU1/6GJy
-	 H718tJYLg/Z8g==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b48d8deaef9so1219983566b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 19:14:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbAbrNbhSQtgSbAtwu41KF5pnpf1r1puiyIkLNlYUpcj4OdSzUwRUG0cBtvxPbLV8hHDKBWGuGyGbbYUaP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtpOvfR7DLvVstSS0hRpJY/B5nzUi1QjOBOXnIPc0VVGlK47Hy
-	ICvKQt1GnY77yG/CdxZCHsg81RS8fa99IVzZIY0gfioBZCGrDP/zgsKNnDB0gjQ0Kl/IKO3h+Hb
-	Uj+6saVxTUrXkp94TvidXAVrwgwRooyg=
-X-Google-Smtp-Source: AGHT+IFt7FAknz2XTlPPH7Tjv30M3nEp+LdrCx3vX81xk7xwmr8jzVAH1KIIedv4le/Wpjp3OZCAVUvGcwL0/Jdx8j4=
-X-Received: by 2002:a17:906:6a1d:b0:b0d:d831:6fba with SMTP id
- a640c23a62f3a-b647453ff67mr2193646466b.59.1761099242372; Tue, 21 Oct 2025
- 19:14:02 -0700 (PDT)
+	s=arc-20240116; t=1761099366; c=relaxed/simple;
+	bh=ZNYpaJWfK2uX7fNuNpV/cydFuI7wkAz8CLs/mB6yfTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNLMcCd4Xl/k2icNdV9r+jEV86tHLQdwOSXtkceyThSdOUEuJ8t8ZoUrpUoiw56cGb+iL2KOC5Adnd+TuEdq2lJcEtJipyo/CPdmGgcVoneOhIiABYRvZzoMN57nf6bil1CmLPSRRwzMo9Cflc+z510QR4YJDJQJVUEZF2ogc88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGvnAwwZ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-78af743c232so4973001b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Oct 2025 19:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761099363; x=1761704163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yFbQwKVrg4ulSzHTYcdE0/YBPiD7WzPZ8N0zJ6yfUg=;
+        b=dGvnAwwZt24nsiLUJRQ+UeeMvxr4qhMK7hbIRNA/JtjRZm+MyX5aOyGPmAE9+aG63s
+         sIPjbmktHkBIYrux7vtL2hYmwgKy0ZO3SrjGJoinbBzGJ0vhWAzp3oFa2NwKF+6HSpaF
+         U33/acgsn/aL38aB64HDrZvRVH3aNZwo/M+146H2/AR8b2/2Bsd1Sx4Ti5+ucnXNz4rP
+         jDfYjgKGeoOKPPUszAjZK8/F2YJ5RlC+Z7nmDvQ5Hymjjng1sFkw+m7TSR13ClGpOhwb
+         mWuP6aVNTUZKshV9RAdycFKEF39Uue+m3oIL87XatFOPv0ffaBxrpAiEi6kShMe0dkda
+         r2sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761099363; x=1761704163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+yFbQwKVrg4ulSzHTYcdE0/YBPiD7WzPZ8N0zJ6yfUg=;
+        b=KgQEPtUm4InxyD4vQUry03L9KNVoWb1PBfb+X8axGZJnCyF7jRL68pxVhTgLs+rRAc
+         3gcNybU5e+OiMF1kJGgMJ/cO9OaL1i6c1pT1eeWF4ioPl5nN2CmLNS+jl6kD9EGTEi0N
+         gGtLV7BfSKsad+BB42KoSfTm/Ek+g69VnQfS8tet8WVu9KT+yYL4WNtqs8gjCkrS5RLb
+         9sT5IdHGB/AHmIuVc1GCA8RKPoNnHHcuNPub6KyLyB75lloFf07xXfSfzJ75ktG2aCar
+         H9o6mWrsPF7GyKClrwxYCOgoUi4qUVkQc3sIzpFTQOZpj1wxB80y1uwPPmGRkF2QYzHL
+         xN8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXsdW2qUYs+jBEH3GxnMQvkLxG9eiHJT2uCpS0kojQRnC6UxuaUbgE97gx5UC7s2I+uhqh/KD5cL1kTciLu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWnXBdQy6M16uwpj5trduS38tXALq5Kwfcog8n3K3ziHDP2tzy
+	fVYBtSQzGs2s9BjAiLOhv4vN23tCCa7QidKN8+mqqwkiORR5jqjAfuAb
+X-Gm-Gg: ASbGncvwQxZF0kgfU+hudIiL+QjyKPEq6yerdpXkXyZNDejIcP0lsglZmRbogKIRr0i
+	Iv7PvU1Kn4Ksn4gTG7z1r6syEVsqFUPIHQ9PEKcpjGR/guVhilZrntRaNQ9tQeCJnRWDJB8U3hY
+	D8zLbIBakrKNsuHkAGAqMvsBXCHY0tFFC6I4g+hIOKscr4+u5dSKfmI0eiJswko0EDG0vJyo5Sb
+	tpQdofXK64EKWUgaMyqpk+WVFp2S7g3pY3pX1HS7d9SqaLuMJre6VlTPQ71b09QifprWW976NPA
+	btoKhZ1LWMeHNrhvd2alm/IcLNtPMUIvUDs7ldTHagv/6xjRqpES9CM8ojREdg7ccdMQVdwKaaN
+	7QAdzqcmLbC2RMqFL69Z8CQxvF25GKitmWRzFpzWaVMvkMhFgiNvcKTLYimTKZhRV/2D0d7Lthl
+	pplnCnmglqCcW1
+X-Google-Smtp-Source: AGHT+IHgcLczGY0gNkz46ZH3wqYDdp+xytg9WZxLoXNNek71M0Z3I+LEtQXMo7LSXlQTlq9C1XGtow==
+X-Received: by 2002:a05:6a20:5493:b0:304:4f7c:df90 with SMTP id adf61e73a8af0-334a861852amr26222250637.50.1761099363079;
+        Tue, 21 Oct 2025 19:16:03 -0700 (PDT)
+Received: from archie.me ([103.124.138.80])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a23010da0bsm12753936b3a.55.2025.10.21.19.16.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 19:16:02 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 48C344209E4B; Wed, 22 Oct 2025 09:16:00 +0700 (WIB)
+Date: Wed, 22 Oct 2025 09:16:00 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Art Nikpal <email2tema@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	linux-arch@vger.kernel.org, linux-block@vger.kernel.org,
+	initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-doc@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Heiko Carstens <hca@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Dave Young <dyoung@redhat.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Jessica Clarke <jrtc27@jrtc27.com>,
+	Nicolas Schichan <nschichan@freebox.fr>,
+	David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
+Subject: Re: [PATCH v3 2/3] initrd: remove deprecated code path (linuxrc)
+Message-ID: <aPg-YF2pcyI-HusN@archie.me>
+References: <20251017060956.1151347-1-safinaskar@gmail.com>
+ <20251017060956.1151347-3-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020020749.5522-1-linkinjeon@kernel.org> <20251020183304.umtx46whqu4awijj@pali>
- <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com> <20251021221919.leqrmil77r2iavyo@pali>
-In-Reply-To: <20251021221919.leqrmil77r2iavyo@pali>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 22 Oct 2025 11:13:50 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
-X-Gm-Features: AS18NWC6mAMxQP9NZ3c7BvWoYtCMOJQRY4IgXvJlRe3WjgtE6NSrE_XJ0LMcBGg
-Message-ID: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
-Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
-	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
-	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
-	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org, neil@brown.name, 
-	amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com, cheol.lee@lge.com, 
-	jay.sim@lge.com, gunho.lee@lge.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m/ueW+980/ea0Wf8"
+Content-Disposition: inline
+In-Reply-To: <20251017060956.1151347-3-safinaskar@gmail.com>
+
+
+--m/ueW+980/ea0Wf8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 7:19=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
-> > On Tue, Oct 21, 2025 at 3:33=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.or=
-g> wrote:
-> > >
-> > > Hello,
-> > Hi Pali,
-> > >
-> > > Do you have a plan, what should be the future of the NTFS support in
-> > > Linux? Because basically this is a third NTFS driver in recent years
-> > > and I think it is not a good idea to replace NTFS driver every decade=
- by
-> > > a new different implementation.
-> > Our product is currently using ntfsplus without any issues, but we plan=
- to
-> > provide support for the various issues that are reported from users or
-> > developers once it is merged into the mainline kernel.
-> > This is very basic, but the current ntfs3 has not provided this support
-> > for the last four years.
-> > After ntfsplus was merged, our next step will be to implement full jour=
-nal
-> > support. Our ultimate goal is to provide stable NTFS support in Linux,
-> > utilities support included fsck(ntfsprogs-plus) and journaling.
->
-> One important thing here is that all those drivers are implementing
-> support for same filesystem. So theoretically they should be equivalent
-> (modulo bugs and missing features).
->
-> So basically the userspace ntfs fs utils should work with any of those
-> drivers and also should be compatible with Windows ntfs.sys driver.
-> And therefore independent of the used kernel driver.
->
-> It would be really nice to have working fsck utility for ntfs. I hope
-> that we would not have 3 ntfs mkfs/fsck tools from 3 different project
-> and every one would have different set of bugs or limitations.
->
-> > >
-> > > Is this new driver going to replace existing ntfs3 driver? Or should =
-it
-> > > live side-by-side together with ntfs3?
-> > Currently, it is the latter. I think the two drivers should compete.
-> > A ntfs driver that users can reliably use for ntfs in their
-> > products is what should be the one that remains.
-> > Four years ago, ntfs3 promised to soon release the full journal and
-> > public utilities support that were in their commercial version.
-> > That promise hasn't been kept yet, Probably, It would not be easy for
-> > a company that sells a ntfs driver commercially to open some or all sou=
-rces.
-> > That's why I think we need at least competition.
->
-> I understand it. It is not really easy.
->
-> Also same thing can happen with your new ntfsplus. Nobody knows what
-> would happen in next one or two years.
-Since I publicly mentioned adding write support to ntfs driver, I have devo=
-ted
-a great deal of time and effort to fulfilling that while working on other t=
-asks
-in parallel. Your comment seems to undermine all the effort I have done
-over the years.
->
-> > >
-> > > If this new driver is going to replace ntfs3 then it should provide s=
-ame
-> > > API/ABI to userspace. For this case at least same/compatible mount
-> > > options, ioctl interface and/or attribute features (not sure what is
-> > > already supported).
-> > Sure, If ntfsplus replace ntfs3, it will support them.
-> > >
-> > > You wrote that ntfsplus is based on the old ntfs driver. How big is t=
-he
-> > > diff between old ntfs and new ntfsplus driver? If the code is still
-> > > same, maybe it would be better to call it ntfs as before and construc=
-t
-> > > commits in a way which will first "revert the old ntfs driver" and th=
-en
-> > > apply your changes on top of it (like write feature, etc..)?
-> > I thought this patch-set was better because a lot of code clean-up
-> > was done, resulting in a large diff, and the old ntfs was removed.
-> > I would like to proceed with the current set of patches rather than
-> > restructuring the patchset again.
->
-> Sure. In the current form it looks to be more readable and easier for
-> review.
->
-> But I think that more developers could be curious how similar is the new
-> ntfsplus to the old removed ntfs. And in the form of revert + changes it
-> is easier to see what was changed, what was fixed and what new developed.
->
-> I'm just thinking, if the code has really lot of common parts, maybe it
-> would make sense to have it in git in that "big revert + new changes"
-> form?
->
-> > >
-> > > For mount options, for example I see that new driver does not use
-> > > de-facto standard iocharset=3D mount option like all other fs driver =
-but
-> > > instead has nls=3D mount option. This should be fixed.
-> > Okay, I will fix it on the next version.
-> > >
-> > > Pali
-> > Thank you for your review:)
+On Fri, Oct 17, 2025 at 06:09:55AM +0000, Askar Safin wrote:
+> +		if (rd_load_image()) {
+> +			pr_warn("using deprecated initrd support, will be removed in Septembe=
+r 2026; "
+> +				"use initramfs instead or (as a last resort) /sys/firmware/initrd; "
+> +				"see section \"Workaround\" in "
+> +				"https://lore.kernel.org/lkml/20251010094047.3111495-1-safinaskar@gm=
+ail.com\n");
+>  		}
+
+Do you mean that initrd support will be removed in LTS kernel release of 20=
+26?
+
+Thanks.=20
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--m/ueW+980/ea0Wf8
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPg+YAAKCRD2uYlJVVFO
+o9OtAQCr/giTF4+FVt9hiDGkb1l4yn/kE0D0NKGYI1gigRnAqAEAhLIU0ssllGOB
+IgSBphGX7ddV9bgZvHiqagtFYOgJwwo=
+=plLG
+-----END PGP SIGNATURE-----
+
+--m/ueW+980/ea0Wf8--
 
