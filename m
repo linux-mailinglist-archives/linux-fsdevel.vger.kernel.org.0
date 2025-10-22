@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34370BFD37D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:30:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A7BBFD5CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABAA5358094
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ACD13BF5DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217CB384B80;
-	Wed, 22 Oct 2025 16:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED8A384BB8;
+	Wed, 22 Oct 2025 16:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZddKlBn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMFWKdF3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC1135A93A;
-	Wed, 22 Oct 2025 16:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F40384BA6;
+	Wed, 22 Oct 2025 16:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761149490; cv=none; b=Q7CHPSrnPXf1KltJQPx81lpY2eyCag8aWFLyqgRwLOSE3wGHrJnCqYAF5ZAfjF6o3vCm78F8Xh+pc6ObOeJtnCKGpjEMkdTn9Sz7Dta4S2RQeZoexRuot/C/E6vqpdUYmsg3aA0jnkAE13vVvO54Bu5brlJpJSkyus5LchyLPsM=
+	t=1761149496; cv=none; b=KHHMCwHgOJDfdYsodENV1aCWtpexzWBO5AiGtT51Dx0H0ybLJ4z1YAdWCTfHdsIR1R/z23COMZDOlezYTIsQvMiLU98HLPFDGhpexsamqKxrCovV8xcSBMjuJoYqPOODV2zGJngkOxcqSyMqvrN0U1J9+ZhVSYYFTKe0i1xf53o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761149490; c=relaxed/simple;
-	bh=No7FiVmWoBp1LOFVcEEf9bBTlBW0Ya8SnK2b2s5KfDo=;
+	s=arc-20240116; t=1761149496; c=relaxed/simple;
+	bh=vC413nkir1j9papm9PzpXouMCCkVqBfBTukOkwiE2ps=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H6PhyBEVVyi0uom4V1yEx7bht9xu+ZUFn6fEZfzG2T4VTsOeaa0wDlkyy0eHGDS+kz2O6G/pZZBd0MWzwy83quQw3xN3lOYNfof29k1aRkWGmg3koHayeVkqKR+FtAd9gbByFt/IC0gosmVdQP5E9mS5P46bMU7XZfVEu+H8Oug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZddKlBn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B315C4CEE7;
-	Wed, 22 Oct 2025 16:11:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ElZjebn/FADPygEJkAWh9sZKNlY0H0qnKG7H9SfndoCjV5tgOdX1qMPx5KsaEs5rBw171tOxlxLCldU/YlSnd8drRHIWmsaNy54n9RrMFtlZNq0pb8qveBNN7WMObKG6y3sUTKHQfIwdIIUGJ29AyU3z7oSoSxXr5g6UnTKXjJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMFWKdF3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39C9C4CEE7;
+	Wed, 22 Oct 2025 16:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761149490;
-	bh=No7FiVmWoBp1LOFVcEEf9bBTlBW0Ya8SnK2b2s5KfDo=;
+	s=k20201202; t=1761149495;
+	bh=vC413nkir1j9papm9PzpXouMCCkVqBfBTukOkwiE2ps=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nZddKlBna4fqY2Z96NW1OaUqRogY36gdzzIAaUyv6P/jceOUpY+um2wnamSO7H3Pv
-	 Vh5aAivZx08izL1IWCZsAXLuUmBHGtUna2CpCEROjVmNkmCzGcK6LAFdWpmHJRhH/R
-	 qED2Xtzpkq1WjJ3W2Yo5isCxM8LAzfBH12HK+nJyyZmsOGS+u+nQA04tnRZGCBpsxy
-	 SYE7XxVeF9TCM+aKmg4evL/Eq5bs1eixxl4OEw168a73tXGb9fCKUQyeyLPI4f7kOb
-	 qBD2enf3WIb/l/UAWerlKXarOWJNcYVYCHLtgui+EppY3J1Eb0adK6M6Ack6Zx8QIe
-	 Rt3BElwGpE7AA==
+	b=sMFWKdF3UWHhJjinRWS6t7J+srITxH0StIoTHUJbLPaE/BD+rIWJi3Vf4rAvg0X90
+	 ZrW/pJ+gAAZr2IxxJcceTv1H1ja7ucKL6I0J8/HOPHxGfqoTMLy2rFOmN7/vT+6gMH
+	 JEsqjxm/TJRmhtufARhiH32nY5Sq0nGhheNaf+gk0S9B3LGiRM85O1nVUoqQhKIIKd
+	 YNTTLtANyp4IrDNKhdTbQ7F1X8P1Egw7IK+JrgNYkS7MHox7LK5JuK9uwUQ2e7N/wu
+	 d0J8aPWKzuTv7FwVpr7ZDLQgXr7xeUJkO2UCBuZBeUc55d4xsWajR8EDKOSReCOaB8
+	 4ByNpecUxxmXQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Oct 2025 18:06:39 +0200
-Subject: [PATCH v2 61/63] selftests/namespaces: tenth inactive namespace
+Date: Wed, 22 Oct 2025 18:06:40 +0200
+Subject: [PATCH v2 62/63] selftests/namespaces: eleventh inactive namespace
  resurrection test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251022-work-namespace-nstree-listns-v2-61-71a588572371@kernel.org>
+Message-Id: <20251022-work-namespace-nstree-listns-v2-62-71a588572371@kernel.org>
 References: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 In-Reply-To: <20251022-work-namespace-nstree-listns-v2-0-71a588572371@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,49 +70,59 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6827; i=brauner@kernel.org;
- h=from:subject:message-id; bh=No7FiVmWoBp1LOFVcEEf9bBTlBW0Ya8SnK2b2s5KfDo=;
- b=kA0DAAoWkcYbwGV43KIByyZiAGj5AOegnCkeUijWzfVAEMyJlkANXq7MHw3xv0VPMhSQUgk27
- oh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmj5AOcACgkQkcYbwGV43KKm7QD+KvUq
- LTR/jdn7CU/P8vBUMdgL2KpFtWz6H72ubYzc3+4BAMUpTJ81orfwmq6x9IgTAK5LOkAW8BarmKC
- lpSXSodMN
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8746; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=vC413nkir1j9papm9PzpXouMCCkVqBfBTukOkwiE2ps=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8ZHgR6bK8LsE0v3cGQ3a1tNTnqUz28iEqsV3Hg3WiF
+ J+9vNDdUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGwWwz/M7eIPX2TF7mAaWKZ
+ r0p69r7lKjevv98rUcfwb9rebYYSqxn+l2z+yd6x63zpbekN5uqTi7u8E6af/XNigkLUVd9HX45
+ JMQMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that socket-kept netns can be reopened via file handle.
-Verify that a network namespace kept alive by a socket FD can be
-reopened using file handles even after the creating process exits.
+Test combined listns() and file handle operations with socket-kept
+netns. Create a netns, keep it alive with a socket, verify it appears in
+listns(), then reopen it via file handle obtained from listns() entry.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../testing/selftests/namespaces/siocgskns_test.c  | 203 +++++++++++++++++++++
- 1 file changed, 203 insertions(+)
+ .../testing/selftests/namespaces/siocgskns_test.c  | 291 +++++++++++++++++++++
+ 1 file changed, 291 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/siocgskns_test.c b/tools/testing/selftests/namespaces/siocgskns_test.c
-index 7b3133f3898c..0ea5241f2b6f 100644
+index 0ea5241f2b6f..a5a96509661e 100644
 --- a/tools/testing/selftests/namespaces/siocgskns_test.c
 +++ b/tools/testing/selftests/namespaces/siocgskns_test.c
-@@ -781,4 +781,207 @@ TEST(siocgskns_listns_visibility)
- 	TH_LOG("Netns %llu correctly disappeared from listns() after socket closed", netns_id);
+@@ -984,4 +984,295 @@ TEST(siocgskns_file_handle)
+ 	free(handle);
  }
  
 +/*
-+ * Test that socket-kept netns can be reopened via file handle.
-+ * Verify that a network namespace kept alive by a socket FD can be
-+ * reopened using file handles even after the creating process exits.
++ * Test combined listns() and file handle operations with socket-kept netns.
++ * Create a netns, keep it alive with a socket, verify it appears in listns(),
++ * then reopen it via file handle obtained from listns() entry.
 + */
-+TEST(siocgskns_file_handle)
++TEST(siocgskns_listns_and_file_handle)
 +{
-+	int sock_fd, netns_fd, reopened_fd;
++	int sock_fd, netns_fd, userns_fd, reopened_fd;
 +	int ipc_sockets[2];
 +	pid_t pid;
 +	int status;
-+	struct stat st1, st2;
++	struct stat st;
 +	ino_t netns_ino;
-+	__u64 netns_id;
++	__u64 netns_id, userns_id;
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWNET | CLONE_NEWUSER,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids[256];
++	int ret, i;
++	bool found_netns = false, found_userns = false;
 +	struct file_handle *handle;
 +	struct nsfs_file_handle *nsfs_fh;
-+	int ret;
 +
 +	/* Allocate file_handle structure for nsfs */
 +	handle = malloc(sizeof(struct file_handle) + sizeof(struct nsfs_file_handle));
@@ -126,8 +136,13 @@ index 7b3133f3898c..0ea5241f2b6f 100644
 +	ASSERT_GE(pid, 0);
 +
 +	if (pid == 0) {
-+		/* Child: create new netns and socket */
++		/* Child: create new userns and netns with socket */
 +		close(ipc_sockets[0]);
++
++		if (setup_userns() < 0) {
++			close(ipc_sockets[1]);
++			exit(1);
++		}
 +
 +		if (unshare(CLONE_NEWNET) < 0) {
 +			close(ipc_sockets[1]);
@@ -211,8 +226,8 @@ index 7b3133f3898c..0ea5241f2b6f 100644
 +		ASSERT_GE(netns_fd, 0);
 +	}
 +
-+	ASSERT_EQ(fstat(netns_fd, &st1), 0);
-+	netns_ino = st1.st_ino;
++	ASSERT_EQ(fstat(netns_fd, &st), 0);
++	netns_ino = st.st_ino;
 +
 +	/* Get namespace ID */
 +	ret = ioctl(netns_fd, NS_GET_ID, &netns_id);
@@ -225,15 +240,60 @@ index 7b3133f3898c..0ea5241f2b6f 100644
 +		ASSERT_EQ(ret, 0);
 +	}
 +
++	/* Get owner user namespace */
++	userns_fd = ioctl(netns_fd, NS_GET_USERNS);
++	if (userns_fd < 0) {
++		free(handle);
++		close(sock_fd);
++		close(netns_fd);
++		if (errno == ENOTTY || errno == EINVAL)
++			SKIP(return, "NS_GET_USERNS not supported");
++		ASSERT_GE(userns_fd, 0);
++	}
++
++	/* Get owner namespace ID */
++	ret = ioctl(userns_fd, NS_GET_ID, &userns_id);
++	if (ret < 0) {
++		close(userns_fd);
++		free(handle);
++		close(sock_fd);
++		close(netns_fd);
++		ASSERT_EQ(ret, 0);
++	}
++	close(userns_fd);
++
++	TH_LOG("Testing netns %lu (id=%llu) owned by userns id=%llu", netns_ino, netns_id, userns_id);
++
++	/* Verify namespace appears in listns() */
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (ret < 0) {
++		free(handle);
++		close(sock_fd);
++		close(netns_fd);
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		TH_LOG("listns failed: %s", strerror(errno));
++		ASSERT_GE(ret, 0);
++	}
++
++	found_netns = false;
++	found_userns = false;
++	for (i = 0; i < ret; i++) {
++		if (ns_ids[i] == netns_id)
++			found_netns = true;
++		if (ns_ids[i] == userns_id)
++			found_userns = true;
++	}
++	ASSERT_TRUE(found_netns);
++	ASSERT_TRUE(found_userns);
++	TH_LOG("Found netns %llu in listns() output", netns_id);
++
 +	/* Construct file handle from namespace ID */
 +	nsfs_fh = (struct nsfs_file_handle *)handle->f_handle;
 +	nsfs_fh->ns_id = netns_id;
-+	nsfs_fh->ns_type = 0;  /* Type field not needed for reopening */
-+	nsfs_fh->ns_inum = 0;  /* Inum field not needed for reopening */
++	nsfs_fh->ns_type = 0;
++	nsfs_fh->ns_inum = 0;
 +
-+	TH_LOG("Constructed file handle for netns %lu (id=%llu)", netns_ino, netns_id);
-+
-+	/* Reopen namespace using file handle (while socket still keeps it alive) */
 +	reopened_fd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
 +	if (reopened_fd < 0) {
 +		free(handle);
@@ -244,16 +304,13 @@ index 7b3133f3898c..0ea5241f2b6f 100644
 +		ASSERT_GE(reopened_fd, 0);
 +	}
 +
-+	/* Verify it's the same namespace */
-+	ASSERT_EQ(fstat(reopened_fd, &st2), 0);
-+	ASSERT_EQ(st1.st_ino, st2.st_ino);
-+	ASSERT_EQ(st1.st_dev, st2.st_dev);
++	struct stat reopened_st;
++	ASSERT_EQ(fstat(reopened_fd, &reopened_st), 0);
++	ASSERT_EQ(reopened_st.st_ino, netns_ino);
 +
-+	TH_LOG("Successfully reopened netns %lu via file handle", netns_ino);
++	TH_LOG("Successfully reopened netns %lu via file handle (socket-kept)", netns_ino);
 +
 +	close(reopened_fd);
-+
-+	/* Close the netns FD */
 +	close(netns_fd);
 +
 +	/* Try to reopen via file handle - should fail since namespace is now inactive */
@@ -276,25 +333,56 @@ index 7b3133f3898c..0ea5241f2b6f 100644
 +		ASSERT_GE(netns_fd, 0);
 +	}
 +
-+	/* Reopen namespace using file handle (while socket still keeps it alive) */
-+	reopened_fd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	if (reopened_fd < 0) {
++	/* Verify namespace appears in listns() */
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (ret < 0) {
 +		free(handle);
 +		close(sock_fd);
-+		if (errno == EOPNOTSUPP || errno == ENOSYS || errno == EBADF)
-+			SKIP(return, "open_by_handle_at with FD_NSFS_ROOT not supported");
-+		TH_LOG("open_by_handle_at failed: %s", strerror(errno));
-+		ASSERT_GE(reopened_fd, 0);
++		close(netns_fd);
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		TH_LOG("listns failed: %s", strerror(errno));
++		ASSERT_GE(ret, 0);
 +	}
 +
-+	/* Verify it's the same namespace */
-+	ASSERT_EQ(fstat(reopened_fd, &st2), 0);
-+	ASSERT_EQ(st1.st_ino, st2.st_ino);
-+	ASSERT_EQ(st1.st_dev, st2.st_dev);
++	found_netns = false;
++	found_userns = false;
++	for (i = 0; i < ret; i++) {
++		if (ns_ids[i] == netns_id)
++			found_netns = true;
++		if (ns_ids[i] == userns_id)
++			found_userns = true;
++	}
++	ASSERT_TRUE(found_netns);
++	ASSERT_TRUE(found_userns);
++	TH_LOG("Found netns %llu in listns() output", netns_id);
 +
-+	TH_LOG("Successfully reopened netns %lu via file handle", netns_ino);
++	close(netns_fd);
 +
-+	/* Close socket - namespace should become inactive */
++	/* Verify namespace appears in listns() */
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (ret < 0) {
++		free(handle);
++		close(sock_fd);
++		close(netns_fd);
++		if (errno == ENOSYS)
++			SKIP(return, "listns() not supported");
++		TH_LOG("listns failed: %s", strerror(errno));
++		ASSERT_GE(ret, 0);
++	}
++
++	found_netns = false;
++	found_userns = false;
++	for (i = 0; i < ret; i++) {
++		if (ns_ids[i] == netns_id)
++			found_netns = true;
++		if (ns_ids[i] == userns_id)
++			found_userns = true;
++	}
++	ASSERT_FALSE(found_netns);
++	ASSERT_FALSE(found_userns);
++	TH_LOG("Netns %llu correctly disappeared from listns() after socket closed", netns_id);
++
 +	close(sock_fd);
 +	free(handle);
 +}
