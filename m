@@ -1,172 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-65200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758A7BFDEFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 20:52:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EF5BFDF23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 20:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F33D3A7859
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:52:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75AB54E18AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 18:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6895B2DC770;
-	Wed, 22 Oct 2025 18:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C782FABF8;
+	Wed, 22 Oct 2025 18:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNTP4LcO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsBcZenZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD5434D4F1;
-	Wed, 22 Oct 2025 18:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581D4325480;
+	Wed, 22 Oct 2025 18:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761159139; cv=none; b=f9LKmtwzat2EH90MDQvC3mUQnLIsdF7+F7IIFVrJL13ALV94eaB7zrL3cjeg1fjl2R257qwN+kzpiLccl6Exs3XeAiQcIShfz3O7yuuqojpb59B7s8jfHHbzbUqFURhXd92GHXzNgUFYuE6kEdy5QMyyu2AYSobsQAp+HJ0xlhY=
+	t=1761159427; cv=none; b=cgiZEZr9kzZNC/fNMq3Oyqbtb37QRDkF0NjNcg3cHP1mEFMqvWV/Se7BQqzJB5XBEHc7+1ep2Ws/TYalRv0IEBs9Ybat+MXC0rb/yUqYJ12c6huCQb9dHcsueNQWtOjuVuJ02zUCEhyQlbt2RiEeCqgLdn5Qg5hmThblE+M50k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761159139; c=relaxed/simple;
-	bh=PVZZYAVyvv7egp6gkbuFjCZQu8uS05vLnw8Xj2BSIs0=;
+	s=arc-20240116; t=1761159427; c=relaxed/simple;
+	bh=LOh3uSZkB5BdNxatWsnBLpppmFv7ZA8CFHvbttqLK/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xus079LD/k7MsmwrASt/I/bLsIJJxQAvwDOGRt9MYbLXVbBRBGHWHSntZpGamR1iHWfigfG6cAq99bU9I5xit+e7tg9jCwBba5agkv8dj38seu8Bc1G/IOGR3Ni0tjrDXRUByT9IkvmtrL2J2BVTWY6Z9xl+E3RsZjAn2HWq3Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNTP4LcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B98C4CEE7;
-	Wed, 22 Oct 2025 18:52:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1WHWLcxXgozdemDzVaxFO1hNK5wza0VoL49p4Z/+I8kz8iT5Z+T34xw3JSRue/yM7vMTiU39K7sN4I7RpZH7LIZc0f/bH+CFL2wAKWYlnSuwb7kYhV4530UHAw74kWtkl6eJr5TOJ7zRIUt3E1b4vyT9H/MAeFEQEr6yTGysTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsBcZenZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A786BC4CEE7;
+	Wed, 22 Oct 2025 18:57:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761159139;
-	bh=PVZZYAVyvv7egp6gkbuFjCZQu8uS05vLnw8Xj2BSIs0=;
+	s=k20201202; t=1761159426;
+	bh=LOh3uSZkB5BdNxatWsnBLpppmFv7ZA8CFHvbttqLK/M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RNTP4LcO8Y6DKJwaR7oZ+UzWZs7exVd95CeR5tt6jm6N9nGinD/tjbIwl3wCC/er8
-	 LWDqVvp25rETJ5CDkEvuNrIWC01nA1clI5JyKvTGIvjSolxed3smMshMe19Tq4yZvk
-	 HeaNp94MyW4fctBj0QLro1Jb9dmwlLYpj1iV3AKx4iHQ7v/zzLW+/C0F9xNsKb1GIp
-	 sTgJBdp2ewQn0cC3+YMD/fZHuMvxBrJvHdmvvQVlkUlYJiAUrpiAiWEnKqzLytc2my
-	 sOmt39OZZht6k7cKXDrDrbZN4eEswu9OTvrOhd5reL9a61oTCxkQTvcHH/eh3lqwN0
-	 X5tEe1ZugVMog==
+	b=JsBcZenZXQIpbz56ox/YMTk2OIuF+uB5LzBxN9JJKgZIDceom0xU3WmCPAWl2mujo
+	 YtVdDZ9Ngg1DM9IEHGBoHlSWBopII6/R09+TbZ2/W4Klo7Q89Rk74S4Ojqa1fLoKBe
+	 9yLemKSE8cFhDsMTefJJWyl/jsovp2z9+O4+DSbGqagmgYVsS4SRCgXvq3bN5gd6gi
+	 4lshfmqCiAfBn4ez52eU2t2/qhMD2pryl4eon0VjJkYNoaf0pewBhpcBOzXpaMqthq
+	 OcrfEV85swjUYPXQnGGXtbtqo8+WDzZykdYUgOtBlgAVFNQ2H/aa/5cz8+n80BkU0I
+	 mePlIeh5CtOow==
 Received: by pali.im (Postfix)
-	id 34F227F2; Wed, 22 Oct 2025 20:52:14 +0200 (CEST)
-Date: Wed, 22 Oct 2025 20:52:14 +0200
+	id 4518F7F2; Wed, 22 Oct 2025 20:57:02 +0200 (CEST)
+Date: Wed, 22 Oct 2025 20:57:02 +0200
 From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
-	hch@lst.de, tytso@mit.edu, willy@infradead.org, jack@suse.cz,
-	djwong@kernel.org, josef@toxicpanda.com, sandeen@sandeen.net,
-	rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com,
-	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
-	gunho.lee@lge.com
+To: David Sterba <dsterba@suse.cz>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hch@infradead.org, hch@lst.de, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
+	xiang@kernel.org, dsterba@suse.com, ebiggers@kernel.org,
+	neil@brown.name, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iamjoonsoo.kim@lge.com,
+	cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
 Subject: Re: [PATCH 00/11] ntfsplus: ntfs filesystem remake
-Message-ID: <20251022185214.abdbkp7eqmcrnbhx@pali>
+Message-ID: <20251022185702.qqeexyjyivpjeark@pali>
 References: <20251020020749.5522-1-linkinjeon@kernel.org>
- <20251020183304.umtx46whqu4awijj@pali>
- <CAKYAXd-EZ1i9CeQ3vUCXgzQ7HTJdd-eeXRq3=iUaSTkPLbJLCg@mail.gmail.com>
- <20251021221919.leqrmil77r2iavyo@pali>
- <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+ <20251022063056.GR13776@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKYAXd8iexxzsiEzBwyp6fWazDFME_ad4LUJdzJQFM6KjBOe=g@mail.gmail.com>
+In-Reply-To: <20251022063056.GR13776@twin.jikos.cz>
 User-Agent: NeoMutt/20180716
 
-On Wednesday 22 October 2025 11:13:50 Namjae Jeon wrote:
-> On Wed, Oct 22, 2025 at 7:19 AM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > On Tuesday 21 October 2025 10:49:48 Namjae Jeon wrote:
-> > > On Tue, Oct 21, 2025 at 3:33 AM Pali Rohár <pali@kernel.org> wrote:
-> > > >
-> > > > Hello,
-> > > Hi Pali,
-> > > >
-> > > > Do you have a plan, what should be the future of the NTFS support in
-> > > > Linux? Because basically this is a third NTFS driver in recent years
-> > > > and I think it is not a good idea to replace NTFS driver every decade by
-> > > > a new different implementation.
-> > > Our product is currently using ntfsplus without any issues, but we plan to
-> > > provide support for the various issues that are reported from users or
-> > > developers once it is merged into the mainline kernel.
-> > > This is very basic, but the current ntfs3 has not provided this support
-> > > for the last four years.
-> > > After ntfsplus was merged, our next step will be to implement full journal
-> > > support. Our ultimate goal is to provide stable NTFS support in Linux,
-> > > utilities support included fsck(ntfsprogs-plus) and journaling.
-> >
-> > One important thing here is that all those drivers are implementing
-> > support for same filesystem. So theoretically they should be equivalent
-> > (modulo bugs and missing features).
-> >
-> > So basically the userspace ntfs fs utils should work with any of those
-> > drivers and also should be compatible with Windows ntfs.sys driver.
-> > And therefore independent of the used kernel driver.
-> >
-> > It would be really nice to have working fsck utility for ntfs. I hope
-> > that we would not have 3 ntfs mkfs/fsck tools from 3 different project
-> > and every one would have different set of bugs or limitations.
-> >
-> > > >
-> > > > Is this new driver going to replace existing ntfs3 driver? Or should it
-> > > > live side-by-side together with ntfs3?
-> > > Currently, it is the latter. I think the two drivers should compete.
-> > > A ntfs driver that users can reliably use for ntfs in their
-> > > products is what should be the one that remains.
-> > > Four years ago, ntfs3 promised to soon release the full journal and
-> > > public utilities support that were in their commercial version.
-> > > That promise hasn't been kept yet, Probably, It would not be easy for
-> > > a company that sells a ntfs driver commercially to open some or all sources.
-> > > That's why I think we need at least competition.
-> >
-> > I understand it. It is not really easy.
-> >
-> > Also same thing can happen with your new ntfsplus. Nobody knows what
-> > would happen in next one or two years.
-> Since I publicly mentioned adding write support to ntfs driver, I have devoted
-> a great deal of time and effort to fulfilling that while working on other tasks
-> in parallel. Your comment seems to undermine all the effort I have done
-> over the years.
+On Wednesday 22 October 2025 08:30:56 David Sterba wrote:
+> On Mon, Oct 20, 2025 at 11:07:38AM +0900, Namjae Jeon wrote:
+> > The feature comparison summary
+> > ==============================
+> > 
+> > Feature                               ntfsplus   ntfs3
+> > ===================================   ========   ===========
+> > Write support                         Yes        Yes
+> > iomap support                         Yes        No
+> > No buffer head                        Yes        No
+> > Public utilities(mkfs, fsck, etc.)    Yes        No
+> > xfstests passed                       287        218
+> > Idmapped mount                        Yes        No
+> > Delayed allocation                    Yes        No
+> > Bonnie++                              Pass       Fail
+> > Journaling                            Planned    Inoperative
+> > ===================================   ========   ===========
+> 
+> Having two implementations of the same is problematic but I think what
+> votes for ntfs+ is that it's using the current internal interfaces like
+> iomap and no buffer heads. I'm not familiar with recent ntfs3
+> development but it would be good to know if the API conversions are
+> planned at all.
+> 
+> There are many filesystems using the old interfaces and I think most of
+> them will stay like that. The config options BUFFER_HEAD and FS_IOMAP
+> make the distinction what people care about most. In case of ntfs it's
+> clearly for interoperability.
+> 
+> As a user I'd be interested in feature parity with ntfs3, eg. I don't
+> see the label ioctls supported but it's a minor thing. Ideally there's
+> one full featured implementation but I take it that it may not be
+> feasible to update ntfs3 so it's equivalent to ntfs+. As this is not a
+> native linux filesystem swapping the implementation can be fairly
+> transparent, depending only on the config options. The drawback is
+> losing the history of fixed bugs that may show up again.
 
-I'm really sorry, I did not mean it in that way. I just wanted to point
-that year is a very long period and unexpected things could happen.
-Nothing against your or any others effort.
+This drawback already happened at the time of switch from old ntfs to
+ntfs3 driver. So I think that this is not a problem.
 
-> >
-> > > >
-> > > > If this new driver is going to replace ntfs3 then it should provide same
-> > > > API/ABI to userspace. For this case at least same/compatible mount
-> > > > options, ioctl interface and/or attribute features (not sure what is
-> > > > already supported).
-> > > Sure, If ntfsplus replace ntfs3, it will support them.
-> > > >
-> > > > You wrote that ntfsplus is based on the old ntfs driver. How big is the
-> > > > diff between old ntfs and new ntfsplus driver? If the code is still
-> > > > same, maybe it would be better to call it ntfs as before and construct
-> > > > commits in a way which will first "revert the old ntfs driver" and then
-> > > > apply your changes on top of it (like write feature, etc..)?
-> > > I thought this patch-set was better because a lot of code clean-up
-> > > was done, resulting in a large diff, and the old ntfs was removed.
-> > > I would like to proceed with the current set of patches rather than
-> > > restructuring the patchset again.
-> >
-> > Sure. In the current form it looks to be more readable and easier for
-> > review.
-> >
-> > But I think that more developers could be curious how similar is the new
-> > ntfsplus to the old removed ntfs. And in the form of revert + changes it
-> > is easier to see what was changed, what was fixed and what new developed.
-> >
-> > I'm just thinking, if the code has really lot of common parts, maybe it
-> > would make sense to have it in git in that "big revert + new changes"
-> > form?
-> >
-> > > >
-> > > > For mount options, for example I see that new driver does not use
-> > > > de-facto standard iocharset= mount option like all other fs driver but
-> > > > instead has nls= mount option. This should be fixed.
-> > > Okay, I will fix it on the next version.
-> > > >
-> > > > Pali
-> > > Thank you for your review:)
+> We could do the same as when ntfs3 appeared, but back then it had
+> arguably better position as it brought full write support. Right now I
+> understand it more of as maintenance problem.
 
