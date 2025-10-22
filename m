@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-65034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE1CBF9FE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 06:49:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0979DBF9FEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 06:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99572564A8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A01564A9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 04:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110FB2110E;
-	Wed, 22 Oct 2025 04:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742DD2E090C;
+	Wed, 22 Oct 2025 04:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="aVl3EDY+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uh/uK7LX"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="S6/r6pB8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NfciAuuJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D643E2DF6FA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 04:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AA02E091C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 04:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761108444; cv=none; b=Hzrp6bUxB/ztEbzsA4oCq4srGrZK3t2gLrR/L/xEnBYkpFb2osPhff9UUi7eAN3DUvH6eJ0tUT1cWDlkX1kwlYkrC0gAkWeRXdW58cr9JKa8A7zJUa8BDZQVqaL/xdyn21DeFbvVZISFYTk1m1Q/ByI2Dm32XW9otScHnE9nvUU=
+	t=1761108447; cv=none; b=W32c6mbvnbz7PnEsImXakVVPCmlICi2NIE3FXJEyuxjo7IZvknqBb4l16t8DnOsV5pl4v/KBbsRM8DoBW39f0ypSE/uzINQNgaEU5wBYVv3DE4si1/bUqmY7H+4qBL+/yZLpvXvpQP3iQX/fmcjIXcEJ0mRxkJCfkAQmrHtVzU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761108444; c=relaxed/simple;
-	bh=7z1puoGc0Maw2mYrBj5q5gzBpwaxvsXaP30tLYcOr9E=;
+	s=arc-20240116; t=1761108447; c=relaxed/simple;
+	bh=oVS+h5r0DK/yL/nJuSoEVwkYmXX5izACS08ItM8n8P4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F1QUm35SSxEbtajYMQgGRKywwvITpzi17sggYwBhyx9ioBLfdmvNXuQeTH1wKrw/AugpeqX1VCxvXatyDQinYxj7PDPjnbB5RdmwKL8EWaAK82ZSD3l4WBGjS/u5NmCI6oZOYtKoF3DzfwHPIDJG/Y6nfFlAYVXZrPBFIDpFvg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=aVl3EDY+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uh/uK7LX; arc=none smtp.client-ip=103.168.172.154
+	 MIME-Version; b=k25yv9R4jQ64zD9d702VXc4c7QPefmLcdksi+nMCcSU7o88B5IwRQGTIRA4dfRUI28IGmwrLQY4doCDxvcY0ksuLauDetJE34qIeaIXowJWkbWpb8C3w8MTTU4iT6GwJivretoRR1PnK+Nk+t3zvxqZOVPPDiQbOt5cYPthvUS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=S6/r6pB8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NfciAuuJ; arc=none smtp.client-ip=103.168.172.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id ECABD1400083;
-	Wed, 22 Oct 2025 00:47:20 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Wed, 22 Oct 2025 00:47:20 -0400
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 225B11400131;
+	Wed, 22 Oct 2025 00:47:25 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Wed, 22 Oct 2025 00:47:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm2; t=1761108440;
-	 x=1761194840; bh=XmECYJsbB/jZ2LHmTB/scwrXUR8F+2VoGp+BtgaR5S4=; b=
-	aVl3EDY+nWPbQnMrYFz7Dg+/OoH9x1Wca4FjOSvTECKovrRtUaNF2zmYvadTYkft
-	PSDo8nt6StsqQdf5gCRdT3M1HqD1/BJYX/6UUZaWmDYm1KmP1UlDh1xY44e2jgTf
-	YAZE2gk29kGFByRrs3zOSIR1VUz6B4lknvTpSNf+zZgeDcdS9dgo2DwJY2XO1TAN
-	draqHQayMKu7cd1rZCwVnHaqLvHBCsOvbfgzZ8GBe/JGar1fzI7CE44OQR+vf85b
-	qE6Oul7d9OvIodRpGKuDVpRRzQyjkv6522XpXyRg1A0aYXTwjeVSRhRalUPOxJoL
-	OWAH9x/MozZ7oajIFR1G1g==
+	:reply-to:reply-to:subject:subject:to:to; s=fm2; t=1761108445;
+	 x=1761194845; bh=bd+J28EpkqsL+J3nsCE3KaLQTbVtAeBoRgW0o7OZd6Q=; b=
+	S6/r6pB8e8tpE2H3qH48mUEIg86OkI3xXG7t0PlK5kqSj9Iw4c/wAiSV18CJrjNS
+	S8ubaFgMXyWP7ULpTz+cPypqWDbc0AqacVgsPcdvJ4L5p1ANttafVjq+WgsjOIbs
+	VMTuZh9xHgo3TX34BHqDRISpfnRvXvVydfc4f7M97wwwZ3jihCVh0fX//g6wlCDw
+	tceUoIjNzx/jV0aZzCysoy7CO4b2I24ZN2I7Hp8VrTB9F+my3HbU3BOEmQERCw/o
+	Bwtf1JtXrbIEdoPQTOlIlY5RTHORZ0Ne0WahwmmrP1uTDAI+o8nhOIinHo86LUEq
+	AvPHKMQjRuVeWQtsSUASlg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1761108440; x=1761194840; bh=X
-	mECYJsbB/jZ2LHmTB/scwrXUR8F+2VoGp+BtgaR5S4=; b=uh/uK7LXHCf4ADC3A
-	N5ZOGNDjuSjv9z6GEso6GIZRf5lmCNJCNy+sir9d8vmDNbGEfeW8KBo+bjqavQ/k
-	9JXkgPzRsV/FMb97K7Q3bfN+LFDYx6SqTZIH0/Dt+PCGVdJ59t+DMgr1TtSWgb9d
-	J8xspOytyIeIif2swfMXtnv1pFNrScjJunReJVzAxojOP4gPrSqXuU8sy10er5lz
-	OMugc3zpfOUSOIM3/shYn3m+3Saeh17V6r93VSrxM5FpkdVoV7KfiQLftGO2XSwe
-	qS05wzg6CGepai/RNtDAfZDkZQcI233YkiUVes7wsqvVoiEhSLWh9zaqNAd6JLag
-	m9OvA==
-X-ME-Sender: <xms:2GH4aKDva_254svNhrahBf4y0XGEKZ9w_Y-Ll-8TF3JkNRaI8vK1-w>
-    <xme:2GH4aPfl7hYegsd4-QD_8RvPlg0IE7ptBuyCgYkp5It3oN-sWPlOAEUAiRJ-UMD9D
-    -6hudoL0dBboag0gYSFAweOZWTqW9Y1u3WdJ-dg5O0EBBbp1A>
-X-ME-Received: <xmr:2GH4aMlKEKZzgh0X_obVvD3MroLMQ8pCIL1wbV0CVxdEXoA9L785fR4fkTJIbVMCqi6cqd8xoEg32aIOup9QMLRioyB562qs5-nrppIzR0V6>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvieehucetufdoteggodetrf
+	:x-me-sender:x-sasl-enc; s=fm2; t=1761108445; x=1761194845; bh=b
+	d+J28EpkqsL+J3nsCE3KaLQTbVtAeBoRgW0o7OZd6Q=; b=NfciAuuJ9A5Y9IeYw
+	bhSkYek9PsnHMUQRkSYTpryOX9Pvu813JiftlmlOV4EKA+0nl8bKPgtkA2bmzW9Z
+	mhBUZ9o+zjfaNxHE1BLdAPHOqEzuK/W2sf3NqEOnaYDguyHB2sbAm995khfImpTy
+	blTUMmgsTCts4eCvoSl5MqJwXvcdLbB8nkyi8NCz8Gntv0YENSorowiJOUmbS/le
+	yLho0r1VAUKwkTo5iVz0rM+fWrXFG7rWSXvW0T6MkX2g0mZu7f3AkA63hrVyOLpg
+	cDKue3WigcizhqlXJgVfJTy14T/HiPcJyWecRsH1YSc/YQLu8VPEjq4AbbmD1h09
+	ac80g==
+X-ME-Sender: <xms:3GH4aGAQHEbkC-cF15zHpDvHld4rYZ_FCx70Xg9APuVm_qT2JruXWw>
+    <xme:3GH4aLdXWfgQrbzf_XYNlD7suNjEwjoMWd2Svwiq8rjCwcGI9DlubHD7X97r-aVGZ
+    k_nDRZ-fl0b_gE-pNelIT40Ih-sRU8nxQkj6xAkfG0b1DIfJcc>
+X-ME-Received: <xmr:3GH4aIk5lZ98-nhpxdwXc4y7k72UDhx20Sb4yV99GDgH1sAuEM-4brTzBsCgb06cQ-jysu3N4pEtjgb6sNswlzY_WMkNz04gr_SzXnzmhkAR>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvieeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
@@ -78,14 +78,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedvieehucetufdote
     pdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepjhhlrgihthhonh
     eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdho
     rhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:2GH4aOFxOpbCgJblKFyThNqF9t-SRkp5lxJgomAbk1S_S4_31YJUgQ>
-    <xmx:2GH4aM5-4n1Q4yR0hWwBcbK2RBw5SUizpOBGep-lsa7oOFsz8fJMYA>
-    <xmx:2GH4aOl_9C_tYHQrsRxHBhtjy9NvOsCBp0QOv4asVZnYuwh-Dtp9qg>
-    <xmx:2GH4aJqghlbSJEKs7VamZeEHVpLrXdDIlrDz3NlJQ1BuynY5M9VOQg>
-    <xmx:2GH4aGZeNe-1UI1g3H-AzEhmOj3AZ7aa4DFDQSDg2CV8ULY5171Uvyvr>
+X-ME-Proxy: <xmx:3GH4aKGZVNsw85XWOxyY6VIjy6r7CJFI2_D7MeNwIW32G9J_yKt9_w>
+    <xmx:3GH4aI7ru46T1Lda21eUVDjvk3N1fM5llG1AQe23Is3LlJ2sXWh94g>
+    <xmx:3GH4aKlNPHWtbJUWseSu1HptItZIadgnFKlXkD5_trF82jVN8bdMJg>
+    <xmx:3GH4aFq784XKbhJFr7x6O2-myne3v3Uv3iUGvzz5J-0tW_yNfUul1w>
+    <xmx:3WH4aCYxZCI6SG3a9vysQvmwIfvaYpypXKE7Ms1XES77CwUf7NZgWszF>
 Feedback-ID: iab3e480c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 Oct 2025 00:47:18 -0400 (EDT)
+ 22 Oct 2025 00:47:22 -0400 (EDT)
 From: NeilBrown <neilb@ownmail.net>
 To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	"Christian Brauner" <brauner@kernel.org>,
@@ -93,9 +93,9 @@ To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
 	Jeff Layton <jlayton@kernel.org>
 Cc: "Jan Kara" <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 02/14] VFS: introduce start_dirop() and end_dirop()
-Date: Wed, 22 Oct 2025 15:41:36 +1100
-Message-ID: <20251022044545.893630-3-neilb@ownmail.net>
+Subject: [PATCH v3 03/14] VFS: tidy up do_unlinkat()
+Date: Wed, 22 Oct 2025 15:41:37 +1100
+Message-ID: <20251022044545.893630-4-neilb@ownmail.net>
 X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 In-Reply-To: <20251022044545.893630-1-neilb@ownmail.net>
 References: <20251022044545.893630-1-neilb@ownmail.net>
@@ -110,310 +110,116 @@ Content-Transfer-Encoding: 8bit
 
 From: NeilBrown <neil@brown.name>
 
-The fact that directory operations (create,remove,rename) are protected
-by a lock on the parent is known widely throughout the kernel.
-In order to change this - to instead lock the target dentry  - it is
-best to centralise this knowledge so it can be changed in one place.
+The simplification of locking in the previous patch opens up some room
+for tidying up do_unlinkat()
 
-This patch introduces start_dirop() which is local to VFS code.
-It performs the required locking for create and remove.  Rename
-will be handled separately.
-
-Various functions with names like start_creating() or start_removing_path(),
-some of which already exist, will export this functionality beyond the VFS.
-
-end_dirop() is the partner of start_dirop().  It drops the lock and
-releases the reference on the dentry.
-It *is* exported so that various end_creating etc functions can be inline.
-
-As vfs_mkdir() drops the dentry on error we cannot use end_dirop() as
-that won't unlock when the dentry IS_ERR().  For now we need an explicit
-unlock when dentry IS_ERR().  I hope to change vfs_mkdir() to unlock
-when it drops a dentry so that explicit unlock can go away.
-
-end_dirop() can always be called on the result of start_dirop(), but not
-after vfs_mkdir().  After a vfs_mkdir() we still may need the explicit
-unlock as seen in end_creating_path().
-
-As well as adding start_dirop() and end_dirop()
-this patch uses them in:
- - simple_start_creating (which requires sharing lookup_noperm_common()
-        with libfs.c)
- - start_removing_path / start_removing_user_path_at
- - filename_create / end_creating_path()
- - do_rmdir(), do_unlinkat()
+- change all "exit" labels to describe what will happen at the label.
+- always goto an exit label on an error - unwrap the "if (!IS_ERR())" branch.
+- Move the "slashes" handing inline, but mark it as unlikely()
+- simplify use of the "inode" variable - we no longer need to test for NULL.
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- fs/internal.h      |  3 ++
- fs/libfs.c         | 36 ++++++++---------
- fs/namei.c         | 98 ++++++++++++++++++++++++++++++++++------------
- include/linux/fs.h |  2 +
- 4 files changed, 95 insertions(+), 44 deletions(-)
+ fs/namei.c | 55 ++++++++++++++++++++++++++----------------------------
+ 1 file changed, 26 insertions(+), 29 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 9b2b4d116880..d08d5e2235e9 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -67,6 +67,9 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
- 		const struct path *parentpath,
- 		struct file *file, umode_t mode);
- struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
-+struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
-+			   unsigned int lookup_flags);
-+int lookup_noperm_common(struct qstr *qname, struct dentry *base);
- 
- /*
-  * namespace.c
-diff --git a/fs/libfs.c b/fs/libfs.c
-index ce8c496a6940..02371f45ef7d 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -2289,27 +2289,25 @@ void stashed_dentry_prune(struct dentry *dentry)
- 	cmpxchg(stashed, dentry, NULL);
- }
- 
--/* parent must be held exclusive */
-+/**
-+ * simple_start_creating - prepare to create a given name
-+ * @parent: directory in which to prepare to create the name
-+ * @name:   the name to be created
-+ *
-+ * Required lock is taken and a lookup in performed prior to creating an
-+ * object in a directory.  No permission checking is performed.
-+ *
-+ * Returns: a negative dentry on which vfs_create() or similar may
-+ *  be attempted, or an error.
-+ */
- struct dentry *simple_start_creating(struct dentry *parent, const char *name)
- {
--	struct dentry *dentry;
--	struct inode *dir = d_inode(parent);
-+	struct qstr qname = QSTR(name);
-+	int err;
- 
--	inode_lock(dir);
--	if (unlikely(IS_DEADDIR(dir))) {
--		inode_unlock(dir);
--		return ERR_PTR(-ENOENT);
--	}
--	dentry = lookup_noperm(&QSTR(name), parent);
--	if (IS_ERR(dentry)) {
--		inode_unlock(dir);
--		return dentry;
--	}
--	if (dentry->d_inode) {
--		dput(dentry);
--		inode_unlock(dir);
--		return ERR_PTR(-EEXIST);
--	}
--	return dentry;
-+	err = lookup_noperm_common(&qname, parent);
-+	if (err)
-+		return ERR_PTR(err);
-+	return start_dirop(parent, &qname, LOOKUP_CREATE | LOOKUP_EXCL);
- }
- EXPORT_SYMBOL(simple_start_creating);
 diff --git a/fs/namei.c b/fs/namei.c
-index 7377020a2cba..3618efd4bcaa 100644
+index 3618efd4bcaa..9effaad115d9 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -2765,6 +2765,48 @@ static int filename_parentat(int dfd, struct filename *name,
- 	return __filename_parentat(dfd, name, flags, parent, last, type, NULL);
- }
- 
-+/**
-+ * start_dirop - begin a create or remove dirop, performing locking and lookup
-+ * @parent:       the dentry of the parent in which the operation will occur
-+ * @name:         a qstr holding the name within that parent
-+ * @lookup_flags: intent and other lookup flags.
-+ *
-+ * The lookup is performed and necessary locks are taken so that, on success,
-+ * the returned dentry can be operated on safely.
-+ * The qstr must already have the hash value calculated.
-+ *
-+ * Returns: a locked dentry, or an error.
-+ *
-+ */
-+struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
-+			   unsigned int lookup_flags)
-+{
-+	struct dentry *dentry;
-+	struct inode *dir = d_inode(parent);
-+
-+	inode_lock_nested(dir, I_MUTEX_PARENT);
-+	dentry = lookup_one_qstr_excl(name, parent, lookup_flags);
-+	if (IS_ERR(dentry))
-+		inode_unlock(dir);
-+	return dentry;
-+}
-+
-+/**
-+ * end_dirop - signal completion of a dirop
-+ * @de: the dentry which was returned by start_dirop or similar.
-+ *
-+ * If the de is an error, nothing happens. Otherwise any lock taken to
-+ * protect the dentry is dropped and the dentry itself is release (dput()).
-+ */
-+void end_dirop(struct dentry *de)
-+{
-+	if (!IS_ERR(de)) {
-+		inode_unlock(de->d_parent->d_inode);
-+		dput(de);
-+	}
-+}
-+EXPORT_SYMBOL(end_dirop);
-+
- /* does lookup, returns the object with parent locked */
- static struct dentry *__start_removing_path(int dfd, struct filename *name,
- 					   struct path *path)
-@@ -2781,10 +2823,9 @@ static struct dentry *__start_removing_path(int dfd, struct filename *name,
- 		return ERR_PTR(-EINVAL);
- 	/* don't fail immediately if it's r/o, at least try to report other errors */
- 	error = mnt_want_write(parent_path.mnt);
--	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
--	d = lookup_one_qstr_excl(&last, parent_path.dentry, 0);
-+	d = start_dirop(parent_path.dentry, &last, 0);
- 	if (IS_ERR(d))
--		goto unlock;
-+		goto drop;
+@@ -4755,65 +4755,62 @@ int do_unlinkat(int dfd, struct filename *name)
+ 	struct path path;
+ 	struct qstr last;
+ 	int type;
+-	struct inode *inode = NULL;
++	struct inode *inode;
+ 	struct inode *delegated_inode = NULL;
+ 	unsigned int lookup_flags = 0;
+ retry:
+ 	error = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
  	if (error)
- 		goto fail;
- 	path->dentry = no_free_ptr(parent_path.dentry);
-@@ -2792,10 +2833,9 @@ static struct dentry *__start_removing_path(int dfd, struct filename *name,
- 	return d;
+-		goto exit1;
++		goto exit_putname;
  
- fail:
--	dput(d);
-+	end_dirop(d);
- 	d = ERR_PTR(error);
--unlock:
--	inode_unlock(parent_path.dentry->d_inode);
-+drop:
- 	if (!error)
- 		mnt_drop_write(parent_path.mnt);
- 	return d;
-@@ -2910,7 +2950,7 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
- }
- EXPORT_SYMBOL(vfs_path_lookup);
+ 	error = -EISDIR;
+ 	if (type != LAST_NORM)
+-		goto exit2;
++		goto exit_path_put;
  
--static int lookup_noperm_common(struct qstr *qname, struct dentry *base)
-+int lookup_noperm_common(struct qstr *qname, struct dentry *base)
- {
- 	const char *name = qname->name;
- 	u32 len = qname->len;
-@@ -4223,21 +4263,18 @@ static struct dentry *filename_create(int dfd, struct filename *name,
- 	 */
- 	if (last.name[last.len] && !want_dir)
- 		create_flags &= ~LOOKUP_CREATE;
--	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
--	dentry = lookup_one_qstr_excl(&last, path->dentry,
--				      reval_flag | create_flags);
-+	dentry = start_dirop(path->dentry, &last, reval_flag | create_flags);
- 	if (IS_ERR(dentry))
--		goto unlock;
-+		goto out_drop_write;
- 
- 	if (unlikely(error))
- 		goto fail;
- 
- 	return dentry;
- fail:
--	dput(dentry);
-+	end_dirop(dentry);
- 	dentry = ERR_PTR(error);
--unlock:
--	inode_unlock(path->dentry->d_inode);
-+out_drop_write:
- 	if (!error)
- 		mnt_drop_write(path->mnt);
- out:
-@@ -4256,11 +4293,26 @@ struct dentry *start_creating_path(int dfd, const char *pathname,
- }
- EXPORT_SYMBOL(start_creating_path);
- 
-+/**
-+ * end_creating_path - finish a code section started by start_creating_path()
-+ * @path: the path instantiated by start_creating_path()
-+ * @dentry: the dentry returned by start_creating_path()
-+ *
-+ * end_creating_path() will unlock and locks taken by start_creating_path()
-+ * and drop an references that were taken.  It should only be called
-+ * if start_creating_path() returned a non-error.
-+ * If vfs_mkdir() was called and it returned an error, that error *should*
-+ * be passed to end_creating_path() together with the path.
-+ */
- void end_creating_path(const struct path *path, struct dentry *dentry)
- {
--	if (!IS_ERR(dentry))
--		dput(dentry);
--	inode_unlock(path->dentry->d_inode);
-+	if (IS_ERR(dentry))
-+		/* The parent is still locked despite the error from
-+		 * vfs_mkdir() - must unlock it.
-+		 */
-+		inode_unlock(path->dentry->d_inode);
-+	else
-+		end_dirop(dentry);
- 	mnt_drop_write(path->mnt);
- 	path_put(path);
- }
-@@ -4592,8 +4644,7 @@ int do_rmdir(int dfd, struct filename *name)
+ 	error = mnt_want_write(path.mnt);
  	if (error)
- 		goto exit2;
- 
--	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
--	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
-+	dentry = start_dirop(path.dentry, &last, lookup_flags);
- 	error = PTR_ERR(dentry);
- 	if (IS_ERR(dentry))
- 		goto exit3;
-@@ -4602,9 +4653,8 @@ int do_rmdir(int dfd, struct filename *name)
- 		goto exit4;
- 	error = vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode, dentry);
- exit4:
--	dput(dentry);
-+	end_dirop(dentry);
- exit3:
--	inode_unlock(path.dentry->d_inode);
- 	mnt_drop_write(path.mnt);
- exit2:
- 	path_put(&path);
-@@ -4721,8 +4771,7 @@ int do_unlinkat(int dfd, struct filename *name)
- 	if (error)
- 		goto exit2;
+-		goto exit2;
++		goto exit_path_put;
  retry_deleg:
--	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
--	dentry = lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
-+	dentry = start_dirop(path.dentry, &last, lookup_flags);
+ 	dentry = start_dirop(path.dentry, &last, lookup_flags);
  	error = PTR_ERR(dentry);
- 	if (!IS_ERR(dentry)) {
+-	if (!IS_ERR(dentry)) {
++	if (IS_ERR(dentry))
++		goto exit_drop_write;
  
-@@ -4737,9 +4786,8 @@ int do_unlinkat(int dfd, struct filename *name)
- 		error = vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
- 				   dentry, &delegated_inode);
- exit3:
--		dput(dentry);
-+		end_dirop(dentry);
+-		/* Why not before? Because we want correct error value */
+-		if (last.name[last.len])
+-			goto slashes;
+-		inode = dentry->d_inode;
+-		ihold(inode);
+-		error = security_path_unlink(&path, dentry);
+-		if (error)
+-			goto exit3;
+-		error = vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+-				   dentry, &delegated_inode);
+-exit3:
++	/* Why not before? Because we want correct error value */
++	if (unlikely(last.name[last.len])) {
++		if (d_is_dir(dentry))
++			error = -EISDIR;
++		else
++			error = -ENOTDIR;
+ 		end_dirop(dentry);
++		goto exit_drop_write;
  	}
--	inode_unlock(path.dentry->d_inode);
- 	if (inode)
- 		iput(inode);	/* truncate the inode here */
- 	inode = NULL;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..f4543612ef1e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3609,6 +3609,8 @@ extern void iterate_supers_type(struct file_system_type *,
- void filesystems_freeze(void);
- void filesystems_thaw(void);
+-	if (inode)
+-		iput(inode);	/* truncate the inode here */
+-	inode = NULL;
++	inode = dentry->d_inode;
++	ihold(inode);
++	error = security_path_unlink(&path, dentry);
++	if (error)
++		goto exit_end_dirop;
++	error = vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
++			   dentry, &delegated_inode);
++exit_end_dirop:
++	end_dirop(dentry);
++	iput(inode);	/* truncate the inode here */
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
+ 		if (!error)
+ 			goto retry_deleg;
+ 	}
++exit_drop_write:
+ 	mnt_drop_write(path.mnt);
+-exit2:
++exit_path_put:
+ 	path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+-		inode = NULL;
+ 		goto retry;
+ 	}
+-exit1:
++exit_putname:
+ 	putname(name);
+ 	return error;
+-
+-slashes:
+-	if (d_is_dir(dentry))
+-		error = -EISDIR;
+-	else
+-		error = -ENOTDIR;
+-	goto exit3;
+ }
  
-+void end_dirop(struct dentry *de);
-+
- extern int dcache_dir_open(struct inode *, struct file *);
- extern int dcache_dir_close(struct inode *, struct file *);
- extern loff_t dcache_dir_lseek(struct file *, loff_t, int);
+ SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, flag)
 -- 
 2.50.0.107.gf914562f5916.dirty
 
