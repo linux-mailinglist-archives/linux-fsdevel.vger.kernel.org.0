@@ -1,167 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-65087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B62BFBBE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 13:57:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84674BFBCAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 14:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B68E54E2828
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 11:57:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08A0C3568D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Oct 2025 12:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B56633FE0B;
-	Wed, 22 Oct 2025 11:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E38534165E;
+	Wed, 22 Oct 2025 12:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JAfOlSCa"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nMFPJTmK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="96GHO7kE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0itR3CsJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="07dwfYMr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40333F8C0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 11:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3317F3126BA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 12:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761134231; cv=none; b=KizJax55uEMWjAn+qVlAxF3ADDGZSsH6urGlK1qGk0OUsg3h8BK4JQHB/SYYS217C74uLIS5rIGJ8L4AJ+5s9H9MA8cxCL6N6yZbQlBthfq6AHygaG/wxyicslf/10ZG0HyKBm8WIQzgbri9VI6qTZSRAnrZvGEmM44Nvb5lzaQ=
+	t=1761135136; cv=none; b=szjvWpJjfrKWNYVzNFBplT+guslZcohp6EHbLglmpFFzlSkcP3JT3wAA+kkQzZaR6fgea2wg7mkGgoqFuyuU4SmwsV5x58SBUJLZfV3+lNegvrhjtZRLweBPk7QyG4UdKyQI0BuFjXc/OD10vGdpA8/kixi6XXtRwHn3FBGXJ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761134231; c=relaxed/simple;
-	bh=URTqzJkAAJFoQOPycXd7kEr7wppHxat1qLacnS1FCiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sqDhVFMhVdAMjSsmYVHLeQLcqGWE2Gn+sCrFBzp4nxB2uK4SdkcE9oHUZrnANdUwmwsbsCNf+RM9LMwLU4QT9jmrx4lYsIp9JOzL2GA9t2YAI1yesHAS+Zvg70sbJhGEDR5bxmuXRu9W/ZBrBrkTwM1mc1IM2Vj1PcCsKimNkvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JAfOlSCa; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-33bafd5d2adso6198563a91.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Oct 2025 04:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761134229; x=1761739029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WzfUG+BqfKD/coIQsN8R1l6DNO8bGUEyk6UsV4mKerM=;
-        b=JAfOlSCaYsES8eqnvLfEbXJcW6WxBP77WG4g8H3pSYshm1aaV5ND0ro4E4OHDTS8+G
-         Rq1Op7BFiCWw7iyrjpww+F/hdTU3cS1ZuK+Gw96SdUuaKQMLzf66XjdwCw+FqEYLKBXH
-         EcX3rk5okm/EdxPgi5ml2rtgXZd5a4qweNmZeUsK29hK86xT90KSPE+//HsOmtH2+8Zd
-         eOnH3x1DVi/nwETowceEGoDCpMrm1llsvcjfn3LdOUBHTAaHjMnLydTlvfu4PLes4Ldk
-         7l29PpssC3+PxWGvp1rK9InHT/YmGZSebA/jPCBvo0Ly+JGO53VR4efERbXBQg8XUAHu
-         Hy9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761134229; x=1761739029;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WzfUG+BqfKD/coIQsN8R1l6DNO8bGUEyk6UsV4mKerM=;
-        b=q7sI6bGu8mKoD/i14euwSGs0QHp7XydB7OLFTiHHoP066mUsJUqF+KXDFh3uJofCsw
-         txqAo52xbjxxI1f2kCh/+LuPCISp1W9D/vGKENmxGpqvUC5wVwnrQYrAOwKwmT8Fbn+6
-         WU4gY0GXEWZSk1oLTNWwbOXm86Y50MBmlwLOMKEwCfm6QLp9fZ05jPy/Xuk3soi8O2ux
-         8wuVvNJL82dtczWd3FTUh5fuaPzFwCj8sot5O+QQqo8Z+YXddGNw49DvXW60gt6Ju9av
-         1Q46cJ2aR9C7QkZ1QA10//3o+9Wh9ZzrfL2vKB2k06lHV+/XZQfrvCe1ncijh87YAsL2
-         tUKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOgBGn+0XNx3AwAHlViOoOPP38AMYOCxBtFpCtXG484W4bCJBddOoWH4qF409/Dt2Cx/17TBFTaf/c7RCM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyBuxfJSFdHwVZ0K2OgqpHHezidTnu1hX3I/FAIquyTDX/m7me
-	L31tDA0wCI9YLlMijoIKtXZYhaN7wI5kKu4T4fvsl2hNafeUoYgDQiJihPUYtpDPQ2g=
-X-Gm-Gg: ASbGncsIDgSzeJdO5hg5NCBzzbKPfCPGJPDvABUI9JR/dGsS+jsDzsp1UzM8u+vq/Oq
-	3lW7Gy5CAKn/RQ1np12vmfRlfknFkdGMdemNPrLAuTFNTm2xGOspg46yIdMuk0ADoSbJDBrBfLU
-	nvMxcrwlBDMPrpwnBchEzvKe3yISG1bssaaqFBsACPxe++MA0+ficwKOMOgiRIc391A93hfz6D9
-	fYVn28arRP2MRrzrX9ZP5xFOs9yDvFCP+GHJ/KwCae205pv41v0P5Tqah6EoKNmYoxP+7QMS0cz
-	YR5zMQYe5FuORueP+65Si+PFpbag6wion2W9B03tnmnjJmy70BWHzmazLpQBFyzGt+Ekb8lFiBl
-	YpaVsAF73FMqyGfmI9BjH/qmX8FsUPk/tXmLbZfIIabLMLK9iOPI0ezSt4eheqeTLT8dEy9PiOC
-	qvnNg7eiDCiXoD3BPvRHcxF3JknmjsUWPgcC71VxMBKrs9SSYKRg8QfjEW4A==
-X-Google-Smtp-Source: AGHT+IEubD0OvI6uVVM+gnAPZHbQP3Rz7U+Y/YydXiR4UWw4SnGLju39L4qJ5sYEmZqdZYH8YZdr7g==
-X-Received: by 2002:a17:90b:1dc6:b0:339:a4ef:c8b1 with SMTP id 98e67ed59e1d1-33bcf8f7802mr26421431a91.22.1761134229471;
-        Wed, 22 Oct 2025 04:57:09 -0700 (PDT)
-Received: from localhost ([2405:201:c00c:2854:21a:7bd8:378:3750])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e22428b1esm2401348a91.22.2025.10.22.04.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 04:57:08 -0700 (PDT)
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-To: ltp@lists.linux.it
-Cc: lkft@linaro.org,
-	lkft-triage@linaro.org,
-	arnd@kernel.org,
-	dan.carpenter@linaro.org,
-	pvorel@suse.cz,
-	jack@suse.cz,
-	brauner@kernel.org,
-	chrubis@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	lkft-triage@lists.linaro.org,
-	regressions@lists.linux.dev,
-	aalbersh@kernel.org,
-	arnd@arndb.de,
-	viro@zeniv.linux.org.uk,
-	anders.roxell@linaro.org,
-	benjamin.copeland@linaro.org,
-	andrea.cervesato@suse.com,
-	Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: [PATCH] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid errors
-Date: Wed, 22 Oct 2025 17:27:04 +0530
-Message-ID: <20251022115704.46936-1-naresh.kamboju@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761135136; c=relaxed/simple;
+	bh=KPYQHJydC+41DZNG/UQhU3NOtQQd3fs3N8308YZjraQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mycgJfu0kzdJcasu9eRWplxIY1cSe+EZXkz/Q6E2dJMcwRQie77G6ZJRaqOmPPEzGwnABsXWtSiUaNsz+Mz8q0ZAVwtBq0ZsEBH1ToRCFAVAPHFiTb0OAYgogTjH6LnaCDo98s6vpKant9OMkYeTNuszc1a0zl44eDLIFL8qhkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nMFPJTmK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=96GHO7kE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0itR3CsJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=07dwfYMr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1F30221168;
+	Wed, 22 Oct 2025 12:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761135129;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
+	b=nMFPJTmKqSCxr11/LtGHNRjCGNpQ+MLZOE+3j4M9FHGpbwDHJF0kADldkBgTCKvJmkIhzz
+	BQl+5svEUU2l1TCEhTYjTVZJTtFvzqrKNxiCkpm+8gkNtwzmi1yJkaCZncu5mi1QNuHEKR
+	C8NtJ98JlOZaT4mKdJDHDRy3CryDcs0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761135129;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
+	b=96GHO7kE//mCSmmANRBvMOvx8HaS41atmVmupWfpqbD7dZ2SgkrfgNa345n2svaY1McU7X
+	jhC14mw1l3K+vRBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0itR3CsJ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=07dwfYMr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761135125;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
+	b=0itR3CsJ5T5nlGrp1T/WtXxreTrPSocGRF4zQ4f3XhI9YY3XPh0vWuBt8QoLXHivGvm04Y
+	PSY3NXtfF1+3fvANCWLhIVrwRw3ZnB4SYobonn3gczgNpSQFAYLoBuguoDF1jnoykizsPt
+	Co0apKLApNKYdVL75VtBLV3KZV63L9A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761135125;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GOATducwgjJYNf5xRUUlUigG5jvG/objCWoK3h1UNoM=;
+	b=07dwfYMrkhqVWXy+i2oBY4odwxdKrwib4Px9QAmfzvsuMFsfn+fxotX1tVMR4ecTVLlKRU
+	U267ichU8LdJ9PDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 91A9413AAC;
+	Wed, 22 Oct 2025 12:12:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ikGNIhTK+GjVHgAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Wed, 22 Oct 2025 12:12:04 +0000
+Date: Wed, 22 Oct 2025 14:12:03 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: ltp@lists.linux.it, lkft@linaro.org, lkft-triage@linaro.org,
+	arnd@kernel.org, dan.carpenter@linaro.org, jack@suse.cz,
+	brauner@kernel.org, chrubis@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org,
+	regressions@lists.linux.dev, aalbersh@kernel.org, arnd@arndb.de,
+	viro@zeniv.linux.org.uk, anders.roxell@linaro.org,
+	benjamin.copeland@linaro.org, andrea.cervesato@suse.com
+Subject: Re: [PATCH] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid
+ errors
+Message-ID: <20251022121203.GA481852@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20251022115704.46936-1-naresh.kamboju@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022115704.46936-1-naresh.kamboju@linaro.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1F30221168
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.71 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-test-project.readthedocs.io:url,suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_EQ_FROM(0.00)[]
+X-Spam-Score: -3.71
 
-Latest kernels return ENOTTY instead of EINVAL when invoking
-ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid).  Update the test to
-accept both EINVAL and ENOTTY as valid errors to ensure compatibility
-across different kernel versions.
+Hi Naresh,
 
-Link: https://lore.kernel.org/all/CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
----
- .../kernel/syscalls/ioctl/ioctl_pidfd05.c     | 20 +++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+> Latest kernels return ENOTTY instead of EINVAL when invoking
+> ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid).  Update the test to
+> accept both EINVAL and ENOTTY as valid errors to ensure compatibility
+> across different kernel versions.
 
-diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-index d20c6f074..ec92240a1 100644
---- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-+++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-@@ -4,7 +4,7 @@
-  */
- 
- /*\
-- * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
-+ * Verify that ioctl() raises an EINVAL or ENOTTY error when PIDFD_GET_INFO is used. This
-  * happens when:
-  *
-  * - info parameter is NULL
-@@ -14,6 +14,7 @@
- #include "tst_test.h"
- #include "lapi/pidfd.h"
- #include "lapi/sched.h"
-+#include <errno.h>
- #include "ioctl_pidfd.h"
- 
- struct pidfd_info_invalid {
-@@ -43,7 +44,22 @@ static void run(void)
- 		exit(0);
- 
- 	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
--	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
-+	/* Expect ioctl to fail; accept either EINVAL or ENOTTY */
-+	TEST(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid));
-+	if (TEST_RETURN == -1) {
-+		if (TEST_ERRNO == EINVAL || TEST_ERRNO == ENOTTY) {
-+			tst_res(TPASS,
-+				"ioctl(PIDFD_GET_INFO_SHORT) failed as expected with %s",
-+				tst_strerrno(TEST_ERRNO));
-+		} else {
-+			tst_res(TFAIL,
-+				"Unexpected errno: %s (expected EINVAL or ENOTTY)",
-+				tst_strerrno(TEST_ERRNO));
-+		}
-+	} else {
-+		tst_res(TFAIL, "ioctl(PIDFD_GET_INFO_SHORT) unexpectedly succeeded");
-+	}
-+
- 
- 	SAFE_CLOSE(pidfd);
- }
--- 
-2.43.0
+Thanks a lot for contributing to LTP, we really appreciate it.
 
+> Link: https://lore.kernel.org/all/CA+G9fYtUp3Bk-5biynickO5U98CKKN1nkE7ooxJHp7dT1g3rxw@mail.gmail.com
+very nit: +1 for this. I prefer to reference it differently (e.g. [1]) as I add
+Link: for referencing your actual patch the same way how it's used in kernel.
+(e.g. Link: https://lore.kernel.org/ltp/20251022115704.46936-1-naresh.kamboju@linaro.org/)
+
+> +++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> @@ -4,7 +4,7 @@
+>   */
+
+>  /*\
+> - * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
+> + * Verify that ioctl() raises an EINVAL or ENOTTY error when PIDFD_GET_INFO is used. This
+nit: maybe note for ENOTTY: (from v6.18)?
+>   * happens when:
+>   *
+>   * - info parameter is NULL
+> @@ -14,6 +14,7 @@
+>  #include "tst_test.h"
+>  #include "lapi/pidfd.h"
+>  #include "lapi/sched.h"
+> +#include <errno.h>
+>  #include "ioctl_pidfd.h"
+
+>  struct pidfd_info_invalid {
+> @@ -43,7 +44,22 @@ static void run(void)
+>  		exit(0);
+
+>  	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
+> -	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
+> +	/* Expect ioctl to fail; accept either EINVAL or ENOTTY */
+> +	TEST(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid));
+
+I'm sorry, we prefer these macros in include/tst_test_macros.h which shorten the
+code. Could you please use TST_EXP_FAIL_ARR() [1]?
+
+Kind regards,
+Petr
+
+[1] https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.html#macro-tst-exp-fail-arr
+
+> +	if (TEST_RETURN == -1) {
+> +		if (TEST_ERRNO == EINVAL || TEST_ERRNO == ENOTTY) {
+> +			tst_res(TPASS,
+> +				"ioctl(PIDFD_GET_INFO_SHORT) failed as expected with %s",
+> +				tst_strerrno(TEST_ERRNO));
+> +		} else {
+> +			tst_res(TFAIL,
+> +				"Unexpected errno: %s (expected EINVAL or ENOTTY)",
+> +				tst_strerrno(TEST_ERRNO));
+> +		}
+> +	} else {
+> +		tst_res(TFAIL, "ioctl(PIDFD_GET_INFO_SHORT) unexpectedly succeeded");
+> +	}
+> +
+
+>  	SAFE_CLOSE(pidfd);
+>  }
 
