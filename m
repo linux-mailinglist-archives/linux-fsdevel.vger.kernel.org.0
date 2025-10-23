@@ -1,234 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-65338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E929C023DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 17:49:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBA9C027AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 18:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039A03ACB74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 15:49:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858841A68590
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3494D8CE;
-	Thu, 23 Oct 2025 15:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B6B3385A3;
+	Thu, 23 Oct 2025 16:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="JrIYCLdr"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNfANo6B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009FC1FC7C5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 15:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DFB272E61
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 16:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761234547; cv=none; b=l/zVaz8bjWLRIlCXvOLrRlWmImyVypcraCEAadEGukEx81UlRTLwRHdFPmns4ldXX2z9m0q/KKDxQgvshWNIFtK33lBn7R5e4HebohQwyhxle9LNsNtpY4ZqIyAjax/wdi3zrnkmK28rKv9og8P/O6yRErPe6aYwqoWV1tAo4UI=
+	t=1761237848; cv=none; b=IkVjRYrrYqN1uqRq5HpnJExmufg9TqePfLwEXklH+8ek+SFeP487OffjEgCUPBi2TXvNxatoCcaVpGpHixgoRUxrwgMDgk3YkW2o7am8EocObj+cRSanRuKBpNfCVoHvKkJXwqicLos9HoX9dz944aeONem486ZbamVBT3oPZX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761234547; c=relaxed/simple;
-	bh=TR0vyrIj5zOAmrWtxwLaf9B/tGNGrD4OYYiP6WG1Udc=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=cI+3L6GMb4QkCiq6mB4yM1EFKlaKIBAQdrHGggwkK8f3eo+NRe+5NFUu6PnHTnYDGWe2Y1Q1pAJPLZr36+43wIwXsSADo2jVUzzlN/wLoKbAcz2Alg/+jcocOlcw+W3jlRMONUGxxCN0FUeIJXqBVjqUjPPnXqusHAuqxsm6PGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=JrIYCLdr; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so1139398a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 08:49:04 -0700 (PDT)
+	s=arc-20240116; t=1761237848; c=relaxed/simple;
+	bh=8fIX7biSbEZ4B4b77XL+f4TS9/Jp/xnQ/nE2WkTPmO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W5GmCoNDfdLsnsFnCElDdoqCeKj49Qx62ocsP/dVyqblAEx4lQ4sz1jRQHjuKNNlW6BKue161xZsSO8ZI097SGaj7/M0VouZyuNPnjMFMMWKzj0Ybq32SjKxsza/2WWhLvVKAF9gWQos7OvKjOfXGOYdSaeG+5tCRWIDcCEQ6lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UNfANo6B; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b6cf257f325so929944a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 09:44:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1761234544; x=1761839344; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6l6v5GKhdHV57QLrRcfX0OseV//0wL094GM3Lc9kONI=;
-        b=JrIYCLdrrQi3ahtK48HYqNZOktXIXOwDg/XD/YrSkNwKbbWxVpEAjHDZ7apWAM2rUA
-         wzr2+FQu9q1EL5TUQOy5qRUJngDnp878XToShB7p6graYiBlQ0P7ilSVPr8YanLcCfA2
-         7Vq+TJio+1qbqkTcZPeJOIXUwzrmtq4e/JORW1qCz2dmZ+1iA/OeVauUWB7C8/d9Zq+f
-         LpDJfD/5MfrtzKpmE1BNOqeDDobImMYKcq/eLrJQhV0H1j7nInY0nwHOmhIarCAUX7nm
-         l7s8T7gIGUfekTrWwShX7Y7RiJM6m7UH2686hmUxKBz6L1J9LsYBVVaK8ZQgAQdNynZr
-         BAsw==
+        d=linaro.org; s=google; t=1761237846; x=1761842646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WBSNSnNcjQaKaCnCJuZwnw3e0fnN82ayIMOAkE29L9Y=;
+        b=UNfANo6B8NSVzy8e1ma/B97PuCjyURVP7TRevV1niwA32P0DuFNbUX+ZWb/htdYPgf
+         KCUTcWls2F5vwBfCZ2kQ0/LfYASwdQdni06efKEmlvBPpETt8DZ6cm6DuuBmIBvLBT3B
+         8ZsMmRQsHRs7vFUp/gCXetMYabgeiddOMDnyjT/vilJDmf96i+RSlfIN95b9jSjDmQ4T
+         i1fnBQ7GhAYxdFnJrCAXKl7t9K7JWBLTlkTWKV62wEQxsGs5BAmS7YhCKu4b6WHAC6QN
+         iNNcVBTRZvQmDlPPzpdC8nCRtHg62OZJkqM7R54QQ3DD5W6pxF2Goz7lGnybBXSzDZp8
+         okMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761234544; x=1761839344;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6l6v5GKhdHV57QLrRcfX0OseV//0wL094GM3Lc9kONI=;
-        b=I+ko+r81mlr23sBaaWIAzvQzP2shuQlvSGrclluqofZlZuiVty8OQGeGb31uwJ6H9P
-         YSx+5D19tAnguVLhvoXbtOex9u18MBo7WJZSjdoLVxKtORVuUyhC5v9sEGJGvj61zbdK
-         sXHzij5MffwJZO370LJbE2gMzMgFoMC8e56Y6OUFfZvM6goIYxEcSOb1aFSUeslsnRdm
-         GEQ75Y+9w+mD4mhqBVWdzSkAG3cIUljJLi7O3FkOx6/jsMdxhBC3qFxamNCS4WUqL4Wn
-         AJXAnwTVz6JzC1ytWaWTm4KuZEMxo0rHP09Jqp5O9FmC0KVTawW/dbNM5di63JDYfap/
-         gpDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNSXMoX9+lJCn+Hw5IOieknSWcmWrd5X4Ml4iO+kiBx7KfD9ZAijhcC/AKLrmHvSC0xFdbXRiI+C9tfhiP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN30z8bsAi/QtvPRtttE1O1G+dnu57C7mQYKYuA2S4/6JyJbZN
-	KDkIVPvTqtJAbpPtZArpKP7c4hJl4+tsyfHiJa4pr5D3Zfeem+gloM6NyKqjz2XGKUY=
-X-Gm-Gg: ASbGncs8W5dE+Rs/gk3IOMuuiXJa56cO6niE91J28rzW4U/3hbFgHRkelHJurYLPUJS
-	wk8MbCRz9ZwfdtoJL99CVuV10+Ycz5MagDGXxauOIhrICgzOghSL2Dl8sU8GEXGA/aFa7YZwJBi
-	1rLDcbkhSaj12L9p+sEku8v699AqOK9D+1ahMP4qs8YrhX+f5MG+/Jz/mQVDuxPqgrfNHwwOjnd
-	tA8KXKPFg7dgIjxgT8yh07OFZWF3LSBQ2IkgiiVSpiKyG917llfLHCd9Bu/GHua1YJ9L80EfvOR
-	A+AUon2KVfTkd/9l5q2F0zsf67S33cRptHtMOmOr8EH6pk5GKGBiMh5+jg5SIgbAdD7X9HMwnqk
-	y045UtN0y1hXeg0vzob+PQO8v3Ga5PU4oRxstpiZVf30o1+076I92T6JtIYSqd7uzG5YP2KANKm
-	wXEqGj5prXdoUZrIyNAYe6S53sbNt19lv7ncqwm6/DqhwX1M9L
-X-Google-Smtp-Source: AGHT+IH3PwWqpiI3zcpwER2AyB/rp+AS9Y6D6TVLAKwCB2BvEfgzPHpJN6qvv4GuH89JR9PFSabRKQ==
-X-Received: by 2002:a17:90b:5291:b0:32e:859:c79 with SMTP id 98e67ed59e1d1-33bcec1ab25mr31330207a91.0.1761234544113;
-        Thu, 23 Oct 2025 08:49:04 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c13d58sm2446777a12.15.2025.10.23.08.49.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Oct 2025 08:49:03 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <AF891D9F-C006-411C-BC4C-3787622AB189@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        d=1e100.net; s=20230601; t=1761237846; x=1761842646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WBSNSnNcjQaKaCnCJuZwnw3e0fnN82ayIMOAkE29L9Y=;
+        b=Yd277fO9ckCfmYtozOzMIReprt4dJhpJ71ROw+8iqHLl/uye7bkaHHk7KAfYTvBeO7
+         WQzOP9ojkB6v6PrzjRq9TCJYkwMTC8sVlkctgHXERMHrm95Ky9sIgPE4grQ6EV555sbK
+         5IHooBU1rDcorboNBP9nwj+QKKm66RiHzyyH5d/Ufs1D72qvRsBUrdIBPMUPwDpf6Aeq
+         jAy03n4Z7Mfb4K64ttMCBThuvGoRDyckL3eYuV8xNt/KVLzhsUcK1p0VkRtvpPOkv9Ar
+         +M9WSDmCm97a8EeK5aIPAKhhGti5itY3WF6kxDstJ3CMO4n23FBUSD02xAtQqAp13n7t
+         SaCA==
+X-Forwarded-Encrypted: i=1; AJvYcCV93ba/nuLS+EyVipuMFBI+D74ZS8GBXZn5zLrh8V40cij3oBjBNC5SP4o2h9izWoSOHcGRzT1QG0yU0TfU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdpVsD1anEq3JZ2avnRirTnPCc+jrQLU/SaKloHBZco7ZC6kL5
+	gvCg2X6Qyoh1LKxhuMtCab2ZmknS26udLGJu/Y+ihIntSCnUAx30Urgbr1rF64rTZWE=
+X-Gm-Gg: ASbGncv2Q/KmZYUTjJO3ta3muhgxnIEXaWMGNrGfsamYlsKAAjOxAfYma8o6P+Aeo6C
+	CFiVxbCkh4g/8lppg2cnrukRyRx96KzmL5vIzgDb63FV9WUoUsLnS8keN1rPgoBgNsHUMu9CZ8U
+	WpiJtArRjI26IbsyFNDCPtyVo6yRV4K/Xxla5gcUeOkf1EZu/Vc0N3pni85gbL8Nz1BE5Gwtaj2
+	3Z05B6wVEw16aSetSgXMbNk9JG47O0tIXzjfBV0SASX5sB5U0Bq2yFuhUwVf2X3wz/j/t1ODJIq
+	DTP1tTozXvH9KfbEmzIDaYbSVf3YXYmeQc5FBmvvVyI3ocIKwjPNdmrCxto0moaJcawqMdtWuS3
+	lRcirQjsYbKbzSw4uxzX0LmWra97LsvWFbzpyXyFuLXjlbqkyiCl/+169qOhM9dS5ZWQd68Fm6g
+	Iv6VwD+sVwHObHVR7GxOFY2bI3qGIhZTXW1iCMkurvA50WK5O2IA==
+X-Google-Smtp-Source: AGHT+IE4pFFH1ySU5m3ad6i6VUzfPRs66wcF55zEy8vDarPljKErMuGfeUnYnh7PBCKkJQkt4U7EUg==
+X-Received: by 2002:a17:902:cec2:b0:282:eea8:764d with SMTP id d9443c01a7336-2946552521emr61649525ad.35.1761237845759;
+        Thu, 23 Oct 2025 09:44:05 -0700 (PDT)
+Received: from localhost ([2405:201:c00c:2854:d184:69e6:58bf:965c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de0c894sm28713685ad.47.2025.10.23.09.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 09:44:04 -0700 (PDT)
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+To: ltp@lists.linux.it
+Cc: lkft@linaro.org,
+	arnd@kernel.org,
+	dan.carpenter@linaro.org,
+	pvorel@suse.cz,
+	jack@suse.cz,
+	brauner@kernel.org,
+	chrubis@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	aalbersh@kernel.org,
+	arnd@arndb.de,
+	viro@zeniv.linux.org.uk,
+	anders.roxell@linaro.org,
+	benjamin.copeland@linaro.org,
+	andrea.cervesato@suse.com,
+	lkft-triage@lists.linaro.org,
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: [PATCH v2] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid errors
+Date: Thu, 23 Oct 2025 22:14:01 +0530
+Message-ID: <20251023164401.302967-1-naresh.kamboju@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC, PATCH 0/2] Large folios vs. SIGBUS semantics
-Date: Thu, 23 Oct 2025 09:48:58 -0600
-In-Reply-To: <aPoTw1qaEhU5CYmI@dread.disaster.area>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>,
- Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>,
- linux-mm <linux-mm@kvack.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-References: <20251020163054.1063646-1-kirill@shutemov.name>
- <aPbFgnW1ewPzpBGz@dread.disaster.area>
- <d7s4dpxtfwf2kdp4zd7szy22lxrhdjilxrsrtpm7ckzsnosdmo@bq43jwx7omq3>
- <aPoTw1qaEhU5CYmI@dread.disaster.area>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Newer kernels (since ~v6.18-rc1) return ENOTTY instead of EINVAL when
+invoking ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid). Update the
+test to accept both EINVAL and ENOTTY as valid errors to ensure
+compatibility across different kernel versions.
 
---Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+---
+ testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+index d20c6f074..744f7def4 100644
+--- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
++++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+@@ -4,8 +4,8 @@
+  */
+ 
+ /*\
+- * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
+- * happens when:
++ * Verify that ioctl() raises an EINVAL or ENOTTY (since ~v6.18-rc1) error when
++ * PIDFD_GET_INFO is used. This happens when:
+  *
+  * - info parameter is NULL
+  * - info parameter is providing the wrong size
+@@ -14,6 +14,7 @@
+ #include "tst_test.h"
+ #include "lapi/pidfd.h"
+ #include "lapi/sched.h"
++#include <errno.h>
+ #include "ioctl_pidfd.h"
+ 
+ struct pidfd_info_invalid {
+@@ -43,7 +44,12 @@ static void run(void)
+ 		exit(0);
+ 
+ 	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
+-	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
++
++	/* Expect ioctl to fail; accept either EINVAL or ENOTTY (~v6.18-rc1) */
++	int exp_errnos[] = {EINVAL, ENOTTY};
++
++	TST_EXP_FAIL_ARR(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid),
++			exp_errnos, ARRAY_SIZE(exp_errnos));
+ 
+ 	SAFE_CLOSE(pidfd);
+ }
+-- 
+2.43.0
 
-> On Oct 23, 2025, at 5:38 AM, Dave Chinner <david@fromorbit.com> wrote:
-> 
-> On Tue, Oct 21, 2025 at 07:16:26AM +0100, Kiryl Shutsemau wrote:
->> On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
->>> In critical paths like truncate, correctness and safety come first.
->>> Performance is only a secondary consideration.  The overlap of
->>> mmap() and truncate() is an area where we have had many, many bugs
->>> and, at minimum, the current POSIX behaviour largely shields us from
->>> serious stale data exposure events when those bugs (inevitably)
->>> occur.
->> 
->> How do you prevent writes via GUP racing with truncate()?
->> 
->> Something like this:
->> 
->> 	CPU0				CPU1
->> fd = open("file")
->> p = mmap(fd)
->> whatever_syscall(p)
->>  get_user_pages(p, &page)
->>  				truncate("file");
->>  <write to page>
->>  put_page(page);
-> 
-> Forget about truncate, go look at the comment above
-> writable_file_mapping_allowed() about using GUP this way.
-> 
-> i.e. file-backed mmap/GUP is a known broken anti-pattern. We've
-> spent the past 15+ years telling people that it is unfixably broken
-> and they will crash their kernel or corrupt there data if they do
-> this.
-> 
-> This is not supported functionality because real world production
-> use ends up exposing problems with sync and background writeback
-> races, truncate races, fallocate() races, writes into holes, writes
-> into preallocated regions, writes over shared extents that require
-> copy-on-write, etc, etc, ad nausiem.
-> 
-> If anyone is using filebacked mappings like this, then when it
-> breaks they get to keep all the broken pieces to themselves.
-
-Should ftruncate("file") return ETXTBUSY in this case, so that users
-and applications know this doesn't work/isn't safe?  Unfortunately,
-today's application developers barely even know how IO is done, so
-there is little chance that they would understand subtleties like this.
-
-Cheers, Andreas
-
->> The GUP can pin a page in the middle of a large folio well beyond the
->> truncation point. The folio will not be split on truncation due to the
->> elevated pin.
->> 
->> I don't think this issue can be fundamentally fixed as long as we allow
->> GUP for file-backed memory.
-> 
-> Yup, but that's the least of the problems with GUP on file-backed
-> pages...
-> 
->> If the filesystem side cannot handle a non-zeroed tail of a large folio,
->> this SIGBUS semantics only hides the issue instead of addressing it.
-> 
-> The objections raised have not related to whether a filesystem
-> "cannot handle" this case or not. The concerns are about a change of
-> behaviour in a well known, widely documented API, as well as the
-> significant increase in surface area of potential data exposure it
-> would enable should there be Yet Another Truncate Bug Again Once
-> More.
-> 
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
-> 
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmj6TmsACgkQcqXauRfM
-H+CY1w/+JoC6DHdgP5p4CEVNhByOccTqDc9/xK5kbk0cN1d/jNA0jaz3s/jLATWn
-DMDa3ZsuYDyYNk1KhlbLNZ/k1MJEh8mxq4pqUrmu4PpMFrO2037t0lkPdYxcakkW
-+idSJxoIYQcCGS42vOUZ6gL40RIRLDdY/5zgCvysIF4aIbYyp/NJj58BBuzHahC4
-MlejI5KKvqxYtvhCeCt0lGbSc4a/rmoI02hhKngMZ865oM2sEdSNQpjE6/J9COz7
-XwbWqa9mth0aa5vuUt/RcL9jkFshItIUmhs4DxUtdHfXPSG4hDwM0jsJnNdRD/SM
-RQY30IoDVBoefkwdhs+fvGbUivgw0LSgba56P+AjLChp6FAX1ASh3ML+4zxspqs4
-fPxiX7BS7+ojkg0VtKEKJPk5Q6+4a1T3flIBq6tDE4UwISC63Vb4qA1CPCVbyVeU
-zKAkfNMzSOlOMOYKAj51Nx9mj6NxZXLJvrS7jMCKiWh1m7B6a9GuDs7yQ5QQ+Q5v
-PfheQd2jmcYXXRZpyzu3qhzJzPGpJ6seMJCZHwBQ3jg2zfiv+7gyGwedVKy/xb+j
-Cd2xi0wN9hrGFKO2Ya2Zd7VIHkkWnjErwOm1x4QNsiqj9D6Hc9yJkHCG0dRb1Lwv
-4064fTxGFyNuIujVcvPB6rXpKVJGhLEayMqrVtDjuzoJtA9vQJ4=
-=kl6f
------END PGP SIGNATURE-----
-
---Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0--
 
