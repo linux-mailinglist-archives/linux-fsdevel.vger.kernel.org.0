@@ -1,136 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-65310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DEB1C0131C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 14:43:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B36BFC0157B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 15:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CE3319A755B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 12:44:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50D174E11EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5188430F7ED;
-	Thu, 23 Oct 2025 12:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CCC314A70;
+	Thu, 23 Oct 2025 13:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iczP/9oC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B01qGBel"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D262F1FE6;
-	Thu, 23 Oct 2025 12:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA043019DA;
+	Thu, 23 Oct 2025 13:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761223405; cv=none; b=enT6hE5gWH3fHy3RBZQEN8SUb8G2x8545c3ihIPJHuaO8VmGOpDHpeeyLurSEwdvJu1iYNmzgimLFd4yUs03zCNlcsHkrX2/NhQUhGZL/UWCo9Oi7lAWB9Q7jUxd6RmOHp0Oh5V03zo/QBUL0J9xaFcR77eXv0SKvblIk10uyDo=
+	t=1761225826; cv=none; b=EFdmen/4CSrXmKhPOjjCG5Y1bRP8W2Ylc/ob+USRc0Cx64+iPWc1BHryQ8oamZ5WTwA9Yz/i6jySKc8DDkNWtuWBb8YqwIxQmCZAMzDvGcNgG2mnoVlWSsbz/G3n2uk3I0wG64Z8NOfFzyJLWRuLU2tyjCiHEckJUYwWlTscD94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761223405; c=relaxed/simple;
-	bh=al+DPQz4YQhivF4SLVa2PpT/m2RtlvnEATBY44DPTiI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Rw++uUSqMTEqOW7qltJTI3q26xuBGFIGSXaS4Om/rr9rRoaWRk5EOn/Bx1gKaJbYlU9/UrLTkyl5FV9qj55k3XP1rT4M2iMtTmi//2DLaoJAEhUia6YG38Pu3byTJX/Kam5vGZtq9A09CBMth77qZvTkVK3D2QKLaui+bJYTnVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iczP/9oC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4511AC4CEE7;
-	Thu, 23 Oct 2025 12:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761223405;
-	bh=al+DPQz4YQhivF4SLVa2PpT/m2RtlvnEATBY44DPTiI=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=iczP/9oC06j/N3i3MMv7wHOJW80UuCo914UVvhM65AlK9aX+pC3sgC7k3nwd/knxk
-	 XqdOpVMYMAolMvOeFz9rbXvNLaK5Dz+A1EGG4reTOowWEDggHCq3xW9GG+jlu7AsH9
-	 eECpkvQN7Lys0hHjVulvzMlHMaTChXQx7uSsRqH6xcr3X0CLnUddrMUgtU2hDwLnx5
-	 4VQAld5cS1LmmYsveBLqS3P2fkgB1uDnqra6+qpzLY9qCxKoXKO78iF/P5JCmMOyRW
-	 WaWDcJg2MlEuDq99kGQ/Ex/csPot+fy7kKKvH+ng9bn35BL6DFErJ4/UBOSMGeV1SN
-	 A4uUdNIQhs+DA==
+	s=arc-20240116; t=1761225826; c=relaxed/simple;
+	bh=UZJ7rtuDhf2dV+t2MpDDxignV1q/vjHFdxInnFmgxbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=buzh0Lx7gn+FMz/HFzk7vPdmP1cpEi8mCd41a+Ub0X9pRWYxakfgnjKsSIlpV6yezyuAM1uNghPH7XbIuzuddW4DYWTh/40PekewCjfPJbUqRbHmXbiDrJRnpyUMWOE5D1JorIWB9d+IcKZV+JxfML50B2LF6jJ5J10n+aI8nWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B01qGBel; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761225824; x=1792761824;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UZJ7rtuDhf2dV+t2MpDDxignV1q/vjHFdxInnFmgxbg=;
+  b=B01qGBeld2r0c6+dxn7X3SwOLEPTqpc5izMC8ZMpLtBRZCRZSuvzE6hl
+   l3iVwSAuLKKkeZrsUcGdrzhTYMO+UM+K+qolPibyMl1UzWpmuh5NKqqNG
+   SL6GL5qRQOtTuVUEmllKFCcJyzPoJpcpbjhrGURmOW9E0KjIwbTA4ymPm
+   issWIT8Ex9F5SW5vp8LeWSwchhUCk+R17zzED4aV6Dq6P+JfAqgxxuvVY
+   GYk4mrMrY7omdVydycXIc+JCf7cLolHJqKXAS5qgd2Pgi/D6YDTbKNbsA
+   nR9UCcFrNk19f2E3BCqEUvQk88oH50luYYtEKf3sLgUQSyVO9Kjo9bjZv
+   w==;
+X-CSE-ConnectionGUID: Y18tH/vWReCxX9mo6YKv5A==
+X-CSE-MsgGUID: rJwEahUPQ7OR/uc+PZV8ag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62603631"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="62603631"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 06:23:44 -0700
+X-CSE-ConnectionGUID: bL2DiRSvQQSnFiykPx9JpQ==
+X-CSE-MsgGUID: Zps6QcEdQ+iOkzg3PGwFSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="184546770"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 23 Oct 2025 06:23:41 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBvHn-000DWX-0w;
+	Thu, 23 Oct 2025 13:23:29 +0000
+Date: Thu, 23 Oct 2025 21:22:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	axboe@kernel.dk
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, bschubert@ddn.com,
+	asml.silence@gmail.com, io-uring@vger.kernel.org,
+	xiaobing.li@samsung.com
+Subject: Re: [PATCH v1 2/2] fuse: support io-uring registered buffers
+Message-ID: <202510232038.LOpSOOQa-lkp@intel.com>
+References: <20251022202021.3649586-3-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Oct 2025 14:43:20 +0200
-Message-Id: <DDPPL8HKEERV.2JXDADIJPM6NY@kernel.org>
-Subject: Re: [PATCH v3 05/10] rust: uaccess: add
- UserSliceWriter::write_slice_file()
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <mmaurer@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251022143158.64475-1-dakr@kernel.org>
- <20251022143158.64475-6-dakr@kernel.org> <aPnnkU3IWwgERuT3@google.com>
- <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
- <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
- <DDPNGUVNJR6K.SX999PDIF1N2@kernel.org> <aPoPbFXGXk_ohOpW@google.com>
-In-Reply-To: <aPoPbFXGXk_ohOpW@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022202021.3649586-3-joannelkoong@gmail.com>
 
-On Thu Oct 23, 2025 at 1:20 PM CEST, Alice Ryhl wrote:
-> I would love to have infallible conversions from usize to u64 (and u32
-> to usize), but we can't really modify the stdlib to add them.
+Hi Joanne,
 
-We can (and probably should) implement a kernel specific infallible one.
+kernel test robot noticed the following build errors:
 
-I think we also want a helper for `slice::len() as isize`.
+[auto build test ERROR on mszeredi-fuse/for-next]
+[also build test ERROR on linus/master v6.18-rc2 next-20251023]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> But even if we had them, it wouldn't help here since the target type is
-> i64, not u64. And there are usize values that don't fit in i64 - it's
-> just that in this case the usize fits in isize.
+url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io-uring-add-io_uring_cmd_get_buffer_info/20251023-042601
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
+patch link:    https://lore.kernel.org/r/20251022202021.3649586-3-joannelkoong%40gmail.com
+patch subject: [PATCH v1 2/2] fuse: support io-uring registered buffers
+config: i386-buildonly-randconfig-002-20251023 (https://download.01.org/0day-ci/archive/20251023/202510232038.LOpSOOQa-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510232038.LOpSOOQa-lkp@intel.com/reproduce)
 
-Sure, it doesn't change the code required for this case. Yet, I think that =
-if we
-agree on having a kernel specific infallible conversions for usize -> u64 a=
-nd
-isize -> i64, it makes this + operation formally more consistent.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510232038.LOpSOOQa-lkp@intel.com/
 
-Here's the diff I'd apply:
+All errors (new ones prefixed by >>):
 
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-index 681b8a9e5d52..63478dd7deb8 100644
---- a/rust/kernel/fs/file.rs
-+++ b/rust/kernel/fs/file.rs
-@@ -125,6 +125,22 @@ pub fn saturating_sub_usize(self, rhs: usize) -> Offse=
-t {
-     }
- }
+   In file included from fs/fuse/dev.c:9:
+>> fs/fuse/dev_uring_i.h:51:20: error: field has incomplete type 'struct iov_iter'
+      51 |                         struct iov_iter payload_iter;
+         |                                         ^
+   include/linux/fs.h:74:8: note: forward declaration of 'struct iov_iter'
+      74 | struct iov_iter;
+         |        ^
+   In file included from fs/fuse/dev.c:9:
+   fs/fuse/dev_uring_i.h:52:20: error: field has incomplete type 'struct iov_iter'
+      52 |                         struct iov_iter headers_iter;
+         |                                         ^
+   include/linux/fs.h:74:8: note: forward declaration of 'struct iov_iter'
+      74 | struct iov_iter;
+         |        ^
+   2 errors generated.
+--
+   In file included from fs/fuse/dev_uring.c:8:
+>> fs/fuse/dev_uring_i.h:51:20: error: field has incomplete type 'struct iov_iter'
+      51 |                         struct iov_iter payload_iter;
+         |                                         ^
+   include/linux/fs.h:74:8: note: forward declaration of 'struct iov_iter'
+      74 | struct iov_iter;
+         |        ^
+   In file included from fs/fuse/dev_uring.c:8:
+   fs/fuse/dev_uring_i.h:52:20: error: field has incomplete type 'struct iov_iter'
+      52 |                         struct iov_iter headers_iter;
+         |                                         ^
+   include/linux/fs.h:74:8: note: forward declaration of 'struct iov_iter'
+      74 | struct iov_iter;
+         |        ^
+>> fs/fuse/dev_uring.c:588:22: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+     588 |         payload_iter = ent->fixed_buffer.payload_iter;
+         |                        ~~~  ^
+   fs/fuse/dev_uring.c:590:22: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+     590 |         headers_iter = ent->fixed_buffer.headers_iter;
+         |                        ~~~  ^
+>> fs/fuse/dev_uring.c:618:43: error: no member named 'user' in 'struct fuse_ring_ent'
+     618 |         err = copy_from_user(&ring_in_out, &ent->user.headers->ring_ent_in_out,
+         |                                             ~~~  ^
+   fs/fuse/dev_uring.c:623:38: error: no member named 'user' in 'struct fuse_ring_ent'
+     623 |         err = import_ubuf(ITER_SOURCE, ent->user.payload, ring->max_payload_sz,
+         |                                        ~~~  ^
+   fs/fuse/dev_uring.c:653:22: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+     653 |         payload_iter = ent->fixed_buffer.payload_iter;
+         |                        ~~~  ^
+   fs/fuse/dev_uring.c:656:22: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+     656 |         headers_iter = ent->fixed_buffer.headers_iter;
+         |                        ~~~  ^
+   fs/fuse/dev_uring.c:725:36: error: no member named 'user' in 'struct fuse_ring_ent'
+     725 |         err = import_ubuf(ITER_DEST, ent->user.payload, ring->max_payload_sz, &iter);
+         |                                      ~~~  ^
+   fs/fuse/dev_uring.c:741:29: error: no member named 'user' in 'struct fuse_ring_ent'
+     741 |                         err = copy_to_user(&ent->user.headers->op_in, in_args->value,
+         |                                             ~~~  ^
+   fs/fuse/dev_uring.c:762:27: error: no member named 'user' in 'struct fuse_ring_ent'
+     762 |         err = copy_to_user(&ent->user.headers->ring_ent_in_out, &ent_in_out,
+         |                             ~~~  ^
+   fs/fuse/dev_uring.c:797:39: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+     797 |                 struct iov_iter headers_iter = ent->fixed_buffer.headers_iter;
+         |                                                ~~~  ^
+   fs/fuse/dev_uring.c:807:28: error: no member named 'user' in 'struct fuse_ring_ent'
+     807 |                 err = copy_to_user(&ent->user.headers->in_out, &req->in.h,
+         |                                     ~~~  ^
+   fs/fuse/dev_uring.c:936:39: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+     936 |                 struct iov_iter headers_iter = ent->fixed_buffer.headers_iter;
+         |                                                ~~~  ^
+   fs/fuse/dev_uring.c:944:43: error: no member named 'user' in 'struct fuse_ring_ent'
+     944 |                 err = copy_from_user(&req->out.h, &ent->user.headers->in_out,
+         |                                                    ~~~  ^
+   fs/fuse/dev_uring.c:1187:12: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+    1187 |                                         &ent->fixed_buffer.payload_iter, cmd, 0);
+         |                                          ~~~  ^
+   fs/fuse/dev_uring.c:1194:12: error: no member named 'fixed_buffer' in 'struct fuse_ring_ent'
+    1194 |                                         &ent->fixed_buffer.headers_iter, cmd, 0);
+         |                                          ~~~  ^
+   fs/fuse/dev_uring.c:1245:7: error: no member named 'user' in 'struct fuse_ring_ent'
+    1245 |         ent->user.headers = iov[0].iov_base;
+         |         ~~~  ^
+   fs/fuse/dev_uring.c:1246:7: error: no member named 'user' in 'struct fuse_ring_ent'
+    1246 |         ent->user.payload = iov[1].iov_base;
+         |         ~~~  ^
+   19 errors generated.
 
-+impl core::ops::Add<isize> for Offset {
-+    type Output =3D Offset;
-+
-+    #[inline]
-+    fn add(self, rhs: isize) -> Offset {
-+        Offset(self.0 + rhs as bindings::loff_t)
-+    }
-+}
-+
-+impl core::ops::AddAssign<isize> for Offset {
-+    #[inline]
-+    fn add_assign(&mut self, rhs: isize) {
-+        self.0 +=3D rhs as bindings::loff_t;
-+    }
-+}
-+
- impl From<bindings::loff_t> for Offset {
-     #[inline]
-     fn from(v: bindings::loff_t) -> Self {
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index 20ea31781efb..44ee334c4507 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -514,7 +514,8 @@ pub fn write_slice_file(&mut self, data: &[u8], offset:=
- &mut file::Offset) -> Re
 
-         let written =3D self.write_slice_partial(data, offset_index)?;
+vim +51 fs/fuse/dev_uring_i.h
 
--        *offset =3D offset.saturating_add_usize(written);
-+        // OVERFLOW: `offset + written <=3D data.len() <=3D isize::MAX <=
-=3D Offset::MAX`
-+        *offset +=3D written as isize;
+    38	
+    39	/** A fuse ring entry, part of the ring queue */
+    40	struct fuse_ring_ent {
+    41		/* True if daemon has registered its buffers ahead of time */
+    42		bool is_fixed_buffer;
+    43		union {
+    44			/* userspace buffer */
+    45			struct {
+    46				struct fuse_uring_req_header __user *headers;
+    47				void __user *payload;
+    48			} user;
+    49	
+    50			struct {
+  > 51				struct iov_iter payload_iter;
+    52				struct iov_iter headers_iter;
+    53			} fixed_buffer;
+    54		};
+    55	
+    56		/* the ring queue that owns the request */
+    57		struct fuse_ring_queue *queue;
+    58	
+    59		/* fields below are protected by queue->lock */
+    60	
+    61		struct io_uring_cmd *cmd;
+    62	
+    63		struct list_head list;
+    64	
+    65		enum fuse_ring_req_state state;
+    66	
+    67		struct fuse_req *fuse_req;
+    68	};
+    69	
 
-         Ok(written)
-     }
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
