@@ -1,127 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-65374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E31C02C60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:43:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CB7C02C99
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFD414EE325
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 17:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435E83A6209
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 17:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9B534AB11;
-	Thu, 23 Oct 2025 17:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E29430B519;
+	Thu, 23 Oct 2025 17:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1rXeHjW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHWuff3v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2038434A3DD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 17:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41DF35B150;
+	Thu, 23 Oct 2025 17:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761241373; cv=none; b=U//ok95XxR1Ccv66oSHtI4Zpe8dQkUs5vBezm1OBdc0gxkJgqYvMMWBtKt5Q57Wk/bgVQj/SRh5P+OtFbTmwj4AHCxE8LQKuMMVWRqgUM0jQH8FxlZbTC35DIhGPV2tngrAQdPnT1CZwU9qcLGjuQjEVWY1ULz83V35Hced8g8U=
+	t=1761241641; cv=none; b=n0plE7XVbTNuTucDrrlt3xqSZTlyDY3u5oVkKy2i5+HcSWEUL2LrHpGkMUBJAeC1tjNqWmuiQNCAzj3nKqQ+IbrSpj/CkIvPCwzEf6wRczjYBXBa/JKWyUxX2Ne0jzp6UF/Su/5G+XtiVLStLBExkBWv7H/+zu24IPB8ZG5z4Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761241373; c=relaxed/simple;
-	bh=SOi8RTAvsP5fHphida3kvNb3CyaDYKqZqhJ0YfbI+/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJulTngSOyehBIog18BwfjlTxn/JKE5BVlUmrSUaB0MvA1hRyNYlSFf1mhoaImIFa6dXUbcjC9iEfDYO8RkXHuYR1Uh6UCylDiVWQW9UaZQzf0uiGeYVkuscNn4Bok9yJQeLP9xdNrngHpI+u2wG+bdDbOH0mC5fVcdtrKKcgoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1rXeHjW; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63e11cfb4a9so2010218a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 10:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761241370; x=1761846170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FgjwodffJXCXV9bFCxRQxHHnhjnX/ahOR9pMrTqBvoc=;
-        b=O1rXeHjWSl+Nw52FXcYJ61T6RoKZowNj42LSaJKMKlfLNKrgp5ByBffGK2eo17Tijg
-         q153QGRNeN7LYb5LnEKgSW1kdLvRbfo6HkIG3nnlEpCn4qigkHLzJNtrNqw++LRwDpaf
-         sJi+eh9ebDwna/h8UVtfj/U/2g5ACM2Ky9uQpZ8d687LCgFxX75G6JP3jiQOB4LHoR/w
-         QXLT9gS8lS1nNq8oMp/ix19CjbuRL/wdBYrhrWPVESIxGwsKftRuflxic9ndFf4SwFDy
-         E05iWClNuEs32ev6/C5pLYTdl3FF9XdjkA1sOC53gbQtmEV+TQNogTy95LPXET7LUR94
-         TNwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761241370; x=1761846170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FgjwodffJXCXV9bFCxRQxHHnhjnX/ahOR9pMrTqBvoc=;
-        b=H/wKez3uAZhw5zHNpJWNxhhHeAlrLjWTIbdolTWsvbhyNmnS/pC3hTNIzS/OANZajm
-         XdBbE9bAPNYtCW081oduSSuPAflHRVMzc3Pl973h0BcsQLosFJhb+olvn/MrTHKF9U6v
-         iwy23QvEK3wEfMMSRRh5+h9p5Np0aQsMzN0XZhD7+4qgP5/LO/IP1WYkZFPNVDKl/sAB
-         /lw6avMJA5UfSnI4pcT1AdzpeAq+Rl/FUVLKxygReY9tejgs5kt1JFapj8nk1OcVXbYk
-         xR5ytG+ddiGik4aWCDHFv+AYVGYCWptp1+EFC4fMTML0saoxBxg+Pq7G8reEQiRMLzPx
-         7Z7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYQWMtCAuueE/sv0Dn7VpZ5Djjh0u9t0rv7SVZGR0m+d5PtBo3HK1MFx0GtNQh56T/TgsmOtw6j8ndmZ0u@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlkrlUt6yARXl33GafG58FkG+QIxXkwluK20oEDFBKmBi8OVWi
-	1JYy9EAnaBY3CbgqbApgioEMya73/OBS4MRaxM1e6/onYYitbmFnySHqd5Nj0IZMBYdTrlPNuMl
-	/uC8aXGI0l96e5qVui8JXtkpok+UNtRA=
-X-Gm-Gg: ASbGnctp2osPu23eaC6mY2O6iAMcHg47um303aSa110X8kEaSYHVsXx+Q362EQOzeGI
-	789XS55baTVjnAIRwRfNQfgRN7d5xqqE4774PvU6q2D8IzWpI33Glac/RkMxXPjoFPtoiLnIT/4
-	75hyGqCDJWm8CTl6y/CyeUctJcEFtl0SH6QnAITAGApmjhKbZlIE+vFT3xaNgOfiRuMijTfSWCK
-	slR0OsByTaW68q4s9GrgIQS1s/DHQiVAOBk7Wtx2gdDYe+HYmUuIQyiFoztaVk2l4kvddOZKw==
-X-Google-Smtp-Source: AGHT+IEKQYSOEcrZQfp4cJ7IkzzOuPov5OvT9VKtkMyLr8PjhSdzUuJ0K2NylS1MWdT9Z9LwTFR1Qn2IXWVMA8nvEAc=
-X-Received: by 2002:a17:907:2dab:b0:b44:f9fe:913a with SMTP id
- a640c23a62f3a-b6475d04cb3mr2843914766b.65.1761241370295; Thu, 23 Oct 2025
- 10:42:50 -0700 (PDT)
+	s=arc-20240116; t=1761241641; c=relaxed/simple;
+	bh=0UjbUuHWI+/B9+mpMQaomI/3XkufAKikbowYNANqJzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qluhRPu1sGStgHhMQhrf9YHSpDaO1MORHnoONyG3RHdCxUQNMFNe+29q63FjPNRvQ8nPxPc8wDlYVHzjCpIKT78oWwePbN9vtMOS0LUr6vGa2vNzRBT9zTmUO6kLDVzM/XfuQlUeyCcNM0BNu0r0cp2OOYatx7X9AeengO12HCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHWuff3v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 260DBC4CEE7;
+	Thu, 23 Oct 2025 17:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761241641;
+	bh=0UjbUuHWI+/B9+mpMQaomI/3XkufAKikbowYNANqJzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eHWuff3vgCcM4s6HPc99FPHy/+VJy1z4r2xR9Bz/6yK7LYtewBpfK0r1kmkUrEPpQ
+	 kLNX0iPYF1s7aoir8pqg+Ux9hDMrQQXTKiyKQ945TJt8LTqiLQGaK/TteqSLHEeaSp
+	 z9nSJbdes+XLFleJbsQCLNZOf++fsbdCSQHP4aUQc0BWH/R/B8nb37Q8hA/3h9Y6Hr
+	 Vky829rcJ/zd6/sDXcrr+bEIT/MFpbYVvE7AfQ7kSioZD4jUgjMXcLfS7/aLXfo1lY
+	 TTZkOfm1HEahMlEAlRFYn6ozp2xsNS+nZvr9nnOY/EvMFPAodYVryDCs/reS3B0IUy
+	 YVCyXAFalfYBg==
+Date: Thu, 23 Oct 2025 10:47:20 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCHv2 0/2] Fix SIGBUS semantics with large folios
+Message-ID: <20251023174720.GI6174@frogsfrogsfrogs>
+References: <20251023093251.54146-1-kirill@shutemov.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017141536.577466-1-kirill@shutemov.name> <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
- <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
-In-Reply-To: <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
-From: Yang Shi <shy828301@gmail.com>
-Date: Thu, 23 Oct 2025 10:42:37 -0700
-X-Gm-Features: AWmQ_bl7HHHe3F5m7s8SKqaEwkR90lx0Ku2nfc1LYSRH2AGyQ13C81borZW52B8
-Message-ID: <CAHbLzkpx7iv40Tt+CDpbSsOupkGXKcix0wfiF6cVGrLFe0dvRQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023093251.54146-1-kirill@shutemov.name>
 
-On Thu, Oct 23, 2025 at 3:34=E2=80=AFAM Kiryl Shutsemau <kirill@shutemov.na=
-me> wrote:
->
-> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
-> > "garbage" as in pointing at something without a direct map, something t=
-hat's
-> > protected differently (MTE? weird CoCo protection?) or even worse MMIO =
-with
-> > undesired read-effects.
->
-> Pedro already points to the problem with missing direct mapping.
-> _nofault() copy should help with this.
->
-> Can direct mapping ever be converted to MMIO? It can be converted to DMA
-> buffer (which is fine), but MMIO? I have not seen it even in virtualized
-> environments.
->
-> I cannot say for all CoCo protections, but TDX guest shared<->private
-> should be fine.
->
-> I am not sure about MTE. Is there a way to bypass MTE check for a load?
-> And how does it deal with stray reads from load_unaligned_zeropad()?
+On Thu, Oct 23, 2025 at 10:32:49AM +0100, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
+> 
+> Accessing memory within a VMA, but beyond i_size rounded up to the next
+> page size, is supposed to generate SIGBUS.
+> 
+> Darrick reported[1] an xfstests regression in v6.18-rc1. generic/749
+> failed due to missing SIGBUS. This was caused by my recent changes that
+> try to fault in the whole folio where possible:
+> 
+>         19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+>         357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> 
+> These changes did not consider i_size when setting up PTEs, leading to
+> xfstest breakage.
+> 
+> However, the problem has been present in the kernel for a long time -
+> since huge tmpfs was introduced in 2016. The kernel happily maps
+> PMD-sized folios as PMD without checking i_size. And huge=always tmpfs
+> allocates PMD-size folios on any writes.
+> 
+> I considered this corner case when I implemented a large tmpfs, and my
+> conclusion was that no one in their right mind should rely on receiving
+> a SIGBUS signal when accessing beyond i_size. I cannot imagine how it
+> could be useful for the workload.
+> 
+> But apparently filesystem folks care a lot about preserving strict
+> SIGBUS semantics.
+> 
+> Generic/749 was introduced last year with reference to POSIX, but no
+> real workloads were mentioned. It also acknowledged the tmpfs deviation
+> from the test case.
+> 
+> POSIX indeed says[3]:
+> 
+>         References within the address range starting at pa and
+>         continuing for len bytes to whole pages following the end of an
+>         object shall result in delivery of a SIGBUS signal.
+> 
+> The patchset fixes the regression introduced by recent changes as well
+> as more subtle SIGBUS breakage due to split failure on truncation.
+> 
 
-If I remember correctly, _nofault() copy should skip tag check too.
+This fixes generic/749 for me, thanks!
+Tested-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Thanks,
-Yang
+--D
 
->
-> --
->   Kiryl Shutsemau / Kirill A. Shutemov
->
+> v2:
+>  - Fix try_to_unmap() flags;
+>  - Add warning if try_to_unmap() fails to unmap the folio;
+>  - Adjust comments and commit messages;
+>  - Whitespace fixes;
+> v1:
+>  - Drop RFC;
+>  - Add Signed-off-bys;
+> 
+> [1] https://lore.kernel.org/all/20251014175214.GW6188@frogsfrogsfrogs
+> [2]
+> https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/commit/tests/generic/749?h=for-next&id=e4a6b119e5
+> 229599eac96235fb7e683b8a8bdc53
+> [3] https://pubs.opengroup.org/onlinepubs/9799919799/
+> Kiryl Shutsemau (2):
+>   mm/memory: Do not populate page table entries beyond i_size
+>   mm/truncate: Unmap large folio on split failure
+> 
+>  mm/filemap.c  | 18 ++++++++++--------
+>  mm/memory.c   | 13 +++++++++++--
+>  mm/truncate.c | 31 +++++++++++++++++++++++++------
+>  3 files changed, 46 insertions(+), 16 deletions(-)
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
