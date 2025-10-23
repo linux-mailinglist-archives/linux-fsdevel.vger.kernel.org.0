@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-65344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D67C02842
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 18:52:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9385C02884
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 18:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1ADA0507AC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:52:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A112E505306
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC50344049;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAAC3451C9;
 	Thu, 23 Oct 2025 16:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhgXLxWJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VexfKeP+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307FB33DEDF;
-	Thu, 23 Oct 2025 16:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4951033DEFE;
+	Thu, 23 Oct 2025 16:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761238270; cv=none; b=aYSOBv8AOYrk0hAASoe8Zrz8unjO+Jv8exnxPRhSnOARsjgS42qwW4vKPtrrqqwz1DR/QdfyvQFVc1KlJBZA0oc3Gpx/ybY6Pj/DXfpMISzqp8XwARZNZyval4BMYKBRSz+E6ecdF8Gs4Rx4glxrUnaQsYWUc/t22Ft8lYgEEtQ=
+	t=1761238270; cv=none; b=KNDVkTnFueYdoaexcXl406zYR18t+AEiiarI6NCHAK6q7Pc68dGWAqZvuZxRoOdgulukcWNblWXKRTpM5CqfnBNzMAnCknQM2rt6ZFqlsRUmSMVXvoLiNVUkNld7QqjweWZZJ+loXjqg/ll9ZNxwpybZmkzzSOvUwUCerZbgqEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761238270; c=relaxed/simple;
-	bh=B6oYBetl6TQXfW1dNsiK6ccjw9VFfFfmPrPyliUaQyM=;
+	bh=qy72dCosHMlyVaEZSO/0x0kMtkg5SMH4dAjVj3FsaHM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K3bEZEIRwnN7JZywYg1NqC50DC+xqpjNsJ2w2dlLWFxPGVcpPfx4W7TM3P5yvcwMTLPtQ63Lv2afUX019LoDhqd8KyoVw0aPoR5QFv9ST9JKxg3/aHj5gJOIQ+XsR8ck9mOoPELT/nM1R52eHe7taGosbwhIiiJERl8bPx4Hn5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhgXLxWJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A372CC2BC86;
+	 In-Reply-To:To:Cc; b=BocXFTpl5SuPKoPqcpNY0K3Ka2XQ1x1nqKL6C/B3jQFcD1FF2A4ocLeUZApDeUNQ2i6gr7DeapONGiU68CGtRoImOju1kudT5jfFQZh22V3S4ueM/vISie4VG2prm4Dzteo8gvX2Z1YlCMax6gIVQjNRkvfL85n1jL39CMlQ8wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VexfKeP+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C30FFC2BCB2;
 	Thu, 23 Oct 2025 16:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761238269;
-	bh=B6oYBetl6TQXfW1dNsiK6ccjw9VFfFfmPrPyliUaQyM=;
+	bh=qy72dCosHMlyVaEZSO/0x0kMtkg5SMH4dAjVj3FsaHM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mhgXLxWJhri72svG2Hc0KLYaTzOBcgoqLjbpiKvHCTgPKCQBzpe/gugMsj5GMtbRR
-	 og+DozbFFwWIcnU+XnmqaFy+vNCdE/oFvBV+XNzbMERJAwM+M8Dq+DNuuXAY/Bohe8
-	 FyvPH5Hz8cUm1vymw9pbHGFKq/EgCpYfAuMW50fNZQogYIeCSFIWZTqcxDRBOh8Wud
-	 NOYpCOlWUwlHzFn/u+tiBgRVlmmSTaJo3IWj2h1nXR5PM+cTe13pzWbP7HDv1OSBCU
-	 g3frPbBBJik+Dz2m2Wv88BGmaN4uizo75ztnFqzQeK52YW47sP+UUDfUFt1QejbNxR
-	 WVJOpSX4yh5YA==
+	b=VexfKeP+0GjqQFjAzE5L+oif3T5em6hRrQJM306Vp8C5F7F0rCcsLxpeEuAYeCI1I
+	 8NjBSEfuQAcYhYhTWQreFFnNZocUXdjoFeVtV/RNEmvdQiaw9fz5YYumGsP3FFQetf
+	 J7usdZjDhqoDb4hKYSL/QlFhVtRrLXUysCY4GuXyUW/mlU0AvdJytiaENX/2G6BKeX
+	 KqtTVUnFWMGign2esWSSqBR8fVudxfy87PD8tL34hv0hSKZPUc0DfrWsWvkjjYNHiD
+	 5fxu+ZnKoh40/vzBHxoQN9HoMulY21Owfu5AgEYdV/OGz1r1k5edY4lhwyuhiJhi/a
+	 smppIJMFlM+Dg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C35CCD1BC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0562CCF9E3;
 	Thu, 23 Oct 2025 16:51:09 +0000 (UTC)
 From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Thu, 23 Oct 2025 09:51:07 -0700
-Subject: [PATCH v22 02/28] dt-bindings: riscv: zicfilp and zicfiss in
- dt-bindings (extensions.yaml)
+Date: Thu, 23 Oct 2025 09:51:08 -0700
+Subject: [PATCH v22 03/28] riscv: zicfiss / zicfilp enumeration
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-v5_user_cfi_series-v22-2-1935270f7636@rivosinc.com>
+Message-Id: <20251023-v5_user_cfi_series-v22-3-1935270f7636@rivosinc.com>
 References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
 In-Reply-To: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -89,13 +88,13 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
  rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Deepak Gupta <debug@rivosinc.com>
+ Zong Li <zong.li@sifive.com>, Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761238267; l=1500;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761238267; l=3586;
  i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=onQZPDO/5PI+EGQWomoauY3V7EJZG9au2H7fkbOgnBs=;
- b=lvCMW0ZxXnLNDcoSCS0dz8sseZUUceYVdmkvZqQMJJflgpNFfv8MskbwLB0L1hPH79GvUxSuA
- GNeooInsBj5CySypZFtJd60V+L+u/LKByXjcqfUg69jVPSLgO7SjJtn
+ bh=deI8AoZPctoPZRL1uqTvQmr6gi6xgPskQ2JbS5WJlvk=;
+ b=YQro2OnbakPseUD/kFjeSVeE/iiyJeU35txlhId36bc8S/GO70B2r5RwUtPmX2Oe2A5vQhCAM
+ 9DaIjK+Ro39C0PnhGyRdJTEo4pb1xgSns4EiwWJHlwXzQ7VmsXEai4t
 X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
  pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
 X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
@@ -105,39 +104,98 @@ Reply-To: debug@rivosinc.com
 
 From: Deepak Gupta <debug@rivosinc.com>
 
-Make an entry for cfi extensions in extensions.yaml.
+This patch adds support for detecting zicfiss and zicfilp. zicfiss and
+zicfilp stands for unprivleged integer spec extension for shadow stack
+and branch tracking on indirect branches, respectively.
 
+This patch looks for zicfiss and zicfilp in device tree and accordinlgy
+lights up bit in cpu feature bitmap. Furthermore this patch adds detection
+utility functions to return whether shadow stack or landing pads are
+supported by cpu.
+
+Reviewed-by: Zong Li <zong.li@sifive.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/riscv/extensions.yaml | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/riscv/include/asm/cpufeature.h | 12 ++++++++++++
+ arch/riscv/include/asm/hwcap.h      |  2 ++
+ arch/riscv/kernel/cpufeature.c      | 22 ++++++++++++++++++++++
+ 3 files changed, 36 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index 543ac94718e8..3222326e32eb 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -444,6 +444,20 @@ properties:
-             The standard Zicboz extension for cache-block zeroing as ratified
-             in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+index fbd0e4306c93..481f483ebf15 100644
+--- a/arch/riscv/include/asm/cpufeature.h
++++ b/arch/riscv/include/asm/cpufeature.h
+@@ -150,4 +150,16 @@ static __always_inline bool riscv_cpu_has_extension_unlikely(int cpu, const unsi
+ 	return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
+ }
  
-+        - const: zicfilp
-+          description: |
-+            The standard Zicfilp extension for enforcing forward edge
-+            control-flow integrity as ratified in commit 3f8e450 ("merge
-+            pull request #227 from ved-rivos/0709") of riscv-cfi
-+            github repo.
++static inline bool cpu_supports_shadow_stack(void)
++{
++	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
++		riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICFISS));
++}
 +
-+        - const: zicfiss
-+          description: |
-+            The standard Zicfiss extension for enforcing backward edge
-+            control-flow integrity as ratified in commit 3f8e450 ("merge
-+            pull request #227 from ved-rivos/0709") of riscv-cfi
-+            github repo.
++static inline bool cpu_supports_indirect_br_lp_instr(void)
++{
++	return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
++		riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICFILP));
++}
 +
-         - const: zicntr
-           description:
-             The standard Zicntr extension for base counters and timers, as
+ #endif
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index affd63e11b0a..7c4619a6d70d 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -106,6 +106,8 @@
+ #define RISCV_ISA_EXT_ZAAMO		97
+ #define RISCV_ISA_EXT_ZALRSC		98
+ #define RISCV_ISA_EXT_ZICBOP		99
++#define RISCV_ISA_EXT_ZICFILP		100
++#define RISCV_ISA_EXT_ZICFISS		101
+ 
+ #define RISCV_ISA_EXT_XLINUXENVCFG	127
+ 
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 67b59699357d..5a1a194e1180 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -274,6 +274,24 @@ static int riscv_ext_svadu_validate(const struct riscv_isa_ext_data *data,
+ 	return 0;
+ }
+ 
++static int riscv_cfilp_validate(const struct riscv_isa_ext_data *data,
++			      const unsigned long *isa_bitmap)
++{
++	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int riscv_cfiss_validate(const struct riscv_isa_ext_data *data,
++			      const unsigned long *isa_bitmap)
++{
++	if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
++		return -EINVAL;
++
++	return 0;
++}
++
+ static const unsigned int riscv_a_exts[] = {
+ 	RISCV_ISA_EXT_ZAAMO,
+ 	RISCV_ISA_EXT_ZALRSC,
+@@ -461,6 +479,10 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_DATA_VALIDATE(zicbop, RISCV_ISA_EXT_ZICBOP, riscv_ext_zicbop_validate),
+ 	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts, riscv_ext_zicboz_validate),
+ 	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfilp, RISCV_ISA_EXT_ZICFILP, riscv_xlinuxenvcfg_exts,
++					  riscv_cfilp_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfiss, RISCV_ISA_EXT_ZICFISS, riscv_xlinuxenvcfg_exts,
++					  riscv_cfiss_validate),
+ 	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
+ 	__RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
+ 	__RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
 
 -- 
 2.43.0
