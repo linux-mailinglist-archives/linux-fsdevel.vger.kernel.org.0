@@ -1,214 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-65285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122B1C00436
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B43C0049C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB15D3A9684
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 09:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B3019A2A11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 09:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073963081D7;
-	Thu, 23 Oct 2025 09:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6593093CD;
+	Thu, 23 Oct 2025 09:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="cFhzcu2X";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LCM9trZC"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LU/5yS3R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uL1pIUmR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hny0RdB4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t7GXBfMY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C39F308F12;
-	Thu, 23 Oct 2025 09:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5995B3090EB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 09:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761211988; cv=none; b=OUSt7PKCuipyCShHS1sxc2TPfUSqPiY3rwqYeNpwayFlGSEV1YNd2hOZCbteckPfM+JwdEaiQzv/IYe8TVBr3KczzEiLE17SnNXB68z8l6DHgLJyfk+LQmgdgGTKJ+IQq6CB+ceusb8LOstOgM0hWafCZj7C3hcjikwtE8RjmiM=
+	t=1761212257; cv=none; b=GLY4FQMDo98ZaNfVdJBxyCTpRGOYpOEHXdSX78JHYcZwuGHMC9TwoBSGP/0AiFJdSaFWQ/K8Xx8GncG0WplcxWvG3wny+spP8ESvLHiYCw4A9m7P23C9MUHP+9rTjTHOlHtGQt1r4qeHsI8+dOWWv2Hm/YhSV0FfLppNsvmH4eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761211988; c=relaxed/simple;
-	bh=mh+Jhq2H9uaAJh9tBZQ8VECEmmiboM5ZGdsetheo3eA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c20zihAqO+EwKvYQJEU4eZLQ0gEkpBlW2+gQOHS6/aHmYJ60hgQS0V1ACffRWbBncz288DHJyedqRlXXLVJcd258i/YT8HnEhBskh4Cv4vAyYftjDFOufhwf8fiZZGRbfRudfkKBpuO5+k68gchojw6bwadP6xgOKZJuQTxriyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=cFhzcu2X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LCM9trZC; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 34F5313000E6;
-	Thu, 23 Oct 2025 05:33:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 23 Oct 2025 05:33:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761211982; x=
-	1761219182; bh=ok4mnq2NNACQ1V+S0uDNcBIlKAcl6TkUg957YVuWVaA=; b=c
-	Fhzcu2XHPlMJIp+8ynL1IL70VNFTbVzhZgJNsRhgvKmGfujCLVHXuB+U+cY3EFhk
-	ciRMd1AJBh7a6Kgt5y2yizbKmQ1b7wJ9Vv5ERMQ4s+G71KaXczSyTAOSr4LyPs12
-	F6AohsGhU43C75T9lG7NLL3i45uT74mzoXGAdxgoiwFr4+JjMx1t+aCT1mBh44YI
-	gy0NPSUUxLvudWyM9blszLhFKAn/GTr2AKIBsPhz6VxOrc485LAEBL2CvJkLT3gF
-	Ac2TeUZB09sNfI18taQLvSZHdTP572oj6pQwf9SyaOC5sHHUjb1OOqd6++aAu9I6
-	NEIIrfqIRUXPjS8x98HWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1761211982; x=1761219182; bh=o
-	k4mnq2NNACQ1V+S0uDNcBIlKAcl6TkUg957YVuWVaA=; b=LCM9trZCurcWKdisH
-	LkfAhVdG6vi7pZmV3manZ/m1fb4C+qTEhxF93nz9PI9eWs3icpnsKZ8u8ZsiXPc2
-	GLgPUSS6hhjRC8KKpNZAbUM5cA4eqrMPK+EZeOnX7RtSj5Xyx6hzKZ0TMURMVlKc
-	HWY5XAW2DLuQI5vySlw8nHnPRPlsbrxEZ3S2UwTGv7qlttmtB2sxVAAlhjTZ5oX1
-	gignm0S3ePoClflysHCyAtBei5lpPim5hTTRD3Dqq+cUbzR1TIKmO3La+W31InZQ
-	eLFrxihQ89YSkYBRfMSPUg8rjW6sy0Jkt3ayCq5sVNqdkALGgf68f9scDCQbkrT0
-	Vy4KQ==
-X-ME-Sender: <xms:Tfb5aMmyHFljBnsb3T2W25zar78VSSV4KWibHv4HCUUasEl_0CFZrg>
-    <xme:Tfb5aAupddsLE8U8p1qCL9UMl-nOE39MZbcDbiriDac_N2T9NxKdmWpJ7Cev42B-L
-    ilf2htyRPGOkTEn-lCAB54TMMl4cMjTSYsuSx-V_LO39rN4iY2prM0>
-X-ME-Received: <xmr:Tfb5aIPsSN9UugIv3MurODpcwgqgxsyX0j1bXX1_yUiEvtAniegtq1NvWZZdpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeiudduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepgeevhedtgfdvhfdugeffueduvdegveejhfevveeghfdvveeiveet
-    iedvheejhfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfoh
-    hunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:Tfb5aKo18UVhomkB2aK9sNqjotI7KT9fxU3Zf4ai2P_RtBX7uoXrmA>
-    <xmx:Tfb5aJ_u6v5qW2M6wnTuOrPhfZIe-TQITOg0uwfxBQUPaPx4-l8jhw>
-    <xmx:Tfb5aBq7KEciwv1RRBzv0Ez_k1lMiZ2FGqmzI-WTy-IEijjbuTUdNA>
-    <xmx:Tfb5aPhFJjVqMhzMckii8yRXzqZUkW0GYtOHZo-bTcgBJPtnEBF5EQ>
-    <xmx:Tvb5aPkcE7oDWD3GX-VIMa2dEWn5uNDjZMvEAEb0jt9WFdtzHtnhyM4O>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 05:33:01 -0400 (EDT)
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
-Date: Thu, 23 Oct 2025 10:32:51 +0100
-Message-ID: <20251023093251.54146-3-kirill@shutemov.name>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251023093251.54146-1-kirill@shutemov.name>
-References: <20251023093251.54146-1-kirill@shutemov.name>
+	s=arc-20240116; t=1761212257; c=relaxed/simple;
+	bh=o5BtFZIm837qddv5i2fr1EKRdue0SPouZ8RzRp+CGfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fRRz8m6M9hdeiOzKnvFFuMXCIGYjmE3IhvJ9aVgpz9If54FVZKqUXqSG1VJVd6k2MfNsf+oEs8BizVl2o9jiVKzffSfz9XpSN5P3toRMS2vUnXwxUjCUjjxWtvWI7HfBV/kQ2JsqTXD/fHOSwqEYtROz6oSWT7swfwq7cVb8TSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LU/5yS3R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uL1pIUmR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hny0RdB4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t7GXBfMY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4DB9F1F388;
+	Thu, 23 Oct 2025 09:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761212249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=LU/5yS3RC8FrIC0QpaOAIilIPVo0TLduOY3AWCPGA6BobFE13lTDpn9+SV11lJn77agCcE
+	vEnPPmZhYkQfdWV36//PsiBLWrlST69ajpllUQejLV4wcMewonZiPDPhTJgbY4eeOJajff
+	sWQlnfK4uOKW1bSkXzv/aHDYPSCcwhY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761212249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=uL1pIUmRTNpECOZgs8QebhRKXbKiSIfrdEkqBgjXzUuHEluM4CX4BmxRWl10xHD2+jvCCO
+	o6EbLcyHQ1IYQsCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761212245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=hny0RdB44tCxXfVG5kXbxljg2OduQjTiDJvUtB3QjYmX442ek9QsNEGU8MdsY1l1zC+p12
+	lOs2MdTGzr/j1ZUidiC4CE7KFg0XDJLIBa03Nslhgf+bEKdSFiTbj6wlEDSnTeqlK+lobV
+	YoOOkUPOMjIBXOPGz3lFDjIbiqqgkCY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761212245;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=t7GXBfMY7/0bvXiEGsumtSau/j3cPXl0f1UuZvT6uW5Zspqndd1KD40xRT7otK/IxMmgTh
+	CqtbykZbOZK+WXDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4078813285;
+	Thu, 23 Oct 2025 09:37:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Abi6D1X3+WgsSAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 23 Oct 2025 09:37:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D80CBA054D; Thu, 23 Oct 2025 11:37:24 +0200 (CEST)
+Date: Thu, 23 Oct 2025 11:37:24 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Kiryl Shutsemau <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <dupgze7vl2vvndyasmm34ebhzxzumv3sz425qvbquruzvqgf4r@q66h2eeaxs7h>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
+ <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
+ <aPgZthYaP7Flda0z@dread.disaster.area>
+ <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
+ <aPiPG1-VDV7ZV2_F@dread.disaster.area>
+ <CAHk-=wjVOhYTtT9pjzAqXoXdinrV9+uiYfUyoQ5RFmTEvua-Jg@mail.gmail.com>
+ <aPneVmBuuTHGQBgl@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPneVmBuuTHGQBgl@dread.disaster.area>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-From: Kiryl Shutsemau <kas@kernel.org>
+On Thu 23-10-25 18:50:46, Dave Chinner wrote:
+> On Wed, Oct 22, 2025 at 05:31:12AM -1000, Linus Torvalds wrote:
+> > On Tue, 21 Oct 2025 at 22:00, Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Tue, Oct 21, 2025 at 06:25:30PM -1000, Linus Torvalds wrote:
+> > > >
+> > > > The sequence number check should take care of anything like that. Do
+> > > > you have any reason to believe it doesn't?
+> > >
+> > > Invalidation doing partial folio zeroing isn't covered by the page
+> > > cache delete sequence number.
+> > 
+> > Correct - but neither is it covered by anything else in the *regular* read path.
+> > 
+> > So the sequence number protects against the same case that the
+> > reference count protects against: hole punching removing the whole
+> > page.
+> > 
+> > Partial page hole-punching will fundamentally show half-way things.
+> 
+> Only when you have a busted implementation of the spec.
+> 
+> Think about it: if I said "partial page truncation will
+> fundamentally show half-way things", you would shout at me that
+> truncate must -never- expose half-way things to buffered reads.
+> This is how truncate is specified to behave, and we don't violate
+> the spec just because it is hard to implement it.
 
-Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-supposed to generate SIGBUS.
+Well, as a matter of fact we can expose part-way results of truncate for
+ext4 and similar filesystems not serializing reads to truncate with inode
+lock. In particular for ext4 there's the i_size check in filemap_read() but
+if that passes before the truncate starts, the code copying out data from
+the pages can race with truncate zeroing out tail of the last page.
 
-This behavior might not be respected on truncation.
+> We've broken truncate repeatedly over the past 20+ years in ways
+> that have exposed stale data to users. This is always considered a
+> critical bug that needs to be fixed ASAP.
 
-During truncation, the kernel splits a large folio in order to reclaim
-memory. As a side effect, it unmaps the folio and destroys PMD mappings
-of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-are preserved.
+Exposing data that was never in the file is certainly a critical bug.
+Showing a mix of old and new data is not great but less severe and it seems
+over the years userspace on Linux learned to live with it and reap the
+performance benefit (e.g. for mixed read-write workloads to one file)...
 
-However, if the split fails, PMD mappings are preserved and the user
-will not receive SIGBUS on any accesses within the PMD.
+<snip>
 
-Unmap the folio on split failure. It will lead to refault as PTEs and
-preserve SIGBUS semantics.
+> Hence there is really only one behaviour that is required: whilst
+> the low level operation is taking place, no external IO (read,
+> write, discard, etc) can be performed over that range of the file
+> being zeroed because the data andor metadata is not stable until the
+> whole operation is completed by the filesystem.
+> 
+> Now, this doesn't obviously read on the initial invalidation races
+> that are the issue being discussed here because zero's written by
+> invalidation could be considered "valid" for hole punch, zero range,
+> etc.
+> 
+> However, consider COLLAPSE_RANGE.  Page cache invalidation
+> writing zeros and reads racing with that is a problem, because
+> the old data at a given offset is non-zero, whilst the new data at
+> the same offset is alos non-zero.
+> 
+> Hence if we allow the initial page cache invalidation to race with
+> buffered reads, there is the possibility of random zeros appearing
+> in the data being read. Because this is not old or new data, it is
+> -corrupt- data.
 
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
----
- mm/truncate.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
-
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 91eb92a5ce4f..304c383ccbf0 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -177,6 +177,28 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
- 	return 0;
- }
+Well, reasons like this are why for operations like COLLAPSE_RANGE ext4
+reclaims the whole interval of the page cache starting with the first
+affected folio to the end. So again user will either see old data (if it
+managed to get the page before we invalidated the page cache) or the new
+data (when it needs to read from the disk which is properly synchronized
+with COLLAPSE_RANGE through invalidate_lock). I don't see these speculative
+accesses changing anything in this case either.
  
-+static int try_folio_split_or_unmap(struct folio *folio, struct page *split_at)
-+{
-+	enum ttu_flags ttu_flags =
-+		TTU_SYNC |
-+		TTU_SPLIT_HUGE_PMD |
-+		TTU_IGNORE_MLOCK;
-+	int ret;
-+
-+	ret = try_folio_split(folio, split_at, NULL);
-+
-+	/*
-+	 * If the split fails, unmap the folio, so it will be refaulted
-+	 * with PTEs to respect SIGBUS semantics.
-+	 */
-+	if (ret) {
-+		try_to_unmap(folio, ttu_flags);
-+		WARN_ON(folio_mapped(folio));
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Handle partial folios.  The folio may be entirely within the
-  * range if a split has raced with us.  If not, we zero the part of the
-@@ -224,7 +246,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 		return true;
- 
- 	split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
--	if (!try_folio_split(folio, split_at, NULL)) {
-+	if (!try_folio_split_or_unmap(folio, split_at)) {
- 		/*
- 		 * try to split at offset + length to make sure folios within
- 		 * the range can be dropped, especially to avoid memory waste
-@@ -248,13 +270,10 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 		if (!folio_trylock(folio2))
- 			goto out;
- 
--		/*
--		 * make sure folio2 is large and does not change its mapping.
--		 * Its split result does not matter here.
--		 */
-+		/* make sure folio2 is large and does not change its mapping */
- 		if (folio_test_large(folio2) &&
- 		    folio2->mapping == folio->mapping)
--			try_folio_split(folio2, split_at2, NULL);
-+			try_folio_split_or_unmap(folio2, split_at2);
- 
- 		folio_unlock(folio2);
- out:
+> Put simply, these fallocate operations should *never* see partial
+> invalidation data, and so the "old or new data" rule *must* apply to
+> the initial page cache invalidation these fallocate() operations do.
+> 
+> Hence various fallocate() operations need to act as a full IO
+> barrier. Buffered IO, page faults and direct IO all must be blocked
+> and drained before the invalidation of the range begins, and must
+> not be allowed to start again until after the whole operation
+> completes.
+
+Hum, I'm not sure I follow you correctly but what you describe doesn't seem
+like how ext4 works. There are two different things - zeroing out of
+partial folios affected by truncate, hole punch, zero range (other
+fallocate operations don't zero out) and invalidation of the page cache
+folios. For ext4 it is actually the removal of folios from the page cache
+during invalidation + holding invalidate_lock that synchronizes with reads.
+As such zeroing of partial folios *can* actually race with reads within
+these partial folios and so you can get a mix of zeros and old data from
+reads.
+
+								Honza
 -- 
-2.50.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
