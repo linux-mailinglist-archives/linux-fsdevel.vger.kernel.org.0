@@ -1,247 +1,345 @@
-Return-Path: <linux-fsdevel+bounces-65305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E8CC00E76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:51:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315A1C00FD4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 14:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4553A1FE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:49:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41ACA503B24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 12:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA5B30E82E;
-	Thu, 23 Oct 2025 11:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA60D30F80A;
+	Thu, 23 Oct 2025 12:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHotVQQM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CWh8dmEg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F36301703
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 11:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9731D9346;
+	Thu, 23 Oct 2025 12:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220170; cv=none; b=Fr9+eHJmXMTcAP3vV5AmwtkMXMgqoyu0xuDYUZ9Ba4AgX44iWjU2IWmXTkjf8ZP9+uhC/r0Tu19K/4hDNo/oLllXnvoZCGBoVUgsWY4/a7TkGIcqJcC90ylhiCq6AZpmJKne3oI9h9um3Uh2iI+xkr5xQgd/9ilxuG77Rm/kQqc=
+	t=1761221208; cv=none; b=HPiFssVN1FYYcaVNDsTB5ZATJI1S6XqTVp5a1Yr89p3nzznV2NIc5Q9U4MHoUAEgpM2aSZYikrDlUEXhxQfx08jm7cwnGRYoAgL8ACRA/Y8BqGv3oWWbabCBfZ1Oj2H03W0a1rvNJk4RYebFkIDMmYG68NF7Jv95/Ltk6XWcnSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220170; c=relaxed/simple;
-	bh=ggm7K33F2Lvf8aetxoMCpPifvf34MtktdbfMQDbo63U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bfMglM+GkiYBgsGOMuaf4X+udGdOYisQHzJLn598zTKx9Y5jgZEg1wLh7AKPZzfiYhODsT79NybGLQVkEq29XY4oODqZfybrHkQ0RXxjqB+kjKSiYV6cowCI5/zJ0cBoSkp/lePUeGe2f5hjKVLXXwHK8wq0oR8KGaAoPCTT64k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHotVQQM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761220167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JCBxlSGX2oKy9c5VZTiKe/QSwX2dngLFxql68g6Ybmk=;
-	b=fHotVQQM3lGcyz8M1P9QqiHgv2+eM2eIUXqpFIWnZe9EfdEUGo68fytjUCFzHGqwzHDP0M
-	OMZYZKrwQge3uwqieZwFnG/LM7lgUK85TY1Oz1i3SXzZ2mRy/J9oefs9wwYHQ+73Y8Guzm
-	yNjPAeAq6XDqs2a6ALrbNMdwxqfZ5rc=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-M-Vnsc-lMHq1vuX-WFqrPA-1; Thu, 23 Oct 2025 07:49:25 -0400
-X-MC-Unique: M-Vnsc-lMHq1vuX-WFqrPA-1
-X-Mimecast-MFC-AGG-ID: M-Vnsc-lMHq1vuX-WFqrPA_1761220164
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-429893e2905so522273f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 04:49:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761220164; x=1761824964;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JCBxlSGX2oKy9c5VZTiKe/QSwX2dngLFxql68g6Ybmk=;
-        b=nAQQEa1PexlG1nL08GxK0IjkLJrqV8xazw7WX91gj9tdrq6dw8jXAp3C1i4k9O4e1l
-         pMxU6HYowUqqW1wGIwKqOI9bkmsquDqDr6dM5CmRCqGq15DHSGqIXx3L7JxeDgPzvOWQ
-         FTZbECcWlMeD9mZWBU92B3CmFDiEdtl7NNGuLIcndhuYEYu+9vySq50/kUs+gwsJQ8tX
-         sm3178J8Ibg2TbsqJ8vX9eW0xrCN+fHlmoRQetV4vJy1Rv0m+fGUz0/iljzBzpRd4PyE
-         LXWIyq3bv8rAas71g3wBBBMvh2Gt0cmYd6XtrGZm8mdz/f4ybax/N437Xp8UB1NzH7Jx
-         HHpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMLSfTTM/+eYGzXDLLaPheKbDsGjDAhG1h2fmBDr3hBihalygSvyrQzyYi51LM3Z9MI0d9bIGkMh6PwJNy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwwQ1K62iQ9ywGcN7hqMCjrW9j64rWUrdYxI3KblcfNBUeoJdb
-	5UprtjSuq1KNFk+EmLWPtN3xd4axZ6S0yHKhgHoICjuFN1jsS3haeIE4t2fJsMVakdUw45UimeM
-	7monhX5ui42/Fh/mGtsDStTbptsNzPlKXh6/h6MAvkQ2JRqtiBemy0xnUqxSCv/U8e5g=
-X-Gm-Gg: ASbGncu0BbwgEPQTelK0ofiQYKLvy/jL9Z5KYrmWTIB+h2O7jXCG570qrlsEOiKD2iQ
-	M5OxaW82jCbzZ98Cnr1ud9324m7nfVcHFbNx3QWiBHASay4a8Gn7AN8oIM6DPs25l97qxgPeC7y
-	GOevgk2NRV/giySoGja9tlMJvf477eW6wKwIuIR+P5YVNYlpkA5HZuU7G5uBnrsbq+v9y66baeN
-	+14nP7z3JoQXvUgbbkXaJdoHb6Wkvk2wmhVGgy/ya9XWl2eLsXlyiwU7R72V+JyLivP7U5+6BnH
-	O2CDUP7G2b5fXg5QqLcrYdd+6uTfoOiNg1vUdvdZJxk0TFT8243PFck2uICTkYu7gmcwgGoadQH
-	m8a6vYGjCtGlT45RYNp3f8OOxjDdhN3vts7AwZiPdQ+dGZASTxjDhuk84vr98hmqiGQnCRR8tM/
-	je2X9rP+P7NbkB3jtwkxjH02BCCZo=
-X-Received: by 2002:a05:6000:470a:b0:427:491:e77d with SMTP id ffacd0b85a97d-42704da9e16mr15577038f8f.36.1761220164343;
-        Thu, 23 Oct 2025 04:49:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJfOXZJEHV2NsbUj6aOO2PBD6VL5w9K1QsDgEyX5FiTcCiFyrw8Szd74pXh3vMEb+fyU8utQ==
-X-Received: by 2002:a05:6000:470a:b0:427:491:e77d with SMTP id ffacd0b85a97d-42704da9e16mr15577028f8f.36.1761220163874;
-        Thu, 23 Oct 2025 04:49:23 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898acc63sm3522878f8f.27.2025.10.23.04.49.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:49:23 -0700 (PDT)
-Message-ID: <f57d73e3-fb6c-4c01-9897-c9686889fec2@redhat.com>
-Date: Thu, 23 Oct 2025 13:49:22 +0200
+	s=arc-20240116; t=1761221208; c=relaxed/simple;
+	bh=Kxw75anzo26d/gWdMfSPCv4TNV0xnDe2ItxmgjbDW8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=no9kiD4ei7j9k/jfgcrE6tQlOWY1Xo1Vpw/3vLbGzaiH/I8tIrQ1IiC8j5Ce1d0FN3oZbhxggBlnBdIv7YDk3tuxcghWKEUJH0/GykG9fsaMi/nNwOhT/hQAhjntvEcOTKY3u3ViGF8SKfdh2pCNIQDkE3Jxev3cq7zDOWaCefc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CWh8dmEg; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761221206; x=1792757206;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Kxw75anzo26d/gWdMfSPCv4TNV0xnDe2ItxmgjbDW8E=;
+  b=CWh8dmEgVHNtsWCKs0BJqIWedlJuLS3NsHNV9EOXh/dWSQLo+gec8aye
+   +dzjX2/wbWp60ppwcICSj2e0Gq+ba1rFRXu4cf36pheN33Vl/EUIGN3n+
+   woGQ+xI4pzIP8pcTPjMjc3hXFCvHIXScwySQmJcUfVj5acq9qj0ozPPBH
+   eRuntmW94LnRf6ZljNPgA/z16QPnGRPrATZ8Qx9Odqntr9nPzmzvKTel5
+   jostGM3axw7ogeU3zLX9ZRC9FPbXyIsDg1s6WvrcJ5Otj8n19YNxZvjER
+   +h0niZKSgvyqQ0gCx6uDHC0LMQlmDBD0kUcZW/O5E+Ib2Obq76kb7d6HU
+   g==;
+X-CSE-ConnectionGUID: vyMBOLrbRseWJZyomENsKg==
+X-CSE-MsgGUID: LlCPciRuTvOup2pl32rZVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73678379"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="73678379"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:06:45 -0700
+X-CSE-ConnectionGUID: tSitkFo/QTyDESIgSNDvwA==
+X-CSE-MsgGUID: 0Auo8vX1RCWbkqL2ng1u1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="184916161"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2025 05:06:37 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBu5S-000DRp-2V;
+	Thu, 23 Oct 2025 12:06:34 +0000
+Date: Thu, 23 Oct 2025 20:05:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chris Mason <chris.mason@fusionio.com>,
+	David Sterba <dsterba@suse.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
+ task work dispatch
+Message-ID: <202510231952.gAXMcT2A-lkp@intel.com>
+References: <20251022231326.2527838-4-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
- <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
- <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
- <56d9f1d9-fc20-4be8-b64a-07beac3c64d0@redhat.com>
- <5b33b587-ffd1-4a25-95e5-5f803a935a57@redhat.com>
- <7fmiqrcyiccff5okrs7sdz3i63mp376f2r76e4r5c2miluwk76@567sm46qop5h>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <7fmiqrcyiccff5okrs7sdz3i63mp376f2r76e4r5c2miluwk76@567sm46qop5h>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022231326.2527838-4-csander@purestorage.com>
 
-On 23.10.25 13:40, Kiryl Shutsemau wrote:
-> On Thu, Oct 23, 2025 at 01:11:43PM +0200, David Hildenbrand wrote:
->> On 23.10.25 13:10, David Hildenbrand wrote:
->>> On 23.10.25 12:54, David Hildenbrand wrote:
->>>> On 23.10.25 12:31, Kiryl Shutsemau wrote:
->>>>> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
->>>>>> "garbage" as in pointing at something without a direct map, something that's
->>>>>> protected differently (MTE? weird CoCo protection?) or even worse MMIO with
->>>>>> undesired read-effects.
->>>>>
->>>>> Pedro already points to the problem with missing direct mapping.
->>>>> _nofault() copy should help with this.
->>>>
->>>> Yeah, we do something similar when reading the kcore for that reason.
->>>>
->>>>>
->>>>> Can direct mapping ever be converted to MMIO? It can be converted to DMA
->>>>> buffer (which is fine), but MMIO? I have not seen it even in virtualized
->>>>> environments.
->>>>
->>>> I recall discussions in the context of PAT and the adjustment of caching
->>>> attributes of the direct map for MMIO purposes: so I suspect there are
->>>> ways that can happen, but I am not 100% sure.
->>>>
->>>>
->>>> Thinking about it, in VMs we have the direct map set on balloon inflated
->>>> pages that should not be touched, not even read, otherwise your
->>>> hypervisor might get very angry. That case we could likely handle by
->>>> checking whether the source page actually exists and doesn't have
->>>> PageOffline() set, before accessing it. A bit nasty.
->>>>
->>>> A more obscure cases would probably be reading a page that was poisoned
->>>> by hardware and is not expected to be used anymore. Could also be
->>>> checked by checking the page.
->>>>
->>>> Essentially all cases where we try to avoid reading ordinary memory
->>>> already when creating memory dumps that might have a direct map.
->>>>
->>>>
->>>> Regarding MTE and load_unaligned_zeropad(): I don't know unfortunately.
->>>
->>> Looking into this, I'd assume the exception handler will take care of it.
->>>
->>> load_unaligned_zeropad() is interesting if there is a direct map but the
->>> memory should not be touched (especially regarding PageOffline and
->>> memory errors).
->>>
->>> I read drivers/firmware/efi/unaccepted_memory.c where we there is a
->>> lengthy discussion about guard pages and how that works for unaccepted
->>> memory.
->>>
->>> While it works for unaccepted memory, it wouldn't work for other random
->>
->> Sorry I meant here "while that works for load_unaligned_zeropad()".
-> 
-> Do we have other random reads?
-> 
-> For unaccepted memory, we care about touching memory that was never
-> allocated because accepting memory is one way road.
+Hi Caleb,
 
-Right, but I suspect if you get a random read (as the unaccepted memory 
-doc states) you'd be in trouble as well.
+kernel test robot noticed the following build errors:
 
-The "nice" thing about unaccepted memory is that it's a one way road 
-indeed, and at some point the system will not have unaccepted memory 
-anymore.
+[auto build test ERROR on axboe-block/for-next]
+[also build test ERROR on kdave/for-next linus/master v6.18-rc2]
+[cannot apply to mszeredi-fuse/for-next linux-nvme/for-next next-20251023]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> I only know about load_unaligned_zeropad() that does reads like this. Do
-> you know others?
+url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-Sander-Mateos/io_uring-expose-io_should_terminate_tw/20251023-071617
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20251022231326.2527838-4-csander%40purestorage.com
+patch subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
+config: x86_64-buildonly-randconfig-005-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231952.gAXMcT2A-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510231952.gAXMcT2A-lkp@intel.com/reproduce)
 
-No, I am not aware of others. Most code that could read random memory 
-(kcore, vmcore) was fixed to exclude pages we know are unsafe to touch.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510231952.gAXMcT2A-lkp@intel.com/
 
-Code where might speculatively access the "struct page" after it might 
-already have been freed (speculative pagecache lookups, GUP-fast) will 
-just back off and never read page content.
+All errors (new ones prefixed by >>):
 
-We avoid such random memory reads as best we can, as it's just a pain to 
-deal with (like load_unaligned_zeropad(), which i would just wish we 
-could get rid of now that it's present again in my memory. :( ).
+>> block/ioctl.c:783:1: error: invalid storage class specifier in function declarator
+     783 | static void bio_cmd_bio_end_io(struct bio *bio)
+         | ^
+>> block/ioctl.c:783:13: error: parameter named 'bio_cmd_bio_end_io' is missing
+     783 | static void bio_cmd_bio_end_io(struct bio *bio)
+         |             ^
+>> block/ioctl.c:783:48: error: expected ';' at end of declaration
+     783 | static void bio_cmd_bio_end_io(struct bio *bio)
+         |                                                ^
+         |                                                ;
+>> block/ioctl.c:781:38: error: parameter 'blk_cmd_complete' was not declared, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         |                                      ^
+     782 | 
+     783 | static void bio_cmd_bio_end_io(struct bio *bio)
+     784 | {
+>> block/ioctl.c:781:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         | ~~~~~~ ^
+         | int
+>> block/ioctl.c:785:29: error: use of undeclared identifier 'bio'
+     785 |         struct io_uring_cmd *cmd = bio->bi_private;
+         |                                    ^
+   block/ioctl.c:788:15: error: use of undeclared identifier 'bio'
+     788 |         if (unlikely(bio->bi_status) && !bic->res)
+         |                      ^
+   block/ioctl.c:789:34: error: use of undeclared identifier 'bio'
+     789 |                 bic->res = blk_status_to_errno(bio->bi_status);
+         |                                                ^
+>> block/ioctl.c:791:2: error: call to undeclared function 'IO_URING_CMD_TASK_WORK'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     791 |         io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
+         |         ^
+   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
+     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
+         |                                   ^
+   block/ioctl.c:791:2: note: did you mean 'DEFINE_IO_URING_CMD_TASK_WORK'?
+   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
+     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
+         |                                   ^
+   block/ioctl.c:781:8: note: 'DEFINE_IO_URING_CMD_TASK_WORK' declared here
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         |        ^
+>> block/ioctl.c:791:2: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'io_req_tw_func_t' (aka 'void (*)(struct io_kiocb *, struct io_tw_state)') [-Wint-conversion]
+     791 |         io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
+     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/io_uring/cmd.h:123:25: note: passing argument to parameter 'task_work_cb' here
+     123 |                             io_req_tw_func_t task_work_cb, unsigned flags)
+         |                                              ^
+   block/ioctl.c:792:10: error: use of undeclared identifier 'bio'; did you mean 'bic'?
+     792 |         bio_put(bio);
+         |                 ^~~
+         |                 bic
+   block/ioctl.c:786:22: note: 'bic' declared here
+     786 |         struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+         |                             ^
+>> block/ioctl.c:781:8: error: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Werror,-Wdeprecated-non-prototype]
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         |        ^
+>> block/ioctl.c:847:20: error: use of undeclared identifier 'bio_cmd_bio_end_io'
+     847 |         prev->bi_end_io = bio_cmd_bio_end_io;
+         |                           ^
+   13 errors generated.
+--
+>> drivers/nvme/host/ioctl.c:412:1: error: invalid storage class specifier in function declarator
+     412 | static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
+         | ^
+>> drivers/nvme/host/ioctl.c:412:27: error: parameter named 'nvme_uring_cmd_end_io' is missing
+     412 | static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
+         |                           ^
+>> drivers/nvme/host/ioctl.c:413:24: error: expected ';' at end of declaration
+     413 |                                                 blk_status_t err)
+         |                                                                  ^
+         |                                                                  ;
+>> drivers/nvme/host/ioctl.c:410:38: error: parameter 'nvme_uring_task_cb' was not declared, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         |                                      ^
+     411 | 
+     412 | static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
+     413 |                                                 blk_status_t err)
+     414 | {
+>> drivers/nvme/host/ioctl.c:410:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         | ~~~~~~ ^
+         | int
+>> drivers/nvme/host/ioctl.c:415:32: error: use of undeclared identifier 'req'
+     415 |         struct io_uring_cmd *ioucmd = req->end_io_data;
+         |                                       ^
+   drivers/nvme/host/ioctl.c:418:15: error: use of undeclared identifier 'req'
+     418 |         if (nvme_req(req)->flags & NVME_REQ_CANCELLED) {
+         |                      ^
+   drivers/nvme/host/ioctl.c:421:26: error: use of undeclared identifier 'req'
+     421 |                 pdu->status = nvme_req(req)->status;
+         |                                        ^
+>> drivers/nvme/host/ioctl.c:423:38: error: use of undeclared identifier 'err'
+     423 |                         pdu->status = blk_status_to_errno(err);
+         |                                                           ^
+   drivers/nvme/host/ioctl.c:425:37: error: use of undeclared identifier 'req'
+     425 |         pdu->result = le64_to_cpu(nvme_req(req)->result.u64);
+         |                                            ^
+   include/linux/byteorder/generic.h:87:21: note: expanded from macro 'le64_to_cpu'
+      87 | #define le64_to_cpu __le64_to_cpu
+         |                     ^
+>> drivers/nvme/host/ioctl.c:435:2: error: call to undeclared function 'IO_URING_CMD_TASK_WORK'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     435 |         io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
+         |         ^
+   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
+     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
+         |                                   ^
+   drivers/nvme/host/ioctl.c:435:2: note: did you mean 'DEFINE_IO_URING_CMD_TASK_WORK'?
+   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
+     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
+         |                                   ^
+   drivers/nvme/host/ioctl.c:410:8: note: 'DEFINE_IO_URING_CMD_TASK_WORK' declared here
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         |        ^
+>> drivers/nvme/host/ioctl.c:435:2: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'io_req_tw_func_t' (aka 'void (*)(struct io_kiocb *, struct io_tw_state)') [-Wint-conversion]
+     435 |         io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
+     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/io_uring/cmd.h:123:25: note: passing argument to parameter 'task_work_cb' here
+     123 |                             io_req_tw_func_t task_work_cb, unsigned flags)
+         |                                              ^
+>> drivers/nvme/host/ioctl.c:410:8: error: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Werror,-Wdeprecated-non-prototype]
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         |        ^
+>> drivers/nvme/host/ioctl.c:524:16: error: use of undeclared identifier 'nvme_uring_cmd_end_io'; did you mean 'nvme_uring_cmd_io'?
+     524 |         req->end_io = nvme_uring_cmd_end_io;
+         |                       ^~~~~~~~~~~~~~~~~~~~~
+         |                       nvme_uring_cmd_io
+   drivers/nvme/host/ioctl.c:439:12: note: 'nvme_uring_cmd_io' declared here
+     439 | static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+         |            ^
+   14 errors generated.
+
+
+vim +783 block/ioctl.c
+
+50c52250e2d74b Pavel Begunkov      2024-09-11  771  
+50c52250e2d74b Pavel Begunkov      2024-09-11  772  static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
+50c52250e2d74b Pavel Begunkov      2024-09-11  773  {
+50c52250e2d74b Pavel Begunkov      2024-09-11  774  	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+50c52250e2d74b Pavel Begunkov      2024-09-11  775  
+50c52250e2d74b Pavel Begunkov      2024-09-11  776  	if (bic->res == -EAGAIN && bic->nowait)
+50c52250e2d74b Pavel Begunkov      2024-09-11  777  		io_uring_cmd_issue_blocking(cmd);
+50c52250e2d74b Pavel Begunkov      2024-09-11  778  	else
+ef9f603fd3d4b7 Caleb Sander Mateos 2025-09-22  779  		io_uring_cmd_done(cmd, bic->res, issue_flags);
+50c52250e2d74b Pavel Begunkov      2024-09-11  780  }
+c004e50b1d8661 Caleb Sander Mateos 2025-10-22 @781  static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+50c52250e2d74b Pavel Begunkov      2024-09-11  782  
+50c52250e2d74b Pavel Begunkov      2024-09-11 @783  static void bio_cmd_bio_end_io(struct bio *bio)
+50c52250e2d74b Pavel Begunkov      2024-09-11  784  {
+50c52250e2d74b Pavel Begunkov      2024-09-11 @785  	struct io_uring_cmd *cmd = bio->bi_private;
+50c52250e2d74b Pavel Begunkov      2024-09-11  786  	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+50c52250e2d74b Pavel Begunkov      2024-09-11  787  
+50c52250e2d74b Pavel Begunkov      2024-09-11  788  	if (unlikely(bio->bi_status) && !bic->res)
+50c52250e2d74b Pavel Begunkov      2024-09-11  789  		bic->res = blk_status_to_errno(bio->bi_status);
+50c52250e2d74b Pavel Begunkov      2024-09-11  790  
+50c52250e2d74b Pavel Begunkov      2024-09-11 @791  	io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
+50c52250e2d74b Pavel Begunkov      2024-09-11  792  	bio_put(bio);
+50c52250e2d74b Pavel Begunkov      2024-09-11  793  }
+50c52250e2d74b Pavel Begunkov      2024-09-11  794  
+50c52250e2d74b Pavel Begunkov      2024-09-11  795  static int blkdev_cmd_discard(struct io_uring_cmd *cmd,
+50c52250e2d74b Pavel Begunkov      2024-09-11  796  			      struct block_device *bdev,
+50c52250e2d74b Pavel Begunkov      2024-09-11  797  			      uint64_t start, uint64_t len, bool nowait)
+50c52250e2d74b Pavel Begunkov      2024-09-11  798  {
+50c52250e2d74b Pavel Begunkov      2024-09-11  799  	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+50c52250e2d74b Pavel Begunkov      2024-09-11  800  	gfp_t gfp = nowait ? GFP_NOWAIT : GFP_KERNEL;
+50c52250e2d74b Pavel Begunkov      2024-09-11  801  	sector_t sector = start >> SECTOR_SHIFT;
+50c52250e2d74b Pavel Begunkov      2024-09-11  802  	sector_t nr_sects = len >> SECTOR_SHIFT;
+50c52250e2d74b Pavel Begunkov      2024-09-11  803  	struct bio *prev = NULL, *bio;
+50c52250e2d74b Pavel Begunkov      2024-09-11  804  	int err;
+50c52250e2d74b Pavel Begunkov      2024-09-11  805  
+50c52250e2d74b Pavel Begunkov      2024-09-11  806  	if (!bdev_max_discard_sectors(bdev))
+50c52250e2d74b Pavel Begunkov      2024-09-11  807  		return -EOPNOTSUPP;
+50c52250e2d74b Pavel Begunkov      2024-09-11  808  	if (!(file_to_blk_mode(cmd->file) & BLK_OPEN_WRITE))
+50c52250e2d74b Pavel Begunkov      2024-09-11  809  		return -EBADF;
+50c52250e2d74b Pavel Begunkov      2024-09-11  810  	if (bdev_read_only(bdev))
+50c52250e2d74b Pavel Begunkov      2024-09-11  811  		return -EPERM;
+50c52250e2d74b Pavel Begunkov      2024-09-11  812  	err = blk_validate_byte_range(bdev, start, len);
+50c52250e2d74b Pavel Begunkov      2024-09-11  813  	if (err)
+50c52250e2d74b Pavel Begunkov      2024-09-11  814  		return err;
+50c52250e2d74b Pavel Begunkov      2024-09-11  815  
+50c52250e2d74b Pavel Begunkov      2024-09-11  816  	err = filemap_invalidate_pages(bdev->bd_mapping, start,
+50c52250e2d74b Pavel Begunkov      2024-09-11  817  					start + len - 1, nowait);
+50c52250e2d74b Pavel Begunkov      2024-09-11  818  	if (err)
+50c52250e2d74b Pavel Begunkov      2024-09-11  819  		return err;
+50c52250e2d74b Pavel Begunkov      2024-09-11  820  
+50c52250e2d74b Pavel Begunkov      2024-09-11  821  	while (true) {
+50c52250e2d74b Pavel Begunkov      2024-09-11  822  		bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp);
+50c52250e2d74b Pavel Begunkov      2024-09-11  823  		if (!bio)
+50c52250e2d74b Pavel Begunkov      2024-09-11  824  			break;
+50c52250e2d74b Pavel Begunkov      2024-09-11  825  		if (nowait) {
+50c52250e2d74b Pavel Begunkov      2024-09-11  826  			/*
+50c52250e2d74b Pavel Begunkov      2024-09-11  827  			 * Don't allow multi-bio non-blocking submissions as
+50c52250e2d74b Pavel Begunkov      2024-09-11  828  			 * subsequent bios may fail but we won't get a direct
+50c52250e2d74b Pavel Begunkov      2024-09-11  829  			 * indication of that. Normally, the caller should
+50c52250e2d74b Pavel Begunkov      2024-09-11  830  			 * retry from a blocking context.
+50c52250e2d74b Pavel Begunkov      2024-09-11  831  			 */
+50c52250e2d74b Pavel Begunkov      2024-09-11  832  			if (unlikely(nr_sects)) {
+50c52250e2d74b Pavel Begunkov      2024-09-11  833  				bio_put(bio);
+50c52250e2d74b Pavel Begunkov      2024-09-11  834  				return -EAGAIN;
+50c52250e2d74b Pavel Begunkov      2024-09-11  835  			}
+50c52250e2d74b Pavel Begunkov      2024-09-11  836  			bio->bi_opf |= REQ_NOWAIT;
+50c52250e2d74b Pavel Begunkov      2024-09-11  837  		}
+50c52250e2d74b Pavel Begunkov      2024-09-11  838  
+50c52250e2d74b Pavel Begunkov      2024-09-11  839  		prev = bio_chain_and_submit(prev, bio);
+50c52250e2d74b Pavel Begunkov      2024-09-11  840  	}
+50c52250e2d74b Pavel Begunkov      2024-09-11  841  	if (unlikely(!prev))
+50c52250e2d74b Pavel Begunkov      2024-09-11  842  		return -EAGAIN;
+50c52250e2d74b Pavel Begunkov      2024-09-11  843  	if (unlikely(nr_sects))
+50c52250e2d74b Pavel Begunkov      2024-09-11  844  		bic->res = -EAGAIN;
+50c52250e2d74b Pavel Begunkov      2024-09-11  845  
+50c52250e2d74b Pavel Begunkov      2024-09-11  846  	prev->bi_private = cmd;
+50c52250e2d74b Pavel Begunkov      2024-09-11 @847  	prev->bi_end_io = bio_cmd_bio_end_io;
+50c52250e2d74b Pavel Begunkov      2024-09-11  848  	submit_bio(prev);
+50c52250e2d74b Pavel Begunkov      2024-09-11  849  	return -EIOCBQUEUED;
+50c52250e2d74b Pavel Begunkov      2024-09-11  850  }
+50c52250e2d74b Pavel Begunkov      2024-09-11  851  
 
 -- 
-Cheers
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
