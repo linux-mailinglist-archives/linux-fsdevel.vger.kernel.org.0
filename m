@@ -1,132 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-65334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3BAC01A42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:08:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398FCC01AFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 11090567B9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD373BB24D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 14:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D2C32ABC0;
-	Thu, 23 Oct 2025 13:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F010631A56B;
+	Thu, 23 Oct 2025 14:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="psox57Wm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvgvWu7l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CF3320CBC;
-	Thu, 23 Oct 2025 13:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907732AACB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 14:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227784; cv=none; b=hZbnaq+B63bC7EWzVumpXQ345KldmcNEn7Ge/fdKIh9Crp1h2eE2GYWJHKIRNR+0WeTtZkHFRZhb+zztMX6WIb+G2NkZBm+bx9gnanSFJXjN2MCArNLSpiyfxseYZi8/niruP614F8FUyjKhfMMxlk2UhRexbAsZHlmllyzyv3M=
+	t=1761228078; cv=none; b=F7L9LaFx5fMejnDOKJ/b8Te8Tf+JMHNn5ezBEZ+/PJI2fze62iLNd0mZR0zylmoI37dO/RTtSHQ3pJzgoiKTBF6js466AC6PwcYtTUmn79W22zukfqcQJzvkJlviPEDbrRh08OdByiP5Ox2tHffb2fX5s7P5QSuBAAnb4Bd43Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227784; c=relaxed/simple;
-	bh=W2EdmC2/U1gDd0Li49ZYAhxeAf134JxGQDGawGyAqk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KyrFJscAkJSD5Pr+sWa+Fwvmyhxc0YB4/U4CPfNznGStY8oH9Z8zOtzpzpL9k/IpOBav8UHh6bPGsc0SpfhEPC9ePQtjGr+O8pu4UYi4eCpJ1NCYP/sNjOsE1ruS2GMtY9op0SX/FJfq/QYWHKTqyZH+Kpl90NWh8R+lULe+7M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=psox57Wm; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=3nlQNYKh63DZfhqvnbIO/V8BRjwy0Pm04lFLxCF+OHk=; b=psox57WmcssjwYkhGU5JyKb9DJ
-	ZNVIfRsNTuYjvHQHnLldbI59k0PJZ1FixGEVP5CcX/9M4VC2StPBaucCxFMRRvy3ca52T57vk1ihh
-	un3UhqK/yNdHsjWzKccUDTW34jy2eFcJjQ3ludCLgAvokpv9QGbKAbhKNPu2bVGfT7adMLhWffQRw
-	vTYEyIlDWp7i2IvQNH0GJcqTOSAlrvKD8MuDOpVRjBYYOeGJD4hE6uRnDS4ihmwtuXaHn5RqvwfqU
-	QSQZiESbnQT+bV9D2ZgAQU173tPsiO1+k15VfCL4+r1kLfmJyfThwYAnd4UroTVMwu2rvguPSpvLf
-	/SFAipmA==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vBvnh-00000006UdW-2s1b;
-	Thu, 23 Oct 2025 13:56:22 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Qu Wenruo <wqu@suse.com>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] xfs: support sub-block aligned vectors in always COW mode
-Date: Thu, 23 Oct 2025 15:55:45 +0200
-Message-ID: <20251023135559.124072-5-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251023135559.124072-1-hch@lst.de>
-References: <20251023135559.124072-1-hch@lst.de>
+	s=arc-20240116; t=1761228078; c=relaxed/simple;
+	bh=nf2ne/DcUThRcyjkcAtbjjiK8XPQU5PLVC7WSh7jfZU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hsmlktkvVed/rKcb9EL3dzKhRWRQU0kAfQB6fLewr7oz+l4IdI05I92sTRglZTE+YunF/X1jfRIRNJUbXn0xZpQMyoTZ7jqRFdMGNZlc35V5DQ3y5SIvLfWhdyY22DZj61LmQWdvf3dAXv+9NMU7oc9fN+4yam6ZCQ1fSc8bEyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvgvWu7l; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7810289cd5eso1884489b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 07:01:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761228075; x=1761832875; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=inXfddpf6Feyogc8n8Jl5cqVWZOSr51ivnMHY9v0Ey4=;
+        b=FvgvWu7lfkFsFHXEZtj4lw7glbTHzzUEGsEFkLBSyj5lOlrLDU1oghGofvy5n8eOsf
+         hNVds9VXo38wQYB6NTIGzXHSQxJqYajWlPt7009pp2gIii3hh6WwEU9ZD/I4QT7d2bea
+         WCWA56SQxCTKKATjTNzT+lP8oUtynF4+UfwgKPQjst0Xh/ycZHGg8SpB0lZqE/5jPJp6
+         CFTvHYr2ydcrrce3Dm0itC9rIq2bP6EIsKxFqfTiJrJTlg+JsT7q3befgm83FU6T6yNe
+         NI15GlfmkS+YcZs/EH0m47+UgRKGlt6IVvi766TFbKBUkqMBdAj7OK5mBSQiizp6e0mx
+         bTcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761228075; x=1761832875;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=inXfddpf6Feyogc8n8Jl5cqVWZOSr51ivnMHY9v0Ey4=;
+        b=m8NOpxXL+roR/3S8Jys+ljuvLOJ8D5H8g7cSymU5wJo7Qq/NigRzpDfop+0MZqNSpW
+         juR4ZvfkEo/4ycJ/XVRx8ROu3Z0WiPneivUtSKQy04kgi94Cp6Ilxs9+Hym6joGS44L8
+         uyuV0RGIXpM1W/wAHoa+zb6eSYJtLckMqQAH1atTBesdOXDhj1swi31lg8BVS6sqBV8S
+         I2QanzhecWkRu0ZIsN7Ois4wGpWer+06W4SQPEVZaLjvdbSUgwHjmEZlr1nqvLn6VLUc
+         PPXoMQL3KiGXMB6hzgTPmzv1P8gv4pCQVX2rvShedKwC2SgZqK5WQkyGuISPsX4ouAU3
+         zE+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWEboeJY4akrdZBtXmiSo3DoZmvpvjqbytQTXF3ys1bbsaD8cy6FMUjXuPSC4PWelrYQxXHRqYu8JkfxoAQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwINcKsh8ry/BPOijLGpvHulSTxoDdkBzDKjBDbMJ02OzuBTygk
+	pyZmaZog7av+JQpF6NW7ue5856kHBFqaU5sGX6WJ5TKRrO3ouhBUdpxVxoseHcxUExM4GJOwiQG
+	Genky2hCw9pU3sGdE4x49H2l0hw==
+X-Google-Smtp-Source: AGHT+IFIN8uFRC6EtqcEGeMEkYd8inzutN6W/XJij2WhQjtYZx5ArSxhlm3XOqfP/3yjcqmWzVtyJ1fSE/ev6eLgRw==
+X-Received: from pjnu4.prod.google.com ([2002:a17:90a:8904:b0:339:dc19:ae5d])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:3956:b0:334:91ab:f182 with SMTP id adf61e73a8af0-334a85286f8mr35842433637.10.1761228074886;
+ Thu, 23 Oct 2025 07:01:14 -0700 (PDT)
+Date: Thu, 23 Oct 2025 07:01:13 -0700
+In-Reply-To: <aPlpKbHGea90IebS@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+ <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
+ <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
+Message-ID: <diqzv7k5emza.fsf@google.com>
+Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
+	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
+	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
+	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-Now that the block layer and iomap have grown support to indicate
-the bio sector size explicitly instead of assuming the device sector
-size, we can ask for logical block size alignment and thus support
-direct I/O writes where the overall size is logical block size
-aligned, but the boundaries between vectors might not be.
+Sean Christopherson <seanjc@google.com> writes:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/xfs_file.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+> On Wed, Oct 22, 2025, Ackerley Tng wrote:
+>> Ackerley Tng <ackerleytng@google.com> writes:
+>> 
+>> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
+>> 
+>> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
+>> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
+>> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
+>> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
+>
+> No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
+> exists is largely irrelevant.
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 2702fef2c90c..f2ac4115c18b 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -674,8 +674,17 @@ xfs_file_dio_write_aligned(
- 	struct xfs_zone_alloc_ctx *ac)
- {
- 	unsigned int		iolock = XFS_IOLOCK_SHARED;
-+	unsigned int		dio_flags = 0;
- 	ssize_t			ret;
- 
-+	/*
-+	 * For always COW inodes, each bio must be aligned to the file system
-+	 * block size and not just the device sector size because we need to
-+	 * allocate a block-aligned amount of space for each write.
-+	 */
-+	if (xfs_is_always_cow_inode(ip))
-+		dio_flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
-+
- 	ret = xfs_ilock_iocb_for_write(iocb, &iolock);
- 	if (ret)
- 		return ret;
-@@ -693,7 +702,7 @@ xfs_file_dio_write_aligned(
- 		iolock = XFS_IOLOCK_SHARED;
- 	}
- 	trace_xfs_file_direct_write(iocb, from);
--	ret = iomap_dio_rw(iocb, from, ops, dops, 0, ac, 0);
-+	ret = iomap_dio_rw(iocb, from, ops, dops, dio_flags, ac, 0);
- out_unlock:
- 	xfs_iunlock(ip, iolock);
- 	return ret;
-@@ -890,15 +899,7 @@ xfs_file_dio_write(
- 	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
- 		return -EINVAL;
- 
--	/*
--	 * For always COW inodes we also must check the alignment of each
--	 * individual iovec segment, as they could end up with different
--	 * I/Os due to the way bio_iov_iter_get_pages works, and we'd
--	 * then overwrite an already written block.
--	 */
--	if (((iocb->ki_pos | count) & ip->i_mount->m_blockmask) ||
--	    (xfs_is_always_cow_inode(ip) &&
--	     (iov_iter_alignment(from) & ip->i_mount->m_blockmask)))
-+	if ((iocb->ki_pos | count) & ip->i_mount->m_blockmask)
- 		return xfs_file_dio_write_unaligned(ip, iocb, from);
- 	if (xfs_is_zoned_inode(ip))
- 		return xfs_file_dio_write_zoned(ip, iocb, from);
--- 
-2.47.3
+That's true.
 
+> We can even provide the same -ENOTTY errno by
+> checking that _any_ attributes are supported, i.e. so that doing
+> KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
+> same way that KVM with code support but no attributes fails.
+>
+
+IIUC KVM_SET_MEMORY_ATTRIBUTES doesn't fail with -ENOTTY now when there
+are no valid attributes.
+
+Even if there's no valid attributes (as in
+kvm_supported_mem_attributes() returns 0), it's possible to call
+KVM_SET_MEMORY_ATTRIBUTES with .attributes set to 0, which will be a
+no-op, but will return 0.
+
+I think this is kind of correct behavior since .attributes = 0 is
+actually a valid expression for "I want this range to be shared", and
+for a VM that doesn't support private memory, it's a valid expression.
+
+
+The other way that there are "no attributes" would be if there are no
+/VM/ attributes, in which case KVM_SET_MEMORY_ATTRIBUTES, sent to as a
+vm ioctl, will return -ENOTTY.
+
+> In other words, I don't see why it can't do both.  Even if we can't massage the
+> right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
+
+Did you mean KVM_CAP_MEMORY_ATTRIBUTES2 in the line above?
+
+> supported attributes than simply '1'.  E.g. we have no plans to support
+> KVM_SET_MEMORY_ATTRIBUTES on guest_memfd, and so returning simply '1' creates an
+> unwanted and unnecessary dependency.
+>
+
+Okay I'll switch this back to what it was.
+
+>> @@ -1617,4 +1618,15 @@ struct kvm_pre_fault_memory {
+>>  	__u64 padding[5];
+>>  };
+>>  
+>> +/* Available with KVM_CAP_MEMORY_ATTRIBUTES2 */
+>> +#define KVM_SET_MEMORY_ATTRIBUTES2              _IOWR(KVMIO,  0xd6, struct kvm_memory_attributes2)
+>
+> Please use the same literal number, 0xd2, as
+>
+>   #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
+>
+> The "final" ioctl number that userspace sees incorporates the directionality and
+> the size of the struct, i.e. KVM_SET_MEMORY_ATTRIBUTES and KVM_SET_MEMORY_ATTRIBUTES2
+> are guaranteed to be distinct even if they both use 0xd2 as the "minor" number.
+>
+
+Will do.
+
+>> +
+>> +struct kvm_memory_attributes2 {
+>> +	__u64 address;
+>> +	__u64 size;
+>> +	__u64 attributes;
+>> +	__u64 flags;
+>> +	__u64 reserved[4];
+>
+> Maybe be paranoid and reserve 12 u64s?
+
+Will do.
 
