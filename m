@@ -1,162 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-65293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5531EC008A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 12:39:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE9CC0090F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 12:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0E19500ED8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 10:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8481D19A81A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 10:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D042EF667;
-	Thu, 23 Oct 2025 10:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AD430B508;
+	Thu, 23 Oct 2025 10:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JiaADP40"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLokn6j7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B932C11D9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 10:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622622765DC;
+	Thu, 23 Oct 2025 10:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761215863; cv=none; b=VkLl5b7sAfqhZsajHQcO5C1YE9SbGnrLQ4tb98dfflrn9P7B6dBfl83E8mRTNFexMZNRYPtzx11OQUhag2GQbtVP41Q0CqY4gq8bmem69tAyzs+gegm8fG1ZelhVsGSQApOiRrLk2EUV/TBp2HcjrvjL0/PSsv0cZH73lFirG7w=
+	t=1761216413; cv=none; b=J7acZ53Z08PuI0EZ94hojatEirftDrp9WXg5qkcBAkfJI3/SU8yJrIKpyeY84JfavYr9Pt7eA0VXrrfIZwTupibz/vbKJo1ZYsX43B99IwVxUTGis1V6vBqP55s2JalCr2mzwYIvKwLJIlZ/fojSOYLZjU0FUWhvb267sYP92JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761215863; c=relaxed/simple;
-	bh=YYxfUPdfLOOxl7Euu9zdXiMarVpXjjOUqwtysvwPqAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iGOKs46OJdRV7vqqR+vCxCDGTLUsngHtnpCHH7x5rRwUbSFNlMYw5Re7wwOgkfMW9Glb8gbHDIyrx9KK0mDTSRx7K6XyxQ1OP7iw7Zp6i2aebpozixkjKzAxoJfNpn0aMYkdYTq/yN+ll0T+Vnp5Dd5iMyfuldNL4p7PFPFenNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JiaADP40; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-421851bca51so621298f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 03:37:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761215859; x=1761820659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wlbOJJaTUJl2R9AS5ER+G1wmL9urQDFVZkUedb+ly68=;
-        b=JiaADP40+cdDUse3X8lkAmhG/cK7DQllg6z2yNIapco8KiopK+kDSldASAADjDL0t8
-         3WD90uo635LI0L7l4X7Ody6moFNC9bEligxs5KZ+4CZ/bA8hORhbLCIIhxeh6KXwp+yi
-         iQKi3cqNgdCly5TLF1MypNGocpERPCg3b/hj/XPKjTC10sUOobS9UyCKXT2FOxDkDpkq
-         Gy3bQRcVWfBvGtKWLHbiyPabsFCgT3FVa7RWKiKds8I3aBC2dfhq6Rf1y/COWJmR+rTN
-         It5PvSEZZ3SJCfO84lmYe0ijJTHXOZTn21Wkfq+0gFGrFDAM6fyglraBoArWwsBkI+TY
-         SOog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761215859; x=1761820659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wlbOJJaTUJl2R9AS5ER+G1wmL9urQDFVZkUedb+ly68=;
-        b=XmHoWI6W7tGjUBjUqEPWDTweJ0ioBxPrEnOcvbTmrJQaAgPq39C6gh8E4oI8vurYJq
-         dEkqdp4b0apC/jJmAUJwGTK5P/Mjk2UBqeM0puaHCyKjU995QKjCV5DU9GeA70b1N/c/
-         lkVNSuI5LPbBMAfgqv9LCkYnYzLlYoTXZZADJzAg9VbqYaCUOMamR08WV9C5g1P/o7hh
-         PXqJv9Evr0Q10d9CKp/pDRuB40a517hcFP6mIrwCpIk9JG8wvQw0pUM1ybGF+ZfQpj0x
-         PzowY6I2OoWC0GRGucePs4zSNcLBDDblFxzDFzne1/YvO8wkQnuZgPZMmXvx6aQY3EtZ
-         Qaew==
-X-Forwarded-Encrypted: i=1; AJvYcCXAi4RkRLkQDkieJ1VJ/kqAhJ3BxfAxLHevOamgc+PPhe+Y5pppUCCwkdVGgm9y1ZjYR5HXV6b/QxLoDtjC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc5eiWA1X2S2+Ouiuiw+6S3+O8WRbVboR5gdKOJcZSE0osyhLh
-	MrPbRJqojV3bMFQIbdL5o02e5F7inyKFG/YWp3uvYXaef1M4gMaF243wdxGGkla3sTO5ZqgUeCN
-	DQ30Snr8joRpZSSi2JAM/OZOFisex9xJdRxRnK1OW
-X-Gm-Gg: ASbGncvtunB/SFsfzpb/5kFCU+XzBe4jG2jCejD9ZZ8auqiycQaZFzbQf4aUyK8IFfZ
-	VIxcqL0Wu9hMJKmWrtQA/4yB0gzieRK/5Pw/Z+hzlYgsnbs3sRVXOeZpFpR4u/5jhiXyKsTS3Lq
-	mgV2YUQ/tj2MmUKWaF/uRK2+pttsfPMnUm2BAGrB/1CCkHaOpO9HB5+9U5T4MBf8PrF+dNS4VTV
-	+ewL51aGiyxRP9qgpd3a9kPK+wUVIc9yseM0z2XVg3s9W2muZXmWw9Oyc0vUw==
-X-Google-Smtp-Source: AGHT+IF7maTSQiS4kZPLIabukQBdn/rZWFtqT50NtIAJr4GO0YjV9vbHGhXIn7kavPdqJnen7ikTwzQkeGILfRe8wuI=
-X-Received: by 2002:a05:6000:25fd:b0:427:587:d9ae with SMTP id
- ffacd0b85a97d-4270587d9c1mr13312291f8f.9.1761215858529; Thu, 23 Oct 2025
- 03:37:38 -0700 (PDT)
+	s=arc-20240116; t=1761216413; c=relaxed/simple;
+	bh=4Nycx1ORZclwlAUuSrDPm+Q6EH8JvLo9+c1zBeefgcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbHMTTQpLwl2OGBKFVjSqqSs5a7Kl03vI7CkwY/b+MOtlAdKnt80XVYlnIPw9fy+aqVGiGgUv0Eo8R0gZ4Ef4lHRZpI4TgpCPRs7CkHjpL98MI/jN8P97crQHkOOD1X62f310tNVtCXmzuyO8cpNGs/fohkpICcaRYMV4zVVX9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLokn6j7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD9B7C4CEE7;
+	Thu, 23 Oct 2025 10:46:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761216412;
+	bh=4Nycx1ORZclwlAUuSrDPm+Q6EH8JvLo9+c1zBeefgcA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MLokn6j7bsPTtDKzR8pqjp2OIR+OMKA1rj3J/6jxNvlhgcsOoQ+moyQ5GdMJY0dDs
+	 Znmt5H3FHjRCN/E5Q2OiSn3Lge5IHCXD/l7T7/WJ6bkLphXMC2HXV8rhysZfDX6Sr+
+	 rNUl8sN5/1gEAa9ysrMEafdWcYQ0VQhevGk1H7BhaFT8iiTd5n9BTY4verf1aGvcpu
+	 2n7qQ7sTY81LVQ1UhGF1Gtff22NCJXEfiZHTApKvHY7cQr6tmKVbYlAGr+xV9kWFbP
+	 87li730Z1OQYtoHcpFjViMqnavqolBedQ+OYK4M6H1LebiK34NEzwo7Gy1V6/AuNf7
+	 96d0cS8eISSpA==
+Message-ID: <5b287ec6-72ff-4707-9040-3c84efc58b94@kernel.org>
+Date: Thu, 23 Oct 2025 12:46:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-6-dakr@kernel.org>
- <aPnnkU3IWwgERuT3@google.com> <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
-In-Reply-To: <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 23 Oct 2025 12:37:25 +0200
-X-Gm-Features: AWmQ_bnHmpaGJ5SXvKhXy7BPOYeRX2L2uNppxAQX8TK3YbD6TWoOM-Pb_fLGRa8
-Message-ID: <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] rust: uaccess: add UserSliceWriter::write_slice_file()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/32] pidfs: validate extensible ioctls
+To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
+ Mike Yuan <me@yhndnzj.com>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?=
+ <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>,
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 12:35=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> On Thu Oct 23, 2025 at 10:30 AM CEST, Alice Ryhl wrote:
-> > On Wed, Oct 22, 2025 at 04:30:39PM +0200, Danilo Krummrich wrote:
-> >> Add UserSliceWriter::write_slice_file(), which is the same as
-> >> UserSliceWriter::write_slice_partial() but updates the given
-> >> file::Offset by the number of bytes written.
-> >>
-> >> This is equivalent to C's `simple_read_from_buffer()` and useful when
-> >> dealing with file offsets from file operations.
-> >>
-> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> >> ---
-> >>  rust/kernel/uaccess.rs | 24 ++++++++++++++++++++++++
-> >>  1 file changed, 24 insertions(+)
-> >>
-> >> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> >> index 539e77a09cbc..20ea31781efb 100644
-> >> --- a/rust/kernel/uaccess.rs
-> >> +++ b/rust/kernel/uaccess.rs
-> >> @@ -495,6 +495,30 @@ pub fn write_slice_partial(&mut self, data: &[u8]=
-, offset: usize) -> Result<usiz
-> >>              .map_or(Ok(0), |src| self.write_slice(src).map(|()| src.l=
-en()))
-> >>      }
-> >>
-> >> +    /// Writes raw data to this user pointer from a kernel buffer par=
-tially.
-> >> +    ///
-> >> +    /// This is the same as [`Self::write_slice_partial`] but updates=
- the given [`file::Offset`] by
-> >> +    /// the number of bytes written.
-> >> +    ///
-> >> +    /// This is equivalent to C's `simple_read_from_buffer()`.
-> >> +    ///
-> >> +    /// On success, returns the number of bytes written.
-> >> +    pub fn write_slice_file(&mut self, data: &[u8], offset: &mut file=
-::Offset) -> Result<usize> {
-> >> +        if offset.is_negative() {
-> >> +            return Err(EINVAL);
-> >> +        }
-> >> +
-> >> +        let Ok(offset_index) =3D (*offset).try_into() else {
-> >> +            return Ok(0);
-> >> +        };
-> >> +
-> >> +        let written =3D self.write_slice_partial(data, offset_index)?=
-;
-> >> +
-> >> +        *offset =3D offset.saturating_add_usize(written);
-> >
-> > This addition should never overflow:
->
-> It probably never will (which is why this was a + operation in v1).
->
-> >       offset + written <=3D data.len() <=3D isize::MAX <=3D Offset::MAX
->
-> However, this would rely on implementation details you listed, i.e. the
-> invariant that a slice length should be at most isize::MAX and what's the
-> maximum size of file::Offset::MAX.
+On 10. 09. 25, 16:36, Christian Brauner wrote:
+> Validate extensible ioctls stricter than we do now.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>   fs/pidfs.c         |  2 +-
+>   include/linux/fs.h | 14 ++++++++++++++
+>   2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index edc35522d75c..0a5083b9cce5 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
+>   		 * erronously mistook the file descriptor for a pidfd.
+>   		 * This is not perfect but will catch most cases.
+>   		 */
+> -		return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
+> +		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
 
-It's not an implementation detail. All Rust allocations are guaranteed
-to fit in isize::MAX bytes:
-https://doc.rust-lang.org/stable/std/ptr/index.html#allocation
+Hi,
 
-Alice
+this turned EINVAL (from pidfd_info()) into ENOTTY (from pidfd_ioctl()) 
+for at least LTP's:
+struct pidfd_info_invalid {
+	uint32_t dummy;
+};
+
+#define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct 
+pidfd_info_invalid)
+
+ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid) == EINVAL
+
+at:
+https://github.com/linux-test-project/ltp/blob/9bb94efa39bb1b08f37e56c7437db5fa13ddcae2/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c#L46
+
+Is this expected?
+
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -4023,4 +4023,18 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
+>   
+>   int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
+>   
+> +static inline bool extensible_ioctl_valid(unsigned int cmd_a,
+> +					  unsigned int cmd_b, size_t min_size)
+> +{
+> +	if (_IOC_DIR(cmd_a) != _IOC_DIR(cmd_b))
+> +		return false;
+> +	if (_IOC_TYPE(cmd_a) != _IOC_TYPE(cmd_b))
+> +		return false;
+> +	if (_IOC_NR(cmd_a) != _IOC_NR(cmd_b))
+> +		return false;
+> +	if (_IOC_SIZE(cmd_a) < min_size)
+> +		return false;
+> +	return true;
+> +}
+> +
+>   #endif /* _LINUX_FS_H */
+> 
+
+thanks,
+-- 
+js
+suse labs
+
 
