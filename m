@@ -1,129 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-65377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C65C0325F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 21:12:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99B6C03290
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 21:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07531A079D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:12:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FF4C4EEBBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2578C34CFB2;
-	Thu, 23 Oct 2025 19:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9034CFC6;
+	Thu, 23 Oct 2025 19:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fipiGJX8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X7Xf6P6d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016A934C99A
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 19:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2154E34BA2A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 19:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761246740; cv=none; b=sQcGVTjoepr8VPzp5PayBwD5BMwabGRt56RAVc4BqLc2mD526CXaXYi5PbjxsErVOV/x45LLA67FBKAA4Cngujno6tGEPIEQqNbD7kP0eFqt0BbQJVBDfjxDRfxjrQ0oP4wrv2UILIWl3e/YIZgXd+DCiZWvd9fw1uirgjQnF2E=
+	t=1761247222; cv=none; b=LJQdeQgqLaXy5Cix1O47/QWRNYidHxCzGHCFmTrq6lBiXDukJoUoW381BXeBtdoucRfqk4WUqlwZrA8fhQF1ygJd7hJxoiopc2PbY346fL+em6MM+MdAdUc7VKXlOwDzG8PEAa9Js3G364NMrEAy58sHHrZkQExkKa//JH1EhYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761246740; c=relaxed/simple;
-	bh=WOIv/HQOmDXhlsKgWbV5uUKMg9vn4FI+7vFtMCzboUA=;
+	s=arc-20240116; t=1761247222; c=relaxed/simple;
+	bh=SpBV0oAtNIOIUcUxfTe6GOHXwqQoTjBsdOw0X372+0g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lbDQWFY4XiDZRky7ztrj/8czk4YsyyUWgMLoZX9a4mu+AeXGAf+68hSMMl2MwjnssNAlzCgBwebpCilLOSVWEOaPpKdHoxyrXQXsunDwRcXVAXkWkjSSqy9nkE7uCk2TsdtimbQEPpI51E87wF3BPToEvh5WD0AEkR2pcwH5K2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fipiGJX8; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a275143acdso73957b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 12:12:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZPUjSykFEVm7Q6A2FRQ/PJ0ksqmbViq+33E7UFslBZsXmr435NAr/H+TaurIlVAboYWGTHNVXtgyR2o0BAzW4XkQiOM9X5OIv13oFh1l5hMc2UJ4fISBDWZ2592vkApwJZOcq9xoP+8TGNKsrNmRxCTMb3xMRrTvcqLgqM9XrnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X7Xf6P6d; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-87c2b5ccd95so1917936d6.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 12:20:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761246738; x=1761851538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7K/5org+RE12u94kWINaZqrKuzfu8gGu9fC3i1OMh3w=;
-        b=fipiGJX8dPxoMr2545eGq912NO7DB2OYnJgTbM0invCo9J/JSSdToACfCUizIbhfzg
-         EGOophPpdxyV59a0Bkk74RvE8hOtWTwcsgZA9tp7aAVuc0HcczUtuDdiY4tdu+mscJv6
-         99XUrKUD0KFiqM+1QgKHpN5F+0iCVhlFjDsm9AkgBGKVDjPMhWqpuX9esHA29lUFQAu/
-         wELHXKXH4ViBi4m0+LVET18WQUqQhlGnweij3ELLAvQfkSpmSCKI54o3nFkTqeK6oocZ
-         6BJHThUS3sU5sZvaIMImc3giZEeumrnXSC7ARARbJX/3fEaIQvbpXYnWY3Qo9wf0z7C9
-         23Wg==
+        d=linaro.org; s=google; t=1761247219; x=1761852019; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7Jc2L0p0jcJ2tGUUd6Ppdki3QU4yD7rPhAK5dStwsA=;
+        b=X7Xf6P6dP0Byre5wcouvB+FsXlRFa1pYYuzRZ8DZm2Ixle7Da8KRHFGmsuJQab2MML
+         9NCFD61It4E11upuMIFEwxr6eeF9T+VVyOZw8h0twTVgsUd5HNzZWYPfF6Me/wTvv82U
+         TpQ9tdKBEiCUoLyqPKRuSLSHr2cAfQIkXzgHDxGLaqGkuVFnYEZKcTm1dfqqv5KQ3uuN
+         w/P/C3h18Xo5rJJsmWsogCdMsa1OdLfnLGWRWs4WVfOf2h+rGG6SfNNjIyfIvTwNg4QH
+         16BE/HCk/0Oya74IvXr++1JP1vQZo7ujzdDpw7rC5WBZsIhCcCK/HzlzB4wyRnEVwsfe
+         gtGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761246738; x=1761851538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7K/5org+RE12u94kWINaZqrKuzfu8gGu9fC3i1OMh3w=;
-        b=aBh4Aox2pJ3k5JsxmKuxdl70gF0U7x5bQuRSnBadxYW/7v0EgO6UUE+YBzw/zLP/bT
-         QOB3B+m5fmBZWCWy6Ry/CICyC68COx2pl9Ii+AQSxmuXknRx//Fl592tpiGUWG/nn+HX
-         At5qsjwR3Rjw9GqssZOl6hhWpaB9tUN+KOqbuRfs9HEnajsGbyv7398GoYPLD0nsLvsg
-         JDRhlTjJHPUe4guIbmrZlWrNy9x/TUPT/u9DnaXvjR3C7cCrhNQSOU7Fo9sjdCttjrTf
-         mbgoyczMW0SDOjcydN/1XhLBSCe7OgTBNw3Qdqn6HlVbiQ+MTsc0asJJS4n+z+1I1byA
-         PIsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYgqCJccE5kL1Qb//WmqwwdHH2L1hel/gPuRUopDMJNwOobNrjhMalpQ5sJlpxSxvs8sni8VLnLSQHZm9a@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRR7SdNSko8OvfdHccSZHmF3fn1ml7gAzUv9qN0VJqsC7Va+OH
-	gruLG/WwlJtaYK84Zxu3D7xa+aEgiKC6WORCXO6sUkjHuD6ncG0P1k3Up/sYCGh7h0D/1POIq+I
-	ujOhjrW6ZV7o8ItTd/MO75kpCxHPml/sDB1GiUs4TKA==
-X-Gm-Gg: ASbGncuYaeqDVVuFp1pIHv5P2KfBFw+kIfpToCTrxAX2vbbxDaKShM51HqQhJIsjV1d
-	9sGcmXL/8WJElc6/MLllVIDDqvqFHRYvxcdT2rpUKiovBnMhagLqA3Hg6XE/Fggqc8kcLN4HL+s
-	pUnQxnkZkQb36LNY427UfRSrvPTEoNSE6cF6r9ehHda7A8vR3QRVA9Mfz8e03OnL8fqFVEwuJD9
-	nL2kNltaG0W5aWT31Cvj33w+mh2EmcTnsECxZzw7x5ywLhASuNQBHWdZSHOe/u0IYMnVsk2Fjmf
-	IFIKhr7o+oHylDw2GflL++1ZTTLojO2GFb5Ynzyc
-X-Google-Smtp-Source: AGHT+IFS1hF1mKJs9xtEGggpEYx3hS9IactTEcTVuTqq3cz04fXfG2tDmrwqCzZgwa2XisCpo38KJZa1Jx+ld2uWSgM=
-X-Received: by 2002:a17:903:19e6:b0:27a:186f:53ec with SMTP id
- d9443c01a7336-290cc2023d8mr183803265ad.9.1761246738317; Thu, 23 Oct 2025
- 12:12:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761247219; x=1761852019;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y7Jc2L0p0jcJ2tGUUd6Ppdki3QU4yD7rPhAK5dStwsA=;
+        b=XC98JrW+2wm4pxQjNjRq4IxYeZoCcw9m9Nr6qsW2JIwHfiXU+WG89PS/XHpjAN6oSr
+         YZ5veo2pbnutSWwmHMbBbSTcVz8w8/5sjKiS9XC2JbHmBUyqEag5DaHhSYSJbnrxKPtq
+         WlH4GJGRxzowaSWZoxpB93CQcjEa2GHbTay+NwUtmNE7sHTR00gyjJKgNOfmWRkYaazH
+         /JvuooiWuKlLxM4T+NypCtFqi1BFI66+pgA7u7DikHmPjEEMFy5tzcccb80YBXFQGJnz
+         Gp7syuoWzP7S3XJ4Lz0I/PLSkoiYi02Iks9NQ0z0iOwouwhwGOMEwJT4YKXNhm38NvY1
+         2sDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXq+3pgVVzdWW/Z7JcumhNxViEBzl0lsHVICQRs80aLmdEmKmtbz9rvceJoiLnaI6VNWaLYZlE48Aog6mau@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY3X5tQUDs+3sFrPmQSx9+PtzURsC/lqG/Xl7eqqvPbILzjMfb
+	lBgqUO8rbhtpYuBnOXB87lwoE7ktET13OMmgSdOBJzf7x5im8aOfGOZbpfTQ8UDjjNSfRbk6eCX
+	FVnIfbX7e2Mc/XtBMz5SnmCOIJxkPHySSaZwgCHp2SA==
+X-Gm-Gg: ASbGnctSNj1lyKJUDwEKj4IJMuq1RJXyFDuhldxwyXoCjaN3vRFve2sdprgzGcnduWB
+	5PJKO8zll+ewrodAfWxNsB2F+bk1ra3SLzP8Lkjyuz+x2N/8t0SOd+UEykIdA9XxR+9X8FK9AHG
+	bzf/cja3JOlOpm/DrgIavkRKnsDlbGQxrO5JQC+qGSxVki5Z5LsmgiYciX1xTMLc7R26MUpf+uk
+	XQwtdKJtTV3POVHuFl3gnWYSEDM63Yo1mtffXmq4Gw3t8b1+ZZtV1ZkpOO2Ruw+sGy6hw==
+X-Google-Smtp-Source: AGHT+IGkQvnw+P4oceXyA5t5qG3cgWb0laXxzyqv1FiNzsffgaXuAVfp39vbfz48HT80gEehZCMHTKqYfeFUsV9baTU=
+X-Received: by 2002:ad4:5b87:0:b0:87c:21db:cbbf with SMTP id
+ 6a1803df08f44-87de714bf08mr100164216d6.4.1761247219089; Thu, 23 Oct 2025
+ 12:20:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022231326.2527838-1-csander@purestorage.com>
- <20251022231326.2527838-4-csander@purestorage.com> <20251023134047.GA24570@lst.de>
-In-Reply-To: <20251023134047.GA24570@lst.de>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 23 Oct 2025 12:12:06 -0700
-X-Gm-Features: AS18NWCMPnrkTE6bRuzJFrSEBQu8dMm91LH9slk7_UilpxZ_vUHOFG7TTmSOab4
-Message-ID: <CADUfDZoMJ26nS9qzk1ACKX_MXkSpBy1kEEkekZoHyCrHtrGZRg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
- task work dispatch
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>, Ming Lei <ming.lei@redhat.com>, 
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251023164401.302967-1-naresh.kamboju@linaro.org>
+In-Reply-To: <20251023164401.302967-1-naresh.kamboju@linaro.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Thu, 23 Oct 2025 21:20:06 +0200
+X-Gm-Features: AWmQ_bm15EalXbAnjLs4CmLjdIsxVVIbblnMfG02uQMZQ8ouizbiUwGmA3HVblI
+Message-ID: <CADYN=9J1xAgctUqwptD5C3Ss9aJZvZQ2ep=Ck2zP6X+ZrKe81Q@mail.gmail.com>
+Subject: Re: [PATCH v2] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid errors
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: ltp@lists.linux.it, lkft@linaro.org, arnd@kernel.org, 
+	dan.carpenter@linaro.org, pvorel@suse.cz, jack@suse.cz, brauner@kernel.org, 
+	chrubis@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	regressions@lists.linux.dev, aalbersh@kernel.org, arnd@arndb.de, 
+	viro@zeniv.linux.org.uk, benjamin.copeland@linaro.org, 
+	andrea.cervesato@suse.com, lkft-triage@lists.linaro.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 6:40=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
+On Thu, 23 Oct 2025 at 18:44, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> On Wed, Oct 22, 2025 at 05:13:26PM -0600, Caleb Sander Mateos wrote:
-> > io_uring task work dispatch makes an indirect call to struct io_kiocb's
-> > io_task_work.func field to allow running arbitrary task work functions.
-> > In the uring_cmd case, this calls io_uring_cmd_work(), which immediatel=
-y
-> > makes another indirect call to struct io_uring_cmd's task_work_cb field=
-.
-> > Introduce a macro DEFINE_IO_URING_CMD_TASK_WORK() to define a
-> > io_req_tw_func_t function wrapping an io_uring_cmd_tw_t. Convert the
-> > io_uring_cmd_tw_t function to the io_req_tw_func_t function in
-> > io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy().
-> > Use DEFINE_IO_URING_CMD_TASK_WORK() to define a io_req_tw_func_t
-> > function for each existing io_uring_cmd_tw_t function. Now uring_cmd
-> > task work dispatch makes a single indirect call to the io_req_tw_func_t
-> > wrapper function, which can inline the io_uring_cmd_tw_t function. This
-> > also allows removing the task_work_cb field from struct io_uring_cmd,
-> > freeing up some additional storage space.
+> Newer kernels (since ~v6.18-rc1) return ENOTTY instead of EINVAL when
+> invoking ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid). Update the
+> test to accept both EINVAL and ENOTTY as valid errors to ensure
+> compatibility across different kernel versions.
 >
-> Please just open code the logic instead of the symbol-hiding multi-level
-> macro indirection.  Everyone who will have to touch the code in the
-> future will thank you.
+> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-Sure, I can send out a v2 with that. My concern was that
-io_kiocb_to_cmd() isn't really meant to be used outside the io_uring
-internals. But I agree hiding the function definition in a macro is
-less than ideal.
+Verified this on arm64, and the test passed now.
 
-Thanks,
-Caleb
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+
+
+Cheers,
+Anders
+
+> ---
+>  testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> index d20c6f074..744f7def4 100644
+> --- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> +++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> @@ -4,8 +4,8 @@
+>   */
+>
+>  /*\
+> - * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
+> - * happens when:
+> + * Verify that ioctl() raises an EINVAL or ENOTTY (since ~v6.18-rc1) error when
+> + * PIDFD_GET_INFO is used. This happens when:
+>   *
+>   * - info parameter is NULL
+>   * - info parameter is providing the wrong size
+> @@ -14,6 +14,7 @@
+>  #include "tst_test.h"
+>  #include "lapi/pidfd.h"
+>  #include "lapi/sched.h"
+> +#include <errno.h>
+>  #include "ioctl_pidfd.h"
+>
+>  struct pidfd_info_invalid {
+> @@ -43,7 +44,12 @@ static void run(void)
+>                 exit(0);
+>
+>         TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
+> -       TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
+> +
+> +       /* Expect ioctl to fail; accept either EINVAL or ENOTTY (~v6.18-rc1) */
+> +       int exp_errnos[] = {EINVAL, ENOTTY};
+> +
+> +       TST_EXP_FAIL_ARR(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid),
+> +                       exp_errnos, ARRAY_SIZE(exp_errnos));
+>
+>         SAFE_CLOSE(pidfd);
+>  }
+> --
+> 2.43.0
+>
 
