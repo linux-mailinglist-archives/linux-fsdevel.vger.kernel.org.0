@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-65366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FD3C029B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 18:58:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C7EC029E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D151883D25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:56:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABE1C500666
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9D1347FC9;
-	Thu, 23 Oct 2025 16:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CC234D918;
+	Thu, 23 Oct 2025 16:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBrhla9v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXed7/t2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266163491C9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5506B34A3C5;
 	Thu, 23 Oct 2025 16:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761238273; cv=none; b=hdorlfzT9rRPLCmxKkZhHj9oQc2Tq4ZQTZUd33a+pYO9mplOKGBfJWEnqtGDhwE9GY/rDpJgqjRMZjVZG2ZryiOcpeNslnVPBVElXQIjc2qDyTaIxvFjwKb1Gpr5JCkPD/kTGs4mtSSn2sYW5HaN4wJ7ctfWHnFZV4BvBvzwSfg=
+	t=1761238273; cv=none; b=nOsnMOryU4wUXSALhgL0q+q51YKy9sJrb6Xit40+PLlvbvbWuPVjs8HiyhKcPeR0xitEAyl/g0SDtiNe2N/byddgQLN4vxr8shzdx5P6ye/RNLppK964GZfM1WazbhkU4w3iiRs8yTR+onw2LM7VgymAXpv3mXKevmomJsAtMeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761238273; c=relaxed/simple;
-	bh=vz6N485yPKrgHZ+kKlWiFl6fZ4uLMzOsy4Z4Okbzjvo=;
+	bh=fQShIQQ+ak3sZ7vPOttttxaX+iCQFP+V6YCuFOVSbJ4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K/zS3OMsmbNUhpzo640vKw34QHTR8Xdzjekzi1HPk/vPLOLoJF+jiOaAirDd/2pdF5yFiLnYpBgtS84xN+pOoVTAxdUmyhvBHOFMTEtnXUbd8JMlM+y1NivYTtfLT11svETaDvhHIjDWuJkPxApE7KAbxCXT1Y6+X+wQgHVLczk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qBrhla9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A248C19421;
+	 In-Reply-To:To:Cc; b=I7kjo/WpssvPG2460Oz6OwOeU5mDq1ALUm4DSsknJBhCEX5JTG7tCIm7MRJJegoBSPwzLxYc0BbflYiUPTBv9yKZ+Q/Z+y3XOIDTUfhaknlqI5daf+Ip9pY1x1zUU5N7bpnjOOzDwJnb647oADHghFgxn76xzJXj9LuQfFTzB3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXed7/t2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 30194C4AF0C;
 	Thu, 23 Oct 2025 16:51:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761238273;
-	bh=vz6N485yPKrgHZ+kKlWiFl6fZ4uLMzOsy4Z4Okbzjvo=;
+	bh=fQShIQQ+ak3sZ7vPOttttxaX+iCQFP+V6YCuFOVSbJ4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=qBrhla9vf2itJ6lTFhT0ci8evKqspCL7++33zzK1hSSba0wvUaWZZbPeQEWPyMvGI
-	 InpklbZDgDXBMinPeetEYupksouiJ++79Q3WaEjv55PDs+WrvSSq9fPusCiy47NTZ1
-	 Uztor4gQXgsOu6s/U+jVj2smXLu0yvkCGtKrEP8Qn/tyHduc/z3uAoDV0IdkEGzN70
-	 W22gf5A3LMNubFYu6TW2W1vaLbD06QKvETD/Mc6AzxvDkr9K+xhxsXqUra/IYn8mgH
-	 mLvngUDwEhu2aLb62XTkboP7JSENAZ5NIVCez4Yd+h7V1bLAyVkufe34dW4AwLnMi2
-	 +ulN9Pj1QW7lA==
+	b=MXed7/t2lV6opOlu8ZwhgndcpsylY2qRSlSc8q7IZ5ODdJA4D7B/Jv7bOSBy0FhlE
+	 9utj3rTBTywyQwv4c4oniZw7UYr/nKARf9rlITxL7X+eC4iG0m7HlJDDDHtLgMkQJr
+	 k6SH1QEAX3sngx730y9Ahq8JWoHAySHswKUH/QlmggXdKuho/+gVcpBGeyUh+g8aro
+	 y1gJfDoJ//8gE2pl6aqDRS2Z/GS7BNqTl47imTWkd08hzZCq/EwfahnXNbDSjQ5mOe
+	 KocoQ+6E90WTlvf5j70vmEDMJzIfEeGVjCe53JAU0bMxnjqKkJDlgPZvp3mq+xs4SG
+	 4tQa7XQYDScEw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C08CCF9E3;
-	Thu, 23 Oct 2025 16:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AC0CCD193;
+	Thu, 23 Oct 2025 16:51:13 +0000 (UTC)
 From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Thu, 23 Oct 2025 09:51:32 -0700
-Subject: [PATCH v22 27/28] riscv: Documentation for shadow stack on riscv
+Date: Thu, 23 Oct 2025 09:51:33 -0700
+Subject: [PATCH v22 28/28] kselftest/riscv: kselftest for user mode cfi
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-v5_user_cfi_series-v22-27-1935270f7636@rivosinc.com>
+Message-Id: <20251023-v5_user_cfi_series-v22-28-1935270f7636@rivosinc.com>
 References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
 In-Reply-To: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -88,13 +88,13 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
  rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Zong Li <zong.li@sifive.com>, Deepak Gupta <debug@rivosinc.com>
+ Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761238267; l=9680;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761238267; l=22627;
  i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=B2WSexk3yw/VKkukKcshyN9jkOKoLBIyBUeyBharWo4=;
- b=+ehqElqPyQ0Y1aOWPBKaB8Z0//2cF5vou6U3f395wZ9tPB9EVerbePx+WtLlZ03UCVCXTk56e
- NK7efVRmmfqBMxx+vBuY6NhxUoA1VrQxQbmzty6qltKrY60enzOTaCH
+ bh=WOWAxX6A3QXldgq80P/nMdsBb70DMucV+lm3CHQPnco=;
+ b=+H2AUUxMrQmL2+HeTK89QaAu63YnS11vzS4vnbywzcUHukQ78zj0ZKvgT5MzeCm2QfFNnNVWw
+ c6geAxb5t08BUUFlLuXyG1Ft4Z6JKg8sbUjt5ybg/2yCxqubKpi2TzG
 X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
  pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
 X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
@@ -104,213 +104,793 @@ Reply-To: debug@rivosinc.com
 
 From: Deepak Gupta <debug@rivosinc.com>
 
-Adding documentation on shadow stack for user mode on riscv and kernel
-interfaces exposed so that user tasks can enable it.
+Adds kselftest for RISC-V control flow integrity implementation for user
+mode. There is not a lot going on in kernel for enabling landing pad for
+user mode. cfi selftest are intended to be compiled with zicfilp and
+zicfiss enabled compiler. Thus kselftest simply checks if landing pad /
+shadow stack for the process are enabled or not and executes ptrace
+selftests on cfi. selftest then register a signal handler for SIGSEGV.
+Any control flow violation are reported as SIGSEGV with si_code =
+SEGV_CPERR. Test will fail on receiving any SEGV_CPERR. Shadow stack part
+has more changes in kernel and thus there are separate tests for that
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
+- Exercise `map_shadow_stack` syscall
+- `fork` test to make sure COW works for shadow stack pages
+- gup tests
+  Kernel uses FOLL_FORCE when access happens to memory via
+  /proc/<pid>/mem. Not breaking that for shadow stack.
+- signal test. Make sure signal delivery results in token creation on
+  shadow stack and consumes (and verifies) token on sigreturn
+- shadow stack protection test. attempts to write using regular store
+  instruction on shadow stack memory must result in access faults
+- ptrace test: adds landing pad violation, clears ELP and continues
+
+In case toolchain doesn't support cfi extension, cfi kselftest wont
+get built.
+
+Test outut
+==========
+
+"""
+TAP version 13
+1..5
+  This is to ensure shadow stack is indeed enabled and working
+  This is to ensure shadow stack is indeed enabled and working
+ok 1 shstk fork test
+ok 2 map shadow stack syscall
+ok 3 shadow stack gup tests
+ok 4 shadow stack signal tests
+ok 5 memory protections of shadow stack memory
+"""
+
+Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- Documentation/arch/riscv/index.rst   |   1 +
- Documentation/arch/riscv/zicfiss.rst | 179 +++++++++++++++++++++++++++++++++++
- 2 files changed, 180 insertions(+)
+ tools/testing/selftests/riscv/Makefile             |   2 +-
+ tools/testing/selftests/riscv/cfi/.gitignore       |   3 +
+ tools/testing/selftests/riscv/cfi/Makefile         |  16 +
+ tools/testing/selftests/riscv/cfi/cfi_rv_test.h    |  82 +++++
+ tools/testing/selftests/riscv/cfi/riscv_cfi_test.c | 173 +++++++++
+ tools/testing/selftests/riscv/cfi/shadowstack.c    | 385 +++++++++++++++++++++
+ tools/testing/selftests/riscv/cfi/shadowstack.h    |  27 ++
+ 7 files changed, 687 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/arch/riscv/index.rst b/Documentation/arch/riscv/index.rst
-index be7237b69682..e240eb0ceb70 100644
---- a/Documentation/arch/riscv/index.rst
-+++ b/Documentation/arch/riscv/index.rst
-@@ -15,6 +15,7 @@ RISC-V architecture
-     vector
-     cmodx
-     zicfilp
-+    zicfiss
+diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
+index 099b8c1f46f8..5671b4405a12 100644
+--- a/tools/testing/selftests/riscv/Makefile
++++ b/tools/testing/selftests/riscv/Makefile
+@@ -5,7 +5,7 @@
+ ARCH ?= $(shell uname -m 2>/dev/null || echo not)
  
-     features
- 
-diff --git a/Documentation/arch/riscv/zicfiss.rst b/Documentation/arch/riscv/zicfiss.rst
+ ifneq (,$(filter $(ARCH),riscv))
+-RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector
++RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector cfi
+ else
+ RISCV_SUBTARGETS :=
+ endif
+diff --git a/tools/testing/selftests/riscv/cfi/.gitignore b/tools/testing/selftests/riscv/cfi/.gitignore
 new file mode 100644
-index 000000000000..7fb86d5ba120
+index 000000000000..82545863bac6
 --- /dev/null
-+++ b/Documentation/arch/riscv/zicfiss.rst
-@@ -0,0 +1,179 @@
-+.. SPDX-License-Identifier: GPL-2.0
++++ b/tools/testing/selftests/riscv/cfi/.gitignore
+@@ -0,0 +1,3 @@
++cfitests
++riscv_cfi_test
++shadowstack
+diff --git a/tools/testing/selftests/riscv/cfi/Makefile b/tools/testing/selftests/riscv/cfi/Makefile
+new file mode 100644
+index 000000000000..55165a93845f
+--- /dev/null
++++ b/tools/testing/selftests/riscv/cfi/Makefile
+@@ -0,0 +1,16 @@
++CFLAGS += -I$(top_srcdir)/tools/include
 +
-+:Author: Deepak Gupta <debug@rivosinc.com>
-+:Date:   12 January 2024
++CFLAGS += -march=rv64gc_zicfilp_zicfiss -fcf-protection=full
 +
-+=========================================================
-+Shadow stack to protect function returns on RISC-V Linux
-+=========================================================
++ifeq ($(shell $(CC) $(CFLAGS) -nostdlib -xc /dev/null -o /dev/null > /dev/null 2>&1; echo $$?),0)
++TEST_GEN_PROGS := cfitests
 +
-+This document briefly describes the interface provided to userspace by Linux
-+to enable shadow stack for user mode applications on RISC-V
++include ../../lib.mk
 +
-+1. Feature Overview
-+--------------------
++$(OUTPUT)/cfitests: riscv_cfi_test.c shadowstack.c
++	$(CC) -o$@ $(CFLAGS) $(LDFLAGS) $^
++else
++include ../../lib.mk
 +
-+Memory corruption issues usually result into crashes, however when in hands of
-+an adversary and if used creatively can result into a variety security issues.
++$(shell echo "Toolchain doesn't support CFI, skipping CFI kselftest." >&2)
++endif
+diff --git a/tools/testing/selftests/riscv/cfi/cfi_rv_test.h b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
+new file mode 100644
+index 000000000000..1c8043f2b778
+--- /dev/null
++++ b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
+@@ -0,0 +1,82 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +
-+One of those security issues can be code re-use attacks on program where
-+adversary can use corrupt return addresses present on stack and chain them
-+together to perform return oriented programming (ROP) and thus compromising
-+control flow integrity (CFI) of the program.
++#ifndef SELFTEST_RISCV_CFI_H
++#define SELFTEST_RISCV_CFI_H
++#include <stddef.h>
++#include <sys/types.h>
++#include "shadowstack.h"
 +
-+Return addresses live on stack and thus in read-write memory and thus are
-+susceptible to corruption and which allows an adversary to reach any program
-+counter (PC) in address space. On RISC-V ``zicfiss`` extension provides an
-+alternate stack termed as shadow stack on which return addresses can be safely
-+placed in prolog of the function and retrieved in epilog. ``zicfiss`` extension
-+makes following changes:
++#define CHILD_EXIT_CODE_SSWRITE		10
++#define CHILD_EXIT_CODE_SIG_TEST	11
 +
-+- PTE encodings for shadow stack virtual memory
-+  An earlier reserved encoding in first stage translation i.e.
-+  PTE.R=0, PTE.W=1, PTE.X=0  becomes PTE encoding for shadow stack pages.
++#define my_syscall5(num, arg1, arg2, arg3, arg4, arg5)			\
++({									\
++	register long _num  __asm__ ("a7") = (num);			\
++	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
++	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
++	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
++	register long _arg4 __asm__ ("a3") = (long)(arg4);		\
++	register long _arg5 __asm__ ("a4") = (long)(arg5);		\
++									\
++	__asm__ volatile(						\
++		"ecall\n"						\
++		: "+r"							\
++		(_arg1)							\
++		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5),	\
++		  "r"(_num)						\
++		: "memory", "cc"					\
++	);								\
++	_arg1;								\
++})
 +
-+- ``sspush x1/x5`` instruction pushes (stores) ``x1/x5`` to shadow stack.
++#define my_syscall3(num, arg1, arg2, arg3)				\
++({									\
++	register long _num  __asm__ ("a7") = (num);			\
++	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
++	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
++	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
++									\
++	__asm__ volatile(						\
++		"ecall\n"						\
++		: "+r" (_arg1)						\
++		: "r"(_arg2), "r"(_arg3),				\
++		  "r"(_num)						\
++		: "memory", "cc"					\
++	);								\
++	_arg1;								\
++})
 +
-+- ``sspopchk x1/x5`` instruction pops (loads) from shadow stack and compares
-+  with ``x1/x5`` and if un-equal, CPU raises ``software check exception`` with
-+  ``*tval = 3``
++#ifndef __NR_prctl
++#define __NR_prctl 167
++#endif
 +
-+Compiler toolchain makes sure that function prologue have ``sspush x1/x5`` to
-+save return address on shadow stack in addition to regular stack. Similarly
-+function epilogs have ``ld x5, offset(x2)`` followed by ``sspopchk x5`` to
-+ensure that popped value from regular stack matches with popped value from
-+shadow stack.
++#ifndef __NR_map_shadow_stack
++#define __NR_map_shadow_stack 453
++#endif
 +
-+2. Shadow stack protections and linux memory manager
-+-----------------------------------------------------
++#define CSR_SSP 0x011
 +
-+As mentioned earlier, shadow stacks get new page table encodings and thus have
-+some special properties assigned to them and instructions that operate on them
-+as below:
++#ifdef __ASSEMBLY__
++#define __ASM_STR(x)    x
++#else
++#define __ASM_STR(x)    #x
++#endif
 +
-+- Regular stores to shadow stack memory raises access store faults. This way
-+  shadow stack memory is protected from stray inadvertent writes.
++#define csr_read(csr)							\
++({									\
++	register unsigned long __v;					\
++	__asm__ __volatile__ ("csrr %0, " __ASM_STR(csr)		\
++				: "=r" (__v) :				\
++				: "memory");				\
++	__v;								\
++})
 +
-+- Regular loads to shadow stack memory are allowed. This allows stack trace
-+  utilities or backtrace functions to read true callstack (not tampered).
++#define csr_write(csr, val)						\
++({									\
++	unsigned long __v = (unsigned long)(val);			\
++	__asm__ __volatile__ ("csrw " __ASM_STR(csr) ", %0"		\
++				: : "rK" (__v)				\
++				: "memory");				\
++})
 +
-+- Only shadow stack instructions can generate shadow stack load or shadow stack
-+  store.
++#endif
+diff --git a/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c b/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c
+new file mode 100644
+index 000000000000..486a2e779053
+--- /dev/null
++++ b/tools/testing/selftests/riscv/cfi/riscv_cfi_test.c
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +
-+- Shadow stack load / shadow stack store on read-only memory raises AMO/store
-+  page fault. Thus both ``sspush x1/x5`` and ``sspopchk x1/x5`` will raise AMO/
-+  store page fault. This simplies COW handling in kernel during fork, kernel
-+  can convert shadow stack pages into read-only memory (as it does for regular
-+  read-write memory) and as soon as subsequent ``sspush`` or ``sspopchk`` in
-+  userspace is encountered, then kernel can perform COW.
++#include "../../kselftest.h"
++#include <sys/signal.h>
++#include <asm/ucontext.h>
++#include <linux/prctl.h>
++#include <errno.h>
++#include <linux/ptrace.h>
++#include <sys/wait.h>
++#include <linux/elf.h>
++#include <sys/uio.h>
++#include <asm-generic/unistd.h>
 +
-+- Shadow stack load / shadow stack store on read-write, read-write-execute
-+  memory raises an access fault. This is a fatal condition because shadow stack
-+  should never be operating on read-write, read-write-execute memory.
++#include "cfi_rv_test.h"
 +
-+3. ELF and psABI
-+-----------------
++/* do not optimize cfi related test functions */
++#pragma GCC push_options
++#pragma GCC optimize("O0")
 +
-+Toolchain sets up :c:macro:`GNU_PROPERTY_RISCV_FEATURE_1_BCFI` for property
-+:c:macro:`GNU_PROPERTY_RISCV_FEATURE_1_AND` in notes section of the object file.
++void sigsegv_handler(int signum, siginfo_t *si, void *uc)
++{
++	struct ucontext *ctx = (struct ucontext *)uc;
 +
-+4. Linux enabling
-+------------------
++	if (si->si_code == SEGV_CPERR) {
++		ksft_print_msg("Control flow violation happened somewhere\n");
++		ksft_print_msg("PC where violation happened %lx\n", ctx->uc_mcontext.gregs[0]);
++		exit(-1);
++	}
 +
-+User space programs can have multiple shared objects loaded in its address space
-+and it's a difficult task to make sure all the dependencies have been compiled
-+with support of shadow stack. Thus it's left to dynamic loader to enable
-+shadow stack for the program.
++	/* all other cases are expected to be of shadow stack write case */
++	exit(CHILD_EXIT_CODE_SSWRITE);
++}
 +
-+5. prctl() enabling
-+--------------------
++bool register_signal_handler(void)
++{
++	struct sigaction sa = {};
 +
-+:c:macro:`PR_SET_SHADOW_STACK_STATUS` / :c:macro:`PR_GET_SHADOW_STACK_STATUS` /
-+:c:macro:`PR_LOCK_SHADOW_STACK_STATUS` are three prctls added to manage shadow
-+stack enabling for tasks. prctls are arch agnostic and returns -EINVAL on other
-+arches.
++	sa.sa_sigaction = sigsegv_handler;
++	sa.sa_flags = SA_SIGINFO;
++	if (sigaction(SIGSEGV, &sa, NULL)) {
++		ksft_print_msg("Registering signal handler for landing pad violation failed\n");
++		return false;
++	}
 +
-+* prctl(PR_SET_SHADOW_STACK_STATUS, unsigned long arg)
++	return true;
++}
 +
-+If arg1 :c:macro:`PR_SHADOW_STACK_ENABLE` and if CPU supports ``zicfiss`` then
-+kernel will enable shadow stack for the task. Dynamic loader can issue this
-+:c:macro:`prctl` once it has determined that all the objects loaded in address
-+space have support for shadow stack. Additionally if there is a
-+:c:macro:`dlopen` to an object which wasn't compiled with ``zicfiss``, dynamic
-+loader can issue this prctl with arg1 set to 0 (i.e.
-+:c:macro:`PR_SHADOW_STACK_ENABLE` being clear)
++long ptrace(int request, pid_t pid, void *addr, void *data);
 +
-+* prctl(PR_GET_SHADOW_STACK_STATUS, unsigned long * arg)
++bool cfi_ptrace_test(void)
++{
++	pid_t pid;
++	int status, ret = 0;
++	unsigned long ptrace_test_num = 0, total_ptrace_tests = 2;
 +
-+Returns current status of indirect branch tracking. If enabled it'll return
-+:c:macro:`PR_SHADOW_STACK_ENABLE`.
++	struct user_cfi_state cfi_reg;
++	struct iovec iov;
 +
-+* prctl(PR_LOCK_SHADOW_STACK_STATUS, unsigned long arg)
++	pid = fork();
 +
-+Locks current status of shadow stack enabling on the task. User space may want
-+to run with strict security posture and wouldn't want loading of objects
-+without ``zicfiss`` support in it and thus would want to disallow disabling of
-+shadow stack on current task. In that case user space can use this prctl to
-+lock current settings.
++	if (pid == -1) {
++		ksft_exit_fail_msg("%s: fork failed\n", __func__);
++		exit(1);
++	}
 +
-+5. violations related to returns with shadow stack enabled
-+-----------------------------------------------------------
++	if (pid == 0) {
++		/* allow to be traced */
++		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
++		raise(SIGSTOP);
++		asm volatile (
++		"la a5, 1f\n"
++		"jalr a5 \n"
++		"nop \n"
++		"nop \n"
++		"1: nop\n"
++		: : : "a5");
++		exit(11);
++		/* child shouldn't go beyond here */
++	}
 +
-+Pertaining to shadow stack, CPU raises software check exception in following
-+condition:
++	/* parent's code goes here */
++	iov.iov_base = &cfi_reg;
++	iov.iov_len = sizeof(cfi_reg);
 +
-+- On execution of ``sspopchk x1/x5``, ``x1/x5`` didn't match top of shadow
-+  stack. If mismatch happens then cpu does ``*tval = 3`` and raise software
-+  check exception.
++	while (ptrace_test_num < total_ptrace_tests) {
++		memset(&cfi_reg, 0, sizeof(cfi_reg));
++		waitpid(pid, &status, 0);
++		if (WIFSTOPPED(status)) {
++			errno = 0;
++			ret = ptrace(PTRACE_GETREGSET, pid, (void *)NT_RISCV_USER_CFI, &iov);
++			if (ret == -1 && errno)
++				ksft_exit_fail_msg("%s: PTRACE_GETREGSET failed\n", __func__);
++		} else
++			ksft_exit_fail_msg("%s: child didn't stop, failed\n", __func__);
 +
-+Linux kernel will treat this as :c:macro:`SIGSEGV` with code =
-+:c:macro:`SEGV_CPERR` and follow normal course of signal delivery.
++		switch (ptrace_test_num) {
++#define CFI_ENABLE_MASK (PTRACE_CFI_LP_EN_STATE |	\
++			PTRACE_CFI_SS_EN_STATE |	\
++			PTRACE_CFI_SS_PTR_STATE)
++		case 0:
++			if ((cfi_reg.cfi_status.cfi_state & CFI_ENABLE_MASK) != CFI_ENABLE_MASK)
++				ksft_exit_fail_msg("%s: ptrace_getregset failed, %llu\n", __func__,
++				cfi_reg.cfi_status.cfi_state);
++			if (!cfi_reg.shstk_ptr)
++				ksft_exit_fail_msg("%s: NULL shadow stack pointer, test failed\n",
++				__func__);
++			break;
++		case 1:
++			if (!(cfi_reg.cfi_status.cfi_state & PTRACE_CFI_ELP_STATE))
++				ksft_exit_fail_msg("%s: elp must have been set\n", __func__);
++			/* clear elp state. not interested in anything else */
++			cfi_reg.cfi_status.cfi_state = 0;
 +
-+6. Shadow stack tokens
-+-----------------------
-+Regular stores on shadow stacks are not allowed and thus can't be tampered
-+with via arbitrary stray writes due to bugs. However method of pivoting /
-+switching to shadow stack is simply writing to csr ``CSR_SSP`` and that will
-+change active shadow stack for the program. Instances of writes to ``CSR_SSP``
-+in the address space of the program should be mostly limited to context
-+switching, stack unwind, longjmp or similar mechanisms (like context switching
-+of green threads) in languages like go, rust. This can be problematic because
-+an attacker can use memory corruption bugs and eventually use such context
-+switching routines to pivot to any shadow stack. Shadow stack tokens can help
-+mitigate this problem by making sure that:
++			ret = ptrace(PTRACE_SETREGSET, pid, (void *)NT_RISCV_USER_CFI, &iov);
++			if (ret == -1 && errno)
++				ksft_exit_fail_msg("%s: PTRACE_GETREGSET failed\n", __func__);
++			break;
++		default:
++			ksft_exit_fail_msg("%s: unreachable switch case\n", __func__);
++			break;
++		}
++		ptrace(PTRACE_CONT, pid, NULL, NULL);
++		ptrace_test_num++;
++	}
 +
-+- When software is switching away from a shadow stack, shadow stack pointer
-+  should be saved on shadow stack itself and call it ``shadow stack token``
++	waitpid(pid, &status, 0);
++	if (WEXITSTATUS(status) != 11)
++		ksft_print_msg("%s, bad return code from child\n", __func__);
 +
-+- When software is switching to a shadow stack, it should read the
-+  ``shadow stack token`` from shadow stack pointer and verify that
-+  ``shadow stack token`` itself is pointer to shadow stack itself.
++	ksft_print_msg("%s, ptrace test succeeded\n", __func__);
++	return true;
++}
 +
-+- Once the token verification is done, software can perform the write to
-+  ``CSR_SSP`` to switch shadow stack.
++int main(int argc, char *argv[])
++{
++	int ret = 0;
++	unsigned long lpad_status = 0, ss_status = 0;
 +
-+Here software can be user mode task runtime itself which is managing various
-+contexts as part of single thread. Software can be kernel as well when kernel
-+has to deliver a signal to user task and must save shadow stack pointer. Kernel
-+can perform similar procedure by saving a token on user shadow stack itself.
-+This way whenever :c:macro:`sigreturn` happens, kernel can read the token and
-+verify the token and then switch to shadow stack. Using this mechanism, kernel
-+helps user task so that any corruption issue in user task is not exploited by
-+adversary by arbitrarily using :c:macro:`sigreturn`. Adversary will have to
-+make sure that there is a ``shadow stack token`` in addition to invoking
-+:c:macro:`sigreturn`
++	ksft_print_header();
 +
-+7. Signal shadow stack
-+-----------------------
-+Following structure has been added to sigcontext for RISC-V::
++	ksft_print_msg("Starting risc-v tests\n");
 +
-+    struct __sc_riscv_cfi_state {
-+        unsigned long ss_ptr;
-+    };
++	/*
++	 * Landing pad test. Not a lot of kernel changes to support landing
++	 * pad for user mode except lighting up a bit in senvcfg via a prctl
++	 * Enable landing pad through out the execution of test binary
++	 */
++	ret = my_syscall5(__NR_prctl, PR_GET_INDIR_BR_LP_STATUS, &lpad_status, 0, 0, 0);
++	if (ret)
++		ksft_exit_fail_msg("Get landing pad status failed with %d\n", ret);
 +
-+As part of signal delivery, shadow stack token is saved on current shadow stack
-+itself and updated pointer is saved away in :c:macro:`ss_ptr` field in
-+:c:macro:`__sc_riscv_cfi_state` under :c:macro:`sigcontext`. Existing shadow
-+stack allocation is used for signal delivery. During :c:macro:`sigreturn`,
-+kernel will obtain :c:macro:`ss_ptr` from :c:macro:`sigcontext` and verify the
-+saved token on shadow stack itself and switch shadow stack.
++	if (!(lpad_status & PR_INDIR_BR_LP_ENABLE))
++		ksft_exit_fail_msg("Landing pad is not enabled, should be enabled via glibc\n");
++
++	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
++	if (ret)
++		ksft_exit_fail_msg("Get shadow stack failed with %d\n", ret);
++
++	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
++		ksft_exit_fail_msg("Shadow stack is not enabled, should be enabled via glibc\n");
++
++	if (!register_signal_handler())
++		ksft_exit_fail_msg("Registering signal handler for SIGSEGV failed\n");
++
++	ksft_print_msg("Landing pad and shadow stack are enabled for binary\n");
++	cfi_ptrace_test();
++
++	execute_shadow_stack_tests();
++
++	return 0;
++}
++
++#pragma GCC pop_options
+diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.c b/tools/testing/selftests/riscv/cfi/shadowstack.c
+new file mode 100644
+index 000000000000..53387dbd9cf5
+--- /dev/null
++++ b/tools/testing/selftests/riscv/cfi/shadowstack.c
+@@ -0,0 +1,385 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include "../../kselftest.h"
++#include <sys/wait.h>
++#include <signal.h>
++#include <fcntl.h>
++#include <asm-generic/unistd.h>
++#include <sys/mman.h>
++#include "shadowstack.h"
++#include "cfi_rv_test.h"
++
++static struct shadow_stack_tests shstk_tests[] = {
++	{ "shstk fork test\n", shadow_stack_fork_test },
++	{ "map shadow stack syscall\n", shadow_stack_map_test },
++	{ "shadow stack gup tests\n", shadow_stack_gup_tests },
++	{ "shadow stack signal tests\n", shadow_stack_signal_test},
++	{ "memory protections of shadow stack memory\n", shadow_stack_protection_test }
++};
++
++#define RISCV_SHADOW_STACK_TESTS ARRAY_SIZE(shstk_tests)
++
++/* do not optimize shadow stack related test functions */
++#pragma GCC push_options
++#pragma GCC optimize("O0")
++
++void zar(void)
++{
++	unsigned long ssp = 0;
++
++	ssp = csr_read(CSR_SSP);
++	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
++			"  This is to ensure shadow stack is indeed enabled and working\n",
++			ssp);
++}
++
++void bar(void)
++{
++	zar();
++}
++
++void foo(void)
++{
++	bar();
++}
++
++void zar_child(void)
++{
++	unsigned long ssp = 0;
++
++	ssp = csr_read(CSR_SSP);
++	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
++			"  This is to ensure shadow stack is indeed enabled and working\n",
++			ssp);
++}
++
++void bar_child(void)
++{
++	zar_child();
++}
++
++void foo_child(void)
++{
++	bar_child();
++}
++
++typedef void (call_func_ptr)(void);
++/*
++ * call couple of functions to test push pop.
++ */
++int shadow_stack_call_tests(call_func_ptr fn_ptr, bool parent)
++{
++	ksft_print_msg("dummy calls for sspush and sspopchk in context of %s\n",
++		       parent ? "parent" : "child");
++
++	(fn_ptr)();
++
++	return 0;
++}
++
++/* forks a thread, and ensure shadow stacks fork out */
++bool shadow_stack_fork_test(unsigned long test_num, void *ctx)
++{
++	int pid = 0, child_status = 0, parent_pid = 0, ret = 0;
++	unsigned long ss_status = 0;
++
++	ksft_print_msg("Exercising shadow stack fork test\n");
++
++	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
++	if (ret) {
++		ksft_exit_skip("Shadow stack get status prctl failed with errorcode %d\n", ret);
++		return false;
++	}
++
++	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
++		ksft_exit_skip("Shadow stack is not enabled, should be enabled via glibc\n");
++
++	parent_pid = getpid();
++	pid = fork();
++
++	if (pid) {
++		ksft_print_msg("Parent pid %d and child pid %d\n", parent_pid, pid);
++		shadow_stack_call_tests(&foo, true);
++	} else {
++		shadow_stack_call_tests(&foo_child, false);
++	}
++
++	if (pid) {
++		ksft_print_msg("Waiting on child to finish\n");
++		wait(&child_status);
++	} else {
++		/* exit child gracefully */
++		exit(0);
++	}
++
++	if (pid && WIFSIGNALED(child_status)) {
++		ksft_print_msg("Child faulted, fork test failed\n");
++		return false;
++	}
++
++	return true;
++}
++
++/* exercise `map_shadow_stack`, pivot to it and call some functions to ensure it works */
++#define SHADOW_STACK_ALLOC_SIZE 4096
++bool shadow_stack_map_test(unsigned long test_num, void *ctx)
++{
++	unsigned long shdw_addr;
++	int ret = 0;
++
++	ksft_print_msg("Exercising shadow stack map test\n");
++
++	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
++
++	if (((long)shdw_addr) <= 0) {
++		ksft_print_msg("map_shadow_stack failed with error code %d\n",
++			       (int)shdw_addr);
++		return false;
++	}
++
++	ret = munmap((void *)shdw_addr, SHADOW_STACK_ALLOC_SIZE);
++
++	if (ret) {
++		ksft_print_msg("munmap failed with error code %d\n", ret);
++		return false;
++	}
++
++	return true;
++}
++
++/*
++ * shadow stack protection tests. map a shadow stack and
++ * validate all memory protections work on it
++ */
++bool shadow_stack_protection_test(unsigned long test_num, void *ctx)
++{
++	unsigned long shdw_addr;
++	unsigned long *write_addr = NULL;
++	int ret = 0, pid = 0, child_status = 0;
++
++	ksft_print_msg("Exercising shadow stack protection test (WPT)\n");
++
++	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
++
++	if (((long)shdw_addr) <= 0) {
++		ksft_print_msg("map_shadow_stack failed with error code %d\n",
++			       (int)shdw_addr);
++		return false;
++	}
++
++	write_addr = (unsigned long *)shdw_addr;
++	pid = fork();
++
++	/* no child was created, return false */
++	if (pid == -1)
++		return false;
++
++	/*
++	 * try to perform a store from child on shadow stack memory
++	 * it should result in SIGSEGV
++	 */
++	if (!pid) {
++		/* below write must lead to SIGSEGV */
++		*write_addr = 0xdeadbeef;
++	} else {
++		wait(&child_status);
++	}
++
++	/* test fail, if 0xdeadbeef present on shadow stack address */
++	if (*write_addr == 0xdeadbeef) {
++		ksft_print_msg("Shadow stack WPT failed\n");
++		return false;
++	}
++
++	/* if child reached here, then fail */
++	if (!pid) {
++		ksft_print_msg("Shadow stack WPT failed: child reached unreachable state\n");
++		return false;
++	}
++
++	/* if child exited via signal handler but not for write on ss */
++	if (WIFEXITED(child_status) &&
++	    WEXITSTATUS(child_status) != CHILD_EXIT_CODE_SSWRITE) {
++		ksft_print_msg("Shadow stack WPT failed: child wasn't signaled for write\n");
++		return false;
++	}
++
++	ret = munmap(write_addr, SHADOW_STACK_ALLOC_SIZE);
++	if (ret) {
++		ksft_print_msg("Shadow stack WPT failed: munmap failed, error code %d\n",
++			       ret);
++		return false;
++	}
++
++	return true;
++}
++
++#define SS_MAGIC_WRITE_VAL 0xbeefdead
++
++int gup_tests(int mem_fd, unsigned long *shdw_addr)
++{
++	unsigned long val = 0;
++
++	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
++	if (read(mem_fd, &val, sizeof(val)) < 0) {
++		ksft_print_msg("Reading shadow stack mem via gup failed\n");
++		return 1;
++	}
++
++	val = SS_MAGIC_WRITE_VAL;
++	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
++	if (write(mem_fd, &val, sizeof(val)) < 0) {
++		ksft_print_msg("Writing shadow stack mem via gup failed\n");
++		return 1;
++	}
++
++	if (*shdw_addr != SS_MAGIC_WRITE_VAL) {
++		ksft_print_msg("GUP write to shadow stack memory failed\n");
++		return 1;
++	}
++
++	return 0;
++}
++
++bool shadow_stack_gup_tests(unsigned long test_num, void *ctx)
++{
++	unsigned long shdw_addr = 0;
++	unsigned long *write_addr = NULL;
++	int fd = 0;
++	bool ret = false;
++
++	ksft_print_msg("Exercising shadow stack gup tests\n");
++	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
++
++	if (((long)shdw_addr) <= 0) {
++		ksft_print_msg("map_shadow_stack failed with error code %d\n", (int)shdw_addr);
++		return false;
++	}
++
++	write_addr = (unsigned long *)shdw_addr;
++
++	fd = open("/proc/self/mem", O_RDWR);
++	if (fd == -1)
++		return false;
++
++	if (gup_tests(fd, write_addr)) {
++		ksft_print_msg("gup tests failed\n");
++		goto out;
++	}
++
++	ret = true;
++out:
++	if (shdw_addr && munmap(write_addr, SHADOW_STACK_ALLOC_SIZE)) {
++		ksft_print_msg("munmap failed with error code %d\n", ret);
++		ret = false;
++	}
++
++	return ret;
++}
++
++volatile bool break_loop;
++
++void sigusr1_handler(int signo)
++{
++	break_loop = true;
++}
++
++bool sigusr1_signal_test(void)
++{
++	struct sigaction sa = {};
++
++	sa.sa_handler = sigusr1_handler;
++	sa.sa_flags = 0;
++	sigemptyset(&sa.sa_mask);
++	if (sigaction(SIGUSR1, &sa, NULL)) {
++		ksft_print_msg("Registering signal handler for SIGUSR1 failed\n");
++		return false;
++	}
++
++	return true;
++}
++
++/*
++ * shadow stack signal test. shadow stack must be enabled.
++ * register a signal, fork another thread which is waiting
++ * on signal. Send a signal from parent to child, verify
++ * that signal was received by child. If not test fails
++ */
++bool shadow_stack_signal_test(unsigned long test_num, void *ctx)
++{
++	int pid = 0, child_status = 0, ret = 0;
++	unsigned long ss_status = 0;
++
++	ksft_print_msg("Exercising shadow stack signal test\n");
++
++	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
++	if (ret) {
++		ksft_print_msg("Shadow stack get status prctl failed with errorcode %d\n", ret);
++		return false;
++	}
++
++	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
++		ksft_print_msg("Shadow stack is not enabled, should be enabled via glibc\n");
++
++	/* this should be caught by signal handler and do an exit */
++	if (!sigusr1_signal_test()) {
++		ksft_print_msg("Registering sigusr1 handler failed\n");
++		exit(-1);
++	}
++
++	pid = fork();
++
++	if (pid == -1) {
++		ksft_print_msg("Signal test: fork failed\n");
++		goto out;
++	}
++
++	if (pid == 0) {
++		while (!break_loop)
++			sleep(1);
++
++		exit(11);
++		/* child shouldn't go beyond here */
++	}
++
++	/* send SIGUSR1 to child */
++	kill(pid, SIGUSR1);
++	wait(&child_status);
++
++out:
++
++	return (WIFEXITED(child_status) &&
++		WEXITSTATUS(child_status) == 11);
++}
++
++int execute_shadow_stack_tests(void)
++{
++	int ret = 0;
++	unsigned long test_count = 0;
++	unsigned long shstk_status = 0;
++	bool test_pass = false;
++
++	ksft_print_msg("Executing RISC-V shadow stack self tests\n");
++	ksft_set_plan(RISCV_SHADOW_STACK_TESTS);
++
++	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &shstk_status, 0, 0, 0);
++
++	if (ret != 0)
++		ksft_exit_fail_msg("Get shadow stack status failed with %d\n", ret);
++
++	/*
++	 * If we are here that means get shadow stack status succeeded and
++	 * thus shadow stack support is baked in the kernel.
++	 */
++	while (test_count < RISCV_SHADOW_STACK_TESTS) {
++		test_pass = (*shstk_tests[test_count].t_func)(test_count, NULL);
++		ksft_test_result(test_pass, shstk_tests[test_count].name);
++		test_count++;
++	}
++
++	ksft_finished();
++
++	return 0;
++}
++
++#pragma GCC pop_options
+diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.h b/tools/testing/selftests/riscv/cfi/shadowstack.h
+new file mode 100644
+index 000000000000..0be510167de3
+--- /dev/null
++++ b/tools/testing/selftests/riscv/cfi/shadowstack.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++#ifndef SELFTEST_SHADOWSTACK_TEST_H
++#define SELFTEST_SHADOWSTACK_TEST_H
++#include <stddef.h>
++#include <linux/prctl.h>
++
++/*
++ * a cfi test returns true for success or false for fail
++ * takes a number for test number to index into array and void pointer.
++ */
++typedef bool (*shstk_test_func)(unsigned long test_num, void *);
++
++struct shadow_stack_tests {
++	char *name;
++	shstk_test_func t_func;
++};
++
++bool shadow_stack_fork_test(unsigned long test_num, void *ctx);
++bool shadow_stack_map_test(unsigned long test_num, void *ctx);
++bool shadow_stack_protection_test(unsigned long test_num, void *ctx);
++bool shadow_stack_gup_tests(unsigned long test_num, void *ctx);
++bool shadow_stack_signal_test(unsigned long test_num, void *ctx);
++
++int execute_shadow_stack_tests(void);
++
++#endif
 
 -- 
 2.43.0
