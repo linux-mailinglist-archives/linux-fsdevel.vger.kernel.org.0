@@ -1,75 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-65308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5FBC012F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 14:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BCFC012FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 14:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727C23A94D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 12:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255513A94EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 12:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546B6313E21;
-	Thu, 23 Oct 2025 12:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E4330B527;
+	Thu, 23 Oct 2025 12:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meBFo0u9"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="F75UTxyQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tWM7k9du"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4702EC568;
-	Thu, 23 Oct 2025 12:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA5A2D7809;
+	Thu, 23 Oct 2025 12:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761223251; cv=none; b=j7k7i8nNoey4yDmGYg+Ntm5gKZOzDdazPh3eqvdRv4Y/c+NjgTpsxUK/FjJQIJHLkmvje5K70iqsgPuHecjv/ujEhW8AtVpL+s531Ul6iM/XpId0c3dg97MpgCASKTv3XpnHY0L9Os41VXhDQ/w3HPNYzh7lxXX1/5aWvRMzTZo=
+	t=1761223320; cv=none; b=deR6sRfHya0CBCioe2oMeQeiF4IkHdMP3o+C8XQcQPbhZ1KaHT4VMsS5FDLwQCEiiQldmdTv0GgSisc/bx3Tuk3BnqUrz6F9HbTLqz5fIsF5T12s2eC8kBF/YgVibgzxBAWOwlvv2Tgbgijgx0ZeQqDdokrhNV8SeFQ6Y/xQ1eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761223251; c=relaxed/simple;
-	bh=Rfzx1RVvSErhKrraTGgi09m3R7z5yigPgkc4w5STX/8=;
+	s=arc-20240116; t=1761223320; c=relaxed/simple;
+	bh=794ZiftVdzwhrSgvGwmkoupZXKGmT7JzUrT9Ch+zXbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W95AOaZUbd6S8/Ye+LerHuflr/AFBsrlGnnFu49gdv8t9sA1OJucImwlVuwG0A/He/YwfoZ4+QKz+WPAWknUZ5xL/2WUraehUi0Vg7yBZLm0jzd3n6tyQP3TwjBOZxm6LqrlwDWy11iEf2zycaZOxT22rueCYLlUZb+NihbLpxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=meBFo0u9; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761223251; x=1792759251;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Rfzx1RVvSErhKrraTGgi09m3R7z5yigPgkc4w5STX/8=;
-  b=meBFo0u9yQfC1FT6aY/GAnRsxdLjg1KUsEaHesA+Pf4M3xrMrtJ2mu+y
-   yePNn35bHuPuSMdpAS7uRaiuJ1kmla6NMeCBKeqjY39MdRXzmSzypn1bC
-   g7KjQxb1qIdpFbUfjPpU9Vs/UJpzoLjEY5IbtEEygAqPVfmi8+/D4DJLP
-   LJecQqGV/QMxkXYWnMGmYLVQZ6BmnrFnA2VcWSZ85BJ00evUGgSQNVkTm
-   UU7M4d8N0IEz5w74OWFAeOybhR7zzZGOi4lOhqoXuRt8gRH1shIu/Wv0C
-   AZJM7xSyKdHFLqVXdUCQ3xkj1FAMw2GAewMinIUWKj2eNvnf/Wltp3KXC
-   w==;
-X-CSE-ConnectionGUID: T49gbyK5QaeFcl18VgQQ8g==
-X-CSE-MsgGUID: mWY29FbKQAq23rWLnTL0Ww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73680874"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="73680874"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:40:50 -0700
-X-CSE-ConnectionGUID: Bmjuq/IqTDSqw9auKJ4n1w==
-X-CSE-MsgGUID: uDiq+3atS42nIqMvajiORw==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 23 Oct 2025 05:40:47 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBucR-000DUn-18;
-	Thu, 23 Oct 2025 12:40:41 +0000
-Date: Thu, 23 Oct 2025 20:39:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
-	axboe@kernel.dk
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org,
-	xiaobing.li@samsung.com
-Subject: Re: [PATCH v1 2/2] fuse: support io-uring registered buffers
-Message-ID: <202510232014.8BtM55jj-lkp@intel.com>
-References: <20251022202021.3649586-3-joannelkoong@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ALoTnfHBYDvqD+hRBfv3aDGK9eBTjx7cQyZjWyQGJ/WhlNxMTxePtZ/39WozzGTMDrpjAsyp78ZIK6RdPw2rEueshx4uzZQYHvX8gX0gG1LPOFWNL9rGYpRWjjVZj9GIp6FXM6Q+MR17+lYRHcmi4LZi1NVtpSIma6mnvTH/P8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=F75UTxyQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tWM7k9du; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 2C5527A0090;
+	Thu, 23 Oct 2025 08:41:57 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 23 Oct 2025 08:41:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761223317; x=
+	1761309717; bh=K/3rmEGyyRqr/NQraJuCGAEXsJxihtT7HX1YfEvOM5I=; b=F
+	75UTxyQjugFyfRZT2hGVKPmuB5pPR7BBVy8wlqG/BEEFoCLdIXdZMNglK3V52Fzc
+	W/8E3rIrnfofl6F2O9HgkA2EWd2kmdSxXU3VfCrCKVy2xsxNGLrW32Svm0Na+W65
+	G60ZAeZuA35QoyNA9AYonv11FZjuf6VBqbhlGor+2i//JrhfsXPMf3NW8Kxd8UYb
+	paa7jML0qbG8cXO3ZZ0ZjvrjxnabEUZqI0jtjmEPOUQBiMPcjOMHc/qasg3lK8vo
+	Kh1AltaXMOp0muk63ogjv3eyr3rKNJhc1rEUfEfSihVKLbcmv8bYr8s+RLequXZA
+	JzQU4kNTScM4FbaPOl7eA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761223317; x=1761309717; bh=K/3rmEGyyRqr/NQraJuCGAEXsJxihtT7HX1
+	YfEvOM5I=; b=tWM7k9duNmDhsdin0A7s2vEwX0yVlBuKpsB6Ywg8Tz1JQsRlyUU
+	abJZKR1JcyVYI3KAVz4gaTVV3gv3gEQhf/E9pnMvwOB1jx5QXk2klJ/ZTj6zMXqI
+	Y+mV83CjndCCJIdOHJp62h6cKAvWnSi3RKaAahI3UJy8RadqYPvUIpuuKzMXS9Ey
+	TVXQ7Ucjl0NbuiWq0KVUHpbSi3PlhyVC2lZLodkH/BBO3L9dtkpWzsnwGfcmCgol
+	rJxr2HLTxLXEk8ZZTSsu95QA+vBErjOazZntRyKSWNXIXOPtNgB6Kd9xB6AlqYvP
+	T8tPw7ucYDKmpMW1pA0UsEUOkmoclznr8EA==
+X-ME-Sender: <xms:kyL6aFo9VJ3L8H15FHR3zvxubpEYSCA839ekhEUzk1O0WcE9q-ND5w>
+    <xme:kyL6aI-sxuS8lOgohAnI1_ZwaUQ_wLpXWj-zkUCmqNAWwUuZEJqlBtERpL2L9CmVG
+    o9zaJ-irDnRLWKjH-r88SRdDGuLGkU7WvsC5HT71NLCSe2gGDtmpIQ>
+X-ME-Received: <xmr:kyL6aG33opj1embYhw12A-wRW1Q8a8-rVmk9yUWiWSEC6R64BQfkfMAbLmcSpQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeigeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    epthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
+    thhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsg
+    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
+    tgiipdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:kyL6aDnv5rDE6fqSI4ovDVI5fsUrPHmeyrw0au1dBlkwN7KmBrpoWQ>
+    <xmx:kyL6aL2u8gn_8pipvVyNqlBtWd3xsNsexDdYnpoMnlzpUGQDyY8OlA>
+    <xmx:kyL6aKj7-lw9T3ixPWJhOYQmB86SVcbjmqNQX8yx_Oa4UaoFF-xeew>
+    <xmx:kyL6aBValJgxaySt0vPOsNs4Vcbo3MPFDKNi2UhsAPyYg87ioUBpeQ>
+    <xmx:lSL6aCtNetd8m1RLcACeFDrEZgLoNJrcAME93tL-XIVEc_7NReQHkMKO>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 08:41:55 -0400 (EDT)
+Date: Thu, 23 Oct 2025 13:41:52 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <fqexozfjp3l6vj643lecky4nndmwblvee7u5f5ejcqkpsij3wp@3yb4y4lyd3dn>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+ <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+ <56d9f1d9-fc20-4be8-b64a-07beac3c64d0@redhat.com>
+ <5b33b587-ffd1-4a25-95e5-5f803a935a57@redhat.com>
+ <7fmiqrcyiccff5okrs7sdz3i63mp376f2r76e4r5c2miluwk76@567sm46qop5h>
+ <f57d73e3-fb6c-4c01-9897-c9686889fec2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,78 +113,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022202021.3649586-3-joannelkoong@gmail.com>
+In-Reply-To: <f57d73e3-fb6c-4c01-9897-c9686889fec2@redhat.com>
 
-Hi Joanne,
+On Thu, Oct 23, 2025 at 01:49:22PM +0200, David Hildenbrand wrote:
+> On 23.10.25 13:40, Kiryl Shutsemau wrote:
+> > On Thu, Oct 23, 2025 at 01:11:43PM +0200, David Hildenbrand wrote:
+> > > On 23.10.25 13:10, David Hildenbrand wrote:
+> > > > On 23.10.25 12:54, David Hildenbrand wrote:
+> > > > > On 23.10.25 12:31, Kiryl Shutsemau wrote:
+> > > > > > On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+> > > > > > > "garbage" as in pointing at something without a direct map, something that's
+> > > > > > > protected differently (MTE? weird CoCo protection?) or even worse MMIO with
+> > > > > > > undesired read-effects.
+> > > > > > 
+> > > > > > Pedro already points to the problem with missing direct mapping.
+> > > > > > _nofault() copy should help with this.
+> > > > > 
+> > > > > Yeah, we do something similar when reading the kcore for that reason.
+> > > > > 
+> > > > > > 
+> > > > > > Can direct mapping ever be converted to MMIO? It can be converted to DMA
+> > > > > > buffer (which is fine), but MMIO? I have not seen it even in virtualized
+> > > > > > environments.
+> > > > > 
+> > > > > I recall discussions in the context of PAT and the adjustment of caching
+> > > > > attributes of the direct map for MMIO purposes: so I suspect there are
+> > > > > ways that can happen, but I am not 100% sure.
+> > > > > 
+> > > > > 
+> > > > > Thinking about it, in VMs we have the direct map set on balloon inflated
+> > > > > pages that should not be touched, not even read, otherwise your
+> > > > > hypervisor might get very angry. That case we could likely handle by
+> > > > > checking whether the source page actually exists and doesn't have
+> > > > > PageOffline() set, before accessing it. A bit nasty.
+> > > > > 
+> > > > > A more obscure cases would probably be reading a page that was poisoned
+> > > > > by hardware and is not expected to be used anymore. Could also be
+> > > > > checked by checking the page.
+> > > > > 
+> > > > > Essentially all cases where we try to avoid reading ordinary memory
+> > > > > already when creating memory dumps that might have a direct map.
+> > > > > 
+> > > > > 
+> > > > > Regarding MTE and load_unaligned_zeropad(): I don't know unfortunately.
+> > > > 
+> > > > Looking into this, I'd assume the exception handler will take care of it.
+> > > > 
+> > > > load_unaligned_zeropad() is interesting if there is a direct map but the
+> > > > memory should not be touched (especially regarding PageOffline and
+> > > > memory errors).
+> > > > 
+> > > > I read drivers/firmware/efi/unaccepted_memory.c where we there is a
+> > > > lengthy discussion about guard pages and how that works for unaccepted
+> > > > memory.
+> > > > 
+> > > > While it works for unaccepted memory, it wouldn't work for other random
+> > > 
+> > > Sorry I meant here "while that works for load_unaligned_zeropad()".
+> > 
+> > Do we have other random reads?
+> > 
+> > For unaccepted memory, we care about touching memory that was never
+> > allocated because accepting memory is one way road.
+> 
+> Right, but I suspect if you get a random read (as the unaccepted memory doc
+> states) you'd be in trouble as well.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on mszeredi-fuse/for-next]
-[also build test ERROR on linus/master v6.18-rc2 next-20251023]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io-uring-add-io_uring_cmd_get_buffer_info/20251023-042601
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
-patch link:    https://lore.kernel.org/r/20251022202021.3649586-3-joannelkoong%40gmail.com
-patch subject: [PATCH v1 2/2] fuse: support io-uring registered buffers
-config: i386-buildonly-randconfig-003-20251023 (https://download.01.org/0day-ci/archive/20251023/202510232014.8BtM55jj-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510232014.8BtM55jj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510232014.8BtM55jj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/fuse/inode.c:11:
->> fs/fuse/dev_uring_i.h:51:41: error: field 'payload_iter' has incomplete type
-      51 |                         struct iov_iter payload_iter;
-         |                                         ^~~~~~~~~~~~
->> fs/fuse/dev_uring_i.h:52:41: error: field 'headers_iter' has incomplete type
-      52 |                         struct iov_iter headers_iter;
-         |                                         ^~~~~~~~~~~~
-
-
-vim +/payload_iter +51 fs/fuse/dev_uring_i.h
-
-    38	
-    39	/** A fuse ring entry, part of the ring queue */
-    40	struct fuse_ring_ent {
-    41		/* True if daemon has registered its buffers ahead of time */
-    42		bool is_fixed_buffer;
-    43		union {
-    44			/* userspace buffer */
-    45			struct {
-    46				struct fuse_uring_req_header __user *headers;
-    47				void __user *payload;
-    48			} user;
-    49	
-    50			struct {
-  > 51				struct iov_iter payload_iter;
-  > 52				struct iov_iter headers_iter;
-    53			} fixed_buffer;
-    54		};
-    55	
-    56		/* the ring queue that owns the request */
-    57		struct fuse_ring_queue *queue;
-    58	
-    59		/* fields below are protected by queue->lock */
-    60	
-    61		struct io_uring_cmd *cmd;
-    62	
-    63		struct list_head list;
-    64	
-    65		enum fuse_ring_req_state state;
-    66	
-    67		struct fuse_req *fuse_req;
-    68	};
-    69	
+Yes. Random read of unaccepted memory is unrecoverable exit to host for
+TDX guest.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  Kiryl Shutsemau / Kirill A. Shutemov
 
