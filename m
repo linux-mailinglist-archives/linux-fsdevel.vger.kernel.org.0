@@ -1,90 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-65299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C38CC00A46
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B85AC00A4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AAB14FAEE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:11:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B48C53A3F20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814D30C359;
-	Thu, 23 Oct 2025 11:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BE92FE047;
+	Thu, 23 Oct 2025 11:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A0jg3bgH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G2Q+nLSG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF324254AF5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 11:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2B92BFC9B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 11:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217861; cv=none; b=sWk3XBlRYLIeTi9XKEAh2fHO8moVLIE2TuIZRqTZRs38LkippZjBM+0LXhkr4vnxpQVujaZeFJuVHQWeuMrQvO0xbXHCPuVslSv5ysGHEUyl1X/UMp3rrwMVtNEZAosxIeZuK6x/el86ESqEtwCzD+xKH/awCQ+GkrifThP4wRY=
+	t=1761217910; cv=none; b=hZwOH9Qx/bZZFJVhvZVWL6sUv4SV3Twemf960zOvAKOdCd7Gzs+UZfr5DVKJhaxrYN34Z2kQWSTG2xKtuNtGMIABeGCHm54R0BNS188F4sAMGZ4Btu7UJrfDIWfImlT5jEpd1v3ODxHel0rGomzZTtymG85y+xnmlGVHVlgGacw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217861; c=relaxed/simple;
-	bh=/O5xOsJInia0hkjcp0azPNTwJpWoqt9stgzQDjYXcI4=;
+	s=arc-20240116; t=1761217910; c=relaxed/simple;
+	bh=Gj/bVUJkNXQApb9nzb0hnPq0cByWN/WZWtmKfxGFS3g=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gDRh+i+FBQw3UmmSNobgrD7+WXee+Krf99zq4ZInwwt7t0evsQcvJYloGxZZ1IQjjELd5tw6Vfg2zptiKywnYZEO5KTUaZggAzl3+ge4C2Am80zzJF/Vlw+CMGpYw1RxOmyM50SxDuyJAHB9VAMY88wOV1+Cm5PRdeIkkNl6DgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A0jg3bgH; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=OZ57gqbvDvjP0eS012XS1pqttxLLyjIybnNCeQ81kJ5Vi+0wy3Maht4zrjYYorJV3WTuCl+6m9a4Kh3azn0MKdQ64iouCezpRbLcqDvXzUftkVjA5HBgB/OZryq7mERe1IczFz1vzfB4Vu7wDQJVPF2Ej0g48XZCNA3HA05sR4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G2Q+nLSG; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761217858;
+	s=mimecast20190719; t=1761217908;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=l2IWmYgTn+axyHlrNGOBe1eg6QF+Mro5+LjrFCWT2pI=;
-	b=A0jg3bgHs7yAdsKJ8TDbhWrWMyiWm6kMao8xvtlKp2B+AWILkE4ud2Ky+Jhi2KBcy3LLbA
-	4ued469gO2TNPvDoydG9UEKgCiY0g1G0P8hE8OMtyDnGI+8h8j2clGczy89JpQi5nJKWnf
-	LcinJoiJxsbubnDUZlB0afKrzuprFIk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=6bhJ9D9puoNFe1MUqX6TKFTSvBgiw0Qt1Ir2FpXvY+U=;
+	b=G2Q+nLSGOc4QspVK7twDHAwX31QTeZ3DaNgAG5vWbIC8OEGXa/MzjIuMtBUwaC1Was+A/f
+	E+dcATiwmge+HOC/4RT3Aywe4AElivIwcur8cnuM7fUoKXmu5HfWIR62HgEFcbqWIyxheS
+	QMiVwKfb0w1DrC+tkRDAOpYYO6TKvpI=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-cZxfrhaRNJSQYPBWh25bbg-1; Thu, 23 Oct 2025 07:10:56 -0400
-X-MC-Unique: cZxfrhaRNJSQYPBWh25bbg-1
-X-Mimecast-MFC-AGG-ID: cZxfrhaRNJSQYPBWh25bbg_1761217856
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471144baa7eso4457655e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 04:10:56 -0700 (PDT)
+ us-mta-531-1CrnEAPJMXuL7XH3LELnLA-1; Thu, 23 Oct 2025 07:11:46 -0400
+X-MC-Unique: 1CrnEAPJMXuL7XH3LELnLA-1
+X-Mimecast-MFC-AGG-ID: 1CrnEAPJMXuL7XH3LELnLA_1761217906
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso2964415e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 04:11:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761217855; x=1761822655;
+        d=1e100.net; s=20230601; t=1761217905; x=1761822705;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l2IWmYgTn+axyHlrNGOBe1eg6QF+Mro5+LjrFCWT2pI=;
-        b=WM6RRRbHdwHdh+IRFL3ouxmDBe75B91tMh1phJdgrke5gniqGC57uKPOaMXUefJXGA
-         7AdObW0zV08AfnI+S2/EXOjpOYw7cPST9Mzn5Efc+Wzuwh3CD/0y9AsCGUNPSXVbjxRV
-         DsEXpRFGSlK4n4cIhSb3P4q0cYcCCMY6Ih75DF5fFvendyBnmCl9YGrJUhn673RmuNz8
-         IQdIfR4AdLoyj5JdTeRMIZ4i8ZeKDY+97/XCJuyrUlLtOPi+yJzPyg8C7xeXFpcvG8rm
-         HpQWGSFBRQqWhPDpuuZb/nr/pcg4EwXF3ILVMmeTJ9h+g0HaZalTehO38uGLPWMf3+2V
-         dvbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFHa0sGiSUZ+RqGV8M6ux2zWCLyQxWjvavc7B6tw2xUdxMxewdeXu0SuiUTEUMZsNQiq83NpIJNEE3VB08@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCka7heAoXK+6vICXE/dr1gCWosBCoAHEHgQFbj+hLyER1QWXt
-	weYukpazlStNFCxKm7zPM0IAhB06kypF1Iio6r+c8378AhtcKVyCev+ZR5qd1TK3oKh09uElcco
-	RDM1I0F7Ptkit9octF7Rk2OuwOukBCFb/ll5ambJ+g+XV+Cgj2KKatSavqsszUtqZmOve8Dh+cr
-	U=
-X-Gm-Gg: ASbGncsYTsylBeGgO6bvnM64vjIEZlFrHxLDONLXUcauZWrWZnuMqY3aaook/RInuyd
-	avkJp/rbWR42MDzeLMJfly1/5Rdz1dpcpP2UIGa6uJUdPfFJSjWtPiw12q+xHm3bSbNghsBAljl
-	RLYkdcyEvDt3NA4l5S/ugS+6Mrrw654/LgTvWKkgXbCIOromDA3JFsqHosK6EQLmLYOGFCHBgHf
-	LDww+DtOsqE91ZRkYm/fN+HMhrh1dN5D0ZfXNKuJ5gn5mYxAfMP59Y+b3br5d/dkcAYhGSGn5M0
-	/yMogKaYHBd4JPDgTadXd+cOY+1M+cGbmSjwLTmEBN5qfJDoXCECl2y+ikDMeU4pe7hAGT20Jaa
-	gaqyeLtGtRUZxH6mKmOwrnhjtnIrrynHrLyMsaLgRVefUBT+YiN9/1s/vhGmy+EgJ7p8gtADKq7
-	+3R0+myt5IWFMvxjF1LmDhlnv+MAk=
-X-Received: by 2002:a05:600c:3b8d:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-471179174cfmr180135085e9.27.1761217855571;
-        Thu, 23 Oct 2025 04:10:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEV7ydI7xyOszLDErCC9LpAr/vyTCsbXL1MuG3tRXSBfXfhqfoS0SRo1a/LWhqon2FVwTNCGA==
-X-Received: by 2002:a05:600c:3b8d:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-471179174cfmr180134835e9.27.1761217855132;
-        Thu, 23 Oct 2025 04:10:55 -0700 (PDT)
+        bh=6bhJ9D9puoNFe1MUqX6TKFTSvBgiw0Qt1Ir2FpXvY+U=;
+        b=j8LCV+t1Gcl9e4RUjGJsH8uNyAjsUjcaus/M1PSyPsnPFYGYpMtiKrV3KLlGiJBTxp
+         rl4JUnleyOeAu2OEjqoV8W21caF3eHDqtviX1WGC2qtScr4rzjQhN16S6yhSqR1NXflL
+         gHs1TjMce02zWa2Ip/43wWoUrvHmgoBLV6dBUUubKNpiZ2K8S7qjpNCslDZszjCSnIn5
+         y0KtHzcjvR3CPbEuhWmSQKCEc/jAGUwgnhY+pbFNSPogXR7K7so9UgBi/VOYlwoFIpJW
+         HDBR/DRX3RRLuKgblawIL6uwvkBbsPA+oWgf67QgbMi7LS7WLhJDbqrTmhigpyHAeKP3
+         HPQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpmAP6NPyUdP69soAQnY4e1eJGVfLd+NqP4IyvlaK4PCNtUWvcB1181OX5l/N8Yzpqzgk7TaQbUN4CPTwd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFUxSFkqN4Isp9I+DkSQA7cq50UHLmV5fugl48aOC2RwlgnQjt
+	LOtKaeGg4nYNGQGXL8ZS9syDD9hUXgNDeh2d2IoT4plY7A+gyRM8XwO0IMyaCTtiZIaBsaybSuP
+	Mf1pWOtsyEoZ/vrxwIQ6+1MJlvUB+hLMYNJ3JKvPyC9XZiwHKWYV9AcmVuSRvDSe0on4=
+X-Gm-Gg: ASbGncs4JCZPeQoGrU0cNGMRuMqiJJd69Wkv10hV9Q4B/Z/bG7KhxVVfGUk7kCSvQ79
+	pE5imJmXRc1QS3SJ1gHxbzeoeErrldte9hFHuMPc796+5wtRq/hfriP+jO/xXkdCIulPP28Gf6L
+	pFBkFxk96zgU8WK80hvPXfRLpQPkfPcP2xM6tps7FZSmVMTDrQa8lLrxGMr1SpBG/D32o8AqRIu
+	dsaPWUtVWByzIoH802VuKV1Ba5cmFDR9x8ogalmuyp3Y/tjaW60DL46c/c+PexOD7K7160VrR/7
+	xF+X6J0SHk4/sJ2VRovfvfAdoSvEgkCT5rS9WXRVi9IT3Kiya23enxMLGfyyCuaDwdFz3Y1ktf6
+	ZwezZGuHkm/aPPWmRAwqIiBhpv55CW7837FldEPd9C/O+3vgD9IdvrB7KgdAiQh9kSK9g6IfGsH
+	+ex3BYsd/3btUBPpLuzVECsSSJmSY=
+X-Received: by 2002:a05:600c:a02:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-475cb064926mr13576535e9.36.1761217905504;
+        Thu, 23 Oct 2025 04:11:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjOTIGLdchiCXBCt7631vjjgeG9GW8BcZLSQPY9hw9ONCdFryCE3QwKhyQwOYvrWIr0Y7WWQ==
+X-Received: by 2002:a05:600c:a02:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-475cb064926mr13576225e9.36.1761217905063;
+        Thu, 23 Oct 2025 04:11:45 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c43900e1sm106702345e9.17.2025.10.23.04.10.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-474949e0a3csm60171795e9.0.2025.10.23.04.11.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:10:54 -0700 (PDT)
-Message-ID: <56d9f1d9-fc20-4be8-b64a-07beac3c64d0@redhat.com>
-Date: Thu, 23 Oct 2025 13:10:53 +0200
+        Thu, 23 Oct 2025 04:11:44 -0700 (PDT)
+Message-ID: <5b33b587-ffd1-4a25-95e5-5f803a935a57@redhat.com>
+Date: Thu, 23 Oct 2025 13:11:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,6 +105,7 @@ References: <20251017141536.577466-1-kirill@shutemov.name>
  <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
  <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
  <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+ <56d9f1d9-fc20-4be8-b64a-07beac3c64d0@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -151,60 +151,62 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+In-Reply-To: <56d9f1d9-fc20-4be8-b64a-07beac3c64d0@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23.10.25 12:54, David Hildenbrand wrote:
-> On 23.10.25 12:31, Kiryl Shutsemau wrote:
->> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
->>> "garbage" as in pointing at something without a direct map, something that's
->>> protected differently (MTE? weird CoCo protection?) or even worse MMIO with
->>> undesired read-effects.
+On 23.10.25 13:10, David Hildenbrand wrote:
+> On 23.10.25 12:54, David Hildenbrand wrote:
+>> On 23.10.25 12:31, Kiryl Shutsemau wrote:
+>>> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+>>>> "garbage" as in pointing at something without a direct map, something that's
+>>>> protected differently (MTE? weird CoCo protection?) or even worse MMIO with
+>>>> undesired read-effects.
+>>>
+>>> Pedro already points to the problem with missing direct mapping.
+>>> _nofault() copy should help with this.
 >>
->> Pedro already points to the problem with missing direct mapping.
->> _nofault() copy should help with this.
-> 
-> Yeah, we do something similar when reading the kcore for that reason.
-> 
+>> Yeah, we do something similar when reading the kcore for that reason.
 >>
->> Can direct mapping ever be converted to MMIO? It can be converted to DMA
->> buffer (which is fine), but MMIO? I have not seen it even in virtualized
->> environments.
+>>>
+>>> Can direct mapping ever be converted to MMIO? It can be converted to DMA
+>>> buffer (which is fine), but MMIO? I have not seen it even in virtualized
+>>> environments.
+>>
+>> I recall discussions in the context of PAT and the adjustment of caching
+>> attributes of the direct map for MMIO purposes: so I suspect there are
+>> ways that can happen, but I am not 100% sure.
+>>
+>>
+>> Thinking about it, in VMs we have the direct map set on balloon inflated
+>> pages that should not be touched, not even read, otherwise your
+>> hypervisor might get very angry. That case we could likely handle by
+>> checking whether the source page actually exists and doesn't have
+>> PageOffline() set, before accessing it. A bit nasty.
+>>
+>> A more obscure cases would probably be reading a page that was poisoned
+>> by hardware and is not expected to be used anymore. Could also be
+>> checked by checking the page.
+>>
+>> Essentially all cases where we try to avoid reading ordinary memory
+>> already when creating memory dumps that might have a direct map.
+>>
+>>
+>> Regarding MTE and load_unaligned_zeropad(): I don't know unfortunately.
 > 
-> I recall discussions in the context of PAT and the adjustment of caching
-> attributes of the direct map for MMIO purposes: so I suspect there are
-> ways that can happen, but I am not 100% sure.
+> Looking into this, I'd assume the exception handler will take care of it.
 > 
+> load_unaligned_zeropad() is interesting if there is a direct map but the
+> memory should not be touched (especially regarding PageOffline and
+> memory errors).
 > 
-> Thinking about it, in VMs we have the direct map set on balloon inflated
-> pages that should not be touched, not even read, otherwise your
-> hypervisor might get very angry. That case we could likely handle by
-> checking whether the source page actually exists and doesn't have
-> PageOffline() set, before accessing it. A bit nasty.
+> I read drivers/firmware/efi/unaccepted_memory.c where we there is a
+> lengthy discussion about guard pages and how that works for unaccepted
+> memory.
 > 
-> A more obscure cases would probably be reading a page that was poisoned
-> by hardware and is not expected to be used anymore. Could also be
-> checked by checking the page.
-> 
-> Essentially all cases where we try to avoid reading ordinary memory
-> already when creating memory dumps that might have a direct map.
-> 
-> 
-> Regarding MTE and load_unaligned_zeropad(): I don't know unfortunately.
+> While it works for unaccepted memory, it wouldn't work for other random
 
-Looking into this, I'd assume the exception handler will take care of it.
-
-load_unaligned_zeropad() is interesting if there is a direct map but the 
-memory should not be touched (especially regarding PageOffline and 
-memory errors).
-
-I read drivers/firmware/efi/unaccepted_memory.c where we there is a 
-lengthy discussion about guard pages and how that works for unaccepted 
-memory.
-
-While it works for unaccepted memory, it wouldn't work for other random 
-accesses as I suspect we could produce in this patch.
+Sorry I meant here "while that works for load_unaligned_zeropad()".
 
 -- 
 Cheers
