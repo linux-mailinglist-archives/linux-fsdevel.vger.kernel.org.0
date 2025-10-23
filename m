@@ -1,326 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-65381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDB4C03387
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 21:50:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E11EC034EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 22:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E54164F2A23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:50:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7430356C0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 20:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86AC34DB53;
-	Thu, 23 Oct 2025 19:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5188421B9C1;
+	Thu, 23 Oct 2025 20:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLz2Klo4"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZcO4Injm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R+iqC5+F";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKV61hF2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xm/iPv/T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1FF347BC3;
-	Thu, 23 Oct 2025 19:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21F634679D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 20:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761249008; cv=none; b=mXxlX3awp0rEe8YSA+YBmeKPCJy0JuYd8AiOSZD1gBnvCLq/deU5UzblwafFDGxFaXkISHryxaW7+xDwdqiKvILpheMjQdW2W5JbD2ZhPd7nJTawFhWn4zoFh7UdSpPL/aVo615OGrgUhKoEi8jrRLVlDJEYMk4QEfPmSItVAY0=
+	t=1761249764; cv=none; b=qOv8O8tuX3FEWBVAr4xFYusu/D2arGJ+tx9h/T76OV2cv733aL+QXho68KaCE4nEfmPOwA781+a5v9NhbTthv6+avunRew9jiAvJJzGxUX1rRSBv+/D5MnEyKeR27yfztIsknH8wpqxD+ZCouhXELatp15Cb3uJYESxg6RQa+bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761249008; c=relaxed/simple;
-	bh=Skua1k2e3mB8SWqi2ga5oqhkJAG1HZvPfRJSsVS0qSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9etJFLdcNdjs3LkqxcO6Z+5JmcSXuGvxHKOZicH4QmsmQHgPmIgjUvKutqJW//XUCVFE3y+w6niRkYJA59K40JBCgZMzTVgxdCbPD+MOQetmz+txgpwPkp6c5fDeX2R+4F5YREkgGlUdkoLm8x2ibvWfKpXgBKkULw6EAFmtdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLz2Klo4; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761249007; x=1792785007;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Skua1k2e3mB8SWqi2ga5oqhkJAG1HZvPfRJSsVS0qSs=;
-  b=ZLz2Klo4R4tYYGviKTCdl5RTmMHx4SISJLC2aA5In695g4TTOwqXMQIH
-   afapLi8riDpW41ZNGN74d9arE+A9BMmGRmbkz3M4+Y7Zqu9fjjmg1GG9Y
-   iArXU5Hqnhbbh8/yqssDViFV+mN0EqT1O3ceQcjZqR1SgsvHVLgXCFrlh
-   PHGQ5mm7TeDwcfc31QxqVVZEgMLkX3SvaStdCiNqXq8LSYqFBWwCHSXXa
-   GwR/MeX6CxbWZfGaRXPYylv70EH9yb+7k/8AQRcAWOOUyxsHnYCtkfeU+
-   w5RzGxAM+ZW6VKWXHZd3NBjPkUnqrnY/o6v+clRjq8elVdkh42JI4AGME
-   w==;
-X-CSE-ConnectionGUID: fU+zXQlXQi6Kkp1SPCe0bg==
-X-CSE-MsgGUID: d+ZktQ+1SNmZ1ekorTf7fQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74870034"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="74870034"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:50:04 -0700
-X-CSE-ConnectionGUID: 2Rs/IhRhSS2PSn3gAgtgDQ==
-X-CSE-MsgGUID: 6Y2P8BYzRYeQpitDQCe9ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="207894922"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Oct 2025 12:50:00 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vC1Jj-000Dp7-15;
-	Thu, 23 Oct 2025 19:49:50 +0000
-Date: Fri, 24 Oct 2025 03:49:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb Sander Mateos <csander@purestorage.com>,
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chris Mason <chris.mason@fusionio.com>,
-	David Sterba <dsterba@suse.com>
-Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
- task work dispatch
-Message-ID: <202510240319.bLypyxx1-lkp@intel.com>
-References: <20251022231326.2527838-4-csander@purestorage.com>
+	s=arc-20240116; t=1761249764; c=relaxed/simple;
+	bh=LulGrsvuQHHRUckW5n9m0iIQV7lVfYvpx4KBlcjJZoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LtP6HtbhFP29LksTxc3UgMfGzKgKt7CRQbnviYtigWdmIdIf9WYxFzl1NtYwkHKeK9awUdbUTcNY3aqiwVMznPdHNgaIxhJ/IpBTg64eoWSJ25SOoWKchrpRiRDj5PitY3qEhp8sFv5jQK4pkiDIe44o70JovDn+XzReJ/F4I2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZcO4Injm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R+iqC5+F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKV61hF2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xm/iPv/T; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D2073211C8;
+	Thu, 23 Oct 2025 20:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761249756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=ZcO4InjmOJYb7+pJOgxVbEblkxS1VHeM/GdoDbhiXh4BKse+ts+lijr8S2yHdv9D+GtkQB
+	fRDocDi2bcH1IKNn0W1Du1S1oJWDfV0cHSIFhlLwyJT7ZNpOTcLeMsbyTMLSEUdTL4KmGj
+	Q6mT7oq5tqZ+HHvMaLu6XHL8wlcQqg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761249756;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=R+iqC5+F5JRiOVdme1BnKWItT+UbVpTrog5loP1kTp84jIxdpMBozQrDJViX4xQDqrAsWc
+	g+keTx6PaQpK7TAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qKV61hF2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="xm/iPv/T"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761249752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=qKV61hF2EmCTw58oGSViB9Mp42S7eJoHfRghZgni6LGuabFjcm8n9MFhQ01DEK6B2vxGsl
+	c44xT2j5QDI4l7n6/YVj7DxYeNq+OY0nRiocE1wWzzAVoBCcJ326BfwlAi8b1cwdmeRn8B
+	C2hjOENL4y93A4g73CmymZJkUo3Aed0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761249752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=xm/iPv/TMIYR9IZjlFhdxqOzO9ZKjnTSc/ayyIQ7/upn0y5ZCor5n0H8k52q9Up46O1J+p
+	rhsO661BlUsSV+Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5B58139D2;
+	Thu, 23 Oct 2025 20:02:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ihVMJ9iJ+mgDHwAAD6G6ig
+	(envelope-from <akumar@suse.de>); Thu, 23 Oct 2025 20:02:32 +0000
+From: Avinesh Kumar <akumar@suse.de>
+To: ltp@lists.linux.it, Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: arnd@kernel.org, brauner@kernel.org, jack@suse.cz,
+ regressions@lists.linux.dev, arnd@arndb.de, linux-kernel@vger.kernel.org,
+ lkft-triage@lists.linaro.org, viro@zeniv.linux.org.uk,
+ benjamin.copeland@linaro.org, linux-fsdevel@vger.kernel.org,
+ aalbersh@kernel.org, lkft@linaro.org, dan.carpenter@linaro.org
+Subject:
+ Re: [LTP] [PATCH v2] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid
+ errors
+Date: Thu, 23 Oct 2025 22:02:32 +0200
+Message-ID: <12786420.O9o76ZdvQC@thinkpad>
+In-Reply-To: <20251023164401.302967-1-naresh.kamboju@linaro.org>
+References: <20251023164401.302967-1-naresh.kamboju@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022231326.2527838-4-csander@purestorage.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D2073211C8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	CTE_CASE(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-Hi Caleb,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on kdave/for-next linus/master v6.18-rc2]
-[cannot apply to mszeredi-fuse/for-next linux-nvme/for-next next-20251023]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-Sander-Mateos/io_uring-expose-io_should_terminate_tw/20251023-071617
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20251022231326.2527838-4-csander%40purestorage.com
-patch subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
-config: arm-randconfig-002-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240319.bLypyxx1-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240319.bLypyxx1-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510240319.bLypyxx1-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> block/ioctl.c:781:8: error: return type defaults to 'int' [-Wimplicit-int]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> block/ioctl.c:781:8: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-   block/ioctl.c: In function 'DEFINE_IO_URING_CMD_TASK_WORK':
->> block/ioctl.c:784:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     784 | {
-         | ^
-   block/ioctl.c:798:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     798 | {
-         | ^
-   block/ioctl.c:853:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     853 | {
-         | ^
->> block/ioctl.c:781:8: error: type of 'blk_cmd_complete' defaults to 'int' [-Wimplicit-int]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> block/ioctl.c:876: error: expected '{' at end of input
-   block/ioctl.c: At top level:
->> block/ioctl.c:781:8: warning: 'DEFINE_IO_URING_CMD_TASK_WORK' defined but not used [-Wunused-function]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> block/ioctl.c:772:13: warning: 'blk_cmd_complete' defined but not used [-Wunused-function]
-     772 | static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
-         |             ^~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
->> drivers/nvme/host/ioctl.c:410:8: error: return type defaults to 'int' [-Wimplicit-int]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:410:8: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-   drivers/nvme/host/ioctl.c: In function 'DEFINE_IO_URING_CMD_TASK_WORK':
->> drivers/nvme/host/ioctl.c:414:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     414 | {
-         | ^
-   drivers/nvme/host/ioctl.c:441:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     441 | {
-         | ^
-   drivers/nvme/host/ioctl.c:534:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     534 | {
-         | ^
-   drivers/nvme/host/ioctl.c:544:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     544 | {
-         | ^
-   drivers/nvme/host/ioctl.c:575:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     575 | {
-         | ^
-   drivers/nvme/host/ioctl.c:605:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     605 | {
-         | ^
-   drivers/nvme/host/ioctl.c:620:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     620 | {
-         | ^
-   drivers/nvme/host/ioctl.c:632:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     632 | {
-         | ^
-   drivers/nvme/host/ioctl.c:643:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     643 | {
-         | ^
-   drivers/nvme/host/ioctl.c:666:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     666 | {
-         | ^
-   drivers/nvme/host/ioctl.c:676:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     676 | {
-         | ^
-   drivers/nvme/host/ioctl.c:777:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     777 | {
-         | ^
-   drivers/nvme/host/ioctl.c:805:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     805 | {
-         | ^
-   drivers/nvme/host/ioctl.c:842:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     842 | {
-         | ^
->> drivers/nvme/host/ioctl.c:410:8: error: type of 'nvme_uring_task_cb' defaults to 'int' [-Wimplicit-int]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:872: error: expected '{' at end of input
-   drivers/nvme/host/ioctl.c: At top level:
->> drivers/nvme/host/ioctl.c:410:8: warning: 'DEFINE_IO_URING_CMD_TASK_WORK' defined but not used [-Wunused-function]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:401:13: warning: 'nvme_uring_task_cb' defined but not used [-Wunused-function]
-     401 | static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
-         |             ^~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:329:12: warning: 'nvme_user_cmd64' defined but not used [-Wunused-function]
-     329 | static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-         |            ^~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:281:12: warning: 'nvme_user_cmd' defined but not used [-Wunused-function]
-     281 | static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-         |            ^~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:206:12: warning: 'nvme_submit_io' defined but not used [-Wunused-function]
-     206 | static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
-         |            ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+Hi,
 
 
-vim +/int +781 block/ioctl.c
+On Thursday, October 23, 2025 6:44:01 PM CEST Naresh Kamboju wrote:
+> Newer kernels (since ~v6.18-rc1) return ENOTTY instead of EINVAL when
+> invoking ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid). Update the
+> test to accept both EINVAL and ENOTTY as valid errors to ensure
+> compatibility across different kernel versions.
+> 
+> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-   771	
- > 772	static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
-   773	{
-   774		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   775	
-   776		if (bic->res == -EAGAIN && bic->nowait)
-   777			io_uring_cmd_issue_blocking(cmd);
-   778		else
-   779			io_uring_cmd_done(cmd, bic->res, issue_flags);
-   780	}
- > 781	static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-   782	
-   783	static void bio_cmd_bio_end_io(struct bio *bio)
- > 784	{
-   785		struct io_uring_cmd *cmd = bio->bi_private;
-   786		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   787	
-   788		if (unlikely(bio->bi_status) && !bic->res)
-   789			bic->res = blk_status_to_errno(bio->bi_status);
-   790	
-   791		io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
-   792		bio_put(bio);
-   793	}
-   794	
-   795	static int blkdev_cmd_discard(struct io_uring_cmd *cmd,
-   796				      struct block_device *bdev,
-   797				      uint64_t start, uint64_t len, bool nowait)
- > 798	{
-   799		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   800		gfp_t gfp = nowait ? GFP_NOWAIT : GFP_KERNEL;
-   801		sector_t sector = start >> SECTOR_SHIFT;
-   802		sector_t nr_sects = len >> SECTOR_SHIFT;
-   803		struct bio *prev = NULL, *bio;
-   804		int err;
-   805	
-   806		if (!bdev_max_discard_sectors(bdev))
-   807			return -EOPNOTSUPP;
-   808		if (!(file_to_blk_mode(cmd->file) & BLK_OPEN_WRITE))
-   809			return -EBADF;
-   810		if (bdev_read_only(bdev))
-   811			return -EPERM;
-   812		err = blk_validate_byte_range(bdev, start, len);
-   813		if (err)
-   814			return err;
-   815	
-   816		err = filemap_invalidate_pages(bdev->bd_mapping, start,
-   817						start + len - 1, nowait);
-   818		if (err)
-   819			return err;
-   820	
-   821		while (true) {
-   822			bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp);
-   823			if (!bio)
-   824				break;
-   825			if (nowait) {
-   826				/*
-   827				 * Don't allow multi-bio non-blocking submissions as
-   828				 * subsequent bios may fail but we won't get a direct
-   829				 * indication of that. Normally, the caller should
-   830				 * retry from a blocking context.
-   831				 */
-   832				if (unlikely(nr_sects)) {
-   833					bio_put(bio);
-   834					return -EAGAIN;
-   835				}
-   836				bio->bi_opf |= REQ_NOWAIT;
-   837			}
-   838	
-   839			prev = bio_chain_and_submit(prev, bio);
-   840		}
-   841		if (unlikely(!prev))
-   842			return -EAGAIN;
-   843		if (unlikely(nr_sects))
-   844			bic->res = -EAGAIN;
-   845	
-   846		prev->bi_private = cmd;
-   847		prev->bi_end_io = bio_cmd_bio_end_io;
-   848		submit_bio(prev);
-   849		return -EIOCBQUEUED;
-   850	}
-   851	
-   852	int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- > 853	{
-   854		struct block_device *bdev = I_BDEV(cmd->file->f_mapping->host);
-   855		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   856		const struct io_uring_sqe *sqe = cmd->sqe;
-   857		u32 cmd_op = cmd->cmd_op;
-   858		uint64_t start, len;
-   859	
-   860		if (unlikely(sqe->ioprio || sqe->__pad1 || sqe->len ||
-   861			     sqe->rw_flags || sqe->file_index))
-   862			return -EINVAL;
-   863	
-   864		bic->res = 0;
-   865		bic->nowait = issue_flags & IO_URING_F_NONBLOCK;
-   866	
-   867		start = READ_ONCE(sqe->addr);
-   868		len = READ_ONCE(sqe->addr3);
-   869	
-   870		switch (cmd_op) {
-   871		case BLOCK_URING_CMD_DISCARD:
-   872			return blkdev_cmd_discard(cmd, bdev, start, len, bic->nowait);
-   873		}
-   874		return -EINVAL;
-   875	}
+Tested-by: Avinesh Kumar <akumar@suse.de>
+Reviewed-by: Avinesh Kumar <akumar@suse.de>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Avinesh
+
+> ---
+>  testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> index d20c6f074..744f7def4 100644
+> --- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> +++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> @@ -4,8 +4,8 @@
+>   */
+>  
+>  /*\
+> - * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
+> - * happens when:
+> + * Verify that ioctl() raises an EINVAL or ENOTTY (since ~v6.18-rc1) error when
+> + * PIDFD_GET_INFO is used. This happens when:
+>   *
+>   * - info parameter is NULL
+>   * - info parameter is providing the wrong size
+> @@ -14,6 +14,7 @@
+>  #include "tst_test.h"
+>  #include "lapi/pidfd.h"
+>  #include "lapi/sched.h"
+> +#include <errno.h>
+>  #include "ioctl_pidfd.h"
+>  
+>  struct pidfd_info_invalid {
+> @@ -43,7 +44,12 @@ static void run(void)
+>  		exit(0);
+>  
+>  	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
+> -	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
+> +
+> +	/* Expect ioctl to fail; accept either EINVAL or ENOTTY (~v6.18-rc1) */
+> +	int exp_errnos[] = {EINVAL, ENOTTY};
+> +
+> +	TST_EXP_FAIL_ARR(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid),
+> +			exp_errnos, ARRAY_SIZE(exp_errnos));
+>  
+>  	SAFE_CLOSE(pidfd);
+>  }
+> 
+
+
+
+
 
