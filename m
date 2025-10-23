@@ -1,73 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-65380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C2AC032EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 21:30:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDB4C03387
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 21:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E4B1A65D9C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:30:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E54164F2A23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 19:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ACC34BA57;
-	Thu, 23 Oct 2025 19:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86AC34DB53;
+	Thu, 23 Oct 2025 19:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X+92uYm5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLz2Klo4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CDE2BE036
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 19:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1FF347BC3;
+	Thu, 23 Oct 2025 19:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761247816; cv=none; b=nCsDgk1xpqlCKX3qtYK2gcC+n+m4hZ+hNqR9wEy9XJjaSkRfk94/tJzIlKZVAZOXg+r0XuGtqBJZaLxSph6+1i0nAKYRLdhZy79zajNfTBfo3doqY6k+LAHnk5QKxfwr1PzOB+aptn8XfaCFGvawny+3ipUE3l+/Um5eYOCF1As=
+	t=1761249008; cv=none; b=mXxlX3awp0rEe8YSA+YBmeKPCJy0JuYd8AiOSZD1gBnvCLq/deU5UzblwafFDGxFaXkISHryxaW7+xDwdqiKvILpheMjQdW2W5JbD2ZhPd7nJTawFhWn4zoFh7UdSpPL/aVo615OGrgUhKoEi8jrRLVlDJEYMk4QEfPmSItVAY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761247816; c=relaxed/simple;
-	bh=vqsheNeYfahjh24ulsA4y8pzCWmedUOmXU6VdEqLlcw=;
+	s=arc-20240116; t=1761249008; c=relaxed/simple;
+	bh=Skua1k2e3mB8SWqi2ga5oqhkJAG1HZvPfRJSsVS0qSs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUcsYRzuJwAyKIWH2CzZCTF1i0yPGBpd0yroXSaICYrUjSVYNiu/141YvbGl67ixyqK2+Q1aOcMzpL3cfAThp3bRyV0L2AAgaH149eWSW3e7dmCQyfWEy4uOT+raYbtHdL1dctrzrSWDVmm2Xf0opbFlmzhqatHZk0jSt/m3Ns0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X+92uYm5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761247813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QJO+XRD2i+F/gyWfgm3P7eI43LJ5KyVADgPitJjDTp4=;
-	b=X+92uYm5JmQ0a8cOySkQbN7iRCzAmtQHdJLecEdrtLY1UXMvzOL7RiM5Mtuk4ua3cbgWSF
-	SuzUfdXmk+ETHjfawYIOY4xrsHUuJajGyrYgqRt7sD/YnOoM1xpGxCHUQsydO1S7drfGu5
-	CiKBwZ9oR3ZHf2H7N1i6hAJxos/4hxQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-246-xuj3Hdu1N6qj8hKcwQYhBw-1; Thu,
- 23 Oct 2025 15:30:09 -0400
-X-MC-Unique: xuj3Hdu1N6qj8hKcwQYhBw-1
-X-Mimecast-MFC-AGG-ID: xuj3Hdu1N6qj8hKcwQYhBw_1761247807
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FED21801377;
-	Thu, 23 Oct 2025 19:30:06 +0000 (UTC)
-Received: from bfoster (unknown [10.22.65.116])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE402195398C;
-	Thu, 23 Oct 2025 19:30:03 +0000 (UTC)
-Date: Thu, 23 Oct 2025 15:34:22 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, djwong@kernel.org,
-	hch@infradead.org, hsiangkao@linux.alibaba.com,
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 07/14] iomap: track pending read bytes more optimally
-Message-ID: <aPqDPjnIaR3EF5Lt@bfoster>
-References: <20250926002609.1302233-1-joannelkoong@gmail.com>
- <20250926002609.1302233-8-joannelkoong@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9etJFLdcNdjs3LkqxcO6Z+5JmcSXuGvxHKOZicH4QmsmQHgPmIgjUvKutqJW//XUCVFE3y+w6niRkYJA59K40JBCgZMzTVgxdCbPD+MOQetmz+txgpwPkp6c5fDeX2R+4F5YREkgGlUdkoLm8x2ibvWfKpXgBKkULw6EAFmtdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLz2Klo4; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761249007; x=1792785007;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Skua1k2e3mB8SWqi2ga5oqhkJAG1HZvPfRJSsVS0qSs=;
+  b=ZLz2Klo4R4tYYGviKTCdl5RTmMHx4SISJLC2aA5In695g4TTOwqXMQIH
+   afapLi8riDpW41ZNGN74d9arE+A9BMmGRmbkz3M4+Y7Zqu9fjjmg1GG9Y
+   iArXU5Hqnhbbh8/yqssDViFV+mN0EqT1O3ceQcjZqR1SgsvHVLgXCFrlh
+   PHGQ5mm7TeDwcfc31QxqVVZEgMLkX3SvaStdCiNqXq8LSYqFBWwCHSXXa
+   GwR/MeX6CxbWZfGaRXPYylv70EH9yb+7k/8AQRcAWOOUyxsHnYCtkfeU+
+   w5RzGxAM+ZW6VKWXHZd3NBjPkUnqrnY/o6v+clRjq8elVdkh42JI4AGME
+   w==;
+X-CSE-ConnectionGUID: fU+zXQlXQi6Kkp1SPCe0bg==
+X-CSE-MsgGUID: d+ZktQ+1SNmZ1ekorTf7fQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74870034"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="74870034"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:50:04 -0700
+X-CSE-ConnectionGUID: 2Rs/IhRhSS2PSn3gAgtgDQ==
+X-CSE-MsgGUID: 6Y2P8BYzRYeQpitDQCe9ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="207894922"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 23 Oct 2025 12:50:00 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vC1Jj-000Dp7-15;
+	Thu, 23 Oct 2025 19:49:50 +0000
+Date: Fri, 24 Oct 2025 03:49:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chris Mason <chris.mason@fusionio.com>,
+	David Sterba <dsterba@suse.com>
+Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
+ task work dispatch
+Message-ID: <202510240319.bLypyxx1-lkp@intel.com>
+References: <20251022231326.2527838-4-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,307 +87,240 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926002609.1302233-8-joannelkoong@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20251022231326.2527838-4-csander@purestorage.com>
 
-On Thu, Sep 25, 2025 at 05:26:02PM -0700, Joanne Koong wrote:
-> Instead of incrementing read_bytes_pending for every folio range read in
-> (which requires acquiring the spinlock to do so), set read_bytes_pending
-> to the folio size when the first range is asynchronously read in, keep
-> track of how many bytes total are asynchronously read in, and adjust
-> read_bytes_pending accordingly after issuing requests to read in all the
-> necessary ranges.
-> 
-> iomap_read_folio_ctx->cur_folio_in_bio can be removed since a non-zero
-> value for pending bytes necessarily indicates the folio is in the bio.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
+Hi Caleb,
 
-Hi Joanne,
+kernel test robot noticed the following build errors:
 
-I was throwing some extra testing at the vfs-6.19.iomap branch since the
-little merge conflict thing with iomap_iter_advance(). I end up hitting
-what appears to be a lockup on XFS with 1k FSB (-bsize=1k) running
-generic/051. It reproduces fairly reliably within a few iterations or so
-and seems to always stall during a read for a dedupe operation:
+[auto build test ERROR on axboe-block/for-next]
+[also build test ERROR on kdave/for-next linus/master v6.18-rc2]
+[cannot apply to mszeredi-fuse/for-next linux-nvme/for-next next-20251023]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-task:fsstress        state:D stack:0     pid:12094 tgid:12094 ppid:12091  task_flags:0x400140 flags:0x00080003
-Call Trace:
- <TASK>
- __schedule+0x2fc/0x7a0
- schedule+0x27/0x80
- io_schedule+0x46/0x70
- folio_wait_bit_common+0x12b/0x310
- ? __pfx_wake_page_function+0x10/0x10
- ? __pfx_xfs_vm_read_folio+0x10/0x10 [xfs]
- filemap_read_folio+0x85/0xd0
- ? __pfx_xfs_vm_read_folio+0x10/0x10 [xfs]
- do_read_cache_folio+0x7c/0x1b0
- vfs_dedupe_file_range_compare.constprop.0+0xaf/0x2d0
- __generic_remap_file_range_prep+0x276/0x2a0
- generic_remap_file_range_prep+0x10/0x20
- xfs_reflink_remap_prep+0x22c/0x300 [xfs]
- xfs_file_remap_range+0x84/0x360 [xfs]
- vfs_dedupe_file_range_one+0x1b2/0x1d0
- ? remap_verify_area+0x46/0x140
- vfs_dedupe_file_range+0x162/0x220
- do_vfs_ioctl+0x4d1/0x940
- __x64_sys_ioctl+0x75/0xe0
- do_syscall_64+0x84/0x800
- ? do_syscall_64+0xbb/0x800
- ? avc_has_perm_noaudit+0x6b/0xf0
- ? _copy_to_user+0x31/0x40
- ? cp_new_stat+0x130/0x170
- ? __do_sys_newfstat+0x44/0x70
- ? do_syscall_64+0xbb/0x800
- ? do_syscall_64+0xbb/0x800
- ? clear_bhb_loop+0x30/0x80
- ? clear_bhb_loop+0x30/0x80
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7fe6bbd9a14d
-RSP: 002b:00007ffde72cd4e0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000068 RCX: 00007fe6bbd9a14d
-RDX: 000000000a1394b0 RSI: 00000000c0189436 RDI: 0000000000000004
-RBP: 00007ffde72cd530 R08: 0000000000001000 R09: 000000000a11a3fc
-R10: 000000000001d6c0 R11: 0000000000000246 R12: 000000000a12cfb0
-R13: 000000000a12ba10 R14: 000000000a14e610 R15: 0000000000019000
- </TASK>
+url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-Sander-Mateos/io_uring-expose-io_should_terminate_tw/20251023-071617
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20251022231326.2527838-4-csander%40purestorage.com
+patch subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
+config: arm-randconfig-002-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240319.bLypyxx1-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240319.bLypyxx1-lkp@intel.com/reproduce)
 
-It wasn't immediately clear to me what the issue was so I bisected and
-it landed on this patch. It kind of looks like we're failing to unlock a
-folio at some point and then tripping over it later..? I can kill the
-fsstress process but then the umount ultimately gets stuck tossing
-pagecache [1], so the mount still ends up stuck indefinitely. Anyways,
-I'll poke at it some more but I figure you might be able to make sense
-of this faster than I can.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510240319.bLypyxx1-lkp@intel.com/
 
-Brian
+All error/warnings (new ones prefixed by >>):
 
-[1] umount stack trace: 
+>> block/ioctl.c:781:8: error: return type defaults to 'int' [-Wimplicit-int]
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> block/ioctl.c:781:8: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+   block/ioctl.c: In function 'DEFINE_IO_URING_CMD_TASK_WORK':
+>> block/ioctl.c:784:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     784 | {
+         | ^
+   block/ioctl.c:798:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     798 | {
+         | ^
+   block/ioctl.c:853:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     853 | {
+         | ^
+>> block/ioctl.c:781:8: error: type of 'blk_cmd_complete' defaults to 'int' [-Wimplicit-int]
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> block/ioctl.c:876: error: expected '{' at end of input
+   block/ioctl.c: At top level:
+>> block/ioctl.c:781:8: warning: 'DEFINE_IO_URING_CMD_TASK_WORK' defined but not used [-Wunused-function]
+     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> block/ioctl.c:772:13: warning: 'blk_cmd_complete' defined but not used [-Wunused-function]
+     772 | static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
+         |             ^~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+>> drivers/nvme/host/ioctl.c:410:8: error: return type defaults to 'int' [-Wimplicit-int]
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/nvme/host/ioctl.c:410:8: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+   drivers/nvme/host/ioctl.c: In function 'DEFINE_IO_URING_CMD_TASK_WORK':
+>> drivers/nvme/host/ioctl.c:414:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     414 | {
+         | ^
+   drivers/nvme/host/ioctl.c:441:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     441 | {
+         | ^
+   drivers/nvme/host/ioctl.c:534:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     534 | {
+         | ^
+   drivers/nvme/host/ioctl.c:544:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     544 | {
+         | ^
+   drivers/nvme/host/ioctl.c:575:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     575 | {
+         | ^
+   drivers/nvme/host/ioctl.c:605:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     605 | {
+         | ^
+   drivers/nvme/host/ioctl.c:620:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     620 | {
+         | ^
+   drivers/nvme/host/ioctl.c:632:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     632 | {
+         | ^
+   drivers/nvme/host/ioctl.c:643:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     643 | {
+         | ^
+   drivers/nvme/host/ioctl.c:666:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     666 | {
+         | ^
+   drivers/nvme/host/ioctl.c:676:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     676 | {
+         | ^
+   drivers/nvme/host/ioctl.c:777:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     777 | {
+         | ^
+   drivers/nvme/host/ioctl.c:805:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     805 | {
+         | ^
+   drivers/nvme/host/ioctl.c:842:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+     842 | {
+         | ^
+>> drivers/nvme/host/ioctl.c:410:8: error: type of 'nvme_uring_task_cb' defaults to 'int' [-Wimplicit-int]
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/nvme/host/ioctl.c:872: error: expected '{' at end of input
+   drivers/nvme/host/ioctl.c: At top level:
+>> drivers/nvme/host/ioctl.c:410:8: warning: 'DEFINE_IO_URING_CMD_TASK_WORK' defined but not used [-Wunused-function]
+     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/nvme/host/ioctl.c:401:13: warning: 'nvme_uring_task_cb' defined but not used [-Wunused-function]
+     401 | static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
+         |             ^~~~~~~~~~~~~~~~~~
+>> drivers/nvme/host/ioctl.c:329:12: warning: 'nvme_user_cmd64' defined but not used [-Wunused-function]
+     329 | static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+         |            ^~~~~~~~~~~~~~~
+>> drivers/nvme/host/ioctl.c:281:12: warning: 'nvme_user_cmd' defined but not used [-Wunused-function]
+     281 | static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+         |            ^~~~~~~~~~~~~
+>> drivers/nvme/host/ioctl.c:206:12: warning: 'nvme_submit_io' defined but not used [-Wunused-function]
+     206 | static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
+         |            ^~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-task:umount          state:D stack:0     pid:12216 tgid:12216 ppid:2514   task_flags:0x400100 flags:0x00080001
-Call Trace:
- <TASK>
- __schedule+0x2fc/0x7a0
- schedule+0x27/0x80
- io_schedule+0x46/0x70
- folio_wait_bit_common+0x12b/0x310
- ? __pfx_wake_page_function+0x10/0x10
- truncate_inode_pages_range+0x42a/0x4d0
- xfs_fs_evict_inode+0x1f/0x30 [xfs]
- evict+0x112/0x290
- evict_inodes+0x209/0x230
- generic_shutdown_super+0x42/0x100
- kill_block_super+0x1a/0x40
- xfs_kill_sb+0x12/0x20 [xfs]
- deactivate_locked_super+0x33/0xb0
- cleanup_mnt+0xba/0x150
- task_work_run+0x5c/0x90
- exit_to_user_mode_loop+0x12f/0x170
- do_syscall_64+0x1af/0x800
- ? vfs_statx+0x80/0x160
- ? do_statx+0x62/0xa0
- ? __x64_sys_statx+0xaf/0x100
- ? do_syscall_64+0xbb/0x800
- ? __x64_sys_statx+0xaf/0x100
- ? do_syscall_64+0xbb/0x800
- ? count_memcg_events+0xdd/0x1b0
- ? handle_mm_fault+0x220/0x340
- ? do_user_addr_fault+0x2c3/0x7f0
- ? clear_bhb_loop+0x30/0x80
- ? clear_bhb_loop+0x30/0x80
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7fdd641ed5ab
-RSP: 002b:00007ffd671182e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000559b3e2056b0 RCX: 00007fdd641ed5ab
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000559b3e205ac0
-RBP: 00007ffd671183c0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000103 R11: 0000000000000246 R12: 0000559b3e2057b8
-R13: 0000000000000000 R14: 0000559b3e205ac0 R15: 0000000000000000
- </TASK>
 
->  fs/iomap/buffered-io.c | 87 ++++++++++++++++++++++++++++++++----------
->  1 file changed, 66 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 09e65771a947..4e6258fdb915 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -362,7 +362,6 @@ static void iomap_read_end_io(struct bio *bio)
->  
->  struct iomap_read_folio_ctx {
->  	struct folio		*cur_folio;
-> -	bool			cur_folio_in_bio;
->  	void			*read_ctx;
->  	struct readahead_control *rac;
->  };
-> @@ -380,19 +379,11 @@ static void iomap_bio_read_folio_range(const struct iomap_iter *iter,
->  {
->  	struct folio *folio = ctx->cur_folio;
->  	const struct iomap *iomap = &iter->iomap;
-> -	struct iomap_folio_state *ifs = folio->private;
->  	size_t poff = offset_in_folio(folio, pos);
->  	loff_t length = iomap_length(iter);
->  	sector_t sector;
->  	struct bio *bio = ctx->read_ctx;
->  
-> -	ctx->cur_folio_in_bio = true;
-> -	if (ifs) {
-> -		spin_lock_irq(&ifs->state_lock);
-> -		ifs->read_bytes_pending += plen;
-> -		spin_unlock_irq(&ifs->state_lock);
-> -	}
-> -
->  	sector = iomap_sector(iomap, pos);
->  	if (!bio || bio_end_sector(bio) != sector ||
->  	    !bio_add_folio(bio, folio, plen, poff)) {
-> @@ -422,8 +413,57 @@ static void iomap_bio_read_folio_range(const struct iomap_iter *iter,
->  	}
->  }
->  
-> +static void iomap_read_init(struct folio *folio)
-> +{
-> +	struct iomap_folio_state *ifs = folio->private;
-> +
-> +	if (ifs) {
-> +		size_t len = folio_size(folio);
-> +
-> +		spin_lock_irq(&ifs->state_lock);
-> +		ifs->read_bytes_pending += len;
-> +		spin_unlock_irq(&ifs->state_lock);
-> +	}
-> +}
-> +
-> +static void iomap_read_end(struct folio *folio, size_t bytes_pending)
-> +{
-> +	struct iomap_folio_state *ifs;
-> +
-> +	/*
-> +	 * If there are no bytes pending, this means we are responsible for
-> +	 * unlocking the folio here, since no IO helper has taken ownership of
-> +	 * it.
-> +	 */
-> +	if (!bytes_pending) {
-> +		folio_unlock(folio);
-> +		return;
-> +	}
-> +
-> +	ifs = folio->private;
-> +	if (ifs) {
-> +		bool end_read, uptodate;
-> +		size_t bytes_accounted = folio_size(folio) - bytes_pending;
-> +
-> +		spin_lock_irq(&ifs->state_lock);
-> +		ifs->read_bytes_pending -= bytes_accounted;
-> +		/*
-> +		 * If !ifs->read_bytes_pending, this means all pending reads
-> +		 * by the IO helper have already completed, which means we need
-> +		 * to end the folio read here. If ifs->read_bytes_pending != 0,
-> +		 * the IO helper will end the folio read.
-> +		 */
-> +		end_read = !ifs->read_bytes_pending;
-> +		if (end_read)
-> +			uptodate = ifs_is_fully_uptodate(folio, ifs);
-> +		spin_unlock_irq(&ifs->state_lock);
-> +		if (end_read)
-> +			folio_end_read(folio, uptodate);
-> +	}
-> +}
-> +
->  static int iomap_read_folio_iter(struct iomap_iter *iter,
-> -		struct iomap_read_folio_ctx *ctx)
-> +		struct iomap_read_folio_ctx *ctx, size_t *bytes_pending)
->  {
->  	const struct iomap *iomap = &iter->iomap;
->  	loff_t pos = iter->pos;
-> @@ -460,6 +500,9 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
->  			folio_zero_range(folio, poff, plen);
->  			iomap_set_range_uptodate(folio, poff, plen);
->  		} else {
-> +			if (!*bytes_pending)
-> +				iomap_read_init(folio);
-> +			*bytes_pending += plen;
->  			iomap_bio_read_folio_range(iter, ctx, pos, plen);
->  		}
->  
-> @@ -482,17 +525,18 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
->  	struct iomap_read_folio_ctx ctx = {
->  		.cur_folio	= folio,
->  	};
-> +	size_t bytes_pending = 0;
->  	int ret;
->  
->  	trace_iomap_readpage(iter.inode, 1);
->  
->  	while ((ret = iomap_iter(&iter, ops)) > 0)
-> -		iter.status = iomap_read_folio_iter(&iter, &ctx);
-> +		iter.status = iomap_read_folio_iter(&iter, &ctx,
-> +				&bytes_pending);
->  
->  	iomap_bio_submit_read(&ctx);
->  
-> -	if (!ctx.cur_folio_in_bio)
-> -		folio_unlock(folio);
-> +	iomap_read_end(folio, bytes_pending);
->  
->  	/*
->  	 * Just like mpage_readahead and block_read_full_folio, we always
-> @@ -504,24 +548,23 @@ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops)
->  EXPORT_SYMBOL_GPL(iomap_read_folio);
->  
->  static int iomap_readahead_iter(struct iomap_iter *iter,
-> -		struct iomap_read_folio_ctx *ctx)
-> +		struct iomap_read_folio_ctx *ctx, size_t *cur_bytes_pending)
->  {
->  	int ret;
->  
->  	while (iomap_length(iter)) {
->  		if (ctx->cur_folio &&
->  		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
-> -			if (!ctx->cur_folio_in_bio)
-> -				folio_unlock(ctx->cur_folio);
-> +			iomap_read_end(ctx->cur_folio, *cur_bytes_pending);
->  			ctx->cur_folio = NULL;
->  		}
->  		if (!ctx->cur_folio) {
->  			ctx->cur_folio = readahead_folio(ctx->rac);
->  			if (WARN_ON_ONCE(!ctx->cur_folio))
->  				return -EINVAL;
-> -			ctx->cur_folio_in_bio = false;
-> +			*cur_bytes_pending = 0;
->  		}
-> -		ret = iomap_read_folio_iter(iter, ctx);
-> +		ret = iomap_read_folio_iter(iter, ctx, cur_bytes_pending);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -554,16 +597,18 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
->  	struct iomap_read_folio_ctx ctx = {
->  		.rac	= rac,
->  	};
-> +	size_t cur_bytes_pending;
->  
->  	trace_iomap_readahead(rac->mapping->host, readahead_count(rac));
->  
->  	while (iomap_iter(&iter, ops) > 0)
-> -		iter.status = iomap_readahead_iter(&iter, &ctx);
-> +		iter.status = iomap_readahead_iter(&iter, &ctx,
-> +					&cur_bytes_pending);
->  
->  	iomap_bio_submit_read(&ctx);
->  
-> -	if (ctx.cur_folio && !ctx.cur_folio_in_bio)
-> -		folio_unlock(ctx.cur_folio);
-> +	if (ctx.cur_folio)
-> +		iomap_read_end(ctx.cur_folio, cur_bytes_pending);
->  }
->  EXPORT_SYMBOL_GPL(iomap_readahead);
->  
-> -- 
-> 2.47.3
-> 
-> 
+vim +/int +781 block/ioctl.c
 
+   771	
+ > 772	static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
+   773	{
+   774		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+   775	
+   776		if (bic->res == -EAGAIN && bic->nowait)
+   777			io_uring_cmd_issue_blocking(cmd);
+   778		else
+   779			io_uring_cmd_done(cmd, bic->res, issue_flags);
+   780	}
+ > 781	static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
+   782	
+   783	static void bio_cmd_bio_end_io(struct bio *bio)
+ > 784	{
+   785		struct io_uring_cmd *cmd = bio->bi_private;
+   786		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+   787	
+   788		if (unlikely(bio->bi_status) && !bic->res)
+   789			bic->res = blk_status_to_errno(bio->bi_status);
+   790	
+   791		io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
+   792		bio_put(bio);
+   793	}
+   794	
+   795	static int blkdev_cmd_discard(struct io_uring_cmd *cmd,
+   796				      struct block_device *bdev,
+   797				      uint64_t start, uint64_t len, bool nowait)
+ > 798	{
+   799		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+   800		gfp_t gfp = nowait ? GFP_NOWAIT : GFP_KERNEL;
+   801		sector_t sector = start >> SECTOR_SHIFT;
+   802		sector_t nr_sects = len >> SECTOR_SHIFT;
+   803		struct bio *prev = NULL, *bio;
+   804		int err;
+   805	
+   806		if (!bdev_max_discard_sectors(bdev))
+   807			return -EOPNOTSUPP;
+   808		if (!(file_to_blk_mode(cmd->file) & BLK_OPEN_WRITE))
+   809			return -EBADF;
+   810		if (bdev_read_only(bdev))
+   811			return -EPERM;
+   812		err = blk_validate_byte_range(bdev, start, len);
+   813		if (err)
+   814			return err;
+   815	
+   816		err = filemap_invalidate_pages(bdev->bd_mapping, start,
+   817						start + len - 1, nowait);
+   818		if (err)
+   819			return err;
+   820	
+   821		while (true) {
+   822			bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp);
+   823			if (!bio)
+   824				break;
+   825			if (nowait) {
+   826				/*
+   827				 * Don't allow multi-bio non-blocking submissions as
+   828				 * subsequent bios may fail but we won't get a direct
+   829				 * indication of that. Normally, the caller should
+   830				 * retry from a blocking context.
+   831				 */
+   832				if (unlikely(nr_sects)) {
+   833					bio_put(bio);
+   834					return -EAGAIN;
+   835				}
+   836				bio->bi_opf |= REQ_NOWAIT;
+   837			}
+   838	
+   839			prev = bio_chain_and_submit(prev, bio);
+   840		}
+   841		if (unlikely(!prev))
+   842			return -EAGAIN;
+   843		if (unlikely(nr_sects))
+   844			bic->res = -EAGAIN;
+   845	
+   846		prev->bi_private = cmd;
+   847		prev->bi_end_io = bio_cmd_bio_end_io;
+   848		submit_bio(prev);
+   849		return -EIOCBQUEUED;
+   850	}
+   851	
+   852	int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ > 853	{
+   854		struct block_device *bdev = I_BDEV(cmd->file->f_mapping->host);
+   855		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
+   856		const struct io_uring_sqe *sqe = cmd->sqe;
+   857		u32 cmd_op = cmd->cmd_op;
+   858		uint64_t start, len;
+   859	
+   860		if (unlikely(sqe->ioprio || sqe->__pad1 || sqe->len ||
+   861			     sqe->rw_flags || sqe->file_index))
+   862			return -EINVAL;
+   863	
+   864		bic->res = 0;
+   865		bic->nowait = issue_flags & IO_URING_F_NONBLOCK;
+   866	
+   867		start = READ_ONCE(sqe->addr);
+   868		len = READ_ONCE(sqe->addr3);
+   869	
+   870		switch (cmd_op) {
+   871		case BLOCK_URING_CMD_DISCARD:
+   872			return blkdev_cmd_discard(cmd, bdev, start, len, bic->nowait);
+   873		}
+   874		return -EINVAL;
+   875	}
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
