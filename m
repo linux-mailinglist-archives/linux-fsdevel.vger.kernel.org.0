@@ -1,148 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-65296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689CBC009F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C91C9C00A2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 13:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56F5C4EAAF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:03:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B5A14F3011
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 11:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DE930B514;
-	Thu, 23 Oct 2025 11:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2765A30C35A;
+	Thu, 23 Oct 2025 11:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oI5i6AjN"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="KTtZ9kPr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZvSBd6Pk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3337530C375;
-	Thu, 23 Oct 2025 11:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351328C00C;
+	Thu, 23 Oct 2025 11:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217420; cv=none; b=YXozHbNTs4eKT0gQlC0qlLJ8hgQTG6eJUc2bGMqxVY7ISwsQ9lqnTC7gKgQCqUql4oI0xPMalCgvk+3bmCcKd0yTvAhGsXT7bEgl+Hfs3CmLHQt3Zk+7qDhSZl5G6l2NakLbM/V625yXZPiCZgVJUN6L6KSPkeSSCpblZvg0rqc=
+	t=1761217760; cv=none; b=F3rllKotjNB2ksrTJlYW2DdKl/pJpHv+eJr+aw3gqk8DnuMXhTMMKVCSQQTblWvn2GyF98VwoXS4S+4D+mrft9yyDyoRzZEtPBnMdwK/C4C51B5jdveK7mm2n6D8WMwFJyxHfYFPsxbnriivx2+CMCp0mOtXU2X5AeTSHHGPC2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217420; c=relaxed/simple;
-	bh=hgYU/otvTYwYyjpmBrCCG+P8GjUEb3ooE2uhRepKbWE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=FiqTHtujGQMWMaFFtVh+UGaw7TXypITnOwvCgNUVuU+SOeIikMnL6Ov3BiGRW4b1+UN35IlN9L0zwNlfAb3LNBMLJpQAN6WMcOvhLTu2XCSNUl9DTF11bj3uDnAvKIRb9w/p5V3gNCnBfLO+L1Lko9jWvW0V7FR42joLx6LPLzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oI5i6AjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D12C8C4CEE7;
-	Thu, 23 Oct 2025 11:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761217419;
-	bh=hgYU/otvTYwYyjpmBrCCG+P8GjUEb3ooE2uhRepKbWE=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=oI5i6AjNf9nLRpgx+TtRRPlMFvvGB53Krcu+hLbmzevmSOeL8pwcw1XCl5bh5xIra
-	 rzZ1xlUfgf3MLhlc4vEppPWONdUe0/UilNX0N+Nq3/aj9mM5ZrEkUF/m8nIcmxaIEO
-	 L279y7rMulLjLGKHjHlpdDabWgwDow6B1ucMcQTEnySRrQc9QfKzJ0jhpm2q7pTwFq
-	 vit6M1gntqMI6WVxuOKufbXAnRPphPc6+Oy7XVIXcpiTPCRaiv+Rc5pTsrfBZvBnZR
-	 L/19+j2qlWXj4/nsGxPzgEujokOZxYbEoL5lgi5j/Wa8zfMVtcUJiSimpavSCRyuOz
-	 cuspWsNXjSxHw==
+	s=arc-20240116; t=1761217760; c=relaxed/simple;
+	bh=TCq9qcVCutQlKO9j2oFwyEX6973EaileswZin2dPFvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=putk1LE7xSVdnlFvmOyC4aSJ5+bMnGPrx3c0LgilaLuonQ+33tsuBKUU3S5G7O8mSq+U9WBEF977/1a+2q7BzsEufBF0IBEb6Lyg52/9vF8HUFFosOxGqDX1+lp3+0f0sTltoAD2Z6+dU1MHPuEktL9OlnSYaNK13loJHXsXniA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=KTtZ9kPr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZvSBd6Pk; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 54A967A01AA;
+	Thu, 23 Oct 2025 07:09:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Thu, 23 Oct 2025 07:09:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761217755; x=
+	1761304155; bh=e9KawlaDhjJS+ZMKZhm8w/oQQAYs/+bmrKLwAa9o+Oo=; b=K
+	TtZ9kPrsDfd+3EaDrvYvKpHAYzkTIVJrAmKe43FITa5lv0nU0iv1DvSxHM2brJHP
+	gXTzRl0evfqb/S4E1iAxXB8h82GaBDpSCh81DC1kl1jdJvli7hF3tMxQW2BXQIfX
+	C9TPWrTl258e/B7muQMshy7xxhDnc2hzV4ymHyBQr0pL1R0mz0HvVqOXyxjBT1gd
+	FAK5k3Ab0NutyVxM7b/mHjEfS1zhsklO20wj3qj29BFELNA4MNl0klKX8SG3X7FK
+	Tk+j8/6L/LHxHk9wo6ugVTSkkUDpb/IU5o0y7HmBoDrLB66MxRaG7NkTnx+6b3aj
+	9+M5Dixxcx7gLWJceyAQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761217755; x=1761304155; bh=e9KawlaDhjJS+ZMKZhm8w/oQQAYs/+bmrKL
+	wAa9o+Oo=; b=ZvSBd6PkTl7poelfrzGYRIkas/w2kqCzCVlPo33fflhWd8vbGGD
+	QpOuZsa7EN85wVTexfkKIF24Ia5/TCUpbU8qL+h3KWOp8kJ/cYsCw/m0qryEg6ND
+	D7BxD273UqTbDugWmRK8c2bZU2ObW/RUbITAwpMcIrw1eWmI5O82Zfb5UZ2q7/5W
+	fApkBz1Nk+eD+UgFEdLSpvSDaj3toTfNrTN3eyYTeHLpuHXv/fbaZV3q/7DiWzve
+	ZPiB/ockgXEUtYhDYcn/k0GNk9IF79AVhN+Q1S5GK1blhpv/J1laU8OqzQd+Hpk+
+	pvnwF2igK+u6FU/zLCBq5ehZT/EAJpI3hAA==
+X-ME-Sender: <xms:2gz6aLgPC_4h27QyswLx5Cwse3RkDSj_uz_4GZaG8mnNLHpnvEabCg>
+    <xme:2gz6aJWyRsYlYESon6RK4edRatJupDlTRapA3AHpbp1OC7G-aAelaSHYHjSyTnKfX
+    9YEjjSqwREQkeITFqtnRZ_BmWqrui-aoIUY0rsoMSJzjAWPlOIE8_M>
+X-ME-Received: <xmr:2gz6aPvrFmO55TAZcbaCU-gBvZySktHrGHEVrq2_E4mX_Q8BWgYEbXORR3UfaQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeifedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    epthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
+    thhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsg
+    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
+    tgiipdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:2gz6aK-j5ahkGjat69k16dsaj_YxKtt6KtPiks_qU2wDXwki7BDPRg>
+    <xmx:2gz6aPuITyhUJk6Nw5pKFFQR6WrAIQmg30Seq_-GRtZp0CNvCvcnTg>
+    <xmx:2gz6aA6cv6s3eOCKW0IeSI7ZfBvceFJVxxXs8Xr538dmhrLrLBnkJg>
+    <xmx:2gz6aINJcBwkBSnrruG4pP9k_2H-RjmOYbZ2I3uAnWQ8EefKooggHA>
+    <xmx:2wz6aJnHpCeaO4Lu5OQQekx6DiIO6DwritTNhnpjWjS4xbjI3-7k-luM>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 07:09:14 -0400 (EDT)
+Date: Thu, 23 Oct 2025 12:09:12 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <55p3kov54tjf5cr2sm3h3z7hv5cq6nlcqihlyxa427pz5mtkuv@nddjx4onw6mq>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+ <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Oct 2025 13:03:35 +0200
-Message-Id: <DDPNGUVNJR6K.SX999PDIF1N2@kernel.org>
-Subject: Re: [PATCH v3 05/10] rust: uaccess: add
- UserSliceWriter::write_slice_file()
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <tmgross@umich.edu>, <mmaurer@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251022143158.64475-1-dakr@kernel.org>
- <20251022143158.64475-6-dakr@kernel.org> <aPnnkU3IWwgERuT3@google.com>
- <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
- <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
-In-Reply-To: <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
 
-On Thu Oct 23, 2025 at 12:37 PM CEST, Alice Ryhl wrote:
-> On Thu, Oct 23, 2025 at 12:35=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
->>
->> On Thu Oct 23, 2025 at 10:30 AM CEST, Alice Ryhl wrote:
->> > On Wed, Oct 22, 2025 at 04:30:39PM +0200, Danilo Krummrich wrote:
->> >> Add UserSliceWriter::write_slice_file(), which is the same as
->> >> UserSliceWriter::write_slice_partial() but updates the given
->> >> file::Offset by the number of bytes written.
->> >>
->> >> This is equivalent to C's `simple_read_from_buffer()` and useful when
->> >> dealing with file offsets from file operations.
->> >>
->> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> >> ---
->> >>  rust/kernel/uaccess.rs | 24 ++++++++++++++++++++++++
->> >>  1 file changed, 24 insertions(+)
->> >>
->> >> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
->> >> index 539e77a09cbc..20ea31781efb 100644
->> >> --- a/rust/kernel/uaccess.rs
->> >> +++ b/rust/kernel/uaccess.rs
->> >> @@ -495,6 +495,30 @@ pub fn write_slice_partial(&mut self, data: &[u8=
-], offset: usize) -> Result<usiz
->> >>              .map_or(Ok(0), |src| self.write_slice(src).map(|()| src.=
-len()))
->> >>      }
->> >>
->> >> +    /// Writes raw data to this user pointer from a kernel buffer pa=
-rtially.
->> >> +    ///
->> >> +    /// This is the same as [`Self::write_slice_partial`] but update=
-s the given [`file::Offset`] by
->> >> +    /// the number of bytes written.
->> >> +    ///
->> >> +    /// This is equivalent to C's `simple_read_from_buffer()`.
->> >> +    ///
->> >> +    /// On success, returns the number of bytes written.
->> >> +    pub fn write_slice_file(&mut self, data: &[u8], offset: &mut fil=
-e::Offset) -> Result<usize> {
->> >> +        if offset.is_negative() {
->> >> +            return Err(EINVAL);
->> >> +        }
->> >> +
->> >> +        let Ok(offset_index) =3D (*offset).try_into() else {
->> >> +            return Ok(0);
->> >> +        };
->> >> +
->> >> +        let written =3D self.write_slice_partial(data, offset_index)=
-?;
->> >> +
->> >> +        *offset =3D offset.saturating_add_usize(written);
->> >
->> > This addition should never overflow:
->>
->> It probably never will (which is why this was a + operation in v1).
->>
->> >       offset + written <=3D data.len() <=3D isize::MAX <=3D Offset::MA=
-X
->>
->> However, this would rely on implementation details you listed, i.e. the
->> invariant that a slice length should be at most isize::MAX and what's th=
-e
->> maximum size of file::Offset::MAX.
->
-> It's not an implementation detail. All Rust allocations are guaranteed
-> to fit in isize::MAX bytes:
-> https://doc.rust-lang.org/stable/std/ptr/index.html#allocation
+On Thu, Oct 23, 2025 at 12:54:59PM +0200, David Hildenbrand wrote:
+> On 23.10.25 12:31, Kiryl Shutsemau wrote:
+> > On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+> > > "garbage" as in pointing at something without a direct map, something that's
+> > > protected differently (MTE? weird CoCo protection?) or even worse MMIO with
+> > > undesired read-effects.
+> > 
+> > Pedro already points to the problem with missing direct mapping.
+> > _nofault() copy should help with this.
+> 
+> Yeah, we do something similar when reading the kcore for that reason.
+> 
+> > 
+> > Can direct mapping ever be converted to MMIO? It can be converted to DMA
+> > buffer (which is fine), but MMIO? I have not seen it even in virtualized
+> > environments.
+> 
+> I recall discussions in the context of PAT and the adjustment of caching
+> attributes of the direct map for MMIO purposes: so I suspect there are ways
+> that can happen, but I am not 100% sure.
+> 
+> 
+> Thinking about it, in VMs we have the direct map set on balloon inflated
+> pages that should not be touched, not even read, otherwise your hypervisor
+> might get very angry. That case we could likely handle by checking whether
+> the source page actually exists and doesn't have PageOffline() set, before
+> accessing it. A bit nasty.
+> 
+> A more obscure cases would probably be reading a page that was poisoned by
+> hardware and is not expected to be used anymore. Could also be checked by
+> checking the page.
 
-Yeah, I'm aware -- I expressed this badly.
+I don't think we can check the page. Since the page is not stabilized
+with a reference, it is TOCTOU race. If there's some side effect that
+we cannot suppress on read (like _nofault() does) we are screwed.
 
-What I meant is that for the kernel we obviously know that there's no
-architecture where isize::MAX > file::Offset::MAX.
-
-However, in the core API the conversion from usize to u128 is considered
-fallible. So, applying the assumption that isize::MAX <=3D file::Offset::MA=
-X is at
-least inconsistent.
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
