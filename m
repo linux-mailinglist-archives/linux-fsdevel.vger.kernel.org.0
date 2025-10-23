@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-65335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398FCC01AFC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 16:15:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C09C0203A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 17:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD373BB24D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 14:02:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC861540CD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 15:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F010631A56B;
-	Thu, 23 Oct 2025 14:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4B93328FC;
+	Thu, 23 Oct 2025 15:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvgvWu7l"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M7Zby9xO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907732AACB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 14:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF743148BA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 15:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228078; cv=none; b=F7L9LaFx5fMejnDOKJ/b8Te8Tf+JMHNn5ezBEZ+/PJI2fze62iLNd0mZR0zylmoI37dO/RTtSHQ3pJzgoiKTBF6js466AC6PwcYtTUmn79W22zukfqcQJzvkJlviPEDbrRh08OdByiP5Ox2tHffb2fX5s7P5QSuBAAnb4Bd43Bg=
+	t=1761231938; cv=none; b=pjSbtkOq1VyHpfzK18JyViYMJZBBK9pTuhIZPlXwDsV0rMcMUgf2l407MOUh+BUbsHHuUz5blBajL2xqIqqb37nFwizow2+JhlRCIYLzSYfIK37CHOCub5/Xvi+ni2RHVECWY1Ck8AT2biN2FgZbGNkqkqfgYs/fk+3eYO4bpKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228078; c=relaxed/simple;
-	bh=nf2ne/DcUThRcyjkcAtbjjiK8XPQU5PLVC7WSh7jfZU=;
+	s=arc-20240116; t=1761231938; c=relaxed/simple;
+	bh=jz93bF63ecWHqlpsfaTIWZ1F+DloVz29gxl65xxvxP8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hsmlktkvVed/rKcb9EL3dzKhRWRQU0kAfQB6fLewr7oz+l4IdI05I92sTRglZTE+YunF/X1jfRIRNJUbXn0xZpQMyoTZ7jqRFdMGNZlc35V5DQ3y5SIvLfWhdyY22DZj61LmQWdvf3dAXv+9NMU7oc9fN+4yam6ZCQ1fSc8bEyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvgvWu7l; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=WqIwgVoKB4vIFejteaHj4aFyeI09fOXF7L2o5jnOhEi9bwRl+cC7WHq9/uW6mb3Wf8jG3bCuudyyRcBgFOCSvZiV89L8UL9i/ppbTuyZ7LQp/3MnLq5ZnMzwHNNAAdFwfNXL3SoooBGyY+oiWwTvG6e8tyOFgms8uawZpTzUJ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M7Zby9xO; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7810289cd5eso1884489b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 07:01:15 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b6ce1b57b9cso648744a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 08:05:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761228075; x=1761832875; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761231936; x=1761836736; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=inXfddpf6Feyogc8n8Jl5cqVWZOSr51ivnMHY9v0Ey4=;
-        b=FvgvWu7lfkFsFHXEZtj4lw7glbTHzzUEGsEFkLBSyj5lOlrLDU1oghGofvy5n8eOsf
-         hNVds9VXo38wQYB6NTIGzXHSQxJqYajWlPt7009pp2gIii3hh6WwEU9ZD/I4QT7d2bea
-         WCWA56SQxCTKKATjTNzT+lP8oUtynF4+UfwgKPQjst0Xh/ycZHGg8SpB0lZqE/5jPJp6
-         CFTvHYr2ydcrrce3Dm0itC9rIq2bP6EIsKxFqfTiJrJTlg+JsT7q3befgm83FU6T6yNe
-         NI15GlfmkS+YcZs/EH0m47+UgRKGlt6IVvi766TFbKBUkqMBdAj7OK5mBSQiizp6e0mx
-         bTcw==
+        bh=PvcmXgf+o6Tu2cYvhHpGmpe9m3a/ceHWHcYak3PalII=;
+        b=M7Zby9xOPXaShDYfHfELOZo+QIPupBI+fSUhPtUzu8LpLDzqODas4KLyd45oYCyAF8
+         BDxJv0hNgFLFoB8WQcIXM00OkNa79EuitP9lwB6a1flH00FPjoJql2i6MS0i6b4VNMHd
+         YNSloQK9lH9CXXwzouz+JypLxzeZxgc1xeDUpSCTKAItWzF7UiMt+e/I1MBpFeRulRun
+         HKkA6NEPOx8XCDgUnnkYTUJNHuXc9jt68IA6uqroZdH3pPDKlADQDB4/t2+S7B22u6Hd
+         Xei2sVhVvQyzMKQeO5urHWG2DtyKldzVKDB6mFy7mjgIM6JQsZqlWiyEmbDgTN26HkJA
+         bMfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761228075; x=1761832875;
+        d=1e100.net; s=20230601; t=1761231936; x=1761836736;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=inXfddpf6Feyogc8n8Jl5cqVWZOSr51ivnMHY9v0Ey4=;
-        b=m8NOpxXL+roR/3S8Jys+ljuvLOJ8D5H8g7cSymU5wJo7Qq/NigRzpDfop+0MZqNSpW
-         juR4ZvfkEo/4ycJ/XVRx8ROu3Z0WiPneivUtSKQy04kgi94Cp6Ilxs9+Hym6joGS44L8
-         uyuV0RGIXpM1W/wAHoa+zb6eSYJtLckMqQAH1atTBesdOXDhj1swi31lg8BVS6sqBV8S
-         I2QanzhecWkRu0ZIsN7Ois4wGpWer+06W4SQPEVZaLjvdbSUgwHjmEZlr1nqvLn6VLUc
-         PPXoMQL3KiGXMB6hzgTPmzv1P8gv4pCQVX2rvShedKwC2SgZqK5WQkyGuISPsX4ouAU3
-         zE+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWEboeJY4akrdZBtXmiSo3DoZmvpvjqbytQTXF3ys1bbsaD8cy6FMUjXuPSC4PWelrYQxXHRqYu8JkfxoAQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwINcKsh8ry/BPOijLGpvHulSTxoDdkBzDKjBDbMJ02OzuBTygk
-	pyZmaZog7av+JQpF6NW7ue5856kHBFqaU5sGX6WJ5TKRrO3ouhBUdpxVxoseHcxUExM4GJOwiQG
-	Genky2hCw9pU3sGdE4x49H2l0hw==
-X-Google-Smtp-Source: AGHT+IFIN8uFRC6EtqcEGeMEkYd8inzutN6W/XJij2WhQjtYZx5ArSxhlm3XOqfP/3yjcqmWzVtyJ1fSE/ev6eLgRw==
-X-Received: from pjnu4.prod.google.com ([2002:a17:90a:8904:b0:339:dc19:ae5d])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:3956:b0:334:91ab:f182 with SMTP id adf61e73a8af0-334a85286f8mr35842433637.10.1761228074886;
- Thu, 23 Oct 2025 07:01:14 -0700 (PDT)
-Date: Thu, 23 Oct 2025 07:01:13 -0700
-In-Reply-To: <aPlpKbHGea90IebS@google.com>
+        bh=PvcmXgf+o6Tu2cYvhHpGmpe9m3a/ceHWHcYak3PalII=;
+        b=BV8tS4leRfCTqbeYveJ7W5VBN+VXdx5508lU0pxERqh9WkoGgmUj709/Ss0y7Iyu6C
+         rlyTj0J71D6hivM7HjpSxgHDZxwP1TJ6AKpoKJgCjKfkTUKIoQv17M87LwFdwGQMWjwQ
+         jn2yJoetJel39ojHs5rYl377tgMqc/d7IEkoZPGYiOTAu0fvmVC+GFseQrv9Ye4FRf3K
+         Orq6b1qj7q97Xi3HPX5qP1IW7y5wxWUkgdP5PLM2I1FcZgP2nXVjBLp2+fmT3bIGVA4B
+         gsyUGoXpjSqB06WJjRpFWbtG9mZ6ufEJHntDIlwCUmvQpYLWsftXB5UasaEQ1eUBAKiw
+         O0cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW90aqzMRWfnIhMXVchF688NdWevhITR/lXw2s9Ss9BL8iIBtQ/peMwVrWlv4kqHxLsLjmS8JY8puUTwT5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaPDkkMInszB7KIqJBxqDLSbVvo2H9MyMZUSFn0c3Jkg10x0B0
+	eY6SaOAjJGBkTrnWxZxQlQ2XRL1bnCF+p7f4XCwjJ8HaeedDY3kSs0r2OPIfeqbrMsEiD0aG+Rm
+	GZ/62JQ==
+X-Google-Smtp-Source: AGHT+IHpWV5RNhKUXvWMGZ+xD8d/MTd1Ze+E21K0nbVEiBP6P7EQ34tE5jerqVVq8m5WkJ7UUYnKv9jKozQ=
+X-Received: from pjbsd7.prod.google.com ([2002:a17:90b:5147:b0:33b:b3b8:216b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3141:b0:32d:e07f:3236
+ with SMTP id 98e67ed59e1d1-33bcf8e3ab0mr32372876a91.22.1761231935591; Thu, 23
+ Oct 2025 08:05:35 -0700 (PDT)
+Date: Thu, 23 Oct 2025 08:05:33 -0700
+In-Reply-To: <diqzv7k5emza.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,11 +74,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
  <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
- <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
-Message-ID: <diqzv7k5emza.fsf@google.com>
+ <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com> <diqzv7k5emza.fsf@google.com>
+Message-ID: <aPpEPZ4YfrRHIkal@google.com>
 Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
 Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
 	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
@@ -109,87 +109,56 @@ Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kerne
 	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
 	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
 	yuzenghui@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 
-Sean Christopherson <seanjc@google.com> writes:
+On Thu, Oct 23, 2025, Ackerley Tng wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+> > On Wed, Oct 22, 2025, Ackerley Tng wrote:
+> >> Ackerley Tng <ackerleytng@google.com> writes:
+> >> 
+> >> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
+> >> 
+> >> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
+> >> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
+> >> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
+> >> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
+> >
+> > No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
+> > exists is largely irrelevant.
+> 
+> That's true.
+> 
+> > We can even provide the same -ENOTTY errno by
+> > checking that _any_ attributes are supported, i.e. so that doing
+> > KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
+> > same way that KVM with code support but no attributes fails.
+> 
+> IIUC KVM_SET_MEMORY_ATTRIBUTES doesn't fail with -ENOTTY now when there
+> are no valid attributes.
+> 
+> Even if there's no valid attributes (as in
+> kvm_supported_mem_attributes() returns 0), it's possible to call
+> KVM_SET_MEMORY_ATTRIBUTES with .attributes set to 0, which will be a
+> no-op, but will return 0.
+> 
+> I think this is kind of correct behavior since .attributes = 0 is
+> actually a valid expression for "I want this range to be shared", and
+> for a VM that doesn't support private memory, it's a valid expression.
+> 
+> 
+> The other way that there are "no attributes" would be if there are no
+> /VM/ attributes, in which case KVM_SET_MEMORY_ATTRIBUTES, sent to as a
+> vm ioctl, will return -ENOTTY.
 
-> On Wed, Oct 22, 2025, Ackerley Tng wrote:
->> Ackerley Tng <ackerleytng@google.com> writes:
->> 
->> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
->> 
->> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
->> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
->> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
->> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
->
-> No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
-> exists is largely irrelevant.
+Ya, this is what I was trying to say with "_any_ attributes are supported".  I.e.
+by "any" I meant "any attributes in KVM for VMs vs. gmems", not "any attributes
+for this specific VM/gmem instance".
 
-That's true.
+> > In other words, I don't see why it can't do both.  Even if we can't massage the
+> > right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
+> 
+> Did you mean KVM_CAP_MEMORY_ATTRIBUTES2 in the line above?
 
-> We can even provide the same -ENOTTY errno by
-> checking that _any_ attributes are supported, i.e. so that doing
-> KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
-> same way that KVM with code support but no attributes fails.
->
-
-IIUC KVM_SET_MEMORY_ATTRIBUTES doesn't fail with -ENOTTY now when there
-are no valid attributes.
-
-Even if there's no valid attributes (as in
-kvm_supported_mem_attributes() returns 0), it's possible to call
-KVM_SET_MEMORY_ATTRIBUTES with .attributes set to 0, which will be a
-no-op, but will return 0.
-
-I think this is kind of correct behavior since .attributes = 0 is
-actually a valid expression for "I want this range to be shared", and
-for a VM that doesn't support private memory, it's a valid expression.
-
-
-The other way that there are "no attributes" would be if there are no
-/VM/ attributes, in which case KVM_SET_MEMORY_ATTRIBUTES, sent to as a
-vm ioctl, will return -ENOTTY.
-
-> In other words, I don't see why it can't do both.  Even if we can't massage the
-> right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
-
-Did you mean KVM_CAP_MEMORY_ATTRIBUTES2 in the line above?
-
-> supported attributes than simply '1'.  E.g. we have no plans to support
-> KVM_SET_MEMORY_ATTRIBUTES on guest_memfd, and so returning simply '1' creates an
-> unwanted and unnecessary dependency.
->
-
-Okay I'll switch this back to what it was.
-
->> @@ -1617,4 +1618,15 @@ struct kvm_pre_fault_memory {
->>  	__u64 padding[5];
->>  };
->>  
->> +/* Available with KVM_CAP_MEMORY_ATTRIBUTES2 */
->> +#define KVM_SET_MEMORY_ATTRIBUTES2              _IOWR(KVMIO,  0xd6, struct kvm_memory_attributes2)
->
-> Please use the same literal number, 0xd2, as
->
->   #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
->
-> The "final" ioctl number that userspace sees incorporates the directionality and
-> the size of the struct, i.e. KVM_SET_MEMORY_ATTRIBUTES and KVM_SET_MEMORY_ATTRIBUTES2
-> are guaranteed to be distinct even if they both use 0xd2 as the "minor" number.
->
-
-Will do.
-
->> +
->> +struct kvm_memory_attributes2 {
->> +	__u64 address;
->> +	__u64 size;
->> +	__u64 attributes;
->> +	__u64 flags;
->> +	__u64 reserved[4];
->
-> Maybe be paranoid and reserve 12 u64s?
-
-Will do.
+Doh, yes.
 
