@@ -1,164 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-65336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C09C0203A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 17:11:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5008BC02263
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 17:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC861540CD7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 15:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C5C3AC09F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 15:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4B93328FC;
-	Thu, 23 Oct 2025 15:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0230334C36;
+	Thu, 23 Oct 2025 15:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M7Zby9xO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTw+GIcZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF743148BA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 15:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C5432E754
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 15:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761231938; cv=none; b=pjSbtkOq1VyHpfzK18JyViYMJZBBK9pTuhIZPlXwDsV0rMcMUgf2l407MOUh+BUbsHHuUz5blBajL2xqIqqb37nFwizow2+JhlRCIYLzSYfIK37CHOCub5/Xvi+ni2RHVECWY1Ck8AT2biN2FgZbGNkqkqfgYs/fk+3eYO4bpKY=
+	t=1761233425; cv=none; b=dHGagY4PddLzjecepnM1IT8htdgpxaN0dLEyshNVq1GgKbhnn1ZISDrY9ccHXB1zo9ZxtcH57zNLLAotDNMlbMXQ1/rx6Jv7EVXhN1EozOi+8xwp6Cwb6/e4BwAkOosn5GPZIszASTpk2SNdNIhqzQMJiAVAb/3laFw9l4MVulI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761231938; c=relaxed/simple;
-	bh=jz93bF63ecWHqlpsfaTIWZ1F+DloVz29gxl65xxvxP8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WqIwgVoKB4vIFejteaHj4aFyeI09fOXF7L2o5jnOhEi9bwRl+cC7WHq9/uW6mb3Wf8jG3bCuudyyRcBgFOCSvZiV89L8UL9i/ppbTuyZ7LQp/3MnLq5ZnMzwHNNAAdFwfNXL3SoooBGyY+oiWwTvG6e8tyOFgms8uawZpTzUJ7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M7Zby9xO; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b6ce1b57b9cso648744a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 08:05:36 -0700 (PDT)
+	s=arc-20240116; t=1761233425; c=relaxed/simple;
+	bh=R1DLxxQVstkHMMSgFPTDNmcwPzVc+mL9pMgA1atSRTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R2dZwxcpYqqkawIl6F5C5dX9ECltKfvI+BRUURMu34BhMAZg0TfszD4jmcjd6CiaIkaAiJx/WtswbAEPzOZtGI9ZTQBHUkFu0+3c12iKFDwOLnufUj5/v9OKycHiygM6voUnbF3gqIfkTHD2MRLtGREwsZ0b7akGyzRUojZqZ+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTw+GIcZ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso1606838a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 08:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761231936; x=1761836736; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PvcmXgf+o6Tu2cYvhHpGmpe9m3a/ceHWHcYak3PalII=;
-        b=M7Zby9xOPXaShDYfHfELOZo+QIPupBI+fSUhPtUzu8LpLDzqODas4KLyd45oYCyAF8
-         BDxJv0hNgFLFoB8WQcIXM00OkNa79EuitP9lwB6a1flH00FPjoJql2i6MS0i6b4VNMHd
-         YNSloQK9lH9CXXwzouz+JypLxzeZxgc1xeDUpSCTKAItWzF7UiMt+e/I1MBpFeRulRun
-         HKkA6NEPOx8XCDgUnnkYTUJNHuXc9jt68IA6uqroZdH3pPDKlADQDB4/t2+S7B22u6Hd
-         Xei2sVhVvQyzMKQeO5urHWG2DtyKldzVKDB6mFy7mjgIM6JQsZqlWiyEmbDgTN26HkJA
-         bMfA==
+        d=gmail.com; s=20230601; t=1761233421; x=1761838221; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1DLxxQVstkHMMSgFPTDNmcwPzVc+mL9pMgA1atSRTY=;
+        b=kTw+GIcZhEL2diW5z0Li/nBofxVJzu+wDe/HyQv38Prs0czRRQbP31hXyXmFpx0fVx
+         wYsQr6DLDrsfaq46Jic6fuIHOS3PxVkKVrjCUazBCfMoGgyOWZcfWA5GyTGv4YixfCGj
+         Oroecz/61rX5CoF5FrLSUm3BEhGkzK0cUyCqjG5sspmSxZmZt/qRdchRiPPfJaoMJ14I
+         QIaLYcbeZPbTN9GLRvrTTH0aSxvzukKcSl5YFQaoUhjlGSJGDt4b6dEH0NoWfpUz4/FQ
+         IywhPT/WzTk6TPELckQ2ijgK/yOIbrzbio4JmEXQeFa6Pd09CXaUq8Z3qL4iq8vlUbCR
+         i54g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761231936; x=1761836736;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PvcmXgf+o6Tu2cYvhHpGmpe9m3a/ceHWHcYak3PalII=;
-        b=BV8tS4leRfCTqbeYveJ7W5VBN+VXdx5508lU0pxERqh9WkoGgmUj709/Ss0y7Iyu6C
-         rlyTj0J71D6hivM7HjpSxgHDZxwP1TJ6AKpoKJgCjKfkTUKIoQv17M87LwFdwGQMWjwQ
-         jn2yJoetJel39ojHs5rYl377tgMqc/d7IEkoZPGYiOTAu0fvmVC+GFseQrv9Ye4FRf3K
-         Orq6b1qj7q97Xi3HPX5qP1IW7y5wxWUkgdP5PLM2I1FcZgP2nXVjBLp2+fmT3bIGVA4B
-         gsyUGoXpjSqB06WJjRpFWbtG9mZ6ufEJHntDIlwCUmvQpYLWsftXB5UasaEQ1eUBAKiw
-         O0cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW90aqzMRWfnIhMXVchF688NdWevhITR/lXw2s9Ss9BL8iIBtQ/peMwVrWlv4kqHxLsLjmS8JY8puUTwT5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaPDkkMInszB7KIqJBxqDLSbVvo2H9MyMZUSFn0c3Jkg10x0B0
-	eY6SaOAjJGBkTrnWxZxQlQ2XRL1bnCF+p7f4XCwjJ8HaeedDY3kSs0r2OPIfeqbrMsEiD0aG+Rm
-	GZ/62JQ==
-X-Google-Smtp-Source: AGHT+IHpWV5RNhKUXvWMGZ+xD8d/MTd1Ze+E21K0nbVEiBP6P7EQ34tE5jerqVVq8m5WkJ7UUYnKv9jKozQ=
-X-Received: from pjbsd7.prod.google.com ([2002:a17:90b:5147:b0:33b:b3b8:216b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3141:b0:32d:e07f:3236
- with SMTP id 98e67ed59e1d1-33bcf8e3ab0mr32372876a91.22.1761231935591; Thu, 23
- Oct 2025 08:05:35 -0700 (PDT)
-Date: Thu, 23 Oct 2025 08:05:33 -0700
-In-Reply-To: <diqzv7k5emza.fsf@google.com>
+        d=1e100.net; s=20230601; t=1761233422; x=1761838222;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R1DLxxQVstkHMMSgFPTDNmcwPzVc+mL9pMgA1atSRTY=;
+        b=EJ7XOaKJaaS7wPTozUURvSgHQhesvsKAqBBad0qLIKZNCrfGvL+ZnZKb4pqplvzHW/
+         ZLOHlddNQdTFLsl5/68YNP600TOXJri2LszgxidT+t7/9PZ+aWfbj30IIkJFmwSH0/+B
+         TFOCsw9iilZ9MrQqz5yP5yOUa7tGY/L4MHA16E9sIVbA/Oo408PyewOayX1x0LRiNpgK
+         VmJukwJa9f1m0CU09huyljYYpSBKxOzLfl8UfR5gUv8vSKel7zvQDrSt7h0bE9AFER/7
+         nGHMX2FGVT2Ua3YIv++iZIorat4fpC7wDYC3imBiW4lDahxeaTeLcC4vBoSzVkQgqlI9
+         i96Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX0L7a0Kjr8oNu/oILV/Cz2UWEVPp8SU0ibueJdr8bp3PzVr/TGGWa/ZChDt9mhXSSDHiFNOT3RXstB4W6r@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsnqGRu3pmyKvzEcXrOyD2+2H7PA1GdZFcn41SAaSjzasr4j1e
+	2EN22LDdEW5mjwnqfFrLvmramTjRXNUijJux5hM2wiXmFlq2emVfA1T3J7NFUfFPTKe9NGcVV9e
+	tVVvfm19n0v2LAn5fQE3edhdGXwnrW3s=
+X-Gm-Gg: ASbGncsOxSSda7OUpsI8++LrHloMhIObKOd+9I88cngbfrFqEANiMGl5eWxSLrXG8u9
+	TWzbaK8o9siYOmZwSM4Iz+iwef67hkhuVB9tfkT4/OatHZZEEoQ/UY9BrgKfVrQVbgtTtk49I1v
+	IbH1C86p9r9KFRSuExeOSqz4JoEqAPIl70GKlGULQwdtcXqMTadFny871sm6R6DkHsQmjYaLpcu
+	mYZxC3K33ty2SGmJeKsO0MxNWZ34Kzh+d2d3d2djYMng3KdSlG/ocj18cMX4MnTCso/seamIIIg
+	5o2Y5WqPKWG+VaZ9uWM=
+X-Google-Smtp-Source: AGHT+IGeg4VShtIIbMZDn43Tom+FCrQ/WOrg0eWdTj7Vv7kLxp9SIc+Im9ri1X7/944ylkzI7ZpCmF9a14W06dA2vLw=
+X-Received: by 2002:a05:6402:5cb:b0:639:fca4:c471 with SMTP id
+ 4fb4d7f45d1cf-63c1f6e04eemr24527060a12.28.1761233421236; Thu, 23 Oct 2025
+ 08:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
- <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
- <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com> <diqzv7k5emza.fsf@google.com>
-Message-ID: <aPpEPZ4YfrRHIkal@google.com>
-Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
-	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
-	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
-	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250916133437.713064-1-ekffu200098@gmail.com>
+ <20250916133437.713064-3-ekffu200098@gmail.com> <CABFDxMFtZKSr5KbqcGQzJWYwT5URUYeuEHJ1a_jDUQPO-OKVGg@mail.gmail.com>
+ <CAOQ4uxgEL=gOpSaSAV_+U=a3W5U5_Uq2Sk4agQhUpL4jHMMQ9w@mail.gmail.com>
+ <CABFDxMG8uLaedhFuWHLAqW75a=TFfVEHkm08uwy76B7w9xbr=w@mail.gmail.com>
+ <CAOQ4uxj9BAz6ibV3i57wgZ5ZNY9mvow=6-iJJ7b4pZn4mpgF7A@mail.gmail.com> <CABFDxMFRhKNENWyqh3Yraq_vDh0P=KxuXA9RcuVPX4FUnhKqGw@mail.gmail.com>
+In-Reply-To: <CABFDxMFRhKNENWyqh3Yraq_vDh0P=KxuXA9RcuVPX4FUnhKqGw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 23 Oct 2025 17:30:10 +0200
+X-Gm-Features: AS18NWD7qJ545TV4uDRrLbxUlzGi9tt1Qfmxci_lB1sZ8ABllrsSvhU5Z_9KIB8
+Message-ID: <CAOQ4uxjxG7KCwsHYv3Oi+t1pwjLS8jUoiAroXtzTatu3+11CWg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] smb: client: add directory change tracking via
+ SMB2 Change Notify
+To: Sang-Heon Jeon <ekffu200098@gmail.com>, Jan Kara <jack@suse.cz>
+Cc: sfrench@samba.org, pc@manguebit.org, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
+	linux-cifs@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Stef Bon <stefbon@gmail.com>, Ioannis Angelakopoulos <iangelak@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 23, 2025, Ackerley Tng wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > On Wed, Oct 22, 2025, Ackerley Tng wrote:
-> >> Ackerley Tng <ackerleytng@google.com> writes:
-> >> 
-> >> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
-> >> 
-> >> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
-> >> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
-> >> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
-> >> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
+...
+> > > Hello, Amir
+> > >
+> > > > First feedback (value):
+> > > > -----------------------------
+> > > > This looks very useful. this feature has been requested and
+> > > > attempted several times in the past (see links below), so if you are
+> > > > willing to incorporate feedback, I hope you will reach further than those
+> > > > past attempts and I will certainly do my best to help you with that.
+> > >
+> > > Thanks for your kind comment. I'm really glad to hear that.
+> > >
+> > > > Second feedback (reviewers):
+> > > > ----------------------------------------
+> > > > I was very surprised that your patch doesn't touch any vfs code
+> > > > (more on that on design feedback), but this is not an SMB-contained
+> > > > change at all.
+> > >
+> > > I agree with your last comment. I think it might not be easy;
+> > > honestly, I may know less than
+> > > Ioannis or Vivek; but I'm fully committed to giving it a try, no
+> > > matter the challenge.
+> > >
+> > > > Your patch touches the guts of the fsnotify subsystem (in a wrong way).
+> > > > For the next posting please consult the MAINTAINERS entry
+> > > > of the fsnotify subsystem for reviewers and list to CC (now added).
+> > >
+> > > I see. I'll keep it in my mind.
+> > >
+> > > > Third feedback (design):
+> > > > --------------------------------
+> > > > The design choice of polling i_fsnotify_mask on readdir()
+> > > > is quite odd and it is not clear to me why it makes sense.
+> > > > Previous discussions suggested to have a filesystem method
+> > > > to update when applications setup a watch on a directory [1].
+> > > > Another prior feedback was that the API should allow a clear
+> > > > distinction between the REMOTE notifications and the LOCAL
+> > > > notifications [2][3].
+> > >
+> > > Current design choice is a workaround for setting an appropriate add
+> > > watch point (as well as remove). I don't want to stick to the RFC
+> > > design. Also, The point that I considered important is similar to
+> > > Ioannis' one: compatible with existing applications.
+> > >
+> > > > IMO it would be better to finalize the design before working on the
+> > > > code, but that's up to you.
+> > >
+> > > I agree, although it's quite hard to create a perfect blueprint, but
+> > > it might be better to draw to some extent.
+> > >
+> > > Based on my current understanding, I think we need to do the following things.
+> > > - design more compatible and general fsnotify API for all network fs;
+> > > should process LOCAL and REMOTE both smoothly.
+> > > - expand inotify (if needed, fanotify both) flow with new fsnotify API
+> > > - replace SMB2 change_notify start/end point to new API
+> > >
 > >
-> > No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
-> > exists is largely irrelevant.
-> 
-> That's true.
-> 
-> > We can even provide the same -ENOTTY errno by
-> > checking that _any_ attributes are supported, i.e. so that doing
-> > KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
-> > same way that KVM with code support but no attributes fails.
-> 
-> IIUC KVM_SET_MEMORY_ATTRIBUTES doesn't fail with -ENOTTY now when there
-> are no valid attributes.
-> 
-> Even if there's no valid attributes (as in
-> kvm_supported_mem_attributes() returns 0), it's possible to call
-> KVM_SET_MEMORY_ATTRIBUTES with .attributes set to 0, which will be a
-> no-op, but will return 0.
-> 
-> I think this is kind of correct behavior since .attributes = 0 is
-> actually a valid expression for "I want this range to be shared", and
-> for a VM that doesn't support private memory, it's a valid expression.
-> 
-> 
-> The other way that there are "no attributes" would be if there are no
-> /VM/ attributes, in which case KVM_SET_MEMORY_ATTRIBUTES, sent to as a
-> vm ioctl, will return -ENOTTY.
+> > Yap, that's about it.
+> > All the rest is the details...
+> >
+> > > Let me know if I missed or misunderstood something. And also please
+> > > give me some time to read attached threads more deeply and clean up my
+> > > thoughts and questions.
+> > >
+> >
+> > Take your time.
+> > It's good to understand the concerns of previous attempts to
+> > avoid hitting the same roadblocks.
+>
+> Good to see you again!
+>
+> I read and try to understand previous discussions that you attached. I
+> would like to ask for your opinion about my current step.
+> I considered different places for new fsnotify API. I came to the same
+> conclusion that you already suggested to Inoannis [1]
+> After adding new API to `struct super_operations`, I tried to find the
+> right place for API calls that would not break existing systems and
+> have compatibility with inotify and fanotify.
+>
+> From my current perspective, I think the outside of fsnotify (like
+> inotify_user.c/fanotify_user.c) is a better place to call new API.
+> Also, it might lead some duplicate code with inotify and fanotify, but
+> it seems difficult to create one unified logic that covers both
+> inotify and fanotify.
 
-Ya, this is what I was trying to say with "_any_ attributes are supported".  I.e.
-by "any" I meant "any attributes in KVM for VMs vs. gmems", not "any attributes
-for this specific VM/gmem instance".
 
-> > In other words, I don't see why it can't do both.  Even if we can't massage the
-> > right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
-> 
-> Did you mean KVM_CAP_MEMORY_ATTRIBUTES2 in the line above?
+Personally, I don't mind duplicating this call in the inotify and
+fanotify backends.
+Not sure if this feature is relevant to other backends like nfsd and audit.
 
-Doh, yes.
+I do care about making this feature opt-in, which goes a bit against your
+requirement that existing applications will get the REMOTE notifications
+without opting in for them and without the notifications being clearly marked
+as REMOTE notifications.
+
+If you do not make this feature opt-in (e.g. by fanotify flag FAN_MARK_REMOTE)
+then it's a change of behavior that could be desired to some and surprising to
+others.
+
+Also when performing an operation on the local smb client (e.g. unlink)
+you would get two notifications, one the LOCAL and one the REMOTE,
+not being able to distinguish between them or request just one of them
+is going to be confusing.
+
+> With this approach, we could start inotify first
+> and then fanotify second that Inoannis and Vivek already attempted.
+> Even if unified logic is possible, I don't think it is not difficult
+> to merge and move them into inside of fsnotify (like mark.c)
+>
+
+For all the reasons above I would prefer to support fanotify first
+(with opt-in flag) and not support inotify at all, but if you want to
+support inotify, better have some method to opt-in at least.
+Could be a global inotify kob for all I care, as long as the default
+does not take anyone by surprise.
+
+> Also, I have concerns when to call the new API. I think after updating
+> the mark is a good moment to call API if we decide to ignore errors
+> from new API; now, to me, it is affordable in terms of minimizing side
+> effect and lower risk with user spaces. However, eventually, I believe
+> the user should be able to decide whether to ignore the error or not
+> of new API, maybe by config or flag else. In that case, we need to
+> rollback update of fsnotify when new API fails. but it is not
+> supported yet. Could you share your thoughts on this, too?
+>
+
+If you update remote mask with explicit FAN_MARK_REMOTE
+and update local mask without FAN_MARK_REMOTE, then
+there is no problem is there?
+
+Either FAN_MARK_REMOTE succeeded or not.
+If it did, remote fs could be expected to generate remote events.
+
+> If my inspection is wrong or you might have better idea, please let me
+> know about it. TBH, understanding new things is hard, but it's also a
+> happy moment to me.
+>
+
+I am relying on what I think you mean, but I may misunderstand you
+because you did not sketch any code samples, so I don't believe
+I fully understand all your concerns and ideas.
+
+Even an untested patch could help me understand if we are on the same page.
+
+Thanks,
+Amir.
 
