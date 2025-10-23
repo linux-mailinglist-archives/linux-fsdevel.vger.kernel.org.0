@@ -1,149 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-65277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B14BFFE23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 10:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B261BFFE56
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 10:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E6381354838
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 08:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61F441A607AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Oct 2025 08:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA822F83BC;
-	Thu, 23 Oct 2025 08:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DB72FF17C;
+	Thu, 23 Oct 2025 08:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="HXPa/5G4"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GhpUltlx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62572F4A12
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 08:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFCA2F7461
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 08:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207711; cv=none; b=tw2WYjsQq4zVfPUnvqHzP2mK7hgAvpvldcgrXyGQCCCZ35IU5wkYrq2qLCvm+boOdmowr2ltEMeJIuwlKvF4RcGIxGZ8B2BNxbKCBG+zEyYGCuw+tmae9DGnsXK0Zughn3OYtXMaoWFZFwz51asOdV3AyVslSna7H9vE0o/Zt88=
+	t=1761207805; cv=none; b=hKz1wM/ZR+jhuObKA7eGdlP7efCqVOGz44/OcA+c6xaX6AF8dkwpp9OSZCPAVSGNSO9mnA64JTB4csHdbk8OMAm/AcIkiAdzVBnXpt217WoInVgk/hXHpKYkjLf3CTknKcv13tkXOXlVXFLmumA21Xo4zIPSDNIRgqPNBezHXY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207711; c=relaxed/simple;
-	bh=pgRaKIs6od0eFwYqqrJU6RY3VmvIaH4v1rOFEhr8j0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tphwuAka47TcoUherGJLK2lhAWJSaVnyUxjt+Gl33RVUZ7in4Leq1citnU8GpC25hsZpwTI4b9zKHq2h7SYrIH/zMefTTjGFBV5hyGbDkLY/eibFJ/+JYIchwTlzznenMDaK/1gGlrDWjoK445miRLnSzWFKYjxgTyhfBtw7kPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=HXPa/5G4; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-378d54f657fso6951391fa.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 01:21:48 -0700 (PDT)
+	s=arc-20240116; t=1761207805; c=relaxed/simple;
+	bh=GZ2o/nJlsEOzs00Oa82WFjuaDZobMx/ouP1Wbql+PLo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MO2XJAkbSLh6cFvJQaIFVfoM6hO7lADv5dFqU7DTW5ExF1sqqKcaTbpNnw/plfWXpSTidwWRIJMECGzwROgda/urxCusYrsGpI7hRstM078+/ZNlX/U6CrPyf6AEdSOH6UszoTI2QuXooMosMXbI1jeGOkVatEqBSO066QIcSGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GhpUltlx; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-475c422fd70so2930095e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Oct 2025 01:23:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1761207707; x=1761812507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TByexTGBy5Gp/RFWC94cXxG9Os7YYgZ+RwohhIq2r5M=;
-        b=HXPa/5G45sACGko3ijOusMNI2kznEwecri4PKOyPqiaTL0ftCfrVcPzDI5N3jfQB3h
-         r6YzGSDui88JzjVV/9k8kJOUsGXvl6E/eF3UGrcxlz9+3rjuRLkTiIj5duii4QYV8aL+
-         4iuvKeQGU2v3Q+8dlj14TeuoSyWktW8cN/3Ag=
+        d=google.com; s=20230601; t=1761207801; x=1761812601; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QpqWsbe7X8TE4MbamMdrMlILOwJyeV2HZGxH0RxJ4HU=;
+        b=GhpUltlxb7pXO7xYnzD2qz1vBVpmNmwv/qPEqqVA5snlYpxMksSkOIwpsEwUiWxLiW
+         Y6ryfxWnV7R9h/x2jXwpTkHzeimlb6pztsOLm61EhOhbFI81pNmmRfBzrYcV+UZyeGoR
+         Xkcsxa97YzGiykhiDUk4iMzSaFv8sayVUBB48pE7DJs1g8J77oPv6z+LtVCWMj7tTC0A
+         HI/4u7TGKCfEb8EY5x4RJfsU6eHGH8KrdEfIQ685Ap4au4wkg6rNt/enGnYhuA/OYmES
+         gXxalzKaOcqQJAVIbVFB37ONZk3xFfi3qEwf24vsV1y/8y74Y6Wyp6fAGa97plN6VaJc
+         WOQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761207707; x=1761812507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TByexTGBy5Gp/RFWC94cXxG9Os7YYgZ+RwohhIq2r5M=;
-        b=lO4xiFruC8Sm9yjlN2d3ozZ5R6DKNoGnGvqhdPtpYh2AVAboG+uSENezCCX81eySf0
-         +E8tVKKP8e0vGGkDnukq1VtOCMCeMkigFQXCaGPv7RT4h5vHflF5LopPKQxJYL/1FHxP
-         4dEawaVRGXSssaLWhP0U1/FdQgmIThBUAbzWRQHJ+0C7AN/RGUiYzeVy28fK/MKTX3EQ
-         Aku7x8vAC3R19TvwVBPf4Hrtgi4gUbFWleRexkPb32ltA5TXNAFM6EUc+l+3dfRVmRcv
-         /1hmBkkE4DTemnLwvuk+WN9pKbkOxkvJrPMQHtDb96c+zOPMh7O/QdnyIfuFG6z3ZF5U
-         UlXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWb1od8d9L60PS+kBLpfYhpkQM/3MgyRYpJ+MOBcy8jclum4byUNqtDupyq115wngJy62L+c+LjVHmQKqBN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLIhgrv7ncBJAjBJFr1PKetYy/zRTl+3+EPZbUExrSA4R2nmxG
-	83m1qTkDmTFvhbtyR/LaYB0Pp0qEx1ntBpErSBgKPgcoXenlfH1eoBgQ1XX27vD2Fug=
-X-Gm-Gg: ASbGnctZQlHYnMIEfMaZyLCjKvK0xZqgkSd8EFBOOBY2Tj76td/hhoIddem0z03KQEG
-	KBTdvVrXendbMyZkGulM7u7hpk3vEhJS0MOInzsquqkW3kFiZEZbyZWIn0sUrSI/6FaNjWlS8Ih
-	FzlzzXCKtRIxPiM5F3T6MsBkBgSkeJMl7yi32+4RlaP4/ZzPKWHPnHZPL9QevYbyJ5JIT+Poaa0
-	ARRjZlgS7Wt4HUGaHtNoltTls/Y5IIo7szgp+F7FtYX76ONQipWYwLk7dW/alLaK7nMGxH/b4zu
-	XX60NMqW5WCjZqi9OCRi/F/jPitQz9o8BkPT1kRn0llZkzafMxRqzJuQk4tWGYhRt+fW/zohpv2
-	QiFD1RZzgNFr5gpI+i73huFbBZUvoiN4u9YBrculhHYzShp9T3gWbSJAOFisc4elaldf51V5H5G
-	9iT+h0VXNJYc4i4Q==
-X-Google-Smtp-Source: AGHT+IF5PkyzpJwpjSOJHc7K9JLi3coycHYDHHhCZspJ09bDYqz9X5m4UzYaiIOgYvkJOFHvN40npQ==
-X-Received: by 2002:a2e:bd83:0:b0:36d:4996:1c4d with SMTP id 38308e7fff4ca-37797831b7cmr67162081fa.9.1761207706694;
-        Thu, 23 Oct 2025 01:21:46 -0700 (PDT)
-Received: from localhost ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d168d4sm534702e87.56.2025.10.23.01.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 01:21:46 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	David Sterba <dsterba@suse.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
-Date: Thu, 23 Oct 2025 10:21:42 +0200
-Message-ID: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1761207801; x=1761812601;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QpqWsbe7X8TE4MbamMdrMlILOwJyeV2HZGxH0RxJ4HU=;
+        b=QsmuBoWUriq11gI2QaUVKrIyUfJkDpPnKdtM6LQkQ/C86QRfzZ9E90XSn6WKARce1g
+         uJbyDuYj7e5XFv48sVNduZXNjNHrtg/pdGrbJjktW1m88N+OJi55QGw3Np7P3xY4k7vA
+         qQukZyJvPECFlX6kd4/2aH2ESNWwm/NDj0I5EyIqq9IXDUYa4QaUf2C/Jbd7FXOkhBoV
+         EP9QaD/16rpnYfv0N85t7G815c6mVLmN+OXVUnsD2KMhhMbdJmeQJY8yxtVVGZyk0NI8
+         R9UT9STwh1LlKGoosQyqW0vuTW8fCqwMyr6Va/lHXG1DVvoxiG2Z5hTryeEuzstzXO1S
+         o+MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNtn1vIxUBZEVTL0lgk34qQ6FHr6Wg63vpTvfCMgckwhmCNeJ8wv1c21NSR1GwGMWJ5rkftphYqo7ETYN6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIqhh+TLCk+zvPb/yJ4pldMmfd4Gxj8g++kL4NgxF7qkUpUV1J
+	2lY8Lmv7oVl62bqSID3/aK4O+VCmxALkQYq5pDWpGhhpt+TgH89sqSzbMPfW1FMtBmqn89XOqgF
+	miQvlYRgJEecgEa/NvA==
+X-Google-Smtp-Source: AGHT+IHRFzs92gG+pJqT1st2Vl1lkPZd3yrofQcAqIqA/U/9o7yE75rCP4nX2IU1q+y5Llnr+jhwkJEc7xi+Eoo=
+X-Received: from wmin5.prod.google.com ([2002:a7b:cbc5:0:b0:46e:67c8:72a6])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:a214:b0:471:ff3:a7fe with SMTP id 5b1f17b1804b1-471179123b8mr119070815e9.19.1761207800744;
+ Thu, 23 Oct 2025 01:23:20 -0700 (PDT)
+Date: Thu, 23 Oct 2025 08:23:19 +0000
+In-Reply-To: <20251022143158.64475-10-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-10-dakr@kernel.org>
+Message-ID: <aPnl92lLX9sCWrT6@google.com>
+Subject: Re: [PATCH v3 09/10] rust: debugfs: support binary large objects for ScopedDir
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Now that we build with -fms-extensions, union pipe_index can be
-included as an anonymous member in struct pipe_inode_info, avoiding
-the duplication.
+On Wed, Oct 22, 2025 at 04:30:43PM +0200, Danilo Krummrich wrote:
+> Add support for creating binary debugfs files via ScopedDir. This
+> mirrors the existing functionality for Dir, but without producing an
+> owning handle -- files are automatically removed when the associated
+> Scope is dropped.
+> 
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Matthew Maurer <mmaurer@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Do we want to do this as well? At the very least it would give some
-more test coverage if this could be in -next for most of a cycle.
-
-Context for new people:
-
-https://lore.kernel.org/lkml/CAHk-=wjeZwww6Zswn6F_iZTpUihTSNKYppLqj36iQDDhfntuEw@mail.gmail.com/
-https://lore.kernel.org/linux-kbuild/20251020142228.1819871-1-linux@rasmusvillemoes.dk/
-
- include/linux/pipe_fs_i.h | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 9d42d473d201..80539972e569 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -44,12 +44,6 @@ typedef unsigned int pipe_index_t;
- typedef unsigned short pipe_index_t;
- #endif
- 
--/*
-- * We have to declare this outside 'struct pipe_inode_info',
-- * but then we can't use 'union pipe_index' for an anonymous
-- * union, so we end up having to duplicate this declaration
-- * below. Annoying.
-- */
- union pipe_index {
- 	unsigned long head_tail;
- 	struct {
-@@ -87,14 +81,7 @@ struct pipe_inode_info {
- 	struct mutex mutex;
- 	wait_queue_head_t rd_wait, wr_wait;
- 
--	/* This has to match the 'union pipe_index' above */
--	union {
--		unsigned long head_tail;
--		struct {
--			pipe_index_t head;
--			pipe_index_t tail;
--		};
--	};
-+	union pipe_index;
- 
- 	unsigned int max_usage;
- 	unsigned int ring_size;
-
-base-commit: 778740ee2d00e5c04d0c8ffd9c3beea89b1ec554
--- 
-2.51.0
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
