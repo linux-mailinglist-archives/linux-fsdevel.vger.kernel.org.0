@@ -1,143 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-65573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CD5C07EB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 21:33:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51727C07ED4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 21:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CD324E50F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 19:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166E41AA41AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 19:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786BD2BE029;
-	Fri, 24 Oct 2025 19:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA462BEFF9;
+	Fri, 24 Oct 2025 19:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="chw4THql";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D3AM57Hq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iz0GK/aH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432329B204;
-	Fri, 24 Oct 2025 19:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05EA2BEFF2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 19:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761334382; cv=none; b=ZnSyT6Wegcb9joZOgCRvJ0ZpRhvIEDG+Qm5PG0iIjih4XPHMsXe5hg37ODeH50V4/kUWhR0aVrrHU6Pz3gHvKPYSBZGJL4aO74IoC7TA/PW1E6JOyTdaWxipaGGTAH/DONm5SG6eubytzPe/OUUz1HbSDidXct4WixRYpGq9mQo=
+	t=1761334680; cv=none; b=Sl3m/ob56t6PcaZo0a8H/qXKltCzzCkgi02G+8+nr1rGnpNgRW/wXFi/ZNAHYi6KiPkLr8i/xiRSj9NODbUO+AVEKM6NTxyh0/4oxAbUpQXll6AXDYoUa93yq4a+L9vQpARR6GbmfddUtvuKeuqcXREMoR1iqGpWni0ESv1D/7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761334382; c=relaxed/simple;
-	bh=jPIkLLtaRCzb8aJMZTdAneGKRi508NY6HlZqhH47XHo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kmwLvq6rCb9V0Ptihxk3vrABEjV8tIOZmY22Spph7S0079FVLxHUIZL3dr7w0VtBwyqUb43cXQeaqzdY77RrrMlXQ8bX0ity6lx/xKF/HN0oSTWyD9Cfs3TJ5FGfZImCTrJXOsVEKDtrvcEoRB8Pm0+FXE+yoH9rQWm95d7ivbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=chw4THql; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D3AM57Hq; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id C06511300286;
-	Fri, 24 Oct 2025 15:32:58 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-04.internal (MEProxy); Fri, 24 Oct 2025 15:32:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1761334378; x=1761341578; bh=2Eie9rhTwSUlY1W7oebxyg5hlbXGes4p
-	kn2Ot5hK/W0=; b=chw4THqlrwqSs38QX7V0HBZScQNidiSKZogcPrpPVGKNFSpY
-	Hr/x/WMn6jcDRCRIZOqeh+04AX2tNshXGRrFGFFPzhCB/R1Yxbn/BRD+CMocWPhx
-	UpBf+N5OpFp4lqNgOHwlKFmSPMJxD8VYzLeHinflFas7Ld3ZoqbcEQqiXJ+Z3xAP
-	fCb8VUSRAqgkBqs7wV2j07myrIUZ6+GGvVEyjZUlcvZ91XU4e/x3XfM5poD9+QHu
-	OJagCG04BPvf0fs7RH1Vqko1n28A/AqdD/RTHNQZVzUfitMiaYH0gHyQoRxFET6p
-	cqGsM92yKgXdESHu8b2MZAD7FbQFbs+Ml/t0YQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761334378; x=
-	1761341578; bh=2Eie9rhTwSUlY1W7oebxyg5hlbXGes4pkn2Ot5hK/W0=; b=D
-	3AM57HqO1i+sRH2fR79zXWnSCId0q9IG98YuR6VSFOQGUhKSutqJMChsDLj/Q7L8
-	yRv4VxnZju07Q9kZijHV78l8O2wKbfusNAjX6uQzY7sPxg2Gs/Rxi94yw2DyGXe1
-	brZLqLfUgrH/eiiEFLDTB3k474jQq/i9D2lnlg+u8wxFgi/pIAx6UB2lZeZUiyKo
-	+jKGYD4ZIVFHHKPB8YCAa7hdkfBWLFVvL2whsdr0dgz3YeV6J9qOeGLWBiMmo5iu
-	rlz9ckZvDXJLCd/aR/cvyC1mVkfwHKTs/yIVTSZb6GfUdyBGBBbNxS5j8wpuygxC
-	fwPJRsyOxvr6PwHvKmG4w==
-X-ME-Sender: <xms:adT7aLrpDPQZGVa84VrLn300BloDRka_Xr4eaWU4ja3qoCoIjmh71Q>
-    <xme:adT7aAd0gyIgXgFgJ6m9vi0bn0ShQv6mIHu_eH2ssB_IpNsPVjpLL9NN6UqSlFbOy
-    zeK2Os0Ng_D0EzLwoOIOmVpDNzRJLXJxrZt0iqRPB-m3wUNHO6V2Wo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduhedtudelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfmfhirhhi
-    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
-    hmvgeqnecuggftrfgrthhtvghrnhepfeehvedviefgueevgeduhfffjedugfdtvdfhvdek
-    uefgueffteegkedvvdffteffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgt
-    phhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgrnhhnvghsse
-    gtmhhpgigthhhgrdhorhhgpdhrtghpthhtohepuggrvhhiugesfhhrohhmohhrsghithdr
-    tghomhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    hsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgr
-    sheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhpphhtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:adT7aFyRBRSeVnGi14kIw5Ck1L7OlC7KwIMqpMZgk5v61oO8fcM_Xw>
-    <xmx:adT7aA9calwwSFl8H5vxhd7a94GeP9js63aA16vdy4NfsUhN7tM54g>
-    <xmx:adT7aKAFG2RoCob6uF9S4yaeS54QhsKtAt-fxnxflvo7RqlSsAM5iA>
-    <xmx:adT7aIdsOaSSwRDxprKYwXiknos2gcSFvlRqyzRQm_upT8MpgRROvg>
-    <xmx:atT7aMGYELrvclqCX7O2E_660PuNtn2jwY1SNpAHOUyXq9fD6wrjUE8C>
-Feedback-ID: ie3994620:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 18E372160065; Fri, 24 Oct 2025 15:32:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761334680; c=relaxed/simple;
+	bh=jxCaOjNQtTL+qljTyPA1mHAF4C8g0MF1oaDOxEFrxKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mFBzTXV3r0icF0uw8qz7GrlA8xeTvOFeMLyEJGYW7Z74mr8jI3LhN44R4KbsL4603Lm4l8n9VgdgTJRZk3ipgqVAtamJgMM+mFr91lOkvk42k7kOoRw8W/0K6dprc2fuwbDs8RrYx6lHe49ljcbgQDtJ3fViQSmIEp3SaX0dQ9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iz0GK/aH; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4e89ac45e61so23822681cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 12:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761334678; x=1761939478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jxCaOjNQtTL+qljTyPA1mHAF4C8g0MF1oaDOxEFrxKQ=;
+        b=Iz0GK/aHIkFSEYF+f3+qeGlQWnCIjN7jvt5BHJhXt95VBC9a1diV0k/W8QZlVwHF8A
+         AkJJg/eFRZpFds0IhYQKk4Xq3mwKUwaZWmYB9tE+e4drcxLRxKqWrviYgiHatoFI55iW
+         QtP007XJdodmF+n5sqXftpgqF/osP1LJ/e1TXQ3cx2E4LCNc74eVqhJo28l2zyPnBynQ
+         uVDBXAn+gK8CSk/uQEec/Ja8pkMYJiz98lAw1hF4HocJXzWegByKAldZ3YFE6NWk0qmp
+         Ulx/moFoi7R+ghKGzoI78kpOUp5DfVitk7P+rtr2Ry8rJsoC47Vmc7pxe6MepY1jXhCC
+         1AHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761334678; x=1761939478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jxCaOjNQtTL+qljTyPA1mHAF4C8g0MF1oaDOxEFrxKQ=;
+        b=AnJTPdxb7YBwhctd9PS3kKLwncKRXHeRrAnUPYxXN3NQh4dfZYKsZWWEZVDUb/MEfj
+         twApyYjlZdhpVi7UGlRx2DRas8C0+4GcHiaf21NvYy7TW4ADSbibRqrAYF+laIlXrOej
+         9lSqvCL3eChpL9F9/vbw0AX2kbbmo1NKmo5UZbwdEfa5fl/0rD0KD3njFE5a6KzXmJW6
+         YxG3tt/GN16vmroEgcGLHcJU15v8l7gBoLS+XAg30GR7RmyPAozfIg2Xzp/NmNjWvtuf
+         ppgKQBX3FvzlrLLMkomwocFBe49oZlNey17sVsy6dgwgMsoCAlT48cZOeD5+LGwtc1BK
+         tWSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO+FOjRIo36BndDGNOGkDTuuFn5ORxOEGsviESqMrkxh0J/ObstHcMeZ+7qfxvg2fUNZNSFdP4wcQWGeoR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+z7XJfPuRGcBpJ/TJRYMYam1PdBnV5cu2rtXmnZiRjJPQ+cKq
+	DND4npeClVxO7lDYzFMMdOolON4//641uARAAWGPsanbd65+v1gjzMS3TiJmd0ViimDAaCngIB0
+	u5IhY03hQAR+1FTfWBBfFUyNZO+/wjU4=
+X-Gm-Gg: ASbGncuHm7kmjtzRKSNQM7TPKiiBob0E6UW6K/ovEutPUKHLPfO70gvBd1Uv1/hz7ig
+	78gBG+cU0pMNhKBsCOQyOLav/YOM63emEAmvfVSeTTkxCky3KV4LSqU4mlvBEeK1Krd5wC+tTlD
+	wz8PyGlCdeB+IiuuzqhlVI1dUintD8nuD3EnqlRhls+rc0+nORNizK5di+gdmE/E98j4mu1kaUN
+	gncN6bKuq7HK1T2jxwgCaFVVFi3sWJhmPX3m2ZcqMkOU2pBbCMEfPvASxF18m9Mptt3oS0dMqKs
+	bU3jo7Ms8CaMFozIFZkHO0nB/w==
+X-Google-Smtp-Source: AGHT+IGNRbLKWdFqdFsvsbww+Es4iTgJjDnipZsGHEvkTewYe9MtMpl+0UXONNgsdyKyONe+l+UOqMc5fN6AQ87ulXo=
+X-Received: by 2002:ac8:7d8d:0:b0:4e8:b4a5:7f1c with SMTP id
+ d75a77b69052e-4eb815dce14mr103197821cf.79.1761334677821; Fri, 24 Oct 2025
+ 12:37:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A_7exwu8WuKB
-Date: Fri, 24 Oct 2025 20:32:36 +0100
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: "David Hildenbrand" <david@redhat.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Hugh Dickins" <hughd@google.com>, "Matthew Wilcox" <willy@infradead.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
- "Suren Baghdasaryan" <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>,
- "Rik van Riel" <riel@surriel.com>, "Harry Yoo" <harry.yoo@oracle.com>,
- "Johannes Weiner" <hannes@cmpxchg.org>,
- "Shakeel Butt" <shakeel.butt@linux.dev>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>, "Dave Chinner" <david@fromorbit.com>,
- linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "Kiryl Shutsemau" <kas@kernel.org>
-Message-Id: <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
-In-Reply-To: <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-2-kirill@shutemov.name>
- <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries beyond i_size
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20251022202021.3649586-1-joannelkoong@gmail.com>
+ <539ebaba-e105-4cf3-ade4-4184a4365710@ddn.com> <CAJnrk1Y2cKgc3snAK8jJpVn5EJpLPE87nqxjcE-eKBWK0TvUgg@mail.gmail.com>
+ <a2aaea17-0719-425e-8999-16a8367c57e7@ddn.com>
+In-Reply-To: <a2aaea17-0719-425e-8999-16a8367c57e7@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 24 Oct 2025 12:37:47 -0700
+X-Gm-Features: AS18NWAgNJy26ZwWDRXhJAQPOqkLUFwSxBJ4VjbCGnz8wNPHfrenMJ66HVeqa4I
+Message-ID: <CAJnrk1Y3z1=douWdDDxnq0bWOTggKEgrrZrLGO+0wcA028MxPg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] fuse io_uring: support registered buffers
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, linux-fsdevel@vger.kernel.org, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On Fri, Oct 24, 2025, at 16:42, David Hildenbrand wrote:
-> On 23.10.25 11:32, Kiryl Shutsemau wrote:
->>   	addr0 = addr - start * PAGE_SIZE;
->>   	if (folio_within_vma(folio, vmf->vma) &&
->> -	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
->> +	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
+On Fri, Oct 24, 2025 at 11:12=E2=80=AFAM Bernd Schubert <bschubert@ddn.com>=
+ wrote:
 >
-> Isn't this just testing whether addr0 is aligned to folio_size(folio)? 
-> (given that we don't support folios > PMD_SIZE), like
+> On 10/24/25 00:27, Joanne Koong wrote:
+> > On Wed, Oct 22, 2025 at 1:43=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
+om> wrote:
+> >>
+> >> On 10/22/25 22:20, Joanne Koong wrote:
+> >>> This adds support for daemons who preregister buffers to minimize the=
+ overhead
+> >>> of pinning/unpinning user pages and translating virtual addresses. Re=
+gistered
+> >>> buffers pay the cost once during registration then reuse the pre-pinn=
+ed pages,
+> >>> which helps reduce the per-op overhead.
+> >>>
+> >>> This is on top of commit 211ddde0823f in the iouring tree.
+> >>
+> >> Interesting, on a first glance this looks like an alternative
+> >> implementation of page pinning
+> >>
+> >> https://lore.kernel.org/all/20240901-b4-fuse-uring-rfcv3-without-mmap-=
+v3-17-9207f7391444@ddn.com/
+> >>
+> >> At DDN we are running with that patch (changed commit message) and ano=
+ther
+> >> one that avoids io_uring_cmd_complete_in_task() - with pinned pages
+> >> the IO submitting application can directly write into header and paylo=
+ad
+> >> (note that the latter also required pinned headers)
+> >>
+> >> Going to look into your approach tomorrow.
+> >
+> > Thanks for taking a look when you get the chance. The libfuse changes
+> > are in this branch
+> > https://github.com/joannekoong/libfuse/tree/registered_buffers btw.
 >
-> 	IS_ALIGNED(addr0, folio_size(folio))
+> Sorry, still didn't manage another task for tomorrow. Btw, the reason
+> hadn't sent my patches is that I hadn't handled memory accounting yet.
+> And then got busy with other tasks for much too long...
+>
+> I see in io_sqe_buffers_register() how that is done, although I'm
+> confused why it first calls io_pin_pages() and only then accounts. I.e.
+> it can temporarily go above the limit - I wonder what happens if the
+> user opens another application that time that just needs a little locked
+> memory...
+>
+> In general I think your solution more complex than mine - I think I'm
+> going to update my patches (there are conflicts due to folio conversion)
+> and then we can compare.
 
-Actually, no. VMA can be not aligned to folio_size().
+Hi Bernd,
 
--- 
-Kiryl Shutsemau / Kirill A. Shutemov
+I think this solution is actually less complex because all the pinning
+and accounting stuff is taken care of by io-uring and there's one
+pinned buffer instead of pinning the header and payload separately.
+
+I think the part that looks complex maybe is the integration of the
+bvec iter with header copying. For v2 I have it vastly simplified so
+that we just kmap the header, which makes it play more nicely with
+directly accessing the header struct members instead of going through
+the bvec iter.
+
+Thanks,
+Joanne
+
+>
+>
+> Thanks,
+> Bernd
 
