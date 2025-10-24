@@ -1,102 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-65398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118B0C0415C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 04:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F41C043DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 05:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AACD4E5047
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 02:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4768D3B8811
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 03:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CFB223DF9;
-	Fri, 24 Oct 2025 02:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7A626CE0A;
+	Fri, 24 Oct 2025 03:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vnECX4a6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e/26v4C+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB311C860C;
-	Fri, 24 Oct 2025 02:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF1326E158
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 03:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761271725; cv=none; b=CAnlbzvJdGAGJq7j92rBkptXYjbjJuxFBJ219pISQBoRtPQHDtLl/adXDUPDGJ5mxWugA40nc6ZgkJt/KrgzZh/e4JUGytNWLdlo/YXGDbCuefuSgClMeD33gP2NXv93Wy/6F7V2vOUzYg5fyQI2PxAz3Dr1NswJHmo1i12HqKM=
+	t=1761276399; cv=none; b=eicr4v5UMEk6pi5I07pxGlPnZqqZmqphJLAecpylpYhxVX5seJnxYhBY8dBStc6wyClnfGgt6zp5ONZcGNiY5a2GaIV/l7Fyb/aqvLyfkk4ehAseqi6YHopwHH8H2uhiHCFGU2c4g6tkv1MGEMKqnQaZF3dHM8P9hpeg/CTE6p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761271725; c=relaxed/simple;
-	bh=CCwFEhSOfS9NSfGrVzU2gOVUH5aKq2aEZss7tEoO70M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXUA/TixKV+ZZy8a46l9bejEAXreN1CFX+psps/rfc1xrTszCFUtmg8VW11I7ER5a5GVqCBAxSHAYSnEoI/GyDluk/YHHx2SmUIwG2sqbfbwaUDlGBvrLNrb15LKHK9GQLccOSmXVLESDdTeVM9N4hpNgTdlAMVwYyoPwOfMU68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vnECX4a6; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761271714; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=9JVQ7GVWcIU2eIV2pPNnWqg43ppy0VbXuD3FPTad8F8=;
-	b=vnECX4a6XkGY0myW4ggcQfPzYwVGI8it2z4e9NTKYtc7WI8CUx+QA5xg5M5iqVtwNSO8CnmlZzvDzwV6wHvYIIwdlbjedysbvn0Ljz3xL1A2qwG3kYM3NtyahzBWVGPrHwvujPIAeEIs2qI/jJ0FGkgigUw3mrtx6GKOfvuK+i4=
-Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WqscYCq_1761271712 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 10:08:32 +0800
-Message-ID: <b1d18017-548f-4219-8cba-351e7f8d29b9@linux.alibaba.com>
-Date: Fri, 24 Oct 2025 10:08:31 +0800
+	s=arc-20240116; t=1761276399; c=relaxed/simple;
+	bh=wOVQLucTqTR+3WTAqlI3dBKz9v+oStyfQUJR6YOtBWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmE3P8vq/nPaG+d0psJk3WcoOQXK5GDqDh9+aKo1PeMVcLkOovOYM0CSfsqTwP9Crzzopfcs7MhUqUdYXv9urXhguMhefxf9td0dOHC36+KpVx8DtTbKTx42S6Pmzx2TDwoHmTvALSjUEG5SZ9b0xgftYuT7J1DKNeSj2L793Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e/26v4C+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761276396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SBGpZ+b69w7Vm+EhedHcipsUWTvIk6iy1D0IPGn2dk8=;
+	b=e/26v4C+9bqPGqN5yv3iN2RMvSK+s8oamJegy5WrnKnfEv0Kdj04qPvja45n/iHwi0Z8hx
+	GstjK8PBx4XTR+7UlLklA6rDBHFWhvemlrKo4vNvh0KBfcOlL3mbYlXmOsS73g1lEe67Qh
+	ktJJPr2PIx0mDOnjaUyNbN1hDx/ul28=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-3XNFOwubM4iZvHWkmhe5wQ-1; Thu,
+ 23 Oct 2025 23:26:31 -0400
+X-MC-Unique: 3XNFOwubM4iZvHWkmhe5wQ-1
+X-Mimecast-MFC-AGG-ID: 3XNFOwubM4iZvHWkmhe5wQ_1761276388
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0420B1800378;
+	Fri, 24 Oct 2025 03:26:27 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.13])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5367F19540EB;
+	Fri, 24 Oct 2025 03:26:16 +0000 (UTC)
+Date: Fri, 24 Oct 2025 11:26:11 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] io_uring: expose io_should_terminate_tw()
+Message-ID: <aPrx05jWsnraLetW@fedora>
+References: <20251023201830.3109805-1-csander@purestorage.com>
+ <20251023201830.3109805-2-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm/huge_memory: preserve PG_has_hwpoisoned if a folio
- is split to >0 order
-To: Zi Yan <ziy@nvidia.com>, linmiaohe@huawei.com, david@redhat.com,
- jane.chu@oracle.com
-Cc: kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
- nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, stable@vger.kernel.org
-References: <20251023030521.473097-1-ziy@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20251023030521.473097-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023201830.3109805-2-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+On Thu, Oct 23, 2025 at 02:18:28PM -0600, Caleb Sander Mateos wrote:
+> A subsequent commit will call io_should_terminate_tw() from an inline
+> function in include/linux/io_uring/cmd.h, so move it from an io_uring
+> internal header to include/linux/io_uring.h. Callers outside io_uring
+> should not call it directly.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-On 2025/10/23 11:05, Zi Yan wrote:
-> folio split clears PG_has_hwpoisoned, but the flag should be preserved in
-> after-split folios containing pages with PG_hwpoisoned flag if the folio is
-> split to >0 order folios. Scan all pages in a to-be-split folio to
-> determine which after-split folios need the flag.
-> 
-> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
-> avoid the scan and set it on all after-split folios, but resulting false
-> positive has undesirable negative impact. To remove false positive, caller
-> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
-> do the scan. That might be causing a hassle for current and future callers
-> and more costly than doing the scan in the split code. More details are
-> discussed in [1].
-> 
-> This issue can be exposed via:
-> 1. splitting a has_hwpoisoned folio to >0 order from debugfs interface;
-> 2. truncating part of a has_hwpoisoned folio in
->     truncate_inode_partial_folio().
-> 
-> And later accesses to a hwpoisoned page could be possible due to the
-> missing has_hwpoisoned folio flag. This will lead to MCE errors.
-> 
-> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
-> Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
+Thanks,
+Ming
 
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
