@@ -1,95 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-65435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A999C053C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:05:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1809EC05512
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4A71A0686A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 09:05:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B8138353211
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 09:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5AE3090C9;
-	Fri, 24 Oct 2025 09:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EB42F99A5;
+	Fri, 24 Oct 2025 09:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ANiS5Erw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tlbb2HLV"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="iaabcnQI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t3ftFPHs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D12308F39;
-	Fri, 24 Oct 2025 09:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A43309EE2;
+	Fri, 24 Oct 2025 09:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761296721; cv=none; b=ojKc0bAIcE71g3V6HUxEqyZm9ETYb83bsgiUet1/au0sgUxhSOjGw7bPsQEfqrL9JNa8hv/9IQARth1vehxKPqUmV0PXTx0Mu5X7tbBex+IMKg8Oq+ig0zDpV6X6g+n/jXAxanlviocRzg+CnI8Ip2tQjU+BWGX4jl8wNlMLC9w=
+	t=1761297973; cv=none; b=kzPmsZvDBaCi7QnSpvWtfE3L4+JWmXg2BGALGKLaAZbFFh2CoYMdX5J/Dtlm0iNSXNb9WOADDR9QWeTfU3BWGlUX84snJJPeEDFoWygF/QTO2+NkWv44PkKj2hHbq2ZEiuCTfi2lIuhXEZSi8gNucGYf1dLbYFDCu8D11h5ByTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761296721; c=relaxed/simple;
-	bh=dP5980YsRaLUhiroNTQesPNMylhYRYAU7PYAYKzy1E8=;
+	s=arc-20240116; t=1761297973; c=relaxed/simple;
+	bh=BdVucMLiQQEjX6RceDm+ToNFzzrCN8nClQ4+iyELyy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlGHRxrGRKs/Cp6l6THyw7ESVPXuxqdSfemr2OVJPfZxTlBvrRVAzwwHWvt1tnJRtQWCnGQVHdWx+hJDbCn8aa6qARGZgOv5jvb2F5h8OEa44gqXCBrcqpGHpZ43kOcNAkmth9lOrrRc+Xltl7QDE80dSSupKaDsAar/2WvQoaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ANiS5Erw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Tlbb2HLV; arc=none smtp.client-ip=103.168.172.143
+	 Content-Type:Content-Disposition:In-Reply-To; b=peGgqldxiJATwBQFv5eihh8pYRTWub9scsCvSnN0uCxajjZkgj6epskHg1TCJYlCeKnafKuVY3MwrCxFW1u6FM4ktmbrrxshf4hvfy0cQ9lu+RSjFnqqaUKRH9lASkrpfOMhBvcZxwHn8ZsqQm2TDBVyaAqPodvAvbes36DH3MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=iaabcnQI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=t3ftFPHs; arc=none smtp.client-ip=103.168.172.143
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.phl.internal (Postfix) with ESMTP id 65E981380333;
-	Fri, 24 Oct 2025 05:05:17 -0400 (EDT)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailflow.phl.internal (Postfix) with ESMTP id 8B730138021D;
+	Fri, 24 Oct 2025 05:26:09 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 24 Oct 2025 05:05:17 -0400
+  by phl-compute-12.internal (MEProxy); Fri, 24 Oct 2025 05:26:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
 	 h=cc:cc:content-type:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761296717; x=
-	1761303917; bh=LzxoOpuRHVLLxFPTQuj5Q9D1orPS20zYzzKfEt8tzg8=; b=A
-	NiS5ErwWj07SDbOX7wjxBWb9q9Gy18k1wlFyespmT6y7i78YixIe67iX6xAus+42
-	dKwoTJm3rEHg+N2tSW4/dnLGihhQvGqXzQsiIr0B/i8EhsGafADk7s+EOnOiZGz/
-	g25mTFNIEL85njmLOB6br8GiEza4+JI5Kl1mWkelPrRdoiui4hUwwTR8ondqozkH
-	yBxU1o40xDvJMKzkLL+68Dk+UpBEBETjseTQYDwD69lu3rKNJ8KrSCzjrtQ93OPK
-	l5lGqjx2llYIVym4iDsHfkEUVqPrFt3Lpi998s2SYHm5OLT/gzU7ZYNeUIeA81/e
-	bMkDzAYvzEsUuARwH0cig==
+	:reply-to:subject:subject:to:to; s=fm1; t=1761297969; x=
+	1761305169; bh=6vOP5u5uit3cxUkfpkAHqHBhu7MvgqmCIDH3vZUkkWg=; b=i
+	aabcnQIduiFQ5ipLXI3sYTNqwj3QuA17NBDTDq1fIME6SB9RwYdbHrrV8OwW9Los
+	O6lha55gjhXnpb5eCDrGKkyinUYaHKzN8iyO2oJdA5VsdbbLwPTXF+KaNhsa5HXt
+	W7fHbXInNyT3a/9m3uXJIozft8IoQI0jQ65+d9PL74KPieqQu0QUPE0/wUFiqeBE
+	7iMj8AvML4V2XZXHHXN6oSxbpCuTuH4YCHxfWxxFCzvgPhjyZYDu0nAnulvx0x1j
+	G45MLfhl/6FzMdyVJtXuohWsEQrHvaDIPR3cbYpOGPopDdQcp1vwQNQMpMi38S/n
+	A9G6tLNlvosmy7XMjM9sQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761296717; x=1761303917; bh=LzxoOpuRHVLLxFPTQuj5Q9D1orPS20zYzzK
-	fEt8tzg8=; b=Tlbb2HLVyYS7KstUdegxMU7zEdNEa7N52WD4YLnYURYlpdyQQTc
-	c0J83zvzy3JzpIwg+h1I3TBTst6gR9U7qn14a4PfUEV4aflq9k+Y2xvYt5cnwcCW
-	nDQuawtKQSqjS4sYwbzbGYOaYOdfQxcU90SK0Fj/uozES4FU5J158KBoOMnUVIkt
-	IvFG0pYjek/QvtwMjCljmAoDcmN62kTompAmvIgxKz704SqW8/8ctZA6VDhPCvxa
-	KYI/0OxiER9nrnd4MSKS0bOGwvAj9xdMqYF+iBdk9WlI/rQaOXlPBhzOVrsDacB6
-	rOJS88/Dn+177BnxCUTRb+dLNRtDLLkRZcw==
-X-ME-Sender: <xms:S0H7aHL04JtqiuSargFb7zQJAxCpLHhAczxS72CAoPagNc7gcmbR2A>
-    <xme:S0H7aEOW8NTp8RxBicT8q61ykl6-kyA9HsqMozR6Su22VJiynieIW_V5hk-b9rkqs
-    Mf2esSAT6WU7UsRfm0v3EDuiR_rksm1CJ2_8LZVKWONGCfF2p3Zsg>
-X-ME-Received: <xmr:S0H7aCpD1WNKN8XVf1yqtLQ78p6E2Z7A67xQoTfj_lmd1ri0D7ljIjUq-uET1Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekleefucetufdoteggodetrf
+	1761297969; x=1761305169; bh=6vOP5u5uit3cxUkfpkAHqHBhu7MvgqmCIDH
+	3vZUkkWg=; b=t3ftFPHsQgOvgRoRYDMEV8j0Q2wDfdHCUdwMjoQGpoLSabmEXRI
+	pg99abZAk5VB1xRJjFVJIfMgX4KUIUEEpSfkr6/SJ5AjhwnaB6e6gDyGXFTYA0+q
+	BoqoUX2cDAACoaCsgWTm/eybdsJYfUHSfJNTR46qSaKN/pKQHZ6qgUECoQ5nxV09
+	XN7fSWty1WZzkw9ILYo+4D3EpJRnX1xphb6IwHieXO7j2kbhciqz6yFYHJTq57A4
+	mnlFVfvtvTPj8BZ9UzES61wz5xcvA1ngARNHcAKdk1DFsqJOOvJf+6DNNGdb7NTL
+	zz5Rq/nq8xuoQnp+C8crw8vWURp4GUQVCTg==
+X-ME-Sender: <xms:MEb7aKdZJSgZ29MHvsigNS1bPIyFFST-MmkpfrqhrCgodsPdMmrgIQ>
+    <xme:MEb7aNRL2UNzZA7Mo3KYepn8bRHYT5FADopl3wnbPRb-mUeRtCAlQzf5pDkKAXRxm
+    4K-91pOoMMr7g3W_tZtc23FQ5drWCpzaQOsPSvejcOz4AeAhBcsHHy8>
+X-ME-Received: <xmr:MEb7aOfXts_XD94bsCrA1Fb57JewCvoNJVa1P7X5TOrDLcKJQ19xhiwQWRpWng>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekleekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
     gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
     ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepgeefheelvedvteffleeuffdtffelvdfgteehgeeiveetgfefhfei
-    jeehveekieegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghm
-    ohhvrdhnrghmvgdpnhgspghrtghpthhtohepgeegpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
-    thhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhughhhugesgh
-    hoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhr
-    ghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhorhgv
-    nhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhirghmrd
-    hhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhu
-    shgvrdgtii
-X-ME-Proxy: <xmx:S0H7aNdki9UJUz0NQesx9xxTyDsPWu4kz3OouIZBFGvZJCcu1qQ2LQ>
-    <xmx:S0H7aLae0FnbklGqvr3ErBnn_WMZkGG8niRmkyzB02Rg153NsKVAVQ>
-    <xmx:S0H7aACB0vysQ-M5-RkvyLNY2LXH1dkxsQEusVw75cPr9s9yLP-Tng>
-    <xmx:S0H7aGCiXudRcMIYBzADUv7SEN63WFVKILIuG87dZnH5nNRU0pIf8w>
-    <xmx:TUH7aNFSqtzaDOz-qPI1dGtn0qLQi1xryUp4aAbrWfAvhOkN2V1U5nWA>
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
+    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfoh
+    hunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtgho
+    mhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
+    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
+    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
+    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:MEb7aFCHdXRnXcHGjsRb842voZlMR7r8VLeZTiyu6Zwj0d1v31cjZg>
+    <xmx:MEb7aDsCBhTTLvsrYgBSE047YfKVcvwZaZ3HwwV9jpp3G8KYxhmOPw>
+    <xmx:MEb7aKFek1HdkRpUYzR7i4P6mo9kjt_kk0zltpGlnVpwAgfdBs2-jA>
+    <xmx:MEb7aO2lBzM7RtgplMKnX5AS8rVgBdW4JrcthpKWMGX-iRcIAo-vpA>
+    <xmx:MUb7aE-sgGrAILrrvqrM5ksHsNJ6VKG7Z3ffY1qxlijRyMG1p8k3BxRm>
 Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Oct 2025 05:05:14 -0400 (EDT)
-Date: Fri, 24 Oct 2025 10:05:11 +0100
+ 24 Oct 2025 05:26:07 -0400 (EDT)
+Date: Fri, 24 Oct 2025 10:26:05 +0100
 From: Kiryl Shutsemau <kirill@shutemov.name>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
@@ -102,11 +101,14 @@ Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
 	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
 	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
-Message-ID: <efm75n5srtb4xp5akp4x6sq6522p4hivzge7ufwnkodsw2yixt@ahntf6d2qe4h>
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+Message-ID: <xhpgje5pb5sxi5frjvje73v7oatablynl7ksyjnbrglwh5qx7h@fforsl3cwbl6>
 References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-3-kirill@shutemov.name>
- <20251023135644.f955b3aa4b4df23f621087c4@linux-foundation.org>
+ <20251023093251.54146-2-kirill@shutemov.name>
+ <20251023134929.b72ab75a8c132a17ae68a582@linux-foundation.org>
+ <3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
+ <20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -115,123 +117,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023135644.f955b3aa4b4df23f621087c4@linux-foundation.org>
+In-Reply-To: <20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
 
-On Thu, Oct 23, 2025 at 01:56:44PM -0700, Andrew Morton wrote:
-> On Thu, 23 Oct 2025 10:32:51 +0100 Kiryl Shutsemau <kirill@shutemov.name> wrote:
+On Thu, Oct 23, 2025 at 02:36:24PM -0700, Andrew Morton wrote:
+> On Thu, 23 Oct 2025 22:54:49 +0200 David Hildenbrand <david@redhat.com> wrote:
 > 
-> > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-> > supposed to generate SIGBUS.
+> > >> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+> > > 
+> > > Sep 28 2025
+> > > 
+> > >> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> > > 
+> > > Sep 28 2025
+> > > 
+> > >> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> > > 
+> > > Jul 26 2016
+> > > 
+> > > eek, what's this one doing here?  Are we asking -stable maintainers
+> > > to backport this patch into nine years worth of kernels?
+> > > 
+> > > I'll remove this Fixes: line for now...
 > > 
-> > This behavior might not be respected on truncation.
-> > 
-> > During truncation, the kernel splits a large folio in order to reclaim
-> > memory. As a side effect, it unmaps the folio and destroys PMD mappings
-> > of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-> > are preserved.
-> > 
-> > However, if the split fails, PMD mappings are preserved and the user
-> > will not receive SIGBUS on any accesses within the PMD.
-> > 
-> > Unmap the folio on split failure. It will lead to refault as PTEs and
-> > preserve SIGBUS semantics.
+> > Ehm, why?
 > 
-> This conflicts significantly with mm-hotfixes's
-> https://lore.kernel.org/all/20251017013630.139907-1-ziy@nvidia.com/T/#u,
-> whcih is cc:stable.
+> Because the Sep 28 2025 Fixes: totally fooled me and because this
+> doesn't apply to 6.17, let alone to 6.ancient.
 > 
-> What do do here?
+> > It sure is a fix for that. We can indicate to which stable 
+> > versions we want to have ti backported.
+> > 
+> > And yes, it might be all stable kernels.
+> 
+> No probs, thanks for clarifying.  I'll restore the
+> 
+> 	Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> 	Cc; <stable@vger.kernel.org>
+> 
+> and shall let others sort out the backporting issues.
 
-The patch below applies cleanly onto mm-everything.
+One possible way to relax backporting requirements is only to backport
+to kernels where we can have writable file mapping to filesystem with a
+backing storage (non-shmem).
 
-Let me now if you want solve the conflict other way around. I can rebase
-Zi's patch on top my patchset.
+Maybe
 
-From 3ebc2c6690928def2b123e5f44014c02011cfc65 Mon Sep 17 00:00:00 2001
-From: Kiryl Shutsemau <kas@kernel.org>
-Date: Mon, 20 Oct 2025 14:08:21 +0100
-Subject: [PATCH] mm/truncate: Unmap large folio on split failure
+Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
 
-Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-supposed to generate SIGBUS.
-
-This behavior might not be respected on truncation.
-
-During truncation, the kernel splits a large folio in order to reclaim
-memory. As a side effect, it unmaps the folio and destroys PMD mappings
-of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-are preserved.
-
-However, if the split fails, PMD mappings are preserved and the user
-will not receive SIGBUS on any accesses within the PMD.
-
-Unmap the folio on split failure. It will lead to refault as PTEs and
-preserve SIGBUS semantics.
-
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
----
- mm/truncate.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
-
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 9210cf808f5c..6936b8e88e72 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -177,6 +177,29 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
- 	return 0;
- }
- 
-+static int try_folio_split_or_unmap(struct folio *folio, struct page *split_at,
-+				    unsigned long min_order)
-+{
-+	enum ttu_flags ttu_flags =
-+		TTU_SYNC |
-+		TTU_SPLIT_HUGE_PMD |
-+		TTU_IGNORE_MLOCK;
-+	int ret;
-+
-+	ret = try_folio_split_to_order(folio, split_at, min_order);
-+
-+	/*
-+	 * If the split fails, unmap the folio, so it will be refaulted
-+	 * with PTEs to respect SIGBUS semantics.
-+	 */
-+	if (ret) {
-+		try_to_unmap(folio, ttu_flags);
-+		WARN_ON(folio_mapped(folio));
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Handle partial folios.  The folio may be entirely within the
-  * range if a split has raced with us.  If not, we zero the part of the
-@@ -226,7 +249,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 
- 	min_order = mapping_min_folio_order(folio->mapping);
- 	split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
--	if (!try_folio_split_to_order(folio, split_at, min_order)) {
-+	if (!try_folio_split_or_unmap(folio, split_at, min_order)) {
- 		/*
- 		 * try to split at offset + length to make sure folios within
- 		 * the range can be dropped, especially to avoid memory waste
-@@ -250,13 +273,10 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 		if (!folio_trylock(folio2))
- 			goto out;
- 
--		/*
--		 * make sure folio2 is large and does not change its mapping.
--		 * Its split result does not matter here.
--		 */
-+		/* make sure folio2 is large and does not change its mapping */
- 		if (folio_test_large(folio2) &&
- 		    folio2->mapping == folio->mapping)
--			try_folio_split_to_order(folio2, split_at2, min_order);
-+			try_folio_split_or_unmap(folio2, split_at2, min_order);
- 
- 		folio_unlock(folio2);
- out:
 -- 
   Kiryl Shutsemau / Kirill A. Shutemov
 
