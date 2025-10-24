@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98954C05D87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3149AC05D9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37883189F6E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC26189F2D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374EF34B424;
-	Fri, 24 Oct 2025 10:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5334034C820;
+	Fri, 24 Oct 2025 10:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhoNDm7M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0+PQ7VR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83908314D15;
-	Fri, 24 Oct 2025 10:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFCA314D24;
+	Fri, 24 Oct 2025 10:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303378; cv=none; b=QoZGaUiGSCppLvVWQ1FsvJqacziKKwvS29zrxMOwSpIYOqcKKImeo0jMI9BIm0XkfMwyarZgnMsDpkjFdbAM/Z5ZJ613aXfTMQPnyAdHUctgm+2zeAwPehnZZk8GzQOuJiO7cljsojaj/oy0SLCQ5fbIBTmwykwt2/n1So7z0dE=
+	t=1761303383; cv=none; b=cCzzxnvIIup0iwIb+stE5QBhA4OazGB2MgnEYPT38ir/2O7zc6nIM/AP3U44Ugpj54NCXOnaJvv5yoZvw2Cwk1HqPe+04y9fPuOk1sIcJPNJVFA9y9gOYretu162gxaQ0wGoT4WrZ+HZJMp251ROCuW7unBvxHRxFjV17Jh52RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303378; c=relaxed/simple;
-	bh=16wgRCEaRGE6KnaGWYUsE3X1jinLIZr1ZBK0aXw4RfM=;
+	s=arc-20240116; t=1761303383; c=relaxed/simple;
+	bh=UxNNzwwfXU08oQlPAvQ0Gj3cx0fWVzo9FwN6OUP3IWE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QYG4P4tn+ff5OejqF1jR+pzmgnIHJjKAy+7FAEzxeb8cqSp4jVkIpmUIUFlrcdOrZLttfLn9pQhMWfD+KFpx6zRnIAvwwe/99qAPDm/NfCX8CtNYtEpyg4qaluFkCNiP10EuCJKgsrBlSrrErdE8kSkebKn3f8XyNIIdEuJfTTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhoNDm7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC70C4CEF1;
-	Fri, 24 Oct 2025 10:56:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=r2HuiAMNT87t6iH4kaiWXHHmFL1xody/L+Fe50EEVCj3qe957CmBf5lRWZEAD0IT70BfxO4I0deXdmsMwYmMBNa6+AWOZTPOcR7DisqaYtn4F6r2YSWvupxQtzQSqOgrjbQ8gbmtccqNUxrbgmYMja31XnnLPKF/kpVIZBobZks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0+PQ7VR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD267C4CEF5;
+	Fri, 24 Oct 2025 10:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303378;
-	bh=16wgRCEaRGE6KnaGWYUsE3X1jinLIZr1ZBK0aXw4RfM=;
+	s=k20201202; t=1761303383;
+	bh=UxNNzwwfXU08oQlPAvQ0Gj3cx0fWVzo9FwN6OUP3IWE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IhoNDm7MYHudlbkhVsfUx/mu4yPv3B7LpWedIbsFqk5feOJR2CRLTtpPfGU913rts
-	 BnXsbhrrBG61BAiBz8SQXkZzz7CuVgVCCTVF338/JjHpWwS/EisV9aolFITdl8uOiV
-	 NSPcpT3BSWvZci1xaqhHxKBZidz3LoPbdEAG4ILj+fNDqCeN9M0gfspQU3CRZE9whS
-	 GhJDDxpOOdf9k4/VuTE+x2XBOam1W3CpgebRf2yw+btHZbTEbQajWit1RZzWe1YFkC
-	 xJC9kpNKo6CZR+ucuRxGJ+6hR2XNPkcmTFPFiLoxPw3jPI1HNaMIpfpSFCdzIgORxh
-	 6l1D+YC4t/kJQ==
+	b=o0+PQ7VRpTPf1RoflNfIYBzi4NN2upfzZd4YOiX9pG9/MW1Cg5W2+DbhfDwbWMVUo
+	 ysiuojmhoCXqCa5YIJihEy/23arASAhoc/EKl+ke30/RvpM9FBQydhpg+qUft9KK/y
+	 GspxwRaoLGQVa9Fas1FSOQW73AUAOivTp7tMuBmjARqMvPBhmERuyYca5uvL8OLYWw
+	 xsdR6r7ZO1u4rj07za7aYxM4hkyEUBjE9bz8/gwXzXEzeDq2W7C0c1bKXppcH9J9r0
+	 Z3gLygpAqNY7S2bV0VYB0uw+R5iGxf6VQohncdB/eFNZY0ESyx5yPLKAmvVkVR1gLC
+	 XUlzS3xU1CAiA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:53:08 +0200
-Subject: [PATCH v3 39/70] selftests/namespaces: third listns() test
+Date: Fri, 24 Oct 2025 12:53:09 +0200
+Subject: [PATCH v3 40/70] selftests/namespaces: fourth listns() test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-39-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-40-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,36 +69,36 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2006; i=brauner@kernel.org;
- h=from:subject:message-id; bh=16wgRCEaRGE6KnaGWYUsE3X1jinLIZr1ZBK0aXw4RfM=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmqTFlukG3Fq7pS9f+ubJ933MD15XSttObNk0c+Vk
- 7ZO05eI7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIeh+G/77Ns2ff05A9yVel
- /6T/xenyO87L9py7bcszsfjdmoieVTcZGRbntt+c4mIXu+6T60drrmXBx1sPHolevehw58v55uJ
- r29gA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1513; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=UxNNzwwfXU08oQlPAvQ0Gj3cx0fWVzo9FwN6OUP3IWE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmpzvhzw8pziInXpH87zF2xWP6op23jjoJ2HH+v1x
+ UITNnGu6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI1gVGhi636ReOlyz6F3+b
+ daevx2dLOxGFtC9pZosac8U21nCG72H4pxao1b5H73vDI/GSryzndDc/WzzBcG3etKAMjZ/pzKu
+ eMwEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test listns() pagination.
-List namespaces in batches.
+Test listns() with LISTNS_CURRENT_USER.
+List namespaces owned by current user namespace.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/listns_test.c | 53 ++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ tools/testing/selftests/namespaces/listns_test.c | 33 ++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/listns_test.c b/tools/testing/selftests/namespaces/listns_test.c
-index 64249502ac49..7dff63a00263 100644
+index 7dff63a00263..457298cb4c64 100644
 --- a/tools/testing/selftests/namespaces/listns_test.c
 +++ b/tools/testing/selftests/namespaces/listns_test.c
-@@ -115,4 +115,57 @@ TEST(listns_filter_by_type)
+@@ -168,4 +168,37 @@ TEST(listns_pagination)
  	}
  }
  
 +/*
-+ * Test listns() pagination.
-+ * List namespaces in batches.
++ * Test listns() with LISTNS_CURRENT_USER.
++ * List namespaces owned by current user namespace.
 + */
-+TEST(listns_pagination)
++TEST(listns_current_user)
 +{
 +	struct ns_id_req req = {
 +		.size = sizeof(req),
@@ -106,45 +106,25 @@ index 64249502ac49..7dff63a00263 100644
 +		.ns_id = 0,
 +		.ns_type = 0,
 +		.spare2 = 0,
-+		.user_ns_id = 0,
++		.user_ns_id = LISTNS_CURRENT_USER,
 +	};
-+	__u64 batch1[2], batch2[2];
-+	ssize_t ret1, ret2;
++	__u64 ns_ids[100];
++	ssize_t ret;
 +
-+	/* Get first batch */
-+	ret1 = sys_listns(&req, batch1, ARRAY_SIZE(batch1), 0);
-+	if (ret1 < 0) {
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (ret < 0) {
 +		if (errno == ENOSYS)
 +			SKIP(return, "listns() not supported");
 +		TH_LOG("listns failed: %s (errno=%d)", strerror(errno), errno);
 +		ASSERT_TRUE(false);
 +	}
-+	ASSERT_GE(ret1, 0);
++	ASSERT_GE(ret, 0);
 +
-+	if (ret1 == 0)
-+		SKIP(return, "No namespaces found");
++	/* Should find at least the initial namespaces if we're in init_user_ns */
++	TH_LOG("Found %zd namespaces owned by current user namespace", ret);
 +
-+	TH_LOG("First batch: %zd namespaces", ret1);
-+
-+	/* Get second batch using last ID from first batch */
-+	if (ret1 == ARRAY_SIZE(batch1)) {
-+		req.ns_id = batch1[ret1 - 1];
-+		ret2 = sys_listns(&req, batch2, ARRAY_SIZE(batch2), 0);
-+		ASSERT_GE(ret2, 0);
-+
-+		TH_LOG("Second batch: %zd namespaces (after ns_id=%llu)",
-+		       ret2, (unsigned long long)req.ns_id);
-+
-+		/* If we got more results, verify IDs are monotonically increasing */
-+		if (ret2 > 0) {
-+			ASSERT_GT(batch2[0], batch1[ret1 - 1]);
-+			TH_LOG("Pagination working: %llu > %llu",
-+			       (unsigned long long)batch2[0],
-+			       (unsigned long long)batch1[ret1 - 1]);
-+		}
-+	} else {
-+		TH_LOG("All namespaces fit in first batch");
-+	}
++	for (ssize_t i = 0; i < ret; i++)
++		TH_LOG("  [%zd] ns_id: %llu", i, (unsigned long long)ns_ids[i]);
 +}
 +
  TEST_HARNESS_MAIN
