@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A45C05E7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:24:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CD7C05E24
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 363D750819A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:16:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93B1619A1992
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F13D357726;
-	Fri, 24 Oct 2025 10:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827A8315D5B;
+	Fri, 24 Oct 2025 10:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSJq/EQ9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKaD/dhS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF8A35770C;
-	Fri, 24 Oct 2025 10:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80C4357A25;
+	Fri, 24 Oct 2025 10:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303439; cv=none; b=L5nUk4JN2lAQXG1WBYLjw2V8jGESzoXavuI2YKr3IbrD3oRldrognY9Q6ulru9nCYOViKcYpREn+VE8zFOfZrGKO0wbh+3CsuuDhPFG8ViTAPsHyA19GDGBU9nwpM4bGqFdymGKAE6tbzfx2JgwvC8SNgYyAVYZK3zb5BMio7iU=
+	t=1761303444; cv=none; b=ZpcY5PBK4JzJ1XzmGDTlmrrwImXRHmNdecDofA5t3itZJ2+UrkfaJY1Q2pDQB2bEa+D2/sgC0MP/eunHueWXEnUmq+2cT4nHvru+2sVVom5cDQHGFoqmvdgQmpgei2ZduZPeyXBgIujaf3/UV6Af8XuwDLKgygGx960UOah6or0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303439; c=relaxed/simple;
-	bh=jlxGmvG3TRBGBU95oespXIKDq7FaoNyvL6StJ8L+zuI=;
+	s=arc-20240116; t=1761303444; c=relaxed/simple;
+	bh=lxk3HyfGnG2LzFtd9uD08385YY9HWIbP9txgILZ5aFQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c9mLpfSeBizT5DrBH6k0VElfFTqOF6WkKkPKHgyo62F6q56ke/8YSrQ++qTrnFd9hDjkfUyvOVtjLxrYE4E+GhLbM8ZPkSvBmAa2gh7MA1+a2hsfMZzbpZ74tuI9h4nt0i4BloQtQ056FsOMEwqYZEpHP5wJp/00M2pIjCyNj34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSJq/EQ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83647C4CEF1;
-	Fri, 24 Oct 2025 10:57:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=N9kMcPazL1cmahp1L1yFBc60mQGx06jhsOSsSFVS2kEKc/vACLkh5u1RfMz0KCl/PLjTWJWYn50isG6TseXY9rc0nRhypr488HM3bs2zzYJpETIiKT6mvNiCMm8DRZ4lm0fCOXY/HByH/BgzPKS4RXVeKzcXV5IPw+8JdwDQ5Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKaD/dhS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B148C4CEF5;
+	Fri, 24 Oct 2025 10:57:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303439;
-	bh=jlxGmvG3TRBGBU95oespXIKDq7FaoNyvL6StJ8L+zuI=;
+	s=k20201202; t=1761303444;
+	bh=lxk3HyfGnG2LzFtd9uD08385YY9HWIbP9txgILZ5aFQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=bSJq/EQ9DjhEx3MRYq3pOGAC6ltXmTCFdPlaUN28UNpASiS28VRMD849WGQ977mvp
-	 s7afflNINQY3HswiChPKwFjEby9ZOgDfGz27YCjtBA4/UD33ZKvOpEGDMpwHXUW0e/
-	 cHpBE5q+O0c5OpCCkwjyzJiAH4Ajrlo+3oheQ0rTr9+NFltT3RpH+S9s9NuMEjaF/6
-	 rFXffrs1PQBOxssIJ5isXyA3lkPbC739yDvQd7qJ07jrSod5103cXTBT9FxI3Zbc+R
-	 Yt/5XyNETikpNDQh8PaqNkd2eLqr37K+1C11cNSklHfHWtwP8ERSmQLPT7IifYWe5v
-	 tMqxt5W7eapGw==
+	b=fKaD/dhSXHJfBpSm7rd2BGc5mSjkqujo7rCWjxmDGP9hkBA8yFClgyPZpqVB8KCEi
+	 3Np7MlSfdwhQOmz1uh2jpK65XkSyuahWdsGRtvNavXWOFv3QdIxa4KNH3M8A7zgniq
+	 ucFY3fFe4JpTu4h5Xm/ZggeRP0MIPNpX5P2Ttj0Wgf+kgTNy154Ax8inFsjE6N+dC1
+	 E5fa7Fzd6GD2kCKGC+owyG/JJGRmfCxz++RbdfCbyadJc1PUTpkCBhIf24+zRhNE2E
+	 BXPVMTIwQILDIMh9Y6KphRtGQcdf3DeBjxit79BQIBwJGeu3DBB82Cug5FtmZOJQvq
+	 wOiAILQFP7F8g==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:53:20 +0200
-Subject: [PATCH v3 51/70] selftests/namespaces: sixth listns() permission
+Date: Fri, 24 Oct 2025 12:53:21 +0200
+Subject: [PATCH v3 52/70] selftests/namespaces: seventh listns() permission
  test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-51-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-52-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,41 +70,61 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2646; i=brauner@kernel.org;
- h=from:subject:message-id; bh=jlxGmvG3TRBGBU95oespXIKDq7FaoNyvL6StJ8L+zuI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmqf99BFtPul0/WsYMfJz8/+XK8yo+LPZrEDTUdcq
- rqm7kh37yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIYi8jw7IJrJvlqu7qRa/4
- GPT/Wl55Tlv2TNV9VqrLSvSmOlSKxjIyTEl4IGiZJVSd+viOfVZ2TtLv6qvP9wqW87uf+rz486a
- PbAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3491; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=lxk3HyfGnG2LzFtd9uD08385YY9HWIbP9txgILZ5aFQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmr3uGsoc2b2i/6a9qn3Gmrm6C0ysHDXLs1szYl7Y
+ XP7j5dfRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQeGTIy7P632urKvIwVVXvO
+ cSnHX3N++WNCjNH+Vo9nYeWnX07wNGX4p6ew4gNXXX5s/6dtzq/zLp+acyoxo3GG5fFXp5VvCd2
+ fxAkA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that we can see user namespaces we have CAP_SYS_ADMIN inside of.
-This is different from seeing namespaces owned by a user namespace.
+Test that dropping CAP_SYS_ADMIN restricts what we can see.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/listns_permissions_test.c | 87 ++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+ .../selftests/namespaces/listns_permissions_test.c | 108 +++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/listns_permissions_test.c b/tools/testing/selftests/namespaces/listns_permissions_test.c
-index b990b785dd7f..9aa06ff76333 100644
+index 9aa06ff76333..82d818751a5f 100644
 --- a/tools/testing/selftests/namespaces/listns_permissions_test.c
 +++ b/tools/testing/selftests/namespaces/listns_permissions_test.c
-@@ -561,4 +561,91 @@ TEST(listns_parent_userns_cap_sys_admin)
- 			count);
+@@ -648,4 +648,112 @@ TEST(listns_cap_sys_admin_inside_userns)
+ 	TH_LOG("Process can see user namespace it has CAP_SYS_ADMIN inside of");
  }
  
 +/*
-+ * Test that we can see user namespaces we have CAP_SYS_ADMIN inside of.
-+ * This is different from seeing namespaces owned by a user namespace.
++ * Test that dropping CAP_SYS_ADMIN restricts what we can see.
 + */
-+TEST(listns_cap_sys_admin_inside_userns)
++TEST(listns_drop_cap_sys_admin)
 +{
++	cap_t caps;
++	cap_value_t cap_list[1] = { CAP_SYS_ADMIN };
++
++	/* This test needs to start with CAP_SYS_ADMIN */
++	caps = cap_get_proc();
++	if (!caps) {
++		SKIP(return, "Cannot get capabilities");
++	}
++
++	cap_flag_value_t cap_val;
++	if (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE, &cap_val) < 0) {
++		cap_free(caps);
++		SKIP(return, "Cannot check CAP_SYS_ADMIN");
++	}
++
++	if (cap_val != CAP_SET) {
++		cap_free(caps);
++		SKIP(return, "Test needs CAP_SYS_ADMIN to start");
++	}
++	cap_free(caps);
++
 +	int pipefd[2];
 +	pid_t pid;
 +	int status;
-+	bool found_ours;
++	bool correct;
++	ssize_t count_before, count_after;
 +
 +	ASSERT_EQ(pipe(pipefd), 0);
 +
@@ -112,57 +132,52 @@ index b990b785dd7f..9aa06ff76333 100644
 +	ASSERT_GE(pid, 0);
 +
 +	if (pid == 0) {
-+		int fd;
-+		__u64 our_userns_id;
-+		struct ns_id_req req;
-+		__u64 ns_ids[100];
-+		ssize_t ret;
-+		bool found_ours;
++		struct ns_id_req req = {
++			.size = sizeof(req),
++			.spare = 0,
++			.ns_id = 0,
++			.ns_type = CLONE_NEWNET,
++			.spare2 = 0,
++			.user_ns_id = LISTNS_CURRENT_USER,
++		};
++		__u64 ns_ids_before[100];
++		ssize_t count_before;
++		__u64 ns_ids_after[100];
++		ssize_t count_after;
++		bool correct;
 +
 +		close(pipefd[0]);
 +
-+		/* Create user namespace - we have CAP_SYS_ADMIN inside it */
++		/* Create user namespace */
 +		if (setup_userns() < 0) {
 +			close(pipefd[1]);
 +			exit(1);
 +		}
 +
-+		/* Get our user namespace ID */
-+		fd = open("/proc/self/ns/user", O_RDONLY);
-+		if (fd < 0) {
-+			close(pipefd[1]);
-+			exit(1);
++		/* Count namespaces with CAP_SYS_ADMIN */
++		count_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
++
++		/* Drop CAP_SYS_ADMIN */
++		caps = cap_get_proc();
++		if (caps) {
++			cap_set_flag(caps, CAP_EFFECTIVE, 1, cap_list, CAP_CLEAR);
++			cap_set_flag(caps, CAP_PERMITTED, 1, cap_list, CAP_CLEAR);
++			cap_set_proc(caps);
++			cap_free(caps);
 +		}
 +
-+		if (ioctl(fd, NS_GET_ID, &our_userns_id) < 0) {
-+			close(fd);
-+			close(pipefd[1]);
-+			exit(1);
-+		}
-+		close(fd);
++		/* Ensure we can't regain the capability */
++		prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
 +
-+		/* List all user namespaces globally */
-+		req.size = sizeof(req);
-+		req.spare = 0;
-+		req.ns_id = 0;
-+		req.ns_type = CLONE_NEWUSER;
-+		req.spare2 = 0;
-+		req.user_ns_id = 0;
++		/* Count namespaces without CAP_SYS_ADMIN */
++		count_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
 +
-+		ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++		/* Without CAP_SYS_ADMIN, we should see same or fewer namespaces */
++		correct = (count_after <= count_before);
 +
-+		/* We should be able to see our own user namespace */
-+		found_ours = false;
-+		if (ret > 0) {
-+			for (ssize_t i = 0; i < ret; i++) {
-+				if (ns_ids[i] == our_userns_id) {
-+					found_ours = true;
-+					break;
-+				}
-+			}
-+		}
-+
-+		write(pipefd[1], &found_ours, sizeof(found_ours));
++		write(pipefd[1], &correct, sizeof(correct));
++		write(pipefd[1], &count_before, sizeof(count_before));
++		write(pipefd[1], &count_after, sizeof(count_after));
 +		close(pipefd[1]);
 +		exit(0);
 +	}
@@ -170,16 +185,21 @@ index b990b785dd7f..9aa06ff76333 100644
 +	/* Parent */
 +	close(pipefd[1]);
 +
-+	found_ours = false;
-+	read(pipefd[0], &found_ours, sizeof(found_ours));
++	correct = false;
++	count_before = 0;
++	count_after = 0;
++	read(pipefd[0], &correct, sizeof(correct));
++	read(pipefd[0], &count_before, sizeof(count_before));
++	read(pipefd[0], &count_after, sizeof(count_after));
 +	close(pipefd[0]);
 +
 +	waitpid(pid, &status, 0);
 +	ASSERT_TRUE(WIFEXITED(status));
 +	ASSERT_EQ(WEXITSTATUS(status), 0);
 +
-+	ASSERT_TRUE(found_ours);
-+	TH_LOG("Process can see user namespace it has CAP_SYS_ADMIN inside of");
++	ASSERT_TRUE(correct);
++	TH_LOG("With CAP_SYS_ADMIN: %zd namespaces, without: %zd namespaces",
++			count_before, count_after);
 +}
 +
  TEST_HARNESS_MAIN
