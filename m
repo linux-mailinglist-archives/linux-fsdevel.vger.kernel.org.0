@@ -1,123 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-65572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E08C07E4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 21:23:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CD5C07EB9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 21:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823FF1C28865
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 19:23:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CD324E50F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 19:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003A528DB76;
-	Fri, 24 Oct 2025 19:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786BD2BE029;
+	Fri, 24 Oct 2025 19:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPjfy8RF"
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="chw4THql";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D3AM57Hq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8A1288C3D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 19:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432329B204;
+	Fri, 24 Oct 2025 19:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333766; cv=none; b=ZUM0idG0M2vUGiNUCruCEcA3oEiy6trd5fhZgDRa05NPxDqji2+OfxZTJyba6JYqjstHORcqyfu5tsHZ2o6dFor4YNbilcHvTWLLfyhktd7WXHyKaDi+joPqYe6DSrm9BxLYm30bLEo5wQ+wggzSEUe0Y5JLfuoF+hu0mvJOz/c=
+	t=1761334382; cv=none; b=ZnSyT6Wegcb9joZOgCRvJ0ZpRhvIEDG+Qm5PG0iIjih4XPHMsXe5hg37ODeH50V4/kUWhR0aVrrHU6Pz3gHvKPYSBZGJL4aO74IoC7TA/PW1E6JOyTdaWxipaGGTAH/DONm5SG6eubytzPe/OUUz1HbSDidXct4WixRYpGq9mQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333766; c=relaxed/simple;
-	bh=QgsR+Vv3MGDc6mihpTVQXoOx12Z77gAlV2xrGnLO6/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nQSXj5ULwCYpGn6bxyNoKTN/kRYeP7u3aMzS28xBhBoNTeimI3qi/AHgXzFVZgbKWqsEL1vPf1xr6R+KwO6eje1WAeTXv3AX4uBkrujW1/ttMi0faHhpu1b1Lp61JCZrtKLhRjjHwiR1vnrH2TxUy4H53dbePk6dole2MtWLloc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPjfy8RF; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4eb7f0b9041so18158291cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 12:22:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761333764; x=1761938564; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QgVsq2p7ysLPME1WhWajPgNYUjlNdQ3sSEmcEy2qO6w=;
-        b=BPjfy8RFaXc653UEcDt7aXACeN5dBOMeuj4rA77Emfracun9ngFDcRYifmFpEP2AXK
-         5m8C22v7SdieEVE2rVxNAFRd/1Xc35kZLKBy9wl7zSvt2qfcQnsXmcsAFF7cUA9LNkqA
-         SytL4/F3PHlWEKaUTFmlran24Xb9TNKnOV/BhYmhBRFHM2OSm4FiJ1/DcbkRJ7ZXYK7X
-         FumnweK7iumntqEMKm94QaR5Ssc6S0OVZDEMIUPAiOuAsHk6xqnswWbBWDWKTs3IOcAI
-         wTJ0muof9YdKtxEpxjMCIbnAISM/wVevoa9m7D+4RcHdqFPfObTHJLDHDL+NXhaTzDW5
-         zUwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761333764; x=1761938564;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QgVsq2p7ysLPME1WhWajPgNYUjlNdQ3sSEmcEy2qO6w=;
-        b=kVZ3HvQT2FtiGkUoGqAsiNiXc86dEZxv+7Qee3Cfp3Kh7VqjjwmedMkgbzvrhFecdd
-         CqjrdPgheW0fuy7ACKJVTSXblPKGdztUzOdMC7hTGrHyxqEHoWzWGeUGwB00YFh0otdD
-         jNB61n+9Q+5l+p4H1nd0H9S0mBde4IQ0P/N0WhPzNvEV2bWaRjZK71dD1qCWQbXewY0m
-         WDDgvqL7VGiqsoZrTdRfzwKD5YDtd54V1omt+0aiImz41dngcOZTHuFaJXLdNAku6BHv
-         D9Oqeo46gzIXnAVKaHTd7VFU22G5t0hchBj/KPW4+JNDwiju3b3dxGgOhA1x/ulSFfXD
-         JPYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUx1lviN5tDkJkcEgaQ3Rw+EIcEsIkcPMO0PhXVpox8cngbbnPWijy9gq8TYImKB9ppc16cQ/csFs4F0LUN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb/1d1QTgN/vz3kxEcq0RxRErcAehkPvYT9pSRBCvVoYSZQNTp
-	JjTQTcqsPwULAsVOY80w0/ewT5Jm7q93yN3FpSbUvgapS0SSm8zX7bctg9Bqgd7cST61Hi+CvU2
-	CyFBmJOGULYzVMJhb+Rv8K8jpskmiMQo=
-X-Gm-Gg: ASbGncu+KYN4tj4FtZdZZbow8gvTBI75QCbQ/Ct8JrnBjSmiJiggUXqlSmuX3Ktx+mr
-	6KsGlPFOEzwbXPhwzH7SGWkCxdwd6AQGE9q0mrhaj70cIw/nzXMM06PZb9/ca6RDONFBS3Erb9B
-	RR+Q5MEv3Bj6bxnEhewA8mVEtxWE5xZc5i8CITfjEXj4VMRpdo2RzIS/lo13973kvW0yzWXG70Y
-	TL1eMrXuMnjaUEU4fH2THskNyvH0EC3VLU2CW7dkcVXwV8pbKgdDiXdTkCGuGi4KOvSMTN+nAqO
-	pUWl85EpWUBQozZuULY3JyCeLw==
-X-Google-Smtp-Source: AGHT+IGxXnezM7H6ghoHWHVk0i5IpwGNkPTA0TF+xQoIAFjkCgqjiFTZpTBBYWa/w3Z7zp2bKm+jQ4qd+hmkKIGk2Xc=
-X-Received: by 2002:a05:622a:138a:b0:4d8:531e:f896 with SMTP id
- d75a77b69052e-4e89d293c59mr371291051cf.27.1761333763653; Fri, 24 Oct 2025
- 12:22:43 -0700 (PDT)
+	s=arc-20240116; t=1761334382; c=relaxed/simple;
+	bh=jPIkLLtaRCzb8aJMZTdAneGKRi508NY6HlZqhH47XHo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=kmwLvq6rCb9V0Ptihxk3vrABEjV8tIOZmY22Spph7S0079FVLxHUIZL3dr7w0VtBwyqUb43cXQeaqzdY77RrrMlXQ8bX0ity6lx/xKF/HN0oSTWyD9Cfs3TJ5FGfZImCTrJXOsVEKDtrvcEoRB8Pm0+FXE+yoH9rQWm95d7ivbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=chw4THql; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D3AM57Hq; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id C06511300286;
+	Fri, 24 Oct 2025 15:32:58 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-04.internal (MEProxy); Fri, 24 Oct 2025 15:32:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1761334378; x=1761341578; bh=2Eie9rhTwSUlY1W7oebxyg5hlbXGes4p
+	kn2Ot5hK/W0=; b=chw4THqlrwqSs38QX7V0HBZScQNidiSKZogcPrpPVGKNFSpY
+	Hr/x/WMn6jcDRCRIZOqeh+04AX2tNshXGRrFGFFPzhCB/R1Yxbn/BRD+CMocWPhx
+	UpBf+N5OpFp4lqNgOHwlKFmSPMJxD8VYzLeHinflFas7Ld3ZoqbcEQqiXJ+Z3xAP
+	fCb8VUSRAqgkBqs7wV2j07myrIUZ6+GGvVEyjZUlcvZ91XU4e/x3XfM5poD9+QHu
+	OJagCG04BPvf0fs7RH1Vqko1n28A/AqdD/RTHNQZVzUfitMiaYH0gHyQoRxFET6p
+	cqGsM92yKgXdESHu8b2MZAD7FbQFbs+Ml/t0YQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761334378; x=
+	1761341578; bh=2Eie9rhTwSUlY1W7oebxyg5hlbXGes4pkn2Ot5hK/W0=; b=D
+	3AM57HqO1i+sRH2fR79zXWnSCId0q9IG98YuR6VSFOQGUhKSutqJMChsDLj/Q7L8
+	yRv4VxnZju07Q9kZijHV78l8O2wKbfusNAjX6uQzY7sPxg2Gs/Rxi94yw2DyGXe1
+	brZLqLfUgrH/eiiEFLDTB3k474jQq/i9D2lnlg+u8wxFgi/pIAx6UB2lZeZUiyKo
+	+jKGYD4ZIVFHHKPB8YCAa7hdkfBWLFVvL2whsdr0dgz3YeV6J9qOeGLWBiMmo5iu
+	rlz9ckZvDXJLCd/aR/cvyC1mVkfwHKTs/yIVTSZb6GfUdyBGBBbNxS5j8wpuygxC
+	fwPJRsyOxvr6PwHvKmG4w==
+X-ME-Sender: <xms:adT7aLrpDPQZGVa84VrLn300BloDRka_Xr4eaWU4ja3qoCoIjmh71Q>
+    <xme:adT7aAd0gyIgXgFgJ6m9vi0bn0ShQv6mIHu_eH2ssB_IpNsPVjpLL9NN6UqSlFbOy
+    zeK2Os0Ng_D0EzLwoOIOmVpDNzRJLXJxrZt0iqRPB-m3wUNHO6V2Wo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduhedtudelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfmfhirhhi
+    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
+    hmvgeqnecuggftrfgrthhtvghrnhepfeehvedviefgueevgeduhfffjedugfdtvdfhvdek
+    uefgueffteegkedvvdffteffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgt
+    phhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgrnhhnvghsse
+    gtmhhpgigthhhgrdhorhhgpdhrtghpthhtohepuggrvhhiugesfhhrohhmohhrsghithdr
+    tghomhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhope
+    hsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhr
+    rgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgr
+    sheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhpphhtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:adT7aFyRBRSeVnGi14kIw5Ck1L7OlC7KwIMqpMZgk5v61oO8fcM_Xw>
+    <xmx:adT7aA9calwwSFl8H5vxhd7a94GeP9js63aA16vdy4NfsUhN7tM54g>
+    <xmx:adT7aKAFG2RoCob6uF9S4yaeS54QhsKtAt-fxnxflvo7RqlSsAM5iA>
+    <xmx:adT7aIdsOaSSwRDxprKYwXiknos2gcSFvlRqyzRQm_upT8MpgRROvg>
+    <xmx:atT7aMGYELrvclqCX7O2E_660PuNtn2jwY1SNpAHOUyXq9fD6wrjUE8C>
+Feedback-ID: ie3994620:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 18E372160065; Fri, 24 Oct 2025 15:32:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926002609.1302233-1-joannelkoong@gmail.com>
- <20250926002609.1302233-8-joannelkoong@gmail.com> <aPqDPjnIaR3EF5Lt@bfoster>
- <CAJnrk1aNrARYRS+_b0v8yckR5bO4vyJkGKZHB2788vLKOY7xPw@mail.gmail.com>
- <CAJnrk1b3bHYhbW9q0r4A0NjnMNEbtCFExosAL_rUoBupr1mO3Q@mail.gmail.com> <aPu1ilw6Tq6tKPrf@casper.infradead.org>
-In-Reply-To: <aPu1ilw6Tq6tKPrf@casper.infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 24 Oct 2025 12:22:32 -0700
-X-Gm-Features: AS18NWDml_8GOzBxWkDpLBz16byJMfZB750GwQQx4HmcQAC4dkTAAf9RVH0Fz44
-Message-ID: <CAJnrk1az+8iFnN4+bViR0USRHzQ8OejhQNNgUT+yr+g+X4nFEA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/14] iomap: track pending read bytes more optimally
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Brian Foster <bfoster@redhat.com>, brauner@kernel.org, miklos@szeredi.hu, 
-	djwong@kernel.org, hch@infradead.org, hsiangkao@linux.alibaba.com, 
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: A_7exwu8WuKB
+Date: Fri, 24 Oct 2025 20:32:36 +0100
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: "David Hildenbrand" <david@redhat.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Hugh Dickins" <hughd@google.com>, "Matthew Wilcox" <willy@infradead.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
+ "Suren Baghdasaryan" <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>,
+ "Rik van Riel" <riel@surriel.com>, "Harry Yoo" <harry.yoo@oracle.com>,
+ "Johannes Weiner" <hannes@cmpxchg.org>,
+ "Shakeel Butt" <shakeel.butt@linux.dev>,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, "Dave Chinner" <david@fromorbit.com>,
+ linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, "Kiryl Shutsemau" <kas@kernel.org>
+Message-Id: <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
+In-Reply-To: <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-2-kirill@shutemov.name>
+ <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries beyond i_size
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 24, 2025 at 10:21=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Fri, Oct 24, 2025 at 09:25:13AM -0700, Joanne Koong wrote:
-> > What I missed was that if all the bytes in the folio are non-uptodate
-> > and need to read in by the filesystem, then there's a bug where the
-> > read will be ended on the folio twice (in iomap_read_end() and when
-> > the filesystem calls iomap_finish_folio_write(), when only the
-> > filesystem should end the read), which does 2 folio unlocks which ends
-> > up locking the folio. Looking at the writeback patch that does a
-> > similar optimization [1], I miss the same thing there.
->
-> folio_unlock() contains:
->         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
->
-> Feels like more filesystem people should be enabling CONFIG_DEBUG_VM
-> when testing (excluding performance testing of course; it'll do ugly
-> things to your performance numbers).
 
-Point taken. It looks like there's a bunch of other memory debugging
-configs as well. Do you recommend enabling all of these when testing?
-Do you have a particular .config you use for when you run tests?
 
-Thanks,
-Joanne
+On Fri, Oct 24, 2025, at 16:42, David Hildenbrand wrote:
+> On 23.10.25 11:32, Kiryl Shutsemau wrote:
+>>   	addr0 = addr - start * PAGE_SIZE;
+>>   	if (folio_within_vma(folio, vmf->vma) &&
+>> -	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
+>> +	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
+>
+> Isn't this just testing whether addr0 is aligned to folio_size(folio)? 
+> (given that we don't support folios > PMD_SIZE), like
+>
+> 	IS_ALIGNED(addr0, folio_size(folio))
+
+Actually, no. VMA can be not aligned to folio_size().
+
+-- 
+Kiryl Shutsemau / Kirill A. Shutemov
 
