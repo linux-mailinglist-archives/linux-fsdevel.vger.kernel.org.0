@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5D3C05F53
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:30:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AE5C05F65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625251C266DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF18C1C26D66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F259036CA96;
-	Fri, 24 Oct 2025 10:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A78A374AA0;
+	Fri, 24 Oct 2025 10:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OS9VuFq+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFTNuFSj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD2D3191D8;
-	Fri, 24 Oct 2025 10:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E7F319843;
+	Fri, 24 Oct 2025 10:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303545; cv=none; b=dr8a01HWFsDPqa4vQHtM4Mzu0ZcqKvExu2hJWZTOtjZUd8dWaKIm/eQU6njgBBMRWsUJZZMEr1S/Fxg367ugDxZgghGpJHd2n5OCIsKeBJ8xSGX+AhQLrOtjs9el2K1+J2Qw4ouVbqRkVqyXmLKVxguSw+VZzd5DhhTXkF4gmzY=
+	t=1761303550; cv=none; b=o1cuB53Jxg8E0GY4LGemEYWMvX7scrrr1sfJhdT4bOicFB7GsteDJfLr5Lg4HKcjqg162H+hjN2Aii5POdKzURbG44et7tC2J+IFy9LlijMUvQBOyidYArtBXqA00+mrsiCYtBGityAnR4Cp5QQnP5zTeWgHlHhTkrB+3QOMNMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303545; c=relaxed/simple;
-	bh=+kgGWvLMBNpy0C4YEMZXDEKTpLYegwzhaVcMRXxEJRg=;
+	s=arc-20240116; t=1761303550; c=relaxed/simple;
+	bh=wjpkLSx2K2iB/mWZZQZcuIqQ514ywG7UHLGyzr0x04k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Iu4VX79tSepGEm0/sD2Tp4SEqfBIZvcYgPciUt+KkNwyF7xpo1bTuhgEYSXA3ygmZmRzprLXrXq8b6OVz2Kp+OTxmuEtTcdGhdSon4YYysl/1JTznJ+doK9mijXCU9m690ePXovtxZDcFJG+KsSuBUrpxpp6PfNdJSlyTLD18rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OS9VuFq+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17CAC4CEFF;
-	Fri, 24 Oct 2025 10:59:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=MMink3SWkcIc7dH+/EGe6wikBsjx7f6SsLDYXHYiss8meiI/6Y3t/VkfrFs0BKWDL/3r/WfzRfMZnb+oxamkTJS13134svbg7Q3ExDObLuXefuqpD7rRnHCR4gQ49gbh9SggFzDz8Q6+zxdllbmOLYZRvA8chgjREJmx22dIX+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFTNuFSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E94BC4CEF1;
+	Fri, 24 Oct 2025 10:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303545;
-	bh=+kgGWvLMBNpy0C4YEMZXDEKTpLYegwzhaVcMRXxEJRg=;
+	s=k20201202; t=1761303550;
+	bh=wjpkLSx2K2iB/mWZZQZcuIqQ514ywG7UHLGyzr0x04k=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OS9VuFq+p15knQbrnvWBwJblwGdno3oU59XB0mMm6SUD48391bR0SpVaxLCk/u2Wf
-	 impzdD4YedlLes45Ec6LF4lUDYYr4jiuipgpOjLG4hhnaqwW42Fr7UfnMnVnk7onw2
-	 GGRWo5mLghvuiRmf/sPL7jgf56HsF2QDiCUwM+nh0NZNxds5dPp08VMhiN15np/fBF
-	 /Bz3eIQ9kQ+yFjmNlnhxckedjjnpZkVn5tfzqKkg2nkJov0psm/0vnsSNlh6rVOXeT
-	 KVwC4w7JG3THen32DAd8iO5tYbBI0pNJ0BFWuVwZu8pgyDMdBjv9czwH1RIZOIHNtj
-	 hRvH89Cyp9vPg==
+	b=YFTNuFSjSB3jOliTHKvt9NNckQS3AgEWAAjZAcg2tgiLz/3+JLJt48UZtKv2ikiB1
+	 uk7fiXJmzQh/BTp5mnBoPAFtYhzQ3DTAizNqQ2nmPx4WjmzlkllNHdbHhuab/txTpW
+	 DDzS1yC1UpmTvlV9+OmO37w9iAjZ5fuWS5pPHV3BxPwGnzDAjPOqRj8wxc0VWNi6JU
+	 VaYoBOxHBCsffFX6qMIAW21k3OEK9SehKzQ8c6lDFwVXPM88ZAn8MK35Qf84X6isN2
+	 MNoPWt7h05P5X3fOESAKzvnniBYjnaHYxL1gCY5YcjhGoNVVjZ6fkraJi3reNJFDpl
+	 vgs/JaMGY7Srw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:53:35 +0200
-Subject: [PATCH v3 66/70] selftests/namespace: second threaded active
+Date: Fri, 24 Oct 2025 12:53:36 +0200
+Subject: [PATCH v3 67/70] selftests/namespace: third threaded active
  reference count test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-66-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-67-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,129 +70,358 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3834; i=brauner@kernel.org;
- h=from:subject:message-id; bh=+kgGWvLMBNpy0C4YEMZXDEKTpLYegwzhaVcMRXxEJRg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8juoI73luXFt+yfSE8Ydd6umC5iXqJSYn1gWyvOnIc
- a4UUHnYUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGlVEaGWc6uJ2I7p7xKUV6h
- vt9m1QKl6qlGt/PynOQ/JqfzvLwfyPDPcq9q/em0WYfnRWl9n3fQzECb07ax7sVFla+G0rfTdvO
- yAgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11371; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=wjpkLSx2K2iB/mWZZQZcuIqQ514ywG7UHLGyzr0x04k=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jur4OLtGsW32X391m/cv9x36pb//8HqbOfJvCmZXC
+ 5RVHuaa3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRnniG/4GHg5wfRGdvLLIp
+ PlfLmXx9fsHar+Lnl9rK3VB/HqzQI83IsP1KndOW0n/vtx+qrl3zgLnk0NSz59PnHFo2U3rC7v5
+ 0Nz4A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that a namespace remains active while a thread holds an fd to it.
-Even after the thread exits, the namespace should remain active as long
-as another thread holds a file descriptor to it.
+Test that namespaces become inactive after subprocess with multiple
+threads exits. Create a subprocess that unshares user and network
+namespaces, then creates two threads that share those namespaces. Verify
+that after all threads and subprocess exit, the namespaces are no longer
+listed by listns() and cannot be opened by open_by_handle_at().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 99 ++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+ .../selftests/namespaces/ns_active_ref_test.c      | 319 +++++++++++++++++++++
+ 1 file changed, 319 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index 0c6c4869bb16..24dc8ef106b9 100644
+index 24dc8ef106b9..093268f0efaa 100644
 --- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
 +++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -2251,4 +2251,103 @@ TEST(thread_ns_inactive_after_exit)
+@@ -9,6 +9,7 @@
+ #include <string.h>
+ #include <linux/nsfs.h>
+ #include <sys/mount.h>
++#include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
+@@ -2350,4 +2351,322 @@ TEST(thread_ns_fd_keeps_active)
  	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
  }
  
-+/*
-+ * Test that a namespace remains active while a thread holds an fd to it.
-+ * Even after the thread exits, the namespace should remain active as long as
-+ * another thread holds a file descriptor to it.
-+ */
-+TEST(thread_ns_fd_keeps_active)
++/* Structure for thread data in subprocess */
++struct thread_sleep_data {
++	int syncfd_read;
++};
++
++static void *thread_sleep_and_wait(void *arg)
 +{
-+	pthread_t thread;
-+	struct thread_ns_info info;
-+	struct file_handle *handle;
-+	int pipefd[2];
-+	int syncpipe[2];
-+	int ret;
++	struct thread_sleep_data *data = (struct thread_sleep_data *)arg;
 +	char sync_byte;
-+	char buf[sizeof(*handle) + MAX_HANDLE_SZ];
++
++	/* Wait for signal to exit - read will unblock when pipe is closed */
++	(void)read(data->syncfd_read, &sync_byte, 1);
++	return NULL;
++}
++
++/*
++ * Test that namespaces become inactive after subprocess with multiple threads exits.
++ * Create a subprocess that unshares user and network namespaces, then creates two
++ * threads that share those namespaces. Verify that after all threads and subprocess
++ * exit, the namespaces are no longer listed by listns() and cannot be opened by
++ * open_by_handle_at().
++ */
++TEST(thread_subprocess_ns_inactive_after_all_exit)
++{
++	int pipefd[2];
++	int sv[2];
++	pid_t pid;
++	int status;
++	__u64 user_id, net_id;
++	struct file_handle *user_handle, *net_handle;
++	char user_buf[sizeof(*user_handle) + MAX_HANDLE_SZ];
++	char net_buf[sizeof(*net_handle) + MAX_HANDLE_SZ];
++	char sync_byte;
++	int ret;
 +
 +	ASSERT_EQ(pipe(pipefd), 0);
-+	ASSERT_EQ(pipe(syncpipe), 0);
++	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
 +
-+	info.pipefd = pipefd[1];
-+	info.syncfd_read = syncpipe[0];
-+	info.syncfd_write = -1;
-+	info.exit_code = -1;
++	pid = fork();
++	ASSERT_GE(pid, 0);
 +
-+	/* Create thread that will create a namespace */
-+	ret = pthread_create(&thread, NULL, thread_create_namespace, &info);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Read namespace ID from thread */
-+	__u64 ns_id;
-+	ret = read(pipefd[0], &ns_id, sizeof(ns_id));
-+	if (ret != sizeof(ns_id)) {
-+		sync_byte = 'X';
-+		write(syncpipe[1], &sync_byte, 1);
-+		pthread_join(thread, NULL);
++	if (pid == 0) {
++		/* Child process */
 +		close(pipefd[0]);
++		close(sv[0]);
++
++		/* Create user namespace with mappings */
++		if (setup_userns() < 0) {
++			fprintf(stderr, "Child: setup_userns() failed: %s\n", strerror(errno));
++			close(pipefd[1]);
++			close(sv[1]);
++			exit(1);
++		}
++		fprintf(stderr, "Child: setup_userns() succeeded\n");
++
++		/* Get user namespace ID */
++		int user_fd = open("/proc/self/ns/user", O_RDONLY);
++		if (user_fd < 0) {
++			fprintf(stderr, "Child: open(/proc/self/ns/user) failed: %s\n", strerror(errno));
++			close(pipefd[1]);
++			close(sv[1]);
++			exit(1);
++		}
++
++		if (ioctl(user_fd, NS_GET_ID, &user_id) < 0) {
++			fprintf(stderr, "Child: ioctl(NS_GET_ID) for user ns failed: %s\n", strerror(errno));
++			close(user_fd);
++			close(pipefd[1]);
++			close(sv[1]);
++			exit(1);
++		}
++		close(user_fd);
++		fprintf(stderr, "Child: user ns ID = %llu\n", (unsigned long long)user_id);
++
++		/* Unshare network namespace */
++		if (unshare(CLONE_NEWNET) < 0) {
++			fprintf(stderr, "Child: unshare(CLONE_NEWNET) failed: %s\n", strerror(errno));
++			close(pipefd[1]);
++			close(sv[1]);
++			exit(1);
++		}
++		fprintf(stderr, "Child: unshare(CLONE_NEWNET) succeeded\n");
++
++		/* Get network namespace ID */
++		int net_fd = open("/proc/self/ns/net", O_RDONLY);
++		if (net_fd < 0) {
++			fprintf(stderr, "Child: open(/proc/self/ns/net) failed: %s\n", strerror(errno));
++			close(pipefd[1]);
++			close(sv[1]);
++			exit(1);
++		}
++
++		if (ioctl(net_fd, NS_GET_ID, &net_id) < 0) {
++			fprintf(stderr, "Child: ioctl(NS_GET_ID) for net ns failed: %s\n", strerror(errno));
++			close(net_fd);
++			close(pipefd[1]);
++			close(sv[1]);
++			exit(1);
++		}
++		close(net_fd);
++		fprintf(stderr, "Child: net ns ID = %llu\n", (unsigned long long)net_id);
++
++		/* Send namespace IDs to parent */
++		if (write(pipefd[1], &user_id, sizeof(user_id)) != sizeof(user_id)) {
++			fprintf(stderr, "Child: write(user_id) failed: %s\n", strerror(errno));
++			exit(1);
++		}
++		if (write(pipefd[1], &net_id, sizeof(net_id)) != sizeof(net_id)) {
++			fprintf(stderr, "Child: write(net_id) failed: %s\n", strerror(errno));
++			exit(1);
++		}
 +		close(pipefd[1]);
-+		close(syncpipe[0]);
-+		close(syncpipe[1]);
-+		SKIP(return, "Failed to read namespace ID from thread");
++		fprintf(stderr, "Child: sent namespace IDs to parent\n");
++
++		/* Create two threads that share the namespaces */
++		pthread_t thread1, thread2;
++		struct thread_sleep_data data;
++		data.syncfd_read = sv[1];
++
++		int ret_thread = pthread_create(&thread1, NULL, thread_sleep_and_wait, &data);
++		if (ret_thread != 0) {
++			fprintf(stderr, "Child: pthread_create(thread1) failed: %s\n", strerror(ret_thread));
++			close(sv[1]);
++			exit(1);
++		}
++		fprintf(stderr, "Child: created thread1\n");
++
++		ret_thread = pthread_create(&thread2, NULL, thread_sleep_and_wait, &data);
++		if (ret_thread != 0) {
++			fprintf(stderr, "Child: pthread_create(thread2) failed: %s\n", strerror(ret_thread));
++			close(sv[1]);
++			pthread_cancel(thread1);
++			exit(1);
++		}
++		fprintf(stderr, "Child: created thread2\n");
++
++		/* Wait for threads to complete - they will unblock when parent writes */
++		fprintf(stderr, "Child: waiting for threads to exit\n");
++		pthread_join(thread1, NULL);
++		fprintf(stderr, "Child: thread1 exited\n");
++		pthread_join(thread2, NULL);
++		fprintf(stderr, "Child: thread2 exited\n");
++
++		close(sv[1]);
++
++		/* Exit - namespaces should become inactive */
++		fprintf(stderr, "Child: all threads joined, exiting with success\n");
++		exit(0);
 +	}
 +
-+	TH_LOG("Thread created namespace with ID %llu", (unsigned long long)ns_id);
-+
-+	/* Construct file handle */
-+	handle = (struct file_handle *)buf;
-+	handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *fh = (struct nsfs_file_handle *)handle->f_handle;
-+	fh->ns_id = ns_id;
-+	fh->ns_type = 0;
-+	fh->ns_inum = 0;
-+
-+	/* Open namespace while thread is alive */
-+	TH_LOG("Opening namespace while thread is alive");
-+	int nsfd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	ASSERT_GE(nsfd, 0);
-+
-+	/* Signal thread to exit */
-+	TH_LOG("Signaling thread to exit");
-+	sync_byte = 'X';
-+	write(syncpipe[1], &sync_byte, 1);
-+	close(syncpipe[1]);
-+
-+	/* Wait for thread to exit */
-+	pthread_join(thread, NULL);
-+	close(pipefd[0]);
++	/* Parent process */
 +	close(pipefd[1]);
-+	close(syncpipe[0]);
++	close(sv[1]);
 +
-+	if (info.exit_code != 0) {
-+		close(nsfd);
-+		SKIP(return, "Thread failed to create namespace");
++	TH_LOG("Parent: waiting to read namespace IDs from child");
++
++	/* Read namespace IDs from child */
++	ret = read(pipefd[0], &user_id, sizeof(user_id));
++	if (ret != sizeof(user_id)) {
++		TH_LOG("Parent: failed to read user_id, ret=%d, errno=%s", ret, strerror(errno));
++		close(pipefd[0]);
++		sync_byte = 'X';
++		(void)write(sv[0], &sync_byte, 1);
++		close(sv[0]);
++		waitpid(pid, NULL, 0);
++		SKIP(return, "Failed to read user namespace ID from child");
 +	}
 +
-+	TH_LOG("Thread exited, but main thread holds fd - namespace should remain active");
++	ret = read(pipefd[0], &net_id, sizeof(net_id));
++	close(pipefd[0]);
++	if (ret != sizeof(net_id)) {
++		TH_LOG("Parent: failed to read net_id, ret=%d, errno=%s", ret, strerror(errno));
++		sync_byte = 'X';
++		(void)write(sv[0], &sync_byte, 1);
++		close(sv[0]);
++		waitpid(pid, NULL, 0);
++		SKIP(return, "Failed to read network namespace ID from child");
++	}
 +
-+	/* Namespace should still be active because we hold an fd */
-+	int nsfd2 = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	ASSERT_GE(nsfd2, 0);
++	TH_LOG("Child created user ns %llu and net ns %llu with 2 threads",
++	       (unsigned long long)user_id, (unsigned long long)net_id);
 +
-+	/* Verify it's the same namespace */
-+	struct stat st1, st2;
-+	ASSERT_EQ(fstat(nsfd, &st1), 0);
-+	ASSERT_EQ(fstat(nsfd2, &st2), 0);
-+	ASSERT_EQ(st1.st_ino, st2.st_ino);
-+	close(nsfd2);
++	/* Construct file handles */
++	user_handle = (struct file_handle *)user_buf;
++	user_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	user_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *user_fh = (struct nsfs_file_handle *)user_handle->f_handle;
++	user_fh->ns_id = user_id;
++	user_fh->ns_type = 0;
++	user_fh->ns_inum = 0;
 +
-+	TH_LOG("Closing fd - namespace should become inactive");
-+	close(nsfd);
++	net_handle = (struct file_handle *)net_buf;
++	net_handle->handle_bytes = sizeof(struct nsfs_file_handle);
++	net_handle->handle_type = FILEID_NSFS;
++	struct nsfs_file_handle *net_fh = (struct nsfs_file_handle *)net_handle->f_handle;
++	net_fh->ns_id = net_id;
++	net_fh->ns_type = 0;
++	net_fh->ns_inum = 0;
 +
-+	/* Now namespace should be inactive */
-+	nsfd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	ASSERT_LT(nsfd, 0);
-+	/* Should fail with ENOENT (inactive) or ESTALE (gone) */
-+	TH_LOG("Namespace inactive as expected: %s (errno=%d)", strerror(errno), errno);
++	/* Verify namespaces are active while subprocess and threads are alive */
++	TH_LOG("Verifying namespaces are active while subprocess with threads is running");
++	int user_fd = open_by_handle_at(FD_NSFS_ROOT, user_handle, O_RDONLY);
++	ASSERT_GE(user_fd, 0);
++
++	int net_fd = open_by_handle_at(FD_NSFS_ROOT, net_handle, O_RDONLY);
++	ASSERT_GE(net_fd, 0);
++
++	close(user_fd);
++	close(net_fd);
++
++	/* Also verify they appear in listns() */
++	TH_LOG("Verifying namespaces appear in listns() while active");
++	struct ns_id_req req = {
++		.size = sizeof(struct ns_id_req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWUSER,
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	__u64 ns_ids[256];
++	int nr_ids = sys_listns(&req, ns_ids, 256, 0);
++	if (nr_ids < 0) {
++		TH_LOG("listns() not available, skipping listns verification");
++	} else {
++		/* Check if user_id is in the list */
++		int found_user = 0;
++		for (int i = 0; i < nr_ids; i++) {
++			if (ns_ids[i] == user_id) {
++				found_user = 1;
++				break;
++			}
++		}
++		ASSERT_TRUE(found_user);
++		TH_LOG("User namespace found in listns() as expected");
++
++		/* Check network namespace */
++		req.ns_type = CLONE_NEWNET;
++		nr_ids = sys_listns(&req, ns_ids, 256, 0);
++		if (nr_ids >= 0) {
++			int found_net = 0;
++			for (int i = 0; i < nr_ids; i++) {
++				if (ns_ids[i] == net_id) {
++					found_net = 1;
++					break;
++				}
++			}
++			ASSERT_TRUE(found_net);
++			TH_LOG("Network namespace found in listns() as expected");
++		}
++	}
++
++	/* Signal threads to exit */
++	TH_LOG("Signaling threads to exit");
++	sync_byte = 'X';
++	/* Write two bytes - one for each thread */
++	ASSERT_EQ(write(sv[0], &sync_byte, 1), 1);
++	ASSERT_EQ(write(sv[0], &sync_byte, 1), 1);
++	close(sv[0]);
++
++	/* Wait for child process to exit */
++	waitpid(pid, &status, 0);
++	ASSERT_TRUE(WIFEXITED(status));
++	if (WEXITSTATUS(status) != 0) {
++		TH_LOG("Child process failed with exit code %d", WEXITSTATUS(status));
++		SKIP(return, "Child process failed");
++	}
++
++	TH_LOG("Subprocess and all threads have exited successfully");
++
++	/* Verify namespaces are now inactive - open_by_handle_at should fail */
++	TH_LOG("Verifying namespaces are inactive after subprocess and threads exit");
++	user_fd = open_by_handle_at(FD_NSFS_ROOT, user_handle, O_RDONLY);
++	ASSERT_LT(user_fd, 0);
++	TH_LOG("User namespace inactive as expected: %s (errno=%d)",
++	       strerror(errno), errno);
 +	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
++
++	net_fd = open_by_handle_at(FD_NSFS_ROOT, net_handle, O_RDONLY);
++	ASSERT_LT(net_fd, 0);
++	TH_LOG("Network namespace inactive as expected: %s (errno=%d)",
++	       strerror(errno), errno);
++	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
++
++	/* Verify namespaces do NOT appear in listns() */
++	TH_LOG("Verifying namespaces do NOT appear in listns() when inactive");
++	memset(&req, 0, sizeof(req));
++	req.size = sizeof(struct ns_id_req);
++	req.ns_type = CLONE_NEWUSER;
++	nr_ids = sys_listns(&req, ns_ids, 256, 0);
++	if (nr_ids >= 0) {
++		int found_user = 0;
++		for (int i = 0; i < nr_ids; i++) {
++			if (ns_ids[i] == user_id) {
++				found_user = 1;
++				break;
++			}
++		}
++		ASSERT_FALSE(found_user);
++		TH_LOG("User namespace correctly not listed in listns()");
++
++		/* Check network namespace */
++		req.ns_type = CLONE_NEWNET;
++		nr_ids = sys_listns(&req, ns_ids, 256, 0);
++		if (nr_ids >= 0) {
++			int found_net = 0;
++			for (int i = 0; i < nr_ids; i++) {
++				if (ns_ids[i] == net_id) {
++					found_net = 1;
++					break;
++				}
++			}
++			ASSERT_FALSE(found_net);
++			TH_LOG("Network namespace correctly not listed in listns()");
++		}
++	}
 +}
 +
  TEST_HARNESS_MAIN
