@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3F2C05C74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:06:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8B4C05C4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20C08567346
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C34F3BA81E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DB8326D75;
-	Fri, 24 Oct 2025 10:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD4932AAC6;
+	Fri, 24 Oct 2025 10:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NL8T81k6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgFDUWg+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157BE325484;
-	Fri, 24 Oct 2025 10:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230E7313E37;
+	Fri, 24 Oct 2025 10:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303289; cv=none; b=g1N637+BrqpMffpoLx8tOx+qgeR50K2/qIat34qeDkJA+3ZOEkAdceNIoN4VaHJW64Uq4yY0nK8ayD6m5wnucqFdtj8mMoIv9Pi1JE7kj7isr0whvbK+S7M7G+bfPBCkrMwDUzFPdg5NB5ddBvgxzFFpRjUmp+PoFrLlET2bHWA=
+	t=1761303294; cv=none; b=c+Oo2w4YlY75mY9amOjRyDFvKv7Y9TMSgOcrAwhOKh+XKIzEjPwjLuNtkYho6/jgGXA14X1TVKZn61JxHeknfFgpEkOKbHfHWL796jIM491rdhckyFKtdCkpIAH9SU0fcw+fBPgJtWdt9r6XvLt+0fD2rR1LTL9SQqLcy01E4l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303289; c=relaxed/simple;
-	bh=zTxekEdjlVJZprVoI/00FXYGRRSOiQasmJAHzIPasqQ=;
+	s=arc-20240116; t=1761303294; c=relaxed/simple;
+	bh=VPZa5Pr6JMy6E6vudTcQn3gJk3UQIlVxfxrLDEyUgG4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OJU+t67hyPed3DHU9O1ONLTj31JQbFa4dozoat6rzTr9nyxypumFvnJKU+mXR4YO1zlMp/IXZfZV8a2kb1rTthNKQ6n192TaNSLbIWzuVEpLUU1jLDizDVnZmmR66ji4g/j+F+ApaQMSHZKxuuh5HjW6bOvCAygeUa9bNfJR9Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NL8T81k6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 251ABC4CEF5;
-	Fri, 24 Oct 2025 10:54:42 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=mwLUmF39ONI+t+ZqvkgrDPiu5Jn3dQVfvTUYQgWOkPGNf1W2ZqqgLF4tYKTmcchSjQQroWMj5oSQKzedeGsVAR0n1pakbEt9PWVzsaoZE0e32rK5fr6CdlaKq69v1SiWjkH4TlP8kZ+234a2fujAFiQebpadkMS8MA/AAG6tZSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgFDUWg+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAC8C4CEF1;
+	Fri, 24 Oct 2025 10:54:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303287;
-	bh=zTxekEdjlVJZprVoI/00FXYGRRSOiQasmJAHzIPasqQ=;
+	s=k20201202; t=1761303292;
+	bh=VPZa5Pr6JMy6E6vudTcQn3gJk3UQIlVxfxrLDEyUgG4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NL8T81k6ruIE0BffChAF5qn47PPeGcsAzLCXOGXfje3uLxdINc8YNrGm4QVgB5k0v
-	 DwUAlwUkgLCjTHpi1a6trZmL2FJQ0LQ8/uTe7DHGy0Ed6mKBTYt0PjhVou+4YQmSSZ
-	 RMDuU7O3ucX330C/RkiJWEQX03nVx/ToUE172ePLMqhMhSxX0OglMVdqMPDmAJrV2z
-	 a6draJ2gOIDgjQrSIXgQxlUBe8F8YuTHx0nfZDFCoo3Gestpn/OH6iOXbEKcmNa1vN
-	 lu5TtAF5bSb0x/jT3LXum3Um5tvVF3HssJ6gT/P25edbqQjCNZy5dajVmn3UfmjqVi
-	 xzHZNFiVFpalw==
+	b=LgFDUWg+W4XI1v3/3NCYmbLipq4BUGd3rFG/ZgLtGrDp4gBSy5EcY3RdIxIIzKLY/
+	 7Au+2Bx3aP57Mt2bbXoxfA7Rbkje4+HXE+Vqjm8cNTHGGlS9i76V2xyVUy+/oyJxkA
+	 FsDJ6TR13JL4YT5lj78v9lRO3/N/LeB8O3+vbHvJrr83O3XxGqlzm1YxXgfAzLhBmv
+	 Zq16R46T+a9j96Tb3RyvZdGl1wKwCiH/8alLKUp2Gkj6WAOrn16wiNI99jIR8k5bDa
+	 DZXgToZ673ZuX4smuKxmcmywrzjxNTFJAjFcvZBhHeU3xpRk4fRRcZVUS9fDfa+Uh/
+	 E2HtDanAsvFUg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:52:50 +0200
-Subject: [PATCH v3 21/70] selftests/namespaces: first active reference
+Date: Fri, 24 Oct 2025 12:52:51 +0200
+Subject: [PATCH v3 22/70] selftests/namespaces: second active reference
  count tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-21-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-22-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,130 +70,114 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3703; i=brauner@kernel.org;
- h=from:subject:message-id; bh=zTxekEdjlVJZprVoI/00FXYGRRSOiQasmJAHzIPasqQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmq98vhNYEHJNq6VPRmhMbNM4696rZ7izHhcq+RE2
- FSpP65JHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPR3MPwv2LSryeh3QK/Vtz5
- 9nPCty8Sy6fFe/Re2/j3m9zNhguNeSaMDEtXfd75w6VQQ0DH4lRcQf5Vxx1zd8/YPV9n1uLAk2+
- FNvEBAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2754; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=VPZa5Pr6JMy6E6vudTcQn3gJk3UQIlVxfxrLDEyUgG4=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmptzvQT8X3qGlwT9Ub4t9lnMe7LvFUCH/dtZns/b
+ TuveNfpjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkk3GFkOJs6V/L1zvzYFlHt
+ DTGbFOW/u+9c+2l70deNv/mXb5YMn8jwP5gl5ZDrTOfSHWvTLO+KWLXIy1zdImlysEdtxuv59Ss
+ 2sgEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that initial namespaces can be reopened via file handle. Initial
-namespaces should always have a ref count of one from boot.
+Test namespace lifecycle: create a namespace in a child process, get a
+file handle while it's active, then try to reopen after the process
+exits (namespace becomes inactive).
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/.gitignore      |  1 +
- tools/testing/selftests/namespaces/Makefile        |  5 +-
- .../selftests/namespaces/ns_active_ref_test.c      | 74 ++++++++++++++++++++++
- 3 files changed, 79 insertions(+), 1 deletion(-)
+ .../selftests/namespaces/ns_active_ref_test.c      | 81 ++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
-index ccfb40837a73..100cc5bfef04 100644
---- a/tools/testing/selftests/namespaces/.gitignore
-+++ b/tools/testing/selftests/namespaces/.gitignore
-@@ -1,3 +1,4 @@
- nsid_test
- file_handle_test
- init_ino_test
-+ns_active_ref_test
-diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
-index 5fe4b3dc07d3..5cea938cdde8 100644
---- a/tools/testing/selftests/namespaces/Makefile
-+++ b/tools/testing/selftests/namespaces/Makefile
-@@ -1,7 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0-only
- CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-+LDLIBS += -lcap
- 
--TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test
-+TEST_GEN_PROGS := nsid_test file_handle_test init_ino_test ns_active_ref_test
- 
- include ../lib.mk
- 
-+$(OUTPUT)/ns_active_ref_test: ../filesystems/utils.c
-+
 diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-new file mode 100644
-index 000000000000..21514a537b26
---- /dev/null
+index 21514a537b26..7cade298c754 100644
+--- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
 +++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <linux/nsfs.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include "../kselftest_harness.h"
-+#include "../filesystems/utils.h"
-+
-+#ifndef FD_NSFS_ROOT
-+#define FD_NSFS_ROOT -10003 /* Root of the nsfs filesystem */
-+#endif
-+
+@@ -71,4 +71,85 @@ TEST(init_ns_always_active)
+ 	free(handle);
+ }
+ 
 +/*
-+ * Test that initial namespaces can be reopened via file handle.
-+ * Initial namespaces should have active ref count of 1 from boot.
++ * Test namespace lifecycle: create a namespace in a child process,
++ * get a file handle while it's active, then try to reopen after
++ * the process exits (namespace becomes inactive).
 + */
-+TEST(init_ns_always_active)
++TEST(ns_inactive_after_exit)
 +{
 +	struct file_handle *handle;
 +	int mount_id;
 +	int ret;
-+	int fd1, fd2;
-+	struct stat st1, st2;
++	int fd;
++	int pipefd[2];
++	pid_t pid;
++	int status;
++	char buf[sizeof(*handle) + MAX_HANDLE_SZ];
 +
-+	handle = malloc(sizeof(*handle) + MAX_HANDLE_SZ);
-+	ASSERT_NE(handle, NULL);
++	/* Create pipe for passing file handle from child */
++	ASSERT_EQ(pipe(pipefd), 0);
 +
-+	/* Open initial network namespace */
-+	fd1 = open("/proc/1/ns/net", O_RDONLY);
-+	ASSERT_GE(fd1, 0);
++	pid = fork();
++	ASSERT_GE(pid, 0);
 +
-+	/* Get file handle for initial namespace */
-+	handle->handle_bytes = MAX_HANDLE_SZ;
-+	ret = name_to_handle_at(fd1, "", handle, &mount_id, AT_EMPTY_PATH);
-+	if (ret < 0 && errno == EOPNOTSUPP) {
-+		SKIP(free(handle); close(fd1);
-+		     return, "nsfs doesn't support file handles");
++	if (pid == 0) {
++		/* Child process */
++		close(pipefd[0]);
++
++		/* Create new network namespace */
++		ret = unshare(CLONE_NEWNET);
++		if (ret < 0) {
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		/* Open our new namespace */
++		fd = open("/proc/self/ns/net", O_RDONLY);
++		if (fd < 0) {
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		/* Get file handle for the namespace */
++		handle = (struct file_handle *)buf;
++		handle->handle_bytes = MAX_HANDLE_SZ;
++		ret = name_to_handle_at(fd, "", handle, &mount_id, AT_EMPTY_PATH);
++		close(fd);
++
++		if (ret < 0) {
++			close(pipefd[1]);
++			exit(1);
++		}
++
++		/* Send handle to parent */
++		write(pipefd[1], buf, sizeof(*handle) + handle->handle_bytes);
++		close(pipefd[1]);
++
++		/* Exit - namespace should become inactive */
++		exit(0);
 +	}
-+	ASSERT_EQ(ret, 0);
 +
-+	/* Close the namespace fd */
-+	close(fd1);
++	/* Parent process */
++	close(pipefd[1]);
 +
-+	/* Try to reopen via file handle - should succeed since init ns is always active */
-+	fd2 = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	if (fd2 < 0 && (errno == EINVAL || errno == EOPNOTSUPP)) {
-+		SKIP(free(handle);
-+		     return, "open_by_handle_at with FD_NSFS_ROOT not supported");
-+	}
-+	ASSERT_GE(fd2, 0);
++	/* Read file handle from child */
++	ret = read(pipefd[0], buf, sizeof(buf));
++	close(pipefd[0]);
 +
-+	/* Verify we opened the same namespace */
-+	fd1 = open("/proc/1/ns/net", O_RDONLY);
-+	ASSERT_GE(fd1, 0);
-+	ASSERT_EQ(fstat(fd1, &st1), 0);
-+	ASSERT_EQ(fstat(fd2, &st2), 0);
-+	ASSERT_EQ(st1.st_ino, st2.st_ino);
++	/* Wait for child to exit */
++	waitpid(pid, &status, 0);
++	ASSERT_TRUE(WIFEXITED(status));
++	ASSERT_EQ(WEXITSTATUS(status), 0);
 +
-+	close(fd1);
-+	close(fd2);
-+	free(handle);
++	ASSERT_GT(ret, 0);
++	handle = (struct file_handle *)buf;
++
++	/* Try to reopen namespace - should fail with ENOENT since it's inactive */
++	fd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
++	ASSERT_LT(fd, 0);
++	/* Should fail with ENOENT (namespace inactive) or ESTALE */
++	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
 +}
 +
-+TEST_HARNESS_MAIN
+ TEST_HARNESS_MAIN
 
 -- 
 2.47.3
