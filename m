@@ -1,169 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-65436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1809EC05512
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:26:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677CBC059BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 12:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B8138353211
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 09:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0881B818AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 10:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EB42F99A5;
-	Fri, 24 Oct 2025 09:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EB03101AA;
+	Fri, 24 Oct 2025 10:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="iaabcnQI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t3ftFPHs"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MSz7tjwg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A43309EE2;
-	Fri, 24 Oct 2025 09:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80FB30F537
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 10:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761297973; cv=none; b=kzPmsZvDBaCi7QnSpvWtfE3L4+JWmXg2BGALGKLaAZbFFh2CoYMdX5J/Dtlm0iNSXNb9WOADDR9QWeTfU3BWGlUX84snJJPeEDFoWygF/QTO2+NkWv44PkKj2hHbq2ZEiuCTfi2lIuhXEZSi8gNucGYf1dLbYFDCu8D11h5ByTA=
+	t=1761302219; cv=none; b=cxgv28g6gIXB/be8CsIzFArFpPIc6803wZqAkPT44CMpbHOdq2qtGHsJRplV+ow+i144y8fiVRcn4StCelclLGpNsa24/PcwzS5+GaXNAxSwxny98s/24sggq69TgKVYgFiuZ+rlhoEeezP+j31aLVbZsIKzhaV9qkEMt2I6SG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761297973; c=relaxed/simple;
-	bh=BdVucMLiQQEjX6RceDm+ToNFzzrCN8nClQ4+iyELyy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=peGgqldxiJATwBQFv5eihh8pYRTWub9scsCvSnN0uCxajjZkgj6epskHg1TCJYlCeKnafKuVY3MwrCxFW1u6FM4ktmbrrxshf4hvfy0cQ9lu+RSjFnqqaUKRH9lASkrpfOMhBvcZxwHn8ZsqQm2TDBVyaAqPodvAvbes36DH3MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=iaabcnQI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=t3ftFPHs; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 8B730138021D;
-	Fri, 24 Oct 2025 05:26:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Fri, 24 Oct 2025 05:26:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761297969; x=
-	1761305169; bh=6vOP5u5uit3cxUkfpkAHqHBhu7MvgqmCIDH3vZUkkWg=; b=i
-	aabcnQIduiFQ5ipLXI3sYTNqwj3QuA17NBDTDq1fIME6SB9RwYdbHrrV8OwW9Los
-	O6lha55gjhXnpb5eCDrGKkyinUYaHKzN8iyO2oJdA5VsdbbLwPTXF+KaNhsa5HXt
-	W7fHbXInNyT3a/9m3uXJIozft8IoQI0jQ65+d9PL74KPieqQu0QUPE0/wUFiqeBE
-	7iMj8AvML4V2XZXHHXN6oSxbpCuTuH4YCHxfWxxFCzvgPhjyZYDu0nAnulvx0x1j
-	G45MLfhl/6FzMdyVJtXuohWsEQrHvaDIPR3cbYpOGPopDdQcp1vwQNQMpMi38S/n
-	A9G6tLNlvosmy7XMjM9sQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761297969; x=1761305169; bh=6vOP5u5uit3cxUkfpkAHqHBhu7MvgqmCIDH
-	3vZUkkWg=; b=t3ftFPHsQgOvgRoRYDMEV8j0Q2wDfdHCUdwMjoQGpoLSabmEXRI
-	pg99abZAk5VB1xRJjFVJIfMgX4KUIUEEpSfkr6/SJ5AjhwnaB6e6gDyGXFTYA0+q
-	BoqoUX2cDAACoaCsgWTm/eybdsJYfUHSfJNTR46qSaKN/pKQHZ6qgUECoQ5nxV09
-	XN7fSWty1WZzkw9ILYo+4D3EpJRnX1xphb6IwHieXO7j2kbhciqz6yFYHJTq57A4
-	mnlFVfvtvTPj8BZ9UzES61wz5xcvA1ngARNHcAKdk1DFsqJOOvJf+6DNNGdb7NTL
-	zz5Rq/nq8xuoQnp+C8crw8vWURp4GUQVCTg==
-X-ME-Sender: <xms:MEb7aKdZJSgZ29MHvsigNS1bPIyFFST-MmkpfrqhrCgodsPdMmrgIQ>
-    <xme:MEb7aNRL2UNzZA7Mo3KYepn8bRHYT5FADopl3wnbPRb-mUeRtCAlQzf5pDkKAXRxm
-    4K-91pOoMMr7g3W_tZtc23FQ5drWCpzaQOsPSvejcOz4AeAhBcsHHy8>
-X-ME-Received: <xmr:MEb7aOfXts_XD94bsCrA1Fb57JewCvoNJVa1P7X5TOrDLcKJQ19xhiwQWRpWng>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekleekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfoh
-    hunhgurghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:MEb7aFCHdXRnXcHGjsRb842voZlMR7r8VLeZTiyu6Zwj0d1v31cjZg>
-    <xmx:MEb7aDsCBhTTLvsrYgBSE047YfKVcvwZaZ3HwwV9jpp3G8KYxhmOPw>
-    <xmx:MEb7aKFek1HdkRpUYzR7i4P6mo9kjt_kk0zltpGlnVpwAgfdBs2-jA>
-    <xmx:MEb7aO2lBzM7RtgplMKnX5AS8rVgBdW4JrcthpKWMGX-iRcIAo-vpA>
-    <xmx:MUb7aE-sgGrAILrrvqrM5ksHsNJ6VKG7Z3ffY1qxlijRyMG1p8k3BxRm>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Oct 2025 05:26:07 -0400 (EDT)
-Date: Fri, 24 Oct 2025 10:26:05 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <xhpgje5pb5sxi5frjvje73v7oatablynl7ksyjnbrglwh5qx7h@fforsl3cwbl6>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-2-kirill@shutemov.name>
- <20251023134929.b72ab75a8c132a17ae68a582@linux-foundation.org>
- <3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
- <20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
+	s=arc-20240116; t=1761302219; c=relaxed/simple;
+	bh=s2FO8pnEV/7szb+dOJiq08LSuK/rb7I+nZ2d4KW8ctI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hLsfpzx3yIHaD7egOlA9FurBK7+oGAEnxGGeRv+bb+m0tENasmIubHNRet0HBFqi7wh/RovIJrYAITSPfpjrUTdSt+105pNvxDyilmrUzcHOG79FJsKT/wmqcJC062eR2yl8loNfTdH5/yRNHNmeU+6FQijoMImynu1mgbfPQX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MSz7tjwg; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e39567579so9159055e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 03:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761302216; x=1761907016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c5WckZjr4qpmTV+gX2VgoGwpr/mWfENYA9Da0Yb01PI=;
+        b=MSz7tjwgyvFZkXvDVUUXgaxwns48UJXrL6dnuTQzZ43x3DlchEM61p71kMIuz64ph9
+         suiSlWxDC2AcqvZESe7730GIUlX1KntWwl+gUZ+7e4CY+rcdMDN2iDQQ5yNUngCDTQjf
+         FhlGmFNnfYQke2YQC/LcnvN9KAXP03bV7aiWOxaiLeVuTSYWvza+5Ec2Of1RFoJAYNWf
+         cvZbUaszI4w394upLVxOhNSATrn9+PqqGfEIaPcg1f4CLxX+tRaUiFCLVSXHAw8qpGkm
+         Nmg/DjVkc0N+3j9E17j1Z5bCoviefd4Cd/uNGcQWB61yVFMHTrrN7tNy1lHwaQPE5ppL
+         A6GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761302216; x=1761907016;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=c5WckZjr4qpmTV+gX2VgoGwpr/mWfENYA9Da0Yb01PI=;
+        b=v5MJ9XIR3j+o1wh2w/6BKBIJ9cgYD3s3AbizKKM1dhR7gph/Twy7lZasf3jAoUhF7s
+         RK846+4PndLBp6yQL0UY0mkSqO4DrFNbJvioNdxrG7dbjkJ1uhSn0ayunYAhd8B1mGgy
+         RQclY5ninlEYP3ecmZpoQbFeaphh7zaL3Ibt4VJ46S//iv4fVEdlgtgZJWOGyZFyPjhf
+         86Q0ma6+F8uHm6rvbfwu3QwjErjbQoq/oU+GpJxX0z6M3mVhmkyOdj4d7jf6XitHxi5f
+         90p/iGQth5y9R5rz3Cd/TCZM/jaqgxb+6WW931Jsa5pZdwvxya5y3baCJaGn2n3BrXlE
+         a02w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXQifaAwugx8vl+OqPgTLnmtzR1JINOztcMjzuxVCywu71lciGeIoJtGEd5rkx/lsSWAepkyWiHvqVpKcq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjZIwTm+tCDwLZFnH/CDwW/JxQt44kpmKasaxOsXq67U4hSAvX
+	1kcIT0kuN78CVRb7fyHY0CbYUVC383vgn3Bkh3s060a3F3EwSusrZxF0FvnXYu8OF7SSJVciSGm
+	+2KDhax2C0BrFu70Ddw==
+X-Google-Smtp-Source: AGHT+IF6Mgy1YsJz+7QCsPHpP9ik7YMhi0K8WjvdltQv05VpchJvsZPKXTgJ4bEGg+tkcUMZROs5PhBuuxH4BSw=
+X-Received: from wmsm9.prod.google.com ([2002:a05:600c:3b09:b0:46e:684e:1977])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:524f:b0:46e:74cc:42b8 with SMTP id 5b1f17b1804b1-471178a6e99mr195067895e9.17.1761302216346;
+ Fri, 24 Oct 2025 03:36:56 -0700 (PDT)
+Date: Fri, 24 Oct 2025 10:36:55 +0000
+In-Reply-To: <CAH5fLghiEqqccH-0S9-GD7pJaNuVpuo_NecMMmGVF+zR7Xs_dA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
+Mime-Version: 1.0
+References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-7-dakr@kernel.org>
+ <aPnmriUUdbsQAu3e@google.com> <DDPMBR9EUYJ6.23AYG1B27BUEN@kernel.org> <CAH5fLghiEqqccH-0S9-GD7pJaNuVpuo_NecMMmGVF+zR7Xs_dA@mail.gmail.com>
+Message-ID: <aPtWx4i3WuIlcWEM@google.com>
+Subject: Re: [PATCH v3 06/10] rust: debugfs: support for binary large objects
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 02:36:24PM -0700, Andrew Morton wrote:
-> On Thu, 23 Oct 2025 22:54:49 +0200 David Hildenbrand <david@redhat.com> wrote:
-> 
-> > >> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
-> > > 
-> > > Sep 28 2025
-> > > 
-> > >> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
-> > > 
-> > > Sep 28 2025
-> > > 
-> > >> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> > > 
-> > > Jul 26 2016
-> > > 
-> > > eek, what's this one doing here?  Are we asking -stable maintainers
-> > > to backport this patch into nine years worth of kernels?
-> > > 
-> > > I'll remove this Fixes: line for now...
-> > 
-> > Ehm, why?
-> 
-> Because the Sep 28 2025 Fixes: totally fooled me and because this
-> doesn't apply to 6.17, let alone to 6.ancient.
-> 
-> > It sure is a fix for that. We can indicate to which stable 
-> > versions we want to have ti backported.
-> > 
-> > And yes, it might be all stable kernels.
-> 
-> No probs, thanks for clarifying.  I'll restore the
-> 
-> 	Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> 	Cc; <stable@vger.kernel.org>
-> 
-> and shall let others sort out the backporting issues.
+On Thu, Oct 23, 2025 at 12:21:24PM +0200, Alice Ryhl wrote:
+> On Thu, Oct 23, 2025 at 12:09=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+> >
+> > On Thu Oct 23, 2025 at 10:26 AM CEST, Alice Ryhl wrote:
+> > > On Wed, Oct 22, 2025 at 04:30:40PM +0200, Danilo Krummrich wrote:
+> > >> Introduce support for read-only, write-only, and read-write binary f=
+iles
+> > >> in Rust debugfs. This adds:
+> > >>
+> > >> - BinaryWriter and BinaryReader traits for writing to and reading fr=
+om
+> > >>   user slices in binary form.
+> > >> - New Dir methods: read_binary_file(), write_binary_file(),
+> > >>   `read_write_binary_file`.
+> > >> - Corresponding FileOps implementations: BinaryReadFile,
+> > >>   BinaryWriteFile, BinaryReadWriteFile.
+> > >>
+> > >> This allows kernel modules to expose arbitrary binary data through
+> > >> debugfs, with proper support for offsets and partial reads/writes.
+> > >>
+> > >> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > >> Reviewed-by: Matthew Maurer <mmaurer@google.com>
+> > >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > >
+> > >> +extern "C" fn blob_read<T: BinaryWriter>(
+> > >> +    file: *mut bindings::file,
+> > >> +    buf: *mut c_char,
+> > >> +    count: usize,
+> > >> +    ppos: *mut bindings::loff_t,
+> > >> +) -> isize {
+> > >> +    // SAFETY:
+> > >> +    // - `file` is a valid pointer to a `struct file`.
+> > >> +    // - The type invariant of `FileOps` guarantees that `private_d=
+ata` points to a valid `T`.
+> > >> +    let this =3D unsafe { &*((*file).private_data.cast::<T>()) };
+> > >> +
+> > >> +    // SAFETY:
+> > >> +    // `ppos` is a valid `file::Offset` pointer.
+> > >> +    // We have exclusive access to `ppos`.
+> > >> +    let pos =3D unsafe { file::Offset::from_raw(ppos) };
+> > >> +
+> > >> +    let mut writer =3D UserSlice::new(UserPtr::from_ptr(buf.cast())=
+, count).writer();
+> > >> +
+> > >> +    let ret =3D || -> Result<isize> {
+> > >> +        let written =3D this.write_to_slice(&mut writer, pos)?;
+> > >> +
+> > >> +        Ok(written.try_into()?)
+> > >
+> > > Hmm ... a conversion? Sounds like write_to_slice() has the wrong retu=
+rn
+> > > type.
+> >
+> > write_to_slice() returns the number of bytes written as usize, which se=
+ems
+> > correct, no?
+>=20
+> Yes, you're right, I think usize is the right value. The cast is
+> unfortunate, but it can't really be avoided. In practice it should
+> never fail because slice lengths always fit in an isize, but isize
+> isn't the right type.
+>=20
+> Alice
 
-One possible way to relax backporting requirements is only to backport
-to kernels where we can have writable file mapping to filesystem with a
-backing storage (non-shmem).
-
-Maybe
-
-Fixes: 01c70267053d ("fs: add a filesystem flag for THPs")
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
