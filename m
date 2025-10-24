@@ -1,161 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-65586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6016DC0838A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 23:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21ADBC083EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 00:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDEB6401491
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 21:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8173AECA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 22:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D1431327E;
-	Fri, 24 Oct 2025 21:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FA230BBBF;
+	Fri, 24 Oct 2025 22:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKmn90F3"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTTwjRCx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPY0qqdk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTTwjRCx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPY0qqdk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73ECF30C35E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 21:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D83263F36
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 22:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761343146; cv=none; b=ZDzsHwS9qp+ecrV0TWWViWusA25uoM+kBUi2WrXTgv7CWEgocCiSawIArXSk1h2qkrnG3rqn7D0Ro6SBWMNWzNsUYeq3EHZU9A7Ya9XNbq4rNJafRO81PpueBjOn4+VvCcjwlUfq779pEZ7FOewvkFn0vYw4qr1B3rb+08Ohh+w=
+	t=1761345072; cv=none; b=B8cfTLyz06W7xvG4h+8RSk3OA1VqvdiECRJdLHjQod3iI4Jx/gucJiI8TAi1zJCuEm+EkPmrAdGwVcrYNUKUC0idbxyJ8HAIDUvVSvowliHqEawtfOTv+NLKbq4MfO7SvMz4P1lNJC0S5ahCvmJVosDp2rxBmpXb0nY664s0lAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761343146; c=relaxed/simple;
-	bh=mxdDRl5f6ypVZFwxoiySjpzvSm/XaHmi9pbQ4jbflIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j/PjDwEkLCIBvMY2sbzr8C/wiRsTWfCyuucglaLAfPAwyEVYrTEm9eJzzopX+PAEPZjU9V6zET5dhdZcaTTjTs2aHoO8Dj76Juk4BER2sr6JWvxCnH2BklVYwifVmwpvdca0iHnGsnLn0H8/qZFjCwt0ZhIwKwhFekALubJwq7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKmn90F3; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e89e689ec7so15982061cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 14:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761343142; x=1761947942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6JSu4wYR7dGj9hekjT0Scgo7oK7p56khXcsyVLerwhg=;
-        b=QKmn90F3xbYBk9WfK+osCC7TbkFMGWeGuYB9idqjQJemxKN9IqaeBRdDGM5DhnA8/T
-         5fRu4lc7X68u7KXNBHgHx6zWled4MJ5GWQOYMoSihuV2ol8Bo/HN/d+AGkvBGBbSaeZx
-         lqapDG/FeFxIOM34ggwhwYRQLOLTqJjmhVCBMp79sIBqjl12hR/EfPDMDjWZutFiJGdR
-         BTkuB9X/aX+A8BO4M9YRWfKPqqo2bzcOiZ/2G+dixUD4wZT4+q/PhJSvVvLIveHN3LkL
-         9VV0pY4neIJqsNBJB2UZjLj51CUg7LF0bxbJrK3LPqbPc3brCnsirhZAsyJ6u+U1Vs97
-         C0Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761343142; x=1761947942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6JSu4wYR7dGj9hekjT0Scgo7oK7p56khXcsyVLerwhg=;
-        b=K20hN3+Ka9KeAjwYOx9y9NiKeJlM9VlB29rIPbawo7TLr39HLYa8Bn20CkyBTNZB38
-         QVsRKqJ88ENOfiicDfagDOzYHiJprPLOzkjViH2b3AX9cgUPyr7ukeWy3iCM1bxF1LkJ
-         ti/4PUqStHfn3XHMHmMAN2Oiy5BjO2vv3W+MMhLwyy4Ezrej8dcTPWRoO1PX4kqpi1AF
-         xPlEAB2QywvH8UR+LVLG/l/C8mJEIalQGa9ZgYjveISVoJajboJNWRHuFCCmF+efkBYR
-         5WPcip27UBsM0igpCsjNK44x3yBgwde/f/5yNpQcs5rVpLau9QyA+ZGa/EwWQ/UcFMBl
-         N0VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX+OXYNufVS3StXVYf8JWa22XO2lqcxIayLYA0NTnNZX3kFm8V23/rdliMV/SQS61AbjnO5qgR11tSlRWf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmOS7PUhljpTxAYZdNsteWZkzrYg/JIsvLg6TflBHkkxTFIcYH
-	N2QbEKo8EkKnhQU45MkpYfDvAJom19c3XUL2cbmSmpbT5fBxniuALzLGEly6s9e7o00ohpYKFh8
-	eUQ0mHH+vVFalUS6lfMWVPce5HdWBw28=
-X-Gm-Gg: ASbGncsA+rijpnfPdbUrbA2E1gDcqxbJ+Y1SYVcQDd2tHLEQm4dKHMwxnuStpSmvg6p
-	9SyONBLqYerrzezm8XyEXy+7Wu9gPu6hF8rRlqq4L5W0lzQSpjiyKLgkwJxy8UFI+pHLsHj6u8m
-	lE22cuHQFCA3zG364oSstvysXt5R2SWqLD6XAXeewoB4RKvw01jbdYsu0wbX7yDSUNc8IAts7o9
-	SLr3k9h4mfAOiyclJ21C8+2uM4ZcZ+XPV/vXo3pcAgIXDT3zgSXJRthuCDqkaJJdkBVgHlNsDWG
-	AihH3l/QMtCif3k=
-X-Google-Smtp-Source: AGHT+IEbBcSwdHcN87CM+xJKbvHNa6uFwmLTJi2BasWFhru45dH++MGND3s6/74r0tI8E8W9g7oqhkLME3Y3cb4B/Bg=
-X-Received: by 2002:a05:622a:180a:b0:4e8:bbd4:99d8 with SMTP id
- d75a77b69052e-4e8bbd49fd5mr247392271cf.37.1761343142321; Fri, 24 Oct 2025
- 14:59:02 -0700 (PDT)
+	s=arc-20240116; t=1761345072; c=relaxed/simple;
+	bh=TdtvSFhVumAdCHdZdAGKLPPL1lptHcjWodC1ykDPzY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7fjUXFqHPERxFMu83HRPMKPSO31AGwFWSoSW90uC5WdrEqlpoMu+4GnUYRPRrf5BBYn5RQM12wwfow6D4TVeYWxInCChQ8X0HW9dzzyQ9PfHz/pz4jmzeQbam9YBxszDGQog6Saj1HlTpHHtvrKzVdn1C480TUOrMdp6U14JxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTTwjRCx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPY0qqdk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTTwjRCx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPY0qqdk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 47D59211E8;
+	Fri, 24 Oct 2025 22:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761345066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
+	b=WTTwjRCxGB26PULa/ak6Okz4dsHb+N43kdKOP+ED1wRE0ANRFxocl1iqwChFEy2qFVB/t6
+	HnEQ3y1qKQv843HJdWRHWuu4eFa4nPQefDPcdaBUEglKWx/SC6JaFoKeiEMw+zjey+sGE2
+	6Dj8XTGGp0WYBlgpxYMuJIB1ygGaM+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761345066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
+	b=zPY0qqdke3Lu6ES/8PPTBWAO0LRSuqxdR+K2yGNe1/3Z3gdUGnz7iONCHFZFcx+3YtYOC6
+	dAYr1MrZU4+GekDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761345066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
+	b=WTTwjRCxGB26PULa/ak6Okz4dsHb+N43kdKOP+ED1wRE0ANRFxocl1iqwChFEy2qFVB/t6
+	HnEQ3y1qKQv843HJdWRHWuu4eFa4nPQefDPcdaBUEglKWx/SC6JaFoKeiEMw+zjey+sGE2
+	6Dj8XTGGp0WYBlgpxYMuJIB1ygGaM+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761345066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
+	b=zPY0qqdke3Lu6ES/8PPTBWAO0LRSuqxdR+K2yGNe1/3Z3gdUGnz7iONCHFZFcx+3YtYOC6
+	dAYr1MrZU4+GekDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 25DF813693;
+	Fri, 24 Oct 2025 22:31:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JqLLCCr++2gdDAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 24 Oct 2025 22:31:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 80A6CA280E; Sat, 25 Oct 2025 00:31:05 +0200 (CEST)
+Date: Sat, 25 Oct 2025 00:31:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 01/32] pidfs: validate extensible ioctls
+Message-ID: <s57bjg2caxa5zhsamkll7b637omcszkammckb56pexs5m3uu4s@fyqo2js5flrk>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
+ <5b287ec6-72ff-4707-9040-3c84efc58b94@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926002609.1302233-1-joannelkoong@gmail.com>
- <20250926002609.1302233-8-joannelkoong@gmail.com> <aPqDPjnIaR3EF5Lt@bfoster>
- <CAJnrk1aNrARYRS+_b0v8yckR5bO4vyJkGKZHB2788vLKOY7xPw@mail.gmail.com>
- <CAJnrk1b3bHYhbW9q0r4A0NjnMNEbtCFExosAL_rUoBupr1mO3Q@mail.gmail.com>
- <aPu1ilw6Tq6tKPrf@casper.infradead.org> <CAJnrk1az+8iFnN4+bViR0USRHzQ8OejhQNNgUT+yr+g+X4nFEA@mail.gmail.com>
- <aPvolbqCAr1Tx0Pw@casper.infradead.org>
-In-Reply-To: <aPvolbqCAr1Tx0Pw@casper.infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 24 Oct 2025 14:58:51 -0700
-X-Gm-Features: AS18NWApxbcNiaK6JJ1--DN9zMQLqfqvI7dAP8Den9ypsz9jSVcP9ZxOIt1Gw7w
-Message-ID: <CAJnrk1YZoFSMGHRK0M_=ND1RyXPgc6Ts4hh+UMOkrGqO5G884w@mail.gmail.com>
-Subject: Re: [PATCH v5 07/14] iomap: track pending read bytes more optimally
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Brian Foster <bfoster@redhat.com>, brauner@kernel.org, miklos@szeredi.hu, 
-	djwong@kernel.org, hch@infradead.org, hsiangkao@linux.alibaba.com, 
-	linux-block@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b287ec6-72ff-4707-9040-3c84efc58b94@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-On Fri, Oct 24, 2025 at 1:59=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Fri, Oct 24, 2025 at 12:22:32PM -0700, Joanne Koong wrote:
-> > > Feels like more filesystem people should be enabling CONFIG_DEBUG_VM
-> > > when testing (excluding performance testing of course; it'll do ugly
-> > > things to your performance numbers).
-> >
-> > Point taken. It looks like there's a bunch of other memory debugging
-> > configs as well. Do you recommend enabling all of these when testing?
-> > Do you have a particular .config you use for when you run tests?
->
-> Our Kconfig is far too ornate.  We could do with a "recommended for
-> kernel developers" profile.  Here's what I'm currently using, though I
-> know it's changed over time:
->
-> CONFIG_X86_DEBUGCTLMSR=3Dy
-> CONFIG_PM_DEBUG=3Dy
-> CONFIG_PM_SLEEP_DEBUG=3Dy
-> CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=3Dy
-> CONFIG_BLK_DEBUG_FS=3Dy
-> CONFIG_PNP_DEBUG_MESSAGES=3Dy
-> CONFIG_SCSI_DEBUG=3Dm
-> CONFIG_EXT4_DEBUG=3Dy
-> CONFIG_JFS_DEBUG=3Dy
-> CONFIG_XFS_DEBUG=3Dy
-> CONFIG_BTRFS_DEBUG=3Dy
-> CONFIG_UFS_DEBUG=3Dy
-> CONFIG_DEBUG_BUGVERBOSE=3Dy
-> CONFIG_DEBUG_KERNEL=3Dy
-> CONFIG_DEBUG_MISC=3Dy
-> CONFIG_DEBUG_INFO=3Dy
-> CONFIG_DEBUG_INFO_DWARF4=3Dy
-> CONFIG_DEBUG_INFO_COMPRESSED_NONE=3Dy
-> CONFIG_DEBUG_FS=3Dy
-> CONFIG_DEBUG_FS_ALLOW_ALL=3Dy
-> CONFIG_ARCH_HAS_EARLY_DEBUG=3Dy
-> CONFIG_SLUB_DEBUG=3Dy
-> CONFIG_ARCH_HAS_DEBUG_WX=3Dy
-> CONFIG_HAVE_DEBUG_KMEMLEAK=3Dy
-> CONFIG_SHRINKER_DEBUG=3Dy
-> CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE=3Dy
-> CONFIG_DEBUG_VM_IRQSOFF=3Dy
-> CONFIG_DEBUG_VM=3Dy
-> CONFIG_ARCH_HAS_DEBUG_VIRTUAL=3Dy
-> CONFIG_DEBUG_MEMORY_INIT=3Dy
-> CONFIG_LOCK_DEBUGGING_SUPPORT=3Dy
-> CONFIG_DEBUG_RT_MUTEXES=3Dy
-> CONFIG_DEBUG_SPINLOCK=3Dy
-> CONFIG_DEBUG_MUTEXES=3Dy
-> CONFIG_DEBUG_WW_MUTEX_SLOWPATH=3Dy
-> CONFIG_DEBUG_RWSEMS=3Dy
-> CONFIG_DEBUG_LOCK_ALLOC=3Dy
-> CONFIG_DEBUG_LIST=3Dy
-> CONFIG_X86_DEBUG_FPU=3Dy
-> CONFIG_FAULT_INJECTION_DEBUG_FS=3Dy
->
-> (output from grep DEBUG .build/.config |grep -v ^#)
+On Thu 23-10-25 12:46:45, Jiri Slaby wrote:
+> On 10. 09. 25, 16:36, Christian Brauner wrote:
+> > Validate extensible ioctls stricter than we do now.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >   fs/pidfs.c         |  2 +-
+> >   include/linux/fs.h | 14 ++++++++++++++
+> >   2 files changed, 15 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index edc35522d75c..0a5083b9cce5 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
+> >   		 * erronously mistook the file descriptor for a pidfd.
+> >   		 * This is not perfect but will catch most cases.
+> >   		 */
+> > -		return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
+> > +		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
+> 
+> Hi,
+> 
+> this turned EINVAL (from pidfd_info()) into ENOTTY (from pidfd_ioctl()) for
+> at least LTP's:
+> struct pidfd_info_invalid {
+> 	uint32_t dummy;
+> };
+> 
+> #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct
+> pidfd_info_invalid)
+> 
+> ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid) == EINVAL
+> 
+> at:
+> https://github.com/linux-test-project/ltp/blob/9bb94efa39bb1b08f37e56c7437db5fa13ddcae2/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c#L46
+> 
+> Is this expected?
 
-Thank you, I'll copy this.
->
+We already discussed this internally but for others the problem was
+discussed here [1] and we decided the new errno value is OK and LTP test is
+being fixed up.
+
+								Honza
+
+[1] https://lore.kernel.org/all/aPIPGeWo8gtxVxQX@yuki.lan/
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
