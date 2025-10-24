@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77ADCC05B30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 12:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526C8C05B45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 12:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4B73B70E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 10:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB9A1898696
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 10:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E3C3148DA;
-	Fri, 24 Oct 2025 10:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63BF314B73;
+	Fri, 24 Oct 2025 10:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoYqnB9K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQtZcKCU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201D0311C15;
-	Fri, 24 Oct 2025 10:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297BC3126B0;
+	Fri, 24 Oct 2025 10:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303202; cv=none; b=a5J3y+70B32RCmRskDGtt8kXo6f/rNuN49p9o5s6s0MuOXfKEwTyjREcpM8dJsXsbrqLBRKcu7X4zDpTnanhTDdAJwv2/WBzLAfrf5HCCHm7kRa9oigDduxhqJPfwi4cXfKZb4Q4har2JLhq8hvFqKGZMTZu09kc6o7g+n5LJTY=
+	t=1761303207; cv=none; b=P3h/tWYaAVLYEJohiagi9Dqc201Gb6tmT63JEhfWW99juw8mqUnPb6LGuqrj1uaOGMSGu2eUZ3wOOETLWXWIRVmeZbOEYGvTJ3V0TTzzsjeiiQosrjksyBWwYYIx0CCVpKEcTWI1GDr+vUu8uMV1M0B4JJicFd1L3IaxlHdK3g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303202; c=relaxed/simple;
-	bh=LCe8V3QgmxQPWsHxmkO/HYNSTPj5l9bqGO1onywb9Xk=;
+	s=arc-20240116; t=1761303207; c=relaxed/simple;
+	bh=KoKI9phRTGMhjpn+9D8BgtjcoxSIgpJa0JnjxzKpEbY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tEdJoBXhH4XklmNZpWAMtmzrsyTQ8+aQXPsDGDZEdrOyDO5SoZuLcZOGD/KyHP3KNQTuWxa1O9qg/g6IfVr1A6Q+gvZw0XyWPJYxMB6QNecvYz59KmmMNypfmAwWFGyrIix7uT+foPX/3phr8pj9qDKjiVthS2JS9vqPFYbjQbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoYqnB9K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1184AC4CEF1;
-	Fri, 24 Oct 2025 10:53:16 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=RHJtsyqbZUcaFKRjuIioXPNuikuN0EX1Vm3g/Ic1fG8e4RFcHMG+aqI69bZdP5F5HLxPl4ujIN1vngpqp5oYdNTMnJYfuCKjDeIzr8rrhVc/0h9a5EVtKcFdbGQ0b9aHktwjvXW7jOuDj5Oo+T9JboYxw8OwVBwNbm/lr+Z/fEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQtZcKCU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA43C4CEF5;
+	Fri, 24 Oct 2025 10:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303201;
-	bh=LCe8V3QgmxQPWsHxmkO/HYNSTPj5l9bqGO1onywb9Xk=;
+	s=k20201202; t=1761303206;
+	bh=KoKI9phRTGMhjpn+9D8BgtjcoxSIgpJa0JnjxzKpEbY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZoYqnB9KL4SLwPaLgd/xoT9eRT5rR7P8yMRIpW4Fhd1E2paUg41wvhKY0kKRHEq4l
-	 XbMNEYSJnU2XslSBWSq1ul3zxUecZGylZfo3/kTXyzQcFfO/E1wmmNTubfI90vr6tI
-	 AuwG/d+6Vy/uS/eEIt7A7lRv4MrusY2OgcEOr/A8BOnbvk1VhTrBLu/Z1F4CEAoaRn
-	 XUSCEXfghBAzmCaBgePDvFFjS4Mlcauw5srpSG2XtFy+zaa4mhCzpe6NNP6flKHIaE
-	 HF58q4H+NSG2Qb1Y3XivLqE7YE0EYUVFJ9BVZeDFYt4s6s8hYBSS48tP+GM8QPujAA
-	 O0OTCwouDgW8Q==
+	b=LQtZcKCUECJ4AiyPF2OogZQsWCHtGi6dLz4z5WiF+jcJKEU1YPkl+IE0BszPeq80w
+	 2X/RQm89VASsp7NYMx0NydKahTT/39rek7p6HtJ8gUtpsfegaE4nfpjNd3IAlvVWF2
+	 bqFSX9E1l+54aEP4WR8e/0zn/c4TWikaA2GzhRLkGm2WfkVHVwaQdVie9kjRBfbvVw
+	 u/PWo1i/aTPPoved4Jft5yUttujrHHlB/ufkNTEbksDOfR/9+IE9vLIg1Qcn/hm/TN
+	 hPeoRKzIqdAOoPUuv5pv97Zeon/s0VqnEBB2zMePx5MAgfybKWpVXb9xNlkuuQCDcw
+	 VyR4ZoNMUUvUQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:52:33 +0200
-Subject: [PATCH v3 04/70] pidfs: raise DCACHE_DONTCACHE explicitly
+Date: Fri, 24 Oct 2025 12:52:34 +0200
+Subject: [PATCH v3 05/70] nsfs: raise SB_I_NODEV and SB_I_NOEXEC
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-4-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-5-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,37 +69,35 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=824; i=brauner@kernel.org;
- h=from:subject:message-id; bh=LCe8V3QgmxQPWsHxmkO/HYNSTPj5l9bqGO1onywb9Xk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmqZHX2c71C5nN/fdwzZxZUpjxw5FN+bTFgjZ2y9O
- yeo/PaujlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlMiGD4ZyWe80kkSev6p3NF
- Sa4qojb5pUys2iol6cuuWj1JUt/QxMiwOeNG/44k+8RT59X8uD3FayfN9V0+8fo9e+YHsiqfjnn
- xAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=647; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=KoKI9phRTGMhjpn+9D8BgtjcoxSIgpJa0JnjxzKpEbY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmp5KrkxSMG6zOj1lnJ36biiyFv7myOS7UtNHeX6d
+ vXfWszRUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJECL4Z/ej+/Ke0Q7OAurDrA
+ 0uD37EfOOrkw3Wux31XOlF3hDV7znZHhoKroxDQWCYH5k98yGO1TNhO9GnN9M/c9FWaeuJVTNU4
+ wAAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-While pidfs dentries are never hashed and thus retain_dentry() will never
-consider them for placing them on the LRU it isn't great to always have
-to go and remember that. Raise DCACHE_DONTCACHE explicitly as a visual
-marker that dentries aren't kept but freed immediately instead.
+There's zero need for nsfs to allow device nodes or execution.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nsfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 0ef5b47d796a..db236427fc2c 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -1022,6 +1022,7 @@ static int pidfs_init_fs_context(struct fs_context *fc)
- 
- 	fc->s_iflags |= SB_I_NOEXEC;
- 	fc->s_iflags |= SB_I_NODEV;
-+	ctx->s_d_flags |= DCACHE_DONTCACHE;
- 	ctx->ops = &pidfs_sops;
- 	ctx->eops = &pidfs_export_operations;
- 	ctx->dops = &pidfs_dentry_operations;
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 0e3fe8fda5bf..363be226e357 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -589,6 +589,8 @@ static int nsfs_init_fs_context(struct fs_context *fc)
+ 	struct pseudo_fs_context *ctx = init_pseudo(fc, NSFS_MAGIC);
+ 	if (!ctx)
+ 		return -ENOMEM;
++	fc->s_iflags |= SB_I_NOEXEC;
++	fc->s_iflags |= SB_I_NODEV;
+ 	ctx->s_d_flags |= DCACHE_DONTCACHE;
+ 	ctx->ops = &nsfs_ops;
+ 	ctx->eops = &nsfs_export_operations;
 
 -- 
 2.47.3
