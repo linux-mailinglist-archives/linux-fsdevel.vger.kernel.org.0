@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C209C05F2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:29:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5D3C05F53
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D8C1B87E75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625251C266DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8F536CA62;
-	Fri, 24 Oct 2025 10:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F259036CA96;
+	Fri, 24 Oct 2025 10:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSlzC7e4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OS9VuFq+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9785C36C245;
-	Fri, 24 Oct 2025 10:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD2D3191D8;
+	Fri, 24 Oct 2025 10:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303540; cv=none; b=olPEyT52tU05obqgEwS1ua7r1zo1ORhbz+F1qHu25fmmm4IPsgxJPI19YwaZIJBMHS+ifG6VPMbFF9xPAGEmsKVviEXCbQFPRbEGxEtCr7nCR5xphNrOgiiZCu9wXl1nwOropuoYQ8Gz1XNabBOHnEVM3kjemfv7nxmA6A5rsSY=
+	t=1761303545; cv=none; b=dr8a01HWFsDPqa4vQHtM4Mzu0ZcqKvExu2hJWZTOtjZUd8dWaKIm/eQU6njgBBMRWsUJZZMEr1S/Fxg367ugDxZgghGpJHd2n5OCIsKeBJ8xSGX+AhQLrOtjs9el2K1+J2Qw4ouVbqRkVqyXmLKVxguSw+VZzd5DhhTXkF4gmzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303540; c=relaxed/simple;
-	bh=WqVUkxH4ZBiU30MvQT3O+adj44+G6SHOGkbS5VtGikk=;
+	s=arc-20240116; t=1761303545; c=relaxed/simple;
+	bh=+kgGWvLMBNpy0C4YEMZXDEKTpLYegwzhaVcMRXxEJRg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qLaPrdxmR1iW8Q4Tppgdip/Fpif2gQg2oH4y7CmRRsK/EH2agaNRbvFUNrYUmwtnVmHLQt7fy0L2jPjE5pBtdfllQaz2GUCphvNoxmQWQ/QWSrRwVEJGSsRgp+dKJLY/ULRG32ha8MaYXH46luIIMBMd9PSAVI3Yf+1moVL2XmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSlzC7e4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE48C113D0;
-	Fri, 24 Oct 2025 10:58:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Iu4VX79tSepGEm0/sD2Tp4SEqfBIZvcYgPciUt+KkNwyF7xpo1bTuhgEYSXA3ygmZmRzprLXrXq8b6OVz2Kp+OTxmuEtTcdGhdSon4YYysl/1JTznJ+doK9mijXCU9m690ePXovtxZDcFJG+KsSuBUrpxpp6PfNdJSlyTLD18rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OS9VuFq+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17CAC4CEFF;
+	Fri, 24 Oct 2025 10:59:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303540;
-	bh=WqVUkxH4ZBiU30MvQT3O+adj44+G6SHOGkbS5VtGikk=;
+	s=k20201202; t=1761303545;
+	bh=+kgGWvLMBNpy0C4YEMZXDEKTpLYegwzhaVcMRXxEJRg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tSlzC7e4j3jM0TnsmBpG9ygZRTDeG0oCzatX7Bx62nyYTJFAPnZbArKHQkMbOwGmw
-	 2ppZzY2Y0lN+A+fEqVOlmwMZ/YPhJbi7hbL7xWHlzn0WBF6qXc7QkJi1Mb0770lIbo
-	 I0E3ndgQCiXDHjm4QCP+Ppt2gU0hSp8Dj2++2jPTUxMeEa54FhceUaM/SEzDlM8Y+6
-	 82y85nJ4IFzxy3WVYH7Hz6ZawXYFim/U+Xku/RhiTIXv35PI3aNKDVyUm7IwEhBzgQ
-	 QQJXqrbeZxhx/vOvOr9d3Cb2Cxklc1gPgm6L1C5LdFZ6D1i90tEdcdGi+G2HxPqqP/
-	 JjIZfRtnr+yqw==
+	b=OS9VuFq+p15knQbrnvWBwJblwGdno3oU59XB0mMm6SUD48391bR0SpVaxLCk/u2Wf
+	 impzdD4YedlLes45Ec6LF4lUDYYr4jiuipgpOjLG4hhnaqwW42Fr7UfnMnVnk7onw2
+	 GGRWo5mLghvuiRmf/sPL7jgf56HsF2QDiCUwM+nh0NZNxds5dPp08VMhiN15np/fBF
+	 /Bz3eIQ9kQ+yFjmNlnhxckedjjnpZkVn5tfzqKkg2nkJov0psm/0vnsSNlh6rVOXeT
+	 KVwC4w7JG3THen32DAd8iO5tYbBI0pNJ0BFWuVwZu8pgyDMdBjv9czwH1RIZOIHNtj
+	 hRvH89Cyp9vPg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:53:34 +0200
-Subject: [PATCH v3 65/70] selftests/namespace: first threaded active
+Date: Fri, 24 Oct 2025 12:53:35 +0200
+Subject: [PATCH v3 66/70] selftests/namespace: second threaded active
  reference count test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-65-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-66-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,101 +70,38 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4736; i=brauner@kernel.org;
- h=from:subject:message-id; bh=WqVUkxH4ZBiU30MvQT3O+adj44+G6SHOGkbS5VtGikk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8juqo3ZfBdH/T7Zvp5xadnHbn69FfaksSrRPfbNc29
- Dv7nb3KqaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi4jcZ/qf87ftsHjwpNLOI
- 95hR7WXT7Uft1m61/RP6py929t1HaW8YGU56vmaYxsYYukzTTPq3UltjuaXUPJsDSWVnY3j5G7f
- d5AQA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3834; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=+kgGWvLMBNpy0C4YEMZXDEKTpLYegwzhaVcMRXxEJRg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8juoI73luXFt+yfSE8Ydd6umC5iXqJSYn1gWyvOnIc
+ a4UUHnYUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGlVEaGWc6uJ2I7p7xKUV6h
+ vt9m1QKl6qlGt/PynOQ/JqfzvLwfyPDPcq9q/em0WYfnRWl9n3fQzECb07ax7sVFla+G0rfTdvO
+ yAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that namespace becomes inactive after thread exits. This verifies
-active reference counting works with threads, not just processes.
+Test that a namespace remains active while a thread holds an fd to it.
+Even after the thread exits, the namespace should remain active as long
+as another thread holds a file descriptor to it.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 138 +++++++++++++++++++++
- 1 file changed, 138 insertions(+)
+ .../selftests/namespaces/ns_active_ref_test.c      | 99 ++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index b7fa973a2572..0c6c4869bb16 100644
+index 0c6c4869bb16..24dc8ef106b9 100644
 --- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
 +++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -12,9 +12,12 @@
- #include <sys/stat.h>
- #include <sys/types.h>
- #include <sys/wait.h>
-+#include <sys/syscall.h>
- #include <unistd.h>
-+#include <pthread.h>
- #include "../kselftest_harness.h"
- #include "../filesystems/utils.h"
-+#include "wrappers.h"
- 
- #ifndef FD_NSFS_ROOT
- #define FD_NSFS_ROOT -10003 /* Root of the nsfs filesystem */
-@@ -2113,4 +2116,139 @@ TEST(ns_mixed_types_same_owner)
- 	ASSERT_LT(u_fd, 0);
+@@ -2251,4 +2251,103 @@ TEST(thread_ns_inactive_after_exit)
+ 	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
  }
  
-+/* Thread test helpers and structures */
-+struct thread_ns_info {
-+	__u64 ns_id;
-+	int pipefd;
-+	int syncfd_read;
-+	int syncfd_write;
-+	int exit_code;
-+};
-+
-+static void *thread_create_namespace(void *arg)
-+{
-+	struct thread_ns_info *info = (struct thread_ns_info *)arg;
-+	int ret;
-+
-+	/* Create new network namespace */
-+	ret = unshare(CLONE_NEWNET);
-+	if (ret < 0) {
-+		info->exit_code = 1;
-+		return NULL;
-+	}
-+
-+	/* Get namespace ID */
-+	int fd = open("/proc/thread-self/ns/net", O_RDONLY);
-+	if (fd < 0) {
-+		info->exit_code = 2;
-+		return NULL;
-+	}
-+
-+	ret = ioctl(fd, NS_GET_ID, &info->ns_id);
-+	close(fd);
-+	if (ret < 0) {
-+		info->exit_code = 3;
-+		return NULL;
-+	}
-+
-+	/* Send namespace ID to main thread */
-+	if (write(info->pipefd, &info->ns_id, sizeof(info->ns_id)) != sizeof(info->ns_id)) {
-+		info->exit_code = 4;
-+		return NULL;
-+	}
-+
-+	/* Wait for signal to exit */
-+	char sync_byte;
-+	if (read(info->syncfd_read, &sync_byte, 1) != 1) {
-+		info->exit_code = 5;
-+		return NULL;
-+	}
-+
-+	info->exit_code = 0;
-+	return NULL;
-+}
-+
 +/*
-+ * Test that namespace becomes inactive after thread exits.
-+ * This verifies active reference counting works with threads, not just processes.
++ * Test that a namespace remains active while a thread holds an fd to it.
++ * Even after the thread exits, the namespace should remain active as long as
++ * another thread holds a file descriptor to it.
 + */
-+TEST(thread_ns_inactive_after_exit)
++TEST(thread_ns_fd_keeps_active)
 +{
 +	pthread_t thread;
 +	struct thread_ns_info info;
@@ -212,30 +149,45 @@ index b7fa973a2572..0c6c4869bb16 100644
 +	fh->ns_type = 0;
 +	fh->ns_inum = 0;
 +
-+	/* Namespace should be active while thread is alive */
-+	TH_LOG("Attempting to open namespace while thread is alive (should succeed)");
++	/* Open namespace while thread is alive */
++	TH_LOG("Opening namespace while thread is alive");
 +	int nsfd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
 +	ASSERT_GE(nsfd, 0);
-+	close(nsfd);
 +
 +	/* Signal thread to exit */
 +	TH_LOG("Signaling thread to exit");
 +	sync_byte = 'X';
-+	ASSERT_EQ(write(syncpipe[1], &sync_byte, 1), 1);
++	write(syncpipe[1], &sync_byte, 1);
 +	close(syncpipe[1]);
 +
 +	/* Wait for thread to exit */
-+	ASSERT_EQ(pthread_join(thread, NULL), 0);
++	pthread_join(thread, NULL);
 +	close(pipefd[0]);
 +	close(pipefd[1]);
 +	close(syncpipe[0]);
 +
-+	if (info.exit_code != 0)
++	if (info.exit_code != 0) {
++		close(nsfd);
 +		SKIP(return, "Thread failed to create namespace");
++	}
 +
-+	TH_LOG("Thread exited, namespace should be inactive");
++	TH_LOG("Thread exited, but main thread holds fd - namespace should remain active");
 +
-+	/* Namespace should now be inactive */
++	/* Namespace should still be active because we hold an fd */
++	int nsfd2 = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
++	ASSERT_GE(nsfd2, 0);
++
++	/* Verify it's the same namespace */
++	struct stat st1, st2;
++	ASSERT_EQ(fstat(nsfd, &st1), 0);
++	ASSERT_EQ(fstat(nsfd2, &st2), 0);
++	ASSERT_EQ(st1.st_ino, st2.st_ino);
++	close(nsfd2);
++
++	TH_LOG("Closing fd - namespace should become inactive");
++	close(nsfd);
++
++	/* Now namespace should be inactive */
 +	nsfd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
 +	ASSERT_LT(nsfd, 0);
 +	/* Should fail with ENOENT (inactive) or ESTALE (gone) */
