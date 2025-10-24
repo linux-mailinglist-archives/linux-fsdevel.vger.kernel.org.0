@@ -1,54 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-65516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC8BC06681
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 15:09:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171CBC0672A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 15:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C943BEEDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:04:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28B004E6AF8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E6631A567;
-	Fri, 24 Oct 2025 13:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C261531BCB6;
+	Fri, 24 Oct 2025 13:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtXz0iFz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ap3FCyEK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EB7207A22;
-	Fri, 24 Oct 2025 13:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D47C19C546;
+	Fri, 24 Oct 2025 13:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761311057; cv=none; b=AFPJmb2YZDZYyMVe8QLca63xkGZiDk+CdhWPpNKs4nD0AOBZu89Y5L90UWHoX/0dM4QHOTw4OZe7NDz8CiHK0GyuNZMDXnZyyKgN74d3S/YhRn4VzEPh5VDXKWfApMbR1NzVjfbLo2AuY2KOd9PKJuFJFmg+I0Vn+3azMkpRYjU=
+	t=1761311925; cv=none; b=i1BW+BMpONCQUqn/fLcpgIRK+VKQ8oKVCKkwyhpw1U6gI6QAWyoIhoe0lUBR8yp2SIPo4xPpGGhoA7FXzfqmq6FfF+AHx3Qk0TKiWsNAzn8SPwRuFYYamLAZg6cVt7IH10CqPPmt2CrN7y+muFzaDeQKKeFsAz3mQ+j57Naa+zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761311057; c=relaxed/simple;
-	bh=EyAeLjD2mt8q0+a+IwgJteAu5pMwhBg01yOiKtaBrHo=;
+	s=arc-20240116; t=1761311925; c=relaxed/simple;
+	bh=vImAAcOdyR7m2dcr4BvB07svTo8HUve8pu05bW+Z0LU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGYnyNhjMJKK415OsoXyqVQb62HcJB7RMvoc1Yy1X5vaFWAVr6E61MraB7Racrr2VJGbN+mgEK8h/yUNkNuyk8j6eLuoJJz/djrpYv0ydG+Av2RDc6BV0h3h3qk2ndCQ1TVoo0miS0itkgKvcsUUo1d83k4t/ErxGDM6f4N0umY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtXz0iFz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB05C4CEF1;
-	Fri, 24 Oct 2025 13:04:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNfV+nnddbZMNpEYYW0TAapHDg7So+z+X4QjHvSxOEtO+BLZ358qm2/mTYsQK90bvwSKXcMDzRErSOTUGqDzZtjMjl+zIFuDpltLhaIAMUv0AfkRmnLHNqPhecm1OrdrUQ0dE/5EMqLqrunQnabhXcBXE6tZFfmX0U5TjrUQ9/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ap3FCyEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B37C4CEF5;
+	Fri, 24 Oct 2025 13:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761311056;
-	bh=EyAeLjD2mt8q0+a+IwgJteAu5pMwhBg01yOiKtaBrHo=;
+	s=k20201202; t=1761311924;
+	bh=vImAAcOdyR7m2dcr4BvB07svTo8HUve8pu05bW+Z0LU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZtXz0iFzncEokMqHB0LPd/aZe9xXOXZNzLK/jV+K9uKtHNOIN42e2ze2n1B3cGaI6
-	 kQd3ZeyJIgSIMK521q2gtUR01ZO3JO304GTj0mzIit3jNGhC/dWWbXbY6e8SF4jViD
-	 3sF+WKySbv559ORkKa9mvW8apVhf9+LQcInbUsCUG6suv6Bu6jkpe9S+isvrnd7V7W
-	 ItKrVmLzwMODHg3KAM8uVTnuNa51DtKN96gKnSWqJtiKvkw1cCEbBxGqYL3P8hdF9t
-	 +LYQIETjJiW6aOpAgZCIRybmZ3rZ1O2OrCNRRP7Plnot95UR0dD5THFdXctj4roHXJ
-	 vAF6VeowzzFYQ==
-Date: Fri, 24 Oct 2025 15:03:17 +0200
+	b=Ap3FCyEKlaPhsQvDZ3vl7y1ziDzs9Fhjf4gIeVlD5rh239CiQLHisW3l60JarLJdb
+	 YHmdOKi7Cir91+s++S0fO+Vf3z41Un33JrFhYLUAvzoK+BhZWHBuxf4axzm+kgTxws
+	 EF/XFSrMnt5SpkAz6gH9lw3aCddDYEbqQSuLhDUQ2DgYxk2QcU206SBeQJSMJFu26X
+	 MBRQLZ7VTjxbPK06uf37wrjt7sl2weMwMbbrClXh0woRN6UJQTF2u5fW7oKk7LenCc
+	 T1pY1xvh3wO3WOh0cbKqw+g9+eZv20YfWW3iELmAEW+EN6ED6wX7j28WuQT3srAk+T
+	 sZsq0fb2QKW1w==
+Date: Fri, 24 Oct 2025 15:18:37 +0200
 From: Joel Granados <joel.granados@kernel.org>
 To: Randy Dunlap <rdunlap@infradead.org>
 Cc: linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>, 
 	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] sysctl: fix kernel-doc format warning
-Message-ID: <kyn7q3tjjxg45am326ykx4hbnqzffl2nkt77vl65qxa4p3kpz2@ysgkf3j3ch4m>
+Message-ID: <v7wxokakvlnewgifh3xp672surr4hncsapyfc3tj7mwod6sev6@ixqd7qjsrusk>
 References: <20251017070802.1639215-1-rdunlap@infradead.org>
+ <kyn7q3tjjxg45am326ykx4hbnqzffl2nkt77vl65qxa4p3kpz2@ysgkf3j3ch4m>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,72 +57,119 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pwzdj7e5is4kav6e"
+	protocol="application/pgp-signature"; boundary="ztwvjylmiin7c47e"
 Content-Disposition: inline
-In-Reply-To: <20251017070802.1639215-1-rdunlap@infradead.org>
+In-Reply-To: <kyn7q3tjjxg45am326ykx4hbnqzffl2nkt77vl65qxa4p3kpz2@ysgkf3j3ch4m>
 
 
---pwzdj7e5is4kav6e
+--ztwvjylmiin7c47e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 12:08:02AM -0700, Randy Dunlap wrote:
-> Describe the "type" struct member using '@type' to avoid a kernel-doc
-> warning:
+On Fri, Oct 24, 2025 at 03:03:17PM +0200, Joel Granados wrote:
+> On Fri, Oct 17, 2025 at 12:08:02AM -0700, Randy Dunlap wrote:
+> > Describe the "type" struct member using '@type' to avoid a kernel-doc
+> > warning:
+=2E..
+> >  	/**
+> > -	 * enum type - Enumeration to differentiate between ctl target types
+> > +	 * @type: Enumeration to differentiate between ctl target types
+> >  	 * @SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considerati=
+ons
+> >  	 * @SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Used to identify a permanent=
+ly
+> >  	 *                                       empty directory target to se=
+rve
 >=20
-> Warning: include/linux/sysctl.h:178 Incorrect use of kernel-doc format:
->  * enum type - Enumeration to differentiate between ctl target types
+> Yes! I'll push it through with a little tweek by putting it together
+> with the general documentation for the ctl_table_header. That is the way
+> it is supposed to be (according to Documentation/doc-guide/kernel-doc.rst)
 >=20
-> Fixes: 2f2665c13af4 ("sysctl: replace child with an enumeration")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Joel Granados <joel.granados@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  include/linux/sysctl.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Best
+> --=20
 >=20
-> --- linux-next-20251016.orig/include/linux/sysctl.h
-> +++ linux-next-20251016/include/linux/sysctl.h
-> @@ -176,7 +176,7 @@ struct ctl_table_header {
->  	struct ctl_node *node;
->  	struct hlist_head inodes; /* head for proc_inode->sysctl_inodes */
->  	/**
-> -	 * enum type - Enumeration to differentiate between ctl target types
-> +	 * @type: Enumeration to differentiate between ctl target types
->  	 * @SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considerations
->  	 * @SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Used to identify a permanently
->  	 *                                       empty directory target to serve
+> Joel Granados
 
-Yes! I'll push it through with a little tweek by putting it together
-with the general documentation for the ctl_table_header. That is the way
-it is supposed to be (according to Documentation/doc-guide/kernel-doc.rst)
+Going to look something like this
+
+sysctl: fix kernel-doc format warning
+
+Describe the "type" struct member using '@type' and move it together
+with the rest of the doc for ctl_table_header to avoid a kernel-doc
+warning:
+
+Warning: include/linux/sysctl.h:178 Incorrect use of kernel-doc format:
+ * enum type - Enumeration to differentiate between ctl target types
+
+Fixes: 2f2665c13af4 ("sysctl: replace child with an enumeration")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 92e9146b1104..f59d5677ee09 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -156,7 +156,12 @@ struct ctl_node {
+  * @nreg: When nreg drops to 0 the ctl_table_header will be unregistered.
+  * @rcu: Delays the freeing of the inode. Introduced with "unfuck proc_sys=
+ctl ->d_compare()"
+  *
++ * @type: Enumeration to differentiate between ctl target types
++ * @type.SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considerati=
+ons
++ * @type.SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Identifies a permanently emp=
+ty dir
++ *                                            target to serve as a mount p=
+oint
+  */
++
+ struct ctl_table_header {
+        union {
+                struct {
+@@ -175,13 +180,6 @@ struct ctl_table_header {
+        struct ctl_dir *parent;
+        struct ctl_node *node;
+        struct hlist_head inodes; /* head for proc_inode->sysctl_inodes */
+-       /**
+-        * enum type - Enumeration to differentiate between ctl target types
+-        * @SYSCTL_TABLE_TYPE_DEFAULT: ctl target with no special considera=
+tions
+-        * @SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY: Used to identify a permane=
+ntly
+-        *                                       empty directory target to =
+serve
+-        *                                       as mount point.
+-        */
+        enum {
+                SYSCTL_TABLE_TYPE_DEFAULT,
+                SYSCTL_TABLE_TYPE_PERMANENTLY_EMPTY,
+~
+
+
 
 Best
 --=20
 
 Joel Granados
 
---pwzdj7e5is4kav6e
+--ztwvjylmiin7c47e
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmj7eQ0ACgkQupfNUreW
-QU8yBQwAlFm8UKuMzczwawnfRf9Dl0Fmx5r+HK/PQIBKBtBXz7eV4ZjzXnNZ12IX
-C24dwOF6lUq3TJQWn1uAYtnctoOGb95vMzi1Lo8IXNiOY/CiwNsJPHl4UYz//LFZ
-tzICdE2UUfWXPNT5tOjryrvfM/wsNs28CNNvH2HwWUFuIRn53CqCAtiD1eBoP0HH
-H5cj0/8Vy9xNksrohLoCvjhKsVIxdjJ59sToBWbIiOZxbJk3ekiwb5/qJ3RaQ/Wz
-r+mlRk9s3gU9xbMGgXVZuj4QCTmds559c/BY7ekQ/eb6SlAQW0fv7aCvRjngsa9E
-HZbZYy/nJkc+sibmvxcPfazHPmnQv1GwBYX00GQ/N40fZpv8ujaDGG1FaJCwrCSN
-jEa2L/Tqze/z/eGdJ7Tp9Z/gBCmcJ5V29NuWmAOS/wUq2CF9S1OqQizFIKd3Lqf8
-eE3uUtw8ngexZzB4CF6HkN8YZEyIEeGlYv4BSscd661WVo3Z4n4JxPGouHIjmwCX
-WkHJaKxi
-=eoQm
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmj7fJ0ACgkQupfNUreW
+QU9Kygv9Hx1LQGMN++tNdm0WIAyhz4zv+mRYukc/KmatkMfbvBlRRGzfvcJXeNLx
+bSl7gsD2XVR6gBYdvMPS2JLQnG7LO420un9GG5bIgrqbkmDIeE4W02vvl1U4jNRa
+D+juUXZw3lcOFzrV0+Z6zwzu3Xi7XIFp7evqBS5TTOn6p0ENse5vc/FUgN5ai/70
+KX/0BQEWo7rqMI8yCMCiS0MrPcxEoBHcWhMlblNuFlAgPALk1rcKrKQEpEJysFwt
+9agRTIRlprbvibMFR1dHpwA8YwWFY+dQSp2FhFwlthqSXpPRsPD0BnYnIdRMMkPg
+NUACCoDIDrKw0CCVNRpPW5qBbaP9VyrexZwBmsCXXRQ0oQgYIPywhDdbf2ys6laJ
+ezH5LSLre7LxNNcDFunNkrXlUWjU+n71J2pTHKjKI+Ay5yltQnIWrsiPokdIoBxF
+tPQVpIRxPEyOSiOCgfsyXenBKuw1PsKVygeH7jIzYN0crCWT4H+goXWovzCAKhOM
+dup4OT6u
+=nuR/
 -----END PGP SIGNATURE-----
 
---pwzdj7e5is4kav6e--
+--ztwvjylmiin7c47e--
 
