@@ -1,98 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-65577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A193DC07FBD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 22:09:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9716AC08025
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 22:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580653B6D27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 20:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5552F1AA35DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 20:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F8B2E2EF3;
-	Fri, 24 Oct 2025 20:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDA72E7641;
+	Fri, 24 Oct 2025 20:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3OP5kaH6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WOSYeK1O";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rJR58lxL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011015.outbound.protection.outlook.com [52.101.62.15])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8780C2E040E;
-	Fri, 24 Oct 2025 20:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582FD72628;
+	Fri, 24 Oct 2025 20:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761336507; cv=fail; b=h3j5MFwgd1waQdYshsvxGOzZlBvL/qxfmoyvHIqgQnu4unCkSBmPLrj5bTK2LxBnEH3NSExXl/0sIB63agJ7QQFU6S2O41MhhvR+MXUikgTw3AcfS/Op7BKexu/VwEOQz7spxHlPlnCtoYSpEwCT9BmEnGb5eLMchPwzJualjlk=
+	t=1761336910; cv=fail; b=YXI0h1iOe4/8faWTlsQVbJQcbfkQDz9DonoU5gQBUapUJr8QJ8CcFM8RIrZAxYu6wSTsEisxaGKUvyP/EEy45dZqBUuzKsCqNdgRnMPH8+r+zWlonm1bATS+YeHSdFo0Su9DuUQ0sNlUeJfOeeJ7eGLk/p/NgEqMrPNffeEKnYo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761336507; c=relaxed/simple;
-	bh=gY58F5j+5LJQzMoJLI2OUhhWe51O03vOTZmmJX5GLwA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CWUZmsxG9dJJ/XpAP5PIQeHZwxnIEGmyq12+JrFBwdokvNa6ndoifnROnXTJ5ehkUU9Y1lRqGKrBcE3eD/OIl9o/VMC0RojX1Y9/mOPwiPOEgV13qzxEsCoelx5O1xPnx8xD5lScARbbJSPbyAmL87Htzl6ZLxnmeEyogsMo6dA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3OP5kaH6; arc=fail smtp.client-ip=52.101.62.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1761336910; c=relaxed/simple;
+	bh=0mZCUWUkPEGNnxgQB+/ptEluZ1kGZseWNGLqCbsVsO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fTtpvDSugUKBxvkw3nGWJa/JECCZD+l+cYgpk4rv7xcuhFGZMNqvQMHYUUOskpzta0/UyZFfsox/2Klg7bRW9d/QWug4d55KWX2tUhuPXO4siegjXusYGvRFud6th6BPwcJocbX5yjFeyWVOVixE0ILpxxHPhH1kgi4ml2gz+C0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WOSYeK1O; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rJR58lxL; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OINLtW012004;
+	Fri, 24 Oct 2025 20:14:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=0mZCUWUkPEGNnxgQB+
+	/ptEluZ1kGZseWNGLqCbsVsO4=; b=WOSYeK1ObUsqAVml3A0SG8GI7No4BvvjPK
+	PM9nui3mo+b6GMJ/7GCyrfHLJi+kWSwXfSHfIIHMqcS6CpQn9cOtqUuDNQmhH+5s
+	4J2xrxU57GyyzL+oFV0pSaNlHNqGiBOD8G1Y8fVOM2pd/G3wy03552BptIAWASqO
+	jUzwNqRWXXLjhsgzd44T6pU1ggfrb29Jg+HPa7VzcP1Ff6SsD2P7AChJI3Za5qA6
+	H0t5l3YQHMewOJq40DXJkawWFgt/Ui/XJ5K2PQcY9Oslf6gDwGjE42qYmEkcQ/Ua
+	+qAhE2h0NFdAemLPipWjvHYoUDNoDZQt/djdsbIdHUMJv72HOb2w==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49xvd0wj5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 20:14:17 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59OJgXRF030465;
+	Fri, 24 Oct 2025 20:14:16 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012069.outbound.protection.outlook.com [52.101.53.69])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bhdwm6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 20:14:16 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nABi3FUWSdRAb6ZcHdVdwIwcxxt701D/c2ez6wap77u6z73hDeEYiIQ4ZSwEXc2zmu+BuVPzy2dwjdtM0smbdi/AfL9GrvjszzCUL9ksA6RDNSYTA08kuE2kmlRH5gBb7wvDjUPw37kYOQdT0+6/6wgknPbWbQM8EygvE9VbzsdGYsG2E7ajq7e4GMUt+E3grhdGWIAeDa+hFXy7nx0UxgR6Cw9SGd4iNpyfj3MGw/vNFMfoE45616z+B6oqaZQzvI0Yb9st2cmCzcjC1wHSSaP+vXQrhawkRY91RJwPgYUkUn0awbFwTPyyUx+XJhriax9H5RqpcJinxfGdJO7ebg==
+ b=jA/wEnr9SRKREQjB+DypZ/f9iKxWfLZ27dQ/79Z75iOy2RsOxixBxVFxpcrAEAnMvUoP3SOifoc7vXmVDBRWO1H32awLLvCmXhzUndg//IIem0U1AlmpCAT3aBOegVVX/sRickZbw8cbHXjdtD/gysdMApI6n8gsOv4wf4uzm1yJ/JUE77e9BGnpSfcBpm9EggmPy8FBAVyJ+dRhv/l2C+PCMYK69PIK2Hf5XRwtNF6r70/noxncXbA1z9KjhJ3jCYG7v6BeTeMLneiAEYRxyosPAw0fj0DuV+CeUM5EZxlDIw96myI5hqkOcFKE4ZKBOF0QeUydjznDyzkmyiGuGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XWdVPrygvC0JJeFtmfNwN+G+FfQKfPKH+M85oxZtFF4=;
- b=J8W1r75tJFn+QkZvukmKdoCySxW0wwuMrHLRbFSZcoccUUn4nkip+zunBd7CsIQgzI7nCjQFS9dQjDlfvunE3Q8LxYZR7hMCnpV39Bdwlu6jZhunDkj9SGsAkuYbCv0zQ4fh/AYP7xyk30QLlr0pXbsyxMkMuUI1WrLxKXPxrD8QpjtPvDcF0Cya7a1Q+8QAUTu95vSWq01/v716ophUHC2VBzUMh9tz/4xscsppWNDhc0THf20XE9/dWeJus0QukZgrX1RVB2xQmqTZGp3750ShleUrXA+tdhQvArHbvjn2wxpllvJ7xfq6tHi115bbO0AyptuYqFahND8e56ca3g==
+ bh=0mZCUWUkPEGNnxgQB+/ptEluZ1kGZseWNGLqCbsVsO4=;
+ b=mfWXU60jncc1sYrWm80zmr8JrJ2pVtGaO+pliBMcxs0y9Ecx0jPa4jpQZ+DKSNS7OKVdy5l+CZuIURvZdDkvQUCGxGJdWQwypHEMff8dNNVxxj5dBtCMK0VKEAjROCzLQc+smCdrkF95OvgD/QrXoo4SK323fG7X4W2SVF6hcvLrhg5BBnUILhfPKnJEVYnkdUt39DRODKt+3DTzJbffRbZS8ch3S7eI+hEFuJVjmIrB2SD4f/0zVpdR7ODvrNB7OS9a4j8l3m3gsRcrV2NL6iqioglZjME7o7/ZDSeQ2h5lbpZPYYOr6S/2HVQ2ZB2AsCZFNEVvsnlwy+s9Mszn7A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XWdVPrygvC0JJeFtmfNwN+G+FfQKfPKH+M85oxZtFF4=;
- b=3OP5kaH6Lo/jmHZo9jFQTBWeksPAhUlq2JctCQeyOh2umi77Cf526B5IsIe/yk1j5HfJQq964Jh5emIU6bar1wHXEVfjDn4UXl1cU+4Eq+Ig3MkZPhnm38dZSSHKNoG25m6+09xSNi8uQGUeM3GW3BfQRpUqKiBC62z70bccKtk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6)
- by SJ2PR12MB8781.namprd12.prod.outlook.com (2603:10b6:a03:4d0::17) with
+ bh=0mZCUWUkPEGNnxgQB+/ptEluZ1kGZseWNGLqCbsVsO4=;
+ b=rJR58lxLV2GKg5dbkBXxBykpg70i6e6zm0eRh4wxVFSsXo62JLyXcZdkzeCVwpo7cgAnjNIehu7cAV9qLrcmM8qyqlad1T1N9rFX147C0SPgfM9XPRJ8fVAA0NVpffc4URGgPTc40NxqUJ1DkX5ltlsF8JVUJUVCwJ8Jo5FEtDo=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SN7PR10MB7102.namprd10.prod.outlook.com (2603:10b6:806:348::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 20:08:21 +0000
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3]) by MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 20:08:21 +0000
-Message-ID: <d920b7d0-61db-481f-b256-a1f51ac7f743@amd.com>
-Date: Fri, 24 Oct 2025 13:08:19 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] dax/hmem, cxl: Coordinate Soft Reserved handling
- with CXL
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
- Ard Biesheuvel <ardb@kernel.org>
-References: <20250930044757.214798-1-Smita.KoralahalliChannabasappa@amd.com>
- <aORp6MpbPMIamNBh@aschofie-mobl2.lan> <aOlxcaTUowFddiEQ@aschofie-mobl2.lan>
- <e2bf2bf1-e791-47e5-846c-149e735f9dde@amd.com>
- <aPbOfFPIhtu5npaG@aschofie-mobl2.lan>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita" <skoralah@amd.com>
-In-Reply-To: <aPbOfFPIhtu5npaG@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR11CA0078.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::19) To MW4PR12MB7142.namprd12.prod.outlook.com
- (2603:10b6:303:220::6)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Fri, 24 Oct
+ 2025 20:14:12 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 20:14:12 +0000
+Date: Fri, 24 Oct 2025 21:14:10 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
+ confusion
+Message-ID: <10862498-3348-4cf8-a00d-355d12100443@lucifer.local>
+References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+ <7tjpibvbt2nwkkrzcbrsw3t3ehxckjrro6vxqukh4ld4memodx@cxfpmwbr3fo6>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7tjpibvbt2nwkkrzcbrsw3t3ehxckjrro6vxqukh4ld4memodx@cxfpmwbr3fo6>
+X-ClientProxiedBy: LO2P265CA0445.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::25) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,408 +133,157 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB7142:EE_|SJ2PR12MB8781:EE_
-X-MS-Office365-Filtering-Correlation-Id: 82042873-aadf-4a5f-2cfb-08de13391462
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SN7PR10MB7102:EE_
+X-MS-Office365-Filtering-Correlation-Id: dca52c39-bb85-4fe0-4401-08de1339e5c3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eWJ3cnJSdU5YOUFlMlJabnkrTUhQL2MrMy9IRDZTZ3ZNQlRFbGtKMEVpWWNL?=
- =?utf-8?B?bzRTL2Y4azIyZk1vZkRlWUJwb3g1Z0hZK1Ryd21YSzlkSUR3RG5yZGV4VXFw?=
- =?utf-8?B?ektaQkNaRm5xQldKbVdnNlh4NzFzLzF2ZDRQbWNGcVNEdW9wdXRuZjg3RVFT?=
- =?utf-8?B?WURjeUMvdENtSWhEZitSZDdsQjgrRlZiNnh3eHNnRXB2YVNxTytlTEZTeFoy?=
- =?utf-8?B?YnVIelFlY3lVQ1dsTnVkOURSSWphWGRuc3ZhN2Z1Tk81SStpTUg1emtxY1lU?=
- =?utf-8?B?V1hMcnFuL3lRajJ1YW8xcThWMHExSmVVUzc4Wk9Sdm1xbkRRUVdxWWw5V0Np?=
- =?utf-8?B?cmN5UklTbUQzSUxYMitiQnNkMDBEOHYrY1Z0SDZvRDl4aEYwUzZqeTZXWXBY?=
- =?utf-8?B?WStYR0VxMkJYQkZmZCtwQTUyWXlhYVRPOGNFRFFYZUgwRTBMZEJLY1FROWo3?=
- =?utf-8?B?cHMzcjdLc3hKRDhhN2tyTDl1d2gwL0xHaDhuTU1tL1RqMElFaENoVUE5NmtX?=
- =?utf-8?B?R2pHU2hiSkh3N2JDdmg3Y3J0ZTlpTVdGZ1BLbGplQUwva2htTy9LNEVTSk8v?=
- =?utf-8?B?ckJiN09zRjNWRXlFa1dmc3YxckJ3OUhOdHZETW5MNTRkcEZtMStHOStQRjB6?=
- =?utf-8?B?VDFLMmdXNVZNU3U2dlkxMWx5anp2aHJtbnNCbGZkengvVnZrSVBZZDRibXEx?=
- =?utf-8?B?dVQyeUIxNDRTeHpUaVFZWENaMFdobzVpWjBuczZJWWdOaVNDa3dPNnNkdURE?=
- =?utf-8?B?eTJ1bXhLeThFK2JuRklLYzF0QTBrbGhsN1lnMjRxQlR5NEljNkRERkxWV08z?=
- =?utf-8?B?KytTaEFyanVpdDJ6RTNHN1REVlZ3ellDam9MQi9ReFdzSUtUMFBVaUV5YnVL?=
- =?utf-8?B?OXBVUGxzWFFxeWU1Z3hiYzFyRG5JMmpKSTl6RytVTm85TU9UWmhWZVhSYjVu?=
- =?utf-8?B?N1NEUWpzSk92eXJGM2srU1hXbjlySWFaaEdTcmFlSm5SU3UxaDc4RDFqdnRi?=
- =?utf-8?B?akFaejJBS1RJSTZSaklPeDBpa3ZLY0k1SkNwcUNOeGhYYnRlcjdsa0UzdjUy?=
- =?utf-8?B?bW1CQ0xoMDlBZDBHK2czZUd3cWJ6UlQzcUFPSDVXV2tRdjJTWnRwQTNpYXRD?=
- =?utf-8?B?ek43YVNEdkZvVHdFcEZQL3hmTGNYdm5pWGJVd1IweHprKyszT1R6T1BlYUNZ?=
- =?utf-8?B?SmlQTmROTTdXVUM3WlpSUWFjakJDblA1YitRUmFxUFpnL0lHVDQzL0pQM2NZ?=
- =?utf-8?B?NFpLYmFJYXNrNXBXWVlibmRKVDVjaWp4VnZDaXRUT0tud2VVSGFsaHVRVkJB?=
- =?utf-8?B?d2F1eGJlYTYwSkJzeUJYMHAyRDhWUnJYWG1XaTR0S0M0a2JqVndnSDNhcDZn?=
- =?utf-8?B?SjNlaDVZRkRsL1NQeXpkWUZhZzl3QmtuQjBVQUNnOVNQQ0x4VU96dUpxZkN4?=
- =?utf-8?B?ekk1MkxyMTlqTEIzdi9lYmtBb3Z6OHhIWjVsVW10YzhOOGxFdnl3YTNRVEw2?=
- =?utf-8?B?RDEvUDhWVVIyUXQ3V21VWUVXVElCaEh4amJBVjkxc1ZvN2J6R2hNMmlGbFFF?=
- =?utf-8?B?dEtxdm5UUFdmNURDaHRFMXZHcEE5MWlsL25yR1JlUnNTK1JtSlpuNEo1ZmNm?=
- =?utf-8?B?MFd5b1Z2cmN1OUtFcVVlbjF1NHNka2s5OEJkR1pWZWRWYVZCUFFFSXpaLzdj?=
- =?utf-8?B?OXhGVDllRGl3NkZCMGI2akFZUFNxVlNXaUNma2VSb0M0bDRBN2RPeFZOcU1W?=
- =?utf-8?B?Q3VEYXR6ajdYb3JTVlhhbU5vWUJsM1ZvaTVrRlRzS2plOW1pcTBxSzBPMjRC?=
- =?utf-8?B?MUNkaWNmalcvYlhnVElDcHlHTWwxcGdJNVpPWExjcjcwbHpmTW9ldjJzQ2ZU?=
- =?utf-8?B?WHlGdDBPcWlJaTFTZ21QeGUrZ1haZEhzTXNQYUdoZDFncEdhNmVhdWxVZnVB?=
- =?utf-8?Q?zdycqS+nqGE=3D?=
+	=?us-ascii?Q?OUFijJnfQpVUF/STPHX4vMlMCJA8UP3/jwo1YfFtBuqovJDuEDyuvPXUATR0?=
+ =?us-ascii?Q?xniTTC9NWoNhHDUSDURWDAtqGAMxluCG4pJkyg2FGE/y0MLFdXfUEz8B9PD1?=
+ =?us-ascii?Q?SikM4L/Go+Jt3UUC3CW8dG0itGc+DgsjI4dXNRD4R5ZbEIZ5C0NK0Oj3uHel?=
+ =?us-ascii?Q?A0YkWui1C1bSD2oOFHlo0vUFpe44U5PGE7HR8qfAu8RsKIm54JDTwXZwMlhq?=
+ =?us-ascii?Q?z4OiVkMCtcnxb04SgF2a1x/r6x2Hz2v4aCA5w9KKWUJbecLd2nWYxGxd8QI+?=
+ =?us-ascii?Q?R6FOmfmMxVrhCYuCw54uxJ0XesAZRrjNnJFbHuusmR/hoG5nwLq9ZVaux3qy?=
+ =?us-ascii?Q?ZjMeKrZJ6jk4UBrBRSvu1qaUkenEJO1AdZ4jY/7B78LjBrzqmaHY3A6rhxdN?=
+ =?us-ascii?Q?07JtxGs7JQDrGE0/bRS3fFr2Ft2mGuTI3KbNZ/i8/24xFg0SYs+RfbcVBo/b?=
+ =?us-ascii?Q?yx8Yr21TE8WY/TXoAB//mzDMb1IUnktxKKXfUFCFgSJ0X79jXZfosyUJrELU?=
+ =?us-ascii?Q?oH1OI6cjKjc+4XDq8WA+aXFnS3m8P0MBnrpmpfut+Q6LfHWH3Ma/F8jZO9p/?=
+ =?us-ascii?Q?L9gtYS1pEInGXAXmt6L27q2VW5/bdsneD3Ky3C+uvVPO8j92Z6jI7CwgH5zr?=
+ =?us-ascii?Q?qQqNzRCWZPJa3FnJF1QvfMiXMWvN8GwCyANUlyecsYdojXOITwVkm3A6mQBM?=
+ =?us-ascii?Q?riG7IHXTgdOPtGuBlFs3jLmpPbMZFr4amPExEUXbfIw9HRsy5tqcBoLfFo2N?=
+ =?us-ascii?Q?9to3VSn8ngIKdZctGoPVlgJPcfmdJ8g/WRg9Pg4eSITRUJTu8yfO12Re96+b?=
+ =?us-ascii?Q?8Uks17NSB1Wo9FNgyeTraBQ4/hioDiBicyxkY0R6qnMenebx/FY/a2VUe+QP?=
+ =?us-ascii?Q?4WHYiF9IRC4xD1u0Y9FQqXMtJUnXZJ4qWCs5qEX+uPvojXmsMf7A3t/xGRDH?=
+ =?us-ascii?Q?N9u2o2aHxZUG44db+bxs4XQQHrIE9sG9vvsNsh24wHZtVluGDrj7V57dANF+?=
+ =?us-ascii?Q?RnUM8zWS1juTxg56/2BjWcjKZgT+d4rIc/nj/o+Vdb/EBO5v2QE157qeRlsk?=
+ =?us-ascii?Q?fVo26k8RK9A/sOkue2vJlPfhMYsG1hUH120BB1u4M0O56kOvNC99QSX/7RLp?=
+ =?us-ascii?Q?MXn26WL8gKALNInxLQmXKyrNCRGYTry2tVzICo0144LaTe3/IVptxN+E2kz1?=
+ =?us-ascii?Q?ArVa8qI/qPWCYchOVXSCOaRMFB6HDHpFvIk4DVHYMNMrCGcVxqvKszFyd8ua?=
+ =?us-ascii?Q?N7yT9mkKCOg8SItg3yii77U8yZ4Q2KDQ48cxYrIO5HKg1dMvQFHtnPOjuS0N?=
+ =?us-ascii?Q?3FfSFbzCv7D50YGfK951qeSEiSSiuZTJ/e09pGuwYINKmQmuaP8LeOR1xuyD?=
+ =?us-ascii?Q?jNPUmC9Jthj10w8jY/kHL9EEAfXe2KCiIQMkexqDURVb+X6EDBseueJQMqdC?=
+ =?us-ascii?Q?pYTB19snJwMNHvet9RYchdhYtpHZt1Xr?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7142.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bExlWU5aN0l1eUJkZHRUSGdobkVaLzdqbXpZWHNZVVljNHZyK1VRT3VHWUcw?=
- =?utf-8?B?eThXYVRuZ0ZyU0ZWOEgweTQ5a0tleFlnRXdzcmtUVkkrelZQSFpONzJ1NXQ5?=
- =?utf-8?B?ZEdSUEY0VDFpQ2NkeDYwSStkd1lIQUtLU2M5cFA4WUtHWVA3TjRRVi9RRjRk?=
- =?utf-8?B?eHBGNzBQNlB1YWJlZitOK0lOV2o0NDJ5NUlrZVEwUFhDanVWL1RaQ1dGQU1I?=
- =?utf-8?B?SkprbnQ2TVhseDhOQkxQNjdLNi9CL1dkcjAxQ1FmaDk4VUd3L2F3bHM1c05s?=
- =?utf-8?B?dVhOU0dDWk9hOXBmK1NlcEgzSE9FeCttUFFZdGVPd1o1L2hrQlJIOE9pTTRi?=
- =?utf-8?B?ZGxIUWdWeGFsV3o1cyt2TC91RFlBWWNxaHlCbFlScE4zd0N1bUtxK25kVTJs?=
- =?utf-8?B?YTdWT09id2tjTG01dG5RVW9KTXZjY1NiVElCZlcwZmxGYlBxdHJwTFZhcFdZ?=
- =?utf-8?B?cEwvMFNTUVlmRmxaTUZNZzBJczFaV1hhK2tlYXhhSHcxL1ZIWmgrWUJLWFN0?=
- =?utf-8?B?YWxxZDM3ODg1RFV5YmFMdGJjU2VDd01EeUt4MWp2SFdDZU1CM29OR1VhWk02?=
- =?utf-8?B?YldUd2p6bmpiU1k5OTAydkxXclBlQVhZUkpxWXNxOFByNEhKYjJGLzUyYjhT?=
- =?utf-8?B?WVJpRW9XaXZnRWNiR3N5Z0x4clNxYVkwM2JkYWJMOTEyTTU2amNKMHlJNDJ0?=
- =?utf-8?B?dEZmSVVMNUhNZWZCTEJrKzBmdTRNMjNLR01NSGd3UnJKWkVUNmgvSGVUYlhj?=
- =?utf-8?B?SFVLWFJXdnJsblNUMzUvbGdsQkN1cnBQTzlGZnZLOVRTSlJaZVQzbUhjSENK?=
- =?utf-8?B?R0pOajBqdi9GRDhlOEpTZkxsZE1JYnRYVDJiYjJvSEFhQVlLdmpucUpnUktZ?=
- =?utf-8?B?ak1YNVJhbW1mcWxPcENSbHZ2cytxekd0UWVhTXNiY0Qyd0dJblU0QTVaMkFi?=
- =?utf-8?B?NE5NNDkrdkVVVFR1WTJ0ZzhZa3RlaWJPUm5iTW5vWk1nVmZZYjNOOGhWV09G?=
- =?utf-8?B?TFRhUTc3T2RJOXJkcW9PVXU5V2E3RWZpSGtsQnFOTFZYdmlzemVESHRCaE1i?=
- =?utf-8?B?ajczMTE3RWpUaVBCcW1ENFNhVmFuRU5GbHpNZzE0MGkrbm5KTnorcXM1K0hH?=
- =?utf-8?B?WjFIbEFyMjE1WUZHNWprL2NZamtpSDBZeEgvWkRLQzVZUFdySEFkL1orMzhs?=
- =?utf-8?B?Z1c4dEtGeENaWmhSRWROQ2JoaWRzamQvdm1CSVJ2b2RuNnFJbElVN2QveGxl?=
- =?utf-8?B?UlNPMGFjY1Vtd0JkZ1BGdVZhTXF1TjZrRFlJblVXb1I4SXJ2dnlUVTdzVFBu?=
- =?utf-8?B?NXJ4QWdSOWQvV2ZDNWh6SWV1b1RUR0g2ZTUzYXIwMURtWXQ1bEQ3d0haN3N0?=
- =?utf-8?B?bmFpcFR5bkJmbTByRW9aR3ZaSWNOR0JmRE4vK0RqcGtTN2tNSmtBbjRPelFx?=
- =?utf-8?B?L0NobnJRT0V1ajVzM2U3N2Q4eWJ6bUNqeWxQVDhLSjNCbHN0bDJrYUY1QVdI?=
- =?utf-8?B?Y3AxUXN0c0tzZzZtT3RpZ29XUlNQUks3ZVhjMFlrSkVQbTUzb1RIamhXeC9o?=
- =?utf-8?B?blFaVWxiT3J5cTdDZnVRL0pQRGM2b1dZSUl0eW1sSXcyY2pjM0ZGcG0zZFNw?=
- =?utf-8?B?OGtjdGVxemFrN0NlTHFabjZYSG1kVFpKTjhZdGJ1ZWxyanVLSlZxTFZ1dmhC?=
- =?utf-8?B?SXl4OVJwM0xqUHI1U2hCaCtabWtyN3FHL1JrT2J2U2l6amtJdFdtZnEwK2p0?=
- =?utf-8?B?bUFuZ0Y1bVkzZlArM3p4Q3VSa09CVDdadWlPU1hwTVRrbXVpUWR2MkhFeVhM?=
- =?utf-8?B?NVEyWVlQSGVjMWFHaW5QQjZscjJ5bW9lcHUxVkN3Y2VReUpuN3Jwbm9oYjdh?=
- =?utf-8?B?YUxIWTBTZ1E3M0FVWWRjWm4zbktLajZBSWlQZWd5eVcrZjdoUjU1a2RwVDg4?=
- =?utf-8?B?ZmZuOGdiNFU1b3VUVHJyVXlUMlgxMkZZRjBCWGkyTERLNzNxU0tzZjFaU0xW?=
- =?utf-8?B?WmxiQTRXRitzQ1NMUUVXc09FQjZhTGNKNnJJMElmTjJzOE90bzB2aFBoZjVI?=
- =?utf-8?B?YVRPZnRKVDdkS2h4Wi9zNUtSV0VzcnZiQUU1YTBDc1FqN2g0REFIWWxXT0xW?=
- =?utf-8?Q?60PtI37hYClM/krufJ3maLz4Y?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82042873-aadf-4a5f-2cfb-08de13391462
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7142.namprd12.prod.outlook.com
+	=?us-ascii?Q?13lFWSprIMEUrnKfysQuddqHkfv8/8OqpWPcC9PyAhlpnuolmMBvMl8wi+zm?=
+ =?us-ascii?Q?NTkqAKWz+QSRmAbWdGbYcmpZ2vH2soepUF4vkXG3wW1m8Rt8mRhKaSLE/Z/d?=
+ =?us-ascii?Q?iHzsQc2IHevkVtYQOTfrqiH4a+sFpiM0vrrXhW6qK0bIlURl3qcnfIZeVn8z?=
+ =?us-ascii?Q?WmipsEZe0CWnqQ9Z8nargQL1q6rVgH767LJBwGBUqq/cNda1N63/Ju4snTn7?=
+ =?us-ascii?Q?ajwvFfFIoSuGSssgJORN/4BgBiZkjz0v8rDfPpjJ/UlHeBJgQ8lwIBE0VBKu?=
+ =?us-ascii?Q?6lkaTMQe2yOjKqBH1Aht27jyXtwEQ1kdNKqz9DcAYrWuq5N+4IAR9whVRNCa?=
+ =?us-ascii?Q?iAXR63Qtr/vQTn8SpvJbHXIDI4KEd6e0Hg6PIBmj9t0AaqB7uQsDxsrQJYqS?=
+ =?us-ascii?Q?DHNu6FSEy/1nFn81bWyWNpSHSDBpdoiuiPPK74p4itGxTbQihKjlKoccW5q/?=
+ =?us-ascii?Q?sjhQDQ39p/JCpRmkTP9VdKkp9k0aQaw3gRh3Xmz19uM1ynjaoHj5TpHtD3Vj?=
+ =?us-ascii?Q?1v/pH+fUvccSUm2z5VbjHK/3xmRC14c1IvzLCUXUHzrxBKNYHPwW8Zpr+3Fh?=
+ =?us-ascii?Q?2W5dPATK/f5vdLz3gfwbUkIeM8t+EMAwN99XH/tM1PVORGgJwkscPLCRUxED?=
+ =?us-ascii?Q?ciF0CKlNYbDtnPbD/iWITDiLJXLLej/Sk9hkIcLTyIofB6dXeB6QYQA1F4q2?=
+ =?us-ascii?Q?F7P9DJ0Up+qm9N3pdO+J6/UdYr4U8K0cedZRp3aqoqiEA74/sarD8nuS3Qcx?=
+ =?us-ascii?Q?Jkn1VN9YXu/9jgnPnz9gtfgylE/GmGJNiQCFUTrTFNzXbmAfsmFUpZEq5z0r?=
+ =?us-ascii?Q?xNflhKlM5tn3atR3BDbxwmWh1iRzzz6kCHIBaDSW43ypJaYhZW2gCkO4mn/b?=
+ =?us-ascii?Q?gOsUqixBs5ZolGBPBApbU8N6U9a9ejJ5dGhV19hKXxn8jYhgRXZwMlijrQXg?=
+ =?us-ascii?Q?fxhXZMRxqX3Hv/LbU7s//PgG/qVbGP5MMTOQNO2v+qMS1izDa4I7/8C/CXF6?=
+ =?us-ascii?Q?3yGiqNRjesSh3uv4Ciqom8BY5N9K2DscBkuRn6EuxEYrUFCDm9n5Zx7+z1xk?=
+ =?us-ascii?Q?lFN98MfcOs2H3gQnKtn9o/czr61pD5ZNoXoNxsTwYfUHaUY2jFkhuV+c5SR4?=
+ =?us-ascii?Q?6/tm8bskyAzy+Fcv+RO3KsqPuM4z5P4NMf+nNxkgBwICH+GjKRh+iecamFNe?=
+ =?us-ascii?Q?XUeK4ewqqIDEvDA0fv/qoY7LYln8N0yXsncWHXR5OBn3InynSRbxQ5iXRELq?=
+ =?us-ascii?Q?kgs6X7qmnD0sia7pj6iFFIBhRzZ1ePzAtVGGXM6AFvePlxV2SY8mL/7aJgAy?=
+ =?us-ascii?Q?3c/eSiClVhIUSi3DCZvQBwdGgqG5jH5xsJAKLCU4kYenk/SSVp/F+k3VdVPC?=
+ =?us-ascii?Q?w50SFsTZ8y14X4UTfqIa1+qJXmeCqYuIy6RxLdXNRB5LCDwB4rNVpypmE4yz?=
+ =?us-ascii?Q?oKSa7RuE1FNyR1Twjrr1dX3HVfd52X4tYpAHW2SmZZU0LaahpA3EtkTkSO1g?=
+ =?us-ascii?Q?X/CMcwvSgM+latPh4JzhhSSIzfQQsp+7vcCwiacTU326uJIpSgF4hFRxFkvU?=
+ =?us-ascii?Q?ZisTjWu3oWGX/IJAl0ri2gQa9f9zx8yjHFimCFpj3ycUczDeIzVl33ioNbXw?=
+ =?us-ascii?Q?Mg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	fb/0vmFIhyY3JnpONG2hgaR732/1eJngf2eF5QRIsUSDw/JsmQbdCLPprqS+XBsk5gzMxbE/8eOypuvO/nhVw9KMGjPUkO+cp8c3Waqf+qYamXsCFGoOGLhH9KVkDVA6TkxW0HIkLzq4cfkaWU1whsqYTtkdenxpU+4+5UvpZ+E31d9jLlLBere7bLme5GoCEs9Ombv51qKxZwNAtYTh43HIUYsR9g0p8+s7LJV02hRDWru5nBeJX3vMC06syqegj/5X4H353kLA/AuVmzA0t59kTwFq44tmYdfGzWalzFmmWIkLVSpC/9fDg/6nB7oVCbA0cZfJqfAiNwRAZ9KRVx6GAAzf0eyxEZExqvvKOqMKfPD1Q3jqir3pNjhN2RLop+WykgAeJ3ZojLxCfDgJIbznVXQ3FZVoNry5Pin7HF8r7SrnBSAKEvl0zhfGJQaNT1otuDEFn1PIDvVhJa0UrgdXH0HsB8FDK5euLHilCgHv+1snwUDN5dbkcq4EbJM7Y7qh6X9S2et0GJRqsESaDG9upvEY4M20ZyxetfSab2pvIpgruAviRBa74q7a65IyBh7ul3c2xquAqE1EpJ0V9YFPUeOsD/xzdWfu790QUU0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dca52c39-bb85-4fe0-4401-08de1339e5c3
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 20:08:21.1368
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 20:14:12.3738
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9kNm1npN9o04otmVxp9cD+oznh8ryCXDlCrijclymdPTDxwcbEInduWRS5oXoffACtqLvKnrOaykrtFdy4CrKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8781
+X-MS-Exchange-CrossTenant-UserPrincipalName: e40kbXkmlYPR6z1Sg/ook/fJnnLaOXA/fLQ8E/AhgtKIjeoPn4dsaRSoq07s2Ya4ZkfpkOnh6ZeBe4kyWhbWutuk1H8HBuxmlQwLHXZPKME=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB7102
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_04,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510240183
+X-Proofpoint-ORIG-GUID: z-R4osy-haIUZT7Z7hrM-QNXTUmjL2YG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDA3MyBTYWx0ZWRfXwrgqtW3pKSwf
+ zLpA1M8pW2V1YLhU8WxCe4/LK5c1Mra8b3z3pRw616XM29Q5WLubFN1ipyQJ3urLmHiVBQodRnw
+ pFpcSu4YKHNUyWFguGXf4XmRpm2v/hB4yxWc291N91gnym2wyFhwBdOLMsEDh2QsRhEYXF8qzNs
+ l+Q+gxpeBGpHeK4jKJ22q6CWNr++OYISuGtoTnWiyx/6CvS1u5GC91D9uk7qMqFbLTE+oryxdA6
+ MukGrkmFZ6LuetjQzKL89mnA0Sq9fLUotZ+JP2Q3K10j4GQw7N/oyovh7xZlp9ZMCJafduigAjb
+ t77Xb2NEfNYkyDH2fgjEadQK7rhFhaUZ3pucAl3AskHit2qvyyou5MIXUusS5oF5PDyz7SUnMhL
+ dAextFYRjtsg6nI3VD5OcpKzSPMfQCBUq4kV540EEvKbV8xRrBA=
+X-Proofpoint-GUID: z-R4osy-haIUZT7Z7hrM-QNXTUmjL2YG
+X-Authority-Analysis: v=2.4 cv=D9RK6/Rj c=1 sm=1 tr=0 ts=68fbde19 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=L2rSnejp1Q9WeG8jOc4A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13624
 
-Hi Alison,
+On Fri, Oct 24, 2025 at 08:05:33PM +0000, Yosry Ahmed wrote:
+> On Fri, Oct 24, 2025 at 08:41:16AM +0100, Lorenzo Stoakes wrote:
+> > There's an established convention in the kernel that we treat leaf page
+> > tables (so far at the PTE, PMD level) as containing 'swap entries' should
+> > they be neither empty (i.e. p**_none() evaluating true) nor present
+> > (i.e. p**_present() evaluating true).
+> >
+> > However, at the same time we also have helper predicates - is_swap_pte(),
+> > is_swap_pmd() - which are inconsistently used.
+> >
+> > This is problematic, as it is logical to assume that should somebody wish
+> > to operate upon a page table swap entry they should first check to see if
+> > it is in fact one.
+> >
+> > It also implies that perhaps, in future, we might introduce a non-present,
+> > none page table entry that is not a swap entry.
+> >
+> > This series resolves this issue by systematically eliminating all use of
+> > the is_swap_pte() and is swap_pmd() predicates so we retain only the
+> > convention that should a leaf page table entry be neither none nor present
+> > it is a swap entry.
+> >
+> > We also have the further issue that 'swap entry' is unfortunately a really
+> > rather overloaded term and in fact refers to both entries for swap and for
+> > other information such as migration entries, page table markers, and device
+> > private entries.
+> >
+> > We therefore have the rather 'unique' concept of a 'non-swap' swap entry.
+> >
+> > This is deeply confusing, so this series goes further and eliminates the
+> > non_swap_entry() predicate, replacing it with is_non_present_entry() - with
+> > an eye to a new convention of referring to these non-swap 'swap entries' as
+> > non-present.
+>
+> I just wanted to say THANK YOU for doing this. It is indeed a very
+> annoying and confusing convention, and I wanted to do something about it
+> in the past but never got around to it..
 
-Thanks for the pointers and the branch. Here’s where I landed on the 
-three items. Responses inline.
+:) that's very kind of you to say thanks! I was motivated by pure irritation at
+this situation after David and I discussed it extensively.
 
-On 10/20/2025 5:06 PM, Alison Schofield wrote:
-> On Tue, Oct 14, 2025 at 10:52:20AM -0700, Koralahalli Channabasappa, Smita wrote:
->> Hi Alison,
->>
->> On 10/10/2025 1:49 PM, Alison Schofield wrote:
->>> On Mon, Oct 06, 2025 at 06:16:24PM -0700, Alison Schofield wrote:
->>>> On Tue, Sep 30, 2025 at 04:47:52AM +0000, Smita Koralahalli wrote:
->>>>> This series aims to address long-standing conflicts between dax_hmem and
->>>>> CXL when handling Soft Reserved memory ranges.
->>>>
->>>> Hi Smita,
->>>>
->>>> Thanks for the updates Smita!
->>>>
->>>> About those "long-standing conflicts": In the next rev, can you resurrect,
->>>> or recreate the issues list that this set is addressing. It's been a
->>>> long and winding road with several handoffs (me included) and it'll help
->>>> keep the focus.
->>>>
->>>> Hotplug works :)  Auto region comes up, we tear it down and can recreate it,
->>>> in place, because the soft reserved resource is gone (no longer occupying
->>>> the CXL Window and causing recreate to fail.)
->>>>
->>>> !CONFIG_CXL_REGION works :) All resources go directly to DAX.
->>>>
->>>> The scenario that is failing is handoff to DAX after region assembly
->>>> failure. (Dan reminded me to check that today.) That is mostly related
->>>> to Patch4, so I'll respond there.
->>>>
->>>> --Alison
->>>
->>> Hi Smita -
->>>
->>> (after off-list chat w Smita about what is and is not included)
->>>
->>> This CXL failover to DAX case is not implemented. In my response in Patch 4,
->>> I cobbled something together that made it work in one test case. But to be
->>> clear, there was some trickery in the CXL region driver to even do that.
->>>
->>> One path forward is to update this set restating the issues it addresses, and
->>> remove any code and comments that are tied to failing over to DAX after a
->>> region assembly failure.
->>>
->>> That leaves the issue Dan raised, "shutdown CXL in favor of vanilla DAX devices
->>> as an emergency fallback for platform configuration quirks and bugs"[1], for a
->>> future patch.
->>>
->>> -- Alison
->>>
->>> [1] The failover to DAX was last described in response to v5 of the 'prior' patchset.
->>> https://lore.kernel.org/linux-cxl/20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com/
->>> https://lore.kernel.org/linux-cxl/687ffcc0ee1c8_137e6b100ed@dwillia2-xfh.jf.intel.com.notmuch/
->>> https://lore.kernel.org/linux-cxl/68808fb4e4cbf_137e6b100cc@dwillia2-xfh.jf.intel.com.notmuch/
->>
->> [+cc Nathan, Terry]
->>
->>  From the AMD side, our primary concern in this series is CXL hotplug. With
->> the patches as is, the hotplug flows are working for us: region comes up, we
->> can tear it down, and recreate it in place because the soft reserved window
->> is released.
->>
->> On our systems I consistently see wait_for_device_probe() block until region
->> assembly has completed so I don’t currently have evidence of a sequencing
->> hole there on AMD platforms.
->>
->> Once CXL windows are discovered, would it be acceptable for dax_hmem to
->> simply ignore soft reserved ranges inside those windows, assuming CXL will
->> own and manage them? That aligns with Dan’s guidance about letting CXL win
->> those ranges when present.
->> https://lore.kernel.org/all/687fef9ec0dd9_137e6b100c8@dwillia2-xfh.jf.intel.com.notmuch/
->>
->> If that approach sounds right, I can reword the commit descriptions in
->> patches 4/5 and 5/5 to drop the parts about region assembly failures and
->> remove the REGISTER enum.
->>
->> And then leave the “shutdown CXL in favor of vanilla DAX as an emergency
->> fallback for platform configuration quirks and bugs” to a future, dedicated
->> patch.
->>
->> Thanks
->> Smita
-> 
-> Hi Smita,
-> 
-> I was able to discard the big sleep after picking up the patch "cxl/mem:
-> Arrange for always-synchronous memdev attach" from Alejandro's Type2 set.
-> 
-> With that patch, all CXL probing completed before the HMEM probe so the
-> deferred waiting mechanism of the HMEM driver seems unnecessary. Please
-> take a look.
-> 
-> That patch, is one of four in this branch Dan provided:
-> https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/log/?h=for-6.18/cxl-probe-order
-> 
-> After chats with Dan and DaveJ, we thought the Soft Reserved set was the
-> right place to introduce these probe order patches (let Type 2 follow).
-> So, the SR set adds these three patches:
-> 
-> - **cxl/mem: Arrange for always-synchronous memdev attach**
-> - cxl/port: Arrange for always synchronous endpoint attach
-> - cxl/mem: Introduce a memdev creation ->probe() operation
-> 
-> **I actually grabbed this one from v19 Type2 set, not the CXL branch,
-> so you may need to see if Alejandro changed anything in that one.
-> 
-> When picking those up, there's a bit of wordsmithing to do in the
-> commit logs. Probably replace mentions of needing for accelerators
-> with needing for synchronizing the usage of soft-reserved resources.
-> 
-> Note that the HMEM driver is also not picking up unused SR ranges.
-> That was described in review comments here:
-> https://lore.kernel.org/linux-cxl/aORscMprmQyGlohw@aschofie-mobl2.lan
-> 
-> Summarized for my benefit ;)
-> - pick up all the probe order patches,
-> - determine whether the HMEM deferral is needed, maybe drop it,
-> - register the unused SR, don't drop based on intersect w 'CXL Window'
-> 
-> With all that, nothing would be left undone in the HMEM driver. The region
-> driver would still need to fail gracefully and release resources in a
-> follow-on patch.
-> 
-> Let me know what you find wrt the timing, ie is the wait_for_device_probe()
-> needed at all?
-> 
-> Thanks!
-> -- Alison
-> 
+I was initially thinking we should consistently _use_ the predicate and was
+arguing for it on review, but David pointed out the convention is quite the
+opposite and it became apparent to me th the predicates were the issue.
 
-1. Pick up all the probe order patches
-I pulled in the three patches you listed.
-They build and run fine here.
+Of course I have encountered this non-swap swap entry madness as all of us
+in mm have, but fixing that ends up being a natural extension to resolving
+the is_swap_xxx() stuff and a big relief to deal with also.
 
-2. Determine whether HMEM deferral is needed (and maybe drop it)
-On my system, even with those three patches, the HMEM probe still races 
-ahead of CXL region assembly. A short dmesg timeline shows HMEM 
-registering before init_hdm_decoder() and region construction:
+There's more work to be done but this addresses some of the more proximate
+issues! :)
 
-..
-[   26.597369] hmem_register_device: hmem_platform hmem_platform.0: 
-registering released/unclaimed range with DAX: [mem 
-0x850000000-0x284fffffff flags 0x80000200]
-[   26.602371] init_hdm_decoder: cxl_port port1: decoder1.0: range: 
-0x850000000-0x284fffffff iw: 1 ig: 256
-[   26.628614] init_hdm_decoder: cxl_port endpoint7: decoder7.0: range: 
-0x850000000-0x284fffffff iw: 1 ig: 256
-[   26.628711] __construct_region: cxl_pci 0000:e1:00.0: 
-mem2:decoder7.0: __construct_region region0 res: [mem 
-0x850000000-0x284fffffff flags 0x200] iw: 1 ig: 256
-[   26.628714] cxl_calc_interleave_pos: cxl_mem mem2: decoder:decoder7.0 
-parent:0000:e1:00.0 port:endpoint7 range:0x850000000-0x284fffffff pos:0
-[   44.022792] __hmem_register_resource: hmem range [mem 
-0x850000000-0x284fffffff flags 0x80000200] already active
-[   49.991221] kmem dax0.0: mapping0: 0x850000000-0x284fffffff could not 
-reserve region
-..
-
-As, region assembly still completes after HMEM on my platform, 
-wait_for_device_probe() might be needed to avoid HMEM claiming ranges 
-before CXL region assembly.
-
-3. Register unused SR, don’t drop based on intersect with “CXL Window”
-Agree with your review note: checking region_intersects(..., 
-IORES_DESC_CXL) is not reliable for 'CXL owns this'. IORES_DESC_CXL 
-marks just the 'CXL Windows' so the intersect test is true regardless of 
-whether a region was actually assembled.
-
-I tried the insert SR and rely on -EBUSY approach suggested.
-
-https://lore.kernel.org/linux-cxl/aORscMprmQyGlohw@aschofie-mobl2.lan/#t
-
-On my setup it never returns -EBUSY, the SR inserts cleanly even when 
-the CXL region has already been assembled successfully before dax_hmem.
-
-insert_resource() is treating 'fully contains' as a valid hierarchy, not 
-a conflict. The SR I insert covers exactly the same range as the CXL 
-window/region. In that situation, insert_resource(&iomem_resource, SR) 
-does not report a conflict, instead, it inserts SR and reparents the 
-existing CXL window/region under SR. That matches what I see in the tree:
-
-850000000-284fffffff : Soft Reserved
-   850000000-284fffffff : CXL Window 0
-     850000000-284fffffff : region0
-       850000000-284fffffff : dax0.0
-         850000000-284fffffff : System RAM (kmem)
-... (same for the other windows)
-
-So there is no overlap error to trigger -EBUSY, the tree is simply 
-restructured.
-
-insert_resource_conflict() is also behaving the same.
-
-and hence the kmem failure
-kmem dax6.0: mapping0: 0x850000000-0x284fffffff could not reserve region
-kmem dax6.0: probe with driver kmem failed with error -16
-
-walk_iomem_res_desc() was also not a good discriminator here: it passes 
-a temporary struct resource to the callback (name == NULL, no 
-child/sibling links), so I couldn't reliably detect the 'region under 
-window' relationship from that walker alone. (only CXL windows were 
-discovered properly).
-
-Below worked for me instead. I could see the region assembly success and 
-failure cases handled properly.
-
-Walk the real iomem_resource tree: find the enclosing CXL window for the 
-SR range, then check if there’s a region child that covers sr->start, 
-sr->end.
-
-If yes, drop (CXL owns it).
-
-If no, register as unused SR with DAX.
-
-
-+static struct resource *cxl_window_exists(resource_size_t start,
-+                                        resource_size_t end)
-+{
-+       struct resource *r;
-+
-+       for (r = iomem_resource.child; r; r = r->sibling) {
-+               if (r->desc == IORES_DESC_CXL &&
-+                   r->start == start && r->end == end)
-+                       return r;
-+       }
-+
-+       return NULL;
-+}
-+
-+static bool cxl_region_exists(resource_size_t start, resource_size_t end)
-+{
-+       const struct resource *res, *child;
-+
-+       res = cxl_window_exists(start, end);
-+       if (!res)
-+               return false;
-+
-+       for (child = res->child; child; child = child->sibling) {
-+               if (child->start <= start && child->end <= end)
-+                       return true;
-+       }
-+
-+       return false;
-+}
-+
-  static int handle_deferred_cxl(struct device *host, int target_nid,
-                                const struct resource *res)
-  {
--       /* TODO: Handle region assembly failures */
-+       if (region_intersects(res->start, resource_size(res), 
-IORESOURCE_MEM,
-+                             IORES_DESC_CXL) != REGION_DISJOINT) {
-+
-+               if (cxl_region_exists(res->start, res->end)) {
-+                       dax_cxl_mode = DAX_CXL_MODE_DROP;
-+                       dev_dbg(host, "dropping CXL range: %pr\n", res);
-+               }
-+               else {
-+                       dax_cxl_mode = DAX_CXL_MODE_REGISTER;
-+                       dev_dbg(host, "registering CXL range: %pr\n", res);
-+               }
-+
-+               hmem_register_device(host, target_nid, res);
-+       }
-+
-         return 0;
-  }
-
-static void process_defer_work(struct work_struct *_work)
-{
-         struct dax_defer_work *work = container_of(_work, 
-typeof(*work), work);
-         struct platform_device *pdev = work->pdev;
-
-         /* relies on cxl_acpi and cxl_pci having had a chance to load */
-         wait_for_device_probe();
-
-         walk_hmem_resources(&pdev->dev, handle_deferred_cxl);
-}
-
-For region assembly failure (Thanks for the patch to test this!):
-
-hmem_register_device: hmem_platform hmem_platform.0: deferring range to 
-CXL: [mem 0x850000000-0x284fffffff flags 0x80000200]
-handle_deferred_cxl: hmem_platform hmem_platform.0: registering CXL 
-range: [mem 0x850000000-0x284fffffff flags 0x80000200]
-hmem_register_device: hmem_platform hmem_platform.0: registering CXL 
-range: [mem 0x850000000-0x284fffffff flags 0x80000200]
-
-For region assembly success:
-
-hmem_register_device: hmem_platform hmem_platform.0: deferring range to 
-CXL: [mem 0x850000000-0x284fffffff flags 0x80000200]
-handle_deferred_cxl: hmem_platform hmem_platform.0: dropping CXL range: 
-[mem 0x850000000-0x284fffffff flags 0x80000200]
-hmem_register_device: hmem_platform hmem_platform.0: dropping CXL range: 
-[mem 0x850000000-0x284fffffff flags 0x80000200]
-
-Happy to fold this into v4 if it looks good.
-
-Thanks
-Smita
-> 
->>
->>>
->>>>
->>>>
->>
-
+Cheers, Lorenzo
 
