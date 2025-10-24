@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-65495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0394C05E4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:23:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2798C05EA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 13:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF5A1C25B2D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D50413B7F10
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 11:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485D83590DB;
-	Fri, 24 Oct 2025 10:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8AD359FB9;
+	Fri, 24 Oct 2025 10:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G44AQ0rv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNyb7/5D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7473590B4;
-	Fri, 24 Oct 2025 10:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A109359F95;
+	Fri, 24 Oct 2025 10:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303459; cv=none; b=RpGMEqgvsg+UmnFdj/AMLvG7NjdsViIZbgjFVfWP+tqpPk3DSDkcD8AtnNhFXDza1NpahSm7DnOHa/ZEAi2hAf49Q1G8kuoaP//04Lo8nf3LyVkI/VTsdiF0GY0Kn7DkAit0dxyU/XXkzyHR82mf4IHsw5Y5Xx3RWlAmx+kq9Eo=
+	t=1761303464; cv=none; b=tXpn3MKK50CrBSeQCucYJg4uyE71ciPc4XMAT1fYthBWu/YUG/Ct9pLTuo6wooQaE6CgNrmWL+/fmHt25ZIsZTED1jGq7h5TM3IiK9OoPe5x73dYDGkIVeayC7SQobqkFCWdIqp/W5vKhZGUWFRvb4pNol9onDmXDHX3571I4jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303459; c=relaxed/simple;
-	bh=Jefh0E5wrR69nQhrRe8vhHFWAuKaAVI3adTXCV7rO88=;
+	s=arc-20240116; t=1761303464; c=relaxed/simple;
+	bh=BCihYefUNETnf9SgrifE/6AmFo1JxPKscMdQ4tQ9EDw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P5Z3GfmG6yDpSJpYydjJjPz3eZxTdD4WKkA0UNTpVWBeWOxuXV8IhK5iuly3wrX5YK1Px8JSmfj/HateyXdSIBQPLAKVt47V2b38nKR+IUhiRLtpie77MhZH+ytMiKKaVR6HnDFEsawWDmjHtPGz9Rn8huncQ7pZnTAtRSgQY6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G44AQ0rv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9918C4CEF1;
-	Fri, 24 Oct 2025 10:57:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=LQRjUHPg0arOnOPidHNNC+K8qrpv/i5rXAcf/Z7eqiLpw+b4iI2DAjOa0esP1BPlCDYM9OC7peubYXaF3a4uR/KDe0lfmhfrmqkK1iNoxxUH+18Sa0k5HQi16opcUbShN0pL3SQeXCJAkD07haPTqoq0jF8MNFoDF130xKN1xkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNyb7/5D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E243EC113D0;
+	Fri, 24 Oct 2025 10:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303459;
-	bh=Jefh0E5wrR69nQhrRe8vhHFWAuKaAVI3adTXCV7rO88=;
+	s=k20201202; t=1761303464;
+	bh=BCihYefUNETnf9SgrifE/6AmFo1JxPKscMdQ4tQ9EDw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=G44AQ0rvIRzBP+W6LESmvu3KMQo/1PVUQOZb99S29fFu7dnfDvrpbNnvI2Q5ywGlZ
-	 Vu4MUqTwZ5BR0ye/iWdyu21Og/5oe7upd46WoSbNSUANmNF/yl0xbb1co96KYk6CDo
-	 mR17NBQqNMv3MY+CUJTkfM+KJVn4FZNzhpuql18e9dLN7a+5Ua+g7gjtyk3q+m3rE2
-	 16PIWX1Px3tl0RxoVYKxYTaAzQWtZW8jIHWb13q38Ebg6LCjhRpxr8tqWmrBiwGKgo
-	 DqnzHM06GXlWo7YC25IWkZ1Ub8YSa4o6PvGHZxZBjJIgWT/WI1rW9AmQiwL7A8pH1c
-	 V1x8fjTiFul5A==
+	b=nNyb7/5DUtDexae+j+ZgdLJera/saAvPv6qpaToXs2JbZ49bim7ADeJcqib15NdAj
+	 6y03rXzSp1UVNnVftKGUWpA++RGKDhylYo87A0cF47xjsV18KanTQ4SbsJrBR+399y
+	 BPHAE2w1wEu1pWei9YYG1gh012LIYP0A2yV54lwSxnb8YjobJcL6g+AokeJdH2Umlj
+	 m9yfZj/9WwVemnMP/hlijWj7LZ7VfwRhxs95EiFaHd1mYHBdop2yrgqRPe1bj2c2dO
+	 x8L56CXj12Xnt1jLIhKGqSvFHN1BLLR+TfNw4Pa3S8Rephqo2bZUZtfx4XFnQYqFt3
+	 Sm6Y8TI3Iv8mw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 24 Oct 2025 12:53:24 +0200
-Subject: [PATCH v3 55/70] selftests/namespaces: third inactive namespace
+Date: Fri, 24 Oct 2025 12:53:25 +0200
+Subject: [PATCH v3 56/70] selftests/namespaces: fourth inactive namespace
  resurrection test
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-work-namespace-nstree-listns-v3-55-b6241981b72b@kernel.org>
+Message-Id: <20251024-work-namespace-nstree-listns-v3-56-b6241981b72b@kernel.org>
 References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -70,100 +70,80 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2704; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Jefh0E5wrR69nQhrRe8vhHFWAuKaAVI3adTXCV7rO88=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmrfU2Cd+na9HytbkErTxMp7+2/697u/c9o6T2j9Y
- 193+b43HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZ0cfIcOHPXPV0lUCv+YqW
- aXsNEmyTKoK+lvoldC/viSk8q1Zgx/C/XOum++fkZ9+uaMr+k/d4enivjvPaTkfVmFMWjUsehp3
- hBgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2063; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=BCihYefUNETnf9SgrifE/6AmFo1JxPKscMdQ4tQ9EDw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT8jmrX9VjosO/Ha9YF8pu+KXleMwgvtX9578f1Y+9+C
+ ecq6ZvN6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIgnBGhm/Km7jW7jn9aHtj
+ x8EnZTOtJ/QqvAg4Yst25kxOydf9tYaMDL82FV89fd2+7QDD/6ofP8/MnLtgZ+GKZ0Vfn9YmJqU
+ vC+UHAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test SIOCGSKNS with different socket types (TCP, UDP, RAW).
+Test SIOCGSKNS across setns. Create a socket in netns A, switch to netns
+B, verify SIOCGSKNS still returns netns A.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../testing/selftests/namespaces/siocgskns_test.c  | 65 +++++++++++++++++++++-
- 1 file changed, 63 insertions(+), 2 deletions(-)
+ .../testing/selftests/namespaces/siocgskns_test.c  | 51 ++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/siocgskns_test.c b/tools/testing/selftests/namespaces/siocgskns_test.c
-index 0ad5e39b7e16..02798e59fc11 100644
+index 02798e59fc11..28e45954c4fa 100644
 --- a/tools/testing/selftests/namespaces/siocgskns_test.c
 +++ b/tools/testing/selftests/namespaces/siocgskns_test.c
-@@ -163,8 +163,7 @@ TEST(siocgskns_keeps_netns_active)
- 	/* Wait for child to exit */
- 	waitpid(pid, &status, 0);
- 	ASSERT_TRUE(WIFEXITED(status));
--	if (WEXITSTATUS(status) != 0)
--		SKIP(close(sock_fd); return, "Child failed to create namespace");
-+	ASSERT_EQ(WEXITSTATUS(status), 0);
- 
- 	/* Get network namespace from socket */
- 	netns_fd = ioctl(sock_fd, SIOCGSKNS);
-@@ -195,4 +194,66 @@ TEST(siocgskns_keeps_netns_active)
- 	ASSERT_LT(ioctl(sock_fd, SIOCGSKNS), 0);
+@@ -256,4 +256,55 @@ TEST(siocgskns_socket_types)
+ 	close(sock_udp);
  }
  
 +/*
-+ * Test SIOCGSKNS with different socket types (TCP, UDP, RAW).
++ * Test SIOCGSKNS across setns.
++ * Create a socket in netns A, switch to netns B, verify SIOCGSKNS still
++ * returns netns A.
 + */
-+TEST(siocgskns_socket_types)
++TEST(siocgskns_across_setns)
 +{
-+	int sock_tcp, sock_udp, sock_raw;
-+	int netns_tcp, netns_udp, netns_raw;
-+	struct stat st_tcp, st_udp, st_raw;
++	int sock_fd, netns_a_fd, netns_b_fd, result_fd;
++	struct stat st_a;
 +
-+	/* TCP socket */
-+	sock_tcp = socket(AF_INET, SOCK_STREAM, 0);
-+	ASSERT_GE(sock_tcp, 0);
++	/* Get current netns (A) */
++	netns_a_fd = open("/proc/self/ns/net", O_RDONLY);
++	ASSERT_GE(netns_a_fd, 0);
++	ASSERT_EQ(fstat(netns_a_fd, &st_a), 0);
 +
-+	/* UDP socket */
-+	sock_udp = socket(AF_INET, SOCK_DGRAM, 0);
-+	ASSERT_GE(sock_udp, 0);
++	/* Create socket in netns A */
++	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
++	ASSERT_GE(sock_fd, 0);
 +
-+	/* RAW socket (may require privileges) */
-+	sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-+	if (sock_raw < 0 && (errno == EPERM || errno == EACCES)) {
-+		sock_raw = -1; /* Skip raw socket test */
-+	}
++	/* Create new netns (B) */
++	ASSERT_EQ(unshare(CLONE_NEWNET), 0);
 +
-+	/* Test SIOCGSKNS on TCP */
-+	netns_tcp = ioctl(sock_tcp, SIOCGSKNS);
-+	if (netns_tcp < 0) {
-+		close(sock_tcp);
-+		close(sock_udp);
-+		if (sock_raw >= 0) close(sock_raw);
++	netns_b_fd = open("/proc/self/ns/net", O_RDONLY);
++	ASSERT_GE(netns_b_fd, 0);
++
++	/* Get netns from socket created in A */
++	result_fd = ioctl(sock_fd, SIOCGSKNS);
++	if (result_fd < 0) {
++		close(sock_fd);
++		setns(netns_a_fd, CLONE_NEWNET);
++		close(netns_a_fd);
++		close(netns_b_fd);
 +		if (errno == ENOTTY || errno == EINVAL)
 +			SKIP(return, "SIOCGSKNS not supported");
-+		ASSERT_GE(netns_tcp, 0);
++		ASSERT_GE(result_fd, 0);
 +	}
 +
-+	/* Test SIOCGSKNS on UDP */
-+	netns_udp = ioctl(sock_udp, SIOCGSKNS);
-+	ASSERT_GE(netns_udp, 0);
++	/* Verify it still points to netns A */
++	struct stat st_result_stat;
++	ASSERT_EQ(fstat(result_fd, &st_result_stat), 0);
++	ASSERT_EQ(st_a.st_ino, st_result_stat.st_ino);
 +
-+	/* Test SIOCGSKNS on RAW (if available) */
-+	if (sock_raw >= 0) {
-+		netns_raw = ioctl(sock_raw, SIOCGSKNS);
-+		ASSERT_GE(netns_raw, 0);
-+	}
++	close(result_fd);
++	close(sock_fd);
++	close(netns_b_fd);
 +
-+	/* Verify all return the same network namespace */
-+	ASSERT_EQ(fstat(netns_tcp, &st_tcp), 0);
-+	ASSERT_EQ(fstat(netns_udp, &st_udp), 0);
-+	ASSERT_EQ(st_tcp.st_ino, st_udp.st_ino);
-+
-+	if (sock_raw >= 0) {
-+		ASSERT_EQ(fstat(netns_raw, &st_raw), 0);
-+		ASSERT_EQ(st_tcp.st_ino, st_raw.st_ino);
-+		close(netns_raw);
-+		close(sock_raw);
-+	}
-+
-+	close(netns_tcp);
-+	close(netns_udp);
-+	close(sock_tcp);
-+	close(sock_udp);
++	/* Restore original netns */
++	ASSERT_EQ(setns(netns_a_fd, CLONE_NEWNET), 0);
++	close(netns_a_fd);
 +}
 +
  TEST_HARNESS_MAIN
