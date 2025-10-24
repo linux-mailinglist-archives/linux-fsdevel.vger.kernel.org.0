@@ -1,175 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-65536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8764C07565
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 18:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE948C075DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 18:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F073A7A7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 16:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D963A3EAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 16:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A7D26ED2D;
-	Fri, 24 Oct 2025 16:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CA2280324;
+	Fri, 24 Oct 2025 16:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH/qH/yG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tsctTBNU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53F62264C4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 16:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82EA27F017
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 16:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761323609; cv=none; b=gb2mrF5qGAN22u16nvKwbU0v99pKPPEF3sJoj1bhsfpiPQXx6TncQOZfLwTGjFWMEaAPJcEZ0rMVW77FkW/yeF35H1SNIQDpSxYfXjD7TglXjuH1rj+URW2ZAMNcL6kKimV5FffbqAGDlJb7lMF5yR/chBjS9WVVXKa1fvJ7iYI=
+	t=1761324117; cv=none; b=haT93PsePFNfyov+Ng5n7NYLXm673oiVb64H5iSAeBgRTX5MDaxy1wIqALYU/znZQZ+TdsbDwKHR+pkEBEyf5pr9KvnX/1NBLkIM9XczjO2eaOS3WYilmbBngTuvPEuaeSkc97YQJfPhznQPSY+flbbmzhpcwxMCberjRcAzZY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761323609; c=relaxed/simple;
-	bh=I/rphTZwOq9V/qBdMZVXIAUVeQYsdrGVZoJgfJbCu5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bNSWX3qVrK6sKkRvbnl4y16nynkLf93ANHOuhe10GGWK/9mFE/HjfOxjcLOE/nu5Ph2sIkiOdgmaR/fqhH9nJ9qAYb/VoT+k5iA2X4BPuw0A/R1dxwmbwsz9K00qZjN4vH3PnAK9oYsVHD6f+SDGMOakTDXZuzm0cjYkax0SqAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH/qH/yG; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c11011e01so3666186a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:27 -0700 (PDT)
+	s=arc-20240116; t=1761324117; c=relaxed/simple;
+	bh=McfDafsoKZ0Qc/ftfxMbpecU+5qms1ggNuFPRrlly10=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LULojmq0/J1dwUUbTIOn/VtvsaN+Sl9PFX2fpJXon1XIGG/pgMmXcM45R4Muyd7RJKqXjQWZpxdq0+0W7DhxOCGGI6P2qeOy47pEpxXmUpnOpLdvTFQnR9pL/MNki84mCevAXtALuZUq21cKpzBE0ZBFlcRGZUVkRp9phgQes6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tsctTBNU; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2904e9e0ef9so44785895ad.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 09:41:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761323606; x=1761928406; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x6RZa0e8kC9rcuKvg9IwDJV3wJWrztBGC4/5CmpBBH8=;
-        b=mH/qH/yG+8AfzIW5hjsW2vbCcvC3ltDmZ6l5G2s9VH7FfLnPPIrQaEFCck9uzQe3ec
-         Tg8EX2jA22oK4iXekTLxv7My+mcSM0vPUh0RbRnOLkyn9g5D/SBlZ07GLVSrzplSCKfv
-         cJdNMaASNVIce+3y+xWBOTW0Bn3gEym8TUW6mAm7wVoXaGulTakFMGrR1H/TnQ8bD7h4
-         UBN/Bw62eZePNmneXsIjmOaFFfk5zMrPeLGykl5mQP9bcav+fJFokCChnHQGOzx51E6r
-         eycf9pZFd7gL2W34nmV/BVhDHekkNdj4SJIwPtiIu5juRPuNteBAValJi3XQt4L3gGB3
-         8vlA==
+        d=google.com; s=20230601; t=1761324115; x=1761928915; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1RHFoPTdDvcwb/qkIe5JmQx1A2yObnl5+zva5BuXpw=;
+        b=tsctTBNUSZLhJdLijABuCYbdLPgyibjJHwSemEN+RLADY9F8zDG3CtohhrbugCEnqr
+         TwzkCU9u2J+GHaMYa+tqD4lvZWe6aB1dd5wTlWtA1ghCxpJclHAEon7ii+YbdJo78d1A
+         Ww+U3RfxAGKk539AN8Ks0MR88xu2nTmpK7AfEjOlRxtrfZTRtmCSzRKVjGddiPUaxIJM
+         qZgn5eqMIDTEjmTG9Ee12SlpR8ng8BfeDwndOaSBHwKMC4qETtX1Sx2MUN28tTQkz/T5
+         NkKuk0pjiAJjaH5K1nsW8GNMzHAcfOD1eaj/6vw4+laSEZaFJH21swpVvBz+ub52AZJS
+         gIgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761323606; x=1761928406;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x6RZa0e8kC9rcuKvg9IwDJV3wJWrztBGC4/5CmpBBH8=;
-        b=gagdtR2zgoH9jmzgsqsH+lur5+BQjtp3TFveM5G5Zy7gGnPp7gYlZ/qg9L4QBe7FGU
-         XUY6kGDc+wXN5NUlmkAB+87Eeb5089ESB3G4fre4QRmDoQPBah6SMIkvmzYpAmpX+kDg
-         KQ+i0nYc87+vj+HItMVqpd9FJc7o3XInN3iKmn+gat8HveBLBYSZI3NOqk4TUgab1qpM
-         t5pIjqhFgSXky6Alui3xdr/dsqT5cvwdIPKcUpMhK4Jc+HP2IW11xjYfsNaCvAmz8sU7
-         R3UhvkCjA63GdS1huBwBmhn/WJBHObdX5xMKKVihuhSqlzQCOUavqDUUy40AB10L4GqK
-         +78w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzuRRGu7Ri227RVNsmTMXyCH8UKs/bn2Etyn/3y7xH7mN10hjBmH0aTklevzX3vlOyzaZItgxeqC2p5bpH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2ch18mzjcMl99zW0LleftD+DF41ShBYv64yDffnQO9/Aq02iJ
-	tWqXs4XCGwYjFrVUP0g0C91E8r5kA/wDE++NAsj9sZXKz0m5XFJO63aoYPcxfoOrtZTKKTRmD2L
-	7cIhdnXp9xiwOE6fBN53Dx/2/Y4EmRTuVihCQ
-X-Gm-Gg: ASbGncs3mfXJ6JXnqc0rebSq4xYEa7fhoEYkhCDsnOslFn21gzQDG7BPs0SW/awvoB9
-	nmrZnr9qtV5lhSQKK/of+Q2D3/7e1Z/5AacgjdyVsCpZ2ilmeKg265g5/IfIxh+yaZdMJ962PT9
-	dYuEjw4oqTOUkd/AW7mBc+EYqV+xZ2EavUSP6ABdMtT3uoHcjlTIvF8FGnmbP/RMPz5w0O+yxjI
-	FwNtJ8U6daWtw+5ZJ9e2H0H+n048p4vyIh6KT0c3Iq3TRIpYEMiyHROuouDtjNM9L4TbkDmTb3d
-	R0bf42tWJ011Eqse2W0=
-X-Google-Smtp-Source: AGHT+IFfeWIyHmIfMT0OewMP1kHLql9mT1xoCrSdn0COOqaLS+rNY6hSh2OoGI7Pc2dCMgVA40OBm5O3g5QnqLoC5WA=
-X-Received: by 2002:a05:6402:1e8f:b0:636:9129:882f with SMTP id
- 4fb4d7f45d1cf-63c1f6e1e4dmr27350682a12.30.1761323605666; Fri, 24 Oct 2025
- 09:33:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761324115; x=1761928915;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1RHFoPTdDvcwb/qkIe5JmQx1A2yObnl5+zva5BuXpw=;
+        b=ft9Oo3ZrbMP9TGkB5e/90FOJQLY6CGZVz9BLJ8D2E1YD0KtrNlvhzQkt5RQiClMCGe
+         KtmAb/TA6wnmV5Z0Z8MILnSkNTsKCpwxzWMPY1EJHIONJI1UAfcX7VDmG7nKRgUJwkhY
+         r9UaM+8lM0Gn1JZ2kN7sUl4OjxS0Y8k8g1zBvIqlhgRE34zX2CS5Ql1I+bi9B/sVcEgG
+         P9ZfVaO26KfnAGPXW64r9/LLbX5vsaobMWk24JOAKXlwErA7zsc8Bm2bQvjU5YfIkQGX
+         ojcmctek3A1dhK7IWeH8p9OL7ApyvAk5YF/KYM1ekFdmZYDfzLirduH+uBKRnUSSK2QV
+         QXuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkvSb6mdKRjGEb2zxyvZiJlUCSvWc8g8XqXUkRced1WK9joVh1FRBDKqEXIjB8fJ2Jq78F3TwnFfR1q0WD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQQ+mRWWfQmneVdDFb91J+wRWplctK8cPc0xQw+evRcWe5tk2E
+	zZQB8rjf0MGXUNzJa8Hza8eT0MjLewvAsxfZu/RnLXvzp3bNk3y/pTdnsKBXDlI/TVx/bJ+WUN6
+	s1Y3WXPdZl4Ce8RPhGHxPn9i8Hg==
+X-Google-Smtp-Source: AGHT+IEPuBDuGNsrppGmcrNT5qFipxZMZW83jV/EN44QaRv4+wQ0X1ZUm0/OOFjwazq9d0SG+iIXrpEvGj5fqDDiKg==
+X-Received: from pjn8.prod.google.com ([2002:a17:90b:5708:b0:31f:2a78:943])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ea01:b0:267:d2f9:2327 with SMTP id d9443c01a7336-290c9cf2d88mr421610105ad.27.1761324115016;
+ Fri, 24 Oct 2025 09:41:55 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:41:53 -0700
+In-Reply-To: <aPuXCV0Aof0zihW9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251022044545.893630-1-neilb@ownmail.net> <20251022044545.893630-10-neilb@ownmail.net>
- <CAOQ4uxhExX9SiKVRyf=GHhNy-f8O=KH-oDS3=efLinXC8E=ekA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhExX9SiKVRyf=GHhNy-f8O=KH-oDS3=efLinXC8E=ekA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 24 Oct 2025 18:33:14 +0200
-X-Gm-Features: AWmQ_bnuV5aGWbmGez8sUhyEKU7jXOnxDMYssBzRdhHU1Z24nBprXeWQw-SMU60
-Message-ID: <CAOQ4uxgzceK-RJd3rN8pBSBf1Oo0u8wd6KSfdiKQSTF1RUuzXw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/14] VFS/nfsd/ovl: introduce start_renaming() and end_renaming()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Mime-Version: 1.0
+References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+ <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
+ <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
+ <diqzv7k5emza.fsf@google.com> <aPpEPZ4YfrRHIkal@google.com>
+ <diqzqzuse58c.fsf@google.com> <aPuXCV0Aof0zihW9@google.com>
+Message-ID: <diqzo6pwdzfy.fsf@google.com>
+Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
+	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
+	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
+	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 12:03=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
-> wrote:
->
-> On Wed, Oct 22, 2025 at 6:47=E2=80=AFAM NeilBrown <neilb@ownmail.net> wro=
-te:
-> >
-> > From: NeilBrown <neil@brown.name>
-> >
-> > start_renaming() combines name lookup and locking to prepare for rename=
-.
-> > It is used when two names need to be looked up as in nfsd and overlayfs=
- -
-> > cases where one or both dentries are already available will be handled
-> > separately.
-> >
-> > __start_renaming() avoids the inode_permission check and hash
-> > calculation and is suitable after filename_parentat() in do_renameat2()=
-.
-> > It subsumes quite a bit of code from that function.
-> >
-> > start_renaming() does calculate the hash and check X permission and is
-> > suitable elsewhere:
-> > - nfsd_rename()
-> > - ovl_rename()
-> >
-> > In ovl, ovl_do_rename_rd() is factored out of ovl_do_rename(), which
-> > itself will be gone by the end of the series.
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
-> >
-> > --
-> > Changes since v2:
-> >  - in __start_renaming() some label have been renamed, and err
-> >    is always set before a "goto out_foo" rather than passing the
-> >    error in a dentry*.
-> >  - ovl_do_rename() changed to call the new ovl_do_rename_rd() rather
-> >    than keeping duplicate code
-> >  - code around ovl_cleanup() call in ovl_rename() restructured.
->
-> Thanks for fixing those and for the change log.
->
-> Feel free to add:
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->
-...
-> > @@ -1299,18 +1285,22 @@ static int ovl_rename(struct mnt_idmap *idmap, =
-struct inode *olddir,
-> >                 err =3D ovl_set_redirect(new, samedir);
-> >         else if (!overwrite && new_is_dir && !new_opaque &&
-> >                  ovl_type_merge(old->d_parent))
-> > -               err =3D ovl_set_opaque_xerr(new, newdentry, -EXDEV);
-> > +               err =3D ovl_set_opaque_xerr(new, rd.new_dentry, -EXDEV)=
-;
-> >         if (err)
-> >                 goto out_unlock;
-> >
-> > -       err =3D ovl_do_rename(ofs, old_upperdir, olddentry,
-> > -                           new_upperdir, newdentry, flags);
-> > -       unlock_rename(new_upperdir, old_upperdir);
-> > +       err =3D ovl_do_rename_rd(&rd);
-> > +
-> > +       if (!err && cleanup_whiteout)
-> > +               whiteout =3D dget(rd.new_dentry);
-> > +
-> > +       end_renaming(&rd);
-> > +
-> >         if (err)
-> >                 goto out_revert_creds;
-> >
-> > -       if (cleanup_whiteout)
-> > -               ovl_cleanup(ofs, old_upperdir, newdentry);
-> > +       if (whiteout)
-> > +               ovl_cleanup(ofs, old_upperdir, whiteout);
+Sean Christopherson <seanjc@google.com> writes:
 
-missing
-                       dput(whiteout);
-                 }
+> On Fri, Oct 24, 2025, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> >> 
+>> >> [...snip...]
+>> >> 
+>> 
+>> I've been thinking more about this:
+>> 
+>>   #ifdef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
+>>   	case KVM_CAP_MEMORY_ATTRIBUTES2:
+>>   	case KVM_CAP_MEMORY_ATTRIBUTES:
+>>   		if (!vm_memory_attributes)
+>>   			return 0;
+>>   
+>>   		return kvm_supported_mem_attributes(kvm);
+>>   #endif
+>> 
+>> And the purpose of adding KVM_CAP_MEMORY_ATTRIBUTES2 is that
+>> KVM_CAP_MEMORY_ATTRIBUTES2 tells userspace that
+>> KVM_SET_MEMORY_ATTRIBUTES2 is available iff there are valid
+>> attributes.
+>> 
+>> (So there's still a purpose)
+>> 
+>> Without valid attributes, userspace can't tell if it should use
+>> KVM_SET_MEMORY_ATTRIBUTES or the 2 version.
+>
+> To do what?  If there are no attributes, userspace can't do anything useful anyways.
+>
+>> I also added KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES, which tells
+>> userspace the valid attributes when calling KVM_SET_MEMORY_ATTRIBUTES2
+>> on a guest_memfd:
+>
+> Ya, and that KVM_SET_MEMORY_ATTRIBUTES2 is supported on guest_memfd.
+>
+>>   #ifdef CONFIG_KVM_GUEST_MEMFD
+>>   	case KVM_CAP_GUEST_MEMFD:
+>>   		return 1;
+>>   	case KVM_CAP_GUEST_MEMFD_FLAGS:
+>>   		return kvm_gmem_get_supported_flags(kvm);
+>>   	case KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES:
+>>   		if (vm_memory_attributes)
+>>   			return 0;
+>>   
+>>   		return kvm_supported_mem_attributes(kvm);
+>>   #endif
+>>   
+>> So to set memory attributes, userspace should
+>
+> Userspace *can*.  User could also decide it only wants to support guest_memfd
+> attributes, e.g. because the platform admins controls the entire stack and built
+> their entire operation around in-place conversion.
+>
+>>   if (kvm_check_cap(KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES) > 0)
+>> 	use KVM_SET_MEMORY_ATTRIBUTES2 with guest_memfd
+>>   else if (kvm_check_cap(KVM_CAP_MEMORY_ATTRIBUTES2) > 0)
+>>         use KVM_SET_MEMORY_ATTRIBUTES2 with VM fd
+>>   else if (kvm_check_cap(KVM_CAP_MEMORY_ATTRIBUTES) > 0)
+>> 	use KVM_SET_MEMORY_ATTRIBUTES with VM fd
+>>   else
+>> 	can't set memory attributes
+>> 
+>> Something like that?
+>
+> More or else, ya.
+>
+>> In selftests there's this, when KVM_SET_USER_MEMORY_REGION2 was
+>> introduced:
+>> 
+>>   #define TEST_REQUIRE_SET_USER_MEMORY_REGION2()			\
+>> 	__TEST_REQUIRE(kvm_has_cap(KVM_CAP_USER_MEMORY2),	\
+>> 		       "KVM selftests now require KVM_SET_USER_MEMORY_REGION2 (introduced in v6.8)")
+>> 
+>> But looks like there's no direct equivalent for the introduction of
+>> KVM_SET_MEMORY_ATTRIBUTES2?
+>
+> KVM_CAP_USER_MEMORY2 is the equivalent.
+>
+> There's was no need to enumerate anything beyond yes/no, because
+> SET_USER_MEMORY_REGION2 didn't introduce new flags, it expanded the size of the
+> structure passed in from userspace so that KVM_CAP_GUEST_MEMFD could be introduced
+> without breaking backwards compatibility.
+>
+>> The closest would be to add a TEST_REQUIRE_VALID_ATTRIBUTES() which
+>> checks KVM_CAP_MEMORY_ATTRIBUTES2 or
+>> KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES before making the vm or
+>> guest_memfd ioctl respsectively.
+>
+> Yes.  This is what I did in my (never posted, but functional) version:
+>
+> @@ -486,6 +488,7 @@ struct kvm_vm *__vm_create(struct vm_shape shape, uint32_t nr_runnable_vcpus,
+>         }
+>         guest_rng = new_guest_random_state(guest_random_seed);
+>         sync_global_to_guest(vm, guest_rng);
+> +       sync_global_to_guest(vm, kvm_has_gmem_attributes);
 
-This fixes the dentry leak I reported.
+I ported this [1] except for syncing this value to the guest, because I
+think the guest shouldn't need to know this information, the host should
+decide what to do. I think, if the guests really need to know this, the
+test itself can do the syncing.
 
-Thanks,
-Amir.
+[1] https://lore.kernel.org/all/5656d432df1217c08da0cc2694fd79948bfd686f.1760731772.git.ackerleytng@google.com/
+
+>  
+>         kvm_arch_vm_post_create(vm, nr_runnable_vcpus);
+>  
+> @@ -2319,6 +2333,8 @@ void __attribute((constructor)) kvm_selftest_init(void)
+>         guest_random_seed = last_guest_seed = random();
+>         pr_info("Random seed: 0x%x\n", guest_random_seed);
+>  
+> +       kvm_has_gmem_attributes = kvm_has_cap(KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES);
+> +
+>         kvm_selftest_arch_init();
+>  }
+>  
+> That way the core library code can pivot on gmem vs. VM attributes without having
+> to rely on tests to define anything.  E.g.
+>
+> static inline void vm_mem_set_memory_attributes(struct kvm_vm *vm, uint64_t gpa,
+> 						uint64_t size, uint64_t attrs)
+> {
+> 	if (kvm_has_gmem_attributes) {
+> 		off_t fd_offset;
+> 		uint64_t len;
+> 		int fd;
+>
+> 		fd = kvm_gpa_to_guest_memfd(vm, gpa, &fd_offset, &len);
+> 		TEST_ASSERT(len >= size, "Setting attributes beyond the length of a guest_memfd");
+> 		gmem_set_memory_attributes(fd, fd_offset, size, attrs);
+> 	} else {
+> 		vm_set_memory_attributes(vm, gpa, size, attrs);
+> 	}
+> }
 
