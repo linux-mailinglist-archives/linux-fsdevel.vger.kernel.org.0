@@ -1,201 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-65538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362B6C0763D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 18:48:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A44EC07691
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 18:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D0A3AAB88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 16:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C8C1C43B21
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 16:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBE43376A9;
-	Fri, 24 Oct 2025 16:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5423337BBF;
+	Fri, 24 Oct 2025 16:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3kE1an0p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cKu9FYdr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E807D3191C4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 16:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51175272805
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 16:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761324497; cv=none; b=MZXy+OB2yEJ3zLd1t2DmUUQPOFi38tNh5MTCNr4A8xfKjm6CZUm/11gEInvDs+NbwmfCdx3cm+3ukhFbOHXke4tGtfjCmIPdvsIfZb3RlXTkjih0fpJLUXdC98cI04y1dQRJId6PeiFE+Niutc1tpOsWWbZF/kFm0wqXjCTpqE4=
+	t=1761324944; cv=none; b=X7adheB1qM0TYQKvhR8zDyrxf9sB0lkMEvbDJ8OoOJlkk6h4Gh4cv9/gZ54/jgxWYrNbatMxvdy96EEXzyZ/YxGZDR6wmJuTW0zF/7fACxPjJt2uk6GW/NdAQds67aqQ7Xf0ofboYx+qlM/eVGZ3fuGP+Fb8ahhXOkt5qGQWeYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761324497; c=relaxed/simple;
-	bh=f2a3PKTXtxiqGjxZTh9T4s+dCE9zdgxrYpNNXCt4lP4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dDQEDwJd62oDpTekz7q78lfOiwC51UyedvDa25NqIWNo1JGKpoQUaviYwVgKINUiC9CcYaJSvB8GfUOc9mkTIn9CErDD547g7NAoRvviSOOTkd3AFLWt5MqWITSdqBsUHIdDromU1RV6TLEGdFNaHyzK9rHlRySXx9FMLheulLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3kE1an0p; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b6cf50cbd2cso1779299a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 09:48:14 -0700 (PDT)
+	s=arc-20240116; t=1761324944; c=relaxed/simple;
+	bh=IJ67J6jTPGDZ24MDuX6oveeVnwvqB0T4gqOQ6EZ0ELY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UB7KnNQYQkg4LPrbq9zoOF8bQ3tS+ezOOghdwmXDtA9hJw2H/uEaxstaCfqpQYsWSXHOnw73lM9d8RHfSknP/CMVBh+v4Q73viYF3Pg4kijrApAb8EplzYT23XLNboQJbWMUkDGzAQMpoZfIPzaCv+RacHzcV1shWn/KgLB6JOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cKu9FYdr; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso3931330a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 09:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761324494; x=1761929294; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0ZqooCPaM4r88VkiqaSJuwNdNXDKXHQHEd4a0Vhrkk=;
-        b=3kE1an0pZPerDXVZT/Eryt9uJLK3d3syqHXqx2U9sE68vp+cA0k//igGNp03uLI6v0
-         bWU0BPVXcZnbk5Cp1wLp0ziT+rVR2R+VT3VF9WQSRVuPO1rEDSDxx10EIkOV2bBqF29i
-         vO9SoLzY3B9//15oc0CnGQia/eN+qYvIaGyyg0xJN5PC6Ro7mmgEFr7rdnazQFjyfylC
-         V8Z/K65gdxDsiJOn7zA2L/fiI7N9ow9FzNYJmItwiEzsnpk9PBme5+h18wyva85Il8xv
-         DXn4xNKhzPIeDLEm07oce/QTQ1rLUINZ6X0qMvPgfRna8f7azAG05IzBLssyFwAa6ZfA
-         udoA==
+        d=gmail.com; s=20230601; t=1761324940; x=1761929740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jUJ6GHWskUudXuBHrFElse2PfnoNVMmsNBsqag8F9BY=;
+        b=cKu9FYdrfg7YvJeNmZHMbCrX9S4GhAsGXIkGWkNmmARUUldsnNXHN3jIY8MhJd5kDI
+         56mGta7vn6kv9/OeSh2Yg9b9tHS249l+aGHM0MXkdOYltylU9Cet2BxrPc8FpecrJS0P
+         Q39h6qVgHeg8xMdDtOZ/KTG+9I31hP2HusQIfRsIoJXMy30vvau8wFKP2thYDQFWhRtH
+         j92+zMVOwX450MuUjhr+Jaw/R1HfIB1EU/WfP2aGiqmtdofXqmT4Uhn27FwUajskmOJ/
+         YFKrYI3kc51wHOFVhG0gVVsbc7ZWBLICiDDORp8n36QrAessdeTfKBSsUy1+ce7aCyXo
+         SW3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761324494; x=1761929294;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0ZqooCPaM4r88VkiqaSJuwNdNXDKXHQHEd4a0Vhrkk=;
-        b=W3Eep3Nrf5/o6/B4oqy9pqC2F10TAgO6IQpx3CmRRs3s1HR9q53xMccrlhOJYoKBoH
-         Ioky5L5RwggBdruPAnrte2bVBOg6k4uPCqDzDWx0KxbrOrqCuH9B4KWfSmPmIHNOKf6c
-         Bj1vbdna3dJ/Rj1dQIj04NwHMol8rA4yDbvhKnVehYm/YjRSo7WERALxCAJFxJ7eHD/A
-         KivQYpmKZQuGD0OF/Re5fc6ZQ8D8qwmHuvmEJ1Z3of10QwWIB4fKSsgVnUDf4s30+NnP
-         7WlGeOyAx/X289fZP8jLwAkp8oYolvmFvChWkG4n43ItmTd4TCew8DT33XFCk6F1rVfC
-         Hpog==
-X-Forwarded-Encrypted: i=1; AJvYcCXczS8paPpYBD11U2cynQcxYKKr24Ey/fB4tBexWn7ZHIL+DzI6d1VIHm6N3+HMd7OmCFdpG9x48Fw2qmg2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvTBytzE+/uBbYsqTfAaZTa4/9XTUTe5lLb/0bKWziB001wNKw
-	FRFesUGMEGq4ILPNRqKcrXD4nkABwOy3TTSNvojZVcS9OJtvAswPEQhP8TTZWfFhsq7YpruROZh
-	Xw1cdnYue1F2KS35hnLvKSwVrtg==
-X-Google-Smtp-Source: AGHT+IEK36TdUsL0vlOCqmspe4caiObjbOIOsGdu4QEVuayy/5SWQrXbR3hmNgi0EJY8rePbH10nOdC3ZkaAHHoKBw==
-X-Received: from pjyj23.prod.google.com ([2002:a17:90a:e617:b0:339:ae3b:2bc7])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:9988:b0:334:b8bb:b11d with SMTP id adf61e73a8af0-33dead4c65cmr3868140637.31.1761324494100;
- Fri, 24 Oct 2025 09:48:14 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:48:12 -0700
-In-Reply-To: <727482ec42baa50cb1488ad89d02e732defda3db.1760731772.git.ackerleytng@google.com>
+        d=1e100.net; s=20230601; t=1761324940; x=1761929740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jUJ6GHWskUudXuBHrFElse2PfnoNVMmsNBsqag8F9BY=;
+        b=sr83iZ/eHnCfH6IFQtsd/pPRhOemYZY8Dcrd6CmflcwlOayh4ormusYLKOg8qH6cRD
+         oj/Z92vbIPr36ud2Wy86PeU9ZtpL6bAs01OOBrwFBRDOUCuPVtYofX1vUz5DODnE12dp
+         iW+A4Kwu2akzhOpu06434dF3+I8D8xaB/QfyfprWjPa4xzdzd7JswvVhD+4u82z8NmEi
+         tXKGrklTna1z7VeWNATgcdY8CETXL5zr4+5FH7UtrZIiKVe/iOLYfrLgkFLGnls5wx34
+         vzgcdldQN5QmRQtaF+W9s577cw5k8EYE33VgG8khmgeXASpW09YsILIK5nZV0sz45NNN
+         GJsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUE6jTipCCSR4PI5blg/r7WSFEUQ7JQIR/O4RBhkqrqxv4NB2nRxpjdNipBHQcPOEIhQIms0KwdCxy8Ezri@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPZqDoNTDpFDUeelIa6a2EBLCOzmuljh/6pAugDPvdH0DmFFiV
+	Wi/pLTuRFldT0enqCO2h/AzCwfQEPJP2Y5UlOnZbxq93k3VTgFeMYPlqrfzJSM+iyjjsKgPNr6X
+	zgW4yDV0eTb81td8AdyghTfmRcMyONgA=
+X-Gm-Gg: ASbGncvON/pAZIBXDJLtusw7YV9yNmIcD8NxTZRW6OLM+KSStXa4lSMW8uqOtQzH7V8
+	7KjTU9Pgfu3yfIJGV8hgBRhgFvQCFux//8xbFhg6yMR7++FsdTovufFaEO+Vl9/dMscNOWP7Pz4
+	VA58bZGe2WRqEQdz5yP/CyOxh4RzjpOBSd6iiOHzpP6BHOUfH3zvP17pCNP3CZk3iCar8lZccGS
+	MxR/6fdUmUcd4Ff+mRIRJ0rUwdQSaMBFnVzQMJ9W/wvKBB/OSk/PD3RuEIVs5ifuC5/t0YLfUsH
+	HYrF9grmtKtuqTrPOMH68oRq++NMgg==
+X-Google-Smtp-Source: AGHT+IH6UG3ynzY6MQQZS9eEqOiyEOUOfQWPI2lRPRTme3cJYySvdIgDlPzlBJwjMLF5zv6xjW6d3j6vCFOSZaUWlPE=
+X-Received: by 2002:a05:6402:1ed2:b0:63c:276b:1504 with SMTP id
+ 4fb4d7f45d1cf-63c276b1683mr27357501a12.19.1761324940374; Fri, 24 Oct 2025
+ 09:55:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760731772.git.ackerleytng@google.com> <727482ec42baa50cb1488ad89d02e732defda3db.1760731772.git.ackerleytng@google.com>
-Message-ID: <diqzldl0dz5f.fsf@google.com>
-Subject: Re: [RFC PATCH v1 16/37] KVM: selftests: Add support for mmap() on
- guest_memfd in core library
-From: Ackerley Tng <ackerleytng@google.com>
-To: cgroups@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Cc: akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
-	mail@maciej.szmigiero.name, maobibo@loongson.cn, 
-	mathieu.desnoyers@efficios.com, maz@kernel.org, mhiramat@kernel.org, 
-	mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, mingo@redhat.com, 
-	mlevitsk@redhat.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	peterx@redhat.com, pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, 
-	qperret@google.com, richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, 
-	rientjes@google.com, rostedt@goodmis.org, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shakeel.butt@linux.dev, shuah@kernel.org, 
-	steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, wyihan@google.com, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
+MIME-Version: 1.0
+References: <20251022044545.893630-1-neilb@ownmail.net> <CAOQ4uxjH4G6JrhnhLRRHAG8HBb-Dy9BcQCLs=pWz8W9t8eOvJQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjH4G6JrhnhLRRHAG8HBb-Dy9BcQCLs=pWz8W9t8eOvJQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 24 Oct 2025 18:55:28 +0200
+X-Gm-Features: AWmQ_bnvzT5Pc-ot0kz4PDZ5QlEzhSODYW2uW1okndD7a_KECB8DKETxeU016-o
+Message-ID: <CAOQ4uxi_sAHkgn7Ob0XOatR8N+VVjD-qPE-Cfhwgas0nrxPF2w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/14] Create and use APIs to centralise locking for
+ directory ops.
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ackerley Tng <ackerleytng@google.com> writes:
+On Wed, Oct 22, 2025 at 4:27=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Wed, Oct 22, 2025 at 6:47=E2=80=AFAM NeilBrown <neilb@ownmail.net> wro=
+te:
+> >
+> > following is v3 of this patch set with a few changes as suggested by Am=
+ir.
+> > See particularly patches 06 09 13
+> >
+> > Whole series can be found in "pdirops" branch of
+> >    https://github.com/neilbrown/linux.git
+>
+> Thanks for the test branch.
+>
+> Besides the NULL pointer deref bug in patch 11, the overlay fstests < 100
+> pass, but the unionmount-testsuite tests triggers a few dentry leaks:
+>
+> You'd see them if you run the overlayfs fstests overlay/1??
+> See README.overlay how to set unionmount-testsuite.
+>
+> Here is a report of the individual test cases that leak dentries:
+>
+> # cd .../unionmount-testsuite/
+> # mkdir -p /base /mnt
+> # ./run --ov --samefs rename-new-dir
+> ...
+> TEST rename-new-dir.py:161: Rename new empty dir over removed empty lower=
+ dir^M
+>  ./run --mkdir /base/m/a/empty110-new 0755^M
+>  ./run --rmdir /base/m/a/empty110^M
+>  ./run --rename /base/m/a/empty110-new /base/m/a/empty110^M
+>  ./run --open-file /base/m/a/empty110 -r -d^M
+> TEST rename-new-dir.py:172: Rename new empty dir over removed
+> populated lower dir^M
+>  ./run --mkdir /base/m/a/empty111-new 0755^M
+> - rmtree /base/m/a/dir111^M
+>  ./run --rename /base/m/a/empty111-new /base/m/a/dir111^M
+>  ./run --open-file /base/m/a/dir111/a -r -E ENOENT^M
+>  ./run --open-file /base/m/a/dir111/pop -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/dir111 -r -d^M
+> ...
+> [  388.752012] BUG: Dentry 00000000f4f4e4ee{i=3D19f,n=3Dempty111-new}
+> still in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  388.817649] BUG: Dentry 0000000094364c21{i=3D19f,n=3Dempty110-new}
+> still in use (1) [unmount of tmpfs tmpfs]^M
+>
+> # ./run --ov --samefs rename-new-pop-dir
+> ...
+> TEST rename-new-pop-dir.py:182: Rename new dir over removed unioned empty=
+ dir^M
+>  ./run --mkdir /base/m/a/dir112-new 0755^M
+>  ./run --open-file /base/m/a/dir112-new/a -w -c -W aaaa^M
+>  ./run --rmdir /base/m/a/dir112/pop/c^M
+>  ./run --rename /base/m/a/dir112-new /base/m/a/dir112/pop/c^M
+>  ./run --open-file /base/m/a/dir112/pop/c -r -d^M
+>  ./run --open-file /base/m/a/dir112/pop/c/a -r -R aaaa^M
+> TEST rename-new-pop-dir.py:195: Rename new dir over removed unioned
+> dir, different files^M
+>  ./run --mkdir /base/m/a/dir113-new 0755^M
+>  ./run --open-file /base/m/a/dir113-new/a -w -c -W aaaa^M
+> - rmtree /base/m/a/dir113/pop^M
+>  ./run --rename /base/m/a/dir113-new /base/m/a/dir113/pop^M
+>  ./run --open-file /base/m/a/dir113/pop -r -d^M
+>  ./run --open-file /base/m/a/dir113/pop/a -r -R aaaa^M
+>  ./run --open-file /base/m/a/dir113/pop/b -r -E ENOENT^M
+> TEST rename-new-pop-dir.py:209: Rename new dir over removed unioned
+> dir, same files^M
+>  ./run --mkdir /base/m/a/dir114-new 0755^M
+>  ./run --open-file /base/m/a/dir114-new/b -w -c -W aaaa^M
+> - rmtree /base/m/a/dir114/pop^M
+>  ./run --rename /base/m/a/dir114-new /base/m/a/dir114/pop^M
+>  ./run --open-file /base/m/a/dir114-new -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/dir114/pop -r -d^M
+>  ./run --open-file /base/m/a/dir114/pop/b -r -R aaaa^M
+> TEST rename-new-pop-dir.py:223: Rename new dir over removed unioned
+> dir, different dirs^M
+>  ./run --mkdir /base/m/a/dir115-new 0755^M
+>  ./run --mkdir /base/m/a/dir115-new/pop 0755^M
+>  ./run --open-file /base/m/a/dir115-new/pop/x -w -c -W aaaa^M
+> - rmtree /base/m/a/dir115^M
+>  ./run --rename /base/m/a/dir115-new /base/m/a/dir115^M
+>  ./run --open-file /base/m/a/dir115-new -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/dir115 -r -d^M
+>  ./run --open-file /base/m/a/dir115/pop/x -r -R aaaa^M
+>  ./run --open-file /base/m/a/dir115/pop/b -r -E ENOENT^M
+> ...
+> [  424.294866] BUG: Dentry 0000000038c5d03b{i=3D1b0,n=3Ddir116-new}  stil=
+l
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  424.360470] BUG: Dentry 0000000022ebd323{i=3D1b0,n=3Ddir115-new}  stil=
+l
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  424.416038] BUG: Dentry 0000000081e7b75d{i=3D1b0,n=3Ddir114-new}  stil=
+l
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  424.483255] BUG: Dentry 00000000f7c68d9e{i=3D1b0,n=3Ddir113-new}  stil=
+l
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  424.547676] BUG: Dentry 00000000cc79d5e8{i=3D1b0,n=3Ddir112-new}  stil=
+l
+> in use (1) [unmount of tmpfs tmpfs]^M
+>
+>
+> # ./run --ov --samefs rename-pop-dir
+> ...
+> TEST rename-pop-dir.py:10: Rename dir and rename back^M
+>  ./run --rename /base/m/a/dir100 /base/m/a/no_dir100^M
+>  ./run --rename /base/m/a/dir100 /base/m/a/no_dir100 -E ENOENT^M
+>  ./run --rename /base/m/a/no_dir100 /base/m/a/dir100^M
+>  ./run --rename /base/m/a/no_dir100 /base/m/a/dir100 -E ENOENT^M
+>  ./run --open-file /base/m/a/dir100 -r -d^M
+>  ./run --open-file /base/m/a/no_dir100 -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/dir100/a -r^M
+> TEST rename-pop-dir.py:24: Rename dir and remove old name^M
+>  ./run --rename /base/m/a/dir101 /base/m/a/no_dir101^M
+>  ./run --rmdir /base/m/a/dir101 -E ENOENT^M
+>  ./run --rename /base/m/a/no_dir101 /base/m/a/dir101^M
+>  ./run --rename /base/m/a/no_dir101 /base/m/a/dir101 -E ENOENT^M
+>  ./run --open-file /base/m/a/dir101 -r -d^M
+>  ./run --rmdir /base/m/a/dir101 -E ENOTEMPTY^M
+>  ./run --open-file /base/m/a/dir101 -r -d^M
+>  ./run --open-file /base/m/a/no_dir101 -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/dir101/a -r^M
+> TEST rename-pop-dir.py:40: Rename dir and unlink old name^M
+>  ./run --rename /base/m/a/dir102 /base/m/a/no_dir102^M
+>  ./run --unlink /base/m/a/dir102 -E ENOENT^M
+>  ./run --rename /base/m/a/no_dir102 /base/m/a/dir102^M
+>  ./run --rename /base/m/a/no_dir102 /base/m/a/dir102 -E ENOENT^M
+>  ./run --open-file /base/m/a/dir102 -r -d^M
+>  ./run --unlink /base/m/a/dir102 -E EISDIR^M
+>  ./run --open-file /base/m/a/dir102 -r -d^M
+>  ./run --open-file /base/m/a/no_dir102 -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/dir102/a -r^M
+> ...
+> [  434.158149] BUG: Dentry 00000000d2ca689c{i=3D199,n=3Dno_dir102}  still
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  434.221809] BUG: Dentry 000000006c8e444d{i=3D197,n=3Dno_dir101}  still
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  434.283807] BUG: Dentry 00000000e9aece78{i=3D195,n=3Dno_dir100}  still
+> in use (1) [unmount of tmpfs tmpfs]^M
+>
+> # ./run --ov --samefs rename-empty-dir
+> ...
+> TEST rename-empty-dir.py:10: Rename empty dir and rename back^M
+>  ./run --rename /base/m/a/empty100 /base/m/a/no_dir100^M
+>  ./run --rename /base/m/a/empty100 /base/m/a/no_dir100 -E ENOENT^M
+>  ./run --rename /base/m/a/no_dir100 /base/m/a/empty100^M
+>  ./run --rename /base/m/a/no_dir100 /base/m/a/empty100 -E ENOENT^M
+>  ./run --open-file /base/m/a/empty100 -r -d^M
+>  ./run --open-file /base/m/a/no_dir100 -r -d -E ENOENT^M
+> TEST rename-empty-dir.py:23: Rename empty dir and remove old name^M
+>  ./run --rename /base/m/a/empty101 /base/m/a/no_dir101^M
+>  ./run --rmdir /base/m/a/empty101 -E ENOENT^M
+>  ./run --rename /base/m/a/no_dir101 /base/m/a/empty101^M
+>  ./run --rename /base/m/a/no_dir101 /base/m/a/empty101 -E ENOENT^M
+>  ./run --open-file /base/m/a/empty101 -r -d^M
+>  ./run --rmdir /base/m/a/empty101^M
+>  ./run --rmdir /base/m/a/empty101 -E ENOENT^M
+>  ./run --open-file /base/m/a/empty101 -r -d -E ENOENT^M
+>  ./run --open-file /base/m/a/no_dir101 -r -d -E ENOENT^M
+> TEST rename-empty-dir.py:39: Rename empty dir and unlink old name^M
+>  ./run --rename /base/m/a/empty102 /base/m/a/no_dir102^M
+>  ./run --unlink /base/m/a/empty102 -E ENOENT^M
+>  ./run --rename /base/m/a/no_dir102 /base/m/a/empty102^M
+>  ./run --rename /base/m/a/no_dir102 /base/m/a/empty102 -E ENOENT^M
+>  ./run --open-file /base/m/a/empty102 -r -d^M
+>  ./run --unlink /base/m/a/empty102 -E EISDIR^M
+>  ./run --open-file /base/m/a/empty102 -r -d^M
+>  ./run --open-file /base/m/a/no_dir102 -r -d -E ENOENT^M
+> ...
+> [  455.066208] BUG: Dentry 000000001f825e4e{i=3D19a,n=3Dno_dir102}  still
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  455.135872] BUG: Dentry 00000000283f4586{i=3D197,n=3Dno_dir101}  still
+> in use (1) [unmount of tmpfs tmpfs]^M
+> ...
+> [  455.193638] BUG: Dentry 0000000001271a44{i=3D195,n=3Dno_dir100}  still
+> in use (1) [unmount of tmpfs tmpfs]^M
+>
+> Let me know if you need further help to reproduce.
+>
 
-> From: Sean Christopherson <seanjc@google.com>
->
-> Accept gmem_flags in vm_mem_add() to be able to create a guest_memfd within
-> vm_mem_add().
->
-> When vm_mem_add() is used to set up a guest_memfd for a memslot, set up the
-> provided (or created) gmem_fd as the fd for the user memory region. This
-> makes it available to be mmap()-ed from just like fds from other memory
-> sources. mmap() from guest_memfd using the provided gmem_flags and
-> gmem_offset.
->
-> Add a kvm_slot_to_fd() helper to provide convenient access to the file
-> descriptor of a memslot.
->
-> Update existing callers of vm_mem_add() to pass 0 for gmem_flags to
-> preserve existing behavior.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> [For guest_memfds, mmap() using gmem_offset instead of 0 all the time.]
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> ---
->  tools/testing/selftests/kvm/include/kvm_util.h |  7 ++++++-
->  tools/testing/selftests/kvm/lib/kvm_util.c     | 18 ++++++++++--------
->  .../kvm/x86/private_mem_conversions_test.c     |  2 +-
->  3 files changed, 17 insertions(+), 10 deletions(-)
->
-> 
-> [...snip...]
-> 
-> @@ -1050,13 +1049,16 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	}
->  
->  	region->fd = -1;
-> -	if (backing_src_is_shared(src_type))
-> +	if (flags & KVM_MEM_GUEST_MEMFD && gmem_flags & GUEST_MEMFD_FLAG_MMAP)
-> +		region->fd = kvm_dup(gmem_fd);
-> +	else if (backing_src_is_shared(src_type))
->  		region->fd = kvm_memfd_alloc(region->mmap_size,
->  					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
->  
+This issue was fixed by the fix that I replied with to patch 9.
 
-Doing this makes it hard to test the legacy dual-backing case.
-
-It actually broke x86/private_mem_conversions_test for the legacy
-dual-backing case because there's no way to mmap or provide a
-userspace_address from the memory provider that is not guest_memfd, as
-determined by src_type.
-
-I didn't test the legacy dual-backing case before posting this RFC and
-probably should have.
-
-> -	region->mmap_start = kvm_mmap(region->mmap_size, PROT_READ | PROT_WRITE,
-> -				      vm_mem_backing_src_alias(src_type)->flag,
-> -				      region->fd);
-> +	mmap_offset = flags & KVM_MEM_GUEST_MEMFD ? gmem_offset : 0;
-> +	region->mmap_start = __kvm_mmap(region->mmap_size, PROT_READ | PROT_WRITE,
-> +					vm_mem_backing_src_alias(src_type)->flag,
-> +					region->fd, mmap_offset);
->  
->  	TEST_ASSERT(!is_backing_src_hugetlb(src_type) ||
->  		    region->mmap_start == align_ptr_up(region->mmap_start, backing_src_pagesz),
-> @@ -1117,7 +1119,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
->  				 uint64_t gpa, uint32_t slot, uint64_t npages,
->  				 uint32_t flags)
->  {
-> -	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0);
-> +	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0, 0);
->  }
->  
->  /*
-> diff --git a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-> index 1969f4ab9b280..41f6b38f04071 100644
-> --- a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-> +++ b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
-> @@ -399,7 +399,7 @@ static void test_mem_conversions(enum vm_mem_backing_src_type src_type, uint32_t
->  	for (i = 0; i < nr_memslots; i++)
->  		vm_mem_add(vm, src_type, BASE_DATA_GPA + slot_size * i,
->  			   BASE_DATA_SLOT + i, slot_size / vm->page_size,
-> -			   KVM_MEM_GUEST_MEMFD, memfd, slot_size * i);
-> +			   KVM_MEM_GUEST_MEMFD, memfd, slot_size * i, 0);
->  
->  	for (i = 0; i < nr_vcpus; i++) {
->  		uint64_t gpa =  BASE_DATA_GPA + i * per_cpu_size;
-> -- 
-> 2.51.0.858.gf9c4a03a3a-goog
+Thanks,
+Amir.
 
