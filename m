@@ -1,58 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-65543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CA9C07796
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 19:08:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4004EC077DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 19:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CD510344F89
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 17:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C08E1C484A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 17:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E7133FE08;
-	Fri, 24 Oct 2025 17:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570083451D0;
+	Fri, 24 Oct 2025 17:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GXCqLlKQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J5nIVsHm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584C631CA5A;
-	Fri, 24 Oct 2025 17:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CDC343204
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 17:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325709; cv=none; b=dgAyZG6LiouEcZrU8rz9gLGGADi3W9s84RDWC6T+i6dZRLz0CIl4wRVTNoYKBvviNMbQKm7bCslnDY4rqNBbHWb9zyf6JnmCTqaljCq5o5BPyrj5bp3DeOwXRaDgoUKsT0imupCK+5R4CnaHXdJAFI60wNe24gyJfR9LSbdePLU=
+	t=1761325712; cv=none; b=QiJaj0mjxWXed3Yvg9B2tjXMTXTwpd2arzpKpKy8xTsX9BC/MNmpd628KGzHCyq2m5hBKzv9jjJSYYBXQ3X8j9hhtuNKb6bVMiuYwySCFRbqyuALQTUspIC15bIMVP4pbq1AFx2zGw5XCgFfYJ7VTUQNi1gucpZMCn/ji1GsX6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325709; c=relaxed/simple;
-	bh=5rxqm28jInhTvPZlo7Lb7NdtJBvFNa54w/E+WCxDquU=;
+	s=arc-20240116; t=1761325712; c=relaxed/simple;
+	bh=gEGlHSwsX9Zo4tZ5GxaEaAu47VCJj6yIrOZ4KwsZG1U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PaZ5ju055K4bWvqCSVt8fqv6zMac9qD5qXXmnjEatXvwFCQBMEqa80XSCKy81BUyLQUK08qB0rRbYkGGpdzc/pj0xccJgpYnTJKN3PQhsNaNuC6+GX4LtQXjOVQ9eeJRYLaGBwClghuoVi7C+GkO8U3ZpsZx6R2cEa3ZE5PCogg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GXCqLlKQ; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=MZ7aMrbJikt6+LzVtgRfkke89tftAPTcdUidsDoiB95bYTNFZgJmrtTphr/FSmrt4Dt4XET7ICtK5hl55GZ0G3VISBpB0BmGlyHR6tZzn4HGC3DHszsEWA6wclnTirAOMVdhEl6GyygKy3HUr+QIybQkAFwqgnhigrons9utSoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J5nIVsHm; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=mdl7H6EKP/Vg6RTNb5AbJQkDdWcRFyzVVD++tdHodzA=; b=GXCqLlKQSm4gD6aaAm5fyLbXaL
-	RWlS1YFhYrt7Iliey66+/QuH7PQ2cqgUsIwwczY8/McUkzKyydljNphLURSRa+xuWoVKspmTxxIb2
-	/+zKSujY5wh7eBFgtm8+/WJMTZ+X9t4MPkbHRK7ANfCIz28raqB8DsHmaX3gH2Nq4i0CkW8UHboo7
-	W0e5IuX6IHxcjQflT+dYhQVgEs752seseloQExTwVceEBn+74lQMAono0e/lEG+F4jVXYKnLRtznR
-	6JW/Gi6FimjD8O93xqxnSSbirDm8juOeWfzhUZIkEEhPKH6OMoJuiBrcmpF7NWd58XI5I1t91FCPV
-	B+/RiRfA==;
+	bh=5ZW5olhctt8pQPRZxoAAJytfYIV9yoFEgRh2hZHi7Ks=; b=J5nIVsHm9KMzkVsz+UUroU00Fy
+	B0yX4QuYTnVGZWEppX1RPvG05Ya1Bnz51s1AJe65eYrxxzRwoCOA4RVt5gmygFvqRUDZFocbE3UQs
+	1HVy2IFtL80K6uonYWg1UpSb3rAC2wl6znxX6WucN+F6j43yVzrWRifH7yfcQIhGt5dTTxqUsagLp
+	H+n/MYBlKaa+IX6FesApAibC2STndf1Xj3+n7P9XsebBEDOLNFY0QvJiyjezRRCttPrk8YkCDHoYa
+	+Ppr0gm4egEcU8CT6D/qzgEWn3ZX+sbq0EEB+zCVXSg8VbPfZIFvepHZcej+Q3hMIN6WWPHB7qfMd
+	dA/t7aPA==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCLH7-00000005zM5-2PCb;
+	id 1vCLH7-00000005zMA-2jPO;
 	Fri, 24 Oct 2025 17:08:25 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	linux-xfs@vger.kernel.org
-Subject: [PATCH 09/10] xfs: Use folio_next_pos()
-Date: Fri, 24 Oct 2025 18:08:17 +0100
-Message-ID: <20251024170822.1427218-10-willy@infradead.org>
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org
+Subject: [PATCH 10/10] mm: Use folio_next_pos()
+Date: Fri, 24 Oct 2025 18:08:18 +0100
+Message-ID: <20251024170822.1427218-11-willy@infradead.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251024170822.1427218-1-willy@infradead.org>
 References: <20251024170822.1427218-1-willy@infradead.org>
@@ -69,39 +71,41 @@ folio_size().  It's the equivalent of (x + y) << z rather than
 x << z + y << z.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: Carlos Maiolino <cem@kernel.org>
-Cc: linux-xfs@vger.kernel.org
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 ---
- fs/xfs/scrub/xfarray.c | 2 +-
- fs/xfs/xfs_aops.c      | 2 +-
+ mm/shmem.c    | 2 +-
+ mm/truncate.c | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/scrub/xfarray.c b/fs/xfs/scrub/xfarray.c
-index cdd13ed9c569..ed2e8c64b1a8 100644
---- a/fs/xfs/scrub/xfarray.c
-+++ b/fs/xfs/scrub/xfarray.c
-@@ -834,7 +834,7 @@ xfarray_sort_scan(
- 		si->first_folio_idx = xfarray_idx(si->array,
- 				folio_pos(si->folio) + si->array->obj_size - 1);
- 
--		next_pos = folio_pos(si->folio) + folio_size(si->folio);
-+		next_pos = folio_next_pos(si->folio);
- 		si->last_folio_idx = xfarray_idx(si->array, next_pos - 1);
- 		if (xfarray_pos(si->array, si->last_folio_idx + 1) > next_pos)
- 			si->last_folio_idx--;
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index a26f79815533..ad76d5d01dd1 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -271,7 +271,7 @@ xfs_discard_folio(
- 	 * folio itself and not the start offset that is passed in.
- 	 */
- 	xfs_bmap_punch_delalloc_range(ip, XFS_DATA_FORK, pos,
--				folio_pos(folio) + folio_size(folio), NULL);
-+				folio_next_pos(folio), NULL);
- }
- 
- /*
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b9081b817d28..c819cecf1ed9 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1133,7 +1133,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 	same_folio = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
+ 	folio = shmem_get_partial_folio(inode, lstart >> PAGE_SHIFT);
+ 	if (folio) {
+-		same_folio = lend < folio_pos(folio) + folio_size(folio);
++		same_folio = lend < folio_next_pos(folio);
+ 		folio_mark_dirty(folio);
+ 		if (!truncate_inode_partial_folio(folio, lstart, lend)) {
+ 			start = folio_next_index(folio);
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 91eb92a5ce4f..a3d673533e32 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -387,7 +387,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 	same_folio = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
+ 	folio = __filemap_get_folio(mapping, lstart >> PAGE_SHIFT, FGP_LOCK, 0);
+ 	if (!IS_ERR(folio)) {
+-		same_folio = lend < folio_pos(folio) + folio_size(folio);
++		same_folio = lend < folio_next_pos(folio);
+ 		if (!truncate_inode_partial_folio(folio, lstart, lend)) {
+ 			start = folio_next_index(folio);
+ 			if (same_folio)
 -- 
 2.47.2
 
