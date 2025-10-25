@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-65591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C3BC08972
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 05:30:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A42FC0897B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 05:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4C824E26DF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 03:30:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 914224E17C1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 03:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EAA26E16E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ECB27464F;
 	Sat, 25 Oct 2025 03:30:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E822580ED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C327624C66F;
 	Sat, 25 Oct 2025 03:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761363007; cv=none; b=EXSSj3ZTMg3lkd0T57oQLNFfQOCctuV3hMvPS4O/zs7c+RrqwHpEOi1CdQI7vBxQ1nzNMhklcRgcu1JbuZlFmTFs98RZPjjUMKfdSd68rjOfJ2RHiVJaBmaPNOps6bqocSh20pw040nEWRI3z3p1oRiKG4nIDKEG7eydaVRkTIo=
+	t=1761363007; cv=none; b=FwPvTdWdbD0WlynoRtIHcAeKAEqh/Bpu/SAjXEjXqTri8Nju8zd6CX7P/Ykal0ulSZaTZgS0ZPwAkEmVDne+EX2IUeI9VtlRVx+SIROI5hktc8r2MJ5Xulv7xWqy7/eBp2kJSpDZw86+nVVtv/Nt3gHg3l3PSEJslunTx4zJHoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761363007; c=relaxed/simple;
-	bh=oqEqRfo0WOWZL1A+A4O5vHFbv2HDQCYSx8eM6XxUJNI=;
+	bh=XmVFctZ6RkEHD80dF9plNNnZF5PKlfN5E7U3OBzDcMk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=guS/FiviA8lF1H4FoyNocmJ6DtCzh8rASx7XfKyxo9xSod6Jc9y6HFJ2jYjqkOZrfsZbWlYPF/GkfDsuh/7X4j9cgb7RvfJhWQe4msc1JJfw1YgSg1NxWqW1AiTKAfb0q/RZQ7K4S0ammNObPB+atK3Evtacv9/ywwP1Ss6Ke3U=
+	 MIME-Version; b=B9p1qWLnEPkLkxse7jZWJpICQobQUtrRLYqiivCgCT3jErS4SD7YQ3JxJoQb8rtQ8GU+y2zRK6uKJ9Z0GX1oX9MYrI+fSLqj3bs9w3FMMGtDuJmXg5j2YLHFqF1piuaBfg3mwXGFx7A+e6f2srb1/a1zWFl8JLc1kk8Atm42mvY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ctlcR6BT0zKHMMH;
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ctlcR6Rb4zKHMMH;
 	Sat, 25 Oct 2025 11:29:11 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 8A72D1A08C2;
+	by mail.maildlp.com (Postfix) with ESMTP id 940001A101B;
 	Sat, 25 Oct 2025 11:30:03 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.50.87.129])
-	by APP2 (Coremail) with SMTP id Syh0CgBHnEQ6RPxox1YbBg--.45388S5;
+	by APP2 (Coremail) with SMTP id Syh0CgBHnEQ6RPxox1YbBg--.45388S6;
 	Sat, 25 Oct 2025 11:30:03 +0800 (CST)
 From: libaokun@huaweicloud.com
 To: linux-ext4@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: tytso@mit.edu,
 	chengzhihao1@huawei.com,
 	libaokun1@huawei.com,
 	libaokun@huaweicloud.com
-Subject: [PATCH 01/25] ext4: remove page offset calculation in ext4_block_zero_page_range()
-Date: Sat, 25 Oct 2025 11:21:57 +0800
-Message-Id: <20251025032221.2905818-2-libaokun@huaweicloud.com>
+Subject: [PATCH 02/25] ext4: remove page offset calculation in ext4_block_truncate_page()
+Date: Sat, 25 Oct 2025 11:21:58 +0800
+Message-Id: <20251025032221.2905818-3-libaokun@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20251025032221.2905818-1-libaokun@huaweicloud.com>
 References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
@@ -66,54 +66,61 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHnEQ6RPxox1YbBg--.45388S5
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFW5uw1fAr1rZr1UZF1UJrb_yoWkJFc_A3
-	yv9w48Ww1rJrnak3W5A3yYqFyvk3W8Crn8uFn8tryrXFWrZFs5X3WkKryY9rs8WF47urs8
-	A34kXF45KrnF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbP8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-	0Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1Y6r17McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
-	jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0x
-	kIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC2
-	0s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI
-	0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE
-	14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20x
-	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
-	JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjIztUUUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAMBWj7Ua9I6AABsH
+X-CM-TRANSID:Syh0CgBHnEQ6RPxox1YbBg--.45388S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1fJFy7WrWfAr1kJr48Xrb_yoW8Jw48pF
+	y5K3ykur17uFyjga1IvFn5Xryak3ZrGFWUXFWYq345WryIqF1fKr97K3ZYqFW0qrWxXayv
+	qFs0yrWxZa17A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQj14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
+	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
+	IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
+	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
+	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2
+	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUdManUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAMBWj7UbRJGQABsv
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+From: Baokun Li <libaokun1@huawei.com>
 
 For bs <= ps scenarios, calculating the offset within the block is
 sufficient. For bs > ps, an initial page offset calculation can lead to
 incorrect behavior. Thus this redundant calculation has been removed.
 
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
 Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ext4/inode.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e99306a8f47c..0742039c53a7 100644
+index 0742039c53a7..4c04af7e51c9 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -4157,9 +4157,8 @@ static int ext4_block_zero_page_range(handle_t *handle,
- 		struct address_space *mapping, loff_t from, loff_t length)
+@@ -4183,7 +4183,6 @@ static int ext4_block_zero_page_range(handle_t *handle,
+ static int ext4_block_truncate_page(handle_t *handle,
+ 		struct address_space *mapping, loff_t from)
  {
- 	struct inode *inode = mapping->host;
 -	unsigned offset = from & (PAGE_SIZE-1);
- 	unsigned blocksize = inode->i_sb->s_blocksize;
--	unsigned max = blocksize - (offset & (blocksize - 1));
-+	unsigned int max = blocksize - (from & (blocksize - 1));
+ 	unsigned length;
+ 	unsigned blocksize;
+ 	struct inode *inode = mapping->host;
+@@ -4192,8 +4191,8 @@ static int ext4_block_truncate_page(handle_t *handle,
+ 	if (IS_ENCRYPTED(inode) && !fscrypt_has_encryption_key(inode))
+ 		return 0;
  
- 	/*
- 	 * correct length if it does not fall between
+-	blocksize = inode->i_sb->s_blocksize;
+-	length = blocksize - (offset & (blocksize - 1));
++	blocksize = i_blocksize(inode);
++	length = blocksize - (from & (blocksize - 1));
+ 
+ 	return ext4_block_zero_page_range(handle, mapping, from, length);
+ }
 -- 
 2.46.1
 
