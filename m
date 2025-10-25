@@ -1,192 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-65631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9333BC09C53
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:54:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9465C09C9B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F9424715
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 16:38:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56CD8580061
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 16:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299083126B2;
-	Sat, 25 Oct 2025 16:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A32C324B1D;
+	Sat, 25 Oct 2025 16:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Erabh20A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6Bz5I2O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1D230C609;
-	Sat, 25 Oct 2025 16:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EF5322C60
+	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Oct 2025 16:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409737; cv=none; b=JA5rFwi8776Z43DMUf0Sj4cSiKULnFoOZFaq9+ce3MOA/0PiKERUj+DJiMhn1Wx8T6jmvuOZ3vWnZNNLMcHaUqYGbQnoGxCrpfhWXCzA3c8B/77AODvEWA59GFOd2Wga9srHAc1UGAjiqws5U0GzS2WUBcZhjyWc8DUNuZRu9II=
+	t=1761409751; cv=none; b=cLiIDSKwh/a/UtpBLCI2A2k2HQ71xxO1wKRaYpB6nMDnASdRZdVpAiDdbQX3mZr1t9ZA8QuGJDsGfEdyag+tZ/yYM92pD1GXDhRZ4SsVEN2t+qWVZFd2ewB2z330Q/IyZmXUlZa5hpjoLyQ7NQJtFYMiRamMftOXXr1x53iBUwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409737; c=relaxed/simple;
-	bh=NBzBBqfdDX3ER7q56c+eTh28BN4lKPjJ15k8LfFyso8=;
+	s=arc-20240116; t=1761409751; c=relaxed/simple;
+	bh=zAr2NN3Jns2OMOMJhebylpaZ7+Fr+NR7SMgQK33hi4Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W0YrXUvVSqMPyp8jag5dUJ2mErKYljf9i+i2nC6QVRzyGxV9uaaTd3A/YmjbZL+GJSekDNv3S5Z2Hdf3Z5RnYaZUx5jgEQjzQFZ9c/UYMeOzB77M3xurbAPEIHf9AOCAalnWJqY+FC9dgcgQjd5XdZ6XS0porGXpboOAXIW0wgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Erabh20A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613FFC4CEFB;
-	Sat, 25 Oct 2025 16:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761409737;
-	bh=NBzBBqfdDX3ER7q56c+eTh28BN4lKPjJ15k8LfFyso8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Erabh20AyiTZfse63dZH3/58b6Fcow3KU2QleCF5REb6+qoR1fFl7+VAO1k4hLB85
-	 hjYjt21oF8Qsg9g9H6LI9kd5kfiAnhJRZF2XopUYv7ZxGUtXGCtYkuZngvg4qlf0vl
-	 IfP23/HVz1ZdYzvYAovxCNP6PpaHOk9uJ5YL/4C78vIad2FykA0POjRnCPYE5v79rT
-	 9wBjv8pIwBDnEejEr2Y9ezXKZ0pgqOfWQvBubc7IjW+Txky56MRX1Cxhm9lFiSJWQe
-	 bhePpepM/1qAWeh81N+6htyVdkcUg970Lk9q9+yyOxzX7MTo1btsmkOPK6cb+tkG1m
-	 d9G30zOUOypHA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	 MIME-Version; b=XmlgfLEuvTHzMgRYRC/Ryt+VON47WlU/2xxal4OwGWfYVlKch52T1WK1M60RCrTrTAMHa0y+HwYarT8IJiquzS7WOBL8sDFAD/Vae7Qo1lxE6b++r7lLZCNSpRwX3G2BecNJXvqcQLviuWHpJKC40YfRlAtNpYDdH/pBa4/X8RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6Bz5I2O; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-7f7835f4478so22886006d6.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Oct 2025 09:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761409748; x=1762014548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FdGq6o03y1IFQKw38Yd5zNXdE2p5YkP/ZYXUEcu9OkE=;
+        b=i6Bz5I2O9jVbID42iDVIbOzlEr5XwhUAAjk8FWt0wYGbdmgSQ7+rQOE3yf8siJqS2c
+         LKwXvWYtS4g4AsyaLon14YeHlKq5s7rAVUp3v0VbAvkEPuE4ZzZ3HswDQtJ8umgRzqFO
+         5UVGrtYlOrOoc3RmNYTVseuQ+Og+2oo92dJ9CIuPws6U68ALLIwe9Ei+onlmo2aGCM+L
+         OhkYxevNLYgCRp4TeKfHuMvyU/c2ZB0ZIEsyPKmPQN0XwW3vN1JHEqx4QVii8Seh2TOY
+         zIcQBi1OjFRHwLHH1wHwcqIF8eKWtuz4u4nAgbvxP3jYwQ1xHM03ZW2FQVZg50/uuZeZ
+         j8Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761409748; x=1762014548;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FdGq6o03y1IFQKw38Yd5zNXdE2p5YkP/ZYXUEcu9OkE=;
+        b=P9qbqqRmeqIiM1DBGEAEFIPod02EDespQ/gjgX4dTCOujRgDmt70fNRFQ6Txyim4DW
+         hjZpWHL5/KXcE5YRk9J/QZ3SPiol356Jd5ESXNFPGlECm+h0rUmfL6tKb3SwptE4AcX4
+         upqVSrXQFusIU1jSji+tLT2FOBpNdWM6pXcqib1CRlvtbHYQl9PMqynemx/RkMkJ4h0k
+         s47q0tJ5Z2FhUj1ZmbrsewDLuC9UxjfayHzAQKCFwQxYZbtCLnP3kYr++TsYRHnIxanq
+         xqfM1E9eOZv2oxqnrQYrmilghoaCXhVUpChsDHTzcwfJeWBRQUmtcJZTGj9EWs1gYTHJ
+         1BQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDdEaKRmQuJjzVkqjlIspw0H02PRAXxUHsrd3OvUqAIoN2S9ZsDX/Yubz/gn7YzaIFUVQMUuCqzTIUsJlA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgg08J70S0Ts9mAjlr//2Aiea/g0eZ6GmQpjbejp6XBh7o41L6
+	DzNBqPAkKJ4wdt1jkW6qZHU5uG+ileiQJ4kxIvRI/xGcyqJRvQt59IfU
+X-Gm-Gg: ASbGncvyAHsyGiSXUmku3997AGQ31MJr/PAEFW8dT2tMvwQDw+P1A6svd/7TnCp0uNa
+	GiPc5vWrHMcjc81gDayRvlar/bqpdRPG3wUcqpctPQH+RmQazpyROWV6WTBGKtK1fZU8cSyHGmW
+	XvM58tIZgnoTbUPeJXB+FCPEEeUL2iTYBEMJTEaT0G6b/MCT0f5qUh+e/FwgWoawPKeKSFfDO1X
+	oD+zOS6gRBdBMR6KH/fPQLesJ/YzKuQeOOCFQ+cX+6TFESqS/eKP9sh1L40UkIMlB1hFbvLZqiT
+	6XNYKpVt8MXKGkAd8V40lmrKqLeUqVoHuPMf7sZncFnkyKowEj5/PMIx6V112B/FLLgKSD5dPFT
+	jlrpD/+FcbKDvIR2j/5wMvzhknRyVD+yjx/1l6ZXwmXC93WdE0u+p6yemZ6YqB68rAAx2DyDjI8
+	mwbf9+LRTvhBosNjn58g==
+X-Google-Smtp-Source: AGHT+IEWdMIG+klSNN4Q5YLgAGeFSgXTpZGuYAcS8sJZ75faWnXPFFjnzC68BJ5CVQ3F20pqCi+JnQ==
+X-Received: by 2002:a05:6214:450d:b0:87d:fee6:727c with SMTP id 6a1803df08f44-87dfee67d65mr177200556d6.59.1761409748012;
+        Sat, 25 Oct 2025 09:29:08 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc4944d57sm16187276d6.35.2025.10.25.09.29.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Oct 2025 09:29:07 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17] move_mount(2): take sanity checks in 'beneath' case into do_lock_mount()
-Date: Sat, 25 Oct 2025 12:01:14 -0400
-Message-ID: <20251025160905.3857885-443-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251025160905.3857885-1-sashal@kernel.org>
-References: <20251025160905.3857885-1-sashal@kernel.org>
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 03/21] select: rename BITS() to FDS_BITS()
+Date: Sat, 25 Oct 2025 12:28:39 -0400
+Message-ID: <20251025162858.305236-4-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251025162858.305236-1-yury.norov@gmail.com>
+References: <20251025162858.305236-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.17.5
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+In preparation for adding generic BITS() macro, rename the local one.
 
-[ Upstream commit d29da1a8f119130e6fc7d5d71029d402dabe2cb0 ]
-
-We want to mount beneath the given location.  For that operation to
-make sense, location must be the root of some mount that has something
-under it.  Currently we let it proceed if those requirements are not met,
-with rather meaningless results, and have that bogosity caught further
-down the road; let's fail early instead - do_lock_mount() doesn't make
-sense unless those conditions hold, and checking them there makes
-things simpler.
-
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
+ fs/select.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-LLM Generated explanations, may be completely bogus:
-
-YES
-
-- What it fixes
-  - Prevents nonsensical MOVE_MOUNT_BENEATH operations from proceeding
-    when the destination is not a mount root or when the topmost mount
-    has no parent (i.e., namespace root). Previously this could “proceed
-    with meaningless results” and fail later; now it fails early with
-    -EINVAL as intended.
-
-- Key changes
-  - Early validation in do_lock_mount():
-    - Adds `if (unlikely(beneath) && !path_mounted(path)) return
-      -EINVAL;` so non-mount-root targets are rejected immediately
-      (fs/namespace.c:do_lock_mount()).
-    - Adds a parent check under `mount_lock` in the ‘beneath’ path: `if
-      (unlikely(!mnt_has_parent(m))) { ... return -EINVAL; }` to reject
-      attempts beneath a namespace root before proceeding
-      (fs/namespace.c:do_lock_mount()).
-  - De-duplication: Removes the equivalent checks from
-    can_move_mount_beneath(), centralizing them where the mountpoint and
-    parent are actually determined
-    (fs/namespace.c:can_move_mount_beneath()).
-
-- Context in current tree
-  - The tree already performs an early `beneath && !path_mounted(path)`
-    rejection in do_lock_mount (see `fs/namespace.c:2732`), so
-    moving/keeping this check in do_lock_mount is aligned with the
-    patch’s intent.
-  - The explicit `mnt_has_parent()` guard is not currently enforced at
-    lock acquisition time in do_lock_mount; adding it there (while
-    holding `mount_lock`) closes a race and ensures the operation only
-    proceeds when a real parent exists.
-  - can_move_mount_beneath in this tree already focuses on
-    propagation/relationship checks and does not contain those
-    path/parent assertions (see around `fs/namespace.c:3417`), so
-    consolidating sanity checks into do_lock_mount is consistent and low
-    risk.
-
-- Why it’s a good stable candidate
-  - Bug fix: Enforces semantic preconditions for MOVE_MOUNT_BENEATH,
-    avoiding misleading or late failures.
-  - Small and contained: Changes are limited to fs/namespace.c, mostly
-    simple condition checks and code movement.
-  - No feature or architectural change: Just earlier, clearer
-    validation; the end result remains a failure for invalid usage.
-  - Concurrency-safe: Parent check is done while holding `mount_lock`,
-    reducing race windows between `mount_lock` and `namespace_sem`.
-
-- Regression risk
-  - Low. Users attempting invalid MOVE_MOUNT_BENEATH operations will now
-    get -EINVAL earlier rather than later. Valid usages are unaffected.
-
- fs/namespace.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index c8c2376bb2424..fa7c034ac4a69 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2785,12 +2785,19 @@ static int do_lock_mount(struct path *path, struct pinned_mountpoint *pinned, bo
- 	struct path under = {};
- 	int err = -ENOENT;
+diff --git a/fs/select.c b/fs/select.c
+index 082cf60c7e23..ad5bfb4907ea 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -412,7 +412,7 @@ void zero_fd_set(unsigned long nr, unsigned long *fdset)
+ #define FDS_OUT(fds, n)		(fds->out + n)
+ #define FDS_EX(fds, n)		(fds->ex + n)
  
-+	if (unlikely(beneath) && !path_mounted(path))
-+		return -EINVAL;
-+
- 	for (;;) {
- 		struct mount *m = real_mount(mnt);
+-#define BITS(fds, n)	(*FDS_IN(fds, n)|*FDS_OUT(fds, n)|*FDS_EX(fds, n))
++#define FDS_BITS(fds, n)	(*FDS_IN(fds, n)|*FDS_OUT(fds, n)|*FDS_EX(fds, n))
  
- 		if (beneath) {
- 			path_put(&under);
- 			read_seqlock_excl(&mount_lock);
-+			if (unlikely(!mnt_has_parent(m))) {
-+				read_sequnlock_excl(&mount_lock);
-+				return -EINVAL;
-+			}
- 			under.mnt = mntget(&m->mnt_parent->mnt);
- 			under.dentry = dget(m->mnt_mountpoint);
- 			read_sequnlock_excl(&mount_lock);
-@@ -3462,8 +3469,6 @@ static bool mount_is_ancestor(const struct mount *p1, const struct mount *p2)
-  * @to:   mount under which to mount
-  * @mp:   mountpoint of @to
-  *
-- * - Make sure that @to->dentry is actually the root of a mount under
-- *   which we can mount another mount.
-  * - Make sure that nothing can be mounted beneath the caller's current
-  *   root or the rootfs of the namespace.
-  * - Make sure that the caller can unmount the topmost mount ensuring
-@@ -3485,12 +3490,6 @@ static int can_move_mount_beneath(const struct path *from,
- 		     *mnt_to = real_mount(to->mnt),
- 		     *parent_mnt_to = mnt_to->mnt_parent;
- 
--	if (!mnt_has_parent(mnt_to))
--		return -EINVAL;
--
--	if (!path_mounted(to))
--		return -EINVAL;
--
- 	if (IS_MNT_LOCKED(mnt_to))
- 		return -EINVAL;
- 
+ static int max_select_fd(unsigned long n, fd_set_bits *fds)
+ {
+@@ -428,7 +428,7 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
+ 	open_fds = fdt->open_fds + n;
+ 	max = 0;
+ 	if (set) {
+-		set &= BITS(fds, n);
++		set &= FDS_BITS(fds, n);
+ 		if (set) {
+ 			if (!(set & ~*open_fds))
+ 				goto get_max;
+@@ -438,7 +438,7 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
+ 	while (n) {
+ 		open_fds--;
+ 		n--;
+-		set = BITS(fds, n);
++		set = FDS_BITS(fds, n);
+ 		if (!set)
+ 			continue;
+ 		if (set & ~*open_fds)
 -- 
-2.51.0
+2.43.0
 
 
