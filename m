@@ -1,57 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-65617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85624C08A6B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 05:43:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAD8C08B1D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 06:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148E61CC7749
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 03:40:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A43D4E479B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 04:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907C5273D6C;
-	Sat, 25 Oct 2025 03:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACD82BE622;
+	Sat, 25 Oct 2025 04:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Fub/+nVe"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hDX9dsBt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1AB215F6B;
-	Sat, 25 Oct 2025 03:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C185F2AD3D;
+	Sat, 25 Oct 2025 04:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761363370; cv=none; b=JICCbzV0tNo1WD7WebZ1osNVU/uDHRBZ/WuldBnYfb6ZfEg67VKmqPf9fk3muV2GHCjOj0dv6dldEgaydvB9T3gEFMaSM97c9PcXW3xUpdmNs6SD8Y+mKVJSHKGWBDrKVoNuOnw4mNINS6EfrPRUsIG5vw/hlvMuTSitFPvvQx8=
+	t=1761367539; cv=none; b=Mlx2D466/Sob6EfOOPIXDdOnaxe+hTQGh5WT2dq4EHf+pqp9prz0fTwoDOaLCWzB3StMs/8ZFaJ4rizEPodouL9Jsh3CCNfwt49bfX60e47r+4mTkYljMYK1w1ULEI913wyy/3eFIHt/ZJp6tmK0IXknWgKSmKk8U5hw407WJTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761363370; c=relaxed/simple;
-	bh=KiON0OU+Y/RR/jXzP9+/gwwp+JIlFiRQgsnXLMPprwY=;
+	s=arc-20240116; t=1761367539; c=relaxed/simple;
+	bh=MpWNGfxEaaSWJwURGuFrqvFiZNrJ2gPR2Wx/QXwoJJM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBxDA0DXt3MafxH+7qMYiDrmjCG1RZgi3yEltEscVqk8zBOEIT4QkO8URkTuFYSFtnddikjnK8rv3E1U0aSiC8L9HPrIpULF/00AQN4GoGHwNEpf7wi1s8ilkFB9kUcfRU80t0QqjwxaOYQFEy3/IsUcKKthiWuKTLC47S5/SJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Fub/+nVe; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=nF2nw5oJNgNO0Rka5BkFE0zFvea2fs8N9WNWsbyf0SoerphsyzbRZVbS24WHliBJXsxd+IGh8z0RtbQ4+7wWAJGLpP3MUt+ZEUp/26lcZeFkU3dvvy5I+ZzS9xaItpVzNnqtN+3g3UtSqltOIJ6yIYPHrWtcoxS8zmiDphXh5FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hDX9dsBt; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cbugbZ+qcT/wMKq21rqYgDFNKpMW8Ujxzcq00HGBWCs=; b=Fub/+nVe73IoydgDcQfwiwEOT+
-	yVfeo1JMxWigGVonx9kafO5yX5RhmBeZzQ2np82JYDmOzBFCwd11Z9DHEDdM4nyw3awdDVX7yXv1/
-	T47wKmTOCQcN2NC1LhUTjIK8+HDdt5AiMZn4aYJq5O+MbYW/O4EC8MYoN8RIMnIUBiO9lApBMzDiN
-	3+An56UwxbaRLd4wYMRgPfwpWVJvNgvyg59j60IZjbNzHdEk4ZNbokaWPvEju35D+rL0V2UrN5rBH
-	4x8SAlJaF4iIUpxeRvyYZxxmF7Qlk2J6FdPfd6PNzJHMAer9wkKK9xWYxk+5LVurXBLx2gVyWbNIa
-	bK/cEZTw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCV4U-00000009yw1-08Ph;
-	Sat, 25 Oct 2025 03:36:02 +0000
-Date: Sat, 25 Oct 2025 04:36:01 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: GuangFei Luo <luogf2025@163.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mount: fix duplicate mounts using the new mount API
-Message-ID: <20251025033601.GJ2441659@ZenIV>
-References: <20251025024934.1350492-1-luogf2025@163.com>
+	bh=mQjSkC3ua7dzjDBzte7rrQ5nRmVgH3qrTQ90wWZPPLY=; b=hDX9dsBtzcXQhmANie+AEm0YjV
+	vQPj5MEpcoB8AwXFuNdkmltwxQ5HpiwG1cTqtkVeoePAILnF3KENpgMIAzd3/DVFo/IiirZI9Mn+0
+	fi0ShxIRMGcTV7vg4v0Xf15vjyffKlDO13+qyKY1LLfJp2bFl7UNyPofCg8ySrxnbDuOSo7nHmGoF
+	5KtjMg0mCDSzvbPwLKHm7wtbOWD1igBnB4XsrR7UGfgPsro0Y4H0KYqBKZe8U2fJ5YJlXw+OfEVJg
+	+Y8fR+CrgkgR3dYM/4QfOjvpRU2OEwjiQKHdRtPdlth+lEdJKvXaaHiJJm3zh8SVkJ9FBxJuOaCKE
+	K7m1Gnjg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCW9i-00000002hpY-0vxi;
+	Sat, 25 Oct 2025 04:45:30 +0000
+Date: Sat, 25 Oct 2025 05:45:29 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+	chengzhihao1@huawei.com, libaokun1@huawei.com
+Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
+ __alloc_pages_slowpath() when BS > PS
+Message-ID: <aPxV6QnXu-OufSDH@casper.infradead.org>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-23-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,50 +65,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251025024934.1350492-1-luogf2025@163.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20251025032221.2905818-23-libaokun@huaweicloud.com>
 
-On Sat, Oct 25, 2025 at 10:49:34AM +0800, GuangFei Luo wrote:
-
-> @@ -4427,6 +4427,7 @@ SYSCALL_DEFINE5(move_mount,
->  {
->  	struct path to_path __free(path_put) = {};
->  	struct path from_path __free(path_put) = {};
-> +	struct path path __free(path_put) = {};
->  	struct filename *to_name __free(putname) = NULL;
->  	struct filename *from_name __free(putname) = NULL;
->  	unsigned int lflags, uflags;
-> @@ -4472,6 +4473,14 @@ SYSCALL_DEFINE5(move_mount,
->  			return ret;
->  	}
->  
-> +	ret = user_path_at(AT_FDCWD, to_pathname, LOOKUP_FOLLOW, &path);
-> +	if (ret)
-> +		return ret;
+On Sat, Oct 25, 2025 at 11:22:18AM +0800, libaokun@huaweicloud.com wrote:
+> +	while (1) {
+> +		folio = __filemap_get_folio(mapping, index, fgp_flags,
+> +					    gfp & ~__GFP_NOFAIL);
+> +		if (!IS_ERR(folio) || !(gfp & __GFP_NOFAIL))
+> +			return folio;
 > +
-> +	/* Refuse the same filesystem on the same mount point */
-> +	if (path.mnt->mnt_sb == to_path.mnt->mnt_sb && path_mounted(&path))
-> +		return -EBUSY;
+> +		if (PTR_ERR(folio) != -ENOMEM && PTR_ERR(folio) != -EAGAIN)
+> +			return folio;
+> +
+> +		memalloc_retry_wait(gfp);
+> +	}
 
-Races galore:
-	* who said that string pointed to by to_pathname will remain
-the same bothe for user_path_at() and getname_maybe_null()?
-	* assuming it is not changed, who said that it will resolve
-to the same location the second time around?
-	* not a race but... the fact that to_dfd does not affect anything
-in that check looks odd, doesn't it?  And if you try to pass it instead
-of AT_FDCWD... who said that descriptor will correspond to the same
-opened file for both?
-
-Besides... assuming that nothing's changing under you, your test is basically
-"we are not moving anything on top of existing mountpoint" - both path and
-to_path come from resolving to_pathname, after all.  It doesn't depend upon
-the thing you are asked to move over there - the check is done before you
-even look at from_pathname.
-
-What's more, you are breaking the case of mount --move, which had never had
-that constraint of plain mount.  Same for mount --bind, for that matter.
-
-I agree that it's a regression in mount(8) conversion to new API, but this
-is not a fix.
+No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
+The right way forward is for ext4 to use iomap, not for buffer heads
+to support large block sizes.
 
