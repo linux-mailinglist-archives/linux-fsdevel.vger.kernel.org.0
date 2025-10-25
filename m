@@ -1,197 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-65587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21ADBC083EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 00:31:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A51AC088FD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 04:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8173AECA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Oct 2025 22:31:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9E264E22AF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 02:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FA230BBBF;
-	Fri, 24 Oct 2025 22:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF8F248868;
+	Sat, 25 Oct 2025 02:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTTwjRCx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPY0qqdk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTTwjRCx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPY0qqdk"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iJlbNIV2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D83263F36
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Oct 2025 22:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C6610D;
+	Sat, 25 Oct 2025 02:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761345072; cv=none; b=B8cfTLyz06W7xvG4h+8RSk3OA1VqvdiECRJdLHjQod3iI4Jx/gucJiI8TAi1zJCuEm+EkPmrAdGwVcrYNUKUC0idbxyJ8HAIDUvVSvowliHqEawtfOTv+NLKbq4MfO7SvMz4P1lNJC0S5ahCvmJVosDp2rxBmpXb0nY664s0lAk=
+	t=1761360214; cv=none; b=d1oVM2b0m9Q+8TnHeq3fCHwvx25lZagki2SB6ilW6naDDUIAexcuxVoNR2qT3p0m6IrIvU9UimMAksEWMQ8+sR88kOJPCB4HIY4r1lkEf6CLMzULM3KYSemKmIrLUXOhOL04wENGXdSVyp+V5zjFpW0Pii5oAw3zJLLjQhhRvIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761345072; c=relaxed/simple;
-	bh=TdtvSFhVumAdCHdZdAGKLPPL1lptHcjWodC1ykDPzY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7fjUXFqHPERxFMu83HRPMKPSO31AGwFWSoSW90uC5WdrEqlpoMu+4GnUYRPRrf5BBYn5RQM12wwfow6D4TVeYWxInCChQ8X0HW9dzzyQ9PfHz/pz4jmzeQbam9YBxszDGQog6Saj1HlTpHHtvrKzVdn1C480TUOrMdp6U14JxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTTwjRCx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPY0qqdk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTTwjRCx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPY0qqdk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 47D59211E8;
-	Fri, 24 Oct 2025 22:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761345066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
-	b=WTTwjRCxGB26PULa/ak6Okz4dsHb+N43kdKOP+ED1wRE0ANRFxocl1iqwChFEy2qFVB/t6
-	HnEQ3y1qKQv843HJdWRHWuu4eFa4nPQefDPcdaBUEglKWx/SC6JaFoKeiEMw+zjey+sGE2
-	6Dj8XTGGp0WYBlgpxYMuJIB1ygGaM+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761345066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
-	b=zPY0qqdke3Lu6ES/8PPTBWAO0LRSuqxdR+K2yGNe1/3Z3gdUGnz7iONCHFZFcx+3YtYOC6
-	dAYr1MrZU4+GekDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761345066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
-	b=WTTwjRCxGB26PULa/ak6Okz4dsHb+N43kdKOP+ED1wRE0ANRFxocl1iqwChFEy2qFVB/t6
-	HnEQ3y1qKQv843HJdWRHWuu4eFa4nPQefDPcdaBUEglKWx/SC6JaFoKeiEMw+zjey+sGE2
-	6Dj8XTGGp0WYBlgpxYMuJIB1ygGaM+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761345066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaDkQXEDq3kiZtr1ll+BBk3Dg0qixXh2ek2kyEyFBLo=;
-	b=zPY0qqdke3Lu6ES/8PPTBWAO0LRSuqxdR+K2yGNe1/3Z3gdUGnz7iONCHFZFcx+3YtYOC6
-	dAYr1MrZU4+GekDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 25DF813693;
-	Fri, 24 Oct 2025 22:31:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JqLLCCr++2gdDAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 24 Oct 2025 22:31:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 80A6CA280E; Sat, 25 Oct 2025 00:31:05 +0200 (CEST)
-Date: Sat, 25 Oct 2025 00:31:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 01/32] pidfs: validate extensible ioctls
-Message-ID: <s57bjg2caxa5zhsamkll7b637omcszkammckb56pexs5m3uu4s@fyqo2js5flrk>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
- <5b287ec6-72ff-4707-9040-3c84efc58b94@kernel.org>
+	s=arc-20240116; t=1761360214; c=relaxed/simple;
+	bh=QdAPGK5hXpf0G5m6pcdF7m7LqY3YmGZb7eU89/9gqGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IqJSlm5zHvTcC03A7ZYO7WIzyzDWB2AQRDAxEJDp/rE0w9UOjh5IwzvbLaLaTAA1LlKrmw9ZLWAClRp2RpMNyb+WM0mYPuy4p/lpwHxM44ikLahhIaWT9uipSKBAJqLBB/wwnyO+R9trZ8GrQZxqzYHfaCRUYqKlq2Zrh/jiSLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iJlbNIV2; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=yN
+	l65k/kAeexTgDSNR6tWuwOKvH4IBPMLIdSVvUAofc=; b=iJlbNIV2UkMRMwbQlg
+	z7lgnIyGtxcw+j57t63C3i3RDDmCiXfIgH7SqqJcO14vJmk8/5aWKxoVIi9paE6P
+	pYMyTRJJzW4v3JOYootQlWvmSybvAehETtkg54axezXH+Hr5hFNGLZDjuvNaW1/A
+	aQ6yjXOkZJ8P0M36qVOqXihwk=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgBHn9cwOfxoc1hRBQ--.47S2;
+	Sat, 25 Oct 2025 10:42:57 +0800 (CST)
+From: albin_yang@163.com
+To: akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	wangzijie1@honor.com,
+	brauner@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: albinwyang@tencent.com
+Subject: [PATCH] fs/proc: fix uaf in proc_readdir_de()
+Date: Sat, 25 Oct 2025 10:42:33 +0800
+Message-ID: <20251025024233.158363-1-albin_yang@163.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b287ec6-72ff-4707-9040-3c84efc58b94@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgBHn9cwOfxoc1hRBQ--.47S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCF18XFWDtFy3KF4xKFyUWrg_yoW5AF45pF
+	W3WrW3Gr48WFn8Gr1Sqr1DCF48uF15Aa1akr4xua1IyrsFvryxJr4rtFy8try7AFWrGa4Y
+	qF4jg3srArykA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7txhUUUUU=
+X-CM-SenderInfo: pdoex0xb1d0wi6rwjhhfrp/1tbiShbxomj8NBwwJgABsk
 
-On Thu 23-10-25 12:46:45, Jiri Slaby wrote:
-> On 10. 09. 25, 16:36, Christian Brauner wrote:
-> > Validate extensible ioctls stricter than we do now.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >   fs/pidfs.c         |  2 +-
-> >   include/linux/fs.h | 14 ++++++++++++++
-> >   2 files changed, 15 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index edc35522d75c..0a5083b9cce5 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
-> >   		 * erronously mistook the file descriptor for a pidfd.
-> >   		 * This is not perfect but will catch most cases.
-> >   		 */
-> > -		return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-> > +		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
-> 
-> Hi,
-> 
-> this turned EINVAL (from pidfd_info()) into ENOTTY (from pidfd_ioctl()) for
-> at least LTP's:
-> struct pidfd_info_invalid {
-> 	uint32_t dummy;
-> };
-> 
-> #define PIDFD_GET_INFO_SHORT _IOWR(PIDFS_IOCTL_MAGIC, 11, struct
-> pidfd_info_invalid)
-> 
-> ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid) == EINVAL
-> 
-> at:
-> https://github.com/linux-test-project/ltp/blob/9bb94efa39bb1b08f37e56c7437db5fa13ddcae2/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c#L46
-> 
-> Is this expected?
+From: Wei Yang <albinwyang@tencent.com>
 
-We already discussed this internally but for others the problem was
-discussed here [1] and we decided the new errno value is OK and LTP test is
-being fixed up.
+Pde is erased from subdir rbtree through rb_erase(), but not set the node to EMPTY,
+which may result in uaf access. We should use RB_CLEAR_NODE() set the erased node
+to EMPTY, then pde_subdir_next() will return NULL to avoid uaf access.
 
-								Honza
+We found an uaf issue while using stree-ng testing, need to run testcase getdent and
+tun in the same time. The steps of the issue is as follows:
+1) use getdent to traverse dir /proc/pid/net/dev_snmp6/, and current pde is tun3;
+2) in the [time windows] unregister netdevice tun3 and tun2, and erase them from
+   rbtree. erase tun3 first, and then erase tun2. the pde(tun2) will be released
+   to slab;
+3) continue to getdent process, then pde_subdir_next() will return pde(tun2) which
+   is released, it will case uaf access.
 
-[1] https://lore.kernel.org/all/aPIPGeWo8gtxVxQX@yuki.lan/
+CPU 0                                      |    CPU 1
+----------------------------------------------------------------------------------------------
+traverse dir /proc/pid/net/dev_snmp6/      |   unregister_netdevice(tun->dev)   //tun3 tun2
+sys_getdents64()                           |
+  iterate_dir()                            |
+    proc_readdir()                         |
+      proc_readdir_de()                    |     snmp6_unregister_dev()
+        pde_get(de);                       |       proc_remove()
+        read_unlock(&proc_subdir_lock);    |         remove_proc_subtree()
+                                           |           write_lock(&proc_subdir_lock);
+        [time window]                      |           rb_erase(&root->subdir_node, &parent->subdir);
+                                           |           write_unlock(&proc_subdir_lock);
+        read_lock(&proc_subdir_lock);      |
+        next = pde_subdir_next(de);        |
+        pde_put(de);                       |
+        de = next;    //UAF                |
 
+rbtree of dev_snmp6
+                        |
+                    pde(tun3)
+                     /    \
+                  NULL  pde(tun2)
+
+Signed-off-by: Wei Yang <albinwyang@tencent.com>
+---
+ fs/proc/generic.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 176281112273..501889856461 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -698,6 +698,12 @@ void pde_put(struct proc_dir_entry *pde)
+ 	}
+ }
+ 
++static void pde_erase(struct proc_dir_entry *pde, struct proc_dir_entry *parent)
++{
++	rb_erase(&pde->subdir_node, &parent->subdir);
++	RB_CLEAR_NODE(&pde->subdir_node);
++}
++
+ /*
+  * Remove a /proc entry and free it if it's not currently in use.
+  */
+@@ -720,7 +726,7 @@ void remove_proc_entry(const char *name, struct proc_dir_entry *parent)
+ 			WARN(1, "removing permanent /proc entry '%s'", de->name);
+ 			de = NULL;
+ 		} else {
+-			rb_erase(&de->subdir_node, &parent->subdir);
++			pde_erase(de, parent);
+ 			if (S_ISDIR(de->mode))
+ 				parent->nlink--;
+ 		}
+@@ -764,7 +770,7 @@ int remove_proc_subtree(const char *name, struct proc_dir_entry *parent)
+ 			root->parent->name, root->name);
+ 		return -EINVAL;
+ 	}
+-	rb_erase(&root->subdir_node, &parent->subdir);
++	pde_erase(root, parent);
+ 
+ 	de = root;
+ 	while (1) {
+@@ -776,7 +782,7 @@ int remove_proc_subtree(const char *name, struct proc_dir_entry *parent)
+ 					next->parent->name, next->name);
+ 				return -EINVAL;
+ 			}
+-			rb_erase(&next->subdir_node, &de->subdir);
++			pde_erase(next, de);
+ 			de = next;
+ 			continue;
+ 		}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.7
+
 
