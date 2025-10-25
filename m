@@ -1,61 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-65628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF7AC09659
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:24:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F303C098A5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2447F34E40F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 16:24:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99EEC5034E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 16:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513173043B5;
-	Sat, 25 Oct 2025 16:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228B5308F0B;
+	Sat, 25 Oct 2025 16:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKl1YArx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGFZW81t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61272F5A2D;
-	Sat, 25 Oct 2025 16:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709C03064B1;
+	Sat, 25 Oct 2025 16:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409173; cv=none; b=N9RSm4FRBbVx5wtiujo9fOSCW/DjomuyMCoMQZM5q0NibKalYFro/S4xhCrnXB52V6F+sLp+4U7kfaI+8gkYbl4rGirc0frdzGtbJBAyCeclrG7irz/FW++fgecr9oS7b4dQrPgpxMxbXzZ0/Du8AvJnjZw0oa1/YFWNSRN2LKA=
+	t=1761409307; cv=none; b=hm3MwdiF4EuzLznZIzUEt+ZGypubWM8OOoJ1aOv1IOSd+QkuQjeWn8WZNwDVOQWY5W7AJYAzWVQE3tNUhPbHvfInVUc42t7xJ+sI0eaUEDWq+PQY7hYoG3yG9FfHyFw1oHfGxI3TFo6yAT5VpArYk4Z23WBCPViAHjD8ngmCwW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409173; c=relaxed/simple;
-	bh=9HkRSYhRyPFwC+Ebch60U0eOkF+niXbkC6onf51bdM4=;
+	s=arc-20240116; t=1761409307; c=relaxed/simple;
+	bh=ZFwS/yiQomAQ3MgaRgMgID6n07EAK9YcalbNOoA1M8U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sHZE2rG0UUVZnLhtrbPqQyEgC8nc1kueuas8flsAdO8V72dwIhNEpaQuhrc3+o4+2RsG5UGjelm3KyaFSAjbTsynvo4bzyotpjyU7XIoZrU31znZ1tdQKmQz+HJTxwkdAQUN+Ew7qRTVgHuUgqxinRLkN05HsiXs624We8962Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKl1YArx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57969C4CEFB;
-	Sat, 25 Oct 2025 16:19:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QrU3bB5ox0ZQnRnjByTQKnKw5UXH3PtlMa0SrmJ9wf6VL2AlYYaQ7YaIjfO7GHZusWVbacHApup0YgPcGBRCulpcybGNXM+NDNHppZEeSn73qlyjuwDhOKFUhDFYwr0pugeAZUPoxwbgKqvaPuCPG/2zjVCoAymqiJBDWiIp4vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGFZW81t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CA4C2BC9E;
+	Sat, 25 Oct 2025 16:21:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761409173;
-	bh=9HkRSYhRyPFwC+Ebch60U0eOkF+niXbkC6onf51bdM4=;
+	s=k20201202; t=1761409307;
+	bh=ZFwS/yiQomAQ3MgaRgMgID6n07EAK9YcalbNOoA1M8U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gKl1YArxQnIvCurA5cukZnrwpGSRwJ6hqDT/lT40+Okk8pS/RvkQ4Gu8CrGRVNiKr
-	 qgTSo4DU1MaNj2i6/V/ANQXHAZ8x7vLXQJCVpbLAFPRbnOQRQ2oia5h6cn84DZynSI
-	 uU54CXAn2JIOHxx4njL8mUwfuNhmS1Sr0cyyFIhItr1zbwF5PO7n00ClH22nD3+QJY
-	 8E17Oj816ia6ivtstsKd0IUO3CK+oNDyyLwNJApUPoAGrGf13ubI3gb59jM+OGLgD0
-	 pTBe4S6lhITezZdtZxjI9LBk8RqrKOsjkVv4+27Xitc4XpzPrCc5yiFqg9RQ6zOIhZ
-	 Z5O0jeOYVT5Zw==
+	b=MGFZW81tlHo5yg3ZLUiE+7DLB6nzLmlQQ4jERhfMjDl3NwFGtc0sQDPDf6FzqIOvb
+	 nrfqgBvDZJpZ6SuRKaBIB6StaaOI5jfekeKiGNwuYzkx2gwAeRlKSNxtyYxpSH1t03
+	 BR15Ie6qU72VvCImTPz964uie7yolZopOrDuA0SCfesmFr+Hkn17JrYTb+mvMgUVnT
+	 9cbP9lB8RPGZbw6Ef6kXLSZPgAgvoC8l+4ZK8crSbh9MLXjp1NH25IHbhBKS70wQzE
+	 3rTf8I4rL4KiueIKm+tvSWJyeiPiDR0DoKPQcfFjDGGMk97+NVaZo+LR1SGmDcZefF
+	 Weiqh75oH5mdA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Li RongQing <lirongqing@baidu.com>,
-	Fushuai Wang <wangfushuai@baidu.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com,
+	Yuezhang Mo <Yuezhang.Mo@sony.com>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
 	Sasha Levin <sashal@kernel.org>,
-	miklos@szeredi.hu,
-	vgoyal@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.17] virtio_fs: fix the hash table using in virtio_fs_enqueue_req()
-Date: Sat, 25 Oct 2025 11:57:41 -0400
-Message-ID: <20251025160905.3857885-230-sashal@kernel.org>
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-6.12] exfat: validate cluster allocation bits of the allocation bitmap
+Date: Sat, 25 Oct 2025 11:58:24 -0400
+Message-ID: <20251025160905.3857885-273-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251025160905.3857885-1-sashal@kernel.org>
 References: <20251025160905.3857885-1-sashal@kernel.org>
@@ -71,126 +68,160 @@ X-stable-base: Linux 6.17.5
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
 
-[ Upstream commit 7dbe6442487743ad492d9143f1f404c1f4a05e0e ]
+[ Upstream commit 79c1587b6cda74deb0c86fc7ba194b92958c793c ]
 
-The original commit be2ff42c5d6e ("fuse: Use hash table to link
-processing request") converted fuse_pqueue->processing to a hash table,
-but virtio_fs_enqueue_req() was not updated to use it correctly.
-So use fuse_pqueue->processing as a hash table, this make the code
-more coherent
+syzbot created an exfat image with cluster bits not set for the allocation
+bitmap. exfat-fs reads and uses the allocation bitmap without checking
+this. The problem is that if the start cluster of the allocation bitmap
+is 6, cluster 6 can be allocated when creating a directory with mkdir.
+exfat zeros out this cluster in exfat_mkdir, which can delete existing
+entries. This can reallocate the allocated entries. In addition,
+the allocation bitmap is also zeroed out, so cluster 6 can be reallocated.
+This patch adds exfat_test_bitmap_range to validate that clusters used for
+the allocation bitmap are correctly marked as in-use.
 
-Co-developed-by: Fushuai Wang <wangfushuai@baidu.com>
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Reported-by: syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com
+Tested-by: syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com
+Reviewed-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
 YES
+- The commit adds `exfat_test_bitmap_range()` to verify that every
+  cluster backing the allocation bitmap file has its allocation bit set
+  before the filesystem accepts the bitmap (`fs/exfat/balloc.c:29`).
+  Without this guard, the mount path would happily proceed even when the
+  bitmap’s own clusters are marked free, exactly the corruption pattern
+  syzbot reported.
+- The new helper simply walks the existing bitmap pages
+  (`sbi->vol_amap`) and checks the relevant bits with the existing
+  macros; on any mismatch it rejects the volume with `-EIO`, preventing
+  us from ever reaching the allocator that can hand the bitmap’s cluster
+  to new directories (`fs/exfat/balloc.c:108`, `fs/exfat/balloc.c:114`).
+  This is a small, self-contained mount-time validation step.
+- The bug being fixed is high severity: when the bitmap cluster is
+  falsely free, `exfat_alloc_cluster()` can select it and zero the data
+  while creating a directory (`fs/exfat/fatent.c:381` onward),
+  destroying the bitmap and any directory entries stored there. The
+  patch blocks that corruption before it can happen.
+- Risk of regression is minimal—the helper only reads data we already
+  loaded, relies on longstanding helpers/macros, and touches no runtime
+  paths once the bitmap validates. If the check fails we already have to
+  bail out because the on-disk image is inconsistent; no new behavior
+  appears for well-formed volumes.
+- The change stands on its own (no functional dependencies on later
+  commits), fixes a real user-visible corruption scenario, and adheres
+  to stable-tree guidance (bug fix, limited scope, no architectural
+  churn). Backporting will materially improve resilience of exFAT mounts
+  against malformed media.
 
-**Why This Is A Bugfix**
-- The earlier change “fuse: Use hash table to link processing request”
-  (be2ff42c5d6e) converted `fuse_pqueue->processing` from a single list
-  to a hash table. You can see the hash table parameters and the data
-  structure:
-  - `FUSE_PQ_HASH_BITS` and `FUSE_PQ_HASH_SIZE`: fs/fuse/fuse_i.h:546
-  - `struct fuse_pqueue { struct list_head *processing; }`:
-    fs/fuse/fuse_i.h:556
-  - Allocation as an array of `list_head` buckets: fs/fuse/inode.c:1622
-- Responses are looked up by hashing the request ID and searching only
-  that bucket:
-  - `fuse_request_find()` iterates `&fpq->processing[hash]`:
-    fs/fuse/dev.c:2131
-- Before this fix, `virtio_fs_enqueue_req()` added every request to the
-  list head pointer (effectively bucket 0) instead of the hashed bucket.
-  That makes replies unfindable for non-zero buckets, leading to -ENOENT
-  on reply processing and stuck/hung requests.
+ fs/exfat/balloc.c | 72 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 60 insertions(+), 12 deletions(-)
 
-**What The Patch Changes**
-- Export the hash function so virtio-fs can use it:
-  - `fuse_req_hash()` now exported: fs/fuse/dev.c:321
-- Ensure virtio-fs adds requests to the correct bucket:
-  - Include FUSE device internals: fs/fuse/virtio_fs.c:23
-  - Compute the bucket: `hash = fuse_req_hash(req->in.h.unique);`:
-    fs/fuse/virtio_fs.c:1445
-  - Enqueue into the correct bucket: `list_add_tail(&req->list,
-    &fpq->processing[hash]);`: fs/fuse/virtio_fs.c:1447
-  - Function definition location for context: fs/fuse/virtio_fs.c:1370
-
-**Impact and Risk**
-- User-visible bugfix: Without this, replies cannot be matched to
-  requests (except those hashing to bucket 0), causing request
-  completion failures and potential hangs in virtio-fs workloads.
-- Small and contained: Two files touched; logic change is limited to
-  correctly hashing and inserting into the right bucket, plus exporting
-  a helper symbol.
-- No architectural changes: Keeps the existing hash-table design; simply
-  uses it correctly.
-- Stable-friendly: Minimal risk of regression, no new features, fixes
-  incorrect behavior.
-
-**Backport Conditions**
-- This should be backported to any stable series that already includes
-  the conversion of `processing` to a hash table (be2ff42c5d6e). If a
-  stable series predates that change (i.e., `processing` is still a
-  single list), this patch is not applicable.
-- The export `EXPORT_SYMBOL_GPL(fuse_req_hash)` (fs/fuse/dev.c:321) is
-  required so `virtio_fs` can link against it. This is an internal, GPL-
-  only symbol used by in-tree code and is appropriate for stable.
-
- fs/fuse/dev.c       | 1 +
- fs/fuse/virtio_fs.c | 6 ++++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index dbf53c7bc8535..612d4da6d7d91 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -322,6 +322,7 @@ unsigned int fuse_req_hash(u64 unique)
- {
- 	return hash_long(unique & ~FUSE_INT_REQ_BIT, FUSE_PQ_HASH_BITS);
- }
-+EXPORT_SYMBOL_GPL(fuse_req_hash);
- 
+diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+index cc01556c9d9b3..071448adbd5d9 100644
+--- a/fs/exfat/balloc.c
++++ b/fs/exfat/balloc.c
+@@ -26,12 +26,55 @@
  /*
-  * A new request is available, wake fiq->waitq
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 76c8fd0bfc75d..1751cd6e3d42b 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -20,6 +20,7 @@
- #include <linux/cleanup.h>
- #include <linux/uio.h>
- #include "fuse_i.h"
-+#include "fuse_dev_i.h"
+  *  Allocation Bitmap Management Functions
+  */
++static bool exfat_test_bitmap_range(struct super_block *sb, unsigned int clu,
++		unsigned int count)
++{
++	struct exfat_sb_info *sbi = EXFAT_SB(sb);
++	unsigned int start = clu;
++	unsigned int end = clu + count;
++	unsigned int ent_idx, i, b;
++	unsigned int bit_offset, bits_to_check;
++	__le_long *bitmap_le;
++	unsigned long mask, word;
++
++	if (!is_valid_cluster(sbi, start) || !is_valid_cluster(sbi, end - 1))
++		return false;
++
++	while (start < end) {
++		ent_idx = CLUSTER_TO_BITMAP_ENT(start);
++		i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
++		b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
++
++		bitmap_le = (__le_long *)sbi->vol_amap[i]->b_data;
++
++		/* Calculate how many bits we can check in the current word */
++		bit_offset = b % BITS_PER_LONG;
++		bits_to_check = min(end - start,
++				    (unsigned int)(BITS_PER_LONG - bit_offset));
++
++		/* Create a bitmask for the range of bits to check */
++		if (bits_to_check >= BITS_PER_LONG)
++			mask = ~0UL;
++		else
++			mask = ((1UL << bits_to_check) - 1) << bit_offset;
++		word = lel_to_cpu(bitmap_le[b / BITS_PER_LONG]);
++
++		/* Check if all bits in the mask are set */
++		if ((word & mask) != mask)
++			return false;
++
++		start += bits_to_check;
++	}
++
++	return true;
++}
++
+ static int exfat_allocate_bitmap(struct super_block *sb,
+ 		struct exfat_dentry *ep)
+ {
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	long long map_size;
+-	unsigned int i, need_map_size;
++	unsigned int i, j, need_map_size;
+ 	sector_t sector;
  
- /* Used to help calculate the FUSE connection's max_pages limit for a request's
-  * size. Parts of the struct fuse_req are sliced into scattergather lists in
-@@ -1384,7 +1385,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 	unsigned int out_sgs = 0;
- 	unsigned int in_sgs = 0;
- 	unsigned int total_sgs;
--	unsigned int i;
-+	unsigned int i, hash;
- 	int ret;
- 	bool notify;
- 	struct fuse_pqueue *fpq;
-@@ -1444,8 +1445,9 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 	sbi->map_clu = le32_to_cpu(ep->dentry.bitmap.start_clu);
+@@ -58,20 +101,25 @@ static int exfat_allocate_bitmap(struct super_block *sb,
+ 	sector = exfat_cluster_to_sector(sbi, sbi->map_clu);
+ 	for (i = 0; i < sbi->map_sectors; i++) {
+ 		sbi->vol_amap[i] = sb_bread(sb, sector + i);
+-		if (!sbi->vol_amap[i]) {
+-			/* release all buffers and free vol_amap */
+-			int j = 0;
+-
+-			while (j < i)
+-				brelse(sbi->vol_amap[j++]);
+-
+-			kvfree(sbi->vol_amap);
+-			sbi->vol_amap = NULL;
+-			return -EIO;
+-		}
++		if (!sbi->vol_amap[i])
++			goto err_out;
+ 	}
  
- 	/* Request successfully sent. */
- 	fpq = &fsvq->fud->pq;
-+	hash = fuse_req_hash(req->in.h.unique);
- 	spin_lock(&fpq->lock);
--	list_add_tail(&req->list, fpq->processing);
-+	list_add_tail(&req->list, &fpq->processing[hash]);
- 	spin_unlock(&fpq->lock);
- 	set_bit(FR_SENT, &req->flags);
- 	/* matches barrier in request_wait_answer() */
++	if (exfat_test_bitmap_range(sb, sbi->map_clu,
++		EXFAT_B_TO_CLU_ROUND_UP(map_size, sbi)) == false)
++		goto err_out;
++
+ 	return 0;
++
++err_out:
++	j = 0;
++	/* release all buffers and free vol_amap */
++	while (j < i)
++		brelse(sbi->vol_amap[j++]);
++
++	kvfree(sbi->vol_amap);
++	sbi->vol_amap = NULL;
++	return -EIO;
+ }
+ 
+ int exfat_load_bitmap(struct super_block *sb)
 -- 
 2.51.0
 
