@@ -1,57 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-65630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71851C09923
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:37:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9333BC09C53
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1896734E598
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 16:37:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F9424715
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 16:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44075306B3D;
-	Sat, 25 Oct 2025 16:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299083126B2;
+	Sat, 25 Oct 2025 16:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f08v9eXN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Erabh20A"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDE72FB99A;
-	Sat, 25 Oct 2025 16:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1D230C609;
+	Sat, 25 Oct 2025 16:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761409666; cv=none; b=E/aPUSqv3JvDn6Z4ew+lemChToKghVHjsaH0Ayknc6nliRi+bTV1AMfL9XxCYT7Wdl8hRsjVmJ+g0BXcekRRzec8rmjW721pSU0EWtODMfOQl4VwhppDPntUDjWrNMnI5PLFO1UGhMzWqFKXea+zEZq50CpW/IbQqY+nDVdBBeI=
+	t=1761409737; cv=none; b=JA5rFwi8776Z43DMUf0Sj4cSiKULnFoOZFaq9+ce3MOA/0PiKERUj+DJiMhn1Wx8T6jmvuOZ3vWnZNNLMcHaUqYGbQnoGxCrpfhWXCzA3c8B/77AODvEWA59GFOd2Wga9srHAc1UGAjiqws5U0GzS2WUBcZhjyWc8DUNuZRu9II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761409666; c=relaxed/simple;
-	bh=V3Ju5Ag8i4WkS8138BvjU6X3PT2JxrmorIOw+5wRt48=;
+	s=arc-20240116; t=1761409737; c=relaxed/simple;
+	bh=NBzBBqfdDX3ER7q56c+eTh28BN4lKPjJ15k8LfFyso8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IxHn9VMEMFvjeMhxqGyPRCIEeUV0JVcH5QG9phnH8+OWXtmkvoHXy+3SpmA5PDwLOUylJF9g7Mphc/YAzJ774hecl2CLP1NgrylsPomQdOe/sas9hUjVp1HwlQbc0k1XtVa9Nz6VN0qPdSefTJCcRE/t54gP8k6xevEYYvY5uC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f08v9eXN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC04BC113D0;
-	Sat, 25 Oct 2025 16:27:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=W0YrXUvVSqMPyp8jag5dUJ2mErKYljf9i+i2nC6QVRzyGxV9uaaTd3A/YmjbZL+GJSekDNv3S5Z2Hdf3Z5RnYaZUx5jgEQjzQFZ9c/UYMeOzB77M3xurbAPEIHf9AOCAalnWJqY+FC9dgcgQjd5XdZ6XS0porGXpboOAXIW0wgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Erabh20A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613FFC4CEFB;
+	Sat, 25 Oct 2025 16:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761409666;
-	bh=V3Ju5Ag8i4WkS8138BvjU6X3PT2JxrmorIOw+5wRt48=;
+	s=k20201202; t=1761409737;
+	bh=NBzBBqfdDX3ER7q56c+eTh28BN4lKPjJ15k8LfFyso8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f08v9eXNeR+UqHyBs1LS446c+/K2fnRemo5A3heBP8TG+UJQzFGq/y/ybgP8Mz/Ik
-	 qOvOVAelfV7zhltSvwf4MCEZC2HlnQWde4WEhF+2iBQyEytg3mWtGg8cgifMHQPuDL
-	 nnRV+Q1Lwn1p6kBt2c5cTFCRuqyNhJ4DKuut8WcgPaEDd0pNYsDZERxFjs7kdQMBpn
-	 Yx5UXN9xCjuUmIDQoopswS4jRWi8GfaRB3VVfUn3UDHkFI0umHVdk7L6oLfPMSwg3Z
-	 OS/k8cawU6m65SdNy6VLp8NmDK2BaUL5d4cR6pEy2ljoo8E+y5y2ILE2eokHIYTVi8
-	 gLk+Bq/QPcptQ==
+	b=Erabh20AyiTZfse63dZH3/58b6Fcow3KU2QleCF5REb6+qoR1fFl7+VAO1k4hLB85
+	 hjYjt21oF8Qsg9g9H6LI9kd5kfiAnhJRZF2XopUYv7ZxGUtXGCtYkuZngvg4qlf0vl
+	 IfP23/HVz1ZdYzvYAovxCNP6PpaHOk9uJ5YL/4C78vIad2FykA0POjRnCPYE5v79rT
+	 9wBjv8pIwBDnEejEr2Y9ezXKZ0pgqOfWQvBubc7IjW+Txky56MRX1Cxhm9lFiSJWQe
+	 bhePpepM/1qAWeh81N+6htyVdkcUg970Lk9q9+yyOxzX7MTo1btsmkOPK6cb+tkG1m
+	 d9G30zOUOypHA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Chi Zhiling <chizhiling@kylinos.cn>,
-	Namjae Jeon <linkinjeon@kernel.org>,
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	sj1557.seo@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-5.10] exfat: limit log print for IO error
-Date: Sat, 25 Oct 2025 12:00:43 -0400
-Message-ID: <20251025160905.3857885-412-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.17] move_mount(2): take sanity checks in 'beneath' case into do_lock_mount()
+Date: Sat, 25 Oct 2025 12:01:14 -0400
+Message-ID: <20251025160905.3857885-443-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251025160905.3857885-1-sashal@kernel.org>
 References: <20251025160905.3857885-1-sashal@kernel.org>
@@ -67,102 +66,126 @@ X-stable-base: Linux 6.17.5
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 6dfba108387bf4e71411b3da90b2d5cce48ba054 ]
+[ Upstream commit d29da1a8f119130e6fc7d5d71029d402dabe2cb0 ]
 
-For exFAT filesystems with 4MB read_ahead_size, removing the storage device
-when the read operation is in progress, which cause the last read syscall
-spent 150s [1]. The main reason is that exFAT generates excessive log
-messages [2].
+We want to mount beneath the given location.  For that operation to
+make sense, location must be the root of some mount that has something
+under it.  Currently we let it proceed if those requirements are not met,
+with rather meaningless results, and have that bogosity caught further
+down the road; let's fail early instead - do_lock_mount() doesn't make
+sense unless those conditions hold, and checking them there makes
+things simpler.
 
-After applying this patch, approximately 300,000 lines of log messages
-were suppressed, and the delay of the last read() syscall was reduced
-to about 4 seconds.
-
-[1]:
-write(5, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 131072) = 131072 <0.000120>
-read(4, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 131072) = 131072 <0.000032>
-write(5, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 131072) = 131072 <0.000119>
-read(4, 0x7fccf28ae000, 131072)         = -1 EIO (Input/output error) <150.186215>
-
-[2]:
-[  333.696603] exFAT-fs (vdb): error, failed to access to FAT (entry 0x0000d780, err:-5)
-[  333.697378] exFAT-fs (vdb): error, failed to access to FAT (entry 0x0000d780, err:-5)
-[  333.698156] exFAT-fs (vdb): error, failed to access to FAT (entry 0x0000d780, err:-5)
-
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-YES. The change switches the hot error sites in `exfat_ent_get()` to the
-already-available rate-limited logger (`fs/exfat/fatent.c:96`, `:104`,
-`:112`, `:120`, `:128`), so the driver still returns the same `-EIO`
-codes but no longer emits hundreds of thousands of synchronous
-`exfat_fs_error()` messages that were stretching the failing read path
-to ~150 s. Because `exfat_fs_error_ratelimit()` simply gates the printk
-while preserving the remount/panic handling in `__exfat_fs_error()`
-(`fs/exfat/exfat_fs.h:555-561`, `fs/exfat/misc.c:26-47`), correctness
-isn’t touched. The rate limiter is already initialized per superblock
-(`fs/exfat/super.c:803-808`) and used in other exFAT paths
-(`fs/exfat/inode.c:288`), so the patch aligns this high-frequency error
-path with existing practice. This is a contained fix for a user-visible
-regression (extreme latency when media disappears), introduces no
-architectural changes, and applies cleanly to stable trees that already
-ship the same infrastructure.
+YES
 
- fs/exfat/fatent.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+- What it fixes
+  - Prevents nonsensical MOVE_MOUNT_BENEATH operations from proceeding
+    when the destination is not a mount root or when the topmost mount
+    has no parent (i.e., namespace root). Previously this could “proceed
+    with meaningless results” and fail later; now it fails early with
+    -EINVAL as intended.
 
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index 232cc7f8ab92f..825083634ba2d 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -89,35 +89,36 @@ int exfat_ent_get(struct super_block *sb, unsigned int loc,
- 	int err;
+- Key changes
+  - Early validation in do_lock_mount():
+    - Adds `if (unlikely(beneath) && !path_mounted(path)) return
+      -EINVAL;` so non-mount-root targets are rejected immediately
+      (fs/namespace.c:do_lock_mount()).
+    - Adds a parent check under `mount_lock` in the ‘beneath’ path: `if
+      (unlikely(!mnt_has_parent(m))) { ... return -EINVAL; }` to reject
+      attempts beneath a namespace root before proceeding
+      (fs/namespace.c:do_lock_mount()).
+  - De-duplication: Removes the equivalent checks from
+    can_move_mount_beneath(), centralizing them where the mountpoint and
+    parent are actually determined
+    (fs/namespace.c:can_move_mount_beneath()).
+
+- Context in current tree
+  - The tree already performs an early `beneath && !path_mounted(path)`
+    rejection in do_lock_mount (see `fs/namespace.c:2732`), so
+    moving/keeping this check in do_lock_mount is aligned with the
+    patch’s intent.
+  - The explicit `mnt_has_parent()` guard is not currently enforced at
+    lock acquisition time in do_lock_mount; adding it there (while
+    holding `mount_lock`) closes a race and ensures the operation only
+    proceeds when a real parent exists.
+  - can_move_mount_beneath in this tree already focuses on
+    propagation/relationship checks and does not contain those
+    path/parent assertions (see around `fs/namespace.c:3417`), so
+    consolidating sanity checks into do_lock_mount is consistent and low
+    risk.
+
+- Why it’s a good stable candidate
+  - Bug fix: Enforces semantic preconditions for MOVE_MOUNT_BENEATH,
+    avoiding misleading or late failures.
+  - Small and contained: Changes are limited to fs/namespace.c, mostly
+    simple condition checks and code movement.
+  - No feature or architectural change: Just earlier, clearer
+    validation; the end result remains a failure for invalid usage.
+  - Concurrency-safe: Parent check is done while holding `mount_lock`,
+    reducing race windows between `mount_lock` and `namespace_sem`.
+
+- Regression risk
+  - Low. Users attempting invalid MOVE_MOUNT_BENEATH operations will now
+    get -EINVAL earlier rather than later. Valid usages are unaffected.
+
+ fs/namespace.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index c8c2376bb2424..fa7c034ac4a69 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2785,12 +2785,19 @@ static int do_lock_mount(struct path *path, struct pinned_mountpoint *pinned, bo
+ 	struct path under = {};
+ 	int err = -ENOENT;
  
- 	if (!is_valid_cluster(sbi, loc)) {
--		exfat_fs_error(sb, "invalid access to FAT (entry 0x%08x)",
-+		exfat_fs_error_ratelimit(sb,
-+			"invalid access to FAT (entry 0x%08x)",
- 			loc);
- 		return -EIO;
- 	}
++	if (unlikely(beneath) && !path_mounted(path))
++		return -EINVAL;
++
+ 	for (;;) {
+ 		struct mount *m = real_mount(mnt);
  
- 	err = __exfat_ent_get(sb, loc, content);
- 	if (err) {
--		exfat_fs_error(sb,
-+		exfat_fs_error_ratelimit(sb,
- 			"failed to access to FAT (entry 0x%08x, err:%d)",
- 			loc, err);
- 		return err;
- 	}
+ 		if (beneath) {
+ 			path_put(&under);
+ 			read_seqlock_excl(&mount_lock);
++			if (unlikely(!mnt_has_parent(m))) {
++				read_sequnlock_excl(&mount_lock);
++				return -EINVAL;
++			}
+ 			under.mnt = mntget(&m->mnt_parent->mnt);
+ 			under.dentry = dget(m->mnt_mountpoint);
+ 			read_sequnlock_excl(&mount_lock);
+@@ -3462,8 +3469,6 @@ static bool mount_is_ancestor(const struct mount *p1, const struct mount *p2)
+  * @to:   mount under which to mount
+  * @mp:   mountpoint of @to
+  *
+- * - Make sure that @to->dentry is actually the root of a mount under
+- *   which we can mount another mount.
+  * - Make sure that nothing can be mounted beneath the caller's current
+  *   root or the rootfs of the namespace.
+  * - Make sure that the caller can unmount the topmost mount ensuring
+@@ -3485,12 +3490,6 @@ static int can_move_mount_beneath(const struct path *from,
+ 		     *mnt_to = real_mount(to->mnt),
+ 		     *parent_mnt_to = mnt_to->mnt_parent;
  
- 	if (*content == EXFAT_FREE_CLUSTER) {
--		exfat_fs_error(sb,
-+		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT free cluster (entry 0x%08x)",
- 			loc);
- 		return -EIO;
- 	}
+-	if (!mnt_has_parent(mnt_to))
+-		return -EINVAL;
+-
+-	if (!path_mounted(to))
+-		return -EINVAL;
+-
+ 	if (IS_MNT_LOCKED(mnt_to))
+ 		return -EINVAL;
  
- 	if (*content == EXFAT_BAD_CLUSTER) {
--		exfat_fs_error(sb,
-+		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT bad cluster (entry 0x%08x)",
- 			loc);
- 		return -EIO;
- 	}
- 
- 	if (*content != EXFAT_EOF_CLUSTER && !is_valid_cluster(sbi, *content)) {
--		exfat_fs_error(sb,
-+		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT (entry 0x%08x) bogus content (0x%08x)",
- 			loc, *content);
- 		return -EIO;
 -- 
 2.51.0
 
