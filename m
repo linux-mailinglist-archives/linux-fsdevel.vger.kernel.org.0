@@ -1,117 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-65636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519D4C09E18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 19:57:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F31C09E95
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 20:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886A1406DEF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 17:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D68C3BFDE0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Oct 2025 18:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5087F303A1A;
-	Sat, 25 Oct 2025 17:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB95C301039;
+	Sat, 25 Oct 2025 18:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ECXAMnnY"
+	dkim=pass (2048-bit key) header.d=tutamail.com header.i=@tutamail.com header.b="qJRtWQFk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mail.w13.tutanota.de (mail.w13.tutanota.de [185.205.69.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A962A2FC027;
-	Sat, 25 Oct 2025 17:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931C61C69D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Oct 2025 18:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761415029; cv=none; b=IJUSKErmfUpmLAkIxXW/EvmouguH+OKqc0bq+FgGaqxMMsDkwS6vw4iLxjtz7/4jd5tm4D/b01bz3dig9V/J+5kpQowaYB+EZze4LEr0mMwcfb0LItjz0AM4ewcc/c7/d13iL9EPsvJ5hE3++tq9qE0DTngR4SS5h8oAWEB0+AA=
+	t=1761418167; cv=none; b=K/ZnMOf8v+NTdjOaplpmd+8NJRCj/bxtdzpwqlNDFZ+gQWn2gQ0RqKKhbUMOtd5ZdlFeAi5EUiMObQB+Qmc5HMoPsOlz/n0+498FXIWTZxq1Lu3qrfv2gKxRhg++XLkvPnlgtbFwYUDN7/4H/EWa7FTLysL2hiMzB8RrTQ1eXMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761415029; c=relaxed/simple;
-	bh=bnsS9Z2tUWZFYzST6NRYQcpqSZJrSfuEGOlxVww4oN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDzhL7bMoHIAWlPvn5jfQLVWaQcKuhpuMcfrwq7tgVaYDmkOnbKfxbKaGX0LGCYwFS0jrv0XDHNr+O5GPtnulI8IEQLSe/6QhrMdDn/OxczhAYABQ3cHO9eoxQjfe2GXE2+EmfRh5EfJInI80wht02mMw5urZ6+NFfjt/6s11Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ECXAMnnY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Z9vGoY+nbBaOsbKg03YXEdXl7WE0FeSV0k77hTLT5bU=; b=ECXAMnnYzkobhQTzmNKTN+D2JT
-	LJwyNcLznU3digEnaytP90GukMfPxEKZNmmye4UGQ19jzCPM3wd8PiPgiIC7rzd+6qJXDIQYUGAyA
-	2UjXIykYnLNnFjQKG2y5vqoMwm4cV0lUhRAAqEJlVF3M3zZ38cWcedP3YCY3Zo3DJvEsndNjmucqF
-	tvLgUBTnHX9radZQYvZRG6yBwaTBX/qMTHGwJRZTD6p+bs9wPQvNqZ60kUFBpHzb8kJU1LZEJSGuJ
-	mUz2Mv1HnWqADDRfXGwQitYT2Rk39kHpK7WCBCsp+5eG/+hoxz7/sVJnLd6cN+Qp+3TFITzoZ/ST+
-	L/vzx7tQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCiVd-00000001ILI-4AtI;
-	Sat, 25 Oct 2025 17:56:58 +0000
-Date: Sat, 25 Oct 2025 18:56:57 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-	linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, yi.zhang@huawei.com, yangerkun@huawei.com,
-	chengzhihao1@huawei.com, libaokun1@huawei.com,
-	catherine.hoang@oracle.com
-Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
- __alloc_pages_slowpath() when BS > PS
-Message-ID: <aP0PachXS8Qxjo9Q@casper.infradead.org>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-23-libaokun@huaweicloud.com>
- <aPxV6QnXu-OufSDH@casper.infradead.org>
- <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
+	s=arc-20240116; t=1761418167; c=relaxed/simple;
+	bh=XQLq6SqPfOgW1k3I84AdyQa2oOQTXjEzBu/EanGLgns=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=YIm9K9uJlzZe+WO7uTTzblHicch98995RwgziwZVMLVv7M6HGgSiYCc8O1PkYUb5yBKGpuZV76jK2GnOPM/QjYpdPT+CqiEyDlpMMG+bt+/qn/7vivEn/2ay8z6QVsDl/P5j4gfePErxbFMRv0rO7p24s0rerd6EPJxZDUJKi3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tutamail.com; spf=pass smtp.mailfrom=tutamail.com; dkim=pass (2048-bit key) header.d=tutamail.com header.i=@tutamail.com header.b=qJRtWQFk; arc=none smtp.client-ip=185.205.69.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tutamail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tutamail.com
+Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
+	by mail.w13.tutanota.de (Postfix) with ESMTP id DBCE4D546EFB
+	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Oct 2025 20:40:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761417645;
+	s=s1; d=tutamail.com;
+	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:Sender;
+	bh=XQLq6SqPfOgW1k3I84AdyQa2oOQTXjEzBu/EanGLgns=;
+	b=qJRtWQFkPgbgSHI4MwSPlPUwkistwx6ETXobuxOu9HVa43QAWHgB0vAnoLY/e+1x
+	9U9CI7rCbXYRowVFTdtt1W1HUz9D5PRUfOXD6gl9g+nAlsXWjXij3u9HfLgLo5Ql8Dx
+	BttrJMsBFCexjHw6mRyfqPUrsJSvdryLhOoXbspIfn46K/4kO8aF9xcXc7wCMH77iai
+	SnI4tXOrh77lKdRGSPLF5a2/52VbYAYk0lu8ygLgoaZfeRElBkJ+F7QxsEvM1mlgej7
+	CXDGsMxfGNRFFuhrUNmD7JT/NSmr+g8q0wEJmJsVoBp7RzlpRpjk8mw5iDiCwbQVM9g
+	ZDPqgZYktg==
+Date: Sat, 25 Oct 2025 20:40:45 +0200 (GMT+02:00)
+From: craftfever@tutamail.com
+To: Linkinjeon <linkinjeon@kernel.org>
+Cc: Linux Fsdevel <linux-fsdevel@vger.kernel.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Iamjoonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Cheol Lee <cheol.lee@lge.com>, Jay Sim <jay.sim@lge.com>,
+	Gunho Lee <gunho.lee@lge.com>
+Message-ID: <OcRf3_Q--F-9@tutamail.com>
+Subject: [FS-DEV][NTFSPLUS][BUGREPORT]NtfsPlus extend mft data allocation
+ error.
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25, 2025 at 02:32:45PM +0800, Baokun Li wrote:
-> On 2025-10-25 12:45, Matthew Wilcox wrote:
-> > On Sat, Oct 25, 2025 at 11:22:18AM +0800, libaokun@huaweicloud.com wrote:
-> >> +	while (1) {
-> >> +		folio = __filemap_get_folio(mapping, index, fgp_flags,
-> >> +					    gfp & ~__GFP_NOFAIL);
-> >> +		if (!IS_ERR(folio) || !(gfp & __GFP_NOFAIL))
-> >> +			return folio;
-> >> +
-> >> +		if (PTR_ERR(folio) != -ENOMEM && PTR_ERR(folio) != -EAGAIN)
-> >> +			return folio;
-> >> +
-> >> +		memalloc_retry_wait(gfp);
-> >> +	}
-> > No, absolutely not.  We're not having open-coded GFP_NOFAIL semantics.
-> > The right way forward is for ext4 to use iomap, not for buffer heads
-> > to support large block sizes.
-> 
-> ext4 only calls getblk_unmovable or __getblk when reading critical
-> metadata. Both of these functions set __GFP_NOFAIL to ensure that
-> metadata reads do not fail due to memory pressure.
 
-If filesystems actually require __GFP_NOFAIL for high-order allocations,
-then this is a new requirement that needs to be communicated to the MM
-developers, not hacked around in filesystems (or the VFS).  And that
-communication needs to be a separate thread with a clear subject line
-to attract the right attention, not buried in patch 26/28.
 
-For what it's worth, I think you have a good case.  This really is
-a new requirement (bs>PS) and in this scenario, we should be able to
-reclaim page cache memory of the appropriate order to satisfy the NOFAIL
-requirement.  There will be concerns that other users will now be able to
-use it without warning, but I think eventually this use case will prevail.
+Hi, I' decided to test your new driver, as I found ntfs3 driver buggy and c=
+ausing system crush under huge amount of files writing ti disk ("I'm report=
+ed this bug already on lore.kernel maillists). The thing is ntfsplus demons=
+trated buggy behavior in somewhat similar situation, but without system cru=
+shing or partition corruption. When I try, for example, download many small=
+ files through download manager, download can interrupt, and cosole version=
+ writes about memory allocation error. Similar error was in ntfs3 driver, b=
+ut in this case with ntfsplus there is no program/system crash, just soft-e=
+rroring and interrupting, but files cannot be wrote in this case. In dmesg =
+this errors follow up with this messages:
 
-> Both functions eventually call grow_dev_folio(), which is why we
-> handle the __GFP_NOFAIL logic there. xfs_buf_alloc_backing_mem()
-> has similar logic, but XFS manages its own metadata, allowing it
-> to use vmalloc for memory allocation.
+[16952.870880] ntfsplus: (device sdc1): ntfs_mft_record_alloc(): Failed to =
+extend mft data allocation.
+[16954.299230] ntfsplus: (device sdc1): ntfs_mft_data_extend_allocation_nol=
+ock(): Not enough space in this mft record to accommodate extended mft data=
+ attribute extent.=C2=A0 Cannot handle this yet.
 
-The other possibility is that we switch ext4 away from the buffer cache
-entirely.  This is a big job!  I know Catherine has been working on
-a generic replacement for the buffer cache, but I'm not sure if it's
-ready yet.
+I know. that driver in development now, so I'm reporting this bug in time w=
+hen development is still in process. Thank you
 
