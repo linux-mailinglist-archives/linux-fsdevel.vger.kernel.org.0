@@ -1,176 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-65641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68538C0AD1C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 17:05:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B2FC0AEB1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 18:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1FE18A15A8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 16:05:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72911189AEA2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 17:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4F4214228;
-	Sun, 26 Oct 2025 16:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10792DF128;
+	Sun, 26 Oct 2025 17:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVtW0NKe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7dR/cFS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAD845C0B;
-	Sun, 26 Oct 2025 16:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1F8205E26;
+	Sun, 26 Oct 2025 17:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761494701; cv=none; b=CSr62wCUTNzU7FYBZXTDeANpTmpY1xH5PERbSFVWgeTgqLTIVNEJzYS9m8VKdPC7lCMc455x7xDpFWwVVGOw85kd2AW083gsIHQmrb4K+BU3sbx2Xir3Fi6PjMRKDUEN0jnI5YYUdbHnx+SI5rg42+JNnXDRIfBbb1axXnla1Rw=
+	t=1761499661; cv=none; b=X4NYPc1dBGk0e4o13C/SIl5qsMLkYyf7Fi17nLbLuHaaciy0zC/BVC0FVuCxaMkdw81CmU2NGv82vNMtc9jfzlVdCUbfu4Loj9SQoG/I9Cy0RhvQcuuYhvlMB0v35R95Er6MfGqzPvxmYNyBhF3tIUz+c+SVIdpMsREwADtr8Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761494701; c=relaxed/simple;
-	bh=l7JPkliu+UAJY5jgLqKO+0m/pMNLoNR87mNscuCPqhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZVwcl7R94FKOADTOEJA3xYIi0iTV1FVp53wNOj+nR8gi6xZosseAearHn922EbTmWdWiuEzLGH+3W07aNhFdpZOO8TzTYJ92RlPVeprzIfnA4yuhYl7I99lUj8JB9+0FC67ZUfLhiBM9cilI4f6P74edLoysu1CiUAVVoO3jy0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVtW0NKe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D019DC4CEE7;
-	Sun, 26 Oct 2025 16:04:58 +0000 (UTC)
+	s=arc-20240116; t=1761499661; c=relaxed/simple;
+	bh=ojMKD630vCvaxyVc4ANcWJgQ82Xcn/ry9tixOPvqfaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDwBHHKXNEf1sNm/K5CyN9XVEoSFf7zMLXUJY1jQjqaMNiBr+5wdqdPbge1nAFVbrLOGLMDsuIu3RF7+kAvo+M+dLE+aE/s7RCySa4NBMDmqa0ruBvKC8HvO8UccQSguxps1NvTtFaYoGBO+e48cxZW93rBezZXwpvlNUcDfppg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7dR/cFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB12DC4CEE7;
+	Sun, 26 Oct 2025 17:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761494700;
-	bh=l7JPkliu+UAJY5jgLqKO+0m/pMNLoNR87mNscuCPqhU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cVtW0NKeE9+CKIn2dxUtvyxQTcVBo2OzidnfN8htCwbPWpSB1XMuemJIcPEWAZM3b
-	 bRe0TG/rWB1cLfzjIjYD7wZyRZgR9Fj1c1uNFQWRKnPag6j7Qwwf82h7YJAdDWJ6Ab
-	 yxGHmGJ/pgobJEX/BFUsh2wqo8YGQp9I1nmjS6uNsNwj2U6RrUcwrnOgONCRvKIi2P
-	 Usva7N/bsQXopbVKo5FzJ1xPU5ROegU21mq6V4hmzKXq3VLFFYJMlSnQ8aIDZN43HX
-	 q9IlwrPhYYIw8UXDnyYDB/kXwzR87H2UCv5D2+wro75USR+JwwtiKs1JGhIuxfJnu1
-	 EovmCwQVFBcBA==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org
-Cc: Jakub Acs <acsjakub@amazon.de>,
-	Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-unionfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.6.y] fs/notify: call exportfs_encode_fid with s_umount
-Date: Sun, 26 Oct 2025 12:04:56 -0400
-Message-ID: <20251026160456.99836-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <2025102612-kissing-atrocious-4949@gregkh>
-References: <2025102612-kissing-atrocious-4949@gregkh>
+	s=k20201202; t=1761499660;
+	bh=ojMKD630vCvaxyVc4ANcWJgQ82Xcn/ry9tixOPvqfaM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D7dR/cFSC4iWlihjR6+jdiVgcLq9yPP0qHXB3fogNjF5KJEIjLjeGUuHIFVvdHqeZ
+	 hq6yb7g9VDWed7505L3Hzgb9/JtA074FSBkexLXLYQu4aD/ntNAAatt6uiJUyWyS1w
+	 QQCx8gYod0ga67iXjRse8C4yQDL4E0xTaRW2CHNj+8UJ/yPG3dkSoLcmUMGdZwit+U
+	 6DfeUXf5YrmJ04JKBiwRB4JlqCVRdnni9hxDQap+wyLEiKSKAxqTQHNZO8PYRjtA4O
+	 MXS7zh9NWqkK3n7ZLYWW+pvba4ua5eEnYNzenS8dXrFavp54mXFXhkR5fQ/soZ1a/d
+	 9T5RNNAmB95Zg==
+Date: Sun, 26 Oct 2025 18:27:32 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: brauner@kernel.org, cyphar@cyphar.com, dhowells@redhat.com, 
+	g.branden.robinson@gmail.com, jack@suse.cz, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	mtk.manpages@gmail.com, safinaskar@zohomail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 0/8] man2: document "new" mount API
+Message-ID: <tfy2f45ah23b65gdlitiaffwy6nltevmo3z2akwnc3nbpkfh6w@ihzheoumkysn>
+References: <hk5kr2fbrpalyggobuz3zpqeekzqv7qlhfh6sjfifb6p5n5bjs@gjowkgi776ey>
+ <20251026122742.960661-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u7izvt4jolxhgk5l"
+Content-Disposition: inline
+In-Reply-To: <20251026122742.960661-1-safinaskar@gmail.com>
 
-From: Jakub Acs <acsjakub@amazon.de>
 
-[ Upstream commit a7c4bb43bfdc2b9f06ee9d036028ed13a83df42a ]
+--u7izvt4jolxhgk5l
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: brauner@kernel.org, cyphar@cyphar.com, dhowells@redhat.com, 
+	g.branden.robinson@gmail.com, jack@suse.cz, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	mtk.manpages@gmail.com, safinaskar@zohomail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 0/8] man2: document "new" mount API
+Message-ID: <tfy2f45ah23b65gdlitiaffwy6nltevmo3z2akwnc3nbpkfh6w@ihzheoumkysn>
+References: <hk5kr2fbrpalyggobuz3zpqeekzqv7qlhfh6sjfifb6p5n5bjs@gjowkgi776ey>
+ <20251026122742.960661-1-safinaskar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20251026122742.960661-1-safinaskar@gmail.com>
 
-Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
-the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
+Hi Askar,
 
-This issue was found by syzkaller.
+On Sun, Oct 26, 2025 at 03:27:42PM +0300, Askar Safin wrote:
+> Alejandro Colomar <alx@kernel.org>:
+> > The full patch set has been merged now.  I've done a merge commit where
+>=20
+> Alejandro, I still don't see manpages for "new" mount API here:
+> https://man7.org/linux/man-pages/dir_section_2.html
 
-Race Condition Diagram:
+<man7.org> is not official.  It's Michael Kerrisk's (previous
+maintainer) website.  He usually publishes new pages shortly-ish after
+each new release, and I haven't issued a new release yet.
 
-Thread 1                           Thread 2
---------                           --------
+I have plans to release soon-ish, but have internet issues at home (the
+cable in the street is broken, so I'm connecting on cell internet from
+the laptop).  Hopefully, I'll be able to release this month.
 
-generic_shutdown_super()
- shrink_dcache_for_umount
-  sb->s_root = NULL
 
-                    |
-                    |             vfs_read()
-                    |              inotify_fdinfo()
-                    |               * inode get from mark *
-                    |               show_mark_fhandle(m, inode)
-                    |                exportfs_encode_fid(inode, ..)
-                    |                 ovl_encode_fh(inode, ..)
-                    |                  ovl_check_encode_origin(inode)
-                    |                   * deref i_sb->s_root *
-                    |
-                    |
-                    v
- fsnotify_sb_delete(sb)
+Have a lovely day!
+Alex
 
-Which then leads to:
+>=20
+> Please, publish.
+>=20
+> --=20
+> Askar Safin
+>=20
 
-[   32.133461] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-[   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-[   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted 6.17.0-rc6 #22 PREEMPT(none)
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
 
-<snip registers, unreliable trace>
+--u7izvt4jolxhgk5l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[   32.143353] Call Trace:
-[   32.143732]  ovl_encode_fh+0xd5/0x170
-[   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
-[   32.144425]  show_mark_fhandle+0xbe/0x1f0
-[   32.145805]  inotify_fdinfo+0x226/0x2d0
-[   32.146442]  inotify_show_fdinfo+0x1c5/0x350
-[   32.147168]  seq_show+0x530/0x6f0
-[   32.147449]  seq_read_iter+0x503/0x12a0
-[   32.148419]  seq_read+0x31f/0x410
-[   32.150714]  vfs_read+0x1f0/0x9e0
-[   32.152297]  ksys_read+0x125/0x240
+-----BEGIN PGP SIGNATURE-----
 
-IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
-to NULL in the unmount path.
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmj+WgQACgkQ64mZXMKQ
+wqkeVxAAhVvnync+BnWREmvpRHx2InmUvxBQFNSS8P4y7gFTW6KFP25hSxhNrg40
+i4GhHEBpu9Ub0NCdNlgW83bKhy6U11w/eCgfxx3rSmbucn6e+aC8smgiv5tpI3CV
+sD7/0GNsTIgwQyDC1OSewjah49Dx9jCBdR0ncOWrS10Ya2WieXJ+1teyfLpw5a7l
+PfRTiREwMsIWGuPvVXbpnzSUWGXvi9Mq5NQ1u1XVcxbAlCQ74Tra4ZpBUpjZ0Gn9
+pxgAnJ/PWIYq18Atem/7zT8i52dOHO8TYL/d1b5i7xXQn5GlcqgceESkpet8Zxv0
++Y9jPDRTJxXbYfVEd1593KZ1gy+ucQBU2KCmPw2ql4++4ETKnl3mlOHosydfVrTV
+hakjNGhQSU0lW8oKNeTa/13dNiDpe+NbGlDFTiFEdlvPQWX/17OLLiJ7MDYTzvgb
+R5x6fHjesq2dbMD2XRSZ+dMj6yAndnl+kXEsQgneSPvrcrxje+6Mc0Wt9uDnvKPG
+Yr/+IDSWQZh0QpNwXC+8h/PRrGPl/T3NWwPHeyHPVKNZIBRGQU3As6hpOhxF3MLH
+XomgOw5wwg+G5NjTmYWobxX4NtxpBosyITGeeYTz0Er+1GXowRjpya9xin9Ba9AL
+fH9lTpYFHsnHGrocVyMaJVzYPaokjnI0jm7IKiHDl+vh945nHWo=
+=Dmul
+-----END PGP SIGNATURE-----
 
-Fix it by protecting calling exportfs_encode_fid() from
-show_mark_fhandle() with s_umount lock.
-
-This form of fix was suggested by Amir in [1].
-
-[1]: https://lore.kernel.org/all/CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com/
-
-Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias")
-Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-[ Adjust context ]
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/notify/fdinfo.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 26655572975d3..1aa7de55094cd 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -17,6 +17,7 @@
- #include "fanotify/fanotify.h"
- #include "fdinfo.h"
- #include "fsnotify.h"
-+#include "../internal.h"
- 
- #if defined(CONFIG_PROC_FS)
- 
-@@ -50,7 +51,12 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- 	f.handle.handle_bytes = sizeof(f.pad);
- 	size = f.handle.handle_bytes >> 2;
- 
-+	if (!super_trylock_shared(inode->i_sb))
-+		return;
-+
- 	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
-+	up_read(&inode->i_sb->s_umount);
-+
- 	if ((ret == FILEID_INVALID) || (ret < 0))
- 		return;
- 
--- 
-2.51.0
-
+--u7izvt4jolxhgk5l--
 
