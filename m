@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-65645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD52FC0B2FF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 21:36:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BF4C0B329
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 21:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFA11888395
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 20:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6542C3BB191
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Oct 2025 20:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2CB2FE049;
-	Sun, 26 Oct 2025 20:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396992FF161;
+	Sun, 26 Oct 2025 20:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W0yuZLMx"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vEjYeajO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C932FE055
-	for <linux-fsdevel@vger.kernel.org>; Sun, 26 Oct 2025 20:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC52E26A0B9
+	for <linux-fsdevel@vger.kernel.org>; Sun, 26 Oct 2025 20:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761510982; cv=none; b=Trul7LcEDJBV056HCvxc7g54zjXh53yOrz2Or2khZkfRDaoPpOVS9+9llUGx4589WI8T7ZB+iqVOS5s1DwL/quch0XhIdG/821Np6WRLFEKxZpFOv+DfXoiHVB0yK92U3HAwZ9ZsG0cLzitiqVSpj9oWpo4VS1aDL+y+wDZjvEI=
+	t=1761510984; cv=none; b=SJca2+CxmLpq8nsbPOIQYzjOQSObSk7mqXrrAJOpL+upIkS5NzxcF6zbGkHlibToqu/qGb9SzNECCVbUuZevNwH54xRat2ZxL9qxtyASjLEwhWCVrl3wxEEdY+sji2RuZOfAAIsF7UahbLaWxKVwQaHMSQ3SVz1zxvWssjnqlQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761510982; c=relaxed/simple;
-	bh=QuxbnIJY4zttbFleGXLAX5MQ12fDQs4gIZS1TSv63Bk=;
+	s=arc-20240116; t=1761510984; c=relaxed/simple;
+	bh=QdobSCFFDwZco5H10+mCZIVaLZD/bxvZhAPtHu84mSM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kpdzO+fkMp29PbUmqn9FLDHFWF/K42/KDo+lR8liK5Qi/cHKMvm+EnmJaf8CNbt4pwg7nagwCGVesBKAL4vSN9v/7DjKLUTWZbpK7ww/IK78hAHo03NHzEA4ijx30QOIHmrJRy2O5I3AOyDyMTtDlbtQ/RU/7i/oDHF7OhNiL7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W0yuZLMx; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=nT8b0oesR5K+6IGujI132vzAgyQorJsFp2Ji1M5nV+Ml34OY5ob8ujk76F5BvteyPpil2ZlitRNPdIYkxpnxzPbHSHc+2ZYEfHhCGhmt2OkhsxD17cqbbTY4fQ52IJNWwxPtxZjY5M1EkDDlFlWHL9AQSUPjrr3DR/RNvEOolFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vEjYeajO; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-785ebbc739aso20317247b3.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Oct 2025 13:36:20 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso2421892a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Oct 2025 13:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761510980; x=1762115780; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761510982; x=1762115782; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IMCyHr31TLzATbQuHg3ruEQF/2874D74tyKjOOWzy0s=;
-        b=W0yuZLMxinVLKW1xISBfd9Vp0yxe4XroEJ5JAXOtme969TKaGeGJ2GktG7X2qogoKW
-         mgBTAonZFO1uYsUCsDETNfvr3hNipazOVbXNojkQRMArY+hHs/iMXgxUubdxItfZxeTr
-         2L9o3zOVuPPsplWPNspXDYQ8rntZGs6S74F8rUDQAjodP0jEsY6vVeK2HMENZyb8HVJz
-         uCOROT0hNQiBbD+50VPh/NPSHecMwVLY1wZI6ponRgK/peVLE0jCFFRSh3zVZbzSqnLQ
-         939LLxl1mNaq6rWFlP8V31lXwnF8KdIVFH2jFbDN6UXsa+QO1SQ6+hrvHNfvRKCL/acS
-         6EPQ==
+        bh=WjcuHpYYcQHcLMxflMYQWhRGNmSrL1U/STCZpS9nknA=;
+        b=vEjYeajO3IgfKZ963vKoCuZ9klq3xlcHp8hTa1/3XLR6caQFql4lBhTbK9VJEYuvjp
+         Y6rAYB+lW0a1CaUG2BWN1+PKu3nSj0Cgqo5/haFuKalvDeEi7ajZfgfMQnq81hrkCs0x
+         +ScsxiXKYL66IT9swxjCmrfmWW06IAxSgatvcZKVc7fE1szTjpUnHuEomrpVJxOp2jF+
+         GykRSNH1dXjAFQX4NvM/Kfb/Tod7Jh2MwCz57LYUvUpEzfl8Upei2QgChQqsUp0vF070
+         UXjavm2PjmmazZ5DXTvT42u2OTnMWvObmDQ/AoGyH4zEG/5taVaSDeGjoJei7UZk4wRc
+         1U7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761510980; x=1762115780;
+        d=1e100.net; s=20230601; t=1761510982; x=1762115782;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IMCyHr31TLzATbQuHg3ruEQF/2874D74tyKjOOWzy0s=;
-        b=oWCDKf5JdAKy+yfKKJoYCzFJe2aTfM5lQK0aT+AWPXWysVsyR3m3yYbzZhJzLQUNiO
-         py0tYmdQ2HrK90sPQ0fePvWhLHapCLNa613G5ix87lK1xVynVnBtmcs1XHk34nuxMfUu
-         ASumVv4iK6ISR9E2R4h6QYi9gbbg+D8ZIXtBMJ5KQRMI8CMj9cIFFGVQ7Dcxnu7ML4jR
-         iLjzEUi1XF3TWlrEY0j06pwZ1o8riGooJnyaw8xaaJhR+diF7L2W2PY175LiNSj3XvuQ
-         KhAUagqzO4LwiM8vbosFF//LKS3x1n+dhRqp0YD3a66uxsqjub8Nr77uFSedgta0TL9B
-         aZdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGODgEQJ2Mj53x+1Wa+p/JmB4R8+tHaf+NRd1u9emuALD3zlI8dIBM5zU9tQh780Ttd/NUrN7CylJXI4EC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze+8muTKH/2pe42QArJp7ioxWDZ5ppoKtPbGnvBiBSFtmdlVKt
-	eYtktGTOcmXseY8hkbFwp/mQ/fFquHJHSjzrgAaPmCurV0fhNtu+MByabWYdz70noIy3fdVd3gB
-	7juRqfQ==
-X-Google-Smtp-Source: AGHT+IHpMr9cFr0H62WPICb/ViZzGU3rsCsk6GeJaW1ZdGu5t8yZ0ftElBAnf4rqpT99zJhDJFFFka8CTI4=
-X-Received: from ywa1.prod.google.com ([2002:a05:690c:9401:b0:785:bb80:f2f5])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:f88:b0:784:9419:2787
- with SMTP id 00721157ae682-78494193880mr250052107b3.69.1761510979847; Sun, 26
- Oct 2025 13:36:19 -0700 (PDT)
-Date: Sun, 26 Oct 2025 13:36:05 -0700
+        bh=WjcuHpYYcQHcLMxflMYQWhRGNmSrL1U/STCZpS9nknA=;
+        b=HuoM64uRa3bgibStXKuW2WIFTvW29W8xb2xveqlfs6A4ekTMOb9UglMki0NISsOCP+
+         f8O1doQJt6RMiKSP32ATyHn4dWsamCSivx8LSy1gxZT3+TfX+/tNi+Uj+cMx6yszQgcx
+         2b3PxnMyBjte2TtItsoRdyXyRB6ipAcf1hrMpeqioQ3ragcic1w6J1fU216hmESZTuGy
+         Pwp3uMH7FAXnHVqRnL9FORWt4544DpyIM6citba49GcbGS+v6m4rfNVOuhYPmqsimHaT
+         SMuxc0hPy1BP+/lOhhGN41XRJkTDNstjSeDatQPJM4aEOqu3o5PI/WdbI6s5nm0ZflPU
+         550Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURvVbTYV8wF5jrJGgXVnIae0uhumkB2OJ79zJIQtfT+kwT68qRVyQsFd7OsTAXG2TL1o/wJps9g0wn9VoB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKj/hces4xqU9B7GPum7iWZWKfNFUk4pOmNjfejwiXrnNdf1xx
+	lBZtKHBGTAJNMx7+SBbJziWFTXBIyrhT+kq/xRGkh4iY2kLjW2wqLSy/zcN6vlnDisEz1euLcn8
+	UzOOJVg==
+X-Google-Smtp-Source: AGHT+IGjcHCIP4ct/x+2y/THOCKsvE9F5w9jWhI/lZb7MjaZDIeaamZd+nSYaoL2Nf3TsDz920cb3q85adE=
+X-Received: from pjb3.prod.google.com ([2002:a17:90b:2f03:b0:33e:34c2:1e17])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3942:b0:336:bfce:3b48
+ with SMTP id 98e67ed59e1d1-33bcf87f431mr47241846a91.9.1761510981924; Sun, 26
+ Oct 2025 13:36:21 -0700 (PDT)
+Date: Sun, 26 Oct 2025 13:36:06 -0700
 In-Reply-To: <20251026203611.1608903-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251026203611.1608903-1-surenb@google.com>
 X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251026203611.1608903-3-surenb@google.com>
-Subject: [PATCH v2 2/8] mm/cleancache: add cleancache LRU for folio aging
+Message-ID: <20251026203611.1608903-4-surenb@google.com>
+Subject: [PATCH v2 3/8] mm/cleancache: readahead support
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
@@ -88,192 +88,203 @@ Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
 	minchan@kernel.org, surenb@google.com, linux-mm@kvack.org, 
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	iommu@lists.linux.dev, Minchan Kim <minchan@google.com>
+	iommu@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-Once all folios in the cleancache are used to store data from previously
-evicted folios, no more data can be stored there. To avoid that situation
-we can drop older data and make space for new one.
-Add an LRU for cleancache folios to reclaim the oldest folio when
-cleancache is full and we need to store a new folio.
+Restore pages from the cleancache during readahead operation.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Minchan Kim <minchan@google.com>
 ---
- mm/cleancache.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 89 insertions(+), 2 deletions(-)
+ include/linux/cleancache.h | 13 +++++++++
+ mm/cleancache.c            | 58 ++++++++++++++++++++++++++++++++++++++
+ mm/readahead.c             | 54 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 125 insertions(+)
 
+diff --git a/include/linux/cleancache.h b/include/linux/cleancache.h
+index 419faa183aba..75361d1cfe3f 100644
+--- a/include/linux/cleancache.h
++++ b/include/linux/cleancache.h
+@@ -11,6 +11,7 @@
+ 
+ #define CLEANCACHE_KEY_MAX	6
+ 
++struct cleancache_inode;
+ 
+ #ifdef CONFIG_CLEANCACHE
+ 
+@@ -21,6 +22,11 @@ bool cleancache_store_folio(struct inode *inode, struct folio *folio);
+ bool cleancache_restore_folio(struct inode *inode, struct folio *folio);
+ bool cleancache_invalidate_folio(struct inode *inode, struct folio *folio);
+ bool cleancache_invalidate_inode(struct inode *inode);
++struct cleancache_inode *
++cleancache_start_inode_walk(struct inode *inode, unsigned long count);
++void cleancache_end_inode_walk(struct cleancache_inode *ccinode);
++bool cleancache_restore_from_inode(struct cleancache_inode *ccinode,
++				   struct folio *folio);
+ 
+ /*
+  * Backend API
+@@ -50,6 +56,13 @@ static inline bool cleancache_invalidate_folio(struct inode *inode,
+ 		{ return false; }
+ static inline bool cleancache_invalidate_inode(struct inode *inode)
+ 		{ return false; }
++static inline struct cleancache_inode *
++cleancache_start_inode_walk(struct inode *inode, unsigned long count)
++		{ return NULL; }
++static inline void cleancache_end_inode_walk(struct cleancache_inode *ccinode) {}
++static inline bool cleancache_restore_from_inode(struct cleancache_inode *ccinode,
++						 struct folio *folio)
++		{ return false; }
+ static inline int cleancache_backend_register_pool(const char *name)
+ 		{ return -EOPNOTSUPP; }
+ static inline int cleancache_backend_get_folio(int pool_id, struct folio *folio)
 diff --git a/mm/cleancache.c b/mm/cleancache.c
-index 26fb91b987b7..3acf46c0cdd1 100644
+index 3acf46c0cdd1..6be86938c8fe 100644
 --- a/mm/cleancache.c
 +++ b/mm/cleancache.c
-@@ -18,6 +18,13 @@
-  *
-  *	ccinode->folios.xa_lock
-  *		pool->lock
-+ *
-+ *	ccinode->folios.xa_lock
-+ *		lru_lock
-+ *
-+ *	ccinode->folios.xa_lock
-+ *		lru_lock
-+ *			pool->lock
-  */
- 
- #define INODE_HASH_BITS		6
-@@ -58,6 +65,8 @@ static struct kmem_cache *slab_inode; /* cleancache_inode slab */
- static struct cleancache_pool pools[CLEANCACHE_MAX_POOLS];
- static atomic_t nr_pools = ATOMIC_INIT(0);
- static DEFINE_SPINLOCK(pools_lock); /* protects pools */
-+static LIST_HEAD(cleancache_lru);
-+static DEFINE_SPINLOCK(lru_lock); /* protects cleancache_lru */
- 
- static inline void init_cleancache_folio(struct folio *folio, int pool_id)
- {
-@@ -73,6 +82,7 @@ static inline void clear_cleancache_folio(struct folio *folio)
- {
- 	/* Folio must be detached and not in the pool. No locking is needed. */
- 	VM_BUG_ON(folio->cc_inode);
-+	VM_BUG_ON(!list_empty(&folio->lru));
- 
- 	folio->cc_pool_id = -1;
- }
-@@ -123,6 +133,7 @@ static inline bool is_folio_attached(struct folio *folio)
- /*
-  * Folio pool helpers.
-  *	Only detached folios are stored in the pool->folio_list.
-+ *	Once a folio gets attached, it's placed on the cleancache LRU list.
-  *
-  * Locking:
-  *	pool->folio_list is accessed under pool->lock.
-@@ -174,6 +185,32 @@ static struct folio *pick_folio_from_any_pool(void)
- 	return folio;
+@@ -799,6 +799,64 @@ bool cleancache_invalidate_inode(struct inode *inode)
+ 	return count > 0;
  }
  
-+/* Folio LRU helpers. Only attached folios are stored in the cleancache_lru. */
-+static void add_folio_to_lru(struct folio *folio)
-+{
-+	VM_BUG_ON(!list_empty(&folio->lru));
-+
-+	spin_lock(&lru_lock);
-+	list_add(&folio->lru, &cleancache_lru);
-+	spin_unlock(&lru_lock);
-+}
-+
-+static void rotate_lru_folio(struct folio *folio)
-+{
-+	spin_lock(&lru_lock);
-+	if (!list_empty(&folio->lru))
-+		list_move(&folio->lru, &cleancache_lru);
-+	spin_unlock(&lru_lock);
-+}
-+
-+static void delete_folio_from_lru(struct folio *folio)
-+{
-+	spin_lock(&lru_lock);
-+	if (!list_empty(&folio->lru))
-+		list_del_init(&folio->lru);
-+	spin_unlock(&lru_lock);
-+}
-+
- /* FS helpers */
- static struct cleancache_fs *get_fs(int fs_id)
- {
-@@ -306,6 +343,7 @@ static void erase_folio_from_inode(struct cleancache_inode *ccinode,
- 
- 	removed = __xa_erase(&ccinode->folios, offset);
- 	VM_BUG_ON(!removed);
-+	delete_folio_from_lru(folio);
- 	remove_inode_if_empty(ccinode);
- }
- 
-@@ -403,6 +441,48 @@ static struct cleancache_inode *add_and_get_inode(struct cleancache_fs *fs,
- 	return ccinode;
- }
- 
-+static struct folio *reclaim_folio_from_lru(void)
++struct cleancache_inode *
++cleancache_start_inode_walk(struct inode *inode, unsigned long count)
 +{
 +	struct cleancache_inode *ccinode;
-+	struct folio *folio;
-+	pgoff_t offset;
++	struct cleancache_fs *fs;
++	int fs_id;
 +
-+again:
-+	spin_lock(&lru_lock);
-+	if (list_empty(&cleancache_lru)) {
-+		spin_unlock(&lru_lock);
++	if (!inode)
++		return ERR_PTR(-EINVAL);
++
++	fs_id = inode->i_sb->cleancache_id;
++	if (fs_id == CLEANCACHE_ID_INVALID)
++		return ERR_PTR(-EINVAL);
++
++	fs = get_fs(fs_id);
++	if (!fs)
++		return NULL;
++
++	ccinode = find_and_get_inode(fs, inode);
++	if (!ccinode) {
++		put_fs(fs);
 +		return NULL;
 +	}
-+	ccinode = NULL;
-+	/* Get the ccinode of the folio at the LRU tail */
-+	list_for_each_entry_reverse(folio, &cleancache_lru, lru) {
-+		struct cleancache_pool *pool = folio_pool(folio);
 +
-+		/* Find and get ccinode */
-+		spin_lock(&pool->lock);
-+		folio_attachment(folio, &ccinode, &offset);
-+		if (ccinode && !get_inode(ccinode))
-+			ccinode = NULL;
-+		spin_unlock(&pool->lock);
-+		if (ccinode)
-+			break;
-+	}
-+	spin_unlock(&lru_lock);
-+
-+	if (!ccinode)
-+		return NULL; /* No ccinode to reclaim */
-+
-+	if (!isolate_folio_from_inode(ccinode, offset, folio)) {
-+		/* Retry if the folio got erased from the ccinode */
-+		put_inode(ccinode);
-+		goto again;
-+	}
-+
-+	put_inode(ccinode);
-+
-+	return folio;
++	return ccinode;
 +}
 +
- static void copy_folio_content(struct folio *from, struct folio *to)
++void cleancache_end_inode_walk(struct cleancache_inode *ccinode)
++{
++	struct cleancache_fs *fs = ccinode->fs;
++
++	put_inode(ccinode);
++	put_fs(fs);
++}
++
++bool cleancache_restore_from_inode(struct cleancache_inode *ccinode,
++				   struct folio *folio)
++{
++	struct folio *stored_folio;
++	void *src, *dst;
++	bool ret = false;
++
++	xa_lock(&ccinode->folios);
++	stored_folio = xa_load(&ccinode->folios, folio->index);
++	if (stored_folio) {
++		rotate_lru_folio(stored_folio);
++		src = kmap_local_folio(stored_folio, 0);
++		dst = kmap_local_folio(folio, 0);
++		memcpy(dst, src, PAGE_SIZE);
++		kunmap_local(dst);
++		kunmap_local(src);
++		ret = true;
++	}
++	xa_unlock(&ccinode->folios);
++
++	return ret;
++}
++
+ /* Backend API */
+ /*
+  * Register a new backend and add its folios for cleancache to use.
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 3a4b5d58eeb6..878cc8dfa48e 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -128,6 +128,7 @@
+ #include <linux/blk-cgroup.h>
+ #include <linux/fadvise.h>
+ #include <linux/sched/mm.h>
++#include <linux/cleancache.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/readahead.h>
+@@ -146,12 +147,65 @@ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
+ }
+ EXPORT_SYMBOL_GPL(file_ra_state_init);
+ 
++static inline bool restore_from_cleancache(struct readahead_control *rac)
++{
++	XA_STATE(xas, &rac->mapping->i_pages, rac->_index);
++	struct cleancache_inode *ccinode;
++	struct folio *folio;
++	unsigned long end;
++	bool ret = true;
++
++	int count = readahead_count(rac);
++
++	/* Readahead should not have started yet. */
++	VM_BUG_ON(rac->_batch_count != 0);
++
++	if (!count)
++		return true;
++
++	ccinode = cleancache_start_inode_walk(rac->mapping->host, count);
++	if (!ccinode)
++		return false;
++
++	end = rac->_index + rac->_nr_pages - 1;
++	xas_for_each(&xas, folio, end) {
++		unsigned long nr;
++
++		if (xas_retry(&xas, folio)) {
++			ret = false;
++			break;
++		}
++
++		if (!cleancache_restore_from_inode(ccinode, folio)) {
++			ret = false;
++			break;
++		}
++
++		nr = folio_nr_pages(folio);
++		folio_mark_uptodate(folio);
++		folio_unlock(folio);
++		rac->_index += nr;
++		rac->_nr_pages -= nr;
++		rac->ra->size -= nr;
++		if (rac->ra->async_size >= nr)
++			rac->ra->async_size -= nr;
++	}
++
++	cleancache_end_inode_walk(ccinode);
++
++	return ret;
++}
++
+ static void read_pages(struct readahead_control *rac)
  {
- 	void *src = kmap_local_folio(from, 0);
-@@ -458,14 +538,19 @@ static bool store_into_inode(struct cleancache_fs *fs,
- 			move_folio_from_inode_to_pool(ccinode, offset, stored_folio);
- 			goto out_unlock;
- 		}
-+		rotate_lru_folio(stored_folio);
- 	} else {
- 		if (!workingset)
- 			goto out_unlock;
+ 	const struct address_space_operations *aops = rac->mapping->a_ops;
+ 	struct folio *folio;
+ 	struct blk_plug plug;
  
- 		stored_folio = pick_folio_from_any_pool();
- 		if (!stored_folio) {
--			/* No free folios, TODO: try reclaiming */
--			goto out_unlock;
-+			/* No free folios, try reclaiming */
-+			xa_unlock(&ccinode->folios);
-+			stored_folio = reclaim_folio_from_lru();
-+			xa_lock(&ccinode->folios);
-+			if (!stored_folio)
-+				goto out_unlock;
- 		}
++	/* Try to read all pages from the cleancache */
++	if (restore_from_cleancache(rac))
++		return;
++
+ 	if (!readahead_count(rac))
+ 		return;
  
- 		if (!store_folio_in_inode(ccinode, offset, stored_folio)) {
-@@ -477,6 +562,7 @@ static bool store_into_inode(struct cleancache_fs *fs,
- 			spin_unlock(&pool->lock);
- 			goto out_unlock;
- 		}
-+		add_folio_to_lru(stored_folio);
- 	}
- 	copy_folio_content(folio, stored_folio);
- 
-@@ -506,6 +592,7 @@ static bool load_from_inode(struct cleancache_fs *fs,
- 	xa_lock(&ccinode->folios);
- 	stored_folio = xa_load(&ccinode->folios, offset);
- 	if (stored_folio) {
-+		rotate_lru_folio(stored_folio);
- 		copy_folio_content(stored_folio, folio);
- 		ret = true;
- 	}
 -- 
 2.51.1.851.g4ebd6896fd-goog
 
