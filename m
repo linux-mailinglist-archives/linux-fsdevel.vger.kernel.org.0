@@ -1,216 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-65726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C64ACC0F2C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:09:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19292C0F315
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:13:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF1C1888F4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 16:07:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 840E24FCA70
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 16:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E61F30F930;
-	Mon, 27 Oct 2025 16:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A5E311C06;
+	Mon, 27 Oct 2025 16:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HA/0OXMd"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="IcBHqm7f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FAC30DD2A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 16:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD6311969
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 16:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761581201; cv=none; b=pEP3AKKU90qeqCw2C6kMVwiOFdlvkyYmnkxcyus4y7jpoMuE0rgBVnPg+PG60H7Cbg5AayswhqVjMYm7kzwtNeicyCvirWhJgpmufKwAIxUQme5kO70STTrEPzsDQb1POGTbFDAOhvPs1AJVVxmOIy42eAs97HijXDTwLFQrOh8=
+	t=1761581372; cv=none; b=KR7swkYSRKrXZmPi0vJfwtQBQ5Ah0OusWSdoEe/cXiJESe4OKoODPq480prnanjISpqE1FeEPRlKX1oKmbwL6Th5mBDCsRRqjCVgoZueX0GHETvpGYtzFdGJnIU5eP/4E4jOV1g2gBYgukZwmRjY4yvPYUjO2kt1sQzgEz1DGqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761581201; c=relaxed/simple;
-	bh=QaWPD/XxXcWJkRndKn0ialPXtuOPWjCwlbSKvLXVWL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CV55LoQ4XEOC+5OucDoOylk3HEL5cn1GLG/RmeUoKpXFUD8PEQOp4rGdSAbtFTz7gPVw8VpM3yvsG4fNCtZmPVc847dM9Vz8+EMEJbGizva7W0/DrH7Iyaf+kRple4rvAgWy4sMeJLbnJd0mwf2+BryHedNpMPdp3j0fSIjfFg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HA/0OXMd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761581198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kpxdS5ygvVp4sssexZhDityvniMqB9yz0acKtxZ1LBk=;
-	b=HA/0OXMdlw29QT44TH66HnEKUjp/yuTvp+Kij7dAeYc7jn9RcB7hhHFReoQqgUWwhaTVBd
-	6W/G7+9riiSuFR7QN5UorADLDNbTJiZd1fxnZyacutyqexIAovVG0PGf2A1NwMc0H/dSj0
-	x9yJDgpm+QHyQ+LsOhQbMlrM4pXt++4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-9jZO8z2TOWK8s-9nFvgkLg-1; Mon, 27 Oct 2025 12:06:37 -0400
-X-MC-Unique: 9jZO8z2TOWK8s-9nFvgkLg-1
-X-Mimecast-MFC-AGG-ID: 9jZO8z2TOWK8s-9nFvgkLg_1761581196
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-475da25c4c4so11743085e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 09:06:37 -0700 (PDT)
+	s=arc-20240116; t=1761581372; c=relaxed/simple;
+	bh=Ip6risDW9tTbsO2jqPpdXFWuol17OZMU9AeN0DDZC0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lWqVwcG7Z8SdtpTB8NlFE++4qDP9BSrJpdmzx653k6RW83JI3dMq6/Zq64PCd0cGehx8xOzlmrHHOWxvO32SsfEpqD0TIPOX8tJ429vHrkkBYi1kHUtQDlaND0TgAfI4e91DE7rHIjuIE1pRkDegpL0KNYdTOgc2XjmIMiJopHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=IcBHqm7f; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8a114591f15so237133485a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 09:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1761581369; x=1762186169; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=anSGbOUh9PRDsyCb0fgwZTMvbpzdcHnK6psdZLJfHyQ=;
+        b=IcBHqm7fU43ySr4jxg1yFycM5TUboENAPgV0PPQ8nLUO0nwiE/ZwVB6PYrWLv5HQPS
+         lW+V7ySyEgrtWmoOD8v9RN6JtdSKa7CA+HYSkFc3uAkUjQ/Fi161lT95fxKmFqwiMBFa
+         PZnQ7y7fR47yEX4ug1dDiAc602ytkP0bRa2CwA9WJw2tzhCnYCOqGworuYtc3suStXun
+         NCNpcI0Io5nLReoujMyPHQbPO3BywFJHUncVShVYVhokCuV2XlvrS/BEBYQOEFggHII3
+         IPB1NQ+qYfN3SEUy6T9RqVV51b4Gb2tL/k2G3ERO2sj7DDGeU6fyE/UFui2BmhuHc6th
+         pjjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761581196; x=1762185996;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kpxdS5ygvVp4sssexZhDityvniMqB9yz0acKtxZ1LBk=;
-        b=CvBJy5Yfc3ox7IYsnmPOB3wJNF4IKU+NvTzVgjU2S3QeqQF6vExSl55VNo/+yqsDmZ
-         Rw2K4o+UZH51mcyUvU+n8sseJJovyD7ih51YHgABZTSjwDQw+VyCLfWc+xxtU85BW+e/
-         cea07T2EeyKemeOcddXra/phT0inAJdcMN0G0rt+CFjOKZKH7I9K+SdcxxCRKQjSsIL3
-         +pKXVROkydpjQFSZxf6d219foNvx1I9bTfxHprPrmoiHoS2i2l9Z6v4wu4R+tjwNVKTj
-         ITWk84PPnb1BO8jDBHk3xDinAcYC5HkIA0/NbeJEuNsckgfCx9eu3QaTbwyZeZzxhZXh
-         26BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAi5w12uXBRjKijGxFz745ENxUoS2FP4240S9fx0HXJkMFZVnIixgO+F5jojuZOn/zZvsLQUGSWaDJaO2i@vger.kernel.org
-X-Gm-Message-State: AOJu0YziI3TlI8zOsekHTNW8w67T6F9PFsaAFAXUN6wqfDKrLSqB888n
-	sd7BWQ9M86ssFKsMO13Mm6vHrYXlk7u90TKXF/yiw9cK/Mx2qmYm8uZZkdLzDzHmlW0Rvx3RJ83
-	G9Iu8AJjbI5NGwqWFdzrsBe2YUrakO2yLutOaHwyUC0AW6ohlWLY4JoVB4+2Sl+Wp77U=
-X-Gm-Gg: ASbGncvx6k+SCYHrpkJCry5NdxZZhLxQmTVq8aidpsBdM3AEqY3E1mA07U2/SjYoRuh
-	DDsBFdtjmMQK3VQa4PvZprKbWxUPCBXj59++ZosOIGvzK/wCIogmiDD/gulZpqd51OF18t1i8BE
-	RPPw7+v8nBh/3WHbldCo48W7Ol62LQtjd4wax3r1bNNUOtudNGvY2unUDxohgAfVe8tBdgdSnsn
-	X8E7vzzgq84mStIDWzHXy7cqIhnph7TJeHKKvLJgEZhQQfqOVwUl9xjvW1z7J0ZX8ri9xXqlCAt
-	8zj9xyl4vMWSRYj6dKOEox6F27qqzwvCiQfE1xHluzHmOHMkf7o4fX8UGzdwSs7gKAnn16MrsK0
-	FY273XkMldwq83kJecF0q1vVFJ1BO1ZJMbngMfo9lxNcXKkQWuPtTO5yeDOH6H4MifqYGPblSOE
-	DeAfWnHGpGj7+2OZPu2Nse72Ow0EE=
-X-Received: by 2002:a05:600c:4fc4:b0:46f:b327:ecfb with SMTP id 5b1f17b1804b1-47717e03722mr1896875e9.9.1761581196177;
-        Mon, 27 Oct 2025 09:06:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHv5M9b4q9OVKGnW+HmaEJg2ucSNwvJY0LUs9zHR8mcSnR+YxmFwPGnp36vYB+8STF/MebLhQ==
-X-Received: by 2002:a05:600c:4fc4:b0:46f:b327:ecfb with SMTP id 5b1f17b1804b1-47717e03722mr1896525e9.9.1761581195766;
-        Mon, 27 Oct 2025 09:06:35 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4cc596sm147684725e9.15.2025.10.27.09.06.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 09:06:35 -0700 (PDT)
-Message-ID: <7bfd0822-5687-4ddc-9637-0cedd404c34e@redhat.com>
-Date: Mon, 27 Oct 2025 17:06:34 +0100
+        d=1e100.net; s=20230601; t=1761581369; x=1762186169;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=anSGbOUh9PRDsyCb0fgwZTMvbpzdcHnK6psdZLJfHyQ=;
+        b=JMRDNOyTE3GANDvsIhQVmxhycplxK8kO9NA7aBvU/lnjmA5vg7D69AmLvZYNk+TRpp
+         vzC15/WBlkAQ5UqROeWuLCe2XPwwgxF/O/RWMDcH75vtPaAfYFqHNmBUEhuAVVpf8Drb
+         bMx5/UV6+IBDyX11zxCxp8lBlKy6re6OkSz+Rl6CFtLOBA2fGB7BosFGs/2aCSnXBRVb
+         LniwStlO5TxtdUDaQpxNrxmiZHdEVP8wwci6DNT19cPEiT/hrdUNqGS2fOWZ8VIYwlJv
+         Yl4V4iqOqjHIrq4mgDQo39mXyrdyJRWnFyOlFDMT1aRkRqL9h5gP5mD5uMZaSZyw1vpa
+         CYlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUpnIk/PA4kYfa9XHVDFiHyq/hWPlCXTw9RSM3jo+JRdtwGQAUks2OU/wSUIvYwbTVASMdnUCV3NjxVP1s@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUkXREHT27V+RHSpL/oAmJ6JcAXBsS6apx3XvpCjvEsC3yQ2Ss
+	S+88v6BYKetE20XdduOOSYtw6TSc0bmzccjhbTf4IvZ49R8ozVeXl66rxSFOD/xq538=
+X-Gm-Gg: ASbGncu2noD8DwXuYZSVMwHSIg4TGpDj/hG3tqZgxZq3z23SiVImGgVPNfeuchJHVcm
+	iJefvn2ffsLh6K0Gwb0aboFWth8/WygD2ceHIAUXKvqtllB42VEGkWxMb3kfI4dzOX0K7udqnkN
+	auFkfqna5ma9dfD5dF1bFQYYZIGBm9M5/HiwPjLybha0cQ9LGbgk8YMx7zFTipP6XyttZeYCivF
+	G27JucH1T42OO4MH09qYYuG395KdHwauVXPtXpZvbYrlniPLg9Yo/HzPLcuExfzHOGxK+yVqYTu
+	DqDD8ktbRa+emI/NRgJAJMNc96MPMASYtiAwGIWTY+fkfYX8Zyk738C8T2jimpc9FBkFfYILwDe
+	9rH+2rjSH0weyfnMS6FnUVTmHJlZt7qSIMU05LhtL7rHWjrQYYFSzmhG+CaqzzxsMaCRiSUEvNk
+	X+8wqtHAcMm6qprOm/6F635PaOuuizRTgZFcBW/lPTQIboAO/mjd7KLWdv
+X-Google-Smtp-Source: AGHT+IHlNcX7M4ho1Hgm07pKSXRDLSWwAqfcPM4p2At44BY4PwXR6XnbKFaciXa2MkD0JUoTO3ORTg==
+X-Received: by 2002:a05:620a:1aa1:b0:8a3:9a05:ec15 with SMTP id af79cd13be357-8a6d072570emr95429085a.19.1761581364508;
+        Mon, 27 Oct 2025 09:09:24 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25c8a34dsm624408985a.48.2025.10.27.09.09.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 09:09:23 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vDPmd-00000004HT9-1p2Z;
+	Mon, 27 Oct 2025 13:09:23 -0300
+Date: Mon, 27 Oct 2025 13:09:23 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
+ confusion
+Message-ID: <20251027160923.GF760669@ziepe.ca>
+References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>,
- Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Yang Shi <shy828301@gmail.com>, Dave Chinner <david@fromorbit.com>,
- Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
- <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
- <CAHbLzkpx7iv40Tt+CDpbSsOupkGXKcix0wfiF6cVGrLFe0dvRQ@mail.gmail.com>
- <b8e56515-3903-068c-e4bd-fc0ca5c30d94@google.com>
- <CAHk-=wiWmTpQwz5FZ_=At_Tw+Nm_5Fcy-9is_jXCMo9T0mshZQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAHk-=wiWmTpQwz5FZ_=At_Tw+Nm_5Fcy-9is_jXCMo9T0mshZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
 
-On 27.10.25 16:50, Linus Torvalds wrote:
-> On Mon, 27 Oct 2025 at 03:49, Hugh Dickins <hughd@google.com> wrote:
->>
->> This makes a fundamental change to speculative page cache assumptions.
-> 
-> Yes, but I'm a bit surprised by people who find that scary.
-> 
-> The page cache does *much* more scary things elsewhere, particularly
-> the whole folio_try_get() dance (in filemap_get_entry() and other
-> places).
-> 
-> I suspect you ignore that just because it's been that way forever, so
-> you're comfortable with it.
-> 
-> I'd argue that that is much *much* more subtle because it means that
-> somebody may be incrementing the page count of a page that has already
-> been re-allocated by somebody else.
-> 
-> Talk about cognitive load: that code makes you think that "hey, the
-> tryget means that if it has been released, we don't get a ref to it",
-> because that's how many of our *other* speculative RCU accesses do in
-> fact work.
-> 
-> But that's not how the page cache works, exactly because freeing isn't
-> actually RCU-delayed.
-> 
-> So while the code visually follows the exact same pattern as some
-> other "look up speculatively under RCU, skip if it's not there any
-> more", it actually does exactly the same thing as the "copy data under
-> RCU, then check later if it was ok". Except it does "increment
-> refcount under RCU, then check later if it was actually valid".
-> 
-> That said, I wonder if we might not consider making page cache freeing
-> be RCU-delayed. This has come up before (exactly *because* of that
-> "folio_try_get()").
-> 
-> Because while I am pretty sure that filemap_get_entry() is fine (and a
-> number of other core users), I'm not convinced that some of the other
-> users of folio_try_get() are necessarily aware of just how subtle that
-> thing is.
-> 
-> Anyway, I'm certainly not going to push that patch very hard.
+On Fri, Oct 24, 2025 at 08:41:16AM +0100, Lorenzo Stoakes wrote:
+> There's an established convention in the kernel that we treat leaf page
+> tables (so far at the PTE, PMD level) as containing 'swap entries' should
+> they be neither empty (i.e. p**_none() evaluating true) nor present
+> (i.e. p**_present() evaluating true).
 
-I will sleep better at night if we can guarantee that we are reading 
-from a folio that has not been reused in the meantime -- or reading 
-random other memory as I raised in my other mail.
+I have to say I've never liked the none-vs-present naming either.
 
-So I really wish that we can defer optimizing this to freeing folios 
-under RCU instead.
+> This is deeply confusing, so this series goes further and eliminates the
+> non_swap_entry() predicate, replacing it with is_non_present_entry() - with
+> an eye to a new convention of referring to these non-swap 'swap entries' as
+> non-present.
 
--- 
-Cheers
+I'm not keen on is_non_present_entry(), it seems confusing again.
 
-David / dhildenb
+It looks like we are stuck with swp_entry_t as the being the handle
+for a non-present pte. Oh well, not a great name, but fine..
 
+So we think of that swp_entry_t having multiple types: swap, migration,
+device private, etc, etc
+
+Then I'd think the general pattern should be to get a swp_entry_t:
+
+    if (pte_present(pte))
+        return;
+    swpent = pte_to_swp_entry(pte);
+
+And then evaluate the type:
+
+    if (swpent_is_swap()) {
+    }
+
+
+If you keep the naming as "swp_entry" indicates the multi-type value,
+then "swap" can mean a swp_entry which is used by the swap subsystem.
+
+That suggests functions like this:
+
+swpent_is_swap()
+swpent_is_migration()
+..
+
+and your higher level helpers like:
+
+/* True if the pte is a swpent_is_swap() */
+static inline bool swpent_get_swap_pte(pte_t pte, swp_entry_t *entryp)
+{
+   if (pte_present(pte))
+        return false;
+   *swpent = pte_to_swp_entry(pte);
+   return swpent_is_swap(*swpent);
+}
+
+I also think it will be more readable to keep all these things under a
+swpent namespace instead of using unstructured english names.
+
+> * pte_to_swp_entry_or_zero() - allows for convenient conversion from a PTE
+>   to a swap entry if present, or an empty swap entry if none. This is
+>   useful as many swap entry conversions are simply checking for flags for
+>   which this suffices.
+
+I'd expect a safe function should be more like
+
+   *swpent = pte_to_swp_entry_safe(pte);
+   return swpent_is_swap(*swpent);
+
+Where "safe" means that if the PTE is None or Present then
+swpent_is_XX() == false. Ie it returns a 0 swpent and 0 swpent is
+always nothing.
+
+> * get_pte_swap_entry() - Retrieves a PTE swap entry if it truly is a swap
+>   entry (i.e. not a non-present entry), returning true if so, otherwise
+>   returns false. This simplifies a lot of logic that previously open-coded
+>   this.
+
+Like this is still a tortured function:
+
++static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
++{
++       if (pte_present(pte))
++               return false;
++       if (pte_none(pte))
++               return false;
++
++       *entryp = pte_to_swp_entry(pte);
++       if (non_swap_entry(*entryp))
++               return false;
++
++       return true;
++}
++
+
+static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
+{
+   return swpent_is_swap(*swpent = pte_to_swp_entry_safe(pte));
+}
+
+Maybe it doesn't even need an inline at that point?
+
+> * is_huge_pmd() - Determines if a PMD contains either a present transparent
+>   huge page entry or a huge non-present entry. This again simplifies a lot
+>   of logic that simply open-coded this.
+
+is_huge_or_swpent_pmd() would be nicer, IMHO. I think it is surprising
+when any of these APIs accept swap entries without being explicit
+
+Jason
 
