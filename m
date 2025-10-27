@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-65715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45025C0E440
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 15:11:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5A7C0E614
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 15:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A07421154
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 14:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E430462937
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 14:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B558F306B3D;
-	Mon, 27 Oct 2025 14:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FC730DD35;
+	Mon, 27 Oct 2025 14:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhk7If0L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l15j1k7j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F8822D7B1;
-	Mon, 27 Oct 2025 14:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAF6307AF8;
+	Mon, 27 Oct 2025 14:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573859; cv=none; b=HXvZbfNySCQ3X/r5K7InoQbul6NWAMO2h8Xg6/gdC1IrtsG82BPU9ti97dTvXozXc7WI/ugySC2l2ieB3V6fCvoarYaaRjjeBBEHei7pZzG9CjgEoLLYxuqeQX8vNuRhToUw6QzIzEFJUKYUYTjlYqQKAgKU63rgl3kPT4cp5io=
+	t=1761574218; cv=none; b=VBtRNiowW+chGpAOXCuJ0QIFwK2BGFvo6847ZAYbaS/E7ZWQwA0kq/fQQt0iOUd05uOjiz1n6Ecbod/3nbf7XMbZZ2ghXQ8GuzzSQ+x1XRPbOHuGleJLlueUzhI0FJtQB+YqG1skYMLiUEDkEMPDdFKk4GDHRIfMoWbDvkwfv3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573859; c=relaxed/simple;
-	bh=8m6HekK2vqnWmOZFGTVdVX8NpWM4Za5yEX0MoytUOIM=;
+	s=arc-20240116; t=1761574218; c=relaxed/simple;
+	bh=CjdQ/5cQ/4q2pAY7bUWuObYvjYAlf55jd7CNlNkzwQw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NSQ9MHSHfsmIUECA2e2B3Kfk1tXTziZXr3NmDWX6YGfu5SO4mxgLJmaDuq/eFqFU31HvDPabQg7tgP7ZTwvi2n5Bg+iUovQjL6iaWQzc4cXN1LJ3LJv1LnRlXZmvkrUgr+GU/zKkO/ACa7wnvFCSxl08QGcH/E0Yow5OhtIR/9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhk7If0L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07A7C4CEFF;
-	Mon, 27 Oct 2025 14:04:16 +0000 (UTC)
+	 Content-Type:MIME-Version; b=MTAxgOyBw2mvzWufdn/cm335KIJnsnubUKbxRINUkotjfhsW/3B4Ok/Wm3VuBzVjT7Diip0Ls0PCZ6rzYla1thVI/ApUXbPvJvmRzKr4mivkgBdSnGYG0UgsNEuCSNwPPmW/ds8dzDDtDXI1DkzxA2mjH09KI4+14ZoJT8RH1cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l15j1k7j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0780C4CEF1;
+	Mon, 27 Oct 2025 14:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761573858;
-	bh=8m6HekK2vqnWmOZFGTVdVX8NpWM4Za5yEX0MoytUOIM=;
+	s=k20201202; t=1761574218;
+	bh=CjdQ/5cQ/4q2pAY7bUWuObYvjYAlf55jd7CNlNkzwQw=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rhk7If0LqX6yF+Jbbep/+gtPHPzE0PDQrR9UnEUK+lQV5DOFEoi3ci06S9bpZkt9p
-	 TWYYN6ixXFcomL50ArAQe4Xoa1VB9p3zJ0eiqsyD3TtPBfuTbWTEx1e4NDq+ore1zn
-	 /ZjwTaApXMp4pjP14LrmvBSoPMF2qi0s+au/LyHwYeSq9PwpmxC0X1A+EZJ8cJ9GqP
-	 V8jhSsOCDDz6rWtQ9z9rnimfiaWD4GI+7qO3XzPbBKWO+qtYM2Wj06sNQB2LZkwRxn
-	 V9vlHf1AR9bEMSH8CJg5mHki+vSH1NvvD65b/sHEw5A+uqVp4Cc7BhqMHp6IlLR7mq
-	 ueN/nQ0TqL+Vw==
-Message-ID: <c2cdf48188312c108f2b3aa07ea353acdd32e999.camel@kernel.org>
-Subject: Re: [PATCH v3 17/70] nstree: add listns()
+	b=l15j1k7jCLo+s4hGnhGp7A8XUkqktLxNJMJx4fKmNpwSuLkcy5KLodor40FA6amNU
+	 6Ew4Vu0n9RvqygmH70oDQLndGJF1wSU2ju5+qLPI2Fvb4SKxlu3iTkpmai5tb6erJK
+	 3BuYMemNuMFrspEojp79juujN1xOUPxY1TCTobix/2gbISH9IcJIFgyJtgenWa2wlg
+	 qvoWSz4gl7gVXVIrak/QiKFh9FTb/C/hKRb2v8QGARb2d6iV9voRSVn/NNwv3lLRu0
+	 z/w5ZzzSC1cWXXF2lcSfp5McsItx7vBeUq4DbBgCdVOIGG+cY+dFAfQssjugTg5aqf
+	 EwCwHVuWMvX7A==
+Message-ID: <5ab02765a247dbaebc7d1224ee20a3bc01adc330.camel@kernel.org>
+Subject: Re: [PATCH v3 00/70] nstree: listns()
 From: Jeff Layton <jlayton@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
  Josef Bacik <josef@toxicpanda.com>
@@ -56,11 +56,10 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, Zbigniew
 	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org,
   Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
  netdev@vger.kernel.org, Arnd Bergmann	 <arnd@arndb.de>
-Date: Mon, 27 Oct 2025 10:04:15 -0400
-In-Reply-To: <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
+Date: Mon, 27 Oct 2025 10:10:15 -0400
+In-Reply-To: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
 References: 
 	<20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
-	 <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -146,9 +145,114 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Fri, 2025-10-24 at 12:52 +0200, Christian Brauner wrote:
-> Add a new listns() system call that allows userspace to iterate through
-> namespaces in the system. This provides a programmatic interface to
-> discover and inspect namespaces, enhancing existing namespace apis.
+> Hey,
+>=20
+> As announced a while ago this is the next step building on the nstree
+> work from prior cycles. There's a bunch of fixes and semantic cleanups
+> in here and a ton of tests.
+>=20
+> Currently listns() is relying on active namespace reference counts which
+> are introduced alongside this series.
+>=20
+> While a namespace is on the namespace trees with a valid reference count
+> it is possible to reopen it through a namespace file handle. This is all
+> fine but has some issues that should be addressed.
+>=20
+> On current kernels a namespace is visible to userspace in the
+> following cases:
+>=20
+> (1) The namespace is in use by a task.
+> (2) The namespace is persisted through a VFS object (namespace file
+>     descriptor or bind-mount).
+>     Note that (2) only cares about direct persistence of the namespace
+>     itself not indirectly via e.g., file->f_cred file references or
+>     similar.
+> (3) The namespace is a hierarchical namespace type and is the parent of
+>     a single or multiple child namespaces.
+>=20
+> Case (3) is interesting because it is possible that a parent namespace
+> might not fulfill any of (1) or (2), i.e., is invisible to userspace but
+> it may still be resurrected through the NS_GET_PARENT ioctl().
+>=20
+> Currently namespace file handles allow much broader access to namespaces
+> than what is currently possible via (1)-(3). The reason is that
+> namespaces may remain pinned for completely internal reasons yet are
+> inaccessible to userspace.
+>=20
+> For example, a user namespace my remain pinned by get_cred() calls to
+> stash the opener's credentials into file->f_cred. As it stands file
+> handles allow to resurrect such a users namespace even though this
+> should not be possible via (1)-(3). This is a fundamental uapi change
+> that we shouldn't do if we don't have to.
+>=20
+> Consider the following insane case: Various architectures support the
+> CONFIG_MMU_LAZY_TLB_REFCOUNT option which uses lazy TLB destruction.
+> When this option is set a userspace task's struct mm_struct may be used
+> for kernel threads such as the idle task and will only be destroyed once
+> the cpu's runqueue switches back to another task. But because of ptrace()
+> permission checks struct mm_struct stashes the user namespace of the
+> task that struct mm_struct originally belonged to. The kernel thread
+> will take a reference on the struct mm_struct and thus pin it.
+>=20
+> So on an idle system user namespaces can be persisted for arbitrary
+> amounts of time which also means that they can be resurrected using
+> namespace file handles. That makes no sense whatsoever. The problem is
+> of course excarabted on large systems with a huge number of cpus.
+>=20
+> To handle this nicely we introduce an active reference count which
+> tracks (1)-(3). This is easy to do as all of these things are already
+> managed centrally. Only (1)-(3) will count towards the active reference
+> count and only namespaces which are active may be opened via namespace
+> file handles.
+>=20
+> The problem is that namespaces may be resurrected. Which means that they
+> can become temporarily inactive and will be reactived some time later.
+> Currently the only example of this is the SIOGCSKNS socket ioctl. The
+> SIOCGSKNS ioctl allows to open a network namespace file descriptor based
+> on a socket file descriptor.
+>=20
+> If a socket is tied to a network namespace that subsequently becomes
+> inactive but that socket is persisted by another process in another
+> network namespace (e.g., via SCM_RIGHTS of pidfd_getfd()) then the
+> SIOCGSKNS ioctl will resurrect this network namespace.
+>=20
+> So calls to open_related_ns() and open_namespace() will end up
+> resurrecting the corresponding namespace tree.
+>=20
+> Note that the active reference count does not regulate the lifetime of
+> the namespace itself. This is still done by the normal reference count.
+> The active reference count can only be elevated if the regular reference
+> count is elevated.
+>=20
+> The active reference count also doesn't regulate the presence of a
+> namespace on the namespace trees. It only regulates its visiblity to
+> namespace file handles (and in later patches to listns()).
+>=20
+> A namespace remains on the namespace trees from creation until its
+> actual destruction. This will allow the kernel to always reach any
+> namespace trivially and it will also enable subsystems like bpf to walk
+> the namespace lists on the system for tracing or general introspection
+> purposes.
+>=20
+> Note that different namespaces have different visibility lifetimes on
+> current kernels. While most namespace are immediately released when the
+> last task using them exits, the user- and pid namespace are persisted
+> and thus both remain accessible via /proc/<pid>/ns/<ns_type>.
+>=20
+> The user namespace lifetime is aliged with struct cred and is only
+> released through exit_creds(). However, it becomes inaccessible to
+> userspace once the last task using it is reaped, i.e., when
+> release_task() is called and all proc entries are flushed. Similarly,
+> the pid namespace is also visible until the last task using it has been
+> reaped and the associated pid numbers are freed.
+>=20
+> The active reference counts of the user- and pid namespace are
+> decremented once the task is reaped.
+>=20
+> Based on the namespace trees and the active reference count, a new
+> listns() system call that allows userspace to iterate through namespaces
+> in the system. This provides a programmatic interface to discover and
+> inspect namespaces, enhancing existing namespace apis.
 >=20
 > Currently, there is no direct way for userspace to enumerate namespaces
 > in the system. Applications must resort to scanning /proc/<pid>/ns/
@@ -211,136 +315,134 @@ pace ID
 >=20
 > void list_all_namespaces(void)
 > {
->     struct ns_id_req req =3D {
->         .size =3D sizeof(req),
->         .ns_id =3D 0,          /* Start from beginning */
->         .ns_type =3D 0,        /* All types */
->         .user_ns_id =3D 0,     /* All user namespaces */
->     };
->     uint64_t ids[100];
->     ssize_t ret;
+> 	struct ns_id_req req =3D {
+> 		.size =3D sizeof(req),
+> 		.ns_id =3D 0,      /* Start from beginning */
+> 		.ns_type =3D 0,    /* All types */
+> 		.user_ns_id =3D 0, /* All user namespaces */
+> 	};
+> 	uint64_t ids[100];
+> 	ssize_t ret;
 >=20
->     printf("All namespaces in the system:\n");
->     do {
->         ret =3D listns(&req, ids, 100, 0);
->         if (ret < 0) {
->             perror("listns");
->             break;
->         }
+> 	printf("All namespaces in the system:\n");
+> 	do {
+> 		ret =3D listns(&req, ids, 100, 0);
+> 		if (ret < 0) {
+> 			perror("listns");
+> 			break;
+> 		}
 >=20
->         for (ssize_t i =3D 0; i < ret; i++)
->             printf("  Namespace ID: %llu\n", (unsigned long long)ids[i]);
+> 		for (ssize_t i =3D 0; i < ret; i++)
+> 			printf("  Namespace ID: %llu\n", (unsigned long long)ids[i]);
 >=20
->         /* Continue from last seen ID */
->         if (ret > 0)
->             req.ns_id =3D ids[ret - 1];
->     } while (ret =3D=3D 100);  /* Buffer was full, more may exist */
+> 		/* Continue from last seen ID */
+> 		if (ret > 0)
+> 			req.ns_id =3D ids[ret - 1];
+> 	} while (ret =3D=3D 100); /* Buffer was full, more may exist */
 > }
 >=20
-> Example 2: List network namespaces only
+> Example 2 : List network namespaces only
 >=20
 > void list_network_namespaces(void)
 > {
->     struct ns_id_req req =3D {
->         .size =3D sizeof(req),
->         .ns_id =3D 0,
->         .ns_type =3D NET_NS,   /* Only network namespaces */
->         .user_ns_id =3D 0,
->     };
->     uint64_t ids[100];
->     ssize_t ret;
+> 	struct ns_id_req req =3D {
+> 		.size =3D sizeof(req),
+> 		.ns_id =3D 0,
+> 		.ns_type =3D NET_NS, /* Only network namespaces */
+> 		.user_ns_id =3D 0,
+> 	};
+> 	uint64_t ids[100];
+> 	ssize_t ret;
 >=20
->     ret =3D listns(&req, ids, 100, 0);
->     if (ret < 0) {
->         perror("listns");
->         return;
->     }
+> 	ret =3D listns(&req, ids, 100, 0);
+> 	if (ret < 0) {
+> 		perror("listns");
+> 		return;
+> 	}
 >=20
->     printf("Network namespaces: %zd found\n", ret);
->     for (ssize_t i =3D 0; i < ret; i++)
->         printf("  netns ID: %llu\n", (unsigned long long)ids[i]);
+> 	printf("Network namespaces: %zd found\n", ret);
+> 	for (ssize_t i =3D 0; i < ret; i++)
+> 		printf("  netns ID: %llu\n", (unsigned long long)ids[i]);
 > }
 >=20
-> Example 3: List namespaces owned by current user namespace
+> Example 3 : List namespaces owned by current user namespace
 >=20
 > void list_owned_namespaces(void)
 > {
->     struct ns_id_req req =3D {
->         .size =3D sizeof(req),
->         .ns_id =3D 0,
->         .ns_type =3D 0,                      /* All types */
->         .user_ns_id =3D LISTNS_CURRENT_USER, /* Current userns */
->     };
->     uint64_t ids[100];
->     ssize_t ret;
+> 	struct ns_id_req req =3D {
+> 		.size =3D sizeof(req),
+> 		.ns_id =3D 0,
+> 		.ns_type =3D 0,                      /* All types */
+> 		.user_ns_id =3D LISTNS_CURRENT_USER, /* Current userns */
+> 	};
+> 	uint64_t ids[100];
+> 	ssize_t ret;
 >=20
->     ret =3D listns(&req, ids, 100, 0);
->     if (ret < 0) {
->         perror("listns");
->         return;
->     }
+> 	ret =3D listns(&req, ids, 100, 0);
+> 	if (ret < 0) {
+> 		perror("listns");
+> 		return;
+> 	}
 >=20
->     printf("Namespaces owned by my user namespace: %zd\n", ret);
->     for (ssize_t i =3D 0; i < ret; i++)
->         printf("  ns ID: %llu\n", (unsigned long long)ids[i]);
+> 	printf("Namespaces owned by my user namespace: %zd\n", ret);
+> 	for (ssize_t i =3D 0; i < ret; i++)
+> 		printf("  ns ID: %llu\n", (unsigned long long)ids[i]);
 > }
 >=20
-> Example 4: List multiple namespace types
+> Example 4 : List multiple namespace types
 >=20
 > void list_network_and_mount_namespaces(void)
 > {
->     struct ns_id_req req =3D {
->         .size =3D sizeof(req),
->         .ns_id =3D 0,
->         .ns_type =3D NET_NS | MNT_NS,  /* Network and mount */
->         .user_ns_id =3D 0,
->     };
->     uint64_t ids[100];
->     ssize_t ret;
+> 	struct ns_id_req req =3D {
+> 		.size =3D sizeof(req),
+> 		.ns_id =3D 0,
+> 		.ns_type =3D NET_NS | MNT_NS, /* Network and mount */
+> 		.user_ns_id =3D 0,
+> 	};
+> 	uint64_t ids[100];
+> 	ssize_t ret;
 >=20
->     ret =3D listns(&req, ids, 100, 0);
->     printf("Network and mount namespaces: %zd found\n", ret);
+> 	ret =3D listns(&req, ids, 100, 0);
+> 	printf("Network and mount namespaces: %zd found\n", ret);
 > }
 >=20
-> Example 5: Pagination through large namespace sets
+> Example 5 : Pagination through large namespace sets
 >=20
 > void list_all_with_pagination(void)
 > {
->     struct ns_id_req req =3D {
->         .size =3D sizeof(req),
->         .ns_id =3D 0,
->         .ns_type =3D 0,
->         .user_ns_id =3D 0,
->     };
->     uint64_t ids[50];
->     size_t total =3D 0;
->     ssize_t ret;
+> 	struct ns_id_req req =3D {
+> 		.size =3D sizeof(req),
+> 		.ns_id =3D 0,
+> 		.ns_type =3D 0,
+> 		.user_ns_id =3D 0,
+> 	};
+> 	uint64_t ids[50];
+> 	size_t total =3D 0;
+> 	ssize_t ret;
 >=20
->     printf("Enumerating all namespaces with pagination:\n");
+> 	printf("Enumerating all namespaces with pagination:\n");
 >=20
->     while (1) {
->         ret =3D listns(&req, ids, 50, 0);
->         if (ret < 0) {
->             perror("listns");
->             break;
->         }
->         if (ret =3D=3D 0)
->             break;  /* No more namespaces */
+> 	while (1) {
+> 		ret =3D listns(&req, ids, 50, 0);
+> 		if (ret < 0) {
+> 			perror("listns");
+> 			break;
+> 		}
+> 		if (ret =3D=3D 0)
+> 			break; /* No more namespaces */
 >=20
->         total +=3D ret;
->         printf("  Batch: %zd namespaces\n", ret);
+> 		total +=3D ret;
+> 		printf("  Batch: %zd namespaces\n", ret);
 >=20
->         /* Last ID in this batch becomes start of next batch */
->         req.ns_id =3D ids[ret - 1];
+> 		/* Last ID in this batch becomes start of next batch */
+> 		req.ns_id =3D ids[ret - 1];
 >=20
->         if (ret < 50)
->             break;  /* Partial batch =3D end of results */
->     }
+> 		if (ret < 50)
+> 			break; /* Partial batch =3D end of results */
+> 	}
 >=20
->     printf("Total: %zu namespaces\n", total);
+> 	printf("Total: %zu namespaces\n", total);
 > }
->=20
-> Permission Model
 >=20
 > listns() respects namespace isolation and capabilities:
 >=20
@@ -364,830 +466,181 @@ pace ID
 >=20
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  fs/namespace.c                 |   1 +
->  fs/nsfs.c                      |  39 ++++
->  include/linux/ns_common.h      |   5 +-
->  include/linux/syscalls.h       |   4 +
->  include/linux/user_namespace.h |   4 +-
->  include/uapi/linux/nsfs.h      |  44 +++++
->  init/version-timestamp.c       |   1 +
->  ipc/msgutil.c                  |   1 +
->  kernel/cgroup/cgroup.c         |   1 +
->  kernel/nscommon.c              |   3 +
->  kernel/nstree.c                | 417 +++++++++++++++++++++++++++++++++++=
-+++++-
->  kernel/pid.c                   |   1 +
->  kernel/time/namespace.c        |   1 +
->  kernel/user.c                  |   1 +
->  14 files changed, 516 insertions(+), 7 deletions(-)
+> Changes in v3:
+> - Expanded test-suite.
+> - Moved active reference count tracking for task-attached namespaces to
+>   dedicated helpers.
+> - Fixed active reference count leaks when creating a new process fails.
+> - Allow to be rescheduled when walking a a long namespace list.
+> - Grab reference count when accessing a namespace when walking the list.
+> - Link to v2: https://patch.msgid.link/20251022-work-namespace-nstree-lis=
+tns-v2-0-71a588572371@kernel.org
 >=20
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d460ca79f0e7..980296b0ec86 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5996,6 +5996,7 @@ struct mnt_namespace init_mnt_ns =3D {
->  	.mounts		=3D RB_ROOT,
->  	.poll		=3D __WAIT_QUEUE_HEAD_INITIALIZER(init_mnt_ns.poll),
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_mnt_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_mnt_ns.ns.ns_unified_l=
-ist_node),
->  	.ns.ns_owner_entry =3D LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner_entry),
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner),
->  };
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 19dc28742a42..5c21fdc79796 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -471,6 +471,45 @@ static int nsfs_encode_fh(struct inode *inode, u32 *=
-fh, int *max_len,
->  	return FILEID_NSFS;
->  }
-> =20
-> +bool is_current_namespace(struct ns_common *ns)
-> +{
-> +	switch (ns->ns_type) {
-> +#ifdef CONFIG_CGROUPS
-> +	case CLONE_NEWCGROUP:
-> +		return current_in_namespace(to_cg_ns(ns));
-> +#endif
-> +#ifdef CONFIG_IPC_NS
-> +	case CLONE_NEWIPC:
-> +		return current_in_namespace(to_ipc_ns(ns));
-> +#endif
-> +	case CLONE_NEWNS:
-> +		return current_in_namespace(to_mnt_ns(ns));
-> +#ifdef CONFIG_NET_NS
-> +	case CLONE_NEWNET:
-> +		return current_in_namespace(to_net_ns(ns));
-> +#endif
-> +#ifdef CONFIG_PID_NS
-> +	case CLONE_NEWPID:
-> +		return current_in_namespace(to_pid_ns(ns));
-> +#endif
-> +#ifdef CONFIG_TIME_NS
-> +	case CLONE_NEWTIME:
-> +		return current_in_namespace(to_time_ns(ns));
-> +#endif
-> +#ifdef CONFIG_USER_NS
-> +	case CLONE_NEWUSER:
-> +		return current_in_namespace(to_user_ns(ns));
-> +#endif
-> +#ifdef CONFIG_UTS_NS
-> +	case CLONE_NEWUTS:
-> +		return current_in_namespace(to_uts_ns(ns));
-> +#endif
-> +	default:
-> +		VFS_WARN_ON_ONCE(true);
-> +		return false;
-> +	}
-> +}
-> +
->  static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct f=
-id *fh,
->  					int fh_len, int fh_type)
->  {
-> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-> index 88dce67e06e4..95b3e2aa177d 100644
-> --- a/include/linux/ns_common.h
-> +++ b/include/linux/ns_common.h
-> @@ -123,8 +123,10 @@ struct ns_common {
->  				struct rb_node ns_tree_node;
->  				struct list_head ns_list_node;
->  			};
-> -			struct /* namespace ownership list */ {
-> +			struct /* namespace ownership rbtree and list */ {
-> +				struct rb_root ns_owner_tree; /* rbtree of namespaces owned by this =
-namespace */
->  				struct list_head ns_owner; /* list of namespaces owned by this names=
-pace */
-> +				struct rb_node ns_owner_tree_node; /* node in the owner namespace's =
-rbtree */
+> Changes in v2:
+> - Fully implement the active reference count.
+> - Fix various minor issues.
+> - Expand the testsuite to test complex resurrection scenarios due to SIOC=
+GSKNS.
+> - Currently each task takes an active reference on the user namespace as
+>   credentials can be persisted for a very long time and completely
+>   arbitrary reasons but we don't want to tie the lifetime of a user
+>   namespace being visible to userspace to the existence of some
+>   credentials being stashed somewhere. We want to tie it to it being
+>   in-use by actual tasks or vfs objects and then go away. There might be
+>   more clever ways of doing this but for now this is good enough.
+> - TODO: Add detailed tests for multi-threaded namespace sharing.
+> - Link to v1: https://patch.msgid.link/20251021-work-namespace-nstree-lis=
+tns-v1-0-ad44261a8a5b@kernel.org
+>=20
+> ---
+> Christian Brauner (70):
+>       libfs: allow to specify s_d_flags
+>       nsfs: use inode_just_drop()
+>       nsfs: raise DCACHE_DONTCACHE explicitly
+>       pidfs: raise DCACHE_DONTCACHE explicitly
+>       nsfs: raise SB_I_NODEV and SB_I_NOEXEC
+>       cgroup: add cgroup namespace to tree after owner is set
+>       nstree: simplify return
+>       ns: initialize ns_list_node for initial namespaces
+>       ns: add __ns_ref_read()
+>       ns: rename to exit_nsproxy_namespaces()
+>       ns: add active reference count
+>       ns: use anonymous struct to group list member
+>       nstree: introduce a unified tree
+>       nstree: allow lookup solely based on inode
+>       nstree: assign fixed ids to the initial namespaces
+>       ns: maintain list of owned namespaces
+>       nstree: add listns()
+>       arch: hookup listns() system call
+>       nsfs: update tools header
+>       selftests/filesystems: remove CLONE_NEWPIDNS from setup_userns() he=
+lper
+>       selftests/namespaces: first active reference count tests
+>       selftests/namespaces: second active reference count tests
+>       selftests/namespaces: third active reference count tests
+>       selftests/namespaces: fourth active reference count tests
+>       selftests/namespaces: fifth active reference count tests
+>       selftests/namespaces: sixth active reference count tests
+>       selftests/namespaces: seventh active reference count tests
+>       selftests/namespaces: eigth active reference count tests
+>       selftests/namespaces: ninth active reference count tests
+>       selftests/namespaces: tenth active reference count tests
+>       selftests/namespaces: eleventh active reference count tests
+>       selftests/namespaces: twelth active reference count tests
+>       selftests/namespaces: thirteenth active reference count tests
+>       selftests/namespaces: fourteenth active reference count tests
+>       selftests/namespaces: fifteenth active reference count tests
+>       selftests/namespaces: add listns() wrapper
+>       selftests/namespaces: first listns() test
+>       selftests/namespaces: second listns() test
+>       selftests/namespaces: third listns() test
+>       selftests/namespaces: fourth listns() test
+>       selftests/namespaces: fifth listns() test
+>       selftests/namespaces: sixth listns() test
+>       selftests/namespaces: seventh listns() test
+>       selftests/namespaces: eigth listns() test
+>       selftests/namespaces: ninth listns() test
+>       selftests/namespaces: first listns() permission test
+>       selftests/namespaces: second listns() permission test
+>       selftests/namespaces: third listns() permission test
+>       selftests/namespaces: fourth listns() permission test
+>       selftests/namespaces: fifth listns() permission test
+>       selftests/namespaces: sixth listns() permission test
+>       selftests/namespaces: seventh listns() permission test
+>       selftests/namespaces: first inactive namespace resurrection test
+>       selftests/namespaces: second inactive namespace resurrection test
+>       selftests/namespaces: third inactive namespace resurrection test
+>       selftests/namespaces: fourth inactive namespace resurrection test
+>       selftests/namespaces: fifth inactive namespace resurrection test
+>       selftests/namespaces: sixth inactive namespace resurrection test
+>       selftests/namespaces: seventh inactive namespace resurrection test
+>       selftests/namespaces: eigth inactive namespace resurrection test
+>       selftests/namespaces: ninth inactive namespace resurrection test
+>       selftests/namespaces: tenth inactive namespace resurrection test
+>       selftests/namespaces: eleventh inactive namespace resurrection test
+>       selftests/namespaces: twelth inactive namespace resurrection test
+>       selftests/namespace: first threaded active reference count test
+>       selftests/namespace: second threaded active reference count test
+>       selftests/namespace: third threaded active reference count test
+>       selftests/namespace: commit_creds() active reference tests
+>       selftests/namespace: add stress test
+>       selftests/namespace: test listns() pagination
+>=20
+>  arch/alpha/kernel/syscalls/syscall.tbl             |    1 +
+>  arch/arm/tools/syscall.tbl                         |    1 +
+>  arch/arm64/tools/syscall_32.tbl                    |    1 +
+>  arch/m68k/kernel/syscalls/syscall.tbl              |    1 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl        |    1 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl          |    1 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl          |    1 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl          |    1 +
+>  arch/parisc/kernel/syscalls/syscall.tbl            |    1 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl           |    1 +
+>  arch/s390/kernel/syscalls/syscall.tbl              |    1 +
+>  arch/sh/kernel/syscalls/syscall.tbl                |    1 +
+>  arch/sparc/kernel/syscalls/syscall.tbl             |    1 +
+>  arch/x86/entry/syscalls/syscall_32.tbl             |    1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl             |    1 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl            |    1 +
+>  fs/libfs.c                                         |    1 +
+>  fs/namespace.c                                     |    8 +-
+>  fs/nsfs.c                                          |   95 +-
+>  fs/pidfs.c                                         |    1 +
+>  include/linux/ns_common.h                          |  166 +-
+>  include/linux/nsfs.h                               |    3 +
+>  include/linux/nsproxy.h                            |    5 +-
+>  include/linux/nstree.h                             |   26 +-
+>  include/linux/pseudo_fs.h                          |    1 +
+>  include/linux/syscalls.h                           |    4 +
+>  include/linux/user_namespace.h                     |    4 +-
+>  include/uapi/asm-generic/unistd.h                  |    4 +-
+>  include/uapi/linux/nsfs.h                          |   58 +
+>  init/version-timestamp.c                           |    5 +
+>  ipc/msgutil.c                                      |    5 +
+>  ipc/namespace.c                                    |    1 +
+>  kernel/cgroup/cgroup.c                             |   11 +-
+>  kernel/cgroup/namespace.c                          |    3 +-
+>  kernel/cred.c                                      |    6 +
+>  kernel/exit.c                                      |    3 +-
+>  kernel/fork.c                                      |    3 +-
+>  kernel/nscommon.c                                  |  227 +-
+>  kernel/nsproxy.c                                   |   25 +-
+>  kernel/nstree.c                                    |  540 +++-
+>  kernel/pid.c                                       |   10 +
+>  kernel/pid_namespace.c                             |    1 +
+>  kernel/time/namespace.c                            |    6 +
+>  kernel/user.c                                      |    5 +
+>  kernel/user_namespace.c                            |    1 +
+>  kernel/utsname.c                                   |    1 +
+>  net/core/net_namespace.c                           |    3 +-
+>  scripts/syscall.tbl                                |    1 +
+>  tools/include/uapi/linux/nsfs.h                    |   70 +
+>  tools/testing/selftests/filesystems/utils.c        |    2 +-
+>  tools/testing/selftests/namespaces/.gitignore      |    7 +
+>  tools/testing/selftests/namespaces/Makefile        |   20 +-
+>  .../selftests/namespaces/cred_change_test.c        |  814 ++++++
+>  .../selftests/namespaces/listns_pagination_bug.c   |  138 +
+>  .../selftests/namespaces/listns_permissions_test.c |  759 ++++++
+>  tools/testing/selftests/namespaces/listns_test.c   |  679 +++++
+>  .../selftests/namespaces/ns_active_ref_test.c      | 2672 ++++++++++++++=
+++++++
+>  .../testing/selftests/namespaces/siocgskns_test.c  | 1824 +++++++++++++
+>  tools/testing/selftests/namespaces/stress_test.c   |  626 +++++
+>  tools/testing/selftests/namespaces/wrappers.h      |   35 +
+>  60 files changed, 8835 insertions(+), 60 deletions(-)
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251020-work-namespace-nstree-listns-9fd71518515c
 
+This looks pretty great overall, Christian. Nice work!
 
-The changelog doesn't mention why these fields are being added.
+I hate the fact that we have to deal with resurrection here since it
+makes things much messier, but I don't see a great alternative. I found
+the nsfs filehandle format, btw, so that seems fine.
 
-I'd prefer to see the parts of this patch that deal with the above
-fields added in a separate patch. I'm guessing that you added them here
-because this patch adds the need to check ns ownership for listns(),
-but I think it warrants a separate patch and changelog explaining
-what's going on.
+You can add this to patches 1-19, though I'd still prefer that you
+split the ns_owner_tree handling out of patch #17 and into a separate
+patch.
 
->  				struct list_head ns_owner_entry; /* node in the owner namespace's ns=
-_owned list */
->  			};
->  			atomic_t __ns_ref_active; /* do not use directly */
-> @@ -133,6 +135,7 @@ struct ns_common {
->  	};
->  };
-> =20
-> +bool is_current_namespace(struct ns_common *ns);
->  int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct pro=
-c_ns_operations *ops, int inum);
->  void __ns_common_free(struct ns_common *ns);
-> =20
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 66c06fcdfe19..cf84d98964b2 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -77,6 +77,7 @@ struct cachestat_range;
->  struct cachestat;
->  struct statmount;
->  struct mnt_id_req;
-> +struct ns_id_req;
->  struct xattr_args;
->  struct file_attr;
-> =20
-> @@ -437,6 +438,9 @@ asmlinkage long sys_statmount(const struct mnt_id_req=
- __user *req,
->  asmlinkage long sys_listmount(const struct mnt_id_req __user *req,
->  			      u64 __user *mnt_ids, size_t nr_mnt_ids,
->  			      unsigned int flags);
-> +asmlinkage long sys_listns(const struct ns_id_req __user *req,
-> +			   u64 __user *ns_ids, size_t nr_ns_ids,
-> +			   unsigned int flags);
->  asmlinkage long sys_truncate(const char __user *path, long length);
->  asmlinkage long sys_ftruncate(unsigned int fd, off_t length);
->  #if BITS_PER_LONG =3D=3D 32
-> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespac=
-e.h
-> index 9a9aebbf96b9..9c3be157397e 100644
-> --- a/include/linux/user_namespace.h
-> +++ b/include/linux/user_namespace.h
-> @@ -166,13 +166,13 @@ static inline void set_userns_rlimit_max(struct use=
-r_namespace *ns,
->  	ns->rlimit_max[type] =3D max <=3D LONG_MAX ? max : LONG_MAX;
->  }
-> =20
-> -#ifdef CONFIG_USER_NS
-> -
->  static inline struct user_namespace *to_user_ns(struct ns_common *ns)
->  {
->  	return container_of(ns, struct user_namespace, ns);
->  }
-> =20
-> +#ifdef CONFIG_USER_NS
-> +
->  static inline struct user_namespace *get_user_ns(struct user_namespace *=
-ns)
->  {
->  	if (ns)
-> diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-> index f8bc2aad74d6..a25e38d1c874 100644
-> --- a/include/uapi/linux/nsfs.h
-> +++ b/include/uapi/linux/nsfs.h
-> @@ -81,4 +81,48 @@ enum init_ns_id {
->  #endif
->  };
-> =20
-> +enum ns_type {
-> +	TIME_NS    =3D (1ULL << 7),  /* CLONE_NEWTIME */
-> +	MNT_NS     =3D (1ULL << 17), /* CLONE_NEWNS */
-> +	CGROUP_NS  =3D (1ULL << 25), /* CLONE_NEWCGROUP */
-> +	UTS_NS     =3D (1ULL << 26), /* CLONE_NEWUTS */
-> +	IPC_NS     =3D (1ULL << 27), /* CLONE_NEWIPC */
-> +	USER_NS    =3D (1ULL << 28), /* CLONE_NEWUSER */
-> +	PID_NS     =3D (1ULL << 29), /* CLONE_NEWPID */
-> +	NET_NS     =3D (1ULL << 30), /* CLONE_NEWNET */
-> +};
-> +
-> +/**
-> + * struct ns_id_req - namespace ID request structure
-> + * @size: size of this structure
-> + * @spare: reserved for future use
-> + * @filter: filter mask
-> + * @ns_id: last namespace id
-> + * @user_ns_id: owning user namespace ID
-> + *
-> + * Structure for passing namespace ID and miscellaneous parameters to
-> + * statns(2) and listns(2).
-> + *
-> + * For statns(2) @param represents the request mask.
-> + * For listns(2) @param represents the last listed mount id (or zero).
-> + */
-> +struct ns_id_req {
-> +	__u32 size;
-> +	__u32 spare;
-> +	__u64 ns_id;
-> +	struct /* listns */ {
-> +		__u32 ns_type;
-> +		__u32 spare2;
-> +		__u64 user_ns_id;
-> +	};
-> +};
-> +
-> +/*
-> + * Special @user_ns_id value that can be passed to listns()
-> + */
-> +#define LISTNS_CURRENT_USER 0xffffffffffffffff /* Caller's userns */
-> +
-> +/* List of all ns_id_req versions. */
-> +#define NS_ID_REQ_SIZE_VER0 32 /* sizeof first published struct */
-> +
->  #endif /* __LINUX_NSFS_H */
-> diff --git a/init/version-timestamp.c b/init/version-timestamp.c
-> index e5c278dabecf..cd6f435d5fde 100644
-> --- a/init/version-timestamp.c
-> +++ b/init/version-timestamp.c
-> @@ -22,6 +22,7 @@ struct uts_namespace init_uts_ns =3D {
->  	.user_ns =3D &init_user_ns,
->  	.ns.inum =3D ns_init_inum(&init_uts_ns),
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_uts_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_uts_ns.ns.ns_unified_l=
-ist_node),
->  	.ns.ns_owner_entry =3D LIST_HEAD_INIT(init_uts_ns.ns.ns_owner_entry),
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_uts_ns.ns.ns_owner),
->  #ifdef CONFIG_UTS_NS
-> diff --git a/ipc/msgutil.c b/ipc/msgutil.c
-> index ce1de73725c0..3708f325228d 100644
-> --- a/ipc/msgutil.c
-> +++ b/ipc/msgutil.c
-> @@ -32,6 +32,7 @@ struct ipc_namespace init_ipc_ns =3D {
->  	.user_ns =3D &init_user_ns,
->  	.ns.inum =3D ns_init_inum(&init_ipc_ns),
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_ipc_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_ipc_ns.ns.ns_unified_l=
-ist_node),
->  	.ns.ns_owner_entry =3D LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner_entry),
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner),
->  #ifdef CONFIG_IPC_NS
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index 9fa082e2eb1a..a0eee0785080 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -258,6 +258,7 @@ struct cgroup_namespace init_cgroup_ns =3D {
->  	.root_cset	=3D &init_css_set,
->  	.ns.ns_type	=3D ns_common_type(&init_cgroup_ns),
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_cgroup_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_cgroup_ns.ns.ns_unifie=
-d_list_node),
->  	.ns.ns_owner_entry =3D LIST_HEAD_INIT(init_cgroup_ns.ns.ns_owner_entry)=
-,
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_cgroup_ns.ns.ns_owner),
->  };
-> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-> index ba46de0637c3..def79b549c52 100644
-> --- a/kernel/nscommon.c
-> +++ b/kernel/nscommon.c
-> @@ -62,7 +62,10 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type=
-, const struct proc_ns_ope
->  	ns->ns_type =3D ns_type;
->  	RB_CLEAR_NODE(&ns->ns_tree_node);
->  	RB_CLEAR_NODE(&ns->ns_unified_tree_node);
-> +	RB_CLEAR_NODE(&ns->ns_owner_tree_node);
->  	INIT_LIST_HEAD(&ns->ns_list_node);
-> +	INIT_LIST_HEAD(&ns->ns_unified_list_node);
-> +	ns->ns_owner_tree =3D RB_ROOT;
->  	INIT_LIST_HEAD(&ns->ns_owner);
->  	INIT_LIST_HEAD(&ns->ns_owner_entry);
-> =20
-> diff --git a/kernel/nstree.c b/kernel/nstree.c
-> index 829682bb04a1..5fd50d73f0ae 100644
-> --- a/kernel/nstree.c
-> +++ b/kernel/nstree.c
-> @@ -2,11 +2,15 @@
-> =20
->  #include <linux/nstree.h>
->  #include <linux/proc_ns.h>
-> +#include <linux/rculist.h>
-> +#include <linux/syscalls.h>
->  #include <linux/vfsdebug.h>
->  #include <linux/user_namespace.h>
-> +#include <linux/rcupdate_wait.h>
-> =20
->  __cacheline_aligned_in_smp DEFINE_SEQLOCK(ns_tree_lock);
->  static struct rb_root ns_unified_tree =3D RB_ROOT; /* protected by ns_tr=
-ee_lock */
-> +static LIST_HEAD(ns_unified_list); /* protected by ns_tree_lock */
-> =20
->  /**
->   * struct ns_tree - Namespace tree
-> @@ -83,6 +87,13 @@ static inline struct ns_common *node_to_ns_unified(con=
-st struct rb_node *node)
->  	return rb_entry(node, struct ns_common, ns_unified_tree_node);
->  }
-> =20
-> +static inline struct ns_common *node_to_ns_owner(const struct rb_node *n=
-ode)
-> +{
-> +	if (!node)
-> +		return NULL;
-> +	return rb_entry(node, struct ns_common, ns_owner_tree_node);
-> +}
-> +
->  static inline int ns_cmp(struct rb_node *a, const struct rb_node *b)
->  {
->  	struct ns_common *ns_a =3D node_to_ns(a);
-> @@ -111,6 +122,20 @@ static inline int ns_cmp_unified(struct rb_node *a, =
-const struct rb_node *b)
->  	return 0;
->  }
-> =20
-> +static inline int ns_cmp_owner(struct rb_node *a, const struct rb_node *=
-b)
-> +{
-> +	struct ns_common *ns_a =3D node_to_ns_owner(a);
-> +	struct ns_common *ns_b =3D node_to_ns_owner(b);
-> +	u64 ns_id_a =3D ns_a->ns_id;
-> +	u64 ns_id_b =3D ns_b->ns_id;
-> +
-> +	if (ns_id_a < ns_id_b)
-> +		return -1;
-> +	if (ns_id_a > ns_id_b)
-> +		return 1;
-> +	return 0;
-> +}
-> +
->  void __ns_tree_add_raw(struct ns_common *ns, struct ns_tree *ns_tree)
->  {
->  	struct rb_node *node, *prev;
-> @@ -134,7 +159,13 @@ void __ns_tree_add_raw(struct ns_common *ns, struct =
-ns_tree *ns_tree)
->  	else
->  		list_add_rcu(&ns->ns_list_node, &node_to_ns(prev)->ns_list_node);
-> =20
-> +	/* Add to unified tree and list */
->  	rb_find_add_rcu(&ns->ns_unified_tree_node, &ns_unified_tree, ns_cmp_uni=
-fied);
-> +	prev =3D rb_prev(&ns->ns_unified_tree_node);
-> +	if (!prev)
-> +		list_add_rcu(&ns->ns_unified_list_node, &ns_unified_list);
-> +	else
-> +		list_add_rcu(&ns->ns_unified_list_node, &node_to_ns_unified(prev)->ns_=
-unified_list_node);
-> =20
->  	if (ops) {
->  		struct user_namespace *user_ns;
-> @@ -144,7 +175,16 @@ void __ns_tree_add_raw(struct ns_common *ns, struct =
-ns_tree *ns_tree)
->  		if (user_ns) {
->  			struct ns_common *owner =3D &user_ns->ns;
->  			VFS_WARN_ON_ONCE(owner->ns_type !=3D CLONE_NEWUSER);
-> -			list_add_tail_rcu(&ns->ns_owner_entry, &owner->ns_owner);
-> +
-> +			/* Insert into owner's rbtree */
-> +			rb_find_add_rcu(&ns->ns_owner_tree_node, &owner->ns_owner_tree, ns_cm=
-p_owner);
-> +
-> +			/* Insert into owner's list in sorted order */
-> +			prev =3D rb_prev(&ns->ns_owner_tree_node);
-> +			if (!prev)
-> +				list_add_rcu(&ns->ns_owner_entry, &owner->ns_owner);
-> +			else
-> +				list_add_rcu(&ns->ns_owner_entry, &node_to_ns_owner(prev)->ns_owner_=
-entry);
->  		} else {
->  			/* Only the initial user namespace doesn't have an owner. */
->  			VFS_WARN_ON_ONCE(ns !=3D to_ns_common(&init_user_ns));
-> @@ -157,16 +197,36 @@ void __ns_tree_add_raw(struct ns_common *ns, struct=
- ns_tree *ns_tree)
-> =20
->  void __ns_tree_remove(struct ns_common *ns, struct ns_tree *ns_tree)
->  {
-> +	const struct proc_ns_operations *ops =3D ns->ops;
-> +	struct user_namespace *user_ns;
-> +
->  	VFS_WARN_ON_ONCE(RB_EMPTY_NODE(&ns->ns_tree_node));
->  	VFS_WARN_ON_ONCE(list_empty(&ns->ns_list_node));
->  	VFS_WARN_ON_ONCE(ns->ns_type !=3D ns_tree->type);
-> =20
->  	write_seqlock(&ns_tree_lock);
->  	rb_erase(&ns->ns_tree_node, &ns_tree->ns_tree);
-> -	rb_erase(&ns->ns_unified_tree_node, &ns_unified_tree);
-> -	list_bidir_del_rcu(&ns->ns_list_node);
->  	RB_CLEAR_NODE(&ns->ns_tree_node);
-> -	list_bidir_del_rcu(&ns->ns_owner_entry);
-> +
-> +	list_bidir_del_rcu(&ns->ns_list_node);
-> +
-> +	rb_erase(&ns->ns_unified_tree_node, &ns_unified_tree);
-> +	RB_CLEAR_NODE(&ns->ns_unified_tree_node);
-> +
-> +	list_bidir_del_rcu(&ns->ns_unified_list_node);
-> +
-> +	/* Remove from owner's rbtree if this namespace has an owner */
-> +	if (ops) {
-> +		user_ns =3D ops->owner(ns);
-> +		if (user_ns) {
-> +			struct ns_common *owner =3D &user_ns->ns;
-> +			rb_erase(&ns->ns_owner_tree_node, &owner->ns_owner_tree);
-> +			RB_CLEAR_NODE(&ns->ns_owner_tree_node);
-> +		}
-> +
-> +		list_bidir_del_rcu(&ns->ns_owner_entry);
-> +	}
-> +
->  	write_sequnlock(&ns_tree_lock);
->  }
-
-The above changes in this file seem like they ought to be part of a
-different patch. This is adding=20
-
->  EXPORT_SYMBOL_GPL(__ns_tree_remove);
-> @@ -312,3 +372,352 @@ u64 __ns_tree_gen_id(struct ns_common *ns, u64 id)
->  		ns->ns_id =3D atomic64_inc_return(&namespace_cookie);
->  	return ns->ns_id;
->  }
-> +
-> +struct klistns {
-> +	u64 *kns_ids;
-> +	u32 nr_ns_ids;
-> +	u64 last_ns_id;
-> +	u64 user_ns_id;
-> +	u32 ns_type;
-> +	struct user_namespace *user_ns;
-> +	struct ns_common *first_ns;
-> +};
-> +
-> +static void __free_klistns_free(const struct klistns *kls)
-> +{
-> +	if (kls->user_ns_id !=3D LISTNS_CURRENT_USER)
-> +		put_user_ns(kls->user_ns);
-> +	if (kls->first_ns)
-> +		kls->first_ns->ops->put(kls->first_ns);
-> +	kvfree(kls->kns_ids);
-> +}
-> +
-> +#define NS_ALL (PID_NS | USER_NS | MNT_NS | UTS_NS | IPC_NS | NET_NS | C=
-GROUP_NS | TIME_NS)
-> +
-> +static int copy_ns_id_req(const struct ns_id_req __user *req,
-> +			  struct ns_id_req *kreq)
-> +{
-> +	int ret;
-> +	size_t usize;
-> +
-> +	BUILD_BUG_ON(sizeof(struct ns_id_req) !=3D NS_ID_REQ_SIZE_VER0);
-> +
-> +	ret =3D get_user(usize, &req->size);
-> +	if (ret)
-> +		return -EFAULT;
-> +	if (unlikely(usize > PAGE_SIZE))
-> +		return -E2BIG;
-> +	if (unlikely(usize < NS_ID_REQ_SIZE_VER0))
-> +		return -EINVAL;
-> +	memset(kreq, 0, sizeof(*kreq));
-> +	ret =3D copy_struct_from_user(kreq, sizeof(*kreq), req, usize);
-> +	if (ret)
-> +		return ret;
-> +	if (kreq->spare !=3D 0)
-> +		return -EINVAL;
-> +	if (kreq->ns_type & ~NS_ALL)
-> +		return -EOPNOTSUPP;
-> +	return 0;
-> +}
-> +
-> +static inline int prepare_klistns(struct klistns *kls, struct ns_id_req =
-*kreq,
-> +				  size_t nr_ns_ids)
-> +{
-> +	kls->last_ns_id =3D kreq->ns_id;
-> +	kls->user_ns_id =3D kreq->user_ns_id;
-> +	kls->nr_ns_ids =3D nr_ns_ids;
-> +	kls->ns_type =3D kreq->ns_type;
-> +
-> +	kls->kns_ids =3D kvmalloc_array(nr_ns_ids, sizeof(*kls->kns_ids),
-> +				      GFP_KERNEL_ACCOUNT);
-> +	if (!kls->kns_ids)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Lookup a namespace owned by owner with id >=3D ns_id.
-> + * Returns the namespace with the smallest id that is >=3D ns_id.
-> + */
-> +static struct ns_common *lookup_ns_owner_at(u64 ns_id, struct ns_common =
-*owner)
-> +{
-> +	struct ns_common *ret =3D NULL;
-> +	struct rb_node *node;
-> +
-> +	VFS_WARN_ON_ONCE(owner->ns_type !=3D CLONE_NEWUSER);
-> +
-> +	read_seqlock_excl(&ns_tree_lock);
-> +	node =3D owner->ns_owner_tree.rb_node;
-> +
-> +	while (node) {
-> +		struct ns_common *ns =3D node_to_ns_owner(node);
-> +
-> +		if (ns_id <=3D ns->ns_id) {
-> +			ret =3D ns;
-> +			if (ns_id =3D=3D ns->ns_id)
-> +				break;
-> +			node =3D node->rb_left;
-> +		} else {
-> +			node =3D node->rb_right;
-> +		}
-> +	}
-> +
-> +	if (ret && !ns_get_unless_inactive(ret))
-> +		ret =3D NULL;
-> +	read_sequnlock_excl(&ns_tree_lock);
-> +	return ret;
-> +}
-> +
-> +static struct ns_common *lookup_ns_id(u64 mnt_ns_id, int ns_type)
-> +{
-> +	struct ns_common *ns;
-> +
-> +	guard(rcu)();
-> +	ns =3D ns_tree_lookup_rcu(mnt_ns_id, ns_type);
-> +	if (!ns)
-> +		return NULL;
-> +
-> +	if (!ns_get_unless_inactive(ns))
-> +		return NULL;
-> +
-> +	return ns;
-> +}
-> +
-> +static ssize_t do_listns_userns(struct klistns *kls)
-> +{
-> +	u64 *ns_ids =3D kls->kns_ids;
-> +	size_t nr_ns_ids =3D kls->nr_ns_ids;
-> +	struct ns_common *ns =3D NULL, *first_ns =3D NULL;
-> +	const struct list_head *head;
-> +	bool userns_capable;
-> +	ssize_t ret;
-> +
-> +	VFS_WARN_ON_ONCE(!kls->user_ns_id);
-> +
-> +	if (kls->user_ns_id =3D=3D LISTNS_CURRENT_USER)
-> +		ns =3D to_ns_common(current_user_ns());
-> +	else if (kls->user_ns_id)
-> +		ns =3D lookup_ns_id(kls->user_ns_id, CLONE_NEWUSER);
-> +	if (!ns)
-> +		return -EINVAL;
-> +	kls->user_ns =3D to_user_ns(ns);
-> +
-> +	/*
-> +	 * Use the rbtree to find the first namespace we care about and
-> +	 * then use it's list entry to iterate from there.
-> +	 */
-> +	if (kls->last_ns_id) {
-> +		kls->first_ns =3D lookup_ns_owner_at(kls->last_ns_id + 1, ns);
-> +		if (!kls->first_ns)
-> +			return -ENOENT;
-> +		first_ns =3D kls->first_ns;
-> +	}
-> +
-> +	ret =3D 0;
-> +	head =3D &to_ns_common(kls->user_ns)->ns_owner;
-> +	userns_capable =3D ns_capable_noaudit(kls->user_ns, CAP_SYS_ADMIN);
-> +	guard(rcu)();
-> +	if (!first_ns)
-> +		first_ns =3D list_entry_rcu(head->next, typeof(*ns), ns_owner_entry);
-> +	for (ns =3D first_ns; &ns->ns_owner_entry !=3D head && nr_ns_ids;
-> +	     ns =3D list_entry_rcu(ns->ns_owner_entry.next, typeof(*ns), ns_own=
-er_entry)) {
-> +		if (kls->ns_type && !(kls->ns_type & ns->ns_type))
-> +			continue;
-> +		if (!ns_get_unless_inactive(ns))
-> +			continue;
-> +		if (userns_capable || is_current_namespace(ns) ||
-> +		    ((ns->ns_type =3D=3D CLONE_NEWUSER) && ns_capable_noaudit(to_user_=
-ns(ns), CAP_SYS_ADMIN))) {
-> +			*ns_ids =3D ns->ns_id;
-> +			ns_ids++;
-> +			nr_ns_ids--;
-> +			ret++;
-> +		}
-> +		if (need_resched())
-> +			cond_resched_rcu();
-> +		/* doesn't sleep */
-> +		ns->ops->put(ns);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Lookup a namespace with id >=3D ns_id in either the unified tree or a=
- type-specific tree.
-> + * Returns the namespace with the smallest id that is >=3D ns_id.
-> + */
-> +static struct ns_common *lookup_ns_id_at(u64 ns_id, int ns_type)
-> +{
-> +	struct ns_common *ret =3D NULL;
-> +	struct ns_tree *ns_tree =3D NULL;
-> +	struct rb_node *node;
-> +
-> +	if (ns_type) {
-> +		ns_tree =3D ns_tree_from_type(ns_type);
-> +		if (!ns_tree)
-> +			return NULL;
-> +	}
-> +
-> +	read_seqlock_excl(&ns_tree_lock);
-> +	if (ns_tree)
-> +		node =3D ns_tree->ns_tree.rb_node;
-> +	else
-> +		node =3D ns_unified_tree.rb_node;
-> +
-> +	while (node) {
-> +		struct ns_common *ns;
-> +
-> +		if (ns_type)
-> +			ns =3D node_to_ns(node);
-> +		else
-> +			ns =3D node_to_ns_unified(node);
-> +
-> +		if (ns_id <=3D ns->ns_id) {
-> +			if (ns_type)
-> +				ret =3D node_to_ns(node);
-> +			else
-> +				ret =3D node_to_ns_unified(node);
-> +			if (ns_id =3D=3D ns->ns_id)
-> +				break;
-> +			node =3D node->rb_left;
-> +		} else {
-> +			node =3D node->rb_right;
-> +		}
-> +	}
-> +
-> +	if (ret && !ns_get_unless_inactive(ret))
-> +		ret =3D NULL;
-> +	read_sequnlock_excl(&ns_tree_lock);
-> +	return ret;
-> +}
-> +
-> +static inline struct ns_common *first_ns_common(const struct list_head *=
-head,
-> +						struct ns_tree *ns_tree)
-> +{
-> +	if (ns_tree)
-> +		return list_entry_rcu(head->next, struct ns_common, ns_list_node);
-> +	return list_entry_rcu(head->next, struct ns_common, ns_unified_list_nod=
-e);
-> +}
-> +
-> +static inline struct ns_common *next_ns_common(struct ns_common *ns,
-> +					       struct ns_tree *ns_tree)
-> +{
-> +	if (ns_tree)
-> +		return list_entry_rcu(ns->ns_list_node.next, struct ns_common, ns_list=
-_node);
-> +	return list_entry_rcu(ns->ns_unified_list_node.next, struct ns_common, =
-ns_unified_list_node);
-> +}
-> +
-> +static inline bool ns_common_is_head(struct ns_common *ns,
-> +				     const struct list_head *head,
-> +				     struct ns_tree *ns_tree)
-> +{
-> +	if (ns_tree)
-> +		return &ns->ns_list_node =3D=3D head;
-> +	return &ns->ns_unified_list_node =3D=3D head;
-> +}
-> +
-> +static ssize_t do_listns(struct klistns *kls)
-> +{
-> +	u64 *ns_ids =3D kls->kns_ids;
-> +	size_t nr_ns_ids =3D kls->nr_ns_ids;
-> +	struct ns_common *ns, *first_ns =3D NULL;
-> +	struct ns_tree *ns_tree =3D NULL;
-> +	const struct list_head *head;
-> +	struct user_namespace *user_ns;
-> +	u32 ns_type;
-> +	ssize_t ret;
-> +
-> +	if (hweight32(kls->ns_type) =3D=3D 1)
-> +		ns_type =3D kls->ns_type;
-> +	else
-> +		ns_type =3D 0;
-> +
-> +	if (ns_type) {
-> +		ns_tree =3D ns_tree_from_type(ns_type);
-> +		if (!ns_tree)
-> +			return -EINVAL;
-> +	}
-> +
-> +	if (kls->last_ns_id) {
-> +		kls->first_ns =3D lookup_ns_id_at(kls->last_ns_id + 1, ns_type);
-> +		if (!kls->first_ns)
-> +			return -ENOENT;
-> +		first_ns =3D kls->first_ns;
-> +	}
-> +
-> +	ret =3D 0;
-> +	if (ns_tree)
-> +		head =3D &ns_tree->ns_list;
-> +	else
-> +		head =3D &ns_unified_list;
-> +
-> +	guard(rcu)();
-> +	if (!first_ns)
-> +		first_ns =3D first_ns_common(head, ns_tree);
-> +
-> +	for (ns =3D first_ns; !ns_common_is_head(ns, head, ns_tree) && nr_ns_id=
-s;
-> +	     ns =3D next_ns_common(ns, ns_tree)) {
-> +		if (kls->ns_type && !(kls->ns_type & ns->ns_type))
-> +			continue;
-> +		if (!ns_get_unless_inactive(ns))
-> +			continue;
-> +		/* Check permissions */
-> +		if (!ns->ops)
-> +			user_ns =3D NULL;
-> +		else
-> +			user_ns =3D ns->ops->owner(ns);
-> +		if (!user_ns)
-> +			user_ns =3D &init_user_ns;
-> +		if (ns_capable_noaudit(user_ns, CAP_SYS_ADMIN) ||
-> +		    is_current_namespace(ns) ||
-> +		    ((ns->ns_type =3D=3D CLONE_NEWUSER) && ns_capable_noaudit(to_user_=
-ns(ns), CAP_SYS_ADMIN))) {
-> +			*ns_ids++ =3D ns->ns_id;
-> +			nr_ns_ids--;
-> +			ret++;
-> +		}
-> +		if (need_resched())
-> +			cond_resched_rcu();
-> +		/* doesn't sleep */
-> +		ns->ops->put(ns);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +SYSCALL_DEFINE4(listns, const struct ns_id_req __user *, req,
-> +		u64 __user *, ns_ids, size_t, nr_ns_ids, unsigned int, flags)
-> +{
-> +	struct klistns klns __free(klistns_free) =3D {};
-> +	const size_t maxcount =3D 1000000;
-> +	struct ns_id_req kreq;
-> +	ssize_t ret;
-> +
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	if (unlikely(nr_ns_ids > maxcount))
-> +		return -EOVERFLOW;
-> +
-> +	if (!access_ok(ns_ids, nr_ns_ids * sizeof(*ns_ids)))
-> +		return -EFAULT;
-> +
-> +	ret =3D copy_ns_id_req(req, &kreq);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D prepare_klistns(&klns, &kreq, nr_ns_ids);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (kreq.user_ns_id)
-> +		ret =3D do_listns_userns(&klns);
-> +	else
-> +		ret =3D do_listns(&klns);
-> +	if (ret <=3D 0)
-> +		return ret;
-> +
-> +	if (copy_to_user(ns_ids, klns.kns_ids, ret * sizeof(*ns_ids)))
-> +		return -EFAULT;
-> +
-> +	return ret;
-> +}
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 8134c40b2584..22a0440a62fa 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -80,6 +80,7 @@ struct pid_namespace init_pid_ns =3D {
->  	.user_ns =3D &init_user_ns,
->  	.ns.inum =3D ns_init_inum(&init_pid_ns),
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_pid_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_pid_ns.ns.ns_unified_l=
-ist_node),
->  	.ns.ns_owner_entry =3D LIST_HEAD_INIT(init_pid_ns.ns.ns_owner_entry),
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_pid_ns.ns.ns_owner),
->  #ifdef CONFIG_PID_NS
-> diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
-> index 15cb74267c75..acbeec049263 100644
-> --- a/kernel/time/namespace.c
-> +++ b/kernel/time/namespace.c
-> @@ -489,6 +489,7 @@ struct time_namespace init_time_ns =3D {
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_time_ns.ns.ns_owner),
->  	.frozen_offsets	=3D true,
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_time_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_time_ns.ns.ns_unified_=
-list_node),
->  };
-> =20
->  void __init time_ns_init(void)
-> diff --git a/kernel/user.c b/kernel/user.c
-> index e392768ccd44..68fe16617d38 100644
-> --- a/kernel/user.c
-> +++ b/kernel/user.c
-> @@ -72,6 +72,7 @@ struct user_namespace init_user_ns =3D {
->  	.group =3D GLOBAL_ROOT_GID,
->  	.ns.inum =3D ns_init_inum(&init_user_ns),
->  	.ns.ns_list_node =3D LIST_HEAD_INIT(init_user_ns.ns.ns_list_node),
-> +	.ns.ns_unified_list_node =3D LIST_HEAD_INIT(init_user_ns.ns.ns_unified_=
-list_node),
->  	.ns.ns_owner_entry =3D LIST_HEAD_INIT(init_user_ns.ns.ns_owner_entry),
->  	.ns.ns_owner =3D LIST_HEAD_INIT(init_user_ns.ns.ns_owner),
->  #ifdef CONFIG_USER_NS
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
