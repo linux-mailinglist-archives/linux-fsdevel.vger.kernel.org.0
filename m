@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-65763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E49C10966
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:11:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B5AC1081A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346B356043E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:05:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA026342430
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C230326D6F;
-	Mon, 27 Oct 2025 19:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4240E3314D2;
+	Mon, 27 Oct 2025 19:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zPmPifLc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2ZPeoiGp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A204B31B127;
-	Mon, 27 Oct 2025 19:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D9433033A;
+	Mon, 27 Oct 2025 19:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761591715; cv=none; b=t+ZILmWE2h7Lgdac8uypX7KIysveaXhll2zlEAxGNS4b70RS0daLdLMoWmHHlosN7o61jtU8EO+ltK4zUkiAPBV1RQaeVW8jZPRDDO2aVa6HjYIWcRwPp34aUSC2rHiEI8P/1yMa6GO/laZ6rIU4ZhJr8LhvvvFqQ4aNhL/OriE=
+	t=1761591891; cv=none; b=pWp+GHjy5gebycZffaKLp3mtV5orLZ/XS42baqt2VLsTToYeqQZC3Li69aANTjjbQgORwa/K43lGnrCnjBcIB1Tbve62ZWsRHyq4XEOXhRt+4ieNl0rNI/miK/pBfg9MGKlc+oYraBdldkVt/jB6T53rJINg3aYlxX32P5zEvzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761591715; c=relaxed/simple;
-	bh=Tw/fcgQj4/SBAiBls7zm3ANrZCu/fK+JkB8KM0t4V7k=;
+	s=arc-20240116; t=1761591891; c=relaxed/simple;
+	bh=75LQ70aNEmscEg6w8oZSUQ6Bqept4RdkAMCgh1spdS0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=riE0Cgg/w16QevWhWDwC5ZOkQ7a3zHuhBcMgmRrsJSswjDy8U2gWD9TRrRuJU7XHVAxL7O2YH/FU65rnfMhb20Am5KhnRnltZyRgYzo6dkwxHz0PSNnl9ghzOK6El7XP8XP9rXsQtbcL3qlhytU6v+wYVJXvvBrr4bvaGtpsV1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zPmPifLc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D1EC4CEF1;
-	Mon, 27 Oct 2025 19:01:55 +0000 (UTC)
+	 MIME-Version; b=loO70UdXHCXnzhRwMo0EUBswlkv/p5IJEhAoigB7WrwNtHmTfAoXAStpMdWUGxLnM8go+c2iYnlZPFvBzJTiSr6z3DKcft+CXS4tlIFVtKVsA52Oh9Gu6viXFtNN2x1Hi6/URty4rr1j/oxJP8z9LdgCJg76ciyqvt+KK7v8wQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2ZPeoiGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2708DC4CEF1;
+	Mon, 27 Oct 2025 19:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761591715;
-	bh=Tw/fcgQj4/SBAiBls7zm3ANrZCu/fK+JkB8KM0t4V7k=;
+	s=korg; t=1761591891;
+	bh=75LQ70aNEmscEg6w8oZSUQ6Bqept4RdkAMCgh1spdS0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=zPmPifLcqeI+q/LNQi9+juw4XutFdtPiVGDuT7HcuCKl3p/54N5OaX8asDAXiMbLs
-	 r4qeEDH8wJqW/ds+afPi4lctvmAQp/X5lNgPZYYJVABYV0rd2+Et/XG4yFxg7bpkwK
-	 A+Yc9TLGi9i/Vc5pkqv6NPpQmAzZ0y+IaR6YLKL8=
+	b=2ZPeoiGpds0pSJScaXbsCLHBcdo9l4NGnpmSnsrU2oWNY2j7fYUZ+OO6QqWHZ6W+j
+	 YYXNVuVd6Bl0ocXzdlDpgCg9GC/I4R+Ky7MtNxaKCI91Y9H/vl2R+c31vsN6d6pNdu
+	 Lm14it2yzTb2a2PP5QTacfUgCC3+alXMfWiXV0O4=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	syzbot <syzbot+773fa9d79b29bd8b6831@syzkaller.appspotmail.com>,
+	Jiaming Zhang <r772577952@gmail.com>,
 	Viacheslav Dubeyko <slava@dubeyko.com>,
 	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
 	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 265/332] hfs: fix KMSAN uninit-value issue in hfs_find_set_zero_bits()
+	syzkaller@googlegroups.com
+Subject: [PATCH 5.15 038/123] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
 Date: Mon, 27 Oct 2025 19:35:18 +0100
-Message-ID: <20251027183531.851224555@linuxfoundation.org>
+Message-ID: <20251027183447.422099414@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183524.611456697@linuxfoundation.org>
-References: <20251027183524.611456697@linuxfoundation.org>
+In-Reply-To: <20251027183446.381986645@linuxfoundation.org>
+References: <20251027183446.381986645@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,117 +65,228 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.10-stable review patch.  If anyone has any objections, please let me know.
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-[ Upstream commit 2048ec5b98dbdfe0b929d2e42dc7a54c389c53dd ]
+commit 42520df65bf67189541a425f7d36b0b3e7bd7844 upstream.
 
-The syzbot reported issue in hfs_find_set_zero_bits():
+The hfsplus_strcasecmp() logic can trigger the issue:
 
-=====================================================
-BUG: KMSAN: uninit-value in hfs_find_set_zero_bits+0x74d/0xb60 fs/hfs/bitmap.c:45
- hfs_find_set_zero_bits+0x74d/0xb60 fs/hfs/bitmap.c:45
- hfs_vbm_search_free+0x13c/0x5b0 fs/hfs/bitmap.c:151
- hfs_extend_file+0x6a5/0x1b00 fs/hfs/extent.c:408
- hfs_get_block+0x435/0x1150 fs/hfs/extent.c:353
- __block_write_begin_int+0xa76/0x3030 fs/buffer.c:2151
- block_write_begin fs/buffer.c:2262 [inline]
- cont_write_begin+0x10e1/0x1bc0 fs/buffer.c:2601
- hfs_write_begin+0x85/0x130 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2528 [inline]
- cont_write_begin+0x35a/0x1bc0 fs/buffer.c:2591
- hfs_write_begin+0x85/0x130 fs/hfs/inode.c:52
- hfs_file_truncate+0x1d6/0xe60 fs/hfs/extent.c:494
- hfs_inode_setattr+0x964/0xaa0 fs/hfs/inode.c:654
- notify_change+0x1993/0x1aa0 fs/attr.c:552
- do_truncate+0x28f/0x310 fs/open.c:68
- do_ftruncate+0x698/0x730 fs/open.c:195
- do_sys_ftruncate fs/open.c:210 [inline]
- __do_sys_ftruncate fs/open.c:215 [inline]
- __se_sys_ftruncate fs/open.c:213 [inline]
- __x64_sys_ftruncate+0x11b/0x250 fs/open.c:213
- x64_sys_call+0xfe3/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:78
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.317703][ T9855] ==================================================================
+[  117.318353][ T9855] BUG: KASAN: slab-out-of-bounds in hfsplus_strcasecmp+0x1bc/0x490
+[  117.318991][ T9855] Read of size 2 at addr ffff88802160f40c by task repro/9855
+[  117.319577][ T9855]
+[  117.319773][ T9855] CPU: 0 UID: 0 PID: 9855 Comm: repro Not tainted 6.17.0-rc6 #33 PREEMPT(full)
+[  117.319780][ T9855] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  117.319783][ T9855] Call Trace:
+[  117.319785][ T9855]  <TASK>
+[  117.319788][ T9855]  dump_stack_lvl+0x1c1/0x2a0
+[  117.319795][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319803][ T9855]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  117.319808][ T9855]  ? rcu_is_watching+0x15/0xb0
+[  117.319816][ T9855]  ? lock_release+0x4b/0x3e0
+[  117.319821][ T9855]  ? __kasan_check_byte+0x12/0x40
+[  117.319828][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319835][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
+[  117.319842][ T9855]  print_report+0x17e/0x7e0
+[  117.319848][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319855][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
+[  117.319862][ T9855]  ? __phys_addr+0xd3/0x180
+[  117.319869][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
+[  117.319876][ T9855]  kasan_report+0x147/0x180
+[  117.319882][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
+[  117.319891][ T9855]  hfsplus_strcasecmp+0x1bc/0x490
+[  117.319900][ T9855]  ? __pfx_hfsplus_cat_case_cmp_key+0x10/0x10
+[  117.319906][ T9855]  hfs_find_rec_by_key+0xa9/0x1e0
+[  117.319913][ T9855]  __hfsplus_brec_find+0x18e/0x470
+[  117.319920][ T9855]  ? __pfx_hfsplus_bnode_find+0x10/0x10
+[  117.319926][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
+[  117.319933][ T9855]  ? __pfx___hfsplus_brec_find+0x10/0x10
+[  117.319942][ T9855]  hfsplus_brec_find+0x28f/0x510
+[  117.319949][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
+[  117.319956][ T9855]  ? __pfx_hfsplus_brec_find+0x10/0x10
+[  117.319963][ T9855]  ? __kmalloc_noprof+0x2a9/0x510
+[  117.319969][ T9855]  ? hfsplus_find_init+0x8c/0x1d0
+[  117.319976][ T9855]  hfsplus_brec_read+0x2b/0x120
+[  117.319983][ T9855]  hfsplus_lookup+0x2aa/0x890
+[  117.319990][ T9855]  ? __pfx_hfsplus_lookup+0x10/0x10
+[  117.320003][ T9855]  ? d_alloc_parallel+0x2f0/0x15e0
+[  117.320008][ T9855]  ? __lock_acquire+0xaec/0xd80
+[  117.320013][ T9855]  ? __pfx_d_alloc_parallel+0x10/0x10
+[  117.320019][ T9855]  ? __raw_spin_lock_init+0x45/0x100
+[  117.320026][ T9855]  ? __init_waitqueue_head+0xa9/0x150
+[  117.320034][ T9855]  __lookup_slow+0x297/0x3d0
+[  117.320039][ T9855]  ? __pfx___lookup_slow+0x10/0x10
+[  117.320045][ T9855]  ? down_read+0x1ad/0x2e0
+[  117.320055][ T9855]  lookup_slow+0x53/0x70
+[  117.320065][ T9855]  walk_component+0x2f0/0x430
+[  117.320073][ T9855]  path_lookupat+0x169/0x440
+[  117.320081][ T9855]  filename_lookup+0x212/0x590
+[  117.320089][ T9855]  ? __pfx_filename_lookup+0x10/0x10
+[  117.320098][ T9855]  ? strncpy_from_user+0x150/0x290
+[  117.320105][ T9855]  ? getname_flags+0x1e5/0x540
+[  117.320112][ T9855]  user_path_at+0x3a/0x60
+[  117.320117][ T9855]  __x64_sys_umount+0xee/0x160
+[  117.320123][ T9855]  ? __pfx___x64_sys_umount+0x10/0x10
+[  117.320129][ T9855]  ? do_syscall_64+0xb7/0x3a0
+[  117.320135][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320141][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320145][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.320150][ T9855]  ? exc_page_fault+0x9f/0xf0
+[  117.320154][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320158][ T9855] RIP: 0033:0x7f7dd7908b07
+[  117.320163][ T9855] Code: 23 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 08
+[  117.320167][ T9855] RSP: 002b:00007ffd5ebd9698 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+[  117.320172][ T9855] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7dd7908b07
+[  117.320176][ T9855] RDX: 0000000000000009 RSI: 0000000000000009 RDI: 00007ffd5ebd9740
+[  117.320179][ T9855] RBP: 00007ffd5ebda780 R08: 0000000000000005 R09: 00007ffd5ebd9530
+[  117.320181][ T9855] R10: 00007f7dd799bfc0 R11: 0000000000000202 R12: 000055e2008b32d0
+[  117.320184][ T9855] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[  117.320189][ T9855]  </TASK>
+[  117.320190][ T9855]
+[  117.351311][ T9855] Allocated by task 9855:
+[  117.351683][ T9855]  kasan_save_track+0x3e/0x80
+[  117.352093][ T9855]  __kasan_kmalloc+0x8d/0xa0
+[  117.352490][ T9855]  __kmalloc_noprof+0x288/0x510
+[  117.352914][ T9855]  hfsplus_find_init+0x8c/0x1d0
+[  117.353342][ T9855]  hfsplus_lookup+0x19c/0x890
+[  117.353747][ T9855]  __lookup_slow+0x297/0x3d0
+[  117.354148][ T9855]  lookup_slow+0x53/0x70
+[  117.354514][ T9855]  walk_component+0x2f0/0x430
+[  117.354921][ T9855]  path_lookupat+0x169/0x440
+[  117.355325][ T9855]  filename_lookup+0x212/0x590
+[  117.355740][ T9855]  user_path_at+0x3a/0x60
+[  117.356115][ T9855]  __x64_sys_umount+0xee/0x160
+[  117.356529][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.356920][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.357429][ T9855]
+[  117.357636][ T9855] The buggy address belongs to the object at ffff88802160f000
+[  117.357636][ T9855]  which belongs to the cache kmalloc-2k of size 2048
+[  117.358827][ T9855] The buggy address is located 0 bytes to the right of
+[  117.358827][ T9855]  allocated 1036-byte region [ffff88802160f000, ffff88802160f40c)
+[  117.360061][ T9855]
+[  117.360266][ T9855] The buggy address belongs to the physical page:
+[  117.360813][ T9855] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21608
+[  117.361562][ T9855] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  117.362285][ T9855] flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+[  117.362929][ T9855] page_type: f5(slab)
+[  117.363282][ T9855] raw: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
+[  117.364015][ T9855] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  117.364750][ T9855] head: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
+[  117.365491][ T9855] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  117.366232][ T9855] head: 00fff00000000003 ffffea0000858201 00000000ffffffff 00000000ffffffff
+[  117.366968][ T9855] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+[  117.367711][ T9855] page dumped because: kasan: bad access detected
+[  117.368259][ T9855] page_owner tracks the page as allocated
+[  117.368745][ T9855] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN1
+[  117.370541][ T9855]  post_alloc_hook+0x240/0x2a0
+[  117.370954][ T9855]  get_page_from_freelist+0x2101/0x21e0
+[  117.371435][ T9855]  __alloc_frozen_pages_noprof+0x274/0x380
+[  117.371935][ T9855]  alloc_pages_mpol+0x241/0x4b0
+[  117.372360][ T9855]  allocate_slab+0x8d/0x380
+[  117.372752][ T9855]  ___slab_alloc+0xbe3/0x1400
+[  117.373159][ T9855]  __kmalloc_cache_noprof+0x296/0x3d0
+[  117.373621][ T9855]  nexthop_net_init+0x75/0x100
+[  117.374038][ T9855]  ops_init+0x35c/0x5c0
+[  117.374400][ T9855]  setup_net+0x10c/0x320
+[  117.374768][ T9855]  copy_net_ns+0x31b/0x4d0
+[  117.375156][ T9855]  create_new_namespaces+0x3f3/0x720
+[  117.375613][ T9855]  unshare_nsproxy_namespaces+0x11c/0x170
+[  117.376094][ T9855]  ksys_unshare+0x4ca/0x8d0
+[  117.376477][ T9855]  __x64_sys_unshare+0x38/0x50
+[  117.376879][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.377265][ T9855] page last free pid 9110 tgid 9110 stack trace:
+[  117.377795][ T9855]  __free_frozen_pages+0xbeb/0xd50
+[  117.378229][ T9855]  __put_partials+0x152/0x1a0
+[  117.378625][ T9855]  put_cpu_partial+0x17c/0x250
+[  117.379026][ T9855]  __slab_free+0x2d4/0x3c0
+[  117.379404][ T9855]  qlist_free_all+0x97/0x140
+[  117.379790][ T9855]  kasan_quarantine_reduce+0x148/0x160
+[  117.380250][ T9855]  __kasan_slab_alloc+0x22/0x80
+[  117.380662][ T9855]  __kmalloc_noprof+0x232/0x510
+[  117.381074][ T9855]  tomoyo_supervisor+0xc0a/0x1360
+[  117.381498][ T9855]  tomoyo_env_perm+0x149/0x1e0
+[  117.381903][ T9855]  tomoyo_find_next_domain+0x15ad/0x1b90
+[  117.382378][ T9855]  tomoyo_bprm_check_security+0x11c/0x180
+[  117.382859][ T9855]  security_bprm_check+0x89/0x280
+[  117.383289][ T9855]  bprm_execve+0x8f1/0x14a0
+[  117.383673][ T9855]  do_execveat_common+0x528/0x6b0
+[  117.384103][ T9855]  __x64_sys_execve+0x94/0xb0
+[  117.384500][ T9855]
+[  117.384706][ T9855] Memory state around the buggy address:
+[  117.385179][ T9855]  ffff88802160f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  117.385854][ T9855]  ffff88802160f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  117.386534][ T9855] >ffff88802160f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.387204][ T9855]                       ^
+[  117.387566][ T9855]  ffff88802160f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.388243][ T9855]  ffff88802160f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.388918][ T9855] ==================================================================
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4154 [inline]
- slab_alloc_node mm/slub.c:4197 [inline]
- __kmalloc_cache_noprof+0x7f7/0xed0 mm/slub.c:4354
- kmalloc_noprof include/linux/slab.h:905 [inline]
- hfs_mdb_get+0x1cc8/0x2a90 fs/hfs/mdb.c:175
- hfs_fill_super+0x3d0/0xb80 fs/hfs/super.c:337
- get_tree_bdev_flags+0x6e3/0x920 fs/super.c:1681
- get_tree_bdev+0x38/0x50 fs/super.c:1704
- hfs_get_tree+0x35/0x40 fs/hfs/super.c:388
- vfs_get_tree+0xb0/0x5c0 fs/super.c:1804
- do_new_mount+0x738/0x1610 fs/namespace.c:3902
- path_mount+0x6db/0x1e90 fs/namespace.c:4226
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount+0x6eb/0x7d0 fs/namespace.c:4427
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4427
- x64_sys_call+0xfa7/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+The issue takes place if the length field of struct hfsplus_unistr
+is bigger than HFSPLUS_MAX_STRLEN. The patch simply checks
+the length of comparing strings. And if the strings' length
+is bigger than HFSPLUS_MAX_STRLEN, then it is corrected
+to this value.
 
-CPU: 1 UID: 0 PID: 12609 Comm: syz.1.2692 Not tainted 6.16.0-syzkaller #0 PREEMPT(none)
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-=====================================================
+v2
+The string length correction has been added for hfsplus_strcmp().
 
-The HFS_SB(sb)->bitmap buffer is allocated in hfs_mdb_get():
-
-HFS_SB(sb)->bitmap = kmalloc(8192, GFP_KERNEL);
-
-Finally, it can trigger the reported issue because kmalloc()
-doesn't clear the allocated memory. If allocated memory contains
-only zeros, then everything will work pretty fine.
-But if the allocated memory contains the "garbage", then
-it can affect the bitmap operations and it triggers
-the reported issue.
-
-This patch simply exchanges the kmalloc() on kzalloc()
-with the goal to guarantee the correctness of bitmap operations.
-Because, newly created allocation bitmap should have all
-available blocks free. Potentially, initialization bitmap's read
-operation could not fill the whole allocated memory and
-"garbage" in the not initialized memory will be the reason of
-volume coruptions and file system driver bugs.
-
-Reported-by: syzbot <syzbot+773fa9d79b29bd8b6831@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
+Reported-by: Jiaming Zhang <r772577952@gmail.com>
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 cc: Yangtao Li <frank.li@vivo.com>
 cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20250820230636.179085-1-slava@dubeyko.com
+cc: syzkaller@googlegroups.com
+Link: https://lore.kernel.org/r/20250919191243.1370388-1-slava@dubeyko.com
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfs/mdb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/hfsplus/unicode.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-index cdf0edeeb2781..f8f976afcc740 100644
---- a/fs/hfs/mdb.c
-+++ b/fs/hfs/mdb.c
-@@ -172,7 +172,7 @@ int hfs_mdb_get(struct super_block *sb)
- 		pr_warn("continuing without an alternate MDB\n");
- 	}
+--- a/fs/hfsplus/unicode.c
++++ b/fs/hfsplus/unicode.c
+@@ -40,6 +40,18 @@ int hfsplus_strcasecmp(const struct hfsp
+ 	p1 = s1->unicode;
+ 	p2 = s2->unicode;
  
--	HFS_SB(sb)->bitmap = kmalloc(8192, GFP_KERNEL);
-+	HFS_SB(sb)->bitmap = kzalloc(8192, GFP_KERNEL);
- 	if (!HFS_SB(sb)->bitmap)
- 		goto out;
++	if (len1 > HFSPLUS_MAX_STRLEN) {
++		len1 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s1->length), len1);
++	}
++
++	if (len2 > HFSPLUS_MAX_STRLEN) {
++		len2 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s2->length), len2);
++	}
++
+ 	while (1) {
+ 		c1 = c2 = 0;
  
--- 
-2.51.0
-
+@@ -74,6 +86,18 @@ int hfsplus_strcmp(const struct hfsplus_
+ 	p1 = s1->unicode;
+ 	p2 = s2->unicode;
+ 
++	if (len1 > HFSPLUS_MAX_STRLEN) {
++		len1 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s1->length), len1);
++	}
++
++	if (len2 > HFSPLUS_MAX_STRLEN) {
++		len2 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s2->length), len2);
++	}
++
+ 	for (len = min(len1, len2); len > 0; len--) {
+ 		c1 = be16_to_cpu(*p1);
+ 		c2 = be16_to_cpu(*p2);
 
 
 
