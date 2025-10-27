@@ -1,96 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-65710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F42C0E03C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 14:27:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A47C0E1D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 14:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F00A3AF37B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:27:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61C5434E3DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7C12C11D6;
-	Mon, 27 Oct 2025 13:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCEB2F616B;
+	Mon, 27 Oct 2025 13:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TM9vO7Jc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="85Ixpc4J";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Neqw/yzt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N5zhOPEQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uAJW/z40";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FP44aS9i";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uAJW/z40";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FP44aS9i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE4028727B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 13:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEC72F6174
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 13:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761571656; cv=none; b=iJ4IZWFQRR6fplc5qMuWg3R0zwp67JY6JqT9Zw8yx13Ok5VQoqB9xs8NbFCZHbqJ2C/uPJwlPqNRPNwqkKOElzW63AVtyBnu1ogd0WfotP0EEGH895UUCRqvaek0AKAcRcnJGny5SbFThE6jULRGZWX6ZX5aj8myLZJ++ntRzq0=
+	t=1761572368; cv=none; b=ureC5ZQwWomt6K5qltc3M4wKkRPdxOjznPS2d7R15qulaTLkLwcSLOwIuZuAdg1aGnwAvs4CNijaYN9jW13jdA/PH9bt18rwyUGFkwT/gX0zeg+iwd8PAzir5dSMNYFuhATWns27C0zPF7zyvZrTsrpZuZzEgyUfnkXxIrTSeIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761571656; c=relaxed/simple;
-	bh=o5Ho7ZZ2WaFp0JzdWDL0uVeZ8dGhvbT/ojp1hVOm93I=;
+	s=arc-20240116; t=1761572368; c=relaxed/simple;
+	bh=9RgNrqv/mENwlNJwRQ4VQLL/ur0tFFoTDefG8DnppDk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lEYJF2PkVwmImX8F/XRJsTXC4kuSO9/c75OhNkDs7448KcvQgVIZhU3rbOvPj8Kifvc/s7WOC9WjFRSGTD8l1PRYIQBvAjRNSEQzqJn6p0HPSG9v1BjwmC9Zka4M9dyku8iZ29m5PsDrEInFYdtTa+kwXXHw0NdJY5Yk7ksKmB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TM9vO7Jc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=85Ixpc4J; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Neqw/yzt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N5zhOPEQ; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=IvakNqffV5PCuLkkAcIv3O5YKxOREYYEXF8noVbtRAXutlWJRebFo5HlGxeZZgVnOBWXAR1B0QyIXNOPqWKKgfvsDTc0KWmx9AP/tzAklNr0/eAwixKO92eaFYJyrRInmY8jMiAMgW6KKAEyvpZPFtfRyA7CeovaBFzkQxbyHPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uAJW/z40; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FP44aS9i; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uAJW/z40; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FP44aS9i; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CF540219E4;
-	Mon, 27 Oct 2025 13:27:30 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EA91A21B21;
+	Mon, 27 Oct 2025 13:39:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761571651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1761572362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5XpAc/wnKhW7u09JNrLPt9PaFPUwXBy6MclCMVEFG2c=;
-	b=TM9vO7Jc61kw+VXUhOQ+PGjaEbab7kI7IqQsWiI8Becj2jWF0T18ysXykCJva50100qZiV
-	KxZS/IYk5nxsFp6WBXD0QGjZtXB7J+QsgAyu4CLo+QaJKwPfCZmam4WTXqa6eI4ABpLRp5
-	VFCL6kLowFxDpMiOc6vWqgGf19tN7GU=
+	bh=i27u97N4e73GoXPAJTcuvMQHbHuPQ9/roOonBRBxYNQ=;
+	b=uAJW/z40YgANMYhmD50708FHkiKIs2E+rgLkpZiPOVKlkoft9lcSiCB+KMwvkdTBJuBdzG
+	1UhGzq2JqoZjgk64YQEoitm2O+xU7kyYAzyXFfjZqOQD1GrLbQyjfVVeN1pq0lbMHR0hXh
+	0oM2jHeDfCNTIQWopnQnaAudiOnYeFw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761571651;
+	s=susede2_ed25519; t=1761572362;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5XpAc/wnKhW7u09JNrLPt9PaFPUwXBy6MclCMVEFG2c=;
-	b=85Ixpc4JK9GwDRQJK1w6m0apKLDqjn/tLJKiqOW/a2SWTiwaaxcoQIeZxANpbukVMYAZUC
-	Cq9BrhPHp0AEVPBQ==
+	bh=i27u97N4e73GoXPAJTcuvMQHbHuPQ9/roOonBRBxYNQ=;
+	b=FP44aS9ioBrt+HRJvuoeyP4iKpqxYiMu9h1hjOQq5L0lX0/5TSitUuEAxeFuZ1UVlMVZLq
+	5EXBdVJuMsSgBtDA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Neqw/yzt";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=N5zhOPEQ
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="uAJW/z40";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FP44aS9i
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761571650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1761572362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5XpAc/wnKhW7u09JNrLPt9PaFPUwXBy6MclCMVEFG2c=;
-	b=Neqw/yzt5jkjQeyE88ZObAB5rNiQRIMgkO1G/L0izC2JO31t3R8ruwVCycwb9ObjVlA3lC
-	NTdrolCFr07dGsBUvQQI10lxfPW+Paamqcryxl8G5O7pUW/xYZi2+FFmEIEyYZWKoN7Pm8
-	FuVlvhMX17+Qxsh8z81l6vY52dMCbA8=
+	bh=i27u97N4e73GoXPAJTcuvMQHbHuPQ9/roOonBRBxYNQ=;
+	b=uAJW/z40YgANMYhmD50708FHkiKIs2E+rgLkpZiPOVKlkoft9lcSiCB+KMwvkdTBJuBdzG
+	1UhGzq2JqoZjgk64YQEoitm2O+xU7kyYAzyXFfjZqOQD1GrLbQyjfVVeN1pq0lbMHR0hXh
+	0oM2jHeDfCNTIQWopnQnaAudiOnYeFw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761571650;
+	s=susede2_ed25519; t=1761572362;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5XpAc/wnKhW7u09JNrLPt9PaFPUwXBy6MclCMVEFG2c=;
-	b=N5zhOPEQviM9fOW+4dNYU4eUhqEyCo0EbRr9vYHizE0xAZESli17qpj+4h+HXMWzK0upNn
-	dbhf1I3lAqr0C5Bg==
+	bh=i27u97N4e73GoXPAJTcuvMQHbHuPQ9/roOonBRBxYNQ=;
+	b=FP44aS9ioBrt+HRJvuoeyP4iKpqxYiMu9h1hjOQq5L0lX0/5TSitUuEAxeFuZ1UVlMVZLq
+	5EXBdVJuMsSgBtDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38112136CF;
-	Mon, 27 Oct 2025 13:27:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60BDB136CF;
+	Mon, 27 Oct 2025 13:39:21 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /r5bDUJz/2gfTwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 27 Oct 2025 13:27:30 +0000
-Message-ID: <33d350d9-b247-4181-b8c8-5e879acd35fe@suse.cz>
-Date: Mon, 27 Oct 2025 14:27:29 +0100
+	id lfDsFgl2/2gIWwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 27 Oct 2025 13:39:21 +0000
+Message-ID: <b73fdd99-befe-4e2b-b029-909c4b31902b@suse.cz>
+Date: Mon, 27 Oct 2025 14:39:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,16 +98,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 01/37] KVM: guest_memfd: Introduce per-gmem
- attributes, use to guard user mappings
+Subject: Re: [RFC PATCH v1 08/37] KVM: guest_memfd: Don't set FGP_ACCESSED
+ when getting folios
 Content-Language: en-US
 To: Ackerley Tng <ackerleytng@google.com>, cgroups@vger.kernel.org,
  kvm@vger.kernel.org, linux-doc@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org
 Cc: akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
  brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org,
  corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com,
@@ -137,7 +135,7 @@ Cc: akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de,
  xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com,
  yuzenghui@huawei.com, zhiquan1.li@intel.com
 References: <cover.1760731772.git.ackerleytng@google.com>
- <638600e19c6e23959bad60cf61582f387dff6445.1760731772.git.ackerleytng@google.com>
+ <dc5f58f5d3427b6291486a24061b6301761dda3d.1760731772.git.ackerleytng@google.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -178,10 +176,10 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <638600e19c6e23959bad60cf61582f387dff6445.1760731772.git.ackerleytng@google.com>
+In-Reply-To: <dc5f58f5d3427b6291486a24061b6301761dda3d.1760731772.git.ackerleytng@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CF540219E4
+X-Rspamd-Queue-Id: EA91A21B21
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-3.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
@@ -191,256 +189,68 @@ X-Spamd-Result: default: False [-3.01 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim];
 	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
 	FREEMAIL_CC(0.00)[linux-foundation.org,linux.intel.com,alien8.de,kernel.org,intel.com,lwn.net,redhat.com,google.com,cmpxchg.org,infradead.org,zytor.com,suse.cz,arm.com,ziepe.ca,amazon.com,nvidia.com,suse.de,linux.dev,oracle.com,maciej.szmigiero.name,loongson.cn,efficios.com,digikod.net,amd.com,ellerman.id.au,amazon.es,dabbelt.com,sifive.com,gmail.com,goodmis.org,amazon.co.uk,linutronix.de,zeniv.linux.org.uk,huawei.com];
 	RCVD_TLS_ALL(0.00)[];
 	DKIM_TRACE(0.00)[suse.cz:+];
 	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[98];
+	RCPT_COUNT_GT_50(0.00)[96];
 	RCVD_COUNT_TWO(0.00)[2];
 	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	R_RATELIMIT(0.00)[to_ip_from(RLit8ednp7j3q8s7mp5dsi7bwe)];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 X-Rspamd-Action: no action
 X-Spam-Flag: NO
 X-Spam-Score: -3.01
 X-Spam-Level: 
 
 On 10/17/25 22:11, Ackerley Tng wrote:
-> From: Sean Christopherson <seanjc@google.com>
+> guest_memfd folios don't care about accessed flags since the memory is
+> unevictable and there is no storage to write back to, hence, cleanup the
+> allocation path by not setting FGP_ACCESSED.
 > 
-> Start plumbing in guest_memfd support for in-place private<=>shared
-> conversions by tracking attributes via a maple tree.  KVM currently tracks
-> private vs. shared attributes on a per-VM basis, which made sense when a
-> guest_memfd _only_ supported private memory, but tracking per-VM simply
-> can't work for in-place conversions as the shareability of a given page
-> needs to be per-gmem_inode, not per-VM.
-> 
-> Use the filemap invalidation lock to protect the maple tree, as taking the
-> lock for read when faulting in memory (for userspace or the guest) isn't
-> expected to result in meaningful contention, and using a separate lock
-> would add significant complexity (avoid deadlock is quite difficult).
-
-+Cc Liam and maple-tree list, especially for this part.
-
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Ackerley Tng <ackerleytng@google.com>
 > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Co-developed-by: Vishal Annapurve <vannapurve@google.com>
-> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
-> Co-developed-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Fuad Tabba <tabba@google.com>
+> [sean: split to separate patch, write changelog]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
 > ---
->  virt/kvm/guest_memfd.c | 119 +++++++++++++++++++++++++++++++++++------
->  1 file changed, 103 insertions(+), 16 deletions(-)
+>  virt/kvm/guest_memfd.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
 > diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index b22caa8b530ab..26cec833766c3 100644
+> index 855e682041311..2a9e9220a48aa 100644
 > --- a/virt/kvm/guest_memfd.c
 > +++ b/virt/kvm/guest_memfd.c
-> @@ -4,6 +4,7 @@
->  #include <linux/falloc.h>
->  #include <linux/fs.h>
->  #include <linux/kvm_host.h>
-> +#include <linux/maple_tree.h>
->  #include <linux/mempolicy.h>
->  #include <linux/pseudo_fs.h>
->  #include <linux/pagemap.h>
-> @@ -32,6 +33,7 @@ struct gmem_inode {
->  	struct inode vfs_inode;
-> 
->  	u64 flags;
-> +	struct maple_tree attributes;
->  };
-> 
->  static __always_inline struct gmem_inode *GMEM_I(struct inode *inode)
-> @@ -54,6 +56,23 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
->  	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
->  }
-> 
-> +static u64 kvm_gmem_get_attributes(struct inode *inode, pgoff_t index)
-> +{
-> +	void *entry = mtree_load(&GMEM_I(inode)->attributes, index);
-> +
-> +	return WARN_ON_ONCE(!entry) ? 0 : xa_to_value(entry);
-> +}
-> +
-> +static bool kvm_gmem_is_private_mem(struct inode *inode, pgoff_t index)
-> +{
-> +	return kvm_gmem_get_attributes(inode, index) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
-> +}
-> +
-> +static bool kvm_gmem_is_shared_mem(struct inode *inode, pgoff_t index)
-> +{
-> +	return !kvm_gmem_is_private_mem(inode, index);
-> +}
-> +
->  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  				    pgoff_t index, struct folio *folio)
->  {
-> @@ -415,10 +434,13 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
->  	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
->  		return VM_FAULT_SIGBUS;
-> 
-> -	if (!(GMEM_I(inode)->flags & GUEST_MEMFD_FLAG_INIT_SHARED))
-> -		return VM_FAULT_SIGBUS;
-> +	filemap_invalidate_lock_shared(inode->i_mapping);
-> +	if (kvm_gmem_is_shared_mem(inode, vmf->pgoff))
-> +		folio = kvm_gmem_get_folio(inode, vmf->pgoff);
-> +	else
-> +		folio = ERR_PTR(-EACCES);
-> +	filemap_invalidate_unlock_shared(inode->i_mapping);
-> 
-> -	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
->  	if (IS_ERR(folio)) {
->  		if (PTR_ERR(folio) == -EAGAIN)
->  			return VM_FAULT_RETRY;
-> @@ -572,6 +594,46 @@ bool __weak kvm_arch_supports_gmem_init_shared(struct kvm *kvm)
->  	return true;
->  }
-> 
-> +static int kvm_gmem_init_inode(struct inode *inode, loff_t size, u64 flags)
-> +{
-> +	struct gmem_inode *gi = GMEM_I(inode);
-> +	MA_STATE(mas, &gi->attributes, 0, (size >> PAGE_SHIFT) - 1);
-> +	u64 attrs;
-> +	int r;
-> +
-> +	inode->i_op = &kvm_gmem_iops;
-> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> +	inode->i_mode |= S_IFREG;
-> +	inode->i_size = size;
-> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> +	mapping_set_inaccessible(inode->i_mapping);
-> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
-> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> +
-> +	gi->flags = flags;
-> +
-> +	mt_set_external_lock(&gi->attributes,
-> +			     &inode->i_mapping->invalidate_lock);
-> +
-> +	/*
-> +	 * Store default attributes for the entire gmem instance. Ensuring every
-> +	 * index is represented in the maple tree at all times simplifies the
-> +	 * conversion and merging logic.
-> +	 */
-> +	attrs = gi->flags & GUEST_MEMFD_FLAG_INIT_SHARED ? 0 : KVM_MEMORY_ATTRIBUTE_PRIVATE;
-> +
-> +	/*
-> +	 * Acquire the invalidation lock purely to make lockdep happy. There
-> +	 * should be no races at this time since the inode hasn't yet been fully
-> +	 * created.
-> +	 */
-> +	filemap_invalidate_lock(inode->i_mapping);
-> +	r = mas_store_gfp(&mas, xa_mk_value(attrs), GFP_KERNEL);
-> +	filemap_invalidate_unlock(inode->i_mapping);
-> +
-> +	return r;
-> +}
-> +
->  static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  {
->  	static const char *name = "[kvm-gmem]";
-> @@ -602,16 +664,9 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  		goto err_fops;
->  	}
-> 
-> -	inode->i_op = &kvm_gmem_iops;
-> -	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> -	inode->i_mode |= S_IFREG;
-> -	inode->i_size = size;
-> -	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> -	mapping_set_inaccessible(inode->i_mapping);
-> -	/* Unmovable mappings are supposed to be marked unevictable as well. */
-> -	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> -
-> -	GMEM_I(inode)->flags = flags;
-> +	err = kvm_gmem_init_inode(inode, size, flags);
-> +	if (err)
-> +		goto err_inode;
-> 
->  	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, &kvm_gmem_fops);
->  	if (IS_ERR(file)) {
-> @@ -798,9 +853,13 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->  	if (!file)
->  		return -EFAULT;
-> 
-> +	filemap_invalidate_lock_shared(file_inode(file)->i_mapping);
-> +
->  	folio = __kvm_gmem_get_pfn(file, slot, index, pfn, &is_prepared, max_order);
-> -	if (IS_ERR(folio))
-> -		return PTR_ERR(folio);
-> +	if (IS_ERR(folio)) {
-> +		r = PTR_ERR(folio);
-> +		goto out;
-> +	}
-> 
->  	if (!is_prepared)
->  		r = kvm_gmem_prepare_folio(kvm, slot, gfn, folio);
-> @@ -812,6 +871,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->  	else
->  		folio_put(folio);
-> 
-> +out:
-> +	filemap_invalidate_unlock_shared(file_inode(file)->i_mapping);
->  	return r;
->  }
->  EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_gmem_get_pfn);
-> @@ -925,13 +986,39 @@ static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
-> 
->  	mpol_shared_policy_init(&gi->policy, NULL);
-> 
-> +	/*
-> +	 * Memory attributes are protected the filemap invalidation lock, but
-> +	 * the lock structure isn't available at this time.  Immediately mark
-> +	 * maple tree as using external locking so that accessing the tree
-> +	 * before its fully initialized results in NULL pointer dereferences
-> +	 * and not more subtle bugs.
-> +	 */
-> +	mt_init_flags(&gi->attributes, MT_FLAGS_LOCK_EXTERN);
-> +
->  	gi->flags = 0;
->  	return &gi->vfs_inode;
->  }
-> 
->  static void kvm_gmem_destroy_inode(struct inode *inode)
->  {
-> -	mpol_free_shared_policy(&GMEM_I(inode)->policy);
-> +	struct gmem_inode *gi = GMEM_I(inode);
-> +
-> +	mpol_free_shared_policy(&gi->policy);
-> +
-> +	/*
-> +	 * Note!  Checking for an empty tree is functionally necessary to avoid
-> +	 * explosions if the tree hasn't been initialized, i.e. if the inode is
-> +	 * being destroyed before guest_memfd can set the external lock.
-> +	 */
-> +	if (!mtree_empty(&gi->attributes)) {
-> +		/*
-> +		 * Acquire the invalidation lock purely to make lockdep happy,
-> +		 * the inode is unreachable at this point.
-> +		 */
-> +		filemap_invalidate_lock(inode->i_mapping);
-> +		__mt_destroy(&gi->attributes);
-> +		filemap_invalidate_unlock(inode->i_mapping);
-> +	}
->  }
-> 
->  static void kvm_gmem_free_inode(struct inode *inode)
-> --
-> 2.51.0.858.gf9c4a03a3a-goog
+> @@ -167,14 +167,13 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+>  	 * Fast-path: See if folio is already present in mapping to avoid
+>  	 * policy_lookup.
+>  	 */
+> -	folio = __filemap_get_folio(inode->i_mapping, index,
+> -				    FGP_LOCK | FGP_ACCESSED, 0);
+> +	folio = filemap_lock_folio(inode->i_mapping, index);
+>  	if (!IS_ERR(folio))
+>  		return folio;
+>  
+>  	policy = kvm_gmem_get_folio_policy(GMEM_I(inode), index);
+>  	folio = __filemap_get_folio_mpol(inode->i_mapping, index,
+> -					 FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
+> +					 FGP_LOCK | FGP_CREAT,
+>  					 mapping_gfp_mask(inode->i_mapping), policy);
+>  	mpol_cond_put(policy);
+>  
 
 
