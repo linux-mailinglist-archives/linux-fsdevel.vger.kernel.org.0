@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-65787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3EE7C11003
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:29:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85F6C10D46
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD2B250130C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:22:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A12F503A8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012B632A3D7;
-	Mon, 27 Oct 2025 19:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0357831DDBC;
+	Mon, 27 Oct 2025 19:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nIivxPWq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DBWnWcin"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB9F31D753;
-	Mon, 27 Oct 2025 19:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C59E2C15BB;
+	Mon, 27 Oct 2025 19:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592847; cv=none; b=MiIgslNZiNTBeF2KRLiHzv03yuMprprdkq5SOe/7bD4SCta4qkU8DeSfmN03aT7lSVNFA4ulvWz3yOxcM/yfXzlT/qlFfK0c/eGllwsWMYuVljpcxoDLjeBpd541TBCLpa/02VPzOPb+gKLOTSJpexl7DtzhIky4e+OiZaYO32A=
+	t=1761592320; cv=none; b=RrC4hCA3+5tr2pNr84FKxgp3x0RICY07JpvuaYs/VzEtrZCKHH1zCB4yDYAzHQBRxZJoFiR3rWUHu2Ycho6VUljFoIDq83f7wGPIOqnBbTRWAmU7XyzkOAxd03WeXY+vCy7eyrMMyoptgKdwJjM9y52BdCR9ICR8caUuAiMSDDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592847; c=relaxed/simple;
-	bh=rWaw++ZbAOi8LwgelYKBCsXBcElei1Le53olxrLLftY=;
+	s=arc-20240116; t=1761592320; c=relaxed/simple;
+	bh=HovdNNQB4whTRWhq6M5iowX4zobTW8P1gy2B2gY+Ni4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HGeGQ008GV79SekY77wGcH57PgatREBq8Hj7pjq7D8TxJLFP79gahnEAtpI9OKDEQ0AgfHQ0pd06PXphxDQzFeXa8xaHdc71C9oymXFwCCoSdHELQoV1MPMXYLkX8foGDYg/rNLphhQAt4ggIl4BB7k6CkzMr32zx07cmS0EDV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nIivxPWq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C9EC113D0;
-	Mon, 27 Oct 2025 19:20:46 +0000 (UTC)
+	 MIME-Version; b=rWQGc6UzV5HSjeteziUN5NMd623lVgwqDo7ChilV4e/WnBJtMBy+k0o2S8EOAkWoh7yIpocLDZ+Gt/50A/pW/yurhfsTgVEPkYX27Y6iL3wPM6EEgOIrt9ryL9vjsOFGmvb4pVXPVChDX3y9V0oLxVleXhWc/YMmh6XALOTI+tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DBWnWcin; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA398C4CEF1;
+	Mon, 27 Oct 2025 19:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761592847;
-	bh=rWaw++ZbAOi8LwgelYKBCsXBcElei1Le53olxrLLftY=;
+	s=korg; t=1761592320;
+	bh=HovdNNQB4whTRWhq6M5iowX4zobTW8P1gy2B2gY+Ni4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nIivxPWqK4nWauVEKeHn01ScXSkeVDxNovkRJBnEbuyYrk1vmp4Z6Z2mDUpw2ZRmg
-	 0qqlBdLwUEeScvioN2SY1A6WWS2JN2iNjpRrWzPYl1Whs8Ca3TxqAFeMa1iK3sgFvx
-	 4K3LRpZSDdNwQyAdgIVkg71XaIkC2S+DH+3VtR6s=
+	b=DBWnWcin4XpEZjj4ob2/HaD9cNLnOqrUe2NHwlX0Y7i7tw3vbWQ/Tu1CYshEW/JVM
+	 MqW/HY3TwuaBrYtcpHRaN1qHSATGyKRzirRrTogg9IWMi+GVhuKjxXip2rPekMAPxp
+	 0jvcyigcb/BtlBynB/n9aNaczxQom/JqOT5RAjwA=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,12 +48,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 009/117] hfs: fix KMSAN uninit-value issue in hfs_find_set_zero_bits()
-Date: Mon, 27 Oct 2025 19:35:35 +0100
-Message-ID: <20251027183454.189345382@linuxfoundation.org>
+Subject: [PATCH 6.1 075/157] hfs: fix KMSAN uninit-value issue in hfs_find_set_zero_bits()
+Date: Mon, 27 Oct 2025 19:35:36 +0100
+Message-ID: <20251027183503.293327366@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
-References: <20251027183453.919157109@linuxfoundation.org>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+References: <20251027183501.227243846@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
