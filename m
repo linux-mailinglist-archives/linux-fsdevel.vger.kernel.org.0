@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-65768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECD7C10A55
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:14:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074F3C10A1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1BAC503A3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:08:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7FC0E3405BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036343328ED;
-	Mon, 27 Oct 2025 19:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D6C32BF44;
+	Mon, 27 Oct 2025 19:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vWhIdxh7"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dpTMb6Pw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5447B2D7DDA;
-	Mon, 27 Oct 2025 19:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE99B2C3749;
+	Mon, 27 Oct 2025 19:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761591912; cv=none; b=Tvc21wqvKI9HV2wioA5QI+f+yjQcknRyXONa0eeoEcVipC/9VhFN36loKf+L0tprMK9ReePLCtPGUB2uNtK/dtQ6tJ2fkl8XvxvRM/qO39lKmZP7EG8sNCuf/iuEzxPdtEWBNCtSTfMAs9kWcv21XOfh1s0pWDCVcZ9/U810NYk=
+	t=1761592291; cv=none; b=Oy01VU33UJtaYIXkE1WZIMri8tpT6uiIoPZDbw7hoSDJBsrlU8MhM3tAkLVw0S+HY/eZu1zPX5aKMdPKHWW96hLLlhJ4KzRVVUBAzh3GEmIeYN0DE4dZ+zkOZy/FhxW1cUkRGX1SHbU6Q+51pFfPBNfrEs2MWLuKpw5edFhkHkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761591912; c=relaxed/simple;
-	bh=jCz7d7CErCGD0XTSKmmeKx4CxZGPwPKerKzH5NRybEo=;
+	s=arc-20240116; t=1761592291; c=relaxed/simple;
+	bh=bKDvjB/LHpfcMx1hntdz+BhPqiT5mU7ojW1wh3QmjcE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fx+fPEQCo7uJRoyMvZUfOGZbxJxijxIaB6PK67w4/9obRebwY/zL15lDTlAXRy3jpBBFkEnnXOnIUBIhXkfrpS8JVwmZcNC6WJTj9ZrJ3s/PxAAn1G+KTDMCyNuiunAF9WvdJUPJhXgw5lNRuhtPlZsK89pKVtVwKniG0LsTOTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vWhIdxh7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC789C4CEF1;
-	Mon, 27 Oct 2025 19:05:11 +0000 (UTC)
+	 MIME-Version; b=fYihO91O7yxD+Wjw9XvnZuRK6iH4Wws5ehdeGStME9OPHPKMSA4FE1pzcX30HUXXWVPt7KjcVS8ulTvsfZq169Uvq3nJV/1GIcVfnZxBs0WtBb/JdadmWGyXM/sV8EkJhoirmRsyB1nElS6smgjQSW9UzParO/KQpzE7/g4yh0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dpTMb6Pw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC5FC4CEF1;
+	Mon, 27 Oct 2025 19:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761591912;
-	bh=jCz7d7CErCGD0XTSKmmeKx4CxZGPwPKerKzH5NRybEo=;
+	s=korg; t=1761592291;
+	bh=bKDvjB/LHpfcMx1hntdz+BhPqiT5mU7ojW1wh3QmjcE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vWhIdxh7GBct36CCm2L/qfhfsliS6JlKbFA1LRwnN78sHWRThRX9eVn149HlQxKxd
-	 5zpISbcl+iO67a0NhczzE2bfmzpgC40BR3kiFHsM9Kb9buHp/WXDGuAOuky402oowf
-	 xkI0KB0bJr2uycoVh/gwxkzrbUTtIyQpzqDvhvxc=
+	b=dpTMb6PwkAJtG8XB+XL3x+fOH73tpobnycY2fX/6R0iJ6XzMYckMTAa+gY9XPcSg9
+	 l0TvItSC1tz0DVdwXTEjvwS0WDxulpQ0gBOJYqIwzk7N0dATBQNA0oBK6P2ANclz4I
+	 vQzPg6e/XKRUDSfv0ggTbU5foSyCsC47RqBgUwdM=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	syzbot <syzbot+55ad87f38795d6787521@syzkaller.appspotmail.com>,
+	Jiaming Zhang <r772577952@gmail.com>,
 	Viacheslav Dubeyko <slava@dubeyko.com>,
 	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
 	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 045/123] hfsplus: fix KMSAN uninit-value issue in __hfsplus_ext_cache_extent()
-Date: Mon, 27 Oct 2025 19:35:25 +0100
-Message-ID: <20251027183447.606479841@linuxfoundation.org>
+	syzkaller@googlegroups.com
+Subject: [PATCH 6.1 065/157] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
+Date: Mon, 27 Oct 2025 19:35:26 +0100
+Message-ID: <20251027183503.027408649@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183446.381986645@linuxfoundation.org>
-References: <20251027183446.381986645@linuxfoundation.org>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+References: <20251027183501.227243846@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,219 +65,228 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-[ Upstream commit 4840ceadef4290c56cc422f0fc697655f3cbf070 ]
+commit 42520df65bf67189541a425f7d36b0b3e7bd7844 upstream.
 
-The syzbot reported issue in __hfsplus_ext_cache_extent():
+The hfsplus_strcasecmp() logic can trigger the issue:
 
-[   70.194323][ T9350] BUG: KMSAN: uninit-value in __hfsplus_ext_cache_extent+0x7d0/0x990
-[   70.195022][ T9350]  __hfsplus_ext_cache_extent+0x7d0/0x990
-[   70.195530][ T9350]  hfsplus_file_extend+0x74f/0x1cf0
-[   70.195998][ T9350]  hfsplus_get_block+0xe16/0x17b0
-[   70.196458][ T9350]  __block_write_begin_int+0x962/0x2ce0
-[   70.196959][ T9350]  cont_write_begin+0x1000/0x1950
-[   70.197416][ T9350]  hfsplus_write_begin+0x85/0x130
-[   70.197873][ T9350]  generic_perform_write+0x3e8/0x1060
-[   70.198374][ T9350]  __generic_file_write_iter+0x215/0x460
-[   70.198892][ T9350]  generic_file_write_iter+0x109/0x5e0
-[   70.199393][ T9350]  vfs_write+0xb0f/0x14e0
-[   70.199771][ T9350]  ksys_write+0x23e/0x490
-[   70.200149][ T9350]  __x64_sys_write+0x97/0xf0
-[   70.200570][ T9350]  x64_sys_call+0x3015/0x3cf0
-[   70.201065][ T9350]  do_syscall_64+0xd9/0x1d0
-[   70.201506][ T9350]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   70.202054][ T9350]
-[   70.202279][ T9350] Uninit was created at:
-[   70.202693][ T9350]  __kmalloc_noprof+0x621/0xf80
-[   70.203149][ T9350]  hfsplus_find_init+0x8d/0x1d0
-[   70.203602][ T9350]  hfsplus_file_extend+0x6ca/0x1cf0
-[   70.204087][ T9350]  hfsplus_get_block+0xe16/0x17b0
-[   70.204561][ T9350]  __block_write_begin_int+0x962/0x2ce0
-[   70.205074][ T9350]  cont_write_begin+0x1000/0x1950
-[   70.205547][ T9350]  hfsplus_write_begin+0x85/0x130
-[   70.206017][ T9350]  generic_perform_write+0x3e8/0x1060
-[   70.206519][ T9350]  __generic_file_write_iter+0x215/0x460
-[   70.207042][ T9350]  generic_file_write_iter+0x109/0x5e0
-[   70.207552][ T9350]  vfs_write+0xb0f/0x14e0
-[   70.207961][ T9350]  ksys_write+0x23e/0x490
-[   70.208375][ T9350]  __x64_sys_write+0x97/0xf0
-[   70.208810][ T9350]  x64_sys_call+0x3015/0x3cf0
-[   70.209255][ T9350]  do_syscall_64+0xd9/0x1d0
-[   70.209680][ T9350]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   70.210230][ T9350]
-[   70.210454][ T9350] CPU: 2 UID: 0 PID: 9350 Comm: repro Not tainted 6.12.0-rc5 #5
-[   70.211174][ T9350] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   70.212115][ T9350] =====================================================
-[   70.212734][ T9350] Disabling lock debugging due to kernel taint
-[   70.213284][ T9350] Kernel panic - not syncing: kmsan.panic set ...
-[   70.213858][ T9350] CPU: 2 UID: 0 PID: 9350 Comm: repro Tainted: G    B              6.12.0-rc5 #5
-[   70.214679][ T9350] Tainted: [B]=BAD_PAGE
-[   70.215057][ T9350] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   70.215999][ T9350] Call Trace:
-[   70.216309][ T9350]  <TASK>
-[   70.216585][ T9350]  dump_stack_lvl+0x1fd/0x2b0
-[   70.217025][ T9350]  dump_stack+0x1e/0x30
-[   70.217421][ T9350]  panic+0x502/0xca0
-[   70.217803][ T9350]  ? kmsan_get_metadata+0x13e/0x1c0
+[  117.317703][ T9855] ==================================================================
+[  117.318353][ T9855] BUG: KASAN: slab-out-of-bounds in hfsplus_strcasecmp+0x1bc/0x490
+[  117.318991][ T9855] Read of size 2 at addr ffff88802160f40c by task repro/9855
+[  117.319577][ T9855]
+[  117.319773][ T9855] CPU: 0 UID: 0 PID: 9855 Comm: repro Not tainted 6.17.0-rc6 #33 PREEMPT(full)
+[  117.319780][ T9855] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  117.319783][ T9855] Call Trace:
+[  117.319785][ T9855]  <TASK>
+[  117.319788][ T9855]  dump_stack_lvl+0x1c1/0x2a0
+[  117.319795][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319803][ T9855]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  117.319808][ T9855]  ? rcu_is_watching+0x15/0xb0
+[  117.319816][ T9855]  ? lock_release+0x4b/0x3e0
+[  117.319821][ T9855]  ? __kasan_check_byte+0x12/0x40
+[  117.319828][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319835][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
+[  117.319842][ T9855]  print_report+0x17e/0x7e0
+[  117.319848][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319855][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
+[  117.319862][ T9855]  ? __phys_addr+0xd3/0x180
+[  117.319869][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
+[  117.319876][ T9855]  kasan_report+0x147/0x180
+[  117.319882][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
+[  117.319891][ T9855]  hfsplus_strcasecmp+0x1bc/0x490
+[  117.319900][ T9855]  ? __pfx_hfsplus_cat_case_cmp_key+0x10/0x10
+[  117.319906][ T9855]  hfs_find_rec_by_key+0xa9/0x1e0
+[  117.319913][ T9855]  __hfsplus_brec_find+0x18e/0x470
+[  117.319920][ T9855]  ? __pfx_hfsplus_bnode_find+0x10/0x10
+[  117.319926][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
+[  117.319933][ T9855]  ? __pfx___hfsplus_brec_find+0x10/0x10
+[  117.319942][ T9855]  hfsplus_brec_find+0x28f/0x510
+[  117.319949][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
+[  117.319956][ T9855]  ? __pfx_hfsplus_brec_find+0x10/0x10
+[  117.319963][ T9855]  ? __kmalloc_noprof+0x2a9/0x510
+[  117.319969][ T9855]  ? hfsplus_find_init+0x8c/0x1d0
+[  117.319976][ T9855]  hfsplus_brec_read+0x2b/0x120
+[  117.319983][ T9855]  hfsplus_lookup+0x2aa/0x890
+[  117.319990][ T9855]  ? __pfx_hfsplus_lookup+0x10/0x10
+[  117.320003][ T9855]  ? d_alloc_parallel+0x2f0/0x15e0
+[  117.320008][ T9855]  ? __lock_acquire+0xaec/0xd80
+[  117.320013][ T9855]  ? __pfx_d_alloc_parallel+0x10/0x10
+[  117.320019][ T9855]  ? __raw_spin_lock_init+0x45/0x100
+[  117.320026][ T9855]  ? __init_waitqueue_head+0xa9/0x150
+[  117.320034][ T9855]  __lookup_slow+0x297/0x3d0
+[  117.320039][ T9855]  ? __pfx___lookup_slow+0x10/0x10
+[  117.320045][ T9855]  ? down_read+0x1ad/0x2e0
+[  117.320055][ T9855]  lookup_slow+0x53/0x70
+[  117.320065][ T9855]  walk_component+0x2f0/0x430
+[  117.320073][ T9855]  path_lookupat+0x169/0x440
+[  117.320081][ T9855]  filename_lookup+0x212/0x590
+[  117.320089][ T9855]  ? __pfx_filename_lookup+0x10/0x10
+[  117.320098][ T9855]  ? strncpy_from_user+0x150/0x290
+[  117.320105][ T9855]  ? getname_flags+0x1e5/0x540
+[  117.320112][ T9855]  user_path_at+0x3a/0x60
+[  117.320117][ T9855]  __x64_sys_umount+0xee/0x160
+[  117.320123][ T9855]  ? __pfx___x64_sys_umount+0x10/0x10
+[  117.320129][ T9855]  ? do_syscall_64+0xb7/0x3a0
+[  117.320135][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320141][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320145][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.320150][ T9855]  ? exc_page_fault+0x9f/0xf0
+[  117.320154][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320158][ T9855] RIP: 0033:0x7f7dd7908b07
+[  117.320163][ T9855] Code: 23 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 08
+[  117.320167][ T9855] RSP: 002b:00007ffd5ebd9698 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+[  117.320172][ T9855] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7dd7908b07
+[  117.320176][ T9855] RDX: 0000000000000009 RSI: 0000000000000009 RDI: 00007ffd5ebd9740
+[  117.320179][ T9855] RBP: 00007ffd5ebda780 R08: 0000000000000005 R09: 00007ffd5ebd9530
+[  117.320181][ T9855] R10: 00007f7dd799bfc0 R11: 0000000000000202 R12: 000055e2008b32d0
+[  117.320184][ T9855] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[  117.320189][ T9855]  </TASK>
+[  117.320190][ T9855]
+[  117.351311][ T9855] Allocated by task 9855:
+[  117.351683][ T9855]  kasan_save_track+0x3e/0x80
+[  117.352093][ T9855]  __kasan_kmalloc+0x8d/0xa0
+[  117.352490][ T9855]  __kmalloc_noprof+0x288/0x510
+[  117.352914][ T9855]  hfsplus_find_init+0x8c/0x1d0
+[  117.353342][ T9855]  hfsplus_lookup+0x19c/0x890
+[  117.353747][ T9855]  __lookup_slow+0x297/0x3d0
+[  117.354148][ T9855]  lookup_slow+0x53/0x70
+[  117.354514][ T9855]  walk_component+0x2f0/0x430
+[  117.354921][ T9855]  path_lookupat+0x169/0x440
+[  117.355325][ T9855]  filename_lookup+0x212/0x590
+[  117.355740][ T9855]  user_path_at+0x3a/0x60
+[  117.356115][ T9855]  __x64_sys_umount+0xee/0x160
+[  117.356529][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.356920][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.357429][ T9855]
+[  117.357636][ T9855] The buggy address belongs to the object at ffff88802160f000
+[  117.357636][ T9855]  which belongs to the cache kmalloc-2k of size 2048
+[  117.358827][ T9855] The buggy address is located 0 bytes to the right of
+[  117.358827][ T9855]  allocated 1036-byte region [ffff88802160f000, ffff88802160f40c)
+[  117.360061][ T9855]
+[  117.360266][ T9855] The buggy address belongs to the physical page:
+[  117.360813][ T9855] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21608
+[  117.361562][ T9855] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  117.362285][ T9855] flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+[  117.362929][ T9855] page_type: f5(slab)
+[  117.363282][ T9855] raw: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
+[  117.364015][ T9855] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  117.364750][ T9855] head: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
+[  117.365491][ T9855] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  117.366232][ T9855] head: 00fff00000000003 ffffea0000858201 00000000ffffffff 00000000ffffffff
+[  117.366968][ T9855] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+[  117.367711][ T9855] page dumped because: kasan: bad access detected
+[  117.368259][ T9855] page_owner tracks the page as allocated
+[  117.368745][ T9855] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN1
+[  117.370541][ T9855]  post_alloc_hook+0x240/0x2a0
+[  117.370954][ T9855]  get_page_from_freelist+0x2101/0x21e0
+[  117.371435][ T9855]  __alloc_frozen_pages_noprof+0x274/0x380
+[  117.371935][ T9855]  alloc_pages_mpol+0x241/0x4b0
+[  117.372360][ T9855]  allocate_slab+0x8d/0x380
+[  117.372752][ T9855]  ___slab_alloc+0xbe3/0x1400
+[  117.373159][ T9855]  __kmalloc_cache_noprof+0x296/0x3d0
+[  117.373621][ T9855]  nexthop_net_init+0x75/0x100
+[  117.374038][ T9855]  ops_init+0x35c/0x5c0
+[  117.374400][ T9855]  setup_net+0x10c/0x320
+[  117.374768][ T9855]  copy_net_ns+0x31b/0x4d0
+[  117.375156][ T9855]  create_new_namespaces+0x3f3/0x720
+[  117.375613][ T9855]  unshare_nsproxy_namespaces+0x11c/0x170
+[  117.376094][ T9855]  ksys_unshare+0x4ca/0x8d0
+[  117.376477][ T9855]  __x64_sys_unshare+0x38/0x50
+[  117.376879][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.377265][ T9855] page last free pid 9110 tgid 9110 stack trace:
+[  117.377795][ T9855]  __free_frozen_pages+0xbeb/0xd50
+[  117.378229][ T9855]  __put_partials+0x152/0x1a0
+[  117.378625][ T9855]  put_cpu_partial+0x17c/0x250
+[  117.379026][ T9855]  __slab_free+0x2d4/0x3c0
+[  117.379404][ T9855]  qlist_free_all+0x97/0x140
+[  117.379790][ T9855]  kasan_quarantine_reduce+0x148/0x160
+[  117.380250][ T9855]  __kasan_slab_alloc+0x22/0x80
+[  117.380662][ T9855]  __kmalloc_noprof+0x232/0x510
+[  117.381074][ T9855]  tomoyo_supervisor+0xc0a/0x1360
+[  117.381498][ T9855]  tomoyo_env_perm+0x149/0x1e0
+[  117.381903][ T9855]  tomoyo_find_next_domain+0x15ad/0x1b90
+[  117.382378][ T9855]  tomoyo_bprm_check_security+0x11c/0x180
+[  117.382859][ T9855]  security_bprm_check+0x89/0x280
+[  117.383289][ T9855]  bprm_execve+0x8f1/0x14a0
+[  117.383673][ T9855]  do_execveat_common+0x528/0x6b0
+[  117.384103][ T9855]  __x64_sys_execve+0x94/0xb0
+[  117.384500][ T9855]
+[  117.384706][ T9855] Memory state around the buggy address:
+[  117.385179][ T9855]  ffff88802160f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  117.385854][ T9855]  ffff88802160f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  117.386534][ T9855] >ffff88802160f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.387204][ T9855]                       ^
+[  117.387566][ T9855]  ffff88802160f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.388243][ T9855]  ffff88802160f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.388918][ T9855] ==================================================================
 
-[   70.218294][ Message fromT sy9350]  kmsan_report+0x296/slogd@syzkaller 0x2aat Aug 18 22:11:058 ...
- kernel
-:[   70.213284][ T9350] Kernel panic - not syncing: kmsan.panic [   70.220179][ T9350]  ? kmsan_get_metadata+0x13e/0x1c0
-set ...
-[   70.221254][ T9350]  ? __msan_warning+0x96/0x120
-[   70.222066][ T9350]  ? __hfsplus_ext_cache_extent+0x7d0/0x990
-[   70.223023][ T9350]  ? hfsplus_file_extend+0x74f/0x1cf0
-[   70.224120][ T9350]  ? hfsplus_get_block+0xe16/0x17b0
-[   70.224946][ T9350]  ? __block_write_begin_int+0x962/0x2ce0
-[   70.225756][ T9350]  ? cont_write_begin+0x1000/0x1950
-[   70.226337][ T9350]  ? hfsplus_write_begin+0x85/0x130
-[   70.226852][ T9350]  ? generic_perform_write+0x3e8/0x1060
-[   70.227405][ T9350]  ? __generic_file_write_iter+0x215/0x460
-[   70.227979][ T9350]  ? generic_file_write_iter+0x109/0x5e0
-[   70.228540][ T9350]  ? vfs_write+0xb0f/0x14e0
-[   70.228997][ T9350]  ? ksys_write+0x23e/0x490
-[   70.229458][ T9350]  ? __x64_sys_write+0x97/0xf0
-[   70.229939][ T9350]  ? x64_sys_call+0x3015/0x3cf0
-[   70.230432][ T9350]  ? do_syscall_64+0xd9/0x1d0
-[   70.230941][ T9350]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   70.231926][ T9350]  ? kmsan_get_metadata+0x13e/0x1c0
-[   70.232738][ T9350]  ? kmsan_internal_set_shadow_origin+0x77/0x110
-[   70.233711][ T9350]  ? kmsan_get_metadata+0x13e/0x1c0
-[   70.234516][ T9350]  ? kmsan_get_shadow_origin_ptr+0x4a/0xb0
-[   70.235398][ T9350]  ? __msan_metadata_ptr_for_load_4+0x24/0x40
-[   70.236323][ T9350]  ? hfsplus_brec_find+0x218/0x9f0
-[   70.237090][ T9350]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
-[   70.237938][ T9350]  ? __msan_instrument_asm_store+0xbf/0xf0
-[   70.238827][ T9350]  ? __msan_metadata_ptr_for_store_4+0x27/0x40
-[   70.239772][ T9350]  ? __hfsplus_ext_write_extent+0x536/0x620
-[   70.240666][ T9350]  ? kmsan_get_metadata+0x13e/0x1c0
-[   70.241175][ T9350]  __msan_warning+0x96/0x120
-[   70.241645][ T9350]  __hfsplus_ext_cache_extent+0x7d0/0x990
-[   70.242223][ T9350]  hfsplus_file_extend+0x74f/0x1cf0
-[   70.242748][ T9350]  hfsplus_get_block+0xe16/0x17b0
-[   70.243255][ T9350]  ? kmsan_internal_set_shadow_origin+0x77/0x110
-[   70.243878][ T9350]  ? kmsan_get_metadata+0x13e/0x1c0
-[   70.244400][ T9350]  ? kmsan_get_shadow_origin_ptr+0x4a/0xb0
-[   70.244967][ T9350]  __block_write_begin_int+0x962/0x2ce0
-[   70.245531][ T9350]  ? __pfx_hfsplus_get_block+0x10/0x10
-[   70.246079][ T9350]  cont_write_begin+0x1000/0x1950
-[   70.246598][ T9350]  hfsplus_write_begin+0x85/0x130
-[   70.247105][ T9350]  ? __pfx_hfsplus_get_block+0x10/0x10
-[   70.247650][ T9350]  ? __pfx_hfsplus_write_begin+0x10/0x10
-[   70.248211][ T9350]  generic_perform_write+0x3e8/0x1060
-[   70.248752][ T9350]  __generic_file_write_iter+0x215/0x460
-[   70.249314][ T9350]  generic_file_write_iter+0x109/0x5e0
-[   70.249856][ T9350]  ? kmsan_internal_set_shadow_origin+0x77/0x110
-[   70.250487][ T9350]  vfs_write+0xb0f/0x14e0
-[   70.250930][ T9350]  ? __pfx_generic_file_write_iter+0x10/0x10
-[   70.251530][ T9350]  ksys_write+0x23e/0x490
-[   70.251974][ T9350]  __x64_sys_write+0x97/0xf0
-[   70.252450][ T9350]  x64_sys_call+0x3015/0x3cf0
-[   70.252924][ T9350]  do_syscall_64+0xd9/0x1d0
-[   70.253384][ T9350]  ? irqentry_exit+0x16/0x60
-[   70.253844][ T9350]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   70.254430][ T9350] RIP: 0033:0x7f7a92adffc9
-[   70.254873][ T9350] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 48
-[   70.256674][ T9350] RSP: 002b:00007fff0bca3188 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-[   70.257485][ T9350] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7a92adffc9
-[   70.258246][ T9350] RDX: 000000000208e24b RSI: 0000000020000100 RDI: 0000000000000004
-[   70.258998][ T9350] RBP: 00007fff0bca31a0 R08: 00007fff0bca31a0 R09: 00007fff0bca31a0
-[   70.259769][ T9350] R10: 0000000000000000 R11: 0000000000000202 R12: 000055e0d75f8250
-[   70.260520][ T9350] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[   70.261286][ T9350]  </TASK>
-[   70.262026][ T9350] Kernel Offset: disabled
+The issue takes place if the length field of struct hfsplus_unistr
+is bigger than HFSPLUS_MAX_STRLEN. The patch simply checks
+the length of comparing strings. And if the strings' length
+is bigger than HFSPLUS_MAX_STRLEN, then it is corrected
+to this value.
 
-(gdb) l *__hfsplus_ext_cache_extent+0x7d0
-0xffffffff8318aef0 is in __hfsplus_ext_cache_extent (fs/hfsplus/extents.c:168).
-163		fd->key->ext.cnid = 0;
-164		res = hfs_brec_find(fd, hfs_find_rec_by_key);
-165		if (res && res != -ENOENT)
-166			return res;
-167		if (fd->key->ext.cnid != fd->search_key->ext.cnid ||
-168		    fd->key->ext.fork_type != fd->search_key->ext.fork_type)
-169			return -ENOENT;
-170		if (fd->entrylength != sizeof(hfsplus_extent_rec))
-171			return -EIO;
-172		hfs_bnode_read(fd->bnode, extent, fd->entryoffset,
+v2
+The string length correction has been added for hfsplus_strcmp().
 
-The __hfsplus_ext_cache_extent() calls __hfsplus_ext_read_extent():
-
-res = __hfsplus_ext_read_extent(fd, hip->cached_extents, inode->i_ino,
-				block, HFSPLUS_IS_RSRC(inode) ?
-					HFSPLUS_TYPE_RSRC :
-					HFSPLUS_TYPE_DATA);
-
-And if inode->i_ino could be equal to zero or any non-available CNID,
-then hfs_brec_find() could not find the record in the tree. As a result,
-fd->key could be compared with fd->search_key. But hfsplus_find_init()
-uses kmalloc() for fd->key and fd->search_key allocation:
-
-int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
-{
-<skipped>
-        ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-        if (!ptr)
-                return -ENOMEM;
-        fd->search_key = ptr;
-        fd->key = ptr + tree->max_key_len + 2;
-<skipped>
-}
-
-Finally, fd->key is still not initialized if hfs_brec_find()
-has found nothing.
-
-This patch changes kmalloc() on kzalloc() in hfs_find_init()
-and intializes fd->record, fd->keyoffset, fd->keylength,
-fd->entryoffset, fd->entrylength for the case if hfs_brec_find()
-has been found nothing in the b-tree node.
-
-Reported-by: syzbot <syzbot+55ad87f38795d6787521@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=55ad87f38795d6787521
+Reported-by: Jiaming Zhang <r772577952@gmail.com>
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 cc: Yangtao Li <frank.li@vivo.com>
 cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20250818225232.126402-1-slava@dubeyko.com
+cc: syzkaller@googlegroups.com
+Link: https://lore.kernel.org/r/20250919191243.1370388-1-slava@dubeyko.com
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfsplus/bfind.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/hfsplus/unicode.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
-index 901e83d65d202..26ebac4c60424 100644
---- a/fs/hfsplus/bfind.c
-+++ b/fs/hfsplus/bfind.c
-@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
+--- a/fs/hfsplus/unicode.c
++++ b/fs/hfsplus/unicode.c
+@@ -40,6 +40,18 @@ int hfsplus_strcasecmp(const struct hfsp
+ 	p1 = s1->unicode;
+ 	p2 = s2->unicode;
  
- 	fd->tree = tree;
- 	fd->bnode = NULL;
--	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-+	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
- 	if (!ptr)
- 		return -ENOMEM;
- 	fd->search_key = ptr;
-@@ -158,6 +158,12 @@ int hfs_brec_find(struct hfs_find_data *fd, search_strategy_t do_key_compare)
- 	__be32 data;
- 	int height, res;
- 
-+	fd->record = -1;
-+	fd->keyoffset = -1;
-+	fd->keylength = -1;
-+	fd->entryoffset = -1;
-+	fd->entrylength = -1;
++	if (len1 > HFSPLUS_MAX_STRLEN) {
++		len1 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s1->length), len1);
++	}
 +
- 	tree = fd->tree;
- 	if (fd->bnode)
- 		hfs_bnode_put(fd->bnode);
--- 
-2.51.0
-
++	if (len2 > HFSPLUS_MAX_STRLEN) {
++		len2 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s2->length), len2);
++	}
++
+ 	while (1) {
+ 		c1 = c2 = 0;
+ 
+@@ -74,6 +86,18 @@ int hfsplus_strcmp(const struct hfsplus_
+ 	p1 = s1->unicode;
+ 	p2 = s2->unicode;
+ 
++	if (len1 > HFSPLUS_MAX_STRLEN) {
++		len1 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s1->length), len1);
++	}
++
++	if (len2 > HFSPLUS_MAX_STRLEN) {
++		len2 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s2->length), len2);
++	}
++
+ 	for (len = min(len1, len2); len > 0; len--) {
+ 		c1 = be16_to_cpu(*p1);
+ 		c2 = be16_to_cpu(*p2);
 
 
 
