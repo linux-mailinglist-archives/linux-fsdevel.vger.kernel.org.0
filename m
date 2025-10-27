@@ -1,150 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-65706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02672C0DAC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:49:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EADC0DBA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7069A34DD2A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:49:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AA2F4FF6E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7748823D7DC;
-	Mon, 27 Oct 2025 12:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YTS802Je"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DC4242D6E;
+	Mon, 27 Oct 2025 12:50:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F9C230D0F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 12:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C72F23C505
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 12:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761569340; cv=none; b=U3+f1XLZkROAI97Qu7eMxEmfa9a3i9e7IDeCdh6SUmcmCPnQDs0ND2TCVwdHolCeuE5ied5Jw6kwd6LVMHfULhEYc6kuIlfsVPaSKn2gSo3zUUHcPwdy/fPGKMKzmZwFdGZa0Jwg0PZ4ASaFHafPLStpRZuHWPXDT54UnlvE31Q=
+	t=1761569427; cv=none; b=kgwr3XmdLNIGDkzZ298obIWqZjidae0F+QXOQMmoCm54VySlPH7NwnI3dk80zlFNm1oz4S+XJnQKZ8pS8xMdmGHXQyDQUgQqe1FddnDyG5nX88NJAsBcNgoJttEDCCHx0vv4K/flFLicwymeA4kFMQMYMcy1+QCwn0m14RVysus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761569340; c=relaxed/simple;
-	bh=xIqDNcTwMPF2Nfh7H2HrsYu57Z68rRXirPja4i/3Ah0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=azLgtE/e6D0M/oGtEuvMJ9QXS+gnBCL3FTTyQw37+YJ8GDgd1LVI2D49fa40rQrlNMKEUIArqfcWx98n7B7pdZwaXIRoFEXst6w2UjJn4aycTZl89+XngGa2f3VpSUWkg9+gbazLe6DfaFiwRg6gl142HfJgjTmZ4WH66F1PWhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YTS802Je; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27ee41e062cso51710035ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 05:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761569338; x=1762174138; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TpsH9gx/luUFZveFm6voMll1yjdVEPjIbyyyxybZ4HQ=;
-        b=YTS802JetUCMSbN8b0ql2ACutOsA+EQE7/jK1PeV7DwkUyOmKCiPVNA1QulO179JGF
-         nY5Ab48vWwtZ2dz/7nMVpeVj+LzBc+BxEZJillea3xf/mLFJDMFuTIa5pAUMGdKM8cBh
-         9A/HLo7dCsUus1TE7HhhVykk9/8hEm45rWsUIKNGvdPem2zLfQ8yks4JmrQ/Ek0vT2q6
-         67Pid7oNNI7hUUI7eb9wyItNX6w13LL+otk4aWjEtjaM+an+cBKYAWes7Es+GMAE3+jS
-         DgiPdNRbo+6BgBz2QZgmbpXqn0KaBmqOBClU0h7v/rUkBAumXx+MmlLItZRucPkWv12a
-         Y7Hg==
+	s=arc-20240116; t=1761569427; c=relaxed/simple;
+	bh=MYokRgUnklfgp2hSGLi/l31foxE3G9yPu1Ffasv37f0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SRkyBZwQazG0sSXt/MWW9RWF+XM1VM5Z3qDC0jEVeSbuDHrSyPf/8A5WdNDYK2uWsqJmNIUzfPWmVhJennjPErc1bSc8JZokjlr2MHmDFp6Ain6CfsgPR94QKtwngwGI1JR5pO/gfx54Z5HbVVM8uIPyu+JIFYPQVTgHDNABFe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d1adb32aso44322405ab.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 05:50:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761569338; x=1762174138;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TpsH9gx/luUFZveFm6voMll1yjdVEPjIbyyyxybZ4HQ=;
-        b=qSMYQ/wES4NBO3cHLtZ+B6WxjpQUnNU89F84mQq05SD/q2xPXNYhjnx+XJ7BACE6lD
-         ma3cXYSa0Z4NRC3/FaiXJVxs6K0+BDjiG10iQO7fulydQRR70MWGoPkZInPZlpfhCbN8
-         RA+lbLNYyYzKYOiJ2c+o7OiLbSzC6DuLv7SizmozA9EtBdhfg8vtXMh36+kYLlSIV3mQ
-         WFddWvJJLUs1BW2bAzs9DwaAkm0/COBw1UY15KANY0muMpUF418dSIotW73vS0ICpRaF
-         5Z05nuN4Qb9Lsp2wsK684lcHHpQDThLkGdcj4JXo+XnfvjikQscE8IyUC8e+hBGC7g4H
-         pu+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhOxS2jCVAkdK6ijpSVutcKNn/mifFEPjc4mBRt+wR7L6cgPUzmbIWlsD6jZPBq4kLw7wRkr1auYZ0X203@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf4b7zax75I5vaHHqNg97zYYeN1X2/0VkOXMILL6dO9wCl83NR
-	yc4T6tksxfWJX8DVVytNVzsE/EjMHMJ4hIO6Oas+HLKlhxYjL2ZbXE6+yYDf7j5eYFdeNqBBp55
-	4AiGanopZJrwuUPUWHkFsrVXdMA==
-X-Google-Smtp-Source: AGHT+IE8aJKICvS5xOA+BTAY6bjRh41q0VtmGZijtJh7qHPsEmdIFH7jOAvP+FEHmW/GVGRbcG4XOU1+vDg6R+rrXQ==
-X-Received: from plbmg14.prod.google.com ([2002:a17:903:348e:b0:268:e12a:2266])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d60d:b0:270:e595:a440 with SMTP id d9443c01a7336-290c9cd4b48mr418021645ad.25.1761569338212;
- Mon, 27 Oct 2025 05:48:58 -0700 (PDT)
-Date: Mon, 27 Oct 2025 05:48:56 -0700
-In-Reply-To: <aPu7IosMI61NjZY5@google.com>
+        d=1e100.net; s=20230601; t=1761569424; x=1762174224;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LJaGp5DmbI3TdoxyBnJoC8ClyEN+J7FA0llN9o0qtOA=;
+        b=NYSudRqwd971pHWvo9Kd6McGieUL1OS5RwcQRQ5u3n5EuUtF3/SKZRwD73ufYWQ/kC
+         snhLFB9hoGue0QTemQVPufhHrfFDmf/aSzMo4RkjIhIdqmEilzkAo1DWACr3fFE+8Lev
+         1/71mJKLZWbbjBV8490OZWDeosVTIlTNEDd0UHy9ELbCVIoEbiWWry4Nptx36+8tzQYL
+         iwmu70MfkhLEvgexhcHC+1rlty1MoIAav5IgTwBGdHKrOamsbLVNFbtVfWC3Os/Cvbd0
+         TDB7PpihUTs7D2GqkG4lzxtX8vvO3Nvvq2cNwy5pzq+zVmGjyZN3tgDPMhAT2ei53sE9
+         f1+A==
+X-Gm-Message-State: AOJu0YyggHxcf/1RIxfHew446/vpGfUG2C+meCwPvJSt7I4+YE0v4ZAU
+	sViJhGwTLvOc9rOmgagawbjZj8kvCJoMifvpHwC5Id5K0C8klUQxrMRuf3UduLksPj9ttOVjjOj
+	eDoZ1/fxNr7uDecor9pgOwfJhhmVFs24SHjAHhFRXjVdVQf6R6bxKyHBUPnQ=
+X-Google-Smtp-Source: AGHT+IFOhQ6MNo5f6BQh53xHVN/xb7dbWkIHpwoIidagx6Rmn/gbggVW8zAmug69JEstH/3ucEPq3nK2GQlCcB3N82y8wdKz06dP
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
- <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
- <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
- <diqzv7k5emza.fsf@google.com> <aPpEPZ4YfrRHIkal@google.com>
- <diqzqzuse58c.fsf@google.com> <aPuXCV0Aof0zihW9@google.com>
- <diqzo6pwdzfy.fsf@google.com> <aPu7IosMI61NjZY5@google.com>
-Message-ID: <diqzecqojyrr.fsf@google.com>
-Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
-	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
-	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
-	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:32c2:b0:431:d793:6ccd with SMTP id
+ e9e14a558f8ab-431d7936d92mr233216075ab.15.1761569424499; Mon, 27 Oct 2025
+ 05:50:24 -0700 (PDT)
+Date: Mon, 27 Oct 2025 05:50:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ff6a90.050a0220.3344a1.0393.GAE@google.com>
+Subject: [syzbot] Monthly hfs report (Oct 2025)
+From: syzbot <syzbot+listd792fd3cf3cd3d015985@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Sean Christopherson <seanjc@google.com> writes:
+Hello hfs maintainers/developers,
 
-> On Fri, Oct 24, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> > @@ -486,6 +488,7 @@ struct kvm_vm *__vm_create(struct vm_shape shape, uint32_t nr_runnable_vcpus,
->> >         }
->> >         guest_rng = new_guest_random_state(guest_random_seed);
->> >         sync_global_to_guest(vm, guest_rng);
->> > +       sync_global_to_guest(vm, kvm_has_gmem_attributes);
->> 
->> I ported this [1] except for syncing this value to the guest, because I
->> think the guest shouldn't need to know this information,
->
-> KVM selftests are about practically and testing, what information should or
-> shouldn't be available to a test from e.g. a safety perspective is completely
-> irrelevant.  In fact, one of the biggest advantages of selftests over KUT is
-> that the guest side can know _exactly_ what's going on in the host.
->
-> See the usage in 1850e3da4b03 ("KVM: selftests: Update private_mem_conversions_test
-> to mmap() guest_memfd") from:
->
->   https://github.com/sean-jc/linux.git x86/gmem_inplace
->
->> the host should decide what to do. I think, if the guests really need to know
->> this, the test itself can do the syncing.
->
-> Why force tests to do extra work, and potentially introduce subtle bugs due to
-> state being stale?
+This is a 31-day syzbot report for the hfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hfs
 
-Adding it back. Thanks!
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 33 issues are still open and 30 have already been fixed.
 
-This variable should be sync-able for TDX selftests as well since the
-value should be synced before the TD image is loaded.
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  129081  Yes   kernel BUG in hfs_write_inode
+                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+<2>  14106   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<3>  5424    Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<4>  4085    Yes   WARNING in hfs_bnode_create
+                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
+<5>  3538    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<6>  2855    Yes   possible deadlock in hfs_extend_file (3)
+                   https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
+<7>  1830    Yes   KMSAN: uninit-value in hfsplus_rename_cat
+                   https://syzkaller.appspot.com/bug?extid=93f4402297a457fc6895
+<8>  1007    Yes   WARNING in hfsplus_bnode_create
+                   https://syzkaller.appspot.com/bug?extid=1c8ff72d0cd8a50dfeaa
+<9>  819     Yes   possible deadlock in hfsplus_find_init
+                   https://syzkaller.appspot.com/bug?extid=f8ce6c197125ab9d72ce
+<10> 599     Yes   WARNING in mark_buffer_dirty (7)
+                   https://syzkaller.appspot.com/bug?extid=2327bccb02eef9291c1c
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
