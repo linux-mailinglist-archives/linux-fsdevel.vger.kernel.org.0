@@ -1,235 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-65696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08713C0D03D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 11:49:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE10C0D2C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 509DE4F16BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 10:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838433AF9C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 11:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DDD2F9C2D;
-	Mon, 27 Oct 2025 10:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3788D2FC02A;
+	Mon, 27 Oct 2025 11:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPZB8lkX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4FF2F3C3E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 10:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9B51FF1AD;
+	Mon, 27 Oct 2025 11:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761562167; cv=none; b=N6euUUQZmL4cCCdYlVetPMU6yMyQYpmgc8SDcieHuXiBl+HBnTINUd4SXaqRotwc7L1lrnm5+W0TkDssOJs4honmFAQ4Q49WBpQGY3yskg5TFQ7TnH4q7NhegQLJEEf5w+UQKagFIIKsmuEI3n0xPKYOfzfKHlorkCt46xiuvEg=
+	t=1761565075; cv=none; b=QO/UveNKh+uqvIwM6Cei6WUb0ovz7ik5hRt1B5csMXFMUTSx+9YED5r0MyMpfkiTK+Pe2RaTPoCVC/sW4rMuezS8Zcov8veCWoDc4AbeuzCq1RihLZa+44PkpEiHBfMRr7MPuK1vAReOJEJxiedc6+LwAoL+oVqsZ9N9ZnUWlgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761562167; c=relaxed/simple;
-	bh=2x4KR0G7UwcPw5kY8y2EBE8YorHPAz2+4JwfNEt525k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tq5OlqjtZc5YsnzK4Yhks4EZ2wQvx7C3k5Dn20wE08THXU4SY2GTcnvFI638DIouxHiSJEFQ2MEDHRScX0ulIQ+tvR57uG16xNjY2cJzPY5bcGz1gLCRn5u5amZNezrjSzJvUnI36cGWVsBlg2bGBxsaHvTgEG2paaUVColdW+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fejes.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fejes.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-475dbc3c9efso14217885e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 03:49:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761562163; x=1762166963;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0uT5T+CCda9NfmCDxQvE5M5FBpTxCUYhV8ShRWLIe98=;
-        b=uOdIA/6oUqRB+IgxbsVIW5qr3tHbtGA63kSonl76oxX/v+aU2rsgNjY71eIQIsI9sk
-         1eprB5cdoywUxLo7Uh86qqwzoCHDigq+9ncQoYVMfoaaQeAPSX+j/+Qlx4SyyqMJ+DZ9
-         nzary5esqP23iJ2bkMua4jXOwzt2rgpQw4n/XVWI7ccrOo6W2YlmGmKzV/CGAvEM+rnE
-         39VetjmKScUH2L0PPqpo397a5ap8UNFVNhyF8HRirEmxyiGV7L/mV6cm2Wh3/88H5jEt
-         4DlGi+Nd/KyZBrCyWje8atKxhoT492HELSV7Mxwngg4Y3Gbm6tK7PpSWJnDB1+zjYUP8
-         FRIw==
-X-Gm-Message-State: AOJu0YxAmaTHTRbkP6nrVeon8BNLXSEsLdhvGnYZVC+wApOgcx3EB6J9
-	K1WZfpzmF+d0+ObAwfvidkXdpQGzl6PebmSOrTFtw55h+4hB++hoNGpK
-X-Gm-Gg: ASbGncs99UYBKGX8hlFMzu1fMx4Tm/5bCvxKiY7Ni/c0X4/OslMyglR5sRCFlXPDhLe
-	EJhf5rDas/3Zzc4B0VHjtHPZ4J+NYpkEqM0XWsfCJ5WB0iwRCxKW6ttEyfUcQe9xBueSqU9AY1u
-	s1mCihhLuxWskEBCU8wuU5K0i6ovvLNG9xQl1ut1V6YuV35t9qosjrBXS9a9YO4xFWPu177JNtq
-	6RLrn5x6X2jCYAd5N3R2irRu5lYJK8kC3CrN69eQknNy6+Y//EAFtvaAbW3CeWJYrKYilzTKrvy
-	xCwuTb4VNNQ0YjWKhTntI9DKcBOeK1d9tWxuC+NIBPYaQNjlWk7hL++Dg5Ot3p2tSJiMDCuIpC7
-	810qL10ZBny9YaWAVDxL8dR5XHwqZ0eaYHBP8l01uSOb+uelG/BlVPOxIBrGH5O3t3HYkRhRQYQ
-	s+EGEaanVScMgYZP/eMsGqNAtU1A08cfNbqz4my6tm+BUMJWzVtfGS7VPvvCe3qR31Nu5D1qRb
-X-Google-Smtp-Source: AGHT+IE6ocL5Th32b34BBOC0L9pFQlFvi/YH+L6cOh1wnI9WJsnVc28ef88WDuXdG9RsxeTD0U0vfQ==
-X-Received: by 2002:a05:600d:634f:b0:475:d952:342f with SMTP id 5b1f17b1804b1-475d9523a1amr53410685e9.39.1761562163354;
-        Mon, 27 Oct 2025 03:49:23 -0700 (PDT)
-Received: from [10.148.83.128] ([195.228.69.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b43sm13830879f8f.6.2025.10.27.03.49.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 03:49:21 -0700 (PDT)
-Message-ID: <a06ceeb57ba62aeb6df00bd49faad1bb5073321c.camel@fejes.dev>
-Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
-From: Ferenc Fejes <ferenc@fejes.dev>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, Jeff
- Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, Mike Yuan
- <me@yhndnzj.com>,  Zbigniew =?UTF-8?Q?J=C4=99drzejewski-Szmek?=	
- <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, Daan De
- Meyer	 <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, Amir
- Goldstein	 <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
-	 <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, Alexander Viro
-	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org,
-  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, Arnd Bergmann	 <arnd@arndb.de>
-Date: Mon, 27 Oct 2025 11:49:20 +0100
-In-Reply-To: <20251024-rostig-stier-0bcd991850f5@brauner>
-References: 
-	<20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
-	 <f708a1119b2ad8cf2514b1df128a4ef7cf21c636.camel@fejes.dev>
-	 <20251024-rostig-stier-0bcd991850f5@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-5 
+	s=arc-20240116; t=1761565075; c=relaxed/simple;
+	bh=qEFSBVn7tvYChgqBuSbB762Baav+81SepQq/Uf98LX4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Tg/cX1djWyLahStzNaYVJ0hNofPoy/hpu0t8UgseM07PQNK/LfdQctRVXji7SSJksS/uVgTxiN4vfXotMOk47Z31+aRcvE8OS00WwTfV2rVz2F/5bF4/rKrs2eZy/RnRW4MyGT30gRAvrDNial8T7Oa1Mt9+jymb7zh+WzjP3Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPZB8lkX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC65DC4CEFF;
+	Mon, 27 Oct 2025 11:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761565075;
+	bh=qEFSBVn7tvYChgqBuSbB762Baav+81SepQq/Uf98LX4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QPZB8lkXka1OfqOTgreoj/P2Lg1hhWZXmp0ATPFjOUcqNjUMSysHbPqTyyVoyY21G
+	 pIPzTIEX+qR7+KzqRNGZ6cuJXse0MlchxX/qiRN2MqZYCiQY5t5V0OXONi9DqK3SSz
+	 K3AyPumi09jDGxYjIm9az3m97OE5uWSLyHisKPIPa2hli7eY0f5ffKsNYg1fH9rG2p
+	 Mc/tUYgYA3hAo/ShlSZseCveHX6OpCES8EJxQWqW8eVPC+0G+rGD1UU4DqFc705ygd
+	 p9jQBRWFkJa9wCUdyjyZpLmnuP/QTLnJSuAhyKVtHkBPYhC5plFZDMfv/br3uPs/P3
+	 MSRt9bNkz34ig==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com,  hughd@google.com,
+  skhawaja@google.com,  chrisl@kernel.org,  steven.sistare@oracle.com
+Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
+In-Reply-To: <20251020142924.GS316284@nvidia.com> (Jason Gunthorpe's message
+	of "Mon, 20 Oct 2025 11:29:24 -0300")
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+	<CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
+	<mafs0ms5zn0nm.fsf@kernel.org>
+	<CA+CK2bB6F634HCw_N5z9E5r_LpbGJrucuFb_5fL4da5_W99e4Q@mail.gmail.com>
+	<20251010150116.GC3901471@nvidia.com> <mafs0bjm9lig8.fsf@kernel.org>
+	<20251020142924.GS316284@nvidia.com>
+Date: Mon, 27 Oct 2025 12:37:44 +0100
+Message-ID: <mafs0y0owd187.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri, 2025-10-24 at 16:50 +0200, Christian Brauner wrote:
-> > > Add a new listns() system call that allows userspace to iterate throu=
-gh
-> > > namespaces in the system. This provides a programmatic interface to
-> > > discover and inspect namespaces, enhancing existing namespace apis.
-> > >=20
-> > > Currently, there is no direct way for userspace to enumerate namespac=
-es
-> > > in the system. Applications must resort to scanning /proc/<pid>/ns/
-> > > across all processes, which is:
-> > >=20
-> > > 1. Inefficient - requires iterating over all processes
-> > > 2. Incomplete - misses inactive namespaces that aren't attached to an=
-y
-> > > =C2=A0=C2=A0 running process but are kept alive by file descriptors, =
-bind mounts,
-> > > =C2=A0=C2=A0 or parent namespace references
-> > > 3. Permission-heavy - requires access to /proc for many processes
-> > > 4. No ordering or ownership.
-> > > 5. No filtering per namespace type: Must always iterate and check all
-> > > =C2=A0=C2=A0 namespaces.
-> > >=20
-> > > The list goes on. The listns() system call solves these problems by
-> > > providing direct kernel-level enumeration of namespaces. It is simila=
-r
-> > > to listmount() but obviously tailored to namespaces.
-> >=20
-> > I've been waiting for such an API for years; thanks for working on it. =
-I
-> > mostly
-> > deal with network namespaces, where points 2 and 3 are especially painf=
-ul.
-> >=20
-> > Recently, I've used this eBPF snippet to discover (at most 1024, becaus=
-e of
-> > the
-> > verifier's halt checking) network namespaces, even if no process is
-> > attached.
-> > But I can't do anything with it in userspace since it's not possible to=
- pass
-> > the
-> > inode number or netns cookie value to setns()...
->=20
-> I've mentioned it in the cover letter and in my earlier reply to Josef:
->=20
-> On v6.18+ kernels it is possible to generate and open file handles to
-> namespaces. This is probably an api that people outside of fs/ proper
-> aren't all that familiar with.
->=20
-> In essence it allows you to refer to files - or more-general:
-> kernel-object that may be referenced via files - via opaque handles
-> instead of paths.
->=20
-> For regular filesystem that are multi-instance (IOW, you can have
-> multiple btrfs or ext4 filesystems mounted) such file handles cannot be
-> used without providing a file descriptor to another object in the
-> filesystem that is used to resolve the file handle...
->=20
-> However, for single-instance filesystems like pidfs and nsfs that's not
-> required which is why I added:
->=20
-> FD_PIDFS_ROOT
-> FD_NSFS_ROOT
->=20
-> which means that you can open both pidfds and namespace via
-> open_by_handle_at() purely based on the file handle. I call such file
-> handles "exhaustive file handles" because they fully describe the object
-> to be resolvable without any further information.
->=20
-> They are also not subject to the capable(CAP_DAC_READ_SEARCH) permission
-> check that regular file handles are and so can be used even by
-> unprivileged code as long as the caller is sufficiently privileged over
-> the relevant object (pid resolvable in caller's pid namespace of pidfds,
-> or caller located in namespace or privileged over the owning user
-> namespace of the relevant namespace for nsfs).
->=20
-> File handles for namespaces have the following uapi:
->=20
-> struct nsfs_file_handle {
-> 	__u64 ns_id;
-> 	__u32 ns_type;
-> 	__u32 ns_inum;
-> };
->=20
-> #define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
-> #define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* s=
-izeof
-> latest published struct */
->=20
-> and it is explicitly allowed to generate such file handles manually in
-> userspace. When the kernel generates a namespace file handle via
-> name_to_handle_at() till will return: ns_id, ns_type, and ns_inum but
-> userspace is allowed to provide the kernel with a laxer file handle
-> where only the ns_id is filled in but ns_type and ns_inum are zero - at
-> least after this patch series.
->=20
-> So for your case where you even know inode number, ns type, and ns id
-> you can fill in a struct nsfs_file_handle and either look at my reply to
-> Josef or in the (ugly) tests.
->=20
-> fd =3D open_by_handle_at(FD_NSFS_ROOT, file_handle, O_RDONLY);
->=20
-> and can open the namespace (provided it is still active).
->=20
-> >=20
-> > extern const void net_namespace_list __ksym;
-> > static void list_all_netns()
-> > {
-> > =C2=A0=C2=A0=C2=A0 struct list_head *nslist =3D=C2=A0
-> > 	bpf_core_cast(&net_namespace_list, struct list_head);
-> >=20
-> > =C2=A0=C2=A0=C2=A0 struct list_head *iter =3D nslist->next;
-> >=20
-> > =C2=A0=C2=A0=C2=A0 bpf_repeat(1024) {
->=20
-> This isn't needed anymore. I've implemented it in a bpf-friendly way so
-> it's possible to add kfuncs that would allow you to iterate through the
-> various namespace trees (locklessly).
->=20
-> If this is merged then I'll likely design that bpf part myself.
+On Mon, Oct 20 2025, Jason Gunthorpe wrote:
 
-Excellent, thanks for the detailed explanation, noted! Well I guess I have =
-to
-keep my eyes closer on recent ns changes, I was aware of pidfs but not the
-helpers you just mentioned.
+> On Tue, Oct 14, 2025 at 03:29:59PM +0200, Pratyush Yadav wrote:
+>> > 1) Use a vmalloc and store a list of the PFNs in the pool. Pool becomes
+>> >    frozen, can't add/remove PFNs.
+>> 
+>> Doesn't that circumvent LUO's state machine? The idea with the state
+>> machine was to have clear points in time when the system goes into the
+>> "limited capacity"/"frozen" state, which is the LIVEUPDATE_PREPARE
+>> event. 
+>
+> I wouldn't get too invested in the FSM, it is there but it doesn't
+> mean every luo client has to be focused on it.
 
->=20
-> > After this merged, do you see any chance for backports? Does it rely on
-> > recent
-> > bits which is hard/impossible to backport? I'm not aware of backported
-> > syscalls
-> > but this would be really nice to see in older kernels.
->=20
-> Uhm, what downstream entities, managing kernels do is not my concern but
-> for upstream it's certainly not an option. There's a lot of preparatory
-> work that would have to be backported.
+Having each subsystem have its own state machine sounds like a bad idea
+to me. It can get tricky to manage both for us and our users.
 
-I was curious about the upstream option, but I see this isn't feasible. Any=
-way,
-its great we will have this in the future, thanks for doing it!
+>
+>> With what you propose, the first FD being preserved implicitly
+>> triggers the prepare event. Same thing for unprepare/cancel operations.
+>
+> Yes, this is easy to write and simple to manage.
+>
+>> I am wondering if it is better to do it the other way round: prepare all
+>> files first, and then prepare the hugetlb subsystem at
+>> LIVEUPDATE_PREPARE event. At that point it already knows which pages to
+>> mark preserved so the serialization can be done in one go.
+>
+> I think this would be slower and more complex?
+>
+>> > 2) Require the users of hugetlb memory, like memfd, to
+>> >    preserve/restore the folios they are using (using their hugetlb order)
+>> > 3) Just before kexec run over the PFN list and mark a bit if the folio
+>> >    was preserved by KHO or not. Make sure everything gets KHO
+>> >    preserved.
+>> 
+>> "just before kexec" would need a callback from LUO. I suppose a
+>> subsystem is the place for that callback. I wrote my email under the
+>> (wrong) impression that we were replacing subsystems.
+>
+> The file descriptors path should have luo client ops that have all
+> the required callbacks. This is probably an existing op.
+>
+>> That makes me wonder: how is the subsystem-level callback supposed to
+>> access the global data? I suppose it can use the liveupdate_file_handler
+>> directly, but it is kind of strange since technically the subsystem and
+>> file handler are two different entities.
+>
+> If we need such things we would need a way to link these together, but
+> I'm wonder if we really don't..
+>
+>> Also as Pasha mentioned, 1G pages for guest_memfd will use hugetlb, and
+>> I'm not sure how that would map with this shared global data. memfd and
+>> guest_memfd will likely have different liveupdate_file_handler but would
+>> share data from the same subsystem. Maybe that's a problem to solve for
+>> later...
+>
+> On preserve memfd should call into hugetlb to activate it as a hugetlb
+> page provider and preserve it too.
 
-Ferenc
+From what I understand, the main problem you want to solve is that the
+life cycle of the global data should be tied to the file descriptors.
+And since everything should have a FD anyway, can't we directly tie the
+subsystems to file handlers? The subsystem gets a "preserve" callback
+when the first FD that uses it gets preserved. It gets a "unpreserve"
+callback when the last FD goes away. And the rest of the state machine
+like prepare, cancel, etc. stay the same.
+
+I think this gives us a clean abstraction that has LUO-managed lifetime.
+
+It also works with the guest_memfd and memfd case since both can have
+hugetlb as their underlying subsystem. For example,
+
+static const struct liveupdate_file_ops memfd_luo_file_ops = {
+	.preserve = memfd_luo_preserve,
+	.unpreserve = memfd_luo_unpreserve,
+	[...]
+	.subsystem = &luo_hugetlb_subsys,
+};
+
+And then luo_{un,}preserve_file() can keep a refcount for the subsystem
+and preserve or unpreserve the subsystem as needed. LUO can manage the
+locking for these callbacks too.
+
+-- 
+Regards,
+Pratyush Yadav
 
