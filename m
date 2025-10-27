@@ -1,146 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-65745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAA6C0F887
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 18:08:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414C2C0F8B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 18:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 105404F2A96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37027189C65A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AAC315D4F;
-	Mon, 27 Oct 2025 17:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E97D314B65;
+	Mon, 27 Oct 2025 17:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaWNK4M0"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AP/QchWX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776B2314D0A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 17:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D5E1E1C22;
+	Mon, 27 Oct 2025 17:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761584892; cv=none; b=ZZQfFuAwYLkqYdiQku3pS3RBPmzpQe0F4aW1fIbFWLLT0zNRYz0FjbtXdXMqpFQNpM94LvQU9syuryv7YndKg8Dmrch0nnlGkUtIOeHRgMgY7X7FJ3HkSl32DXfZprV+CSdEIEHpdJh13vr0dQj3Tnk67qVmfqAAxfbULnFc/YM=
+	t=1761585016; cv=none; b=Z/izMP2DOS8WUxz2l8heQ1ctbmOsdL/onpbXRCKBzQzXtAdC9QFa0Ol1B1fujom0HcAxBIXX9bQLAHnZE+CWZmgaJ2zNNWbZlYrsOCkQyaFITc06zJUeKOaQn1q7A+xZydlVPAGG+wG7AaDSgHvnuYC8l0083Oe5/JihTTQrCcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761584892; c=relaxed/simple;
-	bh=Ka53cxpwq6TDd0s/BJwOxT5nR+b4eomfy9aOxOy90KE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lq+unnVHorQ9Du2X9C6npewxHD6zonVtaAA/jVxQ/nIvD9NxSdFdWrK98CnFqdfi8k9E4k+O0CLKQb2xC2lWxBPckuMeQ8qcV9KogWOA8/WcvgfvMil4Lz4bSIy6cyWbGwVVkMTKBowvLO48cjBbT+JaMzVZO5rIAAOq6o8Sq2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MaWNK4M0; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so9263414a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 10:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761584889; x=1762189689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5/aJpcx16wEq6iLWJmAYoLVa/ENBxlXQoVj8lw6qVT8=;
-        b=MaWNK4M0VwrMlIeg+emRdp+Yc3CgJXlujVmJlwYeB4KQfxVYau8U3wU4S77HunSsNZ
-         4llDjCufs5l5ZFx7Uu5lLsJ80ghrj3+CRV3hQVHbFlBTtXzFyyYrWEOZLo4VI9/+54T8
-         EHlZbgCN04cwzKo3/mJQBvEgpZ6jZlObjKBvuChXJrWEFeQuk0ga7bLZrhssW9bQhTMQ
-         L5F8pC1LzRWtbCt3S2K17ctY4LX2DihuzTACdyS/Es2CGqMVraI9+7eaZUyQzte/ttAH
-         REF6PVo6i6Z429rNfCfBfVrWQGqmRN4mgrRQLkOlyCAC1dlHYzEFBSNk+eEJXoYwFu7X
-         M2Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761584889; x=1762189689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5/aJpcx16wEq6iLWJmAYoLVa/ENBxlXQoVj8lw6qVT8=;
-        b=ucfQedub52OMvWN7Wpr/fCszZlRGxX19nJhU/JWIokanvwSuHFhIP6TuONTPBf125o
-         UbL3ddgRLtb5xCC9oNwF9uySMqrkXDLtDgJZtsC/9+bzwRAAgPTqI2/RJ4zdcLMmdw7M
-         IeKmeYBBNoT+dGLimrRQPrWMpBeXiI+K8EsBBGyX5nGGU8hcFO4hJ+8vxz0h0Mk188AJ
-         XbQ1Ai/NonSA7EqHNz9DRrB7EOtWWR4wTs1AuGDmUhe+AAA88+g696PnMOFOI8S7ZTPu
-         UlnZi482DEAqxTYx1dGQjiRqK87EJ4qTKhD2UVWT3XXUF5NmTg0gzH0nG9N/QWXX78BM
-         UpXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1BPpNLHQTdiWy50Cfn6xPWWqS2li20dldmqDpdQXnkfLhhytMNvfqJQQ8QpOvqteWXwIO97ZJbWv5Pb0K@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKGDXizN80ofUNCYkVG/hueJw+QRzFXnvhVfbuT/V9GbqocDff
-	JxVLNiYiy+bPuLr3TbmC2wWmSB3LweXDpBBlP6rdwSlGOAdL0Yol5PgF/FsGwh3I43Twjsesf90
-	PutdJ/Asl23tyXcMDyWPhb8QXeH9za4IH9hs2aJw=
-X-Gm-Gg: ASbGncuJZB02OAhyeZXBmWPs4SdJRku4Zxboi1UTlsSECyw2EAG3PeF1AIHn8t5Wawn
-	SMcuZeWNHMeDy7DoVtXdIRV1mqKxJpaUSEEpDyXiy0gjdkZcGplv64cZUI4IMWmm10nyal3MTHm
-	M0ZyCUXty+x7L1s93BRx6YB10ywJ/IogmRNASwhCPCUS15ZWPWvs7B/WFZwl+nmJSqrQqWwtRHU
-	N+NCinJKc7s2lYwOkape5b1rRdRE2lN1Pnx5lfbH2RDl5leO96Tryfp58am7hL4LQtV9RbWebLH
-	5rPxI+NEMYpMunrDiIM=
-X-Google-Smtp-Source: AGHT+IFy5AYcGQeUuouCXeNIv8SgQPkJp09VTLiHUl6FymkxDtypIcL8Uz3yiNnyD8ogxqz/W/ESkTd2N56oPCfboSY=
-X-Received: by 2002:a05:6402:f0c:b0:63c:4d42:993b with SMTP id
- 4fb4d7f45d1cf-63ed84a220dmr459934a12.34.1761584888538; Mon, 27 Oct 2025
- 10:08:08 -0700 (PDT)
+	s=arc-20240116; t=1761585016; c=relaxed/simple;
+	bh=3HQMtPV6eZuKv9gYREhBpKelmhByRKtNvBJgbJRSotA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6jfx4OdQh+k/0mkowSGvHIJOhI3DTGOmxSh/NAVvrL3h7jcVLgQPa9Ak/2kgleSUK231pmxND+Xno5gOySVwUNEDaxToJJI2tXXEppvP3CAZ6mzB9miBUFHgVIwTYj45Qsq8Zfl6AgsZCn/u08UXUqSLUatAPYJLE9UL1T0yMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AP/QchWX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59RDLf4u023398;
+	Mon, 27 Oct 2025 17:08:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=A+YnKl1CrIrZJI+jzZyMIk5/iGctAv
+	k+Uu1N1BWz42o=; b=AP/QchWXQdne0bWePAXyCKclddZNZu8i7WZ40JhWINNNns
+	khjrDlMyURhVdb9kHc42jGzAz7CBzpNUBgEq+6q2tbFoKGzH/cAaK/RYRUnNToy9
+	LjVI7YwDog4t9349PpoFGDzBFJcVlAvIzhkvb9TD1sYtMon8BG1CsnZsjBdrETUs
+	f7hEv4npvsZtb0uJmpPGTwCrjH0Y/CliZmVvGKr5m4GLYmZoZeZBKDBS6h8hePLE
+	imndMVNyFR2VfBS9gltwla51oGbYqy9CsVcN59X7pjz/BuPDEN8jMDzoPDHbcwzQ
+	pTIjW36NsD6VQf0vJ9ZBc05VnA+L7nhvOlzwlgRw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p71yv4m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 17:08:23 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59RH5imf010059;
+	Mon, 27 Oct 2025 17:08:22 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p71yv4j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 17:08:22 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59RFEl3L030460;
+	Mon, 27 Oct 2025 17:08:21 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a1acjpmx2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 27 Oct 2025 17:08:21 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59RH8HXh36962730
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 27 Oct 2025 17:08:17 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 582A220043;
+	Mon, 27 Oct 2025 17:08:17 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 23B1820040;
+	Mon, 27 Oct 2025 17:08:16 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 27 Oct 2025 17:08:16 +0000 (GMT)
+Date: Mon, 27 Oct 2025 18:08:14 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Gregory Price <gourry@gourry.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+        Leon Romanovsky <leon@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
+Message-ID: <e8483d5a-7b03-4ae7-97c7-157af55879c6-agordeev@linux.ibm.com>
+References: <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
+ <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
+ <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+ <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
+ <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
+ <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F>
+ <20251027161146.GG760669@ziepe.ca>
+ <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
+ <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
+ <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027141230.657732-1-dmantipov@yandex.ru>
-In-Reply-To: <20251027141230.657732-1-dmantipov@yandex.ru>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 27 Oct 2025 18:07:56 +0100
-X-Gm-Features: AWmQ_bkOPVPx7i9KVsHLAuWjNBZCtTcFrq31FkzfAc9RdwQf2GB8K76XFIVl6Lc
-Message-ID: <CAOQ4uxgRBO9bAi-p_L+Svc13+DiLB_Sh8JVqhUBy80mtFiOKrw@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: avoid redundant call to strlen() in ovl_lookup_temp()
-To: Dmitry Antipov <dmantipov@yandex.ru>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	NeilBrown <neil@brown.name>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a813aa51-cc5c-4375-9146-31699b4be4ca@lucifer.local>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EK7LLW1zqR14UEm-qP1tp6NfXAmFReR6
+X-Proofpoint-ORIG-GUID: VOJEHKfLfHkaI1BCCtzOrXAtTP6TyvpG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAyNCBTYWx0ZWRfX0P0eV63ApyQa
+ JVYUBiJ7e4hixThpPeihq5N8pK5i/dDm2AJ4IHrwG8jN/xtE7o3Iwn2cflFYUh6HSfmZgsV9azu
+ V732AzY82NfPEJySFQ1r+DcKCH0s7d3K7a+qUN2nyZ9GKRkPvReFreSu1RLlKyOwqPNoPdVIOOC
+ D2blpK243mcc/RCz20BtbxMitQkJanHtA7dK8R7y7rrakkQ7bqJUOFM/ZfSMFFErkhIrf2VxOEr
+ CYUtzbqL93R2NQID7p8SiXfQitlzxuR6FYZFHcj3uzh3k9puJ2ZuPA2Oel7HpuhMCY1joaApUeg
+ YyR4UHMtRLe3T6AZwwjT0tO9WMoUyCjaXc8kkshXPt5aAfNcr0SaMgQFKD9Zom54ot/XFgY6L1f
+ ky123Y4Sh+nUYIfv2Zlk6bhTjCCPPQ==
+X-Authority-Analysis: v=2.4 cv=G/gR0tk5 c=1 sm=1 tr=0 ts=68ffa707 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=OE0-M_IHMqe_YGGL9GEA:9 a=CjuIK1q_8ugA:10 a=DXsff8QfwkrTrK3sU8N1:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-27_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250024
 
-On Mon, Oct 27, 2025 at 3:13=E2=80=AFPM Dmitry Antipov <dmantipov@yandex.ru=
-> wrote:
->
-> Since 'snprintf()' returns the number of characters emitted
-> and an overflow is impossible, an extra call to 'strlen()'
-> in 'ovl_lookup_temp()' may be dropped. Compile tested only.
->
-> To whom it still concerns, this also reduces .text a bit.
->
-> Before:
->    text    data     bss     dec     hex filename
->  162522   10954      22  173498   2a5ba fs/overlayfs/overlay.ko
->
-> After:
->    text    data     bss     dec     hex filename
->  162430   10954      22  173406   2a55e fs/overlayfs/overlay.ko
->
-> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-> ---
->  fs/overlayfs/dir.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index a5e9ddf3023b..c5b2553ef6f1 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -66,9 +66,9 @@ struct dentry *ovl_lookup_temp(struct ovl_fs *ofs, stru=
-ct dentry *workdir)
->         static atomic_t temp_id =3D ATOMIC_INIT(0);
->
->         /* counter is allowed to wrap, since temp dentries are ephemeral =
-*/
-> -       snprintf(name, sizeof(name), "#%x", atomic_inc_return(&temp_id));
-> +       int len =3D snprintf(name, sizeof(name), "#%x", atomic_inc_return=
-(&temp_id));
->
-> -       temp =3D ovl_lookup_upper(ofs, name, workdir, strlen(name));
-> +       temp =3D ovl_lookup_upper(ofs, name, workdir, len);
->         if (!IS_ERR(temp) && temp->d_inode) {
->                 pr_err("workdir/%s already exists\n", name);
->                 dput(temp);
-> --
-> 2.51.0
->
+On Mon, Oct 27, 2025 at 04:38:05PM +0000, Lorenzo Stoakes wrote:
+> Yeah but leaf_entry_t encapsulates BOTH swap and non-swap entries.
+> 
+> So that's nice.
+> 
+> What do you propose calling non-swap leaf entries? It starts spiralling down a
+> bit there.
 
-Makes sense, but this patch by Neil is going to remove this helper, so I th=
-ink
-there is no use in fixing it now?
-
-https://lore.kernel.org/linux-fsdevel/20251022044545.893630-11-neilb@ownmai=
-l.net/
-
-Thanks,
-Amir.
+Absent?
 
