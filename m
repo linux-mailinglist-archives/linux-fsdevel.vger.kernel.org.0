@@ -1,202 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-65704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B4FC0D6D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:13:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE428C0D762
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:17:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6E8C63451E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3377B3ACA03
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805B4301472;
-	Mon, 27 Oct 2025 12:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF841301472;
+	Mon, 27 Oct 2025 12:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="G1vT7q2/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UpUAvZe6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011002.outbound.protection.outlook.com [52.101.62.2])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D0DEEAB;
-	Mon, 27 Oct 2025 12:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567172; cv=fail; b=VmFw4XlmcSLNls5xCh8u4hZnOz09EzfXy5Ku1p8eZzRuz7fcX2kx7IdVAaWhn+YyFSQ5jYmp8IHOL+o1jsMtZW8fD+sxsSVMjWA7qjH//ejLUdIuEDqjZdR+tCgl2AKPUkAhBeAEz4tTqNN+G38h/356zZZdfNmHtznZKDOvARE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567172; c=relaxed/simple;
-	bh=La1wQWw0cXC2e4roLKZIUXdomoWopp8luancc82yr/A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uX400EeB8jhhBGVzeGr1yCotIf8lZ4HNsM+f9+7YIGSWrOGwG4x+XAl8qhE3nI7omxEdPeool3u1VcKCjAlGdesPzY/fiGrFcypm3PiIyRdjLojjP+mmfyLrOEaJtchVX3NuuTu1sMxNPg5knnBj81QDph+WuUPWi2yR2Q8F/UU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=citrix.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=G1vT7q2/; arc=fail smtp.client-ip=52.101.62.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=citrix.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XCSlu5/AIoLSeveYAFiJpByFYxzqKwhm7AduZwjO6et60AYreDYDBNAcoKvqzSov2BcrgixCJZD1RmtQXIxE8Q/e1QK6LRpEm+gzOwkFeIwUPva1KgiCjW+ed2WnO5wBFKSpnh2KLCFR6Heih6vNxtp98IwdR6cH2cYr1A463K2lLjzMjowvgdy2w+PQHNFDKEgLGMOiW7Ye8uQ+FSx0r4ICCdLsiAWd3jbmCZyozsy+XHL9JbSJsKYIthylGeH0H4sSLkLHFPT69JUOPqJOapZtvyYweSPW2x7kzQCK64LFROBoK9Stts7Z5ulgDZXA6HA2YlOkMw5MDJmz9cKm0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=La1wQWw0cXC2e4roLKZIUXdomoWopp8luancc82yr/A=;
- b=zJJV+a+3vFAkntnB0z6rWKUoL0nAnrPGEfVCquPp6k6H0G3rWFyqL3QFw/H4YJ9pFcxgQWbh1A5XT4JsMPyI17cLi+Id4MUF2xbfwD3JV7RFlPgbwLsALeXoabp2EvAKsWwSk/H/4zWfeSq6GSqaRoV86adJNzTfInOpNIMHhydYX/F9tq761aNlmO+FaxwQQ49LGD7/52ff6xhoQAtyX0PV2H/ItnOSTn5HI3VwGZMYOehSPsOe2uPyWdyPTxdFbdHtYIDWfa2gPvPJVrEal2ChqFp2YmhcL+Ncz1rM009fsdk6A9gOr4vqcazSWiocNU0Df5AIqwvBgD7oaJ4Psg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=citrix.com; dmarc=pass action=none header.from=citrix.com;
- dkim=pass header.d=citrix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=citrix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=La1wQWw0cXC2e4roLKZIUXdomoWopp8luancc82yr/A=;
- b=G1vT7q2/YJUnAgwOMDT5tKlihQk6kAjbxSAud5qdky3SQs40oMBYoa2Sm54wEFxvQQB0eayUI6JdL934tJx9Dcx40J0wtLa7/dIzRKp+Bjd1ZXygaF5riQRoVxqyIPNp6hjhRtUJI13tMZ81Q9Mc1uM7pw+vrLiV4UePG4pjAXk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=citrix.com;
-Received: from DM4PR03MB7015.namprd03.prod.outlook.com (2603:10b6:8:42::8) by
- BL1PR03MB6104.namprd03.prod.outlook.com (2603:10b6:208:311::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Mon, 27 Oct
- 2025 12:12:45 +0000
-Received: from DM4PR03MB7015.namprd03.prod.outlook.com
- ([fe80::e21:7aa4:b1ef:a1f9]) by DM4PR03MB7015.namprd03.prod.outlook.com
- ([fe80::e21:7aa4:b1ef:a1f9%3]) with mapi id 15.20.9253.013; Mon, 27 Oct 2025
- 12:12:45 +0000
-Message-ID: <a4ad352f-5fc2-4c64-8af0-8835af7064a7@citrix.com>
-Date: Mon, 27 Oct 2025 12:12:38 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V5 02/12] uaccess: Provide ASM GOTO safe wrappers for
- unsafe_*_user()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- David Laight <david.laight.linux@gmail.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.231716098@linutronix.de>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-In-Reply-To: <20251027083745.231716098@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0468.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1aa::23) To DM4PR03MB7015.namprd03.prod.outlook.com
- (2603:10b6:8:42::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B9A2FFFB6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 12:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761567137; cv=none; b=Mw7u/NolWZikxDhh29Kdr4yGPRWhwjhQD2E20qxGpkVKDYWtqJk+q22S9goE4U5ojLOQbvn/aHVUuWto9HY89uUC/RPsxDfRzHk4qeU3KfOH0rOsI4ogDkZTYF3MfBgzDGAM9HwV5eA3F8gh/OkLtAk8LpOG+0bqEwN6uzVc4mI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761567137; c=relaxed/simple;
+	bh=Abr5mbwnWBxHCsJT0JX28zRVj7tmgWW1C8etKDryohM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTNjNrN1/ISQXrilLiWraPyxrqTL+Ia0Lg/aD+F8HXlrn8qr6zhliDH5qi7AAUn/YfRVGCBz+8+A9QR8hzTR7i+hDK7U1F2bqXOIAG3eHj5ksSxAWSYf6o4ozUy1efEz2wim3i4DkaOXFTAJvSkz1VOa1XBYAXVLfQWfifEQdoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UpUAvZe6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761567133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l8QmYcf2qcgHxyLSSNmPzf2VO7g9R1+3AwVMwAbR4/s=;
+	b=UpUAvZe6uK10LI1iZhcTmote/rKR2VL6JEkVbxbinI6FGXxHGltMQApTkyPRs0CsRi9E41
+	gLjUCrll3wBI2YHUYbdIi58f4OPHO91AgYH+4XO3HpHkP52/3V1L1EtLpRhSRi1WgqGXP6
+	/FFHe3mb2Z7P3MNwcBIlJIBg4dz6CA8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-483-gTH_jFoHP2-lTU4NonmGOw-1; Mon,
+ 27 Oct 2025 08:12:09 -0400
+X-MC-Unique: gTH_jFoHP2-lTU4NonmGOw-1
+X-Mimecast-MFC-AGG-ID: gTH_jFoHP2-lTU4NonmGOw_1761567127
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 420A81956095;
+	Mon, 27 Oct 2025 12:12:07 +0000 (UTC)
+Received: from bfoster (unknown [10.22.88.105])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE0241955F1B;
+	Mon, 27 Oct 2025 12:12:03 +0000 (UTC)
+Date: Mon, 27 Oct 2025 08:16:22 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, miklos@szeredi.hu, djwong@kernel.org,
+	hch@infradead.org, hsiangkao@linux.alibaba.com,
+	linux-block@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
+	linux-xfs@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 07/14] iomap: track pending read bytes more optimally
+Message-ID: <aP9illNXOVJ8SF6m@bfoster>
+References: <20250926002609.1302233-1-joannelkoong@gmail.com>
+ <20250926002609.1302233-8-joannelkoong@gmail.com>
+ <aPqDPjnIaR3EF5Lt@bfoster>
+ <CAJnrk1aNrARYRS+_b0v8yckR5bO4vyJkGKZHB2788vLKOY7xPw@mail.gmail.com>
+ <CAJnrk1b3bHYhbW9q0r4A0NjnMNEbtCFExosAL_rUoBupr1mO3Q@mail.gmail.com>
+ <aPuz4Uop66-jRpN-@bfoster>
+ <CAJnrk1bqjykKtpAdsHLPuuvHTzOHW0tExRZ8KKmKYyfDpuAsTQ@mail.gmail.com>
+ <CAJnrk1ZOcnOT77c2fCiqzV=ZiiNnxOcB7wXn4=V+VFijS+-2Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR03MB7015:EE_|BL1PR03MB6104:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7cb4f1e-7d3c-4eff-6d93-08de155222e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c0YvVFFnQTRmeTd4YTl0bkt3SzNWaTJvSVp0dUNlSUwxRzNaWlZ4S2s2Q1Ba?=
- =?utf-8?B?QmdRcmlhemtyVFR2K3JBQkNhNWd4YlRzTUtQNm8vRXg4WW9Cakh6ZXJmc0k1?=
- =?utf-8?B?T3RucHptdk5xY1NLR1U4YU95aDA2QmlJZ29QT2diTFlTNGRCNTU1SG5uMi9q?=
- =?utf-8?B?a05Ock9UVHpJVi9vZk4vb3hhOHJmUlB1a2pRbjAxOFp5Y2w2ZFgrbzUrUU9H?=
- =?utf-8?B?T0ZmVkY1Sy9nak9wWlppSDYwYXlwenhJM0JSb3ZwZ1pMaVJiaGp6aFM1Q05U?=
- =?utf-8?B?dGRlMWhITzJnVmM0QXU2cWhadkU3WmYrVytZK2ZpQlRZcDdGQ2FHSlF5anZC?=
- =?utf-8?B?ejZLRm1tR1FwR244Y2dTdXNVMjJzdGl2YU1reDI3OVQyM1lTeUUzL0ttZXlr?=
- =?utf-8?B?ZWtqNzFQOEUxbTlCRTJROExvMUR4NkZjQmpyM0E1bisvREtJb1pXK3BlMklk?=
- =?utf-8?B?NytKQllOdW5YRlFJNVhlM1dZL1dBZTFhRGVrWVZ3bmVPbFAxUXdZYzR3L1Iy?=
- =?utf-8?B?SkVNdDNoQTlrWFJHWEZ1a1h0WmpvT29rMnNJa1lkeHVNODJhaEFSRmtObU91?=
- =?utf-8?B?dGpCNzZxMGdhWUV0MUN0YzZMbHBQa2FSMWhTNzdCS2RiNXVldTFRbGNtOWFM?=
- =?utf-8?B?MDdLU1ZOL29NY1VRM0gwakRiejJQS2llUTBCR0NrYTZPcXdIWDJaMy9jL1JO?=
- =?utf-8?B?aEpZcXdWNzRYQlNQUUlvSnJnR2srK0xOS1IxQ1NTZ01hekF0N1BiaUZNZUQr?=
- =?utf-8?B?UWlYMEZRSERvcGkzYjhSN0VwbTF2VTlPNDNJWUF1aDRQcGR2YWpqbGdlSmZ1?=
- =?utf-8?B?bnJOL1RmeUVvb2ZxTk1PZG9wOEUvZmo3NUswZ1Z5QVlvZnV1djc3Ukp2QnBk?=
- =?utf-8?B?dGM3aXM1YUJRa3FNK0FQZVRUNERCUHEwSjlFTUE5bEE1YTdHNWJKSkIvK0RD?=
- =?utf-8?B?aEZJUWNCQTQ3RkdZeTN2VmJSNVREMUxxUUdhZHNOZFVIVUpEakpQUmJsZFQ1?=
- =?utf-8?B?T0xXdjAxR3pGaWZIYXFYRWswMGp1V0NDQktaZkVTeURWKytjNjgyNHQvdzFT?=
- =?utf-8?B?dUk2Rk8rUlVJK0h3WHRlaWxwc2N0cFJ0NEZORVJmdnB3UlM2bTF3V3ViOFRE?=
- =?utf-8?B?alpiRG5NS3Jmdk16OXpaZ1RKd3I1am5Ed0tBak4yMFVXc1VlR3Y2VC9wZnZO?=
- =?utf-8?B?NkJwRzJrSXIzcTlrcGJjdlJac0QwTTRTWGNUaTlLYlpsKzY2VXM3cEZ0a09P?=
- =?utf-8?B?NFltaGhCRkQyL2tSSkxLdnZvaFczeUhwUmVMaEFTNUNncE1OWEU0Z045R3Na?=
- =?utf-8?B?WkpjRnFiR0I0OHhoT0hmWFZqR1poejJvb1YvNEZEUHl3TFlKNEoyUENJQktm?=
- =?utf-8?B?aUwzaVkrV2dUcldKckxxZG93cENpTWRpQUtDQWhpWUZDdmZCR25CMGhHMUVu?=
- =?utf-8?B?OE85R1hTT2hxb1RFbGt3WDlaY3BuMTNpT1Y2V2NtZHd5Z0UxWnRBUGhPZWpV?=
- =?utf-8?B?eU9oVEJkQUtOMzkxZWI1aHNuR1FGMnQ1cHJKQmV3QlBIaUwzcHFmYzNmZ00r?=
- =?utf-8?B?UDFtZzlNK0tkUGNBVE5kSE5Ub3F3SHQ2dDlPcWVTbDBjWkpuZDV2QzFHdkxP?=
- =?utf-8?B?M1d4UDJwZWorVllVcEtZa0VjSjZ5WHVHdmZadERrb2lFbVVQaE9sTTFiQy9X?=
- =?utf-8?B?bzZxNTBaS3hnMWg4T21oSzVLR1ppWk5oWjloS2ZEUGN6ZWJ1YUxyYUNMV0dH?=
- =?utf-8?B?WGtsYThGZ1B0eWhuUXNuQktyV3FRQ1JqVmQzeDJId244ZHlET0JCT3B3RVp4?=
- =?utf-8?B?MjFFTTJrUENuL002c0s3YjlZeTdPRmZKWG1HbDZjaVo5aVhUS3ViRFNlZFov?=
- =?utf-8?B?a2RFcUpTSXFuTjdqSGkrUlcyUk9ET0xSQjA0YUhqcUFLT2tYanFsaU95YVFt?=
- =?utf-8?Q?kJvJ0gYNmvgI+RWYtLB1hmrLAYeXldU8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR03MB7015.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Vzh5dm9ybHhXNi9TSU9HTVVuZ0VBODEwc1BHdFNCOG1JRVRQcjUvMjB6NmMy?=
- =?utf-8?B?TmJBdW8xaGxuL2dYNWQyYUo3MVZ5djVuYndGUkVJSnlpbmpRV2FmY0l3NWFM?=
- =?utf-8?B?Um5xUEtRU0RBSjdPN3MwTXFvUFBrMTlaYkVtbEkzV0tXSFE5aUh3Qmxxd0kv?=
- =?utf-8?B?Z24vQWl6d0dhZ3dRdjZHRzVLNE4zVEhHL2k0QWZqaG1EcXhZazh2UVUvS0hm?=
- =?utf-8?B?ZVNESFVpdFNGMWtLMVN6azRqK2pZRFdKWnBpdXN2WGxOeGhHOEZFY00xRTdD?=
- =?utf-8?B?RjlDK28wNFFqcTJ4V3VjaWJVRnJuN1QxRklSUTJFQ2dFWmgvcU5YN0FwM3lM?=
- =?utf-8?B?NXdib3ZhTXozUFZHMGltMjhlT0tmT21SOVhQZFJqdno3ck5iV1NyNzVGblRa?=
- =?utf-8?B?VTVheG1rdXprOVd3WUpxS3FzRUxnTCtEN1JsdjlneUxxMkhqUTV4cnU2ajRa?=
- =?utf-8?B?cnpaOW5XcVlQYXNmY2x6Y0ZneERZUk8vdkdnQ1ZJdFZ1S3Zyc3JUek44SDhu?=
- =?utf-8?B?M20rTXpYMGcyNGZKZk04NFJpKzBtbU5mRnVvV2dlMmUyRkNkcEd5WE96Z3Mx?=
- =?utf-8?B?am1zYmk2QUhwYUhrSElSVCt3eHErd0pnaFVuREVKakhsVjlJNjE4S3N0Y0h1?=
- =?utf-8?B?SWFIN3k1UC92QUVwbFpuMlA2emhQTFk4ZVk5M1EyeVNYU28xczRKY1R1blZB?=
- =?utf-8?B?UWZndndBRXU4Qno0ZFBFNTlRYmswOEx2MEpxb0RHbUt6SDR3QzNEWW9jbTlu?=
- =?utf-8?B?dlVuMTJzL0xZaEM1OXlkeHpvVm1zU1N6SHFZbThIZWxwTE1sZFRBM3IyNnNu?=
- =?utf-8?B?anRTcm5od1NhZmh5R25mVnNQRnlsYWtDQWxHdHhsTjE5MTBHMzhnellFZlNw?=
- =?utf-8?B?bFpNbVhWeTMxdzhDZWxBdFdGMXFnSkhmTWtERHhHZm1yakVYUSswSTIrT1Q3?=
- =?utf-8?B?SVUwNTNRU24zL1NQd2lETHRNVk1mWHRTbEV3ZXE1Y2tOOXNEUGZYclFiU1JB?=
- =?utf-8?B?NURCS05mdFhaNFJHbmZRWkEzZTIwR3lRWGVBVXh0YVYvaGJoWG9jV29scWlq?=
- =?utf-8?B?dmFKVHBoVWsyeXZmeVh6WndNZWdRWElYUWNWTWNvSWhkUVg5Y05OalZJcUZw?=
- =?utf-8?B?Y3hPUGpxMEVHQzd3SVNXT3dLb2JveW1WYTVrNmF3UWYvMWJOaENFNndZRTVl?=
- =?utf-8?B?YWZoR1hUMEhtcExOTjBhVU1jMks1bHUyM2tyMmo0YlZSdkVDRVlYblFxdnpy?=
- =?utf-8?B?THFBVXlJTVNIbTdocTZMZ2orUE1yR1ZoQkViM0xraGJ6bEpqVDhlQXBHdzJT?=
- =?utf-8?B?SVY1L3NmWnBma2pNb2RmRU1Rd1lOKzU3dzQrazBnUWhkM0N1UXlCKzNLMzdp?=
- =?utf-8?B?cDJxR3NBT05DSUM3Tks5MnJzamErRmlCZ29qMDF2SHllZTU1MzVaZlJ2VGov?=
- =?utf-8?B?b1NNdXNndmdaUElmYjBiZVNkSW04NnJCTTRCdWVQNyt2UWxmRmhpSHVGOWpW?=
- =?utf-8?B?WGVLYWI5bTNvNSs1TVQrQ3RySGFOR0FEUXUwYmJiYTJVOEZ1b21zMVJINm5U?=
- =?utf-8?B?NlBjSXd5K0I0V3ZGRDQrd1FSUDZJeWZNWHVTNnpUY1dLWW4zV1hXR2Z0Ymxx?=
- =?utf-8?B?UmlSN2FrQ21lNlNrcnJoQSs2N1FyUW9vSlRwTmR5VGk0aURJclR3cjR5Zkk2?=
- =?utf-8?B?bkZSTmhQUDhLekpZcFBPUzJ4RFd4eGlsQWJPT0xkMW44UzJIcnNNR3BCQ1BG?=
- =?utf-8?B?QkdDY1hSQ1NhdlkxcEpoaklwRjlXK3IzUUxFcjdQU3hyU0ZJRmxScjV3eHpJ?=
- =?utf-8?B?V2QrczM2VUxXNmVaem9yRmVtck10alkyZzFpNU55TEh4TnZlQTFuV29iN1h6?=
- =?utf-8?B?TGh3WTRBS0pHNHdlKzJLdFBCa0FpWnB6WitLdnpzNEM1bmY4YmRDRmdXZU9a?=
- =?utf-8?B?aHo3alREaWFLdi9aZlF2b1EzY0JYM1dxMmkwNjR6Y2p4aGk4cktpcnlVeDlt?=
- =?utf-8?B?TzZZUDdGRHMrUnhJdlVyKytxeXkvSjQ5TmEzWWdyZ2RIWEdkb0F1Wi9JWG9U?=
- =?utf-8?B?YXgzOXZTZXFhN1E0UGxqNDNzS3ZVaTFMRUE2QU9qMFJMTWdaTDFGS0k2ckZL?=
- =?utf-8?B?WFlIamVlM09wUFJibm9BS2dVZzAxNDFXUnBiSThmVE55V1VPQUx6SXMzeGkw?=
- =?utf-8?B?NGc9PQ==?=
-X-OriginatorOrg: citrix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7cb4f1e-7d3c-4eff-6d93-08de155222e1
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR03MB7015.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 12:12:45.3341
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335836de-42ef-43a2-b145-348c2ee9ca5b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iT6lsUqjIpYBLliHDlkc2ZMF+j8gzC2dD0gKKEJ2ip4ErxXMtUGQqy+zME185CL8eTLdslk5NN6lhptZK3373cvTNfhljlpbGqAvYn6+S7c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR03MB6104
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZOcnOT77c2fCiqzV=ZiiNnxOcB7wXn4=V+VFijS+-2Rw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 27/10/2025 8:43 am, Thomas Gleixner wrote:
-> ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
+On Fri, Oct 24, 2025 at 02:55:20PM -0700, Joanne Koong wrote:
+> On Fri, Oct 24, 2025 at 12:48 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+> >
+> > On Fri, Oct 24, 2025 at 10:10 AM Brian Foster <bfoster@redhat.com> wrote:
+> > >
+> > > On Fri, Oct 24, 2025 at 09:25:13AM -0700, Joanne Koong wrote:
+> > > > On Thu, Oct 23, 2025 at 5:01 PM Joanne Koong <joannelkoong@gmail.com> wrote:
+> > > > >
+> > > > > On Thu, Oct 23, 2025 at 12:30 PM Brian Foster <bfoster@redhat.com> wrote:
+> > > > > >
+> > > > > > On Thu, Sep 25, 2025 at 05:26:02PM -0700, Joanne Koong wrote:
+> > > > > > > Instead of incrementing read_bytes_pending for every folio range read in
+> > > > > > > (which requires acquiring the spinlock to do so), set read_bytes_pending
+> > > > > > > to the folio size when the first range is asynchronously read in, keep
+> > > > > > > track of how many bytes total are asynchronously read in, and adjust
+> > > > > > > read_bytes_pending accordingly after issuing requests to read in all the
+> > > > > > > necessary ranges.
+> > > > > > >
+> > > > > > > iomap_read_folio_ctx->cur_folio_in_bio can be removed since a non-zero
+> > > > > > > value for pending bytes necessarily indicates the folio is in the bio.
+> > > > > > >
+> > > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > > > Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > > > > > ---
+> > > > > >
+> > > > > > Hi Joanne,
+> > > > > >
+> > > > > > I was throwing some extra testing at the vfs-6.19.iomap branch since the
+> > > > > > little merge conflict thing with iomap_iter_advance(). I end up hitting
+> > > > > > what appears to be a lockup on XFS with 1k FSB (-bsize=1k) running
+> > > > > > generic/051. It reproduces fairly reliably within a few iterations or so
+> > > > > > and seems to always stall during a read for a dedupe operation:
+> > > > > >
+> > > > > > task:fsstress        state:D stack:0     pid:12094 tgid:12094 ppid:12091  task_flags:0x400140 flags:0x00080003
+> > > > > > Call Trace:
+> > > > > >  <TASK>
+> > > > > >  __schedule+0x2fc/0x7a0
+> > > > > >  schedule+0x27/0x80
+> > > > > >  io_schedule+0x46/0x70
+> > > > > >  folio_wait_bit_common+0x12b/0x310
+> > > > > >  ? __pfx_wake_page_function+0x10/0x10
+> > > > > >  ? __pfx_xfs_vm_read_folio+0x10/0x10 [xfs]
+> > > > > >  filemap_read_folio+0x85/0xd0
+> > > > > >  ? __pfx_xfs_vm_read_folio+0x10/0x10 [xfs]
+> > > > > >  do_read_cache_folio+0x7c/0x1b0
+> > > > > >  vfs_dedupe_file_range_compare.constprop.0+0xaf/0x2d0
+> > > > > >  __generic_remap_file_range_prep+0x276/0x2a0
+> > > > > >  generic_remap_file_range_prep+0x10/0x20
+> > > > > >  xfs_reflink_remap_prep+0x22c/0x300 [xfs]
+> > > > > >  xfs_file_remap_range+0x84/0x360 [xfs]
+> > > > > >  vfs_dedupe_file_range_one+0x1b2/0x1d0
+> > > > > >  ? remap_verify_area+0x46/0x140
+> > > > > >  vfs_dedupe_file_range+0x162/0x220
+> > > > > >  do_vfs_ioctl+0x4d1/0x940
+> > > > > >  __x64_sys_ioctl+0x75/0xe0
+> > > > > >  do_syscall_64+0x84/0x800
+> > > > > >  ? do_syscall_64+0xbb/0x800
+> > > > > >  ? avc_has_perm_noaudit+0x6b/0xf0
+> > > > > >  ? _copy_to_user+0x31/0x40
+> > > > > >  ? cp_new_stat+0x130/0x170
+> > > > > >  ? __do_sys_newfstat+0x44/0x70
+> > > > > >  ? do_syscall_64+0xbb/0x800
+> > > > > >  ? do_syscall_64+0xbb/0x800
+> > > > > >  ? clear_bhb_loop+0x30/0x80
+> > > > > >  ? clear_bhb_loop+0x30/0x80
+> > > > > >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > > > RIP: 0033:0x7fe6bbd9a14d
+> > > > > > RSP: 002b:00007ffde72cd4e0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> > > > > > RAX: ffffffffffffffda RBX: 0000000000000068 RCX: 00007fe6bbd9a14d
+> > > > > > RDX: 000000000a1394b0 RSI: 00000000c0189436 RDI: 0000000000000004
+> > > > > > RBP: 00007ffde72cd530 R08: 0000000000001000 R09: 000000000a11a3fc
+> > > > > > R10: 000000000001d6c0 R11: 0000000000000246 R12: 000000000a12cfb0
+> > > > > > R13: 000000000a12ba10 R14: 000000000a14e610 R15: 0000000000019000
+> > > > > >  </TASK>
+> > > > > >
+> > > > > > It wasn't immediately clear to me what the issue was so I bisected and
+> > > > > > it landed on this patch. It kind of looks like we're failing to unlock a
+> > > > > > folio at some point and then tripping over it later..? I can kill the
+> > > > > > fsstress process but then the umount ultimately gets stuck tossing
+> > > > > > pagecache [1], so the mount still ends up stuck indefinitely. Anyways,
+> > > > > > I'll poke at it some more but I figure you might be able to make sense
+> > > > > > of this faster than I can.
+> > > > > >
+> > > > > > Brian
+> > > > >
+> > > > > Hi Brian,
+> > > > >
+> > > > > Thanks for your report and the repro instructions. I will look into
+> > > > > this and report back what I find.
+> > > >
+> > > > This is the fix:
+> > > >
+> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > > index 4e6258fdb915..aa46fec8362d 100644
+> > > > --- a/fs/iomap/buffered-io.c
+> > > > +++ b/fs/iomap/buffered-io.c
+> > > > @@ -445,6 +445,9 @@ static void iomap_read_end(struct folio *folio,
+> > > > size_t bytes_pending)
+> > > >                 bool end_read, uptodate;
+> > > >                 size_t bytes_accounted = folio_size(folio) - bytes_pending;
+> > > >
+> > > > +               if (!bytes_accounted)
+> > > > +                       return;
+> > > > +
+> > > >                 spin_lock_irq(&ifs->state_lock);
+> > > >
+> > > >
+> > > > What I missed was that if all the bytes in the folio are non-uptodate
+> > > > and need to read in by the filesystem, then there's a bug where the
+> > > > read will be ended on the folio twice (in iomap_read_end() and when
+> > > > the filesystem calls iomap_finish_folio_write(), when only the
+> > > > filesystem should end the read), which does 2 folio unlocks which ends
+> > > > up locking the folio. Looking at the writeback patch that does a
+> > > > similar optimization [1], I miss the same thing there.
+> > > >
+> > >
+> > > Makes sense.. though a short comment wouldn't hurt in there. ;) I found
+> > > myself a little confused by the accounted vs. pending naming when
+> > > reading through that code. If I follow correctly, the intent is to refer
+> > > to the additional bytes accounted to read_bytes_pending via the init
+> > > (where it just accounts the whole folio up front) and pending refers to
+> > > submitted I/O.
+> > >
+> > > Presumably that extra accounting doubly serves as the typical "don't
+> > > complete the op before the submitter is done processing" extra
+> > > reference, except in this full submit case of course. If so, that's
+> > > subtle enough in my mind that a sentence or two on it wouldn't hurt..
+> >
+> > I will add some a comment about this :) That's a good point about the
+> > naming, maybe "bytes_submitted" and "bytes_unsubmitted" is a lot less
+> > confusing than "bytes_pending" and "bytes_accounted".
+> 
+> Thinking about this some more, bytes_unsubmitted sounds even more
+> confusing, so maybe bytes_nonsubmitted or bytes_not_submitted. I'll
+> think about this some more but kept it as pending/accounted for now.
+> 
 
-"inside an auto".  Same on all patches up to 6.
+bytes_submitted sounds better than pending to me, not sure about
+unsubmitted or whatever. As long as there's a sentence or two that
+explains what accounted means in the end helper, though, that seems
+reasonable enough to me.
 
-Otherwise, LGTM.
+Brian
 
-~Andrew
+> The fix for this bug is here [1].
+> 
+> Thanks,
+> Joanne
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20251024215008.3844068-1-joannelkoong@gmail.com/
+> 
+> >
+> > Thanks,
+> > Joanne
+> >
+> > >
+> > > > I'll fix up both. Thanks for catching this and bisecting it down to
+> > > > this patch. Sorry for the trouble.
+> > > >
+> > >
+> > > No prob. Thanks for the fix!
+> > >
+> > > Brian
+> > >
+> > > > Thanks,
+> > > > Joanne
+> > > >
+> > > > [1] https://lore.kernel.org/linux-fsdevel/20251009225611.3744728-4-joannelkoong@gmail.com/
+> > > > >
+> > > > > Thanks,
+> > > > > Joanne
+> > > > > >
+> > > >
+> > >
+> 
+
 
