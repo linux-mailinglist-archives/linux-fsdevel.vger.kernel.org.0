@@ -1,76 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-65799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55885C11B39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 23:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36361C11B3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 23:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8111467724
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 22:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2AA560C3D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 22:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8556632C938;
-	Mon, 27 Oct 2025 22:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1328732C937;
+	Mon, 27 Oct 2025 22:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apXhFa4d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwHHEmgI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAAF320382
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF81832C92A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604182; cv=none; b=fBdZ0BBZgZQbm016B6JR6UVvb5tjrXJ9lTUH0If0wfaSP1dMEjK6poAP/eMtxhfzbJEHD6wXLqqR/1+t+0EBZQ2DL2JhwxximQl0TpVGx4pSAk4BZXp5aivIJdPXgd03Q3BmBqipDRP7LKV82xybRycl0VNGP1idlGl6Mhu0xZI=
+	t=1761604184; cv=none; b=YtzaqP+XFchZNicFrV4kGYJ/97ix0gLAYYAYfH7qkT6fOxTa2rHoiqw1qeRgmybkOG7W1dLwVzgpT8DRaVeVktr30VaGi/CPx5yIozLcZsNx0fHcIAa/+TruqnuEk9gTftQK0NioeUTK8rJm7D0hW/Qy1aEQOSu759y/SPxOpUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604182; c=relaxed/simple;
-	bh=d8NMdMIAsKL9dT6NiZf9+euKVtilxlxSJ5AK9kuS4JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lO6eBlpBNxJ3CjSr/FwpfsVzqvU0zu81U/e/TqXOTBCguh7gOjewLlpksNCg4U5WR2BBcbVazlSiBploVvz1znNmBzd00NLbnzLd0R3hOdORk1Drz8/L558NWO6QI+Tjxbe6OXTRxmxx5kZYANgjOolWnHyMWilQcCjSdY6Nn/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apXhFa4d; arc=none smtp.client-ip=209.85.216.41
+	s=arc-20240116; t=1761604184; c=relaxed/simple;
+	bh=q0CIG4sg3YcHVlE6O1hVSe7wVahN3MkLZ6EDbg4kQ6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pFZNnXaHMkx/utAGUJ7hMqOgd3aSw8w83DJJ31RZVYO9GyjW6PjxwaLzQ4aoRLXgrjLg6qdHFbQMKPaonP7rVPMIPPOVyw8kLXSoUX117nTPiuLC6NCCnT+qLrix/sLklZXGwIW+7Ss8S/Kdz5qXSIi1vxe2aCOvmg8LvgIqQrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwHHEmgI; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so6140119a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 15:29:41 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so5084780b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 15:29:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761604181; x=1762208981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8mhu62PqUUoiRlh9DDmVeEAVqYSH9RKV2q5DyJsz5J4=;
-        b=apXhFa4d+yKE6olfb0DvBNUQe0hJorglbPH7h73euoN7G5sW+tO2jrrHQDpT3eEFuh
-         F4uwit47RfxDgiWrQKTcNnJ1sGeTbtQtzJQ9f8WD80C1AJBeVhIFhYWxhY1GrDkezu3Q
-         Vl2G7LJIbolFNKrNxaxa0JzWGTZJEQU1tXpeJOWOD3CLbyCALGeBAQ6n/ssC8+dqltsC
-         Yjlw+u8txM54PowIVLO7WXcf9G44bewEWwq66yiPvig2Ig0RTYZC7Uz9lR7uWWxgH4fD
-         8Y5JiU5uFraJM/jRCu/ovYLDU+5boboTjWhXFk9yv8XWlnmPud9pN7rP45hNFQFM1KjC
-         4ksA==
+        d=gmail.com; s=20230601; t=1761604182; x=1762208982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIIe7J+2Fjq2fETJFbES/k/BB7orrQTU6gidQxHEsTo=;
+        b=CwHHEmgID7HCJgLs+JGaOZMHcCZQAI/v+cuXLbVMWk6DcSQ9xwyC+ToDuwRdbbAi4w
+         g7ysQZj7nTHDkIqsBqKLC56j8/v5DS+oUtkFV9DGSBgbE9WqW90p5htS+JqINlDwFJUV
+         Jfk8smgYiSYIB0TLwyppTQvRga6Lie6nG3gGmoy5e+Zv2xsXR2wmAbfsrqdqZjiqeD/s
+         p1061+Qdff1W51xa5kKado81ljg9cXCNUEIPUKkQYczHDhZ74wBpN9bpp9N5r42t5Lpe
+         RQ0GCZdEo/uKSjy7O4YB7s7dN7sYLnNnQHwR5jg+UgpO21bekRDtTwUo9HnfJqKikPj9
+         Qhpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761604181; x=1762208981;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8mhu62PqUUoiRlh9DDmVeEAVqYSH9RKV2q5DyJsz5J4=;
-        b=KWKA1lb+MjGJ7jfqkDUCAkxtKOMubAzevrjSjrE6gq1AEIXxhDUL+7wpGuxhVhG9pm
-         e6jvrS+RjWAZ4rIDdIrLFxCl4tGrmd22Fo6XsyYFJZAZynwzUlLOXCKUdmPeils06n9U
-         ROpvt9lYTlbWBFr4dMJdi+EMJozu4mEK9SGE9WGmpCiXLJ99nQ9SGTyjziVPozdD0UV9
-         X3pYBA2Qf4H3a5BaXbExRSgDcgf/L+8QaBQs+IaZKxvKxaXswzgPRlP54agz/SzklPBH
-         zhA9tNdKlWYCXDtW5sq2bGhhLHjg95yS0y28PChOnt7GdTLkOsUocs6JKzDHhNm0HENM
-         WxBw==
-X-Gm-Message-State: AOJu0Yym1IXN7lhGLsT9VR2TB2xlTHUxNQmt4yv+1l7AG3sA9xkuQRlR
-	nSGpGwczHmW7dCso134ts65yC4qnqnH2jtWpHzj943L0fx3f1gSslIZY
-X-Gm-Gg: ASbGnctL/vR5hV5SMAse3Pe0/b0v3BeOW14/VXbgiyuIDW5P7ZDnsL2sNjKbaqR5V1v
-	vqWl6u3MK5wtVPBvxs3Zn7/ptqG9w+jgDFUglL4+hij4vPyjL9KW6w+cESpnVWk6g/6+aXME1YZ
-	vMvL59OLDiryZJn1OpKy2G2txN8SO3Q/+TkNuIKUegmu9ESZm9v4rfVIaUX47lF2yl+1xQ4UBJU
-	7oHZNgdtUhDfruwDc2nZXWAcOcU6pFtRo2OBGChUPbHI/Ti8LshKc428jlIr4jVIZ0mjDQK+L9a
-	mKYS0uHbRXuszQCK7cEVK3Mrt0g5wb11NRFJWoRnptFudmM6iJ9btTwLvNc91PFDeM8VcAdsHUj
-	GLyGJZgk2cvaCTMWKCnoHTG1/Fnxvq8Dw+QrkDAfKZ5pmjysNHWmAlKPX3QysGeNW8TLWSc6Wte
-	NAcCHm3oJ1+LWzgClJZ7dIbqnlf38=
-X-Google-Smtp-Source: AGHT+IGPU1TePCGRCsZt+liUeRMz+ZQoyOc9MsK8xsHUDywlroEXsW+H9dLQ5M35xZaqbOPL+oauqQ==
-X-Received: by 2002:a17:90b:5241:b0:32e:d649:f98c with SMTP id 98e67ed59e1d1-340279e4afemr1601136a91.1.1761604180545;
-        Mon, 27 Oct 2025 15:29:40 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:43::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed73b5bbsm9752763a91.7.2025.10.27.15.29.39
+        d=1e100.net; s=20230601; t=1761604182; x=1762208982;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UIIe7J+2Fjq2fETJFbES/k/BB7orrQTU6gidQxHEsTo=;
+        b=F7Usad1GvOTSRxe7I5qdpfywUg3Wz0DcEqFG7dnShgKne9on4Gqjvn4C4Ik9A1ba/k
+         l7sVCKJg69SqyIsEoO4qQ3vfh9rl7iQ4Md+uhMxW08f4Lvincm5eY8EFKSpLiba4O4TF
+         /96sNgFbmH72DpLiFPPdgiMHmaLDJ5TKLq1Vbhe5InD1eu1QMBmWxUPxmiO/pg+L0S7m
+         cGSqTy02dCI2XDMPHnR2OqSon55wv2s6lyPHBqKLb2Y29uY76T3PTjAjw+ZTVc4x5mhf
+         6CGH0+XoPr27dbZb52LyXUlG9SDU5MbDeSonDuTtUtGT/fc55GE4jr7zGXB1MOJ9a9RC
+         RtRg==
+X-Gm-Message-State: AOJu0YwxnIxC/MufX/6GeB0Xi/am6pnzwPDos4b5CNElSfKSuQj+e7JD
+	XhIqp/ui8rPxPMH5BkLbtllXlinVihKIionKrFv4y7gp2Rsv9cO1ITs9
+X-Gm-Gg: ASbGnctdQfidNJNsih3qEqWD0/8OTcqRGIoymlS/IluLQmq0XK0sFuSiXHnuMwZH/hx
+	pjrlN82l8fZDG2hYwxzHIMjVDncHO4Xt5BuZOI8kpa0E2/l/u55l2tJFdvXMusbZtKhBgGW+rOS
+	kQB0932k4MG4vijqN3s5rkVunbiBkLuP4vTvBgoLf9JnA32O6vZclnpdtq95DYzpcJdSzjNqc3x
+	HV9qn15On0NeFYpUknoVFLfUkVO7Db6jkiPlHGDmAdo+l8cfp8pymq7IaeUwj1A13PFNcjqmxpj
+	DeGVB8nA5RfOsUdaSJzteQwS5zdC4tgyVLMjBvCLUYbI5QDh7erk7YMYb5MiiEXS88mMMujzXrf
+	cyoQ1H79a+xbTcFkttCMh2QYFi5SBWM8Dg7McsgBVhuAjQbfY9MZmcPU32Yldcw2M3EmnevucXu
+	9vL7AUxP/edJuD0BgSAvAikkWcULXDGVZWwEX0Pg==
+X-Google-Smtp-Source: AGHT+IH/BlVDqq1xxpbiFJEvAxmdcEjzo1ibdPGr2BOfyfg8AS3BRphzOlQdrvhB8RrWeSysDEW2BA==
+X-Received: by 2002:a05:6a00:9505:b0:77e:d2f7:f307 with SMTP id d2e1a72fcca58-7a442e5a7f5mr1189940b3a.9.1761604182189;
+        Mon, 27 Oct 2025 15:29:42 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:72::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a4140301ecsm9448576b3a.24.2025.10.27.15.29.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 15:29:40 -0700 (PDT)
+        Mon, 27 Oct 2025 15:29:41 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -81,10 +83,12 @@ Cc: linux-fsdevel@vger.kernel.org,
 	xiaobing.li@samsung.com,
 	csander@purestorage.com,
 	kernel-team@meta.com
-Subject: [PATCH v2 0/8] fuse: support io-uring registered buffers
-Date: Mon, 27 Oct 2025 15:27:59 -0700
-Message-ID: <20251027222808.2332692-1-joannelkoong@gmail.com>
+Subject: [PATCH v2 1/8] io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
+Date: Mon, 27 Oct 2025 15:28:00 -0700
+Message-ID: <20251027222808.2332692-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251027222808.2332692-1-joannelkoong@gmail.com>
+References: <20251027222808.2332692-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,58 +97,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset adds fuse support for io-uring registered buffers.
-Daemons may register buffers ahead of time, which will eliminate the overhead
-of pinning/unpinning user pages and translating virtual addresses for every
-server-kernel interaction.
+Add an API for fetching the registered buffer associated with a
+io_uring cmd. This is useful for callers who need access to the buffer
+but do not have prior knowledge of the buffer's user address or length.
 
-The main logic for fuse registered buffers is in the last patch (patch 8/8).
-Patch 1/8 adds an io_uring api for fetching the registered buffer and patches
-(2-7)/8 refactors the fuse io_uring code, which additionally will make adding
-in the logic for registered buffers neater.
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ include/linux/io_uring/cmd.h |  3 +++
+ io_uring/rsrc.c              | 14 ++++++++++++++
+ io_uring/rsrc.h              |  2 ++
+ io_uring/uring_cmd.c         | 13 +++++++++++++
+ 4 files changed, 32 insertions(+)
 
-The libfuse changes can be found in this branch:
-https://github.com/joannekoong/libfuse/tree/registered_buffers. The libfuse
-implementation first tries registered buffers during registration and if this
-fails, will retry with non-registered buffers. This prevents having to add a
-new init flag (but does have the downside of printing dmesg errors for the
-failed registrations when trying the registered buffers). If using registered
-buffers and the daemon for whatever reason unregisters the buffers midway
-through, then this will sever server-kernel communication. Libfuse will never
-do this. Libfuse will only unregister the buffers when the entire session is
-being destroyed.
-
-Benchmarks will be run and posted.
-
-Thanks,
-Joanne
-
-v1: https://lore.kernel.org/linux-fsdevel/20251022202021.3649586-1-joannelkoong@gmail.com/
-v1 -> v2:
-* Add io_uring_cmd_import_fixed_full() patch
-* Construct iter using io_uring_cmd_import_fixed_full() per cmd instead of recyling
-  iters.
-* Kmap the header instead of using bvec iter for iterating/copying. This makes
-  the code easier to read.
-
-Joanne Koong (8):
-  io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
-  fuse: refactor io-uring logic for getting next fuse request
-  fuse: refactor io-uring header copying to ring
-  fuse: refactor io-uring header copying from ring
-  fuse: use enum types for header copying
-  fuse: add user_ prefix to userspace headers and payload fields
-  fuse: refactor setting up copy state for payload copying
-  fuse: support io-uring registered buffers
-
- fs/fuse/dev_uring.c          | 366 +++++++++++++++++++++++++----------
- fs/fuse/dev_uring_i.h        |  27 ++-
- include/linux/io_uring/cmd.h |   3 +
- io_uring/rsrc.c              |  14 ++
- io_uring/rsrc.h              |   2 +
- io_uring/uring_cmd.c         |  13 ++
- 6 files changed, 316 insertions(+), 109 deletions(-)
-
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 7509025b4071..8c11d9a92733 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -43,6 +43,9 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ 			      struct iov_iter *iter,
+ 			      struct io_uring_cmd *ioucmd,
+ 			      unsigned int issue_flags);
++int io_uring_cmd_import_fixed_full(int rw, struct iov_iter *iter,
++				   struct io_uring_cmd *ioucmd,
++				   unsigned int issue_flags);
+ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ 				  const struct iovec __user *uvec,
+ 				  size_t uvec_segs,
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index d787c16dc1c3..2c3d8489ae52 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1147,6 +1147,20 @@ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ 	return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
+ }
+ 
++int io_import_reg_buf_full(struct io_kiocb *req, struct iov_iter *iter,
++			   int ddir, unsigned issue_flags)
++{
++	struct io_rsrc_node *node;
++	struct io_mapped_ubuf *imu;
++
++	node = io_find_buf_node(req, issue_flags);
++	if (!node)
++		return -EFAULT;
++
++	imu = node->buf;
++	return io_import_fixed(ddir, iter, imu, imu->ubuf, imu->len);
++}
++
+ /* Lock two rings at once. The rings must be different! */
+ static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx *ctx2)
+ {
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index a3ca6ba66596..4e01eb0f277e 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -64,6 +64,8 @@ struct io_rsrc_node *io_find_buf_node(struct io_kiocb *req,
+ int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+ 			u64 buf_addr, size_t len, int ddir,
+ 			unsigned issue_flags);
++int io_import_reg_buf_full(struct io_kiocb *req, struct iov_iter *iter,
++			   int ddir, unsigned issue_flags);
+ int io_import_reg_vec(int ddir, struct iov_iter *iter,
+ 			struct io_kiocb *req, struct iou_vec *vec,
+ 			unsigned nr_iovs, unsigned issue_flags);
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index d1e3ba62ee8e..07730ced9449 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -292,6 +292,19 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+ }
+ EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
+ 
++int io_uring_cmd_import_fixed_full(int rw, struct iov_iter *iter,
++				   struct io_uring_cmd *ioucmd,
++				   unsigned int issue_flags)
++{
++	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
++
++	if (WARN_ON_ONCE(!(ioucmd->flags & IORING_URING_CMD_FIXED)))
++		return -EINVAL;
++
++	return io_import_reg_buf_full(req, iter, rw, issue_flags);
++}
++EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_full);
++
+ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ 				  const struct iovec __user *uvec,
+ 				  size_t uvec_segs,
 -- 
 2.47.3
 
