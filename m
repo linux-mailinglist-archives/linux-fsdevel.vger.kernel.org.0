@@ -1,184 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-65705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546ABC0D7AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:21:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02672C0DAC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 13:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9149140450D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:16:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7069A34DD2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 12:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62166285CAD;
-	Mon, 27 Oct 2025 12:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7748823D7DC;
+	Mon, 27 Oct 2025 12:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NBoBOP6n"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YTS802Je"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C8834CDD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 12:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F9C230D0F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 12:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761567396; cv=none; b=qvRE1rZ+MCgvbCwm7qSPnG1UKKwJNCVEZ4qlHNayAmpS1/ZXO0fzbpaqRpGBWwraXdh1vcNOkHiOAPvMLTv4/sbnbP3EhzDksRGlVUKMLgnfYmdrZKqJ1CyOvDx7ZcgwTAKA5j/gP5/8u5xPbDD64v0H/hkHZabDgtKE9tLLBYE=
+	t=1761569340; cv=none; b=U3+f1XLZkROAI97Qu7eMxEmfa9a3i9e7IDeCdh6SUmcmCPnQDs0ND2TCVwdHolCeuE5ied5Jw6kwd6LVMHfULhEYc6kuIlfsVPaSKn2gSo3zUUHcPwdy/fPGKMKzmZwFdGZa0Jwg0PZ4ASaFHafPLStpRZuHWPXDT54UnlvE31Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761567396; c=relaxed/simple;
-	bh=HI6yWxEJp1gjlKZvada8DPKGKofq1d1froZRXfIIJsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCpwjU151T2H90bcWCyO5cFLwcRmNkWMWy4Of21Wtr4wOaKiYHM82NSQXFpGqju2O6KkvQyyx5l+oDEXpAq8MgJgEqTGkVjnQTVS1Vyo7P5tMpCDejtY+3XRmAyhzkcm0JGYXHHrbF8fWuynM3WaTDGdBfJao7KByUi6guwxXco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NBoBOP6n; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761567394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dvr5yCDDdvO0hGiiC+c+bdZ8Q9bBrB9l+9wKUIkrPEo=;
-	b=NBoBOP6nqVvgSaHaf9XSec1nTVdIOzKmgROknBlIOeaPssgDMR6dQO15O+oyzGJmgTxFK5
-	6qSvWYJGx5QZKvQ6BLGIr4ZDdaan5Fg3Qbvb8LO7PjW8aOMFzgJqA0NDH6R96USh5c8Tpa
-	2+WOpMm62eeuBLYUi3LM4TaUiZO73co=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-643-8SYgUiLWONmZLpuxqwO0RA-1; Mon,
- 27 Oct 2025 08:16:28 -0400
-X-MC-Unique: 8SYgUiLWONmZLpuxqwO0RA-1
-X-Mimecast-MFC-AGG-ID: 8SYgUiLWONmZLpuxqwO0RA_1761567387
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC93318002DD;
-	Mon, 27 Oct 2025 12:16:26 +0000 (UTC)
-Received: from bfoster (unknown [10.22.88.105])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B83718004D8;
-	Mon, 27 Oct 2025 12:16:25 +0000 (UTC)
-Date: Mon, 27 Oct 2025 08:20:43 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: brauner@kernel.org, hch@infradead.org, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: fix race when reading in all bytes of a folio
-Message-ID: <aP9jmwrd5r-VPWdg@bfoster>
-References: <20251024215008.3844068-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1761569340; c=relaxed/simple;
+	bh=xIqDNcTwMPF2Nfh7H2HrsYu57Z68rRXirPja4i/3Ah0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=azLgtE/e6D0M/oGtEuvMJ9QXS+gnBCL3FTTyQw37+YJ8GDgd1LVI2D49fa40rQrlNMKEUIArqfcWx98n7B7pdZwaXIRoFEXst6w2UjJn4aycTZl89+XngGa2f3VpSUWkg9+gbazLe6DfaFiwRg6gl142HfJgjTmZ4WH66F1PWhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YTS802Je; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27ee41e062cso51710035ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 05:48:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761569338; x=1762174138; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TpsH9gx/luUFZveFm6voMll1yjdVEPjIbyyyxybZ4HQ=;
+        b=YTS802JetUCMSbN8b0ql2ACutOsA+EQE7/jK1PeV7DwkUyOmKCiPVNA1QulO179JGF
+         nY5Ab48vWwtZ2dz/7nMVpeVj+LzBc+BxEZJillea3xf/mLFJDMFuTIa5pAUMGdKM8cBh
+         9A/HLo7dCsUus1TE7HhhVykk9/8hEm45rWsUIKNGvdPem2zLfQ8yks4JmrQ/Ek0vT2q6
+         67Pid7oNNI7hUUI7eb9wyItNX6w13LL+otk4aWjEtjaM+an+cBKYAWes7Es+GMAE3+jS
+         DgiPdNRbo+6BgBz2QZgmbpXqn0KaBmqOBClU0h7v/rUkBAumXx+MmlLItZRucPkWv12a
+         Y7Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761569338; x=1762174138;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TpsH9gx/luUFZveFm6voMll1yjdVEPjIbyyyxybZ4HQ=;
+        b=qSMYQ/wES4NBO3cHLtZ+B6WxjpQUnNU89F84mQq05SD/q2xPXNYhjnx+XJ7BACE6lD
+         ma3cXYSa0Z4NRC3/FaiXJVxs6K0+BDjiG10iQO7fulydQRR70MWGoPkZInPZlpfhCbN8
+         RA+lbLNYyYzKYOiJ2c+o7OiLbSzC6DuLv7SizmozA9EtBdhfg8vtXMh36+kYLlSIV3mQ
+         WFddWvJJLUs1BW2bAzs9DwaAkm0/COBw1UY15KANY0muMpUF418dSIotW73vS0ICpRaF
+         5Z05nuN4Qb9Lsp2wsK684lcHHpQDThLkGdcj4JXo+XnfvjikQscE8IyUC8e+hBGC7g4H
+         pu+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhOxS2jCVAkdK6ijpSVutcKNn/mifFEPjc4mBRt+wR7L6cgPUzmbIWlsD6jZPBq4kLw7wRkr1auYZ0X203@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf4b7zax75I5vaHHqNg97zYYeN1X2/0VkOXMILL6dO9wCl83NR
+	yc4T6tksxfWJX8DVVytNVzsE/EjMHMJ4hIO6Oas+HLKlhxYjL2ZbXE6+yYDf7j5eYFdeNqBBp55
+	4AiGanopZJrwuUPUWHkFsrVXdMA==
+X-Google-Smtp-Source: AGHT+IE8aJKICvS5xOA+BTAY6bjRh41q0VtmGZijtJh7qHPsEmdIFH7jOAvP+FEHmW/GVGRbcG4XOU1+vDg6R+rrXQ==
+X-Received: from plbmg14.prod.google.com ([2002:a17:903:348e:b0:268:e12a:2266])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:d60d:b0:270:e595:a440 with SMTP id d9443c01a7336-290c9cd4b48mr418021645ad.25.1761569338212;
+ Mon, 27 Oct 2025 05:48:58 -0700 (PDT)
+Date: Mon, 27 Oct 2025 05:48:56 -0700
+In-Reply-To: <aPu7IosMI61NjZY5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024215008.3844068-1-joannelkoong@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Mime-Version: 1.0
+References: <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+ <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
+ <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
+ <diqzv7k5emza.fsf@google.com> <aPpEPZ4YfrRHIkal@google.com>
+ <diqzqzuse58c.fsf@google.com> <aPuXCV0Aof0zihW9@google.com>
+ <diqzo6pwdzfy.fsf@google.com> <aPu7IosMI61NjZY5@google.com>
+Message-ID: <diqzecqojyrr.fsf@google.com>
+Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
+	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
+	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
+	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 24, 2025 at 02:50:08PM -0700, Joanne Koong wrote:
-> There is a race where if all bytes in a folio need to get read in and
-> the filesystem finishes reading the bytes in before the call to
-> iomap_read_end(), then bytes_accounted in iomap_read_end() will be 0 and
-> the following "ifs->read_bytes_pending -= bytes_accounting" will also be
-> 0 which will trigger an extra folio_end_read() call. This extra
-> folio_end_read() unlocks the folio for the 2nd time, which sets the lock
-> bit on the folio, resulting in a permanent lockup.
-> 
-> Fix this by returning from iomap_read_end() early if all bytes are read
-> in by the filesystem.
-> 
-> Additionally, add some comments to clarify how this accounting logic works.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Fixes: 51311f045375 ("iomap: track pending read bytes more optimally")
-> Reported-by: Brian Foster <bfoster@redhat.com>
-> --
-> This is a fix for commit 51311f045375 in the 'vfs-6.19.iomap' branch. It
-> would be great if this could get folded up into that original commit, if it's
-> not too logistically messy to do so.
-> 
-> Thanks,
-> Joanne
-> ---
->  fs/iomap/buffered-io.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 72196e5021b1..c31d30643e2d 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -358,6 +358,25 @@ static void iomap_read_init(struct folio *folio)
->  	if (ifs) {
->  		size_t len = folio_size(folio);
->  
-> +		/*
-> +		 * ifs->read_bytes_pending is used to track how many bytes are
-> +		 * read in asynchronously by the filesystem. We need to track
-> +		 * this so that we can know when the filesystem has finished
-> +		 * reading in the folio whereupon folio_end_read() should be
-> +		 * called.
-> +		 *
-> +		 * We first set ifs->read_bytes_pending to the entire folio
-> +		 * size. Then we track how many bytes are read in by the
-> +		 * filesystem. At the end, in iomap_read_end(), we subtract
-> +		 * ifs->read_bytes_pending by the number of bytes NOT read in so
-> +		 * that ifs->read_bytes_pending will be 0 when the filesystem
-> +		 * has finished reading in all pending bytes.
-> +		 *
-> +		 * ifs->read_bytes_pending is initialized to the folio size
-> +		 * because we do not easily know in the beginning how many
-> +		 * bytes need to get read in by the filesystem (eg some ranges
-> +		 * may already be uptodate).
-> +		 */
+Sean Christopherson <seanjc@google.com> writes:
 
-Hmm.. "we do this because we don't easily know how many bytes to read,"
-but apparently that's how this worked before by bumping the count as
-reads were submitted..? I'm not sure this is really telling much. I'd
-suggest something like (and feel free to completely rework any of
-this)..
+> On Fri, Oct 24, 2025, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> > @@ -486,6 +488,7 @@ struct kvm_vm *__vm_create(struct vm_shape shape, uint32_t nr_runnable_vcpus,
+>> >         }
+>> >         guest_rng = new_guest_random_state(guest_random_seed);
+>> >         sync_global_to_guest(vm, guest_rng);
+>> > +       sync_global_to_guest(vm, kvm_has_gmem_attributes);
+>> 
+>> I ported this [1] except for syncing this value to the guest, because I
+>> think the guest shouldn't need to know this information,
+>
+> KVM selftests are about practically and testing, what information should or
+> shouldn't be available to a test from e.g. a safety perspective is completely
+> irrelevant.  In fact, one of the biggest advantages of selftests over KUT is
+> that the guest side can know _exactly_ what's going on in the host.
+>
+> See the usage in 1850e3da4b03 ("KVM: selftests: Update private_mem_conversions_test
+> to mmap() guest_memfd") from:
+>
+>   https://github.com/sean-jc/linux.git x86/gmem_inplace
+>
+>> the host should decide what to do. I think, if the guests really need to know
+>> this, the test itself can do the syncing.
+>
+> Why force tests to do extra work, and potentially introduce subtle bugs due to
+> state being stale?
 
-"Increase ->read_bytes_pending by the folio size to start. We'll
-subtract uptodate ranges that did not require I/O in iomap_read_end()
-once we're done processing the read. We do this because <reasons>."
+Adding it back. Thanks!
 
-... where <reasons> explains to somebody who might look at this in a
-month or year and wonder why we don't just bump read_bytes_pending as we
-go.
-
->  		spin_lock_irq(&ifs->state_lock);
->  		ifs->read_bytes_pending += len;
->  		spin_unlock_irq(&ifs->state_lock);
-> @@ -383,6 +402,9 @@ static void iomap_read_end(struct folio *folio, size_t bytes_pending)
-
-This function could use a comment at the top to explain it's meant for
-ending read submission (not necessarily I/O, since that appears to be
-open coded in finish_folio_read()).
-
->  		bool end_read, uptodate;
->  		size_t bytes_accounted = folio_size(folio) - bytes_pending;
->  
-
-"Subtract any bytes that were initially accounted against
-read_bytes_pending but skipped for I/O. If zero, then the entire folio
-was submitted and we're done. I/O completion handles the rest."
-
-Also, maybe I'm missing something but the !bytes_accounted case means
-the I/O owns the folio lock now, right? If so, is it safe to access the
-folio from here (i.e. folio_size() above)?
-
-Comments aside, this survives a bunch of iters of my original
-reproducer, so seems Ok from that standpoint.
-
-Brian
-
-> +		if (!bytes_accounted)
-> +			return;
-> +
->  		spin_lock_irq(&ifs->state_lock);
->  		ifs->read_bytes_pending -= bytes_accounted;
->  		/*
-> -- 
-> 2.47.3
-> 
-
+This variable should be sync-able for TDX selftests as well since the
+value should be synced before the TD image is loaded.
 
