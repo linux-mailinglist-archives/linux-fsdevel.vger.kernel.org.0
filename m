@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-65806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A06C11B4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 23:30:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1972FC11B69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 23:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 58F96351DE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 22:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1871A64186
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 22:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2167232E15C;
-	Mon, 27 Oct 2025 22:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C9532E14F;
+	Mon, 27 Oct 2025 22:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoN3eeeL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOqPj2cL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB5632E15B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C5132D0C0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604192; cv=none; b=P4+F46uA4eV4EnqXar96AXOTqCEgvz/nUAoqhpEJK30DaYoZ7XLYbVm6KfQ7VKk+5JQzl7pmjXzdTEOCzFSTO4wgx26NPpgpGYUPPZ55SDUTh8pKJtPdDfi2vG6NkPyHEZhr567RkYiBHi5guaYrujzVOtCC8026YKiPSh5JIJo=
+	t=1761604194; cv=none; b=W5wi5rIudXG5arjvPsA+eK1vnJagVBoaoPHR4oK6K6biaXCtb9/K0MgIPDmTL3hEoLEg7IYxJVcCDF2nq13HoEeiaXC1DalNkiAcnaCjN80RyXbNiBxFOF1QXptbFWwQ/KdKqYvZaCJWuGJzUxt4PQH/DJ12AHu+X5kCdRVaD6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604192; c=relaxed/simple;
-	bh=1E18qGvEdVDEk2lUFERAFuFP8ZQrwhZtxHG5TjAD79s=;
+	s=arc-20240116; t=1761604194; c=relaxed/simple;
+	bh=4fwyzOF8sHT2n+2qvGQr4+u67XqzVXw/NjrRotvSNf4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FIFO/lBUb/SHc0Bukpgsn5liTrqsXJ/Z0e5/XBnBub+cts0Y1WI8vSAe3+lup4PmGwOeDQbzDxWblgaht/8mcyiSvFZcGNISoB2/yA/4a9VnhtVtzaCUtvH6BHAPBZvsVh0Kwsi0R3FP9g0EZSHdCTJiFLEQHQAel0s/p3Bq+kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoN3eeeL; arc=none smtp.client-ip=209.85.215.171
+	 MIME-Version; b=hkXx2k9dR+JP1NI7MbDVbuUgQvcbUJn14h3TVlpI3lYlXLNIZEvQmo6DSB+8491CrL4MbYLOhj2BEEdsGbblKpeqz/+hK+uQuIYKljFpoSQvtnFn1VCQNuB6TJoUKzwK8M7Jd73PjNDNUf6iXDbYEWfcooHWVnUqDnt3b7ouK3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOqPj2cL; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b593def09e3so3169037a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 15:29:50 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7833765433cso6563712b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 15:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761604190; x=1762208990; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761604192; x=1762208992; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L0beltc7+RSlROfm77N8Sgc2Yv4Aur58ceDXgjV4dII=;
-        b=EoN3eeeLKUwSIaaJuviSbFmA3nj/9xFVIufVPJbd++RZ1odoRXNLRXMb0RgQAUzKCX
-         j9Xc25qydG2+XsvhmsSx2L+R4FskuGxusFnEO1M1H+JsjVznzeMpwkOk3icAlaZbUaMf
-         FCRmR/Pwr23eW27bQ7eVgu3IeOvFtIRmOQs+d3PT+pU09M3Thtpw/5ECpuBcSb+KI5AV
-         xMBGDv5306214+ywJc8iwUXl+6ODQkxplX7hLf//VqynrRgzL35emlVkIOW0Dfxmxt9Z
-         8RLMyS4XtE+88IGqS2yD+rjUw8wx5fc5K9veF4AQRYriYtmJSnesjvYjcoUuaqUB7CjY
-         PGUw==
+        bh=DrBZZg1wHdq2i5ZHEczcCKJGTkH+fPoSv1UJot++t/U=;
+        b=GOqPj2cLxOvF0G18pwYQ1+o6sB2tSWFydsR8OdDHsT0uey8GGT5AjUCe4tz32hz9P5
+         GNVgbzkCaJy0XvOxmkZJrrC86vrk3l/u964JetC463jMXnn3uiT04XFPayYwBJFbQXpS
+         ApS/h7caCwst0czxixq9j53F0C+g8LbgTYSS1ixNt9rPnD65hyWNp33wvHLng1prH+7D
+         YjF88K1sDcwLta76iTC3ykPxw0oNbeKYLd4emyYKaIaA9LEsxn8NnvnQSNf5l8zTHX9P
+         jHQGwKNh9BzOgaRmEX+Tm7nvlUxzzyczTte79ibhNhUsHmiKy8Ryt9LsBJQ963KPoUs+
+         RdZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761604190; x=1762208990;
+        d=1e100.net; s=20230601; t=1761604192; x=1762208992;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L0beltc7+RSlROfm77N8Sgc2Yv4Aur58ceDXgjV4dII=;
-        b=dEuH3i9waw0x4M3nbP70C6AsHM90xU+dVNNnZ1d5+3UwEh/EFf0xl/ejTBzyZM5xkM
-         vhIog7HUPxNHeNBbyTYczMY9lrhWw+c7BWI9/oTwDs1LkXRdHn50shBiov3jpe/2kBkg
-         lGkuFws2YR8UpJMVDKkKiC2bL/y08BP8aogCV9qbVAYK09uOharRGqWkWIhko7uEiyc4
-         8NYmpeNam3aHgQyIzAemSu7XbTUv4wwAwa6UlxVxD4wfLwHhmbhaaE9gFTPyHvG1Xx8p
-         uv9gh2Rt6ugPd8ceIaXSngjSsENzUpu9xXo5WVD0qOxLyYTJ6y2MqfzZ31O6pXx+ILPs
-         Dg8g==
-X-Gm-Message-State: AOJu0YzNqMXY7BV7SWFVr91bsyr7uVmQ1GfPAMh49XV4AzeUMNFoduYZ
-	SjwCYhm2sAhfuXGVQW7wwPi17cNWhNF86fjX2f6gN6u8Tqir7SQ1GabT
-X-Gm-Gg: ASbGncsWZbv9cQ2/No2SeuLue0j/TH8bkb8UxNu1lrmN0COVCHCZV6f7JKpF9odAZ+E
-	j1jT/CUH+m8QCRZV2duis/nYH+QcqCMcTgCPinjzCGmn/e058GUfVVtb2ivSObelqEcK0JPciL6
-	aPPXqEQe1apO9V+H8r8+Z7Gxxd+hRJjV7FdQUyqd5C1sbktI8v0SPR3iKMN0zGjs2vIvbrBSYGl
-	viX4bCZqCEDfjbIwLMmQY0RRXz3SaWC6h+MCFYfzdwMYslwu0wt+LP697rMOXS9H2SrozUoLHjl
-	k+4WKqWkt6kRE5f8BhQTwiFDtQjVUnd2bWPB26ntKlv/OANh7U83CtPEpU6xmMO7H1KfdTxonbP
-	pjFuNeUUi65QA0gpH2grACd5yXC9zKfeN97PSgz6h76JfotO5UEDEyY+XXZYpHnLZxZGob+8r1v
-	IPL3GxeIfTSRVXWIaQ2INBNZBpRgk=
-X-Google-Smtp-Source: AGHT+IGea/IcFkG+vaNyLf95tzBj2KuTnXXoH/07XommnwBjRVX13r9SSjC9dhwtAj4nt1tMpgQ9JQ==
-X-Received: by 2002:a17:903:304d:b0:25c:e895:6a75 with SMTP id d9443c01a7336-294cb3ecd57mr9577085ad.28.1761604190399;
-        Mon, 27 Oct 2025 15:29:50 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:4f::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7d1fdesm9803952a91.5.2025.10.27.15.29.50
+        bh=DrBZZg1wHdq2i5ZHEczcCKJGTkH+fPoSv1UJot++t/U=;
+        b=uD3GsVyHe0k/HM0V7M9ZQJtnyFSqxgOTijv0fxZE14GlwqKDDh9k98iAtNJkcU99uT
+         pvntUTtc2rmqjgIrTr9OMTEbGjLpGfane1X55YHAmK/8ey9BpYO6o6js+tc6AG0xipBZ
+         gdLWxty1bme2soiNzS4jdQRTgAyeA4X58yvXpGWXAU24dkqSrUGRfNoTF4JgWWpDwiay
+         5OaIOKVv8UV66JJmbb6gLZyYjeJgknCpl4RnpGRkgO7WcsDU+amRkppa3dYHK6jwmw2T
+         NRXvf4Ypngv8FH/KQBhhMf4u8pC0FsKjRUbHhhzyi1OOzMm+aU1gapQdWYfimrzAX4aF
+         uAQg==
+X-Gm-Message-State: AOJu0Yy0jHaIWJGApzmPXvsTwrP6UC/UVbamMN4QTmsLob3xqzbC43t/
+	Vy3FA/KoZxo+CchP1hGu3bG7BJjfJ1p8/2xMV33kwDZLOfFdL+T+sYS8
+X-Gm-Gg: ASbGncsoJpAFsJkbjpMmuYINrtI0JeyceK7YBxoqRL+wfJtE+eS1Nk4UMIK3LG9F05h
+	jtu/b66hiactTxCggS5dyEz3kYy1TNxfXYKSsv4oSStIT8N9mJDIhvLaATyUtghhBHxa+mPr08g
+	6+jwxDsdRfZgF75cCOfxAOKzJlkew77vtMyWH0WWsWUUcATirKL6AhP9mGLEcbg9pRyZSUF6KuV
+	9gvqyiN6mo0tKAH9HenW18yxOzzWvv4sPVS+pE2ru/UA1yvjEIk03qBpkHJgrIZ/8iDRKqyAn+E
+	UZZZCw63QQsJJQ2zaGPUPztxyis913ASMYNHAj+epzLsUtqy+FisO2+3oytYrjRE4C9XCKqgD7g
+	v+VTYoOBs/CnB4Br8G3HB3DttouI/Msg6ScBb5IPvGrth6GWnbR6YFN40sKuMiTNgRuqvaiCVEm
+	JhCyAMY2EjvzEj4p2NBVpt/uVl06A=
+X-Google-Smtp-Source: AGHT+IFRi3GHAPVj2U/rXdnyJiI97LCFcBdtqyqZ1hR7JhDVH0pzqyYtyf1UgSUdZB09g/jMqjTymw==
+X-Received: by 2002:a05:6a00:1817:b0:7a2:84f3:cefc with SMTP id d2e1a72fcca58-7a441aa6a05mr1804275b3a.0.1761604191800;
+        Mon, 27 Oct 2025 15:29:51 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:51::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a443b6c371sm504700b3a.69.2025.10.27.15.29.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 15:29:50 -0700 (PDT)
+        Mon, 27 Oct 2025 15:29:51 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -83,9 +83,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	xiaobing.li@samsung.com,
 	csander@purestorage.com,
 	kernel-team@meta.com
-Subject: [PATCH v2 7/8] fuse: refactor setting up copy state for payload copying
-Date: Mon, 27 Oct 2025 15:28:06 -0700
-Message-ID: <20251027222808.2332692-8-joannelkoong@gmail.com>
+Subject: [PATCH v2 8/8] fuse: support io-uring registered buffers
+Date: Mon, 27 Oct 2025 15:28:07 -0700
+Message-ID: <20251027222808.2332692-9-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251027222808.2332692-1-joannelkoong@gmail.com>
 References: <20251027222808.2332692-1-joannelkoong@gmail.com>
@@ -97,82 +97,374 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new helper function setup_fuse_copy_state() to contain the logic
-for setting up the copy state for payload copying.
+Add support for io-uring registered buffers for fuse daemons
+communicating through the io-uring interface. Daemons may register
+buffers ahead of time, which will eliminate the overhead of
+pinning/unpinning user pages and translating virtual addresses for every
+server-kernel interaction.
+
+To support page-aligned payloads, the buffer is structured such that the
+payload is at the front of the buffer and the fuse_uring_req_header is
+offset from the end of the buffer.
+
+To be backwards compatible, fuse uring still needs to support non-registered
+buffers as well.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/dev_uring.c | 39 +++++++++++++++++++++++++--------------
- 1 file changed, 25 insertions(+), 14 deletions(-)
+ fs/fuse/dev_uring.c   | 200 +++++++++++++++++++++++++++++++++---------
+ fs/fuse/dev_uring_i.h |  27 +++++-
+ 2 files changed, 183 insertions(+), 44 deletions(-)
 
 diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index c814b571494f..c6b22b14b354 100644
+index c6b22b14b354..f501bc81f331 100644
 --- a/fs/fuse/dev_uring.c
 +++ b/fs/fuse/dev_uring.c
-@@ -630,6 +630,28 @@ static int copy_header_from_ring(struct fuse_ring_ent *ent,
+@@ -580,6 +580,22 @@ static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
+ 	return err;
+ }
+ 
++static void *get_kernel_ring_header(struct fuse_ring_ent *ent,
++				    enum fuse_uring_header_type type)
++{
++	switch (type) {
++	case FUSE_URING_HEADER_IN_OUT:
++		return &ent->headers->in_out;
++	case FUSE_URING_HEADER_OP:
++		return &ent->headers->op_in;
++	case FUSE_URING_HEADER_RING_ENT:
++		return &ent->headers->ring_ent_in_out;
++	}
++
++	WARN_ON_ONCE(1);
++	return NULL;
++}
++
+ static void __user *get_user_ring_header(struct fuse_ring_ent *ent,
+ 					 enum fuse_uring_header_type type)
+ {
+@@ -600,16 +616,22 @@ static int copy_header_to_ring(struct fuse_ring_ent *ent,
+ 			       enum fuse_uring_header_type type,
+ 			       const void *header, size_t header_size)
+ {
+-	void __user *ring = get_user_ring_header(ent, type);
++	if (ent->fixed_buffer) {
++		void *ring = get_kernel_ring_header(ent, type);
+ 
+-	if (!ring)
+-		return -EINVAL;
++		if (!ring)
++			return -EINVAL;
++		memcpy(ring, header, header_size);
++	} else {
++		void __user *ring = get_user_ring_header(ent, type);
+ 
+-	if (copy_to_user(ring, header, header_size)) {
+-		pr_info_ratelimited("Copying header to ring failed.\n");
+-		return -EFAULT;
++		if (!ring)
++			return -EINVAL;
++		if (copy_to_user(ring, header, header_size)) {
++			pr_info_ratelimited("Copying header to ring failed.\n");
++			return -EFAULT;
++		}
+ 	}
+-
  	return 0;
  }
  
-+static int setup_fuse_copy_state(struct fuse_ring *ring, struct fuse_req *req,
-+				 struct fuse_ring_ent* ent, int rw,
-+				 struct iov_iter *iter,
-+				 struct fuse_copy_state *cs)
+@@ -617,14 +639,21 @@ static int copy_header_from_ring(struct fuse_ring_ent *ent,
+ 				 enum fuse_uring_header_type type,
+ 				 void *header, size_t header_size)
+ {
+-	const void __user *ring = get_user_ring_header(ent, type);
++	if (ent->fixed_buffer) {
++		const void *ring = get_kernel_ring_header(ent, type);
+ 
+-	if (!ring)
+-		return -EINVAL;
++		if (!ring)
++			return -EINVAL;
++		memcpy(header, ring, header_size);
++	} else {
++		const void __user *ring = get_user_ring_header(ent, type);
+ 
+-	if (copy_from_user(header, ring, header_size)) {
+-		pr_info_ratelimited("Copying header from ring failed.\n");
+-		return -EFAULT;
++		if (!ring)
++			return -EINVAL;
++		if (copy_from_user(header, ring, header_size)) {
++			pr_info_ratelimited("Copying header from ring failed.\n");
++			return -EFAULT;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -637,11 +666,15 @@ static int setup_fuse_copy_state(struct fuse_ring *ring, struct fuse_req *req,
+ {
+ 	int err;
+ 
+-	err = import_ubuf(rw, ent->user_payload, ring->max_payload_sz,
+-			  iter);
+-	if (err) {
+-		pr_info_ratelimited("fuse: Import of user buffer failed\n");
+-		return err;
++	if (ent->fixed_buffer) {
++		*iter = ent->payload_iter;
++	} else {
++		err = import_ubuf(rw, ent->user_payload, ring->max_payload_sz,
++				  iter);
++		if (err) {
++			pr_info_ratelimited("fuse: Import of user buffer failed\n");
++			return err;
++		}
+ 	}
+ 
+ 	fuse_copy_init(cs, rw == ITER_DEST, iter);
+@@ -754,6 +787,62 @@ static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
+ 				   sizeof(req->in.h));
+ }
+ 
++/*
++ * Prepare fixed buffer for access. Sets up the payload iter and kmaps the
++ * header.
++ *
++ * Callers must call fuse_uring_unmap_buffer() in the same scope to release the
++ * header mapping.
++ *
++ * For non-fixed buffers, this is a no-op.
++ */
++static int fuse_uring_map_buffer(struct fuse_ring_ent *ent)
 +{
++	size_t header_size = sizeof(struct fuse_uring_req_header);
++	struct iov_iter iter;
++	struct page *header_page;
++	size_t count, start;
++	ssize_t copied;
 +	int err;
 +
-+	err = import_ubuf(rw, ent->user_payload, ring->max_payload_sz,
-+			  iter);
-+	if (err) {
-+		pr_info_ratelimited("fuse: Import of user buffer failed\n");
++	if (!ent->fixed_buffer)
++		return 0;
++
++	err = io_uring_cmd_import_fixed_full(ITER_DEST, &iter, ent->cmd, 0);
++	if (err)
 +		return err;
-+	}
 +
-+	fuse_copy_init(cs, rw == ITER_DEST, iter);
++	count = iov_iter_count(&iter);
++	if (count < header_size || count & (PAGE_SIZE - 1))
++		return -EINVAL;
 +
-+	cs->is_uring = true;
-+	cs->req = req;
++	/* Adjust the payload iter to protect the header from any overwrites */
++	ent->payload_iter = iter;
++	iov_iter_truncate(&ent->payload_iter, count - header_size);
++
++	/* Set up the headers */
++	iov_iter_advance(&iter, count - header_size);
++	copied = iov_iter_get_pages2(&iter, &header_page, header_size, 1, &start);
++	if (copied < header_size)
++		return -EFAULT;
++	ent->headers = kmap_local_page(header_page) + start;
++
++	/*
++	 * We can release the acquired reference on the header page immediately
++	 * since the page is pinned and io_uring_cmd_import_fixed_full()
++	 * prevents it from being unpinned while we are using it.
++	 */
++	put_page(header_page);
 +
 +	return 0;
 +}
 +
- static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 				     struct fuse_req *req,
- 				     struct fuse_ring_ent *ent)
-@@ -645,15 +667,10 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
- 	if (err)
- 		return err;
++static void fuse_uring_unmap_buffer(struct fuse_ring_ent *ent)
++{
++	if (ent->fixed_buffer)
++		kunmap_local(ent->headers);
++}
++
+ static int fuse_uring_prepare_send(struct fuse_ring_ent *ent,
+ 				   struct fuse_req *req)
+ {
+@@ -932,6 +1021,7 @@ static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
+ 	unsigned int qid = READ_ONCE(cmd_req->qid);
+ 	struct fuse_pqueue *fpq;
+ 	struct fuse_req *req;
++	bool next_req;
  
--	err = import_ubuf(ITER_SOURCE, ent->user_payload, ring->max_payload_sz,
--			  &iter);
-+	err = setup_fuse_copy_state(ring, req, ent, ITER_SOURCE, &iter, &cs);
- 	if (err)
- 		return err;
+ 	err = -ENOTCONN;
+ 	if (!ring)
+@@ -982,6 +1072,13 @@ static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
  
--	fuse_copy_init(&cs, false, &iter);
--	cs.is_uring = true;
--	cs.req = req;
+ 	/* without the queue lock, as other locks are taken */
+ 	fuse_uring_prepare_cancel(cmd, issue_flags, ent);
++
++	err = fuse_uring_map_buffer(ent);
++	if (err) {
++		fuse_uring_req_end(ent, req, err);
++		return err;
++	}
++
+ 	fuse_uring_commit(ent, req, issue_flags);
+ 
+ 	/*
+@@ -990,7 +1087,9 @@ static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
+ 	 * and fetching is done in one step vs legacy fuse, which has separated
+ 	 * read (fetch request) and write (commit result).
+ 	 */
+-	if (fuse_uring_get_next_fuse_req(ent, queue))
++	next_req = fuse_uring_get_next_fuse_req(ent, queue);
++	fuse_uring_unmap_buffer(ent);
++	if (next_req)
+ 		fuse_uring_send(ent, cmd, 0, issue_flags);
+ 	return 0;
+ }
+@@ -1086,39 +1185,49 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+ 	struct iovec iov[FUSE_URING_IOV_SEGS];
+ 	int err;
+ 
++	err = -ENOMEM;
++	ent = kzalloc(sizeof(*ent), GFP_KERNEL_ACCOUNT);
++	if (!ent)
++		return ERR_PTR(err);
++
++	INIT_LIST_HEAD(&ent->list);
++
++	ent->queue = queue;
++
++	if (READ_ONCE(cmd->sqe->uring_cmd_flags) & IORING_URING_CMD_FIXED) {
++		ent->fixed_buffer = true;
++		atomic_inc(&ring->queue_refs);
++		return ent;
++	}
++
+ 	err = fuse_uring_get_iovec_from_sqe(cmd->sqe, iov);
+ 	if (err) {
+ 		pr_info_ratelimited("Failed to get iovec from sqe, err=%d\n",
+ 				    err);
+-		return ERR_PTR(err);
++		goto error;
+ 	}
+ 
+ 	err = -EINVAL;
+ 	if (iov[0].iov_len < sizeof(struct fuse_uring_req_header)) {
+ 		pr_info_ratelimited("Invalid header len %zu\n", iov[0].iov_len);
+-		return ERR_PTR(err);
++		goto error;
+ 	}
+ 
+ 	payload_size = iov[1].iov_len;
+ 	if (payload_size < ring->max_payload_sz) {
+ 		pr_info_ratelimited("Invalid req payload len %zu\n",
+ 				    payload_size);
+-		return ERR_PTR(err);
++		goto error;
+ 	}
 -
- 	return fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
+-	err = -ENOMEM;
+-	ent = kzalloc(sizeof(*ent), GFP_KERNEL_ACCOUNT);
+-	if (!ent)
+-		return ERR_PTR(err);
+-
+-	INIT_LIST_HEAD(&ent->list);
+-
+-	ent->queue = queue;
+ 	ent->user_headers = iov[0].iov_base;
+ 	ent->user_payload = iov[1].iov_base;
+ 
+ 	atomic_inc(&ring->queue_refs);
+ 	return ent;
++
++error:
++	kfree(ent);
++	return ERR_PTR(err);
  }
  
-@@ -674,15 +691,9 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
- 		.commit_id = req->in.h.unique,
- 	};
+ /*
+@@ -1249,20 +1358,29 @@ static void fuse_uring_send_in_task(struct io_uring_cmd *cmd,
+ {
+ 	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+ 	struct fuse_ring_queue *queue = ent->queue;
++	bool send_ent = true;
+ 	int err;
  
--	err = import_ubuf(ITER_DEST, ent->user_payload, ring->max_payload_sz, &iter);
--	if (err) {
--		pr_info_ratelimited("fuse: Import of user buffer failed\n");
-+	err = setup_fuse_copy_state(ring, req, ent, ITER_DEST, &iter, &cs);
-+	if (err)
- 		return err;
--	}
--
--	fuse_copy_init(&cs, true, &iter);
--	cs.is_uring = true;
--	cs.req = req;
+-	if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
+-		err = fuse_uring_prepare_send(ent, ent->fuse_req);
+-		if (err) {
+-			if (!fuse_uring_get_next_fuse_req(ent, queue))
+-				return;
+-			err = 0;
+-		}
+-	} else {
+-		err = -ECANCELED;
++	if (issue_flags & IO_URING_F_TASK_DEAD) {
++		fuse_uring_send(ent, cmd, -ECANCELED, issue_flags);
++		return;
++	}
++
++	err = fuse_uring_map_buffer(ent);
++	if (err) {
++		fuse_uring_req_end(ent, ent->fuse_req, err);
++		return;
++	}
++
++	err = fuse_uring_prepare_send(ent, ent->fuse_req);
++	if (err) {
++		send_ent = fuse_uring_get_next_fuse_req(ent, queue);
++		err = 0;
+ 	}
++	fuse_uring_unmap_buffer(ent);
  
- 	if (num_args > 0) {
- 		/*
+-	fuse_uring_send(ent, cmd, err, issue_flags);
++	if (send_ent)
++		fuse_uring_send(ent, cmd, err, issue_flags);
+ }
+ 
+ static struct fuse_ring_queue *fuse_uring_task_to_queue(struct fuse_ring *ring)
+diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+index 381fd0b8156a..fe14acccd6a6 100644
+--- a/fs/fuse/dev_uring_i.h
++++ b/fs/fuse/dev_uring_i.h
+@@ -7,6 +7,7 @@
+ #ifndef _FS_FUSE_DEV_URING_I_H
+ #define _FS_FUSE_DEV_URING_I_H
+ 
++#include <linux/uio.h>
+ #include "fuse_i.h"
+ 
+ #ifdef CONFIG_FUSE_IO_URING
+@@ -38,9 +39,29 @@ enum fuse_ring_req_state {
+ 
+ /** A fuse ring entry, part of the ring queue */
+ struct fuse_ring_ent {
+-	/* userspace buffer */
+-	struct fuse_uring_req_header __user *user_headers;
+-	void __user *user_payload;
++	/*
++	 * If true, the buffer was pre-registered by the daemon and the
++	 * pages backing it are pinned in kernel memory. The fixed buffer layout
++	 * is: [payload][header at end]. Use payload_iter and headers for
++	 * copying to/from the ring.
++	 *
++	 * Otherwise, use user_headers and user_payload which point to userspace
++	 * addresses representing the ring memory.
++	 */
++	bool fixed_buffer;
++
++	union {
++		/* fixed_buffer == false */
++		struct {
++			struct fuse_uring_req_header __user *user_headers;
++			void __user *user_payload;
++		};
++		/* fixed_buffer == true */
++		struct {
++			struct fuse_uring_req_header *headers;
++			struct iov_iter payload_iter;
++		};
++	};
+ 
+ 	/* the ring queue that owns the request */
+ 	struct fuse_ring_queue *queue;
 -- 
 2.47.3
 
