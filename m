@@ -1,126 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-65727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19292C0F315
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:13:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C36C0F413
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:25:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 840E24FCA70
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 16:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8DA46798F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 16:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A5E311C06;
-	Mon, 27 Oct 2025 16:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED73101DA;
+	Mon, 27 Oct 2025 16:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="IcBHqm7f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fz3XFv1x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD6311969
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 16:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C48433B3;
+	Mon, 27 Oct 2025 16:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761581372; cv=none; b=KR7swkYSRKrXZmPi0vJfwtQBQ5Ah0OusWSdoEe/cXiJESe4OKoODPq480prnanjISpqE1FeEPRlKX1oKmbwL6Th5mBDCsRRqjCVgoZueX0GHETvpGYtzFdGJnIU5eP/4E4jOV1g2gBYgukZwmRjY4yvPYUjO2kt1sQzgEz1DGqA=
+	t=1761581428; cv=none; b=Z91hUnT0kZAYvv7UD2KaLJ0NgaoN91XhKXoIzU2p9wUDJwGqRhkDWxRztXeTz5qkRT/oUO5U2nqxT5EWG/24RCNc0qXxxmpxCs1HtQ+Fn+iQa/qAuDoaE+8HP7ZsBfv7jWg+37A/FblZl3/ImR7kPatx5QIxY0TIMg0SLrKzh6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761581372; c=relaxed/simple;
-	bh=Ip6risDW9tTbsO2jqPpdXFWuol17OZMU9AeN0DDZC0s=;
+	s=arc-20240116; t=1761581428; c=relaxed/simple;
+	bh=KWyZcSM7YJrEzRFYOxV0414nu6sPOX/btOQt6jFmdC4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWqVwcG7Z8SdtpTB8NlFE++4qDP9BSrJpdmzx653k6RW83JI3dMq6/Zq64PCd0cGehx8xOzlmrHHOWxvO32SsfEpqD0TIPOX8tJ429vHrkkBYi1kHUtQDlaND0TgAfI4e91DE7rHIjuIE1pRkDegpL0KNYdTOgc2XjmIMiJopHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=IcBHqm7f; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8a114591f15so237133485a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 09:09:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761581369; x=1762186169; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=anSGbOUh9PRDsyCb0fgwZTMvbpzdcHnK6psdZLJfHyQ=;
-        b=IcBHqm7fU43ySr4jxg1yFycM5TUboENAPgV0PPQ8nLUO0nwiE/ZwVB6PYrWLv5HQPS
-         lW+V7ySyEgrtWmoOD8v9RN6JtdSKa7CA+HYSkFc3uAkUjQ/Fi161lT95fxKmFqwiMBFa
-         PZnQ7y7fR47yEX4ug1dDiAc602ytkP0bRa2CwA9WJw2tzhCnYCOqGworuYtc3suStXun
-         NCNpcI0Io5nLReoujMyPHQbPO3BywFJHUncVShVYVhokCuV2XlvrS/BEBYQOEFggHII3
-         IPB1NQ+qYfN3SEUy6T9RqVV51b4Gb2tL/k2G3ERO2sj7DDGeU6fyE/UFui2BmhuHc6th
-         pjjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761581369; x=1762186169;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=anSGbOUh9PRDsyCb0fgwZTMvbpzdcHnK6psdZLJfHyQ=;
-        b=JMRDNOyTE3GANDvsIhQVmxhycplxK8kO9NA7aBvU/lnjmA5vg7D69AmLvZYNk+TRpp
-         vzC15/WBlkAQ5UqROeWuLCe2XPwwgxF/O/RWMDcH75vtPaAfYFqHNmBUEhuAVVpf8Drb
-         bMx5/UV6+IBDyX11zxCxp8lBlKy6re6OkSz+Rl6CFtLOBA2fGB7BosFGs/2aCSnXBRVb
-         LniwStlO5TxtdUDaQpxNrxmiZHdEVP8wwci6DNT19cPEiT/hrdUNqGS2fOWZ8VIYwlJv
-         Yl4V4iqOqjHIrq4mgDQo39mXyrdyJRWnFyOlFDMT1aRkRqL9h5gP5mD5uMZaSZyw1vpa
-         CYlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUpnIk/PA4kYfa9XHVDFiHyq/hWPlCXTw9RSM3jo+JRdtwGQAUks2OU/wSUIvYwbTVASMdnUCV3NjxVP1s@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUkXREHT27V+RHSpL/oAmJ6JcAXBsS6apx3XvpCjvEsC3yQ2Ss
-	S+88v6BYKetE20XdduOOSYtw6TSc0bmzccjhbTf4IvZ49R8ozVeXl66rxSFOD/xq538=
-X-Gm-Gg: ASbGncu2noD8DwXuYZSVMwHSIg4TGpDj/hG3tqZgxZq3z23SiVImGgVPNfeuchJHVcm
-	iJefvn2ffsLh6K0Gwb0aboFWth8/WygD2ceHIAUXKvqtllB42VEGkWxMb3kfI4dzOX0K7udqnkN
-	auFkfqna5ma9dfD5dF1bFQYYZIGBm9M5/HiwPjLybha0cQ9LGbgk8YMx7zFTipP6XyttZeYCivF
-	G27JucH1T42OO4MH09qYYuG395KdHwauVXPtXpZvbYrlniPLg9Yo/HzPLcuExfzHOGxK+yVqYTu
-	DqDD8ktbRa+emI/NRgJAJMNc96MPMASYtiAwGIWTY+fkfYX8Zyk738C8T2jimpc9FBkFfYILwDe
-	9rH+2rjSH0weyfnMS6FnUVTmHJlZt7qSIMU05LhtL7rHWjrQYYFSzmhG+CaqzzxsMaCRiSUEvNk
-	X+8wqtHAcMm6qprOm/6F635PaOuuizRTgZFcBW/lPTQIboAO/mjd7KLWdv
-X-Google-Smtp-Source: AGHT+IHlNcX7M4ho1Hgm07pKSXRDLSWwAqfcPM4p2At44BY4PwXR6XnbKFaciXa2MkD0JUoTO3ORTg==
-X-Received: by 2002:a05:620a:1aa1:b0:8a3:9a05:ec15 with SMTP id af79cd13be357-8a6d072570emr95429085a.19.1761581364508;
-        Mon, 27 Oct 2025 09:09:24 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25c8a34dsm624408985a.48.2025.10.27.09.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 09:09:23 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vDPmd-00000004HT9-1p2Z;
-	Mon, 27 Oct 2025 13:09:23 -0300
-Date: Mon, 27 Oct 2025 13:09:23 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
- confusion
-Message-ID: <20251027160923.GF760669@ziepe.ca>
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ab79jgiVUD2L7ngWiVqv/5Xb8Wkj/vrfqS+9ulTtogIy9nOeJ2VQLwY6fP1KIsfTiN/H9My2WQO0gZyjZ7DveZwfoWAoNCifH7m7bVwlrCI3l4KIjeATxO3cVzIldvEJ+wiRoXBK5JHkgqXTdG8mBHwOhN/tEJHRv5ClBoK8KKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fz3XFv1x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384E3C4CEF1;
+	Mon, 27 Oct 2025 16:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761581428;
+	bh=KWyZcSM7YJrEzRFYOxV0414nu6sPOX/btOQt6jFmdC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fz3XFv1xeLDxN9Z+GUBiYC6REQ1R+bLRG+rOBXhw8W1swbwxIVQYDx5re/OjljcA4
+	 AAqu1vGKF5S5d+vmHa3A+aS0vjvmgrBa5leLvp9YNtXsKDpt0sCtONm79hogyse/FQ
+	 tVSHO3Lu0wmtWVAxRIoVa0A/NqvVaFTHBp5aerwrtWiKCfnlFWeTrO0kGNlQJ5Rwq/
+	 ZjfVRJgYKG7xZADPntuLvQlAJVMulAw+3VCnkb+lYmjRE1txzYIjCQZrrWyiAeF1XH
+	 nRc61CS28D7FCAwkk1e+obVchEUmzQXRShWtfIJhZ0qgRc4mrrbtvdvKadskLcczSi
+	 XICgRlx5JEoOw==
+Date: Mon, 27 Oct 2025 09:10:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 1/4] iomap: add IOMAP_DIO_FSBLOCK_ALIGNED flag
+Message-ID: <20251027161027.GS3356773@frogsfrogsfrogs>
+References: <20251023135559.124072-1-hch@lst.de>
+ <20251023135559.124072-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -129,113 +60,112 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <20251023135559.124072-2-hch@lst.de>
 
-On Fri, Oct 24, 2025 at 08:41:16AM +0100, Lorenzo Stoakes wrote:
-> There's an established convention in the kernel that we treat leaf page
-> tables (so far at the PTE, PMD level) as containing 'swap entries' should
-> they be neither empty (i.e. p**_none() evaluating true) nor present
-> (i.e. p**_present() evaluating true).
+On Thu, Oct 23, 2025 at 03:55:42PM +0200, Christoph Hellwig wrote:
+> From: Qu Wenruo <wqu@suse.com>
+> 
+> Btrfs requires all of its bios to be fs block aligned, normally it's
+> totally fine but with the incoming block size larger than page size
+> (bs > ps) support, the requirement is no longer met for direct IOs.
+> 
+> Because iomap_dio_bio_iter() calls bio_iov_iter_get_pages(), only
+> requiring alignment to be bdev_logical_block_size().
+> 
+> In the real world that value is either 512 or 4K, on 4K page sized
+> systems it means bio_iov_iter_get_pages() can break the bio at any page
+> boundary, breaking btrfs' requirement for bs > ps cases.
+> 
+> To address this problem, introduce a new public iomap dio flag,
+> IOMAP_DIO_FSBLOCK_ALIGNED.
+> 
+> When calling __iomap_dio_rw() with that new flag, iomap_dio::flags will
+> inherit that new flag, and iomap_dio_bio_iter() will take fs block size
+> into the calculation of the alignment, and pass the alignment to
+> bio_iov_iter_get_pages(), respecting the fs block size requirement.
+> 
+> The initial user of this flag will be btrfs, which needs to calculate the
+> checksum for direct read and thus requires the biovec to be fs block
+> aligned for the incoming bs > ps support.
+> 
+> Signed-off-by: Qu Wenruo <wqu@suse.com>
+> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/direct-io.c  | 13 ++++++++++++-
+>  include/linux/iomap.h |  8 ++++++++
+>  2 files changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 5d5d63efbd57..ce9cbd2bace0 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -336,10 +336,18 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	int nr_pages, ret = 0;
+>  	u64 copied = 0;
+>  	size_t orig_count;
+> +	unsigned int alignment = bdev_logical_block_size(iomap->bdev);
+>  
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1))
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * Align to the larger one of bdev and fs block size, to meet the
+> +	 * alignment requirement of both layers.
+> +	 */
+> +	if (dio->flags & IOMAP_DIO_FSBLOCK_ALIGNED)
+> +		alignment = max(alignment, fs_block_size);
+> +
+>  	if (dio->flags & IOMAP_DIO_WRITE) {
+>  		bio_opf |= REQ_OP_WRITE;
+>  
+> @@ -434,7 +442,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+>  		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
+> -				bdev_logical_block_size(iomap->bdev) - 1);
+> +					     alignment - 1);
+>  		if (unlikely(ret)) {
+>  			/*
+>  			 * We have to stop part way through an IO. We must fall
+> @@ -639,6 +647,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> +	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
+> +		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
+> +
+>  	if (iov_iter_rw(iter) == READ) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 73dceabc21c8..4da13fe24ce8 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -518,6 +518,14 @@ struct iomap_dio_ops {
+>   */
+>  #define IOMAP_DIO_PARTIAL		(1 << 2)
+>  
+> +/*
+> + * Ensure each bio is aligned to fs block size.
+> + *
+> + * For filesystems which need to calculate/verify the checksum of each fs
+> + * block. Otherwise they may not be able to handle unaligned bios.
+> + */
+> +#define IOMAP_DIO_FSBLOCK_ALIGNED	(1 << 3)
 
-I have to say I've never liked the none-vs-present naming either.
+A new flag requires an update to IOMAP_F_FLAGS_STRINGS in trace.h for
+tracepoint decoding.
 
-> This is deeply confusing, so this series goes further and eliminates the
-> non_swap_entry() predicate, replacing it with is_non_present_entry() - with
-> an eye to a new convention of referring to these non-swap 'swap entries' as
-> non-present.
+The rest of the changes look ok to me, modulo hch's subsequent fixups.
 
-I'm not keen on is_non_present_entry(), it seems confusing again.
+--D
 
-It looks like we are stuck with swp_entry_t as the being the handle
-for a non-present pte. Oh well, not a great name, but fine..
-
-So we think of that swp_entry_t having multiple types: swap, migration,
-device private, etc, etc
-
-Then I'd think the general pattern should be to get a swp_entry_t:
-
-    if (pte_present(pte))
-        return;
-    swpent = pte_to_swp_entry(pte);
-
-And then evaluate the type:
-
-    if (swpent_is_swap()) {
-    }
-
-
-If you keep the naming as "swp_entry" indicates the multi-type value,
-then "swap" can mean a swp_entry which is used by the swap subsystem.
-
-That suggests functions like this:
-
-swpent_is_swap()
-swpent_is_migration()
-..
-
-and your higher level helpers like:
-
-/* True if the pte is a swpent_is_swap() */
-static inline bool swpent_get_swap_pte(pte_t pte, swp_entry_t *entryp)
-{
-   if (pte_present(pte))
-        return false;
-   *swpent = pte_to_swp_entry(pte);
-   return swpent_is_swap(*swpent);
-}
-
-I also think it will be more readable to keep all these things under a
-swpent namespace instead of using unstructured english names.
-
-> * pte_to_swp_entry_or_zero() - allows for convenient conversion from a PTE
->   to a swap entry if present, or an empty swap entry if none. This is
->   useful as many swap entry conversions are simply checking for flags for
->   which this suffices.
-
-I'd expect a safe function should be more like
-
-   *swpent = pte_to_swp_entry_safe(pte);
-   return swpent_is_swap(*swpent);
-
-Where "safe" means that if the PTE is None or Present then
-swpent_is_XX() == false. Ie it returns a 0 swpent and 0 swpent is
-always nothing.
-
-> * get_pte_swap_entry() - Retrieves a PTE swap entry if it truly is a swap
->   entry (i.e. not a non-present entry), returning true if so, otherwise
->   returns false. This simplifies a lot of logic that previously open-coded
->   this.
-
-Like this is still a tortured function:
-
-+static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
-+{
-+       if (pte_present(pte))
-+               return false;
-+       if (pte_none(pte))
-+               return false;
-+
-+       *entryp = pte_to_swp_entry(pte);
-+       if (non_swap_entry(*entryp))
-+               return false;
-+
-+       return true;
-+}
-+
-
-static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
-{
-   return swpent_is_swap(*swpent = pte_to_swp_entry_safe(pte));
-}
-
-Maybe it doesn't even need an inline at that point?
-
-> * is_huge_pmd() - Determines if a PMD contains either a present transparent
->   huge page entry or a huge non-present entry. This again simplifies a lot
->   of logic that simply open-coded this.
-
-is_huge_or_swpent_pmd() would be nicer, IMHO. I think it is surprising
-when any of these APIs accept swap entries without being explicit
-
-Jason
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		unsigned int dio_flags, void *private, size_t done_before);
+> -- 
+> 2.47.3
+> 
+> 
 
