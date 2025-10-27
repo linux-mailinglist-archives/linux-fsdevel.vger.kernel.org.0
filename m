@@ -1,206 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-65798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EBDC11958
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 22:56:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55885C11B39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 23:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 252DB4E4929
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 21:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8111467724
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 22:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCE82FFDDD;
-	Mon, 27 Oct 2025 21:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8556632C938;
+	Mon, 27 Oct 2025 22:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+2Hs3Iy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apXhFa4d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407132EB84E;
-	Mon, 27 Oct 2025 21:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAAF320382
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761602211; cv=none; b=l7IQnSITtNsGoP5BCL3Z1r7TNQGtXJDBGTwNrkWQSFFjKfFG14a51TZG1DeUZjfVyQ/nWUdNwlwvV2OyLC5F8lvHal0jB7vwdNJfE82A8stgczansh7Cc/KBfxnBXDt7ik/yhcjU51ydGLosL7GNb19flA2zQTe2CfxHT5Kjnd0=
+	t=1761604182; cv=none; b=fBdZ0BBZgZQbm016B6JR6UVvb5tjrXJ9lTUH0If0wfaSP1dMEjK6poAP/eMtxhfzbJEHD6wXLqqR/1+t+0EBZQ2DL2JhwxximQl0TpVGx4pSAk4BZXp5aivIJdPXgd03Q3BmBqipDRP7LKV82xybRycl0VNGP1idlGl6Mhu0xZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761602211; c=relaxed/simple;
-	bh=405cnyAwlgl8G6n9UhDVXviAWRHuhcD6pnbJ2+1/ELo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kcz2y6BMdXxOjp8YRI8xvtmPvvnlwhyAwMQT06DovH+BtUc/UgvF8MC/yKvgEr8bHELxBlhHeKuxyEvUb0lWprdIuVh7RuxtRjauQ0qgP58gjCIjPqImx3YLKjGxfFPc76B3/j540WuNMZlF5UYqjnFHEWRA0/Lolo/+moaerBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+2Hs3Iy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A474AC4CEF1;
-	Mon, 27 Oct 2025 21:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761602210;
-	bh=405cnyAwlgl8G6n9UhDVXviAWRHuhcD6pnbJ2+1/ELo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a+2Hs3IypUls8lSAjdGvQhr+l4x/IwslEpeWGbGpmjryf+rXJCB6leDz+nuXscEEQ
-	 5EEax/w4kjmRAOb2LjwX+qXZU6awcTnUqql7NwUGg4jvfaNhgYB2TtZZ9u3UXr5gdD
-	 w0Wj/GOCzQgdU82zKvFqXF7wWh5eDVyMb1qs8VMG9CcULK/1ncirpqX4OhDZW0GYF7
-	 TKGKwdBizDiRp6vdTCmTSWAQ+Ybv9keILSkKPfWzkVT5IYBTIyzMAhzePDO39Bigwg
-	 m67e7v93N0X+6QJAUBhBdBtvzuDcLp425i/OlMmWqH5iP+uU5J9Vwqb4zAkH7IHmWe
-	 FhhsQeDoIuQig==
-Date: Mon, 27 Oct 2025 14:56:50 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 1/4] iomap: add IOMAP_DIO_FSBLOCK_ALIGNED flag
-Message-ID: <20251027215650.GO4015566@frogsfrogsfrogs>
-References: <20251023135559.124072-1-hch@lst.de>
- <20251023135559.124072-2-hch@lst.de>
- <20251027161027.GS3356773@frogsfrogsfrogs>
- <c4cc53b4-cc1a-4269-b67c-817a0d7f3929@suse.com>
+	s=arc-20240116; t=1761604182; c=relaxed/simple;
+	bh=d8NMdMIAsKL9dT6NiZf9+euKVtilxlxSJ5AK9kuS4JM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lO6eBlpBNxJ3CjSr/FwpfsVzqvU0zu81U/e/TqXOTBCguh7gOjewLlpksNCg4U5WR2BBcbVazlSiBploVvz1znNmBzd00NLbnzLd0R3hOdORk1Drz8/L558NWO6QI+Tjxbe6OXTRxmxx5kZYANgjOolWnHyMWilQcCjSdY6Nn/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apXhFa4d; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so6140119a91.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 15:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761604181; x=1762208981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8mhu62PqUUoiRlh9DDmVeEAVqYSH9RKV2q5DyJsz5J4=;
+        b=apXhFa4d+yKE6olfb0DvBNUQe0hJorglbPH7h73euoN7G5sW+tO2jrrHQDpT3eEFuh
+         F4uwit47RfxDgiWrQKTcNnJ1sGeTbtQtzJQ9f8WD80C1AJBeVhIFhYWxhY1GrDkezu3Q
+         Vl2G7LJIbolFNKrNxaxa0JzWGTZJEQU1tXpeJOWOD3CLbyCALGeBAQ6n/ssC8+dqltsC
+         Yjlw+u8txM54PowIVLO7WXcf9G44bewEWwq66yiPvig2Ig0RTYZC7Uz9lR7uWWxgH4fD
+         8Y5JiU5uFraJM/jRCu/ovYLDU+5boboTjWhXFk9yv8XWlnmPud9pN7rP45hNFQFM1KjC
+         4ksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761604181; x=1762208981;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8mhu62PqUUoiRlh9DDmVeEAVqYSH9RKV2q5DyJsz5J4=;
+        b=KWKA1lb+MjGJ7jfqkDUCAkxtKOMubAzevrjSjrE6gq1AEIXxhDUL+7wpGuxhVhG9pm
+         e6jvrS+RjWAZ4rIDdIrLFxCl4tGrmd22Fo6XsyYFJZAZynwzUlLOXCKUdmPeils06n9U
+         ROpvt9lYTlbWBFr4dMJdi+EMJozu4mEK9SGE9WGmpCiXLJ99nQ9SGTyjziVPozdD0UV9
+         X3pYBA2Qf4H3a5BaXbExRSgDcgf/L+8QaBQs+IaZKxvKxaXswzgPRlP54agz/SzklPBH
+         zhA9tNdKlWYCXDtW5sq2bGhhLHjg95yS0y28PChOnt7GdTLkOsUocs6JKzDHhNm0HENM
+         WxBw==
+X-Gm-Message-State: AOJu0Yym1IXN7lhGLsT9VR2TB2xlTHUxNQmt4yv+1l7AG3sA9xkuQRlR
+	nSGpGwczHmW7dCso134ts65yC4qnqnH2jtWpHzj943L0fx3f1gSslIZY
+X-Gm-Gg: ASbGnctL/vR5hV5SMAse3Pe0/b0v3BeOW14/VXbgiyuIDW5P7ZDnsL2sNjKbaqR5V1v
+	vqWl6u3MK5wtVPBvxs3Zn7/ptqG9w+jgDFUglL4+hij4vPyjL9KW6w+cESpnVWk6g/6+aXME1YZ
+	vMvL59OLDiryZJn1OpKy2G2txN8SO3Q/+TkNuIKUegmu9ESZm9v4rfVIaUX47lF2yl+1xQ4UBJU
+	7oHZNgdtUhDfruwDc2nZXWAcOcU6pFtRo2OBGChUPbHI/Ti8LshKc428jlIr4jVIZ0mjDQK+L9a
+	mKYS0uHbRXuszQCK7cEVK3Mrt0g5wb11NRFJWoRnptFudmM6iJ9btTwLvNc91PFDeM8VcAdsHUj
+	GLyGJZgk2cvaCTMWKCnoHTG1/Fnxvq8Dw+QrkDAfKZ5pmjysNHWmAlKPX3QysGeNW8TLWSc6Wte
+	NAcCHm3oJ1+LWzgClJZ7dIbqnlf38=
+X-Google-Smtp-Source: AGHT+IGPU1TePCGRCsZt+liUeRMz+ZQoyOc9MsK8xsHUDywlroEXsW+H9dLQ5M35xZaqbOPL+oauqQ==
+X-Received: by 2002:a17:90b:5241:b0:32e:d649:f98c with SMTP id 98e67ed59e1d1-340279e4afemr1601136a91.1.1761604180545;
+        Mon, 27 Oct 2025 15:29:40 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:43::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed73b5bbsm9752763a91.7.2025.10.27.15.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 15:29:40 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	axboe@kernel.dk
+Cc: linux-fsdevel@vger.kernel.org,
+	bschubert@ddn.com,
+	asml.silence@gmail.com,
+	io-uring@vger.kernel.org,
+	xiaobing.li@samsung.com,
+	csander@purestorage.com,
+	kernel-team@meta.com
+Subject: [PATCH v2 0/8] fuse: support io-uring registered buffers
+Date: Mon, 27 Oct 2025 15:27:59 -0700
+Message-ID: <20251027222808.2332692-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c4cc53b4-cc1a-4269-b67c-817a0d7f3929@suse.com>
 
-On Tue, Oct 28, 2025 at 08:11:21AM +1030, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/10/28 02:40, Darrick J. Wong 写道:
-> > On Thu, Oct 23, 2025 at 03:55:42PM +0200, Christoph Hellwig wrote:
-> > > From: Qu Wenruo <wqu@suse.com>
-> > > 
-> > > Btrfs requires all of its bios to be fs block aligned, normally it's
-> > > totally fine but with the incoming block size larger than page size
-> > > (bs > ps) support, the requirement is no longer met for direct IOs.
-> > > 
-> > > Because iomap_dio_bio_iter() calls bio_iov_iter_get_pages(), only
-> > > requiring alignment to be bdev_logical_block_size().
-> > > 
-> > > In the real world that value is either 512 or 4K, on 4K page sized
-> > > systems it means bio_iov_iter_get_pages() can break the bio at any page
-> > > boundary, breaking btrfs' requirement for bs > ps cases.
-> > > 
-> > > To address this problem, introduce a new public iomap dio flag,
-> > > IOMAP_DIO_FSBLOCK_ALIGNED.
-> > > 
-> > > When calling __iomap_dio_rw() with that new flag, iomap_dio::flags will
-> > > inherit that new flag, and iomap_dio_bio_iter() will take fs block size
-> > > into the calculation of the alignment, and pass the alignment to
-> > > bio_iov_iter_get_pages(), respecting the fs block size requirement.
-> > > 
-> > > The initial user of this flag will be btrfs, which needs to calculate the
-> > > checksum for direct read and thus requires the biovec to be fs block
-> > > aligned for the incoming bs > ps support.
-> > > 
-> > > Signed-off-by: Qu Wenruo <wqu@suse.com>
-> > > Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > ---
-> > >   fs/iomap/direct-io.c  | 13 ++++++++++++-
-> > >   include/linux/iomap.h |  8 ++++++++
-> > >   2 files changed, 20 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > > index 5d5d63efbd57..ce9cbd2bace0 100644
-> > > --- a/fs/iomap/direct-io.c
-> > > +++ b/fs/iomap/direct-io.c
-> > > @@ -336,10 +336,18 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> > >   	int nr_pages, ret = 0;
-> > >   	u64 copied = 0;
-> > >   	size_t orig_count;
-> > > +	unsigned int alignment = bdev_logical_block_size(iomap->bdev);
-> > >   	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1))
-> > >   		return -EINVAL;
-> > > +	/*
-> > > +	 * Align to the larger one of bdev and fs block size, to meet the
-> > > +	 * alignment requirement of both layers.
-> > > +	 */
-> > > +	if (dio->flags & IOMAP_DIO_FSBLOCK_ALIGNED)
-> > > +		alignment = max(alignment, fs_block_size);
-> > > +
-> > >   	if (dio->flags & IOMAP_DIO_WRITE) {
-> > >   		bio_opf |= REQ_OP_WRITE;
-> > > @@ -434,7 +442,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> > >   		bio->bi_end_io = iomap_dio_bio_end_io;
-> > >   		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
-> > > -				bdev_logical_block_size(iomap->bdev) - 1);
-> > > +					     alignment - 1);
-> > >   		if (unlikely(ret)) {
-> > >   			/*
-> > >   			 * We have to stop part way through an IO. We must fall
-> > > @@ -639,6 +647,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> > >   	if (iocb->ki_flags & IOCB_NOWAIT)
-> > >   		iomi.flags |= IOMAP_NOWAIT;
-> > > +	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
-> > > +		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
-> > > +
-> > >   	if (iov_iter_rw(iter) == READ) {
-> > >   		/* reads can always complete inline */
-> > >   		dio->flags |= IOMAP_DIO_INLINE_COMP;
-> > > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > > index 73dceabc21c8..4da13fe24ce8 100644
-> > > --- a/include/linux/iomap.h
-> > > +++ b/include/linux/iomap.h
-> > > @@ -518,6 +518,14 @@ struct iomap_dio_ops {
-> > >    */
-> > >   #define IOMAP_DIO_PARTIAL		(1 << 2)
-> > > +/*
-> > > + * Ensure each bio is aligned to fs block size.
-> > > + *
-> > > + * For filesystems which need to calculate/verify the checksum of each fs
-> > > + * block. Otherwise they may not be able to handle unaligned bios.
-> > > + */
-> > > +#define IOMAP_DIO_FSBLOCK_ALIGNED	(1 << 3)
-> > 
-> > A new flag requires an update to IOMAP_F_FLAGS_STRINGS in trace.h for
-> > tracepoint decoding.
-> 
-> I'm wondering who should fix this part.
-> 
-> The original author (myself) or Christoph?
+This patchset adds fuse support for io-uring registered buffers.
+Daemons may register buffers ahead of time, which will eliminate the overhead
+of pinning/unpinning user pages and translating virtual addresses for every
+server-kernel interaction.
 
-Or the maintainer?
+The main logic for fuse registered buffers is in the last patch (patch 8/8).
+Patch 1/8 adds an io_uring api for fetching the registered buffer and patches
+(2-7)/8 refactors the fuse io_uring code, which additionally will make adding
+in the logic for registered buffers neater.
 
-Here's the relevant patch for whomever actually commits it.
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+The libfuse changes can be found in this branch:
+https://github.com/joannekoong/libfuse/tree/registered_buffers. The libfuse
+implementation first tries registered buffers during registration and if this
+fails, will retry with non-registered buffers. This prevents having to add a
+new init flag (but does have the downside of printing dmesg errors for the
+failed registrations when trying the registered buffers). If using registered
+buffers and the daemon for whatever reason unregisters the buffers midway
+through, then this will sever server-kernel communication. Libfuse will never
+do this. Libfuse will only unregister the buffers when the entire session is
+being destroyed.
 
-diff --git i/fs/iomap/trace.h w/fs/iomap/trace.h
-index a61c1dae474270..eae9c1e5c674c8 100644
---- i/fs/iomap/trace.h
-+++ w/fs/iomap/trace.h
-@@ -121,13 +121,14 @@ DEFINE_RANGE_EVENT(iomap_zero_iter);
-        { IOMAP_F_STALE,        "STALE" }
- 
- 
- #define IOMAP_DIO_STRINGS \
-        {IOMAP_DIO_FORCE_WAIT,  "DIO_FORCE_WAIT" }, \
-        {IOMAP_DIO_OVERWRITE_ONLY, "DIO_OVERWRITE_ONLY" }, \
--       {IOMAP_DIO_PARTIAL,     "DIO_PARTIAL" }
-+       {IOMAP_DIO_PARTIAL,     "DIO_PARTIAL" }, \
-+       {IOMAP_DIO_FSBLOCK_ALIGNED,     "DIO_FSBLOCK" }
- 
- DECLARE_EVENT_CLASS(iomap_class,
-        TP_PROTO(struct inode *inode, struct iomap *iomap),
-        TP_ARGS(inode, iomap),
-        TP_STRUCT__entry(
-                __field(dev_t, dev)
+Benchmarks will be run and posted.
 
-> Thanks,
-> Qu
-> 
-> > 
-> > The rest of the changes look ok to me, modulo hch's subsequent fixups.
-> > 
-> > --D
-> > 
-> > >   ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> > >   		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> > >   		unsigned int dio_flags, void *private, size_t done_before);
-> > > -- 
-> > > 2.47.3
-> > > 
-> > > 
-> 
+Thanks,
+Joanne
+
+v1: https://lore.kernel.org/linux-fsdevel/20251022202021.3649586-1-joannelkoong@gmail.com/
+v1 -> v2:
+* Add io_uring_cmd_import_fixed_full() patch
+* Construct iter using io_uring_cmd_import_fixed_full() per cmd instead of recyling
+  iters.
+* Kmap the header instead of using bvec iter for iterating/copying. This makes
+  the code easier to read.
+
+Joanne Koong (8):
+  io_uring/uring_cmd: add io_uring_cmd_import_fixed_full()
+  fuse: refactor io-uring logic for getting next fuse request
+  fuse: refactor io-uring header copying to ring
+  fuse: refactor io-uring header copying from ring
+  fuse: use enum types for header copying
+  fuse: add user_ prefix to userspace headers and payload fields
+  fuse: refactor setting up copy state for payload copying
+  fuse: support io-uring registered buffers
+
+ fs/fuse/dev_uring.c          | 366 +++++++++++++++++++++++++----------
+ fs/fuse/dev_uring_i.h        |  27 ++-
+ include/linux/io_uring/cmd.h |   3 +
+ io_uring/rsrc.c              |  14 ++
+ io_uring/rsrc.h              |   2 +
+ io_uring/uring_cmd.c         |  13 ++
+ 6 files changed, 316 insertions(+), 109 deletions(-)
+
+-- 
+2.47.3
+
 
