@@ -1,68 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-65663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B314C0C29E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 08:40:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024F8C0C303
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 08:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52BF24F037B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 07:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DA23A5510
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 07:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E902E03EF;
-	Mon, 27 Oct 2025 07:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PiheCWsq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86E22E54A7;
+	Mon, 27 Oct 2025 07:51:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77C527E06C;
-	Mon, 27 Oct 2025 07:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D0B2E4241;
+	Mon, 27 Oct 2025 07:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761550814; cv=none; b=tHYnzODnzfleJl2uAo/g9TUvedpYcVloz4LlMugReHRZHnWXOKmKTunUNMwhxEJ1fxf91wJOkNSGGWhKNCSDaPbCZMsbDJAmX44LNwka6noyqsY9XS/U6lyV2Hx7VhZPcOisgGj3Mr6arGy9aoWf8RRxdYJPG+dGbJ5k63G+yEE=
+	t=1761551509; cv=none; b=LrQFjmJB2X94O0g01agl7Uy7g4SriW25Gf2iEXx7/Fuitdkte450KEsoKfDP4tOS9vG0spcIwuX3wFLH42rfKO20o2GgUSMLjtMxYD267awi7yB4DnL5jJoU1vBlgD/+S7c2qs4JuMIZA6gtfmCUeW1X80MbqAe7EpuFgEbVF1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761550814; c=relaxed/simple;
-	bh=4AUKMRAsAp22IJZUtp5f+8gpkrQvUtZ8fKI89RfiftI=;
+	s=arc-20240116; t=1761551509; c=relaxed/simple;
+	bh=f3iwptgJ39Cvn/1R/92zDLiiyDlPBo6yDS5IVREqL2Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jxaftd7bmQnvHz/WDp8rukruI6rMJ5kJ8Wf736e5czl+Z5ec3M/qYGrIMDEFO1Qd6TDijgZqREkZKiOcze5ER1f/8ZDz03y8edNzah95rqWQowAFaYyqsWv0aP1kth/ewOgu2ND/BzDjocZigaq1WA4LCNV8Y1jQN+yCoq6qOU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PiheCWsq; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9jMl20VeWz5/kixKog9nGx1c3XBZkDdSCBaR7mjSQx8=; b=PiheCWsq42Vhc0KTiC/bg8ndkG
-	MeK55Ev+k6GwF8Vb5G4IDqHCtpXpfby7eMipiOb16PeGrIljYOjpJEdHJqF95VaEMSdVojOn6Nv/A
-	EG/mDPY166eH6hQ1JSoHjFVhYQT5TSZol8BJqgbJBEnM8vrIbge33wl3i0a7ePlte9O4fs5+i22tt
-	qLKNBCWPGm9yg0JrOc6ivDGSWeVOOFu3DW31rm53IlzXqlAiVzK5KJlOCDoPgUhefNlokG+TJ3MH2
-	fXm3s8eNmp786D/xL/55EOEiQJh8OrDFryydlujf/BM8QHr3/Frek4i0leO8GuZhM4DKOVH0zr/XT
-	v946VGTA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDHpm-0000000DI50-0JnV;
-	Mon, 27 Oct 2025 07:40:06 +0000
-Date: Mon, 27 Oct 2025 00:40:06 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Baokun Li <libaokun@huaweicloud.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-	linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, yi.zhang@huawei.com, yangerkun@huawei.com,
-	chengzhihao1@huawei.com, libaokun1@huawei.com,
-	catherine.hoang@oracle.com
-Subject: Re: [PATCH 22/25] fs/buffer: prevent WARN_ON in
- __alloc_pages_slowpath() when BS > PS
-Message-ID: <aP8h1jz8JEN-3du0@infradead.org>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-23-libaokun@huaweicloud.com>
- <aPxV6QnXu-OufSDH@casper.infradead.org>
- <adccaa99-ffbc-4fbf-9210-47932724c184@huaweicloud.com>
- <aP0PachXS8Qxjo9Q@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHvMWMqFFT/Wfp32mHhtxIZhl+se8OunbViA2tZTC7XZfgjFtPalP85qCumC8knVxzoZY4fj+OD1qs55TGPWx1C52imqQBw5EbMkoF8e930sjcz6TtxrdD2/I+jMUIGHKueVeDlFcup3hsLd709RKn8uHFmlMPxi7OH4AJeMCqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id ACB27227A87; Mon, 27 Oct 2025 08:51:42 +0100 (CET)
+Date: Mon, 27 Oct 2025 08:51:42 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] io_uring/uring_cmd: avoid double indirect call
+ in task work dispatch
+Message-ID: <20251027075142.GA14661@lst.de>
+References: <20251027020302.822544-1-csander@purestorage.com> <20251027020302.822544-5-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,24 +53,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aP0PachXS8Qxjo9Q@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20251027020302.822544-5-csander@purestorage.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sat, Oct 25, 2025 at 06:56:57PM +0100, Matthew Wilcox wrote:
-> If filesystems actually require __GFP_NOFAIL for high-order allocations,
-> then this is a new requirement that needs to be communicated to the MM
-> developers, not hacked around in filesystems (or the VFS).  And that
-> communication needs to be a separate thread with a clear subject line
-> to attract the right attention, not buried in patch 26/28.
+> +static void blk_cmd_complete(struct io_tw_req tw_req, io_tw_token_t tw)
+>  {
+> +	unsigned int issue_flags = IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
 
-It's not really new.  XFS had this basically since day 1, but with
-Linus having a religious aversion against __GFP_NOFAIL most folks
-have given up on trying to improve it as it just ends up in shouting
-matches in political grounds.  XFS just ends up with it's own fallback
-in xfs_buf_alloc_backing_mem which survives the various rounds of
-refactoring since XFS was merged.  Given that weird behavior in some
-of the memory allocators where GFP_NOFAIL is simply ignored for too
-large allocations that seems like by far the sanest option in the
-current Linux environment unfortunately.
+In most of these ioctl handlers issue_flags only has a single user,
+so you might as well pass it directly.
+
+In fact asm most external callers of io_uring_cmd_done pass that, would
+a helper that just harcodes it make sense and then maybe switch the
+special cases to use __io_uring_cmd_done directly?
 
 
