@@ -1,89 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-65688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F90C0C9EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 10:22:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5535AC0CB76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 10:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D76134C184
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 09:22:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DFF40195D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 09:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258612E8E1F;
-	Mon, 27 Oct 2025 09:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442132F0C45;
+	Mon, 27 Oct 2025 09:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZeArEhqO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jED3ioSl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC632E88B3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 09:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26715270ED2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 09:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761556938; cv=none; b=oKyBXoOS+sEytOTTbfI1QVp58YU2kuyGMNS9bv7Xtyq56bHr+cwXO6sE3EwKscHaVUexOrPvXNMnf4v8oSwDfeqHh1UJZgjkjRcRS/e8yM3+QM3bF6QysHVnqeCBgc5gskMmMylnzY6uwtgsICwS3lFMXh14bSSRMIx785hMQG8=
+	t=1761557692; cv=none; b=X8Bm+qfcY1hbT9MAFEe1mmWBrFFNuCdBe9dLcLxbWu0msNd1rJWlfUkTRm5C5db13djdMy+SzvntNAOPUAKruw22oJv6b+wS+Ju8iIACKUL0E5W+Lpxc5qZ3Www/mUb6vBXNC4cJKspgkoyLPpQmgMwIq9v7yY0LEc3Lx8T614c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761556938; c=relaxed/simple;
-	bh=NMH9CbbvFmTV0ED5geaJqAzjDltegQCfOWjYkTn1ZPQ=;
+	s=arc-20240116; t=1761557692; c=relaxed/simple;
+	bh=c7pWnfUI5l93xQMWezruXtzU0006jy+k7UTgGV61vbs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jAnEZPfAabtItEqlaQur2EnWXtIrqhxIibuHcm6DzHrhxVN310QXGl9zL9GH2tSCjbGURo/YHWrUehD5/X0EhgwgRDoNCD3M9zRSN2KzQLN/gQOme+I49Vzu+JeJlU4hMpNQX+EJhfze2x8BQGJpJ5/W3v9Ig1lvld9N6pPsNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZeArEhqO; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=iW5jCiHuLpLhxc2GG3NpeA6X7b+e1gZbopbN7ecmFBYQuHVWnku4SSxAvmAq7zFfNVOPJPEKb9RvLgj8rZbOIGgRcwhcYGqVPJIRVfg5+IESRa5Qdl+eAe4zFuXgExYFteDQJuedvku1PXT3rjw6zxuJPwRoHuFZF/MpQYmsVBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jED3ioSl; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761556934;
+	s=mimecast20190719; t=1761557690;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A/GXeoHonKMlzjFGTYijF05WfyyHRvFPdjwbyNeXc3Y=;
-	b=ZeArEhqOB2nPgT9UQdOsrhP+1You61yRQzP5NqROTx89v6lck5+75GFDk0LIDtb7amFQs+
-	B/bndFWgO5eZ6CkdyOyPB/q9QgegFXScqpIETZYzej3ZQb4g07FK7yGJI/JdWzrx+nvRaD
-	q34NxUqAonKLh8PeMRSsmlIuYx54b1k=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=enI7LZNpEoEgG2kCIqkqYuUnATtEoWBy7Pep0LNgBPY=;
+	b=jED3ioSlNDzyRnVlA5d2JKz84s4Hx+gvlGp9us1FkFfvvA0nR4IdNdhwhoZJw9IaxX6c7H
+	yRk8G49Th6EAoXmzQ2pGQQnyCMdx2/yGpLu5tOV11I7Q8Xbm60z6exI73whe1XVyAUNRCg
+	Rw76/i/CM6l3bliE7qpGew5dO/0qLvw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-G2JBX7jwO3eE0GdEhC3qvA-1; Mon, 27 Oct 2025 05:22:13 -0400
-X-MC-Unique: G2JBX7jwO3eE0GdEhC3qvA-1
-X-Mimecast-MFC-AGG-ID: G2JBX7jwO3eE0GdEhC3qvA_1761556932
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-427013eb71dso4359077f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 02:22:12 -0700 (PDT)
+ us-mta-361-MYCnYgrYMbGCQ5nQFZxlEw-1; Mon, 27 Oct 2025 05:34:48 -0400
+X-MC-Unique: MYCnYgrYMbGCQ5nQFZxlEw-1
+X-Mimecast-MFC-AGG-ID: MYCnYgrYMbGCQ5nQFZxlEw_1761557687
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4770be47bfcso2477025e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 02:34:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761556932; x=1762161732;
+        d=1e100.net; s=20230601; t=1761557687; x=1762162487;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A/GXeoHonKMlzjFGTYijF05WfyyHRvFPdjwbyNeXc3Y=;
-        b=jNdvVgMFHrVmhKUR9foT6zLL2wqHsMNfXYW6O/eOJuZBhAjQZ+Cszq7+3Lr/bYvOBR
-         C2OjoZVxgwgsK2hYAQJbxc1FdEVjblzBwAZKhWPZxUaDFAfQn9wC2nzf6KNsbKQRBwAS
-         6xBKQ28iE3cVHAVWoBgv0hezlxbdCizB7nbrOd2yUHvmUR5TArUjNEUOSvzJQyQd8nK4
-         t2sLzRG+/LtI5lDFWB7uF7slJIBEAA3CaluuGAFGm6iWEt8hxfQ4YeVYcFFJE8/yIclJ
-         hhohR+2Wj4/JPXXFfwdthw3poHpYhLIh7ZqhuEsASRgb6FqHBqL0fDCw+m6H6vYo8UHP
-         KiTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpQ+J+k6LU/q6Eyr4EgFT49k4U4LNCioiqr+K9yEw3cIBFY6jjD3DJP5c6ucoQxRluOK2sq5IyWZe8rS4y@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS9CpFNZi4EFhk4zLq211M1vIcy5hepVBgHhPHEXZ4/JsuflGq
-	wE+IIlqyA9JyHiO8d0pbUhSgG3eJ4vFeVcxLJI7jlDWR8ARzIUPXIsOydTojW+jcvO/+vbBCHTF
-	/ZoyhjKRbdBW5DVdGW50D97ToarlTwm1DqEaOBurc4Gt76iJ2lIAa4YLDGccwGhOHPuY=
-X-Gm-Gg: ASbGnct2O1si4ijJKOGhCdptJa+LGdkq7nh8+JOg8eWqKfO7XmBOyAM3GO7Z7cqfc/B
-	sG59yFmhUbF3rhT1/obqC/Vz0z2EDNq13g/JfCs5AP5gYaLcGY2Vf5iAEmXF3a0rj4MOX7vv5Sp
-	g5gAKAVIZSm4UoJGc9OiY2ywp7UVPQ7XCJqesFAhVyM2ujsK8x2ExB8fUadD6ol1CDlJjBswdhR
-	MIcx53kKC51jzNBegGLFG7ZvehZP45n7qwSEwPv08XtlHk6sF/p5qxP2DzxXKHNfgJ2uLLScaZu
-	MyrwaCDYPLXSU/v2wHXz9ZVXdxtBL0LeGd4tRlqqOSxeby4Ri6bYuhA0sDGD+Fe0q3VSiNnW8+x
-	EKShJJVNcirBY2JcGYvzFTm4SOLu5Kjq1dU1yKbFbmrpV+ohq9YznRnlEpLyHxsiEYuZIZ8CpPf
-	xdkjPEnfoDU269GFW2M/rHvrnFmDM=
-X-Received: by 2002:a05:6000:4024:b0:3e9:a1cb:ea8f with SMTP id ffacd0b85a97d-42704da3924mr26721897f8f.52.1761556931779;
-        Mon, 27 Oct 2025 02:22:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDRyzbYNgapAsDQVUP/dfMOneGlFTnaQdS54xLTyrz5QcB73wRWvx5krJws1/xS1I2xHKHjw==
-X-Received: by 2002:a05:6000:4024:b0:3e9:a1cb:ea8f with SMTP id ffacd0b85a97d-42704da3924mr26721844f8f.52.1761556931254;
-        Mon, 27 Oct 2025 02:22:11 -0700 (PDT)
+        bh=enI7LZNpEoEgG2kCIqkqYuUnATtEoWBy7Pep0LNgBPY=;
+        b=nkWqBPwhg58uahilTbBBweInaFSyKX8sVZWq3fcPEqYXStvC2gvY3wPxFFPYF7Diel
+         Mlt4IH2XHNQtIvZ7tc4DKsLxv4G4IXFL3zQbFJw4xRJLKYUj8Ll/nGu5cXsS+LZVTZwt
+         tOh4ac1NfXMgfHhDBCILLh4gIbNrk65eFxjjsYf7MAFkZpMqluDCa5IaMN+4qjpA4jXT
+         EICKv+7N2loXuI0Q/Z6oZzW+haPrvGw3WcIxbvczq2AMXJS7epzSkiXC0QESvrxD34sT
+         LYq7X6WTmZlryEtrPOSIQSn6UUh4+4TDXYpW6qHYy9CBP9H0It8YHYR2Qsc9jdfCnUW3
+         heIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaOSXkVsgsFLY1FWssm0j0rXB7CYy74IWKCiT2pZSBP0AxCYxIuejGZC6YuKYXFeFgnVxNiGPQR7grChXi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/LsDgX/BIRsUXrocV4CMd+o+uTQl6Q33yG6XOHReg+l1ATp6K
+	te9VDthiXXPVAIlV8+yV1fdfQHT2Ea9PxNniErJ8eK5bnDy5A9loNBpcG7nk0VkhLIIdnYLjW0E
+	b5n0uMRvj9jLYIAKbwd5jvyStJtLSqOdNW42GIkTmwZjZnmJT4MVOqEUTRDy2KXCr8eo=
+X-Gm-Gg: ASbGncsmV1UNNysH/ckDzZ3Jw26EEgppFuQHB06y9GgPpYjUFMerGdIUSmLMmgTENWg
+	229iqQvCbfwMAEjQTZEIb0rvt8RAjUVoFE1iBTwkR9yJxEDmk6VOjRxtbO2NWTh6JlU+o3SHiWw
+	P+2ycy9vzIca/4Ir59DbbljNyBoGkp2ZV2eI1zNSM3WAXDU3fIA0lkx2Oo0QFfI4D9+QhzdwFVE
+	Iwuztkuo+bXOSZjIpdDJbxsOXM214ieM8xuZbHsyO5S7QfXZDRxCUjg2Wm+VO/yt3EMJhDASYcE
+	sF2Wam/hleDehkP3vXgw8TF0n7YJzNb+9AEM8UcKARWpqDDXL16G4hYS1NLV/SAjFQ/1iUDeiq7
+	0KAQEqxxpRE1dWPsmCsZbtm498AnJKZsFgSRblmkx/asOWRTlDnwtzAX6r6ZhAPwEhZI+oVFN3V
+	0bKPnARmLHAAjIl5lFjLRDbFF8pfc=
+X-Received: by 2002:a05:600c:800f:b0:471:672:3486 with SMTP id 5b1f17b1804b1-475d2e7e9c3mr74954765e9.15.1761557687240;
+        Mon, 27 Oct 2025 02:34:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbYhXBdD/2sb21JkRwYqN4qMp1O+MlBYVpVhQAmAEtPEi4yKtKC4y56wL69hYkHpXzsclqsw==
+X-Received: by 2002:a05:600c:800f:b0:471:672:3486 with SMTP id 5b1f17b1804b1-475d2e7e9c3mr74954495e9.15.1761557686886;
+        Mon, 27 Oct 2025 02:34:46 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb7dcsm13518433f8f.11.2025.10.27.02.22.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dcbe5587sm146578635e9.0.2025.10.27.02.34.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 02:22:10 -0700 (PDT)
-Message-ID: <8fc01e1d-11b4-4f92-be43-ea21a06fcef1@redhat.com>
-Date: Mon, 27 Oct 2025 10:22:08 +0100
+        Mon, 27 Oct 2025 02:34:46 -0700 (PDT)
+Message-ID: <0fd86682-0679-48ee-8622-d9d7a977d69c@redhat.com>
+Date: Mon, 27 Oct 2025 10:34:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,12 +93,12 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
  beyond i_size
-To: Hugh Dickins <hughd@google.com>, Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+To: "Kirill A. Shutemov" <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
  Matthew Wilcox <willy@infradead.org>,
  Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
  <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
  Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
@@ -106,11 +106,13 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
  Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
  Baolin Wang <baolin.wang@linux.alibaba.com>,
  "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
+ linux-mm <linux-mm@kvack.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ Kiryl Shutsemau <kas@kernel.org>
 References: <20251023093251.54146-1-kirill@shutemov.name>
  <20251023093251.54146-2-kirill@shutemov.name>
- <96102837-402d-c671-1b29-527f2b5361bf@google.com>
+ <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
+ <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -157,71 +159,33 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <96102837-402d-c671-1b29-527f2b5361bf@google.com>
+In-Reply-To: <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27.10.25 09:20, Hugh Dickins wrote:
-> On Thu, 23 Oct 2025, Kiryl Shutsemau wrote:
+On 24.10.25 21:32, Kirill A. Shutemov wrote:
 > 
->> From: Kiryl Shutsemau <kas@kernel.org>
->>
->> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
->> supposed to generate SIGBUS.
->>
->> Recent changes attempted to fault in full folio where possible. They did
->> not respect i_size, which led to populating PTEs beyond i_size and
->> breaking SIGBUS semantics.
->>
->> Darrick reported generic/749 breakage because of this.
->>
->> However, the problem existed before the recent changes. With huge=always
->> tmpfs, any write to a file leads to PMD-size allocation. Following the
->> fault-in of the folio will install PMD mapping regardless of i_size.
->>
->> Fix filemap_map_pages() and finish_fault() to not install:
->>    - PTEs beyond i_size;
->>    - PMD mappings across i_size;
 > 
-> Sorry for coming in late as usual, and complicating matters.
-> 
-
-No problem, we CCed you on earlier versions to get your input, and we 
-were speculating that shmem behavior might be intended (one way or the 
-other).
-
+> On Fri, Oct 24, 2025, at 16:42, David Hildenbrand wrote:
+>> On 23.10.25 11:32, Kiryl Shutsemau wrote:
+>>>    	addr0 = addr - start * PAGE_SIZE;
+>>>    	if (folio_within_vma(folio, vmf->vma) &&
+>>> -	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
+>>> +	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
 >>
->> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
->> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
->> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+>> Isn't this just testing whether addr0 is aligned to folio_size(folio)?
+>> (given that we don't support folios > PMD_SIZE), like
+>>
+>> 	IS_ALIGNED(addr0, folio_size(folio))
 > 
-> ACK to restoring the correct POSIX behaviour to those filesystems
-> which are being given large folios beyond EOF transparently,
-> without any huge= mount option to permit it.
-> 
->> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> 
-> But NAK to regressing the intentional behaviour of huge=always
-> on shmem/tmpfs: the page size, whenever possible, is PMD-sized.  In
-> 6.18-rc huge=always is currently (thanks to Baolin) behaving correctly
-> again, as it had done for nine years: I insist we do not re-break it.
+> Actually, no. VMA can be not aligned to folio_size().
 
-Just so we are on the same page: this is not about which folio sizes we 
-allocate (like what Baolin fixed) but what/how much to map.
+Ah, I missed that we can also have folio sizes besides PMD_SIZE here.
 
-I guess this patch here would imply the following changes
+So it's all about testing whether the complete folio would be mapped by 
+a single page table.
 
-1) A file with a size that is not PMD aligned will have the last 
-(unaligned part) not mapped by PMDs.
-
-2) Once growing a file, the previously-last-part would not be mapped by 
-PMDs.
-
-
-Of course, we would have only mapped the last part of the file by PMDs 
-if the VMA would have been large enough in the first place. I'm curious, 
-is that something that is commonly done by applications with shmem files 
-(map beyond eof)?
+(a helper would be nice, but cannot immediately come up with a good name)
 
 -- 
 Cheers
