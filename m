@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-65786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445C4C10FB0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:28:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC25C10A4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F609504245
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:22:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 45178351D87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1412232A3C1;
-	Mon, 27 Oct 2025 19:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A21732D7E0;
+	Mon, 27 Oct 2025 19:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uG0R/+9j"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q03aQDgd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C78B31D393;
-	Mon, 27 Oct 2025 19:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CDA306491;
+	Mon, 27 Oct 2025 19:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592842; cv=none; b=W1kBuplMiHdq2gAu6nC8useZweVF4TPn3keHAahULHaBPJ+gFgQELzum5Yw448DfDBRwrt82Oi8sYmBNA5OngaE5/3A5tXTV/L0524lgeLOF+KZogLi+ZoXRxtkgnJxyMZ4B5SZ+H7O8ZrmMQ1CbCZdFKKPbxwHFXzYlKv5R5Fk=
+	t=1761592312; cv=none; b=j4RJqnn48133Q/lHngvLkT3iRqZfxlNUqPaVd9isPW5yB2ixrOt5E4G71hqbpaQZXB0lvsFZqshF9q+l31hViMzEODDb+ugxbaqJsfkRfu55wQgvH9KroPTXh2b8uPb0Ldv29RTIFUcoZ4QLbTcOkui7y55Pr8gx/xZdvzjbJow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592842; c=relaxed/simple;
-	bh=7bbjpYno3UXV1CDqBaFOAjMEhHqDzxwoYlqLfX3d9XM=;
+	s=arc-20240116; t=1761592312; c=relaxed/simple;
+	bh=lqXh6TnqwynwgbIm8aDrN5Tgdohvb3yL9vPSN07qF6k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X0QNzXIITuhOL8LEAhYyanHb0ad1jP0ADxpGBmadhjYXswa/VUlz9DOrnBL/9gqEaKF8MVMRQxIxCp7QysFgKC10tOL/YhXPEm4cTbvEMuK2KNKmIshRyU140B6ZHnCAhuIkrzYR7FSoTMjr3SIABB1dP5zXr2vwikHtMNW6d3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uG0R/+9j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8B3C4CEF1;
-	Mon, 27 Oct 2025 19:20:41 +0000 (UTC)
+	 MIME-Version; b=Mbch1AK/+T0wwFheRqxTcEIA62MH6Y6U0RTp2XaRejfJfUBF0s0ebvMQHccFbXDEEp7MI110PLDlZtBgxx7H++cjzS8q9PmanBVbSKfxMtuaMCVleatG1qU8GSzwtdigfVKPbWp2QWZEPt6QAkZZbGVOatqMPXKx2PFJJTa6BxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q03aQDgd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C79C4CEF1;
+	Mon, 27 Oct 2025 19:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761592842;
-	bh=7bbjpYno3UXV1CDqBaFOAjMEhHqDzxwoYlqLfX3d9XM=;
+	s=korg; t=1761592312;
+	bh=lqXh6TnqwynwgbIm8aDrN5Tgdohvb3yL9vPSN07qF6k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uG0R/+9jyKgZXr08sy2BgQKrIbkiHETwygrEKN/V6aqiurgPKvcuba1GFkCBgtpNp
-	 1ZC7NtPAYr/6dPj6KATGpFp+m6aGbbJCP7kbilzdU5KQv4CLX8VHVVDtWL7VR8+5j3
-	 pKhrdgzN4mHMVVVvSBOL6/EZOst1phaqbjdnuNGY=
+	b=q03aQDgdVzH+GSIbJ/2a12HKacRK3tW5sWKihWHQVQSiq2+lKXQL1m1dJay7VBx8E
+	 OflbVgIJ019p9ITSoyio79F5DZmzykIzl1KaFMvbvuYy668paenX9bTvatHRslNeC2
+	 iVlCrn9IswWBpNYG9J+8u63puPYzlbAJcr1FwiKo=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,12 +48,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 007/117] hfsplus: fix KMSAN uninit-value issue in hfsplus_delete_cat()
-Date: Mon, 27 Oct 2025 19:35:33 +0100
-Message-ID: <20251027183454.133616765@linuxfoundation.org>
+Subject: [PATCH 6.1 073/157] hfsplus: fix KMSAN uninit-value issue in hfsplus_delete_cat()
+Date: Mon, 27 Oct 2025 19:35:34 +0100
+Message-ID: <20251027183503.239553056@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
-References: <20251027183453.919157109@linuxfoundation.org>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+References: <20251027183501.227243846@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -224,7 +224,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+), 5 deletions(-)
 
 diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 97920202790f9..51364aacd4626 100644
+index 1986b4f18a901..8c086f16dd589 100644
 --- a/fs/hfsplus/super.c
 +++ b/fs/hfsplus/super.c
 @@ -67,13 +67,26 @@ struct inode *hfsplus_iget(struct super_block *sb, unsigned long ino)
