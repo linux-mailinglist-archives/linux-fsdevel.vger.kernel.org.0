@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-65788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109D1C10F25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:27:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E07C10F3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 20:27:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26151A27E71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:23:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52DB65033DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE4A202963;
-	Mon, 27 Oct 2025 19:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D64E329C4E;
+	Mon, 27 Oct 2025 19:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ea0gW6JP"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="L1G4dBAT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776622D8377;
-	Mon, 27 Oct 2025 19:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5D11E47CA;
+	Mon, 27 Oct 2025 19:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761592870; cv=none; b=P0Ks3LL2mkeaE7kiraB4t7aFat2Zd0kvoRvRA6ILlAsTZf/iuNImbQQmrPV/8sg299uQsNGNPG5mhDvL7uX/GUulvlJFPSiuUipTp/a6xFP8+a0Hhzrp5/G4euX5MfM597drkYsIkkaG1dGc4brO7jb5Rzt31p1LVajamSwCCus=
+	t=1761592743; cv=none; b=UhdLISIFXO/rdR42/0HsMaxfoRvsa6LKaBxOpFl4o8fRbgFcl3e1ZibqpMjczeZld3XcHr20ErSaPjkcAR1tIeoKvZFhFp2aLjc2RwMdtl1UDIedgoK9iKgp4FtOhwe0JPqqxs9EZTgVTV0pJLHxzepOu8FRkCbecYjhlDu0pLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761592870; c=relaxed/simple;
-	bh=xeMObYoLgmoFSY4R0nHyIOsoq7aiRB2pRxIiALWll34=;
+	s=arc-20240116; t=1761592743; c=relaxed/simple;
+	bh=y4pka1w29PC/VgsouxsFLMaNNFTMzKtWMoz4Zr3Jqxo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NmGuklKPVvEXl/9FixYfJrvHwe8d6cKPAo+2NuQygbqgLgZ5Q17Kq7uaWqOzXTMbwTL2xb4xinJAhBryByBMoqVdrLiIbyF7vzDMYzHZYQDv9Al58qL8brvFZJZYjVkuqad8M1iGeEWYoX+E+GdYzXnzD8+ZcfofSEQXDWd+miQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ea0gW6JP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE2B4C4CEFD;
-	Mon, 27 Oct 2025 19:21:09 +0000 (UTC)
+	 MIME-Version; b=f9nSDq7SIqRfMPAH9sXbAcdiazRCUONl1mURacuEh8pB1ynH22j63Bfn/LeyWzlPH3aPXMSZxAtgUy9gpuncidQPLnJjMp6ahPrAL+SWwBPEtxGW0+WiJSeRi17dydcRGUzBFLI7bWoLFdEhrD3MFqzUxekO450tuRlAED1k54k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=L1G4dBAT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA8CAC4CEFD;
+	Mon, 27 Oct 2025 19:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761592870;
-	bh=xeMObYoLgmoFSY4R0nHyIOsoq7aiRB2pRxIiALWll34=;
+	s=korg; t=1761592743;
+	bh=y4pka1w29PC/VgsouxsFLMaNNFTMzKtWMoz4Zr3Jqxo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ea0gW6JPy7jsbSnzpWdfB6KmS6xvNGKkkkTxqGxGsWBy9wV/QU5igZev7weMqgawK
-	 sVZoZX8gcifmsIg/LqR0/ya5A5HigD8NF1qmP/DfIZEwAfIhPS8uYg8+Zm9pnVuXaG
-	 LL1dJD0J4A1XNA/JnjxFr9aUySj7S5VzU6DXW88k=
+	b=L1G4dBATTGfJrDh7mJpehGV8jJNGGUJWyuwTouE2nvyrfcUyNwqjjFcAtaMZeh6j2
+	 KF6CwVv/lZGhx17vn0BaoCk0RsIewnTKCi4VMYtIgzKWmwZRZC3I6FYRAJGL+Qn7RJ
+	 kaMA1Y3IG7IvqTJkgBB6kT21Hr7XE1UoaddRa2Vw=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,13 +49,14 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-unionfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.12 044/117] fs/notify: call exportfs_encode_fid with s_umount
-Date: Mon, 27 Oct 2025 19:36:10 +0100
-Message-ID: <20251027183455.182140414@linuxfoundation.org>
+	linux-kernel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6 79/84] fs/notify: call exportfs_encode_fid with s_umount
+Date: Mon, 27 Oct 2025 19:37:08 +0100
+Message-ID: <20251027183440.915948125@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
-References: <20251027183453.919157109@linuxfoundation.org>
+In-Reply-To: <20251027183438.817309828@linuxfoundation.org>
+References: <20251027183438.817309828@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,13 +68,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
 From: Jakub Acs <acsjakub@amazon.de>
 
-commit a7c4bb43bfdc2b9f06ee9d036028ed13a83df42a upstream.
+[ Upstream commit a7c4bb43bfdc2b9f06ee9d036028ed13a83df42a ]
 
 Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
 the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
@@ -144,6 +145,8 @@ Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: stable@vger.kernel.org
 Signed-off-by: Jan Kara <jack@suse.cz>
+[ Adjust context ]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
  fs/notify/fdinfo.c |    6 ++++++
@@ -159,14 +162,14 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  #if defined(CONFIG_PROC_FS)
  
-@@ -46,7 +47,12 @@ static void show_mark_fhandle(struct seq
- 
- 	size = f->handle_bytes >> 2;
+@@ -50,7 +51,12 @@ static void show_mark_fhandle(struct seq
+ 	f.handle.handle_bytes = sizeof(f.pad);
+ 	size = f.handle.handle_bytes >> 2;
  
 +	if (!super_trylock_shared(inode->i_sb))
 +		return;
 +
- 	ret = exportfs_encode_fid(inode, (struct fid *)f->f_handle, &size);
+ 	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
 +	up_read(&inode->i_sb->s_umount);
 +
  	if ((ret == FILEID_INVALID) || (ret < 0))
