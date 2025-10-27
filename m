@@ -1,92 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-65752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CFCC0FDF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:15:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34357C10494
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 19:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37E619A5607
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 18:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7615613E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 18:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F4D2D5925;
-	Mon, 27 Oct 2025 18:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8B9322A04;
+	Mon, 27 Oct 2025 18:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiOkil6K"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0q9kIrVK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B415229E11B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 18:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97168324B19;
+	Mon, 27 Oct 2025 18:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761588934; cv=none; b=VbMTN7IHmdSDsib7yUm5F9YQRTq8ASpdznHfRw7ZA7zpcPI+C3AsqqiXiLGz3CQo9ST3oorHjf4Mtkk3V6fLGuLqUdWo0Ji8rRRXqlTF8Xp6Is4TYEu+DNN00dxunewrTnm7ZAf19Dr0FTwc2NNe7jr8sPyd09vJfoXu/sjX8HY=
+	t=1761590861; cv=none; b=pip1FMh2OwxwizHW/cXfvtD2R2kWNMeBPbyZJjG49SCSuaJ7xsPHguCpUhSnlADMEUCnwTCTSHBsPC3rsh9Y9oL2/8IacNu6yBuUXFxCC+R8N7jx2Y7wqmqQQS3mJwUigcD210reZTsLGVciZE36JUBhm0Jzhw6fEHvF61DK1vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761588934; c=relaxed/simple;
-	bh=qf5mZXRJB/Ml/ez4I77Xj9dNkrjjc3K/ZQL94A4HegM=;
+	s=arc-20240116; t=1761590861; c=relaxed/simple;
+	bh=jgYGkAzWIC93eJh6OuE/520c9zft4vV+txrDMXkfl4k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hG3JDlz1m5pJAORFv3YyKvY0hfsYktJsatwZT3B2JBj+hSQk8e1bwRm9SVIzUyMni2NyxBUWHG+SW9dK4V2Q1PuPBV7mDfIiwYMjcVm0pCDD7yAfj9681eUW9TP4V+FqbSki99bulBdHEuO2tUiTk1wdf9d20ICPTuYoQu2jxD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiOkil6K; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7a26ea3bf76so6644758b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 11:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761588932; x=1762193732; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VtUaZrhL/bfjDk0nNCKdG5tI+MxsmiHujIMbttxPGKw=;
-        b=LiOkil6KHR0IC6sjMt6mheUjln/z3P1OjYf27LScP+j8A8lNPZcK6j6WcjjX2NHZPG
-         3n69TcUwe87JDSNCUaQNV/TMY4EqxaopeNk5Ggat7+yaVIsqrW6iIlKsvXW9kMw0WG9n
-         9zUQNDJRl1oF/jrot67YrRES9tzp3qMzsd8BnxQICbq3H7CSiD61Yc+yfFFbcMxHfSW8
-         aZtm0FHL1qvjHzskstOWqJKwOjgT2S73zV6k7qFrw3r+U2KfYnvH1P0+W4t3UX5063d4
-         1/Cg/EzxT25Dh5Rj3I1zKtydcy0G+qsVJUvpytKoUgsitqw+K4JW+iMWOc6N9iVbuHEV
-         OaTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761588932; x=1762193732;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VtUaZrhL/bfjDk0nNCKdG5tI+MxsmiHujIMbttxPGKw=;
-        b=NqHY/LNJsfbiOXygG6mWDl7+iaaCUaVzDnRHd2iKyf0Rguu0ADcVtOEONe0TprO8Z+
-         E9kLsKeQdFLNSb9cQeEvMthjBMsNoB9HkbDKfAgLNp2MhBSzMqqeCIc2frZPKNhddRWC
-         v/TUpzlsE7c2tcYT6x9BAyYtHkuQeQO6NLMVGFuP6HAl+nb76WZJG4SKjwEkV+3JiKP2
-         UR5gQRSan8GSiD6liWxoKTkQkNik3x1g98jTOtAViFWRMoK00gtS4mPR+tay4QGE4JV9
-         OZYeNAccVjNP83wOx8V+nnSvStk7kqzRHkccg5yQrHP+GdKmdp4xIVxBs9LFyXNQ8vF9
-         LoHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW4VzkN9WcEUwDBz7SPzFToFIvcpiIvjinKBvcTUuRj6Mt8WkX8/qFe/Lhg4as3RQpNrSrpL9CS+Mo6rWj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN18TBZA5pFbD7oucJKqeRdGZXvKO6vhXsxfBPVFn15YqjZOo2
-	wk6buYgY+LcJMP6EXhNxx/J2PhjZoH6+AxGNNcnl4ucaSNspisN4q/qq
-X-Gm-Gg: ASbGnctJ2w63xxdDv2dwOhwn6GZUZsSF+Qupp9U8/8XPXpAxCPIEpjGWmlVVg9NJxhQ
-	VGBPVdfkdOp1Tn/23YayD/xaNNJqweP6cE4LBvtXw+QbspKRAGn3MeZpl6u0FfvtpyVUdttK+IY
-	cROnKDyL634BazNQFUoShF57O0uWJX9TZnNff8mzlMeIwG7SWhBeqYZ+Dq10GRlsaM7FZO5NjbY
-	dPCStJJbQCtCBopgsL9fKIx2oP4la9HRYEUHa1fT8++LBb8vwaux7mrH3c+MzraM0xhL7IT8Ys1
-	na6NR1yI70f6xxNSvbk5yoDkrz7W32gndrNrAD3YSXX9YmQXo0Bx4nhvpsHRLgytqVVo6oAiWly
-	94x/PORQ0JOO1TzKeM2hoChadxIuHOOBy1PjXSIooBAG5a/QA208gJsSlpwKujaIXPImrGziDYH
-	P6sbGSrmBrKBBU18I+OC4INf+YgdOGItmgcOBEtQ==
-X-Google-Smtp-Source: AGHT+IGZ0U8B1F1i0hfqsUO2ZEiom6fQEhM/HOacE0WFyICjUEsvbzSnum3cX5y4ZIoP3qDLDLGPPQ==
-X-Received: by 2002:a17:902:e845:b0:293:623:3246 with SMTP id d9443c01a7336-294cb3944e0mr8166645ad.13.1761588931630;
-        Mon, 27 Oct 2025 11:15:31 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:4a::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0ac07sm89490835ad.43.2025.10.27.11.15.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 11:15:31 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: bfoster@redhat.com,
-	hch@infradead.org,
-	djwong@kernel.org,
+	 MIME-Version; b=AXnJ5NFbqiVJqz4svizN22Qv72QILu4K/AwZ0O1NAlg03DlVeLxwv6KhHbSQYq74l3ysteHAt+v7Cr/gl7Xcz0ZTJ1gzz5uUbSuYNAgS1a4jPS5PZgz7fI46tZMfF+UfXp52eZAmDn+d2zUlnMsCsgwMtYxhH4q+UWGMJl7GKjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0q9kIrVK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F1CDC4CEF1;
+	Mon, 27 Oct 2025 18:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761590861;
+	bh=jgYGkAzWIC93eJh6OuE/520c9zft4vV+txrDMXkfl4k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=0q9kIrVK7W4FKQ6Jaid9pq8fpzfxbez1XWmVfkygrFGXFET4qKvsQgu38s/d1xhS3
+	 Knzz4abEx7BVV2Fzv1+qDSRpYru+Ei0BwJf8wf9Fw2aV2iM+cHSV4fnhnpPKNE7gYD
+	 UQQD/gpRypr7e0ukfqpyjWD0CTsG7R3DL2PZODZg=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Jiaming Zhang <r772577952@gmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
 	linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 2/2] iomap: fix race when reading in all bytes of a folio
-Date: Mon, 27 Oct 2025 11:12:45 -0700
-Message-ID: <20251027181245.2657535-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251027181245.2657535-1-joannelkoong@gmail.com>
-References: <20251027181245.2657535-1-joannelkoong@gmail.com>
+	syzkaller@googlegroups.com
+Subject: [PATCH 5.4 171/224] hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
+Date: Mon, 27 Oct 2025 19:35:17 +0100
+Message-ID: <20251027183513.471373124@linuxfoundation.org>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251027183508.963233542@linuxfoundation.org>
+References: <20251027183508.963233542@linuxfoundation.org>
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,92 +65,228 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a race where if all bytes in a folio need to get read in and
-the filesystem finishes reading the bytes in before the call to
-iomap_read_end(), then bytes_not_submitted in iomap_read_end() will be 0
-and the following "ifs->read_bytes_pending -= bytes_not_submitted" will
-also be 0 which will trigger an extra folio_end_read() call. This extra
-folio_end_read() unlocks the folio for the 2nd time, which sets the lock
-bit on the folio, resulting in a permanent lockup.
+5.4-stable review patch.  If anyone has any objections, please let me know.
 
-Fix this by returning from iomap_read_end() early if all bytes are read
-in by the filesystem.
+------------------
 
-Additionally, add some comments to clarify how this logic works.
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Fixes: 51311f045375 ("iomap: track pending read bytes more optimally")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Brian Foster <bfoster@redhat.com>
+commit 42520df65bf67189541a425f7d36b0b3e7bd7844 upstream.
+
+The hfsplus_strcasecmp() logic can trigger the issue:
+
+[  117.317703][ T9855] ==================================================================
+[  117.318353][ T9855] BUG: KASAN: slab-out-of-bounds in hfsplus_strcasecmp+0x1bc/0x490
+[  117.318991][ T9855] Read of size 2 at addr ffff88802160f40c by task repro/9855
+[  117.319577][ T9855]
+[  117.319773][ T9855] CPU: 0 UID: 0 PID: 9855 Comm: repro Not tainted 6.17.0-rc6 #33 PREEMPT(full)
+[  117.319780][ T9855] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  117.319783][ T9855] Call Trace:
+[  117.319785][ T9855]  <TASK>
+[  117.319788][ T9855]  dump_stack_lvl+0x1c1/0x2a0
+[  117.319795][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319803][ T9855]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  117.319808][ T9855]  ? rcu_is_watching+0x15/0xb0
+[  117.319816][ T9855]  ? lock_release+0x4b/0x3e0
+[  117.319821][ T9855]  ? __kasan_check_byte+0x12/0x40
+[  117.319828][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319835][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
+[  117.319842][ T9855]  print_report+0x17e/0x7e0
+[  117.319848][ T9855]  ? __virt_addr_valid+0x1c8/0x5c0
+[  117.319855][ T9855]  ? __virt_addr_valid+0x4a5/0x5c0
+[  117.319862][ T9855]  ? __phys_addr+0xd3/0x180
+[  117.319869][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
+[  117.319876][ T9855]  kasan_report+0x147/0x180
+[  117.319882][ T9855]  ? hfsplus_strcasecmp+0x1bc/0x490
+[  117.319891][ T9855]  hfsplus_strcasecmp+0x1bc/0x490
+[  117.319900][ T9855]  ? __pfx_hfsplus_cat_case_cmp_key+0x10/0x10
+[  117.319906][ T9855]  hfs_find_rec_by_key+0xa9/0x1e0
+[  117.319913][ T9855]  __hfsplus_brec_find+0x18e/0x470
+[  117.319920][ T9855]  ? __pfx_hfsplus_bnode_find+0x10/0x10
+[  117.319926][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
+[  117.319933][ T9855]  ? __pfx___hfsplus_brec_find+0x10/0x10
+[  117.319942][ T9855]  hfsplus_brec_find+0x28f/0x510
+[  117.319949][ T9855]  ? __pfx_hfs_find_rec_by_key+0x10/0x10
+[  117.319956][ T9855]  ? __pfx_hfsplus_brec_find+0x10/0x10
+[  117.319963][ T9855]  ? __kmalloc_noprof+0x2a9/0x510
+[  117.319969][ T9855]  ? hfsplus_find_init+0x8c/0x1d0
+[  117.319976][ T9855]  hfsplus_brec_read+0x2b/0x120
+[  117.319983][ T9855]  hfsplus_lookup+0x2aa/0x890
+[  117.319990][ T9855]  ? __pfx_hfsplus_lookup+0x10/0x10
+[  117.320003][ T9855]  ? d_alloc_parallel+0x2f0/0x15e0
+[  117.320008][ T9855]  ? __lock_acquire+0xaec/0xd80
+[  117.320013][ T9855]  ? __pfx_d_alloc_parallel+0x10/0x10
+[  117.320019][ T9855]  ? __raw_spin_lock_init+0x45/0x100
+[  117.320026][ T9855]  ? __init_waitqueue_head+0xa9/0x150
+[  117.320034][ T9855]  __lookup_slow+0x297/0x3d0
+[  117.320039][ T9855]  ? __pfx___lookup_slow+0x10/0x10
+[  117.320045][ T9855]  ? down_read+0x1ad/0x2e0
+[  117.320055][ T9855]  lookup_slow+0x53/0x70
+[  117.320065][ T9855]  walk_component+0x2f0/0x430
+[  117.320073][ T9855]  path_lookupat+0x169/0x440
+[  117.320081][ T9855]  filename_lookup+0x212/0x590
+[  117.320089][ T9855]  ? __pfx_filename_lookup+0x10/0x10
+[  117.320098][ T9855]  ? strncpy_from_user+0x150/0x290
+[  117.320105][ T9855]  ? getname_flags+0x1e5/0x540
+[  117.320112][ T9855]  user_path_at+0x3a/0x60
+[  117.320117][ T9855]  __x64_sys_umount+0xee/0x160
+[  117.320123][ T9855]  ? __pfx___x64_sys_umount+0x10/0x10
+[  117.320129][ T9855]  ? do_syscall_64+0xb7/0x3a0
+[  117.320135][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320141][ T9855]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320145][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.320150][ T9855]  ? exc_page_fault+0x9f/0xf0
+[  117.320154][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.320158][ T9855] RIP: 0033:0x7f7dd7908b07
+[  117.320163][ T9855] Code: 23 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 08
+[  117.320167][ T9855] RSP: 002b:00007ffd5ebd9698 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+[  117.320172][ T9855] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7dd7908b07
+[  117.320176][ T9855] RDX: 0000000000000009 RSI: 0000000000000009 RDI: 00007ffd5ebd9740
+[  117.320179][ T9855] RBP: 00007ffd5ebda780 R08: 0000000000000005 R09: 00007ffd5ebd9530
+[  117.320181][ T9855] R10: 00007f7dd799bfc0 R11: 0000000000000202 R12: 000055e2008b32d0
+[  117.320184][ T9855] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[  117.320189][ T9855]  </TASK>
+[  117.320190][ T9855]
+[  117.351311][ T9855] Allocated by task 9855:
+[  117.351683][ T9855]  kasan_save_track+0x3e/0x80
+[  117.352093][ T9855]  __kasan_kmalloc+0x8d/0xa0
+[  117.352490][ T9855]  __kmalloc_noprof+0x288/0x510
+[  117.352914][ T9855]  hfsplus_find_init+0x8c/0x1d0
+[  117.353342][ T9855]  hfsplus_lookup+0x19c/0x890
+[  117.353747][ T9855]  __lookup_slow+0x297/0x3d0
+[  117.354148][ T9855]  lookup_slow+0x53/0x70
+[  117.354514][ T9855]  walk_component+0x2f0/0x430
+[  117.354921][ T9855]  path_lookupat+0x169/0x440
+[  117.355325][ T9855]  filename_lookup+0x212/0x590
+[  117.355740][ T9855]  user_path_at+0x3a/0x60
+[  117.356115][ T9855]  __x64_sys_umount+0xee/0x160
+[  117.356529][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.356920][ T9855]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  117.357429][ T9855]
+[  117.357636][ T9855] The buggy address belongs to the object at ffff88802160f000
+[  117.357636][ T9855]  which belongs to the cache kmalloc-2k of size 2048
+[  117.358827][ T9855] The buggy address is located 0 bytes to the right of
+[  117.358827][ T9855]  allocated 1036-byte region [ffff88802160f000, ffff88802160f40c)
+[  117.360061][ T9855]
+[  117.360266][ T9855] The buggy address belongs to the physical page:
+[  117.360813][ T9855] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21608
+[  117.361562][ T9855] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  117.362285][ T9855] flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+[  117.362929][ T9855] page_type: f5(slab)
+[  117.363282][ T9855] raw: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
+[  117.364015][ T9855] raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  117.364750][ T9855] head: 00fff00000000040 ffff88801a842f00 ffffea0000932000 dead000000000002
+[  117.365491][ T9855] head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
+[  117.366232][ T9855] head: 00fff00000000003 ffffea0000858201 00000000ffffffff 00000000ffffffff
+[  117.366968][ T9855] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+[  117.367711][ T9855] page dumped because: kasan: bad access detected
+[  117.368259][ T9855] page_owner tracks the page as allocated
+[  117.368745][ T9855] page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN1
+[  117.370541][ T9855]  post_alloc_hook+0x240/0x2a0
+[  117.370954][ T9855]  get_page_from_freelist+0x2101/0x21e0
+[  117.371435][ T9855]  __alloc_frozen_pages_noprof+0x274/0x380
+[  117.371935][ T9855]  alloc_pages_mpol+0x241/0x4b0
+[  117.372360][ T9855]  allocate_slab+0x8d/0x380
+[  117.372752][ T9855]  ___slab_alloc+0xbe3/0x1400
+[  117.373159][ T9855]  __kmalloc_cache_noprof+0x296/0x3d0
+[  117.373621][ T9855]  nexthop_net_init+0x75/0x100
+[  117.374038][ T9855]  ops_init+0x35c/0x5c0
+[  117.374400][ T9855]  setup_net+0x10c/0x320
+[  117.374768][ T9855]  copy_net_ns+0x31b/0x4d0
+[  117.375156][ T9855]  create_new_namespaces+0x3f3/0x720
+[  117.375613][ T9855]  unshare_nsproxy_namespaces+0x11c/0x170
+[  117.376094][ T9855]  ksys_unshare+0x4ca/0x8d0
+[  117.376477][ T9855]  __x64_sys_unshare+0x38/0x50
+[  117.376879][ T9855]  do_syscall_64+0xf3/0x3a0
+[  117.377265][ T9855] page last free pid 9110 tgid 9110 stack trace:
+[  117.377795][ T9855]  __free_frozen_pages+0xbeb/0xd50
+[  117.378229][ T9855]  __put_partials+0x152/0x1a0
+[  117.378625][ T9855]  put_cpu_partial+0x17c/0x250
+[  117.379026][ T9855]  __slab_free+0x2d4/0x3c0
+[  117.379404][ T9855]  qlist_free_all+0x97/0x140
+[  117.379790][ T9855]  kasan_quarantine_reduce+0x148/0x160
+[  117.380250][ T9855]  __kasan_slab_alloc+0x22/0x80
+[  117.380662][ T9855]  __kmalloc_noprof+0x232/0x510
+[  117.381074][ T9855]  tomoyo_supervisor+0xc0a/0x1360
+[  117.381498][ T9855]  tomoyo_env_perm+0x149/0x1e0
+[  117.381903][ T9855]  tomoyo_find_next_domain+0x15ad/0x1b90
+[  117.382378][ T9855]  tomoyo_bprm_check_security+0x11c/0x180
+[  117.382859][ T9855]  security_bprm_check+0x89/0x280
+[  117.383289][ T9855]  bprm_execve+0x8f1/0x14a0
+[  117.383673][ T9855]  do_execveat_common+0x528/0x6b0
+[  117.384103][ T9855]  __x64_sys_execve+0x94/0xb0
+[  117.384500][ T9855]
+[  117.384706][ T9855] Memory state around the buggy address:
+[  117.385179][ T9855]  ffff88802160f300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  117.385854][ T9855]  ffff88802160f380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  117.386534][ T9855] >ffff88802160f400: 00 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.387204][ T9855]                       ^
+[  117.387566][ T9855]  ffff88802160f480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.388243][ T9855]  ffff88802160f500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  117.388918][ T9855] ==================================================================
+
+The issue takes place if the length field of struct hfsplus_unistr
+is bigger than HFSPLUS_MAX_STRLEN. The patch simply checks
+the length of comparing strings. And if the strings' length
+is bigger than HFSPLUS_MAX_STRLEN, then it is corrected
+to this value.
+
+v2
+The string length correction has been added for hfsplus_strcmp().
+
+Reported-by: Jiaming Zhang <r772577952@gmail.com>
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+cc: syzkaller@googlegroups.com
+Link: https://lore.kernel.org/r/20250919191243.1370388-1-slava@dubeyko.com
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/iomap/buffered-io.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ fs/hfsplus/unicode.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4c0d66612a67..654c10a63dc1 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -358,12 +358,37 @@ static void iomap_read_init(struct folio *folio)
- 	if (ifs) {
- 		size_t len = folio_size(folio);
+--- a/fs/hfsplus/unicode.c
++++ b/fs/hfsplus/unicode.c
+@@ -40,6 +40,18 @@ int hfsplus_strcasecmp(const struct hfsp
+ 	p1 = s1->unicode;
+ 	p2 = s2->unicode;
  
-+		/*
-+		 * ifs->read_bytes_pending is used to track how many bytes are
-+		 * read in asynchronously by the IO helper. We need to track
-+		 * this so that we can know when the IO helper has finished
-+		 * reading in all the necessary ranges of the folio and can end
-+		 * the read.
-+		 *
-+		 * Increase ->read_bytes_pending by the folio size to start.
-+		 * We'll subtract uptodate/zeroed ranges that did not require
-+		 * IO in iomap_read_end() after we're done processing the folio.
-+		 * We do this because otherwise, we would have to increment
-+		 * ifs->read_bytes_pending every time a range in the folio needs
-+		 * to be read in, which can get expensive since the spinlock
-+		 * needs to be held whenever modifying ifs->read_bytes_pending.
-+		 */
- 		spin_lock_irq(&ifs->state_lock);
- 		ifs->read_bytes_pending += len;
- 		spin_unlock_irq(&ifs->state_lock);
- 	}
- }
- 
-+/*
-+ * This ends IO if no bytes were submitted to an IO helper.
-+ *
-+ * If all bytes were submitted to the IO helper then the IO helper is
-+ * responsible for ending IO.
-+ *
-+ * Otherwise, this calibrates ifs->read_bytes_pending to represent only the
-+ * submitted bytes (see comment in iomap_read_init()). If the IO helper has
-+ * already finished reading in all the submitted bytes, then this will end IO.
-+ */
- static void iomap_read_end(struct folio *folio, size_t bytes_submitted)
- {
- 	struct iomap_folio_state *ifs;
-@@ -381,9 +406,21 @@ static void iomap_read_end(struct folio *folio, size_t bytes_submitted)
- 	ifs = folio->private;
- 	if (ifs) {
- 		bool end_read, uptodate;
-+		/*
-+		 * Subtract any bytes that were initially accounted to
-+		 * read_bytes_pending but skipped for IO.
-+		 */
- 		size_t bytes_not_submitted = folio_size(folio) -
- 				bytes_submitted;
- 
-+		/*
-+		 * If all bytes were submitted for IO then we're done, as the
-+		 * IO helper will handle everything in their call(s) to
-+		 * iomap_finish_folio_read().
-+		 */
-+		if (!bytes_not_submitted)
-+			return;
++	if (len1 > HFSPLUS_MAX_STRLEN) {
++		len1 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s1->length), len1);
++	}
 +
- 		spin_lock_irq(&ifs->state_lock);
- 		ifs->read_bytes_pending -= bytes_not_submitted;
- 		/*
--- 
-2.47.3
++	if (len2 > HFSPLUS_MAX_STRLEN) {
++		len2 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s2->length), len2);
++	}
++
+ 	while (1) {
+ 		c1 = c2 = 0;
+ 
+@@ -74,6 +86,18 @@ int hfsplus_strcmp(const struct hfsplus_
+ 	p1 = s1->unicode;
+ 	p2 = s2->unicode;
+ 
++	if (len1 > HFSPLUS_MAX_STRLEN) {
++		len1 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s1->length), len1);
++	}
++
++	if (len2 > HFSPLUS_MAX_STRLEN) {
++		len2 = HFSPLUS_MAX_STRLEN;
++		pr_err("invalid length %u has been corrected to %d\n",
++			be16_to_cpu(s2->length), len2);
++	}
++
+ 	for (len = min(len1, len2); len > 0; len--) {
+ 		c1 = be16_to_cpu(*p1);
+ 		c2 = be16_to_cpu(*p2);
+
 
 
