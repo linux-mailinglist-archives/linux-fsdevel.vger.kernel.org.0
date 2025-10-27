@@ -1,206 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-65737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29789C0F5ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:39:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6952AC0F623
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 17:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A315188D3A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 16:37:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 893FB4F6A74
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 16:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18585314B90;
-	Mon, 27 Oct 2025 16:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CFA319619;
+	Mon, 27 Oct 2025 16:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gbxakDrD"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ey7n90JD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xoIbsUk2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE001314B6E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 16:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7274830AAC8;
+	Mon, 27 Oct 2025 16:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761582723; cv=none; b=h3uQQx5BeCGEwsp83dpE2MuKf1VAKwVJA08O7eocd3eJPcVIRitrsZc+/NDbUmy7ukYrbFSJtipi8dCEEOOzeGKwf9E9ohKqy8hU2QtTxAaHwEPuZQPM0rkwdP4rf9LohK+y1Gukq+lKFVg/Ci0pdFVWMmxbRyX415/qZ2PUHDY=
+	t=1761582990; cv=none; b=TQsRAK0ApbGR9hjH+fQW93uUhMw8UIsYUrvaRK1CSAzlDvDXwfIk3I+uZXqJYqfPnvq/K8lqOTGriXk+RyZAQ6ymJlIppLNJSdb/VuQx67MJ/X2GiZa39MIQ2dnK0wCYPaiCT5+Cq9HGryrK343KeutyRFjPGEcOHSBYbZ6T864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761582723; c=relaxed/simple;
-	bh=iNeib+L/sv3iKHk1dJkrzOT6vJ28kpHPaFmhxbuhswo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Chv8Yf5Lzccn9c/Kuc/+dtDxMadryq/CTeheEBChBz4+aXjQ2QYl2xirfo5nU5qVcJpqsJUAomkEAAhY/UdDEHrknz+oIy1rnlv4eYj3nDgh0GZRYN9gmhmGagHXiDnu5GLCzH81K4QRPuluJuRpWMQA9A9qE1MM44MOBjfOr4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gbxakDrD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761582720;
+	s=arc-20240116; t=1761582990; c=relaxed/simple;
+	bh=NF5bSX0dyXfyOuPerzSokt+xmjFMmp5Twg/WVnHSNyg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ieuymSF2TINMxXy0pJUb6SJu5c9OF/TQJY7CAtwjvy72TLxyjQzxpxYvrplfIq2IJXpt5qiGQNKEl3QYhMt9U/ncBzQPJ/IFSlXa3kFRSihUtYy3TayC1uMx7i0mgP3rI1BfAkdYI+hdV7bZ0b8hgIhFQrjGiBaAx9yDD/L0ukc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ey7n90JD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xoIbsUk2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761582987;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a4SSBM/POjfRiBE6DHhiqMi9Y8mKWaQroye8KGKfKMM=;
-	b=gbxakDrDCbMabVd6hrUKAHuVAusX/ByplZAFX8NLNCD67r+pbXbddv+TCLDgbI4TmB5Fi9
-	mHnM+MJBWXcppVAPZnbVTpPdx8iBz2ehlDQlMIa+NYr5ArvcMhOTYYc9E6YzPUDsLWpXzE
-	WxWlwqGOj3Ii6xoAim2Ab/PrcoeQt74=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-604-tf2kcxpyMPSYmvPQVKpavA-1; Mon, 27 Oct 2025 12:31:59 -0400
-X-MC-Unique: tf2kcxpyMPSYmvPQVKpavA-1
-X-Mimecast-MFC-AGG-ID: tf2kcxpyMPSYmvPQVKpavA_1761582718
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-477124f7c00so3927535e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 09:31:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761582718; x=1762187518;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a4SSBM/POjfRiBE6DHhiqMi9Y8mKWaQroye8KGKfKMM=;
-        b=e30v6EJW7P1/KfFFWPA7zvv8ID2kNam6aOQJ5Xzg/Rq1fGZH/8Q+yDDkLhhV4p0wKz
-         XoLsExSG8CMdj9p5wVhwaqr8c14DG06hCsepmYrVKPznmzB940GcEisFIHOVGhWITps6
-         W+zbDpNYOj9VulAST64z55ryPoCgcLuM3ujPJHmBjC/MKv5rzDlwHis+iRHA2Chb5QAK
-         V0d2KBSlS0+Ur9Kup7kFHFgUbkcNvfjep3zlAtT4ouY6dDDmy4kjkgURNB6qspNRrjKC
-         hrABFl60NIhAPn+wCJPgssg7R+ByVCyCUC7t1fwbjcnEsdeuMpoHdZIVsIR6Gm9XJhFh
-         WY3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWmRZQoQoD8q6PemvFo4pRU7/5sYVPb+JXf2cEKmeCgZebOSlNrC3F388ImjO5HeHXEPr3Vg8xeYTOWkIpd@vger.kernel.org
-X-Gm-Message-State: AOJu0YybrV+0zKzygHem7IUKT3jE53NJfgn9qHPokLPeeBu10AOlMac3
-	7hOte/cWe/cOQ17+NfMyNVMT3fofNpuX7EC40aXr9mGPoraephTX//fvLKcLntyv0MlB4j38FoB
-	FgaLAP6CDE8siscFlUgNrpvNMFRHtt4tHWanlXTbExs2ZMLwGOxTUuN8+OXmjeqvtM+c=
-X-Gm-Gg: ASbGncuppD3lfYRIWiudNDm9Ofd++vflelhUd1PU91TP+pBZ9EJ5TkfoPl48zvuhyNe
-	gpjJx67qOvwc2eMWf9rQT/3L27x2xspxqmMsR4gfy5DMTOj4dTkUzAryl93BXq5b5uTWNLSzkaj
-	lZy3O8Q1jywasVMNHBmEhlO6K7KbDtv/pGpM9nJeM7priXs/+bIWFNJ5DOUskNN9ZMLA4hu0m0N
-	tneO9NG6bvGyeHNgecH0HHrwaYSGVo0j8kBKbcfkiQyWQcjqebvWtv3pf3u1+vIex5NWVq9obyA
-	SCI73+19aOIElEuuHmn3nOAeGPZR3aoqmzH5OTA/Pa/T+MCWIxhr9j/QdkynoIJ0+AEvBWIycBe
-	hpSXeroTEiKO/dKdnk8zOuUykoGzKYhgbek/a4hXojS3SareWZzhiz53QTPZbwV/CYUWHkLBZj9
-	eIeTPEp4hQpf2+13OutKq4JptuHqM=
-X-Received: by 2002:a05:600c:540d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-47717e6ae77mr2486235e9.40.1761582717995;
-        Mon, 27 Oct 2025 09:31:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9hBUduL/K2sJ2VMSMKpTvh6O7vT8Cwrl1/5Mssg7iiqgi3rWLBvdxmliRcG5sUi4pRS1k8Q==
-X-Received: by 2002:a05:600c:540d:b0:46f:b42e:e366 with SMTP id 5b1f17b1804b1-47717e6ae77mr2485705e9.40.1761582717529;
-        Mon, 27 Oct 2025 09:31:57 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4894c9sm141374155e9.5.2025.10.27.09.31.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 09:31:56 -0700 (PDT)
-Message-ID: <dac763e0-3912-439d-a9c3-6e54bf3329c6@redhat.com>
-Date: Mon, 27 Oct 2025 17:31:54 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=OY0q5YKTtT4E1ub/SpSB1ESrYQ5WABlmRfW9bRPjcDE=;
+	b=ey7n90JDMTUM2Zplf9hrF7CfTAUl/zYjlBdAveeVDbOc8ldRGQ5IgDRhRHEC4SjTCRCAwm
+	HOCpUiOITgnmyeuHcEyYNMhcgEr0MtJAvrjVP/dp9ZcO9VnXu1MlG19lmGMZFXK8pE9byb
+	qCvo2rU7soYJu5SvFyaIDcW3yws89FFOgfppQqSiXlA9smFcFvpdrpGARE1JWRzDS1xhjp
+	jAg2IyMcqyMUSfceTXxqam6QPuUYKbSBaWv++3QRy+0t5LncQkdMhcgyww7vKgjLgCUjvn
+	eyPFg3cyEP76bok5mJwZOa+CzK0KpYoJJm+3ZYX+aoDhkSnFpiQlm2+T2GoLEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761582987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OY0q5YKTtT4E1ub/SpSB1ESrYQ5WABlmRfW9bRPjcDE=;
+	b=xoIbsUk2+vEfPCpIpLkF4GC+uw2r8MliQIR0TvsBpdisw3Dy96mpl0L1ViaoVKsVRemTKD
+	kVWEc+FYaY5tk6DA==
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, Zbigniew
+ =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering
+ <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa
+ Sarai <cyphar@cyphar.com>, Amir Goldstein <amir73il@gmail.com>, Tejun Heo
+ <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 11/70] ns: add active reference count
+In-Reply-To: <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
+References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
+ <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
+Date: Mon, 27 Oct 2025 17:36:27 +0100
+Message-ID: <87a51cwbck.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Gregory Price <gourry@gourry.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
- Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- Leon Romanovsky <leon@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
- <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
- <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
- <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
- <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
- <3f3e5582-d707-41d0-99a7-4e9c25f1224d@lucifer.local>
- <aPvjfo1hVlb_WBcz@gourry-fedora-PF4VCD3F> <20251027161146.GG760669@ziepe.ca>
- <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <27a5ea4e-155c-40d1-87d7-e27e98b4871d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-> 
-> I don't love the union.
-> 
-> How would we determine what type it is, we'd have to have some
-> generic_leaf_entry_t type or something to contain the swap type field and then
-> cast and... is it worth it?
-> 
-> Intent of non-present was to refer to not-swap swapentry. It's already a
-> convention that exists, e.g. is_pmd_non_present_folio_entry().
+On Fri, Oct 24 2025 at 12:52, Christian Brauner wrote:
+> diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+> index ee05cad288da..2e7c110bd13f 100644
+> --- a/kernel/time/namespace.c
+> +++ b/kernel/time/namespace.c
+> @@ -106,6 +106,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
+>  	ns->offsets = old_ns->offsets;
+>  	ns->frozen_offsets = false;
+>  	ns_tree_add(ns);
+> +	ns_ref_active_get_owner(ns);
 
-Just noting that this was a recent addition (still not upstream) that 
-essentially says "there is a folio here, but it's not in an ordinary 
-present page table entry.
+It seems all places where ns_ref_active_get_owner() is added it is
+preceeded by a variant of ns_tree_add(). So why don't you stilck that
+refcount thing into ns_tree_add()? I'm probably missing something here.
 
-So we could change that to something better.
+Thanks,
 
--- 
-Cheers
+        tglx
 
-David / dhildenb
 
 
