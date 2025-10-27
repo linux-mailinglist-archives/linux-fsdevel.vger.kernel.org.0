@@ -1,120 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-65672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D8DC0C51F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 09:34:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1B2C0C682
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 09:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9365D19A0EEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 08:34:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 848614F3C29
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Oct 2025 08:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF611E51EB;
-	Mon, 27 Oct 2025 08:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8521B2E8B95;
+	Mon, 27 Oct 2025 08:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qAX/0326"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iGpxBn9D";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dGRlxXc7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40881B040D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Oct 2025 08:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4781553AA;
+	Mon, 27 Oct 2025 08:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554039; cv=none; b=RnWqlBdVLhpJyGGaJb7BA01HR0AfsdXry6MAjx1n1Q3z4ZdkXK2EoniRtygSuKONkLm0ZV32shfvXD6x+jQW6gMgeWRXB2SwSU8tcL7gagOou3eyFUK6QR+1yAmo1Xr+gVvTENennAH7eg0yWxpoyPXynLFPqSvySA7atKuLgoo=
+	t=1761554626; cv=none; b=KqSObNPgmV1dwqkwofp72Fxpb+NQT7mhxSOV+jW8lijQo/zqf4b/n6ms+9ZcRVun5HCCxoqZHhwATHCFeANjFngWalhwzijH0yT8iO+UHyfH4cCs+H3O2FCe3+/gnY5dolU6q2F2tAUy6aU7DHu6eV3wIgKWbDbOYUPaxqHzuWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554039; c=relaxed/simple;
-	bh=ONYUxwLj6NLt0dbvoTmRpbt77e5fW9u6CzNNEKfbnAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1+SV+y2L9sx/NmGk2XE488+okEjT594fdBax0p8FhcVw5sk2Zl9nQjb7xqQue1GxrOnWQ4Pnl7gzUJ79sGigPts15rgo/pjxAHBHvYI3TG+OjqFsse2I2sydHKCKoIPJIotQ7RDMAUj6MGk6qsVeF7vXCDrat4lMKaAunkOjFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qAX/0326; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761554034; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=d3Bls5HH+ybxSPc0U9pigA/kPbOoHpfUV3O5m9VQ7UM=;
-	b=qAX/0326EJovKrm4JbkMP0qX5fvqAC3Vp6LEa4TslXdQI+TU2WbTnTsBOSVXQOZmJUaG63z0EDvdt1tHmJgmJdRC9vihpq1b0TffY/eAYkGSdUSowJh8yoJe7q2VVg2Gr+sk9ZaAdUIU2gaiy5zeE64gg0mFDUwR0OJ1y6VNHks=
-Received: from 30.221.128.238(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Wr2ST4N_1761554033 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 27 Oct 2025 16:33:53 +0800
-Message-ID: <518cc572-af28-414b-be1a-c69adce4b922@linux.alibaba.com>
-Date: Mon, 27 Oct 2025 16:33:53 +0800
+	s=arc-20240116; t=1761554626; c=relaxed/simple;
+	bh=ZHxLQkYXek6HHXQ5ls+E2bALK/kHDUf0oXDBDKXjjrw=;
+	h=Message-ID:From:To:Subject:cc:Date; b=gmwo1RbCcoN4prNcRedEMG/ExvbOHXe+fUchqIOs/fCKTDriza7y+In1BtSFQdKjlMy5dJNZ+pt2hfBqgiKfCJCwSrf04l1GOZZLvUCS8H4rM6YAi+0vs2bECcKsAvMo8T3LEr57flTB5SzNjHsl+TFxE3KKniah7Da7xhgLgcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iGpxBn9D; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dGRlxXc7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20251027083700.573016505@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761554622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=O22qaF58WF4tGgLoC6Og2ju8TL8XuvxgR3eoZKY2RJA=;
+	b=iGpxBn9D31bepoX3FHP5IxFfDs5MNFXXJwqX00s5HifGOgVtnQBNtWlVQO67EBAqw5ZFNe
+	jRyhkjcwumS8f4M4armAfDMf932m5kwZLGz6oowakDMrVHJzvvvwd/9RAPtBfWlGzRmEse
+	gHNEi72Bj3wWNLUru0yqQR3WMCgyxQGzZOpZ2j0tRwHdogz/sx2wcjKo4NQKBCDIH+c7Dv
+	M6bQlHP37PdBS0lJ7hmjRWkogKwMpxS9DNSPeAtvFcyeKirRANDrLqkiZGQwvhNKRe5C7H
+	xZdPWOc+g630w3DfFMU/UvoidKO3Wl22xCGwvhnz3O9xIynKtbYCK7vgdMHxyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761554622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=O22qaF58WF4tGgLoC6Og2ju8TL8XuvxgR3eoZKY2RJA=;
+	b=dGRlxXc7DXj9/3iHmX+iKPKx+vPqnQiXifrAOlfFvv9S86+GVFnxrCPovoOdbKKfgVviBe
+	Sc3dSh9pQ+LjAIDg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Subject: [patch V5 00/12] uaccess: Provide and use scopes for user access
+cc: kernel test robot <lkp@intel.com>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ x86@kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org,
+ Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Date: Mon, 27 Oct 2025 09:43:40 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] filemap: Add folio_next_pos()
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
- ocfs2-devel@lists.linux.dev
-References: <20251024170822.1427218-1-willy@infradead.org>
- <20251024170822.1427218-2-willy@infradead.org>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20251024170822.1427218-2-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+This is a follow up on the V4 feedback:
 
+   https://lore.kernel.org/20251022102427.400699796@linutronix.de
 
-On 2025/10/25 01:08, Matthew Wilcox (Oracle) wrote:
-> Replace the open-coded implementation in ocfs2 (which loses the top
-> 32 bits on 32-bit architectures) with a helper in pagemap.h.
-> 
-> Fixes: 35edec1d52c0 (ocfs2: update truncate handling of partial clusters)
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Mark Fasheh <mark@fasheh.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Cc: ocfs2-devel@lists.linux.dev
+Changes vs. V4:
 
-Looks fine.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+  - Rename get/put_user_masked() to get/put_user_inline()
 
-> ---
->  fs/ocfs2/alloc.c        |  2 +-
->  include/linux/pagemap.h | 11 +++++++++++
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-> index 162711cc5b20..b267ec580da9 100644
-> --- a/fs/ocfs2/alloc.c
-> +++ b/fs/ocfs2/alloc.c
-> @@ -6892,7 +6892,7 @@ static void ocfs2_zero_cluster_folios(struct inode *inode, loff_t start,
->  		ocfs2_map_and_dirty_folio(inode, handle, from, to, folio, 1,
->  				&phys);
->  
-> -		start = folio_next_index(folio) << PAGE_SHIFT;
-> +		start = folio_next_pos(folio);
->  	}
->  out:
->  	if (folios)
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 09b581c1d878..e16576e3763a 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -941,6 +941,17 @@ static inline pgoff_t folio_next_index(const struct folio *folio)
->  	return folio->index + folio_nr_pages(folio);
->  }
->  
-> +/**
-> + * folio_next_pos - Get the file position of the next folio.
-> + * @folio: The current folio.
-> + *
-> + * Return: The position of the folio which follows this folio in the file.
-> + */
-> +static inline loff_t folio_next_pos(const struct folio *folio)
-> +{
-> +	return (loff_t)folio_next_index(folio) << PAGE_SHIFT;
-> +}
-> +
->  /**
->   * folio_file_page - The page for a particular index.
->   * @folio: The folio which contains this index.
+  - Remove the futex helpers. Keep the inline get/put for now as it needs
+    more testing whether they are really valuable.
+
+  - Picked up tags
+
+The series is based on v6.18-rc1 and also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/scoped
+
+Thanks,
+
+	tglx
+---
+Thomas Gleixner (12):
+      ARM: uaccess: Implement missing __get_user_asm_dword()
+      uaccess: Provide ASM GOTO safe wrappers for unsafe_*_user()
+      x86/uaccess: Use unsafe wrappers for ASM GOTO
+      powerpc/uaccess: Use unsafe wrappers for ASM GOTO
+      riscv/uaccess: Use unsafe wrappers for ASM GOTO
+      s390/uaccess: Use unsafe wrappers for ASM GOTO
+      uaccess: Provide scoped user access regions
+      uaccess: Provide put/get_user_inline()
+      coccinelle: misc: Add scoped_masked_$MODE_access() checker script
+      futex: Convert to get/put_user_inline()
+      x86/futex: Convert to scoped user access
+      select: Convert to scoped user access
+
+ arch/arm/include/asm/uaccess.h               |   26 ++
+ arch/powerpc/include/asm/uaccess.h           |    8 
+ arch/riscv/include/asm/uaccess.h             |    8 
+ arch/s390/include/asm/uaccess.h              |    4 
+ arch/x86/include/asm/futex.h                 |   75 ++----
+ arch/x86/include/asm/uaccess.h               |   12 -
+ fs/select.c                                  |   12 -
+ include/linux/uaccess.h                      |  314 ++++++++++++++++++++++++++-
+ kernel/futex/core.c                          |    4 
+ kernel/futex/futex.h                         |   58 ----
+ scripts/coccinelle/misc/scoped_uaccess.cocci |  108 +++++++++
+ 11 files changed, 501 insertions(+), 128 deletions(-)
 
 
