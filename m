@@ -1,59 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-65811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9048DC12383
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 01:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5016C12389
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 01:43:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D80565E7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 00:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93570581E38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 00:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25191FECD4;
-	Tue, 28 Oct 2025 00:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C321DF246;
+	Tue, 28 Oct 2025 00:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i//W4UN4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKHwZLFQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013981F4281;
-	Tue, 28 Oct 2025 00:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B7C1EC01B;
+	Tue, 28 Oct 2025 00:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612009; cv=none; b=Qg5oniAje+kqWrqioAzoNqWssy0pJI40CJe9Uiv+PdqGm6NE7nS6HRXai1z1f57EK0hHYNBcpzLhkrQQx9/UlC5XmLa6O28hNS89YlduJKZVKS410XxytdSnGPSQfscI/GRPy8l1AjInCwSQjsSZZIbVOsr0ucXQvLzVlv5BUp0=
+	t=1761612023; cv=none; b=jg6RnSYFYLUgx2UYCfNuzOVXbYa7SrgRWAxuNpa8pWPilWCtarcLiyWF5ITjv8Ck3QA9LO4sVy7HKoLAYygUZDg3NJr8VqNObE6DG+D/3IQH/HDfmo7p87DSX8u3RRHheeAnRKrY8H157erPsJrYjVFEIcC2VGVk7AlJIfL0RvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612009; c=relaxed/simple;
-	bh=a4YzAj28JtSGsA03tk/HbuKbWOSOOpy022Cgf4VNVPE=;
+	s=arc-20240116; t=1761612023; c=relaxed/simple;
+	bh=E7pIPM+tWW3Z7U4FqepvC0V+Rdiwd9IgrrN3d6Fw16g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mx+yjKu1YWYkshJCgT06fIkHttcpBycX4o9wse1v6RREk9bfD2caDjLzSdUS1OBB1p3u+LvWTOp8Lh4698odkxZ16/MMoXz9cD8GfTlWPHzDNxIrdUPnKiMUmIqi/sFpZqZhGf4YypLgBK5wN0pTHypiTTcmIfgp1RtgqJI1q0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i//W4UN4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C71CC113D0;
-	Tue, 28 Oct 2025 00:40:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=LqG1/LeFJehF5+H926mbYN9SkhqLA+3MUk/NBY0r4ORLnmTd6ZF8fdfDqOuvvn60Qf/yVFfPtbNceMSsPfiq9cKptqon0p7IjUAqK6xNEpIqYqDQVqg1ny1IuXaCHumiCAY0ZIIZBx4PEa6WRez5UTg5TW2v5NAI8mkRlBbYnOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKHwZLFQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6954C4CEFB;
+	Tue, 28 Oct 2025 00:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761612008;
-	bh=a4YzAj28JtSGsA03tk/HbuKbWOSOOpy022Cgf4VNVPE=;
+	s=k20201202; t=1761612023;
+	bh=E7pIPM+tWW3Z7U4FqepvC0V+Rdiwd9IgrrN3d6Fw16g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=i//W4UN4OnYiLjzY0ZKLQ5C32+xNoQWKXl283wa2DnCPEHlQ86yScqfk2IF43YM1o
-	 QRVFT+WRWtsXKoSf9/53Qs1hqBDmc3Xy8tf4CQ3a6/ELvNJOYlhtsbGNU0Lea1p3er
-	 ARFMCN+mDoCs+DtmSowE+x5Kcgg5R+cGiBhryQBW0CiWCRIXuXqiiikl+n2no1mT+d
-	 Q9OUi/uLywG4ajdsh+g9Kd4sKtQWvp9Aw7ZzDWBvlvzdeIc60SDKvocA/mvzPC11yt
-	 mFLOzc6tB8kaaEus+/WxC9VbMAbjXG9f8pysMJG93F2XzPNRw5QWz8a5nOU6HldZWr
-	 GvMjmOLjTKNBg==
+	b=dKHwZLFQz+foO52YD5n1/bFKaO5XEj/Xu6536s8CwVrmk5Av+zrM6fCLAqI8g7dbs
+	 pJsYu1iEWwNYIX+5N6dmYFbXZU1XEZlMHUs/WnRRlSdSgA/Ihhdqn8BN4FDvocQOiz
+	 J94vIvUww41hdQhpdg/6T1tehWiMCM1tuXQfSr8k/cOonWwG3jKhSNIIUgdn+kE/2U
+	 vkDMQe9RnClBN2T79xzh5B402qhxJHdP0sEa8aRJtcyj6Z43truN5rUB8z0A/BKdvp
+	 zhHg+2ZUCGiwivi6zZGQPQUFGyCkxUodMeW6XgAcKlFWLkG8cTUv8IVX/KSF9/Kixu
+	 hwHpb5qNj/S1A==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Jaehun Gou <p22gone@gmail.com>,
-	Seunghun Han <kkamagui@gmail.com>,
-	Jihoon Kwon <jimmyxyz010315@gmail.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	sj1557.seo@samsung.com,
+	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-6.12] exfat: fix improper check of dentry.stream.valid_size
-Date: Mon, 27 Oct 2025 20:38:56 -0400
-Message-ID: <20251028003940.884625-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.17] fs: return EOPNOTSUPP from file_setattr/file_getattr syscalls
+Date: Mon, 27 Oct 2025 20:39:02 -0400
+Message-ID: <20251028003940.884625-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251028003940.884625-1-sashal@kernel.org>
 References: <20251028003940.884625-1-sashal@kernel.org>
@@ -63,198 +64,200 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.17.5
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jaehun Gou <p22gone@gmail.com>
+From: Andrey Albershteyn <aalbersh@redhat.com>
 
-[ Upstream commit 82ebecdc74ff555daf70b811d854b1f32a296bea ]
+[ Upstream commit d90ad28e8aa482e397150e22f3762173d918a724 ]
 
-We found an infinite loop bug in the exFAT file system that can lead to a
-Denial-of-Service (DoS) condition. When a dentry in an exFAT filesystem is
-malformed, the following system calls — SYS_openat, SYS_ftruncate, and
-SYS_pwrite64 — can cause the kernel to hang.
+These syscalls call to vfs_fileattr_get/set functions which return
+ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
+inode. For syscalls EOPNOTSUPP would be more appropriate return error.
 
-Root cause analysis shows that the size validation code in exfat_find()
-does not check whether dentry.stream.valid_size is negative. As a result,
-the system calls mentioned above can succeed and eventually trigger the DoS
-issue.
-
-This patch adds a check for negative dentry.stream.valid_size to prevent
-this vulnerability.
-
-Co-developed-by: Seunghun Han <kkamagui@gmail.com>
-Signed-off-by: Seunghun Han <kkamagui@gmail.com>
-Co-developed-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
-Signed-off-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
-Signed-off-by: Jaehun Gou <p22gone@gmail.com>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## BACKPORT RECOMMENDATION: **YES**
+## ANSWER: YES
 
-### Detailed Analysis
+This commit should be backported to stable kernel trees (specifically
+6.17.x).
 
-I've conducted a comprehensive analysis using semantic code analysis
-tools and git history examination. Here are my findings:
+## Extensive Analysis
 
-#### 1. **Vulnerability Characterization**
-This commit fixes a **Denial-of-Service (DoS) vulnerability** in the
-Linux exFAT filesystem driver. The issue occurs when
-`dentry.stream.valid_size` (stored as a signed `loff_t` type) is read
-from disk without checking if it's negative.
+### 1. Code Changes Analysis
 
-**Semantic Analysis Used:**
-- `mcp__semcode__find_function` to locate `exfat_find()` at
-  fs/exfat/namei.c:590-708
-- `mcp__semcode__find_callers` to trace the call graph upward
-- `mcp__semcode__grep_functions` to identify all uses of `valid_size`
-  field across the exFAT codebase
+The commit adds error code translation at two syscall boundaries in
+`fs/file_attr.c`:
 
-#### 2. **User-Space Exposure Analysis**
-**Finding:** The vulnerability is **directly user-triggerable**
-
-Call chain analysis reveals:
-- `exfat_find()` is called exclusively by `exfat_lookup()`
-  (fs/exfat/namei.c:715)
-- `exfat_lookup()` is registered in the VFS `inode_operations` structure
-- This is invoked by the VFS layer during file lookups
-- User-space can trigger via: `SYS_openat`, `SYS_ftruncate`,
-  `SYS_pwrite64` (as stated in commit message)
-
-**Tools Used:** `mcp__semcode__find_callchain` confirmed single-level
-callpath to VFS interface
-
-#### 3. **Impact Scope Analysis**
-The negative `valid_size` propagates through the exFAT code causing
-severe issues:
-
-**Critical Code Paths Identified (via `mcp__semcode__grep_functions`):**
-
-In `fs/exfat/inode.c:exfat_get_block()` (lines 321-370):
+**In `file_getattr` syscall (line 418):**
 ```c
-valid_blks = EXFAT_B_TO_BLK(ei->valid_size, sb);  // Line 324
-if (iblock < valid_blks) {
-    max_blocks = valid_blks - iblock;  // Line 332 - arithmetic with
-negative
-}
-size = ei->valid_size - pos;  // Line 370 - negative size calculation
+error = vfs_fileattr_get(filepath.dentry, &fa);
++if (error == -ENOIOCTLCMD || error == -ENOTTY)
++    error = -EOPNOTSUPP;
+if (error)
+    return error;
 ```
 
-The macro `EXFAT_B_TO_BLK(b, sb)` performs `((b) >>
-(sb)->s_blocksize_bits)`. When `b` is negative:
-- Arithmetic right-shift preserves negative sign
-- Results in very large unsigned values when cast/compared
-- Causes infinite loops in block iteration
-- Leads to memory corruption via negative size calculations
-
-**Found 14 uses of `valid_size`** across 3 files that could be affected
-by negative values.
-
-#### 4. **Affected Kernel Versions**
-**Git history analysis:**
-- Vulnerable code introduced in commit `11a347fb6cef6` (2023-03-13)
-- First appeared in **Linux v6.8** (v6.8-rc1)
-- All kernels from **6.8 onwards** are vulnerable
-- The exFAT driver itself was added in v5.10, but this specific
-  vulnerability pattern exists only in 6.8+
-
-#### 5. **Fix Characteristics**
-**Change Analysis:**
+**In `file_setattr` syscall (line 484):**
 ```c
-+       if (info->valid_size < 0) {
-+               exfat_fs_error(sb, "data valid size is invalid(%lld)",
-info->valid_size);
-+               return -EIO;
-+       }
+error = vfs_fileattr_set(mnt_idmap(filepath.mnt), filepath.dentry, &fa);
++if (error == -ENOIOCTLCMD || error == -ENOTTY)
++    error = -EOPNOTSUPP;
+mnt_drop_write(filepath.mnt);
 ```
 
-- **Size**: Minimal (5 lines added)
-- **Complexity**: Simple validation check
-- **Side effects**: None - fails early on invalid input
-- **Dependencies**: No new dependencies introduced
-- **Risk**: Extremely low - pure input validation
+These are minimal, surgical changes that translate internal kernel error
+codes to appropriate user-space error codes.
 
-#### 6. **Stable Tree Compliance Check**
+### 2. Semantic Analysis Tools Used
 
-✅ **Fixes important bug**: DoS vulnerability
-✅ **Small and contained**: 5 lines, single function
-✅ **No new features**: Pure security fix
-✅ **No architectural changes**: No data structure modifications
-✅ **Minimal regression risk**: Early validation prevents corruption
-✅ **User-facing impact**: Prevents kernel hangs from malicious
-filesystems
-❌ **No stable tag present**: Missing "Cc: stable@vger.kernel.org" (but
-should have one)
+**Tools utilized:**
+- `mcp__semcode__find_function`: Located the syscalls and vfs functions
+- `mcp__semcode__find_callers`: Identified all callers of
+  vfs_fileattr_get/set (5 and 4 callers respectively)
+- `Read`, `Grep`, `Bash`: Examined code and git history
+- Git history analysis: Traced the evolution of this fix
 
-#### 7. **Security Severity**
-- **Severity**: HIGH
-- **Attack Vector**: Local (requires mounting malicious exFAT
-  filesystem)
-- **User Interaction**: Minimal (just mount and access file)
-- **Impact**: Complete DoS (kernel hang/infinite loop)
-- **Exploit Complexity**: Low (craft malicious filesystem image)
+**Key findings from tool usage:**
 
-The commit message explicitly states: *"can lead to a Denial-of-Service
-(DoS) condition...can cause the kernel to hang"*
+**Call graph analysis:**
+- `vfs_fileattr_get` is called by:
+  - `file_getattr` syscall (the fix location)
+  - `ioctl_fsgetxattr`, `ioctl_getflags` (ioctl handlers)
+  - `ovl_real_fileattr_get`, `ecryptfs_fileattr_get` (filesystem
+    wrappers)
 
-#### 8. **Verification of Exploit Scenario**
-The commit message mentions specific syscalls that trigger the issue. I
-verified the code path:
-1. User calls `openat()` on exFAT-mounted file
-2. VFS calls `exfat_lookup()` → `exfat_find()`
-3. Reads negative `valid_size` from malicious dentry
-4. Propagates to `exfat_fill_inode()` → sets `ei->valid_size`
-5. Later file operations use negative `valid_size` in arithmetic
-6. Results in infinite loops in `exfat_get_block()` calculations
+- `vfs_fileattr_set` is called by:
+  - `file_setattr` syscall (the fix location)
+  - `ioctl_fssetxattr`, `ioctl_setflags` (ioctl handlers)
+  - `ovl_real_fileattr_set`, `ecryptfs_fileattr_set` (filesystem
+    wrappers)
 
-### Recommendation Rationale
+**Impact scope:**
+- The fix ONLY affects the two new syscalls
+- Does NOT affect existing ioctl interfaces (critical - this was why the
+  earlier vfs-level fix was reverted)
+- overlayfs already converts -ENOIOCTLCMD to -ENOTTY internally
+  (fs/overlayfs/inode.c:724)
 
-This commit is an **excellent candidate for backporting** because:
+### 3. Critical Bug Analysis
 
-1. **Critical security impact**: Fixes a user-triggerable DoS
-   vulnerability
-2. **Broad exposure**: Affects all kernel versions 6.8+
-3. **Minimal risk**: Tiny, self-contained validation fix
-4. **No dependencies**: Applies cleanly to stable trees
-5. **Clear benefit**: Prevents kernel hangs from malicious filesystems
-6. **Follows stable rules**: Bug fix with no feature additions
+**Error code verification:**
+- `-ENOIOCTLCMD` (error 515) is defined in `include/linux/errno.h` - a
+  **kernel-internal header**
+- It is **NOT** in `include/uapi/` directories (user-space API)
+- This confirms -ENOIOCTLCMD should **NEVER** reach user-space - it's a
+  kernel implementation detail
+- `-ENOTTY` (error 25) is valid for user-space but semantically
+  inappropriate for non-ioctl syscalls
+- `-EOPNOTSUPP` is the correct POSIX error for "operation not supported"
 
-The only concern is the lack of an explicit "Cc: stable@" tag, but this
-appears to be an oversight given the security nature of the fix. The
-commit should be backported to:
-- **6.8+ stable trees** (where vulnerability exists)
-- Possibly flagged for **LTS kernels** (6.12 LTS at minimum)
+### 4. Historical Context Analysis
 
- fs/exfat/namei.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Git history reveals a carefully considered approach:
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index f5f1c4e8a29fd..d8964d7368142 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -642,10 +642,14 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+1. **v6.17-rc1 (June 2025)**: New syscalls introduced (commit
+   be7efb2d20d67)
+2. **v6.17-rc1 (June 2025)**: First fix attempt at vfs level (commit
+   474b155adf392)
+3. **October 2025**: Vfs fix reverted due to regression in
+   `ioctl_setflags()` (commit 4dd5b5ac089bb)
+   - Problem: Filesystems use -EOPNOTSUPP to indicate unsupported flags
+   - Vfs-level translation caused error code confusion for ioctls
+4. **October 2025**: Current fix at syscall level (commit d90ad28e8aa48)
+   - Merged in v6.18-rc2
+   - Does NOT affect ioctl behavior
+   - Solves the problem without regressions
+
+### 5. Backport Suitability Assessment
+
+**STRONG YES indicators:**
+
+✅ **Fixes real user-impacting bug**: Internal error codes leak to user-
+space
+✅ **Minimal risk**: Only 4 lines changed, pure error code translation
+✅ **Well-tested approach**: Previous vfs-level fix was reverted; this
+approach is proven safer
+✅ **Affects recent feature**: Syscalls introduced in v6.17, so 6.17.x
+needs this fix
+✅ **Active usage**: XFS already using these syscalls (commits
+0239bd9fa445a, 8a221004fe528)
+✅ **Reviewed by experts**: Jan Kara and Arnd Bergmann reviewed
+✅ **No follow-up fixes or reverts**: The commit stands without issues
+✅ **Stable tree precedent**: Related revert was already backported
+(commit 0cfb126205ecc)
+
+**Current status:**
+- Fix merged in v6.18-rc2
+- **NOT present** in current 6.17.5 stable tree (verified via `git
+  merge-base`)
+- Syscalls present in 6.17.x but returning wrong error codes
+
+### 6. Why No Explicit Stable Tag?
+
+The commit lacks `Cc: stable@vger.kernel.org` or `Fixes:` tags, likely
+because:
+- The syscalls are brand new (only in v6.17)
+- Maintainers may have expected it to flow naturally to stable
+- Limited user-space adoption at the time meant low immediate impact
+
+However, this doesn't diminish the need for backporting - it prevents
+the bug from becoming entrenched as applications start using these
+syscalls.
+
+### 7. Compliance with Stable Tree Rules
+
+✅ **Bug fix**: Yes - fixes ABI violation (internal error code exposure)
+✅ **Important**: Yes - affects syscall interface correctness
+✅ **Obvious and correct**: Yes - simple error code translation
+✅ **Tested**: Yes - in mainline since v6.18-rc2
+✅ **Minimal**: Yes - only 4 lines
+✅ **No new features**: Correct - only fixes existing functionality
+✅ **No architectural changes**: Correct - localized syscall boundary fix
+
+### Conclusion
+
+This is an excellent backport candidate that fixes a genuine ABI bug
+(kernel-internal error codes leaking to user-space) in newly introduced
+syscalls. The fix is minimal, safe, well-reviewed, and specifically
+targets the 6.17.x stable tree where the bug exists. Backporting now
+prevents applications from depending on incorrect error codes.
+
+ fs/file_attr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 460b2dd21a852..1dcec88c06805 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 	}
  
- 	info->type = exfat_get_entry_type(ep);
- 	info->attr = le16_to_cpu(ep->dentry.file.attr);
--	info->size = le64_to_cpu(ep2->dentry.stream.valid_size);
- 	info->valid_size = le64_to_cpu(ep2->dentry.stream.valid_size);
- 	info->size = le64_to_cpu(ep2->dentry.stream.size);
+ 	error = vfs_fileattr_get(filepath.dentry, &fa);
++	if (error == -ENOIOCTLCMD || error == -ENOTTY)
++		error = -EOPNOTSUPP;
+ 	if (error)
+ 		return error;
  
-+	if (info->valid_size < 0) {
-+		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
-+		return -EIO;
-+	}
-+
- 	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
- 		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
- 		return -EIO;
+@@ -483,6 +485,8 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 	if (!error) {
+ 		error = vfs_fileattr_set(mnt_idmap(filepath.mnt),
+ 					 filepath.dentry, &fa);
++		if (error == -ENOIOCTLCMD || error == -ENOTTY)
++			error = -EOPNOTSUPP;
+ 		mnt_drop_write(filepath.mnt);
+ 	}
+ 
 -- 
 2.51.0
 
