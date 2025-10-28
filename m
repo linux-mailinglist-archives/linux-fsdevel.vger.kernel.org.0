@@ -1,135 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-65960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F1FC17127
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 22:41:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54D9C1733F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 23:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22AA4566C22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 21:36:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91CF73563F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 22:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE212E427F;
-	Tue, 28 Oct 2025 21:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5163B3563E6;
+	Tue, 28 Oct 2025 22:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r93s37by"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oswcsXZG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D022D876F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 21:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA9033CEB3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 22:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761687305; cv=none; b=Z0WxE7MU7dcswdnv8w8vzyvbXkVWqpaRQ5/KV9hTsAJ87QViqp3dbbreT58L9AzF3hkAOkNIzk6D4L2mdiy6ehJaLy/acug7WKTmnsGzQLUC4yovjBS1tPWsMoVvGeYhfrSK/cchFfXbFJ1xoucOfKR02nRpO7gciNuiozL4+a4=
+	t=1761690858; cv=none; b=av5T5CpzKBl779ZPNJd03pRyjh83rNEV4FfIoqZrVjf3/son2BmlfELJfX4ANs2pdX/CQeKZzngBF8lWPk4HmfwZliXjRJ7oUBNXDbhe1WS1eUZeRN0KPBd4SBtYyJFeoRqvnBS14UeNza+vDAG6s8X+cJYVN6EtTrPQd6CxGOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761687305; c=relaxed/simple;
-	bh=R2i31H9vGUKt8c9pEDO8kNOSs2JZfSsFlvxECOPAMbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sckM5ifqvx63i4SDkreATFspzsB/XPYi8BYHomVM3fF2YxmPh1qWuia2fRJmOD6VxzVUkhGhDqujtzwnfBzGEW5KziFCVMrM7rpwOVcUT3Yf4G70O6OrkJr3khXQMtVNHWWPGJk2Iug0v8BtaSBw+E/b4utwJdostnjELoJ/EDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r93s37by; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECA1C116D0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 21:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761687305;
-	bh=R2i31H9vGUKt8c9pEDO8kNOSs2JZfSsFlvxECOPAMbQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r93s37byBu5Kqu2QNWAApFRsKMEiKn+rnGBu28Yh213bmXlXtpGYHy6Md1GZVj5bM
-	 s5vnSo0yrYRMDPmHpEUorqNbrzfUbLmxqipY4eXZSatd2x/wYVLZWkfxLbVUyrJnqB
-	 qzzqP0cqOIMCM1+yieYa4Jpw8ExK8yVQ10CoTtDy/YpQpSoWeYoXUNtfhEmCx16Hlx
-	 hAutjjpMeCNc9SkrGfI4cOnOn4oU/nFvmIHsnMpTitKiMXtsQmuipZbmLKSEJQNkuU
-	 lggI9QCrsvI59YWcEgE4fHKT+JxK/C1s0+GH6Knmt4VFXcIEFUXIvCxgclL3uQke9v
-	 P+fvzMKknG1XA==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-592ff1d80feso5238957e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 14:35:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVR5kBNyMCNSiw9tLG5ReGKoAoL13lhQ2lA8LkQTKTpdeK2/z5RItAF5VIpl3FdNb2dM2gtxjDV5sFhT4Rz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Xx2F/LJw/EcaJe1Cfoc8iEQIyFp1zEa/aoBU0cnjsFMuLwZZ
-	f+lHrUnQU5e9eRyxCHm4JOC5IbDahLmvRoKRUd+wFT6DBDNbUOaMxMc6nFIL2NBZzxmGnwyxmLg
-	nlrszJrhg+hHvr2ZgOz6u5johLziMMOE=
-X-Google-Smtp-Source: AGHT+IEUgTLUAIKN7pUG+BuUf5d2rQVkYmo1LrGvDv+SiZ+/7mc0PZPnIKuDcBIJFaSVmyoUk9OgmOBn+4n7FgjOtLw=
-X-Received: by 2002:a05:6512:3b0c:b0:592:fce6:9054 with SMTP id
- 2adb3069b0e04-594128c4f37mr242551e87.52.1761687303564; Tue, 28 Oct 2025
- 14:35:03 -0700 (PDT)
+	s=arc-20240116; t=1761690858; c=relaxed/simple;
+	bh=u8baRSL7KclzTL8WlsWeWbaoI5oWwE3of0QEMtKoYGU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KrjxRq+RyCbYuxuYin2W+OT8DrFBZgrrwI8miMS2jzhfuokk62qWPEII8drNv+F57zshFR1m4/ASAtW1bR6Jb1YJ2wdKJhLepHyAZAhbT5HBejL2DkoRflOD1tGn49hk2CA3I7M2erRdzWkrhSCCRsxdeY//GGaoNAXGnstPzA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oswcsXZG; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7a27ec82624so3888368b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 15:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761690857; x=1762295657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=82B/e5OUffQkDxAP5PsiVgukJ2nGDysFGKTvJ7FhReA=;
+        b=oswcsXZGNealMx4g4hb2TEsND2qSuqcSWGayVkSyYQa1uhWhOVmycNztrYep4FHhmu
+         RcdoyqQxepA3tezrmrSdtrEpM8qThI9Dz7dPynzB5wLpmD5FTjbmuf5AIM9BEiJj5/bH
+         05/xunhfyL/iH+aYlDoMhCKEOnJEg0r9DpPLyi9hzYPSB3AX1xu2UD4f9MpXwIhQ/EtB
+         P+Xd5uOAHsFr0wnzLVkHlU+Iw73OoqLR9H6TDp/pYiBc7Zo3ZIpKA0PAq/Uf4rg0H6rD
+         IB51SEIco/uVb7RoFJDD8QFEkGMnlbnwHcxvaFi4th7d3Q76tgy9yiqNEtP3QqBeN07t
+         4/TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761690857; x=1762295657;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=82B/e5OUffQkDxAP5PsiVgukJ2nGDysFGKTvJ7FhReA=;
+        b=r/7olfZqFB5UW60nYhrJ6PR9HImo8qBCyGSUOFnxeJh6ojOIFIksWCzN2ZoonGoWKJ
+         V9fPSp2BWLsCa6It0ask63iBVT8XuZsUQO4sx8/NgC3alYWiGwmVYy5B212CV2PBtSMc
+         8so3EoPUZXFA/JE25yfzFZmkRcB19oqF+xuLNxjwAGpoVZUxSKD2u2mwm0yQL8LVUjFl
+         gLXP8bpR0MZe7b7omYicG/XBBPspZI+zgLx8jrgL7VMFzhcggTe2NhtJsK3Dk3GTCNtR
+         SEbFqkbbtkXZzlDdFwChVH0NSmh67w4RUr7qNSAl1+UBHIDKtzZxgdp9V8XFNlxBbxn5
+         3X4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX0mWb1EzrgeiObFO8CodkqQg/YDvtIKNFClg9ESU1n1XdubRFz8wjL+YGDXY4eyY0IK2Evy8gcO6tYlcLZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+lZgL6YoeEAvSTkD7ezQm5P57AYT2NP+SNydJftaBx9at1RjH
+	avYXwi9vDlD1ejZxVQ/k8NDY+ayVsVsmkx7mrXtjqz3R06ZiCPprlPuanO1HYjWGQyH4QF+G1uq
+	qDEyO8glf8dCLXlANJ1sdFipjSA==
+X-Google-Smtp-Source: AGHT+IF/qfPNoL6JkiLjO359CkzK4oS1vbBtwFq+LTrilAHtRFpRVvqvS8ZuclUXWTGo1CNzmGf9dAahO2M+QJlTeQ==
+X-Received: from pjph17.prod.google.com ([2002:a17:90a:9c11:b0:32d:7097:81f1])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:12c9:b0:334:a784:3046 with SMTP id adf61e73a8af0-34653146b07mr765020637.38.1761690856743;
+ Tue, 28 Oct 2025 15:34:16 -0700 (PDT)
+Date: Tue, 28 Oct 2025 15:34:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
- <20251028004614.393374-23-viro@zeniv.linux.org.uk> <66300d81c5e127e3bca8c6c4d997da386b142004.camel@HansenPartnership.com>
- <20251028174540.GN2441659@ZenIV> <20251028210805.GP2441659@ZenIV>
-In-Reply-To: <20251028210805.GP2441659@ZenIV>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 28 Oct 2025 22:34:51 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkR_zy3h447gWqfy_yWS54Z8UsgWDqAQbawTspKnXeI6tlX292HDo0fyss
-Message-ID: <CAMj1kXF6tvg6+CL_1x7h0HK1PoSGtxDjc0LQ1abGQBd5qrbffg@mail.gmail.com>
-Subject: Re: [PATCH v2 22/50] convert efivarfs
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, linux-fsdevel@vger.kernel.org, 
-	torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz, 
-	raven@themaw.net, miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org, 
-	linux-mm@kvack.org, linux-efi@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
-	kees@kernel.org, rostedt@goodmis.org, gregkh@linuxfoundation.org, 
-	linux-usb@vger.kernel.org, paul@paul-moore.com, casey@schaufler-ca.com, 
-	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com, 
-	selinux@vger.kernel.org, borntraeger@linux.ibm.com, bpf@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251028223414.299268-1-ackerleytng@google.com>
+Subject: Hit an assertion within lib/xarray.c from lib/test_xarray.c, would
+ like help debugging
+From: Ackerley Tng <ackerleytng@google.com>
+To: willy@infradead.org, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Cc: david@redhat.com, michael.roth@amd.com, vannapurve@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 28 Oct 2025 at 22:08, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Tue, Oct 28, 2025 at 05:45:40PM +0000, Al Viro wrote:
->
-> > FWIW, having a special path for "we are in foofs_fill_super(), fuck
-> > the locking - nobody's going to access it anyway" is not a great
-> > idea, simply because the helpers tend to get reused on codepaths
-> > where we can't cut corners that way.
->
->         BTW, looking through efivarfs codebase now... *both* callers
-> of efivarfs_create_dentry() end up doing dcache lookups, with variously
-> convoluted call chains.  Look: efivarfs_check_missing() has an explicit
-> try_lookup_noperm() before the call of efivarfs_create_dentry().
-> efivarfs_callback() doesn't, but it's called via
->         efivar_init(efivarfs_callback, sb, true)
-> and with the last argument being true efivar_init() will precede the call
-> of the callback with efivarfs_variable_is_present().  Guess what does that
-> thing (never used anywhere else) do?  Right, the call of try_lookup_noperm().
->
-> Why do we bother with that?  What's wrong with having efivarfs_create_dentry()
-> returning -EEXIST in case of dentry already being there and turning the
-> chunk in efivar_init() into
->                         err = func(variable_name, vendor_guid,
->                                    variable_name_size, data);
->                         if (err == -EEXIST) {
->                                 if (duplicate_check)
->                                         dup_variable_bug(variable_name,
->                                                          &vendor_guid,
->                                                          variable_name_size);
->                                 else
->                                         err = 0;
->                         }
->                         if (err)
->                                 status = EFI_NOT_FOUND;
-> Note that both possible callbacks become almost identical and I wouldn't
-> be surprised if that "almost" is actually "completely"...  <checks> yep.
->
+Hi!
 
-I'll let James respond to the specifics of your suggestion, but I'll
-just note that this code has a rather convoluted history, as we used
-to have two separate pseudo-filesystem drivers, up until a few years
-ago: the sysfs based 'efivars' and this efivarfs driver. Given that
-modifications in one needed to be visible in the other, they shared a
-linked list that shadowed the state of the underlying variable store.
-'efivars' was removed years ago, but it was only recently that James
-replaced the linked list in this driver with the dentry cache as the
-shadow mechanism.
+I'm trying to use multi-index xarrays and I was experimenting with
+test_xarray.c.
 
-Relying on the -EEXIST return value to detect duplicates, and
-combining the two callbacks seem like neat optimizations to me, so
+I'm trying to use xa_erase() on every index after splitting the entry in the
+xarray. (and I commented out every other test case just to focus on this test)
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Should erasing every index within the xarray after splitting be a supported use
+case?
 
-but I have to confess I am slightly out of my depth when it comes to VFS stuff.
+Here's the diff:
+
+  diff --git i/lib/test_xarray.c w/lib/test_xarray.c
+  index 5ca0aefee9aa5..fe74f44bbbd92 100644
+  --- i/lib/test_xarray.c
+  +++ w/lib/test_xarray.c
+  @@ -1868,6 +1868,9 @@ static void check_split_1(struct xarray *xa, unsigned long index,
+   	rcu_read_unlock();
+   	XA_BUG_ON(xa, found != 1 << (order - new_order));
+
+  +	for (i = 0; i < (1 << order); i++)
+  +		xa_erase(xa, index + i);
+  +
+   	xa_destroy(xa);
+  }
+
+And made a call to
+
+  check_split_1(xa, 0, 3, 2);
+
+Here's the assertion I hit:
+
+  node 0x7c4de89e01c0x offset 0 parent 0x7c4de89e0100x shift 0 count 4 values 254 array 0x55edd2dd8940x list 0x7c4de89e01d8x 0x7c4de89e01d8x marks 0 10 0
+  xarray: ../shared/../../../lib/xarray.c:764: update_node: Assertion `!(1)' failed.
+
+
+I think I've narrowed down the issue to the for (;;) loop in xas_store(), which
+I believe isn't counting the `values` to be updated in update_node() correctly.
+
+Is `values += !xa_is_value(first) - !value;` intended to compute the increase in
+number of values with replacement of every slot being iterated by the new entry?
+
+Why does the computation of `count` involve next and entry, and why does the
+computation for `values` only statically depend on the initial value of entry,
+and on first instead of next?
+
+Thanks,
+
+
+Ackerley
 
