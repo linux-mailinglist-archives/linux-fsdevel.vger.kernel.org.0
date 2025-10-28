@@ -1,117 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-65922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E964C1505C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 15:00:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C959BC15197
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 15:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 663F05045DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 13:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848941C26191
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 14:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4582E88A7;
-	Tue, 28 Oct 2025 13:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F38E34321C;
+	Tue, 28 Oct 2025 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1P5+oPl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkD9PecY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D216238D54
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 13:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8865A339708
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 14:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659862; cv=none; b=qWbBvMylrzvS+ufXdqA4EmrcOqwGS+G2xycDi7Jf809g6+Nlqa1RP8PmnsChM/n7Q6bfCuQkPW88XU8QDU/naZJQPedC1t4yQPWpO+jjzR4gytTLKya/Fa13BOM39I1L8nlSexfgIQYmpUUE5Jr0DlOG6pM4qju4AA4ZtMRRcDw=
+	t=1761660302; cv=none; b=HLho5j57LBFBbxYEvyzpWBv6qTHGC/20u6nwVEAESxITlXETE79NDFT2ZkB5HiJlCrcJ5KeWjheohjD95mselZnJdF1xc/OqJtJZdwBJGxW37f2ExCcMcLtWwZBDWI7hQ2YV1cX/c9D/a0tlzkUHwOMAi7hdMHr6kvRRZcu0urU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659862; c=relaxed/simple;
-	bh=nV8aVqNOJAIyIjO/EUdFBuENKUMJmFxkUUBjy1ynmIA=;
+	s=arc-20240116; t=1761660302; c=relaxed/simple;
+	bh=XJNXAFxZiK88cHz3NFRWbJYZtmI5vkRXCxubdq9iJNw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=leQgydCg3wFMlnAI01qoSDqHkwPMt/d8VS+gII2xvgaSqKNVcEaN6mmRNDwbbO2vdfHmonJpFAKX24tvbQ1Lqz7BquAIH5U9X8STfecfp6gAuxdxRnavcV8eMCBJkARzyJ5bEUxkql6UaODYNW6DRxFIiOpuU8XP9QHy7/hJTQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1P5+oPl; arc=none smtp.client-ip=209.85.167.52
+	 To:Cc:Content-Type; b=rQbRcsNAKnAS8v4qfzPUNMmCdFWBCtNXAIAf93yD05R1CqYSsgtAeVM1kh/GvzYnk58qn8bjiV+ZKp0pvF2esv9PpRK9Ok0A45r0eTFC4BsuYJE5z7PlxmP5eQSk8ER2RwSrPW9J+b4Y+id1a+SjZYJAVnwVQP2yWqnFRY2HTvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkD9PecY; arc=none smtp.client-ip=74.125.224.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592f1f75c46so983635e87.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 06:57:40 -0700 (PDT)
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-63e3568f90dso6245885d50.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 07:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761659859; x=1762264659; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761660298; x=1762265098; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1C2XMyUgu0EHbkLApoQMoHRbeyl5zqyqZMRCLgfDJEo=;
-        b=g1P5+oPlWgZ9CxUj11nsE68Y7kuCvnhAWJiZMttzVN+7SGSh1Hi3Wi2ycPRVAZv/OB
-         /3UNZcd2zyl5im3c6Y9MpMX3t2wtioTB9B32myg1d5GoBhmk7JxTDguhODygf2Oyfcat
-         azxfXaoSzj0YsHU59cYdLOlHRahrUAlQuoLaQ1g/Qz0On0ojDGGQbgeiEuccz0ltQd6Y
-         AI/EdR+7wLRzUlVX/YuPgk31POyP/lzQpZiDEr9phBCNXUgI/phu0TI6not+bZF6fw8r
-         Yjwf1EZmkBdrUOJKItEeH9YrvOnxPi6OSetlJsv/zGPqe9IHEXR7wWK4IRBMgx5XM2Wy
-         ZhpQ==
+        bh=tV6lq40DHC8JcmNfWL6yF+Abxx6Ldftej9yA3XYbJaI=;
+        b=LkD9PecYZJCjpN81Xp8B9YuIdXawRmUkLPFYl5OV4oN411bhpSHRDj0WgIRDVgMA+2
+         rt8yeyDnCpeG1F6Qu4K+Ns0oYJuNmuEPjnA0NJR/eAvgiccf9rDmkXG+Cbkt8i3+FQiW
+         Hb30KZacsgjYXqrX1++nRbU3aofjx4BHnkH0j+ZBZBobTJs3s+K9BZjYsq4du/CF5rDs
+         JfLL3A7auKDgK3fsnJplkRf3hQu0C7JUt6cCrTDaMrjmsM/oVPK9kgxXM1Df+t4pt4Vp
+         xf+rGMhZZuDHRtSse0fQUp4svRhLOC47JpJv0OMcMRLS7bte+auvFiZ8c3SXHvP6BZl3
+         D+OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761659859; x=1762264659;
+        d=1e100.net; s=20230601; t=1761660298; x=1762265098;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1C2XMyUgu0EHbkLApoQMoHRbeyl5zqyqZMRCLgfDJEo=;
-        b=XR6Z/OrtAd3oHQjrLn4PklRRzl8gGGY1r2kivDrpCuRDO2FEzptwh6oeTPE+cInj+F
-         DUz/1etV2gcD6l4bzPVW28Up30RfaI+aE/TeSve5igKDtxwBDOF08xJkXGQAuTlodZuB
-         JwIXP8vfA1YbZAfZ6r+PNnt2TO76WKPBFURrRVXhrsgMvB+cndaJPgcw8faDrnSK4TAl
-         SFg2ibx8VkF0tshrJT4GWICHg84/oH4FSV6ZNVfT5IGWCSmA1vXt+fTiUMcMEhjrn8Bu
-         JWUzol3lBKUksNlMNAXyOExPBA9vgC0xMDnQ6TUkktHK/n3hMMNbBGJOgYO9NfyVecBo
-         0Z2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwM3umE8NZIiblMquCY9jR0gda6l5YnESPVK7TniFLeLmhUUJg24OEyafs2ETrxyaPaApmBItdZ725idgt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzJtqW8VfwHjMlUmjvQf8/RC/i+c/QehzUFZ2JnAa5MHGiO3Py
-	MceRAz1VwbkfmdELbid2d4j3yA8r79ktUQLmdiEarq0mM5UtkfkJxhdbNL0u2Vmd4ysF+5qG2tT
-	zUIgN+ryXzZzcGl6UskB6S5/z+21+RfE=
-X-Gm-Gg: ASbGncu4blQU8wv6CGibNCpJtBWRcbiELVnoCx6DgY4QjGwGgAfQaI4lmIItTwSTjBH
-	jj/1ggmvP0UaKFQ9ay4U2b/EhBysg0YFZmyz7OT5UpPIAWCxMrcuuxocv6WVsiTSiUd4/s9FP76
-	MPgzFN+1XBOBCHo+QWlfoVGNVjlLIaDKrM32HprpHhTBpPgNbQQXJqveYYvkAmVVw64FNRE1yhe
-	VrJjxwkqxIIdedyDbc4QII+EuBCJI66cq5uH87n89XcfTwUzrbRU2raUyRMMT5jM0oIk0Bxr9w9
-	5tvffEgsF/B+ly2Aaaz4W6O52S0OKU2ukObw+7LLxW1B/KP4aaFYxc2ga/580EkEsLefE4hmqjv
-	uiJ2RBF9bWHHbHg==
-X-Google-Smtp-Source: AGHT+IFS57SRzyAyh1eA0T/y//nY2/lPuyiomWpmCMnvcaMsoEebfDQSxTVSOlnauCaDmOiZN5PfiOLQuY4tBm0ugog=
-X-Received: by 2002:a05:6512:a90:b0:57a:8bb8:2a26 with SMTP id
- 2adb3069b0e04-5930e9c8d1dmr707784e87.6.1761659858839; Tue, 28 Oct 2025
- 06:57:38 -0700 (PDT)
+        bh=tV6lq40DHC8JcmNfWL6yF+Abxx6Ldftej9yA3XYbJaI=;
+        b=ViFkZLivtp9NU0HgZNKQNVpEpe4e8qV15XCnbUAtbCbD/KMFBJ+xMZ1f95cYD2gXve
+         pZjWn856PNYP/KSqNs7Cly23OeM9jsZVcB6geHaKG1hTFlTfXPoGrXFHp18C3zT0tXH4
+         kc1P+C8cRJR9Us+Lay+mCNg3FXWZgQl0PEeQgnSgoPIcqAuSaeO2C/Hkf3+ebd++wnCr
+         6o0f8V670lD2fHRXetJO4hLUfG0dEqGvW5FPVxJpiUM8qRtrgr/tzcq+t9TeylV8XvdI
+         XCnVZrKoTRJu+gKuU4s1URiz8DvzAf5ZsWhT55gOhGi/VN3uQuZaRw9a1MIagMWsbDAj
+         +S5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU7OML3plcYmw3TUG4jy1VzJJWeYSUwEdlXr2O/OE1J1SshSWjaQ0ViGqUA0GTkZM67QTVfeqoIAUdzhRCF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaMzrA2kK3uDPPebsL+sVgrLiCc2zbo4OPbQ34DoL+UwJSsjpw
+	h/cAFNzntfbYBopZ1m/4kPXFlWbReSBXZ/7BZDLIjppU4Eb63AERZ7YaOLYhlE7wRr3IRr22aY0
+	zBS+xs0xzSPD3amN6wVUBtc1E1QExT+Q=
+X-Gm-Gg: ASbGncuorpSxJ00Xy9GYq2DHX0A8TEdBEbYyePZ2SZwbdEwk8aTMwFIZztMUM5bqkYz
+	amzzxdt139NnG67g3A0xYOu/GV3bZcIsSLPaLhMge/Xug3/guZ/7yPeDBhYWvu6YAogXqHzvjoy
+	GYf4BQX0NVqsMwH9S3nFAYsLR3lsEJ0wcne18B6+ZFjYRMwpytPIaRzhwzeEkvs0WJcSMvb1UqD
+	ukljP1PGnPt1VXAKEeIDjS8E/nvDlRHa/RdROgivCEiE1EiUFhv0pB+pdDSACqv8uBdoTDPBcRF
+	qntuBjpefucv4cnMlg==
+X-Google-Smtp-Source: AGHT+IGO59IsEPrMaZUmuz6Z8HqEjQzA2Ntsc7bvDVyVXUheTpOGkWA4zrFX+wmhIbJUO+iBKxLOdRdY9YaXu1dEED0=
+X-Received: by 2002:a05:690e:d83:b0:63c:e90c:a6d8 with SMTP id
+ 956f58d0204a3-63f6ba849bamr2974242d50.44.1761660298140; Tue, 28 Oct 2025
+ 07:04:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-5-dakr@kernel.org>
- <aPnoTV4kPz5NHGBE@google.com>
-In-Reply-To: <aPnoTV4kPz5NHGBE@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 28 Oct 2025 14:57:23 +0100
-X-Gm-Features: AWmQ_bnk18uRC3GZJw-yqZUBJTaPq1ujFmD1FsVkdoikw4byHiqEGaMJE2xDXoI
-Message-ID: <CANiq72nSugiQhNU++HYGi=N6hUN815copxgXnfW7fXt6pWhkjw@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] rust: uaccess: add UserSliceWriter::write_slice_partial()
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
-	a.hindborg@kernel.org, tmgross@umich.edu, mmaurer@google.com, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251027083700.573016505@linutronix.de> <20251027083745.231716098@linutronix.de>
+In-Reply-To: <20251027083745.231716098@linutronix.de>
+From: Yann Ylavic <ylavic.dev@gmail.com>
+Date: Tue, 28 Oct 2025 15:04:46 +0100
+X-Gm-Features: AWmQ_bnQq8Ze7k4D-80utHvwT6MTXau8I1_bRZ4nLy6wJZW1-jMkY-uZGE3OIrk
+Message-ID: <CAKQ1sVO9YmWqo2uzk7NbssgWuwnQ-o4Yf2+bCP8UmHAU3u8KmQ@mail.gmail.com>
+Subject: Re: [patch V5 02/12] uaccess: Provide ASM GOTO safe wrappers for unsafe_*_user()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	David Laight <david.laight.linux@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
+	Nicolas Palix <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 10:33=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Isn't it more readable to write it like this?
->
->         let Some(src) =3D data.get(offset..end) else {
->             return Ok(0);
->         };
->
->         self.write_slice(src)?;
->         Ok(src.len())
+On Tue, Oct 28, 2025 at 10:32=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+> +
+> +#define __put_kernel_nofault(dst, src, type, label)            \
+> +do {                                                           \
+> +       __label__ local_label;                                  \
+> +       arch_get_kernel_nofault(dst, src, type, local_label);   \
 
-Yeah, I also tend to prefer that style for things like this, because
-the "main" operation (like forwarding to `write_slice()`) is at the
-top-level. rather than deep in a closure. Plus early returns look
-closer to C.
+Probably arch_put_kernel_nofault() instead?
 
-Cheers,
-Miguel
+> +       if (0) {                                                \
+> +       local_label:                                            \
+> +               goto label;                                     \
+> +       }                                                       \
+> +} while (0)
+
+
+Regards;
+Yann.
 
