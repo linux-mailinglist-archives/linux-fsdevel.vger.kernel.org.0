@@ -1,131 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-65964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3ABC1745B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:05:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EC6C17626
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Oct 2025 00:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB4E3B5F68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 23:04:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB04B4EA436
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 23:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1230C36A615;
-	Tue, 28 Oct 2025 23:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB4736B96C;
+	Tue, 28 Oct 2025 23:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UitXAtQ+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtRh9aBJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588AC199931;
-	Tue, 28 Oct 2025 23:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BC92C21EB;
+	Tue, 28 Oct 2025 23:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761692633; cv=none; b=WU6b12kFAexuY48nH1qIteo0cvXUKFK2KSRi8CbjJASkoyk33OYG+CwgF44RApHesBESH5zUrSoZtS/6V9D/dLnP8NuuTGRmV2eUKkDsYpCHusbPoiIO35AZ8f9XhMnC6aUXpFLyUGtysy1sH8S+VYGF6dNBRzDjYlUK0kIxnYY=
+	t=1761694743; cv=none; b=LcMFoxCwW2GRbpnSI7nkEAPfcKrpYTj8k8GmIZkILT8h8z2/OFLfSP/HRgbqprTbFrT4htRME+gVzcRw6CgSjOmOILFXpF+Cf/VXqPPwOw2BsbVVaPKk+9y/JjTtnvJj444uPR9fL1HR++xJ/BULIDfD7sV0YgrSBmOJit8YNao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761692633; c=relaxed/simple;
-	bh=kgX4g6vUYkvgZSZP1fvrdIYXiC9PY9BfKX/VN+ui3hw=;
+	s=arc-20240116; t=1761694743; c=relaxed/simple;
+	bh=usEXZdlQ8ofX0gOhMwCU8++sGXu1iTrFTVbToiGGZUk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4lOLDILYJzwC4Pg9pltD0VVzkex0PRfw6atNjQB5HrPAvtIeNVdt4W+CEWZjMsqKOxmvzsXfxOLrjvBYBla2APjb+Dtg298wE6fgNY/ef5g1SZhZFD+6fPaUDxSYc1y1izQyMK17iac250pPxmUvoqB910vYrYmXeuLNj+Ofs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UitXAtQ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB94C4CEE7;
-	Tue, 28 Oct 2025 23:03:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4uGYmYFQiaflLN6O05Fr76W9wU2iD/v827onflQXlY8z/HUO+tOCjZwWF58LZXIyqErGNlyyJD98OgOmonzjuSNISijZXPriTJC7925i34oIYpv2+sFeoi4d1AeEadLCibiP4xfd3stA+0FJHrmTlJczNpCCdyMIe5JMlmB7hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtRh9aBJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18226C4CEE7;
+	Tue, 28 Oct 2025 23:39:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761692632;
-	bh=kgX4g6vUYkvgZSZP1fvrdIYXiC9PY9BfKX/VN+ui3hw=;
+	s=k20201202; t=1761694743;
+	bh=usEXZdlQ8ofX0gOhMwCU8++sGXu1iTrFTVbToiGGZUk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UitXAtQ+ZUQ9Pn9+px3V6NR+FRxoklye0tQSSoWExizr1U8ODSP0DqrADg8Va1IlL
-	 sqwUgTk5ScjgGkrAMJfBhVcyVE3LhHbxB38slMtsnhRIzJmsiUu62coD4x/gcDOrYj
-	 f3Anr7AzIRiNB1MYTe6eu4FNeQlnF9y3YMlBVhuMxaTmWvyCJmL9nbg7C7vRytPG0W
-	 Im0kvOsKKLmzbjsMLhvnLjC1WJ6PBU5vpisfNj04Ebulit1ohS/PMm2PtfhXsJDaPi
-	 7W9Wv411rpbjAHdXtGH+1k9xg7pPNl+qtaUxWwea+86zkNWU17NTnJpufsc+eInCsS
-	 s68rycFoWURDA==
-Date: Tue, 28 Oct 2025 23:03:50 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Keith Busch <kbusch@kernel.org>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
-	axboe@kernel.dk, Hannes Reinecke <hare@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCHv4 5/8] iomap: simplify direct io validity check
-Message-ID: <20251028230350.GB1639650@google.com>
-References: <20250827141258.63501-1-kbusch@meta.com>
- <20250827141258.63501-6-kbusch@meta.com>
- <aP-c5gPjrpsn0vJA@google.com>
- <aP-hByAKuQ7ycNwM@kbusch-mbp>
- <aQFIGaA5M4kDrTlw@google.com>
- <20251028225648.GA1639650@google.com>
+	b=TtRh9aBJv0OrUuBV4+eAVjv3FwU2W/Vmds75avOSkolfvqTgPGlym75HUOkHEgjgC
+	 1UMJMF8F74aYJ79n6xhkKfxa2hE2KwaJ2F+dOGZlqLJeAvnIQAFrruBd/xEllby3ge
+	 UxH6f4k8wtKB8v14X8rsTmM81w4DtrJWjxz+E/fyKUk9Eub6x0+9ZLJa64O/mVhg4B
+	 x8bk6lIr2NVjLkPEwF3Us328FZn/hZm6chcg/crAVlHPAfx4xKkUwb23VCLG5rYOA3
+	 nx6VeQ/7MAy2df/Ter5sOM552Db3F56CEsDdcdHRbVF1BbdyPI9j834bBATrR79KyH
+	 M2pcn4q4HvLkQ==
+Date: Wed, 29 Oct 2025 00:38:59 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: linux-man@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] man/man2/flock.2: Mention non-atomicity w.r.t close
+Message-ID: <ajtcmj6vhszc4r5zx647ccagtf67huovte76moslqmpotr5dey@3v5a4lok6rrj>
+References: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kcug6qaud2n4ayr6"
 Content-Disposition: inline
-In-Reply-To: <20251028225648.GA1639650@google.com>
+In-Reply-To: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
 
-On Tue, Oct 28, 2025 at 10:56:48PM +0000, Eric Biggers wrote:
-> On Tue, Oct 28, 2025 at 10:47:53PM +0000, Carlos Llamas wrote:
-> > Ok, I did a bit more digging. I'm using f2fs but the problem in this
-> > case is the blk_crypto layer. The OP_READ request goes through
-> > submit_bio() which then calls blk_crypto_bio_prep() and if the bio has
-> > crypto context then it checks for bio_crypt_check_alignment().
-> > 
-> > This is where the LTP tests fails the alignment. However, the propagated
-> > error goes through "bio->bi_status = BLK_STS_IOERR" which in bio_endio()
-> > get translates to EIO due to blk_status_to_errno().
-> > 
-> > I've verified this restores the original behavior matching the LTP test,
-> > so I'll write up a patch and send it a bit later.
-> > 
-> > diff --git a/block/blk-crypto.c b/block/blk-crypto.c
-> > index 1336cbf5e3bd..a417843e7e4a 100644
-> > --- a/block/blk-crypto.c
-> > +++ b/block/blk-crypto.c
-> > @@ -293,7 +293,7 @@ bool __blk_crypto_bio_prep(struct bio **bio_ptr)
-> >  	}
-> >  
-> >  	if (!bio_crypt_check_alignment(bio)) {
-> > -		bio->bi_status = BLK_STS_IOERR;
-> > +		bio->bi_status = BLK_STS_INVAL;
-> >  		goto fail;
-> >  	}
-> 
-> That change looks fine, but I'm wondering how this case was reached in
-> the first place.  Upper layers aren't supposed to be submitting
-> misaligned bios like this.  For example, ext4 and f2fs require
-> filesystem logical block size alignment for direct I/O on encrypted
-> files.  They check for this early, before getting to the point of
-> submitting a bio, and fall back to buffered I/O if needed.
 
-I suppose it's this code in f2fs_should_use_dio():
+--kcug6qaud2n4ayr6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: linux-man@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] man/man2/flock.2: Mention non-atomicity w.r.t close
+Message-ID: <ajtcmj6vhszc4r5zx647ccagtf67huovte76moslqmpotr5dey@3v5a4lok6rrj>
+References: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
+MIME-Version: 1.0
+In-Reply-To: <181d561860e52955b29fe388ad089bde4f67241a.1760627023.git.amonakov@ispras.ru>
 
-	/*
-	 * Direct I/O not aligned to the disk's logical_block_size will be
-	 * attempted, but will fail with -EINVAL.
-	 *
-	 * f2fs additionally requires that direct I/O be aligned to the
-	 * filesystem block size, which is often a stricter requirement.
-	 * However, f2fs traditionally falls back to buffered I/O on requests
-	 * that are logical_block_size-aligned but not fs-block aligned.
-	 *
-	 * The below logic implements this behavior.
-	 */
-	align = iocb->ki_pos | iov_iter_alignment(iter);
-	if (!IS_ALIGNED(align, i_blocksize(inode)) &&
-	    IS_ALIGNED(align, bdev_logical_block_size(inode->i_sb->s_bdev)))
-		return false;
+Hi Jan,
 
-So it relies on the alignment check in iomap in the case where the
-request is neither logical_block_size nor filesystem_block_size aligned.
+On Thu, Oct 16, 2025 at 06:22:36PM +0300, Alexander Monakov wrote:
+> Ideally one should be able to use flock to synchronize with another
+> process (or thread) closing that file, for instance before attempting
+> to execve it (as execve of a file open for writing fails with ETXTBSY).
+>=20
+> Unfortunately, on Linux it is not reliable, because in the process of
+> closing a file its locks are dropped before the refcounts of the file
+> (as well as its underlying filesystem) are decremented, creating a race
+> window where execve of the just-unlocked file sees it as if still open.
+>=20
+> Linux developers have indicated that it is not easy to fix, and the
+> appropriate course of action for now is to document this limitation.
+>=20
+> Link: <https://lore.kernel.org/linux-fsdevel/68c99812-e933-ce93-17c0-3fe3=
+ab01afb8@ispras.ru/>
+>=20
+> Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
 
-f2fs_should_use_dio() probably should just handle that case explicitly.
+Would you mind reviewing this?  Thanks!
 
-But making __blk_crypto_bio_prep() use a better error code sounds good
-too.
 
-- Eric
+Have a lovely night!
+Alex
+
+> ---
+>  man/man2/flock.2 | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/man/man2/flock.2 b/man/man2/flock.2
+> index b424b3267..793eaa3bd 100644
+> --- a/man/man2/flock.2
+> +++ b/man/man2/flock.2
+> @@ -245,6 +245,21 @@ .SH NOTES
+>  and occurs on many other implementations.)
+>  .\" Kernel 2.5.21 changed things a little: during lock conversion
+>  .\" it is now the highest priority process that will get the lock -- mtk
+> +.P
+> +Release of a lock when a file descriptor is closed
+> +is not sequenced after all observable effects of
+> +.BR close (2).
+> +For example, if one process writes a file while holding an exclusive loc=
+k,
+> +then closes that file, and another process blocks placing a shared lock
+> +on that file to wait until it is closed, it may observe that subsequent
+> +.BR execve (2)
+> +of that file fails with
+> +.BR ETXTBSY ,
+> +and
+> +.BR umount (2)
+> +of its underlying filesystem fails with
+> +.BR EBUSY ,
+> +as if the file is still open in the first process.
+>  .SH SEE ALSO
+>  .BR flock (1),
+>  .BR close (2),
+>=20
+> Range-diff against v0:
+> -:  --------- > 1:  181d56186 man/man2/flock.2: Mention non-atomicity w.r=
+=2Et close
+> --=20
+> 2.49.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--kcug6qaud2n4ayr6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkBVBMACgkQ64mZXMKQ
+wqkH2A/+P9pZ5wDkpQiPd10gZTCWunAuijAEgdYFs80osYWuh539MLdZIfzSu77Y
+AsEUkUaQmBe1E8FT/S9FPcqaYS1SRVIw4CiHgLXhQakMPQTs6blPJIAoM5UkfhVK
+R7OB74/AfbZ6gaQ1fjNoawKLU3wHH1WGxpLEZ//QILtScBvehwp9zpv9fgWCXtoG
+mZnzymJCSIEqSQkcWAP7wqM82Fu1oT0ndmTt61uXuNYJ/SAnEoQDL1rmVGy1l/I9
+chb2tDyF4reFeDoZAmtRkJJARXwa8TVa5F3ZAQDQg5MiFKrUeyLfamGWxEuYSpN8
+byDOe4CKssdpyS168FbVhelcdLPA3jgiEiNVULmAStxtSogK/e5mGOlemQS87fGK
+Yjn8M6+IND69rcL2rUTIvyBNvmwR5TgF0bphy8EOunZhdkIK5CSiX8j80u7NrdKt
+JwlIs0jPRbZ9q4hiDsDwfYbjJYp5Y04wbOh9mk5uSJOQNXBjkfhzalsGSjk8gPqr
++6mDUxinSJ3Gnvw3J3e0E3BHsgZOsmsh9bgWb23EzPmW9adxnLmdQqvVIq1tDlGa
+Xk04Rg+TBiM5/87x9OzoZeHpHh+jVVm9cw37hU3RV0fgsNANWCVYKGQbsRYiPtZ1
+0pDBC4C939DeVl1wl6lkheKHkB42T9AIvDEdzwKZw9jVyNFMK8k=
+=BFCF
+-----END PGP SIGNATURE-----
+
+--kcug6qaud2n4ayr6--
 
