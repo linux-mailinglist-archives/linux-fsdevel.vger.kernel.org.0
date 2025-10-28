@@ -1,343 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-65953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-65954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7781AC16E19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 22:10:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C38C17027
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 22:32:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AFF3ADCA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 21:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 409611A63112
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Oct 2025 21:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58416350A0D;
-	Tue, 28 Oct 2025 21:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203563570CC;
+	Tue, 28 Oct 2025 21:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ksb5g8Zr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sRldQMR9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f74.google.com (mail-yx1-f74.google.com [74.125.224.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22512DCF4C;
-	Tue, 28 Oct 2025 21:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32AB3570C6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 21:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761685695; cv=none; b=eFvZVMgQW12wdtDKHR3o71VNB7jiLT4I9TzxyDiuHaP73pylx+PUsGuWFIOAIfpxmFC8/PGj6K0p+/iQj4waRnG0PnYdiuwpRsx4i+Jc+WAibFQr6EBfWNH8gIi13Sbh764j1ZSH/P/O4PFlplUH5Akbb2aA3xROJUYPyUwNcTg=
+	t=1761686740; cv=none; b=Q1WuiHesbF1zl4PGmlmFClnxEuAxEVmbGKAxJYC0k2z9bDwZGlHK6KN3h1ccHchRmtUAGMhKi9CFViB+G6/dC2jAEEPMwI9jq1j+lzufU6mLf4kkiOUD7b7EcvT8Oje2NXi865OkIzvR6jyhJ4/FTIwYuPKCwQdNACkXS1TRSe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761685695; c=relaxed/simple;
-	bh=yUSHQgos7Kh9J6Gv2qFGOCJHSJ6+VHnfECGLT/kKGiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyJSJ3ZPGbZ7vFev8oBDyU+NLL8US1TGGNgkgqhtAmwOYVRt3OEu//eniriWfFLilO39no3VrQsK3W9CZwKAr+kfygDXVcuQ19a57dK+oIqaRP62yvj39iT9DE9iPkjMuIfuAPVAe3kjMmTBcc9ytt56xWDjVx1Aqxs3HKUtuOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ksb5g8Zr; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KlTwB+1F+PugnwlBKmbzqaDoi+J+L/6Td5vFafDz7aQ=; b=Ksb5g8ZrVafnbFuTRxbUrPhDBj
-	VSOMEinbRhfNMqbf8zNwa4y+4w91yeN1ZkolOTq7QHfZv9jbf9wzwIgjoyGXNTLzmtCmiuSlsuFQY
-	I2duEP0tPN70bNXR+5LqqotswpJ2viRu62H7osNC8PUSJSrQulUJeNM/ANyqo1gLANZ82mjExXHlj
-	1F+kesXVgTzno6Sx7Se5kMbenDUUhlD1xSwZGEI1aNvuxQWH0jGuFuiDJKw286315kfeqCsz/8rE+
-	ioRQsGUqL6ZTFGl0vQ2Ve+T2xs0+XXea6lOfg9yJCHsRQXsmQJWUMV9NmpQEVchINZrcmNhueZ2ko
-	8V7lMBVw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDqvF-0000000FqQ8-4BSQ;
-	Tue, 28 Oct 2025 21:08:06 +0000
-Date: Tue, 28 Oct 2025 21:08:05 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
-	miklos@szeredi.hu, neil@brown.name, a.hindborg@kernel.org,
-	linux-mm@kvack.org, linux-efi@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev, kees@kernel.org, rostedt@goodmis.org,
-	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	paul@paul-moore.com, casey@schaufler-ca.com,
-	linuxppc-dev@lists.ozlabs.org, john.johansen@canonical.com,
-	selinux@vger.kernel.org, borntraeger@linux.ibm.com,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v2 22/50] convert efivarfs
-Message-ID: <20251028210805.GP2441659@ZenIV>
-References: <20251028004614.393374-1-viro@zeniv.linux.org.uk>
- <20251028004614.393374-23-viro@zeniv.linux.org.uk>
- <66300d81c5e127e3bca8c6c4d997da386b142004.camel@HansenPartnership.com>
- <20251028174540.GN2441659@ZenIV>
+	s=arc-20240116; t=1761686740; c=relaxed/simple;
+	bh=VONa5+qGmceUz/WA5Ut4vRFxC2i/SKI2Ca9kKEHzbt8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JJZQ5o3YqGzTRniQyDoJr5Upnjk8SKLMoYGzMI1Yq6bmpkPxHrMOsPGUhtOsMbEiMwVHjCogePhpw1l2WTu7R1rgeIKms+5kCNq9J8Mdh0IWGZ1ssjZ8T9p7fbOYOX7TwJ6yEeTc6J7M4ZdvulAfVHCSPrwCAZJWRJ+1Q5xfjCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sRldQMR9; arc=none smtp.client-ip=74.125.224.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
+Received: by mail-yx1-f74.google.com with SMTP id 956f58d0204a3-63b7d182e42so7350037d50.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Oct 2025 14:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761686738; x=1762291538; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U4p6kxOlNOG31wIDXmwy414BSQw9sWas+789Bv9fSts=;
+        b=sRldQMR9bGFZcTGpGR/kF50apQxspOQb9yLQuOgNfr+ScULM/dVFL7Q0WMYyjjW0Zm
+         djz2EpBg6SFifB+PTE4YWtAMQ5rNIh17w6gmIMidgJcSGWeUjUvOhBPigRu+bBP+pkq+
+         mdQeP0r1Z5nYZLx1EFYE2dIKFGduIeOxkEPc2cD72LAhZ5GdG3+7rBIullPFAEyBcZWp
+         fPBMF54Sp6JUS9P3oAbQDLzhTE3CaEe0piX1Yx4WuHSbcUtYf3DKfei+nGq7A7Qp/J6l
+         6ZDCjOS2Gm9DqDPYn//KQsGqT73IKp1iycZIXI8vwcmAU85wuy/HjUY+CNmp3aJLCQE/
+         9dOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761686738; x=1762291538;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U4p6kxOlNOG31wIDXmwy414BSQw9sWas+789Bv9fSts=;
+        b=gBoDaLne4wKHlJ0zEVT9cXuYn6xBTS5r2Nr9WFU9aHv3F226nQcozQfmUTqepgW0Is
+         LK/QK8uSGznESAnMz/S8NN2qIq1mpVYJ/JGUSkEM2uc1lOcrIm5LvVVBUDJzKAl9F8L9
+         4wQ1R/NdjCfRgWt7HlUQz6zo7LWiBdY36KDLYzUwKbriNN+PsS05nusyBmNhAeX8s0M0
+         20aMcheW5yLoNRPG3+F46z8EVjyaSaDPbxYvv+9LyKhg9OTEOZg8qZu+MtDHgKeLK+FM
+         Xatbm6TcXYVZN8t7avh1J0QfP4tFwjuTc1rJS9njbECyyR1j44nMGF7DMgBkoabCdPf6
+         YQXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHjXK60MITWWnlelS/i6V7IJoDWb59KABUoXCKwn0H9F5Xzvm3nuf0OMqLButHgoXxxuRtpPdV9voamlPf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqxCa6tPK3Yo4PisXXHs0ee89v3t90bRpZzsPOOJsMBgglbM+r
+	Kp0/Wqs0UQhKs9pugfSiObAxwJtS2pGwgqnsoa8RbcAHWS2v9zNcUT5EtWdl39f/06yl17LAbJR
+	eV9LuAKLcDo0Xj3RQ/CZoKsyYxQ==
+X-Google-Smtp-Source: AGHT+IGJWNdmzr+80PlpfT/LLo3Pibom+vpVqtRUcL1zZ6uSsgkD1esTGCr9/87u9nvyfQFqt6WKW0iDTdv7HmQAjw==
+X-Received: from yxli18.prod.google.com ([2002:a53:c0d2:0:b0:63f:2d9a:6543])
+ (user=kaleshsingh job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:690e:38c:b0:63e:1de4:7fc0 with SMTP id 956f58d0204a3-63f76df7854mr600821d50.66.1761686737742;
+ Tue, 28 Oct 2025 14:25:37 -0700 (PDT)
+Date: Tue, 28 Oct 2025 14:24:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028174540.GN2441659@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
+Message-ID: <20251028212528.681081-1-kaleshsingh@google.com>
+Subject: [PATCH v4 0/5] mm: Refactor and improve VMA count limit code
+From: Kalesh Singh <kaleshsingh@google.com>
+To: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
+	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de
+Cc: rostedt@goodmis.org, hughd@google.com, kernel-team@android.com, 
+	android-mm@google.com, Kalesh Singh <kaleshsingh@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 28, 2025 at 05:45:40PM +0000, Al Viro wrote:
+Hi all,
 
-> FWIW, having a special path for "we are in foofs_fill_super(), fuck
-> the locking - nobody's going to access it anyway" is not a great
-> idea, simply because the helpers tend to get reused on codepaths
-> where we can't cut corners that way.
+This series refactors the VMA count limit code to improve clarity,
+test coverage, and observability.
 
-	BTW, looking through efivarfs codebase now... *both* callers
-of efivarfs_create_dentry() end up doing dcache lookups, with variously
-convoluted call chains.  Look: efivarfs_check_missing() has an explicit
-try_lookup_noperm() before the call of efivarfs_create_dentry().
-efivarfs_callback() doesn't, but it's called via
-	efivar_init(efivarfs_callback, sb, true)
-and with the last argument being true efivar_init() will precede the call
-of the callback with efivarfs_variable_is_present().  Guess what does that
-thing (never used anywhere else) do?  Right, the call of try_lookup_noperm().
+The VMA count limit, controlled by sysctl_max_map_count, is a safeguard
+that prevents a single process from consuming excessive kernel memory
+by creating too many memory mappings.
 
-Why do we bother with that?  What's wrong with having efivarfs_create_dentry()
-returning -EEXIST in case of dentry already being there and turning the
-chunk in efivar_init() into
-			err = func(variable_name, vendor_guid,
-				   variable_name_size, data);
-			if (err == -EEXIST) {
-				if (duplicate_check)
-					dup_variable_bug(variable_name,
-							 &vendor_guid,
-							 variable_name_size);
-				else
-					err = 0;
-			}
-			if (err)
-				status = EFI_NOT_FOUND;
-Note that both possible callbacks become almost identical and I wouldn't
-be surprised if that "almost" is actually "completely"...  <checks> yep.
+A major change since v3 is the first patch in the series which instead of 
+attempting to fix overshooting the limit now documents that this is the
+intended behavior. As Hugh pointed out, the lenient check (>) in do_mmap()
+and do_brk_flags() is intentional to allow for potential VMA merges or
+expansions when the process is at the sysctl_max_map_count limit. 
+The consensus is that this historical behavior is correct but non-obvious.
 
-So I'm not sure we want that callback to be an argument, but that's
-a separate followup.  For now, do you see any problems with the following
-patch?  [Completely untested, on top of the posted series]
+This series now focuses on making that behavior clear and the surrounding
+code more robust. Based on feedback from Lorenzo and David, this series
+retains the helper function and the rename of map_count.
 
-diff --git a/fs/efivarfs/internal.h b/fs/efivarfs/internal.h
-index f913b6824289..045d53fd0f3c 100644
---- a/fs/efivarfs/internal.h
-+++ b/fs/efivarfs/internal.h
-@@ -55,8 +55,6 @@ bool efivar_validate(efi_guid_t vendor, efi_char16_t *var_name, u8 *data,
- bool efivar_variable_is_removable(efi_guid_t vendor, const char *name,
- 				  size_t len);
- char *efivar_get_utf8name(const efi_char16_t *name16, efi_guid_t *vendor);
--bool efivarfs_variable_is_present(efi_char16_t *variable_name,
--				  efi_guid_t *vendor, void *data);
- 
- extern const struct file_operations efivarfs_file_operations;
- extern const struct inode_operations efivarfs_dir_inode_operations;
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index 298ab3c929eb..80ed81bbd4a5 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -189,52 +189,6 @@ static const struct dentry_operations efivarfs_d_ops = {
- 	.d_hash = efivarfs_d_hash,
- };
- 
--static struct dentry *efivarfs_alloc_dentry(struct dentry *parent, char *name)
--{
--	struct dentry *d;
--	struct qstr q;
--	int err;
--
--	q.name = name;
--	q.len = strlen(name);
--
--	err = efivarfs_d_hash(parent, &q);
--	if (err)
--		return ERR_PTR(err);
--
--	d = d_alloc(parent, &q);
--	if (d)
--		return d;
--
--	return ERR_PTR(-ENOMEM);
--}
--
--bool efivarfs_variable_is_present(efi_char16_t *variable_name,
--				  efi_guid_t *vendor, void *data)
--{
--	char *name = efivar_get_utf8name(variable_name, vendor);
--	struct super_block *sb = data;
--	struct dentry *dentry;
--
--	if (!name)
--		/*
--		 * If the allocation failed there'll already be an
--		 * error in the log (and likely a huge and growing
--		 * number of them since they system will be under
--		 * extreme memory pressure), so simply assume
--		 * collision for safety but don't add to the log
--		 * flood.
--		 */
--		return true;
--
--	dentry = try_lookup_noperm(&QSTR(name), sb->s_root);
--	kfree(name);
--	if (!IS_ERR_OR_NULL(dentry))
--		dput(dentry);
--
--	return dentry != NULL;
--}
--
- static int efivarfs_create_dentry(struct super_block *sb, efi_char16_t *name16,
- 				  unsigned long name_size, efi_guid_t vendor,
- 				  char *name)
-@@ -244,7 +198,7 @@ static int efivarfs_create_dentry(struct super_block *sb, efi_char16_t *name16,
- 	struct dentry *dentry, *root = sb->s_root;
- 	unsigned long size = 0;
- 	int len;
--	int err = -ENOMEM;
-+	int err = 0;
- 	bool is_removable = false;
- 
- 	/* length of the variable name itself: remove GUID and separator */
-@@ -253,41 +207,36 @@ static int efivarfs_create_dentry(struct super_block *sb, efi_char16_t *name16,
- 	if (efivar_variable_is_removable(vendor, name, len))
- 		is_removable = true;
- 
-+	dentry = simple_start_creating(root, name);
-+	if (IS_ERR(dentry)) {
-+		err = PTR_ERR(dentry);
-+		goto out_name;
-+	}
-+
- 	inode = efivarfs_get_inode(sb, d_inode(root), S_IFREG | 0644, 0,
- 				   is_removable);
--	if (!inode)
--		goto fail_name;
-+	if (unlikely(!inode)) {
-+		err = -ENOMEM;
-+		goto out_dentry;
-+	}
- 
- 	entry = efivar_entry(inode);
- 
- 	memcpy(entry->var.VariableName, name16, name_size);
- 	memcpy(&(entry->var.VendorGuid), &vendor, sizeof(efi_guid_t));
- 
--	dentry = efivarfs_alloc_dentry(root, name);
--	if (IS_ERR(dentry)) {
--		err = PTR_ERR(dentry);
--		goto fail_inode;
--	}
--
- 	__efivar_entry_get(entry, NULL, &size, NULL);
- 
--	/* copied by the above to local storage in the dentry. */
--	kfree(name);
--
- 	inode_lock(inode);
- 	inode->i_private = entry;
- 	i_size_write(inode, size + sizeof(__u32)); /* attributes + data */
- 	inode_unlock(inode);
- 	d_make_persistent(dentry, inode);
--	dput(dentry);
--
--	return 0;
- 
--fail_inode:
--	iput(inode);
--fail_name:
-+out_dentry:
-+	simple_done_creating(dentry);
-+out_name:
- 	kfree(name);
--
- 	return err;
- }
- 
-@@ -407,42 +356,6 @@ static const struct fs_context_operations efivarfs_context_ops = {
- 	.free		= efivarfs_free,
- };
- 
--static int efivarfs_check_missing(efi_char16_t *name16, efi_guid_t vendor,
--				  unsigned long name_size, void *data)
--{
--	char *name;
--	struct super_block *sb = data;
--	struct dentry *dentry;
--	int err;
--
--	if (guid_equal(&vendor, &LINUX_EFI_RANDOM_SEED_TABLE_GUID))
--		return 0;
--
--	name = efivar_get_utf8name(name16, &vendor);
--	if (!name)
--		return -ENOMEM;
--
--	dentry = try_lookup_noperm(&QSTR(name), sb->s_root);
--	if (IS_ERR(dentry)) {
--		err = PTR_ERR(dentry);
--		goto out;
--	}
--
--	if (!dentry) {
--		/* found missing entry */
--		pr_info("efivarfs: creating variable %s\n", name);
--		return efivarfs_create_dentry(sb, name16, name_size, vendor, name);
--	}
--
--	dput(dentry);
--	err = 0;
--
-- out:
--	kfree(name);
--
--	return err;
--}
--
- static struct file_system_type efivarfs_type;
- 
- static int efivarfs_freeze_fs(struct super_block *sb)
-@@ -493,7 +406,7 @@ static int efivarfs_unfreeze_fs(struct super_block *sb)
- 		}
- 	}
- 
--	efivar_init(efivarfs_check_missing, sb, false);
-+	efivar_init(efivarfs_callback, sb, false);
- 	pr_info("efivarfs: finished resyncing variable state\n");
- 	return 0;
- }
-diff --git a/fs/efivarfs/vars.c b/fs/efivarfs/vars.c
-index 6edc10958ecf..d893e928891a 100644
---- a/fs/efivarfs/vars.c
-+++ b/fs/efivarfs/vars.c
-@@ -407,6 +407,8 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 		case EFI_SUCCESS:
- 			variable_name_size = var_name_strnsize(variable_name,
- 							       variable_name_size);
-+			err = func(variable_name, vendor_guid,
-+				   variable_name_size, data);
- 
- 			/*
- 			 * Some firmware implementations return the
-@@ -416,18 +418,16 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 			 * we'll ever see a different variable name,
- 			 * and may end up looping here forever.
- 			 */
--			if (duplicate_check &&
--			    efivarfs_variable_is_present(variable_name,
--							 &vendor_guid, data)) {
--				dup_variable_bug(variable_name, &vendor_guid,
--						 variable_name_size);
--				status = EFI_NOT_FOUND;
--			} else {
--				err = func(variable_name, vendor_guid,
--					   variable_name_size, data);
--				if (err)
--					status = EFI_NOT_FOUND;
-+			if (err == -EEXIST) {
-+				if (duplicate_check)
-+					dup_variable_bug(variable_name,
-+							 &vendor_guid,
-+							 variable_name_size);
-+				else
-+					err = 0;
- 			}
-+			if (err)
-+				status = EFI_NOT_FOUND;
- 			break;
- 		case EFI_UNSUPPORTED:
- 			err = -EOPNOTSUPP;
+The refined v4 series is now structured as follows:
+
+1.  Documents the lenient VMA count checks with comments to clarify
+    their purpose.
+
+2.  Adds a comprehensive selftest to codify the expected behavior at the
+    limit, including the lenient mmap case.
+
+3.  Introduces max_vma_count() to abstract the max map count sysctl,
+    making the sysctl static and converting all callers to use the new
+    helper.
+
+4.  Renames mm_struct->map_count to the more explicit vma_count for
+    better code clarity.
+
+5.  Adds a tracepoint for observability when a process fails to
+    allocate a VMA due to the count limit.
+
+Tested on x86_64 and arm64:
+
+ 1. Build test:
+      allyesconfig for rename
+
+ 2. Selftests:
+      cd tools/testing/selftests/mm && \
+          make && \
+          ./run_vmtests.sh -t max_vma_count
+
+ 3. vma tests:
+      cd tools/testing/vma && \
+          make && \
+          ./vma
+
+Link to v3:
+https://lore.kernel.org/r/20251013235259.589015-1-kaleshsingh@google.com/
+
+Thanks to everyone for the valuable discussion on previous revisions.
+
+-- Kalesh
+
+Kalesh Singh (5):
+  mm: Document lenient map_count checks
+  mm/selftests: add max_vma_count tests
+  mm: Introduce max_vma_count() to abstract the max map count sysctl
+  mm: rename mm_struct::map_count to vma_count
+  mm/tracing: introduce trace_mm_insufficient_vma_slots event
+
+ MAINTAINERS                                   |   2 +
+ fs/binfmt_elf.c                               |   2 +-
+ fs/coredump.c                                 |   2 +-
+ include/linux/mm.h                            |   2 -
+ include/linux/mm_types.h                      |   2 +-
+ include/trace/events/vma.h                    |  32 +
+ kernel/fork.c                                 |   2 +-
+ mm/debug.c                                    |   2 +-
+ mm/internal.h                                 |   3 +
+ mm/mmap.c                                     |  25 +-
+ mm/mremap.c                                   |  13 +-
+ mm/nommu.c                                    |   8 +-
+ mm/util.c                                     |   1 -
+ mm/vma.c                                      |  42 +-
+ mm/vma_internal.h                             |   2 +
+ tools/testing/selftests/mm/.gitignore         |   1 +
+ tools/testing/selftests/mm/Makefile           |   1 +
+ .../selftests/mm/max_vma_count_tests.c        | 716 ++++++++++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh     |   5 +
+ tools/testing/vma/vma.c                       |  32 +-
+ tools/testing/vma/vma_internal.h              |  13 +-
+ 21 files changed, 856 insertions(+), 52 deletions(-)
+ create mode 100644 include/trace/events/vma.h
+ create mode 100644 tools/testing/selftests/mm/max_vma_count_tests.c
+
+
+base-commit: b227c04932039bccc21a0a89cd6df50fa57e4716
+-- 
+2.51.1.851.g4ebd6896fd-goog
+
 
